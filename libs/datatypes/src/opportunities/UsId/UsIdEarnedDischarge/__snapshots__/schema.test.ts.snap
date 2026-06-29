@@ -1,0 +1,187 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for almostEligibleSupervisionLength 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "noFelonyWithin24Months": true,
+    "usIdLsirLevelLowModerateForXDays": {
+      "eligibleDate": 2021-09-16T00:00:00.000Z,
+      "riskLevel": "MODERATE",
+    },
+  },
+  "eligibleStartDate": 2021-08-16T00:00:00.000Z,
+  "externalId": "002",
+  "formInformation": {},
+  "ineligibleCriteria": {
+    "pastEarnedDischargeEligibleDate": {
+      "eligibleDate": 2022-03-16T00:00:00.000Z,
+    },
+  },
+  "isAlmostEligible": true,
+  "isEligible": false,
+  "metadata": {},
+  "stateCode": "US_ID",
+}
+`;
+
+exports[`schema for complexFormInformation 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "noFelonyWithin24Months": true,
+    "pastEarnedDischargeEligibleDate": {
+      "eligibleDate": 2021-11-16T00:00:00.000Z,
+    },
+    "supervisionNotPastFullTermCompletionDate": {
+      "eligibleDate": "2023-12-16",
+    },
+    "usIdLsirLevelLowModerateForXDays": {
+      "eligibleDate": 2021-09-16T00:00:00.000Z,
+      "riskLevel": "MODERATE",
+    },
+  },
+  "eligibleStartDate": 2021-06-16T00:00:00.000Z,
+  "externalId": "005",
+  "formInformation": {
+    "caseNumbers": [
+      "12858",
+      "13085",
+      "14558",
+    ],
+    "chargeDescriptions": [
+      "Shoplifting",
+      "Public Intoxication",
+      "Trespassing",
+    ],
+    "countyNames": [
+      "Duane",
+      "Duane",
+      "Moraga",
+    ],
+    "dateImposed": [
+      2018-08-16T00:00:00.000Z,
+      2018-10-16T00:00:00.000Z,
+      2018-12-16T00:00:00.000Z,
+    ],
+    "firstAssessmentDate": 2019-12-16T00:00:00.000Z,
+    "firstAssessmentScore": 27,
+    "fullTermReleaseDates": [
+      2023-02-16T00:00:00.000Z,
+      2023-01-16T00:00:00.000Z,
+      2022-12-16T00:00:00.000Z,
+    ],
+    "judgeNames": [
+      {
+        "givenNames": "Starla",
+        "surname": "Murieta",
+      },
+      {
+        "givenNames": "Raymond",
+        "surname": "Dart",
+      },
+      {
+        "givenNames": "Ahmud",
+        "surname": "Blake",
+      },
+    ],
+    "latestAssessmentDate": 2021-10-16T00:00:00.000Z,
+    "latestAssessmentScore": 19,
+    "ncicCheckDate": 2021-11-16T00:00:00.000Z,
+    "sentenceMax": [
+      365,
+      334,
+      60,
+    ],
+    "sentenceMin": [
+      92,
+      61,
+      15,
+    ],
+  },
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_ID",
+}
+`;
+
+exports[`schema for dualParoleRecord 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "noFelonyWithin24Months": true,
+    "pastEarnedDischargeEligibleDate": {
+      "eligibleDate": 2021-11-16T00:00:00.000Z,
+      "sentenceType": "DUAL",
+    },
+    "usIdLsirLevelLowModerateForXDays": {
+      "eligibleDate": 2021-09-16T00:00:00.000Z,
+      "riskLevel": "MODERATE",
+    },
+  },
+  "eligibleStartDate": 2021-06-16T00:00:00.000Z,
+  "externalId": "001",
+  "formInformation": {},
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_ID",
+}
+`;
+
+exports[`schema for optionalCriteriaHaveSaneFallbacks 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "noFelonyWithin24Months": true,
+    "pastEarnedDischargeEligibleDate": {
+      "eligibleDate": 2021-11-16T00:00:00.000Z,
+    },
+    "supervisionNotPastFullTermCompletionDate": {
+      "eligibleDate": "2023-12-16",
+    },
+    "usIdLsirLevelLowModerateForXDays": {
+      "eligibleDate": 2021-09-16T00:00:00.000Z,
+      "riskLevel": "MODERATE",
+    },
+  },
+  "eligibleStartDate": 2021-06-16T00:00:00.000Z,
+  "externalId": "004",
+  "formInformation": {},
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_ID",
+}
+`;
+
+exports[`schema for probationEligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "noFelonyWithin24Months": true,
+    "pastEarnedDischargeEligibleDate": {
+      "eligibleDate": 2021-11-16T00:00:00.000Z,
+    },
+    "supervisionNotPastFullTermCompletionDate": {
+      "eligibleDate": "2023-12-16",
+    },
+    "usIdLsirLevelLowModerateForXDays": {
+      "eligibleDate": 2021-09-16T00:00:00.000Z,
+      "riskLevel": "MODERATE",
+    },
+  },
+  "eligibleStartDate": 2021-06-16T00:00:00.000Z,
+  "externalId": "003",
+  "formInformation": {},
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_ID",
+}
+`;

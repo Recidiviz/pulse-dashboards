@@ -1,0 +1,25 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for eligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "usIdMeetsOverdueFaceToFaceContactAlert": {
+      "caseType": "GENERAL",
+      "lastContactDate": 2021-09-16T00:00:00.000Z,
+      "overdueForContactAlertDate": 2021-12-31T00:00:00.000Z,
+      "supervisionLevel": "MEDIUM",
+    },
+  },
+  "externalId": "001",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "lastContactDate": 2021-09-16T00:00:00.000Z,
+  "metadata": {
+    "contactCadence": "Every 90 days",
+    "dueDate": 2021-12-31T00:00:00.000Z,
+  },
+  "stateCode": "US_ID",
+}
+`;

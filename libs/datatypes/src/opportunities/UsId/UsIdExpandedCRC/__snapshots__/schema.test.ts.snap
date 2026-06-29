@@ -1,0 +1,100 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for ftcdAndPed 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "custodyLevelIsMinimum": {
+      "custodyLevel": "MINIMUM",
+    },
+    "notServingForSexualOffense": null,
+    "usIdInCrcFacilityOrPwccUnit1": {
+      "crcStartDate": 2021-06-16T00:00:00.000Z,
+      "facilityName": "PRC",
+    },
+    "usIdInCrcFacilityOrPwccUnit1For60Days": {
+      "sixtyDaysInCrcFacilityDate": 2021-08-16T00:00:00.000Z,
+    },
+    "usIdIncarcerationWithin6MonthsOfFtcdOrPedOrEprd": {
+      "fullTermCompletionDate": 2022-04-16T00:00:00.000Z,
+      "paroleEligibilityDate": 2022-02-16T00:00:00.000Z,
+    },
+    "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
+    "usIdNotDetainersForXcrcAndCrc": null,
+  },
+  "externalId": "ID_RES001",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_ID",
+}
+`;
+
+exports[`schema for tpdRecord 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "custodyLevelIsMinimum": {
+      "custodyLevel": "MINIMUM",
+    },
+    "notServingForSexualOffense": null,
+    "usIdInCrcFacilityOrPwccUnit1": {
+      "crcStartDate": 2021-06-16T00:00:00.000Z,
+      "facilityName": "Vault 6",
+    },
+    "usIdInCrcFacilityOrPwccUnit1For60Days": {
+      "sixtyDaysInCrcFacilityDate": 2021-08-16T00:00:00.000Z,
+    },
+    "usIdIncarcerationWithin6MonthsOfFtcdOrPedOrEprd": {
+      "fullTermCompletionDate": null,
+      "paroleEligibilityDate": null,
+    },
+    "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
+    "usIdNotDetainersForXcrcAndCrc": null,
+  },
+  "externalId": "ID_RES002",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_ID",
+}
+`;
+
+exports[`schema for withCaseNotes 1`] = `
+{
+  "caseNotes": {
+    "SomeSection": [
+      {
+        "noteBody": "Some pig!",
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "custodyLevelIsMinimum": {
+      "custodyLevel": "MINIMUM",
+    },
+    "notServingForSexualOffense": null,
+    "usIdInCrcFacilityOrPwccUnit1": {
+      "crcStartDate": 2021-06-16T00:00:00.000Z,
+      "facilityName": "Vault 6",
+    },
+    "usIdInCrcFacilityOrPwccUnit1For60Days": {
+      "sixtyDaysInCrcFacilityDate": 2021-08-16T00:00:00.000Z,
+    },
+    "usIdIncarcerationWithin6MonthsOfFtcdOrPedOrEprd": {
+      "fullTermCompletionDate": null,
+      "paroleEligibilityDate": null,
+    },
+    "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
+    "usIdNotDetainersForXcrcAndCrc": null,
+  },
+  "externalId": "ID_RES003",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_ID",
+}
+`;

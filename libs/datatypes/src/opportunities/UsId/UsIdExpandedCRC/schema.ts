@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,12 +17,10 @@
 
 import { z } from "zod";
 
-import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
-
-import {
-  crcSharedCriteria,
-  crcSharedIneligibleCriteria,
-} from "../UsIdSharedCriteria";
+import { ParsedRecord } from "../../../utils/types";
+import { dateStringSchema } from "../../../utils/zod";
+import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
+import { crcSharedCriteria, crcSharedIneligibleCriteria } from "../common";
 
 export const usIdExpandedCRCSchema = opportunitySchemaBase.extend({
   eligibleCriteria: crcSharedCriteria.extend({
@@ -49,10 +47,4 @@ export const usIdExpandedCRCSchema = opportunitySchemaBase.extend({
   }),
 });
 
-export type UsIdExpandedCRCReferralRecord = z.infer<
-  typeof usIdExpandedCRCSchema
->;
-
-export type UsIdExpandedCRCReferralRecordRaw = z.input<
-  typeof usIdExpandedCRCSchema
->;
+export type UsIdExpandedCRCRecord = ParsedRecord<typeof usIdExpandedCRCSchema>;

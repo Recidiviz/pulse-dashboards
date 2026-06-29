@@ -17,16 +17,17 @@
 
 import { DocumentData } from "firebase/firestore";
 
+import {
+  UsIdOverdueFaceToFaceContactRecord,
+  usIdOverdueFaceToFaceContactSchema,
+} from "~datatypes";
+
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
-import {
-  UsIdOverdueFaceToFaceContactReferralRecord,
-  usIdOverdueFaceToFaceContactSchema,
-} from "./UsIdOverdueFaceToFaceContactReferralRecord";
 
 export class UsIdOverdueFaceToFaceContactOpportunity extends OpportunityBase<
   Client,
-  UsIdOverdueFaceToFaceContactReferralRecord
+  UsIdOverdueFaceToFaceContactRecord["output"]
 > {
   constructor(client: Client, record: DocumentData) {
     super(

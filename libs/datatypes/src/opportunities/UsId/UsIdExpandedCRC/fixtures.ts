@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,107 +15,84 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  UsIdExpandedCRCReferralRecordRaw,
-  usIdExpandedCRCSchema,
-} from "../UsIdExpandedCRCOpportunity";
+import { makeRecordFixture, relativeFixtureDate } from "../../../utils/zod";
+import { FixtureMapping } from "../../utils/types";
+import { UsIdExpandedCRCRecord, usIdExpandedCRCSchema } from "./schema";
 
-test("transforms record with FTCD and PED set", () => {
-  const rawRecord: UsIdExpandedCRCReferralRecordRaw = {
-    stateCode: "US_MI",
-    externalId: "xcrc-eligible-01",
+export const usIdExpandedCRCFixtures = {
+  ftcdAndPed: makeRecordFixture(usIdExpandedCRCSchema, {
+    stateCode: "US_ID",
+    externalId: "ID_RES001",
     eligibleCriteria: {
-      custodyLevelIsMinimum: {
-        custodyLevel: "MINIMUM",
-      },
+      custodyLevelIsMinimum: { custodyLevel: "MINIMUM" },
       notServingForSexualOffense: null,
-      usIdNotDetainersForXcrcAndCrc: null,
       usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
+      usIdNotDetainersForXcrcAndCrc: null,
       usIdIncarcerationWithin6MonthsOfFtcdOrPedOrEprd: {
-        fullTermCompletionDate: "2022-08-12",
-        paroleEligibilityDate: "2022-03-19",
+        fullTermCompletionDate: relativeFixtureDate({ months: 4 }),
+        paroleEligibilityDate: relativeFixtureDate({ months: 2 }),
       },
       usIdInCrcFacilityOrPwccUnit1: {
-        crcStartDate: "2022-02-06",
-        facilityName: "Facility 73",
+        crcStartDate: relativeFixtureDate({ months: -6 }),
+        facilityName: "PRC",
       },
       usIdInCrcFacilityOrPwccUnit1For60Days: {
-        sixtyDaysInCrcFacilityDate: "2022-04-07",
+        sixtyDaysInCrcFacilityDate: relativeFixtureDate({ months: -4 }),
       },
     },
     ineligibleCriteria: {},
     isEligible: true,
     isAlmostEligible: false,
-  };
-
-  expect(usIdExpandedCRCSchema.parse(rawRecord)).toMatchSnapshot();
-});
-
-test("transforms record with TPD set", () => {
-  const rawRecord: UsIdExpandedCRCReferralRecordRaw = {
-    stateCode: "US_MI",
-    externalId: "xcrc-eligible-02",
+  }),
+  tpdRecord: makeRecordFixture(usIdExpandedCRCSchema, {
+    stateCode: "US_ID",
+    externalId: "ID_RES002",
     eligibleCriteria: {
-      custodyLevelIsMinimum: {
-        custodyLevel: "MINIMUM",
-      },
+      custodyLevelIsMinimum: { custodyLevel: "MINIMUM" },
       notServingForSexualOffense: null,
-      usIdNotDetainersForXcrcAndCrc: null,
       usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
+      usIdNotDetainersForXcrcAndCrc: null,
       usIdIncarcerationWithin6MonthsOfFtcdOrPedOrEprd: {
         fullTermCompletionDate: null,
         paroleEligibilityDate: null,
       },
       usIdInCrcFacilityOrPwccUnit1: {
-        crcStartDate: "2022-02-06",
+        crcStartDate: relativeFixtureDate({ months: -6 }),
         facilityName: "Vault 6",
       },
       usIdInCrcFacilityOrPwccUnit1For60Days: {
-        sixtyDaysInCrcFacilityDate: "2022-04-07",
+        sixtyDaysInCrcFacilityDate: relativeFixtureDate({ months: -4 }),
       },
     },
     ineligibleCriteria: {},
     isEligible: true,
     isAlmostEligible: false,
-  };
-
-  expect(usIdExpandedCRCSchema.parse(rawRecord)).toMatchSnapshot();
-});
-
-test("transforms record with caseNotes set", () => {
-  const rawRecord: UsIdExpandedCRCReferralRecordRaw = {
-    stateCode: "US_MI",
-    externalId: "xcrc-eligible-02",
+  }),
+  withCaseNotes: makeRecordFixture(usIdExpandedCRCSchema, {
+    stateCode: "US_ID",
+    externalId: "ID_RES003",
     eligibleCriteria: {
-      custodyLevelIsMinimum: {
-        custodyLevel: "MINIMUM",
-      },
+      custodyLevelIsMinimum: { custodyLevel: "MINIMUM" },
       notServingForSexualOffense: null,
-      usIdNotDetainersForXcrcAndCrc: null,
       usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
+      usIdNotDetainersForXcrcAndCrc: null,
       usIdIncarcerationWithin6MonthsOfFtcdOrPedOrEprd: {
         fullTermCompletionDate: null,
         paroleEligibilityDate: null,
       },
       usIdInCrcFacilityOrPwccUnit1: {
-        crcStartDate: "2022-02-06",
+        crcStartDate: relativeFixtureDate({ months: -6 }),
         facilityName: "Vault 6",
       },
       usIdInCrcFacilityOrPwccUnit1For60Days: {
-        sixtyDaysInCrcFacilityDate: "2022-04-07",
+        sixtyDaysInCrcFacilityDate: relativeFixtureDate({ months: -4 }),
       },
     },
     ineligibleCriteria: {},
     caseNotes: {
-      SomeSection: [
-        {
-          noteBody: "Some pig!",
-        },
-      ],
+      SomeSection: [{ noteBody: "Some pig!" }],
     },
     isEligible: true,
     isAlmostEligible: false,
-  };
-
-  expect(usIdExpandedCRCSchema.parse(rawRecord)).toMatchSnapshot();
-});
+  }),
+} satisfies FixtureMapping<UsIdExpandedCRCRecord>;

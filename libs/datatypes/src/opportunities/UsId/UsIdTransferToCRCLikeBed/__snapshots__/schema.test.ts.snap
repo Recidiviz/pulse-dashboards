@@ -1,0 +1,23 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for eligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "custodyLevelIsMinimum": {
+      "custodyLevel": "MINIMUM",
+    },
+    "notServingForSexualOffense": null,
+    "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
+    "usIdNotDetainersForXcrcAndCrc": null,
+  },
+  "externalId": "ID_RES001",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {
+    "criteriaSource": "CRC_RESIDENT_WORKER",
+  },
+  "stateCode": "US_ID",
+}
+`;

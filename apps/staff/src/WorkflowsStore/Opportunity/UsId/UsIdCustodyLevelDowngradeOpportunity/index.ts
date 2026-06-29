@@ -16,4 +16,3 @@
 // =============================================================================
 
 export * from "./UsIdCustodyLevelDowngradeOpportunity";
-export * from "./UsIdCustodyLevelDowngradeReferralRecord";

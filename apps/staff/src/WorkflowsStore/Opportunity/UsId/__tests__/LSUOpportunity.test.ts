@@ -20,6 +20,8 @@ import { cloneDeep } from "lodash";
 import { configure } from "mobx";
 import tk from "timekeeper";
 
+import { UsIdLsuRecord } from "~datatypes";
+
 import { RootStore } from "../../../../RootStore";
 import { Client } from "../../../Client";
 import { DocumentSubscription } from "../../../subscriptions";
@@ -27,11 +29,7 @@ import {
   LSUEligibleClientRecord,
   LSUReferralRecordFixture,
 } from "../__fixtures__";
-import {
-  LSUDraftData,
-  LSUOpportunity,
-  LSUReferralRecord,
-} from "../LSUOpportunity";
+import { LSUDraftData, LSUOpportunity } from "../LSUOpportunity";
 
 vi.mock("../../../subscriptions");
 
@@ -84,7 +82,7 @@ describe("fully eligible", () => {
 
   interface LSUPrefilledDataTransformerTestProps {
     property: keyof LSUDraftData;
-    formInformation: Partial<LSUReferralRecord["formInformation"]>;
+    formInformation: Partial<UsIdLsuRecord["output"]["formInformation"]>;
     expected: string;
   }
 

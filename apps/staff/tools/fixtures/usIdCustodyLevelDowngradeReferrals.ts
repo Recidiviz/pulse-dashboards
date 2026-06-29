@@ -15,43 +15,45 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsIdCustodyLevelDowngradeReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsId";
+import { UsIdCustodyLevelDowngradeRecord } from "~datatypes";
+
 import { fixtureWithIdKey } from "./utils";
 
-export const usIdCustodyLevelDowngradeReferrals =
-  fixtureWithIdKey<UsIdCustodyLevelDowngradeReferralRecordRaw>("externalId", [
-    {
-      stateCode: "US_ID",
-      externalId: "ID_RES001",
-      eligibleCriteria: {
-        custodyLevelHigherThanRecommended: {
-          custodyLevel: "MEDIUM",
-          recommendedCustodyLevel: "MINIMUM",
-          upcomingEligibilityDate: "2020-09-04",
-        },
-      },
-      ineligibleCriteria: {},
-      isEligible: true,
-      isAlmostEligible: false,
-      metadata: {
-        eligibleDate: "2020-09-04",
+export const usIdCustodyLevelDowngradeReferrals = fixtureWithIdKey<
+  UsIdCustodyLevelDowngradeRecord["input"]
+>("externalId", [
+  {
+    stateCode: "US_ID",
+    externalId: "ID_RES001",
+    eligibleCriteria: {
+      custodyLevelHigherThanRecommended: {
+        custodyLevel: "MEDIUM",
+        recommendedCustodyLevel: "MINIMUM",
+        upcomingEligibilityDate: "2020-09-04",
       },
     },
-    {
-      stateCode: "US_ID",
-      externalId: "ID_RES002",
-      eligibleCriteria: {
-        custodyLevelHigherThanRecommended: {
-          custodyLevel: "MAXIMUM",
-          recommendedCustodyLevel: "MEDIUM",
-          upcomingEligibilityDate: "2021-01-04",
-        },
-      },
-      ineligibleCriteria: {},
-      isEligible: true,
-      isAlmostEligible: false,
-      metadata: {
-        eligibleDate: "2021-01-04",
+    ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
+    metadata: {
+      eligibleDate: "2020-09-04",
+    },
+  },
+  {
+    stateCode: "US_ID",
+    externalId: "ID_RES002",
+    eligibleCriteria: {
+      custodyLevelHigherThanRecommended: {
+        custodyLevel: "MAXIMUM",
+        recommendedCustodyLevel: "MEDIUM",
+        upcomingEligibilityDate: "2021-01-04",
       },
     },
-  ]);
+    ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
+    metadata: {
+      eligibleDate: "2021-01-04",
+    },
+  },
+]);

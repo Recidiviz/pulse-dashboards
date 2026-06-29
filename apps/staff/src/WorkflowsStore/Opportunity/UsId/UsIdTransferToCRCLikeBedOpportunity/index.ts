@@ -16,4 +16,3 @@
 // =============================================================================
 
 export * from "./UsIdTransferToCRCLikeBedOpportunity";
-export * from "./UsIdTransferToCRCLikeBedReferralRecord";

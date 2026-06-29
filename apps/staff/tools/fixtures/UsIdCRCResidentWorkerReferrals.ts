@@ -15,56 +15,58 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsIdCRCResidentWorkerReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsId/UsIdCRCResidentWorkerOpportunity";
+import { UsIdCRCResidentWorkerRecord } from "~datatypes";
+
 import { externalIdFunc, FirestoreFixture } from "./utils";
 
-export const usIdCRCResidentWorkerReferrals: FirestoreFixture<UsIdCRCResidentWorkerReferralRecordRaw> =
-  {
-    data: [
-      {
-        stateCode: "US_ID",
-        externalId: "ID_RES003",
-        eligibleCriteria: {
-          custodyLevelIsMinimum: {
-            custodyLevel: "MINIMUM",
-          },
-          notServingForSexualOffense: null,
-          usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
-          usIdNotDetainersForXcrcAndCrc: null,
-          usIdCrcResidentWorkerTimeBasedCriteria: {
-            eligibleOffenses: null,
-            fullTermCompletionDate: null,
-            groupProjectedParoleReleaseDate: "2025-08-14",
-            paroleEligibilityDate: null,
-            nextParoleHearingDate: null,
-          },
+export const usIdCRCResidentWorkerReferrals: FirestoreFixture<
+  UsIdCRCResidentWorkerRecord["input"]
+> = {
+  data: [
+    {
+      stateCode: "US_ID",
+      externalId: "ID_RES003",
+      eligibleCriteria: {
+        custodyLevelIsMinimum: {
+          custodyLevel: "MINIMUM",
         },
-        ineligibleCriteria: {},
-        isEligible: true,
-        isAlmostEligible: false,
-      },
-      {
-        stateCode: "US_ID",
-        externalId: "ID_RES004",
-        eligibleCriteria: {
-          custodyLevelIsMinimum: {
-            custodyLevel: "MINIMUM",
-          },
-          notServingForSexualOffense: null,
-          usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
-          usIdNotDetainersForXcrcAndCrc: null,
-          usIdCrcResidentWorkerTimeBasedCriteria: {
-            eligibleOffenses: null,
-            fullTermCompletionDate: "2031-03-13",
-            groupProjectedParoleReleaseDate: null,
-            nextParoleHearingDate: "2025-11-15",
-            paroleEligibilityDate: "2025-10-12",
-          },
+        notServingForSexualOffense: null,
+        usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
+        usIdNotDetainersForXcrcAndCrc: null,
+        usIdCrcResidentWorkerTimeBasedCriteria: {
+          eligibleOffenses: null,
+          fullTermCompletionDate: null,
+          groupProjectedParoleReleaseDate: "2025-08-14",
+          paroleEligibilityDate: null,
+          nextParoleHearingDate: null,
         },
-        ineligibleCriteria: {},
-        isEligible: true,
-        isAlmostEligible: false,
       },
-    ],
-    idFunc: externalIdFunc,
-  };
+      ineligibleCriteria: {},
+      isEligible: true,
+      isAlmostEligible: false,
+    },
+    {
+      stateCode: "US_ID",
+      externalId: "ID_RES004",
+      eligibleCriteria: {
+        custodyLevelIsMinimum: {
+          custodyLevel: "MINIMUM",
+        },
+        notServingForSexualOffense: null,
+        usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
+        usIdNotDetainersForXcrcAndCrc: null,
+        usIdCrcResidentWorkerTimeBasedCriteria: {
+          eligibleOffenses: null,
+          fullTermCompletionDate: "2031-03-13",
+          groupProjectedParoleReleaseDate: null,
+          nextParoleHearingDate: "2025-11-15",
+          paroleEligibilityDate: "2025-10-12",
+        },
+      },
+      ineligibleCriteria: {},
+      isEligible: true,
+      isAlmostEligible: false,
+    },
+  ],
+  idFunc: externalIdFunc,
+};

@@ -15,10 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { LSUReferralRecordRaw } from "../../src/WorkflowsStore";
+import { UsIdLsuRecord } from "~datatypes";
+
 import { externalIdFunc, FirestoreFixture } from "./utils";
 
-export const LSUReferralsFixture: FirestoreFixture<LSUReferralRecordRaw> = {
+export const LSUReferralsFixture: FirestoreFixture<UsIdLsuRecord["input"]> = {
   data: [
     {
       externalId: "001",

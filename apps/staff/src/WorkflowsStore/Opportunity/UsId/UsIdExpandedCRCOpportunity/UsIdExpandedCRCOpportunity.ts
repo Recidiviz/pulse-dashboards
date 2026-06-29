@@ -17,14 +17,14 @@
 
 import { DocumentData } from "firebase/firestore";
 
+import { UsIdExpandedCRCRecord, usIdExpandedCRCSchema } from "~datatypes";
+
 import { Resident } from "../../../Resident";
 import { UsIdCRCOpportunityBase } from "../UsIdCRCOpportunityBase/UsIdCRCOpportunityBase";
-import {
-  UsIdExpandedCRCReferralRecord,
-  usIdExpandedCRCSchema,
-} from "./UsIdExpandedCRCReferralRecord";
 
-export class UsIdExpandedCRCOpportunity extends UsIdCRCOpportunityBase<UsIdExpandedCRCReferralRecord> {
+export class UsIdExpandedCRCOpportunity extends UsIdCRCOpportunityBase<
+  UsIdExpandedCRCRecord["output"]
+> {
   constructor(resident: Resident, record: DocumentData) {
     super(
       resident,

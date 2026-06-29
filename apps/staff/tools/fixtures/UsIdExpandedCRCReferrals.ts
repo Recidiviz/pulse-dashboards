@@ -15,38 +15,40 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsIdExpandedCRCReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsId";
+import { UsIdExpandedCRCRecord } from "~datatypes";
+
 import { externalIdFunc, FirestoreFixture } from "./utils";
 
-export const usIdExpandedCRCReferrals: FirestoreFixture<UsIdExpandedCRCReferralRecordRaw> =
-  {
-    data: [
-      {
-        stateCode: "US_ID",
-        externalId: "ID_RES001",
-        eligibleCriteria: {
-          custodyLevelIsMinimum: {
-            custodyLevel: "MINIMUM",
-          },
-          notServingForSexualOffense: null,
-          usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
-          usIdNotDetainersForXcrcAndCrc: null,
-          usIdIncarcerationWithin6MonthsOfFtcdOrPedOrEprd: {
-            fullTermCompletionDate: "2024-03-12",
-            paroleEligibilityDate: "2023-11-03",
-          },
-          usIdInCrcFacilityOrPwccUnit1: {
-            crcStartDate: "2021-02-15",
-            facilityName: "PRC",
-          },
-          usIdInCrcFacilityOrPwccUnit1For60Days: {
-            sixtyDaysInCrcFacilityDate: "2023-04-16",
-          },
+export const usIdExpandedCRCReferrals: FirestoreFixture<
+  UsIdExpandedCRCRecord["input"]
+> = {
+  data: [
+    {
+      stateCode: "US_ID",
+      externalId: "ID_RES001",
+      eligibleCriteria: {
+        custodyLevelIsMinimum: {
+          custodyLevel: "MINIMUM",
         },
-        ineligibleCriteria: {},
-        isEligible: true,
-        isAlmostEligible: false,
+        notServingForSexualOffense: null,
+        usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
+        usIdNotDetainersForXcrcAndCrc: null,
+        usIdIncarcerationWithin6MonthsOfFtcdOrPedOrEprd: {
+          fullTermCompletionDate: "2024-03-12",
+          paroleEligibilityDate: "2023-11-03",
+        },
+        usIdInCrcFacilityOrPwccUnit1: {
+          crcStartDate: "2021-02-15",
+          facilityName: "PRC",
+        },
+        usIdInCrcFacilityOrPwccUnit1For60Days: {
+          sixtyDaysInCrcFacilityDate: "2023-04-16",
+        },
       },
-    ],
-    idFunc: externalIdFunc,
-  };
+      ineligibleCriteria: {},
+      isEligible: true,
+      isAlmostEligible: false,
+    },
+  ],
+  idFunc: externalIdFunc,
+};

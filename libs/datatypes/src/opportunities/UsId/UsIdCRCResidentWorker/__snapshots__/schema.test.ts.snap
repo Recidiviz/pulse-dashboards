@@ -1,0 +1,76 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for eligibleFtcdOrTpd 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "custodyLevelIsMinimum": {
+      "custodyLevel": "MINIMUM",
+    },
+    "incarcerationWithin7YearsOfFtcdOrTpd": {
+      "fullTermCompletionDate": 2026-12-16T00:00:00.000Z,
+      "groupProjectedParoleReleaseDate": null,
+    },
+    "notServingForSexualOffense": null,
+    "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
+    "usIdNotDetainersForXcrcAndCrc": null,
+  },
+  "externalId": "ID_RES004",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_ID",
+}
+`;
+
+exports[`schema for eligibleLifeSentence 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "custodyLevelIsMinimum": {
+      "custodyLevel": "MINIMUM",
+    },
+    "incarcerationWithin3YearsOfTpdAndLifeSentence": {
+      "eligibleOffenses": [
+        "DUI",
+      ],
+      "groupProjectedParoleReleaseDate": 2023-12-16T00:00:00.000Z,
+    },
+    "notServingForSexualOffense": null,
+    "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
+    "usIdNotDetainersForXcrcAndCrc": null,
+  },
+  "externalId": "ID_RES003",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_ID",
+}
+`;
+
+exports[`schema for pedAndPhd 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "custodyLevelIsMinimum": {
+      "custodyLevel": "MINIMUM",
+    },
+    "incarcerationWithin7YearsOfPedAndPhdAnd20YearsOfFtcd": {
+      "fullTermCompletionDate": 2029-12-16T00:00:00.000Z,
+      "nextParoleHearingDate": 2020-06-16T00:00:00.000Z,
+      "paroleEligibilityDate": 2020-04-16T00:00:00.000Z,
+    },
+    "notServingForSexualOffense": null,
+    "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
+    "usIdNotDetainersForXcrcAndCrc": null,
+  },
+  "externalId": "ID_RES005",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_ID",
+}
+`;

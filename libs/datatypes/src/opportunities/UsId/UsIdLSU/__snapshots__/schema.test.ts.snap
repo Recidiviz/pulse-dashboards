@@ -1,0 +1,105 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for almostEligibleIncomeNotVerified 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "underSupervisionCustodialAuthorityAtLeastOneYear": {
+      "eligibleDate": 2021-06-16T00:00:00.000Z,
+    },
+    "usIdLsirLevelLowFor90Days": {
+      "eligibleDate": 2021-09-16T00:00:00.000Z,
+      "riskLevel": "LOW",
+    },
+    "usIdNoActiveNco": {
+      "activeNco": false,
+    },
+  },
+  "eligibleStartDate": 2021-11-16T00:00:00.000Z,
+  "externalId": "002",
+  "formInformation": {
+    "assessmentDate": "2021-08-16",
+    "assessmentScore": 25,
+    "chargeDescriptions": [
+      "GRAND THEFT BY POSSESSION",
+    ],
+    "currentAddress": "123 FAKE ST, TWIN FALLS, ID, 99999-9876",
+  },
+  "ineligibleCriteria": {
+    "usIdIncomeVerifiedWithin3Months": true,
+  },
+  "isAlmostEligible": true,
+  "isEligible": false,
+  "metadata": {},
+  "stateCode": "US_ID",
+}
+`;
+
+exports[`schema for fullyEligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "underSupervisionCustodialAuthorityAtLeastOneYear": {
+      "eligibleDate": 2021-06-16T00:00:00.000Z,
+    },
+    "usIdIncomeVerifiedWithin3Months": {
+      "incomeVerifiedDate": 2021-10-16T00:00:00.000Z,
+    },
+    "usIdLsirLevelLowFor90Days": {
+      "eligibleDate": 2021-09-16T00:00:00.000Z,
+      "riskLevel": "LOW",
+    },
+    "usIdNoActiveNco": {
+      "activeNco": false,
+    },
+  },
+  "eligibleStartDate": 2021-11-16T00:00:00.000Z,
+  "externalId": "001",
+  "formInformation": {
+    "assessmentDate": "2021-08-16",
+    "assessmentScore": 25,
+    "chargeDescriptions": [
+      "GRAND THEFT BY POSSESSION",
+    ],
+    "currentAddress": "123 FAKE ST, TWIN FALLS, ID, 99999-9876",
+    "latestNegativeDrugScreenDate": "2021-10-16",
+    "txDischargeDate": "2021-02-16",
+    "txNoteBody": "TX Goal: Complete GEO successfully.",
+    "txNoteTitle": "TX GOAL",
+  },
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_ID",
+}
+`;
+
+exports[`schema for optionalCriteriaHaveSaneFallbacks 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "underSupervisionCustodialAuthorityAtLeastOneYear": {
+      "eligibleDate": 2021-06-16T00:00:00.000Z,
+    },
+    "usIdIncomeVerifiedWithin3Months": {
+      "incomeVerifiedDate": 2021-10-16T00:00:00.000Z,
+    },
+    "usIdLsirLevelLowFor90Days": {
+      "eligibleDate": 2021-09-16T00:00:00.000Z,
+      "riskLevel": "LOW",
+    },
+    "usIdNoActiveNco": {
+      "activeNco": false,
+    },
+  },
+  "eligibleStartDate": 2021-11-16T00:00:00.000Z,
+  "externalId": "003",
+  "formInformation": {},
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_ID",
+}
+`;

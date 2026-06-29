@@ -18,20 +18,18 @@
 import { DocumentData } from "firebase/firestore";
 import { cloneDeep } from "lodash";
 
+import { UsIdLsuRecord, usIdLsuSchema } from "~datatypes";
+
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
 import { LSUForm } from "../../Forms/LSUForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
 import { monthsOrDaysRemainingFromToday } from "../../utils/criteriaUtils";
-import {
-  LSUDraftData,
-  LSUReferralRecord,
-  usIdLsuSchema,
-} from "./LSUReferralRecord";
+import { LSUDraftData } from "./LSUReferralRecord";
 
 export const LSU_CRITERIA: Record<
-  keyof LSUReferralRecord["eligibleCriteria"],
+  keyof UsIdLsuRecord["output"]["eligibleCriteria"],
   OpportunityRequirement
 > = {
   usIdNoActiveNco: {
@@ -56,7 +54,7 @@ export const LSU_CRITERIA: Record<
 };
 
 const INELIGIBLE_CRITERIA_COPY: Record<
-  keyof LSUReferralRecord["ineligibleCriteria"],
+  keyof UsIdLsuRecord["output"]["ineligibleCriteria"],
   OpportunityRequirement
 > = {
   underSupervisionCustodialAuthorityAtLeastOneYear: {
@@ -73,7 +71,7 @@ const INELIGIBLE_CRITERIA_COPY: Record<
 
 export class LSUOpportunity extends OpportunityBase<
   Client,
-  LSUReferralRecord,
+  UsIdLsuRecord["output"],
   OpportunityUpdateWithForm<LSUDraftData>
 > {
   form: LSUForm;

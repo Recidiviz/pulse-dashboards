@@ -16,4 +16,3 @@
 // =============================================================================
 
 export * from "./UsIdCRCResidentWorkerOpportunity";
-export * from "./UsIdCRCResidentWorkerReferralRecord";

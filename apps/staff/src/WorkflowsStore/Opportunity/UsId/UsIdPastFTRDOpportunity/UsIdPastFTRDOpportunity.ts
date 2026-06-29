@@ -17,15 +17,15 @@
 
 import { DocumentData } from "firebase/firestore";
 
+import { UsIdPastFTRDRecord, usIdPastFTRDSchema } from "~datatypes";
+
 import { Client } from "../../../Client";
 import { PastFTRDOpportunityBase } from "../../PastFTRDOpportunityBase";
 import { OpportunityTab } from "../../types";
-import {
-  UsIdPastFTRDReferralRecord,
-  usIdPastFTRDSchema,
-} from "./UsIdPastFTRDReferralRecord";
 
-export class UsIdPastFTRDOpportunity extends PastFTRDOpportunityBase<UsIdPastFTRDReferralRecord> {
+export class UsIdPastFTRDOpportunity extends PastFTRDOpportunityBase<
+  UsIdPastFTRDRecord["output"]
+> {
   constructor(client: Client, record: DocumentData) {
     super(client, "pastFTRD", usIdPastFTRDSchema.parse(record));
   }

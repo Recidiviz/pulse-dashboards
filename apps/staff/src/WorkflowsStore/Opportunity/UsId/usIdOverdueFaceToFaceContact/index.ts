@@ -16,8 +16,6 @@
 // =============================================================================
 
 import { UsIdOverdueFaceToFaceContactOpportunity } from "./UsIdOverdueFaceToFaceContactOpportunity";
-import { UsIdOverdueFaceToFaceContactReferralRecord } from "./UsIdOverdueFaceToFaceContactReferralRecord";
 
 export { UsIdOverdueFaceToFaceContactOpportunity };
 export default UsIdOverdueFaceToFaceContactOpportunity;
-export type { UsIdOverdueFaceToFaceContactReferralRecord };

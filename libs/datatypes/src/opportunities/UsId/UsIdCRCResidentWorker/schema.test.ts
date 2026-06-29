@@ -15,32 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { usIdCRCResidentWorkerFixtures } from "./fixtures";
+import { usIdCRCResidentWorkerSchema } from "./schema";
 
-import { opportunitySchemaBase } from "~datatypes";
-
-import {
-  crcSharedCriteria,
-  crcSharedIneligibleCriteria,
-} from "../UsIdSharedCriteria";
-
-export const usIdTransferToCRCLikeBedSchema = opportunitySchemaBase.extend({
-  eligibleCriteria: crcSharedCriteria.extend({
-    custodyLevelIsMinimum: z
-      .object({
-        custodyLevel: z.string(),
-      })
-      .nullish(),
-  }),
-  ineligibleCriteria: crcSharedIneligibleCriteria.passthrough(),
-  metadata: z.object({
-    criteriaSource: z.string(),
-  }),
+test.each(
+  Object.keys(usIdCRCResidentWorkerFixtures) as Array<
+    keyof typeof usIdCRCResidentWorkerFixtures
+  >,
+)("schema for %s", (key) => {
+  expect(
+    usIdCRCResidentWorkerSchema.parse(usIdCRCResidentWorkerFixtures[key].input),
+  ).toMatchSnapshot();
 });
-
-export type UsIdTransferToCRCLikeBedReferralRecord = z.infer<
-  typeof usIdTransferToCRCLikeBedSchema
->;
-export type UsIdTransferToCRCLikeBedReferralRecordRaw = z.input<
-  typeof usIdTransferToCRCLikeBedSchema
->;

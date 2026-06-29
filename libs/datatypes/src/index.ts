@@ -40,6 +40,27 @@ export * from "./opportunities/UsAz/UsAzReleaseToDTP/schema";
 export * from "./opportunities/UsAz/UsAzReleaseToTPR/fixtures";
 export * from "./opportunities/UsAz/UsAzReleaseToTPR/schema";
 
+// UsId Exports: Includes fixtures and schema related to US-ID opportunities
+// -----------------------------------------------------------------------------
+export * from "./opportunities/UsId/UsIdCRCResidentWorker/fixtures";
+export * from "./opportunities/UsId/UsIdCRCResidentWorker/schema";
+export * from "./opportunities/UsId/UsIdCRCWorkRelease/fixtures";
+export * from "./opportunities/UsId/UsIdCRCWorkRelease/schema";
+export * from "./opportunities/UsId/UsIdCustodyLevelDowngrade/fixtures";
+export * from "./opportunities/UsId/UsIdCustodyLevelDowngrade/schema";
+export * from "./opportunities/UsId/UsIdEarnedDischarge/fixtures";
+export * from "./opportunities/UsId/UsIdEarnedDischarge/schema";
+export * from "./opportunities/UsId/UsIdExpandedCRC/fixtures";
+export * from "./opportunities/UsId/UsIdExpandedCRC/schema";
+export * from "./opportunities/UsId/UsIdLSU/fixtures";
+export * from "./opportunities/UsId/UsIdLSU/schema";
+export * from "./opportunities/UsId/UsIdOverdueFaceToFaceContact/fixtures";
+export * from "./opportunities/UsId/UsIdOverdueFaceToFaceContact/schema";
+export * from "./opportunities/UsId/UsIdPastFTRD/fixtures";
+export * from "./opportunities/UsId/UsIdPastFTRD/schema";
+export * from "./opportunities/UsId/UsIdTransferToCRCLikeBed/fixtures";
+export * from "./opportunities/UsId/UsIdTransferToCRCLikeBed/schema";
+
 // UsMe Exports: Includes fixtures and schema related to US-ME opportunities
 // -----------------------------------------------------------------------------
 export { usMeDenialMetadataSchema } from "./opportunities/UsMe/common";

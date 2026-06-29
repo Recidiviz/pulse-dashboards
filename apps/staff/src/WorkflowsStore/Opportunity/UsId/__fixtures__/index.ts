@@ -17,11 +17,12 @@
 
 import {} from "date-fns";
 
-import { ClientRecord } from "~datatypes";
-
-import { EarnedDischargeReferralRecordRaw } from "../EarnedDischargeOpportunity";
-import { LSUReferralRecordRaw } from "../LSUOpportunity";
-import { UsIdPastFTRDReferralRecordRaw } from "../UsIdPastFTRDOpportunity";
+import {
+  ClientRecord,
+  UsIdEarnedDischargeRecord,
+  UsIdLsuRecord,
+  UsIdPastFTRDRecord,
+} from "~datatypes";
 
 export const ineligibleClientRecord: ClientRecord = {
   recordId: "us_id_001",
@@ -44,7 +45,7 @@ export const ineligibleClientRecord: ClientRecord = {
   personType: "CLIENT",
 };
 
-export const LSUReferralRecordFixture: LSUReferralRecordRaw = {
+export const LSUReferralRecordFixture: UsIdLsuRecord["input"] = {
   stateCode: "US_ID",
   externalId: "001",
   formInformation: {
@@ -103,7 +104,7 @@ export const LSUReferralRecordFixture: LSUReferralRecordRaw = {
   isAlmostEligible: false,
 };
 
-export const AlmostEligibleLSUReferralRecordFixture: LSUReferralRecordRaw = {
+export const AlmostEligibleLSUReferralRecordFixture: UsIdLsuRecord["input"] = {
   stateCode: "US_ID",
   externalId: "us_xx_103",
   formInformation: {
@@ -161,7 +162,7 @@ export const AlmostEligibleLSUReferralRecordFixture: LSUReferralRecordRaw = {
   isAlmostEligible: true,
 };
 
-export const EarnedDischargeReferralRecordFixture: EarnedDischargeReferralRecordRaw =
+export const EarnedDischargeReferralRecordFixture: UsIdEarnedDischargeRecord["input"] =
   {
     stateCode: "US_ID",
     externalId: "001",
@@ -204,7 +205,7 @@ export const EarnedDischargeReferralRecordFixture: EarnedDischargeReferralRecord
     isAlmostEligible: false,
   };
 
-export const earnedDischargeAlmostEligibleSupervisionLength: EarnedDischargeReferralRecordRaw =
+export const earnedDischargeAlmostEligibleSupervisionLength: UsIdEarnedDischargeRecord["input"] =
   {
     stateCode: "US_ID",
     externalId: "001",
@@ -258,7 +259,7 @@ export const EarnedDischargeEligibleClientRecord: ClientRecord = {
   allEligibleOpportunities: ["earnedDischarge"],
 };
 
-export const pastFTRDRecordEligibleFixture: UsIdPastFTRDReferralRecordRaw = {
+export const pastFTRDRecordEligibleFixture: UsIdPastFTRDRecord["input"] = {
   stateCode: "US_ID",
   externalId: "001",
   eligibleCriteria: {
@@ -272,7 +273,7 @@ export const pastFTRDRecordEligibleFixture: UsIdPastFTRDReferralRecordRaw = {
   isAlmostEligible: false,
 };
 
-export const pastFTRDAlmostEligibleFixture: UsIdPastFTRDReferralRecordRaw = {
+export const pastFTRDAlmostEligibleFixture: UsIdPastFTRDRecord["input"] = {
   stateCode: "US_ID",
   externalId: "002",
   eligibleCriteria: {},

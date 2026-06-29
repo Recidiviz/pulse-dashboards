@@ -15,72 +15,74 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsIdOverdueFaceToFaceContactReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsId/usIdOverdueFaceToFaceContact/UsIdOverdueFaceToFaceContactReferralRecord";
+import { UsIdOverdueFaceToFaceContactRecord } from "~datatypes";
+
 import { externalIdFunc, FirestoreFixture } from "./utils";
 
-export const usIdOverdueFaceToFaceContactReferralsFixture: FirestoreFixture<UsIdOverdueFaceToFaceContactReferralRecordRaw> =
-  {
-    data: [
-      {
-        stateCode: "US_ID",
-        externalId: "001",
-        eligibleCriteria: {
-          usIdMeetsOverdueFaceToFaceContactAlert: {
-            caseType: "GENERAL",
-            lastContactDate: "2025-11-15",
-            overdueForContactAlertDate: "2026-02-15",
-            supervisionLevel: "MEDIUM",
-          },
+export const usIdOverdueFaceToFaceContactReferralsFixture: FirestoreFixture<
+  UsIdOverdueFaceToFaceContactRecord["input"]
+> = {
+  data: [
+    {
+      stateCode: "US_ID",
+      externalId: "001",
+      eligibleCriteria: {
+        usIdMeetsOverdueFaceToFaceContactAlert: {
+          caseType: "GENERAL",
+          lastContactDate: "2025-11-15",
+          overdueForContactAlertDate: "2026-02-15",
+          supervisionLevel: "MEDIUM",
         },
-        ineligibleCriteria: {},
-        lastContactDate: "2025-11-15",
-        metadata: {
-          dueDate: "2026-02-15",
-          contactCadence: "Every 90 days",
-        },
-        isEligible: true,
-        isAlmostEligible: false,
       },
-      {
-        stateCode: "US_ID",
-        externalId: "003",
-        eligibleCriteria: {
-          usIdMeetsOverdueFaceToFaceContactAlert: {
-            caseType: "GENERAL",
-            lastContactDate: "2025-12-01",
-            overdueForContactAlertDate: "2026-03-01",
-            supervisionLevel: "HIGH",
-          },
-        },
-        ineligibleCriteria: {},
-        lastContactDate: "2025-12-01",
-        metadata: {
-          dueDate: "2026-03-01",
-          contactCadence: "Every 90 days",
-        },
-        isEligible: true,
-        isAlmostEligible: false,
+      ineligibleCriteria: {},
+      lastContactDate: "2025-11-15",
+      metadata: {
+        dueDate: "2026-02-15",
+        contactCadence: "Every 90 days",
       },
-      {
-        stateCode: "US_ID",
-        externalId: "005",
-        eligibleCriteria: {
-          usIdMeetsOverdueFaceToFaceContactAlert: {
-            caseType: "SEX_OFFENSE",
-            lastContactDate: "2026-01-10",
-            overdueForContactAlertDate: "2026-03-10",
-            supervisionLevel: "HIGH",
-          },
+      isEligible: true,
+      isAlmostEligible: false,
+    },
+    {
+      stateCode: "US_ID",
+      externalId: "003",
+      eligibleCriteria: {
+        usIdMeetsOverdueFaceToFaceContactAlert: {
+          caseType: "GENERAL",
+          lastContactDate: "2025-12-01",
+          overdueForContactAlertDate: "2026-03-01",
+          supervisionLevel: "HIGH",
         },
-        ineligibleCriteria: {},
-        lastContactDate: "2026-01-10",
-        metadata: {
-          dueDate: "2026-03-10",
-          contactCadence: "Every 60 days",
-        },
-        isEligible: true,
-        isAlmostEligible: false,
       },
-    ],
-    idFunc: externalIdFunc,
-  };
+      ineligibleCriteria: {},
+      lastContactDate: "2025-12-01",
+      metadata: {
+        dueDate: "2026-03-01",
+        contactCadence: "Every 90 days",
+      },
+      isEligible: true,
+      isAlmostEligible: false,
+    },
+    {
+      stateCode: "US_ID",
+      externalId: "005",
+      eligibleCriteria: {
+        usIdMeetsOverdueFaceToFaceContactAlert: {
+          caseType: "SEX_OFFENSE",
+          lastContactDate: "2026-01-10",
+          overdueForContactAlertDate: "2026-03-10",
+          supervisionLevel: "HIGH",
+        },
+      },
+      ineligibleCriteria: {},
+      lastContactDate: "2026-01-10",
+      metadata: {
+        dueDate: "2026-03-10",
+        contactCadence: "Every 60 days",
+      },
+      isEligible: true,
+      isAlmostEligible: false,
+    },
+  ],
+  idFunc: externalIdFunc,
+};

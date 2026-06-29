@@ -23,6 +23,17 @@ export function nullishAsUndefined<T extends z.ZodTypeAny>(schema: T) {
   });
 }
 
+export const stringToIntSchema = z.string().transform((s) => parseInt(s));
+
+export function defaultOnNull<T extends z.ZodTypeAny>(
+  schema: T,
+  defaultValue: z.infer<T>,
+) {
+  return schema.nullable().transform((output) => {
+    return output === null ? defaultValue : output;
+  });
+}
+
 export const getReadableSupervisionLocation = (
   location: string | undefined | null,
 ): string => {

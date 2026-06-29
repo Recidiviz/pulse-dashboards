@@ -15,38 +15,40 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsIdPastFTRDReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsId/UsIdPastFTRDOpportunity/UsIdPastFTRDReferralRecord";
+import { UsIdPastFTRDRecord } from "~datatypes";
+
 import { externalIdFunc, FirestoreFixture } from "./utils";
 
-export const usIdPastFtrdFixture: FirestoreFixture<UsIdPastFTRDReferralRecordRaw> =
-  {
-    data: [
-      {
-        stateCode: "US_ID",
-        externalId: "002",
-        eligibleCriteria: {
-          supervisionPastFullTermCompletionDate: {
-            eligibleDate: "2022-07-10",
-          },
+export const usIdPastFtrdFixture: FirestoreFixture<
+  UsIdPastFTRDRecord["input"]
+> = {
+  data: [
+    {
+      stateCode: "US_ID",
+      externalId: "002",
+      eligibleCriteria: {
+        supervisionPastFullTermCompletionDate: {
+          eligibleDate: "2022-07-10",
         },
-        ineligibleCriteria: {},
-        metadata: { tabName: "ELIGIBLE" },
-        isEligible: true,
-        isAlmostEligible: false,
       },
-      {
-        stateCode: "US_ID",
-        externalId: "010",
-        eligibleCriteria: {},
-        ineligibleCriteria: {
-          supervisionPastFullTermCompletionDate: {
-            eligibleDate: "2025-06-09",
-          },
+      ineligibleCriteria: {},
+      metadata: { tabName: "ELIGIBLE" },
+      isEligible: true,
+      isAlmostEligible: false,
+    },
+    {
+      stateCode: "US_ID",
+      externalId: "010",
+      eligibleCriteria: {},
+      ineligibleCriteria: {
+        supervisionPastFullTermCompletionDate: {
+          eligibleDate: "2025-06-09",
         },
-        metadata: { tabName: "PENDING_VIOLATION" },
-        isEligible: false,
-        isAlmostEligible: true,
       },
-    ],
-    idFunc: externalIdFunc,
-  };
+      metadata: { tabName: "PENDING_VIOLATION" },
+      isEligible: false,
+      isAlmostEligible: true,
+    },
+  ],
+  idFunc: externalIdFunc,
+};

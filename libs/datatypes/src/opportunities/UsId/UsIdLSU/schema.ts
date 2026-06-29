@@ -1,0 +1,90 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2026 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+import { z } from "zod";
+
+import { ParsedRecord } from "../../../utils/types";
+import {
+  dateStringSchema,
+  defaultOnNull,
+  stringToIntSchema,
+} from "../../../utils/zod";
+import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
+
+export const usIdLsuSchema = opportunitySchemaBase.extend({
+  formInformation: z
+    .object({
+      chargeDescriptions: z.array(z.string()),
+      currentAddress: z.string(),
+      currentPhoneNumber: z.string(),
+      assessmentDate: z.string(),
+      assessmentScore: stringToIntSchema,
+      emailAddress: z.string(),
+      employerName: z.string(),
+      employerAddress: z.string(),
+      employmentStartDate: z.string(),
+      employmentDateVerified: z.string(),
+      latestNegativeDrugScreenDate: z.string(),
+      ncicReviewDate: z.string(),
+      ncicNoteTitle: z.string(),
+      ncicNoteBody: z.string(),
+      txDischargeDate: z.string(),
+      txNoteTitle: z.string(),
+      txNoteBody: z.string(),
+      caseNumbers: z.array(z.string()),
+    })
+    .partial(),
+  eligibleCriteria: z
+    .object({
+      usIdNoActiveNco: defaultOnNull(
+        z.object({
+          activeNco: z.boolean(),
+        }),
+        { activeNco: false },
+      ),
+      usIdLsirLevelLowFor90Days: z.object({
+        eligibleDate: dateStringSchema,
+        riskLevel: z.literal("LOW"),
+      }),
+      underSupervisionCustodialAuthorityAtLeastOneYear: z
+        .object({
+          eligibleDate: dateStringSchema,
+        })
+        .partial()
+        .optional(),
+      usIdIncomeVerifiedWithin3Months: z
+        .object({
+          incomeVerifiedDate: dateStringSchema,
+        })
+        .optional(),
+    })
+    .passthrough(),
+  ineligibleCriteria: z
+    .object({
+      underSupervisionCustodialAuthorityAtLeastOneYear: z
+        .object({
+          eligibleDate: dateStringSchema,
+        })
+        .partial(),
+      usIdIncomeVerifiedWithin3Months: z.null().transform(() => true),
+    })
+    .passthrough()
+    .partial(),
+  eligibleStartDate: dateStringSchema.optional(),
+});
+
+export type UsIdLsuRecord = ParsedRecord<typeof usIdLsuSchema>;

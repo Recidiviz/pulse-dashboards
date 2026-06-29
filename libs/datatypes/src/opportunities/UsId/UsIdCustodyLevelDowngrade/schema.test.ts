@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,24 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { usIdCustodyLevelDowngradeFixtures } from "./fixtures";
+import { usIdCustodyLevelDowngradeSchema } from "./schema";
 
-export const sentenceTypeSchema = z.enum(["PROBATION", "PAROLE", "DUAL"]);
-
-export const crcSharedCriteria = z
-  .object({
-    custodyLevelIsMinimum: z.object({
-      custodyLevel: z.string(),
-    }),
-    notServingForSexualOffense: z.object({}).nullable().optional(),
-    notServingForViolentOffense: z.object({}).nullable().optional(),
-    usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: z
-      .object({})
-      .nullable(),
-    usIdNotDetainersForXcrcAndCrc: z.object({}).nullable(),
-  })
-  .passthrough();
-
-export const crcSharedIneligibleCriteria = crcSharedCriteria.pick({
-  notServingForViolentOffense: true,
+test.each(
+  Object.keys(usIdCustodyLevelDowngradeFixtures) as Array<
+    keyof typeof usIdCustodyLevelDowngradeFixtures
+  >,
+)("schema for %s", (key) => {
+  expect(
+    usIdCustodyLevelDowngradeSchema.parse(
+      usIdCustodyLevelDowngradeFixtures[key].input,
+    ),
+  ).toMatchSnapshot();
 });

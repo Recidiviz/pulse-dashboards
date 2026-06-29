@@ -17,19 +17,20 @@
 
 import { DocumentData } from "firebase/firestore";
 
+import {
+  UsIdEarnedDischargeRecord,
+  usIdEarnedDischargeSchema,
+} from "~datatypes";
+
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
 import { UsIdEarnedDischargeForm } from "../../Forms/UsIdEarnedDischargeForm";
 import { OpportunityBase } from "../../OpportunityBase";
-import {
-  EarnedDischargeDraftData,
-  EarnedDischargeReferralRecord,
-  usIdEarnedDischargeSchema,
-} from "./EarnedDischargeReferralRecord";
+import { EarnedDischargeDraftData } from "./EarnedDischargeReferralRecord";
 
 export class EarnedDischargeOpportunity extends OpportunityBase<
   Client,
-  EarnedDischargeReferralRecord,
+  UsIdEarnedDischargeRecord["output"],
   OpportunityUpdateWithForm<EarnedDischargeDraftData>
 > {
   form?: UsIdEarnedDischargeForm;

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,17 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { usIdExpandedCRCFixtures } from "./fixtures";
+import { usIdExpandedCRCSchema } from "./schema";
 
-import { basePastFTRDSchema } from "../../PastFTRDReferralRecord";
-
-export const usIdPastFTRDSchema = basePastFTRDSchema.extend({
-  metadata: z
-    .object({
-      tabName: z.string().optional(),
-    })
-    .passthrough()
-    .default({}),
+test.each(
+  Object.keys(usIdExpandedCRCFixtures) as Array<
+    keyof typeof usIdExpandedCRCFixtures
+  >,
+)("schema for %s", (key) => {
+  expect(
+    usIdExpandedCRCSchema.parse(usIdExpandedCRCFixtures[key].input),
+  ).toMatchSnapshot();
 });
-export type UsIdPastFTRDReferralRecord = z.infer<typeof usIdPastFTRDSchema>;
-export type UsIdPastFTRDReferralRecordRaw = z.input<typeof usIdPastFTRDSchema>;

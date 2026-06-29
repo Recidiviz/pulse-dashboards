@@ -17,11 +17,9 @@
 
 import { z } from "zod";
 
-import {
-  dateStringSchema,
-  nullishAsUndefined,
-  opportunitySchemaBase,
-} from "~datatypes";
+import { ParsedRecord } from "../../../utils/types";
+import { dateStringSchema, nullishAsUndefined } from "../../../utils/zod";
+import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 
 const usIdOverdueFaceToFaceContactCriteriaSchema = z.object({
   usIdMeetsOverdueFaceToFaceContactAlert: z
@@ -48,10 +46,6 @@ export const usIdOverdueFaceToFaceContactSchema = opportunitySchemaBase
   })
   .passthrough();
 
-export type UsIdOverdueFaceToFaceContactReferralRecordRaw = z.input<
-  typeof usIdOverdueFaceToFaceContactSchema
->;
-
-export type UsIdOverdueFaceToFaceContactReferralRecord = z.infer<
+export type UsIdOverdueFaceToFaceContactRecord = ParsedRecord<
   typeof usIdOverdueFaceToFaceContactSchema
 >;
