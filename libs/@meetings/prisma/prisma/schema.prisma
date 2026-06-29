@@ -413,3 +413,12 @@ model NotetakingEvaluationRun {
   @@index([pipelineRunId])
   @@index([evaluatorVersion])
 }
+
+model AgencyConfig {
+  id       String
+  config   String
+  version  Int
+  parentId String?
+
+  @@id([id, version])
+}
