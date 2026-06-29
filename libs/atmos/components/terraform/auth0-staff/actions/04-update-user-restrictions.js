@@ -1,3 +1,20 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2026 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
 /**
  * Handler that will be called during the execution of a PostLogin flow.
  *
@@ -21,13 +38,13 @@ exports.onExecutePostLogin = async (event, api) => {
     environment: event.secrets.SENTRY_ENV,
   });
 
-  let credentials = JSON.parse(event.secrets.GOOGLE_APPLICATION_CREDENTIALS);
-  const privateKey = event.secrets.PRIVATE_KEY.replace(/\\n/gm, "\n");
-  credentials = { ...credentials, private_key: privateKey };
+  const credentials = JSON.parse(
+    event.secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON,
+  );
 
   const { Storage } = require("@google-cloud/storage");
   const storage = new Storage({
-    projectId: event.secrets.PROJECT_ID,
+    projectId: event.secrets.RECIDIVIZ_AUTH_BUCKET_PROJECT_ID,
     credentials,
   });
 
@@ -119,7 +136,9 @@ exports.onExecutePostLogin = async (event, api) => {
   try {
     /** Get user restrictions from Admin Panel backend */
     const auth = new GoogleAuth({ credentials });
-    const client = await auth.getIdTokenClient(event.secrets.TARGET_AUDIENCE);
+    const client = await auth.getIdTokenClient(
+      event.secrets.RECIDIVIZ_ADMIN_PANEL_URL,
+    );
 
     // some ID accounts come up with an onmicrosoft domain. This patches the email for the request
     const request_email = userEmail?.replace(
@@ -131,7 +150,7 @@ exports.onExecutePostLogin = async (event, api) => {
     if (userHash.startsWith("/")) {
       userHash = userHash.replace("/", "_");
     }
-    const url = `${event.secrets.RECIDIVIZ_APP_URL}auth/users/${userHash}`;
+    const url = `${event.secrets.RECIDIVIZ_ADMIN_PANEL_URL}auth/users/${userHash}`;
 
     const apiResponse = await client.request({ url, retry: true });
     const restrictions = apiResponse.data;
@@ -175,11 +194,12 @@ exports.onExecutePostLogin = async (event, api) => {
       restrictions.allowedSupervisionLocationLevel,
     );
     api.user.setAppMetadata("user_hash", restrictions.userHash);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (apiError) {
     const { user } = event;
 
     // We don't care about feature variants for failed logins
-    let appMetadataForTracking = {
+    const appMetadataForTracking = {
       ...user.app_metadata,
     };
     delete appMetadataForTracking["featureVariants"];
