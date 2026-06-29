@@ -64,7 +64,7 @@ jest.mock("~@meetings/app/context/StateContext", () => ({
   useStateSelection: () => ({ selectedStateCode: "US_NE" }),
 }));
 
-jest.mock("~@meetings/app/context/AnalyticsContext", () => ({
+jest.mock("~@meetings/app/shared/analytics", () => ({
   useAnalytics: () => ({ track: mockTrack }),
 }));
 

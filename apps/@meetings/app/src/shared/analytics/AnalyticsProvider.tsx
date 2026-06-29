@@ -17,9 +17,8 @@
 
 import React, { createContext, useContext, useEffect } from "react";
 
-import { env } from "../shared/config/env";
-import { segmentClient } from "../shared/lib/segment";
-import { useUserContext } from "./UserContext";
+import { env } from "~@meetings/app/shared/config/env";
+import { segmentClient } from "~@meetings/app/shared/lib/segment";
 
 interface AnalyticsContextType {
   track: (eventName: string, metadata?: Record<string, unknown>) => void;
@@ -32,11 +31,17 @@ const AnalyticsContext = createContext<AnalyticsContextType | undefined>(
 const isAnalyticsEnabledForEnv = () =>
   ["staging", "production"].includes(env.EXPO_PUBLIC_DEPLOY_ENV);
 
-export const AnalyticsProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
-  const { email, isSkipAuthUser } = useUserContext();
+interface AnalyticsProviderProps {
+  children: React.ReactNode;
+  email?: string;
+  isSkipAuthUser: boolean;
+}
 
+export const AnalyticsProvider: React.FC<AnalyticsProviderProps> = ({
+  children,
+  email,
+  isSkipAuthUser,
+}) => {
   const recidivizEmail =
     email?.toLowerCase().includes("recidiviz.org") ||
     email?.toLowerCase().includes("recidiviz-test.org");

@@ -33,7 +33,6 @@ import {
 
 import Header from "~@meetings/app/components/Header";
 import { useAgencyConfigs } from "~@meetings/app/context/AgencyConfigContext";
-import { useAnalytics } from "~@meetings/app/context/AnalyticsContext";
 import { useStateSelection } from "~@meetings/app/context/StateContext";
 import {
   ClientMeetings,
@@ -49,6 +48,7 @@ import {
   MeetingControlsMobile,
   useRecording,
 } from "~@meetings/app/features/recording";
+import { useAnalytics } from "~@meetings/app/shared/analytics";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 import {
   ClientsStackParamList,

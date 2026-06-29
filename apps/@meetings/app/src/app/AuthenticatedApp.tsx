@@ -22,7 +22,6 @@ import React, { useEffect, useRef, useState } from "react";
 import superjson from "superjson";
 
 import { AgencyConfigProvider } from "~@meetings/app/context/AgencyConfigContext";
-import { AnalyticsProvider } from "~@meetings/app/context/AnalyticsContext";
 import {
   DEFAULT_STATE_CODE,
   StateCode,
@@ -30,6 +29,7 @@ import {
 } from "~@meetings/app/context/StateContext";
 import { useUserContext } from "~@meetings/app/context/UserContext";
 import { useImpersonationStore } from "~@meetings/app/hooks/useImpersonationStore";
+import { AnalyticsProvider } from "~@meetings/app/shared/analytics";
 import { trpc } from "~@meetings/app/shared/api";
 import { env } from "~@meetings/app/shared/config";
 import { queryCachePersister } from "~@meetings/app/shared/lib/queryCachePersister";
@@ -51,7 +51,7 @@ const queryClient = new QueryClient({
  * This component must be wrapped by UserContextProvider.
  */
 const AuthenticatedApp: React.FC = () => {
-  const { isLoading, isSkipAuthUser, getCredentials } = useUserContext();
+  const { email, isLoading, isSkipAuthUser, getCredentials } = useUserContext();
   const { impersonatedEmail, impersonatedStateCode } = useImpersonationStore();
 
   // State code ref is managed here since it's only needed for authenticated requests. StateContext
@@ -123,7 +123,7 @@ const AuthenticatedApp: React.FC = () => {
         persistOptions={{ persister: queryCachePersister, maxAge: ONE_WEEK_MS }}
       >
         <AgencyConfigProvider>
-          <AnalyticsProvider>
+          <AnalyticsProvider email={email} isSkipAuthUser={isSkipAuthUser}>
             <StateCodeProvider selectedStateRef={selectedStateRef}>
               <AuthenticatedContent />
             </StateCodeProvider>

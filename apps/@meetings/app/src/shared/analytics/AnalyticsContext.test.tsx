@@ -18,36 +18,36 @@
 import { renderHook, waitFor } from "@testing-library/react-native";
 import React from "react";
 
-import {
-  AnalyticsProvider,
-  useAnalytics,
-} from "../../context/AnalyticsContext";
-import { useUserContext } from "../../context/UserContext";
-import * as segmentModule from "../../shared/lib/segment";
+import * as segmentModule from "~@meetings/app/shared/lib/segment";
 
-jest.mock("../../shared/lib/segment", () => ({
+import { AnalyticsProvider, useAnalytics } from "./AnalyticsProvider";
+
+jest.mock("~@meetings/app/shared/lib/segment", () => ({
   segmentClient: {
     identify: jest.fn(),
     track: jest.fn(),
   },
 }));
 
-jest.mock("../../context/UserContext", () => ({
-  useUserContext: jest.fn(),
-}));
-const mockUseUserContext = useUserContext as jest.Mock;
-
 // The factory returns a plain object. We grab the same reference via require() below
-// so mutations in tests are visible to AnalyticsContext via `import env`.
-jest.mock("../../shared/config/env", () => ({
+// so mutations in tests are visible to AnalyticsProvider via `import env`.
+jest.mock("~@meetings/app/shared/config/env", () => ({
   env: { EXPO_PUBLIC_DEPLOY_ENV: "production" },
 }));
-const mockEnv = require("../../shared/config/env").env as {
+const mockEnv = require("~@meetings/app/shared/config/env").env as {
   EXPO_PUBLIC_DEPLOY_ENV: string;
 };
 
+// User identity is injected into the provider as props; tests set this before rendering.
+let user: { email?: string; isSkipAuthUser: boolean } = {
+  email: undefined,
+  isSkipAuthUser: false,
+};
+
 const wrapper = ({ children }: { children: React.ReactNode }) => (
-  <AnalyticsProvider>{children}</AnalyticsProvider>
+  <AnalyticsProvider email={user.email} isSkipAuthUser={user.isSkipAuthUser}>
+    {children}
+  </AnalyticsProvider>
 );
 
 describe("AnalyticsContext", () => {
@@ -70,10 +70,7 @@ describe("AnalyticsContext", () => {
 
   describe("identify", () => {
     it("calls segmentClient.identify on mount for authenticated external users", async () => {
-      mockUseUserContext.mockReturnValue({
-        email: "officer@example.gov",
-        isSkipAuthUser: false,
-      });
+      user = { email: "officer@example.gov", isSkipAuthUser: false };
 
       renderHook(() => useAnalytics(), { wrapper });
 
@@ -86,10 +83,7 @@ describe("AnalyticsContext", () => {
     });
 
     it("does not call segmentClient.identify for skip-auth users", () => {
-      mockUseUserContext.mockReturnValue({
-        email: undefined,
-        isSkipAuthUser: true,
-      });
+      user = { email: undefined, isSkipAuthUser: true };
 
       renderHook(() => useAnalytics(), { wrapper });
 
@@ -97,10 +91,7 @@ describe("AnalyticsContext", () => {
     });
 
     it("does not write to segment for internal users in production", () => {
-      mockUseUserContext.mockReturnValue({
-        email: "internal@recidiviz.org",
-        isSkipAuthUser: false,
-      });
+      user = { email: "internal@recidiviz.org", isSkipAuthUser: false };
 
       renderHook(() => useAnalytics(), { wrapper });
 
@@ -109,10 +100,7 @@ describe("AnalyticsContext", () => {
 
     it("writes to segment for internal users in staging", async () => {
       mockEnv.EXPO_PUBLIC_DEPLOY_ENV = "staging";
-      mockUseUserContext.mockReturnValue({
-        email: "internal@recidiviz.org",
-        isSkipAuthUser: false,
-      });
+      user = { email: "internal@recidiviz.org", isSkipAuthUser: false };
 
       renderHook(() => useAnalytics(), { wrapper });
 
@@ -127,10 +115,7 @@ describe("AnalyticsContext", () => {
 
   describe("track", () => {
     it("prefixes event name with frontend_meetings_ and writes to segment", () => {
-      mockUseUserContext.mockReturnValue({
-        email: "officer@example.gov",
-        isSkipAuthUser: false,
-      });
+      user = { email: "officer@example.gov", isSkipAuthUser: false };
 
       const { result } = renderHook(() => useAnalytics(), { wrapper });
 
@@ -144,10 +129,7 @@ describe("AnalyticsContext", () => {
 
     it("does not write to segment in development", () => {
       mockEnv.EXPO_PUBLIC_DEPLOY_ENV = "development";
-      mockUseUserContext.mockReturnValue({
-        email: "officer@example.gov",
-        isSkipAuthUser: false,
-      });
+      user = { email: "officer@example.gov", isSkipAuthUser: false };
 
       const { result } = renderHook(() => useAnalytics(), { wrapper });
 
@@ -157,10 +139,7 @@ describe("AnalyticsContext", () => {
     });
 
     it("does not write to segment for internal users in production", () => {
-      mockUseUserContext.mockReturnValue({
-        email: "internal@recidiviz.org",
-        isSkipAuthUser: false,
-      });
+      user = { email: "internal@recidiviz.org", isSkipAuthUser: false };
 
       const { result } = renderHook(() => useAnalytics(), { wrapper });
 
@@ -171,10 +150,7 @@ describe("AnalyticsContext", () => {
 
     it("writes to segment for internal users in staging", () => {
       mockEnv.EXPO_PUBLIC_DEPLOY_ENV = "staging";
-      mockUseUserContext.mockReturnValue({
-        email: "internal@recidiviz.org",
-        isSkipAuthUser: false,
-      });
+      user = { email: "internal@recidiviz.org", isSkipAuthUser: false };
 
       const { result } = renderHook(() => useAnalytics(), { wrapper });
 
@@ -187,10 +163,7 @@ describe("AnalyticsContext", () => {
     });
 
     it("includes extra metadata alongside default properties", () => {
-      mockUseUserContext.mockReturnValue({
-        email: "officer@example.gov",
-        isSkipAuthUser: false,
-      });
+      user = { email: "officer@example.gov", isSkipAuthUser: false };
 
       const { result } = renderHook(() => useAnalytics(), { wrapper });
 
@@ -207,10 +180,7 @@ describe("AnalyticsContext", () => {
 
     it("logs to console in development", () => {
       mockEnv.EXPO_PUBLIC_DEPLOY_ENV = "development";
-      mockUseUserContext.mockReturnValue({
-        email: "officer@example.gov",
-        isSkipAuthUser: false,
-      });
+      user = { email: "officer@example.gov", isSkipAuthUser: false };
       const consoleSpy = jest.spyOn(console, "log").mockImplementation();
 
       const { result } = renderHook(() => useAnalytics(), { wrapper });
