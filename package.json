@@ -401,7 +401,6 @@
     "chalk": "^5.6.0",
     "coveralls": "^3.1.0",
     "devtools": "^7.27.0",
-    "dotenv-stringify": "^3.0.1",
     "esbuild": "^0.19.2",
     "eslint": "^9.33.0",
     "eslint-config-next": "15.5.0",
@@ -505,7 +504,7 @@
     "atmos:plan": "node libs/atmos/atmos-executor.mjs terraform plan",
     "atmos:apply": "node libs/atmos/atmos-executor.mjs terraform apply",
     "atmos:vendor-pull": "node libs/atmos/atmos-executor.mjs vendor pull",
-    "deploy": "node tools/deploy.mjs",
+    "deploy": "tsx tools/deploy.mts",
     "deploy-reentry": "node tools/deploy-reentry.mjs"
   },
   "nx": {},

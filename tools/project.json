@@ -1,0 +1,25 @@
+{
+  "name": "tools",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "tools",
+  "projectType": "library",
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsc -p ./tsconfig.json"],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/tools"],
+      "cache": true,
+      "options": {
+        "command": "vitest",
+        "cwd": "{projectRoot}"
+      }
+    }
+  },
+  "tags": ["scope:server", "type:util"]
+}

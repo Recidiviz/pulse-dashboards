@@ -24,29 +24,30 @@ import { createProjectGraphAsync } from "@nx/devkit";
  * Resolves the Artifact Registry path (no tag) for an Nx project's `container`
  * target, preferring the `staging` configuration and falling back to `demo`.
  * Single source of truth shared between `.github/workflows/build-images.yml`
- * and `tools/deploy.mjs`.
+ * and `tools/deploy.mts`.
  */
-export async function getImageRef(projectName) {
+export async function getImageRef(projectName: string): Promise<string> {
   const graph = await createProjectGraphAsync({ exitOnError: false });
   const node = graph.nodes[projectName];
   if (!node) {
     throw new Error(`Unknown Nx project: ${projectName}`);
   }
-  const configs = node.data?.targets?.container?.configurations ?? {};
-  const tag = configs.staging?.tags?.[0] ?? configs.demo?.tags?.[0];
+  const configs = node.data.targets?.["container"]?.configurations ?? {};
+  const tag: string | undefined =
+    configs["staging"]?.tags?.[0] ?? configs["demo"]?.tags?.[0];
   if (!tag) {
     throw new Error(`No staging/demo container tag found for ${projectName}`);
   }
   return tag.slice(0, tag.lastIndexOf(":"));
 }
 
-// CLI entry point: `node tools/get-image-ref.mjs <nx-project>`
+// CLI entry point: `tsx tools/get-image-ref.mts <nx-project>`
 // createProjectGraphAsync may spawn the Nx daemon, which keeps an open socket
 // and prevents Node from exiting on its own — call exit() explicitly.
 if (import.meta.url === pathToFileURL(argv[1]).href) {
   const project = argv[2];
   if (!project) {
-    console.error("Usage: get-image-ref.mjs <nx-project>");
+    console.error("Usage: get-image-ref.mts <nx-project>");
     exit(1);
   }
   stdout.write(`${await getImageRef(project)}\n`);

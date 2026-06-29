@@ -30919,13 +30919,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv-stringify@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "dotenv-stringify@npm:3.0.1"
-  checksum: 10c0/d6ce60651f4c3a76d4ee1b704f48ed5b3a17130d5d38f86973d85c36cfa05b7db40a48b493a71983389d6488bbfec8605ac53947ebd45243292a41aca4cf16b9
-  languageName: node
-  linkType: hard
-
 "dotenv@npm:^16.0.3, dotenv@npm:^16.6.1":
   version: 16.6.1
   resolution: "dotenv@npm:16.6.1"
@@ -51775,7 +51768,6 @@ __metadata:
     docxtemplater: "npm:^3.31.5"
     dompurify: "npm:^3.3.2"
     dotenv: "npm:^8.2.0"
-    dotenv-stringify: "npm:^3.0.1"
     downloadjs: "npm:^1.4.7"
     env-cmd: "npm:^9.0.3"
     esbuild: "npm:^0.19.2"

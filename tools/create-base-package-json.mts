@@ -19,7 +19,7 @@ import fs from "fs/promises";
 import path from "path";
 
 const projectRoot = process.argv[2];
-const rootDir = process.env.NX_WORKSPACE_ROOT ?? "";
+const rootDir = process.env["NX_WORKSPACE_ROOT"] ?? "";
 
 const projectPackagePath = path.join(projectRoot, "package.json");
 const repoPackagePath = path.join(rootDir, "package.json");
