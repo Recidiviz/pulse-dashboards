@@ -1,0 +1,77 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for fullyEligible1 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "drugScreenOkForCrr": {
+      "atLeast30DaysSinceDrugScreen": null,
+      "latestDrugScreenDate": "2021-11-05",
+      "latestDrugScreenResult": "N",
+      "mostRecentPositiveTestDate": null,
+    },
+    "usNc90ConsecutiveDaysOfPositiveBehaviorForCrr": {
+      "completedFacilityProgramIds": null,
+      "completedProgramDischargeDates": null,
+      "completedProgramStartDates": null,
+      "completionOfFacilityProgramDuringPrs": null,
+      "continuousEmploymentFor90Days": null,
+      "continuousEnrollmentAtFacilityFor90Days": true,
+      "continuousStudentFor90Days": null,
+      "eligibleDate": "2019-11-05",
+      "employerName": null,
+      "employmentStartDate": null,
+      "employmentStatus": null,
+    },
+    "usNcCompletedSexOffenderTreatmentOrWithin30MonthsOfFullTermCompletionDate": null,
+    "usNcNoPendingViolationsOrConvictionsPrecludingCrr": null,
+    "usNcSupervisionNotPastProjectedEndDate": {
+      "projectedSupervisionEndDate": "2023-02-05",
+    },
+  },
+  "externalId": "NC001",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_NC",
+}
+`;
+
+exports[`schema for fullyEligible2 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "drugScreenOkForCrr": {
+      "atLeast30DaysSinceDrugScreen": null,
+      "latestDrugScreenDate": "2021-11-05",
+      "latestDrugScreenResult": "N",
+      "mostRecentPositiveTestDate": null,
+    },
+    "usNc90ConsecutiveDaysOfPositiveBehaviorForCrr": {
+      "completedFacilityProgramIds": null,
+      "completedProgramDischargeDates": null,
+      "completedProgramStartDates": null,
+      "completionOfFacilityProgramDuringPrs": null,
+      "continuousEmploymentFor90Days": null,
+      "continuousEnrollmentAtFacilityFor90Days": true,
+      "continuousStudentFor90Days": null,
+      "eligibleDate": "2019-11-05",
+      "employerName": null,
+      "employmentStartDate": null,
+      "employmentStatus": null,
+    },
+    "usNcCompletedSexOffenderTreatmentOrWithin30MonthsOfFullTermCompletionDate": null,
+    "usNcNoPendingViolationsOrConvictionsPrecludingCrr": null,
+    "usNcSupervisionNotPastProjectedEndDate": {
+      "projectedSupervisionEndDate": "2023-02-05",
+    },
+  },
+  "externalId": "NC002",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_NC",
+}
+`;

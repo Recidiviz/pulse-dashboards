@@ -91,8 +91,14 @@ function enterReason(text = "Needs revision") {
 }
 
 beforeEach(() => {
+  vi.useFakeTimers();
   ReactModal.setAppElement(document.createElement("div"));
   vi.clearAllMocks();
+});
+
+afterEach(() => {
+  vi.runAllTimers();
+  vi.useRealTimers();
 });
 
 describe("CancelButton", () => {

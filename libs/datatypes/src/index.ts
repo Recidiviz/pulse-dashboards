@@ -79,6 +79,7 @@ export * from "./opportunities/UsMi/UsMiWardenInPersonSecurityClassificationComm
 // UsNc Exports: Includes fixtures and schema related to US-NC opportunities
 // -----------------------------------------------------------------------------
 export * from "./opportunities/UsNc/UsNcCreditReductionReview/fixtures";
+export * from "./opportunities/UsNc/UsNcCreditReductionReview/schema";
 
 // UsIa Exports: Includes fixtures and schema related to US-IA opportunities
 // -----------------------------------------------------------------------------

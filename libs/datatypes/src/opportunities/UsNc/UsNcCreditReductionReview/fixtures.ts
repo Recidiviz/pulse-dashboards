@@ -15,14 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ParsedRecord } from "../../../utils/types";
-import { relativeFixtureDate } from "../../../utils/zod";
-import { makeRecordFixture } from "../../../utils/zod";
-import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
+import { makeRecordFixture, relativeFixtureDate } from "../../../utils/zod";
 import { FixtureMapping } from "../../utils/types";
+import {
+  UsNcCreditReductionReviewRecord,
+  usNcCreditReductionReviewSchema,
+} from "./schema";
 
 export const usNcCreditReductionReviewFixtures = {
-  fullyEligible1: makeRecordFixture(opportunitySchemaBase, {
+  fullyEligible1: makeRecordFixture(usNcCreditReductionReviewSchema, {
     stateCode: "US_NC",
     externalId: "NC001",
     isEligible: true,
@@ -67,7 +68,7 @@ export const usNcCreditReductionReviewFixtures = {
     },
     ineligibleCriteria: {},
   }),
-  fullyEligible2: makeRecordFixture(opportunitySchemaBase, {
+  fullyEligible2: makeRecordFixture(usNcCreditReductionReviewSchema, {
     stateCode: "US_NC",
     externalId: "NC002",
     isEligible: true,
@@ -112,4 +113,4 @@ export const usNcCreditReductionReviewFixtures = {
     },
     ineligibleCriteria: {},
   }),
-} satisfies FixtureMapping<ParsedRecord<typeof opportunitySchemaBase>>;
+} satisfies FixtureMapping<UsNcCreditReductionReviewRecord>;

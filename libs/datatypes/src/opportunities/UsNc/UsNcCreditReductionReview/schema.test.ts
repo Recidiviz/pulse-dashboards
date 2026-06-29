@@ -15,31 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { DocumentData } from "firebase/firestore";
+import { usNcCreditReductionReviewFixtures } from "./fixtures";
+import { usNcCreditReductionReviewSchema } from "./schema";
 
-import {
-  UsNcCreditReductionReviewRecord,
-  usNcCreditReductionReviewSchema,
-} from "~datatypes";
-
-import { Client } from "../../Client";
-import { UsNcCreditReductionReviewForm } from "../Forms/UsNcCreditReductionReviewForm";
-import { OpportunityBase } from "../OpportunityBase";
-
-export class UsNcCreditReductionReviewOpportunity extends OpportunityBase<
-  Client,
-  UsNcCreditReductionReviewRecord["output"]
-> {
-  form: UsNcCreditReductionReviewForm;
-
-  constructor(client: Client, record: DocumentData) {
-    super(
-      client,
-      "usNcCreditReductionReview",
-      client.rootStore,
-      usNcCreditReductionReviewSchema.parse(record),
-    );
-
-    this.form = new UsNcCreditReductionReviewForm(this, client.rootStore);
-  }
-}
+test.each(
+  Object.keys(usNcCreditReductionReviewFixtures) as Array<
+    keyof typeof usNcCreditReductionReviewFixtures
+  >,
+)("schema for %s", (key) => {
+  expect(
+    usNcCreditReductionReviewSchema.parse(
+      usNcCreditReductionReviewFixtures[key].input,
+    ),
+  ).toMatchSnapshot();
+});

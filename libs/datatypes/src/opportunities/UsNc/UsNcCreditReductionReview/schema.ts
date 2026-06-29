@@ -15,31 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { DocumentData } from "firebase/firestore";
+import { ParsedRecord } from "../../../utils/types";
+import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 
-import {
-  UsNcCreditReductionReviewRecord,
-  usNcCreditReductionReviewSchema,
-} from "~datatypes";
+export const usNcCreditReductionReviewSchema = opportunitySchemaBase;
 
-import { Client } from "../../Client";
-import { UsNcCreditReductionReviewForm } from "../Forms/UsNcCreditReductionReviewForm";
-import { OpportunityBase } from "../OpportunityBase";
-
-export class UsNcCreditReductionReviewOpportunity extends OpportunityBase<
-  Client,
-  UsNcCreditReductionReviewRecord["output"]
-> {
-  form: UsNcCreditReductionReviewForm;
-
-  constructor(client: Client, record: DocumentData) {
-    super(
-      client,
-      "usNcCreditReductionReview",
-      client.rootStore,
-      usNcCreditReductionReviewSchema.parse(record),
-    );
-
-    this.form = new UsNcCreditReductionReviewForm(this, client.rootStore);
-  }
-}
+export type UsNcCreditReductionReviewRecord = ParsedRecord<
+  typeof usNcCreditReductionReviewSchema
+>;
