@@ -1,0 +1,256 @@
+{
+  "lastUpdated": "[US_NE]lastUpdated",
+  "topLinkText": "[US_NE]topLinkText",
+  "homeLink": "[US_NE]homeLink",
+  "definitionsLinksHeading": "[US_NE]definitionsLinksHeading",
+  "home": {
+    "pageTitle": "[US_NE]home.pageTitle",
+    "noSentenceFallback": "[US_NE]home.noSentenceFallback",
+    "headerFields": {
+      "numHoldsAndDetainers": {
+        "label": "[US_NE]home.headerFields.numHoldsAndDetainers.label",
+        "value": "[US_NE]home.headerFields.numHoldsAndDetainers.value"
+      },
+      "numNotifiers": {
+        "label": "[US_NE]home.headerFields.numNotifiers.label",
+        "value": "[US_NE]home.headerFields.numNotifiers.value"
+      },
+      "deadTime": {
+        "label": "[US_NE]home.headerFields.deadTime.label",
+        "value_one": "[US_NE]home.headerFields.deadTime.value_one",
+        "value_other": "[US_NE]home.headerFields.deadTime.value_other"
+      },
+      "minimumSentence": {
+        "label": "[US_NE]home.headerFields.minimumSentence.label",
+        "value_one": "[US_NE]home.headerFields.minimumSentence.value_one",
+        "value_other": "[US_NE]home.headerFields.minimumSentence.value_other"
+      },
+      "maximumSentence": {
+        "label": "[US_NE]home.headerFields.maximumSentence.label",
+        "value_one": "[US_NE]home.headerFields.maximumSentence.value_one",
+        "value_other": "[US_NE]home.headerFields.maximumSentence.value_other"
+      },
+      "goodTimeLaw": {
+        "label": "[US_NE]home.headerFields.goodTimeLaw.label",
+        "value": "[US_NE]home.headerFields.goodTimeLaw.value"
+      }
+    },
+    "todos": {
+      "sectionTitle": "[US_NE]home.todos.sectionTitle",
+      "goodTimeRestoration": {
+        "almostEligible": {
+          "title": "[US_NE]home.todos.goodTimeRestoration.almostEligible.title",
+          "body_one": "[US_NE]home.todos.goodTimeRestoration.almostEligible.body_one",
+          "body_other": "[US_NE]home.todos.goodTimeRestoration.almostEligible.body_other",
+          "linkText": "[US_NE]home.todos.goodTimeRestoration.almostEligible.linkText"
+        },
+        "ineligibleLTRH": {
+          "title": "[US_NE]home.todos.goodTimeRestoration.ineligibleLTRH.title",
+          "body": "[US_NE]home.todos.goodTimeRestoration.ineligibleLTRH.body",
+          "linkText": "[US_NE]home.todos.goodTimeRestoration.ineligibleLTRH.linkText"
+        },
+        "ineligibleTreatment": {
+          "title": "[US_NE]home.todos.goodTimeRestoration.ineligibleTreatment.title",
+          "body": "[US_NE]home.todos.goodTimeRestoration.ineligibleTreatment.body",
+          "linkText": "[US_NE]home.todos.goodTimeRestoration.ineligibleTreatment.linkText"
+        }
+      },
+      "reentryChecklist": {
+        "title": "[US_NE]home.todos.reentryChecklist.title",
+        "body": "[US_NE]home.todos.reentryChecklist.body",
+        "linkText": "[US_NE]home.todos.reentryChecklist.linkText"
+      },
+      "reentryAssessment": {
+        "title": "[US_NE]home.todos.reentryAssessment.title",
+        "body": "[US_NE]home.todos.reentryAssessment.body",
+        "linkText": "[US_NE]home.todos.reentryAssessment.linkText"
+      }
+    },
+    "dates": {
+      "sectionTitle": "[US_NE]home.dates.sectionTitle",
+      "moreInfoLink": "[US_NE]home.dates.moreInfoLink",
+      "cards": {
+        "trd": {
+          "label": "[US_NE]home.dates.cards.trd.label",
+          "value": "[US_NE]home.dates.cards.trd.value",
+          "summary": "[US_NE]home.dates.cards.trd.summary"
+        },
+        "ped": {
+          "label": "[US_NE]home.dates.cards.ped.label",
+          "value": "[US_NE]home.dates.cards.ped.value",
+          "summary": "[US_NE]home.dates.cards.ped.summary"
+        },
+        "mmtd": {
+          "label": "[US_NE]home.dates.cards.mmtd.label",
+          "value": "[US_NE]home.dates.cards.mmtd.value",
+          "summary": "[US_NE]home.dates.cards.mmtd.summary"
+        }
+      }
+    },
+    "goodTimeBalances": {
+      "sectionTitle": "[US_NE]home.goodTimeBalances.sectionTitle",
+      "moreInfoLink": "[US_NE]home.goodTimeBalances.moreInfoLink",
+      "cards": {
+        "gbmd": {
+          "label": "[US_NE]home.goodTimeBalances.cards.gbmd.label",
+          "value_one": "[US_NE]home.goodTimeBalances.cards.gbmd.value_one",
+          "value_other": "[US_NE]home.goodTimeBalances.cards.gbmd.value_other",
+          "summary": "[US_NE]home.goodTimeBalances.cards.gbmd.summary"
+        },
+        "lgtr": {
+          "label": "[US_NE]home.goodTimeBalances.cards.lgtr.label",
+          "value_one": "[US_NE]home.goodTimeBalances.cards.lgtr.value_one",
+          "value_other": "[US_NE]home.goodTimeBalances.cards.lgtr.value_other",
+          "summary_zero": "[US_NE]home.goodTimeBalances.cards.lgtr.summary_zero",
+          "summary_other": "[US_NE]home.goodTimeBalances.cards.lgtr.summary_other"
+        },
+        "lgtn": {
+          "label": "[US_NE]home.goodTimeBalances.cards.lgtn.label",
+          "value_one": "[US_NE]home.goodTimeBalances.cards.lgtn.value_one",
+          "value_other": "[US_NE]home.goodTimeBalances.cards.lgtn.value_other",
+          "summary_zero": "[US_NE]home.goodTimeBalances.cards.lgtn.summary_zero",
+          "summary_other": "[US_NE]home.goodTimeBalances.cards.lgtn.summary_other"
+        },
+        "lb191": {
+          "label": "[US_NE]home.goodTimeBalances.cards.lb191.label",
+          "value_one": "[US_NE]home.goodTimeBalances.cards.lb191.value_one",
+          "value_other": "[US_NE]home.goodTimeBalances.cards.lb191.value_other",
+          "summary": "[US_NE]home.goodTimeBalances.cards.lb191.summary",
+          "summaryOtherLaw": "[US_NE]home.goodTimeBalances.cards.lb191.summaryOtherLaw"
+        },
+        "jailCredits": {
+          "label": "[US_NE]home.goodTimeBalances.cards.jailCredits.label",
+          "value_one": "[US_NE]home.goodTimeBalances.cards.jailCredits.value_one",
+          "value_other": "[US_NE]home.goodTimeBalances.cards.jailCredits.value_other",
+          "summary": "[US_NE]home.goodTimeBalances.cards.jailCredits.summary"
+        }
+      }
+    },
+    "goodTimeAdjustments": {
+      "sectionTitle": "[US_NE]home.goodTimeAdjustments.sectionTitle",
+      "emptyMessage": "[US_NE]home.goodTimeAdjustments.emptyMessage",
+      "adjustmentType": {
+        "addition": "[US_NE]home.goodTimeAdjustments.adjustmentType.addition",
+        "additionWithViolation": "[US_NE]home.goodTimeAdjustments.adjustmentType.additionWithViolation",
+        "removal": "[US_NE]home.goodTimeAdjustments.adjustmentType.removal",
+        "removalWithViolation": "[US_NE]home.goodTimeAdjustments.adjustmentType.removalWithViolation"
+      },
+      "tableColumns": {
+        "adjustmentType": "[US_NE]home.goodTimeAdjustments.tableColumns.adjustmentType",
+        "misconductReportNumber": "[US_NE]home.goodTimeAdjustments.tableColumns.misconductReportNumber",
+        "days": "[US_NE]home.goodTimeAdjustments.tableColumns.days",
+        "transactionDate": "[US_NE]home.goodTimeAdjustments.tableColumns.transactionDate"
+      }
+    }
+  },
+  "reentryAssessment": {
+    "pageTitle": "[US_NE]reentryAssessment.pageTitle"
+  },
+  "reentryChecklist": {
+    "pageTitle": "[US_NE]reentryChecklist.pageTitle",
+    "verifiedItem": {
+      "confirmed": {
+        "default": "[US_NE]reentryChecklist.verifiedItem.confirmed.default",
+        "state-id-license": "[US_NE]reentryChecklist.verifiedItem.confirmed.state-id-license"
+      },
+      "unconfirmed": {
+        "default": "[US_NE]reentryChecklist.verifiedItem.unconfirmed.default"
+      }
+    },
+    "subtitle": "[US_NE]reentryChecklist.subtitle",
+    "backLink": "[US_NE]reentryChecklist.backLink",
+    "progressBar": {
+      "sectionsComplete": "[US_NE]reentryChecklist.progressBar.sectionsComplete",
+      "lastSaved": "[US_NE]reentryChecklist.progressBar.lastSaved"
+    },
+    "saveButton": "[US_NE]reentryChecklist.saveButton",
+    "savingButton": "[US_NE]reentryChecklist.savingButton",
+    "writeErrorMessage": "[US_NE]reentryChecklist.writeErrorMessage",
+    "unsavedChangesModal": {
+      "title": "[US_NE]reentryChecklist.unsavedChangesModal.title",
+      "message": "[US_NE]reentryChecklist.unsavedChangesModal.message",
+      "cancelButtonText": "[US_NE]reentryChecklist.unsavedChangesModal.cancelButtonText",
+      "discardButtonText": "[US_NE]reentryChecklist.unsavedChangesModal.discardButtonText"
+    },
+    "sections": {
+      "early": {
+        "title": "[US_NE]reentryChecklist.sections.early.title",
+        "subtitle": "[US_NE]reentryChecklist.sections.early.subtitle"
+      },
+      "3-years": {
+        "title": "[US_NE]reentryChecklist.sections.3-years.title",
+        "subtitle": "[US_NE]reentryChecklist.sections.3-years.subtitle"
+      },
+      "6-months": {
+        "title": "[US_NE]reentryChecklist.sections.6-months.title",
+        "subtitle": "[US_NE]reentryChecklist.sections.6-months.subtitle"
+      },
+      "120-days": {
+        "title": "[US_NE]reentryChecklist.sections.120-days.title",
+        "subtitle": "[US_NE]reentryChecklist.sections.120-days.subtitle"
+      }
+    },
+    "items": {
+      "birth-certificate": "[US_NE]reentryChecklist.items.birth-certificate",
+      "applied-medicaid": "[US_NE]reentryChecklist.items.applied-medicaid",
+      "ged-diploma": "[US_NE]reentryChecklist.items.ged-diploma",
+      "job-training": "[US_NE]reentryChecklist.items.job-training",
+      "skills-career-interests": "[US_NE]reentryChecklist.items.skills-career-interests",
+      "parenting-programs": "[US_NE]reentryChecklist.items.parenting-programs",
+      "five-keys-interest": "[US_NE]reentryChecklist.items.five-keys-interest",
+      "career-programs": "[US_NE]reentryChecklist.items.career-programs",
+      "mental-health-assessment": "[US_NE]reentryChecklist.items.mental-health-assessment",
+      "parenting-programs-2yr": "[US_NE]reentryChecklist.items.parenting-programs-2yr",
+      "clinical-program": "[US_NE]reentryChecklist.items.clinical-program",
+      "job-opportunities": "[US_NE]reentryChecklist.items.job-opportunities",
+      "resume-portfolio": "[US_NE]reentryChecklist.items.resume-portfolio",
+      "safe-housing": "[US_NE]reentryChecklist.items.safe-housing",
+      "backup-housing": "[US_NE]reentryChecklist.items.backup-housing",
+      "reentry-circle": "[US_NE]reentryChecklist.items.reentry-circle",
+      "social-security-card": "[US_NE]reentryChecklist.items.social-security-card",
+      "state-id-license": "[US_NE]reentryChecklist.items.state-id-license",
+      "birth-certificate-120": "[US_NE]reentryChecklist.items.birth-certificate-120",
+      "medicaid-120": "[US_NE]reentryChecklist.items.medicaid-120",
+      "medical-checkup": "[US_NE]reentryChecklist.items.medical-checkup",
+      "continuation-care-plan": "[US_NE]reentryChecklist.items.continuation-care-plan",
+      "medication-supply": "[US_NE]reentryChecklist.items.medication-supply",
+      "treatment-aftercare": "[US_NE]reentryChecklist.items.treatment-aftercare",
+      "barriers-plan": "[US_NE]reentryChecklist.items.barriers-plan",
+      "budget-plan": "[US_NE]reentryChecklist.items.budget-plan",
+      "legal-obligations": "[US_NE]reentryChecklist.items.legal-obligations",
+      "parole-expectations": "[US_NE]reentryChecklist.items.parole-expectations",
+      "supportive-person": "[US_NE]reentryChecklist.items.supportive-person",
+      "peer-support": "[US_NE]reentryChecklist.items.peer-support",
+      "success-plan": "[US_NE]reentryChecklist.items.success-plan",
+      "community-help": "[US_NE]reentryChecklist.items.community-help",
+      "transportation-plan": "[US_NE]reentryChecklist.items.transportation-plan"
+    }
+  },
+  "infoPages": {
+    "mmtd": {
+      "heading": "[US_NE]infoPages.mmtd.heading",
+      "body": "[US_NE]infoPages.mmtd.body"
+    },
+    "ped": {
+      "heading": "[US_NE]infoPages.ped.heading",
+      "body": "[US_NE]infoPages.ped.body"
+    },
+    "trd": {
+      "heading": "[US_NE]infoPages.trd.heading",
+      "body": "[US_NE]infoPages.trd.body"
+    },
+    "gbmd": {
+      "heading": "[US_NE]infoPages.gbmd.heading",
+      "body": "[US_NE]infoPages.gbmd.body"
+    },
+    "lb191": {
+      "heading": "[US_NE]infoPages.lb191.heading",
+      "body": "[US_NE]infoPages.lb191.body"
+    },
+    "jailCredits": {
+      "heading": "[US_NE]infoPages.jailCredits.heading",
+      "body": "[US_NE]infoPages.jailCredits.body"
+    }
+  },
+  "disclaimer": "[US_NE]disclaimer"
+}

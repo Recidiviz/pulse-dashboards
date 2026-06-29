@@ -27,7 +27,7 @@ import US_ID from "../namespaces/US_ID/resources/en";
 import US_MA from "../namespaces/US_MA/resources/en.json";
 import US_NC from "../namespaces/US_NC/resources/en.json";
 import US_ND from "../namespaces/US_ND/resources/en.json";
-import US_NE from "../namespaces/US_NE/resources/en";
+import US_NE from "../namespaces/US_NE/resources/en.json";
 import US_TN from "../namespaces/US_TN/resources/en";
 import {
   CombinedProgramCatalogResources,

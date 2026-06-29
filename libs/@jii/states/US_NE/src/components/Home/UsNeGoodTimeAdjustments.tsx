@@ -18,13 +18,13 @@
 import { sortBy, startCase, toLower } from "lodash";
 
 import { Card, HomepageSectionHeading } from "~@jii/common-ui";
-import { formatFullDate, useResidentMetadata } from "~@jii/data";
+import { useResidentMetadata } from "~@jii/data";
 import { OpenTable } from "~@jii/earned-good-time";
 import { useUsNeTranslations } from "~@jii/translation";
 
 const UsNeGoodTimeAdjustments = () => {
   const metadata = useResidentMetadata("US_NE");
-  const { t } = useUsNeTranslations();
+  const { t, i18n } = useUsNeTranslations();
 
   const colSpec = [
     {
@@ -65,10 +65,17 @@ const UsNeGoodTimeAdjustments = () => {
           ? `: ${startCase(toLower(violationDescription))}`
           : "");
 
-      const days =
-        creditsEarned > 0 ? `+${creditsEarned}` : String(creditsEarned);
+      const days = i18n.format(
+        creditsEarned,
+        "withSign",
+        i18n.resolvedLanguage,
+      );
 
-      const transactionDate = creditDate ? formatFullDate(creditDate) : "";
+      const transactionDate = i18n.format(
+        creditDate,
+        "formatFullDate",
+        i18n.resolvedLanguage,
+      );
 
       return {
         adjustmentType,

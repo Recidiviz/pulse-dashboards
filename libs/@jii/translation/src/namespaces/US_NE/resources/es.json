@@ -1,0 +1,256 @@
+{
+  "lastUpdated": "Esta información se modificó por última vez el {{sentenceLastModifiedDate, formatFullDate}}",
+  "topLinkText": "Volver arriba",
+  "homeLink": "Atrás",
+  "definitionsLinksHeading": "Otras definiciones",
+  "home": {
+    "pageTitle": "Aprenda más sobre su sentencia",
+    "noSentenceFallback": "Los detalles de su sentencia aún no han sido confirmados por NDCS. Comuníquese con la oficina de registros para obtener más información.",
+    "headerFields": {
+      "numHoldsAndDetainers": {
+        "label": "Detenciones/Retenciones Pendientes:",
+        "value": "{{count, number}}"
+      },
+      "numNotifiers": {
+        "label": "Notificaciones Pendientes:",
+        "value": "{{count, number}}"
+      },
+      "deadTime": {
+        "label": "Tiempo muerto",
+        "value_one": "{{count, number}} Día",
+        "value_other": "{{count, number}} Días"
+      },
+      "minimumSentence": {
+        "label": "Sentencia Mínima:",
+        "value_one": "{{count, number}} Año",
+        "value_other": "{{count, number}} Años"
+      },
+      "maximumSentence": {
+        "label": "Sentencia Máxima:",
+        "value_one": "{{count, number}} Año",
+        "value_other": "{{count, number}} Años"
+      },
+      "goodTimeLaw": {
+        "label": "Ley de tiempo de buena conducta:",
+        "value": "LB {{goodTimeLawNumber}}"
+      }
+    },
+    "todos": {
+      "sectionTitle": "Tareas pendientes",
+      "goodTimeRestoration": {
+        "almostEligible": {
+          "title": "Manténgase libre de mala conducta para su tiempo de buena conducta",
+          "body_one": "{{count, number}} mes más sin reportes de mala conducta y podrá solicitar la restitución de su tiempo de buena conducta. Si cumple con los requisitos, el personal iniciará automáticamente una solicitud y le informará de la decisión.\nActualmente tiene {{goodTimeLostDaysRestorable, number}} días perdidos recuperables.\n",
+          "body_other": "{{count, number}} meses más sin reportes de mala conducta y podrá solicitar la restitución de su tiempo de buena conducta. Si cumple con los requisitos, el personal iniciará automáticamente una solicitud y le informará de la decisión.\n\nActualmente tiene {{goodTimeLostDaysRestorable, number}} días perdidos recuperables.\n",
+          "linkText": "Más información"
+        },
+        "ineligibleLTRH": {
+          "title": "Ser Elegible para la Restitución de su tiempo de buena conducta",
+          "body": "A pesar de no haber recibido reportes recientes de mala conducta que lo descalifiquen, el personal de la instalación ha notado que actualmente no cumple los requisitos para la restitución de su tiempo de buena conducta debido a su colocación actual o reciente en una vivienda restrictiva de larga duración. Para obtener más información, comuníquese con el personal de la instalación. \n\nActualmente tiene {{goodTimeLostDaysRestorable, number}} días perdidos recuperables.\n",
+          "linkText": "Más información"
+        },
+        "ineligibleTreatment": {
+          "title": "Ser Elegible para la Restitución de su tiempo de buena conducta",
+          "body": "A pesar de no haber recibido reportes recientes de mala conducta que lo descalifiquen, el personal de la instalación ha notado que actualmente no cumple los requisitos para la restitución de su buena conducta debido a su rechazo a la programación clínica recomendada. Para obtener más información, comuníquese con el personal de la instalación.\n\n\nActualmente tiene {{goodTimeLostDaysRestorable, number}} días perdidos recuperables.\n",
+          "linkText": "Más información"
+        }
+      },
+      "reentryChecklist": {
+        "title": "Inventario de preparación para el reingreso",
+        "body": "Completa esas tareas para preparase para el éxito.",
+        "linkText": "Más información"
+      },
+      "reentryAssessment": {
+        "title": "Complete la Evaluación de Reinserción de 120 Días",
+        "body": "Su Especialista de Reinserción le ha asignado esta evaluación para poder comprender mejor sus necesidades antes de su reunión de 120 días con ellos. Esto les permitirá llevar recursos más personalizados y respuestas claras a su reunión.",
+        "linkText": "Comenzar Evaluación"
+      }
+    },
+    "dates": {
+      "sectionTitle": "Fechas Importantes",
+      "moreInfoLink": "Más información",
+      "cards": {
+        "trd": {
+          "label": "Fecha Tentativa de Salida (TRD)",
+          "value": "{{value, formatFullDate(fallbackText: 'Sin Fecha de TRD')}}",
+          "summary": "Su Fecha Tentativa de Liberación (TRD) es la fecha estimada en que será liberado de prisión. Esta fecha puede cambiar debido a una medida disciplinaria, un cambio en tiempo de buena conducta, la revocación de la libertad condicional o un cambio en la ley o su interpretación."
+        },
+        "ped": {
+          "label": "Fecha de Elegibilidad de Libertad Condicional (PED)",
+          "value": "{{value, formatFullDate(fallbackText: 'Sin Fecha de PED')}}",
+          "summary": "La Fecha de Elegibilidad de Libertad Condicional (PED) es la fecha en que usted es elegible por primera vez para libertad condicional. "
+        },
+        "mmtd": {
+          "label": "Fecha Mínima Obligatoria (MMTD)",
+          "value": "{{value, formatFullDate(fallbackText: 'Sin Fecha de MMTD')}}",
+          "summary": "Su Fecha Mínima Obligatoria (MMTD) es la fecha en que finaliza la parte mínima requerida de su sentencia. La ley establece la fecha mínima obligatoria con base en el total de su sentencia combinada."
+        }
+      }
+    },
+    "goodTimeBalances": {
+      "sectionTitle": "Créditos",
+      "moreInfoLink": "Más información",
+      "cards": {
+        "gbmd": {
+          "label": "Días de Saldo de tiempo de buena conducta/Libertad Obligatoria (GB/MD)",
+          "value_one": "{{count, number}} Día",
+          "value_other": "{{count, number}} Días",
+          "summary": "Una persona sentenciada a prisión recibe este abono por buena conducta por adelantado. Este beneficio puede ser eliminado mediante Reportes de Mala Conducta (MR)."
+        },
+        "lgtr": {
+          "label": "Perdida de tiempo de buena conducta (Restaurable)",
+          "value_one": "{{count, number}} Día",
+          "value_other": "{{count, number}} Días",
+          "summary_zero": "No tiene días de tiempo de buena conducta perdidos que sean recuperables. ",
+          "summary_other": "Este tiempo de buena conducta se ha eliminado debido a reportes de mala conducta (MR). Puede solicitar la restitución de estos días después de un tiempo sin reportes de mala conducta. Consulte con su administrador de casos para obtener información específica sobre cuándo puede solicitar la restitución."
+        },
+        "lgtn": {
+          "label": "Perdida de tiempo de buena conducta (No-Restaurable)",
+          "value_one": "{{count, number}} Día",
+          "value_other": "{{count, number}} Días",
+          "summary_zero": "No tiene días de tiempo de buena conducta perdidos que no sean recuperables. ",
+          "summary_other": "Este tiempo de buena conducta se ha perdido debido a reportes de mala conducta (MR). No es posible recuperar estos días. \n\nEsto ya se aplica a su Fecha de Salida Tentativa (TRD).\n"
+        },
+        "lb191": {
+          "label": "Credito de Tiempo Ganado LB 191",
+          "value_one": "{{count, number}} Día",
+          "value_other": "{{count, number}} Días",
+          "summary": "Después de los primeros 12 meses, puede obtener 3 días adicionales de descuento en su sentencia máxima cada mes por buena conducta. Estos días se aplican a su Fecha de Liberación Tentativa (FLT) al momento de obtenerlos.",
+          "summaryOtherLaw": "Usted fue sentenciado bajo LB {{lawNumber}}, no bajo la LB 191. Para obtener más información, envíe sus preguntas al personal de la oficina de registros de su institución mediante una Solicitud de Entrevista de Reclusos (IIR)."
+        },
+        "jailCredits": {
+          "label": "Créditos Carcelarios",
+          "value_one": "{{count, number}} Día",
+          "value_other": "{{count, number}} Días",
+          "summary": "Los créditos carcelarios son la cantidad de días que el tribunal determinó que usted pasó en la carcel por el delito que condujo a su sentencia. Estos días se restan de su sentencia total combinada."
+        }
+      }
+    },
+    "goodTimeAdjustments": {
+      "sectionTitle": "Ajustes de Créditos",
+      "emptyMessage": "No se han hecho ajustes",
+      "adjustmentType": {
+        "addition": "Adición",
+        "additionWithViolation": "Adición: {{violationDescription}}",
+        "removal": "Eliminación",
+        "removalWithViolation": "Eliminación: {{violationDescription}}"
+      },
+      "tableColumns": {
+        "adjustmentType": "Tipo de Ajustes",
+        "misconductReportNumber": "Numero de MR (si es aplicable)",
+        "days": "Días",
+        "transactionDate": "Fecha de la Transacción "
+      }
+    }
+  },
+  "reentryAssessment": {
+    "pageTitle": "Evaluación del reingreso\n"
+  },
+  "reentryChecklist": {
+    "pageTitle": "Inventario de preparación para el reingreso",
+    "verifiedItem": {
+      "confirmed": {
+        "default": "NDCS confirmó que esto se completó para usted.",
+        "state-id-license": "El personal de NDCS ha confirmado la recepción de al menos uno de estos documentos; sin embargo, su fecha de vencimiento podría estar próxima. Para obtener más información, hable con su administrador de casos."
+      },
+      "unconfirmed": {
+        "default": "El personal de NDCS aún no ha confirmado que esto se haya realizado. Hable con su administrador de casos."
+      }
+    },
+    "subtitle": "Marque las tareas como completadas para mantener a su administrador de casos informado sobre su progreso.",
+    "backLink": "Volver al inicio",
+    "progressBar": {
+      "sectionsComplete": "{{completedSections}}/{{totalSections}} Secciones Completadas",
+      "lastSaved": "Guardado {{date, formatFullDate}}"
+    },
+    "saveButton": "Guardar",
+    "savingButton": "Guardando...",
+    "writeErrorMessage": "No pudimos guardar su progreso: {{error}}",
+    "unsavedChangesModal": {
+      "title": "Cambios sin guardar",
+      "message": "Usted tiene cambios sin guardar en su Hoja de Ruta para la Reintegración. ¿Está seguro de que desea descartarlos?",
+      "cancelButtonText": "Cancelar",
+      "discardButtonText": "Descartar"
+    },
+    "sections": {
+      "early": {
+        "title": "Completar en cualquier momento",
+        "subtitle": "Estas tareas pueden completarse lo antes posible para asegurar su éxito."
+      },
+      "3-years": {
+        "title": "Completar 3 años antes de la liberación",
+        "subtitle": "Se debe priorizar la preparación profesional, especialmente dentro de los 3 años posteriores a la liberación."
+      },
+      "6-months": {
+        "title": "Completar 6 meses antes de la liberación",
+        "subtitle": "Comienza tu plan de vivienda y empleo dentro de los 6 meses posteriores a la liberación."
+      },
+      "120-days": {
+        "title": "Complete los 120 días previos a la liberación",
+        "subtitle": "Finalice su plan de reingreso. Su especialista en reingreso puede ayudarle con estos puntos en su junta de los 120 días."
+      }
+    },
+    "items": {
+      "birth-certificate": "Tengo mi certificado de nacimiento o he solicitado uno.\n",
+      "applied-medicaid": "He solicitado Medicaid.",
+      "ged-diploma": "Tengo mi GED o diploma de preparatoria, o estoy inscrito actualmente en clases de GED.",
+      "job-training": "Estoy participando en capacitación laboral, industrias o un programa de aprendizaje para prepararme para una carrera.",
+      "skills-career-interests": "Conozco mis habilidades e intereses profesionales\n",
+      "parenting-programs": "*Si tengo familia,* participo en programas para padres o familias.\n",
+      "five-keys-interest": "Sé en cuál de los programas de las 5 Claves me interesa participar. ",
+      "career-programs": "Estoy inscrito en programas universitarios, vocacionales o de capacitación para prepararme para una carrera.",
+      "mental-health-assessment": "He completado una evaluación de salud mental o abuso de sustancias.",
+      "parenting-programs-2yr": "*Si tengo familia,* participo en programas para padres o familiares.\n",
+      "clinical-program": "*Si corresponde,* he completado o estoy en vías de completar cualquier programa clínico prescrito.",
+      "job-opportunities": "Sé a qué tipo de oportunidades laborales puedo postularme.",
+      "resume-portfolio": "Tengo un currículum o portafolio de trabajo.",
+      "safe-housing": "Tengo un lugar seguro donde vivir después de la liberación.\n",
+      "backup-housing": "Tengo un plan de vivienda alternativo.",
+      "reentry-circle": "Sé cuándo es mi junta del Círculo Interno de Reingreso o ya he asistido.",
+      "social-security-card": "Tengo mi tarjeta del Seguro Social.",
+      "state-id-license": "Tengo mi identificación estatal o licencia de conducir.\n",
+      "birth-certificate-120": "Tengo mi certificado de nacimiento.",
+      "medicaid-120": "Tengo Medicaid.",
+      "medical-checkup": "Me he realizado un examen médico.",
+      "continuation-care-plan": "*Si corresponde,* cuento con un plan de atención médica continua (citas, proveedores o referencias).",
+      "medication-supply": "*Si corresponde,* me iré con un suministro de medicamentos para 30 días, más resurtidos.",
+      "treatment-aftercare": "*Si corresponde,* sé dónde puedo recibir tratamiento o cuidados posteriores si los necesito.",
+      "barriers-plan": "Tengo un plan para gestionar las barreras para obtener la licencia de conducir o el empleo.\n",
+      "budget-plan": "Tengo un presupuesto para mi primer mes después de la liberación. ",
+      "legal-obligations": "*Si corresponde,* conozco mis obligaciones legales o financieras (Pensión alimenticia l, multas, deudas).\n",
+      "parole-expectations": "*Si corresponde,* entiendo qué esperar durante la libertad condicional.",
+      "supportive-person": "Cuento con al menos una persona de apoyo o mentor con quien puedo contar.",
+      "peer-support": "Estoy conectado a programas de apoyo entre pares o de reingreso.",
+      "success-plan": "Tengo un Plan de Éxito con objetivos para 2 semanas, 30, 60 y 90 días.",
+      "community-help": "Sé a dónde acudir en la comunidad para obtener ayuda adicional.",
+      "transportation-plan": "Tengo un plan de transporte para el día de la liberación y para el trabajo/supervisión."
+    }
+  },
+  "infoPages": {
+    "mmtd": {
+      "heading": "Fecha Mínima Obligatoria (MMTD)",
+      "body": "Su Fecha Mínima Obligatoria (MMTD) es la fecha en que finaliza la parte mínima requerida de su sentencia. La ley establece la fecha mínima obligatoria con base en el total de su sentencia combinada.\n\nSi su sentencia tiene un mínimo obligatorio, debe cumplir todo ese tiempo antes de que se aplique o se obtenga el tiempo por buena conducta.   \n\n<PolicyCallout text=\"Para más información, investigue\n\n-**Nebraska Revised Statute 28-105**\n-**Nebraska Revised Statute 83-1,107**\n \nen la Biblioteca Legal.\n\nAlternativamente, envíe sus preguntas al personal de la oficina de registros de su instalación a través de una Solicitud de Entrevista de Recluso (IIR).\" />\n"
+    },
+    "ped": {
+      "heading": "Fecha de Elegibilidad de Libertad Condicional (PED)",
+      "body": "La Fecha de Elegibilidad para Libertad Condicional (PED) es la fecha en que usted es elegible por primera vez para la libertad condicional. La Junta de Libertad Condicional de Nebraska establece las Fechas de Audiencia de Libertad Condicional según los resultados de las revisiones. En la audiencia, la Junta de Libertad Condicional de Nebraska decidirá si concede la libertad condicional, la deniega o pospone la decisión.\n\n\nSu PED depende de la duración de su condena y de cualquier cambio en su historial de buena conducta.\n\nLa pena mínima obligatoria es el tiempo mínimo que debe cumplir antes de ser elegible para la libertad condicional. Su fecha de elegibilidad para la libertad condicional nunca puede ser anterior a la fecha de la pena mínima obligatoria.  \n\n  iv.        Usted es elegible para la libertad condicional en la fecha más temprana de las siguientes:\n- (a) “Cuando la persona haya cumplido la mitad del período mínimo de su condena, según lo dispuesto en Nebraska Revised Statute, §§ 83-1,107 y 83-1,108”;\n- (b) “Si cumple una condena máxima de 20 años o menos, dos años         antes de la fecha de liberación obligatoria de la persona” (Fecha Tentativa de Liberación); o \n- (c) “Si cumple una condena máxima de más de 20 años, cuando la         persona haya cumplido el ochenta por ciento del tiempo hasta la fecha de salida obligatoria” (Fecha de liberación tentativa)\n\n\nSi se modifica su fecha de elegibilidad para libertad condicional o su fecha tentativa de liberación, se le notificará por escrito la nueva fecha tentativa de liberación o la fecha de elegibilidad para libertad condicional.\n\nLos cambios relacionados con las fechas de elegibilidad para libertad condicional del LB 50 ya se han reflejado en las fechas.\n\n<PolicyCallout text=\"Para obtener más información, consulte el \n**Nebraska Revised Statute 83-1,110**\nen la Biblioteca de Derecho.\n\nComo alternativa, presente sus preguntas al personal de la \t\t\t\t\toficina de registros de su centro mediante una Solicitud de \t\t\t\t\tEntrevista con el Recluso (IIR).\"/>\n"
+    },
+    "trd": {
+      "heading": "Fecha Tentativa de Salida (TRD)",
+      "body": "Su Fecha Tentativa de Liberación (TRD) es la fecha estimada en que será liberado de prisión. Esta fecha puede cambiar debido a una medida disciplinaria, un cambio en el cumplimiento de los plazos, la revocación de la libertad condicional o un cambio en la ley o su interpretación.\n\nSi se modifica su fecha de elegibilidad para libertad condicional o su fecha tentativa de liberación, se le notificará por escrito la nueva fecha tentativa de liberación o de elegibilidad para libertad condicional. \n\n<PolicyCallout text=\"\nPara más información, consulte el\n- **Nebraska Revised Statute 28-105**\n- **Nebraska Revised Statute 83-1,107**\n\nen la Biblioteca Legal.\n\nComo alternativa, envíe sus preguntas al personal de la oficina de registros de su centro mediante una Solicitud de Entrevista con el Recluso (IIR).\"/>\n"
+    },
+    "gbmd": {
+      "heading": "Saldo de Tiempo de Buena Conducta/Libertad Obligatoria (GB/MD) ",
+      "body": "## Que es\n\nLos días de Saldo de tiempo de buena conducta/Libertad Obligatoria (GB/MD) se emiten por adelantado. Esto se refleja en su Fecha de Salida Tentativa (TRD) al momento del ingreso. \n\n## Como funciona\n\nSi no tiene una sentencia mínima obligatoria, recibirá seis meses por cada año de su condena y una parte proporcional por cualquier parte de su condena que sea inferior a un año. \n\nSi tiene una sentencia mínima obligatoria, sus días de GB/MD reflejarán sus días de tiempo de buena conducta según su fecha de término mínimo obligatorio (MMTD).\n\n##Pérdida de tiempo de buena conducta: Restaurable/No restaurable\n\nEste tiempo de buena conducta se puede eliminar mediante reportes de mala conducta (MR).\n\n##Cómo recuperar tiempo\n\nSi perdió tiempo recuperable, puede recuperarlo siguiendo las reglas. **El personal de NDCS iniciará automáticamenteeste proceso** en el plazo de un mes desde que cumpla los requisitos.\n\n##¿Puedo recuperar mi tiempo perdido?\n\nEste es un resumen de la política para **recuperar el tiempo de buena conducta perdido.** Para consultar las normas legales oficiales e información sobre cómo apelar una decisión, consulte **NDCS policy 117.02** en la Biblioteca Legal. LB 191 y otros formularios de Credito de Tiempo Ganado son diferentes y tienen políticas independientes.\n\nPara poder recuperar el tiempo de buena conducta perdido, usted debe cumplir con estas reglas:\n- ** No haber sido declarado culpable de mala conducta de \"Clase I\" durante el último año.**\n- **Sin reportes de mala conducta de “IDC” durante los últimos 6 meses.\n- **No haber tenido más de 2 malas conductas de \"UDC\" durante los últimos 6 meses.\n    - **Nota:** Estos plazos comienzan a contar a partir de  \n        la fecha de su último reporte de mala conducta.\n- **No ingresar a una vivienda restrictiva de largo plazo (LTRH):** No puede estar en una LTRH actualmente ni haber estado allí en los últimos 90 días.\n- **Participar en tratamiento:** Debe aceptar y asistir a todos los programas clínicos recomendados.\n- **Tiempo restante:** Su fecha tentativa de liberación (TRD) debe ser mayor a 4 meses.\n\n##C ómo funciona el proceso\n\n1. **El personal inicia la solicitud:** Una vez que cumpla con las normas, un miembro del personal presentará la solicitud por usted.\n2. **La decisión:** El Alcaide aprobará o rechazará la solicitud en un plazo de 20 días.\n3. **Obtener más tiempo:** Inicialmente, puede obtener 30 días adicionales, una vez al mes.\n- Si recupera 30 días cada mes durante 5 meses consecutivos y aún le queda tiempo de buena conducta, puede empezar a recuperar 60 días cada mes.\n- Después de tres meses de recuperación de 60 días, podría ser elegible para recuperar 90 días cada mes.\n4. **Si recibe un nuevo reporte de mala conducta:** Si deja de cumplir con las normas, el proceso se reinicia. Tendrá que volver a acumular 30 días seguidos durante 5 meses antes de poder acumular más de 30 días a un tiempo .\n5. **Si se rechaza:** Si su solicitud es rechazada, el personal esperará 90 días antes de volver a intentarlo.\n\n"
+    },
+    "lb191": {
+      "heading": "LB 191 Credito de Tiempo Ganado",
+      "body": "Los créditos LB 191 te otorgan 3 días adicionales de tu Fecha Tentativa de Liberacion (TRD) cada mes por buen comportamiento. Estos días se aplican a tu Fecha de Liberación Tentativa (TRD) al obtenerlos.\n\nSi no tiene una sentencia mínima obligatoria, puede empezar a acumular estos días después de los primeros 12 meses de encarcelamiento sin tener que presentar reportes de mala conducta de clase 1, clase 2 o más de tres de clase 3 que lo descalifiquen. No hay límite para la cantidad de créditos que puede acumular, y una vez obtenidos, no se le pueden retirar.\n\nSi tiene una sentencia mínima obligatoria, puede comenzar a obtener estos créditos después de cumplirla sin ningún reporte de mala conducta que lo descalifique.\n\n<PolicyCallout text=\"Para más información, investigue\n**Nebraska Revised Statute 83-1,107\t**\nen la Biblioteca Legal. \n\nAlternativamente, envíe sus preguntas al personal de la oficina de registros de su instalación a través de una Solicitud de Entrevista de Recluso (IIR).\"/>\n"
+    },
+    "jailCredits": {
+      "heading": "Créditos Carcelarios",
+      "body": "Los créditos carcelarios son los días que el tribunal determinó que usted pasó en prisión por el delito que condujo a su sentencia. Estos días se restan de su sentencia total combinada.\n\n<PolicyCallout text=\"Para más información, investigue\n**Nebraska Revised Statute 83-1,106**\nen la Biblioteca Legal. \n\nAlternativamente, envíe sus preguntas al personal de la oficina de registros de su instalación a través de una Solicitud de Entrevista de Recluso (IIR).\"/>\n"
+    }
+  },
+  "disclaimer": "Esta información es proporcionada por un proveedor externo únicamente con fines informativos generales. No constituye asesoramiento legal ni sustituye el asesoramiento individualizado de su abogado.\n\nProporcionar esta información no crea una relación abogado-cliente entre el Departamento de Servicios Correccionales de Nebraska y el usuario.\nProporcionar esta información no crea una relación abogado-cliente entre el proveedor externo y el usuario.\n\nEl Departamento de Servicios Correccionales de Nebraska y el proveedor externo no serán responsables de ningún error, omisión, retraso o interrupción relacionada con la información proporcionada.\n\n"
+}

@@ -28,6 +28,6 @@ export const usNeResidentsConfig: ResidentsConfig = {
     },
   },
   translation: {
-    additionalLanguages: [],
+    additionalLanguages: ["es"],
   },
 };
