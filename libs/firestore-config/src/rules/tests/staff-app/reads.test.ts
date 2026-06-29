@@ -22,9 +22,11 @@ import {
 } from "@firebase/rules-unit-testing";
 
 import {
+  seedClientOpportunityUpdate,
   startTestEnv,
   testAllQueriesUnrestricted,
   testAllReadsForState,
+  testCollectionGroupOpportunityUpdateRead,
   testReadCustomTaskForState,
   testUserUpdateRead,
 } from "../utils";
@@ -165,6 +167,79 @@ describe("app = staff", () => {
       );
     },
   );
+
+  describe("clientOpportunityUpdates (collectionGroup)", () => {
+    beforeEach(async () => {
+      // Seed one document per state so rules are evaluated against real data.
+      await seedClientOpportunityUpdate(testEnv, "US_TN");
+      await seedClientOpportunityUpdate(testEnv, "US_ND");
+      await seedClientOpportunityUpdate(testEnv, "US_CA");
+      await seedClientOpportunityUpdate(testEnv, "US_PA");
+    });
+
+    // eslint-disable-next-line vitest/expect-expect
+    test.each([
+      ["TN", getTNUser],
+      ["ND", getNDUser],
+    ])(
+      "%s user can query clientOpportunityUpdates for their own state",
+      async (userState, getUserContext) => {
+        await testCollectionGroupOpportunityUpdateRead(
+          getUserContext(testEnv).firestore(),
+          assertSucceeds,
+          `US_${userState}`,
+        );
+      },
+    );
+
+    // eslint-disable-next-line vitest/expect-expect
+    test.each([
+      ["TN", getTNUser, "ND"],
+      ["ND", getNDUser, "TN"],
+    ])(
+      "%s user cannot query clientOpportunityUpdates for a different state",
+      async (_userState, getUserContext, otherState) => {
+        await testCollectionGroupOpportunityUpdateRead(
+          getUserContext(testEnv).firestore(),
+          assertFails,
+          `US_${otherState}`,
+        );
+      },
+    );
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("stateless user cannot query clientOpportunityUpdates", async () => {
+      await testCollectionGroupOpportunityUpdateRead(
+        getStatelessUser(testEnv).firestore(),
+        assertFails,
+        "US_TN",
+      );
+    });
+
+    // eslint-disable-next-line vitest/expect-expect
+    test.each([["TN"], ["ND"]])(
+      "Recidiviz user can query %s clientOpportunityUpdates from recidivizAllowedStates",
+      async (userState) => {
+        await testCollectionGroupOpportunityUpdateRead(
+          getRecidivizUser(testEnv).firestore(),
+          assertSucceeds,
+          `US_${userState}`,
+        );
+      },
+    );
+
+    // eslint-disable-next-line vitest/expect-expect
+    test.each([["CA"], ["PA"]])(
+      "Recidiviz user cannot query %s clientOpportunityUpdates if not in recidivizAllowedStates",
+      async (userState) => {
+        await testCollectionGroupOpportunityUpdateRead(
+          getRecidivizUser(testEnv).firestore(),
+          assertFails,
+          `US_${userState}`,
+        );
+      },
+    );
+  });
 
   describe("clientUpdatesV2/{clientId}/custom_tasks/{taskId}", () => {
     // The recursive rule on clientUpdatesV2 covers this subcollection; these

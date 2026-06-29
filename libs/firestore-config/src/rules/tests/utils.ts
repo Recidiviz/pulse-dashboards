@@ -17,6 +17,7 @@
 
 import {
   collection,
+  collectionGroup,
   doc,
   getDoc,
   getDocs,
@@ -24,7 +25,10 @@ import {
   setDoc,
   where,
 } from "@firebase/firestore";
-import { initializeTestEnvironment } from "@firebase/rules-unit-testing";
+import {
+  initializeTestEnvironment,
+  RulesTestEnvironment,
+} from "@firebase/rules-unit-testing";
 import fs from "fs";
 import path from "path";
 
@@ -214,6 +218,46 @@ export async function testReadCustomTaskForState(
         `${stateCode}_someID`,
         "custom_tasks",
         "task123",
+      ),
+    ),
+  );
+}
+
+/**
+ * Seeds a clientOpportunityUpdates document under clientUpdatesV2 bypassing
+ * security rules, so tests can assert read access against real data.
+ */
+export async function seedClientOpportunityUpdate(
+  testEnv: RulesTestEnvironment,
+  stateCode: string,
+) {
+  await testEnv.withSecurityRulesDisabled(async (context) => {
+    await setDoc(
+      doc(
+        context.firestore(),
+        "clientUpdatesV2",
+        `${stateCode}_someClient`,
+        "clientOpportunityUpdates",
+        "someOpportunity",
+      ),
+      { stateCode },
+    );
+  });
+}
+
+/**
+ * Attempts a collectionGroup query on clientOpportunityUpdates filtered by stateCode.
+ */
+export async function testCollectionGroupOpportunityUpdateRead(
+  db: FirestoreInstance,
+  assertFn: AssertFn,
+  stateCode: string,
+) {
+  await assertFn(
+    getDocs(
+      query(
+        collectionGroup(db, "clientOpportunityUpdates"),
+        where("stateCode", "==", stateCode),
       ),
     ),
   );

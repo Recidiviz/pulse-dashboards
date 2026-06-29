@@ -176,6 +176,12 @@ service cloud.firestore {
       allow write: if appIsStaff() && allowPersonUpdates(clientId);
     }
 
+    // collectionGroup rule required for querying clientOpportunityUpdates across by currentReviewerId
+    match /{path=**}/clientOpportunityUpdates/{docId} {
+      allow read: if appIsStaff() && (recidivizAllowedStatesIncludesTarget("clientOpportunityUpdates") || stateCodeMatchesTarget());
+    }
+
+
     match /DEMO_userUpdates/{path=**}/{document} {
       allow read: if appIsStaff() && usernameMatches(document);
       allow write: if appIsStaff() && allowUserUpdates(document);
