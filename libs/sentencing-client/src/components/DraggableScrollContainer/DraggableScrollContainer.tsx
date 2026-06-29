@@ -16,9 +16,11 @@
 // =============================================================================
 
 import React, {
+  forwardRef,
   PropsWithChildren,
   useCallback,
   useEffect,
+  useImperativeHandle,
   useRef,
   useState,
 } from "react";
@@ -29,6 +31,7 @@ import * as Styled from "../CaseDetails/CaseDetails.styles";
 
 const ScrollControlsContainer = styled.div`
   position: relative;
+  width: 100%;
 `;
 
 const ScrollContainer = styled.div<{ isCursorGrab?: boolean }>`
@@ -42,111 +45,156 @@ const ScrollContainer = styled.div<{ isCursorGrab?: boolean }>`
   margin-right: 40px;
 `;
 
-const SCROLL_SPEED_OFFSET = 200;
+const DEFAULT_SCROLL_OFFSET = 200;
 
-const DraggableScrollContainer: React.FC<
-  PropsWithChildren & { hideArrowButtons?: boolean }
-> = ({ children, hideArrowButtons = false }) => {
-  const scrollRef = useRef<HTMLDivElement>(null);
+export interface DraggableScrollContainerHandle {
+  scrollLeft: () => void;
+  scrollRight: () => void;
+  scrollTo: (item: number) => void;
+}
 
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
-  const [currentScrollLeft, setCurrentScrollLeft] = useState(0);
-
-  const handleMouseDown = useCallback((e: MouseEvent) => {
-    if (scrollRef.current) {
-      setIsDragging(true);
-      setStartX(e.pageX - scrollRef.current.offsetLeft);
-      setScrollLeft(scrollRef.current.scrollLeft);
-    }
-  }, []);
-
-  const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
-      if (!isDragging || !scrollRef.current) return;
-      const xOffset = e.pageX;
-      const scrollSpeedDelta = (xOffset - startX) * 0.5;
-      setCurrentScrollLeft(scrollLeft - scrollSpeedDelta);
+const DraggableScrollContainer = forwardRef<
+  DraggableScrollContainerHandle,
+  PropsWithChildren & {
+    hideArrowButtons?: boolean;
+    scrollOffset?: number;
+    onSlideChange?: (slide: number) => void;
+  }
+>(
+  (
+    {
+      children,
+      hideArrowButtons = false,
+      scrollOffset = DEFAULT_SCROLL_OFFSET,
+      onSlideChange,
     },
-    [isDragging, scrollLeft, startX],
-  );
+    ref,
+  ) => {
+    const scrollRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
-  }, []);
+    const [isDragging, setIsDragging] = useState(false);
+    const [startX, setStartX] = useState(0);
+    const [dragStartScrollLeft, setDragStartScrollLeft] = useState(0);
+    const [currentScrollLeft, setCurrentScrollLeft] = useState(0);
 
-  const calculateNewOffset = (currentOffset: number, delta: number) => {
-    if (!scrollRef.current) return currentOffset;
+    const handleMouseDown = useCallback((e: MouseEvent) => {
+      if (scrollRef.current) {
+        setIsDragging(true);
+        setStartX(e.pageX - scrollRef.current.offsetLeft);
+        setDragStartScrollLeft(scrollRef.current.scrollLeft);
+      }
+    }, []);
 
-    const nextOffset = currentOffset + delta;
-    const maxOffset =
-      scrollRef.current.scrollWidth - scrollRef.current.offsetWidth;
-
-    return delta < 0
-      ? Math.max(nextOffset, 0) // Scrolling left
-      : Math.min(nextOffset, maxOffset); // Scrolling right
-  };
-
-  const handleScrollLeft = () => {
-    setCurrentScrollLeft((prev) =>
-      calculateNewOffset(prev, -SCROLL_SPEED_OFFSET),
+    const handleMouseMove = useCallback(
+      (e: MouseEvent) => {
+        if (!isDragging || !scrollRef.current) return;
+        const xOffset = e.pageX;
+        const scrollSpeedDelta = (xOffset - startX) * 0.5;
+        setCurrentScrollLeft(dragStartScrollLeft - scrollSpeedDelta);
+      },
+      [isDragging, dragStartScrollLeft, startX],
     );
-  };
 
-  const handleScrollRight = () => {
-    setCurrentScrollLeft((prev) =>
-      calculateNewOffset(prev, SCROLL_SPEED_OFFSET),
+    const handleMouseUp = useCallback(() => {
+      setIsDragging(false);
+    }, []);
+
+    const calculateNewOffset = (currentOffset: number, delta: number) => {
+      if (!scrollRef.current) return currentOffset;
+
+      const nextOffset = currentOffset + delta;
+      const maxOffset =
+        scrollRef.current.scrollWidth - scrollRef.current.offsetWidth;
+
+      return delta < 0
+        ? Math.max(nextOffset, 0) // Scrolling left
+        : Math.min(nextOffset, maxOffset); // Scrolling right
+    };
+
+    const handleScrollLeft = useCallback(() => {
+      // calculateNewOffset only reads scrollRef.current (stable) and its own params,
+      // so the stale closure reference is safe to exclude.
+
+      setCurrentScrollLeft((prev) => calculateNewOffset(prev, -scrollOffset));
+    }, [scrollOffset]);
+
+    const handleScrollRight = useCallback(() => {
+      // calculateNewOffset only reads scrollRef.current (stable) and its own params,
+      // so the stale closure reference is safe to exclude.
+
+      setCurrentScrollLeft((prev) => calculateNewOffset(prev, scrollOffset));
+    }, [scrollOffset]);
+
+    useImperativeHandle(
+      ref,
+      () => ({
+        scrollLeft: handleScrollLeft,
+        scrollRight: handleScrollRight,
+        scrollTo: (item: number) => setCurrentScrollLeft(item * scrollOffset),
+      }),
+      [handleScrollLeft, handleScrollRight, scrollOffset],
     );
-  };
 
-  useEffect(() => {
-    const scrollContainer = scrollRef.current;
-    if (scrollContainer) {
-      scrollContainer.addEventListener("mousedown", handleMouseDown);
-      scrollContainer.addEventListener("mousemove", handleMouseMove);
-      scrollContainer.addEventListener("mouseup", handleMouseUp);
-      scrollContainer.addEventListener("mouseleave", handleMouseUp);
+    useEffect(() => {
+      const scrollContainer = scrollRef.current;
+      if (scrollContainer) {
+        scrollContainer.addEventListener("mousedown", handleMouseDown);
+        scrollContainer.addEventListener("mousemove", handleMouseMove);
+        scrollContainer.addEventListener("mouseup", handleMouseUp);
+        scrollContainer.addEventListener("mouseleave", handleMouseUp);
 
-      return () => {
-        scrollContainer.removeEventListener("mousedown", handleMouseDown);
-        scrollContainer.removeEventListener("mousemove", handleMouseMove);
-        scrollContainer.removeEventListener("mouseup", handleMouseUp);
-        scrollContainer.removeEventListener("mouseleave", handleMouseUp);
-      };
-    }
-    return;
-  }, [
-    isDragging,
-    startX,
-    scrollLeft,
-    handleMouseDown,
-    handleMouseMove,
-    handleMouseUp,
-  ]);
+        return () => {
+          scrollContainer.removeEventListener("mousedown", handleMouseDown);
+          scrollContainer.removeEventListener("mousemove", handleMouseMove);
+          scrollContainer.removeEventListener("mouseup", handleMouseUp);
+          scrollContainer.removeEventListener("mouseleave", handleMouseUp);
+        };
+      }
+      return;
+    }, [
+      isDragging,
+      startX,
+      dragStartScrollLeft,
+      handleMouseDown,
+      handleMouseMove,
+      handleMouseUp,
+    ]);
 
-  useEffect(() => {
-    if (!scrollRef.current) return;
-    scrollRef.current.scrollLeft = currentScrollLeft;
-  }, [currentScrollLeft]);
+    useEffect(() => {
+      if (!scrollRef.current) return;
+      scrollRef.current.scrollLeft = currentScrollLeft;
+    }, [currentScrollLeft]);
 
-  return (
-    <ScrollControlsContainer>
-      {!hideArrowButtons && (
-        <Styled.CarouselButtons>
-          <Styled.CarouselButton onClick={handleScrollLeft}>
-            <ChevronIcon />
-          </Styled.CarouselButton>
-          <Styled.CarouselButton onClick={handleScrollRight}>
-            <ChevronIcon />
-          </Styled.CarouselButton>
-        </Styled.CarouselButtons>
-      )}
-      <ScrollContainer ref={scrollRef} isCursorGrab={!hideArrowButtons}>
-        {children}
-      </ScrollContainer>
-    </ScrollControlsContainer>
-  );
-};
+    const currentSlide = Math.round(currentScrollLeft / scrollOffset);
+
+    useEffect(() => {
+      onSlideChange?.(currentSlide);
+    }, [currentSlide, onSlideChange]);
+
+    return (
+      <ScrollControlsContainer>
+        {!hideArrowButtons && (
+          <Styled.CarouselButtons>
+            <Styled.CarouselButton onClick={handleScrollLeft}>
+              <ChevronIcon />
+            </Styled.CarouselButton>
+            <Styled.CarouselButton onClick={handleScrollRight}>
+              <ChevronIcon />
+            </Styled.CarouselButton>
+          </Styled.CarouselButtons>
+        )}
+        <ScrollContainer
+          ref={scrollRef}
+          isCursorGrab={!hideArrowButtons}
+          onScroll={(e) => setCurrentScrollLeft(e.currentTarget.scrollLeft)}
+        >
+          {children}
+        </ScrollContainer>
+      </ScrollControlsContainer>
+    );
+  },
+);
+
+DraggableScrollContainer.displayName = "DraggableScrollContainer";
 
 export default DraggableScrollContainer;

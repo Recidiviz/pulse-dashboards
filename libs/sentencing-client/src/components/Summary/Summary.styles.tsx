@@ -204,6 +204,18 @@ export const InsightsSidePanel = styled(SummarySidePanel)`
   flex-direction: column;
 `;
 
+const INSIGHTS_CHART_CARD_WIDTH = 700;
+const INSIGHTS_CHARTS_GAP = 16;
+// One full slide width — card + gap — used to snap between slides on arrow click.
+export const INSIGHTS_CHART_SCROLL_OFFSET =
+  INSIGHTS_CHART_CARD_WIDTH + INSIGHTS_CHARTS_GAP;
+
+export const Charts = styled.div`
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: ${INSIGHTS_CHARTS_GAP}px;
+`;
+
 export const SignatureSidePanel = styled(InsightsSidePanel)``;
 
 export const InsightsChartCard = styled.div<{ $isEmpty?: boolean }>`
@@ -212,12 +224,13 @@ export const InsightsChartCard = styled.div<{ $isEmpty?: boolean }>`
   flex-direction: column;
   align-items: flex-start;
   gap: 16px;
-  align-self: stretch;
   border-radius: 10px;
   border: 1px solid ${palette.slate10};
   background: ${palette.white};
   box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.35) inset;
   position: relative;
+  flex-shrink: 0;
+  width: ${INSIGHTS_CHART_CARD_WIDTH}px;
   ${({ $isEmpty }) => $isEmpty && `min-height: 521px;`}
 `;
 
@@ -382,13 +395,6 @@ export const MoreText = styled.span`
   font-style: italic;
 `;
 
-export const CarouselNav = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-self: stretch;
-  gap: 5px;
-`;
-
 export const CarouselArrowButton = styled.button`
   display: flex;
   padding: 7.326px 6.94px;
@@ -404,6 +410,14 @@ export const CarouselArrowButton = styled.button`
     opacity: 0.4;
     cursor: default;
   }
+`;
+
+export const CarouselNav = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-self: flex-start;
+  gap: 5px;
+  margin-top: 4px;
 `;
 
 export const TimeServedPanelStatsRow = styled.div`

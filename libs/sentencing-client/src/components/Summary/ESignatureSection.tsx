@@ -226,7 +226,7 @@ export const ESignatureSection: React.FC<ESignatureSectionProps> = observer(
         </Styled.FormsRow>
         {!isReportComplete && (
           <Styled.HelperText>
-            Report cannot be signed until all required fields are completed
+            Report cannot be signed until all required fields are completed.
           </Styled.HelperText>
         )}
       </SummaryStyled.SignatureSidePanel>

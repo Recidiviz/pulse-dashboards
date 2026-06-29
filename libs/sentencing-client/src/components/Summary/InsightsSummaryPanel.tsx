@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
 import { palette } from "~design-system";
 
@@ -25,13 +25,16 @@ import {
   formatTimeServedPct,
   printFormattedRecordString,
 } from "../../utils/utils";
-import ChevronLeft from "../assets/chevron-left.svg?react";
-import ChevronRight from "../assets/chevron-right.svg?react";
+import ChevronLeftIcon from "../assets/chevron-left.svg?react";
+import ChevronRightIcon from "../assets/chevron-right.svg?react";
 import * as CommonStyled from "../CaseDetails/components/charts/components/Styles";
 import { SENTENCE_DISTRIBUTION_TEXT } from "../CaseDetails/components/charts/constants";
 import { DispositionDonutChart } from "../CaseDetails/components/charts/DispositionChart/DispositionDonutChart";
 import { SARDispositionChartExplanation } from "../CaseDetails/components/charts/DispositionChart/SARDispositionChartExplanation";
 import { getSARDispositionChartSubtitle } from "../CaseDetails/components/charts/DispositionChart/sarUtils";
+import DraggableScrollContainer, {
+  DraggableScrollContainerHandle,
+} from "../DraggableScrollContainer/DraggableScrollContainer";
 import { TimeServed } from "../TimeServed/TimeServed";
 import { InfoIconWithTooltip } from "../Tooltip/Tooltip";
 import {
@@ -39,10 +42,6 @@ import {
   InsightSubjectSpans,
 } from "./insightsUtils";
 import * as Styled from "./Summary.styles";
-
-interface InsightsSummaryPanelProps {
-  presenter: SARDetailsPresenter;
-}
 
 const ORAS_REQUIRED_MESSAGE =
   "An ORAS assessment score is required to generate this data for this client.";
@@ -63,195 +62,198 @@ function InsightsChartEmptyState({
   );
 }
 
-export const InsightsSummaryPanel: React.FC<InsightsSummaryPanelProps> =
-  observer(function InsightsSummaryPanel({ presenter }) {
-    const insightData = presenter.insightData;
-    const sortedDispositionData = presenter.sortedDispositionData;
-    const hasOrasAssessment = presenter.offenderAssessment.hasOrasAssessment;
-    const emptyStateContext = presenter.emptyStateDescriptionContext;
-    const clientFullName = presenter.SARAttributes.client?.fullName;
+export const InsightsSummaryPanel: React.FC<{
+  presenter: SARDetailsPresenter;
+}> = observer(function InsightsSummaryPanel({ presenter }) {
+  const insightData = presenter.insightData;
+  const sortedDispositionData = presenter.sortedDispositionData;
+  const hasOrasAssessment = presenter.offenderAssessment.hasOrasAssessment;
+  const emptyStateContext = presenter.emptyStateDescriptionContext;
+  const clientFullName = presenter.SARAttributes.client?.fullName;
 
-    const [activeSlide, setActiveSlide] = useState(0);
+  const carouselRef = useRef<DraggableScrollContainerHandle>(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
-    if (!insightData && !emptyStateContext) return null;
+  const hasDispositionData =
+    !!insightData && insightData.dispositionNumRecords > 0;
+  const avgPctServed = insightData?.avgPctServed ?? null;
+  const hasTimeServedData =
+    !!insightData &&
+    insightData.timeServedNumRecords != null &&
+    insightData.timeServedNumRecords > 0 &&
+    avgPctServed != null;
 
-    const hasDispositionData =
-      !!insightData && insightData.dispositionNumRecords > 0;
+  if (!insightData && !emptyStateContext) return null;
 
-    const avgPctServed = insightData?.avgPctServed ?? null;
-    const hasTimeServedData =
-      insightData?.timeServedNumRecords != null &&
-      insightData.timeServedNumRecords > 0 &&
-      avgPctServed != null;
+  const slideFootnotes = [
+    hasDispositionData
+      ? buildInsightsFootnoteText(
+          insightData.dispositionNumRecords,
+          insightData.gender,
+          insightData.assessmentScoreBucketStart,
+        )
+      : null,
+    hasTimeServedData && insightData.timeServedNumRecords != null
+      ? buildInsightsFootnoteText(
+          insightData.timeServedNumRecords,
+          insightData.gender,
+          insightData.assessmentScoreBucketStart,
+        )
+      : null,
+  ];
 
-    const sentenceDistributionSlide = hasDispositionData ? (
-      <>
-        <CommonStyled.ChartTitle>
-          Sentence Distribution{" "}
-          <InfoIconWithTooltip
-            headerText={SENTENCE_DISTRIBUTION_TEXT}
-            content={
-              <CommonStyled.ChartTooltipContentSection>
-                <SARDispositionChartExplanation insight={insightData} />
-              </CommonStyled.ChartTooltipContentSection>
-            }
-          />
-        </CommonStyled.ChartTitle>
+  const sentenceDistributionSlide = hasDispositionData ? (
+    <Styled.InsightsChartCard>
+      <CommonStyled.ChartTitle>
+        Sentence Distribution{" "}
+        <InfoIconWithTooltip
+          headerText={SENTENCE_DISTRIBUTION_TEXT}
+          content={
+            <CommonStyled.ChartTooltipContentSection>
+              <SARDispositionChartExplanation insight={insightData} />
+            </CommonStyled.ChartTooltipContentSection>
+          }
+        />
+      </CommonStyled.ChartTitle>
+      <CommonStyled.ChartSubTitle>
+        {getSARDispositionChartSubtitle(insightData)}{" "}
+        <span>
+          (Based on {insightData.dispositionNumRecords.toLocaleString()}{" "}
+          {printFormattedRecordString(insightData.dispositionNumRecords)})
+        </span>
+      </CommonStyled.ChartSubTitle>
+      <Styled.InsightsDonutWrapper>
+        <DispositionDonutChart
+          datapoints={sortedDispositionData}
+          numberOfRecords={insightData.dispositionNumRecords}
+          selectedRecommendation={null}
+          inlineLayout
+        />
+      </Styled.InsightsDonutWrapper>
+    </Styled.InsightsChartCard>
+  ) : (
+    <Styled.InsightsChartCard $isEmpty>
+      <CommonStyled.ChartTitle>Sentence Distribution</CommonStyled.ChartTitle>
+      <InsightsChartEmptyState
+        hasOrasAssessment={hasOrasAssessment}
+        noDataMessage="There are no previous sentencing records matching this client's gender, risk score, and offense."
+      />
+    </Styled.InsightsChartCard>
+  );
+
+  const timeServedSlide =
+    insightData &&
+    insightData.timeServedNumRecords != null &&
+    insightData.timeServedNumRecords > 0 &&
+    avgPctServed != null ? (
+      <Styled.InsightsChartCard>
+        <Styled.InsightsChartTitleRow>
+          <CommonStyled.ChartTitle>
+            Average Time Served{" "}
+            <InfoIconWithTooltip
+              headerText="Average Time Served"
+              content={
+                <CommonStyled.ChartTooltipContentSection>
+                  Average Time Served shows the average amount of time served in
+                  prison for{" "}
+                  <InsightSubjectSpans
+                    gender={insightData.gender}
+                    assessmentScoreBucketStart={
+                      insightData.assessmentScoreBucketStart
+                    }
+                    offense={insightData.offense}
+                    offenseCategory={insightData.offenseCategory}
+                  />{" "}
+                  before being granted parole, using MODOC data from 2017 to
+                  present.
+                </CommonStyled.ChartTooltipContentSection>
+              }
+            />
+          </CommonStyled.ChartTitle>
+        </Styled.InsightsChartTitleRow>
         <CommonStyled.ChartSubTitle>
           {getSARDispositionChartSubtitle(insightData)}{" "}
           <span>
-            (Based on {insightData.dispositionNumRecords.toLocaleString()}{" "}
-            {printFormattedRecordString(insightData.dispositionNumRecords)})
+            (Based on {insightData.timeServedNumRecords.toLocaleString()}{" "}
+            {printFormattedRecordString(insightData.timeServedNumRecords)})
           </span>
         </CommonStyled.ChartSubTitle>
-        <Styled.InsightsDonutWrapper>
-          <DispositionDonutChart
-            datapoints={sortedDispositionData}
-            numberOfRecords={insightData.dispositionNumRecords}
-            selectedRecommendation={null}
-            inlineLayout
+        <Styled.TimeServedPanelStatsRow>
+          <Styled.TimeServedPanelStatColumn>
+            <Styled.TimeServedPanelStatLabel>
+              Average time served:
+            </Styled.TimeServedPanelStatLabel>
+            <Styled.TimeServedPanelStatValue>
+              {formatTimeServedPct(avgPctServed)}%
+            </Styled.TimeServedPanelStatValue>
+          </Styled.TimeServedPanelStatColumn>
+        </Styled.TimeServedPanelStatsRow>
+        <Styled.TimeServedChartWrapper>
+          <TimeServed
+            avgPctServed={avgPctServed}
+            fillColor={palette.data.cornflower1}
+            barHeight={100}
+            labelColor={palette.slate70}
+            labelStyle={Styled.timeServedPanelLabelStyle}
+            showLabelsAbove={false}
           />
-        </Styled.InsightsDonutWrapper>
-      </>
+        </Styled.TimeServedChartWrapper>
+      </Styled.InsightsChartCard>
     ) : (
-      <>
-        <CommonStyled.ChartTitle>Sentence Distribution</CommonStyled.ChartTitle>
+      <Styled.InsightsChartCard $isEmpty>
+        <Styled.InsightsChartTitleRow>
+          <CommonStyled.ChartTitle>Average Time Served</CommonStyled.ChartTitle>
+        </Styled.InsightsChartTitleRow>
         <InsightsChartEmptyState
           hasOrasAssessment={hasOrasAssessment}
-          noDataMessage="There are no previous sentencing records matching this client's gender, risk score, and offense."
+          noDataMessage="There are not enough historical records of time served to show this data."
         />
-      </>
+      </Styled.InsightsChartCard>
     );
 
-    const timeServedSlide =
-      hasTimeServedData &&
-      insightData &&
-      insightData.timeServedNumRecords != null ? (
-        <>
-          <Styled.InsightsChartTitleRow>
-            <CommonStyled.ChartTitle>
-              Average Time Served{" "}
-              <InfoIconWithTooltip
-                headerText="Average Time Served"
-                content={
-                  <CommonStyled.ChartTooltipContentSection>
-                    Average Time Served shows the average amount of time served
-                    in prison for{" "}
-                    <InsightSubjectSpans
-                      gender={insightData.gender}
-                      assessmentScoreBucketStart={
-                        insightData.assessmentScoreBucketStart
-                      }
-                      offense={insightData.offense}
-                      offenseCategory={insightData.offenseCategory}
-                    />{" "}
-                    before being granted parole, using MODOC data from 2017 to
-                    present.
-                  </CommonStyled.ChartTooltipContentSection>
-                }
-              />
-            </CommonStyled.ChartTitle>
-          </Styled.InsightsChartTitleRow>
-          <CommonStyled.ChartSubTitle>
-            {getSARDispositionChartSubtitle(insightData)}{" "}
-            <span>
-              (Based on {insightData.timeServedNumRecords.toLocaleString()}{" "}
-              {printFormattedRecordString(insightData.timeServedNumRecords)})
-            </span>
-          </CommonStyled.ChartSubTitle>
-          <Styled.TimeServedPanelStatsRow>
-            <Styled.TimeServedPanelStatColumn>
-              <Styled.TimeServedPanelStatLabel>
-                Average time served:
-              </Styled.TimeServedPanelStatLabel>
-              <Styled.TimeServedPanelStatValue>
-                {formatTimeServedPct(avgPctServed)}%
-              </Styled.TimeServedPanelStatValue>
-            </Styled.TimeServedPanelStatColumn>
-          </Styled.TimeServedPanelStatsRow>
-          <Styled.TimeServedChartWrapper>
-            <TimeServed
-              avgPctServed={avgPctServed}
-              fillColor={palette.data.cornflower1}
-              barHeight={100}
-              labelColor={palette.slate70}
-              labelStyle={Styled.timeServedPanelLabelStyle}
-              showLabelsAbove={false}
-            />
-          </Styled.TimeServedChartWrapper>
-        </>
-      ) : (
-        <>
-          <Styled.InsightsChartTitleRow>
-            <CommonStyled.ChartTitle>
-              Average Time Served
-            </CommonStyled.ChartTitle>
-          </Styled.InsightsChartTitleRow>
-          <InsightsChartEmptyState
-            hasOrasAssessment={hasOrasAssessment}
-            noDataMessage="There are not enough historical records of time served to show this data."
-          />
-        </>
-      );
-
-    return (
-      <Styled.InsightsSidePanel>
-        <Styled.SectionTitle>Insights</Styled.SectionTitle>
-        {hasDispositionData && (
-          <Styled.InsightsSubtitle>
-            This information represents outcomes for cases similar to that of
-            the current client
-            {clientFullName ? `, ${clientFullName},` : ""} based on gender, risk
-            score, and type of conviction. The statistics below are pulled from
-            historical sentencing data and will appear in the report to provide
-            context for judges, attorneys, and others involved in the case.
-          </Styled.InsightsSubtitle>
-        )}
-        <Styled.InsightsChartCard
-          $isEmpty={
-            (activeSlide === 0 && !hasDispositionData) ||
-            (activeSlide === 1 && !hasTimeServedData)
-          }
+  return (
+    <Styled.InsightsSidePanel>
+      <Styled.SectionTitle>Insights</Styled.SectionTitle>
+      {hasDispositionData && (
+        <Styled.InsightsSubtitle>
+          This information represents outcomes for cases similar to that of the
+          current client
+          {clientFullName ? `, ${clientFullName},` : ""} based on gender, risk
+          score, and type of conviction. The statistics below are pulled from
+          historical sentencing data and will appear in the report to provide
+          context for judges, attorneys, and others involved in the case.
+        </Styled.InsightsSubtitle>
+      )}
+      <DraggableScrollContainer
+        ref={carouselRef}
+        scrollOffset={Styled.INSIGHTS_CHART_SCROLL_OFFSET}
+        hideArrowButtons
+        onSlideChange={setCurrentSlide}
+      >
+        <Styled.Charts>
+          {sentenceDistributionSlide}
+          {timeServedSlide}
+        </Styled.Charts>
+      </DraggableScrollContainer>
+      <Styled.CarouselNav>
+        <Styled.CarouselArrowButton
+          onClick={() => carouselRef.current?.scrollLeft()}
+          aria-label="Scroll left"
         >
-          {activeSlide === 0 ? sentenceDistributionSlide : timeServedSlide}
-        </Styled.InsightsChartCard>
-        <Styled.CarouselNav>
-          <Styled.CarouselArrowButton
-            onClick={() => setActiveSlide(0)}
-            disabled={activeSlide === 0}
-            aria-label="View sentence distribution"
-          >
-            <ChevronLeft />
-          </Styled.CarouselArrowButton>
-          <Styled.CarouselArrowButton
-            onClick={() => setActiveSlide(1)}
-            disabled={activeSlide === 1}
-            aria-label="View time served"
-          >
-            <ChevronRight />
-          </Styled.CarouselArrowButton>
-        </Styled.CarouselNav>
-        {hasDispositionData && activeSlide === 0 && (
-          <Styled.InsightsFootnote>
-            {buildInsightsFootnoteText(
-              insightData.dispositionNumRecords,
-              insightData.gender,
-              insightData.assessmentScoreBucketStart,
-            )}
-          </Styled.InsightsFootnote>
-        )}
-        {hasTimeServedData &&
-          insightData &&
-          insightData.timeServedNumRecords != null &&
-          activeSlide === 1 && (
-            <Styled.InsightsFootnote>
-              {buildInsightsFootnoteText(
-                insightData.timeServedNumRecords,
-                insightData.gender,
-                insightData.assessmentScoreBucketStart,
-              )}
-            </Styled.InsightsFootnote>
-          )}
-      </Styled.InsightsSidePanel>
-    );
-  });
+          <ChevronLeftIcon />
+        </Styled.CarouselArrowButton>
+        <Styled.CarouselArrowButton
+          onClick={() => carouselRef.current?.scrollRight()}
+          aria-label="Scroll right"
+        >
+          <ChevronRightIcon />
+        </Styled.CarouselArrowButton>
+      </Styled.CarouselNav>
+      {slideFootnotes[currentSlide] && (
+        <Styled.InsightsFootnote>
+          {slideFootnotes[currentSlide]}
+        </Styled.InsightsFootnote>
+      )}
+    </Styled.InsightsSidePanel>
+  );
+});
