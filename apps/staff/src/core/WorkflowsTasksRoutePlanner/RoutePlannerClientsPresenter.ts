@@ -64,6 +64,7 @@ export class RoutePlannerClientsPresenter implements Hydratable {
   isAddingPerson = false;
   // Prevent trying to optimize while an optimization is in progress
   isOptimizing = false;
+  private OMS: string | undefined;
 
   private TASK_TYPE_COPY: PartialRecord<SupervisionTaskType, string> = {
     usTxHomeContactScheduled: "Scheduled Home Contact",
@@ -85,6 +86,7 @@ export class RoutePlannerClientsPresenter implements Hydratable {
     this.searchStore = workflowsStore.searchStore;
     this.analyticsStore = workflowsStore.rootStore.analyticsStore;
     makeAutoObservable(this);
+    this.OMS = this.getOMSSystem(workflowsStore.rootStore.currentTenantId);
 
     // If the selected officers change, deselect people who were on a caseload that was removed
     reaction(
@@ -152,11 +154,24 @@ export class RoutePlannerClientsPresenter implements Hydratable {
     );
   }
 
-  // Methods relating to copy in the clients page
+  getOMSSystem(stateCode: string | undefined): string | undefined {
+    switch (stateCode) {
+      case "US_ID":
+        return "Atlas";
+      case "US_TX":
+        return "OIMS";
+      default:
+        return;
+    }
+  }
 
-  badAddressCopy =
-    "We couldn't find any results for this address. Please check for typos and correct the address in OIMS. Updates in OIMS will be reflected in 1-2 business days.";
+  getBadAddressCopy() {
+    return `We couldn't find any results for this address. Please check for typos and correct the address in ${this.OMS}. Updates in ${this.OMS} will be reflected in 1-2 business days.`;
+  }
 
+  getNoAddressFoundCopy() {
+    return `No address on file in ${this.OMS}`;
+  }
   /**
    * @returns copy and information used in ClientCard for a specific task
    */
@@ -364,7 +379,7 @@ export class RoutePlannerClientsPresenter implements Hydratable {
         });
       });
     } else {
-      toast(this.badAddressCopy, {
+      toast(this.getBadAddressCopy(), {
         duration: TOAST_DURATION,
         id: `${person.pseudonymizedId}-address-no-results`, // prevent duplicate toasts
       });

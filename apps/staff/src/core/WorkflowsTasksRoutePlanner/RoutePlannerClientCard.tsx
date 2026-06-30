@@ -412,7 +412,7 @@ export const ClientCard = observer(function ClientCard({
                 </a>
                 {hasBadAddress && (
                   <TooltipTrigger
-                    contents={presenter.badAddressCopy}
+                    contents={presenter.getBadAddressCopy()}
                     maxWidth={340}
                   >
                     <InfoButton infoUrl={undefined} />
@@ -421,7 +421,7 @@ export const ClientCard = observer(function ClientCard({
               </>
             ) : (
               <NoAddressFoundText>
-                No address on file in OIMS
+                {presenter.getNoAddressFoundCopy()}
               </NoAddressFoundText>
             )}
           </InfoRow>

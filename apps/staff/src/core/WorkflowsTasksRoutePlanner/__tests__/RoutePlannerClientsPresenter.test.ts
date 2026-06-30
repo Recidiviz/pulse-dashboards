@@ -15,10 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { runInAction } from "mobx";
 import { Mock } from "vitest";
 
 import { GeocodingStatus } from "../../../FirestoreStore";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
+import TenantStore from "../../../RootStore/TenantStore";
 import { Client, WorkflowsStore } from "../../../WorkflowsStore";
 import { RoutePlannerClientsPresenter } from "../RoutePlannerClientsPresenter";
 
@@ -28,12 +30,17 @@ const mockAnalyticsStore = {
   trackRoutePlannerClientDeselected: vi.fn(),
 } as any as AnalyticsStore;
 
+const mockTenantStore = {
+  currentTenantId: vi.fn(),
+} as any as TenantStore;
+
 const mockWorkflowsStore = {
   searchStore: {
     selectedSearchIds: [],
   },
   rootStore: {
     analyticsStore: mockAnalyticsStore,
+    tenantStore: mockTenantStore,
   },
 } as any as WorkflowsStore;
 let presenter: RoutePlannerClientsPresenter;
@@ -89,6 +96,30 @@ describe("Selected client methods with locally stored addresses", () => {
 
     expect(presenter.isPersonSelected(clients[2])).toBeTrue();
     expect(presenter.indexOfPerson(clients[2])).toEqual(1);
+  });
+});
+
+describe("Displays correct OMS in error messages", () => {
+  it("Displays correct OMS for Texas", async () => {
+    runInAction(() => {
+      // @ts-ignore
+      mockWorkflowsStore.rootStore.currentTenantId = "US_TX";
+      presenter = new RoutePlannerClientsPresenter(mockWorkflowsStore);
+    });
+    expect(presenter.getBadAddressCopy()).toEqual(
+      "We couldn't find any results for this address. Please check for typos and correct the address in OIMS. Updates in OIMS will be reflected in 1-2 business days.",
+    );
+  });
+
+  it("Displays correct OMS for Idaho", async () => {
+    runInAction(() => {
+      // @ts-ignore
+      mockWorkflowsStore.rootStore.currentTenantId = "US_ID";
+      presenter = new RoutePlannerClientsPresenter(mockWorkflowsStore);
+    });
+    expect(presenter.getBadAddressCopy()).toEqual(
+      "We couldn't find any results for this address. Please check for typos and correct the address in Atlas. Updates in Atlas will be reflected in 1-2 business days.",
+    );
   });
 });
 
