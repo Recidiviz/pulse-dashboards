@@ -45,30 +45,6 @@ export const SectionHeading = styled.h3`
   padding-right: ${rem(16)};
 `;
 
-export const Row = styled.div`
-  display: flex;
-  flex-direction: column;
-  font-size: ${rem(12)};
-  font-weight: 500;
-  gap: ${rem(8)};
-  letter-spacing: -0.01em;
-  line-height: 1.2;
-  padding: ${rem(8)} ${rem(16)} ${rem(8)} 0;
-`;
-
-export const Label = styled.div`
-  ${typography.Sans12}
-  color: ${palette.pine1};
-`;
-
-export const Value = styled.div.attrs({ className: "fs-exclude" })`
-  ${typography.Sans12}
-  color: ${palette.slate85};
-  display: flex;
-  flex-direction: column;
-  gap: ${rem(2)};
-`;
-
 /**
  * Row layout with a label on the left and a trailing action (typically a link)
  * on the right. Used by the SAR Reports section; defined here so the typography

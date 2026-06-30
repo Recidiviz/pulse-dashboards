@@ -28,6 +28,7 @@ import {
 } from "~sentencing-client/components/OffenderAssessment/assessmentTypeUtils";
 import { OrasScoreDonut } from "~sentencing-client/components/OffenderAssessment/OrasScoreDonut";
 
+import { LabelValue } from "../shared/LabelValue";
 import { mapMoAssessmentType } from "./mapMoAssessmentType";
 
 // --- ORAS Assessment section ----------------------------------------------
@@ -75,22 +76,6 @@ const MetadataColumn = styled.div`
   flex-direction: column;
   gap: ${rem(16)};
   min-width: 0;
-`;
-
-const MetadataItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${rem(2)};
-`;
-
-const MetadataLabel = styled.div`
-  ${typography.Sans12}
-  color: ${palette.pine1};
-`;
-
-const MetadataValue = styled.div.attrs({ className: "fs-exclude" })`
-  ${typography.Sans12}
-  color: ${palette.slate85};
 `;
 
 /** Empty state shown inside the ORAS section (when no assessment is on file). */
@@ -166,22 +151,15 @@ export const OrasAssessmentCard: React.FC<OrasAssessmentCardProps> = ({
           <OrasScoreDonut score={assessmentScore ?? 0} maxScore={maxScore} />
         </DonutColumn>
         <MetadataColumn>
-          <MetadataItem>
-            <MetadataLabel>Assessment type</MetadataLabel>
-            <MetadataValue>
-              {getAssessmentTypeDisplayName(mapped)}
-            </MetadataValue>
-          </MetadataItem>
-          <MetadataItem>
-            <MetadataLabel>Assessment date</MetadataLabel>
-            <MetadataValue>
-              {format(assessmentDate, "MM/dd/yyyy")}
-            </MetadataValue>
-          </MetadataItem>
-          <MetadataItem>
-            <MetadataLabel>Administered by</MetadataLabel>
-            <MetadataValue>{assessmentAdministeredBy ?? "N/A"}</MetadataValue>
-          </MetadataItem>
+          <LabelValue label="Assessment type">
+            {getAssessmentTypeDisplayName(mapped)}
+          </LabelValue>
+          <LabelValue label="Assessment date">
+            {format(assessmentDate, "MM/dd/yyyy")}
+          </LabelValue>
+          <LabelValue label="Administered by">
+            {assessmentAdministeredBy ?? "N/A"}
+          </LabelValue>
         </MetadataColumn>
       </OrasBody>
     </OrasSection>

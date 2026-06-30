@@ -15,13 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { rem } from "polished";
+import styled from "styled-components";
+
 import { UsMoClientMetadata } from "~datatypes";
 
 import { toTitleCase } from "../../../../utils";
 import { Client } from "../../../../WorkflowsStore";
+import { LabelValue } from "../shared/LabelValue";
 import { CardFrame } from "../shared/styles";
 import { SARReports } from "./SARReports";
-import { Label, Row, Section, SectionHeading, Value } from "./styles";
+import { Section, SectionHeading } from "./styles";
 import {
   buildAddressLines,
   formatDob,
@@ -30,6 +34,11 @@ import {
 } from "./utils";
 
 export type { StructuredAddress };
+
+/** Label-over-value field with the Client Information card's row padding. */
+const Row = styled(LabelValue)`
+  padding: ${rem(8)} ${rem(16)} ${rem(8)} 0;
+`;
 
 export type ClientInformationCardProps = {
   // Personal Details
@@ -66,46 +75,36 @@ export const ClientInformationCard = ({
           Personal Details
         </SectionHeading>
 
-        <Row>
-          <Label>Gender</Label>
-          <Value>{formattedSex || EMPTY_PLACEHOLDER}</Value>
+        <Row label="Gender">{formattedSex || EMPTY_PLACEHOLDER}</Row>
+
+        <Row label="DOB">
+          {birthdate ? formatDob(birthdate) : EMPTY_PLACEHOLDER}
         </Row>
 
-        <Row>
-          <Label>DOB</Label>
-          <Value>{birthdate ? formatDob(birthdate) : EMPTY_PLACEHOLDER}</Value>
-        </Row>
-
-        <Row>
-          <Label>Offenses</Label>
-          <Value>
-            {latestCycleSentences.length === 0
-              ? EMPTY_PLACEHOLDER
-              : latestCycleSentences.map((sentence, index) => (
-                  // No stable id; rendered statically from a server-sourced
-                  // array and not reordered client-side.
-                  // eslint-disable-next-line react/no-array-index-key
-                  <div key={index}>{formatSentence(sentence)}</div>
-                ))}
-          </Value>
+        <Row label="Offenses">
+          {latestCycleSentences.length === 0
+            ? EMPTY_PLACEHOLDER
+            : latestCycleSentences.map((sentence, index) => (
+                // No stable id; rendered statically from a server-sourced
+                // array and not reordered client-side.
+                // eslint-disable-next-line react/no-array-index-key
+                <div key={index}>{formatSentence(sentence)}</div>
+              ))}
         </Row>
       </Section>
 
       <Section aria-labelledby="housing-heading">
         <SectionHeading id="housing-heading">Housing</SectionHeading>
 
-        <Row>
-          <Label>Address</Label>
-          <Value>
-            {addressLines.length === 0
-              ? EMPTY_PLACEHOLDER
-              : addressLines.map((line, index) => (
-                  // No stable id; rendered statically from a structured
-                  // address object.
-                  // eslint-disable-next-line react/no-array-index-key
-                  <div key={index}>{line}</div>
-                ))}
-          </Value>
+        <Row label="Address">
+          {addressLines.length === 0
+            ? EMPTY_PLACEHOLDER
+            : addressLines.map((line, index) => (
+                // No stable id; rendered statically from a structured
+                // address object.
+                // eslint-disable-next-line react/no-array-index-key
+                <div key={index}>{line}</div>
+              ))}
         </Row>
       </Section>
 

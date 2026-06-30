@@ -156,20 +156,35 @@ export class MyCaseloadPresenter
     return this.filterStore.trackTaskFilterDropdownOpened;
   }
 
-  // Total tasks across the caseload, regardless of category and filters.
+  // Distinct clients matching the option within the *selected* tab, regardless
+  // of the currently selected filters. The count is tab-specific (e.g. on
+  // "Overdue" it reflects clients with an overdue matching task) so it lines up
+  // with the rows that tab surfaces, and counts clients — not tasks — because
+  // My Caseload is one-row-per-client.
   numItems(type: FilterType, field: FilterField, option: FilterOption): number {
-    const allTasks = this.filterStore.allTasksForCategory("ALL_TASKS", false);
+    const matchingPersons = this.filterStore
+      .allTasksForCategory("ALL_TASKS", false)
+      .filter((task) => {
+        const taskIsInCategory = this.taskIsInCategory(
+          task,
+          this.selectedTaskCategory,
+        );
+        if (!taskIsInCategory) {
+          return false;
+        }
 
-    return allTasks.filter((task) => {
-      if (type === "task") {
-        // @ts-expect-error searchable fields are restricted to strings but TS does not know that
-        return task[field] === option.value;
-      } else if (type === "person") {
-        // @ts-expect-error searchable fields are restricted to strings but TS does not know that
-        return task.person[field] === option.value;
-      }
-      return false;
-    }).length;
+        if (type === "task") {
+          // @ts-expect-error searchable fields are restricted to strings but TS does not know that
+          return task[field] === option.value;
+        } else if (type === "person") {
+          // @ts-expect-error searchable fields are restricted to strings but TS does not know that
+          return task.person[field] === option.value;
+        }
+        return false;
+      })
+      .map((task) => task.person);
+
+    return uniq(matchingPersons).length;
   }
 
   // Task bucketing — owned here rather than in the shared filter store.
@@ -181,32 +196,34 @@ export class MyCaseloadPresenter
   }
 
   /**
-   * Tasks for a My Caseload tab, ordered by due date. "All Clients" is the
-   * full current-month horizon (overdue + this week + this month, nothing due
-   * next month or later). The week/month split is always applied because My
-   * Caseload always renders both a "Due this week" and a "Due this month" tab,
-   * so the buckets are mutually exclusive.
+   * Whether a task belongs in a My Caseload tab. "All Clients" is the full
+   * current-month horizon (overdue + this week + this month, nothing due next
+   * month or later). The week/month split is always applied because My Caseload
+   * always renders both a "Due this week" and a "Due this month" tab, so the
+   * buckets are mutually exclusive.
    */
+  private taskIsInCategory(
+    t: TaskTableItem,
+    category: SupervisionTaskCategory,
+  ): boolean {
+    switch (category) {
+      case "ALL_TASKS":
+        return t.isOverdue || isThisWeek(t.dueDate) || isThisMonth(t.dueDate);
+      case "OVERDUE":
+        return t.isOverdue;
+      case "DUE_THIS_WEEK":
+        return !t.isOverdue && isThisWeek(t.dueDate);
+      case "DUE_THIS_MONTH":
+        return !t.isOverdue && !isThisWeek(t.dueDate) && isThisMonth(t.dueDate);
+      default:
+        return false;
+    }
+  }
+
+  /** Tasks for a My Caseload tab, ordered by due date. */
   private bucketedTasks(category: SupervisionTaskCategory): TaskTableItem[] {
     return this.filteredTasks
-      .filter((t) => {
-        switch (category) {
-          case "ALL_TASKS":
-            return (
-              t.isOverdue || isThisWeek(t.dueDate) || isThisMonth(t.dueDate)
-            );
-          case "OVERDUE":
-            return t.isOverdue;
-          case "DUE_THIS_WEEK":
-            return !t.isOverdue && isThisWeek(t.dueDate);
-          case "DUE_THIS_MONTH":
-            return (
-              !t.isOverdue && !isThisWeek(t.dueDate) && isThisMonth(t.dueDate)
-            );
-          default:
-            return false;
-        }
-      })
+      .filter((t) => this.taskIsInCategory(t, category))
       .sort(taskDueDateComparator);
   }
 

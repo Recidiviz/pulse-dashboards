@@ -44,7 +44,7 @@ const US_MO_CONFIG = {
     tasks: {
       usMoEmploymentVerification: {
         constructor: UsMoEmploymentVerificationTask,
-        snoozeForOptionsInDays: [7, 30, "FOREVER"],
+        snoozeForOptionsInDays: [7, 30],
       },
       usMoInitialEmploymentVerificationIap: {
         constructor: UsMoInitialEmploymentVerificationIapTask,

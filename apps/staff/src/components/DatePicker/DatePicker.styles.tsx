@@ -57,6 +57,13 @@ export const DatePickerWrapper = styled.div`
     border-radius: 8px;
     border: 1px solid ${palette.slate20};
     box-shadow: 8px 10px 7px ${palette.slate05};
+  }
+
+  /* Set z-index on the absolutely-positioned popper, not the statically
+   * positioned .react-datepicker (where z-index is a no-op). Otherwise the
+   * calendar paints in DOM order and can be covered by later-in-DOM siblings
+   * (e.g. the US_MO ORAS card in the adjacent profile column). */
+  .react-datepicker-popper {
     z-index: 1000;
   }
 

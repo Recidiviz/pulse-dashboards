@@ -82,14 +82,18 @@ function makePersonWithTasks(
     id = undefined as string | undefined,
   } = {},
 ): JusticeInvolvedPerson {
+  // Lightweight person stub carrying just the fields the row/count builders
+  // read (`task.person.pseudonymizedId`, `task.person.supervisionLevel`).
+  // Intentionally NOT the full person object — a back-reference would create a
+  // cycle that mobx can't observe. Shared across the client's tasks so it is a
+  // single reference, as it is in production (where `uniq(...map(t => t.person))`
+  // dedupes by reference).
+  const personStub = { pseudonymizedId: id, supervisionLevel };
   const tasks = taskTypes.map((type) => ({
     type,
     dueDate: addDays(new Date(), dateOffset),
     isOverdue: overdue,
-    // Lightweight person stub carrying just the grouping key the row builders
-    // read (`task.person.pseudonymizedId`). Intentionally NOT the full person
-    // object — a back-reference would create a cycle that mobx can't observe.
-    person: { pseudonymizedId: id },
+    person: personStub,
   }));
   return {
     supervisionLevel,
@@ -264,5 +268,100 @@ describe("MyCaseloadPresenter", () => {
       (r) => r.person.pseudonymizedId === "c",
     );
     expect(rowC?.tasks).toHaveLength(0);
+  });
+
+  describe("numItems (filter option counts)", () => {
+    it("counts distinct clients, not tasks, for a task-type option", () => {
+      // Client a has two matching contact tasks; client b has one. The count is
+      // 2 clients, not 3 tasks (My Caseload is one-row-per-client).
+      presenter = getPresenter({
+        workflowsStore: {
+          ...mockWorkflowsStore,
+          caseloadPersons: [
+            makePersonWithTasks(["contact", "contact"], { id: "a" }),
+            makePersonWithTasks(["contact"], { id: "b" }),
+            makePersonWithTasks(["assessment"], { id: "c" }),
+          ],
+        } as any as WorkflowsStore,
+      });
+
+      expect(
+        presenter.numItems("task", "type" as any, { value: "contact" } as any),
+      ).toEqual(2);
+      expect(
+        presenter.numItems(
+          "task",
+          "type" as any,
+          {
+            value: "assessment",
+          } as any,
+        ),
+      ).toEqual(1);
+    });
+
+    it("counts distinct clients for a person-type option", () => {
+      // Client a has two tasks but is one High client; b is the other.
+      presenter = getPresenter({
+        workflowsStore: {
+          ...mockWorkflowsStore,
+          caseloadPersons: [
+            makePersonWithTasks(["contact", "assessment"], {
+              id: "a",
+              supervisionLevel: "High",
+            }),
+            makePersonWithTasks(["contact"], {
+              id: "b",
+              supervisionLevel: "High",
+            }),
+            makePersonWithTasks(["contact"], {
+              id: "c",
+              supervisionLevel: "Low",
+            }),
+          ],
+        } as any as WorkflowsStore,
+      });
+
+      expect(
+        presenter.numItems(
+          "person",
+          "supervisionLevel" as any,
+          {
+            value: "High",
+          } as any,
+        ),
+      ).toEqual(2);
+    });
+
+    it("counts only clients whose matching task falls in the selected tab", () => {
+      // Four clients, each with one contact task in a different bucket.
+      presenter = getPresenter({
+        workflowsStore: {
+          ...mockWorkflowsStore,
+          caseloadPersons: [
+            makePersonWithTasks(["contact"], { id: "od", overdue: true }),
+            makePersonWithTasks(["contact"], { id: "tw", dateOffset: 2 }), // this week
+            makePersonWithTasks(["contact"], { id: "tm", dateOffset: 15 }), // this month
+            makePersonWithTasks(["contact"], { id: "nm", dateOffset: 35 }), // next month
+          ],
+        } as any as WorkflowsStore,
+      });
+
+      const contactCount = () =>
+        presenter.numItems("task", "type" as any, { value: "contact" } as any);
+
+      // "All Clients" is the current-month horizon, so the next-month client is
+      // excluded (3, not 4).
+      presenter.selectedTaskCategory = "ALL_TASKS";
+      expect(contactCount()).toEqual(3);
+
+      presenter.selectedTaskCategory = "OVERDUE";
+      expect(contactCount()).toEqual(1);
+
+      presenter.selectedTaskCategory = "DUE_THIS_WEEK";
+      expect(contactCount()).toEqual(1);
+
+      presenter.selectedTaskCategory = "DUE_THIS_MONTH";
+      expect(contactCount()).toEqual(1);
+    });
   });
 });
