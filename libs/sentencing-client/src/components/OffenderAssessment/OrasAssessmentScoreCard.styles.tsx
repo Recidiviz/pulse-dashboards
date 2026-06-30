@@ -17,7 +17,7 @@
 
 import styled from "styled-components";
 
-import { palette } from "~design-system";
+import { Button, palette } from "~design-system";
 
 export const Card = styled.div`
   display: flex;
@@ -35,14 +35,6 @@ export const CardTitle = styled.div`
   justify-content: space-between;
 `;
 
-export const ORASTitle = styled.span`
-  color: ${palette.pine1};
-  font-family: "Public Sans";
-  font-size: 1.125rem;
-  font-weight: 500;
-  line-height: 120%;
-  letter-spacing: -0.0225rem;
-`;
 export const ORASUpdatedText = styled.span`
   color: ${palette.slate60};
   font-family: "Public Sans";
@@ -86,6 +78,15 @@ export const MetadataValue = styled.span`
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 150%;
+`;
+
+export const ORASFormButton = styled(Button).attrs({
+  kind: "primary",
+  shape: "block",
+})`
+  width: 20%;
+  align-self: flex-end;
+  padding: 10px 16px;
 `;
 
 export const EmptyState = styled.div`

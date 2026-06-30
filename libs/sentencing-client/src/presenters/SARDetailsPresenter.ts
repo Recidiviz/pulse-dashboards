@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { pick } from "lodash";
 import { flowResult, makeAutoObservable, reaction, runInAction } from "mobx";
 import moment from "moment";
 
@@ -50,7 +51,14 @@ import {
   getAssessmentScoreBucket,
 } from "../components/OffenderAssessment/assessmentTypeUtils";
 import { RiskLevelKey } from "../components/OffenderAssessment/constants";
-import { getDomainsForAssessmentType } from "../components/OffenderAssessment/utils";
+import {
+  deriveDomainRiskLevel,
+  DomainConfig,
+  getDomainsForAssessmentType,
+  ORAS_EMPTY_FORM,
+  ORASDomainRiskLevelField,
+  ORASFormData,
+} from "../components/OffenderAssessment/utils";
 import {
   SAR_REPORT_SECTIONS,
   SARSection,
@@ -1102,6 +1110,50 @@ export class SARDetailsPresenter implements Hydratable {
   /** Update drug history summary */
   async updateDrugHistorySummary(value: string): Promise<void> {
     return this.updateStringField("drugHistorySummary", value);
+  }
+
+  get orasData(): ORASFormData | null {
+    const sarData = this.SARData;
+    if (!sarData) return null;
+    return pick(
+      sarData,
+      Object.keys(ORAS_EMPTY_FORM) as (keyof ORASFormData)[],
+    );
+  }
+
+  async saveORASData(data: ORASFormData): Promise<void> {
+    const sarData = this.SARData;
+    if (!sarData) return;
+
+    type ScoredDomain = DomainConfig & {
+      scoreField: keyof ORASFormData;
+      riskLevelField: ORASDomainRiskLevelField;
+      maxScore: number;
+    };
+    const derivedRiskLevels = Object.fromEntries(
+      getDomainsForAssessmentType(data.assessmentType)
+        .filter(
+          (d): d is ScoredDomain =>
+            !!(d.scoreField && d.riskLevelField && d.maxScore),
+        )
+        .map((d) => [
+          d.riskLevelField,
+          deriveDomainRiskLevel(
+            data[d.scoreField] as number | null,
+            d.maxScore,
+          ),
+        ]),
+    );
+
+    const payload = {
+      ...data,
+      ...derivedRiskLevels,
+      ORASLastUpdatedAt: new Date(),
+    };
+    await this.sentencingStore.apiClient.updateSARDetails(sarData.id, payload);
+    runInAction(() => {
+      Object.assign(sarData, payload);
+    });
   }
 
   /** Update employed at offense */

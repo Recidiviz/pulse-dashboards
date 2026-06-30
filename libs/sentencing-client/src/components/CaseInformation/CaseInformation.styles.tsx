@@ -19,6 +19,17 @@ import styled from "styled-components";
 
 import { palette } from "~design-system";
 
+import { CheckboxContainer as SharedCheckboxContainer } from "../OffenderAssessment/FormComponents.styles";
+
+export {
+  Checkbox,
+  CheckboxLabel,
+} from "../OffenderAssessment/FormComponents.styles";
+
+export const CheckboxContainer = styled(SharedCheckboxContainer)`
+  padding-left: 2.5rem;
+`;
+
 export const Container = styled.div`
   display: flex;
   width: 50rem;
@@ -29,28 +40,6 @@ export const Container = styled.div`
   line-height: 120%;
   letter-spacing: -0.00875rem;
   font-family: "Public Sans";
-`;
-
-export const CheckboxContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  align-self: stretch;
-  padding-left: 2.5rem;
-`;
-
-export const Checkbox = styled.input`
-  width: 1rem;
-  height: 1rem;
-  accent-color: ${palette.pine4};
-
-  &:disabled {
-    cursor: not-allowed;
-  }
-`;
-
-export const CheckboxLabel = styled.span`
-  font-size: 0.875rem;
 `;
 
 export const ClientInfoRow = styled.div`

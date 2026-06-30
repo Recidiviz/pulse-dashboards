@@ -18,7 +18,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { APIClient, OfflineAPIClient } from "../api";
-import { MutableSARAttributes } from "../components/CaseDetails/types";
 import {
   RISK_LEVEL_KEYS,
   RISK_LEVELS,
@@ -41,27 +40,6 @@ import {
 import { splitFullName } from "../utils/utils";
 import { SARDetailsPresenter } from "./SARDetailsPresenter";
 
-type ORASUpdate = Pick<
-  MutableSARAttributes,
-  | "assessmentScore"
-  | "assessmentType"
-  | "assessmentDate"
-  | "assessmentAdministeredBy"
-  | "educationLevelScore"
-  | "neighborhoodLevel"
-  | "substanceAbuseLevel"
-  | "familySocialSupportLevel"
-  | "peerAssociatesLevel"
-  | "criminalBehaviorLevel"
-  | "responsivityLevel"
-  | "criminalHistoryRiskLevel"
-  | "educationRiskLevel"
-  | "neighborhoodRiskLevel"
-  | "substanceAbuseRiskLevel"
-  | "familySocialSupportRiskLevel"
-  | "peerAssociatesRiskLevel"
-  | "criminalBehaviorRiskLevel"
->;
 /**
  * Presenter for Offender Assessment section (ORAS domain logic).
  *
@@ -136,15 +114,6 @@ export class OffenderAssessmentPresenter {
   // Employment History - Individual CRUD operations
   get employmentHistories(): EmploymentHistory[] {
     return this.SARData?.employmentHistories ?? [];
-  }
-
-  async saveORASData(data: ORASUpdate): Promise<void> {
-    if (!this.SARData) return;
-
-    await this.apiClient.updateSARDetails(this.SARData.id, data);
-    runInAction(() => {
-      if (this.SARData) Object.assign(this.SARData, data);
-    });
   }
 
   async createEmploymentHistory(

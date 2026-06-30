@@ -18,6 +18,7 @@
 import { runInAction } from "mobx";
 
 import { SARDetailsFixture, StaffInfoFixture } from "../../api/offlineFixtures";
+import { ORAS_EMPTY_FORM } from "../../components/OffenderAssessment/utils";
 import { SARSection } from "../../components/SARDetails/constants";
 import { SentencingStore } from "../../datastores/SentencingStore";
 import { createMockSentencingStore } from "../../utils/test";
@@ -52,6 +53,75 @@ async function hydrateWithDeclined(declined: boolean) {
   });
   await presenter.hydrate();
 }
+
+describe("orasData", () => {
+  it("returns null before hydration", () => {
+    expect(presenter.orasData).toBeNull();
+  });
+
+  it("returns ORAS fields from SARData after hydration", async () => {
+    vi.spyOn(sentencingStore.apiClient, "getSARDetails").mockResolvedValue({
+      ...SARDetailsFixture[sarId],
+      assessmentType: "ORAS_CST",
+      assessmentScore: 10,
+      criminalHistoryLevel: 3,
+    });
+    await presenter.hydrate();
+
+    expect(presenter.orasData).toMatchObject({
+      assessmentType: "ORAS_CST",
+      assessmentScore: 10,
+      criminalHistoryLevel: 3,
+    });
+  });
+});
+
+describe("saveORASData", () => {
+  it("calls updateSARDetails with derived domain risk levels", async () => {
+    vi.spyOn(sentencingStore.apiClient, "updateSARDetails").mockResolvedValue(
+      undefined as never,
+    );
+    await presenter.hydrate();
+
+    await presenter.saveORASData({
+      ...ORAS_EMPTY_FORM,
+      assessmentType: "ORAS_CST",
+      assessmentDate: new Date("2025-01-01"),
+      assessmentAdministeredBy: "Officer Smith",
+      criminalHistoryLevel: 6, // 6/8 = 75% → HIGH
+      educationLevelScore: 2, // 2/6 = 33.3% → MODERATE
+    });
+
+    expect(presenter.SARData).toBeDefined();
+    expect(sentencingStore.apiClient.updateSARDetails).toHaveBeenCalledWith(
+      presenter.SARData?.id,
+      expect.objectContaining({
+        criminalHistoryRiskLevel: "HIGH",
+        educationRiskLevel: "MODERATE",
+        familySocialSupportRiskLevel: null,
+        ORASLastUpdatedAt: expect.any(Date),
+      }),
+    );
+  });
+
+  it("updates SARData locally after saving", async () => {
+    vi.spyOn(sentencingStore.apiClient, "updateSARDetails").mockResolvedValue(
+      undefined as never,
+    );
+    await presenter.hydrate();
+
+    await presenter.saveORASData({
+      ...ORAS_EMPTY_FORM,
+      assessmentType: "ORAS_CST",
+      assessmentDate: new Date("2025-06-01"),
+      assessmentAdministeredBy: "Officer Smith",
+    });
+
+    expect(presenter.SARData?.assessmentType).toBe("ORAS_CST");
+    expect(presenter.SARData?.assessmentAdministeredBy).toBe("Officer Smith");
+    expect(presenter.SARData?.ORASLastUpdatedAt).toBeInstanceOf(Date);
+  });
+});
 
 describe("defendant declined to participate", () => {
   describe("SARSections", () => {

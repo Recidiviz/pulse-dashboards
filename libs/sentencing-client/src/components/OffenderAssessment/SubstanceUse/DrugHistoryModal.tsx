@@ -23,6 +23,7 @@ import { SharedDatePicker } from "../../shared/SharedDatePicker";
 import {
   ButtonRow,
   CancelButton,
+  DatePickerWrapper,
   dropdownStyles,
   SaveButton,
 } from "../FormComponents.styles";
@@ -40,7 +41,6 @@ import {
   SubstanceType,
   SubstanceTypeLabels,
 } from "./constants";
-import { DatePickerWrapper } from "./DrugHistoryModal.styles";
 
 type SelectOption = { label: string; value: string };
 

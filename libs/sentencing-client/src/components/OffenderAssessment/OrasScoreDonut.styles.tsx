@@ -17,7 +17,7 @@
 
 import styled from "styled-components";
 
-import { palette } from "~design-system";
+import { palette, typography } from "~design-system";
 
 export const DonutContainer = styled.div`
   position: relative;
@@ -36,20 +36,16 @@ export const CenterText = styled.div`
 `;
 
 export const RiskLevelLabel = styled.span`
+  ${typography.Sans14}
   color: ${palette.pine1};
   text-align: center;
-  font-family: "Public Sans";
-  font-size: 0.919rem;
   font-weight: 500;
   line-height: 120%;
-  letter-spacing: -0.009rem;
 `;
 
-export const ScoreText = styled.span`
+export const ScoreText = styled.span<{ $small?: boolean }>`
+  ${({ $small }) => ($small ? typography.Sans14 : typography.Sans16)}
   color: ${palette.pine1};
-  font-family: "Public Sans";
-  font-size: 1.072rem;
   font-weight: 500;
   line-height: 120%;
-  letter-spacing: -0.011rem;
 `;

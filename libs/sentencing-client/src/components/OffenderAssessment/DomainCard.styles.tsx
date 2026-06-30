@@ -56,6 +56,41 @@ export const Title = styled.h3`
   margin: 0;
 `;
 
+export const SpacedRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 1rem 0;
+`;
+
+export const DomainEntryTitle = styled(Title)`
+  flex: 1;
+`;
+
+const getDomainRowJustify = ({
+  $rightAlign,
+  $center,
+}: {
+  $rightAlign?: boolean;
+  $center?: boolean;
+}) => {
+  if ($center) return "center";
+  if ($rightAlign) return "flex-end";
+  return "flex-start";
+};
+
+export const DomainRow = styled.div<{
+  $rightAlign?: boolean;
+  $center?: boolean;
+}>`
+  display: flex;
+  flex: 0 0 100px;
+  align-items: center;
+  justify-content: ${getDomainRowJustify};
+  gap: 0.25rem;
+`;
+
 export const HelperText = styled.p`
   font-family: "Public Sans";
   font-size: 0.875rem;
@@ -101,4 +136,14 @@ export const InfoBox = styled.div`
   font-family: "Public Sans";
   font-size: 0.875rem;
   line-height: 150%;
+`;
+
+export const ORASDomainText = styled.span`
+  color: ${palette.slate85};
+  font-family: "Public Sans";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 120%;
+  letter-spacing: -0.16px;
 `;

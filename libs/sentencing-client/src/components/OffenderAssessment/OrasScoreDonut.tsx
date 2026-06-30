@@ -29,7 +29,7 @@ const SCORE_COLOR = palette.data.forest1; // Data/Forest
 const BACKGROUND_COLOR = palette.data.teal1; // Data/Teal
 
 interface OrasScoreDonutProps {
-  score: number;
+  score: number | null;
   maxScore?: number;
 }
 
@@ -38,7 +38,7 @@ export const OrasScoreDonut: React.FC<OrasScoreDonutProps> = ({
   maxScore = 9,
 }) => {
   // Calculate the angle for the filled portion
-  const percentage = Math.min(score / maxScore, 1);
+  const percentage = score !== null ? Math.min(score / maxScore, 1) : 0;
   const endAngle = percentage * 2 * Math.PI;
 
   // Create arc generators
@@ -67,13 +67,15 @@ export const OrasScoreDonut: React.FC<OrasScoreDonutProps> = ({
           {/* Background arc */}
           <path d={backgroundArc ?? undefined} fill={BACKGROUND_COLOR} />
           {/* Foreground arc (score) */}
-          <path d={foregroundArc ?? undefined} fill={SCORE_COLOR} />
+          {score !== null && (
+            <path d={foregroundArc ?? undefined} fill={SCORE_COLOR} />
+          )}
         </g>
       </svg>
       <Styled.CenterText>
         <Styled.RiskLevelLabel>Risk Level</Styled.RiskLevelLabel>
-        <Styled.ScoreText>
-          {score}/{maxScore}
+        <Styled.ScoreText $small={score === null}>
+          {score !== null ? `${score}/${maxScore}` : "Score Unavailable"}
         </Styled.ScoreText>
       </Styled.CenterText>
     </Styled.DonutContainer>

@@ -15,6 +15,66 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { MutableSARAttributes } from "../CaseDetails/types";
+
+export type ORASFormData = Pick<
+  MutableSARAttributes,
+  | "assessmentScore"
+  | "assessmentType"
+  | "assessmentDate"
+  | "assessmentAdministeredBy"
+  | "criminalHistoryLevel"
+  | "educationLevelScore"
+  | "neighborhoodLevel"
+  | "substanceAbuseLevel"
+  | "familySocialSupportLevel"
+  | "peerAssociatesLevel"
+  | "criminalBehaviorLevel"
+  | "responsivityLevel"
+  | "criminalHistoryRiskLevel"
+  | "educationRiskLevel"
+  | "neighborhoodRiskLevel"
+  | "substanceAbuseRiskLevel"
+  | "familySocialSupportRiskLevel"
+  | "peerAssociatesRiskLevel"
+  | "criminalBehaviorRiskLevel"
+>;
+
+export const ORAS_EMPTY_FORM: ORASFormData = {
+  assessmentScore: null,
+  assessmentType: null,
+  assessmentDate: null,
+  assessmentAdministeredBy: null,
+  criminalHistoryLevel: null,
+  educationLevelScore: null,
+  neighborhoodLevel: null,
+  substanceAbuseLevel: null,
+  familySocialSupportLevel: null,
+  peerAssociatesLevel: null,
+  criminalBehaviorLevel: null,
+  responsivityLevel: null,
+  criminalHistoryRiskLevel: null,
+  educationRiskLevel: null,
+  neighborhoodRiskLevel: null,
+  substanceAbuseRiskLevel: null,
+  familySocialSupportRiskLevel: null,
+  peerAssociatesRiskLevel: null,
+  criminalBehaviorRiskLevel: null,
+};
+
+// Derives a domain risk level from a raw score as a fraction of maxScore.
+// LOW: < 33%, MODERATE: 33–66%, HIGH: >= 67%
+export function deriveDomainRiskLevel(
+  score: number | null | undefined,
+  maxScore: number | undefined,
+): "LOW" | "MODERATE" | "HIGH" | null {
+  if (score == null || !maxScore) return null;
+  const ratio = score / maxScore;
+  if (ratio >= 0.67) return "HIGH";
+  if (ratio >= 0.33) return "MODERATE";
+  return "LOW";
+}
+
 // Domain keys used for conditional rendering based on ORAS type
 export type ORASDomainKey =
   | "criminalHistory"
@@ -48,14 +108,14 @@ export type ORASDomainRiskLevelField =
 export interface DomainConfig {
   key: ORASDomainKey;
   title: string;
-  scoreField?: string;
+  scoreField?: keyof ORASFormData;
   riskLevelField?: ORASDomainRiskLevelField;
   summaryField: ORASDomainSummaryField;
   maxScore?: number;
 }
 
 // Base domain configurations (reusable across ORAS types)
-const DOMAIN = {
+export const DOMAIN = {
   CRIMINAL_HISTORY: {
     key: "criminalHistory",
     title: "Criminal History",

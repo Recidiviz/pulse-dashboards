@@ -15,39 +15,48 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React from "react";
 
 import { Banner } from "../shared/styles/Banner";
+import { useStore } from "../StoreProvider/StoreProvider";
 import {
   AssessmentTypeKey,
   getAssessmentTypeDisplayName,
   OVERALL_MAX_SCORE_BY_ASSESSMENT_TYPE,
 } from "./assessmentTypeUtils";
+import { ORASTitle } from "./FormComponents.styles";
 import * as Styled from "./OrasAssessmentScoreCard.styles";
 import { OrasScoreDonut } from "./OrasScoreDonut";
 
 interface ORASHeaderProps {
   ORASLastUpdatedAt: Date | null;
+  hasORASData: boolean;
   children: React.ReactNode;
+  onOpenForm: () => void;
 }
-
 interface OrasAssessmentScoreCardProps {
-  score: number;
+  assessmentScore: number | null;
   assessmentType: AssessmentTypeKey | null;
   assessmentDate: Date | string | null;
-  administeredBy: string | null;
+  assessmentAdministeredBy: string | null;
   ORASLastUpdatedAt: Date | null;
+  hasORASData: boolean;
+  onOpenForm: () => void;
 }
 
-const ORASCardWrapper: React.FC<ORASHeaderProps> = ({
+const ORASCardWrapper = observer(function ORASCardWrapper({
   ORASLastUpdatedAt,
+  hasORASData,
   children,
-}) => {
+  onOpenForm,
+}: ORASHeaderProps) {
+  const { activeFeatureVariants } = useStore();
   return (
     <Styled.Card>
       <Styled.CardTitle>
-        <Styled.ORASTitle>ORAS Assessment Score</Styled.ORASTitle>
+        <ORASTitle>ORAS Assessment Score</ORASTitle>
         <Styled.ORASUpdatedText>
           Last Updated:{" "}
           {ORASLastUpdatedAt
@@ -57,18 +66,25 @@ const ORASCardWrapper: React.FC<ORASHeaderProps> = ({
       </Styled.CardTitle>
       <Banner>ORAS data regularly updated on Monday evenings.</Banner>
       {children}
+      {activeFeatureVariants["SARManualORAS"] && (
+        <Styled.ORASFormButton onClick={onOpenForm}>
+          {hasORASData ? "Edit ORAS Data" : "Add ORAS Data"}
+        </Styled.ORASFormButton>
+      )}
     </Styled.Card>
   );
-};
+});
 
 export const OrasAssessmentScoreCard: React.FC<
   OrasAssessmentScoreCardProps
 > = ({
-  score,
+  assessmentScore,
   assessmentType,
   assessmentDate,
-  administeredBy,
+  assessmentAdministeredBy,
   ORASLastUpdatedAt,
+  hasORASData,
+  onOpenForm,
 }) => {
   const maxScore =
     assessmentType !== null
@@ -77,16 +93,24 @@ export const OrasAssessmentScoreCard: React.FC<
 
   if (!assessmentDate) {
     return (
-      <ORASCardWrapper ORASLastUpdatedAt={ORASLastUpdatedAt}>
+      <ORASCardWrapper
+        ORASLastUpdatedAt={ORASLastUpdatedAt}
+        hasORASData={hasORASData}
+        onOpenForm={onOpenForm}
+      >
         <Styled.EmptyState>No ORAS assessment on file.</Styled.EmptyState>
       </ORASCardWrapper>
     );
   }
 
   return (
-    <ORASCardWrapper ORASLastUpdatedAt={ORASLastUpdatedAt}>
+    <ORASCardWrapper
+      ORASLastUpdatedAt={ORASLastUpdatedAt}
+      hasORASData={hasORASData}
+      onOpenForm={onOpenForm}
+    >
       <Styled.CardContent>
-        <OrasScoreDonut score={score} maxScore={maxScore} />
+        <OrasScoreDonut score={assessmentScore} maxScore={maxScore} />
         <Styled.MetadataSection>
           <Styled.MetadataItem>
             <Styled.MetadataLabel>Assessment type</Styled.MetadataLabel>
@@ -103,7 +127,7 @@ export const OrasAssessmentScoreCard: React.FC<
           <Styled.MetadataItem>
             <Styled.MetadataLabel>Administered by</Styled.MetadataLabel>
             <Styled.MetadataValue>
-              {administeredBy ?? "N/A"}
+              {assessmentAdministeredBy ?? "N/A"}
             </Styled.MetadataValue>
           </Styled.MetadataItem>
         </Styled.MetadataSection>

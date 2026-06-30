@@ -18,10 +18,17 @@
 import { StylesConfig } from "react-select";
 import styled from "styled-components";
 
-import { Icon, IconSVG, iconToDataURI, palette } from "~design-system";
+import {
+  Icon,
+  IconSVG,
+  iconToDataURI,
+  palette,
+  typography,
+} from "~design-system";
 
 import { SelectOption } from "../CaseDetails/Form/types";
 import { hasErrorStyles } from "../shared/styles/ValidationStyles";
+import { BaseDatePickerWrapper } from "./ModalStyles";
 
 export const CHEVRON_DOWN_BACKGROUND = iconToDataURI(
   <Icon kind={IconSVG["ChevronDown"]} color={palette.pine1} />,
@@ -30,7 +37,7 @@ export const CHEVRON_DOWN_BACKGROUND = iconToDataURI(
 export const FieldContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.25rem;
 `;
 
 export const Label = styled.label`
@@ -66,10 +73,17 @@ const inputStyles = `
   }
 `;
 
-export const Input = styled.input<{ halfWidth?: boolean; $hasError?: boolean }>`
+export const Input = styled.input<{
+  halfWidth?: boolean;
+  $hasError?: boolean;
+  $shrink?: boolean;
+}>`
   ${inputStyles}
   ${({ halfWidth }) => halfWidth && "width: 50%;"}
   ${({ $hasError }) => $hasError && hasErrorStyles()}
+  ${({ $shrink }) =>
+    $shrink &&
+    "width: 50px; min-width: 0; min-height: unset; height: 30px; padding: 0.25rem 0.5rem;"}
 `;
 
 export const Select = styled.select`
@@ -89,7 +103,7 @@ export const dropdownStyles: StylesConfig<SelectOption, boolean> = {
     borderRadius: "0.5rem",
     border: `1px solid ${isFocused ? palette.pine4 : "rgba(43, 84, 105, 0.20)"}`,
     boxShadow: "none",
-    backgroundColor: "rgba(43, 105, 105, 0.03)",
+    backgroundColor: palette.white,
     fontFamily: "Public Sans",
     fontSize: "0.875rem",
     lineHeight: 1.5,
@@ -142,7 +156,12 @@ const Button = styled.button`
 `;
 
 export const CancelButton = styled(Button)`
-  background: transparent;
+  ${typography.Sans14}
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 4px;
+  border: 1px solid ${palette.slate30};
+  background: ${palette.white};
   color: ${palette.slate85};
 
   &:hover:not(:disabled) {
@@ -151,6 +170,7 @@ export const CancelButton = styled(Button)`
 `;
 
 export const SaveButton = styled(Button)`
+  padding: 10px 16px;
   background: ${palette.signal.links};
   color: white;
 
@@ -168,4 +188,44 @@ export const ButtonRow = styled.div`
   display: flex;
   gap: 0.75rem;
   justify-content: flex-end;
+`;
+
+export const ORASTitle = styled.span`
+  color: ${palette.pine1};
+  font-family: "Public Sans";
+  font-size: 1.125rem;
+  font-weight: 500;
+  line-height: 120%;
+  letter-spacing: -0.0225rem;
+`;
+
+export const CheckboxContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  align-self: stretch;
+`;
+
+export const Checkbox = styled.input`
+  width: 1rem;
+  height: 1rem;
+  accent-color: ${palette.pine4};
+  cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+`;
+
+export const CheckboxLabel = styled.span`
+  font-family: "Public Sans";
+  font-size: 0.875rem;
+  color: ${palette.pine1};
+`;
+
+export const DatePickerWrapper = styled(BaseDatePickerWrapper)`
+  .react-datepicker__input-container input {
+    background-position: right 1rem center;
+    background-size: 1rem;
+  }
 `;
