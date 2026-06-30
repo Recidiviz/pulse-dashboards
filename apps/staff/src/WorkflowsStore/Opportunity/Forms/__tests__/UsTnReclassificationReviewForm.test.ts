@@ -59,6 +59,7 @@ function createTestUnit(
     officerId: "zzz",
     allEligibleOpportunities: [],
     facilityId: "facility1",
+    unitId: null,
     custodyLevel: "MINIMUM",
     metadata: {},
   };

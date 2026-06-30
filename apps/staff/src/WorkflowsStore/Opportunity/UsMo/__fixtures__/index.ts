@@ -42,6 +42,8 @@ export const usMoPersonRecord: WorkflowsResidentRecord = {
     "usMoOverdueRestrictiveHousingRelease",
     "usMoOverdueRestrictiveHousingInitialHearing",
   ],
+  facilityId: null,
+  unitId: null,
   metadata: {},
 };
 

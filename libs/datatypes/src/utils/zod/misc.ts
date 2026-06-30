@@ -34,6 +34,10 @@ export function nullishAsUndefined<T extends z.ZodTypeAny>(schema: T) {
   });
 }
 
+export function nullishAsNull<T extends z.ZodTypeAny>(schema: T) {
+  return schema.nullish().transform((output) => output ?? null);
+}
+
 export const stringToIntSchema = z.string().transform((s) => parseInt(s));
 
 export function defaultOnNull<T extends z.ZodTypeAny>(

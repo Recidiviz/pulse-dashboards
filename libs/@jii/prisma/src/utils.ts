@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,31 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PrismaPg } from "@prisma/adapter-pg";
-
-import { PrismaClient } from "./client/client";
-
-const prismaClients: Record<string, PrismaClient> = {};
-
-export function getPrismaClientForStateCode(stateCode: string) {
-  const dbUrl: string | undefined = ["development", "test"].includes(
-    process.env["NODE_ENV"] ?? "",
-  )
-    ? process.env["DATABASE_URL"]
-    : process.env[`DATABASE_URL_${stateCode}`];
-
-  if (!dbUrl) {
-    throw Error(
-      `Attempted to access unsupported database for state ${stateCode}`,
-    );
-  }
-
-  if (!prismaClients[dbUrl]) {
-    const adapter = new PrismaPg({
-      connectionString: dbUrl,
-    });
-    prismaClients[dbUrl] = new PrismaClient({ adapter });
-  }
-
-  return prismaClients[dbUrl];
+export function getDevDatabaseUrl(stateCode: string) {
+  return `postgresql://postgres:postgres@localhost:${process.env["DEV_PORT"]}/${stateCode.toLowerCase()}?schema=public`;
 }

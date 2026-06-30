@@ -17,52 +17,67 @@
 
 import { relativeFixtureDate } from "../../../utils/zod";
 import {
+  RawResidentCommon,
+  residentCommonSchema,
+} from "../residentCommonSchema";
+import {
   RawWorkflowsResidentRecord,
   workflowsResidentRecordSchema,
 } from "../workflowsResidentRecordSchema";
 
+export const rawUsNcResidentCommon: Array<RawResidentCommon> = [
+  {
+    stateCode: "US_NC",
+    personExternalId: "RES001",
+    pseudonymizedId: "anonres001",
+    displayId: "RES001",
+    personName: { givenNames: "Albert", middleNames: "Ross", surname: "Garry" },
+    facilityId: "NC_DEMO_FACILITY",
+  },
+  {
+    stateCode: "US_NC",
+    personExternalId: "RES002",
+    pseudonymizedId: "anonres002",
+    displayId: "RES002",
+    personName: {
+      givenNames: "Sabrina",
+      middleNames: "Alysa",
+      surname: "Johnston",
+    },
+    facilityId: "NC_DEMO_FACILITY",
+  },
+];
+
+export const usNcResidentCommon = rawUsNcResidentCommon.map((r) =>
+  residentCommonSchema.parse(r),
+);
+
 export const rawUsNcResidents: Array<RawWorkflowsResidentRecord> = [
   {
-    displayId: "RES001",
-    admissionDate: relativeFixtureDate({ years: -1, days: -97 }),
-    gender: "MALE",
-    personName: {
-      givenNames: "Albert",
-      middleNames: "Ross",
-      surname: "Garry",
-    },
-    personExternalId: "RES001",
+    ...rawUsNcResidentCommon[0],
     recordId: "us_nc_RES001",
-    custodyLevel: "MINIMUM",
-    pseudonymizedId: "anonres001",
-    facilityId: "NC_DEMO_FACILITY",
-    facilityUnitId: null,
     allEligibleOpportunities: [],
-    unitId: null,
     stateCode: "US_NC",
+    gender: "MALE",
+    custodyLevel: "MINIMUM",
+    facilityUnitId: null,
+    unitId: null,
+    admissionDate: relativeFixtureDate({ years: -1, days: -97 }),
     metadata: {
       stateCode: "US_NC",
       rnaDueDate: relativeFixtureDate({ days: -3 }),
     },
   },
   {
-    displayId: "RES002",
-    admissionDate: relativeFixtureDate({ years: -2, months: -6 }),
-    gender: "FEMALE",
-    personName: {
-      givenNames: "Sabrina",
-      middleNames: "Alysa",
-      surname: "Johnston",
-    },
-    personExternalId: "RES002",
+    ...rawUsNcResidentCommon[1],
     recordId: "us_nc_RES002",
-    custodyLevel: "MINIMUM",
-    pseudonymizedId: "anonres002",
-    facilityId: "NC_DEMO_FACILITY",
-    facilityUnitId: null,
     allEligibleOpportunities: [],
-    unitId: null,
     stateCode: "US_NC",
+    gender: "FEMALE",
+    custodyLevel: "MINIMUM",
+    facilityUnitId: null,
+    unitId: null,
+    admissionDate: relativeFixtureDate({ years: -2, months: -6 }),
     metadata: {
       stateCode: "US_NC",
       rnaDueDate: relativeFixtureDate({ days: 22 }),

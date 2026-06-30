@@ -1833,13 +1833,13 @@ exports[`schema for 'US_MA' 'RES001' 1`] = `
   "personExternalId": "RES001",
   "personName": {
     "givenNames": "Laurence",
-    "middleNames": undefined,
     "surname": "Baumbach",
   },
   "personType": "RESIDENT",
   "pseudonymizedId": "anonres001",
   "recordId": "us_ma_RES001",
   "stateCode": "US_MA",
+  "unitId": null,
 }
 `;
 
@@ -1985,6 +1985,7 @@ exports[`schema for 'US_MA' 'RES002' 1`] = `
   "pseudonymizedId": "anonres002",
   "recordId": "us_ma_RES002",
   "stateCode": "US_MA",
+  "unitId": null,
 }
 `;
 
@@ -2074,6 +2075,7 @@ exports[`schema for 'US_MA' 'RES003' 1`] = `
   "pseudonymizedId": "anonres003",
   "recordId": "us_ma_RES003",
   "stateCode": "US_MA",
+  "unitId": null,
 }
 `;
 
@@ -2099,13 +2101,13 @@ exports[`schema for 'US_MA' 'RES004' 1`] = `
   "personExternalId": "RES004",
   "personName": {
     "givenNames": "Marty",
-    "middleNames": undefined,
     "surname": "Fahey",
   },
   "personType": "RESIDENT",
   "pseudonymizedId": "anonres004",
   "recordId": "us_ma_RES004",
   "stateCode": "US_MA",
+  "unitId": null,
 }
 `;
 

@@ -89,7 +89,8 @@ export const residentRecordBase: WorkflowsResidentRecord = {
   releaseDate: new Date("2024-12-31"),
   allEligibleOpportunities: [],
   personType: "RESIDENT",
-
+  facilityId: null,
+  unitId: null,
   metadata: {},
 };
 

@@ -24,6 +24,7 @@ export type BulkUpdateEntry = {
     | boolean
     | Date
     | null
+    | undefined
     | bigint
     | string[]
     | Record<string, unknown>;
@@ -75,7 +76,7 @@ export async function bulkUpdate(
         } else if (value instanceof Date) {
           // Convert Date to ISO 8601 string format
           return `'${value.toISOString()}'::timestamp`;
-        } else if (value === null) {
+        } else if (value === null || value === undefined) {
           return "NULL";
         } else if (typeof value === "object") {
           // escape single quotes in JSON strings

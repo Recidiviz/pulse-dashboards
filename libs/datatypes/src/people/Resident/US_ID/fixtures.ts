@@ -16,25 +16,60 @@
 // =============================================================================
 
 import {
+  RawResidentCommon,
+  residentCommonSchema,
+} from "../residentCommonSchema";
+import {
   RawWorkflowsResidentRecord,
   workflowsResidentRecordSchema,
 } from "../workflowsResidentRecordSchema";
 
+export const rawUsIdResidentCommon: Array<RawResidentCommon> = [
+  {
+    stateCode: "US_ID",
+    personExternalId: "RES001",
+    pseudonymizedId: "anonres001",
+    displayId: "RES001",
+    personName: { givenNames: "Andre", middleNames: "Isaiah", surname: "Hall" },
+    facilityId: "FACILITY1",
+  },
+  {
+    stateCode: "US_ID",
+    personExternalId: "RES002",
+    pseudonymizedId: "anonres002",
+    displayId: "RES002",
+    personName: { givenNames: "Antonio", surname: "Martin" },
+    facilityId: "FACILITY1",
+  },
+  {
+    stateCode: "US_ID",
+    personExternalId: "RES003",
+    pseudonymizedId: "anonres003",
+    displayId: "RES003",
+    personName: { givenNames: "Walter", surname: "Brown" },
+    facilityId: "FACILITY1",
+  },
+  {
+    stateCode: "US_ID",
+    personExternalId: "RES004",
+    pseudonymizedId: "anonres004",
+    displayId: "RES004",
+    personName: { givenNames: "Nathan", surname: "Torres" },
+    facilityId: "FACILITY1",
+  },
+];
+
+export const usIdResidentCommon = rawUsIdResidentCommon.map((r) =>
+  residentCommonSchema.parse(r),
+);
+
 export const rawUsIdResidents: Array<RawWorkflowsResidentRecord> = [
   {
+    ...rawUsIdResidentCommon[0],
     allEligibleOpportunities: ["usIdExpandedCRC", "usIdCustodyLevelDowngrade"],
     stateCode: "US_ID",
     recordId: "us_id_res001",
-    personExternalId: "RES001",
-    displayId: "RES001",
-    personName: {
-      givenNames: "Andre",
-      middleNames: "Isaiah",
-      surname: "Hall",
-    },
     gender: "MALE",
-    pseudonymizedId: "anonres001",
-    facilityId: "FACILITY1",
     unitId: "UNIT A",
     custodyLevel: "MINIMUM",
     admissionDate: "2019-08-12",
@@ -48,21 +83,14 @@ export const rawUsIdResidents: Array<RawWorkflowsResidentRecord> = [
     },
   },
   {
+    ...rawUsIdResidentCommon[1],
     allEligibleOpportunities: [
       "usIdCRCWorkRelease",
       "usIdCustodyLevelDowngrade",
     ],
     stateCode: "US_ID",
     recordId: "us_id_res002",
-    personExternalId: "RES002",
-    displayId: "RES002",
-    personName: {
-      givenNames: "Antonio",
-      surname: "Martin",
-    },
     gender: "MALE",
-    pseudonymizedId: "anonres002",
-    facilityId: "FACILITY1",
     unitId: "UNIT A",
     custodyLevel: "MINIMUM",
     admissionDate: "2020-01-12",
@@ -76,18 +104,11 @@ export const rawUsIdResidents: Array<RawWorkflowsResidentRecord> = [
     },
   },
   {
+    ...rawUsIdResidentCommon[2],
     allEligibleOpportunities: ["usIdCRCWorkRelease", "usIdCRCResidentWorker"],
     stateCode: "US_ID",
     recordId: "us_id_res003",
-    personExternalId: "RES003",
-    displayId: "RES003",
-    personName: {
-      givenNames: "Walter",
-      surname: "Brown",
-    },
     gender: "MALE",
-    pseudonymizedId: "anonres003",
-    facilityId: "FACILITY1",
     unitId: "UNIT A",
     custodyLevel: "MINIMUM",
     admissionDate: "2017-07-12",
@@ -101,18 +122,11 @@ export const rawUsIdResidents: Array<RawWorkflowsResidentRecord> = [
     },
   },
   {
+    ...rawUsIdResidentCommon[3],
     allEligibleOpportunities: ["usIdCRCResidentWorker"],
     stateCode: "US_ID",
     recordId: "us_id_res004",
-    personExternalId: "RES004",
-    displayId: "RES004",
-    personName: {
-      givenNames: "Nathan",
-      surname: "Torres",
-    },
     gender: "MALE",
-    pseudonymizedId: "anonres004",
-    facilityId: "FACILITY1",
     unitId: "UNIT A",
     custodyLevel: "MINIMUM",
     admissionDate: "2021-07-12",

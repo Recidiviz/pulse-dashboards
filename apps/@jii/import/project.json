@@ -94,6 +94,19 @@
         }
       },
       "defaultConfiguration": "dev"
+    },
+    "requires-sops-env:seed": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^prisma-generate", "^prepare-dev-db"],
+      "options": {
+        "command": "vite-node src/seedDevData/main.ts",
+        "cwd": "{projectRoot}"
+      },
+      "metadata": {
+        "sops-env": {
+          "additional-dotenv-files": ["{workspaceRoot}/libs/@jii/prisma/.env"]
+        }
+      }
     }
   }
 }

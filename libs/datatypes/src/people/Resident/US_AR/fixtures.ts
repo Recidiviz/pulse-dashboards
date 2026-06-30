@@ -16,25 +16,96 @@
 // =============================================================================
 
 import {
+  RawResidentCommon,
+  residentCommonSchema,
+} from "../residentCommonSchema";
+import {
   RawWorkflowsResidentRecord,
   workflowsResidentRecordSchema,
 } from "../workflowsResidentRecordSchema";
 
-export const rawUsArResidents: Array<RawWorkflowsResidentRecord> = [
+export const rawUsArResidentCommon: Array<RawResidentCommon> = [
   {
-    recordId: "us_ar_res001",
-    allEligibleOpportunities: [],
     stateCode: "US_AR",
     personExternalId: "AR_RES001",
+    pseudonymizedId: "anonres001",
     displayId: "RES001",
     personName: {
       givenNames: "Sandra",
       middleNames: "Wynona",
       surname: "French",
     },
-    gender: "FEMALE",
-    pseudonymizedId: "anonres001",
     facilityId: "FACILITY1",
+  },
+  {
+    stateCode: "US_AR",
+    personExternalId: "AR_RES002",
+    pseudonymizedId: "anonres002",
+    displayId: "RES002",
+    personName: {
+      givenNames: "Clayton",
+      middleNames: "Milton",
+      surname: "Hamilton",
+    },
+    facilityId: "FACILITY2",
+  },
+  {
+    stateCode: "US_AR",
+    personExternalId: "AR_RES003",
+    pseudonymizedId: "anonres003",
+    displayId: "RES003",
+    personName: {
+      givenNames: "Robert",
+      middleNames: "Terence",
+      surname: "Bradley",
+    },
+    facilityId: "FACILITY2",
+  },
+  {
+    stateCode: "US_AR",
+    personExternalId: "AR_RES004",
+    pseudonymizedId: "anonres004",
+    displayId: "RES004",
+    personName: {
+      givenNames: "Alice",
+      middleNames: "Marie",
+      surname: "Johnson",
+    },
+    facilityId: "FACILITY1",
+  },
+  {
+    stateCode: "US_AR",
+    personExternalId: "AR_RES005",
+    pseudonymizedId: "anonres005",
+    displayId: "RES005",
+    personName: { givenNames: "John", middleNames: "Edward", surname: "Smith" },
+    facilityId: "FACILITY1",
+  },
+  {
+    stateCode: "US_AR",
+    personExternalId: "AR_RES006",
+    pseudonymizedId: "anonres006",
+    displayId: "RES006",
+    personName: {
+      givenNames: "Maria",
+      middleNames: "Elena",
+      surname: "Torres",
+    },
+    facilityId: "FACILITY1",
+  },
+];
+
+export const usArResidentCommon = rawUsArResidentCommon.map((r) =>
+  residentCommonSchema.parse(r),
+);
+
+export const rawUsArResidents: Array<RawWorkflowsResidentRecord> = [
+  {
+    ...rawUsArResidentCommon[0],
+    recordId: "us_ar_res001",
+    allEligibleOpportunities: [],
+    stateCode: "US_AR",
+    gender: "FEMALE",
     unitId: "UNIT A",
     custodyLevel: "MINIMUM",
     admissionDate: "2019-08-12",
@@ -84,19 +155,11 @@ export const rawUsArResidents: Array<RawWorkflowsResidentRecord> = [
     },
   },
   {
+    ...rawUsArResidentCommon[1],
     recordId: "us_ar_res002",
     allEligibleOpportunities: [],
     stateCode: "US_AR",
-    personExternalId: "AR_RES002",
-    displayId: "RES002",
-    personName: {
-      givenNames: "Clayton",
-      middleNames: "Milton",
-      surname: "Hamilton",
-    },
     gender: "MALE",
-    pseudonymizedId: "anonres002",
-    facilityId: "FACILITY2",
     unitId: "UNIT A",
     custodyLevel: "MINIMUM",
     admissionDate: "2019-08-12",
@@ -146,19 +209,11 @@ export const rawUsArResidents: Array<RawWorkflowsResidentRecord> = [
     },
   },
   {
+    ...rawUsArResidentCommon[2],
     recordId: "us_ar_res003",
     allEligibleOpportunities: [],
     stateCode: "US_AR",
-    personExternalId: "AR_RES003",
-    displayId: "RES003",
-    personName: {
-      givenNames: "Robert",
-      middleNames: "Terence",
-      surname: "Bradley",
-    },
     gender: "MALE",
-    pseudonymizedId: "anonres003",
-    facilityId: "FACILITY2",
     unitId: "UNIT A",
     custodyLevel: "MINIMUM",
     admissionDate: "2020-05-17",
@@ -208,19 +263,11 @@ export const rawUsArResidents: Array<RawWorkflowsResidentRecord> = [
     },
   },
   {
+    ...rawUsArResidentCommon[3],
     recordId: "us_ar_res004",
     allEligibleOpportunities: ["usArInstitutionalWorkerStatus"],
     stateCode: "US_AR",
-    personExternalId: "AR_RES004",
-    displayId: "RES004",
-    personName: {
-      givenNames: "Alice",
-      middleNames: "Marie",
-      surname: "Johnson",
-    },
     gender: "FEMALE",
-    pseudonymizedId: "anonres004",
-    facilityId: "FACILITY1",
     unitId: "UNIT B",
     custodyLevel: "MEDIUM",
     admissionDate: "2021-01-15",
@@ -270,19 +317,11 @@ export const rawUsArResidents: Array<RawWorkflowsResidentRecord> = [
     },
   },
   {
+    ...rawUsArResidentCommon[4],
     recordId: "us_ar_res005",
     allEligibleOpportunities: ["usArInstitutionalWorkerStatus"],
     stateCode: "US_AR",
-    personExternalId: "AR_RES005",
-    displayId: "RES005",
-    personName: {
-      givenNames: "John",
-      middleNames: "Edward",
-      surname: "Smith",
-    },
     gender: "MALE",
-    pseudonymizedId: "anonres005",
-    facilityId: "FACILITY1",
     unitId: "UNIT C",
     custodyLevel: "MAXIMUM",
     admissionDate: "2018-11-20",
@@ -332,19 +371,11 @@ export const rawUsArResidents: Array<RawWorkflowsResidentRecord> = [
     },
   },
   {
+    ...rawUsArResidentCommon[5],
     recordId: "us_ar_res006",
     allEligibleOpportunities: [],
     stateCode: "US_AR",
-    personExternalId: "AR_RES006",
-    displayId: "RES006",
-    personName: {
-      givenNames: "Maria",
-      middleNames: "Elena",
-      surname: "Torres",
-    },
     gender: "FEMALE",
-    pseudonymizedId: "anonres006",
-    facilityId: "FACILITY1",
     unitId: "UNIT A",
     custodyLevel: "MINIMUM",
     admissionDate: "2025-03-10",

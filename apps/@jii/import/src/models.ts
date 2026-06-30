@@ -39,9 +39,15 @@ const exportPreprocessSchema = z
   .passthrough()
   .transform(camelCaseObject);
 
+/**
+ * schema for Resident data that has already passed through the BigQuery preprocessing step
+ * (or that comes from a fixture file that does not require it)
+ */
+export const processedResidentSchema = residentCommonSchema.extend({
+  // placeholder until we have schemas for all SSD
+  stateSpecificData: z.object({}).passthrough(),
+});
+
 export const residentSchema = exportPreprocessSchema.pipe(
-  residentCommonSchema.extend({
-    // placeholder until we have schemas for all SSD
-    stateSpecificData: z.object({}).passthrough(),
-  }),
+  processedResidentSchema,
 );

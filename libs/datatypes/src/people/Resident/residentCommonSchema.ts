@@ -17,6 +17,7 @@
 
 import { z } from "zod";
 
+import { nullishAsNull } from "../../utils/zod";
 import { justiceInvolvedPersonRecordSchema } from "../JusticeInvolvedPerson/schema";
 
 /**
@@ -24,5 +25,9 @@ import { justiceInvolvedPersonRecordSchema } from "../JusticeInvolvedPerson/sche
  * Product-specific schemas should extend this.
  */
 export const residentCommonSchema = justiceInvolvedPersonRecordSchema.extend({
-  facilityId: z.string().nullish(),
+  facilityId: nullishAsNull(z.string()),
+  unitId: nullishAsNull(z.string()),
 });
+
+export type RawResidentCommon = z.input<typeof residentCommonSchema>;
+export type ResidentCommon = z.infer<typeof residentCommonSchema>;

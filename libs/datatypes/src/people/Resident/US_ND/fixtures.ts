@@ -17,24 +17,52 @@
 
 import { relativeFixtureDate } from "../../../utils/zod";
 import {
+  RawResidentCommon,
+  residentCommonSchema,
+} from "../residentCommonSchema";
+import {
   RawWorkflowsResidentRecord,
   workflowsResidentRecordSchema,
 } from "../workflowsResidentRecordSchema";
 
-export const rawUsNdResidents: Array<RawWorkflowsResidentRecord> = [
+export const rawUsNdResidentCommon: Array<RawResidentCommon> = [
   {
-    allEligibleOpportunities: ["usNdTransferToMinFacility"],
     stateCode: "US_ND",
     personExternalId: "ND_RES003",
-    recordId: "us_nd_nd_res003",
-    displayId: "RES003",
-    personName: {
-      givenNames: "Dakota",
-      surname: "Johnson",
-    },
-    gender: "MALE",
     pseudonymizedId: "anonres003",
+    displayId: "RES003",
+    personName: { givenNames: "Dakota", surname: "Johnson" },
     facilityId: "ND_DEMO_FACILITY",
+  },
+  {
+    stateCode: "US_ND",
+    personExternalId: "ND_RES004",
+    pseudonymizedId: "anonres004",
+    displayId: "RES004",
+    personName: { givenNames: "Casey", surname: "Thompson" },
+    facilityId: "ND_DEMO_FACILITY",
+  },
+  {
+    stateCode: "US_ND",
+    personExternalId: "ND_RES005",
+    pseudonymizedId: "anonres005",
+    displayId: "RES005",
+    personName: { givenNames: "Riley", surname: "Martinez" },
+    facilityId: "ND_DEMO_FACILITY",
+  },
+];
+
+export const usNdResidentCommon = rawUsNdResidentCommon.map((r) =>
+  residentCommonSchema.parse(r),
+);
+
+export const rawUsNdResidents: Array<RawWorkflowsResidentRecord> = [
+  {
+    ...rawUsNdResidentCommon[0],
+    allEligibleOpportunities: ["usNdTransferToMinFacility"],
+    stateCode: "US_ND",
+    recordId: "us_nd_nd_res003",
+    gender: "MALE",
     unitId: "UNIT A",
     officerId: "OFFICER3",
     custodyLevel: "MINIMUM",
@@ -46,19 +74,12 @@ export const rawUsNdResidents: Array<RawWorkflowsResidentRecord> = [
     },
   },
   {
+    ...rawUsNdResidentCommon[1],
     allEligibleOpportunities: ["usNdTransferToMinFacility"],
     stateCode: "US_ND",
-    personExternalId: "ND_RES004",
     recordId: "us_nd_nd_res004",
-    displayId: "RES004",
-    personName: {
-      givenNames: "Casey",
-      surname: "Thompson",
-    },
     officerId: "OFFICER3",
     gender: "FEMALE",
-    pseudonymizedId: "anonres004",
-    facilityId: "ND_DEMO_FACILITY",
     unitId: "UNIT B",
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ years: -1, months: -8 }),
@@ -74,19 +95,12 @@ export const rawUsNdResidents: Array<RawWorkflowsResidentRecord> = [
     },
   },
   {
+    ...rawUsNdResidentCommon[2],
     allEligibleOpportunities: ["usNdTransferToMinFacility"],
     stateCode: "US_ND",
-    personExternalId: "ND_RES005",
     recordId: "us_nd_nd_res005",
-    displayId: "RES005",
-    personName: {
-      givenNames: "Riley",
-      surname: "Martinez",
-    },
     officerId: "OFFICER3",
     gender: "MALE",
-    pseudonymizedId: "anonres005",
-    facilityId: "ND_DEMO_FACILITY",
     unitId: "UNIT C",
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ years: -3, months: -2 }),

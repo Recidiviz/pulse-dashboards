@@ -53,6 +53,8 @@ function createTestUnit() {
     officerId: "OFFICER1",
     allEligibleOpportunities: ["usMiSecurityClassificationCommitteeReview"],
     gender: "female",
+    facilityId: null,
+    unitId: null,
     metadata: {},
   };
 

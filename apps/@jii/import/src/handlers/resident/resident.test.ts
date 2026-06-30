@@ -47,6 +47,7 @@ const personData = {
     surname: "Doe",
   }),
   facility_id: "FAC1",
+  unit_id: "UN1",
   person_id: "1",
   state_specific_data: JSON.stringify({ some_key: "some_value" }),
 };
@@ -84,7 +85,7 @@ describe("residentHandler", () => {
             "someKey": "some_value",
           },
           "surname": "Doe",
-          "unitId": null,
+          "unitId": "UN1",
         },
       ]
     `);
@@ -106,7 +107,7 @@ describe("residentHandler", () => {
     expect("extraColumn" in result).toBeFalse();
   });
 
-  it("upserts an existing resident", async () => {
+  it("updates an existing resident", async () => {
     dataProviderSingleton.setData(DATA_PROVIDER_FILE_NAME, [personData]);
     await importHandler.import(STATE_CODE, [RESIDENTS_FILE_NAME]);
     expect(await prismaClient.resident.findMany()).toHaveLength(1);
@@ -154,6 +155,49 @@ describe("residentHandler", () => {
       where: { pseudonymizedId: "other_pseudo_id" },
     });
     expect(deleted).toBeNull();
+  });
+
+  const minimalRecord = {
+    pseudonymized_id: "minimal_pseudo_id",
+    person_external_id: "EXT_MIN",
+    display_id: "D_MIN",
+    state_code: "US_NC",
+    person_name: JSON.stringify({}),
+    state_specific_data: JSON.stringify({}),
+    // facility_id, unit_id omitted — nullish in schema
+    // given_names, middle_names, surname omitted — nullish in fullNameSchema
+  };
+
+  it("succeeds on create when all optional fields are missing", async () => {
+    dataProviderSingleton.setData(DATA_PROVIDER_FILE_NAME, [minimalRecord]);
+    await importHandler.import(STATE_CODE, [RESIDENTS_FILE_NAME]);
+
+    const result = await prismaClient.resident.findFirstOrThrow();
+    expect(result.givenNames).toBeNull();
+    expect(result.middleNames).toBeNull();
+    expect(result.surname).toBeNull();
+    expect(result.facilityId).toBeNull();
+    expect(result.unitId).toBeNull();
+  });
+
+  it("succeeds on update when all optional fields are missing", async () => {
+    dataProviderSingleton.setData(DATA_PROVIDER_FILE_NAME, [personData]);
+    await importHandler.import(STATE_CODE, [RESIDENTS_FILE_NAME]);
+
+    vi.setSystemTime(new Date("2025-05-20"));
+    dataProviderSingleton.setData(DATA_PROVIDER_FILE_NAME, [
+      { ...minimalRecord, pseudonymized_id: personData.pseudonymized_id },
+    ]);
+    await importHandler.import(STATE_CODE, [RESIDENTS_FILE_NAME]);
+
+    const result = await prismaClient.resident.findFirstOrThrow({
+      where: { pseudonymizedId: personData.pseudonymized_id },
+    });
+    expect(result.givenNames).toBeNull();
+    expect(result.middleNames).toBeNull();
+    expect(result.surname).toBeNull();
+    expect(result.facilityId).toBeNull();
+    expect(result.unitId).toBeNull();
   });
 
   it("correctly imports more than BATCH_SIZE residents", async () => {

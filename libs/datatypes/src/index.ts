@@ -158,6 +158,7 @@ export * from "./people/Client/utils";
 // -----------------------------------------------------------------------------
 export * from "./people/Resident/fixtures";
 export * from "./people/Resident/residentCommonSchema";
+export * from "./people/Resident/residentCommonSchemaFixtures";
 export type * from "./people/Resident/US_AR/metadata/schema";
 export * from "./people/Resident/US_AZ/fixtures";
 export type * from "./people/Resident/US_AZ/metadata/schema";

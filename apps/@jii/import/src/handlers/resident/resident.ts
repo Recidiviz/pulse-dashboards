@@ -17,6 +17,7 @@
 
 import { PrismaClient, ResidentCreateInput } from "~@jii/prisma";
 import { LoaderFn } from "~data-import-plugin";
+import { FullName } from "~datatypes";
 
 import { residentSchema } from "../../models";
 import {
@@ -26,6 +27,13 @@ import {
 } from "../../utils/bulkUpdate";
 
 export const BATCH_SIZE = 500;
+
+// we'll use this to make sure no fields are missing when we spread the name blobs
+const personNameDefaults: Record<keyof FullName, null> = {
+  givenNames: null,
+  middleNames: null,
+  surname: null,
+};
 
 export const residentHandler: LoaderFn<
   PrismaClient,
@@ -63,13 +71,24 @@ export const residentHandler: LoaderFn<
   };
 
   for await (const d of data) {
-    const { personName, stateSpecificData, ...passthroughFields } = d;
+    const {
+      personName,
+      // we don't actually have to include state code in the import,
+      // data has already been segmented by state
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      stateCode,
+      ...passthroughFields
+    } = d;
+
+    // because we're spreading this into columns in the SQL query,
+    // we have to make sure there are no missing fields, or we may get
+    // a SQL syntax error in bulkUpdate
+    const personNameData = { ...personNameDefaults, ...personName };
+
     const newResidentData = {
       ...passthroughFields,
+      ...personNameData,
       importedAt: importTimestamp,
-      stateSpecificData: stateSpecificData,
-      // unpack personName blob
-      ...personName,
     } satisfies ResidentCreateInput & BulkUpdateEntry;
 
     if (existingResidentIds.has(d.pseudonymizedId)) {

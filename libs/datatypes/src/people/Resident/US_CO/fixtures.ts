@@ -17,29 +17,56 @@
 
 import { relativeFixtureDate } from "../../../utils/zod";
 import {
+  RawResidentCommon,
+  residentCommonSchema,
+} from "../residentCommonSchema";
+import {
   RawWorkflowsResidentRecord,
   workflowsResidentRecordSchema,
 } from "../workflowsResidentRecordSchema";
 
-export const rawUsCoResidents: Array<RawWorkflowsResidentRecord> = [
+export const rawUsCoResidentCommon: Array<RawResidentCommon> = [
   {
+    stateCode: "US_CO",
+    personExternalId: "RES001",
+    pseudonymizedId: "anonres001",
     displayId: "RES001",
-    admissionDate: relativeFixtureDate({ years: -1, days: -97 }),
-    gender: "MALE",
     personName: {
       givenNames: "John",
       middleNames: "Michael",
       surname: "Smith",
     },
-    personExternalId: "RES001",
-    recordId: "us_co_RES001",
-    custodyLevel: "MINIMUM",
-    pseudonymizedId: "anonres001",
     facilityId: "CO_DEMO_FACILITY",
-    facilityUnitId: null,
-    allEligibleOpportunities: [],
-    unitId: null,
+  },
+  {
     stateCode: "US_CO",
+    personExternalId: "RES002",
+    pseudonymizedId: "anonres002",
+    displayId: "RES002",
+    personName: {
+      givenNames: "Jane",
+      middleNames: "Marie",
+      surname: "Johnson",
+    },
+    facilityId: "CO_DEMO_FACILITY",
+  },
+];
+
+export const usCoResidentCommon = rawUsCoResidentCommon.map((r) =>
+  residentCommonSchema.parse(r),
+);
+
+export const rawUsCoResidents: Array<RawWorkflowsResidentRecord> = [
+  {
+    ...rawUsCoResidentCommon[0],
+    recordId: "us_co_RES001",
+    allEligibleOpportunities: [],
+    stateCode: "US_CO",
+    gender: "MALE",
+    custodyLevel: "MINIMUM",
+    facilityUnitId: null,
+    unitId: null,
+    admissionDate: relativeFixtureDate({ years: -1, days: -97 }),
     metadata: {
       stateCode: "US_CO",
       incarcerationStartDate: relativeFixtureDate({ years: -1, days: -97 }),
@@ -102,23 +129,15 @@ export const rawUsCoResidents: Array<RawWorkflowsResidentRecord> = [
     },
   },
   {
-    displayId: "RES002",
-    admissionDate: relativeFixtureDate({ years: -2, months: -6 }),
-    gender: "FEMALE",
-    personName: {
-      givenNames: "Jane",
-      middleNames: "Marie",
-      surname: "Johnson",
-    },
-    personExternalId: "RES002",
+    ...rawUsCoResidentCommon[1],
     recordId: "us_co_RES002",
-    custodyLevel: "MINIMUM",
-    pseudonymizedId: "anonres002",
-    facilityId: "CO_DEMO_FACILITY",
-    facilityUnitId: null,
     allEligibleOpportunities: [],
-    unitId: null,
     stateCode: "US_CO",
+    gender: "FEMALE",
+    custodyLevel: "MINIMUM",
+    facilityUnitId: null,
+    unitId: null,
+    admissionDate: relativeFixtureDate({ years: -2, months: -6 }),
     metadata: {
       stateCode: "US_CO",
       incarcerationStartDate: relativeFixtureDate({ years: -2, months: -6 }),

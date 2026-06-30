@@ -90,6 +90,31 @@
       }
     },
 
+    "prepare-dev-db": {
+      "dependsOn": ["docker"],
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx scripts/prepareDev.mts",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "reset-dev": {
+      "dependsOn": ["docker"],
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx scripts/resetDev.mts",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "migrate-dev": {
+      "dependsOn": ["docker"],
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx scripts/migrateDev.mts",
+        "cwd": "{projectRoot}"
+      }
+    },
+
     "prepare-offline-db": {
       "dependsOn": ["docker"],
       "executor": "nx:run-commands",
@@ -112,7 +137,7 @@
         "schema": "{projectRoot}/prisma/schema.prisma"
       }
     },
-    "docker": {
+    "docker:start": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}"
@@ -120,6 +145,25 @@
       "configurations": {
         "dev": {
           "command": "docker compose up --wait"
+        },
+        "ci": {
+          "command": "echo 'No docker for CI'"
+        },
+        "test": {
+          "command": "echo 'No docker for CI'"
+        }
+      },
+      "defaultConfiguration": "dev"
+    },
+    "docker": {
+      "executor": "nx:run-commands",
+      "dependsOn": [{ "target": "docker:start", "params": "forward" }],
+      "options": {
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {
+          "command": "tsx scripts/initDbs.mts"
         },
         "ci": {
           "command": "echo 'No docker for CI'"

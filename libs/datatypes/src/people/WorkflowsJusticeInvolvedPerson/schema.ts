@@ -20,7 +20,6 @@ import { z } from "zod";
 import { OpportunityType } from "../../opportunities/OpportunityType";
 
 export const workflowsJusticeInvolvedPersonMixinSchema = z.object({
-  stateCode: z.string(),
   recordId: z.string(),
   // TODO($6489): Look at relaxing typing to be string[]
   allEligibleOpportunities: z.array(

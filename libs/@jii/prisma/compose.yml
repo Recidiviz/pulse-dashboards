@@ -3,45 +3,46 @@ services:
   db:
     image: postgres:17
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=jii
+      - POSTGRES_USER=${PGUSER}
+      - POSTGRES_PASSWORD=${PGPASSWORD}
     ports:
-      - 6508:5432
+      - ${DEV_PORT}:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-d", "$${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready", "-U", "$${POSTGRES_USER}"]
       interval: 3s
       timeout: 1s
       retries: 5
   test-db:
     image: postgres:17
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=${PGUSER}
+      - POSTGRES_PASSWORD=${PGPASSWORD}
       - POSTGRES_DB=jii-test
     ports:
       - 6509:5432
     volumes:
       - postgres_data:/var/lib/postgresql/test-data/
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-d", "$${POSTGRES_DB}"]
+      test:
+        ["CMD-SHELL", "pg_isready", "-U", "postgres", "-d", "$${POSTGRES_DB}"]
       interval: 3s
       timeout: 1s
       retries: 5
   offline-db:
     image: postgres:17
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=${PGUSER}
+      - POSTGRES_PASSWORD=${PGPASSWORD}
       - POSTGRES_DB=jii-offline
     ports:
       - 6510:5432
     volumes:
       - postgres_data:/var/lib/postgresql/offline-data/
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-d", "$${POSTGRES_DB}"]
+      test:
+        ["CMD-SHELL", "pg_isready", "-U", "postgres", "-d", "$${POSTGRES_DB}"]
       interval: 3s
       timeout: 1s
       retries: 5

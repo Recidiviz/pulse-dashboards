@@ -2,6 +2,10 @@ data "dotenv" "env" {
   filename = "../../../../../../apps/@jii/server/${var.server_env_filename}"
 }
 
+data "dotenv" "prisma_env" {
+  filename = "../../../../../@jii/prisma/.env"
+}
+
 data "sops_file" "env_secrets" {
   source_file = "../../../../../../apps/@jii/server/${var.server_env_secrets_filename}"
 }
@@ -18,7 +22,7 @@ locals {
 
   secrets = yamldecode(data.sops_file.secrets.raw)
 
-  additional_database_names = flatten([for state_code in var.enabled_states : [state_code, "${state_code}_demo"]])
+  additional_database_names = flatten([for state_code in split(",", data.dotenv.prisma_env.entries["ENABLED_STATE_DBS"]) : [state_code, "${state_code}_demo"]])
 
   # This list needs to be marked as nonsensitive so it can be used in `for_each`
   # the keys are not sensitive, so it is fine if they end up in the Terraform resource names

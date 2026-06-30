@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,6 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./client/client";
-export * from "./client/models";
-export * from "./getPrismaClientForStateCode";
+export function getEnabledStates() {
+  const ENABLED_STATE_DBS = process.env["ENABLED_STATE_DBS"] ?? "";
+
+  const states = ENABLED_STATE_DBS.split(",");
+
+  if (!states.length)
+    throw new Error("No states specified in ENABLED_STATE_DBS");
+
+  return states;
+}

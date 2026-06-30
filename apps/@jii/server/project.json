@@ -7,11 +7,16 @@
   "targets": {
     "requires-sops-env:dev": {
       "continuous": true,
-      "dependsOn": ["^prisma-generate", "^prisma-deploy", "jwks-sim"],
+      "dependsOn": ["^prisma-generate", "^prepare-dev-db", "jwks-sim"],
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
         "command": "vite-node --watch src/main.ts"
+      },
+      "metadata": {
+        "sops-env": {
+          "additional-dotenv-files": ["{workspaceRoot}/libs/@jii/prisma/.env"]
+        }
       }
     },
     "offline": {

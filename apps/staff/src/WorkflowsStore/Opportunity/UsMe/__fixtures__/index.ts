@@ -46,7 +46,8 @@ export const usMePersonRecord: WorkflowsResidentRecord = {
     "usMeFurloughRelease",
     "usMeWorkRelease",
   ],
-
+  facilityId: null,
+  unitId: null,
   metadata: {},
 };
 
@@ -67,7 +68,8 @@ export const usMePersonRecordShorterSentence: WorkflowsResidentRecord = {
   admissionDate: new Date("2020-03-10"),
   releaseDate: new Date("2024-05-20"),
   allEligibleOpportunities: ["usMeSCCP"],
-
+  facilityId: null,
+  unitId: null,
   metadata: {},
 };
 

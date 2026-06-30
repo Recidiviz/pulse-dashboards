@@ -24,6 +24,7 @@ import { fullNameSchema } from "../utils/fullNameSchema";
  * regardless of which system compartment they are currently subject to
  */
 export const justiceInvolvedPersonRecordSchema = z.object({
+  stateCode: z.string(),
   personExternalId: z.string(),
   pseudonymizedId: z.string(),
   displayId: z.string(),

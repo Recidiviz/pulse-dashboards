@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,13 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { getPrismaClientForStateCode } from "./utils";
+import { getPrismaClientForStateCode } from "~@jii/prisma";
 
-describe("prisma", () => {
-  test("should return the same instance of a prisma client for a state code if it already exists", async () => {
-    const firstClient = getPrismaClientForStateCode("US_MA");
-    const secondClient = getPrismaClientForStateCode("US_MA");
+import { residentHandler } from "../handlers/resident/resident";
+import { residentFixtures } from "./fixtures/resident";
 
-    expect(secondClient).toBe(firstClient);
-  });
-});
+async function* toAsyncGenerator<T>(items: T[]) {
+  for (const item of items) {
+    yield item;
+  }
+}
+
+await Promise.all(
+  Object.entries(residentFixtures).map(([stateCode, fixtures]) => {
+    const prismaClient = getPrismaClientForStateCode(stateCode);
+    console.log(`Seeding fixtures for ${stateCode}`);
+    return residentHandler(prismaClient, toAsyncGenerator(fixtures));
+  }),
+);
+
+console.log("Seeding complete");
+// ensure the script doesn't hang once all the work is done
+process.exit(0);

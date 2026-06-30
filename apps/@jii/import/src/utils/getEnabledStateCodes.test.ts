@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,6 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./client/client";
-export * from "./client/models";
-export * from "./getPrismaClientForStateCode";
+import { getEnabledStateCodes } from "./getEnabledStateCodes";
+
+test("split state codes from env", () => {
+  vi.stubEnv("ENABLED_STATE_DBS", "US_AR,US_AZ,US_TN");
+  expect(getEnabledStateCodes()).toMatchInlineSnapshot(`
+    [
+      "US_AR",
+      "US_AZ",
+      "US_TN",
+    ]
+  `);
+});
+
+test("one state code", () => {
+  vi.stubEnv("ENABLED_STATE_DBS", "US_AR");
+  expect(getEnabledStateCodes()).toMatchInlineSnapshot(`
+    [
+      "US_AR",
+    ]
+  `);
+});
+
+test("no enabled states", () => {
+  expect(getEnabledStateCodes).toThrowErrorMatchingInlineSnapshot(
+    `[Error: No states specified in ENABLED_STATE_DBS]`,
+  );
+});

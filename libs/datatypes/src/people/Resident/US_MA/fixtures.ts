@@ -15,12 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { faker } from "@faker-js/faker";
-import { range } from "d3-array";
-
-import { FIXTURE_SEED_DEFAULT } from "~fixture-generator";
-
-import { fullNameFactory } from "../../utils/factories";
+import {
+  RawResidentCommon,
+  residentCommonSchema,
+} from "../residentCommonSchema";
 import {
   RawWorkflowsResidentRecord,
   WorkflowsResidentRecord,
@@ -29,25 +27,63 @@ import {
 import { rawUsMaResidentMetadataFixtures } from "./metadata/fixtures";
 import { RawUsMaResidentMetadata } from "./metadata/schema";
 
-faker.seed(FIXTURE_SEED_DEFAULT);
+export const rawUsMaResidentCommon: Array<RawResidentCommon> = [
+  {
+    stateCode: "US_MA",
+    personExternalId: "RES001",
+    pseudonymizedId: "anonres001",
+    displayId: "RES001",
+    personName: { givenNames: "Laurence", surname: "Baumbach" },
+    facilityId: "DEMO FACILITY",
+  },
+  {
+    stateCode: "US_MA",
+    personExternalId: "RES002",
+    pseudonymizedId: "anonres002",
+    displayId: "RES002",
+    personName: {
+      givenNames: "Dan",
+      middleNames: "Michael",
+      surname: "Krajcik",
+    },
+    facilityId: "DEMO FACILITY",
+  },
+  {
+    stateCode: "US_MA",
+    personExternalId: "RES003",
+    pseudonymizedId: "anonres003",
+    displayId: "RES003",
+    personName: {
+      givenNames: "Israel",
+      middleNames: "Nixon",
+      surname: "Willms",
+    },
+    facilityId: "DEMO FACILITY 2",
+  },
+  {
+    stateCode: "US_MA",
+    personExternalId: "RES004",
+    pseudonymizedId: "anonres004",
+    displayId: "RES004",
+    personName: { givenNames: "Marty", surname: "Fahey" },
+    facilityId: "DEMO FACILITY 2",
+  },
+];
+
+export const usMaResidentCommon = rawUsMaResidentCommon.map((r) =>
+  residentCommonSchema.parse(r),
+);
 
 export const rawUsMaResidents: Array<
   RawWorkflowsResidentRecord & { metadata: RawUsMaResidentMetadata }
-> = range(4).map((i) => {
-  const resId = `RES${String(i + 1).padStart(3, "0")}`;
-  return {
-    stateCode: "US_MA",
-    personExternalId: resId,
-    displayId: resId,
-    gender: "MALE",
-    personName: fullNameFactory("male").build(),
-    pseudonymizedId: `anon${resId.toLowerCase()}`,
-    facilityId: `DEMO FACILITY${i < 2 ? "" : " 2"}`,
-    metadata: rawUsMaResidentMetadataFixtures[i],
-    recordId: `us_ma_${resId}`,
-    allEligibleOpportunities: [],
-  };
-});
+> = rawUsMaResidentCommon.map((common, i) => ({
+  ...common,
+  stateCode: "US_MA",
+  gender: "MALE",
+  metadata: rawUsMaResidentMetadataFixtures[i],
+  recordId: `us_ma_${common.personExternalId}`,
+  allEligibleOpportunities: [],
+}));
 
 export const usMaResidents: Array<WorkflowsResidentRecord> =
   rawUsMaResidents.map((r) => workflowsResidentRecordSchema.parse(r));

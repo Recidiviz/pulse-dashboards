@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,6 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./client/client";
-export * from "./client/models";
-export * from "./getPrismaClientForStateCode";
+import { $ } from "zx";
+
+import { getDevDatabaseUrl } from "../src/utils";
+import { getEnabledStates } from "./utils";
+
+$.verbose = false;
+
+for (const state of getEnabledStates()) {
+  console.log(`migrating DB for ${state}`);
+  // eslint-disable-next-line no-await-in-loop
+  await $`DATABASE_URL=${getDevDatabaseUrl(state)} yarn prisma migrate dev`.pipe(
+    process.stdout,
+  );
+}

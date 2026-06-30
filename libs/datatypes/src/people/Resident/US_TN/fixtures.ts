@@ -17,6 +17,10 @@
 
 import { relativeFixtureDate } from "../../../utils/zod";
 import {
+  RawResidentCommon,
+  residentCommonSchema,
+} from "../residentCommonSchema";
+import {
   RawWorkflowsResidentRecord,
   workflowsResidentRecordSchema,
 } from "../workflowsResidentRecordSchema";
@@ -123,20 +127,52 @@ const metadata = {
   ],
 };
 
-export const rawUsTnResidents: Array<RawWorkflowsResidentRecord> = [
+export const rawUsTnResidentCommon: Array<RawResidentCommon> = [
   {
-    allEligibleOpportunities: ["usTnCustodyLevelDowngrade"],
     stateCode: "US_TN",
     personExternalId: "RES001",
-    recordId: "us_tn_res001",
-    displayId: "dRES001",
-    personName: {
-      givenNames: "Carmen",
-      surname: "Reyes",
-    },
-    gender: "MALE",
     pseudonymizedId: "anonres001",
+    displayId: "dRES001",
+    personName: { givenNames: "Carmen", surname: "Reyes" },
     facilityId: "BLEDSOE_CC",
+  },
+  {
+    stateCode: "US_TN",
+    personExternalId: "RES002",
+    pseudonymizedId: "anonres002",
+    displayId: "dRES002",
+    personName: { givenNames: "Jessica", surname: "Ren" },
+    facilityId: "BLEDSOE_CC",
+  },
+  {
+    stateCode: "US_TN",
+    personExternalId: "RES003",
+    pseudonymizedId: "anonres003",
+    displayId: "dRES003",
+    personName: { givenNames: "Fei", surname: "Jackson" },
+    facilityId: "BLEDSOE_CC",
+  },
+  {
+    stateCode: "US_TN",
+    personExternalId: "RES004",
+    pseudonymizedId: "anonres004",
+    displayId: "dRES004",
+    personName: { givenNames: "Geoff", surname: "Zhang" },
+    facilityId: "BLEDSOE_CC",
+  },
+];
+
+export const usTnResidentCommon = rawUsTnResidentCommon.map((r) =>
+  residentCommonSchema.parse(r),
+);
+
+export const rawUsTnResidents: Array<RawWorkflowsResidentRecord> = [
+  {
+    ...rawUsTnResidentCommon[0],
+    allEligibleOpportunities: ["usTnCustodyLevelDowngrade"],
+    stateCode: "US_TN",
+    recordId: "us_tn_res001",
+    gender: "MALE",
     unitId: "UNIT A",
     facilityUnitId: "BLEDSOE_CC‡UNIT A",
     custodyLevel: "CLOSE",
@@ -145,18 +181,11 @@ export const rawUsTnResidents: Array<RawWorkflowsResidentRecord> = [
     metadata,
   },
   {
+    ...rawUsTnResidentCommon[1],
     allEligibleOpportunities: ["usTnCustodyLevelDowngrade"],
     stateCode: "US_TN",
-    personExternalId: "RES002",
     recordId: "us_tn_res002",
-    displayId: "dRES002",
-    personName: {
-      givenNames: "Jessica",
-      surname: "Ren",
-    },
     gender: "FEMALE",
-    pseudonymizedId: "anonres002",
-    facilityId: "BLEDSOE_CC",
     unitId: "UNIT A",
     facilityUnitId: "BLEDSOE_CC‡UNIT A",
     custodyLevel: "MEDIUM",
@@ -165,21 +194,14 @@ export const rawUsTnResidents: Array<RawWorkflowsResidentRecord> = [
     metadata,
   },
   {
+    ...rawUsTnResidentCommon[2],
     allEligibleOpportunities: [
       "usTnAnnualReclassification",
       "usTnInitialClassification",
     ],
     stateCode: "US_TN",
-    personExternalId: "RES003",
     recordId: "us_tn_res003",
-    displayId: "dRES003",
-    personName: {
-      givenNames: "Fei",
-      surname: "Jackson",
-    },
     gender: "MALE",
-    pseudonymizedId: "anonres003",
-    facilityId: "BLEDSOE_CC",
     unitId: "UNIT A",
     facilityUnitId: "BLEDSOE_CC‡UNIT A",
     custodyLevel: "MEDIUM",
@@ -188,21 +210,14 @@ export const rawUsTnResidents: Array<RawWorkflowsResidentRecord> = [
     metadata,
   },
   {
+    ...rawUsTnResidentCommon[3],
     allEligibleOpportunities: [
       "usTnAnnualReclassification",
       "usTnInitialClassification",
     ],
     stateCode: "US_TN",
-    personExternalId: "RES004",
     recordId: "us_tn_res004",
-    displayId: "dRES004",
-    personName: {
-      givenNames: "Geoff",
-      surname: "Zhang",
-    },
     gender: "INTERNAL_UNKNOWN",
-    pseudonymizedId: "anonres004",
-    facilityId: "BLEDSOE_CC",
     unitId: "UNIT A",
     facilityUnitId: "BLEDSOE_CC‡UNIT A",
     custodyLevel: "CLOSE",

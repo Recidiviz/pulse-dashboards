@@ -262,6 +262,7 @@ describe("matchingPersons", () => {
       recordId: "us_xx_PERSON1",
       stateCode: "US_XX",
       facilityId: "FACILITY1",
+      unitId: null,
       personType: "RESIDENT",
       metadata: {},
     };
