@@ -358,8 +358,8 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
 
         // TODO(recidiviz-data/#75828): Remove once we support 2026 versions in demo mode
         usTn2026ClassificationPolicyPilot: isDemoMode() ? undefined : {},
+        usTnRcafV1: undefined,
         usTnRcafV2: isDemoMode() ? undefined : {},
-        usTnRcafV1: isDemoMode() ? undefined : {},
 
         operationsDrilldown: { activeTenants: ["US_ID", "US_ND", "US_TX"] },
         operationsContactsDrilldown: { activeTenants: ["US_TX"] },
