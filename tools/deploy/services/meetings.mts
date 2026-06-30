@@ -54,6 +54,11 @@ export const meetingsBackend: ServiceDefinition = {
         -var seed_demo_container_version=${currentRevision}`.pipe(
       process.stdout,
     );
+
+    // Sync the Postgres -> BQ transfer; runs after apps/meetings since it reads that component's state.
+    await $`yarn atmos:apply postgres-bq-data-transfer -s ${stack} -- -auto-approve`.pipe(
+      process.stdout,
+    );
   },
 };
 
