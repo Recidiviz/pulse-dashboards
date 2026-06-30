@@ -141,6 +141,7 @@ export class OfflineAPIClient {
       startDate: input.startDate ?? null,
       endDate: input.endDate ?? null,
       verifiedByReportAuthor: input.verifiedByReportAuthor ?? null,
+      importedFromDOC: false,
     };
   }
 

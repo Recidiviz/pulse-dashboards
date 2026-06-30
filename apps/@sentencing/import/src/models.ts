@@ -412,8 +412,17 @@ const completedProgramSchema = z.array(
   }),
 );
 
-export const docTreatmentHistoryImportSchema = z.object({
+const employmentHistorySchema = z.array(
+  z.object({
+    employer_name: z.string().nullable(),
+    end_date: z.coerce.date(),
+    start_date: z.coerce.date(),
+  }),
+);
+
+export const clientHistoryImportSchema = z.object({
   state_code: stateCode,
   client_external_id: z.string(),
-  completed_programs: completedProgramSchema,
+  completed_programs: completedProgramSchema.nullish(),
+  employment_history: employmentHistorySchema.nullish(),
 });

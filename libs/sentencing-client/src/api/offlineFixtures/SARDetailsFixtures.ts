@@ -72,6 +72,7 @@ export const SARDetailsFixture: { [sarId: string]: SAR } = {
         county: null,
       },
     ],
+    hasManuallyUpdatedEmploymentHistory: false,
     drugHistories: [],
     employmentHistories: [],
     priorTreatmentHistories: [],

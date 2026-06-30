@@ -26,7 +26,11 @@ import {
   dropdownStyles,
   SaveButton,
 } from "../FormComponents.styles";
-import { EmploymentHistory, VERIFIED_OPTIONS } from "./constants";
+import {
+  CreateEmploymentHistoryInput,
+  EmploymentHistory,
+  VERIFIED_OPTIONS,
+} from "./constants";
 import * as Styled from "./EmploymentHistoryModal.styles";
 
 type SelectOption = { label: string; value: string };
@@ -36,7 +40,7 @@ const today = new Date();
 interface EmploymentHistoryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (history: Omit<EmploymentHistory, "id">) => Promise<void>;
+  onSave: (history: CreateEmploymentHistoryInput) => Promise<void>;
   initialData?: EmploymentHistory;
   isEditMode?: boolean;
 }
@@ -48,7 +52,7 @@ export const EmploymentHistoryModal: React.FC<EmploymentHistoryModalProps> = ({
   initialData,
   isEditMode = false,
 }) => {
-  const [formData, setFormData] = useState<Omit<EmploymentHistory, "id">>({
+  const [formData, setFormData] = useState<CreateEmploymentHistoryInput>({
     employerName: null,
     startDate: null,
     endDate: null,

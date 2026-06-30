@@ -235,11 +235,15 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                       </Styled.FreeTextContent>
                     </SentencingAssessmentReportSection>
                   )}
+                {/* TODO(OBT-29467): remove spread once import skips manually-updated SARs */}
                 {(declined ||
                   sarData.assessmentType ||
                   !presenter.hasOrasAssessment) && (
                   <ReportOffenderAssessment
-                    sarData={sarData}
+                    sarData={{
+                      ...sarData,
+                      employmentHistories: presenter.employmentHistories,
+                    }}
                     administeredBy={presenter.assessmentAdministeredBy}
                     hasOrasAssessment={presenter.hasOrasAssessment}
                     isDeclined={declined}

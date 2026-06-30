@@ -528,6 +528,116 @@ describe("SAR router", () => {
     });
   });
 
+  describe("employment history CRUD", () => {
+    test("should create an employment history record linked to the SAR", async () => {
+      const startDate = new Date("2020-03-01");
+      const endDate = new Date("2023-06-30");
+
+      await testTRPCClient.sar.createEmploymentHistory.mutate({
+        sarId: fakeSAR.id,
+        employerName: "Acme Corp",
+        startDate,
+        endDate,
+        verifiedByReportAuthor: true,
+      });
+
+      const histories = await testPrismaClient.employmentHistory.findMany({
+        where: { sentencingAssessmentReportId: fakeSAR.id },
+      });
+
+      expect(histories).toHaveLength(1);
+      expect(histories[0]).toMatchObject({
+        employerName: "Acme Corp",
+        startDate,
+        endDate,
+        verifiedByReportAuthor: true,
+        importedFromDOC: false,
+      });
+    });
+
+    test("should update an employment history record", async () => {
+      const created = await testTRPCClient.sar.createEmploymentHistory.mutate({
+        sarId: fakeSAR.id,
+        employerName: "Old Employer",
+      });
+
+      if (!created)
+        throw new Error("Expected employment history to be created");
+
+      await testTRPCClient.sar.updateEmploymentHistory.mutate({
+        id: created.id,
+        employerName: "New Employer",
+        verifiedByReportAuthor: false,
+      });
+
+      const updated = await testPrismaClient.employmentHistory.findUnique({
+        where: { id: created.id },
+      });
+
+      expect(updated).toMatchObject({
+        employerName: "New Employer",
+        verifiedByReportAuthor: false,
+      });
+    });
+
+    test("should delete an employment history record", async () => {
+      const created = await testTRPCClient.sar.createEmploymentHistory.mutate({
+        sarId: fakeSAR.id,
+        employerName: "Temp Employer",
+      });
+
+      if (!created)
+        throw new Error("Expected employment history to be created");
+
+      let histories = await testPrismaClient.employmentHistory.findMany({
+        where: { sentencingAssessmentReportId: fakeSAR.id },
+      });
+      expect(histories).toHaveLength(1);
+
+      await testTRPCClient.sar.deleteEmploymentHistory.mutate({
+        id: created.id,
+      });
+
+      histories = await testPrismaClient.employmentHistory.findMany({
+        where: { sentencingAssessmentReportId: fakeSAR.id },
+      });
+      expect(histories).toHaveLength(0);
+    });
+
+    test("should include all employment records (imported and manual) in getSAR response", async () => {
+      // Create a manual record
+      await testTRPCClient.sar.createEmploymentHistory.mutate({
+        sarId: fakeSAR.id,
+        employerName: "Manual Entry",
+      });
+
+      // Create an imported record directly via Prisma (bypassing the CRUD endpoint)
+      await testPrismaClient.employmentHistory.create({
+        data: {
+          sentencingAssessmentReportId: fakeSAR.id,
+          employerName: "DOC Import",
+          importedFromDOC: true,
+        },
+      });
+
+      const sar = await testTRPCClient.sar.getSAR.query({ id: fakeSAR.id });
+
+      expect(sar.employmentHistories).toHaveLength(2);
+      expect(sar.employmentHistories).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            employerName: "Manual Entry",
+            importedFromDOC: false,
+          }),
+          expect.objectContaining({
+            employerName: "DOC Import",
+            importedFromDOC: true,
+          }),
+        ]),
+      );
+    });
+  });
+
   describe("getSARsByClient", () => {
     // Builds a tRPC caller whose context includes a `staffPseudonymizedId`, so we can
     // exercise the staff-scoping filter. The httpBatchLink-based `testTRPCClient` hits a

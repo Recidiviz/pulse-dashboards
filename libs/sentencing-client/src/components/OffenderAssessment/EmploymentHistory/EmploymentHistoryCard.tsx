@@ -20,7 +20,7 @@ import React, { useState } from "react";
 
 import { OffenderAssessmentPresenter } from "../../../presenters/OffenderAssessmentPresenter";
 import * as Styled from "../HistoryCardStyles";
-import { EmploymentHistory } from "./constants";
+import { CreateEmploymentHistoryInput, EmploymentHistory } from "./constants";
 import { EmploymentHistoryItem } from "./EmploymentHistoryItem";
 import { EmploymentHistoryModal } from "./EmploymentHistoryModal";
 
@@ -54,7 +54,7 @@ export const EmploymentHistoryCard: React.FC<EmploymentHistoryCardProps> =
       }
     };
 
-    const handleModalSave = async (data: Omit<EmploymentHistory, "id">) => {
+    const handleModalSave = async (data: CreateEmploymentHistoryInput) => {
       if (editingId) {
         // Edit mode
         await presenter.updateEmploymentHistory(editingId, data);

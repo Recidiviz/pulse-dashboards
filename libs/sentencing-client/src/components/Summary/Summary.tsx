@@ -206,7 +206,15 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
         // New react-pdf renderer, behind a flag: render + save via the shared
         // helper (also used by the client Full Profile's Download Report),
         // bypassing the jsPDF + html2canvas DOM capture.
-        await downloadSARPdf(sarData, presenter.insight, fileName);
+        // TODO(OBT-29467): remove spread once import skips manually-updated SARs
+        await downloadSARPdf(
+          {
+            ...sarData,
+            employmentHistories: presenter.employmentHistories,
+          },
+          presenter.insight,
+          fileName,
+        );
       } else if (targetRef.current) {
         await exportSARtoPDF(targetRef.current, fileName);
       }

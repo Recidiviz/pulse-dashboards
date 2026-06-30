@@ -51,6 +51,7 @@ import {
   getAssessmentScoreBucket,
 } from "../components/OffenderAssessment/assessmentTypeUtils";
 import { RiskLevelKey } from "../components/OffenderAssessment/constants";
+import { EmploymentHistory } from "../components/OffenderAssessment/EmploymentHistory/constants";
 import {
   deriveDomainRiskLevel,
   DomainConfig,
@@ -137,6 +138,17 @@ export class SARDetailsPresenter implements Hydratable {
   insight?: SARInsight | null;
 
   offenderAssessment: OffenderAssessmentPresenter;
+
+  // TODO(OBT-29467): remove once import skips manually-updated SARs —
+  // at that point the DB will only contain user-entered records for manually-updated SARs.
+  get employmentHistories(): EmploymentHistory[] {
+    const histories = this.SARData?.employmentHistories ?? [];
+    const showImported =
+      this.sentencingStore.activeFeatureVariants.SARImportEmploymentRecords;
+    return showImported
+      ? histories
+      : histories.filter((h) => !h.importedFromDOC);
+  }
 
   priorTreatmentHistory: PriorTreatmentHistoryPresenter;
 

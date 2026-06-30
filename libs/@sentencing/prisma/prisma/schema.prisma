@@ -679,6 +679,7 @@ model SentencingAssessmentReport {
   charges      Charge[]
   drugHistories DrugHistory[]
   employmentHistories EmploymentHistory[]
+  hasManuallyUpdatedEmploymentHistory Boolean @default(false)
   priorTreatmentHistories PriorTreatmentHistory[]
 
   // Metadata stored as JSON
@@ -761,6 +762,7 @@ model EmploymentHistory {
   startDate               DateTime?
   endDate                 DateTime?
   verifiedByReportAuthor  Boolean?
+  importedFromDOC         Boolean  @default(false)
 }
 
 

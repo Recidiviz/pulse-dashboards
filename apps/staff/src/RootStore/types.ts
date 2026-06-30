@@ -179,7 +179,8 @@ export type FeatureVariant =
   | "SARBuilder"
   | "SARSignature"
   | "SARManualORAS"
-  | "reactPdfSAR";
+  | "reactPdfSAR"
+  | "SARImportEmploymentRecords";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -280,6 +281,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   SARSignature: {},
   SARManualORAS: {},
   reactPdfSAR: {},
+  SARImportEmploymentRecords: {},
   splitParoleProbationOutcomes: {},
   enableSupervisorReviewChain: {},
   supervisorHomepageReviewCard: {},
@@ -381,6 +383,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         SARBuilder: { activeTenants: ["US_MO"] },
         SARSignature: { activeTenants: ["US_MO"] },
         SARManualORAS: { activeTenants: ["US_MO"] },
+        SARImportEmploymentRecords: { activeTenants: ["US_MO"] },
         sentenceProgressV2: { activeTenants: ["US_ND"] },
         hideWorkflowsOpportunities: undefined,
         hideWorkflowsResidentsPage: { activeTenants: ["US_NC"] },

@@ -112,8 +112,9 @@ export class OffenderAssessmentPresenter {
   }
 
   // Employment History - Individual CRUD operations
+  // TODO(OBT-29467): remove once import skips manually-updated SARs
   get employmentHistories(): EmploymentHistory[] {
-    return this.SARData?.employmentHistories ?? [];
+    return this.sarDetailsPresenter.employmentHistories;
   }
 
   async createEmploymentHistory(

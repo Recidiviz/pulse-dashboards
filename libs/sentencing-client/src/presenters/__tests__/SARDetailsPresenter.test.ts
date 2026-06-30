@@ -242,4 +242,48 @@ describe("defendant declined to participate", () => {
       expect(progressDeclined).toBeGreaterThanOrEqual(progressNotDeclined);
     });
   });
+
+  describe("employmentHistories", () => {
+    const manualRecord = {
+      id: "emp-1",
+      employerName: "Acme Corp",
+      startDate: null,
+      endDate: null,
+      verifiedByReportAuthor: null,
+      importedFromDOC: false,
+    };
+    const importedRecord = {
+      id: "emp-2",
+      employerName: "DOC Employer",
+      startDate: null,
+      endDate: null,
+      verifiedByReportAuthor: null,
+      importedFromDOC: true,
+    };
+
+    beforeEach(() => {
+      vi.spyOn(sentencingStore.apiClient, "getSARDetails").mockResolvedValue({
+        ...SARDetailsFixture[sarId],
+        employmentHistories: [manualRecord, importedRecord],
+      });
+    });
+
+    it("filters out importedFromDOC records when variant is off", async () => {
+      await presenter.hydrate();
+      expect(presenter.employmentHistories).toEqual([manualRecord]);
+    });
+
+    it("returns all records including importedFromDOC when variant is on", async () => {
+      // Mutate the mock userStore before any computed access so MobX evaluates
+      // the non-observable activeFeatureVariants with the updated value.
+      sentencingStore.rootStore.userStore.activeFeatureVariants = {
+        SARImportEmploymentRecords: {},
+      };
+      await presenter.hydrate();
+      expect(presenter.employmentHistories).toEqual([
+        manualRecord,
+        importedRecord,
+      ]);
+    });
+  });
 });

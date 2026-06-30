@@ -47,7 +47,7 @@ const STALE_TIME_MS = 5 * 60 * 1000;
  * clicked, so each row owns its own lock around the awaited `downloadSAR`.
  */
 export function useDownloadSARReport() {
-  const { sentencingStore, analyticsStore } = useRootStore();
+  const { sentencingStore, analyticsStore, userStore } = useRootStore();
   const queryClient = useQueryClient();
 
   const queryOptions = (sar: SARByClient) => ({
@@ -79,7 +79,18 @@ export function useDownloadSARReport() {
       const { sar: details, insight } = await queryClient.ensureQueryData(
         queryOptions(sar),
       );
-      await downloadSARPdf(details, insight);
+      // TODO(OBT-29467): remove spread once import skips manually-updated SARs
+      const showImported =
+        userStore.activeFeatureVariants.SARImportEmploymentRecords;
+      const sarForPdf = showImported
+        ? details
+        : {
+            ...details,
+            employmentHistories: details.employmentHistories.filter(
+              (h) => !h.importedFromDOC,
+            ),
+          };
+      await downloadSARPdf(sarForPdf, insight);
     } catch (e) {
       Sentry.captureException(e);
     }

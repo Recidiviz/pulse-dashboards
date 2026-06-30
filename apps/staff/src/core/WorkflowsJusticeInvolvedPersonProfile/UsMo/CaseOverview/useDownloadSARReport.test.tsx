@@ -69,7 +69,11 @@ function createWrapper() {
 describe("useDownloadSARReport", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    getSARDetails.mockResolvedValue({ id: "sar-1", client: { fullName: "X" } });
+    getSARDetails.mockResolvedValue({
+      id: "sar-1",
+      client: { fullName: "X" },
+      employmentHistories: [],
+    });
     loadSARInsightMock.mockResolvedValue(null);
     downloadSARPdfMock.mockResolvedValue(undefined);
     useRootStoreMock.mockReturnValue({
@@ -78,6 +82,7 @@ describe("useDownloadSARReport", () => {
         trackSARDownloadReportClicked,
         trackSARClientsPageBuilderLinkClicked,
       },
+      userStore: { activeFeatureVariants: {} },
     });
   });
 
@@ -141,5 +146,71 @@ describe("useDownloadSARReport", () => {
 
     expect(captureExceptionMock).toHaveBeenCalledTimes(1);
     expect(downloadSARPdfMock).not.toHaveBeenCalled();
+  });
+
+  describe("SARImportEmploymentRecords variant", () => {
+    const manualHistory = {
+      id: "emp-1",
+      employerName: "Manual Entry",
+      importedFromDOC: false,
+    };
+    const importedHistory = {
+      id: "emp-2",
+      employerName: "DOC Import",
+      importedFromDOC: true,
+    };
+
+    beforeEach(() => {
+      getSARDetails.mockResolvedValue({
+        id: "sar-1",
+        client: { fullName: "X" },
+        employmentHistories: [manualHistory, importedHistory],
+      });
+    });
+
+    it("strips importedFromDOC records from the PDF when variant is off", async () => {
+      const { result } = renderHook(() => useDownloadSARReport(), {
+        wrapper: createWrapper(),
+      });
+
+      await act(async () => {
+        await result.current.downloadSAR(sar);
+      });
+
+      expect(downloadSARPdfMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          employmentHistories: [manualHistory],
+        }),
+        null,
+      );
+    });
+
+    it("passes all employment records to the PDF when variant is on", async () => {
+      useRootStoreMock.mockReturnValue({
+        sentencingStore: { apiClient: { getSARDetails } },
+        analyticsStore: {
+          trackSARDownloadReportClicked,
+          trackSARClientsPageBuilderLinkClicked,
+        },
+        userStore: {
+          activeFeatureVariants: { SARImportEmploymentRecords: {} },
+        },
+      });
+
+      const { result } = renderHook(() => useDownloadSARReport(), {
+        wrapper: createWrapper(),
+      });
+
+      await act(async () => {
+        await result.current.downloadSAR(sar);
+      });
+
+      expect(downloadSARPdfMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          employmentHistories: [manualHistory, importedHistory],
+        }),
+        null,
+      );
+    });
   });
 });

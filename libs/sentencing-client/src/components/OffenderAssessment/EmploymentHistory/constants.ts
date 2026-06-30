@@ -20,7 +20,9 @@ export { VERIFIED_OPTIONS } from "../constants";
 
 export type EmploymentHistory = NonNullable<SAR["employmentHistories"]>[number];
 
-export type CreateEmploymentHistoryInput = Omit<EmploymentHistory, "id">;
-export type UpdateEmploymentHistoryInput = Partial<
-  Omit<EmploymentHistory, "id">
+export type CreateEmploymentHistoryInput = Pick<
+  EmploymentHistory,
+  "employerName" | "startDate" | "endDate" | "verifiedByReportAuthor"
 >;
+export type UpdateEmploymentHistoryInput =
+  Partial<CreateEmploymentHistoryInput>;

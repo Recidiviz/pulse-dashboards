@@ -197,40 +197,40 @@ export const SummaryOffenderAssessment: React.FC<SummaryOffenderAssessmentProps>
                           <MissingBadge />
                         )}
                       </div>
-                      {sarData?.employmentHistories &&
-                        sarData.employmentHistories.length > 0 && (
-                          <Styled.AssessmentTable>
-                            <Styled.TableHeaderRow>
-                              <Styled.TableHeaderCell>
-                                Name of Employer
-                              </Styled.TableHeaderCell>
-                              <Styled.TableHeaderCell>
-                                Start/End Date
-                              </Styled.TableHeaderCell>
-                              <Styled.TableHeaderCell>
-                                Verified by Report Author
-                              </Styled.TableHeaderCell>
-                            </Styled.TableHeaderRow>
-                            {sarData.employmentHistories.map((history) => (
-                              <Styled.TableDataRow key={history.id}>
-                                <Styled.TableDataCell>
-                                  {history.employerName || "—"}
-                                </Styled.TableDataCell>
-                                <Styled.TableDataCell>
-                                  {formatDateRange(
-                                    history.startDate,
-                                    history.endDate,
-                                  )}
-                                </Styled.TableDataCell>
-                                <Styled.TableDataCell>
-                                  {formatBooleanDisplay(
-                                    history.verifiedByReportAuthor,
-                                  )}
-                                </Styled.TableDataCell>
-                              </Styled.TableDataRow>
-                            ))}
-                          </Styled.AssessmentTable>
-                        )}
+                      {/* TODO(OBT-29467): remove filter once import skips manually-updated SARs */}
+                      {presenter.employmentHistories.length > 0 && (
+                        <Styled.AssessmentTable>
+                          <Styled.TableHeaderRow>
+                            <Styled.TableHeaderCell>
+                              Name of Employer
+                            </Styled.TableHeaderCell>
+                            <Styled.TableHeaderCell>
+                              Start/End Date
+                            </Styled.TableHeaderCell>
+                            <Styled.TableHeaderCell>
+                              Verified by Report Author
+                            </Styled.TableHeaderCell>
+                          </Styled.TableHeaderRow>
+                          {presenter.employmentHistories.map((history) => (
+                            <Styled.TableDataRow key={history.id}>
+                              <Styled.TableDataCell>
+                                {history.employerName || "—"}
+                              </Styled.TableDataCell>
+                              <Styled.TableDataCell>
+                                {formatDateRange(
+                                  history.startDate,
+                                  history.endDate,
+                                )}
+                              </Styled.TableDataCell>
+                              <Styled.TableDataCell>
+                                {formatBooleanDisplay(
+                                  history.verifiedByReportAuthor,
+                                )}
+                              </Styled.TableDataCell>
+                            </Styled.TableDataRow>
+                          ))}
+                        </Styled.AssessmentTable>
+                      )}
                     </>
                   )}
                   {domain.key === "familySocialSupport" && (
