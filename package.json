@@ -111,6 +111,7 @@
     "build-url": "^6.0.1",
     "cache-manager": "^3.6.1",
     "cache-manager-ioredis": "^2.1.0",
+    "camelcase-keys": "^10.0.2",
     "chart.js": "^2.8.0",
     "chartjs-plugin-annotation": "^0.5.7",
     "chartjs-plugin-datalabels": "^0.7.0",

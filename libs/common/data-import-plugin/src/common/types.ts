@@ -17,12 +17,14 @@
 
 import { z } from "zod";
 
+export type LoaderFn<T, U extends z.ZodTypeAny> = (
+  prismaClient: T,
+  data: AsyncGenerator<z.infer<U>>,
+) => Promise<void>;
+
 interface ZodSchemaAndLoaderFn<T, U extends z.ZodTypeAny> {
   schema: U;
-  loaderFn: (
-    prismaClient: T,
-    data: AsyncGenerator<z.infer<U>>,
-  ) => Promise<void>;
+  loaderFn: LoaderFn<T, U>;
 }
 
 // This type is a generic that is inferred from the provided ZodSchemaAndLoaderFns

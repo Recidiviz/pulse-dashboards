@@ -27,7 +27,6 @@ export const justiceInvolvedPersonRecordSchema = z.object({
   personExternalId: z.string(),
   pseudonymizedId: z.string(),
   displayId: z.string(),
-  stateCode: z.string(),
   personName: fullNameSchema,
 });
 

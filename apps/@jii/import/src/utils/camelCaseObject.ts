@@ -15,4 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// no public library API to export for now
+import camelcaseKeys from "camelcase-keys";
+
+/**
+ * Given an input object, returns a version with all keys (including nested keys)
+ * converted to camelCase. Will throw a ZodError if the input is not an object.
+ */
+export function camelCaseObject(input: Record<string, unknown>) {
+  return camelcaseKeys(input, { deep: true });
+}

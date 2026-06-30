@@ -17,7 +17,9 @@
 
 import { z } from "zod";
 
-import { dateStringSchema } from "~datatypes";
+import { dateStringSchema, residentCommonSchema } from "~datatypes";
+
+import { camelCaseObject } from "./utils/camelCaseObject";
 
 export const rnaWritebackSchema = z.object({
   pseudonymized_id: z.string(),
@@ -25,3 +27,21 @@ export const rnaWritebackSchema = z.object({
   opus_id: z.string(),
   admit_date: dateStringSchema.nullable(),
 });
+
+// JSON fields are exported as strings and need to be parsed
+const jsonStringToObjectSchema = z.string().transform((s) => JSON.parse(s));
+
+const exportPreprocessSchema = z
+  .object({
+    person_name: jsonStringToObjectSchema,
+    state_specific_data: jsonStringToObjectSchema,
+  })
+  .passthrough()
+  .transform(camelCaseObject);
+
+export const residentSchema = exportPreprocessSchema.pipe(
+  residentCommonSchema.extend({
+    // placeholder until we have schemas for all SSD
+    stateSpecificData: z.object({}).passthrough(),
+  }),
+);

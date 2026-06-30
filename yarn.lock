@@ -26566,6 +26566,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"camelcase-keys@npm:^10.0.2":
+  version: 10.0.2
+  resolution: "camelcase-keys@npm:10.0.2"
+  dependencies:
+    camelcase: "npm:^9.0.0"
+    map-obj: "npm:6.0.0"
+    quick-lru: "npm:^7.3.0"
+    type-fest: "npm:^5.4.1"
+  checksum: 10c0/62489bf09baee295eb7afd60cb732dd9774483a877613091480173cca6c83d72daeef1daa6d08e680477628138e2657233520b157d2799877992b9be74e0b6b4
+  languageName: node
+  linkType: hard
+
 "camelcase-keys@npm:^2.0.0":
   version: 2.1.0
   resolution: "camelcase-keys@npm:2.1.0"
@@ -26611,6 +26623,13 @@ __metadata:
   version: 5.3.1
   resolution: "camelcase@npm:5.3.1"
   checksum: 10c0/92ff9b443bfe8abb15f2b1513ca182d16126359ad4f955ebc83dc4ddcc4ef3fdd2c078bc223f2673dc223488e75c99b16cc4d056624374b799e6a1555cf61b23
+  languageName: node
+  linkType: hard
+
+"camelcase@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "camelcase@npm:9.0.0"
+  checksum: 10c0/7171e1540b9b227cab9d59b7afa05174d14c10268171c18bdf2240eb1485ad6851592f1253ddc291f7ae34caad42c18206d339538965c67fb17fc995c0bb509b
   languageName: node
   linkType: hard
 
@@ -42940,6 +42959,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"map-obj@npm:6.0.0":
+  version: 6.0.0
+  resolution: "map-obj@npm:6.0.0"
+  checksum: 10c0/c6f867873f72f8aaa4962ec70895fa95cd3e0fdcae95e1c240581fe6891fd5cd31ae16d61a6a7b867982a4344679fe5b3763e62e91580652d7d7696a84c97330
+  languageName: node
+  linkType: hard
+
 "map-obj@npm:^1.0.0, map-obj@npm:^1.0.1":
   version: 1.0.1
   resolution: "map-obj@npm:1.0.1"
@@ -50000,6 +50026,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"quick-lru@npm:^7.3.0":
+  version: 7.3.0
+  resolution: "quick-lru@npm:7.3.0"
+  checksum: 10c0/28dc8eaadcd489d26917f238ad27a6b09f8fe3a609152b0a4f399d5805094e07b56fe1e8c0d7ade0c11463c31bef329803672effc559601daf160a85f578fd05
+  languageName: node
+  linkType: hard
+
 "quote-unquote@npm:^1.0.0":
   version: 1.0.0
   resolution: "quote-unquote@npm:1.0.0"
@@ -51747,6 +51780,7 @@ __metadata:
     build-url: "npm:^6.0.1"
     cache-manager: "npm:^3.6.1"
     cache-manager-ioredis: "npm:^2.1.0"
+    camelcase-keys: "npm:^10.0.2"
     chalk: "npm:^5.6.0"
     chart.js: "npm:^2.8.0"
     chartjs-plugin-annotation: "npm:^0.5.7"
@@ -56442,6 +56476,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tagged-tag@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "tagged-tag@npm:1.0.0"
+  checksum: 10c0/91d25c9ffb86a91f20522cefb2cbec9b64caa1febe27ad0df52f08993ff60888022d771e868e6416cf2e72dab68449d2139e8709ba009b74c6c7ecd4000048d1
+  languageName: node
+  linkType: hard
+
 "tailwindcss-scoped-preflight@npm:^3.5.3":
   version: 3.5.3
   resolution: "tailwindcss-scoped-preflight@npm:3.5.3"
@@ -57629,6 +57670,15 @@ __metadata:
   version: 4.41.0
   resolution: "type-fest@npm:4.41.0"
   checksum: 10c0/f5ca697797ed5e88d33ac8f1fec21921839871f808dc59345c9cf67345bfb958ce41bd821165dbf3ae591cedec2bf6fe8882098dfdd8dc54320b859711a2c1e4
+  languageName: node
+  linkType: hard
+
+"type-fest@npm:^5.4.1":
+  version: 5.7.0
+  resolution: "type-fest@npm:5.7.0"
+  dependencies:
+    tagged-tag: "npm:^1.0.0"
+  checksum: 10c0/f71ed17b753649421e419db8cc2e140f930333a1467b1d9cca2e0e4052900fd442f2360bae73f3a6bf9340d949ac46d9a1598c709b4c8089272e7624df9c8716
   languageName: node
   linkType: hard
 

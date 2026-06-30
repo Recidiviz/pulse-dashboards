@@ -15,11 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { workspaceRoot } from "@nx/devkit";
 import { nxCopyAssetsPlugin } from "@nx/vite/plugins/nx-copy-assets.plugin";
 import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
-import { defineConfig } from "vite";
+import { join } from "path";
+import { defineConfig, loadEnv } from "vite";
 
-export default defineConfig(() => ({
+export default defineConfig(({ mode }) => ({
   root: __dirname,
   cacheDir: "../../../node_modules/.vite/apps/@jii/import",
   plugins: [nxViteTsPaths(), nxCopyAssetsPlugin(["*.md"])],
@@ -29,6 +31,8 @@ export default defineConfig(() => ({
     globalSetup: ["src/setupTestsGlobal.ts"],
     setupFiles: ["src/setupTests.ts"],
     passWithNoTests: true,
+    // needed to prevent stateful DB tests from clobbering each other
+    fileParallelism: false,
     name: "@jii/import",
     globals: true,
     environment: "jsdom",
@@ -38,5 +42,9 @@ export default defineConfig(() => ({
       reportsDirectory: "../../../coverage/apps/@jii/import",
       provider: "v8" as const,
     },
+    env:
+      mode === "test"
+        ? loadEnv(mode, join(workspaceRoot, "apps/@jii/import"), "")
+        : undefined,
   },
 }));

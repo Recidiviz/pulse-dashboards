@@ -18,9 +18,10 @@
 import { MockStorage } from "mock-gcs";
 import { beforeEach } from "vitest";
 
-import { NC_RNA_FILE_NAME } from "./constants";
+import { NC_RNA_FILE_NAME, RESIDENTS_FILE_NAME } from "./constants";
 import { getImportHandler } from "./handler";
-import { transformAndLoadRNAWritebackData } from "./utils/usNcRNA";
+import { residentHandler } from "./handlers/resident/resident";
+import { transformAndLoadRNAWritebackData } from "./handlers/usNcRNA/usNcRNA";
 
 // Mock GCS so getDataFromGCS never touches a real bucket
 let mockStorage: MockStorage;
@@ -34,9 +35,13 @@ vi.mock("~@jii/prisma", () => ({
   getPrismaClientForStateCode: () => ({ $disconnect: () => Promise.resolve() }),
 }));
 
-// Replace the loaderFn with a spy so we can assert call/no-call without real DB writes
-vi.mock("./utils/usNcRNA", () => ({
+// Replace the loaderFns with spies so we can assert call/no-call without real DB writes
+vi.mock("./handlers/usNcRNA/usNcRNA", () => ({
   transformAndLoadRNAWritebackData: vi.fn(),
+}));
+
+vi.mock("./handlers/resident/resident", () => ({
+  residentHandler: vi.fn(),
 }));
 
 describe("import handler state code prefix filtering", () => {
@@ -53,6 +58,7 @@ describe("import handler state code prefix filtering", () => {
     process.env["IMPORT_BUCKET_ID"] = "test-bucket";
     importHandler = getImportHandler();
     vi.mocked(transformAndLoadRNAWritebackData).mockClear();
+    vi.mocked(residentHandler).mockClear();
   });
 
   it("skips a state-prefixed file when importing for a non-matching state", async () => {
@@ -77,5 +83,14 @@ describe("import handler state code prefix filtering", () => {
     expect(transformAndLoadRNAWritebackData).toHaveBeenCalled();
   });
 
-  // TODO(OBT-29533): verify this doesn't affect non-prefixed files once we have some
+  it("imports a non-prefixed file regardless of state", async () => {
+    await mockStorage
+      .bucket("test-bucket")
+      .file(`US_ID/${RESIDENTS_FILE_NAME}`)
+      .save("");
+
+    await importHandler.import("US_ID", [RESIDENTS_FILE_NAME]);
+
+    expect(residentHandler).toHaveBeenCalled();
+  });
 });

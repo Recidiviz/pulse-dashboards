@@ -15,22 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
-
 import { PrismaClient, UsNcRNAWritebackDataCreateInput } from "~@jii/prisma";
+import { LoaderFn } from "~data-import-plugin";
 
-import { rnaWritebackSchema } from "../models";
-import { bulkUpdate, type BulkUpdateEntries, BulkUpdateEntry } from "./common";
+import { rnaWritebackSchema } from "../../models";
+import {
+  bulkUpdate,
+  type BulkUpdateEntries,
+  BulkUpdateEntry,
+} from "../../utils/bulkUpdate";
 
 /**
  * Loads data to the UsNcRNAWriteback table in batches of 500 records at a time,
  * either bulk-updating or bulk-creating records as appropriate.
  * Adapted from similar code in the meetings/reentry apps.
  */
-export async function transformAndLoadRNAWritebackData(
-  prismaClient: PrismaClient,
-  data: AsyncGenerator<z.infer<typeof rnaWritebackSchema>>,
-) {
+export const transformAndLoadRNAWritebackData: LoaderFn<
+  PrismaClient,
+  typeof rnaWritebackSchema
+> = async (prismaClient, data) => {
   const BATCH_SIZE = 500;
   const importedAt = new Date();
 
@@ -84,4 +87,4 @@ export async function transformAndLoadRNAWritebackData(
 
   await flushCreateBatch();
   await flushUpdateBatch();
-}
+};

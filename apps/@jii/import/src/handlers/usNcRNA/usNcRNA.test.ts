@@ -23,10 +23,10 @@ import {
   MockImportHandler,
 } from "~data-import-plugin/testkit";
 
-import { NC_RNA_FILE_NAME } from "../constants";
-import { getImportHandler } from "../handler";
-import { rnaWritebackSchema } from "../models";
-import { resetDb } from "../testUtils";
+import { NC_RNA_FILE_NAME } from "../../constants";
+import { getImportHandler } from "../../handler";
+import { rnaWritebackSchema } from "../../models";
+import { resetDb } from "../../testUtils";
 
 vi.mock("~data-import-plugin", () => ({
   ImportHandler: MockImportHandler,

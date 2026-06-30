@@ -17,8 +17,8 @@ model UserProperties {
 }
 
 model Resident {
-    personId          Int
-    pseudonymizedId   String  @id
+    importedAt        DateTime
+    pseudonymizedId   String   @id
     personExternalId  String
     displayId         String
     givenNames        String?
