@@ -50,6 +50,7 @@ import AudioPlayer from "./AudioPlayer";
 import DraftCaseNoteTab from "./DraftCaseNoteTab";
 import MeetingTabs, { Tab } from "./MeetingTabs";
 import MeetingTranscriptionTab from "./MeetingTranscriptionTab";
+import OutputVote from "./OutputVote";
 import StaffFeedbackTab from "./StaffFeedbackTab";
 
 type Props = {
@@ -69,8 +70,9 @@ const MeetingDesktop = ({
 }: Props) => {
   const [activeTab, setActiveTab] = useState<Tab>(Tab.DraftCaseNotes);
   const [isPlayerVisible, setIsPlayerVisible] = useState(false);
-  const { email: currentUserEmail } = useUserContext();
-  const isMeetingCreator = currentUserEmail === meetingDetails.staffEmail;
+  const { email: currentUserEmail, isSkipAuthUser } = useUserContext();
+  const isMeetingCreator =
+    currentUserEmail === meetingDetails.staffEmail || isSkipAuthUser;
 
   const meetingDate = meetingDetails.startTime
     ? formatMeetingStartDate(meetingDetails.startTime)
@@ -202,18 +204,44 @@ const MeetingDesktop = ({
                 <DraftCaseNoteTab
                   meetingId={meetingId}
                   caseNote={meetingDetails.caseNote || ""}
+                  outputVote={
+                    isMeetingCreator &&
+                    meetingDetails.caseNote && (
+                      <OutputVote
+                        meetingDetails={meetingDetails}
+                        tab={activeTab}
+                      />
+                    )
+                  }
                 />
               )}
               {activeTab === Tab.ActionItems && (
-                <ActionItemsTab items={meetingDetails.structuredActionItems} />
+                <ActionItemsTab
+                  items={meetingDetails.structuredActionItems}
+                  outputVote={
+                    isMeetingCreator &&
+                    (meetingDetails.structuredActionItems?.length || 0) > 0 && (
+                      <OutputVote
+                        meetingDetails={meetingDetails}
+                        tab={activeTab}
+                      />
+                    )
+                  }
+                />
               )}
               {activeTab === Tab.StaffFeedback &&
                 meetingDetails.staffFeedback && (
                   <StaffFeedbackTab
-                    meetingId={meetingId}
                     staffFeedback={meetingDetails.staffFeedback}
-                    currentVote={meetingDetails.currentFeedbackVote}
-                    canVote={isMeetingCreator}
+                    outputVote={
+                      isMeetingCreator &&
+                      meetingDetails.staffFeedback && (
+                        <OutputVote
+                          meetingDetails={meetingDetails}
+                          tab={activeTab}
+                        />
+                      )
+                    }
                   />
                 )}
               {activeTab === Tab.Transcript &&

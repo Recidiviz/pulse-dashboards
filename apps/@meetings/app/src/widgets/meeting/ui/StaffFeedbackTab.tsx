@@ -15,25 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Pressable, View } from "react-native";
-import OutlineThumbDownIcon from "react-native-heroicons/outline/ThumbDownIcon";
-import OutlineThumbUpIcon from "react-native-heroicons/outline/ThumbUpIcon";
-import SolidThumbDownIcon from "react-native-heroicons/solid/ThumbDownIcon";
-import SolidThumbUpIcon from "react-native-heroicons/solid/ThumbUpIcon";
+import { ReactNode } from "react";
+import { View } from "react-native";
 
 import type { MeetingDetails } from "~@meetings/app/entities/meeting";
-import { trpc } from "~@meetings/app/shared/api";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 type StaffFeedback = NonNullable<MeetingDetails["staffFeedback"]>;
-type Vote = MeetingDetails["currentFeedbackVote"];
 
 type Props = {
-  meetingId: string;
   staffFeedback: StaffFeedback;
-  currentVote: Vote;
-  // Only the staff member who created the meeting can vote on feedback.
-  canVote: boolean;
+  outputVote?: ReactNode;
 };
 
 type SectionVariant = "positive" | "growth";
@@ -88,27 +80,7 @@ const FeedbackCard = ({
   );
 };
 
-const StaffFeedbackTab = ({
-  meetingId,
-  staffFeedback,
-  currentVote,
-  canVote,
-}: Props) => {
-  const utils = trpc.useUtils();
-  const voteFeedback = trpc.v1.meeting.voteFeedback.useMutation({
-    onSettled: () => {
-      utils.v1.meeting.getDetails.invalidate({ meetingId });
-    },
-  });
-
-  const handleVote = (vote: NonNullable<Vote>) => {
-    if (voteFeedback.isPending) return;
-    voteFeedback.mutate({ meetingId, vote });
-  };
-
-  const isUp = currentVote === "UP";
-  const isDown = currentVote === "DOWN";
-
+const StaffFeedbackTab = ({ staffFeedback, outputVote }: Props) => {
   return (
     <View className="flex-1 gap-5 pb-4">
       <Typography className="text-xl font-semibold text-primary">
@@ -126,41 +98,7 @@ const StaffFeedbackTab = ({
         variant="growth"
         emptyMessage="No growth opportunities flagged for this meeting."
       />
-      {canVote && (
-        <View className="flex-row items-center justify-between pt-2">
-          <Typography className="text-base text-primary">
-            Was this helpful?
-          </Typography>
-          <View className="flex-row gap-2">
-            <Pressable
-              accessibilityLabel="Thumbs up"
-              onPress={() => handleVote("UP")}
-              className={`size-10 items-center justify-center rounded-full ${
-                isUp ? "bg-primary" : "bg-secondary"
-              }`}
-            >
-              {isUp ? (
-                <SolidThumbUpIcon className="size-5 fill-on-strong" />
-              ) : (
-                <OutlineThumbUpIcon className="size-5 stroke-tertiary" />
-              )}
-            </Pressable>
-            <Pressable
-              accessibilityLabel="Thumbs down"
-              onPress={() => handleVote("DOWN")}
-              className={`size-10 items-center justify-center rounded-full ${
-                isDown ? "bg-primary" : "bg-secondary"
-              }`}
-            >
-              {isDown ? (
-                <SolidThumbDownIcon className="size-5 fill-on-strong" />
-              ) : (
-                <OutlineThumbDownIcon className="size-5 stroke-tertiary" />
-              )}
-            </Pressable>
-          </View>
-        </View>
-      )}
+      {outputVote}
     </View>
   );
 };

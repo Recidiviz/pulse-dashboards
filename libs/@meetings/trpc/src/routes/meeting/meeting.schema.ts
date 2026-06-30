@@ -19,8 +19,9 @@ import { z } from "zod";
 
 import {
   ApprovalValue,
-  FeedbackVoteValue,
   NoteSection,
+  OutputVoteTab,
+  OutputVoteValue,
   PostMeetingProcessingStatus,
 } from "~@meetings/prisma/client";
 import {
@@ -55,7 +56,15 @@ export const getDetailsOutputSchema = z.object({
   staffFeedback: StaffFeedbackOutputSchema.extend({
     generatedAt: z.date(),
   }).nullable(),
-  currentFeedbackVote: z.nativeEnum(FeedbackVoteValue).nullable(),
+  currentOutputVotes: z
+    .record(
+      z.nativeEnum(OutputVoteTab),
+      z.object({
+        vote: z.nativeEnum(OutputVoteValue),
+        message: z.string().nullable(),
+      }),
+    )
+    .nullable(),
   // Most-recent user edit per section; null = untouched LLM output.
   caseNoteEditedAt: z.date().nullable(),
   actionItemsEditedAt: z.date().nullable(),
@@ -121,9 +130,16 @@ export const updateNotesInputSchema = z.object({
   caseNote: z.string().max(100000).optional(),
 });
 
-export const voteFeedbackInputSchema = z.object({
+export const submitOutputVoteInputSchema = z.object({
   meetingId: z.string(),
-  vote: z.nativeEnum(FeedbackVoteValue),
+  vote: z.nativeEnum(OutputVoteValue),
+  tab: z.nativeEnum(OutputVoteTab),
+});
+
+export const submitOutputVoteMessageInputSchema = z.object({
+  meetingId: z.string(),
+  tab: z.nativeEnum(OutputVoteTab),
+  message: z.string().max(10000),
 });
 
 export const approveSectionInputSchema = z.object({

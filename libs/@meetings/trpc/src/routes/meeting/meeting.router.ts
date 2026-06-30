@@ -26,6 +26,8 @@ import { AGENCY_CONFIGS } from "~@meetings/config/loader";
 import {
   ApprovalValue,
   NoteSection,
+  OutputVoteTab,
+  OutputVoteValue,
   PostMeetingProcessingStatus,
   Prisma,
 } from "~@meetings/prisma/client";
@@ -46,8 +48,9 @@ import {
   endMeetingInputSchema,
   getDetailInputSchema,
   getDetailsOutputSchema,
+  submitOutputVoteInputSchema,
+  submitOutputVoteMessageInputSchema,
   updateNotesInputSchema,
-  voteFeedbackInputSchema,
 } from "~@meetings/trpc/routes/meeting/meeting.schema";
 import { queueStitchingTask } from "~@meetings/trpc/routes/meeting/utils";
 
@@ -72,7 +75,7 @@ export const meetingRouter = router({
               meetingSummary: true,
               staffFeedback: true,
               staffFeedbackGeneratedAt: true,
-              staffFeedbackPipelineRunId: true,
+              outputsPipelineRunId: true,
               notetakingPipelineRunId: true,
               caseNoteEditedAt: true,
               actionItemsEditedAt: true,
@@ -162,18 +165,36 @@ export const meetingRouter = router({
           // version (the pipeline run that produced it). Older votes (against
           // prior runs) are ignored so the UI shows no current vote when
           // feedback is reprocessed.
-          const latestVote =
-            staffFeedbackEnabled && meeting.staffFeedbackPipelineRunId
-              ? await prisma.feedbackVote.findFirst({
+          const currentOutputVotes = meeting.outputsPipelineRunId
+            ? (
+                await prisma.outputVote.findMany({
                   where: {
                     meetingId,
                     voterEmail: user.email,
-                    pipelineRunId: meeting.staffFeedbackPipelineRunId,
+                    pipelineRunId: meeting.outputsPipelineRunId,
                   },
                   orderBy: { createdAt: "desc" },
-                  select: { vote: true },
+                  select: { vote: true, tab: true, message: true },
                 })
-              : null;
+              ).reduce<
+                Partial<
+                  Record<
+                    OutputVoteTab,
+                    {
+                      vote: OutputVoteValue;
+                      message: string | null;
+                    }
+                  >
+                >
+              >((acc, { tab, ...rest }) => {
+                const skip =
+                  tab === OutputVoteTab.STAFF_FEEDBACK && !staffFeedbackEnabled;
+                if (!acc[tab] && !skip) {
+                  acc[tab] = rest;
+                }
+                return acc;
+              }, {})
+            : null;
 
           const audioUrl =
             supportsAudioPlayback &&
@@ -212,7 +233,7 @@ export const meetingRouter = router({
               "transcriptions",
               "staffFeedback",
               "staffFeedbackGeneratedAt",
-              "staffFeedbackPipelineRunId",
+              "outputsPipelineRunId",
               "notetakingPipelineRunId",
               "recordingsGCSBucket",
               "finalRecordingGCSPath",
@@ -240,7 +261,9 @@ export const meetingRouter = router({
                 MinuteSectionSchema.array(),
               ) || [],
             staffFeedback,
-            currentFeedbackVote: latestVote?.vote ?? null,
+            currentOutputVotes: _.isEmpty(currentOutputVotes)
+              ? null
+              : currentOutputVotes,
             approvals: {
               caseNote: isApproved(NoteSection.CASE_NOTE),
               actionItems: isApproved(NoteSection.ACTION_ITEMS),
@@ -434,16 +457,16 @@ export const meetingRouter = router({
         }
       },
     ),
-  voteFeedback: auth0Procedure
-    .input(voteFeedbackInputSchema)
+  submitOutputVote: auth0Procedure
+    .input(submitOutputVoteInputSchema)
     .mutation(
       async ({
-        input: { meetingId, vote },
-        ctx: { prisma, stateCode, user },
+        input: { meetingId, vote, tab },
+        ctx: { prisma, stateCode, user, isSkipAuth },
       }) => {
         const staffFeedbackEnabled =
           AGENCY_CONFIGS[stateCode]?.staffFeedbackEnabled ?? false;
-        if (!staffFeedbackEnabled) {
+        if (tab === OutputVoteTab.STAFF_FEEDBACK && !staffFeedbackEnabled) {
           throw new TRPCError({
             code: "FORBIDDEN",
             message: "Staff feedback is not enabled for this agency",
@@ -452,7 +475,7 @@ export const meetingRouter = router({
 
         const meeting = await prisma.meeting.findUnique({
           where: { id: meetingId },
-          select: { staffFeedbackPipelineRunId: true, staffEmail: true },
+          select: { outputsPipelineRunId: true, staffEmail: true },
         });
 
         if (!meeting) {
@@ -463,29 +486,104 @@ export const meetingRouter = router({
         }
 
         // Only the staff member who created the meeting can vote on its feedback.
-        if (meeting.staffEmail !== user.email) {
+        // Skip-auth (offline/dev) mode uses a mock user, so bypass the ownership
+        // check to make feedback testable against any fixture meeting.
+        if (!isSkipAuth && meeting.staffEmail !== user.email) {
           throw new TRPCError({
             code: "FORBIDDEN",
             message: "Only the meeting creator can vote on staff feedback",
           });
         }
 
-        if (!meeting.staffFeedbackPipelineRunId) {
+        if (!meeting.outputsPipelineRunId) {
           throw new TRPCError({
             code: "PRECONDITION_FAILED",
-            message: "Cannot vote on feedback that has not been generated yet",
+            message: "Cannot vote on output before it has been generated",
           });
         }
 
         // Append a new row every time. We never update or delete so the full
         // vote history (including thumbs-flips) is preserved for analysis.
-        await prisma.feedbackVote.create({
+        await prisma.outputVote.create({
           data: {
             meetingId,
             voterEmail: user.email,
             vote,
-            pipelineRunId: meeting.staffFeedbackPipelineRunId,
+            tab,
+            pipelineRunId: meeting.outputsPipelineRunId,
           },
+        });
+      },
+    ),
+  submitOutputVoteMessage: auth0Procedure
+    .input(submitOutputVoteMessageInputSchema)
+    .mutation(
+      async ({
+        input: { meetingId, tab, message },
+        ctx: { prisma, stateCode, user, isSkipAuth },
+      }) => {
+        const staffFeedbackEnabled =
+          AGENCY_CONFIGS[stateCode]?.staffFeedbackEnabled ?? false;
+        if (tab === OutputVoteTab.STAFF_FEEDBACK && !staffFeedbackEnabled) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Staff feedback is not enabled for this agency",
+          });
+        }
+
+        const meeting = await prisma.meeting.findUnique({
+          where: { id: meetingId },
+          select: { outputsPipelineRunId: true, staffEmail: true },
+        });
+
+        if (!meeting) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Meeting with that id was not found",
+          });
+        }
+
+        // Only the staff member who created the meeting can submit feedback.
+        // Skip-auth (offline/dev) mode uses a mock user, so bypass the ownership
+        // check to make feedback testable against any fixture meeting.
+        if (!isSkipAuth && meeting.staffEmail !== user.email) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Only the meeting creator can submit feedback",
+          });
+        }
+
+        if (!meeting.outputsPipelineRunId) {
+          throw new TRPCError({
+            code: "PRECONDITION_FAILED",
+            message:
+              "Cannot submit feedback message before outputs have been generated",
+          });
+        }
+
+        // Update the most recent vote for this user/meeting/tab/pipeline run
+        // with the feedback message.
+        const latestOutputVote = await prisma.outputVote.findFirst({
+          where: {
+            meetingId,
+            voterEmail: user.email,
+            tab,
+            pipelineRunId: meeting.outputsPipelineRunId,
+          },
+          orderBy: { createdAt: "desc" },
+        });
+
+        if (!latestOutputVote) {
+          throw new TRPCError({
+            code: "PRECONDITION_FAILED",
+            message:
+              "Cannot submit a feedback message without casting a vote first",
+          });
+        }
+
+        await prisma.outputVote.update({
+          where: { id: latestOutputVote.id },
+          data: { message },
         });
       },
     ),

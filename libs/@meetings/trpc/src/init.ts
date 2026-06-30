@@ -51,6 +51,7 @@ export const auth0Procedure = baseProcedure.use(async (opts) => {
     ctx: {
       user: ctx.user,
       isAuth0Authorized: ctx.isAuth0Authorized,
+      isSkipAuth: ctx.isSkipAuth,
       stateCode: ctx.stateCode,
       prisma: ctx.prisma,
     },

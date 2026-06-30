@@ -107,7 +107,7 @@ export function useOfflineEventFactory() {
             criticalUpdates: null,
             meetingSummary: null,
             staffFeedback: null,
-            currentFeedbackVote: null,
+            currentOutputVotes: null,
             caseNoteEditedAt: null,
             actionItemsEditedAt: null,
             approvals: {

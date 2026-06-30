@@ -140,7 +140,7 @@ async function seedMeeting(
     meetingSummary: normalizeMinutes(person.meetingSummary),
     staffFeedback: person.staffFeedback,
     staffFeedbackGeneratedAt: new Date(),
-    staffFeedbackPipelineRunId: `pipeline-${meetingId}`,
+    outputsPipelineRunId: `pipeline-${meetingId}`,
     postMeetingProcessingStatus: PostMeetingProcessingStatus.COMPLETED,
     transcriptions: {
       create: [

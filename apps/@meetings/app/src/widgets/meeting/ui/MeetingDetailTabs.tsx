@@ -15,15 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { isEmpty } from "lodash";
+import { ReactNode } from "react";
 import { View } from "react-native";
 
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 type Props = {
   items?: string[] | null;
+  outputVote?: ReactNode;
 };
 
-export const BulletListTab = ({ items }: Props) => (
+export const BulletListTab = ({ items, outputVote }: Props) => (
   <View className="flex-1 gap-4 pb-4">
     {items?.map((item, index) => (
       <View key={index} className="flex-row gap-2 px-4">
@@ -33,5 +36,6 @@ export const BulletListTab = ({ items }: Props) => (
         </Typography>
       </View>
     ))}
+    {!isEmpty(items) && outputVote}
   </View>
 );

@@ -37,4 +37,8 @@ export type {
 } from "~@meetings/tasks";
 
 // eslint-disable-next-line @nx/enforce-module-boundaries
-export type { PostMeetingProcessingStatus } from "~@meetings/prisma/client";
+export type {
+  OutputVoteTab,
+  OutputVoteValue,
+  PostMeetingProcessingStatus,
+} from "~@meetings/prisma/client";

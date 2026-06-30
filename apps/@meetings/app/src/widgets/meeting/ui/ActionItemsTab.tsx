@@ -17,7 +17,7 @@
 
 import { Arrow as TooltipArrowWeb } from "@radix-ui/react-tooltip";
 import * as TooltipPrimitive from "@rn-primitives/tooltip";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import { ScrollView as GHScrollView } from "react-native-gesture-handler";
 
@@ -30,14 +30,16 @@ type ActionItem = {
 
 type ActionItemsTabProps = {
   items?: ActionItem[] | null;
+  outputVote?: ReactNode;
 };
 
-export const ActionItemsTab = ({ items }: ActionItemsTabProps) => {
+export const ActionItemsTab = ({ items, outputVote }: ActionItemsTabProps) => {
   const ActionItem = Platform.OS === "web" ? ActionItemWeb : ActionItemMobile;
 
   return (
     <View className="flex-1 gap-4 pb-4">
       {items?.map((item, index) => <ActionItem key={index} {...item} />)}
+      {outputVote}
     </View>
   );
 };

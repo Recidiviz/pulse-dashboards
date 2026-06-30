@@ -17,9 +17,9 @@
 
 import Clipboard from "@react-native-clipboard/clipboard";
 import { debounce } from "lodash";
-import { useCallback, useEffect, useState } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
+import { ScrollView, TextInput } from "react-native-gesture-handler";
 import DocumentDuplicateIcon from "react-native-heroicons/solid/DocumentDuplicateIcon";
 
 import { useUpdateNotes } from "~@meetings/app/entities/meeting";
@@ -30,12 +30,14 @@ import { Typography } from "~@meetings/app/shared/ui/Typography";
 type Props = {
   meetingId: string;
   caseNote: string;
+  outputVote?: ReactNode;
 };
 
-const DraftCaseNoteTab = ({ meetingId, caseNote }: Props) => {
+const DraftCaseNoteTab = ({ meetingId, caseNote, outputVote }: Props) => {
   const utils = trpc.useUtils();
   const { showSnackbar, isShowing: isSnackbarShowing } = useSnackbar();
   const [inputNotes, setInputNotes] = useState(caseNote);
+  const [inputHeight, setInputHeight] = useState(0);
   const updateNotesMutation = useUpdateNotes({
     onSuccess: () => {
       utils.v1.meeting.getDetails.invalidate({ meetingId });
@@ -91,16 +93,25 @@ const DraftCaseNoteTab = ({ meetingId, caseNote }: Props) => {
           </TouchableOpacity>
         </View>
       </View>
-      <View className="flex-1">
+      <ScrollView className="flex-1">
         <TextInput
-          style={{ flex: 1, outlineColor: "transparent" }}
+          style={{
+            outlineColor: "transparent",
+            minHeight: inputHeight,
+            overflow: "hidden",
+          }}
           className="text-base leading-6 tracking-[-0.32px] text-primary"
           value={inputNotes}
           onChangeText={handleChange}
+          onContentSizeChange={(e) =>
+            setInputHeight(e.nativeEvent.contentSize.height)
+          }
           textAlignVertical="top"
+          scrollEnabled={false}
           multiline
         />
-      </View>
+        {outputVote}
+      </ScrollView>
     </View>
   );
 };

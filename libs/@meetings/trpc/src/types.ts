@@ -43,6 +43,7 @@ export type Context = {
   req: FastifyRequest;
   res: FastifyReply;
   isAuth0Authorized: boolean;
+  isSkipAuth: boolean;
   user?: AuthUser;
   prisma?: PrismaClient;
   stateCode?: StateCode;

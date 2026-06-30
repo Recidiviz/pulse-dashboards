@@ -30,8 +30,9 @@ import { AUDIO_FORMATS } from "~@meetings/config";
 import { AGENCY_CONFIGS } from "~@meetings/config/loader";
 import {
   ApprovalValue,
-  FeedbackVoteValue,
   NoteSection,
+  OutputVoteTab,
+  OutputVoteValue,
   PostMeetingProcessingStatus,
 } from "~@meetings/prisma/client";
 import * as meetingsTasks from "~@meetings/tasks";
@@ -109,7 +110,7 @@ describe("meeting router", () => {
         criticalUpdates: [],
         meetingSummary: [],
         staffFeedback: null,
-        currentFeedbackVote: null,
+        currentOutputVotes: null,
         caseNoteEditedAt: null,
         actionItemsEditedAt: null,
         approvals: {
@@ -183,7 +184,7 @@ describe("meeting router", () => {
           criticalUpdates: [],
           meetingSummary: [],
           staffFeedback: null,
-          currentFeedbackVote: null,
+          currentOutputVotes: null,
           caseNoteEditedAt: null,
           actionItemsEditedAt: null,
           approvals: {
@@ -200,7 +201,7 @@ describe("meeting router", () => {
       }
     });
 
-    test("Should return staffFeedback and currentFeedbackVote tied to the latest feedback content", async () => {
+    test("Should return staffFeedback and currentOutputVotes tied to the latest feedback content", async () => {
       setUSNEStaffFeedback(true);
       try {
         const generatedAt = new Date("2026-04-01T00:00:00.000Z");
@@ -217,34 +218,37 @@ describe("meeting router", () => {
               growthOpportunities: ["A reflection might have helped here."],
             },
             staffFeedbackGeneratedAt: generatedAt,
-            staffFeedbackPipelineRunId: currentPipelineRunId,
+            outputsPipelineRunId: currentPipelineRunId,
           },
         });
 
         // A vote against the *previous* feedback content - should be ignored.
-        await testPrismaClient.feedbackVote.create({
+        await testPrismaClient.outputVote.create({
           data: {
             meetingId: fakeActiveMeeting.id,
             voterEmail: fakeStaff[0].email,
-            vote: FeedbackVoteValue.UP,
+            vote: OutputVoteValue.UP,
+            tab: OutputVoteTab.STAFF_FEEDBACK,
             pipelineRunId: oldPipelineRunId,
           },
         });
 
         // Two votes against the current feedback. The most recent (DOWN) wins.
-        await testPrismaClient.feedbackVote.create({
+        await testPrismaClient.outputVote.create({
           data: {
             meetingId: fakeActiveMeeting.id,
             voterEmail: fakeStaff[0].email,
-            vote: FeedbackVoteValue.UP,
+            vote: OutputVoteValue.UP,
+            tab: OutputVoteTab.STAFF_FEEDBACK,
             pipelineRunId: currentPipelineRunId,
           },
         });
-        await testPrismaClient.feedbackVote.create({
+        await testPrismaClient.outputVote.create({
           data: {
             meetingId: fakeActiveMeeting.id,
             voterEmail: fakeStaff[0].email,
-            vote: FeedbackVoteValue.DOWN,
+            vote: OutputVoteValue.DOWN,
+            tab: OutputVoteTab.STAFF_FEEDBACK,
             pipelineRunId: currentPipelineRunId,
           },
         });
@@ -260,13 +264,18 @@ describe("meeting router", () => {
           growthOpportunities: ["A reflection might have helped here."],
           generatedAt,
         });
-        expect(result.currentFeedbackVote).toBe(FeedbackVoteValue.DOWN);
+        expect(result.currentOutputVotes).toEqual({
+          [OutputVoteTab.STAFF_FEEDBACK]: {
+            vote: OutputVoteValue.DOWN,
+            message: null,
+          },
+        });
       } finally {
         delete AGENCY_CONFIGS["US_NE"];
       }
     });
 
-    test("Should ignore votes from other users when reporting currentFeedbackVote", async () => {
+    test("Should ignore votes from other users when reporting currentOutputVotes", async () => {
       setUSNEStaffFeedback(true);
       try {
         const generatedAt = new Date("2026-04-01T00:00:00.000Z");
@@ -280,16 +289,17 @@ describe("meeting router", () => {
               growthOpportunities: [],
             },
             staffFeedbackGeneratedAt: generatedAt,
-            staffFeedbackPipelineRunId: pipelineRunId,
+            outputsPipelineRunId: pipelineRunId,
           },
         });
 
         // Another user voted, but the test client is fakeStaff[0].
-        await testPrismaClient.feedbackVote.create({
+        await testPrismaClient.outputVote.create({
           data: {
             meetingId: fakeActiveMeeting.id,
             voterEmail: "someone-else@example.com",
-            vote: FeedbackVoteValue.UP,
+            vote: OutputVoteValue.UP,
+            tab: OutputVoteTab.STAFF_FEEDBACK,
             pipelineRunId,
           },
         });
@@ -298,7 +308,7 @@ describe("meeting router", () => {
           meetingId: fakeActiveMeeting.id,
         });
 
-        expect(result.currentFeedbackVote).toBeNull();
+        expect(result.currentOutputVotes).toBeNull();
       } finally {
         delete AGENCY_CONFIGS["US_NE"];
       }
@@ -318,16 +328,17 @@ describe("meeting router", () => {
               growthOpportunities: [],
             },
             staffFeedbackGeneratedAt: generatedAt,
-            staffFeedbackPipelineRunId: pipelineRunId,
+            outputsPipelineRunId: pipelineRunId,
           },
         });
 
         // A real vote exists for this user — should also be hidden when off.
-        await testPrismaClient.feedbackVote.create({
+        await testPrismaClient.outputVote.create({
           data: {
             meetingId: fakeActiveMeeting.id,
             voterEmail: fakeStaff[0].email,
-            vote: FeedbackVoteValue.UP,
+            vote: OutputVoteValue.UP,
+            tab: OutputVoteTab.STAFF_FEEDBACK,
             pipelineRunId,
           },
         });
@@ -337,7 +348,7 @@ describe("meeting router", () => {
         });
 
         expect(result.staffFeedback).toBeNull();
-        expect(result.currentFeedbackVote).toBeNull();
+        expect(result.currentOutputVotes).toBeNull();
       } finally {
         delete AGENCY_CONFIGS["US_NE"];
       }
@@ -712,16 +723,17 @@ describe("meeting router", () => {
       setUSNEStaffFeedback(false);
 
       await expect(
-        testTRPCClient.v1.meeting.voteFeedback.mutate({
+        testTRPCClient.v1.meeting.submitOutputVote.mutate({
           meetingId: fakeActiveMeeting.id,
-          vote: FeedbackVoteValue.UP,
+          vote: OutputVoteValue.UP,
+          tab: OutputVoteTab.STAFF_FEEDBACK,
         }),
       ).rejects.toMatchObject({
         message: "Staff feedback is not enabled for this agency",
         data: { code: "FORBIDDEN" },
       });
 
-      const votes = await testPrismaClient.feedbackVote.findMany({
+      const votes = await testPrismaClient.outputVote.findMany({
         where: { meetingId: fakeActiveMeeting.id },
       });
       expect(votes).toHaveLength(0);
@@ -729,9 +741,10 @@ describe("meeting router", () => {
 
     test("Should throw NOT_FOUND when the meeting does not exist", async () => {
       await expect(
-        testTRPCClient.v1.meeting.voteFeedback.mutate({
+        testTRPCClient.v1.meeting.submitOutputVote.mutate({
           meetingId: "non-existent-meeting-id",
-          vote: FeedbackVoteValue.UP,
+          vote: OutputVoteValue.UP,
+          tab: OutputVoteTab.STAFF_FEEDBACK,
         }),
       ).rejects.toMatchObject({
         message: "Meeting with that id was not found",
@@ -739,15 +752,21 @@ describe("meeting router", () => {
       });
     });
 
-    test("Should throw PRECONDITION_FAILED when no staff feedback has been generated", async () => {
+    test("Should reject voting when no staff feedback has been generated yet", async () => {
       await expect(
-        testTRPCClient.v1.meeting.voteFeedback.mutate({
+        testTRPCClient.v1.meeting.submitOutputVote.mutate({
           meetingId: fakeActiveMeeting.id,
-          vote: FeedbackVoteValue.UP,
+          vote: OutputVoteValue.UP,
+          tab: OutputVoteTab.STAFF_FEEDBACK,
         }),
       ).rejects.toMatchObject({
         data: { code: "PRECONDITION_FAILED" },
       });
+
+      const votes = await testPrismaClient.outputVote.findMany({
+        where: { meetingId: fakeActiveMeeting.id },
+      });
+      expect(votes).toHaveLength(0);
     });
 
     test("Should throw FORBIDDEN when the user did not create the meeting", async () => {
@@ -765,15 +784,16 @@ describe("meeting router", () => {
       });
 
       await expect(
-        testTRPCClient.v1.meeting.voteFeedback.mutate({
+        testTRPCClient.v1.meeting.submitOutputVote.mutate({
           meetingId: fakeMeetingStaff1.id,
-          vote: FeedbackVoteValue.UP,
+          vote: OutputVoteValue.UP,
+          tab: OutputVoteTab.STAFF_FEEDBACK,
         }),
       ).rejects.toMatchObject({
         data: { code: "FORBIDDEN" },
       });
 
-      const votes = await testPrismaClient.feedbackVote.findMany({
+      const votes = await testPrismaClient.outputVote.findMany({
         where: { meetingId: fakeMeetingStaff1.id },
       });
       expect(votes).toHaveLength(0);
@@ -789,33 +809,36 @@ describe("meeting router", () => {
             growthOpportunities: [],
           },
           staffFeedbackGeneratedAt: new Date("2026-04-01T00:00:00.000Z"),
-          staffFeedbackPipelineRunId: pipelineRunId,
+          outputsPipelineRunId: pipelineRunId,
         },
       });
 
-      await testTRPCClient.v1.meeting.voteFeedback.mutate({
+      await testTRPCClient.v1.meeting.submitOutputVote.mutate({
         meetingId: fakeActiveMeeting.id,
-        vote: FeedbackVoteValue.UP,
+        vote: OutputVoteValue.UP,
+        tab: OutputVoteTab.STAFF_FEEDBACK,
       });
-      await testTRPCClient.v1.meeting.voteFeedback.mutate({
+      await testTRPCClient.v1.meeting.submitOutputVote.mutate({
         meetingId: fakeActiveMeeting.id,
-        vote: FeedbackVoteValue.DOWN,
+        vote: OutputVoteValue.DOWN,
+        tab: OutputVoteTab.STAFF_FEEDBACK,
       });
-      await testTRPCClient.v1.meeting.voteFeedback.mutate({
+      await testTRPCClient.v1.meeting.submitOutputVote.mutate({
         meetingId: fakeActiveMeeting.id,
-        vote: FeedbackVoteValue.UP,
+        vote: OutputVoteValue.UP,
+        tab: OutputVoteTab.STAFF_FEEDBACK,
       });
 
-      const votes = await testPrismaClient.feedbackVote.findMany({
+      const votes = await testPrismaClient.outputVote.findMany({
         where: { meetingId: fakeActiveMeeting.id },
         orderBy: { createdAt: "asc" },
       });
 
       expect(votes).toHaveLength(3);
       expect(votes.map((v) => v.vote)).toEqual([
-        FeedbackVoteValue.UP,
-        FeedbackVoteValue.DOWN,
-        FeedbackVoteValue.UP,
+        OutputVoteValue.UP,
+        OutputVoteValue.DOWN,
+        OutputVoteValue.UP,
       ]);
       expect(
         votes.every(
@@ -824,6 +847,229 @@ describe("meeting router", () => {
             v.pipelineRunId === pipelineRunId,
         ),
       ).toBe(true);
+    });
+  });
+
+  describe("submitOutputVoteMessage", () => {
+    const pipelineRunId = "pipeline-run-feedback";
+
+    beforeEach(() => {
+      setUSNEStaffFeedback(true);
+    });
+
+    afterEach(() => {
+      delete AGENCY_CONFIGS["US_NE"];
+    });
+
+    test("Should throw FORBIDDEN when staffFeedbackEnabled is false for the agency", async () => {
+      setUSNEStaffFeedback(false);
+
+      await expect(
+        testTRPCClient.v1.meeting.submitOutputVoteMessage.mutate({
+          meetingId: fakeActiveMeeting.id,
+          tab: OutputVoteTab.STAFF_FEEDBACK,
+          message: "Great feedback!",
+        }),
+      ).rejects.toMatchObject({
+        message: "Staff feedback is not enabled for this agency",
+        data: { code: "FORBIDDEN" },
+      });
+    });
+
+    test("Should throw NOT_FOUND when the meeting does not exist", async () => {
+      await expect(
+        testTRPCClient.v1.meeting.submitOutputVoteMessage.mutate({
+          meetingId: "non-existent-meeting-id",
+          tab: OutputVoteTab.STAFF_FEEDBACK,
+          message: "Great feedback!",
+        }),
+      ).rejects.toMatchObject({
+        message: "Meeting with that id was not found",
+        data: { code: "NOT_FOUND" },
+      });
+    });
+
+    test("Should throw FORBIDDEN when the user did not create the meeting", async () => {
+      await expect(
+        testTRPCClient.v1.meeting.submitOutputVoteMessage.mutate({
+          meetingId: fakeMeetingStaff1.id,
+          tab: OutputVoteTab.STAFF_FEEDBACK,
+          message: "Great feedback!",
+        }),
+      ).rejects.toMatchObject({
+        data: { code: "FORBIDDEN" },
+      });
+    });
+
+    test("Should throw PRECONDITION_FAILED when no vote has been cast", async () => {
+      await testPrismaClient.meeting.update({
+        where: { id: fakeActiveMeeting.id },
+        data: { outputsPipelineRunId: pipelineRunId },
+      });
+
+      await expect(
+        testTRPCClient.v1.meeting.submitOutputVoteMessage.mutate({
+          meetingId: fakeActiveMeeting.id,
+          tab: OutputVoteTab.STAFF_FEEDBACK,
+          message: "Great feedback!",
+        }),
+      ).rejects.toMatchObject({
+        message:
+          "Cannot submit a feedback message without casting a vote first",
+        data: { code: "PRECONDITION_FAILED" },
+      });
+    });
+
+    test("Should throw PRECONDITION_FAILED when the meeting has no feedback pipeline run", async () => {
+      await testPrismaClient.meeting.update({
+        where: { id: fakeActiveMeeting.id },
+        data: { outputsPipelineRunId: null },
+      });
+      await testPrismaClient.outputVote.create({
+        data: {
+          meetingId: fakeActiveMeeting.id,
+          voterEmail: fakeStaff[0].email,
+          vote: OutputVoteValue.UP,
+          tab: OutputVoteTab.STAFF_FEEDBACK,
+          pipelineRunId,
+        },
+      });
+
+      await expect(
+        testTRPCClient.v1.meeting.submitOutputVoteMessage.mutate({
+          meetingId: fakeActiveMeeting.id,
+          tab: OutputVoteTab.STAFF_FEEDBACK,
+          message: "Great feedback!",
+        }),
+      ).rejects.toMatchObject({
+        data: { code: "PRECONDITION_FAILED" },
+      });
+    });
+
+    test("Should throw PRECONDITION_FAILED when the only vote is against an older feedback version", async () => {
+      await testPrismaClient.meeting.update({
+        where: { id: fakeActiveMeeting.id },
+        data: { outputsPipelineRunId: pipelineRunId },
+      });
+      await testPrismaClient.outputVote.create({
+        data: {
+          meetingId: fakeActiveMeeting.id,
+          voterEmail: fakeStaff[0].email,
+          vote: OutputVoteValue.UP,
+          tab: OutputVoteTab.STAFF_FEEDBACK,
+          pipelineRunId: "pipeline-run-old",
+        },
+      });
+
+      await expect(
+        testTRPCClient.v1.meeting.submitOutputVoteMessage.mutate({
+          meetingId: fakeActiveMeeting.id,
+          tab: OutputVoteTab.STAFF_FEEDBACK,
+          message: "Great feedback!",
+        }),
+      ).rejects.toMatchObject({
+        data: { code: "PRECONDITION_FAILED" },
+      });
+    });
+
+    test("Should attach the message to the vote for the current feedback version", async () => {
+      await testPrismaClient.meeting.update({
+        where: { id: fakeActiveMeeting.id },
+        data: { outputsPipelineRunId: pipelineRunId },
+      });
+
+      await testTRPCClient.v1.meeting.submitOutputVote.mutate({
+        meetingId: fakeActiveMeeting.id,
+        vote: OutputVoteValue.UP,
+        tab: OutputVoteTab.STAFF_FEEDBACK,
+      });
+
+      await testTRPCClient.v1.meeting.submitOutputVoteMessage.mutate({
+        meetingId: fakeActiveMeeting.id,
+        tab: OutputVoteTab.STAFF_FEEDBACK,
+        message: "The housing suggestion was spot on.",
+      });
+
+      const votes = await testPrismaClient.outputVote.findMany({
+        where: { meetingId: fakeActiveMeeting.id },
+      });
+      expect(votes).toHaveLength(1);
+      expect(votes[0]).toMatchObject({
+        vote: OutputVoteValue.UP,
+        tab: OutputVoteTab.STAFF_FEEDBACK,
+        pipelineRunId,
+        message: "The housing suggestion was spot on.",
+      });
+    });
+
+    test("Should only attach the message to the most recent matching vote", async () => {
+      await testPrismaClient.meeting.update({
+        where: { id: fakeActiveMeeting.id },
+        data: { outputsPipelineRunId: pipelineRunId },
+      });
+
+      const olderVote = await testPrismaClient.outputVote.create({
+        data: {
+          meetingId: fakeActiveMeeting.id,
+          voterEmail: fakeStaff[0].email,
+          vote: OutputVoteValue.UP,
+          tab: OutputVoteTab.STAFF_FEEDBACK,
+          pipelineRunId,
+          createdAt: new Date("2026-04-01T00:00:00.000Z"),
+        },
+      });
+      const newerVote = await testPrismaClient.outputVote.create({
+        data: {
+          meetingId: fakeActiveMeeting.id,
+          voterEmail: fakeStaff[0].email,
+          vote: OutputVoteValue.DOWN,
+          tab: OutputVoteTab.STAFF_FEEDBACK,
+          pipelineRunId,
+          createdAt: new Date("2026-04-02T00:00:00.000Z"),
+        },
+      });
+
+      await testTRPCClient.v1.meeting.submitOutputVoteMessage.mutate({
+        meetingId: fakeActiveMeeting.id,
+        tab: OutputVoteTab.STAFF_FEEDBACK,
+        message: "Latest thoughts.",
+      });
+
+      const updatedOlder = await testPrismaClient.outputVote.findUnique({
+        where: { id: olderVote.id },
+      });
+      const updatedNewer = await testPrismaClient.outputVote.findUnique({
+        where: { id: newerVote.id },
+      });
+      expect(updatedOlder?.message).toBeNull();
+      expect(updatedNewer?.message).toBe("Latest thoughts.");
+    });
+
+    test("Should match the vote for the requested tab only", async () => {
+      await testPrismaClient.meeting.update({
+        where: { id: fakeActiveMeeting.id },
+        data: { outputsPipelineRunId: pipelineRunId },
+      });
+
+      await testPrismaClient.outputVote.create({
+        data: {
+          meetingId: fakeActiveMeeting.id,
+          voterEmail: fakeStaff[0].email,
+          vote: OutputVoteValue.UP,
+          tab: OutputVoteTab.ACTION_ITEMS,
+          pipelineRunId,
+        },
+      });
+
+      await expect(
+        testTRPCClient.v1.meeting.submitOutputVoteMessage.mutate({
+          meetingId: fakeActiveMeeting.id,
+          tab: OutputVoteTab.STAFF_FEEDBACK,
+          message: "Great feedback!",
+        }),
+      ).rejects.toMatchObject({
+        data: { code: "PRECONDITION_FAILED" },
+      });
     });
   });
 
