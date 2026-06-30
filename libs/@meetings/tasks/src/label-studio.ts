@@ -92,6 +92,8 @@ export function buildLabelStudioTask(
       : null;
 
   return {
+    meeting_id: meeting.id,
+
     // Allows us to use the label studio UI to randomly assign each task to an annotator by having a
     // range of numbers that correspond to each annotator. Doing it as a random number instead of
     // doing the assignments in the code makes it easy to make adjustments in LS later.
