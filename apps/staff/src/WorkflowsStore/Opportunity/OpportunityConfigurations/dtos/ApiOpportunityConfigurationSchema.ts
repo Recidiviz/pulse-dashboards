@@ -140,6 +140,17 @@ export const apiOpportunityConfigurationSchema = z.object({
   emptyTabCopy: tabTextSchema,
   tabPrefaceCopy: tabTextSchema,
 
+  supportsSupervisorReviewOnGrants: z.boolean().default(false),
+  supportsSupervisorReviewOnSnooze: z.boolean().default(false),
+  reasonsRequiringApproval: nullishAsUndefined(z.array(z.string())),
+  supervisorReviewTabTitle: nullishAsUndefined(z.string()),
+  grantApprovedTabTitle: nullishAsUndefined(z.string()),
+  grantApprovedStatusMessage: nullishAsUndefined(z.string()),
+  snoozeReviewStatusMessage: nullishAsUndefined(z.string()),
+  grantReviewStatusMessage: nullishAsUndefined(z.string()),
+  grantReviewDropdownLabel: nullishAsUndefined(z.string()),
+  reviewerFeatureVariant: nullishAsUndefined(z.string()),
+
   subcategoryHeadings: subcategoryHeadingSchema,
   subcategoryOrderings: tabTextListSchema,
   markSubmittedOptionsByTab: tabTextListSchema,
@@ -164,14 +175,7 @@ export const apiOpportunityConfigurationSchema = z.object({
   indefiniteSnoozeSectionSubheading: nullishAsUndefined(z.string()),
   skipFormPreview: z.boolean().default(false),
 
-  // TODO(#10028): Add supervisor review fields to admin panel
-  supervisorReviewTabTitle: nullishAsUndefined(z.string()),
-  grantReviewStatusMessage: nullishAsUndefined(z.string()),
-  snoozeReviewStatusMessage: nullishAsUndefined(z.string()),
-
   enableWorkflowsFilter: z.boolean().default(false),
-  grantApprovedTabTitle: nullishAsUndefined(z.string()),
-  grantApprovedStatusMessage: nullishAsUndefined(z.string()),
 });
 
 export const apiOpportunityConfigurationResponseSchema = z.object({

@@ -359,6 +359,77 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     );
   }
 
+  /** Compound logic used to determine whether or not approval flows tabs render. */
+  get supportsSupervisorReview() {
+    return (
+      this.supportsSupervisorReviewOnGrants ||
+      this.supportsSupervisorReviewOnSnooze
+    );
+  }
+
+  /** True when the grant approval flow is enabled for this opportunity. */
+  get supportsSupervisorReviewOnGrants() {
+    return this.configurationObject.supportsSupervisorReviewOnGrants;
+  }
+
+  /** True when the snooze approval flow is enabled — either explicitly via config in admin panel or because a custom opportunity config has overridden using denial reason logic. */
+  get supportsSupervisorReviewOnSnooze() {
+    return (
+      this.configurationObject.supportsSupervisorReviewOnSnooze ||
+      this.reasonsRequiringApproval.length > 0
+    );
+  }
+
+  /**  Denial reasons that require a supervisor approval before triggering a snooze. */
+  get reasonsRequiringApproval(): string[] {
+    return this.configurationObject.reasonsRequiringApproval ?? [];
+  }
+
+  /** The tab title for opportunities pending review. */
+  get supervisorReviewTabTitle() {
+    return (this.configurationObject.supervisorReviewTabTitle ??
+      "Supervisor Review") as OpportunityTab;
+  }
+
+  /** The tab title for opportunity grant requests that have been approved. */
+  get grantApprovedTabTitle() {
+    return (this.configurationObject.grantApprovedTabTitle ??
+      "Approved by Supervisor") as OpportunityTab;
+  }
+
+  /** The status message shown on an opportunity record after review approval. */
+  get grantApprovedStatusMessage() {
+    return (
+      this.configurationObject.grantApprovedStatusMessage ??
+      "Approved by Supervisor"
+    );
+  }
+
+  /** The dropdown option label that submits an opportunity grant for review. */
+  get grantReviewDropdownLabel() {
+    return (
+      this.configurationObject.grantReviewDropdownLabel ??
+      "Submit for Supervisor Approval"
+    );
+  }
+
+  /** The status message shown on an opportunity record while a snooze is pending review approval. */
+  get snoozeReviewStatusMessage() {
+    return this.configurationObject.snoozeReviewStatusMessage ?? "Under Review";
+  }
+
+  /** The status message shown on an opportunity record while a grant is pending review approval. */
+  get grantReviewStatusMessage() {
+    return this.configurationObject.grantReviewStatusMessage ?? "Under Review";
+  }
+
+  /** When set, only users with this feature variant active are permitted to act as a reviewer for this opportunity's grant approval flows. */
+  get reviewerFeatureVariant(): FeatureVariant | undefined {
+    return this.configurationObject.reviewerFeatureVariant as
+      | FeatureVariant
+      | undefined;
+  }
+
   get subcategoryHeadings() {
     return this.configurationObject.subcategoryHeadings;
   }
@@ -456,68 +527,10 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   }
 
   /**
-   * Denial reasons that require a supervisor approval before triggering a snooze.
-   */
-  get reasonsRequiringApproval(): string[] {
-    return [];
-  }
-
-  /**
    * Used to configure which denial reasons require text input from the user.
    */
   get denialInputSettings(): Record<string, DenialInputSettings> {
     return {};
-  }
-
-  get supportsSupervisorReview() {
-    return (
-      this.supportsSupervisorReviewOnGrants ||
-      this.supportsSupervisorReviewOnSnooze
-    );
-  }
-
-  get supportsSupervisorReviewOnGrants() {
-    return false;
-  }
-
-  get supportsSupervisorReviewOnSnooze() {
-    return this.reasonsRequiringApproval.length > 0;
-  }
-
-  get supervisorReviewTabTitle() {
-    return (this.configurationObject.supervisorReviewTabTitle ??
-      "Supervisor Review") as OpportunityTab;
-  }
-
-  /**
-   * The tab title for opportunity grant requests that have been approved.
-   */
-  get grantApprovedTabTitle() {
-    return (this.configurationObject.supervisorReviewTabTitle ??
-      "Approved by Supervisor") as OpportunityTab;
-  }
-
-  get grantApprovedStatusMessage() {
-    return (
-      this.configurationObject.snoozeReviewStatusMessage ??
-      "Approved by Supervisor"
-    );
-  }
-
-  get grantReviewDropdownLabel() {
-    return "Submit for Supervisor Approval";
-  }
-
-  get snoozeReviewStatusMessage() {
-    return this.configurationObject.snoozeReviewStatusMessage ?? "Under Review";
-  }
-
-  get grantReviewStatusMessage() {
-    return this.configurationObject.grantReviewStatusMessage ?? "Under Review";
-  }
-
-  get reviewerFeatureVariant(): FeatureVariant | undefined {
-    return undefined;
   }
 
   get customSubmittedText(): string | undefined {

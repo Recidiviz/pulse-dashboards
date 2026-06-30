@@ -82,3 +82,18 @@ describe("indefiniteDenialReasons", () => {
     });
   });
 });
+
+describe("supportsSupervisorReviewOnSnooze", () => {
+  const userStore = new UserStore({});
+  let oppConfig: ApiOpportunityConfiguration;
+
+  test("True when reasons require approval, even if the config flag is unset", () => {
+    const mockConfigObject = {} as unknown as IApiOpportunityConfiguration;
+    oppConfig = new ApiOpportunityConfiguration(mockConfigObject, userStore);
+    vi.spyOn(oppConfig, "reasonsRequiringApproval", "get").mockReturnValue([
+      "REASON 1",
+    ]);
+
+    expect(oppConfig.supportsSupervisorReviewOnSnooze).toBeTrue();
+  });
+});

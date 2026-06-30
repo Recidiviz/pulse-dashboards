@@ -531,6 +531,33 @@ describe("OpportunityDenialView", () => {
       ).toHaveLength(1);
     });
 
+    it("snooze approval flow routes to supervisor review when a reason requiring approval is selected", async () => {
+      const opp = {
+        ...mockOpportunity,
+        config: {
+          ...mockOpportunity.config,
+          denialReasons: {
+            CODE: "Denial reason",
+          },
+          reasonsRequiringApproval: ["CODE"],
+        },
+      };
+
+      vi.spyOn(opp, "setOfficerAction");
+
+      renderElement(opp);
+
+      const checkbox = getCheckbox("CODE");
+      if (checkbox) fireEvent.click(checkbox);
+
+      fireEvent.click(screen.getByTestId("OpportunityDenialView__button"));
+
+      expect(vi.mocked(opp.setOfficerAction).mock.calls[0][0]).toMatchObject({
+        type: "DENIAL",
+        denialReasons: ["CODE"],
+      });
+    });
+
     it("opens the modal and doesn't immediately submit", () => {
       const opp = {
         ...mockOpportunity,

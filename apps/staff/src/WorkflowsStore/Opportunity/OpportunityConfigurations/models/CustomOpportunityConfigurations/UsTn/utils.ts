@@ -71,6 +71,8 @@ export const usTnUntrackedEligibilityConfigBase = {
   tabGroups: {
     ELIGIBILITY_STATUS: ["Pending"],
   },
+  supportsSupervisorReviewOnGrants: false,
+  supportsSupervisorReviewOnSnooze: false,
   subcategoryHeadings: {},
   subcategoryOrderings: {},
   markSubmittedOptionsByTab: {},
