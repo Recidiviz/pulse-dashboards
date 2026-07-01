@@ -26,6 +26,7 @@ import { InsightsStore } from "../../InsightsStore/InsightsStore";
 import store, { RootStore } from "../../RootStore";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import { FeatureVariantRecord } from "../../RootStore/types";
+import { TypesenseStore } from "../../RootStore/TypesenseStore";
 import type UserStore from "../../RootStore/UserStore";
 import { WorkflowsStore } from "../../WorkflowsStore";
 import { OpportunityConfiguration } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations";
@@ -80,6 +81,10 @@ export function useUserStore(): UserStore {
 export function useFeatureVariants(): FeatureVariantRecord {
   const { activeFeatureVariants } = useUserStore();
   return activeFeatureVariants;
+}
+
+export function useTypesenseStore(): TypesenseStore {
+  return useRootStore().typesenseStore;
 }
 
 export function useOpportunityConfigurations(): Record<

@@ -48,6 +48,26 @@ export async function typesenseHealth(req, res) {
     return;
   }
 
+  // For testing: set TYPESENSE_SIMULATE=healthy|unhealthy|unconfigured to
+  // force a response without actually hitting the cluster
+  const simulate = process.env.TYPESENSE_SIMULATE;
+  if (simulate) {
+    if (simulate === "healthy") {
+      responder(res)(null, {
+        ok: true,
+        host: process.env.TYPESENSE_HOST ?? null,
+      });
+    } else if (simulate === "unconfigured") {
+      responder(res)({
+        status: 500,
+        errors: ["TYPESENSE_HOST is not configured for this environment"],
+      });
+    } else {
+      responder(res)({ status: 503, errors: ["Typesense reported unhealthy"] });
+    }
+    return;
+  }
+
   let client;
   try {
     client = createTypesenseInspectClient();
@@ -59,7 +79,10 @@ export async function typesenseHealth(req, res) {
   try {
     const health = await client.health.retrieve();
     if (health?.ok) {
-      responder(res)(null, { ok: true });
+      responder(res)(null, {
+        ok: true,
+        host: process.env.TYPESENSE_HOST ?? null,
+      });
       return;
     }
     responder(res)({ status: 503, errors: ["Typesense reported unhealthy"] });

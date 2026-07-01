@@ -34,6 +34,7 @@ import MobileNavigation from "../MobileNavigation";
 import PageTemplate from "../PageTemplate";
 import FeatureVariantsList from "./FeatureVariantsList";
 import { ImpersonationForm } from "./ImpersonationForm";
+import { TypesenseSection } from "./Typesense";
 
 function Profile() {
   const userStore = useUserStore();
@@ -97,6 +98,7 @@ function Profile() {
           </div>
           <StateSelection />
           {showFeatureVariants && <FeatureVariantSelection />}
+          {userStore.isRecidivizUser && <TypesenseSection />}
           <div>
             <Link to="/">
               <Button className="Profile__button">Back to dashboard</Button>

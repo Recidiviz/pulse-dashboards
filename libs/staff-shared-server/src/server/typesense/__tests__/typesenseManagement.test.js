@@ -53,7 +53,7 @@ describe("typesenseHealth", () => {
     const { res, send } = buildRes();
     await typesenseHealth(recidivizReq, res);
 
-    expect(send).toHaveBeenCalledWith({ ok: true });
+    expect(send).toHaveBeenCalledWith({ ok: true, host: null });
   });
 
   test("responds 503 when the cluster reports unhealthy", async () => {

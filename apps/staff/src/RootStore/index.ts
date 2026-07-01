@@ -45,6 +45,7 @@ import { APIStore } from "./APIStore";
 import PageStore from "./PageStore";
 import TenantStore from "./TenantStore";
 import { TenantId } from "./types";
+import { TypesenseStore } from "./TypesenseStore";
 import UserStore from "./UserStore";
 
 /**
@@ -111,6 +112,8 @@ export class RootStore {
 
   apiStore: APIStore;
 
+  typesenseStore: TypesenseStore;
+
   analyticsStore: AnalyticsStore;
 
   firestoreStore: FirestoreStore;
@@ -154,6 +157,8 @@ export class RootStore {
     this.workflowsStore = new WorkflowsStore({ rootStore: this });
 
     this.apiStore = new APIStore(this.userStore);
+
+    this.typesenseStore = new TypesenseStore(this.userStore);
 
     this.analyticsStore = new AnalyticsStore({
       rootStore: this,
