@@ -118,3 +118,7 @@ if (successfullyDeployedServices.length > 0) {
   console.log("No services were successfully deployed.");
 }
 console.log(`Total execution time: ${minutes}m ${seconds}s`);
+
+// getImageRef in ./get-image-ref.mts creates an nx daemon connection with
+// no way to clean it up, so we have to explicitly exit or we'll hang forever.
+process.exit(0);
