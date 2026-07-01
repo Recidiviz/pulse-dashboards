@@ -68,4 +68,10 @@ export type ProgramCatalogProps = {
    * The label comes from t(($) => $.programs.backLink).
    */
   backHref?: string;
+
+  /**
+   * Whether category sections are expanded on initial render.
+   * Defaults to true.
+   */
+  defaultExpanded?: boolean;
 };

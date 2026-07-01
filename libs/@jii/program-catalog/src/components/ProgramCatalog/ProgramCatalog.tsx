@@ -68,8 +68,13 @@ const ManagedComponent: FC<{ presenter: ProgramCatalogPresenter }> = observer(
   function ProgramCatalogManaged({ presenter }) {
     const { t } = useTranslation([presenter.config.stateCode, "common"]);
 
-    const { showCredits, showStars, learnMoreHref, backHref } =
-      presenter.config;
+    const {
+      showCredits,
+      showStars,
+      learnMoreHref,
+      backHref,
+      defaultExpanded = true,
+    } = presenter.config;
 
     const handleToggleStar = (program: Program) => {
       presenter.toggleStarred(program);
@@ -114,6 +119,7 @@ const ManagedComponent: FC<{ presenter: ProgramCatalogPresenter }> = observer(
               programCount={programs.length}
               totalCount={presenter.totalProgramsByCategory.get(name)}
               t={t}
+              defaultExpanded={defaultExpanded}
             >
               {programs.map((program) => (
                 <ProgramCard

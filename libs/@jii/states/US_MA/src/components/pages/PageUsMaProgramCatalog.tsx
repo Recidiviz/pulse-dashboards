@@ -36,6 +36,7 @@ export const PageUsMaProgramCatalog: FC = () => {
         pageSlug: "credits",
       })}
       backHref={State.Resident.buildPath(pathParams)}
+      defaultExpanded={false}
     />
   );
 };

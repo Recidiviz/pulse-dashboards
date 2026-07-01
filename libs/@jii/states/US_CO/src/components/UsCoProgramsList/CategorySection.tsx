@@ -64,7 +64,6 @@ interface CategorySectionProps {
   programCount: number;
   totalCount?: number;
   children: ReactNode;
-  defaultExpanded?: boolean;
 }
 
 // TODO(#11610) Set this up as details/summary for better accessibility

@@ -66,6 +66,7 @@ interface CategorySectionProps {
   totalCount?: number;
   children: ReactNode;
   t: TFn;
+  defaultExpanded: boolean;
 }
 
 // TODO(#11610) Set this up as details/summary for better accessibility
@@ -75,8 +76,9 @@ export const CategorySection: FC<CategorySectionProps> = ({
   totalCount,
   children,
   t,
+  defaultExpanded,
 }) => {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
   const showFilteredCount =
     totalCount !== undefined && totalCount > programCount;
