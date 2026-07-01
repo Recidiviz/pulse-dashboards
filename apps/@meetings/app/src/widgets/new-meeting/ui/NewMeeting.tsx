@@ -24,20 +24,22 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import Header from "~@meetings/app/components/Header";
+import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
+import {
+  MeetingControlsMobile,
+  useRecording,
+} from "~@meetings/app/features/recording";
 import { Person } from "~@meetings/app/shared/api";
-
-import { MeetingTypeTag } from "../entities/meeting-type";
-import { MeetingControlsMobile, useRecording } from "../features/recording";
-import NotesSvg from "../shared/assets/icons/arrows-poin-outting-in.svg";
-import { Typography } from "../shared/ui/Typography";
-import Header from "./Header";
+import NotesSvg from "~@meetings/app/shared/assets/icons/arrows-poin-outting-in.svg";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 type Props = {
   person: Person;
   navigateToPersonProfile: () => void;
 };
 
-const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
+export const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
   const insets = useSafeAreaInsets();
 
   const {
@@ -125,5 +127,3 @@ const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
     </TouchableWithoutFeedback>
   );
 };
-
-export default NewMeeting;

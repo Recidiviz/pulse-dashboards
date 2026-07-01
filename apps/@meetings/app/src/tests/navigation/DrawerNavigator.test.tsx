@@ -56,8 +56,8 @@ jest.mock("../../pages/client-profile", () => null);
 jest.mock("../../pages/resident-profile", () => null);
 jest.mock("../../pages/client-meeting", () => null);
 jest.mock("../../pages/resident-meeting", () => null);
-jest.mock("../../screens/ClientNewMeetingScreen", () => null);
-jest.mock("../../screens/ResidentNewMeetingScreen", () => null);
+jest.mock("../../pages/client-new-meeting", () => null);
+jest.mock("../../pages/resident-new-meeting", () => null);
 jest.mock("../../components/DrawerContent", () => null);
 jest.mock("../../pages/onboarding", () => ({
   OnboardingScreen: null,

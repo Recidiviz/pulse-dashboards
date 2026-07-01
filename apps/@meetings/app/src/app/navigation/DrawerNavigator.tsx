@@ -25,16 +25,16 @@ import { useStateSelection } from "~@meetings/app/context/StateContext";
 import { useUserContext } from "~@meetings/app/context/UserContext";
 import { useGetUser } from "~@meetings/app/entities/user";
 import { ClientMeetingScreen } from "~@meetings/app/pages/client-meeting";
+import { ClientNewMeetingScreen } from "~@meetings/app/pages/client-new-meeting";
 import { ClientProfileScreen } from "~@meetings/app/pages/client-profile";
 import { ClientsScreen } from "~@meetings/app/pages/clients";
 import { NoAccessScreen } from "~@meetings/app/pages/no-access";
 import { OnboardingScreen } from "~@meetings/app/pages/onboarding";
 import { ResidentMeetingScreen } from "~@meetings/app/pages/resident-meeting";
+import { ResidentNewMeetingScreen } from "~@meetings/app/pages/resident-new-meeting";
 import { ResidentProfileScreen } from "~@meetings/app/pages/resident-profile";
 import { ResidentsScreen } from "~@meetings/app/pages/residents";
 import { StateSelectionScreen } from "~@meetings/app/pages/state-selection";
-import ClientNewMeetingScreen from "~@meetings/app/screens/ClientNewMeetingScreen";
-import ResidentNewMeetingScreen from "~@meetings/app/screens/ResidentNewMeetingScreen";
 import {
   ClientsStackParamList,
   IS_PROD,

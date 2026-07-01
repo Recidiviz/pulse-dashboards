@@ -19,27 +19,26 @@ import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import NewMeeting from "../components/NewMeeting";
-import { deserializeResident, formatPersonTitle } from "../entities/person";
-import { trpc } from "../shared/api";
-import { ResidentsStackParamList } from "../shared/config/routes";
-import { useSetDocumentTitle } from "../shared/lib/useSetDocumentTitle";
-import Loading from "../shared/ui/Loading";
+import {
+  deserializeClient,
+  formatPersonTitle,
+} from "~@meetings/app/entities/person";
+import { trpc } from "~@meetings/app/shared/api";
+import { ClientsStackParamList } from "~@meetings/app/shared/config";
+import { useSetDocumentTitle } from "~@meetings/app/shared/lib/useSetDocumentTitle";
+import Loading from "~@meetings/app/shared/ui/Loading";
+import { NewMeeting } from "~@meetings/app/widgets/new-meeting";
 
 type ProfileNavProp = NativeStackNavigationProp<
-  ResidentsStackParamList,
-  "Residents"
+  ClientsStackParamList,
+  "Clients"
 >;
-type NewMeetingRouteProp = RouteProp<
-  ResidentsStackParamList,
-  "ResidentNewMeeting"
->;
+type NewMeetingRouteProp = RouteProp<ClientsStackParamList, "ClientNewMeeting">;
 
-const ResidentNewMeetingScreen = () => {
+export const ClientNewMeetingScreen = () => {
   const navigation = useNavigation<ProfileNavProp>();
   const route = useRoute<NewMeetingRouteProp>();
-
-  const { data: resident } = trpc.v1.resident.get.useQuery(
+  const { data: person } = trpc.v1.client.get.useQuery(
     { personId: BigInt(route.params?.personId || 0) },
     { enabled: !!route.params?.personId },
   );
@@ -56,15 +55,15 @@ const ResidentNewMeetingScreen = () => {
     `New Meeting - ${formatPersonTitle(routePerson)} - Recidiviz Meetings`,
   );
 
-  if (!resident) return <Loading message="Loading..." />;
+  if (!person) return <Loading message="Loading..." />;
 
-  const navigateToResidentProfile = () => {
+  const navigateToClientProfile = () => {
     navigation.reset({
       index: 1,
       routes: [
-        { name: "Residents" },
+        { name: "Clients" },
         {
-          name: "ResidentProfile",
+          name: "ClientProfile",
           params: {
             personId: route.params.personId,
             fullName: route.params.fullName,
@@ -79,11 +78,9 @@ const ResidentNewMeetingScreen = () => {
   return (
     <SafeAreaView className="flex-1 bg-primary">
       <NewMeeting
-        person={deserializeResident(resident)}
-        navigateToPersonProfile={navigateToResidentProfile}
+        person={deserializeClient(person)}
+        navigateToPersonProfile={navigateToClientProfile}
       />
     </SafeAreaView>
   );
 };
-
-export default ResidentNewMeetingScreen;
