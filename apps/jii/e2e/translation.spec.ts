@@ -41,7 +41,7 @@ import { clearAllLoaders } from "./utils";
   {
     state: "US_NE",
     slug: "nebraska",
-    expectSpanishEnabled: false,
+    expectSpanishEnabled: true,
   },
   {
     state: "US_AR",
