@@ -85,6 +85,10 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_MO-outsideClearanceReferrals",
+      grantApprovedStatusMessage: null,
+      grantApprovedTabTitle: null,
+      grantReviewDropdownLabel: null,
+      grantReviewStatusMessage: null,
       hideDenialRevert: false,
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
@@ -112,10 +116,12 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: "Validated by data from MOCIS and OP-II",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
+      reviewerFeatureVariant: null,
       sidebarComponents: [],
       skipFormPreview: true,
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: ["usMoWorkRelease"],
+      snoozeReviewStatusMessage: null,
       stateCode: "US_MO",
       strictlyIneligibleCriteriaCopy: [
         {
@@ -152,8 +158,11 @@ export const mockApiOpportunityConfigurationResponse = {
       subheading:
         "Outside Clearance is a program allowing residents to work on assignments located outside the security perimeter that are on department property and supervised by department staff members.",
       submittedTabTitle: "Submitted",
+      supervisorReviewTabTitle: null,
       supportsIneligible: true,
       supportsSubmitted: true,
+      supportsSupervisorReviewOnGrants: false,
+      supportsSupervisorReviewOnSnooze: false,
       systemType: "INCARCERATION",
       tabGroups: null,
       tabPrefaceCopy: [],
@@ -198,6 +207,10 @@ export const mockApiOpportunityConfigurationResponse = {
       emptyTabCopy: [],
       firestoreCollection:
         "US_MO-overdueRestrictiveHousingInitialHearingReferrals",
+      grantApprovedStatusMessage: null,
+      grantApprovedTabTitle: null,
+      grantReviewDropdownLabel: null,
+      grantReviewStatusMessage: null,
       hideDenialRevert: false,
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
@@ -215,6 +228,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: null,
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
+      reviewerFeatureVariant: null,
       sidebarComponents: ["UsMoIncarceration", "UsMoRestrictiveHousing"],
       skipFormPreview: false,
       snooze: {
@@ -224,6 +238,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       },
       snoozeCompanionOpportunityTypes: [],
+      snoozeReviewStatusMessage: null,
       stateCode: "US_MO",
       strictlyIneligibleCriteriaCopy: [],
       subcategoryHeadings: [],
@@ -231,8 +246,11 @@ export const mockApiOpportunityConfigurationResponse = {
       subheading:
         "This alert helps staff identify residents in Temporary Assignment who are overdue or due for an initial meaningful hearing.",
       submittedTabTitle: null,
+      supervisorReviewTabTitle: null,
       supportsIneligible: false,
       supportsSubmitted: true,
+      supportsSupervisorReviewOnGrants: false,
+      supportsSupervisorReviewOnSnooze: false,
       systemType: "INCARCERATION",
       tabGroups: [
         {
@@ -286,6 +304,10 @@ export const mockApiOpportunityConfigurationResponse = {
       eligibleCriteriaCopy: [],
       emptyTabCopy: [],
       firestoreCollection: "US_MO-overdueRestrictiveHousingReleaseReferrals",
+      grantApprovedStatusMessage: null,
+      grantApprovedTabTitle: null,
+      grantReviewDropdownLabel: null,
+      grantReviewStatusMessage: null,
       hideDenialRevert: false,
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
@@ -303,6 +325,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: null,
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
+      reviewerFeatureVariant: null,
       sidebarComponents: ["UsMoIncarceration", "UsMoRestrictiveHousing"],
       skipFormPreview: false,
       snooze: {
@@ -312,6 +335,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       },
       snoozeCompanionOpportunityTypes: [],
+      snoozeReviewStatusMessage: null,
       stateCode: "US_MO",
       strictlyIneligibleCriteriaCopy: [],
       subcategoryHeadings: [],
@@ -319,8 +343,11 @@ export const mockApiOpportunityConfigurationResponse = {
       subheading:
         "This alert helps staff identify residents in Restrictive Housing who have already reached or are about to reach the total number of days they were assigned to serve in restrictive housing before returning to the General Population. Review residents for release and prepare necessary paperwork for their return to the General Population.",
       submittedTabTitle: null,
+      supervisorReviewTabTitle: null,
       supportsIneligible: false,
       supportsSubmitted: true,
+      supportsSupervisorReviewOnGrants: false,
+      supportsSupervisorReviewOnSnooze: false,
       systemType: "INCARCERATION",
       tabGroups: [
         {
@@ -368,6 +395,10 @@ export const mockApiOpportunityConfigurationResponse = {
       emptyTabCopy: [],
       firestoreCollection:
         "US_MO-overdueRestrictiveHousingReviewHearingReferrals",
+      grantApprovedStatusMessage: null,
+      grantApprovedTabTitle: null,
+      grantReviewDropdownLabel: null,
+      grantReviewStatusMessage: null,
       hideDenialRevert: false,
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
@@ -385,6 +416,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: null,
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
+      reviewerFeatureVariant: null,
       sidebarComponents: ["UsMoIncarceration", "UsMoRestrictiveHousing"],
       skipFormPreview: false,
       snooze: {
@@ -394,6 +426,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       },
       snoozeCompanionOpportunityTypes: [],
+      snoozeReviewStatusMessage: null,
       stateCode: "US_MO",
       strictlyIneligibleCriteriaCopy: [],
       subcategoryHeadings: [],
@@ -401,8 +434,11 @@ export const mockApiOpportunityConfigurationResponse = {
       subheading:
         "This alert helps staff identify residents in Extended Restrictive Housing  who are overdue or due for a hearing. Review residents and prepare necessary paperwork for their next hearing.",
       submittedTabTitle: null,
+      supervisorReviewTabTitle: null,
       supportsIneligible: false,
       supportsSubmitted: true,
+      supportsSupervisorReviewOnGrants: false,
+      supportsSupervisorReviewOnSnooze: false,
       systemType: "INCARCERATION",
       tabGroups: [
         {
@@ -509,6 +545,10 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_MO-workReleaseReferrals",
+      grantApprovedStatusMessage: null,
+      grantApprovedTabTitle: null,
+      grantReviewDropdownLabel: null,
+      grantReviewStatusMessage: null,
       hideDenialRevert: false,
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
@@ -545,10 +585,12 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: "Validated by data from MOCIS and OP-II",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
+      reviewerFeatureVariant: null,
       sidebarComponents: [],
       skipFormPreview: true,
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 180 },
       snoozeCompanionOpportunityTypes: [],
+      snoozeReviewStatusMessage: null,
       stateCode: "US_MO",
       strictlyIneligibleCriteriaCopy: [
         {
@@ -589,8 +631,11 @@ export const mockApiOpportunityConfigurationResponse = {
       subheading:
         "Supervised Work Release is a program that allows residents to work outside of the institution under the supervision of department staff members or trained employees of another private, nonprofit, or government agency.",
       submittedTabTitle: "Submitted",
+      supervisorReviewTabTitle: null,
       supportsIneligible: true,
       supportsSubmitted: true,
+      supportsSupervisorReviewOnGrants: false,
+      supportsSupervisorReviewOnSnooze: false,
       systemType: "INCARCERATION",
       tabGroups: null,
       tabPrefaceCopy: [],

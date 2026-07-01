@@ -99,6 +99,10 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_AZ-DTPReferrals",
+      grantApprovedStatusMessage: null,
+      grantApprovedTabTitle: null,
+      grantReviewDropdownLabel: null,
+      grantReviewStatusMessage: null,
       hideDenialRevert: false,
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
@@ -194,10 +198,12 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: "Requirements validated by ACIS",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
+      reviewerFeatureVariant: null,
       sidebarComponents: ["UsAzDates", "UsAzAcisInformation", "Incarceration"],
       skipFormPreview: false,
       snooze: { defaultSnoozeDays: 15, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
+      snoozeReviewStatusMessage: null,
       stateCode: "US_AZ",
       strictlyIneligibleCriteriaCopy: [],
       subcategoryHeadings: [
@@ -236,8 +242,11 @@ export const mockApiOpportunityConfigurationResponse = {
       subheading:
         "This tool helps staff prioritize inmates for early release through the Drug Transition Program. Eligible individuals—or those nearing eligibility—will appear under designated tabs. [Learn more](https://docs.google.com/document/d/e/2PACX-1vTUcDC7U_T-u1vch4wQNB8POs1-TJhaUFodbv0srptCdQzHX7yRItEOYzlSyY2CNu8eDIlWibGeFvY-/pub)",
       submittedTabTitle: "Pending",
+      supervisorReviewTabTitle: null,
       supportsIneligible: false,
       supportsSubmitted: true,
+      supportsSupervisorReviewOnGrants: false,
+      supportsSupervisorReviewOnSnooze: false,
       systemType: "INCARCERATION",
       tabGroups: [
         {
@@ -355,6 +364,10 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_AZ-TPRReferrals",
+      grantApprovedStatusMessage: null,
+      grantApprovedTabTitle: null,
+      grantReviewDropdownLabel: null,
+      grantReviewStatusMessage: null,
       hideDenialRevert: false,
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
@@ -450,10 +463,12 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: "Requirements validated by ACIS data",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
+      reviewerFeatureVariant: null,
       sidebarComponents: ["UsAzDates", "UsAzAcisInformation", "Incarceration"],
       skipFormPreview: false,
       snooze: { defaultSnoozeDays: 15, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
+      snoozeReviewStatusMessage: null,
       stateCode: "US_AZ",
       strictlyIneligibleCriteriaCopy: [],
       subcategoryHeadings: [
@@ -492,8 +507,11 @@ export const mockApiOpportunityConfigurationResponse = {
       subheading:
         "This tool helps staff prioritize inmates for early release through the Standard Transition Program. Eligible individuals—or those nearing eligibility—will appear under designated tabs. [Learn more](https://docs.google.com/document/d/e/2PACX-1vTUcDC7U_T-u1vch4wQNB8POs1-TJhaUFodbv0srptCdQzHX7yRItEOYzlSyY2CNu8eDIlWibGeFvY-/pub)",
       submittedTabTitle: "Pending",
+      supervisorReviewTabTitle: null,
       supportsIneligible: false,
       supportsSubmitted: true,
+      supportsSupervisorReviewOnGrants: false,
+      supportsSupervisorReviewOnSnooze: false,
       systemType: "INCARCERATION",
       tabGroups: [
         {
@@ -607,6 +625,12 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip:
             "(DO 1007 8.1.8) Not currently dealing with substance use issues, as assessed in the risk and needs assessment. Only a score of 2, indicating “current problems caused by drug use,” disqualifies someone from eligibility. A client may also meet this requirement if they have abstained from illicit drug use for the past year.",
         },
+        {
+          key: "usAzNotInHalfwayHouseOrNewFreedom",
+          text: "Not in halfway house",
+          tooltip:
+            "Requires validation of DO 1007 section 8.1.4: A client has achieved stable housing while on supervision.",
+        },
       ],
       emptyTabCopy: [
         {
@@ -627,6 +651,10 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       firestoreCollection: "US_AZ-TransferToAdminSupervision",
+      grantApprovedStatusMessage: null,
+      grantApprovedTabTitle: null,
+      grantReviewDropdownLabel: null,
+      grantReviewStatusMessage: null,
       hideDenialRevert: true,
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
@@ -666,10 +694,12 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: "Validated by data from ACIS",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
+      reviewerFeatureVariant: null,
       sidebarComponents: ["Supervision"],
       skipFormPreview: false,
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
+      snoozeReviewStatusMessage: null,
       stateCode: "US_AZ",
       strictlyIneligibleCriteriaCopy: [],
       subcategoryHeadings: [],
@@ -677,8 +707,11 @@ export const mockApiOpportunityConfigurationResponse = {
       subheading:
         "Identify clients who are eligible for Administrative Supervision and adjust their supervision level in ACIS. [Learn More](https://docs.google.com/document/d/e/2PACX-1vQ55ljjO7rz-6UiHGLwEcH7WR6_ZZIbEynN-92kO5D61wfKIZZVewqLxQdQfjOtv6vnKDSmQKLX9xui/pub)",
       submittedTabTitle: "Transferred in ACIS",
+      supervisorReviewTabTitle: null,
       supportsIneligible: false,
       supportsSubmitted: true,
+      supportsSupervisorReviewOnGrants: false,
+      supportsSupervisorReviewOnSnooze: false,
       systemType: "SUPERVISION",
       tabGroups: [
         {
@@ -766,7 +799,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usAzOrasEmployedDisabledRetiredOrStudent",
-          text: "{{#unless record.metadata.isMaybeEligible}}\nCurrently employed, disabled, retired, or in school\n{{/unless}}",
+          text: "Currently employed, disabled, retired, or in school",
           tooltip:
             "(DO 1007 8.1.5) Currently employed, disabled, retired, or in school, as assessed in the risk and needs assessment. See DO for more details. ",
         },
@@ -782,7 +815,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usAzOrasHasSubstanceUseIssues",
-          text: "{{#unless record.metadata.isMaybeEligible}}\nNot currently dealing with substance use issues\n{{/unless}}",
+          text: "Not currently dealing with substance use issues",
           tooltip:
             "(DO 1007 8.1.8) Not currently dealing with substance use issues, as assessed in the risk and needs assessment. Only a score of 2, indicating “current problems caused by drug use,” disqualifies someone from eligibility. A client may also meet this requirement if they have abstained from illicit drug use for the past year.",
         },
@@ -810,6 +843,10 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       firestoreCollection: "US_AZ-TransferToAdminSupervisionV2",
+      grantApprovedStatusMessage: null,
+      grantApprovedTabTitle: null,
+      grantReviewDropdownLabel: null,
+      grantReviewStatusMessage: null,
       hideDenialRevert: true,
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
@@ -834,19 +871,65 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: "Validated by data from ACIS",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
+      reviewerFeatureVariant: null,
       sidebarComponents: ["Supervision"],
       skipFormPreview: false,
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
+      snoozeReviewStatusMessage: null,
       stateCode: "US_AZ",
-      strictlyIneligibleCriteriaCopy: [],
+      strictlyIneligibleCriteriaCopy: [
+        {
+          key: "usAzOrasRiskLevelIsMediumOrLower",
+          text: "Ineligible risk score",
+          tooltip:
+            "(DO 1007 8.1.1 - 8.1.1.1) Risk and needs assessment shows a risk determination of moderate or lower. Clients that score Minimum on the Initial Community Risk Assessment and who therefore do not receive additional risk and needs assessment are not required to meet criteria 8.1.1 above.",
+        },
+        {
+          key: "usAzNoIneligibleCurrentOrPriorOffense",
+          text: "Has current or prior convictions of exclusionary offenses",
+          tooltip:
+            "(DO 1007 8.1.2) No current or prior convictions of a registerable sexual offense or felony domestic violence offense, or current convictions of felony arson or murder. See  Attachment A of DO 1007 for a list of offenses excluded under this section.",
+        },
+        {
+          key: "usAzRiskReleaseAssessmentIsCompleted",
+          text: "Initial intake and needs assessment is not complete",
+          tooltip:
+            "(DO 1007 8.1.3) Has completed initial intake and risk and needs assessment with assigned CRO. This may be done in-person, or, where deemed appropriate by the CRO, virtually (e.g., by telephone or video call).",
+        },
+        {
+          key: "usAzOrasEmployedDisabledRetiredOrStudent",
+          text: "Not currently employed, disabled, retired, or in school",
+          tooltip:
+            "(DO 1007 8.1.5) Currently employed, disabled, retired, or in school, as assessed in the risk and needs assessment. See DO for more details. ",
+        },
+        {
+          key: "usAzMentalHealthScore3OrBelow",
+          text: "Mental Health Score of 4 or higher",
+          tooltip: "(DO 1007 8.1.6) Mental Health Score below 4.",
+        },
+        {
+          key: "usAzNotSeverelyMentallyIll",
+          text: "Client is SMI-C",
+          tooltip: "(DO 1007 8.1.7) Not SMI-C.",
+        },
+        {
+          key: "usAzOrasHasSubstanceUseIssues",
+          text: "Currently dealing with substance use issues",
+          tooltip:
+            "(DO 1007 8.1.8) Not currently dealing with substance use issues, as assessed in the risk and needs assessment. Only a score of 2, indicating “current problems caused by drug use,” disqualifies someone from eligibility. A client may also meet this requirement if they have abstained from illicit drug use for the past year.",
+        },
+      ],
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
         "Identify clients who are eligible for Administrative Supervision and adjust their supervision level in ACIS. [Learn More](https://docs.google.com/document/d/e/2PACX-1vQ55ljjO7rz-6UiHGLwEcH7WR6_ZZIbEynN-92kO5D61wfKIZZVewqLxQdQfjOtv6vnKDSmQKLX9xui/pub)",
       submittedTabTitle: "Transferred in ACIS",
-      supportsIneligible: false,
+      supervisorReviewTabTitle: null,
+      supportsIneligible: true,
       supportsSubmitted: true,
+      supportsSupervisorReviewOnGrants: false,
+      supportsSupervisorReviewOnSnooze: false,
       systemType: "SUPERVISION",
       tabGroups: [
         {
