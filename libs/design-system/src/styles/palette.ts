@@ -61,6 +61,8 @@ const basePalette = {
   pine4: rgb(0, 102, 95),
 
   white,
+  white40: rgba(white, 0.4),
+  white70: rgba(white, 0.7),
   white90: rgba(white, 0.9),
   white80: rgba(white, 0.8),
 };

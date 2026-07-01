@@ -37,4 +37,8 @@ export class UsTxArsErsV2Configuration extends ApiOpportunityConfiguration {
   get hidePreviewModal(): boolean {
     return true;
   }
+
+  get enableSupervisorReviewChain(): boolean {
+    return true;
+  }
 }

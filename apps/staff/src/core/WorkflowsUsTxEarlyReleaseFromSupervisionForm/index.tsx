@@ -23,6 +23,7 @@ import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
 import { PrintablePageContainer } from "../Paperwork/styles";
 import ERSChecklist from "../Paperwork/US_TX/UsTxEarlyReleaseFromSupervision/ERS-Checklist";
+import { useOpportunitySidePanel } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunitySidePanelContext";
 
 const WorkflowsUsTxEarlyReleaseFromSupervisionForm = observer(
   function WorkflowsUsTxEarlyReleaseFromSupervisionForm({
@@ -30,6 +31,7 @@ const WorkflowsUsTxEarlyReleaseFromSupervisionForm = observer(
   }: {
     opportunity: Opportunity;
   }) {
+    const { setCurrentView } = useOpportunitySidePanel();
     const formRef = React.useRef<HTMLDivElement>(null);
     const [isMissingContent, setIsMissingContent] = useState(false);
 
@@ -47,6 +49,9 @@ const WorkflowsUsTxEarlyReleaseFromSupervisionForm = observer(
         onClickDownload={async () => opportunity.form?.fillAndSaveFile()}
         downloadButtonLabel="Download Form"
         opportunity={opportunity}
+        onDenialButtonClick={() => {
+          setCurrentView("MARK_INELIGIBLE");
+        }}
       >
         <FormViewer formRef={formRef}>
           <ERSChecklist />

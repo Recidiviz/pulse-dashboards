@@ -127,8 +127,11 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
 
     const colors = useStatusColors(opportunity);
 
+    //
     const showUpdateStatusButton =
-      opportunity.config.supportsDenial || opportunity.config.supportsSubmitted;
+      (opportunity.config.supportsDenial ||
+        opportunity.config.supportsSubmitted) && // Does this opportunity allow for Submitted and Denial menu options?
+      !opportunity.config.enableSupervisorReviewChain; // Do we want the Submitted and Denial menu options to show in the OpportunityModule (as opposed to the ReviewChainButtons)?
 
     const snoozeUntil: Date | undefined =
       opportunity.manualSnoozeUntilDate ??
@@ -213,7 +216,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
       <Wrapper {...colors}>
         {!hideHeader && <OpportunityModuleHeader opportunity={opportunity} />}
         <CriteriaList opportunity={opportunity} />
-        {showUpdateStatusButton && (
+        {opportunity.config.supportsDenial && (
           <MarkedIneligibleReasons
             opportunity={opportunity}
             actedOnTextAndResurfaceTextPair={[actedOnText, resurfaceText]}
@@ -250,16 +253,15 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
             <UsArApprovedVisitors opportunity={opportunity} />
           )}
 
-        {isRevertConfirmationModalOpen && (
-          <RevertChangesConfirmationModal
-            onConfirm={() => {
-              handleUndoAction();
-              setRevertConfirmationModalOpen(false);
-            }}
-            onCancel={() => setRevertConfirmationModalOpen(false)}
-            {...opportunity.revertConfirmationCopy}
-          />
-        )}
+        <RevertChangesConfirmationModal
+          showModal={isRevertConfirmationModalOpen}
+          onConfirm={() => {
+            handleUndoAction();
+            setRevertConfirmationModalOpen(false);
+          }}
+          onCancel={() => setRevertConfirmationModalOpen(false)}
+          {...opportunity.revertConfirmationCopy}
+        />
       </Wrapper>
     );
   },

@@ -17,7 +17,6 @@
 
 import { Modal, spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
-import { createPortal } from "react-dom";
 import styled from "styled-components";
 
 import { Button, palette } from "~design-system";
@@ -44,13 +43,14 @@ const ModalButton = styled(Button)`
 `;
 
 export const RevertChangesConfirmationModal: React.FC<{
+  showModal: boolean;
   onConfirm: () => void;
   onCancel: () => void;
   headerText: string;
   descriptionText: string;
-}> = ({ onConfirm, onCancel, headerText, descriptionText }) => {
-  return createPortal(
-    <Modal isOpen={true}>
+}> = ({ showModal, onConfirm, onCancel, headerText, descriptionText }) => {
+  return (
+    <Modal isOpen={showModal} onRequestClose={onCancel}>
       <ModalHeader>{headerText}</ModalHeader>
       <ModalDescription>{descriptionText}</ModalDescription>
       <ActionButtonWrapper>
@@ -61,7 +61,6 @@ export const RevertChangesConfirmationModal: React.FC<{
           Revert Changes
         </ModalButton>
       </ActionButtonWrapper>
-    </Modal>,
-    document.body,
+    </Modal>
   );
 };

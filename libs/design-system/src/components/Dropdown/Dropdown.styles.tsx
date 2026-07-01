@@ -21,7 +21,10 @@ import styled, { css } from "styled-components";
 import { palette, spacing, typography } from "../../styles";
 import { Button } from "../Button";
 
-export const MenuItemElement = styled.button<{ isLink?: boolean }>`
+export const MenuItemElement = styled.button<{
+  isLink?: boolean;
+  isDisabled?: boolean;
+}>`
   ${typography.Sans14}
   color: ${palette.pine3};
   list-style: none;
@@ -78,6 +81,14 @@ export const MenuItemElement = styled.button<{ isLink?: boolean }>`
       &:active {
         background-color: ${palette.pine4};
       }
+    `}
+
+  ${({ isDisabled }) =>
+    isDisabled &&
+    css`
+      color: ${palette.slate30};
+      cursor: not-allowed;
+      pointer-events: all;
     `}
 `;
 

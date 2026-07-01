@@ -544,4 +544,8 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   get hidePreviewModal(): boolean {
     return false;
   }
+
+  get enableSupervisorReviewChain(): boolean {
+    return false;
+  }
 }

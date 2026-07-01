@@ -23,6 +23,7 @@ import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
 import { PrintablePageContainer } from "../Paperwork/styles";
 import FormPSV323D from "../Paperwork/US_TX/UsTxAnnualReportStatus/PSV-323D";
+import { useOpportunitySidePanel } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunitySidePanelContext";
 
 const WorkflowsUsTxAnnualReportStatusForm = observer(
   function WorkflowsUsTxAnnualReportStatusForm({
@@ -30,6 +31,7 @@ const WorkflowsUsTxAnnualReportStatusForm = observer(
   }: {
     opportunity: Opportunity;
   }) {
+    const { setCurrentView } = useOpportunitySidePanel();
     const formRef = React.useRef<HTMLDivElement>(null);
     const [isMissingContent, setIsMissingContent] = useState(false);
 
@@ -47,6 +49,9 @@ const WorkflowsUsTxAnnualReportStatusForm = observer(
         onClickDownload={async () => opportunity.form?.fillAndSaveFile()}
         downloadButtonLabel="Download Form"
         opportunity={opportunity}
+        onDenialButtonClick={() => {
+          setCurrentView("MARK_INELIGIBLE");
+        }}
       >
         <FormViewer formRef={formRef}>
           <FormPSV323D />

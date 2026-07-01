@@ -119,6 +119,7 @@ export const mockUsXxOppConfig: OpportunityConfiguration = {
   excludeIndefiniteSnoozesFromTableView: true,
   enableWorkflowsFilter: false,
   hidePreviewModal: false,
+  enableSupervisorReviewChain: false,
 };
 
 export const mockUsXxTwoOppConfig: OpportunityConfiguration = {

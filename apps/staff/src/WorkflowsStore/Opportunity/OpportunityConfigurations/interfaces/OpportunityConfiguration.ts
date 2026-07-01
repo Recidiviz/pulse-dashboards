@@ -155,4 +155,5 @@ export interface OpportunityConfiguration {
 
   eligibleNotViewedDaysThreshold?: number;
   hidePreviewModal: boolean;
+  enableSupervisorReviewChain: boolean;
 }

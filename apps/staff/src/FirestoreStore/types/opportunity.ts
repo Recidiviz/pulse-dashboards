@@ -74,7 +74,7 @@ export type SupervisorResponse = UpdateLog &
 export type OfficerApprovalRequest = {
   type: "APPROVAL";
   notes?: string;
-  // Only relevant for Texas at this time. Used when enableSupervisorReviewChain fv is granted
+  // Only relevant for Texas at this time. Used when config.enableSupervisorReviewChain is true
   reviewerId?: string;
 };
 

@@ -209,6 +209,7 @@ export const mockOpportunity: Opportunity<Client> = {
     excludeIndefiniteSnoozesFromTableView: true,
     enableWorkflowsFilter: false,
     hidePreviewModal: false,
+    enableSupervisorReviewChain: false,
   },
   sentryTrackingId: undefined,
   instanceDetails: undefined,

@@ -184,7 +184,7 @@ const OfficerGrantRequestItem = observer(function OfficerGrantRequestItem({
   );
 });
 
-const DenialItem = observer(function DenialItem({
+export const DenialItem = observer(function DenialItem({
   opportunity,
   onDenialButtonClick = () => null,
 }: {

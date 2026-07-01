@@ -40,6 +40,7 @@ import DropdownContext from "./DropdownContext";
 // Base props shared by all variants
 interface DropdownMenuItemBaseProps {
   className?: string;
+  disabled?: boolean;
   /**
    * @deprecated pass children instead
    */
@@ -66,6 +67,7 @@ export const DropdownMenuItem = ({
   children,
   onClick,
   preventCloseOnClickEvent,
+  disabled = false,
 }: DropdownMenuItemProps): JSX.Element => {
   const { focusManager, shown, setShown } = useContext(DropdownContext);
   const ref = useRef<HTMLButtonElement>(null);
@@ -108,6 +110,7 @@ export const DropdownMenuItem = ({
       className={className}
       ref={ref}
       isLink={isLink}
+      isDisabled={disabled}
       onMouseDown={(e) =>
         // prevents a blur from clobbering click event in Safari
         // https://stackoverflow.com/questions/17769005/onclick-and-onblur-ordering-issue/57630197#57630197
@@ -115,7 +118,7 @@ export const DropdownMenuItem = ({
       }
       onMouseEnter={onMouseEnter}
       onClick={handleClick}
-      disabled={!shown}
+      disabled={!shown || disabled}
       role="menuitem"
     >
       {label || children}
