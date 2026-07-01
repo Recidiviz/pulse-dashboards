@@ -127,6 +127,7 @@ export const FilterPanel: FC<FilterPanelProps> = ({ presenter }) => {
     showOnlyEarnCredits,
     showOnlyStarred,
     hasActiveFilters,
+    isYOSResident,
     setSelectedCategory,
     setSelectedFacility,
     setShowOnlyEarnCredits,
@@ -190,26 +191,27 @@ export const FilterPanel: FC<FilterPanelProps> = ({ presenter }) => {
                 onChange={setSelectedCategory}
               />
             </DropdownWrapper>
-
-            <DropdownWrapper>
-              <DropdownLabel id="facility-select-label">
-                {t(($) => $.programs.filters.facilityLabel)}
-              </DropdownLabel>
-              <Selector
-                labelId="facility-select-label"
-                placeholder={allFacilitiesLabel}
-                options={[
-                  { label: allFacilitiesLabel, value: undefined },
-                  ...facilities.map(toOption),
-                ]}
-                value={
-                  selectedFacility
-                    ? toOption(selectedFacility)
-                    : { label: allFacilitiesLabel, value: undefined }
-                }
-                onChange={setSelectedFacility}
-              />
-            </DropdownWrapper>
+            {!isYOSResident && (
+              <DropdownWrapper>
+                <DropdownLabel id="facility-select-label">
+                  {t(($) => $.programs.filters.facilityLabel)}
+                </DropdownLabel>
+                <Selector
+                  labelId="facility-select-label"
+                  placeholder={allFacilitiesLabel}
+                  options={[
+                    { label: allFacilitiesLabel, value: undefined },
+                    ...facilities.map(toOption),
+                  ]}
+                  value={
+                    selectedFacility
+                      ? toOption(selectedFacility)
+                      : { label: allFacilitiesLabel, value: undefined }
+                  }
+                  onChange={setSelectedFacility}
+                />
+              </DropdownWrapper>
+            )}
           </FilterRow>
 
           <FilterRow>

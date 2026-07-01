@@ -20,6 +20,11 @@ import { useSingleResidentContext } from "~@jii/data";
 export function useV1Gate(): boolean {
   const { resident, residentFlags } = useSingleResidentContext();
 
+  // YOS residents should only see the program catalog, even after launch
+  if (resident.facilityId === "YOS") return false;
+
+  // TODO: Remove the rest of this post-launch
+
   // All residents with the flag should see V1
   if (residentFlags.usCoV1Experience) return true;
 

@@ -60,6 +60,10 @@ export class UsCoProgramsPresenter implements Hydratable {
     return this.resident.pseudonymizedId;
   }
 
+  get isYOSResident() {
+    return this.resident.facilityId === "YOS";
+  }
+
   private hydrator: HydratesFromSource;
 
   get hydrationState(): HydrationState {
@@ -74,6 +78,12 @@ export class UsCoProgramsPresenter implements Hydratable {
     this.programs = await this.apiClient.trpc.resident.getPrograms.query({
       pseudonymizedId: this.residentId,
     });
+
+    if (this.isYOSResident) {
+      this.programs = this.programs?.filter((p) =>
+        p.facilitiesOffered.includes("Youthful Offender System"),
+      );
+    }
   }
 
   private expectProgramsPopulated() {
