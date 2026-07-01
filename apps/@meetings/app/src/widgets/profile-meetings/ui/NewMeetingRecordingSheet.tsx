@@ -30,7 +30,6 @@ import XIcon from "react-native-heroicons/outline/XIcon";
 import MicrophoneIcon from "react-native-heroicons/solid/MicrophoneIcon";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { useUserContext } from "~@meetings/app/context/UserContext";
 import {
   getCategoryType,
   getCategoryTypePlaceholder,
@@ -38,6 +37,7 @@ import {
   getMeetingTypesOptions,
   HIDDEN_MEETING_TYPE_SUFFIX,
 } from "~@meetings/app/entities/meeting-type";
+import { useUserContext } from "~@meetings/app/entities/user";
 import { Person } from "~@meetings/app/shared/api";
 import PlaySvg from "~@meetings/app/shared/assets/icons/play.svg";
 import BgAvatarImage from "~@meetings/app/shared/assets/images/bg-avatar.png";

@@ -19,7 +19,6 @@ import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 import MicrophoneIcon from "react-native-heroicons/solid/MicrophoneIcon";
 import UploadIcon from "react-native-heroicons/solid/UploadIcon";
 
-import { useUserContext } from "~@meetings/app/context/UserContext";
 import {
   getCategoryType,
   getCategoryTypePlaceholder,
@@ -27,6 +26,7 @@ import {
   getMeetingTypesOptions,
   HIDDEN_MEETING_TYPE_SUFFIX,
 } from "~@meetings/app/entities/meeting-type";
+import { useUserContext } from "~@meetings/app/entities/user";
 import { Person } from "~@meetings/app/shared/api";
 import MinimizeSvg from "~@meetings/app/shared/assets/icons/arrows-pointing-in.svg";
 import PlaySvg from "~@meetings/app/shared/assets/icons/play.svg";
