@@ -112,7 +112,7 @@ The env files in this lib carry the cluster **write key** — provisioning and
 migration are destructive operations and the key has `documents:*` +
 `collections:*` actions.
 
-Decryption of `env.staging.enc.yaml` is gated on the
+Decryption of `env.staging.enc.yaml` (and production equivalent) is gated on the
 `pulse-dashboards-sops-typesense-admin` KMS key (in
 `recidiviz-dashboard-staging`), separate from the broad-access dashboards SOPS
 key used elsewhere. IAM on that key determines who can run write/migration

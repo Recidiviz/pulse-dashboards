@@ -115,7 +115,7 @@ components:
 
     # Custom Cloud Function that bulk-imports the once-daily ETL'd collections
     # into Typesense. Sits alongside the extension above — the extension handles
-    # realtime indexOnWrite for collections in its FIRESTORE_COLLECTION_PATHS,
+    # realtime indexOnWrite for collections in its FIRESTORE_COLLECTION_PATH,
     # this function handles batch sync for collections that aren't in that list.
     # See the component README for the why/how:
     # libs/atmos/components/terraform/apps/typesense-backfill/README.md
@@ -130,9 +130,12 @@ components:
 
         typesense_host: typesense.recidiviz.org
 
-        # Same source-of-truth as the firestore-typesense-search component
-        # above — both consume the schema export. Once realtime-sync vs
-        # batch-sync collections need to diverge per env, switch the consumer
-        # that diverges to a static list (and document why) rather than
-        # filtering the !exec output here.
+        # Absolute path to the workspace root, used by the component to
+        # locate the nx-built function bundle at
+        # $${workspace_root}/dist/apps/@typesense/backfill-fn. Read from
+        # $NX_WORKSPACE_ROOT (set automatically by `nx deploy`); TF validation
+        # in the component fails loudly if it's empty.
+        workspace_root: '{{ env.Getenv "NX_WORKSPACE_ROOT" }}'
+
+        # Same source-of-truth as the typesense client schema
         collections: !exec yarn tsx ../../libs/@typesense/client/src/export-collections.ts

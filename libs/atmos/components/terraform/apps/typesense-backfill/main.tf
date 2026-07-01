@@ -8,9 +8,18 @@
 # collections backfill on cadence (daily / post-ETL) vs which sync in realtime
 # via the extension's indexOnWrite trigger.
 #
-# Source is colocated under ./function and built/uploaded as a zip on every apply.
-# The Cloud Function builder runs `npm install` server-side, so node_modules
-# is intentionally NOT in the zip.
+# Source lives in the nx workspace at apps/@typesense/backfill-fn/ (TypeScript,
+# tests, shared types from ~@typesense/client). It's bundled to a single
+# index.cjs + slim runtime package.json under dist/apps/@typesense/backfill-fn/
+# by `nx build '@typesense/backfill-fn'`, then zipped + uploaded here.
+#
+# **`atmos terraform apply` does NOT run the build.** Use `nx deploy
+# '@typesense/backfill-fn' -c <staging|production>` for the orchestrated path
+# (it `dependsOn`s build, then invokes atmos). Direct atmos invocations ship
+# whatever's currently in dist/ — fine if you just built, footgun otherwise.
+#
+# Cloud Functions builder runs `npm install` server-side against the bundled
+# package.json's runtime deps (firebase-admin, typesense).
 #
 # Triggering: HTTP for now (callable via authenticated curl with a Google
 # OIDC token). A Cloud Scheduler job pointed at this function's URL will be
@@ -46,10 +55,12 @@ resource "google_storage_bucket" "function_source" {
 }
 
 data "archive_file" "function_source" {
-  type        = "zip"
-  source_dir  = "${path.module}/function"
+  type = "zip"
+  # nx build output — populated by `nx build '@typesense/backfill-fn'`. On a
+  # fresh checkout this directory won't exist; `terraform plan` will fail
+  # until the build runs once. The `nx deploy` target handles this for you.
+  source_dir  = "${var.workspace_root}/dist/apps/@typesense/backfill-fn"
   output_path = "${path.module}/.terraform/function.zip"
-  excludes    = ["node_modules", "package-lock.json"]
 }
 
 resource "google_storage_bucket_object" "function_source" {

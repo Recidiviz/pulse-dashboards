@@ -3,6 +3,28 @@ variable "project_id" {
   description = "GCP project hosting Firestore + the Typesense API key secret + this function."
 }
 
+variable "workspace_root" {
+  type        = string
+  description = <<-EOT
+    Absolute path to the nx workspace root. Used to locate the build output
+    at $${workspace_root}/dist/apps/@typesense/backfill-fn so the TF file
+    doesn't have to do `path.module/../../../../../..` arithmetic.
+
+    Sourced from $NX_WORKSPACE_ROOT via gomplate templating in the stack file:
+      workspace_root: '{{ env.Getenv "NX_WORKSPACE_ROOT" }}'
+
+    nx sets this env var automatically when invoked via `nx <target>`. If
+    running `atmos terraform <plan|apply>` directly outside an nx target,
+    export NX_WORKSPACE_ROOT first (e.g. `export NX_WORKSPACE_ROOT=$PWD`
+    from the repo root).
+  EOT
+
+  validation {
+    condition     = length(var.workspace_root) > 0 && startswith(var.workspace_root, "/")
+    error_message = "workspace_root must be an absolute path. Either invoke via `nx deploy '@typesense/backfill-fn' -c <env>`, or `export NX_WORKSPACE_ROOT=<repo-root>` before running atmos directly."
+  }
+}
+
 variable "region" {
   type        = string
   default     = "us-east1"

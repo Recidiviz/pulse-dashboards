@@ -34,21 +34,51 @@
  * IP-rate-limit (600/min) on large collections.
  */
 
-const admin = require("firebase-admin");
-const Typesense = require("typesense");
+import { firestore } from "firebase-admin";
+import type { Client as TypesenseClient } from "typesense";
+
+import { createTypesenseClient } from "~@typesense/client";
 
 const BATCH_SIZE = 100;
 
-function buildTypesenseClient() {
-  return new Typesense.Client({
-    nodes: [
-      {
-        host: process.env.TYPESENSE_HOSTS,
-        port: Number.parseInt(process.env.TYPESENSE_PORT, 10),
-        protocol: process.env.TYPESENSE_PROTOCOL,
-      },
-    ],
-    apiKey: process.env.TYPESENSE_API_KEY,
+export interface CollectionConfig {
+  name: string;
+  fields: string[];
+}
+
+export interface BackfillResult {
+  name: string;
+  pages: number;
+  imported: number;
+  failed: number;
+}
+
+export interface BackfillSummary {
+  collections: BackfillResult[];
+  totals: { imported: number; failed: number };
+}
+
+type FirestoreDoc = Record<string, unknown>;
+
+// Per-doc result line from Typesense's bulk import.
+type ImportEntry = { success: true } | { success: false; error?: string };
+
+// Shape Typesense's client throws when EVERY doc in the bulk fails. The error
+// object carries the same per-line results that a success response returns.
+interface TypesenseImportError extends Error {
+  httpStatus?: number;
+  importResults?: ImportEntry[];
+}
+
+function buildTypesenseClient(): TypesenseClient {
+  // The function ships three separate env vars (TYPESENSE_HOSTS / PORT / PROTOCOL)
+  // because that's the contract the upstream extension established and our TF
+  // mirrors it. Compose them into a URL so we can use the shared factory from
+  // ~@typesense/client — single client construction across the codebase.
+  const host = `${process.env["TYPESENSE_PROTOCOL"]}://${process.env["TYPESENSE_HOSTS"]}:${process.env["TYPESENSE_PORT"]}`;
+  return createTypesenseClient({
+    host,
+    apiKey: process.env["TYPESENSE_API_KEY"] ?? "",
     connectionTimeoutSeconds: 60,
   });
 }
@@ -58,24 +88,34 @@ function buildTypesenseClient() {
 // that share a parent (e.g. metadata.crcFacilities + metadata.crcWorkRelease)
 // merge into the same nested object. Missing intermediate keys -> skip
 // silently; the field is optional from the projection's perspective.
-function assignNested(out, src, path) {
+export function assignNested(
+  out: FirestoreDoc,
+  src: FirestoreDoc,
+  path: string,
+): void {
   const parts = path.split(".");
-  let cursor = src;
+  let cursor: unknown = src;
   for (const p of parts) {
     if (cursor === null || cursor === undefined || typeof cursor !== "object") {
       return;
     }
-    if (!(p in cursor)) return;
-    cursor = cursor[p];
+    const obj = cursor as FirestoreDoc;
+    if (!(p in obj)) return;
+    cursor = obj[p];
   }
   // `cursor` is the leaf value (may legitimately be null).
   let dst = out;
   for (let i = 0; i < parts.length - 1; i++) {
     const k = parts[i];
-    if (!(k in dst) || typeof dst[k] !== "object" || dst[k] === null) {
+    const existing = dst[k];
+    if (
+      existing === null ||
+      existing === undefined ||
+      typeof existing !== "object"
+    ) {
       dst[k] = {};
     }
-    dst = dst[k];
+    dst = dst[k] as FirestoreDoc;
   }
   dst[parts[parts.length - 1]] = cursor;
 }
@@ -87,8 +127,12 @@ function assignNested(out, src, path) {
 // specific nested children in the schema without shipping their entire parent
 // object — important for residents where `metadata` is large but we only
 // index one sub-field.
-function projectFields(data, fields, docId) {
-  const out = { id: docId };
+export function projectFields(
+  data: FirestoreDoc,
+  fields: string[],
+  docId: string,
+): FirestoreDoc {
+  const out: FirestoreDoc = { id: docId };
   for (const f of fields) {
     if (f.includes(".")) {
       assignNested(out, data, f);
@@ -99,19 +143,39 @@ function projectFields(data, fields, docId) {
   return out;
 }
 
-async function backfillCollection(client, { name, fields }) {
-  const db = admin.firestore();
+// Typesense v1.x's bulk-import response is either a pre-parsed array (modern)
+// or an NDJSON string (older). Normalize both shapes into `ImportEntry[]`.
+export function parseImportResponse(raw: unknown): ImportEntry[] {
+  if (Array.isArray(raw)) return raw as ImportEntry[];
+  return String(raw)
+    .split("\n")
+    .filter(Boolean)
+    .map((line): ImportEntry => {
+      try {
+        return JSON.parse(line) as ImportEntry;
+      } catch {
+        return {
+          success: false,
+          error: `unparseable response line: ${line}`,
+        };
+      }
+    });
+}
+
+async function backfillCollection(
+  client: TypesenseClient,
+  { name, fields }: CollectionConfig,
+): Promise<BackfillResult> {
+  const db = firestore();
   const ref = db.collection(name);
 
   let imported = 0;
   let failed = 0;
   let pages = 0;
-  let cursor = null;
+  let cursor: firestore.QueryDocumentSnapshot | null = null;
 
   while (true) {
-    let q = ref
-      .orderBy(admin.firestore.FieldPath.documentId())
-      .limit(BATCH_SIZE);
+    let q = ref.orderBy(firestore.FieldPath.documentId()).limit(BATCH_SIZE);
     if (cursor) q = q.startAfter(cursor);
 
     const snapshot = await q.get();
@@ -119,41 +183,26 @@ async function backfillCollection(client, { name, fields }) {
     pages += 1;
 
     const docs = snapshot.docs.map((d) =>
-      projectFields(d.data(), fields, d.id),
+      projectFields(d.data() as FirestoreDoc, fields, d.id),
     );
 
     try {
       // Typesense bulk import returns per-doc results — a 200 on the request as
-      // a whole still has individual `success` booleans per doc. Modern client
-      // versions (1.x+) return a pre-parsed array; older versions returned an
-      // NDJSON string. Normalize both shapes here.
+      // a whole still has individual `success` booleans per doc.
       const raw = await client
         .collections(name)
         .documents()
         .import(docs, { action: "upsert" });
 
-      const entries = Array.isArray(raw)
-        ? raw
-        : String(raw)
-            .split("\n")
-            .filter(Boolean)
-            .map((line) => {
-              try {
-                return JSON.parse(line);
-              } catch {
-                return {
-                  success: false,
-                  error: `unparseable response line: ${line}`,
-                };
-              }
-            });
+      const entries = parseImportResponse(raw);
 
       for (const entry of entries) {
-        if (entry.success) imported += 1;
-        else {
+        if (entry.success) {
+          imported += 1;
+        } else {
           failed += 1;
           console.warn(
-            `[${name}] doc import failed: ${entry.error || JSON.stringify(entry)}`,
+            `[${name}] doc import failed: ${entry.error ?? JSON.stringify(entry)}`,
           );
         }
       }
@@ -162,25 +211,26 @@ async function backfillCollection(client, { name, fields }) {
       // the bulk fails (vs returning per-line successes when some succeed)
       // and tucks the per-doc reasons onto `err.importResults`. Surface a
       // summary of those reasons so Cloud Logging shows why, not just that.
+      const importErr = err as TypesenseImportError;
       failed += docs.length;
       console.error(
-        `[${name}] batch import threw (size=${docs.length}): ${err.message}`,
+        `[${name}] batch import threw (size=${docs.length}): ${importErr.message}`,
       );
-      if (err.httpStatus) {
-        console.error(`[${name}] httpStatus=${err.httpStatus}`);
+      if (importErr.httpStatus) {
+        console.error(`[${name}] httpStatus=${importErr.httpStatus}`);
       }
-      const results = Array.isArray(err.importResults)
-        ? err.importResults
+      const results = Array.isArray(importErr.importResults)
+        ? importErr.importResults
         : null;
       if (results) {
         // Counts by distinct error message — usually one or two unique reasons
         // dominate (a schema-constraint violation hitting every doc the same
         // way), and we get the answer without dumping 100 per-doc lines.
-        const errorCounts = new Map();
+        const errorCounts = new Map<string, number>();
         for (const r of results) {
           if (r && r.success === false) {
-            const key = r.error || "(no error message)";
-            errorCounts.set(key, (errorCounts.get(key) || 0) + 1);
+            const key = r.error ?? "(no error message)";
+            errorCounts.set(key, (errorCounts.get(key) ?? 0) + 1);
           }
         }
         console.error(
@@ -191,7 +241,9 @@ async function backfillCollection(client, { name, fields }) {
         // First 3 failed entries with their projected docs — for when the
         // counts alone don't pin it down (multiple distinct errors).
         const samples = results
-          .filter((r) => r && r.success === false)
+          .filter(
+            (r): r is { success: false; error?: string } => r.success === false,
+          )
           .slice(0, 3);
         for (const r of samples) {
           console.error(`[${name}] sample failure: ${JSON.stringify(r)}`);
@@ -209,9 +261,11 @@ async function backfillCollection(client, { name, fields }) {
   return { name, pages, imported, failed };
 }
 
-async function runBackfill(collectionsConfig) {
+export async function runBackfill(
+  collectionsConfig: CollectionConfig[],
+): Promise<BackfillSummary> {
   const client = buildTypesenseClient();
-  const results = [];
+  const results: BackfillResult[] = [];
 
   // Sequential, not parallel — concurrent imports would blow past Typesense's
   // per-IP rate limit (600/min) on large collections, and Cloud Armor would
@@ -231,5 +285,3 @@ async function runBackfill(collectionsConfig) {
 
   return { collections: results, totals };
 }
-
-module.exports = { runBackfill };

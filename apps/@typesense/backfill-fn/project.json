@@ -1,0 +1,81 @@
+{
+  "name": "@typesense/backfill-fn",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/@typesense/backfill-fn/src",
+  "projectType": "application",
+  "tags": ["scope:server"],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.app.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/apps/@typesense/backfill-fn"],
+      "cache": true,
+      "options": {
+        "command": "vitest",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "platform": "node",
+        "outputPath": "{workspaceRoot}/dist/apps/{projectName}",
+        "format": ["cjs"],
+        "bundle": true,
+        "main": "{projectRoot}/src/index.ts",
+        "tsConfig": "{projectRoot}/tsconfig.app.json",
+        "generatePackageJson": false,
+        "target": "node22",
+        "external": ["firebase-admin", "typesense"],
+        "assets": [
+          {
+            "glob": "package.json",
+            "input": "{projectRoot}/runtime",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "plan": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "{workspaceRoot}/libs/atmos",
+        "env": { "NX_TUI": "false" }
+      },
+      "configurations": {
+        "staging": {
+          "command": "atmos terraform plan apps/typesense-backfill -s recidiviz-dashboard-staging--typesense"
+        },
+        "production": {
+          "command": "atmos terraform plan apps/typesense-backfill -s recidiviz-dashboard-production--typesense"
+        }
+      }
+    },
+    "deploy": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "{workspaceRoot}/libs/atmos"
+      },
+      "configurations": {
+        "staging": {
+          "command": "atmos terraform apply apps/typesense-backfill -s recidiviz-dashboard-staging--typesense"
+        },
+        "production": {
+          "command": "atmos terraform apply apps/typesense-backfill -s recidiviz-dashboard-production--typesense"
+        }
+      }
+    }
+  }
+}

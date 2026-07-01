@@ -17,6 +17,10 @@
 
 // HTTP entry point for the typesense-backfill Cloud Function.
 //
+// Exported as the named `backfill` so CFv2's buildpack discovers it directly —
+// no @google-cloud/functions-framework registration required. The TF resource's
+// `entry_point = "backfill"` points at this export.
+//
 // Adapted from the upstream firestore-typesense-search extension's backfill
 // function (https://github.com/typesense/firestore-typesense-search/blob/9f6343eefa6d5cf42747db84368c770e85de7241/functions/src/backfill.js).
 // Differences vs the extension:
@@ -28,35 +32,50 @@
 //   - No backfill-doc-status writeback; the function just returns a JSON
 //     summary in the HTTP response.
 
-const functions = require("@google-cloud/functions-framework");
-const admin = require("firebase-admin");
+import type { Request, Response } from "express";
+import * as admin from "firebase-admin";
 
-const { runBackfill } = require("./backfill");
+import { type CollectionConfig, runBackfill } from "./backfill";
 
 // Init only once per cold start. The default app reads the configured
 // Firestore database from process.env.FIRESTORE_DATABASE when set;
 // `(default)` is the project's default DB.
 admin.initializeApp();
 
-functions.http("backfill", async (req, res) => {
+function parseCollectionsJson(): CollectionConfig[] | { error: string } {
+  const raw = process.env["COLLECTIONS_JSON"] ?? "[]";
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed)) {
+      return { error: "COLLECTIONS_JSON is not an array" };
+    }
+    return parsed as CollectionConfig[];
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return { error: `COLLECTIONS_JSON env var is not valid JSON: ${message}` };
+  }
+}
+
+function extractFilter(body: unknown): Set<string> | null {
+  if (!body || typeof body !== "object") return null;
+  const collections = (body as { collections?: unknown }).collections;
+  if (!Array.isArray(collections)) return null;
+  return new Set(collections.filter((c): c is string => typeof c === "string"));
+}
+
+export async function backfill(req: Request, res: Response): Promise<void> {
   const startedAt = Date.now();
 
-  let allCollections;
-  try {
-    allCollections = JSON.parse(process.env.COLLECTIONS_JSON || "[]");
-  } catch (err) {
-    res.status(500).json({
-      error: "COLLECTIONS_JSON env var is not valid JSON",
-      detail: err.message,
-    });
+  const parsed = parseCollectionsJson();
+  if ("error" in parsed) {
+    res.status(500).json({ error: parsed.error });
     return;
   }
+  const allCollections = parsed;
 
   // Optional per-invocation filter: POST `{ "collections": ["clients"] }` to
   // backfill only a subset. Omit to backfill everything in COLLECTIONS_JSON.
-  const filter = Array.isArray(req.body && req.body.collections)
-    ? new Set(req.body.collections)
-    : null;
+  const filter = extractFilter(req.body);
   const targets = filter
     ? allCollections.filter((c) => filter.has(c.name))
     : allCollections;
@@ -79,11 +98,9 @@ functions.http("backfill", async (req, res) => {
     res.status(200).json({ durationMs, ...result });
   } catch (err) {
     const durationMs = Date.now() - startedAt;
+    const message = err instanceof Error ? err.message : String(err);
+    const stack = err instanceof Error ? err.stack : undefined;
     console.error(`[backfill] failed after ${durationMs}ms`, err);
-    res.status(500).json({
-      error: err.message,
-      stack: err.stack,
-      durationMs,
-    });
+    res.status(500).json({ error: message, stack, durationMs });
   }
-});
+}

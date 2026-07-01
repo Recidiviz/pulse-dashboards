@@ -1,0 +1,13 @@
+{
+  "name": "typesense-backfill",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.cjs",
+  "engines": {
+    "node": "22"
+  },
+  "dependencies": {
+    "firebase-admin": "10.0.2",
+    "typesense": "1.8.2"
+  }
+}
