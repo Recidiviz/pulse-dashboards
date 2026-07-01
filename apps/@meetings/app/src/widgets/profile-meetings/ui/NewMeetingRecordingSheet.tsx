@@ -30,11 +30,13 @@ import XIcon from "react-native-heroicons/outline/XIcon";
 import MicrophoneIcon from "react-native-heroicons/solid/MicrophoneIcon";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { useUserContext } from "~@meetings/app/context/UserContext";
 import {
   getCategoryType,
   getCategoryTypePlaceholder,
   getMeetingTypeCategoriesOptions,
   getMeetingTypesOptions,
+  HIDDEN_MEETING_TYPE_SUFFIX,
 } from "~@meetings/app/entities/meeting-type";
 import { Person } from "~@meetings/app/shared/api";
 import PlaySvg from "~@meetings/app/shared/assets/icons/play.svg";
@@ -78,10 +80,15 @@ export function NewMeetingRecordingSheet({
 }: NewMeetingRecordingSheetProps) {
   const insets = useSafeAreaInsets();
   const { isOnline } = useIsOnline();
-  const meetingTypesOptions = getMeetingTypesOptions(meetingTypes);
+  const { isRecidivizUser } = useUserContext();
+  const meetingTypesOptions = getMeetingTypesOptions(
+    meetingTypes,
+    isRecidivizUser,
+  );
   const meetingTypeCategoriesOptions = getMeetingTypeCategoriesOptions(
     meetingTypes,
     meetingTypeValue,
+    isRecidivizUser,
   );
   const categoryType = getCategoryType(meetingTypes, meetingTypeValue);
   return (
@@ -153,7 +160,9 @@ export function NewMeetingRecordingSheet({
               variant="outline"
               value={meetingTypeValue}
               options={meetingTypesOptions}
-              onSelect={setMeetingType}
+              onSelect={(v) =>
+                setMeetingType(v.replace(HIDDEN_MEETING_TYPE_SUFFIX, ""))
+              }
             />
           )}
           {meetingTypeCategoriesOptions && (

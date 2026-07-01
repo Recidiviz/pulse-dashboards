@@ -30,7 +30,10 @@ import { wrapOpenAI } from "langsmith/wrappers";
 import OpenAI from "openai";
 
 import { generateConfigKey } from "~@meetings/config/loader";
-import type { AgencyConfig } from "~@meetings/config/types";
+import type {
+  AgencyConfig,
+  MeetingTypeConfigEntry,
+} from "~@meetings/config/types";
 import type { Person } from "~@meetings/prisma/types";
 import { generateContentWithZodSchema } from "~@meetings/tasks/llm/clients/gemini";
 import { completeChatWithZodSchema } from "~@meetings/tasks/llm/clients/openai";
@@ -46,6 +49,24 @@ import {
   VerificationPayloadSchema,
 } from "~@meetings/tasks/llm/schemas";
 import { createLogger } from "~server-setup-plugin";
+
+function buildMeetingTypeExtractionContext(
+  config: MeetingTypeConfigEntry | undefined,
+): string {
+  if (!config?.extractionNote) {
+    return "";
+  }
+  return `\n- Meeting Type Context: ${config.extractionNote}`;
+}
+
+function buildMeetingTypeCaseNoteGuidance(
+  config: MeetingTypeConfigEntry | undefined,
+): string {
+  if (!config?.caseNoteGuidance) {
+    return "";
+  }
+  return `\nMeeting Type Context: ${config.caseNoteGuidance}`;
+}
 
 export class SpecialistCore {
   private openai: OpenAI;
@@ -111,7 +132,13 @@ export class SpecialistCore {
       transcript_duration_seconds: transcript.durationSeconds,
     });
 
-    const agencySpecificRules = agency.rules.map((r) => `- ${r}`).join("\n");
+    const meetingTypeConfig = agency?.meetingTypes?.find(
+      (mt) => mt.type === transcript.meetingType,
+    )?.promptConfig;
+
+    const agencySpecificRules =
+      agency.rules.map((r) => `- ${r}`).join("\n") +
+      buildMeetingTypeExtractionContext(meetingTypeConfig);
 
     const userMessage = PROMPTS.EXTRACTION.USER({
       agencySpecificRules,
@@ -179,13 +206,21 @@ export class SpecialistCore {
       ENTITIES: ${JSON.stringify(entityDict)}`;
     const clientContextStr = `Client: ${person.givenNames} ${person.surname}`;
 
-    // Build our case note output structure instructions
+    const meetingTypeConfig = agency?.meetingTypes?.find(
+      (mt) => mt.type === transcript.meetingType,
+    )?.promptConfig;
+    const meetingTypeCaseNoteGuidance =
+      buildMeetingTypeCaseNoteGuidance(meetingTypeConfig);
+
     let structureStr = "";
     for (const output of agency.outputs) {
       let promptGuidance = output.promptGuidance;
+      if (output.id === "case_note") {
+        promptGuidance += meetingTypeCaseNoteGuidance;
+      }
       if (output.subheaders?.length) {
-        promptGuidance += dedent`\nUse these subheaders where relevant: 
-        ${output.subheaders.join(", ")}. Omit any that don't apply, 
+        promptGuidance += dedent`\nUse these subheaders where relevant:
+        ${output.subheaders.join(", ")}. Omit any that don't apply,
         and add others if they'd better organize the content.`;
       }
       structureStr += `- (${output.label}): ${promptGuidance}\n`;

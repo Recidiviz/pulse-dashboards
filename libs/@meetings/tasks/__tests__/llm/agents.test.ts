@@ -265,6 +265,127 @@ describe("SpecialistCore", () => {
         entities: [],
       });
     });
+
+    describe("meeting type promptConfig", () => {
+      const agencyWithPromptConfig: AgencyConfig = {
+        ...mockAgency,
+        meetingTypes: [
+          {
+            type: "Collateral Contact",
+            promptConfig: {
+              extractionNote: "The client was NOT present for this meeting.",
+            },
+            visible: true,
+          },
+        ],
+      };
+
+      const emptyExtractionResponse = {
+        actionItems: [],
+        criticalUpdates: [],
+        entities: [],
+      };
+
+      test("should inject extractionNote when meetingType matches a configured type", async () => {
+        vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
+          id: "test-completion",
+          object: "chat.completion",
+          created: 0,
+          model: "gpt-4o-mini",
+          choices: [
+            {
+              index: 0,
+              message: {
+                role: "assistant",
+                content: JSON.stringify(emptyExtractionResponse),
+              },
+              finish_reason: "stop",
+            },
+          ],
+        } as never);
+
+        await core.runExtraction(
+          { ...mockTranscript, meetingType: "Collateral Contact" },
+          mockClient,
+          agencyWithPromptConfig,
+        );
+
+        expect(mockOpenAI.chat.completions.create).toHaveBeenCalledWith(
+          expect.objectContaining({
+            messages: expect.arrayContaining([
+              expect.objectContaining({
+                role: "user",
+                content: expect.stringContaining(
+                  "The client was NOT present for this meeting.",
+                ),
+              }),
+            ]),
+          }),
+        );
+      });
+
+      test("should not inject extractionNote when transcript has no meetingType", async () => {
+        vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
+          id: "test-completion",
+          object: "chat.completion",
+          created: 0,
+          model: "gpt-4o-mini",
+          choices: [
+            {
+              index: 0,
+              message: {
+                role: "assistant",
+                content: JSON.stringify(emptyExtractionResponse),
+              },
+              finish_reason: "stop",
+            },
+          ],
+        } as never);
+
+        await core.runExtraction(
+          mockTranscript,
+          mockClient,
+          agencyWithPromptConfig,
+        );
+
+        const callArg = vi.mocked(mockOpenAI.chat.completions.create).mock
+          .calls[0]?.[0] as { messages: { role: string; content: string }[] };
+        const userContent =
+          callArg.messages.find((m) => m.role === "user")?.content ?? "";
+        expect(userContent).not.toContain("Meeting Type Context");
+      });
+
+      test("should not inject extractionNote when meetingType has no matching config", async () => {
+        vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
+          id: "test-completion",
+          object: "chat.completion",
+          created: 0,
+          model: "gpt-4o-mini",
+          choices: [
+            {
+              index: 0,
+              message: {
+                role: "assistant",
+                content: JSON.stringify(emptyExtractionResponse),
+              },
+              finish_reason: "stop",
+            },
+          ],
+        } as never);
+
+        await core.runExtraction(
+          { ...mockTranscript, meetingType: "Assessment" },
+          mockClient,
+          agencyWithPromptConfig,
+        );
+
+        const callArg = vi.mocked(mockOpenAI.chat.completions.create).mock
+          .calls[0]?.[0] as { messages: { role: string; content: string }[] };
+        const userContent =
+          callArg.messages.find((m) => m.role === "user")?.content ?? "";
+        expect(userContent).not.toContain("Meeting Type Context");
+      });
+    });
   });
 
   describe("runDrafting", () => {
@@ -462,6 +583,184 @@ describe("SpecialistCore", () => {
         caseNote: "[Error]",
         minutes: [],
         staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
+      });
+    });
+
+    describe("meeting type promptConfig", () => {
+      const agencyWithPromptConfig: AgencyConfig = {
+        ...mockAgency,
+        meetingTypes: [
+          {
+            type: "Collateral Contact",
+            promptConfig: {
+              caseNoteGuidance:
+                "Document what the contact reported about the client.",
+            },
+            visible: true,
+          },
+        ],
+      };
+
+      const emptyDraftingResponse = {
+        caseNote: "Test note",
+        minutes: [],
+        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
+      };
+
+      test("should inject caseNoteGuidance when meetingType matches a configured type", async () => {
+        vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
+          id: "test-completion",
+          object: "chat.completion",
+          created: 0,
+          model: "gpt-4o-mini",
+          choices: [
+            {
+              index: 0,
+              message: {
+                role: "assistant",
+                content: JSON.stringify(emptyDraftingResponse),
+              },
+              finish_reason: "stop",
+            },
+          ],
+        } as never);
+
+        await core.runDrafting(
+          { ...mockTranscript, meetingType: "Collateral Contact" },
+          { actionItems: [], criticalUpdates: [], entities: [] },
+          agencyWithPromptConfig,
+          mockClient,
+        );
+
+        expect(mockOpenAI.chat.completions.create).toHaveBeenCalledWith(
+          expect.objectContaining({
+            messages: expect.arrayContaining([
+              expect.objectContaining({
+                role: "user",
+                content: expect.stringContaining(
+                  "Document what the contact reported about the client.",
+                ),
+              }),
+            ]),
+          }),
+        );
+      });
+
+      test("should not inject caseNoteGuidance when transcript has no meetingType", async () => {
+        vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
+          id: "test-completion",
+          object: "chat.completion",
+          created: 0,
+          model: "gpt-4o-mini",
+          choices: [
+            {
+              index: 0,
+              message: {
+                role: "assistant",
+                content: JSON.stringify(emptyDraftingResponse),
+              },
+              finish_reason: "stop",
+            },
+          ],
+        } as never);
+
+        await core.runDrafting(
+          mockTranscript,
+          { actionItems: [], criticalUpdates: [], entities: [] },
+          agencyWithPromptConfig,
+          mockClient,
+        );
+
+        const callArg = vi.mocked(mockOpenAI.chat.completions.create).mock
+          .calls[0]?.[0] as { messages: { role: string; content: string }[] };
+        const userContent =
+          callArg.messages.find((m) => m.role === "user")?.content ?? "";
+        expect(userContent).not.toContain("Meeting Type Context");
+      });
+
+      test("should not inject caseNoteGuidance when meetingType has no matching config", async () => {
+        vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
+          id: "test-completion",
+          object: "chat.completion",
+          created: 0,
+          model: "gpt-4o-mini",
+          choices: [
+            {
+              index: 0,
+              message: {
+                role: "assistant",
+                content: JSON.stringify(emptyDraftingResponse),
+              },
+              finish_reason: "stop",
+            },
+          ],
+        } as never);
+
+        await core.runDrafting(
+          { ...mockTranscript, meetingType: "Assessment" },
+          { actionItems: [], criticalUpdates: [], entities: [] },
+          agencyWithPromptConfig,
+          mockClient,
+        );
+
+        const callArg = vi.mocked(mockOpenAI.chat.completions.create).mock
+          .calls[0]?.[0] as { messages: { role: string; content: string }[] };
+        const userContent =
+          callArg.messages.find((m) => m.role === "user")?.content ?? "";
+        expect(userContent).not.toContain("Meeting Type Context");
+      });
+
+      test("should only inject caseNoteGuidance into case_note output, not other outputs", async () => {
+        const agencyWithMultipleOutputs: AgencyConfig = {
+          ...agencyWithPromptConfig,
+          outputs: [
+            {
+              id: "case_note",
+              label: "Case Note",
+              promptGuidance: "Write the case note here.",
+            },
+            {
+              id: "minutes",
+              label: "Meeting Minutes",
+              promptGuidance: "Summarize the meeting.",
+            },
+          ],
+        };
+
+        vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
+          id: "test-completion",
+          object: "chat.completion",
+          created: 0,
+          model: "gpt-4o-mini",
+          choices: [
+            {
+              index: 0,
+              message: {
+                role: "assistant",
+                content: JSON.stringify(emptyDraftingResponse),
+              },
+              finish_reason: "stop",
+            },
+          ],
+        } as never);
+
+        await core.runDrafting(
+          { ...mockTranscript, meetingType: "Collateral Contact" },
+          { actionItems: [], criticalUpdates: [], entities: [] },
+          agencyWithMultipleOutputs,
+          mockClient,
+        );
+
+        const callArg = vi.mocked(mockOpenAI.chat.completions.create).mock
+          .calls[0]?.[0] as { messages: { role: string; content: string }[] };
+        const userContent =
+          callArg.messages.find((m) => m.role === "user")?.content ?? "";
+
+        // Guidance appears once (for case_note), not duplicated into minutes
+        const occurrences = (
+          userContent.match(/Document what the contact reported/g) ?? []
+        ).length;
+        expect(occurrences).toBe(1);
       });
     });
   });

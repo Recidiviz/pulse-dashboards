@@ -19,11 +19,13 @@ import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 import MicrophoneIcon from "react-native-heroicons/solid/MicrophoneIcon";
 import UploadIcon from "react-native-heroicons/solid/UploadIcon";
 
+import { useUserContext } from "~@meetings/app/context/UserContext";
 import {
   getCategoryType,
   getCategoryTypePlaceholder,
   getMeetingTypeCategoriesOptions,
   getMeetingTypesOptions,
+  HIDDEN_MEETING_TYPE_SUFFIX,
 } from "~@meetings/app/entities/meeting-type";
 import { Person } from "~@meetings/app/shared/api";
 import MinimizeSvg from "~@meetings/app/shared/assets/icons/arrows-pointing-in.svg";
@@ -63,10 +65,15 @@ export function NewMeetingOptionsModal({
   meetingTypeCategoryError,
 }: NewMeetingOptionsModalProps) {
   const { isOnline } = useIsOnline();
-  const meetingTypesOptions = getMeetingTypesOptions(meetingTypes);
+  const { isRecidivizUser } = useUserContext();
+  const meetingTypesOptions = getMeetingTypesOptions(
+    meetingTypes,
+    isRecidivizUser,
+  );
   const meetingTypeCategoriesOptions = getMeetingTypeCategoriesOptions(
     meetingTypes,
     meetingTypeValue,
+    isRecidivizUser,
   );
   const categoryType = getCategoryType(meetingTypes, meetingTypeValue);
   return (
@@ -118,13 +125,15 @@ export function NewMeetingOptionsModal({
             Please note: Summaries and other notes are generated for meetings
             containing 50 words or more.
           </Typography>
-          {meetingTypesOptions?.length > 1 && (
+          {meetingTypesOptions?.length > 0 && (
             <Dropdown
               className="z-20"
               variant="outline"
               value={meetingTypeValue}
               options={meetingTypesOptions}
-              onSelect={setMeetingType}
+              onSelect={(v) =>
+                setMeetingType(v.replace(HIDDEN_MEETING_TYPE_SUFFIX, ""))
+              }
             />
           )}
           {meetingTypeCategoriesOptions && (

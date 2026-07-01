@@ -1,6 +1,6 @@
 name: Demo
 stateCode: US_DEMO
-version: 5
+version: 6
 
 audioTTLDays: null
 transcriptTTLDays: null
@@ -8,9 +8,13 @@ staffFeedbackEnabled: true
 audioPlaybackEnabled: true
 meetingTypes:
   - type: Assessment
+    visible: true
   - type: Contact
+    visible: true
   - type: 120-Day Meeting
+    visible: true
   - type: Collateral Contact
+    visible: true
     isCategoryRequired: true
     categories:
       - Family
@@ -19,3 +23,6 @@ meetingTypes:
       - Treatment Provider
       - Legal Counsel
     categoryType: "Relationship"
+    promptConfig:
+      extractionNote: The client was NOT present for this meeting. The other speaker is a collateral contact (family member, employer, service provider, etc.), not the client. Do not assign action items to a "Client" — assign them to "Third Party" or "Staff Member" only.
+      caseNoteGuidance: This is a collateral contact meeting; the client was not present. Document what the contact reported about the client rather than direct client statements.

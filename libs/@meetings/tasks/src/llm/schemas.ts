@@ -32,6 +32,7 @@ export const TranscriptInputSchema = z.object({
   recordingDate: z.string().describe("YYYY-MM-DD"),
   durationSeconds: z.number(),
   poNotes: z.string().default("").describe("Officer's raw notes"),
+  meetingType: z.string().optional(),
   utterances: z
     .array(
       z.object({

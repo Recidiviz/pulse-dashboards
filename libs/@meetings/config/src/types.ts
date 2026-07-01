@@ -17,6 +17,11 @@
 
 import { z } from "zod";
 
+export const MeetingTypeConfigEntrySchema = z.object({
+  extractionNote: z.string().optional(),
+  caseNoteGuidance: z.string().optional(),
+});
+
 export const OutputSpecSchema = z.object({
   id: z.string().describe("Unique identifier for this output section"),
   label: z.string().describe("Human-readable label"),
@@ -38,6 +43,14 @@ export const MeetingTypeSchema = z.object({
     .boolean()
     .optional()
     .describe("Whether a category is required for this meeting type"),
+  // Visible used here so that we can very easily test configs as they are written without bouncing
+  // back and forth between US_DEMO. Recidiviz users will still see these meeting types.
+  visible: z
+    .boolean()
+    .describe(
+      "Whether this meeting type is visible in the frontend to non-recidiviz users.",
+    )
+    .default(true),
   categories: z
     .array(z.string())
     .optional()
@@ -48,6 +61,9 @@ export const MeetingTypeSchema = z.object({
     .describe(
       "Category type, e.g. 'Relationship' for collateral meeting type, used in some front parts like placeholder, error, etc.",
     ),
+  promptConfig: MeetingTypeConfigEntrySchema.optional().describe(
+    "Contains config for any prompt changes this config may inject to our prompts",
+  ),
 });
 
 /**
@@ -123,3 +139,6 @@ export const AgencyConfigSchema = z.object({
 export type AgencyConfigFile = z.infer<typeof AgencyConfigFileSchema>;
 export type AgencyConfig = z.infer<typeof AgencyConfigSchema>;
 export type OutputSpec = z.infer<typeof OutputSpecSchema>;
+export type MeetingTypeConfigEntry = z.infer<
+  typeof MeetingTypeConfigEntrySchema
+>;

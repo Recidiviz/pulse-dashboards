@@ -443,6 +443,7 @@ export async function handleNotetakingProcessing(
         )
       : 0,
     poNotes: meeting.userNotepadNotes || "",
+    meetingType: meeting.meetingType ?? undefined,
   };
 
   const meetingPerson = meeting.client ?? meeting.resident;

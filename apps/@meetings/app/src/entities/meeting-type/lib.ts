@@ -19,6 +19,8 @@ import { AgencyConfig } from "~@meetings/config";
 
 import { meetingTypes, meetingTypesStyles } from "./config";
 
+export const HIDDEN_MEETING_TYPE_SUFFIX = " [HIDDEN]";
+
 export const getMeetingTypeStyles = (type: string) => {
   const index = meetingTypes.indexOf(type);
   if (index > meetingTypesStyles.length - 1)
@@ -35,12 +37,22 @@ export const getCategoryTypeError = (categoryType?: string | null) =>
 
 export const getMeetingTypesOptions = (
   meetingTypes: AgencyConfig["meetingTypes"],
-) => meetingTypes.map(({ type }) => type);
+  isRecidivizUser: boolean,
+) =>
+  meetingTypes
+    .filter(({ visible }) => visible || isRecidivizUser)
+    .map(({ visible, type }) =>
+      !visible ? `${type}${HIDDEN_MEETING_TYPE_SUFFIX}` : type,
+    );
 
 export const getMeetingTypeCategoriesOptions = (
   meetingTypes: AgencyConfig["meetingTypes"],
   meetingType: string | null,
-) => meetingTypes.find(({ type }) => type === meetingType)?.categories;
+  isRecidivizUser: boolean,
+) =>
+  meetingTypes
+    .filter(({ visible }) => visible || isRecidivizUser)
+    .find(({ type }) => type === meetingType)?.categories;
 
 export const getCategoryType = (
   meetingTypes: AgencyConfig["meetingTypes"],

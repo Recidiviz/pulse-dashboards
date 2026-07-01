@@ -20,6 +20,7 @@ export {
   getCategoryTypePlaceholder,
   getMeetingTypeCategoriesOptions,
   getMeetingTypesOptions,
+  HIDDEN_MEETING_TYPE_SUFFIX,
   validateAndStart,
 } from "./lib";
 export { useMeetingTypeStore } from "./model/store";
