@@ -27,7 +27,7 @@ import {
   StateCode,
   StateCodeProvider,
 } from "~@meetings/app/context/StateContext";
-import { useUserContext } from "~@meetings/app/context/UserContext";
+import { useUserContext } from "~@meetings/app/entities/user";
 import { useImpersonationStore } from "~@meetings/app/hooks/useImpersonationStore";
 import { AnalyticsProvider } from "~@meetings/app/shared/analytics";
 import { trpc } from "~@meetings/app/shared/api";

@@ -18,12 +18,12 @@
 import * as Sentry from "@sentry/react-native";
 import { createContext, useEffect, useRef } from "react";
 
-import { useUserContext } from "~@meetings/app/context/UserContext";
 import {
   useDiscardMeeting,
   useEndMeeting,
 } from "~@meetings/app/entities/meeting";
 import { getPersonType } from "~@meetings/app/entities/person";
+import { useUserContext } from "~@meetings/app/entities/user";
 import { Person, useUploadSegment } from "~@meetings/app/shared/api";
 import { env } from "~@meetings/app/shared/config";
 import { extractError } from "~@meetings/app/shared/lib/extractError";

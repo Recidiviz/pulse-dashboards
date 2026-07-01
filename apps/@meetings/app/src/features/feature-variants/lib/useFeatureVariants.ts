@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useUserContext } from "~@meetings/app/context/UserContext";
+import { useUserContext } from "~@meetings/app/entities/user";
 import { IS_PROD } from "~@meetings/app/shared/config";
 import type {
   FeatureVariant,

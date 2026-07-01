@@ -19,7 +19,7 @@ import { renderHook, waitFor } from "@testing-library/react-native";
 import React from "react";
 import { useAuth0 } from "react-native-auth0";
 
-import { UserContextProvider, useUserContext } from "../../context/UserContext";
+import { UserContextProvider, useUserContext } from "./UserContext";
 
 // Mock AsyncStorage
 jest.mock("@react-native-async-storage/async-storage", () =>

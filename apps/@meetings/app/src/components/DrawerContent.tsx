@@ -25,9 +25,10 @@ import XIcon from "react-native-heroicons/outline/XIcon";
 import UsersIcon from "react-native-heroicons/solid/UsersIcon";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { useUserContext } from "~@meetings/app/entities/user";
+
 import MobileMenuItem from "../components/MobileMenuItem";
 import { useStateSelection } from "../context/StateContext";
-import { useUserContext } from "../context/UserContext";
 import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
 import { IS_PROD } from "../shared/config";
 import { getInitials } from "../shared/lib/format";

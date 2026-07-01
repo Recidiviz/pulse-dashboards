@@ -16,11 +16,11 @@
 // =============================================================================
 
 import { useCallback } from "react";
+import { useAuth0 } from "react-native-auth0";
 import uuid from "react-native-uuid";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import { useUserContext } from "~@meetings/app/context/UserContext";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 import { createEventQueueStorage } from "~@meetings/app/utils/meetingEventQueueStorage";
 
@@ -199,7 +199,8 @@ const _meetingEventQueueStore = create<MeetingEventQueueStoreState>()(
  * Events enqueued by one user are never visible to another user on the same device.
  */
 export function useMeetingEventQueue(): MeetingEventQueueState {
-  const { email } = useUserContext();
+  const { user } = useAuth0();
+  const email = user?.email;
   const userId = email ?? "";
   const store = _meetingEventQueueStore();
 

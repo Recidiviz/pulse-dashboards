@@ -21,7 +21,7 @@ import { useFeatureVariants } from "./useFeatureVariants";
 
 const mockUseUserContext = jest.fn();
 
-jest.mock("~@meetings/app/context/UserContext", () => ({
+jest.mock("~@meetings/app/entities/user", () => ({
   useUserContext: () => mockUseUserContext(),
 }));
 
@@ -132,7 +132,7 @@ describe("useFeatureVariants", () => {
       beforeEach(() => {
         jest.resetModules();
         jest.doMock("~@meetings/app/shared/config", () => ({ IS_PROD: true }));
-        jest.doMock("~@meetings/app/context/UserContext", () => ({
+        jest.doMock("~@meetings/app/entities/user", () => ({
           useUserContext: () => mockUseUserContext(),
         }));
 

@@ -30,7 +30,7 @@ import { useAuth0 } from "react-native-auth0";
 import superjson from "superjson";
 
 import AppUpdateModal from "~@meetings/app/components/AppUpdateModal";
-import { UserContextProvider } from "~@meetings/app/context/UserContext";
+import { UserContextProvider } from "~@meetings/app/entities/user";
 import { stateCodeParam } from "~@meetings/app/navigation/config";
 import { extractAndRemoveStateCode } from "~@meetings/app/navigation/lib";
 import { LoginScreen } from "~@meetings/app/pages/login";

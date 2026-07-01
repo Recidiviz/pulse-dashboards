@@ -23,9 +23,10 @@ import {
 import { fireEvent, render, waitFor } from "@testing-library/react-native";
 import React from "react";
 
+import { UserContextProvider } from "~@meetings/app/entities/user";
+
 import Header from "../../components/Header";
 import { StateCode, StateCodeProvider } from "../../context/StateContext";
-import { UserContextProvider } from "../../context/UserContext";
 
 jest.mock("../../context/AgencyConfigContext", () => ({
   useAgencyConfigs: () => ({ agencyConfigs: {}, isLoading: false }),

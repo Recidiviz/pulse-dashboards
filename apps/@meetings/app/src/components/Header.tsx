@@ -39,8 +39,9 @@ import MenuIcon from "react-native-heroicons/outline/MenuIcon";
 import ArrowLeftIcon from "react-native-heroicons/solid/ArrowLeftIcon";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { useUserContext } from "~@meetings/app/entities/user";
+
 import { useStateSelection } from "../context/StateContext";
-import { useUserContext } from "../context/UserContext";
 import { useRecording } from "../features/recording";
 import { useImpersonationStore } from "../hooks/useImpersonationStore";
 import WordmarkSvg from "../shared/assets/icons/wordmark.svg";

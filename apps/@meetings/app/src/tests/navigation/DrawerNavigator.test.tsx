@@ -18,10 +18,11 @@
 import { render, screen } from "@testing-library/react-native";
 import React from "react";
 
+import * as UserContext from "~@meetings/app/entities/user";
+
 import DrawerNavigator from "../../app/navigation/DrawerNavigator";
 import * as AgencyConfigContext from "../../context/AgencyConfigContext";
 import * as StateContext from "../../context/StateContext";
-import * as UserContext from "../../context/UserContext";
 import * as UserModule from "../../entities/user";
 
 // Mock useSetDocumentTitle hooks, since it modifies document.title, and it causes errors
@@ -63,8 +64,9 @@ jest.mock("../../pages/onboarding", () => ({
   OnboardingScreen: null,
 }));
 
-jest.mock("../../entities/user", () => ({
+jest.mock("~@meetings/app/entities/user", () => ({
   useGetUser: jest.fn(),
+  useUserContext: jest.fn(),
 }));
 
 describe("DrawerNavigator", () => {

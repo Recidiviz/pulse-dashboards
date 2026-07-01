@@ -25,8 +25,7 @@ import {
   View,
 } from "react-native";
 
-import { useUserContext } from "~@meetings/app/context/UserContext";
-import { useGetUser } from "~@meetings/app/entities/user";
+import { useGetUser, useUserContext } from "~@meetings/app/entities/user";
 import WordmarkSvg from "~@meetings/app/shared/assets/icons/wordmark.svg";
 import { RootStackParamList } from "~@meetings/app/shared/config";
 import { Typography } from "~@meetings/app/shared/ui/Typography";

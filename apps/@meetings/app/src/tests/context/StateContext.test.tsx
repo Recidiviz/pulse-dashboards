@@ -18,25 +18,30 @@
 import { renderHook } from "@testing-library/react-native";
 import React from "react";
 
+import { useUserContext } from "~@meetings/app/entities/user";
+
 import * as AgencyConfigContext from "../../context/AgencyConfigContext";
 import {
   DEFAULT_STATE_CODE,
   StateCodeProvider,
   useStateSelection,
 } from "../../context/StateContext";
-import * as UserContext from "../../context/UserContext";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
 );
 
-const mockUseUserContext = jest.spyOn(UserContext, "useUserContext");
+jest.mock("~@meetings/app/entities/user", () => ({
+  useUserContext: jest.fn(),
+}));
+
+const mockUseUserContext = useUserContext as jest.Mock;
 const mockUseAgencyConfigs = jest.spyOn(
   AgencyConfigContext,
   "useAgencyConfigs",
 );
 
-const baseUserContext: ReturnType<typeof UserContext.useUserContext> = {
+const baseUserContext: ReturnType<typeof useUserContext> = {
   isLoading: false,
   stateCode: "US_NE",
   isSkipAuthUser: false,

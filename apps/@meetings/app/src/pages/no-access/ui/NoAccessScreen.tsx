@@ -19,7 +19,7 @@ import React from "react";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { useUserContext } from "~@meetings/app/context/UserContext";
+import { useUserContext } from "~@meetings/app/entities/user";
 import { useSetDocumentTitle } from "~@meetings/app/shared/lib/useSetDocumentTitle";
 import PrimaryButton from "~@meetings/app/shared/ui/PrimaryButton";
 import { Typography } from "~@meetings/app/shared/ui/Typography";

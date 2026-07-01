@@ -52,7 +52,7 @@ jest.mock("../../ui/MeetingModal", () => ({
   MeetingModal: () => null,
 }));
 jest.mock("../store");
-jest.mock("~@meetings/app/context/UserContext", () => ({
+jest.mock("~@meetings/app/entities/user", () => ({
   useUserContext: jest.fn().mockReturnValue({
     getCredentials: jest.fn().mockResolvedValue({}),
     isSkipAuthUser: false,

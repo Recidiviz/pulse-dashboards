@@ -25,11 +25,10 @@ import React, {
 import type { Credentials } from "react-native-auth0";
 import { useAuth0 } from "react-native-auth0";
 
+import { env } from "~@meetings/app/shared/config";
+import { isLoginRequiredError } from "~@meetings/app/shared/lib/auth";
+import { extractError } from "~@meetings/app/shared/lib/extractError";
 import type { FeatureVariantRecord } from "~@meetings/trpc-types";
-
-import { env } from "../shared/config/env";
-import { isLoginRequiredError } from "../shared/lib/auth";
-import { extractError } from "../shared/lib/extractError";
 
 interface UserContextType {
   isLoading: boolean;
