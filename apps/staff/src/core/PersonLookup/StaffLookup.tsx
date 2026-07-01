@@ -159,7 +159,7 @@ export const StaffLookup = observer(function StaffLookup({
         }
         if (value.trim().length >= 2) {
           const searchResults = workflowsStore
-            .searchStaff(value)
+            .searchStaffWithOrWithoutCaseloads(value)
             .filter(
               (o) =>
                 o.staffExternalId !==
@@ -299,7 +299,12 @@ export const StaffLookup = observer(function StaffLookup({
                 onClick={() => selectStaff(staff)}
                 onMouseEnter={() => setSelectedIndex(index)}
               >
-                <WorkflowsOfficerName officerId={staff.staffExternalId} />
+                <WorkflowsOfficerName
+                  officerId={staff.staffExternalId}
+                  availableOfficers={
+                    workflowsStore.availableOfficersWithOrWithoutCaseloads
+                  }
+                />
               </ResultItem>
             ))
           ) : (

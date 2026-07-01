@@ -308,11 +308,56 @@ describe("StaffSubscription tests", () => {
         expect(sub.data[0]).toMatchObject({ staffExternalId: "OFFICER1" });
       });
 
-      test("staff with hasCaseload: false is excluded", () => {
+      test("staff with hasCaseload: false is returned", () => {
         const mockReceive = getMockQuerySnapshotHandler(onSnapshotMock);
         sub.subscribe();
         mockReceive([{ ...baseStaffRecord, hasCaseload: false }]);
-        expect(sub.data).toHaveLength(0);
+        expect(sub.data).toHaveLength(1);
+        expect(sub.data[0]).toMatchObject({ staffExternalId: "OFFICER1" });
+      });
+    });
+
+    describe("hasCaseload query constraint", () => {
+      beforeEach(() => {
+        whereMock.mockImplementation(
+          (field: string, op: string, value: unknown) => ({
+            field,
+            op,
+            value,
+          }),
+        );
+      });
+
+      test("constrains to hasCaseload: true by default", () => {
+        sub.subscribe();
+
+        expect(whereMock).toHaveBeenCalledWith("hasCaseload", "==", true);
+        expect(andMock.mock.calls[0]).toContainEqual({
+          field: "hasCaseload",
+          op: "==",
+          value: true,
+        });
+      });
+
+      test("omits the hasCaseload constraint when includeStaffWithoutCaseload is true", () => {
+        sub = new StaffSubscription(
+          rootStoreMock,
+          { key: "supervisionStaff" },
+          supervisionStaffRecordSchema,
+          "SUPERVISION",
+          true,
+        );
+
+        sub.subscribe();
+
+        expect(whereMock).not.toHaveBeenCalledWith(
+          "hasCaseload",
+          "==",
+          expect.anything(),
+        );
+        expect(andMock.mock.calls[0]).not.toContainEqual(
+          expect.objectContaining({ field: "hasCaseload" }),
+        );
       });
     });
 

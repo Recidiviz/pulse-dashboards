@@ -32,13 +32,10 @@ export class StaffSubscription<
     private collectionKey: FirestoreCollectionKey,
     parser: z.ZodType<RecordType, any, any>,
     private systemId?: "SUPERVISION" | "INCARCERATION",
+    private includeStaffWithoutCaseload = false,
   ) {
     super((data) => {
       const record = parser.parse(data);
-      // hasCaseload: false cannot be filtered in the Firestore query because Firestore
-      // excludes missing-field documents from any hasCaseload index. Filter here instead.
-      if (record.hasCaseload === false)
-        return undefined as unknown as RecordType;
       return record;
     });
   }
@@ -51,6 +48,10 @@ export class StaffSubscription<
     const stateCode = this.rootStore.currentTenantId;
     const stateCodeConstraint = [where("stateCode", "==", stateCode)];
     const compositeConstraint = [];
+
+    if (!this.includeStaffWithoutCaseload) {
+      compositeConstraint.push(where("hasCaseload", "==", true));
+    }
 
     if (user) {
       const staffFilter =

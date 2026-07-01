@@ -87,7 +87,7 @@ export const SubmitRevisionModal = observer(function SubmitRevisionModal({
   workflowsStore,
 }: submitRevisionModalProps) {
   const navigate = useNavigate();
-  const { availableOfficers } = workflowsStore;
+  const { availableOfficersWithOrWithoutCaseloads } = workflowsStore;
 
   const previousReviewerIds = new Set(
     opportunity.actionHistory
@@ -97,8 +97,8 @@ export const SubmitRevisionModal = observer(function SubmitRevisionModal({
 
   const currentReviewerId = opportunity.currentReviewerId;
 
-  const actionHistoryOfficers = availableOfficers.filter((o) =>
-    previousReviewerIds.has(o.staffExternalId),
+  const actionHistoryOfficers = availableOfficersWithOrWithoutCaseloads.filter(
+    (o) => previousReviewerIds.has(o.staffExternalId),
   );
   const [selectedStaff, setSelectedStaff] = useState<StaffRecord | null>(null);
   const [reason, setReason] = useState("");
@@ -115,7 +115,10 @@ export const SubmitRevisionModal = observer(function SubmitRevisionModal({
         <StyledDropdownToggle>
           <NameLabel>
             {selectedStaff ? (
-              <WorkflowsOfficerName officerId={selectedStaff.staffExternalId} />
+              <WorkflowsOfficerName
+                officerId={selectedStaff.staffExternalId}
+                availableOfficers={availableOfficersWithOrWithoutCaseloads}
+              />
             ) : (
               "Select a previous reviewer"
             )}
@@ -128,7 +131,10 @@ export const SubmitRevisionModal = observer(function SubmitRevisionModal({
               key={officer.staffExternalId}
               onClick={() => setSelectedStaff(officer)}
             >
-              <WorkflowsOfficerName officerId={officer.staffExternalId} />
+              <WorkflowsOfficerName
+                officerId={officer.staffExternalId}
+                availableOfficers={availableOfficersWithOrWithoutCaseloads}
+              />
             </StyledDropdownMenuItem>
           ))}
         </StyledDropdownMenu>
@@ -136,7 +142,10 @@ export const SubmitRevisionModal = observer(function SubmitRevisionModal({
       {currentReviewerId && (
         <CurrentReviewer>
           Current Reviewer:{" "}
-          <WorkflowsOfficerName officerId={currentReviewerId} />
+          <WorkflowsOfficerName
+            officerId={currentReviewerId}
+            availableOfficers={availableOfficersWithOrWithoutCaseloads}
+          />
         </CurrentReviewer>
       )}
       <ModalTitle>Reason:</ModalTitle>

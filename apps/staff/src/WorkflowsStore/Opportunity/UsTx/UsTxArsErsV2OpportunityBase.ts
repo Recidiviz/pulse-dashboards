@@ -55,7 +55,7 @@ export abstract class UsTxArsErsV2OpportunityBase<
     }
 
     const {
-      availableOfficers,
+      availableOfficersWithOrWithoutCaseloads,
       searchStore: { searchType },
     } = this.rootStore.workflowsStore;
 
@@ -67,13 +67,13 @@ export abstract class UsTxArsErsV2OpportunityBase<
         if (staffResponseId && staffRequestId) {
           return [
             getOfficerFullName(
-              availableOfficers,
+              availableOfficersWithOrWithoutCaseloads,
               staffRequestId,
               undefined,
               searchType,
             ) ?? staffRequestId,
             getOfficerFullName(
-              availableOfficers,
+              availableOfficersWithOrWithoutCaseloads,
               staffResponseId,
               undefined,
               searchType,
@@ -84,7 +84,7 @@ export abstract class UsTxArsErsV2OpportunityBase<
         if (!staffRequestId || staffRequestId === "RECIDIVIZ") return action.by;
         return (
           getOfficerFullName(
-            availableOfficers,
+            availableOfficersWithOrWithoutCaseloads,
             staffRequestId,
             undefined,
             searchType,

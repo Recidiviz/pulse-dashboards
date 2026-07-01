@@ -45,7 +45,9 @@ const mockOfficer = {
   surname: "Smith",
   givenNames: "John",
 };
-const mockWorkflowsStore = { availableOfficers: [mockOfficer] };
+const mockWorkflowsStore = {
+  availableOfficersWithOrWithoutCaseloads: [mockOfficer],
+};
 
 function setup(overrides: Partial<typeof mockOpportunity> = {}) {
   const onCloseFn = vi.fn();
@@ -236,7 +238,7 @@ describe("Officer dropdown", () => {
       givenNames: "Jane",
     };
     const workflowsStoreWithBoth = {
-      availableOfficers: [mockOfficer, otherOfficer],
+      availableOfficersWithOrWithoutCaseloads: [mockOfficer, otherOfficer],
     };
     const opportunity = {
       ...mockOpportunity,

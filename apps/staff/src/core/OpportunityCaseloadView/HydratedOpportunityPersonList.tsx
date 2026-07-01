@@ -360,8 +360,17 @@ function EligibilityDateCell({
 }
 
 function CurrentReviewerNameCell({ row }: { row: Row<Opportunity> }) {
+  const {
+    workflowsStore: { availableOfficersWithOrWithoutCaseloads },
+  } = useRootStore();
+
   if (row.original.currentReviewerId) {
-    return <WorkflowsOfficerName officerId={row.original.currentReviewerId} />;
+    return (
+      <WorkflowsOfficerName
+        officerId={row.original.currentReviewerId}
+        availableOfficers={availableOfficersWithOrWithoutCaseloads}
+      />
+    );
   }
 }
 
@@ -410,13 +419,19 @@ export function EligibilityStatusCell({ row }: { row: Row<Opportunity> }) {
 }
 
 export function LastViewedCell({ row }: { row: Row<Opportunity> }) {
+  const {
+    workflowsStore: { availableOfficersWithOrWithoutCaseloads },
+  } = useRootStore();
   const { lastViewed } = row.original;
 
   if (lastViewed) {
     return (
       <>
         {formatWorkflowsDate(lastViewed.date.toDate())} by{" "}
-        <WorkflowsOfficerName officerEmail={lastViewed.by} />
+        <WorkflowsOfficerName
+          officerEmail={lastViewed.by}
+          availableOfficers={availableOfficersWithOrWithoutCaseloads}
+        />
       </>
     );
   }

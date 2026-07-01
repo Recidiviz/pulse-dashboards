@@ -121,6 +121,10 @@ export class WorkflowsStore implements Hydratable {
     SupervisionStaffRecord["output"]
   >;
 
+  supervisionStaffWithOrWithoutCaseloadSubscription: StaffSubscription<
+    SupervisionStaffRecord["output"]
+  >;
+
   clientsSubscription: CaseloadSubscription<ClientRecord>;
 
   residentsSubscription: CaseloadSubscription<WorkflowsResidentRecord>;
@@ -171,6 +175,16 @@ export class WorkflowsStore implements Hydratable {
       incarcerationStaffRecordSchema,
       "INCARCERATION",
     );
+    this.supervisionStaffWithOrWithoutCaseloadSubscription =
+      new StaffSubscription(
+        rootStore,
+        {
+          key: "supervisionStaff",
+        },
+        supervisionStaffRecordSchema,
+        "SUPERVISION",
+        true,
+      );
     this.clientsSubscription = new CaseloadSubscription<ClientRecord>(
       this,
       { key: "clients" },
@@ -202,6 +216,19 @@ export class WorkflowsStore implements Hydratable {
         // This reaction exists primarily to trigger observation of staffSubscription
         // for scenarios where a user navigate directly to an opportunity page and then
         // clicks the "back" button to go to the opportunity overview page with caseloads.
+      },
+    );
+
+    // ensure the with-or-without-caseload subscription is kept observed so its
+    // dataSource is computed and the Firestore listener starts
+    reaction(
+      () => [
+        this.staffWithOrWithoutCaseloadSubscription?.map((s) => s.data).flat(),
+      ],
+      () => {
+        // This reaction exists primarily to trigger observation of staffWithOrWithoutCaseloadSubscription
+        // for scenarios where a user navigates directly to the Submit for Approval modal in the
+        // AnnualReportStatusV2 or EarlyReleaseFromSupervisionV2 form pages.
       },
     );
 
@@ -471,12 +498,15 @@ export class WorkflowsStore implements Hydratable {
    * Fuzzy search across display ID, external ID, and name fields,
    * scoped to the current active system (clients or residents).
    */
-  searchStaff(searchTerm: string, limit = 10): StaffRecord[] {
+  searchStaffWithOrWithoutCaseloads(
+    searchTerm: string,
+    limit = 10,
+  ): StaffRecord[] {
     if (!searchTerm.trim()) {
       return [];
     }
 
-    const fuse = new Fuse(this.availableOfficers, {
+    const fuse = new Fuse(this.availableOfficersWithOrWithoutCaseloads, {
       keys: [
         { name: "staffExternalId", weight: 3 },
         { name: "surname", weight: 1.8 },
@@ -591,6 +621,15 @@ export class WorkflowsStore implements Hydratable {
       default:
         assertNever(this.activeSystem);
     }
+  }
+
+  get staffWithOrWithoutCaseloadSubscription():
+    | StaffSubscription<SupervisionStaffRecord["output"]>[]
+    | undefined {
+    if (this.activeSystem === "SUPERVISION") {
+      return [this.supervisionStaffWithOrWithoutCaseloadSubscription];
+    }
+    return;
   }
 
   get caseloadSubscription():
@@ -736,6 +775,15 @@ export class WorkflowsStore implements Hydratable {
   get availableOfficers(): StaffRecord[] {
     const officers = (this.staffSubscription ?? []).map((s) => s.data).flat();
     officers.sort(staffNameComparator);
+    return officers;
+  }
+
+  get availableOfficersWithOrWithoutCaseloads(): StaffRecord[] {
+    const officers = (this.staffWithOrWithoutCaseloadSubscription ?? [])
+      .map((s) => s.data)
+      .flat();
+    officers.sort(staffNameComparator);
+
     return officers;
   }
 

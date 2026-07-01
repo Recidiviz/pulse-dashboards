@@ -18,6 +18,8 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
+import { StaffRecord } from "~datatypes";
+
 import { useRootStore } from "../../components/StoreProvider";
 import { getOfficerFullName } from "./getOfficerFullName";
 
@@ -25,24 +27,29 @@ type WorkflowsOfficerNameProps =
   | {
       officerId: string;
       officerEmail?: never;
+      availableOfficers?: StaffRecord[];
     }
   | {
       officerId?: never;
       officerEmail: string;
+      availableOfficers?: StaffRecord[];
     };
 
 const WorkflowsOfficerName: React.FC<WorkflowsOfficerNameProps> = ({
   officerId,
   officerEmail,
+  availableOfficers: availableOfficersProp,
 }) => {
   const {
     workflowsStore: {
-      availableOfficers,
+      availableOfficers: availableOfficersFromStore,
       searchStore: { searchType },
     },
   } = useRootStore();
 
   if (!officerId && !officerEmail) return null;
+
+  const availableOfficers = availableOfficersProp ?? availableOfficersFromStore;
 
   const officerFullName = getOfficerFullName(
     availableOfficers,
