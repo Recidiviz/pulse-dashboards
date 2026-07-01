@@ -1,0 +1,69 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for almostEligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "supervisionLevelIsHigherThanRecommended": {
+      "recommendedSupervisionLevel": "MEDIUM",
+      "supervisionLevel": "HIGH",
+    },
+  },
+  "externalId": "CLI002",
+  "ineligibleCriteria": {
+    "notSupervisionPastFullTermCompletionDateOrUpcoming30Days": {
+      "eligibleDate": "2022-01-05",
+    },
+  },
+  "isAlmostEligible": true,
+  "isEligible": false,
+  "metadata": {
+    "recentOrasScores": [
+      {
+        "assessmentDate": 2021-11-16T00:00:00.000Z,
+        "assessmentLevel": "MODERATE",
+      },
+    ],
+    "specialConditions": [],
+  },
+  "stateCode": "US_NE",
+}
+`;
+
+exports[`schema for fullyEligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "notSupervisionPastFullTermCompletionDateOrUpcoming30Days": {
+      "eligibleDate": "2023-12-16",
+    },
+    "supervisionLevelIsHigherThanRecommended": {
+      "recommendedSupervisionLevel": "MINIMUM",
+      "supervisionLevel": "MEDIUM",
+    },
+  },
+  "externalId": "CLI001",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {
+    "recentOrasScores": [
+      {
+        "assessmentDate": 2021-10-16T00:00:00.000Z,
+        "assessmentLevel": "LOW",
+      },
+      {
+        "assessmentDate": 2021-04-16T00:00:00.000Z,
+        "assessmentLevel": "MODERATE",
+      },
+    ],
+    "specialConditions": [
+      {
+        "compliance": "COMPLIANT",
+        "specialConditionType": "DRUG_TESTING",
+      },
+    ],
+  },
+  "stateCode": "US_NE",
+}
+`;

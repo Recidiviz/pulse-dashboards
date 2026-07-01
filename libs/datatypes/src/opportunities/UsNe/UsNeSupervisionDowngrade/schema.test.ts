@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,4 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./UsNeSupervisionDowngradeOpportunity";
+import { usNeSupervisionDowngradeFixtures } from "./fixtures";
+import { usNeSupervisionDowngradeSchema } from "./schema";
+
+test.each(
+  Object.keys(usNeSupervisionDowngradeFixtures) as Array<
+    keyof typeof usNeSupervisionDowngradeFixtures
+  >,
+)("schema for %s", (key) => {
+  expect(
+    usNeSupervisionDowngradeSchema.parse(
+      usNeSupervisionDowngradeFixtures[key].input,
+    ),
+  ).toMatchSnapshot();
+});

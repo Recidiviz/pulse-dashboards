@@ -124,6 +124,8 @@ export * from "./opportunities/UsNd/UsNdTransferToMinFacility/schema";
 // -----------------------------------------------------------------------------
 export * from "./opportunities/UsNe/UsNeGoodTimeRestoration/fixtures";
 export * from "./opportunities/UsNe/UsNeGoodTimeRestoration/schema";
+export * from "./opportunities/UsNe/UsNeSupervisionDowngrade/fixtures";
+export * from "./opportunities/UsNe/UsNeSupervisionDowngrade/schema";
 
 // UsPa Exports: Includes fixtures and schema related to US-PA opportunities
 // -----------------------------------------------------------------------------
