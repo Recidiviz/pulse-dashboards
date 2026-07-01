@@ -118,7 +118,11 @@ const ProfileLinkWrapper: React.FC<{
   link: string;
   children: React.ReactElement<any>;
 }> = ({ link, children }) => (
-  <StyledLink className="PersonProfileLink" to={link}>
+  <StyledLink
+    className="PersonProfileLink"
+    to={link}
+    state={{ previousPage: location.pathname }}
+  >
     <TooltipTrigger contents="Go to profile">{children}</TooltipTrigger>
   </StyledLink>
 );
