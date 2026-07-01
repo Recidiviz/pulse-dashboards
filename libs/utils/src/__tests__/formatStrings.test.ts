@@ -32,6 +32,10 @@ describe("formatDate", () => {
     expect(formatDate(null)).toBe("Unknown");
   });
 
+  it("returns 'Unknown' when date is invalid", () => {
+    expect(formatDate(new Date("bad_date_string"))).toBe("Unknown");
+  });
+
   it("formats a date with the default pattern", () => {
     const date = new Date(2024, 0, 15);
     expect(formatDate(date)).toBe("1/15/24");

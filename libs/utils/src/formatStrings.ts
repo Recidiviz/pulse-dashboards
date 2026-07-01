@@ -15,12 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { format, subMonths } from "date-fns";
+import { format, isValid, subMonths } from "date-fns";
 import ceil from "lodash/ceil";
 import Pluralize from "pluralize";
 
 export function formatDate(date?: Date | null, pattern = "M/d/yy"): string {
-  if (!date) return "Unknown";
+  if (!date || !isValid(date)) return "Unknown";
   return format(date, pattern);
 }
 

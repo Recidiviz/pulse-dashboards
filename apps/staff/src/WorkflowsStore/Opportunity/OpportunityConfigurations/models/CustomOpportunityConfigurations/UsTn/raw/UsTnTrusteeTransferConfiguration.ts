@@ -36,7 +36,7 @@ export const usTnTrusteeTransferV2Configuration: IApiOpportunityConfiguration =
     featureVariant: "usTnRcafV2",
     displayName:
       "[2026 Pilot V2] Special Reclassification: Transfer to Trustee or Transition Center",
-    firestoreCollection: "US_TN-custodyLevelDowngrade2026PolicyReferrals",
+    firestoreCollection: "US_TN-custodyLevelDowngrade2026PolicyV2Referrals",
     urlSection: "trusteeTransferV2",
     // Place at the bottom
     homepagePosition: 23,
