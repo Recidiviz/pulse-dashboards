@@ -105,6 +105,12 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
           {usMoMyCaseload ? "My Caseload" : workflowsHomepageName}
         </NavLink>
       )}
+      {usMoMyCaseload &&
+        (userAllowedNavigation?.workflows || []).includes("opportunities") && (
+          <NavLink to={workflowsUrl("opportunities")} role="menuitem">
+            Opportunities
+          </NavLink>
+        )}
       {enableRNA && (
         <NavLink to={workflowsUrl("rna")} role="menuitem">
           Self-Report Viewer

@@ -182,6 +182,18 @@ describe("WorkflowsRoute activeSystem sync", () => {
     expect(workflowsStore.activeSystem).toBe("ALL");
   });
 
+  it("maps /workflows/opportunities to ALL when usMoMyCaseload is on", () => {
+    // The restored Opportunities homepage is system-agnostic, mirroring the
+    // pre-flag `home` behavior. It lives in the ALL bucket of
+    // WORKFLOWS_SYSTEM_ID_TO_PAGE so the caseload-type selector renders.
+    const { workflowsStore } = setupRootStoreMock({ flagOn: true });
+
+    renderRoute("/workflows/opportunities");
+
+    expect(workflowsStore.updateActiveSystem).toHaveBeenCalledWith("ALL");
+    expect(workflowsStore.activeSystem).toBe("ALL");
+  });
+
   it("maps /workflows/tasks to SUPERVISION regardless of the flag", () => {
     const { workflowsStore } = setupRootStoreMock({ flagOn: true });
 

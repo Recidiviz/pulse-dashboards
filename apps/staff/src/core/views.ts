@@ -77,6 +77,7 @@ export const WORKFLOWS_PATH_SECTIONS = [
   "tasks",
   "milestones",
   "rna", // North Carolina Facilities RNA self-report viewer
+  "opportunities", // Workflows opportunities homepage, surfaced alongside My Caseload
 ] as const;
 export type WorkflowsPathSection = (typeof WORKFLOWS_PATH_SECTIONS)[number];
 export const isWorkflowsPathSection = (
@@ -96,7 +97,7 @@ export const WORKFLOWS_SYSTEM_ID_TO_PAGE: Record<
 > = {
   INCARCERATION: ["residents", "rna"],
   SUPERVISION: ["clients", "tasks", "milestones"],
-  ALL: ["home"],
+  ALL: ["home", "opportunities"],
 };
 
 // Internal identifiers for types of page within the /workflows route
@@ -123,6 +124,7 @@ export const WORKFLOWS_PATHS: Record<WorkflowsPage | "workflows", string> = {
   opportunityAction: `/${DASHBOARD_VIEWS.workflows}/:opportunityTypeUrl/${PERSON_ID_SLUG}/${OPPORTUNITY_ID_SLUG}`,
   workflows: `/${DASHBOARD_VIEWS.workflows}`,
   home: `/${DASHBOARD_VIEWS.workflows}/home`,
+  opportunities: `/${DASHBOARD_VIEWS.workflows}/opportunities`,
   tasks: `/${DASHBOARD_VIEWS.workflows}/tasks`,
   tasksRoutePlanner: `/${DASHBOARD_VIEWS.workflows}/tasks/route-planner`,
   milestones: `/${DASHBOARD_VIEWS.workflows}/milestones`,

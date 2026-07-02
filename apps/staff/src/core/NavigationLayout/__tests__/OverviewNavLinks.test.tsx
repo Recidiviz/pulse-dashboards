@@ -315,6 +315,46 @@ describe("OverviewNavLinks tests", () => {
         ).not.toBeInTheDocument();
       });
     });
+
+    it("renders a separate Opportunities link alongside My Caseload when the flag is on and opportunities nav is allowed", async () => {
+      rootStoreMock.userStore.userAllowedNavigation = {
+        workflows: ["home", "clients", "tasks", "opportunities"],
+      };
+      useFeatureVariantsMock.mockReturnValue({ usMoMyCaseload: {} });
+
+      renderLinks();
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole("menuitem", { name: "My Caseload" }),
+        ).toBeInTheDocument();
+        expect(
+          screen.getByRole("menuitem", { name: "Opportunities" }),
+        ).toBeInTheDocument();
+        // Tasks and Clients remain hidden under the flag.
+        expect(
+          screen.queryByRole("menuitem", { name: "Tasks" }),
+        ).not.toBeInTheDocument();
+        expect(
+          screen.queryByRole("menuitem", { name: "Clients" }),
+        ).not.toBeInTheDocument();
+      });
+    });
+
+    it("does not render the Opportunities link when the user lacks opportunities nav access", async () => {
+      rootStoreMock.userStore.userAllowedNavigation = {
+        workflows: ["tasks", "clients"],
+      };
+      useFeatureVariantsMock.mockReturnValue({ usMoMyCaseload: {} });
+
+      renderLinks();
+
+      await waitFor(() => {
+        expect(
+          screen.queryByRole("menuitem", { name: "Opportunities" }),
+        ).not.toBeInTheDocument();
+      });
+    });
   });
 
   it("Does not render a link for opportunities if hideWorkflowsOpportunities is set", async () => {

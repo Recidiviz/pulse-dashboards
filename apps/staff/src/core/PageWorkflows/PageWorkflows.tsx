@@ -96,6 +96,11 @@ const PageWorkflows: React.FC = () => {
             />
 
             <Route
+              path={workflowsRoute({ routeName: "opportunities" })}
+              element={<WorkflowsHomepage />}
+            />
+
+            <Route
               path={workflowsRoute({ routeName: "milestones" })}
               element={<WorkflowsMilestones />}
             />

@@ -29,6 +29,7 @@ describe("getRelativePath", () => {
       opportunityClients: `/:opportunityTypeUrl`,
       opportunityAction: `/:opportunityTypeUrl/:justiceInvolvedPersonId/:opportunityPseudoId`,
       home: `/home`,
+      opportunities: `/opportunities`,
       tasks: `/tasks`,
       tasksRoutePlanner: `/tasks/route-planner`,
       workflows: "",

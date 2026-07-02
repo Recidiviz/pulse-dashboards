@@ -232,7 +232,7 @@ const US_MO_CONFIG = {
     },
   },
   navigation: {
-    workflows: ["home", "tasks", "clients", "residents"],
+    workflows: ["home", "tasks", "clients", "residents", "opportunities"],
     system: [
       PATHWAYS_PAGES.libertyToPrison,
       PATHWAYS_PAGES.prison,
