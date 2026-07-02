@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import * as Sentry from "@sentry/react-native";
 import { useCallback, useRef } from "react";
 
 import {
@@ -94,6 +95,7 @@ export function useAudioUpload() {
           store.setError(error.message);
         } else if (error instanceof Error) {
           store.setError(error.message || "Upload failed. Please try again.");
+          Sentry.captureException(error);
         }
 
         store.setStatus("selecting");
@@ -131,6 +133,7 @@ export function useAudioUpload() {
       if (error instanceof Error) {
         store.setError(error.message || "Removing failed. Please try again.");
       }
+      Sentry.captureException(error);
       console.error("Failed to remove file:", error);
     }
   }, [store, deleteRecordings]);
@@ -165,6 +168,7 @@ export function useAudioUpload() {
       store.setDialog("success");
     } catch (error) {
       store.setDialog("error");
+      Sentry.captureException(error);
       console.error("Failed to confirm uploading:", error);
     }
   }, [store, endMeetingMutation]);
@@ -187,6 +191,7 @@ export function useAudioUpload() {
       });
       store.reset();
     } catch (error) {
+      Sentry.captureException(error);
       console.error("Failed to discard meeting:", error);
     }
   }, [store, discardMeetingMutation, deleteRecordings]);

@@ -182,10 +182,11 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       Sentry.logger.error("stop.recording.error", {
         error: extractError(err),
       });
+      Sentry.captureException(err, { tags: { meetingId } });
       await setStatus("paused");
       throw err;
     }
-  }, [audioRecorder, recorderState.isRecording, setStatus]);
+  }, [audioRecorder, recorderState.isRecording, meetingId, setStatus]);
 
   /**
    * uploadRecording()
@@ -195,11 +196,13 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
    */
   const uploadRecording = useCallback(async () => {
     if (!meetingId) {
+      const error = new Error("meetingId is required for uploading");
       Sentry.logger.error("upload.segment.error", {
         meetingId,
-        error: "meetingId is required for uploading",
+        error: error.message,
       });
-      throw new Error("meetingId is required for uploading");
+      Sentry.captureException(error);
+      throw error;
     }
 
     try {
@@ -232,6 +235,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         meetingId,
         error: extractError(err),
       });
+      Sentry.captureException(err, { tags: { meetingId } });
       console.error("Upload failed:", err);
       Alert.alert("Upload Recording Failed");
       await setStatus("paused"); // fallback safe state
@@ -254,6 +258,10 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         meetingId,
         reason,
       });
+      Sentry.captureException(
+        new Error(`meeting.initialization.error: ${reason}`),
+        { tags: { meetingId }, extra: { status: statusRef.current } },
+      );
 
       // Attempt to upload whatever audio we have, but don't let a failed upload
       // abort recovery: stopAndUploadRecording re-throws on error, and if we
@@ -287,6 +295,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
             meetingId,
             error: extractError(err),
           });
+          Sentry.captureException(err, { tags: { meetingId } });
         }
       }
 
@@ -403,6 +412,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         meetingId,
         error: errorMessage,
       });
+      Sentry.captureException(err, { tags: { meetingId } });
       Alert.alert("Recording Start Failed", errorMessage);
       throw err;
     }
@@ -478,11 +488,15 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
 
   const handleFinishAndSave = async (onComplete?: () => void) => {
     if (!meetingId || !person) {
+      const error = new Error(
+        "Cannot end meeting without a meeting ID and person",
+      );
       Sentry.logger.error("meeting.end.error", {
         meetingId,
-        error: "Cannot end meeting without a meeting ID and person",
+        error: error.message,
       });
-      throw new Error("Cannot end meeting without a meeting ID and person");
+      Sentry.captureException(error, { tags: { meetingId } });
+      throw error;
     }
 
     setStatus("ending");
@@ -514,6 +528,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         meetingId,
         error: extractError(err),
       });
+      Sentry.captureException(err, { tags: { meetingId } });
       console.error("Failed to end meeting:", err);
       Alert.alert("Error", "Failed to end meeting. Please try again.");
       setStatus("paused");
@@ -522,11 +537,15 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
 
   const handleFinalDiscard = async (onComplete?: () => void) => {
     if (!meetingId || !person) {
+      const error = new Error(
+        "Cannot discard meeting without a meeting ID and person",
+      );
       Sentry.logger.error("meeting.discard.error", {
         meetingId,
-        error: "Cannot discard meeting without a meeting ID and person",
+        error: error.message,
       });
-      throw new Error("Cannot discard meeting without a meeting ID and person");
+      Sentry.captureException(error, { tags: { meetingId } });
+      throw error;
     }
 
     try {
@@ -545,6 +564,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         meetingId,
         error: errorMessage,
       });
+      Sentry.captureException(err, { tags: { meetingId } });
       Alert.alert("Failed to discard meeting", errorMessage);
       setStatus("paused");
       throw err;

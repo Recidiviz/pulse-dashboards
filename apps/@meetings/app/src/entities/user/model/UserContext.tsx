@@ -93,6 +93,7 @@ export const UserContextProvider: React.FC<{
             Sentry.logger.error("auth.clear_credentials.error", {
               error: extractError(clearError),
             });
+            Sentry.captureException(clearError);
           }
           return undefined;
         }
@@ -113,6 +114,7 @@ export const UserContextProvider: React.FC<{
         Sentry.logger.error("auth.populate_metadata.error", {
           error: extractError(error),
         });
+        Sentry.captureException(error);
       });
     }
   }, [isSkipAuthUser, user, isLoading, getCredentialsWithReauth]);

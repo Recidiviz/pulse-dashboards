@@ -115,6 +115,7 @@ export const useRecordingStore = create<RecordingStore>()(
             state,
             error,
           });
+          Sentry.captureException(error);
           // Rehydrating `person` failed (e.g. BigInt(personId) threw on a
           // corrupted value). Drop the person rather than leaving a string
           // `personId` where callers expect a bigint.
