@@ -86,6 +86,8 @@ import { usTnExpirationSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsT
 import { usTnInitialClassificationSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnInitialClassificationOpportunity/UsTnInitialClassificationReferralRecord";
 import { usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnSupervisionLevelDowngradeOpportunity/UsTnSupervisionLevelDowngradeReferralRecord";
 import { usTnSuspensionOfDirectSupervisionSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnSuspensionOfDirectSupervisionOpportunity/UsTnSuspensionOfDirectSupervisionReferralRecord";
+import { usTxAnnualReportStatusV2Schema } from "../src/WorkflowsStore/Opportunity/UsTx/UsTxAnnualReportStatusV2Opportunity/UsTxAnnualReportStatusV2OpportunityReferralRecord";
+import { usTxEarlyReleaseFromSupervisionV2Schema } from "../src/WorkflowsStore/Opportunity/UsTx/UsTxEarlyReleaseFromSupervisionV2OpportunityReferralRecord";
 import { usUtEarlyTerminationSchema } from "../src/WorkflowsStore/Opportunity/UsUt/UsUtEarlyTerminationOpportunity/UsUtEarlyTerminationReferralRecord";
 
 const { FIREBASE_PROJECT, FIREBASE_CREDENTIAL_JSON } = process.env;
@@ -210,6 +212,10 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
   usTnAnnualReclassification2026PolicyV2: usTnReclassification2026Schema,
   usTnCustodyLevelDowngrade2026PolicyV2: usTnReclassification2026Schema,
   usTnSpecialCustodyLevelUpgrade2026PolicyV2: usTnReclassification2026Schema,
+
+  // US_TX
+  usTxAnnualReportStatusV2: usTxAnnualReportStatusV2Schema,
+  usTxEarlyReleaseFromSupervisionV2: usTxEarlyReleaseFromSupervisionV2Schema,
 
   // US_UT
   usUtEarlyTermination: usUtEarlyTerminationSchema,

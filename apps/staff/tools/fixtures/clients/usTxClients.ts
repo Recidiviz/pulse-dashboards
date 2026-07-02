@@ -68,7 +68,10 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     phoneNumber: "5111111111",
     supervisionStartDate: "2020-11-01",
     expirationDate: "2022-12-31",
-    allEligibleOpportunities: [],
+    allEligibleOpportunities: [
+      "usTxAnnualReportStatusV2",
+      "usTxEarlyReleaseFromSupervisionV2",
+    ],
     currentEmployers: [
       {
         name: "Paper store",
@@ -97,7 +100,10 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     phoneNumber: "5222222222",
     supervisionStartDate: "2022-04-01",
     expirationDate: "2024-01-01",
-    allEligibleOpportunities: [],
+    allEligibleOpportunities: [
+      "usTxAnnualReportStatusV2",
+      "usTxEarlyReleaseFromSupervisionV2",
+    ],
     currentEmployers: [
       {
         name: "Bookstore",
@@ -155,7 +161,10 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     phoneNumber: "5444444444",
     supervisionStartDate: "2021-07-01",
     expirationDate: "2022-01-01",
-    allEligibleOpportunities: [],
+    allEligibleOpportunities: [
+      "usTxAnnualReportStatusV2",
+      "usTxEarlyReleaseFromSupervisionV2",
+    ],
     currentEmployers: [
       {
         name: "Grocery store",
@@ -184,7 +193,7 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     phoneNumber: "5555555555",
     supervisionStartDate: "2021-06-01",
     expirationDate: "2023-01-01",
-    allEligibleOpportunities: [],
+    allEligibleOpportunities: ["usTxAnnualReportStatusV2"],
     currentEmployers: [
       {
         name: "Pharmacy",
@@ -213,7 +222,10 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     phoneNumber: "5666666666",
     supervisionStartDate: "2023-01-01",
     expirationDate: "2022-12-31",
-    allEligibleOpportunities: [],
+    allEligibleOpportunities: [
+      "usTxAnnualReportStatusV2",
+      "usTxEarlyReleaseFromSupervisionV2",
+    ],
     currentEmployers: [
       {
         name: "Amazon",
@@ -242,7 +254,10 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     phoneNumber: "5777777777",
     supervisionStartDate: "2020-01-01",
     expirationDate: "2021-12-31",
-    allEligibleOpportunities: [],
+    allEligibleOpportunities: [
+      "usTxAnnualReportStatusV2",
+      "usTxEarlyReleaseFromSupervisionV2",
+    ],
     currentEmployers: [
       {
         name: "Subway",
@@ -271,7 +286,10 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     phoneNumber: "5888888888",
     supervisionStartDate: "2021-02-01",
     expirationDate: "2022-08-31",
-    allEligibleOpportunities: [],
+    allEligibleOpportunities: [
+      "usTxAnnualReportStatusV2",
+      "usTxEarlyReleaseFromSupervisionV2",
+    ],
     currentEmployers: [
       {
         name: "Pet store",
@@ -300,7 +318,10 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     phoneNumber: "5999999999",
     supervisionStartDate: "2022-04-01",
     expirationDate: "2023-12-31",
-    allEligibleOpportunities: [],
+    allEligibleOpportunities: [
+      "usTxAnnualReportStatusV2",
+      "usTxEarlyReleaseFromSupervisionV2",
+    ],
     currentEmployers: [
       {
         name: "CVS",
@@ -329,7 +350,10 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     phoneNumber: "5212121212",
     supervisionStartDate: "2019-01-01",
     expirationDate: "2020-09-30",
-    allEligibleOpportunities: [],
+    allEligibleOpportunities: [
+      "usTxAnnualReportStatusV2",
+      "usTxEarlyReleaseFromSupervisionV2",
+    ],
     currentEmployers: [
       {
         name: "Walmart",
@@ -358,7 +382,10 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     phoneNumber: "5323232323",
     supervisionStartDate: "2023-01-01",
     expirationDate: "2024-12-31",
-    allEligibleOpportunities: [],
+    allEligibleOpportunities: [
+      "usTxAnnualReportStatusV2",
+      "usTxEarlyReleaseFromSupervisionV2",
+    ],
     currentEmployers: [
       {
         name: "Walmart",
@@ -387,7 +414,10 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     phoneNumber: "5434343434",
     supervisionStartDate: "2022-01-01",
     expirationDate: "2022-02-28",
-    allEligibleOpportunities: [],
+    allEligibleOpportunities: [
+      "usTxAnnualReportStatusV2",
+      "usTxEarlyReleaseFromSupervisionV2",
+    ],
     currentEmployers: [
       {
         name: "AT&T",
@@ -416,7 +446,7 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     phoneNumber: "5545454545",
     supervisionStartDate: "2021-01-01",
     expirationDate: "2022-04-30",
-    allEligibleOpportunities: [],
+    allEligibleOpportunities: ["usTxEarlyReleaseFromSupervisionV2"],
     currentEmployers: [
       {
         name: "American Airlines",
@@ -445,7 +475,10 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     phoneNumber: "5656565656",
     supervisionStartDate: "2021-01-01",
     expirationDate: "2022-05-31",
-    allEligibleOpportunities: [],
+    allEligibleOpportunities: [
+      "usTxAnnualReportStatusV2",
+      "usTxEarlyReleaseFromSupervisionV2",
+    ],
     currentEmployers: [
       {
         name: "Southwest Airlines",
@@ -474,7 +507,10 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     phoneNumber: "5767676767",
     supervisionStartDate: "2021-03-01",
     expirationDate: "2022-07-31",
-    allEligibleOpportunities: [],
+    allEligibleOpportunities: [
+      "usTxAnnualReportStatusV2",
+      "usTxEarlyReleaseFromSupervisionV2",
+    ],
     currentEmployers: [
       {
         name: "Amazon",
@@ -532,7 +568,10 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     phoneNumber: "5989898989",
     supervisionStartDate: "2021-06-01",
     expirationDate: "2022-09-30",
-    allEligibleOpportunities: [],
+    allEligibleOpportunities: [
+      "usTxAnnualReportStatusV2",
+      "usTxEarlyReleaseFromSupervisionV2",
+    ],
     currentEmployers: [
       {
         name: "McDonald's",

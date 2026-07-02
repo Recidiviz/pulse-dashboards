@@ -38,6 +38,10 @@ export type UsTxAnnualReportStatusV2ReferralRecord = z.infer<
   typeof usTxAnnualReportStatusV2Schema
 >;
 
+export type UsTxAnnualReportStatusV2ReferralRecordRaw = z.input<
+  typeof usTxAnnualReportStatusV2Schema
+>;
+
 export type UsTxAnnualReportStatusV2DraftData = UsTxArsErsSharedDraftData & {
   threeYearsTRASCheck: boolean;
   comment1: string;

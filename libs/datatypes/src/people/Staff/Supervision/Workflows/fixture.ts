@@ -32,6 +32,7 @@ export const usIdSupervisionStaffFixtures: Array<
     surname: "Harris",
     supervisorExternalId: "SUPER847",
     pseudonymizedId: "p004",
+    hasCaseload: true,
     stateSpecificData: {
       stateCode: "US_ID" as const,
       officeAddress: {
@@ -50,6 +51,7 @@ export const usIdSupervisionStaffFixtures: Array<
     surname: "Schroeder",
     supervisorExternalId: "SUPER847",
     pseudonymizedId: "p006",
+    hasCaseload: true,
     stateSpecificData: {
       stateCode: "US_ID" as const,
       officeAddress: null,
@@ -80,6 +82,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     surname: "Teak",
     supervisorExternalId: null,
     pseudonymizedId: "p123",
+    hasCaseload: true,
   },
 
   // US_ID - IDAHO
@@ -94,6 +97,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     surname: "Chapman",
     supervisorExternalId: null,
     pseudonymizedId: "p008",
+    hasCaseload: true,
   },
 
   // US_MI - MICHIGAN
@@ -105,6 +109,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     surname: "Bonilla",
     supervisorExternalId: "1290831",
     pseudonymizedId: "p008",
+    hasCaseload: true,
   },
 
   // US_NC - NORTH CAROLINA
@@ -116,6 +121,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     surname: "Giles",
     supervisorExternalId: null,
     pseudonymizedId: "NCOFFICER1",
+    hasCaseload: true,
   },
 
   // US_ND - NORTH DAKOTA
@@ -128,6 +134,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     surname: "Osborne",
     supervisorExternalId: null,
     pseudonymizedId: "p003",
+    hasCaseload: true,
   },
 
   // US_NE - NEBRASKA
@@ -140,6 +147,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     surname: "Mitchell",
     supervisorExternalId: "NESUPERVISOR1",
     pseudonymizedId: "p001",
+    hasCaseload: true,
   },
 
   // US_OR - OREGON
@@ -151,6 +159,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     surname: "271828",
     supervisorExternalId: null,
     pseudonymizedId: "p271",
+    hasCaseload: true,
   },
   {
     email: null,
@@ -160,6 +169,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     surname: "314159",
     supervisorExternalId: "SUPER221",
     pseudonymizedId: "p314",
+    hasCaseload: true,
   },
 
   // US_PA - PENNSYLVANIA
@@ -171,6 +181,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     surname: "Pruitt",
     supervisorExternalId: "25-1239123A",
     pseudonymizedId: "p001",
+    hasCaseload: true,
   },
   {
     email: "test-officer@example.com",
@@ -180,6 +191,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     surname: "Frederick",
     supervisorExternalId: null,
     pseudonymizedId: "p002",
+    hasCaseload: true,
   },
 
   // US_TN - TENNESSEE
@@ -192,6 +204,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     surname: "Rice",
     supervisorExternalId: "agonzalez123",
     pseudonymizedId: "p001",
+    hasCaseload: true,
   },
 
   // US_TX - TEXAS
@@ -204,6 +217,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     surname: "Linkus",
     supervisorExternalId: "SUPERVISOR1",
     pseudonymizedId: "p001",
+    hasCaseload: true,
     stateSpecificData: {
       stateCode: "US_TX" as const,
       isInUnderstaffedOffice: false,
@@ -218,6 +232,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     surname: "Jones",
     supervisorExternalId: "SUPERVISOR2",
     pseudonymizedId: "p002",
+    hasCaseload: true,
     stateSpecificData: {
       stateCode: "US_TX" as const,
       isInUnderstaffedOffice: true,
@@ -232,6 +247,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     surname: "Garcia",
     supervisorExternalId: "SUPERVISOR3",
     pseudonymizedId: "p003",
+    hasCaseload: true,
     stateSpecificData: {
       stateCode: "US_TX" as const,
       isInUnderstaffedOffice: false,
@@ -246,6 +262,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     surname: "Smith",
     supervisorExternalId: "SUPERVISOR4",
     pseudonymizedId: "p004",
+    hasCaseload: true,
     stateSpecificData: {
       stateCode: "US_TX" as const,
       isInUnderstaffedOffice: true,
@@ -260,6 +277,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     surname: "Johnson",
     supervisorExternalId: "SUPERVISOR5",
     pseudonymizedId: "p005",
+    hasCaseload: true,
     stateSpecificData: {
       stateCode: "US_TX" as const,
       isInUnderstaffedOffice: false,
@@ -275,5 +293,6 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     surname: "Campana",
     supervisorExternalId: null,
     pseudonymizedId: "p001",
+    hasCaseload: true,
   },
 ].map((r) => makeRecordFixture(supervisionStaffRecordSchema, r));

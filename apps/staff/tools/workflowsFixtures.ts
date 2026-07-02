@@ -98,6 +98,8 @@ import { usTnCustodyLevelDowngradeFixture } from "./fixtures/usTnCustodyLevelDow
 import { usTnExpirationFixture } from "./fixtures/usTnExpirationReferrals";
 import { usTnInitialClassificationFixture } from "./fixtures/usTnInitialClassificationReferrals";
 import { usTnSuspensionOfDirectSupervisionFixture } from "./fixtures/UsTnSuspensionOfDirectSupervisionReferrals";
+import { usTxAnnualReportStatusV2ReferralsFixture } from "./fixtures/UsTxAnnualReportStatusV2Referrals";
+import { usTxEarlyReleaseFromSupervisionV2ReferralsFixture } from "./fixtures/UsTxEarlyReleaseFromSupervisionV2Referrals";
 import { usTxSupervisionTasksData } from "./fixtures/usTxSupervisionTasks";
 import { usUtEarlyTerminationReferrals } from "./fixtures/usUtEarlyTerminationReferrals";
 import { FirestoreFixture, fixtureFromParsedRecords } from "./fixtures/utils";
@@ -230,6 +232,9 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
   usMoWorkReleaseReferrals,
   usNeConditionalLowRiskOverrideReferrals,
   usNeOverrideModerateToLowReferrals,
+  usTxAnnualReportStatusV2Referrals: usTxAnnualReportStatusV2ReferralsFixture,
+  usTxEarlyReleaseFromSupervisionV2Referrals:
+    usTxEarlyReleaseFromSupervisionV2ReferralsFixture,
 } as const;
 
 const FIXTURES_TO_LOAD = [
