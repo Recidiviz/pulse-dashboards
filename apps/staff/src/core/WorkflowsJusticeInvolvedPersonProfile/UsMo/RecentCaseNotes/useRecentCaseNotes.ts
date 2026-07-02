@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { UsMoClientMetadata } from "~datatypes";
+
 import { Client } from "../../../../WorkflowsStore";
 
 /**
@@ -32,53 +34,59 @@ export const MAX_RECENT_NOTES = 3;
 export type RecentCaseNote = {
   /** Stable React key + dialog selector. */
   id: string;
-  /** SOURCE label, e.g. "MOSAGI - OFFICE VISIT". */
+  /** SOURCE label — the contact type(s), e.g. "POV, UA". */
   source: string;
   date: Date;
   /** Full note text; `\n` paragraphs are preserved when rendered in the modal. */
   body: string;
 };
 
+type SupervisionContact = NonNullable<
+  UsMoClientMetadata["supervisionContacts"]
+>[number];
+
 /**
- * Stub fixture matching the Figma's "Recent Case Notes" content. The first two
- * bodies are intentionally long enough that the 2-line clamp on the card row
- * visibly truncates; the modal expands them in full.
+ * Maps a single raw `supervisionContacts` entry to a `RecentCaseNote`. Returns
+ * `undefined` for contacts missing the date or note we need to render a usable
+ * row — the metadata feed is intentionally sparse (every field is nullish), so
+ * we drop unrenderable entries rather than show blanks.
  */
-const STUB_NOTES: RecentCaseNote[] = [
-  {
-    id: "stub-1",
-    source: "SOURCE PLACEHOLDER",
-    date: new Date("2026-04-15"),
-    body: "Home visit conducted — Charlie present at residence. Apartment clean and stable. No violations observed. Neighbor interactions reported as positive. Discussed ongoing employment search and reviewed transportation logistics for upcoming court date. Charlie expressed continued interest in vocational training opportunities; provided referral packet for the local workforce development office.",
-  },
-  {
-    id: "stub-2",
-    source: "SOURCE",
-    date: new Date("2024-06-12"),
-    body: "Charlie attended scheduled office meeting. Reported maintaining sobriety and steady employment. No compliance issues. Discussed upcoming housing transition plans, reviewed budgeting worksheet, and confirmed attendance at this month's support group. Reminded Charlie of the next required check-in and provided updated contact information for the assigned case manager.",
-  },
-  {
-    id: "stub-3",
-    source: "SOURCE",
-    date: new Date("2026-03-30"),
-    body: "He brought his sister in to meet me today as she is home for the summer, she is going to run the Food Truck that they are opening which is going to have Puerto Rican and Mexican Food, they are anticipating to open June 1st, they are currently doing the paperwork.",
-  },
-];
+function toRecentCaseNote(
+  contact: SupervisionContact,
+  index: number,
+): RecentCaseNote | undefined {
+  const { contactDate, contactNote, contactTypes } = contact;
+  if (!contactDate || !contactNote) return undefined;
+
+  return {
+    // `contactDate` alone isn't unique (a client can have multiple contacts on
+    // one day), so pair it with the source index for a stable, unique key.
+    id: `${contactDate.toISOString()}-${index}`,
+    source: contactTypes?.join(", ") ?? "",
+    date: contactDate,
+    body: contactNote,
+  };
+}
 
 /**
  * Returns the most recent case notes for the given client.
  *
- * Currently returns a hard-coded stub so the UI can ship behind the
- * `recentCaseNotes` feature variant; the `client` argument is reserved for the
- * real backend wiring (likely a tRPC query against ARB) and is not yet read.
+ * Reads from the US_MO client's `metadata.supervisionContacts` (sourced from
+ * the ARB feed), keeping the most recent `MAX_RECENT_NOTES` contacts. Because
+ * metadata travels with the client record, the data is available synchronously
+ * and `isLoading` is always `false`.
  */
 export function useRecentCaseNotes(client: Client): {
   notes: RecentCaseNote[];
   isLoading: boolean;
 } {
-  // `client` is part of the forward-compatible signature; the stub doesn't
-  // read it yet. The real implementation will key the data fetch off it.
-  void client;
-  // TODO(OBT-32327): replace with real data source (likely tRPC against ARB).
-  return { notes: STUB_NOTES.slice(0, MAX_RECENT_NOTES), isLoading: false };
+  const { supervisionContacts } = client.metadata as UsMoClientMetadata;
+
+  const notes = (supervisionContacts ?? [])
+    .map(toRecentCaseNote)
+    .filter((note): note is RecentCaseNote => note !== undefined)
+    .sort((a, b) => b.date.getTime() - a.date.getTime())
+    .slice(0, MAX_RECENT_NOTES);
+
+  return { notes, isLoading: false };
 }

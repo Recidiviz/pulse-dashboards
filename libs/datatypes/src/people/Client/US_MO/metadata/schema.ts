@@ -71,5 +71,20 @@ export const usMoClientMetadataSchema = z.object({
       }),
     )
     .optional(),
+  // Supervision contacts (a.k.a. "recent case notes"), sourced from the ARB
+  // feed and surfaced in the US_MO "Recent Case Notes" card. Intentionally
+  // flexible: the array and *every* field inside it are nullish so a sparse or
+  // partial feed never drops the client's whole metadata blob — we'd rather
+  // render what we have. `contactDate` is parsed to a Date for the same reason
+  // as `birthdate` above.
+  supervisionContacts: z
+    .array(
+      z.object({
+        contactDate: dateStringSchemaWithoutTimeShift.nullish(),
+        contactNote: z.string().nullish(),
+        contactTypes: z.array(z.string()).nullish(),
+      }),
+    )
+    .nullish(),
 });
 export type UsMoClientMetadata = z.infer<typeof usMoClientMetadataSchema>;

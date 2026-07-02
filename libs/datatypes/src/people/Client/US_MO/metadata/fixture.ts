@@ -95,4 +95,24 @@ export const usMoClientMetadataFixture: z.input<
       ],
     },
   ],
+  supervisionContacts: [
+    {
+      contactDate: "2026-05-19",
+      contactNote:
+        "Tessmer reported as directed. Send me pay stubs. When we talked about the ORAS she stated that she has completed it 2 times with 2 different officers. The ORAS system shows she still has no reports. I will be checking the file and NRD I have scheduled the ORAS regardless. NRD 06/02/2026 @10am",
+      contactTypes: ["POV", "UA"],
+    },
+    {
+      contactDate: "2026-04-16",
+      contactNote:
+        "Client reports as directed. Client reports working a lot at TC Capri. Client provided with document regarding her payment plan. Client plans on having fees paid in full by June 2026. Directed client to send PPO Ralston a copies of her check stubs to continue verifying employment. Client denied substance use. Client reported she needs to go to the doctor about sciatic nerve pain. Client directed to report May 19, 2026 at 9:00 AM.",
+      contactTypes: ["POV"],
+    },
+    {
+      contactDate: "2026-04-07",
+      contactNote:
+        "Tessmer states she is doing well just working a lot and trying to get custody of her grandchildren. Tessmer is working and keeping up with intervention fees. NRD 04/16 @ 9:30",
+      contactTypes: ["POV"],
+    },
+  ],
 };

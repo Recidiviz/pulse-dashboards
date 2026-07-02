@@ -250,6 +250,50 @@ describe("usMoClientMetadataSchema ORAS assessment and case plan", () => {
   });
 });
 
+describe("usMoClientMetadataSchema supervision contacts", () => {
+  test("parses the reusable fixture, transforming contactDate to a Date", () => {
+    const parsed = usMoClientMetadataSchema.parse(usMoClientMetadataFixture);
+
+    expect(parsed.supervisionContacts).toHaveLength(3);
+    expect(parsed.supervisionContacts?.[0].contactDate).toEqual(
+      parseISO("2026-05-19"),
+    );
+    expect(parsed.supervisionContacts?.[0].contactTypes).toEqual(["POV", "UA"]);
+    expect(typeof parsed.supervisionContacts?.[0].contactNote).toBe("string");
+  });
+
+  test("parses when supervisionContacts is missing (backward compat)", () => {
+    expect(() =>
+      usMoClientMetadataSchema.parse(validUsMoMetadataInput),
+    ).not.toThrow();
+  });
+
+  test("accepts a null supervisionContacts", () => {
+    const fixture = { ...usMoClientMetadataFixture, supervisionContacts: null };
+    expect(() => usMoClientMetadataSchema.parse(fixture)).not.toThrow();
+  });
+
+  test("accepts an empty supervisionContacts array", () => {
+    const fixture = { ...usMoClientMetadataFixture, supervisionContacts: [] };
+    const parsed = usMoClientMetadataSchema.parse(fixture);
+    expect(parsed.supervisionContacts).toEqual([]);
+  });
+
+  test("accepts a contact with every inner field nullish", () => {
+    const fixture: z.input<typeof usMoClientMetadataSchema> = {
+      ...usMoClientMetadataFixture,
+      supervisionContacts: [
+        { contactDate: null, contactNote: null, contactTypes: null },
+        {},
+      ],
+    };
+    const parsed = usMoClientMetadataSchema.parse(fixture);
+    expect(parsed.supervisionContacts).toHaveLength(2);
+    expect(parsed.supervisionContacts?.[0].contactDate).toBeNull();
+    expect(parsed.supervisionContacts?.[1].contactNote).toBeUndefined();
+  });
+});
+
 describe("usMoClientMetadataSchema integration with clientRecordSchema", () => {
   test("clientRecordSchema accepts a US_MO client with US_MO metadata", () => {
     const record = clientRecordSchema.parse({

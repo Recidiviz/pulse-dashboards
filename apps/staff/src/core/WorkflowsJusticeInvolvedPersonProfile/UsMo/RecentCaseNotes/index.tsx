@@ -18,8 +18,6 @@
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 
-import { Icon } from "~design-system";
-
 import { formatWorkflowsDate } from "../../../../utils";
 import { Client } from "../../../../WorkflowsStore";
 import {
@@ -31,7 +29,6 @@ import {
 import { RecentCaseNoteModal } from "./RecentCaseNoteModal";
 import {
   CardSubtitle,
-  GoToArbButton,
   NoteBody,
   NoteDate,
   NoteMeta,
@@ -41,8 +38,24 @@ import {
 } from "./RecentCaseNotes.styled";
 import { RecentCaseNote, useRecentCaseNotes } from "./useRecentCaseNotes";
 
-// TODO(OBT-32326): source from US_MO tenant config (src/tenants/US_MO.ts).
-const ARB_URL = "https://example.com/arb";
+/**
+ * Word-count thresholds for the card-row body preview. Notes longer than
+ * `TRUNCATE_ABOVE_WORDS` are clipped to the first `TRUNCATED_WORD_COUNT` words
+ * with a trailing ellipsis; the full text is always available in the modal.
+ */
+const TRUNCATE_ABOVE_WORDS = 60;
+const TRUNCATED_WORD_COUNT = 50;
+
+/**
+ * Returns the note body trimmed to `TRUNCATED_WORD_COUNT` words + an ellipsis
+ * when it exceeds `TRUNCATE_ABOVE_WORDS` words; otherwise the body is returned
+ * unchanged. Word boundaries are any run of whitespace.
+ */
+export function truncateNoteBody(body: string): string {
+  const words = body.trim().split(/\s+/);
+  if (words.length <= TRUNCATE_ABOVE_WORDS) return body;
+  return `${words.slice(0, TRUNCATED_WORD_COUNT).join(" ")}…`;
+}
 
 type Props = { client: Client };
 
@@ -60,17 +73,10 @@ export const RecentCaseNotesView = function RecentCaseNotesView({
     undefined,
   );
 
-  const handleArbClick = () => {
-    window.open(ARB_URL, "_blank", "noopener,noreferrer");
-  };
-
   return (
     <div>
       <ModuleHeader>
         <ModuleHeading>Recent Case Notes</ModuleHeading>
-        <GoToArbButton onClick={handleArbClick}>
-          <Icon kind="Open" size={12} /> Go to ARB
-        </GoToArbButton>
       </ModuleHeader>
       <CardFrame>
         {notes.length === 0 ? (
@@ -80,7 +86,7 @@ export const RecentCaseNotesView = function RecentCaseNotesView({
         ) : (
           <>
             <CardSubtitle>
-              3 most recent case notes. Go to ARB to see all.
+              {notes.length} most recent case notes. Go to ARB to see all.
             </CardSubtitle>
             <NotesList>
               {notes.map((note) => (
@@ -89,7 +95,7 @@ export const RecentCaseNotesView = function RecentCaseNotesView({
                     <Source>{note.source}</Source>
                     <NoteDate>{formatWorkflowsDate(note.date)}</NoteDate>
                   </NoteMeta>
-                  <NoteBody>{note.body}</NoteBody>
+                  <NoteBody>{truncateNoteBody(note.body)}</NoteBody>
                 </NoteRow>
               ))}
             </NotesList>

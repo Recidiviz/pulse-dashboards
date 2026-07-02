@@ -20,7 +20,7 @@ import ReactModal from "react-modal";
 import { Mock } from "vitest";
 
 import { Client } from "../../../../../WorkflowsStore";
-import { RecentCaseNotes } from "..";
+import { RecentCaseNotes, truncateNoteBody } from "..";
 import { RecentCaseNote, useRecentCaseNotes } from "../useRecentCaseNotes";
 
 vi.mock("../useRecentCaseNotes", () => ({
@@ -140,21 +140,46 @@ describe("RecentCaseNotes", () => {
     ).toHaveLength(1);
   });
 
-  it("calls window.open with noopener,noreferrer when Go to ARB is clicked", () => {
+  it("truncates a long note body to 50 words + ellipsis in the card row, but shows the full body in the modal", () => {
+    // 70 words — over the 60-word threshold, so the row preview clips to 50.
+    const longBody = Array.from({ length: 70 }, (_, i) => `word${i}`).join(" ");
     useRecentCaseNotesMock.mockReturnValue({
-      notes: sampleNotes,
+      notes: [{ id: "long", source: "POV", date: new Date(), body: longBody }],
       isLoading: false,
     });
-    const openSpy = vi.spyOn(window, "open").mockImplementation(() => null);
 
     render(<RecentCaseNotes client={mockClient} />);
 
-    fireEvent.click(screen.getByRole("button", { name: /Go to ARB/i }));
+    const expectedPreview = `${Array.from({ length: 50 }, (_, i) => `word${i}`).join(" ")}…`;
+    const rowPreview = screen.getByText(expectedPreview);
+    expect(rowPreview).toBeInTheDocument();
 
-    expect(openSpy).toHaveBeenCalledWith(
-      "https://example.com/arb",
-      "_blank",
-      "noopener,noreferrer",
-    );
+    // Clicking opens the modal with the full, untruncated body.
+    fireEvent.click(rowPreview);
+    expect(
+      within(screen.getByRole("dialog")).getByText(longBody),
+    ).toBeInTheDocument();
+  });
+});
+
+describe("truncateNoteBody", () => {
+  const wordsOfLength = (n: number) =>
+    Array.from({ length: n }, (_, i) => `w${i}`).join(" ");
+
+  it("returns the body unchanged at exactly the 60-word threshold", () => {
+    const body = wordsOfLength(60);
+    expect(truncateNoteBody(body)).toBe(body);
+  });
+
+  it("returns the body unchanged when under the threshold", () => {
+    const body = wordsOfLength(10);
+    expect(truncateNoteBody(body)).toBe(body);
+  });
+
+  it("clips to 50 words + an ellipsis when over the threshold", () => {
+    const result = truncateNoteBody(wordsOfLength(61));
+    expect(result).toBe(`${wordsOfLength(50)}…`);
+    // 50 words means 49 separating spaces.
+    expect(result.replace("…", "").trim().split(/\s+/)).toHaveLength(50);
   });
 });

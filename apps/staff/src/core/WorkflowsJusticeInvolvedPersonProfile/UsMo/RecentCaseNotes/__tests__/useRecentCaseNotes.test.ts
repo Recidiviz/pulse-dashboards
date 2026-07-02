@@ -18,29 +18,84 @@
 import { renderHook } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
+import { UsMoClientMetadata } from "~datatypes";
+
 import { Client } from "../../../../../WorkflowsStore";
 import { MAX_RECENT_NOTES, useRecentCaseNotes } from "../useRecentCaseNotes";
 
+type SupervisionContacts = UsMoClientMetadata["supervisionContacts"];
+
+// Builds a minimal Client stand-in whose `metadata.supervisionContacts` getter
+// returns the provided contacts. The hook only reads `client.metadata`, so an
+// otherwise-empty object cast is sufficient.
+function clientWithContacts(supervisionContacts: SupervisionContacts): Client {
+  return { metadata: { supervisionContacts } } as unknown as Client;
+}
+
+const contact = (
+  contactDate: Date | null,
+  contactNote: string | null,
+  contactTypes: string[] = [],
+) => ({ contactDate, contactNote, contactTypes });
+
 describe("useRecentCaseNotes", () => {
-  // The stub hook ignores `client`, so an empty cast is sufficient. When the
-  // real backend lands this test will switch to a properly mocked Client.
-  const client = {} as Client;
-
-  it("returns exactly three stub notes", () => {
+  it("maps supervision contacts into recent case notes", () => {
+    const client = clientWithContacts([
+      contact(new Date("2026-05-19"), "Reported as directed.", ["POV", "UA"]),
+    ]);
     const { result } = renderHook(() => useRecentCaseNotes(client));
-    expect(result.current.notes).toHaveLength(3);
+
+    expect(result.current.notes).toHaveLength(1);
+    expect(result.current.notes[0]).toMatchObject({
+      source: "POV, UA",
+      body: "Reported as directed.",
+      date: new Date("2026-05-19"),
+    });
   });
 
-  // The hook applies a slice(0, MAX_RECENT_NOTES) cap so the view never has to
-  // worry about it. Asserting against the exported constant — rather than
-  // injecting a 4-note fixture — keeps the test tightly scoped to the cap
-  // contract without coupling to STUB_NOTES internals.
+  it("sorts notes by date descending", () => {
+    const client = clientWithContacts([
+      contact(new Date("2026-04-07"), "Oldest."),
+      contact(new Date("2026-05-19"), "Newest."),
+      contact(new Date("2026-04-16"), "Middle."),
+    ]);
+    const { result } = renderHook(() => useRecentCaseNotes(client));
+
+    expect(result.current.notes.map((n) => n.body)).toEqual([
+      "Newest.",
+      "Middle.",
+      "Oldest.",
+    ]);
+  });
+
   it("caps the returned notes at MAX_RECENT_NOTES", () => {
+    const client = clientWithContacts(
+      Array.from({ length: MAX_RECENT_NOTES + 2 }, (_, i) =>
+        contact(new Date(2026, 0, i + 1), `Note ${i}`),
+      ),
+    );
     const { result } = renderHook(() => useRecentCaseNotes(client));
-    expect(result.current.notes.length).toBeLessThanOrEqual(MAX_RECENT_NOTES);
+
+    expect(result.current.notes).toHaveLength(MAX_RECENT_NOTES);
   });
 
-  it("assigns each note a non-empty, unique id", () => {
+  it("drops contacts missing a date or note", () => {
+    const client = clientWithContacts([
+      contact(null, "No date."),
+      contact(new Date("2026-05-19"), null),
+      contact(new Date("2026-04-16"), "Renderable."),
+    ]);
+    const { result } = renderHook(() => useRecentCaseNotes(client));
+
+    expect(result.current.notes).toHaveLength(1);
+    expect(result.current.notes[0].body).toBe("Renderable.");
+  });
+
+  it("assigns each note a non-empty, unique id even for same-day contacts", () => {
+    const client = clientWithContacts([
+      contact(new Date("2026-05-19"), "First same-day note."),
+      contact(new Date("2026-05-19"), "Second same-day note."),
+    ]);
     const { result } = renderHook(() => useRecentCaseNotes(client));
     const ids = result.current.notes.map((n) => n.id);
 
@@ -50,17 +105,20 @@ describe("useRecentCaseNotes", () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it("reports isLoading === false", () => {
-    const { result } = renderHook(() => useRecentCaseNotes(client));
-    expect(result.current.isLoading).toBe(false);
+  it("returns an empty list when there are no supervision contacts", () => {
+    expect(
+      renderHook(() => useRecentCaseNotes(clientWithContacts([]))).result
+        .current.notes,
+    ).toEqual([]);
+    expect(
+      renderHook(() => useRecentCaseNotes(clientWithContacts(undefined))).result
+        .current.notes,
+    ).toEqual([]);
   });
 
-  it("returns notes with Date objects and string bodies", () => {
+  it("reports isLoading === false", () => {
+    const client = clientWithContacts([]);
     const { result } = renderHook(() => useRecentCaseNotes(client));
-
-    for (const note of result.current.notes) {
-      expect(note.date).toBeInstanceOf(Date);
-      expect(typeof note.body).toBe("string");
-    }
+    expect(result.current.isLoading).toBe(false);
   });
 });
