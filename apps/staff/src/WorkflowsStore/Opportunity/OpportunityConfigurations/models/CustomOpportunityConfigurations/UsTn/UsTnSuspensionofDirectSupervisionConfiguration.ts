@@ -15,11 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DenialInputSettings } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 import { usTnGateMarkSubmittedOnFormDownloaded } from "./utils";
 
 export class UsTnSuspensionofDirectSupervisionConfiguration extends ApiOpportunityConfiguration {
   get markSubmittedOnFormDownload(): boolean {
     return usTnGateMarkSubmittedOnFormDownloaded(this.userStore);
+  }
+
+  get denialInputSettings(): Record<string, DenialInputSettings> {
+    const leadershipDenialInput: DenialInputSettings = {
+      required: false,
+      heading: "Reason given by leadership:",
+      placeholder: "Please specify a reason...",
+      inputType: "text",
+    };
+    return {
+      "DENIAL BY DD": leadershipDenialInput,
+      "DENIAL BY CA": leadershipDenialInput,
+      "DENIAL BY PA": leadershipDenialInput,
+    };
   }
 }
