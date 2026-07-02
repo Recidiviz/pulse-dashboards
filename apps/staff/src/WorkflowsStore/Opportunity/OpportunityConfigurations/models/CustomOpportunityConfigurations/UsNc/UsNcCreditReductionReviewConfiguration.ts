@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ADJUDICATION_STATUSES } from "../../../../../../FirestoreStore";
 import { FeatureVariant } from "../../../../../../RootStore/types";
-import { OpportunityTab } from "../../../../types";
+import { OpportunityTab, OpportunityTabGroups } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsNcCreditReductionReviewConfiguration extends ApiOpportunityConfiguration {
@@ -40,6 +41,10 @@ export class UsNcCreditReductionReviewConfiguration extends ApiOpportunityConfig
     return "Approved by Chief";
   }
 
+  get submittedTabTitle(): OpportunityTab {
+    return "Submitted to Commission";
+  }
+
   get grantApprovedStatusMessage(): string {
     return "Approved by Chief";
   }
@@ -50,5 +55,23 @@ export class UsNcCreditReductionReviewConfiguration extends ApiOpportunityConfig
 
   get reviewerFeatureVariant(): FeatureVariant {
     return "usNcCrrApprover";
+  }
+
+  get tabGroups(): OpportunityTabGroups {
+    const supervisorTabs: OpportunityTab[] = this
+      .supportsSupervisorReviewOnGrants
+      ? [this.supervisorReviewTabTitle, this.grantApprovedTabTitle]
+      : [];
+
+    return {
+      "ELIGIBILITY STATUS": [
+        "Eligible Now",
+        "Almost Eligible",
+        ...supervisorTabs,
+        this.submittedTabTitle,
+        "Marked Ineligible",
+        ...ADJUDICATION_STATUSES,
+      ],
+    };
   }
 }

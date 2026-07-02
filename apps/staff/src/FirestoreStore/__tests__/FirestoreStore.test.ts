@@ -713,6 +713,32 @@ describe("FirestoreStore", () => {
       ]);
     });
 
+    test("updateAdjudicationStatus", async () => {
+      await store.updateAdjudicationStatus("test-email", opp, "Approved");
+      expect(mockSetDoc.mock.calls).toContainEqual([
+        "test-doc-ref",
+        {
+          adjudicationStatus: {
+            adjudicationStatus: "Approved",
+            by: "test-email",
+            date: "mock-timestamp",
+          },
+        },
+        { merge: true },
+      ]);
+    });
+
+    test("deleteAdjudicationStatus", async () => {
+      await store.deleteAdjudicationStatus(opp);
+      expect(mockSetDoc.mock.calls).toContainEqual([
+        "test-doc-ref",
+        {
+          adjudicationStatus: "mock-delete-fn",
+        },
+        { merge: true },
+      ]);
+    });
+
     test("deleteOpportunitySubmitted", async () => {
       await store.deleteOpportunitySubmitted(opp);
       expect(mockSetDoc.mock.calls).toContainEqual([

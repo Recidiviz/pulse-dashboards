@@ -27,6 +27,7 @@ import {
   UsIaEarlyDischargeOpportunity,
   UsIaSupervisionLevelDowngradeOpportunity,
 } from "../../WorkflowsStore/Opportunity/UsIa";
+import { UsNcCreditReductionReviewOpportunity } from "../../WorkflowsStore/Opportunity/UsNc/UsNcCreditReductionReviewOpportunity";
 import {
   deleteSubmitted,
   DropdownMenuButton,
@@ -35,6 +36,7 @@ import {
 import { StatusAwareButton } from "./MenuButton.styles";
 import UsAzMenuButton from "./UsAz/UsAzMenuButton";
 import UsIaMenuButton from "./UsIa/UsIaMenuButton";
+import UsNcMenuButton from "./UsNc/UsNcMenuButton";
 
 // TODO(#9771): Consider adding a presenter to this component to determine which menu
 // items are relevant.
@@ -84,6 +86,15 @@ export const MenuButton = observer(function MenuButton({
   ) {
     return (
       <UsAzMenuButton
+        opportunity={opportunity}
+        onDenialButtonClick={onDenialButtonClick}
+      />
+    );
+  }
+
+  if (opportunity instanceof UsNcCreditReductionReviewOpportunity) {
+    return (
+      <UsNcMenuButton
         opportunity={opportunity}
         onDenialButtonClick={onDenialButtonClick}
       />

@@ -68,6 +68,7 @@ import {
 import { CollectionDocumentSubscription } from "../WorkflowsStore/subscriptions";
 import { getMonthYearFromDate } from "../WorkflowsStore/utils";
 import {
+  AdjudicationStatusValue,
   AtLeastOneTrue,
   AutoSnoozeUpdate,
   ClientAddressUpdate,
@@ -643,6 +644,26 @@ export default class FirestoreStore {
             },
           },
       stateCode: opportunity.person.stateCode,
+    });
+  }
+
+  async updateAdjudicationStatus(
+    userEmail: string,
+    opportunity: Opportunity,
+    status: AdjudicationStatusValue,
+  ): Promise<void> {
+    return this.updateOpportunity(opportunity, {
+      adjudicationStatus: {
+        adjudicationStatus: status,
+        by: userEmail,
+        date: serverTimestamp(),
+      },
+    });
+  }
+
+  async deleteAdjudicationStatus(opportunity: Opportunity): Promise<void> {
+    return this.updateOpportunity(opportunity, {
+      adjudicationStatus: deleteField(),
     });
   }
 

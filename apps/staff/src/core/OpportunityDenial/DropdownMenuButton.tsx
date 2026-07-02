@@ -74,7 +74,7 @@ const setSupervisorResponse = async (
   });
 };
 
-const requestGrant = async (opportunity: Opportunity) => {
+export const requestGrant = async (opportunity: Opportunity) => {
   await opportunity.setOfficerAction({ type: "APPROVAL" });
 
   toast(
@@ -138,7 +138,7 @@ const SupervisorSnoozeReviewItems = observer(
   },
 );
 
-const SupervisorGrantReviewItems = observer(
+export const SupervisorGrantReviewItems = observer(
   function SupervisorGrantReviewItems({
     opportunity,
     onDenialButtonClick = () => null,

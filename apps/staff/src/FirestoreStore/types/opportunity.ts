@@ -100,9 +100,22 @@ export type OfficerRequest = UpdateLog &
     isStale: boolean;
   };
 
+export const ADJUDICATION_STATUSES = [
+  "Approved",
+  "Partially Approved",
+  "Denied",
+] as const;
+
+export type AdjudicationStatusValue = (typeof ADJUDICATION_STATUSES)[number];
+
+export type AdjudicationStatus = UpdateLog & {
+  adjudicationStatus: AdjudicationStatusValue;
+};
+
 export type OpportunityUpdate = {
   denial?: Denial;
   submitted?: Submission;
+  adjudicationStatus?: AdjudicationStatus;
   actionHistory?: OfficerRequest[];
   manualSnooze?: ManualSnoozeUpdate;
   autoSnooze?: AutoSnoozeUpdate;

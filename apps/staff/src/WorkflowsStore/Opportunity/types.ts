@@ -343,6 +343,10 @@ export type OpportunityTab =
   // For US_NC
   | "Submitted for Chief Review"
   | "Approved by Chief"
+  | "Submitted to Commission"
+  | "Approved"
+  | "Partially Approved"
+  | "Denied"
 
   // For US_TX
   | "Awaiting Revisions"
