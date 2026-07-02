@@ -30,8 +30,6 @@ main:
                   env:
                     - name: STATE_CODE
                       value: ${state_code}
-                    - name: FILES
-                      value: us_nc_rna_writeback.json
           result: job_execution
         except:
           as: e
