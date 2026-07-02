@@ -183,7 +183,7 @@ export const VitalsContactrilldownTable = observer(
                 {!info.row.original.contactCompleted && (
                   <StatusIcon
                     kind="Error"
-                    tooltip={`${bodyDisplayName} not completed`}
+                    tooltip={`${bodyDisplayName} not completed by due date`}
                   />
                 )}
               </span>

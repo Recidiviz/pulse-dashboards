@@ -130,7 +130,7 @@ const US_ID_CONFIG = {
           },
           {
             value: "usIdHomeVisit",
-            label: "Home Visit",
+            label: "Home Contact",
           },
           {
             value: "usIdLsirAssessment",

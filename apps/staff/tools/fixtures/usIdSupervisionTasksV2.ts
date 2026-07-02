@@ -27,7 +27,7 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
     officerId: "OFFICER6",
     tasks: [
       {
-        taskDisplayName: "Home Visit",
+        taskDisplayName: "Home Contact",
         type: "usIdHomeVisit",
         dueDate: relativeFixtureDate({ days: -10 }),
         details: {
@@ -62,7 +62,7 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
     officerId: "OFFICER6",
     tasks: [
       {
-        taskDisplayName: "Home Visit",
+        taskDisplayName: "Home Contact",
         type: "usIdHomeVisit",
         dueDate: relativeFixtureDate({ days: -10 }),
         details: {
@@ -115,7 +115,7 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
         },
       },
       {
-        taskDisplayName: "Home Visit",
+        taskDisplayName: "Home Contact",
         type: "usIdHomeVisit",
         dueDate: relativeFixtureDate({ days: 0 }),
         details: {

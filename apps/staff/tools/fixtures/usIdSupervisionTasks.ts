@@ -25,7 +25,7 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
     officerId: "OFFICER6",
     tasks: [
       {
-        taskDisplayName: "Home Visit",
+        taskDisplayName: "Home Contact",
         type: "homeVisit",
         // overdue
         dueDate: "2021-11-28",
@@ -82,7 +82,7 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
     officerId: "OFFICER6",
     tasks: [
       {
-        taskDisplayName: "Home Visit",
+        taskDisplayName: "Home Contact",
         type: "homeVisit",
         // overdue
         dueDate: "2021-12-19",
