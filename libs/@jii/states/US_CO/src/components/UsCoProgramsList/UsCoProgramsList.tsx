@@ -179,8 +179,12 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
 
 function usePresenter() {
   const rootStore = useRootStore();
-  const { resident } = useSingleResidentContext();
-  return new UsCoProgramsPresenter(resident, rootStore.apiClient);
+  const { resident, residentFlags } = useSingleResidentContext();
+  return new UsCoProgramsPresenter(
+    resident,
+    rootStore.apiClient,
+    residentFlags,
+  );
 }
 
 export const UsCoProgramsList = withPresenterManager({

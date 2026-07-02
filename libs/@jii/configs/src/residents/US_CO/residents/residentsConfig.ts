@@ -26,6 +26,6 @@ export const usCoResidentsConfig: ResidentsConfig = {
     additionalLanguages: [],
   },
   enabledResidentFlags: {
-    usCoV1Experience: parseISO("2026-07-06T09:00:00-06:00"),
+    usCoV1Experience: parseISO("2026-07-13T09:00:00-06:00"),
   },
 };

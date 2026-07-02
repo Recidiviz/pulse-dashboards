@@ -21,7 +21,7 @@ import { max, parseISO } from "date-fns";
 import { isUndefined, sortBy } from "lodash";
 import { makeAutoObservable, runInAction } from "mobx";
 
-import { DataAPI } from "~@jii/data";
+import { DataAPI, ResidentFlags } from "~@jii/data";
 import type { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
 import { WorkflowsResidentRecord } from "~datatypes";
 import {
@@ -45,6 +45,7 @@ export class UsCoProgramsPresenter implements Hydratable {
   constructor(
     private readonly resident: WorkflowsResidentRecord,
     private readonly apiClient: DataAPI,
+    private readonly residentFlags: ResidentFlags,
   ) {
     makeAutoObservable(this, {}, { autoBind: true });
 
@@ -61,7 +62,10 @@ export class UsCoProgramsPresenter implements Hydratable {
   }
 
   get isYOSResident() {
-    return this.resident.facilityId === "YOS";
+    return (
+      this.resident.facilityId === "YOS" &&
+      !!this.residentFlags.usCoV1Experience
+    );
   }
 
   private hydrator: HydratesFromSource;
