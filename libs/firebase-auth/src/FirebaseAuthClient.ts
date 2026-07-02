@@ -23,6 +23,7 @@ import {
   getIdToken,
   signInWithCustomToken,
 } from "firebase/auth";
+import pRetry from "p-retry";
 
 export class FirebaseAuthClient {
   constructor(
@@ -59,7 +60,7 @@ export class FirebaseAuthClient {
     if (emulatorUrl) {
       connectAuthEmulator(auth, emulatorUrl);
     }
-    await signInWithCustomToken(auth, firebaseToken);
+    await pRetry(() => signInWithCustomToken(auth, firebaseToken));
   }
 
   /**
