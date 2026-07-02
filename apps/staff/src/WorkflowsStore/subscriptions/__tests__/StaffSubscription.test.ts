@@ -326,9 +326,13 @@ describe("StaffSubscription tests", () => {
             value,
           }),
         );
+        orMock.mockImplementation((...constraints: unknown[]) => ({
+          type: "or",
+          constraints,
+        }));
       });
 
-      test("constrains to hasCaseload: true by default", () => {
+      test("constrains to hasCaseload: true by default for supervision staff", () => {
         sub.subscribe();
 
         expect(whereMock).toHaveBeenCalledWith("hasCaseload", "==", true);
@@ -339,7 +343,7 @@ describe("StaffSubscription tests", () => {
         });
       });
 
-      test("omits the hasCaseload constraint when includeStaffWithoutCaseload is true", () => {
+      test("includes staff with and without a caseload when includeSupervisionStaffWithoutCaseload is true", () => {
         sub = new StaffSubscription(
           rootStoreMock,
           { key: "supervisionStaff" },
@@ -350,10 +354,40 @@ describe("StaffSubscription tests", () => {
 
         sub.subscribe();
 
+        expect(whereMock).toHaveBeenCalledWith("hasCaseload", "==", true);
+        expect(whereMock).toHaveBeenCalledWith("hasCaseload", "==", false);
+        expect(orMock).toHaveBeenCalledWith(
+          { field: "hasCaseload", op: "==", value: true },
+          { field: "hasCaseload", op: "==", value: false },
+        );
+        expect(andMock.mock.calls[0]).toContainEqual({
+          type: "or",
+          constraints: [
+            { field: "hasCaseload", op: "==", value: true },
+            { field: "hasCaseload", op: "==", value: false },
+          ],
+        });
+      });
+
+      test("does not add a hasCaseload constraint for non-supervision staff, even when includeSupervisionStaffWithoutCaseload is true", () => {
+        sub = new StaffSubscription(
+          rootStoreMock,
+          { key: "incarcerationStaff" },
+          incarcerationStaffRecordSchema,
+          "INCARCERATION",
+          true,
+        );
+
+        sub.subscribe();
+
         expect(whereMock).not.toHaveBeenCalledWith(
           "hasCaseload",
           "==",
           expect.anything(),
+        );
+        expect(orMock).not.toHaveBeenCalled();
+        expect(andMock.mock.calls[0]).not.toContainEqual(
+          expect.objectContaining({ type: "or" }),
         );
         expect(andMock.mock.calls[0]).not.toContainEqual(
           expect.objectContaining({ field: "hasCaseload" }),

@@ -32,7 +32,7 @@ export class StaffSubscription<
     private collectionKey: FirestoreCollectionKey,
     parser: z.ZodType<RecordType, any, any>,
     private systemId?: "SUPERVISION" | "INCARCERATION",
-    private includeStaffWithoutCaseload = false,
+    private includeSupervisionStaffWithoutCaseload = false,
   ) {
     super((data) => {
       const record = parser.parse(data);
@@ -49,8 +49,18 @@ export class StaffSubscription<
     const stateCodeConstraint = [where("stateCode", "==", stateCode)];
     const compositeConstraint = [];
 
-    if (!this.includeStaffWithoutCaseload) {
-      compositeConstraint.push(where("hasCaseload", "==", true));
+    // Only supervision staff records have non-null hasCaseload
+    if (this.systemId === "SUPERVISION") {
+      if (this.includeSupervisionStaffWithoutCaseload) {
+        compositeConstraint.push(
+          or(
+            where("hasCaseload", "==", true),
+            where("hasCaseload", "==", false),
+          ),
+        );
+      } else {
+        compositeConstraint.push(where("hasCaseload", "==", true));
+      }
     }
 
     if (user) {
