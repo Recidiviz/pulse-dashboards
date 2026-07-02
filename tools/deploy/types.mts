@@ -70,7 +70,17 @@ export type ReleasePlan =
       deployingLatestMain: boolean; // was the deployed commit the tip of main?
     }
   | {
+      // Re-deploy of a commit that is ALREADY released (e.g. deploying services that were
+      // skipped on the first pass). No version is computed and nothing is tagged/published —
+      // the deploy runs against the existing release version.
       env: "production";
+      isRedeploy: true;
+      currentRevision: string;
+      nextVersion: string; // the existing release tag on this commit (drives service version labels)
+    }
+  | {
+      env: "production";
+      isRedeploy: false;
       currentRevision: string;
       isCpDeploy: boolean; // drives version math AND whether a release branch is cut
       nextVersion: string; // cherry-pick ⇒ patch bump; else ⇒ minor bump

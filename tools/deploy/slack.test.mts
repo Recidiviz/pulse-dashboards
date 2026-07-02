@@ -78,6 +78,7 @@ describe("buildSlackNotification", () => {
   it("builds a production message on the polaris channel with trimmed release notes", () => {
     const plan: ReleasePlan = {
       env: "production",
+      isRedeploy: false,
       currentRevision: "abc123def456",
       isCpDeploy: false,
       nextVersion: "v5.296.0",
@@ -102,5 +103,24 @@ describe("buildSlackNotification", () => {
     // header + footer lines removed, the middle kept inside a code block
     expect(note?.text).toContain("```- change one\n- change two```");
     expect(note?.text).toContain("\nWhat was deployed: Staff Frontend");
+  });
+
+  it("builds a re-deploy message pointing at the existing release (no published notes)", () => {
+    const plan: ReleasePlan = {
+      env: "production",
+      isRedeploy: true,
+      currentRevision: "abc123def456",
+      nextVersion: "v5.300.0",
+    };
+    const note = buildSlackNotification(plan, ["Meetings Backend"], null, {
+      deployer: "me",
+      deployDurationMinutes: 3,
+    });
+    expect(note?.channel).toBe(polarisChannelId);
+    expect(note?.text).toContain(
+      "me re-deployed the existing v5.300.0 release in 3 minutes",
+    );
+    expect(note?.text).toContain("releases/tag/v5.300.0|view on GitHub");
+    expect(note?.text).toContain("\nWhat was deployed: Meetings Backend");
   });
 });

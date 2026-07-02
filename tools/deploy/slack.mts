@@ -61,6 +61,11 @@ export function buildSlackNotification(
     if (stagingGithubLink) {
       message += ` (<${stagingGithubLink}|view on GitHub>)`;
     }
+  } else if (plan.env === "production" && plan.isRedeploy) {
+    const githubLink = `https://github.com/${owner}/${repo}/releases/tag/${plan.nextVersion}`;
+    message = `${deployer} re-deployed the existing ${plan.nextVersion} release in ${deployDurationMinutes} minutes (<${githubLink}|view on GitHub>)!`;
+
+    channel = polarisChannelId;
   } else if (plan.env === "production" && published) {
     message = `${deployer} deployed ${published.nextVersion} to production in ${deployDurationMinutes} minutes!`;
 

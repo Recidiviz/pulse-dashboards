@@ -48,6 +48,9 @@ export function computeNextVersion(
   return { ok: true, version: `v${bumpedVersion}` };
 }
 
+/** Glob passed to `git tag`/`git describe` to match production release tags (`vX.Y.Z`). */
+const releaseTagPattern = "v[0-9]*.[0-9]*.[0-9]*";
+
 async function prepareStagingPlan(
   octokit: Octokit,
   currentRevision: string,
@@ -81,6 +84,34 @@ async function prepareProductionPlan(
   octokit: Octokit,
   currentRevision: string,
 ): Promise<Extract<ReleasePlan, { env: "production" }>> {
+  // If the commit being deployed is already released (a tag points at it), this is a
+  // re-deploy — e.g. shipping services that were skipped on the first pass. Deploy against
+  // the existing version instead of minting a new one, so we don't double-tag the commit or
+  // cut a second release branch from it (the bug that produced two release lines at one SHA).
+  const tagsAtHead = (
+    await $`git tag --points-at HEAD --list ${releaseTagPattern}`.quiet()
+  ).stdout
+    .trim()
+    .split("\n")
+    .filter(Boolean);
+  const existingTag = tagsAtHead[0];
+  if (existingTag) {
+    const { redeploy } = (await inquirer.prompt({
+      type: "confirm",
+      name: "redeploy",
+      message: `This commit is already released as ${existingTag}. Re-deploy that release?`,
+      default: true,
+    })) as { redeploy: boolean };
+    if (redeploy) {
+      return {
+        env: "production",
+        isRedeploy: true,
+        currentRevision,
+        nextVersion: existingTag,
+      };
+    }
+  }
+
   const { isCpDeploy } = (await inquirer.prompt({
     type: "confirm",
     name: "isCpDeploy",
@@ -133,7 +164,6 @@ async function prepareProductionPlan(
   // inc(). Only needed for cherry-pick deploys.
   let describeTag = "";
   if (isCpDeploy) {
-    const releaseTagPattern = "v[0-9]*.[0-9]*.[0-9]*";
     describeTag = (
       await $`git describe --abbrev=0 --match ${releaseTagPattern}`
     ).stdout.trim();
@@ -153,6 +183,7 @@ async function prepareProductionPlan(
 
   return {
     env: "production",
+    isRedeploy: false,
     currentRevision,
     isCpDeploy,
     nextVersion: result.version,
@@ -202,6 +233,9 @@ export async function finalizeProduction(
   octokit: Octokit,
   plan: Extract<ReleasePlan, { env: "production" }>,
 ): Promise<PublishedRelease | null> {
+  // Re-deploys ship against an existing release, so there is nothing to tag or publish.
+  if (plan.isRedeploy) return null;
+
   // Create a tag for the new version
   await $`git tag -m "Version [${plan.nextVersion}] release - $(date +'%Y-%m-%d %H:%M:%S %Z')" "${plan.nextVersion}"`;
   await $`git push origin ${plan.nextVersion}`;
