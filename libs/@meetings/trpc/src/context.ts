@@ -167,7 +167,7 @@ export async function createContext(
     console.log("Skipping Auth0 verification in dev mode - using mock user");
     formattedUser = {
       email: "staff-email-1@example.com",
-      isRecidivizUser: false,
+      isRecidivizUser: true,
     };
   } else {
     // Cast since the returned object from verifyAuth0Token has no type information
