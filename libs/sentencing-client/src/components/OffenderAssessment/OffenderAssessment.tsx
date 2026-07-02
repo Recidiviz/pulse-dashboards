@@ -194,6 +194,9 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
               assessmentDate={assessmentDate ?? null}
               assessmentAdministeredBy={assessmentAdministeredBy}
               ORASLastUpdatedAt={presenter.SARData?.ORASLastUpdatedAt ?? null}
+              ORASEnteredManually={
+                presenter.SARData?.ORASEnteredManually ?? false
+              }
               hasORASData={hasORASData}
               onOpenForm={() => setShowORASForm(true)}
             />

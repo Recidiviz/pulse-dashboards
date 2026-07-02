@@ -29,9 +29,10 @@ import {
 import { ORASTitle } from "./FormComponents.styles";
 import * as Styled from "./OrasAssessmentScoreCard.styles";
 import { OrasScoreDonut } from "./OrasScoreDonut";
+import { getOrasUpdatedText } from "./utils";
 
 interface ORASHeaderProps {
-  ORASLastUpdatedAt: Date | null;
+  orasUpdatedText: string;
   hasORASData: boolean;
   children: React.ReactNode;
   onOpenForm: () => void;
@@ -42,12 +43,13 @@ interface OrasAssessmentScoreCardProps {
   assessmentDate: Date | string | null;
   assessmentAdministeredBy: string | null;
   ORASLastUpdatedAt: Date | null;
+  ORASEnteredManually: boolean;
   hasORASData: boolean;
   onOpenForm: () => void;
 }
 
 const ORASCardWrapper = observer(function ORASCardWrapper({
-  ORASLastUpdatedAt,
+  orasUpdatedText,
   hasORASData,
   children,
   onOpenForm,
@@ -57,12 +59,7 @@ const ORASCardWrapper = observer(function ORASCardWrapper({
     <Styled.Card>
       <Styled.CardTitle>
         <ORASTitle>ORAS Assessment Score</ORASTitle>
-        <Styled.ORASUpdatedText>
-          Last Updated:{" "}
-          {ORASLastUpdatedAt
-            ? moment.utc(ORASLastUpdatedAt).format("l")
-            : "Unknown"}
-        </Styled.ORASUpdatedText>
+        <Styled.ORASUpdatedText>{orasUpdatedText}</Styled.ORASUpdatedText>
       </Styled.CardTitle>
       <Banner>ORAS data regularly updated on Monday evenings.</Banner>
       {children}
@@ -83,6 +80,7 @@ export const OrasAssessmentScoreCard: React.FC<
   assessmentDate,
   assessmentAdministeredBy,
   ORASLastUpdatedAt,
+  ORASEnteredManually,
   hasORASData,
   onOpenForm,
 }) => {
@@ -90,11 +88,15 @@ export const OrasAssessmentScoreCard: React.FC<
     assessmentType !== null
       ? OVERALL_MAX_SCORE_BY_ASSESSMENT_TYPE[assessmentType] ?? undefined
       : undefined;
+  const orasUpdatedText = getOrasUpdatedText(
+    ORASLastUpdatedAt,
+    ORASEnteredManually,
+  );
 
   if (!assessmentDate) {
     return (
       <ORASCardWrapper
-        ORASLastUpdatedAt={ORASLastUpdatedAt}
+        orasUpdatedText={orasUpdatedText}
         hasORASData={hasORASData}
         onOpenForm={onOpenForm}
       >
@@ -105,7 +107,7 @@ export const OrasAssessmentScoreCard: React.FC<
 
   return (
     <ORASCardWrapper
-      ORASLastUpdatedAt={ORASLastUpdatedAt}
+      orasUpdatedText={orasUpdatedText}
       hasORASData={hasORASData}
       onOpenForm={onOpenForm}
     >

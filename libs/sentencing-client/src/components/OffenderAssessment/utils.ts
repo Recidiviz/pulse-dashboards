@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import moment from "moment";
+
 import { ActiveFeatureVariants } from "../../datastores/types";
 import { MutableSARAttributes } from "../CaseDetails/types";
 
@@ -93,6 +95,24 @@ export function shouldShowOrasContent(
   return (
     !activeFeatureVariants["SARManualORAS"] || (ORASDomainsAvailable ?? true)
   );
+}
+
+/**
+ * Text describing the provenance/recency of ORAS data for the score card
+ * header. Manually-entered ORAS data isn't synced on a schedule, so we show
+ * that it was entered by staff instead of a sync timestamp.
+ *
+ * e.g. "Data manually added"
+ * e.g. "Last Updated: 1/2/2026"
+ */
+export function getOrasUpdatedText(
+  ORASLastUpdatedAt: Date | null,
+  ORASEnteredManually: boolean,
+): string {
+  const label = ORASEnteredManually ? "Data Manually Added:" : `Last Updated: `;
+  return `${label} ${
+    ORASLastUpdatedAt ? moment.utc(ORASLastUpdatedAt).format("l") : "Unknown"
+  }`;
 }
 
 // Domain keys used for conditional rendering based on ORAS type
