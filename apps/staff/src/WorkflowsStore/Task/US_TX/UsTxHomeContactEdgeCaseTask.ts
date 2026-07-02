@@ -23,11 +23,20 @@ import {
 } from "../../../utils/formatStrings";
 import { Task } from "../Task";
 
+const EDGE_CASE_TRIGGER_LABELS: Record<string, string> = {
+  US_TX_MEETS_ADDRESS_CHANGE_HOME_CONTACT_TRIGGER: "Address change date",
+  US_TX_MEETS_INITIAL_HOME_CONTACT_TRIGGER: "Initial contact date",
+  US_TX_MEETS_RETURN_FROM_CUSTODY_HOME_CONTACT_TRIGGER:
+    "Return from custody date",
+};
+
 class UsTxHomeContactEdgeCaseTask extends Task<"usTxHomeContactEdgeCase"> {
   vitalsMetricId = "timely_contact_due_date_based" as const;
 
   get additionalDetails(): string {
-    return `Event Date: ${formatWorkflowsDateString(this.details.causalDate)}`;
+    const trigger =
+      EDGE_CASE_TRIGGER_LABELS[this.details.criteriaName] ?? "Event Date";
+    return `${trigger}: ${formatWorkflowsDateString(this.details.causalDate)}`;
   }
 
   get frequency(): string {

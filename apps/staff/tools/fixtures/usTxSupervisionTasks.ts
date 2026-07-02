@@ -102,6 +102,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
           contactCadence: "1 EVERY 3 MONTHS",
           scheduledContactDates: null,
           causalDate: "2020-01-01",
+          criteriaName: "US_TX_MEETS_ADDRESS_CHANGE_HOME_CONTACT_TRIGGER",
         },
       },
       {
@@ -135,6 +136,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
           contactCadence: "1 EVERY 3 MONTHS",
           scheduledContactDates: "2022-03-10",
           causalDate: "2021-02-10",
+          criteriaName: "US_TX_MEETS_INITIAL_HOME_CONTACT_TRIGGER",
         },
       },
       {
@@ -370,6 +372,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
           contactCadence: "1 EVERY 3 MONTHS",
           scheduledContactDates: null,
           causalDate: "2022-06-25",
+          criteriaName: "US_TX_MEETS_RETURN_FROM_CUSTODY_HOME_CONTACT_TRIGGER",
         },
       },
     ],

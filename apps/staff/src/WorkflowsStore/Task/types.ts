@@ -123,6 +123,7 @@ type UsTxEdgeCaseContactDetails = {
   contactCadence: string;
   scheduledContactDates: string | null;
   causalDate: string;
+  criteriaName: string; // raw trigger, e.g. US_TX_MEETS_ADDRESS_CHANGE_HOME_CONTACT_TRIGGER
 };
 
 type UsTxAssessmentDetails = {
