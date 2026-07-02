@@ -17,20 +17,20 @@
 
 import { DocumentData } from "@google-cloud/firestore";
 
-import { OpportunityType } from "~datatypes";
+import {
+  OpportunityType,
+  UsMoWorkReleaseReferralRecord,
+  usMoWorkReleaseSchema,
+} from "~datatypes";
 
 import { Resident } from "../../../Resident";
 import { UsMoWorkReleaseForm } from "../../Forms/UsMoWorkReleaseForm/UsMoWorkReleaseForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
-import {
-  UsMoWorkReleaseReferralRecord,
-  usMoWorkReleaseSchema,
-} from "./UsMoWorkReleaseReferralRecord";
 
 export class UsMoWorkReleaseOpportunity extends OpportunityBase<
   Resident,
-  UsMoWorkReleaseReferralRecord
+  UsMoWorkReleaseReferralRecord["output"]
 > {
   constructor(
     resident: Resident,

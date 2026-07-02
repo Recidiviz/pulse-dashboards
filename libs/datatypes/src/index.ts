@@ -101,6 +101,20 @@ export * from "./opportunities/UsMi/UsMiWardenInPersonSecurityClassificationComm
 export * from "./opportunities/UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReviewV2/fixtures";
 export * from "./opportunities/UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReviewV2/schema";
 
+// UsMo Exports: Includes fixtures and schema related to US-MO opportunities
+// -----------------------------------------------------------------------------
+export * from "./opportunities/UsMo/common";
+export * from "./opportunities/UsMo/UsMoOverdueRestrictiveHousingBase/fixtures";
+export * from "./opportunities/UsMo/UsMoOverdueRestrictiveHousingBase/schema";
+export * from "./opportunities/UsMo/UsMoOverdueRestrictiveHousingInitialHearing/fixtures";
+export * from "./opportunities/UsMo/UsMoOverdueRestrictiveHousingInitialHearing/schema";
+export * from "./opportunities/UsMo/UsMoOverdueRestrictiveHousingRelease/fixtures";
+export * from "./opportunities/UsMo/UsMoOverdueRestrictiveHousingRelease/schema";
+export * from "./opportunities/UsMo/UsMoOverdueRestrictiveHousingReviewHearing/fixtures";
+export * from "./opportunities/UsMo/UsMoOverdueRestrictiveHousingReviewHearing/schema";
+export * from "./opportunities/UsMo/UsMoWorkRelease/fixtures";
+export * from "./opportunities/UsMo/UsMoWorkRelease/schema";
+
 // UsNc Exports: Includes fixtures and schema related to US-NC opportunities
 // -----------------------------------------------------------------------------
 export * from "./opportunities/UsNc/UsNcCreditReductionReview/fixtures";

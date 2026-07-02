@@ -16,4 +16,3 @@
 // =============================================================================
 
 export * from "./UsMoOverdueRestrictiveHousingReleaseOpportunity";
-export * from "./UsMoOverdueRestrictiveHousingReleaseReferralRecord";

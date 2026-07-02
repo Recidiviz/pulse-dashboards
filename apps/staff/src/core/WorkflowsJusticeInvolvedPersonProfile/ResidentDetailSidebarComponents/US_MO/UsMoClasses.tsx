@@ -17,8 +17,9 @@
 
 import React from "react";
 
+import { UsMoClassInfo } from "~datatypes";
+
 import { formatWorkflowsDate } from "../../../../utils";
-import { UsMoClassInfo } from "../../../../WorkflowsStore/Opportunity/UsMo";
 import {
   CaseNoteDate,
   DetailsHeading,

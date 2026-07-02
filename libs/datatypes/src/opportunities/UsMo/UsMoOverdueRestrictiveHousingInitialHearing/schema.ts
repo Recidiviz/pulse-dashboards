@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
 
 import { z } from "zod";
 
-import { dateStringSchema } from "~datatypes";
-
-import { baseUsMoOverdueRestrictiveHousingSchema } from "../UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingReferralRecord";
+import { ParsedRecord } from "../../../utils/types";
+import { dateStringSchema } from "../../../utils/zod";
+import { baseUsMoOverdueRestrictiveHousingSchema } from "../UsMoOverdueRestrictiveHousingBase/schema";
 
 const usMoInitialHearingPastDueDate = z
   .object({
@@ -44,9 +44,5 @@ export const usMoOverdueRestrictiveHousingInitialHearingSchema =
     ineligibleCriteria,
   });
 
-export type UsMoOverdueRestrictiveHousingInitialHearingReferralRecord = z.infer<
-  typeof usMoOverdueRestrictiveHousingInitialHearingSchema
->;
-
-export type UsMoOverdueRestrictiveHousingInitialHearingReferralRecordRaw =
-  z.input<typeof usMoOverdueRestrictiveHousingInitialHearingSchema>;
+export type UsMoOverdueRestrictiveHousingInitialHearingReferralRecord =
+  ParsedRecord<typeof usMoOverdueRestrictiveHousingInitialHearingSchema>;

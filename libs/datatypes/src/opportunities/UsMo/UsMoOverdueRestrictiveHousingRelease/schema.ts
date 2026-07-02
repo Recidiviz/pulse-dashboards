@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,15 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { maxBy } from "lodash";
+import { maxBy } from "lodash-es";
 import { z } from "zod";
 
-import { dateStringSchema } from "~datatypes";
-
+import { ParsedRecord } from "../../../utils/types";
+import { dateStringSchema } from "../../../utils/zod";
 import {
   baseUsMoOverdueRestrictiveHousingSchema,
   usMoNoActiveProgressiveDisciplineSanctions,
-} from "../UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingReferralRecord";
+} from "../UsMoOverdueRestrictiveHousingBase/schema";
 
 const eligibleCriteria =
   baseUsMoOverdueRestrictiveHousingSchema.shape.eligibleCriteria.extend({
@@ -91,10 +91,6 @@ export const usMoOverdueRestrictiveHousingReleaseSchema =
       return record;
     });
 
-export type UsMoOverdueRestrictiveHousingReleaseReferralRecord = z.infer<
-  typeof usMoOverdueRestrictiveHousingReleaseSchema
->;
-
-export type UsMoOverdueRestrictiveHousingReleaseReferralRecordRaw = z.input<
+export type UsMoOverdueRestrictiveHousingReleaseReferralRecord = ParsedRecord<
   typeof usMoOverdueRestrictiveHousingReleaseSchema
 >;

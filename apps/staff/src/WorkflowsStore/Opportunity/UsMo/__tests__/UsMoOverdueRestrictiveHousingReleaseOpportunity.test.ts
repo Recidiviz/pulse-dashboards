@@ -21,6 +21,8 @@ import { cloneDeep, shuffle } from "lodash";
 import { configure } from "mobx";
 import { freeze } from "timekeeper";
 
+import { UsMoOverdueRestrictiveHousingReleaseReferralRecord } from "~datatypes";
+
 import { RootStore } from "../../../../RootStore";
 import { Resident } from "../../../Resident";
 import { DocumentSubscription } from "../../../subscriptions";
@@ -31,13 +33,12 @@ import {
   usMoPersonRecord,
 } from "../__fixtures__";
 import { UsMoOverdueRestrictiveHousingReleaseOpportunity } from "../UsMoOverdueRestrictiveHousingReleaseOpportunity";
-import { UsMoOverdueRestrictiveHousingReleaseReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingReleaseOpportunity/UsMoOverdueRestrictiveHousingReleaseReferralRecord";
 
 let opp: UsMoOverdueRestrictiveHousingReleaseOpportunity;
 let resident: Resident;
 let root: RootStore;
 let updatesSub: DocumentSubscription<any>;
-let fixtureData: UsMoOverdueRestrictiveHousingReleaseReferralRecordRaw;
+let fixtureData: UsMoOverdueRestrictiveHousingReleaseReferralRecord["input"];
 
 vi.mock("../../../subscriptions");
 

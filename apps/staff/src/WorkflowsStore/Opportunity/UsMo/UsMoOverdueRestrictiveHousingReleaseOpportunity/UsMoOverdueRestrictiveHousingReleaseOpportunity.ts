@@ -19,6 +19,11 @@ import { DocumentData } from "firebase/firestore";
 import { reduce } from "lodash";
 import { ValuesType } from "utility-types";
 
+import {
+  UsMoOverdueRestrictiveHousingReleaseReferralRecord,
+  usMoOverdueRestrictiveHousingReleaseSchema,
+} from "~datatypes";
+
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
 import { OpportunityRequirement } from "../../types";
@@ -33,10 +38,6 @@ import {
   usMoInRestrictiveHousing,
   UsMoOverdueRestrictiveHousingBase,
 } from "../UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingOpportunityBase";
-import {
-  UsMoOverdueRestrictiveHousingReleaseReferralRecord,
-  usMoOverdueRestrictiveHousingReleaseSchema,
-} from "./UsMoOverdueRestrictiveHousingReleaseReferralRecord";
 
 const usMoNoActiveProgressiveDisciplineSanctionsDueDateCopy: CopyTuple<"usMoNoActiveProgressiveDisciplineSanctions"> =
   [
@@ -47,9 +48,9 @@ const usMoNoActiveProgressiveDisciplineSanctionsDueDateCopy: CopyTuple<"usMoNoAc
   ];
 
 const usMoNoActiveProgressiveDisciplineSanctionsCriteriaFormatter: NonNullable<
-  CriteriaFormatters<UsMoOverdueRestrictiveHousingReleaseReferralRecord>[
-    | "eligibleCriteria"
-    | "ineligibleCriteria"]
+  CriteriaFormatters<
+    UsMoOverdueRestrictiveHousingReleaseReferralRecord["output"]
+  >["eligibleCriteria" | "ineligibleCriteria"]
 >["usMoNoActiveProgressiveDisciplineSanctions"] = {
   DAYS_PAST: (usMoNoActiveProgressiveDisciplineSanctions) =>
     usMoNoActiveProgressiveDisciplineSanctions &&
@@ -67,38 +68,40 @@ const usMoNoActiveProgressiveDisciplineSanctionsCriteriaFormatter: NonNullable<
       : "N/A",
 };
 
-const CRITERIA_COPY: CriteriaCopy<UsMoOverdueRestrictiveHousingReleaseReferralRecord> =
-  {
-    eligibleCriteria: [
-      usMoNoActiveProgressiveDisciplineSanctionsDueDateCopy,
-      [
-        "usMoProgressiveDisciplineSanctionAfterMostRecentHearing",
-        {
-          text: "In Restrictive Housing due to a progressive discipline sanction",
-        },
-      ],
-      [
-        "usMoProgressiveDisciplineSanctionAfterRestrictiveHousingStart",
-        {
-          text: "In Restrictive Housing due to a progressive discipline sanction",
-        },
-      ],
-      usMoInRestrictiveHousing,
+const CRITERIA_COPY: CriteriaCopy<
+  UsMoOverdueRestrictiveHousingReleaseReferralRecord["output"]
+> = {
+  eligibleCriteria: [
+    usMoNoActiveProgressiveDisciplineSanctionsDueDateCopy,
+    [
+      "usMoProgressiveDisciplineSanctionAfterMostRecentHearing",
+      {
+        text: "In Restrictive Housing due to a progressive discipline sanction",
+      },
     ],
-    ineligibleCriteria: [usMoNoActiveProgressiveDisciplineSanctionsDueDateCopy],
-  };
+    [
+      "usMoProgressiveDisciplineSanctionAfterRestrictiveHousingStart",
+      {
+        text: "In Restrictive Housing due to a progressive discipline sanction",
+      },
+    ],
+    usMoInRestrictiveHousing,
+  ],
+  ineligibleCriteria: [usMoNoActiveProgressiveDisciplineSanctionsDueDateCopy],
+};
 
-const CRITERIA_FORMATTERS: CriteriaFormatters<UsMoOverdueRestrictiveHousingReleaseReferralRecord> =
-  {
-    eligibleCriteria: {
-      usMoNoActiveProgressiveDisciplineSanctions:
-        usMoNoActiveProgressiveDisciplineSanctionsCriteriaFormatter,
-    },
-    ineligibleCriteria: {
-      usMoNoActiveProgressiveDisciplineSanctions:
-        usMoNoActiveProgressiveDisciplineSanctionsCriteriaFormatter,
-    },
-  };
+const CRITERIA_FORMATTERS: CriteriaFormatters<
+  UsMoOverdueRestrictiveHousingReleaseReferralRecord["output"]
+> = {
+  eligibleCriteria: {
+    usMoNoActiveProgressiveDisciplineSanctions:
+      usMoNoActiveProgressiveDisciplineSanctionsCriteriaFormatter,
+  },
+  ineligibleCriteria: {
+    usMoNoActiveProgressiveDisciplineSanctions:
+      usMoNoActiveProgressiveDisciplineSanctionsCriteriaFormatter,
+  },
+};
 
 type ThisCriteriaCopyInstance = typeof CRITERIA_COPY;
 
@@ -110,7 +113,9 @@ type ThisCriteriaCopyInstance = typeof CRITERIA_COPY;
  */
 const removeDuplicateCopyIfPresent = (
   criteriaCopy: typeof CRITERIA_COPY,
-  record: UsMoOverdueRestrictiveHousingReleaseReferralRecord | undefined,
+  record:
+    | UsMoOverdueRestrictiveHousingReleaseReferralRecord["output"]
+    | undefined,
 ): ThisCriteriaCopyInstance => {
   if (!record) return criteriaCopy;
 
@@ -136,7 +141,9 @@ const removeDuplicateCopyIfPresent = (
     : criteriaCopy;
 };
 
-export class UsMoOverdueRestrictiveHousingReleaseOpportunity extends UsMoOverdueRestrictiveHousingBase<UsMoOverdueRestrictiveHousingReleaseReferralRecord> {
+export class UsMoOverdueRestrictiveHousingReleaseOpportunity extends UsMoOverdueRestrictiveHousingBase<
+  UsMoOverdueRestrictiveHousingReleaseReferralRecord["output"]
+> {
   constructor(resident: Resident, record: DocumentData) {
     super(
       resident,

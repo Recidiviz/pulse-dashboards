@@ -22,7 +22,10 @@ import {
   startOfWeek,
 } from "date-fns";
 
-import { OpportunityType } from "~datatypes";
+import {
+  BaseUsMoOverdueRestrictiveHousingReferralRecord,
+  OpportunityType,
+} from "~datatypes";
 
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
@@ -30,7 +33,6 @@ import { ValidateFunction } from "../../../subscriptions";
 import { CopyTuple } from "../..";
 import { OpportunityBase } from "../../OpportunityBase";
 import { Component, OpportunityTab, OpportunityTabGroup } from "../../types";
-import { BaseUsMoOverdueRestrictiveHousingReferralRecord } from "./UsMoOverdueRestrictiveHousingReferralRecord";
 
 export const usMoNoActiveProgressiveDisciplineSanctions: CopyTuple<"usMoNoActiveProgressiveDisciplineSanctions"> =
   [
@@ -61,7 +63,8 @@ export const US_MO_DAYS_PAST = (eligibilityDate: Date, numOfDays?: number) => {
 };
 
 export abstract class UsMoOverdueRestrictiveHousingBase<
-  ReferralRecord extends BaseUsMoOverdueRestrictiveHousingReferralRecord,
+  ReferralRecord extends
+    BaseUsMoOverdueRestrictiveHousingReferralRecord["output"],
 > extends OpportunityBase<Resident, ReferralRecord> {
   constructor(
     resident: Resident,

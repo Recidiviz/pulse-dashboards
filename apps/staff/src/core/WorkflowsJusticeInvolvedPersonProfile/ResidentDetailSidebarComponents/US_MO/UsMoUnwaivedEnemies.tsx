@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsMoUnwaivedEnemyInfo } from "../../../../WorkflowsStore";
+import { UsMoUnwaivedEnemyInfo } from "~datatypes";
+
 import {
   DetailsHeading,
   DetailsSubheading,

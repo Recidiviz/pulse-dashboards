@@ -15,12 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { WorkflowsResidentRecord } from "~datatypes";
-
-import { UsMoOverdueRestrictiveHousingInitialHearingReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingInitialHearingOpportunity/UsMoOverdueRestrictiveHousingInitialHearingReferralRecord";
-import { BaseUsMoOverdueRestrictiveHousingReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingReferralRecord";
-import { UsMoOverdueRestrictiveHousingReleaseReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingReleaseOpportunity";
-import { UsMoOverdueRestrictiveHousingReviewHearingReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingReviewHearingOpportunity/UsMoOverdueRestrictiveHousingReviewHearingReferralRecord";
+import {
+  BaseUsMoOverdueRestrictiveHousingReferralRecord,
+  UsMoOverdueRestrictiveHousingInitialHearingReferralRecord,
+  UsMoOverdueRestrictiveHousingReleaseReferralRecord,
+  UsMoOverdueRestrictiveHousingReviewHearingReferralRecord,
+  WorkflowsResidentRecord,
+} from "~datatypes";
 
 export const usMoPersonRecord: WorkflowsResidentRecord = {
   recordId: "us_mo_111",
@@ -48,7 +49,7 @@ export const usMoPersonRecord: WorkflowsResidentRecord = {
 };
 
 export const baseUsMoOverdueRestrictiveHousingReferralRecordFixture = <
-  T extends BaseUsMoOverdueRestrictiveHousingReferralRecordRaw,
+  T extends BaseUsMoOverdueRestrictiveHousingReferralRecord["input"],
 >(
   externalIdSuffix: number,
   additionalCriteria?: Record<string, any>,
@@ -91,44 +92,41 @@ export const baseUsMoOverdueRestrictiveHousingReferralRecordFixture = <
       numMinorCdvsBeforeLastHearing: "5",
     },
     formInformation: {},
-  }) as BaseUsMoOverdueRestrictiveHousingReferralRecordRaw as T;
+  }) as BaseUsMoOverdueRestrictiveHousingReferralRecord["input"] as T;
 
 export const usMoOverdueRestrictiveHousingReleaseReferralRecordFixture =
-  baseUsMoOverdueRestrictiveHousingReferralRecordFixture<UsMoOverdueRestrictiveHousingReleaseReferralRecordRaw>(
-    1,
-    {
-      usMoProgressiveDisciplineSanctionAfterMostRecentHearing: {
-        latestRestrictiveHousingHearingDate: "2023-09-20",
-      },
-      usMoProgressiveDisciplineSanctionAfterRestrictiveHousingStart: {
-        latestProgressiveDisciplineSanctionStartDate: "2023-08-15",
-        restrictiveHousingStartDate: "2023-08-15",
-      },
+  baseUsMoOverdueRestrictiveHousingReferralRecordFixture<
+    UsMoOverdueRestrictiveHousingReleaseReferralRecord["input"]
+  >(1, {
+    usMoProgressiveDisciplineSanctionAfterMostRecentHearing: {
+      latestRestrictiveHousingHearingDate: "2023-09-20",
     },
-  );
+    usMoProgressiveDisciplineSanctionAfterRestrictiveHousingStart: {
+      latestProgressiveDisciplineSanctionStartDate: "2023-08-15",
+      restrictiveHousingStartDate: "2023-08-15",
+    },
+  });
 
 export const usMoOverdueRestrictiveHousingInitialHearingReferralRecordFixture =
-  baseUsMoOverdueRestrictiveHousingReferralRecordFixture<UsMoOverdueRestrictiveHousingInitialHearingReferralRecordRaw>(
-    1,
-    {
-      usMoInitialHearingPastDueDate: {
-        nextReviewDate: "2023-10-15",
-        dueDateInferred: true,
-      },
+  baseUsMoOverdueRestrictiveHousingReferralRecordFixture<
+    UsMoOverdueRestrictiveHousingInitialHearingReferralRecord["input"]
+  >(1, {
+    usMoInitialHearingPastDueDate: {
+      nextReviewDate: "2023-10-15",
+      dueDateInferred: true,
     },
-  );
+  });
 
 export const usMoOverdueRestrictiveHousingReviewHearingReferralRecordFixture =
-  baseUsMoOverdueRestrictiveHousingReferralRecordFixture<UsMoOverdueRestrictiveHousingReviewHearingReferralRecordRaw>(
-    1,
-    {
-      usMoPastLatestScheduledReviewDate: {
-        nextReviewDate: "2023-10-15",
-        dueDateInferred: true,
-      },
-      usMoHearingAfterRestrictiveHousingStart: {
-        latestRestrictiveHousingHearingDate: "2023-10-15",
-        restrictiveHousingStartDate: "2023-09-15",
-      },
+  baseUsMoOverdueRestrictiveHousingReferralRecordFixture<
+    UsMoOverdueRestrictiveHousingReviewHearingReferralRecord["input"]
+  >(1, {
+    usMoPastLatestScheduledReviewDate: {
+      nextReviewDate: "2023-10-15",
+      dueDateInferred: true,
     },
-  );
+    usMoHearingAfterRestrictiveHousingStart: {
+      latestRestrictiveHousingHearingDate: "2023-10-15",
+      restrictiveHousingStartDate: "2023-09-15",
+    },
+  });

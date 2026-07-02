@@ -15,18 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { baseUsMoOverdueRestrictiveHousingReferralRecordFixture } from "../__fixtures__";
 import {
-  BaseUsMoOverdueRestrictiveHousingReferralRecordRaw,
+  BaseUsMoOverdueRestrictiveHousingReferralRecord,
   baseUsMoOverdueRestrictiveHousingSchema,
-} from "../UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingReferralRecord";
+} from "~datatypes";
+
+import { baseUsMoOverdueRestrictiveHousingReferralRecordFixture } from "../__fixtures__";
 
 test("validateReferral", () => {
   expect(
     baseUsMoOverdueRestrictiveHousingSchema.parse(
-      baseUsMoOverdueRestrictiveHousingReferralRecordFixture<BaseUsMoOverdueRestrictiveHousingReferralRecordRaw>(
-        1,
-      ),
+      baseUsMoOverdueRestrictiveHousingReferralRecordFixture<
+        BaseUsMoOverdueRestrictiveHousingReferralRecord["input"]
+      >(1),
     ),
   ).toMatchInlineSnapshot(`
     {
@@ -71,9 +72,9 @@ test("validateReferral", () => {
 });
 
 const baseRecord =
-  baseUsMoOverdueRestrictiveHousingReferralRecordFixture<BaseUsMoOverdueRestrictiveHousingReferralRecordRaw>(
-    1,
-  );
+  baseUsMoOverdueRestrictiveHousingReferralRecordFixture<
+    BaseUsMoOverdueRestrictiveHousingReferralRecord["input"]
+  >(1);
 
 const createMostRecentHearingCommentsTestCase = (
   mostRecentHearingComments?: string,

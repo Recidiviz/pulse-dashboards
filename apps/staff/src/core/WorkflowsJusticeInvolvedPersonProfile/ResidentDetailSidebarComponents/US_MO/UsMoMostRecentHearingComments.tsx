@@ -18,7 +18,8 @@
 import { toTitleCase } from "@artsy/to-title-case";
 import { startCase } from "lodash";
 
-import { UsMoMostRecentHearingCommentsMetadata } from "../../../../WorkflowsStore/Opportunity/UsMo/common";
+import { UsMoMostRecentHearingCommentsMetadata } from "~datatypes";
+
 import {
   DetailsHeading,
   DetailsSection,

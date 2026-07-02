@@ -18,9 +18,10 @@
 import { differenceInDays } from "date-fns";
 import React from "react";
 
+import { BaseUsMoOverdueRestrictiveHousingReferralRecord } from "~datatypes";
+
 import { formatWorkflowsDate } from "../../../../utils";
 import { UsMoOverdueRestrictiveHousingBase } from "../../../../WorkflowsStore/Opportunity/UsMo/UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingOpportunityBase";
-import { BaseUsMoOverdueRestrictiveHousingReferralRecord } from "../../../../WorkflowsStore/Opportunity/UsMo/UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingReferralRecord";
 import {
   CaseNoteDate,
   DetailsHeading,
@@ -44,7 +45,7 @@ export function UsMoRestrictiveHousing({
     return null;
   }
   const opportunityRecord =
-    opportunity.record as BaseUsMoOverdueRestrictiveHousingReferralRecord;
+    opportunity.record as BaseUsMoOverdueRestrictiveHousingReferralRecord["output"];
   if (!opportunityRecord) return null;
 
   const {

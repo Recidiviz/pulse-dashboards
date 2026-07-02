@@ -1,0 +1,124 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for almostEligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "usMoInRestrictiveHousing": {
+      "confinementType": "COMMUNITY",
+    },
+    "usMoNoActiveProgressiveDisciplineSanctions": {
+      "latestSanctionEndDate": 2023-12-05T00:00:00.000Z,
+      "latestSanctionStartDate": 2023-08-15T00:00:00.000Z,
+    },
+  },
+  "externalId": "rh-2",
+  "ineligibleCriteria": {
+    "usMoInitialHearingPastDueDate": {
+      "dueDateInferred": true,
+      "nextReviewDate": 2023-10-15T00:00:00.000Z,
+    },
+  },
+  "isAlmostEligible": true,
+  "isEligible": false,
+  "metadata": {
+    "cdvsSinceLastHearing": [],
+    "majorCdvs": [],
+    "numMinorCdvsBeforeLastHearing": 0,
+    "restrictiveHousingStartDate": 2022-10-01T00:00:00.000Z,
+  },
+  "stateCode": "US_MO",
+}
+`;
+
+exports[`schema for eligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "usMoInRestrictiveHousing": {
+      "confinementType": "COMMUNITY",
+    },
+    "usMoInitialHearingPastDueDate": {
+      "dueDateInferred": true,
+      "nextReviewDate": 2023-10-15T00:00:00.000Z,
+    },
+    "usMoNoActiveProgressiveDisciplineSanctions": {
+      "latestSanctionEndDate": 2023-12-05T00:00:00.000Z,
+      "latestSanctionStartDate": 2023-08-15T00:00:00.000Z,
+    },
+  },
+  "externalId": "rh-1",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {
+    "bedNumber": "03",
+    "buildingNumber": "13",
+    "cdvsSinceLastHearing": [],
+    "complexNumber": "2",
+    "currentFacility": "FACILITY 01",
+    "housingUseCode": "123456",
+    "majorCdvs": [
+      {
+        "cdvDate": 2022-02-20T00:00:00.000Z,
+        "cdvRule": "Rule 7.2",
+      },
+    ],
+    "mostRecentHearingComments": "Reason for Hearing: 30 day review",
+    "mostRecentHearingDate": 2022-09-03T00:00:00.000Z,
+    "mostRecentHearingFacility": "FACILITY NAME",
+    "mostRecentHearingType": "hearing type",
+    "numMinorCdvsBeforeLastHearing": 5,
+    "restrictiveHousingStartDate": 2022-10-01T00:00:00.000Z,
+    "roomNumber": "05",
+  },
+  "stateCode": "US_MO",
+}
+`;
+
+exports[`schema when usMoInitialHearingPastDueDate moves from eligibleCriteria to ineligibleCriteria 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "usMoInRestrictiveHousing": {
+      "confinementType": "COMMUNITY",
+    },
+    "usMoInitialHearingPastDueDate": undefined,
+    "usMoNoActiveProgressiveDisciplineSanctions": {
+      "latestSanctionEndDate": 2023-12-05T00:00:00.000Z,
+      "latestSanctionStartDate": 2023-08-15T00:00:00.000Z,
+    },
+  },
+  "externalId": "rh-1",
+  "ineligibleCriteria": {
+    "usMoInitialHearingPastDueDate": {
+      "dueDateInferred": true,
+      "nextReviewDate": 2023-10-15T00:00:00.000Z,
+    },
+  },
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {
+    "bedNumber": "03",
+    "buildingNumber": "13",
+    "cdvsSinceLastHearing": [],
+    "complexNumber": "2",
+    "currentFacility": "FACILITY 01",
+    "housingUseCode": "123456",
+    "majorCdvs": [
+      {
+        "cdvDate": 2022-02-20T00:00:00.000Z,
+        "cdvRule": "Rule 7.2",
+      },
+    ],
+    "mostRecentHearingComments": "Reason for Hearing: 30 day review",
+    "mostRecentHearingDate": 2022-09-03T00:00:00.000Z,
+    "mostRecentHearingFacility": "FACILITY NAME",
+    "mostRecentHearingType": "hearing type",
+    "numMinorCdvsBeforeLastHearing": 5,
+    "restrictiveHousingStartDate": 2022-10-01T00:00:00.000Z,
+    "roomNumber": "05",
+  },
+  "stateCode": "US_MO",
+}
+`;

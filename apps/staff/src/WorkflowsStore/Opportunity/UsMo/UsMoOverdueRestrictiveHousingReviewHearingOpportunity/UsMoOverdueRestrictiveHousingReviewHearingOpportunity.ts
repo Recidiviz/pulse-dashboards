@@ -17,6 +17,11 @@
 
 import { DocumentData } from "firebase/firestore";
 
+import {
+  UsMoOverdueRestrictiveHousingReviewHearingReferralRecord,
+  usMoOverdueRestrictiveHousingReviewHearingSchema,
+} from "~datatypes";
+
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
 import { OpportunityRequirement } from "../../types";
@@ -32,10 +37,6 @@ import {
   usMoNoActiveProgressiveDisciplineSanctions,
   UsMoOverdueRestrictiveHousingBase,
 } from "../UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingOpportunityBase";
-import {
-  UsMoOverdueRestrictiveHousingReviewHearingReferralRecord,
-  usMoOverdueRestrictiveHousingReviewHearingSchema,
-} from "./UsMoOverdueRestrictiveHousingReviewHearingReferralRecord";
 
 const usMoPastLatestScheduledReviewDateCopy: CopyTuple<"usMoPastLatestScheduledReviewDate"> =
   [
@@ -48,9 +49,9 @@ const usMoPastLatestScheduledReviewDateCopy: CopyTuple<"usMoPastLatestScheduledR
   ];
 
 const usMoPastLatestScheduledReviewDateCriteriaFormatter: NonNullable<
-  CriteriaFormatters<UsMoOverdueRestrictiveHousingReviewHearingReferralRecord>[
-    | "eligibleCriteria"
-    | "ineligibleCriteria"]
+  CriteriaFormatters<
+    UsMoOverdueRestrictiveHousingReviewHearingReferralRecord["output"]
+  >["eligibleCriteria" | "ineligibleCriteria"]
 >["usMoPastLatestScheduledReviewDate"] = {
   DAYS_PAST: (usMoPastLatestScheduledReviewDate) =>
     !usMoPastLatestScheduledReviewDate
@@ -62,29 +63,33 @@ const usMoPastLatestScheduledReviewDateCriteriaFormatter: NonNullable<
       : formatWorkflowsDate(usMoPastLatestScheduledReviewDate.nextReviewDate),
 };
 
-const CRITERIA_COPY: CriteriaCopy<UsMoOverdueRestrictiveHousingReviewHearingReferralRecord> =
-  {
-    eligibleCriteria: [
-      usMoPastLatestScheduledReviewDateCopy,
-      usMoNoActiveProgressiveDisciplineSanctions,
-      usMoInRestrictiveHousing,
-    ],
-    ineligibleCriteria: [usMoPastLatestScheduledReviewDateCopy],
-  };
+const CRITERIA_COPY: CriteriaCopy<
+  UsMoOverdueRestrictiveHousingReviewHearingReferralRecord["output"]
+> = {
+  eligibleCriteria: [
+    usMoPastLatestScheduledReviewDateCopy,
+    usMoNoActiveProgressiveDisciplineSanctions,
+    usMoInRestrictiveHousing,
+  ],
+  ineligibleCriteria: [usMoPastLatestScheduledReviewDateCopy],
+};
 
-const CRITERIA_FORMATTERS: CriteriaFormatters<UsMoOverdueRestrictiveHousingReviewHearingReferralRecord> =
-  {
-    eligibleCriteria: {
-      usMoPastLatestScheduledReviewDate:
-        usMoPastLatestScheduledReviewDateCriteriaFormatter,
-    },
-    ineligibleCriteria: {
-      usMoPastLatestScheduledReviewDate:
-        usMoPastLatestScheduledReviewDateCriteriaFormatter,
-    },
-  };
+const CRITERIA_FORMATTERS: CriteriaFormatters<
+  UsMoOverdueRestrictiveHousingReviewHearingReferralRecord["output"]
+> = {
+  eligibleCriteria: {
+    usMoPastLatestScheduledReviewDate:
+      usMoPastLatestScheduledReviewDateCriteriaFormatter,
+  },
+  ineligibleCriteria: {
+    usMoPastLatestScheduledReviewDate:
+      usMoPastLatestScheduledReviewDateCriteriaFormatter,
+  },
+};
 
-export class UsMoOverdueRestrictiveHousingReviewHearingOpportunity extends UsMoOverdueRestrictiveHousingBase<UsMoOverdueRestrictiveHousingReviewHearingReferralRecord> {
+export class UsMoOverdueRestrictiveHousingReviewHearingOpportunity extends UsMoOverdueRestrictiveHousingBase<
+  UsMoOverdueRestrictiveHousingReviewHearingReferralRecord["output"]
+> {
   constructor(resident: Resident, record: DocumentData) {
     super(
       resident,

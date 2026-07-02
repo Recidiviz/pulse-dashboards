@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,11 +17,12 @@
 
 import { z } from "zod";
 
-import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
+import { ParsedRecord } from "../../../utils/types";
+import { dateStringSchema } from "../../../utils/zod";
+import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
+import { usMoMetadataSchema } from "../common";
 
-import { usMoMetadataSchema as metadata } from "../common";
-
-export const usMoInRestrictiveHousing = z.object({
+export const usMoInRestrictiveHousingCriteria = z.object({
   confinementType: z.string(),
 });
 
@@ -34,20 +35,16 @@ export const usMoNoActiveProgressiveDisciplineSanctions = z
 
 export const baseUsMoOverdueRestrictiveHousingSchema =
   opportunitySchemaBase.extend({
-    metadata,
+    metadata: usMoMetadataSchema,
     eligibleCriteria: z
       .object({
-        usMoInRestrictiveHousing,
+        usMoInRestrictiveHousing: usMoInRestrictiveHousingCriteria,
         usMoNoActiveProgressiveDisciplineSanctions,
       })
       .passthrough(),
     ineligibleCriteria: z.object({}).passthrough(), // Empty shape here so that it can be pulled out and extended
   });
 
-export type BaseUsMoOverdueRestrictiveHousingReferralRecord = z.infer<
-  typeof baseUsMoOverdueRestrictiveHousingSchema
->;
-
-export type BaseUsMoOverdueRestrictiveHousingReferralRecordRaw = z.input<
+export type BaseUsMoOverdueRestrictiveHousingReferralRecord = ParsedRecord<
   typeof baseUsMoOverdueRestrictiveHousingSchema
 >;

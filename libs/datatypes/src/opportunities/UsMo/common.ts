@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,12 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { mapValues } from "lodash";
+import { mapValues } from "lodash-es";
 import { z } from "zod";
 
-import { dateStringSchema, usMoSanctionsSchema } from "~datatypes";
+import { usMoSanctionsSchema } from "../../people/Resident/US_MO/metadata/schema";
+import { dateStringSchema } from "../../utils/zod";
 
-import { stringToIntSchema } from "../schemaHelpers";
+const stringToIntSchema = z.string().transform((s) => parseInt(s));
 
 const classesSchema = z.object({
   startDate: dateStringSchema,

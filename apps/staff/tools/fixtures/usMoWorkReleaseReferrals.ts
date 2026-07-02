@@ -15,17 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { UsMoWorkReleaseReferralRecord } from "~datatypes";
 
-import { usMoWorkReleaseSchema } from "../../src/WorkflowsStore/Opportunity/UsMo/UsMoWorkReleaseOpportunity/UsMoWorkReleaseReferralRecord";
 import { externalIdFunc, FirestoreFixture } from "./utils";
 
-// Use the Raw/input type so we can provide ISO strings for dates and let the schema parse them.
-export type UsMoWorkReleaseReferralRecordRaw = z.input<
-  typeof usMoWorkReleaseSchema
->;
-
-const data: UsMoWorkReleaseReferralRecordRaw[] = [
+const data: UsMoWorkReleaseReferralRecord["input"][] = [
   {
     stateCode: "US_MO",
     externalId: "RES019",
@@ -78,8 +72,9 @@ const data: UsMoWorkReleaseReferralRecordRaw[] = [
   },
 ];
 
-export const usMoWorkReleaseReferrals: FirestoreFixture<UsMoWorkReleaseReferralRecordRaw> =
-  {
-    data,
-    idFunc: externalIdFunc,
-  };
+export const usMoWorkReleaseReferrals: FirestoreFixture<
+  UsMoWorkReleaseReferralRecord["input"]
+> = {
+  data,
+  idFunc: externalIdFunc,
+};

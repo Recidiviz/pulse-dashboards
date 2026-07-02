@@ -1,0 +1,92 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for almostEligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "usMoHearingAfterRestrictiveHousingStart": {
+      "latestRestrictiveHousingHearingDate": 2023-10-15T00:00:00.000Z,
+      "restrictiveHousingStartDate": 2023-09-15T00:00:00.000Z,
+    },
+    "usMoInRestrictiveHousing": {
+      "confinementType": "COMMUNITY",
+    },
+    "usMoNoActiveProgressiveDisciplineSanctions": {
+      "latestSanctionEndDate": 2023-12-05T00:00:00.000Z,
+      "latestSanctionStartDate": 2023-08-15T00:00:00.000Z,
+    },
+  },
+  "externalId": "rh-2",
+  "ineligibleCriteria": {
+    "usMoPastLatestScheduledReviewDate": {
+      "dueDateInferred": true,
+      "nextReviewDate": 2023-11-14T00:00:00.000Z,
+    },
+  },
+  "isAlmostEligible": true,
+  "isEligible": false,
+  "metadata": {
+    "cdvsSinceLastHearing": [],
+    "majorCdvs": [],
+    "numMinorCdvsBeforeLastHearing": 0,
+    "restrictiveHousingStartDate": 2022-10-01T00:00:00.000Z,
+  },
+  "stateCode": "US_MO",
+}
+`;
+
+exports[`schema for eligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "usMoHearingAfterRestrictiveHousingStart": {
+      "latestRestrictiveHousingHearingDate": 2023-10-15T00:00:00.000Z,
+      "restrictiveHousingStartDate": 2023-09-15T00:00:00.000Z,
+    },
+    "usMoInRestrictiveHousing": {
+      "confinementType": "COMMUNITY",
+    },
+    "usMoNoActiveProgressiveDisciplineSanctions": {
+      "latestSanctionEndDate": 2023-12-05T00:00:00.000Z,
+      "latestSanctionStartDate": 2023-08-15T00:00:00.000Z,
+    },
+    "usMoPastLatestScheduledReviewDate": {
+      "dueDateInferred": true,
+      "nextReviewDate": 2023-10-15T00:00:00.000Z,
+    },
+  },
+  "externalId": "rh-1",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {
+    "bedNumber": "03",
+    "buildingNumber": "13",
+    "cdvsSinceLastHearing": [],
+    "complexNumber": "2",
+    "currentFacility": "FACILITY 01",
+    "housingUseCode": "123456",
+    "majorCdvs": [
+      {
+        "cdvDate": 2022-02-20T00:00:00.000Z,
+        "cdvRule": "Rule 7.2",
+      },
+    ],
+    "mostRecentHearingComments": "Reason for Hearing: 30 day review",
+    "mostRecentHearingDate": 2022-09-03T00:00:00.000Z,
+    "mostRecentHearingFacility": "FACILITY NAME",
+    "mostRecentHearingType": "hearing type",
+    "numMinorCdvsBeforeLastHearing": 5,
+    "restrictiveHousingStartDate": 2022-10-01T00:00:00.000Z,
+    "roomNumber": "05",
+  },
+  "stateCode": "US_MO",
+}
+`;
+
+exports[`schema infers nextReviewDate via addDays(30) when usMoPastLatestScheduledReviewDate is null in ineligibleCriteria 1`] = `
+{
+  "dueDateInferred": true,
+  "nextReviewDate": 2023-11-14T00:00:00.000Z,
+}
+`;

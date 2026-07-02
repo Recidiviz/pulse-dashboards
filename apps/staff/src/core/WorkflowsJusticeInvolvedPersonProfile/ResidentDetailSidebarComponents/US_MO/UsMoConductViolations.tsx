@@ -17,11 +17,12 @@
 
 import React from "react";
 
-import { formatWorkflowsDate } from "../../../../utils";
 import {
   UsMoConductViolationInfo,
   UsMoConductViolationMetadata,
-} from "../../../../WorkflowsStore/Opportunity/UsMo";
+} from "~datatypes";
+
+import { formatWorkflowsDate } from "../../../../utils";
 import {
   CaseNoteTitle,
   DetailsContent,

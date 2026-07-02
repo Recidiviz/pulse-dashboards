@@ -17,178 +17,178 @@
 
 import { nextMonday, startOfTomorrow } from "date-fns";
 
+import { UsMoOverdueRestrictiveHousingInitialHearingReferralRecord } from "~datatypes";
+
 import { formatDateToISO } from "../../src/utils";
-import { UsMoOverdueRestrictiveHousingInitialHearingReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsMo/UsMoOverdueRestrictiveHousingInitialHearingOpportunity/UsMoOverdueRestrictiveHousingInitialHearingReferralRecord";
 import { fixtureWithIdKey } from "./utils";
 
 export const usMoOverdueRestrictiveHousingInitialHearingReferrals =
-  fixtureWithIdKey<UsMoOverdueRestrictiveHousingInitialHearingReferralRecordRaw>(
-    "externalId",
-    [
-      {
-        externalId: "RES011",
-        stateCode: "US_MO",
-        eligibleCriteria: {
-          usMoInitialHearingPastDueDate: {
-            nextReviewDate: `${formatDateToISO(startOfTomorrow())}`,
-            dueDateInferred: false,
-          },
-          usMoInRestrictiveHousing: {
-            confinementType: "COMMUNITY",
-          },
-          usMoNoActiveProgressiveDisciplineSanctions: {
-            latestSanctionEndDate: `${formatDateToISO(nextMonday(new Date()))}`,
-            latestSanctionStartDate: "2023-01-15",
-          },
+  fixtureWithIdKey<
+    UsMoOverdueRestrictiveHousingInitialHearingReferralRecord["input"]
+  >("externalId", [
+    {
+      externalId: "RES011",
+      stateCode: "US_MO",
+      eligibleCriteria: {
+        usMoInitialHearingPastDueDate: {
+          nextReviewDate: `${formatDateToISO(startOfTomorrow())}`,
+          dueDateInferred: false,
         },
-        ineligibleCriteria: {},
-        metadata: {
-          mostRecentHearingDate: "2022-09-03",
-          mostRecentHearingType: "hearing type",
-          mostRecentHearingFacility: "FACILITY NAME",
-          mostRecentHearingComments: "Reason for Hearing: 30 day review",
-          currentFacility: "FACILITY 02",
-          restrictiveHousingStartDate: "2022-10-01",
-          bedNumber: "03",
-          roomNumber: "05",
-          complexNumber: "2",
-          buildingNumber: "13",
-          housingUseCode: "HOS",
-          majorCdvs: [
-            {
-              cdvDate: "2022-02-20",
-              cdvRule: "Rule 7.2",
-            },
-          ],
-          cdvsSinceLastHearing: [],
-          numMinorCdvsBeforeLastHearing: "3",
+        usMoInRestrictiveHousing: {
+          confinementType: "COMMUNITY",
         },
-        isEligible: true,
-        isAlmostEligible: false,
+        usMoNoActiveProgressiveDisciplineSanctions: {
+          latestSanctionEndDate: `${formatDateToISO(nextMonday(new Date()))}`,
+          latestSanctionStartDate: "2023-01-15",
+        },
       },
-      {
-        externalId: "RES012",
-        stateCode: "US_MO",
-        eligibleCriteria: {
-          usMoInitialHearingPastDueDate: {
-            nextReviewDate: `${formatDateToISO(startOfTomorrow())}`,
-            dueDateInferred: true,
+      ineligibleCriteria: {},
+      metadata: {
+        mostRecentHearingDate: "2022-09-03",
+        mostRecentHearingType: "hearing type",
+        mostRecentHearingFacility: "FACILITY NAME",
+        mostRecentHearingComments: "Reason for Hearing: 30 day review",
+        currentFacility: "FACILITY 02",
+        restrictiveHousingStartDate: "2022-10-01",
+        bedNumber: "03",
+        roomNumber: "05",
+        complexNumber: "2",
+        buildingNumber: "13",
+        housingUseCode: "HOS",
+        majorCdvs: [
+          {
+            cdvDate: "2022-02-20",
+            cdvRule: "Rule 7.2",
           },
-          usMoInRestrictiveHousing: {
-            confinementType: "COMMUNITY",
-          },
-          usMoNoActiveProgressiveDisciplineSanctions: {
-            latestSanctionEndDate: `${formatDateToISO(nextMonday(new Date()))}`,
-            latestSanctionStartDate: "2023-01-15",
-          },
-        },
-        ineligibleCriteria: {},
-        metadata: {
-          mostRecentHearingDate: "2022-09-03",
-          mostRecentHearingType: "hearing type",
-          mostRecentHearingFacility: "FACILITY NAME",
-          mostRecentHearingComments: "Reason for Hearing: 30 day review",
-          currentFacility: "FACILITY 02",
-          restrictiveHousingStartDate: "2022-10-01",
-          bedNumber: "03",
-          roomNumber: "05",
-          complexNumber: "2",
-          buildingNumber: "13",
-          housingUseCode: "HOS",
-          majorCdvs: [
-            {
-              cdvDate: "2022-02-20",
-              cdvRule: "Rule 7.2",
-            },
-          ],
-          cdvsSinceLastHearing: [],
-          numMinorCdvsBeforeLastHearing: "3",
-        },
-        isEligible: true,
-        isAlmostEligible: false,
+        ],
+        cdvsSinceLastHearing: [],
+        numMinorCdvsBeforeLastHearing: "3",
       },
-      {
-        externalId: "RES013",
-        stateCode: "US_MO",
-        eligibleCriteria: {
-          usMoInRestrictiveHousing: {
-            confinementType: "COMMUNITY",
-          },
-          usMoNoActiveProgressiveDisciplineSanctions: {
-            latestSanctionEndDate: `${formatDateToISO(nextMonday(new Date()))}`,
-            latestSanctionStartDate: "2023-01-15",
-          },
+      isEligible: true,
+      isAlmostEligible: false,
+    },
+    {
+      externalId: "RES012",
+      stateCode: "US_MO",
+      eligibleCriteria: {
+        usMoInitialHearingPastDueDate: {
+          nextReviewDate: `${formatDateToISO(startOfTomorrow())}`,
+          dueDateInferred: true,
         },
-        ineligibleCriteria: {
-          usMoInitialHearingPastDueDate: {
-            nextReviewDate: `${formatDateToISO(nextMonday(new Date()))}`,
-            dueDateInferred: true,
-          },
+        usMoInRestrictiveHousing: {
+          confinementType: "COMMUNITY",
         },
-        metadata: {
-          mostRecentHearingDate: "2022-09-03",
-          mostRecentHearingType: "hearing type",
-          mostRecentHearingFacility: "FACILITY NAME",
-          mostRecentHearingComments: "Reason for Hearing: 30 day review",
-          currentFacility: "FACILITY 02",
-          restrictiveHousingStartDate: "2022-10-01",
-          bedNumber: "03",
-          roomNumber: "05",
-          complexNumber: "2",
-          buildingNumber: "13",
-          housingUseCode: "HOS",
-          majorCdvs: [
-            {
-              cdvDate: "2022-02-20",
-              cdvRule: "Rule 7.2",
-            },
-          ],
-          cdvsSinceLastHearing: [],
-          numMinorCdvsBeforeLastHearing: "3",
+        usMoNoActiveProgressiveDisciplineSanctions: {
+          latestSanctionEndDate: `${formatDateToISO(nextMonday(new Date()))}`,
+          latestSanctionStartDate: "2023-01-15",
         },
-        isEligible: false,
-        isAlmostEligible: true,
       },
-      {
-        externalId: "RES014",
-        stateCode: "US_MO",
-        eligibleCriteria: {
-          usMoInitialHearingPastDueDate: {
-            nextReviewDate: `${formatDateToISO(new Date())}`,
-            dueDateInferred: true,
+      ineligibleCriteria: {},
+      metadata: {
+        mostRecentHearingDate: "2022-09-03",
+        mostRecentHearingType: "hearing type",
+        mostRecentHearingFacility: "FACILITY NAME",
+        mostRecentHearingComments: "Reason for Hearing: 30 day review",
+        currentFacility: "FACILITY 02",
+        restrictiveHousingStartDate: "2022-10-01",
+        bedNumber: "03",
+        roomNumber: "05",
+        complexNumber: "2",
+        buildingNumber: "13",
+        housingUseCode: "HOS",
+        majorCdvs: [
+          {
+            cdvDate: "2022-02-20",
+            cdvRule: "Rule 7.2",
           },
-          usMoInRestrictiveHousing: {
-            confinementType: "COMMUNITY",
-          },
-          usMoNoActiveProgressiveDisciplineSanctions: {
-            latestSanctionEndDate: `${formatDateToISO(nextMonday(new Date()))}`,
-            latestSanctionStartDate: "2023-01-15",
-          },
-        },
-        ineligibleCriteria: {},
-        metadata: {
-          mostRecentHearingDate: "2022-09-03",
-          mostRecentHearingType: "hearing type",
-          mostRecentHearingFacility: "FACILITY NAME",
-          mostRecentHearingComments: "Reason for Hearing: 30 day review",
-          currentFacility: "FACILITY 02",
-          restrictiveHousingStartDate: "2022-10-01",
-          bedNumber: "03",
-          roomNumber: "05",
-          complexNumber: "2",
-          buildingNumber: "13",
-          housingUseCode: "HOS",
-          majorCdvs: [
-            {
-              cdvDate: "2022-02-20",
-              cdvRule: "Rule 7.2",
-            },
-          ],
-          cdvsSinceLastHearing: [],
-          numMinorCdvsBeforeLastHearing: "3",
-        },
-        isEligible: true,
-        isAlmostEligible: false,
+        ],
+        cdvsSinceLastHearing: [],
+        numMinorCdvsBeforeLastHearing: "3",
       },
-    ],
-  );
+      isEligible: true,
+      isAlmostEligible: false,
+    },
+    {
+      externalId: "RES013",
+      stateCode: "US_MO",
+      eligibleCriteria: {
+        usMoInRestrictiveHousing: {
+          confinementType: "COMMUNITY",
+        },
+        usMoNoActiveProgressiveDisciplineSanctions: {
+          latestSanctionEndDate: `${formatDateToISO(nextMonday(new Date()))}`,
+          latestSanctionStartDate: "2023-01-15",
+        },
+      },
+      ineligibleCriteria: {
+        usMoInitialHearingPastDueDate: {
+          nextReviewDate: `${formatDateToISO(nextMonday(new Date()))}`,
+          dueDateInferred: true,
+        },
+      },
+      metadata: {
+        mostRecentHearingDate: "2022-09-03",
+        mostRecentHearingType: "hearing type",
+        mostRecentHearingFacility: "FACILITY NAME",
+        mostRecentHearingComments: "Reason for Hearing: 30 day review",
+        currentFacility: "FACILITY 02",
+        restrictiveHousingStartDate: "2022-10-01",
+        bedNumber: "03",
+        roomNumber: "05",
+        complexNumber: "2",
+        buildingNumber: "13",
+        housingUseCode: "HOS",
+        majorCdvs: [
+          {
+            cdvDate: "2022-02-20",
+            cdvRule: "Rule 7.2",
+          },
+        ],
+        cdvsSinceLastHearing: [],
+        numMinorCdvsBeforeLastHearing: "3",
+      },
+      isEligible: false,
+      isAlmostEligible: true,
+    },
+    {
+      externalId: "RES014",
+      stateCode: "US_MO",
+      eligibleCriteria: {
+        usMoInitialHearingPastDueDate: {
+          nextReviewDate: `${formatDateToISO(new Date())}`,
+          dueDateInferred: true,
+        },
+        usMoInRestrictiveHousing: {
+          confinementType: "COMMUNITY",
+        },
+        usMoNoActiveProgressiveDisciplineSanctions: {
+          latestSanctionEndDate: `${formatDateToISO(nextMonday(new Date()))}`,
+          latestSanctionStartDate: "2023-01-15",
+        },
+      },
+      ineligibleCriteria: {},
+      metadata: {
+        mostRecentHearingDate: "2022-09-03",
+        mostRecentHearingType: "hearing type",
+        mostRecentHearingFacility: "FACILITY NAME",
+        mostRecentHearingComments: "Reason for Hearing: 30 day review",
+        currentFacility: "FACILITY 02",
+        restrictiveHousingStartDate: "2022-10-01",
+        bedNumber: "03",
+        roomNumber: "05",
+        complexNumber: "2",
+        buildingNumber: "13",
+        housingUseCode: "HOS",
+        majorCdvs: [
+          {
+            cdvDate: "2022-02-20",
+            cdvRule: "Rule 7.2",
+          },
+        ],
+        cdvsSinceLastHearing: [],
+        numMinorCdvsBeforeLastHearing: "3",
+      },
+      isEligible: true,
+      isAlmostEligible: false,
+    },
+  ]);

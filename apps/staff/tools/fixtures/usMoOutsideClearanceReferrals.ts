@@ -15,18 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { relativeFixtureDate, UsMoWorkReleaseReferralRecord } from "~datatypes";
 
-import { relativeFixtureDate } from "~datatypes";
-
-import { usMoWorkReleaseSchema } from "../../src/WorkflowsStore/Opportunity/UsMo/UsMoWorkReleaseOpportunity/UsMoWorkReleaseReferralRecord";
 import { externalIdFunc, FirestoreFixture } from "./utils";
 
-export type UsMoOutsideClearanceReferralRecordRaw = z.input<
-  typeof usMoWorkReleaseSchema
->;
-
-const data: UsMoOutsideClearanceReferralRecordRaw[] = [
+const data: UsMoWorkReleaseReferralRecord["input"][] = [
   {
     stateCode: "US_MO",
     externalId: "RES019",
@@ -122,8 +115,9 @@ const data: UsMoOutsideClearanceReferralRecordRaw[] = [
   },
 ];
 
-export const usMoOutsideClearanceReferrals: FirestoreFixture<UsMoOutsideClearanceReferralRecordRaw> =
-  {
-    data,
-    idFunc: externalIdFunc,
-  };
+export const usMoOutsideClearanceReferrals: FirestoreFixture<
+  UsMoWorkReleaseReferralRecord["input"]
+> = {
+  data,
+  idFunc: externalIdFunc,
+};
