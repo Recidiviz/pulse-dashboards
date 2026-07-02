@@ -21,12 +21,12 @@ import { httpBatchLink } from "@trpc/client";
 import React, { useEffect, useRef, useState } from "react";
 import superjson from "superjson";
 
-import { AgencyConfigProvider } from "~@meetings/app/context/AgencyConfigContext";
 import {
   DEFAULT_STATE_CODE,
   StateCode,
   StateCodeProvider,
 } from "~@meetings/app/context/StateContext";
+import { AgencyConfigProvider } from "~@meetings/app/entities/agency-config";
 import { useUserContext } from "~@meetings/app/entities/user";
 import { useImpersonationStore } from "~@meetings/app/hooks/useImpersonationStore";
 import { AnalyticsProvider } from "~@meetings/app/shared/analytics";

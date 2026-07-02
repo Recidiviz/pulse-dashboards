@@ -28,7 +28,7 @@ import { UserContextProvider } from "~@meetings/app/entities/user";
 import Header from "../../components/Header";
 import { StateCode, StateCodeProvider } from "../../context/StateContext";
 
-jest.mock("../../context/AgencyConfigContext", () => ({
+jest.mock("../../entities/agency-config", () => ({
   useAgencyConfigs: () => ({ agencyConfigs: {}, isLoading: false }),
   AgencyConfigProvider: ({ children }: { children: React.ReactNode }) =>
     children,

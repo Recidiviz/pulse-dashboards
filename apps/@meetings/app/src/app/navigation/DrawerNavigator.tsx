@@ -20,8 +20,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 
 import DrawerContent from "~@meetings/app/components/DrawerContent";
-import { useAgencyConfigs } from "~@meetings/app/context/AgencyConfigContext";
 import { useStateSelection } from "~@meetings/app/context/StateContext";
+import { useAgencyConfigs } from "~@meetings/app/entities/agency-config";
 import { useGetUser, useUserContext } from "~@meetings/app/entities/user";
 import { ClientMeetingScreen } from "~@meetings/app/pages/client-meeting";
 import { ClientNewMeetingScreen } from "~@meetings/app/pages/client-new-meeting";

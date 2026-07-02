@@ -20,26 +20,28 @@ import React from "react";
 
 import { useUserContext } from "~@meetings/app/entities/user";
 
-import * as AgencyConfigContext from "../../context/AgencyConfigContext";
 import {
   DEFAULT_STATE_CODE,
   StateCodeProvider,
   useStateSelection,
 } from "../../context/StateContext";
+import { useAgencyConfigs } from "../../entities/agency-config";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
 );
+
+jest.mock("../../entities/agency-config", () => ({
+  useAgencyConfigs: jest.fn(),
+}));
+
+const mockUseAgencyConfigs = useAgencyConfigs as jest.Mock;
 
 jest.mock("~@meetings/app/entities/user", () => ({
   useUserContext: jest.fn(),
 }));
 
 const mockUseUserContext = useUserContext as jest.Mock;
-const mockUseAgencyConfigs = jest.spyOn(
-  AgencyConfigContext,
-  "useAgencyConfigs",
-);
 
 const baseUserContext: ReturnType<typeof useUserContext> = {
   isLoading: false,

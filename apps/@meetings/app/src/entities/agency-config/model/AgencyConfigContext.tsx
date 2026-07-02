@@ -17,10 +17,10 @@
 
 import React, { createContext, useContext } from "react";
 
+import { trpc } from "~@meetings/app/shared/api";
 import type { AgencyConfig } from "~@meetings/config";
 
-import ConfigErrorScreen from "../screens/ConfigErrorScreen";
-import { trpc } from "../shared/api";
+import ConfigErrorScreen from "../ui/ConfigErrorScreen";
 
 interface AgencyConfigContextType {
   agencyConfigs: Record<string, AgencyConfig>;

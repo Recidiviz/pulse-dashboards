@@ -51,7 +51,7 @@ const mockOpenRecordingView = jest.fn();
 const mockTrack = jest.fn();
 const mockResetMeetingTypeStore = jest.fn();
 
-jest.mock("~@meetings/app/context/AgencyConfigContext", () => ({
+jest.mock("~@meetings/app/entities/agency-config", () => ({
   useAgencyConfigs: () => ({
     agencyConfigs: {
       US_NE: { stateCode: "US_NE", meetingTypes: mockMeetingTypes },

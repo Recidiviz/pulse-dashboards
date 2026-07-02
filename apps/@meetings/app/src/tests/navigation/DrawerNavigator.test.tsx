@@ -21,8 +21,8 @@ import React from "react";
 import * as UserContext from "~@meetings/app/entities/user";
 
 import DrawerNavigator from "../../app/navigation/DrawerNavigator";
-import * as AgencyConfigContext from "../../context/AgencyConfigContext";
 import * as StateContext from "../../context/StateContext";
+import { useAgencyConfigs } from "../../entities/agency-config";
 import * as UserModule from "../../entities/user";
 
 // Mock useSetDocumentTitle hooks, since it modifies document.title, and it causes errors
@@ -64,6 +64,10 @@ jest.mock("../../pages/onboarding", () => ({
   OnboardingScreen: null,
 }));
 
+jest.mock("../../entities/agency-config", () => ({
+  useAgencyConfigs: jest.fn(),
+}));
+
 jest.mock("~@meetings/app/entities/user", () => ({
   useGetUser: jest.fn(),
   useUserContext: jest.fn(),
@@ -72,10 +76,7 @@ jest.mock("~@meetings/app/entities/user", () => ({
 describe("DrawerNavigator", () => {
   const mockUseUserContext = jest.spyOn(UserContext, "useUserContext");
   const mockUseStateSelection = jest.spyOn(StateContext, "useStateSelection");
-  const mockUseAgencyConfigs = jest.spyOn(
-    AgencyConfigContext,
-    "useAgencyConfigs",
-  );
+  const mockUseAgencyConfigs = useAgencyConfigs as jest.Mock;
   const mockUseGetUser = UserModule.useGetUser as jest.Mock;
 
   mockUseAgencyConfigs.mockReturnValue({

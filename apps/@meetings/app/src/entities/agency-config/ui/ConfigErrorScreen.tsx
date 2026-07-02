@@ -19,8 +19,8 @@ import React from "react";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import PrimaryButton from "../shared/ui/PrimaryButton";
-import { Typography } from "../shared/ui/Typography";
+import PrimaryButton from "~@meetings/app/shared/ui/PrimaryButton";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 interface ConfigErrorScreenProps {
   onRetry: () => void;

@@ -30,11 +30,11 @@ import {
 } from "react-native-safe-area-context";
 
 import Header from "~@meetings/app/components/Header";
-import { useAgencyConfigs } from "~@meetings/app/context/AgencyConfigContext";
 import {
   StateCode,
   useStateSelection,
 } from "~@meetings/app/context/StateContext";
+import { useAgencyConfigs } from "~@meetings/app/entities/agency-config";
 import { trpc } from "~@meetings/app/shared/api";
 import { theme } from "~@meetings/app/shared/config";
 import { RootStackParamList } from "~@meetings/app/shared/config";

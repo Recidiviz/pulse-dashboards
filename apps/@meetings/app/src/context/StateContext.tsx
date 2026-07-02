@@ -19,9 +19,9 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 
 import { useUserContext } from "~@meetings/app/entities/user";
 
+import { useAgencyConfigs } from "../entities/agency-config";
 import { stateCodeParam } from "../navigation/config";
 import { getItem, saveItem } from "../shared/lib/storage";
-import { useAgencyConfigs } from "./AgencyConfigContext";
 
 export type StateCode = string;
 
