@@ -18,6 +18,7 @@
 import React, { createContext, useContext } from "react";
 
 import type { SAR, SARInsight } from "../../../api";
+import type { ActiveFeatureVariants } from "../../../datastores/types";
 
 /**
  * The complete data the PDF renders from: the raw `getSAR` tRPC response plus
@@ -32,6 +33,7 @@ import type { SAR, SARInsight } from "../../../api";
 export interface SARContextValue {
   sar: SAR;
   insight: NonNullable<SARInsight> | null;
+  activeFeatureVariants: ActiveFeatureVariants;
 }
 
 const SARContext = createContext<SARContextValue | null>(null);
@@ -39,9 +41,12 @@ const SARContext = createContext<SARContextValue | null>(null);
 export const SARProvider: React.FC<{
   sar: SAR;
   insight?: SARInsight | null;
+  activeFeatureVariants: ActiveFeatureVariants;
   children: React.ReactNode;
-}> = ({ sar, insight, children }) => (
-  <SARContext.Provider value={{ sar, insight: insight ?? null }}>
+}> = ({ sar, insight, activeFeatureVariants, children }) => (
+  <SARContext.Provider
+    value={{ sar, insight: insight ?? null, activeFeatureVariants }}
+  >
     {children}
   </SARContext.Provider>
 );
@@ -54,3 +59,7 @@ export const useSAR = (): SARContextValue => {
   }
   return value;
 };
+
+/** Read just the active feature variants from context. Throws if used outside `SARProvider`. */
+export const useActiveFeatureVariants = (): ActiveFeatureVariants =>
+  useSAR().activeFeatureVariants;

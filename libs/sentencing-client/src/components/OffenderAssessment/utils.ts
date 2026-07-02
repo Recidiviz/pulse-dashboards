@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ActiveFeatureVariants } from "../../datastores/types";
 import { MutableSARAttributes } from "../CaseDetails/types";
 
 export type ORASFormData = Pick<
@@ -38,6 +39,8 @@ export type ORASFormData = Pick<
   | "familySocialSupportRiskLevel"
   | "peerAssociatesRiskLevel"
   | "criminalBehaviorRiskLevel"
+  | "noORASDomainReason"
+  | "ORASDomainsAvailable"
 >;
 
 export const ORAS_EMPTY_FORM: ORASFormData = {
@@ -60,6 +63,8 @@ export const ORAS_EMPTY_FORM: ORASFormData = {
   familySocialSupportRiskLevel: null,
   peerAssociatesRiskLevel: null,
   criminalBehaviorRiskLevel: null,
+  noORASDomainReason: null,
+  ORASDomainsAvailable: true,
 };
 
 // Derives a domain risk level from a raw score as a fraction of maxScore.
@@ -73,6 +78,21 @@ export function deriveDomainRiskLevel(
   if (ratio >= 0.67) return "HIGH";
   if (ratio >= 0.33) return "MODERATE";
   return "LOW";
+}
+
+/**
+ * Whether ORAS domain data (scores, risk levels) should be treated as
+ * available. SARManualORAS gates the "no ORAS domains available" flow
+ * entirely: with the flag off, domains are always treated as available,
+ * matching pre-feature behavior for tenants that haven't opted in.
+ */
+export function shouldShowOrasContent(
+  ORASDomainsAvailable: boolean | null | undefined,
+  activeFeatureVariants: ActiveFeatureVariants,
+): boolean {
+  return (
+    !activeFeatureVariants["SARManualORAS"] || (ORASDomainsAvailable ?? true)
+  );
 }
 
 // Domain keys used for conditional rendering based on ORAS type

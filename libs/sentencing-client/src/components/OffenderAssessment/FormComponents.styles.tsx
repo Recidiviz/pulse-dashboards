@@ -86,6 +86,12 @@ export const Input = styled.input<{
     "width: 50px; min-width: 0; min-height: unset; height: 30px; padding: 0.25rem 0.5rem;"}
 `;
 
+export const Textarea = styled.textarea<{ height?: string }>`
+  ${inputStyles}
+  resize: none;
+  height: ${({ height }) => height ?? "6.8125rem"};
+`;
+
 export const Select = styled.select`
   ${inputStyles}
   appearance: none;

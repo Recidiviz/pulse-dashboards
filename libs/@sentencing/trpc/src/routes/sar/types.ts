@@ -59,6 +59,8 @@ export type UpsertSARInput = Pick<
   | "assessmentType"
   | "assessmentDate"
   | "assessmentAdministeredBy"
+  | "noORASDomainReason"
+  | "ORASDomainsAvailable"
   | "criminalHistoryLevel"
   | "educationLevelScore"
   | "neighborhoodLevel"

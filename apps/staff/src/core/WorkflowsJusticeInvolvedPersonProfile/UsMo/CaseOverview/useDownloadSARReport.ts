@@ -90,7 +90,7 @@ export function useDownloadSARReport() {
               (h) => !h.importedFromDOC,
             ),
           };
-      await downloadSARPdf(sarForPdf, insight);
+      await downloadSARPdf(sarForPdf, userStore.activeFeatureVariants, insight);
     } catch (e) {
       Sentry.captureException(e);
     }

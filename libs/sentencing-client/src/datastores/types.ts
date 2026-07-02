@@ -130,4 +130,8 @@ export type FeatureVariantValue = {
   activeTenants?: StateCode[];
 };
 
+export type ActiveFeatureVariants = Partial<
+  Record<FeatureVariant, FeatureVariantValue>
+>;
+
 export type RoutePermission = [route: string, permission: boolean];

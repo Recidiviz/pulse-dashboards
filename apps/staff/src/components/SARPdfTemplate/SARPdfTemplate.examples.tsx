@@ -58,7 +58,7 @@ const Variant: React.FC<{ sar: SAR; insight?: SARInsight | null }> = ({
       showToolbar
       style={{ border: "none" }}
     >
-      <SARPdfTemplate sar={sar} insight={insight} />
+      <SARPdfTemplate sar={sar} insight={insight} activeFeatureVariants={{}} />
     </PDFViewer>
   </div>
 );

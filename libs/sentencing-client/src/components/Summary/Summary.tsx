@@ -212,6 +212,7 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
             ...sarData,
             employmentHistories: presenter.employmentHistories,
           },
+          activeFeatureVariants,
           presenter.insight,
           fileName,
         );

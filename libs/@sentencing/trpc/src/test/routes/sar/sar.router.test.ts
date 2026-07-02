@@ -64,6 +64,8 @@ describe("SAR router", () => {
           assessmentType: fakeSAR.assessmentType,
           assessmentDate: fakeSAR.assessmentDate,
           assessmentAdministeredBy: fakeSAR.assessmentAdministeredBy,
+          noORASDomainReason: null,
+          ORASDomainsAvailable: true,
           criminalHistoryLevel: fakeSAR.criminalHistoryLevel,
           educationLevelScore: fakeSAR.educationLevelScore,
           neighborhoodLevel: fakeSAR.neighborhoodLevel,

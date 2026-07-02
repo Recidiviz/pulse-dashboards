@@ -36,7 +36,9 @@ import {
 import {
   DomainConfig,
   getDomainsForAssessmentType,
+  shouldShowOrasContent,
 } from "../components/OffenderAssessment/utils";
+import { ActiveFeatureVariants } from "../datastores/types";
 import { splitFullName } from "../utils/utils";
 import { SARDetailsPresenter } from "./SARDetailsPresenter";
 
@@ -180,6 +182,29 @@ export class OffenderAssessmentPresenter {
   // Substance Use History - Individual CRUD operations
   get drugHistories(): DrugHistory[] {
     return this.SARData?.drugHistories ?? [];
+  }
+
+  get ORASDomainsAvailable(): boolean {
+    return this.SARData?.ORASDomainsAvailable ?? true;
+  }
+
+  /**
+   * Whether ORAS domain scores (risk category summary, domain score cards)
+   * should be shown. Behind the SARManualORAS feature variant, staff can mark
+   * ORAS domains as unavailable and provide a reason instead of scores — in
+   * that case the derived risk-category summary has no data to show.
+   *
+   * When the feature variant is off, domains are always considered available
+   * so existing behavior for tenants without manual ORAS entry is unchanged.
+   */
+  shouldShowRiskProfileSummary(
+    activeFeatureVariants: ActiveFeatureVariants,
+  ): boolean {
+    if (!this.hasOrasAssessment) return false;
+    return shouldShowOrasContent(
+      this.ORASDomainsAvailable,
+      activeFeatureVariants,
+    );
   }
 
   async createDrugHistory(data: CreateDrugHistoryInput): Promise<void> {

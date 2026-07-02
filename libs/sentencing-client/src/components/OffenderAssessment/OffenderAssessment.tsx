@@ -21,6 +21,7 @@ import React, { useEffect, useRef } from "react";
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import { OffenderAssessmentSubsection } from "../SARDetails/constants";
 import { SectionContainer } from "../SARDetails/SARDetails.styles";
+import { useStore } from "../StoreProvider/StoreProvider";
 import { RiskLevelKey } from "./constants";
 import { DomainCard } from "./DomainCard";
 import * as DomainCardStyled from "./DomainCard.styles";
@@ -44,6 +45,7 @@ interface OffenderAssessmentProps {
 
 export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
   ({ presenter, currentSubsection }) => {
+    const { activeFeatureVariants } = useStore();
     // Create refs for scroll-to behavior
     const criminalHistoryRef = useRef<HTMLDivElement>(null);
     const educationRef = useRef<HTMLDivElement>(null);
@@ -196,7 +198,9 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
               onOpenForm={() => setShowORASForm(true)}
             />
 
-            {presenter.offenderAssessment.hasOrasAssessment && (
+            {presenter.offenderAssessment.shouldShowRiskProfileSummary(
+              activeFeatureVariants,
+            ) && (
               <RiskCategorySummary
                 assessmentType={assessmentType ?? null}
                 domainRiskLevels={domainRiskLevels}

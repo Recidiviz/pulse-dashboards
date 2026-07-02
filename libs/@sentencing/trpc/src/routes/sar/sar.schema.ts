@@ -169,6 +169,8 @@ export const updateSARSchema = z.object({
     assessmentType: assessmentTypeEnum.nullish(),
     assessmentDate: z.date().nullish(),
     assessmentAdministeredBy: z.string().nullish(),
+    noORASDomainReason: z.string().nullish(),
+    ORASDomainsAvailable: z.boolean().optional(),
     // Domain scores
     criminalHistoryLevel: domainScore,
     educationLevelScore: domainScore,

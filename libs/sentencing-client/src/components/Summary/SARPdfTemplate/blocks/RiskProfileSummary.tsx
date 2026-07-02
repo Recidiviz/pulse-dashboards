@@ -24,10 +24,11 @@ import React from "react";
 
 import { formatLongDate } from "../../../../utils/utils";
 import type { RiskLevelKey } from "../../../OffenderAssessment/constants";
+import { shouldShowOrasContent } from "../../../OffenderAssessment/utils";
 import { riskProfileGroups } from "../derive";
 import { Badge } from "../primitives/Badge";
 import { SectionHeading } from "../primitives/SectionHeading";
-import { useSAR } from "../SARContext";
+import { useActiveFeatureVariants, useSAR } from "../SARContext";
 import type { PdfStyle } from "../SARPdfTemplate.types";
 import { color, font, space } from "../tokens";
 
@@ -66,7 +67,11 @@ export const RiskProfileSummary: React.FC<{ style?: PdfStyle }> = ({
   style = {},
 }) => {
   const { sar } = useSAR();
-  const hasOras = !!sar.assessmentDate && !sar.defendantDeclinedToParticipate;
+  const activeFeatureVariants = useActiveFeatureVariants();
+  const hasOras =
+    !!sar.assessmentDate &&
+    !sar.defendantDeclinedToParticipate &&
+    shouldShowOrasContent(sar.ORASDomainsAvailable, activeFeatureVariants);
   if (!hasOras) return null;
 
   const groups = riskProfileGroups(sar);

@@ -37,6 +37,7 @@ import {
   Label,
   ORASTitle,
   SaveButton,
+  Textarea,
 } from "./FormComponents.styles";
 import * as ModalStyled from "./ModalStyles";
 import {
@@ -66,7 +67,8 @@ export const ORASForm: React.FC<ORASFormProps> = ({
   const [formData, setFormData] = useState<ORASFormData>(
     initialData ?? ORAS_EMPTY_FORM,
   );
-  const [isSkipped, setIsSkipped] = useState(false);
+  // false = user explicitly skipped; null/true = entering scores
+  const isSkipped = formData.ORASDomainsAvailable === false;
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const domains = getDomainsForAssessmentType(formData.assessmentType);
@@ -115,7 +117,7 @@ export const ORASForm: React.FC<ORASFormProps> = ({
     !!formData.assessmentAdministeredBy?.trim() &&
     !!formData.assessmentType &&
     !!formData.assessmentDate &&
-    (isSkipped || allScoresFilled);
+    (isSkipped ? !!formData.noORASDomainReason?.trim() : allScoresFilled);
 
   return (
     <DomainCardStyled.CardContainer>
@@ -192,26 +194,39 @@ export const ORASForm: React.FC<ORASFormProps> = ({
                   checked={isSkipped}
                   onChange={(e) => {
                     const checked = e.target.checked;
-                    setIsSkipped(checked);
-                    if (checked) {
-                      setFormData((prev) => ({
-                        ...prev,
-                        ...Object.fromEntries(
-                          scoredDomains.map((d) => [d.scoreField, null]),
-                        ),
-                      }));
-                    }
+                    setFormData((prev) => ({
+                      ...prev,
+                      ORASDomainsAvailable: !checked,
+                      ...(checked
+                        ? Object.fromEntries(
+                            scoredDomains.map((d) => [d.scoreField, null]),
+                          )
+                        : {}),
+                    }));
                   }}
                 />
                 <CheckboxLabel>Skip entering scores</CheckboxLabel>
               </CheckboxContainer>
             )}
           </DomainCardStyled.SpacedRow>
-          <DomainCardStyled.HelperText>
-            {formData.assessmentType
-              ? "Enter the numerical values for each domain"
-              : "Waiting for assessment type"}
-          </DomainCardStyled.HelperText>
+          {isSkipped ? (
+            <Textarea
+              value={formData.noORASDomainReason ?? ""}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  noORASDomainReason: e.target.value || null,
+                })
+              }
+              placeholder="Provide a reason for skipping scores"
+            />
+          ) : (
+            <DomainCardStyled.HelperText>
+              {formData.assessmentType
+                ? "Enter the numerical values for each domain"
+                : "Waiting for assessment type"}
+            </DomainCardStyled.HelperText>
+          )}
           {domains
             .filter(
               (

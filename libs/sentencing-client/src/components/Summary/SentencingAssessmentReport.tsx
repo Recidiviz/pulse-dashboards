@@ -212,6 +212,7 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                     needsDisplayItems={needsDisplayItems}
                     factorsDisplayItems={factorsDisplayItems}
                     riskProfileCardData={presenter.riskProfileCardData}
+                    ORASDomainsAvailable={sarData.ORASDomainsAvailable}
                   />
                 )}
                 {!declined &&

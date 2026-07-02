@@ -24,10 +24,13 @@ import React from "react";
 
 import { formatLongDate } from "../../../../utils/utils";
 import { getAssessmentTypeShortName } from "../../../OffenderAssessment/assessmentTypeUtils";
-import { getDomainsForAssessmentType } from "../../../OffenderAssessment/utils";
+import {
+  getDomainsForAssessmentType,
+  shouldShowOrasContent,
+} from "../../../OffenderAssessment/utils";
 import { Paragraph } from "../primitives/Paragraph";
 import { UnderlinedHeading } from "../primitives/UnderlinedHeading";
-import { useSAR } from "../SARContext";
+import { useActiveFeatureVariants, useSAR } from "../SARContext";
 import type { PdfStyle } from "../SARPdfTemplate.types";
 import { OrasDomainSection } from "./OrasDomainSection";
 
@@ -47,6 +50,7 @@ export const OrasAssessment: React.FC<{ style?: PdfStyle }> = ({
   style = {},
 }) => {
   const { sar } = useSAR();
+  const activeFeatureVariants = useActiveFeatureVariants();
   const declined = sar.defendantDeclinedToParticipate;
   const domains = getDomainsForAssessmentType(
     declined ? null : sar.assessmentType,
@@ -69,6 +73,12 @@ export const OrasAssessment: React.FC<{ style?: PdfStyle }> = ({
       </UnderlinedHeading>
       {declined && sar.defendantStatement ? (
         <Paragraph>{sar.defendantStatement}</Paragraph>
+      ) : null}
+      {!shouldShowOrasContent(
+        sar.ORASDomainsAvailable,
+        activeFeatureVariants,
+      ) && sar.noORASDomainReason ? (
+        <Paragraph>{sar.noORASDomainReason}</Paragraph>
       ) : null}
       {domains.map((domain, i) => (
         <OrasDomainSection key={i} domain={domain} />

@@ -45,7 +45,7 @@ describe("downloadSARPdf", () => {
   it("renders the template to a blob and saves it with the default filename", async () => {
     const sar = { client: { fullName: "JANE A DOE" } } as unknown as SAR;
 
-    await downloadSARPdf(sar, null);
+    await downloadSARPdf(sar, {});
 
     expect(mockPdf).toHaveBeenCalledTimes(1);
     expect(mockSaveAs).toHaveBeenCalledWith(
@@ -56,7 +56,7 @@ describe("downloadSARPdf", () => {
 
   it("falls back to an empty name when the client has none", async () => {
     const sar = { client: null } as unknown as SAR;
-    await downloadSARPdf(sar, null);
+    await downloadSARPdf(sar, {});
     expect(mockSaveAs).toHaveBeenCalledWith(
       blob,
       "Sentencing Assessment Report - .pdf",
@@ -65,7 +65,7 @@ describe("downloadSARPdf", () => {
 
   it("honors an explicit filename (appending .pdf)", async () => {
     const sar = { client: { fullName: "X" } } as unknown as SAR;
-    await downloadSARPdf(sar, null, "Custom Report Name");
+    await downloadSARPdf(sar, {}, null, "Custom Report Name");
     expect(mockSaveAs).toHaveBeenCalledWith(blob, "Custom Report Name.pdf");
   });
 });

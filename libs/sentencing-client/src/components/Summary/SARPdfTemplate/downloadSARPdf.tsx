@@ -19,6 +19,7 @@ import { pdf } from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
 import React from "react";
 
+import type { ActiveFeatureVariants } from "../../../datastores/types";
 import { SARPdfTemplate } from "./SARPdfTemplate";
 import type { SAR, SARInsight } from "./SARPdfTemplate.types";
 
@@ -35,11 +36,16 @@ const defaultFileName = (sar: SAR): string =>
  */
 export async function downloadSARPdf(
   sar: SAR,
+  activeFeatureVariants: ActiveFeatureVariants,
   insight?: SARInsight | null,
   fileName: string = defaultFileName(sar),
 ): Promise<void> {
   const blob = await pdf(
-    <SARPdfTemplate sar={sar} insight={insight ?? null} />,
+    <SARPdfTemplate
+      sar={sar}
+      insight={insight ?? null}
+      activeFeatureVariants={activeFeatureVariants}
+    />,
   ).toBlob();
   saveAs(blob, `${fileName}.pdf`);
 }

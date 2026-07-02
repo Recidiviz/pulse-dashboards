@@ -653,6 +653,8 @@ model SentencingAssessmentReport {
   familySocialSupportRiskLevel  DomainRiskLevel?
   peerAssociatesRiskLevel       DomainRiskLevel?
   criminalBehaviorRiskLevel     DomainRiskLevel?
+  noORASDomainReason            String?
+  ORASDomainsAvailable          Boolean @default(true)
 
   // Free text sections
   defendantStatement            String?

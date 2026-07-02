@@ -31,9 +31,8 @@ import { SARStore } from "./SARStore";
 import { StaffStore } from "./StaffStore";
 import { SupervisorStore } from "./SupervisorStore";
 import {
+  ActiveFeatureVariants,
   CreateOrUpdateRecommendationTrackingMetadata,
-  FeatureVariant,
-  FeatureVariantValue,
   IndividualCaseClickedWithStatusMetadata,
   OnboardingTrackingMetadata,
   OpportunityViewedTrackingMetadata,
@@ -53,7 +52,7 @@ export interface RootStore {
     userPseudoId?: string;
     isImpersonating: boolean;
     isRecidivizUser: boolean;
-    activeFeatureVariants: Partial<Record<FeatureVariant, FeatureVariantValue>>;
+    activeFeatureVariants: ActiveFeatureVariants;
     stateCode: UserStateCode;
     getToken?: (
       options?: GetTokenSilentlyOptions,
@@ -179,9 +178,7 @@ export class SentencingStore {
     return config;
   }
 
-  get activeFeatureVariants(): Partial<
-    Record<FeatureVariant, FeatureVariantValue>
-  > {
+  get activeFeatureVariants(): ActiveFeatureVariants {
     return this.rootStore.userStore.activeFeatureVariants;
   }
 

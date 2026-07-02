@@ -28,7 +28,9 @@ import { getAssessmentTypeShortName } from "../OffenderAssessment/assessmentType
 import {
   getDomainsForAssessmentType,
   ORASDomainKey,
+  shouldShowOrasContent,
 } from "../OffenderAssessment/utils";
+import { useStore } from "../StoreProvider/StoreProvider";
 import { ReportBlock } from "./ReportBlock";
 import { ReportDomainSection } from "./ReportDomainSection";
 import {
@@ -137,6 +139,7 @@ export const ReportOffenderAssessment: React.FC<
   hasOrasAssessment = true,
   isDeclined = false,
 }) => {
+  const { activeFeatureVariants } = useStore();
   const { assessmentType } = sarData;
   const allDomains = getDomainsForAssessmentType(assessmentType);
   const domains =
@@ -167,6 +170,15 @@ export const ReportOffenderAssessment: React.FC<
             {sarData.defendantStatement}
           </Styled.FreeTextContent>
         )}
+        {!shouldShowOrasContent(
+          sarData.ORASDomainsAvailable,
+          activeFeatureVariants,
+        ) &&
+          sarData.noORASDomainReason && (
+            <Styled.FreeTextContent>
+              {sarData.noORASDomainReason}
+            </Styled.FreeTextContent>
+          )}
       </ReportBlock>
 
       {/* Domain cards — each individually non-splittable, but the collection

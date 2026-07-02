@@ -18,6 +18,7 @@
 import { Document, Page } from "@react-pdf/renderer";
 import React from "react";
 
+import type { ActiveFeatureVariants } from "../../../datastores/types";
 import { DefendantStatement } from "./blocks/DefendantStatement";
 import { HistoricalOutcomeBlock } from "./blocks/HistoricalOutcomeBlock";
 import { KeyConsiderationsBlock } from "./blocks/KeyConsiderationsBlock";
@@ -42,6 +43,7 @@ export interface SARPdfTemplateProps {
   sar: SAR;
   /** The getSARInsight response (Historical Outcome); null when none exists. */
   insight?: SARInsight | null;
+  activeFeatureVariants: ActiveFeatureVariants;
 }
 
 // Uniform gap between top-level blocks, owned here by the page rather than by
@@ -59,8 +61,13 @@ const blockSpacing = { marginBottom: space.blockGap };
 export const SARPdfTemplate: React.FC<SARPdfTemplateProps> = ({
   sar,
   insight = null,
+  activeFeatureVariants,
 }) => (
-  <SARProvider sar={sar} insight={insight}>
+  <SARProvider
+    sar={sar}
+    insight={insight}
+    activeFeatureVariants={activeFeatureVariants}
+  >
     <Document
       title={`Sentencing Assessment Report - ${sar.client?.fullName ?? "Unknown"}`}
       author="Missouri Department of Corrections"

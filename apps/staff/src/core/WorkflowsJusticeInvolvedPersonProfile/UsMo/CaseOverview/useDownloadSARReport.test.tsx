@@ -181,6 +181,7 @@ describe("useDownloadSARReport", () => {
         expect.objectContaining({
           employmentHistories: [manualHistory],
         }),
+        {},
         null,
       );
     });
@@ -209,6 +210,7 @@ describe("useDownloadSARReport", () => {
         expect.objectContaining({
           employmentHistories: [manualHistory, importedHistory],
         }),
+        { SARImportEmploymentRecords: {} },
         null,
       );
     });

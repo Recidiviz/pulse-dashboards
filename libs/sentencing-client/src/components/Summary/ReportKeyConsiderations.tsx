@@ -19,6 +19,8 @@ import React from "react";
 
 import AreasOfNeedIcon from "../assets/areas-of-need-icon.svg?react";
 import JusticeScaleIcon from "../assets/justice-scale-icon.svg?react";
+import { shouldShowOrasContent } from "../OffenderAssessment/utils";
+import { useStore } from "../StoreProvider/StoreProvider";
 import { ReportBlock, SentencingAssessmentReportSection } from "./ReportBlock";
 import {
   ReportRiskProfileSummaryCard,
@@ -51,6 +53,7 @@ interface ReportKeyConsiderationsProps {
   needsDisplayItems: string[];
   factorsDisplayItems: string[];
   riskProfileCardData: RiskProfileCardData | null;
+  ORASDomainsAvailable: boolean | null;
 }
 
 const AdditionalConsiderationsContent: React.FC<
@@ -81,33 +84,46 @@ const AdditionalConsiderationsContent: React.FC<
 
 export const ReportKeyConsiderations: React.FC<
   ReportKeyConsiderationsProps
-> = ({ needsDisplayItems, factorsDisplayItems, riskProfileCardData }) => (
-  <SentencingAssessmentReportSection
-    title="Key Considerations"
-    continuationContent={
-      <AdditionalConsiderationsContent
-        needsDisplayItems={needsDisplayItems}
-        factorsDisplayItems={factorsDisplayItems}
-      />
-    }
-  >
-    <Styled.ColumnFlexContainer gap={15}>
-      {riskProfileCardData && (
-        <>
-          <ReportBlock>
-            The Ohio Risk Assessment System (ORAS) is a validated,
-            evidence-based tool used to identify an individual's risk of
-            recidivism and determine the appropriate level of supervision and
-            treatment. For further information on its application in Missouri,
-            please visit{" "}
-            <strong>
-              https://doc.mo.gov/justice-reinvestment-initiative/oras
-            </strong>
-            .
-          </ReportBlock>
-          <ReportRiskProfileSummaryCard {...riskProfileCardData} />
-        </>
-      )}
-    </Styled.ColumnFlexContainer>
-  </SentencingAssessmentReportSection>
-);
+> = ({
+  needsDisplayItems,
+  factorsDisplayItems,
+  riskProfileCardData,
+  ORASDomainsAvailable,
+}) => {
+  const { activeFeatureVariants } = useStore();
+  const showOrasCard = shouldShowOrasContent(
+    ORASDomainsAvailable,
+    activeFeatureVariants,
+  );
+
+  return (
+    <SentencingAssessmentReportSection
+      title="Key Considerations"
+      continuationContent={
+        <AdditionalConsiderationsContent
+          needsDisplayItems={needsDisplayItems}
+          factorsDisplayItems={factorsDisplayItems}
+        />
+      }
+    >
+      <Styled.ColumnFlexContainer gap={15}>
+        {riskProfileCardData && showOrasCard && (
+          <>
+            <ReportBlock>
+              The Ohio Risk Assessment System (ORAS) is a validated,
+              evidence-based tool used to identify an individual's risk of
+              recidivism and determine the appropriate level of supervision and
+              treatment. For further information on its application in Missouri,
+              please visit{" "}
+              <strong>
+                https://doc.mo.gov/justice-reinvestment-initiative/oras
+              </strong>
+              .
+            </ReportBlock>
+            <ReportRiskProfileSummaryCard {...riskProfileCardData} />
+          </>
+        )}
+      </Styled.ColumnFlexContainer>
+    </SentencingAssessmentReportSection>
+  );
+};

@@ -31,6 +31,7 @@ import {
   FrequencyOfUseLabels,
   MethodOfUseLabels,
 } from "../OffenderAssessment/SubstanceUse/constants";
+import { useStore } from "../StoreProvider/StoreProvider";
 import { MissingBadge } from "./MissingBadge";
 import * as Styled from "./Summary.styles";
 
@@ -54,6 +55,7 @@ interface SummaryOffenderAssessmentProps {
 
 export const SummaryOffenderAssessment: React.FC<SummaryOffenderAssessmentProps> =
   observer(function SummaryOffenderAssessment({ presenter }) {
+    const { activeFeatureVariants } = useStore();
     const sarData = presenter.SARData;
     const {
       domainsWithoutSubstanceUse,
@@ -61,7 +63,10 @@ export const SummaryOffenderAssessment: React.FC<SummaryOffenderAssessmentProps>
       offenderAssessmentDisplay,
     } = presenter.offenderAssessment;
     const { fatherName, motherName, guardianName } = sarData?.client ?? {};
-
+    const showRiskProfileSummary =
+      presenter.offenderAssessment.shouldShowRiskProfileSummary(
+        activeFeatureVariants,
+      );
     if (presenter.defendantDeclinedToParticipate) {
       return (
         <Styled.SectionCard>
@@ -101,6 +106,15 @@ export const SummaryOffenderAssessment: React.FC<SummaryOffenderAssessmentProps>
         {offenderAssessmentDisplay && (
           <Styled.SectionBody>{offenderAssessmentDisplay}</Styled.SectionBody>
         )}
+
+        {!sarData?.ORASDomainsAvailable &&
+          activeFeatureVariants["SARManualORAS"] && (
+            <Styled.DetailSubsection>
+              <Styled.SectionBody>
+                <SummaryOrMissing summary={sarData?.noORASDomainReason} />
+              </Styled.SectionBody>
+            </Styled.DetailSubsection>
+          )}
 
         <Styled.DetailContainer>
           <Styled.DetailSubsection>
@@ -151,7 +165,7 @@ export const SummaryOffenderAssessment: React.FC<SummaryOffenderAssessmentProps>
             </Styled.SectionBody>
           </Styled.DetailSubsection>
 
-          {presenter.offenderAssessment.hasOrasAssessment && (
+          {showRiskProfileSummary && (
             <Styled.DetailSubsection>
               <Styled.SubsectionTitle>
                 Risk Category Summary
