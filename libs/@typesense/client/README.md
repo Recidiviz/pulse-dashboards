@@ -2,7 +2,7 @@
 
 Shared FE-facing Typesense module: the client factory, collection schemas, FE
 scope-to-filter compilation, and read-only inspect tooling. Imported by the
-staff frontend and `staff-shared-server`.
+staff frontend and `staff-server`.
 
 Companion lib: [`@typesense/tools`](../tools/) owns write operations
 (provision, migrate-schemas), the local Docker cluster, and the Firestore-emulator

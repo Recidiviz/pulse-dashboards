@@ -45,7 +45,7 @@ creation_rules:
   - path_regex: apps/staff/.*\.contractor\.enc\.yaml$
     gcp_kms: projects/recidiviz-dashboard-staging/locations/us-central1/keyRings/pulse-dashboards-sops/cryptoKeys/pulse-dashboards-sops-key
     age: age12pap9kznevf3j2cjclv6lsy4j7c5h6vmzx6csj87ejvravz4laqskan053
-  - path_regex: libs/staff-shared-server/.*\.contractor\.enc\.yaml$
+  - path_regex: apps/staff-server/.*\.contractor\.enc\.yaml$
     gcp_kms: projects/recidiviz-dashboard-staging/locations/us-central1/keyRings/pulse-dashboards-sops/cryptoKeys/pulse-dashboards-sops-key
     age: age12pap9kznevf3j2cjclv6lsy4j7c5h6vmzx6csj87ejvravz4laqskan053
   - path_regex: \.contractor\.enc\.yaml$

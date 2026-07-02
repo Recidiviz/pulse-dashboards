@@ -19,28 +19,28 @@ import { $ } from "zx";
 
 import type { ServiceDefinition } from "../types.mts";
 
-/** Build and deploy the staff App Engine backend (staff-shared-server). */
+/** Build and deploy the staff App Engine backend (staff-server). */
 export const staffBackend: ServiceDefinition = {
   displayName: "Staff Backend",
   environments: ["staging", "demo", "production"],
   async build() {
-    await $`nx build staff-shared-server`.pipe(process.stdout);
+    await $`nx build staff-server`.pipe(process.stdout);
   },
   async deploy(plan) {
     const gaeVersion = plan.nextVersion.replaceAll(".", "-");
     switch (plan.env) {
       case "production":
-        await $`./tools/gcloud-sops-app-deploy.sh dist/libs/staff-shared-server/gae-production.enc.yaml --quiet --project recidiviz-dashboard-production --version ${gaeVersion}`.pipe(
+        await $`./tools/gcloud-sops-app-deploy.sh dist/apps/staff-server/gae-production.enc.yaml --quiet --project recidiviz-dashboard-production --version ${gaeVersion}`.pipe(
           process.stdout,
         );
         break;
       case "demo":
-        await $`./tools/gcloud-sops-app-deploy.sh dist/libs/staff-shared-server/gae-staging-demo.enc.yaml --quiet --project recidiviz-dashboard-staging`.pipe(
+        await $`./tools/gcloud-sops-app-deploy.sh dist/apps/staff-server/gae-staging-demo.enc.yaml --quiet --project recidiviz-dashboard-staging`.pipe(
           process.stdout,
         );
         break;
       default:
-        await $`./tools/gcloud-sops-app-deploy.sh dist/libs/staff-shared-server/gae-staging.enc.yaml --quiet --project recidiviz-dashboard-staging`.pipe(
+        await $`./tools/gcloud-sops-app-deploy.sh dist/apps/staff-server/gae-staging.enc.yaml --quiet --project recidiviz-dashboard-staging`.pipe(
           process.stdout,
         );
         break;

@@ -22,14 +22,14 @@ import { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import { computed, configure, makeObservable, onReactionError } from "mobx";
 
 import type { JiiStaffAppRouter } from "~@jii/trpc-types";
-import { isTestEnv } from "~client-env-utils";
-import { FirebaseAuthClient } from "~firebase-auth";
-import { SentencingStore } from "~sentencing-client";
 import {
   demoAuthConfig,
   devAuthConfig,
   productionAuthConfig,
-} from "~staff-shared-server";
+} from "~auth-utils";
+import { isTestEnv } from "~client-env-utils";
+import { FirebaseAuthClient } from "~firebase-auth";
+import { SentencingStore } from "~sentencing-client";
 
 import OpportunitiesFilterStore from "../FilterStore/OpportunitiesFilterStore";
 import TasksFilterStore from "../FilterStore/TasksFilterStore";

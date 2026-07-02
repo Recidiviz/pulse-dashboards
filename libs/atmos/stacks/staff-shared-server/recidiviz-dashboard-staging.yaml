@@ -21,4 +21,5 @@ components:
       vars:
         project_id: "{{ .settings.context.project_id }}"
         location: "{{ .settings.context.location }}"
+        # staff-shared-server is the legacy name for what is now staff-server
         repository_id: staff-shared-server

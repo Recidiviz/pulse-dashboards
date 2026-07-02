@@ -36,7 +36,7 @@ export const US_UT = "US_UT";
 
 /**
  * NOTE: When adding new tenants, please also add the state code to the `stateCodes` object
- * in `libs/staff-shared-server/src/server/constants/stateCodes.js`
+ * in `libs/auth-utils/src/stateCodes.js`
  */
 const NON_PATHWAYS_TENANTS = [
   US_AZ,

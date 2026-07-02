@@ -1,0 +1,28 @@
+{
+  "name": "auth-utils",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/auth-utils/src",
+  "projectType": "library",
+  "tags": ["scope:universal"],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.lib.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/libs/auth-utils"],
+      "cache": true,
+      "options": {
+        "command": "vitest",
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}

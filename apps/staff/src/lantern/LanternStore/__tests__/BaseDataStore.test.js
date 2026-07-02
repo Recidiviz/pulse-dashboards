@@ -17,7 +17,7 @@
 
 import * as Sentry from "@sentry/react";
 
-import * as sharedFilters from "~staff-shared-server";
+import * as sharedFilters from "~staff-shared-filters";
 
 import { callMetricsApi } from "../../../api/metrics/metricsClient";
 import LanternStore from "..";
@@ -43,9 +43,9 @@ vi.mock("../DataStore/MatrixStore");
 vi.mock("../DataStore/CaseTableStore");
 vi.mock("../DataStore/RevocationsChartStore");
 vi.mock("../DataStore/RevocationsOverTimeStore");
-vi.mock("~staff-shared-server", async () => {
+vi.mock("~staff-shared-filters", async () => {
   return {
-    ...(await vi.importActual("~staff-shared-server")),
+    ...(await vi.importActual("~staff-shared-filters")),
     filterOptimizedDataFormat: vi.fn(),
   };
 });

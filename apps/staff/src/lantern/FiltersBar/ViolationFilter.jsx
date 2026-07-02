@@ -19,7 +19,7 @@ import { get } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useMemo } from "react";
 
-import { isAllItem } from "~staff-shared-server";
+import { isAllItem } from "~staff-shared-filters";
 import { pluralize } from "~utils";
 
 import {

@@ -107,10 +107,12 @@ nx generate ~repo:lib [my-library]
   - `@sentencing/` - PSI/Sentencing tools (React frontend in staff, Fastify/tRPC server)
   - `@meetings/` - Meeting Assistant (React Native/Expo mobile app)
   - `@jii-texting/` - JII Texting service (Fastify server)
+  - `staff-server/` - Legacy Node/Express backend for the staff dashboard (Pathways/Lantern metrics)
 - `libs/` - Shared libraries
   - `@*/prisma/` - Prisma schemas and clients per domain
   - `@*/trpc-types/` - tRPC type definitions
-  - `staff-shared-server/` - Legacy Node server and shared filtering logic
+  - `staff-shared-filters/` - Shared Pathways/Lantern filtering logic used by both the staff frontend and `staff-server` (`~staff-shared-filters`)
+  - `auth-utils/` - Universal auth configs and state-code constants shared by the staff frontend and `staff-server` (`~auth-utils`)
   - `datatypes/` - Shared TypeScript types
   - `design-system/` - UI component library
   - `atmos/` - Terraform infrastructure components
@@ -154,7 +156,7 @@ Prefer using ~design-system when components are available in both locations.
 
 ### Backend Services
 
-- **staff-shared-server**: Legacy Node/Express on port 3001, Redis cache on port 6380
+- **staff-server**: Legacy Node/Express on port 3001, Redis cache on port 6380
 - **@sentencing/server**: Fastify + tRPC + Prisma
 - **@reentry/backend**: Python FastAPI (separate venv with `uv`)
 - **@meetings/server**: Fastify + tRPC + Prisma

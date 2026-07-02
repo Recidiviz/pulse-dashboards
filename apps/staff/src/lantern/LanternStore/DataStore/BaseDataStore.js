@@ -26,7 +26,7 @@ import {
   toJS,
 } from "mobx";
 
-import { filterOptimizedDataFormat } from "~staff-shared-server";
+import { filterOptimizedDataFormat } from "~staff-shared-filters";
 
 import {
   callMetricsApi,

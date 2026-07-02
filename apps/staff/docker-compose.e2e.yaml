@@ -39,7 +39,7 @@ services:
 
   server:
     image: ghcr.io/recidiviz/pulse-dashboards/firebase-tools-react:latest
-    working_dir: /home/node/app/dist/libs/staff-shared-server
+    working_dir: /home/node/app/dist/apps/staff-server
     volumes:
       - ../../:/home/node/app
     command: yarn start-e2e

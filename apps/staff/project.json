@@ -59,7 +59,7 @@
       "defaultConfiguration": "development",
       "metadata": {
         "sops-env": {
-          "override-sops-env-project": "staff-shared-server"
+          "override-sops-env-project": "staff-server"
         }
       }
     },
@@ -74,7 +74,7 @@
     "requires-sops-env:dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["nx dev-spa staff", "nx dev staff-shared-server"]
+        "commands": ["nx dev-spa staff", "nx dev staff-server"]
       },
       "defaultConfiguration": "development",
       "configurations": {
@@ -85,7 +85,7 @@
     "requires-sops-env:dev-be": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["nx dev-spa staff", "nx dev staff-shared-server"]
+        "commands": ["nx dev-spa staff", "nx dev staff-server"]
       },
       "defaultConfiguration": "dev.local",
       "configurations": {
@@ -125,7 +125,7 @@
         "commands": [
           "vite dev",
           "cd ../../ && nx firebase-offline staff",
-          "cd ../../ && nx offline staff-shared-server",
+          "cd ../../ && nx offline staff-server",
           "cd ../../ && nx offline '@typesense/tools'",
           "cd ../../ && nx offline-sync '@typesense/tools'"
         ],
@@ -137,7 +137,7 @@
       "options": {
         "commands": [
           "nx offline staff",
-          "nx python-backend-offline staff-shared-server"
+          "nx python-backend-offline staff-server"
         ],
         "cwd": "{workspaceRoot}"
       }

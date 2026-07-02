@@ -48,7 +48,7 @@ The build process, as described below, ensures that the proper values are compil
 
 The backend API server and most frontend views in the app are authenticated via [Auth0](https://auth0.com/). You can control which views are authenticated by specifying the allowed paths in `ProtectedLayout.tsx`. If you are setting this app up completely fresh, you will need to create your own Auth0 account.
 
-This setup assumes you have two separate Auth0 tenants, one for staging/demo/development and one for production. Configs live in `~staff-shared-server`. Which config is loaded and used relies on the `AUTH_ENV` environment variable on the backend and the `VITE_AUTH_ENV` environment variable on the frontend. It is important that the same config be loaded on the backend and frontend servers in a given tier so that API authentication will work.
+This setup assumes you have two separate Auth0 tenants, one for staging/demo/development and one for production. Configs live in `~auth-utils`. Which config is loaded and used relies on the `AUTH_ENV` environment variable on the backend and the `VITE_AUTH_ENV` environment variable on the frontend. It is important that the same config be loaded on the backend and frontend servers in a given tier so that API authentication will work.
 
 ### Nx
 
@@ -86,7 +86,7 @@ A script is available for starting the development servers.
 
 `nx dev staff`
 
-This will start both the frontend dev server and a local backend from `~staff-shared-server`. You could start the frontend server on its own using using `nx dev-spa staff`.
+This will start both the frontend dev server and a local backend from `staff-server`. You could start the frontend server on its own using using `nx dev-spa staff`.
 
 API calls to the Python backend are made to the staging version of the app.
 
@@ -157,17 +157,17 @@ If you are running in offline mode, you may need to run through the following st
 1. Make sure you can run the Firebase emulator; this requires Firebase Tools as described above as well as a recent version of Java.
    The Firebase emulator has its own set of fixtures that it automatically imports when starting up; to change those fixtures, edit the fixture files in `tools/fixtures` and then run `nx update-workflows-fixture staff`.
 
-1. Follow any setup steps for Offline Mode in `/libs/staff-shared-server`
+1. Follow any setup steps for Offline Mode in `/apps/staff-server`
 
 ### Running the Frontend and Backend together in Offline mode with the Python backend
 
-Similar to dev mode, in offline mode we do not run the Python backend locally by default. If you are working on features that require this backend, you can run it along with the rest of offline mode with `nx offline-python staff`. (Because it runs in Docker Compose, after stopping the server with Ctrl-C you can also run `nx python-backend-shutdown staff-shared-server` to clean it up.)
+Similar to dev mode, in offline mode we do not run the Python backend locally by default. If you are working on features that require this backend, you can run it along with the rest of offline mode with `nx offline-python staff`. (Because it runs in Docker Compose, after stopping the server with Ctrl-C you can also run `nx python-backend-shutdown staff-server` to clean it up.)
 
 It is possible that the frontend finishes loading before the backend has finished setting up. If that happens, you may see a "no data available" indicator in the frontend and/or failed requests in the console. To fix this, wait for the container output to display the message "finished initializing pathways database" and refresh the page (this should take no more than a minute).
 
 To swap out the backend for a specific metric, set its id to "OLD" or "NEW in the development `metricBackendOverrides` section in [flags.ts](./src/flags.ts) ("NEW" indicates the Python backend). To swap out the backend for all supported metrics, change the `defaultMetricBackend` to "OLD" or "NEW".
 
-The offline version of the Pathways backend is managed by `libs/staff-shared-server`, please see documentation in that library for additional information and troubleshooting.
+The offline version of the Pathways backend is managed by `apps/staff-server`, please see documentation in that library for additional information and troubleshooting.
 
 ## Deploys
 

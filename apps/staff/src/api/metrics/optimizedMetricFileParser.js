@@ -23,7 +23,7 @@ import {
   getDimensionValue,
   getValueKey,
   validateMetadata,
-} from "~staff-shared-server";
+} from "~staff-shared-filters";
 
 /**
  * Expands the optimized metric file format into an array of json objects.

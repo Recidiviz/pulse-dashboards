@@ -8,12 +8,12 @@ Guidance for working in the Staff Dashboard. Inherits from the repo root `CLAUDE
 
 The staff app bundles four loosely-coupled products that share auth, routing, and design system but have separate stores, data sources, and code locations. **Be explicit about which product you're working in** — patterns rarely transfer cleanly.
 
-| Product       | Code location                                                                | Backend / data source                                        | State                             |
-| ------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------ | --------------------------------- |
-| **Workflows** | `src/WorkflowsStore/` (incl. `Opportunity/`, `Task/`), `src/core/Workflows*` | Firestore (direct) + Recidiviz API                           | `WorkflowsStore`                  |
-| **Insights**  | `src/InsightsStore/`, `src/core/Insights*`                                   | tRPC → `@sentencing/server`-style backend                    | `InsightsStore`                   |
-| **Pathways**  | `src/core/` (most non-Insights/Workflows views)                              | Node/Express (`~staff-shared-server`) + Python (Case Triage) | `CoreStore`                       |
-| **Lantern**   | `src/lantern/`                                                               | Node/Express (`~staff-shared-server`)                        | `RootStore` (Lantern-only stores) |
+| Product       | Code location                                                                | Backend / data source                                | State                             |
+| ------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------- | --------------------------------- |
+| **Workflows** | `src/WorkflowsStore/` (incl. `Opportunity/`, `Task/`), `src/core/Workflows*` | Firestore (direct) + Recidiviz API                   | `WorkflowsStore`                  |
+| **Insights**  | `src/InsightsStore/`, `src/core/Insights*`                                   | tRPC → `@sentencing/server`-style backend            | `InsightsStore`                   |
+| **Pathways**  | `src/core/` (most non-Insights/Workflows views)                              | Node/Express (`staff-server`) + Python (Case Triage) | `CoreStore`                       |
+| **Lantern**   | `src/lantern/`                                                               | Node/Express (`staff-server`)                        | `RootStore` (Lantern-only stores) |
 
 Lantern is a separate dashboard surfaced under the same app shell. Don't import Lantern code from `core/` or vice versa — they have parallel store trees.
 
@@ -109,12 +109,12 @@ Prefer Playwright for new tests. Workflows Cucumber tests run against `nx offlin
 
 ## Backends quick reference
 
-| Concern                   | Backend                                | Run locally with                                                  |
-| ------------------------- | -------------------------------------- | ----------------------------------------------------------------- |
-| Workflows reads/writes    | Firestore (direct from frontend)       | Firebase emulator (`nx offline staff`)                            |
-| Insights                  | tRPC over HTTP                         | mocked in offline; staging in `nx dev staff`                      |
-| Pathways metrics (legacy) | Node/Express in `~staff-shared-server` | started by `nx dev staff`                                         |
-| Pathways metrics (new)    | Python/FastAPI in `recidiviz-data`     | `nx dev-be staff` (frontend) + Docker compose in `recidiviz-data` |
-| Auth                      | Auth0 (separate staging/prod tenants)  | bypassed in offline mode                                          |
+| Concern                   | Backend                               | Run locally with                                                  |
+| ------------------------- | ------------------------------------- | ----------------------------------------------------------------- |
+| Workflows reads/writes    | Firestore (direct from frontend)      | Firebase emulator (`nx offline staff`)                            |
+| Insights                  | tRPC over HTTP                        | mocked in offline; staging in `nx dev staff`                      |
+| Pathways metrics (legacy) | Node/Express in `staff-server`        | started by `nx dev staff`                                         |
+| Pathways metrics (new)    | Python/FastAPI in `recidiviz-data`    | `nx dev-be staff` (frontend) + Docker compose in `recidiviz-data` |
+| Auth                      | Auth0 (separate staging/prod tenants) | bypassed in offline mode                                          |
 
 For Pathways metrics specifically: `flags.ts` `defaultMetricBackend` / `metricBackendOverrides` selects between the legacy Node and new Python backend per metric.

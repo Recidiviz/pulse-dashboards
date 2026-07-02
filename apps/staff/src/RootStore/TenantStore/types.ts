@@ -15,6 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { stateCodes } from "~staff-shared-server";
+import { stateCodes } from "~auth-utils";
 
 export type ProvisionedStateCode = keyof typeof stateCodes;

@@ -219,7 +219,7 @@ Future additions to this lib:
 
 - Phase 2 collections (`opportunities`, `opportunityUpdates`, `personUpdates`)
 - Phase 4 collections (`tasks`, `taskUpdates`)
-- Scoped-key minting helpers (consumed by `staff-shared-server`)
+- Scoped-key minting helpers (consumed by `staff-server`)
 - Shared filter-builder module (state-aware caseload-visibility filters)
 - Firebase extension installation for live Firestore → Typesense sync (Spike 4)
 

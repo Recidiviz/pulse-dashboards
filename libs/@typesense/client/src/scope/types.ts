@@ -20,7 +20,7 @@
 // Firestore query layer in apps/staff/src/FirestoreStore/subscriptions/StaffSubscription.ts.
 //
 // The resolver is consumed by:
-//   (1) the staff-shared-server scoped-key mint endpoint (compiled to Typesense filter_by)
+//   (1) the staff-server scoped-key mint endpoint (compiled to Typesense filter_by)
 //   (2) the staff frontend's existing Firestore query path (eventually, once unified)
 
 import type { RoleSubtype, SystemId } from "~datatypes";
