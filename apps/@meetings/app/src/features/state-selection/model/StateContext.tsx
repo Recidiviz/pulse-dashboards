@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import * as Sentry from "@sentry/react-native";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 import { useAgencyConfigs } from "~@meetings/app/entities/agency-config";
@@ -146,6 +147,10 @@ export const StateCodeProvider: React.FC<{
       selectedStateRef.current = selectedStateCode;
     }
   }, [selectedStateCode, selectedStateRef]);
+
+  useEffect(() => {
+    Sentry.setTag("stateCode", selectedStateCode);
+  }, [selectedStateCode]);
 
   return (
     <StateContext.Provider

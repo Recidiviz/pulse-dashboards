@@ -292,6 +292,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
 
       return withScope(async (scope) => {
         scope.setTag("meetingId", meetingId);
+        scope.setTag("stateCode", stateCode);
 
         const prisma = getPrismaClientForStateCode(stateCode);
 
@@ -417,6 +418,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
 
       return withScope(async (scope) => {
         scope.setTag("meetingId", meetingId);
+        scope.setTag("stateCode", stateCode);
 
         const prisma = getPrismaClientForStateCode(stateCode);
 
@@ -559,6 +561,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
 
       return withScope(async (scope) => {
         scope.setTag("meetingId", meetingId);
+        scope.setTag("stateCode", stateCode);
 
         const prisma = getPrismaClientForStateCode(stateCode);
 
@@ -872,6 +875,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
 
       return withScope(async (scope) => {
         scope.setTag("meetingId", meetingId);
+        scope.setTag("stateCode", stateCode);
 
         const prisma = getPrismaClientForStateCode(stateCode);
 

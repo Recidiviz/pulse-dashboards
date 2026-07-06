@@ -18,6 +18,7 @@
 // Required to get the "request.jwtVerify" decorator to be recognized by typescript
 import "@fastify/jwt";
 
+import { getIsolationScope } from "@sentry/node";
 import { TRPCError } from "@trpc/server";
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
 
@@ -147,6 +148,8 @@ export async function createContext(
       message: `Unsupported state code provided in request headers: ${stateCode}`,
     });
   }
+
+  getIsolationScope().setTag("stateCode", stateCode);
 
   // Check for skip auth in offline mode (dev only)
   const skipAuthHeader = req.headers[SKIP_AUTH_HEADER_KEY];
