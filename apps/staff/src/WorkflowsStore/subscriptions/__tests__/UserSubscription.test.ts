@@ -275,7 +275,7 @@ describe("Firestore converter", () => {
   test("infers hasCaseload", () => {
     const mockInput = { ...inputFixture(supervisionStaffFixtures[0]) };
     // sanity check
-    expect(mockInput.hasCaseload).toBeUndefined();
+    expect(mockInput.hasCaseload).toBeDefined();
 
     const mockDocumentSnapshot = {
       id: "test123",

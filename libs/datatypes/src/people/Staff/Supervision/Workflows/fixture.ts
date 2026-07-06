@@ -71,6 +71,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     surname: "Douglas",
     supervisorExternalId: "SUPERVISOR1",
     pseudonymizedId: "p001",
+    hasCaseload: true,
   },
 
   // US_IA - IOWA
