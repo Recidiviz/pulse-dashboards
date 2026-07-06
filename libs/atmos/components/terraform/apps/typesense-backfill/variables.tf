@@ -86,8 +86,14 @@ variable "collections" {
 
 variable "function_memory" {
   type        = string
-  default     = "1Gi"
-  description = "Memory allocated to the function. 1Gi gives Firestore client + Typesense batches comfortable headroom."
+  default     = "4Gi"
+  description = "Memory allocated to the function. Bumped from 1Gi, which pegged (and OOM-restarted the instance) during a full backfill — concurrent collections each buffer a page of docs plus the Typesense client/Firestore SDK overhead. Raise further if the memory metric still tops out."
+}
+
+variable "function_cpu" {
+  type        = string
+  default     = "2"
+  description = "vCPUs allocated to the function. Cloud Run defaults to 1 at this memory; 2 gives the concurrent (rate-limited) collection workers headroom to project/serialize batches without pegging CPU. Must satisfy Cloud Run's CPU/memory pairing rules (e.g. 4 CPU needs >=2Gi)."
 }
 
 variable "function_timeout_seconds" {
@@ -100,4 +106,56 @@ variable "function_max_instances" {
   type        = number
   default     = 1
   description = "Cap concurrent invocations. 1 prevents overlapping backfills (a manual trigger during a scheduled run shouldn't fan out)."
+}
+
+variable "backfill_concurrency" {
+  type        = number
+  default     = 6
+  description = "How many collections backfill concurrently. Provides overlap so a large collection's slow tail runs alongside the others; the import rate itself is bounded by backfill_import_rate_per_sec, not by this."
+}
+
+variable "backfill_import_rate_per_sec" {
+  type        = number
+  default     = 40
+  description = "Global cap on Typesense import requests/sec across all concurrent collections. Now that the function's static egress IP is allowlisted past Cloud Armor, this protects the SHARED Typesense cluster (same nodes serve live search) rather than dodging the per-IP 429 ceiling. Set to 0 to disable limiting entirely (e.g. a staging run with no live traffic). Note: with a large backfill_batch_size the request rate is naturally low, so this rarely binds."
+}
+
+variable "backfill_batch_size" {
+  type        = number
+  default     = 4000
+  description = "Firestore page size = Typesense import batch size. Pagination is serial within a collection, so for large collections (e.g. clients) the round-trip count dominates wall-clock — bigger batches mean fewer round trips and a much faster backfill. Bounded by function_memory (a page of docs is held in memory). This, not the rate limit, is the lever for single-collection speed."
+}
+
+# -----------------------------------------------------------------------------
+# Static egress (so the typesense Cloud Armor policy can allowlist this function)
+# -----------------------------------------------------------------------------
+
+variable "static_egress_enabled" {
+  type        = bool
+  default     = false
+  description = "Route ALL function egress through a Serverless VPC connector + Cloud NAT so outbound traffic uses a reserved static IP (the egress_ip output). Enable so the typesense Cloud Armor policy can allowlist the backfill past its per-IP rate limit. When false, the function uses the shared Google egress pool and is subject to the rate limit."
+}
+
+variable "egress_subnet_cidr" {
+  type        = string
+  default     = "10.124.0.0/28"
+  description = "The /28 the Serverless VPC Access connector owns in the dedicated egress network. Must be a /28. Any private range works since the egress network is isolated; just avoid a range you might later peer with overlapping CIDRs."
+}
+
+variable "connector_machine_type" {
+  type        = string
+  default     = "e2-micro"
+  description = "Serverless VPC Access connector machine type. e2-micro is sufficient for the backfill's modest throughput."
+}
+
+variable "connector_min_instances" {
+  type        = number
+  default     = 2
+  description = "Connector minimum instances. GCP's floor is 2."
+}
+
+variable "connector_max_instances" {
+  type        = number
+  default     = 3
+  description = "Connector maximum instances. Must be greater than connector_min_instances. 3 is ample for this workload."
 }

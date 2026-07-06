@@ -118,6 +118,34 @@ resource "google_compute_region_security_policy_rule" "waf" {
   }
 }
 
+# Allowlist trusted source IPs (the typesense-backfill function's static egress)
+# past the WAF + rate limit. Priority 500 sits ABOVE the WAF (900/901) and the
+# rate-limit (1000) rules; a match short-circuits evaluation to `allow` before
+# either is reached, so the backfill can bulk-import without tripping the per-IP
+# rate limit (and without the WAF's JSONL false positives).
+#
+# Only created when the workload is present AND an allowlist is configured, so
+# stacks that don't set backfill_allowlist_ip_ranges are unaffected.
+#
+# NOTE: this fully exempts the listed IPs from the WAF too. That's intentional for
+# our own trusted egress IP; if you ever allowlist a less-trusted source and want
+# the WAF to still apply, give that rule a priority between 901 and 1000 instead.
+resource "google_compute_region_security_policy_rule" "allowlist" {
+  count           = local.workload_count > 0 && length(var.backfill_allowlist_ip_ranges) > 0 ? 1 : 0
+  region          = var.region
+  security_policy = google_compute_region_security_policy.typesense[0].name
+  action          = "allow"
+  priority        = 500
+  description     = "Allowlist trusted source IPs (typesense-backfill static egress) past WAF + rate limit"
+
+  match {
+    versioned_expr = "SRC_IPS_V1"
+    config {
+      src_ip_ranges = var.backfill_allowlist_ip_ranges
+    }
+  }
+}
+
 # Per-IP rate limiting.
 resource "google_compute_region_security_policy_rule" "rate_limit" {
   count           = local.workload_count

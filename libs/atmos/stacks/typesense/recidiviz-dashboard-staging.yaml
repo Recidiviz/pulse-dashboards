@@ -18,6 +18,13 @@ components:
       vars:
         region: "{{ .settings.context.location }}"
 
+        # Allowlist the typesense-backfill function's static egress IP past the
+        # Cloud Armor WAF + per-IP rate limit so it can bulk-import
+        # faster. Sourced from that component's egress_ip output — apply
+        # apps/typesense-backfill first so the output exists in its state.
+        backfill_allowlist_ip_ranges:
+          - !terraform.state apps/typesense-backfill egress_ip
+
         # Public endpoint. DNS (A record + cert-validation CNAME) is managed outside
         # this project — see the endpoint_ip / cert_dns_authorization_record outputs.
         hostname: typesense-staging.recidiviz.org
@@ -142,3 +149,10 @@ components:
 
         # Same source-of-truth as the typesense client
         collections: !exec yarn tsx ../../libs/@typesense/client/src/export-collections.ts
+
+        # Pin outbound traffic to a reserved static IP (via VPC connector + Cloud
+        # NAT) so the typesense Cloud Armor policy can allowlist this function past
+        # its per-IP rate limit. The egress_ip output is wired into apps/typesense's
+        # backfill_allowlist_ip_ranges above. Apply this component BEFORE apps/typesense
+        # so the egress_ip output exists when that stack resolves !terraform.state.
+        static_egress_enabled: true

@@ -28,10 +28,13 @@
 // can cross-reference (https://github.com/typesense/firestore-typesense-search).
 
 /* eslint-disable no-await-in-loop --
- * Sequential awaits are intentional throughout this file. Pages of Firestore
- * docs MUST be fetched serially (each query uses the previous page's last doc
- * as its cursor), and concurrent Typesense imports would blow past the cluster
- * IP-rate-limit (600/min) on large collections.
+ * Sequential awaits within a single collection are intentional: pages of
+ * Firestore docs MUST be fetched serially (each query uses the previous page's
+ * last doc as its cursor), and the import for a page can't start until that
+ * page is fetched. Collections themselves run concurrently through a bounded
+ * worker pool (see runBackfill) — the pool size, not per-collection paging, is
+ * what keeps total in-flight imports under the cluster's IP rate limit
+ * (600/min).
  */
 
 import { firestore } from "firebase-admin";
@@ -39,7 +42,117 @@ import type { Client as TypesenseClient } from "typesense";
 
 import { createTypesenseClient } from "~@typesense/client";
 
-const BATCH_SIZE = 100;
+// Firestore page size = Typesense import batch size. Larger batches mean fewer
+// serial fetch→import round trips per collection (pagination is strictly serial
+// within a collection, so for big collections like `clients` the round-trip
+// count dominates wall-clock). Typesense bulk import handles thousands of docs
+// per request; 500 is a safe default well within the function's memory. Override
+// via env.
+const DEFAULT_BATCH_SIZE = 500;
+
+export function resolveBatchSize(): number {
+  const raw = Number(process.env["BACKFILL_BATCH_SIZE"]);
+  return Number.isInteger(raw) && raw > 0 ? raw : DEFAULT_BATCH_SIZE;
+}
+
+// How many collections to backfill concurrently. Each collection pages its
+// Firestore reads — and therefore its Typesense imports — serially, so this caps
+// how many import streams overlap. Concurrency is what lets a large collection's
+// slow tail overlap the others; it is NOT what keeps us under the rate limit —
+// that's the limiter below (concurrency bounds in-flight requests, not their
+// rate). Override via env.
+const DEFAULT_CONCURRENCY = 3;
+
+export function resolveConcurrency(): number {
+  const raw = Number(process.env["BACKFILL_CONCURRENCY"]);
+  return Number.isInteger(raw) && raw > 0 ? raw : DEFAULT_CONCURRENCY;
+}
+
+// Global cap on the rate of Typesense import requests across ALL concurrently
+// running collections. Originally added to stay under Cloud Armor's per-IP limit
+// (600/min); now that the function's static egress IP is allowlisted past Cloud
+// Armor, its job is to protect the SHARED Typesense cluster — the same nodes
+// answer live search, so an unbounded write flood would spike search latency and
+// pending writes. Set BACKFILL_IMPORT_RATE_PER_SEC=0 to disable limiting entirely
+// (e.g. a staging run with no live traffic); any positive value caps requests/sec.
+const DEFAULT_IMPORT_RATE_PER_SEC = 50;
+
+export function resolveImportRatePerSec(): number {
+  const raw = process.env["BACKFILL_IMPORT_RATE_PER_SEC"];
+  // Distinguish "unset" (→ default) from an explicit "0" (→ disabled). A negative
+  // or non-numeric value is treated as a mistake and falls back to the default.
+  if (raw === undefined || raw.trim() === "")
+    return DEFAULT_IMPORT_RATE_PER_SEC;
+  const n = Number(raw);
+  return Number.isFinite(n) && n >= 0 ? n : DEFAULT_IMPORT_RATE_PER_SEC;
+}
+
+export interface RateLimiter {
+  take(): Promise<void>;
+}
+
+// Minimum-interval limiter: hands out permits no closer together than
+// `1000 / ratePerSec` ms. Each caller synchronously reserves the next slot
+// (advancing `nextAllowedAt`) before awaiting, so concurrent callers queue
+// fairly FIFO and spread out rather than all firing at once. Deliberately a
+// smooth limiter, not a burst bucket — it protects a sustained write rate.
+// A non-positive (or non-finite) rate disables limiting entirely: take()
+// resolves immediately, imports run as fast as the cluster will accept them.
+// `now`/`sleep` are injectable so the spacing is deterministically testable.
+export function createRateLimiter(
+  ratePerSec: number,
+  now: () => number = Date.now,
+  sleep: (ms: number) => Promise<void> = (ms) =>
+    new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    }),
+): RateLimiter {
+  // Disabled (BACKFILL_IMPORT_RATE_PER_SEC=0): hand out permits with no spacing.
+  if (!Number.isFinite(ratePerSec) || ratePerSec <= 0) {
+    return { take: () => Promise.resolve() };
+  }
+
+  const minIntervalMs = 1000 / ratePerSec;
+  let nextAllowedAt = 0;
+
+  return {
+    async take(): Promise<void> {
+      const scheduledAt = Math.max(now(), nextAllowedAt);
+      // Reserve this slot synchronously so a concurrent caller chains off it.
+      nextAllowedAt = scheduledAt + minIntervalMs;
+      const waitMs = scheduledAt - now();
+      if (waitMs > 0) await sleep(waitMs);
+    },
+  };
+}
+
+// Runs `task` over `items` with at most `concurrency` invocations in flight at
+// once, returning results in INPUT order regardless of completion order. A
+// small hand-rolled worker pool (no extra deps): each worker pulls the next
+// index until the queue drains. `concurrency` is clamped to [1, items.length]
+// so an empty list spawns no real work and an oversized limit can't exceed the
+// number of items.
+export async function mapWithConcurrency<T, R>(
+  items: readonly T[],
+  concurrency: number,
+  task: (item: T, index: number) => Promise<R>,
+): Promise<R[]> {
+  const results = new Array<R>(items.length);
+  const limit = Math.max(1, Math.min(concurrency, items.length));
+  let next = 0;
+
+  async function worker(): Promise<void> {
+    while (true) {
+      const index = next;
+      next += 1;
+      if (index >= items.length) break;
+      results[index] = await task(items[index], index);
+    }
+  }
+
+  await Promise.all(Array.from({ length: limit }, () => worker()));
+  return results;
+}
 
 export interface CollectionConfig {
   name: string;
@@ -165,6 +278,8 @@ export function parseImportResponse(raw: unknown): ImportEntry[] {
 async function backfillCollection(
   client: TypesenseClient,
   { name, fields }: CollectionConfig,
+  limiter: RateLimiter,
+  batchSize: number,
 ): Promise<BackfillResult> {
   const db = firestore();
   const ref = db.collection(name);
@@ -175,7 +290,7 @@ async function backfillCollection(
   let cursor: firestore.QueryDocumentSnapshot | null = null;
 
   while (true) {
-    let q = ref.orderBy(firestore.FieldPath.documentId()).limit(BATCH_SIZE);
+    let q = ref.orderBy(firestore.FieldPath.documentId()).limit(batchSize);
     if (cursor) q = q.startAfter(cursor);
 
     const snapshot = await q.get();
@@ -187,6 +302,11 @@ async function backfillCollection(
     );
 
     try {
+      // Gate every import through the shared limiter so the combined request
+      // rate across all concurrent collections doesn't overwhelm the shared
+      // Typesense cluster (which also serves live search). No-op when disabled.
+      await limiter.take();
+
       // Typesense bulk import returns per-doc results — a 200 on the request as
       // a whole still has individual `success` booleans per doc.
       const raw = await client
@@ -252,7 +372,7 @@ async function backfillCollection(
     }
 
     cursor = snapshot.docs[snapshot.docs.length - 1];
-    if (snapshot.size < BATCH_SIZE) break;
+    if (snapshot.size < batchSize) break;
   }
 
   console.info(
@@ -265,15 +385,19 @@ export async function runBackfill(
   collectionsConfig: CollectionConfig[],
 ): Promise<BackfillSummary> {
   const client = buildTypesenseClient();
-  const results: BackfillResult[] = [];
 
-  // Sequential, not parallel — concurrent imports would blow past Typesense's
-  // per-IP rate limit (600/min) on large collections, and Cloud Armor would
-  // start denying with 429s.
-  for (const config of collectionsConfig) {
-    const r = await backfillCollection(client, config);
-    results.push(r);
-  }
+  // Process collections through a bounded worker pool rather than one-at-a-time,
+  // overlapping the slow tail of large collections against the rest. A single
+  // limiter shared across every collection caps the combined import request rate
+  // so the backfill doesn't overwhelm the shared cluster (disabled when the rate
+  // resolves to 0). The batch size is resolved once and applied to every page.
+  const limiter = createRateLimiter(resolveImportRatePerSec());
+  const batchSize = resolveBatchSize();
+  const results = await mapWithConcurrency(
+    collectionsConfig,
+    resolveConcurrency(),
+    (config) => backfillCollection(client, config, limiter, batchSize),
+  );
 
   const totals = results.reduce(
     (acc, r) => ({

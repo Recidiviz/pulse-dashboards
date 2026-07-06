@@ -176,3 +176,17 @@ variable "compact_schedule" {
   description = "Cron schedule (UTC) for the per-node RocksDB compaction CronJob. Default: 03:00 US/Central daily."
   default     = "0 8 * * *"
 }
+
+variable "backfill_allowlist_ip_ranges" {
+  type        = list(string)
+  default     = []
+  description = <<-EOT
+    Source IPs/CIDRs allowlisted past the Cloud Armor WAF + rate limit at high priority
+    (see the "allowlist" rule in exposure.tf). Intended for the typesense-backfill function's
+    static egress IP so it can bulk-import faster than the per-IP rate limit. Wire it from the
+    backfill component's egress_ip output in the stack:
+      backfill_allowlist_ip_ranges:
+        - !terraform.state apps/typesense-backfill egress_ip
+    Empty (the default) creates no allowlist rule, so non-backfill stacks are unaffected.
+  EOT
+}

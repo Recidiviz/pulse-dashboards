@@ -124,15 +124,26 @@ resource "google_cloudfunctions2_function" "backfill" {
   service_config {
     max_instance_count    = var.function_max_instances
     available_memory      = var.function_memory
+    available_cpu         = var.function_cpu
     timeout_seconds       = var.function_timeout_seconds
     service_account_email = google_service_account.backfill.email
 
+    # Route ALL outbound traffic through the Serverless VPC connector so egress to
+    # the public Typesense endpoint leaves via Cloud NAT's reserved static IP — the
+    # address the typesense Cloud Armor policy allowlists past its rate limit (see
+    # network.tf). Null when static egress is disabled (shared Google pool).
+    vpc_connector                 = var.static_egress_enabled ? google_vpc_access_connector.backfill[0].id : null
+    vpc_connector_egress_settings = var.static_egress_enabled ? "ALL_TRAFFIC" : null
+
     environment_variables = {
-      TYPESENSE_HOSTS    = var.typesense_host
-      TYPESENSE_PORT     = tostring(var.typesense_port)
-      TYPESENSE_PROTOCOL = var.typesense_protocol
-      FIRESTORE_DATABASE = var.firestore_database
-      COLLECTIONS_JSON   = local.collections_json
+      TYPESENSE_HOSTS              = var.typesense_host
+      TYPESENSE_PORT               = tostring(var.typesense_port)
+      TYPESENSE_PROTOCOL           = var.typesense_protocol
+      FIRESTORE_DATABASE           = var.firestore_database
+      COLLECTIONS_JSON             = local.collections_json
+      BACKFILL_CONCURRENCY         = tostring(var.backfill_concurrency)
+      BACKFILL_IMPORT_RATE_PER_SEC = tostring(var.backfill_import_rate_per_sec)
+      BACKFILL_BATCH_SIZE          = tostring(var.backfill_batch_size)
     }
 
     # Mounted as $TYPESENSE_API_KEY in the function process.
