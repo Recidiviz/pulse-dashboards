@@ -24,8 +24,14 @@ import { ScrollView as GHScrollView } from "react-native-gesture-handler";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 type ActionItem = {
-  task: string;
+  id: string;
+  assignee: string;
+  completed: boolean;
+  editedTask: string | null;
+  generatedTask: string;
   context: string | null;
+  evidenceQuotes: string[];
+  deleted: boolean;
 };
 
 type ActionItemsTabProps = {
@@ -34,11 +40,12 @@ type ActionItemsTabProps = {
 };
 
 export const ActionItemsTab = ({ items, outputVote }: ActionItemsTabProps) => {
-  const ActionItem = Platform.OS === "web" ? ActionItemWeb : ActionItemMobile;
+  const ActionItemComponent =
+    Platform.OS === "web" ? ActionItemWeb : ActionItemMobile;
 
   return (
     <View className="flex-1 gap-4 pb-4">
-      {items?.map((item, index) => <ActionItem key={index} {...item} />)}
+      {items?.map((item) => <ActionItemComponent key={item.id} {...item} />)}
       {outputVote}
     </View>
   );
@@ -62,7 +69,8 @@ function SourceLabel() {
   );
 }
 
-function ActionItemWeb({ task, context }: ActionItem) {
+function ActionItemWeb({ editedTask, generatedTask, context }: ActionItem) {
+  const task = editedTask ?? generatedTask;
   return (
     <View className="flex-row gap-2 px-4">
       <Typography className="mt-0.5 text-primary">•</Typography>
@@ -99,7 +107,8 @@ function ActionItemWeb({ task, context }: ActionItem) {
   );
 }
 
-function ActionItemMobile({ task, context }: ActionItem) {
+function ActionItemMobile({ editedTask, generatedTask, context }: ActionItem) {
+  const task = editedTask ?? generatedTask;
   const [open, setOpen] = useState(false);
 
   return (

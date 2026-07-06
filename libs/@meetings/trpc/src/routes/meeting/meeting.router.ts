@@ -70,7 +70,6 @@ export const meetingRouter = router({
               caseNote: true,
               userNotepadNotes: true,
               actionItems: true,
-              structuredActionItems: true,
               criticalUpdates: true,
               meetingSummary: true,
               staffFeedback: true,
@@ -89,6 +88,21 @@ export const meetingRouter = router({
               audioDeletedAt: true,
               meetingType: true,
               meetingTypeCategory: true,
+              meetingActionItems: {
+                where: { deleted: false },
+                orderBy: { createdAt: "asc" },
+                select: {
+                  id: true,
+                  assignee: true,
+                  completed: true,
+                  editedTask: true,
+                  generatedTask: true,
+                  context: true,
+                  evidenceQuotes: true,
+                  deleted: true,
+                  pipelineRunId: true,
+                },
+              },
               transcriptions: {
                 orderBy: {
                   confidence: "desc",
@@ -228,9 +242,14 @@ export const meetingRouter = router({
           const isApproved = (section: NoteSection) =>
             latestApprovalBySection.get(section) === ApprovalValue.APPROVED;
 
+          const currentActionItems = meeting.meetingActionItems.filter(
+            (item) => item.pipelineRunId === meeting.notetakingPipelineRunId,
+          );
+
           return {
             ..._.omit(meeting, [
               "transcriptions",
+              "meetingActionItems",
               "staffFeedback",
               "staffFeedbackGeneratedAt",
               "outputsPipelineRunId",
@@ -241,17 +260,15 @@ export const meetingRouter = router({
             ]),
             actionItems:
               validateJsonField(meeting.actionItems, z.array(z.string())) || [],
-            structuredActionItems:
-              validateJsonField(
-                meeting.structuredActionItems,
-                z.array(
-                  z.object({
-                    task: z.string(),
-                    context: z.string().nullable(),
-                    evidenceQuotes: z.array(z.string()).nullable().optional(),
-                  }),
-                ),
-              ) || [],
+            meetingActionItems: currentActionItems.map((item) =>
+              _.omit(item, ["pipelineRunId"]),
+            ),
+            structuredActionItems: currentActionItems.map((item) => ({
+              task: item.editedTask ?? item.generatedTask,
+              context: item.context ?? null,
+              evidenceQuotes:
+                item.evidenceQuotes.length > 0 ? item.evidenceQuotes : null,
+            })),
             criticalUpdates:
               validateJsonField(meeting.criticalUpdates, z.array(z.string())) ||
               [],

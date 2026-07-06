@@ -61,17 +61,6 @@ function buildUtterances(person: DemoPerson, durationMs: number) {
   }));
 }
 
-/** structuredActionItems column shape (mirrors routes.ts persistence). */
-function toStructuredActionItems(person: DemoPerson) {
-  return person.actionItems.map((item) => ({
-    task: item.task,
-    assignee: item.assignee,
-    deadline: item.deadline ?? null,
-    context: item.context ?? null,
-    evidenceQuotes: item.evidenceQuotes ?? null,
-  }));
-}
-
 /** criticalUpdates column shape: "Category - UpdateType: details". */
 function toCriticalUpdateStrings(person: DemoPerson): string[] {
   return person.criticalUpdates.map(
@@ -121,6 +110,7 @@ async function seedMeeting(
     });
     await prisma.transcription.deleteMany({ where: { meetingId } });
   }
+  await prisma.meetingActionItem.deleteMany({ where: { meetingId } });
 
   const data = {
     startTime,
@@ -133,9 +123,17 @@ async function seedMeeting(
     recordingsFolderPath: meetingId,
     userNotepadNotes: "",
     caseNote: person.caseNote,
-    // TODO OBT-31909: actionItems (string[]) is superseded by structuredActionItems.
-    actionItems: person.actionItems.map((item) => item.task),
-    structuredActionItems: toStructuredActionItems(person),
+    meetingActionItems: {
+      create: person.actionItems.map((item) => ({
+        assignee: item.assignee,
+        generatedTask: item.task,
+        context: item.context ?? null,
+        evidenceQuotes: item.evidenceQuotes ?? [],
+        completed: false,
+        deleted: false,
+        pipelineRunId: `pipeline-${meetingId}`,
+      })),
+    },
     criticalUpdates: toCriticalUpdateStrings(person),
     meetingSummary: normalizeMinutes(person.meetingSummary),
     staffFeedback: person.staffFeedback,

@@ -244,6 +244,7 @@ model MeetingActionItem {
   completed      Boolean
   editedTask     String?
   generatedTask  String
+  context        String?
   evidenceQuotes String[]
   deleted        Boolean
   deletedAt      DateTime?

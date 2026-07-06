@@ -42,15 +42,27 @@ export const getDetailsOutputSchema = z.object({
   caseNote: z.string().nullable(),
   userNotepadNotes: z.string().nullable(),
   actionItems: z.array(z.string()).nullable(),
-  structuredActionItems: z
-    .array(
-      z.object({
-        task: z.string(),
-        context: z.string().nullable(),
-        evidenceQuotes: z.array(z.string()).nullable().optional(),
-      }),
-    )
-    .nullable(),
+  meetingActionItems: z.array(
+    z.object({
+      id: z.string(),
+      assignee: z.string(),
+      completed: z.boolean(),
+      editedTask: z.string().nullable(),
+      generatedTask: z.string(),
+      context: z.string().nullable(),
+      evidenceQuotes: z.array(z.string()),
+      deleted: z.boolean(),
+    }),
+  ),
+  // Backwards-compat shim — derived from meetingActionItems for old frontend
+  // versions in flight during deployment. Remove once deployment is confirmed.
+  structuredActionItems: z.array(
+    z.object({
+      task: z.string(),
+      context: z.string().nullable(),
+      evidenceQuotes: z.array(z.string()).nullable().optional(),
+    }),
+  ),
   criticalUpdates: z.array(z.string()).nullable(),
   meetingSummary: z.array(MinuteSectionSchema).nullable(),
   staffFeedback: StaffFeedbackOutputSchema.extend({

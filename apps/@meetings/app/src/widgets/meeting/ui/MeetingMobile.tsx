@@ -431,10 +431,10 @@ const MeetingMobile = ({
             )}
             {activeTab === Tab.ActionItems && (
               <ActionItemsTab
-                items={meetingDetails.structuredActionItems}
+                items={meetingDetails.meetingActionItems}
                 outputVote={
                   isMeetingCreator &&
-                  (meetingDetails.structuredActionItems?.length || 0) > 0 && (
+                  meetingDetails.meetingActionItems.length > 0 && (
                     <OutputVote
                       meetingDetails={meetingDetails}
                       tab={activeTab}

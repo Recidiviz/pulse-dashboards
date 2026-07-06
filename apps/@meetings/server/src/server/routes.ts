@@ -49,7 +49,6 @@ import {
   queueTranscriptionTask,
 } from "~@meetings/server/server/utils";
 import {
-  ActionItem,
   cleanupLocalFiles,
   CriticalUpdate,
   exportLabelStudioTask,
@@ -72,13 +71,6 @@ import {
   postMeetingCompletedNotification,
   postMeetingErrorNotification,
 } from "~@meetings/trpc/services/slack";
-
-/**
- * Convert ActionItem objects to simple task strings
- */
-function formatActionItems(actionItems: ActionItem[]): string[] {
-  return actionItems.map((item) => item.task);
-}
 
 /**
  * Convert CriticalUpdate objects to formatted strings
@@ -595,19 +587,8 @@ export function registerTaskRoutes(app: FastifyInstance) {
             prisma,
           });
 
-          // Transform action items and critical updates to simple string arrays
-          const actionItems = formatActionItems(result.output.actionItems);
           const criticalUpdates = formatCriticalUpdates(
             result.output.statusUpdates,
-          );
-          const structuredActionItems = result.output.actionItems.map(
-            (item) => ({
-              task: item.task,
-              assignee: item.assignee,
-              deadline: item.deadline ?? null,
-              context: item.context ?? null,
-              evidenceQuotes: item.evidenceQuotes ?? null,
-            }),
           );
 
           // Always persist staff feedback (it's bundled into the writer agent's
@@ -622,8 +603,6 @@ export function registerTaskRoutes(app: FastifyInstance) {
             },
             data: {
               caseNote: result.output.caseNote,
-              actionItems: actionItems, // TODO OBT-31909: Remove this
-              structuredActionItems,
               criticalUpdates: criticalUpdates,
               meetingSummary: result.output.meetingMinutes,
               staffFeedback: result.output.staffFeedback,
@@ -643,6 +622,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
                   data: result.output.actionItems.map((item) => ({
                     assignee: item.assignee,
                     generatedTask: item.task,
+                    context: item.context ?? null,
                     evidenceQuotes: item.evidenceQuotes ?? [],
                     completed: false,
                     deleted: false,
