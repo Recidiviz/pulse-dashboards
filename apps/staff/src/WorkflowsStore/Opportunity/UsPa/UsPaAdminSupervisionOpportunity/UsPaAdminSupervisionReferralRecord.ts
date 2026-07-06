@@ -15,63 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
-
-import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
-
-export const usPaAdminSupervisionSchema = opportunitySchemaBase.extend({
-  eligibleCriteria: z
-    .object({
-      usPaNoHighSanctionsInPastYear: z.object({}).nullable(),
-      usPaNotServingIneligibleOffenseForAdminSupervision: z
-        .object({
-          ineligibleOffenses: z.array(z.string()),
-          ineligibleSentencesExpirationDate: z.array(dateStringSchema),
-        })
-        .nullable(),
-    })
-    .passthrough(),
-  formInformation: z
-    .object({
-      drugConviction: z.boolean(),
-      statute14: z.boolean(),
-      statute30: z.boolean(),
-      statute37: z.boolean(),
-      drugUnreportedDisposition: z.boolean(),
-    })
-    .partial(),
-  metadata: z.union([
-    // TODO (#10375): Remove passthrough once all necessary fields are added
-    z.object({}).passthrough(),
-    z
-      .object({
-        tabName: z.literal("ELIGIBLE_NOW"),
-        eligibilityUnclearText: z.array(z.string()).nullish(),
-      })
-      .passthrough(),
-    z
-      .object({
-        tabName: z.literal("ALMOST_ELIGIBLE"),
-        eligibilityUnclearText: z.array(z.string()).nullish(),
-      })
-      .passthrough(),
-    z
-      .object({
-        tabName: z.literal("ELIGIBILITY_UNCLEAR"),
-        eligibilityUnclearText: z.array(z.string()),
-      })
-      .passthrough(),
-  ]),
-});
-
-export type UsPaAdminSupervisionReferralRecord = z.infer<
-  typeof usPaAdminSupervisionSchema
->;
-
-export type UsPaAdminSupervisionReferralRecordRaw = z.input<
-  typeof usPaAdminSupervisionSchema
->;
-
 export type UsPaAdminSupervisionDraftData = {
   reentrantName: string;
   paroleNumber: string;

@@ -1,0 +1,71 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2026 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+import { z } from "zod";
+
+import { ParsedRecord } from "../../../utils/types";
+import { dateStringSchema } from "../../../utils/zod/date/dateStringSchema";
+import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
+
+export const usPaAdminSupervisionSchema = opportunitySchemaBase.extend({
+  eligibleCriteria: z
+    .object({
+      usPaNoHighSanctionsInPastYear: z.object({}).nullable(),
+      usPaNotServingIneligibleOffenseForAdminSupervision: z
+        .object({
+          ineligibleOffenses: z.array(z.string()),
+          ineligibleSentencesExpirationDate: z.array(dateStringSchema),
+        })
+        .nullable(),
+    })
+    .passthrough(),
+  formInformation: z
+    .object({
+      drugConviction: z.boolean(),
+      statute14: z.boolean(),
+      statute30: z.boolean(),
+      statute37: z.boolean(),
+      drugUnreportedDisposition: z.boolean(),
+    })
+    .partial(),
+  // TODO (#10375): Remove passthrough once all necessary fields are added
+  metadata: z.union([
+    z.object({}).passthrough(),
+    z
+      .object({
+        tabName: z.literal("ELIGIBLE_NOW"),
+        eligibilityUnclearText: z.array(z.string()).nullish(),
+      })
+      .passthrough(),
+    z
+      .object({
+        tabName: z.literal("ALMOST_ELIGIBLE"),
+        eligibilityUnclearText: z.array(z.string()).nullish(),
+      })
+      .passthrough(),
+    z
+      .object({
+        tabName: z.literal("ELIGIBILITY_UNCLEAR"),
+        eligibilityUnclearText: z.array(z.string()),
+      })
+      .passthrough(),
+  ]),
+});
+
+export type UsPaAdminSupervisionRecord = ParsedRecord<
+  typeof usPaAdminSupervisionSchema
+>;

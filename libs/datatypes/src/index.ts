@@ -148,6 +148,8 @@ export * from "./opportunities/UsOr/UsOrEarnedDischargeSentence/schema";
 
 // UsPa Exports: Includes fixtures and schema related to US-PA opportunities
 // -----------------------------------------------------------------------------
+export * from "./opportunities/UsPa/UsPaAdminSupervision/fixtures";
+export * from "./opportunities/UsPa/UsPaAdminSupervision/schema";
 export * from "./opportunities/UsPa/UsPaSpecialCircumstancesSupervision/fixtures";
 export * from "./opportunities/UsPa/UsPaSpecialCircumstancesSupervision/schema";
 

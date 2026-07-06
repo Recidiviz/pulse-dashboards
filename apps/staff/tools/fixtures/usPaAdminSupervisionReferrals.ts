@@ -15,79 +15,81 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsPaAdminSupervisionReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsPa/UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionReferralRecord";
+import { UsPaAdminSupervisionRecord } from "~datatypes";
+
 import { fixtureWithIdKey } from "./utils";
 
-export const usPaAdminSupervisionReferrals =
-  fixtureWithIdKey<UsPaAdminSupervisionReferralRecordRaw>("externalId", [
-    {
-      stateCode: "US_PA",
-      externalId: "001",
-      eligibleCriteria: {
-        usPaNoHighSanctionsInPastYear: {},
-        usPaNotServingIneligibleOffenseForAdminSupervision: null,
-      },
-      ineligibleCriteria: {},
-      formInformation: {
-        drugConviction: true,
-        statute14: false,
-        statute30: true,
-        statute37: false,
-        drugUnreportedDisposition: true,
-      },
-      metadata: {
-        tabName: "ELIGIBLE_NOW",
-      },
-      isEligible: true,
-      isAlmostEligible: false,
+export const usPaAdminSupervisionReferrals = fixtureWithIdKey<
+  UsPaAdminSupervisionRecord["input"]
+>("externalId", [
+  {
+    stateCode: "US_PA",
+    externalId: "001",
+    eligibleCriteria: {
+      usPaNoHighSanctionsInPastYear: {},
+      usPaNotServingIneligibleOffenseForAdminSupervision: null,
     },
-    {
-      stateCode: "US_PA",
-      externalId: "002",
-      eligibleCriteria: {
-        usPaNoHighSanctionsInPastYear: {},
-        usPaNotServingIneligibleOffenseForAdminSupervision: {
-          ineligibleOffenses: ["EXAMPLE"],
-          ineligibleSentencesExpirationDate: ["2021-01-01"],
-        },
-      },
-      ineligibleCriteria: {},
-      formInformation: {
-        drugConviction: true,
-        statute14: false,
-        statute30: true,
-        statute37: false,
-        drugUnreportedDisposition: true,
-      },
-      metadata: {
-        tabName: "ELIGIBLE_NOW",
-      },
-      isEligible: true,
-      isAlmostEligible: false,
+    ineligibleCriteria: {},
+    formInformation: {
+      drugConviction: true,
+      statute14: false,
+      statute30: true,
+      statute37: false,
+      drugUnreportedDisposition: true,
     },
-    {
-      stateCode: "US_PA",
-      externalId: "003",
-      eligibleCriteria: {
-        usPaNoHighSanctionsInPastYear: null,
-        usPaNotServingIneligibleOffenseForAdminSupervision: null,
-      },
-      ineligibleCriteria: {},
-      formInformation: {
-        drugConviction: true,
-        statute14: false,
-        statute30: true,
-        statute37: false,
-        drugUnreportedDisposition: true,
-      },
-      metadata: {
-        tabName: "ELIGIBILITY_UNCLEAR",
-        eligibilityUnclearText: [
-          "Some unclear eligibility text",
-          "Previously flagged as NAE",
-        ],
-      },
-      isEligible: true,
-      isAlmostEligible: false,
+    metadata: {
+      tabName: "ELIGIBLE_NOW",
     },
-  ]);
+    isEligible: true,
+    isAlmostEligible: false,
+  },
+  {
+    stateCode: "US_PA",
+    externalId: "002",
+    eligibleCriteria: {
+      usPaNoHighSanctionsInPastYear: {},
+      usPaNotServingIneligibleOffenseForAdminSupervision: {
+        ineligibleOffenses: ["EXAMPLE"],
+        ineligibleSentencesExpirationDate: ["2021-01-01"],
+      },
+    },
+    ineligibleCriteria: {},
+    formInformation: {
+      drugConviction: true,
+      statute14: false,
+      statute30: true,
+      statute37: false,
+      drugUnreportedDisposition: true,
+    },
+    metadata: {
+      tabName: "ELIGIBLE_NOW",
+    },
+    isEligible: true,
+    isAlmostEligible: false,
+  },
+  {
+    stateCode: "US_PA",
+    externalId: "003",
+    eligibleCriteria: {
+      usPaNoHighSanctionsInPastYear: null,
+      usPaNotServingIneligibleOffenseForAdminSupervision: null,
+    },
+    ineligibleCriteria: {},
+    formInformation: {
+      drugConviction: true,
+      statute14: false,
+      statute30: true,
+      statute37: false,
+      drugUnreportedDisposition: true,
+    },
+    metadata: {
+      tabName: "ELIGIBILITY_UNCLEAR",
+      eligibilityUnclearText: [
+        "Some unclear eligibility text",
+        "Previously flagged as NAE",
+      ],
+    },
+    isEligible: true,
+    isAlmostEligible: false,
+  },
+]);

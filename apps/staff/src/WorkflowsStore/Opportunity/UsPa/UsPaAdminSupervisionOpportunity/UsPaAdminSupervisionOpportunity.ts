@@ -17,16 +17,19 @@
 
 import { DocumentData } from "firebase/firestore";
 
+import {
+  UsPaAdminSupervisionRecord,
+  usPaAdminSupervisionSchema,
+} from "~datatypes";
+
 import { Client } from "../../../Client";
 import { UsPaAdminSupervisionForm } from "../../Forms/UsPaAdminSupervisionForm";
 import { ActedOnTextAddition } from "../../types";
 import { UsPaSupervisionOpportunityBase } from "../UsPaSupervisionOpportunityBase";
-import {
-  UsPaAdminSupervisionReferralRecord,
-  usPaAdminSupervisionSchema,
-} from "./UsPaAdminSupervisionReferralRecord";
 
-export class UsPaAdminSupervisionOpportunity extends UsPaSupervisionOpportunityBase<UsPaAdminSupervisionReferralRecord> {
+export class UsPaAdminSupervisionOpportunity extends UsPaSupervisionOpportunityBase<
+  UsPaAdminSupervisionRecord["output"]
+> {
   form: UsPaAdminSupervisionForm;
 
   constructor(client: Client, record: DocumentData) {

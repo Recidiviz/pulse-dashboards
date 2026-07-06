@@ -15,11 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ClientRecord } from "~datatypes";
+import { ClientRecord, UsPaAdminSupervisionRecord } from "~datatypes";
 
-import { UsPaAdminSupervisionReferralRecordRaw } from "../UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionReferralRecord";
-
-export const usPaAdminSupervisionReferralRecord: UsPaAdminSupervisionReferralRecordRaw =
+export const usPaAdminSupervisionReferralRecord: UsPaAdminSupervisionRecord["input"] =
   {
     stateCode: "US_PA",
     externalId: "123",

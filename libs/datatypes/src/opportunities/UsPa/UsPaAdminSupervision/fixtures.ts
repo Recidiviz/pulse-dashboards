@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,25 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { makeRecordFixture } from "../../../utils/zod/object/makeRecordFixture";
+import { FixtureMapping } from "../../utils/types";
 import {
-  UsPaAdminSupervisionReferralRecordRaw,
+  UsPaAdminSupervisionRecord,
   usPaAdminSupervisionSchema,
-} from "../UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionReferralRecord";
+} from "./schema";
 
-const rawRecord: UsPaAdminSupervisionReferralRecordRaw = {
+const baseInput = {
   stateCode: "US_PA",
   externalId: "abc123",
-  eligibleCriteria: {
-    usPaNoHighSanctionsInPastYear: {},
-    usPaNotServingIneligibleOffenseForAdminSupervision: {
-      ineligibleOffenses: ["ABC", "DEF"],
-      ineligibleSentencesExpirationDate: ["2023-06-01", "2022-01-01"],
-    },
-  },
   ineligibleCriteria: {},
-  metadata: {
-    tabName: "ELIGIBLE_NOW",
-  },
+  metadata: { tabName: "ELIGIBLE_NOW" as const },
   formInformation: {
     drugConviction: true,
     statute14: false,
@@ -45,39 +38,32 @@ const rawRecord: UsPaAdminSupervisionReferralRecordRaw = {
   isAlmostEligible: false,
 };
 
-test("record parses as expected", () => {
-  expect(usPaAdminSupervisionSchema.parse(rawRecord)).toMatchSnapshot();
-});
-
-test("parses null reason fields", () => {
-  const testRecord: UsPaAdminSupervisionReferralRecordRaw = {
-    ...rawRecord,
+export const usPaAdminSupervisionFixtures = {
+  fullyEligible: makeRecordFixture(usPaAdminSupervisionSchema, {
+    ...baseInput,
     eligibleCriteria: {
-      ...rawRecord.eligibleCriteria,
+      usPaNoHighSanctionsInPastYear: {},
+      usPaNotServingIneligibleOffenseForAdminSupervision: {
+        ineligibleOffenses: ["ABC", "DEF"],
+        ineligibleSentencesExpirationDate: ["2023-06-01", "2022-01-01"],
+      },
+    },
+  }),
+  nullReasonFields: makeRecordFixture(usPaAdminSupervisionSchema, {
+    ...baseInput,
+    eligibleCriteria: {
       usPaNoHighSanctionsInPastYear: null,
       usPaNotServingIneligibleOffenseForAdminSupervision: null,
     },
-  };
-  expect(usPaAdminSupervisionSchema.parse(testRecord)).toMatchSnapshot();
-});
-
-test("parses empty ineligible offenses array", () => {
-  const testRecord: UsPaAdminSupervisionReferralRecordRaw = {
-    ...rawRecord,
+  }),
+  emptyIneligibleOffenses: makeRecordFixture(usPaAdminSupervisionSchema, {
+    ...baseInput,
     eligibleCriteria: {
-      ...rawRecord.eligibleCriteria,
+      usPaNoHighSanctionsInPastYear: {},
       usPaNotServingIneligibleOffenseForAdminSupervision: {
         ineligibleOffenses: [],
         ineligibleSentencesExpirationDate: [],
       },
     },
-    formInformation: {
-      drugConviction: true,
-      statute14: false,
-      statute30: true,
-      statute37: false,
-      drugUnreportedDisposition: true,
-    },
-  };
-  expect(usPaAdminSupervisionSchema.parse(testRecord)).toMatchSnapshot();
-});
+  }),
+} satisfies FixtureMapping<UsPaAdminSupervisionRecord>;
