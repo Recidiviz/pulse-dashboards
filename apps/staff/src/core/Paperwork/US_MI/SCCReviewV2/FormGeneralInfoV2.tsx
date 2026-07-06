@@ -19,7 +19,10 @@ import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components";
 
-import { UsMiSCCReviewV2DraftData } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiSCCReviewV2Form";
+import {
+  reviewTypeOptions,
+  UsMiSCCReviewV2DraftData,
+} from "../../../../WorkflowsStore/Opportunity/Forms/UsMiSCCReviewV2Form";
 import { FormCheckbox, FormDropdown, FormInput } from "../SCCReview/FormUtils";
 
 const ContentContainer = styled.div`
@@ -108,14 +111,6 @@ const InputField = (props: InputProps) => {
   );
 };
 
-const reviewTypeOptions = [
-  "Initial - Within 7 days of Classification",
-  "At Least Monthly Thereafter",
-  "Punitive Monthly Warden Approval (Skip to Bottom)",
-  "Interview Only - Warden (Skip to Bottom)",
-  "Interview Only - ADD (Skip to Bottom)",
-];
-
 const segregationClassificationReason = [
   "Pending Misconduct (Bond Revoked)",
   "Inability To Be Managed With GP Privileges",
@@ -140,7 +135,10 @@ const FormGeneralInfoV2: React.FC = () => {
           }}
         >
           Review Type:
-          <FormDropdown name="reviewType" menuItems={reviewTypeOptions} />
+          <FormDropdown
+            name="reviewType"
+            menuItems={Object.values(reviewTypeOptions)}
+          />
         </div>
       </Cell>
       <InputField row={2} col={3} title="ERD:" name="ERD" maxWidth="80px" />

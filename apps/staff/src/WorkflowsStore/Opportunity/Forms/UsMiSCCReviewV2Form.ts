@@ -148,6 +148,14 @@ export type UsMiSCCReviewV2DraftData = {
   addDist: boolean;
 };
 
+export const reviewTypeOptions = {
+  INITIAL_SCC: "Initial - Within 7 days of Classification",
+  MONTHLY_SCC: "At Least Monthly Thereafter",
+  PUNITIVE: "Punitive Monthly Warden Approval (Skip to Bottom)",
+  WARDEN: "Interview Only - Warden (Skip to Bottom)",
+  ADD: "Interview Only - ADD (Skip to Bottom)",
+};
+
 export class UsMiSCCReviewV2Form extends FormBase<
   UsMiSCCReviewV2DraftData,
   | usMiSecurityClassificationCommitteeReviewV2Opportunity
@@ -166,6 +174,23 @@ export class UsMiSCCReviewV2Form extends FormBase<
 
   get formType(): string {
     return "UsMiSCCReviewFormV2";
+  }
+
+  private formattedReviewType(): string | undefined {
+    const { latestSccReviewDate } = this.opportunity.record.metadata;
+
+    switch (this.opportunity.type) {
+      case "usMiAddInPersonSecurityClassificationCommitteeReviewV2":
+        return reviewTypeOptions.ADD;
+      case "usMiWardenInPersonSecurityClassificationCommitteeReviewV2":
+        return reviewTypeOptions.WARDEN;
+      default:
+        // For the base SCC Review opportunity, if no prior review date exists, we
+        // can assume this is the initial SCC Review
+        return latestSccReviewDate
+          ? reviewTypeOptions.MONTHLY_SCC
+          : reviewTypeOptions.INITIAL_SCC;
+    }
   }
 
   prefilledDataTransformer(): Partial<UsMiSCCReviewV2DraftData> {
@@ -239,6 +264,7 @@ export class UsMiSCCReviewV2Form extends FormBase<
       adSegDate4: adSegStays?.at(3)?.date,
       adSegReason4: adSegStays?.at(3)?.reasons,
       reportsSinceReview,
+      reviewType: this.formattedReviewType(),
     };
   }
 }
