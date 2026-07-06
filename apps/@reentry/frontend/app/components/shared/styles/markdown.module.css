@@ -10,11 +10,14 @@
 .markdown h3 {
   border: none;
   color: #003331;
-  font-size: 1.5rem;
   margin-top: 24px;
   margin-bottom: 16px;
   font-weight: 600;
   padding-bottom: 0.3rem;
+}
+
+.markdown h1 {
+  font-size: 1.5rem;
 }
 
 .markdown h1:first-of-type {
@@ -23,6 +26,10 @@
 
 .markdown h2 {
   font-size: 1.1rem;
+}
+
+.markdown h3 {
+  font-size: 1rem;
 }
 
 .markdown ol,
