@@ -44,7 +44,11 @@ const CaseloadHydrator = observer(function CaseloadHydrator({
     () =>
       autorun(() => {
         workflowsStore.caseloadSubscription?.forEach((caseload) => {
-          if (!isHydrated(caseload)) caseload.hydrate();
+          // Only hydrate when the subscription has a data source. When it
+          // doesn't (e.g. no selected search IDs), `startSnapshotListener`
+          // resets `hydrationState` to "needs hydration", which this autorun
+          // would immediately retry — an infinite loop that never converges.
+          if (caseload.dataSource && !isHydrated(caseload)) caseload.hydrate();
         });
       }),
     [workflowsStore, selectedSearchIds],
