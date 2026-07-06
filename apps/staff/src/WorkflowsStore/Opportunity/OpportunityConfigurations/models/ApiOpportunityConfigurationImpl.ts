@@ -392,6 +392,11 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
       "Supervisor Review") as OpportunityTab;
   }
 
+  get awaitingRevisionsTabTitle(): OpportunityTab {
+    return (this.configurationObject.awaitingRevisionsTabTitle ??
+      "Awaiting Revisions") as OpportunityTab;
+  }
+
   /** The tab title for opportunity grant requests that have been approved. */
   get grantApprovedTabTitle() {
     return (this.configurationObject.grantApprovedTabTitle ??

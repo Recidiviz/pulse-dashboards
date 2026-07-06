@@ -132,7 +132,8 @@ export abstract class UsTxArsErsV2OpportunityBase<
 
   eligibilityStatusLabel(includeReasons?: boolean): string | null {
     if (this.isGrantApproved) return this.grantApprovedStatusMessage;
-    if (this.isInRevisionsRequested) return "Awaiting Revisions";
+    if (this.isInRevisionsRequested)
+      return this.config.awaitingRevisionsTabTitle;
     if (this.isInGrantReview) return this.supervisorReviewTabTitle;
     return super.eligibilityStatusLabel(includeReasons);
   }
@@ -145,7 +146,8 @@ export abstract class UsTxArsErsV2OpportunityBase<
     if (this.isInSupervisorReview) return this.supervisorReviewTabTitle;
 
     // Awaiting Revisions tab
-    if (this.isInRevisionsRequested) return "Awaiting Revisions";
+    if (this.isInRevisionsRequested)
+      return this.config.awaitingRevisionsTabTitle;
 
     // Approved tab
     if (this.isGrantApproved) return this.grantApprovedTabTitle;

@@ -198,6 +198,7 @@ export const mockOpportunity: Opportunity<Client> = {
     indefiniteSnoozeSectionHeader: "Indefinite Snooze",
     indefiniteSnoozeSectionSubheading: "Indefinite snooze subheading",
     supervisorReviewTabTitle: "Supervisor Review",
+    awaitingRevisionsTabTitle: "Awaiting Revisions",
     grantApprovedTabTitle: "Approved by Supervisor",
     supportsSupervisorReview: true,
     supportsSupervisorReviewOnGrants: true,

@@ -139,6 +139,7 @@ export interface OpportunityConfiguration {
   supportsSupervisorReviewOnSnooze: boolean;
 
   supervisorReviewTabTitle: OpportunityTab;
+  awaitingRevisionsTabTitle: OpportunityTab;
   grantApprovedTabTitle: OpportunityTab;
   grantApprovedStatusMessage: string;
   snoozeReviewStatusMessage: string;

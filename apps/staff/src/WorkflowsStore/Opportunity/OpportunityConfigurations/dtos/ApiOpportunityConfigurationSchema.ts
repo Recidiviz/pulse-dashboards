@@ -144,6 +144,7 @@ export const apiOpportunityConfigurationSchema = z.object({
   supportsSupervisorReviewOnSnooze: z.boolean().default(false),
   reasonsRequiringApproval: nullishAsUndefined(z.array(z.string())),
   supervisorReviewTabTitle: nullishAsUndefined(z.string()),
+  awaitingRevisionsTabTitle: nullishAsUndefined(z.string()),
   grantApprovedTabTitle: nullishAsUndefined(z.string()),
   grantApprovedStatusMessage: nullishAsUndefined(z.string()),
   snoozeReviewStatusMessage: nullishAsUndefined(z.string()),
