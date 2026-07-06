@@ -15,13 +15,37 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import type { SamplingContext } from "@sentry/core";
 import { init, prismaIntegration } from "@sentry/node";
 import { nodeProfilingIntegration } from "@sentry/profiling-node";
+
+const PIPELINE_ROUTES = [
+  "/stitch-audio",
+  "/transcribe-audio",
+  "/process-notetaking",
+  "/run-llmaj-evaluation",
+];
+
+function requestMatchesRoute(ctx: SamplingContext, routes: string[]) {
+  const httpRoute = ctx.attributes?.["http.route"];
+  const urlPath = ctx.attributes?.["url.path"];
+  const haystacks = [
+    ctx.name,
+    typeof httpRoute === "string" ? httpRoute : undefined,
+    typeof urlPath === "string" ? urlPath : undefined,
+    ctx.normalizedRequest?.url,
+  ].filter((s): s is string => typeof s === "string");
+
+  return routes.some((route) => haystacks.some((h) => h.includes(route)));
+}
 
 init({
   dsn: process.env["SENTRY_DSN"],
   environment: process.env["SENTRY_ENV"],
-  tracesSampleRate: 0,
+  tracesSampler: (ctx) => {
+    if (requestMatchesRoute(ctx, PIPELINE_ROUTES)) return 1;
+    return ctx.parentSampled ?? 0;
+  },
   profilesSampleRate: 0,
   integrations: [nodeProfilingIntegration(), prismaIntegration()],
   maxValueLength: 5000,

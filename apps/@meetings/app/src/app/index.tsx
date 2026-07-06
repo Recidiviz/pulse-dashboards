@@ -45,7 +45,7 @@ function sanitizeUrl(url: string): string {
 
 Sentry.init({
   dsn: env.EXPO_PUBLIC_SENTRY_DSN,
-  tracesSampleRate: 0,
+  tracesSampleRate: 1,
   profilesSampleRate: 0,
   // Adds more context data to events (IP address, cookies, user, etc.)
   // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
