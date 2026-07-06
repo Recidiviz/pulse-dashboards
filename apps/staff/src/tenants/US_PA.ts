@@ -42,7 +42,6 @@ const US_PA_CONFIG = {
   navigation: {
     insights: [INSIGHTS_PAGES.supervision],
     workflows: ["home", "clients"],
-    revocations: [],
   },
   featureVariants: { zeroGrantsFlag: {} },
 } satisfies TenantConfig<"US_PA">;
