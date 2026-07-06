@@ -260,7 +260,9 @@ def cache_client_record(
     try:
         # Serialize to JSON using Pydantic
         if isinstance(client_record, list):
-            json_data = json.dumps([record.model_dump() for record in client_record])
+            json_data = json.dumps(
+                [record.model_dump(mode="json") for record in client_record]
+            )
         else:
             json_data = client_record.model_dump_json()
 

@@ -637,6 +637,38 @@ class TestCacheClientRecord:
         assert call_args[1] == 21600  # CACHE_TTL
 
     @patch("app.services.client_data.utils.redis_client")
+    def test_cache_list_with_date_fields(self, mock_redis):
+        """Regression test: caching a list of records must serialize date fields correctly.
+
+        model_dump() returns datetime.date objects which json.dumps() can't serialize.
+        model_dump(mode='json') converts them to ISO strings first.
+        """
+        full_name = FullNameModel(given_names="Jane", surname="Doe")
+        records = [
+            ClientDataRecord(
+                external_client_id=f"ext{i}",
+                pseudonymized_client_id=f"pseudo{i}",
+                full_name=full_name,
+                birthdate=date(1990, 1, i + 1),
+                state_code="US_NE",
+                location=[],
+            )
+            for i in range(3)
+        ]
+
+        mock_redis.setex.return_value = True
+
+        result = cache_client_record("list_key", records)
+
+        assert result is True
+        call_args = mock_redis.setex.call_args[0]
+        # The stored JSON must be parseable and contain ISO date strings, not date objects
+        import json
+
+        stored = json.loads(call_args[2])
+        assert stored[0]["birthdate"] == "1990-01-01"
+
+    @patch("app.services.client_data.utils.redis_client")
     def test_cache_storage_failure(self, mock_redis):
         """Test handling of cache storage failures."""
         full_name = FullNameModel(
