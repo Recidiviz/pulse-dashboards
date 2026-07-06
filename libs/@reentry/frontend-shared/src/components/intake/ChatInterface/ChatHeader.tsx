@@ -21,12 +21,14 @@ import { Box, Typography } from "@mui/material";
 import type React from "react";
 import { useState } from "react";
 
+import { getIntakeTenantConfig } from "../../../configs/tenantConfig";
 import { useApplicationContext } from "../../../contexts/ApplicationContext";
 import { clearIntakeSession } from "../../../utils/clearIntakeSession";
 import { useSocket } from "../../../websockets/IntakeSocketContext";
 import { PrimaryButton } from "../../buttons/PrimaryButton";
 import { EndChatModal } from "../EndChatModal";
 import { ClientAvatar } from "./CustomAvatar";
+import { InfoPopover } from "./InfoPopover";
 
 interface ChatHeaderProps {
   isConversationInProgress?: boolean;
@@ -45,6 +47,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       allSections,
       conversationStarted,
       currentSection,
+      client_state,
     },
   } = useSocket();
 
@@ -61,6 +64,8 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
 
   const progressPercentage =
     totalSections > 0 ? (completedSections / totalSections) * 100 : 0;
+
+  const tenantConfig = getIntakeTenantConfig(client_state);
 
   return (
     <>
@@ -119,7 +124,11 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
         </Box>
         {isConversationInProgress && (
           <>
-            <Box className="flex justify-end px-4 xs:px-0 md:px-8 py-3 flex-none">
+            <Box className="flex items-center gap-2 justify-end px-4 xs:px-0 md:px-8 py-3 flex-none">
+              <InfoPopover
+                noteOneCopy={tenantConfig.noteOneCopy}
+                noteTwoCopy={tenantConfig.noteTwoCopy}
+              />
               <PrimaryButton
                 className={"w-[100px] md:max-w-lg"}
                 buttonText="End chat"

@@ -1,0 +1,139 @@
+.triggerButton {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(52, 82, 98, 0.2);
+  color: rgba(52, 82, 98, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: transparent;
+  cursor: pointer;
+  transition:
+    background-color 300ms,
+    color 300ms;
+}
+
+.triggerButton:hover {
+  background-color: #6b7280;
+  color: white;
+}
+
+.floatingRoot {
+  z-index: 1100;
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 1099;
+}
+
+.panel {
+  background: white;
+  border-radius: 12px;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.08);
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  overflow: hidden;
+}
+
+.panelHeader {
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  background: white;
+}
+
+.panelTitle {
+  font-family: "Public Sans", sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  color: #012322;
+}
+
+.scrollWrapper {
+  position: relative;
+}
+
+.scrollContent {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.scrollFade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  background: linear-gradient(to bottom, transparent, white);
+  pointer-events: none;
+}
+
+.section {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.paragraph {
+  font-family: "Public Sans", sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #374151;
+  margin: 0 0 8px;
+}
+
+.paragraph:last-child {
+  margin-bottom: 0;
+}
+
+.faqItem {
+  margin-bottom: 12px;
+}
+
+.faqItem:last-child {
+  margin-bottom: 0;
+}
+
+.faqQuestion {
+  font-family: "Public Sans", sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  color: #012322;
+  margin: 0 0 3px;
+}
+
+.faqAnswer {
+  font-family: "Public Sans", sans-serif;
+  font-size: 13px;
+  color: #374151;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.importantList {
+  list-style: disc;
+  margin: 0;
+  padding: 14px 16px 14px 34px;
+}
+
+.importantItem {
+  font-family: "Public Sans", sans-serif;
+  font-size: 13px;
+  color: #374151;
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+
+.importantItem:last-child {
+  margin-bottom: 0;
+}
+
+.importantLabel {
+  font-weight: 600;
+  color: #012322;
+}
