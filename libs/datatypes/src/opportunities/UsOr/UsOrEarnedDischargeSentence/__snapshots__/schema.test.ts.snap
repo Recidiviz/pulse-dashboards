@@ -1,0 +1,66 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for almostEligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "eligibleStatute": {},
+    "noConvictionDuringSentence": {},
+    "pastHalfCompletion": {},
+    "usOrNoSupervisionSanctionsWithin6Months": null,
+  },
+  "externalId": "CLIENT002",
+  "ineligibleCriteria": {
+    "past6Months": {},
+    "usOrSentenceEligible": {
+      "meetsCriteriaServed6Months": false,
+      "meetsCriteriaServedHalfOfSentence": true,
+    },
+  },
+  "isAlmostEligible": true,
+  "isEligible": false,
+  "metadata": {
+    "sentence": {
+      "courtCaseNumber": "CASE-002",
+      "sentenceEndDate": 2024-08-16T00:00:00.000Z,
+      "sentenceStartDate": 2021-08-16T00:00:00.000Z,
+      "sentenceStatute": "OR REV STAT 475.752",
+    },
+  },
+  "opportunityId": "opp2",
+  "opportunityPseudonymizedId": "popp2",
+  "stateCode": "US_OR",
+}
+`;
+
+exports[`schema for fullyEligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "eligibleStatute": {},
+    "noConvictionDuringSentence": {},
+    "past6Months": {},
+    "pastHalfCompletion": {},
+    "usOrNoSupervisionSanctionsWithin6Months": null,
+    "usOrSentenceEligible": {
+      "meetsCriteriaServed6Months": true,
+      "meetsCriteriaServedHalfOfSentence": true,
+    },
+  },
+  "externalId": "CLIENT001",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {
+    "sentence": {
+      "courtCaseNumber": "CASE-001",
+      "sentenceEndDate": 2023-12-16T00:00:00.000Z,
+      "sentenceStartDate": 2018-12-16T00:00:00.000Z,
+      "sentenceStatute": "OR REV STAT 163.315",
+    },
+  },
+  "opportunityId": "opp1",
+  "opportunityPseudonymizedId": "popp1",
+  "stateCode": "US_OR",
+}
+`;

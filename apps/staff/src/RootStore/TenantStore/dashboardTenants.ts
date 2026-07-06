@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { isDemoMode } from "~client-env-utils";
+import { isDemoMode, isOfflineMode } from "~client-env-utils";
 
 import { PATHWAYS_TENANTS } from "./pathwaysTenants";
 import { ProvisionedStateCode } from "./types";
@@ -56,7 +56,8 @@ const NON_PATHWAYS_TENANTS = [
 // Tenants whose configs we'd like to keep around, but don't actually want to show as available states
 // US_OR is a special case state that is deprecated, but we still need to appear in
 // demo mode for BD purposes.
-export const DEPRECATED_TENANTS = isDemoMode() ? [] : ([US_OR] as const);
+export const DEPRECATED_TENANTS =
+  isDemoMode() || isOfflineMode() ? [] : ([US_OR] as const);
 
 /**
  * Tenants that have access to the Recidiviz Dashboard, including Pathways, Operations, and Workflows.

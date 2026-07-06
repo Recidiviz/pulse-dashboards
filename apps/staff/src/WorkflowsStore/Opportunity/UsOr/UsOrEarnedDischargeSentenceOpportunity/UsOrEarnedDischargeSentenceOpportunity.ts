@@ -17,17 +17,18 @@
 
 import { DocumentData } from "@google-cloud/firestore";
 
+import {
+  UsOrEarnedDischargeSentenceRecord,
+  usOrEarnedDischargeSentenceSchema,
+} from "~datatypes";
+
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
-import {
-  UsOrEarnedDischargeSentenceReferralRecord,
-  usOrEarnedDischargeSentenceSchema,
-} from "./UsOrEarnedDischargeSentenceReferralRecord";
 
 // =============================================================================
 export class UsOrEarnedDischargeSentenceOpportunity extends OpportunityBase<
   Client,
-  UsOrEarnedDischargeSentenceReferralRecord
+  UsOrEarnedDischargeSentenceRecord["output"]
 > {
   constructor(client: Client, record: DocumentData) {
     super(

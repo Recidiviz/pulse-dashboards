@@ -63,6 +63,7 @@ import {
   usNdEarlyTerminationSchema,
   usNdTransferToMinFacilitySchema,
   usNeGoodTimeRestorationSchema,
+  usOrEarnedDischargeSentenceSchema,
   usPaSpecialCircumstancesSupervisionSchema,
   usTnInitialClassification2026Schema,
   usTnReclassification2026Schema,
@@ -76,7 +77,6 @@ import { usMiEarlyDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsMi
 import { usMiMinimumTelephoneReportingSchema } from "../src/WorkflowsStore/Opportunity/UsMi/UsMiMinimumTelephoneReportingOpportunity/UsMiMinimumTelephoneReportingReferralRecord";
 import { usMiPastFTRDSchema } from "../src/WorkflowsStore/Opportunity/UsMi/UsMiPastFTRDOpportunity/UsMiPastFTRDReferralRecord";
 import { usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsMi/UsMiSupervisionLevelDowngradeOpportunity/UsMiSupervisionLevelDowngradeReferralRecord";
-import { usOrEarnedDischargeSentenceSchema } from "../src/WorkflowsStore/Opportunity/UsOr/UsOrEarnedDischargeSentenceOpportunity/UsOrEarnedDischargeSentenceReferralRecord";
 import { usPaAdminSupervisionSchema } from "../src/WorkflowsStore/Opportunity/UsPa/UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionReferralRecord";
 import { compliantReportingSchema } from "../src/WorkflowsStore/Opportunity/UsTn/CompliantReportingOpportunity/CompliantReportingReferralRecord";
 import { usTnAnnualReclassificationReviewSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnAnnualReclassificationReviewOpportunity/UsTnAnnualReclassificationReviewReferralRecord";

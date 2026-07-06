@@ -141,6 +141,11 @@ export * from "./opportunities/UsNe/UsNeGoodTimeRestoration/schema";
 export * from "./opportunities/UsNe/UsNeSupervisionDowngrade/fixtures";
 export * from "./opportunities/UsNe/UsNeSupervisionDowngrade/schema";
 
+// UsOr Exports: Includes fixtures and schema related to US-OR opportunities
+// -----------------------------------------------------------------------------
+export * from "./opportunities/UsOr/UsOrEarnedDischargeSentence/fixtures";
+export * from "./opportunities/UsOr/UsOrEarnedDischargeSentence/schema";
+
 // UsPa Exports: Includes fixtures and schema related to US-PA opportunities
 // -----------------------------------------------------------------------------
 export * from "./opportunities/UsPa/UsPaSpecialCircumstancesSupervision/fixtures";
