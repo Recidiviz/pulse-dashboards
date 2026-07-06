@@ -41,8 +41,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useUserContext } from "~@meetings/app/entities/user";
 
-import { useStateSelection } from "../context/StateContext";
 import { useRecording } from "../features/recording";
+import { useStateSelection } from "../features/state-selection";
 import { useImpersonationStore } from "../hooks/useImpersonationStore";
 import WordmarkSvg from "../shared/assets/icons/wordmark.svg";
 import BgAvatarImage from "../shared/assets/images/bg-avatar.png";

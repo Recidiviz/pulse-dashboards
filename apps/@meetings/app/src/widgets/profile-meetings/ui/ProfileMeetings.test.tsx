@@ -60,7 +60,7 @@ jest.mock("~@meetings/app/entities/agency-config", () => ({
   }),
 }));
 
-jest.mock("~@meetings/app/context/StateContext", () => ({
+jest.mock("~@meetings/app/features/state-selection", () => ({
   useStateSelection: () => ({ selectedStateCode: "US_NE" }),
 }));
 

@@ -31,13 +31,13 @@ import superjson from "superjson";
 
 import AppUpdateModal from "~@meetings/app/components/AppUpdateModal";
 import { UserContextProvider } from "~@meetings/app/entities/user";
-import { stateCodeParam } from "~@meetings/app/navigation/config";
-import { extractAndRemoveStateCode } from "~@meetings/app/navigation/lib";
+import { stateCodeParam } from "~@meetings/app/features/state-selection";
 import { LoginScreen } from "~@meetings/app/pages/login";
 import { publicTrpc } from "~@meetings/app/shared/api";
 import { AppStackParamList, env } from "~@meetings/app/shared/config";
 
 import AuthenticatedApp from "./../AuthenticatedApp";
+import { extractAndRemoveStateCode } from "./extractAndRemoveStateCode";
 
 const Drawer = createDrawerNavigator();
 const publicQueryClient = new QueryClient();

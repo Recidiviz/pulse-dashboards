@@ -26,7 +26,7 @@ import React from "react";
 import { UserContextProvider } from "~@meetings/app/entities/user";
 
 import Header from "../../components/Header";
-import { StateCode, StateCodeProvider } from "../../context/StateContext";
+import { StateCode, StateCodeProvider } from "../../features/state-selection";
 
 jest.mock("../../entities/agency-config", () => ({
   useAgencyConfigs: () => ({ agencyConfigs: {}, isLoading: false }),

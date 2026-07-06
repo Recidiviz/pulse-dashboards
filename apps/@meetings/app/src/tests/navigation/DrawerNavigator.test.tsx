@@ -18,12 +18,11 @@
 import { render, screen } from "@testing-library/react-native";
 import React from "react";
 
+import DrawerNavigator from "~@meetings/app/app/navigation/DrawerNavigator";
+import { useAgencyConfigs } from "~@meetings/app/entities/agency-config";
 import * as UserContext from "~@meetings/app/entities/user";
-
-import DrawerNavigator from "../../app/navigation/DrawerNavigator";
-import * as StateContext from "../../context/StateContext";
-import { useAgencyConfigs } from "../../entities/agency-config";
-import * as UserModule from "../../entities/user";
+import * as UserModule from "~@meetings/app/entities/user";
+import { useStateSelection } from "~@meetings/app/features/state-selection";
 
 // Mock useSetDocumentTitle hooks, since it modifies document.title, and it causes errors
 jest.mock("../../shared/lib/useSetDocumentTitle", () => ({
@@ -73,9 +72,13 @@ jest.mock("~@meetings/app/entities/user", () => ({
   useUserContext: jest.fn(),
 }));
 
+jest.mock("../../features/state-selection", () => ({
+  useStateSelection: jest.fn(),
+}));
+
 describe("DrawerNavigator", () => {
   const mockUseUserContext = jest.spyOn(UserContext, "useUserContext");
-  const mockUseStateSelection = jest.spyOn(StateContext, "useStateSelection");
+  const mockUseStateSelection = useStateSelection as jest.Mock;
   const mockUseAgencyConfigs = useAgencyConfigs as jest.Mock;
   const mockUseGetUser = UserModule.useGetUser as jest.Mock;
 

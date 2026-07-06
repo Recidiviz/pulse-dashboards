@@ -18,20 +18,20 @@
 import { renderHook } from "@testing-library/react-native";
 import React from "react";
 
+import { useAgencyConfigs } from "~@meetings/app/entities/agency-config";
 import { useUserContext } from "~@meetings/app/entities/user";
 
 import {
   DEFAULT_STATE_CODE,
   StateCodeProvider,
   useStateSelection,
-} from "../../context/StateContext";
-import { useAgencyConfigs } from "../../entities/agency-config";
+} from "./StateContext";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
 );
 
-jest.mock("../../entities/agency-config", () => ({
+jest.mock("~@meetings/app/entities/agency-config", () => ({
   useAgencyConfigs: jest.fn(),
 }));
 

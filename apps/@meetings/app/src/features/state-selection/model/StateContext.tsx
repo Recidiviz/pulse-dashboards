@@ -17,11 +17,11 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 
+import { useAgencyConfigs } from "~@meetings/app/entities/agency-config";
 import { useUserContext } from "~@meetings/app/entities/user";
+import { getItem, saveItem } from "~@meetings/app/shared/lib/storage";
 
-import { useAgencyConfigs } from "../entities/agency-config";
-import { stateCodeParam } from "../navigation/config";
-import { getItem, saveItem } from "../shared/lib/storage";
+import { stateCodeParam } from "./stateCodeParam";
 
 export type StateCode = string;
 

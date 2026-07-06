@@ -28,7 +28,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useUserContext } from "~@meetings/app/entities/user";
 
 import MobileMenuItem from "../components/MobileMenuItem";
-import { useStateSelection } from "../context/StateContext";
+import { useStateSelection } from "../features/state-selection";
 import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
 import { IS_PROD } from "../shared/config";
 import { getInitials } from "../shared/lib/format";
