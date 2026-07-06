@@ -18,7 +18,7 @@
 "use client";
 
 import { MessageSquare } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
 import { ChatMessageBubble } from "~@reentry/frontend-shared";
@@ -35,6 +35,7 @@ const SectionChatInterface = ({
   client,
   smallText,
   isRecidivizInternalView = false,
+  showLatestMessage = false,
 }: {
   section: IntakeSection;
   intakeId: string;
@@ -42,9 +43,11 @@ const SectionChatInterface = ({
   client: ClientRecord;
   smallText?: boolean;
   isRecidivizInternalView?: boolean;
+  showLatestMessage?: boolean;
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const hasScrolledRef = useRef(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const shouldFetchMessages = isActive && section.status !== "not_started";
@@ -160,11 +163,17 @@ const SectionChatInterface = ({
       return true;
     });
 
-  useEffect(() => {
-    if (formattedMessages.length > 0) {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  useLayoutEffect(() => {
+    if (
+      showLatestMessage &&
+      !hasScrolledRef.current &&
+      data?.length &&
+      messagesEndRef.current
+    ) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+      hasScrolledRef.current = true;
     }
-  }, [formattedMessages]);
+  }, [showLatestMessage, data]);
 
   if (!isActive) return null;
 

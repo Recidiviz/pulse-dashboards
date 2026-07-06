@@ -146,6 +146,9 @@ async def prepare_intake_response(
             intake_sections=formatted_sections,
             token=token or "",
             internal_access=intake.internal_access,
+            locked=intake.locked,
+            locked_at=intake.locked_at,
+            locked_reason=intake.locked_reason,
         )
     else:
         return IntakeResponse(

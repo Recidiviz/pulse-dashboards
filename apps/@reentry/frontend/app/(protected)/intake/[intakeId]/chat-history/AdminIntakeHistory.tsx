@@ -18,7 +18,7 @@
 "use client";
 
 import { ChevronRight, MessageSquare } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import Chatbubble from "~@reentry/frontend/(protected)/intake/[intakeId]/chat-history/Chatbubble";
 import Sidebar from "~@reentry/frontend/(protected)/intake/[intakeId]/chat-history/Sidebar";
@@ -39,28 +39,33 @@ const AdminIntakeHistory = ({
   intake: Intake;
   isRecidivizInternalView?: boolean;
 }) => {
-  const [activeSection, setActiveSection] = useState<string | null>(null);
   const { trackClientIntakeChatHistoryViewed } = useAnalytics();
-
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const sidebarRef = useRef<HTMLDivElement>(null);
+
+  /** Locked intakes (guardrail-triggered) and the internal safety-review route
+   * should both start at the last active section, scrolled to the bottom. */
+  const scrollToLatest = isRecidivizInternalView || !!intake.locked;
+
+  const [activeSection, setActiveSection] = useState<string | null>(() => {
+    const sections = intake.intake_sections ?? [];
+    if (!sections.length) return null;
+    const first = sections[0].title;
+    if (!scrollToLatest) return first;
+    return sections.findLast((s) => s.status !== "not_started")?.title ?? first;
+  });
+
+  /** Starts true for locked/internal view guardrailed intakes, becomes false on
+   * the first sidebar click so section switches always show the top of that section. */
+  const [scrollToBottom, setScrollToBottom] = useState(scrollToLatest);
 
   useEffect(() => {
-    if (intake?.intake_sections?.length && !activeSection) {
-      const sections = intake.intake_sections;
-      const firstSection = sections[0].title;
-      const lastActiveSection = sections.findLast(
-        (s) => s.status !== "not_started",
-      )?.title;
-      const currentSection = lastActiveSection ?? firstSection;
-
-      setActiveSection(currentSection);
+    if (activeSection) {
       trackClientIntakeChatHistoryViewed({
         justiceInvolvedPersonId: clientRecord.pseudonymized_client_id,
-        section: currentSection,
+        section: activeSection,
       });
     }
-  }, [intake, activeSection]);
+  }, []);
 
   const sections: IntakeSection[] = intake.intake_sections || [];
 
@@ -68,16 +73,17 @@ const AdminIntakeHistory = ({
     <div className="h-full mx-auto bg-white rounded-lg shadow p-4 flex flex-col sm:flex-row overflow-hidden">
       {/* Sidebar */}
       {sidebarOpen ? (
-        <div className="flex-none" ref={sidebarRef}>
+        <div className="flex-none">
           <Sidebar
             onClose={() => setSidebarOpen(!sidebarOpen)}
             activeSection={activeSection}
             onSectionSelect={(sectionTitle) => {
+              setScrollToBottom(false);
+              setActiveSection(sectionTitle);
               trackClientIntakeChatHistoryViewed({
                 justiceInvolvedPersonId: clientRecord.pseudonymized_client_id,
                 section: sectionTitle,
               });
-              setActiveSection(sectionTitle);
             }}
             intakeSections={sections}
           />
@@ -116,6 +122,7 @@ const AdminIntakeHistory = ({
                     client={clientRecord}
                     smallText
                     isRecidivizInternalView={isRecidivizInternalView}
+                    showLatestMessage={scrollToBottom}
                   />
                 </div>
               </div>
