@@ -126,7 +126,7 @@ function StatusIndicator({
   );
 }
 
-function ReconnectRow({
+export function ReconnectRow({
   person,
   recordedOn,
   uploadStatus,
@@ -137,13 +137,17 @@ function ReconnectRow({
   if (!person) return null;
 
   const isUploading = uploadStatus === "uploading";
+  // recordedOn may be deserialized as a string if it was persisted to disk
+  // before a fix to the offline queue's date reviver (see OBT-37472).
+  const recordedOnDate =
+    recordedOn instanceof Date ? recordedOn : new Date(recordedOn);
   const recordedOnLabel =
-    recordedOn.toLocaleDateString("en-US", {
+    recordedOnDate.toLocaleDateString("en-US", {
       month: "long",
       day: "numeric",
     }) +
     " at " +
-    recordedOn.toLocaleTimeString("en-US", {
+    recordedOnDate.toLocaleTimeString("en-US", {
       hour: "numeric",
       minute: "2-digit",
     });
