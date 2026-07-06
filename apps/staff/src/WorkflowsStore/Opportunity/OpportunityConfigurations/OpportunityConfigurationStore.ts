@@ -16,7 +16,13 @@
 // =============================================================================
 
 import { mapValues } from "lodash";
-import { flowResult, makeAutoObservable, reaction, runInAction } from "mobx";
+import {
+  comparer,
+  flowResult,
+  makeAutoObservable,
+  reaction,
+  runInAction,
+} from "mobx";
 
 import { isDemoMode, isOfflineMode, isTestEnv } from "~client-env-utils";
 import { OpportunityType } from "~datatypes";
@@ -75,6 +81,7 @@ export class OpportunityConfigurationStore implements Hydratable {
       () => {
         runInAction(() => this.reset());
       },
+      { equals: comparer.structural },
     );
   }
 

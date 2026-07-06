@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { renderHook } from "@testing-library/react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Mock } from "vitest";
 import { expect } from "vitest";
 
@@ -32,6 +32,7 @@ let userStore: any;
 
 const mockUseRootStore = useRootStore as Mock;
 const mockUseLocation = useLocation as Mock;
+const mockUseNavigate = useNavigate as Mock;
 
 describe("useAuth", () => {
   beforeEach(() => {
@@ -49,6 +50,7 @@ describe("useAuth", () => {
     mockUseLocation.mockReturnValue({
       pathname: "/",
     });
+    mockUseNavigate.mockReturnValue(vi.fn());
   });
   afterEach(() => {
     vi.resetAllMocks();
@@ -68,6 +70,32 @@ describe("useAuth", () => {
     });
 
     expect(() => renderHook(() => useAuth())).toThrowError(authError);
+  });
+
+  it("preserves query params and hash when navigating after login", () => {
+    const navigateSpy = vi.fn();
+    mockUseNavigate.mockReturnValue(navigateSpy);
+    mockUseRootStore.mockReturnValue({
+      userStore: {
+        ...userStore,
+        isAuthorized: false,
+        authorize: (handleTargetUrl: (targetUrl: string) => void) =>
+          handleTargetUrl(
+            "https://app.example.com/workflows?stateCode=US_TN&clientId=abc#section",
+          ),
+      },
+      tenantStore: {
+        currentTenantId: undefined,
+        tenantConfigs: {},
+      },
+    });
+
+    renderHook(() => useAuth());
+
+    expect(navigateSpy).toHaveBeenCalledWith(
+      "/workflows?stateCode=US_TN&clientId=abc#section",
+      { replace: true },
+    );
   });
 
   it("sets the currentTenantId for recidiviz users with a state code param", () => {

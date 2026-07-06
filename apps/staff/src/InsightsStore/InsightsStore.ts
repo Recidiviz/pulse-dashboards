@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeAutoObservable, reaction, runInAction } from "mobx";
+import { comparer, makeAutoObservable, reaction, runInAction } from "mobx";
 
 import { isDemoMode, isOfflineMode, isTestEnv } from "~client-env-utils";
 import { normalizeMetricNamesForFixtureData } from "~datatypes";
@@ -40,17 +40,17 @@ export class InsightsStore {
 
     makeAutoObservable(this);
 
-    // reset the store for each new tenant and if the current user changes (such as via impersonation)
+    // Reset the store for each new tenant and if the current user changes
+    // (such as via impersonation).
     reaction(
-      () => {
-        return {
-          tenant: this.rootStore.currentTenantId,
-          ...this.rootStore.userStore.user,
-        };
-      },
+      () => ({
+        tenant: this.rootStore.currentTenantId,
+        ...this.rootStore.userStore.user,
+      }),
       () => {
         runInAction(() => this.reset());
       },
+      { equals: comparer.structural },
     );
   }
 

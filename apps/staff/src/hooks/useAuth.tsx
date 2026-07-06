@@ -54,7 +54,11 @@ const useAuth = () => {
         () =>
           userStore.authorize((targetUrl: string) => {
             const url = new URL(targetUrl);
-            navigate(url.pathname, { replace: true });
+            // strip the origin (React Router needs an app-relative location) but
+            // preserve the search + hash so query params survive the Auth0 redirect
+            navigate(`${url.pathname}${url.search}${url.hash}`, {
+              replace: true,
+            });
           }),
       ),
     // these references should never really change, so this is essentially

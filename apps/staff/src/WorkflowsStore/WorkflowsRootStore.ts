@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeAutoObservable, reaction, runInAction } from "mobx";
+import { comparer, makeAutoObservable, reaction, runInAction } from "mobx";
 
 import { RootStore } from "../RootStore";
 import { JusticeInvolvedPersonsStore } from "./JusticeInvolvedPersonsStore";
@@ -47,6 +47,7 @@ export class WorkflowsRootStore {
       () => {
         runInAction(() => this.reset());
       },
+      { equals: comparer.structural },
     );
   }
 

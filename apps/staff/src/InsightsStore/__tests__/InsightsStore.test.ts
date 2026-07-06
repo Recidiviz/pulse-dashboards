@@ -47,9 +47,32 @@ test("automatically reset when state code changes", async () => {
   expect(store.supervisionStore).toBeUndefined();
 });
 
-test("automatically reset when user changes", async () => {
+test("automatically reset when the user's identity changes", async () => {
+  store.rootStore.userStore.user = { email: "user@example.com" };
   await flowResult(store.populateSupervisionStore());
   expect(store.supervisionStore).toBeDefined();
-  store.rootStore.userStore.user = {};
+
+  // e.g. switching to an impersonated user
+  store.rootStore.userStore.user = { email: "impersonated@example.com" };
   expect(store.supervisionStore).toBeUndefined();
+});
+
+test("does not reset when the user object is replaced with identical content", async () => {
+  store.rootStore.userStore.user = {
+    email: "user@example.com",
+    "https://dashboard.recidiviz.org/app_metadata": { stateCode: "US_NC" },
+  };
+  await flowResult(store.populateSupervisionStore());
+  expect(store.supervisionStore).toBeDefined();
+
+  // Auth0 rehydrates the user_metadata/app_metadata claim objects shortly after
+  // login: a new user object with new nested references but identical content.
+  // Structural comparison must treat this as unchanged, or it wipes an
+  // already-populated store and deep-linked Insights pages get stuck on a 404
+  // after the login redirect.
+  store.rootStore.userStore.user = {
+    email: "user@example.com",
+    "https://dashboard.recidiviz.org/app_metadata": { stateCode: "US_NC" },
+  };
+  expect(store.supervisionStore).toBeDefined();
 });
