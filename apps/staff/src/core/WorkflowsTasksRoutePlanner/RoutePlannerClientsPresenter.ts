@@ -34,7 +34,6 @@ import {
   RoutePlannerRouteEvent,
 } from "../../RootStore/AnalyticsStore/AnalyticsStore";
 import { formatWorkflowsDateWithoutYear } from "../../utils";
-import { PartialRecord } from "../../utils/typeUtils";
 import {
   Client,
   JusticeInvolvedPerson,
@@ -66,13 +65,6 @@ export class RoutePlannerClientsPresenter implements Hydratable {
   isOptimizing = false;
   private OMS: string | undefined;
 
-  private TASK_TYPE_COPY: PartialRecord<SupervisionTaskType, string> = {
-    usTxHomeContactScheduled: "Scheduled Home Contact",
-    usTxHomeContactUnscheduled: "Unscheduled Home Contact",
-    usTxHomeContactEdgeCase: "Residence Validation",
-    usTxHomeContactUnscheduledWeekend: "Unscheduled Home Contact (Weekend)",
-    usIdHomeVisit: "Home Contact",
-  };
   private SHORT_SUPERVISION_LEVEL_COPY: Record<string, string> = {
     High: "H",
     Moderate: "M",
@@ -145,7 +137,7 @@ export class RoutePlannerClientsPresenter implements Hydratable {
         .map((person) => {
           if (person.supervisionTasks) {
             return person.supervisionTasks.readyOrderedTasks.filter(
-              ({ type }) => Object.keys(this.TASK_TYPE_COPY).includes(type),
+              (task) => task.includeInRoutePlanner,
             );
           }
           return [];
@@ -180,7 +172,7 @@ export class RoutePlannerClientsPresenter implements Hydratable {
 
     const taskInfo = tasks.map((task) => {
       return {
-        type: this.TASK_TYPE_COPY[task.type] ?? "Other",
+        type: task.routePlannerDisplayName ?? "Other",
         // idaho does not have the ability to view
         // or schedule appointment dates presently
         ...(person.stateCode !== "US_ID" && {

@@ -99,6 +99,14 @@ export abstract class Task<TaskType extends SupervisionTaskType>
     return this.task.details;
   }
 
+  get includeInRoutePlanner(): boolean {
+    return this.task.includeInRoutePlanner ?? false;
+  }
+
+  get routePlannerDisplayName(): string | undefined {
+    return this.task.routePlannerDisplayName;
+  }
+
   get getDisplayName(): string {
     return this.task.taskDisplayName;
   }

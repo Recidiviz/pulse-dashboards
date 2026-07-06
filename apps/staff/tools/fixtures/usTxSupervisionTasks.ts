@@ -29,6 +29,8 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
         type: "usTxHomeContactScheduled",
         // overdue
         dueDate: "2022-01-03",
+        includeInRoutePlanner: true,
+        routePlannerDisplayName: "Scheduled Home Contact",
         details: {
           contactCount: 2,
           lastContactDate: "2021-08-03",
@@ -64,6 +66,8 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
         type: "usTxHomeContactScheduled",
         // overdue
         dueDate: "2022-03-09",
+        includeInRoutePlanner: true,
+        routePlannerDisplayName: "Scheduled Home Contact",
         details: {
           contactCount: 2,
           lastContactDate: "2021-03-09",
@@ -98,6 +102,8 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
         taskDisplayName: "Home Contact",
         type: "usTxHomeContactEdgeCase",
         dueDate: "2022-03-12",
+        includeInRoutePlanner: true,
+        routePlannerDisplayName: "Residence Validation",
         details: {
           contactCadence: "1 EVERY 3 MONTHS",
           scheduledContactDates: null,
@@ -109,6 +115,8 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
         taskDisplayName: "Home Contact (Scheduled)",
         type: "usTxHomeContactScheduled",
         dueDate: "2022-03-26",
+        includeInRoutePlanner: true,
+        routePlannerDisplayName: "Scheduled Home Contact",
         details: {
           overrideContactType: "SCHEDULED HOME (VIRTUAL)",
           officerInCriticallyUnderstaffedLocation: true,
@@ -132,6 +140,8 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
         taskDisplayName: "Home Contact",
         type: "usTxHomeContactEdgeCase",
         dueDate: "2022-03-18",
+        includeInRoutePlanner: true,
+        routePlannerDisplayName: "Residence Validation",
         details: {
           contactCadence: "1 EVERY 3 MONTHS",
           scheduledContactDates: "2022-03-10",
@@ -143,6 +153,8 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
         taskDisplayName: "Unscheduled Field or Unscheduled Home",
         type: "usTxHomeContactUnscheduled",
         dueDate: "2024-06-12",
+        includeInRoutePlanner: true,
+        routePlannerDisplayName: "Unscheduled Home Contact",
         details: {
           overrideContactType: "UNSCHEDULED HOME (VIRTUAL)",
           officerInCriticallyUnderstaffedLocation: true,
@@ -165,6 +177,8 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
         taskDisplayName: "Unscheduled Field or Unscheduled Home",
         type: "usTxHomeContactUnscheduled",
         dueDate: "2020-03-19",
+        includeInRoutePlanner: true,
+        routePlannerDisplayName: "Unscheduled Home Contact",
         details: {
           overrideContactType: "UNSCHEDULED HOME (VIRTUAL)",
           officerInCriticallyUnderstaffedLocation: true,
@@ -325,6 +339,8 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
         taskDisplayName: "Home Contact (Scheduled)",
         type: "usTxHomeContactScheduled",
         dueDate: "2020-09-14",
+        includeInRoutePlanner: true,
+        routePlannerDisplayName: "Scheduled Home Contact",
         details: {
           contactCount: 2,
           lastContactDate: "2022-03-14",
@@ -346,6 +362,8 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
         taskDisplayName: "Home Contact (Scheduled)",
         type: "usTxHomeContactUnscheduled",
         dueDate: "2020-12-01",
+        includeInRoutePlanner: true,
+        routePlannerDisplayName: "Unscheduled Home Contact",
         details: {
           overrideContactType: "UNSCHEDULED HOME (VIRTUAL)",
           officerInCriticallyUnderstaffedLocation: false,
@@ -368,6 +386,8 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
         taskDisplayName: "Home Contact",
         type: "usTxHomeContactEdgeCase",
         dueDate: "2023-11-30",
+        includeInRoutePlanner: true,
+        routePlannerDisplayName: "Residence Validation",
         details: {
           contactCadence: "1 EVERY 3 MONTHS",
           scheduledContactDates: null,

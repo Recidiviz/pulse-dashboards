@@ -312,6 +312,8 @@ export type SupervisionTask<
 
   additionalDetails?: string;
   vitalsMetricId?: VitalsMetricId;
+  includeInRoutePlanner: boolean;
+  routePlannerDisplayName?: string;
   updateSupervisionTask: (
     snoozeForDays?: SnoozeOptions,
     snoozeReason?: string,
@@ -375,6 +377,12 @@ export type SupervisionTaskRecord<T extends SupervisionTaskType> = {
   type: T;
   details: SupervisionDetailsForTask[T];
   dueDate: string;
+  // Backend-driven signal for whether this task should surface in the Tasks
+  // Route Planner. Defaults to false when absent from the Firestore record.
+  includeInRoutePlanner?: boolean;
+  // Route-Planner-specific display label. Set by the backend only when
+  // includeInRoutePlanner is true; absent otherwise.
+  routePlannerDisplayName?: string;
 };
 
 export type SupervisionNeed = {

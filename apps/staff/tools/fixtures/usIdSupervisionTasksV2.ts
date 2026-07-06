@@ -29,6 +29,8 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
       {
         taskDisplayName: "Home Contact",
         type: "usIdHomeVisit",
+        includeInRoutePlanner: true,
+        routePlannerDisplayName: "Home Visit",
         dueDate: relativeFixtureDate({ days: -10 }),
         details: {
           contactCadence: "1 EVERY 365",
@@ -64,6 +66,8 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
       {
         taskDisplayName: "Home Contact",
         type: "usIdHomeVisit",
+        includeInRoutePlanner: true,
+        routePlannerDisplayName: "Home Visit",
         dueDate: relativeFixtureDate({ days: -10 }),
         details: {
           contactCadence: "1 EVERY 365",
@@ -117,6 +121,8 @@ const data: SupervisionTasksRecord<"US_ID">[] = [
       {
         taskDisplayName: "Home Contact",
         type: "usIdHomeVisit",
+        includeInRoutePlanner: true,
+        routePlannerDisplayName: "Home Visit",
         dueDate: relativeFixtureDate({ days: 0 }),
         details: {
           contactCadence: "1 EVERY 365",
