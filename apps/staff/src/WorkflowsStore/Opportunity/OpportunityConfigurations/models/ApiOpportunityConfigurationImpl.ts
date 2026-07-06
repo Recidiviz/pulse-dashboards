@@ -154,9 +154,10 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return this.configurationObject.hideDenialRevert;
   }
 
-  get tabGroups() {
-    const tabs = this.configurationObject.tabGroups as OpportunityTabGroups;
-    if (tabs) return tabs;
+  get tabGroups(): OpportunityTabGroups {
+    const tabs = this.configurationObject.tabGroups;
+    // If we receive an empty object for tab groups, don't pass it through
+    if (tabs && !isEmpty(tabs)) return tabs;
     return {
       "ELIGIBILITY STATUS": this.defaultEligibilityStatusTabs(),
     };
