@@ -52,13 +52,13 @@ export async function verifyDockerImages(
   const requiredImages = await Promise.all(imageProjects.map(getImageRef));
 
   // Check for images with retry prompt
-  let allImagesFound = false;
+  let imagesToCheck = requiredImages;
 
-  while (!allImagesFound) {
+  while (imagesToCheck.length > 0) {
     const missingImages: string[] = [];
 
-    // Check each image once
-    for (const image of requiredImages) {
+    // Check each image we haven't yet found
+    for (const image of imagesToCheck) {
       try {
         const result =
           await $`gcloud artifacts docker images list ${image} --quiet --include-tags --filter=tags:${currentRevision} --format=json`;
@@ -73,6 +73,8 @@ export async function verifyDockerImages(
         missingImages.push(image);
       }
     }
+
+    imagesToCheck = missingImages;
 
     // If any images are missing, ask user what to do
     if (missingImages.length > 0) {
@@ -91,8 +93,8 @@ export async function verifyDockerImages(
         name: "action",
         message: "What would you like to do?",
         choices: [
-          { name: "Retry checking for images", value: "retry" },
-          { name: "Build images manually", value: "build" },
+          { name: "Retry checking for the missing images", value: "retry" },
+          { name: "Build all images manually", value: "build" },
           { name: "Exit deployment", value: "exit" },
         ],
         default: "retry",
@@ -114,10 +116,8 @@ export async function verifyDockerImages(
       } else {
         console.log("Retrying image checks...");
       }
-    } else {
-      // All images found
-      allImagesFound = true;
-      console.log("✅ All required Docker images verified");
     }
   }
+
+  console.log("✅ All required Docker images verified");
 }
