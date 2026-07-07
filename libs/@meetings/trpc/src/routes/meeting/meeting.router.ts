@@ -419,7 +419,7 @@ export const meetingRouter = router({
           await queueStitchingTask(stateCode, meetingId, prisma);
         } catch (e) {
           // Don't throw the error because the meeting should still be ended
-          captureException(e);
+          captureException(e, { tags: { meetingId } });
 
           await prisma.meeting.update({
             where: { id: meetingId },

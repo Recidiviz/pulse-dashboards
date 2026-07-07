@@ -231,7 +231,8 @@ export async function handleTranscriptions(params: HandleTranscriptionParams) {
     });
   } else {
     captureException("AssemblyAI transcription failed", {
-      extra: { error: assemblyAIResult.reason, meetingId },
+      tags: { meetingId },
+      extra: { error: assemblyAIResult.reason },
     });
   }
 
@@ -257,7 +258,8 @@ export async function handleTranscriptions(params: HandleTranscriptionParams) {
     });
   } else {
     captureException("Deepgram transcription failed", {
-      extra: { error: deepgramResult.reason, meetingId },
+      tags: { meetingId },
+      extra: { error: deepgramResult.reason },
     });
   }
 
