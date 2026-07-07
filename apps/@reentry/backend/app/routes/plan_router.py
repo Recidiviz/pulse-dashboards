@@ -378,9 +378,13 @@ async def router_get_plan(
     action_plan_config = await plan.get_action_plan_config(session)
     resources_pipeline_enabled = (
         action_plan_config.external_api.resources_pipeline_enabled
+        if action_plan_config
+        else None
     )
     digital_resources_enabled = (
         action_plan_config.external_api.digital_resources_enabled
+        if action_plan_config
+        else None
     )
 
     intake_address = None

@@ -14,9 +14,11 @@ from app.crud.address import get_latest_address_client_pseudo_id
 from app.crud.ai_persona import get_latest_ai_intake_trigger_by_intake_id
 from app.crud.client import ClientSort, SortOrder, get_paginated_client_list
 from app.crud.client import reset_client_data as crud_reset_client_data
+from app.crud.config_management import get_output_configs
 from app.crud.intake import (
     get_all_intakes_by_client_pseudo_id,
 )
+from app.models.output_config import OutputType
 from app.routes.execution_router import ExecutionResponse
 from app.routes.shared_models import (
     ClientAddressResponse,
@@ -193,9 +195,16 @@ async def get_client_intakes(
     # Format response with assessment config info
     response = []
     for intake in intakes:
-        plan_config = await ConfigLoader.load_plan_config(
+        assessment = await ConfigLoader.load_assessment_config(
             intake.assessment_config_id, session
         )
+        has_plan_output = False
+        for output_code in assessment.outputs.codes:
+            if await get_output_configs(
+                session, code=output_code, output_type=OutputType.action_plan
+            ):
+                has_plan_output = True
+                break
         trigger = await get_latest_ai_intake_trigger_by_intake_id(session, intake.id)
         response.append(
             IntakeHistoryResponse(
@@ -211,7 +220,7 @@ async def get_client_intakes(
                 if intake.assessment_config
                 else None,
                 completed_at=intake.completed_at,
-                assessment_config_outputs_action_plan_activated=plan_config is not None,
+                assessment_config_outputs_action_plan_activated=has_plan_output,
                 outputs_enabled=intake.outputs_enabled,
                 locked=intake.locked,
                 locked_at=intake.locked_at,
