@@ -236,6 +236,11 @@ module "import_job" {
     name       = "cloudsql"
     mount_path = "/cloudsql"
   }]
+
+  limits = {
+    memory = "1Gi"
+    cpu    = "1000m"
+  }
 }
 
 # Configure a Google Workflow that is executed when a pubsub notification to the GCS
