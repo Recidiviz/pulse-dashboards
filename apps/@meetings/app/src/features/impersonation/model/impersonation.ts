@@ -17,7 +17,7 @@
 
 import { create } from "zustand";
 
-export type ImpersonationMetadata = {
+type ImpersonationMetadata = {
   impersonatedEmail: string;
   impersonatedStateCode: string;
   startImpersonating: (email: string, stateCode: string) => void;

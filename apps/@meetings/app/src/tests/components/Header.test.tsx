@@ -83,17 +83,9 @@ jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
 );
 
-jest.mock("../../components/ImpersonationModal", () => ({
+jest.mock("../../features/impersonation", () => ({
+  ImpersonationBanner: () => null,
   ImpersonationModal: () => null,
-}));
-
-jest.mock("../../hooks/useImpersonationStore", () => ({
-  useImpersonationStore: () => ({
-    impersonatedEmail: "",
-    impersonatedStateCode: "",
-    startImpersonating: jest.fn(),
-    stopImpersonating: jest.fn(),
-  }),
 }));
 
 jest.mock("../../shared/ui/OfflineIndicator", () => ({

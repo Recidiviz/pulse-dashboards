@@ -22,14 +22,15 @@ import React, { useState } from "react";
 import { TextInput, TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 
-import { useImpersonationStore } from "../hooks/useImpersonationStore";
-import { trpc } from "../shared/api";
-import { RootStackParamList } from "../shared/config/routes";
-import { queryCachePersister } from "../shared/lib/queryCachePersister";
-import Modal from "../shared/ui/Modal";
-import PrimaryButton from "../shared/ui/PrimaryButton";
-import { useSnackbar } from "../shared/ui/Snackbar";
-import { Typography } from "../shared/ui/Typography";
+import { trpc } from "~@meetings/app/shared/api";
+import { RootStackParamList } from "~@meetings/app/shared/config";
+import { queryCachePersister } from "~@meetings/app/shared/lib/queryCachePersister";
+import Modal from "~@meetings/app/shared/ui/Modal";
+import PrimaryButton from "~@meetings/app/shared/ui/PrimaryButton";
+import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
+
+import { useImpersonationStore } from "../model/impersonation";
 
 type ImpersonationModalNavProp = NativeStackNavigationProp<RootStackParamList>;
 

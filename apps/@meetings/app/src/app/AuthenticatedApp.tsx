@@ -23,12 +23,12 @@ import superjson from "superjson";
 
 import { AgencyConfigProvider } from "~@meetings/app/entities/agency-config";
 import { useUserContext } from "~@meetings/app/entities/user";
+import { useImpersonationStore } from "~@meetings/app/features/impersonation";
 import {
   DEFAULT_STATE_CODE,
   StateCode,
   StateCodeProvider,
 } from "~@meetings/app/features/state-selection";
-import { useImpersonationStore } from "~@meetings/app/hooks/useImpersonationStore";
 import { AnalyticsProvider } from "~@meetings/app/shared/analytics";
 import { trpc } from "~@meetings/app/shared/api";
 import { env } from "~@meetings/app/shared/config";

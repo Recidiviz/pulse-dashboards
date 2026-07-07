@@ -41,9 +41,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useUserContext } from "~@meetings/app/entities/user";
 
+import {
+  ImpersonationBanner,
+  ImpersonationModal,
+} from "../features/impersonation";
 import { useRecording } from "../features/recording";
 import { useStateSelection } from "../features/state-selection";
-import { useImpersonationStore } from "../hooks/useImpersonationStore";
 import WordmarkSvg from "../shared/assets/icons/wordmark.svg";
 import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
 import { IS_PROD } from "../shared/config";
@@ -52,7 +55,6 @@ import { getInitials } from "../shared/lib/format";
 import { OfflineIndicator } from "../shared/ui/OfflineIndicator";
 import { Typography } from "../shared/ui/Typography";
 import DesktopMenuItem from "./DesktopMenuItem";
-import { ImpersonationModal } from "./ImpersonationModal";
 import { ProfileMenuItem } from "./ProfileMenuItem";
 
 type HeaderNavProp = NativeStackNavigationProp<RootStackParamList>;
@@ -131,7 +133,6 @@ const Header: React.FC<HeaderProps> = ({
   const [showImpersonationModal, setShowImpersonationModal] = useState(false);
   const { canSelectStateCode, currentStateName, selectedStateCode } =
     useStateSelection();
-  const { impersonatedEmail, impersonatedStateCode } = useImpersonationStore();
 
   const dashboardUrl = IS_PROD
     ? "https://dashboard.recidiviz.org"
@@ -359,13 +360,7 @@ const Header: React.FC<HeaderProps> = ({
           </Typography>
         </View>
       )}
-      {!!impersonatedEmail && (
-        <View className="z-[-1] bg-warning-light px-4 py-2.5">
-          <Typography className="text-center text-sm font-medium text-warning">
-            Impersonating: {impersonatedEmail} in {impersonatedStateCode}
-          </Typography>
-        </View>
-      )}
+      <ImpersonationBanner />
       <ImpersonationModal
         visible={showImpersonationModal}
         onClose={() => setShowImpersonationModal(false)}
