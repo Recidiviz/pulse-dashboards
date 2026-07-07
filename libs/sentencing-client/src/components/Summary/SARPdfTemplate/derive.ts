@@ -23,6 +23,7 @@
 
 import type { SAR, SARInsight } from "../../../api";
 import {
+  calculateAgeAtDate,
   convertDecimalToPercentage,
   formatDisplayDate,
   titleCase,
@@ -97,6 +98,14 @@ const riskLevelOf = (
   return value === "LOW" || value === "MODERATE" || value === "HIGH"
     ? value
     : null;
+};
+
+/** Client's age as of the ORAS assessment date; mirrors
+ * `OffenderAssessmentPresenter.ageAtAssessment`. */
+export const ageAtAssessment = (sar: SAR): number | null => {
+  const birthDate = sar.client?.birthDate;
+  if (!birthDate || !sar.assessmentDate) return null;
+  return calculateAgeAtDate(birthDate, sar.assessmentDate);
 };
 
 /**

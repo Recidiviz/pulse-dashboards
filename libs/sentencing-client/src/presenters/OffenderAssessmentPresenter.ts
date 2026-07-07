@@ -39,7 +39,7 @@ import {
   shouldShowOrasContent,
 } from "../components/OffenderAssessment/utils";
 import { ActiveFeatureVariants } from "../datastores/types";
-import { splitFullName } from "../utils/utils";
+import { calculateAgeAtDate, splitFullName } from "../utils/utils";
 import { SARDetailsPresenter } from "./SARDetailsPresenter";
 
 /**
@@ -74,6 +74,14 @@ export class OffenderAssessmentPresenter {
   /** True when an ORAS assessment was actually performed (has date + has scored domains). */
   get hasOrasAssessment(): boolean {
     return this.domains.length > 0 && !!this.SARData?.assessmentDate;
+  }
+
+  /** Client's age as of the ORAS assessment date, or null if either date is missing. */
+  get ageAtAssessment(): number | null {
+    const birthDate = this.SARData?.client?.birthDate;
+    const assessmentDate = this.SARData?.assessmentDate;
+    if (!birthDate || !assessmentDate) return null;
+    return calculateAgeAtDate(birthDate, assessmentDate);
   }
 
   get groupedByRisk(): Record<RiskLevelKey, string[]> {

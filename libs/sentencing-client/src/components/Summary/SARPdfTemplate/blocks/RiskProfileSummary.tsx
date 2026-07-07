@@ -22,10 +22,13 @@
 import { Text, View } from "@react-pdf/renderer";
 import React from "react";
 
-import { formatLongDate } from "../../../../utils/utils";
+import { formatLongDate, joinNonEmptyParts } from "../../../../utils/utils";
 import type { RiskLevelKey } from "../../../OffenderAssessment/constants";
 import { shouldShowOrasContent } from "../../../OffenderAssessment/utils";
-import { riskProfileGroups } from "../derive";
+import {
+  ageAtAssessment as getAgeAtAssessment,
+  riskProfileGroups,
+} from "../derive";
 import { Badge } from "../primitives/Badge";
 import { SectionHeading } from "../primitives/SectionHeading";
 import { useActiveFeatureVariants, useSAR } from "../SARContext";
@@ -76,14 +79,25 @@ export const RiskProfileSummary: React.FC<{ style?: PdfStyle }> = ({
 
   const groups = riskProfileGroups(sar);
   const administeredBy = sar.assessmentAdministeredBy ?? "Unknown";
-  const meta = `Administered By: ${administeredBy}${
-    sar.assessmentDate
-      ? `, ${formatLongDate(new Date(sar.assessmentDate))}`
-      : ""
-  }`;
+  const ageAtAssessment = getAgeAtAssessment(sar);
+  const meta = joinNonEmptyParts(
+    [
+      joinNonEmptyParts(
+        [
+          `Administered By: ${administeredBy}`,
+          sar.assessmentDate
+            ? formatLongDate(new Date(sar.assessmentDate))
+            : null,
+        ],
+        ", ",
+      ),
+      ageAtAssessment != null ? `Age at Assessment: ${ageAtAssessment}` : null,
+    ],
+    " | ",
+  );
 
   return (
-    <View style={style}>
+    <View style={style} wrap={false}>
       <SectionHeading
         title={`RISK PROFILE SUMMARY (${sar.assessmentType})`}
         meta={meta}

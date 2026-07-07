@@ -1533,6 +1533,7 @@ export class SARDetailsPresenter implements Hydratable {
       assessmentDate: sarData.assessmentDate
         ? formatLongDate(sarData.assessmentDate)
         : null,
+      ageAtAssessment: this.offenderAssessment.ageAtAssessment,
       groupedDomains: grouped,
     };
   }

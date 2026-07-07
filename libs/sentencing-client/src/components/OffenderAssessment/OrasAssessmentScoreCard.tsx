@@ -42,6 +42,7 @@ interface OrasAssessmentScoreCardProps {
   assessmentType: AssessmentTypeKey | null;
   assessmentDate: Date | string | null;
   assessmentAdministeredBy: string | null;
+  ageAtAssessment: number | null;
   ORASLastUpdatedAt: Date | null;
   ORASEnteredManually: boolean;
   hasORASData: boolean;
@@ -79,6 +80,7 @@ export const OrasAssessmentScoreCard: React.FC<
   assessmentType,
   assessmentDate,
   assessmentAdministeredBy,
+  ageAtAssessment,
   ORASLastUpdatedAt,
   ORASEnteredManually,
   hasORASData,
@@ -124,6 +126,12 @@ export const OrasAssessmentScoreCard: React.FC<
             <Styled.MetadataLabel>Assessment date</Styled.MetadataLabel>
             <Styled.MetadataValue>
               {moment(assessmentDate).utc().format("l")}
+            </Styled.MetadataValue>
+          </Styled.MetadataItem>
+          <Styled.MetadataItem>
+            <Styled.MetadataLabel>Age at assessment</Styled.MetadataLabel>
+            <Styled.MetadataValue>
+              {ageAtAssessment ?? "N/A"}
             </Styled.MetadataValue>
           </Styled.MetadataItem>
           <Styled.MetadataItem>

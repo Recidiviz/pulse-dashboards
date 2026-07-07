@@ -246,6 +246,9 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                       employmentHistories: presenter.employmentHistories,
                     }}
                     administeredBy={presenter.assessmentAdministeredBy}
+                    ageAtAssessment={
+                      presenter.offenderAssessment.ageAtAssessment
+                    }
                     hasOrasAssessment={presenter.hasOrasAssessment}
                     isDeclined={declined}
                   />

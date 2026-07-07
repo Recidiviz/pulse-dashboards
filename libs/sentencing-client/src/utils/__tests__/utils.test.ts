@@ -16,6 +16,7 @@
 // =============================================================================
 
 import {
+  calculateAgeAtDate,
   capitalizeName,
   convertDecimalToPercentage,
   displayReportType,
@@ -206,4 +207,25 @@ test("localDateFromUtcDate and localDateToUtcIsoDate round-trip correctly", () =
   const original = "2025-06-30";
   const localDate = localDateFromUtcDate(original);
   expect(localDateToUtcIsoDate(localDate)).toBe(original);
+});
+
+test("calculateAgeAtDate returns the number of full years between two dates", () => {
+  expect(
+    calculateAgeAtDate(new Date("1990-05-01"), new Date("2024-04-30")),
+  ).toBe(33);
+  expect(
+    calculateAgeAtDate(new Date("1990-05-01"), new Date("2024-05-01")),
+  ).toBe(34);
+  expect(
+    calculateAgeAtDate(new Date("1990-05-01"), new Date("2024-05-02")),
+  ).toBe(34);
+});
+
+test("calculateAgeAtDate handles leap-day birth dates correctly", () => {
+  expect(
+    calculateAgeAtDate(new Date("2000-02-29"), new Date("2024-02-28")),
+  ).toBe(23);
+  expect(
+    calculateAgeAtDate(new Date("2000-02-29"), new Date("2024-03-01")),
+  ).toBe(24);
 });

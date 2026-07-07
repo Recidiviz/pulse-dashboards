@@ -347,16 +347,32 @@ export const formatLongDate = (date: Date): string => {
   });
 };
 
-// e.g. "Administered By: Officer Smith, March 27, 2026"
+/** Joins non-empty parts with a separator, dropping null/undefined/empty entries. */
+export const joinNonEmptyParts = (
+  parts: Array<string | null | undefined>,
+  separator: string,
+): string => parts.filter((part): part is string => !!part).join(separator);
+
+// e.g. "Administered By: Officer Smith, March 27, 2026 | Age at Assessment: 34"
 export const formatAssessmentNote = (
   administeredBy: string | null | undefined,
   formattedDate: string | null | undefined,
+  ageAtAssessment?: number | null,
 ): string | undefined => {
-  const parts = [
-    administeredBy ? `Administered By: Officer ${administeredBy}` : null,
-    formattedDate,
-  ].filter((part): part is string => part != null);
-  return parts.length > 0 ? parts.join(", ") : undefined;
+  const note = joinNonEmptyParts(
+    [
+      joinNonEmptyParts(
+        [
+          administeredBy ? `Administered By: Officer ${administeredBy}` : null,
+          formattedDate,
+        ],
+        ", ",
+      ),
+      ageAtAssessment != null ? `Age at Assessment: ${ageAtAssessment}` : null,
+    ],
+    " | ",
+  );
+  return note || undefined;
 };
 
 // e.g. "04/2023"
@@ -392,3 +408,12 @@ export const formatDisplayDate = (
   if (!date) return "—";
   return moment(date).utc().format("MM/DD/YYYY");
 };
+
+/**
+ * Returns the number of full years between a birth date and a reference date.
+ * e.g. calculateAgeAtDate(new Date("1990-05-01"), new Date("2024-04-30")) -> 33
+ */
+export const calculateAgeAtDate = (
+  birthDate: Date,
+  referenceDate: Date,
+): number => moment(referenceDate).utc().diff(moment(birthDate).utc(), "years");

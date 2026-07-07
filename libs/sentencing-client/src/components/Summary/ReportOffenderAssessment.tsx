@@ -43,6 +43,7 @@ import * as Styled from "./SentencingAssessmentReport.styles";
 interface ReportOffenderAssessmentProps {
   sarData: SAR;
   administeredBy: string | null;
+  ageAtAssessment: number | null;
   hasOrasAssessment?: boolean;
   isDeclined?: boolean;
 }
@@ -136,6 +137,7 @@ export const ReportOffenderAssessment: React.FC<
 > = ({
   sarData,
   administeredBy,
+  ageAtAssessment,
   hasOrasAssessment = true,
   isDeclined = false,
 }) => {
@@ -152,6 +154,7 @@ export const ReportOffenderAssessment: React.FC<
     ? formatAssessmentNote(
         administeredBy,
         sarData.assessmentDate ? formatLongDate(sarData.assessmentDate) : null,
+        ageAtAssessment,
       )
     : null;
   const sectionTitle = isDeclined

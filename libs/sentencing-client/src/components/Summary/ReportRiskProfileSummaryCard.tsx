@@ -51,6 +51,7 @@ export interface RiskProfileCardData {
   assessmentType: AssessmentTypeKey | null;
   administeredBy: string | null;
   assessmentDate: string | null;
+  ageAtAssessment: number | null;
   groupedDomains: Record<RiskLevelKey, string[]>;
 }
 
@@ -58,9 +59,14 @@ export const ReportRiskProfileSummaryCard: React.FC<RiskProfileCardData> = ({
   assessmentType,
   administeredBy,
   assessmentDate,
+  ageAtAssessment,
   groupedDomains,
 }) => {
-  const note = formatAssessmentNote(administeredBy, assessmentDate);
+  const note = formatAssessmentNote(
+    administeredBy,
+    assessmentDate,
+    ageAtAssessment,
+  );
   return (
     <ReportBlock>
       <Styled.ReportCardHeader>

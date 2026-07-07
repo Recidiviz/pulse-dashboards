@@ -22,12 +22,13 @@
 import { View } from "@react-pdf/renderer";
 import React from "react";
 
-import { formatLongDate } from "../../../../utils/utils";
+import { formatLongDate, joinNonEmptyParts } from "../../../../utils/utils";
 import { getAssessmentTypeShortName } from "../../../OffenderAssessment/assessmentTypeUtils";
 import {
   getDomainsForAssessmentType,
   shouldShowOrasContent,
 } from "../../../OffenderAssessment/utils";
+import { ageAtAssessment as getAgeAtAssessment } from "../derive";
 import { Paragraph } from "../primitives/Paragraph";
 import { UnderlinedHeading } from "../primitives/UnderlinedHeading";
 import { useActiveFeatureVariants, useSAR } from "../SARContext";
@@ -57,16 +58,31 @@ export const OrasAssessment: React.FC<{ style?: PdfStyle }> = ({
   );
   const administeredBy = sar.assessmentAdministeredBy;
   const administeredOn = sar.assessmentDate;
+  const ageAtAssessment = getAgeAtAssessment(sar);
+  const meta =
+    !declined && administeredBy
+      ? joinNonEmptyParts(
+          [
+            joinNonEmptyParts(
+              [
+                `Administered By: ${administeredBy}`,
+                administeredOn
+                  ? formatLongDate(new Date(administeredOn))
+                  : null,
+              ],
+              ", ",
+            ),
+            ageAtAssessment != null
+              ? `Age at Assessment: ${ageAtAssessment}`
+              : null,
+          ],
+          " | ",
+        )
+      : undefined;
 
   return (
     <View style={style}>
-      <UnderlinedHeading
-        meta={
-          !declined && administeredBy
-            ? `Administered By: ${administeredBy}${administeredOn ? `, ${formatLongDate(new Date(administeredOn))}` : ""}`
-            : undefined
-        }
-      >
+      <UnderlinedHeading meta={meta}>
         {declined
           ? "Offender Risk Assessment"
           : `Offender Risk Assessment (${getAssessmentTypeShortName(sar.assessmentType)})`}
