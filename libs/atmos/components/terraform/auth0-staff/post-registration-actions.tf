@@ -15,6 +15,29 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # =============================================================================
 
-data "sops_file" "configs" {
-  source_file = "${path.module}/secrets/recidiviz-dev-auth0-configs.enc.yaml"
+resource "auth0_trigger_actions" "post_user_registration" {
+  trigger = "post-user-registration"
+  actions {
+    display_name = auth0_action.log_success_signup_to_segment.name
+    id           = auth0_action.log_success_signup_to_segment.id
+  }
+}
+
+resource "auth0_action" "log_success_signup_to_segment" {
+  code    = file("${path.module}/actions/07-log-success-signup-to-segment.js")
+  deploy  = true
+  name    = "[TF-managed] 07-log-success-signup-to-segment"
+  runtime = "node22"
+  dependencies {
+    name    = "analytics-node"
+    version = "6.2.0"
+  }
+  supported_triggers {
+    id      = "post-user-registration"
+    version = "v2"
+  }
+  secrets {
+    name  = "SEGMENT_WRITE_KEY"
+    value = data.sops_file.configs.data["segment_write_key"]
+  }
 }

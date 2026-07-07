@@ -15,17 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+function getUserEmail(event) {
+  const { email, emailaddress, emailAddress } = event.user;
+  return email ?? emailaddress ?? emailAddress;
+}
+
 /**
  * Handler that will be called during the execution of a PostLogin flow.
  *
  * @param {Event} event - Details about the user and the context in which they are logging in.
  * @param {PostLoginAPI} api - Interface whose methods can be used to change the behavior of the login.
  */
-function getUserEmail(event) {
-  const { email, emailaddress, emailAddress } = event.user;
-  return email ?? emailaddress ?? emailAddress;
-}
-
 exports.onExecutePostLogin = async (event) => {
   const Analytics = require("analytics-node");
   const analytics = new Analytics(event.secrets.SEGMENT_WRITE_KEY, {

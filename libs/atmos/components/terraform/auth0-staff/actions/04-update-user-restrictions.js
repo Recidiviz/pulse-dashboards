@@ -58,7 +58,7 @@ exports.onExecutePostLogin = async (event, api) => {
     stateCode = "csg";
     api.user.setAppMetadata("state_code", stateCode);
   }
-  const authorizedDomains = ["recidiviz.org", "csg.org", "recidiviz-test.org"]; // add authorized domains here
+  const authorizedDomains = ["recidiviz.org", "csg.org"]; // add authorized domains here
   const emailSplit = userEmail?.split("@") || [];
   const userDomain =
     (userEmail?.length ?? 0) > 1 &&
@@ -137,7 +137,7 @@ exports.onExecutePostLogin = async (event, api) => {
     /** Get user restrictions from Admin Panel backend */
     const auth = new GoogleAuth({ credentials });
     const client = await auth.getIdTokenClient(
-      event.secrets.RECIDIVIZ_ADMIN_PANEL_URL,
+      event.secrets.RECIDIVIZ_ADMIN_PANEL_TARGET_AUDIENCE,
     );
 
     // some ID accounts come up with an onmicrosoft domain. This patches the email for the request
