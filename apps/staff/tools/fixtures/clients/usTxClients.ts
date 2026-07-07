@@ -71,6 +71,8 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     allEligibleOpportunities: [
       "usTxAnnualReportStatusV2",
       "usTxEarlyReleaseFromSupervisionV2",
+      "usTxAnnualReportStatus",
+      "usTxEarlyReleaseFromSupervision",
     ],
     currentEmployers: [
       {
@@ -103,6 +105,8 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     allEligibleOpportunities: [
       "usTxAnnualReportStatusV2",
       "usTxEarlyReleaseFromSupervisionV2",
+      "usTxAnnualReportStatus",
+      "usTxEarlyReleaseFromSupervision",
     ],
     currentEmployers: [
       {
@@ -132,7 +136,10 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     phoneNumber: "5333333333",
     supervisionStartDate: "2019-07-01",
     expirationDate: "2021-01-01",
-    allEligibleOpportunities: [],
+    allEligibleOpportunities: [
+      "usTxAnnualReportStatus",
+      "usTxEarlyReleaseFromSupervision",
+    ],
     currentEmployers: [
       {
         name: "Cafe",
@@ -164,6 +171,8 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     allEligibleOpportunities: [
       "usTxAnnualReportStatusV2",
       "usTxEarlyReleaseFromSupervisionV2",
+      "usTxAnnualReportStatus",
+      "usTxEarlyReleaseFromSupervision",
     ],
     currentEmployers: [
       {
@@ -193,7 +202,10 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     phoneNumber: "5555555555",
     supervisionStartDate: "2021-06-01",
     expirationDate: "2023-01-01",
-    allEligibleOpportunities: ["usTxAnnualReportStatusV2"],
+    allEligibleOpportunities: [
+      "usTxAnnualReportStatusV2",
+      "usTxAnnualReportStatus",
+    ],
     currentEmployers: [
       {
         name: "Pharmacy",
@@ -225,6 +237,8 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     allEligibleOpportunities: [
       "usTxAnnualReportStatusV2",
       "usTxEarlyReleaseFromSupervisionV2",
+      "usTxAnnualReportStatus",
+      "usTxEarlyReleaseFromSupervision",
     ],
     currentEmployers: [
       {
@@ -289,6 +303,8 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     allEligibleOpportunities: [
       "usTxAnnualReportStatusV2",
       "usTxEarlyReleaseFromSupervisionV2",
+      "usTxAnnualReportStatus",
+      "usTxEarlyReleaseFromSupervision",
     ],
     currentEmployers: [
       {
@@ -321,6 +337,8 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     allEligibleOpportunities: [
       "usTxAnnualReportStatusV2",
       "usTxEarlyReleaseFromSupervisionV2",
+      "usTxAnnualReportStatus",
+      "usTxEarlyReleaseFromSupervision",
     ],
     currentEmployers: [
       {
@@ -353,6 +371,8 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     allEligibleOpportunities: [
       "usTxAnnualReportStatusV2",
       "usTxEarlyReleaseFromSupervisionV2",
+      "usTxAnnualReportStatus",
+      "usTxEarlyReleaseFromSupervision",
     ],
     currentEmployers: [
       {
@@ -385,6 +405,8 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     allEligibleOpportunities: [
       "usTxAnnualReportStatusV2",
       "usTxEarlyReleaseFromSupervisionV2",
+      "usTxAnnualReportStatus",
+      "usTxEarlyReleaseFromSupervision",
     ],
     currentEmployers: [
       {
@@ -417,6 +439,8 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     allEligibleOpportunities: [
       "usTxAnnualReportStatusV2",
       "usTxEarlyReleaseFromSupervisionV2",
+      "usTxAnnualReportStatus",
+      "usTxEarlyReleaseFromSupervision",
     ],
     currentEmployers: [
       {
@@ -446,7 +470,10 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     phoneNumber: "5545454545",
     supervisionStartDate: "2021-01-01",
     expirationDate: "2022-04-30",
-    allEligibleOpportunities: ["usTxEarlyReleaseFromSupervisionV2"],
+    allEligibleOpportunities: [
+      "usTxEarlyReleaseFromSupervisionV2",
+      "usTxEarlyReleaseFromSupervision",
+    ],
     currentEmployers: [
       {
         name: "American Airlines",
@@ -478,6 +505,8 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     allEligibleOpportunities: [
       "usTxAnnualReportStatusV2",
       "usTxEarlyReleaseFromSupervisionV2",
+      "usTxAnnualReportStatus",
+      "usTxEarlyReleaseFromSupervision",
     ],
     currentEmployers: [
       {
@@ -510,6 +539,8 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     allEligibleOpportunities: [
       "usTxAnnualReportStatusV2",
       "usTxEarlyReleaseFromSupervisionV2",
+      "usTxAnnualReportStatus",
+      "usTxEarlyReleaseFromSupervision",
     ],
     currentEmployers: [
       {
@@ -539,7 +570,10 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     phoneNumber: "5878787878",
     supervisionStartDate: "2021-04-01",
     expirationDate: "2022-08-31",
-    allEligibleOpportunities: [],
+    allEligibleOpportunities: [
+      "usTxAnnualReportStatus",
+      "usTxEarlyReleaseFromSupervision",
+    ],
     currentEmployers: [
       {
         name: "McDonald's",

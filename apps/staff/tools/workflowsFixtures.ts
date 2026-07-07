@@ -98,7 +98,9 @@ import { usTnCustodyLevelDowngradeFixture } from "./fixtures/usTnCustodyLevelDow
 import { usTnExpirationFixture } from "./fixtures/usTnExpirationReferrals";
 import { usTnInitialClassificationFixture } from "./fixtures/usTnInitialClassificationReferrals";
 import { usTnSuspensionOfDirectSupervisionFixture } from "./fixtures/UsTnSuspensionOfDirectSupervisionReferrals";
+import { usTxAnnualReportStatusReferralsFixture } from "./fixtures/UsTxAnnualReportStatusReferrals";
 import { usTxAnnualReportStatusV2ReferralsFixture } from "./fixtures/UsTxAnnualReportStatusV2Referrals";
+import { usTxEarlyReleaseFromSupervisionReferralsFixture } from "./fixtures/UsTxEarlyReleaseFromSupervisionReferrals";
 import { usTxEarlyReleaseFromSupervisionV2ReferralsFixture } from "./fixtures/UsTxEarlyReleaseFromSupervisionV2Referrals";
 import { usTxSupervisionTasksData } from "./fixtures/usTxSupervisionTasks";
 import { usUtEarlyTerminationReferrals } from "./fixtures/usUtEarlyTerminationReferrals";
@@ -235,6 +237,9 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
   usTxAnnualReportStatusV2Referrals: usTxAnnualReportStatusV2ReferralsFixture,
   usTxEarlyReleaseFromSupervisionV2Referrals:
     usTxEarlyReleaseFromSupervisionV2ReferralsFixture,
+  usTxAnnualReportStatusReferrals: usTxAnnualReportStatusReferralsFixture,
+  usTxEarlyReleaseFromSupervisionReferrals:
+    usTxEarlyReleaseFromSupervisionReferralsFixture,
 } as const;
 
 const FIXTURES_TO_LOAD = [

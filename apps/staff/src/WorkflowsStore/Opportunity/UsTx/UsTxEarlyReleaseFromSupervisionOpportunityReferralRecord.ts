@@ -50,6 +50,10 @@ export type UsTxEarlyReleaseFromSupervisionReferralRecord = z.infer<
   typeof usTxEarlyReleaseFromSupervisionSchema
 >;
 
+export type UsTxEarlyReleaseFromSupervisionReferralRecordRaw = z.input<
+  typeof usTxEarlyReleaseFromSupervisionSchema
+>;
+
 export type UsTxEarlyReleaseFromSupervisionDraftData =
   UsTxArsErsSharedDraftData & {
     atLeastHalfTimeCheck: boolean;

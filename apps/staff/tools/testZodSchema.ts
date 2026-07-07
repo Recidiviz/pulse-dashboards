@@ -86,7 +86,9 @@ import { usTnExpirationSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsT
 import { usTnInitialClassificationSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnInitialClassificationOpportunity/UsTnInitialClassificationReferralRecord";
 import { usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnSupervisionLevelDowngradeOpportunity/UsTnSupervisionLevelDowngradeReferralRecord";
 import { usTnSuspensionOfDirectSupervisionSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnSuspensionOfDirectSupervisionOpportunity/UsTnSuspensionOfDirectSupervisionReferralRecord";
+import { usTxAnnualReportStatusSchema } from "../src/WorkflowsStore/Opportunity/UsTx/UsTxAnnualReportStatusOpportunity/UsTxAnnualReportStatusOpportunityReferralRecord";
 import { usTxAnnualReportStatusV2Schema } from "../src/WorkflowsStore/Opportunity/UsTx/UsTxAnnualReportStatusV2Opportunity/UsTxAnnualReportStatusV2OpportunityReferralRecord";
+import { usTxEarlyReleaseFromSupervisionSchema } from "../src/WorkflowsStore/Opportunity/UsTx/UsTxEarlyReleaseFromSupervisionOpportunityReferralRecord";
 import { usTxEarlyReleaseFromSupervisionV2Schema } from "../src/WorkflowsStore/Opportunity/UsTx/UsTxEarlyReleaseFromSupervisionV2OpportunityReferralRecord";
 import { usUtEarlyTerminationSchema } from "../src/WorkflowsStore/Opportunity/UsUt/UsUtEarlyTerminationOpportunity/UsUtEarlyTerminationReferralRecord";
 
@@ -216,6 +218,8 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
   // US_TX
   usTxAnnualReportStatusV2: usTxAnnualReportStatusV2Schema,
   usTxEarlyReleaseFromSupervisionV2: usTxEarlyReleaseFromSupervisionV2Schema,
+  usTxAnnualReportStatus: usTxAnnualReportStatusSchema,
+  usTxEarlyReleaseFromSupervision: usTxEarlyReleaseFromSupervisionSchema,
 
   // US_UT
   usUtEarlyTermination: usUtEarlyTerminationSchema,
