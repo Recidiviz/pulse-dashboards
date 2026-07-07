@@ -215,6 +215,8 @@ export function buildSARStaffFilter(
  * staff member, respecting supervisor scoping (district or org-wide).
  * When staffPseudonymizedId is undefined (e.g. Recidiviz internal users), returns
  * an empty object so the query is unrestricted.
+ * Not used by `sar.router.ts`'s `getSARsByClient` — see that procedure's comment
+ * for why it intentionally skips PSI-officer scoping.
  */
 export async function sarAccessFilter(
   prisma: PrismaClient,

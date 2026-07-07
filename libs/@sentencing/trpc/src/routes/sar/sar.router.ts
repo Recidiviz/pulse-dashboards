@@ -204,40 +204,36 @@ export const sarRouter = router({
       },
     ),
 
-  // Returns the SARs for a given client that the caller is allowed to see.
-  // Authz mirrors `getSAR`/`getSARsForStaff`: regular users are scoped to SARs where
-  // `staff.pseudonymizedId` matches their JWT pseudonymizedId; Recidiviz internal users
-  // (no JWT pseudonymizedId) are unrestricted. State scoping is implicit --- the
-  // sentencing-client Cloud SQL databases are already state-segmented and `Client.externalId`
-  // is the table's primary key (globally unique), so the tRPC handler does not need to
-  // double-check `stateCode` in the where clause.
+  // Returns the SARs for a given client. This is called from a client's profile page
+  // in Tasks/Workflows, where the caller is the client's supervision officer, not
+  // necessarily the PSI officer assigned to their SAR (these are separate staff
+  // assignments, frequently different people). So this intentionally doesn't apply
+  // `sarAccessFilter`'s PSI-officer/district scoping: appearing in a Tasks caseload
+  // already means the caller supervises this client. State isolation is enforced
+  // upstream (the request's Prisma client is already scoped to one state's database
+  // via the JWT-checked `statecode` header in context.ts), so no additional scoping
+  // is needed here.
   getSARsByClient: baseProcedure
     .input(getSARsByClientInputSchema)
-    .query(
-      async ({
-        input: { clientExternalId },
-        ctx: { prisma, staffPseudonymizedId },
-      }) => {
-        return prisma.sentencingAssessmentReport.findMany({
-          where: {
-            clientId: clientExternalId,
-            ...(await sarAccessFilter(prisma, staffPseudonymizedId)),
-          },
-          select: {
-            id: true,
-            externalId: true,
-            status: true,
-            completionDate: true,
-            courtDate: true,
-            staff: {
-              select: {
-                pseudonymizedId: true,
-              },
+    .query(async ({ input: { clientExternalId }, ctx: { prisma } }) => {
+      return prisma.sentencingAssessmentReport.findMany({
+        where: {
+          clientId: clientExternalId,
+        },
+        select: {
+          id: true,
+          externalId: true,
+          status: true,
+          completionDate: true,
+          courtDate: true,
+          staff: {
+            select: {
+              pseudonymizedId: true,
             },
           },
-        });
-      },
-    ),
+        },
+      });
+    }),
 
   updateSAR: baseProcedure
     .input(updateSARSchema)

@@ -716,8 +716,11 @@ describe("SAR router", () => {
       expect(sars).toEqual([]);
     });
 
-    test("filters out SARs owned by a different staff member for the same client", async () => {
-      // Add a second SAR for the same client owned by fakeSARStaff.
+    test("includes SARs owned by a different staff member for the same client (Tasks-originated supervision officer)", async () => {
+      // Add a second SAR for the same client owned by fakeSARStaff. The caller isn't
+      // the PSI staff on this SAR, but getSARsByClient intentionally doesn't scope by
+      // PSI officer — this is what lets a supervision officer viewing a client's
+      // profile in Tasks see SARs owned by whichever PSI officer was assigned.
       await testPrismaClient.sentencingAssessmentReport.create({
         data: {
           externalId: "sar-ext-other-staff",
@@ -733,8 +736,10 @@ describe("SAR router", () => {
         clientExternalId: fakeSARClient.externalId,
       });
 
-      expect(sars).toHaveLength(1);
-      expect(sars[0].id).toBe(fakeSAR.id);
+      expect(sars).toHaveLength(2);
+      expect(sars.map((s) => s.id).sort()).toEqual(
+        [fakeSAR.id, "sar-other-staff"].sort(),
+      );
     });
 
     test("returns all SARs for the client when staffPseudonymizedId is undefined (internal user)", async () => {
