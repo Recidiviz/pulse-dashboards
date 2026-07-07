@@ -1270,4 +1270,309 @@ describe("meeting router", () => {
       ).toBe(true);
     });
   });
+
+  describe("createActionItem", () => {
+    test("Should throw NOT_FOUND when the meeting does not exist", async () => {
+      await expect(
+        testTRPCClient.v1.meeting.createActionItem.mutate({
+          meetingId: "non-existent-meeting-id",
+          task: "Follow up with client",
+          assignee: "Staff",
+        }),
+      ).rejects.toMatchObject({
+        message: "Meeting with that id was not found",
+        data: { code: "NOT_FOUND" },
+      });
+    });
+
+    test("Should throw FORBIDDEN when the caller does not own the meeting", async () => {
+      await expect(
+        testTRPCClient.v1.meeting.createActionItem.mutate({
+          meetingId: fakeMeetingStaff1.id,
+          task: "Follow up with client",
+          assignee: "Staff",
+        }),
+      ).rejects.toMatchObject({
+        data: { code: "FORBIDDEN" },
+      });
+
+      const items = await testPrismaClient.meetingActionItem.findMany({
+        where: { meetingId: fakeMeetingStaff1.id },
+      });
+      expect(items).toHaveLength(0);
+    });
+
+    test("Should create and return the action item", async () => {
+      const result = await testTRPCClient.v1.meeting.createActionItem.mutate({
+        meetingId: fakeActiveMeeting.id,
+        task: "Schedule follow-up appointment",
+        assignee: fakeStaff[0].email,
+      });
+
+      expect(result).toMatchObject({
+        assignee: fakeStaff[0].email,
+        completed: false,
+        deleted: false,
+        editedTask: null,
+        generatedTask: "Schedule follow-up appointment",
+        context: null,
+        evidenceQuotes: [],
+      });
+      expect(result.id).toBeDefined();
+    });
+
+    test("User-created items appear in getDetails even when a notetakingPipelineRunId is set", async () => {
+      await testPrismaClient.meeting.update({
+        where: { id: fakeActiveMeeting.id },
+        data: { notetakingPipelineRunId: "some-pipeline-run" },
+      });
+
+      await testTRPCClient.v1.meeting.createActionItem.mutate({
+        meetingId: fakeActiveMeeting.id,
+        task: "Schedule follow-up appointment",
+        assignee: fakeStaff[0].email,
+      });
+
+      const details = await testTRPCClient.v1.meeting.getDetails.query({
+        meetingId: fakeActiveMeeting.id,
+      });
+
+      expect(details.meetingActionItems).toHaveLength(1);
+      expect(details.meetingActionItems[0]).toMatchObject({
+        assignee: fakeStaff[0].email,
+        generatedTask: "Schedule follow-up appointment",
+        completed: false,
+        deleted: false,
+      });
+    });
+  });
+
+  describe("updateActionItem", () => {
+    test("Should throw NOT_FOUND when the action item does not exist", async () => {
+      await expect(
+        testTRPCClient.v1.meeting.updateActionItem.mutate({
+          actionItemId: "non-existent-id",
+          task: "Updated task text",
+        }),
+      ).rejects.toMatchObject({
+        message: "Action item with that id was not found",
+        data: { code: "NOT_FOUND" },
+      });
+    });
+
+    test("Should throw FORBIDDEN when the caller does not own the parent meeting", async () => {
+      const item = await testPrismaClient.meetingActionItem.create({
+        data: {
+          meetingId: fakeMeetingStaff1.id,
+          assignee: "Staff",
+          generatedTask: "Original task",
+          completed: false,
+          deleted: false,
+          pipelineRunId: null,
+        },
+      });
+
+      await expect(
+        testTRPCClient.v1.meeting.updateActionItem.mutate({
+          actionItemId: item.id,
+          task: "Attempted edit",
+        }),
+      ).rejects.toMatchObject({
+        data: { code: "FORBIDDEN" },
+      });
+
+      const unchanged = await testPrismaClient.meetingActionItem.findUnique({
+        where: { id: item.id },
+      });
+      expect(unchanged?.editedTask).toBeNull();
+    });
+
+    test("Should set editedTask on the action item", async () => {
+      const item = await testPrismaClient.meetingActionItem.create({
+        data: {
+          meetingId: fakeActiveMeeting.id,
+          assignee: "Staff",
+          generatedTask: "Original task",
+          completed: false,
+          deleted: false,
+          pipelineRunId: null,
+        },
+      });
+
+      const result = await testTRPCClient.v1.meeting.updateActionItem.mutate({
+        actionItemId: item.id,
+        task: "Edited task text",
+      });
+
+      expect(result).toMatchObject({
+        id: item.id,
+        editedTask: "Edited task text",
+        generatedTask: "Original task",
+      });
+    });
+  });
+
+  describe("completeActionItem", () => {
+    test("Should throw NOT_FOUND when the action item does not exist", async () => {
+      await expect(
+        testTRPCClient.v1.meeting.completeActionItem.mutate({
+          actionItemId: "non-existent-id",
+        }),
+      ).rejects.toMatchObject({
+        message: "Action item with that id was not found",
+        data: { code: "NOT_FOUND" },
+      });
+    });
+
+    test("Should throw FORBIDDEN when the caller does not own the parent meeting", async () => {
+      const item = await testPrismaClient.meetingActionItem.create({
+        data: {
+          meetingId: fakeMeetingStaff1.id,
+          assignee: "Staff",
+          generatedTask: "Some task",
+          completed: false,
+          deleted: false,
+          pipelineRunId: null,
+        },
+      });
+
+      await expect(
+        testTRPCClient.v1.meeting.completeActionItem.mutate({
+          actionItemId: item.id,
+        }),
+      ).rejects.toMatchObject({
+        data: { code: "FORBIDDEN" },
+      });
+
+      const unchanged = await testPrismaClient.meetingActionItem.findUnique({
+        where: { id: item.id },
+      });
+      expect(unchanged?.completed).toBe(false);
+    });
+
+    test("Should toggle completed from false to true", async () => {
+      const item = await testPrismaClient.meetingActionItem.create({
+        data: {
+          meetingId: fakeActiveMeeting.id,
+          assignee: "Staff",
+          generatedTask: "Some task",
+          completed: false,
+          deleted: false,
+          pipelineRunId: null,
+        },
+      });
+
+      const result = await testTRPCClient.v1.meeting.completeActionItem.mutate({
+        actionItemId: item.id,
+      });
+
+      expect(result.completed).toBe(true);
+    });
+
+    test("Should toggle completed from true back to false", async () => {
+      const item = await testPrismaClient.meetingActionItem.create({
+        data: {
+          meetingId: fakeActiveMeeting.id,
+          assignee: "Staff",
+          generatedTask: "Some task",
+          completed: true,
+          deleted: false,
+          pipelineRunId: null,
+        },
+      });
+
+      const result = await testTRPCClient.v1.meeting.completeActionItem.mutate({
+        actionItemId: item.id,
+      });
+
+      expect(result.completed).toBe(false);
+    });
+  });
+
+  describe("deleteActionItem", () => {
+    test("Should throw NOT_FOUND when the action item does not exist", async () => {
+      await expect(
+        testTRPCClient.v1.meeting.deleteActionItem.mutate({
+          actionItemId: "non-existent-id",
+        }),
+      ).rejects.toMatchObject({
+        message: "Action item with that id was not found",
+        data: { code: "NOT_FOUND" },
+      });
+    });
+
+    test("Should throw FORBIDDEN when the caller does not own the parent meeting", async () => {
+      const item = await testPrismaClient.meetingActionItem.create({
+        data: {
+          meetingId: fakeMeetingStaff1.id,
+          assignee: "Staff",
+          generatedTask: "Some task",
+          completed: false,
+          deleted: false,
+          pipelineRunId: null,
+        },
+      });
+
+      await expect(
+        testTRPCClient.v1.meeting.deleteActionItem.mutate({
+          actionItemId: item.id,
+        }),
+      ).rejects.toMatchObject({
+        data: { code: "FORBIDDEN" },
+      });
+
+      const unchanged = await testPrismaClient.meetingActionItem.findUnique({
+        where: { id: item.id },
+      });
+      expect(unchanged?.deleted).toBe(false);
+    });
+
+    test("Should soft-delete the item and set deletedAt", async () => {
+      const item = await testPrismaClient.meetingActionItem.create({
+        data: {
+          meetingId: fakeActiveMeeting.id,
+          assignee: "Staff",
+          generatedTask: "Some task",
+          completed: false,
+          deleted: false,
+          pipelineRunId: null,
+        },
+      });
+
+      await testTRPCClient.v1.meeting.deleteActionItem.mutate({
+        actionItemId: item.id,
+      });
+
+      const deleted = await testPrismaClient.meetingActionItem.findUnique({
+        where: { id: item.id },
+      });
+      expect(deleted?.deleted).toBe(true);
+      expect(deleted?.deletedAt).toBeInstanceOf(Date);
+    });
+
+    test("Deleted items are excluded from getDetails", async () => {
+      const item = await testPrismaClient.meetingActionItem.create({
+        data: {
+          meetingId: fakeActiveMeeting.id,
+          assignee: "Staff",
+          generatedTask: "Some task",
+          completed: false,
+          deleted: false,
+          pipelineRunId: null,
+        },
+      });
+
+      await testTRPCClient.v1.meeting.deleteActionItem.mutate({
+        actionItemId: item.id,
+      });
+
+      const details = await testTRPCClient.v1.meeting.getDetails.query({
+        meetingId: fakeActiveMeeting.id,
+      });
+
+      expect(details.meetingActionItems.some((i) => i.id === item.id)).toBe(
+        false,
+      );
+    });
+  });
 });

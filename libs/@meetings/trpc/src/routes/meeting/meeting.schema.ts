@@ -159,3 +159,22 @@ export const approveSectionInputSchema = z.object({
   section: z.nativeEnum(NoteSection),
   value: z.nativeEnum(ApprovalValue),
 });
+
+export const createActionItemInputSchema = z.object({
+  meetingId: z.string(),
+  task: z.string().max(100000),
+  assignee: z.string().max(1000),
+});
+
+export const updateActionItemInputSchema = z.object({
+  actionItemId: z.string(),
+  task: z.string().max(100000),
+});
+
+export const completeActionItemInputSchema = z.object({
+  actionItemId: z.string(),
+});
+
+export const deleteActionItemInputSchema = z.object({
+  actionItemId: z.string(),
+});

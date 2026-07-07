@@ -42,7 +42,10 @@ import { auth0Procedure, router } from "~@meetings/trpc/init";
 import { deriveValidationErrorType } from "~@meetings/trpc/routes/meeting.helpers";
 import {
   approveSectionInputSchema,
+  completeActionItemInputSchema,
+  createActionItemInputSchema,
   createSignedUrlForRecordingInputSchema,
+  deleteActionItemInputSchema,
   deleteRecordingsInputSchema,
   discardMeetingInputSchema,
   endMeetingInputSchema,
@@ -50,6 +53,7 @@ import {
   getDetailsOutputSchema,
   submitOutputVoteInputSchema,
   submitOutputVoteMessageInputSchema,
+  updateActionItemInputSchema,
   updateNotesInputSchema,
 } from "~@meetings/trpc/routes/meeting/meeting.schema";
 import { queueStitchingTask } from "~@meetings/trpc/routes/meeting/utils";
@@ -243,7 +247,9 @@ export const meetingRouter = router({
             latestApprovalBySection.get(section) === ApprovalValue.APPROVED;
 
           const currentActionItems = meeting.meetingActionItems.filter(
-            (item) => item.pipelineRunId === meeting.notetakingPipelineRunId,
+            (item) =>
+              item.pipelineRunId === meeting.notetakingPipelineRunId ||
+              item.pipelineRunId === null,
           );
 
           return {
@@ -647,6 +653,174 @@ export const meetingRouter = router({
             value,
             pipelineRunId: meeting.notetakingPipelineRunId,
           },
+        });
+      },
+    ),
+  createActionItem: auth0Procedure
+    .input(createActionItemInputSchema)
+    .mutation(
+      async ({
+        input: { meetingId, task, assignee },
+        ctx: { prisma, user, isSkipAuth },
+      }) => {
+        const meeting = await prisma.meeting.findUnique({
+          where: { id: meetingId },
+          select: { staffEmail: true },
+        });
+
+        if (!meeting) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Meeting with that id was not found",
+          });
+        }
+
+        if (!isSkipAuth && meeting.staffEmail !== user.email) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Only the meeting creator can modify action items",
+          });
+        }
+
+        return prisma.meetingActionItem.create({
+          data: {
+            meetingId,
+            assignee,
+            generatedTask: task,
+            editedTask: null,
+            completed: false,
+            deleted: false,
+            pipelineRunId: null,
+          },
+          select: {
+            id: true,
+            assignee: true,
+            completed: true,
+            editedTask: true,
+            generatedTask: true,
+            context: true,
+            evidenceQuotes: true,
+            deleted: true,
+          },
+        });
+      },
+    ),
+  updateActionItem: auth0Procedure
+    .input(updateActionItemInputSchema)
+    .mutation(
+      async ({
+        input: { actionItemId, task },
+        ctx: { prisma, user, isSkipAuth },
+      }) => {
+        const item = await prisma.meetingActionItem.findUnique({
+          where: { id: actionItemId },
+          select: { meeting: { select: { staffEmail: true } } },
+        });
+
+        if (!item) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Action item with that id was not found",
+          });
+        }
+
+        if (!isSkipAuth && item.meeting.staffEmail !== user.email) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Only the meeting creator can modify action items",
+          });
+        }
+
+        return prisma.meetingActionItem.update({
+          where: { id: actionItemId },
+          data: { editedTask: task },
+          select: {
+            id: true,
+            assignee: true,
+            completed: true,
+            editedTask: true,
+            generatedTask: true,
+            context: true,
+            evidenceQuotes: true,
+            deleted: true,
+          },
+        });
+      },
+    ),
+  completeActionItem: auth0Procedure
+    .input(completeActionItemInputSchema)
+    .mutation(
+      async ({
+        input: { actionItemId },
+        ctx: { prisma, user, isSkipAuth },
+      }) => {
+        const item = await prisma.meetingActionItem.findUnique({
+          where: { id: actionItemId },
+          select: {
+            completed: true,
+            meeting: { select: { staffEmail: true } },
+          },
+        });
+
+        if (!item) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Action item with that id was not found",
+          });
+        }
+
+        if (!isSkipAuth && item.meeting.staffEmail !== user.email) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Only the meeting creator can modify action items",
+          });
+        }
+
+        return prisma.meetingActionItem.update({
+          where: { id: actionItemId },
+          data: { completed: !item.completed },
+          select: {
+            id: true,
+            assignee: true,
+            completed: true,
+            editedTask: true,
+            generatedTask: true,
+            context: true,
+            evidenceQuotes: true,
+            deleted: true,
+          },
+        });
+      },
+    ),
+  deleteActionItem: auth0Procedure
+    .input(deleteActionItemInputSchema)
+    .mutation(
+      async ({
+        input: { actionItemId },
+        ctx: { prisma, user, isSkipAuth },
+      }) => {
+        const item = await prisma.meetingActionItem.findUnique({
+          where: { id: actionItemId },
+          select: { meeting: { select: { staffEmail: true } } },
+        });
+
+        if (!item) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Action item with that id was not found",
+          });
+        }
+
+        if (!isSkipAuth && item.meeting.staffEmail !== user.email) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Only the meeting creator can modify action items",
+          });
+        }
+
+        await prisma.meetingActionItem.update({
+          where: { id: actionItemId },
+          data: { deleted: true, deletedAt: new Date() },
         });
       },
     ),

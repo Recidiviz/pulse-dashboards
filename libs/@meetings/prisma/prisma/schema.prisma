@@ -248,7 +248,7 @@ model MeetingActionItem {
   evidenceQuotes String[]
   deleted        Boolean
   deletedAt      DateTime?
-  pipelineRunId  String
+  pipelineRunId  String?
 
   meeting Meeting @relation(fields: [meetingId], references: [id])
 }
