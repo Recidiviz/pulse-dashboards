@@ -22,7 +22,7 @@ import { makeAutoObservable } from "mobx";
 import {
   UsCoCreditType,
   UsCoEarnedCreditActivity,
-  UsCoResidentMetadata,
+  UsCoResidentJiiData,
   WorkflowsResidentRecord,
 } from "~datatypes";
 
@@ -51,7 +51,7 @@ const CREDIT_TYPE_ORDER: UsCoCreditType[] = [
  * by type.
  */
 function processMonthlyReports(
-  metadata: UsCoResidentMetadata,
+  metadata: UsCoResidentJiiData,
 ): UsCoMonthlyReports {
   const monthlyReports: UsCoMonthlyReports = {};
 
@@ -93,7 +93,7 @@ export class UsCoCreditReportPresenter {
 
   constructor(
     public readonly resident: WorkflowsResidentRecord,
-    metadata: UsCoResidentMetadata,
+    metadata: UsCoResidentJiiData,
   ) {
     this.monthlyReports = processMonthlyReports(metadata);
     makeAutoObservable(this, undefined, { autoBind: true });

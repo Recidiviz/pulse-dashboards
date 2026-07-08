@@ -34,24 +34,42 @@ export const usArCurrentSentencesSchema = z.object({
   initialTimeServedDays: z.number(),
 });
 
-export const usArResidentMetadataSchema = z.object({
+// Fields used by both JII and workflows.
+export const usArResidentCommonSchema = z.object({
   stateCode: z.literal("US_AR"),
-  cohortCode: nullishAsUndefined(z.string()),
-  currentCustodyClassification: z.string(),
-  currentGtEarningClass: z.string(),
-  currentLocation: z.string(),
-  currentSentences: z.array(usArCurrentSentencesSchema),
   eligibilityDate: nullishAsUndefined(dateStringSchema),
   eligibilityDateName: z.enum([
     "Parole Eligibility Date",
     "Transfer Eligibility Date",
     "Release Eligibility Date",
   ]),
-  gedCompletionDate: nullishAsUndefined(dateStringSchema),
-  lastUpdatedDate: dateStringSchema,
   maximumReleaseDate: nullishAsUndefined(dateStringSchema),
+});
+export type UsArResidentCommon = z.infer<typeof usArResidentCommonSchema>;
+export type RawUsArResidentCommon = z.input<typeof usArResidentCommonSchema>;
+
+// JII-only fields (extends common).
+// TODO(OBT-29535): remove this from the workflows schema and move to @jii/schemas
+export const usArResidentJiiDataSchema = usArResidentCommonSchema.extend({
+  cohortCode: nullishAsUndefined(z.string()),
+  lastUpdatedDate: dateStringSchema,
+});
+export type UsArResidentJiiData = z.output<typeof usArResidentJiiDataSchema>;
+export type RawUsArResidentJiiData = z.input<typeof usArResidentJiiDataSchema>;
+
+// Workflows metadata (extends JII, which extends common).
+// TODO(OBT-29535): remove JII-only fields from this schema and move to @jii/schemas
+export const usArResidentMetadataSchema = usArResidentJiiDataSchema.extend({
+  currentCustodyClassification: z.string(),
+  currentGtEarningClass: z.string(),
+  currentLocation: z.string(),
+  currentSentences: z.array(usArCurrentSentencesSchema),
+  gedCompletionDate: nullishAsUndefined(dateStringSchema),
   noIncarcerationSanctionsWithin6Months: z.boolean(),
   noIncarcerationSanctionsWithin12Months: z.boolean(),
   programAchievement: z.array(usArProgramAchievementSchema),
 });
 export type UsArResidentMetadata = z.output<typeof usArResidentMetadataSchema>;
+export type RawUsArResidentMetadata = z.input<
+  typeof usArResidentMetadataSchema
+>;

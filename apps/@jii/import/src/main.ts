@@ -18,14 +18,10 @@
 import { getImportHandler } from "./handler";
 
 async function importData() {
-  let stateCode = process.env["STATE_CODE"];
+  const stateCode = process.env["STATE_CODE"];
 
   if (!stateCode) {
     throw new Error("Missing state code environment variable");
-  }
-
-  if (stateCode === "US_IX") {
-    stateCode = "US_ID";
   }
 
   const files = process.env["FILES"]?.split(",");
@@ -36,3 +32,5 @@ async function importData() {
 }
 
 await importData();
+// ensure the script doesn't hang once all the work is done
+process.exit(0);

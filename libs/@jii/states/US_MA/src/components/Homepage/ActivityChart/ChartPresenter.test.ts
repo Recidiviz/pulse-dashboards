@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { residentsConfigByState } from "~@jii/configs";
-import { UsMaResidentMetadata, usMaResidents } from "~datatypes";
+import { UsMaResidentJiiData, usMaResidents } from "~datatypes";
 
 import { populateUsMaEGTMonthlyReport } from "../../../models/UsMaEGTMonthlyReport";
 import { ChartPresenter } from "./ChartPresenter";
@@ -26,7 +26,7 @@ const usMaEgtConfig = residentsConfigByState.US_MA.egt!;
 
 test("chart data", () => {
   const testReports = populateUsMaEGTMonthlyReport(
-    usMaResidents[0].metadata as UsMaResidentMetadata,
+    usMaResidents[0].metadata as UsMaResidentJiiData,
     usMaEgtConfig,
   );
   const presenter = new ChartPresenter(testReports);
@@ -100,7 +100,7 @@ test("chart data", () => {
 test("calculated axis ticks", () => {
   let presenter = new ChartPresenter(
     populateUsMaEGTMonthlyReport(
-      usMaResidents[0].metadata as UsMaResidentMetadata,
+      usMaResidents[0].metadata as UsMaResidentJiiData,
       usMaEgtConfig,
     ),
   );
@@ -110,7 +110,7 @@ test("calculated axis ticks", () => {
 
   presenter = new ChartPresenter(
     populateUsMaEGTMonthlyReport(
-      usMaResidents[2].metadata as UsMaResidentMetadata,
+      usMaResidents[2].metadata as UsMaResidentJiiData,
       usMaEgtConfig,
     ),
   );

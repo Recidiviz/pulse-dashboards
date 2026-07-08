@@ -37,15 +37,26 @@ export const usTnJiiCreditsSchema = z.object({
   creditsEarned: z.number().nullable(),
 });
 
-export const usTnResidentMetadataSchema = z.object({
+export const usTnResidentCommonSchema = z.object({
   stateCode: z.literal("US_TN"),
+});
+export type UsTnResidentCommon = z.infer<typeof usTnResidentCommonSchema>;
+export type RawUsTnResidentCommon = z.input<typeof usTnResidentCommonSchema>;
+
+// TODO(OBT-29535): remove this from the workflows schema and move to @jii/schemas
+export const usTnResidentJiiDataSchema = usTnResidentCommonSchema.extend({
   expirationDate: dateStringSchema.nullable(),
   expirationDateOriginal: dateStringSchema.nullable(),
-  latestClassificationDate: dateStringSchema.nullable().optional(),
   releaseEligibilityDate: dateStringSchema.nullable(),
   sentenceEffectiveDate: dateStringSchema.nullable(),
   creditActivity: z.array(usTnJiiCreditsSchema),
   fileUpdateDate: dateStringSchema,
+});
+export type UsTnResidentJiiData = z.infer<typeof usTnResidentJiiDataSchema>;
+export type RawUsTnResidentJiiData = z.input<typeof usTnResidentJiiDataSchema>;
+
+export const usTnResidentMetadataSchema = usTnResidentJiiDataSchema.extend({
+  latestClassificationDate: dateStringSchema.nullable().optional(),
 });
 
 export type UsTnResidentMetadata = z.output<typeof usTnResidentMetadataSchema>;

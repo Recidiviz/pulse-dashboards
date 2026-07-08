@@ -24,6 +24,7 @@ import {
   RawWorkflowsResidentRecord,
   workflowsResidentRecordSchema,
 } from "../workflowsResidentRecordSchema";
+import { usNcResidentMetadataFixtures } from "./metadata/fixtures";
 
 export const rawUsNcResidentCommon: Array<RawResidentCommon> = [
   {
@@ -63,10 +64,7 @@ export const rawUsNcResidents: Array<RawWorkflowsResidentRecord> = [
     facilityUnitId: null,
     unitId: null,
     admissionDate: relativeFixtureDate({ years: -1, days: -97 }),
-    metadata: {
-      stateCode: "US_NC",
-      rnaDueDate: relativeFixtureDate({ days: -3 }),
-    },
+    metadata: usNcResidentMetadataFixtures[0],
   },
   {
     ...rawUsNcResidentCommon[1],
@@ -78,10 +76,7 @@ export const rawUsNcResidents: Array<RawWorkflowsResidentRecord> = [
     facilityUnitId: null,
     unitId: null,
     admissionDate: relativeFixtureDate({ years: -2, months: -6 }),
-    metadata: {
-      stateCode: "US_NC",
-      rnaDueDate: relativeFixtureDate({ days: 22 }),
-    },
+    metadata: usNcResidentMetadataFixtures[1],
   },
 ];
 

@@ -32,9 +32,26 @@ export const usNeCreditActivitySchema = z.object({
   misconductReportNumber: z.string().nullable(),
 });
 
-export const usNeResidentMetadataSchema = z.object({
-  stateCode: z.literal("US_NE"),
+export const usNeCriticalDocumentSchema = z.object({
+  documentExpirationDate: dateStringSchema.nullable(),
+  documentIssueDate: dateStringSchema.nullable(),
+  documentStateCode: z.string().nullable(),
+  documentStatus: z.string().nullable(),
+  documentType: z.string().nullable(),
+});
 
+// Fields used by both JII and workflows.
+export const usNeResidentCommonSchema = z.object({
+  stateCode: z.literal("US_NE"),
+  creditActivity: z.array(usNeCreditActivitySchema),
+  goodTimeLostDaysRestorable: z.number().nullable(),
+});
+export type UsNeResidentCommon = z.infer<typeof usNeResidentCommonSchema>;
+export type RawUsNeResidentCommon = z.input<typeof usNeResidentCommonSchema>;
+
+// JII-only fields (extends common).
+// TODO(OBT-29535): remove this from the workflows schema and move to @jii/schemas
+export const usNeResidentJiiDataSchema = usNeResidentCommonSchema.extend({
   // Sentence dates & info
   sentenceStartDate: dateStringSchema.nullable(),
   mandatoryMinimumDate: dateStringSchema.nullable(),
@@ -65,12 +82,9 @@ export const usNeResidentMetadataSchema = z.object({
   // Good time fields
   goodTimeAllowedDays: z.number().nullable(),
   goodTimeBalanceDays: z.number().nullable().default(0),
-  goodTimeLostDaysRestorable: z.number().nullable(),
   goodTimeLostDaysNonRestorable: z.number().nullable(),
   goodTimeLastModifiedDate: dateStringSchema.nullable(),
   goodTimeLawNumber: z.string().nullable(),
-
-  creditActivity: z.array(usNeCreditActivitySchema),
 
   // Detainers and notifiers
   numHoldsAndDetainers: z.number(),
@@ -79,19 +93,15 @@ export const usNeResidentMetadataSchema = z.object({
   // LB 191 cumulative credits since sentence start
   lb191Credits: z.number().nullable().default(0),
 
-  criticalDocuments: z
-    .object({
-      documentExpirationDate: dateStringSchema.nullable(),
-      documentIssueDate: dateStringSchema.nullable(),
-      documentStateCode: z.string().nullable(),
-      documentStatus: z.string().nullable(),
-      documentType: z.string().nullable(),
-    })
-    .array(),
+  criticalDocuments: z.array(usNeCriticalDocumentSchema),
 });
+export type UsNeResidentJiiData = z.output<typeof usNeResidentJiiDataSchema>;
+export type RawUsNeResidentJiiData = z.input<typeof usNeResidentJiiDataSchema>;
 
-export type RawUsNeResidentMetadata = z.input<
-  typeof usNeResidentMetadataSchema
->;
-export type UsNeResidentMetadata = z.output<typeof usNeResidentMetadataSchema>;
+// there are no workflows-only fields in this schema, but to satisfy the naming convention
+// we just alias the shared schema
+export const usNeResidentMetadataSchema = usNeResidentJiiDataSchema;
+export type UsNeResidentMetadata = UsNeResidentJiiData;
+export type RawUsNeResidentMetadata = RawUsNeResidentJiiData;
+
 export type UsNeCreditActivity = z.output<typeof usNeCreditActivitySchema>;

@@ -24,8 +24,8 @@ import {
   WorkflowsResidentRecord,
   workflowsResidentRecordSchema,
 } from "../workflowsResidentRecordSchema";
-import { rawUsMaResidentMetadataFixtures } from "./metadata/fixtures";
-import { RawUsMaResidentMetadata } from "./metadata/schema";
+import { rawUsMaResidentJiiDataFixtures } from "./metadata/fixtures";
+import { RawUsMaResidentJiiData } from "./metadata/schema";
 
 export const rawUsMaResidentCommon: Array<RawResidentCommon> = [
   {
@@ -75,12 +75,12 @@ export const usMaResidentCommon = rawUsMaResidentCommon.map((r) =>
 );
 
 export const rawUsMaResidents: Array<
-  RawWorkflowsResidentRecord & { metadata: RawUsMaResidentMetadata }
+  RawWorkflowsResidentRecord & { metadata: RawUsMaResidentJiiData }
 > = rawUsMaResidentCommon.map((common, i) => ({
   ...common,
   stateCode: "US_MA",
   gender: "MALE",
-  metadata: rawUsMaResidentMetadataFixtures[i],
+  metadata: rawUsMaResidentJiiDataFixtures[i],
   recordId: `us_ma_${common.personExternalId}`,
   allEligibleOpportunities: [],
 }));

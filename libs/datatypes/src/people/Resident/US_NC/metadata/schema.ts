@@ -19,7 +19,16 @@ import { z } from "zod";
 
 import { dateStringSchema, nullishAsUndefined } from "../../../../utils/zod";
 
-export const usNcResidentMetadataSchema = z.object({
+export const usNcResidentCommonSchema = z.object({
   stateCode: z.literal("US_NC"),
   rnaDueDate: nullishAsUndefined(dateStringSchema),
 });
+export type RawUsNcResidentCommonData = z.input<
+  typeof usNcResidentCommonSchema
+>;
+
+// there are no Workflows-specific fields; schema is aliased to satisfy naming convention
+export const usNcResidentMetadataSchema = usNcResidentCommonSchema;
+export type RawUsNcResidentMetadata = z.input<
+  typeof usNcResidentMetadataSchema
+>;

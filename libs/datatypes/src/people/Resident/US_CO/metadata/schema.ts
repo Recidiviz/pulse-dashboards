@@ -35,7 +35,7 @@ export const usCoEarnedCreditActivitySchema = z.object({
   earnedTimeStatus: z.string().nullable(),
 });
 
-export const usCoResidentMetadataSchema = z.object({
+export const usCoResidentJiiDataSchema = z.object({
   stateCode: z.literal("US_CO"),
   incarcerationStartDate: dateStringSchema.nullable(),
   mrdTent: nullishAsUndefined(dateStringSchema),
@@ -52,10 +52,8 @@ export const usCoResidentMetadataSchema = z.object({
   ]),
 });
 
-export type RawUsCoResidentMetadata = z.input<
-  typeof usCoResidentMetadataSchema
->;
-export type UsCoResidentMetadata = z.output<typeof usCoResidentMetadataSchema>;
+export type RawUsCoResidentJiiData = z.input<typeof usCoResidentJiiDataSchema>;
+export type UsCoResidentJiiData = z.output<typeof usCoResidentJiiDataSchema>;
 export type UsCoEarnedCreditActivity = z.output<
   typeof usCoEarnedCreditActivitySchema
 >;

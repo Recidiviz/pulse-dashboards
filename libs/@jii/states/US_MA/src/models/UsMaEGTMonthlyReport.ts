@@ -24,7 +24,7 @@ import { UsMaTranslationsObject } from "~@jii/translation";
 import {
   UsMaCreditActivity,
   UsMaEarnedCreditType,
-  UsMaResidentMetadata,
+  UsMaResidentJiiData,
 } from "~datatypes";
 
 export type AchievementKey = Exclude<
@@ -89,7 +89,7 @@ export class UsMaEGTMonthlyReport {
   }
 }
 
-function getValidCreditActivity(metadata: UsMaResidentMetadata) {
+function getValidCreditActivity(metadata: UsMaResidentJiiData) {
   const { creditActivity, lastUpdatedDate } = metadata;
 
   // activity may be future-dated but it may also be a future-dated placeholder record,
@@ -104,7 +104,7 @@ function getValidCreditActivity(metadata: UsMaResidentMetadata) {
 }
 
 export function populateUsMaEGTMonthlyReport(
-  metadata: UsMaResidentMetadata,
+  metadata: UsMaResidentJiiData,
   config: EarnedGoodTimeConfig,
 ) {
   const creditActivity = getValidCreditActivity(metadata);

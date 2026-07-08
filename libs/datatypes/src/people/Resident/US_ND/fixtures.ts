@@ -24,6 +24,7 @@ import {
   RawWorkflowsResidentRecord,
   workflowsResidentRecordSchema,
 } from "../workflowsResidentRecordSchema";
+import { usNdResidentMetadataFixtures } from "./metadata/fixtures";
 
 export const rawUsNdResidentCommon: Array<RawResidentCommon> = [
   {
@@ -68,10 +69,7 @@ export const rawUsNdResidents: Array<RawWorkflowsResidentRecord> = [
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ years: -2, months: -6 }),
     releaseDate: relativeFixtureDate({ years: 1, months: 6 }),
-    metadata: {
-      stateCode: "US_ND",
-      lastUpdatedDate: relativeFixtureDate(),
-    },
+    metadata: usNdResidentMetadataFixtures[0],
   },
   {
     ...rawUsNdResidentCommon[1],
@@ -84,15 +82,7 @@ export const rawUsNdResidents: Array<RawWorkflowsResidentRecord> = [
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ years: -1, months: -8 }),
     releaseDate: relativeFixtureDate({ months: 10 }),
-    metadata: {
-      stateCode: "US_ND",
-      lastUpdatedDate: relativeFixtureDate(),
-      initialReviewDate: relativeFixtureDate({ months: 2 }),
-      paroleReviewDate: relativeFixtureDate({ months: 4 }),
-      eightyFivePercentDate: relativeFixtureDate({ months: 5, days: 14 }),
-      goodTimeDate: relativeFixtureDate({ months: 7 }),
-      finalSentExpDate: relativeFixtureDate({ months: 10 }),
-    },
+    metadata: usNdResidentMetadataFixtures[1],
   },
   {
     ...rawUsNdResidentCommon[2],
@@ -105,11 +95,7 @@ export const rawUsNdResidents: Array<RawWorkflowsResidentRecord> = [
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ years: -3, months: -2 }),
     releaseDate: relativeFixtureDate({ years: 2, months: 4 }),
-    metadata: {
-      stateCode: "US_ND",
-      lastUpdatedDate: relativeFixtureDate(),
-      paroleReviewDate: relativeFixtureDate({ months: 10 }),
-    },
+    metadata: usNdResidentMetadataFixtures[2],
   },
 ];
 

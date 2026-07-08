@@ -78,7 +78,7 @@ export const creditActivitySchema = z.object({
   [usMaEarnedCreditTypes.enum.COMPLETION]: nullZeroFloatSchema,
 });
 
-export const usMaResidentMetadataSchema = z.object({
+export const usMaResidentJiiDataSchema = z.object({
   stateCode: z.literal("US_MA"),
   isEgtDisabled: z.boolean().nullish(),
   rtsDate: dateStringSchema.nullable(),
@@ -95,13 +95,11 @@ export const usMaResidentMetadataSchema = z.object({
 /**
  * US_MA-specific data from the Recidiviz data platform about an incarcerated person
  */
-export type UsMaResidentMetadata = z.output<typeof usMaResidentMetadataSchema>;
+export type UsMaResidentJiiData = z.output<typeof usMaResidentJiiDataSchema>;
 
 export type UsMaCreditActivity = z.infer<typeof creditActivitySchema>;
 
 /**
  * US_MA-specific data in its raw form, as stored in Firestore
  */
-export type RawUsMaResidentMetadata = z.input<
-  typeof usMaResidentMetadataSchema
->;
+export type RawUsMaResidentJiiData = z.input<typeof usMaResidentJiiDataSchema>;

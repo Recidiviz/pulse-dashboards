@@ -52,6 +52,7 @@
       "~@jii/paths": ["libs/@jii/paths/src/index.ts"],
       "~@jii/prisma": ["libs/@jii/prisma/src/index.ts"],
       "~@jii/program-catalog": ["libs/@jii/program-catalog/src/index.ts"],
+      "~@jii/schemas": ["libs/@jii/schemas/src/index.ts"],
       "~@jii/sentence-dates": ["libs/@jii/sentence-dates/src/index.ts"],
       "~@jii/translation": ["libs/@jii/translation/src/index.ts"],
       "~@jii/trpc": ["libs/@jii/trpc/src/index.ts"],

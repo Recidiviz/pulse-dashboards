@@ -23,6 +23,9 @@ import { getDevDatabaseUrl } from "./utils";
 const prismaClients: Record<string, PrismaClient> = {};
 
 export function getPrismaClientForStateCode(stateCode: string) {
+  if (stateCode === "US_IX") {
+    stateCode = "US_ID";
+  }
   const NODE_ENV = process.env["NODE_ENV"] ?? "";
   let dbUrl: string | undefined;
 

@@ -73,8 +73,6 @@ export const residentHandler: LoaderFn<
   for await (const d of data) {
     const {
       personName,
-      // we don't actually have to include state code in the import,
-      // data has already been segmented by state
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       stateCode,
       ...passthroughFields
@@ -89,6 +87,8 @@ export const residentHandler: LoaderFn<
       ...passthroughFields,
       ...personNameData,
       importedAt: importTimestamp,
+      // we don't actually have to include state code in the import,
+      // data has already been segmented by state
     } satisfies ResidentCreateInput & BulkUpdateEntry;
 
     if (existingResidentIds.has(d.pseudonymizedId)) {
@@ -96,7 +96,6 @@ export const residentHandler: LoaderFn<
     } else {
       createBatch.push(newResidentData);
     }
-
     if (createBatch.length >= BATCH_SIZE) {
       await flushCreateBatch();
     }

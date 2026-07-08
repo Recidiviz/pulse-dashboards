@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsCoResidentMetadata, WorkflowsResidentRecord } from "~datatypes";
+import { UsCoResidentJiiData, WorkflowsResidentRecord } from "~datatypes";
 
 import { UsCoCreditReportPresenter } from "./UsCoCreditReportPresenter";
 
@@ -27,11 +27,11 @@ const buildMetadata = (
     creditType: string | null;
     creditsEarned: number | null;
   }[],
-): UsCoResidentMetadata =>
-  ({ stateCode: "US_CO", creditActivity }) as never as UsCoResidentMetadata;
+): UsCoResidentJiiData =>
+  ({ stateCode: "US_CO", creditActivity }) as never as UsCoResidentJiiData;
 
 // one EARNED_TIME credit per month for the given month-start dates
-const metadataForMonths = (dates: Date[]): UsCoResidentMetadata =>
+const metadataForMonths = (dates: Date[]): UsCoResidentJiiData =>
   buildMetadata(
     dates.map((creditDate) => ({
       creditDate,

@@ -21,9 +21,9 @@ import {
   relativeFixtureMonth,
 } from "../../../../utils/zod";
 import {
-  RawUsMaResidentMetadata,
-  UsMaResidentMetadata,
-  usMaResidentMetadataSchema,
+  RawUsMaResidentJiiData,
+  UsMaResidentJiiData,
+  usMaResidentJiiDataSchema,
 } from "./schema";
 
 export const creditActivityFixture = [
@@ -117,7 +117,7 @@ export const creditActivityFixture = [
   },
 ];
 
-export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
+export const rawUsMaResidentJiiDataFixtures: Array<RawUsMaResidentJiiData> = [
   {
     // normal case: adjustment equals credits
     stateCode: "US_MA",
@@ -364,7 +364,5 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
   },
 ];
 
-export const usMaResidentMetadataFixtures: Array<UsMaResidentMetadata> =
-  rawUsMaResidentMetadataFixtures.map((f) =>
-    usMaResidentMetadataSchema.parse(f),
-  );
+export const usMaResidentJiiDataFixtures: Array<UsMaResidentJiiData> =
+  rawUsMaResidentJiiDataFixtures.map((f) => usMaResidentJiiDataSchema.parse(f));

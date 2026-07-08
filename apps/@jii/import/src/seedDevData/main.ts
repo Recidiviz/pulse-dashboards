@@ -27,10 +27,15 @@ async function* toAsyncGenerator<T>(items: T[]) {
 }
 
 await Promise.all(
-  Object.entries(residentFixtures).map(([stateCode, fixtures]) => {
+  Object.entries(residentFixtures).map(async ([stateCode, fixtures]) => {
     const prismaClient = getPrismaClientForStateCode(stateCode);
     console.log(`Seeding fixtures for ${stateCode}`);
-    return residentHandler(prismaClient, toAsyncGenerator(fixtures));
+    try {
+      return await residentHandler(prismaClient, toAsyncGenerator(fixtures));
+    } catch (e) {
+      console.error(`Seeding failed for ${stateCode}`);
+      throw e;
+    }
   }),
 );
 

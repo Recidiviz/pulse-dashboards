@@ -49,7 +49,9 @@ const personData = {
   facility_id: "FAC1",
   unit_id: "UN1",
   person_id: "1",
-  state_specific_data: JSON.stringify({ some_key: "some_value" }),
+  state_specific_data: JSON.stringify({
+    state_code: "US_NC",
+  }),
 };
 
 describe("residentHandler", () => {
@@ -82,7 +84,7 @@ describe("residentHandler", () => {
           "personExternalId": "EXT001",
           "pseudonymizedId": "test_pseudo_id",
           "stateSpecificData": {
-            "someKey": "some_value",
+            "stateCode": "US_NC",
           },
           "surname": "Doe",
           "unitId": "UN1",
@@ -163,7 +165,7 @@ describe("residentHandler", () => {
     display_id: "D_MIN",
     state_code: "US_NC",
     person_name: JSON.stringify({}),
-    state_specific_data: JSON.stringify({}),
+    state_specific_data: JSON.stringify({ state_code: "US_NC" }),
     // facility_id, unit_id omitted — nullish in schema
     // given_names, middle_names, surname omitted — nullish in fullNameSchema
   };
@@ -198,6 +200,49 @@ describe("residentHandler", () => {
     expect(result.surname).toBeNull();
     expect(result.facilityId).toBeNull();
     expect(result.unitId).toBeNull();
+  });
+
+  it("fails when state_specific_data is missing for a state with a schema", async () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { state_specific_data, ...recordWithoutSSD } = personData;
+    dataProviderSingleton.setData(DATA_PROVIDER_FILE_NAME, [recordWithoutSSD]);
+
+    await expect(
+      importHandler.import(STATE_CODE, [RESIDENTS_FILE_NAME]),
+    ).rejects.toThrow();
+
+    expect(await prismaClient.resident.findMany()).toHaveLength(0);
+  });
+
+  it("succeeds when state_specific_data is missing for a state with no schema", async () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { state_specific_data, ...recordWithoutSSD } = personData;
+    // ID has no SSD schema as of this writing. if that changes this test should fail
+    dataProviderSingleton.setData(DATA_PROVIDER_FILE_NAME, [
+      { ...recordWithoutSSD, state_code: "US_ID" },
+    ]);
+    await importHandler.import(STATE_CODE, [RESIDENTS_FILE_NAME]);
+
+    const result = await prismaClient.resident.findFirstOrThrow();
+    expect(result.stateSpecificData).toEqual({});
+  });
+
+  it("fails when state_specific_data does not conform to the schema", async () => {
+    dataProviderSingleton.setData(DATA_PROVIDER_FILE_NAME, [
+      {
+        ...personData,
+        state_specific_data: JSON.stringify({
+          state_code: "US_NC",
+          rna_due_date: "not-a-date",
+        }),
+      },
+    ]);
+
+    await expect(
+      importHandler.import(STATE_CODE, [RESIDENTS_FILE_NAME]),
+    ).rejects.toThrow();
+
+    expect(await prismaClient.resident.findMany()).toHaveLength(0);
   });
 
   it("correctly imports more than BATCH_SIZE residents", async () => {

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { relativeFixtureDate, relativeFixtureMonth } from "../../../utils/zod";
+import { relativeFixtureDate } from "../../../utils/zod";
 import {
   RawResidentCommon,
   residentCommonSchema,
@@ -24,211 +24,7 @@ import {
   RawWorkflowsResidentRecord,
   workflowsResidentRecordSchema,
 } from "../workflowsResidentRecordSchema";
-import { RawUsNeResidentMetadata } from "./metadata/schema";
-
-const baseMetadata: RawUsNeResidentMetadata = {
-  goodTimeLawNumber: "191",
-  stateCode: "US_NE",
-  sentenceInfoIsCurrent: true,
-  lb191Credits: 18,
-  maximumSentenceYears: 16,
-  paroleEligibilityDate: relativeFixtureDate({ years: 2 }),
-  jailTimeDays: 174,
-  mandatoryMinimumSentenceYears: 0,
-  goodTimeLostDaysNonRestorable: 0,
-  maximumSentenceDays: 0,
-  maximumSentenceMonths: 0,
-  numNotifiers: 0,
-  goodTimeLostDaysRestorable: 45,
-  deadTimeDays: 0,
-  mandatoryMinimumSentenceMonths: 0,
-  sentenceLastModifiedDate: relativeFixtureMonth({}, "start"),
-  minimumSentenceYears: 8,
-  mandatoryMinimumDate: null,
-  minimumSentenceMonths: 0,
-  sentenceStartDate: relativeFixtureDate({ years: -2, months: -3 }),
-  minimumSentenceDays: 0,
-  goodTimeBalanceDays: 2922,
-  goodTimeAllowedDays: 2922,
-  mandatoryMinimumSentenceDays: 0,
-  goodTimeLastModifiedDate: relativeFixtureMonth({}, "start"),
-  numHoldsAndDetainers: 0,
-  criticalDocuments: [],
-  creditActivity: [
-    {
-      creditsEarned: 3,
-      isRestorable: null,
-      violationDescription: null,
-      violationCount: null,
-      actionDate: relativeFixtureMonth({ months: -5 }, "start"),
-      violationCode: null,
-      creditType: "BEHAVIOR",
-      lastModifiedDate: relativeFixtureMonth({ months: -5 }, "start"),
-      misconductReportNumber: null,
-      creditDate: relativeFixtureMonth({ months: -5 }, "start"),
-    },
-    {
-      actionDate: relativeFixtureMonth({ months: -4 }, "start"),
-      creditDate: relativeFixtureMonth({ months: -4 }, "start"),
-      isRestorable: null,
-      lastModifiedDate: relativeFixtureMonth({ months: -4 }, "start"),
-      creditsEarned: 3,
-      misconductReportNumber: null,
-      violationCount: null,
-      creditType: "BEHAVIOR",
-      violationDescription: null,
-      violationCode: null,
-    },
-    {
-      actionDate: relativeFixtureMonth({ months: -3 }, "start"),
-      lastModifiedDate: relativeFixtureMonth({ months: -3 }, "start"),
-      violationCount: null,
-      creditType: "BEHAVIOR",
-      violationCode: null,
-      misconductReportNumber: null,
-      creditDate: relativeFixtureMonth({ months: -3 }, "start"),
-      isRestorable: null,
-      violationDescription: null,
-      creditsEarned: 3,
-    },
-    {
-      violationCode: null,
-      violationCount: null,
-      lastModifiedDate: relativeFixtureMonth({ months: -2 }, "start"),
-      violationDescription: null,
-      isRestorable: null,
-      actionDate: relativeFixtureMonth({ months: -2 }, "start"),
-      misconductReportNumber: null,
-      creditDate: relativeFixtureMonth({ months: -2 }, "start"),
-      creditType: "BEHAVIOR",
-      creditsEarned: 3,
-    },
-    {
-      misconductReportNumber: null,
-      isRestorable: null,
-      creditType: "BEHAVIOR",
-      violationCount: null,
-      violationCode: null,
-      creditDate: relativeFixtureMonth({ months: -1 }, "start"),
-      actionDate: relativeFixtureMonth({ months: -1 }, "start"),
-      lastModifiedDate: relativeFixtureMonth({ months: -1 }, "start"),
-      violationDescription: null,
-      creditsEarned: 3,
-    },
-    {
-      violationCount: null,
-      creditDate: relativeFixtureMonth({}, "start"),
-      lastModifiedDate: relativeFixtureMonth({}, "start"),
-      misconductReportNumber: null,
-      actionDate: relativeFixtureMonth({}, "start"),
-      creditType: "BEHAVIOR",
-      violationDescription: null,
-      isRestorable: null,
-      creditsEarned: 3,
-      violationCode: null,
-    },
-  ],
-  tentativeReleaseDate: relativeFixtureDate({ years: 2, months: 3 }),
-};
-
-const res002Metadata: RawUsNeResidentMetadata = {
-  ...baseMetadata,
-  goodTimeLostDaysRestorable: 25,
-  maximumSentenceYears: 10,
-  minimumSentenceYears: 5,
-  sentenceStartDate: relativeFixtureDate({ years: -1, months: -8 }),
-  tentativeReleaseDate: relativeFixtureDate({ years: 1, months: 6 }),
-  lb191Credits: 12,
-};
-
-const res003Metadata: RawUsNeResidentMetadata = {
-  ...baseMetadata,
-  goodTimeLostDaysRestorable: 245,
-  maximumSentenceYears: 25,
-  minimumSentenceYears: 15,
-  sentenceStartDate: relativeFixtureDate({ years: -3, months: -4 }),
-  tentativeReleaseDate: relativeFixtureDate({ years: 3, months: 8 }),
-  lb191Credits: 32,
-  jailTimeDays: 220,
-};
-
-const res004Metadata: RawUsNeResidentMetadata = {
-  ...baseMetadata,
-  goodTimeLostDaysRestorable: 120,
-  maximumSentenceYears: 18,
-  minimumSentenceYears: 10,
-  sentenceStartDate: relativeFixtureDate({ years: -2, months: -7 }),
-  tentativeReleaseDate: relativeFixtureDate({ years: 2, months: 9 }),
-  lb191Credits: 24,
-  jailTimeDays: 189,
-};
-
-const res005Metadata: RawUsNeResidentMetadata = {
-  ...baseMetadata,
-  goodTimeLostDaysRestorable: 85,
-  maximumSentenceYears: 14,
-  minimumSentenceYears: 8,
-  sentenceStartDate: relativeFixtureDate({ years: -2, months: -2 }),
-  tentativeReleaseDate: relativeFixtureDate({ years: 1, months: 11 }),
-  lb191Credits: 20,
-  creditActivity: [
-    ...baseMetadata.creditActivity,
-    {
-      creditsEarned: -15,
-      isRestorable: "Y",
-      violationDescription: "DISOBEYING A DIRECT ORDER",
-      violationCount: "1",
-      actionDate: relativeFixtureMonth({ months: -4, days: -15 }, "start"),
-      violationCode: "IDC-301",
-      creditType: "VIOLATION",
-      lastModifiedDate: relativeFixtureMonth(
-        { months: -4, days: -15 },
-        "start",
-      ),
-      misconductReportNumber: "MR-2024-105",
-      creditDate: relativeFixtureMonth({ months: -4, days: -15 }, "start"),
-    },
-  ],
-};
-
-const res006Metadata: RawUsNeResidentMetadata = {
-  ...baseMetadata,
-  goodTimeLostDaysRestorable: 160,
-  maximumSentenceYears: 20,
-  minimumSentenceYears: 12,
-  sentenceStartDate: relativeFixtureDate({ years: -2, months: -5 }),
-  tentativeReleaseDate: relativeFixtureDate({ years: 2, months: 7 }),
-  lb191Credits: 26,
-  creditActivity: [
-    ...baseMetadata.creditActivity,
-    {
-      creditsEarned: -90,
-      isRestorable: "Y",
-      violationDescription: "AGGREV ASSULT/ASSULT/FIGHTING",
-      violationCount: "1",
-      actionDate: relativeFixtureMonth({ months: -10, days: -10 }, "start"),
-      violationCode: "CLASS1-201",
-      creditType: "VIOLATION",
-      lastModifiedDate: relativeFixtureMonth(
-        { months: -10, days: -10 },
-        "start",
-      ),
-      misconductReportNumber: "MR-2024-078",
-      creditDate: relativeFixtureMonth({ months: -10, days: -10 }, "start"),
-    },
-  ],
-};
-
-const res007Metadata: RawUsNeResidentMetadata = {
-  ...baseMetadata,
-  goodTimeLostDaysRestorable: 65,
-  maximumSentenceYears: 12,
-  minimumSentenceYears: 7,
-  sentenceStartDate: relativeFixtureDate({ years: -2, months: -1 }),
-  tentativeReleaseDate: relativeFixtureDate({ years: 1, months: 8 }),
-  lb191Credits: 16,
-  jailTimeDays: 145,
-};
+import { usNeResidentMetadataFixtures } from "./metadata/fixtures";
 
 export const rawUsNeResidentCommon: Array<RawResidentCommon> = [
   {
@@ -308,7 +104,7 @@ export const rawUsNeResidents: Array<RawWorkflowsResidentRecord> = [
     stateCode: "US_NE",
     gender: "MALE",
     admissionDate: relativeFixtureDate({ years: -2, months: -3 }),
-    metadata: baseMetadata,
+    metadata: usNeResidentMetadataFixtures[0],
   },
   {
     ...rawUsNeResidentCommon[1],
@@ -320,7 +116,7 @@ export const rawUsNeResidents: Array<RawWorkflowsResidentRecord> = [
     stateCode: "US_NE",
     gender: "MALE",
     admissionDate: relativeFixtureDate({ years: -1, months: -8 }),
-    metadata: res002Metadata,
+    metadata: usNeResidentMetadataFixtures[1],
   },
   {
     ...rawUsNeResidentCommon[2],
@@ -332,7 +128,7 @@ export const rawUsNeResidents: Array<RawWorkflowsResidentRecord> = [
     stateCode: "US_NE",
     gender: "MALE",
     admissionDate: relativeFixtureDate({ years: -3, months: -4 }),
-    metadata: res003Metadata,
+    metadata: usNeResidentMetadataFixtures[2],
   },
   {
     ...rawUsNeResidentCommon[3],
@@ -344,7 +140,7 @@ export const rawUsNeResidents: Array<RawWorkflowsResidentRecord> = [
     stateCode: "US_NE",
     gender: "MALE",
     admissionDate: relativeFixtureDate({ years: -2, months: -7 }),
-    metadata: res004Metadata,
+    metadata: usNeResidentMetadataFixtures[3],
   },
   {
     ...rawUsNeResidentCommon[4],
@@ -356,7 +152,7 @@ export const rawUsNeResidents: Array<RawWorkflowsResidentRecord> = [
     stateCode: "US_NE",
     gender: "MALE",
     admissionDate: relativeFixtureDate({ years: -2, months: -2 }),
-    metadata: res005Metadata,
+    metadata: usNeResidentMetadataFixtures[4],
   },
   {
     ...rawUsNeResidentCommon[5],
@@ -368,7 +164,7 @@ export const rawUsNeResidents: Array<RawWorkflowsResidentRecord> = [
     stateCode: "US_NE",
     gender: "MALE",
     admissionDate: relativeFixtureDate({ years: -2, months: -5 }),
-    metadata: res006Metadata,
+    metadata: usNeResidentMetadataFixtures[5],
   },
   {
     ...rawUsNeResidentCommon[6],
@@ -380,7 +176,7 @@ export const rawUsNeResidents: Array<RawWorkflowsResidentRecord> = [
     stateCode: "US_NE",
     gender: "MALE",
     admissionDate: relativeFixtureDate({ years: -2, months: -1 }),
-    metadata: res007Metadata,
+    metadata: usNeResidentMetadataFixtures[6],
   },
 ];
 

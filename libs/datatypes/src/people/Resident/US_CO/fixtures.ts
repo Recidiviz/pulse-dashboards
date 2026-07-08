@@ -24,6 +24,7 @@ import {
   RawWorkflowsResidentRecord,
   workflowsResidentRecordSchema,
 } from "../workflowsResidentRecordSchema";
+import { rawUsCoResidentJiiDataFixtures } from "./metadata/fixtures";
 
 export const rawUsCoResidentCommon: Array<RawResidentCommon> = [
   {
@@ -67,66 +68,7 @@ export const rawUsCoResidents: Array<RawWorkflowsResidentRecord> = [
     facilityUnitId: null,
     unitId: null,
     admissionDate: relativeFixtureDate({ years: -1, days: -97 }),
-    metadata: {
-      stateCode: "US_CO",
-      incarcerationStartDate: relativeFixtureDate({ years: -1, days: -97 }),
-      pedTent: relativeFixtureDate({ years: 1, months: 3 }),
-      mrdTent: relativeFixtureDate({ years: 2 }),
-      sddTent: null,
-      cohortLabel: "STANDARD",
-      creditActivity: [
-        {
-          creditDate: relativeFixtureDate({ months: -1 }),
-          creditType: "EARNED_TIME",
-          creditsEarned: 10,
-          goodTimeChangeReason: null,
-          earnedTimeStatus: "ELIGIBLE",
-        },
-        {
-          creditDate: relativeFixtureDate({ months: -1 }),
-          creditType: "ACHIEVEMENT",
-          creditsEarned: 15,
-          goodTimeChangeReason: "Completed GED program",
-          earnedTimeStatus: null,
-        },
-        {
-          creditDate: relativeFixtureDate({ months: -2 }),
-          creditType: "EARNED_TIME",
-          creditsEarned: 10,
-          goodTimeChangeReason: null,
-          earnedTimeStatus: "ELIGIBLE",
-        },
-        {
-          creditDate: relativeFixtureDate({ months: -2 }),
-          creditType: "GOOD_TIME",
-          creditsEarned: 5,
-          goodTimeChangeReason: null,
-          earnedTimeStatus: null,
-        },
-        {
-          creditDate: relativeFixtureDate({ months: -3 }),
-          creditType: "EARNED_TIME",
-          creditsEarned: 8,
-          goodTimeChangeReason: null,
-          earnedTimeStatus: "ELIGIBLE",
-        },
-        {
-          creditDate: relativeFixtureDate({ months: -3 }),
-          creditType: "OTHER",
-          creditsEarned: 2,
-          goodTimeChangeReason: "Adjustment",
-          earnedTimeStatus: null,
-        },
-        {
-          creditDate: relativeFixtureDate({ months: -4 }),
-          creditType: "EARNED_TIME",
-          creditsEarned: 10,
-          goodTimeChangeReason: null,
-          earnedTimeStatus: "ELIGIBLE",
-        },
-      ],
-      lastUpdatedDate: relativeFixtureDate({ days: -7 }),
-    },
+    metadata: rawUsCoResidentJiiDataFixtures[0],
   },
   {
     ...rawUsCoResidentCommon[1],
@@ -138,16 +80,7 @@ export const rawUsCoResidents: Array<RawWorkflowsResidentRecord> = [
     facilityUnitId: null,
     unitId: null,
     admissionDate: relativeFixtureDate({ years: -2, months: -6 }),
-    metadata: {
-      stateCode: "US_CO",
-      incarcerationStartDate: relativeFixtureDate({ years: -2, months: -6 }),
-      pedTent: relativeFixtureDate({ months: 8 }),
-      mrdTent: relativeFixtureDate({ years: 1, months: 6 }),
-      sddTent: relativeFixtureDate({ years: 3 }),
-      cohortLabel: "LIFE_WITHOUT_PAROLE",
-      creditActivity: [],
-      lastUpdatedDate: relativeFixtureDate({ days: -3 }),
-    },
+    metadata: rawUsCoResidentJiiDataFixtures[1],
   },
 ];
 

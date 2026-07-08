@@ -24,108 +24,7 @@ import {
   RawWorkflowsResidentRecord,
   workflowsResidentRecordSchema,
 } from "../workflowsResidentRecordSchema";
-
-const metadata = {
-  stateCode: "US_TN" as const,
-  expirationDate: relativeFixtureDate({ years: 1, days: 249 }),
-  expirationDateOriginal: relativeFixtureDate({ years: 3, days: 300 }),
-  fileUpdateDate: relativeFixtureDate({ days: -1 }),
-  latestClassificationDate: relativeFixtureDate({ days: -172 }),
-  releaseEligibilityDate: relativeFixtureDate({ days: 222 }),
-  sentenceEffectiveDate: relativeFixtureDate({ years: -2, days: -222 }),
-  creditActivity: [
-    {
-      creditDate: relativeFixtureDate({ months: -11 }),
-      creditType: "PROGRAM" as const,
-      creditsEarned: 6,
-    },
-    {
-      creditDate: relativeFixtureDate({ months: -11 }),
-      creditType: "BEHAVIOR" as const,
-      creditsEarned: 6,
-    },
-    {
-      creditDate: relativeFixtureDate({ months: -10 }),
-      creditType: "PROGRAM" as const,
-      creditsEarned: 6,
-    },
-    {
-      creditDate: relativeFixtureDate({ months: -10 }),
-      creditType: "BEHAVIOR" as const,
-      creditsEarned: 6,
-    },
-    {
-      creditDate: relativeFixtureDate({ months: -9 }),
-      creditType: "PROGRAM" as const,
-      creditsEarned: 6,
-    },
-    {
-      creditDate: relativeFixtureDate({ months: -9 }),
-      creditType: "BEHAVIOR" as const,
-      creditsEarned: 6,
-    },
-    {
-      creditDate: relativeFixtureDate({ months: -8 }),
-      creditType: "PROGRAM" as const,
-      creditsEarned: 6,
-    },
-    {
-      creditDate: relativeFixtureDate({ months: -8 }),
-      creditType: "BEHAVIOR" as const,
-      creditsEarned: 6,
-    },
-    {
-      creditDate: relativeFixtureDate({ months: -7 }),
-      creditType: "PROGRAM" as const,
-      creditsEarned: 6,
-    },
-    {
-      creditDate: relativeFixtureDate({ months: -7 }),
-      creditType: "BEHAVIOR" as const,
-      creditsEarned: 6,
-    },
-    {
-      creditDate: relativeFixtureDate({ months: -6 }),
-      creditType: "PROGRAM" as const,
-      creditsEarned: 6,
-    },
-    {
-      creditDate: relativeFixtureDate({ months: -6 }),
-      creditType: "BEHAVIOR" as const,
-      creditsEarned: 6,
-    },
-    {
-      creditDate: relativeFixtureDate({ months: -5 }),
-      creditType: "BEHAVIOR" as const,
-      creditsEarned: 6,
-    },
-    {
-      creditDate: relativeFixtureDate({ months: -4 }),
-      creditType: "BEHAVIOR" as const,
-      creditsEarned: 6,
-    },
-    {
-      creditDate: relativeFixtureDate({ months: -3 }),
-      creditType: "BEHAVIOR" as const,
-      creditsEarned: 6,
-    },
-    {
-      creditDate: relativeFixtureDate({ months: -3 }),
-      creditType: "REMOVAL" as const,
-      creditsEarned: -10,
-    },
-    {
-      creditDate: relativeFixtureDate({ months: -2 }),
-      creditType: "BEHAVIOR" as const,
-      creditsEarned: 6,
-    },
-    {
-      creditDate: relativeFixtureDate({ months: -1 }),
-      creditType: "BEHAVIOR" as const,
-      creditsEarned: 6,
-    },
-  ],
-};
+import { usTnResidentMetadata } from "./metadata/fixtures";
 
 export const rawUsTnResidentCommon: Array<RawResidentCommon> = [
   {
@@ -135,6 +34,7 @@ export const rawUsTnResidentCommon: Array<RawResidentCommon> = [
     displayId: "dRES001",
     personName: { givenNames: "Carmen", surname: "Reyes" },
     facilityId: "BLEDSOE_CC",
+    unitId: "UNIT A",
   },
   {
     stateCode: "US_TN",
@@ -143,6 +43,7 @@ export const rawUsTnResidentCommon: Array<RawResidentCommon> = [
     displayId: "dRES002",
     personName: { givenNames: "Jessica", surname: "Ren" },
     facilityId: "BLEDSOE_CC",
+    unitId: "UNIT A",
   },
   {
     stateCode: "US_TN",
@@ -151,6 +52,7 @@ export const rawUsTnResidentCommon: Array<RawResidentCommon> = [
     displayId: "dRES003",
     personName: { givenNames: "Fei", surname: "Jackson" },
     facilityId: "BLEDSOE_CC",
+    unitId: "UNIT A",
   },
   {
     stateCode: "US_TN",
@@ -159,6 +61,7 @@ export const rawUsTnResidentCommon: Array<RawResidentCommon> = [
     displayId: "dRES004",
     personName: { givenNames: "Geoff", surname: "Zhang" },
     facilityId: "BLEDSOE_CC",
+    unitId: "UNIT A",
   },
 ];
 
@@ -170,28 +73,25 @@ export const rawUsTnResidents: Array<RawWorkflowsResidentRecord> = [
   {
     ...rawUsTnResidentCommon[0],
     allEligibleOpportunities: ["usTnCustodyLevelDowngrade"],
-    stateCode: "US_TN",
     recordId: "us_tn_res001",
     gender: "MALE",
-    unitId: "UNIT A",
+
     facilityUnitId: "BLEDSOE_CC‡UNIT A",
     custodyLevel: "CLOSE",
     admissionDate: relativeFixtureDate({ years: -2, days: -200 }),
     releaseDate: relativeFixtureDate({ years: 3, days: 300 }),
-    metadata,
+    metadata: usTnResidentMetadata,
   },
   {
     ...rawUsTnResidentCommon[1],
     allEligibleOpportunities: ["usTnCustodyLevelDowngrade"],
-    stateCode: "US_TN",
     recordId: "us_tn_res002",
     gender: "FEMALE",
-    unitId: "UNIT A",
     facilityUnitId: "BLEDSOE_CC‡UNIT A",
     custodyLevel: "MEDIUM",
     admissionDate: relativeFixtureDate({ years: -4, days: -400 }),
     releaseDate: relativeFixtureDate({ years: 1, days: 100 }),
-    metadata,
+    metadata: usTnResidentMetadata,
   },
   {
     ...rawUsTnResidentCommon[2],
@@ -199,15 +99,13 @@ export const rawUsTnResidents: Array<RawWorkflowsResidentRecord> = [
       "usTnAnnualReclassification",
       "usTnInitialClassification",
     ],
-    stateCode: "US_TN",
     recordId: "us_tn_res003",
     gender: "MALE",
-    unitId: "UNIT A",
     facilityUnitId: "BLEDSOE_CC‡UNIT A",
     custodyLevel: "MEDIUM",
     admissionDate: relativeFixtureDate({ years: -3, days: -100 }),
     releaseDate: relativeFixtureDate({ years: 1, days: 100 }),
-    metadata,
+    metadata: usTnResidentMetadata,
   },
   {
     ...rawUsTnResidentCommon[3],
@@ -215,15 +113,13 @@ export const rawUsTnResidents: Array<RawWorkflowsResidentRecord> = [
       "usTnAnnualReclassification",
       "usTnInitialClassification",
     ],
-    stateCode: "US_TN",
     recordId: "us_tn_res004",
     gender: "INTERNAL_UNKNOWN",
-    unitId: "UNIT A",
     facilityUnitId: "BLEDSOE_CC‡UNIT A",
     custodyLevel: "CLOSE",
     admissionDate: relativeFixtureDate({ years: -2, days: -200 }),
     releaseDate: relativeFixtureDate({ years: 1, days: 200 }),
-    metadata,
+    metadata: usTnResidentMetadata,
   },
 ];
 
