@@ -130,6 +130,13 @@ export interface FilterConfig {
 export interface WorkflowsTasksConfig extends FilterConfig {
   collection: FirestoreCollectionName;
   methodologyUrl?: string;
+  /**
+   * When set, a snooze reason becomes mandatory for snoozes longer than this
+   * many days (and for permanent snoozes); shorter snoozes keep the reason
+   * optional. Only takes effect alongside the `taskSnoozeReason` feature
+   * variant. Left unset for tenants that don't require a reason.
+   */
+  snoozeReasonRequiredOverDays?: number;
   tasks: {
     [K in SupervisionTaskType]?: {
       constructor: new (

@@ -41,6 +41,10 @@ const US_MO_CONFIG = {
     "https://docs.google.com/document/d/e/2PACX-1vToMOcOU3qmUUF9J86R4MaqjcZIogwq5FwuqWqWLFiY2cPCsgq98E_HgbQ5PPJWexRT-n7pWqcqY5Xz/pub",
   workflowsTasksConfig: {
     collection: "usMoSupervisionTasks",
+    // Snoozes longer than 7 days require a reason (paired with the
+    // `taskSnoozeReason` feature variant); 7-day-or-shorter snoozes stay
+    // optional.
+    snoozeReasonRequiredOverDays: 7,
     tasks: {
       usMoEmploymentVerification: {
         constructor: UsMoEmploymentVerificationTask,

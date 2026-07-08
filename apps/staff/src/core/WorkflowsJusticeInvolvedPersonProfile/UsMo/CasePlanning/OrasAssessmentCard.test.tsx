@@ -52,8 +52,8 @@ describe("OrasAssessmentCard", () => {
     render(<OrasAssessmentCard orasAssessment={ORAS} />);
 
     expect(screen.getByText("Assessment type")).toBeInTheDocument();
-    // getAssessmentTypeDisplayName(mapMoAssessmentType("ORAS_COMMUNITY_SUPERVISION"))
-    // → getAssessmentTypeDisplayName("ORAS_CST")
+    // getMoAssessmentDisplayName("ORAS_COMMUNITY_SUPERVISION") → the SAR
+    // display name for "ORAS_CST".
     expect(
       screen.getByText("Community Supervision Tool (ORAS-CST)"),
     ).toBeInTheDocument();
@@ -79,13 +79,39 @@ describe("OrasAssessmentCard", () => {
     expect(screen.getByText("N/A")).toBeInTheDocument();
   });
 
-  test("renders 'Unknown' display name when the assessment type is unmapped", () => {
-    render(
+  test("renders a configured tool's max score in the donut (e.g. 23/49 for ORAS-CST)", () => {
+    const { container } = render(<OrasAssessmentCard orasAssessment={ORAS} />);
+    expect(screen.getByText("23/49")).toBeInTheDocument();
+    // Background ring + filled score arc = two <path> elements.
+    expect(container.querySelectorAll("svg path")).toHaveLength(2);
+  });
+
+  test("shows the real name and 'X/--' light donut for the CSST screening tool", () => {
+    const { container } = render(
+      <OrasAssessmentCard
+        orasAssessment={{
+          ...ORAS,
+          assessmentType: "ORAS_COMMUNITY_SUPERVISION_SCREENING",
+        }}
+      />,
+    );
+    expect(
+      screen.getByText("Community Supervision Screening Tool (ORAS-CSST)"),
+    ).toBeInTheDocument();
+    expect(screen.getByText("23/--")).toBeInTheDocument();
+    // Unknown max → only the light background ring renders (no filled arc).
+    expect(container.querySelectorAll("svg path")).toHaveLength(1);
+  });
+
+  test("falls back to 'Other Assessment' and 'X/--' when the assessment type is unmapped", () => {
+    const { container } = render(
       <OrasAssessmentCard
         orasAssessment={{ ...ORAS, assessmentType: "SOMETHING_ELSE" }}
       />,
     );
-    expect(screen.getByText("Unknown")).toBeInTheDocument();
+    expect(screen.getByText("Other Assessment")).toBeInTheDocument();
+    expect(screen.getByText("23/--")).toBeInTheDocument();
+    expect(container.querySelectorAll("svg path")).toHaveLength(1);
   });
 
   test("shows the 'Last Updated' subtitle only when lastUpdated is provided", () => {

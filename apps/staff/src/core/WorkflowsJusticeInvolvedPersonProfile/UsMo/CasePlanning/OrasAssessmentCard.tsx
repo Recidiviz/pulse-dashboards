@@ -22,14 +22,13 @@ import styled from "styled-components";
 
 import { UsMoClientMetadata } from "~datatypes";
 import { palette, typography } from "~design-system";
-import {
-  getAssessmentTypeDisplayName,
-  OVERALL_MAX_SCORE_BY_ASSESSMENT_TYPE,
-} from "~sentencing-client/components/OffenderAssessment/assessmentTypeUtils";
 import { OrasScoreDonut } from "~sentencing-client/components/OffenderAssessment/OrasScoreDonut";
 
 import { LabelValue } from "../shared/LabelValue";
-import { mapMoAssessmentType } from "./mapMoAssessmentType";
+import {
+  getMoAssessmentDisplayName,
+  getMoAssessmentMaxScore,
+} from "./mapMoAssessmentType";
 
 // --- ORAS Assessment section ----------------------------------------------
 
@@ -133,10 +132,8 @@ export const OrasAssessmentCard: React.FC<OrasAssessmentCardProps> = ({
     assessmentDate,
     assessmentAdministeredBy,
   } = orasAssessment;
-  const mapped = mapMoAssessmentType(assessmentType);
-  const maxScore = mapped
-    ? OVERALL_MAX_SCORE_BY_ASSESSMENT_TYPE[mapped] ?? undefined
-    : undefined;
+  const displayName = getMoAssessmentDisplayName(assessmentType);
+  const maxScore = getMoAssessmentMaxScore(assessmentType);
 
   return (
     <OrasSection>
@@ -145,15 +142,19 @@ export const OrasAssessmentCard: React.FC<OrasAssessmentCardProps> = ({
         <DonutColumn>
           {/*
            * Reuses the SAR Builder's donut, showing the raw assessment score
-           * relative to the tool's max (e.g. 23/49 for ORAS-CST) — the value
-           * relative to the assessment, not a fixed "X/9" scale.
+           * relative to the tool's max (e.g. 23/49 for ORAS-CST). When the max
+           * for a type isn't configured (e.g. CSST/PST, or an unrecognized
+           * type), `showUnknownMax` renders "X/--" with a light ring rather
+           * than an arbitrary denominator.
            */}
-          <OrasScoreDonut score={assessmentScore ?? 0} maxScore={maxScore} />
+          <OrasScoreDonut
+            score={assessmentScore ?? 0}
+            maxScore={maxScore}
+            showUnknownMax
+          />
         </DonutColumn>
         <MetadataColumn>
-          <LabelValue label="Assessment type">
-            {getAssessmentTypeDisplayName(mapped)}
-          </LabelValue>
+          <LabelValue label="Assessment type">{displayName}</LabelValue>
           <LabelValue label="Assessment date">
             {format(assessmentDate, "MM/dd/yyyy")}
           </LabelValue>

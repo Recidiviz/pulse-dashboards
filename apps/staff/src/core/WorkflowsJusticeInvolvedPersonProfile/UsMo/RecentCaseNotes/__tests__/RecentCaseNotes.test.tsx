@@ -88,9 +88,33 @@ describe("RecentCaseNotes", () => {
 
     render(<RecentCaseNotes client={mockClient} />);
 
-    expect(
-      screen.getByText("No recent case notes from the past 90 days"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("No recent case notes")).toBeInTheDocument();
+  });
+
+  it("uses the singular 'note' in the subtitle when there is one note", () => {
+    useRecentCaseNotesMock.mockReturnValue({
+      notes: sampleNotes.slice(0, 1),
+      isLoading: false,
+    });
+
+    const { container } = render(<RecentCaseNotes client={mockClient} />);
+
+    expect(container.textContent).toContain(
+      "1 most recent case note. Go to ARB to see all.",
+    );
+  });
+
+  it("uses the plural 'notes' in the subtitle when there are multiple notes", () => {
+    useRecentCaseNotesMock.mockReturnValue({
+      notes: sampleNotes.slice(0, 2),
+      isLoading: false,
+    });
+
+    const { container } = render(<RecentCaseNotes client={mockClient} />);
+
+    expect(container.textContent).toContain(
+      "2 most recent case notes. Go to ARB to see all.",
+    );
   });
 
   it("opens the modal showing the clicked note's body", () => {

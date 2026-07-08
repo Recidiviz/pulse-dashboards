@@ -23,11 +23,18 @@ function renderForm(
   overrides: {
     onSave?: (reason: string | undefined) => void;
     onCancel?: () => void;
+    required?: boolean;
   } = {},
 ) {
   const onSave = overrides.onSave ?? vi.fn();
   const onCancel = overrides.onCancel ?? vi.fn();
-  render(<TaskSnoozeReasonForm onSave={onSave} onCancel={onCancel} />);
+  render(
+    <TaskSnoozeReasonForm
+      onSave={onSave}
+      onCancel={onCancel}
+      required={overrides.required}
+    />,
+  );
   return { onSave, onCancel };
 }
 
@@ -118,6 +125,42 @@ describe("TaskSnoozeReasonForm", () => {
     test("clicking Save while disabled (1-2 chars) does nothing", () => {
       const { onSave } = renderForm();
       fireEvent.change(getReasonInput(), { target: { value: "ab" } });
+      fireEvent.click(getSaveButton());
+      expect(onSave).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("required path", () => {
+    test("renders the (required) prompt", () => {
+      renderForm({ required: true });
+      expect(
+        screen.getByText("Why is this task not actionable? (required)"),
+      ).toBeInTheDocument();
+    });
+
+    test("Save is disabled when reason is empty", () => {
+      renderForm({ required: true });
+      expect(getSaveButton()).toBeDisabled();
+    });
+
+    test("Save is disabled when reason has 1-2 characters", () => {
+      renderForm({ required: true });
+      fireEvent.change(getReasonInput(), { target: { value: "ab" } });
+      expect(getSaveButton()).toBeDisabled();
+    });
+
+    test("Save is enabled once a valid reason is entered", () => {
+      const { onSave } = renderForm({ required: true });
+      fireEvent.change(getReasonInput(), {
+        target: { value: "Client moving" },
+      });
+      expect(getSaveButton()).not.toBeDisabled();
+      fireEvent.click(getSaveButton());
+      expect(onSave).toHaveBeenCalledWith("Client moving");
+    });
+
+    test("clicking Save while empty does nothing", () => {
+      const { onSave } = renderForm({ required: true });
       fireEvent.click(getSaveButton());
       expect(onSave).not.toHaveBeenCalled();
     });

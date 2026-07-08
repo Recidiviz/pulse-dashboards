@@ -32,7 +32,6 @@ const FormWrapper = styled.div`
   flex-direction: column;
   gap: ${rem(16)};
   width: 100%;
-  padding: ${rem(16)};
 `;
 
 const FormTitle = styled(Sans16)`
@@ -60,19 +59,29 @@ type TaskSnoozeReasonFormProps = {
    */
   onSave: (reason: string | undefined) => void;
   onCancel: () => void;
+  /**
+   * When true, a reason is mandatory: the field can't be left empty and Save
+   * stays disabled until a valid reason is entered. Driven by the snooze
+   * duration (long snoozes require a reason) in the parent.
+   */
+  required?: boolean;
 };
 
 export function TaskSnoozeReasonForm({
   onSave,
   onCancel,
+  required = false,
 }: TaskSnoozeReasonFormProps) {
   const [reason, setReason] = useState("");
   // Validity is gated on the same length the counter shows the user — no trim
-  // here, so the two stay aligned. Reason is optional: empty input is allowed;
-  // if anything is typed it must meet the 3-character minimum.
-  const canSave =
-    reason.length === 0 ||
-    (reason.length >= REASON_MIN_LENGTH && reason.length <= REASON_MAX_LENGTH);
+  // here, so the two stay aligned. When the reason is optional an empty input
+  // is allowed; anything typed must meet the 3-character minimum. When it's
+  // required, a valid (in-range) reason must be present.
+  const reasonInRange =
+    reason.length >= REASON_MIN_LENGTH && reason.length <= REASON_MAX_LENGTH;
+  const canSave = required
+    ? reasonInRange
+    : reason.length === 0 || reasonInRange;
 
   const handleSave = () => {
     if (!canSave) return;
@@ -84,7 +93,10 @@ export function TaskSnoozeReasonForm({
       className="TaskSnoozeReasonForm"
       data-testid="TaskSnoozeReasonForm"
     >
-      <FormTitle>Why is this task not actionable? (optional)</FormTitle>
+      <FormTitle>
+        Why is this task not actionable?{" "}
+        {required ? "(required)" : "(optional)"}
+      </FormTitle>
       <CharacterCountTextField
         id="task-snooze-reason"
         value={reason}
@@ -92,7 +104,7 @@ export function TaskSnoozeReasonForm({
         minLength={REASON_MIN_LENGTH}
         maxLength={REASON_MAX_LENGTH}
         placeholder="Please specify a reason..."
-        isOptional
+        isOptional={!required}
       />
       <ButtonRow>
         <FormButton kind="secondary" onClick={onCancel}>

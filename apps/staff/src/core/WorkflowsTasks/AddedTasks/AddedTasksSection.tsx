@@ -135,7 +135,7 @@ const AddedTasksSection = observer(function AddedTasksSection({
   return (
     <SectionWrapper>
       {tasks.length === 0 && pendingAddIds.length === 0 && (
-        <EmptyState>No Added Tasks Yet.</EmptyState>
+        <EmptyState>No added tasks yet</EmptyState>
       )}
       {tasks.map((task) => (
         <AddedTaskRow

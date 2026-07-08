@@ -90,7 +90,13 @@ export function TaskSectionFilter({
         icon="Filter"
         aria-label={`Filter: ${label}`}
       />
-      <DropdownMenu>
+      {/*
+       * Anchor the menu to the toggle's right edge so it opens leftward. The
+       * toggle sits at the right edge of the module header, so the default
+       * left alignment lets the absolutely-positioned menu overflow past the
+       * panel's right edge and introduce a horizontal scrollbar.
+       */}
+      <DropdownMenu alignment="right">
         <DropdownMenuLabel>Filter</DropdownMenuLabel>
         <FilterMenuItem
           preventCloseOnClickEvent

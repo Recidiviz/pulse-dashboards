@@ -278,6 +278,20 @@ export const SnoozedTaskInfo = ({ task }: { task: SupervisionTask }) => {
   );
 };
 /**
+ * Whether a snooze reason is mandatory for the given duration. Gated on the
+ * tenant opting in via `snoozeReasonRequiredOverDays`: when set, snoozes longer
+ * than that many days (and permanent "FOREVER" snoozes) require a reason; when
+ * unset, the reason stays optional for every duration.
+ */
+export const isSnoozeReasonRequired = (
+  days: SnoozeOptions,
+  requiredOverDays: number | undefined,
+): boolean => {
+  if (requiredOverDays === undefined) return false;
+  return days === "FOREVER" || days > requiredOverDays;
+};
+
+/**
  * TODO(#10615): Delete TaskPreview when UsIdTasksV2 is fully rolled out.
  */
 const TaskPreview = ({
@@ -304,6 +318,11 @@ const TaskPreview = ({
     return (
       <TaskItem showSnoozeDropdown={false} key={task.key}>
         <TaskSnoozeReasonForm
+          required={isSnoozeReasonRequired(
+            pendingSnoozeDays,
+            task.person.supervisionTasks?.tasksConfig
+              ?.snoozeReasonRequiredOverDays,
+          )}
           onCancel={() => setPendingSnoozeDays(null)}
           onSave={(reason) => {
             persistSnooze(pendingSnoozeDays, reason);
@@ -377,6 +396,11 @@ const TaskPreviewV2 = ({ task }: { task: SupervisionTask }) => {
     return (
       <TaskItemWrapper>
         <TaskSnoozeReasonForm
+          required={isSnoozeReasonRequired(
+            pendingSnoozeDays,
+            task.person.supervisionTasks?.tasksConfig
+              ?.snoozeReasonRequiredOverDays,
+          )}
           onCancel={() => setPendingSnoozeDays(null)}
           onSave={(reason) => {
             persistSnooze(pendingSnoozeDays, reason);

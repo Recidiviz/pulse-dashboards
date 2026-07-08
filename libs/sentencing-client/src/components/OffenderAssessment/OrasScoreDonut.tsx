@@ -31,14 +31,31 @@ const BACKGROUND_COLOR = palette.data.teal1; // Data/Teal
 interface OrasScoreDonutProps {
   score: number | null;
   maxScore?: number;
+  /**
+   * When true and `maxScore` is undefined, treat the max as genuinely unknown:
+   * render the denominator as "--" and draw no filled arc (a light,
+   * background-only ring) instead of falling back to a default max. Opt-in so
+   * existing callers (SAR Builder) keep their current rendering.
+   */
+  showUnknownMax?: boolean;
 }
 
 export const OrasScoreDonut: React.FC<OrasScoreDonutProps> = ({
   score,
-  maxScore = 9,
+  maxScore,
+  showUnknownMax = false,
 }) => {
+  // With an unknown max we can't compute a fraction, so leave the ring empty
+  // (light). Otherwise fall back to the historical default of 9 for callers
+  // that don't pass a max and haven't opted into the unknown-max treatment.
+  const fallbackMax = showUnknownMax ? undefined : 9;
+  const effectiveMax = maxScore !== undefined ? maxScore : fallbackMax;
+
   // Calculate the angle for the filled portion
-  const percentage = score !== null ? Math.min(score / maxScore, 1) : 0;
+  const percentage =
+    score !== null && effectiveMax !== undefined
+      ? Math.min(score / effectiveMax, 1)
+      : 0;
   const endAngle = percentage * 2 * Math.PI;
 
   // Create arc generators
@@ -66,8 +83,9 @@ export const OrasScoreDonut: React.FC<OrasScoreDonutProps> = ({
         <g transform={`translate(${DONUT_RADIUS}, ${DONUT_RADIUS})`}>
           {/* Background arc */}
           <path d={backgroundArc ?? undefined} fill={BACKGROUND_COLOR} />
-          {/* Foreground arc (score) */}
-          {score !== null && (
+          {/* Foreground arc (score) — omitted when the max is unknown so the
+              ring reads as a single light color. */}
+          {score !== null && effectiveMax !== undefined && (
             <path d={foregroundArc ?? undefined} fill={SCORE_COLOR} />
           )}
         </g>
@@ -75,7 +93,9 @@ export const OrasScoreDonut: React.FC<OrasScoreDonutProps> = ({
       <Styled.CenterText>
         <Styled.RiskLevelLabel>Risk Level</Styled.RiskLevelLabel>
         <Styled.ScoreText $small={score === null}>
-          {score !== null ? `${score}/${maxScore}` : "Score Unavailable"}
+          {score === null
+            ? "Score Unavailable"
+            : `${score}/${effectiveMax ?? "--"}`}
         </Styled.ScoreText>
       </Styled.CenterText>
     </Styled.DonutContainer>

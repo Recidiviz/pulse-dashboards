@@ -88,7 +88,7 @@ describe("UsMoCasePlanningView", () => {
     );
     expect(screen.getByText("Case Planning")).toBeInTheDocument();
     expect(screen.getByText("No ORAS assessment on file.")).toBeInTheDocument();
-    expect(screen.getByText("No Case Plan On File")).toBeInTheDocument();
+    expect(screen.getByText("No case plan on file")).toBeInTheDocument();
   });
 });
 
@@ -127,7 +127,7 @@ describe("UsMoCasePlanning (observer wrapper)", () => {
     render(<UsMoCasePlanning client={client} />);
 
     expect(screen.getByText("No ORAS assessment on file.")).toBeInTheDocument();
-    expect(screen.getByText("No Case Plan On File")).toBeInTheDocument();
+    expect(screen.getByText("No case plan on file")).toBeInTheDocument();
     // No assessment date → no "Last Updated" subtitle.
     expect(screen.queryByText(/Last Updated/)).not.toBeInTheDocument();
   });

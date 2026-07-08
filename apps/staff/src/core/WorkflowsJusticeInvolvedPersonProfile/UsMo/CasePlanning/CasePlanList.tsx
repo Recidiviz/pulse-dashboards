@@ -123,7 +123,7 @@ export const CasePlanList: React.FC<CasePlanListProps> = ({
   now = new Date(),
 }) => {
   if (!casePlan || casePlan.length === 0) {
-    return <ModuleEmptyState>No Case Plan On File</ModuleEmptyState>;
+    return <ModuleEmptyState>No case plan on file</ModuleEmptyState>;
   }
 
   return (

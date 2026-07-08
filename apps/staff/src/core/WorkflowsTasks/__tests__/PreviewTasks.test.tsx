@@ -22,7 +22,11 @@ import useIsMobile from "../../../hooks/useIsMobile";
 import { SupervisionTask } from "../../../WorkflowsStore";
 import { SnoozeInfo } from "../../../WorkflowsStore/Task/types";
 import { JusticeInvolvedPerson } from "../../../WorkflowsStore/types";
-import { PreviewTasks, SnoozedTaskInfo } from "../PreviewTasks";
+import {
+  isSnoozeReasonRequired,
+  PreviewTasks,
+  SnoozedTaskInfo,
+} from "../PreviewTasks";
 
 vi.mock("../../../components/StoreProvider");
 vi.mock("../../../hooks/useIsMobile");
@@ -86,6 +90,23 @@ function mockStores() {
     workflowsStore: { isUsIdLegacyTasksEnabled: false },
   } as unknown as ReturnType<typeof StoreProvider.useRootStore>);
 }
+
+describe("isSnoozeReasonRequired", () => {
+  test("never requires a reason when the threshold is unset", () => {
+    expect(isSnoozeReasonRequired(30, undefined)).toBe(false);
+    expect(isSnoozeReasonRequired("FOREVER", undefined)).toBe(false);
+  });
+
+  test("requires a reason only for durations over the threshold", () => {
+    expect(isSnoozeReasonRequired(7, 7)).toBe(false);
+    expect(isSnoozeReasonRequired(30, 7)).toBe(true);
+    expect(isSnoozeReasonRequired(90, 7)).toBe(true);
+  });
+
+  test("always requires a reason for permanent snoozes", () => {
+    expect(isSnoozeReasonRequired("FOREVER", 7)).toBe(true);
+  });
+});
 
 describe("SnoozedTaskInfo", () => {
   test("renders nothing when the task is not snoozed", () => {

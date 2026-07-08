@@ -59,12 +59,12 @@ const CASE_PLAN: CasePlan = [
 describe("CasePlanList", () => {
   test("renders the empty state when casePlan is an empty array", () => {
     render(<CasePlanList casePlan={[]} now={NOW} />);
-    expect(screen.getByText("No Case Plan On File")).toBeInTheDocument();
+    expect(screen.getByText("No case plan on file")).toBeInTheDocument();
   });
 
   test("renders the empty state when casePlan is undefined", () => {
     render(<CasePlanList casePlan={undefined} now={NOW} />);
-    expect(screen.getByText("No Case Plan On File")).toBeInTheDocument();
+    expect(screen.getByText("No case plan on file")).toBeInTheDocument();
   });
 
   test("renders each goal title with a 'Goal' label", () => {

@@ -15,9 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Sans16, spacing } from "@recidiviz/design-system";
+import { Sans16 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
 import React from "react";
 import styled from "styled-components";
 
@@ -26,15 +25,13 @@ import { palette } from "~design-system";
 import { Client } from "../../../../WorkflowsStore";
 import { ClientInformationCard } from "./ClientInformationCard";
 
-const StyledClientInformationCard = styled(ClientInformationCard)`
-  margin-bottom: ${rem(spacing.md)};
-`;
-
 /** "Case Overview" heading shown above the bordered `ClientInformationCard`.
  * Matches the `SectionHeading` style used by other left-column sections in
- * `FullProfile` (slate80 / Sans16 / 500). `margin-bottom` is zeroed so the
- * heading sits flush above the card; the card itself attaches the
- * `spacing.md` gap below via `StyledClientInformationCard`. */
+ * `FullProfile` (slate80 / Sans16 / 500). `margin-bottom` is zeroed because the
+ * heading and card are separate flex children of `FullProfile`'s
+ * `ProfileDetailsWrapper`, whose `gap: spacing.md` already spaces the card below
+ * the heading — keeping this in step with the right column's `ModuleHeader`
+ * (also `spacing.md`) so the two columns' cards line up. */
 const SectionHeading = styled(Sans16)`
   color: ${palette.slate80};
   margin-bottom: 0;
@@ -62,7 +59,7 @@ export const UsMoCaseOverview = observer(function UsMoCaseOverview({
   return (
     <>
       <SectionHeading>Case Overview</SectionHeading>
-      <StyledClientInformationCard client={client} />
+      <ClientInformationCard client={client} />
     </>
   );
 });

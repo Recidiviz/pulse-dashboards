@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
+import pluralize from "pluralize";
 import { useState } from "react";
 
 import { formatWorkflowsDate } from "../../../../utils";
@@ -80,13 +81,12 @@ export const RecentCaseNotesView = function RecentCaseNotesView({
       </ModuleHeader>
       <CardFrame>
         {notes.length === 0 ? (
-          <ModuleEmptyState>
-            No recent case notes from the past 90 days
-          </ModuleEmptyState>
+          <ModuleEmptyState>No recent case notes</ModuleEmptyState>
         ) : (
           <>
             <CardSubtitle>
-              {notes.length} most recent case notes. Go to ARB to see all.
+              {notes.length} most recent case {pluralize("note", notes.length)}.
+              Go to ARB to see all.
             </CardSubtitle>
             <NotesList>
               {notes.map((note) => (

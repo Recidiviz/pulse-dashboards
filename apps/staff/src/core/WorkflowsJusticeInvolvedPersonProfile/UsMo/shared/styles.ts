@@ -32,7 +32,7 @@ export const ModuleHeader = styled.div`
   align-items: center;
   display: flex;
   justify-content: space-between;
-  margin-bottom: ${rem(spacing.lg)};
+  margin-bottom: ${rem(spacing.md)};
 `;
 
 /** Title text for a module, sitting in `ModuleHeader` above the card frame. */

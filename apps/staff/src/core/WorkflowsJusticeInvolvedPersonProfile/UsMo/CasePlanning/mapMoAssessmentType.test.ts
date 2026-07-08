@@ -17,26 +17,30 @@
 
 import { describe, expect, test } from "vitest";
 
-import { mapMoAssessmentType } from "./mapMoAssessmentType";
+import {
+  getMoAssessmentDisplayName,
+  getMoAssessmentMaxScore,
+  mapMoAssessmentType,
+} from "./mapMoAssessmentType";
 
 describe("mapMoAssessmentType", () => {
   test.each([
     ["ORAS_COMMUNITY_SUPERVISION", "ORAS_CST"],
-    ["ORAS_COMMUNITY_SUPERVISION_SCREENING", "Other"],
     ["ORAS_PRISON_INTAKE", "ORAS_PIT"],
-    ["ORAS_PRISON_SCREENING", "Other"],
     ["ORAS_REENTRY", "ORAS_RT"],
     ["ORAS_SUPPLEMENTAL_REENTRY", "ORAS_SRT"],
   ])("maps %s to %s", (input, expected) => {
     expect(mapMoAssessmentType(input)).toBe(expected);
   });
 
-  test("returns null for an unknown assessment type string", () => {
-    expect(mapMoAssessmentType("ORAS_SOMETHING_ELSE")).toBeNull();
-  });
-
-  test("returns null for an empty string", () => {
-    expect(mapMoAssessmentType("")).toBeNull();
+  test.each([
+    // The screening tools have no SAR key; they're handled MO-side.
+    "ORAS_COMMUNITY_SUPERVISION_SCREENING",
+    "ORAS_PRISON_SCREENING",
+    "ORAS_SOMETHING_ELSE",
+    "",
+  ])("returns null for %s", (input) => {
+    expect(mapMoAssessmentType(input)).toBeNull();
   });
 
   test("returns null for null", () => {
@@ -45,5 +49,49 @@ describe("mapMoAssessmentType", () => {
 
   test("returns null for undefined", () => {
     expect(mapMoAssessmentType(undefined)).toBeNull();
+  });
+});
+
+describe("getMoAssessmentDisplayName", () => {
+  test.each([
+    ["ORAS_COMMUNITY_SUPERVISION", "Community Supervision Tool (ORAS-CST)"],
+    ["ORAS_PRISON_INTAKE", "Prison Intake Tool (ORAS-PIT)"],
+    ["ORAS_REENTRY", "Reentry Tool (ORAS-RT)"],
+    ["ORAS_SUPPLEMENTAL_REENTRY", "Supplemental Reentry Tool (ORAS-SRT)"],
+    [
+      "ORAS_COMMUNITY_SUPERVISION_SCREENING",
+      "Community Supervision Screening Tool (ORAS-CSST)",
+    ],
+    ["ORAS_PRISON_SCREENING", "Prison Screening Tool (ORAS-PST)"],
+  ])("maps %s to its real display name", (input, expected) => {
+    expect(getMoAssessmentDisplayName(input)).toBe(expected);
+  });
+
+  test.each(["ORAS_SOMETHING_ELSE", "", null, undefined])(
+    "falls back to 'Other Assessment' for %s",
+    (input) => {
+      expect(getMoAssessmentDisplayName(input)).toBe("Other Assessment");
+    },
+  );
+});
+
+describe("getMoAssessmentMaxScore", () => {
+  test.each([
+    ["ORAS_COMMUNITY_SUPERVISION", 49],
+    ["ORAS_PRISON_INTAKE", 40],
+    ["ORAS_REENTRY", 28],
+    ["ORAS_SUPPLEMENTAL_REENTRY", 45],
+  ])("returns the configured max for %s", (input, expected) => {
+    expect(getMoAssessmentMaxScore(input)).toBe(expected);
+  });
+
+  test.each([
+    // Deferred (CSST/PST) and unrecognized types have no configured max.
+    "ORAS_COMMUNITY_SUPERVISION_SCREENING",
+    "ORAS_PRISON_SCREENING",
+    "ORAS_SOMETHING_ELSE",
+    "",
+  ])("returns undefined for %s", (input) => {
+    expect(getMoAssessmentMaxScore(input)).toBeUndefined();
   });
 });
