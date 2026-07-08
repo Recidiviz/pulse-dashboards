@@ -23,6 +23,7 @@ import { Banner } from "../shared/styles/Banner";
 import {
   AssessmentTypeDisplayNames,
   AssessmentTypeKey,
+  ORAS_TOOL_KEYS,
 } from "./assessmentTypeUtils";
 import * as DomainCardStyled from "./DomainCard.styles";
 import {
@@ -47,9 +48,10 @@ import {
   ORASFormData,
 } from "./utils";
 
-const ASSESSMENT_TYPE_OPTIONS = Object.entries(AssessmentTypeDisplayNames).map(
-  ([value, label]) => ({ value, label }),
-);
+const ASSESSMENT_TYPE_OPTIONS = ORAS_TOOL_KEYS.map((value) => ({
+  value,
+  label: AssessmentTypeDisplayNames[value],
+}));
 
 type SelectOption = { label: string; value: string };
 
@@ -142,16 +144,17 @@ export const ORASForm: React.FC<ORASFormProps> = ({
                 : null
             }
             options={ASSESSMENT_TYPE_OPTIONS}
-            onChange={(option) =>
+            onChange={(option) => {
+              const newAssessmentType =
+                ((option as SelectOption)?.value as AssessmentTypeKey) ?? null;
+              if (newAssessmentType === formData.assessmentType) return;
               setFormData({
                 ...ORAS_EMPTY_FORM,
                 assessmentDate: formData.assessmentDate,
                 assessmentAdministeredBy: formData.assessmentAdministeredBy,
-                assessmentType:
-                  ((option as SelectOption)?.value as AssessmentTypeKey) ??
-                  null,
-              })
-            }
+                assessmentType: newAssessmentType,
+              });
+            }}
             placeholder="Select"
             styles={dropdownStyles}
           />

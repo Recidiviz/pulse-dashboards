@@ -110,6 +110,11 @@ export const SARMetadataSchema = z.object({
         edited: z.boolean().optional(),
       })
       .optional(),
+    offenderAssessment: z
+      .object({
+        edited: z.boolean().optional(),
+      })
+      .optional(),
   }),
   version: z.literal("1.0").optional(),
 });

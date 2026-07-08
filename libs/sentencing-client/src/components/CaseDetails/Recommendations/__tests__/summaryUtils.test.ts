@@ -126,7 +126,7 @@ describe("formatNeedsList", () => {
     expect(result).not.toContain("Family Support");
     expect(result).not.toContain("Financial Support");
     expect(result).not.toContain("Food Insecurity");
-    expect(result).not.toContain("General Re-entry Support");
+    expect(result).not.toContain("General Reentry Support");
     expect(result).not.toContain("Housing");
     expect(result).not.toContain("Job Training or Opportunities");
     expect(result).not.toContain("Transportation");
@@ -148,7 +148,7 @@ describe("formatNeedsList", () => {
     expect(result).not.toContain("Family Support");
     expect(result).not.toContain("Financial Support");
     expect(result).not.toContain("Food Insecurity");
-    expect(result).not.toContain("General Re-entry Support");
+    expect(result).not.toContain("General Reentry Support");
     expect(result).not.toContain("Housing");
     expect(result).not.toContain("Job Training or Opportunities");
     expect(result).not.toContain("Transportation");
@@ -174,7 +174,7 @@ describe("formatNeedsList", () => {
     ]);
 
     expect(result).not.toContain("Clothing and toiletries");
-    expect(result).not.toContain("General Re-entry Support");
+    expect(result).not.toContain("General Reentry Support");
     expect(result).not.toContain("Job Training or Opportunities");
     expect(result).not.toContain("Other");
   });
@@ -198,7 +198,7 @@ describe("formatNeedsList", () => {
     ]);
 
     expect(result).not.toContain("Clothing and toiletries");
-    expect(result).not.toContain("General Re-entry Support");
+    expect(result).not.toContain("General Reentry Support");
     expect(result).not.toContain("Job Training or Opportunities");
     expect(result).not.toContain("Other");
   });

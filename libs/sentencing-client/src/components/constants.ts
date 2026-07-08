@@ -39,7 +39,7 @@ export const NeedsToBeAddressed: Record<
   FamilyServices: "Family Services",
   FinancialAssistance: "Financial Assistance",
   FoodInsecurity: "Food Insecurity",
-  GeneralReEntrySupport: "General Re-entry Support",
+  GeneralReEntrySupport: "General Reentry Support",
   Healthcare: "Healthcare",
   HousingOpportunities: "Housing Opportunities",
   JobTrainingOrOpportunities: "Job Training or Opportunities",

@@ -110,6 +110,9 @@ type SARMetadataSections = {
   priorTreatmentHistory?: {
     edited?: boolean;
   };
+  offenderAssessment?: {
+    edited?: boolean;
+  };
 };
 
 type SARMetadata = {
@@ -1127,10 +1130,16 @@ export class SARDetailsPresenter implements Hydratable {
   get orasData(): ORASFormData | null {
     const sarData = this.SARData;
     if (!sarData) return null;
-    return pick(
+    const data = pick(
       sarData,
       Object.keys(ORAS_EMPTY_FORM) as (keyof ORASFormData)[],
     );
+    if (!sarData.assessmentDate && !data.assessmentAdministeredBy) {
+      const staffName = this.sentencingStore.staffStore.staffInfo?.fullName;
+      if (staffName)
+        data.assessmentAdministeredBy = formatPersonName(staffName);
+    }
+    return data;
   }
 
   async saveORASData(data: ORASFormData): Promise<void> {
@@ -1161,10 +1170,26 @@ export class SARDetailsPresenter implements Hydratable {
       ...data,
       ...derivedRiskLevels,
       ORASLastUpdatedAt: new Date(),
+      ORASEnteredManually: true,
     };
-    await this.sentencingStore.apiClient.updateSARDetails(sarData.id, payload);
+
     runInAction(() => {
       Object.assign(sarData, payload);
+      this.markFieldAsEditedLocally("offenderAssessment");
+    });
+
+    const updates: Partial<MutableSARAttributes> = {
+      ...payload,
+      status: this.statusForUpdate,
+    };
+    if (this.metadata) {
+      updates.metadata = this.metadata as SARMetadata;
+    }
+
+    await this.sentencingStore.apiClient.updateSARDetails(sarData.id, updates);
+
+    runInAction(() => {
+      this.updateLocalStatus(this.statusForUpdate);
     });
   }
 
@@ -1361,6 +1386,10 @@ export class SARDetailsPresenter implements Hydratable {
           section === "priorTreatmentHistory"
             ? { edited: true }
             : currentSections?.priorTreatmentHistory,
+        offenderAssessment:
+          section === "offenderAssessment"
+            ? { edited: true }
+            : currentSections?.offenderAssessment,
       },
     };
 
@@ -1431,6 +1460,7 @@ export class SARDetailsPresenter implements Hydratable {
                 skipped: false,
               },
         priorTreatmentHistory: currentSections?.priorTreatmentHistory,
+        offenderAssessment: currentSections?.offenderAssessment,
       },
     };
 
@@ -1813,11 +1843,15 @@ export class SARDetailsPresenter implements Hydratable {
       totalFilledCount === 1 &&
       formFilledCount === 0;
 
+    const isEdited =
+      this.metadata?.sections?.offenderAssessment?.edited === true;
+
     if (!this.SARData?.assessmentDate && !this.defendantDeclinedToParticipate)
       return "incomplete";
     if (totalFilledCount === totalFields) return "complete";
     if (totalFilledCount > 0 && !onlyDefaultCriminalHistory)
       return "incomplete";
+    if (isEdited) return "incomplete";
     return "empty";
   }
 }

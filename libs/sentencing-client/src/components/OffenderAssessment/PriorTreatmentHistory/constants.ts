@@ -67,8 +67,8 @@ export const TREATMENT_PROGRAM_CATEGORY_LABELS: Record<
     plural: "Parenting",
   },
   ReEntry: {
-    singular: "Re-Entry",
-    plural: "Re-Entry",
+    singular: "Reentry",
+    plural: "Reentry",
   },
   SexOffender: {
     singular: "Sex Offender Program",
