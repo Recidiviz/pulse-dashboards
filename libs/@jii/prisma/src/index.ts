@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+// Public entry point for the @jii/prisma package.
 export * from "./client/client";
 export * from "./client/models";
 export * from "./getPrismaClientForStateCode";
