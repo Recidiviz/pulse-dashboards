@@ -68,6 +68,7 @@ import {
   usPaSpecialCircumstancesSupervisionSchema,
   usTnInitialClassification2026Schema,
   usTnReclassification2026Schema,
+  usUtEarlyTerminationSchema,
   workflowsResidentRecordSchema,
 } from "~datatypes";
 
@@ -90,7 +91,6 @@ import { usTxAnnualReportStatusSchema } from "../src/WorkflowsStore/Opportunity/
 import { usTxAnnualReportStatusV2Schema } from "../src/WorkflowsStore/Opportunity/UsTx/UsTxAnnualReportStatusV2Opportunity/UsTxAnnualReportStatusV2OpportunityReferralRecord";
 import { usTxEarlyReleaseFromSupervisionSchema } from "../src/WorkflowsStore/Opportunity/UsTx/UsTxEarlyReleaseFromSupervisionOpportunityReferralRecord";
 import { usTxEarlyReleaseFromSupervisionV2Schema } from "../src/WorkflowsStore/Opportunity/UsTx/UsTxEarlyReleaseFromSupervisionV2OpportunityReferralRecord";
-import { usUtEarlyTerminationSchema } from "../src/WorkflowsStore/Opportunity/UsUt/UsUtEarlyTerminationOpportunity/UsUtEarlyTerminationReferralRecord";
 
 const { FIREBASE_PROJECT, FIREBASE_CREDENTIAL_JSON } = process.env;
 

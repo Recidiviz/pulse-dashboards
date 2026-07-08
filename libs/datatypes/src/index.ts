@@ -157,6 +157,11 @@ export * from "./opportunities/UsPa/UsPaSpecialCircumstancesSupervision/schema";
 // -----------------------------------------------------------------------------
 export * from "./opportunities/UsTn";
 
+// UsUt Exports: Includes fixtures and schema related to US-UT opportunities
+// -----------------------------------------------------------------------------
+export * from "./opportunities/UsUt/UsUtEarlyTermination/fixtures";
+export * from "./opportunities/UsUt/UsUtEarlyTermination/schema";
+
 // Utilities Exports: Common utilities for opportunities
 // -----------------------------------------------------------------------------
 export * from "./opportunities/utils/caseNotesSchema";

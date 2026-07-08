@@ -1,0 +1,182 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for almostEligible2ReportDueAlmostEligible 1`] = `
+{
+  "caseNotes": {
+    "Latest LS/RNR": [
+      {
+        "eventDate": 2021-11-30T00:00:00.000Z,
+        "noteBody": "15 - MODERATE",
+        "noteTitle": "Score",
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "atLeast6MonthsSinceMostRecentPositiveDrugTest": null,
+    "onSupervisionAtLeast6Months": null,
+    "supervisionContinuousEmploymentFor3Months": null,
+    "supervisionHousingIsPermanentFor3Months": null,
+    "usUtNoMedhighSupervisionViolationWithin3Months": null,
+    "usUtNoRiskLevelIncreaseOf15Percent": null,
+    "usUtRiskReductionForEt": null,
+    "usUtSupervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate": null,
+  },
+  "externalId": "UT002",
+  "ineligibleCriteria": {
+    "usUtHasCompletedOrderedAssessments": null,
+  },
+  "isAlmostEligible": true,
+  "isEligible": false,
+  "metadata": {
+    "tabName": "REPORT_DUE_ALMOST_ELIGIBLE",
+  },
+  "stateCode": "US_UT",
+}
+`;
+
+exports[`schema for almostEligible3EarlyRequests 1`] = `
+{
+  "caseNotes": {
+    "Latest LS/RNR": [
+      {
+        "eventDate": 2021-11-30T00:00:00.000Z,
+        "noteBody": "16 - MODERATE",
+        "noteTitle": "Score",
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "atLeast6MonthsSinceMostRecentPositiveDrugTest": null,
+    "onSupervisionAtLeast6Months": null,
+    "supervisionContinuousEmploymentFor3Months": null,
+    "supervisionHousingIsPermanentFor3Months": null,
+    "usUtHasCompletedOrderedAssessments": null,
+    "usUtNoMedhighSupervisionViolationWithin3Months": null,
+    "usUtNoRiskLevelIncreaseOf15Percent": null,
+    "usUtRiskReductionForEt": null,
+  },
+  "externalId": "UT003",
+  "ineligibleCriteria": {
+    "usUtSupervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate": null,
+  },
+  "isAlmostEligible": true,
+  "isEligible": false,
+  "metadata": {
+    "tabName": "EARLY_REQUESTS",
+  },
+  "stateCode": "US_UT",
+}
+`;
+
+exports[`schema for almostEligible5ReportDueIneligible 1`] = `
+{
+  "caseNotes": {
+    "Latest LS/RNR": [
+      {
+        "eventDate": 2021-11-30T00:00:00.000Z,
+        "noteBody": "16 - MODERATE",
+        "noteTitle": "Score",
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "onSupervisionAtLeast6Months": null,
+    "supervisionHousingIsPermanentFor3Months": null,
+    "usUtHasCompletedOrderedAssessments": null,
+    "usUtNoMedhighSupervisionViolationWithin3Months": null,
+    "usUtNoRiskLevelIncreaseOf15Percent": null,
+    "usUtRiskReductionForEt": null,
+    "usUtSupervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate": null,
+  },
+  "externalId": "UT005",
+  "ineligibleCriteria": {
+    "atLeast6MonthsSinceMostRecentPositiveDrugTest": null,
+    "onSupervisionAtLeast6Months": null,
+    "supervisionContinuousEmploymentFor3Months": null,
+  },
+  "isAlmostEligible": true,
+  "isEligible": false,
+  "metadata": {
+    "tabName": "REPORT_DUE_INELIGIBLE",
+  },
+  "stateCode": "US_UT",
+}
+`;
+
+exports[`schema for eligible1ReportDueEligible 1`] = `
+{
+  "caseNotes": {
+    "Accomplishments (in the past year)": [
+      {
+        "eventDate": 2021-10-08T00:00:00.000Z,
+        "noteBody": "By having achieved maximum earned compliance credits.",
+        "noteTitle": "CONDITIONS",
+      },
+      {
+        "eventDate": 2021-10-08T00:00:00.000Z,
+        "noteBody": "By having completed all special & standard conditions of probation/parole.",
+        "noteTitle": "CONDITIONS",
+      },
+    ],
+    "Latest LS/RNR": [
+      {
+        "eventDate": 2021-11-30T00:00:00.000Z,
+        "noteBody": "8 - LOW",
+        "noteTitle": "Score",
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "atLeast6MonthsSinceMostRecentPositiveDrugTest": null,
+    "onSupervisionAtLeast6Months": null,
+    "supervisionContinuousEmploymentFor3Months": null,
+    "supervisionHousingIsPermanentFor3Months": null,
+    "usUtHasCompletedOrderedAssessments": null,
+    "usUtNoMedhighSupervisionViolationWithin3Months": null,
+    "usUtNoRiskLevelIncreaseOf15Percent": null,
+    "usUtRiskReductionForEt": null,
+    "usUtSupervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate": null,
+  },
+  "externalId": "UT001",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {
+    "tabName": "REPORT_DUE_ELIGIBLE",
+  },
+  "stateCode": "US_UT",
+}
+`;
+
+exports[`schema for eligible4ReportSubmitted 1`] = `
+{
+  "caseNotes": {
+    "Latest LS/RNR": [
+      {
+        "eventDate": 2021-11-30T00:00:00.000Z,
+        "noteBody": "16 - MODERATE",
+        "noteTitle": "Score",
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "atLeast6MonthsSinceMostRecentPositiveDrugTest": null,
+    "onSupervisionAtLeast6Months": null,
+    "supervisionContinuousEmploymentFor3Months": null,
+    "supervisionHousingIsPermanentFor3Months": null,
+    "usUtHasCompletedOrderedAssessments": null,
+    "usUtNoMedhighSupervisionViolationWithin3Months": null,
+    "usUtNoRiskLevelIncreaseOf15Percent": null,
+    "usUtRiskReductionForEt": null,
+    "usUtSupervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate": null,
+  },
+  "externalId": "UT004",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {
+    "tabName": "REPORT_SUBMITTED",
+  },
+  "stateCode": "US_UT",
+}
+`;

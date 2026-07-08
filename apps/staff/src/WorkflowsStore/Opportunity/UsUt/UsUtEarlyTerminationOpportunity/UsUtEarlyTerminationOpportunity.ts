@@ -17,18 +17,19 @@
 
 import { DocumentData } from "firebase/firestore";
 
+import {
+  UsUtEarlyTerminationRecord,
+  usUtEarlyTerminationSchema,
+} from "~datatypes";
+
 import { OPPORTUNITY_STATUS_COLORS } from "../../../../core/utils/workflowsUtils";
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityTab } from "../../types";
-import {
-  UsUtEarlyTerminationReferralRecord,
-  usUtEarlyTerminationSchema,
-} from "./UsUtEarlyTerminationReferralRecord";
 
 export class UsUtEarlyTerminationOpportunity extends OpportunityBase<
   Client,
-  UsUtEarlyTerminationReferralRecord
+  UsUtEarlyTerminationRecord["output"]
 > {
   constructor(client: Client, record: DocumentData) {
     super(

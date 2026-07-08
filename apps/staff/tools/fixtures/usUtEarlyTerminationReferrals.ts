@@ -15,10 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsUtEarlyTerminationReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsUt";
+import { UsUtEarlyTerminationRecord } from "~datatypes";
+
 import { externalIdFunc, FirestoreFixture } from "./utils";
 
-const data: UsUtEarlyTerminationReferralRecordRaw[] = [
+const data: UsUtEarlyTerminationRecord["input"][] = [
   {
     stateCode: "US_UT",
     externalId: "UT001",
@@ -240,8 +241,9 @@ const data: UsUtEarlyTerminationReferralRecordRaw[] = [
   },
 ];
 
-export const usUtEarlyTerminationReferrals: FirestoreFixture<UsUtEarlyTerminationReferralRecordRaw> =
-  {
-    data,
-    idFunc: externalIdFunc,
-  };
+export const usUtEarlyTerminationReferrals: FirestoreFixture<
+  UsUtEarlyTerminationRecord["input"]
+> = {
+  data,
+  idFunc: externalIdFunc,
+};
