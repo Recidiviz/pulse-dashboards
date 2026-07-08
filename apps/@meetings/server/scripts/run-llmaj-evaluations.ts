@@ -233,7 +233,6 @@ function buildEvaluatorInputs(
     bestTranscript,
     caseNote: draftingOutput.caseNote,
     actionItems: verificationOutput.actionItems,
-    criticalUpdates: verificationOutput.criticalUpdates,
     meetingContext,
   };
 }
@@ -471,9 +470,6 @@ async function evaluateForStateCode(
           scores.actionItems
             ? `actions=${colorGrade(scores.actionItems.grade)}`
             : `actions=${colorGrade("ERR")}`,
-          scores.criticalUpdates
-            ? `updates=${colorGrade(scores.criticalUpdates.grade)}`
-            : `updates=${colorGrade("ERR")}`,
           scores.overall
             ? `overall=${colorGrade(scores.overall.grade)}`
             : `overall=${colorGrade("ERR")}`,

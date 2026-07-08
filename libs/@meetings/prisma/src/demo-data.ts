@@ -19,16 +19,14 @@
  * Hand-authored demo data for the Meetings module (US_DEMO).
  *
  * Each person below carries a real transcript and the downstream notetaking
- * output (case note, action items, critical updates, meeting minutes, staff
- * feedback) authored to match the current production prompts in
- * `~@meetings/tasks/llm/prompts`. The output is committed as a static fixture
- * so the demo seed stays deterministic and needs no LLM keys at deploy time.
+ * output (case note, action items, staff feedback) authored to match the
+ * current production prompts in `~@meetings/tasks/llm/prompts`. The output is
+ * committed as a static fixture so the demo seed stays deterministic and needs
+ * no LLM keys at deploy time.
  *
  * Shapes mirror what the live pipeline persists in `routes.ts`:
  * - actionItems            -> string[] of each item's task
  * - structuredActionItems  -> { task, assignee, deadline, context, evidenceQuotes }
- * - criticalUpdates        -> "Category - UpdateType: details"
- * - meetingSummary         -> MinuteSection[]
  * - staffFeedback          -> { whatYouDidWell, growthOpportunities }
  */
 
@@ -38,32 +36,6 @@ export type DemoActionItem = {
   deadline?: string | null;
   context?: string | null;
   evidenceQuotes?: string[];
-};
-
-export type DemoCriticalUpdate = {
-  category:
-    | "Housing"
-    | "Employment"
-    | "Legal"
-    | "Substance"
-    | "Family"
-    | "Health"
-    | "Education"
-    | "Other";
-  updateType: "New" | "Change" | "Stable/Status Quo";
-  details: string;
-};
-
-export type DemoMinuteItem = {
-  timestamp?: string;
-  content: string;
-  status?: "Discussed" | "Completed" | "Assigned";
-  subItems?: DemoMinuteItem[];
-};
-
-export type DemoMinuteSection = {
-  title: string;
-  items: DemoMinuteItem[];
 };
 
 export type DemoStaffFeedback = {
@@ -84,8 +56,6 @@ export type DemoPerson = {
   transcript: string;
   caseNote: string;
   actionItems: DemoActionItem[];
-  criticalUpdates: DemoCriticalUpdate[];
-  meetingSummary: DemoMinuteSection[];
   staffFeedback: DemoStaffFeedback;
 };
 
@@ -177,77 +147,6 @@ BARRIERS: Client has no remaining minutes on her Safelink phone; officer authori
         evidenceQuotes: ["I'll print out the list of three places."],
       },
     ],
-    criticalUpdates: [
-      {
-        category: "Housing",
-        updateType: "New",
-        details:
-          "Staying at an emergency shelter she describes as unsafe (theft of personal items) and disruptive to sleep. Public housing waitlist quoted at ~1 year; pivoting to women's sober-living/transitional housing.",
-      },
-      {
-        category: "Other",
-        updateType: "Stable/Status Quo",
-        details:
-          "No remaining minutes on her Safelink phone, limiting her ability to make calls.",
-      },
-    ],
-    meetingSummary: [
-      {
-        title: "Check-In",
-        items: [
-          {
-            timestamp: "[00:30]",
-            content: "Client reports poor sleep and theft at the shelter.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Discussion Log",
-        items: [
-          {
-            timestamp: "[03:00]",
-            content: "Housing options",
-            status: "Discussed",
-            subItems: [
-              {
-                content:
-                  "Confirmed she went to the housing office Tuesday; public housing waitlist ~1 year.",
-              },
-              {
-                content:
-                  "Officer recommended sober-living/transitional housing as a faster path.",
-              },
-            ],
-          },
-          {
-            timestamp: "[08:00]",
-            content:
-              "Client priorities: a lockable space of her own and a kitchen to cook her own meals.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Logistics & Plan",
-        items: [
-          {
-            content:
-              "Staff: Authorized use of the lobby phone for intake calls.",
-            status: "Completed",
-          },
-          {
-            content: "Staff: Print list of three housing options.",
-            status: "Assigned",
-          },
-          {
-            content:
-              "Client: Call all three houses today to request an intake interview.",
-            status: "Assigned",
-          },
-        ],
-      },
-    ],
     staffFeedback: {
       whatYouDidWell: [
         "When Alta resisted sharing a room, the officer connected the move to what she actually cared about, a real bed and a kitchen to cook her own meals, and she agreed.",
@@ -309,86 +208,6 @@ EMPLOYMENT: Client is working ~30 hours/week at a diner. She raised concerns abo
         ],
       },
     ],
-    criticalUpdates: [
-      {
-        category: "Substance",
-        updateType: "Change",
-        details:
-          "14 days sober, received a chip at Sunday's meeting. Attends meetings but has no sponsor yet. Reports night-time loneliness as her primary relapse trigger.",
-      },
-      {
-        category: "Family",
-        updateType: "New",
-        details:
-          "Had a two-hour supervised visit with her children (incl. a 4-year-old) at the park on Saturday via her mother. Reunification is her goal; mother says she needs larger housing first.",
-      },
-      {
-        category: "Employment",
-        updateType: "Stable/Status Quo",
-        details:
-          "Working ~30 hrs/week at a diner. Concerns about a 5 AM shift (six-block walk in the dark, safety) and low take-home pay after child-support withholding.",
-      },
-    ],
-    meetingSummary: [
-      {
-        title: "Check-In",
-        items: [
-          {
-            timestamp: "[00:30]",
-            content: "Client reports 14 days sober; received her chip Sunday.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Discussion Log",
-        items: [
-          {
-            timestamp: "[02:00]",
-            content: "Recovery meetings",
-            status: "Discussed",
-            subItems: [
-              {
-                content:
-                  "Likes the facilitator; has not asked for a sponsor due to shyness.",
-              },
-            ],
-          },
-          {
-            timestamp: "[06:00]",
-            content:
-              "Family — supervised visit with children was emotionally difficult.",
-            status: "Discussed",
-          },
-          {
-            timestamp: "[12:00]",
-            content:
-              "Employment — diner job, early-shift safety and low pay concerns.",
-            status: "Discussed",
-          },
-          {
-            timestamp: "[18:00]",
-            content:
-              "Relapse triggers — loneliness at night identified as highest-risk time.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Logistics & Plan",
-        items: [
-          {
-            content: "Client: Ask the facilitator about a sponsor this week.",
-            status: "Assigned",
-          },
-          {
-            content:
-              "Plan reaffirmed: sobriety, then employment stability, then housing.",
-            status: "Discussed",
-          },
-        ],
-      },
-    ],
     staffFeedback: {
       whatYouDidWell: [
         "When Christiana said she gets lonely at night and wants to use, the officer linked that exact moment to why a sponsor matters, someone to call at 9 PM, instead of giving a generic warning.",
@@ -432,59 +251,6 @@ LEGAL/FINANCIAL: Client committed to making his $50 restitution payment on Frida
           "about that $50 restitution payment, can you make that this week?",
           "I can do it Friday.",
           "Make sure you get a receipt from the clerk's office.",
-        ],
-      },
-    ],
-    criticalUpdates: [
-      {
-        category: "Employment",
-        updateType: "Stable/Status Quo",
-        details:
-          "Working the graveyard shift at City Car Wash; pay stub shows 40 hours plus 5 hours overtime last week.",
-      },
-      {
-        category: "Legal",
-        updateType: "Stable/Status Quo",
-        details:
-          "On track with restitution; $50 payment planned for Friday. Balancing repayment of a ~$100 personal debt to his mother.",
-      },
-    ],
-    meetingSummary: [
-      {
-        title: "Check-In",
-        items: [
-          {
-            timestamp: "[00:30]",
-            content: "Client arrived directly from his graveyard shift.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Discussion Log",
-        items: [
-          {
-            timestamp: "[01:30]",
-            content:
-              "Employment verification — submitted pay stub (40 hrs + 5 hrs OT).",
-            status: "Completed",
-          },
-          {
-            timestamp: "[04:00]",
-            content: "Restitution — confirmed plan to pay $50 on Friday.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Logistics & Plan",
-        items: [
-          {
-            content:
-              "Client: Pay $50 restitution Friday and bring receipt to next visit.",
-            status: "Assigned",
-          },
-          { content: "Next contact in two weeks.", status: "Discussed" },
         ],
       },
     ],
@@ -557,90 +323,6 @@ STABILITY: Client reports staying home, helping his mother, and avoiding night-t
         ],
       },
     ],
-    criticalUpdates: [
-      {
-        category: "Legal",
-        updateType: "New",
-        details:
-          "DMV license hold originating from Ohio is preventing licensure. Client cannot legally drive; counseled on consequences of driving on a suspended license.",
-      },
-      {
-        category: "Family",
-        updateType: "New",
-        details:
-          "Primary caregiver for his mother, who has a serious cardiac condition and needs transport to appointments three times per week.",
-      },
-      {
-        category: "Health",
-        updateType: "New",
-        details:
-          "Mother's heart condition and dizziness make the two-hour bus trip unworkable; pursuing insurance medical transport.",
-      },
-    ],
-    meetingSummary: [
-      {
-        title: "Check-In",
-        items: [
-          {
-            timestamp: "[00:30]",
-            content:
-              "Client presented visibly stressed; disclosed caregiving strain.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Discussion Log",
-        items: [
-          {
-            timestamp: "[02:00]",
-            content: "Transportation barrier",
-            status: "Discussed",
-            subItems: [
-              {
-                content:
-                  "Ohio DMV hold prevents licensure; client cannot drive.",
-              },
-              {
-                content:
-                  "Officer firmly reiterated the driving prohibition and its consequences.",
-              },
-            ],
-          },
-          {
-            timestamp: "[14:00]",
-            content:
-              "Medical transport alternative identified through mother's insurance.",
-            status: "Discussed",
-          },
-          {
-            timestamp: "[24:00]",
-            content:
-              "Compliance check — client reports staying home, no negative contacts.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Logistics & Plan",
-        items: [
-          {
-            content: "Staff: Look up the basis of the Ohio license hold.",
-            status: "Assigned",
-          },
-          {
-            content:
-              "Staff: Help client find the insurance medical-transport number before he leaves.",
-            status: "Assigned",
-          },
-          {
-            content:
-              "Client: Call insurance to schedule a medical van for his mother.",
-            status: "Assigned",
-          },
-        ],
-      },
-    ],
     staffFeedback: {
       whatYouDidWell: [
         "When Grady said he was tempted to just drive his mom, the officer was direct about the consequence of going back to jail, which is appropriate for a clear compliance risk.",
@@ -691,54 +373,6 @@ SUBSTANCE USE / COMPLIANCE: Client missed his scheduled UA on Monday. He denied 
         ],
       },
     ],
-    criticalUpdates: [
-      {
-        category: "Substance",
-        updateType: "New",
-        details:
-          "Missed scheduled UA on Monday (attributed to a dead phone). Denies use; sent for an immediate makeup test. Warned that another miss results in a write-up.",
-      },
-    ],
-    meetingSummary: [
-      {
-        title: "Check-In",
-        items: [
-          {
-            timestamp: "[00:10]",
-            content: "Officer opened with the missed Monday drug test.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Discussion Log",
-        items: [
-          {
-            timestamp: "[00:40]",
-            content:
-              "Client's explanation — dead phone, lost track of the day; reports new charger and alarms set.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Logistics & Plan",
-        items: [
-          {
-            content: "Client: Report to the lab immediately for a makeup UA.",
-            status: "Assigned",
-          },
-          {
-            content: "Client: Post testing schedule on the fridge.",
-            status: "Assigned",
-          },
-          {
-            content: "Staff: Review results tomorrow; next miss = write-up.",
-            status: "Assigned",
-          },
-        ],
-      },
-    ],
     staffFeedback: {
       whatYouDidWell: [
         "The officer set a clear, firm expectation for the missed test and an immediate makeup, which is the appropriate response to a compliance violation.",
@@ -781,68 +415,6 @@ BASIC NEEDS: Client confirmed she received her food stamps and reported no need 
         evidenceQuotes: [
           "Every morning with my coffee.",
           "Every two weeks. The doctor is nice.",
-        ],
-      },
-    ],
-    criticalUpdates: [
-      {
-        category: "Health",
-        updateType: "Change",
-        details:
-          "New medication is improving symptom control and emotional regulation (side effect: morning drowsiness). Adherent daily; attending clinic every two weeks. Using a window garden as a coping strategy.",
-      },
-      {
-        category: "Other",
-        updateType: "Stable/Status Quo",
-        details:
-          "Received food stamps; no additional resource needs this month.",
-      },
-    ],
-    meetingSummary: [
-      {
-        title: "Check-In",
-        items: [
-          {
-            timestamp: "[00:30]",
-            content: "Client presented noticeably calmer than prior visits.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Discussion Log",
-        items: [
-          {
-            timestamp: "[01:00]",
-            content: "Mental health",
-            status: "Discussed",
-            subItems: [
-              {
-                content:
-                  "New medication reduced symptoms; taken daily with morning drowsiness.",
-              },
-              {
-                content:
-                  "Attending clinic every two weeks; started a window garden as coping.",
-              },
-            ],
-          },
-          {
-            timestamp: "[11:00]",
-            content: "Basic needs — food stamps received; no additional needs.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Logistics & Plan",
-        items: [
-          {
-            content:
-              "Client: Continue daily medication and biweekly appointments.",
-            status: "Assigned",
-          },
-          { content: "Next contact next month.", status: "Discussed" },
         ],
       },
     ],
@@ -903,84 +475,6 @@ EMPLOYMENT: Client is employed cleaning downtown offices on a night schedule, wh
         evidenceQuotes: ["I'll make a note that you were just a witness."],
       },
     ],
-    criticalUpdates: [
-      {
-        category: "Legal",
-        updateType: "New",
-        details:
-          "Witness to a neighbor's arrest at her building Saturday. Police questioned her; not the reporting party and not named. No client legal exposure.",
-      },
-      {
-        category: "Housing",
-        updateType: "New",
-        details:
-          'Fears retaliation from an arrested neighbor (Apt 3B) who called her a "snitch." Landlord notified but unresponsive. Relocation discussed as a contingency.',
-      },
-      {
-        category: "Employment",
-        updateType: "Stable/Status Quo",
-        details:
-          "Employed cleaning downtown offices on a night schedule; finds it low-stress.",
-      },
-    ],
-    meetingSummary: [
-      {
-        title: "Check-In",
-        items: [
-          {
-            timestamp: "[00:30]",
-            content:
-              "Officer opened on the reported disturbance at the client's building.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Discussion Log",
-        items: [
-          {
-            timestamp: "[01:00]",
-            content: "Neighbor incident",
-            status: "Discussed",
-            subItems: [
-              {
-                content:
-                  "Neighbor in 3B arrested Saturday; client questioned as a witness only.",
-              },
-              {
-                content:
-                  'Neighbor called her a "snitch"; she fears retaliation.',
-              },
-            ],
-          },
-          {
-            timestamp: "[10:00]",
-            content:
-              "Safety planning — keep door locked, avoid contact, report if unsafe; relocation as contingency.",
-            status: "Discussed",
-          },
-          {
-            timestamp: "[16:00]",
-            content: "Employment — stable night cleaning job.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Logistics & Plan",
-        items: [
-          {
-            content: "Staff: Note client's witness-only status.",
-            status: "Assigned",
-          },
-          {
-            content: "Client: Report immediately if she feels unsafe.",
-            status: "Assigned",
-          },
-          { content: "Next contact in two weeks.", status: "Discussed" },
-        ],
-      },
-    ],
     staffFeedback: {
       whatYouDidWell: [
         'The officer affirmed Joan for reporting the incident ("You did the right thing by telling me"), which reinforces that being honest with him is safe.',
@@ -1036,60 +530,6 @@ EMPLOYMENT: Client submitted three job applications yesterday (grocery store, au
         evidenceQuotes: ["I got a new number. It's 555-0199. Write that down."],
       },
     ],
-    criticalUpdates: [
-      {
-        category: "Housing",
-        updateType: "Stable/Status Quo",
-        details:
-          "Living with his uncle under a no-visitors rule; reports complying and avoiding friends who use substances.",
-      },
-      {
-        category: "Employment",
-        updateType: "New",
-        details:
-          "Submitted three job applications (grocery store, auto-parts store); awaiting responses.",
-      },
-    ],
-    meetingSummary: [
-      {
-        title: "Check-In",
-        items: [
-          {
-            timestamp: "[00:20]",
-            content: "Confirmed phone situation resolved; new number provided.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Discussion Log",
-        items: [
-          {
-            timestamp: "[01:30]",
-            content: "Housing — stable at uncle's; following no-visitors rule.",
-            status: "Discussed",
-          },
-          {
-            timestamp: "[04:00]",
-            content: "Employment — three applications submitted yesterday.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Logistics & Plan",
-        items: [
-          {
-            content: "Staff: Update contact number to 555-0199.",
-            status: "Assigned",
-          },
-          {
-            content: "Client: Follow up on applications tomorrow.",
-            status: "Assigned",
-          },
-        ],
-      },
-    ],
     staffFeedback: {
       whatYouDidWell: [
         "When Lenny described his uncle's no-visitors rule, the officer affirmed it as fair and checked whether he was keeping to it, reinforcing the boundary without nagging.",
@@ -1143,65 +583,6 @@ EMPLOYMENT (GOAL): Client is motivated by a conditional hospital job (laundry/cl
           "Follow-up to verify the client followed through on attendance.",
         evidenceQuotes: [
           "I'll call the teacher on Friday to see if you showed up.",
-        ],
-      },
-    ],
-    criticalUpdates: [
-      {
-        category: "Education",
-        updateType: "Change",
-        details:
-          "Enrolled in GED classes; struggling with math (fractions) and missed one class out of frustration/avoidance. Teacher providing extra materials. Re-committed to attendance.",
-      },
-      {
-        category: "Employment",
-        updateType: "Stable/Status Quo",
-        details:
-          "Conditional hospital job (laundry/cleaning, $18/hr) available upon earning his GED; strong motivator.",
-      },
-    ],
-    meetingSummary: [
-      {
-        title: "Check-In",
-        items: [
-          {
-            timestamp: "[00:30]",
-            content: "Officer raised the missed GED class on Thursday.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Discussion Log",
-        items: [
-          {
-            timestamp: "[01:00]",
-            content: "Education barrier",
-            status: "Discussed",
-            subItems: [
-              { content: "Struggling with fractions; feels discouraged." },
-              { content: "Avoided class because homework wasn't done." },
-            ],
-          },
-          {
-            timestamp: "[08:00]",
-            content:
-              "Motivation — $18/hr hospital job contingent on GED; client wants a car.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Logistics & Plan",
-        items: [
-          {
-            content: "Client: Attend next class; ask for help with fractions.",
-            status: "Assigned",
-          },
-          {
-            content: "Staff: Call the teacher Friday to confirm attendance.",
-            status: "Assigned",
-          },
         ],
       },
     ],
@@ -1299,121 +680,6 @@ MENTAL HEALTH / SUPPORT: Client disclosed loneliness as a relapse risk. Protecti
         ],
       },
     ],
-    criticalUpdates: [
-      {
-        category: "Housing",
-        updateType: "New",
-        details:
-          "Secured first independent studio apartment six months post-release; lease in hand. Minimal furnishings (air mattress, folding chair). Home visit scheduled Thursday 2:00 PM.",
-      },
-      {
-        category: "Employment",
-        updateType: "Stable/Status Quo",
-        details:
-          "Employed at a laundry, $14/hr (~$420/week take-home). Rent is $900/month, leaving a very tight budget.",
-      },
-      {
-        category: "Legal",
-        updateType: "New",
-        details:
-          'Contact with a former associate ("T-Bone") who was drinking and invited her over; she declined, withheld her address, and left. Lives near former-associate "hot spots."',
-      },
-      {
-        category: "Family",
-        updateType: "Stable/Status Quo",
-        details:
-          'Mother providing supplemental food (canned goods, toiletries). Sister, mother, and sponsor identified as a support "Safe List."',
-      },
-      {
-        category: "Health",
-        updateType: "New",
-        details:
-          "Reports loneliness/isolation in the new apartment as a relapse risk; protective planning (church, Safe List) in place.",
-      },
-    ],
-    meetingSummary: [
-      {
-        title: "Check-In",
-        items: [
-          {
-            timestamp: "[00:30]",
-            content:
-              "Celebrated a major milestone: client's first independent apartment.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Discussion Log",
-        items: [
-          {
-            timestamp: "[03:00]",
-            content: "Budget walkthrough",
-            status: "Discussed",
-            subItems: [
-              {
-                content:
-                  "$14/hr (~$420/wk) vs. $900/mo rent; very tight margin.",
-              },
-              {
-                content:
-                  "SNAP reduced to $40/mo; family providing food support.",
-              },
-              {
-                content:
-                  "Client anxious about managing bill due dates for the first time.",
-              },
-            ],
-          },
-          {
-            timestamp: "[18:00]",
-            content: "Neighborhood risk",
-            status: "Discussed",
-            subItems: [
-              {
-                content:
-                  'Recent contact with "T-Bone"; client declined and withheld her address.',
-              },
-              {
-                content:
-                  "Officer recommended an alternate bus stop to avoid hot spots.",
-              },
-            ],
-          },
-          {
-            timestamp: "[30:00]",
-            content: "Isolation & support",
-            status: "Discussed",
-            subItems: [
-              { content: "Loneliness flagged as a relapse trigger." },
-              { content: 'Created a "Safe List": sister, mother, sponsor.' },
-            ],
-          },
-        ],
-      },
-      {
-        title: "Logistics & Plan",
-        items: [
-          {
-            content: "Staff: Home visit Thursday 2:00 PM.",
-            status: "Assigned",
-          },
-          {
-            content: "Client: Have lease ready to scan at the visit.",
-            status: "Assigned",
-          },
-          {
-            content: "Client: Attend 4th Street church on Sunday.",
-            status: "Assigned",
-          },
-          {
-            content:
-              "Client: Use the Safe List before contacting former associates.",
-            status: "Assigned",
-          },
-        ],
-      },
-    ],
     staffFeedback: {
       whatYouDidWell: [
         "When Pattie described declining T-Bone's invitation and protecting her address, the officer named it as exactly the right call, reinforcing a decision she made under real pressure.",
@@ -1483,87 +749,6 @@ PROGRAMMING: The resident is attending the Money Management class weekly and rep
         ],
       },
     ],
-    criticalUpdates: [
-      {
-        category: "Housing",
-        updateType: "Change",
-        details:
-          "Planned post-release housing with her sister fell through (landlord prohibits felons). No alternative placement; ~60 days to release. Pursuing Oxford House.",
-      },
-      {
-        category: "Substance",
-        updateType: "New",
-        details:
-          "Identified homelessness as a relapse trigger; states she would likely use again if she became homeless. Reinforces urgency of stable placement.",
-      },
-      {
-        category: "Family",
-        updateType: "Change",
-        details:
-          "Sister withdrew her housing offer, citing her landlord and the safety of her children.",
-      },
-    ],
-    meetingSummary: [
-      {
-        title: "Check-In",
-        items: [
-          {
-            timestamp: "[00:30]",
-            content:
-              "Resident disclosed her sister's housing offer fell through.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Discussion Log",
-        items: [
-          {
-            timestamp: "[02:00]",
-            content: "Reentry housing",
-            status: "Discussed",
-            subItems: [
-              {
-                content:
-                  "No alternative placement; explored halfway house / Oxford House.",
-              },
-              {
-                content:
-                  "Sobriety and meeting attendance are placement conditions.",
-              },
-            ],
-          },
-          {
-            timestamp: "[14:00]",
-            content: "Relapse risk — resident named homelessness as a trigger.",
-            status: "Discussed",
-          },
-          {
-            timestamp: "[18:00]",
-            content:
-              "Programming — attending Money Management weekly; saving $5/week.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Logistics & Plan",
-        items: [
-          {
-            content: "Staff: Submit Oxford House application today.",
-            status: "Assigned",
-          },
-          {
-            content: "Staff: Apply gate money toward first week of placement.",
-            status: "Discussed",
-          },
-          {
-            content: "Client: Continue and complete Money Management class.",
-            status: "Assigned",
-          },
-        ],
-      },
-    ],
     staffFeedback: {
       whatYouDidWell: [
         'When Aisha admitted she\'d likely use again if homeless, the case manager affirmed her honesty ("Recognizing that is the first step") instead of reacting to the risk, which kept her open.',
@@ -1619,75 +804,6 @@ LEGAL / SENTENCE: Completion qualifies the resident for approximately five days 
         evidenceQuotes: [
           "I'll check the list. If not, maybe the carpentry class.",
           "Check the painting one first.",
-        ],
-      },
-    ],
-    criticalUpdates: [
-      {
-        category: "Education",
-        updateType: "Change",
-        details:
-          "Completed auto-shop certificate (top performer on brakes). Interested in a follow-on auto-painting or carpentry class.",
-      },
-      {
-        category: "Legal",
-        updateType: "New",
-        details:
-          "Eligible for ~5 days of earned-time credit from the completed certificate; paperwork being filed with records.",
-      },
-      {
-        category: "Family",
-        updateType: "Stable/Status Quo",
-        details:
-          "Motivated to be released in time for her daughter's 10th birthday on June 12.",
-      },
-    ],
-    meetingSummary: [
-      {
-        title: "Check-In",
-        items: [
-          {
-            timestamp: "[00:20]",
-            content:
-              "Case manager delivered news that the resident passed her auto-shop certification.",
-            status: "Completed",
-          },
-        ],
-      },
-      {
-        title: "Discussion Log",
-        items: [
-          {
-            timestamp: "[02:00]",
-            content:
-              "Earned time — completion qualifies for ~5 days off sentence.",
-            status: "Discussed",
-          },
-          {
-            timestamp: "[06:00]",
-            content:
-              "Resident tied early release to her daughter's June 12 birthday.",
-            status: "Discussed",
-          },
-          {
-            timestamp: "[10:00]",
-            content:
-              "Next vocational step — requested auto-painting class (carpentry backup).",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Logistics & Plan",
-        items: [
-          {
-            content: "Staff: File earned-time paperwork with records today.",
-            status: "Assigned",
-          },
-          {
-            content: "Staff: Check availability of an auto-painting class.",
-            status: "Assigned",
-          },
         ],
       },
     ],
@@ -1755,73 +871,6 @@ CONDUCT: The resident acknowledged conflict with staff (yelling about his pain).
         ],
       },
     ],
-    criticalUpdates: [
-      {
-        category: "Health",
-        updateType: "New",
-        details:
-          "Severe, worsening chronic back pain (prior roofing fall ~10 yrs ago), aggravated by mattress/cold. Reports difficulty walking and sleep loss. Sick call provided only topical cream; requesting X-ray and back brace. Has lower-bunk permit.",
-      },
-      {
-        category: "Legal",
-        updateType: "New",
-        details:
-          'Ongoing friction with staff (yelling about pain); at risk of a "disrespect" disciplinary ticket. Coached to stay calm.',
-      },
-    ],
-    meetingSummary: [
-      {
-        title: "Check-In",
-        items: [
-          {
-            timestamp: "[00:30]",
-            content: "Reviewed the resident's repeat medical grievance.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Discussion Log",
-        items: [
-          {
-            timestamp: "[02:00]",
-            content: "Pain & treatment",
-            status: "Discussed",
-            subItems: [
-              {
-                content: "Severe back pain; sick call gave only topical cream.",
-              },
-              {
-                content:
-                  "Prior roofing injury; aggravated by mattress and cold cell.",
-              },
-              { content: "Resident requested X-ray and back brace." },
-            ],
-          },
-          {
-            timestamp: "[22:00]",
-            content:
-              "Conduct — case manager coached resident to stop yelling at staff.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Logistics & Plan",
-        items: [
-          {
-            content:
-              "Staff: Write to Medical Director re: brace and PT exercises.",
-            status: "Assigned",
-          },
-          {
-            content: "Client: Stay calm; avoid a disrespect ticket.",
-            status: "Assigned",
-          },
-          { content: "Check back next Tuesday.", status: "Discussed" },
-        ],
-      },
-    ],
     staffFeedback: {
       whatYouDidWell: [
         "When Darren said he only yells because no one listens, the case manager modeled the alternative in the moment (\"I'm listening now, and I'm not yelling\"), showing rather than telling.",
@@ -1864,70 +913,6 @@ STABILITY / FAMILY: The resident keeps a low profile (reading, laundry job) and 
         evidenceQuotes: ["you do have to listen."],
       },
     ],
-    criticalUpdates: [
-      {
-        category: "Legal",
-        updateType: "Change",
-        details:
-          "No disciplinary tickets in three months, a notable improvement. Keeping a low profile (reading, laundry job).",
-      },
-      {
-        category: "Health",
-        updateType: "Stable/Status Quo",
-        details:
-          "Using a grounding/counting technique to manage anger; engaged in the anger management group as a listener.",
-      },
-      {
-        category: "Family",
-        updateType: "Stable/Status Quo",
-        details:
-          "Motivated by reuniting with her cats, cared for by a neighbor who sends photos.",
-      },
-    ],
-    meetingSummary: [
-      {
-        title: "Check-In",
-        items: [
-          {
-            timestamp: "[00:20]",
-            content: "Checked in on the resident's anger management group.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Discussion Log",
-        items: [
-          {
-            timestamp: "[01:30]",
-            content:
-              "Coping strategy — resident uses a counting technique to de-escalate.",
-            status: "Discussed",
-          },
-          {
-            timestamp: "[04:00]",
-            content:
-              "Behavior milestone — three months with no disciplinary tickets.",
-            status: "Discussed",
-          },
-          {
-            timestamp: "[07:00]",
-            content: "Motivation — reuniting with her cats.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Logistics & Plan",
-        items: [
-          {
-            content:
-              "Client: Keep attending and listening in anger management group.",
-            status: "Assigned",
-          },
-        ],
-      },
-    ],
     staffFeedback: {
       whatYouDidWell: [
         "The case manager specifically named the three-months-no-tickets milestone, recognizing progress that matters to Helen rather than offering generic praise.",
@@ -1968,69 +953,6 @@ BEHAVIOR: Clean disciplinary record for a full year. The resident expressed stro
         context:
           "Resident is at the top of the waitlist due to a clean one-year record.",
         evidenceQuotes: ["I'll put your name on the final roster today."],
-      },
-    ],
-    criticalUpdates: [
-      {
-        category: "Education",
-        updateType: "New",
-        details:
-          "Accepted into the plumbing vocational program (top of waitlist); cohort starts in ~3 weeks and yields a state certificate. Self-studying math/measurements.",
-      },
-      {
-        category: "Legal",
-        updateType: "Stable/Status Quo",
-        details: "Clean disciplinary record for a full year.",
-      },
-      {
-        category: "Employment",
-        updateType: "Stable/Status Quo",
-        details:
-          "Post-release goal of working as a plumbing apprentice; strong, future-oriented motivation.",
-      },
-    ],
-    meetingSummary: [
-      {
-        title: "Check-In",
-        items: [
-          {
-            timestamp: "[00:20]",
-            content:
-              "Discussed the resident's plumbing program request and motivation.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Discussion Log",
-        items: [
-          {
-            timestamp: "[03:00]",
-            content:
-              "Preparation — resident showed self-study notebook with pipe measurements.",
-            status: "Discussed",
-          },
-          {
-            timestamp: "[08:00]",
-            content:
-              "Eligibility — clean one-year record puts him top of the waitlist; cohort in 3 weeks.",
-            status: "Discussed",
-          },
-          {
-            timestamp: "[14:00]",
-            content: "Goal — state certificate and a future apprenticeship.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Logistics & Plan",
-        items: [
-          {
-            content: "Staff: Add resident to final plumbing roster today.",
-            status: "Assigned",
-          },
-        ],
       },
     ],
     staffFeedback: {
@@ -2080,57 +1002,6 @@ FAMILY: The resident's wife's car broke down (transmission, ~$2,000 repair), pre
         evidenceQuotes: ["she can set it up on her end."],
       },
     ],
-    criticalUpdates: [
-      {
-        category: "Family",
-        updateType: "Change",
-        details:
-          "In-person family visits disrupted by the wife's car breakdown (~$2,000 transmission repair). Pursuing video visiting to maintain contact with his children.",
-      },
-    ],
-    meetingSummary: [
-      {
-        title: "Check-In",
-        items: [
-          {
-            timestamp: "[00:20]",
-            content:
-              "Case manager noted the missed Sunday visit and checked in.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Discussion Log",
-        items: [
-          {
-            timestamp: "[01:00]",
-            content:
-              "Missed visit — wife's car broke down (~$2,000 repair); resident discouraged.",
-            status: "Discussed",
-          },
-          {
-            timestamp: "[05:00]",
-            content:
-              "Alternative — introduced $5 video visiting to maintain family contact.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Logistics & Plan",
-        items: [
-          {
-            content: "Staff: Provide video-visiting instructions to mail home.",
-            status: "Assigned",
-          },
-          {
-            content: "Third Party: Wife to set up the app on her phone.",
-            status: "Assigned",
-          },
-        ],
-      },
-    ],
     staffFeedback: {
       whatYouDidWell: [
         "When Kenny described his kids dressed up for a visit that didn't happen, the case manager responded to the loss and then offered a workable fix in video visiting.",
@@ -2173,67 +1044,6 @@ FAMILY: The resident is motivated by attending her daughter's graduation in May.
         evidenceQuotes: [
           "I will call the county clerk.",
           "I'll check the records and let you know by Friday.",
-        ],
-      },
-    ],
-    criticalUpdates: [
-      {
-        category: "Legal",
-        updateType: "New",
-        details:
-          "Disputes time-served credit: only 30 of a claimed ~120 county days (Nov–Mar) recorded, affecting her release date (recorded August 12 vs. calculated April). Verification with county clerk pending.",
-      },
-      {
-        category: "Family",
-        updateType: "Stable/Status Quo",
-        details:
-          "Motivated to be released in time for her daughter's graduation in May.",
-      },
-    ],
-    meetingSummary: [
-      {
-        title: "Check-In",
-        items: [
-          {
-            timestamp: "[00:20]",
-            content: "Resident questioned her recorded release date.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Discussion Log",
-        items: [
-          {
-            timestamp: "[01:00]",
-            content: "Time-served discrepancy",
-            status: "Discussed",
-            subItems: [
-              {
-                content:
-                  "Record shows 30 days credit; resident claims ~120 days (Nov–Mar).",
-              },
-              {
-                content:
-                  "Resident reports commissary receipts as supporting evidence.",
-              },
-            ],
-          },
-          {
-            timestamp: "[10:00]",
-            content: "Motivation — daughter's May graduation.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Logistics & Plan",
-        items: [
-          {
-            content:
-              "Staff: Call county clerk to verify credit; respond by Friday.",
-            status: "Assigned",
-          },
         ],
       },
     ],
@@ -2300,73 +1110,6 @@ FINANCIAL: The resident reports ~$20 in her account; the facility fund will cove
         context: "Parole typically requires documented, taxed employment.",
         evidenceQuotes: [
           "We have to make sure your parole officer is okay with that.",
-        ],
-      },
-    ],
-    criticalUpdates: [
-      {
-        category: "Legal",
-        updateType: "New",
-        details:
-          "No birth certificate (lost in a house fire ~3 yrs ago); blocks State ID and lawful employment. Replacement being ordered via facility fund (~1 month).",
-      },
-      {
-        category: "Employment",
-        updateType: "New",
-        details:
-          "Tentative post-release job at uncle's landscaping business ($15/hr cash, first month) pending parole-officer approval of the arrangement.",
-      },
-    ],
-    meetingSummary: [
-      {
-        title: "Check-In",
-        items: [
-          {
-            timestamp: "[00:30]",
-            content: "Opened reentry planning (~90 days to release).",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Discussion Log",
-        items: [
-          {
-            timestamp: "[01:00]",
-            content:
-              "Employment plan — uncle's landscaping ($15/hr cash); needs parole approval.",
-            status: "Discussed",
-          },
-          {
-            timestamp: "[08:00]",
-            content: "ID barrier",
-            status: "Discussed",
-            subItems: [
-              { content: "No birth certificate (lost in house fire)." },
-              {
-                content:
-                  "Blocks State ID and lawful employment; facility fund will cover replacement.",
-              },
-            ],
-          },
-        ],
-      },
-      {
-        title: "Logistics & Plan",
-        items: [
-          {
-            content: "Client: Complete birth-certificate request form.",
-            status: "Assigned",
-          },
-          {
-            content:
-              "Staff: Submit the request to the state via facility fund.",
-            status: "Assigned",
-          },
-          {
-            content: "Staff: Verify uncle's cash job with the parole officer.",
-            status: "Assigned",
-          },
         ],
       },
     ],
@@ -2456,100 +1199,6 @@ FAMILY / EMPLOYMENT (REENTRY): The resident is motivated by his daughter startin
         ],
       },
     ],
-    criticalUpdates: [
-      {
-        category: "Legal",
-        updateType: "New",
-        details:
-          'Yard disciplinary report ("aggressive," "squared up" to another resident) six months before parole board; risks a one-year setback. Case manager seeking downgrade to a warning.',
-      },
-      {
-        category: "Health",
-        updateType: "New",
-        details:
-          "Reports a guard twisted his arm, leaving a visible bruise; declined medical evaluation.",
-      },
-      {
-        category: "Family",
-        updateType: "Stable/Status Quo",
-        details:
-          "Daughter starting school this year; primary motivation for release and good behavior.",
-      },
-      {
-        category: "Employment",
-        updateType: "Stable/Status Quo",
-        details:
-          "Post-release roofing job lined up with his cousin (~$20/hr); to be featured in his parole letter.",
-      },
-    ],
-    meetingSummary: [
-      {
-        title: "Check-In",
-        items: [
-          {
-            timestamp: "[00:30]",
-            content: "Opened with the yard incident report from the prior day.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Discussion Log",
-        items: [
-          {
-            timestamp: "[02:00]",
-            content: "The incident",
-            status: "Discussed",
-            subItems: [
-              {
-                content:
-                  'Resident reacted to insults about his mother; "squared up."',
-              },
-              {
-                content:
-                  "Reports a guard twisted his arm (bruise); declined medical.",
-              },
-            ],
-          },
-          {
-            timestamp: "[18:00]",
-            content: "Parole risk & de-escalation",
-            status: "Discussed",
-            subItems: [
-              {
-                content:
-                  'Reframed antagonist as "bait" trying to cost him his freedom.',
-              },
-              { content: "Anchored coping to his daughter starting school." },
-            ],
-          },
-          {
-            timestamp: "[36:00]",
-            content:
-              "Reentry — roofing job with cousin (~$20/hr); parole letter next week.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Logistics & Plan",
-        items: [
-          {
-            content: "Staff: Ask Sergeant to downgrade ticket to a warning.",
-            status: "Assigned",
-          },
-          {
-            content:
-              "Client: Stay out of the yard two weeks; avoid the resident.",
-            status: "Assigned",
-          },
-          {
-            content: "Client: Start drafting parole letter tonight.",
-            status: "Assigned",
-          },
-        ],
-      },
-    ],
     staffFeedback: {
       whatYouDidWell: [
         'The case manager reframed the other resident as "bait" trying to steal his freedom, which gave Norris a way to see the provocation as a threat to his own goal.',
@@ -2601,68 +1250,6 @@ SUPPORT NEED: The resident reports difficulty with paperwork ("the forms make me
         context: "Card is a prerequisite; release date approaching.",
         evidenceQuotes: [
           "Once this card comes in, we can apply for your State ID.",
-        ],
-      },
-    ],
-    criticalUpdates: [
-      {
-        category: "Legal",
-        updateType: "New",
-        details:
-          "Ordering a replacement Social Security card (prerequisite for a State ID) ahead of release. Prior taxed employment (car wash) confirms he is in the system.",
-      },
-      {
-        category: "Other",
-        updateType: "Stable/Status Quo",
-        details:
-          'Reports difficulty with paperwork ("the forms make me dizzy") and relies on case-manager help. Keeping a low profile.',
-      },
-    ],
-    meetingSummary: [
-      {
-        title: "Check-In",
-        items: [
-          {
-            timestamp: "[00:20]",
-            content:
-              "Case manager presented the Social Security card request form.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Discussion Log",
-        items: [
-          {
-            timestamp: "[01:00]",
-            content: "Resident signed the SS card request form.",
-            status: "Completed",
-          },
-          {
-            timestamp: "[03:00]",
-            content:
-              "Employment history — prior taxed car-wash job confirms he's in the system.",
-            status: "Discussed",
-          },
-          {
-            timestamp: "[06:00]",
-            content:
-              "Path to State ID outlined; documents prepped ahead of release.",
-            status: "Discussed",
-          },
-        ],
-      },
-      {
-        title: "Logistics & Plan",
-        items: [
-          {
-            content: "Staff: Mail the SS card request form today.",
-            status: "Assigned",
-          },
-          {
-            content: "Staff: Apply for State ID once the card arrives.",
-            status: "Assigned",
-          },
         ],
       },
     ],

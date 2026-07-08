@@ -171,45 +171,8 @@ export const EVALUATOR_PROMPTS = {
       Review the action items against the transcript. First, note any fabricated items or missed assignments. Then assign a grade.`,
   },
 
-  CRITICAL_UPDATES: {
-    SYSTEM: dedent`You are a quality reviewer evaluating AI-generated critical updates for case management meetings in the criminal justice system.
-
-      Your task: assess whether the critical updates faithfully and accurately capture what was discussed in the transcript.
-
-      ${GRADING_SCALE_TEXT}
-
-      WHAT TO CHECK:
-      - Coverage — Were significant status updates captured?
-      - Accuracy — Are the facts correct, not exaggerated or softened?
-      - Hallucination — Does the output contain updates not mentioned in the transcript?
-
-      Base your evaluation on the transcript provided. If a KNOWN CONTEXT block is included in the user message, you may treat those facts as ground truth even if they do not appear in the transcript — but do not use any other outside knowledge.
-
-      ADDITIONAL OUTPUTS:
-      Before assigning a grade, also extract:
-      - hallucinations: list each update present in the critical updates output that is not supported by the transcript or known context.
-      - omissions: list each significant update from the transcript that is absent from the critical updates output.`,
-    USER: ({
-      transcript,
-      criticalUpdates,
-      meetingContext,
-    }: {
-      transcript: string;
-      criticalUpdates: string;
-      meetingContext?: MeetingContext;
-    }) =>
-      dedent`${formatMeetingContext(meetingContext)}
-      TRANSCRIPT:
-      ${transcript}
-
-      CRITICAL UPDATES:
-      ${criticalUpdates}
-
-      Review the critical updates against the transcript. First, note any fabricated updates or significant omissions. Then assign a grade.`,
-  },
-
   OVERALL: {
-    SYSTEM: dedent`You are a quality reviewer evaluating the complete AI-generated output for a case management meeting in the criminal justice system. You will see the transcript and all AI outputs together: case note, action items, and critical updates.
+    SYSTEM: dedent`You are a quality reviewer evaluating the complete AI-generated output for a case management meeting in the criminal justice system. You will see the transcript and all AI outputs together: case note and action items.
 
       Your task: assign a holistic grade across all sections, as a human annotator would form an overall impression.
 
@@ -227,13 +190,11 @@ export const EVALUATOR_PROMPTS = {
       transcript,
       caseNote,
       actionItems,
-      criticalUpdates,
       meetingContext,
     }: {
       transcript: string;
       caseNote: string;
       actionItems: string;
-      criticalUpdates: string;
       meetingContext?: MeetingContext;
     }) =>
       dedent`${formatMeetingContext(meetingContext)}
@@ -245,9 +206,6 @@ export const EVALUATOR_PROMPTS = {
 
       ACTION ITEMS:
       ${actionItems}
-
-      CRITICAL UPDATES:
-      ${criticalUpdates}
 
       Review all outputs holistically against the transcript. Note the most significant issues across all sections, then assign an overall grade.`,
   },

@@ -194,8 +194,6 @@ model Meeting {
   caseNote                 String?
   actionItems              Json?
   structuredActionItems    Json?
-  criticalUpdates          Json?
-  meetingSummary           Json?
   /// [StaffFeedback]
   staffFeedback            Json?
   staffFeedbackGeneratedAt DateTime?

@@ -35,7 +35,6 @@ import {
   deleteRecordingFiles,
   getSignedUrlForNewRecording,
   getSignedUrlForRecording,
-  MinuteSectionSchema,
   StaffFeedbackOutputSchema,
 } from "~@meetings/tasks";
 import { auth0Procedure, router } from "~@meetings/trpc/init";
@@ -74,8 +73,6 @@ export const meetingRouter = router({
               caseNote: true,
               userNotepadNotes: true,
               actionItems: true,
-              criticalUpdates: true,
-              meetingSummary: true,
               staffFeedback: true,
               staffFeedbackGeneratedAt: true,
               outputsPipelineRunId: true,
@@ -275,14 +272,6 @@ export const meetingRouter = router({
               evidenceQuotes:
                 item.evidenceQuotes.length > 0 ? item.evidenceQuotes : null,
             })),
-            criticalUpdates:
-              validateJsonField(meeting.criticalUpdates, z.array(z.string())) ||
-              [],
-            meetingSummary:
-              validateJsonField(
-                meeting.meetingSummary,
-                MinuteSectionSchema.array(),
-              ) || [],
             staffFeedback,
             currentOutputVotes: _.isEmpty(currentOutputVotes)
               ? null
@@ -435,13 +424,7 @@ export const meetingRouter = router({
     .input(updateNotesInputSchema)
     .mutation(
       async ({
-        input: {
-          meetingId,
-          userNotepadNotes,
-          actionItems,
-          criticalUpdates,
-          caseNote,
-        },
+        input: { meetingId, userNotepadNotes, actionItems, caseNote },
         ctx: { prisma },
       }) => {
         try {
@@ -458,9 +441,6 @@ export const meetingRouter = router({
               ...(actionItems !== undefined && {
                 actionItems,
                 actionItemsEditedAt: editedAt,
-              }),
-              ...(criticalUpdates !== undefined && {
-                criticalUpdates,
               }),
             },
           });

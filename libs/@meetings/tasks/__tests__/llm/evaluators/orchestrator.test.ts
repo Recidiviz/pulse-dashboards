@@ -55,13 +55,6 @@ const baseInputs: EvaluatorInputs = {
   bestTranscript: "Speaker A: Hello.",
   caseNote: "Officer met with client.",
   actionItems: [{ assignee: "Client", task: "Bring ID" }],
-  criticalUpdates: [
-    {
-      category: "Housing",
-      updateType: "Stable/Status Quo",
-      details: "Unchanged",
-    },
-  ],
 };
 
 const GOOD_TEXT: TextEvaluatorOutput = {
@@ -89,7 +82,6 @@ describe("runAllEvaluators", () => {
     );
     vi.spyOn(agents, "runCaseNote").mockResolvedValue(GOOD_TEXT);
     vi.spyOn(agents, "runActionItems").mockResolvedValue(GOOD_TEXT);
-    vi.spyOn(agents, "runCriticalUpdates").mockResolvedValue(GOOD_TEXT);
     vi.spyOn(agents, "runOverall").mockResolvedValue(GOOD_TEXT);
 
     const { scores } = await runAllEvaluators(mockClients, baseInputs);
@@ -98,7 +90,6 @@ describe("runAllEvaluators", () => {
       transcriptComparison: GOOD_COMPARISON,
       caseNote: GOOD_TEXT,
       actionItems: GOOD_TEXT,
-      criticalUpdates: GOOD_TEXT,
       overall: GOOD_TEXT,
     };
 
@@ -111,7 +102,6 @@ describe("runAllEvaluators", () => {
     );
     vi.spyOn(agents, "runCaseNote").mockResolvedValue(GOOD_TEXT);
     vi.spyOn(agents, "runActionItems").mockResolvedValue(GOOD_TEXT);
-    vi.spyOn(agents, "runCriticalUpdates").mockResolvedValue(GOOD_TEXT);
     vi.spyOn(agents, "runOverall").mockResolvedValue(GOOD_TEXT);
 
     const { scores } = await runAllEvaluators(mockClients, baseInputs);
@@ -119,7 +109,6 @@ describe("runAllEvaluators", () => {
     expect(scores.transcriptComparison).toBeNull();
     expect(scores.caseNote).toEqual(GOOD_TEXT);
     expect(scores.actionItems).toEqual(GOOD_TEXT);
-    expect(scores.criticalUpdates).toEqual(GOOD_TEXT);
     expect(scores.overall).toEqual(GOOD_TEXT);
   });
 
@@ -131,7 +120,6 @@ describe("runAllEvaluators", () => {
       new Error("Gemini timeout"),
     );
     vi.spyOn(agents, "runActionItems").mockResolvedValue(GOOD_TEXT);
-    vi.spyOn(agents, "runCriticalUpdates").mockResolvedValue(GOOD_TEXT);
     vi.spyOn(agents, "runOverall").mockResolvedValue(GOOD_TEXT);
 
     const { scores } = await runAllEvaluators(mockClients, baseInputs);
@@ -147,7 +135,6 @@ describe("runAllEvaluators", () => {
     );
     vi.spyOn(agents, "runCaseNote").mockRejectedValue(new Error("fail"));
     vi.spyOn(agents, "runActionItems").mockRejectedValue(new Error("fail"));
-    vi.spyOn(agents, "runCriticalUpdates").mockRejectedValue(new Error("fail"));
     vi.spyOn(agents, "runOverall").mockRejectedValue(new Error("fail"));
 
     const { scores } = await runAllEvaluators(mockClients, baseInputs);
@@ -156,7 +143,6 @@ describe("runAllEvaluators", () => {
       transcriptComparison: null,
       caseNote: null,
       actionItems: null,
-      criticalUpdates: null,
       overall: null,
     });
   });
@@ -171,9 +157,6 @@ describe("runAllEvaluators", () => {
     const actionItemsSpy = vi
       .spyOn(agents, "runActionItems")
       .mockResolvedValue(GOOD_TEXT);
-    const criticalUpdatesSpy = vi
-      .spyOn(agents, "runCriticalUpdates")
-      .mockResolvedValue(GOOD_TEXT);
     const overallSpy = vi
       .spyOn(agents, "runOverall")
       .mockResolvedValue(GOOD_TEXT);
@@ -182,7 +165,6 @@ describe("runAllEvaluators", () => {
 
     expect(caseNoteSpy).toHaveBeenCalledTimes(1);
     expect(actionItemsSpy).toHaveBeenCalledTimes(1);
-    expect(criticalUpdatesSpy).toHaveBeenCalledTimes(1);
     expect(overallSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -194,7 +176,6 @@ describe("runAllEvaluators", () => {
       .spyOn(agents, "runCaseNote")
       .mockResolvedValue(GOOD_TEXT);
     vi.spyOn(agents, "runActionItems").mockResolvedValue(GOOD_TEXT);
-    vi.spyOn(agents, "runCriticalUpdates").mockResolvedValue(GOOD_TEXT);
     vi.spyOn(agents, "runOverall").mockResolvedValue(GOOD_TEXT);
 
     const clientsWithTimeout: EvaluatorClients = {
@@ -216,7 +197,6 @@ describe("runAllEvaluators", () => {
       .mockResolvedValue(GOOD_COMPARISON);
     vi.spyOn(agents, "runCaseNote").mockResolvedValue(GOOD_TEXT);
     vi.spyOn(agents, "runActionItems").mockResolvedValue(GOOD_TEXT);
-    vi.spyOn(agents, "runCriticalUpdates").mockResolvedValue(GOOD_TEXT);
     vi.spyOn(agents, "runOverall").mockResolvedValue(GOOD_TEXT);
 
     await runAllEvaluators(mockClients, baseInputs);

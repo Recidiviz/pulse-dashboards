@@ -131,36 +131,11 @@ async function runActionItemsInternal(
   });
 }
 
-async function runCriticalUpdatesInternal(
-  gemini: GoogleGenerativeAI,
-  inputs: Pick<
-    EvaluatorInputs,
-    "bestTranscript" | "criticalUpdates" | "meetingContext"
-  >,
-  timeout?: number,
-): Promise<TextEvaluatorOutput> {
-  return generateContentWithZodSchema({
-    client: gemini,
-    systemInstruction: EVALUATOR_PROMPTS.CRITICAL_UPDATES.SYSTEM,
-    parts: EVALUATOR_PROMPTS.CRITICAL_UPDATES.USER({
-      transcript: inputs.bestTranscript,
-      criticalUpdates: JSON.stringify(inputs.criticalUpdates, null, 2),
-      meetingContext: inputs.meetingContext,
-    }),
-    schema: TextEvaluatorOutputSchema,
-    timeout,
-  });
-}
-
 async function runOverallInternal(
   gemini: GoogleGenerativeAI,
   inputs: Pick<
     EvaluatorInputs,
-    | "bestTranscript"
-    | "caseNote"
-    | "actionItems"
-    | "criticalUpdates"
-    | "meetingContext"
+    "bestTranscript" | "caseNote" | "actionItems" | "meetingContext"
   >,
   timeout?: number,
 ): Promise<TextEvaluatorOutput> {
@@ -171,7 +146,6 @@ async function runOverallInternal(
       transcript: inputs.bestTranscript,
       caseNote: inputs.caseNote,
       actionItems: JSON.stringify(inputs.actionItems, null, 2),
-      criticalUpdates: JSON.stringify(inputs.criticalUpdates, null, 2),
       meetingContext: inputs.meetingContext,
     }),
     schema: TextEvaluatorOutputSchema,
@@ -194,11 +168,6 @@ export const runCaseNote = traceable(runCaseNoteInternal, {
 
 export const runActionItems = traceable(runActionItemsInternal, {
   name: "evaluator-action-items",
-  run_type: "chain",
-});
-
-export const runCriticalUpdates = traceable(runCriticalUpdatesInternal, {
-  name: "evaluator-critical-updates",
   run_type: "chain",
 });
 

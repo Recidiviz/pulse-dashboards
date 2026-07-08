@@ -30,11 +30,7 @@ export type {
 
 // LLM schema types for notetaker pipeline
 // eslint-disable-next-line @nx/enforce-module-boundaries
-export type {
-  ActionItem,
-  CriticalUpdate,
-  MinuteSection,
-} from "~@meetings/tasks";
+export type { ActionItem } from "~@meetings/tasks";
 
 // eslint-disable-next-line @nx/enforce-module-boundaries
 export type {

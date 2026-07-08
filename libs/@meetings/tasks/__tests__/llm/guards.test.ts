@@ -25,8 +25,6 @@ import {
   validateCaseNoteLength,
   validateCaseNoteQuality,
   validateExtractionPresence,
-  validateMinutesDetail,
-  validateMinutesQuality,
   validateNoPromptInjection,
   validateNoRoboticTone,
   validateNoTemplateLeaks,
@@ -153,7 +151,6 @@ describe("Guards - Validators", () => {
     test("should pass for case note with sufficient length", () => {
       const drafting = {
         caseNote: "Word ".repeat(200), // 200 words
-        minutes: [],
         staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
@@ -164,7 +161,6 @@ describe("Guards - Validators", () => {
     test("should fail for case note that is too short", () => {
       const drafting = {
         caseNote: "Short note",
-        minutes: [],
         staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
@@ -180,7 +176,6 @@ describe("Guards - Validators", () => {
       const drafting = {
         caseNote:
           "HOUSING: Client reported stable housing situation at current address.\n\nEMPLOYMENT: Currently employed full-time at construction company.",
-        minutes: [],
         staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
@@ -191,7 +186,6 @@ describe("Guards - Validators", () => {
     test("should fail for case note with template leak", () => {
       const drafting = {
         caseNote: "Meeting on [INSERT DATE] discussed housing.",
-        minutes: [],
         staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
@@ -203,7 +197,6 @@ describe("Guards - Validators", () => {
     test("should fail for case note with robotic tone", () => {
       const drafting = {
         caseNote: "Based on the transcript, I cannot provide housing details.",
-        minutes: [],
         staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
@@ -213,205 +206,10 @@ describe("Guards - Validators", () => {
     });
   });
 
-  describe("validateMinutesDetail", () => {
-    test("should pass for minutes with sufficient detail", () => {
-      const drafting = {
-        caseNote: "Some note",
-        minutes: [
-          {
-            title: "Check-In",
-            items: [
-              {
-                content: "Client arrived on time",
-                status: "Discussed" as const,
-                sub_items: [],
-              },
-              {
-                content: "Discussed general wellbeing",
-                status: "Discussed" as const,
-                sub_items: [],
-              },
-            ],
-          },
-          {
-            title: "Discussion",
-            items: [
-              {
-                content: "Housing situation",
-                status: "Discussed" as const,
-                sub_items: [],
-              },
-              {
-                content: "Employment update",
-                status: "Discussed" as const,
-                sub_items: [],
-              },
-              {
-                content: "Next steps",
-                status: "Assigned" as const,
-                sub_items: [],
-              },
-            ],
-          },
-        ],
-        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
-      };
-
-      const result = validateMinutesDetail(drafting);
-      expect(result.valid).toBe(true);
-    });
-
-    test("should pass for minutes with nested sub-items", () => {
-      const drafting = {
-        caseNote: "Some note",
-        minutes: [
-          {
-            title: "Discussion",
-            items: [
-              {
-                content: "Employment",
-                status: "Discussed" as const,
-                sub_items: [
-                  {
-                    content: "Current job details",
-                    status: "Discussed" as const,
-                    sub_items: [],
-                  },
-                  {
-                    content: "Job search activities",
-                    status: "Discussed" as const,
-                    sub_items: [],
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
-      };
-
-      const result = validateMinutesDetail(drafting);
-      expect(result.valid).toBe(true);
-    });
-
-    test("should fail for minutes with no sections", () => {
-      const drafting = {
-        caseNote: "Some note",
-        minutes: [],
-        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
-      };
-
-      const result = validateMinutesDetail(drafting);
-      expect(result.valid).toBe(false);
-      expect(result.errorKind).toBe("Length");
-      expect(result.message).toContain("No meeting sections found");
-    });
-
-    test("should fail for minutes with insufficient detail", () => {
-      const drafting = {
-        caseNote: "Some note",
-        minutes: [
-          {
-            title: "Check-In",
-            items: [
-              {
-                content: "Client arrived",
-                status: "Discussed" as const,
-                sub_items: [],
-              },
-            ],
-          },
-        ],
-        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
-      };
-
-      const result = validateMinutesDetail(drafting);
-      expect(result.valid).toBe(false);
-      expect(result.errorKind).toBe("Length");
-      expect(result.message).toContain("Insufficient detail");
-    });
-  });
-
-  describe("validateMinutesQuality", () => {
-    test("should pass for high quality minutes", () => {
-      const drafting = {
-        caseNote: "Some note",
-        minutes: [
-          {
-            title: "Discussion",
-            items: [
-              {
-                content: "Discussed housing stability",
-                status: "Discussed" as const,
-                sub_items: [],
-              },
-              {
-                content: "Employment progress",
-                status: "Discussed" as const,
-                sub_items: [],
-              },
-            ],
-          },
-        ],
-        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
-      };
-
-      const result = validateMinutesQuality(drafting);
-      expect(result.valid).toBe(true);
-    });
-
-    test("should fail for minutes with template leaks", () => {
-      const drafting = {
-        caseNote: "Some note",
-        minutes: [
-          {
-            title: "Discussion",
-            items: [
-              {
-                content: "Meeting scheduled for [INSERT DATE]",
-                status: "Discussed" as const,
-                sub_items: [],
-              },
-            ],
-          },
-        ],
-        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
-      };
-
-      const result = validateMinutesQuality(drafting);
-      expect(result.valid).toBe(false);
-      expect(result.errorKind).toBe("Format");
-    });
-
-    test("should fail for minutes with robotic tone", () => {
-      const drafting = {
-        caseNote: "Some note",
-        minutes: [
-          {
-            title: "Discussion",
-            items: [
-              {
-                content: "As an AI, I cannot determine housing status",
-                status: "Discussed" as const,
-                sub_items: [],
-              },
-            ],
-          },
-        ],
-        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
-      };
-
-      const result = validateMinutesQuality(drafting);
-      expect(result.valid).toBe(false);
-      expect(result.errorKind).toBe("Tone");
-    });
-  });
-
   describe("validateExtractionPresence", () => {
     test("should always pass (warning-only validator)", () => {
       const extraction = {
         actionItems: [],
-        criticalUpdates: [],
         entities: [],
       };
 
@@ -553,7 +351,6 @@ describe("Guards - Predefined Guards", () => {
             task: "Submit documentation",
           },
         ],
-        criticalUpdates: [],
         entities: [],
       };
 
@@ -564,7 +361,6 @@ describe("Guards - Predefined Guards", () => {
     test("should pass even with empty action items (warning only)", () => {
       const data = {
         actionItems: [],
-        criticalUpdates: [],
         entities: [],
       };
 
@@ -579,43 +375,6 @@ describe("Guards - Predefined Guards", () => {
         caseNote:
           "HOUSING: Client stable.\n\nEMPLOYMENT: Working full-time.\n\n" +
           "Word ".repeat(150),
-        minutes: [
-          {
-            title: "Check-In",
-            items: [
-              {
-                content: "Client on time",
-                status: "Discussed" as const,
-                sub_items: [],
-              },
-              {
-                content: "General wellbeing",
-                status: "Discussed" as const,
-                sub_items: [],
-              },
-            ],
-          },
-          {
-            title: "Discussion",
-            items: [
-              {
-                content: "Housing",
-                status: "Discussed" as const,
-                sub_items: [],
-              },
-              {
-                content: "Employment",
-                status: "Discussed" as const,
-                sub_items: [],
-              },
-              {
-                content: "Next steps",
-                status: "Assigned" as const,
-                sub_items: [],
-              },
-            ],
-          },
-        ],
         staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
@@ -626,39 +385,6 @@ describe("Guards - Predefined Guards", () => {
     test("should fail for short case note", () => {
       const data = {
         caseNote: "Too short",
-        minutes: [
-          {
-            title: "Discussion",
-            items: Array(10).fill({
-              content: "Item",
-              status: "Discussed" as const,
-              sub_items: [],
-            }),
-          },
-        ],
-        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
-      };
-
-      const result = draftingGuard(DraftingOutputSchema, data);
-      expect(result.valid).toBe(false);
-      expect(result.errorKind).toBe("Length");
-    });
-
-    test("should fail for insufficient minutes detail", () => {
-      const data = {
-        caseNote: "Word ".repeat(200),
-        minutes: [
-          {
-            title: "Brief",
-            items: [
-              {
-                content: "One item",
-                status: "Discussed" as const,
-                sub_items: [],
-              },
-            ],
-          },
-        ],
         staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
@@ -670,43 +396,12 @@ describe("Guards - Predefined Guards", () => {
     test("should fail for template leaks in case note", () => {
       const data = {
         caseNote: "[INSERT DATE] Client discussed housing. ".repeat(30),
-        minutes: [
-          {
-            title: "Discussion",
-            items: Array(10).fill({
-              content: "Item",
-              status: "Discussed" as const,
-              sub_items: [],
-            }),
-          },
-        ],
         staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
       const result = draftingGuard(DraftingOutputSchema, data);
       expect(result.valid).toBe(false);
       expect(result.errorKind).toBe("Format");
-    });
-
-    test("should fail for robotic tone in minutes", () => {
-      const data = {
-        caseNote: "Word ".repeat(200),
-        minutes: [
-          {
-            title: "Discussion",
-            items: Array(5).fill({
-              content: "As an AI assistant, I reviewed this.",
-              status: "Discussed" as const,
-              sub_items: [],
-            }),
-          },
-        ],
-        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
-      };
-
-      const result = draftingGuard(DraftingOutputSchema, data);
-      expect(result.valid).toBe(false);
-      expect(result.errorKind).toBe("Tone");
     });
   });
 });

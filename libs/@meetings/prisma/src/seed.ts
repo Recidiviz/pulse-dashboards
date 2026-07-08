@@ -27,7 +27,6 @@ import {
 } from "~@meetings/prisma/client";
 import {
   DEMO_PEOPLE,
-  DemoMinuteSection,
   DemoPerson,
   displaySpeaker,
   parseTranscript,
@@ -58,27 +57,6 @@ function buildUtterances(person: DemoPerson, durationMs: number) {
     endTimeMs: (i + 1) * slice,
     speaker: displaySpeaker(person, u.speaker),
     text: u.text,
-  }));
-}
-
-/** criticalUpdates column shape: "Category - UpdateType: details". */
-function toCriticalUpdateStrings(person: DemoPerson): string[] {
-  return person.criticalUpdates.map(
-    (u) => `${u.category} - ${u.updateType}: ${u.details}`,
-  );
-}
-
-/** Fill in MinuteSectionSchema defaults (status, subItems) recursively. */
-function normalizeMinutes(sections: DemoMinuteSection[]) {
-  const normalizeItem = (item: DemoMinuteSection["items"][number]): object => ({
-    ...(item.timestamp ? { timestamp: item.timestamp } : {}),
-    content: item.content,
-    status: item.status ?? "Discussed",
-    subItems: (item.subItems ?? []).map(normalizeItem),
-  });
-  return sections.map((section) => ({
-    title: section.title,
-    items: section.items.map(normalizeItem),
   }));
 }
 
@@ -134,8 +112,6 @@ async function seedMeeting(
         pipelineRunId: `pipeline-${meetingId}`,
       })),
     },
-    criticalUpdates: toCriticalUpdateStrings(person),
-    meetingSummary: normalizeMinutes(person.meetingSummary),
     staffFeedback: person.staffFeedback,
     staffFeedbackGeneratedAt: new Date(),
     outputsPipelineRunId: `pipeline-${meetingId}`,

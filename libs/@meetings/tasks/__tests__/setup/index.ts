@@ -246,7 +246,6 @@ export const mockOpenAI = mock<OpenAI>({
               role: "assistant",
               content: JSON.stringify({
                 actionItems: [],
-                criticalUpdates: [],
                 entities: [],
               }),
             },

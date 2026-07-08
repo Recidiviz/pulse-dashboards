@@ -20,11 +20,9 @@ import { describe, expect, test } from "vitest";
 import { AgencyConfigSchema } from "~@meetings/config/types";
 import {
   ActionItemSchema,
-  CriticalUpdateSchema,
   DraftingOutputSchema,
   ExtractionOutputSchema,
   GatekeeperOutputSchema,
-  MinuteItemSchema,
   PipelineOutputSchema,
   TranscriptInputSchema,
   VerificationEntrySchema,
@@ -122,77 +120,6 @@ describe("LLM Pipeline Schemas", () => {
     });
   });
 
-  describe("CriticalUpdateSchema", () => {
-    test("should validate valid critical update", () => {
-      const validUpdate = {
-        category: "Housing",
-        updateType: "Change",
-        details: "Client moved to new apartment",
-        evidenceQuotes: ["I got a new apartment"],
-        is_critical: true,
-      };
-
-      expect(CriticalUpdateSchema.safeParse(validUpdate).success).toBe(true);
-    });
-
-    test("should fail for invalid category", () => {
-      const invalidUpdate = {
-        category: "InvalidCategory",
-        updateType: "New",
-        details: "Some details",
-      };
-
-      expect(CriticalUpdateSchema.safeParse(invalidUpdate).success).toBe(false);
-    });
-  });
-
-  describe("MinuteItemSchema", () => {
-    test("should validate simple minute item", () => {
-      const validItem = {
-        timestamp: "[05:30]",
-        content: "Discussed housing situation",
-        status: "Discussed",
-        subItems: [],
-      };
-
-      expect(MinuteItemSchema.safeParse(validItem).success).toBe(true);
-    });
-
-    test("should validate nested minute items", () => {
-      const nestedItem = {
-        content: "Employment discussion",
-        status: "Discussed",
-        subItems: [
-          {
-            content: "Current job at warehouse",
-            status: "Discussed",
-            subItems: [],
-          },
-          {
-            content: "Apply for management position",
-            status: "Assigned",
-            subItems: [],
-          },
-        ],
-      };
-
-      expect(MinuteItemSchema.safeParse(nestedItem).success).toBe(true);
-    });
-
-    test("should apply defaults", () => {
-      const minimalItem = {
-        content: "Brief discussion point",
-      };
-
-      const result = MinuteItemSchema.safeParse(minimalItem);
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data.status).toBe("Discussed");
-        expect(result.data.subItems).toEqual([]);
-      }
-    });
-  });
-
   describe("ExtractionOutputSchema", () => {
     test("should validate valid extraction output", () => {
       const validExtraction = {
@@ -201,14 +128,6 @@ describe("LLM Pipeline Schemas", () => {
             assignee: "Client",
             task: "Submit proof of residence",
             deadline: "2025-01-25",
-          },
-        ],
-        criticalUpdates: [
-          {
-            category: "Housing",
-            updateType: "Stable/Status Quo",
-            details: "Still living at current address",
-            evidenceQuotes: ["I still live in the same place"],
           },
         ],
         entities: [
@@ -227,7 +146,6 @@ describe("LLM Pipeline Schemas", () => {
     test("should validate empty extraction", () => {
       const emptyExtraction = {
         actionItems: [],
-        criticalUpdates: [],
         entities: [],
       };
 
@@ -242,18 +160,6 @@ describe("LLM Pipeline Schemas", () => {
       const validDrafting = {
         caseNote:
           "HOUSING: Client reported stable housing situation.\n\nEMPLOYMENT: Currently employed full-time.",
-        minutes: [
-          {
-            title: "Check-In",
-            items: [
-              {
-                content: "Client arrived on time",
-                status: "Discussed",
-                subItems: [],
-              },
-            ],
-          },
-        ],
         staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
@@ -263,7 +169,7 @@ describe("LLM Pipeline Schemas", () => {
     test("should fail for missing required fields", () => {
       const invalidDrafting = {
         caseNote: "Some case note",
-        // missing minutes
+        // missing staffFeedback
       };
 
       expect(DraftingOutputSchema.safeParse(invalidDrafting).success).toBe(
@@ -354,29 +260,10 @@ describe("LLM Pipeline Schemas", () => {
     test("should validate complete pipeline output", () => {
       const validOutput = {
         caseNote: "SUMMARY: Meeting went well.",
-        meetingMinutes: [
-          {
-            title: "Discussion",
-            items: [
-              {
-                content: "Discussed progress",
-                status: "Discussed",
-                subItems: [],
-              },
-            ],
-          },
-        ],
         actionItems: [
           {
             assignee: "Client",
             task: "Complete form",
-          },
-        ],
-        statusUpdates: [
-          {
-            category: "Housing",
-            updateType: "Stable/Status Quo",
-            details: "No changes",
           },
         ],
         staffFeedback: {
@@ -409,7 +296,6 @@ describe("LLM Pipeline Schemas", () => {
     test("should be equivalent to ExtractionOutputSchema", () => {
       const extraction = {
         actionItems: [],
-        criticalUpdates: [],
         entities: [],
       };
 

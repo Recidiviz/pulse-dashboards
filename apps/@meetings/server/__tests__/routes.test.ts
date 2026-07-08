@@ -117,7 +117,6 @@ mockRunAllEvaluators.mockImplementation(
       transcriptComparison: null,
       caseNote: null,
       actionItems: null,
-      criticalUpdates: null,
       overall: null,
     },
     langsmithTraceId: undefined,
@@ -1413,9 +1412,7 @@ describe("tasks", () => {
       mockHandleLLMProcessing.mockResolvedValue({
         output: {
           caseNote: "Test case note",
-          meetingMinutes: [],
           actionItems: [],
-          statusUpdates: [],
         },
         agencyConfig: {} as never,
         transcriptInput: {} as never,
@@ -1649,7 +1646,6 @@ describe("tasks", () => {
       mockHandleLLMProcessing.mockResolvedValueOnce({
         output: {
           caseNote: "Test case note",
-          meetingMinutes: [],
           actionItems: [
             {
               assignee: "Staff Member",
@@ -1718,7 +1714,6 @@ describe("tasks", () => {
       mockHandleLLMProcessing.mockResolvedValueOnce({
         output: {
           caseNote: "First run",
-          meetingMinutes: [],
           actionItems: [
             {
               assignee: "Staff Member",
@@ -1726,7 +1721,6 @@ describe("tasks", () => {
               evidenceQuotes: [],
             },
           ],
-          statusUpdates: [],
           pipelineRunId: "test-pipeline-run-id-1",
         },
         agencyConfig: {} as never,
@@ -1743,7 +1737,6 @@ describe("tasks", () => {
       mockHandleLLMProcessing.mockResolvedValueOnce({
         output: {
           caseNote: "Second run",
-          meetingMinutes: [],
           actionItems: [
             {
               assignee: "Client",
@@ -1751,7 +1744,6 @@ describe("tasks", () => {
               evidenceQuotes: ["New supporting quote"],
             },
           ],
-          statusUpdates: [],
           pipelineRunId: "test-pipeline-run-id-2",
         },
         agencyConfig: {} as never,
@@ -1793,13 +1785,11 @@ describe("tasks", () => {
   describe("/run-llmaj-evaluation", () => {
     const FAKE_DRAFTING_OUTPUT = {
       caseNote: "Test case note",
-      minutes: [],
       staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
     };
 
     const FAKE_VERIFICATION_OUTPUT = {
       actionItems: [],
-      criticalUpdates: [],
       entities: [],
     };
 
@@ -2010,7 +2000,6 @@ describe("tasks", () => {
             omissions: [],
           },
           actionItems: null,
-          criticalUpdates: null,
           overall: null,
         },
         langsmithTraceId: undefined,

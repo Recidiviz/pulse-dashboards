@@ -24,7 +24,6 @@ import * as geminiClient from "~@meetings/tasks/llm/clients/gemini";
 import {
   runActionItems,
   runCaseNote,
-  runCriticalUpdates,
   runOverall,
   runTranscriptComparison,
 } from "~@meetings/tasks/llm/evaluators/agents";
@@ -74,13 +73,6 @@ const baseInputs: EvaluatorInputs = {
   bestTranscript: "Speaker A: Hello.\nSpeaker B: Hi.",
   caseNote: "Client greeted officer warmly.",
   actionItems: [{ assignee: "Client", task: "Submit proof of address" }],
-  criticalUpdates: [
-    {
-      category: "Housing",
-      updateType: "Stable/Status Quo",
-      details: "No changes",
-    },
-  ],
 };
 
 describe("Evaluator Agents", () => {
@@ -312,38 +304,6 @@ describe("Evaluator Agents", () => {
     });
   });
 
-  describe("runCriticalUpdates", () => {
-    test("should call generateContentWithZodSchema with JSON-serialized critical updates", async () => {
-      const generateSpy = spyOnGenerate().mockResolvedValue(GOOD_TEXT_RESULT);
-
-      await runCriticalUpdates(mockGemini, {
-        bestTranscript: baseInputs.bestTranscript,
-        criticalUpdates: baseInputs.criticalUpdates,
-        meetingContext: undefined,
-      });
-
-      const callArgs = generateSpy.mock.calls[0]?.[0];
-      expect(String(callArgs?.parts)).toContain("Housing");
-    });
-
-    test("should forward timeout", async () => {
-      const generateSpy = spyOnGenerate().mockResolvedValue(GOOD_TEXT_RESULT);
-
-      await runCriticalUpdates(
-        mockGemini,
-        {
-          bestTranscript: baseInputs.bestTranscript,
-          criticalUpdates: [],
-        },
-        12000,
-      );
-
-      expect(generateSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ timeout: 12000 }),
-      );
-    });
-  });
-
   describe("runOverall", () => {
     test("should call generateContentWithZodSchema with all output sections", async () => {
       const generateSpy = spyOnGenerate().mockResolvedValue(GOOD_TEXT_RESULT);
@@ -352,7 +312,6 @@ describe("Evaluator Agents", () => {
         bestTranscript: baseInputs.bestTranscript,
         caseNote: baseInputs.caseNote,
         actionItems: baseInputs.actionItems,
-        criticalUpdates: baseInputs.criticalUpdates,
         meetingContext: undefined,
       });
 
@@ -360,7 +319,6 @@ describe("Evaluator Agents", () => {
       const partsStr = String(callArgs?.parts);
       expect(partsStr).toContain(baseInputs.caseNote);
       expect(partsStr).toContain("Submit proof of address");
-      expect(partsStr).toContain("Housing");
     });
 
     test("should forward timeout", async () => {
@@ -372,7 +330,6 @@ describe("Evaluator Agents", () => {
           bestTranscript: "transcript",
           caseNote: "note",
           actionItems: [],
-          criticalUpdates: [],
         },
         20000,
       );
@@ -389,7 +346,6 @@ describe("Evaluator Agents", () => {
         bestTranscript: "transcript",
         caseNote: "note",
         actionItems: [],
-        criticalUpdates: [],
         meetingContext: { staffNotes: "Client was late." },
       });
 

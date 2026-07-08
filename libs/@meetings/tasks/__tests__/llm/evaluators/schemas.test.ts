@@ -181,7 +181,6 @@ describe("Evaluator Schemas", () => {
         transcriptComparison: null,
         caseNote: null,
         actionItems: null,
-        criticalUpdates: null,
         overall: null,
       };
 
@@ -205,7 +204,6 @@ describe("Evaluator Schemas", () => {
         },
         caseNote: textResult,
         actionItems: textResult,
-        criticalUpdates: textResult,
         overall: textResult,
       };
 
@@ -222,7 +220,6 @@ describe("Evaluator Schemas", () => {
           omissions: [],
         },
         actionItems: null,
-        criticalUpdates: null,
         overall: null,
       };
 
@@ -233,7 +230,7 @@ describe("Evaluator Schemas", () => {
       const incomplete = {
         transcriptComparison: null,
         caseNote: null,
-        // missing actionItems, criticalUpdates, overall
+        // missing actionItems, overall
       };
 
       expect(EvaluationScoresSchema.safeParse(incomplete).success).toBe(false);

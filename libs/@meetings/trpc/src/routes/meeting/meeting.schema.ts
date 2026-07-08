@@ -24,11 +24,7 @@ import {
   OutputVoteValue,
   PostMeetingProcessingStatus,
 } from "~@meetings/prisma/client";
-import {
-  MinuteSectionSchema,
-  StaffFeedbackOutputSchema,
-  ValidationError,
-} from "~@meetings/tasks";
+import { StaffFeedbackOutputSchema, ValidationError } from "~@meetings/tasks";
 
 export const getDetailInputSchema = z.object({
   meetingId: z.string(),
@@ -63,8 +59,6 @@ export const getDetailsOutputSchema = z.object({
       evidenceQuotes: z.array(z.string()).nullable().optional(),
     }),
   ),
-  criticalUpdates: z.array(z.string()).nullable(),
-  meetingSummary: z.array(MinuteSectionSchema).nullable(),
   staffFeedback: StaffFeedbackOutputSchema.extend({
     generatedAt: z.date(),
   }).nullable(),
@@ -138,7 +132,6 @@ export const updateNotesInputSchema = z.object({
   meetingId: z.string(),
   userNotepadNotes: z.string().max(100000).optional(),
   actionItems: z.array(z.string().max(100000)).optional(),
-  criticalUpdates: z.array(z.string().max(100000)).optional(),
   caseNote: z.string().max(100000).optional(),
 });
 

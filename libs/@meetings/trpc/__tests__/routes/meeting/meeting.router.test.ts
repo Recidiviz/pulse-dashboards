@@ -108,8 +108,6 @@ describe("meeting router", () => {
         actionItems: [],
         meetingActionItems: [],
         structuredActionItems: [],
-        criticalUpdates: [],
-        meetingSummary: [],
         staffFeedback: null,
         currentOutputVotes: null,
         caseNoteEditedAt: null,
@@ -183,8 +181,6 @@ describe("meeting router", () => {
           actionItems: [],
           meetingActionItems: [],
           structuredActionItems: [],
-          criticalUpdates: [],
-          meetingSummary: [],
           staffFeedback: null,
           currentOutputVotes: null,
           caseNoteEditedAt: null,
@@ -356,21 +352,15 @@ describe("meeting router", () => {
       }
     });
 
-    test("Should parse JSON-encoded actionItems and criticalUpdates from database", async () => {
-      // This test uses fakeInactiveMeeting which has JSON-encoded arrays for actionItems and criticalUpdates
+    test("Should parse JSON-encoded actionItems from database", async () => {
       const result = await testTRPCClient.v1.meeting.getDetails.query({
         meetingId: fakeInactiveMeeting.id,
       });
 
-      // Verify that the JSON strings are properly parsed into arrays
       expect(result.actionItems).toEqual([
         "Follow up on employment status",
         "Schedule next check-in",
         "Review case file",
-      ]);
-      expect(result.criticalUpdates).toEqual([
-        "Employment - New: Client reported new job opportunity",
-        "Legal - Change: Upcoming court date next week",
       ]);
     });
 
@@ -626,12 +616,11 @@ describe("meeting router", () => {
       );
     });
 
-    test("Should update all fields including actionItems and criticalUpdates", async () => {
+    test("Should update all fields including actionItems", async () => {
       await testTRPCClient.v1.meeting.updateNotes.mutate({
         meetingId: fakeActiveMeeting.id,
         userNotepadNotes: "Updated notes",
         actionItems: ["New action item", "Another action"],
-        criticalUpdates: ["Critical update information"],
         caseNote: "Updated case note",
       });
 
@@ -643,7 +632,6 @@ describe("meeting router", () => {
         expect.objectContaining({
           userNotepadNotes: "Updated notes",
           actionItems: ["New action item", "Another action"],
-          criticalUpdates: ["Critical update information"],
           caseNote: "Updated case note",
         }),
       );
@@ -666,12 +654,6 @@ describe("meeting router", () => {
       // Other fields should remain unchanged from their original values
       expect(updatedMeeting?.userNotepadNotes).toEqual(
         fakeActiveMeeting.userNotepadNotes,
-      );
-      expect(updatedMeeting?.criticalUpdates).toEqual(
-        fakeActiveMeeting.criticalUpdates,
-      );
-      expect(updatedMeeting?.meetingSummary).toEqual(
-        fakeActiveMeeting.meetingSummary,
       );
       expect(updatedMeeting?.caseNote).toEqual(fakeActiveMeeting.caseNote);
     });

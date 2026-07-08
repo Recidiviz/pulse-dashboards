@@ -23,7 +23,6 @@ import { getLangsmithTraceId } from "~@meetings/tasks/llm/evaluation-store";
 import {
   runActionItems,
   runCaseNote,
-  runCriticalUpdates,
   runOverall,
   runTranscriptComparison,
 } from "~@meetings/tasks/llm/evaluators/agents";
@@ -51,63 +50,48 @@ export const runAllEvaluators = traceable(
   }> => {
     const { gemini, fileManager, timeout } = clients;
 
-    const [
-      transcriptComparison,
-      caseNote,
-      actionItems,
-      criticalUpdates,
-      overall,
-    ] = await Promise.allSettled([
-      runTranscriptComparison(
-        gemini,
-        fileManager,
-        {
-          audioBucket: inputs.audioBucket,
-          audioPath: inputs.audioPath,
-          transcriptsByProvider: inputs.transcriptsByProvider,
-          meetingContext: inputs.meetingContext,
-        },
-        timeout,
-      ),
-      runCaseNote(
-        gemini,
-        {
-          bestTranscript: inputs.bestTranscript,
-          caseNote: inputs.caseNote,
-          meetingContext: inputs.meetingContext,
-        },
-        timeout,
-      ),
-      runActionItems(
-        gemini,
-        {
-          bestTranscript: inputs.bestTranscript,
-          actionItems: inputs.actionItems,
-          meetingContext: inputs.meetingContext,
-        },
-        timeout,
-      ),
-      runCriticalUpdates(
-        gemini,
-        {
-          bestTranscript: inputs.bestTranscript,
-          criticalUpdates: inputs.criticalUpdates,
-          meetingContext: inputs.meetingContext,
-        },
-        timeout,
-      ),
-      runOverall(
-        gemini,
-        {
-          bestTranscript: inputs.bestTranscript,
-          caseNote: inputs.caseNote,
-          actionItems: inputs.actionItems,
-          criticalUpdates: inputs.criticalUpdates,
-          meetingContext: inputs.meetingContext,
-        },
-        timeout,
-      ),
-    ]);
+    const [transcriptComparison, caseNote, actionItems, overall] =
+      await Promise.allSettled([
+        runTranscriptComparison(
+          gemini,
+          fileManager,
+          {
+            audioBucket: inputs.audioBucket,
+            audioPath: inputs.audioPath,
+            transcriptsByProvider: inputs.transcriptsByProvider,
+            meetingContext: inputs.meetingContext,
+          },
+          timeout,
+        ),
+        runCaseNote(
+          gemini,
+          {
+            bestTranscript: inputs.bestTranscript,
+            caseNote: inputs.caseNote,
+            meetingContext: inputs.meetingContext,
+          },
+          timeout,
+        ),
+        runActionItems(
+          gemini,
+          {
+            bestTranscript: inputs.bestTranscript,
+            actionItems: inputs.actionItems,
+            meetingContext: inputs.meetingContext,
+          },
+          timeout,
+        ),
+        runOverall(
+          gemini,
+          {
+            bestTranscript: inputs.bestTranscript,
+            caseNote: inputs.caseNote,
+            actionItems: inputs.actionItems,
+            meetingContext: inputs.meetingContext,
+          },
+          timeout,
+        ),
+      ]);
 
     const logIfRejected = (
       result: PromiseSettledResult<unknown>,
@@ -126,7 +110,6 @@ export const runAllEvaluators = traceable(
     logIfRejected(transcriptComparison, "Transcript comparison");
     logIfRejected(caseNote, "Case note");
     logIfRejected(actionItems, "Action items");
-    logIfRejected(criticalUpdates, "Critical updates");
     logIfRejected(overall, "Overall");
 
     return {
@@ -138,8 +121,6 @@ export const runAllEvaluators = traceable(
         caseNote: caseNote.status === "fulfilled" ? caseNote.value : null,
         actionItems:
           actionItems.status === "fulfilled" ? actionItems.value : null,
-        criticalUpdates:
-          criticalUpdates.status === "fulfilled" ? criticalUpdates.value : null,
         overall: overall.status === "fulfilled" ? overall.value : null,
       },
       langsmithTraceId: getLangsmithTraceId(),

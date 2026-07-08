@@ -50,7 +50,6 @@ import {
 } from "~@meetings/server/server/utils";
 import {
   cleanupLocalFiles,
-  CriticalUpdate,
   exportLabelStudioTask,
   labelStudioMeetingInclude,
   stitchAudio,
@@ -71,15 +70,6 @@ import {
   postMeetingCompletedNotification,
   postMeetingErrorNotification,
 } from "~@meetings/trpc/services/slack";
-
-/**
- * Convert CriticalUpdate objects to formatted strings
- */
-function formatCriticalUpdates(criticalUpdates: CriticalUpdate[]): string[] {
-  return criticalUpdates.map(
-    (item) => `${item.category} - ${item.updateType}: ${item.details}`,
-  );
-}
 
 class AuthError extends Error {
   errorCode: number;
@@ -590,10 +580,6 @@ export function registerTaskRoutes(app: FastifyInstance) {
             prisma,
           });
 
-          const criticalUpdates = formatCriticalUpdates(
-            result.output.statusUpdates,
-          );
-
           // Always persist staff feedback (it's bundled into the writer agent's
           // single LLM call). The API layer decides whether to surface it based
           // on the agency's staffFeedbackEnabled flag — storing it
@@ -606,8 +592,6 @@ export function registerTaskRoutes(app: FastifyInstance) {
             },
             data: {
               caseNote: result.output.caseNote,
-              criticalUpdates: criticalUpdates,
-              meetingSummary: result.output.meetingMinutes,
               staffFeedback: result.output.staffFeedback,
               staffFeedbackGeneratedAt: new Date(),
               // Tags this feedback content to the pipeline run that produced it,
@@ -808,7 +792,6 @@ export function registerTaskRoutes(app: FastifyInstance) {
           bestTranscript,
           caseNote: draftingOutput.caseNote,
           actionItems: verificationOutput.actionItems,
-          criticalUpdates: verificationOutput.criticalUpdates,
           meetingContext: {
             personName: person
               ? [person.givenNames, person.surname].filter(Boolean).join(" ")
@@ -850,7 +833,6 @@ export function registerTaskRoutes(app: FastifyInstance) {
             const needsRecidivizReview =
               scores.caseNote?.grade === "BAD" ||
               scores.actionItems?.grade === "BAD" ||
-              scores.criticalUpdates?.grade === "BAD" ||
               scores.overall?.grade === "BAD";
 
             exportLabelStudioTask(

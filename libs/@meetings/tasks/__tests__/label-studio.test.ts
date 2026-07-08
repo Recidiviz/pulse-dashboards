@@ -55,7 +55,6 @@ function makeMeeting(
       },
       { task: "Schedule next meeting", assignee: "Client", deadline: null },
     ],
-    criticalUpdates: ["Safety concern - details noted"],
     client: { displayPersonExternalId: "DISPLAY-001" },
     resident: null,
     transcriptions: [
@@ -90,7 +89,6 @@ describe("buildLabelStudioTask", () => {
           "[Staff Member] Follow up on housing (due: 2026-04-01)",
           "[Client] Schedule next meeting",
         ],
-        critical_updates: "Safety concern - details noted",
         needs_recidiviz_review: false,
         meta: {
           State: "US_NE",
@@ -128,7 +126,6 @@ describe("buildLabelStudioTask", () => {
         endTime: null,
         caseNote: null,
         structuredActionItems: null,
-        criticalUpdates: null,
       }),
       "US_NE",
     );
@@ -137,7 +134,6 @@ describe("buildLabelStudioTask", () => {
     expect(task.meta.Duration).toBeNull();
     expect(task.case_note).toBeNull();
     expect(task.action_items).toBeNull();
-    expect(task.critical_updates).toBeNull();
   });
 
   test("uses resident displayPersonExternalId when client is null", () => {

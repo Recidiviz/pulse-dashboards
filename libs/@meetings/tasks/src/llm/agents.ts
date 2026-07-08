@@ -157,7 +157,6 @@ export class SpecialistCore {
 
       agentLogger.info("Extraction agent completed", {
         action_items_count: extracted.actionItems.length,
-        updates_count: extracted.criticalUpdates.length,
         entities_count: extracted.entities.length,
       });
 
@@ -166,7 +165,7 @@ export class SpecialistCore {
       agentLogger.error("Extraction agent failed", {
         err: e instanceof Error ? e : String(e),
       });
-      return { actionItems: [], criticalUpdates: [], entities: [] };
+      return { actionItems: [], entities: [] };
     }
   }
 
@@ -189,7 +188,6 @@ export class SpecialistCore {
     agentLogger.info("Starting drafting agent", {
       outputs_count: agency.outputs.length,
       action_items_count: facts.actionItems.length,
-      updates_count: facts.criticalUpdates.length,
       config_version: generateConfigKey(agency),
     });
 
@@ -202,7 +200,6 @@ export class SpecialistCore {
       {},
     );
     const factsStr = dedent`ACTIONS: ${facts.actionItems.length} found
-      UPDATES: ${facts.criticalUpdates.length} found
       ENTITIES: ${JSON.stringify(entityDict)}`;
     const clientContextStr = `Client: ${person.givenNames} ${person.surname}`;
 
@@ -248,7 +245,6 @@ export class SpecialistCore {
       });
 
       agentLogger.info("Drafting agent completed", {
-        minutes_count: result.minutes.length,
         case_note_length: result.caseNote.length,
         what_you_did_well_count: result.staffFeedback.whatYouDidWell.length,
         growth_opportunities_count:
@@ -262,7 +258,6 @@ export class SpecialistCore {
       });
       return {
         caseNote: "[Error]",
-        minutes: [],
         staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
     }
@@ -283,10 +278,10 @@ export class SpecialistCore {
     });
 
     agentLogger.info("Starting verification agent", {
-      claims_to_verify: facts.actionItems.length + facts.criticalUpdates.length,
+      claims_to_verify: facts.actionItems.length,
     });
 
-    if (facts.actionItems.length === 0 && facts.criticalUpdates.length === 0) {
+    if (facts.actionItems.length === 0) {
       agentLogger.info("Verification agent skipped - no claims to verify");
       return facts;
     }
@@ -295,11 +290,6 @@ export class SpecialistCore {
     const claimsList: string[] = [];
     facts.actionItems.forEach((item, i) => {
       claimsList.push(`ID: ACT_${i} | Task: ${item.task}`);
-    });
-    facts.criticalUpdates.forEach((item, i) => {
-      claimsList.push(
-        `ID: UPD_${i} | Update: ${item.category} - ${item.details}`,
-      );
     });
 
     const claimsStr = claimsList.join("\n");
@@ -323,14 +313,6 @@ export class SpecialistCore {
 
       facts.actionItems.forEach((item, i) => {
         const key = `ACT_${i}`;
-        const audit = auditMap.get(key);
-        if (audit) {
-          item.evidenceQuotes = audit.evidenceQuotes;
-        }
-      });
-
-      facts.criticalUpdates.forEach((item, i) => {
-        const key = `UPD_${i}`;
         const audit = auditMap.get(key);
         if (audit) {
           item.evidenceQuotes = audit.evidenceQuotes;

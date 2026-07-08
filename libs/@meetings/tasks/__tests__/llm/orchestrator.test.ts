@@ -138,18 +138,6 @@ describe("ProductionPipeline", () => {
             task: "Bring proof of employment",
           },
         ],
-        criticalUpdates: [
-          {
-            category: "Employment",
-            updateType: "New",
-            details: "Started job at local restaurant as line cook",
-          },
-          {
-            category: "Housing",
-            updateType: "Stable/Status Quo",
-            details: "Living with sister",
-          },
-        ],
         entities: [],
       };
 
@@ -158,43 +146,6 @@ describe("ProductionPipeline", () => {
           "EMPLOYMENT: Client reported starting new position as line cook at local restaurant earning $15/hour.\n\nHOUSING: Client remains in stable housing with sister.\n\nACTION ITEMS: Client to provide employment verification at next meeting.".repeat(
             5,
           ),
-        minutes: [
-          {
-            title: "Check-In",
-            items: [
-              {
-                content: "Client reported doing well",
-                status: "Discussed",
-                subItems: [],
-              },
-            ],
-          },
-          {
-            title: "Discussion Log",
-            items: [
-              {
-                content: "New employment at restaurant",
-                status: "Discussed",
-                subItems: [],
-              },
-              {
-                content: "Housing remains stable",
-                status: "Discussed",
-                subItems: [],
-              },
-            ],
-          },
-          {
-            title: "Logistics & Plan",
-            items: [
-              {
-                content: "Bring proof of employment",
-                status: "Assigned",
-                subItems: [],
-              },
-            ],
-          },
-        ],
         staffFeedback: EMPTY_STAFF_FEEDBACK,
       };
 
@@ -232,9 +183,7 @@ describe("ProductionPipeline", () => {
 
       expect(result).toEqual({
         caseNote: mockDrafting.caseNote,
-        meetingMinutes: mockDrafting.minutes,
         actionItems: mockVerifiedExtraction.actionItems,
-        statusUpdates: mockVerifiedExtraction.criticalUpdates,
         staffFeedback: mockDrafting.staffFeedback,
         pipelineRunId: "pipeline-run-123",
       });
@@ -258,14 +207,12 @@ describe("ProductionPipeline", () => {
     test("should retry drafting on validation failure", async () => {
       const mockExtraction: ExtractionOutput = {
         actionItems: [],
-        criticalUpdates: [],
         entities: [],
       };
 
       // First drafting attempt fails validation (too short)
       const badDrafting: DraftingOutput = {
         caseNote: "Too short",
-        minutes: [],
         staffFeedback: EMPTY_STAFF_FEEDBACK,
       };
 
@@ -273,40 +220,6 @@ describe("ProductionPipeline", () => {
       const goodDrafting: DraftingOutput = {
         caseNote:
           "SUMMARY: Client meeting conducted. Discussion covered multiple topics including housing, employment, and future planning.\n\nDISCUSSION: Client reported stable housing situation and recent employment changes. Planning was discussed for next steps.",
-        minutes: [
-          {
-            title: "Check-In",
-            items: [
-              {
-                content: "Opening discussion",
-                status: "Discussed",
-                subItems: [],
-              },
-            ],
-          },
-          {
-            title: "Discussion",
-            items: [
-              { content: "Housing update", status: "Discussed", subItems: [] },
-              {
-                content: "Employment update",
-                status: "Discussed",
-                subItems: [],
-              },
-              {
-                content: "Future planning",
-                status: "Discussed",
-                subItems: [],
-              },
-              {
-                content: "Benefits discussion",
-                status: "Discussed",
-                subItems: [],
-              },
-              { content: "Next meeting", status: "Assigned", subItems: [] },
-            ],
-          },
-        ],
         staffFeedback: EMPTY_STAFF_FEEDBACK,
       };
 
@@ -338,14 +251,12 @@ describe("ProductionPipeline", () => {
     test("should use last draft after max retries exceeded", async () => {
       const mockExtraction: ExtractionOutput = {
         actionItems: [],
-        criticalUpdates: [],
         entities: [],
       };
 
       // All drafting attempts fail validation
       const badDrafting: DraftingOutput = {
         caseNote: "Short",
-        minutes: [],
         staffFeedback: EMPTY_STAFF_FEEDBACK,
       };
 
@@ -377,29 +288,12 @@ describe("ProductionPipeline", () => {
     test("should handle extraction with no action items", async () => {
       const mockExtraction: ExtractionOutput = {
         actionItems: [], // No action items found
-        criticalUpdates: [
-          {
-            category: "Housing",
-            updateType: "Stable/Status Quo",
-            details: "No changes",
-          },
-        ],
         entities: [],
       };
 
       const mockDrafting: DraftingOutput = {
         caseNote:
           "SUMMARY: Routine check-in meeting conducted.\n\nHOUSING: Client housing remains stable with no changes reported.",
-        minutes: [
-          {
-            title: "Discussion",
-            items: Array(5).fill({
-              content: "Discussion point",
-              status: "Discussed",
-              subItems: [],
-            }),
-          },
-        ],
         staffFeedback: EMPTY_STAFF_FEEDBACK,
       };
 
@@ -422,28 +316,16 @@ describe("ProductionPipeline", () => {
       );
 
       expect(result.actionItems).toHaveLength(0);
-      expect(result.statusUpdates).toHaveLength(1);
     });
 
     test("should handle verification failure gracefully", async () => {
       const mockExtraction: ExtractionOutput = {
         actionItems: [{ assignee: "Client", task: "Complete form" }],
-        criticalUpdates: [],
         entities: [],
       };
 
       const mockDrafting: DraftingOutput = {
         caseNote: "Case note content with sufficient length. ".repeat(30),
-        minutes: [
-          {
-            title: "Discussion",
-            items: Array(10).fill({
-              content: "Item",
-              status: "Discussed",
-              subItems: [],
-            }),
-          },
-        ],
         staffFeedback: EMPTY_STAFF_FEEDBACK,
       };
 
@@ -474,7 +356,6 @@ describe("ProductionPipeline", () => {
     test("should skip verification when no claims exist", async () => {
       const emptyExtraction: ExtractionOutput = {
         actionItems: [],
-        criticalUpdates: [],
         entities: [],
       };
 
@@ -482,16 +363,6 @@ describe("ProductionPipeline", () => {
         caseNote: "Brief check-in meeting conducted. No action items. ".repeat(
           20,
         ),
-        minutes: [
-          {
-            title: "Check-In",
-            items: Array(6).fill({
-              content: "Discussion",
-              status: "Discussed",
-              subItems: [],
-            }),
-          },
-        ],
         staffFeedback: EMPTY_STAFF_FEEDBACK,
       };
 
@@ -534,7 +405,6 @@ describe("ProductionPipeline", () => {
     test("should handle drafting errors after all retries", async () => {
       const mockExtraction: ExtractionOutput = {
         actionItems: [],
-        criticalUpdates: [],
         entities: [],
       };
 
@@ -614,22 +484,11 @@ describe("ProductionPipeline", () => {
     test("should create pipeline run on successful execution", async () => {
       const mockExtraction: ExtractionOutput = {
         actionItems: [],
-        criticalUpdates: [],
         entities: [],
       };
 
       const mockDrafting: DraftingOutput = {
         caseNote: "Case note content. ".repeat(50),
-        minutes: [
-          {
-            title: "Discussion",
-            items: Array(5).fill({
-              content: "Item",
-              status: "Discussed",
-              subItems: [],
-            }),
-          },
-        ],
         staffFeedback: EMPTY_STAFF_FEEDBACK,
       };
 
@@ -659,22 +518,11 @@ describe("ProductionPipeline", () => {
     test("should store all agent executions on successful run", async () => {
       const mockExtraction: ExtractionOutput = {
         actionItems: [{ assignee: "Client", task: "Complete form" }],
-        criticalUpdates: [],
         entities: [],
       };
 
       const mockDrafting: DraftingOutput = {
         caseNote: "Case note content. ".repeat(50),
-        minutes: [
-          {
-            title: "Discussion",
-            items: Array(5).fill({
-              content: "Item",
-              status: "Discussed",
-              subItems: [],
-            }),
-          },
-        ],
         staffFeedback: EMPTY_STAFF_FEEDBACK,
       };
 
@@ -720,28 +568,16 @@ describe("ProductionPipeline", () => {
     test("should store all drafting attempts with correct attempt numbers", async () => {
       const mockExtraction: ExtractionOutput = {
         actionItems: [],
-        criticalUpdates: [],
         entities: [],
       };
 
       const badDrafting: DraftingOutput = {
         caseNote: "Too short",
-        minutes: [],
         staffFeedback: EMPTY_STAFF_FEEDBACK,
       };
 
       const goodDrafting: DraftingOutput = {
         caseNote: "Sufficient content for validation. ".repeat(50),
-        minutes: [
-          {
-            title: "Discussion",
-            items: Array(5).fill({
-              content: "Item",
-              status: "Discussed",
-              subItems: [],
-            }),
-          },
-        ],
         staffFeedback: EMPTY_STAFF_FEEDBACK,
       };
 
@@ -850,7 +686,6 @@ describe("ProductionPipeline", () => {
     test("should update pipeline status to FAILURE on drafting error", async () => {
       const mockExtraction: ExtractionOutput = {
         actionItems: [],
-        criticalUpdates: [],
         entities: [],
       };
 

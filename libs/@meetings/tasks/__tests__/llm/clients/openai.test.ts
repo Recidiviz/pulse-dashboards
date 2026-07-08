@@ -149,7 +149,6 @@ describe("OpenAI Client", () => {
               role: "assistant",
               content: JSON.stringify({
                 actionItems: [],
-                criticalUpdates: [],
                 entities: [],
               }),
             },
@@ -243,13 +242,6 @@ describe("OpenAI Client", () => {
             assignee: "Client",
             task: "Submit proof of residence",
             deadline: "2025-01-20",
-          },
-        ],
-        criticalUpdates: [
-          {
-            category: "Housing",
-            updateType: "Change",
-            details: "Moved to new apartment",
           },
         ],
         entities: [

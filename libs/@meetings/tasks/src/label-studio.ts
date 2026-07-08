@@ -116,8 +116,6 @@ export function buildLabelStudioTask(
       (meeting.structuredActionItems as StructuredActionItem[] | null)?.map(
         formatStructuredActionItem,
       ) ?? null,
-    critical_updates:
-      (meeting.criticalUpdates as string[] | null)?.join("\n") ?? null,
 
     needs_recidiviz_review: needsRecidivizReview,
 

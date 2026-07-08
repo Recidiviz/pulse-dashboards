@@ -28,7 +28,6 @@ import { ValidationError } from "~@meetings/tasks";
 import {
   DraftingOutput,
   ExtractionOutput,
-  MinuteItem,
   TranscriptInput,
 } from "~@meetings/tasks/llm/schemas";
 
@@ -241,79 +240,6 @@ export const validateCaseNoteQuality: Validator<
 };
 
 /**
- * Recursively counts all items including nested sub_items
- */
-function countSubItems(item: MinuteItem): number {
-  let count = 0;
-  if (item.sub_items && item.sub_items.length > 0) {
-    for (const subItem of item.sub_items) {
-      count += 1 + countSubItems(subItem);
-    }
-  }
-  return count;
-}
-
-/**
- * Validates minutes have minimum detail
- */
-export const validateMinutesDetail: Validator<
-  Pick<DraftingOutput, "minutes">
-> = (data) => {
-  const minutes = data.minutes;
-
-  if (!minutes || minutes.length === 0) {
-    return {
-      valid: false,
-      errorKind: ValidationError.LENGTH,
-      message: "No meeting sections found",
-    };
-  }
-
-  // Count total items
-  let totalItems = 0;
-  for (const section of minutes) {
-    totalItems += section.items.length;
-
-    // Count nested items
-    for (const item of section.items) {
-      totalItems += countSubItems(item);
-    }
-  }
-
-  const minItems = 3;
-  if (totalItems < minItems) {
-    return {
-      valid: false,
-      errorKind: ValidationError.LENGTH,
-      message: `Insufficient detail: ${totalItems} items (minimum ${minItems})`,
-    };
-  }
-
-  return { valid: true };
-};
-
-/**
- * Validates minutes content quality (checks each item)
- */
-export const validateMinutesQuality: Validator<
-  Pick<DraftingOutput, "minutes">
-> = (data) => {
-  const minutes = data.minutes;
-
-  for (const section of minutes) {
-    for (const item of section.items) {
-      const leakCheck = validateNoTemplateLeaks({ content: item.content });
-      if (!leakCheck.valid) return leakCheck;
-
-      const toneCheck = validateNoRoboticTone({ content: item.content });
-      if (!toneCheck.valid) return toneCheck;
-    }
-  }
-
-  return { valid: true };
-};
-
-/**
  * Logs a warning if extraction found no action items (non-blocking)
  */
 export const validateExtractionPresence: Validator<ExtractionOutput> = () => {
@@ -441,11 +367,9 @@ export const extractionGuard = createGuard<ExtractionOutput>([
 ]);
 
 /**
- * Drafting guard - validates case notes and minutes
+ * Drafting guard - validates case note quality
  */
 export const draftingGuard = createGuard<DraftingOutput>([
   validateCaseNoteLength,
   validateCaseNoteQuality,
-  validateMinutesDetail,
-  validateMinutesQuality,
 ]);

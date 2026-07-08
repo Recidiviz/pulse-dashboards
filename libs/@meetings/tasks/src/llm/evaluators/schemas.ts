@@ -19,7 +19,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { GoogleAIFileManager } from "@google/generative-ai/server";
 import { z } from "zod";
 
-import type { ActionItem, CriticalUpdate } from "~@meetings/tasks/llm/schemas";
+import type { ActionItem } from "~@meetings/tasks/llm/schemas";
 
 // Bump this string whenever any evaluator prompt changes.
 // The script uses this to find pipeline runs that have not yet been evaluated
@@ -51,7 +51,6 @@ export const EvaluationScoresSchema = z.object({
   transcriptComparison: TranscriptComparisonOutputSchema.nullable(),
   caseNote: TextEvaluatorOutputSchema.nullable(),
   actionItems: TextEvaluatorOutputSchema.nullable(),
-  criticalUpdates: TextEvaluatorOutputSchema.nullable(),
   overall: TextEvaluatorOutputSchema.nullable(),
 });
 
@@ -81,7 +80,6 @@ export interface EvaluatorInputs {
   bestTranscript: string;
   caseNote: string;
   actionItems: ActionItem[];
-  criticalUpdates: CriticalUpdate[];
   /** Out-of-band facts about the meeting that may not appear in the transcript. */
   meetingContext?: MeetingContext;
 }

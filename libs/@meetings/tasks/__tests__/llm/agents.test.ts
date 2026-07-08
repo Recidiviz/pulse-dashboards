@@ -163,13 +163,6 @@ describe("SpecialistCore", () => {
             task: "Submit proof of residence",
           },
         ],
-        criticalUpdates: [
-          {
-            category: "Housing",
-            updateType: "Change",
-            details: "Living with mother",
-          },
-        ],
         entities: [
           {
             value: "123 Main St",
@@ -225,7 +218,6 @@ describe("SpecialistCore", () => {
               role: "assistant",
               content: JSON.stringify({
                 actionItems: [],
-                criticalUpdates: [],
                 entities: [],
               }),
             },
@@ -261,7 +253,6 @@ describe("SpecialistCore", () => {
 
       expect(result).toEqual({
         actionItems: [],
-        criticalUpdates: [],
         entities: [],
       });
     });
@@ -282,7 +273,6 @@ describe("SpecialistCore", () => {
 
       const emptyExtractionResponse = {
         actionItems: [],
-        criticalUpdates: [],
         entities: [],
       };
 
@@ -404,21 +394,12 @@ describe("SpecialistCore", () => {
     test("should successfully draft case note and minutes", async () => {
       const mockExtraction: ExtractionOutput = {
         actionItems: [{ assignee: "Client", task: "Submit documentation" }],
-        criticalUpdates: [],
         entities: [],
       };
 
       const mockDrafting = {
         caseNote:
           "SUMMARY: Client meeting went well.\n\nHOUSING: Stable at mother's residence.",
-        minutes: [
-          {
-            title: "Check-In",
-            items: [
-              { content: "Client on time", status: "Discussed", subItems: [] },
-            ],
-          },
-        ],
         staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
@@ -463,7 +444,7 @@ describe("SpecialistCore", () => {
               role: "assistant",
               content: JSON.stringify({
                 caseNote: "Test note",
-                minutes: [],
+                staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
               }),
             },
             finish_reason: "stop",
@@ -473,7 +454,7 @@ describe("SpecialistCore", () => {
 
       await core.runDrafting(
         mockTranscript,
-        { actionItems: [], criticalUpdates: [], entities: [] },
+        { actionItems: [], entities: [] },
         mockAgency,
         mockClient,
       );
@@ -503,7 +484,7 @@ describe("SpecialistCore", () => {
               role: "assistant",
               content: JSON.stringify({
                 caseNote: "Test note",
-                minutes: [],
+                staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
               }),
             },
             finish_reason: "stop",
@@ -513,7 +494,7 @@ describe("SpecialistCore", () => {
 
       await core.runDrafting(
         mockTranscript,
-        { actionItems: [], criticalUpdates: [], entities: [] },
+        { actionItems: [], entities: [] },
         mockAgency,
         mockClient,
       );
@@ -541,7 +522,10 @@ describe("SpecialistCore", () => {
             index: 0,
             message: {
               role: "assistant",
-              content: JSON.stringify({ caseNote: "Test note", minutes: [] }),
+              content: JSON.stringify({
+                caseNote: "Test note",
+                staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
+              }),
             },
             finish_reason: "stop",
           },
@@ -550,7 +534,7 @@ describe("SpecialistCore", () => {
 
       await core.runDrafting(
         mockTranscript,
-        { actionItems: [], criticalUpdates: [], entities: [] },
+        { actionItems: [], entities: [] },
         mockAgency, // has subheaders: ["Housing", "Mental Health"]
         mockClient,
       );
@@ -574,14 +558,13 @@ describe("SpecialistCore", () => {
 
       const result = await core.runDrafting(
         mockTranscript,
-        { actionItems: [], criticalUpdates: [], entities: [] },
+        { actionItems: [], entities: [] },
         mockAgency,
         mockClient,
       );
 
       expect(result).toEqual({
         caseNote: "[Error]",
-        minutes: [],
         staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       });
     });
@@ -627,7 +610,7 @@ describe("SpecialistCore", () => {
 
         await core.runDrafting(
           { ...mockTranscript, meetingType: "Collateral Contact" },
-          { actionItems: [], criticalUpdates: [], entities: [] },
+          { actionItems: [], entities: [] },
           agencyWithPromptConfig,
           mockClient,
         );
@@ -666,7 +649,7 @@ describe("SpecialistCore", () => {
 
         await core.runDrafting(
           mockTranscript,
-          { actionItems: [], criticalUpdates: [], entities: [] },
+          { actionItems: [], entities: [] },
           agencyWithPromptConfig,
           mockClient,
         );
@@ -698,7 +681,7 @@ describe("SpecialistCore", () => {
 
         await core.runDrafting(
           { ...mockTranscript, meetingType: "Assessment" },
-          { actionItems: [], criticalUpdates: [], entities: [] },
+          { actionItems: [], entities: [] },
           agencyWithPromptConfig,
           mockClient,
         );
@@ -746,7 +729,7 @@ describe("SpecialistCore", () => {
 
         await core.runDrafting(
           { ...mockTranscript, meetingType: "Collateral Contact" },
-          { actionItems: [], criticalUpdates: [], entities: [] },
+          { actionItems: [], entities: [] },
           agencyWithMultipleOutputs,
           mockClient,
         );
@@ -783,13 +766,6 @@ describe("SpecialistCore", () => {
         actionItems: [
           { assignee: "Client", task: "Submit proof of residence" },
         ],
-        criticalUpdates: [
-          {
-            category: "Housing",
-            updateType: "Change",
-            details: "Living with mother",
-          },
-        ],
         entities: [],
       };
 
@@ -798,12 +774,6 @@ describe("SpecialistCore", () => {
           {
             claimId: "ACT_0",
             evidenceQuotes: ["I'll get that proof to you by Friday"],
-            confidence: "HIGH",
-            ambiguity: "LOW",
-          },
-          {
-            claimId: "UPD_0",
-            evidenceQuotes: ["I'm staying at my mom's place now"],
             confidence: "HIGH",
             ambiguity: "LOW",
           },
@@ -830,15 +800,11 @@ describe("SpecialistCore", () => {
         "I'll get that proof to you by Friday",
       ]);
       expect(result.actionItems[0]?.context).toBeUndefined();
-      expect(result.criticalUpdates[0]?.evidenceQuotes).toEqual([
-        "I'm staying at my mom's place now",
-      ]);
     });
 
     test("should skip verification when no claims exist", async () => {
       const emptyExtraction: ExtractionOutput = {
         actionItems: [],
-        criticalUpdates: [],
         entities: [],
       };
 
@@ -855,7 +821,6 @@ describe("SpecialistCore", () => {
     test("should return unverified facts on error", async () => {
       const mockExtraction: ExtractionOutput = {
         actionItems: [{ assignee: "Client", task: "Complete form" }],
-        criticalUpdates: [],
         entities: [],
       };
 
@@ -882,13 +847,6 @@ describe("SpecialistCore", () => {
         actionItems: [
           { assignee: "Staff Member", task: "Follow up with provider" },
         ],
-        criticalUpdates: [
-          {
-            category: "Employment",
-            updateType: "New",
-            details: "Started new job",
-          },
-        ],
         entities: [],
       };
 
@@ -909,9 +867,6 @@ describe("SpecialistCore", () => {
 
       expect(mockGenerateContent).toHaveBeenCalledWith(
         expect.stringContaining("ID: ACT_0"),
-      );
-      expect(mockGenerateContent).toHaveBeenCalledWith(
-        expect.stringContaining("ID: UPD_0"),
       );
     });
   });

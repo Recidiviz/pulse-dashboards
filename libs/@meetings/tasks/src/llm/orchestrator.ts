@@ -141,9 +141,7 @@ export class ProductionPipeline {
         });
 
         if (facts.actionItems.length === 0) {
-          logger.warning("Extraction found no action items", {
-            updates_count: facts.criticalUpdates.length,
-          });
+          logger.warning("Extraction found no action items");
         }
 
         // STEP 2: WRITER AGENT (Drafting Loop with Retry)
@@ -219,9 +217,7 @@ export class ProductionPipeline {
 
         return {
           caseNote: finalPayload.caseNote,
-          meetingMinutes: finalPayload.minutes,
           actionItems: verification.actionItems,
-          statusUpdates: verification.criticalUpdates,
           staffFeedback: finalPayload.staffFeedback,
           pipelineRunId: pipelineRun.id,
         };

@@ -62,40 +62,6 @@ export const ActionItemSchema = z.object({
     .describe("Verbatim quotes from the transcript supporting this item"),
 });
 
-export const CriticalUpdateSchema = z.object({
-  category: z.enum([
-    "Housing",
-    "Employment",
-    "Legal",
-    "Substance",
-    "Family",
-    "Health",
-    "Education",
-    "Other",
-  ]),
-  updateType: z.enum(["New", "Change", "Stable/Status Quo"]),
-  details: z.string(),
-  evidenceQuotes: z
-    .array(z.string())
-    .optional()
-    .describe("Verbatim quotes from the transcript supporting this update"),
-});
-
-// Define the base schema first to avoid circular type issues
-export const MinuteItemSchema: z.ZodSchema = z.lazy(() =>
-  z.object({
-    timestamp: z.string().optional().describe("[MM:SS] format"),
-    content: z.string(),
-    status: z.enum(["Discussed", "Completed", "Assigned"]).default("Discussed"),
-    subItems: z.array(MinuteItemSchema).default([]),
-  }),
-);
-
-export const MinuteSectionSchema = z.object({
-  title: z.string().default("General"),
-  items: z.array(MinuteItemSchema).default([]),
-});
-
 export const StaffFeedbackOutputSchema = z.object({
   whatYouDidWell: z
     .array(z.string())
@@ -118,9 +84,6 @@ export const DraftingOutputSchema = z.object({
     .describe(
       "Official case note in professional third-person style with CAPS LABELS for sections",
     ),
-  minutes: z
-    .array(MinuteSectionSchema)
-    .describe("Structured meeting minutes with timestamps and nested items"),
   staffFeedback: StaffFeedbackOutputSchema.describe(
     "Coaching feedback (MI/CCP) about the Staff Member's communication style",
   ),
@@ -128,9 +91,7 @@ export const DraftingOutputSchema = z.object({
 
 export const PipelineOutputSchema = z.object({
   caseNote: z.string(),
-  meetingMinutes: z.array(MinuteSectionSchema).optional(),
   actionItems: z.array(ActionItemSchema),
-  statusUpdates: z.array(CriticalUpdateSchema),
   staffFeedback: StaffFeedbackOutputSchema,
   pipelineRunId: z.string(),
 });
@@ -147,7 +108,6 @@ export const EntityItemSchema = z.object({
 // Extraction step - extraction agent output
 export const ExtractionOutputSchema = z.object({
   actionItems: z.array(ActionItemSchema),
-  criticalUpdates: z.array(CriticalUpdateSchema),
   entities: z.array(EntityItemSchema),
 });
 
@@ -175,9 +135,6 @@ export const AssemblyOutputSchema = PipelineOutputSchema;
 
 export type TranscriptInput = z.infer<typeof TranscriptInputSchema>;
 export type ActionItem = z.infer<typeof ActionItemSchema>;
-export type CriticalUpdate = z.infer<typeof CriticalUpdateSchema>;
-export type MinuteItem = z.infer<typeof MinuteItemSchema>;
-export type MinuteSection = z.infer<typeof MinuteSectionSchema>;
 export type PipelineOutput = z.infer<typeof PipelineOutputSchema>;
 export type EntityItem = z.infer<typeof EntityItemSchema>;
 export type VerificationEntry = z.infer<typeof VerificationEntrySchema>;

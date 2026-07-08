@@ -191,8 +191,6 @@ export const fakeActiveMeeting = {
   recordingsFolderPath: "meeting-1",
   userNotepadNotes: "Sample meeting notes.",
   actionItems: [],
-  criticalUpdates: [],
-  meetingSummary: [],
   caseNote: "draft case note",
   transcriptions: {
     create: [
@@ -269,12 +267,6 @@ export const fakeInactiveMeeting = {
     "Schedule next check-in",
     "Review case file",
   ],
-  criticalUpdates: [
-    "Employment - New: Client reported new job opportunity",
-    "Legal - Change: Upcoming court date next week",
-  ],
-  meetingSummary:
-    "Productive meeting discussing client progress and upcoming milestones.",
   transcriptions: {
     create: [],
   },
@@ -297,12 +289,6 @@ export const fakeMeetingStaff1 = {
     "Schedule next check-in",
     "Review case file",
   ],
-  criticalUpdates: [
-    "Employment - New: Client reported new job opportunity",
-    "Legal - Change: Upcoming court date next week",
-  ],
-  meetingSummary:
-    "Productive meeting discussing client progress and upcoming milestones.",
   transcriptions: {
     create: [],
   },
