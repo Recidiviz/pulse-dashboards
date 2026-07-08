@@ -85,6 +85,16 @@ export const usNeResidentJiiDataSchema = usNeResidentCommonSchema.extend({
   goodTimeLostDaysNonRestorable: z.number().nullable(),
   goodTimeLastModifiedDate: dateStringSchema.nullable(),
   goodTimeLawNumber: z.string().nullable(),
+  // TODO(OBT-29535): once this schema is moved to JII app,
+  // this field does not need to be optional anymore
+  goodTimeRestorationTodos: z
+    .array(
+      z.object({
+        criterion: z.string(),
+        reason: z.object({ latestEligibleDate: dateStringSchema.optional() }),
+      }),
+    )
+    .default([]),
 
   // Detainers and notifiers
   numHoldsAndDetainers: z.number(),

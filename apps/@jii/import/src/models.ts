@@ -68,10 +68,7 @@ export const processedResidentSchema = residentCommonSchema
           // for states where we do have a schema, validate the input against that
           const validation = ssdSchema.safeParse(rawSSD);
           if (validation.error) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              message: validation.error.message,
-            });
+            validation.error.issues.forEach((i) => ctx.addIssue(i));
           }
         }
       })
