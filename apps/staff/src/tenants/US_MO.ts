@@ -154,6 +154,7 @@ const US_MO_CONFIG = {
         title: "Supervision Level",
         field: "supervisionLevel",
         type: "person",
+        dynamic: true,
         options: [
           {
             value: "Low",
@@ -171,6 +172,7 @@ const US_MO_CONFIG = {
         title: "Case Type",
         field: "caseType",
         type: "person",
+        dynamic: true,
         options: [
           {
             value: "General",

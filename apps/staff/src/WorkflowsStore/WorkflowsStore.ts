@@ -1080,4 +1080,8 @@ export class WorkflowsStore implements Hydratable {
       this.rootStore.tenantStore.currentTenantId === "US_ID"
     );
   }
+
+  get isDynamicFiltersEnabled(): boolean {
+    return !!this.featureVariants.dynamicFilters;
+  }
 }

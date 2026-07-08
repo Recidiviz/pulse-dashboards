@@ -167,6 +167,16 @@ export type FilterSection<T extends FilterType = FilterType> = {
   type: T;
   field: FilterField;
   options: FilterOption[];
+  /**
+   * When true (and the `dynamicFilters` feature variant is on), the section's
+   * `options` are extended with any values found in the caseload data that the
+   * static config is missing — see `TasksFilterStore.dynamicOptionsForField`.
+   * Only safe for person-typed fields whose config `field` matches the `Client`
+   * getter read by both filter matching (`personMatchesFilters`) and the option
+   * counts (`numItems`). `caseType` qualifies for US_MO because `Client.caseType`
+   * and `Client.caseTypeForFilter` only diverge for US_TX.
+   */
+  dynamic?: boolean;
 };
 
 export type SearchConfig<R, T extends TenantConfigId> = {

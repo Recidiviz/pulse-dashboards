@@ -70,6 +70,7 @@ export type FeatureVariant =
   //// General
   | "caseNoteSearch"
   | "clientsResidentsTableViewToggle"
+  | "dynamicFilters"
   | "formRevertButton"
   | "hideDenialRevert"
   | "hideWorkflowsOpportunities"
@@ -218,6 +219,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usPaSpecialCircumstances: {},
   caseNoteSearch: {},
   clientsResidentsTableViewToggle: {},
+  dynamicFilters: {},
   actionStrategies: {},
   zeroGrantsFlag: {},
   usOrEarnedDischargeSentence: {},
@@ -336,6 +338,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         hideDenialRevert: { activeTenants: ["US_AZ"] },
         usIdTasksV2: {},
         caseOverview: { activeTenants: ["US_MO"] },
+        dynamicFilters: { activeTenants: ["US_MO"] },
         recentCaseNotes: { activeTenants: ["US_MO"] },
         usMoCasePlanning: { activeTenants: ["US_MO"] },
         customTasks: { activeTenants: ["US_MO"] },
@@ -365,6 +368,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
           activeTenants: ["US_TN"],
         },
         caseOverview: { activeTenants: ["US_MO"] },
+        dynamicFilters: { activeTenants: ["US_MO"] },
         recentCaseNotes: { activeTenants: ["US_MO"] },
         usMoCasePlanning: { activeTenants: ["US_MO"] },
         tasksPermasnooze: { activeTenants: ["US_MO"] },

@@ -332,6 +332,64 @@ describe("MyCaseloadPresenter", () => {
       ).toEqual(2);
     });
 
+    it("counts task-less clients for a person-type option in 'All Clients'", () => {
+      // 'All Clients' lists the whole caseload, so a person filter must count
+      // task-less clients too — b has no tasks but is still a High client.
+      presenter = getPresenter({
+        workflowsStore: {
+          ...mockWorkflowsStore,
+          caseloadPersons: [
+            makePersonWithTasks(["contact"], {
+              id: "a",
+              supervisionLevel: "High",
+            }),
+            makePersonWithTasks([], { id: "b", supervisionLevel: "High" }),
+            makePersonWithTasks([], { id: "c", supervisionLevel: "Low" }),
+          ],
+        } as any as WorkflowsStore,
+      });
+      presenter.selectedTaskCategory = "ALL_TASKS";
+
+      expect(
+        presenter.numItems(
+          "person",
+          "supervisionLevel" as any,
+          {
+            value: "High",
+          } as any,
+        ),
+      ).toEqual(2);
+    });
+
+    it("excludes task-less clients for a person-type option outside 'All Clients'", () => {
+      // Other tabs only surface clients with a matching task in the bucket, so
+      // the count stays task-based — b (no tasks) is not counted in Overdue.
+      presenter = getPresenter({
+        workflowsStore: {
+          ...mockWorkflowsStore,
+          caseloadPersons: [
+            makePersonWithTasks(["contact"], {
+              id: "a",
+              overdue: true,
+              supervisionLevel: "High",
+            }),
+            makePersonWithTasks([], { id: "b", supervisionLevel: "High" }),
+          ],
+        } as any as WorkflowsStore,
+      });
+      presenter.selectedTaskCategory = "OVERDUE";
+
+      expect(
+        presenter.numItems(
+          "person",
+          "supervisionLevel" as any,
+          {
+            value: "High",
+          } as any,
+        ),
+      ).toEqual(1);
+    });
+
     it("counts only clients whose matching task falls in the selected tab", () => {
       // Four clients, each with one contact task in a different bucket.
       presenter = getPresenter({

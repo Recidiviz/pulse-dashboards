@@ -34,7 +34,12 @@ import {
   WorkflowsStore,
 } from "../../WorkflowsStore";
 import { taskDueDateComparator } from "../../WorkflowsStore/Task/TasksBase";
-import { FilterField, FilterOption, FilterType } from "../models/types";
+import {
+  FilterField,
+  FilterOption,
+  FilterType,
+  TaskFilterValue,
+} from "../models/types";
 import { SupervisionTaskCategory } from "../WorkflowsTasks/fixtures";
 import {
   TasksTablePresenter,
@@ -160,31 +165,100 @@ export class MyCaseloadPresenter
   // of the currently selected filters. The count is tab-specific (e.g. on
   // "Overdue" it reflects clients with an overdue matching task) so it lines up
   // with the rows that tab surfaces, and counts clients — not tasks — because
-  // My Caseload is one-row-per-client.
+  // My Caseload is one-row-per-client. Backed by a memoized single-pass map so
+  // this is an O(1) lookup rather than a caseload scan per option.
   numItems(type: FilterType, field: FilterField, option: FilterOption): number {
-    const matchingPersons = this.filterStore
-      .allTasksForCategory("ALL_TASKS", false)
-      .filter((task) => {
-        const taskIsInCategory = this.taskIsInCategory(
-          task,
-          this.selectedTaskCategory,
-        );
-        if (!taskIsInCategory) {
-          return false;
-        }
+    return (
+      this.optionCountsByField.get(`${type}:${field}`)?.get(option.value) ?? 0
+    );
+  }
 
-        if (type === "task") {
-          // @ts-expect-error searchable fields are restricted to strings but TS does not know that
-          return task[field] === option.value;
-        } else if (type === "person") {
-          // @ts-expect-error searchable fields are restricted to strings but TS does not know that
-          return task.person[field] === option.value;
-        }
-        return false;
-      })
-      .map((task) => task.person);
+  /**
+   * Distinct-client counts for every filter option in the selected tab, built in
+   * a single pass and memoized (a `computed` via `makeAutoObservable`), keyed
+   * `${type}:${field}` -> option value -> count.
+   *
+   * "All Clients" lists every client (including task-less ones), so person-typed
+   * options count distinct clients across the whole caseload; deriving them from
+   * tasks would drop task-less clients (making, e.g., a Case Type read 0 while
+   * such clients are clearly listed). Task-typed options — and every other tab —
+   * count distinct clients with a matching task in the bucket, since a task-less
+   * client can't match a task filter anyway.
+   */
+  private get optionCountsByField(): Map<string, Map<TaskFilterValue, number>> {
+    const counts = new Map<string, Map<TaskFilterValue, number>>();
+    const seenClientsByKey = new Map<string, Set<string>>();
 
-    return uniq(matchingPersons).length;
+    const addDistinctClient = (
+      key: string,
+      value: TaskFilterValue,
+      clientId: string,
+    ) => {
+      let seen = seenClientsByKey.get(key);
+      if (!seen) {
+        seen = new Set();
+        seenClientsByKey.set(key, seen);
+      }
+      const dedupeKey = `${String(value)}::${clientId}`;
+      if (seen.has(dedupeKey)) return;
+      seen.add(dedupeKey);
+
+      let valueCounts = counts.get(key);
+      if (!valueCounts) {
+        valueCounts = new Map();
+        counts.set(key, valueCounts);
+      }
+      valueCounts.set(value, (valueCounts.get(value) ?? 0) + 1);
+    };
+
+    const isAllClients = this.selectedTaskCategory === "ALL_TASKS";
+    const sections = this.filterStore.filters;
+
+    // "All Clients": person-typed options count every client, tasks or not.
+    if (isAllClients) {
+      for (const person of this.workflowsStore.caseloadPersons) {
+        for (const section of sections) {
+          if (section.type !== "person") continue;
+          // @ts-expect-error searchable fields are restricted to strings but TS does not know that
+          const value = person[section.field];
+          addDistinctClient(
+            `person:${section.field}`,
+            value,
+            person.pseudonymizedId,
+          );
+        }
+      }
+    }
+
+    // Task-typed options (always), plus person-typed options on the other tabs:
+    // count distinct clients with a matching task in the bucket.
+    for (const task of this.filterStore.allTasksForCategory(
+      "ALL_TASKS",
+      false,
+    )) {
+      if (!this.taskIsInCategory(task, this.selectedTaskCategory)) continue;
+      for (const section of sections) {
+        if (section.type === "task") {
+          // @ts-expect-error searchable fields are restricted to strings but TS does not know that
+          const value = task[section.field];
+          addDistinctClient(
+            `task:${section.field}`,
+            value,
+            task.person.pseudonymizedId,
+          );
+        } else if (section.type === "person" && !isAllClients) {
+          // @ts-expect-error searchable fields are restricted to strings but TS does not know that
+          const value = task.person[section.field];
+          addDistinctClient(
+            `person:${section.field}`,
+            value,
+            task.person.pseudonymizedId,
+          );
+        }
+      }
+    }
+
+    return counts;
   }
 
   // Task bucketing — owned here rather than in the shared filter store.
