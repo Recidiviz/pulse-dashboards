@@ -134,9 +134,13 @@ To create the required databases and add data to them, use the [load_fixtures](h
 
 Similarly to running the application locally, the application can be run but the Backend will fetch from a Demo GCS bucket, where all of the data is anonymized and randomized. Non-recidiviz employees should use this option.
 
-`nx demo staff`
+`nx dev staff --configuration=demo`
 
-Similar to the `dev` command, this will start both the frontend and backend servers.
+or the short form
+
+`nx dev staff -c=demo`
+
+As with other variants of the `dev` command, this will start both the frontend and backend servers.
 
 ### Running the Frontend and Backend together in Offline mode
 
