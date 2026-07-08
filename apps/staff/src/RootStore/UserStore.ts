@@ -379,6 +379,10 @@ export default class UserStore {
    * Returns "RECIDIVIZ" if it is a recidiviz user.
    */
   get externalId(): string | undefined {
+    if (this.isRecidivizUser && (isDemoMode() || isOfflineMode())) {
+      return this.rootStore?.workflowsStore.user?.info.staffExternalId;
+    }
+
     if (this.isRecidivizUser) return "RECIDIVIZ";
     return this.userAppMetadata?.externalId;
   }

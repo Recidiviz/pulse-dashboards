@@ -162,13 +162,13 @@ test("inject record in offline mode", () => {
     [
       {
         "email": "test@example.com",
-        "givenNames": "Demo",
+        "givenNames": "Geri",
         "hasCaseload": false,
         "pseudonymizedId": "p100",
         "recordType": "supervisionStaff",
         "staffExternalId": "us_xx_test@example.com",
         "stateCode": "US_XX",
-        "surname": "",
+        "surname": "Halliwell",
       },
     ]
   `);
@@ -179,13 +179,13 @@ test("inject record in offline mode", () => {
     [
       {
         "email": "test@example.com",
-        "givenNames": "Demo",
+        "givenNames": "Geri",
         "hasCaseload": false,
         "pseudonymizedId": "p100",
         "recordType": "supervisionStaff",
         "staffExternalId": "us_xx_test@example.com",
         "stateCode": "US_XX",
-        "surname": "",
+        "surname": "Halliwell",
       },
     ]
   `);

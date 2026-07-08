@@ -28,6 +28,7 @@ import {
 } from "mobx";
 import { IDisposer, keepAlive } from "mobx-utils";
 
+import { isDemoMode, isOfflineMode } from "~client-env-utils";
 import {
   ClientRecord,
   clientRecordSchema,
@@ -779,9 +780,26 @@ export class WorkflowsStore implements Hydratable {
   }
 
   get availableOfficersWithOrWithoutCaseloads(): StaffRecord[] {
-    const officers = (this.staffWithOrWithoutCaseloadSubscription ?? [])
+    const officers: StaffRecord[] = (
+      this.staffWithOrWithoutCaseloadSubscription ?? []
+    )
       .map((s) => s.data)
       .flat();
+
+    // In demo and offline mode, the signed-in user's own staff record often
+    // doesn't correspond to a real staff document, so officer/reviewer name
+    // lookups for actions taken by the demo user would otherwise fail to resolve.
+    if ((isDemoMode() || isOfflineMode()) && this.user?.info) {
+      const currentUserRecord = this.user.info;
+      const alreadyPresent = officers.some(
+        (officer) =>
+          officer.staffExternalId === currentUserRecord.staffExternalId,
+      );
+      if (!alreadyPresent) {
+        officers.push(currentUserRecord);
+      }
+    }
+
     officers.sort(staffNameComparator);
 
     return officers;
