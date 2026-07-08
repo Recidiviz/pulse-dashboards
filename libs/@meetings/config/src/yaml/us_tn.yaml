@@ -1,6 +1,10 @@
 name: Tennessee
 stateCode: US_TN
-version: 1
+version: 2
+
+audioPlaybackEnabled: true
+audioTTLDays: null
+transcriptTTLDays: null
 
 additionalKeywords:
   - TDOC

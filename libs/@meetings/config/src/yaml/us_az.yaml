@@ -1,6 +1,9 @@
 name: Arizona
 stateCode: US_AZ
-version: 1
+version: 2
+
+audioTTLDays: null
+transcriptTTLDays: null
 
 additionalKeywords:
   - ADCRR
