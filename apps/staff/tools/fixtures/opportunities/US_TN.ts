@@ -496,7 +496,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usTnNoIneligibleCrOffense2025Policy",
-          text: "No convictions for sex offenses or felony domestic-violence offenses",
+          text: "{{#unless (or record.ineligibleCriteria.hasActiveSentence (eq null record.ineligibleCriteria.hasActiveSentence))}}No convictions for sex offenses or felony domestic-violence offenses{{/unless}}",
           tooltip: "",
         },
         {
@@ -540,6 +540,12 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usTnNegativeArrestCheckInPast6Months",
           text: "{{#if record.metadata.latestNegativeArrestCheck.contactDate}} Latest ARRN ({{date record.metadata.latestNegativeArrestCheck.contactDate}}) is more than 6 months old\n{{else}}\nNo recent ARRNs found\n{{/if}}",
           tooltip: "Client has had no arrests in the past 6 months",
+        },
+        {
+          key: "hasActiveSentence",
+          text: "Check judgement orders to confirm no convictions for sex offenses or felony domestic-violence offenses",
+          tooltip:
+            "Since TOMIS sentencing information can be incomplete, especially for Probation or Misdemeanor Probation cases, please double-check offenses on judgement orders",
         },
       ],
       initialHeader:
@@ -593,7 +599,7 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           text: "Judgement orders checked to confirm no convictions for sex offenses or felony domestic-violence offenses",
           tooltip:
-            "Since TOMIS sentencing information can be incomplete, especially for Probation or Misdemeanor Probation cases, please double check offenses on judgement orders",
+            "Since TOMIS sentencing information can be incomplete, especially for Probation or Misdemeanor Probation cases, please double-check offenses on judgement orders",
         },
       ],
       nonOmsCriteriaHeader: "Requirements to check",

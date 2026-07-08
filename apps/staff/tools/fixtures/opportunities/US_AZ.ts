@@ -815,14 +815,14 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usAzOrasHasSubstanceUseIssues",
-          text: "Not currently dealing with substance use issues",
+          text: "Not currently dealing with substance use issues ",
           tooltip:
             "(DO 1007 8.1.8) Not currently dealing with substance use issues, as assessed in the risk and needs assessment. Only a score of 2, indicating “current problems caused by drug use,” disqualifies someone from eligibility. A client may also meet this requirement if they have abstained from illicit drug use for the past year.",
         },
       ],
       emptyTabCopy: [
         {
-          tab: "Eligible per ORAS",
+          tab: "Eligible for Administrative Supervision",
           text: "At this time, there are no clients who are currently eligible. Please navigate to one of the other tabs.",
         },
         {
@@ -843,10 +843,10 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       firestoreCollection: "US_AZ-TransferToAdminSupervisionV2",
-      grantApprovedStatusMessage: null,
-      grantApprovedTabTitle: null,
-      grantReviewDropdownLabel: null,
-      grantReviewStatusMessage: null,
+      grantApprovedStatusMessage: "testing this thing! c",
+      grantApprovedTabTitle: "testing this thing! b",
+      grantReviewDropdownLabel: "testing this thing! f",
+      grantReviewStatusMessage: "testing this thing! e",
       hideDenialRevert: true,
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
@@ -871,12 +871,12 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: "Validated by data from ACIS",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
-      reviewerFeatureVariant: null,
+      reviewerFeatureVariant: "testing this thing! g",
       sidebarComponents: ["Supervision"],
       skipFormPreview: false,
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
-      snoozeReviewStatusMessage: null,
+      snoozeReviewStatusMessage: "testing this thing! d",
       stateCode: "US_AZ",
       strictlyIneligibleCriteriaCopy: [
         {
@@ -915,7 +915,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usAzOrasHasSubstanceUseIssues",
-          text: "Currently dealing with substance use issues",
+          text: "Currently dealing with substance use issues ",
           tooltip:
             "(DO 1007 8.1.8) Not currently dealing with substance use issues, as assessed in the risk and needs assessment. Only a score of 2, indicating “current problems caused by drug use,” disqualifies someone from eligibility. A client may also meet this requirement if they have abstained from illicit drug use for the past year.",
         },
@@ -923,13 +923,13 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "Identify clients who are eligible for Administrative Supervision and adjust their supervision level in ACIS. [Learn More](https://docs.google.com/document/d/e/2PACX-1vQ55ljjO7rz-6UiHGLwEcH7WR6_ZZIbEynN-92kO5D61wfKIZZVewqLxQdQfjOtv6vnKDSmQKLX9xui/pub)",
+        "Identify clients who are eligible for Administrative Supervision and submit them to your supervisor for approval. [Learn More](https://docs.google.com/document/d/e/2PACX-1vQ55ljjO7rz-6UiHGLwEcH7WR6_ZZIbEynN-92kO5D61wfKIZZVewqLxQdQfjOtv6vnKDSmQKLX9xui/pub)",
       submittedTabTitle: "Transferred in ACIS",
-      supervisorReviewTabTitle: null,
+      supervisorReviewTabTitle: "testing this thing! a",
       supportsIneligible: true,
       supportsSubmitted: true,
-      supportsSupervisorReviewOnGrants: false,
-      supportsSupervisorReviewOnSnooze: false,
+      supportsSupervisorReviewOnGrants: true,
+      supportsSupervisorReviewOnSnooze: true,
       systemType: "SUPERVISION",
       tabGroups: [
         {
@@ -945,20 +945,20 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       tabPrefaceCopy: [
         {
-          tab: "Eligible per ORAS",
-          text: "Based on ORAS results and ACIS data, clients in this tab appear eligible for Administrative Supervision. Review housing stability and transfer eligible clients to Administrative Supervision per policy.",
+          tab: "Eligible for Administrative Supervision",
+          text: "Based on ORAS results and ACIS data, clients in this tab appear eligible for Administrative Supervision as per the policy. CROs should review case notes and submit eligible cases for supervisor approval.",
         },
         {
           tab: "Submitted for Supervisor Review",
-          text: "Clients in this tab have been reviewed by a CRO and submitted for supervisor approval. ",
+          text: "Clients in this tab have been reviewed by a CRO and submitted for supervisor approval. Supervisors should review eligibility and approve cases for transfer to Administrative Supervision, or defer the case until conditions have been met.   ",
         },
         {
           tab: "Approved by Supervisor",
-          text: "Clients in this tab have been approved for transfer to Administrative Supervision. Complete the transfer by updating their supervision level in ACIS.",
+          text: "Clients in this tab have been approved by a supervisor for transfer to Administrative Supervision. CROs should complete the transfer by [updating the client’s supervision level in ACIS].",
         },
         {
           tab: "Transferred in ACIS",
-          text: "Clients appear here after you confirm that their supervision level has been set to Administrative Supervision in ACIS. Clients who were successfully transferred will drop off this list after 24 hours. If a client continues to appear here, double check their supervision level in ACIS.",
+          text: "Clients appear here after the CRO confirms that their supervision level has been set to Administrative Supervision in ACIS. Clients who were successfully transferred will drop off this list after 24 hours. If a client continues to appear here, double check their supervision level in ACIS.",
         },
         {
           tab: "Marked Ineligible",
