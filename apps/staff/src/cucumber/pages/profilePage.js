@@ -23,7 +23,7 @@ class ProfilePage extends Page {
   }
 
   async promptText() {
-    return $(".StateSelection__heading");
+    return $(".StateSelection .Profile__heading");
   }
 
   async selectStateOption(stateName) {

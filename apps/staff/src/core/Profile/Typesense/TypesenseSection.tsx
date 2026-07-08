@@ -15,24 +15,71 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { rem } from "polished";
-import styled from "styled-components";
+import { observer } from "mobx-react-lite";
 
+import { Button } from "~design-system";
+import { hydrationFailure, Hydrator } from "~hydration-utils";
+
+import { useTypesenseStore } from "../../../components/StoreProvider";
+import { SectionCardHeader } from "../../SectionCard";
 import { StatusCard } from "./Status/StatusCard";
+import {
+  CardBody,
+  CardsRow,
+  CenteredRow,
+  ErrorMessage,
+  ErrorTitle,
+  StatusCardColumn,
+  TitleRow,
+  TypesenseCard,
+  TypesenseSectionContainer,
+} from "./styles";
+import { SummaryCard } from "./Summary/SummaryCard";
 
-const TypesenseSectionContainer = styled.div`
-  display: inline-block;
-  width: fit-content;
-  max-width: 100%;
-  margin-bottom: ${rem(30)};
-`;
+const TypesenseSectionError = observer(function TypesenseSectionError() {
+  const store = useTypesenseStore();
+  const error = hydrationFailure(store);
+
+  return (
+    <TypesenseCard>
+      <SectionCardHeader>Error</SectionCardHeader>
+      <CardBody>
+        <ErrorTitle>Failed to load Typesense data</ErrorTitle>
+        {error && <ErrorMessage>{error.message}</ErrorMessage>}
+        <CenteredRow>
+          <Button kind="secondary" shape="pill" onClick={() => store.refresh()}>
+            Refresh
+          </Button>
+        </CenteredRow>
+      </CardBody>
+    </TypesenseCard>
+  );
+});
 
 // Displays all Typesense monitoring tools for easy triage of common issues
-export function TypesenseSection() {
+export const TypesenseSection = observer(function TypesenseSection() {
+  const store = useTypesenseStore();
+
   return (
     <TypesenseSectionContainer>
-      <div className="Profile__title">Typesense</div>
-      <StatusCard />
+      <TitleRow>
+        <div className="Profile__heading">Typesense</div>
+      </TitleRow>
+      <Hydrator hydratable={store} failed={<TypesenseSectionError />}>
+        <CardsRow>
+          <StatusCardColumn>
+            <StatusCard />
+            <Button
+              kind="secondary"
+              shape="pill"
+              onClick={() => store.refresh()}
+            >
+              Refresh
+            </Button>
+          </StatusCardColumn>
+          <SummaryCard />
+        </CardsRow>
+      </Hydrator>
     </TypesenseSectionContainer>
   );
-}
+});

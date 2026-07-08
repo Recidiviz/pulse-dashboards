@@ -53,7 +53,7 @@ const StateSelection: React.FC = () => {
 
   return (
     <div className="StateSelection">
-      <div className="StateSelection__heading">Select a state</div>
+      <div className="Profile__heading">Select a state</div>
       <div className="StateSelection__select-item-container">
         {availableStatesOptions.map((option: StateSelectOption) => (
           <button

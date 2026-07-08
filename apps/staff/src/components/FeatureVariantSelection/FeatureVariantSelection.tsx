@@ -25,11 +25,15 @@ import { useFeatureVariants } from "../../components/StoreProvider";
 import { useUserStore } from "../../components/StoreProvider";
 import { allFeatureVariants, FeatureVariant } from "../../RootStore/types";
 
-
 const FeatureVariantSelection: React.FC = () => {
   const userStore = useUserStore();
   const activeFeatureVariants = useFeatureVariants();
-  type Item = { name: string; active: boolean; variant?: string; override?: boolean };
+  type Item = {
+    name: string;
+    active: boolean;
+    variant?: string;
+    override?: boolean;
+  };
 
   const items: Item[] = Object.keys(allFeatureVariants).map((fv) => ({
     name: fv,
@@ -42,7 +46,7 @@ const FeatureVariantSelection: React.FC = () => {
 
   return (
     <div className="FeatureVariantSelection">
-      <div className="FeatureVariantSelection__heading">Selected Feature Variants</div>
+      <div className="Profile__heading">Selected Feature Variants</div>
       <div className="FeatureVariantSelection__select-item-container">
         {items.map(({ name, active, variant, override }) => (
           <div className="FeatureVariantSelection__select-item" key={name}>
@@ -50,17 +54,15 @@ const FeatureVariantSelection: React.FC = () => {
               value={variant || ""}
               checked={active || false}
               name={name}
-               onChange={() => {
-                  userStore.setFeatureVariantOverride(
+              onChange={() => {
+                userStore.setFeatureVariantOverride(
                   name as FeatureVariant,
-                  !override
+                  !override,
                 );
               }}
             >
               {name}
-            <div className="Override__label">
-              {override && `Overridden`}
-            </div>
+              <div className="Override__label">{override && `Overridden`}</div>
             </Checkbox>
           </div>
         ))}

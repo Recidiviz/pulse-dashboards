@@ -53,6 +53,15 @@
         "cwd": "{projectRoot}"
       }
     },
+    "capture-simulate-fixtures": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "vite-node src/server/typesense/captureTypesenseSimulateFixtures.ts"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
     "esbuild": {
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],

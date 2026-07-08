@@ -17,54 +17,53 @@
 
 import { observer } from "mobx-react-lite";
 
-import { palette } from "~design-system";
-
 import { useTypesenseStore } from "../../../../components/StoreProvider";
 import { SectionCardHeader } from "../../../SectionCard";
 import {
   CardBody,
-  InfoBadge,
-  InfoBadgeDetail,
-  InfoBadgeLabel,
-  StatusDot,
-  StatusLabel,
-  StatusRow,
+  ColHeader,
+  DataTable,
+  EmptyCell,
+  NameCell,
+  NumCell,
+  TableWrap,
   TypesenseCard,
 } from "../styles";
 
-function envLabel(host: string): string {
-  if (host.includes("localhost")) return "Offline Mode";
-  if (host.includes("staging")) return "Staging";
-  return "Production";
-}
-
-function dotColor(healthy: boolean) {
-  return healthy ? palette.pine3 : palette.signal.error;
-}
-
-export const StatusCard = observer(function StatusCard() {
+export const SummaryCard = observer(function SummaryCard() {
   const store = useTypesenseStore();
-  const { host, checkedAt } = store;
+  const { collectionsSummary } = store;
 
   return (
     <TypesenseCard>
-      <SectionCardHeader>Status</SectionCardHeader>
+      <SectionCardHeader>Collection Summary</SectionCardHeader>
       <CardBody>
-        <StatusRow>
-          <StatusDot $color={dotColor(true)} />
-          <StatusLabel $color={dotColor(true)}>Healthy</StatusLabel>
-        </StatusRow>
-
-        {host && (
-          <InfoBadge>
-            <InfoBadgeLabel>Environment: {envLabel(host)}</InfoBadgeLabel>
-            <InfoBadgeDetail>{host}</InfoBadgeDetail>
-          </InfoBadge>
-        )}
-
-        {checkedAt && (
-          <span>Last checked: {checkedAt.toLocaleTimeString()}</span>
-        )}
+        <TableWrap>
+          <DataTable>
+            <thead>
+              <tr>
+                <ColHeader>Name</ColHeader>
+                <ColHeader $right>Docs</ColHeader>
+                <ColHeader $right>Fields</ColHeader>
+              </tr>
+            </thead>
+            <tbody>
+              {collectionsSummary && collectionsSummary.length > 0 ? (
+                collectionsSummary.map((c) => (
+                  <tr key={c.name}>
+                    <NameCell>{c.name}</NameCell>
+                    <NumCell>{c.numDocuments.toLocaleString()}</NumCell>
+                    <NumCell>{c.numFields}</NumCell>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <EmptyCell colSpan={3}>No collections found</EmptyCell>
+                </tr>
+              )}
+            </tbody>
+          </DataTable>
+        </TableWrap>
       </CardBody>
     </TypesenseCard>
   );

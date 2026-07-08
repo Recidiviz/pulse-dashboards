@@ -68,6 +68,7 @@ describe("typesenseHealth", () => {
     expect(send).toHaveBeenCalledWith({
       status: 503,
       errors: ["Typesense reported unhealthy"],
+      host: null,
     });
   });
 
@@ -85,6 +86,7 @@ describe("typesenseHealth", () => {
     expect(send).toHaveBeenCalledWith({
       status: 503,
       errors: ["ECONNREFUSED"],
+      host: null,
     });
   });
 

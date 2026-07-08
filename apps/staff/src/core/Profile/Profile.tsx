@@ -98,7 +98,7 @@ function Profile() {
           </div>
           <StateSelection />
           {showFeatureVariants && <FeatureVariantSelection />}
-          {userStore.isRecidivizUser && <TypesenseSection />}
+          {userStore.isRecidivizUser && !isDemoMode() && <TypesenseSection />}
           <div>
             <Link to="/">
               <Button className="Profile__button">Back to dashboard</Button>

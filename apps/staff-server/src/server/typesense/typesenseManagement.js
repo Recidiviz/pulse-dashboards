@@ -26,6 +26,11 @@
 import { responder, respondWithForbidden } from "../routes/api";
 import { getAppMetadata } from "../utils/getAppMetadata";
 import { isOfflineMode } from "../utils/isOfflineMode";
+import notFoundSchemaFixture from "./__fixtures__/not-found-schema.json";
+import unauthorizedCollectionsFixture from "./__fixtures__/unauthorized-collections.json";
+import unauthorizedSchemaFixture from "./__fixtures__/unauthorized-schema.json";
+import unconfiguredHealthFixture from "./__fixtures__/unconfigured-health.json";
+import unreachableHealthFixture from "./__fixtures__/unreachable-health.json";
 import { createTypesenseInspectClient } from "./client";
 
 function isAllowed(req) {
@@ -48,22 +53,40 @@ export async function typesenseHealth(req, res) {
     return;
   }
 
-  // For testing: set TYPESENSE_SIMULATE=healthy|unhealthy|unconfigured to
-  // force a response without actually hitting the cluster
+  const host = process.env.TYPESENSE_HOST ?? null;
+
+  // For testing: set TYPESENSE_SIMULATE to force a response without hitting
+  // the cluster. Failure-mode values are backed by fixtures captured from a
+  // real local Typesense instance (see captureTypesenseSimulateFixtures.ts)
+  // rather than hand-typed guesses.
+  //   no-collections — health OK; collections returns an empty list
+  //   unauthorized   — health OK (Typesense's own /health doesn't require
+  //                    auth); collections/schema return a 401 error
+  //   not-found      — health OK; schema returns a 404 error
+  //   unconfigured   — health 500 (collections/schema never called)
+  //   unreachable    — health 503 (collections/schema never called)
   const simulate = process.env.TYPESENSE_SIMULATE;
   if (simulate) {
-    if (simulate === "healthy") {
-      responder(res)(null, {
-        ok: true,
-        host: process.env.TYPESENSE_HOST ?? null,
-      });
+    if (
+      simulate === "no-collections" ||
+      simulate === "unauthorized" ||
+      simulate === "not-found"
+    ) {
+      responder(res)(null, { ok: true, host });
     } else if (simulate === "unconfigured") {
-      responder(res)({
-        status: 500,
-        errors: ["TYPESENSE_HOST is not configured for this environment"],
-      });
+      res
+        .status(unconfiguredHealthFixture.status)
+        .send(unconfiguredHealthFixture.body);
+    } else if (simulate === "unreachable") {
+      res
+        .status(unreachableHealthFixture.status)
+        .send({ ...unreachableHealthFixture.body, host });
     } else {
-      responder(res)({ status: 503, errors: ["Typesense reported unhealthy"] });
+      res.status(503).send({
+        status: 503,
+        errors: ["Typesense reported unhealthy"],
+        host,
+      });
     }
     return;
   }
@@ -79,17 +102,19 @@ export async function typesenseHealth(req, res) {
   try {
     const health = await client.health.retrieve();
     if (health?.ok) {
-      responder(res)(null, {
-        ok: true,
-        host: process.env.TYPESENSE_HOST ?? null,
-      });
+      responder(res)(null, { ok: true, host });
       return;
     }
-    responder(res)({ status: 503, errors: ["Typesense reported unhealthy"] });
+    res.status(503).send({
+      status: 503,
+      errors: ["Typesense reported unhealthy"],
+      host,
+    });
   } catch (error) {
-    responder(res)({
+    res.status(503).send({
       status: 503,
       errors: [error?.message || "Typesense is unreachable"],
+      host,
     });
   }
 }
@@ -103,6 +128,18 @@ export async function typesenseHealth(req, res) {
 export async function typesenseCollectionsSummary(req, res) {
   if (!isAllowed(req)) {
     respondWithForbidden(res);
+    return;
+  }
+
+  if (process.env.TYPESENSE_SIMULATE === "no-collections") {
+    responder(res)(null, []);
+    return;
+  }
+
+  if (process.env.TYPESENSE_SIMULATE === "unauthorized") {
+    res
+      .status(unauthorizedCollectionsFixture.status)
+      .send(unauthorizedCollectionsFixture.body);
     return;
   }
 
@@ -135,6 +172,18 @@ export async function typesenseCollectionSchema(req, res) {
   }
 
   const { collectionName } = req.params;
+
+  if (process.env.TYPESENSE_SIMULATE === "unauthorized") {
+    res
+      .status(unauthorizedSchemaFixture.status)
+      .send(unauthorizedSchemaFixture.body);
+    return;
+  }
+
+  if (process.env.TYPESENSE_SIMULATE === "not-found") {
+    res.status(notFoundSchemaFixture.status).send(notFoundSchemaFixture.body);
+    return;
+  }
 
   try {
     const client = createTypesenseInspectClient();

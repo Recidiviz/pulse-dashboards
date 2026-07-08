@@ -1,0 +1,9 @@
+{
+  "status": 500,
+  "body": {
+    "status": 500,
+    "errors": [
+      "Request failed with HTTP code 401 | Server said: Forbidden - a valid `x-typesense-api-key` header must be sent."
+    ]
+  }
+}

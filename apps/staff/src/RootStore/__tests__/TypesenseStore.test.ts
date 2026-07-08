@@ -17,11 +17,35 @@
 
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-import { TypesenseStore } from "../TypesenseStore";
+import { CollectionSummary, TypesenseStore } from "../TypesenseStore";
 import UserStore from "../UserStore";
 
 const getToken = vi.fn().mockResolvedValue("test-token");
 const mockUserStore = { getToken } as unknown as UserStore;
+
+const HEALTH_OK = JSON.stringify({ ok: true, host: "https://typesense.test" });
+
+const MOCK_COLLECTIONS: CollectionSummary[] = [
+  {
+    name: "clients",
+    numDocuments: 12_345,
+    numFields: 8,
+    createdAt: 1_000_000,
+  },
+  {
+    name: "residents",
+    numDocuments: 5_678,
+    numFields: 10,
+    createdAt: 2_000_000,
+  },
+  {
+    name: "supervisionStaff",
+    numDocuments: 342,
+    numFields: 7,
+    createdAt: 3_000_000,
+  },
+];
+const COLLECTIONS_OK = JSON.stringify(MOCK_COLLECTIONS);
 
 describe("TypesenseStore", () => {
   let store: TypesenseStore;
@@ -37,112 +61,249 @@ describe("TypesenseStore", () => {
     vi.clearAllMocks();
   });
 
-  test("starts in pending state", () => {
-    expect(store.health.status).toBe("pending");
-    expect(store.health.isFetching).toBe(false);
-    expect(store.health.checkedAt).toBeUndefined();
-    expect(store.health.error).toBeUndefined();
+  test("starts in needs-hydration state with no data", () => {
+    expect(store.hydrationState.status).toBe("needs hydration");
+    expect(store.host).toBeUndefined();
+    expect(store.checkedAt).toBeUndefined();
+    expect(store.collectionsSummary).toBeUndefined();
   });
 
-  test("transitions to success and records checkedAt on a healthy response", async () => {
-    fetchMock.mockResponseOnce(
-      JSON.stringify({ ok: true, host: "https://test.com" }),
-    );
+  describe("hydrate()", () => {
+    test("transitions to loading while in flight", () => {
+      fetchMock.mockResponseOnce(HEALTH_OK);
+      fetchMock.mockResponseOnce(COLLECTIONS_OK);
 
-    await store.fetchHealth();
+      void store.hydrate();
 
-    expect(store.health.status).toBe("success");
-    expect(store.health.error).toBeUndefined();
-    expect(store.health.isFetching).toBe(false);
-    expect(store.health.checkedAt).toBeInstanceOf(Date);
-    expect(store.health.host).toBe("https://test.com");
-  });
+      expect(store.hydrationState.status).toBe("loading");
+    });
 
-  test("leaves host undefined when the response omits it", async () => {
-    fetchMock.mockResponseOnce(JSON.stringify({ ok: true }));
+    test("transitions to hydrated and populates all fields on success", async () => {
+      fetchMock.mockResponseOnce(HEALTH_OK);
+      fetchMock.mockResponseOnce(COLLECTIONS_OK);
 
-    await store.fetchHealth();
+      await store.hydrate();
 
-    expect(store.health.status).toBe("success");
-    expect(store.health.host).toBeUndefined();
-  });
+      expect(store.hydrationState.status).toBe("hydrated");
+      expect(store.host).toBe("https://typesense.test");
+      expect(store.checkedAt).toBeInstanceOf(Date);
+      expect(store.collectionsSummary).toEqual(MOCK_COLLECTIONS);
+    });
 
-  test("sends the Bearer token in the Authorization header", async () => {
-    fetchMock.mockResponseOnce(JSON.stringify({ ok: true }));
+    test("stores undefined host when the health response omits it", async () => {
+      fetchMock.mockResponseOnce(JSON.stringify({ ok: true }));
+      fetchMock.mockResponseOnce(COLLECTIONS_OK);
 
-    await store.fetchHealth();
+      await store.hydrate();
 
-    expect(fetchMock).toHaveBeenCalledWith(
-      "http://test-api/api/typesense/health",
-      expect.objectContaining({
-        headers: expect.objectContaining({
-          Authorization: "Bearer test-token",
+      expect(store.hydrationState.status).toBe("hydrated");
+      expect(store.host).toBeUndefined();
+    });
+
+    test("sends the Bearer token in the Authorization header", async () => {
+      fetchMock.mockResponseOnce(HEALTH_OK);
+      fetchMock.mockResponseOnce(COLLECTIONS_OK);
+
+      await store.hydrate();
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        "http://test-api/api/typesense/health",
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Authorization: "Bearer test-token",
+          }),
         }),
-      }),
-    );
+      );
+      expect(fetchMock).toHaveBeenCalledWith(
+        "http://test-api/api/typesense/collections",
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Authorization: "Bearer test-token",
+          }),
+        }),
+      );
+    });
+
+    test("falls back to an empty bearer token when getToken returns undefined", async () => {
+      getToken.mockResolvedValue(undefined);
+      fetchMock.mockResponseOnce(HEALTH_OK);
+      fetchMock.mockResponseOnce(COLLECTIONS_OK);
+
+      await store.hydrate();
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: expect.objectContaining({ Authorization: "Bearer " }),
+        }),
+      );
+    });
+
+    test("stamps checkedAt even when the health check fails", async () => {
+      fetchMock.mockResponseOnce(
+        JSON.stringify({ errors: ["Typesense reported unhealthy"] }),
+        { status: 503 },
+      );
+
+      await store.hydrate();
+
+      expect(store.hydrationState.status).toBe("failed");
+      expect(store.checkedAt).toBeInstanceOf(Date);
+    });
+
+    test("transitions to failed and surfaces the server message on an unhealthy health response", async () => {
+      fetchMock.mockResponseOnce(
+        JSON.stringify({ errors: ["Typesense reported unhealthy"] }),
+        { status: 503 },
+      );
+
+      await store.hydrate();
+
+      expect(store.hydrationState.status).toBe("failed");
+      const { error } = store.hydrationState as {
+        status: "failed";
+        error: Error & { status: number };
+      };
+      expect(error.message).toBe("Typesense reported unhealthy");
+      expect(error.status).toBe(503);
+    });
+
+    test("transitions to failed on an unconfigured (500) health response", async () => {
+      fetchMock.mockResponseOnce(
+        JSON.stringify({
+          errors: ["TYPESENSE_HOST is not configured for this environment"],
+        }),
+        { status: 500 },
+      );
+
+      await store.hydrate();
+
+      expect(store.hydrationState.status).toBe("failed");
+      const { error } = store.hydrationState as {
+        status: "failed";
+        error: Error & { status: number };
+      };
+      expect(error.message).toBe(
+        "TYPESENSE_HOST is not configured for this environment",
+      );
+      expect(error.status).toBe(500);
+    });
+
+    test("does not fetch collections when health fails", async () => {
+      fetchMock.mockResponseOnce(
+        JSON.stringify({ errors: ["Typesense reported unhealthy"] }),
+        { status: 503 },
+      );
+
+      await store.hydrate();
+
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(store.collectionsSummary).toBeUndefined();
+    });
+
+    test("transitions to failed and surfaces the server message when collections fetch fails", async () => {
+      fetchMock.mockResponseOnce(HEALTH_OK);
+      fetchMock.mockResponseOnce(
+        JSON.stringify({ errors: ["collections unavailable"] }),
+        { status: 503 },
+      );
+
+      await store.hydrate();
+
+      expect(store.hydrationState.status).toBe("failed");
+      const { error } = store.hydrationState as {
+        status: "failed";
+        error: Error;
+      };
+      expect(error.message).toBe("collections unavailable");
+      expect(store.collectionsSummary).toBeUndefined();
+    });
+
+    test("does not start a second hydration when one is already in flight", async () => {
+      fetchMock.mockResponseOnce(HEALTH_OK);
+      fetchMock.mockResponseOnce(COLLECTIONS_OK);
+
+      const first = store.hydrate();
+      const second = store.hydrate();
+      await Promise.all([first, second]);
+
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
+
+    test("is a no-op when already hydrated", async () => {
+      fetchMock.mockResponseOnce(HEALTH_OK);
+      fetchMock.mockResponseOnce(COLLECTIONS_OK);
+
+      await store.hydrate();
+      await store.hydrate();
+
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
   });
 
-  test("falls back to an empty bearer token when getToken returns undefined", async () => {
-    getToken.mockResolvedValue(undefined);
-    fetchMock.mockResponseOnce(JSON.stringify({ ok: true }));
+  describe("refresh()", () => {
+    test("resets all data and hydration state synchronously", async () => {
+      fetchMock.mockResponseOnce(HEALTH_OK);
+      fetchMock.mockResponseOnce(COLLECTIONS_OK);
+      await store.hydrate();
 
-    await store.fetchHealth();
+      fetchMock.mockResponseOnce(HEALTH_OK);
+      fetchMock.mockResponseOnce(COLLECTIONS_OK);
+      store.refresh();
 
-    expect(fetchMock).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.objectContaining({
-        headers: expect.objectContaining({ Authorization: "Bearer " }),
-      }),
-    );
+      expect(store.host).toBeUndefined();
+      expect(store.checkedAt).toBeUndefined();
+      expect(store.collectionsSummary).toBeUndefined();
+      expect(store.hydrationState.status).toBe("loading");
+    });
+
+    test("triggers a new hydration after resetting", async () => {
+      fetchMock.mockResponseOnce(HEALTH_OK);
+      fetchMock.mockResponseOnce(COLLECTIONS_OK);
+      await store.hydrate();
+
+      fetchMock.mockResponseOnce(HEALTH_OK);
+      fetchMock.mockResponseOnce(COLLECTIONS_OK);
+      store.refresh();
+
+      await vi.waitFor(() =>
+        expect(store.hydrationState.status).toBe("hydrated"),
+      );
+      expect(fetchMock).toHaveBeenCalledTimes(4);
+    });
   });
 
-  test("transitions to error and surfaces the server message on a non-2xx response", async () => {
-    const errorResponse = [
-      JSON.stringify({ status: 503, errors: ["Typesense reported unhealthy"] }),
-      { status: 503 },
-    ] as const;
-    fetchMock.mockResponseOnce(...errorResponse);
+  describe("collections summary", () => {
+    test("populates collectionsSummary with all entries from the response", async () => {
+      fetchMock.mockResponseOnce(HEALTH_OK);
+      fetchMock.mockResponseOnce(COLLECTIONS_OK);
 
-    await store.fetchHealth();
+      await store.hydrate();
 
-    expect(store.health.status).toBe("error");
-    expect(store.health.error?.message).toBe("Typesense reported unhealthy");
-    expect(store.health.isFetching).toBe(false);
-    expect(store.health.checkedAt).toBeInstanceOf(Date);
-  });
+      expect(store.collectionsSummary).toHaveLength(3);
+      expect(store.collectionsSummary).toEqual(MOCK_COLLECTIONS);
+    });
 
-  test("surfaces the not-configured server message", async () => {
-    fetchMock.mockResponseOnce(
-      JSON.stringify({
-        status: 500,
-        errors: ["TYPESENSE_HOST is not configured for this environment"],
-      }),
-      { status: 500 },
-    );
+    test("fetches from /api/typesense/collections", async () => {
+      fetchMock.mockResponseOnce(HEALTH_OK);
+      fetchMock.mockResponseOnce(COLLECTIONS_OK);
 
-    await store.fetchHealth();
+      await store.hydrate();
 
-    expect(store.health.status).toBe("error");
-    expect(store.health.error?.message).toBe(
-      "TYPESENSE_HOST is not configured for this environment",
-    );
-  });
+      expect(fetchMock).toHaveBeenCalledWith(
+        "http://test-api/api/typesense/collections",
+        expect.any(Object),
+      );
+    });
 
-  test("does not start a second concurrent fetch when one is already in flight", async () => {
-    fetchMock.mockResponse(JSON.stringify({ ok: true }));
+    test("remains undefined when health fails", async () => {
+      fetchMock.mockResponseOnce(JSON.stringify({ errors: ["unhealthy"] }), {
+        status: 503,
+      });
 
-    const first = store.fetchHealth();
-    const second = store.fetchHealth(); // should be a no-op
-    await Promise.all([first, second]);
+      await store.hydrate();
 
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-  });
-
-  test("refresh triggers a new fetchHealth call", async () => {
-    fetchMock.mockResponse(JSON.stringify({ ok: true }));
-
-    await store.fetchHealth();
-    store.refreshHealth();
-    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+      expect(store.collectionsSummary).toBeUndefined();
+    });
   });
 });

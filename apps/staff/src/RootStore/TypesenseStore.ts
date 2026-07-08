@@ -17,31 +17,64 @@
 
 import { makeAutoObservable, runInAction } from "mobx";
 
-import { castToError } from "~hydration-utils";
+import {
+  Hydratable,
+  HydratesFromSource,
+  HydrationState,
+} from "~hydration-utils";
 
 import UserStore from "./UserStore";
 
-export type TypesenseHealthStatus = "pending" | "success" | "error";
-
-export type HealthState = {
-  status: TypesenseHealthStatus;
-  error?: Error;
-  checkedAt?: Date;
-  isFetching: boolean;
-  host?: string;
+export type CollectionSummary = {
+  name: string;
+  numDocuments: number;
+  numFields: number;
+  defaultSortingField?: string;
+  createdAt?: number;
 };
 
-export class TypesenseStore {
-  health: HealthState = {
-    status: "pending",
-    error: undefined,
-    checkedAt: undefined,
-    isFetching: false,
-    host: undefined,
-  };
+export class TypesenseStore implements Hydratable {
+  host?: string;
+  collectionsSummary?: CollectionSummary[];
+  checkedAt?: Date;
+
+  private hydrator: HydratesFromSource;
 
   constructor(private userStore: UserStore) {
+    this.hydrator = new HydratesFromSource({
+      expectPopulated: [
+        () => {
+          if (this.checkedAt === undefined)
+            throw new Error("health not populated");
+        },
+        () => {
+          if (this.collectionsSummary === undefined)
+            throw new Error("collections summary not populated");
+        },
+      ],
+      populate: async () => {
+        await this.fetchHealth();
+        await this.fetchCollectionsSummary();
+      },
+    });
+
     makeAutoObservable(this);
+  }
+
+  hydrate(): Promise<void> {
+    return this.hydrator.hydrate();
+  }
+
+  get hydrationState(): HydrationState {
+    return this.hydrator.hydrationState;
+  }
+
+  refresh(): void {
+    this.host = undefined;
+    this.collectionsSummary = undefined;
+    this.checkedAt = undefined;
+    this.hydrator.setHydrationStateOverride({ status: "needs hydration" });
+    void this.hydrate();
   }
 
   /** Shared base path for all Typesense API endpoints. */
@@ -57,41 +90,42 @@ export class TypesenseStore {
 
   /**
    * See libs/staff-shared-server/src/server/typesense/typesenseManagement.js
-   * for Typesense server endpoints.
+   * GET /api/typesense/health
    */
-  async fetchHealth(): Promise<void> {
-    if (this.health.isFetching) return;
-    this.health.isFetching = true;
-    try {
-      const res = await fetch(`${this.baseUrl}/health`, {
-        headers: await this.authHeaders(),
-      });
-      const body = await res.json();
-      if (!res.ok) {
-        const status = res.status;
-        throw Object.assign(new Error(body.errors?.[0] ?? `HTTP ${status}`), {
-          status,
-        });
+  private async fetchHealth(): Promise<void> {
+    const res = await fetch(`${this.baseUrl}/health`, {
+      headers: await this.authHeaders(),
+    });
+    const body = await res.json();
+    runInAction(() => {
+      this.checkedAt = new Date();
+      if ("host" in body) {
+        this.host = (body.host as string | null | undefined) ?? undefined;
       }
-      runInAction(() => {
-        this.health.status = "success";
-        this.health.error = undefined;
-        this.health.isFetching = false;
-        this.health.checkedAt = new Date();
-        this.health.host = body.host ?? undefined;
-      });
-    } catch (e) {
-      runInAction(() => {
-        this.health.status = "error";
-        const error = castToError(e);
-        this.health.error = error;
-        this.health.isFetching = false;
-        this.health.checkedAt = new Date();
+    });
+    if (!res.ok) {
+      throw Object.assign(new Error(body.errors?.[0] ?? `HTTP ${res.status}`), {
+        status: res.status,
       });
     }
   }
 
-  refreshHealth(): void {
-    void this.fetchHealth();
+  /**
+   * See libs/staff-shared-server/src/server/typesense/typesenseManagement.js
+   * GET /api/typesense/collections
+   */
+  private async fetchCollectionsSummary(): Promise<void> {
+    const res = await fetch(`${this.baseUrl}/collections`, {
+      headers: await this.authHeaders(),
+    });
+    const body = await res.json();
+    if (!res.ok) {
+      throw Object.assign(new Error(body.errors?.[0] ?? `HTTP ${res.status}`), {
+        status: res.status,
+      });
+    }
+    runInAction(() => {
+      this.collectionsSummary = body as CollectionSummary[];
+    });
   }
 }

@@ -1,0 +1,7 @@
+{
+  "status": 404,
+  "body": {
+    "status": 404,
+    "errors": ["Typesense collection not found: does-not-exist"]
+  }
+}

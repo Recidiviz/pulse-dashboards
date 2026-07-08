@@ -1,0 +1,7 @@
+{
+  "status": 500,
+  "body": {
+    "status": 500,
+    "errors": ["TYPESENSE_HOST is not configured for this environment"]
+  }
+}

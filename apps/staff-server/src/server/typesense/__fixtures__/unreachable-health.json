@@ -1,0 +1,8 @@
+{
+  "status": 503,
+  "body": {
+    "status": 503,
+    "errors": ["Typesense is unreachable"],
+    "host": "http://localhost:19999"
+  }
+}
