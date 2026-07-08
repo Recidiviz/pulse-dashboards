@@ -27,6 +27,7 @@ import { ClientsStackParamList } from "~@meetings/app/shared/config";
 import { useSetDocumentTitle } from "~@meetings/app/shared/lib/useSetDocumentTitle";
 import Loading from "~@meetings/app/shared/ui/Loading";
 import { formatMeetingStartDateTitle } from "~@meetings/app/utils/format";
+import { Header } from "~@meetings/app/widgets/header";
 import { Meeting } from "~@meetings/app/widgets/meeting";
 
 type MeetingRouteProp = RouteProp<ClientsStackParamList, "ClientMeeting">;
@@ -57,6 +58,7 @@ export function ClientMeetingScreen() {
       meetingDetails={meetingDetails}
       person={deserializeClient(person)}
       personType="client"
+      header={<Header />}
     />
   );
 }

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ReactNode } from "react";
 import {
   ActivityIndicator,
   Keyboard,
@@ -24,7 +25,6 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import Header from "~@meetings/app/components/Header";
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
 import {
   MeetingControlsMobile,
@@ -37,9 +37,14 @@ import { Typography } from "~@meetings/app/shared/ui/Typography";
 type Props = {
   person: Person;
   navigateToPersonProfile: () => void;
+  header: (props: { onGoBack: () => void }) => ReactNode;
 };
 
-export const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
+export const NewMeeting = ({
+  person,
+  navigateToPersonProfile,
+  header,
+}: Props) => {
   const insets = useSafeAreaInsets();
 
   const {
@@ -82,7 +87,7 @@ export const NewMeeting = ({ person, navigateToPersonProfile }: Props) => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View className="flex-1 bg-secondary" style={{ marginTop: -insets.top }}>
-        <Header showDrawer={false} showGoBack={true} onGoBack={handleGoBack} />
+        {header({ onGoBack: handleGoBack })}
         <View className="rounded-b-3xl bg-primary">
           <View className="flex flex-col gap-1 p-4 md:px-0 md:pt-0">
             <Typography className="text-base text-primary">

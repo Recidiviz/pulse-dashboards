@@ -27,6 +27,7 @@ import { trpc } from "~@meetings/app/shared/api";
 import { ClientsStackParamList } from "~@meetings/app/shared/config";
 import { useSetDocumentTitle } from "~@meetings/app/shared/lib/useSetDocumentTitle";
 import Loading from "~@meetings/app/shared/ui/Loading";
+import { Header } from "~@meetings/app/widgets/header";
 import { NewMeeting } from "~@meetings/app/widgets/new-meeting";
 
 type ProfileNavProp = NativeStackNavigationProp<
@@ -80,6 +81,9 @@ export const ClientNewMeetingScreen = () => {
       <NewMeeting
         person={deserializeClient(person)}
         navigateToPersonProfile={navigateToClientProfile}
+        header={({ onGoBack }) => (
+          <Header showDrawer={false} showGoBack onGoBack={onGoBack} />
+        )}
       />
     </SafeAreaView>
   );

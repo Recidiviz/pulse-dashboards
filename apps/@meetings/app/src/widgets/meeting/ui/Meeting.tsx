@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ReactNode } from "react";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -29,6 +30,7 @@ type Props = {
   meetingDetails: MeetingDetails;
   person: Person;
   personType: PersonType;
+  header: ReactNode;
 };
 
 export const Meeting = ({
@@ -36,6 +38,7 @@ export const Meeting = ({
   meetingDetails,
   person,
   personType,
+  header,
 }: Props) => {
   // Show transcription tab if the backend returned transcription data
   const showTranscription = meetingDetails?.transcription !== undefined;
@@ -57,6 +60,7 @@ export const Meeting = ({
           person={person}
           personType={personType}
           showTranscription={showTranscription}
+          header={header}
         />
       </View>
     </SafeAreaView>

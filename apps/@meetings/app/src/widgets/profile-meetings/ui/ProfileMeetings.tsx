@@ -15,15 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  CompositeNavigationProp,
-  Link,
-  useIsFocused,
-  useNavigation,
-} from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Link, useIsFocused } from "@react-navigation/native";
 import { format } from "date-fns";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { Platform, ScrollView, View } from "react-native";
 import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
 import {
@@ -31,7 +31,6 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
-import Header from "~@meetings/app/components/Header";
 import { useAgencyConfigs } from "~@meetings/app/entities/agency-config";
 import {
   ClientMeetings,
@@ -50,10 +49,6 @@ import {
 import { useStateSelection } from "~@meetings/app/features/state-selection";
 import { useAnalytics } from "~@meetings/app/shared/analytics";
 import { Person, PersonType } from "~@meetings/app/shared/api";
-import {
-  ClientsStackParamList,
-  ResidentsStackParamList,
-} from "~@meetings/app/shared/config";
 import { useIsMobileWidth } from "~@meetings/app/shared/lib/useIsMobileWidth";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
@@ -63,11 +58,6 @@ import MeetingsPlaceholder from "./MeetingsPlaceholder";
 import MeetingsTable from "./MeetingsTable.web";
 import { NewMeetingOptionsModal } from "./NewMeetingOptionsModal";
 import { NewMeetingRecordingSheet } from "./NewMeetingRecordingSheet";
-
-type ProfileNavProp = CompositeNavigationProp<
-  NativeStackNavigationProp<ClientsStackParamList, "ClientProfile">,
-  NativeStackNavigationProp<ResidentsStackParamList, "ResidentProfile">
->;
 
 enum MeetingsSort {
   NEWEST_FIRST = "Date (Latest first)",
@@ -82,6 +72,7 @@ type Props = {
   isLoading: boolean;
   error: unknown;
   refetch: () => void;
+  header: ReactNode;
 };
 
 export const ProfileMeetings = ({
@@ -91,11 +82,11 @@ export const ProfileMeetings = ({
   isLoading,
   error,
   refetch,
+  header,
 }: Props) => {
   const isFocused = useIsFocused();
   const insets = useSafeAreaInsets();
   const isMobileWidth = useIsMobileWidth();
-  const navigation = useNavigation<ProfileNavProp>();
   const { agencyConfigs } = useAgencyConfigs();
   const { selectedStateCode } = useStateSelection();
   const meetingTypes = agencyConfigs[selectedStateCode].meetingTypes;
@@ -313,15 +304,7 @@ export const ProfileMeetings = ({
   return (
     <SafeAreaView className="flex-1">
       <View className="flex-1" style={{ marginTop: -insets.top }}>
-        <Header
-          showDrawer={false}
-          showGoBack={true}
-          onGoBack={() =>
-            navigation.navigate(
-              personType === "client" ? "Clients" : "Residents",
-            )
-          }
-        />
+        {header}
         {Platform.select({
           native: (
             <>

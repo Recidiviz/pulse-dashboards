@@ -118,7 +118,6 @@ jest.mock("~@meetings/app/shared/lib/useIsMobileWidth", () => ({
   useIsMobileWidth: () => true,
 }));
 
-jest.mock("~@meetings/app/components/Header", () => () => null);
 jest.mock("./MeetingsTable.web", () => () => null);
 jest.mock("./NewMeetingOptionsModal", () => ({
   NewMeetingOptionsModal: () => null,
@@ -147,6 +146,7 @@ function renderComponent() {
       isLoading={false}
       error={null}
       refetch={jest.fn()}
+      header={null}
     />,
   );
 }

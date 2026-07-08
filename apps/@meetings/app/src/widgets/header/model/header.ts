@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,34 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Link } from "@react-navigation/native";
+import { RouteProp } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-import { Typography } from "../shared/ui/Typography";
+import { RootStackParamList } from "~@meetings/app/shared/config";
 
-type DesktopMenuItemProps = {
-  isActive: boolean;
-  screen: string;
-  children: string;
-};
+export type HeaderNavProp = NativeStackNavigationProp<RootStackParamList>;
+export type HeaderRouteProp = RouteProp<RootStackParamList>;
 
-const DesktopMenuItem = ({
-  isActive,
-  screen,
-  children,
-}: DesktopMenuItemProps) => {
-  return (
-    <Link
-      className={`flex h-full flex-row items-center justify-between border-y-4 border-b-transparent ${isActive ? "border-brand" : "border-transparent"}`}
-      screen={screen}
-      params={{}}
-    >
-      <Typography
-        className={`px-1 text-sm font-medium ${isActive ? "text-brand" : "font-normal text-secondary"}`}
-      >
-        {children}
-      </Typography>
-    </Link>
-  );
-};
-
-export default DesktopMenuItem;
+export interface HeaderProps {
+  showDrawer?: boolean;
+  showGoBack?: boolean;
+  onGoBack?: () => void;
+}

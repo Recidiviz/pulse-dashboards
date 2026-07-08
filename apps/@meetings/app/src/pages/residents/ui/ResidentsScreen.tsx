@@ -25,13 +25,13 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
-import Header from "~@meetings/app/components/Header";
 import { SortDirection, SortOption } from "~@meetings/app/entities/person";
 import { useRecording } from "~@meetings/app/features/recording";
 import { trpc } from "~@meetings/app/shared/api";
 import { useIsMobileWidth } from "~@meetings/app/shared/lib/useIsMobileWidth";
 import { useSetDocumentTitle } from "~@meetings/app/shared/lib/useSetDocumentTitle";
 import Loading from "~@meetings/app/shared/ui/Loading";
+import { Header } from "~@meetings/app/widgets/header";
 import {
   PersonsHeaderContent,
   PersonsMobileList,

@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { RouteProp, useRoute } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import {
   deserializeResident,
@@ -25,6 +26,7 @@ import { useMeetings } from "~@meetings/app/hooks/useMeetings";
 import { Person, trpc } from "~@meetings/app/shared/api";
 import { ResidentsStackParamList } from "~@meetings/app/shared/config";
 import { useSetDocumentTitle } from "~@meetings/app/shared/lib/useSetDocumentTitle";
+import { Header } from "~@meetings/app/widgets/header";
 import { ProfileMeetings } from "~@meetings/app/widgets/profile-meetings";
 
 type ProfileRouteProp = RouteProp<ResidentsStackParamList, "ResidentProfile">;
@@ -45,6 +47,8 @@ export function ResidentProfileScreen() {
 }
 
 function ResidentProfileContent({ person }: { person: Person }) {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<ResidentsStackParamList>>();
   const {
     data: rawMeetings,
     isLoading,
@@ -60,6 +64,13 @@ function ResidentProfileContent({ person }: { person: Person }) {
       isLoading={isLoading}
       error={error}
       refetch={refetch}
+      header={
+        <Header
+          showDrawer={false}
+          showGoBack
+          onGoBack={() => navigation.navigate("Residents")}
+        />
+      }
     />
   );
 }

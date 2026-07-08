@@ -24,11 +24,14 @@ import { fireEvent, render, waitFor } from "@testing-library/react-native";
 import React from "react";
 
 import { UserContextProvider } from "~@meetings/app/entities/user";
+import {
+  StateCode,
+  StateCodeProvider,
+} from "~@meetings/app/features/state-selection";
 
-import Header from "../../components/Header";
-import { StateCode, StateCodeProvider } from "../../features/state-selection";
+import { Header } from "./Header";
 
-jest.mock("../../entities/agency-config", () => ({
+jest.mock("~@meetings/app/entities/agency-config", () => ({
   useAgencyConfigs: () => ({ agencyConfigs: {}, isLoading: false }),
   AgencyConfigProvider: ({ children }: { children: React.ReactNode }) =>
     children,
@@ -83,15 +86,21 @@ jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
 );
 
-jest.mock("../../features/impersonation", () => ({
-  ImpersonationBanner: () => null,
+jest.mock("~@meetings/app/features/impersonation", () => ({
   ImpersonationModal: () => null,
+  ImpersonationBanner: () => null,
+  useImpersonationStore: () => ({
+    impersonatedEmail: "",
+    impersonatedStateCode: "",
+    startImpersonating: jest.fn(),
+    stopImpersonating: jest.fn(),
+  }),
 }));
 
-jest.mock("../../shared/ui/OfflineIndicator", () => ({
+jest.mock("~@meetings/app/shared/ui/OfflineIndicator", () => ({
   OfflineIndicator: () => <div>Mocked Indicator</div>,
 }));
-jest.mock("../../features/recording", () => ({
+jest.mock("~@meetings/app/features/recording", () => ({
   useRecording: () => ({
     status: "idle",
   }),

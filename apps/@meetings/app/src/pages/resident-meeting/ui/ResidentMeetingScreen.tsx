@@ -27,6 +27,7 @@ import { ResidentsStackParamList } from "~@meetings/app/shared/config";
 import { useSetDocumentTitle } from "~@meetings/app/shared/lib/useSetDocumentTitle";
 import Loading from "~@meetings/app/shared/ui/Loading";
 import { formatMeetingStartDateTitle } from "~@meetings/app/utils/format";
+import { Header } from "~@meetings/app/widgets/header";
 import { Meeting } from "~@meetings/app/widgets/meeting";
 
 type MeetingRouteProp = RouteProp<ResidentsStackParamList, "ResidentMeeting">;
@@ -57,6 +58,7 @@ export function ResidentMeetingScreen() {
       meetingDetails={meetingDetails}
       person={deserializeResident(person)}
       personType="resident"
+      header={<Header />}
     />
   );
 }

@@ -29,7 +29,6 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
-import Header from "~@meetings/app/components/Header";
 import { useAgencyConfigs } from "~@meetings/app/entities/agency-config";
 import {
   StateCode,
@@ -40,6 +39,7 @@ import { theme } from "~@meetings/app/shared/config";
 import { RootStackParamList } from "~@meetings/app/shared/config";
 import { useSetDocumentTitle } from "~@meetings/app/shared/lib/useSetDocumentTitle";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
+import { Header } from "~@meetings/app/widgets/header";
 
 type StateSelectionNavProp = NativeStackNavigationProp<RootStackParamList>;
 

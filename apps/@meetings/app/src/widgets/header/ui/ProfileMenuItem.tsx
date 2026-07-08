@@ -19,8 +19,8 @@ import { Link } from "@react-navigation/native";
 import { ReactNode } from "react";
 import { Pressable, PressableProps } from "react-native";
 
-import { RootStackParamList } from "../shared/config/routes";
-import { Typography } from "../shared/ui/Typography";
+import { RootStackParamList } from "~@meetings/app/shared/config";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 type WithLink = {
   link: { screen: keyof RootStackParamList; onPress: () => void };

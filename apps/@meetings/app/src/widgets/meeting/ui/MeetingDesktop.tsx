@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { Link } from "@react-navigation/native";
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
 import {
   ImageBackground,
   ScrollView,
@@ -27,7 +27,6 @@ import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
 import ClockIcon from "react-native-heroicons/outline/ClockIcon";
 import PrinterIcon from "react-native-heroicons/solid/PrinterIcon";
 
-import Header from "~@meetings/app/components/Header";
 import { MeetingDetails } from "~@meetings/app/entities/meeting";
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
 import { useUserContext } from "~@meetings/app/entities/user";
@@ -59,6 +58,7 @@ type Props = {
   person: Person;
   personType: PersonType;
   showTranscription?: boolean;
+  header: ReactNode;
 };
 
 const MeetingDesktop = ({
@@ -67,6 +67,7 @@ const MeetingDesktop = ({
   person,
   personType,
   showTranscription = false,
+  header,
 }: Props) => {
   const [activeTab, setActiveTab] = useState<Tab>(Tab.DraftCaseNotes);
   const [isPlayerVisible, setIsPlayerVisible] = useState(false);
@@ -93,7 +94,7 @@ const MeetingDesktop = ({
 
   return (
     <View className="flex-1 grow">
-      <Header />
+      {header}
       <View className="flex-1 grow flex-row border-t border-subtle">
         <View className="w-36 shrink-0 pl-10 pt-12">
           <Link
