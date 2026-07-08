@@ -211,6 +211,35 @@ async function addPSIClientsAndCases(
   }
 }
 
+async function addSeedEmploymentHistory(
+  sarId: string,
+  {
+    yearsBack,
+    hasEndDate,
+    verifiedByReportAuthor,
+    importedFromDOC,
+  }: {
+    yearsBack: number;
+    hasEndDate: boolean;
+    verifiedByReportAuthor: boolean;
+    importedFromDOC: boolean;
+  },
+) {
+  const startDate = faker.date.past({ years: yearsBack });
+  await prisma.employmentHistory.create({
+    data: {
+      sentencingAssessmentReport: { connect: { id: sarId } },
+      employerName: faker.company.name(),
+      startDate,
+      endDate: hasEndDate
+        ? faker.date.between({ from: startDate, to: new Date() })
+        : null,
+      verifiedByReportAuthor,
+      importedFromDOC,
+    },
+  });
+}
+
 async function addSARClientsAndReports(
   staff: Prisma.StaffCreateInput,
   moOffenses: Offense[],
@@ -419,6 +448,24 @@ async function addSARClientsAndReports(
     await prisma.sentencingAssessmentReport.update({
       where: { id: sar.id },
       data: { mostSevereOffenseName: shuffledOffenses[0].name },
+    });
+
+    // Add 1-2 manually-entered employment records and 1 record imported from MOCIS
+    const numManualEmploymentHistories = faker.number.int({ min: 1, max: 2 });
+    for (let j = 0; j < numManualEmploymentHistories; j++) {
+      await addSeedEmploymentHistory(sar.id, {
+        yearsBack: 3,
+        hasEndDate: faker.datatype.boolean(),
+        verifiedByReportAuthor: faker.datatype.boolean(),
+        importedFromDOC: false,
+      });
+    }
+
+    await addSeedEmploymentHistory(sar.id, {
+      yearsBack: 5,
+      hasEndDate: true,
+      verifiedByReportAuthor: true,
+      importedFromDOC: true,
     });
   }
 }

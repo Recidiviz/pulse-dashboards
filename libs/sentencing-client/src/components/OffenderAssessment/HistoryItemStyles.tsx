@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { palette } from "~design-system";
 
@@ -111,13 +111,25 @@ export const DataRow = styled.div`
   padding-right: 2.5rem; /* Space for edit/delete icons */
 `;
 
-export const DataCell = styled.span`
-  flex: 1;
+const historyTextBase = css`
   font-family: "Public Sans";
-  font-size: 0.875rem;
+  font-size: 14px;
+  font-style: normal;
   font-weight: 500;
+`;
+
+export const DataSubtitle = styled.div`
+  ${historyTextBase}
+  color: ${palette.slate70};
+  line-height: 120%; /* 16.8px */
+  letter-spacing: -0.14px;
+`;
+
+export const DataCell = styled.div`
+  ${historyTextBase}
+  flex: 1;
+  line-height: 150%; /* 21px */
   color: ${palette.slate85};
-  line-height: 1.5;
 `;
 
 export { UndoButton, UndoToastContent } from "../shared/styles/ToastStyles";

@@ -144,13 +144,20 @@ export class SARDetailsPresenter implements Hydratable {
 
   // TODO(OBT-29467): remove once import skips manually-updated SARs —
   // at that point the DB will only contain user-entered records for manually-updated SARs.
+  // Sorted most-recent-first by start date so manually-added and MOCIS-imported
+  // records are interspersed rather than grouped by source.
   get employmentHistories(): EmploymentHistory[] {
     const histories = this.SARData?.employmentHistories ?? [];
     const showImported =
       this.sentencingStore.activeFeatureVariants.SARImportEmploymentRecords;
-    return showImported
+    const filtered = showImported
       ? histories
       : histories.filter((h) => !h.importedFromDOC);
+    return [...filtered].sort(
+      (a, b) =>
+        (b.startDate ? new Date(b.startDate).getTime() : 0) -
+        (a.startDate ? new Date(a.startDate).getTime() : 0),
+    );
   }
 
   priorTreatmentHistory: PriorTreatmentHistoryPresenter;

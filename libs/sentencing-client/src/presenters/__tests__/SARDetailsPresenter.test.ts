@@ -285,5 +285,37 @@ describe("defendant declined to participate", () => {
         importedRecord,
       ]);
     });
+
+    it("sorts manual and imported records by start date, most recent first", async () => {
+      const olderImportedRecord = {
+        ...importedRecord,
+        id: "emp-3",
+        startDate: new Date("2018-01-01"),
+      };
+      const recentManualRecord = {
+        ...manualRecord,
+        id: "emp-4",
+        startDate: new Date("2024-01-01"),
+      };
+      sentencingStore.rootStore.userStore.activeFeatureVariants = {
+        SARImportEmploymentRecords: {},
+      };
+      vi.spyOn(sentencingStore.apiClient, "getSARDetails").mockResolvedValue({
+        ...SARDetailsFixture[sarId],
+        employmentHistories: [
+          olderImportedRecord,
+          manualRecord,
+          recentManualRecord,
+        ],
+      });
+
+      await presenter.hydrate();
+
+      expect(presenter.employmentHistories.map((h) => h.id)).toEqual([
+        "emp-4", // 2024, manual
+        "emp-3", // 2018, imported
+        "emp-1", // no start date, manual
+      ]);
+    });
   });
 });

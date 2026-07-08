@@ -46,6 +46,19 @@ import {
   sarAccessFilter,
 } from "~@sentencing/trpc/routes/staff/staff.helpers";
 
+// Any manual create/update/delete of an employment history record means fresh
+// MOCIS imports should no longer overwrite this SAR's employment history —
+// see hasManuallyUpdatedEmploymentHistory on SentencingAssessmentReport.
+function markEmploymentHistoryManuallyUpdated(
+  prisma: Prisma.TransactionClient,
+  sarId: string,
+) {
+  return prisma.sentencingAssessmentReport.update({
+    where: { id: sarId },
+    data: { hasManuallyUpdatedEmploymentHistory: true },
+  });
+}
+
 export const sarRouter = router({
   getSARInsight: baseProcedure
     .input(getSARInsightSchema)
@@ -353,12 +366,16 @@ export const sarRouter = router({
 
       try {
         const { sarId, ...data } = input;
-        return await prisma.employmentHistory.create({
-          data: {
-            ...data,
-            sentencingAssessmentReportId: sarId,
-          },
-        });
+        const [created] = await prisma.$transaction([
+          prisma.employmentHistory.create({
+            data: {
+              ...data,
+              sentencingAssessmentReportId: sarId,
+            },
+          }),
+          markEmploymentHistoryManuallyUpdated(prisma, sarId),
+        ]);
+        return created;
       } catch (e) {
         handlePrismaError(
           e,
@@ -393,7 +410,12 @@ export const sarRouter = router({
         const { id, ...data } = input;
         return await prisma.employmentHistory.update({
           where: { id },
-          data,
+          data: {
+            ...data,
+            sentencingAssessmentReport: {
+              update: { hasManuallyUpdatedEmploymentHistory: true },
+            },
+          },
         });
       } catch (e) {
         handlePrismaError(
@@ -426,8 +448,17 @@ export const sarRouter = router({
       }
 
       try {
-        return await prisma.employmentHistory.delete({
-          where: { id: input.id },
+        // Interactive transaction so we can flag the parent SAR using the
+        // sarId off the deleted row, without a separate lookup query first.
+        return await prisma.$transaction(async (tx) => {
+          const deleted = await tx.employmentHistory.delete({
+            where: { id: input.id },
+          });
+          await markEmploymentHistoryManuallyUpdated(
+            tx,
+            deleted.sentencingAssessmentReportId,
+          );
+          return deleted;
         });
       } catch (e) {
         handlePrismaError(

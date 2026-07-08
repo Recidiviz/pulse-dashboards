@@ -45,7 +45,8 @@ export const Container = styled.div`
 export const Header = styled.div`
   display: flex;
   flex-direction: column;
-  padding-bottom: 2rem;
+  gap: 0.75rem;
+  padding: 2.5rem 2.5rem 2rem 2.5rem;
 `;
 
 export const Title = styled.h2`
@@ -56,7 +57,6 @@ export const Title = styled.h2`
   font-weight: 500;
   line-height: 120%; /* 1.8rem */
   letter-spacing: -0.03rem;
-  padding: 2.5rem 2.5rem 0rem 2.5rem;
 `;
 
 export const Description = styled.p`

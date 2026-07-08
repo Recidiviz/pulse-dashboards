@@ -606,6 +606,65 @@ describe("SAR router", () => {
       expect(histories).toHaveLength(0);
     });
 
+    test("creating an employment history record marks the SAR as manually updated", async () => {
+      await testTRPCClient.sar.createEmploymentHistory.mutate({
+        sarId: fakeSAR.id,
+        employerName: "Acme Corp",
+      });
+
+      const sar = await testPrismaClient.sentencingAssessmentReport.findUnique({
+        where: { id: fakeSAR.id },
+      });
+      expect(sar?.hasManuallyUpdatedEmploymentHistory).toBe(true);
+    });
+
+    test("updating an employment history record marks the SAR as manually updated", async () => {
+      const created = await testTRPCClient.sar.createEmploymentHistory.mutate({
+        sarId: fakeSAR.id,
+        employerName: "Old Employer",
+      });
+      if (!created)
+        throw new Error("Expected employment history to be created");
+
+      await testPrismaClient.sentencingAssessmentReport.update({
+        where: { id: fakeSAR.id },
+        data: { hasManuallyUpdatedEmploymentHistory: false },
+      });
+
+      await testTRPCClient.sar.updateEmploymentHistory.mutate({
+        id: created.id,
+        employerName: "New Employer",
+      });
+
+      const sar = await testPrismaClient.sentencingAssessmentReport.findUnique({
+        where: { id: fakeSAR.id },
+      });
+      expect(sar?.hasManuallyUpdatedEmploymentHistory).toBe(true);
+    });
+
+    test("deleting an employment history record marks the SAR as manually updated", async () => {
+      const created = await testTRPCClient.sar.createEmploymentHistory.mutate({
+        sarId: fakeSAR.id,
+        employerName: "Temp Employer",
+      });
+      if (!created)
+        throw new Error("Expected employment history to be created");
+
+      await testPrismaClient.sentencingAssessmentReport.update({
+        where: { id: fakeSAR.id },
+        data: { hasManuallyUpdatedEmploymentHistory: false },
+      });
+
+      await testTRPCClient.sar.deleteEmploymentHistory.mutate({
+        id: created.id,
+      });
+
+      const sar = await testPrismaClient.sentencingAssessmentReport.findUnique({
+        where: { id: fakeSAR.id },
+      });
+      expect(sar?.hasManuallyUpdatedEmploymentHistory).toBe(true);
+    });
+
     test("should include all employment records (imported and manual) in getSAR response", async () => {
       // Create a manual record
       await testTRPCClient.sar.createEmploymentHistory.mutate({

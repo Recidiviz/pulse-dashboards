@@ -87,6 +87,11 @@ export const EmploymentHistoryItem: React.FC<EmploymentHistoryItemProps> = ({
       <Styled.DataRow>
         <Styled.DataCell>
           {history.employerName || "Not specified"}
+          {history.importedFromDOC && (
+            <Styled.DataSubtitle>
+              This entry was pulled from MOCIS
+            </Styled.DataSubtitle>
+          )}
         </Styled.DataCell>
         <Styled.DataCell>
           {formatDateRange(history.startDate, history.endDate)}
