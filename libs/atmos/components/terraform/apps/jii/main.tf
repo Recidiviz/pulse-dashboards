@@ -238,8 +238,8 @@ module "import_job" {
   }]
 
   limits = {
-    memory = "1Gi"
-    cpu    = "1000m"
+    memory = "2Gi"
+    cpu    = 2
   }
 }
 
