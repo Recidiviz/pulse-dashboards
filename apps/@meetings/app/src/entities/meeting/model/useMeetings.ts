@@ -17,14 +17,10 @@
 
 import { keepPreviousData } from "@tanstack/react-query";
 
-import {
-  ClientMeetings,
-  ResidentMeetings,
-} from "~@meetings/app/entities/meeting";
-import { PersonType } from "~@meetings/app/shared/api";
+import { PersonType, trpc } from "~@meetings/app/shared/api";
+import { isMeetingProcessing } from "~@meetings/app/utils/isMeetingProcessing";
 
-import { trpc } from "../shared/api";
-import { isMeetingProcessing } from "../utils/isMeetingProcessing";
+import type { ClientMeetings, ResidentMeetings } from "../api/meeting";
 
 type Params = {
   personId: bigint;

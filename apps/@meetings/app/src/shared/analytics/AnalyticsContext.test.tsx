@@ -18,11 +18,11 @@
 import { renderHook, waitFor } from "@testing-library/react-native";
 import React from "react";
 
-import * as segmentModule from "~@meetings/app/shared/lib/segment";
+import * as segmentModule from "~@meetings/app/shared/lib/monitoring/segment";
 
 import { AnalyticsProvider, useAnalytics } from "./AnalyticsProvider";
 
-jest.mock("~@meetings/app/shared/lib/segment", () => ({
+jest.mock("~@meetings/app/shared/lib/monitoring/segment", () => ({
   segmentClient: {
     identify: jest.fn(),
     track: jest.fn(),

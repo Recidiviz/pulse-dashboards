@@ -15,11 +15,5 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useWindowDimensions } from "react-native";
-
-import { theme } from "../config";
-
-export function useIsMobileWidth() {
-  const { width } = useWindowDimensions();
-  return width < parseInt(theme["screens"]["md"]);
-}
+export { segmentClient } from "./segment";
+export { useSentryAppLifecycle } from "./useSentryAppLifecycle";

@@ -18,14 +18,14 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
+import { useMeetings } from "~@meetings/app/entities/meeting";
 import {
   deserializeResident,
   formatPersonTitle,
 } from "~@meetings/app/entities/person";
-import { useMeetings } from "~@meetings/app/hooks/useMeetings";
 import { Person, trpc } from "~@meetings/app/shared/api";
 import { ResidentsStackParamList } from "~@meetings/app/shared/config";
-import { useSetDocumentTitle } from "~@meetings/app/shared/lib/useSetDocumentTitle";
+import { useSetDocumentTitle } from "~@meetings/app/shared/lib/platform";
 import { Header } from "~@meetings/app/widgets/header";
 import { ProfileMeetings } from "~@meetings/app/widgets/profile-meetings";
 

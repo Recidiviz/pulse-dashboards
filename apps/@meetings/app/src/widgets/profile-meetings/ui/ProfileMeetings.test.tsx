@@ -114,7 +114,7 @@ jest.mock("react-native-safe-area-context", () => ({
   SafeAreaView: ({ children }: { children: React.ReactNode }) => children,
 }));
 
-jest.mock("~@meetings/app/shared/lib/useIsMobileWidth", () => ({
+jest.mock("~@meetings/app/shared/lib/platform/useIsMobileWidth", () => ({
   useIsMobileWidth: () => true,
 }));
 

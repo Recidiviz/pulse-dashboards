@@ -22,7 +22,7 @@ import { PlusIcon } from "react-native-heroicons/outline";
 
 import { useRecording } from "~@meetings/app/features/recording";
 import { Person } from "~@meetings/app/shared/api";
-import { usePlatform } from "~@meetings/app/shared/lib/usePlatform";
+import { usePlatform } from "~@meetings/app/shared/lib/platform";
 import Dropdown from "~@meetings/app/shared/ui/Dropdown";
 import SearchBar from "~@meetings/app/shared/ui/SearchBar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";

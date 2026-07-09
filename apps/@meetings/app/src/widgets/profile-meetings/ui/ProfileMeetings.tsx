@@ -49,7 +49,7 @@ import {
 import { useStateSelection } from "~@meetings/app/features/state-selection";
 import { useAnalytics } from "~@meetings/app/shared/analytics";
 import { Person, PersonType } from "~@meetings/app/shared/api";
-import { useIsMobileWidth } from "~@meetings/app/shared/lib/useIsMobileWidth";
+import { useIsMobileWidth } from "~@meetings/app/shared/lib/platform";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import MeetingsHeaderContent from "./MeetingsHeaderContent";

@@ -18,7 +18,7 @@
 import { Image, Platform, TouchableOpacity, View } from "react-native";
 
 import WordmarkSvg from "~@meetings/app/shared/assets/icons/wordmark.svg";
-import { useIsMobileWidth } from "~@meetings/app/shared/lib/useIsMobileWidth";
+import { useIsMobileWidth } from "~@meetings/app/shared/lib/platform";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import ProTip2Image from "../assets/pro-tip-2.png";

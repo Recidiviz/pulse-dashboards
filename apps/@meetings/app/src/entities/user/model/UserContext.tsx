@@ -27,7 +27,7 @@ import { useAuth0 } from "react-native-auth0";
 
 import { env } from "~@meetings/app/shared/config";
 import { isLoginRequiredError } from "~@meetings/app/shared/lib/auth";
-import { extractError } from "~@meetings/app/shared/lib/extractError";
+import { extractError } from "~@meetings/app/shared/lib/errors";
 import type { FeatureVariantRecord } from "~@meetings/trpc-types";
 
 interface UserContextType {

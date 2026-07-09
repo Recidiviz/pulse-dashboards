@@ -26,7 +26,7 @@ import { getPersonType } from "~@meetings/app/entities/person";
 import { useUserContext } from "~@meetings/app/entities/user";
 import { Person, useUploadSegment } from "~@meetings/app/shared/api";
 import { env } from "~@meetings/app/shared/config";
-import { extractError } from "~@meetings/app/shared/lib/extractError";
+import { extractError } from "~@meetings/app/shared/lib/errors";
 import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 import { AUDIO_FORMATS } from "~@meetings/config";
 

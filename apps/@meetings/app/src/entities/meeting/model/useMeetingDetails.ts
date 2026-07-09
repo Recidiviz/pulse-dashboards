@@ -15,20 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ScrollView, View } from "react-native";
+import { trpc } from "~@meetings/app/shared/api";
+import { isMeetingProcessing } from "~@meetings/app/utils/isMeetingProcessing";
 
-import { useIsMobileWidth } from "~@meetings/app/shared/lib/platform";
-
-export function DescriptionContainer({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const isMobileWidth = useIsMobileWidth();
-
-  if (isMobileWidth) {
-    return <ScrollView>{children}</ScrollView>;
-  }
-
-  return <View>{children}</View>;
+export function useMeetingDetails(meetingId?: string) {
+  return trpc.v1.meeting.getDetails.useQuery(
+    // @ts-expect-error - it won't run if meetingId is falsy
+    { meetingId },
+    {
+      enabled: !!meetingId,
+      refetchInterval: ({ state }) => {
+        const isProcessing = state.data?.postMeetingProcessingStatus
+          ? isMeetingProcessing(state.data.postMeetingProcessingStatus)
+          : false;
+        return isProcessing ? 1000 : false;
+      },
+    },
+  );
 }

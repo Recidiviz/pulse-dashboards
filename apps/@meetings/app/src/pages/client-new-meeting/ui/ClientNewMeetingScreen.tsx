@@ -25,7 +25,7 @@ import {
 } from "~@meetings/app/entities/person";
 import { trpc } from "~@meetings/app/shared/api";
 import { ClientsStackParamList } from "~@meetings/app/shared/config";
-import { useSetDocumentTitle } from "~@meetings/app/shared/lib/useSetDocumentTitle";
+import { useSetDocumentTitle } from "~@meetings/app/shared/lib/platform";
 import Loading from "~@meetings/app/shared/ui/Loading";
 import { Header } from "~@meetings/app/widgets/header";
 import { NewMeeting } from "~@meetings/app/widgets/new-meeting";

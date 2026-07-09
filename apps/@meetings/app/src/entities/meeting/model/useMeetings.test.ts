@@ -17,14 +17,15 @@
 
 import { renderHook } from "@testing-library/react-native";
 
-import { useMeetings } from "../../hooks/useMeetings";
-import { trpc } from "../../shared/api";
+import { trpc } from "~@meetings/app/shared/api";
+
+import { useMeetings } from "./useMeetings";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
 );
 
-jest.mock("../../shared/api/trpc", () => ({
+jest.mock("~@meetings/app/shared/api/trpc", () => ({
   __esModule: true,
   trpc: {
     v1: {
@@ -34,7 +35,7 @@ jest.mock("../../shared/api/trpc", () => ({
   },
 }));
 
-jest.mock("../../utils/isMeetingProcessing", () => ({
+jest.mock("~@meetings/app/utils/isMeetingProcessing", () => ({
   isMeetingProcessing: () => false,
 }));
 

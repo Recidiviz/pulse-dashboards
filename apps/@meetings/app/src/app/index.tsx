@@ -25,7 +25,8 @@ import React from "react";
 import { Auth0Provider } from "react-native-auth0";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-import { useSentryAppLifecycle } from "../hooks/useSentryAppLifecycle";
+import { useSentryAppLifecycle } from "~@meetings/app/shared/lib/monitoring";
+
 import { env } from "../shared/config";
 import { SnackbarProvider } from "../shared/ui/Snackbar";
 import AppErrorBoundary from "./AppErrorBoundary";

@@ -17,14 +17,14 @@
 
 import { RouteProp, useRoute } from "@react-navigation/native";
 
+import { useMeetingDetails } from "~@meetings/app/entities/meeting";
 import {
   deserializeClient,
   formatPersonTitle,
 } from "~@meetings/app/entities/person";
-import { useMeetingDetails } from "~@meetings/app/hooks/useMeetingDetails";
 import { trpc } from "~@meetings/app/shared/api";
 import { ClientsStackParamList } from "~@meetings/app/shared/config";
-import { useSetDocumentTitle } from "~@meetings/app/shared/lib/useSetDocumentTitle";
+import { useSetDocumentTitle } from "~@meetings/app/shared/lib/platform";
 import Loading from "~@meetings/app/shared/ui/Loading";
 import { formatMeetingStartDateTitle } from "~@meetings/app/utils/format";
 import { Header } from "~@meetings/app/widgets/header";

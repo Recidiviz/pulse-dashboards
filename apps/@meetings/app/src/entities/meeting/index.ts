@@ -24,12 +24,14 @@ export { useCreateMeeting } from "./model/useCreateMeeting";
 export { useDiscardMeeting } from "./model/useDiscardMeeting";
 export { useEndMeeting } from "./model/useEndMeeting";
 export { useMeetingActions } from "./model/useMeetingActions";
+export { useMeetingDetails } from "./model/useMeetingDetails";
 export {
   type MeetingEvent,
   MeetingEventType,
   type OfflineEvent,
   useMeetingEventQueue,
 } from "./model/useMeetingEventQueue";
+export { useMeetings } from "./model/useMeetings";
 export { useOfflineEventFactory } from "./model/useOfflineEventFactory";
 export { useProcessOfflineEvent } from "./model/useProcessOfflineEvent";
 export {

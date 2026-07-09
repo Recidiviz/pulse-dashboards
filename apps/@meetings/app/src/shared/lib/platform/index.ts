@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,29 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import * as Notifications from "expo-notifications";
-
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
-
-export const requestNotificationPermissions = async () => {
-  const { status } = await Notifications.requestPermissionsAsync();
-  if (status !== "granted") {
-    console.warn("Notification permission denied");
-  }
-  return status;
-};
-
-export const sendNotification = async (title: string, body: string) => {
-  await Notifications.scheduleNotificationAsync({
-    content: { title, body },
-    trigger: null, // send immediately
-  });
-};
+export { useIsMobileWidth } from "./useIsMobileWidth";
+export { usePlatform } from "./usePlatform";
+export { useSetDocumentTitle } from "./useSetDocumentTitle";

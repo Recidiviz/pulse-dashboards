@@ -18,7 +18,7 @@
 import React, { createContext, useContext, useEffect } from "react";
 
 import { env } from "~@meetings/app/shared/config/env";
-import { segmentClient } from "~@meetings/app/shared/lib/segment";
+import { segmentClient } from "~@meetings/app/shared/lib/monitoring";
 
 interface AnalyticsContextType {
   track: (eventName: string, metadata?: Record<string, unknown>) => void;

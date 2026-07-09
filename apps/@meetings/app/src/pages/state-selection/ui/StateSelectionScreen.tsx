@@ -37,7 +37,7 @@ import {
 import { trpc } from "~@meetings/app/shared/api";
 import { theme } from "~@meetings/app/shared/config";
 import { RootStackParamList } from "~@meetings/app/shared/config";
-import { useSetDocumentTitle } from "~@meetings/app/shared/lib/useSetDocumentTitle";
+import { useSetDocumentTitle } from "~@meetings/app/shared/lib/platform";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 import { Header } from "~@meetings/app/widgets/header";
 

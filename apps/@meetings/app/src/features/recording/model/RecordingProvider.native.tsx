@@ -40,7 +40,7 @@ import {
 } from "~@meetings/app/entities/meeting";
 import { getPersonType } from "~@meetings/app/entities/person";
 import { useUploadSegment } from "~@meetings/app/shared/api";
-import { extractError } from "~@meetings/app/shared/lib/extractError";
+import { extractError } from "~@meetings/app/shared/lib/errors";
 import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 import { AUDIO_FORMATS } from "~@meetings/config";
 

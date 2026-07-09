@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2026 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,20 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ScrollView, View } from "react-native";
-
-import { useIsMobileWidth } from "~@meetings/app/shared/lib/platform";
-
-export function DescriptionContainer({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const isMobileWidth = useIsMobileWidth();
-
-  if (isMobileWidth) {
-    return <ScrollView>{children}</ScrollView>;
-  }
-
-  return <View>{children}</View>;
-}
+export { AppUpdateModal } from "./ui/AppUpdateModal";

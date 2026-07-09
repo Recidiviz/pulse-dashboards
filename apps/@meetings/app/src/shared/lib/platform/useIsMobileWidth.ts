@@ -15,21 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { trpc } from "../shared/api";
-import { isMeetingProcessing } from "../utils/isMeetingProcessing";
+import { useWindowDimensions } from "react-native";
 
-export function useMeetingDetails(meetingId?: string) {
-  return trpc.v1.meeting.getDetails.useQuery(
-    // @ts-expect-error - it won't run if meetingId is falsy
-    { meetingId },
-    {
-      enabled: !!meetingId,
-      refetchInterval: ({ state }) => {
-        const isProcessing = state.data?.postMeetingProcessingStatus
-          ? isMeetingProcessing(state.data.postMeetingProcessingStatus)
-          : false;
-        return isProcessing ? 1000 : false;
-      },
-    },
-  );
+import { theme } from "~@meetings/app/shared/config";
+
+export function useIsMobileWidth() {
+  const { width } = useWindowDimensions();
+  return width < parseInt(theme["screens"]["md"]);
 }

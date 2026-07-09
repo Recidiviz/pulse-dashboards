@@ -29,8 +29,8 @@ import React, { useEffect } from "react";
 import { useAuth0 } from "react-native-auth0";
 import superjson from "superjson";
 
-import AppUpdateModal from "~@meetings/app/components/AppUpdateModal";
 import { UserContextProvider } from "~@meetings/app/entities/user";
+import { AppUpdateModal } from "~@meetings/app/features/app-update";
 import { stateCodeParam } from "~@meetings/app/features/state-selection";
 import { LoginScreen } from "~@meetings/app/pages/login";
 import { publicTrpc } from "~@meetings/app/shared/api";

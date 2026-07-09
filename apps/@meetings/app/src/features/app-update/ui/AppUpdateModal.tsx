@@ -18,11 +18,12 @@
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
 
-import { useAppVersionCheck } from "../hooks/useAppVersionCheck";
-import Modal from "../shared/ui/Modal";
-import { Typography } from "../shared/ui/Typography";
+import Modal from "~@meetings/app/shared/ui/Modal";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
 
-const AppUpdateModal = () => {
+import { useAppVersionCheck } from "../model/useAppVersionCheck";
+
+export const AppUpdateModal = () => {
   const { isModalVisible, hideModal, openStore, options } =
     useAppVersionCheck();
 
@@ -74,5 +75,3 @@ const AppUpdateModal = () => {
     </Modal>
   );
 };
-
-export default AppUpdateModal;

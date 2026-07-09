@@ -15,20 +15,5 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ScrollView, View } from "react-native";
-
-import { useIsMobileWidth } from "~@meetings/app/shared/lib/platform";
-
-export function DescriptionContainer({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const isMobileWidth = useIsMobileWidth();
-
-  if (isMobileWidth) {
-    return <ScrollView>{children}</ScrollView>;
-  }
-
-  return <View>{children}</View>;
-}
+export { AbortError, FileValidationError } from "./errors";
+export { extractError } from "./extractError";

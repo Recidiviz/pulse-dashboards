@@ -25,7 +25,7 @@ import * as UserModule from "~@meetings/app/entities/user";
 import { useStateSelection } from "~@meetings/app/features/state-selection";
 
 // Mock useSetDocumentTitle hooks, since it modifies document.title, and it causes errors
-jest.mock("../../shared/lib/useSetDocumentTitle", () => ({
+jest.mock("../../shared/lib/platform/useSetDocumentTitle", () => ({
   useSetDocumentTitle: () => null,
 }));
 // Mock AsyncStorage
