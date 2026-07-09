@@ -17,17 +17,29 @@
 
 import { AbortError } from "~@meetings/app/shared/lib/errors";
 
-import { UploadSegmentParams } from "../../../shared/api";
+import { UploadSegmentParams } from "./types";
+
+type Connection = Navigator & {
+  connection?: { type?: string; effectiveType?: string };
+};
+
+function getNetworkType() {
+  const connection = (navigator as Connection).connection;
+  return connection?.type ?? connection?.effectiveType ?? "unknown";
+}
 
 export async function uploadSegment({
   uri,
   meetingId,
   onProgress,
+  onNetworkType,
   signal,
   contentType,
   fileExtension,
   createSignedUrlForRecording,
 }: UploadSegmentParams) {
+  onNetworkType?.(getNetworkType());
+
   const response = await fetch(uri);
 
   if (!response.ok) {

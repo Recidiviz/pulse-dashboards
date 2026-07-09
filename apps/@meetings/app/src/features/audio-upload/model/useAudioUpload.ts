@@ -30,6 +30,7 @@ import {
 
 import { trpc, useUploadSegment } from "../../../shared/api";
 import { deserializeFile } from "../lib/deserializeFile";
+import { recordUploadMetrics } from "../lib/recordUploadMetrics";
 import { useAudioUploadStore } from "./store";
 import { RawFileInfo } from "./types";
 
@@ -76,16 +77,57 @@ export function useAudioUpload() {
 
         const abortController = new AbortController();
         abortControllerRef.current = abortController;
-        await uploadSegment({
-          uri: file.uri,
-          meetingId,
-          signal: abortController.signal,
-          fileExtension: file.extension,
-          contentType: file.contentType,
-          onProgress: (loaded, total) => {
-            store.setUploadProgress(loaded, total);
+
+        await Sentry.startSpan(
+          {
+            name: "audio.upload",
+            op: "file.upload",
+            forceTransaction: true,
+            attributes: {
+              "upload.file_extension": file.extension,
+              "upload.content_type": file.contentType,
+            },
           },
-        });
+          async (span) => {
+            const startedAt = Date.now();
+            let bytesTransferred = 0;
+            let networkType: string | undefined;
+
+            try {
+              await uploadSegment({
+                uri: file.uri,
+                meetingId,
+                signal: abortController.signal,
+                fileExtension: file.extension,
+                contentType: file.contentType,
+                onProgress: (loaded, total) => {
+                  bytesTransferred = loaded;
+                  store.setUploadProgress(loaded, total);
+                },
+                onNetworkType: (type) => {
+                  networkType = type;
+                },
+              });
+
+              recordUploadMetrics(span, {
+                durationMs: Date.now() - startedAt,
+                totalBytes: file.size,
+                bytesTransferred,
+                networkType,
+                outcome: "completed",
+              });
+            } catch (error) {
+              recordUploadMetrics(span, {
+                durationMs: Date.now() - startedAt,
+                totalBytes: file.size,
+                bytesTransferred,
+                networkType,
+                outcome: error instanceof AbortError ? "interrupted" : "failed",
+              });
+              throw error;
+            }
+          },
+        );
 
         store.setStatus("uploaded");
       } catch (error) {

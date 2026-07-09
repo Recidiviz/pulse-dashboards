@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import NetInfo from "@react-native-community/netinfo";
 import * as FileSystem from "expo-file-system/legacy";
 
 import { AbortError } from "~@meetings/app/shared/lib/errors";
@@ -25,11 +26,14 @@ export async function uploadSegment({
   uri,
   meetingId,
   onProgress,
+  onNetworkType,
   signal,
   contentType,
   fileExtension,
   createSignedUrlForRecording,
 }: UploadSegmentParams) {
+  onNetworkType?.((await NetInfo.fetch()).type ?? "unknown");
+
   const fileInfo = await FileSystem.getInfoAsync(uri);
 
   if (!fileInfo.exists) {

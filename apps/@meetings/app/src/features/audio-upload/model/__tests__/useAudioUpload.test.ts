@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import * as Sentry from "@sentry/react-native";
 import { act, renderHook } from "@testing-library/react-native";
 
 import {
@@ -28,6 +29,26 @@ import { trpc, useUploadSegment } from "../../../../shared/api";
 import { useAudioUploadStore } from "../store";
 import { RawFileInfo } from "../types";
 import { useAudioUpload } from "../useAudioUpload";
+
+jest.mock("@sentry/react-native", () => {
+  const uploadSpan = { setAttribute: jest.fn() };
+  return {
+    __esModule: true,
+    __uploadSpan: uploadSpan,
+    startSpan: jest.fn(
+      (_options: unknown, callback: (span: unknown) => unknown) =>
+        callback(uploadSpan),
+    ),
+    setMeasurement: jest.fn(),
+    captureException: jest.fn(),
+  };
+});
+
+const uploadSpan = (
+  jest.requireMock("@sentry/react-native") as {
+    __uploadSpan: { setAttribute: jest.Mock };
+  }
+).__uploadSpan;
 
 jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
@@ -274,6 +295,88 @@ describe("useAudioUpload", () => {
 
       expect(mockSetError).toHaveBeenCalledWith("Network error");
       expect(mockSetStatus).toHaveBeenCalledWith("selecting");
+    });
+
+    it("records an audio.upload transaction with measurements on success", async () => {
+      const { result } = renderHook(() => useAudioUpload());
+
+      await act(async () => {
+        await result.current.addFile(validRawFile);
+      });
+
+      expect(Sentry.startSpan).toHaveBeenCalledWith(
+        expect.objectContaining({ name: "audio.upload", op: "file.upload" }),
+        expect.any(Function),
+      );
+      expect(Sentry.setMeasurement).toHaveBeenCalledWith(
+        "upload.bytes",
+        validRawFile.size,
+        "byte",
+        uploadSpan,
+      );
+      expect(Sentry.setMeasurement).toHaveBeenCalledWith(
+        "upload.duration",
+        expect.any(Number),
+        "millisecond",
+        uploadSpan,
+      );
+      expect(uploadSpan.setAttribute).toHaveBeenCalledWith(
+        "upload.outcome",
+        "completed",
+      );
+    });
+
+    it("marks the transaction as interrupted on AbortError", async () => {
+      mockUploadSegment.mockRejectedValue(new AbortError());
+
+      const { result } = renderHook(() => useAudioUpload());
+
+      await act(async () => {
+        await result.current.addFile(validRawFile);
+      });
+
+      expect(uploadSpan.setAttribute).toHaveBeenCalledWith(
+        "upload.outcome",
+        "interrupted",
+      );
+    });
+
+    it("marks the transaction as failed on a generic upload error", async () => {
+      mockUploadSegment.mockRejectedValue(new Error("Network error"));
+
+      const { result } = renderHook(() => useAudioUpload());
+
+      await act(async () => {
+        await result.current.addFile(validRawFile);
+      });
+
+      expect(uploadSpan.setAttribute).toHaveBeenCalledWith(
+        "upload.outcome",
+        "failed",
+      );
+    });
+
+    it("reports the network type surfaced by the upload", async () => {
+      mockUploadSegment.mockImplementation(
+        async ({
+          onNetworkType,
+        }: {
+          onNetworkType: (type: string) => void;
+        }) => {
+          onNetworkType("cellular");
+        },
+      );
+
+      const { result } = renderHook(() => useAudioUpload());
+
+      await act(async () => {
+        await result.current.addFile(validRawFile);
+      });
+
+      expect(uploadSpan.setAttribute).toHaveBeenCalledWith(
+        "network.type",
+        "cellular",
+      );
     });
   });
 

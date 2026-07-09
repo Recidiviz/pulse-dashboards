@@ -19,6 +19,7 @@ export type UploadParams = {
   uri: string;
   meetingId: string;
   onProgress?: (loaded: number, total: number) => void;
+  onNetworkType?: (networkType: string) => void;
   signal?: AbortSignal;
   fileExtension: string;
   contentType: string;
