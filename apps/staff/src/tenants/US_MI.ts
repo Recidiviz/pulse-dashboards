@@ -66,6 +66,7 @@ const US_MI_CONFIG = {
   },
   featureVariants: {
     outcomesModule: {},
+    supervisorHomepageReviewCard: {},
   },
   custodyLevelCopy: {
     MINIMUM: "Security Level I",

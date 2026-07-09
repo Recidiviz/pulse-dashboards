@@ -299,7 +299,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
           activeTenants: ["US_AZ", "US_CA", "US_ID", "US_MI", "US_TN"],
         },
         supervisionUnrestrictedSearch: {},
-        supervisorHomepageReviewCard: { activeTenants: ["US_IA"] },
+        supervisorHomepageReviewCard: { activeTenants: ["US_IA", "US_MI"] },
         supervisorHomepageWorkflows: {},
         supervisorHomepageVitals: {
           activeTenants: ["US_ID", "US_ND", "US_TX"],
