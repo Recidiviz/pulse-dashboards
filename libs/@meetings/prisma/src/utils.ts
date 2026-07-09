@@ -20,6 +20,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "~@meetings/prisma/client";
 
 const prismaClients: Record<string, PrismaClient> = {};
+const GLOBAL_PRISMA_CODE = "global";
 
 function buildConnectionString(stateCode: string): string {
   // Single-DB environments (local dev, contractor): DATABASE_URL is set directly
@@ -57,4 +58,8 @@ export function getPrismaClientForStateCode(stateCode: string) {
   }
 
   return prismaClients[connectionString];
+}
+
+export function getGlobalPrismaClient() {
+  return getPrismaClientForStateCode(GLOBAL_PRISMA_CODE);
 }
