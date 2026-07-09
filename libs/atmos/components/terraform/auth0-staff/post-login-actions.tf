@@ -56,7 +56,7 @@ resource "auth0_action" "restrict_synthetic_monitor_ip" {
   }
   secrets {
     name  = "SYNTHETIC_MONITOR_ALLOWED_IPS"
-    value = data.sops_file.configs.data["synthetic_monitor_allowed_ips"]
+    value = data.sops_file.configs.data["SYNTHETIC_MONITOR_ALLOWED_IPS"]
   }
 }
 
@@ -75,11 +75,11 @@ resource "auth0_action" "add_state_code_for_sso_users" {
   }
   secrets {
     name  = "SEGMENT_WRITE_KEY"
-    value = data.sops_file.configs.data["segment_write_key"]
+    value = data.sops_file.configs.data["SEGMENT_WRITE_KEY"]
   }
   secrets {
     name  = "RECIDIVIZ_CONNECTION_ID"
-    value = data.sops_file.configs.data["recidiviz_connection_id"]
+    value = data.sops_file.configs.data["RECIDIVIZ_CONNECTION_ID"]
   }
   secrets {
     name  = "ENVIRONMENT"
@@ -102,7 +102,11 @@ resource "auth0_action" "force_e_mail_verification" {
   }
   secrets {
     name  = "SEGMENT_WRITE_KEY"
-    value = data.sops_file.configs.data["segment_write_key"]
+    value = data.sops_file.configs.data["SEGMENT_WRITE_KEY"]
+  }
+  secrets {
+    name  = "RECIDIVIZ_VEFIFY_EMAIL_URL"
+    value = data.sops_file.configs.data["RECIDIVIZ_VEFIFY_EMAIL_URL"]
   }
 }
 
@@ -121,7 +125,7 @@ resource "auth0_action" "allowlist_for_specific_app" {
   }
   secrets {
     name  = "SEGMENT_WRITE_KEY"
-    value = data.sops_file.configs.data["segment_write_key"]
+    value = data.sops_file.configs.data["SEGMENT_WRITE_KEY"]
   }
 }
 
@@ -156,39 +160,39 @@ resource "auth0_action" "update_user_restrictions" {
   }
   secrets {
     name  = "SEGMENT_WRITE_KEY"
-    value = data.sops_file.configs.data["segment_write_key"]
+    value = data.sops_file.configs.data["SEGMENT_WRITE_KEY"]
   }
   secrets {
     name  = "SENTRY_DSN"
-    value = data.sops_file.configs.data["sentry_dsn"]
+    value = data.sops_file.configs.data["SENTRY_DSN"]
   }
   secrets {
     name  = "SENTRY_ENV"
-    value = data.sops_file.configs.data["sentry_env"]
+    value = data.sops_file.configs.data["SENTRY_ENV"]
   }
   secrets {
     name  = "GOOGLE_APPLICATION_CREDENTIALS_JSON"
-    value = data.sops_file.configs.data["google_application_credentials_json"]
+    value = data.sops_file.configs.data["GOOGLE_APPLICATION_CREDENTIALS_JSON"]
   }
   secrets {
     name  = "RECIDIVIZ_AUTH_BUCKET_PROJECT_ID"
-    value = data.sops_file.configs.data["recidiviz_auth_bucket_project_id"]
+    value = data.sops_file.configs.data["RECIDIVIZ_AUTH_BUCKET_PROJECT_ID"]
   }
   secrets {
     name  = "RECIDIVIZ_AUTH_BUCKET_NAME"
-    value = data.sops_file.configs.data["recidiviz_auth_bucket_name"]
+    value = data.sops_file.configs.data["RECIDIVIZ_AUTH_BUCKET_NAME"]
   }
   secrets {
     name  = "DEMO_APP_CLIENT_ID"
-    value = data.sops_file.configs.data["demo_app_client_id"]
+    value = data.sops_file.configs.data["DEMO_APP_CLIENT_ID"]
   }
   secrets {
     name  = "RECIDIVIZ_ADMIN_PANEL_URL"
-    value = data.sops_file.configs.data["recidiviz_admin_panel_url"]
+    value = data.sops_file.configs.data["RECIDIVIZ_ADMIN_PANEL_URL"]
   }
   secrets {
     name  = "RECIDIVIZ_ADMIN_PANEL_TARGET_AUDIENCE"
-    value = data.sops_file.configs.data["recidiviz_admin_panel_target_audience"]
+    value = data.sops_file.configs.data["RECIDIVIZ_ADMIN_PANEL_TARGET_AUDIENCE"]
   }
 }
 
@@ -203,7 +207,7 @@ resource "auth0_action" "add_user_and_app_metadata_to_id_tokens" {
   }
   secrets {
     name  = "INTERCOM_APP_KEY"
-    value = data.sops_file.configs.data["intercom_app_key"]
+    value = data.sops_file.configs.data["INTERCOM_APP_KEY"]
   }
 }
 
@@ -222,6 +226,6 @@ resource "auth0_action" "log_success_login_to_segment" {
   }
   secrets {
     name  = "SEGMENT_WRITE_KEY"
-    value = data.sops_file.configs.data["segment_write_key"]
+    value = data.sops_file.configs.data["SEGMENT_WRITE_KEY"]
   }
 }

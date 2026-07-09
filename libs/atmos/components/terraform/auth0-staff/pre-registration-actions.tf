@@ -50,30 +50,30 @@ resource "auth0_action" "pre_registration_setup" {
   }
   secrets {
     name  = "SENTRY_DSN"
-    value = data.sops_file.configs.data["sentry_dsn"]
+    value = data.sops_file.configs.data["SENTRY_DSN"]
   }
   secrets {
     name  = "SENTRY_ENV"
-    value = data.sops_file.configs.data["sentry_env"]
+    value = data.sops_file.configs.data["SENTRY_ENV"]
   }
   secrets {
     name  = "GOOGLE_APPLICATION_CREDENTIALS_JSON"
-    value = data.sops_file.configs.data["google_application_credentials_json"]
+    value = data.sops_file.configs.data["GOOGLE_APPLICATION_CREDENTIALS_JSON"]
   }
   secrets {
     name  = "RECIDIVIZ_AUTH_BUCKET_PROJECT_ID"
-    value = data.sops_file.configs.data["recidiviz_auth_bucket_project_id"]
+    value = data.sops_file.configs.data["RECIDIVIZ_AUTH_BUCKET_PROJECT_ID"]
   }
   secrets {
     name  = "RECIDIVIZ_AUTH_BUCKET_NAME"
-    value = data.sops_file.configs.data["recidiviz_auth_bucket_name"]
+    value = data.sops_file.configs.data["RECIDIVIZ_AUTH_BUCKET_NAME"]
   }
   secrets {
     name  = "RECIDIVIZ_ADMIN_PANEL_URL"
-    value = data.sops_file.configs.data["recidiviz_admin_panel_url"]
+    value = data.sops_file.configs.data["RECIDIVIZ_ADMIN_PANEL_URL"]
   }
   secrets {
     name  = "RECIDIVIZ_ADMIN_PANEL_TARGET_AUDIENCE"
-    value = data.sops_file.configs.data["recidiviz_admin_panel_target_audience"]
+    value = data.sops_file.configs.data["RECIDIVIZ_ADMIN_PANEL_TARGET_AUDIENCE"]
   }
 }

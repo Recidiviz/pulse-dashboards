@@ -64,7 +64,7 @@ exports.onExecutePostLogin = async (event, api) => {
     });
 
     await analytics.flush();
-    api.redirect.sendUserTo("https://dashboard.recidiviz.org/verify");
+    api.redirect.sendUserTo(event.secrets.RECIDIVIZ_VEFIFY_EMAIL_URL);
   }
 };
 
