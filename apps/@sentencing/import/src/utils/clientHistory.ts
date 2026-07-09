@@ -87,13 +87,16 @@ export async function transformAndLoadClientHistoryData(
 
     const employmentHistory = treatmentData.employment_history;
     if (employmentHistory) {
-      // Find all SARs for this client where employment history hasn't been manually updated
+      // Find all SARs for this client where employment history hasn't been manually
+      // updated and the report isn't already completed — completed reports shouldn't
+      // have their employment history changed underneath them.
       // Records are processed per-client from an async generator; sequential awaits are necessary
 
       const sars = await prismaClient.sentencingAssessmentReport.findMany({
         where: {
           clientId: clientExternalId,
           hasManuallyUpdatedEmploymentHistory: false,
+          completionDate: null,
         },
         select: { id: true },
       });
