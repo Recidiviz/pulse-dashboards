@@ -1406,7 +1406,9 @@ async def test_get_active_resources_success(
         client, async_session, mock_clientdata_service, mock_intake
     )
 
-    plan_gen = PlanGeneration(plan_id=uuid.UUID(plan_id), resources_associations_map={"Housing": []})
+    plan_gen = PlanGeneration(
+        plan_id=uuid.UUID(plan_id), resources_associations_map={"Housing": []}
+    )
     async_session.add(plan_gen)
     await async_session.commit()
     await async_session.refresh(plan_gen)
@@ -1525,7 +1527,7 @@ async def test_get_active_resources_only_active_associations_sent(
             section_title="Housing",
             action=ResourceAssociationAction.REMOVE,
             action_by="SYSTEM",
-            action_at=now.replace(second=now.second + 1),
+            action_at=now + timedelta(seconds=1),
             resource_type=ResourceAssociationType.COMMUNITY,
         )
     )
@@ -1564,7 +1566,9 @@ async def test_get_active_resources_same_id_different_types(
         client, async_session, mock_clientdata_service, mock_intake
     )
 
-    plan_gen = PlanGeneration(plan_id=uuid.UUID(plan_id), resources_associations_map={"Housing": []})
+    plan_gen = PlanGeneration(
+        plan_id=uuid.UUID(plan_id), resources_associations_map={"Housing": []}
+    )
     async_session.add(plan_gen)
     await async_session.commit()
     await async_session.refresh(plan_gen)
@@ -1634,7 +1638,9 @@ async def test_get_active_resources_remove_one_type_keeps_other(
         client, async_session, mock_clientdata_service, mock_intake
     )
 
-    plan_gen = PlanGeneration(plan_id=uuid.UUID(plan_id), resources_associations_map={"Housing": []})
+    plan_gen = PlanGeneration(
+        plan_id=uuid.UUID(plan_id), resources_associations_map={"Housing": []}
+    )
     async_session.add(plan_gen)
     await async_session.commit()
     await async_session.refresh(plan_gen)
@@ -1659,7 +1665,7 @@ async def test_get_active_resources_remove_one_type_keeps_other(
             section_title="Housing",
             action=ResourceAssociationAction.REMOVE,
             action_by="SYSTEM",
-            action_at=now.replace(second=now.second + 1),
+            action_at=now + timedelta(seconds=1),
             resource_type=ResourceAssociationType.COMMUNITY,
         )
     )

@@ -21,15 +21,6 @@
         ],
         "cwd": "{projectRoot}"
       }
-    },
-    "test": {
-      "executor": "nx:run-commands",
-      "outputs": ["{workspaceRoot}/coverage/libs/sentencing-client"],
-      "cache": true,
-      "options": {
-        "command": "vitest",
-        "cwd": "{projectRoot}"
-      }
     }
   }
 }

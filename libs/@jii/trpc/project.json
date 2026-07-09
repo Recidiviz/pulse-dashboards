@@ -16,14 +16,7 @@
       }
     },
     "test": {
-      "dependsOn": ["^prepare-test-db"],
-      "executor": "nx:run-commands",
-      "outputs": ["{workspaceRoot}/coverage/libs/@jii/trpc"],
-      "cache": true,
-      "options": {
-        "command": "vitest",
-        "cwd": "{projectRoot}"
-      }
+      "dependsOn": ["^prepare-test-db"]
     }
   }
 }

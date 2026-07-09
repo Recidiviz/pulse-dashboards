@@ -14,15 +14,6 @@
         ],
         "cwd": "{projectRoot}"
       }
-    },
-    "test": {
-      "executor": "nx:run-commands",
-      "outputs": ["{workspaceRoot}/coverage/libs/@reentry/frontend-shared"],
-      "cache": true,
-      "options": {
-        "command": "cd libs/@reentry/frontend-shared && vitest",
-        "cwd": "{workspaceRoot}"
-      }
     }
   }
 }

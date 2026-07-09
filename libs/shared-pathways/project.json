@@ -15,15 +15,6 @@
         "cwd": "{projectRoot}"
       }
     },
-    "test": {
-      "executor": "nx:run-commands",
-      "outputs": ["{workspaceRoot}/coverage/libs/shared-pathways"],
-      "cache": true,
-      "options": {
-        "command": "vitest",
-        "cwd": "{projectRoot}"
-      }
-    },
     "requires-sops-env:sync-content": {
       "executor": "nx:run-commands",
       "options": {

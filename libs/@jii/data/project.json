@@ -14,15 +14,6 @@
         ],
         "cwd": "{projectRoot}"
       }
-    },
-    "test": {
-      "executor": "nx:run-commands",
-      "outputs": ["{workspaceRoot}/coverage/libs/@jii/data"],
-      "cache": true,
-      "options": {
-        "command": "vitest",
-        "cwd": "{projectRoot}"
-      }
     }
   }
 }

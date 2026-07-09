@@ -14,15 +14,6 @@
         ],
         "cwd": "{projectRoot}"
       }
-    },
-    "test": {
-      "executor": "nx:run-commands",
-      "outputs": ["{workspaceRoot}/coverage/libs/@case-notes-server/trpc"],
-      "cache": true,
-      "options": {
-        "command": "vitest",
-        "cwd": "{projectRoot}"
-      }
     }
   }
 }

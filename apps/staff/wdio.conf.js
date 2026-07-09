@@ -18,6 +18,10 @@
 const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
+// firebase.json is a workspace-root config file, not an Nx project. @nx/eslint-plugin@22's
+// enforce-module-boundaries rule flags this relative import as a false positive (it was
+// allowed under v21); the import is intentional, so suppress the rule for this line.
+// eslint-disable-next-line @nx/enforce-module-boundaries
 const firebase = require("../../firebase.json");
 
 global.downloadDir = path.join("/tmp", "tempDownloads");

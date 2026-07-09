@@ -6,7 +6,7 @@
   "tags": [],
   "targets": {
     "test": {
-      "executor": "@nx/vite:test",
+      "executor": "@nx/vitest:test",
       "outputs": ["{workspaceRoot}/coverage/{projectName}"],
       "options": {
         "reportsDirectory": "../../coverage/{projectName}"

@@ -15,15 +15,6 @@
         "cwd": "{projectRoot}"
       }
     },
-    "test": {
-      "executor": "nx:run-commands",
-      "outputs": ["{workspaceRoot}/coverage/libs/@typesense/client"],
-      "cache": true,
-      "options": {
-        "command": "vitest",
-        "cwd": "{projectRoot}"
-      }
-    },
     "requires-sops-env:collection-list": {
       "executor": "nx:run-commands",
       "options": {

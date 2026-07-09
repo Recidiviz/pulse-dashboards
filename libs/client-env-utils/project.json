@@ -4,15 +4,6 @@
   "sourceRoot": "libs/client-env-utils/src",
   "projectType": "library",
   "targets": {
-    "test": {
-      "executor": "nx:run-commands",
-      "outputs": ["{workspaceRoot}/coverage/libs/client-env-utils"],
-      "cache": true,
-      "options": {
-        "command": "vitest",
-        "cwd": "{projectRoot}"
-      }
-    },
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {

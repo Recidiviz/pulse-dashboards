@@ -15,15 +15,6 @@
         "cwd": "{projectRoot}"
       }
     },
-    "test": {
-      "executor": "nx:run-commands",
-      "outputs": ["{workspaceRoot}/coverage/libs/@typesense/tools"],
-      "cache": true,
-      "options": {
-        "command": "vitest",
-        "cwd": "{projectRoot}"
-      }
-    },
     "offline": {
       "executor": "nx:run-commands",
       "options": {

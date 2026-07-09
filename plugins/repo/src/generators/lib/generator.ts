@@ -114,17 +114,6 @@ export async function libGenerator(tree: Tree, options: LibGeneratorSchema) {
             cwd: "{projectRoot}",
           },
         },
-        // unlike the default test command, this implements default Vitest behavior
-        // (defaults to watch in dev mode and run in CI mode)
-        test: {
-          executor: "nx:run-commands",
-          outputs: [`{workspaceRoot}/coverage/${PROJECT_ROOT}`],
-          cache: true,
-          options: {
-            command: "vitest",
-            cwd: "{projectRoot}",
-          },
-        },
       },
       tags: [`scope:${options.scope}`],
     });

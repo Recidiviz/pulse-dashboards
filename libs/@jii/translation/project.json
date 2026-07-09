@@ -15,15 +15,6 @@
         "cwd": "{projectRoot}"
       }
     },
-    "test": {
-      "executor": "nx:run-commands",
-      "outputs": ["{workspaceRoot}/coverage/libs/@jii/translation"],
-      "cache": true,
-      "options": {
-        "command": "vitest",
-        "cwd": "{projectRoot}"
-      }
-    },
     "requires-sops-env:sync-resource": {
       "executor": "nx:run-commands",
       "options": {

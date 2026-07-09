@@ -31,7 +31,6 @@
       "options": {
         "buildTargetName": "build",
         "previewTargetName": "preview",
-        "testTargetName": "test",
         "serveTargetName": "serve",
         "serveStaticTargetName": "serve-static"
       }
@@ -71,6 +70,12 @@
       "plugin": "@nx/jest/plugin",
       "options": {
         "targetName": "test"
+      }
+    },
+    {
+      "plugin": "@nx/vitest",
+      "options": {
+        "testTargetName": "test"
       }
     },
     {

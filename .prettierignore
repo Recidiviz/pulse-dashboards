@@ -1,6 +1,5 @@
 **/server/core/demo_data
-/.nx/cache
+/.nx
 plugins/repo/src/generators/lib/files
-/.nx/workspace-data
 **/*.enc.yaml
 libs/atmos/components/terraform/vendor

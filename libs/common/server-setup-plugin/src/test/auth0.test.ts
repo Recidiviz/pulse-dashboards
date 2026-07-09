@@ -52,15 +52,9 @@ describe("auth0", () => {
       done();
     });
 
-    // Start listening.
-    testServer.listen({ port: testPort, host: testHost }, (err) => {
-      if (err) {
-        testServer.log.error(err);
-        process.exit(1);
-      } else {
-        console.log(`[ ready ] http://${testHost}:${testPort}`);
-      }
-    });
+    // Start listening. Await so the server is bound before any test runs.
+    await testServer.listen({ port: testPort, host: testHost });
+    console.log(`[ ready ] http://${testHost}:${testPort}`);
   });
 
   test("should be marked as unauthorized if there is no authorization header", async () => {
@@ -102,18 +96,12 @@ describe("auth0", () => {
 
     const customTestPort = testPort + 1;
 
-    // Start listening.
-    testServerWithFailingAuth.listen(
-      { port: customTestPort, host: testHost },
-      (err) => {
-        if (err) {
-          testServerWithFailingAuth.log.error(err);
-          process.exit(1);
-        } else {
-          console.log(`[ ready ] http://${testHost}:${testPort}`);
-        }
-      },
-    );
+    // Start listening. Await so the server is bound before we query it.
+    await testServerWithFailingAuth.listen({
+      port: customTestPort,
+      host: testHost,
+    });
+    console.log(`[ ready ] http://${testHost}:${customTestPort}`);
 
     const trpcClient = createTRPCClient<Auth0AppRouter>({
       links: [

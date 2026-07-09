@@ -55,15 +55,9 @@ describe("firebase auth", () => {
       },
     });
 
-    // Start listening.
-    testServer.listen({ port: testPort, host: testHost }, (err) => {
-      if (err) {
-        testServer.log.error(err);
-        process.exit(1);
-      } else {
-        console.log(`[ ready ] http://${testHost}:${testPort}`);
-      }
-    });
+    // Start listening. Await so the server is bound before any test runs.
+    await testServer.listen({ port: testPort, host: testHost });
+    console.log(`[ ready ] http://${testHost}:${testPort}`);
   });
 
   afterAll(() => {

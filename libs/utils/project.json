@@ -5,15 +5,6 @@
   "projectType": "library",
   "tags": ["scope:universal", "type:util"],
   "targets": {
-    "test": {
-      "executor": "nx:run-commands",
-      "outputs": ["{workspaceRoot}/coverage/libs/utils"],
-      "cache": true,
-      "options": {
-        "command": "vitest",
-        "cwd": "{projectRoot}"
-      }
-    },
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {

@@ -151,15 +151,6 @@
         "cwd": "{projectRoot}",
         "envFile": "{projectRoot}/.env.offline"
       }
-    },
-    "test": {
-      "executor": "nx:run-commands",
-      "outputs": ["{workspaceRoot}/coverage/apps/staff"],
-      "cache": true,
-      "options": {
-        "command": "vitest",
-        "cwd": "{projectRoot}"
-      }
     }
   }
 }
