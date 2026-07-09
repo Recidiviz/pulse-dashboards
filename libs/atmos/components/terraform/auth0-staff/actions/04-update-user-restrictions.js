@@ -155,6 +155,12 @@ exports.onExecutePostLogin = async (event, api) => {
     const apiResponse = await client.request({ url, retry: true });
     const restrictions = apiResponse.data;
 
+    const { allowedApps } = restrictions;
+
+    if (!allowedApps.staff) {
+      throw new Error(`Email ${email} does not have access to the staff app.`);
+    }
+
     // If a user has no routes but is in our roster, treat them as if they weren't in the roster at
     // all. This can happen when a state is on roster sync and a user exists in the synced roster,
     // but the data doesn't show them as being supervision line staff or a supervision supervisor.
