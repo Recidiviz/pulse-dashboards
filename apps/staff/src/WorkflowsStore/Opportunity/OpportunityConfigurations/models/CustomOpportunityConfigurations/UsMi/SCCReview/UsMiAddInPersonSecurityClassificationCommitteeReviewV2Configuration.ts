@@ -15,10 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { OpportunityTableColumnId } from "../../../../../../../core/OpportunityCaseloadView/HydratedOpportunityPersonList";
 import { DenialInputSettings } from "../../../../../types";
 import { ApiOpportunityConfiguration } from "../../../ApiOpportunityConfigurationImpl";
 
 export class UsMiAddInPersonSecurityClassificationCommitteeReviewV2Configuration extends ApiOpportunityConfiguration {
+  get enabledColumns(): Array<OpportunityTableColumnId> {
+    const cols = [...super.enabledColumns];
+    cols.push("US_MI_SEG_START_DATE");
+    cols.push("US_MI_NEXT_SCC_DATE");
+    cols.push("US_MI_ADD_LAST_SCC_DATE");
+    cols.push("US_MI_SEG_DURATION");
+    cols.push("US_MI_OPT");
+    cols.push("US_MI_SMI");
+    return cols.filter((c) => c !== "RELEASE_DATE");
+  }
+
   get allSubcategoriesOfSubmitted() {
     return undefined;
   }

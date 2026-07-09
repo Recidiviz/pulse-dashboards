@@ -17,6 +17,7 @@
 
 import { countBy } from "lodash";
 
+import { OpportunityTableColumnId } from "../../../../../../core/OpportunityCaseloadView/HydratedOpportunityPersonList";
 import { PartialRecord } from "../../../../../../utils/typeUtils";
 import {
   Opportunity,
@@ -38,6 +39,12 @@ export class UsAzTransferToAdministrativeSupervisionConfiguration extends ApiOpp
 
   get customSubmittedText(): string {
     return "Don't forget to remove them from the [drug testing schedule](https://aversys.averhealth.com).";
+  }
+
+  get enabledColumns(): Array<OpportunityTableColumnId> {
+    const cols = [...super.enabledColumns];
+    cols.push("ALMOST_ELIGIBILITY_DATE");
+    return cols.filter((c) => c !== "STATUS");
   }
 
   get tabGroups(): OpportunityTabGroups {

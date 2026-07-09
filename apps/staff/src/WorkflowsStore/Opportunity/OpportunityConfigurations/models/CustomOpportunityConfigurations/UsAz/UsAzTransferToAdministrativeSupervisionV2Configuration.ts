@@ -17,6 +17,7 @@
 
 import { countBy } from "lodash";
 
+import type { OpportunityTableColumnId } from "../../../../../../core/OpportunityCaseloadView/HydratedOpportunityPersonList";
 import type { PartialRecord } from "../../../../../../utils/typeUtils";
 import type {
   Opportunity,
@@ -35,6 +36,10 @@ export class UsAzTransferToAdministrativeSupervisionV2Configuration extends ApiO
 
   get customSubmittedText(): string {
     return "Don't forget to remove them from the [drug testing schedule](https://aversys.averhealth.com).";
+  }
+
+  get enabledColumns(): Array<OpportunityTableColumnId> {
+    return super.enabledColumns.filter((c) => c !== "STATUS");
   }
 
   get supportsSupervisorReviewOnGrants(): boolean {

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import type { OpportunityTableColumnId } from "../../../../../../core/OpportunityCaseloadView/HydratedOpportunityPersonList";
 import { DenialReasonsMap } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 import {
@@ -23,6 +24,12 @@ import {
 } from "./utils";
 
 export class UsTnCompliantReporting2025PolicyConfiguration extends ApiOpportunityConfiguration {
+  get enabledColumns(): Array<OpportunityTableColumnId> {
+    const cols = [...super.enabledColumns];
+    cols.push("ALMOST_ELIGIBILITY_DATE");
+    return cols;
+  }
+
   get markSubmittedOnFormDownload(): boolean {
     return usTnGateMarkSubmittedOnFormDownloaded(this.userStore);
   }

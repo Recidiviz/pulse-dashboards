@@ -17,6 +17,7 @@
 
 import { OpportunityType, SystemId } from "~datatypes";
 
+import { OpportunityTableColumnId } from "../../../../core/OpportunityCaseloadView/HydratedOpportunityPersonList";
 import { FeatureVariant, TenantId } from "../../../../RootStore/types";
 import {
   DenialInputSettings,
@@ -86,6 +87,7 @@ export interface OpportunityConfiguration {
   hydrateIneligibleRecordsInOpportunityManager: boolean;
   highlightCasesOnHomepage: boolean;
   highlightedCaseCtaCopy: string;
+  enabledColumns: Array<OpportunityTableColumnId>;
   subcategoryHeadings?: Record<string, string>;
   allSubcategoriesOfSubmitted?: string[] | undefined;
   zeroGrantsTooltip?: string;

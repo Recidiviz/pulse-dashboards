@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,38 +16,14 @@
 // =============================================================================
 
 import { OpportunityTableColumnId } from "../../../../../../core/OpportunityCaseloadView/HydratedOpportunityPersonList";
-import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
+import { UsTn2026ClassificationConfiguration } from "./UsTn2026ClassificationConfiguration";
 
-export class UsNeGoodTimeRestorationConfiguration extends ApiOpportunityConfiguration {
+// Extends UsTn2026ClassificationConfiguration to inherit the shared 2026 classification behavior
+// and only override for this specific opportunity's enabledColumns
+export class UsTnCustodyLevelDowngrade2026PolicyConfiguration extends UsTn2026ClassificationConfiguration {
   get enabledColumns(): Array<OpportunityTableColumnId> {
     const cols = [...super.enabledColumns];
-    cols.push("UNIT_ID");
-    cols.push("US_NE_ELIGIBLE_RESTORATION_AMT");
-    cols.push("US_NE_TOTAL_LOST_RESTORABLE_GT");
+    cols.push("US_TN_LATEST_CLASSIFICATION_DATE");
     return cols;
-  }
-
-  get pendingOverdueDaysThreshold() {
-    return 14;
-  }
-
-  get eligibleNotViewedDaysThreshold() {
-    return 14;
-  }
-
-  get indefiniteSnoozeSectionSubheading(): string {
-    return "";
-  }
-
-  get maxSnoozeDaysByDenialReason() {
-    return {
-      ...super.maxSnoozeDaysByDenialReason,
-      COURT_ORDER: undefined,
-    };
-  }
-
-  // TODO(#11250): Update sidebar components in admin panel and delete this override
-  get sidebarComponents() {
-    return [...super.sidebarComponents, "UsNeGoodTimeLedger"];
   }
 }

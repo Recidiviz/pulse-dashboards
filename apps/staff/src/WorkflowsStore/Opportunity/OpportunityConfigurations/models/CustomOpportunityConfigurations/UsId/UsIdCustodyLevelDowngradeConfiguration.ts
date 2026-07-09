@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,38 +16,12 @@
 // =============================================================================
 
 import { OpportunityTableColumnId } from "../../../../../../core/OpportunityCaseloadView/HydratedOpportunityPersonList";
-import { DenialInputSettings } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
-export class UsMiCustodyLevelDowngradeConfiguration extends ApiOpportunityConfiguration {
+export class UsIdCustodyLevelDowngradeConfiguration extends ApiOpportunityConfiguration {
   get enabledColumns(): Array<OpportunityTableColumnId> {
     const cols = [...super.enabledColumns];
-    cols.push("US_MI_ERD");
-    cols.push("US_MI_CUSTODY_LEVEL");
-    cols.push("DENIAL_REASONS");
+    cols.push("US_ID_EPRD");
     return cols.filter((c) => c !== "RELEASE_DATE");
-  }
-
-  get denialInputSettings(): Record<string, DenialInputSettings> {
-    return {
-      PROGRAMMING: {
-        required: true,
-        heading: "Programming details:",
-        placeholder:
-          "Please specify what programming is pending and when the programming is expected to be started and completed",
-        inputType: "text",
-        minCharacters: 3,
-        maxCharacters: 1000,
-      },
-      ACCOMMODATION: {
-        required: true,
-        heading: "Accommodation details:",
-        placeholder:
-          "Please specify the required accommodations that are unavailable at other facilities or housing units",
-        inputType: "text",
-        minCharacters: 3,
-        maxCharacters: 1000,
-      },
-    };
   }
 }

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { OpportunityTableColumnId } from "../../../../../../core/OpportunityCaseloadView/HydratedOpportunityPersonList";
 import { OpportunityTab } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
@@ -29,5 +30,13 @@ export class UsAzReleaseToDTPConfiguration extends ApiOpportunityConfiguration {
 
   get enableWorkflowsFilter(): boolean {
     return true;
+  }
+
+  get enabledColumns(): Array<OpportunityTableColumnId> {
+    const cols = [...super.enabledColumns];
+    cols.push("AGREEMENT_STATUS");
+    cols.push("HOME_PLAN_STATUS");
+    cols.push("MAN_LIT_STATUS");
+    return cols.filter((c) => c !== "STATUS");
   }
 }

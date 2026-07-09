@@ -184,6 +184,7 @@ export const mockOpportunity: Opportunity<Client> = {
     supportsIneligible: false,
     showIneligibleFormButtons: true,
     hydrateIneligibleRecordsInOpportunityManager: false,
+    enabledColumns: [],
     highlightCasesOnHomepage: false,
     highlightedCaseCtaCopy: "highlighted CTA",
     overdueOpportunityCalloutCopy: "overdue",

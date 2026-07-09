@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,29 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { OpportunityTableColumnId } from "../../../../../../core/OpportunityCaseloadView/HydratedOpportunityPersonList";
-import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
+import { OpportunityTableColumnId } from "../../../../../core/OpportunityCaseloadView/HydratedOpportunityPersonList";
+import { ApiOpportunityConfiguration } from "../ApiOpportunityConfigurationImpl";
 
-export class LSUConfiguration extends ApiOpportunityConfiguration {
+export class PastFTRDConfiguration extends ApiOpportunityConfiguration {
   get enabledColumns(): Array<OpportunityTableColumnId> {
-    const cols = [...super.enabledColumns];
-    cols.push("ALMOST_ELIGIBILITY_DATE");
-    return cols;
-  }
-
-  get supportsAlmostEligible() {
-    return true;
-  }
-
-  get maxSnoozeDaysByDenialReason(): Record<string, number | undefined> {
-    const snoozeLengthOverrides = {
-      DUI: 365, // DUI - 1 year
-      NCO: 365, // Active NCO - 1 year
-    };
-
-    return {
-      ...super.maxSnoozeDaysByDenialReason,
-      ...snoozeLengthOverrides,
-    };
+    return super.enabledColumns.filter(
+      (c) => c !== "SUPERVISION_EXPIRATION_DATE",
+    );
   }
 }

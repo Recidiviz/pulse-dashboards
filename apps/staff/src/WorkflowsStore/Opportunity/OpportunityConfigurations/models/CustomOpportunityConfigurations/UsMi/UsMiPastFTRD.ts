@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,36 +18,10 @@
 import { OpportunityTableColumnId } from "../../../../../../core/OpportunityCaseloadView/HydratedOpportunityPersonList";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
-export class UsNeGoodTimeRestorationConfiguration extends ApiOpportunityConfiguration {
+export class usMiPastFTRDConfiguration extends ApiOpportunityConfiguration {
   get enabledColumns(): Array<OpportunityTableColumnId> {
-    const cols = [...super.enabledColumns];
-    cols.push("UNIT_ID");
-    cols.push("US_NE_ELIGIBLE_RESTORATION_AMT");
-    cols.push("US_NE_TOTAL_LOST_RESTORABLE_GT");
-    return cols;
-  }
-
-  get pendingOverdueDaysThreshold() {
-    return 14;
-  }
-
-  get eligibleNotViewedDaysThreshold() {
-    return 14;
-  }
-
-  get indefiniteSnoozeSectionSubheading(): string {
-    return "";
-  }
-
-  get maxSnoozeDaysByDenialReason() {
-    return {
-      ...super.maxSnoozeDaysByDenialReason,
-      COURT_ORDER: undefined,
-    };
-  }
-
-  // TODO(#11250): Update sidebar components in admin panel and delete this override
-  get sidebarComponents() {
-    return [...super.sidebarComponents, "UsNeGoodTimeLedger"];
+    return super.enabledColumns.filter(
+      (c) => c !== "SUPERVISION_EXPIRATION_DATE",
+    );
   }
 }

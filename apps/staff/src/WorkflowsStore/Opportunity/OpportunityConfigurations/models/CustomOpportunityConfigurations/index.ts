@@ -20,6 +20,7 @@ import { OpportunityType } from "~datatypes";
 import UserStore from "../../../../../RootStore/UserStore";
 import { IApiOpportunityConfiguration, OpportunityConfiguration } from "../..";
 import { ApiOpportunityConfiguration } from "../ApiOpportunityConfigurationImpl";
+import { PastFTRDConfiguration } from "./PastFTRDConfiguration";
 import { UsAzReleaseToDTPConfiguration } from "./UsAz/UsAzReleaseToDTPConfiguration";
 import { UsAzReleaseToTPRConfiguration } from "./UsAz/UsAzReleaseToTPRConfiguration";
 import { UsAzTransferToAdministrativeSupervisionConfiguration } from "./UsAz/UsAzTransferToAdministrativeSupervisionConfiguration";
@@ -28,7 +29,9 @@ import { UsIaEarlyDischargeConfiguration } from "./UsIa/UsIaEarlyDischargeConfig
 import { UsIaSupervisionLevelDowngradeConfiguration } from "./UsIa/UsIaSupervisionLevelDischargeConfiguration";
 import { LSUConfiguration } from "./UsId/LSUConfiguration";
 import { UsIdCRCConfiguration } from "./UsId/UsIdCRCConfiguration";
+import { UsIdCustodyLevelDowngradeConfiguration } from "./UsId/UsIdCustodyLevelDowngradeConfiguration";
 import { UsIdEarnedDischargeConfiguration } from "./UsId/UsIdEarnedDischargeConfiguration";
+import { UsIdOverdueFaceToFaceContactConfiguration } from "./UsId/UsIdOverdueFaceToFaceContactConfiguration";
 import { UsIdTransferToCRCLikeBedConfiguration } from "./UsId/UsIdTransferToCRCLikeBedConfiguration";
 import { UsMeEarlyTerminationConfiguration } from "./UsMe/UsMeEarlyTerminationConfiguration";
 import { UsMeSCCPConfiguration } from "./UsMe/UsMeSCCPConfiguration";
@@ -38,6 +41,7 @@ import { UsMiWardenInPersonSecurityClassificationCommitteeReviewV2Configuration 
 import { UsMiCustodyLevelDowngradeConfiguration } from "./UsMi/UsMiCustodyLevelDowngradeConfiguration";
 import { UsMiEarlyDischargeConfiguration } from "./UsMi/UsMiEarlyDischargeConfiguration";
 import { UsMiMinimumTelephoneReportingConfiguration } from "./UsMi/UsMiMinimumTelephoneReporting";
+import { usMiPastFTRDConfiguration } from "./UsMi/UsMiPastFTRD";
 import { UsMoOverdueRestrictiveHousingConfiguration } from "./UsMo/UsMoOverdueRestrictiveHousingConfiguration";
 import { UsMoWorkReleaseConfiguration } from "./UsMo/UsMoWorkReleaseConfiguration";
 import { UsNcCreditReductionReviewConfiguration } from "./UsNc/UsNcCreditReductionReviewConfiguration";
@@ -49,6 +53,8 @@ import { CompliantReportingConfiguration } from "./UsTn/CompliantReportingConfig
 import { UsTn2026ClassificationConfiguration } from "./UsTn/UsTn2026ClassificationConfiguration";
 import { UsTnBaselineClassificationConfiguration } from "./UsTn/UsTnBaselineClassificationConfiguration";
 import { UsTnCompliantReporting2025PolicyConfiguration } from "./UsTn/UsTnCompliantReporting2025PolicyConfiguration";
+import { UsTnCustodyLevelDowngrade2026PolicyConfiguration } from "./UsTn/UsTnCustodyLevelDowngrade2026PolicyConfiguration";
+import { UsTnExpirationConfiguration } from "./UsTn/UsTnExpirationConfiguration";
 import { UsTnSuspensionofDirectSupervisionConfiguration } from "./UsTn/UsTnSuspensionofDirectSupervisionConfiguration";
 import { UsTxAnnualReportStatusConfiguration } from "./UsTx/UsTxAnnualReportStatusConfiguration";
 import { UsTxArsErsV2Configuration } from "./UsTx/UsTxArsErsV2Configuration";
@@ -72,11 +78,14 @@ const customOpportunityConfigurations: Partial<
   usIaEarlyDischarge: UsIaEarlyDischargeConfiguration,
 
   // Idaho
+  pastFTRD: PastFTRDConfiguration,
   earnedDischarge: UsIdEarnedDischargeConfiguration,
   LSU: LSUConfiguration,
   usIdCRCResidentWorker: UsIdCRCConfiguration,
   usIdCRCWorkRelease: UsIdCRCConfiguration,
   usIdExpandedCRC: UsIdCRCConfiguration,
+  usIdCustodyLevelDowngrade: UsIdCustodyLevelDowngradeConfiguration,
+  usIdOverdueFaceToFaceContact: UsIdOverdueFaceToFaceContactConfiguration,
   usIdTransferToCRCLikeBed: UsIdTransferToCRCLikeBedConfiguration,
 
   // Maine
@@ -93,6 +102,7 @@ const customOpportunityConfigurations: Partial<
     UsMiAddInPersonSecurityClassificationCommitteeReviewV2Configuration,
   usMiWardenInPersonSecurityClassificationCommitteeReviewV2:
     UsMiWardenInPersonSecurityClassificationCommitteeReviewV2Configuration,
+  usMiPastFTRD: usMiPastFTRDConfiguration,
 
   // Missouri
   usMoOutsideClearance: UsMoWorkReleaseConfiguration,
@@ -125,13 +135,15 @@ const customOpportunityConfigurations: Partial<
   compliantReporting: CompliantReportingConfiguration,
   usTnCompliantReporting2025Policy:
     UsTnCompliantReporting2025PolicyConfiguration,
+  usTnExpiration: UsTnExpirationConfiguration,
   usTnSuspensionOfDirectSupervision:
     UsTnSuspensionofDirectSupervisionConfiguration,
   usTnAnnualReclassification: UsTnBaselineClassificationConfiguration,
   usTnCustodyLevelDowngrade: UsTnBaselineClassificationConfiguration,
   usTnInitialClassification: UsTnBaselineClassificationConfiguration,
   usTnAnnualReclassification2026Policy: UsTn2026ClassificationConfiguration,
-  usTnCustodyLevelDowngrade2026Policy: UsTn2026ClassificationConfiguration,
+  usTnCustodyLevelDowngrade2026Policy:
+    UsTnCustodyLevelDowngrade2026PolicyConfiguration,
   usTnInitialClassification2026Policy: UsTn2026ClassificationConfiguration,
   usTnSpecialCustodyLevelUpgrade2026Policy: UsTn2026ClassificationConfiguration,
   usTnTrusteeTransfer: UsTn2026ClassificationConfiguration,

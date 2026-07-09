@@ -15,9 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { OpportunityTableColumnId } from "../../../../../../core/OpportunityCaseloadView/HydratedOpportunityPersonList";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsTxArsErsV2Configuration extends ApiOpportunityConfiguration {
+  get enabledColumns(): Array<OpportunityTableColumnId> {
+    const cols = [...super.enabledColumns];
+    cols.push("US_TX_CURRENT_REVIEWER");
+    cols.push("US_TX_SUBMITTED_FOR_REVIEW_DATE");
+    cols.push("US_TX_ALL_REVIEWERS");
+    cols.push("US_TX_GRANT_DATE");
+    cols.push("US_TX_REVISION_REASON");
+    return cols.filter((c) => c !== "CTA_BUTTON");
+  }
+
   // TODO(#9880): Add custom denial reason snooze lengths to admin panel
   get maxSnoozeDaysByDenialReason(): Record<string, number | undefined> {
     return { ...super.maxSnoozeDaysByDenialReason, DISCRETION: 365 };

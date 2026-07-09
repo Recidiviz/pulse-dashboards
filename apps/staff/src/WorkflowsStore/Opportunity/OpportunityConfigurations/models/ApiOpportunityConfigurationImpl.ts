@@ -22,6 +22,7 @@ import simplur from "simplur";
 
 import { OpportunityType } from "~datatypes";
 
+import { OpportunityTableColumnId } from "../../../../core/OpportunityCaseloadView/HydratedOpportunityPersonList";
 import {
   allFeatureVariants,
   FeatureVariant,
@@ -334,6 +335,25 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   // requests made when a user first loads up a searchable (officer, facility, etc.)
   get hydrateIneligibleRecordsInOpportunityManager() {
     return false;
+  }
+
+  get enabledColumns(): Array<OpportunityTableColumnId> {
+    const columns: Array<OpportunityTableColumnId> = [
+      "PERSON_NAME",
+      "PERSON_DISPLAY_ID",
+      "STATUS",
+      "LAST_VIEWED",
+      "CTA_BUTTON",
+    ];
+    if (this.systemType === "INCARCERATION") {
+      columns.push("RELEASE_DATE");
+      if (this.stateCode === "US_MI") columns.push("US_MI_UNIT_ID");
+    }
+    if (this.systemType === "SUPERVISION") {
+      columns.push("SUPERVISION_EXPIRATION_DATE");
+      if (this.stateCode === "US_NE") columns.push("US_NE_PEDD_DATE");
+    }
+    return columns;
   }
 
   get highlightCasesOnHomepage() {
