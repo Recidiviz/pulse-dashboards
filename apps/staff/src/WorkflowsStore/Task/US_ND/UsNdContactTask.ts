@@ -17,10 +17,7 @@
 
 import { Task } from "../Task";
 
-export default class UsNdContactTask<
-  // TODO(#10615): Simplify once Firestore is fully migrated to the ND-specific task types.
-  T extends "contact" | "usNdContact",
-> extends Task<T> {
+export default class UsNdContactTask extends Task<"usNdContact"> {
   displayName = "Contact";
   vitalsMetricId = "timely_contact" as const;
 
