@@ -42,10 +42,12 @@ export type PathwaysTheme = {
     subtitleColor: string;
     axisLabel: AxisLabelStyle;
   };
+  badge: {
+    borderColor: string;
+    color: string;
+    fontFamily: string;
+  };
   checkbox: {
-    badgeBorderColor: string;
-    badgeColor: string;
-    badgeFontFamily: string;
     borderColor: string;
     checkedColor: string;
     labelColor: string;
@@ -95,10 +97,12 @@ export const defaultPathwaysTheme: PathwaysTheme = {
     titleColor: palette.pine1,
     subtitleColor: palette.slate80,
   },
+  badge: {
+    borderColor: palette.slate20,
+    color: palette.slate60,
+    fontFamily: DEFAULT_FONT_FAMILY,
+  },
   checkbox: {
-    badgeBorderColor: palette.slate20,
-    badgeColor: palette.slate60,
-    badgeFontFamily: DEFAULT_FONT_FAMILY,
     borderColor: palette.slate30,
     checkedColor: palette.pine3,
     labelColor: palette.pine3,

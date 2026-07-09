@@ -18,7 +18,7 @@
 import React, { useCallback, useMemo } from "react";
 
 import { FilterOption, PopulationFilter } from "../../";
-import { AllSelectedBadge } from "../FilterSectionLayout/FilterSectionLayout.styles";
+import { Badge } from "../Badge";
 import CheckboxGroup from "./CheckboxGroup";
 
 type CheckboxGroupWithSelectAllTitleProps = {
@@ -63,9 +63,7 @@ const CheckboxGroupWithSelectAllTitle: React.FC<
       onChange={onChange}
       collapsible
       headerTitle={filter.title}
-      headerSuffix={
-        <AllSelectedBadge $visible={allSelected}>All Selected</AllSelectedBadge>
-      }
+      headerSuffix={<Badge $visible={allSelected}>All Selected</Badge>}
       selectAll={{
         ariaLabel: `Select all ${filter.title}`,
         checked: allSelected,

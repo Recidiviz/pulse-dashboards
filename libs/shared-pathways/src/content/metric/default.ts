@@ -256,6 +256,21 @@ const content: MetricCopy = {
     methodology:
       "The chart describes the number of people from each admission type as of the date specified in the chart title.",
   },
+  prisonPopulationByReligion: {
+    title: "Prison population by religion",
+    methodology:
+      "The chart describes the number of people from each religion as of the date specified in the chart title.",
+  },
+  prisonPopulationByMaritalStatus: {
+    title: "Prison population by marital status",
+    methodology:
+      "The chart describes the number of people from each marital status as of the date specified in the chart title.",
+  },
+  prisonPopulationByTimeAtFacility: {
+    title: "Prison population by time at facility",
+    methodology:
+      "The chart describes the number of people from each time at facility as of the date specified in the chart title.",
+  },
 };
 
 export default content;

@@ -112,6 +112,21 @@ const content: MetricCopy = {
     note: "Incarcerated population by admission reason note",
     methodology: "Incarcerated population by admission reason methodology",
   },
+  prisonPopulationByReligion: {
+    title: "Incarcerated Population by Religion",
+    note: "Incarcerated population by religion note",
+    methodology: "Incarcerated population by religion methodology",
+  },
+  prisonPopulationByMaritalStatus: {
+    title: "Incarcerated Population by Marital Status",
+    note: "Incarcerated population by marital status note",
+    methodology: "Incarcerated population by marital status methodology",
+  },
+  prisonPopulationByTimeAtFacility: {
+    title: "Incarcerated Population by Time at Facility",
+    note: "Incarcerated population by time at facility note",
+    methodology: "Incarcerated population by time at facility methodology",
+  },
   prisonPopulationOverTime: {
     title: "Incarcerated Population",
     note: "Incarcerated population note",

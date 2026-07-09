@@ -37,6 +37,9 @@ const content: StateSpecificPageCopy = {
       countByOffenseType: "Crime group",
       countByAdmissionReason: "Admission type",
       countByChargeDescription: "Specific crime",
+      countByReligion: "Religion",
+      countByMaritalStatus: "Marital Status",
+      countByTimeAtFacility: "Time at Facility",
     },
     methodology:
       "This dashboard shows data on individuals who are under the custody of New York State Department of Corrections and Community Supervision (DOCCS) at a point in time. First of the month snapshot data is uploaded from DOCCS's systems monthly.\n\nFor more reports on DOCCS's population, please see: https://doccs.ny.gov/research-and-reports \n\n<br/>\n<strong>Notes:</strong>\n- Please note that data labeled May 1, 2024 was actually generated May 4, 2024.\n- Individuals labeled with \"Not Coded\" for some dimensions (such as offense type) are primarily individuals who are newly admitted to the Department's custody and haven't yet had all information entered on the computer system. Those are generally resolved within 1 month.\n- If the label at the top of a chart is listing out all of the individual facilities instead of\n\"Facilities: ALL\", click on Reset Filters from the Filter menu.\n- Clicking Download exports the currently displayed chart as a CSV with your active filters\napplied. For example, if you're viewing 'Population By Facility' with one facility selected, the\nCSV will contain data for that facility only.",

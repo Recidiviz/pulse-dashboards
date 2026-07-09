@@ -30,6 +30,7 @@ import {
 } from "~shared-pathways";
 import useIsMobile from "~utils/react/useIsMobile";
 
+import { COMING_SOON_SECTIONS_BY_TENANT } from "../../datastores/comingSoonSections";
 import { publicPathwaysPalette } from "../../styles/publicPathwaysPalette";
 import { useRouteSync } from "../../useRouteSync";
 import { Footer } from "../Footer/Footer";
@@ -65,18 +66,28 @@ export const PagePublicPathways = observer(function PagePublicPathways() {
   if (isMobile) maxVisible = MOBILE_MAX_VISIBLE;
   else if (isTablet) maxVisible = TABLET_MAX_VISIBLE;
 
-  const sections = useMemo((): Partial<Sections> => {
+  const { sections, comingSoonSections } = useMemo(() => {
     const all = pageContent.sections;
-    if (!all) return {};
+    if (!all)
+      return { sections: {} as Partial<Sections>, comingSoonSections: [] };
 
     const metricMap = metricsStore.map;
+    const allIds = Object.keys(all) as PathwaysSection[];
 
-    return Object.fromEntries(
-      (Object.keys(all) as PathwaysSection[])
-        .filter((id) => id in metricMap)
-        .map((id) => [id, all[id]]),
-    ) as Partial<Sections>;
-  }, [metricsStore.map, pageContent.sections]);
+    return {
+      sections: Object.fromEntries(
+        allIds.filter((id) => id in metricMap).map((id) => [id, all[id]]),
+      ) as Partial<Sections>,
+      comingSoonSections: allIds
+        .filter(
+          (id) =>
+            (COMING_SOON_SECTIONS_BY_TENANT[currentTenantId] ?? new Set()).has(
+              id,
+            ) && !(id in metricMap),
+        )
+        .map((id) => all[id] as string),
+    };
+  }, [currentTenantId, metricsStore.map, pageContent.sections]);
 
   return (
     <PageContainer $isMobile={isMobile}>
@@ -101,6 +112,7 @@ export const PagePublicPathways = observer(function PagePublicPathways() {
               }}
               accentColor={publicPathwaysPalette.signal.links}
               maxVisible={maxVisible}
+              comingSoonSections={comingSoonSections}
             />
           </SectionNav>
           <FiltersButton

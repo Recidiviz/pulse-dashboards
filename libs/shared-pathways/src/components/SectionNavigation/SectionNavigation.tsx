@@ -30,6 +30,7 @@ import {
 
 import { Sections } from "../../content/types";
 import { PathwaysSection } from "../../views";
+import { Badge } from "../Badge";
 
 const MAX_VISIBLE = 5;
 
@@ -120,6 +121,7 @@ const StyledDropdownMenu = styled(DropdownMenu)<{ $accent: string }>`
   && {
     transition: none;
     transform: none;
+    min-width: 240px;
   }
 
   button[role="menuitem"] {
@@ -141,12 +143,21 @@ const StyledDropdownMenu = styled(DropdownMenu)<{ $accent: string }>`
   }
 `;
 
+const ComingSoonItemContent = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100%;
+`;
+
 export interface SectionNavigationProps {
   sections: Partial<Sections>;
   activeSection: PathwaysSection;
   onSectionSelect: (sectionId: PathwaysSection) => void;
   accentColor?: string;
   maxVisible?: number;
+  comingSoonSections?: string[];
 }
 
 export function SectionNavigation({
@@ -155,6 +166,7 @@ export function SectionNavigation({
   onSectionSelect,
   accentColor = palette.signal.links,
   maxVisible = MAX_VISIBLE,
+  comingSoonSections,
 }: SectionNavigationProps) {
   const entries = Object.entries(sections) as [PathwaysSection, string][];
   const needsOverflow = entries.length > maxVisible;
@@ -182,7 +194,10 @@ export function SectionNavigation({
     </SectionPill>
   ));
 
-  if (overflowEntries.length > 0) {
+  const hasDropdown =
+    overflowEntries.length > 0 || (comingSoonSections?.length ?? 0) > 0;
+
+  if (hasDropdown) {
     items.push(
       <Dropdown key="more-dropdown">
         <MoreToggle
@@ -208,6 +223,14 @@ export function SectionNavigation({
               onClick={() => onSectionSelect(id)}
             >
               {label}
+            </DropdownMenuItem>
+          ))}
+          {comingSoonSections?.map((label) => (
+            <DropdownMenuItem key={label} disabled preventCloseOnClickEvent>
+              <ComingSoonItemContent>
+                {label}
+                <Badge>Coming Soon</Badge>
+              </ComingSoonItemContent>
             </DropdownMenuItem>
           ))}
         </StyledDropdownMenu>

@@ -15,11 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import styled from "styled-components";
-
-export const FilterTitleRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-`;
+// Maps tenant IDs to the set of section IDs that are coming soon. Sections in
+// this set appear in the More dropdown as disabled pills. Remove a section ID
+// here and wire up its metric in MetricsStore when the data is ready to ship.
+export const COMING_SOON_SECTIONS_BY_TENANT: Partial<
+  Record<string, Set<string>>
+> = {
+  US_NY: new Set([
+    "countByReligion",
+    "countByMaritalStatus",
+    "countByTimeAtFacility",
+  ]),
+};

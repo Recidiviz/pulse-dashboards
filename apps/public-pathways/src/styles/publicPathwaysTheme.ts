@@ -45,10 +45,12 @@ export const publicPathwaysTheme: PathwaysTheme = {
       charWidth: 10,
     },
   },
+  badge: {
+    borderColor: "rgba(0, 0, 0, 0.15)",
+    color: "rgba(0, 0, 0, 0.4)",
+    fontFamily: PROXIMA_NOVA_FONT_FAMILY,
+  },
   checkbox: {
-    badgeBorderColor: "rgba(0, 0, 0, 0.15)",
-    badgeColor: "rgba(0, 0, 0, 0.4)",
-    badgeFontFamily: PROXIMA_NOVA_FONT_FAMILY,
     borderColor: "black",
     checkedColor: publicPathwaysPalette.signal.links,
     labelColor: publicPathwaysPalette.pine1,

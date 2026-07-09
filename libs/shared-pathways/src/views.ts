@@ -52,6 +52,9 @@ export const PATHWAYS_SECTIONS: Record<string, string> = {
   countByOffenseType: "countByOffenseType",
   countByChargeDescription: "countByChargeDescription",
   countByAdmissionReason: "countByAdmissionReason",
+  countByReligion: "countByReligion",
+  countByMaritalStatus: "countByMaritalStatus",
+  countByTimeAtFacility: "countByTimeAtFacility",
 };
 
 export const DEFAULT_PATHWAYS_PAGE = PATHWAYS_PAGES.prison;
@@ -159,6 +162,10 @@ export const PATHWAYS_SECTION_BY_METRIC_ID: Record<MetricId, PathwaysSection> =
       PATHWAYS_SECTIONS["countByChargeDescription"],
     prisonPopulationByAdmissionReason:
       PATHWAYS_SECTIONS["countByAdmissionReason"],
+    prisonPopulationByReligion: PATHWAYS_SECTIONS["countByReligion"],
+    prisonPopulationByMaritalStatus: PATHWAYS_SECTIONS["countByMaritalStatus"],
+    prisonPopulationByTimeAtFacility:
+      PATHWAYS_SECTIONS["countByTimeAtFacility"],
     prisonPopulationOverTime: PATHWAYS_SECTIONS["countOverTime"],
     projectedPrisonPopulationOverTime:
       PATHWAYS_SECTIONS["projectedCountOverTime"],

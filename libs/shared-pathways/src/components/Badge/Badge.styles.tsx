@@ -17,9 +17,20 @@
 
 import styled from "styled-components";
 
-export const FilterTitleRow = styled.div`
-  display: flex;
+export const Badge = styled.span<{ $visible?: boolean }>`
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  height: 20px;
+  padding: 0 6px;
+  border: 1px solid
+    ${({ theme }) => theme.badge?.borderColor ?? "rgba(0, 0, 0, 0.15)"};
+  border-radius: 4px;
+  font-family: ${({ theme }) =>
+    theme.badge?.fontFamily ?? '"Public Sans", sans-serif'};
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 120%;
+  letter-spacing: -0.01em;
+  color: ${({ theme }) => theme.badge?.color ?? "rgba(0, 0, 0, 0.4)"};
+  visibility: ${({ $visible = true }) => ($visible ? "visible" : "hidden")};
 `;
