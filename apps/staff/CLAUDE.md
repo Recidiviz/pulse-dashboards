@@ -96,7 +96,7 @@ Per-state task availability is gated via `workflowsTasksConfig` in the tenant co
 
 ## Offline / fixture mode
 
-`nx offline staff` runs the app against the Firebase emulator + static fixtures, no auth required. The emulator imports fixtures from `tools/fixtures/` automatically at startup. After editing fixture sources, stop `nx offline staff` and run `nx update-workflows-fixture staff` to regenerate the import, then restart — `nx update-workflows-fixture staff` will fail while the emulator is running.
+`nx offline staff` runs the app against the Firebase emulator + static fixtures, no auth required. The emulator imports fixtures from `tools/fixtures/` automatically at startup. After editing fixture sources, stop and restart `nx offline staff`. This command triggers `nx update-workflows-fixture staff` to regenerate the import.
 
 `apps/staff/__mocks__/` and per-store `__fixtures__/` directories are for unit tests, not the offline runtime — don't conflate them.
 
