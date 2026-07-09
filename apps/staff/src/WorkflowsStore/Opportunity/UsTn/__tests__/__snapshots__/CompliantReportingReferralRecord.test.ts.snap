@@ -34,7 +34,9 @@ exports[`parse almost eligible 1`] = `
       "startDateOnEligibleLevel": 2019-08-01T00:00:00.000Z,
     },
     "usTnPassedDrugScreenCheck": {
-      "hasAtLeast1NegativeDrugTestPastYear": [
+      "latestDrugScreenDate": 2023-02-28T00:00:00.000Z,
+      "latestDrugScreenResult": "DRUN",
+      "negativeDrugScreenHistoryArray": [
         {
           "negativeScreenDate": 2023-02-28T00:00:00.000Z,
           "negativeScreenResult": "DRUN",
@@ -44,10 +46,6 @@ exports[`parse almost eligible 1`] = `
           "negativeScreenResult": "DRUN",
         },
       ],
-      "latestDrugTestIsNegative": {
-        "latestDrugScreenDate": 2023-02-28T00:00:00.000Z,
-        "latestDrugScreenResult": "DRUN",
-      },
     },
     "usTnSpecialConditionsAreCurrent": {
       "speNoteDue": null,
@@ -78,14 +76,9 @@ exports[`parse almost eligible 1`] = `
     "supervisionFeeWaived": false,
   },
   "ineligibleCriteria": {
-    "usTnFinesFeesEligible": {
-      "hasFinesFeesBalanceBelow500": {
-        "amountOwed": 700,
-      },
-      "hasPayments3ConsecutiveMonths": {
-        "amountOwed": 700,
-        "consecutiveMonthlyPayments": 0,
-      },
+    "hasFinesFeesBalanceBelow500OrHasPayments3ConsecutiveMonthsOrIsExempt": {
+      "amountOwed": 700,
+      "consecutiveMonthlyPayments": 0,
     },
   },
   "isAlmostEligible": true,
@@ -115,20 +108,15 @@ exports[`parse eligible 1`] = `
     "hasActiveSentence": {
       "hasActiveSentence": true,
     },
+    "hasFinesFeesBalanceBelow500OrHasPayments3ConsecutiveMonthsOrIsExempt": {
+      "amountOwed": 400,
+      "consecutiveMonthlyPayments": null,
+    },
     "supervisionLevelIsNotInternalUnknown": null,
     "supervisionLevelIsNotInterstateCompact": null,
     "supervisionLevelIsNotUnassigned": null,
     "supervisionNotPastFullTermCompletionDateOrUpcoming90Days": {
       "eligibleDate": "2029-06-06",
-    },
-    "usTnFinesFeesEligible": {
-      "hasFinesFeesBalanceBelow500": {
-        "amountOwed": 400,
-      },
-      "hasPayments3ConsecutiveMonths": {
-        "amountOwed": 400,
-        "consecutiveMonthlyPayments": null,
-      },
     },
     "usTnIneligibleOffensesExpired": null,
     "usTnNoArrestsInPastYear": {},
@@ -151,7 +139,9 @@ exports[`parse eligible 1`] = `
       "startDateOnEligibleLevel": 2019-08-01T00:00:00.000Z,
     },
     "usTnPassedDrugScreenCheck": {
-      "hasAtLeast1NegativeDrugTestPastYear": [
+      "latestDrugScreenDate": 2023-02-28T00:00:00.000Z,
+      "latestDrugScreenResult": "DRUN",
+      "negativeDrugScreenHistoryArray": [
         {
           "negativeScreenDate": 2023-02-28T00:00:00.000Z,
           "negativeScreenResult": "DRUN",
@@ -161,10 +151,6 @@ exports[`parse eligible 1`] = `
           "negativeScreenResult": "DRUN",
         },
       ],
-      "latestDrugTestIsNegative": {
-        "latestDrugScreenDate": 2023-02-28T00:00:00.000Z,
-        "latestDrugScreenResult": "DRUN",
-      },
     },
     "usTnSpecialConditionsAreCurrent": {
       "speNoteDue": null,

@@ -86,7 +86,7 @@ const eligibleCriteria: CompliantReportingReferralRecordRaw["eligibleCriteria"] 
     startDateOnEligibleLevel: "2019-08-01",
   },
   usTnPassedDrugScreenCheck: {
-    hasAtLeast1NegativeDrugTestPastYear: [
+    negativeDrugScreenHistoryArray: [
       {
         negativeScreenDate: "2023-02-28",
         negativeScreenResult: "DRUN",
@@ -96,23 +96,20 @@ const eligibleCriteria: CompliantReportingReferralRecordRaw["eligibleCriteria"] 
         negativeScreenResult: "DRUN",
       },
     ],
-    latestDrugTestIsNegative: {
-      latestDrugScreenDate: "2023-02-28",
-      latestDrugScreenResult: "DRUN",
-    },
+    latestDrugScreenDate: "2023-02-28",
+    latestDrugScreenResult: "DRUN",
   },
   usTnSpecialConditionsAreCurrent: { speNoteDue: null },
-  usTnFinesFeesEligible: {
-    hasFinesFeesBalanceBelow500: { amountOwed: 400 },
-    hasPayments3ConsecutiveMonths: {
-      amountOwed: 400,
-      consecutiveMonthlyPayments: null,
-    },
+  hasFinesFeesBalanceBelow500OrHasPayments3ConsecutiveMonthsOrIsExempt: {
+    amountOwed: 400,
+    consecutiveMonthlyPayments: null,
   },
 };
 
-const { usTnFinesFeesEligible, ...eligibleCriteriaExceptFinesFees } =
-  eligibleCriteria;
+const {
+  hasFinesFeesBalanceBelow500OrHasPayments3ConsecutiveMonthsOrIsExempt,
+  ...eligibleCriteriaExceptFinesFees
+} = eligibleCriteria;
 
 beforeEach(() => {
   tk.freeze(new Date("2023-12-01"));
@@ -139,12 +136,9 @@ test("parse eligible", () => {
 
 test("parse almost eligible", () => {
   const ineligibleCriteria = {
-    usTnFinesFeesEligible: {
-      hasFinesFeesBalanceBelow500: { amountOwed: 700 },
-      hasPayments3ConsecutiveMonths: {
-        amountOwed: 700,
-        consecutiveMonthlyPayments: 0,
-      },
+    hasFinesFeesBalanceBelow500OrHasPayments3ConsecutiveMonthsOrIsExempt: {
+      amountOwed: 700,
+      consecutiveMonthlyPayments: 0,
     },
   };
   const rawRecord = {

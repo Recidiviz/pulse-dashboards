@@ -129,7 +129,7 @@ describe("fully eligible with discretion", () => {
 
 describe.each([
   [
-    "usTnFinesFeesEligible",
+    "hasFinesFeesBalanceBelow500OrHasPayments3ConsecutiveMonthsOrIsExempt",
     "Needs balance <$500 or a payment three months in a row",
     undefined,
     /Fee balance/,

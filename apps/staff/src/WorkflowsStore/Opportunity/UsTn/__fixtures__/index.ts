@@ -117,14 +117,9 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
         eligibleLevel: "MEDIUM",
         startDateOnEligibleLevel: "2019-12-20",
       },
-      usTnFinesFeesEligible: {
-        hasFinesFeesBalanceBelow500: {
-          amountOwed: 750,
-        },
-        hasPayments3ConsecutiveMonths: {
-          amountOwed: 750,
-          consecutiveMonthlyPayments: 3,
-        },
+      hasFinesFeesBalanceBelow500OrHasPayments3ConsecutiveMonthsOrIsExempt: {
+        amountOwed: 750,
+        consecutiveMonthlyPayments: 3,
       },
       usTnNoArrestsInPastYear: null,
       usTnNoHighSanctionsInPastYear: null,
@@ -134,16 +129,14 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
       },
       usTnNotServingIneligibleCrOffense: null,
       usTnPassedDrugScreenCheck: {
-        hasAtLeast1NegativeDrugTestPastYear: [
+        negativeDrugScreenHistoryArray: [
           {
             negativeScreenDate: "2022-01-04",
             negativeScreenResult: "DRUN",
           },
         ],
-        latestDrugTestIsNegative: {
-          latestDrugScreenDate: "2022-01-04",
-          latestDrugScreenResult: "DRUN",
-        },
+        latestDrugScreenDate: "2022-01-04",
+        latestDrugScreenResult: "DRUN",
       },
       usTnNoZeroToleranceCodesSpans: null,
       usTnIneligibleOffensesExpired: null,
@@ -185,14 +178,9 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
         eligibleLevel: "MEDIUM",
         startDateOnEligibleLevel: "2019-12-20",
       },
-      usTnFinesFeesEligible: {
-        hasFinesFeesBalanceBelow500: {
-          amountOwed: 600,
-        },
-        hasPayments3ConsecutiveMonths: {
-          amountOwed: 600,
-          consecutiveMonthlyPayments: 3,
-        },
+      hasFinesFeesBalanceBelow500OrHasPayments3ConsecutiveMonthsOrIsExempt: {
+        amountOwed: 600,
+        consecutiveMonthlyPayments: 3,
       },
       usTnNoArrestsInPastYear: null,
       usTnNoHighSanctionsInPastYear: null,
@@ -202,16 +190,14 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
       },
       usTnNotServingIneligibleCrOffense: null,
       usTnPassedDrugScreenCheck: {
-        hasAtLeast1NegativeDrugTestPastYear: [
+        negativeDrugScreenHistoryArray: [
           {
             negativeScreenDate: "2022-01-04",
             negativeScreenResult: "DRUN",
           },
         ],
-        latestDrugTestIsNegative: {
-          latestDrugScreenDate: "2022-01-04",
-          latestDrugScreenResult: "DRUN",
-        },
+        latestDrugScreenDate: "2022-01-04",
+        latestDrugScreenResult: "DRUN",
       },
       // Eligible with discretion: Previous zero-tolerance codes
       usTnNoZeroToleranceCodesSpans: {
@@ -264,14 +250,9 @@ export const compliantReportingIneligibleCriteria: Required<
     eligibleLevel: "MEDIUM",
     startDateOnEligibleLevel: "2019-12-20",
   },
-  usTnFinesFeesEligible: {
-    hasFinesFeesBalanceBelow500: {
-      amountOwed: 600,
-    },
-    hasPayments3ConsecutiveMonths: {
-      amountOwed: 600,
-      consecutiveMonthlyPayments: 0,
-    },
+  hasFinesFeesBalanceBelow500OrHasPayments3ConsecutiveMonthsOrIsExempt: {
+    amountOwed: 600,
+    consecutiveMonthlyPayments: 0,
   },
   usTnNoHighSanctionsInPastYear: {
     latestHighSanctionDate: "2021-08-15",
@@ -292,16 +273,14 @@ export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantRe
       },
       usTnNotServingIneligibleCrOffense: null,
       usTnPassedDrugScreenCheck: {
-        hasAtLeast1NegativeDrugTestPastYear: [
+        negativeDrugScreenHistoryArray: [
           {
             negativeScreenDate: "2022-01-04",
             negativeScreenResult: "DRUN",
           },
         ],
-        latestDrugTestIsNegative: {
-          latestDrugScreenDate: "2022-01-04",
-          latestDrugScreenResult: "DRUN",
-        },
+        latestDrugScreenDate: "2022-01-04",
+        latestDrugScreenResult: "DRUN",
       },
       usTnNoZeroToleranceCodesSpans: null,
       usTnIneligibleOffensesExpired: null,

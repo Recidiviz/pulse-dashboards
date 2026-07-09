@@ -32,16 +32,14 @@ export const usTnCompliantReportingReferrals =
         },
         usTnNotServingIneligibleCrOffense: null,
         usTnPassedDrugScreenCheck: {
-          hasAtLeast1NegativeDrugTestPastYear: [
+          negativeDrugScreenHistoryArray: [
             {
               negativeScreenDate: relativeFixtureDate({ days: -200 }),
               negativeScreenResult: "DRUN",
             },
           ],
-          latestDrugTestIsNegative: {
-            latestDrugScreenDate: relativeFixtureDate({ days: -200 }),
-            latestDrugScreenResult: "DRUN",
-          },
+          latestDrugScreenDate: relativeFixtureDate({ days: -200 }),
+          latestDrugScreenResult: "DRUN",
         },
         usTnNoZeroToleranceCodesSpans: { zeroToleranceCodeDates: null },
         usTnIneligibleOffensesExpired: {
@@ -64,14 +62,9 @@ export const usTnCompliantReportingReferrals =
             days: -111,
           }),
         },
-        usTnFinesFeesEligible: {
-          hasFinesFeesBalanceBelow500: {
-            amountOwed: 0,
-          },
-          hasPayments3ConsecutiveMonths: {
-            amountOwed: 0,
-            consecutiveMonthlyPayments: 3,
-          },
+        hasFinesFeesBalanceBelow500OrHasPayments3ConsecutiveMonthsOrIsExempt: {
+          amountOwed: 0,
+          consecutiveMonthlyPayments: 3,
         },
         usTnNoHighSanctionsInPastYear: null,
         usTnNoRecentCompliantReportingRejections: null,
@@ -112,7 +105,7 @@ export const usTnCompliantReportingReferrals =
         },
         usTnNotServingIneligibleCrOffense: null,
         usTnPassedDrugScreenCheck: {
-          hasAtLeast1NegativeDrugTestPastYear: [
+          negativeDrugScreenHistoryArray: [
             {
               negativeScreenResult: "DRUN",
               negativeScreenDate: relativeFixtureDate({ days: -111 }),
@@ -122,10 +115,8 @@ export const usTnCompliantReportingReferrals =
               negativeScreenDate: relativeFixtureDate({ days: -33 }),
             },
           ],
-          latestDrugTestIsNegative: {
-            latestDrugScreenDate: relativeFixtureDate({ days: -33 }),
-            latestDrugScreenResult: "DRUM",
-          },
+          latestDrugScreenDate: relativeFixtureDate({ days: -33 }),
+          latestDrugScreenResult: "DRUM",
         },
         usTnNoZeroToleranceCodesSpans: {
           zeroToleranceCodeDates: [
@@ -145,14 +136,9 @@ export const usTnCompliantReportingReferrals =
             days: -5,
           }),
         },
-        usTnFinesFeesEligible: {
-          hasFinesFeesBalanceBelow500: {
-            amountOwed: 600,
-          },
-          hasPayments3ConsecutiveMonths: {
-            amountOwed: 0,
-            consecutiveMonthlyPayments: 0,
-          },
+        hasFinesFeesBalanceBelow500OrHasPayments3ConsecutiveMonthsOrIsExempt: {
+          amountOwed: 600,
+          consecutiveMonthlyPayments: 0,
         },
         usTnNoHighSanctionsInPastYear: null,
         usTnNoRecentCompliantReportingRejections: null,
@@ -193,7 +179,7 @@ export const usTnCompliantReportingReferrals =
         },
         usTnNotServingIneligibleCrOffense: null,
         usTnPassedDrugScreenCheck: {
-          hasAtLeast1NegativeDrugTestPastYear: [
+          negativeDrugScreenHistoryArray: [
             {
               negativeScreenResult: "DRUN",
               negativeScreenDate: relativeFixtureDate({ days: -111 }),
@@ -203,10 +189,8 @@ export const usTnCompliantReportingReferrals =
               negativeScreenDate: relativeFixtureDate({ days: -33 }),
             },
           ],
-          latestDrugTestIsNegative: {
-            latestDrugScreenDate: relativeFixtureDate({ days: -33 }),
-            latestDrugScreenResult: "DRUM",
-          },
+          latestDrugScreenDate: relativeFixtureDate({ days: -33 }),
+          latestDrugScreenResult: "DRUM",
         },
         usTnNoZeroToleranceCodesSpans: {
           zeroToleranceCodeDates: null,
@@ -222,14 +206,9 @@ export const usTnCompliantReportingReferrals =
             days: -5,
           }),
         },
-        usTnFinesFeesEligible: {
-          hasFinesFeesBalanceBelow500: {
-            amountOwed: 600,
-          },
-          hasPayments3ConsecutiveMonths: {
-            amountOwed: 0,
-            consecutiveMonthlyPayments: 0,
-          },
+        hasFinesFeesBalanceBelow500OrHasPayments3ConsecutiveMonthsOrIsExempt: {
+          amountOwed: 600,
+          consecutiveMonthlyPayments: 0,
         },
         usTnNoHighSanctionsInPastYear: null,
         usTnNoRecentCompliantReportingRejections: null,
@@ -274,15 +253,10 @@ export const usTnCompliantReportingReferrals =
             days: 2,
           }),
         },
-        usTnFinesFeesEligible: {
-          hasFinesFeesBalanceBelow500: { amountOwed: 45 },
-          hasPayments3ConsecutiveMonths: {
-            amountOwed: 45,
-            consecutiveMonthlyPayments: 3,
-          },
-          hasPermanentFinesFeesExemption: {
-            currentExemptions: ["SSDB", "SSDB"],
-          },
+        hasFinesFeesBalanceBelow500OrHasPayments3ConsecutiveMonthsOrIsExempt: {
+          amountOwed: 45,
+          consecutiveMonthlyPayments: 3,
+          currentExemptions: ["SSDB", "SSDB"],
         },
         usTnNoArrestsInPastYear: null,
         usTnNoHighSanctionsInPastYear: null,
@@ -292,16 +266,14 @@ export const usTnCompliantReportingReferrals =
         },
         usTnNotServingIneligibleCrOffense: null,
         usTnPassedDrugScreenCheck: {
-          hasAtLeast1NegativeDrugTestPastYear: [
+          negativeDrugScreenHistoryArray: [
             {
               negativeScreenDate: relativeFixtureDate({ days: -200 }),
               negativeScreenResult: "DRUN",
             },
           ],
-          latestDrugTestIsNegative: {
-            latestDrugScreenDate: relativeFixtureDate({ days: -200 }),
-            latestDrugScreenResult: "DRUN",
-          },
+          latestDrugScreenDate: relativeFixtureDate({ days: -200 }),
+          latestDrugScreenResult: "DRUN",
         },
         usTnNoZeroToleranceCodesSpans: null,
         usTnIneligibleOffensesExpired: null,
@@ -366,16 +338,14 @@ export const usTnCompliantReportingReferrals =
         },
         usTnNotServingIneligibleCrOffense: null,
         usTnPassedDrugScreenCheck: {
-          hasAtLeast1NegativeDrugTestPastYear: [
+          negativeDrugScreenHistoryArray: [
             {
               negativeScreenDate: relativeFixtureDate({ days: -200 }),
               negativeScreenResult: "DRUN",
             },
           ],
-          latestDrugTestIsNegative: {
-            latestDrugScreenDate: relativeFixtureDate({ days: -200 }),
-            latestDrugScreenResult: "DRUN",
-          },
+          latestDrugScreenDate: relativeFixtureDate({ days: -200 }),
+          latestDrugScreenResult: "DRUN",
         },
         usTnNoZeroToleranceCodesSpans: null,
         usTnIneligibleOffensesExpired: null,
@@ -387,12 +357,9 @@ export const usTnCompliantReportingReferrals =
         usTnNoRecentCompliantReportingRejections: null,
       },
       ineligibleCriteria: {
-        usTnFinesFeesEligible: {
-          hasFinesFeesBalanceBelow500: { amountOwed: 700 },
-          hasPayments3ConsecutiveMonths: {
-            amountOwed: 700,
-            consecutiveMonthlyPayments: null,
-          },
+        hasFinesFeesBalanceBelow500OrHasPayments3ConsecutiveMonthsOrIsExempt: {
+          amountOwed: 700,
+          consecutiveMonthlyPayments: null,
         },
       },
       formInformation: {
@@ -423,16 +390,14 @@ export const usTnCompliantReportingReferrals =
         },
         usTnNotServingIneligibleCrOffense: null,
         usTnPassedDrugScreenCheck: {
-          hasAtLeast1NegativeDrugTestPastYear: [
+          negativeDrugScreenHistoryArray: [
             {
               negativeScreenDate: relativeFixtureDate({ months: -6, days: 6 }),
               negativeScreenResult: "DRUN",
             },
           ],
-          latestDrugTestIsNegative: {
-            latestDrugScreenDate: relativeFixtureDate({ months: -6, days: 6 }),
-            latestDrugScreenResult: "DRUN",
-          },
+          latestDrugScreenDate: relativeFixtureDate({ months: -6, days: 6 }),
+          latestDrugScreenResult: "DRUN",
         },
         usTnNoZeroToleranceCodesSpans: { zeroToleranceCodeDates: null },
         usTnIneligibleOffensesExpired: {
@@ -443,14 +408,9 @@ export const usTnCompliantReportingReferrals =
         },
         usTnNotServingUnknownCrOffense: null,
         hasActiveSentence: { hasActiveSentence: true },
-        usTnFinesFeesEligible: {
-          hasFinesFeesBalanceBelow500: {
-            amountOwed: 0,
-          },
-          hasPayments3ConsecutiveMonths: {
-            amountOwed: 0,
-            consecutiveMonthlyPayments: 3,
-          },
+        hasFinesFeesBalanceBelow500OrHasPayments3ConsecutiveMonthsOrIsExempt: {
+          amountOwed: 0,
+          consecutiveMonthlyPayments: 3,
         },
         usTnNoHighSanctionsInPastYear: null,
         usTnNoRecentCompliantReportingRejections: null,
@@ -497,16 +457,14 @@ export const usTnCompliantReportingReferrals =
         },
         usTnNotServingIneligibleCrOffense: null,
         usTnPassedDrugScreenCheck: {
-          hasAtLeast1NegativeDrugTestPastYear: [
+          negativeDrugScreenHistoryArray: [
             {
               negativeScreenDate: relativeFixtureDate({ days: -77 }),
               negativeScreenResult: "DRUN",
             },
           ],
-          latestDrugTestIsNegative: {
-            latestDrugScreenDate: relativeFixtureDate({ days: -77 }),
-            latestDrugScreenResult: "DRUN",
-          },
+          latestDrugScreenDate: relativeFixtureDate({ days: -77 }),
+          latestDrugScreenResult: "DRUN",
         },
         usTnNoZeroToleranceCodesSpans: { zeroToleranceCodeDates: null },
         usTnIneligibleOffensesExpired: {
@@ -517,14 +475,9 @@ export const usTnCompliantReportingReferrals =
         },
         usTnNotServingUnknownCrOffense: null,
         hasActiveSentence: { hasActiveSentence: true },
-        usTnFinesFeesEligible: {
-          hasFinesFeesBalanceBelow500: {
-            amountOwed: 0,
-          },
-          hasPayments3ConsecutiveMonths: {
-            amountOwed: 0,
-            consecutiveMonthlyPayments: 3,
-          },
+        hasFinesFeesBalanceBelow500OrHasPayments3ConsecutiveMonthsOrIsExempt: {
+          amountOwed: 0,
+          consecutiveMonthlyPayments: 3,
         },
         usTnNoHighSanctionsInPastYear: null,
         usTnNoRecentCompliantReportingRejections: null,

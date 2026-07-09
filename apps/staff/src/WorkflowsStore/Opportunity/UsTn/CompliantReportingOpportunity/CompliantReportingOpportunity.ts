@@ -262,19 +262,15 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     }
 
     // required fee payment status
-    if (eligibleCriteria.usTnFinesFeesEligible) {
+    const feesCriteria =
+      eligibleCriteria.hasFinesFeesBalanceBelow500OrHasPayments3ConsecutiveMonthsOrIsExempt;
+    if (feesCriteria) {
       let feeText =
         "Fee balance for current sentence less than $2,000 and has made payments on three consecutive months";
-      const exemption =
-        eligibleCriteria.usTnFinesFeesEligible.hasPermanentFinesFeesExemption?.currentExemptions.join(
-          ", ",
-        );
+      const exemption = feesCriteria.currentExemptions?.join(", ");
       if (exemption) {
         feeText = `Exemption: ${exemption}`;
-      } else if (
-        eligibleCriteria.usTnFinesFeesEligible.hasFinesFeesBalanceBelow500
-          .amountOwed <= 500
-      ) {
+      } else if (feesCriteria.amountOwed <= 500) {
         feeText = "Fee balance less than $500";
       }
       requirements.push({ text: feeText, tooltip: CRITERIA.payments.tooltip });
@@ -282,8 +278,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
 
     // Required drug screen history
     const drugScreensPastYear =
-      eligibleCriteria.usTnPassedDrugScreenCheck
-        .hasAtLeast1NegativeDrugTestPastYear;
+      eligibleCriteria.usTnPassedDrugScreenCheck.negativeDrugScreenHistoryArray;
     requirements.push({
       text: `Passed drug screens in last 12 months: ${
         drugScreensPastYear
@@ -429,7 +424,9 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     const { ineligibleCriteria } = this.record;
 
     const requirements: OpportunityRequirement[] = [];
-    if (ineligibleCriteria?.usTnFinesFeesEligible) {
+    if (
+      ineligibleCriteria?.hasFinesFeesBalanceBelow500OrHasPayments3ConsecutiveMonthsOrIsExempt
+    ) {
       const text = "Needs balance <$500 or a payment three months in a row";
       requirements.push({ text, tooltip: CRITERIA.payments.tooltip });
     }
@@ -478,7 +475,9 @@ export class CompliantReportingOpportunity extends OpportunityBase<
 
     let criterionSpecificCopy: string | undefined;
     let title: string | undefined;
-    if (ineligibleCriteria.usTnFinesFeesEligible) {
+    if (
+      ineligibleCriteria.hasFinesFeesBalanceBelow500OrHasPayments3ConsecutiveMonthsOrIsExempt
+    ) {
       title = "Needs balance <$500 or a payment three months in a row";
       criterionSpecificCopy =
         "have a balance of less than $500 or make a payment three months in a row";
@@ -525,7 +524,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
   get drugScreenDate() {
     return formatDate(
       this.record.eligibleCriteria.usTnPassedDrugScreenCheck
-        ?.latestDrugTestIsNegative.latestDrugScreenDate,
+        ?.latestDrugScreenDate,
       "yyyy-MM-dd",
     );
   }

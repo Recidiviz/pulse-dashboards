@@ -43,20 +43,11 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
           startDateOnEligibleLevel: dateStringSchema,
         })
         .optional(),
-      usTnFinesFeesEligible: z
+      hasFinesFeesBalanceBelow500OrHasPayments3ConsecutiveMonthsOrIsExempt: z
         .object({
-          hasFinesFeesBalanceBelow500: z.object({
-            amountOwed: z.number(),
-          }),
-          hasPayments3ConsecutiveMonths: z.object({
-            amountOwed: z.number(),
-            consecutiveMonthlyPayments: z.number().nullable(),
-          }),
-          hasPermanentFinesFeesExemption: z
-            .object({
-              currentExemptions: z.array(z.string()),
-            })
-            .optional(),
+          amountOwed: z.number(),
+          consecutiveMonthlyPayments: z.number().nullable(),
+          currentExemptions: z.array(z.string()).optional(),
         })
         .optional(),
       // Transform null fields to empty object to make them easier to use in conditionals later
@@ -74,18 +65,16 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
       }),
       usTnNotServingIneligibleCrOffense: z.null().transform((_val) => ({})),
       usTnPassedDrugScreenCheck: z.object({
-        hasAtLeast1NegativeDrugTestPastYear: z.array(
+        alcDrugNeedLevel: z.string().optional(),
+        negativeDrugScreenHistoryArray: z.array(
           z.object({
             negativeScreenDate: dateStringSchema,
             negativeScreenResult: z.string(),
           }),
         ),
-        latestDrugTestIsNegative: z.object({
-          latestDrugScreenDate: dateStringSchema,
-          latestDrugScreenResult: z.string(),
-        }),
-        // omitting hasAtLeast2NegativeDrugTestsPastYear because if they have at least 2, they have at least 1
-        // omitting latestAlcoholDrugNeedLevel because it is not used in any copy
+        mostRecentPositiveTestDate: dateStringSchema.nullish(),
+        latestDrugScreenResult: z.string(),
+        latestDrugScreenDate: dateStringSchema,
       }),
       usTnNoZeroToleranceCodesSpans: z
         .object({
@@ -145,15 +134,10 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
           startDateOnEligibleLevel: dateStringSchema,
         })
         .optional(),
-      usTnFinesFeesEligible: z
+      hasFinesFeesBalanceBelow500OrHasPayments3ConsecutiveMonthsOrIsExempt: z
         .object({
-          hasFinesFeesBalanceBelow500: z.object({
-            amountOwed: z.number(),
-          }),
-          hasPayments3ConsecutiveMonths: z.object({
-            amountOwed: z.number(),
-            consecutiveMonthlyPayments: z.number().nullable(),
-          }),
+          amountOwed: z.number(),
+          consecutiveMonthlyPayments: z.number().nullable(),
         })
         .optional(),
       usTnNoHighSanctionsInPastYear: z
