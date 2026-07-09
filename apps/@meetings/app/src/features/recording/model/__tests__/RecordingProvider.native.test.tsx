@@ -78,6 +78,9 @@ jest.mock("~@meetings/app/shared/api/upload-segment");
 jest.mock("../../lib/notifications");
 jest.mock("../../lib/storage");
 jest.mock("../store");
+jest.mock("~@meetings/app/shared/analytics", () => ({
+  useAnalytics: () => ({ track: jest.fn() }),
+}));
 
 const mockPerson = {
   personId: "person-1",

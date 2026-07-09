@@ -37,6 +37,7 @@ import {
   type MeetingDetails,
   useUpdateNotes,
 } from "~@meetings/app/entities/meeting";
+import { useAnalytics } from "~@meetings/app/shared/analytics";
 import { theme } from "~@meetings/app/shared/config";
 import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
@@ -47,13 +48,16 @@ type Props = {
   meetingDetails: MeetingDetails;
   clientName: string;
   bottomSheetRef: RefObject<BottomSheet | null>;
+  personId: string;
 };
 
 const MeetingNotesSheet = ({
   meetingDetails,
   clientName,
   bottomSheetRef,
+  personId,
 }: Props) => {
+  const { track } = useAnalytics();
   const [actionItems, setActionItems] = useState(
     meetingDetails.actionItems || [],
   );
@@ -91,6 +95,7 @@ const MeetingNotesSheet = ({
       actionItems: meetingDetails.actionItems,
     });
     showSnackbar("Notes copied to clipboard");
+    track("case_notes_copied", { meetingId: meetingDetails.id, personId });
   };
 
   // this use effect is used to remove footer while keyboard is active

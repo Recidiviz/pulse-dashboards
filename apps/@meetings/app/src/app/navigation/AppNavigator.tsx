@@ -21,11 +21,12 @@ import {
   getStateFromPath as defaultGetStateFromPath,
   LinkingOptions,
   NavigationContainer,
+  useNavigationContainerRef,
 } from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { useFonts } from "expo-font";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useAuth0 } from "react-native-auth0";
 import superjson from "superjson";
 
@@ -33,6 +34,10 @@ import { UserContextProvider } from "~@meetings/app/entities/user";
 import { AppUpdateModal } from "~@meetings/app/features/app-update";
 import { stateCodeParam } from "~@meetings/app/features/state-selection";
 import { LoginScreen } from "~@meetings/app/pages/login";
+import {
+  AnalyticsProvider,
+  useAnalytics,
+} from "~@meetings/app/shared/analytics";
 import { publicTrpc } from "~@meetings/app/shared/api";
 import { AppStackParamList, env } from "~@meetings/app/shared/config";
 
@@ -92,6 +97,67 @@ const linking: LinkingOptions<AppStackParamList> = {
   },
 };
 
+type AppNavigatorContentProps = {
+  loggedIn: boolean;
+  skipAuth: boolean;
+  onSkipAuth: () => void;
+};
+
+const AppNavigatorContent = ({
+  loggedIn,
+  skipAuth,
+  onSkipAuth,
+}: AppNavigatorContentProps) => {
+  const { screen } = useAnalytics();
+  const navigationRef = useNavigationContainerRef<AppStackParamList>();
+  const routeNameRef = useRef<string | undefined>(undefined);
+
+  const handleNavigationReady = () => {
+    routeNameRef.current = navigationRef.getCurrentRoute()?.name;
+  };
+
+  const handleStateChange = () => {
+    const currentRoute = navigationRef.getCurrentRoute();
+    const currentRouteName = currentRoute?.name;
+    if (!currentRouteName || currentRouteName === routeNameRef.current) {
+      routeNameRef.current = currentRouteName;
+      return;
+    }
+    const params = currentRoute?.params as Record<string, unknown> | undefined;
+    const personId = params?.["personId"] as string | undefined;
+    screen(currentRouteName, { personId });
+    routeNameRef.current = currentRouteName;
+  };
+
+  return (
+    <NavigationContainer
+      ref={navigationRef}
+      linking={linking}
+      documentTitle={{ enabled: false }}
+      onReady={handleNavigationReady}
+      onStateChange={handleStateChange}
+    >
+      <Drawer.Navigator
+        screenOptions={{ headerShown: false, swipeEnabled: false }}
+      >
+        {!loggedIn ? (
+          <Drawer.Screen name="Login">
+            {(props) => <LoginScreen {...props} onSkipAuth={onSkipAuth} />}
+          </Drawer.Screen>
+        ) : (
+          <Drawer.Screen name="Main">
+            {() => (
+              <UserContextProvider isSkipAuthUser={skipAuth}>
+                <AuthenticatedApp />
+              </UserContextProvider>
+            )}
+          </Drawer.Screen>
+        )}
+      </Drawer.Navigator>
+    </NavigationContainer>
+  );
+};
+
 const AppNavigator = () => {
   const { user, isLoading } = useAuth0();
   // skipAuth state triggers re-render when user clicks "Skip Authentication"
@@ -120,13 +186,10 @@ const AppNavigator = () => {
     }
   }, [fontsLoadingError]);
 
-  const handleSkipAuth = () => {
-    setSkipAuth(true);
-  };
-
   if (isLoading) {
     return null;
   }
+
   const loggedIn = (user !== undefined && user !== null) || skipAuth;
 
   return (
@@ -135,31 +198,14 @@ const AppNavigator = () => {
       queryClient={publicQueryClient}
     >
       <QueryClientProvider client={publicQueryClient}>
-        <AppUpdateModal />
-        <NavigationContainer
-          linking={linking}
-          documentTitle={{ enabled: false }}
-        >
-          <Drawer.Navigator
-            screenOptions={{ headerShown: false, swipeEnabled: false }}
-          >
-            {!loggedIn ? (
-              <Drawer.Screen name="Login">
-                {(props) => (
-                  <LoginScreen {...props} onSkipAuth={handleSkipAuth} />
-                )}
-              </Drawer.Screen>
-            ) : (
-              <Drawer.Screen name="Main">
-                {() => (
-                  <UserContextProvider isSkipAuthUser={skipAuth}>
-                    <AuthenticatedApp />
-                  </UserContextProvider>
-                )}
-              </Drawer.Screen>
-            )}
-          </Drawer.Navigator>
-        </NavigationContainer>
+        <AnalyticsProvider email={user?.email} isSkipAuthUser={skipAuth}>
+          <AppUpdateModal />
+          <AppNavigatorContent
+            loggedIn={loggedIn}
+            skipAuth={skipAuth}
+            onSkipAuth={() => setSkipAuth(true)}
+          />
+        </AnalyticsProvider>
       </QueryClientProvider>
     </publicTrpc.Provider>
   );

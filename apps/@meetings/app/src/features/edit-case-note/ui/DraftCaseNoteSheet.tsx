@@ -37,6 +37,7 @@ import DocumentDuplicateIcon from "react-native-heroicons/outline/DocumentDuplic
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useUpdateNotes } from "~@meetings/app/entities/meeting";
+import { useAnalytics } from "~@meetings/app/shared/analytics";
 import { theme } from "~@meetings/app/shared/config";
 import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
@@ -49,6 +50,7 @@ type Props = {
   meetingDate?: Date;
   ref: RefObject<BottomSheetModal | null>;
   canEdit?: boolean;
+  personId: string;
 };
 
 export const DraftCaseNoteSheet = ({
@@ -58,7 +60,9 @@ export const DraftCaseNoteSheet = ({
   meetingDate,
   ref,
   canEdit = true,
+  personId,
 }: Props) => {
+  const { track } = useAnalytics();
   const { bottom: bottomSafeArea } = useSafeAreaInsets();
   const updateNotesMutation = useUpdateNotes();
   const [inputNotes, setInputNotes] = useState(notes || "");
@@ -90,6 +94,7 @@ export const DraftCaseNoteSheet = ({
   const handleCopyNotes = () => {
     Clipboard.setString(notes);
     showSnackbar("Case note copied to clipboard");
+    track("case_notes_copied", { meetingId, personId });
   };
 
   // this use effect is used to remove footer while keyboard is active

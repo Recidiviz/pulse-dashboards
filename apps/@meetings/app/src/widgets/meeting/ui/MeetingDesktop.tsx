@@ -30,6 +30,7 @@ import PrinterIcon from "react-native-heroicons/solid/PrinterIcon";
 import { MeetingDetails } from "~@meetings/app/entities/meeting";
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
 import { useUserContext } from "~@meetings/app/entities/user";
+import { useAnalytics } from "~@meetings/app/shared/analytics";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 import PlaySvg from "~@meetings/app/shared/assets/icons/play.svg";
 import BgAvatarImage from "~@meetings/app/shared/assets/images/bg-avatar.png";
@@ -71,6 +72,7 @@ const MeetingDesktop = ({
 }: Props) => {
   const [activeTab, setActiveTab] = useState<Tab>(Tab.DraftCaseNotes);
   const [isPlayerVisible, setIsPlayerVisible] = useState(false);
+  const { track } = useAnalytics();
   const { email: currentUserEmail, isSkipAuthUser } = useUserContext();
   const isMeetingCreator =
     currentUserEmail === meetingDetails.staffEmail || isSkipAuthUser;
@@ -84,13 +86,21 @@ const MeetingDesktop = ({
     durationMs: meetingDetails.durationMs,
   });
 
-  const handlePrint = usePrintMeetingDetails({
+  const printMeetingDetails = usePrintMeetingDetails({
     person,
     meetingDetails,
     meetingDate,
     time,
     duration,
   });
+
+  const handlePrint = () => {
+    track("print_button_clicked", {
+      meetingId,
+      personId: person.personId.toString(),
+    });
+    printMeetingDetails();
+  };
 
   return (
     <View className="flex-1 grow">
@@ -205,6 +215,7 @@ const MeetingDesktop = ({
                 <DraftCaseNoteTab
                   meetingId={meetingId}
                   caseNote={meetingDetails.caseNote || ""}
+                  personId={person.personId.toString()}
                   outputVote={
                     isMeetingCreator &&
                     meetingDetails.caseNote && (

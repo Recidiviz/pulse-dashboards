@@ -39,6 +39,7 @@ import {
   useUpdateNotes,
 } from "~@meetings/app/entities/meeting";
 import { getPersonType } from "~@meetings/app/entities/person";
+import { useAnalytics } from "~@meetings/app/shared/analytics";
 import { useUploadSegment } from "~@meetings/app/shared/api";
 import { extractError } from "~@meetings/app/shared/lib/errors";
 import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
@@ -70,6 +71,7 @@ const MAX_RECORDING_SECONDS = 90 * 60; // 90 minutes
 export const RecordingContext = createContext<RecordingNative | null>(null);
 
 export const RecordingProvider = ({ children }: RecordingProviderProps) => {
+  const { track } = useAnalytics();
   const uploadSegment = useUploadSegment();
 
   /**
@@ -223,6 +225,10 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         const bytes = fileInfo.exists ? fileInfo.size : 0;
 
         Sentry.logger.info("upload.segment.done", { meetingId, bytes });
+        track("meeting_uploaded", {
+          meetingId,
+          personId: person?.personId?.toString(),
+        });
 
         await removeRecordingUri();
       } else {
@@ -241,7 +247,14 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       await setStatus("paused"); // fallback safe state
       throw err;
     }
-  }, [audioRecorder.uri, meetingId, setStatus, uploadSegment]);
+  }, [
+    audioRecorder.uri,
+    meetingId,
+    person?.personId,
+    setStatus,
+    track,
+    uploadSegment,
+  ]);
 
   /**
    * recoverFromStuckState()
@@ -406,6 +419,10 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       timer.start();
       await setStatus("recording");
       Sentry.logger.info("recording.start", { meetingId, status: "recording" });
+      track("recording_started", {
+        meetingId,
+        personId: person?.personId?.toString(),
+      });
     } catch (err) {
       const errorMessage = extractError(err);
       Sentry.logger.error("recording.start.error", {
@@ -474,6 +491,10 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       await setStatus("uploading");
 
       Sentry.logger.info("recording.resume", { meetingId });
+      track("recording_paused", {
+        meetingId,
+        personId: person?.personId?.toString(),
+      });
 
       await stopRecorder();
       await uploadRecording();
@@ -520,6 +541,10 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         person,
       });
       Sentry.logger.info("meeting.end", { meetingId });
+      track("recording_ended", {
+        meetingId,
+        personId: person.personId.toString(),
+      });
       await cleanupRecording();
       onComplete?.();
       Sentry.setTag("meetingId", null);
@@ -557,6 +582,10 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       await cleanupRecording();
       onComplete?.();
       Sentry.logger.info("meeting.discard", { meetingId });
+      track("recording_discarded", {
+        meetingId,
+        personId: person.personId.toString(),
+      });
       Sentry.setTag("meetingId", null);
     } catch (err) {
       const errorMessage = extractError(err);

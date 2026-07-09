@@ -154,7 +154,11 @@ export const ProfileMeetings = ({
     meetingTypeCategory: meetingTypeCategoryValue,
     personType: personType,
     onSuccess: (meetingId) => {
-      track("meeting_started", { meetingId, personType });
+      track("meeting_started", {
+        meetingId,
+        personId: person.personId.toString(),
+        personType,
+      });
       switch (Platform.OS) {
         case "web":
           openRecordingView({

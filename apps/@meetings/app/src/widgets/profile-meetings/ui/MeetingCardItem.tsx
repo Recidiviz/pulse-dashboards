@@ -32,6 +32,7 @@ import {
 
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
 import { DraftCaseNoteSheet } from "~@meetings/app/features/edit-case-note";
+import { useAnalytics } from "~@meetings/app/shared/analytics";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 import ProcessingSvg from "~@meetings/app/shared/assets/icons/processing.svg";
 import ProcessingErrorBanner from "~@meetings/app/shared/ui/ProcessingErrorBanner";
@@ -66,6 +67,7 @@ const MeetingCardItem = ({
   person,
   personType,
 }: MeetingCardItemProps) => {
+  const { track } = useAnalytics();
   const { title: processingTitle, subtitle: processingSubtitle } =
     useProcessingText();
   const { showSnackbar, isShowing: isSnackbarShowing } = useSnackbar();
@@ -101,6 +103,10 @@ const MeetingCardItem = ({
     if (meeting.caseNote) {
       Clipboard.setString(meeting.caseNote);
       showSnackbar("Case note copied to clipboard");
+      track("case_notes_copied", {
+        meetingId: meeting.id,
+        personId: person.personId.toString(),
+      });
     }
   };
 
@@ -250,6 +256,7 @@ const MeetingCardItem = ({
         meetingDate={meeting?.start}
         ref={draftCaseNoteSheetRef}
         canEdit={canEditNote}
+        personId={person.personId.toString()}
       />
     </View>
   );

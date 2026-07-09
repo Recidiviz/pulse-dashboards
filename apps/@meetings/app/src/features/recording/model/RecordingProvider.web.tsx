@@ -24,6 +24,7 @@ import {
 } from "~@meetings/app/entities/meeting";
 import { getPersonType } from "~@meetings/app/entities/person";
 import { useUserContext } from "~@meetings/app/entities/user";
+import { useAnalytics } from "~@meetings/app/shared/analytics";
 import { Person, useUploadSegment } from "~@meetings/app/shared/api";
 import { env } from "~@meetings/app/shared/config";
 import { extractError } from "~@meetings/app/shared/lib/errors";
@@ -42,6 +43,7 @@ const TOKEN_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
 export const RecordingContext = createContext<RecordingWeb | null>(null);
 
 export const RecordingProvider = ({ children }: RecordingProviderProps) => {
+  const { track } = useAnalytics();
   const uploadSegment = useUploadSegment();
   const { mutateAsync: endMeeting } = useEndMeeting();
   const { mutateAsync: discardMeeting } = useDiscardMeeting();
@@ -187,6 +189,10 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       timer.start();
       setStatus("recording");
       Sentry.logger.info("recording.start", { meetingId, status: "recording" });
+      track("recording_started", {
+        meetingId,
+        personId: person?.personId?.toString(),
+      });
     } catch (err) {
       const errorMessage = extractError(err);
       Sentry.logger.error("recording.start.error", {
@@ -228,6 +234,11 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       Sentry.logger.info("upload.segment.done", {
         meetingId,
         bytes: blob.size,
+      });
+
+      track("meeting_uploaded", {
+        meetingId,
+        personId: person?.personId?.toString(),
       });
 
       await recorder.cleanup();
@@ -282,6 +293,11 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
 
     const duration = timer.stop();
     if (duration) setPersistedDurationMs(duration);
+
+    track("recording_paused", {
+      meetingId,
+      personId: person?.personId?.toString(),
+    });
 
     const blob = await recorder.stop();
     if (blob && isOnline) {
@@ -355,6 +371,10 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         person,
       });
       Sentry.logger.info("meeting.end", { meetingId });
+      track("recording_ended", {
+        meetingId,
+        personId: person.personId.toString(),
+      });
       await cleanupRecording();
       Sentry.setTag("meetingId", null);
       closeRecordingView();
@@ -393,6 +413,10 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       await cleanupRecording();
       closeRecordingView();
       Sentry.logger.info("meeting.discard", { meetingId });
+      track("recording_discarded", {
+        meetingId,
+        personId: person.personId.toString(),
+      });
       Sentry.setTag("meetingId", null);
     } catch (err) {
       const errorMessage = extractError(err);

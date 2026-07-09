@@ -210,6 +210,7 @@ describe("ProfileMeetings", () => {
 
       expect(mockTrack).toHaveBeenCalledWith("meeting_started", {
         meetingId: MEETING_ID,
+        personId: mockPerson.personId.toString(),
         personType: "client",
       });
     });

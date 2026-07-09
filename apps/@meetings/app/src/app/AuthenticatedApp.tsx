@@ -29,7 +29,6 @@ import {
   StateCode,
   StateCodeProvider,
 } from "~@meetings/app/features/state-selection";
-import { AnalyticsProvider } from "~@meetings/app/shared/analytics";
 import { trpc } from "~@meetings/app/shared/api";
 import { env } from "~@meetings/app/shared/config";
 import { queryCachePersister } from "~@meetings/app/shared/lib/queryCachePersister";
@@ -51,7 +50,7 @@ const queryClient = new QueryClient({
  * This component must be wrapped by UserContextProvider.
  */
 const AuthenticatedApp: React.FC = () => {
-  const { email, isLoading, isSkipAuthUser, getCredentials } = useUserContext();
+  const { isLoading, isSkipAuthUser, getCredentials } = useUserContext();
   const { impersonatedEmail, impersonatedStateCode } = useImpersonationStore();
 
   // State code ref is managed here since it's only needed for authenticated requests. StateContext
@@ -123,11 +122,9 @@ const AuthenticatedApp: React.FC = () => {
         persistOptions={{ persister: queryCachePersister, maxAge: ONE_WEEK_MS }}
       >
         <AgencyConfigProvider>
-          <AnalyticsProvider email={email} isSkipAuthUser={isSkipAuthUser}>
-            <StateCodeProvider selectedStateRef={selectedStateRef}>
-              <AuthenticatedContent />
-            </StateCodeProvider>
-          </AnalyticsProvider>
+          <StateCodeProvider selectedStateRef={selectedStateRef}>
+            <AuthenticatedContent />
+          </StateCodeProvider>
         </AgencyConfigProvider>
       </PersistQueryClientProvider>
     </trpc.Provider>

@@ -23,6 +23,7 @@ import { ScrollView, TextInput } from "react-native-gesture-handler";
 import DocumentDuplicateIcon from "react-native-heroicons/solid/DocumentDuplicateIcon";
 
 import { useUpdateNotes } from "~@meetings/app/entities/meeting";
+import { useAnalytics } from "~@meetings/app/shared/analytics";
 import { trpc } from "~@meetings/app/shared/api";
 import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
@@ -30,10 +31,17 @@ import { Typography } from "~@meetings/app/shared/ui/Typography";
 type Props = {
   meetingId: string;
   caseNote: string;
+  personId: string;
   outputVote?: ReactNode;
 };
 
-const DraftCaseNoteTab = ({ meetingId, caseNote, outputVote }: Props) => {
+const DraftCaseNoteTab = ({
+  meetingId,
+  caseNote,
+  personId,
+  outputVote,
+}: Props) => {
+  const { track } = useAnalytics();
   const utils = trpc.useUtils();
   const { showSnackbar, isShowing: isSnackbarShowing } = useSnackbar();
   const [inputNotes, setInputNotes] = useState(caseNote);
@@ -61,6 +69,7 @@ const DraftCaseNoteTab = ({ meetingId, caseNote, outputVote }: Props) => {
   const onCopy = () => {
     Clipboard.setString(caseNote);
     showSnackbar("Case note copied to clipboard");
+    track("case_notes_copied", { meetingId, personId });
   };
 
   useEffect(() => {

@@ -22,6 +22,7 @@ import { segmentClient } from "~@meetings/app/shared/lib/monitoring";
 
 interface AnalyticsContextType {
   track: (eventName: string, metadata?: Record<string, unknown>) => void;
+  screen: (screenName: string, metadata?: Record<string, unknown>) => void;
 }
 
 const AnalyticsContext = createContext<AnalyticsContextType | undefined>(
@@ -62,6 +63,17 @@ export const AnalyticsProvider: React.FC<AnalyticsProviderProps> = ({
     }
   };
 
+  const screen = (screenName: string, metadata?: Record<string, unknown>) => {
+    const fullMetadata = { ...metadata, isInternalUser };
+    if (shouldWriteToSegment) {
+      void segmentClient.screen(screenName, fullMetadata);
+    } else {
+      console.log(
+        `[Analytics] Screen: ${screenName}, metadata: ${JSON.stringify(fullMetadata)}`,
+      );
+    }
+  };
+
   useEffect(() => {
     if (email && !isSkipAuthUser) {
       if (shouldWriteToSegment) {
@@ -73,7 +85,7 @@ export const AnalyticsProvider: React.FC<AnalyticsProviderProps> = ({
   }, [email, isInternalUser, isSkipAuthUser, shouldWriteToSegment]);
 
   return (
-    <AnalyticsContext.Provider value={{ track }}>
+    <AnalyticsContext.Provider value={{ track, screen }}>
       {children}
     </AnalyticsContext.Provider>
   );
