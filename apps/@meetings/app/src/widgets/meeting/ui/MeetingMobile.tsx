@@ -38,10 +38,10 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import DraftCaseNoteSheet from "~@meetings/app/components/DraftCaseNoteSheet";
 import { MeetingDetails } from "~@meetings/app/entities/meeting";
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
 import { useUserContext } from "~@meetings/app/entities/user";
+import { DraftCaseNoteSheet } from "~@meetings/app/features/edit-case-note";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 import PlaySvg from "~@meetings/app/shared/assets/icons/play.svg";
 import BgAvatarImage from "~@meetings/app/shared/assets/images/bg-avatar.png";

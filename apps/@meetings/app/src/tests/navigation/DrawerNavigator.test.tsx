@@ -58,7 +58,9 @@ jest.mock("../../pages/client-meeting", () => null);
 jest.mock("../../pages/resident-meeting", () => null);
 jest.mock("../../pages/client-new-meeting", () => null);
 jest.mock("../../pages/resident-new-meeting", () => null);
-jest.mock("../../components/DrawerContent", () => null);
+jest.mock("~@meetings/app/widgets/navigation-drawer", () => ({
+  DrawerContent: null,
+}));
 jest.mock("../../pages/onboarding", () => ({
   OnboardingScreen: null,
 }));

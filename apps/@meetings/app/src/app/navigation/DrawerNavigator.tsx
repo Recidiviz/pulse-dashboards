@@ -19,7 +19,6 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 
-import DrawerContent from "~@meetings/app/components/DrawerContent";
 import { useAgencyConfigs } from "~@meetings/app/entities/agency-config";
 import { useGetUser, useUserContext } from "~@meetings/app/entities/user";
 import { useStateSelection } from "~@meetings/app/features/state-selection";
@@ -41,6 +40,7 @@ import {
   RootStackParamList,
 } from "~@meetings/app/shared/config";
 import Loading from "~@meetings/app/shared/ui/Loading";
+import { DrawerContent } from "~@meetings/app/widgets/navigation-drawer";
 
 const Drawer = createDrawerNavigator<RootStackParamList>();
 const ClientsStackNavigator =

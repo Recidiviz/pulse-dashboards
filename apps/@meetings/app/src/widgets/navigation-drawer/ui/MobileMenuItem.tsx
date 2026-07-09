@@ -20,7 +20,7 @@ import React from "react";
 import { View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
-import { Typography } from "../shared/ui/Typography";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 type MobileMenuItemProps = {
   icon: React.ElementType;

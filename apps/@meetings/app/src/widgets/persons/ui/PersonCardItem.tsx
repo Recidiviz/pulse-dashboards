@@ -20,7 +20,6 @@ import React from "react";
 import { ImageBackground, View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
-import MeetingInProgressBar from "~@meetings/app/components/MeetingInProgressBar";
 import { formatPersonLastMeetingDate } from "~@meetings/app/entities/person";
 import { useRecording } from "~@meetings/app/features/recording";
 import { Person, PersonType } from "~@meetings/app/shared/api";
@@ -31,6 +30,8 @@ import {
 } from "~@meetings/app/shared/lib/format";
 import ProcessingErrorBanner from "~@meetings/app/shared/ui/ProcessingErrorBanner";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
+
+import MeetingInProgressBar from "./MeetingInProgressBar";
 
 interface ItemProps {
   person: Person;

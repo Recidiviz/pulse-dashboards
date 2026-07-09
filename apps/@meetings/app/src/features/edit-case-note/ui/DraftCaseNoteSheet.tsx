@@ -37,11 +37,10 @@ import DocumentDuplicateIcon from "react-native-heroicons/outline/DocumentDuplic
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useUpdateNotes } from "~@meetings/app/entities/meeting";
-
-import { theme } from "../shared/config";
-import { useSnackbar } from "../shared/ui/Snackbar";
-import { Typography } from "../shared/ui/Typography";
-import { formatDraftCaseNoteMeetingDate } from "../utils/format";
+import { theme } from "~@meetings/app/shared/config";
+import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
+import { formatDraftCaseNoteMeetingDate } from "~@meetings/app/utils/format";
 
 type Props = {
   meetingId: string;
@@ -52,7 +51,7 @@ type Props = {
   canEdit?: boolean;
 };
 
-const DraftCaseNoteSheet = ({
+export const DraftCaseNoteSheet = ({
   meetingId,
   notes,
   clientName,
@@ -217,5 +216,3 @@ const DraftCaseNoteSheet = ({
     </BottomSheetModal>
   );
 };
-
-export default DraftCaseNoteSheet;

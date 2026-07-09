@@ -19,14 +19,13 @@ import clsx from "clsx";
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
 
+import { useRecording } from "~@meetings/app/features/recording";
 import { Person } from "~@meetings/app/shared/api";
-
-import { useRecording } from "../features/recording";
-import PauseSvg from "../shared/assets/icons/pause.svg";
-import PlaySvg from "../shared/assets/icons/play.svg";
-import StopSvg from "../shared/assets/icons/stop.svg";
-import { RecordingIndicator } from "../shared/ui/RecordingIndicator";
-import { Typography } from "../shared/ui/Typography";
+import PauseSvg from "~@meetings/app/shared/assets/icons/pause.svg";
+import PlaySvg from "~@meetings/app/shared/assets/icons/play.svg";
+import StopSvg from "~@meetings/app/shared/assets/icons/stop.svg";
+import { RecordingIndicator } from "~@meetings/app/shared/ui/RecordingIndicator";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 type MeetingInProgressBarProps = {
   recordingState: string;

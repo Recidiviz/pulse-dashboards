@@ -26,16 +26,16 @@ import UsersIcon from "react-native-heroicons/solid/UsersIcon";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useUserContext } from "~@meetings/app/entities/user";
+import { useStateSelection } from "~@meetings/app/features/state-selection";
+import BgAvatarImage from "~@meetings/app/shared/assets/images/bg-avatar.png";
+import { IS_PROD } from "~@meetings/app/shared/config";
+import { getInitials } from "~@meetings/app/shared/lib/format";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
 
-import MobileMenuItem from "../components/MobileMenuItem";
-import { useStateSelection } from "../features/state-selection";
-import BgAvatarImage from "../shared/assets/images/bg-avatar.png";
-import { IS_PROD } from "../shared/config";
-import { getInitials } from "../shared/lib/format";
-import { Typography } from "../shared/ui/Typography";
+import MobileMenuItem from "./MobileMenuItem";
 import MobileMenuTextItem from "./MobileMenuTextItem";
 
-const DrawerContent = (props: DrawerContentComponentProps) => {
+export const DrawerContent = (props: DrawerContentComponentProps) => {
   const insets = useSafeAreaInsets();
   const { navigation } = props;
   const { canSelectStateCode, currentStateName } = useStateSelection();
@@ -127,5 +127,3 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
     </DrawerContentScrollView>
   );
 };
-
-export default DrawerContent;

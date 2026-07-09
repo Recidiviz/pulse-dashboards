@@ -30,8 +30,8 @@ import {
   PencilIcon,
 } from "react-native-heroicons/solid";
 
-import DraftCaseNoteSheet from "~@meetings/app/components/DraftCaseNoteSheet";
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
+import { DraftCaseNoteSheet } from "~@meetings/app/features/edit-case-note";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 import ProcessingSvg from "~@meetings/app/shared/assets/icons/processing.svg";
 import ProcessingErrorBanner from "~@meetings/app/shared/ui/ProcessingErrorBanner";
