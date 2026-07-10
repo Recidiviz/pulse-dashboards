@@ -15,59 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { format } from "date-fns";
-
 import {
   Client,
-  Person,
-  PersonType,
   RawClient,
   RawResident,
   Resident,
 } from "~@meetings/app/shared/api";
 import { formatRelativeTime } from "~@meetings/app/shared/lib/format";
-
-import { SortOption } from "./model";
-
-export const getPersonType = (person: Person): PersonType => {
-  return "supervisionType" in person ? "client" : "resident";
-};
-
-export const formatPersonLastMeetingDate = (date?: Date | null) =>
-  date ? format(date, "EEEE, MMM dd") : null;
-
-export const serializeSort = (sort: SortOption) => {
-  switch (sort) {
-    case SortOption.Name:
-      return "name";
-    case SortOption.Id:
-      return "id";
-    case SortOption.Facility:
-      return "facility";
-    case SortOption.SupervisionType:
-      return "supervisionType";
-    case SortOption.LastMeeting:
-      return "lastMeeting";
-  }
-};
-
-export const formatPersonTitle = ({
-  fullName,
-  givenNames,
-  surname,
-  displayPersonExternalId,
-}: {
-  fullName?: string;
-  givenNames?: string;
-  surname?: string;
-  displayPersonExternalId?: string;
-}) => {
-  if (fullName) {
-    return `${fullName} | ${displayPersonExternalId}`;
-  } else {
-    return `${givenNames} ${surname} | ${displayPersonExternalId}`;
-  }
-};
 
 export const deserializeClient = (rawClient: RawClient): Client => {
   return {

@@ -15,5 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./lib";
+export * from "./lib/deserializePerson";
+export * from "./lib/formatPerson";
+export * from "./lib/getPersonType";
+export * from "./lib/serializeSort";
 export * from "./model";

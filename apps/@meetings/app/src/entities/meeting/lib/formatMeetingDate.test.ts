@@ -15,22 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { trpc } from "~@meetings/app/shared/api";
+import { formatMeetingStartDateTitle } from "./formatMeetingDate";
 
-import { isMeetingProcessing } from "../lib/isMeetingProcessing";
+describe("formatMeetingStartDateTitle", () => {
+  it('should format a date into "MM/dd/yy at HH:mm"', () => {
+    const testDate = new Date("2026-03-02T14:29:47.174Z");
 
-export function useMeetingDetails(meetingId?: string) {
-  return trpc.v1.meeting.getDetails.useQuery(
-    // @ts-expect-error - it won't run if meetingId is falsy
-    { meetingId },
-    {
-      enabled: !!meetingId,
-      refetchInterval: ({ state }) => {
-        const isProcessing = state.data?.postMeetingProcessingStatus
-          ? isMeetingProcessing(state.data.postMeetingProcessingStatus)
-          : false;
-        return isProcessing ? 1000 : false;
-      },
-    },
-  );
-}
+    const result = formatMeetingStartDateTitle(testDate);
+
+    expect(result).toBe("03/02/26 at 09:29");
+  });
+});

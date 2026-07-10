@@ -35,7 +35,7 @@ jest.mock("~@meetings/app/shared/api/trpc", () => ({
   },
 }));
 
-jest.mock("~@meetings/app/utils/isMeetingProcessing", () => ({
+jest.mock("../lib/isMeetingProcessing", () => ({
   isMeetingProcessing: () => false,
 }));
 

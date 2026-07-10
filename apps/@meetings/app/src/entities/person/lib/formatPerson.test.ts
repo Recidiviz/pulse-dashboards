@@ -15,22 +15,31 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { trpc } from "~@meetings/app/shared/api";
+import { formatPersonTitle } from "./formatPerson";
 
-import { isMeetingProcessing } from "../lib/isMeetingProcessing";
+describe("formatPersonTitle", () => {
+  const externalId = "ID-123";
 
-export function useMeetingDetails(meetingId?: string) {
-  return trpc.v1.meeting.getDetails.useQuery(
-    // @ts-expect-error - it won't run if meetingId is falsy
-    { meetingId },
-    {
-      enabled: !!meetingId,
-      refetchInterval: ({ state }) => {
-        const isProcessing = state.data?.postMeetingProcessingStatus
-          ? isMeetingProcessing(state.data.postMeetingProcessingStatus)
-          : false;
-        return isProcessing ? 1000 : false;
-      },
-    },
-  );
-}
+  it("should return fullName with externalId when fullName is provided", () => {
+    const data = {
+      fullName: "John Doe",
+      displayPersonExternalId: externalId,
+    };
+
+    const result = formatPersonTitle(data);
+
+    expect(result).toBe("John Doe | ID-123");
+  });
+
+  it("should fallback to givenNames and surname when fullName is missing", () => {
+    const data = {
+      givenNames: "Jane",
+      surname: "Smith",
+      displayPersonExternalId: externalId,
+    };
+
+    const result = formatPersonTitle(data);
+
+    expect(result).toBe("Jane Smith | ID-123");
+  });
+});

@@ -34,6 +34,7 @@ import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
 import DocumentDuplicateIcon from "react-native-heroicons/outline/DocumentDuplicateIcon";
 
 import {
+  formatDraftCaseNoteMeetingDate,
   type MeetingDetails,
   useUpdateNotes,
 } from "~@meetings/app/entities/meeting";
@@ -41,8 +42,8 @@ import { useAnalytics } from "~@meetings/app/shared/analytics";
 import { theme } from "~@meetings/app/shared/config";
 import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
-import { copyMeetingNotes } from "~@meetings/app/utils/copyMeetingNotes";
-import { formatDraftCaseNoteMeetingDate } from "~@meetings/app/utils/format";
+
+import { copyMeetingNotes } from "../lib/copyMeetingNotes";
 
 type Props = {
   meetingDetails: MeetingDetails;

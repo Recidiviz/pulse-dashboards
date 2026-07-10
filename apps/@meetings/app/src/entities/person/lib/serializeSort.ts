@@ -15,22 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { trpc } from "~@meetings/app/shared/api";
+import { SortOption } from "../model";
 
-import { isMeetingProcessing } from "../lib/isMeetingProcessing";
-
-export function useMeetingDetails(meetingId?: string) {
-  return trpc.v1.meeting.getDetails.useQuery(
-    // @ts-expect-error - it won't run if meetingId is falsy
-    { meetingId },
-    {
-      enabled: !!meetingId,
-      refetchInterval: ({ state }) => {
-        const isProcessing = state.data?.postMeetingProcessingStatus
-          ? isMeetingProcessing(state.data.postMeetingProcessingStatus)
-          : false;
-        return isProcessing ? 1000 : false;
-      },
-    },
-  );
-}
+export const serializeSort = (sort: SortOption) => {
+  switch (sort) {
+    case SortOption.Name:
+      return "name";
+    case SortOption.Id:
+      return "id";
+    case SortOption.Facility:
+      return "facility";
+    case SortOption.SupervisionType:
+      return "supervisionType";
+    case SortOption.LastMeeting:
+      return "lastMeeting";
+  }
+};

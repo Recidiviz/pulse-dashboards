@@ -24,6 +24,7 @@ import React, { useEffect } from "react";
 import { View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
+import { isMeetingProcessing } from "~@meetings/app/entities/meeting";
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 import ProcessingSvg from "~@meetings/app/shared/assets/icons/processing.svg";
@@ -46,7 +47,6 @@ import {
 } from "~@meetings/app/shared/ui/Table.web";
 import { TablePagination } from "~@meetings/app/shared/ui/TablePagination";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
-import { isMeetingProcessing } from "~@meetings/app/utils/isMeetingProcessing";
 import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
 import { useProcessingText } from "../lib/useProcessingText";

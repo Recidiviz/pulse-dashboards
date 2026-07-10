@@ -30,6 +30,7 @@ import {
   PencilIcon,
 } from "react-native-heroicons/solid";
 
+import { isMeetingProcessing } from "~@meetings/app/entities/meeting";
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
 import { DraftCaseNoteSheet } from "~@meetings/app/features/edit-case-note";
 import { useAnalytics } from "~@meetings/app/shared/analytics";
@@ -38,7 +39,6 @@ import ProcessingSvg from "~@meetings/app/shared/assets/icons/processing.svg";
 import ProcessingErrorBanner from "~@meetings/app/shared/ui/ProcessingErrorBanner";
 import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
-import { isMeetingProcessing } from "~@meetings/app/utils/isMeetingProcessing";
 import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
 import { useProcessingText } from "../lib/useProcessingText";

@@ -38,7 +38,11 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { MeetingDetails } from "~@meetings/app/entities/meeting";
+import {
+  formatMeetingDuration,
+  formatMeetingStartDate,
+  MeetingDetails,
+} from "~@meetings/app/entities/meeting";
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
 import { useUserContext } from "~@meetings/app/entities/user";
 import { DraftCaseNoteSheet } from "~@meetings/app/features/edit-case-note";
@@ -50,10 +54,6 @@ import {
   humanReadableTitleCase,
 } from "~@meetings/app/shared/lib/format";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
-import {
-  formatMeetingDuration,
-  formatMeetingStartDate,
-} from "~@meetings/app/utils/format";
 
 import { ActionItemsTab } from "./ActionItemsTab";
 import AudioPlayer from "./AudioPlayer";

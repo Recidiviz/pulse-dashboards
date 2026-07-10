@@ -18,9 +18,9 @@
 import { keepPreviousData } from "@tanstack/react-query";
 
 import { PersonType, trpc } from "~@meetings/app/shared/api";
-import { isMeetingProcessing } from "~@meetings/app/utils/isMeetingProcessing";
 
 import type { ClientMeetings, ResidentMeetings } from "../api/meeting";
+import { isMeetingProcessing } from "../lib/isMeetingProcessing";
 
 type Params = {
   personId: bigint;

@@ -27,7 +27,11 @@ import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
 import ClockIcon from "react-native-heroicons/outline/ClockIcon";
 import PrinterIcon from "react-native-heroicons/solid/PrinterIcon";
 
-import { MeetingDetails } from "~@meetings/app/entities/meeting";
+import {
+  formatMeetingDuration,
+  formatMeetingStartDate,
+  MeetingDetails,
+} from "~@meetings/app/entities/meeting";
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
 import { useUserContext } from "~@meetings/app/entities/user";
 import { useAnalytics } from "~@meetings/app/shared/analytics";
@@ -39,10 +43,6 @@ import {
   humanReadableTitleCase,
 } from "~@meetings/app/shared/lib/format";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
-import {
-  formatMeetingDuration,
-  formatMeetingStartDate,
-} from "~@meetings/app/utils/format";
 
 import { usePrintMeetingDetails } from "../lib/usePrintMeetingDetails";
 import { ActionItemsTab } from "./ActionItemsTab";

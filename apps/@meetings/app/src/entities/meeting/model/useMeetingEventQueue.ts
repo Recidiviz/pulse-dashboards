@@ -22,7 +22,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 import { Person, PersonType } from "~@meetings/app/shared/api";
-import { createEventQueueStorage } from "~@meetings/app/utils/meetingEventQueueStorage";
+
+import { createEventQueueStorage } from "../lib/meetingEventQueueStorage";
 
 export type OfflineEvent =
   | CreateMeetingEvent

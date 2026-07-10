@@ -20,6 +20,13 @@ export type {
   MeetingDetails,
   ResidentMeetings,
 } from "./api/meeting";
+export {
+  formatDraftCaseNoteMeetingDate,
+  formatMeetingDuration,
+  formatMeetingStartDate,
+  formatMeetingStartDateTitle,
+} from "./lib/formatMeetingDate";
+export { isMeetingProcessing } from "./lib/isMeetingProcessing";
 export { useCreateMeeting } from "./model/useCreateMeeting";
 export { useDiscardMeeting } from "./model/useDiscardMeeting";
 export { useEndMeeting } from "./model/useEndMeeting";

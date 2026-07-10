@@ -15,22 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { trpc } from "~@meetings/app/shared/api";
+import { Person, PersonType } from "~@meetings/app/shared/api";
 
-import { isMeetingProcessing } from "../lib/isMeetingProcessing";
-
-export function useMeetingDetails(meetingId?: string) {
-  return trpc.v1.meeting.getDetails.useQuery(
-    // @ts-expect-error - it won't run if meetingId is falsy
-    { meetingId },
-    {
-      enabled: !!meetingId,
-      refetchInterval: ({ state }) => {
-        const isProcessing = state.data?.postMeetingProcessingStatus
-          ? isMeetingProcessing(state.data.postMeetingProcessingStatus)
-          : false;
-        return isProcessing ? 1000 : false;
-      },
-    },
-  );
-}
+export const getPersonType = (person: Person): PersonType => {
+  return "supervisionType" in person ? "client" : "resident";
+};

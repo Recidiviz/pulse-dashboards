@@ -15,22 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { trpc } from "~@meetings/app/shared/api";
+import { format } from "date-fns";
 
-import { isMeetingProcessing } from "../lib/isMeetingProcessing";
+export const formatPersonLastMeetingDate = (date?: Date | null) =>
+  date ? format(date, "EEEE, MMM dd") : null;
 
-export function useMeetingDetails(meetingId?: string) {
-  return trpc.v1.meeting.getDetails.useQuery(
-    // @ts-expect-error - it won't run if meetingId is falsy
-    { meetingId },
-    {
-      enabled: !!meetingId,
-      refetchInterval: ({ state }) => {
-        const isProcessing = state.data?.postMeetingProcessingStatus
-          ? isMeetingProcessing(state.data.postMeetingProcessingStatus)
-          : false;
-        return isProcessing ? 1000 : false;
-      },
-    },
-  );
-}
+export const formatPersonTitle = ({
+  fullName,
+  givenNames,
+  surname,
+  displayPersonExternalId,
+}: {
+  fullName?: string;
+  givenNames?: string;
+  surname?: string;
+  displayPersonExternalId?: string;
+}) => {
+  if (fullName) {
+    return `${fullName} | ${displayPersonExternalId}`;
+  } else {
+    return `${givenNames} ${surname} | ${displayPersonExternalId}`;
+  }
+};
