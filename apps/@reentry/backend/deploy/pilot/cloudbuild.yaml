@@ -42,6 +42,8 @@ steps:
       - "recidiviz-rnd-planner:us-central1:recidiviz-pilot"
       - "--service-account"
       - "773019812766-compute@developer.gserviceaccount.com"
+      - "--ingress"
+      - "internal-and-cloud-load-balancing"
       - "--network"
       - "default"
       - "--subnet"
@@ -88,7 +90,7 @@ steps:
         RECIDIVIZ_SENTRY_DSN=https://68c6d6b1c76579ebee3b9b8d785eda5a@o432474.ingest.us.sentry.io/4509651398819840,
         RECIDIVIZ_DIARIZATION_SERVICE=deepgram,
         RECIDIVIZ_FRONTEND_URL=https://plan-pilot.recidiviz.org,
-        RECIDIVIZ_BASE_URL=https://backend-api-pilot-773019812766.us-central1.run.app,
+        RECIDIVIZ_BASE_URL=https://api.plan-pilot.recidiviz.org,
         RECIDIVIZ_DEEPGRAM_CALLBACK=True,
         RECIDIVIZ_IMPERSONATION_ENABLED=true,
         CHECKFINALCHARACTERHERE=todo:pending-to-fix
@@ -118,6 +120,8 @@ steps:
       - "773019812766-compute@developer.gserviceaccount.com"
       - "--no-cpu-throttling"
       - "--min-instances=1"
+      - "--ingress"
+      - "internal"
       - "--network"
       - "default"
       - "--subnet"
@@ -161,7 +165,7 @@ steps:
         RECIDIVIZ_GCS_SERVICE_ACCOUNT_EMAIL=773019812766-compute@developer.gserviceaccount.com,
         RECIDIVIZ_DIARIZATION_SERVICE=deepgram,
         RECIDIVIZ_FRONTEND_URL=https://plan-pilot.recidiviz.org,
-        RECIDIVIZ_BASE_URL=https://backend-api-pilot-773019812766.us-central1.run.app,
+        RECIDIVIZ_BASE_URL=https://api.plan-pilot.recidiviz.org,
         RECIDIVIZ_DEEPGRAM_CALLBACK=True,
         RECIDIVIZ_SENTRY_DSN=https://68c6d6b1c76579ebee3b9b8d785eda5a@o432474.ingest.us.sentry.io/4509651398819840
 

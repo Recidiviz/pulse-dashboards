@@ -41,6 +41,8 @@ steps:
       - "recidiviz-rnd-planner:us-central1:recidiviz-staging"
       - "--service-account"
       - "reentry-server-staging@recidiviz-rnd-planner.iam.gserviceaccount.com"
+      - "--ingress"
+      - "internal-and-cloud-load-balancing"
       - "--network"
       - "default"
       - "--subnet"
@@ -91,7 +93,7 @@ steps:
         RECIDIVIZ_SENTRY_DSN=https://68c6d6b1c76579ebee3b9b8d785eda5a@o432474.ingest.us.sentry.io/4509651398819840,
         RECIDIVIZ_DIARIZATION_SERVICE=deepgram,
         RECIDIVIZ_FRONTEND_URL=https://plan-staging.recidiviz.org,
-        RECIDIVIZ_BASE_URL=https://backend-api-staging-773019812766.us-central1.run.app,
+        RECIDIVIZ_BASE_URL=https://api.plan-staging.recidiviz.org,
         RECIDIVIZ_DEEPGRAM_CALLBACK=True,
         RECIDIVIZ_FIREBASE_ADMIN_PROJECT_ID=recidiviz-dashboard-staging,
         RECIDIVIZ_IMPERSONATION_ENABLED=true,
@@ -121,6 +123,8 @@ steps:
       - "--no-cpu-throttling"
       - "--service-account"
       - "reentry-server-staging@recidiviz-rnd-planner.iam.gserviceaccount.com"
+      - "--ingress"
+      - "internal"
       - "--network"
       - "default"
       - "--subnet"
@@ -164,7 +168,7 @@ steps:
         RECIDIVIZ_GCS_SERVICE_ACCOUNT_EMAIL=reentry-server-staging@recidiviz-rnd-planner.iam.gserviceaccount.com,
         RECIDIVIZ_DIARIZATION_SERVICE=deepgram,
         RECIDIVIZ_FRONTEND_URL=https://plan-staging.recidiviz.org,
-        RECIDIVIZ_BASE_URL=https://backend-api-staging-773019812766.us-central1.run.app,
+        RECIDIVIZ_BASE_URL=https://api.plan-staging.recidiviz.org,
         RECIDIVIZ_DEEPGRAM_CALLBACK=True,
         RECIDIVIZ_SENTRY_DSN=https://68c6d6b1c76579ebee3b9b8d785eda5a@o432474.ingest.us.sentry.io/4509651398819840
 
