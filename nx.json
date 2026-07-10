@@ -169,5 +169,6 @@
     "@nx/js": {
       "projectsAffectedByDependencyUpdates": "auto"
     }
-  }
+  },
+  "analytics": false
 }
