@@ -21,7 +21,9 @@ import { Button } from "~design-system";
 import { hydrationFailure, Hydrator } from "~hydration-utils";
 
 import { useTypesenseStore } from "../../../components/StoreProvider";
+import { TypesenseFetchError } from "../../../RootStore/TypesenseStore";
 import { SectionCardHeader } from "../../SectionCard";
+import { SchemaCard } from "./Schema/SchemaCard";
 import { StatusCard } from "./Status/StatusCard";
 import {
   CardBody,
@@ -36,6 +38,12 @@ import {
 } from "./styles";
 import { SummaryCard } from "./Summary/SummaryCard";
 
+function formatError(error: Error): string {
+  return error instanceof TypesenseFetchError
+    ? `${error.endpoint} failed (${error.status}): ${error.message}`
+    : error.message;
+}
+
 const TypesenseSectionError = observer(function TypesenseSectionError() {
   const store = useTypesenseStore();
   const error = hydrationFailure(store);
@@ -45,7 +53,7 @@ const TypesenseSectionError = observer(function TypesenseSectionError() {
       <SectionCardHeader>Error</SectionCardHeader>
       <CardBody>
         <ErrorTitle>Failed to load Typesense data</ErrorTitle>
-        {error && <ErrorMessage>{error.message}</ErrorMessage>}
+        {error && <ErrorMessage>{formatError(error)}</ErrorMessage>}
         <CenteredRow>
           <Button kind="secondary" shape="pill" onClick={() => store.refresh()}>
             Refresh
@@ -78,6 +86,7 @@ export const TypesenseSection = observer(function TypesenseSection() {
             </Button>
           </StatusCardColumn>
           <SummaryCard />
+          <SchemaCard />
         </CardsRow>
       </Hydrator>
     </TypesenseSectionContainer>

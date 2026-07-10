@@ -39,7 +39,7 @@ import {
   newRevocationsParamValidations,
 } from "./routes/paramsValidation";
 import {
-  typesenseCollectionSchema,
+  typesenseAllCollectionsSchemas,
   typesenseCollectionsSummary,
   typesenseHealth,
 } from "./typesense/typesenseManagement";
@@ -254,10 +254,7 @@ app.get(
   "/api/typesense/collections",
   asyncHandler(typesenseCollectionsSummary),
 );
-app.get(
-  "/api/typesense/collections/:collectionName",
-  asyncHandler(typesenseCollectionSchema),
-);
+app.get("/api/typesense/schemas", asyncHandler(typesenseAllCollectionsSchemas));
 
 app.get(`${stateApiBaseRoute}looker/config`, asyncHandler(getLookerConfig));
 app.get(

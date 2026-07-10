@@ -122,6 +122,7 @@ export const ErrorTitle = styled.span`
 
 export const TableWrap = styled.div`
   width: 100%;
+  min-width: ${rem(280)};
   border: 1px solid ${palette.slate20};
   border-radius: ${rem(4)};
   overflow: hidden;
@@ -181,4 +182,98 @@ export const CenteredRow = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
+`;
+
+// SchemaCard accordion styles
+
+export const CollectionBlock = styled.details`
+  border-bottom: 1px solid ${palette.slate20};
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  & > summary::before {
+    content: "▸";
+    margin-right: ${rem(spacing.xs)};
+    color: ${palette.slate60};
+  }
+
+  &[open] > summary::before {
+    content: "▾";
+  }
+
+  &[open] > summary {
+    border-bottom: 1px solid ${palette.slate20};
+  }
+`;
+
+export const CollectionSummaryRow = styled.summary`
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  padding: ${rem(5)} ${rem(spacing.sm)};
+  background: ${palette.slate10};
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  &:hover {
+    background: ${palette.slate20};
+  }
+`;
+
+export const CollectionName = styled.span`
+  ${typography.Sans12}
+  font-weight: 600;
+  color: ${palette.slate};
+`;
+
+export const CollectionFieldCount = styled.span`
+  ${typography.Sans12}
+  color: ${palette.slate60};
+  margin-left: auto;
+`;
+
+export const CollectionPanel = styled.div`
+  padding: ${rem(spacing.sm)} 0;
+`;
+
+export const FieldNameCell = styled.td`
+  ${typography.Sans12}
+  padding: ${rem(4)} ${rem(spacing.sm)};
+  border-bottom: 1px solid ${palette.slate10};
+`;
+
+export const FieldTypeCell = styled.td`
+  ${typography.Sans12}
+  color: ${palette.slate60};
+  padding: ${rem(4)} ${rem(spacing.sm)};
+  border-bottom: 1px solid ${palette.slate10};
+  white-space: nowrap;
+`;
+
+export const FieldAttrsCell = styled.td`
+  ${typography.Sans12}
+  color: ${palette.slate60};
+  padding: ${rem(4)} ${rem(spacing.sm)};
+  border-bottom: 1px solid ${palette.slate10};
+`;
+
+export const CollectionSettings = styled.div`
+  ${typography.Sans12}
+  color: ${palette.slate60};
+  font-style: italic;
+  padding: ${rem(spacing.xs)} ${rem(spacing.sm)};
+`;
+
+export const SchemaEmptyMessage = styled.div`
+  ${typography.Sans12}
+  text-align: center;
+  font-style: italic;
+  color: ${palette.slate60};
+  padding: ${rem(18)} ${rem(spacing.sm)};
 `;

@@ -17,7 +17,14 @@
 
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-import { CollectionSummary, TypesenseStore } from "../TypesenseStore";
+import { hydrationFailure } from "~hydration-utils";
+
+import {
+  CollectionSchema,
+  CollectionSummary,
+  TypesenseFetchError,
+  TypesenseStore,
+} from "../TypesenseStore";
 import UserStore from "../UserStore";
 
 const getToken = vi.fn().mockResolvedValue("test-token");
@@ -47,6 +54,110 @@ const MOCK_COLLECTIONS: CollectionSummary[] = [
 ];
 const COLLECTIONS_OK = JSON.stringify(MOCK_COLLECTIONS);
 
+const MOCK_SCHEMAS: Record<string, CollectionSchema> = {
+  clients: {
+    name: "clients",
+    fields: [
+      {
+        name: "stateCode",
+        type: "string",
+        facet: true,
+        optional: false,
+        sort: false,
+      },
+      {
+        name: "allEligibleOpportunities",
+        type: "string[]",
+        facet: true,
+        optional: false,
+        sort: false,
+      },
+      {
+        name: "pseudonymizedId",
+        type: "string",
+        facet: false,
+        optional: false,
+        sort: false,
+      },
+    ],
+    num_documents: 12_345,
+    default_sorting_field: "",
+    enable_nested_fields: false,
+    created_at: 1_000_000,
+  },
+  residents: {
+    name: "residents",
+    fields: [
+      {
+        name: "stateCode",
+        type: "string",
+        facet: true,
+        optional: false,
+        sort: false,
+      },
+      {
+        name: "allEligibleOpportunities",
+        type: "string[]",
+        facet: true,
+        optional: false,
+        sort: false,
+      },
+      {
+        name: "pseudonymizedId",
+        type: "string",
+        facet: false,
+        optional: false,
+        sort: false,
+      },
+    ],
+    num_documents: 5_678,
+    default_sorting_field: "",
+    enable_nested_fields: false,
+    created_at: 2_000_000,
+  },
+  supervisionStaff: {
+    name: "supervisionStaff",
+    fields: [
+      {
+        name: "stateCode",
+        type: "string",
+        facet: true,
+        optional: false,
+        sort: false,
+      },
+      {
+        name: "district",
+        type: "string",
+        facet: true,
+        optional: true,
+        sort: false,
+      },
+      {
+        name: "supervisorExternalId",
+        type: "string",
+        facet: true,
+        optional: true,
+        sort: false,
+      },
+    ],
+    num_documents: 342,
+    default_sorting_field: "",
+    enable_nested_fields: false,
+    created_at: 3_000_000,
+  },
+};
+
+/** Queues mock responses for a complete successful hydration. */
+function mockFullHydrate(): void {
+  fetchMock.mockResponseOnce(HEALTH_OK);
+  fetchMock.mockResponseOnce(COLLECTIONS_OK);
+  fetchMock.mockResponseOnce(JSON.stringify(MOCK_SCHEMAS));
+}
+
+// Number of fetch calls in a single successful hydration:
+//   health + collections + schemas (batch)
+const HYDRATE_CALL_COUNT = 3;
+
 describe("TypesenseStore", () => {
   let store: TypesenseStore;
 
@@ -66,12 +177,12 @@ describe("TypesenseStore", () => {
     expect(store.host).toBeUndefined();
     expect(store.checkedAt).toBeUndefined();
     expect(store.collectionsSummary).toBeUndefined();
+    expect(store.collectionsSchema).toBeUndefined();
   });
 
   describe("hydrate()", () => {
     test("transitions to loading while in flight", () => {
-      fetchMock.mockResponseOnce(HEALTH_OK);
-      fetchMock.mockResponseOnce(COLLECTIONS_OK);
+      mockFullHydrate();
 
       void store.hydrate();
 
@@ -79,8 +190,7 @@ describe("TypesenseStore", () => {
     });
 
     test("transitions to hydrated and populates all fields on success", async () => {
-      fetchMock.mockResponseOnce(HEALTH_OK);
-      fetchMock.mockResponseOnce(COLLECTIONS_OK);
+      mockFullHydrate();
 
       await store.hydrate();
 
@@ -88,11 +198,15 @@ describe("TypesenseStore", () => {
       expect(store.host).toBe("https://typesense.test");
       expect(store.checkedAt).toBeInstanceOf(Date);
       expect(store.collectionsSummary).toEqual(MOCK_COLLECTIONS);
+      expect(store.collectionsSchema).toBeDefined();
     });
 
     test("stores undefined host when the health response omits it", async () => {
       fetchMock.mockResponseOnce(JSON.stringify({ ok: true }));
       fetchMock.mockResponseOnce(COLLECTIONS_OK);
+      for (const { name } of MOCK_COLLECTIONS) {
+        fetchMock.mockResponseOnce(JSON.stringify(MOCK_SCHEMAS[name]));
+      }
 
       await store.hydrate();
 
@@ -101,33 +215,29 @@ describe("TypesenseStore", () => {
     });
 
     test("sends the Bearer token in the Authorization header", async () => {
-      fetchMock.mockResponseOnce(HEALTH_OK);
-      fetchMock.mockResponseOnce(COLLECTIONS_OK);
+      mockFullHydrate();
 
       await store.hydrate();
 
-      expect(fetchMock).toHaveBeenCalledWith(
+      for (const url of [
         "http://test-api/api/typesense/health",
-        expect.objectContaining({
-          headers: expect.objectContaining({
-            Authorization: "Bearer test-token",
-          }),
-        }),
-      );
-      expect(fetchMock).toHaveBeenCalledWith(
         "http://test-api/api/typesense/collections",
-        expect.objectContaining({
-          headers: expect.objectContaining({
-            Authorization: "Bearer test-token",
+        "http://test-api/api/typesense/schemas",
+      ]) {
+        expect(fetchMock).toHaveBeenCalledWith(
+          url,
+          expect.objectContaining({
+            headers: expect.objectContaining({
+              Authorization: "Bearer test-token",
+            }),
           }),
-        }),
-      );
+        );
+      }
     });
 
     test("falls back to an empty bearer token when getToken returns undefined", async () => {
       getToken.mockResolvedValue(undefined);
-      fetchMock.mockResponseOnce(HEALTH_OK);
-      fetchMock.mockResponseOnce(COLLECTIONS_OK);
+      mockFullHydrate();
 
       await store.hydrate();
 
@@ -151,7 +261,7 @@ describe("TypesenseStore", () => {
       expect(store.checkedAt).toBeInstanceOf(Date);
     });
 
-    test("transitions to failed and surfaces the server message on an unhealthy health response", async () => {
+    test("surfaces the server message on an unhealthy health response", async () => {
       fetchMock.mockResponseOnce(
         JSON.stringify({ errors: ["Typesense reported unhealthy"] }),
         { status: 503 },
@@ -160,15 +270,14 @@ describe("TypesenseStore", () => {
       await store.hydrate();
 
       expect(store.hydrationState.status).toBe("failed");
-      const { error } = store.hydrationState as {
-        status: "failed";
-        error: Error & { status: number };
-      };
-      expect(error.message).toBe("Typesense reported unhealthy");
-      expect(error.status).toBe(503);
+      const error = hydrationFailure(store);
+      expect(error).toBeInstanceOf(TypesenseFetchError);
+      expect(error?.message).toBe("Typesense reported unhealthy");
+      expect((error as TypesenseFetchError).status).toBe(503);
+      expect((error as TypesenseFetchError).endpoint).toBe("GET /health");
     });
 
-    test("transitions to failed on an unconfigured (500) health response", async () => {
+    test("surfaces the server message on an unconfigured (500) health response", async () => {
       fetchMock.mockResponseOnce(
         JSON.stringify({
           errors: ["TYPESENSE_HOST is not configured for this environment"],
@@ -179,10 +288,7 @@ describe("TypesenseStore", () => {
       await store.hydrate();
 
       expect(store.hydrationState.status).toBe("failed");
-      const { error } = store.hydrationState as {
-        status: "failed";
-        error: Error & { status: number };
-      };
+      const error = hydrationFailure(store) as TypesenseFetchError;
       expect(error.message).toBe(
         "TYPESENSE_HOST is not configured for this environment",
       );
@@ -201,7 +307,7 @@ describe("TypesenseStore", () => {
       expect(store.collectionsSummary).toBeUndefined();
     });
 
-    test("transitions to failed and surfaces the server message when collections fetch fails", async () => {
+    test("surfaces the server message when collections fetch fails", async () => {
       fetchMock.mockResponseOnce(HEALTH_OK);
       fetchMock.mockResponseOnce(
         JSON.stringify({ errors: ["collections unavailable"] }),
@@ -211,72 +317,64 @@ describe("TypesenseStore", () => {
       await store.hydrate();
 
       expect(store.hydrationState.status).toBe("failed");
-      const { error } = store.hydrationState as {
-        status: "failed";
-        error: Error;
-      };
-      expect(error.message).toBe("collections unavailable");
+      const error = hydrationFailure(store);
+      expect(error?.message).toBe("collections unavailable");
+      expect((error as TypesenseFetchError).endpoint).toBe("GET /collections");
       expect(store.collectionsSummary).toBeUndefined();
     });
 
     test("does not start a second hydration when one is already in flight", async () => {
-      fetchMock.mockResponseOnce(HEALTH_OK);
-      fetchMock.mockResponseOnce(COLLECTIONS_OK);
+      mockFullHydrate();
 
       const first = store.hydrate();
       const second = store.hydrate();
       await Promise.all([first, second]);
 
-      expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(fetchMock).toHaveBeenCalledTimes(HYDRATE_CALL_COUNT);
     });
 
     test("is a no-op when already hydrated", async () => {
-      fetchMock.mockResponseOnce(HEALTH_OK);
-      fetchMock.mockResponseOnce(COLLECTIONS_OK);
+      mockFullHydrate();
 
       await store.hydrate();
       await store.hydrate();
 
-      expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(fetchMock).toHaveBeenCalledTimes(HYDRATE_CALL_COUNT);
     });
   });
 
   describe("refresh()", () => {
     test("resets all data and hydration state synchronously", async () => {
-      fetchMock.mockResponseOnce(HEALTH_OK);
-      fetchMock.mockResponseOnce(COLLECTIONS_OK);
+      mockFullHydrate();
       await store.hydrate();
 
-      fetchMock.mockResponseOnce(HEALTH_OK);
-      fetchMock.mockResponseOnce(COLLECTIONS_OK);
+      mockFullHydrate();
       store.refresh();
 
       expect(store.host).toBeUndefined();
       expect(store.checkedAt).toBeUndefined();
       expect(store.collectionsSummary).toBeUndefined();
+      expect(store.collectionsSchema).toBeUndefined();
       expect(store.hydrationState.status).toBe("loading");
     });
 
     test("triggers a new hydration after resetting", async () => {
-      fetchMock.mockResponseOnce(HEALTH_OK);
-      fetchMock.mockResponseOnce(COLLECTIONS_OK);
+      mockFullHydrate();
       await store.hydrate();
 
-      fetchMock.mockResponseOnce(HEALTH_OK);
-      fetchMock.mockResponseOnce(COLLECTIONS_OK);
+      mockFullHydrate();
       store.refresh();
 
       await vi.waitFor(() =>
         expect(store.hydrationState.status).toBe("hydrated"),
       );
-      expect(fetchMock).toHaveBeenCalledTimes(4);
+      expect(fetchMock).toHaveBeenCalledTimes(HYDRATE_CALL_COUNT * 2);
     });
   });
 
   describe("collections summary", () => {
     test("populates collectionsSummary with all entries from the response", async () => {
-      fetchMock.mockResponseOnce(HEALTH_OK);
-      fetchMock.mockResponseOnce(COLLECTIONS_OK);
+      mockFullHydrate();
 
       await store.hydrate();
 
@@ -285,8 +383,7 @@ describe("TypesenseStore", () => {
     });
 
     test("fetches from /api/typesense/collections", async () => {
-      fetchMock.mockResponseOnce(HEALTH_OK);
-      fetchMock.mockResponseOnce(COLLECTIONS_OK);
+      mockFullHydrate();
 
       await store.hydrate();
 
@@ -304,6 +401,83 @@ describe("TypesenseStore", () => {
       await store.hydrate();
 
       expect(store.collectionsSummary).toBeUndefined();
+    });
+  });
+
+  describe("collections schema", () => {
+    test("populates collectionsSchema with an entry for each collection", async () => {
+      mockFullHydrate();
+
+      await store.hydrate();
+
+      expect(store.collectionsSchema).toEqual(MOCK_SCHEMAS);
+    });
+
+    test("fetches all schemas from /api/typesense/schemas in a single request", async () => {
+      mockFullHydrate();
+
+      await store.hydrate();
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        "http://test-api/api/typesense/schemas",
+        expect.any(Object),
+      );
+      expect(fetchMock).toHaveBeenCalledTimes(HYDRATE_CALL_COUNT);
+    });
+
+    test("sends the Bearer token for the schemas request", async () => {
+      mockFullHydrate();
+
+      await store.hydrate();
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        "http://test-api/api/typesense/schemas",
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Authorization: "Bearer test-token",
+          }),
+        }),
+      );
+    });
+
+    test("surfaces the server message when the schemas request returns an error", async () => {
+      fetchMock.mockResponseOnce(HEALTH_OK);
+      fetchMock.mockResponseOnce(COLLECTIONS_OK);
+      fetchMock.mockResponseOnce(
+        JSON.stringify({ errors: ["schemas unavailable"] }),
+        { status: 503 },
+      );
+
+      await store.hydrate();
+
+      expect(store.hydrationState.status).toBe("failed");
+      const error = hydrationFailure(store) as TypesenseFetchError;
+      expect(error.message).toBe("schemas unavailable");
+      expect(error.status).toBe(503);
+      expect(error.endpoint).toBe("GET /schemas");
+      expect(store.collectionsSchema).toBeUndefined();
+    });
+
+    test("remains undefined when collections summary fails", async () => {
+      fetchMock.mockResponseOnce(HEALTH_OK);
+      fetchMock.mockResponseOnce(
+        JSON.stringify({ errors: ["collections unavailable"] }),
+        { status: 503 },
+      );
+
+      await store.hydrate();
+
+      expect(store.collectionsSchema).toBeUndefined();
+    });
+
+    test("remains undefined when health fails", async () => {
+      fetchMock.mockResponseOnce(JSON.stringify({ errors: ["unhealthy"] }), {
+        status: 503,
+      });
+
+      await store.hydrate();
+
+      expect(store.collectionsSchema).toBeUndefined();
     });
   });
 });

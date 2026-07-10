@@ -21,14 +21,13 @@
  * deployment is wired to (staging or production), mirroring the CLI in
  * libs/@typesense/client/src/inspect.ts.
  *
- * Access is restricted to Recidiviz internal users (or offline mode).
+ * Access is restricted to Recidiviz internal users
  */
 import { responder, respondWithForbidden } from "../routes/api";
 import { getAppMetadata } from "../utils/getAppMetadata";
 import { isOfflineMode } from "../utils/isOfflineMode";
-import notFoundSchemaFixture from "./__fixtures__/not-found-schema.json";
 import unauthorizedCollectionsFixture from "./__fixtures__/unauthorized-collections.json";
-import unauthorizedSchemaFixture from "./__fixtures__/unauthorized-schema.json";
+import unauthorizedSchemasFixture from "./__fixtures__/unauthorized-schemas.json";
 import unconfiguredHealthFixture from "./__fixtures__/unconfigured-health.json";
 import unreachableHealthFixture from "./__fixtures__/unreachable-health.json";
 import { createTypesenseInspectClient } from "./client";
@@ -56,38 +55,33 @@ export async function typesenseHealth(req, res) {
   const host = process.env.TYPESENSE_HOST ?? null;
 
   // For testing: set TYPESENSE_SIMULATE to force a response without hitting
-  // the cluster. Failure-mode values are backed by fixtures captured from a
-  // real local Typesense instance (see captureTypesenseSimulateFixtures.ts)
-  // rather than hand-typed guesses.
-  //   no-collections — health OK; collections returns an empty list
-  //   unauthorized   — health OK (Typesense's own /health doesn't require
-  //                    auth); collections/schema return a 401 error
-  //   not-found      — health OK; schema returns a 404 error
-  //   unconfigured   — health 500 (collections/schema never called)
-  //   unreachable    — health 503 (collections/schema never called)
+  // the cluster. Each value is scoped to the endpoint it names — setting one
+  // only affects that endpoint's handler, so failure modes can be tested in
+  // isolation; every other handler falls through to its real Typesense call.
+  // Failure-mode values are backed by fixtures captured from a real local
+  // Typesense instance (see captureTypesenseSimulateFixtures.ts)
+  //   health-unconfigured — health 500 (TYPESENSE_HOST unset)
+  //   health-unreachable  — health 503 (cluster unreachable)
+  //   health-unhealthy    — health 503 (cluster reports unhealthy)
   const simulate = process.env.TYPESENSE_SIMULATE;
-  if (simulate) {
-    if (
-      simulate === "no-collections" ||
-      simulate === "unauthorized" ||
-      simulate === "not-found"
-    ) {
-      responder(res)(null, { ok: true, host });
-    } else if (simulate === "unconfigured") {
-      res
-        .status(unconfiguredHealthFixture.status)
-        .send(unconfiguredHealthFixture.body);
-    } else if (simulate === "unreachable") {
-      res
-        .status(unreachableHealthFixture.status)
-        .send({ ...unreachableHealthFixture.body, host });
-    } else {
-      res.status(503).send({
-        status: 503,
-        errors: ["Typesense reported unhealthy"],
-        host,
-      });
-    }
+  if (simulate === "health-unconfigured") {
+    res
+      .status(unconfiguredHealthFixture.status)
+      .send(unconfiguredHealthFixture.body);
+    return;
+  }
+  if (simulate === "health-unreachable") {
+    res
+      .status(unreachableHealthFixture.status)
+      .send({ ...unreachableHealthFixture.body, host });
+    return;
+  }
+  if (simulate === "health-unhealthy") {
+    res.status(503).send({
+      status: 503,
+      errors: ["Typesense reported unhealthy"],
+      host,
+    });
     return;
   }
 
@@ -124,6 +118,9 @@ export async function typesenseHealth(req, res) {
  *
  * Returns a summary of every collection in the cluster: name, document count,
  * field count, and creation time. Backs the management section's overview list.
+ *
+ * For testing: TYPESENSE_SIMULATE=collections-empty returns an empty list;
+ * TYPESENSE_SIMULATE=collections-unauthorized returns a 401 error.
  */
 export async function typesenseCollectionsSummary(req, res) {
   if (!isAllowed(req)) {
@@ -131,12 +128,12 @@ export async function typesenseCollectionsSummary(req, res) {
     return;
   }
 
-  if (process.env.TYPESENSE_SIMULATE === "no-collections") {
+  if (process.env.TYPESENSE_SIMULATE === "collections-empty") {
     responder(res)(null, []);
     return;
   }
 
-  if (process.env.TYPESENSE_SIMULATE === "unauthorized") {
+  if (process.env.TYPESENSE_SIMULATE === "collections-unauthorized") {
     res
       .status(unauthorizedCollectionsFixture.status)
       .send(unauthorizedCollectionsFixture.body);
@@ -160,48 +157,38 @@ export async function typesenseCollectionsSummary(req, res) {
 }
 
 /**
- * GET /api/typesense/collections/:collectionName
+ * GET /api/typesense/schemas
  *
- * Returns the full schema (fields, document count, default sorting field, etc.)
- * for a single collection. Backs the management section's schema detail view.
+ * Returns all collection schemas (fields, document count, etc.) keyed by
+ * collection name, in a single request.
+ *
+ * For testing: TYPESENSE_SIMULATE=schemas-empty returns an empty object;
+ * TYPESENSE_SIMULATE=schemas-unauthorized returns a 401 error.
  */
-export async function typesenseCollectionSchema(req, res) {
+export async function typesenseAllCollectionsSchemas(req, res) {
   if (!isAllowed(req)) {
     respondWithForbidden(res);
     return;
   }
 
-  const { collectionName } = req.params;
-
-  if (process.env.TYPESENSE_SIMULATE === "unauthorized") {
-    res
-      .status(unauthorizedSchemaFixture.status)
-      .send(unauthorizedSchemaFixture.body);
+  if (process.env.TYPESENSE_SIMULATE === "schemas-empty") {
+    responder(res)(null, {});
     return;
   }
 
-  if (process.env.TYPESENSE_SIMULATE === "not-found") {
-    res.status(notFoundSchemaFixture.status).send(notFoundSchemaFixture.body);
+  if (process.env.TYPESENSE_SIMULATE === "schemas-unauthorized") {
+    res
+      .status(unauthorizedSchemasFixture.status)
+      .send(unauthorizedSchemasFixture.body);
     return;
   }
 
   try {
     const client = createTypesenseInspectClient();
-    const schema = await client.collections(collectionName).retrieve();
-    responder(res)(null, schema);
+    const collections = await client.collections().retrieve();
+    const schemas = Object.fromEntries(collections.map((c) => [c.name, c]));
+    responder(res)(null, schemas);
   } catch (error) {
-    // Typesense returns a 404 (ObjectNotFound) for unknown collections; surface
-    // it as-is rather than a generic 500.
-    if (error?.httpStatus === 404) {
-      responder(res)(
-        {
-          status: 404,
-          errors: [`Typesense collection not found: ${collectionName}`],
-        },
-        null,
-      );
-      return;
-    }
     responder(res)(error);
   }
 }

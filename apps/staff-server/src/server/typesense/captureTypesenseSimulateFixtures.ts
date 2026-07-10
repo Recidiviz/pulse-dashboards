@@ -50,13 +50,12 @@ import path from "path";
 process.env["IS_OFFLINE"] = "true";
 
 const REAL_TYPESENSE_HOST = "http://localhost:8108";
-const REAL_API_KEY = "xyz"; // matches libs/@typesense/tools/docker-compose.yaml
 const UNREACHABLE_HOST = "http://localhost:19999"; // nothing listens here
 
 const FIXTURES_DIR = path.join(__dirname, "__fixtures__");
 
-function buildReq(params?: { collectionName: string }) {
-  const req: Record<string, unknown> = { params };
+function buildReq() {
+  const req: Record<string, unknown> = {};
   const metadataKey = `${process.env["METADATA_NAMESPACE"] ?? ""}app_metadata`;
   req["user"] = { [metadataKey]: { state_code: "recidiviz" } };
   return req;
@@ -118,12 +117,12 @@ async function main() {
   mkdirSync(FIXTURES_DIR, { recursive: true });
 
   const {
-    typesenseCollectionSchema,
+    typesenseAllCollectionsSchemas,
     typesenseCollectionsSummary,
     typesenseHealth,
   } = await import("./typesenseManagement");
 
-  // unconfigured: createTypesenseInspectClient throws before any HTTP call
+  // health-unconfigured: createTypesenseInspectClient throws before any HTTP call
   delete process.env["TYPESENSE_HOST"];
   delete process.env["TYPESENSE_API_INSPECT_KEY"];
   writeFixture(
@@ -131,7 +130,7 @@ async function main() {
     await capture(typesenseHealth, buildReq()),
   );
 
-  // unauthorized: real host, wrong key
+  // collections-unauthorized / schemas-unauthorized: real host, wrong key
   process.env["TYPESENSE_HOST"] = REAL_TYPESENSE_HOST;
   process.env["TYPESENSE_API_INSPECT_KEY"] = "wrong-key";
   writeFixture(
@@ -139,29 +138,16 @@ async function main() {
     await capture(typesenseCollectionsSummary, buildReq()),
   );
   writeFixture(
-    "unauthorized-schema.json",
-    await capture(
-      typesenseCollectionSchema,
-      buildReq({ collectionName: "clients" }),
-    ),
+    "unauthorized-schemas.json",
+    await capture(typesenseAllCollectionsSchemas, buildReq()),
   );
 
-  // not-found: real host/key, nonexistent collection
-  process.env["TYPESENSE_API_INSPECT_KEY"] = REAL_API_KEY;
-  writeFixture(
-    "not-found-schema.json",
-    await capture(
-      typesenseCollectionSchema,
-      buildReq({ collectionName: "does-not-exist" }),
-    ),
-  );
-
-  // unreachable: closed port. Only fixturing typesenseHealth here --
-  // typesenseCollectionsSummary/typesenseCollectionSchema hit responder()'s
-  // known ECONNREFUSED-status bug (res.status("ECONNREFUSED") throws) on this
-  // path, which a directly-invoked handler + mock res can't faithfully
-  // capture (the mock doesn't replicate Express's real status validation),
-  // and that bug is intentionally left unfixed for now.
+  // health-unreachable: closed port. Only fixturing typesenseHealth here --
+  // typesenseCollectionsSummary hits responder()'s known ECONNREFUSED-status
+  // bug (res.status("ECONNREFUSED") throws) on this path, which a
+  // directly-invoked handler + mock res can't faithfully capture (the mock
+  // doesn't replicate Express's real status validation), and that bug is
+  // intentionally left unfixed for now.
   process.env["TYPESENSE_HOST"] = UNREACHABLE_HOST;
   writeFixture(
     "unreachable-health.json",

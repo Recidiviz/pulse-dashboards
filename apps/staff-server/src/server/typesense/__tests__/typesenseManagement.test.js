@@ -18,7 +18,7 @@
 import { isOfflineMode } from "../../utils/isOfflineMode";
 import { createTypesenseInspectClient } from "../client";
 import {
-  typesenseCollectionSchema,
+  typesenseAllCollectionsSchemas,
   typesenseCollectionsSummary,
   typesenseHealth,
 } from "../typesenseManagement";
@@ -190,60 +190,60 @@ describe("typesenseCollectionsSummary", () => {
   });
 });
 
-describe("typesenseCollectionSchema", () => {
-  test("returns the full schema for the requested collection", async () => {
-    const schema = {
-      name: "clients",
-      num_documents: 42,
-      fields: [{ name: "stateCode", type: "string" }],
-      default_sorting_field: "",
-    };
-    const collections = vi.fn().mockReturnValue({
-      retrieve: vi.fn().mockResolvedValue(schema),
+describe("typesenseAllCollectionsSchemas", () => {
+  test("returns all collection schemas keyed by name", async () => {
+    const collections = [
+      {
+        name: "clients",
+        num_documents: 42,
+        fields: [{ name: "stateCode", type: "string" }],
+        default_sorting_field: "",
+      },
+      {
+        name: "residents",
+        num_documents: 10,
+        fields: [{ name: "stateCode", type: "string" }],
+        default_sorting_field: "",
+      },
+    ];
+    createTypesenseInspectClient.mockReturnValue({
+      collections: () => ({ retrieve: vi.fn().mockResolvedValue(collections) }),
     });
-    createTypesenseInspectClient.mockReturnValue({ collections });
 
     const { res, send } = buildRes();
-    await typesenseCollectionSchema(
-      { ...recidivizReq, params: { collectionName: "clients" } },
-      res,
-    );
+    await typesenseAllCollectionsSchemas(recidivizReq, res);
 
-    expect(collections).toHaveBeenCalledWith("clients");
-    expect(send).toHaveBeenCalledWith(schema);
-  });
-
-  test("responds 404 when the collection does not exist", async () => {
-    const error = new Error("Not Found");
-    error.httpStatus = 404;
-    createTypesenseInspectClient.mockReturnValue({
-      collections: () => ({ retrieve: vi.fn().mockRejectedValue(error) }),
-    });
-
-    const { res, send, status } = buildRes();
-    await typesenseCollectionSchema(
-      { ...recidivizReq, params: { collectionName: "nope" } },
-      res,
-    );
-
-    expect(status).toHaveBeenCalledWith(404);
     expect(send).toHaveBeenCalledWith({
-      status: 404,
-      errors: ["Typesense collection not found: nope"],
+      clients: collections[0],
+      residents: collections[1],
     });
   });
 
-  test("responds 403 for non-recidiviz users", async () => {
+  test("responds 403 for non-recidiviz users without hitting Typesense", async () => {
     const { res, status } = buildRes();
-    await typesenseCollectionSchema(
-      {
-        user: { undefinedapp_metadata: { state_code: "us_xx" } },
-        params: { collectionName: "clients" },
-      },
+    await typesenseAllCollectionsSchemas(
+      { user: { undefinedapp_metadata: { state_code: "us_xx" } } },
       res,
     );
 
     expect(createTypesenseInspectClient).not.toHaveBeenCalled();
     expect(status).toHaveBeenCalledWith(403);
+  });
+
+  test("surfaces Typesense errors via the responder", async () => {
+    createTypesenseInspectClient.mockReturnValue({
+      collections: () => ({
+        retrieve: vi.fn().mockRejectedValue(new Error("connection failed")),
+      }),
+    });
+
+    const { res, send, status } = buildRes();
+    await typesenseAllCollectionsSchemas(recidivizReq, res);
+
+    expect(status).toHaveBeenCalledWith(500);
+    expect(send).toHaveBeenCalledWith({
+      status: 500,
+      errors: ["connection failed"],
+    });
   });
 });

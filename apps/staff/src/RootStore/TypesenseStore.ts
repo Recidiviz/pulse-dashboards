@@ -33,9 +33,40 @@ export type CollectionSummary = {
   createdAt?: number;
 };
 
+export type CollectionField = {
+  name: string;
+  type: string;
+  facet?: boolean;
+  optional?: boolean;
+  index?: boolean;
+  sort?: boolean;
+  infix?: boolean;
+};
+
+export type CollectionSchema = {
+  name: string;
+  fields: CollectionField[];
+  num_documents: number;
+  default_sorting_field?: string;
+  enable_nested_fields?: boolean;
+  created_at?: number;
+};
+
+/** Thrown when a Typesense API request fails. */
+export class TypesenseFetchError extends Error {
+  constructor(
+    message: string,
+    public readonly endpoint: string,
+    public readonly status: number,
+  ) {
+    super(message);
+  }
+}
+
 export class TypesenseStore implements Hydratable {
   host?: string;
   collectionsSummary?: CollectionSummary[];
+  collectionsSchema?: Record<string, CollectionSchema>;
   checkedAt?: Date;
 
   private hydrator: HydratesFromSource;
@@ -51,10 +82,15 @@ export class TypesenseStore implements Hydratable {
           if (this.collectionsSummary === undefined)
             throw new Error("collections summary not populated");
         },
+        () => {
+          if (this.collectionsSchema === undefined)
+            throw new Error("collections schema not populated");
+        },
       ],
       populate: async () => {
         await this.fetchHealth();
         await this.fetchCollectionsSummary();
+        await this.fetchCollectionsSchema();
       },
     });
 
@@ -72,6 +108,7 @@ export class TypesenseStore implements Hydratable {
   refresh(): void {
     this.host = undefined;
     this.collectionsSummary = undefined;
+    this.collectionsSchema = undefined;
     this.checkedAt = undefined;
     this.hydrator.setHydrationStateOverride({ status: "needs hydration" });
     void this.hydrate();
@@ -89,7 +126,7 @@ export class TypesenseStore implements Hydratable {
   }
 
   /**
-   * See libs/staff-shared-server/src/server/typesense/typesenseManagement.js
+   * See apps/staff-server/src/server/typesense/typesenseManagement.js
    * GET /api/typesense/health
    */
   private async fetchHealth(): Promise<void> {
@@ -104,14 +141,16 @@ export class TypesenseStore implements Hydratable {
       }
     });
     if (!res.ok) {
-      throw Object.assign(new Error(body.errors?.[0] ?? `HTTP ${res.status}`), {
-        status: res.status,
-      });
+      throw new TypesenseFetchError(
+        body.errors?.[0] ?? `HTTP ${res.status}`,
+        "GET /health",
+        res.status,
+      );
     }
   }
 
   /**
-   * See libs/staff-shared-server/src/server/typesense/typesenseManagement.js
+   * See apps/staff-server/src/server/typesense/typesenseManagement.js
    * GET /api/typesense/collections
    */
   private async fetchCollectionsSummary(): Promise<void> {
@@ -120,12 +159,35 @@ export class TypesenseStore implements Hydratable {
     });
     const body = await res.json();
     if (!res.ok) {
-      throw Object.assign(new Error(body.errors?.[0] ?? `HTTP ${res.status}`), {
-        status: res.status,
-      });
+      throw new TypesenseFetchError(
+        body.errors?.[0] ?? `HTTP ${res.status}`,
+        "GET /collections",
+        res.status,
+      );
     }
     runInAction(() => {
       this.collectionsSummary = body as CollectionSummary[];
+    });
+  }
+
+  /**
+   * See apps/staff-server/src/server/typesense/typesenseManagement.js
+   * GET /api/typesense/schemas
+   */
+  private async fetchCollectionsSchema(): Promise<void> {
+    const res = await fetch(`${this.baseUrl}/schemas`, {
+      headers: await this.authHeaders(),
+    });
+    const body = await res.json();
+    if (!res.ok) {
+      throw new TypesenseFetchError(
+        body.errors?.[0] ?? `HTTP ${res.status}`,
+        "GET /schemas",
+        res.status,
+      );
+    }
+    runInAction(() => {
+      this.collectionsSchema = body as Record<string, CollectionSchema>;
     });
   }
 }
