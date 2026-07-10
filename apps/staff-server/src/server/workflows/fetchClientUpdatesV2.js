@@ -19,14 +19,25 @@ import { getFirestore } from "firebase-admin/firestore";
 
 /**
  * Given a lowercase stateCode (for example, "us_tx"), makes 2 queries to the clientOpportunityUpdates firestore collection group.
- * The first query grabs all documents where denial is not null. The first query grabs all documents where submitted is not null.
- * We then iterate through these documents, and filter for only those that inclue the stateCode in the document's path.
- * We then construct the results object, which maps a client's external id to a nested object. The nested object maps an opportunity name
- * to another nested object, which contains the denial and submitted values.
- * For example, the returned results would look like:
- * {"fakeExternalId": {"fakeOpportunityOne": {"denial": "true", "submitted": "false"}}, {"fakeOpportunityTwo": {"denial": "false", "submitted": "false"}}}
+ * The first query grabs all documents where denial is not null. The second query grabs all documents where submitted is not null.
+ * Iterates through both snapshots and constructs a results object that maps a client's external id to a nested object.
+ * The nested object maps an opportunity name to another nested object containing the surfaced denial and submission details.
+ *
+ * Per (externalId, opportunity), the returned shape is:
+ *   {
+ *     denial: boolean,                    // true iff the doc had a non-null denial field
+ *     submitted: boolean,                 // true iff the doc had a non-null submitted field
+ *     denialReasons: string[] | null,     // from denial.reasons
+ *     denialOtherReason: string | null,   // from denial.otherReason
+ *     denialDate: Date | null,            // from denial.updated.date
+ *     submittedDate: Date | null,         // from submitted.date
+ *   }
+ *
+ * The same opportunity may appear in both snapshots (e.g. a client was submitted and then denied);
+ * we spread results into the same entry so denial and submission details coexist.
+ *
  * @param {string} stateCode
- * @returns {object} A map of client externalIds to a map of opportunity names to a map of 'denial' and 'submitted' values
+ * @returns {object} A map of client externalIds to a map of opportunity names to denial/submission details
  */
 export async function fetchClientUpdatesV2(stateCode) {
   const db = getFirestore();
@@ -54,11 +65,26 @@ export async function fetchClientUpdatesV2(stateCode) {
         denial: Boolean(denial),
         submitted: Boolean(submitted),
       };
+      if (denial) {
+        opportunityStatuses.denialReasons = denial.reasons ?? null;
+        opportunityStatuses.denialOtherReason = denial.otherReason ?? null;
+        opportunityStatuses.denialDate = denial.updated?.date
+          ? denial.updated.date.toDate()
+          : null;
+      }
+      if (submitted) {
+        opportunityStatuses.submittedDate = submitted.date
+          ? submitted.date.toDate()
+          : null;
+      }
 
       if (!results[externalId]) {
         results[externalId] = {};
       }
-      results[externalId][oppString] = opportunityStatuses;
+      results[externalId][oppString] = {
+        ...results[externalId][oppString],
+        ...opportunityStatuses,
+      };
     });
   });
 

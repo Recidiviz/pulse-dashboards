@@ -153,7 +153,13 @@ export async function userDataDownload(req, res) {
       clientUpdatesV2,
     );
 
-    headers.push("denial", "submitted");
+    headers.push(
+      "denial",
+      "denial_reason",
+      "submitted",
+      "denial_date",
+      "submitted_date",
+    );
     // Remove state_code column
     headers = headers.filter((header) => header != "state_code");
 

@@ -170,8 +170,11 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
     const getTokenSilently = this.userStore.getTokenSilently;
 
     this.isDownloadingUserData = true;
-    await downloadTexasUserData(stateCode, getTokenSilently);
-    this.isDownloadingUserData = false;
+    try {
+      await downloadTexasUserData(stateCode, getTokenSilently);
+    } finally {
+      this.isDownloadingUserData = false;
+    }
   };
 
   trackViewed(): void {

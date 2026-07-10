@@ -115,6 +115,7 @@ nx generate ~repo:lib [my-library]
   - `auth-utils/` - Universal auth configs and state-code constants shared by the staff frontend and `staff-server` (`~auth-utils`)
   - `datatypes/` - Shared TypeScript types
   - `design-system/` - UI component library
+  - `utils/` - Shared helpers (`formatDate`, `pluralize`, `formatName`, etc.); import via `~utils`. Prefer these over local re-implementations.
   - `atmos/` - Terraform infrastructure components
 
 ### Path Aliases

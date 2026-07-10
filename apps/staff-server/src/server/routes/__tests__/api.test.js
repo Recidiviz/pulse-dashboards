@@ -428,7 +428,16 @@ describe("API GET tests", () => {
       vi.mocked(downloadUserData).mockResolvedValue(fakeBuffer);
 
       const fakeCientUpdatesV2 = {
-        fakeExternalId: { fakeOpp: { denial: false, submitted: false } },
+        fakeExternalId: {
+          fakeOpp: {
+            denial: true,
+            submitted: false,
+            denialReasons: ["FEES"],
+            denialOtherReason: null,
+            denialDate: new Date("2026-04-01T00:00:00Z"),
+            submittedDate: null,
+          },
+        },
       };
       vi.mocked(fetchClientUpdatesV2).mockResolvedValue(fakeCientUpdatesV2);
 
@@ -442,8 +451,11 @@ describe("API GET tests", () => {
           officer_name: "fakeOfficer",
           officer_id: "fakeOfficerId",
           unit_supervisor_name: "fakeSupervisor",
-          denial: "false",
+          denial: "true",
+          denial_reason: "FEES",
           submitted: "false",
+          denial_date: "04/01/2026",
+          submitted_date: "",
         },
       ];
       vi.mocked(mergeUserDataWithClientUpdates).mockReturnValue(
