@@ -30,7 +30,7 @@ components:
         artifact_registry_repo: !store jii-staging artifact_registry url
         env_vars:
           OPPORTUNITIES_APP_URL: "https://recidiviz-jii-staging.web.app"
-          CASE_PLANNING_BACKEND_URL: "https://backend-api-staging-773019812766.us-central1.run.app"
+          CASE_PLANNING_BACKEND_URL: "https://api.plan-staging.recidiviz.org"
           CASE_PLANNING_DEV_BACKEND_URL: "https://api.plan-dev.recidiviz.org"
         managed_certificate_domains: [staging.opportunities.app]
         # Refuse TLS < 1.2 handshakes at the frontend (GovRAMP AC-17(2))

@@ -102,7 +102,7 @@ steps:
         RECIDIVIZ_FRONTEND_URL=https://plan-dev.recidiviz.org,
         RECIDIVIZ_BASE_URL=https://api.plan-dev.recidiviz.org,
         RECIDIVIZ_DEEPGRAM_CALLBACK=True,
-        RECIDIVIZ_FIREBASE_ADMIN_PROJECT_ID=recidiviz-dashboard-staging,
+        RECIDIVIZ_FIREBASE_ADMIN_PROJECT_ID=recidiviz-dashboard-production,
         RECIDIVIZ_IMPERSONATION_ENABLED=true,
         CHECKFINALCHARACTERHERE=todo:pending-to-fix
 
