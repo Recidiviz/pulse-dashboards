@@ -14,7 +14,7 @@
     "**/*.spec.js",
     "**/*.test.jsx",
     "**/*.spec.jsx",
-    "src/test-setup.ts",
+    "test-setup.ts",
     "jest.config.ts",
     "src/**/*.spec.ts",
     "src/**/*.test.ts",

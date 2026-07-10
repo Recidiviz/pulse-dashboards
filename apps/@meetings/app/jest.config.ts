@@ -28,7 +28,7 @@ module.exports = {
     "<rootDir>/src/**/*.spec.ts",
     "<rootDir>/src/**/*.spec.tsx",
   ],
-  setupFilesAfterEnv: ["<rootDir>/src/tests/setup/test-setup.ts"],
+  setupFilesAfterEnv: ["<rootDir>/test-setup.ts"],
   moduleNameMapper: {
     "\\.svg$": "@nx/expo/plugins/jest/svg-mock",
     // Fixes https://stackoverflow.com/questions/57749271/fbbatchedbridgeconfig-is-not-set-when-running-jest-tests
@@ -36,8 +36,8 @@ module.exports = {
     "^~@meetings/app/(.*)$": "<rootDir>/src/$1",
     "@react-native-community/netinfo":
       "@react-native-community/netinfo/jest/netinfo-mock.js",
-    "^@paralleldrive/cuid2$": "<rootDir>/src/__mocks__/@paralleldrive/cuid2.js",
-    "^react-native-auth0$": "<rootDir>/src/__mocks__/react-native-auth0.js",
+    "^@paralleldrive/cuid2$": "<rootDir>/__mocks__/@paralleldrive/cuid2.js",
+    "^react-native-auth0$": "<rootDir>/__mocks__/react-native-auth0.js",
   },
   transformIgnorePatterns: [
     "node_modules/(?!(jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/|@expo-google-fonts/|react-navigation|@react-navigation/|@unimodules/|unimodules|sentry-expo|native-base|react-native-svg|@rneui/|@paralleldrive/cuid2|@sentry/react-native|@sentry/core)",

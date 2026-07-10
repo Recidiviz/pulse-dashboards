@@ -8,23 +8,9 @@
     "types": ["jest", "node"],
     "noEmit": false
   },
-  "files": [
-    "src/tests/setup/test-setup.ts",
-    "images.d.ts"
-  ],
+  "files": ["test-setup.ts", "images.d.ts"],
   "include": [
     "jest.config.ts",
-    "src/tests/**/*.test.ts",
-    "src/tests/**/*.spec.ts",
-    "src/tests/**/*.test.tsx",
-    "src/tests/**/*.spec.tsx",
-    "src/tests/**/*.test.js",
-    "src/tests/**/*.spec.js",
-    "src/tests/**/*.test.jsx",
-    "src/tests/**/*.spec.jsx",
-    "src/tests/**/*.d.ts",
-    "src/tests/**/*.ts",
-    "src/tests/**/*.tsx",
     "src/**/*.ts",
     "src/**/*.tsx",
     "jest.resolver.js",

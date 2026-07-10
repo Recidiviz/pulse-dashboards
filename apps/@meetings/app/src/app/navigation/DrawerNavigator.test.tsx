@@ -18,14 +18,15 @@
 import { render, screen } from "@testing-library/react-native";
 import React from "react";
 
-import DrawerNavigator from "~@meetings/app/app/navigation/DrawerNavigator";
 import { useAgencyConfigs } from "~@meetings/app/entities/agency-config";
 import * as UserContext from "~@meetings/app/entities/user";
 import * as UserModule from "~@meetings/app/entities/user";
 import { useStateSelection } from "~@meetings/app/features/state-selection";
 
+import DrawerNavigator from "./DrawerNavigator";
+
 // Mock useSetDocumentTitle hooks, since it modifies document.title, and it causes errors
-jest.mock("../../shared/lib/platform/useSetDocumentTitle", () => ({
+jest.mock("~@meetings/app/shared/lib/platform/useSetDocumentTitle", () => ({
   useSetDocumentTitle: () => null,
 }));
 // Mock AsyncStorage
@@ -47,25 +48,25 @@ jest.mock("@react-navigation/drawer", () => ({
 }));
 
 // Mock all screen components since they import native modules
-jest.mock("../../pages/clients", () => null);
-jest.mock("../../pages/residents", () => null);
+jest.mock("~@meetings/app/pages/clients", () => null);
+jest.mock("~@meetings/app/pages/residents", () => null);
 jest.mock("~@meetings/app/pages/state-selection", () => ({
   StateSelectionScreen: null,
 }));
-jest.mock("../../pages/client-profile", () => null);
-jest.mock("../../pages/resident-profile", () => null);
-jest.mock("../../pages/client-meeting", () => null);
-jest.mock("../../pages/resident-meeting", () => null);
-jest.mock("../../pages/client-new-meeting", () => null);
-jest.mock("../../pages/resident-new-meeting", () => null);
+jest.mock("~@meetings/app/pages/client-profile", () => null);
+jest.mock("~@meetings/app/pages/resident-profile", () => null);
+jest.mock("~@meetings/app/pages/client-meeting", () => null);
+jest.mock("~@meetings/app/pages/resident-meeting", () => null);
+jest.mock("~@meetings/app/pages/client-new-meeting", () => null);
+jest.mock("~@meetings/app/pages/resident-new-meeting", () => null);
 jest.mock("~@meetings/app/widgets/navigation-drawer", () => ({
   DrawerContent: null,
 }));
-jest.mock("../../pages/onboarding", () => ({
+jest.mock("~@meetings/app/pages/onboarding", () => ({
   OnboardingScreen: null,
 }));
 
-jest.mock("../../entities/agency-config", () => ({
+jest.mock("~@meetings/app/entities/agency-config", () => ({
   useAgencyConfigs: jest.fn(),
 }));
 
@@ -74,7 +75,7 @@ jest.mock("~@meetings/app/entities/user", () => ({
   useUserContext: jest.fn(),
 }));
 
-jest.mock("../../features/state-selection", () => ({
+jest.mock("~@meetings/app/features/state-selection", () => ({
   useStateSelection: jest.fn(),
 }));
 

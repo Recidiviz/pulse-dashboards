@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export { extractAndRemoveStateCode } from "./lib/extractAndRemoveStateCode";
 export { stateCodeParam } from "./model/stateCodeParam";
 export type { StateCode } from "./model/StateContext";
 export {
