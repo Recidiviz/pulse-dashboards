@@ -18,7 +18,7 @@
 import z from "zod";
 
 import { insightImportSchema } from "~@sentencing/import/models";
-import { Prisma, PrismaClient } from "~@sentencing/prisma/client";
+import { Prisma, PrismaClient, StateCode } from "~@sentencing/prisma/client";
 
 type TransformedRecidivismSeries = {
   recommendationType: string | undefined;
@@ -34,6 +34,17 @@ type TransformedRecidivismSeries = {
 // sentence-length bucket is specified (e.g. flat types like Probation/Rider).
 const BUCKET_START_DEFAULT = 0;
 const BUCKET_END_DEFAULT = -1;
+
+// Minimum cohort sample size required to show sentence distributions. Cohorts
+// with fewer than this many records don't have a large enough sample to show
+// reliable distributions, so we drop the disposition data at import time and
+// zero out dispositionNumRecords. The frontend renders its "insufficient data"
+// empty state whenever dispositionNumRecords is falsy. See OBT-36602.
+const MIN_DISPOSITION_RECORDS = 10;
+
+// The minimum sample size restriction currently only applies to US_MO. Whether
+// to extend it to other states (e.g. ID, ND) is still being scoped (OBT-36603).
+const STATES_WITH_DISPOSITION_MINIMUM: StateCode[] = [StateCode.US_MO];
 
 function transformRecidivismSeries(
   rawRecidivismSeries: z.infer<typeof insightImportSchema>["recidivism_series"],
@@ -97,6 +108,15 @@ export async function transformAndLoadInsightData(
       continue;
     }
 
+    // Only show sentence distributions for cohorts with a large enough sample.
+    // When a restricted state's cohort falls below the threshold, drop the
+    // disposition data and report zero records so the frontend shows its empty
+    // state instead. States without the restriction always keep their data.
+    const dispositionNumRecords = insightData.disposition_num_records ?? 0;
+    const hasSufficientDispositionData =
+      !STATES_WITH_DISPOSITION_MINIMUM.includes(insightData.state_code) ||
+      dispositionNumRecords >= MIN_DISPOSITION_RECORDS;
+
     // Since the data has been validated, delete the existing insight and insert the new one
     // so that all stale recidivism and disposition records are deleted via cascade.
     await prismaClient.insight
@@ -145,20 +165,26 @@ export async function transformAndLoadInsightData(
         rollupViolentOffense:
           insightData.recidivism_rollup.any_is_violent_uniform,
         rollupRecidivismNumRecords: insightData.recidivism_num_records,
-        // If this is missing, assume it is zero
-        dispositionNumRecords: insightData.disposition_num_records ?? 0,
+        // Below the minimum sample size, report zero records so the sentence
+        // distribution is not shown.
+        dispositionNumRecords: hasSufficientDispositionData
+          ? dispositionNumRecords
+          : 0,
         // Time served fields (avgSentenceLengthYears, avgPctServed, timeServedNumRecords)
         // are populated separately by the time served import — not by the insights import.
       },
     });
 
     // Create dispositions separately using createMany (no nesting, no implicit transaction).
-    await prismaClient.disposition.createMany({
-      data: transformDispositions(insightData.dispositions).map((d) => ({
-        ...d,
-        insightId: createdInsight.id,
-      })),
-    });
+    // Skip entirely for below-threshold cohorts so no distribution data is stored.
+    if (hasSufficientDispositionData) {
+      await prismaClient.disposition.createMany({
+        data: transformDispositions(insightData.dispositions).map((d) => ({
+          ...d,
+          insightId: createdInsight.id,
+        })),
+      });
+    }
 
     // Use createManyAndReturn to bulk-insert all series in one query and get back
     // their IDs, then bulk-insert all data points in one more query. This avoids

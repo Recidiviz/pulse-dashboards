@@ -169,6 +169,128 @@ describe("import insight data", () => {
     );
   });
 
+  test("should drop US_MO sentence distributions below the minimum sample size", async () => {
+    // The minimum sample size restriction currently only applies to US_MO, so
+    // seed a US_MO offense for the insight to link to.
+    const moOffense = await testPrismaClient.offense.create({
+      data: {
+        stateCode: StateCode.US_MO,
+        name: "mo-offense",
+      },
+    });
+
+    dataProviderSingleton.setData(TEST_INSIGHTS_FILE_NAME, [
+      {
+        state_code: StateCode.US_MO,
+        gender: Gender.MALE,
+        assessment_score_bucket_start: faker.number.int({ max: 100 }),
+        assessment_score_bucket_end: faker.number.int({ max: 100 }),
+        most_severe_description: moOffense.name,
+        recidivism_rollup: JSON.stringify({
+          state_code: StateCode.US_MO,
+        }),
+        recidivism_num_records: faker.number.int({ max: 100 }),
+        recidivism_series: createFakeRecidivismSeriesForImport([
+          { sentence_type: "Probation" },
+        ]),
+        // Fewer than the minimum of 10 records — distributions should be dropped.
+        disposition_num_records: 9,
+        dispositions: createFakeDispositionsForImport([
+          { sentence_type: "Probation" },
+        ]),
+      },
+    ]);
+
+    await importHandler.import(TEST_STATE_CODE, [INSIGHTS_FILE_NAME]);
+
+    const dbInsights = await testPrismaClient.insight.findMany({
+      include: { dispositionData: true },
+    });
+
+    expect(dbInsights).toHaveLength(1);
+    // Records are zeroed out so the frontend renders its empty state, and no
+    // disposition rows are stored.
+    expect(dbInsights[0].dispositionNumRecords).toBe(0);
+    expect(dbInsights[0].dispositionData).toHaveLength(0);
+  });
+
+  test("should keep US_MO sentence distributions at exactly the minimum sample size", async () => {
+    // The minimum sample size restriction currently only applies to US_MO, so
+    // seed a US_MO offense for the insight to link to.
+    const moOffense = await testPrismaClient.offense.create({
+      data: {
+        stateCode: StateCode.US_MO,
+        name: "mo-offense",
+      },
+    });
+
+    dataProviderSingleton.setData(TEST_INSIGHTS_FILE_NAME, [
+      {
+        state_code: StateCode.US_MO,
+        gender: Gender.MALE,
+        assessment_score_bucket_start: faker.number.int({ max: 100 }),
+        assessment_score_bucket_end: faker.number.int({ max: 100 }),
+        most_severe_description: moOffense.name,
+        recidivism_rollup: JSON.stringify({
+          state_code: StateCode.US_MO,
+        }),
+        recidivism_num_records: faker.number.int({ max: 100 }),
+        recidivism_series: createFakeRecidivismSeriesForImport([
+          { sentence_type: "Probation" },
+        ]),
+        // Exactly the minimum of 10 records — distributions should be kept.
+        disposition_num_records: 10,
+        dispositions: createFakeDispositionsForImport([
+          { sentence_type: "Probation" },
+        ]),
+      },
+    ]);
+
+    await importHandler.import(TEST_STATE_CODE, [INSIGHTS_FILE_NAME]);
+
+    const dbInsights = await testPrismaClient.insight.findMany({
+      include: { dispositionData: true },
+    });
+
+    expect(dbInsights).toHaveLength(1);
+    expect(dbInsights[0].dispositionNumRecords).toBe(10);
+    expect(dbInsights[0].dispositionData).toHaveLength(1);
+  });
+
+  test("should keep non-US_MO sentence distributions below the minimum sample size", async () => {
+    dataProviderSingleton.setData(TEST_INSIGHTS_FILE_NAME, [
+      {
+        state_code: StateCode.US_ID,
+        gender: Gender.MALE,
+        assessment_score_bucket_start: faker.number.int({ max: 100 }),
+        assessment_score_bucket_end: faker.number.int({ max: 100 }),
+        most_severe_description: fakeOffense.name,
+        recidivism_rollup: JSON.stringify({
+          state_code: StateCode.US_ID,
+        }),
+        recidivism_num_records: faker.number.int({ max: 100 }),
+        recidivism_series: createFakeRecidivismSeriesForImport([
+          { sentence_type: "Probation" },
+        ]),
+        // Below the threshold, but US_ID is not restricted so data is kept.
+        disposition_num_records: 9,
+        dispositions: createFakeDispositionsForImport([
+          { sentence_type: "Probation" },
+        ]),
+      },
+    ]);
+
+    await importHandler.import(TEST_STATE_CODE, [INSIGHTS_FILE_NAME]);
+
+    const dbInsights = await testPrismaClient.insight.findMany({
+      include: { dispositionData: true },
+    });
+
+    expect(dbInsights).toHaveLength(1);
+    expect(dbInsights[0].dispositionNumRecords).toBe(9);
+    expect(dbInsights[0].dispositionData).toHaveLength(1);
+  });
+
   test("should skip insights with no matching offense", async () => {
     dataProviderSingleton.setData(TEST_INSIGHTS_FILE_NAME, [
       {
