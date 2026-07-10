@@ -367,9 +367,59 @@ describe("Guards - Predefined Guards", () => {
       const result = extractionGuard(ExtractionOutputSchema, data);
       expect(result.valid).toBe(true);
     });
+
+    const unicodeSequence = `${String.raw`\u`}00009`;
+    test("should fail for unicode in actionItem string field", () => {
+      const data = {
+        actionItems: [
+          {
+            assignee: "Client" as const,
+            task: `Submit documentation ${unicodeSequence}`,
+          },
+        ],
+        entities: [],
+      };
+
+      const result = extractionGuard(ExtractionOutputSchema, data);
+      expect(result.valid).toBe(false);
+    });
+
+    test("should fail for unicode in actionItem quotes array", () => {
+      const data = {
+        actionItems: [
+          {
+            assignee: "Client" as const,
+            task: `Submit documentation`,
+            evidenceQuotes: ["Some quote", `${unicodeSequence} quote`],
+          },
+        ],
+        entities: [],
+      };
+
+      const result = extractionGuard(ExtractionOutputSchema, data);
+      expect(result.valid).toBe(false);
+    });
+
+    test("should fail for unicode in entities", () => {
+      const data = {
+        actionItems: [
+          {
+            assignee: "Client" as const,
+            task: `Submit documentation`,
+          },
+        ],
+        entities: [
+          { value: `${unicodeSequence} value`, entityKind: "entity kind" },
+        ],
+      };
+
+      const result = extractionGuard(ExtractionOutputSchema, data);
+      expect(result.valid).toBe(false);
+    });
   });
 
   describe("draftingGuard", () => {
+    const unicodeSequence = `${String.raw`\u`}00009`;
     test("should validate valid drafting data", () => {
       const data = {
         caseNote:
@@ -397,6 +447,80 @@ describe("Guards - Predefined Guards", () => {
       const data = {
         caseNote: "[INSERT DATE] Client discussed housing. ".repeat(30),
         staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
+      };
+
+      const result = draftingGuard(DraftingOutputSchema, data);
+      expect(result.valid).toBe(false);
+      expect(result.errorKind).toBe("Format");
+    });
+
+    test("should fail for unicode in caseNote", () => {
+      const data = {
+        caseNote: `${"Word ".repeat(200)} plus a final apostroph${unicodeSequence}e`,
+        minutes: [
+          {
+            title: "Discussion",
+            items: Array(5).fill({
+              content: "Item minutes",
+              status: "Discussed" as const,
+              subItems: [],
+            }),
+          },
+        ],
+        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
+      };
+
+      const result = draftingGuard(DraftingOutputSchema, data);
+      expect(result.valid).toBe(false);
+      expect(result.errorKind).toBe("Format");
+    });
+
+    test("should fail for unicode in staffFeedback whatYouDidWell", () => {
+      const data = {
+        caseNote: "Word ".repeat(200),
+        minutes: [
+          {
+            title: "Discussion",
+            items: Array(5).fill({
+              content: "Item minutes",
+              status: "Discussed" as const,
+              subItems: [],
+            }),
+          },
+        ],
+        staffFeedback: {
+          whatYouDidWell: [
+            "Good tone and support",
+            `You weren${unicodeSequence}t pessimistic`,
+          ],
+          growthOpportunities: [],
+        },
+      };
+
+      const result = draftingGuard(DraftingOutputSchema, data);
+      expect(result.valid).toBe(false);
+      expect(result.errorKind).toBe("Format");
+    });
+
+    test("should fail for unicode in staffFeedback growthOpportunities", () => {
+      const data = {
+        caseNote: "Word ".repeat(200),
+        minutes: [
+          {
+            title: "Discussion",
+            items: Array(5).fill({
+              content: "Item minutes",
+              status: "Discussed" as const,
+              subItems: [],
+            }),
+          },
+        ],
+        staffFeedback: {
+          whatYouDidWell: [],
+          growthOpportunities: [
+            `You didn${unicodeSequence}t bring up goals in conversation.`,
+          ],
+        },
       };
 
       const result = draftingGuard(DraftingOutputSchema, data);

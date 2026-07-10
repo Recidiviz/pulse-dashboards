@@ -224,6 +224,58 @@ export const validateCaseNoteLength: Validator<
   return { valid: true };
 };
 
+const ESCAPE_SEQUENCE = String.raw`\u`;
+
+/**
+ * Validates no unicode escapes in the extraction output
+ */
+export const validateExtractionNoUnicode: Validator<ExtractionOutput> = (
+  data,
+) => {
+  const errorContext = {
+    valid: false,
+    errorKind: ValidationError.FORMAT,
+    message: `Output contains unicode escape sequence`,
+  };
+
+  for (const entry of data.actionItems) {
+    const containsUnicode = Object.values(entry)
+      .flat()
+      .some((value) => value && value.includes(ESCAPE_SEQUENCE));
+    if (containsUnicode) return errorContext;
+  }
+
+  for (const entry of data.entities) {
+    if (Object.values(entry).some((value) => value.includes(ESCAPE_SEQUENCE)))
+      return errorContext;
+  }
+
+  return { valid: true };
+};
+
+/**
+ * Validates no unicode escapes in the drafting output
+ */
+export const validateDraftingNoUnicode: Validator<DraftingOutput> = (data) => {
+  const errorContext = {
+    valid: false,
+    errorKind: ValidationError.FORMAT,
+    message: `Output contains unicode escape sequence`,
+  };
+
+  if (data.caseNote.includes(ESCAPE_SEQUENCE)) return errorContext;
+
+  for (const entry of data.staffFeedback.growthOpportunities) {
+    if (entry.includes(ESCAPE_SEQUENCE)) return errorContext;
+  }
+
+  for (const entry of data.staffFeedback.whatYouDidWell) {
+    if (entry.includes(ESCAPE_SEQUENCE)) return errorContext;
+  }
+
+  return { valid: true };
+};
+
 /**
  * Validates case note content quality (no template leaks or robotic tone)
  */
@@ -364,6 +416,7 @@ export const transcriptGuard = createGuard<TranscriptInput>([
  */
 export const extractionGuard = createGuard<ExtractionOutput>([
   validateExtractionPresence,
+  validateExtractionNoUnicode,
 ]);
 
 /**
@@ -372,4 +425,5 @@ export const extractionGuard = createGuard<ExtractionOutput>([
 export const draftingGuard = createGuard<DraftingOutput>([
   validateCaseNoteLength,
   validateCaseNoteQuality,
+  validateDraftingNoUnicode,
 ]);
