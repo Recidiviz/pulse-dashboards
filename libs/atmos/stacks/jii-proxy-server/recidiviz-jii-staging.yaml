@@ -33,3 +33,5 @@ components:
           CASE_PLANNING_BACKEND_URL: "https://backend-api-staging-773019812766.us-central1.run.app"
           CASE_PLANNING_DEV_BACKEND_URL: "https://api.plan-dev.recidiviz.org"
         managed_certificate_domains: [staging.opportunities.app]
+        # Refuse TLS < 1.2 handshakes at the frontend (GovRAMP AC-17(2))
+        min_tls_version: TLS_1_2

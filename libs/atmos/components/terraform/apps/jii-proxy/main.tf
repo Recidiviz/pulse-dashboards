@@ -84,6 +84,18 @@ resource "google_compute_region_network_endpoint_group" "serverless_neg" {
   }
 }
 
+# GovRAMP AC-17(2): without an SSL policy the HTTPS frontend uses GCP's default,
+# which accepts TLS 1.0/1.1 handshakes.
+resource "google_compute_ssl_policy" "restricted" {
+  count      = var.min_tls_version == null ? 0 : 1
+  depends_on = [google_project_service.compute]
+
+  name            = "restricted-ssl-policy"
+  project         = var.project_id
+  profile         = "RESTRICTED"
+  min_tls_version = var.min_tls_version
+}
+
 module "load_balancer" {
   source = "../../vendor/lb-http"
 
@@ -109,6 +121,7 @@ module "load_balancer" {
   }
 
   ssl                             = true
+  ssl_policy                      = var.min_tls_version == null ? null : google_compute_ssl_policy.restricted[0].self_link
   ssl_certificates                = [google_compute_ssl_certificate.edovo_ssl.id]
   managed_ssl_certificate_domains = var.managed_certificate_domains
 }
