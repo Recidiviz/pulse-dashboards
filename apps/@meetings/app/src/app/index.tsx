@@ -25,7 +25,10 @@ import React from "react";
 import { Auth0Provider } from "react-native-auth0";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-import { useSentryAppLifecycle } from "~@meetings/app/shared/lib/monitoring";
+import {
+  offlineTransport,
+  useSentryAppLifecycle,
+} from "~@meetings/app/shared/lib/monitoring";
 
 import { env } from "../shared/config";
 import { SnackbarProvider } from "../shared/ui/Snackbar";
@@ -46,6 +49,9 @@ function sanitizeUrl(url: string): string {
 
 Sentry.init({
   dsn: env.EXPO_PUBLIC_SENTRY_DSN,
+  // Web-only: cache events that fail while offline and replay on reconnect.
+  // Undefined on native, which keeps the SDK's built-in offline caching.
+  transport: offlineTransport,
   tracesSampleRate: 1,
   profilesSampleRate: 0,
   // Adds more context data to events (IP address, cookies, user, etc.)

@@ -15,6 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { segmentClient } from "./segment";
-export { offlineTransport } from "./sentryOfflineTransport";
-export { useSentryAppLifecycle } from "./useSentryAppLifecycle";
+import { makeBrowserOfflineTransport } from "@sentry/browser";
+import type * as Sentry from "@sentry/react-native";
+
+type SentryTransportFactory = NonNullable<
+  Parameters<typeof Sentry.init>[0]
+>["transport"];
+
+// Web has no native transport, so Sentry falls back to the fetch transport,
+// which drops events that fail while offline
+export const offlineTransport: SentryTransportFactory =
+  makeBrowserOfflineTransport();

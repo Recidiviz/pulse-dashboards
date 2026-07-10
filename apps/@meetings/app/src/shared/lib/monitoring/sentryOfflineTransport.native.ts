@@ -15,6 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { segmentClient } from "./segment";
-export { offlineTransport } from "./sentryOfflineTransport";
-export { useSentryAppLifecycle } from "./useSentryAppLifecycle";
+import type * as Sentry from "@sentry/react-native";
+
+type SentryTransportFactory = NonNullable<
+  Parameters<typeof Sentry.init>[0]
+>["transport"];
+
+// Native keeps @sentry/react-native's built-in transport
+export const offlineTransport: SentryTransportFactory = undefined;
