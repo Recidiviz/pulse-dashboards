@@ -15,6 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { toTitleCase } from "@artsy/to-title-case";
+import { mapValues } from "lodash-es";
+
 import { PrismaClient, ResidentCreateInput } from "~@jii/prisma";
 import { LoaderFn } from "~data-import-plugin";
 import { FullName } from "~datatypes";
@@ -78,10 +81,15 @@ export const residentHandler: LoaderFn<
       ...passthroughFields
     } = d;
 
-    // because we're spreading this into columns in the SQL query,
-    // we have to make sure there are no missing fields, or we may get
-    // a SQL syntax error in bulkUpdate
-    const personNameData = { ...personNameDefaults, ...personName };
+    const personNameData = mapValues(
+      // because we're spreading this into columns in the SQL query,
+      // we have to make sure there are no missing fields, or we may get
+      // a SQL syntax error in bulkUpdate
+      { ...personNameDefaults, ...personName },
+      // names come through in UPPERCASE which is not what we want to display
+      // TODO(OBT-29534): switch to nameCase, but using titleCase here for comparison to old data
+      (v) => (v ? toTitleCase(v.toLowerCase()) : v),
+    );
 
     const newResidentData = {
       ...passthroughFields,
