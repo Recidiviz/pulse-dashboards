@@ -42,7 +42,6 @@ exports.onExecutePostLogin = async (event, api) => {
         [event.secrets.US_IA_CONNECTION_ID]: "us_ia",
         [event.secrets.US_ID_CONNECTION_ID]: "us_id",
         [event.secrets.US_MI_CONNECTION_ID]: "us_mi",
-        [event.secrets.US_ME_CONNECTION_ID]: "us_me",
         [event.secrets.US_NE_CONNECTION_ID]: "us_ne",
         [event.secrets.US_ND_CONNECTION_ID]: "us_nd",
         [event.secrets.US_TN_CONNECTION_ID]: "us_tn",
