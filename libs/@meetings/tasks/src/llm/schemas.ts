@@ -54,12 +54,13 @@ export const GatekeeperOutputSchema = TranscriptInputSchema;
 export const ActionItemSchema = z.object({
   assignee: z.enum(["Staff Member", "Client", "Third Party"]),
   task: z.string(),
-  deadline: z.string().nullable().optional().describe("Due date if specified"),
-  context: z.string().optional().describe("Context/Reasoning for the task"),
+  deadline: z.string().nullable().describe("Due date if specified, else null"),
+  context: z.string().nullable().describe("Context/Reasoning for the task"),
   evidenceQuotes: z
     .array(z.string())
-    .optional()
-    .describe("Verbatim quotes from the transcript supporting this item"),
+    .describe(
+      "Verbatim quotes from the transcript supporting this item, empty if none",
+    ),
 });
 
 export const StaffFeedbackOutputSchema = z.object({

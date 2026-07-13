@@ -71,7 +71,7 @@ export async function completeChatWithZodSchema<T extends ZodSchema>({
     model: "gpt-5-mini",
     messages,
     response_format: zodToOpenAIStructuredOutputSchema(schema, {
-      strict: false,
+      strict: true,
       name: "extraction",
     }),
   });

@@ -161,6 +161,9 @@ describe("SpecialistCore", () => {
           {
             assignee: "Client",
             task: "Submit proof of residence",
+            deadline: null,
+            context: null,
+            evidenceQuotes: [],
           },
         ],
         entities: [
@@ -393,7 +396,15 @@ describe("SpecialistCore", () => {
 
     test("should successfully draft case note and minutes", async () => {
       const mockExtraction: ExtractionOutput = {
-        actionItems: [{ assignee: "Client", task: "Submit documentation" }],
+        actionItems: [
+          {
+            assignee: "Client",
+            task: "Submit documentation",
+            deadline: null,
+            context: null,
+            evidenceQuotes: [],
+          },
+        ],
         entities: [],
       };
 
@@ -586,7 +597,6 @@ describe("SpecialistCore", () => {
 
       const emptyDraftingResponse = {
         caseNote: "Test note",
-        minutes: [],
         staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
       };
 
@@ -764,7 +774,13 @@ describe("SpecialistCore", () => {
     test("should successfully verify claims with evidence", async () => {
       const mockExtraction: ExtractionOutput = {
         actionItems: [
-          { assignee: "Client", task: "Submit proof of residence" },
+          {
+            assignee: "Client",
+            task: "Submit proof of residence",
+            deadline: null,
+            context: null,
+            evidenceQuotes: [],
+          },
         ],
         entities: [],
       };
@@ -799,7 +815,7 @@ describe("SpecialistCore", () => {
       expect(result.actionItems[0]?.evidenceQuotes).toEqual([
         "I'll get that proof to you by Friday",
       ]);
-      expect(result.actionItems[0]?.context).toBeUndefined();
+      expect(result.actionItems[0]?.context).toBeNull();
     });
 
     test("should skip verification when no claims exist", async () => {
@@ -820,7 +836,15 @@ describe("SpecialistCore", () => {
 
     test("should return unverified facts on error", async () => {
       const mockExtraction: ExtractionOutput = {
-        actionItems: [{ assignee: "Client", task: "Complete form" }],
+        actionItems: [
+          {
+            assignee: "Client",
+            task: "Complete form",
+            deadline: null,
+            context: null,
+            evidenceQuotes: [],
+          },
+        ],
         entities: [],
       };
 
@@ -845,7 +869,13 @@ describe("SpecialistCore", () => {
     test("should format claims list with IDs", async () => {
       const mockExtraction: ExtractionOutput = {
         actionItems: [
-          { assignee: "Staff Member", task: "Follow up with provider" },
+          {
+            assignee: "Staff Member",
+            task: "Follow up with provider",
+            deadline: null,
+            context: null,
+            evidenceQuotes: [],
+          },
         ],
         entities: [],
       };

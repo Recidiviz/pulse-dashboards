@@ -87,18 +87,31 @@ describe("LLM Pipeline Schemas", () => {
         task: "Complete job application",
         deadline: "2025-01-20",
         context: "Discussed during employment section",
+        evidenceQuotes: [],
       };
 
       expect(ActionItemSchema.safeParse(validAction).success).toBe(true);
     });
 
-    test("should validate action without optional fields", () => {
+    test("should validate action with null optional fields", () => {
+      const minimalAction = {
+        assignee: "Staff Member",
+        task: "Follow up with treatment provider",
+        deadline: null,
+        context: null,
+        evidenceQuotes: [],
+      };
+
+      expect(ActionItemSchema.safeParse(minimalAction).success).toBe(true);
+    });
+
+    test("should fail when deadline/context/evidenceQuotes are omitted", () => {
       const minimalAction = {
         assignee: "Staff Member",
         task: "Follow up with treatment provider",
       };
 
-      expect(ActionItemSchema.safeParse(minimalAction).success).toBe(true);
+      expect(ActionItemSchema.safeParse(minimalAction).success).toBe(false);
     });
 
     test("should fail for invalid assignee", () => {
@@ -114,6 +127,9 @@ describe("LLM Pipeline Schemas", () => {
       const validAction = {
         assignee: "Third Party",
         task: "Provide housing verification",
+        deadline: null,
+        context: null,
+        evidenceQuotes: [],
       };
 
       expect(ActionItemSchema.safeParse(validAction).success).toBe(true);
@@ -128,6 +144,8 @@ describe("LLM Pipeline Schemas", () => {
             assignee: "Client",
             task: "Submit proof of residence",
             deadline: "2025-01-25",
+            context: null,
+            evidenceQuotes: [],
           },
         ],
         entities: [
@@ -264,6 +282,9 @@ describe("LLM Pipeline Schemas", () => {
           {
             assignee: "Client",
             task: "Complete form",
+            deadline: null,
+            context: null,
+            evidenceQuotes: [],
           },
         ],
         staffFeedback: {

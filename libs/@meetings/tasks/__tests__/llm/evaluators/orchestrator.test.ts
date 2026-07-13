@@ -54,7 +54,15 @@ const baseInputs: EvaluatorInputs = {
   },
   bestTranscript: "Speaker A: Hello.",
   caseNote: "Officer met with client.",
-  actionItems: [{ assignee: "Client", task: "Bring ID" }],
+  actionItems: [
+    {
+      assignee: "Client",
+      task: "Bring ID",
+      deadline: null,
+      context: null,
+      evidenceQuotes: [],
+    },
+  ],
 };
 
 const GOOD_TEXT: TextEvaluatorOutput = {

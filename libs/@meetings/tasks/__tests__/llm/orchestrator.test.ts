@@ -136,6 +136,9 @@ describe("ProductionPipeline", () => {
           {
             assignee: "Client",
             task: "Bring proof of employment",
+            deadline: null,
+            context: null,
+            evidenceQuotes: [],
           },
         ],
         entities: [],
@@ -320,7 +323,15 @@ describe("ProductionPipeline", () => {
 
     test("should handle verification failure gracefully", async () => {
       const mockExtraction: ExtractionOutput = {
-        actionItems: [{ assignee: "Client", task: "Complete form" }],
+        actionItems: [
+          {
+            assignee: "Client",
+            task: "Complete form",
+            deadline: null,
+            context: null,
+            evidenceQuotes: [],
+          },
+        ],
         entities: [],
       };
 
@@ -517,7 +528,15 @@ describe("ProductionPipeline", () => {
 
     test("should store all agent executions on successful run", async () => {
       const mockExtraction: ExtractionOutput = {
-        actionItems: [{ assignee: "Client", task: "Complete form" }],
+        actionItems: [
+          {
+            assignee: "Client",
+            task: "Complete form",
+            deadline: null,
+            context: null,
+            evidenceQuotes: [],
+          },
+        ],
         entities: [],
       };
 

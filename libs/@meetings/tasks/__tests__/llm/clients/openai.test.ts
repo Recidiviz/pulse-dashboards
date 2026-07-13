@@ -169,11 +169,68 @@ describe("OpenAI Client", () => {
             type: "json_schema",
             json_schema: expect.objectContaining({
               name: "extraction",
-              strict: false,
+              strict: true,
             }),
           }),
         }),
       );
+    });
+
+    test("should use strict mode so every schema property is required", async () => {
+      // Regression test for OBT-37714: with strict mode off, the model could
+      // silently omit a field (e.g. `entities`), which threw a ZodError and
+      // discarded an otherwise-valid extraction. Strict mode's constrained
+      // decoding guarantees every property is present in the model output, so
+      // every property (recursively) must appear in the JSON schema's
+      // `required` array or OpenAI will reject the request.
+      const assertAllPropertiesRequired = (schema: unknown): void => {
+        if (typeof schema !== "object" || schema === null) return;
+        const node = schema as Record<string, unknown>;
+
+        if (node["type"] === "object" && node["properties"]) {
+          const properties = node["properties"] as Record<string, unknown>;
+          const required = (node["required"] as string[] | undefined) ?? [];
+          for (const key of Object.keys(properties)) {
+            expect(required).toContain(key);
+          }
+          Object.values(properties).forEach(assertAllPropertiesRequired);
+        }
+
+        if (node["type"] === "array" && node["items"]) {
+          assertAllPropertiesRequired(node["items"]);
+        }
+      };
+
+      vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
+        id: "test-completion",
+        object: "chat.completion",
+        created: Date.now(),
+        choices: [
+          {
+            index: 0,
+            message: {
+              role: "assistant",
+              content: JSON.stringify({
+                actionItems: [],
+                entities: [],
+              }),
+            },
+            finish_reason: "stop",
+          },
+        ],
+      } as never);
+
+      await completeChatWithZodSchema({
+        client: mockOpenAI,
+        messages: [{ role: "user", content: "Test" }],
+        schema: ExtractionOutputSchema,
+      });
+
+      const callArg = vi.mocked(mockOpenAI.chat.completions.create).mock
+        .calls[0]?.[0] as {
+        response_format: { json_schema: { schema: unknown } };
+      };
+      assertAllPropertiesRequired(callArg.response_format.json_schema.schema);
     });
 
     test("should throw error when no response content", async () => {
@@ -242,6 +299,8 @@ describe("OpenAI Client", () => {
             assignee: "Client",
             task: "Submit proof of residence",
             deadline: "2025-01-20",
+            context: null,
+            evidenceQuotes: [],
           },
         ],
         entities: [

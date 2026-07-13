@@ -72,7 +72,15 @@ const baseInputs: EvaluatorInputs = {
   },
   bestTranscript: "Speaker A: Hello.\nSpeaker B: Hi.",
   caseNote: "Client greeted officer warmly.",
-  actionItems: [{ assignee: "Client", task: "Submit proof of address" }],
+  actionItems: [
+    {
+      assignee: "Client",
+      task: "Submit proof of address",
+      deadline: null,
+      context: null,
+      evidenceQuotes: [],
+    },
+  ],
 };
 
 describe("Evaluator Agents", () => {

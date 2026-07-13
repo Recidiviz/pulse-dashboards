@@ -349,6 +349,9 @@ describe("Guards - Predefined Guards", () => {
           {
             assignee: "Client" as const,
             task: "Submit documentation",
+            deadline: null,
+            context: null,
+            evidenceQuotes: [],
           },
         ],
         entities: [],
