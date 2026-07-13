@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { TenantConfig } from "../core/models/types";
-import { INSIGHTS_PAGES } from "../core/views";
+import { DIRECTOR_DASHBOARD_PAGES, INSIGHTS_PAGES } from "../core/views";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 import UsTxAssessmentTask from "../WorkflowsStore/Task/US_TX/UsTxAssessmentTask";
 import UsTxContactTask from "../WorkflowsStore/Task/US_TX/UsTxContactTask";
@@ -278,7 +278,12 @@ const US_TX_CONFIG = {
   },
   navigation: {
     insights: [INSIGHTS_PAGES.supervision],
+    directorDashboard: [DIRECTOR_DASHBOARD_PAGES.supervision],
     workflows: ["home", "tasks", "clients"],
+  },
+  directorDashboard: {
+    navTitle: "Regional Dashboard",
+    lookerDashboard: "texas_region_metrics",
   },
 } satisfies TenantConfig<"US_TX">;
 
