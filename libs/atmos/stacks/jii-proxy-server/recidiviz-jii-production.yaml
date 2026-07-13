@@ -21,6 +21,6 @@ components:
         artifact_registry_repo: !store jii-staging recidiviz-jii-staging--jii-proxy-server artifact_registry url
         env_vars:
           OPPORTUNITIES_APP_URL: "https://recidiviz-jii-production.web.app"
-          CASE_PLANNING_BACKEND_URL: "https://backend-api-prod-773019812766.us-central1.run.app"
+          CASE_PLANNING_BACKEND_URL: "https://api.plan.recidiviz.org"
           CASE_PLANNING_DEV_BACKEND_URL: "https://api.plan-dev.recidiviz.org"
         managed_certificate_domains: [opportunities.app]
