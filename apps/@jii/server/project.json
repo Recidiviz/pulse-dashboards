@@ -48,6 +48,24 @@
         }
       }
     },
+    "requires-sops-env:compare-resident-data": {
+      "executor": "nx:run-commands",
+      "dependsOn": [{ "projects": ["@jii/prisma"], "target": "docker:start" }],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "tsx src/tools/compareResidentData.ts",
+        "env": {
+          "NODE_ENV": "development",
+          "USE_STAGING_DB": "true"
+        }
+      },
+      "metadata": {
+        "sops-env": {
+          "additional-sops-env-files": ["{projectRoot}/env.dev.enc.yaml"],
+          "additional-dotenv-files": ["{workspaceRoot}/libs/@jii/prisma/.env"]
+        }
+      }
+    },
     "requires-sops-env:decode-token": {
       "executor": "nx:run-commands",
       "options": {

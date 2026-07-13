@@ -29,8 +29,12 @@ import {
   getProgramsInputSchema,
   setStarredProgramInputSchema,
 } from "./programs/schema";
+import { getResident } from "./residents/getResident";
+import { getResidentsInFacility } from "./residents/getResidentsInFacility";
 
 export const residentRouter = router({
+  getResident,
+  getResidentsInFacility,
   getFlags: firebaseAuthedResidentProcedure
     .input(z.object({ pseudonymizedId: z.string() }))
     .use(residentRestrictedMiddleware)

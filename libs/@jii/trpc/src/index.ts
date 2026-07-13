@@ -18,5 +18,8 @@
 export * from "./auth/getDecryptedToken";
 export * from "./context";
 export * from "./errors";
-export { firebaseApp } from "./helpers/firebaseAdmin";
+export {
+  firebaseApp,
+  getFirestoreCollectionQuerier,
+} from "./helpers/firebaseAdmin";
 export * from "./router/appRouter";

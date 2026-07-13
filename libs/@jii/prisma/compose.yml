@@ -1,5 +1,14 @@
 name: "jii-prisma"
 services:
+  cloudsql-proxy:
+    container_name: cloudsql-proxy
+    image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:latest
+    command: recidiviz-jii-staging:us-central1:jii --address 0.0.0.0 --port 5432 --credentials-file=/config/application_default_credentials.json
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:5432:5432
+    volumes:
+      - ~/.config/gcloud:/config
   db:
     image: postgres:17
     environment:

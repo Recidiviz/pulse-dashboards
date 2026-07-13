@@ -39,6 +39,9 @@ export function getPrismaClientForStateCode(stateCode: string) {
       // offline mode works similar to a test env
       if (process.env["IS_OFFLINE"] === "true") {
         dbUrl = process.env["DATABASE_URL"];
+      } else if (process.env["USE_STAGING_DB"] === "true") {
+        // this URL points you to the local CloudSQL proxy for the staging DB
+        dbUrl = `postgresql://${process.env["STAGING_DB_USER"]}:${process.env["STAGING_DB_PASSWORD"]}@localhost:5432/${stateCode.toLowerCase()}?host=127.0.0.1`;
       } else {
         // in normal dev environments we can construct them on the fly
         // from a predictable and non-sensitive template
