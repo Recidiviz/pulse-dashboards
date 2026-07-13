@@ -58,7 +58,7 @@ components:
           - Resident
           - Transcription
           - Utterance
-          - FeedbackVote
+          - OutputVote
           - NotetakingPipelineRun
           - NotetakingAgentExecution
           - NotetakingEvaluationRun
