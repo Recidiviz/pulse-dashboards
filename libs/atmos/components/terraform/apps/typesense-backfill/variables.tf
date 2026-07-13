@@ -37,6 +37,24 @@ variable "function_name" {
   description = "Cloud Function name. Used in the deployed function URL and SA prefix."
 }
 
+variable "invoker_members" {
+  type        = list(string)
+  default     = []
+  description = <<-EOT
+    IAM members granted roles/run.invoker on the function's backing Cloud Run
+    service, so they can trigger the backfill via an authenticated OIDC request.
+    This is a gen2 function, so invoke permission lives on the underlying Cloud
+    Run service, not on the function resource.
+
+    The caller today is staff-server's POST /api/typesense/backfill handler,
+    which authenticates as the SA in its GOOGLE_APPLICATION_CREDENTIALS_JSON
+    (dashboard-metrics-*). That SA lives in a different project than this
+    function; cross-project member bindings are fine.
+
+    Format: "serviceAccount:<email>".
+  EOT
+}
+
 variable "typesense_host" {
   type        = string
   description = "Public hostname of the Typesense cluster (e.g. typesense-staging.recidiviz.org)."

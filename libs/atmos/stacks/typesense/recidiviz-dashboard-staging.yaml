@@ -2,6 +2,10 @@
 settings:
   context:
     project_id: recidiviz-dashboard-staging
+    # The core data-platform project — where staff-server's runtime SA
+    # (dashboard-metrics-*) lives. Distinct from project_id above, which is the
+    # dashboard project this Typesense stack deploys into.
+    data_platform_project_id: recidiviz-staging
     product: typesense
     location: us-central1
     fallback_location: us-east1
@@ -163,3 +167,10 @@ components:
         # backfill_allowlist_ip_ranges above. Apply this component BEFORE apps/typesense
         # so the egress_ip output exists when that stack resolves !terraform.state.
         static_egress_enabled: true
+
+        # Grant the staff-server SA roles/run.invoker on this function so its
+        # POST /api/typesense/backfill handler can trigger a backfill. This is
+        # the client_email from staff-server's GOOGLE_APPLICATION_CREDENTIALS_JSON
+        # (gae-staging.enc.yaml) — the identity its OIDC token is minted for.
+        invoker_members:
+          - serviceAccount:dashboard-metrics-staging@{{ .settings.context.data_platform_project_id }}.iam.gserviceaccount.com

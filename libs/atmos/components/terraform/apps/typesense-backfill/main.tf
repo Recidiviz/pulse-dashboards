@@ -160,3 +160,23 @@ resource "google_cloudfunctions2_function" "backfill" {
     google_secret_manager_secret_iam_member.backfill_secret_accessor,
   ]
 }
+
+# -----------------------------------------------------------------------------
+# Invoker IAM
+#
+# gen2 functions are Cloud Run under the hood, so callers need roles/run.invoker
+# on the backing Cloud Run service (same name as the function) — NOT a
+# cloudfunctions role. Without this, an authenticated caller with a valid OIDC
+# token still gets 403 "The IAM principal lacks {run.routes.invoke} permission".
+# The staff-server SA (dashboard-metrics-*) is the caller; see invoker_members.
+# -----------------------------------------------------------------------------
+
+resource "google_cloud_run_v2_service_iam_member" "invokers" {
+  for_each = toset(var.invoker_members)
+
+  project  = var.project_id
+  location = var.region
+  name     = google_cloudfunctions2_function.backfill.name
+  role     = "roles/run.invoker"
+  member   = each.value
+}
