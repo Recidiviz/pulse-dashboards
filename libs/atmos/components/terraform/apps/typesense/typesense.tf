@@ -209,6 +209,34 @@ resource "kubectl_manifest" "typesense_gateway" {
   ]
 }
 
+# Pin the Gateway's frontend to var.min_tls_version (GovRAMP AC-17(2)). Without
+# a GCPGatewayPolicy the controller provisions the LB with no SSL policy — GCP's
+# default — which accepts TLS 1.0 handshakes. sslPolicy must name a REGIONAL
+# policy in the Gateway's region (exposure.tf).
+resource "kubectl_manifest" "typesense_gateway_policy" {
+  count = var.min_tls_version == null ? 0 : local.workload_count
+  yaml_body = yamlencode({
+    apiVersion = "networking.gke.io/v1"
+    kind       = "GCPGatewayPolicy"
+    metadata = {
+      name      = "typesense"
+      namespace = kubernetes_namespace.typesense[0].metadata[0].name
+    }
+    spec = {
+      default = {
+        sslPolicy = google_compute_region_ssl_policy.typesense[0].name
+      }
+      targetRef = {
+        group = "gateway.networking.k8s.io"
+        kind  = "Gateway"
+        name  = "typesense"
+      }
+    }
+  })
+
+  depends_on = [kubectl_manifest.typesense_gateway]
+}
+
 # Attach the Cloud Armor (WAF) policy to the Typesense backend.
 resource "kubectl_manifest" "typesense_backend_policy" {
   count = local.workload_count

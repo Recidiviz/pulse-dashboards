@@ -210,3 +210,16 @@ resource "google_certificate_manager_certificate" "typesense" {
     dns_authorizations = [google_certificate_manager_dns_authorization.typesense.id]
   }
 }
+
+# GovRAMP AC-17(2): without an SSL policy the gateway-managed LB uses GCP's
+# default, which accepts TLS 1.0/1.1 handshakes. A regional external Gateway
+# needs a REGIONAL policy; it's bound to the Gateway by the GCPGatewayPolicy in
+# typesense.tf (attaching it to the proxy directly would be reverted by the
+# gateway controller).
+resource "google_compute_region_ssl_policy" "typesense" {
+  count           = var.min_tls_version == null ? 0 : local.workload_count
+  name            = "typesense-${var.region}-ssl-policy"
+  region          = var.region
+  profile         = "RESTRICTED"
+  min_tls_version = var.min_tls_version
+}

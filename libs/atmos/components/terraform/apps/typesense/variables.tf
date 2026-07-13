@@ -32,6 +32,18 @@ variable "hostname" {
   description = "Public hostname for the Typesense endpoint (e.g. typesense-staging.recidiviz.org)"
 }
 
+variable "min_tls_version" {
+  type        = string
+  default     = null
+  description = <<-EOT
+    Minimum TLS version for the Gateway's HTTPS frontend (e.g. TLS_1_2). When set, a
+    REGIONAL RESTRICTED-profile SSL policy is created (exposure.tf) and bound to the
+    Gateway via a GCPGatewayPolicy (typesense.tf); when null, the gateway-managed LB
+    uses GCP's default SSL policy, which accepts TLS 1.0. Set it on the standby stack
+    too so a failover flip comes up with the same handshake floor.
+  EOT
+}
+
 variable "cors_domains" {
   type        = list(string)
   default     = []
