@@ -18,6 +18,8 @@
 import { Platform, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { OtaUpdateBanner } from "~@meetings/app/features/ota-update";
+
 import { HeaderProps } from "../model/header";
 import { DesktopNav } from "./DesktopNav";
 import { MobileHeader } from "./MobileHeader";
@@ -51,6 +53,7 @@ export const Header = ({
         ),
       })}
       <StatusBanners />
+      <OtaUpdateBanner />
     </SafeAreaView>
   );
 };
