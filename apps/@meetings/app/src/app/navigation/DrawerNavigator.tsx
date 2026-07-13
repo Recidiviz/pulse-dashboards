@@ -22,6 +22,7 @@ import React from "react";
 import { useAgencyConfigs } from "~@meetings/app/entities/agency-config";
 import { useGetUser, useUserContext } from "~@meetings/app/entities/user";
 import { useStateSelection } from "~@meetings/app/features/state-selection";
+import { AgencyConfigScreen } from "~@meetings/app/pages/agency-config";
 import { ClientMeetingScreen } from "~@meetings/app/pages/client-meeting";
 import { ClientNewMeetingScreen } from "~@meetings/app/pages/client-new-meeting";
 import { ClientProfileScreen } from "~@meetings/app/pages/client-profile";
@@ -118,6 +119,9 @@ export default function DrawerNavigator() {
         <Drawer.Screen name="ResidentsRoot" component={ResidentsStack} />
       )}
       <Drawer.Screen name="StateSelection" component={StateSelectionScreen} />
+      {isRecidivizUser && (
+        <Drawer.Screen name="AgencyConfig" component={AgencyConfigScreen} />
+      )}
     </Drawer.Navigator>
   );
 }

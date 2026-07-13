@@ -15,12 +15,60 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { AgencyConfig } from "~@meetings/config";
+import { TRPCError } from "@trpc/server";
+import { parse as parseYaml } from "yaml";
+import { z } from "zod";
+
+import { type AgencyConfig } from "~@meetings/config";
 import { AGENCY_CONFIGS } from "~@meetings/config/loader";
-import { auth0Procedure, router } from "~@meetings/trpc/init";
+import { getGlobalPrismaClient } from "~@meetings/prisma";
+import {
+  auth0Procedure,
+  recidivizStatelessProcedure,
+  router,
+} from "~@meetings/trpc/init";
 
 export const configRouter = router({
   getAll: auth0Procedure.query((): Record<string, AgencyConfig> => {
     return AGENCY_CONFIGS;
   }),
+  getNames: recidivizStatelessProcedure.query(
+    async (): Promise<Record<string, string | undefined>> => {
+      const prisma = getGlobalPrismaClient();
+      const rows = await prisma.agencyConfig.findMany({
+        orderBy: { version: "desc" },
+      });
+
+      const result: Record<string, string | undefined> = {};
+      for (const row of rows) {
+        if (row.id in result) continue;
+        if (!row.parentId) {
+          result[row.id] = undefined;
+        } else {
+          const config = parseYaml(row.config) as { name?: string };
+          result[row.id] = config.name;
+        }
+      }
+
+      return result;
+    },
+  ),
+
+  getByState: recidivizStatelessProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input }): Promise<string> => {
+      const prisma = getGlobalPrismaClient();
+      const row = await prisma.agencyConfig.findFirst({
+        where: { id: input.id },
+        orderBy: { version: "desc" },
+        select: { config: true },
+      });
+      if (!row) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: `No config found for id: ${input.id}`,
+        });
+      }
+      return row.config;
+    }),
 });

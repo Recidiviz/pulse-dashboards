@@ -58,6 +58,7 @@ export type RootStackParamList = {
   ClientsRoot: NavigatorScreenParams<ClientsStackParamList>;
   ResidentsRoot: NavigatorScreenParams<ResidentsStackParamList>;
   StateSelection: undefined;
+  AgencyConfig: undefined;
 };
 
 export type AppStackParamList = {

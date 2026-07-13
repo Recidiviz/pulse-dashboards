@@ -187,14 +187,23 @@ export const ProfileMenu = () => {
                 />
               )}
               {isRecidivizUser && (
-                <ProfileMenuItem
-                  pressable={{
-                    onPress: () => {
-                      setShowImpersonationModal(true);
-                    },
-                  }}
-                  label="Impersonate User"
-                />
+                <>
+                  <ProfileMenuItem
+                    link={{
+                      screen: "AgencyConfig",
+                      onPress: () => setProfileDropdownOpen(false),
+                    }}
+                    label="Agency Configurations"
+                  />
+                  <ProfileMenuItem
+                    pressable={{
+                      onPress: () => {
+                        setShowImpersonationModal(true);
+                      },
+                    }}
+                    label="Impersonate User"
+                  />
+                </>
               )}
               <ProfileMenuItem
                 pressable={{

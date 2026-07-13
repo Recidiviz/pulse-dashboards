@@ -57,3 +57,26 @@ export const auth0Procedure = baseProcedure.use(async (opts) => {
     },
   });
 });
+
+// TODO (OBT-37732): migrate impersonation endpoints to use this procedure
+export const recidivizStatelessProcedure = baseProcedure.use(async (opts) => {
+  const { ctx } = opts;
+  if (!ctx.isAuth0Authorized || !ctx.user) {
+    //
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+
+  if (!ctx.user.isRecidivizUser) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Admin permissions required for requests",
+    });
+  }
+
+  return opts.next({
+    ctx: {
+      user: ctx.user,
+      isSkipAuth: ctx.isSkipAuth,
+    },
+  });
+});

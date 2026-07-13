@@ -39,8 +39,14 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
   const insets = useSafeAreaInsets();
   const { navigation } = props;
   const { canSelectStateCode, currentStateName } = useStateSelection();
-  const { name, email, hasSupervisionAccess, hasFacilitiesAccess, onLogout } =
-    useUserContext();
+  const {
+    name,
+    email,
+    hasSupervisionAccess,
+    hasFacilitiesAccess,
+    onLogout,
+    isRecidivizUser,
+  } = useUserContext();
 
   return (
     <DrawerContentScrollView
@@ -121,6 +127,12 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
               />
             )}
           </>
+        )}
+        {isRecidivizUser && (
+          <MobileMenuTextItem
+            title="Agency Configurations"
+            onPress={() => navigation.navigate("AgencyConfig")}
+          />
         )}
         <MobileMenuTextItem title="Log Out" onPress={onLogout} color="danger" />
       </View>

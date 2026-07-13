@@ -31,7 +31,10 @@ import superjson from "superjson";
 import { beforeAll, beforeEach, expect } from "vitest";
 import { mock } from "vitest-mock-extended";
 
-import { getPrismaClientForStateCode } from "~@meetings/prisma";
+import {
+  getGlobalPrismaClient,
+  getPrismaClientForStateCode,
+} from "~@meetings/prisma";
 import { StateCode } from "~@meetings/prisma/client";
 import * as meetingsTasks from "~@meetings/tasks";
 import { Auth0User, createContext } from "~@meetings/trpc/context";
@@ -49,6 +52,7 @@ export const testHost = process.env["HOST"] ?? "localhost";
 export let testTRPCClient: TRPCClient<AppRouter>;
 export let testServer: FastifyInstance;
 export const testPrismaClient = getPrismaClientForStateCode(StateCode.US_NE);
+export const testGlobalPrismaClient = getGlobalPrismaClient();
 
 const { testkit, sentryTransport } = sentryTestkit();
 
@@ -172,6 +176,9 @@ beforeAll(async () => {
 beforeEach(async () => {
   await resetDb(testPrismaClient);
   await seed(testPrismaClient);
+
+  await resetDb(testGlobalPrismaClient);
+  await seed(testGlobalPrismaClient);
 
   testkit.reset();
 
