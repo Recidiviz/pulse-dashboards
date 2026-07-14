@@ -15,7 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { isBeforeDueDate, isBeforeDueDateWithExtraDayOffset } from "../utils";
+import {
+  getSARCompletionState,
+  isBeforeDueDate,
+  isBeforeDueDateWithExtraDayOffset,
+} from "../utils";
 
 describe("isBeforeDueDate", () => {
   it("should return true if today is before due date", () => {
@@ -58,4 +62,70 @@ test("isBeforeDueDateWithExtraDayOffset", () => {
   expect(isBeforeDueDateWithExtraDayOffset(tomorrow)).toBe(true);
   expect(isBeforeDueDateWithExtraDayOffset(yesterday)).toBe(true);
   expect(isBeforeDueDateWithExtraDayOffset(twoDaysAgo)).toBe(false);
+});
+
+describe("getSARCompletionState", () => {
+  const yesterday = new Date();
+  yesterday.setUTCDate(yesterday.getUTCDate() - 1);
+  const tomorrow = new Date();
+  tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+  const updatedAt = new Date("2026-04-15");
+
+  it("returns archivedInOpii when completionDate has passed", () => {
+    expect(
+      getSARCompletionState({
+        status: "Complete",
+        completionDate: yesterday,
+        updatedAt,
+      }),
+    ).toEqual({ kind: "archivedInOpii", date: yesterday });
+  });
+
+  it("returns archivedInOPii even when status hasn't reached Complete in-app", () => {
+    // OPII closure is independent of in-app progress — MODOC can close the
+    // investigation before a PO has finished the SAR in our tool.
+    expect(
+      getSARCompletionState({
+        status: "InProgress",
+        completionDate: yesterday,
+        updatedAt,
+      }),
+    ).toEqual({ kind: "archivedInOpii", date: yesterday });
+  });
+
+  it("returns completeInApp when status is Complete but completionDate hasn't passed", () => {
+    expect(
+      getSARCompletionState({
+        status: "Complete",
+        completionDate: null,
+        updatedAt,
+      }),
+    ).toEqual({ kind: "completeInApp", date: updatedAt });
+
+    expect(
+      getSARCompletionState({
+        status: "Complete",
+        completionDate: tomorrow,
+        updatedAt,
+      }),
+    ).toEqual({ kind: "completeInApp", date: updatedAt });
+  });
+
+  it("returns active for any other status", () => {
+    expect(
+      getSARCompletionState({
+        status: "InProgress",
+        completionDate: null,
+        updatedAt,
+      }),
+    ).toEqual({ kind: "active" });
+
+    expect(
+      getSARCompletionState({
+        status: "NotYetStarted",
+        completionDate: null,
+        updatedAt,
+      }),
+    ).toEqual({ kind: "active" });
+  });
 });

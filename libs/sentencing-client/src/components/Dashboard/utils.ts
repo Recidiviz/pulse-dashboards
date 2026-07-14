@@ -39,8 +39,36 @@ export const isBeforeDueDateWithExtraDayOffset = (dueDate: Date | null) => {
 };
 
 // SAR: archived when completionDate has passed (investigation closed in OPII).
-export const isSARArchived = (sar: { completionDate?: Date | null }): boolean =>
-  !!sar.completionDate && moment.utc().isAfter(sar.completionDate);
+export function isSARArchived<T extends { completionDate?: Date | null }>(
+  sar: T,
+): sar is T & { completionDate: Date } {
+  return !!sar.completionDate && moment.utc().isAfter(sar.completionDate);
+}
+
+/** The two independent "completion" signals a SAR can have: `status` reaches
+ * Complete as soon as a PO finishes all fields in-app, but the report isn't
+ * archived until MODOC closes the investigation in OPII and `completionDate`
+ * is set. Shared by any UI that branches on this distinction (e.g. a Reports
+ * section label and its download-vs-builder-link action) so they can't fall
+ * out of sync on what counts as "done." */
+export type SARCompletionState =
+  | { kind: "archivedInOpii"; date: Date }
+  | { kind: "completeInApp"; date: Date }
+  | { kind: "active" };
+
+export const getSARCompletionState = (sar: {
+  status: string;
+  completionDate?: Date | null;
+  updatedAt: Date;
+}): SARCompletionState => {
+  if (isSARArchived(sar)) {
+    return { kind: "archivedInOpii", date: sar.completionDate };
+  }
+  if (sar.status === "Complete") {
+    return { kind: "completeInApp", date: sar.updatedAt };
+  }
+  return { kind: "active" };
+};
 
 // PSI: archived when dueDate has passed (with extra day grace period).
 export const isPSICaseArchived = (psiCase: {

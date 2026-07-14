@@ -728,6 +728,7 @@ describe("SAR router", () => {
         status: fakeSAR.status,
         completionDate: null,
         courtDate: null,
+        updatedAt: expect.any(Date),
         staff: { pseudonymizedId: fakeStaff.pseudonymizedId },
       });
     });
@@ -841,6 +842,7 @@ describe("SAR router", () => {
           "id",
           "staff",
           "status",
+          "updatedAt",
         ].sort(),
       );
       // Defense-in-depth: SAR fields that should never leak in this minimal view.

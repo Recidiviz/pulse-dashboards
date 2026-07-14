@@ -35,6 +35,7 @@ function makeSAR(overrides: Partial<SARByClient> = {}): SARByClient {
     status: "InProgress",
     completionDate: null,
     courtDate: null,
+    updatedAt: parseISO("2026-04-15"),
     staff: { pseudonymizedId: "staff-pseudo-1" },
     ...overrides,
   } as SARByClient;
@@ -83,7 +84,9 @@ describe("SARReportsSection", () => {
     const { onDownload, onPrefetch } = renderSection([archivedSAR]);
 
     expect(screen.getByText("Reports")).toBeInTheDocument();
-    expect(screen.getByText("SAR - Completed 05/05/2026")).toBeInTheDocument();
+    expect(
+      screen.getByText("SAR - Completed in OPII 05/05/2026"),
+    ).toBeInTheDocument();
 
     const button = screen.getByRole("button", { name: "Download Report" });
     fireEvent.mouseEnter(button);
@@ -128,15 +131,18 @@ describe("SARReportsSection", () => {
   });
 
   test("a Complete SAR shows Download Report even when not archived", () => {
-    // `Complete` without a past completionDate is not archived (label stays
-    // live), but a Complete SAR always offers Download rather than the builder.
+    // `Complete` without a past completionDate is not archived (label shows
+    // the in-app completion date via `updatedAt`, not OPII's), but a Complete
+    // SAR always offers Download rather than the builder.
     const sars: SARsByClient = [
       makeSAR({ id: "s-complete", status: "Complete", completionDate: null }),
     ];
 
     renderSection(sars);
 
-    expect(screen.getByText("SAR - Complete")).toBeInTheDocument();
+    expect(
+      screen.getByText("SAR - Completed in Recidiviz 04/15/2026"),
+    ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: "Download Report" }),
     ).toBeInTheDocument();
@@ -162,7 +168,10 @@ describe("SARReportsSection", () => {
     renderSection(sars);
 
     const labels = screen.getAllByText(/^SAR - /).map((el) => el.textContent);
-    expect(labels).toEqual(["SAR - Completed 05/05/2026", "SAR - In Progress"]);
+    expect(labels).toEqual([
+      "SAR - Completed in OPII 05/05/2026",
+      "SAR - In Progress",
+    ]);
 
     // Both action types are present.
     expect(
@@ -178,17 +187,19 @@ describe("SARReportsSection", () => {
     expect(container.querySelector("section")).not.toBeNull();
   });
 
-  test("treats a future completionDate as not archived (label stays live)", () => {
+  test("treats a future completionDate as not archived (label uses updatedAt)", () => {
     // completionDate is after NOW (2026-05-28), so the row is not archived and
-    // keeps the live "SAR - Complete" label rather than "Completed <date>".
-    // Being Complete, its action is Download Report (Complete → Download).
+    // shows the in-app completion date ("Completed in Recidiviz") rather than
+    // OPII's. Being Complete, its action is Download Report (Complete → Download).
     const futureSAR = makeSAR({
       id: "future-1",
       status: "Complete",
       completionDate: parseISO("2026-12-31"),
     });
     renderSection([futureSAR]);
-    expect(screen.getByText("SAR - Complete")).toBeInTheDocument();
+    expect(
+      screen.getByText("SAR - Completed in Recidiviz 04/15/2026"),
+    ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: "Download Report" }),
     ).toBeInTheDocument();

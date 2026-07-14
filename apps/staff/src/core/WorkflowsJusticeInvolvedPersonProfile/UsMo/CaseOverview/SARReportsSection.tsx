@@ -20,13 +20,16 @@ import React from "react";
 
 import {
   CaseStatusToDisplay,
-  isSARArchived,
+  getSARCompletionState,
   SARByClient,
   SARsByClient,
 } from "~sentencing-client";
 
 import { SARReportAction } from "./SARReportAction";
 import { RowLabel, RowWithAction, Section, SectionHeading } from "./styles";
+
+/** Display format shared by both "Completed" label variants below. */
+const SAR_DATE_FORMAT = "MM/dd/yyyy";
 
 /** Map the wire-level SAR status enum to the display string used elsewhere in
  * the SAR product (`CaseStatusToDisplay` from `~sentencing-client`). Falls back
@@ -36,10 +39,15 @@ function humanStatus(status: SARByClient["status"]): string {
 }
 
 function rowLabel(sar: SARByClient): string {
-  if (isSARArchived(sar) && sar.completionDate) {
-    return `SAR - Completed ${format(sar.completionDate, "MM/dd/yyyy")}`;
+  const state = getSARCompletionState(sar);
+  switch (state.kind) {
+    case "archivedInOpii":
+      return `SAR - Completed in OPII ${format(state.date, SAR_DATE_FORMAT)}`;
+    case "completeInApp":
+      return `SAR - Completed in Recidiviz ${format(state.date, SAR_DATE_FORMAT)}`;
+    case "active":
+      return `SAR - ${humanStatus(sar.status)}`;
   }
-  return `SAR - ${humanStatus(sar.status)}`;
 }
 
 type SARReportsSectionProps = {
@@ -56,10 +64,12 @@ type SARReportsSectionProps = {
  * Presentational "Reports" section of the US_MO Case Overview card. Renders one
  * row per SAR assigned to the calling officer for the current client:
  *
- * - Archived SAR (`completionDate` in the past): label shows "Completed {date}",
- *   and a "Download Report" button downloads the finished PDF in place
- *   (prefetched on hover/focus).
- * - Not-yet-archived SAR: label shows the current status, action link reads
+ * - Archived SAR (`completionDate` in the past): label shows "Completed in
+ *   OPII {date}", and a "Download Report" button downloads the finished PDF
+ *   in place (prefetched on hover/focus).
+ * - Complete but not yet archived SAR: label shows "Completed in Recidiviz
+ *   {date}"; still offers "Download Report" since a finished PDF exists.
+ * - Any other status: label shows the current status, action link reads
  *   "Go to SAR Builder" and navigates to the SAR Builder.
  *
  * Pure/presentational — all data + side effects are injected by the container

@@ -17,7 +17,7 @@
 
 import React, { useState } from "react";
 
-import { isSARArchived, SARByClient, sarUrl } from "~sentencing-client";
+import { getSARCompletionState, SARByClient, sarUrl } from "~sentencing-client";
 
 import { RowActionButton, RowActionLink } from "./styles";
 
@@ -81,7 +81,7 @@ export function SARReportAction({
   // The builder link is only for an in-progress SAR — neither archived
   // (completionDate passed) nor marked Complete. Once it is archived or
   // Complete, offer the Download Report action for the finished/locked report.
-  if (!isSARArchived(sar) && sar.status !== "Complete") {
+  if (getSARCompletionState(sar).kind === "active") {
     return (
       <RowActionLink
         href={builderHref(sar)}
