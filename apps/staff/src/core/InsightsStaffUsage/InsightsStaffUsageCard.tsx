@@ -172,10 +172,18 @@ const InsightsUsageCard: React.FC<{
 const ManagedComponent: React.FC<{
   presenter: SupervisionSupervisorPagePresenter;
 }> = observer(function SupervisorPagePresenter({ presenter }) {
+  const officerLabel = presenter.labels.supervisionOfficerLabel;
+  const numDays = presenter.insightsNumDaysWithoutLogin;
+
+  // Only describe the "Consistent Login" signal where its pill is enabled.
+  const sectionDescription = presenter.userCanViewConsistentLoginPill
+    ? `View the last log-in date for each ${officerLabel}. Spot ${pluralize(officerLabel)} inactive for over ${numDays} days so you can offer support, and those with consistent logins for the past 12 months to recognize.`
+    : `View the last log-in date for each ${officerLabel}. Any ${officerLabel} inactive for over ${numDays} days will be flagged, so you can take action to ensure continued usage and support.`;
+
   return (
     <InsightsPageSection
       sectionTitle="Login Activity"
-      sectionDescription={`View the last log-in date for each ${presenter.labels.supervisionOfficerLabel}. Any ${presenter.labels.supervisionOfficerLabel} inactive for over ${presenter.insightsNumDaysWithoutLogin} days will be flagged, so you can take action to ensure continued usage and support.`}
+      sectionDescription={sectionDescription}
       customWidth={501}
     >
       <ModelHydrator hydratable={presenter}>
