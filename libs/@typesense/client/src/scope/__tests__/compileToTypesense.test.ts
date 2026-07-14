@@ -78,11 +78,18 @@ describe("compileUserScopePredicate", () => {
     );
   });
 
-  // Note: `unrestricted` base + `expandToSupervisedStaff` is not a combination
-  // resolveStaffScope can produce — the resolver skips the expansion when the
-  // base is unrestricted (mirrors production's "supervisor-OR only fires when
-  // staffFilter is defined" rule). Compiler behavior for that combination is
-  // therefore not tested.
+  // Note: resolveStaffScope won't produce `unrestricted` base + expansion
+  // (it skips the expansion in that case), but compileUserScopePredicate is a
+  // public function that any caller could invoke with that combination, so we
+  // verify the defensive branch.
+  it("unrestricted base + supervisor expansion → null (defensive; resolver doesn't produce this)", () => {
+    expect(
+      compileUserScopePredicate({
+        base: { kind: "unrestricted" },
+        expandToSupervisedStaff: { userId: "user-7" },
+      }),
+    ).toBeNull();
+  });
 
   it("none base alone → impossible-match sentinel", () => {
     expect(compileUserScopePredicate({ base: { kind: "none" } })).toBe(

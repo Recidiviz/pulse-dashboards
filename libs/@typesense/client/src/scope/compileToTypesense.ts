@@ -66,9 +66,12 @@ export function compileUserScopePredicate(scope: StaffScope): string | null {
   // array-membership intent explicit (matches if any element equals userId).
   const supervisorClause = `supervisorExternalId:=${quote(userId)} || supervisorExternalIds:=[${quote(userId)}]`;
 
-  // Invariant from resolveStaffScope: expandToSupervisedStaff is never attached
-  // to an unrestricted base (the resolver skips the expansion in that case
-  // since it would be silently redundant).
+  // If base is unrestricted, the supervisor expansion is redundant —
+  // unrestricted already includes everything. resolveStaffScope won't produce
+  // this combination (it skips the expansion when base is unrestricted), but
+  // we guard here because compileUserScopePredicate is a public function and
+  // direct callers could construct any valid StaffScope shape.
+  if (scope.base.kind === "unrestricted") return null;
 
   // If base is `none`, the supervisor expansion IS the entire predicate
   // (no email/district fallback to OR against).

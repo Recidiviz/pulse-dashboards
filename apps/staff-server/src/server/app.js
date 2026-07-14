@@ -50,6 +50,7 @@ import {
   generateTokens,
   getLookerConfig,
 } from "./workflows/lookerEmbed";
+import { mintTypesenseScopedKey } from "./workflows/typesenseScopedKey";
 
 config();
 
@@ -240,6 +241,12 @@ app.get("/health", (req, res) => {
 
 // authenticates the user to Firestore with Auth0 credential
 app.get("/token", asyncHandler(getFirebaseToken));
+
+// mints a scoped Typesense search API key for the authenticated user
+app.post(
+  "/workflows/typesense-scoped-key",
+  asyncHandler(mintTypesenseScopedKey),
+);
 
 app.get(
   "/api/impersonateAuth0User",
