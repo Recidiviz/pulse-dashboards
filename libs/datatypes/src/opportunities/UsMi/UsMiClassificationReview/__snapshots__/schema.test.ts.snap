@@ -1,5 +1,46 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`schema for eligibleInitialReview 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "usMiNotAlreadyOnLowestEligibleSupervisionLevel": {
+      "mediumIsLowestSupervisionLevelAllowed": null,
+      "supervisionLevel": "MAXIMUM",
+    },
+    "usMiPastInitialClassificationReviewDate": {
+      "eligibleDate": 2022-12-12T00:00:00.000Z,
+    },
+  },
+  "externalId": "cr-eligible-1",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {
+    "recommendedSupervisionLevel": "MEDIUM",
+  },
+  "stateCode": "US_MI",
+}
+`;
+
+exports[`schema for eligibleSixMonthReview 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "usMiNotAlreadyOnLowestEligibleSupervisionLevel": null,
+    "usMiSixMonthsPastLastClassificationReviewDate": {
+      "eligibleDate": 2023-02-28T00:00:00.000Z,
+    },
+  },
+  "externalId": "cr-eligible-2",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_MI",
+}
+`;
+
 exports[`transform record for initial CR 1`] = `
 {
   "caseNotes": {
@@ -90,13 +131,6 @@ exports[`transform record for six-month CR 1`] = `
 exports[`transforms records with eligible and ineligible criteria 1`] = `
 {
   "caseNotes": {
-    "Recent employment (last 6 months)": [
-      {
-        "eventDate": 2022-10-23T00:00:00.000Z,
-        "noteBody": "Got a new job",
-        "noteTitle": "Employed at Big Bob's Burger Joint",
-      },
-    ],
     "Recommended supervision level": [
       {
         "eventDate": null,

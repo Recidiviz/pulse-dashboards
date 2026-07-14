@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,22 +17,19 @@
 
 import { z } from "zod";
 
-import { opportunitySchemaBase } from "~datatypes";
+import { dateStringSchema, nullishAsUndefined } from "../../utils/zod";
 
-import { eligibleDateSchema } from "../../schemaHelpers";
-import { usMiOfficersAndDocketsMetadataSchema } from "../common";
-
-const eligibleAndIneligibleCriteria = z
-  .object({
-    supervisionTwoDaysPastFullTermCompletionDate: eligibleDateSchema.optional(),
-  })
-  .passthrough();
-
-export const usMiPastFTRDSchema = opportunitySchemaBase.extend({
-  eligibleCriteria: eligibleAndIneligibleCriteria,
-  ineligibleCriteria: eligibleAndIneligibleCriteria,
-  metadata: usMiOfficersAndDocketsMetadataSchema,
+export const usMiOfficersAndDocketsMetadataSchema = z.object({
+  officers: z.array(z.string()).default([]),
+  dockets: z
+    .array(
+      z.object({
+        docketNumber: z.string(),
+        issueLocation: z.string().nullable(),
+        legalOrderEffectiveDate: nullishAsUndefined(dateStringSchema),
+        legalOrderExpirationDate: nullishAsUndefined(dateStringSchema),
+        legalOrderType: z.string().nullable(),
+      }),
+    )
+    .default([]),
 });
-
-export type UsMiPastFTRDReferralRecord = z.infer<typeof usMiPastFTRDSchema>;
-export type UsMiPastFTRDReferralRecordRaw = z.input<typeof usMiPastFTRDSchema>;

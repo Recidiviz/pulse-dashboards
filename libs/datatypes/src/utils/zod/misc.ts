@@ -49,6 +49,16 @@ export function defaultOnNull<T extends z.ZodTypeAny>(
   });
 }
 
+export function toTitleCase(str: string): string {
+  return (
+    str &&
+    str.replace(
+      /\w[^\s-/]*/g,
+      (txt) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase(),
+    )
+  );
+}
+
 export const getReadableSupervisionLocation = (
   location: string | undefined | null,
 ): string => {

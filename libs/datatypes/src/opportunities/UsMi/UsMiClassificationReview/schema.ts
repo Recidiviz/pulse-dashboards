@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
 
 import { z } from "zod";
 
-import { opportunitySchemaBase } from "~datatypes";
-
-import { eligibleDateSchema } from "../../schemaHelpers";
+import { ParsedRecord } from "../../../utils/types";
+import { dateStringSchema } from "../../../utils/zod";
+import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 
 export const usMiClassificationReviewSchemaForSupervisionLevelFormatter = (
   formatter: (raw: string) => string = (s) => s,
@@ -32,8 +32,12 @@ export const usMiClassificationReviewSchemaForSupervisionLevelFormatter = (
           mediumIsLowestSupervisionLevelAllowed: z.boolean().nullish(),
         })
         .nullable(),
-      usMiPastInitialClassificationReviewDate: eligibleDateSchema,
-      usMiSixMonthsPastLastClassificationReviewDate: eligibleDateSchema,
+      usMiPastInitialClassificationReviewDate: z.object({
+        eligibleDate: dateStringSchema,
+      }),
+      usMiSixMonthsPastLastClassificationReviewDate: z.object({
+        eligibleDate: dateStringSchema,
+      }),
     })
     .partial()
     .passthrough();
@@ -47,9 +51,6 @@ export const usMiClassificationReviewSchemaForSupervisionLevelFormatter = (
   });
 };
 
-export type UsMiClassificationReviewReferralRecordRaw = z.input<
-  ReturnType<typeof usMiClassificationReviewSchemaForSupervisionLevelFormatter>
->;
-export type UsMiClassificationReviewReferralRecord = z.infer<
+export type UsMiClassificationReviewReferralRecord = ParsedRecord<
   ReturnType<typeof usMiClassificationReviewSchemaForSupervisionLevelFormatter>
 >;

@@ -15,39 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
-
-import { dateStringSchema } from "~datatypes";
-
-import {
-  getBaseSLDValidator,
-  supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter,
-} from "../../SupervisionLevelDowngradeReferralRecord";
-
-type Schema = ReturnType<
-  typeof usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter
->;
-
-export type UsMiSupervisionLevelDowngradeReferralRecordRaw = z.input<Schema>;
-export type UsMiSupervisionLevelDowngradeReferralRecord = z.infer<Schema>;
-
-export const usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter =
-  (fmt?: (raw: string) => string) => {
-    const base =
-      supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(
-        fmt,
-      );
-
-    return base.extend({
-      eligibleCriteria: base.shape.eligibleCriteria.extend({
-        usMiNotPastInitialClassificationReviewDate: z.object({
-          eligibleDate: dateStringSchema,
-        }),
-      }),
-      metadata: z.object({
-        eligibleDate: dateStringSchema,
-      }),
-    });
-  };
-
-export const getValidator = getBaseSLDValidator;
+export { getBaseSLDValidator as getValidator } from "../../SupervisionLevelDowngradeReferralRecord";

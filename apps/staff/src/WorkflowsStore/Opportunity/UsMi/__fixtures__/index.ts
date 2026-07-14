@@ -15,12 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ClientRecord, OpportunityType } from "~datatypes";
-
 import {
-  UsMiMinimumTelephoneReportingReferralRecordRaw,
-  UsMiPastFTRDReferralRecordRaw,
-} from "..";
+  ClientRecord,
+  OpportunityType,
+  UsMiMinimumTelephoneReportingReferralRecord,
+  UsMiPastFTRDReferralRecord,
+} from "~datatypes";
 
 export const ineligibleClientRecord: ClientRecord = {
   recordId: "us_mi_001",
@@ -101,7 +101,7 @@ export const usMiMinimumTelephoneReportingEligibleClientRecord: ClientRecord = {
   personType: "CLIENT",
 };
 
-export const usMiMinimumTelephoneReportingReferralRecord: UsMiMinimumTelephoneReportingReferralRecordRaw =
+export const usMiMinimumTelephoneReportingReferralRecord: UsMiMinimumTelephoneReportingReferralRecord["input"] =
   {
     stateCode: "US_MI",
     externalId: "010",
@@ -133,7 +133,7 @@ export const usMiMinimumTelephoneReportingReferralRecord: UsMiMinimumTelephoneRe
     isAlmostEligible: false,
   };
 
-export const usMiPastFTRDRecordFixture: UsMiPastFTRDReferralRecordRaw = {
+export const usMiPastFTRDRecordFixture: UsMiPastFTRDReferralRecord["input"] = {
   stateCode: "US_MI",
   externalId: "001",
   eligibleCriteria: {

@@ -15,34 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsMiSupervisionLevelDowngradeReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsMi";
-import { fixtureWithIdKey } from "./utils";
+import { usMiSupervisionLevelDowngradeFixtures } from "~datatypes";
 
-export const usMiSupervisionLevelDowngradeReferrals =
-  fixtureWithIdKey<UsMiSupervisionLevelDowngradeReferralRecordRaw>(
-    "externalId",
-    [
-      {
-        stateCode: "US_MI",
-        externalId: "001",
-        eligibleCriteria: {
-          supervisionLevelHigherThanAssessmentLevel: {
-            assessmentLevel: "HIGH",
-            latestAssessmentDate: "2021-08-20",
-            supervisionLevel: "MAXIMUM",
-          },
-          usMiNotPastInitialClassificationReviewDate: {
-            eligibleDate: "2025-01-01",
-          },
-          usMiNotServingIneligibleOffensesForDowngradeFromSupervisionLevel:
-            null,
-        },
-        ineligibleCriteria: {},
-        metadata: {
-          eligibleDate: "2024-02-03",
-        },
-        isEligible: true,
-        isAlmostEligible: false,
-      },
-    ],
-  );
+import { fixtureFromParsedRecords } from "./utils";
+
+export const usMiSupervisionLevelDowngradeReferrals = fixtureFromParsedRecords(
+  "externalId",
+  usMiSupervisionLevelDowngradeFixtures,
+);

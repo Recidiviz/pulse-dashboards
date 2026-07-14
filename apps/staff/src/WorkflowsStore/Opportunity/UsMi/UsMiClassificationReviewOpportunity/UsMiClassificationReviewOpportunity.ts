@@ -17,16 +17,17 @@
 
 import { DocumentData } from "firebase/firestore";
 
-import { Client } from "../../../Client";
-import { OpportunityBase } from "../../OpportunityBase";
 import {
   UsMiClassificationReviewReferralRecord,
   usMiClassificationReviewSchemaForSupervisionLevelFormatter,
-} from "./UsMiClassificationReviewReferralRecord";
+} from "~datatypes";
+
+import { Client } from "../../../Client";
+import { OpportunityBase } from "../../OpportunityBase";
 
 export class UsMiClassificationReviewOpportunity extends OpportunityBase<
   Client,
-  UsMiClassificationReviewReferralRecord
+  UsMiClassificationReviewReferralRecord["output"]
 > {
   readonly hideUnknownCaseNoteDates = true;
 

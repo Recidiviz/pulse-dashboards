@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,13 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { makeRecordFixture } from "../../../utils/zod/object/makeRecordFixture";
+import { FixtureMapping } from "../../utils/types";
 import {
-  UsMiMinimumTelephoneReportingReferralRecordRaw,
+  UsMiMinimumTelephoneReportingReferralRecord,
   usMiMinimumTelephoneReportingSchema,
-} from "..";
+} from "./schema";
 
-test("transform record", () => {
-  const rawRecord: UsMiMinimumTelephoneReportingReferralRecordRaw = {
+export const usMiMinimumTelephoneReportingFixtures = {
+  fullyEligible1: makeRecordFixture(usMiMinimumTelephoneReportingSchema, {
     stateCode: "US_MI",
     externalId: "010",
     eligibleCriteria: {
@@ -36,14 +38,8 @@ test("transform record", () => {
       usMiIfServingAnOuilOrOwiHasCompleted12MonthsOnSupervision: null,
     },
     ineligibleCriteria: {},
-    metadata: {
-      eligibleDate: "2022-08-12",
-    },
+    metadata: { eligibleDate: "2022-08-12" },
     isEligible: true,
     isAlmostEligible: false,
-  };
-
-  expect(
-    usMiMinimumTelephoneReportingSchema.parse(rawRecord),
-  ).toMatchSnapshot();
-});
+  }),
+} satisfies FixtureMapping<UsMiMinimumTelephoneReportingReferralRecord>;

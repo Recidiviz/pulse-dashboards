@@ -16,4 +16,3 @@
 // =============================================================================
 
 export * from "./UsMiMinimumTelephoneReportingOpportunity";
-export * from "./UsMiMinimumTelephoneReportingReferralRecord";

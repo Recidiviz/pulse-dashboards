@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,14 +17,14 @@
 
 import { z } from "zod";
 
-import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
+import { ParsedRecord } from "../../../utils/types";
+import { dateStringSchema } from "../../../utils/zod";
+import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 
 const eligibleAndIneligibleCriteria = z
   .object({
     onMinimumSupervisionAtLeastSixMonths: z
-      .object({
-        eligibleDate: dateStringSchema,
-      })
+      .object({ eligibleDate: dateStringSchema })
       .nullable(),
     usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting: z.object({
       supervisionLevelRawText: z.string(),
@@ -39,19 +39,13 @@ const eligibleAndIneligibleCriteria = z
       })
       .nullable(),
     supervisionNotPastFullTermCompletionDateOrUpcoming90Days: z
-      .object({
-        eligibleDate: dateStringSchema.nullable(),
-      })
+      .object({ eligibleDate: dateStringSchema.nullable() })
       .nullable(),
     usMiNotRequiredToRegisterUnderSora: z
-      .object({
-        ineligibleDate: dateStringSchema,
-      })
+      .object({ ineligibleDate: dateStringSchema })
       .nullable(),
     usMiIfServingAnOuilOrOwiHasCompleted12MonthsOnSupervision: z
-      .object({
-        eligibleDate: dateStringSchema,
-      })
+      .object({ eligibleDate: dateStringSchema })
       .nullable(),
   })
   .partial()
@@ -61,16 +55,10 @@ export const usMiMinimumTelephoneReportingSchema = opportunitySchemaBase.extend(
   {
     eligibleCriteria: eligibleAndIneligibleCriteria,
     ineligibleCriteria: eligibleAndIneligibleCriteria,
-    metadata: z.object({
-      eligibleDate: dateStringSchema,
-    }),
+    metadata: z.object({ eligibleDate: dateStringSchema }),
   },
 );
 
-export type UsMiMinimumTelephoneReportingReferralRecord = z.infer<
-  typeof usMiMinimumTelephoneReportingSchema
->;
-
-export type UsMiMinimumTelephoneReportingReferralRecordRaw = z.input<
+export type UsMiMinimumTelephoneReportingReferralRecord = ParsedRecord<
   typeof usMiMinimumTelephoneReportingSchema
 >;

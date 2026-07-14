@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,14 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsMiPastFTRDReferralRecord } from "~datatypes";
+import { makeRecordFixture } from "../../../utils/zod/object/makeRecordFixture";
+import { FixtureMapping } from "../../utils/types";
+import { UsMiPastFTRDReferralRecord, usMiPastFTRDSchema } from "./schema";
 
-import { fixtureWithIdKey } from "./utils";
-
-export const usMiPastFTRDReferralsFixture = fixtureWithIdKey<
-  UsMiPastFTRDReferralRecord["input"]
->("externalId", [
-  {
+export const usMiPastFTRDFixtures = {
+  fullyEligible1: makeRecordFixture(usMiPastFTRDSchema, {
     stateCode: "US_MI",
     externalId: "010",
     eligibleCriteria: {
@@ -34,5 +32,5 @@ export const usMiPastFTRDReferralsFixture = fixtureWithIdKey<
     metadata: {},
     isEligible: true,
     isAlmostEligible: false,
-  },
-]);
+  }),
+} satisfies FixtureMapping<UsMiPastFTRDReferralRecord>;

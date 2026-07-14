@@ -1,0 +1,89 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for fullyEligibleParole 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "servingAtLeastOneYearOnParoleSupervisionOrSupervisionOutOfState": {
+      "projectedCompletionDateMax": "2025-03-01",
+    },
+    "supervisionNotPastFullTermCompletionDate": {
+      "eligibleDate": "2022-03-01",
+    },
+    "supervisionOrSupervisionOutOfStateLevelIsNotHigh": {
+      "supervisionLevel": "MINIMUM",
+    },
+    "supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate": {
+      "eligibleDate": "2023-03-01",
+    },
+    "usMiNoActivePpo": {
+      "activePpo": false,
+    },
+    "usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision": {
+      "latestIneligibleConvictions": [],
+    },
+    "usMiNoOwiViolationOnParoleDualSupervision": {
+      "latestIneligibleConvictions": [],
+    },
+    "usMiNoPendingDetainer": {
+      "pendingDetainer": false,
+    },
+    "usMiNotServingIneligibleOffensesForEarlyDischargeFromParoleDualSupervision": {
+      "ineligibleOffenses": [],
+    },
+    "usMiParoleDualSupervisionPastEarlyDischargeDate": {
+      "eligibleDate": "2023-01-01",
+      "sentenceType": "PAROLE",
+    },
+    "usMiSupervisionOrSupervisionOutOfStateLevelIsNotSai": {
+      "supervisionLevelRawText": "MINIMUM",
+    },
+  },
+  "externalId": "ed-eligible-1",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {
+    "dockets": [],
+    "eligibleDate": 2024-03-01T00:00:00.000Z,
+    "interstateFlag": "IC-OUT",
+    "officers": [],
+    "supervisionType": "Parole",
+  },
+  "stateCode": "US_MI",
+}
+`;
+
+exports[`schema for fullyEligibleProbation 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "supervisionNotPastFullTermCompletionDate": {
+      "eligibleDate": "2022-03-01",
+    },
+    "supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate": {
+      "eligibleDate": "2022-03-01",
+    },
+    "usMiNoActivePpo": {
+      "activePpo": false,
+    },
+    "usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision": {
+      "latestIneligibleConvictions": [],
+    },
+    "usMiNotServingIneligibleOffensesForEarlyDischargeFromProbationSupervision": {
+      "currentOffenses": [],
+    },
+  },
+  "externalId": "ed-eligible-2",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {
+    "dockets": [],
+    "eligibleDate": 2021-03-01T00:00:00.000Z,
+    "officers": [],
+    "supervisionType": "Probation",
+  },
+  "stateCode": "US_MI",
+}
+`;

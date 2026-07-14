@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`transform record for SLD 1`] = `
+exports[`schema for fullyEligible1 1`] = `
 {
   "caseNotes": {
     "Recommended supervision level": [
@@ -13,21 +13,21 @@ exports[`transform record for SLD 1`] = `
   },
   "eligibleCriteria": {
     "supervisionLevelHigherThanAssessmentLevel": {
-      "assessmentLevel": "Medium",
-      "latestAssessmentDate": 2022-10-12T00:00:00.000Z,
-      "supervisionLevel": "HIGH",
+      "assessmentLevel": "High",
+      "latestAssessmentDate": 2021-08-20T00:00:00.000Z,
+      "supervisionLevel": "MAXIMUM",
     },
     "usMiNotPastInitialClassificationReviewDate": {
-      "eligibleDate": 2022-12-12T00:00:00.000Z,
+      "eligibleDate": 2025-01-01T00:00:00.000Z,
     },
     "usMiNotServingIneligibleOffensesForDowngradeFromSupervisionLevel": null,
   },
-  "externalId": "sld-eligible-1",
+  "externalId": "001",
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
   "metadata": {
-    "eligibleDate": 2022-12-12T00:00:00.000Z,
+    "eligibleDate": 2024-02-03T00:00:00.000Z,
   },
   "stateCode": "US_MI",
 }

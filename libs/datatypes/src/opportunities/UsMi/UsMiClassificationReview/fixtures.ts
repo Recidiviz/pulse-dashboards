@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,14 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsMiClassificationReviewReferralRecord } from "~datatypes";
+import { makeRecordFixture } from "../../../utils/zod/object/makeRecordFixture";
+import { FixtureMapping } from "../../utils/types";
+import {
+  UsMiClassificationReviewReferralRecord,
+  usMiClassificationReviewSchemaForSupervisionLevelFormatter,
+} from "./schema";
 
-import { fixtureWithIdKey } from "./utils";
+const schema = usMiClassificationReviewSchemaForSupervisionLevelFormatter();
 
-export const UsMiClassificationReviewReferralsFixture = fixtureWithIdKey<
-  UsMiClassificationReviewReferralRecord["input"]
->("externalId", [
-  {
+export const usMiClassificationReviewFixtures = {
+  eligibleInitialReview: makeRecordFixture(schema, {
     stateCode: "US_MI",
     externalId: "cr-eligible-1",
     eligibleCriteria: {
@@ -36,19 +39,10 @@ export const UsMiClassificationReviewReferralsFixture = fixtureWithIdKey<
     },
     ineligibleCriteria: {},
     metadata: { recommendedSupervisionLevel: "MEDIUM" },
-    caseNotes: {
-      Education: [
-        {
-          eventDate: "2022-06-02",
-          noteTitle: "Graduated",
-          noteBody: "Completed coding course",
-        },
-      ],
-    },
     isEligible: true,
     isAlmostEligible: false,
-  },
-  {
+  }),
+  eligibleSixMonthReview: makeRecordFixture(schema, {
     stateCode: "US_MI",
     externalId: "cr-eligible-2",
     eligibleCriteria: {
@@ -59,16 +53,7 @@ export const UsMiClassificationReviewReferralsFixture = fixtureWithIdKey<
     },
     ineligibleCriteria: {},
     metadata: {},
-    caseNotes: {
-      Education: [
-        {
-          eventDate: "2022-06-02",
-          noteTitle: "Graduated",
-          noteBody: "Completed coding course",
-        },
-      ],
-    },
     isEligible: true,
     isAlmostEligible: false,
-  },
-]);
+  }),
+} satisfies FixtureMapping<UsMiClassificationReviewReferralRecord>;

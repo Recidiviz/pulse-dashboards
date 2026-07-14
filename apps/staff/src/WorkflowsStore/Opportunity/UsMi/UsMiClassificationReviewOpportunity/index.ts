@@ -16,4 +16,3 @@
 // =============================================================================
 
 export * from "./UsMiClassificationReviewOpportunity";
-export * from "./UsMiClassificationReviewReferralRecord";

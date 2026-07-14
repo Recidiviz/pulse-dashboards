@@ -1,0 +1,21 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for fullyEligible1 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "supervisionTwoDaysPastFullTermCompletionDate": {
+      "eligibleDate": 2022-02-02T00:00:00.000Z,
+    },
+  },
+  "externalId": "010",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {
+    "dockets": [],
+    "officers": [],
+  },
+  "stateCode": "US_MI",
+}
+`;

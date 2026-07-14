@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,24 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsMiPastFTRDReferralRecord } from "~datatypes";
+import { usMiSupervisionLevelDowngradeFixtures } from "./fixtures";
+import { usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "./schema";
 
-import { fixtureWithIdKey } from "./utils";
+const schema =
+  usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter();
 
-export const usMiPastFTRDReferralsFixture = fixtureWithIdKey<
-  UsMiPastFTRDReferralRecord["input"]
->("externalId", [
-  {
-    stateCode: "US_MI",
-    externalId: "010",
-    eligibleCriteria: {
-      supervisionTwoDaysPastFullTermCompletionDate: {
-        eligibleDate: "2022-02-02",
-      },
-    },
-    ineligibleCriteria: {},
-    metadata: {},
-    isEligible: true,
-    isAlmostEligible: false,
-  },
-]);
+test.each(
+  Object.keys(usMiSupervisionLevelDowngradeFixtures) as Array<
+    keyof typeof usMiSupervisionLevelDowngradeFixtures
+  >,
+)("schema for %s", (key) => {
+  expect(
+    schema.parse(usMiSupervisionLevelDowngradeFixtures[key].input),
+  ).toMatchSnapshot();
+});

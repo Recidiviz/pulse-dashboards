@@ -16,4 +16,3 @@
 // =============================================================================
 
 export * from "./UsMiPastFTRDOpportunity";
-export * from "./UsMiPastFTRDReferralRecord";

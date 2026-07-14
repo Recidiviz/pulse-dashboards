@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,29 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { usMiEarlyDischargeFixtures } from "./fixtures";
+import { usMiEarlyDischargeSchema } from "./schema";
 
-import {
-  dateStringSchema,
-  nullishAsUndefined,
-  opportunitySchemaBase,
-} from "~datatypes";
-
-import { usMiOfficersAndDocketsMetadataSchema } from "../common";
-
-const interstateFlag = z.enum(["IC-OUT", "IC-IN"]).optional();
-
-export const usMiEarlyDischargeSchema = opportunitySchemaBase.extend({
-  metadata: usMiOfficersAndDocketsMetadataSchema.extend({
-    interstateFlag,
-    eligibleDate: nullishAsUndefined(dateStringSchema),
-    supervisionType: z.literal("Parole").or(z.literal("Probation")),
-  }),
+test.each(
+  Object.keys(usMiEarlyDischargeFixtures) as Array<
+    keyof typeof usMiEarlyDischargeFixtures
+  >,
+)("schema for %s", (key) => {
+  expect(
+    usMiEarlyDischargeSchema.parse(usMiEarlyDischargeFixtures[key].input),
+  ).toMatchSnapshot();
 });
-
-export type UsMiEarlyDischargeReferralRecordRaw = z.input<
-  typeof usMiEarlyDischargeSchema
->;
-export type UsMiEarlyDischargeReferralRecord = z.infer<
-  typeof usMiEarlyDischargeSchema
->;

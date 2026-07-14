@@ -17,17 +17,18 @@
 
 import { DocumentData } from "firebase/firestore";
 
-import { Client } from "../../../Client";
-import { OpportunityBase } from "../../OpportunityBase";
 import {
-  getValidator,
   UsMiSupervisionLevelDowngradeReferralRecord,
   usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter,
-} from "./UsMiSupervisionLevelDowngradeReferralRecord";
+} from "~datatypes";
+
+import { Client } from "../../../Client";
+import { OpportunityBase } from "../../OpportunityBase";
+import { getValidator } from "./UsMiSupervisionLevelDowngradeReferralRecord";
 
 export class UsMiSupervisionLevelDowngradeOpportunity extends OpportunityBase<
   Client,
-  UsMiSupervisionLevelDowngradeReferralRecord
+  UsMiSupervisionLevelDowngradeReferralRecord["output"]
 > {
   constructor(client: Client, record: DocumentData) {
     const parsedRecord =

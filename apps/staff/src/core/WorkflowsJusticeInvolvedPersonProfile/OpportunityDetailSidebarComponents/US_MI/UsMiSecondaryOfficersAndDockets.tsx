@@ -18,12 +18,15 @@
 import React from "react";
 import styled from "styled-components";
 
+import {
+  UsMiEarlyDischargeReferralRecord,
+  UsMiPastFTRDReferralRecord,
+} from "~datatypes";
+
 import { formatWorkflowsDate } from "../../../../utils/formatStrings";
 import {
   UsMiEarlyDischargeOpportunity,
-  UsMiEarlyDischargeReferralRecord,
   UsMiPastFTRDOpportunity,
-  UsMiPastFTRDReferralRecord,
 } from "../../../../WorkflowsStore/Opportunity/UsMi";
 import {
   DetailsHeading,
@@ -53,8 +56,8 @@ export function UsMiSecondaryOfficersAndDockets({
     return null;
   }
   const opportunityRecord = opportunity.record as
-    | UsMiEarlyDischargeReferralRecord
-    | UsMiPastFTRDReferralRecord;
+    | UsMiEarlyDischargeReferralRecord["output"]
+    | UsMiPastFTRDReferralRecord["output"];
   if (!opportunityRecord) return null;
 
   const {

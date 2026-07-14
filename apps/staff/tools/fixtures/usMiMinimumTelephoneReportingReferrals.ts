@@ -15,33 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsMiMinimumTelephoneReportingReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsMi";
+import { UsMiMinimumTelephoneReportingReferralRecord } from "~datatypes";
+
 import { fixtureWithIdKey } from "./utils";
 
-export const usMiMinimumTelephoneReportingReferralsFixture =
-  fixtureWithIdKey<UsMiMinimumTelephoneReportingReferralRecordRaw>(
-    "externalId",
-    [
-      {
-        stateCode: "US_MI",
-        externalId: "010",
-        eligibleCriteria: {
-          onMinimumSupervisionAtLeastSixMonths: null,
-          usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting: {
-            initialAssessmentLevel: "MEDIUM",
-            supervisionLevelRawText: "MEDIUM",
-          },
-          usMiNotServingIneligibleOffensesForTelephoneReporting: null,
-          usMiNotRequiredToRegisterUnderSora: null,
-          supervisionNotPastFullTermCompletionDateOrUpcoming90Days: null,
-          usMiIfServingAnOuilOrOwiHasCompleted12MonthsOnSupervision: null,
-        },
-        ineligibleCriteria: {},
-        metadata: {
-          eligibleDate: "2024-02-03",
-        },
-        isEligible: true,
-        isAlmostEligible: false,
+export const usMiMinimumTelephoneReportingReferralsFixture = fixtureWithIdKey<
+  UsMiMinimumTelephoneReportingReferralRecord["input"]
+>("externalId", [
+  {
+    stateCode: "US_MI",
+    externalId: "010",
+    eligibleCriteria: {
+      onMinimumSupervisionAtLeastSixMonths: null,
+      usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting: {
+        initialAssessmentLevel: "MEDIUM",
+        supervisionLevelRawText: "MEDIUM",
       },
-    ],
-  );
+      usMiNotServingIneligibleOffensesForTelephoneReporting: null,
+      usMiNotRequiredToRegisterUnderSora: null,
+      supervisionNotPastFullTermCompletionDateOrUpcoming90Days: null,
+      usMiIfServingAnOuilOrOwiHasCompleted12MonthsOnSupervision: null,
+    },
+    ineligibleCriteria: {},
+    metadata: {
+      eligibleDate: "2024-02-03",
+    },
+    isEligible: true,
+    isAlmostEligible: false,
+  },
+]);

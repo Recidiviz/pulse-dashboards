@@ -17,10 +17,9 @@
 
 import React from "react";
 
-import {
-  UsMiEarlyDischargeOpportunity,
-  UsMiEarlyDischargeReferralRecord,
-} from "../../../../WorkflowsStore/Opportunity/UsMi";
+import { UsMiEarlyDischargeReferralRecord } from "~datatypes";
+
+import { UsMiEarlyDischargeOpportunity } from "../../../../WorkflowsStore/Opportunity/UsMi";
 import {
   DetailsBorderedSection,
   DetailsHeading,
@@ -50,7 +49,7 @@ export function UsMiEarlyDischargeIcDetails({
     return null;
   }
   const opportunityRecord =
-    opportunity.record as UsMiEarlyDischargeReferralRecord;
+    opportunity.record as UsMiEarlyDischargeReferralRecord["output"];
   if (!opportunityRecord) return null;
 
   const {

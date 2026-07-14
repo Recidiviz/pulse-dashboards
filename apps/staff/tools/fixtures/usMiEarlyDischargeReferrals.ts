@@ -15,330 +15,332 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsMiEarlyDischargeReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsMi";
+import { UsMiEarlyDischargeReferralRecord } from "~datatypes";
+
 import { fixtureWithIdKey } from "./utils";
 
-export const usMiEarlyDischargeReferralsFixture =
-  fixtureWithIdKey<UsMiEarlyDischargeReferralRecordRaw>("externalId", [
-    {
-      stateCode: "US_MI",
-      externalId: "ed-eligible-1",
-      metadata: {
-        supervisionType: "Parole",
-        interstateFlag: "IC-OUT",
-        eligibleDate: "2024-03-01",
-      },
-      eligibleCriteria: {
-        supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
-          eligibleDate: "2023-03-01",
-        },
-        supervisionNotPastFullTermCompletionDate: {
-          eligibleDate: "2022-03-01",
-        },
-        supervisionOrSupervisionOutOfStateLevelIsNotHigh: {
-          supervisionLevel: "MINIMUM",
-        },
-        servingAtLeastOneYearOnParoleSupervisionOrSupervisionOutOfState: {
-          projectedCompletionDateMax: "2025-03-01",
-        },
-        usMiParoleDualSupervisionPastEarlyDischargeDate: {
-          sentenceType: "PAROLE",
-          eligibleDate: "2023-01-01",
-        },
-        usMiNoPendingDetainer: {
-          pendingDetainer: false,
-        },
-        usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
-          latestIneligibleConvictions: [],
-        },
-        usMiNotServingIneligibleOffensesForEarlyDischargeFromParoleDualSupervision:
-          {
-            ineligibleOffenses: [],
-          },
-        usMiSupervisionOrSupervisionOutOfStateLevelIsNotSai: {
-          supervisionLevelRawText: "MINIMUM",
-        },
-        usMiNoActivePpo: {
-          activePpo: false,
-        },
-        usMiNoOwiViolationOnParoleDualSupervision: {
-          latestIneligibleConvictions: [],
-        },
-      },
-      ineligibleCriteria: {},
-      isEligible: true,
-      isAlmostEligible: false,
+export const usMiEarlyDischargeReferralsFixture = fixtureWithIdKey<
+  UsMiEarlyDischargeReferralRecord["input"]
+>("externalId", [
+  {
+    stateCode: "US_MI",
+    externalId: "ed-eligible-1",
+    metadata: {
+      supervisionType: "Parole",
+      interstateFlag: "IC-OUT",
+      eligibleDate: "2024-03-01",
     },
-    {
-      stateCode: "US_MI",
-      externalId: "ed-eligible-2",
-      metadata: {
-        supervisionType: "Probation",
-        eligibleDate: "2021-03-01",
+    eligibleCriteria: {
+      supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
+        eligibleDate: "2023-03-01",
       },
-      eligibleCriteria: {
-        supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
-          eligibleDate: "2022-03-01",
-        },
-        supervisionNotPastFullTermCompletionDate: {
-          eligibleDate: "2022-03-01",
-        },
-        usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
-          latestIneligibleConvictions: [],
-        },
-        usMiNoActivePpo: {
-          activePpo: false,
-        },
-        usMiNotServingIneligibleOffensesForEarlyDischargeFromProbationSupervision:
-          {
-            currentOffenses: [],
-          },
+      supervisionNotPastFullTermCompletionDate: {
+        eligibleDate: "2022-03-01",
       },
-      ineligibleCriteria: {},
-      isEligible: true,
-      isAlmostEligible: false,
+      supervisionOrSupervisionOutOfStateLevelIsNotHigh: {
+        supervisionLevel: "MINIMUM",
+      },
+      servingAtLeastOneYearOnParoleSupervisionOrSupervisionOutOfState: {
+        projectedCompletionDateMax: "2025-03-01",
+      },
+      usMiParoleDualSupervisionPastEarlyDischargeDate: {
+        sentenceType: "PAROLE",
+        eligibleDate: "2023-01-01",
+      },
+      usMiNoPendingDetainer: {
+        pendingDetainer: false,
+      },
+      usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
+        latestIneligibleConvictions: [],
+      },
+      usMiNotServingIneligibleOffensesForEarlyDischargeFromParoleDualSupervision:
+        {
+          ineligibleOffenses: [],
+        },
+      usMiSupervisionOrSupervisionOutOfStateLevelIsNotSai: {
+        supervisionLevelRawText: "MINIMUM",
+      },
+      usMiNoActivePpo: {
+        activePpo: false,
+      },
+      usMiNoOwiViolationOnParoleDualSupervision: {
+        latestIneligibleConvictions: [],
+      },
     },
-    {
-      stateCode: "US_MI",
-      externalId: "ed-eligible-3",
-      metadata: {
-        supervisionType: "Parole",
-        interstateFlag: "IC-OUT",
-        eligibleDate: "2021-04-01",
-      },
-      eligibleCriteria: {
-        supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
-          eligibleDate: "2022-03-01",
-        },
-        supervisionNotPastFullTermCompletionDate: {
-          eligibleDate: "2022-03-01",
-        },
-        supervisionOrSupervisionOutOfStateLevelIsNotHigh: {
-          supervisionLevel: "MINIMUM",
-        },
-        servingAtLeastOneYearOnParoleSupervisionOrSupervisionOutOfState: {
-          projectedCompletionDateMax: "2025-03-01",
-        },
-        usMiParoleDualSupervisionPastEarlyDischargeDate: {
-          sentenceType: "PAROLE",
-          eligibleDate: "2023-01-01",
-        },
-        usMiNoPendingDetainer: {
-          pendingDetainer: false,
-        },
-        usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
-          latestIneligibleConvictions: [],
-        },
-        usMiNotServingIneligibleOffensesForEarlyDischargeFromParoleDualSupervision:
-          {
-            ineligibleOffenses: [],
-          },
-        usMiSupervisionOrSupervisionOutOfStateLevelIsNotSai: {
-          supervisionLevelRawText: "MINIMUM",
-        },
-        usMiNoActivePpo: {
-          activePpo: false,
-        },
-        usMiNoOwiViolationOnParoleDualSupervision: {
-          latestIneligibleConvictions: [],
-        },
-      },
-      ineligibleCriteria: {},
-      isEligible: true,
-      isAlmostEligible: false,
+    ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
+  },
+  {
+    stateCode: "US_MI",
+    externalId: "ed-eligible-2",
+    metadata: {
+      supervisionType: "Probation",
+      eligibleDate: "2021-03-01",
     },
-    {
-      stateCode: "US_MI",
-      externalId: "ed-eligible-4",
-      metadata: {
-        supervisionType: "Probation",
-        eligibleDate: "2022-04-04",
+    eligibleCriteria: {
+      supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
+        eligibleDate: "2022-03-01",
       },
-      eligibleCriteria: {
-        supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
-          eligibleDate: "2022-03-01",
-        },
-        supervisionNotPastFullTermCompletionDate: {
-          eligibleDate: "2022-03-01",
-        },
-        usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
-          latestIneligibleConvictions: [],
-        },
-        usMiNoActivePpo: {
-          activePpo: false,
-        },
-        usMiNotServingIneligibleOffensesForEarlyDischargeFromProbationSupervision:
-          {
-            currentOffenses: [],
-          },
+      supervisionNotPastFullTermCompletionDate: {
+        eligibleDate: "2022-03-01",
       },
-      ineligibleCriteria: {},
-      isEligible: true,
-      isAlmostEligible: false,
+      usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
+        latestIneligibleConvictions: [],
+      },
+      usMiNoActivePpo: {
+        activePpo: false,
+      },
+      usMiNotServingIneligibleOffensesForEarlyDischargeFromProbationSupervision:
+        {
+          currentOffenses: [],
+        },
     },
-    {
-      stateCode: "US_MI",
-      externalId: "ed-eligible-5",
-      metadata: {
-        supervisionType: "Parole",
-        interstateFlag: "IC-OUT",
-        eligibleDate: "2022-03-04",
-      },
-      eligibleCriteria: {
-        supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
-          eligibleDate: "2022-03-01",
-        },
-        supervisionNotPastFullTermCompletionDate: {
-          eligibleDate: "2022-03-01",
-        },
-        supervisionOrSupervisionOutOfStateLevelIsNotHigh: {
-          supervisionLevel: "MINIMUM",
-        },
-        servingAtLeastOneYearOnParoleSupervisionOrSupervisionOutOfState: {
-          projectedCompletionDateMax: "2025-03-01",
-        },
-        usMiParoleDualSupervisionPastEarlyDischargeDate: {
-          sentenceType: "PAROLE",
-          eligibleDate: "2023-01-01",
-        },
-        usMiNoPendingDetainer: {
-          pendingDetainer: false,
-        },
-        usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
-          latestIneligibleConvictions: [],
-        },
-        usMiNotServingIneligibleOffensesForEarlyDischargeFromParoleDualSupervision:
-          {
-            ineligibleOffenses: [],
-          },
-        usMiSupervisionOrSupervisionOutOfStateLevelIsNotSai: {
-          supervisionLevelRawText: "MINIMUM",
-        },
-        usMiNoActivePpo: {
-          activePpo: false,
-        },
-        usMiNoOwiViolationOnParoleDualSupervision: {
-          latestIneligibleConvictions: [],
-        },
-      },
-      ineligibleCriteria: {},
-      isEligible: true,
-      isAlmostEligible: false,
+    ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
+  },
+  {
+    stateCode: "US_MI",
+    externalId: "ed-eligible-3",
+    metadata: {
+      supervisionType: "Parole",
+      interstateFlag: "IC-OUT",
+      eligibleDate: "2021-04-01",
     },
-    {
-      stateCode: "US_MI",
-      externalId: "001",
-      metadata: {
-        supervisionType: "Probation",
-        eligibleDate: "2022-03-10",
+    eligibleCriteria: {
+      supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
+        eligibleDate: "2022-03-01",
       },
-      eligibleCriteria: {
-        supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
-          eligibleDate: "2022-03-01",
-        },
-        supervisionNotPastFullTermCompletionDate: {
-          eligibleDate: "2022-03-01",
-        },
-        usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
-          latestIneligibleConvictions: [],
-        },
-        usMiNoActivePpo: {
-          activePpo: false,
-        },
-        usMiNotServingIneligibleOffensesForEarlyDischargeFromProbationSupervision:
-          {
-            currentOffenses: [],
-          },
+      supervisionNotPastFullTermCompletionDate: {
+        eligibleDate: "2022-03-01",
       },
-      ineligibleCriteria: {},
-      isEligible: true,
-      isAlmostEligible: false,
+      supervisionOrSupervisionOutOfStateLevelIsNotHigh: {
+        supervisionLevel: "MINIMUM",
+      },
+      servingAtLeastOneYearOnParoleSupervisionOrSupervisionOutOfState: {
+        projectedCompletionDateMax: "2025-03-01",
+      },
+      usMiParoleDualSupervisionPastEarlyDischargeDate: {
+        sentenceType: "PAROLE",
+        eligibleDate: "2023-01-01",
+      },
+      usMiNoPendingDetainer: {
+        pendingDetainer: false,
+      },
+      usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
+        latestIneligibleConvictions: [],
+      },
+      usMiNotServingIneligibleOffensesForEarlyDischargeFromParoleDualSupervision:
+        {
+          ineligibleOffenses: [],
+        },
+      usMiSupervisionOrSupervisionOutOfStateLevelIsNotSai: {
+        supervisionLevelRawText: "MINIMUM",
+      },
+      usMiNoActivePpo: {
+        activePpo: false,
+      },
+      usMiNoOwiViolationOnParoleDualSupervision: {
+        latestIneligibleConvictions: [],
+      },
     },
-    {
-      stateCode: "US_MI",
-      externalId: "cr-eligible-1",
-      metadata: {
-        supervisionType: "Probation",
-        eligibleDate: "2022-05-15",
-      },
-      eligibleCriteria: {
-        supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
-          eligibleDate: "2022-03-01",
-        },
-        supervisionNotPastFullTermCompletionDate: {
-          eligibleDate: "2022-03-01",
-        },
-        usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
-          latestIneligibleConvictions: [],
-        },
-        usMiNoActivePpo: {
-          activePpo: false,
-        },
-        usMiNotServingIneligibleOffensesForEarlyDischargeFromProbationSupervision:
-          {
-            currentOffenses: [],
-          },
-      },
-      ineligibleCriteria: {},
-      isEligible: true,
-      isAlmostEligible: false,
+    ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
+  },
+  {
+    stateCode: "US_MI",
+    externalId: "ed-eligible-4",
+    metadata: {
+      supervisionType: "Probation",
+      eligibleDate: "2022-04-04",
     },
-    {
-      stateCode: "US_MI",
-      externalId: "cr-eligible-2",
-      metadata: {
-        supervisionType: "Probation",
-        eligibleDate: "2022-05-15",
+    eligibleCriteria: {
+      supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
+        eligibleDate: "2022-03-01",
       },
-      eligibleCriteria: {
-        supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
-          eligibleDate: "2022-03-01",
-        },
-        supervisionNotPastFullTermCompletionDate: {
-          eligibleDate: "2022-03-01",
-        },
-        usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
-          latestIneligibleConvictions: [],
-        },
-        usMiNoActivePpo: {
-          activePpo: false,
-        },
-        usMiNotServingIneligibleOffensesForEarlyDischargeFromProbationSupervision:
-          {
-            currentOffenses: [],
-          },
+      supervisionNotPastFullTermCompletionDate: {
+        eligibleDate: "2022-03-01",
       },
-      ineligibleCriteria: {},
-      isEligible: true,
-      isAlmostEligible: false,
+      usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
+        latestIneligibleConvictions: [],
+      },
+      usMiNoActivePpo: {
+        activePpo: false,
+      },
+      usMiNotServingIneligibleOffensesForEarlyDischargeFromProbationSupervision:
+        {
+          currentOffenses: [],
+        },
     },
-    {
-      stateCode: "US_MI",
-      externalId: "010",
-      metadata: {
-        supervisionType: "Probation",
-        eligibleDate: "2022-10-15",
-      },
-      eligibleCriteria: {
-        supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
-          eligibleDate: "2022-03-01",
-        },
-        supervisionNotPastFullTermCompletionDate: {
-          eligibleDate: "2022-03-01",
-        },
-        usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
-          latestIneligibleConvictions: [],
-        },
-        usMiNoActivePpo: {
-          activePpo: false,
-        },
-        usMiNotServingIneligibleOffensesForEarlyDischargeFromProbationSupervision:
-          {
-            currentOffenses: [],
-          },
-      },
-      ineligibleCriteria: {},
-      isEligible: true,
-      isAlmostEligible: false,
+    ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
+  },
+  {
+    stateCode: "US_MI",
+    externalId: "ed-eligible-5",
+    metadata: {
+      supervisionType: "Parole",
+      interstateFlag: "IC-OUT",
+      eligibleDate: "2022-03-04",
     },
-  ]);
+    eligibleCriteria: {
+      supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
+        eligibleDate: "2022-03-01",
+      },
+      supervisionNotPastFullTermCompletionDate: {
+        eligibleDate: "2022-03-01",
+      },
+      supervisionOrSupervisionOutOfStateLevelIsNotHigh: {
+        supervisionLevel: "MINIMUM",
+      },
+      servingAtLeastOneYearOnParoleSupervisionOrSupervisionOutOfState: {
+        projectedCompletionDateMax: "2025-03-01",
+      },
+      usMiParoleDualSupervisionPastEarlyDischargeDate: {
+        sentenceType: "PAROLE",
+        eligibleDate: "2023-01-01",
+      },
+      usMiNoPendingDetainer: {
+        pendingDetainer: false,
+      },
+      usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
+        latestIneligibleConvictions: [],
+      },
+      usMiNotServingIneligibleOffensesForEarlyDischargeFromParoleDualSupervision:
+        {
+          ineligibleOffenses: [],
+        },
+      usMiSupervisionOrSupervisionOutOfStateLevelIsNotSai: {
+        supervisionLevelRawText: "MINIMUM",
+      },
+      usMiNoActivePpo: {
+        activePpo: false,
+      },
+      usMiNoOwiViolationOnParoleDualSupervision: {
+        latestIneligibleConvictions: [],
+      },
+    },
+    ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
+  },
+  {
+    stateCode: "US_MI",
+    externalId: "001",
+    metadata: {
+      supervisionType: "Probation",
+      eligibleDate: "2022-03-10",
+    },
+    eligibleCriteria: {
+      supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
+        eligibleDate: "2022-03-01",
+      },
+      supervisionNotPastFullTermCompletionDate: {
+        eligibleDate: "2022-03-01",
+      },
+      usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
+        latestIneligibleConvictions: [],
+      },
+      usMiNoActivePpo: {
+        activePpo: false,
+      },
+      usMiNotServingIneligibleOffensesForEarlyDischargeFromProbationSupervision:
+        {
+          currentOffenses: [],
+        },
+    },
+    ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
+  },
+  {
+    stateCode: "US_MI",
+    externalId: "cr-eligible-1",
+    metadata: {
+      supervisionType: "Probation",
+      eligibleDate: "2022-05-15",
+    },
+    eligibleCriteria: {
+      supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
+        eligibleDate: "2022-03-01",
+      },
+      supervisionNotPastFullTermCompletionDate: {
+        eligibleDate: "2022-03-01",
+      },
+      usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
+        latestIneligibleConvictions: [],
+      },
+      usMiNoActivePpo: {
+        activePpo: false,
+      },
+      usMiNotServingIneligibleOffensesForEarlyDischargeFromProbationSupervision:
+        {
+          currentOffenses: [],
+        },
+    },
+    ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
+  },
+  {
+    stateCode: "US_MI",
+    externalId: "cr-eligible-2",
+    metadata: {
+      supervisionType: "Probation",
+      eligibleDate: "2022-05-15",
+    },
+    eligibleCriteria: {
+      supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
+        eligibleDate: "2022-03-01",
+      },
+      supervisionNotPastFullTermCompletionDate: {
+        eligibleDate: "2022-03-01",
+      },
+      usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
+        latestIneligibleConvictions: [],
+      },
+      usMiNoActivePpo: {
+        activePpo: false,
+      },
+      usMiNotServingIneligibleOffensesForEarlyDischargeFromProbationSupervision:
+        {
+          currentOffenses: [],
+        },
+    },
+    ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
+  },
+  {
+    stateCode: "US_MI",
+    externalId: "010",
+    metadata: {
+      supervisionType: "Probation",
+      eligibleDate: "2022-10-15",
+    },
+    eligibleCriteria: {
+      supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
+        eligibleDate: "2022-03-01",
+      },
+      supervisionNotPastFullTermCompletionDate: {
+        eligibleDate: "2022-03-01",
+      },
+      usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
+        latestIneligibleConvictions: [],
+      },
+      usMiNoActivePpo: {
+        activePpo: false,
+      },
+      usMiNotServingIneligibleOffensesForEarlyDischargeFromProbationSupervision:
+        {
+          currentOffenses: [],
+        },
+    },
+    ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
+  },
+]);

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,21 +17,21 @@
 
 import { z } from "zod";
 
-import { dateStringSchema } from "~datatypes";
+import { ParsedRecord } from "../../../utils/types";
+import { dateStringSchema, nullishAsUndefined } from "../../../utils/zod";
+import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
+import { usMiOfficersAndDocketsMetadataSchema } from "../common";
 
-import { nullishAsUndefined } from "../schemaHelpers";
+const interstateFlag = z.enum(["IC-OUT", "IC-IN"]).optional();
 
-export const usMiOfficersAndDocketsMetadataSchema = z.object({
-  officers: z.array(z.string()).default([]),
-  dockets: z
-    .array(
-      z.object({
-        docketNumber: z.string(),
-        issueLocation: z.string().nullable(),
-        legalOrderEffectiveDate: nullishAsUndefined(dateStringSchema),
-        legalOrderExpirationDate: nullishAsUndefined(dateStringSchema),
-        legalOrderType: z.string().nullable(),
-      }),
-    )
-    .default([]),
+export const usMiEarlyDischargeSchema = opportunitySchemaBase.extend({
+  metadata: usMiOfficersAndDocketsMetadataSchema.extend({
+    interstateFlag,
+    eligibleDate: nullishAsUndefined(dateStringSchema),
+    supervisionType: z.literal("Parole").or(z.literal("Probation")),
+  }),
 });
+
+export type UsMiEarlyDischargeReferralRecord = ParsedRecord<
+  typeof usMiEarlyDischargeSchema
+>;

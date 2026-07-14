@@ -17,10 +17,9 @@
 
 import React from "react";
 
-import {
-  UsMiClassificationReviewOpportunity,
-  UsMiClassificationReviewReferralRecord,
-} from "../../../../WorkflowsStore/Opportunity/UsMi/UsMiClassificationReviewOpportunity";
+import { UsMiClassificationReviewReferralRecord } from "~datatypes";
+
+import { UsMiClassificationReviewOpportunity } from "../../../../WorkflowsStore/Opportunity/UsMi/UsMiClassificationReviewOpportunity";
 import {
   DetailsHeading,
   DetailsSection,
@@ -36,7 +35,7 @@ export function UsMiRecommendedSupervisionLevel({
     return null;
   }
   const opportunityRecord =
-    opportunity.record as UsMiClassificationReviewReferralRecord;
+    opportunity.record as UsMiClassificationReviewReferralRecord["output"];
   if (!opportunityRecord) return null;
 
   const {

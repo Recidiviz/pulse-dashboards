@@ -51,9 +51,14 @@ import {
   usMeWorkReleaseSchema,
   usMiAddInPersonSecurityClassificationCommitteeReviewSchema,
   usMiAddInPersonSecurityClassificationCommitteeReviewV2Schema,
+  usMiClassificationReviewSchemaForSupervisionLevelFormatter,
   usMiCustodyLevelDowngradeSchema,
+  usMiEarlyDischargeSchema,
+  usMiMinimumTelephoneReportingSchema,
+  usMiPastFTRDSchema,
   usMiSecurityClassificationCommitteeReviewSchema,
   usMiSecurityClassificationCommitteeReviewV2Schema,
+  usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter,
   usMiWardenInPersonSecurityClassificationCommitteeReviewSchema,
   usMiWardenInPersonSecurityClassificationCommitteeReviewV2Schema,
   usMoOverdueRestrictiveHousingInitialHearingSchema,
@@ -74,11 +79,6 @@ import {
 
 import { mockOpportunityConfigs } from "../src/core/__tests__/testUtils";
 import { supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/SupervisionLevelDowngradeReferralRecord";
-import { usMiClassificationReviewSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsMi/UsMiClassificationReviewOpportunity/UsMiClassificationReviewReferralRecord";
-import { usMiEarlyDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsMi/UsMiEarlyDischargeOpportunity/UsMiEarlyDischargeReferralRecord";
-import { usMiMinimumTelephoneReportingSchema } from "../src/WorkflowsStore/Opportunity/UsMi/UsMiMinimumTelephoneReportingOpportunity/UsMiMinimumTelephoneReportingReferralRecord";
-import { usMiPastFTRDSchema } from "../src/WorkflowsStore/Opportunity/UsMi/UsMiPastFTRDOpportunity/UsMiPastFTRDReferralRecord";
-import { usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsMi/UsMiSupervisionLevelDowngradeOpportunity/UsMiSupervisionLevelDowngradeReferralRecord";
 import { compliantReportingSchema } from "../src/WorkflowsStore/Opportunity/UsTn/CompliantReportingOpportunity/CompliantReportingReferralRecord";
 import { usTnAnnualReclassificationReviewSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnAnnualReclassificationReviewOpportunity/UsTnAnnualReclassificationReviewReferralRecord";
 import { usTnCompliantReporting2025PolicySchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnCompliantReporting2025PolicyOpportunity";
@@ -151,26 +151,26 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
   usMeWorkRelease: usMeWorkReleaseSchema,
 
   // US_MI
-  usMiPastFTRD: usMiPastFTRDSchema,
-  usMiSupervisionLevelDowngrade:
-    usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(),
-  usMiClassificationReview:
-    usMiClassificationReviewSchemaForSupervisionLevelFormatter(),
-  usMiEarlyDischarge: usMiEarlyDischargeSchema,
-  usMiMinimumTelephoneReporting: usMiMinimumTelephoneReportingSchema,
   usMiAddInPersonSecurityClassificationCommitteeReview:
     usMiAddInPersonSecurityClassificationCommitteeReviewSchema,
   usMiAddInPersonSecurityClassificationCommitteeReviewV2:
     usMiAddInPersonSecurityClassificationCommitteeReviewV2Schema,
+  usMiClassificationReview:
+    usMiClassificationReviewSchemaForSupervisionLevelFormatter(),
+  usMiCustodyLevelDowngrade: usMiCustodyLevelDowngradeSchema,
+  usMiEarlyDischarge: usMiEarlyDischargeSchema,
+  usMiMinimumTelephoneReporting: usMiMinimumTelephoneReportingSchema,
+  usMiPastFTRD: usMiPastFTRDSchema,
   usMiSecurityClassificationCommitteeReview:
     usMiSecurityClassificationCommitteeReviewSchema,
   usMiSecurityClassificationCommitteeReviewV2:
     usMiSecurityClassificationCommitteeReviewV2Schema,
+  usMiSupervisionLevelDowngrade:
+    usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(),
   usMiWardenInPersonSecurityClassificationCommitteeReview:
     usMiWardenInPersonSecurityClassificationCommitteeReviewSchema,
   usMiWardenInPersonSecurityClassificationCommitteeReviewV2:
     usMiWardenInPersonSecurityClassificationCommitteeReviewV2Schema,
-  usMiCustodyLevelDowngrade: usMiCustodyLevelDowngradeSchema,
 
   // US_MO
   usMoOverdueRestrictiveHousingRelease:

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,24 +15,56 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { identity } from "lodash";
 import { z } from "zod";
 
-import { usMiClassificationReviewSchemaForSupervisionLevelFormatter } from "..";
+import { usMiClassificationReviewFixtures } from "./fixtures";
+import { usMiClassificationReviewSchemaForSupervisionLevelFormatter } from "./schema";
 
-const mockClient = {
-  rootStore: {
-    workflowsStore: {
-      formatSupervisionLevel: identity,
-    },
-  },
-};
-
-const schema = usMiClassificationReviewSchemaForSupervisionLevelFormatter(
-  mockClient.rootStore.workflowsStore.formatSupervisionLevel,
-);
+const schema = usMiClassificationReviewSchemaForSupervisionLevelFormatter();
 
 type RawRecord = z.input<typeof schema>;
+
+test.each(
+  Object.keys(usMiClassificationReviewFixtures) as Array<
+    keyof typeof usMiClassificationReviewFixtures
+  >,
+)("schema for %s", (key) => {
+  expect(
+    schema.parse(usMiClassificationReviewFixtures[key].input),
+  ).toMatchSnapshot();
+});
+
+test("transforms records with eligible and ineligible criteria", () => {
+  const rawRecord: RawRecord = {
+    stateCode: "US_MI",
+    externalId: "cr-eligible-4",
+    eligibleCriteria: {
+      usMiNotAlreadyOnLowestEligibleSupervisionLevel: {
+        supervisionLevel: "MAXIMUM",
+        mediumIsLowestSupervisionLevelAllowed: true,
+      },
+    },
+    ineligibleCriteria: {
+      usMiPastInitialClassificationReviewDate: {
+        eligibleDate: "2022-12-12",
+      },
+    },
+    metadata: { recommendedSupervisionLevel: "MEDIUM" },
+    caseNotes: {
+      "Recommended supervision level": [
+        {
+          eventDate: null,
+          noteBody: "MEDIUM",
+          noteTitle: null,
+        },
+      ],
+    },
+    isEligible: false,
+    isAlmostEligible: true,
+  };
+
+  expect(schema.parse(rawRecord)).toMatchSnapshot();
+});
 
 test("transform record for initial CR", () => {
   const rawRecord: RawRecord = {
@@ -103,39 +135,6 @@ test("transform record for six-month CR", () => {
   expect(schema.parse(rawRecord)).toMatchSnapshot();
 });
 
-test("expect to fail if both date reasons are set", () => {
-  // Not typed as RawRecord because this is intentionally invalid
-  const rawRecord: Record<string, any> = {
-    stateCode: "US_MI",
-    externalId: "cr-eligible-2",
-    eligibleCriteria: {
-      usMiNotAlreadyOnLowestEligibleSupervisionLevel: {
-        supervisionLevel: "MAXIMUM",
-        requiresSoRegistration: null,
-      },
-      usMiPastInitialClassificationReviewDate: {
-        eligibleDate: "2022-12-12",
-      },
-      usMiSixMonthsPastLastClassificationReviewDate: {
-        eligibleDate: "2019-01-12",
-      },
-    },
-    ineligibleCriteria: {},
-    metadata: { recommendedSupervisionLevel: "MEDIUM" },
-    caseNotes: {
-      "Recommended supervision level": [
-        {
-          eventDate: null,
-          noteBody: "MEDIUM",
-          noteTitle: null,
-        },
-      ],
-    },
-  };
-
-  expect(() => schema.parse(rawRecord)).toThrow();
-});
-
 test("transform record for missing usMiNotAlreadyOnLowestEligibleSupervisionLevel", () => {
   const rawRecord: RawRecord = {
     stateCode: "US_MI",
@@ -155,41 +154,26 @@ test("transform record for missing usMiNotAlreadyOnLowestEligibleSupervisionLeve
   expect(schema.parse(rawRecord)).toMatchSnapshot();
 });
 
-test("transforms records with eligible and ineligible criteria", () => {
-  const rawRecord: RawRecord = {
+test("expect to fail if both date reasons are set", () => {
+  // Not typed as RawRecord because this is intentionally invalid
+  const rawRecord: Record<string, unknown> = {
     stateCode: "US_MI",
-    externalId: "cr-eligible-4",
+    externalId: "cr-eligible-2",
     eligibleCriteria: {
       usMiNotAlreadyOnLowestEligibleSupervisionLevel: {
         supervisionLevel: "MAXIMUM",
-        mediumIsLowestSupervisionLevelAllowed: true,
+        mediumIsLowestSupervisionLevelAllowed: null,
       },
-    },
-    ineligibleCriteria: {
       usMiPastInitialClassificationReviewDate: {
         eligibleDate: "2022-12-12",
       },
+      usMiSixMonthsPastLastClassificationReviewDate: {
+        eligibleDate: "2019-01-12",
+      },
     },
+    ineligibleCriteria: {},
     metadata: { recommendedSupervisionLevel: "MEDIUM" },
-    caseNotes: {
-      "Recommended supervision level": [
-        {
-          eventDate: null,
-          noteBody: "MEDIUM",
-          noteTitle: null,
-        },
-      ],
-      "Recent employment (last 6 months)": [
-        {
-          eventDate: "2022-10-23",
-          noteBody: "Got a new job",
-          noteTitle: "Employed at Big Bob's Burger Joint",
-        },
-      ],
-    },
-    isEligible: false,
-    isAlmostEligible: true,
   };
 
-  expect(schema.parse(rawRecord)).toMatchSnapshot();
+  expect(() => schema.parse(rawRecord)).toThrow();
 });

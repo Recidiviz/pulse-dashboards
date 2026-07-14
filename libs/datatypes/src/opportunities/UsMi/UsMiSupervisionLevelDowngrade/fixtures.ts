@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,34 +15,33 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { makeRecordFixture } from "../../../utils/zod/object/makeRecordFixture";
+import { FixtureMapping } from "../../utils/types";
 import {
-  UsMiSupervisionLevelDowngradeReferralRecordRaw,
+  UsMiSupervisionLevelDowngradeReferralRecord,
   usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter,
-} from "..";
+} from "./schema";
 
-const transformer =
-  usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter()
-    .parse;
+const schema =
+  usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter();
 
-test("transform record for SLD", () => {
-  const rawRecord: UsMiSupervisionLevelDowngradeReferralRecordRaw = {
+export const usMiSupervisionLevelDowngradeFixtures = {
+  fullyEligible1: makeRecordFixture(schema, {
     stateCode: "US_MI",
-    externalId: "sld-eligible-1",
+    externalId: "001",
     eligibleCriteria: {
+      supervisionLevelHigherThanAssessmentLevel: {
+        assessmentLevel: "HIGH",
+        latestAssessmentDate: "2021-08-20",
+        supervisionLevel: "MAXIMUM",
+      },
       usMiNotPastInitialClassificationReviewDate: {
-        eligibleDate: "2022-12-12",
+        eligibleDate: "2025-01-01",
       },
       usMiNotServingIneligibleOffensesForDowngradeFromSupervisionLevel: null,
-      supervisionLevelHigherThanAssessmentLevel: {
-        supervisionLevel: "HIGH",
-        assessmentLevel: "MEDIUM",
-        latestAssessmentDate: "2022-10-12",
-      },
-    },
-    metadata: {
-      eligibleDate: "2022-12-12",
     },
     ineligibleCriteria: {},
+    metadata: { eligibleDate: "2024-02-03" },
     caseNotes: {
       "Recommended supervision level": [
         {
@@ -54,7 +53,5 @@ test("transform record for SLD", () => {
     },
     isEligible: true,
     isAlmostEligible: false,
-  };
-
-  expect(transformer(rawRecord)).toMatchSnapshot();
-});
+  }),
+} satisfies FixtureMapping<UsMiSupervisionLevelDowngradeReferralRecord>;

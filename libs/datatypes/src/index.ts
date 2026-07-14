@@ -84,18 +84,29 @@ export * from "./opportunities/UsCa/UsCaSupervisionLevelDowngrade/schema";
 
 // UsMi Exports: Includes fixtures and schema related to US-MI opportunities
 // -----------------------------------------------------------------------------
+export { usMiOfficersAndDocketsMetadataSchema } from "./opportunities/UsMi/common";
 export * from "./opportunities/UsMi/UsMiAddInPersonSecurityClassificationCommitteeReview/fixtures";
 export * from "./opportunities/UsMi/UsMiAddInPersonSecurityClassificationCommitteeReview/schema";
 export * from "./opportunities/UsMi/UsMiAddInPersonSecurityClassificationCommitteeReviewV2/fixtures";
 export * from "./opportunities/UsMi/UsMiAddInPersonSecurityClassificationCommitteeReviewV2/schema";
+export * from "./opportunities/UsMi/UsMiClassificationReview/fixtures";
+export * from "./opportunities/UsMi/UsMiClassificationReview/schema";
 export * from "./opportunities/UsMi/UsMiCustodyLevelDowngrade/fixtures";
 export * from "./opportunities/UsMi/UsMiCustodyLevelDowngrade/schema";
+export * from "./opportunities/UsMi/UsMiEarlyDischarge/fixtures";
+export * from "./opportunities/UsMi/UsMiEarlyDischarge/schema";
+export * from "./opportunities/UsMi/UsMiMinimumTelephoneReporting/fixtures";
+export * from "./opportunities/UsMi/UsMiMinimumTelephoneReporting/schema";
+export * from "./opportunities/UsMi/UsMiPastFTRD/fixtures";
+export * from "./opportunities/UsMi/UsMiPastFTRD/schema";
 export * from "./opportunities/UsMi/UsMiReclassificationRequest/fixtures";
 export * from "./opportunities/UsMi/UsMiReclassificationRequest/schema";
 export * from "./opportunities/UsMi/UsMiSecurityClassificationCommitteeReview/fixtures";
 export * from "./opportunities/UsMi/UsMiSecurityClassificationCommitteeReview/schema";
 export * from "./opportunities/UsMi/UsMiSecurityClassificationCommitteeReviewV2/fixtures";
 export * from "./opportunities/UsMi/UsMiSecurityClassificationCommitteeReviewV2/schema";
+export * from "./opportunities/UsMi/UsMiSupervisionLevelDowngrade/fixtures";
+export * from "./opportunities/UsMi/UsMiSupervisionLevelDowngrade/schema";
 export * from "./opportunities/UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReview/fixtures";
 export * from "./opportunities/UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReview/schema";
 export * from "./opportunities/UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReviewV2/fixtures";

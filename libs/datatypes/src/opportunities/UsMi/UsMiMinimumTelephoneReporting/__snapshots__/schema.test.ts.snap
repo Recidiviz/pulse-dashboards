@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`transform record 1`] = `
+exports[`schema for fullyEligible1 1`] = `
 {
   "caseNotes": {},
   "eligibleCriteria": {
