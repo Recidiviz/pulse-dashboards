@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import _, { capitalize } from "lodash";
+import _ from "lodash";
 
 import { titleCase } from "../../../utils/utils";
 import { ReportType } from "../../constants";
@@ -27,11 +27,15 @@ import {
   COUNTY_KEY,
   DISTRICT_KEY,
   GenderToDisplayName,
+  MENTAL_HEALTH_DIAGNOSES_KEY,
+  NEEDS_TO_BE_ADDRESSED_KEY,
   NeedsToBeAddressed,
   OFFENSE_KEY,
   OTHER_MENTAL_HEALTH_DIAGNOSIS_KEY,
   OTHER_NEED_TO_BE_ADDRESSED_KEY,
   OTHER_PROTECTIVE_FACTORS_KEY,
+  PLEA_KEY,
+  PROTECTIVE_FACTORS_KEY,
   ProtectiveFactors,
   REPORT_TYPE_KEY,
   SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY,
@@ -73,26 +77,51 @@ export const getFilteredCountyOptions = (
     .sort((a, b) => a.label.localeCompare(b.label));
 };
 
-const convertGenderDisplayNameToEnum = (gender: string) => {
-  const genderDisplayNameToEnum = _.invert(GenderToDisplayName);
-  return genderDisplayNameToEnum[gender];
-};
+/**
+ * Central registry for enum-backed form fields. Both the display→key lookup maps used in
+ * transformUpdates and the parse functions used to populate the form are derived from these
+ * registries — adding a new enum-backed field here is the only registration needed.
+ */
+const ENUM_ARRAY_REGISTRY = {
+  [NEEDS_TO_BE_ADDRESSED_KEY]: NeedsToBeAddressed,
+  [PROTECTIVE_FACTORS_KEY]: ProtectiveFactors,
+  [MENTAL_HEALTH_DIAGNOSES_KEY]: mentalHealthDiagnoses,
+} as const;
 
-const convertReportTypeDisplayNameToEnum = (reportType: string) => {
-  const reportTypeDisplayNameToEnum = _.invert(ReportType);
-  return reportTypeDisplayNameToEnum[reportType];
-};
+const ENUM_SCALAR_REGISTRY = {
+  [PLEA_KEY]: pleas,
+  [ASAM_CARE_RECOMMENDATION_KEY]: asamLevelOfCareRecommendation,
+  [REPORT_TYPE_KEY]: ReportType,
+  [CLIENT_GENDER_KEY]: GenderToDisplayName,
+} as const;
 
-/** Formats form value to enum */
-export const formatFormEnumValue = (value: string) => {
-  return value
-    .replaceAll(/\d+\.\d+/g, "") // removes number strings such as "1.5"
-    .replaceAll(/\s*\(.*?\)/g, "") // removes parentheses and strings within parentheses
-    .replaceAll("-", " ") // removes all dashes
-    .split(" ")
-    .map((splitVal) => capitalize(splitVal)) // capitalizes the first letter in each word
-    .join("");
-};
+type ArrayEnumKey = keyof typeof ENUM_ARRAY_REGISTRY;
+type ScalarEnumKey = keyof typeof ENUM_SCALAR_REGISTRY;
+
+const isArrayEnumKey = (key: string): key is ArrayEnumKey =>
+  key in ENUM_ARRAY_REGISTRY;
+const isScalarEnumKey = (key: string): key is ScalarEnumKey =>
+  key in ENUM_SCALAR_REGISTRY;
+
+const ENUM_ARRAY_LOOKUPS = (
+  Object.entries(ENUM_ARRAY_REGISTRY) as [
+    ArrayEnumKey,
+    Record<string, string>,
+  ][]
+).reduce(
+  (acc, [key, enumObj]) => ({ ...acc, [key]: _.invert(enumObj) }),
+  {} as Record<ArrayEnumKey, Record<string, string>>,
+);
+
+const ENUM_SCALAR_LOOKUPS = (
+  Object.entries(ENUM_SCALAR_REGISTRY) as [
+    ScalarEnumKey,
+    Record<string, string>,
+  ][]
+).reduce(
+  (acc, [key, enumObj]) => ({ ...acc, [key]: _.invert(enumObj) }),
+  {} as Record<ScalarEnumKey, Record<string, string>>,
+);
 
 /** Helper functions to parse backend values into frontend-compatible formats */
 export const parseBooleanValue = (value?: boolean | null) => {
@@ -101,52 +130,38 @@ export const parseBooleanValue = (value?: boolean | null) => {
   return NOT_SURE_YET_OPTION;
 };
 
-export const parseNeedsToBeAddressedValue = (
-  value?: (keyof typeof NeedsToBeAddressed)[] | null,
-) => {
+const parseEnumArray = (key: ArrayEnumKey, value?: string[] | null) => {
   if (!value) return null;
-  return value.map((val) => NeedsToBeAddressed[val]);
+  const enumObj = ENUM_ARRAY_REGISTRY[key] as Record<string, string>;
+  return value.map((val) => enumObj[val]);
 };
 
-export const parseProtectiveFactorsValue = (
-  value?: (keyof typeof ProtectiveFactors)[] | null,
-) => {
+const parseEnumScalar = (key: ScalarEnumKey, value?: string | null) => {
   if (!value) return null;
-  return value.map((val) => ProtectiveFactors[val]);
+  const enumObj = ENUM_SCALAR_REGISTRY[key] as Record<string, string>;
+  return enumObj[value];
 };
 
-export const parseMentalHealthDiagnosesValue = (
-  value?: (keyof typeof mentalHealthDiagnoses)[] | null,
-) => {
-  if (!value) return null;
-  return value.map((val) => mentalHealthDiagnoses[val]);
-};
+export const parseNeedsToBeAddressedValue = (value?: string[] | null) =>
+  parseEnumArray(NEEDS_TO_BE_ADDRESSED_KEY, value);
 
-export const parseAsamCareRecommendationValue = (
-  value?: keyof typeof asamLevelOfCareRecommendation | null,
-) => {
-  if (!value) return null;
-  return asamLevelOfCareRecommendation[value];
-};
+export const parseProtectiveFactorsValue = (value?: string[] | null) =>
+  parseEnumArray(PROTECTIVE_FACTORS_KEY, value);
 
-export const parsePleaValue = (value?: keyof typeof pleas | null) => {
-  if (!value) return null;
-  return pleas[value];
-};
+export const parseMentalHealthDiagnosesValue = (value?: string[] | null) =>
+  parseEnumArray(MENTAL_HEALTH_DIAGNOSES_KEY, value);
 
-export const parseClientGenderValue = (
-  value?: keyof typeof GenderToDisplayName | null,
-) => {
-  if (!value) return null;
-  return GenderToDisplayName[value];
-};
+export const parseAsamCareRecommendationValue = (value?: string | null) =>
+  parseEnumScalar(ASAM_CARE_RECOMMENDATION_KEY, value);
 
-export const parseReportTypeValue = (
-  value?: keyof typeof ReportType | null,
-) => {
-  if (!value) return null;
-  return ReportType[value];
-};
+export const parsePleaValue = (value?: string | null) =>
+  parseEnumScalar(PLEA_KEY, value);
+
+export const parseClientGenderValue = (value?: string | null) =>
+  parseEnumScalar(CLIENT_GENDER_KEY, value);
+
+export const parseReportTypeValue = (value?: string | null) =>
+  parseEnumScalar(REPORT_TYPE_KEY, value);
 
 /** Converts form update inputs into enums or other backend-compatible data types. */
 export const transformUpdates = (
@@ -155,12 +170,13 @@ export const transformUpdates = (
   const transformedUpdates = {} as { [key: string]: FormValue };
 
   Object.entries(updates).forEach(([key, value]) => {
-    if (
-      key === SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY &&
-      (value === NONE_OPTION || value === NOT_SURE_YET_OPTION)
-    ) {
-      transformedUpdates[key] = value === NONE_OPTION ? NONE_OPTION : null;
-      transformedUpdates[ASAM_CARE_RECOMMENDATION_KEY] = null;
+    if (key === SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY) {
+      if (value === NONE_OPTION || value === NOT_SURE_YET_OPTION) {
+        transformedUpdates[key] = value === NONE_OPTION ? NONE_OPTION : null;
+        transformedUpdates[ASAM_CARE_RECOMMENDATION_KEY] = null;
+      } else {
+        transformedUpdates[key] = value; // "Mild" | "Moderate" | "Severe" are already valid enum keys
+      }
       return;
     }
 
@@ -179,7 +195,12 @@ export const transformUpdates = (
 
     const isArray = Array.isArray(value);
     if (isArray) {
-      transformedUpdates[key] = value.map((val) => formatFormEnumValue(val));
+      if (isArrayEnumKey(key)) {
+        const lookup = ENUM_ARRAY_LOOKUPS[key];
+        transformedUpdates[key] = value.map((val) => lookup[val]);
+      } else {
+        transformedUpdates[key] = value;
+      }
       return;
     }
 
@@ -214,17 +235,13 @@ export const transformUpdates = (
     const isUndefined = value === undefined;
     if (isUndefined) return;
 
-    if (key === REPORT_TYPE_KEY) {
-      transformedUpdates[key] = convertReportTypeDisplayNameToEnum(value);
+    if (typeof value === "string" && isScalarEnumKey(key)) {
+      const lookup = ENUM_SCALAR_LOOKUPS[key];
+      transformedUpdates[key] = lookup[value];
       return;
     }
 
-    if (key === CLIENT_GENDER_KEY) {
-      transformedUpdates[key] = convertGenderDisplayNameToEnum(value);
-      return;
-    }
-
-    transformedUpdates[key] = formatFormEnumValue(value);
+    transformedUpdates[key] = value;
     return;
   });
 

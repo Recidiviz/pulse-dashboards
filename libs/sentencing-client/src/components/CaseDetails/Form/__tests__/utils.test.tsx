@@ -29,6 +29,8 @@ import {
   IS_VETERAN_KEY,
   LSIR_SCORE_KEY,
   MENTAL_HEALTH_DIAGNOSES_KEY,
+  NEEDS_TO_BE_ADDRESSED_KEY,
+  NeedsToBeAddressed,
   OFFENSE_KEY,
   OTHER_MENTAL_HEALTH_DIAGNOSIS_KEY,
   OTHER_NEED_TO_BE_ADDRESSED_KEY,
@@ -42,14 +44,17 @@ import {
 import {
   asamLevelOfCareRecommendation,
   mentalHealthDiagnoses,
+  MILD_OPTION,
+  MODERATE_OPTION,
   NO_OPTION,
   NONE_OPTION,
   NOT_SURE_YET_OPTION,
+  pleas,
+  SEVERE_OPTION,
   YES_OPTION,
 } from "../constants";
 import { CountyDistrict } from "../types";
 import {
-  formatFormEnumValue,
   getFilteredCountyOptions,
   isSelectionOverLimit,
   transformUpdates,
@@ -108,24 +113,31 @@ describe("transformUpdates", () => {
     expect(result[IS_VETERAN_KEY]).toBe(false);
   });
 
-  it("should convert array values using formatFormEnumValue", () => {
-    const updates = {
-      [MENTAL_HEALTH_DIAGNOSES_KEY]: [
-        mentalHealthDiagnoses.MajorDepressiveDisorder,
-        mentalHealthDiagnoses.BorderlinePersonalityDisorder,
-      ],
-    };
+  it("should map all needsToBeAddressed display labels to their correct enum keys", () => {
+    const result = transformUpdates({
+      [NEEDS_TO_BE_ADDRESSED_KEY]: Object.values(NeedsToBeAddressed),
+    });
+    expect(result[NEEDS_TO_BE_ADDRESSED_KEY]).toEqual(
+      Object.keys(NeedsToBeAddressed),
+    );
+  });
 
-    const mentalHealthDiagnosesEnums = _.invert(mentalHealthDiagnoses);
+  it("should map all protectiveFactors display labels to their correct enum keys", () => {
+    const result = transformUpdates({
+      [PROTECTIVE_FACTORS_KEY]: Object.values(ProtectiveFactors),
+    });
+    expect(result[PROTECTIVE_FACTORS_KEY]).toEqual(
+      Object.keys(ProtectiveFactors),
+    );
+  });
 
-    const result = transformUpdates(updates);
-
-    expect(result[MENTAL_HEALTH_DIAGNOSES_KEY]).toEqual([
-      mentalHealthDiagnosesEnums[mentalHealthDiagnoses.MajorDepressiveDisorder],
-      mentalHealthDiagnosesEnums[
-        mentalHealthDiagnoses.BorderlinePersonalityDisorder
-      ],
-    ]);
+  it("should map all mentalHealthDiagnoses display labels to their correct enum keys", () => {
+    const result = transformUpdates({
+      [MENTAL_HEALTH_DIAGNOSES_KEY]: Object.values(mentalHealthDiagnoses),
+    });
+    expect(result[MENTAL_HEALTH_DIAGNOSES_KEY]).toEqual(
+      Object.keys(mentalHealthDiagnoses),
+    );
   });
 
   it("should leave null, boolean, and number values unchanged", () => {
@@ -192,23 +204,6 @@ describe("transformUpdates", () => {
     const result = transformUpdates(updates);
 
     expect(result[CLIENT_GENDER_KEY]).toBe("NON_BINARY");
-  });
-
-  it("should format everything else in PascalCase", () => {
-    const updates = {
-      [PROTECTIVE_FACTORS_KEY]:
-        ProtectiveFactors.ActivelyParticipatingInTreatmentPrograms,
-    };
-
-    const protectiveFactorsToEnum = _.invert(ProtectiveFactors);
-
-    const result = transformUpdates(updates);
-
-    expect(result[PROTECTIVE_FACTORS_KEY]).toBe(
-      protectiveFactorsToEnum[
-        ProtectiveFactors.ActivelyParticipatingInTreatmentPrograms
-      ],
-    );
   });
 
   it("should not include undefined keys", () => {
@@ -317,12 +312,32 @@ describe("isSelectionOverLimit", () => {
   });
 });
 
-describe("formatFormEnumValue", () => {
-  it("should transform asamLevelOfCareRecommendation values to their proper enum", () => {
+describe("transformUpdates scalar enum fields", () => {
+  it("should map all plea display values to their correct enum keys", () => {
+    Object.entries(pleas).forEach(([enumKey, displayValue]) => {
+      const result = transformUpdates({ [PLEA_KEY]: displayValue });
+      expect(result[PLEA_KEY]).toBe(enumKey);
+    });
+  });
+
+  it("should map all asamCareRecommendation display values to their correct enum keys", () => {
     Object.entries(asamLevelOfCareRecommendation).forEach(
-      ([enumValue, displayValue]) => {
-        expect(formatFormEnumValue(displayValue)).toBe(enumValue);
+      ([enumKey, displayValue]) => {
+        const result = transformUpdates({
+          [ASAM_CARE_RECOMMENDATION_KEY]: displayValue,
+        });
+        expect(result[ASAM_CARE_RECOMMENDATION_KEY]).toBe(enumKey);
       },
     );
+  });
+
+  it("should pass through substanceUseDisorderDiagnosis real values unchanged", () => {
+    [MILD_OPTION, MODERATE_OPTION, SEVERE_OPTION].forEach((value) => {
+      const result = transformUpdates({
+        [SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY]: value,
+      });
+      expect(result[SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY]).toBe(value);
+      expect(result[ASAM_CARE_RECOMMENDATION_KEY]).toBeUndefined();
+    });
   });
 });
