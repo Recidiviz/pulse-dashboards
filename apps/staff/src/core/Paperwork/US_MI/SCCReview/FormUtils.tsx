@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,17 +17,13 @@
 
 import * as React from "react";
 
-import { UsMiSCCReviewDraftData } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiSCCReviewForm";
 import { UsMiSCCReviewV2DraftData } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiSCCReviewV2Form";
 import { DOCXFormDropdown } from "../../DOCXFormDropdown";
 import DOCXFormInput from "../../DOCXFormInput";
 import DOCXFormCheckbox from "../../FormCheckbox";
 
-type MergedUsMiSCCReviewDraftData = UsMiSCCReviewDraftData &
-  UsMiSCCReviewV2DraftData;
-
 type InputProps = {
-  name: Extract<keyof MergedUsMiSCCReviewDraftData, string>;
+  name: Extract<keyof UsMiSCCReviewV2DraftData, string>;
   placeholder?: string;
   maxWidth?: string;
 };
@@ -40,7 +36,7 @@ export const FormInput: React.FC<InputProps> = ({
   ...props
 }: InputProps) => {
   return (
-    <DOCXFormInput<MergedUsMiSCCReviewDraftData>
+    <DOCXFormInput<UsMiSCCReviewV2DraftData>
       {...props}
       style={{ maxWidth: maxWidth ?? "90px", minWidth: "50px" }}
     />
@@ -48,7 +44,7 @@ export const FormInput: React.FC<InputProps> = ({
 };
 
 type CheckboxProps = {
-  name: Extract<keyof MergedUsMiSCCReviewDraftData, string>;
+  name: Extract<keyof UsMiSCCReviewV2DraftData, string>;
   invert?: boolean;
   toggleable?: boolean;
   label?: string;
@@ -58,9 +54,7 @@ type CheckboxProps = {
  * A wrapper for the DOCX checkbox for the MI SCC review form.
  */
 export const FormCheckbox: React.FC<CheckboxProps> = (props: CheckboxProps) => {
-  const checkbox = (
-    <DOCXFormCheckbox<MergedUsMiSCCReviewDraftData> {...props} />
-  );
+  const checkbox = <DOCXFormCheckbox<UsMiSCCReviewV2DraftData> {...props} />;
   return props.label ? (
     <label style={{ marginBottom: 0 }}>
       {checkbox}
@@ -72,7 +66,7 @@ export const FormCheckbox: React.FC<CheckboxProps> = (props: CheckboxProps) => {
 };
 
 type DropdownProps = {
-  name: Extract<keyof MergedUsMiSCCReviewDraftData, string>;
+  name: Extract<keyof UsMiSCCReviewV2DraftData, string>;
   menuItems: string[];
 };
 
@@ -80,5 +74,5 @@ type DropdownProps = {
  * A wrapper for the DOCX dropdown for the MI SCC review form.
  */
 export const FormDropdown = (props: DropdownProps) => {
-  return <DOCXFormDropdown<MergedUsMiSCCReviewDraftData> {...props} />;
+  return <DOCXFormDropdown<UsMiSCCReviewV2DraftData> {...props} />;
 };

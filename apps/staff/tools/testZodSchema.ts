@@ -50,17 +50,14 @@ import {
   usMeMediumTrusteeSchema,
   usMeSCCPSchema,
   usMeWorkReleaseSchema,
-  usMiAddInPersonSecurityClassificationCommitteeReviewSchema,
   usMiAddInPersonSecurityClassificationCommitteeReviewV2Schema,
   usMiClassificationReviewSchemaForSupervisionLevelFormatter,
   usMiCustodyLevelDowngradeSchema,
   usMiEarlyDischargeSchema,
   usMiMinimumTelephoneReportingSchema,
   usMiPastFTRDSchema,
-  usMiSecurityClassificationCommitteeReviewSchema,
   usMiSecurityClassificationCommitteeReviewV2Schema,
   usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter,
-  usMiWardenInPersonSecurityClassificationCommitteeReviewSchema,
   usMiWardenInPersonSecurityClassificationCommitteeReviewV2Schema,
   usMoOverdueRestrictiveHousingInitialHearingSchema,
   usMoOverdueRestrictiveHousingReleaseSchema,
@@ -151,8 +148,6 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
   usMeWorkRelease: usMeWorkReleaseSchema,
 
   // US_MI
-  usMiAddInPersonSecurityClassificationCommitteeReview:
-    usMiAddInPersonSecurityClassificationCommitteeReviewSchema,
   usMiAddInPersonSecurityClassificationCommitteeReviewV2:
     usMiAddInPersonSecurityClassificationCommitteeReviewV2Schema,
   usMiClassificationReview:
@@ -161,14 +156,10 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
   usMiEarlyDischarge: usMiEarlyDischargeSchema,
   usMiMinimumTelephoneReporting: usMiMinimumTelephoneReportingSchema,
   usMiPastFTRD: usMiPastFTRDSchema,
-  usMiSecurityClassificationCommitteeReview:
-    usMiSecurityClassificationCommitteeReviewSchema,
   usMiSecurityClassificationCommitteeReviewV2:
     usMiSecurityClassificationCommitteeReviewV2Schema,
   usMiSupervisionLevelDowngrade:
     usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(),
-  usMiWardenInPersonSecurityClassificationCommitteeReview:
-    usMiWardenInPersonSecurityClassificationCommitteeReviewSchema,
   usMiWardenInPersonSecurityClassificationCommitteeReviewV2:
     usMiWardenInPersonSecurityClassificationCommitteeReviewV2Schema,
 

@@ -26,7 +26,7 @@ import {
 import {
   MisconductHistory,
   SegregationHistory,
-} from "../UsMiRestrictiveHousingDetails";
+} from "../UsMiRestrictiveHousingDetailsV2";
 
 describe("UsMiRestrictiveHousingDetails helper functions", () => {
   describe("SegregationHistory", () => {

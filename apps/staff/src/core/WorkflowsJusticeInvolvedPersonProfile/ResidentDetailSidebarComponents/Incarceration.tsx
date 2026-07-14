@@ -51,9 +51,9 @@ const ReleaseDate = observer(function ReleaseDate({
   if (
     opportunity &&
     [
-      "usMiSecurityClassificationCommitteeReview",
-      "usMiAddInPersonSecurityClassificationCommitteeReview",
-      "usMiWardenInPersonSecurityClassificationCommitteeReview",
+      "usMiSecurityClassificationCommitteeReviewV2",
+      "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
+      "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
     ].includes(opportunity.type)
   ) {
     return <UsMiMinMaxReleaseDates opportunity={opportunity} />;

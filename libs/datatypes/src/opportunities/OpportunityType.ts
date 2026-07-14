@@ -59,11 +59,8 @@ export const constructedOpportunityTypes = [
   "usMiPastFTRD",
   "usMiSupervisionLevelDowngrade",
   "usMiReclassificationRequest",
-  "usMiSecurityClassificationCommitteeReview",
   "usMiSecurityClassificationCommitteeReviewV2",
-  "usMiWardenInPersonSecurityClassificationCommitteeReview",
   "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
-  "usMiAddInPersonSecurityClassificationCommitteeReview",
   "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
   "usMiCustodyLevelDowngrade",
 

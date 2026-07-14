@@ -550,10 +550,10 @@ describe("table view columns", () => {
         "allOpportunitiesByType",
         "get",
       ).mockReturnValue({
-        usMiSecurityClassificationCommitteeReview: [
+        usMiSecurityClassificationCommitteeReviewV2: [
           {
             ...mockOpportunity,
-            type: "usMiSecurityClassificationCommitteeReview",
+            type: "usMiSecurityClassificationCommitteeReviewV2",
             tabTitle: () => "Marked Ineligible",
           },
         ],
@@ -562,7 +562,7 @@ describe("table view columns", () => {
       presenter = getPresenter({
         tenantStore: mockTenantStore,
         workflowsStore: mockWorkflowsStoreWithSystem,
-        opportunityType: "usMiSecurityClassificationCommitteeReview",
+        opportunityType: "usMiSecurityClassificationCommitteeReviewV2",
       });
 
       presenter.activeTab = mockOpportunity.deniedTabTitle as OpportunityTab;
@@ -753,9 +753,6 @@ describe("table view columns", () => {
     });
 
     test.each([
-      "usMiSecurityClassificationCommitteeReview",
-      "usMiAddInPersonSecurityClassificationCommitteeReview",
-      "usMiWardenInPersonSecurityClassificationCommitteeReview",
       "usMiSecurityClassificationCommitteeReviewV2",
       "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
       "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
@@ -1002,9 +999,6 @@ describe("table view columns", () => {
 
   describe("US_MI_NEXT_SCC_DATE", () => {
     test.each([
-      "usMiSecurityClassificationCommitteeReview",
-      "usMiAddInPersonSecurityClassificationCommitteeReview",
-      "usMiWardenInPersonSecurityClassificationCommitteeReview",
       "usMiSecurityClassificationCommitteeReviewV2",
       "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
       "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",

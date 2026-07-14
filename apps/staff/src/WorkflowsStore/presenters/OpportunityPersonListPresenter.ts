@@ -198,9 +198,6 @@ export class OpportunityPersonListPresenter
         ![
           // Michigan facilities opportunities have both min and max release dates,
           // and the release date on the Resident object doesn't agree with them
-          "usMiSecurityClassificationCommitteeReview",
-          "usMiAddInPersonSecurityClassificationCommitteeReview",
-          "usMiWardenInPersonSecurityClassificationCommitteeReview",
           "usMiSecurityClassificationCommitteeReviewV2",
           "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
           "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
@@ -250,9 +247,6 @@ export class OpportunityPersonListPresenter
         this.workflowsStore.activeSystem === "INCARCERATION" &&
         this.tenantStore.currentTenantId === "US_MI" &&
         [
-          "usMiSecurityClassificationCommitteeReview",
-          "usMiAddInPersonSecurityClassificationCommitteeReview",
-          "usMiWardenInPersonSecurityClassificationCommitteeReview",
           "usMiSecurityClassificationCommitteeReviewV2",
           "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
           "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",

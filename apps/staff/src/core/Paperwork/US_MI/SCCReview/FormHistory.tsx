@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import { rem } from "polished";
 import * as React from "react";
 import styled from "styled-components";
 
-import { UsMiSCCReviewDraftData } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiSCCReviewForm";
+import { UsMiSCCReviewV2DraftData } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiSCCReviewV2Form";
 import { FormCheckbox, FormInput } from "./FormUtils";
 
 const ContentContainer = styled.div`
@@ -80,7 +80,7 @@ const Cell = styled.div<CellProps>`
 
 type InputProps = CellProps & {
   title: string;
-  name: Extract<keyof UsMiSCCReviewDraftData, string>;
+  name: Extract<keyof UsMiSCCReviewV2DraftData, string>;
   placeholder?: string;
   maxWidth: string;
 };

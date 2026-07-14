@@ -813,9 +813,6 @@ const TableView = observer(function TableView({
       accessorFn: (opp: Opportunity) => {
         if (
           [
-            "usMiSecurityClassificationCommitteeReview",
-            "usMiAddInPersonSecurityClassificationCommitteeReview",
-            "usMiWardenInPersonSecurityClassificationCommitteeReview",
             "usMiSecurityClassificationCommitteeReviewV2",
             "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
             "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
@@ -829,9 +826,6 @@ const TableView = observer(function TableView({
         const opp = row.original;
         if (
           [
-            "usMiSecurityClassificationCommitteeReview",
-            "usMiAddInPersonSecurityClassificationCommitteeReview",
-            "usMiWardenInPersonSecurityClassificationCommitteeReview",
             "usMiSecurityClassificationCommitteeReviewV2",
             "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
             "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",

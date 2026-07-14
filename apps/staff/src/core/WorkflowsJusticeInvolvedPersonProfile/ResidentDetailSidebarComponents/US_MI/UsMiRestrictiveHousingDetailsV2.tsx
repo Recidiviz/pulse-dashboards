@@ -16,10 +16,17 @@
 // =============================================================================
 
 import React from "react";
+import styled from "styled-components";
 
-import { usMiSecurityClassificationCommitteeReviewV2Record } from "~datatypes";
+import {
+  UsMiBondableOffense,
+  UsMiNonbondableOffense,
+  usMiSecurityClassificationCommitteeReviewV2Record,
+  UsMiSegregationStay,
+} from "~datatypes";
+import { palette } from "~design-system";
 
-import { formatWorkflowsDate } from "../../../../utils";
+import { formatDateRange, formatWorkflowsDate } from "../../../../utils";
 import { usMiAddInPersonSecurityClassificationCommitteeReviewV2Opportunity } from "../../../../WorkflowsStore/Opportunity/UsMi/UsMiAddInPersonSecurityClassificationCommitteeReviewV2Opportunity";
 import { usMiSecurityClassificationCommitteeReviewV2Opportunity } from "../../../../WorkflowsStore/Opportunity/UsMi/UsMiSecurityClassificationCommitteeReviewV2Opportunity";
 import { usMiWardenInPersonSecurityClassificationCommitteeReviewV2Opportunity } from "../../../../WorkflowsStore/Opportunity/UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReviewV2Opportunity";
@@ -31,12 +38,81 @@ import {
   SecureDetailsList,
 } from "../../styles";
 import { OpportunityProfileProps } from "../../types";
-import {
-  MisconductHistory,
-  SegregationHistory,
-} from "./UsMiRestrictiveHousingDetails";
 
-// TODO(#OBT-9920): Deprecating V1 component and rename
+const OffenseCode = styled.div`
+  margin-top: 0.25rem;
+  color: ${palette.slate60};
+`;
+
+export const SegregationHistory: React.FC<{
+  stays: UsMiSegregationStay[];
+}> = ({ stays }) => {
+  if (stays.length === 0) return <>N/A</>;
+
+  return (
+    <>
+      {stays.map((stay) => (
+        <div key={`${stay.stayStartDate}`}>
+          {formatWorkflowsDate(stay.stayStartDate)} -{" "}
+          {formatWorkflowsDate(stay.stayEndDate)} (
+          {formatDateRange(stay.stayStartDate, stay.stayEndDate)})
+          {stay.stayOffenses && stay.stayOffenses.trim() && (
+            <OffenseCode>
+              • Code: {stay.stayOffenses.replace(/,+$/, "")}
+            </OffenseCode>
+          )}
+        </div>
+      ))}
+    </>
+  );
+};
+
+export const MisconductHistory: React.FC<{
+  bondableOffenses: UsMiBondableOffense[];
+  nonbondableOffenses: UsMiNonbondableOffense[];
+}> = ({ bondableOffenses, nonbondableOffenses }) => {
+  if (bondableOffenses.length === 0 && nonbondableOffenses.length === 0) {
+    return <>N/A</>;
+  }
+
+  const allOffenses = [
+    ...bondableOffenses.map((o) => ({
+      date: o.bondableIncidentDate,
+      code: o.bondableOffense,
+    })),
+    ...nonbondableOffenses.map((o) => ({
+      date: o.nonbondableIncidentDate,
+      code: o.nonbondableOffense,
+    })),
+  ].sort((a, b) => (a.date?.getTime() ?? 0) - (b.date?.getTime() ?? 0));
+
+  // Group offenses by date (offenses are already sorted, so just check the last group)
+  const groupedByDate: Array<{ date: Date; codes: string[] }> = [];
+
+  allOffenses.forEach((offense) => {
+    if (!offense.date || !offense.code) return;
+
+    const lastGroup = groupedByDate[groupedByDate.length - 1];
+
+    if (lastGroup && lastGroup.date.getTime() === offense.date.getTime()) {
+      lastGroup.codes.push(offense.code);
+    } else {
+      groupedByDate.push({ date: offense.date, codes: [offense.code] });
+    }
+  });
+
+  return (
+    <>
+      {groupedByDate.map(({ date, codes }) => (
+        <div key={`offense-${date.getTime()}`}>
+          {formatWorkflowsDate(date)}
+          <OffenseCode>• Code: {codes.join(", ")}</OffenseCode>
+        </div>
+      ))}
+    </>
+  );
+};
+
 export function UsMiRestrictiveHousingV2({
   opportunity,
 }: OpportunityProfileProps): React.ReactElement<any> | null {
