@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Link, useIsFocused } from "@react-navigation/native";
+import { Link, StackActions, useIsFocused } from "@react-navigation/native";
 import { format } from "date-fns";
 import React, {
   ReactNode,
@@ -353,6 +353,9 @@ export const ProfileMeetings = ({
                           personType === "client" ? "Clients" : "Residents"
                         }
                         params={{}}
+                        action={StackActions.popTo(
+                          personType === "client" ? "Clients" : "Residents",
+                        )}
                       >
                         <ChevronLeftIcon className="size-3 stroke-primary stroke-[3px]" />
                         <Typography className="text-sm font-medium text-primary">

@@ -68,7 +68,7 @@ function ClientProfileContent({ person }: { person: Person }) {
         <Header
           showDrawer={false}
           showGoBack
-          onGoBack={() => navigation.navigate("Clients")}
+          onGoBack={() => navigation.popTo("Clients")}
         />
       }
     />
