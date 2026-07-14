@@ -37,3 +37,8 @@ export {
   toTypesenseFilter,
   type ToTypesenseFilterClauses,
 } from "./scope";
+export {
+  createScopedTypesenseClient,
+  type CreateScopedTypesenseClientConfig,
+  type ScopedTypesenseClient,
+} from "./scopedClient";
