@@ -44,10 +44,6 @@ const metadata: CompliantReportingReferralRecordRaw["metadata"] &
   allOffenses: ["FAILURE TO APPEAR (FELONY)", "EVADING ARREST"],
   convictionCounties: ["123ABC"],
   ineligibleOffensesExpired: [],
-  latestNegativeArrestCheck: {
-    contactDate: "2023-04-01",
-    contactType: "ARRN",
-  },
   mostRecentSpeNote: {
     contactDate: "2019-08-15",
     contactType: "SPET",
@@ -67,6 +63,9 @@ const eligibleCriteria: CompliantReportingReferralRecordRaw["eligibleCriteria"] 
   },
   usTnIneligibleOffensesExpired: null,
   usTnNoArrestsInPastYear: null,
+  usTnNegativeArrestCheckInPastYear: {
+    latestNegativeArrestCheckDate: "2023-04-01",
+  },
   usTnNoDuiOffenseInPast5Years: null,
   usTnNoHighSanctionsInPastYear: null,
   usTnNoMurderConvictions: null,

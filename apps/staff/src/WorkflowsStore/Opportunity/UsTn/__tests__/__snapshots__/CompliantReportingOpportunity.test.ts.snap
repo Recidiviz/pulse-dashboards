@@ -11,7 +11,11 @@ exports[`fully eligible > requirements met 1`] = `
     "tooltip": "Policy requirement: On minimum supervision level for 1 year or medium level for 18 months.",
   },
   {
-    "text": "Negative arrest check on May 28, 2022",
+    "text": "No positive arrest checks (ARRP) in past year",
+    "tooltip": "Policy requirement: No arrests in the last 1 year.",
+  },
+  {
+    "text": "Negative arrest check (ARRN) on May 28, 2022",
     "tooltip": "Policy requirement: No arrests in the last 1 year.",
   },
   {
@@ -56,7 +60,11 @@ exports[`fully eligible with discretion > eligible with discretion 1`] = `
     "tooltip": "Policy requirement: On minimum supervision level for 1 year or medium level for 18 months.",
   },
   {
-    "text": "Negative arrest check on May 28, 2022",
+    "text": "No positive arrest checks (ARRP) in past year",
+    "tooltip": "Policy requirement: No arrests in the last 1 year.",
+  },
+  {
+    "text": "Negative arrest check (ARRN) on May 28, 2022",
     "tooltip": "Policy requirement: No arrests in the last 1 year.",
   },
   {

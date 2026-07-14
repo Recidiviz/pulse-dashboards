@@ -247,11 +247,19 @@ export class CompliantReportingOpportunity extends OpportunityBase<
 
     // required arrest history
     requirements.push({
-      text: `Negative arrest check on ${formatWorkflowsDate(
-        metadata.latestNegativeArrestCheck.contactDate,
-      )}`,
+      text: "No positive arrest checks (ARRP) in past year",
       tooltip: CRITERIA.arrests.tooltip,
     });
+
+    if (eligibleCriteria.usTnNegativeArrestCheckInPastYear) {
+      requirements.push({
+        text: `Negative arrest check (ARRN) on ${formatWorkflowsDate(
+          eligibleCriteria.usTnNegativeArrestCheckInPastYear
+            .latestNegativeArrestCheckDate,
+        )}`,
+        tooltip: CRITERIA.arrests.tooltip,
+      });
+    }
 
     // required sanction history
     if (eligibleCriteria.usTnNoHighSanctionsInPastYear) {
@@ -457,6 +465,19 @@ export class CompliantReportingOpportunity extends OpportunityBase<
             .latestHighSanctionDate,
         ).text,
         tooltip: CRITERIA.sanctions.tooltip,
+      });
+    }
+
+    if (ineligibleCriteria?.usTnNegativeArrestCheckInPastYear) {
+      const { latestNegativeArrestCheckDate } =
+        ineligibleCriteria.usTnNegativeArrestCheckInPastYear;
+      requirements.push({
+        text: latestNegativeArrestCheckDate
+          ? `Latest ARRN (${formatWorkflowsDate(
+              latestNegativeArrestCheckDate,
+            )}) is more than one year old`
+          : "No recent negative arrest check (ARRN) found",
+        tooltip: CRITERIA.arrests.tooltip,
       });
     }
 

@@ -36,6 +36,7 @@ import {
   compliantReportingEligibleClientRecord,
   compliantReportingEligibleWithDiscretionReferralRecord,
   compliantReportingIneligibleCriteria,
+  compliantReportingMissingArrestCheck,
   compliantReportingReferralRecord,
 } from "../__fixtures__";
 import { CompliantReportingOpportunity } from "../CompliantReportingOpportunity";
@@ -155,6 +156,12 @@ describe.each([
     /on medium supervision for /,
     /stay on your current supervision level/,
   ],
+  [
+    "usTnNegativeArrestCheckInPastYear",
+    "Latest ARRN (Jun 1, 2021) is more than one year old",
+    /No arrests in the last 1 year/,
+    /Negative arrest check \(ARRN\)/,
+  ],
 ] as [
   criterionKey: keyof CompliantReportingReferralRecord["ineligibleCriteria"],
   expectedListText: string,
@@ -228,6 +235,31 @@ describe.each([
     });
   },
 );
+
+describe("almost eligible but for usTnNegativeArrestCheckInPastYear with no ARRN on record", () => {
+  beforeEach(() => {
+    const testRecord = cloneDeep(
+      compliantReportingAlmostEligibleReferralRecord,
+    );
+
+    testRecord.ineligibleCriteria = {
+      usTnNegativeArrestCheckInPastYear: compliantReportingMissingArrestCheck,
+    };
+
+    createTestUnit(compliantReportingAlmostEligibleClientRecord, testRecord);
+
+    updatesSub = cr.updatesSubscription;
+  });
+
+  test("requirements almost met", () => {
+    expect(cr.requirementsAlmostMet).toEqual([
+      {
+        text: "No recent negative arrest check (ARRN) found",
+        tooltip: expect.stringMatching(/No arrests in the last 1 year/),
+      },
+    ]);
+  });
+});
 
 test("hydrate", () => {
   createTestUnit(

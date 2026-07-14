@@ -14,6 +14,9 @@ exports[`parse almost eligible 1`] = `
       "eligibleDate": "2029-06-06",
     },
     "usTnIneligibleOffensesExpired": null,
+    "usTnNegativeArrestCheckInPastYear": {
+      "latestNegativeArrestCheckDate": 2023-04-01T00:00:00.000Z,
+    },
     "usTnNoArrestsInPastYear": {},
     "usTnNoDuiOffenseInPast5Years": null,
     "usTnNoHighSanctionsInPastYear": {},
@@ -88,10 +91,6 @@ exports[`parse almost eligible 1`] = `
       "123ABC",
     ],
     "ineligibleOffensesExpired": [],
-    "latestNegativeArrestCheck": {
-      "contactDate": 2023-04-01T00:00:00.000Z,
-      "contactType": "ARRN",
-    },
     "mostRecentSpeNote": {
       "contactDate": 2019-08-15T00:00:00.000Z,
       "contactType": "SPET",
@@ -119,6 +118,9 @@ exports[`parse eligible 1`] = `
       "eligibleDate": "2029-06-06",
     },
     "usTnIneligibleOffensesExpired": null,
+    "usTnNegativeArrestCheckInPastYear": {
+      "latestNegativeArrestCheckDate": 2023-04-01T00:00:00.000Z,
+    },
     "usTnNoArrestsInPastYear": {},
     "usTnNoDuiOffenseInPast5Years": null,
     "usTnNoHighSanctionsInPastYear": {},
@@ -188,10 +190,6 @@ exports[`parse eligible 1`] = `
       "123ABC",
     ],
     "ineligibleOffensesExpired": [],
-    "latestNegativeArrestCheck": {
-      "contactDate": 2023-04-01T00:00:00.000Z,
-      "contactType": "ARRN",
-    },
     "mostRecentSpeNote": {
       "contactDate": 2019-08-15T00:00:00.000Z,
       "contactType": "SPET",

@@ -52,6 +52,11 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
         .optional(),
       // Transform null fields to empty object to make them easier to use in conditionals later
       usTnNoArrestsInPastYear: z.null().transform((_val) => ({})),
+      usTnNegativeArrestCheckInPastYear: z
+        .object({
+          latestNegativeArrestCheckDate: dateStringSchema.nullable(),
+        })
+        .optional(),
       usTnNoHighSanctionsInPastYear: z
         .null()
         .transform((_val) => ({}))
@@ -150,6 +155,11 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
           contactCode: z.array(z.string()),
         })
         .optional(),
+      usTnNegativeArrestCheckInPastYear: z
+        .object({
+          latestNegativeArrestCheckDate: dateStringSchema.nullable(),
+        })
+        .optional(),
     })
     .passthrough(),
   formInformation: z
@@ -178,10 +188,6 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
     })
     .partial(),
   metadata: z.object({
-    latestNegativeArrestCheck: z.object({
-      contactDate: dateStringSchema,
-      contactType: z.literal("ARRN"),
-    }),
     mostRecentSpeNote: z
       .object({
         contactDate: dateStringSchema,

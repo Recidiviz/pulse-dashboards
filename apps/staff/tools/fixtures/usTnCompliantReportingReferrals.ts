@@ -27,6 +27,12 @@ export const usTnCompliantReportingReferrals =
       externalId: "100",
       eligibleCriteria: {
         usTnNoArrestsInPastYear: null,
+        usTnNegativeArrestCheckInPastYear: {
+          latestNegativeArrestCheckDate: relativeFixtureDate({
+            years: -1,
+            days: -33,
+          }),
+        },
         usTnSpecialConditionsAreCurrent: {
           speNoteDue: null,
         },
@@ -83,10 +89,6 @@ export const usTnCompliantReportingReferrals =
       metadata: {
         convictionCounties: ["123 - ABC", "456 - DEF"],
         ineligibleOffensesExpired: ["HABITUAL TRAFFIC OFFENDER"],
-        latestNegativeArrestCheck: {
-          contactDate: relativeFixtureDate({ years: -1, days: -33 }),
-          contactType: "ARRN",
-        },
         mostRecentSpeNote: {
           contactDate: relativeFixtureDate({ days: -222 }),
           contactType: "SPET",
@@ -100,6 +102,9 @@ export const usTnCompliantReportingReferrals =
       externalId: "101",
       eligibleCriteria: {
         usTnNoArrestsInPastYear: null,
+        usTnNegativeArrestCheckInPastYear: {
+          latestNegativeArrestCheckDate: relativeFixtureDate({ days: -70 }),
+        },
         usTnSpecialConditionsAreCurrent: {
           speNoteDue: relativeFixtureDate({ days: -50 }),
         },
@@ -155,10 +160,6 @@ export const usTnCompliantReportingReferrals =
         judicialDistrict: ["14"],
       },
       metadata: {
-        latestNegativeArrestCheck: {
-          contactDate: relativeFixtureDate({ days: -70 }),
-          contactType: "ARRN",
-        },
         mostRecentSpeNote: {
           contactDate: relativeFixtureDate({ days: -50 }),
           contactType: "SPEC",
@@ -174,6 +175,9 @@ export const usTnCompliantReportingReferrals =
       externalId: "104",
       eligibleCriteria: {
         usTnNoArrestsInPastYear: null,
+        usTnNegativeArrestCheckInPastYear: {
+          latestNegativeArrestCheckDate: relativeFixtureDate({ months: -1 }),
+        },
         usTnSpecialConditionsAreCurrent: {
           speNoteDue: relativeFixtureDate({ days: -50 }),
         },
@@ -227,10 +231,6 @@ export const usTnCompliantReportingReferrals =
         judicialDistrict: [],
       },
       metadata: {
-        latestNegativeArrestCheck: {
-          contactDate: relativeFixtureDate({ months: -1 }),
-          contactType: "ARRN",
-        },
         mostRecentSpeNote: {
           contactDate: relativeFixtureDate({ months: -1 }),
           contactType: "SPEC",
@@ -243,8 +243,150 @@ export const usTnCompliantReportingReferrals =
     },
     {
       stateCode: "US_TN",
+      externalId: "205",
+      eligibleCriteria: {
+        usTnNoArrestsInPastYear: null,
+        usTnSpecialConditionsAreCurrent: {
+          speNoteDue: null,
+        },
+        usTnNotServingIneligibleCrOffense: null,
+        usTnPassedDrugScreenCheck: {
+          negativeDrugScreenHistoryArray: [
+            {
+              negativeScreenDate: relativeFixtureDate({ days: -200 }),
+              negativeScreenResult: "DRUN",
+            },
+          ],
+          latestDrugScreenDate: relativeFixtureDate({ days: -200 }),
+          latestDrugScreenResult: "DRUN",
+        },
+        usTnNoZeroToleranceCodesSpans: { zeroToleranceCodeDates: null },
+        usTnIneligibleOffensesExpired: null,
+        usTnNotServingUnknownCrOffense: null,
+        hasActiveSentence: { hasActiveSentence: true },
+        usTnOnEligibleLevelForSufficientTime: {
+          eligibleDate: relativeFixtureDate({
+            years: -2,
+            days: -111,
+            months: 18,
+          }),
+          eligibleLevel: "MEDIUM",
+          startDateOnEligibleLevel: relativeFixtureDate({
+            years: -2,
+            days: -111,
+          }),
+        },
+        hasFinesFeesBalanceBelow500OrHasPayments3ConsecutiveMonthsOrIsExempt: {
+          amountOwed: 0,
+          consecutiveMonthlyPayments: 3,
+        },
+        usTnNoHighSanctionsInPastYear: null,
+        usTnNoRecentCompliantReportingRejections: null,
+        usTnNoPriorRecordWithIneligibleCrOffense: null,
+      },
+      ineligibleCriteria: {
+        usTnNegativeArrestCheckInPastYear: {
+          latestNegativeArrestCheckDate: relativeFixtureDate({
+            years: -1,
+            days: -30,
+          }),
+        },
+      },
+      formInformation: {
+        sentenceStartDate: relativeFixtureDate({ years: -2, days: -555 }),
+        currentOffenses: ["FAILURE TO APPEAR (FELONY)"],
+        driversLicense: "12345678",
+        restitutionAmt: 400.0,
+        restitutionMonthlyPayment: 0.0,
+        restitutionMonthlyPaymentTo: ["2ND JUDICIAL DRUG TASK FORCE"],
+        judicialDistrict: ["17"],
+      },
+      metadata: {
+        convictionCounties: ["123 - ABC", "456 - DEF"],
+        ineligibleOffensesExpired: [],
+        mostRecentSpeNote: {
+          contactDate: relativeFixtureDate({ days: -222 }),
+          contactType: "SPET",
+        },
+      },
+      isEligible: false,
+      isAlmostEligible: true,
+    },
+    {
+      stateCode: "US_TN",
+      externalId: "206",
+      eligibleCriteria: {
+        usTnNoArrestsInPastYear: null,
+        usTnSpecialConditionsAreCurrent: {
+          speNoteDue: null,
+        },
+        usTnNotServingIneligibleCrOffense: null,
+        usTnPassedDrugScreenCheck: {
+          negativeDrugScreenHistoryArray: [
+            {
+              negativeScreenDate: relativeFixtureDate({ days: -200 }),
+              negativeScreenResult: "DRUN",
+            },
+          ],
+          latestDrugScreenDate: relativeFixtureDate({ days: -200 }),
+          latestDrugScreenResult: "DRUN",
+        },
+        usTnNoZeroToleranceCodesSpans: { zeroToleranceCodeDates: null },
+        usTnIneligibleOffensesExpired: null,
+        usTnNotServingUnknownCrOffense: null,
+        hasActiveSentence: { hasActiveSentence: true },
+        usTnOnEligibleLevelForSufficientTime: {
+          eligibleDate: relativeFixtureDate({
+            years: -2,
+            days: -111,
+            months: 18,
+          }),
+          eligibleLevel: "MEDIUM",
+          startDateOnEligibleLevel: relativeFixtureDate({
+            years: -2,
+            days: -111,
+          }),
+        },
+        hasFinesFeesBalanceBelow500OrHasPayments3ConsecutiveMonthsOrIsExempt: {
+          amountOwed: 0,
+          consecutiveMonthlyPayments: 3,
+        },
+        usTnNoHighSanctionsInPastYear: null,
+        usTnNoRecentCompliantReportingRejections: null,
+        usTnNoPriorRecordWithIneligibleCrOffense: null,
+      },
+      ineligibleCriteria: {
+        usTnNegativeArrestCheckInPastYear: {
+          latestNegativeArrestCheckDate: null,
+        },
+      },
+      formInformation: {
+        sentenceStartDate: relativeFixtureDate({ years: -2, days: -555 }),
+        currentOffenses: ["FAILURE TO APPEAR (FELONY)"],
+        driversLicense: "12345678",
+        restitutionAmt: 400.0,
+        restitutionMonthlyPayment: 0.0,
+        restitutionMonthlyPaymentTo: ["2ND JUDICIAL DRUG TASK FORCE"],
+        judicialDistrict: ["17"],
+      },
+      metadata: {
+        convictionCounties: ["123 - ABC", "456 - DEF"],
+        ineligibleOffensesExpired: [],
+        mostRecentSpeNote: {
+          contactDate: relativeFixtureDate({ days: -222 }),
+          contactType: "SPET",
+        },
+      },
+      isEligible: false,
+      isAlmostEligible: true,
+    },
+    {
+      stateCode: "US_TN",
       externalId: "201",
       eligibleCriteria: {
+        usTnNegativeArrestCheckInPastYear: {
+          latestNegativeArrestCheckDate: relativeFixtureDate({ days: -72 }),
+        },
         usTnOnEligibleLevelForSufficientTime: {
           eligibleDate: relativeFixtureDate({ months: -1, days: 2 }),
           eligibleLevel: "MINIMUM",
@@ -307,10 +449,6 @@ export const usTnCompliantReportingReferrals =
       metadata: {
         convictionCounties: ["123 - ABC", "456 - DEF"],
         ineligibleOffensesExpired: [],
-        latestNegativeArrestCheck: {
-          contactDate: relativeFixtureDate({ days: -72 }),
-          contactType: "ARRN",
-        },
         mostRecentSpeNote: {
           contactDate: relativeFixtureDate({ days: -99 }),
           contactType: "SPEC",
@@ -323,6 +461,9 @@ export const usTnCompliantReportingReferrals =
       stateCode: "US_TN",
       externalId: "202",
       eligibleCriteria: {
+        usTnNegativeArrestCheckInPastYear: {
+          latestNegativeArrestCheckDate: relativeFixtureDate({ days: -5 }),
+        },
         usTnOnEligibleLevelForSufficientTime: {
           eligibleDate: relativeFixtureDate({ months: -1, days: 2 }),
           eligibleLevel: "MINIMUM",
@@ -371,10 +512,6 @@ export const usTnCompliantReportingReferrals =
       metadata: {
         convictionCounties: ["123ABC"],
         ineligibleOffensesExpired: [],
-        latestNegativeArrestCheck: {
-          contactDate: relativeFixtureDate({ days: -5 }),
-          contactType: "ARRN",
-        },
       },
       isEligible: false,
       isAlmostEligible: true,
@@ -385,6 +522,9 @@ export const usTnCompliantReportingReferrals =
       externalId: "107",
       eligibleCriteria: {
         usTnNoArrestsInPastYear: null,
+        usTnNegativeArrestCheckInPastYear: {
+          latestNegativeArrestCheckDate: relativeFixtureDate({ months: -1 }),
+        },
         usTnSpecialConditionsAreCurrent: {
           speNoteDue: null,
         },
@@ -435,10 +575,6 @@ export const usTnCompliantReportingReferrals =
       metadata: {
         convictionCounties: ["123 - ABC", "456 - DEF"],
         ineligibleOffensesExpired: ["HABITUAL TRAFFIC OFFENDER"],
-        latestNegativeArrestCheck: {
-          contactDate: relativeFixtureDate({ months: -1 }),
-          contactType: "ARRN",
-        },
         mostRecentSpeNote: {
           contactDate: relativeFixtureDate({ days: -222 }),
           contactType: "SPET",
@@ -452,6 +588,9 @@ export const usTnCompliantReportingReferrals =
       externalId: "203",
       eligibleCriteria: {
         usTnNoArrestsInPastYear: null,
+        usTnNegativeArrestCheckInPastYear: {
+          latestNegativeArrestCheckDate: relativeFixtureDate({ months: -1 }),
+        },
         usTnSpecialConditionsAreCurrent: {
           speNoteDue: null,
         },
@@ -505,10 +644,6 @@ export const usTnCompliantReportingReferrals =
       metadata: {
         convictionCounties: ["123 - ABC", "456 - DEF"],
         ineligibleOffensesExpired: ["HABITUAL TRAFFIC OFFENDER"],
-        latestNegativeArrestCheck: {
-          contactDate: relativeFixtureDate({ months: -1 }),
-          contactType: "ARRN",
-        },
         mostRecentSpeNote: {
           contactDate: relativeFixtureDate({ days: -222 }),
           contactType: "SPET",
