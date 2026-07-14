@@ -15,9 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeAutoObservable, runInAction } from "mobx";
+import { makeAutoObservable } from "mobx";
 
 import {
+  castToError,
   Hydratable,
   HydratesFromSource,
   HydrationState,
@@ -52,6 +53,24 @@ export type CollectionSchema = {
   created_at?: number;
 };
 
+export type BackfillCollectionResult = {
+  name: string;
+  pages: number;
+  imported: number;
+  failed: number;
+  deleted: number;
+};
+
+export type BackfillSummary = {
+  durationMs: number;
+  collections: BackfillCollectionResult[];
+  totals: { imported: number; failed: number; deleted: number };
+};
+
+export type BackfillOutcome =
+  | { status: "success"; completedAt: Date; result: BackfillSummary }
+  | { status: "error"; completedAt: Date; error: Error };
+
 /** Thrown when a Typesense API request fails. */
 export class TypesenseFetchError extends Error {
   constructor(
@@ -68,6 +87,10 @@ export class TypesenseStore implements Hydratable {
   collectionsSummary?: CollectionSummary[];
   collectionsSchema?: Record<string, CollectionSchema>;
   checkedAt?: Date;
+
+  backfillStartedAt?: Date;
+  backfillInProgress = false;
+  lastBackfillOutcome?: BackfillOutcome;
 
   private hydrator: HydratesFromSource;
 
@@ -95,6 +118,31 @@ export class TypesenseStore implements Hydratable {
     });
 
     makeAutoObservable(this);
+  }
+
+  private setIsBackfillInProgress(inProgress: boolean): void {
+    this.backfillInProgress = inProgress;
+  }
+
+  private setLastBackfillOutcome(outcome: BackfillOutcome): void {
+    this.lastBackfillOutcome = outcome;
+  }
+
+  private setLastBackfillStartedAt(date: Date): void {
+    this.backfillStartedAt = date;
+  }
+
+  private setHealth(checkedAt: Date, host: string | undefined): void {
+    this.checkedAt = checkedAt;
+    this.host = host;
+  }
+
+  private setCollectionsSummary(summary: CollectionSummary[]): void {
+    this.collectionsSummary = summary;
+  }
+
+  private setCollectionsSchema(schema: Record<string, CollectionSchema>): void {
+    this.collectionsSchema = schema;
   }
 
   hydrate(): Promise<void> {
@@ -134,12 +182,12 @@ export class TypesenseStore implements Hydratable {
       headers: await this.authHeaders(),
     });
     const body = await res.json();
-    runInAction(() => {
-      this.checkedAt = new Date();
-      if ("host" in body) {
-        this.host = (body.host as string | null | undefined) ?? undefined;
-      }
-    });
+    this.setHealth(
+      new Date(),
+      "host" in body
+        ? (body.host as string | null | undefined) ?? undefined
+        : this.host,
+    );
     if (!res.ok) {
       throw new TypesenseFetchError(
         body.errors?.[0] ?? `HTTP ${res.status}`,
@@ -165,9 +213,7 @@ export class TypesenseStore implements Hydratable {
         res.status,
       );
     }
-    runInAction(() => {
-      this.collectionsSummary = body as CollectionSummary[];
-    });
+    this.setCollectionsSummary(body as CollectionSummary[]);
   }
 
   /**
@@ -186,8 +232,50 @@ export class TypesenseStore implements Hydratable {
         res.status,
       );
     }
-    runInAction(() => {
-      this.collectionsSchema = body as Record<string, CollectionSchema>;
+    this.setCollectionsSchema(body as Record<string, CollectionSchema>);
+  }
+
+  /**
+   * See apps/staff-server/src/server/typesense/typesenseManagement.js
+   * POST /api/typesense/backfill
+   */
+  private async postBackfill(): Promise<BackfillSummary> {
+    const res = await fetch(`${this.baseUrl}/backfill`, {
+      method: "POST",
+      headers: await this.authHeaders(),
     });
+    const body = await res.json();
+    if (!res.ok) {
+      throw new TypesenseFetchError(
+        body.errors?.[0] ?? `HTTP ${res.status}`,
+        "POST /backfill",
+        res.status,
+      );
+    }
+    return body as BackfillSummary;
+  }
+
+  async triggerBackfill(): Promise<void> {
+    if (this.backfillInProgress) return;
+
+    this.setIsBackfillInProgress(true);
+    this.setLastBackfillStartedAt(new Date());
+
+    let outcome: BackfillOutcome;
+    try {
+      outcome = {
+        status: "success",
+        completedAt: new Date(),
+        result: await this.postBackfill(),
+      };
+    } catch (e) {
+      outcome = {
+        status: "error",
+        completedAt: new Date(),
+        error: castToError(e),
+      };
+    }
+    this.setIsBackfillInProgress(false);
+    this.setLastBackfillOutcome(outcome);
   }
 }

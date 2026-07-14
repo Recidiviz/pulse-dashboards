@@ -22,12 +22,12 @@ import { SectionCardHeader } from "../../../SectionCard";
 import {
   CardBody,
   ColHeader,
+  CollectionCard,
   DataTable,
   EmptyCell,
   NameCell,
   NumCell,
   TableWrap,
-  TypesenseCard,
 } from "../styles";
 
 export const SummaryCard = observer(function SummaryCard() {
@@ -35,7 +35,7 @@ export const SummaryCard = observer(function SummaryCard() {
   const { collectionsSummary } = store;
 
   return (
-    <TypesenseCard>
+    <CollectionCard>
       <SectionCardHeader>Collection Summary</SectionCardHeader>
       <CardBody>
         <TableWrap>
@@ -65,6 +65,6 @@ export const SummaryCard = observer(function SummaryCard() {
           </DataTable>
         </TableWrap>
       </CardBody>
-    </TypesenseCard>
+    </CollectionCard>
   );
 });

@@ -22,21 +22,16 @@ import { palette } from "~design-system";
 import { useTypesenseStore } from "../../../../components/StoreProvider";
 import { SectionCardHeader } from "../../../SectionCard";
 import {
-  CardBody,
   InfoBadge,
   InfoBadgeDetail,
   InfoBadgeLabel,
+  StatusCardBody,
   StatusDot,
   StatusLabel,
   StatusRow,
   TypesenseCard,
 } from "../styles";
-
-function envLabel(host: string): string {
-  if (host.includes("localhost")) return "Offline Mode";
-  if (host.includes("staging")) return "Staging";
-  return "Production";
-}
+import { envLabel } from "../util";
 
 function dotColor(healthy: boolean) {
   return healthy ? palette.pine3 : palette.signal.error;
@@ -49,7 +44,7 @@ export const StatusCard = observer(function StatusCard() {
   return (
     <TypesenseCard>
       <SectionCardHeader>Status</SectionCardHeader>
-      <CardBody>
+      <StatusCardBody>
         <StatusRow>
           <StatusDot $color={dotColor(true)} />
           <StatusLabel $color={dotColor(true)}>Healthy</StatusLabel>
@@ -65,7 +60,7 @@ export const StatusCard = observer(function StatusCard() {
         {checkedAt && (
           <span>Last checked: {checkedAt.toLocaleTimeString()}</span>
         )}
-      </CardBody>
+      </StatusCardBody>
     </TypesenseCard>
   );
 });

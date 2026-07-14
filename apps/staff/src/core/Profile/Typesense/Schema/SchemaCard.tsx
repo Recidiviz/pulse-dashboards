@@ -26,6 +26,7 @@ import { SectionCardHeader } from "../../../SectionCard";
 import {
   CardBody,
   CollectionBlock,
+  CollectionCard,
   CollectionFieldCount,
   CollectionName,
   CollectionPanel,
@@ -37,7 +38,6 @@ import {
   FieldTypeCell,
   SchemaEmptyMessage,
   TableWrap,
-  TypesenseCard,
 } from "../styles";
 
 function fieldAttributes(field: CollectionField): string {
@@ -60,7 +60,7 @@ export const SchemaCard = observer(function SchemaCard() {
   const schemas = collectionsSchema ? Object.values(collectionsSchema) : [];
 
   return (
-    <TypesenseCard>
+    <CollectionCard>
       <SectionCardHeader>Collection Schema</SectionCardHeader>
       <CardBody>
         <TableWrap>
@@ -101,6 +101,6 @@ export const SchemaCard = observer(function SchemaCard() {
           )}
         </TableWrap>
       </CardBody>
-    </TypesenseCard>
+    </CollectionCard>
   );
 });

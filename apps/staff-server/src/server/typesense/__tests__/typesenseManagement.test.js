@@ -16,9 +16,13 @@
 // =============================================================================
 
 import { isOfflineMode } from "../../utils/isOfflineMode";
-import { createTypesenseInspectClient } from "../client";
+import {
+  createTypesenseBackfillClient,
+  createTypesenseInspectClient,
+} from "../client";
 import {
   typesenseAllCollectionsSchemas,
+  typesenseBackfill,
   typesenseCollectionsSummary,
   typesenseHealth,
 } from "../typesenseManagement";
@@ -244,6 +248,73 @@ describe("typesenseAllCollectionsSchemas", () => {
     expect(send).toHaveBeenCalledWith({
       status: 500,
       errors: ["connection failed"],
+    });
+  });
+});
+
+describe("typesenseBackfill", () => {
+  test("triggers the backfill function and returns its response", async () => {
+    const request = vi.fn().mockResolvedValue({ data: { ok: true } });
+    createTypesenseBackfillClient.mockResolvedValue({
+      url: "https://typesense-backfill-abc123-us-east1.a.run.app",
+      idTokenClient: { request },
+    });
+
+    const { res, send } = buildRes();
+    await typesenseBackfill(recidivizReq, res);
+
+    expect(request).toHaveBeenCalledWith({
+      url: "https://typesense-backfill-abc123-us-east1.a.run.app",
+      method: "POST",
+      data: {},
+    });
+    expect(send).toHaveBeenCalledWith({ ok: true });
+  });
+
+  test("responds 403 for non-recidiviz users without triggering the function", async () => {
+    const { res, status } = buildRes();
+    await typesenseBackfill(
+      { user: { undefinedapp_metadata: { state_code: "us_xx" } } },
+      res,
+    );
+
+    expect(createTypesenseBackfillClient).not.toHaveBeenCalled();
+    expect(status).toHaveBeenCalledWith(403);
+  });
+
+  test("surfaces errors when the function URL is not configured", async () => {
+    createTypesenseBackfillClient.mockRejectedValue(
+      new Error(
+        "TYPESENSE_BACKFILL_FUNCTION_URL is not configured for this environment",
+      ),
+    );
+
+    const { res, send, status } = buildRes();
+    await typesenseBackfill(recidivizReq, res);
+
+    expect(status).toHaveBeenCalledWith(500);
+    expect(send).toHaveBeenCalledWith({
+      status: 500,
+      errors: [
+        "TYPESENSE_BACKFILL_FUNCTION_URL is not configured for this environment",
+      ],
+    });
+  });
+
+  test("surfaces errors from the function call", async () => {
+    const request = vi.fn().mockRejectedValue(new Error("backfill failed"));
+    createTypesenseBackfillClient.mockResolvedValue({
+      url: "https://typesense-backfill-abc123-us-east1.a.run.app",
+      idTokenClient: { request },
+    });
+
+    const { res, send, status } = buildRes();
+    await typesenseBackfill(recidivizReq, res);
+
+    expect(status).toHaveBeenCalledWith(500);
+    expect(send).toHaveBeenCalledWith({
+      status: 500,
+      errors: ["backfill failed"],
     });
   });
 });

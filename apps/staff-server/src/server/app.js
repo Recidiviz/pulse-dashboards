@@ -40,6 +40,7 @@ import {
 } from "./routes/paramsValidation";
 import {
   typesenseAllCollectionsSchemas,
+  typesenseBackfill,
   typesenseCollectionsSummary,
   typesenseHealth,
 } from "./typesense/typesenseManagement";
@@ -262,6 +263,7 @@ app.get(
   asyncHandler(typesenseCollectionsSummary),
 );
 app.get("/api/typesense/schemas", asyncHandler(typesenseAllCollectionsSchemas));
+app.post("/api/typesense/backfill", asyncHandler(typesenseBackfill));
 
 app.get(`${stateApiBaseRoute}looker/config`, asyncHandler(getLookerConfig));
 app.get(

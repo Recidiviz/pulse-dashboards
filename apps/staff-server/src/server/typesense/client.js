@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { GoogleAuth } from "google-auth-library";
 import { Client as TypesenseClient } from "typesense";
 
 const DEFAULT_CONNECTION_TIMEOUT_SECONDS = 5;
@@ -58,4 +59,23 @@ export function createTypesenseInspectClient() {
   }
 
   return createTypesenseClient({ host, apiKey });
+}
+
+/**
+ * Builds an OIDC-authenticated client for triggering the `typesense-backfill`
+ * Cloud Function, using this server's own service account credentials (the
+ * Node equivalent of `gcloud auth print-identity-token`). The function's own
+ * URL doubles as the token audience, as required for Cloud Run/gen2 Functions.
+ */
+export async function createTypesenseBackfillClient({ credentials } = {}) {
+  const url = process.env.TYPESENSE_BACKFILL_FUNCTION_URL;
+  if (!url) {
+    throw new Error(
+      "TYPESENSE_BACKFILL_FUNCTION_URL is not configured for this environment",
+    );
+  }
+
+  const auth = new GoogleAuth({ credentials });
+  const idTokenClient = await auth.getIdTokenClient(url);
+  return { url, idTokenClient };
 }

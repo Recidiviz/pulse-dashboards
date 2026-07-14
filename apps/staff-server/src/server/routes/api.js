@@ -51,7 +51,7 @@ import { isOfflineMode } from "../utils/isOfflineMode";
 import { mergeUserDataWithClientUpdates } from "../utils/mergeUserDataWithClientUpdates";
 import { fetchClientUpdatesV2 } from "../workflows/fetchClientUpdatesV2";
 
-let serviceAccount;
+export let serviceAccount;
 
 if (!isOfflineMode()) {
   serviceAccount = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);

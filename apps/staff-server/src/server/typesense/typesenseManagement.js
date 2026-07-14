@@ -23,14 +23,17 @@
  *
  * Access is restricted to Recidiviz internal users
  */
-import { responder, respondWithForbidden } from "../routes/api";
+import { responder, respondWithForbidden, serviceAccount } from "../routes/api";
 import { getAppMetadata } from "../utils/getAppMetadata";
 import { isOfflineMode } from "../utils/isOfflineMode";
 import unauthorizedCollectionsFixture from "./__fixtures__/unauthorized-collections.json";
 import unauthorizedSchemasFixture from "./__fixtures__/unauthorized-schemas.json";
 import unconfiguredHealthFixture from "./__fixtures__/unconfigured-health.json";
 import unreachableHealthFixture from "./__fixtures__/unreachable-health.json";
-import { createTypesenseInspectClient } from "./client";
+import {
+  createTypesenseBackfillClient,
+  createTypesenseInspectClient,
+} from "./client";
 
 function isAllowed(req) {
   const appMetadata = getAppMetadata(req);
@@ -188,6 +191,33 @@ export async function typesenseAllCollectionsSchemas(req, res) {
     const collections = await client.collections().retrieve();
     const schemas = Object.fromEntries(collections.map((c) => [c.name, c]));
     responder(res)(null, schemas);
+  } catch (error) {
+    responder(res)(error);
+  }
+}
+
+/**
+ * POST /api/typesense/backfill
+ *
+ * Triggers the `typesense-backfill` Cloud Function, which bulk-imports the
+ * configured Firestore collections into Typesense.
+ */
+export async function typesenseBackfill(req, res) {
+  if (!isAllowed(req)) {
+    respondWithForbidden(res);
+    return;
+  }
+
+  try {
+    const { url, idTokenClient } = await createTypesenseBackfillClient({
+      credentials: serviceAccount,
+    });
+    const response = await idTokenClient.request({
+      url,
+      method: "POST",
+      data: {},
+    });
+    responder(res)(null, response.data);
   } catch (error) {
     responder(res)(error);
   }

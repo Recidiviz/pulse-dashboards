@@ -20,6 +20,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { hydrationFailure } from "~hydration-utils";
 
 import {
+  BackfillSummary,
   CollectionSchema,
   CollectionSummary,
   TypesenseFetchError,
@@ -370,6 +371,22 @@ describe("TypesenseStore", () => {
       );
       expect(fetchMock).toHaveBeenCalledTimes(HYDRATE_CALL_COUNT * 2);
     });
+
+    test("does not call the backfill endpoint", async () => {
+      mockFullHydrate();
+      await store.hydrate();
+
+      mockFullHydrate();
+      store.refresh();
+
+      await vi.waitFor(() =>
+        expect(store.hydrationState.status).toBe("hydrated"),
+      );
+      expect(fetchMock).not.toHaveBeenCalledWith(
+        "http://test-api/api/typesense/backfill",
+        expect.anything(),
+      );
+    });
   });
 
   describe("collections summary", () => {
@@ -478,6 +495,116 @@ describe("TypesenseStore", () => {
       await store.hydrate();
 
       expect(store.collectionsSchema).toBeUndefined();
+    });
+  });
+
+  describe("triggerBackfill()", () => {
+    const MOCK_SUMMARY: BackfillSummary = {
+      durationMs: 4_200,
+      collections: [
+        { name: "clients", pages: 3, imported: 12_345, failed: 0, deleted: 2 },
+        { name: "residents", pages: 2, imported: 5_670, failed: 8, deleted: 0 },
+      ],
+      totals: { imported: 18_015, failed: 8, deleted: 2 },
+    };
+
+    test("records a successful outcome on the store", async () => {
+      fetchMock.mockResponseOnce(JSON.stringify(MOCK_SUMMARY));
+
+      await store.triggerBackfill();
+
+      expect(store.backfillInProgress).toBe(false);
+      expect(store.lastBackfillOutcome).toMatchObject({
+        status: "success",
+        result: MOCK_SUMMARY,
+        completedAt: expect.any(Date),
+      });
+    });
+
+    test("POSTs to /api/typesense/backfill with the Bearer token", async () => {
+      fetchMock.mockResponseOnce(JSON.stringify(MOCK_SUMMARY));
+
+      await store.triggerBackfill();
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        "http://test-api/api/typesense/backfill",
+        expect.objectContaining({
+          method: "POST",
+          headers: expect.objectContaining({
+            Authorization: "Bearer test-token",
+          }),
+        }),
+      );
+    });
+
+    test("does not mutate store hydration state", async () => {
+      fetchMock.mockResponseOnce(JSON.stringify(MOCK_SUMMARY));
+
+      await store.triggerBackfill();
+
+      expect(store.hydrationState.status).toBe("needs hydration");
+    });
+
+    test("sets backfillInProgress and backfillStartedAt before the fetch resolves", () => {
+      fetchMock.mockResponseOnce(JSON.stringify(MOCK_SUMMARY));
+
+      const promise = store.triggerBackfill();
+
+      expect(store.backfillInProgress).toBe(true);
+      expect(store.backfillStartedAt).toBeInstanceOf(Date);
+
+      return promise;
+    });
+
+    test("records a TypesenseFetchError outcome on failure, without rejecting", async () => {
+      fetchMock.mockResponseOnce(
+        JSON.stringify({ errors: ["backfill already in progress"] }),
+        { status: 409 },
+      );
+
+      await expect(store.triggerBackfill()).resolves.toBeUndefined();
+
+      expect(store.backfillInProgress).toBe(false);
+      expect(store.lastBackfillOutcome?.status).toBe("error");
+      expect(
+        store.lastBackfillOutcome?.status === "error" &&
+          store.lastBackfillOutcome.error,
+      ).toBeInstanceOf(TypesenseFetchError);
+      expect(
+        store.lastBackfillOutcome?.status === "error" &&
+          store.lastBackfillOutcome.error,
+      ).toMatchObject({
+        message: "backfill already in progress",
+        status: 409,
+        endpoint: "POST /backfill",
+      });
+    });
+
+    test("falls back to an HTTP status message when the response has no errors array", async () => {
+      fetchMock.mockResponseOnce(JSON.stringify({}), { status: 500 });
+
+      await store.triggerBackfill();
+
+      expect(
+        store.lastBackfillOutcome?.status === "error" &&
+          store.lastBackfillOutcome.error,
+      ).toMatchObject({
+        message: "HTTP 500",
+        status: 500,
+      });
+    });
+
+    test("is a no-op when a backfill is already in progress", async () => {
+      fetchMock.mockResponseOnce(async () => {
+        // While the first call is still in flight, fire a second one — it
+        // should return immediately without issuing another fetch.
+        await store.triggerBackfill();
+        return JSON.stringify(MOCK_SUMMARY);
+      });
+
+      await store.triggerBackfill();
+
+      expect(fetchMock).toHaveBeenCalledTimes(1);
     });
   });
 });

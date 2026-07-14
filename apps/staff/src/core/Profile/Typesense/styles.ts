@@ -16,15 +16,24 @@
 // =============================================================================
 
 import { rem } from "polished";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { palette, spacing, typography } from "~design-system";
 
 import { SectionCard, SectionCardBody } from "../../SectionCard";
 
 export const TypesenseCard = styled(SectionCard)`
+  display: flex;
+  flex-direction: column;
   border-radius: ${rem(8)};
+  min-width: ${rem(240)};
+  min-height: ${rem(268)};
   overflow: hidden;
+`;
+
+// for SummaryCard and SchemaCard to not get clipped in a flex row
+export const CollectionCard = styled(TypesenseCard)`
+  min-width: ${rem(320)};
 `;
 
 export const TypesenseSectionContainer = styled.div`
@@ -54,25 +63,41 @@ export const StatusRow = styled.div`
 `;
 
 export const StatusDot = styled.div<{ $color: string }>`
-  width: ${rem(16)};
-  height: ${rem(16)};
+  width: ${rem(14)};
+  height: ${rem(14)};
   border-radius: 50%;
   background: ${({ $color }) => $color};
   flex-shrink: 0;
 `;
 
-export const StatusLabel = styled.span<{ $color: string }>`
+const cardHeadline = css`
   font-size: ${rem(16)};
   font-weight: 600;
+`;
+
+export const StatusLabel = styled.span<{ $color: string }>`
+  font-size: ${rem(24)};
+  font-weight: 700;
   color: ${({ $color }) => $color};
+`;
+
+export const CardHeadline = styled.span`
+  ${cardHeadline}
 `;
 
 export const CardBody = styled(SectionCardBody)`
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-items: flex-start;
   gap: ${rem(spacing.md)};
   padding: ${rem(spacing.md)};
+`;
+
+export const StatusCardBody = styled(CardBody)`
+  justify-content: center;
+  gap: ${rem(spacing.md)};
+  padding: ${rem(spacing.md)} ${rem(spacing.md)} ${rem(spacing.lg)};
 `;
 
 export const StatusCardColumn = styled.div`
@@ -99,11 +124,20 @@ export const InfoBadgeLabel = styled.span`
   color: ${palette.slate};
 `;
 
+export const MetaBadge = styled(InfoBadge)`
+  gap: ${rem(spacing.xs)};
+`;
+
+export const MetaValue = styled.span`
+  font-weight: 400;
+`;
+
 export const InfoBadgeDetail = styled.span`
   ${typography.Sans12}
   color: ${palette.slate};
   overflow-wrap: anywhere;
   word-break: break-word;
+  margin-top: ${rem(spacing.xs)};
 `;
 
 export const ErrorMessage = styled.span`
@@ -125,7 +159,8 @@ export const TableWrap = styled.div`
   min-width: ${rem(280)};
   border: 1px solid ${palette.slate20};
   border-radius: ${rem(4)};
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   margin-bottom: ${rem(spacing.sm)};
 `;
 
@@ -182,6 +217,7 @@ export const CenteredRow = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
+  margin-top: ${rem(spacing.lg)};
 `;
 
 // SchemaCard accordion styles
@@ -276,4 +312,35 @@ export const SchemaEmptyMessage = styled.div`
   font-style: italic;
   color: ${palette.slate60};
   padding: ${rem(18)} ${rem(spacing.sm)};
+`;
+
+// Modal content styles, shared by any Typesense card that pops a confirm/
+// result Modal (currently just BackfillCard).
+
+export const ModalHeader = styled.div`
+  ${typography.Sans18}
+  color: ${palette.slate};
+  margin-bottom: ${rem(spacing.md)};
+`;
+
+export const ModalCloseButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  padding: ${rem(spacing.xs)};
+  position: absolute;
+  right: ${rem(spacing.md)};
+  top: ${rem(spacing.md)};
+`;
+
+export const ModalDescription = styled.div`
+  ${typography.Sans14}
+  color: ${palette.pine4};
+  margin-bottom: ${rem(spacing.lg)};
+`;
+
+export const ModalActions = styled.div`
+  display: flex;
+  gap: ${rem(spacing.sm)};
 `;
