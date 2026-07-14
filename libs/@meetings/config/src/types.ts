@@ -67,6 +67,18 @@ export const MeetingTypeSchema = z.object({
 });
 
 /**
+ * Labels/copy for common terms used in UI.
+ * Default values for each field should be defined
+ * in the base agency config (base.yaml).
+ */
+const LabelsSchema = z.object({
+  supervisionStaff: z.string().optional(),
+  facilitiesStaff: z.string().optional(),
+  client: z.string().optional(),
+  resident: z.string().optional(),
+});
+
+/**
  * Schema for a raw agency YAML file.
  *
  * Use plain fields (`glossary`, `keywords`, etc.) to fully replace the base.
@@ -91,6 +103,8 @@ export const AgencyConfigFileSchema = z.object({
   additionalKeywords: z.array(z.string()).optional(),
   /** Each state has its own meeting types list */
   meetingTypes: z.array(MeetingTypeSchema).optional(),
+  /** Labels/copy for common terms used in UI */
+  labels: LabelsSchema.optional(),
 
   // ── LLM ───────────────────────────────────────────────────
   /** Replaces base glossary entirely */
@@ -129,6 +143,7 @@ export const AgencyConfigSchema = z.object({
   transcriptTTLDays: z.number().int().min(7).default(30).nullable(),
   keywords: z.array(z.string()).default([]),
   meetingTypes: z.array(MeetingTypeSchema).default([]),
+  labels: LabelsSchema,
 
   // ── LLM ───────────────────────────────────────────────────
   glossary: z.record(z.string()).default({}),

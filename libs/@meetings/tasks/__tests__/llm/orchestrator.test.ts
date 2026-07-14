@@ -80,6 +80,7 @@ describe("ProductionPipeline", () => {
     outputs: [
       { id: "case_note", label: "Case Note", promptGuidance: "Brief overview" },
     ],
+    labels: {},
   };
 
   const mockTranscript: TranscriptInput = {

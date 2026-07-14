@@ -20,6 +20,11 @@ import { ScrollView, View } from "react-native";
 import MenuAlt2Icon from "react-native-heroicons/outline/MenuAlt2Icon";
 import DocumentSearchIcon from "react-native-heroicons/solid/DocumentSearchIcon";
 
+import { useAgencyConfigs } from "~@meetings/app/entities/agency-config";
+import { formatSpeakerLabel } from "~@meetings/app/entities/meeting";
+import { useUserContext } from "~@meetings/app/entities/user";
+import { useStateSelection } from "~@meetings/app/features/state-selection";
+import { PersonType } from "~@meetings/app/shared/api";
 import SearchBar from "~@meetings/app/shared/ui/SearchBar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
@@ -36,6 +41,9 @@ type Props = {
     }[];
   };
   transcriptDeleted?: boolean;
+  meetingStaffEmail: string;
+  jiiName: string;
+  personType: PersonType;
 };
 
 const TranscriptUnavailable = ({
@@ -77,8 +85,16 @@ const formatSpeakerStartTime = (startTimeMs: number) => {
 const MeetingsTranscriptionTab = ({
   transcription,
   transcriptDeleted,
+  meetingStaffEmail,
+  jiiName,
+  personType,
 }: Props) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const { selectedStateCode } = useStateSelection();
+  const { agencyConfigs } = useAgencyConfigs();
+  const labels = agencyConfigs[selectedStateCode].labels;
+
+  const { email: currentUserEmail, name: currentUserName } = useUserContext();
 
   if (transcriptDeleted) {
     return (
@@ -128,7 +144,15 @@ const MeetingsTranscriptionTab = ({
               {formatSpeakerStartTime(u.startTimeMs)}
             </Typography>
             <Typography className="text-sm font-semibold text-secondary">
-              {u.speaker}
+              {formatSpeakerLabel({
+                baseLabel: u.speaker,
+                meetingStaffEmail,
+                personType,
+                labels,
+                jiiName,
+                currentUserEmail,
+                currentUserName,
+              })}
             </Typography>
           </View>
           <Typography className="text-sm font-normal text-primary">

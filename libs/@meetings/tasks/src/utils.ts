@@ -20,7 +20,7 @@ import os from "node:os";
 
 import { createClient } from "@deepgram/sdk";
 import { Storage } from "@google-cloud/storage";
-import { AssemblyAI } from "assemblyai";
+import { AssemblyAI, SpeechUnderstandingFeatureRequests } from "assemblyai";
 import ffmpegPath from "ffmpeg-static";
 import ffprobePath from "ffprobe-static";
 import ffmpeg from "fluent-ffmpeg";
@@ -348,10 +348,19 @@ export async function transcribeAudioWithAssemblyAI(
     apiKey,
   });
 
-  // TODO: Add custom speaker labels once the API supports it
+  const speechRequest: SpeechUnderstandingFeatureRequests = {
+    speaker_identification: {
+      speaker_type: "role",
+      known_values: ["Staff", "Client"],
+    },
+  };
+
   const transcriptionResult = await assemblyAiClient.transcripts.transcribe({
     audio: audioUrl,
     speaker_labels: true,
+    speech_understanding: {
+      request: speechRequest,
+    },
     format_text: true,
     punctuate: true,
     speech_model: "universal",

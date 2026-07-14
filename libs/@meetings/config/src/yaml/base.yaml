@@ -2,7 +2,7 @@
 # Agency-specific YAMLs override individual fields on top of these defaults.
 # This file is not a valid AgencyConfig on its own (no name/stateCode).
 
-version: 3
+version: 4
 
 # ── Infrastructure defaults ──────────────────────────────────
 audioTTLDays: 30
@@ -32,3 +32,9 @@ outputs:
       Incorporate all points from staff member notes.
       If INTAKE: focus on risk, needs, and initial stability.
       If ROUTINE: focus on changes since last visit and progress.
+
+labels:
+  supervisionStaff: Staff
+  facilitiesStaff: Staff
+  client: Client
+  resident: Resident

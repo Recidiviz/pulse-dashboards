@@ -77,6 +77,7 @@ describe("SpecialistCore", () => {
         subheaders: ["Housing", "Mental Health"],
       },
     ],
+    labels: {},
   };
 
   beforeEach(() => {

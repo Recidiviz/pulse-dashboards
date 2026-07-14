@@ -80,6 +80,7 @@ export function mergeWithBase(
         return patch ? { ...output, ...patch } : output;
       });
     })(),
+    labels: { ...base.labels, ...(agency.labels ?? {}) },
     // Strip additional* fields — not part of resolved AgencyConfig
     additionalKeywords: undefined,
     additionalGlossary: undefined,

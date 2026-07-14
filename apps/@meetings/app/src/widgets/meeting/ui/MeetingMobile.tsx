@@ -474,6 +474,9 @@ const MeetingMobile = ({
                     ),
                   }}
                   transcriptDeleted={!!meetingDetails.transcriptDeletedAt}
+                  meetingStaffEmail={meetingDetails.staffEmail}
+                  jiiName={person.fullName}
+                  personType={personType}
                 />
               )}
           </View>

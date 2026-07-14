@@ -41,6 +41,12 @@ describe("config loader", () => {
           promptGuidance: "Base guidance",
         },
       ],
+      labels: {
+        supervisionStaff: "Supervision Staff",
+        facilitiesStaff: "Facilities Staff",
+        client: "Client",
+        resident: "Resident",
+      },
     };
 
     const AGENCY = {

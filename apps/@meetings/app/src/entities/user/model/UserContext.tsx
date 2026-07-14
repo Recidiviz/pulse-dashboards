@@ -151,6 +151,8 @@ export const UserContextProvider: React.FC<{
           getCredentials: getCredentialsWithReauth,
           isRecidivizUser: true,
           featureVariants: undefined,
+          email: "staff-email-1@example.com",
+          name: "Unauthenticated Staff",
         }}
       >
         {children}

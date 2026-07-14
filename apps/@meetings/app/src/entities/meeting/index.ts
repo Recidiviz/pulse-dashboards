@@ -26,6 +26,7 @@ export {
   formatMeetingStartDate,
   formatMeetingStartDateTitle,
 } from "./lib/formatMeetingDate";
+export { formatSpeakerLabel } from "./lib/formatMeetingSpeakers";
 export { isMeetingProcessing } from "./lib/isMeetingProcessing";
 export { useCreateMeeting } from "./model/useCreateMeeting";
 export { useDiscardMeeting } from "./model/useDiscardMeeting";

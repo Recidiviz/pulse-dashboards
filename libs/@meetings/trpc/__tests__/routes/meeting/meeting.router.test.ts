@@ -71,6 +71,7 @@ function setUSNEStaffFeedback(enabled: boolean) {
     glossary: {},
     rules: [],
     outputs: [],
+    labels: {},
   };
 }
 
@@ -160,6 +161,7 @@ describe("meeting router", () => {
         glossary: {},
         rules: [],
         outputs: [],
+        labels: {},
       };
 
       try {
@@ -381,6 +383,7 @@ describe("meeting router", () => {
           glossary: {},
           rules: [],
           outputs: [],
+          labels: {},
         };
       }
 

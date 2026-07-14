@@ -259,6 +259,12 @@ describe("LLM Pipeline Schemas", () => {
             promptGuidance: "Brief overview of meeting",
           },
         ],
+        labels: {
+          supervisionStaff: "Staff",
+          facilitiesStaff: "Staff",
+          client: "Client",
+          resident: "Resident",
+        },
       };
 
       expect(AgencyConfigSchema.safeParse(validConfig).success).toBe(true);
