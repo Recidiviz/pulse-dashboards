@@ -17,20 +17,21 @@
 
 import { DocumentData } from "firebase/firestore";
 
+import {
+  UsTnInitialClassificationRecord,
+  usTnInitialClassificationSchema,
+} from "~datatypes";
+
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Resident } from "../../../Resident";
 import { UsTnReclassificationReviewForm } from "../../Forms/UsTnReclassificationReviewForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { NO_RELEASE_DATE_TEXT } from "../UsTnAnnualReclassificationReviewOpportunity";
 import { UsTnSharedReclassificationDraftData } from "../UsTnSharedCriteria";
-import {
-  UsTnInitialClassificationReferralRecord,
-  usTnInitialClassificationSchema,
-} from "./UsTnInitialClassificationReferralRecord";
 
 export class UsTnInitialClassificationOpportunity extends OpportunityBase<
   Resident,
-  UsTnInitialClassificationReferralRecord,
+  UsTnInitialClassificationRecord["output"],
   OpportunityUpdateWithForm<UsTnSharedReclassificationDraftData>
 > {
   form: UsTnReclassificationReviewForm;

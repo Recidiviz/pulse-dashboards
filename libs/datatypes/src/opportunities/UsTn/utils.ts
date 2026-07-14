@@ -146,52 +146,6 @@ export const q7Notes = z
 
 const booleanToString = z.boolean().transform((x) => x.toString());
 
-export const trusteeFormSchema = z.object({
-  trusteeHas10YearsOrLessRemaining: booleanToString,
-  trusteeNoAssaultiveDisciplinaryWithSeriousInjury: booleanToString,
-  trusteeNoEscapeFromLowTrusteePast5Years: booleanToString,
-  trusteeNoEscapeFromMediumCloseMaxPast10Years: booleanToString,
-  trusteeNotConvictedOfFirstDegreeMurder: booleanToString,
-  trusteeNotScoredHighForViolence: booleanToString,
-  trusteeNotServingForSexualOffense: booleanToString,
-});
-
-export type TrusteeFormAdditionalFields = {
-  trusteeNotConvictedOfViolentOffenseOr12MonthsInCustody: string;
-  trusteeNoFelonyDetainers: string;
-  trusteeNoPendingFelonyCharges: string;
-  trusteeNoPendingImmigrationActions: string;
-  trusteeNoViolentFelonyConvictionPast5YearsIncarceration: string;
-  trusteeNotesForWarden: string;
-  trusteeWardenHasApproved: string;
-  trusteeDenialReasons: string;
-  trusteeCustodyApproved: string;
-  trusteeWardenSignature: boolean;
-  trusteeWardenSignatureDate: string;
-  trusteeCMSignature: boolean;
-  trusteeCMSignatureDate: string;
-  trusteeACSignature: boolean;
-  trusteeACSignatureDate: string;
-};
-
-export type TrusteeFormSchema = z.output<typeof trusteeFormSchema> &
-  TrusteeFormAdditionalFields;
-
-export const TRUSTEE_FORM_QUESTION_ORDER = [
-  "trusteeHas10YearsOrLessRemaining",
-  "trusteeNotConvictedOfViolentOffenseOr12MonthsInCustody",
-  "trusteeNotServingForSexualOffense",
-  "trusteeNoFelonyDetainers",
-  "trusteeNoPendingFelonyCharges",
-  "trusteeNoPendingImmigrationActions",
-  "trusteeNoAssaultiveDisciplinaryWithSeriousInjury",
-  "trusteeNoViolentFelonyConvictionPast5YearsIncarceration",
-  "trusteeNoEscapeFromMediumCloseMaxPast10Years",
-  "trusteeNoEscapeFromLowTrusteePast5Years",
-  "trusteeNotScoredHighForViolence",
-  "trusteeWardenHasApproved",
-] satisfies (keyof TrusteeFormSchema)[];
-
 export const coverSheetInformationSchema = z.object({
   levelOfCare: z.string().optional(),
   sentenceReleaseEligibilityDate: dateStringSchema.optional(),
@@ -265,3 +219,129 @@ export type UsTnCoverSheetSharedDraftData = {
   hearingLocation: string;
   hearingClassificationDate: string;
 };
+
+const eventNote = z.object({
+  eventDate: dateStringSchema,
+  noteBody: z.string(),
+});
+
+// ZodObject base. Exported so consumers that need ZodObject-only methods
+// (`.omit()`, `.extend()`) can apply them before reapplying the rename transform.
+export const formInformationBaseSchema = coverSheetInformationSchema.merge(
+  z.object({
+    currentOffenses: z.string().array().optional(),
+    // These two fields come in from the platform under their new names
+    // (`form_information_last_assessment_date` / `_total_score`) and get
+    // remapped below to the in-app keys `lastCafDate` / `lastCafTotal` that
+    // user form drafts in Firestore are already saved under.
+    lastAssessmentDate: dateStringSchema.optional(),
+    lastAssessmentTotalScore: z.string().optional(),
+    latestClassificationDate: dateStringSchema.optional(),
+    q1Score: z.coerce.number(),
+    q2Score: z.coerce.number(),
+    q3Score: z.coerce.number(),
+    q4Score: z.coerce.number(),
+    q5Score: z.coerce.number(),
+    q6Score: z.coerce.number(),
+    q7Score: z.coerce.number(),
+    q8Score: z.coerce.number(),
+    q9Score: z.coerce.number(),
+    q6Notes: z.optional(z.array(eventNote)),
+    q7Notes: z.optional(z.array(eventNote).or(eventNote.transform((n) => [n]))),
+    q8Notes: z.optional(
+      z.array(
+        z.object({
+          detainerReceivedDate: dateStringSchema,
+          detainerFelonyFlag: z
+            .string()
+            .nullable()
+            .transform((raw) => raw === "X"),
+          detainerMisdemeanorFlag: z
+            .string()
+            .nullable()
+            .transform((raw) => raw === "X"),
+          jurisdiction: z.string().nullish(),
+          description: z.string().nullish(),
+          chargePending: z
+            .string()
+            .nullish()
+            .transform((raw) => {
+              if (raw === "Y") return true;
+              if (raw === "N") return false;
+              return undefined;
+            }),
+        }),
+      ),
+    ),
+  }),
+);
+
+export const renameLastAssessmentToLastCaf = <
+  T extends {
+    lastAssessmentDate?: Date;
+    lastAssessmentTotalScore?: string;
+  },
+>({
+  lastAssessmentDate,
+  lastAssessmentTotalScore,
+  ...rest
+}: T): Omit<T, "lastAssessmentDate" | "lastAssessmentTotalScore"> & {
+  lastCafDate?: Date;
+  lastCafTotal?: string;
+} => ({
+  ...rest,
+  ...(lastAssessmentDate !== undefined && { lastCafDate: lastAssessmentDate }),
+  ...(lastAssessmentTotalScore !== undefined && {
+    lastCafTotal: lastAssessmentTotalScore,
+  }),
+});
+
+export const formInformationSchema = formInformationBaseSchema
+  .partial()
+  .transform(renameLastAssessmentToLastCaf);
+
+export const trusteeFormSchema = z.object({
+  trusteeHas10YearsOrLessRemaining: booleanToString,
+  trusteeNoAssaultiveDisciplinaryWithSeriousInjury: booleanToString,
+  trusteeNoEscapeFromLowTrusteePast5Years: booleanToString,
+  trusteeNoEscapeFromMediumCloseMaxPast10Years: booleanToString,
+  trusteeNotConvictedOfFirstDegreeMurder: booleanToString,
+  trusteeNotScoredHighForViolence: booleanToString,
+  trusteeNotServingForSexualOffense: booleanToString,
+});
+
+export type TrusteeFormAdditionalFields = {
+  trusteeNotConvictedOfViolentOffenseOr12MonthsInCustody: string;
+  trusteeNoFelonyDetainers: string;
+  trusteeNoPendingFelonyCharges: string;
+  trusteeNoPendingImmigrationActions: string;
+  trusteeNoViolentFelonyConvictionPast5YearsIncarceration: string;
+  trusteeNotesForWarden: string;
+  trusteeWardenHasApproved: string;
+  trusteeDenialReasons: string;
+  trusteeCustodyApproved: string;
+  trusteeWardenSignature: boolean;
+  trusteeWardenSignatureDate: string;
+  trusteeCMSignature: boolean;
+  trusteeCMSignatureDate: string;
+  trusteeACSignature: boolean;
+  trusteeACSignatureDate: string;
+};
+
+export type TrusteeFormSchema = z.output<typeof trusteeFormSchema> &
+  TrusteeFormAdditionalFields;
+
+export const TRUSTEE_FORM_QUESTION_ORDER = [
+  "trusteeHas10YearsOrLessRemaining",
+  "trusteeNotConvictedOfViolentOffenseOr12MonthsInCustody",
+  "trusteeNotServingForSexualOffense",
+  "trusteeNoFelonyDetainers",
+  "trusteeNoPendingFelonyCharges",
+  "trusteeNoPendingImmigrationActions",
+  "trusteeNoAssaultiveDisciplinaryWithSeriousInjury",
+  "trusteeNoViolentFelonyConvictionPast5YearsIncarceration",
+  "trusteeNoEscapeFromMediumCloseMaxPast10Years",
+  "trusteeNoEscapeFromLowTrusteePast5Years",
+  "trusteeNotScoredHighForViolence",
+  "trusteeWardenHasApproved",
+] satisfies (keyof TrusteeFormSchema)[];

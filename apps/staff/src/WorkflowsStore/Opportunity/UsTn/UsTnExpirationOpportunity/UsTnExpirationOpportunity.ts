@@ -17,6 +17,8 @@
 
 import { DocumentData } from "firebase/firestore";
 
+import { UsTnExpirationRecord, usTnExpirationSchema } from "~datatypes";
+
 import {
   ExternalRequestUpdate,
   ExternalSystemRequestStatus,
@@ -26,15 +28,11 @@ import {
 import { Client } from "../../../Client";
 import { UsTnExpirationForm } from "../../Forms/UsTnExpirationForm";
 import { OpportunityBase } from "../../OpportunityBase";
-import {
-  getUsTnExpirationValidator,
-  UsTnExpirationReferralRecord,
-  usTnExpirationSchema,
-} from "./UsTnExpirationReferralRecord";
+import { getUsTnExpirationValidator } from "./UsTnExpirationReferralRecord";
 
 export class UsTnExpirationOpportunity extends OpportunityBase<
   Client,
-  UsTnExpirationReferralRecord,
+  UsTnExpirationRecord["output"],
   UsTnExpirationOpportunityUpdate
 > {
   readonly supportsExternalRequest = true;

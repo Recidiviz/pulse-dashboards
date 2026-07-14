@@ -156,6 +156,10 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
       judicialDistrict: ["A"],
     },
     metadata: {
+      latestNegativeArrestCheck: {
+        contactDate: "2022-05-28",
+        contactType: "ARRN",
+      },
       mostRecentSpeNote: {
         contactDate: "2022-03-15",
         contactType: "SPEC",
@@ -229,6 +233,10 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
       currentOffenses: [],
     },
     metadata: {
+      latestNegativeArrestCheck: {
+        contactDate: "2022-05-28",
+        contactType: "ARRN",
+      },
       mostRecentSpeNote: {
         contactDate: "2022-05-28",
         contactType: "SPET",
@@ -302,6 +310,10 @@ export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantRe
       judicialDistrict: ["A"],
     },
     metadata: {
+      latestNegativeArrestCheck: {
+        contactDate: "2022-03-15",
+        contactType: "ARRN",
+      },
       mostRecentSpeNote: {
         contactDate: "2022-03-15",
         contactType: "SPEC",

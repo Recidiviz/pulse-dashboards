@@ -15,41 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { UsTnSuspensionOfDirectSupervisionRecord } from "~datatypes";
 
-import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
-
-export const usTnSuspensionOfDirectSupervisionSchema =
-  opportunitySchemaBase.extend({
-    eligibleCriteria: z.object({}).passthrough(),
-    formInformation: z
-      .object({
-        convictionCounties: z.array(z.string()),
-        convictionCharge: z.string(),
-        sentenceDate: dateStringSchema,
-        supervisionDuration: z.string(),
-        supervisionOfficeLocation: z.string(),
-      })
-      .partial(),
-    metadata: z
-      .object({
-        tabName: z.string().optional(),
-        latestNegativeArrestCheck: z.object({
-          contactDate: dateStringSchema,
-          contactType: z.string(),
-          contactComment: z.string().optional(),
-        }),
-      })
-      .passthrough(),
-  });
-
-export type UsTnSuspensionOfDirectSupervisionReferralRecord = z.infer<
-  typeof usTnSuspensionOfDirectSupervisionSchema
->;
-
-export type UsTnSuspensionOfDirectSupervisionReferralRecordRaw = z.input<
-  typeof usTnSuspensionOfDirectSupervisionSchema
->;
+export type UsTnSuspensionOfDirectSupervisionReferralRecordRaw =
+  UsTnSuspensionOfDirectSupervisionRecord["input"];
 
 export type UsTnSuspensionOfDirectSupervisionDraftData = {
   downloadDate: string;

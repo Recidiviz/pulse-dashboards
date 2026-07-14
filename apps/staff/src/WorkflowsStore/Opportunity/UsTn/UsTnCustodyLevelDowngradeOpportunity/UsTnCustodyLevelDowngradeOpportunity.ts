@@ -17,20 +17,21 @@
 
 import { DocumentData } from "firebase/firestore";
 
+import {
+  UsTnCustodyLevelDowngradeRecord,
+  usTnCustodyLevelDowngradeSchema,
+} from "~datatypes";
+
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Resident } from "../../../Resident";
 import { UsTnReclassificationReviewForm } from "../../Forms/UsTnReclassificationReviewForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { NO_RELEASE_DATE_TEXT } from "../UsTnAnnualReclassificationReviewOpportunity";
 import { UsTnSharedReclassificationDraftData } from "../UsTnSharedCriteria";
-import {
-  UsTnCustodyLevelDowngradeReferralRecord,
-  usTnCustodyLevelDowngradeSchema,
-} from "./UsTnCustodyLevelDowngradeReferralRecord";
 
 export class UsTnCustodyLevelDowngradeOpportunity extends OpportunityBase<
   Resident,
-  UsTnCustodyLevelDowngradeReferralRecord,
+  UsTnCustodyLevelDowngradeRecord["output"],
   OpportunityUpdateWithForm<UsTnSharedReclassificationDraftData>
 > {
   form: UsTnReclassificationReviewForm;

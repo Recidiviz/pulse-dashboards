@@ -15,63 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
-
-import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
+import { UsTnExpirationRecord } from "~datatypes";
 
 import { OpportunityValidationError } from "../../../../errors";
 import { Client } from "../../..";
 import { ValidateFunction } from "../../../subscriptions";
-import { NullCoalesce } from "../../schemaHelpers";
 
-const contactSchema = z.object({
-  contactDate: dateStringSchema,
-  contactType: z.string(),
-  contactComment: z.string().optional(),
-});
-
-export const usTnExpirationSchema = opportunitySchemaBase.extend({
-  formInformation: z.object({
-    latestPse: contactSchema.optional(),
-    latestEmp: contactSchema.optional(),
-    latestSpe: contactSchema.optional(),
-    latestVrr: contactSchema.optional(),
-    latestFee: contactSchema.optional(),
-    newOffenses: z.array(contactSchema),
-    alcoholHistory: z.array(contactSchema),
-    sexOffenses: z.array(z.string()),
-    offenses: z.array(z.string()),
-    docketNumbers: z.array(z.string()),
-    convictionCounties: z.array(z.string()),
-    gangAffiliationId: z.string().optional(),
-  }),
-  eligibleCriteria: z
-    .object({
-      supervisionPastFullTermCompletionDate: z.object({
-        eligibleDate: dateStringSchema,
-      }),
-      usTnNoZeroToleranceCodesSpans: NullCoalesce(
-        { zeroToleranceCodeDates: undefined },
-        z
-          .object({
-            zeroToleranceCodeDates: z.array(dateStringSchema).nullish(),
-          })
-          .optional(),
-      ),
-      usTnNotOnLifeSentenceOrLifetimeSupervision: NullCoalesce(
-        {},
-        z.object({
-          lifetimeFlag: z.boolean().optional(),
-        }),
-      ),
-    })
-    .passthrough(),
-});
-
-export type UsTnExpirationReferralRecord = z.infer<typeof usTnExpirationSchema>;
-export type UsTnExpirationReferralRecordRaw = z.input<
-  typeof usTnExpirationSchema
->;
+export type UsTnExpirationReferralRecord = UsTnExpirationRecord["output"];
+export type UsTnExpirationReferralRecordRaw = UsTnExpirationRecord["input"];
 
 export type Contact = {
   contactDate: Date;

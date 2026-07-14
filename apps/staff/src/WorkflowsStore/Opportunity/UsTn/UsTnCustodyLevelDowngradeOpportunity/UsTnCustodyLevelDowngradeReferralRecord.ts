@@ -15,49 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { cloneDeep } from "lodash";
-import { z } from "zod";
+import { UsTnCustodyLevelDowngradeRecord } from "~datatypes";
 
-import { opportunitySchemaBase } from "~datatypes";
-
-import {
-  formInformationBaseSchema,
-  renameLastAssessmentToLastCaf,
-} from "../UsTnSharedCriteria";
-
-export const usTnCustodyLevelDowngradeSchema = opportunitySchemaBase
-  .extend({
-    eligibleCriteria: z
-      .object({
-        custodyLevelHigherThanRecommended: z.object({
-          custodyLevel: z.string(),
-          recommendedCustodyLevel: z.string(),
-        }),
-        custodyLevelIsNotMax: z.null(),
-        usTnLatestCafAssessmentNotOverride: z.object({
-          overrideReason: z.string().nullable(),
-        }),
-        usTnIneligibleForAnnualReclassification: z.object({
-          ineligibleCriteria: z.array(z.string()),
-        }),
-      })
-      .passthrough(),
-    formInformation: formInformationBaseSchema
-      .omit({ isServingLife: true })
-      .partial()
-      .transform(renameLastAssessmentToLastCaf),
-  })
-  .transform((r) => {
-    const out = cloneDeep(r);
-    if (!out.caseNotes["ASSAULTIVE DISCIPLINARIES"])
-      out.caseNotes["ASSAULTIVE DISCIPLINARIES"] = [];
-    return out;
-  });
-
-export type UsTnCustodyLevelDowngradeReferralRecordRaw = z.input<
-  typeof usTnCustodyLevelDowngradeSchema
->;
-
-export type UsTnCustodyLevelDowngradeReferralRecord = z.infer<
-  typeof usTnCustodyLevelDowngradeSchema
->;
+export type UsTnCustodyLevelDowngradeReferralRecordRaw =
+  UsTnCustodyLevelDowngradeRecord["input"];

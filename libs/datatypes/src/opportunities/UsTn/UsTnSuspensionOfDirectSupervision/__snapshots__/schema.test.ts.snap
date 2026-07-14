@@ -1,0 +1,28 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for eligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {},
+  "externalId": "101",
+  "formInformation": {
+    "convictionCharge": "THEFT OF PROPERTY",
+    "convictionCounties": [
+      "123 - ABC",
+    ],
+    "sentenceDate": 2018-12-16T00:00:00.000Z,
+    "supervisionDuration": "5 years",
+    "supervisionOfficeLocation": "Nashville",
+  },
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {
+    "latestNegativeArrestCheck": {
+      "contactDate": 2021-11-16T00:00:00.000Z,
+      "contactType": "ARRN",
+    },
+  },
+  "stateCode": "US_TN",
+}
+`;

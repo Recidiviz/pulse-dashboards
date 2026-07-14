@@ -16,6 +16,20 @@
 // =============================================================================
 
 export * from "./reclassificationScoreUtils";
+export * from "./UsTnAnnualReclassificationReview/fixtures";
+export * from "./UsTnAnnualReclassificationReview/schema";
+export * from "./UsTnCompliantReporting/fixtures";
+export * from "./UsTnCompliantReporting/schema";
+export * from "./UsTnCompliantReporting2025Policy/fixtures";
+export * from "./UsTnCompliantReporting2025Policy/schema";
+export * from "./UsTnCustodyLevelDowngrade/fixtures";
+export * from "./UsTnCustodyLevelDowngrade/schema";
+export * from "./UsTnExpiration/fixtures";
+export * from "./UsTnExpiration/schema";
+export * from "./UsTnInitialClassification/fixtures";
+export * from "./UsTnInitialClassification/schema";
 export * from "./UsTnInitialClassification2026Policy";
 export * from "./UsTnReclassification2026Policy";
+export * from "./UsTnSuspensionOfDirectSupervision/fixtures";
+export * from "./UsTnSuspensionOfDirectSupervision/schema";
 export * from "./utils";

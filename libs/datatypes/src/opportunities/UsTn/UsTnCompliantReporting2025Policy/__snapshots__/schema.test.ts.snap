@@ -1,0 +1,153 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for almostEligible 1`] = `
+{
+  "caseNotes": {
+    "CURRENT OFFENSES": [
+      {
+        "eventDate": null,
+        "noteBody": "THEFT OF PROPERTY - $10,000-$60,000",
+        "noteTitle": null,
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "latestDrugTestIsNegativeOrMissing": {
+      "latestDrugScreenDate": "2021-08-27",
+      "latestDrugScreenResult": "DRUN",
+    },
+    "noSupervisionViolationReportWithin6Months": null,
+    "onMinimumOrLowMediumSupervisionAtLeastSixMonths": {
+      "eligibleDate": "2021-11-11",
+    },
+    "usTnAssessedNotHighOnStrongRDomains": {
+      "assessmentDate": "2021-11-13",
+      "assessmentMetadata": {
+        "AGGRESSION_NEED_LEVEL": "LOW",
+        "ALCOHOL_DRUG_NEED_LEVEL": "MOD",
+      },
+    },
+    "usTnFeeScheduleOrPermanentExemption": {
+      "contactType": null,
+      "currentExemptions": "SSDB",
+      "latestFeeContactDate": null,
+    },
+    "usTnNoArrestsInPast6Months": null,
+    "usTnNoSupervisionSanctionWithin3Months": null,
+    "usTnNoSupervisionViolationsReportWithin6Months": null,
+    "usTnNotInDayReportingCenterLocation": null,
+    "usTnNotOnCommunitySupervisionForLife": null,
+    "usTnNotServingIneligibleCrOffensePolicyB": null,
+  },
+  "externalId": "104",
+  "formInformation": {
+    "currentOffenses": [
+      "THEFT OF PROPERTY - $10,000-$60,000",
+    ],
+    "expirationDate": 2024-09-11T00:00:00.000Z,
+    "judicialDistrict": [],
+    "sentenceLengthDays": 1700,
+    "sentenceStartDate": 2020-04-16T00:00:00.000Z,
+    "supervisionFeeArrearaged": false,
+  },
+  "ineligibleCriteria": {
+    "usTnNoRecentCompliantReportingRejections": {
+      "contactCode": [
+        "DECF",
+        "DEDU",
+      ],
+    },
+  },
+  "isAlmostEligible": true,
+  "isEligible": false,
+  "metadata": {
+    "convictionCounties": [],
+    "eligibleDate": "2021-12-01",
+    "ineligibleOffensesExpired": [
+      "TNCARE FRAUD",
+    ],
+    "latestNegativeArrestCheck": {
+      "contactDate": "2021-11-16",
+      "contactType": "ARRN",
+    },
+    "mostRecentSpeNote": {
+      "contactDate": "2021-11-16",
+      "contactType": "SPEC",
+    },
+    "tabName": "MISSING_1_CRITERIA",
+  },
+  "stateCode": "US_TN",
+}
+`;
+
+exports[`schema for eligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "latestDrugTestIsNegativeOrMissing": {
+      "latestDrugScreenDate": "2021-05-30",
+      "latestDrugScreenResult": "DRUN",
+    },
+    "noSupervisionViolationReportWithin6Months": null,
+    "onMinimumOrLowMediumSupervisionAtLeastSixMonths": {
+      "eligibleDate": "2021-11-11",
+    },
+    "usTnAssessedNotHighOnStrongRDomains": {
+      "assessmentDate": "2021-08-17",
+      "assessmentMetadata": {
+        "AGGRESSION_NEED_LEVEL": "LOW",
+        "ALCOHOL_DRUG_NEED_LEVEL": "MOD",
+      },
+    },
+    "usTnFeeScheduleOrPermanentExemption": {
+      "contactType": null,
+      "currentExemptions": "SSDB",
+      "latestFeeContactDate": null,
+    },
+    "usTnNoArrestsInPast6Months": null,
+    "usTnNoSupervisionSanctionWithin3Months": null,
+    "usTnNoSupervisionViolationsReportWithin6Months": null,
+    "usTnNotInDayReportingCenterLocation": null,
+    "usTnNotOnCommunitySupervisionForLife": null,
+    "usTnNotServingIneligibleCrOffensePolicyB": null,
+  },
+  "externalId": "100",
+  "formInformation": {
+    "currentOffenses": [
+      "FAILURE TO APPEAR (FELONY)",
+    ],
+    "driversLicense": "12345678",
+    "judicialDistrict": [
+      "17",
+    ],
+    "restitutionAmt": 400,
+    "restitutionMonthlyPayment": 0,
+    "restitutionMonthlyPaymentTo": [
+      "2ND JUDICIAL DRUG TASK FORCE",
+    ],
+    "sentenceStartDate": 2018-06-09T00:00:00.000Z,
+  },
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {
+    "convictionCounties": [
+      "123 - ABC",
+      "456 - DEF",
+    ],
+    "eligibleDate": "2021-11-11",
+    "ineligibleOffensesExpired": [
+      "HABITUAL TRAFFIC OFFENDER",
+    ],
+    "latestNegativeArrestCheck": {
+      "contactDate": "2020-11-13",
+      "contactType": "ARRN",
+    },
+    "mostRecentSpeNote": {
+      "contactDate": "2021-05-08",
+      "contactType": "SPET",
+    },
+  },
+  "stateCode": "US_TN",
+}
+`;

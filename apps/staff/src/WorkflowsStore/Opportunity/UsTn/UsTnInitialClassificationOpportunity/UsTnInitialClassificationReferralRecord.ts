@@ -15,32 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { UsTnInitialClassificationRecord } from "~datatypes";
 
-import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
-
-import {
-  formInformationBaseSchema,
-  renameLastAssessmentToLastCaf,
-} from "../UsTnSharedCriteria";
-
-export const usTnInitialClassificationSchema = opportunitySchemaBase.extend({
-  formInformation: formInformationBaseSchema
-    .extend({
-      q3Score: z.null(),
-      q4Score: z.null(),
-      q5Score: z.null(),
-      q9Score: z.null(),
-    })
-    .partial()
-    .or(formInformationBaseSchema.partial())
-    .transform(renameLastAssessmentToLastCaf),
-  formReclassificationDueDate: dateStringSchema.optional(),
-});
-
-export type UsTnInitialClassificationReferralRecord = z.infer<
-  typeof usTnInitialClassificationSchema
->;
-export type UsTnInitialClassificationReferralRecordRaw = z.input<
-  typeof usTnInitialClassificationSchema
->;
+export type UsTnInitialClassificationReferralRecordRaw =
+  UsTnInitialClassificationRecord["input"];

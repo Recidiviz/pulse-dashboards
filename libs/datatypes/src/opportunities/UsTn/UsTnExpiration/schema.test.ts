@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,13 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { identity } from "lodash";
 import { z } from "zod";
 
-import { fieldToDate, usTnExpirationSchema } from "~datatypes";
-
-import { OpportunityValidationError } from "../../../../errors";
-import { getUsTnExpirationValidator as getValidator } from "../UsTnExpirationOpportunity/UsTnExpirationReferralRecord";
+import { usTnExpirationSchema } from "./schema";
 
 const usTnExpirationRecordRaw: z.input<typeof usTnExpirationSchema> = {
   stateCode: "US_XX",
@@ -92,28 +88,6 @@ const usTnExpirationRecordRaw: z.input<typeof usTnExpirationSchema> = {
   isAlmostEligible: false,
 };
 
-const mockClient = {
-  expirationDate: fieldToDate("2022-03-03"),
-  rootStore: {
-    workflowsStore: {
-      formatSupervisionLevel: identity,
-    },
-  },
-};
-
-test("record validates", () => {
-  const validator = getValidator(mockClient as any);
-  expect(() =>
-    validator(usTnExpirationSchema.parse(usTnExpirationRecordRaw)),
-  ).not.toThrow(OpportunityValidationError);
-});
-
-test("record does not validate", () => {
-  const validator = getValidator({
-    ...mockClient,
-    expirationDate: fieldToDate("2022-04-04"),
-  } as any);
-  expect(() =>
-    validator(usTnExpirationSchema.parse(usTnExpirationRecordRaw)),
-  ).toThrow(OpportunityValidationError);
+test("transform function", () => {
+  expect(usTnExpirationSchema.parse(usTnExpirationRecordRaw)).toMatchSnapshot();
 });

@@ -87,6 +87,10 @@ export const usTnCompliantReportingReferrals =
         judicialDistrict: ["17"],
       },
       metadata: {
+        latestNegativeArrestCheck: {
+          contactDate: relativeFixtureDate({ years: -1, days: -33 }),
+          contactType: "ARRN",
+        },
         convictionCounties: ["123 - ABC", "456 - DEF"],
         ineligibleOffensesExpired: ["HABITUAL TRAFFIC OFFENDER"],
         mostRecentSpeNote: {
@@ -160,6 +164,10 @@ export const usTnCompliantReportingReferrals =
         judicialDistrict: ["14"],
       },
       metadata: {
+        latestNegativeArrestCheck: {
+          contactDate: relativeFixtureDate({ days: -70 }),
+          contactType: "ARRN",
+        },
         mostRecentSpeNote: {
           contactDate: relativeFixtureDate({ days: -50 }),
           contactType: "SPEC",
@@ -231,6 +239,10 @@ export const usTnCompliantReportingReferrals =
         judicialDistrict: [],
       },
       metadata: {
+        latestNegativeArrestCheck: {
+          contactDate: relativeFixtureDate({ months: -1 }),
+          contactType: "ARRN",
+        },
         mostRecentSpeNote: {
           contactDate: relativeFixtureDate({ months: -1 }),
           contactType: "SPEC",
@@ -302,6 +314,10 @@ export const usTnCompliantReportingReferrals =
         judicialDistrict: ["17"],
       },
       metadata: {
+        latestNegativeArrestCheck: {
+          contactDate: relativeFixtureDate({ years: -1, days: -30 }),
+          contactType: "ARRN",
+        },
         convictionCounties: ["123 - ABC", "456 - DEF"],
         ineligibleOffensesExpired: [],
         mostRecentSpeNote: {
@@ -370,6 +386,10 @@ export const usTnCompliantReportingReferrals =
         judicialDistrict: ["17"],
       },
       metadata: {
+        latestNegativeArrestCheck: {
+          contactDate: relativeFixtureDate({ days: -222 }),
+          contactType: "ARRN",
+        },
         convictionCounties: ["123 - ABC", "456 - DEF"],
         ineligibleOffensesExpired: [],
         mostRecentSpeNote: {
@@ -447,6 +467,10 @@ export const usTnCompliantReportingReferrals =
         supervisionFeeWaived: true,
       },
       metadata: {
+        latestNegativeArrestCheck: {
+          contactDate: relativeFixtureDate({ days: -72 }),
+          contactType: "ARRN",
+        },
         convictionCounties: ["123 - ABC", "456 - DEF"],
         ineligibleOffensesExpired: [],
         mostRecentSpeNote: {
@@ -510,6 +534,10 @@ export const usTnCompliantReportingReferrals =
         supervisionFeeArrearaged: false,
       },
       metadata: {
+        latestNegativeArrestCheck: {
+          contactDate: relativeFixtureDate({ days: -5 }),
+          contactType: "ARRN",
+        },
         convictionCounties: ["123ABC"],
         ineligibleOffensesExpired: [],
       },
@@ -573,6 +601,10 @@ export const usTnCompliantReportingReferrals =
         judicialDistrict: ["17"],
       },
       metadata: {
+        latestNegativeArrestCheck: {
+          contactDate: relativeFixtureDate({ months: -1 }),
+          contactType: "ARRN",
+        },
         convictionCounties: ["123 - ABC", "456 - DEF"],
         ineligibleOffensesExpired: ["HABITUAL TRAFFIC OFFENDER"],
         mostRecentSpeNote: {
@@ -642,6 +674,10 @@ export const usTnCompliantReportingReferrals =
         judicialDistrict: ["17"],
       },
       metadata: {
+        latestNegativeArrestCheck: {
+          contactDate: relativeFixtureDate({ months: -1 }),
+          contactType: "ARRN",
+        },
         convictionCounties: ["123 - ABC", "456 - DEF"],
         ineligibleOffensesExpired: ["HABITUAL TRAFFIC OFFENDER"],
         mostRecentSpeNote: {

@@ -17,18 +17,19 @@
 
 import { DocumentData } from "firebase/firestore";
 
+import {
+  UsTnCompliantReporting2025PolicyRecord,
+  usTnCompliantReporting2025PolicySchema,
+} from "~datatypes";
+
 import { DenialConfirmationModalName } from "../../../../core/OpportunityDenial/DenialConfirmationModals";
 import { Client } from "../../../Client";
 import { CompliantReportingForm } from "../../Forms/CompliantReportingForm";
 import { OpportunityBase } from "../../OpportunityBase";
-import {
-  UsTnCompliantReporting2025PolicyReferralRecord,
-  usTnCompliantReporting2025PolicySchema,
-} from "./UsTnCompliantReporting2025PolicyReferralRecord";
 
 export class UsTnCompliantReporting2025PolicyOpportunity extends OpportunityBase<
   Client,
-  UsTnCompliantReporting2025PolicyReferralRecord
+  UsTnCompliantReporting2025PolicyRecord["output"]
 > {
   form: CompliantReportingForm;
 

@@ -17,6 +17,10 @@
 
 import { DocumentData } from "firebase/firestore";
 
+import {
+  UsTnAnnualReclassificationReviewRecord,
+  usTnAnnualReclassificationReviewSchema,
+} from "~datatypes";
 import { formatDate } from "~utils";
 
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
@@ -24,16 +28,12 @@ import { Resident } from "../../../Resident";
 import { UsTnReclassificationReviewForm } from "../../Forms/UsTnReclassificationReviewForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { UsTnSharedReclassificationDraftData } from "../UsTnSharedCriteria";
-import {
-  UsTnAnnualReclassificationReviewReferralRecord,
-  usTnAnnualReclassificationReviewSchema,
-} from "./UsTnAnnualReclassificationReviewReferralRecord";
 
 export const NO_RELEASE_DATE_TEXT =
   "This resident's release date is currently not available. If applicable, please update TOMIS with the latest judgment order.";
 export class UsTnAnnualReclassificationReviewOpportunity extends OpportunityBase<
   Resident,
-  UsTnAnnualReclassificationReviewReferralRecord,
+  UsTnAnnualReclassificationReviewRecord["output"],
   OpportunityUpdateWithForm<UsTnSharedReclassificationDraftData>
 > {
   form: UsTnReclassificationReviewForm;

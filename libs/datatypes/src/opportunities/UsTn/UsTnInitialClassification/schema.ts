@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,33 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TrusteeFormSchema, UsTnCoverSheetSharedDraftData } from "~datatypes";
+import { z } from "zod";
 
-import { AssessmentQuestionNumber } from "../../../core/Paperwork/US_TN/CustodyReclassification/assessmentQuestions";
-
-export {
+import { ParsedRecord } from "../../../utils/types";
+import { dateStringSchema } from "../../../utils/zod";
+import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
+import {
   formInformationBaseSchema,
-  formInformationSchema,
   renameLastAssessmentToLastCaf,
-} from "~datatypes";
+} from "../utils";
 
-type DraftDataSelections = {
-  [I in AssessmentQuestionNumber as `q${I}Selection`]: number;
-};
+export const usTnInitialClassificationSchema = opportunitySchemaBase.extend({
+  formInformation: formInformationBaseSchema
+    .extend({
+      q3Score: z.null(),
+      q4Score: z.null(),
+      q5Score: z.null(),
+      q9Score: z.null(),
+    })
+    .partial()
+    .or(formInformationBaseSchema.partial())
+    .transform(renameLastAssessmentToLastCaf),
+  formReclassificationDueDate: dateStringSchema.optional(),
+});
 
-type DraftDataNotes = {
-  [I in AssessmentQuestionNumber as `q${I}Note`]: string;
-};
-
-export type UsTnSharedReclassificationDraftData = {
-  lastCafDate: string;
-  lastCafTotal: string;
-  latestClassificationDate: string;
-  levelOfCare: string;
-  hearingDate: string;
-  hearingLocation: string;
-  hearingClassificationDate: string;
-} & DraftDataSelections &
-  UsTnCoverSheetSharedDraftData &
-  DraftDataNotes &
-  TrusteeFormSchema;
+export type UsTnInitialClassificationRecord = ParsedRecord<
+  typeof usTnInitialClassificationSchema
+>;

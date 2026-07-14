@@ -1,0 +1,120 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for eligibleWithCaseNotes 1`] = `
+{
+  "caseNotes": {
+    "ASSAULTIVE DISCIPLINARIES": [],
+    "PRIOR RECORD OFFENSES": [
+      {
+        "eventDate": 2016-04-16T00:00:00.000Z,
+        "noteTitle": "THEFT OF PROPERTY",
+      },
+      {
+        "eventDate": 2016-04-16T00:00:00.000Z,
+        "noteTitle": "CRIMINAL IMPERSONATION",
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "custodyLevelHigherThanRecommended": {
+      "custodyLevel": "MEDIUM",
+      "recommendedCustodyLevel": "MINIMUM",
+    },
+    "custodyLevelIsNotMax": null,
+    "usTnIneligibleForAnnualReclassification": {
+      "ineligibleCriteria": [],
+    },
+    "usTnLatestCafAssessmentNotOverride": {
+      "overrideReason": null,
+    },
+  },
+  "externalId": "RES002",
+  "formInformation": {
+    "activeRecommendations": [],
+    "currentOffenses": [
+      "THEFT OF PROPERTY",
+    ],
+    "hasIncompatibles": false,
+    "incompatibleArray": [],
+    "lastCafDate": 2020-07-16T00:00:00.000Z,
+    "lastCafTotal": "8",
+    "latestVantageCompletedDate": 2021-02-19T00:00:00.000Z,
+    "latestVantageRiskLevel": "LOW",
+    "levelOfCare": "LVL1",
+    "q1Score": 0,
+    "q2Score": 0,
+    "q3Score": 1,
+    "q4Score": 0,
+    "q5Score": -2,
+    "q6Score": -4,
+    "q7Score": 0,
+    "q8Score": 0,
+    "q9Score": 2,
+    "sentenceExpirationDate": 2023-03-26T00:00:00.000Z,
+    "sentenceReleaseEligibilityDate": 2022-05-09T00:00:00.000Z,
+    "statusAtHearingSeg": "GEN",
+  },
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_TN",
+}
+`;
+
+exports[`schema for fullyEligible 1`] = `
+{
+  "caseNotes": {
+    "ASSAULTIVE DISCIPLINARIES": [],
+  },
+  "eligibleCriteria": {
+    "custodyLevelHigherThanRecommended": {
+      "custodyLevel": "CLOSE",
+      "recommendedCustodyLevel": "MEDIUM",
+    },
+    "custodyLevelIsNotMax": null,
+    "usTnIneligibleForAnnualReclassification": {
+      "ineligibleCriteria": [
+        "q1",
+      ],
+    },
+    "usTnLatestCafAssessmentNotOverride": {
+      "overrideReason": null,
+    },
+  },
+  "externalId": "RES001",
+  "formInformation": {
+    "activeRecommendations": [],
+    "hasIncompatibles": false,
+    "incompatibleArray": [],
+    "lastCafDate": 2021-01-05T00:00:00.000Z,
+    "lastCafTotal": "18",
+    "latestVantageCompletedDate": 2021-02-19T00:00:00.000Z,
+    "latestVantageRiskLevel": "LOW",
+    "levelOfCare": "LVL1",
+    "q1Score": 0,
+    "q2Score": 0,
+    "q3Score": 4,
+    "q4Score": 0,
+    "q5Score": 5,
+    "q6Score": -2,
+    "q7Notes": [
+      {
+        "eventDate": 2020-11-03T00:00:00.000Z,
+        "noteBody": "Class B Incident",
+      },
+    ],
+    "q7Score": 5,
+    "q8Score": 3,
+    "q9Score": 0,
+    "sentenceExpirationDate": 2025-10-12T00:00:00.000Z,
+    "sentenceReleaseEligibilityDate": 2022-12-16T00:00:00.000Z,
+    "statusAtHearingSeg": "GEN",
+  },
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_TN",
+}
+`;

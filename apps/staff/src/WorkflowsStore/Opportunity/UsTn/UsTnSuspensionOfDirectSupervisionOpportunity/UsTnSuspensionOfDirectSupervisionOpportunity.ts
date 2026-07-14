@@ -17,17 +17,18 @@
 
 import { DocumentData } from "firebase/firestore";
 
+import {
+  UsTnSuspensionOfDirectSupervisionRecord,
+  usTnSuspensionOfDirectSupervisionSchema,
+} from "~datatypes";
+
 import { Client } from "../../../Client";
 import { UsTnSuspensionOfDirectSupervisionForm } from "../../Forms/UsTnSuspensionOfDirectSupervisionForm";
 import { OpportunityBase } from "../../OpportunityBase";
-import {
-  UsTnSuspensionOfDirectSupervisionReferralRecord,
-  usTnSuspensionOfDirectSupervisionSchema,
-} from "./UsTnSuspensionOfDirectSupervisionReferralRecord";
 
 export class UsTnSuspensionOfDirectSupervisionOpportunity extends OpportunityBase<
   Client,
-  UsTnSuspensionOfDirectSupervisionReferralRecord
+  UsTnSuspensionOfDirectSupervisionRecord["output"]
 > {
   form: UsTnSuspensionOfDirectSupervisionForm;
 

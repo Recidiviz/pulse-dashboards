@@ -24,6 +24,7 @@ import { z } from "zod";
 
 import {
   clientRecordSchema,
+  compliantReportingSchema,
   incarcerationStaffRecordSchema,
   locationRecordSchema,
   OpportunityType,
@@ -71,8 +72,14 @@ import {
   usOrEarnedDischargeSentenceSchema,
   usPaAdminSupervisionSchema,
   usPaSpecialCircumstancesSupervisionSchema,
+  usTnAnnualReclassificationReviewSchema,
+  usTnCompliantReporting2025PolicySchema,
+  usTnCustodyLevelDowngradeSchema,
+  usTnExpirationSchema,
   usTnInitialClassification2026Schema,
+  usTnInitialClassificationSchema,
   usTnReclassification2026Schema,
+  usTnSuspensionOfDirectSupervisionSchema,
   usTxAnnualReportStatusSchema,
   usTxAnnualReportStatusV2Schema,
   usTxEarlyReleaseFromSupervisionSchema,
@@ -83,14 +90,7 @@ import {
 
 import { mockOpportunityConfigs } from "../src/core/__tests__/testUtils";
 import { supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/SupervisionLevelDowngradeReferralRecord";
-import { compliantReportingSchema } from "../src/WorkflowsStore/Opportunity/UsTn/CompliantReportingOpportunity/CompliantReportingReferralRecord";
-import { usTnAnnualReclassificationReviewSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnAnnualReclassificationReviewOpportunity/UsTnAnnualReclassificationReviewReferralRecord";
-import { usTnCompliantReporting2025PolicySchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnCompliantReporting2025PolicyOpportunity";
-import { usTnCustodyLevelDowngradeSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnCustodyLevelDowngradeOpportunity/UsTnCustodyLevelDowngradeReferralRecord";
-import { usTnExpirationSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnExpirationOpportunity/UsTnExpirationReferralRecord";
-import { usTnInitialClassificationSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnInitialClassificationOpportunity/UsTnInitialClassificationReferralRecord";
 import { usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnSupervisionLevelDowngradeOpportunity/UsTnSupervisionLevelDowngradeReferralRecord";
-import { usTnSuspensionOfDirectSupervisionSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnSuspensionOfDirectSupervisionOpportunity/UsTnSuspensionOfDirectSupervisionReferralRecord";
 
 const { FIREBASE_PROJECT, FIREBASE_CREDENTIAL_JSON } = process.env;
 

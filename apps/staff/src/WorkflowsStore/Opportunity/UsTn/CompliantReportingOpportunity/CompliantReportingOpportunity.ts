@@ -18,7 +18,11 @@
 import { add, differenceInCalendarDays, isEqual } from "date-fns";
 import { DocumentData } from "firebase/firestore";
 
-import { OpportunityType } from "~datatypes";
+import {
+  CompliantReportingRecord,
+  compliantReportingSchema,
+  OpportunityType,
+} from "~datatypes";
 import { formatDate, pluralizeWord } from "~utils";
 
 import { DenialConfirmationModalName } from "../../../../core/OpportunityDenial/DenialConfirmationModals";
@@ -31,11 +35,7 @@ import { CompliantReportingForm } from "../../Forms/CompliantReportingForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement, OpportunityStatus } from "../../types";
 import { formatNoteDate } from "../../utils/caseNotesUtils";
-import {
-  CompliantReportingDraftData,
-  CompliantReportingReferralRecord,
-  compliantReportingSchema,
-} from "./CompliantReportingReferralRecord";
+import { CompliantReportingDraftData } from "./CompliantReportingReferralRecord";
 
 // This could be configured externally once it's fleshed out
 // to include all copy and other static data
@@ -97,7 +97,7 @@ type CompliantReportingUpdateRecord =
 
 const getRecordValidator =
   (client: Client) =>
-  (record?: CompliantReportingReferralRecord): void => {
+  (record?: CompliantReportingRecord["output"]): void => {
     if (!record) {
       throw new OpportunityValidationError("No opportunity record found");
     }
@@ -138,7 +138,7 @@ const sanctionsAlmostEligibleText = (latestHighSanctionDate: Date) => {
 
 export class CompliantReportingOpportunity extends OpportunityBase<
   Client,
-  CompliantReportingReferralRecord,
+  CompliantReportingRecord["output"],
   CompliantReportingUpdateRecord
 > {
   readonly type: OpportunityType = "compliantReporting";

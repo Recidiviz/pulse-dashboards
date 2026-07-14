@@ -1,0 +1,66 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for fullyEligible 1`] = `
+{
+  "caseNotes": {
+    "PRIOR RECORD OFFENSES": [
+      {
+        "eventDate": 2019-10-14T00:00:00.000Z,
+        "noteTitle": "AGGRAVATED ASSAULT",
+      },
+      {
+        "eventDate": 2019-11-06T00:00:00.000Z,
+        "noteTitle": "CRIMINAL IMPERSONATION",
+      },
+    ],
+    "TN, ISC, DIVERSION SENTENCES": [
+      {
+        "eventDate": 2018-12-10T00:00:00.000Z,
+        "noteBody": "Expires: 2028-02-02",
+        "noteTitle": "POSS FIREARM W/PRIOR VIOL/DEAD WPN CONV",
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "custodyLevelIsNotMax": null,
+    "usTnAtLeast12MonthsSinceLatestAssessment": null,
+  },
+  "externalId": "RES003",
+  "formInformation": {
+    "currentOffenses": [
+      "POSS FIREARM W/PRIOR VIOL/DEAD WPN CONV",
+    ],
+    "hasIncompatibles": false,
+    "lastCafDate": 2020-12-18T00:00:00.000Z,
+    "lastCafTotal": "15",
+    "latestClassificationDate": 2020-12-26T00:00:00.000Z,
+    "latestVantageCompletedDate": 2021-02-19T00:00:00.000Z,
+    "latestVantageRiskLevel": "LOW",
+    "levelOfCare": "LVL2",
+    "q1Score": 0,
+    "q2Score": 0,
+    "q3Score": null,
+    "q4Score": null,
+    "q5Score": null,
+    "q6Score": -2,
+    "q7Notes": [
+      {
+        "eventDate": 2020-09-26T00:00:00.000Z,
+        "noteBody": "Class B Incident",
+      },
+    ],
+    "q7Score": 5,
+    "q8Score": 0,
+    "q9Score": null,
+    "sentenceExpirationDate": 2023-03-26T00:00:00.000Z,
+    "sentenceReleaseEligibilityDate": 2022-02-16T00:00:00.000Z,
+    "statusAtHearingSeg": "GEN",
+  },
+  "formReclassificationDueDate": 2021-12-18T00:00:00.000Z,
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_TN",
+}
+`;
