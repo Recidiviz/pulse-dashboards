@@ -28,8 +28,8 @@ export function fetchOfflineUser({
   allowedSupervisionLocationLevel,
 }) {
   return {
-    picture:
-      "https://ui-avatars.com/api/?name=Demo+Jones&background=0D8ABC&color=fff&rounded=false",
+    // Intentionally omit `picture` so the avatar renders via the
+    // self-contained boring-avatars + initials path.
     name,
     given_name: "Demo",
     family_name: "Jones",
