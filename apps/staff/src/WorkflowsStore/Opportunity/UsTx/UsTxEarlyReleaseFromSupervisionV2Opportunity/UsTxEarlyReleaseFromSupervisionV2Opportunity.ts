@@ -17,18 +17,19 @@
 
 import { DocumentData } from "@google-cloud/firestore";
 
+import {
+  UsTxEarlyReleaseFromSupervisionV2Record,
+  usTxEarlyReleaseFromSupervisionV2Schema,
+} from "~datatypes";
+
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
 import { UsTxEarlyReleaseFromSupervisionV2Form } from "../../Forms/UsTxEarlyReleaseFromSupervisionV2Form/UsTxEarlyReleaseFromSupervisionV2Form";
 import { UsTxArsErsV2OpportunityBase } from "../UsTxArsErsV2OpportunityBase";
-import {
-  UsTxEarlyReleaseFromSupervisionV2DraftData,
-  UsTxEarlyReleaseFromSupervisionV2ReferralRecord,
-  usTxEarlyReleaseFromSupervisionV2Schema,
-} from "../UsTxEarlyReleaseFromSupervisionV2OpportunityReferralRecord";
+import type { UsTxEarlyReleaseFromSupervisionV2DraftData } from "../UsTxDraftData";
 
 export class UsTxEarlyReleaseFromSupervisionV2Opportunity extends UsTxArsErsV2OpportunityBase<
-  UsTxEarlyReleaseFromSupervisionV2ReferralRecord,
+  UsTxEarlyReleaseFromSupervisionV2Record["output"],
   OpportunityUpdateWithForm<UsTxEarlyReleaseFromSupervisionV2DraftData>
 > {
   form: UsTxEarlyReleaseFromSupervisionV2Form;

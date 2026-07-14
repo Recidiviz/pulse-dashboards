@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,12 +16,6 @@
 // =============================================================================
 
 import { z } from "zod";
-
-import { opportunitySchemaBase } from "~datatypes";
-
-import type { UsTxArsErsSharedDraftData } from "./UsTxArsErsSharedUtils";
-
-// TODO OBT-32657 Clean up V1 opp
 
 /**
  * Shared `formInformation` shape for the US_TX ARS and ERS forms. Both forms
@@ -40,31 +34,3 @@ export const usTxArsErsSharedFormInformationSchema = z
 export type UsTxArsErsSharedFormInformation = z.infer<
   typeof usTxArsErsSharedFormInformationSchema
 >;
-
-export const usTxEarlyReleaseFromSupervisionSchema =
-  opportunitySchemaBase.extend({
-    formInformation: usTxArsErsSharedFormInformationSchema,
-  });
-
-export type UsTxEarlyReleaseFromSupervisionReferralRecord = z.infer<
-  typeof usTxEarlyReleaseFromSupervisionSchema
->;
-
-export type UsTxEarlyReleaseFromSupervisionReferralRecordRaw = z.input<
-  typeof usTxEarlyReleaseFromSupervisionSchema
->;
-
-export type UsTxEarlyReleaseFromSupervisionDraftData =
-  UsTxArsErsSharedDraftData & {
-    atLeastHalfTimeCheck: boolean;
-    comment1: string;
-    minimumThreeYearsSupervisionCheck: boolean;
-    comment2: string;
-    goodFaithFeesAndEducationCheck: boolean;
-    comment3: string;
-    comment4: string;
-    comment5: string;
-    noViolationsCertificateCheck: boolean;
-    comment6: string;
-    comment7: string;
-  };

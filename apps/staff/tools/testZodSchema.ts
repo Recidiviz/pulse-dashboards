@@ -73,6 +73,10 @@ import {
   usPaSpecialCircumstancesSupervisionSchema,
   usTnInitialClassification2026Schema,
   usTnReclassification2026Schema,
+  usTxAnnualReportStatusSchema,
+  usTxAnnualReportStatusV2Schema,
+  usTxEarlyReleaseFromSupervisionSchema,
+  usTxEarlyReleaseFromSupervisionV2Schema,
   usUtEarlyTerminationSchema,
   workflowsResidentRecordSchema,
 } from "~datatypes";
@@ -87,10 +91,6 @@ import { usTnExpirationSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsT
 import { usTnInitialClassificationSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnInitialClassificationOpportunity/UsTnInitialClassificationReferralRecord";
 import { usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnSupervisionLevelDowngradeOpportunity/UsTnSupervisionLevelDowngradeReferralRecord";
 import { usTnSuspensionOfDirectSupervisionSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnSuspensionOfDirectSupervisionOpportunity/UsTnSuspensionOfDirectSupervisionReferralRecord";
-import { usTxAnnualReportStatusSchema } from "../src/WorkflowsStore/Opportunity/UsTx/UsTxAnnualReportStatusOpportunity/UsTxAnnualReportStatusOpportunityReferralRecord";
-import { usTxAnnualReportStatusV2Schema } from "../src/WorkflowsStore/Opportunity/UsTx/UsTxAnnualReportStatusV2Opportunity/UsTxAnnualReportStatusV2OpportunityReferralRecord";
-import { usTxEarlyReleaseFromSupervisionSchema } from "../src/WorkflowsStore/Opportunity/UsTx/UsTxEarlyReleaseFromSupervisionOpportunityReferralRecord";
-import { usTxEarlyReleaseFromSupervisionV2Schema } from "../src/WorkflowsStore/Opportunity/UsTx/UsTxEarlyReleaseFromSupervisionV2OpportunityReferralRecord";
 
 const { FIREBASE_PROJECT, FIREBASE_CREDENTIAL_JSON } = process.env;
 

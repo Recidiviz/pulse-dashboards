@@ -1,6 +1,5 @@
-/* eslint-disable @nx/enforce-module-boundaries */
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,11 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type {
-  UsTxAnnualReportStatusDraftData,
-  UsTxEarlyReleaseFromSupervisionDraftData,
-} from "apps/staff/src/WorkflowsStore/Opportunity/UsTx/UsTxDraftData";
+import { ParsedRecord } from "../../../utils/types";
+import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
+import { usTxArsErsSharedFormInformationSchema } from "../common";
 
-export type FormDataFieldName =
-  | keyof UsTxAnnualReportStatusDraftData
-  | keyof UsTxEarlyReleaseFromSupervisionDraftData;
+// TODO OBT-32657 Clean up V1 opp
+export const usTxEarlyReleaseFromSupervisionSchema =
+  opportunitySchemaBase.extend({
+    formInformation: usTxArsErsSharedFormInformationSchema,
+  });
+
+export type UsTxEarlyReleaseFromSupervisionRecord = ParsedRecord<
+  typeof usTxEarlyReleaseFromSupervisionSchema
+>;

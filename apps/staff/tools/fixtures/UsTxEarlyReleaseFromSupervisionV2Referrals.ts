@@ -15,11 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsTxEarlyReleaseFromSupervisionV2ReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsTx/UsTxEarlyReleaseFromSupervisionV2OpportunityReferralRecord";
+import { UsTxEarlyReleaseFromSupervisionV2Record } from "~datatypes";
+
 import { fixtureWithIdKey } from "./utils";
 
 export const usTxEarlyReleaseFromSupervisionV2ReferralsFixture =
-  fixtureWithIdKey<UsTxEarlyReleaseFromSupervisionV2ReferralRecordRaw>(
+  fixtureWithIdKey<UsTxEarlyReleaseFromSupervisionV2Record["input"]>(
     "externalId",
     [
       // ── Eligible Now ───────────────────────────────────────────────────────

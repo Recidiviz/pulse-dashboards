@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,20 +17,21 @@
 
 import { DocumentData } from "@google-cloud/firestore";
 
+import {
+  UsTxAnnualReportStatusRecord,
+  usTxAnnualReportStatusSchema,
+} from "~datatypes";
+
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
 import { UsTxAnnualReportStatusForm } from "../../Forms/UsTxAnnualReportStatusForm/UsTxAnnualReportStatusForm";
 import { OpportunityBase } from "../../OpportunityBase";
-import {
-  UsTxAnnualReportStatusDraftData,
-  UsTxAnnualReportStatusReferralRecord,
-  usTxAnnualReportStatusSchema,
-} from "./UsTxAnnualReportStatusOpportunityReferralRecord";
+import type { UsTxAnnualReportStatusDraftData } from "../UsTxDraftData";
 
 // TODO OBT-32657 Clean up V1 opp
 export class UsTxAnnualReportStatusOpportunity extends OpportunityBase<
   Client,
-  UsTxAnnualReportStatusReferralRecord,
+  UsTxAnnualReportStatusRecord["output"],
   OpportunityUpdateWithForm<UsTxAnnualReportStatusDraftData>
 > {
   form: UsTxAnnualReportStatusForm;

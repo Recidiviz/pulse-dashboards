@@ -17,9 +17,10 @@
 
 import startOfMonth from "date-fns/startOfMonth";
 
+import type { UsTxArsErsSharedFormInformation } from "~datatypes";
+
 import { toTitleCase } from "../../../utils/formatStrings";
 import { Client } from "../../Client";
-import type { UsTxArsErsSharedFormInformation } from "./UsTxEarlyReleaseFromSupervisionOpportunityReferralRecord";
 
 /**
  * Draft data fields that are identical across the ARS and ERS forms (header

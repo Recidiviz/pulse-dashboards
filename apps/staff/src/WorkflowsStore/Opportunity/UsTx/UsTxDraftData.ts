@@ -15,50 +15,34 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
-
-import {
-  dateStringSchemaWithoutTimeShift,
-  opportunitySchemaBase,
-} from "~datatypes";
-
 import type { UsTxArsErsSharedDraftData } from "./UsTxArsErsSharedUtils";
 
-/**
- * Shared `formInformation` shape for the US_TX ARS and ERS forms. Both forms
- * pull the same staff hierarchy and TDCJ number off the referral record.
- */
-export const usTxArsErsSharedFormInformationSchema = z
-  .object({
-    tdcjNumber: z.string(),
-    unitSupervisor: z.string().nullish(),
-    paroleSupervisor: z.string().nullish(),
-    assistantRegionDirector: z.string().nullish(),
-    regionDirector: z.string().nullish(),
-  })
-  .partial();
+// TODO OBT-32657 Clean up V1 opp
+export type UsTxEarlyReleaseFromSupervisionDraftData =
+  UsTxArsErsSharedDraftData & {
+    atLeastHalfTimeCheck: boolean;
+    comment1: string;
+    minimumThreeYearsSupervisionCheck: boolean;
+    comment2: string;
+    goodFaithFeesAndEducationCheck: boolean;
+    comment3: string;
+    comment4: string;
+    comment5: string;
+    noViolationsCertificateCheck: boolean;
+    comment6: string;
+    comment7: string;
+  };
 
-export type UsTxArsErsSharedFormInformation = z.infer<
-  typeof usTxArsErsSharedFormInformationSchema
->;
-
-export const usTxEarlyReleaseFromSupervisionV2Schema =
-  opportunitySchemaBase.extend({
-    formInformation: usTxArsErsSharedFormInformationSchema,
-    metadata: z
-      .object({
-        grantedAt: dateStringSchemaWithoutTimeShift.nullish(),
-      })
-      .passthrough(),
-  });
-
-export type UsTxEarlyReleaseFromSupervisionV2ReferralRecord = z.infer<
-  typeof usTxEarlyReleaseFromSupervisionV2Schema
->;
-
-export type UsTxEarlyReleaseFromSupervisionV2ReferralRecordRaw = z.input<
-  typeof usTxEarlyReleaseFromSupervisionV2Schema
->;
+// TODO OBT-32657 Clean up V1 opp
+export type UsTxAnnualReportStatusDraftData = UsTxArsErsSharedDraftData & {
+  threeYearsTRASCheck: boolean;
+  comment1: string;
+  complianceFeesAndEducationCheck: boolean;
+  comment2: string;
+  comment3: string;
+  comment4: string;
+  comment5: string;
+};
 
 export type UsTxEarlyReleaseFromSupervisionV2DraftData =
   UsTxArsErsSharedDraftData & {
@@ -74,3 +58,13 @@ export type UsTxEarlyReleaseFromSupervisionV2DraftData =
     comment6: string;
     comment7: string;
   };
+
+export type UsTxAnnualReportStatusV2DraftData = UsTxArsErsSharedDraftData & {
+  threeYearsTRASCheck: boolean;
+  comment1: string;
+  complianceFeesAndEducationCheck: boolean;
+  comment2: string;
+  comment3: string;
+  comment4: string;
+  comment5: string;
+};

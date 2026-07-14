@@ -1,0 +1,33 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for eligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {},
+  "externalId": "ARS001",
+  "formInformation": {
+    "paroleSupervisor": "WILLIAMS SARA",
+    "tdcjNumber": "87654321",
+    "unitSupervisor": "JOHNSON MARK",
+  },
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_TX",
+}
+`;
+
+exports[`schema for eligibleNoFormInfo 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {},
+  "externalId": "ARS002",
+  "formInformation": {},
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_TX",
+}
+`;

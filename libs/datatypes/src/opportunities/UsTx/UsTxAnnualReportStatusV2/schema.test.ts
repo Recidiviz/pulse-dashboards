@@ -1,6 +1,5 @@
-/* eslint-disable @nx/enforce-module-boundaries */
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,11 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type {
-  UsTxAnnualReportStatusDraftData,
-  UsTxEarlyReleaseFromSupervisionDraftData,
-} from "apps/staff/src/WorkflowsStore/Opportunity/UsTx/UsTxDraftData";
+import { usTxAnnualReportStatusV2Fixtures } from "./fixtures";
+import { usTxAnnualReportStatusV2Schema } from "./schema";
 
-export type FormDataFieldName =
-  | keyof UsTxAnnualReportStatusDraftData
-  | keyof UsTxEarlyReleaseFromSupervisionDraftData;
+test.each(
+  Object.keys(usTxAnnualReportStatusV2Fixtures) as Array<
+    keyof typeof usTxAnnualReportStatusV2Fixtures
+  >,
+)("schema for %s", (key) => {
+  expect(
+    usTxAnnualReportStatusV2Schema.parse(
+      usTxAnnualReportStatusV2Fixtures[key].input,
+    ),
+  ).toMatchSnapshot();
+});

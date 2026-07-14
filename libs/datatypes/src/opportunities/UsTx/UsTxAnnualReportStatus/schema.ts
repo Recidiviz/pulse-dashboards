@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,32 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
-
-import { opportunitySchemaBase } from "~datatypes";
-
-import type { UsTxArsErsSharedDraftData } from "../UsTxArsErsSharedUtils";
-import { usTxArsErsSharedFormInformationSchema } from "../UsTxEarlyReleaseFromSupervisionOpportunityReferralRecord";
+import { ParsedRecord } from "../../../utils/types";
+import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
+import { usTxArsErsSharedFormInformationSchema } from "../common";
 
 // TODO OBT-32657 Clean up V1 opp
 export const usTxAnnualReportStatusSchema = opportunitySchemaBase.extend({
   formInformation: usTxArsErsSharedFormInformationSchema,
 });
 
-export type UsTxAnnualReportStatusReferralRecord = z.infer<
+export type UsTxAnnualReportStatusRecord = ParsedRecord<
   typeof usTxAnnualReportStatusSchema
 >;
-
-export type UsTxAnnualReportStatusReferralRecordRaw = z.input<
-  typeof usTxAnnualReportStatusSchema
->;
-
-export type UsTxAnnualReportStatusDraftData = UsTxArsErsSharedDraftData & {
-  threeYearsTRASCheck: boolean;
-  comment1: string;
-  complianceFeesAndEducationCheck: boolean;
-  comment2: string;
-  comment3: string;
-  comment4: string;
-  comment5: string;
-};

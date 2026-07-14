@@ -17,13 +17,10 @@
 
 import { z } from "zod";
 
-import {
-  dateStringSchemaWithoutTimeShift,
-  opportunitySchemaBase,
-} from "~datatypes";
-
-import type { UsTxArsErsSharedDraftData } from "../UsTxArsErsSharedUtils";
-import { usTxArsErsSharedFormInformationSchema } from "../UsTxEarlyReleaseFromSupervisionOpportunityReferralRecord";
+import { ParsedRecord } from "../../../utils/types";
+import { dateStringSchemaWithoutTimeShift } from "../../../utils/zod";
+import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
+import { usTxArsErsSharedFormInformationSchema } from "../common";
 
 export const usTxAnnualReportStatusV2Schema = opportunitySchemaBase.extend({
   formInformation: usTxArsErsSharedFormInformationSchema,
@@ -34,20 +31,6 @@ export const usTxAnnualReportStatusV2Schema = opportunitySchemaBase.extend({
     .passthrough(),
 });
 
-export type UsTxAnnualReportStatusV2ReferralRecord = z.infer<
+export type UsTxAnnualReportStatusV2Record = ParsedRecord<
   typeof usTxAnnualReportStatusV2Schema
 >;
-
-export type UsTxAnnualReportStatusV2ReferralRecordRaw = z.input<
-  typeof usTxAnnualReportStatusV2Schema
->;
-
-export type UsTxAnnualReportStatusV2DraftData = UsTxArsErsSharedDraftData & {
-  threeYearsTRASCheck: boolean;
-  comment1: string;
-  complianceFeesAndEducationCheck: boolean;
-  comment2: string;
-  comment3: string;
-  comment4: string;
-  comment5: string;
-};

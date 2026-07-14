@@ -25,8 +25,8 @@ import {
 } from "../../../../core/Paperwork/US_TX/utils";
 import { OpportunityFormComponentName } from "../../../../core/WorkflowsLayouts";
 import { prefilledArsErsSharedDraftData } from "../../UsTx/UsTxArsErsSharedUtils";
+import type { UsTxEarlyReleaseFromSupervisionDraftData } from "../../UsTx/UsTxDraftData";
 import { UsTxEarlyReleaseFromSupervisionOpportunity } from "../../UsTx/UsTxEarlyReleaseFromSupervisionOpportunity/UsTxEarlyReleaseFromSupervisionOpportunity";
-import { UsTxEarlyReleaseFromSupervisionDraftData } from "../../UsTx/UsTxEarlyReleaseFromSupervisionOpportunityReferralRecord";
 import { FormBase } from "../FormBase";
 import ersTemplate from "./ERS.pdf";
 

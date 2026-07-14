@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,20 +17,21 @@
 
 import { DocumentData } from "@google-cloud/firestore";
 
+import {
+  UsTxEarlyReleaseFromSupervisionRecord,
+  usTxEarlyReleaseFromSupervisionSchema,
+} from "~datatypes";
+
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
 import { UsTxEarlyReleaseFromSupervisionForm } from "../../Forms/UsTxEarlyReleaseFromSupervisionForm/UsTxEarlyReleaseFromSupervisionForm";
 import { OpportunityBase } from "../../OpportunityBase";
-import {
-  UsTxEarlyReleaseFromSupervisionDraftData,
-  UsTxEarlyReleaseFromSupervisionReferralRecord,
-  usTxEarlyReleaseFromSupervisionSchema,
-} from "../UsTxEarlyReleaseFromSupervisionOpportunityReferralRecord";
+import type { UsTxEarlyReleaseFromSupervisionDraftData } from "../UsTxDraftData";
 
 // TODO OBT-32657 Clean up V1 opp
 export class UsTxEarlyReleaseFromSupervisionOpportunity extends OpportunityBase<
   Client,
-  UsTxEarlyReleaseFromSupervisionReferralRecord,
+  UsTxEarlyReleaseFromSupervisionRecord["output"],
   OpportunityUpdateWithForm<UsTxEarlyReleaseFromSupervisionDraftData>
 > {
   form: UsTxEarlyReleaseFromSupervisionForm;

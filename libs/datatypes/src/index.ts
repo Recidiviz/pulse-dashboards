@@ -173,6 +173,18 @@ export * from "./opportunities/UsTn";
 export * from "./opportunities/UsUt/UsUtEarlyTermination/fixtures";
 export * from "./opportunities/UsUt/UsUtEarlyTermination/schema";
 
+// UsTx Exports: Includes fixtures and schema related to US-TX opportunities
+// -----------------------------------------------------------------------------
+export * from "./opportunities/UsTx/common";
+export * from "./opportunities/UsTx/UsTxAnnualReportStatus/fixtures";
+export * from "./opportunities/UsTx/UsTxAnnualReportStatus/schema";
+export * from "./opportunities/UsTx/UsTxAnnualReportStatusV2/fixtures";
+export * from "./opportunities/UsTx/UsTxAnnualReportStatusV2/schema";
+export * from "./opportunities/UsTx/UsTxEarlyReleaseFromSupervision/fixtures";
+export * from "./opportunities/UsTx/UsTxEarlyReleaseFromSupervision/schema";
+export * from "./opportunities/UsTx/UsTxEarlyReleaseFromSupervisionV2/fixtures";
+export * from "./opportunities/UsTx/UsTxEarlyReleaseFromSupervisionV2/schema";
+
 // Utilities Exports: Common utilities for opportunities
 // -----------------------------------------------------------------------------
 export * from "./opportunities/utils/caseNotesSchema";

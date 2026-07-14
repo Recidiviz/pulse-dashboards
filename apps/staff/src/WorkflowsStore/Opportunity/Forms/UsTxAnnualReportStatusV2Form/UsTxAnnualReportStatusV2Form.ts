@@ -25,9 +25,11 @@ import {
 } from "../../../../core/Paperwork/US_TX/utils";
 import { OpportunityFormComponentName } from "../../../../core/WorkflowsLayouts";
 import { UsTxAnnualReportStatusV2Opportunity } from "../../UsTx/UsTxAnnualReportStatusV2Opportunity/UsTxAnnualReportStatusV2Opportunity";
-import { UsTxAnnualReportStatusV2DraftData } from "../../UsTx/UsTxAnnualReportStatusV2Opportunity/UsTxAnnualReportStatusV2OpportunityReferralRecord";
-import { prefilledArsErsSharedDraftData } from "../../UsTx/UsTxArsErsSharedUtils";
-import { US_TX_ARS_ERS_BLOCKING_SUBMIT_FIELDS } from "../../UsTx/UsTxArsErsSharedUtils";
+import {
+  prefilledArsErsSharedDraftData,
+  US_TX_ARS_ERS_BLOCKING_SUBMIT_FIELDS,
+} from "../../UsTx/UsTxArsErsSharedUtils";
+import type { UsTxAnnualReportStatusV2DraftData } from "../../UsTx/UsTxDraftData";
 import { FormBase } from "../FormBase";
 import arsTemplate from "./ARS.pdf";
 

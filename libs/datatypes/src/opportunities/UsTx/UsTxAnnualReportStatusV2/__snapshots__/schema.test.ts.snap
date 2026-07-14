@@ -1,0 +1,42 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for eligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {},
+  "externalId": "ARS_V2_001",
+  "formInformation": {
+    "tdcjNumber": "99001122",
+    "unitSupervisor": "DAVIS CAROL",
+  },
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {
+    "grantedAt": null,
+  },
+  "stateCode": "US_TX",
+}
+`;
+
+exports[`schema for grantApproved 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {},
+  "externalId": "ARS_V2_002",
+  "formInformation": {
+    "assistantRegionDirector": "JACKSON FRED",
+    "paroleSupervisor": "MARTIN LISA",
+    "regionDirector": "WHITE GINA",
+    "tdcjNumber": "33445566",
+    "unitSupervisor": "MOORE ERIC",
+  },
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {
+    "grantedAt": 2021-12-09T00:00:00.000Z,
+  },
+  "stateCode": "US_TX",
+}
+`;

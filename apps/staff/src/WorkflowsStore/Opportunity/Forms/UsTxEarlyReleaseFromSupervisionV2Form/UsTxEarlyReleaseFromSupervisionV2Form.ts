@@ -24,10 +24,12 @@ import {
   setArsErsSharedPDFFields,
 } from "../../../../core/Paperwork/US_TX/utils";
 import { OpportunityFormComponentName } from "../../../../core/WorkflowsLayouts";
-import { prefilledArsErsSharedDraftData } from "../../UsTx/UsTxArsErsSharedUtils";
-import { US_TX_ARS_ERS_BLOCKING_SUBMIT_FIELDS } from "../../UsTx/UsTxArsErsSharedUtils";
+import {
+  prefilledArsErsSharedDraftData,
+  US_TX_ARS_ERS_BLOCKING_SUBMIT_FIELDS,
+} from "../../UsTx/UsTxArsErsSharedUtils";
+import type { UsTxEarlyReleaseFromSupervisionV2DraftData } from "../../UsTx/UsTxDraftData";
 import { UsTxEarlyReleaseFromSupervisionV2Opportunity } from "../../UsTx/UsTxEarlyReleaseFromSupervisionV2Opportunity/UsTxEarlyReleaseFromSupervisionV2Opportunity";
-import { UsTxEarlyReleaseFromSupervisionV2DraftData } from "../../UsTx/UsTxEarlyReleaseFromSupervisionV2OpportunityReferralRecord";
 import { FormBase } from "../FormBase";
 import ersTemplate from "./ERS.pdf";
 
