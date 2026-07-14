@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ArgumentParser } from "argparse";
 import { $ } from "zx";
 
 import { getDevDatabaseUrl } from "../src/utils";
@@ -22,10 +23,36 @@ import { getEnabledStates } from "./utils";
 
 $.verbose = false;
 
+const parser = new ArgumentParser({
+  description:
+    "Runs a Prisma CLI command against every enabled state's database",
+});
+
+parser.add_argument("--prisma-cmd", {
+  dest: "prismaCmd",
+  required: true,
+  help: 'Prisma CLI command (and args) to run for each state, e.g. "migrate dev" or "migrate reset"',
+});
+
+type Args = {
+  prismaCmd: string;
+};
+
+const [{ prismaCmd }, extraArgs] = parser.parse_known_args() as [
+  Args,
+  string[],
+];
+const prismaArgs = [...prismaCmd.split(" "), ...extraArgs];
+
+// we don't actually develop against the default db but we may want to use it for e.g. prisma generate
+await $`DATABASE_URL=${getDevDatabaseUrl("postgres")} yarn prisma ${prismaArgs}`.pipe(
+  process.stdout,
+);
+
 for (const state of getEnabledStates()) {
-  console.log(`migrating DB for ${state}`);
+  console.log(`Running "prisma ${prismaCmd}" for ${state}`);
   // eslint-disable-next-line no-await-in-loop
-  await $`DATABASE_URL=${getDevDatabaseUrl(state)} yarn prisma migrate dev`.pipe(
+  await $`DATABASE_URL=${getDevDatabaseUrl(state)} yarn prisma ${prismaArgs}`.pipe(
     process.stdout,
   );
 }

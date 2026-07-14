@@ -7,7 +7,7 @@
   "targets": {
     "requires-sops-env:dev": {
       "continuous": true,
-      "dependsOn": ["^prisma-generate", "^prepare-dev-db", "jwks-sim"],
+      "dependsOn": ["^prisma-generate", "^docker", "jwks-sim"],
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
@@ -19,13 +19,18 @@
         }
       }
     },
-    "offline": {
+    "requires-sops-env:offline": {
       "continuous": true,
-      "dependsOn": ["^prisma-generate", "^prepare-offline-db"],
+      "dependsOn": ["^prisma-generate", "^prisma-deploy"],
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
         "command": "vite-node --watch src/main.ts"
+      },
+      "metadata": {
+        "sops-env": {
+          "additional-dotenv-files": ["{workspaceRoot}/libs/@jii/prisma/.env"]
+        }
       }
     },
     "jwks-sim": {
@@ -50,7 +55,7 @@
     },
     "requires-sops-env:compare-resident-data": {
       "executor": "nx:run-commands",
-      "dependsOn": [{ "projects": ["@jii/prisma"], "target": "docker:start" }],
+      "dependsOn": [{ "projects": ["@jii/prisma"], "target": "docker" }],
       "options": {
         "cwd": "{projectRoot}",
         "command": "tsx src/tools/compareResidentData.ts",

@@ -97,6 +97,7 @@ export const createUnwrappedSopsEnvTargets = (
       // Create a new target that loads env then delegates to the prefixed target
       targets[unprefixedName] = {
         executor: "~repo:sopsDelegateExecutor",
+        continuous: projectTargetConfig.continuous,
         options: {
           prefixedTarget: targetName,
         },

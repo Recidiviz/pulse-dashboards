@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ArgumentParser } from "argparse";
 import { $ } from "zx";
 
 import { getDevDatabaseUrl } from "../src/utils";
@@ -22,10 +23,28 @@ import { getEnabledStates } from "./utils";
 
 $.verbose = false;
 
-for (const state of getEnabledStates()) {
-  console.log(`migrating DB for ${state}`);
-  // eslint-disable-next-line no-await-in-loop
-  await $`DATABASE_URL=${getDevDatabaseUrl(state)} yarn prisma migrate deploy`.pipe(
-    process.stdout,
-  );
-}
+const parser = new ArgumentParser({
+  description:
+    "Starts Prisma Studio against the local dev DB for a single state",
+});
+
+parser.add_argument("-s", "--state-code", {
+  dest: "stateCode",
+  required: true,
+  choices: [
+    ...getEnabledStates(),
+    ...getEnabledStates().map((s) => s.toUpperCase()),
+  ],
+  help: "State code to open Prisma Studio for",
+});
+
+type Args = {
+  stateCode: string;
+};
+
+const { stateCode } = parser.parse_args() as Args;
+
+console.log(`Starting Prisma Studio for ${stateCode}`);
+await $`DATABASE_URL=${getDevDatabaseUrl(stateCode)} yarn prisma studio`.pipe(
+  process.stdout,
+);

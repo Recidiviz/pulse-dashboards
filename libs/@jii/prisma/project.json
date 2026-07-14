@@ -5,139 +5,7 @@
   "projectType": "library",
   "tags": ["scope:server"],
   "targets": {
-    "prisma-generate": {
-      "inputs": ["{projectRoot}/prisma/schema.prisma"],
-      "executor": "@nx-tools/nx-prisma:generate",
-      "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
-      }
-    },
-    "prisma-format": {
-      "executor": "@nx-tools/nx-prisma:format",
-      "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
-      }
-    },
-    "prisma": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": ["yarn prisma"],
-        "forwardAllArgs": true,
-        "cwd": "{projectRoot}"
-      }
-    },
-    "prisma-migrate": {
-      "dependsOn": ["docker"],
-      "executor": "@nx-tools/nx-prisma:migrate",
-      "configurations": {
-        "test": {}
-      },
-      "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
-      }
-    },
-    "prisma-pull": {
-      "executor": "@nx-tools/nx-prisma:pull",
-      "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
-      }
-    },
-    "prisma-push": {
-      "executor": "@nx-tools/nx-prisma:push",
-      "dependsOn": ["docker"],
-      "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
-      }
-    },
-    "prisma-deploy": {
-      "dependsOn": ["docker"],
-      "executor": "@nx-tools/nx-prisma:deploy",
-      "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
-      }
-    },
-    "prisma-status": {
-      "executor": "@nx-tools/nx-prisma:status",
-      "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
-      }
-    },
-    "prisma-studio": {
-      "executor": "@nx-tools/nx-prisma:studio",
-      "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
-      },
-      "configurations": {
-        "offline": {},
-        "test": {}
-      }
-    },
-    "prisma-reset": {
-      "dependsOn": ["docker"],
-      "executor": "@nx-tools/nx-prisma:reset",
-      "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
-      },
-      "configurations": {
-        "offline": {},
-        "test": {}
-      }
-    },
-    "prisma-resolve": {
-      "executor": "@nx-tools/nx-prisma:resolve",
-      "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
-      }
-    },
-
-    "prepare-dev-db": {
-      "dependsOn": ["docker"],
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "tsx scripts/prepareDev.mts",
-        "cwd": "{projectRoot}"
-      }
-    },
-    "reset-dev": {
-      "dependsOn": ["docker"],
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "tsx scripts/resetDev.mts",
-        "cwd": "{projectRoot}"
-      }
-    },
-    "migrate-dev": {
-      "dependsOn": ["docker"],
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "tsx scripts/migrateDev.mts",
-        "cwd": "{projectRoot}"
-      }
-    },
-
-    "prepare-offline-db": {
-      "dependsOn": ["docker"],
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "prisma migrate deploy",
-        "cwd": "{projectRoot}"
-      }
-    },
-    "prepare-test-db": {
-      "dependsOn": ["docker"],
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "prisma migrate reset --force",
-        "cwd": "{projectRoot}"
-      }
-    },
-    "prisma-validate": {
-      "executor": "@nx-tools/nx-prisma:validate",
-      "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma"
-      }
-    },
-    "docker:start": {
+    "docker": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}"
@@ -155,9 +23,26 @@
       },
       "defaultConfiguration": "dev"
     },
-    "docker": {
+
+    "docker-down": {
       "executor": "nx:run-commands",
-      "dependsOn": [{ "target": "docker:start", "params": "forward" }],
+      "options": { "cwd": "{projectRoot}" },
+      "configurations": {
+        "dev": {
+          "command": "docker compose down"
+        },
+        "ci": {
+          "command": "echo 'No docker for CI'"
+        }
+      },
+      "defaultConfiguration": "dev"
+    },
+    "init-db": {
+      "metadata": {
+        "description": "Ensures that a DB exists for each state configured in the environment"
+      },
+      "executor": "nx:run-commands",
+      "dependsOn": ["docker"],
       "options": {
         "cwd": "{projectRoot}"
       },
@@ -174,28 +59,145 @@
       },
       "defaultConfiguration": "dev"
     },
-    "docker:stop": {
+    "prepare-test-db": {
+      "dependsOn": ["init-db"],
       "executor": "nx:run-commands",
-      "options": { "cwd": "{projectRoot}" },
+      "options": {
+        "command": "prisma migrate reset --force",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "prisma-deploy": {
+      "metadata": {
+        "description": "Runs migrations (prisma migrate deploy) in each state DB."
+      },
+      "dependsOn": ["init-db"],
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}"
+      },
       "configurations": {
         "dev": {
-          "command": "docker compose down"
+          "command": "tsx scripts/runForAllStates.mts --prisma-cmd=\"migrate deploy\""
         },
-        "ci": {
-          "command": "echo 'No docker for CI'"
+        "test": {
+          "command": "prisma migrate dev"
         }
       },
       "defaultConfiguration": "dev"
     },
-    "typecheck": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["prisma-generate"],
+    "prisma-format": {
+      "executor": "@nx-tools/nx-prisma:format",
       "options": {
-        "commands": [
-          "tsc -p ./tsconfig.lib.json",
-          "tsc -p ./tsconfig.spec.json"
-        ],
+        "schema": "{projectRoot}/prisma/schema.prisma"
+      }
+    },
+    "prisma-generate": {
+      "inputs": ["{projectRoot}/prisma/schema.prisma"],
+      "executor": "@nx-tools/nx-prisma:generate",
+      "options": {
+        "schema": "{projectRoot}/prisma/schema.prisma"
+      }
+    },
+    "prisma-migrate": {
+      "metadata": {
+        "description": "Verifies migrations for all state DBs (prisma migrate dev). Will prompt if a new migration is needed."
+      },
+      "dependsOn": ["init-db"],
+      "executor": "nx:run-commands",
+      "options": {
         "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {
+          "command": "tsx scripts/runForAllStates.mts --prisma-cmd=\"migrate dev\""
+        },
+        "test": {
+          "command": "prisma migrate dev"
+        }
+      },
+      "defaultConfiguration": "dev"
+    },
+    "prisma-pull": {
+      "metadata": {
+        "description": "Pulls changes from the DB into the Prisma schema. Requires a DATABASE_URL to be specified in the env."
+      },
+      "executor": "@nx-tools/nx-prisma:pull",
+      "options": {
+        "schema": "{projectRoot}/prisma/schema.prisma"
+      }
+    },
+    "prisma-push": {
+      "metadata": {
+        "description": "Pushes latest schema changes to all state DBs without generating a migration"
+      },
+      "dependsOn": ["init-db"],
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {
+          "command": "tsx scripts/runForAllStates.mts --prisma-cmd=\"db push\""
+        },
+        "test": {
+          "command": "prisma migrate dev"
+        }
+      },
+      "defaultConfiguration": "dev"
+    },
+    "prisma-reset": {
+      "metadata": {
+        "description": "Wipes all state DBs and reruns migrations (prisma migrate reset)"
+      },
+      "dependsOn": ["init-db"],
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {
+          "command": "tsx scripts/runForAllStates.mts --prisma-cmd=\"migrate reset\""
+        },
+        "test": {
+          "command": "prisma migrate dev"
+        }
+      },
+      "defaultConfiguration": "dev"
+    },
+    "prisma-resolve": {
+      "metadata": {
+        "description": "Lets you mark failed migrations as applied or rolled back. Requires a DATABASE_URL to be specified in the env."
+      },
+      "executor": "@nx-tools/nx-prisma:resolve",
+      "options": {
+        "schema": "{projectRoot}/prisma/schema.prisma"
+      }
+    },
+    "prisma-status": {
+      "metadata": {
+        "description": "Reports on the state of migrations in the DB. Requires a DATABASE_URL to be specified in the env."
+      },
+      "executor": "@nx-tools/nx-prisma:status",
+      "options": {
+        "schema": "{projectRoot}/prisma/schema.prisma"
+      }
+    },
+    "prisma-studio": {
+      "metadata": {
+        "description": "Runs prisma studio for a single state DB (-s or --state-code)"
+      },
+      "dependsOn": [{ "target": "init-db", "params": "ignore" }],
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx scripts/studioDev.mts",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "prisma-validate": {
+      "executor": "@nx-tools/nx-prisma:validate",
+      "options": {
+        "schema": "{projectRoot}/prisma/schema.prisma"
       }
     },
     "requires-sops-env:test": {
@@ -206,10 +208,17 @@
       "options": {
         "command": "vitest",
         "cwd": "{projectRoot}"
-      },
-      "configurations": {
-        "dev": {},
-        "test": {}
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["prisma-generate"],
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.lib.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
       }
     }
   }
