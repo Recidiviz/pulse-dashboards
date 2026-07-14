@@ -63,6 +63,10 @@ export class UsAzTransferToAdministrativeSupervisionV2Configuration extends ApiO
     return "Submit for Supervisor Approval";
   }
 
+  get showIneligibleFormButtons(): boolean {
+    return false;
+  }
+
   get tabGroups(): OpportunityTabGroups {
     if (!this.supportsSupervisorReviewOnGrants) {
       return {

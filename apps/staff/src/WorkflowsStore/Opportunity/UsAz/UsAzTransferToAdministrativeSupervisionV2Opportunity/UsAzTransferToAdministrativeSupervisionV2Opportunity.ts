@@ -41,6 +41,7 @@ export class UsAzTransferToAdministrativeSupervisionV2Opportunity extends Opport
     if (this.isSubmitted) return this.submittedTabTitle;
     if (this.isInSupervisorReview) return this.supervisorReviewTabTitle;
     if (this.isGrantApproved) return this.grantApprovedTabTitle;
+    if (this.isIneligible) return "Not Currently Eligible";
     return "Eligible per ORAS";
   }
 
