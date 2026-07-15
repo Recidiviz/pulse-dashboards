@@ -174,7 +174,7 @@ export const FormUsTnReclassification2026V2 = observer(
               </ScoredAssessmentQuestion>
               <ScoredAssessmentQuestion
                 questionSpec={rcafAssessmentQuestionsV2[2]}
-                scoreSubtext="(if greater than 6, write 6)"
+                scoreSubtext="(Capped at 6)"
                 questionNumber={3}
                 supportingText={DISCIPLINARY_RECORD_SUPPORTING_TEXT}
               >
@@ -186,7 +186,7 @@ export const FormUsTnReclassification2026V2 = observer(
               <ScoredAssessmentQuestion
                 questionSpec={rcafAssessmentQuestionsV2[3]}
                 questionNumber={4}
-                scoreSubtext="(if greater than 9, write 9)"
+                scoreSubtext="(Capped at 9)"
                 supportingText={DISCIPLINARY_RECORD_SUPPORTING_TEXT}
               >
                 <TextboxWithHeader
@@ -200,7 +200,7 @@ export const FormUsTnReclassification2026V2 = observer(
             <ClassificationFormPage>
               <ScoredAssessmentQuestion
                 questionSpec={rcafAssessmentQuestionsV2[4]}
-                scoreSubtext="(if greater than 33, write 33)"
+                scoreSubtext="(Capped at 33)"
                 questionNumber={5}
                 supportingText={DISCIPLINARY_RECORD_SUPPORTING_TEXT}
               >

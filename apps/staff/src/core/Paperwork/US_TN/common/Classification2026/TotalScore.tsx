@@ -38,7 +38,7 @@ export function TotalScore({
   return (
     <Container>
       <div>
-        <Bold>TOTAL SCORE (IF GREATER THAN 45, WRITE 45):</Bold> {score}
+        <Bold>TOTAL SCORE (CAPPED AT 45):</Bold> {score}
       </div>
       <div>
         <div>
