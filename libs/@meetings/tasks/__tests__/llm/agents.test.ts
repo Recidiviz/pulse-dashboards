@@ -244,21 +244,14 @@ describe("SpecialistCore", () => {
       );
     });
 
-    test("should return empty extraction on error", async () => {
+    test("should throw on error", async () => {
       vi.mocked(mockOpenAI.chat.completions.create).mockRejectedValueOnce(
         new Error("API error"),
       );
 
-      const result = await core.runExtraction(
-        mockTranscript,
-        mockClient,
-        mockAgency,
-      );
-
-      expect(result).toEqual({
-        actionItems: [],
-        entities: [],
-      });
+      await expect(
+        core.runExtraction(mockTranscript, mockClient, mockAgency),
+      ).rejects.toThrow("API error");
     });
 
     describe("meeting type promptConfig", () => {
@@ -563,22 +556,19 @@ describe("SpecialistCore", () => {
       );
     });
 
-    test("should return error case note on error", async () => {
+    test("should throw on error", async () => {
       vi.mocked(mockOpenAI.chat.completions.create).mockRejectedValueOnce(
         new Error("API error"),
       );
 
-      const result = await core.runDrafting(
-        mockTranscript,
-        { actionItems: [], entities: [] },
-        mockAgency,
-        mockClient,
-      );
-
-      expect(result).toEqual({
-        caseNote: "[Error]",
-        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
-      });
+      await expect(
+        core.runDrafting(
+          mockTranscript,
+          { actionItems: [], entities: [] },
+          mockAgency,
+          mockClient,
+        ),
+      ).rejects.toThrow("API error");
     });
 
     describe("meeting type promptConfig", () => {

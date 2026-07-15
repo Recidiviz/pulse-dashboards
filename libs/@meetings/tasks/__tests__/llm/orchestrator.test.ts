@@ -365,6 +365,74 @@ describe("ProductionPipeline", () => {
       expect(result.caseNote).toBe(mockDrafting.caseNote);
     });
 
+    test("should retry drafting after transient agent errors and succeed", async () => {
+      const mockExtraction: ExtractionOutput = {
+        actionItems: [],
+        entities: [],
+      };
+
+      const goodDrafting: DraftingOutput = {
+        caseNote:
+          "SUMMARY: Client meeting conducted. Discussion covered multiple topics including housing, employment, and future planning.\n\nDISCUSSION: Client reported stable housing situation and recent employment changes. Planning was discussed for next steps.",
+        staffFeedback: EMPTY_STAFF_FEEDBACK,
+      };
+
+      vi.spyOn(SpecialistCore.prototype, "runExtraction").mockResolvedValue(
+        mockExtraction,
+      );
+      const runDraftingSpy = vi
+        .spyOn(SpecialistCore.prototype, "runDrafting")
+        .mockRejectedValueOnce(new Error("429 rate limited"))
+        .mockRejectedValueOnce(new Error("429 rate limited"))
+        .mockResolvedValueOnce(goodDrafting);
+      vi.spyOn(SpecialistCore.prototype, "runVerification").mockResolvedValue(
+        mockExtraction,
+      );
+
+      const pipeline = new ProductionPipeline(mockPrisma, mockCore);
+      const result = await pipeline.run(
+        mockAgency,
+        mockClient,
+        mockTranscript,
+        "test-meeting-transient",
+      );
+
+      // Should have retried past the two transient failures.
+      expect(runDraftingSpy).toHaveBeenCalledTimes(3);
+      expect(result.caseNote).toBe(goodDrafting.caseNote);
+    });
+
+    test("should throw (not fall back to a fake draft) when every drafting attempt errors", async () => {
+      const mockExtraction: ExtractionOutput = {
+        actionItems: [],
+        entities: [],
+      };
+
+      vi.spyOn(SpecialistCore.prototype, "runExtraction").mockResolvedValue(
+        mockExtraction,
+      );
+      const runDraftingSpy = vi
+        .spyOn(SpecialistCore.prototype, "runDrafting")
+        .mockRejectedValue(new Error("429 rate limited"));
+      vi.spyOn(SpecialistCore.prototype, "runVerification").mockResolvedValue(
+        mockExtraction,
+      );
+
+      const pipeline = new ProductionPipeline(mockPrisma, mockCore);
+
+      await expect(
+        pipeline.run(
+          mockAgency,
+          mockClient,
+          mockTranscript,
+          "test-meeting-all-fail",
+        ),
+      ).rejects.toThrow("429 rate limited");
+
+      // Should have exhausted all retries before giving up.
+      expect(runDraftingSpy).toHaveBeenCalledTimes(3);
+    });
+
     test("should skip verification when no claims exist", async () => {
       const emptyExtraction: ExtractionOutput = {
         actionItems: [],

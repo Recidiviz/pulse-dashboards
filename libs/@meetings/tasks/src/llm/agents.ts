@@ -91,6 +91,11 @@ export class SpecialistCore {
     const baseOpenAI = new OpenAI({
       apiKey: openaiKey,
       baseURL: "https://us.api.openai.com/v1",
+      // Explicit retry/timeout config (rather than relying on SDK defaults)
+      // so rate-limit/network errors get a predictable backoff before
+      // surfacing to the orchestrator's own retry loop.
+      maxRetries: 3,
+      timeout: 120_000,
     });
 
     return new SpecialistCore({
@@ -165,7 +170,7 @@ export class SpecialistCore {
       agentLogger.error("Extraction agent failed", {
         err: e instanceof Error ? e : String(e),
       });
-      return { actionItems: [], entities: [] };
+      throw e;
     }
   }
 
@@ -256,10 +261,7 @@ export class SpecialistCore {
       agentLogger.error("Drafting agent failed", {
         err: e instanceof Error ? e : String(e),
       });
-      return {
-        caseNote: "[Error]",
-        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
-      };
+      throw e;
     }
   }
 

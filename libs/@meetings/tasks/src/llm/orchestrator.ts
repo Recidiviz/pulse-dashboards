@@ -156,13 +156,26 @@ export class ProductionPipeline {
             max_retries: this.maxDraftingAttempts,
           });
 
-          // eslint-disable-next-line no-await-in-loop
-          const draft = await this.core.runDrafting(
-            transcript,
-            facts,
-            agency,
-            person,
-          );
+          let draft: Awaited<ReturnType<typeof this.core.runDrafting>>;
+          try {
+            // eslint-disable-next-line no-await-in-loop
+            draft = await this.core.runDrafting(
+              transcript,
+              facts,
+              agency,
+              person,
+            );
+          } catch (e) {
+            logger.warning("Drafting agent call failed", {
+              attempt: attempt + 1,
+              error: e instanceof Error ? e.message : String(e),
+            });
+
+            if (attempt === this.maxDraftingAttempts - 1) {
+              throw e;
+            }
+            continue;
+          }
 
           const draftingResult = draftingGuard(DraftingOutputSchema, draft);
 
