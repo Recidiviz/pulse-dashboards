@@ -761,14 +761,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
 
         const meeting = await prisma.meeting.findUnique({
           where: { id: meetingId },
-          include: {
-            transcriptions: {
-              include: { utterances: { orderBy: { startTimeMs: "asc" } } },
-              orderBy: { confidence: "desc" },
-            },
-            client: { select: { givenNames: true, surname: true } },
-            resident: { select: { givenNames: true, surname: true } },
-          },
+          include: labelStudioMeetingInclude,
         });
 
         if (
@@ -822,31 +815,17 @@ export function registerTaskRoutes(app: FastifyInstance) {
           stateCode !== StateCode.US_DEMO ||
           env.DEPLOY_ENV !== "production"
         ) {
-          try {
-            const meetingWithRelations = await prisma.meeting.findUniqueOrThrow(
-              {
-                where: { id: meetingId },
-                include: labelStudioMeetingInclude,
-              },
-            );
+          const needsRecidivizReview =
+            scores.caseNote?.grade === "BAD" ||
+            scores.actionItems?.grade === "BAD" ||
+            scores.overall?.grade === "BAD";
 
-            const needsRecidivizReview =
-              scores.caseNote?.grade === "BAD" ||
-              scores.actionItems?.grade === "BAD" ||
-              scores.overall?.grade === "BAD";
-
-            exportLabelStudioTask(
-              meetingWithRelations,
-              stateCode,
-              needsRecidivizReview,
-            ).catch((e) => {
+          exportLabelStudioTask(meeting, stateCode, needsRecidivizReview).catch(
+            (e) => {
               captureException(e);
               console.error("Failed to export Label Studio task to GCS", e);
-            });
-          } catch (e) {
-            captureException(e);
-            console.error("Failed to fetch meeting for Label Studio export", e);
-          }
+            },
+          );
         }
 
         reply.code(200).send("LLMAJ evaluation completed successfully");
