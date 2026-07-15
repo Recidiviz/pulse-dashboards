@@ -46,4 +46,9 @@ export class UsTxEarlyReleaseFromSupervisionOpportunity extends OpportunityBase<
 
     this.form = new UsTxEarlyReleaseFromSupervisionForm(this, this.rootStore);
   }
+
+  // TODO(#8429): Add caseNoteHeaders field to the admin panel config
+  get caseNoteHeaders() {
+    return ["Current Fees", "Most Recent Payments"];
+  }
 }
