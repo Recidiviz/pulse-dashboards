@@ -34599,12 +34599,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"express-rate-limit@npm:^6.4.0":
-  version: 6.4.0
-  resolution: "express-rate-limit@npm:6.4.0"
+"express-rate-limit@npm:^7.5.1":
+  version: 7.5.1
+  resolution: "express-rate-limit@npm:7.5.1"
   peerDependencies:
-    express: ^4 || ^5
-  checksum: 10c0/09cacbe2a97134212037e5e5daa5ec060f7840534a0c759c9e8d8f56a5ac8319e29049172e6f705606f20cf1f14f9d446625c4fe3c4b159399e264e5a4ba6985
+    express: ">= 4.11"
+  checksum: 10c0/b07de84d700a2c07c4bf2f040e7558ed5a1f660f03ed5f30bf8ff7b51e98ba7a85215640e70fc48cbbb9151066ea51239d9a1b41febc9b84d98c7915b0186161
   languageName: node
   linkType: hard
 
@@ -52906,7 +52906,7 @@ __metadata:
     expo-system-ui: "npm:~6.0.8"
     express: "npm:4.21.2"
     express-jwt: "npm:^6.1.2"
-    express-rate-limit: "npm:^6.4.0"
+    express-rate-limit: "npm:^7.5.1"
     express-unless: "npm:^1.0.0"
     express-validator: "npm:^6.8.1"
     extensionless: "npm:^1.9.9"

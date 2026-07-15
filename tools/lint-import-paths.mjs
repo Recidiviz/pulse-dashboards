@@ -27,20 +27,18 @@ const tsconfig = JSON.parse(
 // Allowlist the paths for the custom prisma clients (@prisma) and third-party
 // modules without bundler-resolvable types (object.hasown).
 //
-// TODO(OBT-36753): remove the firebase-admin and express-rate-limit entries once
-// those deps are upgraded. Their tsconfig.base.json `paths` redirects exist only
-// because firebase-admin@10 and express-rate-limit@6 expose subpath types via the
-// legacy `typesVersions` field / lack a `types` export condition, which
-// moduleResolution "bundler" ignores. firebase-admin >= 14 and express-rate-limit
-// v7 add a proper `types` condition, after which the redirects (and these two
-// allowlist entries) can be deleted.
+// TODO(OBT-36753): remove the firebase-admin entry once the dep is upgraded. Its
+// tsconfig.base.json `paths` redirect exists only because firebase-admin@10
+// exposes subpath types via the legacy `typesVersions` field / lacks a `types`
+// export condition, which moduleResolution "bundler" ignores. firebase-admin
+// >= 14 adds a proper `types` condition, after which the redirect (and this
+// allowlist entry) can be deleted.
 const invalidImportPaths = Object.keys(tsconfig.compilerOptions.paths).filter(
   (path) =>
     !path.startsWith("~") &&
     !path.startsWith("@prisma") &&
     !path.startsWith("object.hasown") &&
-    !path.startsWith("firebase-admin") &&
-    !path.startsWith("express-rate-limit"),
+    !path.startsWith("firebase-admin"),
 );
 
 if (invalidImportPaths.length) {
