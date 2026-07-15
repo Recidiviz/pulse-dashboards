@@ -245,6 +245,7 @@ export const meetingRouter = router({
 
           const currentActionItems = meeting.meetingActionItems.filter(
             (item) =>
+              meeting.notetakingPipelineRunId === null ||
               item.pipelineRunId === meeting.notetakingPipelineRunId ||
               item.pipelineRunId === null,
           );
