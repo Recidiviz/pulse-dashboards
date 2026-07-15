@@ -239,6 +239,7 @@ const MeetingDesktop = ({
                       />
                     )
                   }
+                  meetingId={meetingId}
                 />
               )}
               {activeTab === Tab.StaffFeedback &&

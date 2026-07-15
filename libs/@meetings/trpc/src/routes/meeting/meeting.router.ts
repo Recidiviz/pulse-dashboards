@@ -91,7 +91,7 @@ export const meetingRouter = router({
               meetingTypeCategory: true,
               meetingActionItems: {
                 where: { deleted: false },
-                orderBy: { createdAt: "asc" },
+                orderBy: [{ createdAt: "asc" }, { id: "asc" }],
                 select: {
                   id: true,
                   assignee: true,

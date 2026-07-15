@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import clsx from "clsx";
 import { ComponentType, ReactNode } from "react";
 import {
   Modal as RNModal,
@@ -25,6 +26,8 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
+
+import { Typography } from "./Typography";
 
 type ModalProps = ModalBaseProps & {
   onClickOutside?: () => void;
@@ -106,5 +109,49 @@ const Modal = ({
     </RNModal>
   );
 };
+
+type ModalSectionProps = {
+  className?: string;
+  children: ReactNode;
+};
+
+// Matches the most common title style across existing modals (e.g.
+// DiscardMeetingModal, DiscardUploadModal, EndMeetingModal).
+function ModalTitle({ className, children }: ModalSectionProps) {
+  return (
+    <Typography
+      className={clsx(
+        "text-center text-xl font-semibold text-primary",
+        className,
+      )}
+    >
+      {children}
+    </Typography>
+  );
+}
+
+// Matches the most common body/description style across existing modals.
+function ModalBody({ className, children }: ModalSectionProps) {
+  return (
+    <Typography
+      className={clsx("text-center text-sm text-secondary", className)}
+    >
+      {children}
+    </Typography>
+  );
+}
+
+// Matches the most common actions-row style across existing modals.
+function ModalActions({ className, children }: ModalSectionProps) {
+  return (
+    <View className={clsx("flex-row justify-end gap-2", className)}>
+      {children}
+    </View>
+  );
+}
+
+Modal.Title = ModalTitle;
+Modal.Body = ModalBody;
+Modal.Actions = ModalActions;
 
 export default Modal;
