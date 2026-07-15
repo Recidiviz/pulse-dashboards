@@ -16,9 +16,9 @@
 // =============================================================================
 
 /// <reference types='vitest' />
-import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 // ignoring the nx rules here since this is just tooling,
 // and we don't want to import the entire library here anyway
@@ -93,7 +93,7 @@ export default defineConfig(() => ({
         plugins: ["babel-plugin-macros", "babel-plugin-styled-components"],
       },
     }),
-    nxViteTsPaths(),
+    tsconfigPaths(),
   ],
 
   build: {

@@ -1,10 +1,11 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "noEmit": false,
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "outDir": "../../dist/out-tsc",
+    // Pure typecheck: consumers import this lib's hand-authored src/index.d.ts, not
+    // emitted output, so we don't emit. Declaration emit is off because tsc (TypeScript 7) runs
+    // declaration diagnostics that trip on the generated Prisma client we re-export
+    // (TS4094 on #private fields) — unwinnable third-party generated code.
+    "noEmit": true
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts"]
 }

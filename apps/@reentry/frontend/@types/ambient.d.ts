@@ -15,28 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { defineConfig } from "vite";
-import tsconfigPaths from "vite-tsconfig-paths";
+// Vitest's jest-compatible globals (describe/it/expect/...) for the test files this
+// project's single tsconfig.json typechecks. Previously these resolved only by tsc's
+// implicit autoload of @types/jest; moduleResolution "bundler" under TypeScript 7 does not, so
+// we reference them explicitly. This config has no `types` array, so a reference (rather
+// than a `types` entry) is used to avoid disabling the default @types autoinclusion.
+/// <reference types="vitest/globals" />
 
-export default defineConfig(() => ({
-  root: __dirname,
-  cacheDir: "../../node_modules/.vite/libs/staff-shared-filters",
-
-  plugins: [tsconfigPaths()],
-
-  test: {
-    passWithNoTests: true,
-    mockReset: true,
-    unstubEnvs: true,
-    globalSetup: ["src/setupTestsGlobal.ts"],
-    setupFiles: ["src/setupTests.ts"],
-    globals: true,
-    environment: "node",
-    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
-    reporters: ["default"],
-    coverage: {
-      reportsDirectory: "../../coverage/libs/staff-shared-filters",
-      provider: "v8",
-    },
-  },
-}));
+// Side-effect stylesheet imports (global.css, component .css, package .css) carry no
+// types; declare them so bundler resolution doesn't flag TS2882.
+declare module "*.css";

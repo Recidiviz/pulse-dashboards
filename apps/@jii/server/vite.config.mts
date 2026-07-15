@@ -16,12 +16,12 @@
 // =============================================================================
 
 /// <reference types='vitest' />
-import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
 import { defineConfig } from "vite";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig(() => ({
   root: __dirname,
   cacheDir: "../../../node_modules/.vite/apps/@jii/server",
 
-  plugins: [nxViteTsPaths()],
+  plugins: [tsconfigPaths()],
 }));

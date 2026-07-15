@@ -15,7 +15,7 @@
     "esModuleInterop": true,
     "target": "ESNext",
     "module": "es2022",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "types": ["vite/client", "node"]
   }
 }

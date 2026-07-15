@@ -4,11 +4,16 @@
     "allowSyntheticDefaultImports": true,
     "jsx": "react-native",
     "lib": ["dom", "esnext"],
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "strict": true,
     "moduleSuffixes": ["", ".native", ".web"]
+  },
+  "ts-node": {
+    "compilerOptions": {
+      "types": ["node"]
+    }
   },
   "include": [
     "nativewind-env.d.ts",

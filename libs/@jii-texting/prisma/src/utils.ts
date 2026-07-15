@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PrismaClient } from "@prisma/jii-texting/client/index.js";
+import { PrismaClient } from "@prisma/jii-texting/client";
 
 const prismaClients: Record<string, PrismaClient> = {};
 

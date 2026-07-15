@@ -17,8 +17,8 @@
 
 import { omit } from "lodash-es";
 import OpenAI from "openai";
-import { ChatCompletionMessageParam } from "openai/src/resources/chat/completions/completions";
-import { ResponseFormatJSONSchema } from "openai/src/resources/shared";
+import { ChatCompletionMessageParam } from "openai/resources/chat/completions/completions";
+import { ResponseFormatJSONSchema } from "openai/resources/shared";
 import { ZodSchema } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 

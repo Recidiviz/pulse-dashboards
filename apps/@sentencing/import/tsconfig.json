@@ -11,14 +11,14 @@
     },
     {
       "path": "./tsconfig.zod.json"
-    },
+    }
   ],
   "compilerOptions": {
     "strict": true,
     "esModuleInterop": true,
     "target": "ESNext",
     "module": "es2022",
-    "moduleResolution": "Node",
-    "types": ["vite/client", "node"],
+    "moduleResolution": "bundler",
+    "types": ["vite/client", "node"]
   }
 }

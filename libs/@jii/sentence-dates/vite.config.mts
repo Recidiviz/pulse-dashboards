@@ -17,9 +17,9 @@
 
 /// <reference types='vitest' />
 import { nxCopyAssetsPlugin } from "@nx/vite/plugins/nx-copy-assets.plugin";
-import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig(() => ({
   root: __dirname,
@@ -30,12 +30,12 @@ export default defineConfig(() => ({
         plugins: ["babel-plugin-macros", "babel-plugin-styled-components"],
       },
     }),
-    nxViteTsPaths(),
+    tsconfigPaths(),
     nxCopyAssetsPlugin(["*.md"]),
   ],
   // Uncomment this if you are using workers.
   // worker: {
-  //  plugins: [ nxViteTsPaths() ],
+  //  plugins: [ tsconfigPaths() ],
   // },
   test: {
     mockReset: true,

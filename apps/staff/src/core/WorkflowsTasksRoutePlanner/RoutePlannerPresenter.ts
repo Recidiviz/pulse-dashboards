@@ -101,7 +101,7 @@ export class RoutePlannerPresenter {
 
   // Starting address picker and autocomplete settings
 
-  set userPickedStartingAddress(newAddress: string) {
+  set userPickedStartingAddress(newAddress: string | undefined) {
     this.analyticsStore.trackRoutePlannerStartingAddressChanged();
     this._userPickedStartingAddress = newAddress;
 

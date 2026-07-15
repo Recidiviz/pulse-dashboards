@@ -15,28 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { defineConfig } from "vite";
-import tsconfigPaths from "vite-tsconfig-paths";
-
-export default defineConfig(() => ({
-  root: __dirname,
-  cacheDir: "../../node_modules/.vite/libs/staff-shared-filters",
-
-  plugins: [tsconfigPaths()],
-
-  test: {
-    passWithNoTests: true,
-    mockReset: true,
-    unstubEnvs: true,
-    globalSetup: ["src/setupTestsGlobal.ts"],
-    setupFiles: ["src/setupTests.ts"],
-    globals: true,
-    environment: "node",
-    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
-    reporters: ["default"],
-    coverage: {
-      reportsDirectory: "../../coverage/libs/staff-shared-filters",
-      provider: "v8",
-    },
-  },
-}));
+// `@fontsource/libre-baskerville` ships font CSS with no type declarations. Under
+// `moduleResolution: "bundler"` (TypeScript 7) a bare side-effect import of an
+// untyped package errors with TS2882; declaring the module lets the import type-check.
+declare module "@fontsource/libre-baskerville";

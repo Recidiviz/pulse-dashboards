@@ -20,8 +20,9 @@ import { observer } from "mobx-react-lite";
 import { transparentize } from "polished";
 import * as React from "react";
 import { useRef } from "react";
-import TextareaAutosize from "react-textarea-autosize";
-import type { TextareaAutosizeProps } from "react-textarea-autosize/dist/declarations/src";
+import TextareaAutosize, {
+  type TextareaAutosizeProps,
+} from "react-textarea-autosize";
 import styled from "styled-components";
 
 import { UsNdEarlyTerminationDraftData } from "~datatypes";

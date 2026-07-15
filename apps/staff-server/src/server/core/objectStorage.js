@@ -43,6 +43,8 @@ export function downloadFile(bucketName, stateCode, srcFilename) {
  * Asynchronously downloads the metadata for the file in the given bucket with the given file name.
  * Returns a Promise which will eventually return either an error or the metadata of the file as a
  * Buffer of bytes.
+ *
+ * @returns {Promise<import("@google-cloud/storage").GetFileMetadataResponse>}
  */
 export function downloadFileMetadata(bucketName, stateCode, srcFilename) {
   const storage = new Storage();

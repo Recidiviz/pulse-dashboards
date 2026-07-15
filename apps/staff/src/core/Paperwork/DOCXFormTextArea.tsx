@@ -19,8 +19,9 @@ import { animation } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { transparentize } from "polished";
 import { useRef } from "react";
-import TextareaAutosize from "react-textarea-autosize";
-import type { TextareaAutosizeProps } from "react-textarea-autosize/dist/declarations/src";
+import TextareaAutosize, {
+  type TextareaAutosizeProps,
+} from "react-textarea-autosize";
 import styled from "styled-components";
 
 import { palette } from "~design-system";

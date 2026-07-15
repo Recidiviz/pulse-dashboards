@@ -18,43 +18,16 @@
 /// <reference types='vitest' />
 import { createRequire } from "node:module";
 
-import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
 import react from "@vitejs/plugin-react";
 import { defineConfig, splitVendorChunkPlugin } from "vite";
 import macros from "vite-plugin-babel-macros";
 import { comlink } from "vite-plugin-comlink";
 import svgr from "vite-plugin-svgr";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 const require = createRequire(import.meta.url);
 const clsxEntry = require.resolve("clsx");
 
-// @nx/vite@22's nxViteTsPaths dropped resolution of aliased non-source asset
-// imports (e.g. `~shared-assets/.../foo.png`). Its fallback file matcher only
-// tries the extensions it's given, and images aren't in the defaults, so such
-// imports fall through to Vite's resolver — which doesn't know the `~` alias —
-// and fail with "Failed to resolve import ... Does the file exist?". Passing
-// the default extension list plus raster image types restores resolution.
-// (SVGs are handled by vite-plugin-svgr, so they are intentionally omitted.)
-const nxViteTsPathsExtensions = [
-  ".ts",
-  ".tsx",
-  ".js",
-  ".jsx",
-  ".json",
-  ".mts",
-  ".mjs",
-  ".cts",
-  ".cjs",
-  ".css",
-  ".scss",
-  ".less",
-  ".png",
-  ".jpg",
-  ".jpeg",
-  ".gif",
-  ".webp",
-  ".avif",
-];
 export default defineConfig(() => ({
   resolve: {
     alias: {
@@ -92,15 +65,12 @@ export default defineConfig(() => ({
     }),
     macros(),
     svgr(),
-    nxViteTsPaths({ extensions: nxViteTsPathsExtensions }),
+    tsconfigPaths(),
     splitVendorChunkPlugin(),
   ],
 
   worker: {
-    plugins: () => [
-      comlink(),
-      nxViteTsPaths({ extensions: nxViteTsPathsExtensions }),
-    ],
+    plugins: () => [comlink(), tsconfigPaths()],
   },
 
   build: {

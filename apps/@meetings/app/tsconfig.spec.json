@@ -2,13 +2,12 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../../dist/out-tsc",
-    "module": "commonjs",
-    "moduleResolution": "node10",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "jsx": "react-jsx",
-    "types": ["jest", "node"],
-    "noEmit": false
+    "types": ["jest", "node"]
   },
-  "files": ["test-setup.ts", "images.d.ts"],
+  "files": ["test-setup.ts", "images.d.ts", "css.d.ts"],
   "include": [
     "jest.config.ts",
     "src/**/*.ts",

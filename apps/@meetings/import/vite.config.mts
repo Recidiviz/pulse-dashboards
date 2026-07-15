@@ -16,16 +16,16 @@
 // =============================================================================
 
 /// <reference types='vitest' />
-import {workspaceRoot} from "@nx/devkit";
-import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
-import {join} from "path";
-import {defineConfig, loadEnv} from "vite";
+import { workspaceRoot } from "@nx/devkit";
+import { join } from "path";
+import { defineConfig, loadEnv } from "vite";
+import tsconfigPaths from "vite-tsconfig-paths";
 
-export default defineConfig(({mode}) => ({
+export default defineConfig(({ mode }) => ({
   root: __dirname,
   cacheDir: "../../../node_modules/.vite/apps/@meetings/import",
 
-  plugins: [nxViteTsPaths()],
+  plugins: [tsconfigPaths()],
   test: {
     passWithNoTests: true,
     name: "@meetings/import",
@@ -45,6 +45,9 @@ export default defineConfig(({mode}) => ({
       provider: "v8",
     },
     // Load .env.test from @meetings/server (adds basic env-compatibility for direct invocations of vitest)
-    env: mode === "test" ? loadEnv(mode, join(workspaceRoot, "apps/@meetings/server"), "") : undefined,
+    env:
+      mode === "test"
+        ? loadEnv(mode, join(workspaceRoot, "apps/@meetings/server"), "")
+        : undefined,
   },
 }));

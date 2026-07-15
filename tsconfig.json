@@ -1,0 +1,7 @@
+{
+  // This file exists for the benefit of vite-tsconfig-paths: It looks for a file
+  // named `tsconfig.json` that claims the file it's trying to resolve from. Everything else
+  // should either be reading `tsconfig.base.json` or the project-specific tsconfigs.
+  "extends": "./tsconfig.base.json",
+  "include": ["apps/**/*", "libs/**/*", "tools/**/*", "plugins/**/*"]
+}

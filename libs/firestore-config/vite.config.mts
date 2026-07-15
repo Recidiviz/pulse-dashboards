@@ -15,15 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
 import path from "path";
 import { defineConfig } from "vite";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig(() => ({
   root: __dirname,
   cacheDir: "../../node_modules/.vite/libs/firestore-config",
 
-  plugins: [nxViteTsPaths()],
+  plugins: [tsconfigPaths()],
 
   // for the unit tests we have to force Vitest to use the CommonJS version of the library,
   // because the unit test SDK bindings are outdated;

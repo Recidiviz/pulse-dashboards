@@ -16,30 +16,32 @@
 // =============================================================================
 
 /// <reference types='vitest' />
-import {workspaceRoot} from "@nx/devkit";
-import {nxViteTsPaths} from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
-import {join} from "path";
-import {defineConfig, loadEnv} from "vite";
+import { workspaceRoot } from "@nx/devkit";
+import { join } from "path";
+import { defineConfig, loadEnv } from "vite";
+import tsconfigPaths from "vite-tsconfig-paths";
 
-export default defineConfig(({mode}) =>
-  ({
-    root: __dirname,
-    cacheDir: "../../../node_modules/.vite/libs/@meetings/prisma",
+export default defineConfig(({ mode }) => ({
+  root: __dirname,
+  cacheDir: "../../../node_modules/.vite/libs/@meetings/prisma",
 
-    plugins: [nxViteTsPaths()],
-    test: {
-      passWithNoTests: true,
-      name: "@meetings/prisma",
-      globals: true,
-      cache: {dir: "../../../node_modules/.vitest"},
-      environment: "node",
-      include: ["__tests__/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
-      reporters: ["default"],
-      coverage: {
-        reportsDirectory: "../../../coverage/libs/@meetings/prisma",
-        provider: "v8",
-      },
-      // Load .env.test from @meetings/server (adds basic env-compatibility for direct invocations of vitest)
-      env: mode === "test" ? loadEnv(mode, join(workspaceRoot, "apps/@meetings/server"), "") : undefined,
-    }
-  }));
+  plugins: [tsconfigPaths()],
+  test: {
+    passWithNoTests: true,
+    name: "@meetings/prisma",
+    globals: true,
+    cache: { dir: "../../../node_modules/.vitest" },
+    environment: "node",
+    include: ["__tests__/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    reporters: ["default"],
+    coverage: {
+      reportsDirectory: "../../../coverage/libs/@meetings/prisma",
+      provider: "v8",
+    },
+    // Load .env.test from @meetings/server (adds basic env-compatibility for direct invocations of vitest)
+    env:
+      mode === "test"
+        ? loadEnv(mode, join(workspaceRoot, "apps/@meetings/server"), "")
+        : undefined,
+  },
+}));

@@ -16,16 +16,16 @@
 // =============================================================================
 
 import { nxCopyAssetsPlugin } from "@nx/vite/plugins/nx-copy-assets.plugin";
-import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig(() => ({
   root: __dirname,
   cacheDir: "../../../node_modules/.vite/libs/@jii/case-planning",
   plugins: [
     react({ babel: { plugins: ["babel-plugin-macros"] } }),
-    nxViteTsPaths(),
+    tsconfigPaths(),
     nxCopyAssetsPlugin(["*.md"]),
   ],
   test: {

@@ -465,9 +465,11 @@
     "testcontainers": "^11.6.0",
     "ts-jest": "^29.4.0",
     "ts-node": "^10.9.1",
+    "tsconfig-paths-webpack-plugin": "^4.2.0",
     "tsx": "^4.22.4",
-    "typescript": "5.8.3",
-    "typescript-eslint": "8.40.0",
+    "typescript": "npm:@typescript/typescript6@^6.0.0",
+    "typescript-7": "npm:typescript@^7.0.2",
+    "typescript-eslint": "8.62.1",
     "utility-types": "^3.10.0",
     "v8r": "^4.2.1",
     "vite": "6.3.5",
@@ -475,6 +477,7 @@
     "vite-plugin-babel-macros": "^1.0.6",
     "vite-plugin-comlink": "^4.0.2",
     "vite-plugin-svgr": "^4.2.0",
+    "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^2.1.9",
     "vitest-canvas-mock": "^0.3.3",
     "vitest-fetch-mock": "^0.3.0",
@@ -510,5 +513,5 @@
     "deploy-reentry": "node tools/deploy-reentry.mjs"
   },
   "nx": {},
-  "packageManager": "yarn@4.10.3+sha512.c38cafb5c7bb273f3926d04e55e1d8c9dfa7d9c3ea1f36a4868fa028b9e5f72298f0b7f401ad5eb921749eb012eb1c3bb74bf7503df3ee43fd600d14a018266f"
+  "packageManager": "yarn@4.17.1+sha512.ccbfabf7d7b6b32075088be9386fb9a2e00bb6887ef07fa56effabc890a56d53da1ccc4128d62db245fcbd3961b236d75335bdf7d5320ed6eafb7588b7ad4697"
 }

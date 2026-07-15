@@ -16,15 +16,15 @@
 // =============================================================================
 
 /// <reference types='vitest' />
-import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
 import { loadEnv } from "vite";
+import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode || 'test', process.cwd(), '');
+  const env = loadEnv(mode || "test", process.cwd(), "");
 
   return {
-    plugins: [nxViteTsPaths()],
+    plugins: [tsconfigPaths()],
     test: {
       globals: true,
       include: ["integration-tests/**/*.{test,spec}.{ts,tsx}"],

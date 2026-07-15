@@ -1,4 +1,3 @@
-/* eslint-disable @nx/enforce-module-boundaries */
 // Recidiviz - a data platform for criminal justice reform
 // Copyright (C) 2025 Recidiviz, Inc.
 //
@@ -19,7 +18,7 @@
 import type {
   UsTxAnnualReportStatusDraftData,
   UsTxEarlyReleaseFromSupervisionDraftData,
-} from "apps/staff/src/WorkflowsStore/Opportunity/UsTx/UsTxDraftData";
+} from "../../../WorkflowsStore/Opportunity/UsTx/UsTxDraftData";
 
 export type FormDataFieldName =
   | keyof UsTxAnnualReportStatusDraftData

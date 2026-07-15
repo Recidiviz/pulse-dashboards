@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { createInstance } from "i18next";
+import { createInstance, type i18n } from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import ChainedBackend from "i18next-chained-backend";
 import resourcesToBackend from "i18next-resources-to-backend";
@@ -38,7 +38,7 @@ export type SupportedLanguagesOption = Array<string> | "_ALL_";
  */
 export function createI18nInstance(
   additionalLanguages: SupportedLanguagesOption,
-) {
+): i18n {
   const supportedLngs = Array.isArray(additionalLanguages)
     ? [
         ...additionalLanguages,

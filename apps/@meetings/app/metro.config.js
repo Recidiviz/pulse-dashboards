@@ -29,9 +29,13 @@ const { assetExts, sourceExts } = defaultConfig.resolver;
 
 const monorepoRoot = path.resolve(__dirname, "../../..");
 const tsConfig = loadConfig(__dirname);
+// tsconfig.base.json no longer sets `baseUrl` (TS7 forbids it), so tsconfig-paths
+// defaults absoluteBaseUrl to this app's directory. The `paths` values are
+// repo-root-relative (e.g. "./libs/...", "./apps/@meetings/app/src/*"), so match
+// them against the monorepo root or every `~` alias resolves to nothing.
 const matchPath =
   tsConfig.resultType === "success"
-    ? createMatchPath(tsConfig.absoluteBaseUrl, tsConfig.paths)
+    ? createMatchPath(monorepoRoot, tsConfig.paths)
     : null;
 
 /**
@@ -54,12 +58,21 @@ const customConfig = {
     unstable_conditionNames: ["browser", "require", "react-native"],
     resolveRequest: (context, moduleName, platform) => {
       if (matchPath) {
-        const resolved = matchPath(moduleName, undefined, undefined, [
-          ".ts",
-          ".tsx",
-          ".js",
-          ".jsx",
-        ]);
+        // tsconfig-paths doesn't understand platform-suffixed files (e.g. a
+        // module that only exists as foo.web.ts / foo.native.ts with no plain
+        // foo.ts), so offer it the current platform's suffixes first — ordered
+        // so it never returns another platform's file. matchPath resolves the
+        // `~` alias to a real base path; Metro then re-resolves it for the
+        // actual platform.
+        const suffixes = platform === "web" ? ["web"] : [platform, "native"];
+        const exts = [];
+        for (const base of [".ts", ".tsx", ".js", ".jsx"]) {
+          for (const suffix of suffixes) {
+            if (suffix) exts.push(`.${suffix}${base}`);
+          }
+          exts.push(base);
+        }
+        const resolved = matchPath(moduleName, undefined, undefined, exts);
         if (resolved) {
           return context.resolveRequest(context, resolved, platform);
         }

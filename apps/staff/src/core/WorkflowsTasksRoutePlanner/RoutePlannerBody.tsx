@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// @ts-expect-error Types from the extended component library can't be resolved under
-// moduleResolution of "node"
 import { APILoader } from "@googlemaps/extended-component-library/react";
 import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";

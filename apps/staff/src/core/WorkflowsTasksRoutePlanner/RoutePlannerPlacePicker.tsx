@@ -15,9 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// prettier-ignore
-// @ts-expect-error Types from the extended component library can't be resolved under moduleResolution of "node"
-import { Place, PlacePicker } from "@googlemaps/extended-component-library/react";
+// `PlacePickerElement` is the underlying custom-element class that the React wrapper's
+// ref resolves to; the wrapper component itself is the `PlacePicker` export from `/react`.
+import type { PlacePicker as PlacePickerElement } from "@googlemaps/extended-component-library/place_picker.js";
+import { PlacePicker } from "@googlemaps/extended-component-library/react";
 import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
@@ -28,6 +29,11 @@ import { palette } from "~design-system";
 
 import Checkbox from "../../components/Checkbox/Checkbox";
 import { RoutePlannerPresenter } from "./RoutePlannerPresenter";
+
+// `valueInternal` is an internal (non-public) setter on the PlacePicker element that we
+// use to programmatically sync the ending picker's selection with the starting picker's.
+// See: https://github.com/googlemaps/extended-component-library/blob/70aff8d2f92a2cc925bf37338e7ad298edf008aa/src/place_picker/place_picker.ts#L240
+type PlacePickerInternal = { valueInternal?: PlacePickerElement["value"] };
 
 const PlacePickersRow = styled.div`
   display: flex;
@@ -72,22 +78,21 @@ export const RoutePlannerPlacePicker = observer(
     presenter: RoutePlannerPresenter;
   }) {
     const hasStartingAddress = !!presenter.startingAddress;
-    const startingPickerRef = useRef<PlacePicker>(null);
-    const endingPickerRef = useRef<PlacePicker>(null);
+    const startingPickerRef = useRef<PlacePickerElement>(null);
+    const endingPickerRef = useRef<PlacePickerElement>(null);
 
     const syncEndingPickerWithStart = () => {
-      const startingPicker: PlacePicker = startingPickerRef.current;
-      const endingPicker: PlacePicker = endingPickerRef.current;
+      const startingPicker = startingPickerRef.current;
+      const endingPicker = endingPickerRef.current;
       if (!startingPicker || !endingPicker) return;
 
-      const startingPlace: Place = startingPicker.value;
+      const startingPlace = startingPicker.value;
       if (!startingPlace) return;
 
-      // valueInternal is the PlacePicker's internal Place object setter from Google's
-      // extended-component-library — we use it to programmatically sync the ending
+      // Use the picker's internal value setter to programmatically sync the ending
       // picker's selection with the starting picker's value.
-      // See: https://github.com/googlemaps/extended-component-library/blob/70aff8d2f92a2cc925bf37338e7ad298edf008aa/src/place_picker/place_picker.ts#L240
-      endingPicker.valueInternal = startingPlace;
+      (endingPicker as unknown as PlacePickerInternal).valueInternal =
+        startingPlace;
 
       const input = endingPicker.shadowRoot?.querySelector("input");
       if (input && startingPlace.formattedAddress) {
@@ -102,7 +107,8 @@ export const RoutePlannerPlacePicker = observer(
       const endingPicker = endingPickerRef.current;
       if (!endingPicker) return;
 
-      endingPicker.valueInternal = undefined;
+      (endingPicker as unknown as PlacePickerInternal).valueInternal =
+        undefined;
 
       const input = endingPicker.shadowRoot?.querySelector("input");
       if (input) {
@@ -135,13 +141,13 @@ export const RoutePlannerPlacePicker = observer(
               locationBias={presenter.locationBias}
               radius={presenter.radius}
               strictBounds={true}
-              // @ts-expect-error We don't have types from the extended component library
               onPlaceChange={(e) => {
+                const picker = e.target as PlacePickerElement;
                 presenter.userPickedStartingAddress =
-                  e.target.value?.formattedAddress;
+                  picker.value?.formattedAddress ?? undefined;
                 // this checks if the input value is undefined and
                 // if it is, the ending picker is cleared
-                if (!e.target.value && presenter.isEndingAddressMatchingStart) {
+                if (!picker.value && presenter.isEndingAddressMatchingStart) {
                   clearEndingPicker();
                 }
                 // this checks if the matching checkbox is selected
@@ -163,10 +169,10 @@ export const RoutePlannerPlacePicker = observer(
               locationBias={presenter.locationBias}
               radius={presenter.radius}
               strictBounds={true}
-              // @ts-expect-error We don't have types from the extended component library
               onPlaceChange={(e) => {
+                const picker = e.target as PlacePickerElement;
                 presenter.userPickedEndingAddress =
-                  e.target.value?.formattedAddress;
+                  picker.value?.formattedAddress ?? undefined;
               }}
             />
           </PlacePickerContainer>

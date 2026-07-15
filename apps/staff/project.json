@@ -10,8 +10,8 @@
       "dependsOn": ["^prisma-generate"],
       "options": {
         "commands": [
-          "tsc -p ./tsconfig.app.json",
-          "tsc -p ./tsconfig.spec.json"
+          "tsc --checkers 2 -p ./tsconfig.app.json",
+          "tsc --checkers 2 -p ./tsconfig.spec.json"
         ],
         "cwd": "{projectRoot}"
       }

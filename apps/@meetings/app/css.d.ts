@@ -15,28 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { defineConfig } from "vite";
-import tsconfigPaths from "vite-tsconfig-paths";
-
-export default defineConfig(() => ({
-  root: __dirname,
-  cacheDir: "../../node_modules/.vite/libs/staff-shared-filters",
-
-  plugins: [tsconfigPaths()],
-
-  test: {
-    passWithNoTests: true,
-    mockReset: true,
-    unstubEnvs: true,
-    globalSetup: ["src/setupTestsGlobal.ts"],
-    setupFiles: ["src/setupTests.ts"],
-    globals: true,
-    environment: "node",
-    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
-    reporters: ["default"],
-    coverage: {
-      reportsDirectory: "../../coverage/libs/staff-shared-filters",
-      provider: "v8",
-    },
-  },
-}));
+// The nativewind global.css side-effect import carries no types; declare bare .css
+// modules so bundler resolution under TypeScript 7 doesn't flag TS2882.
+declare module "*.css";

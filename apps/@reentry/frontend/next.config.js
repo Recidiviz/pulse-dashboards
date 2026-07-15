@@ -20,6 +20,7 @@
 const path = require("path");
 const { composePlugins, withNx } = require("@nx/next");
 const { withSentryConfig } = require("@sentry/nextjs");
+const { TsconfigPathsPlugin } = require("tsconfig-paths-webpack-plugin");
 const { isFeatureEnabled } = require("./config/featureFlagsBuildtime");
 
 /**
@@ -29,6 +30,24 @@ const nextConfig = {
   output: "standalone",
   outputFileTracingRoot: path.join(__dirname, "../../.."),
   productionBrowserSourceMaps: isFeatureEnabled("ENABLE_SOURCE_MAPS"),
+  webpack(config) {
+    // TypeScript 7 forbids `baseUrl`, so tsconfig.base.json no longer sets one.
+    // Vite apps resolve `~` path aliases via vite-tsconfig-paths, but Next.js
+    // resolves them with its built-in JsConfigPathsPlugin, which requires a
+    // baseUrl — without one it resolves the base config's repo-root-relative
+    // `paths` values against this app's own directory, breaking every
+    // `~@reentry/*` import. Register tsconfig-paths-webpack-plugin with an
+    // explicit repo-root baseUrl so the aliases resolve correctly.
+    config.resolve.plugins = config.resolve.plugins ?? [];
+    config.resolve.plugins.push(
+      new TsconfigPathsPlugin({
+        configFile: path.join(__dirname, "tsconfig.json"),
+        baseUrl: path.join(__dirname, "../../.."),
+        extensions: config.resolve.extensions,
+      }),
+    );
+    return config;
+  },
   async headers() {
     return [
       {
