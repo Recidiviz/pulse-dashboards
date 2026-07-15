@@ -309,7 +309,7 @@ export const ReioSubmissionModal = observer(function ReioSubmissionModal({
         </Button>
       </ModalControls>
       <ModalTitle>Submit Compliant Reporting Referral Note (REIO)</ModalTitle>
-      <TextAreaLabel>Other comments</TextAreaLabel>
+      <TextAreaLabel>Enter Contact Comment</TextAreaLabel>
       <CharacterCountTextField
         value={comment}
         placeholder="Please specify a reason..."
