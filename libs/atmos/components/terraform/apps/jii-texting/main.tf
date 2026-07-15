@@ -18,6 +18,8 @@ locals {
 
   import_job_name = "jii-texting-import"
 
+  additional_databases = ["us_id", "us_tx"]
+
   # This list needs to be marked as nonsensitive so it can be used in `for_each`
   # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
   env_vars = nonsensitive([
@@ -43,7 +45,7 @@ module "database" {
   zone                       = "us-central1-a"
   secondary_zone             = var.database_secondary_zone
   tier                       = "db-custom-1-3840"
-  additional_databases       = ["us_id", "us_tx"]
+  additional_databases       = local.additional_databases
   private_network            = "projects/${var.project_id}/global/networks/default"
   insights_config = {
     query_insights_enabled : true

@@ -19,6 +19,8 @@ locals {
   etl_bucket_name     = "sentencing-etl-data"
   archive_bucket_name = "${local.etl_bucket_name}-archive"
 
+  additional_databases = ["us_id", "us_nd", "us_mo"]
+
   # This list needs to be marked as nonsensitive so it can be used in `for_each`
   # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
   env_vars = nonsensitive([
@@ -44,7 +46,7 @@ module "database" {
   zone                                          = "us-central1-f"
   secondary_zone                                = var.database_secondary_zone
   tier                                          = "db-custom-1-3840"
-  additional_databases                          = ["us_id", "us_nd", "us_mo"]
+  additional_databases                          = local.additional_databases
   private_network                               = var.private_network
   enable_private_path_for_google_cloud_services = var.private_network != null ? true : false
 

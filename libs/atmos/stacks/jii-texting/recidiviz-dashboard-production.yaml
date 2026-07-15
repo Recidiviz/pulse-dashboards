@@ -94,6 +94,4 @@ components:
           port: !terraform.state cloud-sql-proxy recidiviz-dashboard-production--shared-infra ".ports[""jii-texting""]"
           username: !terraform.state apps/jii-texting database_credentials.username
           password: !terraform.state apps/jii-texting database_credentials.password
-          databases:
-            - us_id
-            - us_tx
+          databases: !terraform.state apps/jii-texting additional_databases

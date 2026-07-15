@@ -16,6 +16,8 @@ locals {
   etl_bucket_name     = "meetings-etl-data"
   archive_bucket_name = "${local.etl_bucket_name}-archive"
   audio_bucket_name   = "meetings-audio-data"
+
+  additional_databases = ["us_az", "us_co", "us_me", "us_nc", "us_nd", "us_ne", "us_tn", "us_demo", "global"]
 }
 
 module "database" {
@@ -32,7 +34,7 @@ module "database" {
   zone                                          = "us-central1-f"
   secondary_zone                                = var.database_secondary_zone
   tier                                          = "db-custom-1-3840"
-  additional_databases                          = ["us_az", "us_co", "us_me", "us_nc", "us_nd", "us_ne", "us_tn", "us_demo", "global"]
+  additional_databases                          = local.additional_databases
   private_network                               = var.private_network
   enable_private_path_for_google_cloud_services = var.private_network != null ? true : false
 

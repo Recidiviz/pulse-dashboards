@@ -24,3 +24,8 @@ output "database_credentials" {
   }
   sensitive = true
 }
+
+output "additional_databases" {
+  description = "The names of the per-state databases created in the Cloud SQL instance"
+  value       = local.additional_databases
+}

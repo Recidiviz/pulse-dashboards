@@ -50,6 +50,4 @@ components:
           port: !terraform.state cloud-sql-proxy recidiviz-dashboard-production--shared-infra ".ports[""sentencing-db""]"
           username: !terraform.state apps/sentencing "database_credentials.username"
           password: !terraform.state apps/sentencing "database_credentials.password"
-          databases:
-            - us_id
-            - us_nd
+          databases: !terraform.state apps/sentencing additional_databases

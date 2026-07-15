@@ -67,5 +67,4 @@ components:
           port: !terraform.state cloud-sql-proxy recidiviz-dashboard-production--shared-infra ".ports[""meetings""]"
           username: !terraform.state apps/meetings database_credentials.username
           password: !terraform.state apps/meetings database_credentials.password
-          databases:
-            - us_ne
+          databases: !terraform.state apps/meetings additional_databases
