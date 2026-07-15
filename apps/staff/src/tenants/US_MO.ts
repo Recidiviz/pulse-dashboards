@@ -64,15 +64,15 @@ const US_MO_CONFIG = {
       },
       usMoInitialPositiveHomeVisitIap: {
         constructor: UsMoInitialPositiveHomeVisitIapTask,
-        snoozeForOptionsInDays: [7, 30],
+        snoozeForOptionsInDays: [7, 30, 60],
       },
       usMoInitialPositiveHomeVisitSmi: {
         constructor: UsMoInitialPositiveHomeVisitSmiTask,
-        snoozeForOptionsInDays: [7, 30],
+        snoozeForOptionsInDays: [7, 30, 60],
       },
       usMoPositiveHomeVisit: {
         constructor: UsMoPositiveHomeVisitTask,
-        snoozeForOptionsInDays: [7, 30],
+        snoozeForOptionsInDays: [7, 30, 60],
       },
       usMoInPersonContact: {
         constructor: UsMoInPersonContactTask,
