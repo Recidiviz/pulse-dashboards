@@ -7874,6 +7874,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-typed-document-node/core@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "@graphql-typed-document-node/core@npm:3.2.0"
+  peerDependencies:
+    graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: 10c0/94e9d75c1f178bbae8d874f5a9361708a3350c8def7eaeb6920f2c820e82403b7d4f55b3735856d68e145e86c85cbfe2adc444fdc25519cd51f108697e99346c
+  languageName: node
+  linkType: hard
+
 "@grpc/grpc-js@npm:^1.10.9":
   version: 1.11.1
   resolution: "@grpc/grpc-js@npm:1.11.1"
@@ -9875,6 +9884,15 @@ __metadata:
     "@lezer/highlight": "npm:^1.0.0"
     "@lezer/lr": "npm:^1.4.0"
   checksum: 10c0/cef3d0c0a2c48a7e0f36ccc0af948da9394d17b164dcbaf0187d9b472fd4f628b3107d7a4041045181488f1966a94ae65640c932fc8d3bf8c3597813cfb86ae0
+  languageName: node
+  linkType: hard
+
+"@linear/sdk@npm:^88.0.0":
+  version: 88.0.0
+  resolution: "@linear/sdk@npm:88.0.0"
+  dependencies:
+    "@graphql-typed-document-node/core": "npm:^3.2.0"
+  checksum: 10c0/424c18ab61b4df5c6137831a5a50b852eed13382e65a99ee3f750f4a554055e34b1641c4ec4b52a37226f0fe086b7093b6f518451d0b3808d2d873a81b13ebcb
   languageName: node
   linkType: hard
 
@@ -52967,6 +52985,7 @@ __metadata:
     "@langchain/langgraph": "npm:^0.4.9"
     "@langchain/langgraph-checkpoint-postgres": "npm:^0.1.2"
     "@langchain/openai": "npm:^0.6.13"
+    "@linear/sdk": "npm:^88.0.0"
     "@looker/embed-sdk": "npm:^2.0.8"
     "@looker/sdk-node": "npm:^26.6.1"
     "@material/select": "npm:^14.0.0"

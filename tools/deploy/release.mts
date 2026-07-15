@@ -20,7 +20,7 @@ import inquirer from "inquirer";
 import { inc } from "semver";
 import { $, chalk } from "zx";
 
-import { owner, repo } from "./config.mts";
+import { owner, releaseTagPattern, repo } from "./config.mts";
 import type { DeployEnv, PublishedRelease, ReleasePlan } from "./types.mts";
 
 type ReleaseType = "patch" | "minor";
@@ -28,6 +28,33 @@ type ReleaseType = "patch" | "minor";
 export type NextVersionResult =
   | { ok: true; version: string }
   | { ok: false; versionToIncrement: string; releaseType: ReleaseType };
+
+/**
+ * Returns the nearest release tag reachable from `revision`'s own ancestry. Deliberately
+ * uses `git describe` (ancestry-aware) rather than "GitHub's latest release" — after a
+ * cherry-pick/hotfix, the latest published release lives on a `releases/vX.Y` branch, not
+ * on `main`, so anchoring on it would diff against an unrelated line of history. `git
+ * describe` walks back from `revision` itself, so it naturally finds the right ancestor
+ * whether that's a normal release tag on `main` or the tag a hotfix branched from.
+ */
+async function nearestReleaseTag(revision: string): Promise<string> {
+  return (
+    await $`git describe --abbrev=0 --match ${releaseTagPattern} ${revision}`.quiet()
+  ).stdout.trim();
+}
+
+/**
+ * Returns the commit messages shipping in this deploy: every commit between
+ * {@link nearestReleaseTag} and `revision` itself.
+ */
+async function getShippedCommitMessages(revision: string): Promise<string[]> {
+  const previousTag = await nearestReleaseTag(revision);
+  return (
+    await $`git log ${previousTag}..${revision} --format=%B%x00`.quiet()
+  ).stdout
+    .split("\0")
+    .filter(Boolean);
+}
 
 /**
  * Compute the next production version. Cherry-pick deploys bump the **patch** of the
@@ -47,9 +74,6 @@ export function computeNextVersion(
   }
   return { ok: true, version: `v${bumpedVersion}` };
 }
-
-/** Glob passed to `git tag`/`git describe` to match production release tags (`vX.Y.Z`). */
-const releaseTagPattern = "v[0-9]*.[0-9]*.[0-9]*";
 
 async function prepareStagingPlan(
   octokit: Octokit,
@@ -77,6 +101,11 @@ async function prepareStagingPlan(
     currentRevision,
     nextVersion: "deploy-candidate",
     deployingLatestMain,
+    // A staging deploy of a commit that isn't the tip of main (allowed, with a warning,
+    // above) hasn't actually merged its change yet, so there's nothing new to attribute.
+    shippedCommitMessages: deployingLatestMain
+      ? await getShippedCommitMessages(currentRevision)
+      : [],
   };
 }
 
@@ -108,6 +137,8 @@ async function prepareProductionPlan(
         isRedeploy: true,
         currentRevision,
         nextVersion: existingTag,
+        // Nothing new ships in a redeploy — it's the same already-released commit.
+        shippedCommitMessages: [],
       };
     }
   }
@@ -164,9 +195,7 @@ async function prepareProductionPlan(
   // inc(). Only needed for cherry-pick deploys.
   let describeTag = "";
   if (isCpDeploy) {
-    describeTag = (
-      await $`git describe --abbrev=0 --match ${releaseTagPattern}`
-    ).stdout.trim();
+    describeTag = await nearestReleaseTag(currentRevision);
   }
 
   const result = computeNextVersion(
@@ -189,6 +218,7 @@ async function prepareProductionPlan(
     nextVersion: result.version,
     releaseNotes,
     latestReleaseVersion,
+    shippedCommitMessages: await getShippedCommitMessages(currentRevision),
   };
 }
 
@@ -209,7 +239,13 @@ export async function preparePlan(
 
   switch (deployEnv) {
     case "demo":
-      return { env: "demo", currentRevision, nextVersion: "deploy-candidate" };
+      return {
+        env: "demo",
+        currentRevision,
+        nextVersion: "deploy-candidate",
+        // Demo doesn't correspond to a real release, so there's nothing to attribute.
+        shippedCommitMessages: [],
+      };
 
     case "staging":
       return prepareStagingPlan(octokit, currentRevision);

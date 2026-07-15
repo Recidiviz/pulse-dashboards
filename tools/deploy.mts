@@ -19,9 +19,18 @@
 
 import { $ } from "zx";
 
-import { createOctokit, createSlackClient } from "./deploy/clients.mts";
+import {
+  createLinearClient,
+  createOctokit,
+  createSlackClient,
+} from "./deploy/clients.mts";
 import { deployWithRetry } from "./deploy/deploy-with-retry.mts";
 import { verifyDockerImages } from "./deploy/images.mts";
+import {
+  commentOnManualTestingTickets,
+  extractLinearTicketIds,
+  setDeployStatusLabel,
+} from "./deploy/linear.mts";
 import { checkCleanRepo, checkCredentials } from "./deploy/preflight.mts";
 import { runPreviewDeploy } from "./deploy/preview.mts";
 import { promptDeployEnv, promptServices } from "./deploy/prompts.mts";
@@ -44,6 +53,7 @@ await checkCredentials();
 // --- Clients + environment ---------------------------------------------------
 const octokit = await createOctokit();
 const slack = await createSlackClient();
+const linear = await createLinearClient();
 const deployEnv = await promptDeployEnv();
 
 if (deployEnv === "preview (staff frontend only)") {
@@ -52,9 +62,12 @@ if (deployEnv === "preview (staff frontend only)") {
 }
 
 // --- Release plan (staging tip-check / production version math) --------------
-// `preparePlan` resolves the commit being deployed and carries it (plus the env and
-// version) on the returned plan, which is all any downstream phase needs.
+// `preparePlan` resolves the commit being deployed and carries it (plus the env,
+// version, and shipped commit messages) on the returned plan, which is all any
+// downstream phase needs.
 const plan = await preparePlan(octokit, deployEnv);
+
+const ticketIds = extractLinearTicketIds(plan.shippedCommitMessages);
 
 // --- Service selection -------------------------------------------------------
 const selected = await promptServices(deployEnv);
@@ -96,6 +109,24 @@ const published: PublishedRelease | null =
   plan.env === "production" && successfullyDeployedServices.length > 0
     ? await finalizeProduction(octokit, plan)
     : null;
+
+// --- Linear ticket status -----------------------------------------------------
+// A Linear API hiccup shouldn't fail an otherwise-successful deploy, so this phase
+// only logs on error (mirroring the Slack-post error handling below).
+if (successfullyDeployedServices.length > 0 && ticketIds.length > 0) {
+  try {
+    const env = plan.env === "production" ? "production" : "staging";
+    await Promise.all(
+      ticketIds.map((ticketId) => setDeployStatusLabel(linear, ticketId, env)),
+    );
+    if (env === "production") {
+      await commentOnManualTestingTickets(linear, ticketIds);
+    }
+  } catch (error) {
+    console.log("There was a problem updating Linear tickets for this deploy:");
+    console.error(error);
+  }
+}
 
 // --- Notifications ------------------------------------------------------------
 const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);

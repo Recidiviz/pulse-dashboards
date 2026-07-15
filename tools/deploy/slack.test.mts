@@ -27,6 +27,7 @@ describe("buildSlackNotification", () => {
       env: "demo",
       currentRevision: "abc123def456",
       nextVersion: "deploy-candidate",
+      shippedCommitMessages: [],
     };
     expect(
       buildSlackNotification(plan, ["Staff Backend"], null, {
@@ -42,6 +43,7 @@ describe("buildSlackNotification", () => {
       currentRevision: "abc123def456",
       nextVersion: "deploy-candidate",
       deployingLatestMain: true,
+      shippedCommitMessages: [],
     };
     const note = buildSlackNotification(plan, ["Staff Backend"], null, {
       deployer: "me@x",
@@ -62,6 +64,7 @@ describe("buildSlackNotification", () => {
       currentRevision: "abc123def456",
       nextVersion: "deploy-candidate",
       deployingLatestMain: false,
+      shippedCommitMessages: [],
     };
     const note = buildSlackNotification(plan, ["Staff Backend"], null, {
       deployer: "me",
@@ -84,6 +87,7 @@ describe("buildSlackNotification", () => {
       nextVersion: "v5.296.0",
       releaseNotes: "placeholder",
       latestReleaseVersion: "v5.295.0",
+      shippedCommitMessages: [],
     };
     const published: PublishedRelease = {
       nextVersion: "v5.296.0",
@@ -111,6 +115,7 @@ describe("buildSlackNotification", () => {
       isRedeploy: true,
       currentRevision: "abc123def456",
       nextVersion: "v5.300.0",
+      shippedCommitMessages: [],
     };
     const note = buildSlackNotification(plan, ["Meetings Backend"], null, {
       deployer: "me",

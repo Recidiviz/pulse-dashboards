@@ -62,12 +62,14 @@ export type ReleasePlan =
       env: "demo";
       currentRevision: string; // git rev-parse --short=12 HEAD
       nextVersion: "deploy-candidate";
+      shippedCommitMessages: string[]; // always [] — demo doesn't correspond to a real release
     }
   | {
       env: "staging";
       currentRevision: string;
       nextVersion: "deploy-candidate"; // staging never computes a real version
       deployingLatestMain: boolean; // was the deployed commit the tip of main?
+      shippedCommitMessages: string[]; // [] when deployingLatestMain is false
     }
   | {
       // Re-deploy of a commit that is ALREADY released (e.g. deploying services that were
@@ -77,6 +79,7 @@ export type ReleasePlan =
       isRedeploy: true;
       currentRevision: string;
       nextVersion: string; // the existing release tag on this commit (drives service version labels)
+      shippedCommitMessages: string[]; // always [] — nothing new shipped in a redeploy
     }
   | {
       env: "production";
@@ -86,6 +89,7 @@ export type ReleasePlan =
       nextVersion: string; // cherry-pick ⇒ patch bump; else ⇒ minor bump
       releaseNotes: string; // generated/edited in prep (still holds the rc/<rev> placeholder)
       latestReleaseVersion: string;
+      shippedCommitMessages: string[]; // commits between the nearest release tag and currentRevision
     };
 
 /** Result of publishing a production release, handed to the Slack phase. */

@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
+import { LinearClient } from "@linear/sdk";
 import { Octokit } from "@octokit/rest";
 import { WebClient as SlackClient } from "@slack/web-api";
 
@@ -55,4 +56,11 @@ export async function createSlackClient(): Promise<SlackClient> {
   return new SlackClient(
     await readSecret("deploy_slack_bot_authorization_token"),
   );
+}
+
+/** Construct the Linear client from the deploy-script API key in Secret Manager. */
+export async function createLinearClient(): Promise<LinearClient> {
+  return new LinearClient({
+    apiKey: await readSecret("linear_deploy_script_api_key"),
+  });
 }
