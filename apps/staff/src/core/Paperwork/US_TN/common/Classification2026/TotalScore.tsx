@@ -45,7 +45,7 @@ export function TotalScore({
           <Bold>CUSTODY LEVEL SCALE FOR TOTAL:</Bold>
         </div>
         <div>
-          <Bold>Low:</Bold> 0-{lowUpper}
+          <Bold>Low/Trustee:</Bold> 0-{lowUpper}
         </div>
         <div>
           <Bold>Medium:</Bold> {lowUpper + 1}-{mediumUpper}
