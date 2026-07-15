@@ -24,6 +24,7 @@ import {
   interpolatePath,
   loadDotenvFile,
   loadEnvFilesForTask,
+  resolveContractorEnvPath,
 } from "./utils";
 
 export interface DelegateExecutorOptions {
@@ -236,6 +237,9 @@ export default async function runSopsDelegateExecutor(
 
     // 2. Load additional SOPS files from metadata
     if (sopsEnvMetadata["additional-sops-env-files"]?.length) {
+      const useContractorEnv = Boolean(
+        process.env["NX_SOPS_USE_CONTRACTOR_ENV"],
+      );
       for (const additionalFile of sopsEnvMetadata[
         "additional-sops-env-files"
       ]) {
@@ -243,8 +247,13 @@ export default async function runSopsDelegateExecutor(
           additionalFile,
           interpolationContext,
         );
-        logger.verbose(`Decrypting additional SOPS file: ${interpolatedPath}`);
-        const decryptedYaml = decryptSopsFile(interpolatedPath);
+        // In contractor mode, prefer each file's `.contractor.enc.yaml` variant
+        // (when present) since contractors can't decrypt the KMS-only files.
+        const resolvedPath = useContractorEnv
+          ? resolveContractorEnvPath(interpolatedPath)
+          : interpolatedPath;
+        logger.verbose(`Decrypting additional SOPS file: ${resolvedPath}`);
+        const decryptedYaml = decryptSopsFile(resolvedPath);
         Object.assign(envVars, decryptedYaml);
         totalFilesLoaded++;
       }

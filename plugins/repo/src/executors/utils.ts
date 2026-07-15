@@ -73,6 +73,37 @@ export function parseYamlEnv(content: string): DecryptedEnv {
   }
 }
 
+const SOPS_STANDARD_SUFFIX = ".enc.yaml";
+const SOPS_CONTRACTOR_SUFFIX = ".contractor.enc.yaml";
+
+/**
+ * Given a SOPS env file path ending in `.enc.yaml`, return the path to its
+ * contractor variant (`.contractor.enc.yaml`) when that variant exists on disk.
+ * Otherwise (already a contractor file, non-SOPS path, or no variant present)
+ * return the original path unchanged.
+ *
+ * Used so that `additional-sops-env-files` transparently pick up their
+ * contractor-accessible counterparts when running with
+ * `NX_SOPS_USE_CONTRACTOR_ENV`, since contractors cannot decrypt the KMS-only
+ * `.enc.yaml` files.
+ */
+export function resolveContractorEnvPath(filePath: string): string {
+  if (
+    filePath.endsWith(SOPS_CONTRACTOR_SUFFIX) ||
+    !filePath.endsWith(SOPS_STANDARD_SUFFIX)
+  ) {
+    return filePath;
+  }
+
+  const contractorPath =
+    filePath.slice(0, -SOPS_STANDARD_SUFFIX.length) + SOPS_CONTRACTOR_SUFFIX;
+  const absoluteContractorPath = contractorPath.startsWith("/")
+    ? contractorPath
+    : join(workspaceRoot, contractorPath);
+
+  return existsSync(absoluteContractorPath) ? contractorPath : filePath;
+}
+
 export function decryptSopsFile(filePath: string): DecryptedEnv {
   const absolutePath = filePath.startsWith("/")
     ? filePath
