@@ -39,6 +39,9 @@ components:
         cors_domains:
           - https://dashboard.recidiviz.org
 
+        # Refuse TLS < 1.2 handshakes at the Gateway frontend (GovRAMP AC-17(2))
+        min_tls_version: TLS_1_2
+
         operator_chart_version: 0.4.1
         typesense_image: typesense/typesense:30.2
 
@@ -77,6 +80,10 @@ components:
         # brings up CORS correctly without a second config edit.
         cors_domains:
           - https://dashboard.recidiviz.org
+
+        # Mirror primary — the failover flip should come up with the same
+        # TLS floor (GovRAMP AC-17(2)). No-op in standby (count = 0).
+        min_tls_version: TLS_1_2
 
         operator_chart_version: 0.4.1
         typesense_image: typesense/typesense:30.2
