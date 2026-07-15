@@ -144,6 +144,12 @@ variable "backfill_batch_size" {
   description = "Firestore page size = Typesense import batch size. Pagination is serial within a collection, so for large collections (e.g. clients) the round-trip count dominates wall-clock — bigger batches mean fewer round trips and a much faster backfill. Bounded by function_memory (a page of docs is held in memory). This, not the rate limit, is the lever for single-collection speed."
 }
 
+variable "backfill_prune_stale" {
+  type        = bool
+  default     = true
+  description = "After importing, delete Typesense docs whose id is no longer present in the Firestore source (the ETL deletes from Firestore, so without this the index keeps serving removed records). On by default — parity with the ETL is the point. Set false for an import-only pass with no destructive delete phase. Maps to the function's BACKFILL_PRUNE_STALE env var."
+}
+
 # -----------------------------------------------------------------------------
 # Static egress (so the typesense Cloud Armor policy can allowlist this function)
 # -----------------------------------------------------------------------------

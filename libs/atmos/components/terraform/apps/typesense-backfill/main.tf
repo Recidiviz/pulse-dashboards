@@ -144,6 +144,7 @@ resource "google_cloudfunctions2_function" "backfill" {
       BACKFILL_CONCURRENCY         = tostring(var.backfill_concurrency)
       BACKFILL_IMPORT_RATE_PER_SEC = tostring(var.backfill_import_rate_per_sec)
       BACKFILL_BATCH_SIZE          = tostring(var.backfill_batch_size)
+      BACKFILL_PRUNE_STALE         = tostring(var.backfill_prune_stale)
     }
 
     # Mounted as $TYPESENSE_API_KEY in the function process.

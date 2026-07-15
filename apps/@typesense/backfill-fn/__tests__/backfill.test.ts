@@ -24,6 +24,8 @@ import {
   resolveBatchSize,
   resolveConcurrency,
   resolveImportRatePerSec,
+  resolvePruneStale,
+  selectStaleIds,
 } from "../src/backfill";
 
 describe("assignNested", () => {
@@ -286,6 +288,62 @@ describe("resolveBatchSize", () => {
       expect(resolveBatchSize()).toBe(500);
     },
   );
+});
+
+describe("resolvePruneStale", () => {
+  const original = process.env["BACKFILL_PRUNE_STALE"];
+
+  afterEach(() => {
+    if (original === undefined) delete process.env["BACKFILL_PRUNE_STALE"];
+    else process.env["BACKFILL_PRUNE_STALE"] = original;
+  });
+
+  it("defaults to enabled when unset", () => {
+    delete process.env["BACKFILL_PRUNE_STALE"];
+    expect(resolvePruneStale()).toBe(true);
+  });
+
+  it.each(["false", "FALSE", "  False  "])(
+    "is disabled only for the literal false %j (case- and space-insensitive)",
+    (value) => {
+      process.env["BACKFILL_PRUNE_STALE"] = value;
+      expect(resolvePruneStale()).toBe(false);
+    },
+  );
+
+  it.each(["true", "1", "yes", "", "  ", "anything"])(
+    "stays enabled for any non-false value %j",
+    (value) => {
+      process.env["BACKFILL_PRUNE_STALE"] = value;
+      expect(resolvePruneStale()).toBe(true);
+    },
+  );
+});
+
+describe("selectStaleIds", () => {
+  it("returns exported ids that are absent from the keep set", () => {
+    const exported = '{"id":"a"}\n{"id":"b"}\n{"id":"c"}';
+    expect(selectStaleIds(exported, new Set(["a", "c"]))).toEqual(["b"]);
+  });
+
+  it("returns nothing when every exported id is in the keep set", () => {
+    const exported = '{"id":"a"}\n{"id":"b"}';
+    expect(selectStaleIds(exported, new Set(["a", "b"]))).toEqual([]);
+  });
+
+  it("treats an empty export as nothing to prune", () => {
+    expect(selectStaleIds("", new Set(["a"]))).toEqual([]);
+  });
+
+  it("skips blank, unparseable, and id-less lines", () => {
+    const exported = '{"id":"a"}\n\nnot json\n{"foo":"bar"}\n{"id":"b"}';
+    expect(selectStaleIds(exported, new Set())).toEqual(["a", "b"]);
+  });
+
+  it("skips non-string ids", () => {
+    const exported = '{"id":123}\n{"id":"b"}';
+    expect(selectStaleIds(exported, new Set())).toEqual(["b"]);
+  });
 });
 
 describe("createRateLimiter", () => {

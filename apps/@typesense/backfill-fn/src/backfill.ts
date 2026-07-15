@@ -18,11 +18,17 @@
 // Core backfill logic.
 //
 // For each configured collection:
-//   1. Iterate Firestore docs in stable id-ordered pages of BATCH_SIZE.
+//   1. Iterate Firestore docs in stable id-ordered pages of BATCH_SIZE,
+//      remembering every id seen (the authoritative "should exist" set).
 //   2. Project each doc down to just the configured fields (others dropped
 //      before import so Typesense never sees them).
 //   3. Bulk-import the batch into Typesense via `documents/import?action=upsert`.
 //   4. Parse the per-doc result lines and count successes/failures.
+//   5. Prune: after the full scan, delete any Typesense doc whose id is NOT in
+//      the Firestore id set. The ETL deletes records from Firestore, so without
+//      this the search index keeps serving rows that no longer exist. Upsert
+//      alone never removes anything, so the delete pass is what makes a backfill
+//      a true reconcile rather than an additive sync.
 //
 // Mirrors the upstream extension's backfill loop shape so future maintainers
 // can cross-reference (https://github.com/typesense/firestore-typesense-search).
@@ -85,6 +91,19 @@ export function resolveImportRatePerSec(): number {
     return DEFAULT_IMPORT_RATE_PER_SEC;
   const n = Number(raw);
   return Number.isFinite(n) && n >= 0 ? n : DEFAULT_IMPORT_RATE_PER_SEC;
+}
+
+// Whether the backfill deletes Typesense docs whose ids are no longer in the
+// Firestore source (see step 5 in the file header). ON by default — parity with
+// the ETL's Firestore deletes is the whole point. Set BACKFILL_PRUNE_STALE=false
+// to run an import-only pass (e.g. to isolate an import problem, or seed a fresh
+// collection before the source is fully populated) without the destructive
+// delete phase. Only the literal "false" (case-insensitive) disables it; any
+// other value — including unset — leaves pruning on.
+export function resolvePruneStale(): boolean {
+  const raw = process.env["BACKFILL_PRUNE_STALE"];
+  if (raw === undefined) return true;
+  return raw.trim().toLowerCase() !== "false";
 }
 
 export interface RateLimiter {
@@ -164,11 +183,13 @@ export interface BackfillResult {
   pages: number;
   imported: number;
   failed: number;
+  // Stale Typesense docs deleted because their id was absent from Firestore.
+  deleted: number;
 }
 
 export interface BackfillSummary {
   collections: BackfillResult[];
-  totals: { imported: number; failed: number };
+  totals: { imported: number; failed: number; deleted: number };
 }
 
 type FirestoreDoc = Record<string, unknown>;
@@ -275,11 +296,103 @@ export function parseImportResponse(raw: unknown): ImportEntry[] {
     });
 }
 
+// Given a Typesense id-only export (JSONL, one `{"id":"..."}` per line) and the
+// set of ids that Firestore says should exist, returns the ids present in
+// Typesense but NOT in Firestore — the docs to delete. Lines that are blank,
+// unparseable, or missing a string `id` are skipped rather than aborting the
+// diff. Pure and deterministic so the prune decision is unit-testable without a
+// live cluster.
+export function selectStaleIds(
+  exportedJsonl: string,
+  keepIds: Set<string>,
+): string[] {
+  const stale: string[] = [];
+  for (const line of exportedJsonl.split("\n")) {
+    if (!line) continue;
+    try {
+      const { id } = JSON.parse(line) as { id?: unknown };
+      if (typeof id === "string" && !keepIds.has(id)) stale.push(id);
+    } catch {
+      // Ignore an unparseable export line rather than abort the whole prune.
+    }
+  }
+  return stale;
+}
+
+// Reconciles Typesense against Firestore: deletes every doc in the collection
+// whose id is NOT in `firestoreIds`. Called only after backfillCollection has
+// paged the ENTIRE collection without error, so `firestoreIds` is guaranteed
+// complete — a mid-scan Firestore read failure throws out of backfillCollection
+// before we ever get here, so we can never prune against a partial set.
+async function pruneStaleDocs(
+  client: TypesenseClient,
+  name: string,
+  firestoreIds: Set<string>,
+  limiter: RateLimiter,
+): Promise<number> {
+  // Safety valve: an empty Firestore scan would mark EVERY Typesense doc stale.
+  // That almost always means a misconfiguration or an ETL that hasn't populated
+  // the collection — not a legitimate "empty the index" — so refuse and warn
+  // loudly rather than silently wiping a live collection.
+  if (firestoreIds.size === 0) {
+    console.warn(
+      `[${name}] prune skipped: Firestore scan returned 0 docs (refusing to delete the entire collection)`,
+    );
+    return 0;
+  }
+
+  // Pull just the ids currently in Typesense. export() streams the whole
+  // collection as JSONL; include_fields=id keeps each line tiny.
+  await limiter.take();
+  let exported: string;
+  try {
+    exported = await client
+      .collections(name)
+      .documents()
+      .export({ include_fields: "id" });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.warn(`[${name}] prune skipped: could not export ids (${message})`);
+    return 0;
+  }
+
+  const staleIds = selectStaleIds(exported, firestoreIds);
+  if (staleIds.length === 0) {
+    console.info(`[${name}] prune: no stale docs`);
+    return 0;
+  }
+
+  console.info(`[${name}] prune: deleting ${staleIds.length} stale doc(s)`);
+
+  let deleted = 0;
+  for (const id of staleIds) {
+    // Gate deletes through the same limiter as imports so the combined write
+    // rate against the shared cluster stays bounded.
+    await limiter.take();
+    try {
+      await client.collections(name).documents(id).delete();
+      deleted += 1;
+    } catch (err) {
+      // 404 = the doc is already gone (e.g. the extension's realtime delete
+      // trigger raced us). That's the desired end state, so don't count it as
+      // a failure — just move on.
+      const httpStatus = (err as { httpStatus?: number }).httpStatus;
+      if (httpStatus === 404) continue;
+      const message = err instanceof Error ? err.message : String(err);
+      console.warn(`[${name}] failed to delete stale doc ${id}: ${message}`);
+    }
+  }
+
+  console.info(`[${name}] prune: deleted ${deleted}/${staleIds.length}`);
+  return deleted;
+}
+
 async function backfillCollection(
   client: TypesenseClient,
   { name, fields }: CollectionConfig,
   limiter: RateLimiter,
   batchSize: number,
+  prune: boolean,
 ): Promise<BackfillResult> {
   const db = firestore();
   const ref = db.collection(name);
@@ -288,6 +401,9 @@ async function backfillCollection(
   let failed = 0;
   let pages = 0;
   let cursor: firestore.QueryDocumentSnapshot | null = null;
+  // Every Firestore id seen across all pages — the authoritative set of docs
+  // that SHOULD exist in Typesense. Drives the prune pass after the scan.
+  const firestoreIds = new Set<string>();
 
   while (true) {
     let q = ref.orderBy(firestore.FieldPath.documentId()).limit(batchSize);
@@ -296,6 +412,8 @@ async function backfillCollection(
     const snapshot = await q.get();
     if (snapshot.empty) break;
     pages += 1;
+
+    for (const d of snapshot.docs) firestoreIds.add(d.id);
 
     const docs = snapshot.docs.map((d) =>
       projectFields(d.data() as FirestoreDoc, fields, d.id),
@@ -375,10 +493,16 @@ async function backfillCollection(
     if (snapshot.size < batchSize) break;
   }
 
+  // The full Firestore scan completed without throwing, so `firestoreIds` is
+  // authoritative — safe to delete anything in Typesense that isn't in it.
+  const deleted = prune
+    ? await pruneStaleDocs(client, name, firestoreIds, limiter)
+    : 0;
+
   console.info(
-    `[${name}] done — pages=${pages} imported=${imported} failed=${failed}`,
+    `[${name}] done — pages=${pages} imported=${imported} failed=${failed} deleted=${deleted}`,
   );
-  return { name, pages, imported, failed };
+  return { name, pages, imported, failed, deleted };
 }
 
 export async function runBackfill(
@@ -393,18 +517,20 @@ export async function runBackfill(
   // resolves to 0). The batch size is resolved once and applied to every page.
   const limiter = createRateLimiter(resolveImportRatePerSec());
   const batchSize = resolveBatchSize();
+  const prune = resolvePruneStale();
   const results = await mapWithConcurrency(
     collectionsConfig,
     resolveConcurrency(),
-    (config) => backfillCollection(client, config, limiter, batchSize),
+    (config) => backfillCollection(client, config, limiter, batchSize, prune),
   );
 
   const totals = results.reduce(
     (acc, r) => ({
       imported: acc.imported + r.imported,
       failed: acc.failed + r.failed,
+      deleted: acc.deleted + r.deleted,
     }),
-    { imported: 0, failed: 0 },
+    { imported: 0, failed: 0, deleted: 0 },
   );
 
   return { collections: results, totals };
