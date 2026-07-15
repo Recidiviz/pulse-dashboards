@@ -16,11 +16,13 @@
 // =============================================================================
 
 import { render } from "@testing-library/react";
+import { ThemeProvider } from "styled-components";
 import { vi } from "vitest";
 
 import { METRIC_MODES } from "../../../constants";
 import { FiltersStoreBase } from "../../../FiltersStoreBase";
 import SnapshotMetric from "../../../metrics/SnapshotMetric";
+import { defaultPathwaysTheme } from "../../PathwaysTheme";
 import { SnapshotDataPoint } from "../../PopulationSnapshotChart/PopulationSnapshotChart";
 import VizPopulationSnapshot from "../VizPopulationSnapshot";
 
@@ -144,22 +146,45 @@ describe("VizPopulationSnapshot data composition", () => {
   it("uses long and short labels from filtersStore for synthesized rows", () => {
     const metric = buildMetric({
       accessor: "facility",
+      dataSeries: [{ facility: "Y", count: 5 }],
+    });
+    const filtersStore = buildFiltersStore({
+      filters: { facility: ["X", "Y"] },
+    });
+
+    const data = renderViz(metric, filtersStore);
+
+    expect(data).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          accessorValue: "X",
+          accessorLabel: "label-X",
+          tooltipLabel: "long-X",
+          value: "0",
+        }),
+      ]),
+    );
+  });
+
+  it("shows the no data message instead of a chart when every row is a 0 count", () => {
+    const metric = buildMetric({
+      accessor: "facility",
       dataSeries: [],
     });
     const filtersStore = buildFiltersStore({
       filters: { facility: ["X"] },
     });
 
-    const data = renderViz(metric, filtersStore);
+    const { getByText } = render(
+      <ThemeProvider theme={defaultPathwaysTheme}>
+        <VizPopulationSnapshot metric={metric} filtersStore={filtersStore} />
+      </ThemeProvider>,
+    );
 
-    expect(data).toEqual([
-      expect.objectContaining({
-        accessorValue: "X",
-        accessorLabel: "label-X",
-        tooltipLabel: "long-X",
-        value: "0",
-      }),
-    ]);
+    expect(getByText("Test Chart")).toBeInTheDocument();
+    expect(
+      getByText("No data available for the current selection."),
+    ).toBeInTheDocument();
   });
 
   it("passes dataSeries through unchanged when the accessor is not a filter type", () => {
@@ -204,5 +229,27 @@ describe("VizPopulationSnapshot data composition", () => {
     expect(data).toHaveLength(1);
     expect(data[0].accessorValue).toBe("A");
     expect(Number(data[0].value)).toBe(10);
+  });
+
+  it("shows the no data message when dataSeries and filterOptions are both empty", () => {
+    const metric = buildMetric({
+      accessor: "facility",
+      dataSeries: [],
+    });
+    const filtersStore = buildFiltersStore({
+      filters: { facility: ["ALL"] },
+      filterOptions: {},
+    });
+
+    const { getByText } = render(
+      <ThemeProvider theme={defaultPathwaysTheme}>
+        <VizPopulationSnapshot metric={metric} filtersStore={filtersStore} />
+      </ThemeProvider>,
+    );
+
+    expect(getByText("Test Chart")).toBeInTheDocument();
+    expect(
+      getByText("No data available for the current selection."),
+    ).toBeInTheDocument();
   });
 });

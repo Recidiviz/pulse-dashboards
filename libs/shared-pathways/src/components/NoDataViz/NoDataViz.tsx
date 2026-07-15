@@ -15,19 +15,36 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./ChartNote";
-export * from "./CheckboxGroup";
-export * from "./FiltersButton";
-export * from "./FilterSectionLayout";
-export * from "./FiltersPanel";
-export * from "./NoDataViz";
-export * from "./PathwaysModal";
-export * from "./PathwaysTheme";
-export * from "./PopulationSnapshotChart";
-export * from "./PopulationSnapshotTooltip";
-export * from "./PopulationTimeSeriesChart";
-export * from "./RadioGroup";
-export * from "./TogglePill";
-export { default as VizPathways } from "./VizPathways";
-export * from "./VizPopulationOverTime";
-export * from "./VizPopulationSnapshot";
+import React from "react";
+import styled from "styled-components";
+
+import VizPathways from "../VizPathways";
+
+const NoDataWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  padding-top: 3rem;
+  width: 100%;
+`;
+
+type NoDataVizProps = {
+  title: string;
+  subtitle?: string;
+  latestUpdate?: string;
+};
+
+const NoDataViz: React.FC<NoDataVizProps> = ({
+  title,
+  subtitle,
+  latestUpdate,
+}) => (
+  <VizPathways title={title} subtitle={subtitle} latestUpdate={latestUpdate}>
+    <NoDataWrapper>
+      <div>No data available for the current selection.</div>
+    </NoDataWrapper>
+  </VizPathways>
+);
+
+export default NoDataViz;

@@ -20,6 +20,9 @@ import { sumBy } from "lodash/fp";
 import map from "lodash/fp/map";
 import { computed, makeObservable } from "mobx";
 
+import { formatDate } from "~utils";
+
+import { FILTER_TYPES } from "../constants";
 import { PopulationFilterLabels } from "../filters";
 import {
   DefaultOffenseTypeOrder,
@@ -28,6 +31,7 @@ import {
   DownloadableDataset,
   OrderKeys,
   SnapshotDataRecord,
+  SupervisionPopulationSnapshotRecord,
 } from "../types";
 import { convertLengthOfStay } from "../utils";
 import PathwaysNewBackendMetric from "./PathwaysNewBackendMetric";
@@ -93,6 +97,24 @@ export default class SnapshotMetric extends PathwaysNewBackendMetric<SnapshotDat
 
   get isEmpty(): boolean {
     return !this.totalCount;
+  }
+
+  get latestUpdateLabel(): string {
+    const dateInPop = this.store.filters[FILTER_TYPES.DATE_IN_POPULATION]?.[0];
+
+    if (dateInPop && dateInPop !== "ALL") {
+      return this.store.filtersStore.getFilterLabel(
+        FILTER_TYPES.DATE_IN_POPULATION,
+        dateInPop,
+      );
+    }
+
+    return formatDate(
+      this.lastUpdated ??
+        (this.dataSeries[0] as SupervisionPopulationSnapshotRecord)
+          ?.lastUpdated,
+      "MMMM dd, yyyy",
+    );
   }
 
   get downloadableData(): DownloadableData {

@@ -21,13 +21,21 @@ import React from "react";
 import styled from "styled-components";
 
 import { Hydrator } from "~hydration-utils";
-import { HydratablePathwaysMetric } from "~shared-pathways";
+import {
+  FiltersStoreBase,
+  HydratablePathwaysMetric,
+  NoDataViz,
+} from "~shared-pathways";
 import useIsMobile from "~utils/react/useIsMobile";
 
 import PublicPathwaysLoading from "../PublicPathwaysLoading";
 
 type WithMetricHelperProps = {
-  metric: HydratablePathwaysMetric;
+  metric: HydratablePathwaysMetric & {
+    chartTitle: string;
+    latestUpdateLabel?: string;
+  };
+  filtersStore: FiltersStoreBase;
 };
 
 const MetricVizHydrator = styled(Hydrator)<{ $isMobile?: boolean }>`
@@ -42,22 +50,16 @@ const MetricVizHydrator = styled(Hydrator)<{ $isMobile?: boolean }>`
   }
 `;
 
-const NoDataWrapper = styled.div`
-  align-items: center;
-  display: flex;
-  height: 100%;
-  justify-content: center;
-  width: 100%;
-`;
-
 const NoDataHelper: React.FC<
   WithMetricHelperProps & { children?: React.ReactNode }
-> = observer(function NoDataHelper({ metric, children }) {
+> = observer(function NoDataHelper({ metric, filtersStore, children }) {
   if (metric.isEmpty) {
     return (
-      <NoDataWrapper>
-        <div>No data available for the current selection.</div>
-      </NoDataWrapper>
+      <NoDataViz
+        title={metric.chartTitle}
+        subtitle={filtersStore.filtersDescription}
+        latestUpdate={metric.latestUpdateLabel}
+      />
     );
   }
   return <>{children}</>;
@@ -67,7 +69,7 @@ const withPublicPathwaysMetricHelpers = <Props extends WithMetricHelperProps>(
   OriginalComponent: React.ComponentType<Props>,
 ): React.ComponentType<Props> => {
   const ComponentWithHydrator: React.ComponentType<Props> = (props) => {
-    const { metric } = props;
+    const { metric, filtersStore } = props;
     const isMobile = useIsMobile();
     return (
       <MetricVizHydrator
@@ -76,7 +78,7 @@ const withPublicPathwaysMetricHelpers = <Props extends WithMetricHelperProps>(
         loading={<PublicPathwaysLoading />}
         failed={<div>Failed to load data.</div>}
       >
-        <NoDataHelper metric={metric}>
+        <NoDataHelper metric={metric} filtersStore={filtersStore}>
           <OriginalComponent {...props} />
         </NoDataHelper>
       </MetricVizHydrator>

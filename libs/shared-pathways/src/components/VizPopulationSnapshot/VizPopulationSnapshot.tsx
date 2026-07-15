@@ -18,9 +18,7 @@
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 
-import { formatDate } from "~utils";
-
-import { FILTER_TYPES, METRIC_MODES } from "../../constants";
+import { METRIC_MODES } from "../../constants";
 import { Dimension } from "../../dimensions";
 import { PopulationFilterLabels } from "../../filters";
 import { FiltersStoreBase } from "../../FiltersStoreBase";
@@ -30,6 +28,7 @@ import {
   SupervisionPopulationSnapshotRecord,
 } from "../../types";
 import { getDimensionLabel, sortByLabel } from "../../utils";
+import { NoDataViz } from "../NoDataViz";
 import { PopulationSnapshotChart } from "../PopulationSnapshotChart";
 import { SnapshotDataPoint } from "../PopulationSnapshotChart/PopulationSnapshotChart";
 
@@ -151,17 +150,17 @@ const VizPopulationSnapshot: React.FC<VizPopulationSnapshotProps> = ({
       (isOffenseType ? offenseTypeOrder : undefined),
   });
 
-  const dateInPop = (filters as Record<string, string[]>)[
-    FILTER_TYPES.DATE_IN_POPULATION
-  ]?.[0];
-  const latestUpdate =
-    dateInPop && dateInPop !== "ALL"
-      ? filtersStore.getFilterLabel(FILTER_TYPES.DATE_IN_POPULATION, dateInPop)
-      : formatDate(
-          metric.lastUpdated ??
-            (dataSeries[0] as SupervisionPopulationSnapshotRecord)?.lastUpdated,
-          "MMMM dd, yyyy",
-        );
+  const hasNoData = data.every((d) => d.value === "0");
+
+  if (hasNoData) {
+    return (
+      <NoDataViz
+        title={chartTitle}
+        subtitle={filtersDescription}
+        latestUpdate={metric.latestUpdateLabel}
+      />
+    );
+  }
 
   return (
     <PopulationSnapshotChart
@@ -169,7 +168,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationSnapshotProps> = ({
       data={data}
       title={chartTitle}
       subtitle={filtersDescription}
-      latestUpdate={latestUpdate}
+      latestUpdate={metric.latestUpdateLabel}
       chartXAxisTitle={chartXAxisTitle}
       accessor={accessor as string}
       isRate={isRate}
