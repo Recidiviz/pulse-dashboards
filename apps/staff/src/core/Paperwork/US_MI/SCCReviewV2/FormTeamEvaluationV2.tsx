@@ -20,7 +20,7 @@ import { rem } from "polished";
 import * as React from "react";
 import styled from "styled-components";
 
-import { FormCheckbox, FormInput } from "../SCCReview/FormUtils";
+import { FormInput, FormRadioButton } from "../SCCReview/FormUtils";
 
 const ContentContainer = styled.div`
   display: grid;
@@ -69,31 +69,35 @@ const IISPCell = () => {
             alignItems: "center",
           }}
         >
-          IISP STAGE: N/A
-          <div style={{ paddingLeft: "2px" }}>
-            <FormCheckbox name="IISPNA" />
+          IISP STAGE:
+          <div style={{ paddingLeft: "8px" }}>
+            <FormRadioButton
+              name="stageIISP"
+              targetValue={"N/A"}
+              label={"N/A"}
+            />
           </div>
         </div>
       </Cell>
       <Cell row={3} col={1} colSpan={2}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <div>
-            <FormCheckbox name="IISP1" label="I" />
+            <FormRadioButton name="stageIISP" targetValue={"1"} label={"I"} />
           </div>
           <div style={{ paddingLeft: "8px" }}>
-            <FormCheckbox name="IISP2" label="II" />
+            <FormRadioButton name="stageIISP" targetValue={"2"} label={"II"} />
           </div>
           <div style={{ paddingLeft: "8px" }}>
-            <FormCheckbox name="IISP3" label="III" />
+            <FormRadioButton name="stageIISP" targetValue={"3"} label={"III"} />
           </div>
           <div style={{ paddingLeft: "8px" }}>
-            <FormCheckbox name="IISP4" label="IV" />
+            <FormRadioButton name="stageIISP" targetValue={"4"} label={"IV"} />
           </div>
           <div style={{ paddingLeft: "8px" }}>
-            <FormCheckbox name="IISP5" label="V" />
+            <FormRadioButton name="stageIISP" targetValue={"5"} label={"V"} />
           </div>
           <div style={{ paddingLeft: "8px" }}>
-            <FormCheckbox name="IISP6" label="VI" />
+            <FormRadioButton name="stageIISP" targetValue={"6"} label={"VI"} />
           </div>
         </div>
       </Cell>
@@ -110,13 +114,25 @@ const GAPCell = ({ suffix, ...props }: GAPCellProps) => {
     <Cell {...props}>
       <div style={{ display: "flex", alignItems: "center" }}>
         <div>
-          <FormCheckbox name={`good${suffix}`} label="Good" />
+          <FormRadioButton
+            name={`GAP${suffix}`}
+            targetValue="Good"
+            label="Good"
+          />
         </div>
         <div style={{ paddingLeft: "6px" }}>
-          <FormCheckbox name={`adequate${suffix}`} label="Adequate" />
+          <FormRadioButton
+            name={`GAP${suffix}`}
+            targetValue="Adequate"
+            label="Adequate"
+          />
         </div>
         <div style={{ paddingLeft: "6px" }}>
-          <FormCheckbox name={`poor${suffix}`} label="Poor" />
+          <FormRadioButton
+            name={`GAP${suffix}`}
+            targetValue="Poor"
+            label="Poor"
+          />
         </div>
       </div>
     </Cell>
@@ -146,10 +162,13 @@ const FormTeamEvaluationV2: React.FC = () => {
       <Cell row={3} col={6} colSpan={1}>
         <div style={{ display: "flex", alignItems: "center" }}>Date:</div>
       </Cell>
-      <Cell row={4} col={1} colSpan={2}>
+      <Cell row={4} col={1} colSpan={1}>
         Appropriate Behavior and Attitude:
       </Cell>
-      <GAPCell row={4} col={3} colSpan={2} suffix="1" />
+      <GAPCell row={4} col={2} colSpan={2} suffix="1" />
+      <Cell row={4} col={4} colSpan={1}>
+        Housekeeping/Hygiene:
+      </Cell>
       <GAPCell row={4} col={5} colSpan={2} suffix="2" />
     </ContentContainer>
   );

@@ -20,6 +20,7 @@ import * as React from "react";
 import { UsMiSCCReviewV2DraftData } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiSCCReviewV2Form";
 import { DOCXFormDropdown } from "../../DOCXFormDropdown";
 import DOCXFormInput from "../../DOCXFormInput";
+import DOCXFormRadioButton from "../../DOCXFormRadioButton";
 import DOCXFormCheckbox from "../../FormCheckbox";
 
 type InputProps = {
@@ -75,4 +76,17 @@ type DropdownProps = {
  */
 export const FormDropdown = (props: DropdownProps) => {
   return <DOCXFormDropdown<UsMiSCCReviewV2DraftData> {...props} />;
+};
+
+type RadioButtonProps = {
+  name: Extract<keyof UsMiSCCReviewV2DraftData, string>;
+  targetValue: boolean | string;
+  label: string;
+};
+
+/**
+ * A wrapper for the DOCX radio button for the MI SCC review form.
+ */
+export const FormRadioButton = (props: RadioButtonProps) => {
+  return <DOCXFormRadioButton<UsMiSCCReviewV2DraftData> {...props} />;
 };

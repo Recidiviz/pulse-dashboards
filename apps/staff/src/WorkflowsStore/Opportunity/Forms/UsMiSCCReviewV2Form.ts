@@ -22,6 +22,10 @@ import { usMiSecurityClassificationCommitteeReviewV2Opportunity } from "../UsMi/
 import { usMiWardenInPersonSecurityClassificationCommitteeReviewV2Opportunity } from "../UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReviewV2Opportunity";
 import { FormBase } from "./FormBase";
 
+type GAPInput = "Good" | "Adequate" | "Poor" | "";
+type IISPInput = "1" | "2" | "3" | "4" | "5" | "6" | "N/A" | "";
+type STGInput = "1" | "2" | "N/A" | "";
+
 export type UsMiSCCReviewV2DraftData = {
   // Data-populated fields
   prisonerNumber: string;
@@ -33,9 +37,7 @@ export type UsMiSCCReviewV2DraftData = {
   lockDate: string;
   OPT: boolean;
   SMI: boolean;
-  STG1: boolean;
-  STG2: boolean;
-  STG_NA: boolean;
+  STG: STGInput;
   adminSeg: boolean;
   punSeg: boolean;
   tempSeg: boolean;
@@ -68,20 +70,10 @@ export type UsMiSCCReviewV2DraftData = {
   lastADDInterview: boolean;
 
   // Team evaluation fields
-  IISPNA: boolean;
-  IISP1: boolean;
-  IISP2: boolean;
-  IISP3: boolean;
-  IISP4: boolean;
-  IISP5: boolean;
-  IISP6: boolean;
+  stageIISP: IISPInput;
   officerName: string;
-  good1: boolean;
-  good2: boolean;
-  adequate1: boolean;
-  adequate2: boolean;
-  poor1: boolean;
-  poor2: boolean;
+  GAP1: GAPInput;
+  GAP2: GAPInput;
   pcName: string;
 
   // SCC fields
@@ -206,7 +198,6 @@ export class UsMiSCCReviewV2Form extends FormBase<
       lockDate,
       OPT,
       SMI,
-      STG,
       segregationType,
       segregationClassificationDate,
       bondableOffensesWithin6Months,
@@ -245,8 +236,6 @@ export class UsMiSCCReviewV2Form extends FormBase<
       lockDate: formattedLockDate,
       OPT,
       SMI,
-      STG1: STG === "1",
-      STG2: STG === "2",
       adminSeg: segregationType === "ADMINISTRATIVE_SOLITARY_CONFINEMENT",
       punSeg: segregationType === "DISCIPLINARY_SOLITARY_CONFINEMENT",
       tempSeg: segregationType === "TEMPORARY_SOLITARY_CONFINEMENT",

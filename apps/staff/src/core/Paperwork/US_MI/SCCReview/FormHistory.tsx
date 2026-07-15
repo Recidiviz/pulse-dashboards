@@ -21,7 +21,7 @@ import * as React from "react";
 import styled from "styled-components";
 
 import { UsMiSCCReviewV2DraftData } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiSCCReviewV2Form";
-import { FormCheckbox, FormInput } from "./FormUtils";
+import { FormCheckbox, FormInput, FormRadioButton } from "./FormUtils";
 
 const ContentContainer = styled.div`
   display: grid;
@@ -175,13 +175,13 @@ const FormHistory: React.FC = () => {
       <STGCell>
         <div style={{ marginRight: "8px" }}>STG:</div>
         <div style={{ marginRight: "8px" }}>
-          <FormCheckbox name="STG1" label="I" />
+          <FormRadioButton name="STG" targetValue={"1"} label={"I"} />
+        </div>
+        <div style={{ marginRight: "8px" }}>
+          <FormRadioButton name="STG" targetValue={"2"} label={"II"} />
         </div>
         <div>
-          <FormCheckbox name="STG2" label="II" />
-        </div>
-        <div style={{ marginLeft: "8px" }}>
-          <FormCheckbox name="STG_NA" label="N/A" />
+          <FormRadioButton name="STG" targetValue={"N/A"} label={"N/A"} />
         </div>
       </STGCell>
       <ApprovalCell>

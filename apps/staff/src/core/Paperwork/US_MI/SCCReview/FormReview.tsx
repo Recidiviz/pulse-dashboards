@@ -20,7 +20,7 @@ import { rem } from "polished";
 import * as React from "react";
 import styled from "styled-components";
 
-import { FormCheckbox } from "./FormUtils";
+import { FormRadioButton } from "./FormUtils";
 
 const ContentContainer = styled.div`
   display: grid;
@@ -68,10 +68,18 @@ const FormReview: React.FC = () => {
         <div style={{ display: "flex" }}>
           Approve SCC Recommendation? (If Applicable)
           <div style={{ paddingLeft: "4px" }}>
-            <FormCheckbox name="wardenApproval" label="Yes" toggleable />
+            <FormRadioButton
+              name="wardenApproval"
+              targetValue={true}
+              label="Yes"
+            />
           </div>
           <div style={{ paddingLeft: "4px" }}>
-            <FormCheckbox name="wardenApproval" label="No" toggleable invert />
+            <FormRadioButton
+              name="wardenApproval"
+              targetValue={false}
+              label="No"
+            />
           </div>
         </div>
       </Cell>

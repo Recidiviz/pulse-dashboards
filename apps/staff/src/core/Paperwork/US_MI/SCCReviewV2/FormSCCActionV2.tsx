@@ -20,7 +20,11 @@ import { rem } from "polished";
 import * as React from "react";
 import styled from "styled-components";
 
-import { FormCheckbox, FormInput } from "../SCCReview/FormUtils";
+import {
+  FormCheckbox,
+  FormInput,
+  FormRadioButton,
+} from "../SCCReview/FormUtils";
 
 const ContentContainer = styled.div`
   display: grid;
@@ -82,10 +86,18 @@ const FormSCCActionV2: React.FC = () => {
           >
             Prisoner Participated in Interview:
             <div style={{ paddingLeft: "10px" }}>
-              <FormCheckbox name="participated" label="Yes" toggleable />
+              <FormRadioButton
+                name="participated"
+                targetValue={true}
+                label="Yes"
+              />
             </div>
             <div style={{ paddingLeft: "10px" }}>
-              <FormCheckbox name="participated" label="No" invert toggleable />
+              <FormRadioButton
+                name="participated"
+                targetValue={false}
+                label="No"
+              />
             </div>
             <div style={{ paddingLeft: "5px" }}>- Why Not?</div>
             <div style={{ paddingLeft: "10px" }}>
@@ -100,11 +112,10 @@ const FormSCCActionV2: React.FC = () => {
           >
             SCC Stop at Cell if Prisoner Refused?
             <div style={{ paddingLeft: "10px" }}>
-              <FormCheckbox name="sccStop" toggleable />
-              Yes
+              <FormRadioButton name="sccStop" targetValue={true} label="Yes" />
             </div>
             <div style={{ paddingLeft: "10px" }}>
-              <FormCheckbox name="sccStop" label="No" invert toggleable />
+              <FormRadioButton name="sccStop" targetValue={false} label="No" />
             </div>
           </div>
         </div>

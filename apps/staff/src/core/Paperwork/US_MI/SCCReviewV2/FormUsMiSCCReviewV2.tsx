@@ -64,6 +64,28 @@ const formDownloader = async (
   contents.participatedNo = contents.participated === false;
   contents.sccStopNo = contents.sccStop === false;
   contents.wardenApprovalNo = contents.wardenApproval === false;
+  contents.SMINO = contents.SMI === false;
+  contents.OPTNO = contents.OPT === false;
+
+  // Radio button fields
+  contents.STG1 = contents.STG === "1";
+  contents.STG2 = contents.STG === "2";
+  contents.STG_NA = contents.STG === "N/A";
+
+  contents.IISP1 = contents.stageIISP === "1";
+  contents.IISP2 = contents.stageIISP === "2";
+  contents.IISP3 = contents.stageIISP === "3";
+  contents.IISP4 = contents.stageIISP === "4";
+  contents.IISP5 = contents.stageIISP === "5";
+  contents.IISP6 = contents.stageIISP === "6";
+  contents.IISPNA = contents.stageIISP === "N/A";
+
+  contents.good1 = contents.GAP1 === "Good";
+  contents.good2 = contents.GAP2 === "Good";
+  contents.adequate1 = contents.GAP1 === "Adequate";
+  contents.adequate2 = contents.GAP2 === "Adequate";
+  contents.poor1 = contents.GAP1 === "Poor";
+  contents.poor2 = contents.GAP2 === "Poor";
 
   await downloadSingle(
     `${form.person?.displayName} - Form 283.docx`,

@@ -23,7 +23,12 @@ import {
   reviewTypeOptions,
   UsMiSCCReviewV2DraftData,
 } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiSCCReviewV2Form";
-import { FormCheckbox, FormDropdown, FormInput } from "../SCCReview/FormUtils";
+import {
+  FormCheckbox,
+  FormDropdown,
+  FormInput,
+  FormRadioButton,
+} from "../SCCReview/FormUtils";
 
 const ContentContainer = styled.div`
   display: grid;
@@ -58,6 +63,7 @@ const SegTypeCell = styled.div`
 const CheckboxContainer = styled.div`
   display: flex;
   flex-direction: row;
+  align-items: center;
   gap: ${rem(spacing.sm)};
   padding: 0 ${rem(spacing.xs)};
 `;
@@ -187,19 +193,19 @@ const FormGeneralInfoV2: React.FC = () => {
         <CheckboxContainer>
           <div>OPT:</div>
           <div>
-            <FormCheckbox name="OPT" label="YES" />
+            <FormRadioButton name="OPT" targetValue={true} label={"YES"} />
           </div>
           <div>
-            <FormCheckbox name="OPT" label="NO" invert />
+            <FormRadioButton name="OPT" targetValue={false} label={"NO"} />
           </div>
         </CheckboxContainer>
         <CheckboxContainer>
           <div>SMI:</div>
           <div>
-            <FormCheckbox name="SMI" label="YES" />
+            <FormRadioButton name="SMI" targetValue={true} label={"YES"} />
           </div>
           <div>
-            <FormCheckbox name="SMI" label="NO" invert />
+            <FormRadioButton name="SMI" targetValue={false} label={"NO"} />
           </div>
         </CheckboxContainer>
       </OPTSMICell>
