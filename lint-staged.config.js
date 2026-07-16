@@ -17,12 +17,10 @@
 
 const escapeParens = (s) => s.replace(/\(/g, "\\(").replace(/\)/g, "\\)");
 
-const quote = (s) => `"${s}"`;
-
 const formatCommand = (files) => {
   // lint-staged passes the files as absolute paths, so we need to escape parentheses (reentry NEXT app uses them in paths)
   const escaped = files.map(escapeParens);
-  return `nx format:write --files=${quote(escaped.join(","))}`;
+  return `nx format:write --files=${escaped.join(",")}`;
 };
 
 // recently added feature flag will resolve the closest config for each file, meaning we don't need
@@ -33,7 +31,7 @@ const lintCommand =
 const terraformFormatCommand = (files) => {
   // terraform fmt only works on directories or individual files
   // Get the list of files and format them
-  const escaped = files.map(escapeParens).map(quote);
+  const escaped = files.map(escapeParens);
   return `terraform fmt ${escaped.join(" ")}`;
 };
 
@@ -45,15 +43,17 @@ module.exports = {
     formatCommand,
   ],
   "**/*.{js,jsx,mjs}": [lintCommand, formatCommand],
-  "**/*.{!ts,tsx,js,jsx,mjs,mts}": [formatCommand],
-  "tsconfig.base.json": [() => "nx lint-import-paths"],
   "**/*.{yaml,yml}": [lintCommand, formatCommand],
+  "tsconfig.base.json": [() => "nx lint-import-paths", formatCommand],
   "**/project.json": [
     (files) => `nx affected -t projectTags --files=${files.join(",")}`,
   ],
   "libs/atmos/**/*.tf": [terraformFormatCommand],
   "apps/@reentry/frontend/.env*": [
-    (files) =>
-      `node tools/lint-reentry-frontend-env.mjs ${files.map(quote).join(" ")}`,
+    (files) => `node tools/lint-reentry-frontend-env.mjs ${files.join(" ")}`,
   ],
+  // If you add additional rules, they should be excluded from the below pattern
+  // to avoid a race condition: https://github.com/lint-staged/lint-staged#task-concurrency
+  "!(**/*.{ts,tsx,js,jsx,mjs,mts,yaml,yml}|tsconfig.base.json|**/project.json|libs/atmos/**/*.tf|apps/@reentry/frontend/.env*)":
+    [formatCommand],
 };
