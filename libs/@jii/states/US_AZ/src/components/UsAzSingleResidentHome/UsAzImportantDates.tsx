@@ -18,7 +18,6 @@
 import { observer } from "mobx-react-lite";
 
 import { HomepageSectionHeading } from "~@jii/common-ui";
-import { useSingleResidentContext } from "~@jii/data";
 import { useUsAzTranslations } from "~@jii/translation";
 import { withPresenterManager } from "~hydration-utils";
 
@@ -60,13 +59,11 @@ const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
 function usePresenter() {
   const { displayedDates, isTprApproved, isDtpApproved } =
     useUsAzSingleResidentContext();
-  const { residentFlags } = useSingleResidentContext();
   const { t } = useUsAzTranslations();
 
   return new UsAzImportantDatesPresenter(displayedDates, t, {
     isTprApproved,
     isDtpApproved,
-    usAzFslImprovements: residentFlags.usAzFslImprovements,
   });
 }
 

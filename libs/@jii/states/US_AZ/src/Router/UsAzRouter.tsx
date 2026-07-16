@@ -23,7 +23,7 @@ import { UsAzMoreInformation } from "~@jii/paths";
 import { UsAzSingleResidentContextRoute } from "../components/UsAzSingleResidentContext/UsAzSingleResidentContext";
 import { PageMoreInfoAbout } from "../pages/PageMoreInfoAbout";
 import { PageMoreInfoDPR } from "../pages/PageMoreInfoDPR";
-import { PageMoreInfoImportantDates } from "../pages/PageMoreInfoImportantDates";
+import { PageMoreInfoImportantDatesV2 } from "../pages/PageMoreInfoImportantDatesV2";
 import { PageUsAzResidentHome } from "../pages/PageUsAzSingleResidentHome";
 
 export function UsAzRouter() {
@@ -33,7 +33,7 @@ export function UsAzRouter() {
         <Route index element={<PageUsAzResidentHome />} />
         <Route
           path={UsAzMoreInformation.ImportantDates.path}
-          element={<PageMoreInfoImportantDates />}
+          element={<PageMoreInfoImportantDatesV2 />}
         />
         <Route
           path={UsAzMoreInformation.About.path}

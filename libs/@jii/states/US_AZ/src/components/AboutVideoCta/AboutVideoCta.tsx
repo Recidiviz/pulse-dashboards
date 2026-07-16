@@ -17,7 +17,7 @@
 
 import { observer } from "mobx-react-lite";
 
-import { useResidentsContext, useSingleResidentContext } from "~@jii/data";
+import { useResidentsContext } from "~@jii/data";
 import { withPresenterManager } from "~hydration-utils";
 
 import { AboutVideoCtaCard } from "./AboutVideoCard";
@@ -40,14 +40,9 @@ const ManagedComponent = observer(function ManagedComponent({
 });
 
 function usePresenter({ onHomepage }: { onHomepage: boolean }) {
-  const { residentFlags } = useSingleResidentContext();
   const { residentsStore } = useResidentsContext();
 
-  return new AboutVideoPresenter(
-    onHomepage,
-    residentFlags.usAzFslImprovements,
-    residentsStore,
-  );
+  return new AboutVideoPresenter(onHomepage, residentsStore);
 }
 
 export const AboutVideoCta = withPresenterManager({

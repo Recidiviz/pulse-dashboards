@@ -28,7 +28,6 @@ export class AboutVideoPresenter {
 
   constructor(
     public onHomepage: boolean,
-    private usAzFslImprovements: boolean | undefined,
     private residentsStore: ResidentsStore,
   ) {
     makeAutoObservable(this);
@@ -39,13 +38,8 @@ export class AboutVideoPresenter {
    * - when we're on the homepage and the user has moved the video from the homepage, or
    * - when we're not on the homepage (i.e. on the about page) and the user hasn't
    *   moved the video from the homepage.
-   *
-   * The CTA is also hidden if the user doesn't have the `usAzFslImprovements` resident
-   * flag.
    */
   get ctaIsHidden(): boolean {
-    if (!this.usAzFslImprovements) return true;
-
     const userMovedVideo =
       !!this.residentsStore.userProperties?.hideAboutVideoFromHomePage;
     return (

@@ -17,7 +17,6 @@
 
 import aboutInfoPage from "./aboutInfoPage.md?raw";
 import dprInfoPage from "./dprInfoPage.md?raw";
-import importantDatesInfoPage from "./importantDatesInfoPage.md?raw";
 
 export default {
   about: {
@@ -61,7 +60,6 @@ export default {
       to learn more about that release date and its criteria.`,
     moreInfo: {
       heading: "Release Types, Their Requirements, and Restrictions",
-      body: importantDatesInfoPage,
     },
     pastDateMessage: `If this date has already passed, it means you have not met all the requirements yet. 
     Reviewing the criteria will show you what steps you still need to take.`,
@@ -72,10 +70,6 @@ export default {
     dates: {
       tprDate: {
         title: "Standard Transition Program (STP)",
-        info: `Under STP, you may qualify for release up to 90 days earlier than your
-        [Temporary Release (TR)]({{trLinkUrl}}) under the Standard Transition Program if you meet all
-        of the criteria. You may also hear this called "Transition Program Release"
-        (TPR) or "Transition Release."`,
         shortName: "STP",
         value: "{{tprDate, formatFullDate}}",
         approved: {
@@ -97,11 +91,6 @@ export default {
       },
       dtpDate: {
         title: "Drug Transition Program (DTP)",
-        info: `You may qualify for release up to 90 days earlier than your Temporary Release (TR)
-        under the Drug Transition Program if you meet all of the criteria. This
-        is a special version of the Transition Program Release (TPR) for people with only qualifying drug
-        possession or use charges. You may also hear this called "Drug Transition Program Release"
-        (DTP) or "Drug Transition Release."`,
         shortName: "DTP",
         value: "{{dtpDate, formatFullDate}}",
         approved: {

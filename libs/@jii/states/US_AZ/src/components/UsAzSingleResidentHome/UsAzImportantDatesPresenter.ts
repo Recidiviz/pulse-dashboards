@@ -59,7 +59,6 @@ export class UsAzImportantDatesPresenter {
     private approval: {
       isTprApproved: boolean;
       isDtpApproved: boolean;
-      usAzFslImprovements?: boolean;
     } = {
       isTprApproved: false,
       isDtpApproved: false,
@@ -155,46 +154,30 @@ export class UsAzImportantDatesPresenter {
             replace: { [entry.dateKey]: entry.date },
           });
 
-    // Body copy
+    // Body copy. TPR/DTP dates pull their copy from the approved/tentative
+    // variant; all other dates use the generic messages.
     let info: string;
-    //tpr/dtp tentative and in the past
-    if (isTentative && approvalDateKey && isPast) {
-      info = this.t(
-        ($) => $.importantDates.dates[approvalDateKey].tentative.pastInfo,
-      );
-      //tpr/dtp tentative and in the future (upcoming and >30 days)
-    } else if (isTentative && approvalDateKey) {
-      info = this.t(
-        ($) => $.importantDates.dates[approvalDateKey].tentative.info,
-        { replace: { [approvalDateKey]: entry.date } },
-      );
-    } //tpr/dtp approved and in the past
-    else if (approvalDateKey && isPast) {
-      info = this.t(
-        ($) => $.importantDates.dates[approvalDateKey].approved.pastInfo,
-      );
-    } //tpr/dtp approved and <30 days away
-    else if (approvalDateKey && isUpcoming) {
-      info = this.t(
-        ($) => $.importantDates.dates[approvalDateKey].approved.upcomingInfo,
-      );
-    } //tpr/dtp approved and >30 days away
-    else if (approvalDateKey) {
-      info = this.t(
-        ($) => $.importantDates.dates[approvalDateKey].approved.info,
-      );
+    if (entry.dateKey === "tprDate" || entry.dateKey === "dtpDate") {
+      const dateKey = entry.dateKey;
+      const variant = isTentative ? "tentative" : "approved";
+      if (isPast) {
+        info = this.t(($) => $.importantDates.dates[dateKey][variant].pastInfo);
+      } else if (!isTentative && isUpcoming) {
+        info = this.t(
+          ($) => $.importantDates.dates[dateKey].approved.upcomingInfo,
+        );
+      } else {
+        info = this.t(($) => $.importantDates.dates[dateKey][variant].info, {
+          replace: { [dateKey]: entry.date },
+        });
+      }
     } else if (isUpcoming) {
       info = this.t(($) => $.importantDates.upcomingDateMessage);
     } else if (isPast) {
       info = this.t(($) => $.importantDates.pastDateMessage);
     } else {
-      const replace: Record<string, unknown> = {};
-      if (entry.dateKey === "tprDate") {
-        replace["trLinkUrl"] = linkToDateSection("trToAddDate");
-      }
-      info = this.t(($) => $.importantDates.dates[entry.dateKey].info, {
-        replace,
-      });
+      const dateKey = entry.dateKey;
+      info = this.t(($) => $.importantDates.dates[dateKey].info);
     }
 
     let goLink: string;
@@ -234,11 +217,9 @@ export class UsAzImportantDatesPresenter {
       const isPast = entryDate < today;
       const linkUrl = linkToDateSection(entry.dateKey);
 
-      /* Approval state and the learn-more overlay only apply to TPR and DTP
-      when the usAzFslImprovements flag is enabled; otherwise undefined. */
+      // Approval state and the learn-more overlay only apply to TPR and DTP.
       const approvalDateKey =
-        this.approval.usAzFslImprovements &&
-        (entry.dateKey === "tprDate" || entry.dateKey === "dtpDate")
+        entry.dateKey === "tprDate" || entry.dateKey === "dtpDate"
           ? entry.dateKey
           : undefined;
 

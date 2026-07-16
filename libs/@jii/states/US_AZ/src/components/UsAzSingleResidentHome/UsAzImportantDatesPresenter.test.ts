@@ -145,7 +145,6 @@ describe("UsAzImportantDatesPresenter", () => {
         const entry = new UsAzImportantDatesPresenter(futureTpr, t, {
           isTprApproved: true,
           isDtpApproved: false,
-          usAzFslImprovements: true,
         }).dateEntries[0];
         expect(entry.highlightType).toBe("green");
       });
@@ -154,7 +153,6 @@ describe("UsAzImportantDatesPresenter", () => {
         const entry = new UsAzImportantDatesPresenter(futureTpr, t, {
           isTprApproved: false,
           isDtpApproved: false,
-          usAzFslImprovements: true,
         }).dateEntries[0];
         expect(entry.highlightType).toBe("dashed");
       });
@@ -166,7 +164,6 @@ describe("UsAzImportantDatesPresenter", () => {
         const entry = new UsAzImportantDatesPresenter(pastTpr, t, {
           isTprApproved: true,
           isDtpApproved: false,
-          usAzFslImprovements: true,
         }).dateEntries[0];
         expect(entry.highlightType).toBe("dashed");
       });
@@ -175,7 +172,6 @@ describe("UsAzImportantDatesPresenter", () => {
         const entry = new UsAzImportantDatesPresenter(futureDtp, t, {
           isTprApproved: false,
           isDtpApproved: true,
-          usAzFslImprovements: true,
         }).dateEntries[0];
         expect(entry.highlightType).toBe("purple");
       });
@@ -184,7 +180,6 @@ describe("UsAzImportantDatesPresenter", () => {
         const entry = new UsAzImportantDatesPresenter(futureDtp, t, {
           isTprApproved: false,
           isDtpApproved: false,
-          usAzFslImprovements: true,
         }).dateEntries[0];
         expect(entry.highlightType).toBe("dashed");
       });
@@ -196,17 +191,8 @@ describe("UsAzImportantDatesPresenter", () => {
         const entry = new UsAzImportantDatesPresenter(ercd, t, {
           isTprApproved: true,
           isDtpApproved: true,
-          usAzFslImprovements: true,
         }).dateEntries[0];
         expect(entry.highlightType).toBeUndefined();
-      });
-
-      it("is green for a TPR date when usAzFslImprovements is off", () => {
-        const entry = new UsAzImportantDatesPresenter(futureTpr, t, {
-          isTprApproved: false,
-          isDtpApproved: false,
-        }).dateEntries[0];
-        expect(entry.highlightType).toBe("green");
       });
     });
 
@@ -222,7 +208,6 @@ describe("UsAzImportantDatesPresenter", () => {
         const entry = new UsAzImportantDatesPresenter(futureTpr, t, {
           isTprApproved: false,
           isDtpApproved: false,
-          usAzFslImprovements: true,
         }).dateEntries[0];
         expect(entry.isTentative).toBeTrue();
       });
@@ -231,7 +216,6 @@ describe("UsAzImportantDatesPresenter", () => {
         const entry = new UsAzImportantDatesPresenter(futureTpr, t, {
           isTprApproved: true,
           isDtpApproved: false,
-          usAzFslImprovements: true,
         }).dateEntries[0];
         expect(entry.isTentative).toBeFalse();
       });
@@ -243,22 +227,13 @@ describe("UsAzImportantDatesPresenter", () => {
         const entry = new UsAzImportantDatesPresenter(ercd, t, {
           isTprApproved: true,
           isDtpApproved: true,
-          usAzFslImprovements: true,
-        }).dateEntries[0];
-        expect(entry.isTentative).toBeFalse();
-      });
-
-      it("is false when usAzFslImprovements is off", () => {
-        const entry = new UsAzImportantDatesPresenter(futureTpr, t, {
-          isTprApproved: false,
-          isDtpApproved: false,
         }).dateEntries[0];
         expect(entry.isTentative).toBeFalse();
       });
     });
 
     describe("overlay", () => {
-      it("is undefined when usAzFslImprovements is off", () => {
+      it("is defined for a TPR date", () => {
         tk.freeze(new Date("2024-01-01"));
         const entry = new UsAzImportantDatesPresenter(
           [{ dateKey: "tprDate", date: new Date("2024-06-01") }],
@@ -266,7 +241,7 @@ describe("UsAzImportantDatesPresenter", () => {
           { isTprApproved: false, isDtpApproved: false },
         ).dateEntries[0];
         tk.reset();
-        expect(entry.overlay).toBeUndefined();
+        expect(entry.overlay).toBeDefined();
       });
     });
 
