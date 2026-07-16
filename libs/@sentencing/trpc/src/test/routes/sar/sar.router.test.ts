@@ -66,6 +66,8 @@ describe("SAR router", () => {
           assessmentAdministeredBy: fakeSAR.assessmentAdministeredBy,
           noORASDomainReason: null,
           ORASDomainsAvailable: true,
+          involvesSexCrime: false,
+          static9RRCompleted: false,
           criminalHistoryLevel: fakeSAR.criminalHistoryLevel,
           educationLevelScore: fakeSAR.educationLevelScore,
           neighborhoodLevel: fakeSAR.neighborhoodLevel,
@@ -85,6 +87,7 @@ describe("SAR router", () => {
           priorTreatmentHistorySummary: fakeSAR.priorTreatmentHistorySummary,
           peerAssociatesSummary: fakeSAR.peerAssociatesSummary,
           criminalAttitudesSummary: fakeSAR.criminalAttitudesSummary,
+          sexualHistorySummary: null,
           responsivityAndBarriersSummary:
             fakeSAR.responsivityAndBarriersSummary,
           communityStrategyRecommendation:

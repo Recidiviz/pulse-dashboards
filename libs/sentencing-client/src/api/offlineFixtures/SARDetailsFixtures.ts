@@ -92,6 +92,9 @@ export const SARDetailsFixture: { [sarId: string]: SAR } = {
     division: null,
     address: null,
 
+    static9RRCompleted: false,
+    involvesSexCrime: false,
+
     // Education / Assessment
     levelOfEducation: null,
     assessmentScore: 0,
@@ -132,6 +135,7 @@ export const SARDetailsFixture: { [sarId: string]: SAR } = {
     peerAssociatesSummary: null,
     criminalAttitudesSummary: null,
     responsivityAndBarriersSummary: null,
+    sexualHistorySummary: null,
     communityStrategyRecommendation: null,
     institutionalStrategyRecommendation: null,
     priorTreatmentHistorySummary: null,

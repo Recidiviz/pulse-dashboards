@@ -653,6 +653,8 @@ model SentencingAssessmentReport {
   familySocialSupportRiskLevel  DomainRiskLevel?
   peerAssociatesRiskLevel       DomainRiskLevel?
   criminalBehaviorRiskLevel     DomainRiskLevel?
+  involvesSexCrime              Boolean @default(false)
+  static9RRCompleted            Boolean @default(false)
   noORASDomainReason            String?
   ORASDomainsAvailable          Boolean @default(true)
 
@@ -670,6 +672,7 @@ model SentencingAssessmentReport {
   peerAssociatesSummary         String?
   criminalAttitudesSummary      String?
   responsivityAndBarriersSummary String?
+  sexualHistorySummary          String?
   communityStrategyRecommendation String?
   institutionalStrategyRecommendation String?
   priorTreatmentHistorySummary  String?

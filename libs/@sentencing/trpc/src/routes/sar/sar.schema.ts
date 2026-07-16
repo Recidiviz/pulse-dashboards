@@ -158,6 +158,7 @@ export const updateSARSchema = z.object({
     peerAssociatesSummary: z.string().nullable().optional(),
     criminalAttitudesSummary: z.string().nullable().optional(),
     responsivityAndBarriersSummary: z.string().nullable().optional(),
+    sexualHistorySummary: z.string().nullable().optional(),
     priorTreatmentHistorySummary: z.string().nullable().optional(),
     communityStrategyRecommendation: z.string().nullable().optional(),
     institutionalStrategyRecommendation: z.string().nullable().optional(),
@@ -169,6 +170,8 @@ export const updateSARSchema = z.object({
     supervisorSignature: z.string().nullish(),
     supervisorTitle: z.string().nullish(),
     supervisorLastSignedAt: z.date().nullish(),
+    involvesSexCrime: z.boolean().optional(),
+    static9RRCompleted: z.boolean().optional(),
     // Assessment metadata
     assessmentScore: z.number().int().nullish(),
     assessmentType: assessmentTypeEnum.nullish(),
