@@ -17,14 +17,19 @@
 
 import { makeAutoObservable } from "mobx";
 
+import { ClientRecord } from "~datatypes";
 import { FlowMethod } from "~hydration-utils";
 
-import FirestoreStore from "../FirestoreStore";
+import FirestoreStore, {
+  ClientOpportunityUpdateRecord,
+} from "../FirestoreStore";
 import { Client } from "./Client";
 import { JusticeInvolvedPerson } from "./types";
 
 export class JusticeInvolvedPersonsStore {
   caseloadByOfficerExternalId: Map<string, JusticeInvolvedPerson[]> = new Map();
+
+  caseloadByReviewerId: Map<string, JusticeInvolvedPerson[]> = new Map();
 
   constructor(private readonly firestoreStore: FirestoreStore) {
     makeAutoObservable(this);
@@ -52,6 +57,56 @@ export class JusticeInvolvedPersonsStore {
     this.caseloadByOfficerExternalId.set(
       officerExternalId,
       clientData.map((c) => new Client(c, this.firestoreStore.rootStore)),
+    );
+  }
+
+  *populateCaseloadForReviewer(
+    reviewerId: string,
+  ): FlowMethod<FirestoreStore["getOpportunityUpdatesForReviewerId"], void> {
+    const existingClientsByRecordId = new Map(
+      (this.caseloadByReviewerId.get(reviewerId) ?? []).map((c) => [
+        c.recordId,
+        c,
+      ]),
+    );
+
+    const opportunityUpdates =
+      (yield this.firestoreStore.getOpportunityUpdatesForReviewerId(
+        this.tenantId,
+        reviewerId,
+      )) as ClientOpportunityUpdateRecord[];
+
+    const clientRecordIds = [
+      ...new Set(
+        opportunityUpdates
+          .map((u) => u.clientRecordId)
+          .filter((id) => id !== undefined),
+      ),
+    ];
+
+    const newClientRecordIds = clientRecordIds.filter(
+      (id) => !existingClientsByRecordId.has(id),
+    );
+
+    const newClientDataList = (yield this.firestoreStore.getClientsForRecordIds(
+      newClientRecordIds,
+    )) as ClientRecord[];
+
+    const newClientsByRecordId = new Map(
+      newClientDataList.map((c) => [
+        c.recordId,
+        new Client(c, this.firestoreStore.rootStore),
+      ]),
+    );
+
+    this.caseloadByReviewerId.set(
+      reviewerId,
+      clientRecordIds
+        .map(
+          (id) =>
+            existingClientsByRecordId.get(id) ?? newClientsByRecordId.get(id),
+        )
+        .filter((c) => c !== undefined),
     );
   }
 }

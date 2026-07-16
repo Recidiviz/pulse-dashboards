@@ -19,10 +19,12 @@ import { startOfToday } from "date-fns";
 import {
   and,
   collection,
+  collectionGroup,
   connectFirestoreEmulator,
   deleteField,
   doc,
   DocumentData,
+  documentId,
   DocumentReference,
   Firestore,
   getDoc,
@@ -39,7 +41,7 @@ import {
   where,
   writeBatch,
 } from "firebase/firestore";
-import { mapValues, pickBy } from "lodash";
+import { chunk, mapValues, pickBy } from "lodash";
 import { makeAutoObservable } from "mobx";
 
 import { isOfflineMode } from "~client-env-utils";
@@ -72,6 +74,8 @@ import {
   AtLeastOneTrue,
   AutoSnoozeUpdate,
   ClientAddressUpdate,
+  ClientOpportunityUpdateRecord,
+  clientOpportunityUpdatesSchema,
   ContactMethodType,
   CustomTaskCreateInput,
   customTaskCreatePayloadSchema,
@@ -87,6 +91,9 @@ import {
   UserUpdateRecord,
   UsTnExpirationOpportunityUpdate,
 } from "./types";
+
+// Firestore's "in" operator supports at most 30 comparison values per query
+const FIRESTORE_IN_QUERY_BATCH_SIZE = 30;
 
 export default class FirestoreStore {
   rootStore;
@@ -197,6 +204,51 @@ export default class FirestoreStore {
         ...result.data(),
         recordId: result.id,
       }),
+    );
+  }
+
+  async getOpportunityUpdatesForReviewerId(
+    stateCode: string,
+    reviewerId: string,
+  ): Promise<ClientOpportunityUpdateRecord[]> {
+    const results = await getDocs(
+      query(
+        collectionGroup(
+          this.db,
+          collectionNameForCurrentEnv({ key: "clientOpportunityUpdates" }),
+        ),
+        where("stateCode", "==", stateCode),
+        where("currentReviewerId", "==", reviewerId),
+      ),
+    );
+
+    return results.docs.map((result) =>
+      clientOpportunityUpdatesSchema.parse({
+        ...result.data(),
+        clientRecordId: result.ref.parent.parent?.id,
+      }),
+    );
+  }
+
+  async getClientsForRecordIds(recordIds: string[]): Promise<ClientRecord[]> {
+    if (recordIds.length === 0) return [];
+    const batches = await Promise.all(
+      chunk(recordIds, FIRESTORE_IN_QUERY_BATCH_SIZE).map((batch) =>
+        getDocs(
+          query(
+            this.collection({ key: "clients" }),
+            where(documentId(), "in", batch),
+          ),
+        ),
+      ),
+    );
+    return batches.flatMap((results) =>
+      results.docs.map((result) =>
+        clientRecordSchema.parse({
+          ...result.data(),
+          recordId: result.id,
+        }),
+      ),
     );
   }
 

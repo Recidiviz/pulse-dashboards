@@ -166,6 +166,7 @@ export type FeatureVariant =
   | "insightsConsistentLoginPill"
   | "supervisorHomepageReviewCard"
   | "insightsSupervisorOpportunityNotifications"
+  | "supervisorHomepageReviewTable"
 
   // SENTENCING
   | "offenseOverrideControls"
@@ -286,6 +287,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   splitParoleProbationOutcomes: {},
   supervisorHomepageReviewCard: {},
   insightsSupervisorOpportunityNotifications: {},
+  supervisorHomepageReviewTable: {},
   sentenceProgressV2: {},
   hideWorkflowsOpportunities: {},
   hideWorkflowsResidentsPage: {},
@@ -301,7 +303,10 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
           activeTenants: ["US_AZ", "US_CA", "US_ID", "US_MI", "US_TN"],
         },
         supervisionUnrestrictedSearch: {},
-        supervisorHomepageReviewCard: { activeTenants: ["US_IA", "US_MI"] },
+        supervisorHomepageReviewCard: {
+          activeTenants: ["US_IA", "US_MI", "US_TX"],
+        },
+        supervisorHomepageReviewTable: { activeTenants: ["US_TX"] },
         supervisorHomepageWorkflows: {},
         supervisorHomepageVitals: {
           activeTenants: ["US_ID", "US_ND", "US_TX"],
@@ -389,6 +394,10 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         sentenceProgressV2: { activeTenants: ["US_ND"] },
         hideWorkflowsOpportunities: undefined,
         hideWorkflowsResidentsPage: { activeTenants: ["US_NC"] },
+        supervisorHomepageReviewCard: {
+          activeTenants: ["US_IA", "US_MI", "US_TX"],
+        },
+        supervisorHomepageReviewTable: { activeTenants: ["US_TX"] },
       };
 
 export type LanternMethodologyByTenant = {

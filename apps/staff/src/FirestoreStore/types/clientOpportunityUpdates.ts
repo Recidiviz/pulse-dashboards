@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,11 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./clientOpportunityUpdates";
-export * from "./customTask";
-export * from "./metadata";
-export * from "./milestones";
-export * from "./opportunity";
-export * from "./person";
-export * from "./task";
-export * from "./user";
+import { z } from "zod";
+
+export const clientOpportunityUpdatesSchema = z
+  .object({
+    stateCode: z.string().optional(),
+    currentReviewerId: z.string().optional(),
+    // Populated from the Firestore document path (result.ref.parent.parent.id)
+    // rather than the document data itself; used to look up the associated client.
+    clientRecordId: z.string().optional(),
+  })
+  .passthrough();
+
+export type ClientOpportunityUpdateRecord = z.infer<
+  typeof clientOpportunityUpdatesSchema
+>;

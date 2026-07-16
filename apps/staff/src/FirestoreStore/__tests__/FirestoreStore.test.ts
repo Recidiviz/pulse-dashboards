@@ -19,9 +19,11 @@ import {
   deleteField,
   doc,
   DocumentReference,
+  getDocs,
   PartialWithFieldValue,
   serverTimestamp,
   setDoc,
+  where,
   writeBatch,
 } from "firebase/firestore";
 import { omit } from "lodash-es";
@@ -58,6 +60,8 @@ const mockSetDoc = setDoc as Mock;
 const mockDoc = doc as Mock;
 const mockDeleteField = deleteField as Mock;
 const mockServerTimestamp = serverTimestamp as Mock;
+const mockGetDocs = getDocs as Mock;
+const mockWhere = where as Mock;
 
 vi.mock("../../api/fetchFirebaseToken", () => {
   return {
@@ -1088,6 +1092,29 @@ describe("FirestoreStore", () => {
           },
         ],
       ]);
+    });
+  });
+
+  describe("getClientsForRecordIds", () => {
+    beforeEach(() => {
+      mockGetDocs.mockResolvedValue({ docs: [] });
+    });
+
+    test("never calls getDocs with more than 30 recordIds in a batch", async () => {
+      const recordIds = Array.from({ length: 75 }, (_, i) => `record_${i}`);
+
+      await store.getClientsForRecordIds(recordIds);
+
+      const inQueryBatches = mockWhere.mock.calls
+        .filter(([, operator]) => operator === "in")
+        .map(([, , batch]) => batch);
+
+      expect(inQueryBatches.length).toBe(3);
+      inQueryBatches.forEach((batch) => {
+        expect(batch.length).toBeLessThanOrEqual(30);
+      });
+      expect(inQueryBatches.flat()).toEqual(recordIds);
+      expect(mockGetDocs).toHaveBeenCalledTimes(3);
     });
   });
 

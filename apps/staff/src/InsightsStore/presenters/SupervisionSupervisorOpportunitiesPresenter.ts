@@ -34,10 +34,7 @@ import { PartialRecord } from "../../utils/typeUtils";
 import { Opportunity, OpportunityTab } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { OpportunityConfigurationStore } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
-import {
-  isEligible,
-  opportunitiesByTabForType,
-} from "../../WorkflowsStore/utils";
+import { opportunitiesByTabForType } from "../../WorkflowsStore/utils";
 import { WithJusticeInvolvedPersonStore } from "../mixins/WithJusticeInvolvedPersonsPresenterMixin";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionBasePresenter } from "./SupervisionBasePresenter";
@@ -46,6 +43,7 @@ import {
   RawOpportunityInfo,
   RawOpportunityInfoByOpportunityType,
 } from "./types";
+import { addSupervisorReviewCounts, countRelevantOpportunities } from "./utils";
 
 export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvolvedPersonStore(
   SupervisionBasePresenter,
@@ -67,25 +65,32 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
     makeObservable<
       SupervisionSupervisorOpportunitiesPresenter,
       | "expectOfficersPopulated"
+      | "expectSupervisorPopulated"
       | "hydrator"
       | "hydrationState"
       | "initializeOpportunityDetail"
       | "populateCaseload"
+      | "populateCaseloadForCurrentReviewer"
       | "expectCaseloadPopulated"
+      | "expectCaseloadPopulatedForReviewer"
     >(
       this,
       {
         opportunityMapping: true,
         expectOfficersPopulated: true,
+        expectSupervisorPopulated: true,
         supervisorPseudoId: true,
         allOfficers: true,
         hydrate: true,
         hydrator: true,
         populateCaseload: true,
+        populateCaseloadForCurrentReviewer: true,
         expectCaseloadPopulated: true,
+        expectCaseloadPopulatedForReviewer: true,
         hydrationState: true,
         initializeOpportunityDetail: true,
         opportunitiesDetails: true,
+        opportunitiesDetailsForReviewer: true,
         populateOpportunityConfigurationStore: true,
         expectOpportunityConfigurationStorePopulated: true,
         shouldSplitByTab: true,
@@ -93,6 +98,7 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
         opportunitiesDetailsForCardGrid: true,
         alertOpportunitiesNotificationsByOpportunityType: true,
         isNotificationBannerEnabled: true,
+        isInsightsSupervisorReviewTableEnabled: true,
         supervisorInfo: true,
       },
       { autoBind: true },
@@ -107,15 +113,30 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
             ),
           ),
           flowResult(this.populateOpportunityConfigurationStore()),
+          ...(this.isInsightsSupervisorReviewTableEnabled
+            ? [
+                flowResult(
+                  this.supervisionStore.populateSupervisionOfficerSupervisors(),
+                ),
+              ]
+            : []),
         ]);
         await this.populateCaseload();
+        await this.populateCaseloadForCurrentReviewer();
       },
       expectPopulated: [
         this.expectOfficersPopulated,
+        ...(this.isInsightsSupervisorReviewTableEnabled
+          ? [this.expectSupervisorPopulated]
+          : []),
         this.expectOpportunityConfigurationStorePopulated,
         ...this.allOfficers.map(
           (o) => () => this.expectCaseloadPopulated(o.externalId),
         ),
+        () =>
+          this.expectCaseloadPopulatedForReviewer(
+            this.supervisorInfo?.externalId,
+          ),
       ],
     });
   }
@@ -222,6 +243,24 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
   }
 
   /**
+   * Provides details about supervision supervisor opportunities for a given reviewer.
+   * @returns An array of `OpportunityInfo` or `undefined` if workflows are not enabled or data is not available.
+   */
+  get opportunitiesDetailsForReviewer(): OpportunityCardInfo[] | undefined {
+    if (!this.isWorkflowsEnabled) return;
+
+    if (this.isInsightsSupervisorReviewTableEnabled) {
+      const { externalId } = this.supervisorInfo ?? {};
+      if (!externalId) return [];
+      return this.buildOpportunitiesDetails(
+        this.processReviewerOpportunities(externalId),
+      );
+    }
+
+    return [];
+  }
+
+  /**
    * For a given opportunity card, split the aggregated card information up by tab and
    * return the list of card info objects for each tab.
    */
@@ -286,6 +325,11 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
       .activeFeatureVariants.supervisorHomepageReviewCard;
   }
 
+  get isInsightsSupervisorReviewTableEnabled(): boolean {
+    return !!this.supervisionStore.insightsStore.rootStore.userStore
+      .activeFeatureVariants.supervisorHomepageReviewTable;
+  }
+
   /**
    * Filters down the list of opportunity information to just those opportunities
    * with outstanding supervisor review requests.
@@ -299,6 +343,13 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
     if (!this.isReviewCardEnabled) {
       return [];
     }
+
+    if (this.isInsightsSupervisorReviewTableEnabled) {
+      return this.opportunitiesDetailsForReviewer?.filter(
+        (oppInfo) => !isEmpty(oppInfo.supervisorReviewCounts),
+      );
+    }
+
     return this.opportunitiesDetails?.filter(
       (oppInfo) => !isEmpty(oppInfo.supervisorReviewCounts),
     );
@@ -331,6 +382,20 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
         this.supervisorPseudoId,
       ) ?? []
     );
+  }
+
+  /**
+   * Populates the caseload for the current supervisor as a reviewer.
+   */
+  async populateCaseloadForCurrentReviewer() {
+    if (!this.isInsightsSupervisorReviewTableEnabled) {
+      return;
+    }
+
+    const { externalId } = this.supervisorInfo ?? {};
+    if (externalId) {
+      await this.populateCaseloadForReviewer(externalId);
+    }
   }
 
   /**
@@ -393,9 +458,10 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
 
             // Use a custom counting function defined for this opportunity when one exists.
             // Otherwise, only count eligible opportunities.
-            const clientCountForOfficer = countByFunction
-              ? countByFunction(opportunities)
-              : opportunities.filter((opp) => opp && isEligible(opp)).length;
+            const clientCountForOfficer = countRelevantOpportunities(
+              opportunities,
+              countByFunction,
+            );
 
             const oppsByTabForOfficer =
               opportunitiesByTabForType(opportunities);
@@ -403,19 +469,10 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
             // If we need to surface status counts for supervisor review,
             // handle adding the current officer's counts to the supervisor
             // totals.
-            if (
-              this.isReviewCardEnabled &&
-              supportsSupervisorReview &&
-              oppsByTabForOfficer[supervisorReviewTabTitle]?.length
-            ) {
-              const reviewOpps = oppsByTabForOfficer[supervisorReviewTabTitle];
-              reviewOpps.forEach((opp) => {
-                const statusLabel = opp.eligibilityStatusLabel();
-                if (statusLabel && oppDetail.supervisorReviewCounts) {
-                  oppDetail.supervisorReviewCounts[statusLabel] =
-                    oppDetail.supervisorReviewCounts[statusLabel] + 1 || 1;
-                }
-              });
+            if (this.isReviewCardEnabled && supportsSupervisorReview) {
+              addSupervisorReviewCounts(oppDetail, oppsByTabForOfficer, [
+                supervisorReviewTabTitle,
+              ]);
             }
 
             // If we need to surface opportunity counts by tab
@@ -443,6 +500,58 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
             }
           },
         );
+
+        return acc;
+      },
+      new Map(),
+    );
+  }
+
+  /**
+   * Processes a reviewer's clients, creating a map of raw opportunity details.
+   *
+   * @param {string} reviewerId - The external ID of the reviewer (supervisor).
+   * @return {*}  {RawOpportunityInfoByOpportunityType}
+   */
+  protected processReviewerOpportunities(
+    reviewerId: string,
+  ): RawOpportunityInfoByOpportunityType {
+    const opportunitiesByType: PartialRecord<OpportunityType, Opportunity[]> =
+      this.opportunitiesByTypeForReviewer(reviewerId) ?? {};
+
+    return Object.entries(opportunitiesByType).reduce(
+      (acc: RawOpportunityInfoByOpportunityType, [oppType, opportunities]) => {
+        const opportunityType = oppType as OpportunityType;
+        const oppDetail =
+          acc.get(opportunityType) ??
+          this.initializeOpportunityDetail(opportunityType);
+
+        const {
+          countByFunction,
+          supportsSupervisorReview,
+          supervisorReviewTabTitle,
+          awaitingRevisionsTabTitle,
+        } = this.opportunityConfigurationStore.opportunities[opportunityType];
+
+        const oppsByTab = opportunitiesByTabForType(opportunities);
+
+        const clientCount = countRelevantOpportunities(
+          opportunities,
+          countByFunction,
+        );
+
+        if (this.isReviewCardEnabled && supportsSupervisorReview) {
+          addSupervisorReviewCounts(oppDetail, oppsByTab, [
+            supervisorReviewTabTitle,
+            awaitingRevisionsTabTitle,
+          ]);
+        }
+
+        if (clientCount > 0) {
+          oppDetail.relevantClientsCount += clientCount;
+        }
+
+        acc.set(opportunityType, oppDetail);
 
         return acc;
       },
@@ -527,6 +636,15 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
       )
     )
       throw new Error("failed to populate officers with outliers");
+  }
+
+  /**
+   * Asserts that the supervisor has been populated.
+   * @throws An error if the supervisor is not populated.
+   */
+  protected expectSupervisorPopulated() {
+    if (!this.supervisorInfo)
+      throw new Error("Failed to populate supervisor info");
   }
 
   // ==============================

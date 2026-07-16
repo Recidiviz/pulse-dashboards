@@ -28,11 +28,14 @@ import {
 import { Page } from "../../core/InsightsSupervisorPage/InsightsBreadcrumbs";
 import { insightsUrl } from "../../core/views";
 import { humanReadableTitleCase } from "../../utils";
+import { Opportunity, OpportunityTab } from "../../WorkflowsStore";
+import { isEligible } from "../../WorkflowsStore/utils";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import {
   ConfigLabels,
   HighlightedOfficersDetail,
   OfficerOutcomesData,
+  RawOpportunityInfo,
 } from "./types";
 
 export const THIRTY_SECONDS = 1000 * 30;
@@ -125,6 +128,41 @@ export function getOfficerOutcomesData(
       };
     }),
   };
+}
+
+/**
+ * Counts opportunities using an opportunity type's custom counting function when provided,
+ * otherwise falls back to counting only eligible opportunities.
+ */
+export function countRelevantOpportunities(
+  opportunities: Opportunity[],
+  countByFunction?: (opportunities: Opportunity[]) => number,
+): number {
+  return countByFunction
+    ? countByFunction(opportunities)
+    : opportunities.filter((opp) => opp && isEligible(opp)).length;
+}
+
+/**
+ * Increments `oppDetail.supervisorReviewCounts` by eligibility status label for every
+ * opportunity found in any of `reviewTabTitles` within `oppsByTab`.
+ */
+export function addSupervisorReviewCounts(
+  oppDetail: RawOpportunityInfo,
+  oppsByTab: Record<OpportunityTab, Opportunity[]>,
+  reviewTabTitles: OpportunityTab[],
+): void {
+  const reviewOpps = reviewTabTitles.flatMap(
+    (tabTitle) => oppsByTab[tabTitle] ?? [],
+  );
+
+  reviewOpps.forEach((opp) => {
+    const statusLabel = opp.eligibilityStatusLabel();
+    if (statusLabel && oppDetail.supervisorReviewCounts) {
+      oppDetail.supervisorReviewCounts[statusLabel] =
+        (oppDetail.supervisorReviewCounts[statusLabel] ?? 0) + 1;
+    }
+  });
 }
 
 export function getLocationWithoutLabel(

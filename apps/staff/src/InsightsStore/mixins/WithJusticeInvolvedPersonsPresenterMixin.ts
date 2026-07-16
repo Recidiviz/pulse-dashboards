@@ -79,8 +79,8 @@ export function WithJusticeInvolvedPersonStore<
       // Check if...
       return (
         // ...the user has allowed navigation to workflows and...
-        (userStore.getRoutePermission("workflowsSupervision") && // ...if the active feature variant for supervisorHomepageWorkflows is enabled.
-        !!userStore.activeFeatureVariants.supervisorHomepageWorkflows)
+        userStore.getRoutePermission("workflowsSupervision") && // ...if the active feature variant for supervisorHomepageWorkflows is enabled.
+        !!userStore.activeFeatureVariants.supervisorHomepageWorkflows
       );
     }
 
@@ -106,6 +106,22 @@ export function WithJusticeInvolvedPersonStore<
       // Return the list of persons or undefined if no persons found
       return this.justiceInvolvedPersonsStore?.caseloadByOfficerExternalId.get(
         officerExternalId,
+      );
+    }
+
+    /**
+     * Finds all persons with opportunities assigned to a given reviewer.
+     * @param reviewerId - The ID of the reviewer to look up persons for.
+     * @returns An array of persons with opportunities assigned to the reviewer, or undefined if none found.
+     * @see {JusticeInvolvedPerson}
+     */
+    protected findClientsForReviewer(
+      reviewerId: string,
+    ): JusticeInvolvedPerson[] {
+      return (
+        this.justiceInvolvedPersonsStore?.caseloadByReviewerId.get(
+          reviewerId,
+        ) ?? []
       );
     }
 
@@ -146,6 +162,46 @@ export function WithJusticeInvolvedPersonStore<
       );
 
       // Return the grouped opportunities
+      return opportunitiesByType;
+    }
+
+    /**
+     * Finds opportunities for all clients with opportunities assigned to a given reviewer,
+     * grouped by opportunity type.
+     * If opportunityMappingOverride is provided, this function will only return opportunities
+     * applicable to the override (e.g. only eligible opportunities). Otherwise, this function
+     * will return opportunities based on the opportunity mapping of the implementing class.
+     *
+     * @param reviewerId - The ID of the reviewer to look up opportunities.
+     * @returns An object with lists of opportunities assigned to keys of the same type.
+     * @see {Opportunity}
+     * @see {OpportunityType}
+     */
+    protected opportunitiesByTypeForReviewer(
+      reviewerId: string,
+      opportunityMappingOverride?: JusticeInvolvedPersonOpportunityMapping,
+    ): Record<OpportunityType, Opportunity[]> {
+      const clients = this.findClientsForReviewer(reviewerId);
+
+      const opportunitiesByType = clients.reduce(
+        (oppsByType, client) => {
+          for (const opportunity of Object.values(
+            client[opportunityMappingOverride ?? this.opportunityMapping],
+          ).flat()) {
+            // A client can appear here because a *different* opportunity type's
+            // update is assigned to this reviewer, so only bucket the opportunities
+            // that are actually assigned to them for this opportunity type.
+            if (opportunity.currentReviewerId !== reviewerId) continue;
+
+            const { type } = opportunity;
+            (oppsByType[type] ?? (oppsByType[type] = [])).push(opportunity);
+          }
+
+          return oppsByType as Record<OpportunityType, Opportunity[]>;
+        },
+        {} as Record<OpportunityType, Opportunity[]>,
+      );
+
       return opportunitiesByType;
     }
 
@@ -197,6 +253,32 @@ export function WithJusticeInvolvedPersonStore<
     }
 
     /**
+     * Populate the caseload map for this reviewer.
+     * @param reviewerId - External ID of the reviewer.
+     */
+    async populateCaseloadForReviewer(reviewerId: string) {
+      if (!this.justiceInvolvedPersonsStore) return;
+
+      await flowResult(
+        this.justiceInvolvedPersonsStore.populateCaseloadForReviewer(
+          reviewerId,
+        ),
+      );
+
+      const clients = this.findClientsForReviewer(reviewerId);
+      if (!clients) return;
+      const hydrations: Promise<void>[] = [];
+
+      for (const client of clients) {
+        for (const field of this.personFieldsToHydrate) {
+          if (client[field]) hydrations.push(awaitHydration(client[field]));
+        }
+      }
+
+      return await Promise.all(hydrations);
+    }
+
+    /**
      * If workflows are enabled, this method will throw an error if the clients are not populated for the officer.
      * @protected
      * @param officerExternalId
@@ -219,6 +301,32 @@ export function WithJusticeInvolvedPersonStore<
           if (!client[field] || !isHydrated(client[field])) {
             throw new Error(
               `Failed to populate ${field} for client ${client.externalId} of officer ${officerExternalId}`,
+            );
+          }
+        }
+      }
+    }
+
+    /**
+     * If workflows are enabled, this method will throw an error if the clients are not populated for the reviewer.
+     * A missing `reviewerId` is not an error on its own (e.g. no reviewer applies to this presenter) and is a no-op.
+     * @protected
+     * @param reviewerId
+     */
+    protected expectCaseloadPopulatedForReviewer(
+      reviewerId: string | undefined,
+    ) {
+      if (!this.isWorkflowsEnabled) return;
+
+      if (!reviewerId) return;
+
+      const clients = this.findClientsForReviewer(reviewerId);
+
+      for (const client of clients) {
+        for (const field of this.personFieldsToHydrate) {
+          if (!client[field] || !isHydrated(client[field])) {
+            throw new Error(
+              `Failed to populate ${field} for client ${client.externalId} of reviewer ${reviewerId}`,
             );
           }
         }

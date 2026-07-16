@@ -16,8 +16,9 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
 
-import { withPresenterManager } from "~hydration-utils";
+import { isHydrated, withPresenterManager } from "~hydration-utils";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { SupervisionSupervisorOpportunitiesPresenter } from "../../InsightsStore/presenters/SupervisionSupervisorOpportunitiesPresenter";
@@ -64,7 +65,16 @@ const ManagedComponent: React.FC<{
     isWorkflowsEnabled,
     labels,
     supervisorPseudoId,
+    isInsightsSupervisorReviewTableEnabled,
   } = presenter;
+
+  // The hydrator only populates the reviewer caseload once, on the presenter's
+  // first hydration; explicitly reinvoke it on each mount so review counts stay fresh.
+  useEffect(() => {
+    if (isHydrated(presenter) && isInsightsSupervisorReviewTableEnabled) {
+      presenter.populateCaseloadForCurrentReviewer();
+    }
+  });
 
   return (
     <>

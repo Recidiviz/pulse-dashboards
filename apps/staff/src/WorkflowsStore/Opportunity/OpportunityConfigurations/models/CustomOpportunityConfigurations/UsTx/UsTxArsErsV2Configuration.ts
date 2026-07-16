@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { OpportunityTableColumnId } from "../../../../../../core/OpportunityCaseloadView/HydratedOpportunityPersonList";
+import { OpportunityTab, OpportunityTabGroups } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsTxArsErsV2Configuration extends ApiOpportunityConfiguration {
@@ -51,5 +52,32 @@ export class UsTxArsErsV2Configuration extends ApiOpportunityConfiguration {
 
   get enableSupervisorReviewChain(): boolean {
     return true;
+  }
+
+  get supportsSupervisorReview(): boolean {
+    return true;
+  }
+
+  get supervisorReviewTabTitle(): OpportunityTab {
+    return "Submitted for Review";
+  }
+
+  get grantApprovedTabTitle(): OpportunityTab {
+    return "Approved by Supervisor";
+  }
+
+  // Adding this here as opposed to the admin panel since this gives us
+  // 1 source of truth for the two (ARS and ERS) opportunities
+  get tabGroups(): OpportunityTabGroups {
+    return {
+      "ELIGIBILITY STATUS": [
+        "Eligible Now",
+        "Almost Eligible",
+        this.supervisorReviewTabTitle,
+        this.awaitingRevisionsTabTitle,
+        this.grantApprovedTabTitle,
+        this.deniedTabTitle,
+      ],
+    };
   }
 }

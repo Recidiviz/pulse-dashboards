@@ -56,7 +56,7 @@ export class SupervisionSupervisorOpportunityPresenter extends SupervisionSuperv
       // hydration
       hydrate: override,
       hydrationState: override,
-      expectSupervisorPopulated: true,
+      expectSupervisorPopulated: override,
     });
 
     this.hydrator = new HydratesFromSource({
@@ -73,6 +73,7 @@ export class SupervisionSupervisorOpportunityPresenter extends SupervisionSuperv
           flowResult(this.populateOpportunityConfigurationStore()),
         ]);
         await this.populateCaseload();
+        await this.populateCaseloadForCurrentReviewer();
       },
       expectPopulated: [
         this.expectSupervisorPopulated,
@@ -81,12 +82,24 @@ export class SupervisionSupervisorOpportunityPresenter extends SupervisionSuperv
         ...this.allOfficers.map(
           (o) => () => this.expectCaseloadPopulated(o.externalId),
         ),
+        () =>
+          this.expectCaseloadPopulatedForReviewer(
+            this.supervisorInfo?.externalId,
+          ),
       ],
     });
   }
 
   // All opportunities for the officers of this supervisor
+  // If isInsightsSupervisorReviewTableEnabled is true, all opportunities
+  // awaiting review from this supervisor
   get opportunitiesByType(): Record<OpportunityType, Opportunity[]> {
+    if (this.isInsightsSupervisorReviewTableEnabled) {
+      const { externalId } = this.supervisorInfo ?? {};
+      if (!externalId) return {} as Record<OpportunityType, Opportunity[]>;
+      return this.opportunitiesByTypeForReviewer(externalId);
+    }
+
     const oppsByType = this.allOfficers.reduce(
       (acc, officer) => {
         const oppsByTypeForOfficer = this.opportunitiesByTypeForOfficer(
@@ -126,13 +139,30 @@ export class SupervisionSupervisorOpportunityPresenter extends SupervisionSuperv
   }
 
   get clients(): JusticeInvolvedPerson[] {
-    return this.allOfficers.reduce((acc, officer) => {
-      const clientsForOfficer = this.findClientsForOfficer(officer.externalId);
-      if (clientsForOfficer) {
-        acc = acc.concat(clientsForOfficer);
+    const clients = [];
+
+    if (this.isInsightsSupervisorReviewTableEnabled) {
+      const { externalId } = this.supervisorInfo ?? {};
+      const clientsForReviewer = externalId
+        ? this.findClientsForReviewer(externalId)
+        : undefined;
+      if (clientsForReviewer) {
+        clients.push(...clientsForReviewer);
       }
-      return acc;
-    }, [] as JusticeInvolvedPerson[]);
+    } else {
+      const clientsForOfficer = this.allOfficers.reduce((acc, officer) => {
+        const clientsForOfficer = this.findClientsForOfficer(
+          officer.externalId,
+        );
+        if (clientsForOfficer) {
+          acc = acc.concat(clientsForOfficer);
+        }
+        return acc;
+      }, [] as JusticeInvolvedPerson[]);
+      clients.push(...clientsForOfficer);
+    }
+
+    return clients;
   }
 
   get clientPseudoId() {
@@ -147,11 +177,6 @@ export class SupervisionSupervisorOpportunityPresenter extends SupervisionSuperv
 
   get supervisorInfo(): SupervisionOfficerSupervisor | undefined {
     return this.supervisionStore.supervisorInfo(this.supervisorPseudoId);
-  }
-
-  private expectSupervisorPopulated() {
-    if (!this.supervisorInfo)
-      throw new Error("Failed to populate supervisor info");
   }
 
   get userCanAccessAllSupervisors() {

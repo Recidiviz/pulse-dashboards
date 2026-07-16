@@ -78,6 +78,7 @@ beforeEach(async () => {
 
   vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
   rootStore = store.insightsStore.rootStore;
+  rootStore.tenantStore.setCurrentTenantId("US_ID" as TenantId);
 
   rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
 
