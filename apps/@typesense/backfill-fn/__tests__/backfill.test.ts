@@ -18,6 +18,7 @@
 import {
   assignNested,
   createRateLimiter,
+  isValidStateCode,
   mapWithConcurrency,
   parseImportResponse,
   projectFields,
@@ -25,8 +26,151 @@ import {
   resolveConcurrency,
   resolveImportRatePerSec,
   resolvePruneStale,
+  runBackfill,
   selectStaleIds,
 } from "../src/backfill";
+
+// ---------------------------------------------------------------------------
+// Integration harness for runBackfill: fake Firestore + Typesense clients wired
+// in via module mocks, so the real backfill + prune flow (paging, projection,
+// import, export-diff, delete) can be driven without a live cluster or emulator.
+// ---------------------------------------------------------------------------
+
+interface FakeDoc {
+  id: string;
+  data: Record<string, unknown>;
+}
+
+type FakeSnapshot = {
+  empty: boolean;
+  size: number;
+  docs: Array<{ id: string; data: () => Record<string, unknown> }>;
+};
+
+type FakeQuery = {
+  where: (field: string, op: string, value: unknown) => FakeQuery;
+  orderBy: (field?: unknown) => FakeQuery;
+  limit: (n: number) => FakeQuery;
+  startAfter: (cursor: { id: string }) => FakeQuery;
+  get: () => Promise<FakeSnapshot>;
+};
+
+type FakeFirestore = { collection: (name: string) => FakeQuery };
+
+type FakeTypesenseClient = {
+  collections: (name: string) => {
+    documents: (id?: string) => {
+      import: (docs: unknown[], opts?: unknown) => Promise<unknown>;
+      export: (options?: {
+        include_fields?: string;
+        filter_by?: string;
+      }) => Promise<string>;
+      delete: () => Promise<unknown>;
+    };
+  };
+};
+
+// Holders the module mocks read from, so each test installs its own fakes.
+const { firestoreHolder, typesenseHolder } = vi.hoisted(() => ({
+  firestoreHolder: { current: undefined as FakeFirestore | undefined },
+  typesenseHolder: { current: undefined as FakeTypesenseClient | undefined },
+}));
+
+vi.mock("firebase-admin", () => {
+  const firestore = (() => firestoreHolder.current) as unknown as {
+    (): FakeFirestore | undefined;
+    FieldPath: { documentId: () => string };
+  };
+  // backfillCollection orders by documentId(); the fake query ignores the arg.
+  firestore.FieldPath = { documentId: () => "__name__" };
+  return { firestore };
+});
+
+vi.mock("~@typesense/client", () => ({
+  createTypesenseClient: () => typesenseHolder.current,
+}));
+
+// Serves a fixed set of docs per collection, honoring the stateCode equality
+// filter and the id-ordered pagination (orderBy(documentId) + startAfter) that
+// backfillCollection relies on.
+function makeFirestore(collections: Record<string, FakeDoc[]>): FakeFirestore {
+  function query(
+    name: string,
+    opts: { state?: string; afterId?: string; limit?: number },
+  ): FakeQuery {
+    return {
+      where: (field, _op, value) =>
+        query(name, {
+          ...opts,
+          state: field === "stateCode" ? String(value) : opts.state,
+        }),
+      orderBy: () => query(name, opts),
+      limit: (n) => query(name, { ...opts, limit: n }),
+      startAfter: (cursor) => query(name, { ...opts, afterId: cursor.id }),
+      get: async () => {
+        let docs = [...(collections[name] ?? [])];
+        if (opts.state !== undefined) {
+          docs = docs.filter((d) => d.data["stateCode"] === opts.state);
+        }
+        docs.sort((a, b) => a.id.localeCompare(b.id));
+        if (opts.afterId !== undefined) {
+          const idx = docs.findIndex((d) => d.id === opts.afterId);
+          if (idx >= 0) docs = docs.slice(idx + 1);
+        }
+        const page =
+          opts.limit !== undefined ? docs.slice(0, opts.limit) : docs;
+        return {
+          empty: page.length === 0,
+          size: page.length,
+          docs: page.map((d) => ({ id: d.id, data: () => d.data })),
+        };
+      },
+    };
+  }
+  return { collection: (name) => query(name, {}) };
+}
+
+interface TypesenseDoc {
+  id: string;
+  stateCode?: string;
+}
+
+// Records imports/exports/deletes for assertions. export() honors a
+// `stateCode:=X` filter_by so the fake mirrors the cluster's scoping — the whole
+// point of the state-scoped prune.
+function makeTypesense(existing: Record<string, TypesenseDoc[]>) {
+  const importedDocs: Record<string, Array<Record<string, unknown>>> = {};
+  const deletedIds: Record<string, string[]> = {};
+  const exportOptions: Array<{ name: string; filter_by?: string }> = [];
+
+  const client: FakeTypesenseClient = {
+    collections: (name) => ({
+      documents: (id?: string) => ({
+        import: async (docs) => {
+          (importedDocs[name] ??= []).push(
+            ...(docs as Array<Record<string, unknown>>),
+          );
+          return docs.map(() => ({ success: true }));
+        },
+        export: async (options) => {
+          exportOptions.push({ name, filter_by: options?.filter_by });
+          let docs = existing[name] ?? [];
+          const match = options?.filter_by
+            ? /^stateCode:=(.+)$/.exec(options.filter_by)
+            : null;
+          if (match) docs = docs.filter((d) => d.stateCode === match[1]);
+          return docs.map((d) => JSON.stringify({ id: d.id })).join("\n");
+        },
+        delete: async () => {
+          (deletedIds[name] ??= []).push(id as string);
+          return {};
+        },
+      }),
+    }),
+  };
+
+  return { client, importedDocs, deletedIds, exportOptions };
+}
 
 describe("assignNested", () => {
   it("copies a top-level value when the leaf exists", () => {
@@ -320,6 +464,33 @@ describe("resolvePruneStale", () => {
   );
 });
 
+describe("isValidStateCode", () => {
+  it.each(["US_ID", "US_ND", "US_TX", "US_CA"])(
+    "accepts a recognized state code %j",
+    (value) => {
+      expect(isValidStateCode(value)).toBe(true);
+    },
+  );
+
+  it.each([
+    "us_id", // wrong case — codes are uppercase
+    "US_ZZ", // not a real state
+    "US_XX",
+    "USTX",
+    "US_ID || true", // filter-injection attempt
+    "US ID",
+    "",
+  ])("rejects an unknown or malformed code %j", (value) => {
+    expect(isValidStateCode(value)).toBe(false);
+  });
+
+  it("rejects non-string values", () => {
+    for (const value of [123, null, undefined, {}, ["US_ID"]]) {
+      expect(isValidStateCode(value)).toBe(false);
+    }
+  });
+});
+
 describe("selectStaleIds", () => {
   it("returns exported ids that are absent from the keep set", () => {
     const exported = '{"id":"a"}\n{"id":"b"}\n{"id":"c"}';
@@ -518,5 +689,183 @@ describe("mapWithConcurrency", () => {
     });
     expect(results).toEqual([2, 4, 6, 8]);
     expect(peak).toBe(1);
+  });
+});
+
+describe("runBackfill — state-scoped backfill + prune", () => {
+  const ENV_KEYS = [
+    "BACKFILL_IMPORT_RATE_PER_SEC",
+    "BACKFILL_PRUNE_STALE",
+    "BACKFILL_BATCH_SIZE",
+    "BACKFILL_CONCURRENCY",
+  ];
+  const savedEnv: Record<string, string | undefined> = {};
+
+  beforeEach(() => {
+    for (const key of ENV_KEYS) savedEnv[key] = process.env[key];
+    // Disable the rate limiter so imports/deletes don't incur real setTimeout
+    // spacing — keeps these tests fast and deterministic.
+    process.env["BACKFILL_IMPORT_RATE_PER_SEC"] = "0";
+    delete process.env["BACKFILL_PRUNE_STALE"]; // default: prune on
+  });
+
+  afterEach(() => {
+    for (const key of ENV_KEYS) {
+      if (savedEnv[key] === undefined) delete process.env[key];
+      else process.env[key] = savedEnv[key];
+    }
+    firestoreHolder.current = undefined;
+    typesenseHolder.current = undefined;
+  });
+
+  it("imports only the scoped state's docs and prunes only that state's stale docs", async () => {
+    firestoreHolder.current = makeFirestore({
+      clients: [
+        { id: "a", data: { stateCode: "US_ID" } },
+        { id: "b", data: { stateCode: "US_ID" } },
+        { id: "c", data: { stateCode: "US_ND" } },
+      ],
+    });
+    const ts = makeTypesense({
+      clients: [
+        { id: "a", stateCode: "US_ID" },
+        { id: "stale", stateCode: "US_ID" }, // US_ID, absent from Firestore → prune
+        { id: "c", stateCode: "US_ND" },
+        { id: "d", stateCode: "US_ND" }, // other state → must survive
+      ],
+    });
+    typesenseHolder.current = ts.client;
+
+    const summary = await runBackfill(
+      [{ name: "clients", fields: ["stateCode"] }],
+      "US_ID",
+    );
+
+    // Scan was scoped: only US_ID docs imported, the US_ND doc `c` never read.
+    expect(ts.importedDocs["clients"]?.map((d) => d["id"]).sort()).toEqual([
+      "a",
+      "b",
+    ]);
+    // Export was filtered to the same state.
+    expect(ts.exportOptions).toEqual([
+      { name: "clients", filter_by: "stateCode:=US_ID" },
+    ]);
+    // Only the US_ID straggler deleted; US_ND docs untouched.
+    expect(ts.deletedIds["clients"]).toEqual(["stale"]);
+    expect(summary.collections[0]).toMatchObject({
+      name: "clients",
+      imported: 2,
+      deleted: 1,
+    });
+    expect(summary.totals).toEqual({ imported: 2, failed: 0, deleted: 1 });
+  });
+
+  it("refuses to prune when the scoped Firestore scan is empty (safety valve)", async () => {
+    firestoreHolder.current = makeFirestore({
+      clients: [{ id: "c", data: { stateCode: "US_ND" } }], // no US_ID docs
+    });
+    const ts = makeTypesense({
+      clients: [{ id: "x", stateCode: "US_ID" }], // US_ID docs DO exist in Typesense
+    });
+    typesenseHolder.current = ts.client;
+
+    const summary = await runBackfill(
+      [{ name: "clients", fields: ["stateCode"] }],
+      "US_ID",
+    );
+
+    // Nothing imported, and the safety valve returns before export/delete so a
+    // 0-doc scan can't wipe the state's live index.
+    expect(ts.importedDocs["clients"]).toBeUndefined();
+    expect(ts.exportOptions).toEqual([]);
+    expect(ts.deletedIds["clients"]).toBeUndefined();
+    expect(summary.totals).toEqual({ imported: 0, failed: 0, deleted: 0 });
+  });
+
+  it("skips the prune entirely when BACKFILL_PRUNE_STALE=false", async () => {
+    process.env["BACKFILL_PRUNE_STALE"] = "false";
+    firestoreHolder.current = makeFirestore({
+      clients: [{ id: "a", data: { stateCode: "US_ID" } }],
+    });
+    const ts = makeTypesense({
+      clients: [
+        { id: "a", stateCode: "US_ID" },
+        { id: "stale", stateCode: "US_ID" },
+      ],
+    });
+    typesenseHolder.current = ts.client;
+
+    const summary = await runBackfill(
+      [{ name: "clients", fields: ["stateCode"] }],
+      "US_ID",
+    );
+
+    expect(ts.importedDocs["clients"]?.map((d) => d["id"])).toEqual(["a"]);
+    expect(ts.exportOptions).toEqual([]); // no export
+    expect(ts.deletedIds["clients"]).toBeUndefined(); // no deletes
+    expect(summary.totals).toEqual({ imported: 1, failed: 0, deleted: 0 });
+  });
+
+  it("without a state scope, exports unfiltered and prunes across all states", async () => {
+    firestoreHolder.current = makeFirestore({
+      clients: [{ id: "a", data: { stateCode: "US_ID" } }],
+    });
+    const ts = makeTypesense({
+      clients: [
+        { id: "a", stateCode: "US_ID" },
+        { id: "b", stateCode: "US_ND" }, // stale relative to the whole collection
+      ],
+    });
+    typesenseHolder.current = ts.client;
+
+    const summary = await runBackfill([
+      { name: "clients", fields: ["stateCode"] },
+    ]);
+
+    expect(ts.exportOptions).toEqual([
+      { name: "clients", filter_by: undefined },
+    ]);
+    expect(ts.deletedIds["clients"]).toEqual(["b"]);
+    expect(summary.totals.deleted).toBe(1);
+  });
+
+  it("paginates the scoped scan and accumulates ids across pages before pruning", async () => {
+    process.env["BACKFILL_BATCH_SIZE"] = "2";
+    firestoreHolder.current = makeFirestore({
+      clients: [
+        { id: "a", data: { stateCode: "US_ID" } },
+        { id: "b", data: { stateCode: "US_ID" } },
+        { id: "c", data: { stateCode: "US_ID" } },
+        { id: "z", data: { stateCode: "US_ND" } },
+      ],
+    });
+    const ts = makeTypesense({
+      clients: [
+        { id: "a", stateCode: "US_ID" },
+        { id: "b", stateCode: "US_ID" },
+        { id: "c", stateCode: "US_ID" },
+        { id: "old", stateCode: "US_ID" }, // stale across the paged scan
+      ],
+    });
+    typesenseHolder.current = ts.client;
+
+    const summary = await runBackfill(
+      [{ name: "clients", fields: ["stateCode"] }],
+      "US_ID",
+    );
+
+    // 3 US_ID docs over 2 pages (2 + 1); the prune sees the full set, so only
+    // `old` is stale and `z` (US_ND) is never a candidate.
+    expect(ts.importedDocs["clients"]?.map((d) => d["id"]).sort()).toEqual([
+      "a",
+      "b",
+      "c",
+    ]);
+    expect(ts.deletedIds["clients"]).toEqual(["old"]);
+    expect(summary.collections[0]).toMatchObject({
+      pages: 2,
+      imported: 3,
+      deleted: 1,
+    });
   });
 });

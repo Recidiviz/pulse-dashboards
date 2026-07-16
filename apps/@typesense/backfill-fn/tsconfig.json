@@ -1,5 +1,12 @@
 {
   "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    // ~auth-utils is plain JS with no .d.ts files; allowJs lets tsc resolve its
+    // exports (e.g. stateCodes) instead of erroring TS7016. Mirrors how the
+    // other TS consumers of auth-utils compile. checkJs stays off (default), so
+    // the JS isn't deep-typechecked — just resolved.
+    "allowJs": true
+  },
   "files": [],
   "include": [],
   "references": [

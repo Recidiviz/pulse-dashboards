@@ -35,7 +35,11 @@
 import type { Request, Response } from "express";
 import * as admin from "firebase-admin";
 
-import { type CollectionConfig, runBackfill } from "./backfill";
+import {
+  type CollectionConfig,
+  isValidStateCode,
+  runBackfill,
+} from "./backfill";
 
 // Init only once per cold start. The default app reads the configured
 // Firestore database from process.env.FIRESTORE_DATABASE when set;
@@ -61,6 +65,25 @@ function extractFilter(body: unknown): Set<string> | null {
   const collections = (body as { collections?: unknown }).collections;
   if (!Array.isArray(collections)) return null;
   return new Set(collections.filter((c): c is string => typeof c === "string"));
+}
+
+// Optional per-invocation state scope. Returns `{}` when no `stateCode` was sent
+// (whole-collection run), `{ stateCode }` for a valid one, or `{ error }` when
+// the caller sent a malformed value. A malformed value is an ERROR, not a silent
+// whole-collection fallback: the prune deletes everything out of scope, so
+// degrading a per-state request to whole-collection could wipe every other
+// state's docs.
+function extractStateCode(
+  body: unknown,
+): { stateCode?: string } | { error: string } {
+  if (!body || typeof body !== "object") return {};
+  const raw = (body as { stateCode?: unknown }).stateCode;
+  if (raw === undefined || raw === null) return {};
+  const trimmed = typeof raw === "string" ? raw.trim() : raw;
+  if (!isValidStateCode(trimmed)) {
+    return { error: `invalid stateCode: ${JSON.stringify(raw)}` };
+  }
+  return { stateCode: trimmed };
 }
 
 export async function backfill(req: Request, res: Response): Promise<void> {
@@ -89,18 +112,40 @@ export async function backfill(req: Request, res: Response): Promise<void> {
     return;
   }
 
-  console.info(`[backfill] starting: ${targets.map((c) => c.name).join(", ")}`);
+  // Optional per-invocation state scope: POST `{ "stateCode": "US_XX" }` to
+  // reconcile only that state (both the import and the prune are filtered to it).
+  // The ETL trigger fires per state, so this is the common path.
+  const stateResult = extractStateCode(req.body);
+  if ("error" in stateResult) {
+    res.status(400).json({ error: stateResult.error });
+    return;
+  }
+  const { stateCode } = stateResult;
+
+  console.info(
+    `[backfill] starting${stateCode ? ` (state=${stateCode})` : ""}: ${targets
+      .map((c) => c.name)
+      .join(", ")}`,
+  );
 
   try {
-    const result = await runBackfill(targets);
+    const result = await runBackfill(targets, stateCode);
     const durationMs = Date.now() - startedAt;
-    console.info(`[backfill] complete in ${durationMs}ms`, result);
-    res.status(200).json({ durationMs, ...result });
+    console.info(
+      `[backfill] complete${stateCode ? ` (state=${stateCode})` : ""} in ${durationMs}ms`,
+      result,
+    );
+    res
+      .status(200)
+      .json({ durationMs, stateCode: stateCode ?? null, ...result });
   } catch (err) {
     const durationMs = Date.now() - startedAt;
     const message = err instanceof Error ? err.message : String(err);
     const stack = err instanceof Error ? err.stack : undefined;
-    console.error(`[backfill] failed after ${durationMs}ms`, err);
+    console.error(
+      `[backfill] failed${stateCode ? ` (state=${stateCode})` : ""} after ${durationMs}ms`,
+      err,
+    );
     res.status(500).json({ error: message, stack, durationMs });
   }
 }

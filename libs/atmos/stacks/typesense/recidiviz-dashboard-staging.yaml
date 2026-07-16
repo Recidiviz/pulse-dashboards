@@ -168,9 +168,14 @@ components:
         # so the egress_ip output exists when that stack resolves !terraform.state.
         static_egress_enabled: true
 
-        # Grant the staff-server SA roles/run.invoker on this function so its
-        # POST /api/typesense/backfill handler can trigger a backfill. This is
-        # the client_email from staff-server's GOOGLE_APPLICATION_CREDENTIALS_JSON
-        # (gae-staging.enc.yaml) — the identity its OIDC token is minted for.
+        # SAs granted roles/run.invoker on this function so they can trigger a
+        # backfill via an authenticated OIDC request. Both live in the
+        # data-platform project (data_platform_project_id), not this dashboard
+        # project — cross-project member bindings are fine.
+        #   - dashboard-metrics-*: staff-server's GOOGLE_APPLICATION_CREDENTIALS_JSON
+        #     identity (gae-staging.enc.yaml), backing POST /api/typesense/backfill.
+        #   - application-data-import-cr: the data-import Cloud Run SA that fires
+        #     the per-state backfill after its ETL completes (defined in another repo).
         invoker_members:
           - serviceAccount:dashboard-metrics-staging@{{ .settings.context.data_platform_project_id }}.iam.gserviceaccount.com
+          - serviceAccount:application-data-import-cr@{{ .settings.context.data_platform_project_id }}.iam.gserviceaccount.com
