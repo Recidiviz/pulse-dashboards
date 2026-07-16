@@ -22,9 +22,10 @@ import styled from "styled-components";
 
 import { PAGE_WIDTH } from "~@jii/common-ui";
 
-import { AboutVideoPresenter } from "./AboutVideoPresenter";
-import UsAzAboutVideo from "./UsAzAboutVideo.mp4";
-import UsAzAboutVideoCaptions from "./UsAzAboutVideo.vtt";
+import {
+  AboutVideoPresenter,
+  OnboardingVideoAssets,
+} from "../presenter/AboutVideoPresenter";
 
 const StyledVideo = styled.video`
   width: 100%;
@@ -50,26 +51,24 @@ const StyledVideoModal = styled(Modal)`
 
 export const AboutVideoModal = observer(function AboutVideoModal({
   presenter,
+  videoAssets,
 }: {
   presenter: AboutVideoPresenter;
+  videoAssets: OnboardingVideoAssets;
 }) {
   return (
     <StyledVideoModal
       isOpen={presenter.videoIsOpen}
       onRequestClose={() => {
-        presenter.videoIsOpen = false;
+        presenter.closeVideo();
       }}
     >
       <StyledVideo controls>
-        <source src={UsAzAboutVideo} type="video/mp4" />
-        {/* TODO(OBT-33382): Add Spanish caption track when US_AZ enables Spanish support */}
-        <track
-          src={UsAzAboutVideoCaptions}
-          kind="captions"
-          srcLang="en"
-          label="English"
-          default
-        />
+        <source src={videoAssets.source} type="video/mp4" />
+
+        {videoAssets.captions && (
+          <track kind="captions" default {...videoAssets.captions} />
+        )}
       </StyledVideo>
     </StyledVideoModal>
   );

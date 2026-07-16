@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,19 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { AboutVideoCta } from "~@jii/onboarding-video";
+import "@testing-library/jest-dom";
+import "jest-styled-components";
 
-import { UsAzLastUpdatedBanner } from "../UsAzLastUpdatedBanner";
-import { UsAzImportantDates } from "./UsAzImportantDates";
-import { UsAzImportantDatesLink } from "./UsAzImportantDatesLink";
+import { toHaveNoViolations } from "jest-axe";
+import jestExtendedMatchers from "jest-extended";
 
-export function UsAzSingleResidentHome() {
-  return (
-    <>
-      <UsAzLastUpdatedBanner />
-      <AboutVideoCta onHomepage={true} />
-      <UsAzImportantDates />
-      <UsAzImportantDatesLink />
-    </>
-  );
-}
+expect.extend(jestExtendedMatchers);
+
+expect.extend(toHaveNoViolations);

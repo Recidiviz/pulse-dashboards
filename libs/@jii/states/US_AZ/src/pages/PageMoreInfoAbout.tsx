@@ -16,9 +16,9 @@
 // =============================================================================
 
 import { usePageTitle, withCopyWrapperOverrides } from "~@jii/common-ui";
+import { AboutVideoCta } from "~@jii/onboarding-video";
 import { useUsAzTranslations } from "~@jii/translation";
 
-import { AboutVideoCta } from "../components/AboutVideoCta/AboutVideoCta";
 import { DefinitionView } from "../components/DefinitionView";
 import { useInfoPageFooterLinks } from "../hooks/useInfoPageFooterLinks";
 

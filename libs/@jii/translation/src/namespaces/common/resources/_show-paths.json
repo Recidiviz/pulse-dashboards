@@ -81,5 +81,13 @@
       "description": "[common]programs.homepageCta.description",
       "link": "[common]programs.homepageCta.link"
     }
+  },
+  "onboardingVideo": {
+    "heading": "[common]onboardingVideo.heading",
+    "description": "[common]onboardingVideo.description",
+    "confirmClose": "[common]onboardingVideo.confirmClose",
+    "cancelClose": "[common]onboardingVideo.cancelClose",
+    "videoButtonAltText": "[common]onboardingVideo.videoButtonAltText",
+    "closeButtonAltText": "[common]onboardingVideo.closeButtonAltText"
   }
 }

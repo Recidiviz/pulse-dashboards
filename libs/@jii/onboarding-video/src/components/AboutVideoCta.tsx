@@ -20,21 +20,24 @@ import { observer } from "mobx-react-lite";
 import { useResidentsContext } from "~@jii/data";
 import { withPresenterManager } from "~hydration-utils";
 
+import { AboutVideoPresenter } from "../presenter/AboutVideoPresenter";
 import { AboutVideoCtaCard } from "./AboutVideoCard";
 import { AboutVideoModal } from "./AboutVideoModal";
-import { AboutVideoPresenter } from "./AboutVideoPresenter";
 
 const ManagedComponent = observer(function ManagedComponent({
   presenter,
 }: {
   presenter: AboutVideoPresenter;
 }) {
-  if (presenter.ctaIsHidden) return null;
+  if (presenter.ctaIsHidden || !presenter.videoAssets) return null;
 
   return (
     <>
       <AboutVideoCtaCard presenter={presenter} />
-      <AboutVideoModal presenter={presenter} />
+      <AboutVideoModal
+        presenter={presenter}
+        videoAssets={presenter.videoAssets}
+      />
     </>
   );
 });

@@ -81,5 +81,13 @@
       "description": "Explore available programs, filter by facility, and star the ones that are interesting to you.",
       "link": "View full list of programs"
     }
+  },
+  "onboardingVideo": {
+    "heading": "What is Opportunities?",
+    "description": "Want to learn about how the Opportunities App works or how to understand your shown sentence dates? Watch this video to find out.",
+    "confirmClose": "Move to “About” page",
+    "cancelClose": "Never mind, keep video here",
+    "videoButtonAltText": "Open video",
+    "closeButtonAltText": "Dismiss video"
   }
 }

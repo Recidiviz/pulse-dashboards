@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,19 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { AboutVideoCta } from "~@jii/onboarding-video";
-
-import { UsAzLastUpdatedBanner } from "../UsAzLastUpdatedBanner";
-import { UsAzImportantDates } from "./UsAzImportantDates";
-import { UsAzImportantDatesLink } from "./UsAzImportantDatesLink";
-
-export function UsAzSingleResidentHome() {
-  return (
-    <>
-      <UsAzLastUpdatedBanner />
-      <AboutVideoCta onHomepage={true} />
-      <UsAzImportantDates />
-      <UsAzImportantDatesLink />
-    </>
-  );
-}
+export const setup = () => {
+  // prevents silly timezone issues when testing dates
+  process.env.TZ = "UTC";
+};

@@ -19,6 +19,14 @@ import { makeAutoObservable } from "mobx";
 
 import { ResidentsStore } from "~@jii/data";
 
+import UsAzAboutVideo from "../assets/UsAzAboutVideo.mp4";
+import UsAzAboutVideoCaptions from "../assets/UsAzAboutVideo.vtt";
+
+export type OnboardingVideoAssets = {
+  source: string;
+  captions?: { src: string; srcLang: string; label: string };
+};
+
 /**
  * Manages state for an AboutVideoCta and associated modal.
  */
@@ -50,5 +58,29 @@ export class AboutVideoPresenter {
 
   async hideCta() {
     await this.residentsStore.hideAboutVideoFromHomePage();
+  }
+
+  openVideo() {
+    this.videoIsOpen = true;
+  }
+
+  closeVideo() {
+    this.videoIsOpen = false;
+  }
+
+  get videoAssets(): OnboardingVideoAssets | undefined {
+    switch (this.residentsStore.stateCode) {
+      case "US_AZ":
+        return {
+          source: UsAzAboutVideo,
+          captions: {
+            src: UsAzAboutVideoCaptions,
+            srcLang: "en",
+            label: "English",
+          },
+        };
+      default:
+        return;
+    }
   }
 }
