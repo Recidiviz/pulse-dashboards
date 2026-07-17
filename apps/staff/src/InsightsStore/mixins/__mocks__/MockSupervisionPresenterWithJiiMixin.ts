@@ -41,6 +41,8 @@ export class MockSupervisionPresenterWithJiiMixin extends WithJusticeInvolvedPer
   countOpportunitiesForOfficer = super.countOpportunitiesForOfficer;
   opportunitiesByTypeForOfficer = super.opportunitiesByTypeForOfficer;
   expectCaseloadPopulated = super.expectCaseloadPopulated;
+  findClientsForReviewer = super.findClientsForReviewer;
+  opportunitiesByTypeForReviewer = super.opportunitiesByTypeForReviewer;
 
   public personFieldsToHydrate: PersonHydratableField[] = [];
 }

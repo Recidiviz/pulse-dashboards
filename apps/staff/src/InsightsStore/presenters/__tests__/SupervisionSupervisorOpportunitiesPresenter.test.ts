@@ -32,7 +32,11 @@ import { isHydrated } from "~hydration-utils";
 import { RootStore } from "../../../RootStore";
 import { TenantId } from "../../../RootStore/types";
 import UserStore from "../../../RootStore/UserStore";
-import { OpportunityTab } from "../../../WorkflowsStore";
+import {
+  JusticeInvolvedPerson,
+  Opportunity,
+  OpportunityTab,
+} from "../../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import {
   MOCK_OPPORTUNITY_CONFIGS,
@@ -53,7 +57,10 @@ import {
 import { CLIENTS_OFFICERS } from "../../models/offlineFixtures/ClientFixture";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
 import { SupervisionSupervisorOpportunitiesPresenter } from "../SupervisionSupervisorOpportunitiesPresenter";
-import { RawOpportunityInfo } from "../types";
+import {
+  RawOpportunityInfo,
+  RawOpportunityInfoByOpportunityType,
+} from "../types";
 
 const testSupervisor = supervisionOfficerSupervisorsFixture[0];
 const officerWithNoClients = supervisionOfficerFixture[9];
@@ -560,6 +567,101 @@ describe("Opportunity details methods", () => {
             ),
           ).toStrictEqual(officersWithRelevantClients);
         }
+      });
+    });
+
+    describe("Method: processReviewerOpportunities", () => {
+      const REVIEWER_EXTERNAL_ID = testSupervisor.externalId;
+      const OTHER_REVIEWER_EXTERNAL_ID = "other-reviewer-id";
+
+      /**
+       * A minimal Opportunity-shaped fake -- just enough for
+       * opportunitiesByTabForType/isEligible to run without needing a fully
+       * hydrated Client/Opportunity graph.
+       */
+      function fakeReviewerOpportunity(
+        type: OpportunityType,
+        currentReviewerId: string | undefined,
+      ): Opportunity {
+        return {
+          type,
+          currentReviewerId,
+          almostEligible: false,
+          isSubmitted: false,
+          denied: false,
+          tabTitle: () => "Eligible Now",
+          config: MOCK_OPPORTUNITY_CONFIGS[type],
+        } as unknown as Opportunity;
+      }
+
+      function fakeClientWithOpportunities(
+        opportunities: Opportunity[],
+      ): JusticeInvolvedPerson {
+        const opportunitiesByType = opportunities.reduce(
+          (acc, opp) => {
+            (acc[opp.type] ??= []).push(opp);
+            return acc;
+          },
+          {} as Record<OpportunityType, Opportunity[]>,
+        );
+        return {
+          opportunities: opportunitiesByType,
+        } as unknown as JusticeInvolvedPerson;
+      }
+
+      beforeEach(() => {
+        vi.spyOn(presenter, "supervisorInfo", "get").mockReturnValue(
+          testSupervisor,
+        );
+      });
+
+      afterEach(() => {
+        jiiStore.caseloadByReviewerId.clear();
+      });
+
+      it("only counts opportunities actually assigned to the reviewer", () => {
+        const client = fakeClientWithOpportunities([
+          fakeReviewerOpportunity(OPP_TYPE_1, REVIEWER_EXTERNAL_ID),
+          fakeReviewerOpportunity(OPP_TYPE_2, OTHER_REVIEWER_EXTERNAL_ID),
+        ]);
+        jiiStore.caseloadByReviewerId.set(REVIEWER_EXTERNAL_ID, [client]);
+
+        // @ts-ignore -- accessing a protected method directly for testing
+        const result = presenter.processReviewerOpportunities(
+          REVIEWER_EXTERNAL_ID,
+        ) as RawOpportunityInfoByOpportunityType;
+
+        expect(Array.from(result.keys())).toEqual([OPP_TYPE_1]);
+        expect(result.get(OPP_TYPE_1)?.relevantClientsCount).toBe(1);
+      });
+
+      it("aggregates counts across multiple clients assigned to the reviewer", () => {
+        const clientA = fakeClientWithOpportunities([
+          fakeReviewerOpportunity(OPP_TYPE_1, REVIEWER_EXTERNAL_ID),
+        ]);
+        const clientB = fakeClientWithOpportunities([
+          fakeReviewerOpportunity(OPP_TYPE_1, REVIEWER_EXTERNAL_ID),
+        ]);
+        jiiStore.caseloadByReviewerId.set(REVIEWER_EXTERNAL_ID, [
+          clientA,
+          clientB,
+        ]);
+
+        // @ts-ignore -- accessing a protected method directly for testing
+        const result = presenter.processReviewerOpportunities(
+          REVIEWER_EXTERNAL_ID,
+        ) as RawOpportunityInfoByOpportunityType;
+
+        expect(result.get(OPP_TYPE_1)?.relevantClientsCount).toBe(2);
+      });
+
+      it("returns an empty map when the reviewer has no caseload", () => {
+        // @ts-ignore -- accessing a protected method directly for testing
+        const result = presenter.processReviewerOpportunities(
+          "reviewer-with-no-caseload",
+        ) as RawOpportunityInfoByOpportunityType;
+
+        expect(result.size).toBe(0);
       });
     });
   });

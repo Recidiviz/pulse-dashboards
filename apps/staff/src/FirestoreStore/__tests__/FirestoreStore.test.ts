@@ -16,11 +16,14 @@
 // =============================================================================
 
 import {
+  collectionGroup,
   deleteField,
   doc,
+  documentId,
   DocumentReference,
   getDocs,
   PartialWithFieldValue,
+  query,
   serverTimestamp,
   setDoc,
   where,
@@ -31,6 +34,7 @@ import tk from "timekeeper";
 import { expect, Mock } from "vitest";
 
 import { isOfflineMode } from "~client-env-utils";
+import { clientRecordSchema, RawClientRecord } from "~datatypes";
 
 import { fetchFirebaseToken } from "../../api/fetchFirebaseToken";
 import { RootStore } from "../../RootStore";
@@ -38,6 +42,7 @@ import { UserAppMetadata } from "../../RootStore/types";
 import { Opportunity } from "../../WorkflowsStore";
 import FirestoreStore from "../FirestoreStore";
 import {
+  clientOpportunityUpdatesSchema,
   FormUpdate,
   MilestonesMessage,
   OpportunityUpdateWithForm,
@@ -60,7 +65,10 @@ const mockSetDoc = setDoc as Mock;
 const mockDoc = doc as Mock;
 const mockDeleteField = deleteField as Mock;
 const mockServerTimestamp = serverTimestamp as Mock;
+const mockCollectionGroup = collectionGroup as Mock;
+const mockDocumentId = documentId as Mock;
 const mockGetDocs = getDocs as Mock;
+const mockQuery = query as Mock;
 const mockWhere = where as Mock;
 
 vi.mock("../../api/fetchFirebaseToken", () => {
@@ -1095,9 +1103,113 @@ describe("FirestoreStore", () => {
     });
   });
 
+  describe("getOpportunityUpdatesForReviewerId", () => {
+    test("queries the clientOpportunityUpdates collection group filtered by stateCode and currentReviewerId, populating clientRecordId from the document path", async () => {
+      const mockCollectionGroupRef = "clientOpportunityUpdates";
+      mockCollectionGroup.mockReturnValue(mockCollectionGroupRef);
+      mockWhere.mockImplementation(
+        (field: string, op: string, value: unknown) => ({
+          field,
+          op,
+          value,
+        }),
+      );
+      mockQuery.mockImplementation((...args: unknown[]) => args);
+
+      const rawUpdate = {
+        stateCode: "US_TX",
+        currentReviewerId: "reviewer-1",
+      };
+
+      mockGetDocs.mockResolvedValue({
+        docs: [
+          {
+            data: () => rawUpdate,
+            ref: { parent: { parent: { id: "us_tx_001" } } },
+          },
+        ],
+      });
+
+      const result = await store.getOpportunityUpdatesForReviewerId(
+        "US_TX",
+        "reviewer-1",
+      );
+
+      expect(mockCollectionGroup).toHaveBeenCalledWith(
+        undefined,
+        "clientOpportunityUpdates",
+      );
+      expect(mockQuery).toHaveBeenCalledWith(
+        mockCollectionGroupRef,
+        { field: "stateCode", op: "==", value: "US_TX" },
+        { field: "currentReviewerId", op: "==", value: "reviewer-1" },
+      );
+      expect(result).toEqual([
+        clientOpportunityUpdatesSchema.parse({
+          ...rawUpdate,
+          clientRecordId: "us_tx_001",
+        }),
+      ]);
+    });
+  });
+
   describe("getClientsForRecordIds", () => {
     beforeEach(() => {
       mockGetDocs.mockResolvedValue({ docs: [] });
+    });
+
+    const rawClient: RawClientRecord = {
+      recordId: "us_id_001",
+      personName: {
+        givenNames: "BETTY",
+        surname: "RUBBLE",
+      },
+      personExternalId: "001",
+      displayId: "d001",
+      pseudonymizedId: "p001",
+      stateCode: "US_ID",
+      officerId: "OFFICER3",
+      supervisionType: "PROBATION",
+      supervisionLevel: "MEDIUM",
+      supervisionLevelStart: "2019-12-20",
+      address: "123 Bedrock Lane",
+      phoneNumber: "5555555678",
+      expirationDate: "2024-12-31",
+      allEligibleOpportunities: [],
+    };
+
+    test("returns an empty array without querying Firestore when given no record IDs", async () => {
+      const result = await store.getClientsForRecordIds([]);
+
+      expect(result).toEqual([]);
+      expect(mockGetDocs).not.toHaveBeenCalled();
+    });
+
+    test("queries clients by document ID and parses the results into ClientRecords", async () => {
+      mockDocumentId.mockReturnValue("mock-document-id-field");
+      mockWhere.mockImplementation(
+        (field: string, op: string, value: unknown) => ({
+          field,
+          op,
+          value,
+        }),
+      );
+      mockQuery.mockImplementation((...args: unknown[]) => args);
+      mockGetDocs.mockResolvedValue({
+        docs: [
+          {
+            id: rawClient.recordId,
+            data: () => omit(rawClient, "recordId"),
+          },
+        ],
+      });
+
+      const result = await store.getClientsForRecordIds([rawClient.recordId]);
+
+      expect(mockWhere).toHaveBeenCalledWith("mock-document-id-field", "in", [
+        rawClient.recordId,
+      ]);
+      expect(result).toEqual([clientRecordSchema.parse(rawClient)]);
     });
 
     test("never calls getDocs with more than 30 recordIds in a batch", async () => {

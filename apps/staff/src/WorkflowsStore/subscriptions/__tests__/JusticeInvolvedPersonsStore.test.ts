@@ -20,7 +20,9 @@ import { Mocked } from "vitest";
 
 import { ClientRecord } from "~datatypes";
 
-import FirestoreStore from "../../../FirestoreStore";
+import FirestoreStore, {
+  ClientOpportunityUpdateRecord,
+} from "../../../FirestoreStore";
 import { getMockOpportunityConstructor } from "../../../InsightsStore/mixins/__mocks__/MockOpportunity";
 import {
   clientFixture,
@@ -28,6 +30,7 @@ import {
 } from "../../../InsightsStore/models/offlineFixtures/ClientFixture";
 import { RootStore } from "../../../RootStore";
 import { TenantId } from "../../../RootStore/types";
+import { Client } from "../../Client";
 import { JusticeInvolvedPersonsStore } from "../../JusticeInvolvedPersonsStore";
 import {
   mockUsXxOpp,
@@ -41,6 +44,9 @@ import { mockFirestoreStoreClientsForOfficerId } from "./testUtils";
 let firestoreStoreMock: Mocked<FirestoreStore>;
 let rootStoreMock: Mocked<RootStore>;
 let store: Mocked<JusticeInvolvedPersonsStore>;
+
+const [CLIENT_RECORD_A, CLIENT_RECORD_B] =
+  Object.values<ClientRecord>(clientFixture);
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
@@ -68,6 +74,12 @@ beforeEach(() => {
   // @ts-ignore - override readonly property
   opportunityConstructors[mockUsXxTwoOpp] =
     getMockOpportunityConstructor(mockUsXxTwoOpp);
+
+  vi.spyOn(
+    firestoreStoreMock,
+    "getOpportunityUpdatesForReviewerId",
+  ).mockResolvedValue([]);
+  vi.spyOn(firestoreStoreMock, "getClientsForRecordIds").mockResolvedValue([]);
 });
 
 afterAll(() => {
@@ -120,4 +132,137 @@ describe("JusticeInvolvedPersonsStore", () => {
       });
     },
   );
+
+  describe("Method: populateCaseloadForReviewer", () => {
+    it("fetches opportunity updates for the reviewer and populates the caseload with the resulting Clients", async () => {
+      firestoreStoreMock.getOpportunityUpdatesForReviewerId.mockResolvedValueOnce(
+        [
+          { clientRecordId: CLIENT_RECORD_A.recordId },
+          { clientRecordId: CLIENT_RECORD_B.recordId },
+        ] as ClientOpportunityUpdateRecord[],
+      );
+      firestoreStoreMock.getClientsForRecordIds.mockResolvedValueOnce([
+        CLIENT_RECORD_A,
+        CLIENT_RECORD_B,
+      ]);
+
+      await store.populateCaseloadForReviewer("reviewer-1");
+
+      expect(
+        firestoreStoreMock.getOpportunityUpdatesForReviewerId,
+      ).toHaveBeenCalledWith("US_XX", "reviewer-1");
+      expect(firestoreStoreMock.getClientsForRecordIds).toHaveBeenCalledWith([
+        CLIENT_RECORD_A.recordId,
+        CLIENT_RECORD_B.recordId,
+      ]);
+
+      const caseload = store.caseloadByReviewerId.get("reviewer-1");
+      expect(caseload?.[0]).toBeInstanceOf(Client);
+      expect(caseload?.map((c) => c.externalId)).toEqual([
+        CLIENT_RECORD_A.personExternalId,
+        CLIENT_RECORD_B.personExternalId,
+      ]);
+    });
+
+    it("dedupes clientRecordIds and filters out updates with no clientRecordId", async () => {
+      firestoreStoreMock.getOpportunityUpdatesForReviewerId.mockResolvedValueOnce(
+        [
+          { clientRecordId: CLIENT_RECORD_A.recordId },
+          { clientRecordId: CLIENT_RECORD_A.recordId },
+          {},
+        ] as ClientOpportunityUpdateRecord[],
+      );
+      firestoreStoreMock.getClientsForRecordIds.mockResolvedValueOnce([
+        CLIENT_RECORD_A,
+      ]);
+
+      await store.populateCaseloadForReviewer("reviewer-1");
+
+      expect(firestoreStoreMock.getClientsForRecordIds).toHaveBeenCalledWith([
+        CLIENT_RECORD_A.recordId,
+      ]);
+    });
+
+    it("reuses an existing Client instance for the reviewer when its record ID is still present", async () => {
+      firestoreStoreMock.getOpportunityUpdatesForReviewerId.mockResolvedValueOnce(
+        [{ clientRecordId: CLIENT_RECORD_A.recordId }],
+      );
+      firestoreStoreMock.getClientsForRecordIds.mockResolvedValueOnce([
+        CLIENT_RECORD_A,
+      ]);
+      await store.populateCaseloadForReviewer("reviewer-1");
+      const existingClient = store.caseloadByReviewerId.get("reviewer-1")?.[0];
+
+      firestoreStoreMock.getOpportunityUpdatesForReviewerId.mockResolvedValueOnce(
+        [{ clientRecordId: CLIENT_RECORD_A.recordId }],
+      );
+      firestoreStoreMock.getClientsForRecordIds.mockResolvedValueOnce([
+        CLIENT_RECORD_A,
+      ]);
+      await store.populateCaseloadForReviewer("reviewer-1");
+
+      expect(store.caseloadByReviewerId.get("reviewer-1")?.[0]).toBe(
+        existingClient,
+      );
+    });
+
+    it("overwrites the caseload for that reviewer rather than appending to it", async () => {
+      firestoreStoreMock.getOpportunityUpdatesForReviewerId.mockResolvedValueOnce(
+        [{ clientRecordId: CLIENT_RECORD_A.recordId }],
+      );
+      firestoreStoreMock.getClientsForRecordIds.mockResolvedValueOnce([
+        CLIENT_RECORD_A,
+      ]);
+      await store.populateCaseloadForReviewer("reviewer-1");
+
+      firestoreStoreMock.getOpportunityUpdatesForReviewerId.mockResolvedValueOnce(
+        [{ clientRecordId: CLIENT_RECORD_B.recordId }],
+      );
+      firestoreStoreMock.getClientsForRecordIds.mockResolvedValueOnce([
+        CLIENT_RECORD_B,
+      ]);
+      await store.populateCaseloadForReviewer("reviewer-1");
+
+      const caseload = store.caseloadByReviewerId.get("reviewer-1");
+      expect(caseload).toHaveLength(1);
+      expect(caseload?.[0].externalId).toEqual(
+        CLIENT_RECORD_B.personExternalId,
+      );
+    });
+
+    it("keeps caseloads for different reviewers separate", async () => {
+      firestoreStoreMock.getOpportunityUpdatesForReviewerId.mockResolvedValueOnce(
+        [{ clientRecordId: CLIENT_RECORD_A.recordId }],
+      );
+      firestoreStoreMock.getClientsForRecordIds.mockResolvedValueOnce([
+        CLIENT_RECORD_A,
+      ]);
+      await store.populateCaseloadForReviewer("reviewer-1");
+
+      firestoreStoreMock.getOpportunityUpdatesForReviewerId.mockResolvedValueOnce(
+        [{ clientRecordId: CLIENT_RECORD_B.recordId }],
+      );
+      firestoreStoreMock.getClientsForRecordIds.mockResolvedValueOnce([
+        CLIENT_RECORD_B,
+      ]);
+      await store.populateCaseloadForReviewer("reviewer-2");
+
+      expect(
+        store.caseloadByReviewerId.get("reviewer-1")?.[0].externalId,
+      ).toEqual(CLIENT_RECORD_A.personExternalId);
+      expect(
+        store.caseloadByReviewerId.get("reviewer-2")?.[0].externalId,
+      ).toEqual(CLIENT_RECORD_B.personExternalId);
+    });
+
+    it("throws an error if tenant ID is missing", async () => {
+      rootStoreMock.tenantStore.setCurrentTenantId(undefined);
+      expect.assertions(1);
+      try {
+        await store.populateCaseloadForReviewer("reviewer-1");
+      } catch (e) {
+        expect((e as Error).message).toEqual("Tenant ID must be set");
+      }
+    });
+  });
 });

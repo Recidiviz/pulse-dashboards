@@ -18,15 +18,24 @@
 import { configure } from "mobx";
 import { vi } from "vitest";
 
-import { InsightsConfigFixture, supervisionOfficerFixture } from "~datatypes";
+import {
+  InsightsConfigFixture,
+  OpportunityType,
+  supervisionOfficerFixture,
+} from "~datatypes";
 
+import { ClientOpportunityUpdateRecord } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import { TenantId } from "../../../RootStore/types";
+import { JusticeInvolvedPerson } from "../../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { MOCK_OPPORTUNITY_CONFIGS } from "../../../WorkflowsStore/Opportunity/__fixtures__";
 import { opportunityConstructors } from "../../../WorkflowsStore/Opportunity/opportunityConstructors";
 import { mockFirestoreStoreClientsForOfficerId } from "../../../WorkflowsStore/subscriptions/__tests__/testUtils";
-import { CLIENTS_OFFICERS } from "../../models/offlineFixtures/ClientFixture";
+import {
+  clientFixture,
+  CLIENTS_OFFICERS,
+} from "../../models/offlineFixtures/ClientFixture";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
 import { MockOpportunity } from "../__mocks__/MockOpportunity";
 import { MockSupervisionPresenterWithJiiMixin } from "../__mocks__/MockSupervisionPresenterWithJiiMixin";
@@ -38,6 +47,7 @@ officersExternalIds.push(OFFICER_WITH_NO_CLIENTS.externalId);
 let presenter: MockSupervisionPresenterWithJiiMixin;
 let store: InsightsSupervisionStore;
 let jiiStore: JusticeInvolvedPersonsStore | undefined;
+let mockRootStore: RootStore;
 
 beforeEach(async () => {
   configure({ safeDescriptors: false });
@@ -45,7 +55,7 @@ beforeEach(async () => {
   vi.runAllTimersAsync();
 
   // ROOTSTORE =========================================================
-  const mockRootStore = new RootStore();
+  mockRootStore = new RootStore();
 
   // SUPERVISION STORE =================================================
   store = new InsightsSupervisionStore(
@@ -275,6 +285,133 @@ describe("JusticeInvolvedPersonsStore", () => {
             OFFICER_WITH_NO_CLIENTS.externalId,
           ),
         ).toStrictEqual({});
+      });
+    });
+  });
+
+  describe("Reviewer caseload", () => {
+    const REVIEWER_ID = "reviewer-1";
+    const OTHER_REVIEWER_ID = "reviewer-2";
+    const OPP_TYPE_1 = "mockUsXxOpp" as OpportunityType;
+    const OPP_TYPE_2 = "mockUsXxOppTwo" as OpportunityType;
+
+    /**
+     * Builds a minimal JusticeInvolvedPerson-shaped object whose `opportunities`
+     * mapping is grouped by type, mirroring the real Client shape closely enough
+     * for opportunitiesByTypeForReviewer to operate on without needing a fully
+     * hydrated Client/Opportunity graph.
+     */
+    function fakeClientWithOpportunities(
+      opportunities: { type: OpportunityType; currentReviewerId?: string }[],
+    ): JusticeInvolvedPerson {
+      const opportunitiesByType = opportunities.reduce(
+        (acc, opp) => {
+          (acc[opp.type] ??= []).push(opp);
+          return acc;
+        },
+        {} as Record<OpportunityType, typeof opportunities>,
+      );
+      return {
+        opportunities: opportunitiesByType,
+      } as unknown as JusticeInvolvedPerson;
+    }
+
+    afterEach(() => {
+      jiiStore?.caseloadByReviewerId.clear();
+    });
+
+    describe("Method: opportunitiesByTypeForReviewer", () => {
+      it("excludes opportunities not actually assigned to the given reviewer", () => {
+        const client = fakeClientWithOpportunities([
+          { type: OPP_TYPE_1, currentReviewerId: REVIEWER_ID },
+          { type: OPP_TYPE_2, currentReviewerId: OTHER_REVIEWER_ID },
+        ]);
+        jiiStore?.caseloadByReviewerId.set(REVIEWER_ID, [client]);
+
+        const oppsByType = presenter.opportunitiesByTypeForReviewer(
+          REVIEWER_ID,
+          "opportunities",
+        );
+
+        expect(oppsByType).toContainAllKeys([OPP_TYPE_1]);
+        expect(oppsByType?.[OPP_TYPE_1]).toEqual(
+          client.opportunities[OPP_TYPE_1],
+        );
+      });
+
+      it("includes multiple opportunity types when all are assigned to the reviewer", () => {
+        const client = fakeClientWithOpportunities([
+          { type: OPP_TYPE_1, currentReviewerId: REVIEWER_ID },
+          { type: OPP_TYPE_2, currentReviewerId: REVIEWER_ID },
+        ]);
+        jiiStore?.caseloadByReviewerId.set(REVIEWER_ID, [client]);
+
+        const oppsByType = presenter.opportunitiesByTypeForReviewer(
+          REVIEWER_ID,
+          "opportunities",
+        );
+
+        expect(oppsByType).toContainAllKeys([OPP_TYPE_1, OPP_TYPE_2]);
+      });
+
+      it("returns an empty object when no opportunity is assigned to the reviewer", () => {
+        const client = fakeClientWithOpportunities([
+          { type: OPP_TYPE_1, currentReviewerId: OTHER_REVIEWER_ID },
+        ]);
+        jiiStore?.caseloadByReviewerId.set(REVIEWER_ID, [client]);
+
+        expect(
+          presenter.opportunitiesByTypeForReviewer(
+            REVIEWER_ID,
+            "opportunities",
+          ),
+        ).toStrictEqual({});
+      });
+
+      it("returns empty object for a reviewer with no caseload", () => {
+        expect(
+          presenter.opportunitiesByTypeForReviewer(
+            "reviewer-with-no-caseload",
+            "opportunities",
+          ),
+        ).toEqual({});
+      });
+    });
+
+    describe("Method: populateCaseloadForReviewer", () => {
+      afterEach(() => {
+        vi.restoreAllMocks();
+      });
+
+      describe("after population of a reviewer caseload", () => {
+        const [CLIENT_RECORD] = Object.values(clientFixture);
+
+        beforeEach(async () => {
+          vi.spyOn(
+            mockRootStore.firestoreStore,
+            "getOpportunityUpdatesForReviewerId",
+          ).mockResolvedValue([
+            { clientRecordId: CLIENT_RECORD.recordId },
+          ] as ClientOpportunityUpdateRecord[]);
+          vi.spyOn(
+            mockRootStore.firestoreStore,
+            "getClientsForRecordIds",
+          ).mockResolvedValue([CLIENT_RECORD]);
+
+          presenter.personFieldsToHydrate = ["opportunityManager"];
+          await presenter.populateCaseloadForReviewer(REVIEWER_ID);
+        });
+
+        it("should have test client present in caseload map", () => {
+          const testCaseload = jiiStore?.caseloadByReviewerId.get(REVIEWER_ID);
+          expect(testCaseload?.length).toEqual(1);
+        });
+
+        it("finds clients for the populated reviewer", () => {
+          const clients = presenter.findClientsForReviewer(REVIEWER_ID);
+          expect(clients).toHaveLength(1);
+          expect(clients[0].externalId).toEqual(CLIENT_RECORD.personExternalId);
+        });
       });
     });
   });
