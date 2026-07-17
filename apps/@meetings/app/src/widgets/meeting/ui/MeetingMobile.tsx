@@ -419,6 +419,7 @@ const MeetingMobile = ({
                 meetingId={meetingId}
                 caseNote={meetingDetails.caseNote || ""}
                 personId={person.personId.toString()}
+                canEdit={isMeetingCreator}
                 outputVote={
                   isMeetingCreator &&
                   meetingDetails.caseNote && (
@@ -507,12 +508,14 @@ const MeetingMobile = ({
         meetingDate={meetingDetails?.startTime}
         ref={draftCaseNoteSheetRef}
         personId={person.personId.toString()}
+        canEdit={isMeetingCreator}
       />
       <MeetingNotesSheet
         meetingDetails={meetingDetails}
         clientName={person.fullName}
         bottomSheetRef={meetingNotesSheetRef}
         personId={person.personId.toString()}
+        canEdit={isMeetingCreator}
       />
     </View>
   );

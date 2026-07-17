@@ -38,6 +38,7 @@ type Meeting = {
   start: Date;
   end: Date | null;
   caseNote: string | null;
+  staffEmail: string;
 };
 
 type Props = {

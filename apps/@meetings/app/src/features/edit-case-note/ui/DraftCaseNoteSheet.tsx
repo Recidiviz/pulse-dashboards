@@ -61,7 +61,7 @@ export const DraftCaseNoteSheet = ({
   clientName,
   meetingDate,
   ref,
-  canEdit = true,
+  canEdit = false,
   personId,
 }: Props) => {
   const { track } = useAnalytics();

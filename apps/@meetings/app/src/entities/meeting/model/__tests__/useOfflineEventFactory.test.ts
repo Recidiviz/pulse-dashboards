@@ -42,6 +42,11 @@ jest.mock("~@meetings/app/shared/api/trpc", () => ({
   },
 }));
 
+const mockCreatorEmail = "creator@example.com";
+jest.mock("react-native-auth0", () => ({
+  useAuth0: jest.fn(() => ({ user: { email: mockCreatorEmail } })),
+}));
+
 const mockEnqueue = jest.fn();
 const mockClientSetData = jest.fn();
 const mockResidentSetData = jest.fn();
@@ -123,6 +128,8 @@ describe("useOfflineEventFactory", () => {
           startTime: START_TIME,
           endTime: null,
           postMeetingProcessingStatus: "NOT_STARTED",
+          // Stamped with the logged-in user, who is always the creator.
+          staffEmail: mockCreatorEmail,
         }),
       );
       expect(updated).toContainEqual(
@@ -170,6 +177,7 @@ describe("useOfflineEventFactory", () => {
           caseNote: null,
           userNotepadNotes: null,
           postMeetingProcessingStatus: "NOT_STARTED",
+          staffEmail: mockCreatorEmail,
         }),
       );
     });

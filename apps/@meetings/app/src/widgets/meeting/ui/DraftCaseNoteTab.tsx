@@ -33,6 +33,7 @@ type Props = {
   caseNote: string;
   personId: string;
   outputVote?: ReactNode;
+  canEdit?: boolean;
 };
 
 const DraftCaseNoteTab = ({
@@ -40,6 +41,7 @@ const DraftCaseNoteTab = ({
   caseNote,
   personId,
   outputVote,
+  canEdit = false,
 }: Props) => {
   const { track } = useAnalytics();
   const utils = trpc.useUtils();
@@ -62,6 +64,7 @@ const DraftCaseNoteTab = ({
   );
 
   const handleChange = (newValue: string) => {
+    if (!canEdit) return;
     setInputNotes(newValue);
     debouncedSave(newValue);
   };
@@ -85,9 +88,11 @@ const DraftCaseNoteTab = ({
           <Typography className="text-xl font-semibold text-primary">
             Draft case note
           </Typography>
-          <Typography className="text-sm text-secondary">
-            Place your cursor where you want to start typing
-          </Typography>
+          {canEdit && (
+            <Typography className="text-sm text-secondary">
+              Place your cursor where you want to start typing
+            </Typography>
+          )}
         </View>
         <View className="flex-row items-center gap-4">
           <TouchableOpacity
@@ -117,6 +122,7 @@ const DraftCaseNoteTab = ({
           }
           textAlignVertical="top"
           scrollEnabled={false}
+          readOnly={!canEdit}
           multiline
         />
         {outputVote}

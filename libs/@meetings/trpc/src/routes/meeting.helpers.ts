@@ -158,6 +158,7 @@ export async function getMeetingsForPerson({
       postMeetingProcessingStatus: true,
       caseNote: true,
       durationMs: true,
+      staffEmail: true,
     },
   });
 

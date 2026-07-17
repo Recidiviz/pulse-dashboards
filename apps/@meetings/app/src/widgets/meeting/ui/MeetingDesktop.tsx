@@ -216,6 +216,7 @@ const MeetingDesktop = ({
                   meetingId={meetingId}
                   caseNote={meetingDetails.caseNote || ""}
                   personId={person.personId.toString()}
+                  canEdit={isMeetingCreator}
                   outputVote={
                     isMeetingCreator &&
                     meetingDetails.caseNote && (

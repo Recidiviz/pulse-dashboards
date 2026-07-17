@@ -66,17 +66,20 @@ const MEETING_ID = "meeting-1";
 const PERSON_ID = "person-1";
 const ORIGINAL_NOTE = "Original case note";
 
-function renderTab(caseNote = ORIGINAL_NOTE) {
+function renderTab(caseNote = ORIGINAL_NOTE, canEdit = true) {
   const utils = render(
     <DraftCaseNoteTab
       meetingId={MEETING_ID}
       caseNote={caseNote}
       personId={PERSON_ID}
+      canEdit={canEdit}
     />,
   );
   const input = utils.getByDisplayValue(caseNote);
   return { ...utils, input };
 }
+
+const EDIT_HINT = "Place your cursor where you want to start typing";
 
 describe("DraftCaseNoteTab", () => {
   beforeEach(() => {
@@ -142,6 +145,50 @@ describe("DraftCaseNoteTab", () => {
     expect(mockTrack).toHaveBeenCalledWith("case_notes_copied", {
       meetingId: MEETING_ID,
       personId: PERSON_ID,
+    });
+  });
+
+  describe("when the user cannot edit (not the meeting creator)", () => {
+    it("renders the case note read-only and hides the edit hint", () => {
+      const { input, queryByText } = renderTab(ORIGINAL_NOTE, false);
+
+      expect(queryByText(EDIT_HINT)).toBeNull();
+      expect(input.props.readOnly).toBe(true);
+    });
+
+    it("does not save when the text changes", () => {
+      const { input, getByDisplayValue } = renderTab(ORIGINAL_NOTE, false);
+
+      fireEvent.changeText(input, "Tampered text");
+      act(() => {
+        jest.advanceTimersByTime(DEBOUNCE_MS);
+      });
+
+      expect(mockMutate).not.toHaveBeenCalled();
+      // The change is also rejected locally (value unchanged).
+      expect(getByDisplayValue(ORIGINAL_NOTE)).toBeTruthy();
+    });
+
+    it("defaults to read-only when canEdit is omitted (deny-by-default)", () => {
+      const { getByDisplayValue, queryByText } = render(
+        <DraftCaseNoteTab
+          meetingId={MEETING_ID}
+          caseNote={ORIGINAL_NOTE}
+          personId={PERSON_ID}
+        />,
+      );
+
+      expect(queryByText(EDIT_HINT)).toBeNull();
+      expect(getByDisplayValue(ORIGINAL_NOTE).props.readOnly).toBe(true);
+    });
+  });
+
+  describe("when the user can edit (the meeting creator)", () => {
+    it("shows the edit hint and renders the note editable", () => {
+      const { input, getByText } = renderTab();
+
+      expect(getByText(EDIT_HINT)).toBeTruthy();
+      expect(input.props.readOnly).toBe(false);
     });
   });
 

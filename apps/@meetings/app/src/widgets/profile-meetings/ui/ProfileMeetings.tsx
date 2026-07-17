@@ -250,6 +250,7 @@ export const ProfileMeetings = ({
           validationErrorType: m.validationErrorType,
           isActive: !end,
           caseNote: m.caseNote,
+          staffEmail: m.staffEmail,
         };
       }) || []
     );

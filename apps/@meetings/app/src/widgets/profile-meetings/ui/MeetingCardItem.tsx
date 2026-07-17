@@ -32,6 +32,7 @@ import {
 
 import { isMeetingProcessing } from "~@meetings/app/entities/meeting";
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
+import { useUserContext } from "~@meetings/app/entities/user";
 import { DraftCaseNoteSheet } from "~@meetings/app/features/edit-case-note";
 import { useAnalytics } from "~@meetings/app/shared/analytics";
 import { Person, PersonType } from "~@meetings/app/shared/api";
@@ -57,6 +58,7 @@ type MeetingCardItemProps = {
     start: Date;
     end: Date | null;
     caseNote: string | null;
+    staffEmail: string;
   };
   person: Person;
   personType: PersonType;
@@ -73,6 +75,8 @@ const MeetingCardItem = ({
   const { showSnackbar, isShowing: isSnackbarShowing } = useSnackbar();
   const draftCaseNoteSheetRef = useRef<BottomSheetModal>(null);
   const [canEditNote, setCanEditNote] = useState(false);
+  const { email: currentUserEmail } = useUserContext();
+  const isMeetingCreator = currentUserEmail === meeting.staffEmail;
   const isProcessing = isMeetingProcessing(meeting.status);
   const isError = !!meeting.validationErrorType;
   const isFinishedWithoutNote = !isProcessing && !isError && !meeting.caseNote;
@@ -226,14 +230,16 @@ const MeetingCardItem = ({
                   <ChevronDownIcon className="!size-3 stroke-tertiary stroke-[3px]" />
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity onPress={handleDraftCaseNoteEdit}>
-                <View className="flex flex-row items-center justify-center gap-1 rounded-full bg-secondary px-4 py-2">
-                  <PencilIcon className="!size-4 fill-tertiary" />
-                  <Typography className="text-sm font-semibold leading-4 text-primary">
-                    Edit
-                  </Typography>
-                </View>
-              </TouchableOpacity>
+              {isMeetingCreator && (
+                <TouchableOpacity onPress={handleDraftCaseNoteEdit}>
+                  <View className="flex flex-row items-center justify-center gap-1 rounded-full bg-secondary px-4 py-2">
+                    <PencilIcon className="!size-4 fill-tertiary" />
+                    <Typography className="text-sm font-semibold leading-4 text-primary">
+                      Edit
+                    </Typography>
+                  </View>
+                </TouchableOpacity>
+              )}
               <TouchableOpacity
                 onPress={handleCopyNotes}
                 disabled={isSnackbarShowing}
@@ -255,7 +261,7 @@ const MeetingCardItem = ({
         clientName={person.fullName}
         meetingDate={meeting?.start}
         ref={draftCaseNoteSheetRef}
-        canEdit={canEditNote}
+        canEdit={canEditNote && isMeetingCreator}
         personId={person.personId.toString()}
       />
     </View>

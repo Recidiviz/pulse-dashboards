@@ -426,8 +426,30 @@ export const meetingRouter = router({
     .mutation(
       async ({
         input: { meetingId, userNotepadNotes, actionItems, caseNote },
-        ctx: { prisma },
+        ctx: { prisma, user, isSkipAuth },
       }) => {
+        const meeting = await prisma.meeting.findUnique({
+          where: { id: meetingId },
+          select: { staffEmail: true },
+        });
+
+        if (!meeting) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Meeting with that id was not found",
+          });
+        }
+
+        // Only the meeting creator can edit its outputs. Skip-auth (offline/dev)
+        // mode uses a mock user, so bypass the ownership check to match the
+        // frontend, which grants edit access to skip-auth users.
+        if (!isSkipAuth && meeting.staffEmail !== user.email) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Only the meeting creator can edit notes",
+          });
+        }
+
         try {
           // Stamp *EditedAt only for fields actually included in the request.
           const editedAt = new Date();

@@ -50,6 +50,7 @@ type Props = {
   clientName: string;
   bottomSheetRef: RefObject<BottomSheet | null>;
   personId: string;
+  canEdit?: boolean;
 };
 
 const MeetingNotesSheet = ({
@@ -57,6 +58,7 @@ const MeetingNotesSheet = ({
   clientName,
   bottomSheetRef,
   personId,
+  canEdit = false,
 }: Props) => {
   const { track } = useAnalytics();
   const [actionItems, setActionItems] = useState(
@@ -153,17 +155,19 @@ const MeetingNotesSheet = ({
                 className="flex flex-1 items-center justify-center rounded-[32px] border border-[#35536233] py-[17px]"
               >
                 <Typography className="text-lg font-semibold leading-[22px] text-primary">
-                  CANCEL
+                  {canEdit ? "CANCEL" : "CLOSE"}
                 </Typography>
               </TouchableOpacity>
-              <TouchableOpacity
-                onPress={handleSave}
-                className="flex flex-1 items-center justify-center rounded-[32px] bg-[#00665F] py-[17px]"
-              >
-                <Typography className="text-lg font-semibold leading-[22px] text-white">
-                  SAVE CHANGES
-                </Typography>
-              </TouchableOpacity>
+              {canEdit && (
+                <TouchableOpacity
+                  onPress={handleSave}
+                  className="flex flex-1 items-center justify-center rounded-[32px] bg-[#00665F] py-[17px]"
+                >
+                  <Typography className="text-lg font-semibold leading-[22px] text-white">
+                    SAVE CHANGES
+                  </Typography>
+                </TouchableOpacity>
+              )}
             </View>
           </BottomSheetFooter>
         )
@@ -203,6 +207,7 @@ const MeetingNotesSheet = ({
             value={actionItems.join("\n")}
             onChangeText={(text) => setActionItems(text.split("\n"))}
             textAlignVertical="top"
+            readOnly={!canEdit}
           />
         </View>
         {!isKeyboardVisible && (

@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useAuth0 } from "react-native-auth0";
+
 import { PersonType, trpc } from "~@meetings/app/shared/api";
 
 import {
@@ -30,6 +32,10 @@ import {
 export function useOfflineEventFactory() {
   const { enqueue } = useMeetingEventQueue();
   const utils = trpc.useUtils();
+  // The offline creator is always the logged-in user; you can't create a
+  // meeting on someone else's behalf.
+  const { user } = useAuth0();
+  const currentUserEmail = user?.email;
 
   function removeMeetingFromCache(
     meetingId: string,
@@ -77,6 +83,7 @@ export function useOfflineEventFactory() {
           postMeetingProcessingStatus: "NOT_STARTED" as const,
           caseNote: null,
           validationErrorType: null,
+          staffEmail: currentUserEmail ?? "",
         };
 
         if (personType === "client") {
@@ -117,7 +124,7 @@ export function useOfflineEventFactory() {
             validationErrorType: null,
             transcriptDeletedAt: null,
             transcription: null,
-            staffEmail: "",
+            staffEmail: currentUserEmail ?? "",
             audioUrl: null,
           },
         );
