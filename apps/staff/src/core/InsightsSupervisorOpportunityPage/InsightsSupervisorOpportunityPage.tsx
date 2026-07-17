@@ -123,6 +123,7 @@ const InsightsSupervisorOpportunityPage = observer(
       opportunityConfigurationStore,
       supervisorPseudoId,
       opportunityType,
+      workflowsStore,
     );
 
     return (

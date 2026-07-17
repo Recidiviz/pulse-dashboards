@@ -18,10 +18,18 @@
 import { flowResult, makeObservable, override } from "mobx";
 
 import { OpportunityType, SupervisionOfficerSupervisor } from "~datatypes";
-import { HydratesFromSource } from "~hydration-utils";
+import {
+  awaitHydration,
+  HydratesFromSource,
+  isHydrated,
+} from "~hydration-utils";
 
 import { Page } from "../../core/InsightsSupervisorPage/InsightsBreadcrumbs";
-import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
+import {
+  JusticeInvolvedPerson,
+  Opportunity,
+  WorkflowsStore,
+} from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { OpportunityConfigurationStore } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
@@ -39,6 +47,7 @@ export class SupervisionSupervisorOpportunityPresenter extends SupervisionSuperv
     opportunityConfigurationStore: OpportunityConfigurationStore,
     supervisorPseudoId: string,
     public opportunityType: OpportunityType,
+    private workflowsStore?: WorkflowsStore,
   ) {
     super(
       supervisionStore,
@@ -49,7 +58,7 @@ export class SupervisionSupervisorOpportunityPresenter extends SupervisionSuperv
 
     makeObservable<
       SupervisionSupervisorOpportunityPresenter,
-      "expectSupervisorPopulated"
+      "expectSupervisorPopulated" | "expectStaffRosterPopulated"
     >(this, {
       opportunityType: true,
       opportunities: true,
@@ -57,11 +66,19 @@ export class SupervisionSupervisorOpportunityPresenter extends SupervisionSuperv
       hydrate: override,
       hydrationState: override,
       expectSupervisorPopulated: override,
+      expectStaffRosterPopulated: true,
     });
 
     this.hydrator = new HydratesFromSource({
       populate: async () => {
         await Promise.all([
+          // TODO(OBT-OBT-39307) Improve hydration while impersonating
+          this.workflowsStore
+            ? awaitHydration(
+                this.workflowsStore
+                  .supervisionStaffWithOrWithoutCaseloadSubscription,
+              )
+            : Promise.resolve(),
           flowResult(
             this.supervisionStore.populateSupervisionOfficerSupervisors(),
           ),
@@ -77,6 +94,7 @@ export class SupervisionSupervisorOpportunityPresenter extends SupervisionSuperv
       },
       expectPopulated: [
         this.expectSupervisorPopulated,
+        this.expectStaffRosterPopulated,
         this.expectOfficersPopulated,
         this.expectOpportunityConfigurationStorePopulated,
         ...this.allOfficers.map(
@@ -88,6 +106,25 @@ export class SupervisionSupervisorOpportunityPresenter extends SupervisionSuperv
           ),
       ],
     });
+  }
+
+  /**
+   * Asserts that the officer roster (including officers without a caseload)
+   * has been hydrated, so officer names (e.g. the current reviewer) can be
+   * resolved. A missing `workflowsStore` is not an error on its own (e.g. no
+   * caller wired one up) and is a no-op.
+   */
+  private expectStaffRosterPopulated() {
+    if (!this.workflowsStore || !this.isInsightsSupervisorReviewTableEnabled)
+      return;
+
+    if (
+      !isHydrated(
+        this.workflowsStore.supervisionStaffWithOrWithoutCaseloadSubscription,
+      )
+    ) {
+      throw new Error("Failed to populate officer roster");
+    }
   }
 
   // All opportunities for the officers of this supervisor
