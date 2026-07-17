@@ -54,7 +54,7 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
     supervisionStore: InsightsSupervisionStore,
     public supervisorPseudoId: string,
     justiceInvolvedPersonsStore: JusticeInvolvedPersonsStore,
-    private opportunityConfigurationStore: OpportunityConfigurationStore,
+    protected opportunityConfigurationStore: OpportunityConfigurationStore,
   ) {
     super(supervisionStore);
 

@@ -78,6 +78,10 @@ export class UsTxArsErsV2Configuration extends ApiOpportunityConfiguration {
         this.grantApprovedTabTitle,
         this.deniedTabTitle,
       ],
+      "REVIEW STATUS": [
+        this.supervisorReviewTabTitle,
+        this.awaitingRevisionsTabTitle,
+      ],
     };
   }
 }

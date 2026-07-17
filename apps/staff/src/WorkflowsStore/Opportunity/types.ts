@@ -352,8 +352,10 @@ export type OpportunityTab =
   | "Awaiting Revisions"
   | "Submitted for Review";
 
+// TODO (OBT-39704) Refactor OpportunityTabGroup to enums
 export type OpportunityTabGroup =
   | "ELIGIBILITY STATUS"
+  | "REVIEW STATUS"
   | "GENDER"
   | "GENDER - Transgender Only";
 // NOTE: Consider changing the key type to string, because the source of truth is what is set in the configs as opposed to the code.

@@ -24,6 +24,7 @@ import styled, { css } from "styled-components";
 
 import { palette } from "~design-system";
 
+import { useFeatureVariants } from "../../components/StoreProvider";
 import WorkflowsCaseloadTabs from "./WorkflowsCaseloadTabs";
 import { WorkflowsTabGroupSelector } from "./WorkflowsTabGroupSelector";
 
@@ -78,6 +79,7 @@ export function WorkflowsCaseloadControlBar<T extends string>(
     actions,
     ...rest
   } = props;
+  const { supervisorHomepageReviewTable } = useFeatureVariants();
   return (
     <TabControls>
       {tabs && (
@@ -85,7 +87,7 @@ export function WorkflowsCaseloadControlBar<T extends string>(
           {...{ tabs, tabBadges, setActiveTab, activeTab, sortable }}
         />
       )}
-      {Object.keys(rest).length > 0 && (
+      {Object.keys(rest).length > 0 && !supervisorHomepageReviewTable && (
         <WorkflowsTabGroupSelector
           {...(rest as Parameters<typeof WorkflowsTabGroupSelector>[0])}
         />

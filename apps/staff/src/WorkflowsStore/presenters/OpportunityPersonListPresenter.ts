@@ -96,7 +96,12 @@ export class OpportunityPersonListPresenter
     this.displayTabGroups = Object.keys(
       config.tabGroups,
     ) as OpportunityTabGroup[];
-    this._activeTabGroup = this.displayTabGroups[0];
+    // TODO (OBT-39704) Refactor OpportunityTabGroup to enums
+    this._activeTabGroup =
+      this.supervisionPresenter &&
+      "defaultTabGroup" in this.supervisionPresenter
+        ? this.supervisionPresenter.defaultTabGroup
+        : this.displayTabGroups[0];
     this.userOrderedTabs = undefined;
     if (initialTab) {
       this.activeTab = initialTab as OpportunityTab;

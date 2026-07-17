@@ -28,6 +28,7 @@ import { Page } from "../../core/InsightsSupervisorPage/InsightsBreadcrumbs";
 import {
   JusticeInvolvedPerson,
   Opportunity,
+  OpportunityTabGroup,
   WorkflowsStore,
 } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
@@ -161,6 +162,20 @@ export class SupervisionSupervisorOpportunityPresenter extends SupervisionSuperv
 
   get opportunities(): Opportunity[] | undefined {
     return this.opportunitiesByType?.[this.opportunityType];
+  }
+
+  get displayTabGroups(): OpportunityTabGroup[] {
+    return Object.keys(
+      this.opportunityConfigurationStore.opportunities[this.opportunityType]
+        .tabGroups,
+    ) as OpportunityTabGroup[];
+  }
+
+  get defaultTabGroup(): OpportunityTabGroup {
+    // TODO (OBT-39704) Refactor OpportunityTabGroup to enums
+    return this.isInsightsSupervisorReviewTableEnabled
+      ? "REVIEW STATUS"
+      : this.displayTabGroups[0];
   }
 
   get previousPages(): Page[] {
