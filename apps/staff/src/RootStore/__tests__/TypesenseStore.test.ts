@@ -537,6 +537,30 @@ describe("TypesenseStore", () => {
       );
     });
 
+    test("POSTs an empty body when no collections are given", async () => {
+      fetchMock.mockResponseOnce(JSON.stringify(MOCK_SUMMARY));
+
+      await store.triggerBackfill();
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        "http://test-api/api/typesense/backfill",
+        expect.objectContaining({ body: JSON.stringify({}) }),
+      );
+    });
+
+    test("forwards a collections filter in the request body", async () => {
+      fetchMock.mockResponseOnce(JSON.stringify(MOCK_SUMMARY));
+
+      await store.triggerBackfill(["clients", "residents"]);
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        "http://test-api/api/typesense/backfill",
+        expect.objectContaining({
+          body: JSON.stringify({ collections: ["clients", "residents"] }),
+        }),
+      );
+    });
+
     test("does not mutate store hydration state", async () => {
       fetchMock.mockResponseOnce(JSON.stringify(MOCK_SUMMARY));
 

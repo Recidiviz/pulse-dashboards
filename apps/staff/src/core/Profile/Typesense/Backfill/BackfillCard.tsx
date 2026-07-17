@@ -19,10 +19,20 @@ import { Modal, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useState } from "react";
+import simplur from "simplur";
 import styled from "styled-components";
 
 import { isOfflineMode } from "~client-env-utils";
-import { Button, Icon, IconSVG, palette, TooltipTrigger } from "~design-system";
+import {
+  Button,
+  Checkbox,
+  CheckboxGroup,
+  Icon,
+  IconSVG,
+  palette,
+  TooltipTrigger,
+  typography,
+} from "~design-system";
 
 import { useTypesenseStore } from "../../../../components/StoreProvider";
 import {
@@ -82,6 +92,33 @@ const InfoIconTrigger = styled(TooltipTrigger)`
   cursor: help;
 `;
 
+const CollectionsLabel = styled.div`
+  ${typography.Sans12}
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: ${palette.slate60};
+  margin-bottom: ${rem(spacing.xs)};
+`;
+
+const CollectionsFieldset = styled.div`
+  width: 100%;
+  margin-bottom: ${rem(spacing.lg)};
+`;
+
+const CollectionsListGroup = styled(CheckboxGroup)`
+  max-height: ${rem(300)};
+  overflow-y: auto;
+  border: 1px solid ${palette.slate20};
+  border-radius: ${rem(4)};
+`;
+
+const AllCollectionsOption = styled.div`
+  padding-bottom: ${rem(spacing.xs)};
+  margin-bottom: ${rem(spacing.xs)};
+  border-bottom: 1px solid ${palette.slate20};
+`;
+
 function resultSummaryLabel(outcome: BackfillOutcome): string {
   if (outcome.status === "error") return `Failed — `;
   const { totals, durationMs } = outcome.result;
@@ -98,21 +135,67 @@ const RELOAD_WARNING = (
 function ConfirmBackfillContents({
   store,
   onClose,
+  collectionNames,
+  selectedCollections,
+  setSelectedCollections,
 }: {
   store: TypesenseStore;
   onClose: () => void;
+  collectionNames: string[];
+  selectedCollections: string[] | undefined;
+  setSelectedCollections: (collections: string[] | undefined) => void;
 }) {
+  const backfillAll = selectedCollections === undefined;
+  const submitLabel = backfillAll
+    ? "Backfill all collections"
+    : simplur`Backfill ${selectedCollections.length} collection[|s]`;
+
   return (
     <>
       <ModalHeader>Trigger a Typesense backfill?</ModalHeader>
       <ModalDescription>
         <p>
-          This bulk-imports every configured Firestore collection into the{" "}
-          {envLabel(store.host ?? "")} Typesense cluster. It can take several
-          minutes to complete.
+          This bulk-imports{" "}
+          {backfillAll
+            ? "every configured Firestore collection"
+            : simplur`${selectedCollections.length} selected collection[|s]`}{" "}
+          into the {envLabel(store.host ?? "")} Typesense cluster. It can take
+          several minutes to complete.
         </p>
         <p>{RELOAD_WARNING}</p>
       </ModalDescription>
+
+      <CollectionsFieldset>
+        <CollectionsLabel id="backfill-collections-label">
+          Collections
+        </CollectionsLabel>
+        <CollectionsListGroup
+          ariaLabelledBy="backfill-collections-label"
+          value={selectedCollections ?? []}
+          onChange={(next) =>
+            setSelectedCollections(next.length === 0 ? undefined : next)
+          }
+        >
+          <AllCollectionsOption>
+            <Checkbox
+              value="__all__"
+              checked={backfillAll}
+              disabled={backfillAll}
+              onChange={(checked) => {
+                if (checked) setSelectedCollections(undefined);
+              }}
+            >
+              All collections
+            </Checkbox>
+          </AllCollectionsOption>
+          {collectionNames.map((name) => (
+            <Checkbox key={name} value={name}>
+              {name}
+            </Checkbox>
+          ))}
+        </CollectionsListGroup>
+      </CollectionsFieldset>
+
       <ModalActions>
         <Button kind="secondary" shape="pill" onClick={onClose}>
           Cancel
@@ -121,10 +204,10 @@ function ConfirmBackfillContents({
           shape="pill"
           onClick={() => {
             onClose();
-            store.triggerBackfill().catch(() => undefined);
+            store.triggerBackfill(selectedCollections).catch(() => undefined);
           }}
         >
-          Yes, backfill
+          {submitLabel}
         </Button>
       </ModalActions>
     </>
@@ -202,12 +285,16 @@ export const BackfillCard = observer(function BackfillCard() {
   const store = useTypesenseStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContents, setModalContents] = useState<"confirm" | "result">();
+  // undefined = backfill all collections
+  const [selectedCollections, setSelectedCollections] = useState<string[]>();
   const openModal = (contents: "confirm" | "result") => {
+    if (contents === "confirm") setSelectedCollections(undefined);
     setModalContents(contents);
     setIsModalOpen(true);
   };
   const closeModal = () => setIsModalOpen(false);
   const { backfillInProgress, backfillStartedAt, lastBackfillOutcome } = store;
+  const collectionNames = store.collectionsSummary?.map((c) => c.name) ?? [];
 
   return (
     <TypesenseCard>
@@ -221,7 +308,7 @@ export const BackfillCard = observer(function BackfillCard() {
       </SectionCardHeader>
       <CardContent>
         <Description>
-          Re-imports every configured Firestore collection into Typesense.
+          Re-imports configured Firestore collections into Typesense.
         </Description>
 
         <MetaBadge>
@@ -271,7 +358,7 @@ export const BackfillCard = observer(function BackfillCard() {
           disabled={backfillInProgress || isOfflineMode()}
           onClick={() => openModal("confirm")}
         >
-          Backfill all collections
+          Backfill collections
         </Button>
         {isOfflineMode() && (
           <InfoBadgeLabel>
@@ -285,7 +372,13 @@ export const BackfillCard = observer(function BackfillCard() {
           <Icon kind={IconSVG.Close} size={14} color={palette.slate60} />
         </ModalCloseButton>
         {modalContents === "confirm" && (
-          <ConfirmBackfillContents store={store} onClose={closeModal} />
+          <ConfirmBackfillContents
+            store={store}
+            onClose={closeModal}
+            collectionNames={collectionNames}
+            selectedCollections={selectedCollections}
+            setSelectedCollections={setSelectedCollections}
+          />
         )}
         {modalContents === "result" && (
           <BackfillResultsContents

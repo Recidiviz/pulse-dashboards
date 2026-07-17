@@ -197,10 +197,34 @@ export async function typesenseAllCollectionsSchemas(req, res) {
 }
 
 /**
+ * Validates the POST /api/typesense/backfill body, which is optional and if
+ * present must be `{ collections?: string[] }`. Returns `{ error }` for any
+ * malformed body so the route can reject with a 400 before invoking the
+ * Cloud Function.
+ */
+function parseBackfillBody(body) {
+  if (body === undefined || body === null) return {};
+  if (typeof body !== "object" || Array.isArray(body)) {
+    return { error: "body must be an object" };
+  }
+  const { collections } = body;
+  if (collections === undefined) return {};
+  if (!Array.isArray(collections)) {
+    return { error: "`collections` must be an array of strings" };
+  }
+  if (!collections.every((c) => typeof c === "string" && c.length > 0)) {
+    return { error: "`collections` entries must be non-empty strings" };
+  }
+  return { collections };
+}
+
+/**
  * POST /api/typesense/backfill
  *
  * Triggers the `typesense-backfill` Cloud Function, which bulk-imports the
- * configured Firestore collections into Typesense.
+ * configured Firestore collections into Typesense. Accepts an optional
+ * `{ collections: string[] }` body to backfill only a subset; omit to
+ * backfill everything the function is configured for.
  */
 export async function typesenseBackfill(req, res) {
   if (!isAllowed(req)) {
@@ -208,14 +232,24 @@ export async function typesenseBackfill(req, res) {
     return;
   }
 
+  const parsed = parseBackfillBody(req.body);
+  if ("error" in parsed) {
+    res.status(400).send({ status: 400, errors: [parsed.error] });
+    return;
+  }
+
   try {
     const { url, idTokenClient } = await createTypesenseBackfillClient({
       credentials: serviceAccount,
     });
+    const data = {};
+    if (parsed.collections) {
+      data.collections = parsed.collections;
+    }
     const response = await idTokenClient.request({
       url,
       method: "POST",
-      data: {},
+      data,
     });
     responder(res)(null, response.data);
   } catch (error) {

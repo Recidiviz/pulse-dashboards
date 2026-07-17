@@ -256,7 +256,7 @@ describe("typesenseBackfill", () => {
   test("triggers the backfill function and returns its response", async () => {
     const request = vi.fn().mockResolvedValue({ data: { ok: true } });
     createTypesenseBackfillClient.mockResolvedValue({
-      url: "https://typesense-backfill-abc123-us-east1.a.run.app",
+      url: "https://fake-typesense-backfill.app",
       idTokenClient: { request },
     });
 
@@ -264,11 +264,73 @@ describe("typesenseBackfill", () => {
     await typesenseBackfill(recidivizReq, res);
 
     expect(request).toHaveBeenCalledWith({
-      url: "https://typesense-backfill-abc123-us-east1.a.run.app",
+      url: "https://fake-typesense-backfill.app",
       method: "POST",
       data: {},
     });
     expect(send).toHaveBeenCalledWith({ ok: true });
+  });
+
+  test("forwards a `collections` filter from the request body", async () => {
+    const request = vi.fn().mockResolvedValue({ data: { ok: true } });
+    createTypesenseBackfillClient.mockResolvedValue({
+      url: "https://fake-typesense-backfill.app",
+      idTokenClient: { request },
+    });
+
+    const { res } = buildRes();
+    await typesenseBackfill(
+      { ...recidivizReq, body: { collections: ["clients", "residents"] } },
+      res,
+    );
+
+    expect(request).toHaveBeenCalledWith({
+      url: "https://fake-typesense-backfill.app",
+      method: "POST",
+      data: { collections: ["clients", "residents"] },
+    });
+  });
+
+  test("rejects a non-array `collections` value with a 400, without triggering the function", async () => {
+    const { res, status, send } = buildRes();
+    await typesenseBackfill(
+      { ...recidivizReq, body: { collections: "clients" } },
+      res,
+    );
+
+    expect(createTypesenseBackfillClient).not.toHaveBeenCalled();
+    expect(status).toHaveBeenCalledWith(400);
+    expect(send).toHaveBeenCalledWith({
+      status: 400,
+      errors: ["`collections` must be an array of strings"],
+    });
+  });
+
+  test("rejects `collections` entries that aren't non-empty strings", async () => {
+    const { res, status, send } = buildRes();
+    await typesenseBackfill(
+      { ...recidivizReq, body: { collections: ["clients", ""] } },
+      res,
+    );
+
+    expect(createTypesenseBackfillClient).not.toHaveBeenCalled();
+    expect(status).toHaveBeenCalledWith(400);
+    expect(send).toHaveBeenCalledWith({
+      status: 400,
+      errors: ["`collections` entries must be non-empty strings"],
+    });
+  });
+
+  test("rejects a non-object body", async () => {
+    const { res, status, send } = buildRes();
+    await typesenseBackfill({ ...recidivizReq, body: "clients" }, res);
+
+    expect(createTypesenseBackfillClient).not.toHaveBeenCalled();
+    expect(status).toHaveBeenCalledWith(400);
+    expect(send).toHaveBeenCalledWith({
+      status: 400,
+      errors: ["body must be an object"],
+    });
   });
 
   test("responds 403 for non-recidiviz users without triggering the function", async () => {
@@ -304,7 +366,7 @@ describe("typesenseBackfill", () => {
   test("surfaces errors from the function call", async () => {
     const request = vi.fn().mockRejectedValue(new Error("backfill failed"));
     createTypesenseBackfillClient.mockResolvedValue({
-      url: "https://typesense-backfill-abc123-us-east1.a.run.app",
+      url: "https://fake-typesense-backfill.app",
       idTokenClient: { request },
     });
 

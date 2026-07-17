@@ -239,10 +239,14 @@ export class TypesenseStore implements Hydratable {
    * See apps/staff-server/src/server/typesense/typesenseManagement.js
    * POST /api/typesense/backfill
    */
-  private async postBackfill(): Promise<BackfillSummary> {
+  private async postBackfill(collections?: string[]): Promise<BackfillSummary> {
     const res = await fetch(`${this.baseUrl}/backfill`, {
       method: "POST",
-      headers: await this.authHeaders(),
+      headers: {
+        ...(await this.authHeaders()),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(collections ? { collections } : {}),
     });
     const body = await res.json();
     if (!res.ok) {
@@ -255,7 +259,11 @@ export class TypesenseStore implements Hydratable {
     return body as BackfillSummary;
   }
 
-  async triggerBackfill(): Promise<void> {
+  /**
+   * Triggers a backfill. Pass `collections` to backfill only that subset;
+   * omit to backfill everything the Cloud Function is configured for.
+   */
+  async triggerBackfill(collections?: string[]): Promise<void> {
     if (this.backfillInProgress) return;
 
     this.setIsBackfillInProgress(true);
@@ -266,7 +274,7 @@ export class TypesenseStore implements Hydratable {
       outcome = {
         status: "success",
         completedAt: new Date(),
-        result: await this.postBackfill(),
+        result: await this.postBackfill(collections),
       };
     } catch (e) {
       outcome = {
