@@ -21,6 +21,7 @@ import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 import UsTxAssessmentTask from "../WorkflowsStore/Task/US_TX/UsTxAssessmentTask";
 import UsTxContactTask from "../WorkflowsStore/Task/US_TX/UsTxContactTask";
 import usTxHomeContactEdgeCaseTask from "../WorkflowsStore/Task/US_TX/UsTxHomeContactEdgeCaseTask";
+import UsTxNewArrivalContactTask from "../WorkflowsStore/Task/US_TX/UsTxNewArrivalContactTask";
 import usTxTypeAgnosticContactTask from "../WorkflowsStore/Task/US_TX/UsTxTypeAgnosticContactTask";
 
 const US_TX_CONFIG = {
@@ -99,6 +100,10 @@ const US_TX_CONFIG = {
         constructor: usTxTypeAgnosticContactTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
+      usTxNewArrivalContact: {
+        constructor: UsTxNewArrivalContactTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
       usTxAssessment: {
         constructor: UsTxAssessmentTask,
         snoozeForOptionsInDays: [7, 30, 90],
@@ -170,6 +175,11 @@ const US_TX_CONFIG = {
             value: "usTxVirtualOrOfficeContact",
             shortLabel: "Virtual or Addnl. Office Contact",
             label: "Virtual or Additional Office Contact",
+          },
+          {
+            value: "usTxNewArrivalContact",
+            shortLabel: "New Arrival",
+            label: "New Arrival (Scheduled Field Contact)",
           },
           {
             value: "usTxTypeAgnosticContact",

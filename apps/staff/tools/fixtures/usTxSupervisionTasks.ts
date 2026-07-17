@@ -249,7 +249,18 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
     stateCode: "US_TX",
     externalId: "008",
     officerId: "OFFICER3",
-    tasks: [],
+    tasks: [
+      {
+        taskDisplayName: "New Arrival Contact",
+        type: "usTxNewArrivalContact",
+        dueDate: "2022-03-21",
+        details: {
+          contactCadence: "1 WITHIN FIRST 2 DAYS",
+          lastContactDate: null,
+          causalDate: "2022-03-19",
+        },
+      },
+    ],
   },
   {
     stateCode: "US_TX",

@@ -126,6 +126,12 @@ type UsTxEdgeCaseContactDetails = {
   criteriaName: string; // raw trigger, e.g. US_TX_MEETS_ADDRESS_CHANGE_HOME_CONTACT_TRIGGER
 };
 
+type UsTxNewArrivalContactDetails = {
+  contactCadence: string;
+  lastContactDate: string | null;
+  causalDate: string;
+};
+
 type UsTxAssessmentDetails = {
   eventType: string;
   dueAssessmentDate: string | null;
@@ -208,6 +214,7 @@ export const SUPERVISION_TASK_TYPES = [
   "usTxVirtualOfficeContactScheduled",
   // TODO(#10067) Deprecate usTxVirtualOrOfficeContact
   "usTxVirtualOrOfficeContact",
+  "usTxNewArrivalContact",
   "usTxAssessment",
   "usTxHomeContactUnscheduledWeekend",
 ] as const;
@@ -231,6 +238,7 @@ export type SupervisionDetails =
   | UsTxContactDetails
   | UsTxTypeAgnosticContactDetails
   | UsTxEdgeCaseContactDetails
+  | UsTxNewArrivalContactDetails
   | UsTxAssessmentDetails;
 
 export type SupervisionDetailsForTask = {
@@ -273,6 +281,7 @@ export type SupervisionDetailsForTask = {
   usTxFieldContactScheduled: UsTxContactDetails;
   usTxVirtualOfficeContactScheduled: UsTxContactDetails;
   usTxVirtualOrOfficeContact: UsTxTypeAgnosticContactDetails;
+  usTxNewArrivalContact: UsTxNewArrivalContactDetails;
   usTxAssessment: UsTxAssessmentDetails;
   usTxHomeContactUnscheduledWeekend: UsTxOverridableContactDetails;
 };
