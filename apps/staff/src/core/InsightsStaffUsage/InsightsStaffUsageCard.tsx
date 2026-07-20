@@ -95,7 +95,7 @@ const InsightsUsageCard: React.FC<{
   presenter: SupervisionSupervisorPagePresenter;
 }> = observer(function InsightsUsageCard({
   presenter: {
-    allOfficers,
+    officersForUsageCard,
     labels,
     trackLastLoginUsageModuleViewed,
     insightsNumDaysWithoutLogin,
@@ -105,7 +105,7 @@ const InsightsUsageCard: React.FC<{
     userCanViewConsistentLoginPill,
   },
 }) {
-  if (allOfficers.length === 0) return null;
+  if (officersForUsageCard.length === 0) return null;
   trackLastLoginUsageModuleViewed();
 
   const label = labelIsAcronym(labels.supervisionOfficerLabel)
@@ -129,7 +129,7 @@ const InsightsUsageCard: React.FC<{
         </CardHeaderText>
       </CardHeader>
       <SupervisorDetailCardList style={{ width: "100%" }}>
-        {allOfficers
+        {officersForUsageCard
           .toSorted((a, b) => {
             return (
               ascending(

@@ -267,8 +267,25 @@ export class SupervisionSupervisorPagePresenter implements Hydratable {
       .insightsNumDaysWithoutLogin;
   }
 
+  get userCanHideOfficersWithoutEligibleCaseload(): boolean {
+    return this.supervisionStore.userCanHideOfficersWithoutEligibleCaseload;
+  }
+
+  /**
+   * Officers to display in the Last Login module. When
+   * `userCanHideOfficersWithoutEligibleCaseload` is enabled, officers without an
+   * eligible caseload in the past 12 months are excluded.
+   */
+  get officersForUsageCard(): SupervisionOfficer[] {
+    if (!this.userCanHideOfficersWithoutEligibleCaseload)
+      return this.allOfficers;
+    return this.allOfficers.filter(
+      (officer) => officer.hasEligibleCaseloadInPastYear !== false,
+    );
+  }
+
   get numOfficersWithNoLoginActivityInLastXDays(): number {
-    return this.allOfficers.filter((officer) =>
+    return this.officersForUsageCard.filter((officer) =>
       hasNoLoginActivityInNumDays(officer, this.insightsNumDaysWithoutLogin),
     ).length;
   }

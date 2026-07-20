@@ -227,3 +227,39 @@ describe("last login module / numOfficersWithNoLoginActivityInLastXDays", () => 
     expect(presenter.numOfficersWithNoLoginActivityInLastXDays).toBe(0);
   });
 });
+
+describe("last login module / officersForUsageCard", () => {
+  const officers = [
+    { externalId: "officer0", hasEligibleCaseloadInPastYear: true },
+    { externalId: "officer1", hasEligibleCaseloadInPastYear: false },
+    { externalId: "officer2", hasEligibleCaseloadInPastYear: undefined },
+  ] as SupervisionOfficer[];
+
+  beforeEach(() => {
+    vi.spyOn(presenter, "allOfficers", "get").mockReturnValue(officers);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("returns all officers when the feature variant is disabled", () => {
+    vi.spyOn(
+      presenter,
+      "userCanHideOfficersWithoutEligibleCaseload",
+      "get",
+    ).mockReturnValue(false);
+
+    expect(presenter.officersForUsageCard).toEqual(officers);
+  });
+
+  it("excludes only officers explicitly flagged without an eligible caseload when the feature variant is enabled", () => {
+    vi.spyOn(
+      presenter,
+      "userCanHideOfficersWithoutEligibleCaseload",
+      "get",
+    ).mockReturnValue(true);
+
+    expect(presenter.officersForUsageCard).toEqual([officers[0], officers[2]]);
+  });
+});

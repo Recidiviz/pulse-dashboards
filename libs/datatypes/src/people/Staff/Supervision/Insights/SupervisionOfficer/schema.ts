@@ -45,6 +45,9 @@ export const supervisionOfficerSchema = z
       .nullable(),
     latestLoginDate: dateStringSchema.nullable().default(null),
     hasConsistentLoginActivity: nullishAsUndefined(z.boolean()),
+    // Whether this officer had a caseload with clients eligible for any
+    // opportunities at some point in the past 12 months.
+    hasEligibleCaseloadInPastYear: nullishAsUndefined(z.boolean()),
   })
   .transform(addDisplayName);
 

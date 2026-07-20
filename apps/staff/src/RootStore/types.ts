@@ -164,6 +164,7 @@ export type FeatureVariant =
   | "operationsNumeratorDenominatorIsEnabled"
   | "insightsStaffUsage"
   | "insightsConsistentLoginPill"
+  | "insightsHideOfficersWithoutEligibleCaseload"
   | "supervisorHomepageReviewCard"
   | "insightsSupervisorOpportunityNotifications"
   | "supervisorHomepageReviewTable"
@@ -251,6 +252,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usTnRcafV1: {},
   insightsStaffUsage: {},
   insightsConsistentLoginPill: {},
+  insightsHideOfficersWithoutEligibleCaseload: {},
   usTnTEPENotesForAll: {},
   usMoMyCaseload: {},
   caseOverview: {},
@@ -318,6 +320,9 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
           activeTenants: ["US_ID", "US_UT", "US_IA", "US_MI", "US_TX"],
         },
         insightsConsistentLoginPill: { activeTenants: ["US_MI"] },
+        insightsHideOfficersWithoutEligibleCaseload: {
+          activeTenants: ["US_MI"],
+        },
         clientsResidentsTableViewToggle: {},
         usIdCaseManagerSearch: {},
         usIdCRCFacilitySearch: {},

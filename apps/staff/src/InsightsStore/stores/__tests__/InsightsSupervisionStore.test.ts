@@ -467,6 +467,27 @@ test.each([
   },
 );
 
+test.each([
+  [true, true],
+  [false, false],
+])(
+  "%s that user can hide officers without an eligible caseload (hasFeatureVariant: %s)",
+  (expected, hasFeatureVariant) => {
+    vi.spyOn(
+      store.insightsStore.rootStore.userStore,
+      "activeFeatureVariants",
+      "get",
+    ).mockReturnValue(
+      hasFeatureVariant
+        ? {
+            insightsHideOfficersWithoutEligibleCaseload: {},
+          }
+        : {},
+    );
+    expect(store.userCanHideOfficersWithoutEligibleCaseload).toBe(expected);
+  },
+);
+
 test("current user record for an enriched user", async () => {
   vi.useFakeTimers().setSystemTime(
     parseISO("2025-10-04T12:45:04.570Z").getTime(),
