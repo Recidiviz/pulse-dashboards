@@ -146,6 +146,29 @@
         "production": {}
       }
     },
+    "deploy-cdn": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx tools/deploy-staff-frontend.mts {args}",
+        "cwd": "{workspaceRoot}",
+        "forwardAllArgs": true
+      },
+      "configurations": {
+        "staging": {
+          "args": "staging"
+        },
+        "production": {
+          "args": "production"
+        },
+        "dev": {
+          "command": "echo 'Must run with staging/production nx configration'; exit 1"
+        }
+      },
+      "defaultConfiguration": "dev",
+      "metadata": {
+        "description": "Upload dist/apps/staff to the GCS/Cloud CDN buckets and invalidate the CDN cache. Build first: nx build staff --configuration=<env>. Usage: nx deploy-cdn staff --configuration=<env>"
+      }
+    },
     "requires-sops-env:build-e2e": {
       "executor": "@nx/vite:build",
       "dependsOn": ["^prisma-generate"],

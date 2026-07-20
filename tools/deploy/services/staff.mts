@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { $ } from "zx";
+import { $, chalk } from "zx";
 
-import type { ServiceDefinition } from "../types.mts";
+import type { ReleasePlan, ServiceDefinition } from "../types.mts";
 
 /** Build and deploy the staff App Engine backend (staff-server). */
 export const staffBackend: ServiceDefinition = {
@@ -48,6 +48,16 @@ export const staffBackend: ServiceDefinition = {
   },
 };
 
+/**
+ * Envs with a provisioned Cloud CDN stack (`apps/staff-frontend` atmos
+ * component). While we validate the CDN on its test domain,
+ * uploads are run alongside (not instead of) the Firebase
+ * Hosting deploy. The upload/invalidation procedure lives in
+ * tools/deploy-staff-frontend.mts (single source of truth — also runnable
+ * directly or via `nx deploy-cdn staff -- <env>`).
+ */
+const cdnEnabledEnvs = new Set<ReleasePlan["env"]>(["staging"]);
+
 /** Build and deploy the staff frontend to Firebase hosting. */
 export const staffFrontend: ServiceDefinition = {
   displayName: "Staff Frontend",
@@ -75,6 +85,22 @@ export const staffFrontend: ServiceDefinition = {
         await $`firebase deploy --only hosting -P ${plan.env} -m "${plan.currentRevision}"`.pipe(
           process.stdout,
         );
+    }
+
+    if (cdnEnabledEnvs.has(plan.env)) {
+      try {
+        await $`nx deploy-cdn staff --configuration ${plan.env}`.pipe(
+          process.stdout,
+        );
+      } catch (error) {
+        // Firebase Hosting stays the serving path during the CDN transition —
+        // don't fail the release over the secondary target.
+        console.warn(
+          chalk.yellow(
+            `CDN deploy (${plan.env}) failed (Firebase deploy succeeded): ${error}`,
+          ),
+        );
+      }
     }
   },
 };

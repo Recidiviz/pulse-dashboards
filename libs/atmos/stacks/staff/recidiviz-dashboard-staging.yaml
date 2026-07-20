@@ -1,0 +1,38 @@
+# Staff dashboard serving infrastructure (Cloud CDN) for staging.
+#
+# Serves the built staff frontend (dist/apps/staff) from a private, CMEK-encrypted
+# GCS bucket behind a global external load balancer with Cloud CDN, replacing
+# Firebase Hosting. Runs on a test domain alongside Firebase until cutover.
+settings:
+  context:
+    project_id: recidiviz-dashboard-staging
+    project_number: 626425930051
+    product: staff
+    location: us-central1
+
+# The variables set here are automatically provided to any components used in this stack.
+vars:
+  project_id: "{{ .settings.context.project_id }}"
+
+import:
+  - ../@defaults/terraform-backend
+
+components:
+  terraform:
+    apps/staff-frontend:
+      vars:
+        environment: staging
+        # Test domain — the real dashboard-staging.recidiviz.org stays on
+        # Firebase Hosting until the CDN stack is validated; it gets appended
+        # here at cutover (ROLLOUT.md Phase 4). DNS is managed outside this
+        # repo; see the required_dns_records / cert_dns_authorization_records
+        # outputs.
+        domain_names:
+          - dashboard-cdn-staging.recidiviz.org
+          - dashboard-staging.recidiviz.org
+
+        bucket_name: "{{.settings.context.project_id}}-staff-frontend"
+        # Principals that upload builds and invalidate the CDN cache via
+        # `yarn deploy`. Add engineers or the deploy SA
+        # here as the rollout widens.
+        deployer_members: []
