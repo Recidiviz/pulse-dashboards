@@ -107,6 +107,49 @@ describe("import resident data", () => {
     ]);
   });
 
+  test("should update an existing resident matched by personId when its stable external id has changed", async () => {
+    dataProviderSingleton.setData(TEST_RESIDENTS_FILE_NAME, [
+      // Same personId as fakeResident, but a stable external id/type that
+      // doesn't exist yet - this must update the existing row rather than
+      // attempt to create a new one, which would violate personId's
+      // uniqueness as the primary key.
+      {
+        state_code: StateCode.US_NE,
+        person_id: fakeResident.personId.toString(),
+        stable_person_external_id: "resident-ext-reassigned",
+        stable_person_external_id_type: "resident-ext-type-2",
+        display_person_external_id: "resident-display-ext-reassigned",
+        pseudonymized_id: "resident-pid-reassigned",
+        person_name: JSON.stringify({
+          given_names: "Reassigned Name",
+          middle_names: fakeResident.middleNames,
+          surname: fakeResident.surname,
+          name_suffix: fakeResident.suffix,
+        }),
+        facility_id: "facility-3",
+      },
+    ]);
+
+    await importHandler.import(TEST_STATE_CODE, [RESIDENTS_FILE_NAME]);
+
+    const dbResidents = await testPrismaClient.resident.findMany();
+
+    // The existing resident row should have been updated in place, not duplicated
+    expect(dbResidents).toHaveLength(1);
+    expect(dbResidents).toEqual([
+      expect.objectContaining({
+        personId: fakeResident.personId,
+        stablePersonExternalId: "resident-ext-reassigned",
+        stablePersonExternalIdType: "resident-ext-type-2",
+        pseudonymizedId: "resident-pid-reassigned",
+        displayPersonExternalId: "resident-display-ext-reassigned",
+        givenNames: "Reassigned Name",
+        facilityId: "facility-3",
+        isActive: true,
+      }),
+    ]);
+  });
+
   test("should correctly import more than BATCH_SIZE residents", async () => {
     const existingResidentData = {
       state_code: StateCode.US_NE,

@@ -33,22 +33,27 @@ export async function transformAndLoadResidentData(
   const BATCH_SIZE = 500;
   const importedAt = new Date();
 
+  const existingResidents = await prismaClient.resident.findMany({
+    select: {
+      personId: true,
+      stablePersonExternalId: true,
+      stablePersonExternalIdType: true,
+    },
+  });
+
   const existingStablePersonExternalIdsAndTypes = new Set(
-    (
-      await prismaClient.resident.findMany({
-        select: {
-          stablePersonExternalId: true,
-          stablePersonExternalIdType: true,
-        },
-      })
-    ).map(
+    existingResidents.map(
       ({ stablePersonExternalId, stablePersonExternalIdType }) =>
         `${stablePersonExternalId}+${stablePersonExternalIdType}`,
     ),
   );
+  const existingPersonIds = new Set(
+    existingResidents.map(({ personId }) => personId),
+  );
 
   let createBatch: ResidentCreateInput[] = [];
   let updateBatch: BulkUpdateEntries = [];
+  let personIdUpdateBatch: BulkUpdateEntries = [];
 
   const flushCreateBatch = async () => {
     if (createBatch.length === 0) return;
@@ -65,6 +70,17 @@ export async function transformAndLoadResidentData(
       updateBatch,
     );
     updateBatch = [];
+  };
+
+  const flushPersonIdUpdateBatch = async () => {
+    if (personIdUpdateBatch.length === 0) return;
+    await bulkUpdate(
+      prismaClient,
+      "Resident",
+      ["personId"],
+      personIdUpdateBatch,
+    );
+    personIdUpdateBatch = [];
   };
 
   for await (const residentData of data) {
@@ -91,6 +107,10 @@ export async function transformAndLoadResidentData(
     ) {
       updateBatch.push(newResident);
       if (updateBatch.length >= BATCH_SIZE) await flushUpdateBatch();
+    } else if (existingPersonIds.has(residentData.person_id)) {
+      personIdUpdateBatch.push(newResident);
+      if (personIdUpdateBatch.length >= BATCH_SIZE)
+        await flushPersonIdUpdateBatch();
     } else {
       createBatch.push(newResident);
       if (createBatch.length >= BATCH_SIZE) await flushCreateBatch();
@@ -99,6 +119,7 @@ export async function transformAndLoadResidentData(
 
   await flushCreateBatch();
   await flushUpdateBatch();
+  await flushPersonIdUpdateBatch();
 
   // Mark residents not present in this import as inactive.
   // Using lastImportedAt avoids passing all IDs as query parameters (which hits DB limits at scale).

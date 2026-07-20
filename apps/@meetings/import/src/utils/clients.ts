@@ -33,22 +33,27 @@ export async function transformAndLoadClientData(
   const BATCH_SIZE = 500;
   const importedAt = new Date();
 
+  const existingClients = await prismaClient.client.findMany({
+    select: {
+      personId: true,
+      stablePersonExternalId: true,
+      stablePersonExternalIdType: true,
+    },
+  });
+
   const existingStablePersonExternalIdsAndTypes = new Set(
-    (
-      await prismaClient.client.findMany({
-        select: {
-          stablePersonExternalId: true,
-          stablePersonExternalIdType: true,
-        },
-      })
-    ).map(
+    existingClients.map(
       ({ stablePersonExternalId, stablePersonExternalIdType }) =>
         `${stablePersonExternalId}+${stablePersonExternalIdType}`,
     ),
   );
+  const existingPersonIds = new Set(
+    existingClients.map(({ personId }) => personId),
+  );
 
   let createBatch: ClientCreateInput[] = [];
   let updateBatch: BulkUpdateEntries = [];
+  let personIdUpdateBatch: BulkUpdateEntries = [];
 
   const flushCreateBatch = async () => {
     if (createBatch.length === 0) return;
@@ -65,6 +70,12 @@ export async function transformAndLoadClientData(
       updateBatch,
     );
     updateBatch = [];
+  };
+
+  const flushPersonIdUpdateBatch = async () => {
+    if (personIdUpdateBatch.length === 0) return;
+    await bulkUpdate(prismaClient, "Client", ["personId"], personIdUpdateBatch);
+    personIdUpdateBatch = [];
   };
 
   for await (const clientData of data) {
@@ -92,6 +103,10 @@ export async function transformAndLoadClientData(
     ) {
       updateBatch.push(newClient);
       if (updateBatch.length >= BATCH_SIZE) await flushUpdateBatch();
+    } else if (existingPersonIds.has(clientData.person_id)) {
+      personIdUpdateBatch.push(newClient);
+      if (personIdUpdateBatch.length >= BATCH_SIZE)
+        await flushPersonIdUpdateBatch();
     } else {
       createBatch.push(newClient);
       if (createBatch.length >= BATCH_SIZE) await flushCreateBatch();
@@ -100,6 +115,7 @@ export async function transformAndLoadClientData(
 
   await flushCreateBatch();
   await flushUpdateBatch();
+  await flushPersonIdUpdateBatch();
 
   // Mark clients not present in this import as inactive.
   // Using lastImportedAt avoids passing all IDs as query parameters (which hits DB limits at scale).
