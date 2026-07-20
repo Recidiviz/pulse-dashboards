@@ -31,8 +31,8 @@ import { Button, Icon, palette } from "~design-system";
 import TealStar from "../assets/static/images/tealStar.svg?react";
 import cssVars from "./CoreConstants.module.scss";
 
-export const Heading = styled.div<{ isMobile?: boolean }>`
-  ${({ isMobile }) => (isMobile ? typography.Serif24 : typography.Serif34)}
+export const Heading = styled.div<{ $isMobile?: boolean }>`
+  ${({ $isMobile }) => ($isMobile ? typography.Serif24 : typography.Serif34)}
   color: ${palette.pine2};
   padding-bottom: ${rem(spacing.md)};
 `;

@@ -24,7 +24,7 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { WorkflowsStatusPill } from "../WorkflowsStatusPill/WorkflowsStatusPill";
 
-const PersonNameElement = styled.div.attrs({
+export const PersonNameElement = styled.div.attrs({
   className: "fs-exclude",
 })<{ $isMobile: boolean }>`
   display: flex;

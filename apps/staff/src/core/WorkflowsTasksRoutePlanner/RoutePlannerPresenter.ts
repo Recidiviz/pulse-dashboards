@@ -30,6 +30,7 @@ import { TenantId } from "../../RootStore/types";
 import { formatStateAddress, formatWorkflowsDate } from "../../utils";
 import { WorkflowsStore } from "../../WorkflowsStore";
 import { Officer } from "../../WorkflowsStore/Officer";
+import RoutePlannerClientStore from "./ClientStore/ClientStoreBase";
 import { RoutePlannerClientsPresenter } from "./RoutePlannerClientsPresenter";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
@@ -78,7 +79,11 @@ export class RoutePlannerPresenter {
   private _isEndingAddressMatchingStart = false;
   private stateCode: RoutePlannerStateCode;
 
-  constructor(private readonly workflowsStore: WorkflowsStore) {
+  constructor(
+    private readonly workflowsStore: WorkflowsStore,
+    private readonly routePlannerClientStore: RoutePlannerClientStore,
+  ) {
+    this.routePlannerClientStore = routePlannerClientStore;
     this.clientsPresenter = new RoutePlannerClientsPresenter(workflowsStore);
     this.analyticsStore = workflowsStore.rootStore.analyticsStore;
 
@@ -93,6 +98,20 @@ export class RoutePlannerPresenter {
       );
     }
     makeAutoObservable(this);
+  }
+
+  // if the user does not have add more feature variant then we do not show
+  get showAddMoreButton() {
+    return !!this.workflowsStore.rootStore.userStore.activeFeatureVariants
+      .HCRPAddMoreClients;
+  }
+
+  updateShowWindow() {
+    this.routePlannerClientStore.updateShowWindow();
+  }
+
+  get showWindow() {
+    return this.routePlannerClientStore.showAddMoreClientWindow;
   }
 
   get mapsApiKey(): string {

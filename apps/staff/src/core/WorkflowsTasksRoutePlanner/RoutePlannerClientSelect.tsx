@@ -70,7 +70,7 @@ export const RoutePlannerClientSelect = observer(
       <RoutePlannerSelectContainer>
         <CaseloadSelect />
 
-        <Heading isMobile={isMobile}>Home contact route planner</Heading>
+        <Heading $isMobile={isMobile}>Home contact route planner</Heading>
         <TasksDescription>
           You can pre-plan your driving route for home contacts before you head
           out. Search across one or more caseloads to find clients who have home

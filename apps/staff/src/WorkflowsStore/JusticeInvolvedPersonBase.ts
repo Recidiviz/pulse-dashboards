@@ -89,6 +89,10 @@ export abstract class JusticeInvolvedPersonBase<
       updates: computed,
       displayPreferredName: computed,
       preferredContactMethod: computed,
+      assignedStaff: computed,
+      assignedStaffFullName: computed,
+      assignedStaffPseudoId: computed,
+      district: computed,
     });
 
     this.personUpdatesSubscription =

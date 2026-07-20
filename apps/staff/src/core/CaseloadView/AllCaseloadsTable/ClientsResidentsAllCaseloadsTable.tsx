@@ -39,7 +39,7 @@ import {
 
 type CaseloadRowProps = { row: Row<JusticeInvolvedPerson> };
 
-function AssignedToCell({
+export function AssignedToCell({
   row,
   staffTitle,
 }: CaseloadRowProps & { staffTitle: string }) {
@@ -48,9 +48,11 @@ function AssignedToCell({
   );
 }
 
-function TextCell({ getValue }: { getValue: () => unknown }) {
+export function TextCell({ getValue }: { getValue: () => unknown }) {
   return String(getValue() || "Unknown");
 }
+
+export const TextCellObservable = observer(TextCell);
 
 type ClientsResidentsColumnDef = ColumnDef<JusticeInvolvedPerson> & {
   id: ClientsResidentsTableColumnId;
@@ -117,7 +119,7 @@ function buildColumns({
       accessorFn: personLevel,
       enableSorting: true,
       sortingFn: "text",
-      cell: TextCell,
+      cell: TextCellObservable,
     },
     {
       header: "Lock",

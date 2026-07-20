@@ -130,10 +130,15 @@ const Cell = styled.td<{
   }
 `;
 
-const Row = styled.tr<{ $isSelected?: boolean }>`
+const Row = styled.tr<{
+  $isSelected?: boolean;
+  $shouldAppearUnselectable?: boolean;
+}>`
   ${Cell} {
     ${({ $isSelected }) => $isSelected && "background-color: #EDF4FC;"}
     transition: all 0.15s ease-in-out;
+    ${({ $shouldAppearUnselectable }) =>
+      $shouldAppearUnselectable && "opacity: 0.5; cursor: not-allowed"}
   }
 
   // Only show UsAzMarkSubmittedButton and NavigateToFormButton buttons on row hover
@@ -144,7 +149,7 @@ const Row = styled.tr<{ $isSelected?: boolean }>`
   }
 `;
 
-const TableBody = styled.tbody<{ $clickableRows: boolean }>`
+export const TableBody = styled.tbody<{ $clickableRows: boolean }>`
   width: 100%;
 
   /* Give the hover state to only body rows, not header rows */
@@ -187,7 +192,7 @@ const SortIconWrapper = styled.div<{
   }};
 `;
 
-const LoadMoreRows = styled.button`
+export const LoadMoreRows = styled.button`
   ${typography.Sans18};
   width: fit-content;
   display: flex;
@@ -207,7 +212,7 @@ const LoadMoreRows = styled.button`
 // anchor. `display: contents` keeps the <a> from breaking table layout while
 // still surfacing each row as a real anchor — preserving right-click "Open in
 // new tab" and keyboard navigation.
-const RowLink = styled(Link)`
+export const RowLink = styled(Link)`
   display: contents;
   color: inherit;
   text-decoration: none;
@@ -223,7 +228,7 @@ export type CaseloadTableManualSorting = {
   setSorting: Dispatch<SetStateAction<SortingState>>;
 };
 
-type CaseloadTableProps<TData> = {
+export type CaseloadTableProps<TData> = {
   data: TData[];
   columns: ColumnDef<TData>[];
   expandedLastColumn?: boolean;
@@ -242,6 +247,7 @@ type CaseloadTableProps<TData> = {
   initialState?: Partial<TableState>;
   enableProgressiveLoading?: boolean;
   progressiveLoadingBatchSize?: number;
+  shouldAppearUnselectable?: (row: TData) => boolean;
 };
 
 export const CaseloadTable = observer(function CaseloadTable<TData>({
@@ -250,6 +256,7 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
   columns,
   onRowClick,
   rowLinkUrl,
+  shouldAppearUnselectable = () => false,
   shouldHighlightRow = () => false,
   onRowRender = () => undefined,
   manualSorting = undefined,
@@ -359,6 +366,9 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
                   if (onRowClick) onRowClick(row.original);
                 }}
                 $isSelected={shouldHighlightRow(row.original)}
+                $shouldAppearUnselectable={shouldAppearUnselectable(
+                  row.original,
+                )}
               >
                 {rowLinkUrl ? (
                   <RowLink to={rowLinkUrl(row.original)}>{cells}</RowLink>

@@ -1423,7 +1423,7 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
   return (
     <>
       <MaxWidthWrapper>
-        <Heading isMobile={isMobile}>
+        <Heading $isMobile={isMobile}>
           {presenter.label}{" "}
           {presenter.showZeroGrantsPill && (
             <InsightsPill

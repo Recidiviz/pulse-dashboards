@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,24 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import NotFound from "../../components/NotFound";
-import { useFeatureVariants } from "../../components/StoreProvider";
-import { WorkflowsNavLayout } from "../WorkflowsLayouts";
-import { RoutePlannerClientStoreProvider } from "./ClientStore/ClientStoreProvider";
-import { RoutePlannerBody } from "./RoutePlannerBody";
+import { makeAutoObservable } from "mobx";
 
-export const WorkflowsTasksRoutePlanner = () => {
-  const { tasksRoutePlanner } = useFeatureVariants();
+import { WorkflowsStore } from "../../../WorkflowsStore/WorkflowsStore";
 
-  if (!tasksRoutePlanner) {
-    return <NotFound />;
+export default class RoutePlannerClientStore {
+  showAddMoreClientWindow = false;
+
+  constructor(protected readonly workflowsStore: WorkflowsStore) {
+    makeAutoObservable(this);
   }
 
-  return (
-    <WorkflowsNavLayout limitedWidth={false}>
-      <RoutePlannerClientStoreProvider>
-        <RoutePlannerBody />
-      </RoutePlannerClientStoreProvider>
-    </WorkflowsNavLayout>
-  );
-};
+  updateShowWindow() {
+    this.showAddMoreClientWindow = !this.showAddMoreClientWindow;
+  }
+}

@@ -181,7 +181,10 @@ export type FeatureVariant =
   | "SARManualORAS"
   | "reactPdfSAR"
   | "SARImportEmploymentRecords"
-  | "SARSexualHistory";
+  | "SARSexualHistory"
+
+  // HOME CONTACT ROUTE PLANNER
+  | "HCRPAddMoreClients";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -277,6 +280,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   tasksOneRowPerClient: {},
   tasksPermasnooze: {},
   tasksRoutePlanner: {},
+  HCRPAddMoreClients: {},
   usPaUnclearEligibility: {},
   usIdTasksV2: {},
   crcLikeBeds: {},
@@ -355,7 +359,8 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usMoCasePlanning: { activeTenants: ["US_MO"] },
         customTasks: { activeTenants: ["US_MO"] },
         tasksOneRowPerClient: { activeTenants: ["US_MO"] },
-        tasksRoutePlanner: { activeTenants: ["US_TX"] },
+        tasksRoutePlanner: { activeTenants: ["US_TX", "US_ID"] },
+        HCRPAddMoreClients: {},
         hideWorkflowsResidentsPage: { activeTenants: ["US_NC"] },
         sentenceProgressV2: { activeTenants: ["US_ND"] },
       }

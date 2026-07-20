@@ -195,7 +195,7 @@ const CallButton = styled(Button).attrs({ shape: "block" })`
   gap: ${rem(spacing.sm)};
 `;
 
-const BaseCheckbox = styled.span`
+export const BaseCheckbox = styled.span`
   height: ${rem(16)};
   width: ${rem(16)};
   margin-right: ${rem(10)};
@@ -204,21 +204,22 @@ const BaseCheckbox = styled.span`
   border-radius: ${rem(2)};
 `;
 
-const EmptyCheckbox = styled(BaseCheckbox)<{
+export const EmptyCheckbox = styled(BaseCheckbox)<{
   $selectable: boolean;
 }>`
+  display: flex;
   border-color: ${palette.slate20};
 
   ${({ $selectable }) => !$selectable && `cursor: not-allowed;`}
 `;
 
-const NumberedCheckbox = styled(BaseCheckbox)`
+export const NumberedCheckbox = styled(BaseCheckbox)`
   border-color: ${palette.pine4};
   background-color: ${palette.pine4};
   color: ${palette.marble1};
 `;
 
-const CheckboxContents = styled(Sans12)`
+export const CheckboxContents = styled(Sans12)`
   text-align: center;
 `;
 

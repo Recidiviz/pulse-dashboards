@@ -16,16 +16,18 @@
 // =============================================================================
 
 import { APILoader } from "@googlemaps/extended-component-library/react";
-import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components";
 
+import { Button, palette, spacing } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
+import { RoutePlannerAddMoreClients } from "./AddMoreClients/RoutePlannerAddMoreClients";
+import { useRoutePlannerClientStore } from "./ClientStore/ClientStoreProvider";
 import { RoutePlannerClientSelect } from "./RoutePlannerClientSelect";
 import { RoutePlannerMap } from "./RoutePlannerMap";
 import { RoutePlannerPresenter } from "./RoutePlannerPresenter";
@@ -56,6 +58,41 @@ const RoutePlannerSelectArea = styled.div<{
     $isMobile ? rem(spacing.xs) : rem(spacing.lg)};
 `;
 
+const AddMoreLinkStyles = styled(Button)`
+  position: absolute;
+  bottom: 2em;
+  color: ${palette.signal.links};
+  font-weight: 600;
+  &:focus-visible,
+  &:hover {
+    outline: none;
+    text-decoration: none;
+  }
+  &:active {
+    ${palette.signal.links};
+  }
+`;
+
+const AddMoreSection = observer(function AddMoreSection({
+  presenter,
+}: {
+  presenter: RoutePlannerPresenter;
+}) {
+  if (!presenter.showAddMoreButton) return null;
+
+  return (
+    <>
+      <AddMoreLinkStyles
+        kind="link"
+        onClick={() => presenter.updateShowWindow()}
+      >
+        Add more clients to route →
+      </AddMoreLinkStyles>
+      {presenter.showWindow && <RoutePlannerAddMoreClients />}
+    </>
+  );
+});
+
 const MobileRoutePlannerMain = observer(function RoutePlannerMain({
   presenter,
 }: {
@@ -75,6 +112,7 @@ const MobileRoutePlannerMain = observer(function RoutePlannerMain({
         <RoutePlannerSelectArea $isMobile={true}>
           <RoutePlannerClientSelect presenter={presenter} isMobile={true} />
         </RoutePlannerSelectArea>
+        <AddMoreSection presenter={presenter} />
       </RoutePlannerConditionalView>
     </>
   );
@@ -103,6 +141,7 @@ export const ManagedComponent: FC<{
             <RoutePlannerClientSelect presenter={presenter} isMobile={false} />
           </RoutePlannerSelectArea>
           <RoutePlannerMap presenter={presenter} isMobile={false} />
+          <AddMoreSection presenter={presenter} />
         </RoutePlannerContainer>
       )}
     </>
@@ -112,7 +151,9 @@ export const ManagedComponent: FC<{
 function usePresenter() {
   const { workflowsStore } = useRootStore();
 
-  return new RoutePlannerPresenter(workflowsStore);
+  const routePlannerClientStore = useRoutePlannerClientStore();
+
+  return new RoutePlannerPresenter(workflowsStore, routePlannerClientStore);
 }
 
 export const RoutePlannerBody = withPresenterManager({
