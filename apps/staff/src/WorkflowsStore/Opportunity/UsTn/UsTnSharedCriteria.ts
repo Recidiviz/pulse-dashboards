@@ -40,7 +40,6 @@ export type UsTnSharedReclassificationDraftData = {
   levelOfCare: string;
   hearingDate: string;
   hearingLocation: string;
-  hearingClassificationDate: string;
 } & DraftDataSelections &
   UsTnCoverSheetSharedDraftData &
   DraftDataNotes &

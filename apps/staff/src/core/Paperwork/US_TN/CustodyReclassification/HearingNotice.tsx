@@ -43,10 +43,28 @@ const Row = styled.div<{ indented?: boolean; grouped?: boolean }>`
   margin-top: ${({ grouped }) => (grouped ? 0 : "5em")};
 `;
 
-const SigBlock = styled.div`
+const SigRow = styled.div`
+  display: flex;
   margin-top: 5em;
+  width: 95%;
+`;
+
+const SigColumn = styled.div`
+  flex-grow: 1;
+
+  &:not(:last-child) {
+    margin-right: 2em;
+  }
+`;
+
+const DateColumn = styled(SigColumn)`
+  flex-grow: 0;
+  width: 12em;
+`;
+
+const SigLine = styled.div`
   border-bottom: 0.5px solid black;
-  width: 20em;
+  margin-bottom: 0.5em;
 `;
 
 const HearingNotice = ({
@@ -74,14 +92,19 @@ const HearingNotice = ({
             <FormInput name="hearingLocation" placeholder="hearing location" />.
           </Row>
           <Row>
-            Classification Date:
-            <FormInput name="hearingClassificationDate" />
-          </Row>
-          <Row grouped>
             Classification Type:{" "}
             {pilotVersion ? formData.classificationType : "CL CLASSIFICATION"}
           </Row>
-          <SigBlock>x</SigBlock>
+          <SigRow>
+            <SigColumn>
+              <SigLine>x</SigLine>
+              Offender Signature
+            </SigColumn>
+            <DateColumn>
+              <SigLine>&nbsp;</SigLine>
+              Date
+            </DateColumn>
+          </SigRow>
         </Container>
       </FormContainer>
     </PrintablePage>

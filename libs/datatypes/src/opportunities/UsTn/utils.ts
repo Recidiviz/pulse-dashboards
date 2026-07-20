@@ -217,7 +217,6 @@ export type UsTnCoverSheetSharedDraftData = {
   // used as part of the hearing notice form
   hearingDate: string;
   hearingLocation: string;
-  hearingClassificationDate: string;
 };
 
 const eventNote = z.object({
