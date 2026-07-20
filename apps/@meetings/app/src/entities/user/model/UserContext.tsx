@@ -21,6 +21,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useRef,
 } from "react";
 import type { Credentials } from "react-native-auth0";
 import { useAuth0 } from "react-native-auth0";
@@ -72,33 +73,58 @@ export const UserContextProvider: React.FC<{
   const { user, isLoading, clearSession, getCredentials, clearCredentials } =
     useAuth0();
 
+  // Concurrent getCredentials() calls (e.g. several tRPC requests firing close
+  // together) can each try to exchange the same refresh token at once. Auth0's
+  // Refresh Token Rotation treats that as suspicious reuse and invalidates the
+  // whole token family, permanently killing the refresh token and forcing a
+  // full re-auth. Funneling every call through one shared in-flight promise
+  // ensures at most one real SDK exchange is ever in flight at a time.
+  // See https://github.com/auth0/react-native-auth0/issues/1374.
+  const inFlightRef = useRef<Promise<Credentials | undefined> | null>(null);
+
   // On session expiry, clear local credentials so `user` becomes null and
   // AppNavigator routes to login. clearCredentials (not clearSession) avoids a
   // federated-logout page redirect on web.
   const getCredentialsWithReauth = useCallback<
     UserContextType["getCredentials"]
   >(
-    async (...args) => {
-      try {
-        return await getCredentials(...args);
-      } catch (error) {
-        if (isLoginRequiredError(error)) {
-          Sentry.logger.warn("auth.session_expired.redirect_to_login", {
-            error: extractError(error),
-          });
-          // Honor the resolve-to-undefined contract even if clearing fails.
-          try {
-            await clearCredentials();
-          } catch (clearError) {
-            Sentry.logger.error("auth.clear_credentials.error", {
-              error: extractError(clearError),
+    (...args) => {
+      if (inFlightRef.current) return inFlightRef.current;
+
+      const request = (async () => {
+        try {
+          return await getCredentials(...args);
+        } catch (error) {
+          if (isLoginRequiredError(error)) {
+            Sentry.logger.warn("auth.session_expired.redirect_to_login", {
+              error: extractError(error),
             });
-            Sentry.captureException(clearError);
+            // Honor the resolve-to-undefined contract even if clearing fails.
+            try {
+              await clearCredentials();
+            } catch (clearError) {
+              Sentry.logger.error("auth.clear_credentials.error", {
+                error: extractError(clearError),
+              });
+              Sentry.captureException(clearError);
+            }
+            return undefined;
           }
-          return undefined;
+          throw error;
         }
-        throw error;
-      }
+      })();
+
+      inFlightRef.current = request;
+      // Clears the in-flight ref once settled. `request` itself is returned
+      // to (and handled by) the caller below, so this chained catch only
+      // exists to prevent an unhandled-rejection warning on this internal
+      // `.finally()` continuation, not to swallow the error for callers.
+      request
+        .finally(() => {
+          inFlightRef.current = null;
+        })
+        .catch(() => undefined);
+      return request;
     },
     [getCredentials, clearCredentials],
   );

@@ -37,6 +37,12 @@ import { AuthenticatedContent } from "./AuthenticatedContent";
 
 const ONE_WEEK_MS = 1000 * 60 * 60 * 24 * 7;
 
+// react-native-auth0's getCredentials(scope, minTtl, ...) minTtl is in seconds.
+// With a ~900s (15min) access-token TTL, a 60s buffer gives the SDK lead time
+// to refresh before a request fires, without materially increasing refresh
+// frequency.
+const ACCESS_TOKEN_MIN_TTL_SECONDS = 60;
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -89,9 +95,11 @@ const AuthenticatedApp: React.FC = () => {
             }
 
             const audience = env.EXPO_PUBLIC_AUTH0_AUDIENCE;
-            const creds = await getCredentials(undefined, undefined, {
-              audience,
-            });
+            const creds = await getCredentials(
+              undefined,
+              ACCESS_TOKEN_MIN_TTL_SECONDS,
+              { audience },
+            );
 
             // Omit the auth header when creds is undefined (session expiry)
             // instead of sending "Bearer undefined".

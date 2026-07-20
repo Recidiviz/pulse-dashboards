@@ -391,5 +391,84 @@ describe("UserContext", () => {
       expect(result.current.hasFacilitiesAssistantAccess).toBe(false);
       expect(result.current.hasCasePlanningAssistantAccess).toBe(false);
     });
+
+    it("deduplicates concurrent getCredentials calls into a single underlying exchange", async () => {
+      const credentials = { accessToken: "token-1" };
+      mockGetCredentials.mockResolvedValueOnce(credentials);
+
+      mockUseAuth0.mockReturnValue({
+        user: mockUser,
+        isLoading: false,
+        getCredentials: mockGetCredentials,
+        clearSession: mockClearSession,
+        clearCredentials: mockClearCredentials,
+      });
+
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <UserContextProvider isSkipAuthUser={false}>
+          {children}
+        </UserContextProvider>
+      );
+
+      const { result } = renderHook(() => useUserContext(), { wrapper });
+
+      // Let the mount effect's own call settle before testing concurrency.
+      await waitFor(() => expect(mockGetCredentials).toHaveBeenCalledTimes(1));
+      mockGetCredentials.mockClear();
+
+      let resolvePending: (value: typeof credentials) => void = () => undefined;
+      const pending = new Promise<typeof credentials>((resolve) => {
+        resolvePending = resolve;
+      });
+      mockGetCredentials.mockReturnValueOnce(pending);
+
+      const call1 = result.current.getCredentials(undefined, undefined, {
+        audience: "test-audience",
+      });
+      const call2 = result.current.getCredentials(undefined, undefined, {
+        audience: "test-audience",
+      });
+
+      // Both calls share the one in-flight exchange rather than racing the
+      // refresh token with a second concurrent call.
+      expect(mockGetCredentials).toHaveBeenCalledTimes(1);
+
+      resolvePending(credentials);
+      await expect(call1).resolves.toEqual(credentials);
+      await expect(call2).resolves.toEqual(credentials);
+      expect(mockGetCredentials).toHaveBeenCalledTimes(1);
+    });
+
+    it("does not reuse a settled exchange for a later, separate call", async () => {
+      mockGetCredentials.mockResolvedValue({ accessToken: "token" });
+
+      mockUseAuth0.mockReturnValue({
+        user: mockUser,
+        isLoading: false,
+        getCredentials: mockGetCredentials,
+        clearSession: mockClearSession,
+        clearCredentials: mockClearCredentials,
+      });
+
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <UserContextProvider isSkipAuthUser={false}>
+          {children}
+        </UserContextProvider>
+      );
+
+      const { result } = renderHook(() => useUserContext(), { wrapper });
+
+      await waitFor(() => expect(mockGetCredentials).toHaveBeenCalledTimes(1));
+      mockGetCredentials.mockClear();
+
+      await result.current.getCredentials(undefined, undefined, {
+        audience: "test-audience",
+      });
+      await result.current.getCredentials(undefined, undefined, {
+        audience: "test-audience",
+      });
+
+      expect(mockGetCredentials).toHaveBeenCalledTimes(2);
+    });
   });
 });
