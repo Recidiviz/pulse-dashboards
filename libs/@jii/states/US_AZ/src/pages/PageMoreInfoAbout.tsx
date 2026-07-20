@@ -23,7 +23,7 @@ import { DefinitionView } from "../components/DefinitionView";
 import { useInfoPageFooterLinks } from "../hooks/useInfoPageFooterLinks";
 
 const CopyWrapperWithCustomComponents = withCopyWrapperOverrides({
-  AboutVideoCta: { component: AboutVideoCta, props: { onHomePage: false } },
+  AboutVideoCta: { component: AboutVideoCta, props: { onHomepage: false } },
 });
 
 export function PageMoreInfoAbout() {

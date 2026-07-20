@@ -21,6 +21,8 @@ import { ResidentsStore } from "~@jii/data";
 
 import UsAzAboutVideo from "../assets/UsAzAboutVideo.mp4";
 import UsAzAboutVideoCaptions from "../assets/UsAzAboutVideo.vtt";
+import UsNdAboutVideo from "../assets/UsNdAboutVideo.mp4";
+import UsNdAboutVideoCaptions from "../assets/UsNdAboutVideo.vtt";
 
 export type OnboardingVideoAssets = {
   source: string;
@@ -75,6 +77,15 @@ export class AboutVideoPresenter {
           source: UsAzAboutVideo,
           captions: {
             src: UsAzAboutVideoCaptions,
+            srcLang: "en",
+            label: "English",
+          },
+        };
+      case "US_ND":
+        return {
+          source: UsNdAboutVideo,
+          captions: {
+            src: UsNdAboutVideoCaptions,
             srcLang: "en",
             label: "English",
           },

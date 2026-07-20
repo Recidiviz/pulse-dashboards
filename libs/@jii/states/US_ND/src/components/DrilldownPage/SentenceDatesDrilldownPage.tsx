@@ -15,8 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { withCopyWrapperOverrides } from "~@jii/common-ui";
 import { DefinitionPage } from "~@jii/layout";
+import { AboutVideoCta } from "~@jii/onboarding-video";
 import { useUsNdTranslations } from "~@jii/translation";
+
+const CopyWrapperWithCustomComponents = withCopyWrapperOverrides({
+  AboutVideoCta: { component: AboutVideoCta, props: { onHomepage: false } },
+});
 
 export const SentenceDatesDrilldownPage = () => {
   const { t } = useUsNdTranslations();
@@ -28,6 +34,7 @@ export const SentenceDatesDrilldownPage = () => {
       }}
       heading={t(($) => $.pages.sentenceDates.heading)}
       body={t(($) => $.pages.sentenceDates.body)}
+      CopyWrapperOverride={CopyWrapperWithCustomComponents}
     />
   );
 };

@@ -21,6 +21,7 @@ import { FC } from "react";
 import { BottomPaddedContainer, usePageTitle } from "~@jii/common-ui";
 import { useResidentMetadata, useSingleResidentContext } from "~@jii/data";
 import { LastUpdatedBanner } from "~@jii/layout";
+import { AboutVideoCta } from "~@jii/onboarding-video";
 import { SentenceDates } from "~@jii/sentence-dates";
 import { useUsNdTranslations } from "~@jii/translation";
 import { withPresenterManager } from "~hydration-utils";
@@ -37,6 +38,7 @@ const ManagedComponent: FC<{ presenter: ResidentHomepagePresenter }> = observer(
     return (
       <BottomPaddedContainer>
         <LastUpdatedBanner lastUpdatedDate={presenter.lastUpdatedDate} />
+        <AboutVideoCta onHomepage={true} />
         {presenter.isOSUResident && <OSUBanner />}
         <SentenceDates
           data={presenter.sentenceDatesData}
