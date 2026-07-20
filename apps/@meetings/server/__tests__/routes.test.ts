@@ -350,6 +350,8 @@ describe("tasks", () => {
           httpRequest: {
             headers: {
               "Content-Type": "application/json",
+              "sentry-trace": expect.any(String),
+              baggage: expect.any(String),
             },
             body: expect.any(Buffer),
             httpMethod: "POST",
@@ -1094,6 +1096,8 @@ describe("tasks", () => {
               httpRequest: {
                 headers: {
                   "Content-Type": "application/json",
+                  "sentry-trace": expect.any(String),
+                  baggage: expect.any(String),
                 },
                 body: expect.any(Buffer),
                 httpMethod: "POST",
@@ -1146,6 +1150,8 @@ describe("tasks", () => {
             httpRequest: {
               headers: {
                 "Content-Type": "application/json",
+                "sentry-trace": expect.any(String),
+                baggage: expect.any(String),
               },
               body: expect.any(Buffer),
               httpMethod: "POST",
@@ -1385,6 +1391,8 @@ describe("tasks", () => {
           httpRequest: {
             headers: {
               "Content-Type": "application/json",
+              "sentry-trace": expect.any(String),
+              baggage: expect.any(String),
             },
             body: expect.any(Buffer),
             httpMethod: "POST",

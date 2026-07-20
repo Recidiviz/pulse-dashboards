@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { CloudTasksClient, protos } from "@google-cloud/tasks";
+import { getTraceData } from "@sentry/node";
 
 import {
   PostMeetingProcessingStatus,
@@ -55,6 +56,7 @@ export async function queueStitchingTaskCloud(
       httpRequest: {
         headers: {
           "Content-Type": "application/json",
+          ...getTraceData(),
         },
         body: Buffer.from(JSON.stringify({ stateCode, meetingId })),
         httpMethod: "POST",

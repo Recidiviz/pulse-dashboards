@@ -54,6 +54,9 @@ Sentry.init({
   // Undefined on native, which keeps the SDK's built-in offline caching.
   transport: offlineTransport,
   tracesSampleRate: 1,
+  // Without this the SDK propagates trace headers to every request on native,
+  // but only to same-origin ones on web, which drops them on the cross-origin server
+  tracePropagationTargets: [env.EXPO_PUBLIC_SERVER_URL],
   profilesSampleRate: 0,
   // Adds more context data to events (IP address, cookies, user, etc.)
   // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/

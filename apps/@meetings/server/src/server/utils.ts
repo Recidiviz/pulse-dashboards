@@ -17,7 +17,7 @@
 
 import { SyncPrerecordedResponse } from "@deepgram/sdk";
 import { CloudTasksClient, protos } from "@google-cloud/tasks";
-import { captureException } from "@sentry/node";
+import { captureException, getTraceData } from "@sentry/node";
 
 import { AGENCY_CONFIGS } from "~@meetings/config/loader";
 import {
@@ -65,6 +65,7 @@ export async function queueTranscriptionTaskCloud(
       httpRequest: {
         headers: {
           "Content-Type": "application/json",
+          ...getTraceData(),
         },
         body: Buffer.from(JSON.stringify({ stateCode, meetingId })),
         httpMethod: "POST",
@@ -298,6 +299,7 @@ export async function queueNotetakingTaskCloud(
       httpRequest: {
         headers: {
           "Content-Type": "application/json",
+          ...getTraceData(),
         },
         body: Buffer.from(JSON.stringify({ stateCode, meetingId })),
         httpMethod: "POST",
@@ -369,6 +371,7 @@ export async function queueLlmajEvaluationTaskCloud(
       httpRequest: {
         headers: {
           "Content-Type": "application/json",
+          ...getTraceData(),
         },
         body: Buffer.from(JSON.stringify({ stateCode, meetingId })),
         httpMethod: "POST",

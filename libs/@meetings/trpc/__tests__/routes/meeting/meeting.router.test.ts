@@ -1157,6 +1157,8 @@ describe("meeting router", () => {
             httpRequest: {
               headers: {
                 "Content-Type": "application/json",
+                "sentry-trace": expect.any(String),
+                baggage: expect.any(String),
               },
               body: Buffer.from(
                 JSON.stringify({
