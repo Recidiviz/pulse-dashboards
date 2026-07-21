@@ -56,7 +56,10 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "EXPO_NO_GIT_STATUS=1 expo prebuild --clean",
+          {
+            "command": "EXPO_NO_GIT_STATUS=1 expo prebuild --clean",
+            "forwardAllArgs": false
+          },
           "expo run:ios --no-build-cache"
         ],
         "parallel": false,
@@ -68,14 +71,10 @@
       },
       "defaultConfiguration": "dev"
     },
-    "requires-sops-env:dev:ios:device": {
+    "requires-sops-env:dev:ios:fast": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "EXPO_NO_GIT_STATUS=1 expo prebuild --clean",
-          "expo run:ios --no-build-cache --device"
-        ],
-        "parallel": false,
+        "command": "expo run:ios",
         "cwd": "{projectRoot}"
       },
       "configurations": {
@@ -83,6 +82,13 @@
         "staging": {}
       },
       "defaultConfiguration": "dev"
+    },
+    "dev:ios:auto": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "EXPO_PUBLIC_SERVER_URL=\"http://$(apps/@meetings/app/scripts/get-lan-ip.sh):${PORT:-3002}/\" nx dev:ios:fast @meetings/app",
+        "cwd": "{workspaceRoot}"
+      }
     },
     "requires-sops-env:web": {
       "executor": "nx:run-commands",

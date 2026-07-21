@@ -44,15 +44,20 @@ export async function getSignedUrlForNewRecording(
   folderName: string,
   fileExtension: string,
   contentType: string,
+  requestHost?: string,
 ) {
   // Make the file name the time since epoch so that files are naturally ordered
   const secondsSinceEpoch = Math.round(Date.now() / 1000);
 
   // In local mode, return a local upload endpoint instead of a GCS signed URL
   if (isLocalMode()) {
-    const host = process.env["HOST"] ?? "localhost";
-    const port = process.env["PORT"] ? Number(process.env["PORT"]) : 3002;
-    const serverUrl = `http://${host}:${port}`;
+    // Prefer the Host header the client actually connected with: `HOST` is the
+    // server's bind address (e.g. 0.0.0.0 to accept LAN connections), which is
+    // never itself a valid address for a client to connect back to.
+    const authority =
+      requestHost ??
+      `${process.env["HOST"] ?? "localhost"}:${process.env["PORT"] ? Number(process.env["PORT"]) : 3002}`;
+    const serverUrl = `http://${authority}`;
     return `${serverUrl}/upload-audio/${folderName}/${secondsSinceEpoch}.${fileExtension}`;
   }
 
@@ -76,11 +81,16 @@ export async function getSignedUrlForRecording(
   folderName: string,
   bucketName: string,
   fileName: string,
+  requestHost?: string,
 ): Promise<string> {
   if (isLocalMode()) {
-    const host = process.env["HOST"] ?? "localhost";
-    const port = process.env["PORT"] ? Number(process.env["PORT"]) : 3002;
-    const serverUrl = `http://${host}:${port}`;
+    // Prefer the Host header the client actually connected with: `HOST` is the
+    // server's bind address (e.g. 0.0.0.0 to accept LAN connections), which is
+    // never itself a valid address for a client to connect back to.
+    const authority =
+      requestHost ??
+      `${process.env["HOST"] ?? "localhost"}:${process.env["PORT"] ? Number(process.env["PORT"]) : 3002}`;
+    const serverUrl = `http://${authority}`;
     return `${serverUrl}/stream-audio/${folderName}/${fileName}`;
   }
 

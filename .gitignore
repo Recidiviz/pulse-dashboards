@@ -97,6 +97,9 @@ vitest.config.*.timestamp*
 # may be generated temporarily while running vitest type tests
 tsconfig.vitest-temp.json
 
+# Personal, per-developer VSCode Vitest extension workspace scoping file
+vitest.meetings.workspace.ts
+
 # Next.js
 .next
 out

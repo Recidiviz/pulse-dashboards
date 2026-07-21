@@ -27,7 +27,7 @@
       "outputs": ["{workspaceRoot}/coverage/libs/@meetings/prisma"],
       "cache": true,
       "options": {
-        "command": "vitest",
+        "command": "vitest run",
         "cwd": "{projectRoot}"
       },
       "configurations": {

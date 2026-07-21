@@ -39,7 +39,7 @@
       "outputs": ["{workspaceRoot}/coverage/libs/@meetings/trpc"],
       "cache": true,
       "options": {
-        "command": "vitest",
+        "command": "vitest run",
         "cwd": "{projectRoot}"
       },
       "configurations": {

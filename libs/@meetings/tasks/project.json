@@ -19,6 +19,15 @@
         ],
         "cwd": "{projectRoot}"
       }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/libs/@meetings/tasks"],
+      "cache": true,
+      "options": {
+        "command": "vitest run",
+        "cwd": "{projectRoot}"
+      }
     }
   }
 }

@@ -48,20 +48,24 @@ nx sync-env-to-eas @meetings/app --configuration production
 ## Running locally
 
 1. Follow [instructions](../../@meetings/server/README.md) for running a local server
-1. There are three development targets: `web`, `dev:ios` (or `dev:ios:device` for a physical device), and `dev:android`. Run them using `nx` i.e. `nx web @meetings/app`
+1. There are three development targets: `web`, `dev:ios` (add `--device` to target a physical device), and `dev:android`. Run them using `nx` i.e. `nx web @meetings/app`
    1. To run against the live staging backend specify `-c staging`
 
 ### Running locally on a physical device
 
-1. Run the local server with `HOST=0.0.0.0 nx dev @meetings/app`. This will output a few IP
-   addresses the server is listening on.
-1. In your .env.dev.enc.yaml file, set EXPO_PUBLIC_SERVER_URL to the URL of your local dev backend,
-   using one of the local IP address emitted (such as 192.168.0.127- I've had success using the one
-   that starts with 192.168). Make sure you revert this change when putting a PR up for review.
-1. Run `nx dev:ios:device @meetings/app`
+#### iOS
 
-If your device shows "No development servers found", enter the URL manually. The IP address will be
-shown in the console under the QR code, something like http://192.168.0.127:8081.
+1. Make sure that your device and mac are connected to the same Apple Account. Ensure that this account has been [added as a developer](https://appstoreconnect.apple.com/access/users)
+1. Ensure that your device has Development Mode enabled. You can enable development mode by connecting your device to your Mac via USB-C (when the two are under the same Apple Account), then navigating on your device to Settings > Privacy and Security > Enable development mode
+1. Open XCode, and navigate to XCode > Settings > Apple Accounts. Make sure your apple account (the one that's a developer) is listed and, if not, add it
+1. On clicking into your account, you should see that the "Recidiviz Inc" team is listed as a team you belong to as a developer
+1. Click the Recidiviz Inc team, and then click "Manage Certificates". Click the "+" icon that appears in the pop-up window, and add Apple Development credentials
+1. Run the local server with `nx dev @meetings/server`.
+1. The "auto" config we use for easily deploying to native iOS devices skips the native prebuild step for speed, so it won't pick up changes to `app.config.ts`, native dependencies, plugins, permissions, or assets (like fonts) on its own. Before running it for the first time on a branch,
+   or if you've made changes to any of those things, run `nx run @meetings/app:prebuild --platform ios --clean`
+1. Run `nx dev:ios:auto @meetings/app --device` to deploy to your device! This will (after signing into GCloud) make you select a device to deploy on which, if you've followed the previous steps, should include your physical iOS device.
+
+**If your device shows "No development servers found"**: Enter the URL manually OR scan the QR code provided in the terminal when Expo finishes deploying the app. The IP address will be shown in the console under the QR code, something like http://192.168.0.127:8081.
 
 ### Local Mode with Skip Authentication
 

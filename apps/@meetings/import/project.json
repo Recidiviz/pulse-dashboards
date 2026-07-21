@@ -90,7 +90,7 @@
       "outputs": ["{workspaceRoot}/coverage/apps/@meetings/import"],
       "cache": true,
       "options": {
-        "command": "vitest",
+        "command": "vitest run",
         "cwd": "{projectRoot}"
       },
       "defaultConfiguration": "dev",

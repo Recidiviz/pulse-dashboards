@@ -62,7 +62,10 @@ export const meetingRouter = router({
     .input(getDetailInputSchema)
     .output(getDetailsOutputSchema)
     .query(
-      async ({ input: { meetingId }, ctx: { prisma, stateCode, user } }) => {
+      async ({
+        input: { meetingId },
+        ctx: { prisma, stateCode, user, req },
+      }) => {
         try {
           const meeting = await prisma.meeting.findUniqueOrThrow({
             where: { id: meetingId },
@@ -219,6 +222,7 @@ export const meetingRouter = router({
                   meeting.recordingsFolderPath,
                   meeting.recordingsGCSBucket,
                   path.basename(meeting.finalRecordingGCSPath),
+                  req.headers.host,
                 )
               : null;
 
@@ -308,7 +312,7 @@ export const meetingRouter = router({
     .mutation(
       async ({
         input: { meetingId, contentType, fileExtension },
-        ctx: { prisma },
+        ctx: { prisma, req },
       }) => {
         const meeting = await prisma.meeting.findUnique({
           where: { id: meetingId },
@@ -326,6 +330,7 @@ export const meetingRouter = router({
           meeting.recordingsFolderPath,
           fileExtension,
           contentType,
+          req.headers.host,
         );
       },
     ),
