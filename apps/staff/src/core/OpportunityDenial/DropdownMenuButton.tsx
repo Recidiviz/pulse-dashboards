@@ -62,6 +62,8 @@ const setSupervisorResponse = async (
 
     if (requestedSnoozeLength) {
       await opportunity.setManualSnooze(requestedSnoozeLength, reasons);
+      // Redefines to reflect snooze on tabTitle for toast copy
+      toastText = `Marked ${opportunity.person.displayName} as ${opportunity.tabTitle()} for ${opportunity.config.label}`;
     } else {
       // Indefinite snoozes use different toast copy.
       toastText = `You have approved ${opportunity.person.displayName} for an indefinite snooze.`;
@@ -308,8 +310,11 @@ const MenuItems = observer(function MenuItems({
     !opportunity.isGrantApproved &&
     !opportunity.isSubmitted;
 
-  if (opportunity.isInSnoozeReview)
+  // Non-reviewers never reach here: DropdownMenuButton returns null for them in snooze review.
+  if (opportunity.isInSnoozeReview) {
+    // TODO (OBT-39156):  Add sensible menu options for non-reviewer
     return <SupervisorSnoozeReviewItems opportunity={opportunity} />;
+  }
 
   // Some states want only certain users to be able to approve grant requests.
   // If a reviewerFV is set on the opp config, we check that the user is
@@ -364,6 +369,12 @@ export const DropdownMenuButton = observer(function DropdownMenuButton({
   onDenialButtonClick: () => void;
 }) {
   const { config } = opportunity;
+  const featureVariants = useFeatureVariants();
+  // If a reviewerFV is set on the opp config, we check that the user is eligible to review the
+  // request. In snooze review, hide the dropdown for non-reviewers.
+  const reviewerFV = config.reviewerFeatureVariant;
+  const userCanApproveSnoozes = !reviewerFV || !!featureVariants[reviewerFV];
+  if (opportunity.isInSnoozeReview && !userCanApproveSnoozes) return null;
 
   const toggleText = config.isAlert ? "Override?" : "Update status";
 

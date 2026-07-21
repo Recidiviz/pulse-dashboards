@@ -19,11 +19,18 @@ import { DenialInputSettings } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsMiEarlyDischargeConfiguration extends ApiOpportunityConfiguration {
+  get supportsSupervisorReviewOnSnooze(): boolean {
+    return (
+      super.supportsSupervisorReviewOnSnooze ||
+      this.reasonsRequiringApproval.length > 0
+    );
+  }
+
   get reasonsRequiringApproval() {
     if (this.userStore.activeFeatureVariants.indefiniteSnooze) {
-      return ["JUDGE"];
+      return [...super.reasonsRequiringApproval, "JUDGE"];
     }
-    return [];
+    return super.reasonsRequiringApproval;
   }
 
   get maxSnoozeDaysByDenialReason() {

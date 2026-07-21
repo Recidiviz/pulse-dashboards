@@ -393,12 +393,9 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return this.configurationObject.supportsSupervisorReviewOnGrants;
   }
 
-  /** True when the snooze approval flow is enabled — either explicitly via config in admin panel or because a custom opportunity config has overridden using denial reason logic. */
+  /** True when the snooze approval flow is enabled for this opportunity.  */
   get supportsSupervisorReviewOnSnooze() {
-    return (
-      this.configurationObject.supportsSupervisorReviewOnSnooze ||
-      this.reasonsRequiringApproval.length > 0
-    );
+    return this.configurationObject.supportsSupervisorReviewOnSnooze;
   }
 
   /**  Denial reasons that require a supervisor approval before triggering a snooze. */
@@ -449,7 +446,7 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return this.configurationObject.grantReviewStatusMessage ?? "Under Review";
   }
 
-  /** When set, only users with this feature variant active are permitted to act as a reviewer for this opportunity's grant approval flows. */
+  /** When set, only users with this feature variant active are permitted to act as a reviewer for this opportunity's approval flows. */
   get reviewerFeatureVariant(): FeatureVariant | undefined {
     return this.configurationObject.reviewerFeatureVariant as
       | FeatureVariant

@@ -1472,12 +1472,6 @@ export class OpportunityBase<
 
     if (this.isIneligible) return "Ineligible";
 
-    if (almostEligible) {
-      return includeReasons && almostEligibleStatusMessage
-        ? almostEligibleStatusMessage
-        : "Almost eligible";
-    }
-
     if (isGrantApproved) {
       return grantApprovedStatusMessage;
     }
@@ -1488,6 +1482,12 @@ export class OpportunityBase<
 
     if (isInGrantReview) {
       return grantReviewStatusMessage;
+    }
+
+    if (almostEligible) {
+      return includeReasons && almostEligibleStatusMessage
+        ? almostEligibleStatusMessage
+        : "Almost eligible";
     }
 
     if (defaultEligibility === "MAYBE") return "May be eligible";

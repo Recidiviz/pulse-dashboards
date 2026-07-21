@@ -47,8 +47,12 @@ export class UsIaEarlyDischargeConfiguration extends ApiOpportunityConfiguration
     };
   }
 
+  get supportsSupervisorReviewOnSnooze(): boolean {
+    return true;
+  }
+
   get reasonsRequiringApproval() {
-    return ["INTERSTATE (IC-IN)", "COURT"];
+    return [...super.reasonsRequiringApproval, "INTERSTATE (IC-IN)", "COURT"];
   }
 
   // TODO(#9611): Add "PUBLIC SAFETY RISK" mapping for action plan input

@@ -25,8 +25,12 @@ export class UsUtEarlyTerminationConfiguration extends ApiOpportunityConfigurati
     ).length;
   };
 
+  get supportsSupervisorReviewOnSnooze(): boolean {
+    return true;
+  }
+
   get reasonsRequiringApproval(): string[] {
-    return ["ICOTS"];
+    return [...super.reasonsRequiringApproval, "ICOTS"];
   }
 
   get maxSnoozeDaysByDenialReason(): Record<string, number | undefined> {

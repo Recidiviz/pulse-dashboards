@@ -18,6 +18,10 @@
 import UserStore from "../../../../RootStore/UserStore";
 import { IApiOpportunityConfiguration } from "../interfaces";
 import { ApiOpportunityConfiguration } from "../models/ApiOpportunityConfigurationImpl";
+import { UsIaEarlyDischargeConfiguration } from "../models/CustomOpportunityConfigurations/UsIa/UsIaEarlyDischargeConfiguration";
+import { UsMiEarlyDischargeConfiguration } from "../models/CustomOpportunityConfigurations/UsMi/UsMiEarlyDischargeConfiguration";
+import { UsMiMinimumTelephoneReportingConfiguration } from "../models/CustomOpportunityConfigurations/UsMi/UsMiMinimumTelephoneReporting";
+import { UsUtEarlyTerminationConfiguration } from "../models/CustomOpportunityConfigurations/UsUt/UsUtEarlyTerminationConfiguration";
 
 describe("maxSnoozeDaysByDenialReasons", () => {
   const userStore = new UserStore({});
@@ -85,15 +89,36 @@ describe("indefiniteDenialReasons", () => {
 
 describe("supportsSupervisorReviewOnSnooze", () => {
   const userStore = new UserStore({});
-  let oppConfig: ApiOpportunityConfiguration;
 
-  test("True when reasons require approval, even if the config flag is unset", () => {
+  test("Reflects the config flag on the base configuration, even when reasons require approval", () => {
     const mockConfigObject = {} as unknown as IApiOpportunityConfiguration;
-    oppConfig = new ApiOpportunityConfiguration(mockConfigObject, userStore);
+    const oppConfig = new ApiOpportunityConfiguration(
+      mockConfigObject,
+      userStore,
+    );
     vi.spyOn(oppConfig, "reasonsRequiringApproval", "get").mockReturnValue([
       "REASON 1",
     ]);
 
-    expect(oppConfig.supportsSupervisorReviewOnSnooze).toBeTrue();
+    expect(oppConfig.supportsSupervisorReviewOnSnooze).toBeFalsy();
+  });
+
+  // Custom configs that override supportsSupervisorReviewOnSnooze to derive it from reasonsRequiringApproval.
+  // UsMi custom config overrides only provide reasonsRequiringApproval if indefiniteSnooze is an active FV
+  const reviewerUserStore = {
+    activeFeatureVariants: { indefiniteSnooze: {} },
+  } as UserStore;
+  describe.each([
+    UsIaEarlyDischargeConfiguration,
+    UsMiEarlyDischargeConfiguration,
+    UsMiMinimumTelephoneReportingConfiguration,
+    UsUtEarlyTerminationConfiguration,
+  ])("$name", (Config) => {
+    test("True when its own reasons require approval, even if the config flag is unset", () => {
+      const mockConfigObject = {} as unknown as IApiOpportunityConfiguration;
+      const oppConfig = new Config(mockConfigObject, reviewerUserStore);
+
+      expect(oppConfig.supportsSupervisorReviewOnSnooze).toBeTrue();
+    });
   });
 });

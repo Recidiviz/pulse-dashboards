@@ -219,9 +219,11 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   const hasSelectedIndefiniteReason = reasons.some(
     (reason) => reason in opportunity.indefiniteDenialReasons,
   );
-  const requiresApproval = reasons.some((reason) =>
-    opportunity.config.reasonsRequiringApproval.includes(reason),
-  );
+  const requiresApproval =
+    opportunity.config.supportsSupervisorReviewOnSnooze &&
+    reasons.some((reason) =>
+      opportunity.config.reasonsRequiringApproval.includes(reason),
+    );
 
   const shouldSubmitIndefiniteSnoozeRequest =
     indefiniteSnooze && hasSelectedIndefiniteReason && requiresApproval;
