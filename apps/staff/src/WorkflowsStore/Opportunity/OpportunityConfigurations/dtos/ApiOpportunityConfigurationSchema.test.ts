@@ -116,3 +116,31 @@ describe("tab groups", () => {
     ]);
   });
 });
+
+describe("enabled columns", () => {
+  it("keys the output by columnId, preserving order", () => {
+    const { enabledColumns } = apiOpportunityConfigurationSchema.shape;
+    const input = [
+      { columnId: "PERSON_NAME", columnHeader: "Name", cellValue: "name" },
+      { columnId: "STATUS", columnHeader: "Status", cellValue: "status" },
+    ] satisfies z.input<typeof enabledColumns>;
+    const output = enabledColumns.parse(input);
+    expect(Object.entries(output ?? {})).toEqual([
+      ["PERSON_NAME", { columnHeader: "Name", cellValue: "name" }],
+      ["STATUS", { columnHeader: "Status", cellValue: "status" }],
+    ]);
+  });
+
+  it("normalizes missing or null columnHeader/cellValue to undefined", () => {
+    const { enabledColumns } = apiOpportunityConfigurationSchema.shape;
+    const input = [
+      { columnId: "PERSON_NAME" },
+      { columnId: "STATUS", columnHeader: null, cellValue: null },
+    ] satisfies z.input<typeof enabledColumns>;
+    const output = enabledColumns.parse(input);
+    expect(output).toEqual({
+      PERSON_NAME: { columnHeader: undefined, cellValue: undefined },
+      STATUS: { columnHeader: undefined, cellValue: undefined },
+    });
+  });
+});

@@ -100,6 +100,7 @@ export const mockUsXxOppConfig: OpportunityConfiguration = {
   showIneligibleFormButtons: false,
   hydrateIneligibleRecordsInOpportunityManager: false,
   enabledColumns: [],
+  apiEnabledColumnIds: [],
   highlightCasesOnHomepage: false,
   highlightedCaseCtaCopy: "highlighted CTA",
   overdueOpportunityCalloutCopy: "overdue",

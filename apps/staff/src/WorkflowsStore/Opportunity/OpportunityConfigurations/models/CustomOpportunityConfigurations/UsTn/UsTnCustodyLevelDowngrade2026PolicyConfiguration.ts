@@ -23,7 +23,11 @@ import { UsTn2026ClassificationConfiguration } from "./UsTn2026ClassificationCon
 export class UsTnCustodyLevelDowngrade2026PolicyConfiguration extends UsTn2026ClassificationConfiguration {
   get enabledColumns(): Array<OpportunityTableColumnId> {
     const cols = [...super.enabledColumns];
-    cols.push("US_TN_LATEST_CLASSIFICATION_DATE");
-    return cols;
+    const colsToAdd: OpportunityTableColumnId[] = [
+      "US_TN_LATEST_CLASSIFICATION_DATE",
+    ].filter(
+      (c) => !cols.includes(c as OpportunityTableColumnId),
+    ) as OpportunityTableColumnId[];
+    return [...cols, ...colsToAdd];
   }
 }

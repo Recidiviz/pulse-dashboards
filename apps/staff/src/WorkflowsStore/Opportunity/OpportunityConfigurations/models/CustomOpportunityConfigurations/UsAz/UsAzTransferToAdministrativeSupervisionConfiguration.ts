@@ -43,8 +43,13 @@ export class UsAzTransferToAdministrativeSupervisionConfiguration extends ApiOpp
 
   get enabledColumns(): Array<OpportunityTableColumnId> {
     const cols = [...super.enabledColumns];
-    cols.push("ALMOST_ELIGIBILITY_DATE");
-    return cols.filter((c) => c !== "STATUS");
+    const colsToAdd: OpportunityTableColumnId[] = [
+      "ALMOST_ELIGIBILITY_DATE",
+    ].filter(
+      (c) => !cols.includes(c as OpportunityTableColumnId),
+    ) as OpportunityTableColumnId[];
+    const colsToRemove: OpportunityTableColumnId[] = ["STATUS"];
+    return [...cols, ...colsToAdd].filter((c) => !colsToRemove.includes(c));
   }
 
   get tabGroups(): OpportunityTabGroups {

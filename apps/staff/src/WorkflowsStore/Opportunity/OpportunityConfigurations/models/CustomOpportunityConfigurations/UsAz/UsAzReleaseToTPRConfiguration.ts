@@ -34,9 +34,14 @@ export class UsAzReleaseToTPRConfiguration extends ApiOpportunityConfiguration {
 
   get enabledColumns(): Array<OpportunityTableColumnId> {
     const cols = [...super.enabledColumns];
-    cols.push("AGREEMENT_STATUS");
-    cols.push("HOME_PLAN_STATUS");
-    cols.push("MAN_LIT_STATUS");
-    return cols.filter((c) => c !== "STATUS");
+    const colsToAdd: OpportunityTableColumnId[] = [
+      "AGREEMENT_STATUS",
+      "HOME_PLAN_STATUS",
+      "MAN_LIT_STATUS",
+    ].filter(
+      (c) => !cols.includes(c as OpportunityTableColumnId),
+    ) as OpportunityTableColumnId[];
+    const colsToRemove: OpportunityTableColumnId[] = ["STATUS"];
+    return [...cols, ...colsToAdd].filter((c) => !colsToRemove.includes(c));
   }
 }

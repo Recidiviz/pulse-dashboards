@@ -22,10 +22,15 @@ import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationIm
 export class UsMiCustodyLevelDowngradeConfiguration extends ApiOpportunityConfiguration {
   get enabledColumns(): Array<OpportunityTableColumnId> {
     const cols = [...super.enabledColumns];
-    cols.push("US_MI_ERD");
-    cols.push("US_MI_CUSTODY_LEVEL");
-    cols.push("DENIAL_REASONS");
-    return cols.filter((c) => c !== "RELEASE_DATE");
+    const colsToAdd: OpportunityTableColumnId[] = [
+      "US_MI_ERD",
+      "US_MI_CUSTODY_LEVEL",
+      "DENIAL_REASONS",
+    ].filter(
+      (c) => !cols.includes(c as OpportunityTableColumnId),
+    ) as OpportunityTableColumnId[];
+    const colsToRemove: OpportunityTableColumnId[] = ["RELEASE_DATE"];
+    return [...cols, ...colsToAdd].filter((c) => !colsToRemove.includes(c));
   }
 
   get denialInputSettings(): Record<string, DenialInputSettings> {

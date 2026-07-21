@@ -19,7 +19,10 @@ import tk from "timekeeper";
 
 import { OpportunityType } from "~datatypes";
 
-import { mockOpportunity } from "../../../core/__tests__/testUtils";
+import {
+  mockOpportunity,
+  mockOpportunityConfigs,
+} from "../../../core/__tests__/testUtils";
 import OpportunitiesFilterStore from "../../../FilterStore/OpportunitiesFilterStore";
 import FirestoreStore from "../../../FirestoreStore";
 import { SupervisionOpportunityPresenter } from "../../../InsightsStore/presenters/SupervisionOpportunityPresenter";
@@ -334,7 +337,9 @@ describe("in insights/with officer opportunity presenter", () => {
   });
 
   test("doesn't show the officer name column", () => {
-    expect(presenter.enabledColumnIds["ASSIGNED_STAFF_NAME"]).toBeFalse();
+    expect(
+      presenter.enabledColumnIds.includes("ASSIGNED_STAFF_NAME"),
+    ).toBeFalse();
   });
 });
 
@@ -402,13 +407,15 @@ describe("in insights/with supervisor opportunity presenter", () => {
   });
 
   test("shows the officer name column", () => {
-    expect(presenter.enabledColumnIds["ASSIGNED_STAFF_NAME"]).toBeTrue();
+    expect(
+      presenter.enabledColumnIds.includes("ASSIGNED_STAFF_NAME"),
+    ).toBeTrue();
   });
 });
 
 describe("table view columns", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.restoreAllMocks();
     tk.reset();
 
     presenter = getPresenter({});
@@ -429,7 +436,7 @@ describe("table view columns", () => {
       ],
     });
     presenter = getPresenter({ workflowsStore: mockWorkflowsStore });
-    expect(presenter.enabledColumnIds["ELIGIBILITY_DATE"]).toBeTrue();
+    expect(presenter.enabledColumnIds.includes("ELIGIBILITY_DATE")).toBeTrue();
   });
 
   test("show Eligibility Date column when viewing opportunity that will become eligible in the future", () => {
@@ -447,11 +454,11 @@ describe("table view columns", () => {
       ],
     });
     presenter = getPresenter({ workflowsStore: mockWorkflowsStore });
-    expect(presenter.enabledColumnIds["ELIGIBILITY_DATE"]).toBeTrue();
+    expect(presenter.enabledColumnIds.includes("ELIGIBILITY_DATE")).toBeTrue();
   });
 
   test("don't show Instance Details column when opportunity doesn't have them", () => {
-    expect(presenter.enabledColumnIds["INSTANCE_DETAILS"]).toBeFalse();
+    expect(presenter.enabledColumnIds.includes("INSTANCE_DETAILS")).toBeFalse();
   });
 
   test("show Instance Details column when opportunity has them", () => {
@@ -469,7 +476,7 @@ describe("table view columns", () => {
     });
     presenter = getPresenter({ workflowsStore: mockWorkflowsStore });
 
-    expect(presenter.enabledColumnIds["INSTANCE_DETAILS"]).toBeTrue();
+    expect(presenter.enabledColumnIds.includes("INSTANCE_DETAILS")).toBeTrue();
   });
 
   test("show Snooze Ends In column when viewing denied opportunities", () => {
@@ -487,29 +494,24 @@ describe("table view columns", () => {
       ],
     });
     presenter = getPresenter({ workflowsStore: mockWorkflowsStore });
-    expect(presenter.enabledColumnIds["SNOOZE_ENDS_IN"]).toBeFalse();
+    expect(presenter.enabledColumnIds.includes("SNOOZE_ENDS_IN")).toBeFalse();
     presenter.activeTab = mockOpportunity.deniedTabTitle as OpportunityTab;
-    expect(presenter.enabledColumnIds["SNOOZE_ENDS_IN"]).toBeTrue();
+    expect(presenter.enabledColumnIds.includes("SNOOZE_ENDS_IN")).toBeTrue();
   });
 
   test("show Submitted For column when viewing submitted opportunities", () => {
     presenter.activeTab = mockOpportunity.submittedTabTitle as OpportunityTab;
-    expect(presenter.enabledColumnIds["SUBMITTED_FOR"]).toBeTrue();
+    expect(presenter.enabledColumnIds.includes("SUBMITTED_FOR")).toBeTrue();
   });
 
   describe("denial reasons column", () => {
     test("shows denial reasons column for US_MI custody level downgrade when all conditions met", () => {
-      const mockTenantStore = {
-        currentTenantId: "US_MI",
-      } as any as TenantStore;
-
-      const mockWorkflowsStoreWithSystem = {
+      const mockWorkflowsStoreWithOpportunities = {
         ...mockWorkflowsStore,
-        activeSystem: "INCARCERATION",
       } as any as WorkflowsStore;
 
       vi.spyOn(
-        mockWorkflowsStoreWithSystem,
+        mockWorkflowsStoreWithOpportunities,
         "allOpportunitiesByType",
         "get",
       ).mockReturnValue({
@@ -523,30 +525,25 @@ describe("table view columns", () => {
       });
 
       presenter = getPresenter({
-        tenantStore: mockTenantStore,
-        workflowsStore: mockWorkflowsStoreWithSystem,
+        workflowsStore: mockWorkflowsStoreWithOpportunities,
         opportunityType: "usMiCustodyLevelDowngrade",
+        config: mockOpportunityConfigs.usMiCustodyLevelDowngrade,
       });
 
       presenter.activeTab = "Eligible Now" as OpportunityTab;
-      expect(presenter.enabledColumnIds["DENIAL_REASONS"]).toBeFalse();
+      expect(presenter.enabledColumnIds.includes("DENIAL_REASONS")).toBeFalse();
       //only show column in denied Tab
       presenter.activeTab = mockOpportunity.deniedTabTitle as OpportunityTab;
-      expect(presenter.enabledColumnIds["DENIAL_REASONS"]).toBeTrue();
+      expect(presenter.enabledColumnIds.includes("DENIAL_REASONS")).toBeTrue();
     });
 
     test("hides denial reason column for other US_MI incarceration opportunities", () => {
-      const mockTenantStore = {
-        currentTenantId: "US_MI",
-      } as any as TenantStore;
-
-      const mockWorkflowsStoreWithSystem = {
+      const mockWorkflowsStoreWithOpportunities = {
         ...mockWorkflowsStore,
-        activeSystem: "INCARCERATION",
       } as any as WorkflowsStore;
 
       vi.spyOn(
-        mockWorkflowsStoreWithSystem,
+        mockWorkflowsStoreWithOpportunities,
         "allOpportunitiesByType",
         "get",
       ).mockReturnValue({
@@ -560,27 +557,23 @@ describe("table view columns", () => {
       });
 
       presenter = getPresenter({
-        tenantStore: mockTenantStore,
-        workflowsStore: mockWorkflowsStoreWithSystem,
+        workflowsStore: mockWorkflowsStoreWithOpportunities,
         opportunityType: "usMiSecurityClassificationCommitteeReviewV2",
+        config:
+          mockOpportunityConfigs.usMiSecurityClassificationCommitteeReviewV2,
       });
 
       presenter.activeTab = mockOpportunity.deniedTabTitle as OpportunityTab;
-      expect(presenter.enabledColumnIds["DENIAL_REASONS"]).toBeFalse();
+      expect(presenter.enabledColumnIds.includes("DENIAL_REASONS")).toBeFalse();
     });
 
     test("hides denial reason column for US_MI supervision opportunities", () => {
-      const mockTenantStore = {
-        currentTenantId: "US_MI",
-      } as any as TenantStore;
-
-      const mockWorkflowsStoreWithSystem = {
+      const mockWorkflowsStoreWithOpportunities = {
         ...mockWorkflowsStore,
-        activeSystem: "SUPERVISION",
       } as any as WorkflowsStore;
 
       vi.spyOn(
-        mockWorkflowsStoreWithSystem,
+        mockWorkflowsStoreWithOpportunities,
         "allOpportunitiesByType",
         "get",
       ).mockReturnValue({
@@ -594,27 +587,22 @@ describe("table view columns", () => {
       });
 
       presenter = getPresenter({
-        tenantStore: mockTenantStore,
-        workflowsStore: mockWorkflowsStoreWithSystem,
+        workflowsStore: mockWorkflowsStoreWithOpportunities,
         opportunityType: "usMiEarlyDischarge",
+        config: mockOpportunityConfigs.usMiEarlyDischarge,
       });
 
       presenter.activeTab = mockOpportunity.deniedTabTitle as OpportunityTab;
-      expect(presenter.enabledColumnIds["DENIAL_REASONS"]).toBeFalse();
+      expect(presenter.enabledColumnIds.includes("DENIAL_REASONS")).toBeFalse();
     });
 
     test("hides denial reason column for other custody level downgrade opportunities", () => {
-      const mockTenantStore = {
-        currentTenantId: "US_ID",
-      } as any as TenantStore;
-
-      const mockWorkflowsStoreWithSystem = {
+      const mockWorkflowsStoreWithOpportunities = {
         ...mockWorkflowsStore,
-        activeSystem: "INCARCERATION",
       } as any as WorkflowsStore;
 
       vi.spyOn(
-        mockWorkflowsStoreWithSystem,
+        mockWorkflowsStoreWithOpportunities,
         "allOpportunitiesByType",
         "get",
       ).mockReturnValue({
@@ -628,34 +616,42 @@ describe("table view columns", () => {
       });
 
       presenter = getPresenter({
-        tenantStore: mockTenantStore,
-        workflowsStore: mockWorkflowsStoreWithSystem,
+        workflowsStore: mockWorkflowsStoreWithOpportunities,
         opportunityType: "usIdCustodyLevelDowngrade",
+        config: mockOpportunityConfigs.usIdCustodyLevelDowngrade,
       });
 
       presenter.activeTab = mockOpportunity.deniedTabTitle as OpportunityTab;
-      expect(presenter.enabledColumnIds["DENIAL_REASONS"]).toBeFalse();
+      expect(presenter.enabledColumnIds.includes("DENIAL_REASONS")).toBeFalse();
     });
 
     test("hides denial reasons column for US_TX", () => {
-      const mockTenantStore = {
-        currentTenantId: "US_TX",
-      } as any as TenantStore;
-
-      const mockWorkflowsStoreWithSystem = {
+      const mockWorkflowsStoreWithOpportunities = {
         ...mockWorkflowsStore,
-        activeSystem: "INCARCERATION",
       } as any as WorkflowsStore;
 
-      vi.spyOn(mockWorkflowsStoreWithSystem, "allOpportunitiesByType", "get");
+      vi.spyOn(
+        mockWorkflowsStoreWithOpportunities,
+        "allOpportunitiesByType",
+        "get",
+      ).mockReturnValue({
+        usTxAnnualReportStatusV2: [
+          {
+            ...mockOpportunity,
+            type: "usTxAnnualReportStatusV2",
+            tabTitle: () => "Marked Ineligible",
+          },
+        ],
+      });
 
       presenter = getPresenter({
-        tenantStore: mockTenantStore,
-        workflowsStore: mockWorkflowsStoreWithSystem,
+        workflowsStore: mockWorkflowsStoreWithOpportunities,
+        opportunityType: "usTxAnnualReportStatusV2" as OpportunityType,
+        config: mockOpportunityConfigs.usTxAnnualReportStatusV2,
       });
 
       presenter.activeTab = mockOpportunity.deniedTabTitle as OpportunityTab;
-      expect(presenter.enabledColumnIds["DENIAL_REASONS"]).toBeFalse();
+      expect(presenter.enabledColumnIds.includes("DENIAL_REASONS")).toBeFalse();
     });
   });
 
@@ -682,9 +678,10 @@ describe("table view columns", () => {
 
       presenter = getPresenter({
         opportunityType: opportunityType as OpportunityType,
+        config: mockOpportunityConfigs[opportunityType as OpportunityType],
       });
 
-      expect(presenter.enabledColumnIds["STATUS"]).toBeFalse();
+      expect(presenter.enabledColumnIds.includes("STATUS")).toBeFalse();
     });
   });
   describe("ALMOST_ELIGIBILITY_DATE", () => {
@@ -705,6 +702,9 @@ describe("table view columns", () => {
             "Marked Ineligible",
           ],
         },
+        enabledColumns:
+          mockOpportunityConfigs[opportunityType as OpportunityType]
+            .enabledColumns,
       };
       vi.spyOn(
         mockWorkflowsStore,
@@ -730,26 +730,22 @@ describe("table view columns", () => {
 
       presenter.activeTab = "Almost Eligible";
 
-      expect(presenter.enabledColumnIds["ALMOST_ELIGIBILITY_DATE"]).toBeTrue();
+      expect(
+        presenter.enabledColumnIds.includes("ALMOST_ELIGIBILITY_DATE"),
+      ).toBeTrue();
     });
   });
   describe("RELEASE_DATE", () => {
     test("shows for INCARCERATION system", () => {
-      const workflowsStore = {
-        ...mockWorkflowsStore,
-        activeSystem: "INCARCERATION",
-      } as any as WorkflowsStore;
-      presenter = getPresenter({ workflowsStore });
-      expect(presenter.enabledColumnIds["RELEASE_DATE"]).toBeTrue();
+      presenter = getPresenter({
+        config: { ...mockOpportunity.config, enabledColumns: ["RELEASE_DATE"] },
+      });
+      expect(presenter.enabledColumnIds.includes("RELEASE_DATE")).toBeTrue();
     });
 
     test("hides for SUPERVISION system", () => {
-      const workflowsStore = {
-        ...mockWorkflowsStore,
-        activeSystem: "SUPERVISION",
-      } as any as WorkflowsStore;
-      presenter = getPresenter({ workflowsStore });
-      expect(presenter.enabledColumnIds["RELEASE_DATE"]).toBeFalse();
+      presenter = getPresenter({});
+      expect(presenter.enabledColumnIds.includes("RELEASE_DATE")).toBeFalse();
     });
 
     test.each([
@@ -759,37 +755,28 @@ describe("table view columns", () => {
       "usMiCustodyLevelDowngrade",
       "usIdCustodyLevelDowngrade",
     ])("hides for %s even in INCARCERATION", (opportunityType) => {
-      const workflowsStore = {
-        ...mockWorkflowsStore,
-        activeSystem: "INCARCERATION",
-      } as any as WorkflowsStore;
       presenter = getPresenter({
-        workflowsStore,
         opportunityType: opportunityType as OpportunityType,
+        config: mockOpportunityConfigs[opportunityType as OpportunityType],
       });
-      expect(presenter.enabledColumnIds["RELEASE_DATE"]).toBeFalse();
+      expect(presenter.enabledColumnIds.includes("RELEASE_DATE")).toBeFalse();
     });
   });
 
   describe("SUPERVISION_EXPIRATION_DATE", () => {
-    test("shows for SUPERVISION system", () => {
-      const workflowsStore = {
-        ...mockWorkflowsStore,
-        activeSystem: "SUPERVISION",
-      } as any as WorkflowsStore;
-      presenter = getPresenter({ workflowsStore });
+    test("shows for a SUPERVISION opportunity by default", () => {
+      presenter = getPresenter({});
       expect(
-        presenter.enabledColumnIds["SUPERVISION_EXPIRATION_DATE"],
-      ).toBeFalse();
+        presenter.enabledColumnIds.includes("SUPERVISION_EXPIRATION_DATE"),
+      ).toBeTrue();
     });
-    test("hides for INCARCERATION system", () => {
-      const workflowsStore = {
-        ...mockWorkflowsStore,
-        activeSystem: "INCARCERATION",
-      } as any as WorkflowsStore;
-      presenter = getPresenter({ workflowsStore });
+    test("hides for an INCARCERATION opportunity", () => {
+      presenter = getPresenter({
+        opportunityType: "usMiCustodyLevelDowngrade" as OpportunityType,
+        config: mockOpportunityConfigs.usMiCustodyLevelDowngrade,
+      });
       expect(
-        presenter.enabledColumnIds["SUPERVISION_EXPIRATION_DATE"],
+        presenter.enabledColumnIds.includes("SUPERVISION_EXPIRATION_DATE"),
       ).toBeFalse();
     });
 
@@ -798,89 +785,87 @@ describe("table view columns", () => {
       "usMiPastFTRD",
       "usTnExpiration",
       "usIdOverdueFaceToFaceContact",
-    ])("hides for %s even in SUPERVISION", (opportunityType) => {
-      const workflowsStore = {
-        ...mockWorkflowsStore,
-        activeSystem: "SUPERVISION",
-      } as any as WorkflowsStore;
-      presenter = getPresenter({
-        workflowsStore,
-        opportunityType: opportunityType as OpportunityType,
-      });
-      expect(
-        presenter.enabledColumnIds["SUPERVISION_EXPIRATION_DATE"],
-      ).toBeFalse();
-    });
+    ])(
+      "hides for %s even though it is a SUPERVISION opportunity",
+      (opportunityType) => {
+        presenter = getPresenter({
+          opportunityType: opportunityType as OpportunityType,
+          config: mockOpportunityConfigs[opportunityType as OpportunityType],
+        });
+        expect(
+          presenter.enabledColumnIds.includes("SUPERVISION_EXPIRATION_DATE"),
+        ).toBeFalse();
+      },
+    );
   });
 
   describe("US_ID_EPRD", () => {
     test("hides by default", () => {
-      expect(presenter.enabledColumnIds["US_ID_EPRD"]).toBeFalse();
+      expect(presenter.enabledColumnIds.includes("US_ID_EPRD")).toBeFalse();
     });
 
     test("shows for usIdCustodyLevelDowngrade", () => {
       presenter = getPresenter({
         opportunityType: "usIdCustodyLevelDowngrade" as OpportunityType,
+        config: mockOpportunityConfigs.usIdCustodyLevelDowngrade,
       });
-      expect(presenter.enabledColumnIds["US_ID_EPRD"]).toBeTrue();
+      expect(presenter.enabledColumnIds.includes("US_ID_EPRD")).toBeTrue();
     });
   });
 
   describe("US_NE_PEDD_DATE", () => {
-    test("shows for SUPERVISION system in US_NE", () => {
-      const workflowsStore = {
-        ...mockWorkflowsStore,
-        activeSystem: "SUPERVISION",
-      } as any as WorkflowsStore;
-      const tenantStore = { currentTenantId: "US_NE" } as any as TenantStore;
-      presenter = getPresenter({ workflowsStore, tenantStore });
-      expect(presenter.enabledColumnIds["US_NE_PEDD_DATE"]).toBeTrue();
+    test("shows for a SUPERVISION opportunity in US_NE", () => {
+      presenter = getPresenter({
+        opportunityType: "usNeConditionalLowRiskOverride" as OpportunityType,
+        config: mockOpportunityConfigs.usNeConditionalLowRiskOverride,
+      });
+      expect(presenter.enabledColumnIds.includes("US_NE_PEDD_DATE")).toBeTrue();
     });
 
-    test("hides for INCARCERATION system in US_NE", () => {
-      const workflowsStore = {
-        ...mockWorkflowsStore,
-        activeSystem: "INCARCERATION",
-      } as any as WorkflowsStore;
-      const tenantStore = { currentTenantId: "US_NE" } as any as TenantStore;
-      presenter = getPresenter({ workflowsStore, tenantStore });
-      expect(presenter.enabledColumnIds["US_NE_PEDD_DATE"]).toBeFalse();
+    test("hides for an INCARCERATION opportunity in US_NE", () => {
+      presenter = getPresenter({
+        opportunityType: "usNeGoodTimeRestoration" as OpportunityType,
+        config: mockOpportunityConfigs.usNeGoodTimeRestoration,
+      });
+      expect(
+        presenter.enabledColumnIds.includes("US_NE_PEDD_DATE"),
+      ).toBeFalse();
     });
 
-    test("hides for SUPERVISION system in other states", () => {
-      const workflowsStore = {
-        ...mockWorkflowsStore,
-        activeSystem: "SUPERVISION",
-      } as any as WorkflowsStore;
-      presenter = getPresenter({ workflowsStore });
-      expect(presenter.enabledColumnIds["US_NE_PEDD_DATE"]).toBeFalse();
+    test("hides for a SUPERVISION opportunity in other states", () => {
+      presenter = getPresenter({});
+      expect(
+        presenter.enabledColumnIds.includes("US_NE_PEDD_DATE"),
+      ).toBeFalse();
     });
   });
 
   describe("UNIT_ID", () => {
     test("hides by default", () => {
-      expect(presenter.enabledColumnIds["UNIT_ID"]).toBeFalse();
+      expect(presenter.enabledColumnIds.includes("UNIT_ID")).toBeFalse();
     });
     test("shows for usNeGoodTimeRestoration", () => {
       presenter = getPresenter({
         opportunityType: "usNeGoodTimeRestoration" as OpportunityType,
+        config: mockOpportunityConfigs.usNeGoodTimeRestoration,
       });
-      expect(presenter.enabledColumnIds["UNIT_ID"]).toBeTrue();
+      expect(presenter.enabledColumnIds.includes("UNIT_ID")).toBeTrue();
     });
   });
 
   describe("US_NE_ELIGIBLE_RESTORATION_AMT", () => {
     test("hides by default", () => {
       expect(
-        presenter.enabledColumnIds["US_NE_ELIGIBLE_RESTORATION_AMT"],
+        presenter.enabledColumnIds.includes("US_NE_ELIGIBLE_RESTORATION_AMT"),
       ).toBeFalse();
     });
     test("shows for usNeGoodTimeRestoration", () => {
       presenter = getPresenter({
         opportunityType: "usNeGoodTimeRestoration" as OpportunityType,
+        config: mockOpportunityConfigs.usNeGoodTimeRestoration,
       });
       expect(
-        presenter.enabledColumnIds["US_NE_ELIGIBLE_RESTORATION_AMT"],
+        presenter.enabledColumnIds.includes("US_NE_ELIGIBLE_RESTORATION_AMT"),
       ).toBeTrue();
     });
   });
@@ -889,87 +874,75 @@ describe("table view columns", () => {
     test("shows for usNeGoodTimeRestoration", () => {
       presenter = getPresenter({
         opportunityType: "usNeGoodTimeRestoration" as OpportunityType,
+        config: mockOpportunityConfigs.usNeGoodTimeRestoration,
       });
       expect(
-        presenter.enabledColumnIds["US_NE_TOTAL_LOST_RESTORABLE_GT"],
+        presenter.enabledColumnIds.includes("US_NE_TOTAL_LOST_RESTORABLE_GT"),
       ).toBeTrue();
     });
 
     test("hides by default", () => {
       expect(
-        presenter.enabledColumnIds["US_NE_TOTAL_LOST_RESTORABLE_GT"],
+        presenter.enabledColumnIds.includes("US_NE_TOTAL_LOST_RESTORABLE_GT"),
       ).toBeFalse();
     });
   });
 
   describe("US_MI_UNIT_ID", () => {
-    test("shows for INCARCERATION system in US_MI", () => {
-      const workflowsStore = {
-        ...mockWorkflowsStore,
-        activeSystem: "INCARCERATION",
-      } as any as WorkflowsStore;
-      const tenantStore = { currentTenantId: "US_MI" } as any as TenantStore;
-      presenter = getPresenter({ workflowsStore, tenantStore });
-      expect(presenter.enabledColumnIds["US_MI_UNIT_ID"]).toBeTrue();
+    test("shows for an INCARCERATION opportunity in US_MI", () => {
+      presenter = getPresenter({
+        opportunityType: "usMiCustodyLevelDowngrade" as OpportunityType,
+        config: mockOpportunityConfigs.usMiCustodyLevelDowngrade,
+      });
+      expect(presenter.enabledColumnIds.includes("US_MI_UNIT_ID")).toBeTrue();
     });
 
-    test("hides for SUPERVISION system in US_MI", () => {
-      const workflowsStore = {
-        ...mockWorkflowsStore,
-        activeSystem: "SUPERVISION",
-      } as any as WorkflowsStore;
-      const tenantStore = { currentTenantId: "US_MI" } as any as TenantStore;
-      presenter = getPresenter({ workflowsStore, tenantStore });
-      expect(presenter.enabledColumnIds["US_MI_UNIT_ID"]).toBeFalse();
+    test("hides for a SUPERVISION opportunity in US_MI", () => {
+      presenter = getPresenter({
+        opportunityType: "usMiEarlyDischarge" as OpportunityType,
+        config: mockOpportunityConfigs.usMiEarlyDischarge,
+      });
+      expect(presenter.enabledColumnIds.includes("US_MI_UNIT_ID")).toBeFalse();
     });
 
-    test("hides for INCARCERATION system in other states", () => {
-      const workflowsStore = {
-        ...mockWorkflowsStore,
-        activeSystem: "INCARCERATION",
-      } as any as WorkflowsStore;
-      presenter = getPresenter({ workflowsStore });
-      expect(presenter.enabledColumnIds["US_MI_UNIT_ID"]).toBeFalse();
+    test("hides for an INCARCERATION opportunity in other states", () => {
+      presenter = getPresenter({
+        opportunityType: "usIdCustodyLevelDowngrade" as OpportunityType,
+        config: mockOpportunityConfigs.usIdCustodyLevelDowngrade,
+      });
+      expect(presenter.enabledColumnIds.includes("US_MI_UNIT_ID")).toBeFalse();
     });
   });
 
   describe("US_MI_ERD", () => {
     test("shows for usMiCustodyLevelDowngrade", () => {
-      const workflowsStore = {
-        ...mockWorkflowsStore,
-        activeSystem: "INCARCERATION",
-      } as any as WorkflowsStore;
-      const tenantStore = { currentTenantId: "US_MI" } as any as TenantStore;
       presenter = getPresenter({
-        workflowsStore,
-        tenantStore,
         opportunityType: "usMiCustodyLevelDowngrade" as OpportunityType,
+        config: mockOpportunityConfigs.usMiCustodyLevelDowngrade,
       });
-      expect(presenter.enabledColumnIds["US_MI_ERD"]).toBeTrue();
+      expect(presenter.enabledColumnIds.includes("US_MI_ERD")).toBeTrue();
     });
 
     test("hides by default", () => {
-      expect(presenter.enabledColumnIds["US_MI_ERD"]).toBeFalse();
+      expect(presenter.enabledColumnIds.includes("US_MI_ERD")).toBeFalse();
     });
   });
 
   describe("US_MI_CUSTODY_LEVEL", () => {
     test("shows for usMiCustodyLevelDowngrade in INCARCERATION in US_MI", () => {
-      const workflowsStore = {
-        ...mockWorkflowsStore,
-        activeSystem: "INCARCERATION",
-      } as any as WorkflowsStore;
-      const tenantStore = { currentTenantId: "US_MI" } as any as TenantStore;
       presenter = getPresenter({
-        workflowsStore,
-        tenantStore,
         opportunityType: "usMiCustodyLevelDowngrade" as OpportunityType,
+        config: mockOpportunityConfigs.usMiCustodyLevelDowngrade,
       });
-      expect(presenter.enabledColumnIds["US_MI_CUSTODY_LEVEL"]).toBeTrue();
+      expect(
+        presenter.enabledColumnIds.includes("US_MI_CUSTODY_LEVEL"),
+      ).toBeTrue();
     });
 
     test("hides by default", () => {
-      expect(presenter.enabledColumnIds["US_MI_CUSTODY_LEVEL"]).toBeFalse();
+      expect(
+        presenter.enabledColumnIds.includes("US_MI_CUSTODY_LEVEL"),
+      ).toBeFalse();
     });
   });
 
@@ -979,21 +952,19 @@ describe("table view columns", () => {
       "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
       "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
     ])("shows for %s in INCARCERATION in US_MI", (opportunityType) => {
-      const workflowsStore = {
-        ...mockWorkflowsStore,
-        activeSystem: "INCARCERATION",
-      } as any as WorkflowsStore;
-      const tenantStore = { currentTenantId: "US_MI" } as any as TenantStore;
       presenter = getPresenter({
-        workflowsStore,
-        tenantStore,
         opportunityType: opportunityType as OpportunityType,
+        config: mockOpportunityConfigs[opportunityType as OpportunityType],
       });
-      expect(presenter.enabledColumnIds["US_MI_SEG_START_DATE"]).toBeTrue();
+      expect(
+        presenter.enabledColumnIds.includes("US_MI_SEG_START_DATE"),
+      ).toBeTrue();
     });
 
     test("hides by default", () => {
-      expect(presenter.enabledColumnIds["US_MI_SEG_START_DATE"]).toBeFalse();
+      expect(
+        presenter.enabledColumnIds.includes("US_MI_SEG_START_DATE"),
+      ).toBeFalse();
     });
   });
 
@@ -1003,87 +974,78 @@ describe("table view columns", () => {
       "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
       "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
     ])("shows for %s in INCARCERATION in US_MI", (opportunityType) => {
-      const workflowsStore = {
-        ...mockWorkflowsStore,
-        activeSystem: "INCARCERATION",
-      } as any as WorkflowsStore;
-      const tenantStore = { currentTenantId: "US_MI" } as any as TenantStore;
       presenter = getPresenter({
-        workflowsStore,
-        tenantStore,
         opportunityType: opportunityType as OpportunityType,
-      });
-      expect(presenter.enabledColumnIds["US_MI_NEXT_SCC_DATE"]).toBeTrue();
-    });
-
-    test("hides by default", () => {
-      expect(presenter.enabledColumnIds["US_MI_NEXT_SCC_DATE"]).toBeFalse();
-    });
-  });
-
-  describe("US_MI_LAST_SCC_DATE", () => {
-    test("shows for usMiSecurityClassificationCommitteeReviewV2 in INCARCERATION in US_MI", () => {
-      const workflowsStore = {
-        ...mockWorkflowsStore,
-        activeSystem: "INCARCERATION",
-      } as any as WorkflowsStore;
-      const tenantStore = { currentTenantId: "US_MI" } as any as TenantStore;
-      presenter = getPresenter({
-        workflowsStore,
-        tenantStore,
-        opportunityType:
-          "usMiSecurityClassificationCommitteeReviewV2" as OpportunityType,
-      });
-      expect(presenter.enabledColumnIds["US_MI_LAST_SCC_DATE"]).toBeTrue();
-    });
-
-    test("hides by default", () => {
-      expect(presenter.enabledColumnIds["US_MI_LAST_SCC_DATE"]).toBeFalse();
-    });
-  });
-
-  describe("US_MI_ADD_LAST_SCC_DATE", () => {
-    test("shows for usMiAddInPersonSecurityClassificationCommitteeReviewV2 in INCARCERATION in US_MI", () => {
-      const workflowsStore = {
-        ...mockWorkflowsStore,
-        activeSystem: "INCARCERATION",
-      } as any as WorkflowsStore;
-      const tenantStore = { currentTenantId: "US_MI" } as any as TenantStore;
-      presenter = getPresenter({
-        workflowsStore,
-        tenantStore,
-        opportunityType:
-          "usMiAddInPersonSecurityClassificationCommitteeReviewV2" as OpportunityType,
-      });
-      expect(presenter.enabledColumnIds["US_MI_ADD_LAST_SCC_DATE"]).toBeTrue();
-    });
-
-    test("hides by default", () => {
-      expect(presenter.enabledColumnIds["US_MI_ADD_LAST_SCC_DATE"]).toBeFalse();
-    });
-  });
-
-  describe("US_MI_WARDEN_LAST_SCC_DATE", () => {
-    test("shows for usMiWardenInPersonSecurityClassificationCommitteeReviewV2 in INCARCERATION in US_MI", () => {
-      const workflowsStore = {
-        ...mockWorkflowsStore,
-        activeSystem: "INCARCERATION",
-      } as any as WorkflowsStore;
-      const tenantStore = { currentTenantId: "US_MI" } as any as TenantStore;
-      presenter = getPresenter({
-        workflowsStore,
-        tenantStore,
-        opportunityType:
-          "usMiWardenInPersonSecurityClassificationCommitteeReviewV2" as OpportunityType,
+        config: mockOpportunityConfigs[opportunityType as OpportunityType],
       });
       expect(
-        presenter.enabledColumnIds["US_MI_WARDEN_LAST_SCC_DATE"],
+        presenter.enabledColumnIds.includes("US_MI_NEXT_SCC_DATE"),
       ).toBeTrue();
     });
 
     test("hides by default", () => {
       expect(
-        presenter.enabledColumnIds["US_MI_WARDEN_LAST_SCC_DATE"],
+        presenter.enabledColumnIds.includes("US_MI_NEXT_SCC_DATE"),
+      ).toBeFalse();
+    });
+  });
+
+  describe("US_MI_LAST_SCC_DATE", () => {
+    test("shows for usMiSecurityClassificationCommitteeReviewV2 in INCARCERATION in US_MI", () => {
+      presenter = getPresenter({
+        opportunityType:
+          "usMiSecurityClassificationCommitteeReviewV2" as OpportunityType,
+        config:
+          mockOpportunityConfigs.usMiSecurityClassificationCommitteeReviewV2,
+      });
+      expect(
+        presenter.enabledColumnIds.includes("US_MI_LAST_SCC_DATE"),
+      ).toBeTrue();
+    });
+
+    test("hides by default", () => {
+      expect(
+        presenter.enabledColumnIds.includes("US_MI_LAST_SCC_DATE"),
+      ).toBeFalse();
+    });
+  });
+
+  describe("US_MI_ADD_LAST_SCC_DATE", () => {
+    test("shows for usMiAddInPersonSecurityClassificationCommitteeReviewV2 in INCARCERATION in US_MI", () => {
+      presenter = getPresenter({
+        opportunityType:
+          "usMiAddInPersonSecurityClassificationCommitteeReviewV2" as OpportunityType,
+        config:
+          mockOpportunityConfigs.usMiAddInPersonSecurityClassificationCommitteeReviewV2,
+      });
+      expect(
+        presenter.enabledColumnIds.includes("US_MI_ADD_LAST_SCC_DATE"),
+      ).toBeTrue();
+    });
+
+    test("hides by default", () => {
+      expect(
+        presenter.enabledColumnIds.includes("US_MI_ADD_LAST_SCC_DATE"),
+      ).toBeFalse();
+    });
+  });
+
+  describe("US_MI_WARDEN_LAST_SCC_DATE", () => {
+    test("shows for usMiWardenInPersonSecurityClassificationCommitteeReviewV2 in INCARCERATION in US_MI", () => {
+      presenter = getPresenter({
+        opportunityType:
+          "usMiWardenInPersonSecurityClassificationCommitteeReviewV2" as OpportunityType,
+        config:
+          mockOpportunityConfigs.usMiWardenInPersonSecurityClassificationCommitteeReviewV2,
+      });
+      expect(
+        presenter.enabledColumnIds.includes("US_MI_WARDEN_LAST_SCC_DATE"),
+      ).toBeTrue();
+    });
+
+    test("hides by default", () => {
+      expect(
+        presenter.enabledColumnIds.includes("US_MI_WARDEN_LAST_SCC_DATE"),
       ).toBeFalse();
     });
   });
@@ -1094,21 +1056,19 @@ describe("table view columns", () => {
       "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
       "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
     ])("shows for %s in INCARCERATION in US_MI", (opportunityType) => {
-      const workflowsStore = {
-        ...mockWorkflowsStore,
-        activeSystem: "INCARCERATION",
-      } as any as WorkflowsStore;
-      const tenantStore = { currentTenantId: "US_MI" } as any as TenantStore;
       presenter = getPresenter({
-        workflowsStore,
-        tenantStore,
         opportunityType: opportunityType as OpportunityType,
+        config: mockOpportunityConfigs[opportunityType as OpportunityType],
       });
-      expect(presenter.enabledColumnIds["US_MI_SEG_DURATION"]).toBeTrue();
+      expect(
+        presenter.enabledColumnIds.includes("US_MI_SEG_DURATION"),
+      ).toBeTrue();
     });
 
     test("hides by default", () => {
-      expect(presenter.enabledColumnIds["US_MI_SEG_DURATION"]).toBeFalse();
+      expect(
+        presenter.enabledColumnIds.includes("US_MI_SEG_DURATION"),
+      ).toBeFalse();
     });
   });
 
@@ -1118,21 +1078,15 @@ describe("table view columns", () => {
       "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
       "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
     ])("shows for %s in INCARCERATION in US_MI", (opportunityType) => {
-      const workflowsStore = {
-        ...mockWorkflowsStore,
-        activeSystem: "INCARCERATION",
-      } as any as WorkflowsStore;
-      const tenantStore = { currentTenantId: "US_MI" } as any as TenantStore;
       presenter = getPresenter({
-        workflowsStore,
-        tenantStore,
         opportunityType: opportunityType as OpportunityType,
+        config: mockOpportunityConfigs[opportunityType as OpportunityType],
       });
-      expect(presenter.enabledColumnIds["US_MI_OPT"]).toBeTrue();
+      expect(presenter.enabledColumnIds.includes("US_MI_OPT")).toBeTrue();
     });
 
     test("hides by default", () => {
-      expect(presenter.enabledColumnIds["US_MI_OPT"]).toBeFalse();
+      expect(presenter.enabledColumnIds.includes("US_MI_OPT")).toBeFalse();
     });
   });
 
@@ -1142,21 +1096,15 @@ describe("table view columns", () => {
       "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
       "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
     ])("shows for %s in INCARCERATION in US_MI", (opportunityType) => {
-      const workflowsStore = {
-        ...mockWorkflowsStore,
-        activeSystem: "INCARCERATION",
-      } as any as WorkflowsStore;
-      const tenantStore = { currentTenantId: "US_MI" } as any as TenantStore;
       presenter = getPresenter({
-        workflowsStore,
-        tenantStore,
         opportunityType: opportunityType as OpportunityType,
+        config: mockOpportunityConfigs[opportunityType as OpportunityType],
       });
-      expect(presenter.enabledColumnIds["US_MI_SMI"]).toBeTrue();
+      expect(presenter.enabledColumnIds.includes("US_MI_SMI")).toBeTrue();
     });
 
     test("hides by default", () => {
-      expect(presenter.enabledColumnIds["US_MI_SMI"]).toBeFalse();
+      expect(presenter.enabledColumnIds.includes("US_MI_SMI")).toBeFalse();
     });
   });
 
@@ -1165,15 +1113,16 @@ describe("table view columns", () => {
       presenter = getPresenter({
         opportunityType:
           "usTnCustodyLevelDowngrade2026Policy" as OpportunityType,
+        config: mockOpportunityConfigs.usTnCustodyLevelDowngrade2026Policy,
       });
       expect(
-        presenter.enabledColumnIds["US_TN_LATEST_CLASSIFICATION_DATE"],
+        presenter.enabledColumnIds.includes("US_TN_LATEST_CLASSIFICATION_DATE"),
       ).toBeTrue();
     });
 
     test("hides by default", () => {
       expect(
-        presenter.enabledColumnIds["US_TN_LATEST_CLASSIFICATION_DATE"],
+        presenter.enabledColumnIds.includes("US_TN_LATEST_CLASSIFICATION_DATE"),
       ).toBeFalse();
     });
   });
@@ -1182,12 +1131,14 @@ describe("table view columns", () => {
     test("hides for usIdOverdueFaceToFaceContact", () => {
       presenter = getPresenter({
         opportunityType: "usIdOverdueFaceToFaceContact" as OpportunityType,
+        config: mockOpportunityConfigs.usIdOverdueFaceToFaceContact,
       });
-      expect(presenter.enabledColumnIds["LAST_VIEWED"]).toBeFalse();
+      expect(presenter.enabledColumnIds.includes("LAST_VIEWED")).toBeFalse();
     });
 
     test("shows by default", () => {
-      expect(presenter.enabledColumnIds["LAST_VIEWED"]).toBeTrue();
+      presenter = getPresenter({});
+      expect(presenter.enabledColumnIds.includes("LAST_VIEWED")).toBeTrue();
     });
   });
 
@@ -1195,12 +1146,17 @@ describe("table view columns", () => {
     test("shows for usIdOverdueFaceToFaceContact", () => {
       presenter = getPresenter({
         opportunityType: "usIdOverdueFaceToFaceContact" as OpportunityType,
+        config: mockOpportunityConfigs.usIdOverdueFaceToFaceContact,
       });
-      expect(presenter.enabledColumnIds["US_ID_LAST_VIEWED"]).toBeTrue();
+      expect(
+        presenter.enabledColumnIds.includes("US_ID_LAST_VIEWED"),
+      ).toBeTrue();
     });
 
     test("hides by default", () => {
-      expect(presenter.enabledColumnIds["US_ID_LAST_VIEWED"]).toBeFalse();
+      expect(
+        presenter.enabledColumnIds.includes("US_ID_LAST_VIEWED"),
+      ).toBeFalse();
     });
   });
 
@@ -1221,7 +1177,9 @@ describe("table view columns", () => {
         ],
       });
       presenter = getPresenter({});
-      expect(presenter.enabledColumnIds["ALMOST_ELIGIBLE_STATUS"]).toBeTrue();
+      expect(
+        presenter.enabledColumnIds.includes("ALMOST_ELIGIBLE_STATUS"),
+      ).toBeTrue();
     });
 
     test("hides when opportunity is denied", () => {
@@ -1240,7 +1198,9 @@ describe("table view columns", () => {
         ],
       });
       presenter = getPresenter({});
-      expect(presenter.enabledColumnIds["ALMOST_ELIGIBLE_STATUS"]).toBeFalse();
+      expect(
+        presenter.enabledColumnIds.includes("ALMOST_ELIGIBLE_STATUS"),
+      ).toBeFalse();
     });
 
     test("hides when opportunity is submitted", () => {
@@ -1259,7 +1219,9 @@ describe("table view columns", () => {
         ],
       });
       presenter = getPresenter({});
-      expect(presenter.enabledColumnIds["ALMOST_ELIGIBLE_STATUS"]).toBeFalse();
+      expect(
+        presenter.enabledColumnIds.includes("ALMOST_ELIGIBLE_STATUS"),
+      ).toBeFalse();
     });
 
     test("hides when no status message", () => {
@@ -1277,7 +1239,9 @@ describe("table view columns", () => {
         ],
       });
       presenter = getPresenter({});
-      expect(presenter.enabledColumnIds["ALMOST_ELIGIBLE_STATUS"]).toBeFalse();
+      expect(
+        presenter.enabledColumnIds.includes("ALMOST_ELIGIBLE_STATUS"),
+      ).toBeFalse();
     });
   });
 
@@ -1299,7 +1263,7 @@ describe("table view columns", () => {
       presenter = getPresenter({});
       vi.spyOn(presenter, "snoozeEndsInDays").mockReturnValue(10);
       presenter.activeTab = mockOpportunity.deniedTabTitle as OpportunityTab;
-      expect(presenter.enabledColumnIds["SNOOZE_ENDS_IN"]).toBeTrue();
+      expect(presenter.enabledColumnIds.includes("SNOOZE_ENDS_IN")).toBeTrue();
     });
 
     test("shows when viewing denied tab and opportunity has indefinite denial reasons", () => {
@@ -1318,7 +1282,7 @@ describe("table view columns", () => {
       });
       presenter = getPresenter({});
       presenter.activeTab = mockOpportunity.deniedTabTitle as OpportunityTab;
-      expect(presenter.enabledColumnIds["SNOOZE_ENDS_IN"]).toBeTrue();
+      expect(presenter.enabledColumnIds.includes("SNOOZE_ENDS_IN")).toBeTrue();
     });
 
     test("hides when not viewing denied tab", () => {
@@ -1335,7 +1299,7 @@ describe("table view columns", () => {
         ],
       });
       presenter = getPresenter({});
-      expect(presenter.enabledColumnIds["SNOOZE_ENDS_IN"]).toBeFalse();
+      expect(presenter.enabledColumnIds.includes("SNOOZE_ENDS_IN")).toBeFalse();
     });
   });
 
@@ -1343,11 +1307,11 @@ describe("table view columns", () => {
     test("shows when viewing submitted tab", () => {
       presenter = getPresenter({});
       presenter.activeTab = mockOpportunity.submittedTabTitle as OpportunityTab;
-      expect(presenter.enabledColumnIds["SUBMITTED_FOR"]).toBeTrue();
+      expect(presenter.enabledColumnIds.includes("SUBMITTED_FOR")).toBeTrue();
     });
 
     test("hides by default", () => {
-      expect(presenter.enabledColumnIds["SUBMITTED_FOR"]).toBeFalse();
+      expect(presenter.enabledColumnIds.includes("SUBMITTED_FOR")).toBeFalse();
     });
   });
 
@@ -1358,12 +1322,14 @@ describe("table view columns", () => {
     ])("hides for %s", (opportunityType) => {
       presenter = getPresenter({
         opportunityType: opportunityType as OpportunityType,
+        config: mockOpportunityConfigs[opportunityType as OpportunityType],
       });
-      expect(presenter.enabledColumnIds["CTA_BUTTON"]).toBeFalse();
+      expect(presenter.enabledColumnIds.includes("CTA_BUTTON")).toBeFalse();
     });
 
     test("shows by default", () => {
-      expect(presenter.enabledColumnIds["CTA_BUTTON"]).toBeTrue();
+      presenter = getPresenter({});
+      expect(presenter.enabledColumnIds.includes("CTA_BUTTON")).toBeTrue();
     });
   });
 
@@ -1373,13 +1339,18 @@ describe("table view columns", () => {
       (opportunityType) => {
         presenter = getPresenter({
           opportunityType: opportunityType as OpportunityType,
+          config: mockOpportunityConfigs[opportunityType as OpportunityType],
         });
-        expect(presenter.enabledColumnIds["AGREEMENT_STATUS"]).toBeTrue();
+        expect(
+          presenter.enabledColumnIds.includes("AGREEMENT_STATUS"),
+        ).toBeTrue();
       },
     );
 
     test("hides by default", () => {
-      expect(presenter.enabledColumnIds["AGREEMENT_STATUS"]).toBeFalse();
+      expect(
+        presenter.enabledColumnIds.includes("AGREEMENT_STATUS"),
+      ).toBeFalse();
     });
   });
 
@@ -1389,13 +1360,18 @@ describe("table view columns", () => {
       (opportunityType) => {
         presenter = getPresenter({
           opportunityType: opportunityType as OpportunityType,
+          config: mockOpportunityConfigs[opportunityType as OpportunityType],
         });
-        expect(presenter.enabledColumnIds["HOME_PLAN_STATUS"]).toBeTrue();
+        expect(
+          presenter.enabledColumnIds.includes("HOME_PLAN_STATUS"),
+        ).toBeTrue();
       },
     );
 
     test("hides by default", () => {
-      expect(presenter.enabledColumnIds["HOME_PLAN_STATUS"]).toBeFalse();
+      expect(
+        presenter.enabledColumnIds.includes("HOME_PLAN_STATUS"),
+      ).toBeFalse();
     });
   });
 
@@ -1405,13 +1381,16 @@ describe("table view columns", () => {
       (opportunityType) => {
         presenter = getPresenter({
           opportunityType: opportunityType as OpportunityType,
+          config: mockOpportunityConfigs[opportunityType as OpportunityType],
         });
-        expect(presenter.enabledColumnIds["MAN_LIT_STATUS"]).toBeTrue();
+        expect(
+          presenter.enabledColumnIds.includes("MAN_LIT_STATUS"),
+        ).toBeTrue();
       },
     );
 
     test("hides by default", () => {
-      expect(presenter.enabledColumnIds["MAN_LIT_STATUS"]).toBeFalse();
+      expect(presenter.enabledColumnIds.includes("MAN_LIT_STATUS")).toBeFalse();
     });
   });
 
@@ -1419,12 +1398,17 @@ describe("table view columns", () => {
     test("shows for usIdOverdueFaceToFaceContact", () => {
       presenter = getPresenter({
         opportunityType: "usIdOverdueFaceToFaceContact" as OpportunityType,
+        config: mockOpportunityConfigs.usIdOverdueFaceToFaceContact,
       });
-      expect(presenter.enabledColumnIds["US_ID_LAST_CONTACT_DATE"]).toBeTrue();
+      expect(
+        presenter.enabledColumnIds.includes("US_ID_LAST_CONTACT_DATE"),
+      ).toBeTrue();
     });
 
     test("hides by default", () => {
-      expect(presenter.enabledColumnIds["US_ID_LAST_CONTACT_DATE"]).toBeFalse();
+      expect(
+        presenter.enabledColumnIds.includes("US_ID_LAST_CONTACT_DATE"),
+      ).toBeFalse();
     });
   });
 
@@ -1432,12 +1416,17 @@ describe("table view columns", () => {
     test("shows for usIdOverdueFaceToFaceContact", () => {
       presenter = getPresenter({
         opportunityType: "usIdOverdueFaceToFaceContact" as OpportunityType,
+        config: mockOpportunityConfigs.usIdOverdueFaceToFaceContact,
       });
-      expect(presenter.enabledColumnIds["US_ID_SUPERVISION_LEVEL"]).toBeTrue();
+      expect(
+        presenter.enabledColumnIds.includes("US_ID_SUPERVISION_LEVEL"),
+      ).toBeTrue();
     });
 
     test("hides by default", () => {
-      expect(presenter.enabledColumnIds["US_ID_SUPERVISION_LEVEL"]).toBeFalse();
+      expect(
+        presenter.enabledColumnIds.includes("US_ID_SUPERVISION_LEVEL"),
+      ).toBeFalse();
     });
   });
 
@@ -1445,12 +1434,15 @@ describe("table view columns", () => {
     test("shows for usIdOverdueFaceToFaceContact", () => {
       presenter = getPresenter({
         opportunityType: "usIdOverdueFaceToFaceContact" as OpportunityType,
+        config: mockOpportunityConfigs.usIdOverdueFaceToFaceContact,
       });
-      expect(presenter.enabledColumnIds["US_ID_CASE_TYPE"]).toBeTrue();
+      expect(presenter.enabledColumnIds.includes("US_ID_CASE_TYPE")).toBeTrue();
     });
 
     test("hides by default", () => {
-      expect(presenter.enabledColumnIds["US_ID_CASE_TYPE"]).toBeFalse();
+      expect(
+        presenter.enabledColumnIds.includes("US_ID_CASE_TYPE"),
+      ).toBeFalse();
     });
   });
 
@@ -1458,12 +1450,17 @@ describe("table view columns", () => {
     test("shows for usIdOverdueFaceToFaceContact", () => {
       presenter = getPresenter({
         opportunityType: "usIdOverdueFaceToFaceContact" as OpportunityType,
+        config: mockOpportunityConfigs.usIdOverdueFaceToFaceContact,
       });
-      expect(presenter.enabledColumnIds["US_ID_CONTACT_DUE_DATE"]).toBeTrue();
+      expect(
+        presenter.enabledColumnIds.includes("US_ID_CONTACT_DUE_DATE"),
+      ).toBeTrue();
     });
 
     test("hides by default", () => {
-      expect(presenter.enabledColumnIds["US_ID_CONTACT_DUE_DATE"]).toBeFalse();
+      expect(
+        presenter.enabledColumnIds.includes("US_ID_CONTACT_DUE_DATE"),
+      ).toBeFalse();
     });
   });
 
@@ -1471,12 +1468,17 @@ describe("table view columns", () => {
     test("shows for usIdOverdueFaceToFaceContact", () => {
       presenter = getPresenter({
         opportunityType: "usIdOverdueFaceToFaceContact" as OpportunityType,
+        config: mockOpportunityConfigs.usIdOverdueFaceToFaceContact,
       });
-      expect(presenter.enabledColumnIds["US_ID_CONTACT_CADENCE"]).toBeTrue();
+      expect(
+        presenter.enabledColumnIds.includes("US_ID_CONTACT_CADENCE"),
+      ).toBeTrue();
     });
 
     test("hides by default", () => {
-      expect(presenter.enabledColumnIds["US_ID_CONTACT_CADENCE"]).toBeFalse();
+      expect(
+        presenter.enabledColumnIds.includes("US_ID_CONTACT_CADENCE"),
+      ).toBeFalse();
     });
   });
 
@@ -1503,8 +1505,11 @@ describe("table view columns", () => {
         });
         presenter = getPresenter({
           opportunityType: opportunityType as OpportunityType,
+          config: mockOpportunityConfigs[opportunityType as OpportunityType],
         });
-        expect(presenter.enabledColumnIds["US_TX_CURRENT_REVIEWER"]).toBeTrue();
+        expect(
+          presenter.enabledColumnIds.includes("US_TX_CURRENT_REVIEWER"),
+        ).toBeTrue();
       },
     );
 
@@ -1530,8 +1535,11 @@ describe("table view columns", () => {
         });
         presenter = getPresenter({
           opportunityType: opportunityType as OpportunityType,
+          config: mockOpportunityConfigs[opportunityType as OpportunityType],
         });
-        expect(presenter.enabledColumnIds["US_TX_CURRENT_REVIEWER"]).toBeTrue();
+        expect(
+          presenter.enabledColumnIds.includes("US_TX_CURRENT_REVIEWER"),
+        ).toBeTrue();
       },
     );
 
@@ -1553,11 +1561,15 @@ describe("table view columns", () => {
       presenter = getPresenter({
         opportunityType: "usTxAnnualReportStatusV2" as OpportunityType,
       });
-      expect(presenter.enabledColumnIds["US_TX_CURRENT_REVIEWER"]).toBeFalse();
+      expect(
+        presenter.enabledColumnIds.includes("US_TX_CURRENT_REVIEWER"),
+      ).toBeFalse();
     });
 
     test("hides by default", () => {
-      expect(presenter.enabledColumnIds["US_TX_CURRENT_REVIEWER"]).toBeFalse();
+      expect(
+        presenter.enabledColumnIds.includes("US_TX_CURRENT_REVIEWER"),
+      ).toBeFalse();
     });
   });
 
@@ -1584,9 +1596,12 @@ describe("table view columns", () => {
         });
         presenter = getPresenter({
           opportunityType: opportunityType as OpportunityType,
+          config: mockOpportunityConfigs[opportunityType as OpportunityType],
         });
         expect(
-          presenter.enabledColumnIds["US_TX_SUBMITTED_FOR_REVIEW_DATE"],
+          presenter.enabledColumnIds.includes(
+            "US_TX_SUBMITTED_FOR_REVIEW_DATE",
+          ),
         ).toBeTrue();
       },
     );
@@ -1613,9 +1628,12 @@ describe("table view columns", () => {
         });
         presenter = getPresenter({
           opportunityType: opportunityType as OpportunityType,
+          config: mockOpportunityConfigs[opportunityType as OpportunityType],
         });
         expect(
-          presenter.enabledColumnIds["US_TX_SUBMITTED_FOR_REVIEW_DATE"],
+          presenter.enabledColumnIds.includes(
+            "US_TX_SUBMITTED_FOR_REVIEW_DATE",
+          ),
         ).toBeTrue();
       },
     );
@@ -1639,13 +1657,13 @@ describe("table view columns", () => {
         opportunityType: "usTxAnnualReportStatusV2" as OpportunityType,
       });
       expect(
-        presenter.enabledColumnIds["US_TX_SUBMITTED_FOR_REVIEW_DATE"],
+        presenter.enabledColumnIds.includes("US_TX_SUBMITTED_FOR_REVIEW_DATE"),
       ).toBeFalse();
     });
 
     test("hides by default", () => {
       expect(
-        presenter.enabledColumnIds["US_TX_SUBMITTED_FOR_REVIEW_DATE"],
+        presenter.enabledColumnIds.includes("US_TX_SUBMITTED_FOR_REVIEW_DATE"),
       ).toBeFalse();
     });
   });
@@ -1674,8 +1692,11 @@ describe("table view columns", () => {
         });
         presenter = getPresenter({
           opportunityType: opportunityType as OpportunityType,
+          config: mockOpportunityConfigs[opportunityType as OpportunityType],
         });
-        expect(presenter.enabledColumnIds["US_TX_ALL_REVIEWERS"]).toBeTrue();
+        expect(
+          presenter.enabledColumnIds.includes("US_TX_ALL_REVIEWERS"),
+        ).toBeTrue();
       },
     );
 
@@ -1701,8 +1722,11 @@ describe("table view columns", () => {
         });
         presenter = getPresenter({
           opportunityType: opportunityType as OpportunityType,
+          config: mockOpportunityConfigs[opportunityType as OpportunityType],
         });
-        expect(presenter.enabledColumnIds["US_TX_ALL_REVIEWERS"]).toBeTrue();
+        expect(
+          presenter.enabledColumnIds.includes("US_TX_ALL_REVIEWERS"),
+        ).toBeTrue();
       },
     );
 
@@ -1728,8 +1752,11 @@ describe("table view columns", () => {
         });
         presenter = getPresenter({
           opportunityType: opportunityType as OpportunityType,
+          config: mockOpportunityConfigs[opportunityType as OpportunityType],
         });
-        expect(presenter.enabledColumnIds["US_TX_ALL_REVIEWERS"]).toBeTrue();
+        expect(
+          presenter.enabledColumnIds.includes("US_TX_ALL_REVIEWERS"),
+        ).toBeTrue();
       },
     );
 
@@ -1752,11 +1779,15 @@ describe("table view columns", () => {
       presenter = getPresenter({
         opportunityType: "usTxAnnualReportStatusV2" as OpportunityType,
       });
-      expect(presenter.enabledColumnIds["US_TX_ALL_REVIEWERS"]).toBeFalse();
+      expect(
+        presenter.enabledColumnIds.includes("US_TX_ALL_REVIEWERS"),
+      ).toBeFalse();
     });
 
     test("hides by default", () => {
-      expect(presenter.enabledColumnIds["US_TX_ALL_REVIEWERS"]).toBeFalse();
+      expect(
+        presenter.enabledColumnIds.includes("US_TX_ALL_REVIEWERS"),
+      ).toBeFalse();
     });
   });
 
@@ -1782,8 +1813,11 @@ describe("table view columns", () => {
         });
         presenter = getPresenter({
           opportunityType: opportunityType as OpportunityType,
+          config: mockOpportunityConfigs[opportunityType as OpportunityType],
         });
-        expect(presenter.enabledColumnIds["US_TX_GRANT_DATE"]).toBeTrue();
+        expect(
+          presenter.enabledColumnIds.includes("US_TX_GRANT_DATE"),
+        ).toBeTrue();
       },
     );
 
@@ -1804,11 +1838,15 @@ describe("table view columns", () => {
       presenter = getPresenter({
         opportunityType: "usTxAnnualReportStatusV2" as OpportunityType,
       });
-      expect(presenter.enabledColumnIds["US_TX_GRANT_DATE"]).toBeFalse();
+      expect(
+        presenter.enabledColumnIds.includes("US_TX_GRANT_DATE"),
+      ).toBeFalse();
     });
 
     test("hides by default", () => {
-      expect(presenter.enabledColumnIds["US_TX_GRANT_DATE"]).toBeFalse();
+      expect(
+        presenter.enabledColumnIds.includes("US_TX_GRANT_DATE"),
+      ).toBeFalse();
     });
   });
 
@@ -1834,8 +1872,11 @@ describe("table view columns", () => {
         });
         presenter = getPresenter({
           opportunityType: opportunityType as OpportunityType,
+          config: mockOpportunityConfigs[opportunityType as OpportunityType],
         });
-        expect(presenter.enabledColumnIds["US_TX_REVISION_REASON"]).toBeTrue();
+        expect(
+          presenter.enabledColumnIds.includes("US_TX_REVISION_REASON"),
+        ).toBeTrue();
       },
     );
 
@@ -1856,10 +1897,14 @@ describe("table view columns", () => {
       presenter = getPresenter({
         opportunityType: "usTxAnnualReportStatusV2" as OpportunityType,
       });
-      expect(presenter.enabledColumnIds["US_TX_REVISION_REASON"]).toBeFalse();
+      expect(
+        presenter.enabledColumnIds.includes("US_TX_REVISION_REASON"),
+      ).toBeFalse();
     });
     test("hides by default", () => {
-      expect(presenter.enabledColumnIds["US_TX_REVISION_REASON"]).toBeFalse();
+      expect(
+        presenter.enabledColumnIds.includes("US_TX_REVISION_REASON"),
+      ).toBeFalse();
     });
   });
 });
@@ -1886,5 +1931,70 @@ describe("with a linked overdue opportunity", () => {
 
   it("counts the number of overdue opportunities", () => {
     expect(presenter.overdueOpportunityCount).toEqual(3);
+  });
+});
+
+describe("orderedColumnDefs", () => {
+  const columnDef = (id: string) => ({ id });
+  const allColumns = [
+    columnDef("PERSON_NAME"),
+    columnDef("STATUS"),
+    columnDef("PERSON_DISPLAY_ID"),
+    columnDef("LAST_VIEWED"),
+    columnDef("CTA_BUTTON"),
+  ] as any;
+
+  const columnIds = (config: any) =>
+    getPresenter({ config })
+      .orderedColumnDefs(allColumns)
+      .map((col) => col.id);
+
+  it("without API-configured columns, orders by column-definition order", () => {
+    // enabledColumns order for config is intentionally different than in allColumns
+    expect(
+      columnIds({
+        ...mockOpportunity.config,
+        enabledColumns: ["STATUS", "PERSON_NAME", "CTA_BUTTON"],
+        apiEnabledColumnIds: [],
+      }),
+    ).toEqual(["PERSON_NAME", "STATUS", "CTA_BUTTON"]);
+  });
+
+  it("with API-configured columns, orders by enabledColumnIds order with CTA_BUTTON last", () => {
+    // CTA_BUTTON is configured mid-list to confirm it's always forced last.
+    const result = columnIds({
+      ...mockOpportunity.config,
+      enabledColumns: [
+        "STATUS",
+        "CTA_BUTTON",
+        "PERSON_NAME",
+        "PERSON_DISPLAY_ID",
+      ],
+      apiEnabledColumnIds: [
+        "STATUS",
+        "CTA_BUTTON",
+        "PERSON_NAME",
+        "PERSON_DISPLAY_ID",
+      ],
+    });
+    expect(result.at(-1)).toBe("CTA_BUTTON");
+    expect(result).toEqual([
+      "STATUS",
+      "PERSON_NAME",
+      "PERSON_DISPLAY_ID",
+      "CTA_BUTTON",
+    ]);
+  });
+
+  it("omits enabled ids that have no matching column definition", () => {
+    // RELEASE_DATE is a valid column id with no def in allColumnDefs and is not
+    // touched by any dynamic override, so it should simply be dropped.
+    expect(
+      columnIds({
+        ...mockOpportunity.config,
+        enabledColumns: ["STATUS", "RELEASE_DATE"],
+        apiEnabledColumnIds: ["STATUS", "RELEASE_DATE"],
+      }),
+    ).toEqual(["STATUS"]);
   });
 });

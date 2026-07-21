@@ -160,6 +160,25 @@ export const apiOpportunityConfigurationSchema = z.object({
   nonOmsCriteriaHeader: nullishAsUndefined(z.string()),
   nonOmsCriteria: z.array(copySchema).default([]),
 
+  enabledColumns: nullishAsUndefined(
+    z
+      .array(
+        z.object({
+          columnId: z.string(),
+          columnHeader: nullishAsUndefined(z.string()),
+          cellValue: nullishAsUndefined(z.string()),
+        }),
+      )
+      .transform((a) =>
+        Object.fromEntries(
+          a.map(({ columnId, columnHeader, cellValue }) => [
+            columnId,
+            { columnHeader, cellValue },
+          ]),
+        ),
+      ),
+  ),
+
   highlightCasesOnHomepage: z.boolean().default(false),
   highlightedCaseCtaCopy: nullishAsUndefined(z.string()),
   overdueOpportunityCalloutCopy: nullishAsUndefined(z.string()),

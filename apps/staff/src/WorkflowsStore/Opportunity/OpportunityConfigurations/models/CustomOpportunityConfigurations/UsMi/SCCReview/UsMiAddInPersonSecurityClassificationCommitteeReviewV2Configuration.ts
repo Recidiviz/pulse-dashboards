@@ -22,13 +22,18 @@ import { ApiOpportunityConfiguration } from "../../../ApiOpportunityConfiguratio
 export class UsMiAddInPersonSecurityClassificationCommitteeReviewV2Configuration extends ApiOpportunityConfiguration {
   get enabledColumns(): Array<OpportunityTableColumnId> {
     const cols = [...super.enabledColumns];
-    cols.push("US_MI_SEG_START_DATE");
-    cols.push("US_MI_NEXT_SCC_DATE");
-    cols.push("US_MI_ADD_LAST_SCC_DATE");
-    cols.push("US_MI_SEG_DURATION");
-    cols.push("US_MI_OPT");
-    cols.push("US_MI_SMI");
-    return cols.filter((c) => c !== "RELEASE_DATE");
+    const colsToAdd: OpportunityTableColumnId[] = [
+      "US_MI_SEG_START_DATE",
+      "US_MI_NEXT_SCC_DATE",
+      "US_MI_ADD_LAST_SCC_DATE",
+      "US_MI_SEG_DURATION",
+      "US_MI_OPT",
+      "US_MI_SMI",
+    ].filter(
+      (c) => !cols.includes(c as OpportunityTableColumnId),
+    ) as OpportunityTableColumnId[];
+    const colsToRemove: OpportunityTableColumnId[] = ["RELEASE_DATE"];
+    return [...cols, ...colsToAdd].filter((c) => !colsToRemove.includes(c));
   }
 
   get allSubcategoriesOfSubmitted() {

@@ -22,12 +22,17 @@ import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationIm
 export class UsTxArsErsV2Configuration extends ApiOpportunityConfiguration {
   get enabledColumns(): Array<OpportunityTableColumnId> {
     const cols = [...super.enabledColumns];
-    cols.push("US_TX_CURRENT_REVIEWER");
-    cols.push("US_TX_SUBMITTED_FOR_REVIEW_DATE");
-    cols.push("US_TX_ALL_REVIEWERS");
-    cols.push("US_TX_GRANT_DATE");
-    cols.push("US_TX_REVISION_REASON");
-    return cols.filter((c) => c !== "CTA_BUTTON");
+    const colsToAdd: OpportunityTableColumnId[] = [
+      "US_TX_CURRENT_REVIEWER",
+      "US_TX_SUBMITTED_FOR_REVIEW_DATE",
+      "US_TX_ALL_REVIEWERS",
+      "US_TX_GRANT_DATE",
+      "US_TX_REVISION_REASON",
+    ].filter(
+      (c) => !cols.includes(c as OpportunityTableColumnId),
+    ) as OpportunityTableColumnId[];
+    const colsToRemove: OpportunityTableColumnId[] = ["CTA_BUTTON"];
+    return [...cols, ...colsToAdd].filter((c) => !colsToRemove.includes(c));
   }
 
   // TODO(#9880): Add custom denial reason snooze lengths to admin panel

@@ -337,23 +337,50 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return false;
   }
 
+  // The columns explicitly named by the API config
+  get apiEnabledColumnIds(): Array<OpportunityTableColumnId> {
+    return this.configurationObject.enabledColumns
+      ? (Object.keys(
+          this.configurationObject.enabledColumns,
+        ) as Array<OpportunityTableColumnId>)
+      : [];
+  }
+
+  /**
+   * Table view columns enabled for this opportunity. If columns are not yet
+   * configured in the admin panel, we go with a default set of columns
+   * (defined here) in a default order (managed by the table presenter).
+   * TODO(OBT-39481): Remove columnId default logic in base and
+   * custom configs once all opportunities have configured columns
+   * via the admin panel.
+   */
   get enabledColumns(): Array<OpportunityTableColumnId> {
-    const columns: Array<OpportunityTableColumnId> = [
+    if (this.apiEnabledColumnIds.length) return this.apiEnabledColumnIds;
+
+    const defaultColumnIds: Array<OpportunityTableColumnId> = [
       "PERSON_NAME",
       "PERSON_DISPLAY_ID",
       "STATUS",
       "LAST_VIEWED",
+      // In base to support generalizing this column, per TODO(#7453)
+      "INSTANCE_DETAILS",
+      "ASSIGNED_STAFF_NAME",
+      "ALMOST_ELIGIBLE_STATUS",
+      "ELIGIBILITY_DATE",
+      "SNOOZE_ENDS_IN",
+      "SUBMITTED_FOR",
       "CTA_BUTTON",
     ];
     if (this.systemType === "INCARCERATION") {
-      columns.push("RELEASE_DATE");
-      if (this.stateCode === "US_MI") columns.push("US_MI_UNIT_ID");
+      defaultColumnIds.push("RELEASE_DATE");
+      if (this.stateCode === "US_MI") defaultColumnIds.push("US_MI_UNIT_ID");
     }
     if (this.systemType === "SUPERVISION") {
-      columns.push("SUPERVISION_EXPIRATION_DATE");
-      if (this.stateCode === "US_NE") columns.push("US_NE_PEDD_DATE");
+      defaultColumnIds.push("SUPERVISION_EXPIRATION_DATE");
+      if (this.stateCode === "US_NE") defaultColumnIds.push("US_NE_PEDD_DATE");
     }
-    return columns;
+
+    return defaultColumnIds;
   }
 
   get highlightCasesOnHomepage() {

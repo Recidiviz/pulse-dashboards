@@ -21,8 +21,12 @@ import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationIm
 export class LSUConfiguration extends ApiOpportunityConfiguration {
   get enabledColumns(): Array<OpportunityTableColumnId> {
     const cols = [...super.enabledColumns];
-    cols.push("ALMOST_ELIGIBILITY_DATE");
-    return cols;
+    const colsToAdd: OpportunityTableColumnId[] = [
+      "ALMOST_ELIGIBILITY_DATE",
+    ].filter(
+      (c) => !cols.includes(c as OpportunityTableColumnId),
+    ) as OpportunityTableColumnId[];
+    return [...cols, ...colsToAdd];
   }
 
   get supportsAlmostEligible() {

@@ -26,8 +26,12 @@ import {
 export class UsTnCompliantReporting2025PolicyConfiguration extends ApiOpportunityConfiguration {
   get enabledColumns(): Array<OpportunityTableColumnId> {
     const cols = [...super.enabledColumns];
-    cols.push("ALMOST_ELIGIBILITY_DATE");
-    return cols;
+    const colsToAdd: OpportunityTableColumnId[] = [
+      "ALMOST_ELIGIBILITY_DATE",
+    ].filter(
+      (c) => !cols.includes(c as OpportunityTableColumnId),
+    ) as OpportunityTableColumnId[];
+    return [...cols, ...colsToAdd];
   }
 
   get markSubmittedOnFormDownload(): boolean {

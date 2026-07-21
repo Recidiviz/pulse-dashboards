@@ -87,6 +87,7 @@ export interface OpportunityConfiguration {
   hydrateIneligibleRecordsInOpportunityManager: boolean;
   highlightCasesOnHomepage: boolean;
   highlightedCaseCtaCopy: string;
+  apiEnabledColumnIds: Array<OpportunityTableColumnId>;
   enabledColumns: Array<OpportunityTableColumnId>;
   subcategoryHeadings?: Record<string, string>;
   allSubcategoriesOfSubmitted?: string[] | undefined;

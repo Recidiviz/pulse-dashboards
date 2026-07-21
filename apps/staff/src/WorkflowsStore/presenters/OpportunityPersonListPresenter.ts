@@ -17,7 +17,7 @@
 
 import { arrayMove } from "@dnd-kit/sortable";
 import { differenceInDays, startOfToday } from "date-fns";
-import { difference, intersection, isEmpty } from "lodash";
+import { compact, difference, intersection, isEmpty } from "lodash";
 import { action, makeAutoObservable, reaction } from "mobx";
 import pluralize from "pluralize";
 import toast from "react-hot-toast";
@@ -25,7 +25,10 @@ import toast from "react-hot-toast";
 import { OpportunityType } from "~datatypes";
 
 import { FilterField, FilterOption, FilterType } from "../../core/models/types";
-import { OpportunityTableColumnId } from "../../core/OpportunityCaseloadView/HydratedOpportunityPersonList";
+import {
+  OpportunityTableColumnDef,
+  OpportunityTableColumnId,
+} from "../../core/OpportunityCaseloadView/HydratedOpportunityPersonList";
 import { insightsUrl, workflowsUrl } from "../../core/views";
 import { formatSupervisionEndDatePhrase } from "../../core/WorkflowsJusticeInvolvedPersonProfile/utils";
 import { FilterPresenter } from "../../FilterStore/FilterPresenter";
@@ -152,236 +155,118 @@ export class OpportunityPersonListPresenter
     this.tableViewSelectPresenter.showListView = showListView;
   }
 
-  private get showAlmostEligibilityDateColumn(): boolean {
-    const enabledOpportunityTypes: OpportunityType[] = [
-      "LSU",
-      "usTnCompliantReporting2025Policy",
-      "usAzTransferToAdministrativeSupervision",
-    ];
-    const hasAlmostEligibleColumnEnabled = enabledOpportunityTypes.includes(
-      this.opportunityType,
-    );
-    const showAlmostEligibleDateColumn = this.peopleInActiveTab.some(
-      (opp) => opp.almostEligible && !!opp.almostEligibilityDate,
-    );
-    return hasAlmostEligibleColumnEnabled && showAlmostEligibleDateColumn;
-  }
-
   /**
-   * Return a map from column IDs of the opportunity table view to whether or not
-   * the column should currently be visible.
+   * Update the ordered list of column IDs to render in the opportunity table view
+   * after dynamic checks, filtering out any IDs that should not be rendered due to
+   * opportunity or application state.
    */
-  get enabledColumnIds(): Record<OpportunityTableColumnId, boolean> {
+  get enabledColumnIds(): Array<OpportunityTableColumnId> {
     const opportunities = this.peopleInActiveTab;
-    return {
-      PERSON_NAME: true,
-      INSTANCE_DETAILS: opportunities.some((opp) => !!opp.instanceDetails),
-      PERSON_DISPLAY_ID: true,
-      ASSIGNED_STAFF_NAME:
+    // List of column IDs from base/custom config
+    let columnIds = [...this.config.enabledColumns];
+
+    // Helper function to check a particular dynamic condition for this column. When the condition is not met, filters out the ID from the list of columns to be rendered.
+    const overrideColumn = (
+      id: OpportunityTableColumnId,
+      enabled: () => boolean,
+    ) => {
+      // Only calls predicate enabled() function if column IDs list contains the relevant ID.
+      if (columnIds.includes(id) && !enabled()) {
+        columnIds = columnIds.filter((c) => c !== id);
+      }
+    };
+
+    overrideColumn("INSTANCE_DETAILS", () =>
+      opportunities.some((opp) => !!opp.instanceDetails),
+    );
+    overrideColumn(
+      "ASSIGNED_STAFF_NAME",
+      () =>
         (this.isSupervisorHomepage && !!this.supervisorInfo) ||
         (!this.isSupervisorHomepage &&
           opportunities.some((opp) => !!opp.person.assignedStaffId)),
-      // TODO(#7921): More gracefully handle these special cases
-      STATUS: ![
-        "usAzTransferToAdministrativeSupervision",
-        "usAzTransferToAdministrativeSupervisionV2",
-        "usAzReleaseToTPR",
-        "usAzReleaseToDTP",
-        "usIdOverdueFaceToFaceContact",
-      ].includes(this.opportunityType),
-      // TODO(#7921): More gracefully handle these special cases
-      ELIGIBILITY_DATE:
-        !this.showAlmostEligibilityDateColumn &&
+    );
+    overrideColumn("ALMOST_ELIGIBLE_STATUS", () =>
+      opportunities.some(
+        (opp) =>
+          !opp.denied && !opp.isSubmitted && opp.almostEligibleStatusMessage,
+      ),
+    );
+    // Conditional predicate function used for multiple columns.
+    const almostEligibilityDateEnabled = () =>
+      this.config.enabledColumns.includes("ALMOST_ELIGIBILITY_DATE") &&
+      opportunities.some(
+        (opp) => opp.almostEligible && !!opp.almostEligibilityDate,
+      );
+    overrideColumn("ALMOST_ELIGIBILITY_DATE", almostEligibilityDateEnabled);
+    overrideColumn(
+      "ELIGIBILITY_DATE",
+      () =>
+        !almostEligibilityDateEnabled() &&
         opportunities.some((opp) => !!opp.eligibilityDate) &&
         !(
           ["usMeEarlyTermination", "usMeSCCP"].includes(this.opportunityType) &&
           opportunities.every((opp) => opp.almostEligible)
         ),
-      ALMOST_ELIGIBILITY_DATE: this.showAlmostEligibilityDateColumn,
-      RELEASE_DATE:
-        this.workflowsStore.activeSystem === "INCARCERATION" &&
-        ![
-          // Michigan facilities opportunities have both min and max release dates,
-          // and the release date on the Resident object doesn't agree with them
-          "usMiSecurityClassificationCommitteeReviewV2",
-          "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
-          "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
-          "usMiCustodyLevelDowngrade",
-          "usIdCustodyLevelDowngrade",
-        ].includes(this.opportunityType),
-      SUPERVISION_EXPIRATION_DATE:
-        this.workflowsStore.activeSystem === "SUPERVISION" &&
-        ![
-          // the Eligibility Date column for FULL_TERM_DISCHARGE opportunities
-          // will already display the supervision expiration date
-          "pastFTRD",
-          "usMiPastFTRD",
-          "usTnExpiration",
-          // usIdOverdueFaceToFaceContact uses contact-specific columns instead
-          "usIdOverdueFaceToFaceContact",
-        ].includes(this.opportunityType),
-      US_ID_EPRD: this.opportunityType === "usIdCustodyLevelDowngrade",
-      US_NE_PEDD_DATE:
-        this.workflowsStore.activeSystem === "SUPERVISION" &&
-        this.tenantStore.currentTenantId === "US_NE",
-      UNIT_ID: this.opportunityType === "usNeGoodTimeRestoration",
-      US_NE_ELIGIBLE_RESTORATION_AMT:
-        this.opportunityType === "usNeGoodTimeRestoration",
-      US_NE_TOTAL_LOST_RESTORABLE_GT:
-        this.opportunityType === "usNeGoodTimeRestoration",
-      US_MI_UNIT_ID:
-        this.workflowsStore.activeSystem === "INCARCERATION" &&
-        this.tenantStore.currentTenantId === "US_MI",
-      US_MI_ERD:
-        this.workflowsStore.activeSystem === "INCARCERATION" &&
-        this.tenantStore.currentTenantId === "US_MI" &&
-        this.opportunityType === "usMiCustodyLevelDowngrade",
-      US_MI_CUSTODY_LEVEL:
-        this.workflowsStore.activeSystem === "INCARCERATION" &&
-        this.tenantStore.currentTenantId === "US_MI" &&
-        this.opportunityType === "usMiCustodyLevelDowngrade",
-      US_MI_SEG_START_DATE:
-        this.workflowsStore.activeSystem === "INCARCERATION" &&
-        this.tenantStore.currentTenantId === "US_MI" &&
-        [
-          "usMiSecurityClassificationCommitteeReviewV2",
-          "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
-          "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
-        ].includes(this.opportunityType),
-      US_MI_NEXT_SCC_DATE:
-        this.workflowsStore.activeSystem === "INCARCERATION" &&
-        this.tenantStore.currentTenantId === "US_MI" &&
-        [
-          "usMiSecurityClassificationCommitteeReviewV2",
-          "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
-          "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
-        ].includes(this.opportunityType),
-      US_MI_LAST_SCC_DATE:
-        this.workflowsStore.activeSystem === "INCARCERATION" &&
-        this.tenantStore.currentTenantId === "US_MI" &&
-        ["usMiSecurityClassificationCommitteeReviewV2"].includes(
-          this.opportunityType,
-        ),
-      US_MI_ADD_LAST_SCC_DATE:
-        this.workflowsStore.activeSystem === "INCARCERATION" &&
-        this.tenantStore.currentTenantId === "US_MI" &&
-        ["usMiAddInPersonSecurityClassificationCommitteeReviewV2"].includes(
-          this.opportunityType,
-        ),
-      US_MI_WARDEN_LAST_SCC_DATE:
-        this.workflowsStore.activeSystem === "INCARCERATION" &&
-        this.tenantStore.currentTenantId === "US_MI" &&
-        ["usMiWardenInPersonSecurityClassificationCommitteeReviewV2"].includes(
-          this.opportunityType,
-        ),
-      US_MI_SEG_DURATION:
-        this.workflowsStore.activeSystem === "INCARCERATION" &&
-        this.tenantStore.currentTenantId === "US_MI" &&
-        [
-          "usMiSecurityClassificationCommitteeReviewV2",
-          "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
-          "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
-        ].includes(this.opportunityType),
-      US_MI_OPT:
-        this.workflowsStore.activeSystem === "INCARCERATION" &&
-        this.tenantStore.currentTenantId === "US_MI" &&
-        [
-          "usMiSecurityClassificationCommitteeReviewV2",
-          "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
-          "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
-        ].includes(this.opportunityType),
-      US_MI_SMI:
-        this.workflowsStore.activeSystem === "INCARCERATION" &&
-        this.tenantStore.currentTenantId === "US_MI" &&
-        [
-          "usMiSecurityClassificationCommitteeReviewV2",
-          "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
-          "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
-        ].includes(this.opportunityType),
-      US_TN_LATEST_CLASSIFICATION_DATE:
-        "usTnCustodyLevelDowngrade2026Policy" === this.opportunityType,
-      LAST_VIEWED: this.opportunityType !== "usIdOverdueFaceToFaceContact",
-      US_ID_LAST_VIEWED:
-        this.opportunityType === "usIdOverdueFaceToFaceContact",
-      ALMOST_ELIGIBLE_STATUS: opportunities.some(
-        (opp: Opportunity) =>
-          !opp.denied && !opp.isSubmitted && opp.almostEligibleStatusMessage,
-      ),
-      SNOOZE_ENDS_IN:
+    );
+    overrideColumn(
+      "SNOOZE_ENDS_IN",
+      () =>
         this.isViewingDeniedTab &&
         opportunities.some(
           (opp: Opportunity) =>
             !!this.snoozeEndsInDays(opp) ||
             !isEmpty(opp.indefiniteDenialReasons),
         ),
-      SUBMITTED_FOR: this.isViewingSubmittedTab,
-      CTA_BUTTON: ![
-        "usTxAnnualReportStatusV2",
-        "usTxEarlyReleaseFromSupervisionV2",
-      ].includes(this.opportunityType),
-      AGREEMENT_STATUS: ["usAzReleaseToTPR", "usAzReleaseToDTP"].includes(
-        this.opportunityType,
+    );
+    overrideColumn("SUBMITTED_FOR", () => this.isViewingSubmittedTab);
+    overrideColumn("DENIAL_REASONS", () => this.isViewingDeniedTab);
+
+    // Conditional predicate function used for multiple columns.
+    const allInReviewOrRevisions = () =>
+      opportunities.every(
+        (opp) => opp.isInSupervisorReview || opp.isInRevisionsRequested,
+      );
+    overrideColumn("US_TX_CURRENT_REVIEWER", allInReviewOrRevisions);
+    overrideColumn("US_TX_SUBMITTED_FOR_REVIEW_DATE", allInReviewOrRevisions);
+    overrideColumn("US_TX_ALL_REVIEWERS", () =>
+      opportunities.every(
+        (opp) =>
+          opp.isInSupervisorReview ||
+          opp.isInRevisionsRequested ||
+          opp.isGrantApproved,
       ),
-      HOME_PLAN_STATUS: ["usAzReleaseToTPR", "usAzReleaseToDTP"].includes(
-        this.opportunityType,
+    );
+    overrideColumn("US_TX_GRANT_DATE", () =>
+      opportunities.every((opp) => opp.isGrantApproved),
+    );
+    overrideColumn("US_TX_REVISION_REASON", () =>
+      opportunities.every((opp) => opp.isInRevisionsRequested),
+    );
+
+    // The CTA button column should be last to take advantage of special rightmost column formatting
+    if (columnIds.includes("CTA_BUTTON")) {
+      columnIds = columnIds.filter((c) => c !== "CTA_BUTTON");
+      columnIds.push("CTA_BUTTON");
+    }
+
+    return columnIds;
+  }
+
+  /**
+   * When the API does not provide enabled columns, render defaults in `allColumns` order; otherwise use `enabledColumnIds` order.
+   */
+  orderedColumnDefs(
+    allColumns: OpportunityTableColumnDef[],
+  ): OpportunityTableColumnDef[] {
+    // TODO(OBT-39443): Add enabledColumns in the admin panel configs rather than relying on static defaults
+    if (!this.config.apiEnabledColumnIds.length)
+      return allColumns.filter((col) => this.enabledColumnIds.includes(col.id));
+    return compact(
+      this.enabledColumnIds.map((id) =>
+        allColumns.find((col) => col.id === id),
       ),
-      MAN_LIT_STATUS: ["usAzReleaseToTPR", "usAzReleaseToDTP"].includes(
-        this.opportunityType,
-      ),
-      DENIAL_REASONS:
-        this.isViewingDeniedTab &&
-        this.workflowsStore.activeSystem === "INCARCERATION" &&
-        this.tenantStore.currentTenantId === "US_MI" &&
-        this.opportunityType === "usMiCustodyLevelDowngrade",
-      US_ID_LAST_CONTACT_DATE:
-        this.opportunityType === "usIdOverdueFaceToFaceContact",
-      US_ID_SUPERVISION_LEVEL:
-        this.opportunityType === "usIdOverdueFaceToFaceContact",
-      US_ID_CASE_TYPE: this.opportunityType === "usIdOverdueFaceToFaceContact",
-      US_ID_CONTACT_DUE_DATE:
-        this.opportunityType === "usIdOverdueFaceToFaceContact",
-      US_ID_CONTACT_CADENCE:
-        this.opportunityType === "usIdOverdueFaceToFaceContact",
-      US_TX_CURRENT_REVIEWER:
-        [
-          "usTxAnnualReportStatusV2",
-          "usTxEarlyReleaseFromSupervisionV2",
-        ].includes(this.opportunityType) &&
-        opportunities.every(
-          (opp) => opp.isInSupervisorReview || opp.isInRevisionsRequested,
-        ),
-      US_TX_SUBMITTED_FOR_REVIEW_DATE:
-        [
-          "usTxAnnualReportStatusV2",
-          "usTxEarlyReleaseFromSupervisionV2",
-        ].includes(this.opportunityType) &&
-        opportunities.every(
-          (opp) => opp.isInSupervisorReview || opp.isInRevisionsRequested,
-        ),
-      US_TX_ALL_REVIEWERS:
-        [
-          "usTxAnnualReportStatusV2",
-          "usTxEarlyReleaseFromSupervisionV2",
-        ].includes(this.opportunityType) &&
-        opportunities.every(
-          (opp) =>
-            opp.isInSupervisorReview ||
-            opp.isInRevisionsRequested ||
-            opp.isGrantApproved,
-        ),
-      US_TX_GRANT_DATE:
-        [
-          "usTxAnnualReportStatusV2",
-          "usTxEarlyReleaseFromSupervisionV2",
-        ].includes(this.opportunityType) &&
-        opportunities.every((opp) => opp.isGrantApproved),
-      US_TX_REVISION_REASON:
-        [
-          "usTxAnnualReportStatusV2",
-          "usTxEarlyReleaseFromSupervisionV2",
-        ].includes(this.opportunityType) &&
-        opportunities.every((opp) => opp.isInRevisionsRequested),
-    };
+    );
   }
 
   /**

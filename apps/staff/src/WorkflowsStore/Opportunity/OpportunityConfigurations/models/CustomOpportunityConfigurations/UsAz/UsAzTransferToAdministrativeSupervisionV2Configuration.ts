@@ -39,7 +39,8 @@ export class UsAzTransferToAdministrativeSupervisionV2Configuration extends ApiO
   }
 
   get enabledColumns(): Array<OpportunityTableColumnId> {
-    return super.enabledColumns.filter((c) => c !== "STATUS");
+    const colsToRemove: OpportunityTableColumnId[] = ["STATUS"];
+    return super.enabledColumns.filter((c) => !colsToRemove.includes(c));
   }
 
   get supportsSupervisorReviewOnGrants(): boolean {

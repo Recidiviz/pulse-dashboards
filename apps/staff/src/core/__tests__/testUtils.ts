@@ -25,7 +25,10 @@ import { Client, Opportunity } from "../../WorkflowsStore";
 import { OpportunityBase } from "../../WorkflowsStore/Opportunity/OpportunityBase";
 import { OpportunityConfiguration } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations";
 import { apiOpportunityConfigurationSchema } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/dtos/ApiOpportunityConfigurationSchema";
-import { formatEligibilityText } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/models/ApiOpportunityConfigurationImpl";
+import {
+  ApiOpportunityConfiguration,
+  formatEligibilityText,
+} from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/models/ApiOpportunityConfigurationImpl";
 import { apiOpportunityConfigurationFactory } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/models/CustomOpportunityConfigurations";
 import { OTHER_KEY } from "../../WorkflowsStore/utils";
 
@@ -184,7 +187,13 @@ export const mockOpportunity: Opportunity<Client> = {
     supportsIneligible: false,
     showIneligibleFormButtons: true,
     hydrateIneligibleRecordsInOpportunityManager: false,
-    enabledColumns: [],
+    get enabledColumns() {
+      return new ApiOpportunityConfiguration(
+        { systemType: this.systemType, stateCode: this.stateCode } as any,
+        {} as any,
+      ).enabledColumns;
+    },
+    apiEnabledColumnIds: [],
     highlightCasesOnHomepage: false,
     highlightedCaseCtaCopy: "highlighted CTA",
     overdueOpportunityCalloutCopy: "overdue",

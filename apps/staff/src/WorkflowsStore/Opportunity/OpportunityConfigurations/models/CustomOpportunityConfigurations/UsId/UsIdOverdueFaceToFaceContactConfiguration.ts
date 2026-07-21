@@ -21,16 +21,22 @@ import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationIm
 export class UsIdOverdueFaceToFaceContactConfiguration extends ApiOpportunityConfiguration {
   get enabledColumns(): Array<OpportunityTableColumnId> {
     const cols = [...super.enabledColumns];
-    cols.push("US_ID_LAST_VIEWED");
-    cols.push("US_ID_LAST_CONTACT_DATE");
-    cols.push("US_ID_SUPERVISION_LEVEL");
-    cols.push("US_ID_CASE_TYPE");
-    cols.push("US_ID_CONTACT_DUE_DATE");
-    cols.push("US_ID_CONTACT_CADENCE");
+    const colsToAdd: OpportunityTableColumnId[] = [
+      "US_ID_LAST_VIEWED",
+      "US_ID_LAST_CONTACT_DATE",
+      "US_ID_SUPERVISION_LEVEL",
+      "US_ID_CASE_TYPE",
+      "US_ID_CONTACT_DUE_DATE",
+      "US_ID_CONTACT_CADENCE",
+    ].filter(
+      (c) => !cols.includes(c as OpportunityTableColumnId),
+    ) as OpportunityTableColumnId[];
+    const colsToRemove: OpportunityTableColumnId[] = [
+      "STATUS",
+      "LAST_VIEWED",
+      "SUPERVISION_EXPIRATION_DATE",
+    ];
     // SUPERVISION_EXPIRATION_DATE uses contact-specific columns instead
-    return cols.filter(
-      (c) =>
-        !["STATUS", "LAST_VIEWED", "SUPERVISION_EXPIRATION_DATE"].includes(c),
-    );
+    return [...cols, ...colsToAdd].filter((c) => !colsToRemove.includes(c));
   }
 }

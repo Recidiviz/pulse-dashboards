@@ -21,10 +21,14 @@ import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationIm
 export class UsNeGoodTimeRestorationConfiguration extends ApiOpportunityConfiguration {
   get enabledColumns(): Array<OpportunityTableColumnId> {
     const cols = [...super.enabledColumns];
-    cols.push("UNIT_ID");
-    cols.push("US_NE_ELIGIBLE_RESTORATION_AMT");
-    cols.push("US_NE_TOTAL_LOST_RESTORABLE_GT");
-    return cols;
+    const colsToAdd: OpportunityTableColumnId[] = [
+      "UNIT_ID",
+      "US_NE_ELIGIBLE_RESTORATION_AMT",
+      "US_NE_TOTAL_LOST_RESTORABLE_GT",
+    ].filter(
+      (c) => !cols.includes(c as OpportunityTableColumnId),
+    ) as OpportunityTableColumnId[];
+    return [...cols, ...colsToAdd];
   }
 
   get pendingOverdueDaysThreshold() {

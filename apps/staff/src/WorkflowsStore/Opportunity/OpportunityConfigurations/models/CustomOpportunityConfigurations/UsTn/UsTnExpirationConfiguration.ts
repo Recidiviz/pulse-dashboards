@@ -20,8 +20,9 @@ import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationIm
 
 export class UsTnExpirationConfiguration extends ApiOpportunityConfiguration {
   get enabledColumns(): Array<OpportunityTableColumnId> {
-    return super.enabledColumns.filter(
-      (c) => c !== "SUPERVISION_EXPIRATION_DATE",
-    );
+    const colsToRemove: OpportunityTableColumnId[] = [
+      "SUPERVISION_EXPIRATION_DATE",
+    ];
+    return super.enabledColumns.filter((c) => !colsToRemove.includes(c));
   }
 }

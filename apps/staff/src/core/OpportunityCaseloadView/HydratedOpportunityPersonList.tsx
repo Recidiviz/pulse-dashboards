@@ -306,7 +306,7 @@ export type OpportunityTableColumnId =
   | "US_TX_GRANT_DATE"
   | "US_TX_REVISION_REASON";
 
-type OpportunityTableColumnDef = {
+export type OpportunityTableColumnDef = {
   header: string;
   id: OpportunityTableColumnId;
   cell?: ColumnDef<Opportunity>["cell"];
@@ -454,9 +454,7 @@ const OpportunityCaseloadTable = observer(function OpportunityCaseloadTable({
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { officerPseudoId, supervisorPseudoId } = useParams();
-  const displayedColumns = allColumns.filter(
-    (col) => presenter.enabledColumnIds[col.id],
-  );
+  const displayedColumns = presenter.orderedColumnDefs(allColumns);
 
   return (
     <CaseloadTable
@@ -1326,9 +1324,7 @@ const TableView = observer(function TableView({
 
   // Register download callback so the parent can trigger CSV export
   // with the correct data and column definitions.
-  const displayedColumns = columns.filter(
-    (col) => presenter.enabledColumnIds[col.id],
-  );
+  const displayedColumns = presenter.orderedColumnDefs(columns);
   const downloadFileName = [presenter.label, presenter.activeTab]
     .filter(Boolean)
     .join(" - ");
