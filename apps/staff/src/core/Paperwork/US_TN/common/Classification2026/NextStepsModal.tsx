@@ -237,7 +237,7 @@ export const PostDownloadModal: React.FC<{
               used.{" "}
             </Notes>
             <Notes $bold={true}>
-              Use new override code: “Overridden from Recidiviz”{" "}
+              Use new override code: “Overridden From Recidiviz (RCDZ)”{" "}
             </Notes>
           </LeftAlign>
         </ModalContent>
