@@ -88,7 +88,7 @@ vi.mock("~@typesense/client", async (importOriginal) => {
       keys: () => ({
         generateScopedSearchKey: mockGenerateScopedSearchKey,
         // Returns a value so the offline lazy-create path resolves; the
-        // non-offline tests short-circuit on TYPESENSE_API_KEY and
+        // non-offline tests short-circuit on TYPESENSE_API_SEARCH_KEY and
         // never call this.
         create: vi.fn().mockResolvedValue({ value: "lazy-created-parent-key" }),
       }),
@@ -151,9 +151,9 @@ beforeEach(async () => {
   fakeFirestore.userUpdates.clear();
   fakeFirestore.supervisors.clear();
   fakeFirestore.incarcerationSupervisors.clear();
-  // Non-offline path: initTypesenseScopedKeys reads TYPESENSE_API_KEY
+  // Non-offline path: initTypesenseScopedKeys reads TYPESENSE_API_SEARCH_KEY
   // directly.
-  process.env["TYPESENSE_API_KEY"] = "test-parent-key";
+  process.env["TYPESENSE_API_SEARCH_KEY"] = "test-parent-key";
   mockGenerateScopedSearchKey.mockReturnValue("test-scoped-key");
   vi.mocked(isOfflineMode).mockReturnValue(false);
   // Mirrors the server bootstrap in index.js — populates the module-level

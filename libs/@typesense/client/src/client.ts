@@ -47,6 +47,6 @@ export function createTypesenseClient(
 export function createLocalTypesenseClient(): TypesenseClient {
   return createTypesenseClient({
     host: process.env["TYPESENSE_HOST"] || "http://localhost:8108",
-    apiKey: process.env["TYPESENSE_API_KEY"] || "xyz",
+    apiKey: process.env["TYPESENSE_API_SEARCH_KEY"] || "xyz",
   });
 }

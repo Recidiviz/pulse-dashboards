@@ -71,11 +71,11 @@ let searchOnlyParentKey: string | null = null;
  * key (an admin-derived scope is silently ignored by Typesense), so this
  * function makes sure such a key is available:
  *
- *   - dev / staging / production: `TYPESENSE_API_KEY` is already the
+ *   - dev / staging / production: `TYPESENSE_API_SEARCH_KEY` is already the
  *     search-only key, pre-provisioned in
  *     libs/@typesense/client/env.<env>.enc.yaml and surfaced here via the
  *     SOPS plugin's `additional-sops-env-files`.
- *   - offline: no `TYPESENSE_API_KEY` env is set; the client uses the
+ *   - offline: no `TYPESENSE_API_SEARCH_KEY` env is set; the client uses the
  *     admin bootstrap key ("xyz") to talk to local Typesense, and we mint a
  *     fresh search-only sub-key from it. Orphan keys pile up in the offline
  *     cluster across restarts — fine for offline dev.
@@ -104,10 +104,10 @@ export async function initTypesenseScopedKeys(): Promise<void> {
     return;
   }
 
-  const key = process.env["TYPESENSE_API_KEY"];
+  const key = process.env["TYPESENSE_API_SEARCH_KEY"];
   if (!key) {
     throw new Error(
-      "TYPESENSE_API_KEY is not set — cannot mint scoped Typesense keys",
+      "TYPESENSE_API_SEARCH_KEY is not set — cannot mint scoped Typesense keys",
     );
   }
   searchOnlyParentKey = key;

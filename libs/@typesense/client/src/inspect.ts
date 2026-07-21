@@ -22,8 +22,8 @@
 //
 // Reads TYPESENSE_HOST and TYPESENSE_API_INSPECT_KEY from the environment (typically
 // loaded by the SOPS plugin from env.<env>.enc.yaml). Admin key is required so the
-// script can hit `/collections` endpoints (the search-only TYPESENSE_API_KEY used by
-// client.ts would 401 here). No writes — safe to run against any cluster.
+// script can hit `/collections` endpoints (the search-only TYPESENSE_API_SEARCH_KEY
+// used by client.ts would 401 here). No writes — safe to run against any cluster.
 
 import { createTypesenseClient } from "./client";
 

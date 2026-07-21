@@ -208,7 +208,7 @@ async function main(): Promise<void> {
   }
   if (!apiKey) {
     console.error(
-      "TYPESENSE_API_WRITE_KEY is required (needs `collections:*` scope — NOT the search-only TYPESENSE_API_KEY)",
+      "TYPESENSE_API_WRITE_KEY is required (needs `collections:*` scope — NOT the search-only TYPESENSE_API_SEARCH_KEY)",
     );
     process.exit(1);
   }

@@ -55,7 +55,7 @@ Inspect reads `TYPESENSE_HOST` and `TYPESENSE_API_INSPECT_KEY` from the
 SOPS-encrypted env file for the chosen configuration. The full key inventory
 lives in [`env.staging.enc.yaml`](env.staging.enc.yaml) / [`env.production.enc.yaml`](env.production.enc.yaml).
 
-## Minting a new TYPESENSE_API_KEY (search-only parent)
+## Minting a new TYPESENSE_API_SEARCH_KEY (search-only parent)
 
 The search bar minting endpoint signs runtime scoped keys off of this parent
 key, then hands them to the staff app. Typesense rejects admin keys as parent
@@ -98,7 +98,7 @@ Encrypt into the env file:
 ```bash
 sops env.staging.enc.yaml
 # Set:
-#   TYPESENSE_API_KEY: <value>
+#   TYPESENSE_API_SEARCH_KEY: <value>
 ```
 
 After rotation, revoke the old parent key in Typesense (otherwise any

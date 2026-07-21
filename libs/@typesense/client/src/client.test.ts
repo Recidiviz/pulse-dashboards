@@ -81,7 +81,7 @@ describe("createTypesenseClient", () => {
 describe("createLocalTypesenseClient", () => {
   it("uses offline defaults when env vars are unset", () => {
     vi.stubEnv("TYPESENSE_HOST", "");
-    vi.stubEnv("TYPESENSE_API_KEY", "");
+    vi.stubEnv("TYPESENSE_API_SEARCH_KEY", "");
     const client = createLocalTypesenseClient();
     expect(client.configuration.nodes[0]).toMatchObject({
       host: "localhost",
@@ -90,9 +90,9 @@ describe("createLocalTypesenseClient", () => {
     });
   });
 
-  it("respects TYPESENSE_HOST and TYPESENSE_API_KEY from the environment", () => {
+  it("respects TYPESENSE_HOST and TYPESENSE_API_SEARCH_KEY from the environment", () => {
     vi.stubEnv("TYPESENSE_HOST", "https://typesense.staging.example.com:9000");
-    vi.stubEnv("TYPESENSE_API_KEY", "staging-key");
+    vi.stubEnv("TYPESENSE_API_SEARCH_KEY", "staging-key");
     const client = createLocalTypesenseClient();
     expect(client.configuration.nodes[0]).toMatchObject({
       host: "typesense.staging.example.com",
