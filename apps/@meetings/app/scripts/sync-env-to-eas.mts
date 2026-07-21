@@ -29,14 +29,12 @@
 
 import { $, chalk } from "zx";
 
-const SYNCABLE_PREFIXES = ["EXPO_PUBLIC_", "SENTRY_AUTH_TOKEN"];
+import {
+  DEPLOY_ENV_TO_EAS_ENVIRONMENT,
+  resolveEasEnvironment,
+} from "./eas-environment.ts";
 
-// Map Nx configuration to EAS environment
-const NX_TO_EAS_ENV_MAP: Record<string, string> = {
-  development: "development",
-  staging: "preview",
-  production: "production",
-};
+const SYNCABLE_PREFIXES = ["EXPO_PUBLIC_", "SENTRY_AUTH_TOKEN"];
 
 function shouldSyncVar(key: string): boolean {
   return SYNCABLE_PREFIXES.some((prefix) => key.startsWith(prefix));
@@ -53,12 +51,14 @@ function getVisibility(key: string): "plaintext" | "sensitive" {
 
 // Get Nx configuration from argv
 const nxConfig = process.argv[2] || "development"; // argv[0]=node, argv[1]=script path, argv[2]=first arg
-const easEnvironment = NX_TO_EAS_ENV_MAP[nxConfig];
 
-if (!easEnvironment) {
+let easEnvironment: string;
+try {
+  easEnvironment = resolveEasEnvironment(nxConfig);
+} catch {
   console.error(`Invalid configuration: ${nxConfig}`);
   console.error(
-    `Valid configurations: ${Object.keys(NX_TO_EAS_ENV_MAP).join(", ")}`,
+    `Valid configurations: ${Object.keys(DEPLOY_ENV_TO_EAS_ENVIRONMENT).join(", ")}`,
   );
   process.exit(1);
 }
