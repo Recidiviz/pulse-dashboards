@@ -18,7 +18,7 @@
 import http from "http";
 
 import { app, port } from "./app";
-import { initTypesenseScopedKeys } from "./workflows/typesenseScopedKey";
+import { initTypesenseScopedKeys } from "./workflows/typesense/init";
 
 export const server = http.createServer(app);
 
@@ -64,12 +64,12 @@ server.on("listening", onListening);
 // Prep the search-only parent key in the background. The mint endpoint (the
 // only consumer) is under active development and gated separately, so a
 // startup failure here should NOT block Pathways/Lantern/Workflows routes from
-// serving. The mint endpoint returns a 500 with a clear message until this
-// resolves — see mintTypesenseScopedKey. Revisit before Typesense-backed
+// serving. The mint endpoints return a 500 with a clear message until this
+// resolves — see mintCaseloadScopedKey. Revisit before Typesense-backed
 // search ships to production.
 initTypesenseScopedKeys().catch((err) => {
   console.error(
-    "Typesense scoped-key init failed — /workflows/typesense-scoped-key will 500 until this is fixed:",
+    "Typesense scoped-key init failed — /workflows/caseload-scoped-key will 500 until this is fixed:",
     err,
   );
 });

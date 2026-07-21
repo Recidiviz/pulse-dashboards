@@ -19,10 +19,8 @@ import type { Request, Response } from "express";
 
 import { fetchOfflineUser } from "../../core";
 import { isOfflineMode } from "../../utils/isOfflineMode";
-import {
-  initTypesenseScopedKeys,
-  mintTypesenseScopedKey,
-} from "../typesenseScopedKey";
+import { mintCaseloadScopedKey } from "../typesense/caseloadScopedKey";
+import { initTypesenseScopedKeys } from "../typesense/init";
 
 vi.mock("../../utils/isOfflineMode");
 vi.mock("../../core");
@@ -165,10 +163,10 @@ beforeEach(async () => {
 // Validation
 // --------------------------------------------------------------------------
 
-describe("mintTypesenseScopedKey — validation", () => {
+describe("mintCaseloadScopedKey — validation", () => {
   test("returns 400 when currentTenantId is missing", async () => {
     const res = makeRes();
-    await mintTypesenseScopedKey(
+    await mintCaseloadScopedKey(
       makeReq({ system: "SUPERVISION" }, makeUser()),
       res,
     );
@@ -180,7 +178,7 @@ describe("mintTypesenseScopedKey — validation", () => {
 
   test("returns 400 when system is missing", async () => {
     const res = makeRes();
-    await mintTypesenseScopedKey(
+    await mintCaseloadScopedKey(
       makeReq({ currentTenantId: "US_TN" }, makeUser()),
       res,
     );
@@ -192,7 +190,7 @@ describe("mintTypesenseScopedKey — validation", () => {
 
   test("returns 400 when system is invalid", async () => {
     const res = makeRes();
-    await mintTypesenseScopedKey(
+    await mintCaseloadScopedKey(
       makeReq({ currentTenantId: "US_TN", system: "BOGUS" }, makeUser()),
       res,
     );
@@ -201,7 +199,7 @@ describe("mintTypesenseScopedKey — validation", () => {
 
   test("returns 422 when user has no externalId", async () => {
     const res = makeRes();
-    await mintTypesenseScopedKey(
+    await mintCaseloadScopedKey(
       makeReq(
         { currentTenantId: "US_TN", system: "SUPERVISION" },
         makeUser({ externalId: null }),
@@ -220,10 +218,10 @@ describe("mintTypesenseScopedKey — validation", () => {
 // externalId — they aren't in any tenant's staff collection. The mint endpoint
 // skips the Firestore lookup and grants unrestricted scope within whatever
 // tenant they're currently viewing.
-describe("mintTypesenseScopedKey — Recidiviz user (cross-state)", () => {
+describe("mintCaseloadScopedKey — Recidiviz user (cross-state)", () => {
   test("skips Firestore lookups and returns unrestricted filter for system=SUPERVISION", async () => {
     const res = makeRes();
-    await mintTypesenseScopedKey(
+    await mintCaseloadScopedKey(
       makeReq(
         { currentTenantId: "US_TN", system: "SUPERVISION" },
         makeUser({ stateCode: "recidiviz", externalId: null }),
@@ -236,7 +234,7 @@ describe("mintTypesenseScopedKey — Recidiviz user (cross-state)", () => {
 
   test("returns unrestricted filter for system=ALL (no system discriminator since unrestricted covers all)", async () => {
     const res = makeRes();
-    await mintTypesenseScopedKey(
+    await mintCaseloadScopedKey(
       makeReq(
         { currentTenantId: "US_MI", system: "ALL" },
         makeUser({ stateCode: "RECIDIVIZ", externalId: null }),
@@ -251,7 +249,7 @@ describe("mintTypesenseScopedKey — Recidiviz user (cross-state)", () => {
 // Single-system state user paths
 // --------------------------------------------------------------------------
 
-describe("mintTypesenseScopedKey — single-system state user", () => {
+describe("mintCaseloadScopedKey — single-system state user", () => {
   test("US_TN SUPERVISION with district → district filter", async () => {
     fakeFirestore.supervisionStaff.set("us_tn_OFFICER123", {
       district: "Region 1",
@@ -259,7 +257,7 @@ describe("mintTypesenseScopedKey — single-system state user", () => {
     });
 
     const res = makeRes();
-    await mintTypesenseScopedKey(
+    await mintCaseloadScopedKey(
       makeReq({ currentTenantId: "US_TN", system: "SUPERVISION" }, makeUser()),
       res,
     );
@@ -276,7 +274,7 @@ describe("mintTypesenseScopedKey — single-system state user", () => {
     });
 
     const res = makeRes();
-    await mintTypesenseScopedKey(
+    await mintCaseloadScopedKey(
       makeReq(
         { currentTenantId: "US_TN", system: "INCARCERATION" },
         makeUser(),
@@ -296,7 +294,7 @@ describe("mintTypesenseScopedKey — single-system state user", () => {
     });
 
     const res = makeRes();
-    await mintTypesenseScopedKey(
+    await mintCaseloadScopedKey(
       makeReq({ currentTenantId: "US_TN", system: "SUPERVISION" }, makeUser()),
       res,
     );
@@ -310,7 +308,7 @@ describe("mintTypesenseScopedKey — single-system state user", () => {
   test("no staff record + no FVs → none base compiles to never-match sentinel", async () => {
     // hasCaseload=false → district base falls back to `none` (not byEmail)
     const res = makeRes();
-    await mintTypesenseScopedKey(
+    await mintCaseloadScopedKey(
       makeReq({ currentTenantId: "US_TN", system: "SUPERVISION" }, makeUser()),
       res,
     );
@@ -326,7 +324,7 @@ describe("mintTypesenseScopedKey — single-system state user", () => {
     fakeFirestore.supervisors.add("OFFICER123");
 
     const res = makeRes();
-    await mintTypesenseScopedKey(
+    await mintCaseloadScopedKey(
       makeReq(
         { currentTenantId: "US_TN", system: "SUPERVISION" },
         makeUser({
@@ -349,7 +347,7 @@ describe("mintTypesenseScopedKey — single-system state user", () => {
     fakeFirestore.supervisors.add("OFFICER123");
 
     const res = makeRes();
-    await mintTypesenseScopedKey(
+    await mintCaseloadScopedKey(
       makeReq(
         { currentTenantId: "US_TN", system: "SUPERVISION" },
         makeUser({
@@ -375,7 +373,7 @@ describe("mintTypesenseScopedKey — single-system state user", () => {
     });
 
     const res = makeRes();
-    await mintTypesenseScopedKey(
+    await mintCaseloadScopedKey(
       makeReq({ currentTenantId: "US_TN", system: "SUPERVISION" }, makeUser()),
       res,
     );
@@ -397,7 +395,7 @@ describe("mintTypesenseScopedKey — single-system state user", () => {
     });
     fakeFirestore.incarcerationSupervisors.add("OFFICER123");
 
-    await mintTypesenseScopedKey(
+    await mintCaseloadScopedKey(
       makeReq(
         { currentTenantId: "US_TN", system: "SUPERVISION" },
         makeUser({ featureVariants: { workflowsSupervisorSearch: true } }),
@@ -424,7 +422,7 @@ describe("mintTypesenseScopedKey — single-system state user", () => {
 // system=ALL cross-system path
 // --------------------------------------------------------------------------
 
-describe("mintTypesenseScopedKey — system=ALL (cross-system)", () => {
+describe("mintCaseloadScopedKey — system=ALL (cross-system)", () => {
   test("US_MI ALL: SUPERVISION district-scoped + INCARCERATION unrestricted, combined via cross-system compiler", async () => {
     fakeFirestore.supervisionStaff.set("us_mi_OFFICER123", {
       district: "Region 3",
@@ -432,7 +430,7 @@ describe("mintTypesenseScopedKey — system=ALL (cross-system)", () => {
     });
 
     const res = makeRes();
-    await mintTypesenseScopedKey(
+    await mintCaseloadScopedKey(
       makeReq(
         { currentTenantId: "US_MI", system: "ALL" },
         makeUser({ stateCode: "US_MI" }),
@@ -451,7 +449,7 @@ describe("mintTypesenseScopedKey — system=ALL (cross-system)", () => {
 // Response shape
 // --------------------------------------------------------------------------
 
-describe("mintTypesenseScopedKey — response shape", () => {
+describe("mintCaseloadScopedKey — response shape", () => {
   test("returns scopedKey, ISO expiresAt, and typesenseHost", async () => {
     fakeFirestore.supervisionStaff.set("us_tn_OFFICER123", {
       district: "Region 1",
@@ -460,7 +458,7 @@ describe("mintTypesenseScopedKey — response shape", () => {
     process.env["TYPESENSE_HOST"] = "https://typesense-test.example.com";
 
     const res = makeRes();
-    await mintTypesenseScopedKey(
+    await mintCaseloadScopedKey(
       makeReq({ currentTenantId: "US_TN", system: "SUPERVISION" }, makeUser()),
       res,
     );
@@ -481,7 +479,7 @@ describe("mintTypesenseScopedKey — response shape", () => {
     );
 
     const res = makeRes();
-    await mintTypesenseScopedKey(
+    await mintCaseloadScopedKey(
       makeReq({ currentTenantId: "US_TN", system: "SUPERVISION" }),
       res,
     );
@@ -505,7 +503,7 @@ describe("mintTypesenseScopedKey — response shape", () => {
     });
 
     const res = makeRes();
-    await mintTypesenseScopedKey(
+    await mintCaseloadScopedKey(
       makeReq({ currentTenantId: "US_TN", system: "SUPERVISION" }, makeUser()),
       res,
     );
