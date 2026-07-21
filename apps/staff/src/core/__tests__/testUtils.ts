@@ -194,6 +194,7 @@ export const mockOpportunity: Opportunity<Client> = {
       ).enabledColumns;
     },
     apiEnabledColumnIds: [],
+    apiEnabledColumnInfo: {},
     highlightCasesOnHomepage: false,
     highlightedCaseCtaCopy: "highlighted CTA",
     overdueOpportunityCalloutCopy: "overdue",

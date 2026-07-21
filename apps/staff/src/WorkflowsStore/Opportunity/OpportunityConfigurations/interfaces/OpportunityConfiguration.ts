@@ -88,6 +88,12 @@ export interface OpportunityConfiguration {
   highlightCasesOnHomepage: boolean;
   highlightedCaseCtaCopy: string;
   apiEnabledColumnIds: Array<OpportunityTableColumnId>;
+  apiEnabledColumnInfo: Partial<
+    Record<
+      OpportunityTableColumnId,
+      { columnHeader: string | undefined; cellValue: string | undefined }
+    >
+  >;
   enabledColumns: Array<OpportunityTableColumnId>;
   subcategoryHeadings?: Record<string, string>;
   allSubcategoriesOfSubmitted?: string[] | undefined;

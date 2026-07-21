@@ -96,6 +96,7 @@ import { UsAzTransferToAdministrativeSupervisionOpportunity } from "../../Workfl
 import { UsIdOverdueFaceToFaceContactOpportunity } from "../../WorkflowsStore/Opportunity/UsId/usIdOverdueFaceToFaceContact";
 import { UsNeGoodTimeRestorationOpportunity } from "../../WorkflowsStore/Opportunity/UsNe";
 import { UsTxArsErsV2OpportunityBase } from "../../WorkflowsStore/Opportunity/UsTx/UsTxArsErsV2OpportunityBase";
+import { hydrateStr } from "../../WorkflowsStore/Opportunity/utils/criteriaUtils";
 import { OpportunityPersonListPresenter } from "../../WorkflowsStore/presenters/OpportunityPersonListPresenter";
 import { Resident } from "../../WorkflowsStore/Resident";
 import { getLinkToForm } from "../../WorkflowsStore/utils";
@@ -311,6 +312,65 @@ export type OpportunityTableColumnDef = {
   id: OpportunityTableColumnId;
   cell?: ColumnDef<Opportunity>["cell"];
 } & OpportunityTableColumnSorting;
+
+/**
+ * Applies additions/modifications to `allColumns` based on the per-column info
+ * the API config provides.
+ * - For an existing column, replaces the header string provided and/or swaps
+ *   the cell renderer with hydrated Handlebars content.
+ * - For a new column, constructs one from the provided header and hydrated cell
+ *   renderer, but only when both are present.
+ */
+function applyApiEnabledColumnInfo(
+  allColumns: OpportunityTableColumnDef[],
+  apiEnabledColumnInfo: Partial<
+    Record<
+      OpportunityTableColumnId,
+      { columnHeader: string | undefined; cellValue: string | undefined }
+    >
+  >,
+): OpportunityTableColumnDef[] {
+  const newColumns: OpportunityTableColumnDef[] = [];
+  for (const [id, info] of Object.entries(apiEnabledColumnInfo)) {
+    const hydratedAccessorFn =
+      info.cellValue !== undefined
+        ? (opp: Opportunity) =>
+            hydrateStr(info.cellValue as string, {
+              criteria: {},
+              formatters: {},
+              opportunity: opp,
+            })
+        : undefined;
+
+    // Modify existing column
+    const existingCol = allColumns.find((col) => col.id === id);
+    if (existingCol) {
+      if (info.columnHeader !== undefined) {
+        existingCol.header = info.columnHeader;
+      }
+      if (hydratedAccessorFn) {
+        delete existingCol.cell;
+        Object.assign(existingCol, {
+          enableSorting: true,
+          sortingFn: "alphanumeric",
+          accessorFn: hydratedAccessorFn,
+        });
+      }
+      continue;
+    }
+    // Add new column only if necessary values present
+    if (info.columnHeader === undefined || !hydratedAccessorFn) continue;
+    newColumns.push({
+      header: info.columnHeader,
+      id: id as OpportunityTableColumnId,
+      enableSorting: true,
+      sortingFn: "alphanumeric",
+      accessorFn: hydratedAccessorFn,
+    });
+  }
+
+  return [...allColumns, ...newColumns];
+}
 
 type OpportunityPersonListProps = {
   opportunityType: OpportunityType;
@@ -1322,9 +1382,15 @@ const TableView = observer(function TableView({
     },
   ];
 
+  // Apply any header/cell overrides and API-defined columns from the config.
+  const apiModifiedColumns = applyApiEnabledColumnInfo(
+    columns,
+    presenter.config.apiEnabledColumnInfo,
+  );
+
   // Register download callback so the parent can trigger CSV export
   // with the correct data and column definitions.
-  const displayedColumns = presenter.orderedColumnDefs(columns);
+  const displayedColumns = presenter.orderedColumnDefs(apiModifiedColumns);
   const downloadFileName = [presenter.label, presenter.activeTab]
     .filter(Boolean)
     .join(" - ");
@@ -1344,7 +1410,7 @@ const TableView = observer(function TableView({
         presenter={presenter}
         subcategoryOrder={subcategoryOrder}
         peopleInActiveTabBySubcategory={peopleInActiveTabBySubcategory}
-        allColumns={columns}
+        allColumns={apiModifiedColumns}
       />
     );
   }
@@ -1354,7 +1420,7 @@ const TableView = observer(function TableView({
     <OpportunityCaseloadTable
       presenter={presenter}
       opportunities={opportunities}
-      allColumns={columns}
+      allColumns={apiModifiedColumns}
     />
   );
 });

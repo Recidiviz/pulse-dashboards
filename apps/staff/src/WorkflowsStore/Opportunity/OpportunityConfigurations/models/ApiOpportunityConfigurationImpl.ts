@@ -346,6 +346,16 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
       : [];
   }
 
+  // The full column info provided by the API config
+  get apiEnabledColumnInfo(): Partial<
+    Record<
+      OpportunityTableColumnId,
+      { columnHeader: string | undefined; cellValue: string | undefined }
+    >
+  > {
+    return this.configurationObject.enabledColumns ?? {};
+  }
+
   /**
    * Table view columns enabled for this opportunity. If columns are not yet
    * configured in the admin panel, we go with a default set of columns
