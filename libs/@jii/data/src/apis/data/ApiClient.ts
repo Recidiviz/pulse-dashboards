@@ -16,6 +16,10 @@
 // =============================================================================
 
 import type { TRPCClient } from "@trpc/client";
+import {
+  createTRPCOptionsProxy,
+  TRPCOptionsProxy,
+} from "@trpc/tanstack-react-query";
 import { makeObservable, when } from "mobx";
 import { ILazyObservable, lazyObservable } from "mobx-utils";
 
@@ -32,6 +36,7 @@ import { FilterParams, FirestoreAPIClient } from "~firestore-api";
 import { residentOpportunitySchemas } from "../../configs/residentsOpportunitySchemas";
 import { proxyHost } from "../../utils/proxy";
 import { AuthManager } from "../auth/AuthManager";
+import { queryClient } from "../query/client";
 import { DataAPI } from "./interface";
 import { createTrpcClientForApi } from "./trpcMixin";
 
@@ -39,6 +44,7 @@ export class ApiClient implements DataAPI {
   private firestoreClient: FirestoreAPIClient;
 
   readonly trpc: TRPCClient<JiiResidentAppRouter>;
+  readonly trpcQuerier: TRPCOptionsProxy<JiiResidentAppRouter>;
 
   private authentication: ILazyObservable<boolean>;
 
@@ -58,6 +64,10 @@ export class ApiClient implements DataAPI {
     );
 
     this.trpc = createTrpcClientForApi(this);
+    this.trpcQuerier = createTRPCOptionsProxy({
+      client: this.trpc,
+      queryClient,
+    });
 
     // this function will only run the first time auth is checked
     this.authentication = lazyObservable(async (updateValue) => {

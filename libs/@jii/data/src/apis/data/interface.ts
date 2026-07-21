@@ -16,6 +16,7 @@
 // =============================================================================
 
 import type { TRPCClient } from "@trpc/client";
+import { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
 
 import { StateCode } from "~@jii/configs";
 import {
@@ -71,4 +72,5 @@ export interface DataAPI {
   isAuthenticated: boolean;
   getApiToken(): Promise<string>;
   readonly trpc: TRPCClient<JiiResidentAppRouter>;
+  readonly trpcQuerier: TRPCOptionsProxy<JiiResidentAppRouter>;
 }

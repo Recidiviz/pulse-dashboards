@@ -15,7 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { TRPCClient } from "@trpc/client";
+import { type TRPCClient } from "@trpc/client";
+import {
+  createTRPCOptionsProxy,
+  TRPCOptionsProxy,
+} from "@trpc/tanstack-react-query";
 import assertNever from "assert-never";
 import isMatch from "lodash/isMatch";
 
@@ -35,6 +39,7 @@ import { FirestoreAPI, FirestoreOfflineAPIClient } from "~firestore-api";
 
 import { OpportunityRecord } from "../../configs/residentsOpportunitySchemas";
 import { AuthManager } from "../auth/AuthManager";
+import { queryClient } from "../query/client";
 import { DataAPI } from "./interface";
 import { createTrpcClientForApi } from "./trpcMixin";
 
@@ -44,11 +49,16 @@ export class OfflineAPIClient implements DataAPI {
   isAuthenticated = true;
 
   readonly trpc: TRPCClient<JiiResidentAppRouter>;
+  readonly trpcQuerier: TRPCOptionsProxy<JiiResidentAppRouter>;
 
   constructor(private externals: { authManager: AuthManager }) {
     this.firestoreClient = new FirestoreOfflineAPIClient();
 
     this.trpc = createTrpcClientForApi(this);
+    this.trpcQuerier = createTRPCOptionsProxy({
+      client: this.trpc,
+      queryClient,
+    });
   }
 
   /**

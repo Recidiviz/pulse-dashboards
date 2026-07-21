@@ -39,6 +39,7 @@ let store: ResidentsStore;
 
 const queryUserPropertiesMock = vi.fn();
 const mutateUserPropertiesMock = vi.fn();
+const queryGetFlagsMock = vi.fn();
 
 beforeEach(() => {
   vi.restoreAllMocks();
@@ -49,6 +50,7 @@ beforeEach(() => {
       user: {
         getProperties: { query: queryUserPropertiesMock },
         setProperties: { mutate: mutateUserPropertiesMock },
+        getFlags: { query: queryGetFlagsMock },
       },
     },
   );

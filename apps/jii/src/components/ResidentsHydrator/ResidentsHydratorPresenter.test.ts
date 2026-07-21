@@ -25,6 +25,7 @@ let store: RootStore;
 let presenter: ResidentsHydratorPresenter;
 
 const queryUserPropertiesMock = vi.fn();
+const queryUserFlagsMock = vi.fn();
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
@@ -35,10 +36,12 @@ beforeEach(() => {
     // @ts-expect-error minimal stub
     user: {
       getProperties: { query: queryUserPropertiesMock },
+      getFlags: { query: queryUserFlagsMock },
     },
   });
   presenter = new ResidentsHydratorPresenter(store, "US_NE");
-  queryUserPropertiesMock.mockResolvedValue(null);
+  queryUserPropertiesMock.mockResolvedValue({});
+  queryUserFlagsMock.mockResolvedValue({});
 });
 
 afterEach(() => {
@@ -58,6 +61,7 @@ test("hydrate", async () => {
   expect(presenter.hydrationState).toEqual({ status: "hydrated" });
   expect(store.populateResidentsStore).toHaveBeenCalled();
   expect(queryUserPropertiesMock).toHaveBeenCalled();
+  expect(queryUserFlagsMock).toHaveBeenCalled();
 
   expect(store.residentsStore).toBeDefined();
   expect(store.residentsStore?.userProperties).toBeDefined();

@@ -9,7 +9,9 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-// can be used to store random bits of user activity or preferences
+// Can be used to store random bits of user activity or preferences.
+// More specifically, this model should be used for USER-GENERATED data only;
+// for admin-generated user settings see the UserFlag models.
 model UserProperties {
     id                         String    @id
     hasSeenOnboarding          DateTime?
@@ -48,6 +50,22 @@ model ResidentFlagInstance {
     effectiveAt     DateTime
 
     @@id([pseudonymizedId, flagId])
+}
+
+// Most feature flags can and should be applied at the resident level (so that they
+// carry over to staff or Recidiviz users viewing those residents). For those that cannot be,
+// set a User Flag instead. (Flags are ADMIN-GENERATED data on users; for user-generated data
+// properties see the UserProperties model.)
+enum UserFlagId {
+    useNewResidentData
+}
+
+model UserFlagInstance {
+    userId      String
+    flagId      UserFlagId
+    effectiveAt DateTime
+
+    @@id([userId, flagId])
 }
 
 // Tracks programs that a user has starred/favorited

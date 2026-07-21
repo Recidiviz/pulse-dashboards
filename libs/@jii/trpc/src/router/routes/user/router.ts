@@ -17,6 +17,7 @@
 
 import { firebaseAuthedResidentProcedure } from "../../../procedures/firebaseAuthedResidentProcedure";
 import { router } from "../../../procedures/init";
+import { getFlags } from "./getFlags";
 import { setPropertiesInputSchema } from "./schema";
 
 /**
@@ -34,6 +35,7 @@ export const userRouter = router({
       });
     },
   ),
+  getFlags,
   setProperties: firebaseAuthedResidentProcedure
     .input(setPropertiesInputSchema)
     .mutation(async ({ input, ctx: { prisma, userId } }) => {

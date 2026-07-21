@@ -53,6 +53,7 @@ type StateUserPropertiesInput = Partial<
 type UserPropertyKey = "egtOnboardingSeen" | "azOnboardingSeen";
 
 export type ResidentFlags = JiiResidentAppRouterOutputs["resident"]["getFlags"];
+export type UserFlags = JiiResidentAppRouterOutputs["user"]["getFlags"];
 
 export class ResidentsStore {
   /**
@@ -73,6 +74,8 @@ export class ResidentsStore {
   residentFlagsByPseudoId: Map<string, ResidentFlags> = new Map();
 
   userProperties?: StateUserProperties;
+
+  userFlags?: UserFlags;
 
   constructor(
     private readonly rootStore: RootStore,
@@ -225,6 +228,15 @@ export class ResidentsStore {
     runInAction(() => {
       this.userProperties = properties;
     });
+  }
+
+  *populateUserFlags(): FlowMethod<
+    typeof this.apiClient.trpc.user.getFlags.query,
+    void
+  > {
+    if (this.userFlags) return;
+
+    this.userFlags = yield this.apiClient.trpc.user.getFlags.query();
   }
 
   // incrementally migrating old data from local storage as we encounter it

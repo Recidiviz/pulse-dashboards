@@ -36,6 +36,7 @@ export class ResidentsHydratorPresenter implements Hydratable {
       expectPopulated: [
         this.expectStorePopulated,
         this.expectUserPropertiesPopulated,
+        this.expectUserFlagsPopulated,
       ],
       populate: async () => {
         await Promise.all([this.populateStoreAndUserProperties()]);
@@ -55,7 +56,10 @@ export class ResidentsHydratorPresenter implements Hydratable {
 
   private async populateStoreAndUserProperties() {
     await flowResult(this.rootStore.populateResidentsStore(this.stateCode));
-    await this.rootStore.residentsStore?.populateUserProperties();
+    await Promise.all([
+      this.rootStore.residentsStore?.populateUserProperties(),
+      flowResult(this.rootStore.residentsStore?.populateUserFlags()),
+    ]);
   }
 
   private expectStorePopulated() {
@@ -69,6 +73,11 @@ export class ResidentsHydratorPresenter implements Hydratable {
   private expectUserPropertiesPopulated() {
     if (this.rootStore.residentsStore?.userProperties === undefined)
       throw new Error("failed to populate user properties");
+  }
+
+  private expectUserFlagsPopulated() {
+    if (this.rootStore.residentsStore?.userFlags === undefined)
+      throw new Error("failed to populate user flags");
   }
 
   get residentsStore() {

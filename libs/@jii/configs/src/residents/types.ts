@@ -49,6 +49,10 @@ type ResidentFlag =
   //TODO OBT-34689 remove after launch
   | "usArFslImprovements";
 
+// this type must stay in sync with the UserFlagId enum
+// defined in the prisma schema.
+type UserFlag = "useNewResidentData";
+
 export type ResidentsConfig = {
   home: {
     footer: {
@@ -67,6 +71,7 @@ export type ResidentsConfig = {
   translation: TranslationConfig;
   limitDistrictSearchOptions?: boolean;
   enabledResidentFlags?: Partial<Record<ResidentFlag, Date>>;
+  enabledUserFlags?: Partial<Record<UserFlag, Date>>;
 };
 
 export type EligibilityModuleConfig = {

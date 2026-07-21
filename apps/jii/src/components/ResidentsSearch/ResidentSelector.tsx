@@ -16,16 +16,24 @@
 // =============================================================================
 
 import { Body16 } from "@recidiviz/design-system";
+import { useQuery } from "@tanstack/react-query";
 import { observer } from "mobx-react-lite";
 import { FC, useId } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { Selector } from "~@jii/common-ui";
-import { useResidentsContext } from "~@jii/data";
-import { MainContentHydratorWithErrorLogging } from "~@jii/layout";
+import {
+  useNewResidentData,
+  useResidentsContext,
+  useRootStore,
+} from "~@jii/data";
+import {
+  ErrorPageMainContent,
+  MainContentHydratorWithErrorLogging,
+} from "~@jii/layout";
 import { State } from "~@jii/paths";
-import { withPresenterManager } from "~hydration-utils";
+import { castToError, withPresenterManager } from "~hydration-utils";
 
 import { ResidentSelectorPresenter } from "./ResidentSelectorPresenter";
 
@@ -34,38 +42,80 @@ function usePresenter({ facilityId }: { facilityId: string }) {
   return new ResidentSelectorPresenter(residentsStore, facilityId);
 }
 
+type SelectOption = {
+  label: string;
+  value: { pseudonymizedId: string };
+};
+
+// this renders the UI irrespective of the data source
+const ResidentSelectorInner: FC<{ selectOptions: Array<SelectOption> }> = ({
+  selectOptions,
+}) => {
+  const navigate = useNavigate();
+  const residentLabelId = useId();
+  const urlParams = useTypedParams(State.Search);
+  return (
+    <>
+      <Body16 as="p" id={residentLabelId}>
+        Search for a resident to explore what they will see in Opportunities.
+      </Body16>
+      <Selector
+        labelId={residentLabelId}
+        options={selectOptions}
+        onChange={(value) => {
+          // this should land you on the selected resident's homepage
+          navigate(
+            State.Resident.buildPath({
+              ...urlParams,
+              personPseudoId: value.pseudonymizedId,
+            }),
+          );
+        }}
+        placeholder="Start typing a resident's name or DOC ID …"
+      />
+    </>
+  );
+};
+
 const ManagedComponent: FC<{ presenter: ResidentSelectorPresenter }> = observer(
-  function ResidentSelector({ presenter }) {
-    const navigate = useNavigate();
-    const residentLabelId = useId();
-    const urlParams = useTypedParams(State.Search);
-    return (
-      <>
-        <Body16 as="p" id={residentLabelId}>
-          Search for a resident to explore what they will see in Opportunities.
-        </Body16>
-        <Selector
-          labelId={residentLabelId}
-          options={presenter.selectOptions}
-          onChange={(value) => {
-            // this should land you on the selected resident's homepage
-            navigate(
-              State.Resident.buildPath({
-                ...urlParams,
-                personPseudoId: value.pseudonymizedId,
-              }),
-            );
-          }}
-          placeholder="Start typing a resident's name or DOC ID …"
-        />
-      </>
-    );
+  function ResidentSelectorWithPresenter({ presenter }) {
+    return <ResidentSelectorInner selectOptions={presenter.selectOptions} />;
   },
 );
 
-export const ResidentSelector = withPresenterManager({
+// TODO(OBT-29541): don't need this anymore once the migration is complete
+const FirestoreResidentSelector = withPresenterManager({
   usePresenter,
   ManagedComponent,
   managerIsObserver: true,
   HydratorComponent: MainContentHydratorWithErrorLogging,
 });
+
+function TrpcResidentSelector({ facilityId }: { facilityId: string }) {
+  const {
+    apiClient: { trpcQuerier },
+  } = useRootStore();
+  const newData = useQuery(
+    trpcQuerier.resident.getResidentsInFacility.queryOptions({ facilityId }),
+  );
+
+  if (newData.error)
+    return <ErrorPageMainContent error={castToError(newData.error)} />;
+
+  if (!newData.data) return null;
+
+  const selectOptions = newData.data.map((r) => ({
+    label: `${r.givenNames ?? ""} ${r.surname ?? ""} (${r.displayId})`,
+    value: r,
+  }));
+
+  return <ResidentSelectorInner selectOptions={selectOptions} />;
+}
+
+export function ResidentSelector({ facilityId }: { facilityId: string }) {
+  return useNewResidentData() ? (
+    <TrpcResidentSelector facilityId={facilityId} />
+  ) : (
+    <FirestoreResidentSelector facilityId={facilityId} />
+  );
+}
