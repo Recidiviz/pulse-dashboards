@@ -161,6 +161,26 @@ export class RoutePlannerClientsPresenter implements Hydratable {
     }
   }
 
+  // route planner store functions
+
+  removeAddedPerson(person: Client) {
+    this.routePlannerClientStore.removeAddedMorePeople(person);
+  }
+
+  get selectedClients(): readonly JusticeInvolvedPerson[] {
+    return this.routePlannerClientStore.allPeople;
+  }
+
+  get getAddMorePeople(): Client[] {
+    return this.routePlannerClientStore.addMorePeople;
+  }
+
+  indexOfAllPeople(person: Client) {
+    return this.routePlannerClientStore.allPeople.findIndex(
+      (p) => p.pseudonymizedId === person.pseudonymizedId,
+    );
+  }
+
   getBadAddressCopy() {
     return `We couldn't find any results for this address. Please check for typos and correct the address in ${this.OMS}. Updates in ${this.OMS} will be reflected in 1-2 business days.`;
   }
@@ -171,28 +191,34 @@ export class RoutePlannerClientsPresenter implements Hydratable {
   /**
    * @returns copy and information used in ClientCard for a specific task
    */
-  getClientCardCopy(tasks: SupervisionTask[]) {
-    const person = tasks[0].person as Client;
+  getClientCardCopy(tasks: SupervisionTask[] | undefined, person: Client) {
+    if (tasks) {
+      const taskInfo = tasks.map((task) => {
+        return {
+          type: task.routePlannerDisplayName ?? "Other",
+          // idaho does not have the ability to view
+          // or schedule appointment dates presently
+          ...(person.stateCode !== "US_ID" && {
+            scheduledStatus: task.hasFutureScheduledContact
+              ? `Scheduled for ${task.futureScheduledContacts?.map((date) => formatWorkflowsDateWithoutYear(date)).join(", ")}`
+              : "To-Do",
+            isScheduled: task.hasFutureScheduledContact,
+          }),
+        };
+      });
 
-    const taskInfo = tasks.map((task) => {
       return {
-        type: task.routePlannerDisplayName ?? "Other",
-        // idaho does not have the ability to view
-        // or schedule appointment dates presently
-        ...(person.stateCode !== "US_ID" && {
-          scheduledStatus: task.hasFutureScheduledContact
-            ? `Scheduled for ${task.futureScheduledContacts?.map((date) => formatWorkflowsDateWithoutYear(date)).join(", ")}`
-            : "To-Do",
-          isScheduled: task.hasFutureScheduledContact,
-        }),
+        supervisionLevelShort:
+          this.SHORT_SUPERVISION_LEVEL_COPY[person.supervisionLevel] ?? "Other",
+        supervisionTooltip: person.supervisionLevel,
+        tasksInfo: taskInfo,
       };
-    });
-
+    }
     return {
+      tasksInfo: undefined,
       supervisionLevelShort:
         this.SHORT_SUPERVISION_LEVEL_COPY[person.supervisionLevel] ?? "Other",
       supervisionTooltip: person.supervisionLevel,
-      tasksInfo: taskInfo,
     };
   }
 
@@ -303,23 +329,19 @@ export class RoutePlannerClientsPresenter implements Hydratable {
     );
   }
 
-  get selectedClients(): readonly JusticeInvolvedPerson[] {
-    return this.selectedPeople;
-  }
-
   get selectedClientPseudoIds(): string[] {
     return this.selectedPeople.map((client) => client.pseudonymizedId);
   }
 
   get canOptimizeRoute(): boolean {
-    return this.selectedPeople.length >= 2;
+    return this.routePlannerClientStore.allPeople.length >= 2;
   }
 
-  isPersonSelected(person: JusticeInvolvedPerson) {
-    return this.indexOfPerson(person) !== -1;
+  isPersonSelected(person: Client) {
+    return this.routePlannerClientStore.indexOfPerson(person) !== -1;
   }
 
-  indexOfPerson(person: JusticeInvolvedPerson) {
+  indexOfPerson(person: Client) {
     return this.selectedPeople.findIndex(
       (p) => p.pseudonymizedId === person.pseudonymizedId,
     );
@@ -344,6 +366,7 @@ export class RoutePlannerClientsPresenter implements Hydratable {
     // to make a new geocoding API request, so don't even check.
     if (Object.keys(this.placeIds).includes(person.pseudonymizedId)) {
       this.selectedPeople.push(person);
+      this.routePlannerClientStore.addSelectedPeople(person);
       return;
     }
 
@@ -367,6 +390,7 @@ export class RoutePlannerClientsPresenter implements Hydratable {
     if (result.status === GeocodingStatus.Success) {
       runInAction(() => {
         this.placeIds[person.pseudonymizedId] = result.placeId;
+        this.routePlannerClientStore.addSelectedPeople(person);
         this.selectedPeople.push(person);
         this.isAddingPerson = false;
         this.analyticsStore.trackRoutePlannerClientSelected({
@@ -389,7 +413,8 @@ export class RoutePlannerClientsPresenter implements Hydratable {
     }
   }
 
-  removePerson(person: JusticeInvolvedPerson) {
+  removePerson(person: Client) {
+    this.routePlannerClientStore.removeFromAllPeople(person);
     const i = this.indexOfPerson(person);
     if (i === -1) {
       captureException(
@@ -412,11 +437,13 @@ export class RoutePlannerClientsPresenter implements Hydratable {
     this.isOptimizing = true;
 
     try {
-      const waypoints = this.selectedPeople.map((person) => ({
-        pseudonymizedId: person.pseudonymizedId,
-        placeId: this.placeIds[person.pseudonymizedId],
-        formattedAddress: (person as Client).formattedAddress,
-      }));
+      const waypoints = this.routePlannerClientStore.allPeople.map(
+        (person) => ({
+          pseudonymizedId: person.pseudonymizedId,
+          placeId: this.placeIds[person.pseudonymizedId],
+          formattedAddress: (person as Client).formattedAddress,
+        }),
+      );
 
       const apiStore = this.workflowsStore.rootStore.apiStore;
       const result = await apiStore.optimizeRoute({

@@ -244,15 +244,15 @@ const CollapsedClientCard = observer(function ClientCard({
   tasks,
   presenter,
   onDropdownClick,
+  person,
 }: {
-  tasks: SupervisionTask[];
+  tasks: SupervisionTask[] | undefined;
   presenter: RoutePlannerClientsPresenter;
   onDropdownClick: () => void;
+  person: Client;
 }) {
-  const person = tasks[0].person as Client;
-
   const { supervisionLevelShort, supervisionTooltip } =
-    presenter.getClientCardCopy(tasks);
+    presenter.getClientCardCopy(tasks, person);
 
   const isSelected = presenter.isPersonSelected(person);
   const ordinalRank = presenter.indexOfPerson(person) + 1;
@@ -271,7 +271,9 @@ const CollapsedClientCard = observer(function ClientCard({
         if (!isSelectable) return;
 
         if (isSelected) {
-          presenter.removePerson(person);
+          if (tasks) {
+            presenter.removePerson(person);
+          } else presenter.removeAddedPerson(person);
         } else {
           await presenter.addPerson(person);
         }
@@ -314,13 +316,14 @@ export const ClientCard = observer(function ClientCard({
   tasks,
   presenter,
   isMobile,
+  person,
 }: {
-  tasks: SupervisionTask[];
+  tasks?: SupervisionTask[];
   presenter: RoutePlannerClientsPresenter;
   isMobile: boolean;
+  person: Client;
 }) {
   const [collapsed, setCollapsed] = useState(true);
-  const person = tasks[0].person as Client;
 
   usePersonTracking(person, () => {
     presenter.trackRoutePlannerClientEvent(
@@ -330,10 +333,11 @@ export const ClientCard = observer(function ClientCard({
   });
 
   const { supervisionLevelShort, supervisionTooltip, tasksInfo } =
-    presenter.getClientCardCopy(tasks);
+    presenter.getClientCardCopy(tasks, person);
 
   const isSelected = presenter.isPersonSelected(person);
-  const ordinalRank = presenter.indexOfPerson(person) + 1;
+
+  const ordinalRank = presenter.indexOfAllPeople(person) + 1;
 
   const hasAddress = person.formattedAddress !== undefined;
   const hasBadAddress = presenter.hasBadAddress(person);
@@ -342,7 +346,8 @@ export const ClientCard = observer(function ClientCard({
   if (collapsed && isMobile) {
     return (
       <CollapsedClientCard
-        tasks={tasks}
+        person={person}
+        tasks={tasks ? tasks : undefined}
         presenter={presenter}
         onDropdownClick={() => {
           presenter.trackRoutePlannerClientEvent(
@@ -365,7 +370,9 @@ export const ClientCard = observer(function ClientCard({
         if (!isSelectable) return;
 
         if (isSelected) {
-          presenter.removePerson(person);
+          if (tasks) {
+            presenter.removePerson(person);
+          } else presenter.removeAddedPerson(person);
         } else {
           await presenter.addPerson(person);
         }
@@ -427,23 +434,24 @@ export const ClientCard = observer(function ClientCard({
               </NoAddressFoundText>
             )}
           </InfoRow>
-          {tasksInfo.map((task) => (
-            <TasksRow>
-              <InfoRow>
-                <TagsIcon />
-                <SmallInfoText>{task.type}</SmallInfoText>
-              </InfoRow>
-              {task.scheduledStatus && (
-                <SchedulingBadge
-                  color={
-                    task.isScheduled ? palette.slate10 : "rgb(244, 233, 215)"
-                  }
-                >
-                  {task.scheduledStatus}
-                </SchedulingBadge>
-              )}
-            </TasksRow>
-          ))}
+          {tasksInfo &&
+            tasksInfo.map((task) => (
+              <TasksRow>
+                <InfoRow>
+                  <TagsIcon />
+                  <SmallInfoText>{task.type}</SmallInfoText>
+                </InfoRow>
+                {task.scheduledStatus && (
+                  <SchedulingBadge
+                    color={
+                      task.isScheduled ? palette.slate10 : "rgb(244, 233, 215)"
+                    }
+                  >
+                    {task.scheduledStatus}
+                  </SchedulingBadge>
+                )}
+              </TasksRow>
+            ))}
         </AdditionalInfo>
 
         <JustifiedInfo>

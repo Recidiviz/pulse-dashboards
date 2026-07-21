@@ -23,6 +23,7 @@ import { WorkflowsStore } from "../../../WorkflowsStore/WorkflowsStore";
 
 export default class RoutePlannerClientStore {
   showAddMoreClientWindow = false;
+
   // this is for individuals selected in Route Planner Client Card
   private _selectedPeople: Client[] = [];
   // this is for all people added formally in the Add More Client side Panel
@@ -49,6 +50,7 @@ export default class RoutePlannerClientStore {
 
   addSelectedPeople(person: Client) {
     this._selectedPeople.push(person);
+    this._allPeople.push(person);
   }
 
   get allPeople() {
@@ -80,6 +82,12 @@ export default class RoutePlannerClientStore {
     ];
   }
 
+  indexOfPerson(person: Client) {
+    return this._allPeople.findIndex(
+      (p: Client) => p.pseudonymizedId === person.pseudonymizedId,
+    );
+  }
+
   removeFromAllPeople(person: Client) {
     const i = this._allPeople.findIndex(
       (p) => p.pseudonymizedId === person.pseudonymizedId,
@@ -92,6 +100,25 @@ export default class RoutePlannerClientStore {
       );
     } else {
       this._allPeople.splice(i, 1);
+    }
+  }
+
+  // this removes people when clicked from the main screen
+  removeAddedMorePeople(person: Client) {
+    this.spliceIndexOf(person, this._addMorePeopleList);
+    this.removeFromAllPeople(person as Client);
+  }
+
+  spliceIndexOf(person: Client, people: Client[]) {
+    const i = people.findIndex(
+      (p) => p.pseudonymizedId === person.pseudonymizedId,
+    );
+    if (i === -1) {
+      throw new Error(
+        `Trying to remove person ${person.pseudonymizedId} who isn't in list of selected people`,
+      );
+    } else {
+      people.splice(i, 1);
     }
   }
 

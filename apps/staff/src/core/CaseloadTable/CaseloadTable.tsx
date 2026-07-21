@@ -215,7 +215,7 @@ const LoadMoreRows = styled.button`
 // anchor. `display: contents` keeps the <a> from breaking table layout while
 // still surfacing each row as a real anchor — preserving right-click "Open in
 // new tab" and keyboard navigation.
-export const RowLink = styled(Link)`
+const RowLink = styled(Link)`
   display: contents;
   color: inherit;
   text-decoration: none;

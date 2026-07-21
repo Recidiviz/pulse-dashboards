@@ -21,6 +21,7 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components";
 
+import { Client } from "../../WorkflowsStore/Client";
 import {
   EmptyStateText,
   EmptyStateWrapper,
@@ -71,11 +72,12 @@ export const RoutePlannerClients = observer(function RoutePlannerClients({
   presenter: RoutePlannerClientsPresenter;
   isMobile: boolean;
 }) {
-  const { selectedOfficers, contacts } = presenter;
+  const { selectedOfficers, contacts, getAddMorePeople } = presenter;
   const showMapViewButton = isMobile && presenter.selectedClients.length > 0;
 
   const noContacts = Object.values(contacts).flat().length === 0;
   const noOfficers = selectedOfficers.length === 0;
+  const numberOfAdded = getAddMorePeople.length;
   if (noContacts || noOfficers) {
     const emptyStateText = noOfficers
       ? "Select one or more caseloads to see a list of suggested clients with home contacts due this month."
@@ -92,6 +94,23 @@ export const RoutePlannerClients = observer(function RoutePlannerClients({
 
   return (
     <ClientsWrapper>
+      {numberOfAdded > 0 && (
+        <div>
+          <OfficerSectionLabel>
+            <span className="fs-exclude">{`${numberOfAdded} Added to Route`}</span>
+          </OfficerSectionLabel>
+          <ClientCardGrid $isMobile={isMobile}>
+            {getAddMorePeople.map((person: Client) => (
+              <ClientCard
+                person={person}
+                key={`${person.pseudonymizedId}`}
+                presenter={presenter}
+                isMobile={isMobile}
+              />
+            ))}
+          </ClientCardGrid>
+        </div>
+      )}
       {selectedOfficers.map(({ searchId, searchLabel }) => {
         if (!contacts[searchId]) return null;
 
@@ -106,6 +125,7 @@ export const RoutePlannerClients = observer(function RoutePlannerClients({
               <ClientCardGrid $isMobile={isMobile}>
                 {contacts[searchId].map((task) => (
                   <ClientCard
+                    person={task[0].person}
                     key={`${task[0].person.pseudonymizedId}`}
                     tasks={task}
                     presenter={presenter}

@@ -45,6 +45,7 @@ const mockWorkflowsStore = {
   },
 } as any as WorkflowsStore;
 let presenter: RoutePlannerClientsPresenter;
+let rpClientStore: RoutePlannerClientStore;
 
 const clients = [
   { pseudonymizedId: "test123", formattedAddress: "test123" },
@@ -53,10 +54,10 @@ const clients = [
 ] as Client[];
 
 const fakePlaceId = "test123id";
-const rpClientStore = {} as RoutePlannerClientStore;
 
 describe("Selected client methods with locally stored addresses", () => {
   beforeEach(() => {
+    rpClientStore = new RoutePlannerClientStore(mockWorkflowsStore);
     presenter = new RoutePlannerClientsPresenter(
       mockWorkflowsStore,
       rpClientStore,
@@ -109,6 +110,7 @@ describe("Displays correct OMS in error messages", () => {
     runInAction(() => {
       // @ts-ignore
       mockWorkflowsStore.rootStore.currentTenantId = "US_TX";
+      rpClientStore = new RoutePlannerClientStore(mockWorkflowsStore);
       presenter = new RoutePlannerClientsPresenter(
         mockWorkflowsStore,
         rpClientStore,
@@ -123,6 +125,7 @@ describe("Displays correct OMS in error messages", () => {
     runInAction(() => {
       // @ts-ignore
       mockWorkflowsStore.rootStore.currentTenantId = "US_ID";
+      rpClientStore = new RoutePlannerClientStore(mockWorkflowsStore);
       presenter = new RoutePlannerClientsPresenter(
         mockWorkflowsStore,
         rpClientStore,
@@ -136,6 +139,7 @@ describe("Displays correct OMS in error messages", () => {
 
 describe("Gets address info from addressUpdate when not locally stored", () => {
   beforeEach(() => {
+    rpClientStore = new RoutePlannerClientStore(mockWorkflowsStore);
     presenter = new RoutePlannerClientsPresenter(
       mockWorkflowsStore,
       rpClientStore,
@@ -181,6 +185,7 @@ describe("Gets address info from addressUpdate when not locally stored", () => {
 
 describe("Geocodes addresses when not in Firestore", () => {
   beforeEach(() => {
+    rpClientStore = new RoutePlannerClientStore(mockWorkflowsStore);
     presenter = new RoutePlannerClientsPresenter(
       mockWorkflowsStore,
       rpClientStore,
@@ -220,6 +225,7 @@ describe("Geocodes addresses when not in Firestore", () => {
 });
 
 describe("sendGeocodingRequest response parsing", () => {
+  rpClientStore = new RoutePlannerClientStore(mockWorkflowsStore);
   presenter = new RoutePlannerClientsPresenter(
     mockWorkflowsStore,
     rpClientStore,
