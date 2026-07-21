@@ -15,16 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { captureException } from "@sentry/react";
 import { makeAutoObservable } from "mobx";
 
 import { RootStore } from "../../../RootStore";
-import AnalyticsStore from "../../../RootStore/AnalyticsStore";
-import {
-  Client,
-  JusticeInvolvedPerson,
-  WorkflowsStore,
-} from "../../../WorkflowsStore";
-import RoutePlannerClientStore from "../ClientStore/ClientStoreBase";
+import { Client, JusticeInvolvedPerson } from "../../../WorkflowsStore";
+import RoutePlannerClientStore from "./../ClientStore/ClientStoreBase";
 
 export type TableColumnId =
   | "SELECTED"
@@ -34,42 +30,107 @@ export type TableColumnId =
   | "CLIENT_SUPERVISION_TYPE"
   | "LEVEL"
   | "ADDRESS";
+
 export class RoutePlannerTablePresenter {
-  private readonly analyticsStore: AnalyticsStore;
-  private readonly workflowsStore: WorkflowsStore;
   private readonly routePlannerClientStore: RoutePlannerClientStore;
 
-  private selectedPeople: Client[] = [];
+  private _potentialPeople: Client[] = [];
 
   constructor(
     private readonly rootStore: RootStore,
     private readonly clientStore: RoutePlannerClientStore,
   ) {
     this.routePlannerClientStore = clientStore;
-    this.workflowsStore = this.rootStore.workflowsStore;
-    this.analyticsStore = this.workflowsStore.rootStore.analyticsStore;
 
-    this.selectedPeople = [];
+    this._potentialPeople = [...this.routePlannerClientStore.addMorePeople];
 
     makeAutoObservable(this, {}, { autoBind: true });
   }
 
   // BUTTONS
   onCancel() {
+    this._potentialPeople = [];
     this.routePlannerClientStore.updateShowWindow();
   }
 
   onClickAdd() {
+    this.routePlannerClientStore.setAddMorePeopleList(this._potentialPeople);
     this.routePlannerClientStore.updateShowWindow();
   }
 
-  isSelected(people: Client) {
-    return false;
+  // CLIENT ADD IN SIDE PANEL
+
+  get potentialPeople() {
+    return this._potentialPeople;
   }
 
-  get numberOfSelected(): number {
-    return 0;
+  isSelected(person: Client): boolean {
+    return this.potentialPeople.some(
+      (p) => p.pseudonymizedId === person.pseudonymizedId,
+    );
   }
+
+  updateSelected(person: Client) {
+    if (this.isSelected(person)) {
+      this.removeSelected(person);
+    } else {
+      this._potentialPeople.push(person);
+    }
+  }
+
+  removeSelected(person: Client) {
+    const i = this._potentialPeople.findIndex(
+      (p) => p.pseudonymizedId === person.pseudonymizedId,
+    );
+    if (i === -1) {
+      captureException(
+        new Error(
+          `Trying to remove person ${person.pseudonymizedId} who isn't in list of selected people`,
+        ),
+      );
+    } else {
+      this._potentialPeople.splice(i, 1);
+    }
+  }
+
+  indexOfPerson(person: Client) {
+    return this._potentialPeople.findIndex(
+      (p: Client) => p.pseudonymizedId === person.pseudonymizedId,
+    );
+  }
+
+  // CHECKBOX SUPPORTING FEATURES
+
+  /**
+   * This function calculates the place a client is selected in
+   * the overarching list by calculating how many people are selected
+   * in the Add More Modal and the Client Cards on the main page
+   * and returns that value
+   */
+  getCardinal(person: Client): number {
+    const addMore = this.routePlannerClientStore.addMorePeople.length;
+    const existing = this.routePlannerClientStore.allPeople.length;
+
+    return existing - addMore + this.indexOfPerson(person) + 1;
+  }
+
+  // GENERAL DISPLAY
+
+  clientsInSelectedSearchesCount(): number {
+    const { caseloadPersonsGrouped, selectedSearchables } =
+      this.rootStore.workflowsStore.searchStore;
+
+    let count = 0;
+    selectedSearchables.forEach((searchable) => {
+      if (!caseloadPersonsGrouped[searchable.searchId]) return;
+      count += caseloadPersonsGrouped[searchable.searchId].filter(
+        (person: JusticeInvolvedPerson) => person instanceof Client,
+      ).length;
+    });
+    return count;
+  }
+
+  // GENERAL DISPLAY
 
   get people(): Client[] {
     return this.rootStore.workflowsStore.searchStore.caseloadPersons.filter(

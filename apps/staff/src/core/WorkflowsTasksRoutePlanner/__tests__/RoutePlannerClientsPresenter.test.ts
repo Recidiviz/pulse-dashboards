@@ -22,6 +22,7 @@ import { GeocodingStatus } from "../../../FirestoreStore";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import TenantStore from "../../../RootStore/TenantStore";
 import { Client, WorkflowsStore } from "../../../WorkflowsStore";
+import RoutePlannerClientStore from "../ClientStore/ClientStoreBase";
 import { RoutePlannerClientsPresenter } from "../RoutePlannerClientsPresenter";
 
 const mockAnalyticsStore = {
@@ -52,10 +53,14 @@ const clients = [
 ] as Client[];
 
 const fakePlaceId = "test123id";
+const rpClientStore = {} as RoutePlannerClientStore;
 
 describe("Selected client methods with locally stored addresses", () => {
   beforeEach(() => {
-    presenter = new RoutePlannerClientsPresenter(mockWorkflowsStore);
+    presenter = new RoutePlannerClientsPresenter(
+      mockWorkflowsStore,
+      rpClientStore,
+    );
     for (const client of clients) {
       // @ts-expect-error accessing private property for test
       presenter.placeIds[client.pseudonymizedId] = client.formattedAddress;
@@ -104,7 +109,10 @@ describe("Displays correct OMS in error messages", () => {
     runInAction(() => {
       // @ts-ignore
       mockWorkflowsStore.rootStore.currentTenantId = "US_TX";
-      presenter = new RoutePlannerClientsPresenter(mockWorkflowsStore);
+      presenter = new RoutePlannerClientsPresenter(
+        mockWorkflowsStore,
+        rpClientStore,
+      );
     });
     expect(presenter.getBadAddressCopy()).toEqual(
       "We couldn't find any results for this address. Please check for typos and correct the address in OIMS. Updates in OIMS will be reflected in 1-2 business days.",
@@ -115,7 +123,10 @@ describe("Displays correct OMS in error messages", () => {
     runInAction(() => {
       // @ts-ignore
       mockWorkflowsStore.rootStore.currentTenantId = "US_ID";
-      presenter = new RoutePlannerClientsPresenter(mockWorkflowsStore);
+      presenter = new RoutePlannerClientsPresenter(
+        mockWorkflowsStore,
+        rpClientStore,
+      );
     });
     expect(presenter.getBadAddressCopy()).toEqual(
       "We couldn't find any results for this address. Please check for typos and correct the address in Atlas. Updates in Atlas will be reflected in 1-2 business days.",
@@ -125,7 +136,10 @@ describe("Displays correct OMS in error messages", () => {
 
 describe("Gets address info from addressUpdate when not locally stored", () => {
   beforeEach(() => {
-    presenter = new RoutePlannerClientsPresenter(mockWorkflowsStore);
+    presenter = new RoutePlannerClientsPresenter(
+      mockWorkflowsStore,
+      rpClientStore,
+    );
   });
 
   it("Adds client with SUCCESS geocoding result from Firestore", async () => {
@@ -167,7 +181,10 @@ describe("Gets address info from addressUpdate when not locally stored", () => {
 
 describe("Geocodes addresses when not in Firestore", () => {
   beforeEach(() => {
-    presenter = new RoutePlannerClientsPresenter(mockWorkflowsStore);
+    presenter = new RoutePlannerClientsPresenter(
+      mockWorkflowsStore,
+      rpClientStore,
+    );
   });
 
   it("Adds client with SUCCESS geocoding result from API", async () => {
@@ -203,7 +220,10 @@ describe("Geocodes addresses when not in Firestore", () => {
 });
 
 describe("sendGeocodingRequest response parsing", () => {
-  presenter = new RoutePlannerClientsPresenter(mockWorkflowsStore);
+  presenter = new RoutePlannerClientsPresenter(
+    mockWorkflowsStore,
+    rpClientStore,
+  );
   const fakeAddress = "123 Main St";
   const mockResponseResult = {
     address_components: [

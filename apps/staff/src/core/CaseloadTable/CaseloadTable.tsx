@@ -89,17 +89,20 @@ const HeaderCell = styled.th`
 const Cell = styled.td<{
   $expandedLastColumn: boolean;
   $isMobile: boolean;
-  $columns: number;
+  $numColumns: number;
+  $smallColumns: boolean;
 }>`
   ${SharedTableCellStyles}
 
   color: ${palette.pine1};
 
-  ${({ $columns }) =>
+  ${({ $numColumns, $smallColumns }) =>
     /* If there are more than 7 columns, make columns accordingly narrower */
-    $columns > 7 ? `width: calc(91% / ${$columns});` : `width: 13%;`}
+    !$smallColumns &&
+    ($numColumns > 7 ? `width: calc(91% / ${$numColumns});` : `width: 13%;`)}
 
   ${({ $isMobile }) => ($isMobile ? `min-width: 100px;` : `min-width: 125px;`)}
+  ${({ $smallColumns }) => $smallColumns && `min-width: 10px;`}
 
   ${({ $expandedLastColumn }) =>
     /* Offset last column to fill all available space */
@@ -192,7 +195,7 @@ const SortIconWrapper = styled.div<{
   }};
 `;
 
-export const LoadMoreRows = styled.button`
+const LoadMoreRows = styled.button`
   ${typography.Sans18};
   width: fit-content;
   display: flex;
@@ -247,7 +250,13 @@ export type CaseloadTableProps<TData> = {
   initialState?: Partial<TableState>;
   enableProgressiveLoading?: boolean;
   progressiveLoadingBatchSize?: number;
-  shouldAppearUnselectable?: (row: TData) => boolean;
+  /**
+   * When provided true - this parameter overrides the standard styling
+   * to prioritize smaller columns with a min-width of 10px & overwriting
+   * min-width of 100px of 125px (mobile and laptop breakpoints respectively)
+   */
+  smallColumns?: boolean;
+  shouldBlockSelectingRow?: (row: TData) => boolean;
 };
 
 export const CaseloadTable = observer(function CaseloadTable<TData>({
@@ -256,7 +265,7 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
   columns,
   onRowClick,
   rowLinkUrl,
-  shouldAppearUnselectable = () => false,
+  shouldBlockSelectingRow = () => false,
   shouldHighlightRow = () => false,
   onRowRender = () => undefined,
   manualSorting = undefined,
@@ -264,6 +273,7 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
   initialState = undefined,
   enableProgressiveLoading = false,
   progressiveLoadingBatchSize = 0,
+  smallColumns = false,
 }: CaseloadTableProps<TData>) {
   const { isMobile } = useIsMobile(true);
 
@@ -354,11 +364,13 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
                 className={"fs-exclude"}
                 $expandedLastColumn={expandedLastColumn}
                 $isMobile={isMobile}
-                $columns={columns.length}
+                $numColumns={columns.length}
+                $smallColumns={smallColumns}
               >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </Cell>
             ));
+
             return (
               <Row
                 key={row.id}
@@ -366,7 +378,7 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
                   if (onRowClick) onRowClick(row.original);
                 }}
                 $isSelected={shouldHighlightRow(row.original)}
-                $shouldAppearUnselectable={shouldAppearUnselectable(
+                $shouldAppearUnselectable={shouldBlockSelectingRow(
                   row.original,
                 )}
               >

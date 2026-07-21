@@ -84,7 +84,10 @@ export class RoutePlannerPresenter {
     private readonly routePlannerClientStore: RoutePlannerClientStore,
   ) {
     this.routePlannerClientStore = routePlannerClientStore;
-    this.clientsPresenter = new RoutePlannerClientsPresenter(workflowsStore);
+    this.clientsPresenter = new RoutePlannerClientsPresenter(
+      workflowsStore,
+      this.routePlannerClientStore,
+    );
     this.analyticsStore = workflowsStore.rootStore.analyticsStore;
 
     if (

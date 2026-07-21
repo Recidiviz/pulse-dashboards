@@ -128,7 +128,7 @@ export const ManagedComponent = observer(function RoutePlannerAddMoreClients({
     },
   } = useRootStore();
 
-  const addMoreDisabled = presenter.numberOfSelected === 0;
+  const addMoreDisabled = presenter.potentialPeople.length === 0;
 
   // display table according to selected officers
   return (
@@ -148,6 +148,9 @@ export const ManagedComponent = observer(function RoutePlannerAddMoreClients({
               {searchable.searchLabel}
             </OfficersList>
           ))}
+          <OfficersList>
+            {presenter.clientsInSelectedSearchesCount()} Clients
+          </OfficersList>
         </AddMoreClientsHeader>
       </ModalHeader>
       <ClientScrollWrapper>
@@ -156,7 +159,7 @@ export const ManagedComponent = observer(function RoutePlannerAddMoreClients({
       <Footer>
         {addMoreDisabled
           ? "None Selected"
-          : `${presenter.numberOfSelected} selected`}
+          : `${presenter.potentialPeople.length} selected`}
         <div
           style={{
             display: "flex",
@@ -180,7 +183,7 @@ export const ManagedComponent = observer(function RoutePlannerAddMoreClients({
           >
             {addMoreDisabled
               ? "Add clients to route"
-              : `Add ${presenter.numberOfSelected} client(s) to route`}
+              : `Add ${presenter.potentialPeople.length} client(s) to route`}
           </AddMoreClientsButton>
         </div>
       </Footer>

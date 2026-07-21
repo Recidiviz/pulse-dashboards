@@ -196,6 +196,8 @@ const CallButton = styled(Button).attrs({ shape: "block" })`
 `;
 
 export const BaseCheckbox = styled.span`
+  display: flex;
+  justify-content: center;
   height: ${rem(16)};
   width: ${rem(16)};
   margin-right: ${rem(10)};
@@ -207,7 +209,6 @@ export const BaseCheckbox = styled.span`
 export const EmptyCheckbox = styled(BaseCheckbox)<{
   $selectable: boolean;
 }>`
-  display: flex;
   border-color: ${palette.slate20};
 
   ${({ $selectable }) => !$selectable && `cursor: not-allowed;`}

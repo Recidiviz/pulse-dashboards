@@ -49,7 +49,7 @@ import {
 
 type CaseloadRowProps = { row: Row<Client> };
 
-export function AssignedToCell({ row }: CaseloadRowProps) {
+function AssignedToCell({ row }: CaseloadRowProps) {
   return (
     <SupervisingOfficerNameCell
       person={row.original}
@@ -58,7 +58,6 @@ export function AssignedToCell({ row }: CaseloadRowProps) {
   );
 }
 
-// need this to remain separate because we will need to add a tool tip down the line
 function AddressCell({ row }: { row: Client }) {
   return (
     <div
@@ -73,22 +72,24 @@ function AddressCell({ row }: { row: Client }) {
 function CheckBoxWrapper({
   row,
   isSelected,
+  rank,
 }: {
   row: Row<Client>;
   isSelected: (person: Client) => boolean;
+  rank: (person: Client) => number;
 }) {
   if (!isSelected(row.original)) return <EmptyCheckbox $selectable={true} />;
   else
     return (
       <NumberedCheckbox>
-        <CheckboxContents></CheckboxContents>
+        <CheckboxContents>{rank(row.original)}</CheckboxContents>
       </NumberedCheckbox>
     );
 }
 
 export function PersonNameWrapper<Person extends Client>({
   row,
-}: CaseloadPersonRowProps<Person> & {}) {
+}: CaseloadPersonRowProps<Person>) {
   return <PersonNameCell person={row.original} />;
 }
 
@@ -115,7 +116,7 @@ export const PersonNameCell = observer(function PersonNameCell({
         padding: "2px 0",
       }}
     >
-      {displayName}
+      <div>{displayName}</div>
     </PersonNameElement>
   );
 });
@@ -127,9 +128,11 @@ type ClientsResidentsColumnDef = ColumnDef<Client> & {
 function buildColumns({
   displayIdHeader,
   isSelected,
+  getCardinal,
 }: {
   displayIdHeader: string;
   isSelected: (person: Client) => boolean;
+  getCardinal: (person: Client) => number;
 }): ClientsResidentsColumnDef[] {
   return [
     {
@@ -140,7 +143,9 @@ function buildColumns({
       sortingFn: (a, b) => {
         return Number(isSelected(b.original)) - Number(isSelected(a.original));
       },
-      cell: ({ row }) => <CheckBoxWrapper row={row} isSelected={isSelected} />,
+      cell: ({ row }) => (
+        <CheckBoxWrapper rank={getCardinal} row={row} isSelected={isSelected} />
+      ),
     },
     {
       header: "Name",
@@ -201,25 +206,27 @@ export const RoutePlannerTable = observer(function RoutePlannerTable({
 }: {
   presenter: RoutePlannerTablePresenter;
 }) {
-  const { displayIdHeader, isSelected } = presenter;
+  const { displayIdHeader, isSelected, getCardinal } = presenter;
   const columns = useMemo(
     () =>
       buildColumns({
         displayIdHeader,
         isSelected,
+        getCardinal,
       }),
-    [displayIdHeader, isSelected],
+    [displayIdHeader, isSelected, getCardinal],
   );
   return (
     <CaseloadTable
-      shouldHighlightRow={() => false}
-      onRowClick={() => {
-        // will implement later
+      shouldHighlightRow={(e) => presenter.isSelected(e)}
+      onRowClick={(e) => {
+        presenter.updateSelected(e);
       }}
       data={presenter.people}
       columns={columns}
       enableProgressiveLoading={true}
       progressiveLoadingBatchSize={100}
+      smallColumns={true}
     />
   );
 });

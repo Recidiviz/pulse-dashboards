@@ -42,6 +42,7 @@ import {
   WorkflowsStore,
 } from "../../WorkflowsStore";
 import { SearchStore } from "../../WorkflowsStore/SearchStore";
+import RoutePlannerClientStore from "./ClientStore/ClientStoreBase";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const BASE_SEARCH_URL = "https://www.google.com/maps/search/";
@@ -74,7 +75,10 @@ export class RoutePlannerClientsPresenter implements Hydratable {
     "In-custody": "I–C",
   };
 
-  constructor(private readonly workflowsStore: WorkflowsStore) {
+  constructor(
+    private readonly workflowsStore: WorkflowsStore,
+    private readonly routePlannerClientStore: RoutePlannerClientStore,
+  ) {
     this.searchStore = workflowsStore.searchStore;
     this.analyticsStore = workflowsStore.rootStore.analyticsStore;
     makeAutoObservable(this);
