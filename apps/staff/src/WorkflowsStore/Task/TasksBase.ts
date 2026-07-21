@@ -43,6 +43,7 @@ import {
   SupervisionTask,
   SupervisionTaskInterface,
   SupervisionTaskRecord,
+  supervisionTaskRecordSchema,
   SupervisionTaskType,
 } from "./types";
 
@@ -140,10 +141,26 @@ export abstract class TasksBase<
           return [];
         }
 
+        const parsedTask = supervisionTaskRecordSchema(task.type).safeParse(
+          task,
+        );
+
+        if (!parsedTask.success) {
+          const error = new TaskValidationError(
+            `Task record of type [${task.type}] failed schema validation: ${parsedTask.error.message}`,
+          );
+          Sentry.captureException(error, (scope) => {
+            scope.setTag("currentTenantId", currentTenantId);
+            scope.setTag("taskType", task.type);
+            return scope;
+          });
+          return [];
+        }
+
         return [
           new TaskConstructor(
             this.rootStore,
-            task,
+            parsedTask.data,
             this.person,
             this.updates?.[task.type],
           ),
