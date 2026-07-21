@@ -33,5 +33,8 @@
   "osuBanner": {
     "message": "[US_ND]osuBanner.message",
     "linkText": "[US_ND]osuBanner.linkText"
+  },
+  "onboardingVideo": {
+    "confirmClose": "[US_ND]onboardingVideo.confirmClose"
   }
 }

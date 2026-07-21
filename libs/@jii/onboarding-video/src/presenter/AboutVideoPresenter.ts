@@ -17,7 +17,9 @@
 
 import { makeAutoObservable } from "mobx";
 
+import { StateCode } from "~@jii/configs";
 import { ResidentsStore } from "~@jii/data";
+import { I18nResources } from "~@jii/translation";
 
 import UsAzAboutVideo from "../assets/UsAzAboutVideo.mp4";
 import UsAzAboutVideoCaptions from "../assets/UsAzAboutVideo.vtt";
@@ -41,6 +43,13 @@ export class AboutVideoPresenter {
     private residentsStore: ResidentsStore,
   ) {
     makeAutoObservable(this);
+  }
+
+  get stateCode(): keyof I18nResources & StateCode {
+    if (this.residentsStore.stateCode === "US_UT") {
+      throw new Error("Onboarding Video feature not enabled for US_UT");
+    }
+    return this.residentsStore.stateCode;
   }
 
   /**

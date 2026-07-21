@@ -30,6 +30,10 @@ import US_ND from "../namespaces/US_ND/resources/en.json";
 import US_NE from "../namespaces/US_NE/resources/en.json";
 import US_TN from "../namespaces/US_TN/resources/en";
 import {
+  CombinedOnboardingVideoResources,
+  CommonOnboardingVideoResources,
+} from "../onboardingVideo/types";
+import {
   CombinedProgramCatalogResources,
   CommonProgramCatalogResources,
   StateProgramCatalogResources,
@@ -41,12 +45,21 @@ import {
 } from "../sentenceDates/types";
 
 /**
- * Helper that manages state-specific typing for the Program Catalog feature.
- * Inputs that don't include Program Catalog resources are passed through unchanged.
- * Those that conform to the type for state resources containing Program Catalog translations
- * are augmented with a type that reflects the final i18next output that merges the
- * state resources with the common resources; this reflects the fallback configured
- * in CustomTypeOptions below, which is otherwise not fully inferred by i18next-react.
+ * Helpers that manage state-specific typing for various features
+ * (Program Catalog, Sentence Dates, Onboarding Video).
+ *
+ * These features are handled in two ways:
+ *
+ * 1. (used for Program Catalog and Sentence Dates) Inputs that don't include resources
+ * for the feature are passed through unchanged. Those that do contain state-specific
+ * translations for a feature are augmented with a type that reflects the final i18next
+ * output that merges the state resources with the common resources; this reflects the
+ * fallback configured in CustomTypeOptions below, which is otherwise not fully inferred
+ * by i18next-react.
+ *
+ * 2. (used for Onboarding Video) All inputs are augmented with the type that reflects
+ * the fallback to the common namespace, whether or not they contain any overrides for
+ * translations for the feature.
  */
 type WithCorrectedProgramCatalog<T> = T extends StateProgramCatalogResources
   ? Omit<T, "programs"> & {
@@ -58,14 +71,9 @@ type WithCorrectedProgramCatalog<T> = T extends StateProgramCatalogResources
     }
   : T;
 
-/**
- * Helper that manages state-specific typing for the Sentence Dates feature.
- * Inputs that don't include Sentence Dates resources are passed through unchanged.
- * Those that conform to the type for state resources containing Sentence Dates translations
- * are augmented with a type that reflects the final i18next output that merges the
- * state resources with the common resources; this reflects the fallback configured
- * in CustomTypeOptions below, which is otherwise not fully inferred by i18next-react.
- */
+type WithCorrectedOnboardingVideo<T> = Omit<T, "onboardingVideo"> &
+  CombinedOnboardingVideoResources;
+
 type WithCorrectedSentenceDates<T> = T extends StateSentenceDatesResources
   ? // omitting and replacing this property with this predefined type ensures that we
     // have a clean final object type; if we tried to merge the input with its augmentations
@@ -83,13 +91,14 @@ type WithCorrectedSentenceDates<T> = T extends StateSentenceDatesResources
  * resources, so this can be applied uniformly to all states.
  */
 type WithStateCorrections<T> = WithCorrectedProgramCatalog<
-  WithCorrectedSentenceDates<T>
+  WithCorrectedSentenceDates<WithCorrectedOnboardingVideo<T>>
 >;
 
 export interface I18nResources {
-  // requires the common namespace to include valid program catalog and sentence dates resources
+  // requires the common namespace to include valid resources for shared features
   common: typeof common extends CommonSentenceDatesResources &
-    CommonProgramCatalogResources
+    CommonProgramCatalogResources &
+    CommonOnboardingVideoResources
     ? typeof common
     : never;
   // feature-specific resources are optional; WithStateCorrections is a no-op for features a state doesn't include

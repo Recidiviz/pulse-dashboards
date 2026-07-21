@@ -33,5 +33,8 @@
   "osuBanner": {
     "message": "**If you are still in Orientation, you won’t see dates here yet. They will be available after you have been reviewed by the Case Planning Committee.** Tap “Learn More” for information about sentence dates in general.",
     "linkText": "Learn more"
+  },
+  "onboardingVideo": {
+    "confirmClose": "Move to “Learn More” page"
   }
 }

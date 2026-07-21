@@ -18,6 +18,7 @@
 import { animation, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
+import { useTranslation } from "react-i18next";
 import styled, { css, keyframes } from "styled-components";
 
 import {
@@ -26,7 +27,6 @@ import {
   JIIDropdownToggle,
   SlateCopy,
 } from "~@jii/common-ui";
-import { useCommonTranslations } from "~@jii/translation";
 import {
   Dropdown,
   DropdownMenu,
@@ -129,7 +129,7 @@ export const AboutVideoCtaCard = observer(function AboutVideoCtaCard({
 }: {
   presenter: AboutVideoPresenter;
 }) {
-  const { t } = useCommonTranslations();
+  const { t } = useTranslation([presenter.stateCode, "common"]);
 
   return (
     <CtaCard
