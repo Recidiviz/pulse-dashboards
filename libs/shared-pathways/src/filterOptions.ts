@@ -477,7 +477,7 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
   },
   [FILTER_TYPES.CHARGE_DESCRIPTION]: {
     type: FILTER_TYPES.CHARGE_DESCRIPTION,
-    title: "Specific crime",
+    title: "Specific Crime",
     setFilters: setFilters(FILTER_TYPES.CHARGE_DESCRIPTION),
     options: [{ label: "All", value: "ALL" }],
     get defaultOption(): FilterOption {
@@ -1452,7 +1452,7 @@ export const NyPopulationFilterOptions: PopulationFilters = {
   },
   [FILTER_TYPES.OFFENSE_TYPE]: {
     ...DefaultPopulationFilterOptions[FILTER_TYPES.OFFENSE_TYPE],
-    title: "Crime group",
+    title: "Crime Group",
     useDynamicOptions: true,
   },
   [FILTER_TYPES.CHARGE_DESCRIPTION]: {
@@ -1461,7 +1461,7 @@ export const NyPopulationFilterOptions: PopulationFilters = {
   },
   [FILTER_TYPES.ADMISSION_REASON]: {
     ...DefaultPopulationFilterOptions[FILTER_TYPES.ADMISSION_REASON],
-    title: "Admission type",
+    title: "Admission Type",
     useDynamicOptions: true,
   },
   [FILTER_TYPES.DATE_IN_POPULATION]: {
