@@ -47,7 +47,6 @@ import { firestore } from "firebase-admin";
 import type { Client as TypesenseClient } from "typesense";
 
 import { createTypesenseClient } from "~@typesense/client";
-import { stateCodes } from "~auth-utils";
 
 // Firestore page size = Typesense import batch size. Larger batches mean fewer
 // serial fetch→import round trips per collection (pagination is strictly serial
@@ -297,19 +296,16 @@ export function parseImportResponse(raw: unknown): ImportEntry[] {
     });
 }
 
-// The canonical Recidiviz state codes (US_XX), sourced from ~auth-utils so this
-// function tracks the single source of truth rather than a private copy.
-const VALID_STATE_CODES = new Set<string>(Object.values(stateCodes));
+// The Recidiviz state-code shape: `US_` followed by exactly two
+// uppercase ASCII letters (US_AZ, US_ID, ...). We validate the SHAPE rather than
+// membership in ~auth-utils' `stateCodes` because the ETL trigger fires per
+// state as data lands, including states not yet enrolled in a dashboard product
+// (so absent from `stateCodes`). Gating on that list would 400 those legitimate
+// backfills; the ETL is the authority on which states have data.
+const STATE_CODE_PATTERN = /^US_[A-Z]{2}$/;
 
-// Whether `raw` is a recognized Recidiviz state code. Exact membership in this
-// fixed set of [A-Z_] literals is BOTH the validity check and the filter-
-// injection guard: only a known code reaches the Typesense `filter_by`, so a
-// crafted value like "US_ID || true" can never widen the prune's delete scope.
-// Rejecting an unknown code fails a per-state run fast (a clear 400) instead of
-// silently scanning 0 docs — add newly-onboarded states to ~auth-utils'
-// stateCodes.
 export function isValidStateCode(raw: unknown): raw is string {
-  return typeof raw === "string" && VALID_STATE_CODES.has(raw);
+  return typeof raw === "string" && STATE_CODE_PATTERN.test(raw);
 }
 
 // Given a Typesense id-only export (JSONL, one `{"id":"..."}` per line) and the

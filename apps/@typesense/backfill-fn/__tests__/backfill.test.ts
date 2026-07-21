@@ -465,22 +465,27 @@ describe("resolvePruneStale", () => {
 });
 
 describe("isValidStateCode", () => {
-  it.each(["US_ID", "US_ND", "US_TX", "US_CA"])(
-    "accepts a recognized state code %j",
-    (value) => {
-      expect(isValidStateCode(value)).toBe(true);
-    },
-  );
+  it.each([
+    "US_ID",
+    "US_ND",
+    "US_TX",
+    "US_CA",
+    "US_ZZ", // well-formed but not (yet) in ~auth-utils — the ETL fires for
+    "US_XX", // states before they're enrolled, so shape is the gate, not membership
+  ])("accepts a well-formed state code %j", (value) => {
+    expect(isValidStateCode(value)).toBe(true);
+  });
 
   it.each([
     "us_id", // wrong case — codes are uppercase
-    "US_ZZ", // not a real state
-    "US_XX",
+    "US_TEX", // too many letters
+    "US_I", // too few letters
+    "US_1D", // digits not allowed
     "USTX",
     "US_ID || true", // filter-injection attempt
     "US ID",
     "",
-  ])("rejects an unknown or malformed code %j", (value) => {
+  ])("rejects a malformed code %j", (value) => {
     expect(isValidStateCode(value)).toBe(false);
   });
 
