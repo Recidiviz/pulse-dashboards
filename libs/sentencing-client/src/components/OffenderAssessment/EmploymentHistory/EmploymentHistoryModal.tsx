@@ -143,7 +143,9 @@ export const EmploymentHistoryModal: React.FC<EmploymentHistoryModalProps> =
             </Styled.Title>
             {activeFeatureVariants["SARImportEmploymentRecords"] && (
               <Banner>
-                Manual edits to employment history are not updated in MOCIS.
+                Manually entering employment history will overwrite any current
+                or future data synced from MOCIS, but will not edit the data
+                within MOCIS.
               </Banner>
             )}
           </Styled.Header>
