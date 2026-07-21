@@ -64,6 +64,15 @@ export class SupervisionSupervisorPagePresenter implements Hydratable {
   }
 
   /**
+   * Checks if the current tenant is Arizona/Michigan to display the opportunities module first.
+   * @returns `true` if the tenant is Arizona/Michigan, `false` otherwise.
+   */
+  get shouldDisplayOpportunitiesModuleFirst(): boolean {
+    const { currentTenantId } = this.supervisionStore.insightsStore.rootStore;
+    return currentTenantId === "US_AZ" || currentTenantId === "US_MI";
+  }
+
+  /**
    * Returns an array of promises representing the methods required to populate
    * the necessary data for this presenter.
    */

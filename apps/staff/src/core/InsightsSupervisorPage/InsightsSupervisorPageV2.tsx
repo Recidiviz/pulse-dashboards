@@ -101,6 +101,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     pluralizeAcronym,
     labelIsAcronym,
     previousPages,
+    shouldDisplayOpportunitiesModuleFirst,
   } = presenter;
 
   let teamTooltip;
@@ -194,11 +195,16 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
       }
     >
       <InsightsSupervisorOpportunityNotificationsSection />
+      {shouldDisplayOpportunitiesModuleFirst && (
+        <InsightsSupervisorOpportunityDetailSection />
+      )}
       {isUsageLoginActivityModuleDisplayed({
         loginModulePosition: "TOP",
       }) && <InsightsManagedUsageCard />}
       <InsightsOutcomesModule labels={labels} timePeriod={timePeriod} />
-      <InsightsSupervisorOpportunityDetailSection />
+      {!shouldDisplayOpportunitiesModuleFirst && (
+        <InsightsSupervisorOpportunityDetailSection />
+      )}
       <InsightsSupervisorVitals supervisorPseudoId={supervisorPseudoId} />
       {isUsageLoginActivityModuleDisplayed({
         loginModulePosition: "BOTTOM",
