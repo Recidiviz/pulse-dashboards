@@ -237,6 +237,21 @@ export const locationIdsBySearchType = {
 
 export type LocationSearchType = keyof typeof locationIdsBySearchType;
 
+// Schema-level mapping from SearchType to the Typesense collection that
+// serves its dropdown options. Not tenant-configurable — every SearchType
+// deterministically maps to one collection. Absent entries (ALL, CASELOAD)
+// aren't wired for Typesense; the Typesense search function skips them.
+export const collectionsBySearchType = {
+  OFFICER: "supervisionStaff",
+  INCARCERATION_OFFICER: "incarcerationStaff",
+  DISTRICT: "locations",
+  FACILITY: "locations",
+  FACILITY_UNIT: "locations",
+  US_ID_CRC_FACILITY: "locations",
+} as const satisfies Partial<
+  Record<SearchType, "supervisionStaff" | "incarcerationStaff" | "locations">
+>;
+
 export type UsTnCompliantReportingWorkflowsImpactRecord = {
   stateCode: string;
   supervisionDistrict: string;

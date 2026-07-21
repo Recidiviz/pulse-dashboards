@@ -62,6 +62,7 @@ export function fetchOfflineUser({
         // toggle them on and off when testing.
         usMoOverdueRHPilot: { activeDate: "9999" },
         usTnExpirationSubmitToTomis: { activeDate: "9999" },
+        typesenseCaseloadSearch: {},
         // supervisorHomepageVitals: {},
         // supervisorHomepageWorkflows: {},
       },

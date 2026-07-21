@@ -82,6 +82,7 @@ export type FeatureVariant =
   | "tasksPermasnooze"
   | "tasksRoutePlanner"
   | "workflowsSupervisorSearch"
+  | "typesenseCaseloadSearch"
   | "sentenceProgressV2"
   | "useRecordForIneligibleOpps"
 
@@ -220,6 +221,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   insightsOnboarding: {},
   hideDenialRevert: {},
   workflowsSupervisorSearch: {},
+  typesenseCaseloadSearch: {},
   supervisorHomepageWorkflows: {},
   supervisorHomepageVitals: {},
   usPaSpecialCircumstances: {},
@@ -366,6 +368,9 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
       }
     : {
         ...allFeatureVariants,
+        // Off for Recidiviz users during phase 1 build-out — opt in per-user
+        // via the admin panel to actually see the new Typesense search bar.
+        typesenseCaseloadSearch: undefined,
         usOrEarnedDischargeSentence: undefined,
         usMeCaseNoteSnooze: isDemoMode() ? undefined : {},
         outcomesModule: {

@@ -27,6 +27,7 @@ import {
   SearchType,
 } from "../core/models/types";
 import { CaseloadSearchable } from "./CaseloadSearchable";
+import { CaseloadSearchManager } from "./CaseloadSearchManager";
 import { Location } from "./Location";
 import { Officer } from "./Officer";
 import { SearchManager } from "./SearchManager";
@@ -54,12 +55,19 @@ export class SearchStore {
    */
   selectedSearchIdsForSupervisorsWithStaff: string[] | undefined = undefined;
 
+  // Delegate for the Typesense-backed caseload search. Owns the scoped-key
+  // client, the plan builder, and the typeahead lifecycle. Constructed once
+  // in this store's constructor.
+  caseloadSearchManager: CaseloadSearchManager;
+
   constructor(workflowsStore: WorkflowsStore) {
     this.workflowsStore = workflowsStore;
+
     makeAutoObservable(this, {}, { autoBind: true });
 
     this.clientSearchManager = new SearchManager(this, "CLIENT");
     this.residentSearchManager = new SearchManager(this, "RESIDENT");
+    this.caseloadSearchManager = new CaseloadSearchManager(this);
 
     // update the searchTypeOverride on tenant change
     reaction(
@@ -214,7 +222,18 @@ export class SearchStore {
     );
   }
 
+  // The dropdown's source of truth. When the Typesense-backed search bar FV
+  // is on, results come from caseloadSearchManager (server-populated via
+  // typeahead + tenant/system-change seed). Otherwise the existing
+  // Firestore-driven code path runs. The getter is pure — no side effects;
+  // the fetch is triggered by reactions inside CaseloadSearchManager.
   get availableSearchables(): SearchableGroup[] {
+    return this.isTypesenseSearchEnabled
+      ? this.caseloadSearchManager.results
+      : this.firestoreSearchResults;
+  }
+
+  get firestoreSearchResults(): SearchableGroup[] {
     switch (this.searchType) {
       case "FACILITY":
       case "FACILITY_UNIT":
@@ -418,5 +437,15 @@ export class SearchStore {
       // update the active system based on the selected pill
       updateActiveSystem(system);
     }
+  }
+
+  // Truthy when the Typesense-backed caseload search is on for this user.
+  // Phased rollouts get their own FVs (typesenseCaseloadSearch is phase 1;
+  // subsequent phases will add sibling FVs), so this getter doesn't need to
+  // inspect a `variant` value — presence of the FV is enough. Read by both
+  // this store's availableSearchables and by CaseloadSearchManager to gate
+  // its own reactions.
+  get isTypesenseSearchEnabled(): boolean {
+    return Boolean(this.workflowsStore.featureVariants.typesenseCaseloadSearch);
   }
 }

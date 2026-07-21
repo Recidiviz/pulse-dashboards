@@ -525,8 +525,12 @@ export const CaseloadSelect = observer(function CaseloadSelect({
       availableSearchables,
       searchTitleOverride,
       updateSelectedSearch,
+      isTypesenseSearchEnabled,
+      caseloadSearchManager,
     },
   } = workflowsStore;
+
+  const searchableGroups = availableSearchables;
 
   const searchTitle =
     supportsMultipleSystems && activeSystem === "ALL" && searchType === "ALL"
@@ -553,7 +557,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
   const disableAdditionalSelections =
     selectedSearchables.length >= SELECTED_SEARCH_LIMIT;
 
-  const numAvailableSearchables = availableSearchables.reduce(
+  const numAvailableSearchables = searchableGroups.reduce(
     (acc, group) => acc + group.searchables.length,
     0,
   );
@@ -579,7 +583,20 @@ export const CaseloadSelect = observer(function CaseloadSelect({
         searchType,
       });
     },
-    options: buildSelectOptionsFromSearchableGroup(availableSearchables),
+    // When Typesense is on, drive the server-side typeahead on every input
+    // change (the store owns the debounce + fetch) and let react-select skip
+    // its built-in client-side filter since the server already returned the
+    // matching set for this input.
+    ...(isTypesenseSearchEnabled
+      ? {
+          onInputChange: (newValue: string) => {
+            caseloadSearchManager.handleSearchInput(newValue);
+            return newValue;
+          },
+          filterOption: () => true,
+        }
+      : {}),
+    options: buildSelectOptionsFromSearchableGroup(searchableGroups),
     placeholder: `Search for one or more ${pluralizeWord({ term: searchTitle, justAppendS: searchTitleIgnoreCase })} …`,
     styles: caseloadSelectStyles(
       isMobile,

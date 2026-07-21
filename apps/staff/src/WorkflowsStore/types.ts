@@ -122,6 +122,30 @@ export type JusticeInvolvedPerson = {
 
 export type PersonType = "CLIENT" | "RESIDENT";
 
+// ===== Typesense-backed search =====
+
+/**
+ * One entry in the plan array that connects a Typesense multi_search request
+ * to its response. `descriptor` feeds the request; `collection` + `groupLabel`
+ * drive result unpacking. For staff collections, `collection` also doubles as
+ * the `recordType` stamped on the constructed Officer (same string).
+ */
+export interface PlannedTypesenseSearch {
+  descriptor: Record<string, unknown>;
+  collection: "locations" | "supervisionStaff" | "incarcerationStaff";
+  groupLabel: string;
+}
+
+/**
+ * Loose local shape for one result inside a Typesense multi_search response.
+ * Just enough for the fields the SearchStore composer reads
+ * (`hits[i].document`) — avoids importing MultiSearchResponse from typesense
+ * at the call site.
+ */
+export interface TypesenseSearchResult {
+  hits?: Array<{ document: Record<string, unknown> }>;
+}
+
 export type PersonRecordType =
   | WorkflowsJusticeInvolvedPersonRecord
   | ClientRecord
