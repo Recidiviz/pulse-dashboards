@@ -12,6 +12,7 @@
     "@expo/metro-config": "^54.0.0",
     "@expo/metro-runtime": "~6.1.2",
     "@gorhom/bottom-sheet": "^5.2.7",
+    "@monaco-editor/react": "^4.7.0",
     "@nx/detox": "*",
     "@nx/rollup": "*",
     "@paralleldrive/cuid2": "^3.3.0",
@@ -46,6 +47,7 @@
     "expo-status-bar": "~3.0.8",
     "expo-system-ui": "~6.0.8",
     "expo-updates": "~29.0.12",
+    "monaco-editor": "^0.55.1",
     "nativewind": "^4.2.1",
     "picocolors": "*",
     "react": "^19.0.0",
@@ -64,7 +66,8 @@
     "react-native-uuid": "^2.0.3",
     "react-native-web": "^0.21.0",
     "react-native-worklets": "0.5.1",
-    "tsconfig-paths": "*"
+    "tsconfig-paths": "*",
+    "yaml": "^2.8.3"
   },
   "devDependencies": {
     "@feature-sliced/steiger-plugin": "^0.5.7",

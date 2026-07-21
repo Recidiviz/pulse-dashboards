@@ -25,13 +25,8 @@ import {
   AgencyConfigFile,
   AgencyConfigFileSchema,
   AgencyConfigSchema,
+  BaseConfigFileSchema,
 } from "~@meetings/config/types";
-
-// Base YAML omits name/stateCode — make them optional for parsing
-const BaseConfigFileSchema = AgencyConfigFileSchema.omit({
-  name: true,
-  stateCode: true,
-});
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore -- @ts-expect-error can't be used here: the error only appears when

@@ -126,6 +126,14 @@ export const AgencyConfigFileSchema = z.object({
 });
 
 /**
+ * Base YAML omits name/stateCode — leave them out when validating
+ */
+export const BaseConfigFileSchema = AgencyConfigFileSchema.omit({
+  name: true,
+  stateCode: true,
+});
+
+/**
  * The result of merging the base config with an agency YAML
  */
 export const AgencyConfigSchema = z.object({

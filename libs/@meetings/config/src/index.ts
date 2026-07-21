@@ -20,4 +20,5 @@ export type { AgencyConfig, AgencyConfigFile } from "~@meetings/config/types";
 export {
   AgencyConfigFileSchema,
   AgencyConfigSchema,
+  BaseConfigFileSchema,
 } from "~@meetings/config/types";

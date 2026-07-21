@@ -18,3 +18,12 @@
 import { env } from "./env";
 
 export const IS_PROD = env.EXPO_PUBLIC_DEPLOY_ENV === "production";
+
+const DEPLOY_ENV_LABELS: Record<string, string> = {
+  development: "Dev",
+  staging: "Staging",
+  production: "Prod",
+};
+
+export const DEPLOY_ENV_LABEL =
+  DEPLOY_ENV_LABELS[env.EXPO_PUBLIC_DEPLOY_ENV] ?? env.EXPO_PUBLIC_DEPLOY_ENV;

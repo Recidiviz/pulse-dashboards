@@ -19,9 +19,14 @@ import { TRPCError } from "@trpc/server";
 import { parse as parseYaml } from "yaml";
 import { z } from "zod";
 
-import { type AgencyConfig } from "~@meetings/config";
+import {
+  type AgencyConfig,
+  AgencyConfigFileSchema,
+  BaseConfigFileSchema,
+} from "~@meetings/config";
 import { AGENCY_CONFIGS } from "~@meetings/config/loader";
 import { getGlobalPrismaClient } from "~@meetings/prisma";
+import { type AgencyConfig as AgencyConfigRow } from "~@meetings/prisma/client";
 import {
   auth0Procedure,
   recidivizStatelessProcedure,
@@ -56,12 +61,11 @@ export const configRouter = router({
 
   getByState: recidivizStatelessProcedure
     .input(z.object({ id: z.string() }))
-    .query(async ({ input }): Promise<string> => {
+    .query(async ({ input }): Promise<AgencyConfigRow> => {
       const prisma = getGlobalPrismaClient();
       const row = await prisma.agencyConfig.findFirst({
         where: { id: input.id },
         orderBy: { version: "desc" },
-        select: { config: true },
       });
       if (!row) {
         throw new TRPCError({
@@ -69,6 +73,86 @@ export const configRouter = router({
           message: `No config found for id: ${input.id}`,
         });
       }
-      return row.config;
+      return row;
+    }),
+
+  saveNewConfig: recidivizStatelessProcedure
+    .input(
+      z.object({
+        newConfig: z.string(),
+        id: z.string(),
+        parentId: z.string().nullable(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const prisma = getGlobalPrismaClient();
+      const agencyConfigLatestVersion = await prisma.agencyConfig.findFirst({
+        where: { id: input.id },
+        orderBy: { version: "desc" },
+        select: { version: true, parentId: true },
+      });
+
+      if (
+        agencyConfigLatestVersion &&
+        input.parentId !== agencyConfigLatestVersion?.parentId
+      ) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Cannot change the parentId.",
+        });
+      }
+      if (!agencyConfigLatestVersion && input.parentId !== null) {
+        const validParent = await prisma.agencyConfig.findFirst({
+          where: { id: input.parentId },
+        });
+        if (!validParent) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Invalid parentId.",
+          });
+        }
+      }
+
+      const schema = input.parentId
+        ? AgencyConfigFileSchema
+        : BaseConfigFileSchema;
+
+      let parsedYaml: unknown;
+      try {
+        parsedYaml = parseYaml(input.newConfig);
+      } catch (e) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid YAML syntax.",
+          cause: e,
+        });
+      }
+
+      const parseResult = schema.safeParse(parsedYaml);
+      if (!parseResult.success) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Configuration validation failed.",
+          cause: parseResult.error,
+        });
+      }
+
+      const newVersion = parseResult.data.version;
+      const latestVersionNumber = agencyConfigLatestVersion?.version ?? 0;
+      if (newVersion <= latestVersionNumber) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Invalid version number. Must be greater than ${latestVersionNumber}.`,
+        });
+      }
+
+      return await prisma.agencyConfig.create({
+        data: {
+          id: input.id,
+          config: input.newConfig,
+          parentId: input.parentId,
+          version: newVersion,
+        },
+      });
     }),
 });
