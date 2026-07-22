@@ -19,7 +19,7 @@ import { ProgramsConfig } from "../types";
 
 export const US_CO_CONFIG: ProgramsConfig = {
   spreadsheetEnvVar: "US_CO_PROGRAMS_SPREADSHEET_ID",
-  sheetRange: "Program list!A:I",
+  sheetRange: "Prototype data!A:J",
   fixtures: [
     {
       dateAddedOrUpdated: new Date("2026-01-16"),

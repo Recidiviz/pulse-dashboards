@@ -87,6 +87,13 @@ export class UsCoProgramsPresenter implements Hydratable {
       this.programs = this.programs?.filter((p) =>
         p.facilitiesOffered.includes("Youthful Offender System"),
       );
+    } else {
+      // Hide YOS-only programs for everyone else
+      this.programs = this.programs?.filter(
+        (p) =>
+          p.facilitiesOffered.length > 1 ||
+          p.facilitiesOffered[0] !== "Youthful Offender System",
+      );
     }
   }
 

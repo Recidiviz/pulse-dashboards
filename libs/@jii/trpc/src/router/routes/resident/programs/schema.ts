@@ -50,6 +50,10 @@ export const programFromSheetSchema = z.preprocess(
     ),
     eligibilityRequirements: z.string(),
     prerequisites: z.string().optional(),
+    stateSpecificData: z
+      .string()
+      .optional()
+      .transform((raw) => raw && JSON.parse(raw)),
   }),
 );
 

@@ -198,9 +198,10 @@ const ProgramDetailModalComponent: FC<ProgramDetailModalProps> = ({
               </CloseButton>
             </TitleRow>
             <EarnSubtitle>
-              {t(($) => $.programs.modal.earnSubtitle, {
-                count: program.numberOfDaysThatCanBeEarned,
-              })}
+              {program.stateSpecificData?.yos_dtt_notes ??
+                t(($) => $.programs.modal.earnSubtitle, {
+                  count: program.numberOfDaysThatCanBeEarned,
+                })}
             </EarnSubtitle>
           </Header>
 
@@ -245,7 +246,9 @@ const ProgramDetailModalComponent: FC<ProgramDetailModalProps> = ({
               </FacilitiesList>
             </Section>
 
-            {t(($) => $.programs.modalCallToAction)}
+            {program.stateSpecificData.certificates_per_program > 1
+              ? t(($) => $.programs.modalCallToActionMulti)
+              : t(($) => $.programs.modalCallToAction)}
             <div>
               <Button type="button" kind="secondary" onClick={onClose}>
                 {t(($) => $.programs.modal.closeWindow)}

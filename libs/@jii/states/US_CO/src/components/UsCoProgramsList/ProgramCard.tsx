@@ -123,6 +123,12 @@ const ProgramCardComponent: FC<ProgramCardProps> = ({
 
   const showNewBadge = isNew(program.dateAddedOrUpdated);
 
+  const creditText =
+    program.stateSpecificData?.yos_dtt_notes ??
+    t(($) => $.programs.card.daysOfCredit, {
+      count: program.numberOfDaysThatCanBeEarned,
+    });
+
   return (
     <CardContainer onClick={() => onClick?.(program)}>
       <TopSection>
@@ -150,11 +156,7 @@ const ProgramCardComponent: FC<ProgramCardProps> = ({
       <BottomSection>
         <CreditsContainer>
           <EarnLabel>{t(($) => $.programs.card.earnLabel)}</EarnLabel>
-          <CreditsText>
-            {t(($) => $.programs.card.daysOfCredit, {
-              count: program.numberOfDaysThatCanBeEarned,
-            })}
-          </CreditsText>
+          <CreditsText>{creditText}</CreditsText>
         </CreditsContainer>
         {showNewBadge && (
           <Chip color="green">{t(($) => $.programs.card.newBadge)}</Chip>

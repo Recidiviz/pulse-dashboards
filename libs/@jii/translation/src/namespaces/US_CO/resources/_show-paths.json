@@ -58,13 +58,18 @@
       "availableFacilities": "[US_CO]programs.modal.availableFacilities",
       "closeWindow": "[US_CO]programs.modal.closeWindow"
     },
-    "modalCallToAction": "[US_CO]programs.modalCallToAction"
+    "modalCallToAction": "[US_CO]programs.modalCallToAction",
+    "modalCallToActionMulti": "[US_CO]programs.modalCallToActionMulti"
   },
   "homepage": {
     "pageTitle": "[US_CO]homepage.pageTitle",
     "lastUpdatedDate": "[US_CO]homepage.lastUpdatedDate",
     "sentenceDates": {
-      "learnMoreLink": "[US_CO]homepage.sentenceDates.learnMoreLink"
+      "learnMoreLink": "[US_CO]homepage.sentenceDates.learnMoreLink",
+      "lifeSentence": {
+        "withParole": "[US_CO]homepage.sentenceDates.lifeSentence.withParole",
+        "withoutParole": "[US_CO]homepage.sentenceDates.lifeSentence.withoutParole"
+      }
     }
   },
   "sentenceDates": {

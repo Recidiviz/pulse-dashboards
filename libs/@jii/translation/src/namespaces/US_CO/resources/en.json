@@ -58,7 +58,8 @@
       "availableFacilities": "Available Facilities",
       "closeWindow": "Close window"
     },
-    "modalCallToAction": "Sound interesting? Talk to your case manager to see if there might be a good fit."
+    "modalCallToAction": "Sound interesting? Talk to your case manager to see if there might be a good fit.",
+    "modalCallToActionMulti": "This program is offered at multiple facilities. To learn if it is available at your location please speak with your education specialist."
   },
   "homepage": {
     "pageTitle": "Home",
