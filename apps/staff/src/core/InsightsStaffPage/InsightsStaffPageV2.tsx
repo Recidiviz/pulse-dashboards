@@ -27,6 +27,7 @@ import {
   useRootStore,
 } from "../../components/StoreProvider";
 import { SupervisionOfficerPagePresenter } from "../../InsightsStore/presenters/SupervisionOfficerPagePresenter";
+import { shouldDisplayOpportunitiesModuleFirst } from "../../InsightsStore/presenters/utils";
 import { shouldShowHighlightedOfficersBanner } from "../InsightsHighlightedOfficersBanner";
 import { ManagedStaffHighlightedOfficersBanner } from "../InsightsHighlightedOfficersBanner/InsightsManagedStaffHighlightedOfficersBanner";
 import InsightsPageLayout from "../InsightsPageLayout";
@@ -139,10 +140,15 @@ const ManagedComponent = observer(function StaffPage({
         ) : undefined
       }
     >
+      {shouldDisplayOpportunitiesModuleFirst(currentTenantId) && (
+        <InsightsOpportunitySummary />
+      )}
       {!isCurrentOfficerUserRestrictedFromSupervisorsList && (
         <InsightsStaffOutcomesSection />
       )}
-      <InsightsOpportunitySummary />
+      {!shouldDisplayOpportunitiesModuleFirst(currentTenantId) && (
+        <InsightsOpportunitySummary />
+      )}
       <InsightsStaffVitals officerPseudoId={officerPseudoId} />
     </InsightsPageLayout>
   );

@@ -29,6 +29,7 @@ import {
   useRootStore,
 } from "../../components/StoreProvider";
 import { SupervisionSupervisorPagePresenter } from "../../InsightsStore/presenters/SupervisionSupervisorPagePresenter";
+import { shouldDisplayOpportunitiesModuleFirst } from "../../InsightsStore/presenters/utils";
 import { toTitleCase } from "../../utils";
 import InsightsHighlightedOfficersBanner, {
   shouldShowHighlightedOfficersBanner,
@@ -101,7 +102,6 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     pluralizeAcronym,
     labelIsAcronym,
     previousPages,
-    shouldDisplayOpportunitiesModuleFirst,
   } = presenter;
 
   let teamTooltip;
@@ -195,14 +195,14 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
       }
     >
       <InsightsSupervisorOpportunityNotificationsSection />
-      {shouldDisplayOpportunitiesModuleFirst && (
+      {shouldDisplayOpportunitiesModuleFirst(currentTenantId) && (
         <InsightsSupervisorOpportunityDetailSection />
       )}
       {isUsageLoginActivityModuleDisplayed({
         loginModulePosition: "TOP",
       }) && <InsightsManagedUsageCard />}
       <InsightsOutcomesModule labels={labels} timePeriod={timePeriod} />
-      {!shouldDisplayOpportunitiesModuleFirst && (
+      {!shouldDisplayOpportunitiesModuleFirst(currentTenantId) && (
         <InsightsSupervisorOpportunityDetailSection />
       )}
       <InsightsSupervisorVitals supervisorPseudoId={supervisorPseudoId} />
