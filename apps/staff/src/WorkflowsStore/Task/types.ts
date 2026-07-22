@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
-
 import type { VitalsMetricId } from "~datatypes";
 import type { Hydratable } from "~hydration-utils";
 
@@ -28,151 +26,148 @@ import type {
 } from "../../FirestoreStore";
 import type { RootStore } from "../../RootStore";
 import type { SpecificTenantConfigs } from "../../tenants";
+import type { Expect, Extends } from "../../utils/typeUtils";
 import type { Client } from "../Client";
 
-const supervisionTasksCaseTypeSchema = z.enum(["GENERAL", "SEX_OFFENSE"]);
-export type SupervisionTasksCaseType = z.infer<
-  typeof supervisionTasksCaseTypeSchema
->;
+export type SupervisionTasksCaseType = "GENERAL" | "SEX_OFFENSE";
 
 // TODO: Remove optional lastHomeVisit and lastContacted once it's available in the data
-const usIdHomeVisitDetailsSchema = z.object({
-  caseType: supervisionTasksCaseTypeSchema,
-  supervisionLevel: z.string(),
-  currentAddress: z.string(),
-  lastHomeVisit: z.string().optional(),
-});
+type UsIdHomeVisitDetails = {
+  caseType: SupervisionTasksCaseType;
+  supervisionLevel: string;
+  currentAddress: string;
+  lastHomeVisit?: string;
+};
 
-const usIdAssessmentDetailsSchema = z.object({
-  riskLevel: z.string().nullable(),
-  lastAssessedOn: z.string().nullable(),
-});
+type UsIdAssessmentDetails = {
+  riskLevel: string | null;
+  lastAssessedOn: string | null;
+};
 
-const usIdContactDetailsSchema = z.object({
-  caseType: supervisionTasksCaseTypeSchema,
-  supervisionLevel: z.string(),
-  lastContacted: z.string().optional(),
-});
+type UsIdContactDetails = {
+  caseType: SupervisionTasksCaseType;
+  supervisionLevel: string;
+  lastContacted?: string;
+};
 
-const usIdEmploymentDetailsSchema = z.object({
-  caseType: supervisionTasksCaseTypeSchema,
-  supervisionLevel: z.string(),
-  lastContacted: z.string().optional(),
-});
+type UsIdEmploymentDetails = {
+  caseType: SupervisionTasksCaseType;
+  supervisionLevel: string;
+  lastContacted?: string;
+};
 
-const usMoTaskDetailsSchema = z.object({
-  contactCadence: z.string(),
-  lastContactDate: z.string().nullable(),
-});
+type UsMoTaskDetails = {
+  contactCadence: string;
+  lastContactDate: string | null;
+};
 
-const usMoInitialTaskDetailsSchema = z.object({
-  contactCadence: z.string(),
-});
+type UsMoInitialTaskDetails = {
+  contactCadence: string;
+};
 
-const usMoHomeVisitTaskDetailsSchema = usMoTaskDetailsSchema.extend({
-  supplementaryContacts: z.array(
-    z.object({
-      contactTypes: z.string(),
-      contactDate: z.string(),
-    }),
-  ),
-});
+type UsMoHomeVisitTaskDetails = UsMoTaskDetails & {
+  supplementaryContacts: {
+    contactTypes: string;
+    contactDate: string;
+  }[];
+};
 
-// ND doesn't use line staff-facing tasks currently, so tasks don't have
-// details. Not `.strict()` — an additive backend field here shouldn't drop
-// the task, matching the tolerant-of-extra-fields behavior every other
-// schema in this file gets by default.
-const usNdEmptyDetailsSchema = z.object({});
+// ND doesn't use line staff-facing tasks currently, so tasks don't have details.
+type UsNdEmptyDetails = Record<string, never>;
 
-const usNeAssessmentDetailsSchema = z.object({
-  assessmentDueDate: z.string().nullable(),
-  mostRecentAssessmentDate: z.string().nullable(),
-  isFirstAssessment: z.boolean(),
-});
+type UsNeAssessmentDetails = {
+  assessmentDueDate: string | null;
+  mostRecentAssessmentDate: string | null;
+  isFirstAssessment: boolean;
+};
 
-const usNeContactDetailsSchema = z.object({
-  contactCadence: z.string(),
-  contactCount: z.number(),
-  contactDueDate: z.string(),
-  lastContactDate: z.string().nullable(),
-  overdueFlag: z.boolean(),
-  periodType: z.string(),
-  typeOfContact: z.string(),
-});
+type UsNeContactDetails = {
+  contactCadence: string;
+  contactCount: number;
+  contactDueDate: string;
+  lastContactDate: string | null;
+  overdueFlag: boolean;
+  periodType: string;
+  typeOfContact: string;
+};
 
-const usTxContactDetailsSchema = z.object({
-  contactCount: z.number(),
-  lastContactDate: z.string().nullable(),
-  overdueFlag: z.boolean(),
-  typeOfContact: z.string(),
-  contactCadence: z.string(),
-  scheduledContactDates: z.string().nullable(),
-});
+type UsTxContactDetails = {
+  contactCount: number;
+  lastContactDate: string | null;
+  overdueFlag: boolean;
+  typeOfContact: string;
+  contactCadence: string;
+  scheduledContactDates: string | null;
+};
 
-const usTxOverridableContactDetailsSchema = usTxContactDetailsSchema.extend({
-  overrideContactType: z
-    .union([
-      z.literal("SCHEDULED HOME (VIRTUAL)"),
-      z.literal("UNSCHEDULED HOME (VIRTUAL)"),
-    ])
-    .nullable(),
-  officerInCriticallyUnderstaffedLocation: z.boolean(),
-});
+type UsTxOverridableContactDetails = UsTxContactDetails & {
+  overrideContactType:
+    | null
+    | "SCHEDULED HOME (VIRTUAL)"
+    | "UNSCHEDULED HOME (VIRTUAL)";
+  officerInCriticallyUnderstaffedLocation: boolean;
+};
 
-const usTxTypeAgnosticContactDetailsSchema = z.object({
-  contactDueDate: z.string(),
-  contactCadence: z.string(),
-  lastContactDate: z.string().nullable(),
-  overdueFlag: z.boolean(),
-  contactTypesAccepted: z.string(),
-  officerInCriticallyUnderstaffedLocation: z.boolean(),
-  overrideContactTypesAccepted: z.string(),
-  scheduledContactDates: z.string().nullable(),
-});
+type UsTxTypeAgnosticContactDetails = {
+  contactDueDate: string;
+  contactCadence: string;
+  lastContactDate: string | null;
+  overdueFlag: boolean;
+  contactTypesAccepted: string;
+  officerInCriticallyUnderstaffedLocation: boolean;
+  overrideContactTypesAccepted: string;
+  scheduledContactDates: string | null;
+};
 
-const usTxEdgeCaseContactDetailsSchema = z.object({
-  contactCadence: z.string(),
-  scheduledContactDates: z.string().nullable(),
-  causalDate: z.string(),
-  // raw trigger, e.g. US_TX_MEETS_ADDRESS_CHANGE_HOME_CONTACT_TRIGGER
-  criteriaName: z.string(),
-});
+type UsTxEdgeCaseContactDetails = {
+  contactCadence: string;
+  scheduledContactDates: string | null;
+  causalDate: string;
+  criteriaName: string; // raw trigger, e.g. US_TX_MEETS_ADDRESS_CHANGE_HOME_CONTACT_TRIGGER
+};
 
-const usTxNewArrivalContactDetailsSchema = z.object({
-  contactCadence: z.string(),
-  lastContactDate: z.string().nullable(),
-  causalDate: z.string(),
-});
+type UsTxNewArrivalContactDetails = {
+  contactCadence: string;
+  lastContactDate: string | null;
+  causalDate: string;
+};
 
-const usTxAssessmentDetailsSchema = z.object({
-  eventType: z.string(),
-  dueAssessmentDate: z.string().nullable(),
-  eventDate: z.string(),
-  frequency: z.string(),
-  contactCadence: z.string(),
-  dueAssessmentType: z.string().optional().nullable(),
-});
+type UsTxAssessmentDetails = {
+  eventType: string;
+  dueAssessmentDate: string | null;
+  eventDate: string;
+  frequency: string;
+  contactCadence: string;
+  dueAssessmentType?: string;
+};
 
-const usIdTaskBaseDetailsSchema = z.object({
-  contactCadence: z.string(),
-  lastContactDate: z.string().nullable(),
-  contactPeriodStart: z.string().optional().nullable(),
-  contactPeriodEnd: z.string().optional().nullable(),
-});
+export type UsIdTaskBaseDetails = {
+  contactCadence: string;
+  lastContactDate: string | null;
+  contactPeriodStart?: string;
+  contactPeriodEnd?: string;
+};
 
-const usIdLsirAssessmentDetailsSchema = usIdTaskBaseDetailsSchema.extend({
-  lastAssessmentDate: z.string().nullable(),
-});
+type UsIdLsirAssessmentDetails = UsIdTaskBaseDetails & {
+  lastAssessmentDate: string | null;
+};
 
-const usIdStableAssessmentDetailsSchema = usIdTaskBaseDetailsSchema.extend({
-  lastAssessmentDate: z.string().nullable(),
-});
+type UsIdStableAssessmentDetails = UsIdTaskBaseDetails & {
+  lastAssessmentDate: string | null;
+};
 
-const usIdHomeVisitOrAddressChangeDetailsSchema =
-  usIdTaskBaseDetailsSchema.extend({
-    addressChangeContactDueDate: z.string().nullable(),
-    addressChangeDate: z.string().nullable(),
-  });
+type UsIdHomeVisitOrAddressChangeDetails = UsIdTaskBaseDetails & {
+  addressChangeContactDueDate: string | null;
+  addressChangeDate: string | null;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type CheckSupervisionTaskDetailsMappingType = Expect<
+  Extends<
+    SupervisionDetailsForTask,
+    Record<SupervisionTaskType, SupervisionDetails>
+  >
+>;
 
 export const SUPERVISION_NEED_TYPES = ["employmentNeed"] as const;
 
@@ -228,58 +223,67 @@ export type SupervisionTaskType = (typeof SUPERVISION_TASK_TYPES)[number];
 
 export type SnoozeOptions = number | "FOREVER";
 
-// Maps each task type to the Zod schema for its `details` payload. The
-// `satisfies` clause guarantees every `SupervisionTaskType` has an entry
-// (and only valid types have entries).
-const detailsSchemaForTaskType = {
-  // TODO(#10615): Remove 'homeVisit' v1 (keep v2, usIdHomeVisit) task type when UsIdTasksV2 is fully rolled out.
-  homeVisit: usIdHomeVisitDetailsSchema,
-  usIdHomeVisit: usIdHomeVisitOrAddressChangeDetailsSchema,
-  // TODO(#10615): Remove 'assessment' v1 (keep v2, usIdRiskAssessment) task type when UsIdTasksV2 is fully rolled out.
-  assessment: usIdAssessmentDetailsSchema,
-  // TODO(#10615): Remove 'contact' v1 (keep v2, UsIdFaceToFaceContact) task type when UsIdTasksV2 is fully rolled out.
-  usIdLsirAssessment: usIdLsirAssessmentDetailsSchema,
-  usIdStableAssessment: usIdStableAssessmentDetailsSchema,
-  contact: usIdContactDetailsSchema,
-  // TODO(#10615): Remove 'employment' v1 (keep v2, usIdEmploymentVerification) task type when UsIdTasksV2 is fully rolled out.
-  usIdFaceToFaceContact: usIdTaskBaseDetailsSchema,
-  employment: usIdEmploymentDetailsSchema,
-  usIdEmploymentVerification: usIdTaskBaseDetailsSchema,
-  usMoPositiveHomeVisit: usMoHomeVisitTaskDetailsSchema,
-  usMoEmploymentVerification: usMoTaskDetailsSchema,
-  usMoInitialEmploymentVerificationIap: usMoInitialTaskDetailsSchema,
-  usMoInitialPositiveContactWithSignificantOtherIap:
-    usMoInitialTaskDetailsSchema,
-  usMoInitialPositiveContactWithSignificantOtherSmi:
-    usMoInitialTaskDetailsSchema,
-  usMoInitialPositiveHomeVisitIap: usMoInitialTaskDetailsSchema,
-  usMoInitialPositiveHomeVisitSmi: usMoInitialTaskDetailsSchema,
-  usMoInPersonContact: usMoTaskDetailsSchema,
-  usMoPositiveContactWithSignificantOther: usMoTaskDetailsSchema,
-  usNdContact: usNdEmptyDetailsSchema,
-  usNdRiskAssessment: usNdEmptyDetailsSchema,
-  usNeOrasAssessment: usNeAssessmentDetailsSchema,
-  usNeStableAssessment: usNeAssessmentDetailsSchema,
-  usNePersonalContact: usNeContactDetailsSchema,
-  usNeCollateralContact: usNeContactDetailsSchema,
-  usNeNCJISCheckContact: usNeContactDetailsSchema,
-  usTxCollateralContactScheduled: usTxContactDetailsSchema,
-  usTxTypeAgnosticContact: usTxTypeAgnosticContactDetailsSchema,
-  usTxHomeContactScheduled: usTxOverridableContactDetailsSchema,
-  usTxHomeContactUnscheduled: usTxOverridableContactDetailsSchema,
-  usTxHomeContactEdgeCase: usTxEdgeCaseContactDetailsSchema,
-  usTxInCustodyContact: usTxContactDetailsSchema,
-  usTxOfficeContactScheduled: usTxContactDetailsSchema,
-  usTxFieldContactScheduled: usTxContactDetailsSchema,
-  usTxVirtualOfficeContactScheduled: usTxContactDetailsSchema,
-  usTxVirtualOrOfficeContact: usTxTypeAgnosticContactDetailsSchema,
-  usTxNewArrivalContact: usTxNewArrivalContactDetailsSchema,
-  usTxAssessment: usTxAssessmentDetailsSchema,
-  usTxHomeContactUnscheduledWeekend: usTxOverridableContactDetailsSchema,
-} satisfies Record<SupervisionTaskType, z.ZodTypeAny>;
+export type SupervisionDetails =
+  | UsIdHomeVisitDetails
+  | UsIdAssessmentDetails
+  | UsIdTaskBaseDetails
+  | UsIdContactDetails
+  | UsIdEmploymentDetails
+  | UsMoTaskDetails
+  | UsMoInitialTaskDetails
+  | UsMoHomeVisitTaskDetails
+  | UsNdEmptyDetails
+  | UsNeAssessmentDetails
+  | UsNeContactDetails
+  | UsTxContactDetails
+  | UsTxTypeAgnosticContactDetails
+  | UsTxEdgeCaseContactDetails
+  | UsTxNewArrivalContactDetails
+  | UsTxAssessmentDetails;
 
 export type SupervisionDetailsForTask = {
-  [T in SupervisionTaskType]: z.infer<(typeof detailsSchemaForTaskType)[T]>;
+  // TODO(#10615): Remove 'homeVisit' v1 (keep v2, usIdHomeVisit) task type when UsIdTasksV2 is fully rolled out.
+  homeVisit: UsIdHomeVisitDetails;
+  usIdHomeVisit: UsIdHomeVisitOrAddressChangeDetails;
+  // TODO(#10615): Remove 'assessment' v1 (keep v2, usIdRiskAssessment) task type when UsIdTasksV2 is fully rolled out.
+  assessment: UsIdAssessmentDetails;
+  // TODO(#10615): Remove 'contact' v1 (keep v2, UsIdFaceToFaceContact) task type when UsIdTasksV2 is fully rolled out.
+  usIdLsirAssessment: UsIdLsirAssessmentDetails;
+  usIdStableAssessment: UsIdStableAssessmentDetails;
+  contact: UsIdContactDetails;
+  // TODO(#10615): Remove 'employment' v1 (keep v2, usIdEmploymentVerification) task type when UsIdTasksV2 is fully rolled out.
+  usIdFaceToFaceContact: UsIdTaskBaseDetails;
+  employment: UsIdEmploymentDetails;
+  usIdEmploymentVerification: UsIdTaskBaseDetails;
+  usMoPositiveHomeVisit: UsMoHomeVisitTaskDetails;
+  usMoEmploymentVerification: UsMoTaskDetails;
+  usMoInitialEmploymentVerificationIap: UsMoInitialTaskDetails;
+  usMoInitialPositiveContactWithSignificantOtherIap: UsMoInitialTaskDetails;
+  usMoInitialPositiveContactWithSignificantOtherSmi: UsMoInitialTaskDetails;
+  usMoInitialPositiveHomeVisitIap: UsMoInitialTaskDetails;
+  usMoInitialPositiveHomeVisitSmi: UsMoInitialTaskDetails;
+  usMoInPersonContact: UsMoTaskDetails;
+  usMoPositiveContactWithSignificantOther: UsMoTaskDetails;
+  usNdContact: UsNdEmptyDetails;
+  usNdRiskAssessment: UsNdEmptyDetails;
+  usNeOrasAssessment: UsNeAssessmentDetails;
+  usNeStableAssessment: UsNeAssessmentDetails;
+  usNePersonalContact: UsNeContactDetails;
+  usNeCollateralContact: UsNeContactDetails;
+  usNeNCJISCheckContact: UsNeContactDetails;
+  usTxCollateralContactScheduled: UsTxContactDetails;
+  usTxTypeAgnosticContact: UsTxTypeAgnosticContactDetails;
+  usTxHomeContactScheduled: UsTxOverridableContactDetails;
+  usTxHomeContactUnscheduled: UsTxOverridableContactDetails;
+  usTxHomeContactEdgeCase: UsTxEdgeCaseContactDetails;
+  usTxInCustodyContact: UsTxContactDetails;
+  usTxOfficeContactScheduled: UsTxContactDetails;
+  usTxFieldContactScheduled: UsTxContactDetails;
+  usTxVirtualOfficeContactScheduled: UsTxContactDetails;
+  usTxVirtualOrOfficeContact: UsTxTypeAgnosticContactDetails;
+  usTxNewArrivalContact: UsTxNewArrivalContactDetails;
+  usTxAssessment: UsTxAssessmentDetails;
+  usTxHomeContactUnscheduledWeekend: UsTxOverridableContactDetails;
 };
 
 export type SnoozeInfo = {
@@ -389,41 +393,6 @@ export type SupervisionTaskRecord<T extends SupervisionTaskType> = {
   // includeInRoutePlanner is true; absent otherwise.
   routePlannerDisplayName?: string;
 };
-
-// Built once per task type rather than per call — both to avoid rebuilding
-// identical Zod schemas on every task validated, and because asking the
-// compiler to verify a generically-indexed z.object() against
-// `SupervisionTaskRecord<T>` for a live type parameter T is prohibitively
-// expensive (it forces distribution over every branch of
-// `detailsSchemaForTaskType` at once). The cast below is a single, cheap
-// assertion instead.
-const supervisionTaskRecordSchemaForTaskType = Object.fromEntries(
-  SUPERVISION_TASK_TYPES.map((type) => [
-    type,
-    z.object({
-      taskDisplayName: z.string(),
-      type: z.literal(type),
-      details: detailsSchemaForTaskType[type],
-      dueDate: z.string(),
-      includeInRoutePlanner: z.boolean().optional(),
-      routePlannerDisplayName: z.string().optional().nullable(),
-    }),
-  ]),
-) as unknown as Record<SupervisionTaskType, z.ZodTypeAny>;
-
-/**
- * Returns the Zod schema for a single `SupervisionTaskRecord`, keyed to the
- * `details` shape for the given task type. Used by `TasksBase` to validate
- * one task at a time, so a single malformed task can be dropped (and
- * reported to Sentry) without invalidating the rest of the person's tasks.
- */
-export function supervisionTaskRecordSchema<T extends SupervisionTaskType>(
-  type: T,
-): z.ZodType<SupervisionTaskRecord<T>> {
-  return supervisionTaskRecordSchemaForTaskType[type] as z.ZodType<
-    SupervisionTaskRecord<T>
-  >;
-}
 
 export type SupervisionNeed = {
   type: SupervisionNeedType;
