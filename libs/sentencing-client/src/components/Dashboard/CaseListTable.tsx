@@ -27,6 +27,8 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { isSARArchived } from "~@sentencing/trpc-types";
+
 import { filterExcludedAttributes } from "../../geoConfigs/utils";
 import { psiUrl, sarUrl } from "../../utils/routing";
 import SortIcon from "../assets/sort-icon.svg?react";
@@ -46,7 +48,7 @@ import {
   CaseStatusToDisplay,
   RecommendationStatusFilter,
 } from "./types";
-import { isPSICaseArchived, isSARArchived } from "./utils";
+import { isPSICaseArchived } from "./utils";
 
 type CaseListTableProps = {
   caseTableData: CaseListTableCases;

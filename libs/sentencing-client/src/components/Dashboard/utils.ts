@@ -17,6 +17,8 @@
 
 import moment from "moment";
 
+import { isSARArchived } from "~@sentencing/trpc-types";
+
 export const isBeforeDueDate = (dueDate: Date | null, offset?: number) => {
   if (!dueDate) return;
 
@@ -37,13 +39,6 @@ export const isBeforeDueDateWithExtraDayOffset = (dueDate: Date | null) => {
    */
   return isBeforeDueDate(dueDate, 2);
 };
-
-// SAR: archived when completionDate has passed (investigation closed in OPII).
-export function isSARArchived<T extends { completionDate?: Date | null }>(
-  sar: T,
-): sar is T & { completionDate: Date } {
-  return !!sar.completionDate && moment.utc().isAfter(sar.completionDate);
-}
 
 /** The two independent "completion" signals a SAR can have: `status` reaches
  * Complete as soon as a PO finishes all fields in-app, but the report isn't

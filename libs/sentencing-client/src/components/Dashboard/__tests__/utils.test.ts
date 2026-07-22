@@ -67,11 +67,9 @@ test("isBeforeDueDateWithExtraDayOffset", () => {
 describe("getSARCompletionState", () => {
   const yesterday = new Date();
   yesterday.setUTCDate(yesterday.getUTCDate() - 1);
-  const tomorrow = new Date();
-  tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
   const updatedAt = new Date("2026-04-15");
 
-  it("returns archivedInOpii when completionDate has passed", () => {
+  it("returns archivedInOpii whenever completionDate is set", () => {
     expect(
       getSARCompletionState({
         status: "Complete",
@@ -93,19 +91,11 @@ describe("getSARCompletionState", () => {
     ).toEqual({ kind: "archivedInOpii", date: yesterday });
   });
 
-  it("returns completeInApp when status is Complete but completionDate hasn't passed", () => {
+  it("returns completeInApp when status is Complete but completionDate isn't set", () => {
     expect(
       getSARCompletionState({
         status: "Complete",
         completionDate: null,
-        updatedAt,
-      }),
-    ).toEqual({ kind: "completeInApp", date: updatedAt });
-
-    expect(
-      getSARCompletionState({
-        status: "Complete",
-        completionDate: tomorrow,
         updatedAt,
       }),
     ).toEqual({ kind: "completeInApp", date: updatedAt });

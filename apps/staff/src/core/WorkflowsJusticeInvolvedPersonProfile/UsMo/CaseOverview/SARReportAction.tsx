@@ -31,10 +31,9 @@ const DOWNLOADING_LABEL = "Downloading…";
 const ACTIVE_ACTION_LABEL = "Go to SAR Builder";
 
 /** In-tool deep-link to the SAR Builder for a not-yet-archived SAR. Returns
- * `undefined` if the SAR has no associated staff record — Prisma marks the
- * relation optional because the SAR / Staff / Client loads run independently,
- * but the assigned-only authz on the tRPC procedure means we should not see
- * `null` staff here in practice. */
+ * `undefined` if the SAR has no associated staff record -- shouldn't happen
+ * for a row already gated on `currentUserHasAccess` (see `getSARsByClient`),
+ * but Prisma's relation is optional at the type level regardless. */
 function builderHref(sar: SARByClient): string | undefined {
   if (!sar.staff) return undefined;
   return `${sarUrl("sarDetails", {
@@ -57,6 +56,8 @@ type SARReportActionProps = {
 /**
  * Per-row action for a single SAR on the US_MO Case Overview "Reports" section.
  *
+ * - No access (`currentUserHasAccess` false): no action, just the status
+ *   label from `SARReportsSection`.
  * - Archived (`completionDate` in the past) or Complete SAR: a "Download Report"
  *   button that renders + saves the finished PDF in place (prefetched on
  *   hover/focus).
@@ -75,8 +76,10 @@ export function SARReportAction({
   onDownload,
   onPrefetch,
   onBuilderLinkClick,
-}: SARReportActionProps): React.ReactElement {
+}: SARReportActionProps): React.ReactElement | null {
   const [isDownloading, setIsDownloading] = useState(false);
+
+  if (!sar.currentUserHasAccess) return null;
 
   // The builder link is only for an in-progress SAR — neither archived
   // (completionDate passed) nor marked Complete. Once it is archived or

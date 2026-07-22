@@ -18,6 +18,8 @@
 import { ColumnDef, Row } from "@tanstack/react-table";
 import moment from "moment";
 
+import { isSARArchived } from "~@sentencing/trpc-types";
+
 import { sortFullNameByLastNameDescending } from "../../../utils/sorting";
 import {
   capitalizeName,
@@ -42,7 +44,7 @@ import {
 } from "../constants";
 import * as Styled from "../Dashboard.styles";
 import { CaseListTableCase, CaseStatus, CaseStatusToDisplay } from "../types";
-import { isPSICaseArchived, isSARArchived } from "../utils";
+import { isPSICaseArchived } from "../utils";
 
 export const NAME_COLUMN: ColumnDef<CaseListTableCase> = {
   header: "Name",

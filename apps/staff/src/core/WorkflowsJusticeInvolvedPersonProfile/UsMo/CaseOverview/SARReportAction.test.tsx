@@ -30,7 +30,9 @@ import { SARByClient, sarUrl } from "~sentencing-client";
 
 import { SARReportAction } from "./SARReportAction";
 
-/** Test data factory; we only populate the fields the component reads. */
+/** Test data factory; we only populate the fields the component reads.
+ * Defaults `currentUserHasAccess` to true so existing tests exercise the
+ * archived/active branching -- the no-access case has its own tests below. */
 function makeSAR(overrides: Partial<SARByClient> = {}): SARByClient {
   return {
     id: "sar-id-1",
@@ -39,6 +41,7 @@ function makeSAR(overrides: Partial<SARByClient> = {}): SARByClient {
     completionDate: null,
     courtDate: null,
     staff: { pseudonymizedId: "staff-pseudo-1" },
+    currentUserHasAccess: true,
     ...overrides,
   } as SARByClient;
 }
@@ -180,6 +183,49 @@ describe("SARReportAction", () => {
     expect(
       screen.queryByRole("link", { name: "Go to SAR Builder" }),
     ).not.toBeInTheDocument();
+  });
+
+  test("no access: renders no link for an in-progress SAR (status copy comes from SARReportsSection)", () => {
+    const inaccessibleSAR = makeSAR({
+      id: "no-access-active",
+      status: "InProgress",
+      currentUserHasAccess: false,
+    });
+
+    const { container } = render(
+      <SARReportAction
+        sar={inaccessibleSAR}
+        onDownload={vi.fn()}
+        onPrefetch={vi.fn()}
+        onBuilderLinkClick={vi.fn()}
+      />,
+    );
+
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  test("no access: renders no download button even for a Complete-but-not-archived SAR (status copy comes from SARReportsSection)", () => {
+    // currentUserHasAccess is false whenever the caller isn't the assignee/
+    // supervisor and the SAR isn't archived in OPII yet -- reaching Complete
+    // in-app doesn't grant access on its own (see isArchivedInOpii). The row
+    // still shows status copy, just not from this component.
+    const inaccessibleSAR = makeSAR({
+      id: "no-access-complete",
+      status: "Complete",
+      completionDate: null,
+      currentUserHasAccess: false,
+    });
+
+    const { container } = render(
+      <SARReportAction
+        sar={inaccessibleSAR}
+        onDownload={vi.fn()}
+        onPrefetch={vi.fn()}
+        onBuilderLinkClick={vi.fn()}
+      />,
+    );
+
+    expect(container).toBeEmptyDOMElement();
   });
 
   test("archived: renders the Download Report button and warms the cache on hover + focus", () => {

@@ -49,6 +49,7 @@ function makeSAR(overrides: Partial<SARByClient> = {}): SARByClient {
     completionDate: null,
     courtDate: null,
     staff: { pseudonymizedId: "staff-1" },
+    currentUserHasAccess: true,
     ...overrides,
   } as SARByClient;
 }

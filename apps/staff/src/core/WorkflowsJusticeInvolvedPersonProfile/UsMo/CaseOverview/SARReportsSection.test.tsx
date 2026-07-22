@@ -27,7 +27,8 @@ import { SARReportsSection } from "./SARReportsSection";
 
 /** Test data factory. The runtime `SARByClient` row carries a handful of
  * fields the production tRPC procedure selects; we cast to satisfy the
- * structural type but only populate what the section reads. */
+ * structural type but only populate what the section reads. Defaults
+ * `currentUserHasAccess` to true -- the no-access case has its own tests. */
 function makeSAR(overrides: Partial<SARByClient> = {}): SARByClient {
   return {
     id: "sar-id-1",
@@ -37,6 +38,7 @@ function makeSAR(overrides: Partial<SARByClient> = {}): SARByClient {
     courtDate: null,
     updatedAt: parseISO("2026-04-15"),
     staff: { pseudonymizedId: "staff-pseudo-1" },
+    currentUserHasAccess: true,
     ...overrides,
   } as SARByClient;
 }
@@ -151,6 +153,24 @@ describe("SARReportsSection", () => {
     ).not.toBeInTheDocument();
   });
 
+  test("no access: shows the status label with no link or button", () => {
+    const inaccessibleSAR = makeSAR({
+      id: "no-access-1",
+      status: "InProgress",
+      currentUserHasAccess: false,
+    });
+
+    renderSection([inaccessibleSAR]);
+
+    expect(screen.getByText("SAR - In Progress")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: "Go to SAR Builder" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Download Report" }),
+    ).not.toBeInTheDocument();
+  });
+
   test("fires onBuilderLinkClick when a 'Go to SAR Builder' link is clicked", () => {
     const activeSAR = makeSAR({ id: "active-1", status: "InProgress" });
     const { onBuilderLinkClick } = renderSection([activeSAR]);
@@ -185,23 +205,5 @@ describe("SARReportsSection", () => {
   test("renders inside a <section> so the CardFrame divider rule applies", () => {
     const { container } = renderSection([archivedSAR]);
     expect(container.querySelector("section")).not.toBeNull();
-  });
-
-  test("treats a future completionDate as not archived (label uses updatedAt)", () => {
-    // completionDate is after NOW (2026-05-28), so the row is not archived and
-    // shows the in-app completion date ("Completed in Recidiviz") rather than
-    // OPII's. Being Complete, its action is Download Report (Complete → Download).
-    const futureSAR = makeSAR({
-      id: "future-1",
-      status: "Complete",
-      completionDate: parseISO("2026-12-31"),
-    });
-    renderSection([futureSAR]);
-    expect(
-      screen.getByText("SAR - Completed in Recidiviz 04/15/2026"),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "Download Report" }),
-    ).toBeInTheDocument();
   });
 });

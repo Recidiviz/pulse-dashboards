@@ -30,18 +30,34 @@ import {
   SubstanceType,
 } from "~@sentencing/prisma/client";
 import { appRouter } from "~@sentencing/trpc/router";
-import { testPrismaClient, testTRPCClient } from "~@sentencing/trpc/test/setup";
+import { testPrismaClient } from "~@sentencing/trpc/test/setup";
 import {
   fakeSAR,
   fakeSARClient,
   fakeSARStaff,
   fakeStaff,
+  fakeSupervisor,
 } from "~@sentencing/trpc/test/setup/seed";
 
 describe("SAR router", () => {
+  // Builds a tRPC caller directly (bypassing HTTP/createContext) with a given
+  // staffPseudonymizedId, so tests can exercise both the staff-scoped access
+  // paths and the undefined (internal user) case per endpoint.
+  function makeCallerForStaff(staffPseudonymizedId: string | undefined) {
+    return appRouter.createCaller({
+      req: {} as never,
+      res: {} as never,
+      isAuthorized: true,
+      prisma: testPrismaClient,
+      staffPseudonymizedId,
+    });
+  }
+
   describe("getSAR", () => {
     test("should return SAR if SAR exists", async () => {
-      const returnedSAR = await testTRPCClient.sar.getSAR.query({
+      const returnedSAR = await makeCallerForStaff(
+        fakeStaff.pseudonymizedId,
+      ).sar.getSAR({
         id: fakeSAR.id,
       });
 
@@ -127,8 +143,9 @@ describe("SAR router", () => {
     });
 
     test("should throw error if SAR does not exist", async () => {
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
       await expect(() =>
-        testTRPCClient.sar.getSAR.query({
+        caller.sar.getSAR({
           id: "not-a-real-id",
         }),
       ).rejects.toThrowError(
@@ -138,11 +155,76 @@ describe("SAR router", () => {
         }),
       );
     });
+
+    test("an internal user (no staffPseudonymizedId) can read any SAR by id, unrestricted", async () => {
+      const caller = makeCallerForStaff(undefined);
+      const sar = await caller.sar.getSAR({ id: fakeSAR.id });
+
+      expect(sar.id).toEqual(fakeSAR.id);
+    });
+
+    test("an unrelated PO cannot read a SAR they aren't assigned to or supervising", async () => {
+      const caller = makeCallerForStaff(fakeSARStaff.pseudonymizedId);
+
+      await expect(() =>
+        caller.sar.getSAR({ id: fakeSAR.id }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "NOT_FOUND",
+          message: "Sentencing Assessment Report with that id was not found",
+        }),
+      );
+    });
+
+    test("an unrelated PO can read a SAR once it's archived in OPII", async () => {
+      await testPrismaClient.sentencingAssessmentReport.update({
+        where: { id: fakeSAR.id },
+        data: { completionDate: new Date("2020-01-01") },
+      });
+
+      const caller = makeCallerForStaff(fakeSARStaff.pseudonymizedId);
+      const sar = await caller.sar.getSAR({ id: fakeSAR.id });
+
+      expect(sar.id).toEqual(fakeSAR.id);
+    });
+  });
+
+  describe("getSARsForStaff", () => {
+    test("resolves via the caller's own staffPseudonymizedId, ignoring the requested id", async () => {
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
+      const sars = await caller.sar.getSARsForStaff({
+        staffPseudonymizedId: fakeSARStaff.pseudonymizedId, // ignored -- context id wins
+      });
+
+      expect(sars.map((s) => s.id)).toEqual([fakeSAR.id]);
+    });
+
+    test("falls back to the requested staffPseudonymizedId when the caller has none (impersonation)", async () => {
+      const caller = makeCallerForStaff(undefined);
+      const sars = await caller.sar.getSARsForStaff({
+        staffPseudonymizedId: fakeStaff.pseudonymizedId,
+      });
+
+      expect(sars.map((s) => s.id)).toEqual([fakeSAR.id]);
+    });
+
+    test("throws FORBIDDEN when neither the caller nor the request resolves a staff identity", async () => {
+      const caller = makeCallerForStaff(undefined);
+      await expect(() =>
+        caller.sar.getSARsForStaff({ staffPseudonymizedId: "" }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "A staffPseudonymizedId is required to look up SARs for staff",
+        }),
+      );
+    });
   });
 
   describe("updateSAR", () => {
     test("should update basic SAR fields", async () => {
-      await testTRPCClient.sar.updateSAR.mutate({
+      await makeCallerForStaff(fakeStaff.pseudonymizedId).sar.updateSAR({
         id: fakeSAR.id,
         attributes: {
           address: "456 Oak Street",
@@ -166,7 +248,7 @@ describe("SAR router", () => {
     });
 
     test("should update array fields", async () => {
-      await testTRPCClient.sar.updateSAR.mutate({
+      await makeCallerForStaff(fakeStaff.pseudonymizedId).sar.updateSAR({
         id: fakeSAR.id,
         attributes: {
           needsToBeAddressed: [
@@ -192,7 +274,7 @@ describe("SAR router", () => {
     });
 
     test("should clear nullable fields when set to null", async () => {
-      await testTRPCClient.sar.updateSAR.mutate({
+      await makeCallerForStaff(fakeStaff.pseudonymizedId).sar.updateSAR({
         id: fakeSAR.id,
         attributes: {
           defendantStatement: null,
@@ -210,7 +292,7 @@ describe("SAR router", () => {
     });
 
     test("should update client fields", async () => {
-      await testTRPCClient.sar.updateSAR.mutate({
+      await makeCallerForStaff(fakeStaff.pseudonymizedId).sar.updateSAR({
         id: fakeSAR.id,
         attributes: {
           motherName: "Jane Doe",
@@ -254,7 +336,7 @@ describe("SAR router", () => {
       const sentencingDate = new Date("2024-02-20");
 
       // Now update them with attorney/plea information
-      await testTRPCClient.sar.updateSAR.mutate({
+      await makeCallerForStaff(fakeStaff.pseudonymizedId).sar.updateSAR({
         id: fakeSAR.id,
         attributes: {
           charges: [
@@ -304,7 +386,8 @@ describe("SAR router", () => {
     });
 
     test("should create drug histories via CRUD mutation", async () => {
-      await testTRPCClient.sar.createDrugHistory.mutate({
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
+      await caller.sar.createDrugHistory({
         sarId: fakeSAR.id,
         substance: SubstanceType.Alcohol,
         ageOfRegularUse: 18,
@@ -312,7 +395,7 @@ describe("SAR router", () => {
         method: MethodOfUse.Oral,
       });
 
-      await testTRPCClient.sar.createDrugHistory.mutate({
+      await caller.sar.createDrugHistory({
         sarId: fakeSAR.id,
         substance: SubstanceType.Marijuana,
         ageOfRegularUse: null,
@@ -340,8 +423,9 @@ describe("SAR router", () => {
     });
 
     test("should delete drug histories via CRUD mutation", async () => {
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
       // First add a drug history
-      const created = await testTRPCClient.sar.createDrugHistory.mutate({
+      const created = await caller.sar.createDrugHistory({
         sarId: fakeSAR.id,
         substance: SubstanceType.Alcohol,
       });
@@ -354,7 +438,7 @@ describe("SAR router", () => {
 
       // Delete it
       if (!created) throw new Error("Expected drug history to be created");
-      await testTRPCClient.sar.deleteDrugHistory.mutate({
+      await caller.sar.deleteDrugHistory({
         id: created.id,
       });
 
@@ -384,7 +468,7 @@ describe("SAR router", () => {
         version: "1.0" as const,
       };
 
-      await testTRPCClient.sar.updateSAR.mutate({
+      await makeCallerForStaff(fakeStaff.pseudonymizedId).sar.updateSAR({
         id: fakeSAR.id,
         attributes: {
           metadata,
@@ -401,7 +485,7 @@ describe("SAR router", () => {
 
     test("should validate metadata structure and reject invalid statuses", async () => {
       try {
-        await testTRPCClient.sar.updateSAR.mutate({
+        await makeCallerForStaff(fakeStaff.pseudonymizedId).sar.updateSAR({
           id: fakeSAR.id,
           attributes: {
             // Provide completely wrong type - string instead of object
@@ -418,8 +502,9 @@ describe("SAR router", () => {
     });
 
     test("should allow undefined metadata (no update)", async () => {
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
       // Set metadata first
-      await testTRPCClient.sar.updateSAR.mutate({
+      await caller.sar.updateSAR({
         id: fakeSAR.id,
         attributes: {
           metadata: {
@@ -437,7 +522,7 @@ describe("SAR router", () => {
       });
 
       // Now update without metadata field - should not change it
-      await testTRPCClient.sar.updateSAR.mutate({
+      await caller.sar.updateSAR({
         id: fakeSAR.id,
         attributes: {
           address: "New Address",
@@ -466,7 +551,7 @@ describe("SAR router", () => {
         },
       });
 
-      await testTRPCClient.sar.updateSAR.mutate({
+      await makeCallerForStaff(fakeStaff.pseudonymizedId).sar.updateSAR({
         id: fakeSAR.id,
         attributes: {
           address: "789 Maple Ave",
@@ -517,8 +602,12 @@ describe("SAR router", () => {
     });
 
     test("should throw error if SAR does not exist", async () => {
+      // A nonexistent id never matches the accessibility check's `where`, so
+      // this is FORBIDDEN (no accessible SAR under that id) rather than
+      // NOT_FOUND -- the same as any real caller hitting a bad id.
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
       await expect(() =>
-        testTRPCClient.sar.updateSAR.mutate({
+        caller.sar.updateSAR({
           id: "not-a-real-id",
           attributes: {
             address: "123 Test St",
@@ -526,10 +615,25 @@ describe("SAR router", () => {
         }),
       ).rejects.toThrowError(
         new TRPCError({
-          code: "NOT_FOUND",
-          message: "Sentencing Assessment Report with that id was not found",
+          code: "FORBIDDEN",
+          message:
+            "You do not have access to this Sentencing Assessment Report",
         }),
       );
+    });
+
+    test("an internal user (no staffPseudonymizedId) can update any SAR, unrestricted", async () => {
+      const caller = makeCallerForStaff(undefined);
+      await caller.sar.updateSAR({
+        id: fakeSAR.id,
+        attributes: { address: "123 Test St" },
+      });
+
+      const updatedSAR =
+        await testPrismaClient.sentencingAssessmentReport.findUnique({
+          where: { id: fakeSAR.id },
+        });
+      expect(updatedSAR?.address).toBe("123 Test St");
     });
   });
 
@@ -538,7 +642,9 @@ describe("SAR router", () => {
       const startDate = new Date("2020-03-01");
       const endDate = new Date("2023-06-30");
 
-      await testTRPCClient.sar.createEmploymentHistory.mutate({
+      await makeCallerForStaff(
+        fakeStaff.pseudonymizedId,
+      ).sar.createEmploymentHistory({
         sarId: fakeSAR.id,
         employerName: "Acme Corp",
         startDate,
@@ -561,7 +667,8 @@ describe("SAR router", () => {
     });
 
     test("should update an employment history record", async () => {
-      const created = await testTRPCClient.sar.createEmploymentHistory.mutate({
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
+      const created = await caller.sar.createEmploymentHistory({
         sarId: fakeSAR.id,
         employerName: "Old Employer",
       });
@@ -569,7 +676,7 @@ describe("SAR router", () => {
       if (!created)
         throw new Error("Expected employment history to be created");
 
-      await testTRPCClient.sar.updateEmploymentHistory.mutate({
+      await caller.sar.updateEmploymentHistory({
         id: created.id,
         employerName: "New Employer",
         verifiedByReportAuthor: false,
@@ -586,7 +693,8 @@ describe("SAR router", () => {
     });
 
     test("should delete an employment history record", async () => {
-      const created = await testTRPCClient.sar.createEmploymentHistory.mutate({
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
+      const created = await caller.sar.createEmploymentHistory({
         sarId: fakeSAR.id,
         employerName: "Temp Employer",
       });
@@ -599,7 +707,7 @@ describe("SAR router", () => {
       });
       expect(histories).toHaveLength(1);
 
-      await testTRPCClient.sar.deleteEmploymentHistory.mutate({
+      await caller.sar.deleteEmploymentHistory({
         id: created.id,
       });
 
@@ -610,7 +718,9 @@ describe("SAR router", () => {
     });
 
     test("creating an employment history record marks the SAR as manually updated", async () => {
-      await testTRPCClient.sar.createEmploymentHistory.mutate({
+      await makeCallerForStaff(
+        fakeStaff.pseudonymizedId,
+      ).sar.createEmploymentHistory({
         sarId: fakeSAR.id,
         employerName: "Acme Corp",
       });
@@ -622,7 +732,8 @@ describe("SAR router", () => {
     });
 
     test("updating an employment history record marks the SAR as manually updated", async () => {
-      const created = await testTRPCClient.sar.createEmploymentHistory.mutate({
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
+      const created = await caller.sar.createEmploymentHistory({
         sarId: fakeSAR.id,
         employerName: "Old Employer",
       });
@@ -634,7 +745,7 @@ describe("SAR router", () => {
         data: { hasManuallyUpdatedEmploymentHistory: false },
       });
 
-      await testTRPCClient.sar.updateEmploymentHistory.mutate({
+      await caller.sar.updateEmploymentHistory({
         id: created.id,
         employerName: "New Employer",
       });
@@ -646,7 +757,8 @@ describe("SAR router", () => {
     });
 
     test("deleting an employment history record marks the SAR as manually updated", async () => {
-      const created = await testTRPCClient.sar.createEmploymentHistory.mutate({
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
+      const created = await caller.sar.createEmploymentHistory({
         sarId: fakeSAR.id,
         employerName: "Temp Employer",
       });
@@ -658,7 +770,7 @@ describe("SAR router", () => {
         data: { hasManuallyUpdatedEmploymentHistory: false },
       });
 
-      await testTRPCClient.sar.deleteEmploymentHistory.mutate({
+      await caller.sar.deleteEmploymentHistory({
         id: created.id,
       });
 
@@ -669,8 +781,9 @@ describe("SAR router", () => {
     });
 
     test("should include all employment records (imported and manual) in getSAR response", async () => {
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
       // Create a manual record
-      await testTRPCClient.sar.createEmploymentHistory.mutate({
+      await caller.sar.createEmploymentHistory({
         sarId: fakeSAR.id,
         employerName: "Manual Entry",
       });
@@ -684,7 +797,7 @@ describe("SAR router", () => {
         },
       });
 
-      const sar = await testTRPCClient.sar.getSAR.query({ id: fakeSAR.id });
+      const sar = await caller.sar.getSAR({ id: fakeSAR.id });
 
       expect(sar.employmentHistories).toHaveLength(2);
       expect(sar.employmentHistories).toEqual(
@@ -703,20 +816,6 @@ describe("SAR router", () => {
   });
 
   describe("getSARsByClient", () => {
-    // Builds a tRPC caller whose context includes a `staffPseudonymizedId`, so we can
-    // exercise the staff-scoping filter. The httpBatchLink-based `testTRPCClient` hits a
-    // fake JWT that never sets pseudonymizedId (it impersonates a Recidiviz internal user),
-    // so we can't otherwise test the staff-scoped branch end-to-end.
-    function makeCallerForStaff(staffPseudonymizedId: string | undefined) {
-      return appRouter.createCaller({
-        req: {} as never,
-        res: {} as never,
-        isAuthorized: true,
-        prisma: testPrismaClient,
-        staffPseudonymizedId,
-      });
-    }
-
     test("returns the assigned SAR for the given clientExternalId", async () => {
       const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
 
@@ -730,9 +829,9 @@ describe("SAR router", () => {
         externalId: fakeSAR.externalId,
         status: fakeSAR.status,
         completionDate: null,
-        courtDate: null,
         updatedAt: expect.any(Date),
         staff: { pseudonymizedId: fakeStaff.pseudonymizedId },
+        currentUserHasAccess: true,
       });
     });
 
@@ -779,11 +878,12 @@ describe("SAR router", () => {
       expect(sars).toEqual([]);
     });
 
-    test("includes SARs owned by a different staff member for the same client (Tasks-originated supervision officer)", async () => {
+    test("includes SARs owned by a different staff member for the same client, but marks them inaccessible", async () => {
       // Add a second SAR for the same client owned by fakeSARStaff. The caller isn't
-      // the PSI staff on this SAR, but getSARsByClient intentionally doesn't scope by
-      // PSI officer — this is what lets a supervision officer viewing a client's
-      // profile in Tasks see SARs owned by whichever PSI officer was assigned.
+      // the PSI staff on this SAR (or their supervisor), so getSARsByClient still
+      // returns the row -- this is what lets a supervision officer viewing a client's
+      // profile in Tasks see every SAR regardless of PSI assignment -- but flags it
+      // as inaccessible via `currentUserHasAccess` so the FE hides its builder link.
       await testPrismaClient.sentencingAssessmentReport.create({
         data: {
           externalId: "sar-ext-other-staff",
@@ -803,11 +903,105 @@ describe("SAR router", () => {
       expect(sars.map((s) => s.id).sort()).toEqual(
         [fakeSAR.id, "sar-other-staff"].sort(),
       );
+      expect(sars.find((s) => s.id === fakeSAR.id)?.currentUserHasAccess).toBe(
+        true,
+      );
+      expect(
+        sars.find((s) => s.id === "sar-other-staff")?.currentUserHasAccess,
+      ).toBe(false);
     });
 
-    test("returns all SARs for the client when staffPseudonymizedId is undefined (internal user)", async () => {
-      // Add a SAR owned by a different staff for the same client — an internal user
-      // should still see both.
+    test("an unrelated PO has no access to an in-progress SAR they aren't assigned to or supervising", async () => {
+      const caller = makeCallerForStaff(fakeSARStaff.pseudonymizedId);
+      const sars = await caller.sar.getSARsByClient({
+        clientExternalId: fakeSARClient.externalId,
+      });
+
+      expect(sars).toHaveLength(1);
+      expect(sars[0].currentUserHasAccess).toBe(false);
+      // staff is still returned -- only the FE link is gated on currentUserHasAccess.
+      expect(sars[0].staff).toEqual({
+        pseudonymizedId: fakeStaff.pseudonymizedId,
+      });
+    });
+
+    test("a district supervisor can access an in-progress SAR assigned to another PO in their district", async () => {
+      const district = await testPrismaClient.district.findFirstOrThrow({
+        where: { name: "District 1" },
+      });
+
+      // Give fakeStaff (the SAR's assignee) a district...
+      await testPrismaClient.staff.update({
+        where: { externalId: fakeStaff.externalId },
+        data: { district: { connect: { id: district.id } } },
+      });
+
+      // ...and create a supervisor over that same district with at least one
+      // direct report, so `buildSARStaffFilter`'s district-scoping branch applies.
+      // District supervisors manage every PO in their district, not just direct
+      // reports, so the supervisor need not directly manage fakeStaff.
+      const districtSupervisorPseudoId = "district-supervisor-pid";
+      await testPrismaClient.staff.create({
+        data: {
+          externalId: "district-supervisor-ext",
+          pseudonymizedId: districtSupervisorPseudoId,
+          fullName: "District Supervisor",
+          stateCode: StateCode.US_ID,
+          hasLoggedIn: true,
+          district: { connect: { id: district.id } },
+        },
+      });
+      await testPrismaClient.staff.update({
+        where: { externalId: fakeSARStaff.externalId },
+        data: { supervisorId: "district-supervisor-ext" },
+      });
+
+      const caller = makeCallerForStaff(districtSupervisorPseudoId);
+      const sars = await caller.sar.getSARsByClient({
+        clientExternalId: fakeSARClient.externalId,
+      });
+
+      expect(sars).toHaveLength(1);
+      expect(sars[0].currentUserHasAccess).toBe(true);
+    });
+
+    test("an org-wide supervisor can access any in-progress SAR regardless of district", async () => {
+      await testPrismaClient.staff.update({
+        where: { externalId: fakeSupervisor.externalId },
+        data: { supervisesAll: true },
+      });
+
+      const caller = makeCallerForStaff(fakeSupervisor.pseudonymizedId);
+      const sars = await caller.sar.getSARsByClient({
+        clientExternalId: fakeSARClient.externalId,
+      });
+
+      expect(sars).toHaveLength(1);
+      expect(sars[0].currentUserHasAccess).toBe(true);
+    });
+
+    test("a SAR archived in OPII is accessible to any PO regardless of assignment", async () => {
+      await testPrismaClient.sentencingAssessmentReport.update({
+        where: { id: fakeSAR.id },
+        data: { completionDate: new Date("2020-01-01") },
+      });
+
+      const caller = makeCallerForStaff(fakeSARStaff.pseudonymizedId);
+      const sars = await caller.sar.getSARsByClient({
+        clientExternalId: fakeSARClient.externalId,
+      });
+
+      expect(sars).toHaveLength(1);
+      expect(sars[0].currentUserHasAccess).toBe(true);
+    });
+
+    test("an internal user (no staffPseudonymizedId) sees every SAR for the client, but no link to an in-progress one they have no real relationship to", async () => {
+      // Add a SAR owned by a different staff for the same client — an internal
+      // user should still see both rows (no data hidden), but since they have no
+      // real assignee/supervisor relationship to either, neither in-progress SAR
+      // should be marked accessible. Unlike every other check in this file, this
+      // field deliberately doesn't treat "no staffPseudonymizedId" as unrestricted
+      // -- see the comment on getSARsByClient's currentUserHasAccess computation.
       await testPrismaClient.sentencingAssessmentReport.create({
         data: {
           externalId: "sar-ext-other-staff",
@@ -827,6 +1021,22 @@ describe("SAR router", () => {
       expect(sars.map((s) => s.id).sort()).toEqual(
         [fakeSAR.id, "sar-other-staff"].sort(),
       );
+      expect(sars.every((s) => !s.currentUserHasAccess)).toBe(true);
+    });
+
+    test("an internal user (no staffPseudonymizedId) gets a working link to an archived SAR regardless", async () => {
+      await testPrismaClient.sentencingAssessmentReport.update({
+        where: { id: fakeSAR.id },
+        data: { completionDate: new Date("2020-01-01") },
+      });
+
+      const internalCaller = makeCallerForStaff(undefined);
+      const sars = await internalCaller.sar.getSARsByClient({
+        clientExternalId: fakeSARClient.externalId,
+      });
+
+      expect(sars).toHaveLength(1);
+      expect(sars[0].currentUserHasAccess).toBe(true);
     });
 
     test("output rows expose only the documented fields", async () => {
@@ -840,7 +1050,7 @@ describe("SAR router", () => {
       expect(Object.keys(row).sort()).toEqual(
         [
           "completionDate",
-          "courtDate",
+          "currentUserHasAccess",
           "externalId",
           "id",
           "staff",
@@ -861,8 +1071,9 @@ describe("SAR router", () => {
     });
 
     test("rejects missing clientExternalId at the Zod boundary", async () => {
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId);
       await expect(() =>
-        testTRPCClient.sar.getSARsByClient.query({
+        caller.sar.getSARsByClient({
           // @ts-expect-error Testing wrong type / invalid input
           clientExternalId: undefined,
         }),

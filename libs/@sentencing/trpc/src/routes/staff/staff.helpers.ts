@@ -189,6 +189,31 @@ export function sanitizeStaffForResponse(staff: StaffInfo) {
 }
 
 /**
+ * SAR access scope, broadest to narrowest: org-wide, district, or self.
+ * Shared by `buildSARStaffFilter` (query-time) and `canAccessSARAssignee`
+ * (per-row) so the two stay in sync.
+ * e.g. org-wide supervisor → { kind: "orgWide" }
+ * e.g. district supervisor → { kind: "district", districtId: "cmlspocl3..." }
+ * e.g. individual PO      → { kind: "self", pseudonymizedId: "abc123" }
+ */
+function resolveSARStaffScope(
+  staff: StaffInfo,
+):
+  | { kind: "orgWide" }
+  | { kind: "district"; districtId: string }
+  | { kind: "self"; pseudonymizedId: string } {
+  if (staff.supervisesAll) {
+    return { kind: "orgWide" };
+  }
+
+  if (staff._count.directReports > 0 && staff.districtId) {
+    return { kind: "district", districtId: staff.districtId };
+  }
+
+  return { kind: "self", pseudonymizedId: staff.pseudonymizedId };
+}
+
+/**
  * Builds a Prisma staff filter for SAR supervisor scoping.
  * Uses district-based scoping (rather than direct-report IDs like buildStaffCaseFilter)
  * because SAR supervisors manage all POs in their district, not just direct reports.
@@ -199,15 +224,39 @@ export function sanitizeStaffForResponse(staff: StaffInfo) {
 export function buildSARStaffFilter(
   staff: StaffInfo,
 ): Prisma.SentencingAssessmentReportWhereInput["staff"] {
-  if (staff.supervisesAll) {
-    return { stateCode: staff.stateCode };
+  const scope = resolveSARStaffScope(staff);
+  switch (scope.kind) {
+    case "orgWide":
+      return { stateCode: staff.stateCode };
+    case "district":
+      return { districtId: scope.districtId };
+    case "self":
+      return { pseudonymizedId: scope.pseudonymizedId };
   }
+}
 
-  if (staff._count.directReports > 0 && staff.districtId) {
-    return { districtId: staff.districtId };
+/**
+ * Whether `requestingStaff` is `sarStaff`'s assignee or their district/org-wide
+ * supervisor (see `resolveSARStaffScope`). For per-row checks against
+ * already-fetched data, where `buildSARStaffFilter`'s Prisma filter doesn't apply.
+ * e.g. requestingStaff is the assignee → true
+ * e.g. requestingStaff is an unrelated PO → false
+ */
+export function canAccessSARAssignee(
+  requestingStaff: StaffInfo,
+  sarStaff: { pseudonymizedId: string; districtId: string | null } | null,
+): boolean {
+  if (!sarStaff) return false;
+
+  const scope = resolveSARStaffScope(requestingStaff);
+  switch (scope.kind) {
+    case "orgWide":
+      return true;
+    case "district":
+      return sarStaff.districtId === scope.districtId;
+    case "self":
+      return sarStaff.pseudonymizedId === scope.pseudonymizedId;
   }
-
-  return { pseudonymizedId: staff.pseudonymizedId };
 }
 
 /**

@@ -41,6 +41,22 @@ export type MostSevereCharge = {
   offenseClass: string | null;
 };
 
+// SAR: archived once completionDate is set (investigation closed in OPII).
+// completionDate is only ever backfilled from an already-closed investigation,
+// never scheduled ahead, so there's no future-dated case to guard against.
+// Used by the frontend (SAR dashboard/case-list archived filtering). The
+// backend can't import this (it would create a circular dependency, since
+// this package already imports AppRouter from @sentencing/trpc), so
+// sar.router.ts keeps its own parallel isArchivedInOpii copy -- keep the two
+// in sync by hand if this definition changes.
+// e.g. { completionDate: new Date("2024-01-01") } → true
+// e.g. { completionDate: null } → false
+export function isSARArchived<T extends { completionDate?: Date | null }>(
+  sar: T,
+): sar is T & { completionDate: Date } {
+  return !!sar.completionDate;
+}
+
 // Returns the severity rank of a charge as a tuple for comparison.
 // Lower values are more severe. Returns [Infinity, Infinity] for unclassified charges.
 export function getChargeSeverityRank(charge: {

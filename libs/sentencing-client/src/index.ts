@@ -23,10 +23,7 @@ export * from "./components/Dashboard/SARStaffDashboard";
 export * from "./components/Dashboard/SupervisorDashboard";
 export { CaseStatusToDisplay } from "./components/Dashboard/types";
 export type { SARCompletionState } from "./components/Dashboard/utils";
-export {
-  getSARCompletionState,
-  isSARArchived,
-} from "./components/Dashboard/utils";
+export { getSARCompletionState } from "./components/Dashboard/utils";
 export * from "./components/SARDetails";
 export * from "./components/StoreProvider/StoreProvider";
 export * from "./components/Summary/SARPdfTemplate";
