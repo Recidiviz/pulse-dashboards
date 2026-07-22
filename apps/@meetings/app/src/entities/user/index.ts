@@ -16,4 +16,8 @@
 // =============================================================================
 
 export { useGetUser } from "./model/useGetUser";
-export { UserContextProvider, useUserContext } from "./model/UserContext";
+export {
+  ACCESS_TOKEN_MIN_TTL_SECONDS,
+  UserContextProvider,
+  useUserContext,
+} from "./model/UserContext";

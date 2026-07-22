@@ -23,6 +23,7 @@ import React, {
   useEffect,
   useRef,
 } from "react";
+import { AppState, AppStateStatus } from "react-native";
 import type { Credentials } from "react-native-auth0";
 import { useAuth0 } from "react-native-auth0";
 
@@ -30,6 +31,19 @@ import { env } from "~@meetings/app/shared/config";
 import { isLoginRequiredError } from "~@meetings/app/shared/lib/auth";
 import { extractError } from "~@meetings/app/shared/lib/errors";
 import type { FeatureVariantRecord } from "~@meetings/trpc-types";
+
+// react-native-auth0's getCredentials(scope, minTtl, ...) minTtl is in seconds.
+// With a ~900s (15min) access-token TTL, a 60s buffer gives the SDK lead time
+// to refresh before a request fires, without materially increasing refresh
+// frequency.
+export const ACCESS_TOKEN_MIN_TTL_SECONDS = 60;
+
+// Covers a single continuous foreground session that outlasts the access
+// token's TTL without ever backgrounding (the foreground-transition refresh
+// below only fires on a background -> active transition, so it can't catch
+// this case). 5 minutes gives 3 checks within the ~15min TTL window, well
+// inside the minTtl buffer's margin.
+const PROACTIVE_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
 
 interface UserContextType {
   isLoading: boolean;
@@ -144,6 +158,71 @@ export const UserContextProvider: React.FC<{
       });
     }
   }, [isSkipAuthUser, user, isLoading, getCredentialsWithReauth]);
+
+  // Proactively refresh credentials whenever the app returns to the
+  // foreground. Without this, a token that quietly expires while the app is
+  // backgrounded (e.g. during a long recording) isn't noticed until whatever
+  // the user's next action happens to be, which can hit a dead token even
+  // with the minTtl buffer above — that buffer only helps if a
+  // getCredentials() call actually happens before expiry.
+  // Defaults to "active" if the native module hasn't reported a real state
+  // yet (e.g. in tests, where AppState is mocked and currentState isn't
+  // necessarily a string), so we never spuriously treat the very first
+  // "change" event as a background -> active transition.
+  const appStateRef = useRef<AppStateStatus>(
+    typeof AppState.currentState === "string"
+      ? AppState.currentState
+      : "active",
+  );
+  useEffect(() => {
+    if (isSkipAuthUser || !user) return;
+
+    const subscription = AppState.addEventListener(
+      "change",
+      (next: AppStateStatus) => {
+        if (
+          appStateRef.current.match(/inactive|background/) &&
+          next === "active"
+        ) {
+          void getCredentialsWithReauth(
+            undefined,
+            ACCESS_TOKEN_MIN_TTL_SECONDS,
+            {
+              audience: env.EXPO_PUBLIC_AUTH0_AUDIENCE,
+            },
+          ).catch((error) => {
+            Sentry.logger.error("auth.foreground_refresh.error", {
+              error: extractError(error),
+            });
+            Sentry.captureException(error);
+          });
+        }
+        appStateRef.current = next;
+      },
+    );
+
+    return () => subscription?.remove();
+  }, [isSkipAuthUser, user, getCredentialsWithReauth]);
+
+  // Also refresh on a plain interval, independent of any AppState transition,
+  // to cover a single continuous foreground session that outlasts the token
+  // TTL without ever backgrounding.
+  useEffect(() => {
+    if (isSkipAuthUser || !user) return;
+
+    const intervalId = setInterval(() => {
+      void getCredentialsWithReauth(undefined, ACCESS_TOKEN_MIN_TTL_SECONDS, {
+        audience: env.EXPO_PUBLIC_AUTH0_AUDIENCE,
+      }).catch((error) => {
+        Sentry.logger.error("auth.periodic_refresh.error", {
+          error: extractError(error),
+        });
+        Sentry.captureException(error);
+      });
+    }, PROACTIVE_REFRESH_INTERVAL_MS);
+
+    return () => clearInterval(intervalId);
+  }, [isSkipAuthUser, user, getCredentialsWithReauth]);
 
   useEffect(() => {
     if (isSkipAuthUser) {

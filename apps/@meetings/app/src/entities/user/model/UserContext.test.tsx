@@ -17,6 +17,7 @@
 
 import { renderHook, waitFor } from "@testing-library/react-native";
 import React from "react";
+import { AppState } from "react-native";
 import { useAuth0 } from "react-native-auth0";
 
 import { UserContextProvider, useUserContext } from "./UserContext";
@@ -102,6 +103,32 @@ describe("UserContext", () => {
       // Skip-auth allowed states are populated from AgencyConfigContext (async tRPC),
       // not from UserContext, so this is always empty here.
       expect(result.current.recidivizAllowedStates).toEqual([]);
+    });
+
+    it("does not register a foreground-refresh listener in skip-auth mode", () => {
+      const addEventListenerSpy = jest.spyOn(AppState, "addEventListener");
+
+      mockUseAuth0.mockReturnValue({
+        user: null,
+        isLoading: false,
+        getCredentials: mockGetCredentials,
+        clearSession: mockClearSession,
+        clearCredentials: mockClearCredentials,
+      });
+
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <UserContextProvider isSkipAuthUser={true}>
+          {children}
+        </UserContextProvider>
+      );
+
+      renderHook(() => useUserContext(), { wrapper });
+
+      expect(addEventListenerSpy).not.toHaveBeenCalledWith(
+        "change",
+        expect.any(Function),
+      );
+      addEventListenerSpy.mockRestore();
     });
   });
 
@@ -469,6 +496,150 @@ describe("UserContext", () => {
       });
 
       expect(mockGetCredentials).toHaveBeenCalledTimes(2);
+    });
+
+    it("refreshes credentials when the app returns to foreground from background", async () => {
+      const addEventListenerSpy = jest
+        .spyOn(AppState, "addEventListener")
+        .mockReturnValue({ remove: jest.fn() });
+      mockGetCredentials.mockResolvedValue({ accessToken: "token" });
+
+      mockUseAuth0.mockReturnValue({
+        user: mockUser,
+        isLoading: false,
+        getCredentials: mockGetCredentials,
+        clearSession: mockClearSession,
+        clearCredentials: mockClearCredentials,
+      });
+
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <UserContextProvider isSkipAuthUser={false}>
+          {children}
+        </UserContextProvider>
+      );
+
+      renderHook(() => useUserContext(), { wrapper });
+
+      await waitFor(() => expect(mockGetCredentials).toHaveBeenCalledTimes(1));
+      mockGetCredentials.mockClear();
+
+      const changeListener = addEventListenerSpy.mock.calls.find(
+        ([event]) => event === "change",
+      )?.[1] as (state: string) => void;
+      expect(changeListener).toBeDefined();
+
+      changeListener("background");
+      expect(mockGetCredentials).not.toHaveBeenCalled();
+
+      changeListener("active");
+      await waitFor(() => expect(mockGetCredentials).toHaveBeenCalledTimes(1));
+      expect(mockGetCredentials).toHaveBeenCalledWith(undefined, 60, {
+        audience: expect.any(String),
+      });
+
+      addEventListenerSpy.mockRestore();
+    });
+
+    it("does not refresh on transitions that aren't background/inactive -> active", async () => {
+      const addEventListenerSpy = jest
+        .spyOn(AppState, "addEventListener")
+        .mockReturnValue({ remove: jest.fn() });
+      mockGetCredentials.mockResolvedValue({ accessToken: "token" });
+
+      mockUseAuth0.mockReturnValue({
+        user: mockUser,
+        isLoading: false,
+        getCredentials: mockGetCredentials,
+        clearSession: mockClearSession,
+        clearCredentials: mockClearCredentials,
+      });
+
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <UserContextProvider isSkipAuthUser={false}>
+          {children}
+        </UserContextProvider>
+      );
+
+      renderHook(() => useUserContext(), { wrapper });
+
+      await waitFor(() => expect(mockGetCredentials).toHaveBeenCalledTimes(1));
+      mockGetCredentials.mockClear();
+
+      const changeListener = addEventListenerSpy.mock.calls.find(
+        ([event]) => event === "change",
+      )?.[1] as (state: string) => void;
+      expect(changeListener).toBeDefined();
+
+      // active -> background: no refresh (only background/inactive -> active does).
+      changeListener("background");
+      expect(mockGetCredentials).not.toHaveBeenCalled();
+
+      // background -> inactive: still not "active", no refresh.
+      changeListener("inactive");
+      expect(mockGetCredentials).not.toHaveBeenCalled();
+
+      addEventListenerSpy.mockRestore();
+    });
+
+    it("refreshes credentials on a periodic interval, independent of AppState", async () => {
+      jest.useFakeTimers({ advanceTimers: true });
+      mockGetCredentials.mockResolvedValue({ accessToken: "token" });
+
+      mockUseAuth0.mockReturnValue({
+        user: mockUser,
+        isLoading: false,
+        getCredentials: mockGetCredentials,
+        clearSession: mockClearSession,
+        clearCredentials: mockClearCredentials,
+      });
+
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <UserContextProvider isSkipAuthUser={false}>
+          {children}
+        </UserContextProvider>
+      );
+
+      renderHook(() => useUserContext(), { wrapper });
+
+      await waitFor(() => expect(mockGetCredentials).toHaveBeenCalledTimes(1));
+      mockGetCredentials.mockClear();
+
+      const FIVE_MINUTES_MS = 5 * 60 * 1000;
+      await jest.advanceTimersByTimeAsync(FIVE_MINUTES_MS);
+      expect(mockGetCredentials).toHaveBeenCalledTimes(1);
+      expect(mockGetCredentials).toHaveBeenCalledWith(undefined, 60, {
+        audience: expect.any(String),
+      });
+
+      await jest.advanceTimersByTimeAsync(FIVE_MINUTES_MS);
+      expect(mockGetCredentials).toHaveBeenCalledTimes(2);
+
+      jest.useRealTimers();
+    });
+
+    it("does not refresh on an interval in skip-auth mode", async () => {
+      jest.useFakeTimers({ advanceTimers: true });
+
+      mockUseAuth0.mockReturnValue({
+        user: null,
+        isLoading: false,
+        getCredentials: mockGetCredentials,
+        clearSession: mockClearSession,
+        clearCredentials: mockClearCredentials,
+      });
+
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <UserContextProvider isSkipAuthUser={true}>
+          {children}
+        </UserContextProvider>
+      );
+
+      renderHook(() => useUserContext(), { wrapper });
+
+      await jest.advanceTimersByTimeAsync(30 * 60 * 1000);
+      expect(mockGetCredentials).not.toHaveBeenCalled();
+
+      jest.useRealTimers();
     });
   });
 });

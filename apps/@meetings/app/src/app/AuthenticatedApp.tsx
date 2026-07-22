@@ -22,7 +22,10 @@ import React, { useEffect, useRef, useState } from "react";
 import superjson from "superjson";
 
 import { AgencyConfigProvider } from "~@meetings/app/entities/agency-config";
-import { useUserContext } from "~@meetings/app/entities/user";
+import {
+  ACCESS_TOKEN_MIN_TTL_SECONDS,
+  useUserContext,
+} from "~@meetings/app/entities/user";
 import { useImpersonationStore } from "~@meetings/app/features/impersonation";
 import {
   DEFAULT_STATE_CODE,
@@ -36,12 +39,6 @@ import { queryCachePersister } from "~@meetings/app/shared/lib/queryCachePersist
 import { AuthenticatedContent } from "./AuthenticatedContent";
 
 const ONE_WEEK_MS = 1000 * 60 * 60 * 24 * 7;
-
-// react-native-auth0's getCredentials(scope, minTtl, ...) minTtl is in seconds.
-// With a ~900s (15min) access-token TTL, a 60s buffer gives the SDK lead time
-// to refresh before a request fires, without materially increasing refresh
-// frequency.
-const ACCESS_TOKEN_MIN_TTL_SECONDS = 60;
 
 const queryClient = new QueryClient({
   defaultOptions: {
