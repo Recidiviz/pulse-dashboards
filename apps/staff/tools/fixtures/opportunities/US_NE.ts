@@ -77,6 +77,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       emptyTabCopy: [],
+      enabledColumns: [],
       firestoreCollection: "US_NE-ConditionalLowRiskOverrideReferrals",
       grantApprovedStatusMessage: null,
       grantApprovedTabTitle: null,
@@ -101,6 +102,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: "Validated by NICaMS data",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
+      reasonsRequiringApproval: [],
       reviewerFeatureVariant: null,
       sidebarComponents: [
         "EligibilityDate",
@@ -136,13 +138,13 @@ export const mockApiOpportunityConfigurationResponse = {
     },
     usNeGoodTimeRestoration: {
       callToAction: "",
-      caseNotesTitle: "Relevant Case Notes",
+      caseNotesTitle: " Relevant Case Notes",
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
       denialReasons: [
         {
-          key: "Good Time Restoration Appeal Pending",
+          key: " Good Time Restoration Appeal Pending",
           text: "A good time restoration appeal is pending for this resident",
         },
         { key: "Circumstances", text: "Has other exigent circumstances" },
@@ -151,7 +153,7 @@ export const mockApiOpportunityConfigurationResponse = {
       deniedTabTitle: null,
       displayName: "Good Time Restoration",
       dynamicEligibilityText:
-        " [resident|residents] may be eligible for good time restoration",
+        "[resident|residents] may be eligible for good time restoration",
       eligibilityDateText: "Eligible for Restoration Since",
       eligibleCriteriaCopy: [
         {
@@ -176,7 +178,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usNeNoIdcMrsInPast6Months",
-          text: "Free of all IDC misconduct reports for the past 6 months\n",
+          text: "Free of all IDC misconduct reports for the past 6 months",
         },
         {
           key: "usNeLessThan3UdcMrsInPast6Months",
@@ -197,7 +199,6 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usNeWaitUntilNextMonthBeforeNextGoodTimeRestoration",
           text: "No approved good time restoration yet this month",
-          tooltip: "",
         },
         {
           key: "usNeNoClass1MrsInLastYear",
@@ -205,6 +206,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       emptyTabCopy: [],
+      enabledColumns: [],
       firestoreCollection: "US_NE-goodTimeRestorationReferrals",
       grantApprovedStatusMessage: null,
       grantApprovedTabTitle: null,
@@ -239,6 +241,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: "Validated by data from NICaMS",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
+      reasonsRequiringApproval: [],
       reviewerFeatureVariant: null,
       sidebarComponents: ["EligibilityDate", "Incarceration"],
       skipFormPreview: false,
@@ -315,6 +318,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       emptyTabCopy: [],
+      enabledColumns: [],
       firestoreCollection: "US_NE-OverrideModerateToLowReferrals",
       grantApprovedStatusMessage: null,
       grantApprovedTabTitle: null,
@@ -339,6 +343,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: "Validated by NICaMS data",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
+      reasonsRequiringApproval: [],
       reviewerFeatureVariant: null,
       sidebarComponents: [
         "EligibilityDate",

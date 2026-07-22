@@ -129,6 +129,7 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "At this time, there are no clients who have a report submitted. Please navigate to one of the other tabs.",
         },
       ],
+      enabledColumns: [],
       firestoreCollection: "US_UT-earlyTerminationReferrals",
       grantApprovedStatusMessage: null,
       grantApprovedTabTitle: null,
@@ -199,6 +200,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: "Validated by O-Track data",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
+      reasonsRequiringApproval: [],
       reviewerFeatureVariant: null,
       sidebarComponents: [
         "ActionHistory",

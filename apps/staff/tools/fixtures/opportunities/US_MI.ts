@@ -53,6 +53,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       emptyTabCopy: [],
+      enabledColumns: [],
       firestoreCollection:
         "US_MI-addInPersonSecurityClassificationCommitteeReviewV2",
       grantApprovedStatusMessage: null,
@@ -76,6 +77,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: null,
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
+      reasonsRequiringApproval: [],
       reviewerFeatureVariant: null,
       sidebarComponents: [
         "Incarceration",
@@ -202,6 +204,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       emptyTabCopy: [],
+      enabledColumns: [],
       firestoreCollection: "US_MI-classificationReviewReferrals",
       grantApprovedStatusMessage: null,
       grantApprovedTabTitle: null,
@@ -237,6 +240,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: null,
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
+      reasonsRequiringApproval: [],
       reviewerFeatureVariant: null,
       sidebarComponents: [
         "UsMiRecommendedSupervisionLevel",
@@ -326,6 +330,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       emptyTabCopy: [],
+      enabledColumns: [],
       firestoreCollection: "US_MI-custodyLevelDowngrade",
       grantApprovedStatusMessage: null,
       grantApprovedTabTitle: null,
@@ -367,6 +372,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: "Validated by data from COMS & OMNI",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
+      reasonsRequiringApproval: [],
       reviewerFeatureVariant: null,
       sidebarComponents: ["UsMiLastAssessment", "Incarceration", "CaseNotes"],
       skipFormPreview: false,
@@ -578,6 +584,7 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "usMiNoPendingDetainer", text: "No pending detainers" },
       ],
       emptyTabCopy: [],
+      enabledColumns: [],
       firestoreCollection: "US_MI-earlyDischargeReferrals",
       grantApprovedStatusMessage: null,
       grantApprovedTabTitle: null,
@@ -628,6 +635,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: null,
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
+      reasonsRequiringApproval: [],
       reviewerFeatureVariant: null,
       sidebarComponents: [
         "ActionHistory",
@@ -733,6 +741,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       emptyTabCopy: [],
+      enabledColumns: [],
       firestoreCollection: "US_MI-minimumTelephoneReporting",
       grantApprovedStatusMessage: null,
       grantApprovedTabTitle: null,
@@ -768,6 +777,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: null,
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
+      reasonsRequiringApproval: [],
       reviewerFeatureVariant: null,
       sidebarComponents: [
         "ClientProfileDetails",
@@ -822,6 +832,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       emptyTabCopy: [],
+      enabledColumns: [],
       firestoreCollection: "US_MI-pastFTRDReferrals",
       grantApprovedStatusMessage: null,
       grantApprovedTabTitle: null,
@@ -849,6 +860,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: null,
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
+      reasonsRequiringApproval: [],
       reviewerFeatureVariant: null,
       sidebarComponents: [
         "ClientProfileDetails",
@@ -924,6 +936,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       emptyTabCopy: [],
+      enabledColumns: [],
       firestoreCollection: "US_MI-securityClassificationCommitteeReviewV2",
       grantApprovedStatusMessage: null,
       grantApprovedTabTitle: null,
@@ -947,6 +960,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: null,
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
+      reasonsRequiringApproval: [],
       reviewerFeatureVariant: null,
       sidebarComponents: [
         "Incarceration",
@@ -1103,6 +1117,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       emptyTabCopy: [],
+      enabledColumns: [],
       firestoreCollection: "US_MI-supervisionLevelDowngrade",
       grantApprovedStatusMessage: null,
       grantApprovedTabTitle: null,
@@ -1125,6 +1140,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: null,
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
+      reasonsRequiringApproval: [],
       reviewerFeatureVariant: null,
       sidebarComponents: [
         "ClientProfileDetails",
@@ -1188,6 +1204,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       emptyTabCopy: [],
+      enabledColumns: [],
       firestoreCollection:
         "US_MI-wardenInPersonSecurityClassificationCommitteeReviewV2",
       grantApprovedStatusMessage: null,
@@ -1212,6 +1229,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: null,
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
+      reasonsRequiringApproval: [],
       reviewerFeatureVariant: null,
       sidebarComponents: [
         "Incarceration",

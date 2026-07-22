@@ -60,6 +60,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       emptyTabCopy: [],
+      enabledColumns: [],
       firestoreCollection: "US_TX-annualReportStatusReferrals",
       grantApprovedStatusMessage: null,
       grantApprovedTabTitle: null,
@@ -82,7 +83,7 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Review clients who may be eligible for Annual Report Status",
       isAlert: false,
-      markSubmittedOnFormDownload: true,
+      markSubmittedOnFormDownload: false,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf",
@@ -111,6 +112,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: " Requirements validated by OIMS data",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
+      reasonsRequiringApproval: [],
       reviewerFeatureVariant: null,
       sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
       skipFormPreview: false,
@@ -177,6 +179,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       emptyTabCopy: [],
+      enabledColumns: [],
       firestoreCollection: "US_TX-annualReportStatusV2Referrals",
       grantApprovedStatusMessage: null,
       grantApprovedTabTitle: null,
@@ -199,7 +202,7 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Review clients who may be eligible for Annual Report Status",
       isAlert: false,
-      markSubmittedOnFormDownload: true,
+      markSubmittedOnFormDownload: false,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf",
@@ -228,6 +231,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: " Requirements validated by OIMS data",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
+      reasonsRequiringApproval: [],
       reviewerFeatureVariant: null,
       sidebarComponents: ["ClientProfileDetails", "ActionHistory"],
       skipFormPreview: false,
@@ -314,6 +318,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       emptyTabCopy: [],
+      enabledColumns: [],
       firestoreCollection: "US_TX-earlyReleaseFromSupervisionReferrals",
       grantApprovedStatusMessage: null,
       grantApprovedTabTitle: null,
@@ -344,7 +349,7 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Review clients who may be eligible for Early Release from Supervision",
       isAlert: false,
-      markSubmittedOnFormDownload: true,
+      markSubmittedOnFormDownload: false,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf",
@@ -374,6 +379,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: "Requirements validated by OIMS data",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
+      reasonsRequiringApproval: [],
       reviewerFeatureVariant: null,
       sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
       skipFormPreview: false,
@@ -448,6 +454,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       emptyTabCopy: [],
+      enabledColumns: [],
       firestoreCollection: "US_TX-earlyReleaseFromSupervisionV2Referrals",
       grantApprovedStatusMessage: null,
       grantApprovedTabTitle: null,
@@ -478,7 +485,7 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Review clients who may be eligible for Early Release from Supervision",
       isAlert: false,
-      markSubmittedOnFormDownload: true,
+      markSubmittedOnFormDownload: false,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf",
@@ -507,6 +514,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: "Requirements validated by OIMS data",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
+      reasonsRequiringApproval: [],
       reviewerFeatureVariant: null,
       sidebarComponents: ["ClientProfileDetails", "ActionHistory"],
       skipFormPreview: false,
