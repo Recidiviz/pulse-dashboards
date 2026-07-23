@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import * as Sentry from "@sentry/react-native";
 import { renderHook, waitFor } from "@testing-library/react-native";
 import React from "react";
 import { AppState } from "react-native";
@@ -357,6 +358,54 @@ describe("UserContext", () => {
         }),
       ).rejects.toThrow("Network error");
       expect(mockClearCredentials).not.toHaveBeenCalled();
+    });
+
+    it("logs a distinct keystore failure and rethrows on CRYPTO_EXCEPTION, without clearing", async () => {
+      // On Android the SDK has already wiped the stored credentials before
+      // throwing this, so it must not be mislabeled as a plain session expiry.
+      const cryptoError = Object.assign(new Error("Crypto exception"), {
+        name: "CRYPTO_EXCEPTION",
+        code: "CRYPTO_EXCEPTION",
+        type: "CRYPTO_EXCEPTION",
+        cause: new Error("android.security.KeyStoreException: Key not found"),
+      });
+      mockGetCredentials.mockRejectedValue(cryptoError);
+
+      const errorLogSpy = jest
+        .spyOn(Sentry.logger, "error")
+        .mockImplementation(() => undefined);
+
+      mockUseAuth0.mockReturnValue({
+        user: mockUser,
+        isLoading: false,
+        getCredentials: mockGetCredentials,
+        clearSession: mockClearSession,
+        clearCredentials: mockClearCredentials,
+      });
+
+      const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <UserContextProvider isSkipAuthUser={false}>
+          {children}
+        </UserContextProvider>
+      );
+
+      const { result } = renderHook(() => useUserContext(), { wrapper });
+
+      await expect(
+        result.current.getCredentials(undefined, undefined, {
+          audience: "test-audience",
+        }),
+      ).rejects.toThrow("Crypto exception");
+      expect(mockClearCredentials).not.toHaveBeenCalled();
+      expect(errorLogSpy).toHaveBeenCalledWith(
+        "auth.keystore_failure",
+        expect.objectContaining({
+          errorType: "CRYPTO_EXCEPTION",
+          errorCause: "android.security.KeyStoreException: Key not found",
+        }),
+      );
+
+      errorLogSpy.mockRestore();
     });
 
     it("calls clearSession when onLogout is called", async () => {

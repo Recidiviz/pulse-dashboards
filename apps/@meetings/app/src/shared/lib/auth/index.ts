@@ -15,4 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { isLoginRequiredError, LOGIN_REQUIRED } from "./isLoginRequiredError";
+export {
+  isKeystoreCredentialError,
+  isLoginRequiredError,
+  LOGIN_REQUIRED,
+} from "./isLoginRequiredError";

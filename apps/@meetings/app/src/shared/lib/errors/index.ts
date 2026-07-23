@@ -16,4 +16,4 @@
 // =============================================================================
 
 export { AbortError, FileValidationError } from "./errors";
-export { extractError } from "./extractError";
+export { extractError, extractErrorDetails } from "./extractError";

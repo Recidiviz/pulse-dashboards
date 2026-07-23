@@ -26,6 +26,34 @@ const REAUTH_REQUIRED_TYPES = new Set([
   "RENEW_FAILED",
 ]);
 
+// Normalized `CredentialsManagerError.type` values indicating the on-device
+// secure store / Keystore failed a cryptographic operation. These do NOT go
+// through the network, so they never appear in Auth0's server logs. Notably,
+// on a CRYPTO_EXCEPTION the Android SDK internally wipes the stored credential
+// blob before throwing, so the *next* getCredentials() call throws
+// NO_CREDENTIALS — meaning a keystore failure surfaces as a delayed forced
+// logout. We log these distinctly so that root cause is visible rather than
+// mislabeled as a plain session expiry.
+const KEYSTORE_ERROR_TYPES = new Set([
+  "CRYPTO_EXCEPTION",
+  "INCOMPATIBLE_DEVICE",
+]);
+
+/**
+ * True when the error is an on-device secure-store / Keystore cryptographic
+ * failure (see {@link KEYSTORE_ERROR_TYPES}). Distinct from
+ * {@link isLoginRequiredError}: these are not "silent refresh gave up", they
+ * are "the device could not decrypt/sign", and they carry a native `cause`
+ * worth logging.
+ */
+export function isKeystoreCredentialError(error: unknown): boolean {
+  if (typeof error !== "object" || error === null) {
+    return false;
+  }
+  const { type } = error as { type?: unknown };
+  return typeof type === "string" && KEYSTORE_ERROR_TYPES.has(type);
+}
+
 /**
  * True when Auth0's silent refresh failed and the user must log in again. Web
  * exposes `login_required` on `name`/`code`/`error`; native (iOS/Android) only

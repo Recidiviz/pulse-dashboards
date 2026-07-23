@@ -15,7 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { isLoginRequiredError } from "./isLoginRequiredError";
+import {
+  isKeystoreCredentialError,
+  isLoginRequiredError,
+} from "./isLoginRequiredError";
 
 describe("isLoginRequiredError", () => {
   it("matches the web CredentialsManagerError (name === 'login_required')", () => {
@@ -75,5 +78,35 @@ describe("isLoginRequiredError", () => {
     expect(isLoginRequiredError(null)).toBe(false);
     expect(isLoginRequiredError(undefined)).toBe(false);
     expect(isLoginRequiredError("login_required")).toBe(false);
+  });
+
+  it("does not treat a Keystore crypto error as login-required", () => {
+    // CRYPTO_EXCEPTION is handled distinctly, not as a plain session expiry.
+    const error = Object.assign(new Error("Crypto exception"), {
+      type: "CRYPTO_EXCEPTION",
+    });
+    expect(isLoginRequiredError(error)).toBe(false);
+  });
+});
+
+describe("isKeystoreCredentialError", () => {
+  it.each(["CRYPTO_EXCEPTION", "INCOMPATIBLE_DEVICE"])(
+    "matches on-device crypto failures (type === '%s')",
+    (type) => {
+      const error = Object.assign(new Error("Keystore failure"), { type });
+      expect(isKeystoreCredentialError(error)).toBe(true);
+    },
+  );
+
+  it("does not match session-expiry types", () => {
+    for (const type of ["NO_CREDENTIALS", "NO_REFRESH_TOKEN", "RENEW_FAILED"]) {
+      expect(isKeystoreCredentialError({ type })).toBe(false);
+    }
+  });
+
+  it("handles null and non-object input", () => {
+    expect(isKeystoreCredentialError(null)).toBe(false);
+    expect(isKeystoreCredentialError(undefined)).toBe(false);
+    expect(isKeystoreCredentialError("CRYPTO_EXCEPTION")).toBe(false);
   });
 });

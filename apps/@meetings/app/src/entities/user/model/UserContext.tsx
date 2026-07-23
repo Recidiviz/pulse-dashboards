@@ -28,8 +28,11 @@ import type { Credentials } from "react-native-auth0";
 import { useAuth0 } from "react-native-auth0";
 
 import { env } from "~@meetings/app/shared/config";
-import { isLoginRequiredError } from "~@meetings/app/shared/lib/auth";
-import { extractError } from "~@meetings/app/shared/lib/errors";
+import {
+  isKeystoreCredentialError,
+  isLoginRequiredError,
+} from "~@meetings/app/shared/lib/auth";
+import { extractErrorDetails } from "~@meetings/app/shared/lib/errors";
 import type { FeatureVariantRecord } from "~@meetings/trpc-types";
 
 // react-native-auth0's getCredentials(scope, minTtl, ...) minTtl is in seconds.
@@ -110,19 +113,38 @@ export const UserContextProvider: React.FC<{
           return await getCredentials(...args);
         } catch (error) {
           if (isLoginRequiredError(error)) {
-            Sentry.logger.warn("auth.session_expired.redirect_to_login", {
-              error: extractError(error),
-            });
+            // extractErrorDetails surfaces the normalized `errorType`
+            // (NO_CREDENTIALS vs NO_REFRESH_TOKEN vs RENEW_FAILED), which
+            // distinguishes a truly-empty store from a failed renewal — the
+            // free-text message alone is scrubbed to `[Filtered]` on Android.
+            Sentry.logger.warn(
+              "auth.session_expired.redirect_to_login",
+              extractErrorDetails(error),
+            );
             // Honor the resolve-to-undefined contract even if clearing fails.
             try {
               await clearCredentials();
             } catch (clearError) {
-              Sentry.logger.error("auth.clear_credentials.error", {
-                error: extractError(clearError),
-              });
+              Sentry.logger.error(
+                "auth.clear_credentials.error",
+                extractErrorDetails(clearError),
+              );
               Sentry.captureException(clearError);
             }
             return undefined;
+          }
+          // A Keystore/secure-store crypto failure. This is on-device (never
+          // reaches Auth0's servers) and, on Android, the SDK has already
+          // wiped the stored credentials before throwing — so a later
+          // getCredentials() will throw NO_CREDENTIALS and force a logout.
+          // Logging it distinctly (with the native `errorCause`) is what makes
+          // that otherwise-invisible root cause diagnosable. Still rethrow so
+          // callers keep their existing non-session-expiry handling.
+          if (isKeystoreCredentialError(error)) {
+            Sentry.logger.error(
+              "auth.keystore_failure",
+              extractErrorDetails(error),
+            );
           }
           throw error;
         }
@@ -151,9 +173,10 @@ export const UserContextProvider: React.FC<{
       void getCredentialsWithReauth(undefined, undefined, {
         audience: env.EXPO_PUBLIC_AUTH0_AUDIENCE,
       }).catch((error) => {
-        Sentry.logger.error("auth.populate_metadata.error", {
-          error: extractError(error),
-        });
+        Sentry.logger.error(
+          "auth.populate_metadata.error",
+          extractErrorDetails(error),
+        );
         Sentry.captureException(error);
       });
     }
@@ -191,9 +214,10 @@ export const UserContextProvider: React.FC<{
               audience: env.EXPO_PUBLIC_AUTH0_AUDIENCE,
             },
           ).catch((error) => {
-            Sentry.logger.error("auth.foreground_refresh.error", {
-              error: extractError(error),
-            });
+            Sentry.logger.error(
+              "auth.foreground_refresh.error",
+              extractErrorDetails(error),
+            );
             Sentry.captureException(error);
           });
         }
@@ -214,9 +238,10 @@ export const UserContextProvider: React.FC<{
       void getCredentialsWithReauth(undefined, ACCESS_TOKEN_MIN_TTL_SECONDS, {
         audience: env.EXPO_PUBLIC_AUTH0_AUDIENCE,
       }).catch((error) => {
-        Sentry.logger.error("auth.periodic_refresh.error", {
-          error: extractError(error),
-        });
+        Sentry.logger.error(
+          "auth.periodic_refresh.error",
+          extractErrorDetails(error),
+        );
         Sentry.captureException(error);
       });
     }, PROACTIVE_REFRESH_INTERVAL_MS);
