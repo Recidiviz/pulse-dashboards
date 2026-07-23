@@ -414,7 +414,7 @@ describe("VitalsStore", () => {
                   "30D average": "54%",
                 },
               ],
-              label: "Timely F2F contacts",
+              label: "Timely contacts",
             },
             {
               data: [
@@ -449,7 +449,7 @@ describe("VitalsStore", () => {
                   "90D change": "-2%",
                   "30D change": "0%",
                   "Overall across all practices": "85%",
-                  "Timely F2F contacts": "65%",
+                  "Timely contacts": "65%",
                   "Supervision & risk level match": "67%",
                   "Timely risk assessments": "69%",
                 },
@@ -457,7 +457,7 @@ describe("VitalsStore", () => {
                   "90D change": "-2%",
                   "30D change": "0%",
                   "Overall across all practices": "95%",
-                  "Timely F2F contacts": "92%",
+                  "Timely contacts": "92%",
                   "Supervision & risk level match": "67%",
                   "Timely risk assessments": "99%",
                 },
@@ -491,9 +491,9 @@ describe("VitalsStore", () => {
           },
           {
             accessor: "timelyContactDueDateBased",
-            description: `of clients have an up-to-date face-to-face contact, according to IDOC policy`,
+            description: `of clients have up-to-date contacts, according to IDOC policy`,
             id: "CONTACT_DUE_DATE_BASED",
-            name: "Timely F2F contacts",
+            name: "Timely contacts",
           },
           {
             accessor: "timelyDowngrade",
