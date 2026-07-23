@@ -15,10 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { captureException } from "@sentry/react";
 import { mapValues } from "lodash";
-import { makeAutoObservable, reaction, runInAction } from "mobx";
-import toast from "react-hot-toast";
+import { makeAutoObservable } from "mobx";
 
 import {
   compositeHydrationState,
@@ -27,16 +25,10 @@ import {
   isHydrated,
 } from "~hydration-utils";
 
-import { GeocodingResponse, GeocodingStatus } from "../../FirestoreStore";
-import AnalyticsStore from "../../RootStore/AnalyticsStore";
-import {
-  RoutePlannerClientEvent,
-  RoutePlannerRouteEvent,
-} from "../../RootStore/AnalyticsStore/AnalyticsStore";
+import { RoutePlannerClientEvent } from "../../RootStore/AnalyticsStore/AnalyticsStore";
 import { formatWorkflowsDateWithoutYear } from "../../utils";
 import {
   Client,
-  JusticeInvolvedPerson,
   SupervisionTask,
   SupervisionTaskType,
   WorkflowsStore,
@@ -44,10 +36,7 @@ import {
 import { SearchStore } from "../../WorkflowsStore/SearchStore";
 import RoutePlannerClientStore from "./ClientStore/ClientStoreBase";
 
-const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const BASE_SEARCH_URL = "https://www.google.com/maps/search/";
-const BASE_GEOCODING_URL = "https://maps.googleapis.com/maps/api/geocode/json";
-const TOAST_DURATION = 7000;
 
 /**
  * Responsible for keeping track of selected clients and officers on the
@@ -55,16 +44,6 @@ const TOAST_DURATION = 7000;
  */
 export class RoutePlannerClientsPresenter implements Hydratable {
   private readonly searchStore: SearchStore;
-  private readonly analyticsStore: AnalyticsStore;
-  private selectedPeople: JusticeInvolvedPerson[] = [];
-  // Map from pseudonymized IDs of clients to formatted place ID strings that can be used as
-  // a waypoint (address) in a Google Maps embed.
-  private placeIds: Record<string, string> = {};
-  // Prevent trying to add multiple people while we're waiting to see if some person can be added
-  isAddingPerson = false;
-  // Prevent trying to optimize while an optimization is in progress
-  isOptimizing = false;
-  private OMS: string | undefined;
 
   private SHORT_SUPERVISION_LEVEL_COPY: Record<string, string> = {
     High: "H",
@@ -79,24 +58,9 @@ export class RoutePlannerClientsPresenter implements Hydratable {
     private readonly workflowsStore: WorkflowsStore,
     private readonly routePlannerClientStore: RoutePlannerClientStore,
   ) {
+    this.routePlannerClientStore = routePlannerClientStore;
     this.searchStore = workflowsStore.searchStore;
-    this.analyticsStore = workflowsStore.rootStore.analyticsStore;
     makeAutoObservable(this);
-    this.OMS = this.getOMSSystem(workflowsStore.rootStore.currentTenantId);
-
-    // If the selected officers change, deselect people who were on a caseload that was removed
-    reaction(
-      () => this.searchStore.selectedSearchIds,
-      (newIds, oldIds) => {
-        // only run if search IDs could have been removed
-        if (newIds.length <= oldIds.length) {
-          this.selectedPeople = this.selectedPeople.filter(
-            (person) =>
-              person.assignedStaffId && newIds.includes(person.assignedStaffId),
-          );
-        }
-      },
-    );
   }
 
   hydrate() {
@@ -111,6 +75,14 @@ export class RoutePlannerClientsPresenter implements Hydratable {
         person.supervisionTasks.hydrate();
       }
     });
+  }
+
+  get isOptimizing(): boolean {
+    return this.routePlannerClientStore.isOptimizing;
+  }
+
+  get isAddingPerson(): boolean {
+    return this.routePlannerClientStore.isAddingPerson;
   }
 
   get hydrationState(): HydrationState {
@@ -150,25 +122,14 @@ export class RoutePlannerClientsPresenter implements Hydratable {
     );
   }
 
-  getOMSSystem(stateCode: string | undefined): string | undefined {
-    switch (stateCode) {
-      case "US_ID":
-        return "Atlas";
-      case "US_TX":
-        return "OIMS";
-      default:
-        return;
-    }
+  async sendGeocodingRequest(address: string) {
+    return await this.routePlannerClientStore.sendGeocodingRequest(address);
   }
 
   // route planner store functions
 
   removeAddedPerson(person: Client) {
     this.routePlannerClientStore.removeAddedMorePeople(person);
-  }
-
-  get selectedClients(): readonly JusticeInvolvedPerson[] {
-    return this.routePlannerClientStore.allPeople;
   }
 
   get getAddMorePeople(): Client[] {
@@ -182,12 +143,13 @@ export class RoutePlannerClientsPresenter implements Hydratable {
   }
 
   getBadAddressCopy() {
-    return `We couldn't find any results for this address. Please check for typos and correct the address in ${this.OMS}. Updates in ${this.OMS} will be reflected in 1-2 business days.`;
+    return this.routePlannerClientStore.getBadAddressCopy();
   }
 
   getNoAddressFoundCopy() {
-    return `No address on file in ${this.OMS}`;
+    return this.routePlannerClientStore.getNoAddressFoundCopy();
   }
+
   /**
    * @returns copy and information used in ClientCard for a specific task
    */
@@ -233,271 +195,69 @@ export class RoutePlannerClientsPresenter implements Hydratable {
     return `${BASE_SEARCH_URL}?${params}`;
   }
 
-  // Methods relating to geocoding and getting addresses
-
-  /**
-   * Attempt to geocode the provided address and write the results to Firestore
-   * for the provided person.
-   * @returns The result of the geocoding request as a GeocodingResponse
-   */
-  async geocode(person: Client, address: string): Promise<GeocodingResponse> {
-    this.analyticsStore.trackRoutePlannerClientEvent(
-      RoutePlannerClientEvent.AddressGeocoded,
-      { pseudonymizedId: person.pseudonymizedId },
-    );
-
-    const result = await this.sendGeocodingRequest(address);
-    await person.updateAddressUpdates({
-      address,
-      result,
-    });
-    return result;
-  }
-
-  /**
-   * Send a request to the Google Maps Geocoding API for the provided address.
-   * This API returns a Google Maps Place ID that refers to the address.
-   *
-   * The API response format is documented here: https://developers.google.com/maps/documentation/geocoding/requests-geocoding
-   *
-   * @returns The result of the geocoding request as a GeocodingResponse
-   */
-  async sendGeocodingRequest(address: string): Promise<GeocodingResponse> {
-    const params = new URLSearchParams({
-      key: API_KEY,
-      address: address,
-    });
-    const response = await fetch(`${BASE_GEOCODING_URL}?${params}`);
-    const body = await response.json();
-
-    if (!response.ok || !["OK", "ZERO_RESULTS"].includes(body["status"])) {
-      // The request failed
-      return {
-        status: GeocodingStatus.Error,
-      };
-    }
-
-    // The request succeeded, and we got one result that refers to a street address
-    if (
-      body["status"] === "OK" &&
-      body["results"].length === 1 &&
-      body["results"][0]["address_components"].some(
-        ({ types }: { types: string[] }) => types.includes("street_number"),
-      )
-    ) {
-      return {
-        status: GeocodingStatus.Success,
-        placeId: body["results"][0]["place_id"],
-      };
-    }
-
-    // The request succeeded, but we got multiple/0 results or a result that wasn't a street address
-    return {
-      status: GeocodingStatus.BadResult,
-    };
-  }
-
-  /**
-   * Returns true if we know the given person's address is definitely "bad"
-   * i.e. we have tried to geocode it and the result gave us an error.
-   *
-   * If this method returns false, the "badness" of the person's address is
-   * uncertain: for example, they might not have an address, or we might not
-   * have tried to geocode it before.
-   */
-  hasBadAddress(person: JusticeInvolvedPerson): boolean {
-    const { validatedAddressUpdate } = person as Client;
-    return Boolean(
-      validatedAddressUpdate &&
-        validatedAddressUpdate.result.status === GeocodingStatus.BadResult,
-    );
+  hasBadAddress(person: Client): boolean {
+    return this.routePlannerClientStore.hasBadAddress(person);
   }
 
   // Public methods for handling the list of selected people
 
   // Ordered list of formatted addresses used for display and Google Maps links
   get selectedFormattedAddresses(): string[] {
-    return this.selectedPeople.map(
+    return this.routePlannerClientStore.allPeople.map(
       (person) => (person as Client).formattedAddress ?? "",
     );
   }
 
   // Ordered list of place IDs used for generating Google Maps links
   get selectedPlaceIds(): string[] {
-    return this.selectedPeople.map(
-      (person) => this.placeIds[person.pseudonymizedId],
-    );
+    return this.routePlannerClientStore.selectedPlaceIds;
+  }
+
+  get selectedClients(): readonly Client[] {
+    return this.routePlannerClientStore.allPeople;
   }
 
   get selectedClientPseudoIds(): string[] {
-    return this.selectedPeople.map((client) => client.pseudonymizedId);
+    return this.routePlannerClientStore.selectedClientPseudoIds;
   }
 
   get canOptimizeRoute(): boolean {
-    return this.routePlannerClientStore.allPeople.length >= 2;
+    return this.routePlannerClientStore.canOptimizeRoute;
   }
 
   isPersonSelected(person: Client) {
     return this.routePlannerClientStore.indexOfPerson(person) !== -1;
   }
 
-  indexOfPerson(person: Client) {
-    return this.selectedPeople.findIndex(
-      (p) => p.pseudonymizedId === person.pseudonymizedId,
-    );
+  indexOfPerson(person: Client): number {
+    return this.routePlannerClientStore.indexOfPerson(person);
   }
 
   /**
    * Adds a person to the list of addresses, geocoding their address if necessary.
    */
   async addPerson(person: Client) {
-    if (this.isAddingPerson) return;
-
-    if (!person.formattedAddress) {
-      captureException(
-        new Error(
-          `Trying to add person ${person.pseudonymizedId} without valid address`,
-        ),
-      );
-      return;
-    }
-
-    // If we have a place ID for this person in our local record, we definitely don't need
-    // to make a new geocoding API request, so don't even check.
-    if (Object.keys(this.placeIds).includes(person.pseudonymizedId)) {
-      this.selectedPeople.push(person);
-      this.routePlannerClientStore.addSelectedPeople(person);
-      return;
-    }
-
-    this.isAddingPerson = true;
-
-    // If the person has a valid address update, we can use its results.
-    // If they don't (i.e. no update stored in Firestore, or it isn't valid,
-    // or the status was Error (which might be a transient Google Maps platform error)),
-    // we should make another geocoding API request.
-    const { validatedAddressUpdate } = person;
-    let result: GeocodingResponse;
-    if (
-      validatedAddressUpdate &&
-      validatedAddressUpdate.result.status !== GeocodingStatus.Error
-    ) {
-      result = validatedAddressUpdate.result;
-    } else {
-      result = await this.geocode(person, person.formattedAddress);
-    }
-
-    if (result.status === GeocodingStatus.Success) {
-      runInAction(() => {
-        this.placeIds[person.pseudonymizedId] = result.placeId;
-        this.routePlannerClientStore.addSelectedPeople(person);
-        this.selectedPeople.push(person);
-        this.isAddingPerson = false;
-        this.analyticsStore.trackRoutePlannerClientSelected({
-          pseudonymizedId: person.pseudonymizedId,
-          selectedCount: this.selectedClientPseudoIds.length,
-        });
-      });
-    } else {
-      toast(this.getBadAddressCopy(), {
-        duration: TOAST_DURATION,
-        id: `${person.pseudonymizedId}-address-no-results`, // prevent duplicate toasts
-      });
-      this.isAddingPerson = false;
-      this.analyticsStore.trackRoutePlannerClientEvent(
-        RoutePlannerClientEvent.AddressGeocodingFailure,
-        {
-          pseudonymizedId: person.pseudonymizedId,
-        },
-      );
-    }
+    await this.routePlannerClientStore.addPerson(person);
   }
 
   removePerson(person: Client) {
     this.routePlannerClientStore.removeFromAllPeople(person);
-    const i = this.indexOfPerson(person);
-    if (i === -1) {
-      captureException(
-        new Error(
-          `Trying to remove person ${person.pseudonymizedId} who isn't in list of selected people`,
-        ),
-      );
-    } else {
-      this.selectedPeople.splice(i, 1);
-      this.analyticsStore.trackRoutePlannerClientDeselected({
-        pseudonymizedId: person.pseudonymizedId,
-        selectedCount: this.selectedClientPseudoIds.length,
-      });
-    }
   }
 
   async optimizeRoute(startingAddress: string, endingAddress?: string) {
-    if (this.isOptimizing || !this.canOptimizeRoute) return;
-
-    this.isOptimizing = true;
-
-    try {
-      const waypoints = this.routePlannerClientStore.allPeople.map(
-        (person) => ({
-          pseudonymizedId: person.pseudonymizedId,
-          placeId: this.placeIds[person.pseudonymizedId],
-          formattedAddress: (person as Client).formattedAddress,
-        }),
-      );
-
-      const apiStore = this.workflowsStore.rootStore.apiStore;
-      const result = await apiStore.optimizeRoute({
-        origin: startingAddress,
-        destination: endingAddress,
-        waypoints,
-      });
-
-      runInAction(() => {
-        this.selectedPeople = result.optimizedOrder
-          .map((id) =>
-            this.selectedPeople.find((p) => p.pseudonymizedId === id),
-          )
-          .filter(
-            (person): person is JusticeInvolvedPerson => person !== undefined,
-          );
-        this.isOptimizing = false;
-      });
-
-      if (result.isChanged) {
-        toast("Route optimized! New order may reduce travel time.", {
-          duration: 5000,
-        });
-      } else {
-        toast("Route is already optimal!", {
-          duration: 5000,
-        });
-      }
-
-      this.analyticsStore.trackRoutePlannerRouteEvent(
-        RoutePlannerRouteEvent.RouteOptimizationAttempted,
-        {
-          hasStartingAddress: !!startingAddress,
-          hasEndingAddress: !!endingAddress,
-          waypointCount: this.selectedClientPseudoIds.length,
-          orderChanged: result.isChanged,
-        },
-      );
-    } catch (e) {
-      runInAction(() => {
-        this.isOptimizing = false;
-      });
-      toast.error("Unable to optimize route. Please try again.");
-      captureException(e);
-    }
+    await this.routePlannerClientStore.optimizeRoute(
+      startingAddress,
+      endingAddress,
+    );
   }
 
-  // Tracking
   trackRoutePlannerClientEvent(
     eventType: RoutePlannerClientEvent,
-    client: JusticeInvolvedPerson,
+    client: Client,
   ) {
-    this.analyticsStore.trackRoutePlannerClientEvent(eventType, {
-      pseudonymizedId: client.pseudonymizedId,
-    });
+    this.routePlannerClientStore.trackRoutePlannerClientEvent(
+      eventType,
+      client,
+    );
   }
 }

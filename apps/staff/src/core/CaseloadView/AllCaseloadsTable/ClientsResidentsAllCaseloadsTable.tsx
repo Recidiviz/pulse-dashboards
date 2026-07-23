@@ -39,7 +39,7 @@ import {
 
 type CaseloadRowProps = { row: Row<JusticeInvolvedPerson> };
 
-export function AssignedToCell({
+function AssignedToCell({
   row,
   staffTitle,
 }: CaseloadRowProps & { staffTitle: string }) {

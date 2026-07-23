@@ -20,6 +20,7 @@ import styled from "styled-components";
 
 import { Button, Modal, palette, spacing } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
+import useIsMobile from "~utils/react/useIsMobile";
 
 import { useRootStore } from "../../../components/StoreProvider/StoreProvider";
 import { Heading } from "../../sharedComponents";
@@ -67,11 +68,18 @@ const AddMoreClientsButton = styled.button<{ $isDisabled: boolean }>`
   padding: 10px 18px;
 `;
 
-const ModalHeader = styled.div`
+const ModalHeader = styled.div<{ $isTablet: boolean }>`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   flex: 0.01;
+
+  ${({ $isTablet }) =>
+    $isTablet &&
+    `
+    max-width: 80%;
+    text-wrap: wrap;
+  `}
 `;
 
 const CancelButton = styled.button`
@@ -91,10 +99,16 @@ const CancelButton = styled.button`
   }
 `;
 
-const CloseButton = styled(Button)`
+const CloseButton = styled(Button)<{ $isTablet: boolean }>`
   display: flex;
   align-self: flex-end;
   position: absolute;
+
+  ${({ $isTablet }) =>
+    $isTablet &&
+    `
+      right: 0;
+    `}
 `;
 
 const ClientScrollWrapper = styled.div`
@@ -129,17 +143,18 @@ export const ManagedComponent = observer(function RoutePlannerAddMoreClients({
   } = useRootStore();
 
   const addMoreDisabled = presenter.potentialPeople.length === 0;
-
+  const { isTablet } = useIsMobile(true);
   // display table according to selected officers
   return (
     <AddMoreModal isOpen={true} onRequestClose={presenter.onCancel}>
-      <ModalHeader>
+      <ModalHeader $isTablet={isTablet}>
         <CloseButton
           kind="borderless"
           icon="Close"
           iconSize={12}
           onClick={presenter.onCancel}
           aria-label="Close"
+          $isTablet={isTablet}
         />
         <Heading>Add more clients to route</Heading>
         <AddMoreClientsHeader>

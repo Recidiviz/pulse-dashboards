@@ -64,7 +64,7 @@ describe("Selected client methods with locally stored addresses", () => {
     );
     for (const client of clients) {
       // @ts-expect-error accessing private property for test
-      presenter.placeIds[client.pseudonymizedId] = client.formattedAddress;
+      rpClientStore.placeIds[client.pseudonymizedId] = client.formattedAddress;
     }
   });
 
@@ -193,7 +193,7 @@ describe("Geocodes addresses when not in Firestore", () => {
   });
 
   it("Adds client with SUCCESS geocoding result from API", async () => {
-    vi.spyOn(presenter, "geocode").mockResolvedValue({
+    vi.spyOn(rpClientStore, "geocode").mockResolvedValue({
       placeId: fakePlaceId,
       status: GeocodingStatus.Success,
     });
@@ -204,7 +204,7 @@ describe("Geocodes addresses when not in Firestore", () => {
   });
 
   it("Does not add client with ERROR geocoding result from API", async () => {
-    vi.spyOn(presenter, "geocode").mockResolvedValue({
+    vi.spyOn(rpClientStore, "geocode").mockResolvedValue({
       status: GeocodingStatus.Error,
     });
     await presenter.addPerson(clients[0]);
@@ -212,7 +212,7 @@ describe("Geocodes addresses when not in Firestore", () => {
   });
 
   it("Does not add client with BAD_RESULT geocoding result from API", async () => {
-    vi.spyOn(presenter, "geocode").mockResolvedValue({
+    vi.spyOn(rpClientStore, "geocode").mockResolvedValue({
       status: GeocodingStatus.BadResult,
     });
     await presenter.addPerson(clients[0]);

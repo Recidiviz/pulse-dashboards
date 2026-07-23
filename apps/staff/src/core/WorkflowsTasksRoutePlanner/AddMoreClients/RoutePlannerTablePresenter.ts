@@ -74,7 +74,7 @@ export class RoutePlannerTablePresenter {
     if (this.isSelected(person)) {
       this.removeSelected(person);
     } else {
-      this._potentialPeople.push(person);
+      this.routePlannerClientStore.addPerson(person, this.potentialPeople);
     }
   }
 
@@ -108,13 +108,25 @@ export class RoutePlannerTablePresenter {
    * and returns that value
    */
   getCardinal(person: Client): number {
-    const addMore = this.routePlannerClientStore.addMorePeople.length;
-    const existing = this.routePlannerClientStore.allPeople.length;
-
-    return existing - addMore + this.indexOfPerson(person) + 1;
+    /* if the user is found in the current all users array then we can simply return that value
+     * and increment by 1
+     */
+    if (this.routePlannerClientStore.indexOfPerson(person) !== -1) {
+      return this.routePlannerClientStore.indexOfPerson(person) + 1;
+    } else {
+      /* if the user is not found then we can assume this is a potential person.
+       * But as this function is called for all users displayed in the styling sheet,
+       * we need to remove the duplicates from addMorePeople list and then calculate the index
+       * of the person in the potential people array - which is set to be addMorePeople in this constructor.
+       */
+      return (
+        this.routePlannerClientStore.allPeople.length -
+        this.routePlannerClientStore.addMorePeople.length +
+        this.indexOfPerson(person) +
+        1
+      );
+    }
   }
-
-  // GENERAL DISPLAY
 
   clientsInSelectedSearchesCount(): number {
     const { caseloadPersonsGrouped, selectedSearchables } =

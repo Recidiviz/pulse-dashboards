@@ -204,7 +204,7 @@ function buildColumns({
       accessorFn: (row) => isSelected(row),
       enableSorting: true,
       sortingFn: (a, b) => {
-        return Number(isSelected(b.original)) - Number(isSelected(a.original));
+        return Number(isSelected(a.original)) - Number(isSelected(b.original));
       },
       cell: ({ row }) => (
         <CheckBoxWrapper
