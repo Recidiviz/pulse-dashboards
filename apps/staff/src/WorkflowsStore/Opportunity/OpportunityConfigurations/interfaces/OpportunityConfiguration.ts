@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { BuiltInSortingFn } from "@tanstack/react-table";
+
 import { OpportunityType, SystemId } from "~datatypes";
 
 import { OpportunityTableColumnId } from "../../../../core/OpportunityCaseloadView/HydratedOpportunityPersonList";
@@ -91,7 +93,11 @@ export interface OpportunityConfiguration {
   apiEnabledColumnInfo: Partial<
     Record<
       OpportunityTableColumnId,
-      { columnHeader: string | undefined; cellValue: string | undefined }
+      {
+        columnHeader: string | undefined;
+        cellValue: string | undefined;
+        sortingFn: BuiltInSortingFn | undefined;
+      }
     >
   >;
   enabledColumns: Array<OpportunityTableColumnId>;

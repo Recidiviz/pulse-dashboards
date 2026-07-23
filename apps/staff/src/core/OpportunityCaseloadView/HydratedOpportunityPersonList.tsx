@@ -42,12 +42,13 @@ import {
   TooltipTrigger,
 } from "@recidiviz/design-system";
 import {
+  BuiltInSortingFn,
   CellContext,
   ColumnDef,
   Row,
   SortingState,
 } from "@tanstack/react-table";
-import { differenceInDays, startOfToday } from "date-fns";
+import { differenceInDays, isValid, startOfToday } from "date-fns";
 import { orderBy } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
@@ -313,6 +314,13 @@ export type OpportunityTableColumnDef = {
   cell?: ColumnDef<Opportunity>["cell"];
 } & OpportunityTableColumnSorting;
 
+// Cell renderer for a hydrated Date object: formats the accessor value given a
+// successful cast; a string (failed cast) passes through untouched.
+const HydratedDateCell = ({ getValue }: CellContext<Opportunity, unknown>) => {
+  const value = getValue<Date | string>();
+  return value instanceof Date ? formatWorkflowsDate(value) : value;
+};
+
 /**
  * Applies additions/modifications to `allColumns` based on the per-column info
  * the API config provides.
@@ -326,7 +334,11 @@ function applyApiEnabledColumnInfo(
   apiEnabledColumnInfo: Partial<
     Record<
       OpportunityTableColumnId,
-      { columnHeader: string | undefined; cellValue: string | undefined }
+      {
+        columnHeader: string | undefined;
+        cellValue: string | undefined;
+        sortingFn: BuiltInSortingFn | undefined;
+      }
     >
   >,
 ): OpportunityTableColumnDef[] {
@@ -334,12 +346,20 @@ function applyApiEnabledColumnInfo(
   for (const [id, info] of Object.entries(apiEnabledColumnInfo)) {
     const hydratedAccessorFn =
       info.cellValue !== undefined
-        ? (opp: Opportunity) =>
-            hydrateStr(info.cellValue as string, {
+        ? (opp: Opportunity) => {
+            const hydrated = hydrateStr(info.cellValue as string, {
               criteria: {},
               formatters: {},
               opportunity: opp,
-            })
+            });
+            // For a "datetime" sort, cast to a Date so it compares chronologically;
+            // fall back to string if unsuccessful.
+            if (info.sortingFn === "datetime") {
+              const asDate = new Date(hydrated);
+              if (isValid(asDate)) return asDate;
+            }
+            return hydrated;
+          }
         : undefined;
 
     // Modify existing column
@@ -352,8 +372,11 @@ function applyApiEnabledColumnInfo(
         delete existingCol.cell;
         Object.assign(existingCol, {
           enableSorting: true,
-          sortingFn: "alphanumeric",
           accessorFn: hydratedAccessorFn,
+          // Given a "datetime" sort, format the Date value for display.
+          ...(info.sortingFn === "datetime" && { cell: HydratedDateCell }),
+          // Only override the column's existing sortingFn if the API config provides.
+          ...(info.sortingFn && { sortingFn: info.sortingFn }),
         });
       }
       continue;
@@ -364,8 +387,11 @@ function applyApiEnabledColumnInfo(
       header: info.columnHeader,
       id: id as OpportunityTableColumnId,
       enableSorting: true,
-      sortingFn: "alphanumeric",
+      // Consider using tanstack getAutoSortingFn instead of "alphanumeric" fallback, see https://tanstack.com/table/v8/docs/api/features/sorting.
+      sortingFn: info.sortingFn ?? "alphanumeric",
       accessorFn: hydratedAccessorFn,
+      // Given a "datetime" sort, format the Date value for display.
+      ...(info.sortingFn === "datetime" && { cell: HydratedDateCell }),
     });
   }
 

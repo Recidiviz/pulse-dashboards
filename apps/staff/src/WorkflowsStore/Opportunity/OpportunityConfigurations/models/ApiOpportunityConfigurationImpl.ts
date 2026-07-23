@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { BuiltInSortingFn } from "@tanstack/react-table";
 import assertNever from "assert-never";
 import { add, nextDay } from "date-fns";
 import { isEmpty, mapValues, pick, pickBy } from "lodash";
@@ -350,7 +351,11 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   get apiEnabledColumnInfo(): Partial<
     Record<
       OpportunityTableColumnId,
-      { columnHeader: string | undefined; cellValue: string | undefined }
+      {
+        columnHeader: string | undefined;
+        cellValue: string | undefined;
+        sortingFn: BuiltInSortingFn | undefined;
+      }
     >
   > {
     return this.configurationObject.enabledColumns ?? {};

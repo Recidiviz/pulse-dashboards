@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { BuiltInSortingFn, sortingFns } from "@tanstack/react-table";
 import { z } from "zod";
 
 import { TenantIds } from "../../../../RootStore/types";
@@ -33,6 +34,12 @@ const criteriaCopySchema = z
     Object.fromEntries(a.map(({ key, ...rest }) => [key, rest])),
   )
   .or(z.record(copySchema));
+
+// Constrains sortingFn value to react-table's built-in sortingFns, undefined otherwise.
+const sortingFnSchema = z
+  .enum(Object.keys(sortingFns) as [BuiltInSortingFn])
+  .optional()
+  .catch(undefined);
 
 const tabTextSchema = z
   .array(
@@ -167,13 +174,14 @@ export const apiOpportunityConfigurationSchema = z.object({
           columnId: z.string(),
           columnHeader: nullishAsUndefined(z.string()),
           cellValue: nullishAsUndefined(z.string()),
+          sortingFn: sortingFnSchema,
         }),
       )
       .transform((a) =>
         Object.fromEntries(
-          a.map(({ columnId, columnHeader, cellValue }) => [
+          a.map(({ columnId, columnHeader, cellValue, sortingFn }) => [
             columnId,
-            { columnHeader, cellValue },
+            { columnHeader, cellValue, sortingFn },
           ]),
         ),
       ),
