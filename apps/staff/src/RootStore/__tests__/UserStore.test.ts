@@ -1256,7 +1256,6 @@ describe("feature variants", () => {
 
     expect(store.activeFeatureVariants).toMatchInlineSnapshot(`
       {
-        "HCRPAddMoreClients": {},
         "SARBuilder": {},
         "SARImportEmploymentRecords": {},
         "SARManualORAS": {},
@@ -1346,7 +1345,6 @@ describe("feature variants", () => {
     expect(store.activeFeatureVariants).toMatchInlineSnapshot(`
       {
         "EXTRA_FV": {},
-        "HCRPAddMoreClients": {},
         "SARBuilder": {},
         "SARImportEmploymentRecords": {},
         "SARManualORAS": {},
@@ -1435,7 +1433,6 @@ describe("feature variants", () => {
 
     expect(store.activeFeatureVariants).toMatchInlineSnapshot(`
       {
-        "HCRPAddMoreClients": {},
         "SARBuilder": {},
         "SARImportEmploymentRecords": {},
         "SARManualORAS": {},

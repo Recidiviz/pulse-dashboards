@@ -362,7 +362,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         customTasks: { activeTenants: ["US_MO"] },
         tasksOneRowPerClient: { activeTenants: ["US_MO"] },
         tasksRoutePlanner: { activeTenants: ["US_TX", "US_ID"] },
-        HCRPAddMoreClients: {},
+        HCRPAddMoreClients: { activeTenants: ["US_TX", "US_ID"] },
         hideWorkflowsResidentsPage: { activeTenants: ["US_NC"] },
         sentenceProgressV2: { activeTenants: ["US_ND"] },
       }
@@ -400,6 +400,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         customTasks: { activeTenants: ["US_MO"] },
         tasksOneRowPerClient: { activeTenants: ["US_MO"] },
         tasksRoutePlanner: { activeTenants: ["US_TX", "US_ID"] },
+        HCRPAddMoreClients: { activeTenants: ["US_TX", "US_ID"] },
         hideDenialRevert: { activeTenants: ["US_AZ"] },
         SARBuilder: { activeTenants: ["US_MO"] },
         SARSignature: { activeTenants: ["US_MO"] },
