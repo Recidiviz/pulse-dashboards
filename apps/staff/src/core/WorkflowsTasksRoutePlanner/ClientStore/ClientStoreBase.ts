@@ -16,9 +16,15 @@
 // =============================================================================
 
 import { captureException } from "@sentry/react";
-import { makeAutoObservable } from "mobx";
+import { mapValues } from "lodash";
+import { makeAutoObservable, reaction } from "mobx";
 
+import { GeocodingStatus } from "../../../FirestoreStore/types";
 import { Client } from "../../../WorkflowsStore/Client";
+import {
+  SupervisionTask,
+  SupervisionTaskType,
+} from "../../../WorkflowsStore/Task/types";
 import { WorkflowsStore } from "../../../WorkflowsStore/WorkflowsStore";
 
 export default class RoutePlannerClientStore {
@@ -32,8 +38,28 @@ export default class RoutePlannerClientStore {
   // this is for everyone selected in both locations
   private _allPeople: Client[] = [];
 
+  private OMS: string | undefined;
+
   constructor(protected readonly workflowsStore: WorkflowsStore) {
     makeAutoObservable(this);
+    this.OMS = this.getOMSSystem(workflowsStore.rootStore.currentTenantId);
+
+    reaction(
+      () => this.workflowsStore.searchStore.selectedSearchIds,
+      (newIds, oldIds) => {
+        // only run if search IDs could have been removed
+        if (newIds.length <= oldIds.length) {
+          this._allPeople = this._allPeople.filter(
+            (person) =>
+              person.assignedStaffId && newIds.includes(person.assignedStaffId),
+          );
+          this._addMorePeopleList = this._addMorePeopleList.filter(
+            (person) =>
+              person.assignedStaffId && newIds.includes(person.assignedStaffId),
+          );
+        }
+      },
+    );
   }
 
   // WINDOW FUNCTIONS
@@ -120,6 +146,50 @@ export default class RoutePlannerClientStore {
     } else {
       people.splice(i, 1);
     }
+  }
+
+  hasBadAddress(person: Client): boolean {
+    const { validatedAddressUpdate } = person as Client;
+    return Boolean(
+      validatedAddressUpdate &&
+        validatedAddressUpdate.result.status === GeocodingStatus.BadResult,
+    );
+  }
+
+  getBadAddressCopy() {
+    return `We couldn't find any results for this address. Please check for typos and correct the address in ${this.OMS}. Updates in ${this.OMS} will be reflected in 1-2 business days.`;
+  }
+
+  getOMSSystem(stateCode: string | undefined): string | undefined {
+    switch (stateCode) {
+      case "US_ID":
+        return "Atlas";
+      case "US_TX":
+        return "OIMS";
+      default:
+        return;
+    }
+  }
+
+  /**
+   * @returns Record mapping selected caseload IDs to a list of home contact tasks
+   * for each caseload.
+   */
+  get contacts(): Record<string, SupervisionTask<SupervisionTaskType>[][]> {
+    return mapValues(
+      this.workflowsStore.searchStore.caseloadPersonsGrouped,
+      (persons) =>
+        persons
+          .map((person) => {
+            if (person.supervisionTasks) {
+              return person.supervisionTasks.readyOrderedTasks.filter(
+                (task) => task.includeInRoutePlanner,
+              );
+            }
+            return [];
+          })
+          .filter((x: any) => x.length !== 0),
+    );
   }
 
   // ----------------------------------------

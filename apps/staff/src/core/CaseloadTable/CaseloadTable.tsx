@@ -152,7 +152,7 @@ const Row = styled.tr<{
   }
 `;
 
-export const TableBody = styled.tbody<{ $clickableRows: boolean }>`
+const TableBody = styled.tbody<{ $clickableRows: boolean }>`
   width: 100%;
 
   /* Give the hover state to only body rows, not header rows */

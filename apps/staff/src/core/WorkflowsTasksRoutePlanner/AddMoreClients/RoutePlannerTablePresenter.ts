@@ -121,7 +121,7 @@ export class RoutePlannerTablePresenter {
       this.rootStore.workflowsStore.searchStore;
 
     let count = 0;
-    selectedSearchables.forEach((searchable) => {
+    selectedSearchables?.forEach((searchable) => {
       if (!caseloadPersonsGrouped[searchable.searchId]) return;
       count += caseloadPersonsGrouped[searchable.searchId].filter(
         (person: JusticeInvolvedPerson) => person instanceof Client,
@@ -142,5 +142,35 @@ export class RoutePlannerTablePresenter {
     return this.rootStore.tenantStore.getDisplayIdCopy(
       this.rootStore.workflowsStore.activeSystem,
     );
+  }
+
+  // ADDRESS FUNCTIONS
+
+  getBadAddressCopy(): string {
+    return this.routePlannerClientStore.getBadAddressCopy();
+  }
+
+  isBadAddress(e: Client): boolean {
+    return this.routePlannerClientStore.hasBadAddress(e);
+  }
+
+  isAlreadyPresent(e: Client): boolean {
+    const alreadyPresentList: Client[] = [];
+
+    const { selectedSearchables } = this.rootStore.workflowsStore.searchStore;
+
+    const contacts = this.routePlannerClientStore.contacts;
+    selectedSearchables?.forEach(({ searchId }) => {
+      contacts[searchId]?.forEach((task) => {
+        alreadyPresentList.push(task[0].person);
+      });
+    });
+
+    let found = false;
+    alreadyPresentList.forEach((person) => {
+      if (person.pseudonymizedId === e.pseudonymizedId) found = true;
+    });
+
+    return found;
   }
 }

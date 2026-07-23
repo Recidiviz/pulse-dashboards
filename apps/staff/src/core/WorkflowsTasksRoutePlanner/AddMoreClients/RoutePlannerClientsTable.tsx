@@ -18,8 +18,9 @@
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { observer } from "mobx-react-lite";
 import { useMemo } from "react";
+import styled from "styled-components";
 
-import { palette } from "~design-system";
+import { palette, TooltipTrigger } from "~design-system";
 import useIsMobile from "~utils/react/useIsMobile";
 
 import { Client } from "../../../WorkflowsStore";
@@ -37,6 +38,7 @@ import {
   PersonIdCellWrapper,
   personLevel,
 } from "../../CaseloadView/AllCaseloadsTable/utils";
+import { InfoButton } from "../../WorkflowsJusticeInvolvedPersonProfile/InfoButton";
 import {
   CheckboxContents,
   EmptyCheckbox,
@@ -49,6 +51,20 @@ import {
 
 type CaseloadRowProps = { row: Row<Client> };
 
+const NotAllowedCell = styled.div`
+  color: ${palette.slate60};
+  font-size: 11px;
+`;
+
+const PersonNameElementWrapper = styled(PersonNameElement)`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-wrap: wrap;
+  gap: 0em;
+  padding: 2px 0;
+`;
+
 function AssignedToCell({ row }: CaseloadRowProps) {
   return (
     <SupervisingOfficerNameCell
@@ -58,13 +74,27 @@ function AssignedToCell({ row }: CaseloadRowProps) {
   );
 }
 
-function AddressCell({ row }: { row: Client }) {
+function AddressCell({
+  row,
+  isBadAddress,
+  contents,
+}: {
+  row: Client;
+  isBadAddress: (person: Client) => boolean;
+  contents: () => string;
+}) {
   return (
     <div
       style={{ display: "flex", flexDirection: "row", alignItems: "center" }}
     >
       {row.formattedAddress}
-      <div style={{ color: palette.slate50 }}></div>
+      <div style={{ color: palette.slate50 }}>
+        {isBadAddress(row) && (
+          <TooltipTrigger contents={contents()} maxWidth={340}>
+            <InfoButton infoUrl={undefined} />
+          </TooltipTrigger>
+        )}
+      </div>
     </div>
   );
 }
@@ -73,11 +103,27 @@ function CheckBoxWrapper({
   row,
   isSelected,
   rank,
+  isBadAddress,
+  isAlreadyPresent,
 }: {
   row: Row<Client>;
   isSelected: (person: Client) => boolean;
   rank: (person: Client) => number;
+  isBadAddress: (person: Client) => boolean;
+  isAlreadyPresent: (person: Client) => boolean;
 }) {
+  if (isBadAddress(row.original)) {
+    return (
+      <EmptyCheckbox
+        $selectable={false}
+        style={{ cursor: "not-allowed", background: "rgb(244, 245, 245)" }}
+      />
+    );
+  }
+  if (isAlreadyPresent(row.original))
+    return (
+      <EmptyCheckbox $selectable={false} style={{ cursor: "not-allowed" }} />
+    );
   if (!isSelected(row.original)) return <EmptyCheckbox $selectable={true} />;
   else
     return (
@@ -89,14 +135,29 @@ function CheckBoxWrapper({
 
 export function PersonNameWrapper<Person extends Client>({
   row,
-}: CaseloadPersonRowProps<Person>) {
-  return <PersonNameCell person={row.original} />;
+  isBadAddress,
+  isAlreadyPresent,
+}: CaseloadPersonRowProps<Person> & {
+  isBadAddress: (person: Client) => boolean;
+  isAlreadyPresent: (person: Client) => boolean;
+}) {
+  return (
+    <PersonNameCell
+      person={row.original}
+      isBadAddress={isBadAddress}
+      isAlreadyPresent={isAlreadyPresent}
+    />
+  );
 }
 
 export const PersonNameCell = observer(function PersonNameCell({
   person,
+  isBadAddress,
+  isAlreadyPresent,
 }: {
   person: Client;
+  isBadAddress: (person: Client) => boolean;
+  isAlreadyPresent: (person: Client) => boolean;
 }) {
   const { isMobile } = useIsMobile(true);
   // In TX, all JII are displayed with last name first.
@@ -105,19 +166,15 @@ export const PersonNameCell = observer(function PersonNameCell({
     ? person.displayPreferredNameLastFirst
     : person.displayPreferredName;
   return (
-    <PersonNameElement
-      $isMobile={isMobile}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-start",
-        textWrap: "wrap",
-        gap: "0rem",
-        padding: "2px 0",
-      }}
-    >
+    <PersonNameElementWrapper $isMobile={isMobile}>
       <div>{displayName}</div>
-    </PersonNameElement>
+      {isBadAddress(person) && (
+        <NotAllowedCell>{"Address not found"}</NotAllowedCell>
+      )}
+      {isAlreadyPresent(person) && (
+        <NotAllowedCell>{"Already shown in your planner"}</NotAllowedCell>
+      )}
+    </PersonNameElementWrapper>
   );
 });
 
@@ -129,10 +186,16 @@ function buildColumns({
   displayIdHeader,
   isSelected,
   getCardinal,
+  isBadAddress,
+  isAlreadyPresent,
+  getBadAddressCopy,
 }: {
   displayIdHeader: string;
   isSelected: (person: Client) => boolean;
   getCardinal: (person: Client) => number;
+  isBadAddress: (person: Client) => boolean;
+  isAlreadyPresent: (person: Client) => boolean;
+  getBadAddressCopy: () => string;
 }): ClientsResidentsColumnDef[] {
   return [
     {
@@ -144,7 +207,13 @@ function buildColumns({
         return Number(isSelected(b.original)) - Number(isSelected(a.original));
       },
       cell: ({ row }) => (
-        <CheckBoxWrapper rank={getCardinal} row={row} isSelected={isSelected} />
+        <CheckBoxWrapper
+          rank={getCardinal}
+          row={row}
+          isSelected={isSelected}
+          isBadAddress={isBadAddress}
+          isAlreadyPresent={isAlreadyPresent}
+        />
       ),
     },
     {
@@ -153,7 +222,13 @@ function buildColumns({
       accessorFn: nameSortValue,
       enableSorting: true,
       sortingFn: "text",
-      cell: ({ row }) => <PersonNameWrapper row={row} />,
+      cell: ({ row }) => (
+        <PersonNameWrapper
+          row={row}
+          isBadAddress={isBadAddress}
+          isAlreadyPresent={isAlreadyPresent}
+        />
+      ),
     },
     {
       header: displayIdHeader,
@@ -196,7 +271,13 @@ function buildColumns({
       },
       enableSorting: true,
       sortingFn: "text",
-      cell: ({ row }) => <AddressCell row={row.original} />,
+      cell: ({ row }) => (
+        <AddressCell
+          row={row.original}
+          isBadAddress={isBadAddress}
+          contents={getBadAddressCopy}
+        />
+      ),
     },
   ];
 }
@@ -206,24 +287,45 @@ export const RoutePlannerTable = observer(function RoutePlannerTable({
 }: {
   presenter: RoutePlannerTablePresenter;
 }) {
-  const { displayIdHeader, isSelected, getCardinal } = presenter;
+  const {
+    displayIdHeader,
+    isSelected,
+    getCardinal,
+    isBadAddress,
+    isAlreadyPresent,
+    getBadAddressCopy,
+  } = presenter;
   const columns = useMemo(
     () =>
       buildColumns({
         displayIdHeader,
         isSelected,
         getCardinal,
+        isBadAddress,
+        isAlreadyPresent,
+        getBadAddressCopy,
       }),
-    [displayIdHeader, isSelected, getCardinal],
+    [
+      displayIdHeader,
+      isSelected,
+      getCardinal,
+      isBadAddress,
+      isAlreadyPresent,
+      getBadAddressCopy,
+    ],
   );
   return (
     <CaseloadTable
       shouldHighlightRow={(e) => presenter.isSelected(e)}
       onRowClick={(e) => {
+        if (presenter.isBadAddress(e) || presenter.isAlreadyPresent(e)) return;
         presenter.updateSelected(e);
       }}
       data={presenter.people}
       columns={columns}
+      shouldBlockSelectingRow={(e) =>
+        presenter.isBadAddress(e) || presenter.isAlreadyPresent(e)
+      }
       enableProgressiveLoading={true}
       progressiveLoadingBatchSize={100}
       smallColumns={true}
