@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+const { isIdahoThClient } = require("actions:recidiviz-action-helpers");
+
 /**
  * Handler that will be called during the execution of a PostLogin flow.
  *
@@ -22,18 +24,26 @@
  * @param {PostLoginAPI} api - Interface whose methods can be used to change the behavior of the login.
  */
 exports.onExecutePostLogin = async (event, api) => {
+  // Skip this action for the Idaho TH app
+  if (isIdahoThClient(event)) {
+    return;
+  }
+
   const Analytics = require("analytics-node");
   const analytics = new Analytics(event.secrets.SEGMENT_WRITE_KEY, {
     flushAt: 1,
   });
 
-  const testerEmails = [
-    /* Update test emails used in Auth0 Actions */
-  ];
+  // Skip email verification on OpenID, Ping, and SAML connections
   if (
-    testerEmails.includes(event.user.email) &&
-    event.client.name !== "Recidiviz Dashboard Demo"
+    event.connection.name.includes("OpenID") ||
+    event.connection.name.includes("Ping") ||
+    event.connection.name.includes("SAML")
   ) {
+    return;
+  }
+
+  if (!event.user.email_verified) {
     const { user } = event;
 
     // We don't care about feature variants for failed logins
@@ -61,6 +71,6 @@ exports.onExecutePostLogin = async (event, api) => {
     });
 
     await analytics.flush();
-    api.access.deny(`Access to ${event.client.name} is not allowed.`);
+    api.redirect.sendUserTo(event.secrets.RECIDIVIZ_VEFIFY_EMAIL_URL);
   }
 };

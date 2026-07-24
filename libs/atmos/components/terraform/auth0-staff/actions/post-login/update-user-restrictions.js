@@ -15,6 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+const Analytics = require("analytics-node");
+const Sentry = require("@sentry/node");
+const { Storage } = require("@google-cloud/storage");
+
+const {
+  fetchUserRestrictions,
+  getUserEmail,
+  isIdahoThClient,
+} = require("actions:recidiviz-action-helpers");
+
 /**
  * Handler that will be called during the execution of a PostLogin flow.
  *
@@ -22,16 +32,14 @@
  * @param {PostLoginAPI} api - Interface whose methods can be used to change the behavior of the login.
  */
 exports.onExecutePostLogin = async (event, api) => {
-  /** Set up external clients and dependencies */
-  const Base64 = require("crypto-js/enc-base64");
-  const SHA256 = require("crypto-js/sha256");
-  const Analytics = require("analytics-node");
+  // Skip this action for the Idaho TH app
+  if (isIdahoThClient(event)) {
+    return;
+  }
+
   const analytics = new Analytics(event.secrets.SEGMENT_WRITE_KEY, {
     flushAt: 1,
   });
-
-  const Sentry = require("@sentry/node");
-  const { GoogleAuth } = require("google-auth-library");
 
   Sentry.init({
     dsn: event.secrets.SENTRY_DSN,
@@ -42,15 +50,14 @@ exports.onExecutePostLogin = async (event, api) => {
     event.secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON,
   );
 
-  const { Storage } = require("@google-cloud/storage");
   const storage = new Storage({
     projectId: event.secrets.RECIDIVIZ_AUTH_BUCKET_PROJECT_ID,
     credentials,
   });
 
-  const { app_metadata, email, emailaddress, emailAddress } = event.user;
-  const userEmail = email ?? emailaddress ?? emailAddress;
+  const userEmail = getUserEmail(event);
 
+  const { app_metadata } = event.user;
   let stateCode = app_metadata.state_code?.toLowerCase();
 
   /** Set LANTERN state code to CSG */
@@ -134,31 +141,12 @@ exports.onExecutePostLogin = async (event, api) => {
    * Set user restrictions from Admin Panel backend for all users other than Recidiviz and CSG.
    */
   try {
-    /** Get user restrictions from Admin Panel backend */
-    const auth = new GoogleAuth({ credentials });
-    const client = await auth.getIdTokenClient(
-      event.secrets.RECIDIVIZ_ADMIN_PANEL_TARGET_AUDIENCE,
-    );
+    const restrictions = await fetchUserRestrictions(userEmail);
 
-    // some ID accounts come up with an onmicrosoft domain. This patches the email for the request
-    const request_email = userEmail?.replace(
-      "iddoc.onmicrosoft.com",
-      "idoc.idaho.gov",
-    );
-
-    let userHash = Base64.stringify(SHA256(request_email?.toLowerCase()));
-    if (userHash.startsWith("/")) {
-      userHash = userHash.replace("/", "_");
-    }
-    const url = `${event.secrets.RECIDIVIZ_ADMIN_PANEL_URL}auth/users/${userHash}`;
-
-    const apiResponse = await client.request({ url, retry: true });
-    const restrictions = apiResponse.data;
-
-    const { allowedApps } = restrictions;
-
-    if (!allowedApps.staff) {
-      throw new Error(`Email ${email} does not have access to the staff app.`);
+    if (!restrictions.allowedApps.staff) {
+      throw new Error(
+        `Email ${userEmail} does not have access to the staff app.`,
+      );
     }
 
     // If a user has no routes but is in our roster, treat them as if they weren't in the roster at

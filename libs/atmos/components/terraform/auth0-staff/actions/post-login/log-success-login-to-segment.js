@@ -15,10 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-function getUserEmail(event) {
-  const { email, emailaddress, emailAddress } = event.user;
-  return email ?? emailaddress ?? emailAddress;
-}
+const { getUserEmail } = require("actions:recidiviz-action-helpers");
 
 /**
  * Handler that will be called during the execution of a PostLogin flow.
@@ -82,6 +79,7 @@ exports.onExecutePostLogin = async (event) => {
       picture: user.picture,
       updated_at: user.updated_at,
       user_id: user.user_id,
+      application: event.client?.client_id,
     },
   });
 

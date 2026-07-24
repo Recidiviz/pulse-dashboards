@@ -24,9 +24,9 @@ resource "auth0_trigger_actions" "post_user_registration" {
 }
 
 resource "auth0_action" "log_success_signup_to_segment" {
-  code    = file("${path.module}/actions/07-log-success-signup-to-segment.js")
+  code    = file("${path.module}/actions/post-registration/log-success-signup-to-segment.js")
   deploy  = true
-  name    = "[TF-managed] 07-log-success-signup-to-segment"
+  name    = "[TF-managed] Log success signup to segment"
   runtime = "node22"
   dependencies {
     name    = "analytics-node"
@@ -35,6 +35,10 @@ resource "auth0_action" "log_success_signup_to_segment" {
   supported_triggers {
     id      = "post-user-registration"
     version = "v2"
+  }
+  modules {
+    module_id         = auth0_action_module.recidiviz_action_helpers.id
+    module_version_id = auth0_action_module.recidiviz_action_helpers.version_id
   }
   secrets {
     name  = "SEGMENT_WRITE_KEY"

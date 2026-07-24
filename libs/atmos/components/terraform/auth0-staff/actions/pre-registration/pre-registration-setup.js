@@ -15,6 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+const Sentry = require("@sentry/node");
+const { Storage } = require("@google-cloud/storage");
+
+const {
+  fetchUserRestrictions,
+  getUserEmail,
+} = require("actions:recidiviz-action-helpers");
+
 /**
  * Handler that will be called during the execution of a PreUserRegistration flow.
  *
@@ -26,8 +34,6 @@ exports.onExecutePreUserRegistration = async (event, api) => {
    * This hook allows custom code to prevent creation of a user in the
    * database or to add custom app_metadata or user_metadata to a
    * newly created user.
-   *
-   * Only one pre-user registration hook can be enabled at a time.
    *
    * This hook will do three things:
    * 1. Add permissions for csg and recidiviz users
@@ -56,17 +62,10 @@ exports.onExecutePreUserRegistration = async (event, api) => {
     US_UT: ["utah.gov"],
   };
 
-  /** Set up external clients and dependencies **/
-  const Sentry = require("@sentry/node");
-  const { GoogleAuth } = require("google-auth-library");
-  const Base64 = require("crypto-js/enc-base64");
-  const SHA256 = require("crypto-js/sha256");
-
   const credentials = JSON.parse(
     event.secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON,
   );
 
-  const { Storage } = require("@google-cloud/storage");
   const storage = new Storage({
     projectId: event.secrets.RECIDIVIZ_AUTH_BUCKET_PROJECT_ID,
     credentials,
@@ -80,8 +79,8 @@ exports.onExecutePreUserRegistration = async (event, api) => {
     "There was a problem registering your account. Please contact feedback@recidiviz.org.";
 
   /** Extract domain for registration **/
-  const email = event.user.email;
-  const emailSplit = (email && email.split("@")) ?? [""];
+  const userEmail = getUserEmail(event);
+  const emailSplit = (userEmail && userEmail.split("@")) ?? [""];
   const userDomain = emailSplit[emailSplit.length - 1].toLowerCase();
 
   /** 1. Special-case Recidiviz and CSG users **/
@@ -120,7 +119,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
     const recidivizAuthBucketName = event.secrets.RECIDIVIZ_AUTH_BUCKET_NAME;
     const jsonFile = await storage
       .bucket(recidivizAuthBucketName)
-      .file(`${email}.json`)
+      .file(`${userEmail}.json`)
       .download();
 
     const contents = JSON.parse(jsonFile);
@@ -137,24 +136,11 @@ exports.onExecutePreUserRegistration = async (event, api) => {
   /** 2. All other users, request metadata and permissions from the auth
    * endpoint and update app metadata **/
   try {
-    const auth = new GoogleAuth({ credentials });
-    const client = await auth.getIdTokenClient(
-      event.secrets.RECIDIVIZ_ADMIN_PANEL_TARGET_AUDIENCE,
-    );
+    const restrictions = await fetchUserRestrictions(userEmail);
 
-    let userHash = Base64.stringify(SHA256(email?.toLowerCase()));
-    if (userHash.startsWith("/")) {
-      userHash = userHash.replace("/", "_");
-    }
-    const url = `${event.secrets.RECIDIVIZ_ADMIN_PANEL_URL}auth/users/${userHash}`;
-    const apiResponse = await client.request({ url, retry: true });
-    const restrictions = apiResponse.data;
-
-    const { allowedApps } = restrictions;
-
-    if (!allowedApps.staff) {
+    if (!restrictions.allowedApps.staff) {
       throw new Error(
-        `Email ${email} is not allowed to register for the staff app.`,
+        `Email ${userEmail} is not allowed to register for the staff app.`,
       );
     }
 
@@ -178,7 +164,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
       !allowedDomainsForState[stateCode].includes(userDomain)
     ) {
       throw new Error(
-        `Email ${email} not allowed to register for state ${stateCode}`,
+        `Email ${userEmail} not allowed to register for state ${stateCode}`,
       );
     }
 
@@ -218,7 +204,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
     return;
   } catch (apiError) {
     Sentry.captureMessage(
-      `Error while registering new user for email ${email}.`,
+      `Error while registering new user for email ${userEmail}.`,
     );
     Sentry.captureException(apiError, {
       tags: {

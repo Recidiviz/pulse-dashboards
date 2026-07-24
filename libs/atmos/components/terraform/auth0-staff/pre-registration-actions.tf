@@ -24,7 +24,7 @@ resource "auth0_trigger_actions" "pre_user_registration" {
 }
 
 resource "auth0_action" "pre_registration_setup" {
-  code    = file("${path.module}/actions/01-pre-registration-setup.js")
+  code    = file("${path.module}/actions/pre-registration/pre-registration-setup.js")
   deploy  = true
   name    = "[TF-managed] Pre-registration Setup"
   runtime = "node22"
@@ -36,17 +36,13 @@ resource "auth0_action" "pre_registration_setup" {
     name    = "@sentry/node"
     version = "6.11.0"
   }
-  dependencies {
-    name    = "crypto-js"
-    version = "4.1.1"
-  }
-  dependencies {
-    name    = "google-auth-library"
-    version = "7.6.2"
-  }
   supported_triggers {
     id      = "pre-user-registration"
     version = "v2"
+  }
+  modules {
+    module_id         = auth0_action_module.recidiviz_action_helpers.id
+    module_version_id = auth0_action_module.recidiviz_action_helpers.version_id
   }
   secrets {
     name  = "SENTRY_DSN"
@@ -67,13 +63,5 @@ resource "auth0_action" "pre_registration_setup" {
   secrets {
     name  = "RECIDIVIZ_AUTH_BUCKET_NAME"
     value = data.sops_file.action_configs.data["RECIDIVIZ_AUTH_BUCKET_NAME"]
-  }
-  secrets {
-    name  = "RECIDIVIZ_ADMIN_PANEL_URL"
-    value = data.sops_file.action_configs.data["RECIDIVIZ_ADMIN_PANEL_URL"]
-  }
-  secrets {
-    name  = "RECIDIVIZ_ADMIN_PANEL_TARGET_AUDIENCE"
-    value = data.sops_file.action_configs.data["RECIDIVIZ_ADMIN_PANEL_TARGET_AUDIENCE"]
   }
 }

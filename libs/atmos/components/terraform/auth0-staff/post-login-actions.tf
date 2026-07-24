@@ -22,6 +22,8 @@ locals {
     auth0_action.allowlist_for_specific_app[0],
     auth0_action.update_user_restrictions,
     auth0_action.add_user_and_app_metadata_to_id_tokens,
+    auth0_action.idaho_th_set_provider_metadata,
+    auth0_action.idaho_th_set_staff_metadata,
     auth0_action.log_success_login_to_segment
     ]) : tolist([
     auth0_action.add_state_code_for_sso_users,
@@ -64,11 +66,11 @@ resource "auth0_trigger_actions" "post_login" {
 }
 
 resource "auth0_action" "restrict_synthetic_monitor_ip" {
-  code   = file("${path.module}/actions/00-restrict-synthetic-monitor-ip.js")
+  code   = file("${path.module}/actions/post-login/restrict-synthetic-monitor-ip.js")
   deploy = true
   # only create this action in staging
   count   = var.deploy_environment == "staging" ? 1 : 0
-  name    = "[TF-managed] 00-restrict-synthetic-monitor-ip"
+  name    = "[TF-managed] Restrict synthetic monitor ip"
   runtime = "node22"
   supported_triggers {
     id      = "post-login"
@@ -81,7 +83,7 @@ resource "auth0_action" "restrict_synthetic_monitor_ip" {
 }
 
 resource "auth0_action" "add_state_code_for_sso_users" {
-  code    = file("${path.module}/actions/06-add-statecode-for-sso-users.js")
+  code    = file("${path.module}/actions/post-login/add-statecode-for-sso-users.js")
   deploy  = true
   name    = "[TF-managed] Add state code for SSO users"
   runtime = "node22"
@@ -92,6 +94,10 @@ resource "auth0_action" "add_state_code_for_sso_users" {
   supported_triggers {
     id      = "post-login"
     version = "v3"
+  }
+  modules {
+    module_id         = auth0_action_module.recidiviz_action_helpers.id
+    module_version_id = auth0_action_module.recidiviz_action_helpers.version_id
   }
   secrets {
     name  = "SEGMENT_WRITE_KEY"
@@ -113,7 +119,7 @@ resource "auth0_action" "add_state_code_for_sso_users" {
 }
 
 resource "auth0_action" "force_e_mail_verification" {
-  code    = file("${path.module}/actions/02-force-email-verification.js")
+  code    = file("${path.module}/actions/post-login/force-email-verification.js")
   deploy  = true
   name    = "[TF-managed] Force E-mail Verification"
   runtime = "node22"
@@ -124,6 +130,10 @@ resource "auth0_action" "force_e_mail_verification" {
   supported_triggers {
     id      = "post-login"
     version = "v3"
+  }
+  modules {
+    module_id         = auth0_action_module.recidiviz_action_helpers.id
+    module_version_id = auth0_action_module.recidiviz_action_helpers.version_id
   }
   secrets {
     name  = "SEGMENT_WRITE_KEY"
@@ -136,7 +146,7 @@ resource "auth0_action" "force_e_mail_verification" {
 }
 
 resource "auth0_action" "allowlist_for_specific_app" {
-  code    = file("${path.module}/actions/03-allowlist-for-specific-app.js")
+  code    = file("${path.module}/actions/post-login/allowlist-for-specific-app.js")
   deploy  = true
   name    = "[TF-managed] Allowlist for specific app"
   runtime = "node22"
@@ -150,6 +160,10 @@ resource "auth0_action" "allowlist_for_specific_app" {
     id      = "post-login"
     version = "v3"
   }
+  modules {
+    module_id         = auth0_action_module.recidiviz_action_helpers.id
+    module_version_id = auth0_action_module.recidiviz_action_helpers.version_id
+  }
   secrets {
     name  = "SEGMENT_WRITE_KEY"
     value = data.sops_file.action_configs.data["SEGMENT_WRITE_KEY"]
@@ -157,7 +171,7 @@ resource "auth0_action" "allowlist_for_specific_app" {
 }
 
 resource "auth0_action" "update_user_restrictions" {
-  code    = file("${path.module}/actions/04-update-user-restrictions.js")
+  code    = file("${path.module}/actions/post-login/update-user-restrictions.js")
   deploy  = true
   name    = "[TF-managed] Update user restrictions"
   runtime = "node22"
@@ -173,17 +187,13 @@ resource "auth0_action" "update_user_restrictions" {
     name    = "analytics-node"
     version = "6.2.0"
   }
-  dependencies {
-    name    = "crypto-js"
-    version = "4.1.1"
-  }
-  dependencies {
-    name    = "google-auth-library"
-    version = "7.3.0"
-  }
   supported_triggers {
     id      = "post-login"
     version = "v3"
+  }
+  modules {
+    module_id         = auth0_action_module.recidiviz_action_helpers.id
+    module_version_id = auth0_action_module.recidiviz_action_helpers.version_id
   }
   secrets {
     name  = "SEGMENT_WRITE_KEY"
@@ -213,24 +223,20 @@ resource "auth0_action" "update_user_restrictions" {
     name  = "DEMO_APP_CLIENT_ID"
     value = data.sops_file.action_configs.data["DEMO_APP_CLIENT_ID"]
   }
-  secrets {
-    name  = "RECIDIVIZ_ADMIN_PANEL_URL"
-    value = data.sops_file.action_configs.data["RECIDIVIZ_ADMIN_PANEL_URL"]
-  }
-  secrets {
-    name  = "RECIDIVIZ_ADMIN_PANEL_TARGET_AUDIENCE"
-    value = data.sops_file.action_configs.data["RECIDIVIZ_ADMIN_PANEL_TARGET_AUDIENCE"]
-  }
 }
 
 resource "auth0_action" "add_user_and_app_metadata_to_id_tokens" {
-  code    = file("${path.module}/actions/05-add-user-and-app-metadata-to-id-tokens.js")
+  code    = file("${path.module}/actions/post-login/add-user-and-app-metadata-to-id-tokens.js")
   deploy  = true
   name    = "[TF-managed] Add user and app metadata to id tokens"
   runtime = "node22"
   supported_triggers {
     id      = "post-login"
     version = "v3"
+  }
+  modules {
+    module_id         = auth0_action_module.recidiviz_action_helpers.id
+    module_version_id = auth0_action_module.recidiviz_action_helpers.version_id
   }
   secrets {
     name  = "INTERCOM_APP_KEY"
@@ -239,13 +245,17 @@ resource "auth0_action" "add_user_and_app_metadata_to_id_tokens" {
 }
 
 resource "auth0_action" "log_success_login_to_segment" {
-  code    = file("${path.module}/actions/08-log-success-login-to-segment.js")
+  code    = file("${path.module}/actions/post-login/log-success-login-to-segment.js")
   deploy  = true
-  name    = "[TF-managed] 08-log-success-login-to-segment"
+  name    = "[TF-managed] Log success login to segment"
   runtime = "node22"
   dependencies {
     name    = "analytics-node"
     version = "6.2.0"
+  }
+  modules {
+    module_id         = auth0_action_module.recidiviz_action_helpers.id
+    module_version_id = auth0_action_module.recidiviz_action_helpers.version_id
   }
   supported_triggers {
     id      = "post-login"
@@ -254,5 +264,63 @@ resource "auth0_action" "log_success_login_to_segment" {
   secrets {
     name  = "SEGMENT_WRITE_KEY"
     value = data.sops_file.action_configs.data["SEGMENT_WRITE_KEY"]
+  }
+}
+
+resource "auth0_action" "idaho_th_set_provider_metadata" {
+  code    = file("${path.module}/actions/post-login/idaho-th-set-provider-metadata.js")
+  deploy  = true
+  name    = "[TF-managed][ID-TH] Set provider metadata"
+  runtime = "node22"
+  dependencies {
+    name    = "crypto-js"
+    version = "4.1.1"
+  }
+  modules {
+    module_id         = auth0_action_module.recidiviz_action_helpers.id
+    module_version_id = auth0_action_module.recidiviz_action_helpers.version_id
+  }
+  supported_triggers {
+    id      = "post-login"
+    version = "v3"
+  }
+  secrets {
+    name  = "IDAHO_TH_CLIENT_ID"
+    value = data.sops_file.action_configs.data["IDAHO_TH_CLIENT_ID"]
+  }
+  secrets {
+    name  = "IDAHO_TH_BACKEND_API_URL"
+    value = data.sops_file.action_configs.data["IDAHO_TH_BACKEND_API_URL"]
+  }
+  secrets {
+    name  = "IDAHO_TH_BACKEND_WEBHOOK_SECRET"
+    value = data.sops_file.action_configs.data["IDAHO_TH_BACKEND_WEBHOOK_SECRET"]
+  }
+}
+
+resource "auth0_action" "idaho_th_set_staff_metadata" {
+  code    = file("${path.module}/actions/post-login/idaho-th-set-staff-metadata.js")
+  deploy  = true
+  name    = "[TF-managed][ID-TH] Set staff metadata"
+  runtime = "node22"
+  dependencies {
+    name    = "crypto-js"
+    version = "4.1.1"
+  }
+  modules {
+    module_id         = auth0_action_module.recidiviz_action_helpers.id
+    module_version_id = auth0_action_module.recidiviz_action_helpers.version_id
+  }
+  supported_triggers {
+    id      = "post-login"
+    version = "v3"
+  }
+  secrets {
+    name  = "IDAHO_TH_CLIENT_ID"
+    value = data.sops_file.action_configs.data["IDAHO_TH_CLIENT_ID"]
+  }
+  secrets {
+    name  = "ENVIRONMENT"
+    value = var.deploy_environment
   }
 }

@@ -15,18 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/**
- * Handler that will be called during the execution of a PostLogin flow.
- *
- * @param {Event} event - Details about the user and the context in which they are logging in.
- * @param {PostLoginAPI} api - Interface whose methods can be used to change the behavior of the login.
- */
 const crypto = require("crypto");
-
-function getUserEmail(event) {
-  const { email, emailaddress, emailAddress } = event.user;
-  return email ?? emailaddress ?? emailAddress;
-}
+const {
+  getUserEmail,
+  isIdahoThClient,
+} = require("actions:recidiviz-action-helpers");
 
 function generateSegmentId(event) {
   const email = Buffer.from(getUserEmail(event), "utf8");
@@ -41,7 +34,18 @@ function generateIntercomId(event) {
     .digest("hex");
 }
 
+/**
+ * Handler that will be called during the execution of a PostLogin flow.
+ *
+ * @param {Event} event - Details about the user and the context in which they are logging in.
+ * @param {PostLoginAPI} api - Interface whose methods can be used to change the behavior of the login.
+ */
 exports.onExecutePostLogin = async (event, api) => {
+  // Skip this action for the Idaho TH app
+  if (isIdahoThClient(event)) {
+    return;
+  }
+
   const namespace = "https://dashboard.recidiviz.org";
 
   api.idToken.setCustomClaim(
