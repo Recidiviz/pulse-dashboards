@@ -41,7 +41,13 @@ declare module "fastify" {
 
 type Auth0Config = {
   domain: string;
-  audience: string;
+  /**
+   * A single audience, or several. When an array is given, a token is accepted
+   * if its `aud` matches ANY entry (fast-jwt's `allowedAud`, via
+   * fastify-jwt-jwks). Multiple audiences enable a zero-downtime audience
+   * migration: accept both the old and new audience during the transition.
+   */
+  audience: string | string[];
 };
 
 type JwtConfig = {
