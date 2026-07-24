@@ -21,6 +21,10 @@ import { TouchableOpacity, View } from "react-native";
 import MenuIcon from "react-native-heroicons/outline/MenuIcon";
 import ArrowLeftIcon from "react-native-heroicons/solid/ArrowLeftIcon";
 
+import {
+  PrPreviewChip,
+  usePrPreviewContext,
+} from "~@meetings/app/features/pr-preview";
 import { useRecording } from "~@meetings/app/features/recording";
 import { OfflineIndicator } from "~@meetings/app/shared/ui/OfflineIndicator";
 
@@ -38,6 +42,7 @@ export const MobileHeader = ({
 }: MobileHeaderProps) => {
   const { status } = useRecording();
   const navigation = useNavigation<HeaderNavProp>();
+  const { activeChannel, promptExitPreview, isExiting } = usePrPreviewContext();
 
   return (
     <View
@@ -46,19 +51,21 @@ export const MobileHeader = ({
         className,
       )}
     >
-      {showDrawer && (
-        <TouchableOpacity
-          onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-        >
-          <MenuIcon className="text-tertiary" />
-        </TouchableOpacity>
-      )}
+      <View className="flex-row items-center gap-3">
+        {showDrawer && (
+          <TouchableOpacity
+            onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+          >
+            <MenuIcon className="text-tertiary" />
+          </TouchableOpacity>
+        )}
 
-      {showGoBack && (
-        <TouchableOpacity onPress={onGoBack}>
-          <ArrowLeftIcon className="fill-tertiary" />
-        </TouchableOpacity>
-      )}
+        {showGoBack && (
+          <TouchableOpacity onPress={onGoBack}>
+            <ArrowLeftIcon className="fill-tertiary" />
+          </TouchableOpacity>
+        )}
+      </View>
       <View className="absolute inset-x-0 items-center">
         <OfflineIndicator
           enableTooltip={status !== "idle"}
@@ -66,6 +73,13 @@ export const MobileHeader = ({
           align="center"
         />
       </View>
+      {activeChannel && (
+        <PrPreviewChip
+          channel={activeChannel}
+          onPress={promptExitPreview}
+          isExiting={isExiting}
+        />
+      )}
     </View>
   );
 };

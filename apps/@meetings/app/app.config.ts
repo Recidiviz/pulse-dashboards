@@ -65,10 +65,9 @@ const getDynamicAppConfig = (environment: Environment) => {
 };
 
 export default ({ config }: ConfigContext): ExpoConfig => {
+  const environment = (process.env["APP_ENV"] as Environment) ?? "development";
   const { name, bundleIdentifier, packageName, scheme, auth0Domain } =
-    getDynamicAppConfig(
-      (process.env["APP_ENV"] as Environment) ?? "development",
-    );
+    getDynamicAppConfig(environment);
 
   return {
     ...config,
@@ -99,6 +98,12 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       favicon: "./src/shared/assets/images/favicon-32x32.png",
     },
     plugins: [
+      // Keep the generated exp+recidiviz scheme out of release builds; all
+      // variants share the slug, so they'd intercept dev-client launcher links.
+      [
+        "expo-dev-client",
+        { addGeneratedScheme: environment === "development" },
+      ],
       [
         "expo-splash-screen",
         {
@@ -156,6 +161,10 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     owner: "recidiviz",
     updates: {
       url: `https://u.expo.dev/${EAS_PROJECT_ID}`,
+      // Declare the channel header (channels in eas.json match APP_ENV names)
+      // so expo-updates permits the pr-preview runtime override; undeclared
+      // headers throw InvalidRequestHeadersOverrideException.
+      requestHeaders: { "expo-channel-name": environment },
     },
     runtimeVersion: {
       policy: "appVersion",

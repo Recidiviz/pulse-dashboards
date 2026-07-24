@@ -25,6 +25,7 @@ import React from "react";
 import { Auth0Provider } from "react-native-auth0";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
+import { PrPreviewProvider } from "~@meetings/app/features/pr-preview";
 import {
   offlineTransport,
   useSentryAppLifecycle,
@@ -112,10 +113,12 @@ const App = () => {
               cacheLocation: "localstorage",
             }}
           >
-            <AppErrorBoundary>
-              <AppNavigator />
-              <PortalHost />
-            </AppErrorBoundary>
+            <PrPreviewProvider>
+              <AppErrorBoundary>
+                <AppNavigator />
+                <PortalHost />
+              </AppErrorBoundary>
+            </PrPreviewProvider>
           </Auth0Provider>
         </SnackbarProvider>
       </BottomSheetModalProvider>

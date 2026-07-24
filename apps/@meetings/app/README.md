@@ -128,3 +128,25 @@ inlines the staging `EXPO_PUBLIC_*` vars into the bundle):
 ```bash
 eas update --channel staging --environment preview --message "..."
 ```
+
+### PR previews
+
+PRs that affect the app publish an EAS Update to channel `pr-<number>` and comment
+a QR code on the PR.
+
+Scan the QR with your phone's camera; the link opens the **Recidiviz Staging**
+app (or open the `recidiviz-staging://pr-preview?channel=pr-<number>` link on
+the device directly). The app switches its update channel via a runtime header
+override, downloads the PR bundle, and reloads automatically. A red chip with
+the PR id and a close icon appears at the right of the header; tap it to exit
+the preview and return to staging.
+
+Caveats:
+
+- Previews only load when the update's runtime version (the app `version`)
+  matches the installed staging build.
+- Native code changes can't be previewed this way; they need a new build.
+- The staging build must be recent enough to contain the preview handler.
+
+The dev client can still load any branch manually from its launcher's EAS Updates
+list for local development.
