@@ -25,9 +25,13 @@ export async function transformAndLoadStaffData(
   prismaClient: PrismaClient,
   data: AsyncGenerator<z.infer<typeof staffImportSchema>>,
 ) {
-  const existingCases = await prismaClient.case.findMany({
-    select: { externalId: true },
-  });
+  const existingCaseExternalIds = new Set(
+    (
+      await prismaClient.case.findMany({
+        select: { externalId: true },
+      })
+    ).map(({ externalId }) => externalId),
+  );
 
   const supervisorUpdates: {
     externalId: string;
@@ -38,9 +42,16 @@ export async function transformAndLoadStaffData(
   // records exist before we attempt to link them (supervisors may appear after
   // their direct reports in the source data).
   for await (const staffData of data) {
-    const existingCasesForStaff = existingCases.filter(({ externalId }) =>
-      staffData.case_ids.includes(externalId),
-    );
+    if (!staffData.full_name) {
+      console.warn(
+        `Skipping staff record ${staffData.external_id}: missing full_name.`,
+      );
+      continue;
+    }
+
+    const existingCasesForStaff = staffData.case_ids
+      .filter((externalId) => existingCaseExternalIds.has(externalId))
+      .map((externalId) => ({ externalId }));
 
     const districtConnection =
       staffData.state_code === "US_MO" && staffData.district
@@ -85,27 +96,26 @@ export async function transformAndLoadStaffData(
   }
 
   // Second pass: now that all staff records exist, wire up (or clear) supervisor
-  // links. Promise.allSettled isolates failures so one bad reference doesn't
-  // abort the remaining updates.
-  const results = await Promise.allSettled(
-    supervisorUpdates.map(({ externalId, supervisorId }) =>
-      prismaClient.staff.update({
+  // links. We do this in a for loop instead of Promise.all to avoid a prisma
+  // pool connection error (same reasoning as transformAndLoadCaseData). Each
+  // update is wrapped in a try/catch so one bad reference doesn't abort the
+  // remaining updates.
+  for (const { externalId, supervisorId } of supervisorUpdates) {
+    try {
+      // eslint-disable-next-line no-await-in-loop -- sequential to avoid exhausting the Prisma connection pool
+      await prismaClient.staff.update({
         where: { externalId },
         data: {
           supervisor: supervisorId
             ? { connect: { externalId: supervisorId } }
             : { disconnect: true },
         },
-      }),
-    ),
-  );
-
-  results.forEach((result, i) => {
-    if (result.status === "rejected") {
+      });
+    } catch (error) {
       console.error(
-        `Failed to update supervisor link for staff ${supervisorUpdates[i].externalId}:`,
-        result.reason,
+        `Failed to update supervisor link for staff ${externalId}:`,
+        error,
       );
     }
-  });
+  }
 }

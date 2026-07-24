@@ -219,7 +219,7 @@ export const staffImportSchema = z
     pseudonymized_id: z.string(),
     case_ids: caseIdsSchema,
     state_code: stateCode,
-    full_name: nameSchema,
+    full_name: nameSchema.nullish(),
     email: z.string().nullish(), // Email is null for MO staff
     supervisor_id: z.string().nullish(),
     supervises_all: z.string().nullish(),
@@ -230,7 +230,11 @@ export const staffImportSchema = z
   .transform((data) => {
     return {
       ...data,
-      full_name: titleCase(fullNameObjectToString(data.full_name)) ?? "",
+      // Null signals to the loader that this record should be skipped, since
+      // Staff.fullName is required and we don't want to invent a placeholder name
+      full_name: data.full_name
+        ? titleCase(fullNameObjectToString(data.full_name)) ?? ""
+        : null,
       // Transform snake_case to camelCase for consistency with DB fields
       officeAddress: data.office_address,
       officePhoneNumber: formatPhoneNumber(data.office_phone_number),
