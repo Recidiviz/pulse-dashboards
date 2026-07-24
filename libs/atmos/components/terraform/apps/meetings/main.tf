@@ -17,7 +17,7 @@ locals {
   archive_bucket_name = "${local.etl_bucket_name}-archive"
   audio_bucket_name   = "meetings-audio-data"
 
-  additional_databases = ["us_az", "us_co", "us_me", "us_nc", "us_nd", "us_ne", "us_tn", "us_demo", "global"]
+  additional_databases = ["us_az", "us_co", "us_id", "us_me", "us_nc", "us_nd", "us_ne", "us_tn", "us_demo", "global"]
 }
 
 module "database" {
