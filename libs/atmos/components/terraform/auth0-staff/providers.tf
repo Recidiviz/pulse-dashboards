@@ -20,7 +20,7 @@ terraform {
   required_providers {
     auth0 = {
       source  = "auth0/auth0"
-      version = "1.50.0"
+      version = "1.53.0"
     }
     sops = {
       source  = "carlpett/sops"
@@ -29,12 +29,12 @@ terraform {
   }
 }
 
-ephemeral "sops_file" "credentials" {
-  source_file = "${path.module}/secrets/recidiviz-dev-auth0-credentials.enc.yaml"
+ephemeral "sops_file" "auth0_credentials" {
+  source_file = "${path.module}/secrets/recidiviz-${var.deploy_environment}-auth0-credentials.enc.yaml"
 }
 
 provider "auth0" {
-  domain        = ephemeral.sops_file.credentials.data["auth0_domain"]
-  client_id     = ephemeral.sops_file.credentials.data["auth0_client_id"]
-  client_secret = ephemeral.sops_file.credentials.data["auth0_client_secret"]
+  domain        = ephemeral.sops_file.auth0_credentials.data["AUTH0_DOMAIN"]
+  client_id     = ephemeral.sops_file.auth0_credentials.data["AUTH0_CLIENT_ID"]
+  client_secret = ephemeral.sops_file.auth0_credentials.data["AUTH0_CLIENT_SECRET"]
 }

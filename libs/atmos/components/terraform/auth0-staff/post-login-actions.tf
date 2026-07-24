@@ -15,31 +15,51 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # =============================================================================
 
+locals {
+  auth0_post_login_actions = var.deploy_environment == "staging" ? tolist([
+    auth0_action.add_state_code_for_sso_users,
+    auth0_action.force_e_mail_verification,
+    auth0_action.allowlist_for_specific_app[0],
+    auth0_action.update_user_restrictions,
+    auth0_action.add_user_and_app_metadata_to_id_tokens,
+    auth0_action.log_success_login_to_segment
+    ]) : tolist([
+    auth0_action.add_state_code_for_sso_users,
+    auth0_action.force_e_mail_verification,
+    auth0_action.update_user_restrictions,
+    auth0_action.add_user_and_app_metadata_to_id_tokens,
+    auth0_action.log_success_login_to_segment
+  ])
+
+  connection_id_secrets = var.deploy_environment == "staging" ? [
+    "RECIDIVIZ_CONNECTION_ID"
+    ] : [
+    "RECIDIVIZ_CONNECTION_ID",
+    "US_AZ_CONNECTION_ID",
+    "US_CA_CONNECTION_ID",
+    "US_CO_CONNECTION_ID",
+    "US_IA_CONNECTION_ID",
+    "US_ID_CONNECTION_ID",
+    "US_MI_CONNECTION_ID",
+    "US_MO_CONNECTION_ID",
+    "US_NC_CONNECTION_ID",
+    "US_ND_CONNECTION_ID",
+    "US_NE_CONNECTION_ID",
+    "US_PA_CONNECTION_ID",
+    "US_TN_CONNECTION_ID",
+    "US_TX_CONNECTION_ID",
+    "US_UT_CONNECTION_ID"
+  ]
+}
+
 resource "auth0_trigger_actions" "post_login" {
   trigger = "post-login"
-  actions {
-    display_name = auth0_action.add_state_code_for_sso_users.name
-    id           = auth0_action.add_state_code_for_sso_users.id
-  }
-  actions {
-    display_name = auth0_action.force_e_mail_verification.name
-    id           = auth0_action.force_e_mail_verification.id
-  }
-  actions {
-    display_name = auth0_action.allowlist_for_specific_app.name
-    id           = auth0_action.allowlist_for_specific_app.id
-  }
-  actions {
-    display_name = auth0_action.update_user_restrictions.name
-    id           = auth0_action.update_user_restrictions.id
-  }
-  actions {
-    display_name = auth0_action.add_user_and_app_metadata_to_id_tokens.name
-    id           = auth0_action.add_user_and_app_metadata_to_id_tokens.id
-  }
-  actions {
-    display_name = auth0_action.log_success_login_to_segment.name
-    id           = auth0_action.log_success_login_to_segment.id
+  dynamic "actions" {
+    for_each = { for index, action in local.auth0_post_login_actions : index => action }
+    content {
+      display_name = actions.value.name
+      id           = actions.value.id
+    }
   }
 }
 
@@ -56,7 +76,7 @@ resource "auth0_action" "restrict_synthetic_monitor_ip" {
   }
   secrets {
     name  = "SYNTHETIC_MONITOR_ALLOWED_IPS"
-    value = data.sops_file.configs.data["SYNTHETIC_MONITOR_ALLOWED_IPS"]
+    value = data.sops_file.action_configs.data["SYNTHETIC_MONITOR_ALLOWED_IPS"]
   }
 }
 
@@ -75,15 +95,20 @@ resource "auth0_action" "add_state_code_for_sso_users" {
   }
   secrets {
     name  = "SEGMENT_WRITE_KEY"
-    value = data.sops_file.configs.data["SEGMENT_WRITE_KEY"]
-  }
-  secrets {
-    name  = "RECIDIVIZ_CONNECTION_ID"
-    value = data.sops_file.configs.data["RECIDIVIZ_CONNECTION_ID"]
+    value = data.sops_file.action_configs.data["SEGMENT_WRITE_KEY"]
   }
   secrets {
     name  = "ENVIRONMENT"
     value = var.deploy_environment
+  }
+
+  dynamic "secrets" {
+    for_each = toset(local.connection_id_secrets)
+    iterator = secret
+    content {
+      name  = secret.value
+      value = data.sops_file.action_configs.data[secret.value]
+    }
   }
 }
 
@@ -102,11 +127,11 @@ resource "auth0_action" "force_e_mail_verification" {
   }
   secrets {
     name  = "SEGMENT_WRITE_KEY"
-    value = data.sops_file.configs.data["SEGMENT_WRITE_KEY"]
+    value = data.sops_file.action_configs.data["SEGMENT_WRITE_KEY"]
   }
   secrets {
     name  = "RECIDIVIZ_VEFIFY_EMAIL_URL"
-    value = data.sops_file.configs.data["RECIDIVIZ_VEFIFY_EMAIL_URL"]
+    value = data.sops_file.action_configs.data["RECIDIVIZ_VEFIFY_EMAIL_URL"]
   }
 }
 
@@ -115,6 +140,8 @@ resource "auth0_action" "allowlist_for_specific_app" {
   deploy  = true
   name    = "[TF-managed] Allowlist for specific app"
   runtime = "node22"
+  # only create this action in staging
+  count = var.deploy_environment == "staging" ? 1 : 0
   dependencies {
     name    = "analytics-node"
     version = "6.2.0"
@@ -125,7 +152,7 @@ resource "auth0_action" "allowlist_for_specific_app" {
   }
   secrets {
     name  = "SEGMENT_WRITE_KEY"
-    value = data.sops_file.configs.data["SEGMENT_WRITE_KEY"]
+    value = data.sops_file.action_configs.data["SEGMENT_WRITE_KEY"]
   }
 }
 
@@ -160,39 +187,39 @@ resource "auth0_action" "update_user_restrictions" {
   }
   secrets {
     name  = "SEGMENT_WRITE_KEY"
-    value = data.sops_file.configs.data["SEGMENT_WRITE_KEY"]
+    value = data.sops_file.action_configs.data["SEGMENT_WRITE_KEY"]
   }
   secrets {
     name  = "SENTRY_DSN"
-    value = data.sops_file.configs.data["SENTRY_DSN"]
+    value = data.sops_file.action_configs.data["SENTRY_DSN"]
   }
   secrets {
     name  = "SENTRY_ENV"
-    value = data.sops_file.configs.data["SENTRY_ENV"]
+    value = data.sops_file.action_configs.data["SENTRY_ENV"]
   }
   secrets {
     name  = "GOOGLE_APPLICATION_CREDENTIALS_JSON"
-    value = data.sops_file.configs.data["GOOGLE_APPLICATION_CREDENTIALS_JSON"]
+    value = data.sops_file.action_configs.data["GOOGLE_APPLICATION_CREDENTIALS_JSON"]
   }
   secrets {
     name  = "RECIDIVIZ_AUTH_BUCKET_PROJECT_ID"
-    value = data.sops_file.configs.data["RECIDIVIZ_AUTH_BUCKET_PROJECT_ID"]
+    value = data.sops_file.action_configs.data["RECIDIVIZ_AUTH_BUCKET_PROJECT_ID"]
   }
   secrets {
     name  = "RECIDIVIZ_AUTH_BUCKET_NAME"
-    value = data.sops_file.configs.data["RECIDIVIZ_AUTH_BUCKET_NAME"]
+    value = data.sops_file.action_configs.data["RECIDIVIZ_AUTH_BUCKET_NAME"]
   }
   secrets {
     name  = "DEMO_APP_CLIENT_ID"
-    value = data.sops_file.configs.data["DEMO_APP_CLIENT_ID"]
+    value = data.sops_file.action_configs.data["DEMO_APP_CLIENT_ID"]
   }
   secrets {
     name  = "RECIDIVIZ_ADMIN_PANEL_URL"
-    value = data.sops_file.configs.data["RECIDIVIZ_ADMIN_PANEL_URL"]
+    value = data.sops_file.action_configs.data["RECIDIVIZ_ADMIN_PANEL_URL"]
   }
   secrets {
     name  = "RECIDIVIZ_ADMIN_PANEL_TARGET_AUDIENCE"
-    value = data.sops_file.configs.data["RECIDIVIZ_ADMIN_PANEL_TARGET_AUDIENCE"]
+    value = data.sops_file.action_configs.data["RECIDIVIZ_ADMIN_PANEL_TARGET_AUDIENCE"]
   }
 }
 
@@ -207,7 +234,7 @@ resource "auth0_action" "add_user_and_app_metadata_to_id_tokens" {
   }
   secrets {
     name  = "INTERCOM_APP_KEY"
-    value = data.sops_file.configs.data["INTERCOM_APP_KEY"]
+    value = data.sops_file.action_configs.data["INTERCOM_APP_KEY"]
   }
 }
 
@@ -226,6 +253,6 @@ resource "auth0_action" "log_success_login_to_segment" {
   }
   secrets {
     name  = "SEGMENT_WRITE_KEY"
-    value = data.sops_file.configs.data["SEGMENT_WRITE_KEY"]
+    value = data.sops_file.action_configs.data["SEGMENT_WRITE_KEY"]
   }
 }

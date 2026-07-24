@@ -37,7 +37,7 @@ exports.onExecutePostLogin = async (event, api) => {
     if (event.secrets.ENVIRONMENT === "production") {
       connectionToStateCode = {
         ...connectionToStateCode,
-        // NOTE: delete the following lines for staging
+        // NOTE: These are all left undefined on purpose in staging
         [event.secrets.US_CO_CONNECTION_ID]: "us_co",
         [event.secrets.US_IA_CONNECTION_ID]: "us_ia",
         [event.secrets.US_ID_CONNECTION_ID]: "us_id",

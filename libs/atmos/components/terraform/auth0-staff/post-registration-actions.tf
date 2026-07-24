@@ -38,6 +38,6 @@ resource "auth0_action" "log_success_signup_to_segment" {
   }
   secrets {
     name  = "SEGMENT_WRITE_KEY"
-    value = data.sops_file.configs.data["SEGMENT_WRITE_KEY"]
+    value = data.sops_file.action_configs.data["SEGMENT_WRITE_KEY"]
   }
 }

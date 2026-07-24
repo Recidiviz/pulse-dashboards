@@ -15,6 +15,6 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # =============================================================================
 
-data "sops_file" "configs" {
-  source_file = "${path.module}/secrets/recidiviz-dev-auth0-configs.enc.yaml"
+data "sops_file" "action_configs" {
+  source_file = "${path.module}/secrets/recidiviz-${var.deploy_environment}-auth0-action-configs.enc.yaml"
 }
