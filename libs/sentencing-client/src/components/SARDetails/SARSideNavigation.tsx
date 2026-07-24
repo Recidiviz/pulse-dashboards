@@ -19,15 +19,12 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
-import { getDomainsForAssessmentType } from "../OffenderAssessment/utils";
-import { ArrowIcon } from "./ArrowIcon";
 import {
-  OFFENDER_ASSESSMENT_SUBSECTIONS,
-  OffenderAssessmentSubsection,
-  SARSection,
-  SARSectionName,
-  SUBSECTION_TO_DOMAIN_KEY,
-} from "./constants";
+  DOMAIN,
+  getDomainsForAssessmentType,
+} from "../OffenderAssessment/utils";
+import { ArrowIcon } from "./ArrowIcon";
+import { SARSection, SARSectionName } from "./constants";
 import * as Styled from "./SARSideNavigation.styles";
 import { StatusIndicator } from "./StatusIndicator";
 
@@ -55,11 +52,8 @@ export const SARSideNavigation: React.FC<SARSideNavigationProps> = observer(
     const assessmentType = presenter.SARData?.assessmentType;
     const visibleDomains = getDomainsForAssessmentType(assessmentType);
     const visibleSubsections = presenter.defendantDeclinedToParticipate
-      ? [OffenderAssessmentSubsection.CRIMINAL_HISTORY]
-      : OFFENDER_ASSESSMENT_SUBSECTIONS.filter((subsection) => {
-          const domainKey = SUBSECTION_TO_DOMAIN_KEY[subsection];
-          return visibleDomains.some((d) => d.key === domainKey);
-        });
+      ? [DOMAIN.CRIMINAL_HISTORY]
+      : visibleDomains;
 
     const handlePrevious = () => {
       if (currentIndex > 0) {
@@ -111,11 +105,11 @@ export const SARSideNavigation: React.FC<SARSideNavigationProps> = observer(
                     <Styled.SubNavigationList>
                       {visibleSubsections.map((subsection) => (
                         <Styled.SubNavigationItem
-                          key={subsection}
-                          isActive={currentSubsection === subsection}
-                          onClick={() => onSubsectionChange?.(subsection)}
+                          key={subsection.key}
+                          isActive={currentSubsection === subsection.key}
+                          onClick={() => onSubsectionChange?.(subsection.key)}
                         >
-                          {subsection}
+                          {subsection.title}
                         </Styled.SubNavigationItem>
                       ))}
                     </Styled.SubNavigationList>

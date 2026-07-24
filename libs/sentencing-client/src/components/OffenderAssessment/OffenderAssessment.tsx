@@ -19,7 +19,6 @@ import { observer } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
 
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
-import { OffenderAssessmentSubsection } from "../SARDetails/constants";
 import { SectionContainer } from "../SARDetails/SARDetails.styles";
 import { useStore } from "../StoreProvider/StoreProvider";
 import { RiskLevelKey } from "./constants";
@@ -36,7 +35,7 @@ import { OrasAssessmentScoreCard } from "./OrasAssessmentScoreCard";
 import { ORASForm } from "./ORASForm";
 import { RiskCategorySummary } from "./RiskCategorySummary";
 import { DrugHistoryCard } from "./SubstanceUse";
-import { getDomainsForAssessmentType, ORASDomainKey } from "./utils";
+import { DOMAIN, getDomainsForAssessmentType, ORASDomainKey } from "./utils";
 
 interface OffenderAssessmentProps {
   presenter: SARDetailsPresenter;
@@ -126,18 +125,17 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
       if (!currentSubsection) return;
 
       const refMap = {
-        [OffenderAssessmentSubsection.CRIMINAL_HISTORY]: criminalHistoryRef,
-        [OffenderAssessmentSubsection.EDUCATION_EMPLOYMENT]: educationRef,
-        [OffenderAssessmentSubsection.FAMILY_SOCIAL_SUPPORT]: familyRef,
-        [OffenderAssessmentSubsection.NEIGHBORHOOD_PROBLEMS]: neighborhoodRef,
-        [OffenderAssessmentSubsection.SUBSTANCE_USE]: substanceUseRef,
-        [OffenderAssessmentSubsection.PEER_ASSOCIATIONS]: peerRef,
-        [OffenderAssessmentSubsection.CRIMINAL_ATTITUDES]: attitudesRef,
-        [OffenderAssessmentSubsection.RESPONSIVITY_BARRIERS]: responsivityRef,
+        [DOMAIN.CRIMINAL_HISTORY.key]: criminalHistoryRef,
+        [DOMAIN.EDUCATION_FINANCIAL.key]: educationRef,
+        [DOMAIN.FAMILY_SOCIAL_SUPPORT.key]: familyRef,
+        [DOMAIN.NEIGHBORHOOD_PROBLEMS.key]: neighborhoodRef,
+        [DOMAIN.SUBSTANCE_USE.key]: substanceUseRef,
+        [DOMAIN.PEER_ASSOCIATES.key]: peerRef,
+        [DOMAIN.CRIMINAL_ATTITUDES.key]: attitudesRef,
+        [DOMAIN.RESPONSIVITY.key]: responsivityRef,
       };
 
-      const targetRef =
-        refMap[currentSubsection as OffenderAssessmentSubsection];
+      const targetRef = refMap[currentSubsection as ORASDomainKey];
 
       if (targetRef?.current) {
         targetRef.current.scrollIntoView({
