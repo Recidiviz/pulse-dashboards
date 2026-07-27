@@ -114,7 +114,7 @@ export async function createMeetingForPerson({
       staffEmail: user.email,
       startTime,
       recordingsGCSBucket: env.AUDIO_RECORDINGS_BUCKET_NAME,
-      recordingsFolderPath: meetingId,
+      recordingsFolderPath: `${stateCode}/${meetingId}`,
     },
     select: {
       id: true,

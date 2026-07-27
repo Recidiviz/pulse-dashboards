@@ -68,7 +68,7 @@ describe("client router", () => {
               startTime,
               endTime: null,
               recordingsGCSBucket: "test-audio-bucket",
-              recordingsFolderPath: result.id,
+              recordingsFolderPath: `US_NE/${result.id}`,
               postMeetingProcessingStatus:
                 PostMeetingProcessingStatus.NOT_STARTED,
             }),

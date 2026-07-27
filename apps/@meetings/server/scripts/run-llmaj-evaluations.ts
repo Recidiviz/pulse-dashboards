@@ -27,9 +27,9 @@
  * This script connects to Cloud SQL via the Cloud SQL Auth Proxy. Start it before
  * running the script:
  *
- *   cloud-sql-proxy --port 5432 recidiviz-dashboard-staging:us-central1:meeting
+ *   cloud-sql-proxy --port 5432 recidiviz-dashboard-staging:us-central1:meetings
  *   # or for production:
- *   cloud-sql-proxy --port 5432 recidiviz-dashboard-production:us-central1:meeting
+ *   cloud-sql-proxy --port 5432 recidiviz-dashboard-production:us-central1:meetings
  *
  * ## Running
  *

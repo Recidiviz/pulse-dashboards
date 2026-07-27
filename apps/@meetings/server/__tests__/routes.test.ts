@@ -834,7 +834,10 @@ describe("tasks", () => {
       });
 
       expect(response.statusCode).toBe(200);
-      expect(mockCleanupLocalFiles).toHaveBeenCalledWith(fakeMeeting.id);
+      expect(mockCleanupLocalFiles).toHaveBeenCalledWith(
+        "US_NE",
+        fakeMeeting.id,
+      );
     });
 
     test("Should not call cleanupLocalFiles if transcription fails", async () => {
@@ -892,7 +895,7 @@ describe("tasks", () => {
 
       const response = await testServer.inject({
         method: "PUT",
-        url: "/upload-audio/test-meeting/test-file.m4a",
+        url: "/upload-audio/US_DEMO/test-meeting/test-file.m4a",
         payload: Buffer.from("test audio data"),
         headers: {
           "content-type": "audio/m4a",
@@ -906,13 +909,13 @@ describe("tasks", () => {
     });
 
     test("Should successfully upload audio file", async () => {
-      const meetingId = "test-meeting-123";
+      const meetingDir = "US_DEMO/test-meeting-123";
       const filename = "1234567890.m4a";
       const audioData = Buffer.from("test audio data");
 
       const response = await testServer.inject({
         method: "PUT",
-        url: `/upload-audio/${meetingId}/${filename}`,
+        url: `/upload-audio/${meetingDir}/${filename}`,
         payload: audioData,
         headers: {
           "content-type": "audio/m4a",
@@ -926,7 +929,7 @@ describe("tasks", () => {
       // Verify file was saved
       const fs = require("fs");
       const path = require("path");
-      const savedFilePath = path.join(testStorageDir, meetingId, filename);
+      const savedFilePath = path.join(testStorageDir, meetingDir, filename);
       expect(fs.existsSync(savedFilePath)).toBe(true);
 
       const savedData = fs.readFileSync(savedFilePath);
@@ -934,13 +937,13 @@ describe("tasks", () => {
     });
 
     test("Should create meeting directory if it doesn't exist", async () => {
-      const meetingId = "new-meeting-456";
+      const meetingDirectory = "US_DEMO/new-meeting-456";
       const filename = "1234567890.m4a";
       const audioData = Buffer.from("test audio data");
 
       const response = await testServer.inject({
         method: "PUT",
-        url: `/upload-audio/${meetingId}/${filename}`,
+        url: `/upload-audio/${meetingDirectory}/${filename}`,
         payload: audioData,
         headers: {
           "content-type": "audio/m4a",
@@ -952,12 +955,12 @@ describe("tasks", () => {
       // Verify directory was created
       const fs = require("fs");
       const path = require("path");
-      const meetingDir = path.join(testStorageDir, meetingId);
-      expect(fs.existsSync(meetingDir)).toBe(true);
+      const localMeetingDir = path.join(testStorageDir, meetingDirectory);
+      expect(fs.existsSync(localMeetingDir)).toBe(true);
     });
 
     test("Should handle multiple file uploads to same meeting", async () => {
-      const meetingId = "multi-file-meeting";
+      const meetingDir = "US_DEMO/multi-file-meeting";
       const files = [
         { name: "1000.m4a", data: "audio segment 1" },
         { name: "2000.m4a", data: "audio segment 2" },
@@ -968,7 +971,7 @@ describe("tasks", () => {
         // eslint-disable-next-line no-await-in-loop
         const response = await testServer.inject({
           method: "PUT",
-          url: `/upload-audio/${meetingId}/${file.name}`,
+          url: `/upload-audio/${meetingDir}/${file.name}`,
           payload: Buffer.from(file.data),
           headers: {
             "content-type": "audio/m4a",
@@ -981,8 +984,8 @@ describe("tasks", () => {
       // Verify all files were saved
       const fs = require("fs");
       const path = require("path");
-      const meetingDir = path.join(testStorageDir, meetingId);
-      const savedFiles = fs.readdirSync(meetingDir);
+      const localMeetingDir = path.join(testStorageDir, meetingDir);
+      const savedFiles = fs.readdirSync(localMeetingDir);
 
       expect(savedFiles).toHaveLength(3);
       expect(savedFiles).toContain("1000.m4a");
@@ -991,14 +994,14 @@ describe("tasks", () => {
     });
 
     test("Should accept different audio content types", async () => {
-      const meetingId = "content-type-test";
+      const meetingDir = "US_DEMO/content-type-test";
       const contentTypes = ["audio/m4a", "audio/x-m4a", "audio/mp4"];
 
       for (const contentType of contentTypes) {
         // eslint-disable-next-line no-await-in-loop
         const response = await testServer.inject({
           method: "PUT",
-          url: `/upload-audio/${meetingId}/test-${contentType.replace("/", "-")}.m4a`,
+          url: `/upload-audio/${meetingDir}/test-${contentType.replace("/", "-")}.m4a`,
           payload: Buffer.from("test data"),
           headers: {
             "content-type": contentType,

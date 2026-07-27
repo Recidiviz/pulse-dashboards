@@ -98,7 +98,7 @@ async function seedMeeting(
     staffEmail: STAFF_EMAIL,
     meetingType: person.meetingType,
     recordingsGCSBucket: "demo-audio-bucket",
-    recordingsFolderPath: meetingId,
+    recordingsFolderPath: `${StateCode.US_DEMO}/${meetingId}`,
     userNotepadNotes: "",
     caseNote: person.caseNote,
     meetingActionItems: {

@@ -269,6 +269,17 @@
         "production": {}
       }
     },
+    "requires-sops-env:move-audio-to-state-folders": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx scripts/move-audio-to-state-folders.ts",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "staging": {},
+        "production": {}
+      }
+    },
     "requires-sops-env:run-llmaj-evaluations": {
       "executor": "nx:run-commands",
       "options": {

@@ -310,21 +310,21 @@ export async function stitchAudio(bucketName: string, folderName: string) {
 }
 
 function getLocalAudioFilePath(finalRecordingFilePath: string) {
-  // Extract meeting ID from the path (format: {meetingId}/final.{extension})
-  const meetingId = path.dirname(finalRecordingFilePath);
+  // Extract meeting directory from the path (format: {stateCode}/{meetingId}/final.{extension})
+  const meetingDir = path.dirname(finalRecordingFilePath);
   const localStorageDir =
     process.env["LOCAL_STORAGE_DIR"] ||
     path.join(os.tmpdir(), "meetings-local");
-  const meetingDir = path.join(localStorageDir, meetingId);
+  const localMeetingDir = path.join(localStorageDir, meetingDir);
 
-  const files = fs.readdirSync(meetingDir);
+  const files = fs.readdirSync(localMeetingDir);
   const finalFile = files.find((f) => f.startsWith("final."));
 
   if (!finalFile) {
     throw new Error("Final file not found");
   }
 
-  return path.join(meetingDir, finalFile);
+  return path.join(localMeetingDir, finalFile);
 }
 
 export async function transcribeAudioWithAssemblyAI(
@@ -390,7 +390,7 @@ export async function transcribeAudioWithAssemblyAI(
   return transcriptionResult;
 }
 
-export async function cleanupLocalFiles(meetingId: string) {
+export async function cleanupLocalFiles(stateCode: string, meetingId: string) {
   if (!isLocalMode()) {
     // Only cleanup in local mode
     return;
@@ -399,7 +399,7 @@ export async function cleanupLocalFiles(meetingId: string) {
   const localStorageDir =
     process.env["LOCAL_STORAGE_DIR"] ||
     path.join(os.tmpdir(), "meetings-local");
-  const meetingDir = path.join(localStorageDir, meetingId);
+  const meetingDir = path.join(localStorageDir, stateCode, meetingId);
 
   if (fs.existsSync(meetingDir)) {
     // Remove all files in the meeting directory

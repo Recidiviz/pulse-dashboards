@@ -471,20 +471,20 @@ describe("utils", () => {
     });
 
     describe("transcribeAudioWithAssemblyAI (local mode)", () => {
-      const meetingId = "local-transcribe-test-meeting";
-      const meetingDir = path.join(testStorageDir, meetingId);
+      const meetingDir = "US_DEMO/local-transcribe-test-meeting";
+      const localMeetingDir = path.join(testStorageDir, meetingDir);
 
       beforeEach(() => {
         // Create meeting directory with final audio file
-        fs.mkdirSync(meetingDir, { recursive: true });
+        fs.mkdirSync(localMeetingDir, { recursive: true });
         fs.copyFileSync(
           "__tests__/data/1.m4a",
-          path.join(meetingDir, "final.m4a"),
+          path.join(localMeetingDir, "final.m4a"),
         );
       });
 
       test("Should use local file path for transcription", async () => {
-        const finalRecordingPath = `${meetingId}/final.m4a`;
+        const finalRecordingPath = `${meetingDir}/final.m4a`;
 
         const transcript = await transcribeAudioWithAssemblyAI(
           AUDIO_RECORDINGS_BUCKET_NAME,
@@ -498,7 +498,7 @@ describe("utils", () => {
         // Verify AssemblyAI was called with local file path
         expect(mockAssemblyAI.transcripts.transcribe).toHaveBeenCalledWith(
           expect.objectContaining({
-            audio: path.join(testStorageDir, meetingId, "final.m4a"),
+            audio: path.join(testStorageDir, meetingDir, "final.m4a"),
           }),
         );
       });
@@ -506,8 +506,9 @@ describe("utils", () => {
 
     describe("cleanupLocalFiles", () => {
       test("Should delete meeting directory and all files", async () => {
+        const stateCode = "US_TN";
         const meetingId = "cleanup-test-meeting";
-        const meetingDir = path.join(testStorageDir, meetingId);
+        const meetingDir = path.join(testStorageDir, stateCode, meetingId);
 
         // Create meeting directory with files
         fs.mkdirSync(meetingDir, { recursive: true });
@@ -520,7 +521,7 @@ describe("utils", () => {
         expect(fs.readdirSync(meetingDir).length).toBe(3);
 
         // Cleanup
-        await cleanupLocalFiles(meetingId);
+        await cleanupLocalFiles(stateCode, meetingId);
 
         // Verify directory was deleted
         expect(fs.existsSync(meetingDir)).toBe(false);
@@ -528,22 +529,23 @@ describe("utils", () => {
 
       test("Should not throw error if meeting directory doesn't exist", async () => {
         await expect(
-          cleanupLocalFiles("non-existent-meeting"),
+          cleanupLocalFiles("US_TN", "non-existent-meeting"),
         ).resolves.not.toThrow();
       });
 
       test("Should not cleanup in GCS mode", async () => {
         process.env["IS_LOCAL_MODE"] = "false";
 
+        const stateCode = "US_TN";
         const meetingId = "gcs-mode-meeting";
-        const meetingDir = path.join(testStorageDir, meetingId);
+        const meetingDir = path.join(testStorageDir, stateCode, meetingId);
 
         // Create meeting directory with files
         fs.mkdirSync(meetingDir, { recursive: true });
         fs.writeFileSync(path.join(meetingDir, "final.m4a"), "final audio");
 
         // Cleanup should not delete in GCS mode
-        await cleanupLocalFiles(meetingId);
+        await cleanupLocalFiles(stateCode, meetingId);
 
         // Verify directory still exists
         expect(fs.existsSync(meetingDir)).toBe(true);

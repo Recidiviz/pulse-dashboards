@@ -170,9 +170,10 @@ export function registerTaskRoutes(app: FastifyInstance) {
   // Upload endpoint for local mode
   app.withTypeProvider<ZodTypeProvider>().route({
     method: "PUT",
-    url: "/upload-audio/:meetingId/:filename",
+    url: "/upload-audio/:stateCode/:meetingId/:filename",
     schema: {
       params: z.object({
+        stateCode: z.nativeEnum(StateCode),
         meetingId: z.string(),
         filename: z.string(),
       }),
@@ -184,13 +185,13 @@ export function registerTaskRoutes(app: FastifyInstance) {
           .send("Uploading to server is only valid when running in local mode");
       }
 
-      const { meetingId, filename } = req.params;
+      const { stateCode, meetingId, filename } = req.params;
 
       try {
         // Create directory if it doesn't exist
         const localStorageDir =
           env.LOCAL_STORAGE_DIR ?? path.join(os.tmpdir(), "meetings-local");
-        const meetingDir = path.join(localStorageDir, meetingId);
+        const meetingDir = path.join(localStorageDir, stateCode, meetingId);
 
         if (!fs.existsSync(meetingDir)) {
           fs.mkdirSync(meetingDir, { recursive: true });
@@ -215,9 +216,10 @@ export function registerTaskRoutes(app: FastifyInstance) {
   // Serve audio files from local storage in local mode
   app.withTypeProvider<ZodTypeProvider>().route({
     method: "GET",
-    url: "/stream-audio/:meetingId/:filename",
+    url: "/stream-audio/:stateCode/:meetingId/:filename",
     schema: {
       params: z.object({
+        stateCode: z.nativeEnum(StateCode),
         meetingId: z.string(),
         filename: z.string(),
       }),
@@ -227,10 +229,15 @@ export function registerTaskRoutes(app: FastifyInstance) {
         return reply.status(400).send("Only available in local mode");
       }
 
-      const { meetingId, filename } = req.params;
+      const { stateCode, meetingId, filename } = req.params;
       const localStorageDir =
         env.LOCAL_STORAGE_DIR ?? path.join(os.tmpdir(), "meetings-local");
-      const fullPath = path.join(localStorageDir, meetingId, filename);
+      const fullPath = path.join(
+        localStorageDir,
+        stateCode,
+        meetingId,
+        filename,
+      );
 
       if (!fs.existsSync(fullPath)) {
         return reply.status(404).send("Audio file not found");
@@ -506,7 +513,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
           }
 
           // Clean up local files after successful transcription
-          await cleanupLocalFiles(meetingId);
+          await cleanupLocalFiles(stateCode, meetingId);
         } catch (e) {
           await prisma.meeting.update({
             where: {
