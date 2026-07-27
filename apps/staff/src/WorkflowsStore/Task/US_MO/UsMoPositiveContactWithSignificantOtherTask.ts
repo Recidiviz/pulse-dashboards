@@ -19,6 +19,7 @@ import { fieldToDate } from "~datatypes";
 
 import { formatWorkflowsDate, toTitleCase } from "../../../utils";
 import { Task } from "../Task";
+import { US_MO_SIGNIFICANT_OTHER_DEFINITION } from "./constants";
 
 class UsMoPositiveContactWithSignificantOtherTask extends Task<"usMoPositiveContactWithSignificantOther"> {
   get additionalDetails() {
@@ -30,6 +31,10 @@ class UsMoPositiveContactWithSignificantOtherTask extends Task<"usMoPositiveCont
 
   get frequency() {
     return toTitleCase(this.details.contactCadence);
+  }
+
+  get tooltipCopy() {
+    return US_MO_SIGNIFICANT_OTHER_DEFINITION;
   }
 }
 

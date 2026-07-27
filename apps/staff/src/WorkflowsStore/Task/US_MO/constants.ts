@@ -15,22 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { toTitleCase } from "../../../utils";
-import { Task } from "../Task";
-import { US_MO_SIGNIFICANT_OTHER_DEFINITION } from "./constants";
-
-class UsMoInitialPositiveContactWithSignificantOtherSmiTask extends Task<"usMoInitialPositiveContactWithSignificantOtherSmi"> {
-  get additionalDetails() {
-    return "No initial positive contact with significant other recorded since assignment to SMI caseload.";
-  }
-
-  get frequency() {
-    return toTitleCase(this.details.contactCadence);
-  }
-
-  get tooltipCopy() {
-    return US_MO_SIGNIFICANT_OTHER_DEFINITION;
-  }
-}
-
-export default UsMoInitialPositiveContactWithSignificantOtherSmiTask;
+// MODOC's official definition of a "significant other" for the Positive
+// Contact with Significant Other task (and its initial-contact variants).
+// Shared across those task classes so the copy can't drift between them.
+export const US_MO_SIGNIFICANT_OTHER_DEFINITION =
+  "A family member, romantic partner, or close friend who is important or influential in one's life.";

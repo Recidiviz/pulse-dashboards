@@ -17,6 +17,7 @@
 
 import { toTitleCase } from "../../../utils";
 import { Task } from "../Task";
+import { US_MO_SIGNIFICANT_OTHER_DEFINITION } from "./constants";
 
 class UsMoInitialPositiveContactWithSignificantOtherIapTask extends Task<"usMoInitialPositiveContactWithSignificantOtherIap"> {
   get additionalDetails() {
@@ -25,6 +26,10 @@ class UsMoInitialPositiveContactWithSignificantOtherIapTask extends Task<"usMoIn
 
   get frequency() {
     return toTitleCase(this.details.contactCadence);
+  }
+
+  get tooltipCopy() {
+    return US_MO_SIGNIFICANT_OTHER_DEFINITION;
   }
 }
 

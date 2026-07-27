@@ -22,7 +22,7 @@ import { rem } from "polished";
 import { useState } from "react";
 import styled from "styled-components";
 
-import { palette } from "~design-system";
+import { Icon, palette } from "~design-system";
 import { formatDate } from "~utils";
 
 import StopwatchIcon from "../../assets/static/images/stopwatch.svg?react";
@@ -35,6 +35,7 @@ import { formatWorkflowsDate } from "../../utils";
 import { SupervisionTask } from "../../WorkflowsStore";
 import { type SnoozeOptions } from "../../WorkflowsStore/Task/types";
 import { formatDateString } from "../models/utils";
+import { InfoTooltipWrapper } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
 import { PersonProfileProps } from "../WorkflowsJusticeInvolvedPersonProfile/types";
 import { NEED_DISPLAY_NAME } from "./fixtures";
 import { SnoozeTaskDropdown } from "./SnoozeTaskDropdown";
@@ -415,7 +416,17 @@ const TaskPreviewV2 = ({ task }: { task: SupervisionTask }) => {
     <TaskItemWrapper>
       <TaskItemV2>
         <TaskInfo>
-          <TaskName>{task.displayName}</TaskName>
+          <TaskName>
+            {task.displayName}
+            {task.tooltipCopy && (
+              <>
+                {" "}
+                <InfoTooltipWrapper contents={task.tooltipCopy} maxWidth={340}>
+                  <Icon kind="Info" size={12} color={palette.slate60} />
+                </InfoTooltipWrapper>
+              </>
+            )}
+          </TaskName>
           <ContactWindow task={task} />
           <TaskFrequency>
             <i className="fa fa-refresh" /> {task.frequency}
