@@ -39,3 +39,17 @@ export function resolveEasEnvironment(deployEnv: string): string {
   }
   return easEnvironment;
 }
+
+// Allows this module to double as a small CLI, e.g.
+//   npx tsx apps/@meetings/app/scripts/eas-environment.ts production
+// so CI steps can resolve the EAS environment without re-implementing the
+// mapping in shell.
+if (require.main === module) {
+  const [, , deployEnv] = process.argv;
+  try {
+    process.stdout.write(resolveEasEnvironment(deployEnv ?? ""));
+  } catch (e) {
+    console.error(e instanceof Error ? e.message : e);
+    process.exit(1);
+  }
+}
