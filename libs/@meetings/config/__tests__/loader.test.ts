@@ -323,14 +323,38 @@ describe("config loader", () => {
       expect(() => loadAgencyConfig("US_XX")).toThrow();
     });
 
-    test("staffFeedbackEnabled defaults to false for non-demo states", () => {
-      const config = loadAgencyConfig("US_ND");
-      expect(config.staffFeedbackEnabled).toBe(false);
+    test("staffFeedbackEnabled defaults to false when the agency yaml omits it", () => {
+      const merged = mergeWithBase(
+        { version: 1 },
+        { name: "Test Agency", stateCode: "US_XX", version: 1 },
+      );
+      expect(AgencyConfigSchema.parse(merged).staffFeedbackEnabled).toBe(false);
     });
 
-    test("staffFeedbackEnabled is true for US_DEMO", () => {
-      const config = loadAgencyConfig("US_DEMO");
-      expect(config.staffFeedbackEnabled).toBe(true);
+    test("staffFeedbackEnabled passes through when the agency yaml sets it", () => {
+      const merged = mergeWithBase(
+        { version: 1 },
+        {
+          name: "Test Agency",
+          stateCode: "US_XX",
+          version: 1,
+          staffFeedbackEnabled: true,
+        },
+      );
+      expect(AgencyConfigSchema.parse(merged).staffFeedbackEnabled).toBe(true);
+    });
+
+    test("staffFeedbackEnabled set on the agency overrides the base value", () => {
+      const merged = mergeWithBase(
+        { version: 1, staffFeedbackEnabled: true },
+        {
+          name: "Test Agency",
+          stateCode: "US_XX",
+          version: 1,
+          staffFeedbackEnabled: false,
+        },
+      );
+      expect(AgencyConfigSchema.parse(merged).staffFeedbackEnabled).toBe(false);
     });
 
     test("audioPlaybackEnabled defaults to false for non-demo states", () => {

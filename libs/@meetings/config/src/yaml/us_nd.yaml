@@ -1,6 +1,8 @@
 name: North Dakota
 stateCode: US_ND
-version: 1
+version: 2
+
+staffFeedbackEnabled: true
 
 additionalKeywords:
   - DOCR
