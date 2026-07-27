@@ -722,7 +722,7 @@ Please note that time you spend on [Temporary Release](#csbdDate-trToAddDate) (t
           content: `Your **SED (Sentence Expiration Date)** is when you finish 100% of your prison sentence. If you are still in prison when you reach your SED, you are released that day — as long as you sign your Conditions of Supervision.
           Your **CSED (Community Supervision End Date)** is when your supervision ends and you are no longer under ADCRR custody at all.
 
-The two dates are different because most sentences include a period of community supervision *after* the prison part is over. That community supervision time is added to your SED to get your CSED.
+The two dates are different because most sentences include a period of community supervision *after* the prison part is over. That community supervision time is added to your ERCD (if you have one) or your SED (if you don't have an ERCD) to get your CSED. **This means that for some people, if your ERCD is early enough, then your CSED can fall before your SED.**
 
 If you refuse to sign your Conditions of Supervision at your SED, you stay in prison until your CSED. Staying in prison until your CSED is what people sometimes call "killing your number".`,
         },
