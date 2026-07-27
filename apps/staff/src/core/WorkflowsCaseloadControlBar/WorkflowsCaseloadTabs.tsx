@@ -101,7 +101,7 @@ const TabAnchor = styled(Link)<{ $active: boolean }>`
   }
 
   &:hover {
-    color: ${({ $active }) => !$active && palette.slate80};
+    color: ${({ $active }) => ($active ? palette.pine4 : palette.slate80)};
 
     ${TabBadge} {
       background-color: ${({ $active }) => !$active && palette.slate20};
