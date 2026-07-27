@@ -33,7 +33,11 @@ import { Icon, palette } from "~design-system";
 
 import SortIcon from "../../assets/static/images/sortIcon.svg?react";
 import { ConfigLabels } from "../../InsightsStore/presenters/types";
-import { formatWorkflowsDate } from "../../utils";
+import {
+  formatNameLastFirst,
+  formatWorkflowsDate,
+  toTitleCase,
+} from "../../utils";
 import { SupervisionTask } from "../../WorkflowsStore";
 import PersonId, { PersonIdWithCopyIcon } from "../PersonId/PersonId";
 
@@ -138,7 +142,9 @@ export const VitalsTaskDrilldownTable = observer(
     const columns = useMemo<ColumnDef<SupervisionTask>[]>(
       () => [
         {
-          accessorKey: "person.displayName",
+          id: "name",
+          accessorFn: (task) =>
+            toTitleCase(formatNameLastFirst(task.person.fullName)),
           header: "Name",
         },
         {
