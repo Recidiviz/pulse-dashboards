@@ -16,22 +16,34 @@
 // =============================================================================
 
 export {
-  compileUserScopePredicate,
-  toCrossSystemTypesenseFilter,
-  toTypesenseFilter,
-  type ToTypesenseFilterClauses,
+  compileCaseloadScopePredicate,
+  compilePersonScopePredicate,
+  toCaseloadTypesenseFilter,
+  type ToCaseloadTypesenseFilterClauses,
+  toCrossSystemCaseloadTypesenseFilter,
+  toCrossSystemPersonTypesenseFilter,
+  toPersonTypesenseFilter,
 } from "./compileToTypesense";
 export {
-  resolveCrossSystemStaffScopes,
-  resolveStaffScope,
-} from "./resolveStaffScope";
+  resolveCaseloadScope,
+  resolveCrossSystemCaseloadScopes,
+} from "./resolveCaseloadScope";
+export {
+  resolveCrossSystemPersonScopes,
+  resolvePersonScope,
+} from "./resolvePersonScope";
 export { resolveStateBase } from "./stateScopes";
 export type {
   BaseScope,
+  CaseloadScope,
+  PersonGrant,
+  PersonScope,
+  PersonScopeField,
+  ResolveCrossSystemPersonScopeInput,
   ResolveCrossSystemScopeInput,
+  ResolvePersonScopeInput,
   ResolveScopeFeatureVariants,
   ResolveScopeInput,
   ResolveScopeUser,
   SingleWorkflowsSystem,
-  StaffScope,
 } from "./types";

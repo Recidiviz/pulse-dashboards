@@ -18,9 +18,9 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  resolveCrossSystemStaffScopes,
-  resolveStaffScope,
-} from "../resolveStaffScope";
+  resolveCaseloadScope,
+  resolveCrossSystemCaseloadScopes,
+} from "../resolveCaseloadScope";
 import type {
   ResolveScopeFeatureVariants,
   ResolveScopeInput,
@@ -53,9 +53,9 @@ function makeInput(
   };
 }
 
-describe("resolveStaffScope precedence", () => {
+describe("resolveCaseloadScope precedence", () => {
   it("bypass FV → unrestricted regardless of state baseline", () => {
-    const scope = resolveStaffScope(
+    const scope = resolveCaseloadScope(
       makeInput({
         stateCode: "US_TN",
         user: { district: "Region 1" },
@@ -66,7 +66,7 @@ describe("resolveStaffScope precedence", () => {
   });
 
   it("supervisor FV + isSupervisor → adds supervisor expansion to base", () => {
-    const scope = resolveStaffScope(
+    const scope = resolveCaseloadScope(
       makeInput({
         stateCode: "US_TN",
         user: { id: "user-7", district: "Region 1" },
@@ -81,7 +81,7 @@ describe("resolveStaffScope precedence", () => {
   });
 
   it("supervisor FV but isSupervisor=false → no expansion", () => {
-    const scope = resolveStaffScope(
+    const scope = resolveCaseloadScope(
       makeInput({
         stateCode: "US_TN",
         user: { id: "user-7", district: "Region 1" },
@@ -95,7 +95,7 @@ describe("resolveStaffScope precedence", () => {
   });
 
   it("both FVs set (misconfig) → bypass wins, supervisor expansion dropped", () => {
-    const scope = resolveStaffScope(
+    const scope = resolveCaseloadScope(
       makeInput({
         stateCode: "US_TN",
         user: { district: "Region 1" },
@@ -116,7 +116,7 @@ describe("resolveStaffScope precedence", () => {
 
 describe("no caseload (hasCaseload=false)", () => {
   it("district-scoped state with no district falls back to `none` instead of byEmail", () => {
-    const scope = resolveStaffScope(
+    const scope = resolveCaseloadScope(
       makeInput({
         stateCode: "US_TN",
         user: { hasCaseload: false },
@@ -126,7 +126,7 @@ describe("no caseload (hasCaseload=false)", () => {
   });
 
   it("district-scoped state with explicit district still uses byDistricts", () => {
-    const scope = resolveStaffScope(
+    const scope = resolveCaseloadScope(
       makeInput({
         stateCode: "US_TN",
         user: { district: "Region 1", hasCaseload: false },
@@ -139,7 +139,7 @@ describe("no caseload (hasCaseload=false)", () => {
   });
 
   it("no-caseload supervisor with supervisor FV → none + supervisor expansion", () => {
-    const scope = resolveStaffScope(
+    const scope = resolveCaseloadScope(
       makeInput({
         stateCode: "US_TN",
         user: { id: "user-7", hasCaseload: false },
@@ -154,7 +154,7 @@ describe("no caseload (hasCaseload=false)", () => {
   });
 
   it("US_CA SUPERVISION_OFFICER with no caseload → `none` instead of byEmail", () => {
-    const scope = resolveStaffScope(
+    const scope = resolveCaseloadScope(
       makeInput({
         stateCode: "US_CA",
         user: {
@@ -167,7 +167,7 @@ describe("no caseload (hasCaseload=false)", () => {
   });
 
   it("hasCaseload=true (or undefined) preserves the existing email fallback", () => {
-    const scope = resolveStaffScope(
+    const scope = resolveCaseloadScope(
       makeInput({
         stateCode: "US_TN",
         user: { hasCaseload: true },
@@ -195,7 +195,7 @@ describe("state baselines", () => {
       "US_TX",
       "US_UT",
     ])("%s → unrestricted", (stateCode) => {
-      const scope = resolveStaffScope(
+      const scope = resolveCaseloadScope(
         makeInput({ stateCode, user: { district: "10" } }),
       );
       expect(scope.base).toEqual({ kind: "unrestricted" });
@@ -204,7 +204,7 @@ describe("state baselines", () => {
 
   describe("US_TN", () => {
     it("district-scoped via user.district (SUPERVISION)", () => {
-      const scope = resolveStaffScope(
+      const scope = resolveCaseloadScope(
         makeInput({ stateCode: "US_TN", user: { district: "Region 1" } }),
       );
       expect(scope.base).toEqual({
@@ -214,7 +214,7 @@ describe("state baselines", () => {
     });
 
     it("district-scoped via overrideDistrictIds (SUPERVISION)", () => {
-      const scope = resolveStaffScope(
+      const scope = resolveCaseloadScope(
         makeInput({
           stateCode: "US_TN",
           user: {
@@ -230,7 +230,7 @@ describe("state baselines", () => {
     });
 
     it("email fallback when no district and no override (SUPERVISION)", () => {
-      const scope = resolveStaffScope(
+      const scope = resolveCaseloadScope(
         makeInput({
           stateCode: "US_TN",
           user: { email: "officer@example.com" },
@@ -243,7 +243,7 @@ describe("state baselines", () => {
     });
 
     it("INCARCERATION is unrestricted", () => {
-      const scope = resolveStaffScope(
+      const scope = resolveCaseloadScope(
         makeInput({
           stateCode: "US_TN",
           system: "INCARCERATION",
@@ -256,14 +256,14 @@ describe("state baselines", () => {
 
   describe("US_ID", () => {
     it("SUPERVISION is district-scoped", () => {
-      const scope = resolveStaffScope(
+      const scope = resolveCaseloadScope(
         makeInput({ stateCode: "US_ID", user: { district: "D1" } }),
       );
       expect(scope.base).toEqual({ kind: "byDistricts", districts: ["D1"] });
     });
 
     it("INCARCERATION is unrestricted", () => {
-      const scope = resolveStaffScope(
+      const scope = resolveCaseloadScope(
         makeInput({
           stateCode: "US_ID",
           system: "INCARCERATION",
@@ -276,7 +276,7 @@ describe("state baselines", () => {
 
   describe("US_MI", () => {
     it("SUPERVISION district 10 expands to all 10-* districts", () => {
-      const scope = resolveStaffScope(
+      const scope = resolveCaseloadScope(
         makeInput({ stateCode: "US_MI", user: { district: "10" } }),
       );
       expect(scope.base).toEqual({
@@ -291,7 +291,7 @@ describe("state baselines", () => {
     });
 
     it("SUPERVISION non-10 district uses standard district scope", () => {
-      const scope = resolveStaffScope(
+      const scope = resolveCaseloadScope(
         makeInput({ stateCode: "US_MI", user: { district: "Region 3" } }),
       );
       expect(scope.base).toEqual({
@@ -301,7 +301,7 @@ describe("state baselines", () => {
     });
 
     it("SUPERVISION overrideDistrictIds skips district 10 expansion", () => {
-      const scope = resolveStaffScope(
+      const scope = resolveCaseloadScope(
         makeInput({
           stateCode: "US_MI",
           user: { district: "10", overrideDistrictIds: ["Region X"] },
@@ -314,7 +314,7 @@ describe("state baselines", () => {
     });
 
     it("INCARCERATION is unrestricted (no district 10 expansion)", () => {
-      const scope = resolveStaffScope(
+      const scope = resolveCaseloadScope(
         makeInput({
           stateCode: "US_MI",
           system: "INCARCERATION",
@@ -327,7 +327,7 @@ describe("state baselines", () => {
 
   describe("US_CA", () => {
     it("SUPERVISION_OFFICER_SUPERVISOR → unrestricted", () => {
-      const scope = resolveStaffScope(
+      const scope = resolveCaseloadScope(
         makeInput({
           stateCode: "US_CA",
           user: {
@@ -340,7 +340,7 @@ describe("state baselines", () => {
     });
 
     it("SUPERVISION_OFFICER → byEmail (own caseload)", () => {
-      const scope = resolveStaffScope(
+      const scope = resolveCaseloadScope(
         makeInput({
           stateCode: "US_CA",
           user: {
@@ -357,7 +357,7 @@ describe("state baselines", () => {
     });
 
     it("officer with no district + no override → byEmail (intentional fallback)", () => {
-      const scope = resolveStaffScope(
+      const scope = resolveCaseloadScope(
         makeInput({
           stateCode: "US_CA",
           user: { email: "agent@example.com", roleSubtype: null },
@@ -370,7 +370,7 @@ describe("state baselines", () => {
     });
 
     it("non-officer non-supervisor with district → byDistricts", () => {
-      const scope = resolveStaffScope(
+      const scope = resolveCaseloadScope(
         makeInput({
           stateCode: "US_CA",
           user: { roleSubtype: null, district: "Unit 5" },
@@ -383,7 +383,7 @@ describe("state baselines", () => {
     });
 
     it("INCARCERATION is unrestricted regardless of role", () => {
-      const scope = resolveStaffScope(
+      const scope = resolveCaseloadScope(
         makeInput({
           stateCode: "US_CA",
           system: "INCARCERATION",
@@ -395,9 +395,9 @@ describe("state baselines", () => {
   });
 });
 
-describe("resolveCrossSystemStaffScopes (system=ALL leadership case)", () => {
+describe("resolveCrossSystemCaseloadScopes (system=ALL leadership case)", () => {
   it("returns asymmetric scopes for US_MI (SUPR district-scoped, INC unrestricted)", () => {
-    const scopes = resolveCrossSystemStaffScopes({
+    const scopes = resolveCrossSystemCaseloadScopes({
       stateCode: "US_MI",
       user: {
         id: "user-7",
@@ -416,7 +416,7 @@ describe("resolveCrossSystemStaffScopes (system=ALL leadership case)", () => {
 
   // the tenant/us_tn config is wrong - incarceration shouldn't be district scoped
   it("US_TN: SUPERVISION is district-scoped, INCARCERATION is unrestricted", () => {
-    const scopes = resolveCrossSystemStaffScopes({
+    const scopes = resolveCrossSystemCaseloadScopes({
       stateCode: "US_TN",
       user: {
         id: "user-7",
@@ -434,7 +434,7 @@ describe("resolveCrossSystemStaffScopes (system=ALL leadership case)", () => {
   });
 
   it("supervisor expansion attaches only to systems with a non-unrestricted base", () => {
-    const scopes = resolveCrossSystemStaffScopes({
+    const scopes = resolveCrossSystemCaseloadScopes({
       stateCode: "US_MI",
       user: { id: "user-7", email: "u@example.com", district: "Region 3" },
       activeFeatureVariants: { workflowsSupervisorSearch: true },

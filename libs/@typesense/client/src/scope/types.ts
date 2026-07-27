@@ -27,7 +27,7 @@ import type { RoleSubtype, SystemId } from "~datatypes";
 
 // A single Workflows system (excluding the "ALL" leadership case). The
 // per-system resolver only handles SUPERVISION or INCARCERATION; ALL is
-// handled by the separate cross-system resolver (resolveCrossSystemStaffScopes).
+// handled by the separate cross-system resolver (resolveCrossSystemCaseloadScopes).
 export type SingleWorkflowsSystem = Exclude<SystemId, "ALL">;
 
 export interface ResolveScopeUser {
@@ -74,9 +74,48 @@ export type BaseScope =
   | { kind: "byDistricts"; districts: string[] }
   | { kind: "none" };
 
-export interface StaffScope {
+export interface CaseloadScope {
   base: BaseScope;
   // If present, OR the base scope with supervisorExternalId == userId
   // (and the plural supervisorExternalIds variant for Insights compatibility).
   expandToSupervisedStaff?: { userId: string };
 }
+
+// Person-doc fields (clients/residents) that a grant can be scoped to. See
+// libs/@typesense/client/src/schemas/index.ts for the full field lists.
+export type PersonScopeField = "district" | "officerId";
+
+// A single unit of person-doc visibility. `unrestricted` means "everything in
+// the state (+ system)". `byField` grants visibility to docs whose `field`
+// value is one of `ids` — an empty `ids` array grants nothing (compiles away).
+export type PersonGrant =
+  | { kind: "unrestricted" }
+  | { kind: "byField"; field: PersonScopeField; ids: string[] };
+
+// A resolved set of grants describing what person docs a user can see.
+// Unlike CaseloadScope (one base + one optional expansion), a PersonScope may
+// carry multiple independent grants that get OR'd together at compile time —
+// e.g. a district-scoped supervisor who also supervises staff outside their
+// district ends up with both a `district` grant and an `officerId` grant.
+export interface PersonScope {
+  grants: PersonGrant[];
+}
+
+export interface ResolvePersonScopeInput extends ResolveScopeInput {
+  // The user's own staffExternalId, i.e. the value that appears in the
+  // `officerId` field of people assigned to them. Needed to translate a
+  // `byEmail` (own-caseload) base scope into a person-side officerId grant —
+  // email identifies the staff row, but officerId identifies their people.
+  // Omit (or leave empty) if the user has no staff record of their own.
+  staffExternalId?: string;
+  // External ids of the staff members this user supervises, already fetched
+  // by the caller (mirrors the `supervisedStaffExternalIds` used to resolve
+  // production's supervisor-expansion queries). Needed to translate the
+  // staff-side supervisor expansion into a person-side officerId grant.
+  supervisedStaffExternalIds?: string[];
+}
+
+export type ResolveCrossSystemPersonScopeInput = Omit<
+  ResolvePersonScopeInput,
+  "system"
+>;

@@ -12,8 +12,8 @@ sync watcher.
 import {
   createTypesenseClient,
   schemas,
-  resolveStaffScope,
-  toTypesenseFilter,
+  resolveCaseloadScope,
+  toCaseloadTypesenseFilter,
 } from "~@typesense/client";
 ```
 

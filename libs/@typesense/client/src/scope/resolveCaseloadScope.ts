@@ -18,15 +18,15 @@
 import { resolveStateBase } from "./stateScopes";
 import type {
   BaseScope,
+  CaseloadScope,
   ResolveCrossSystemScopeInput,
   ResolveScopeInput,
-  StaffScope,
 } from "./types";
 
 function applySupervisorExpansion(
   base: BaseScope,
   input: ResolveScopeInput,
-): StaffScope {
+): CaseloadScope {
   // Mirrors production: the supervisor-OR clause only fires when the base
   // scope adds a real constraint (StaffSubscription.ts only ORs the supervisor
   // clause inside its `if (staffFilter)` branch).
@@ -51,7 +51,7 @@ function applySupervisorExpansion(
 // Per-user, the two opt-in FVs are effectively mutually exclusive (granted to
 // different roles, not both to the same user). If both are set, the bypass
 // wins and the supervisor clause is dropped — same as production.
-export function resolveStaffScope(input: ResolveScopeInput): StaffScope {
+export function resolveCaseloadScope(input: ResolveScopeInput): CaseloadScope {
   if (input.activeFeatureVariants.supervisionUnrestrictedSearch) {
     return { base: { kind: "unrestricted" } };
   }
@@ -62,15 +62,15 @@ export function resolveStaffScope(input: ResolveScopeInput): StaffScope {
 
 // Resolves staff scopes for both SUPERVISION and INCARCERATION in one pass.
 // Use for leadership users where `currentSystem` is "ALL" — the per-system
-// rules differ enough that a single StaffScope cannot capture the union
+// rules differ enough that a single CaseloadScope cannot capture the union
 // (e.g. US_MI has district-scoped SUPR and unrestricted INC). Caller feeds
-// the result into `toCrossSystemTypesenseFilter` to produce a single
+// the result into `toCrossSystemCaseloadTypesenseFilter` to produce a single
 // filter_by string covering both systems.
-export function resolveCrossSystemStaffScopes(
+export function resolveCrossSystemCaseloadScopes(
   input: ResolveCrossSystemScopeInput,
-): { supervision: StaffScope; incarceration: StaffScope } {
+): { supervision: CaseloadScope; incarceration: CaseloadScope } {
   return {
-    supervision: resolveStaffScope({ ...input, system: "SUPERVISION" }),
-    incarceration: resolveStaffScope({ ...input, system: "INCARCERATION" }),
+    supervision: resolveCaseloadScope({ ...input, system: "SUPERVISION" }),
+    incarceration: resolveCaseloadScope({ ...input, system: "INCARCERATION" }),
   };
 }

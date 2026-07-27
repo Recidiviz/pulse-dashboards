@@ -23,19 +23,19 @@ export {
 export { collectionNames, schemas } from "./schemas";
 export {
   type BaseScope,
-  compileUserScopePredicate,
+  type CaseloadScope,
+  compileCaseloadScopePredicate,
+  resolveCaseloadScope,
+  resolveCrossSystemCaseloadScopes,
   type ResolveCrossSystemScopeInput,
-  resolveCrossSystemStaffScopes,
   type ResolveScopeFeatureVariants,
   type ResolveScopeInput,
   type ResolveScopeUser,
-  resolveStaffScope,
   resolveStateBase,
   type SingleWorkflowsSystem,
-  type StaffScope,
-  toCrossSystemTypesenseFilter,
-  toTypesenseFilter,
-  type ToTypesenseFilterClauses,
+  toCaseloadTypesenseFilter,
+  type ToCaseloadTypesenseFilterClauses,
+  toCrossSystemCaseloadTypesenseFilter,
 } from "./scope";
 export {
   createScopedTypesenseClient,

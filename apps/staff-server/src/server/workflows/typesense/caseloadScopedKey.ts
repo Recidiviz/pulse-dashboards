@@ -18,17 +18,17 @@
 // Mints a scoped Typesense API key for the authenticated user's caseload
 // search bar. The filter_by baked into the key is a STAFF-side scope,
 // derived per-user from the shared UserScopeContext and compiled via
-// resolveStaffScope in ~@typesense/client/scope.
+// resolveCaseloadScope in ~@typesense/client/scope.
 
 import type { Request, Response } from "express";
 
 import {
-  resolveCrossSystemStaffScopes,
-  resolveStaffScope,
+  type CaseloadScope,
+  resolveCaseloadScope,
+  resolveCrossSystemCaseloadScopes,
   type SingleWorkflowsSystem,
-  type StaffScope,
-  toCrossSystemTypesenseFilter,
-  toTypesenseFilter,
+  toCaseloadTypesenseFilter,
+  toCrossSystemCaseloadTypesenseFilter,
 } from "~@typesense/client";
 import type { SystemId } from "~datatypes";
 
@@ -57,7 +57,9 @@ function isValidSystem(value: unknown): value is SystemId {
 }
 
 interface ScopeAndFilter {
-  scope: StaffScope | { supervision: StaffScope; incarceration: StaffScope };
+  scope:
+    | CaseloadScope
+    | { supervision: CaseloadScope; incarceration: CaseloadScope };
   filterBy: string;
   debugSystem: SystemId | "ADMIN";
 }
@@ -70,10 +72,12 @@ function resolveCaseloadScopeAndFilter(
   ctx: UserScopeContext,
 ): ScopeAndFilter {
   if (ctx.isRecidivizUser) {
-    const scope: StaffScope = { base: { kind: "unrestricted" } };
+    const scope: CaseloadScope = { base: { kind: "unrestricted" } };
     return {
       scope,
-      filterBy: toTypesenseFilter(scope, { stateCode: currentTenantId }),
+      filterBy: toCaseloadTypesenseFilter(scope, {
+        stateCode: currentTenantId,
+      }),
       debugSystem: "ADMIN",
     };
   }
@@ -111,19 +115,22 @@ function resolveCaseloadScopeAndFilter(
     // differ per system — e.g. US_MI is district-scoped for SUPERVISION but
     // unrestricted for INCARCERATION) and compile into one filter_by with
     // `system` as the discriminator.
-    const scope = resolveCrossSystemStaffScopes(resolverInput);
+    const scope = resolveCrossSystemCaseloadScopes(resolverInput);
     return {
       scope,
-      filterBy: toCrossSystemTypesenseFilter(scope, currentTenantId),
+      filterBy: toCrossSystemCaseloadTypesenseFilter(scope, currentTenantId),
       debugSystem: system,
     };
   }
 
   const singleSystem: SingleWorkflowsSystem = system;
-  const scope = resolveStaffScope({ ...resolverInput, system: singleSystem });
+  const scope = resolveCaseloadScope({
+    ...resolverInput,
+    system: singleSystem,
+  });
   return {
     scope,
-    filterBy: toTypesenseFilter(scope, { stateCode: currentTenantId }),
+    filterBy: toCaseloadTypesenseFilter(scope, { stateCode: currentTenantId }),
     debugSystem: system,
   };
 }

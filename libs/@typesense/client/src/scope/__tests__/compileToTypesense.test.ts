@@ -18,22 +18,25 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  compileUserScopePredicate,
-  toCrossSystemTypesenseFilter,
-  toTypesenseFilter,
+  compileCaseloadScopePredicate,
+  compilePersonScopePredicate,
+  toCaseloadTypesenseFilter,
+  toCrossSystemCaseloadTypesenseFilter,
+  toCrossSystemPersonTypesenseFilter,
+  toPersonTypesenseFilter,
 } from "../compileToTypesense";
-import type { StaffScope } from "../types";
+import type { CaseloadScope, PersonScope } from "../types";
 
-describe("compileUserScopePredicate", () => {
+describe("compileCaseloadScopePredicate", () => {
   it("unrestricted base → null", () => {
     expect(
-      compileUserScopePredicate({ base: { kind: "unrestricted" } }),
+      compileCaseloadScopePredicate({ base: { kind: "unrestricted" } }),
     ).toBeNull();
   });
 
   it("byEmail base", () => {
     expect(
-      compileUserScopePredicate({
+      compileCaseloadScopePredicate({
         base: { kind: "byEmail", email: "u@example.com" },
       }),
     ).toBe("email:=`u@example.com`");
@@ -41,7 +44,7 @@ describe("compileUserScopePredicate", () => {
 
   it("byDistricts single value", () => {
     expect(
-      compileUserScopePredicate({
+      compileCaseloadScopePredicate({
         base: { kind: "byDistricts", districts: ["Region 1"] },
       }),
     ).toBe("district:=[`Region 1`]");
@@ -49,7 +52,7 @@ describe("compileUserScopePredicate", () => {
 
   it("byDistricts multiple values (US_MI district 10 expansion)", () => {
     expect(
-      compileUserScopePredicate({
+      compileCaseloadScopePredicate({
         base: {
           kind: "byDistricts",
           districts: ["10 - WEST", "10 - CENTRAL"],
@@ -59,7 +62,7 @@ describe("compileUserScopePredicate", () => {
   });
 
   it("base + supervisor expansion → ORed", () => {
-    const result = compileUserScopePredicate({
+    const result = compileCaseloadScopePredicate({
       base: { kind: "byDistricts", districts: ["Region 1"] },
       expandToSupervisedStaff: { userId: "user-7" },
     });
@@ -69,7 +72,7 @@ describe("compileUserScopePredicate", () => {
   });
 
   it("byEmail + supervisor expansion → ORed", () => {
-    const result = compileUserScopePredicate({
+    const result = compileCaseloadScopePredicate({
       base: { kind: "byEmail", email: "u@example.com" },
       expandToSupervisedStaff: { userId: "user-7" },
     });
@@ -78,13 +81,13 @@ describe("compileUserScopePredicate", () => {
     );
   });
 
-  // Note: resolveStaffScope won't produce `unrestricted` base + expansion
-  // (it skips the expansion in that case), but compileUserScopePredicate is a
+  // Note: resolveCaseloadScope won't produce `unrestricted` base + expansion
+  // (it skips the expansion in that case), but compileCaseloadScopePredicate is a
   // public function that any caller could invoke with that combination, so we
   // verify the defensive branch.
   it("unrestricted base + supervisor expansion → null (defensive; resolver doesn't produce this)", () => {
     expect(
-      compileUserScopePredicate({
+      compileCaseloadScopePredicate({
         base: { kind: "unrestricted" },
         expandToSupervisedStaff: { userId: "user-7" },
       }),
@@ -92,13 +95,13 @@ describe("compileUserScopePredicate", () => {
   });
 
   it("none base alone → impossible-match sentinel", () => {
-    expect(compileUserScopePredicate({ base: { kind: "none" } })).toBe(
+    expect(compileCaseloadScopePredicate({ base: { kind: "none" } })).toBe(
       "id:=`__no_match__`",
     );
   });
 
   it("none base + supervisor expansion → just the supervisor clause (no email/district fallback)", () => {
-    const result = compileUserScopePredicate({
+    const result = compileCaseloadScopePredicate({
       base: { kind: "none" },
       expandToSupervisedStaff: { userId: "user-7" },
     });
@@ -108,27 +111,27 @@ describe("compileUserScopePredicate", () => {
   });
 });
 
-describe("toTypesenseFilter (single system)", () => {
-  const unrestrictedScope: StaffScope = { base: { kind: "unrestricted" } };
-  const districtScope: StaffScope = {
+describe("toCaseloadTypesenseFilter (single system)", () => {
+  const unrestrictedScope: CaseloadScope = { base: { kind: "unrestricted" } };
+  const districtScope: CaseloadScope = {
     base: { kind: "byDistricts", districts: ["Region 1"] },
   };
 
   it("unrestricted scope → stateCode only", () => {
-    expect(toTypesenseFilter(unrestrictedScope, { stateCode: "US_TN" })).toBe(
-      "stateCode:=`US_TN`",
-    );
+    expect(
+      toCaseloadTypesenseFilter(unrestrictedScope, { stateCode: "US_TN" }),
+    ).toBe("stateCode:=`US_TN`");
   });
 
   it("district scope → stateCode AND district clause", () => {
-    expect(toTypesenseFilter(districtScope, { stateCode: "US_TN" })).toBe(
-      "stateCode:=`US_TN` && (district:=[`Region 1`])",
-    );
+    expect(
+      toCaseloadTypesenseFilter(districtScope, { stateCode: "US_TN" }),
+    ).toBe("stateCode:=`US_TN` && (district:=[`Region 1`])");
   });
 
   it("with optional system discriminator (for Phase 2 unified opportunities)", () => {
     expect(
-      toTypesenseFilter(districtScope, {
+      toCaseloadTypesenseFilter(districtScope, {
         stateCode: "US_TN",
         system: "SUPERVISION",
       }),
@@ -138,25 +141,28 @@ describe("toTypesenseFilter (single system)", () => {
   });
 
   it("with supervisor expansion", () => {
-    const scope: StaffScope = {
+    const scope: CaseloadScope = {
       base: { kind: "byDistricts", districts: ["Region 1"] },
       expandToSupervisedStaff: { userId: "user-7" },
     };
-    expect(toTypesenseFilter(scope, { stateCode: "US_TN" })).toBe(
+    expect(toCaseloadTypesenseFilter(scope, { stateCode: "US_TN" })).toBe(
       "stateCode:=`US_TN` && ((district:=[`Region 1`]) || supervisorExternalId:=`user-7` || supervisorExternalIds:=[`user-7`])",
     );
   });
 });
 
-describe("toCrossSystemTypesenseFilter", () => {
-  const districtScope: StaffScope = {
+describe("toCrossSystemCaseloadTypesenseFilter", () => {
+  const districtScope: CaseloadScope = {
     base: { kind: "byDistricts", districts: ["Region 1"] },
   };
-  const unrestrictedScope: StaffScope = { base: { kind: "unrestricted" } };
+  const unrestrictedScope: CaseloadScope = { base: { kind: "unrestricted" } };
 
   it("supervision only → single-system clause", () => {
     expect(
-      toCrossSystemTypesenseFilter({ supervision: districtScope }, "US_TN"),
+      toCrossSystemCaseloadTypesenseFilter(
+        { supervision: districtScope },
+        "US_TN",
+      ),
     ).toBe(
       "stateCode:=`US_TN` && (system:=`SUPERVISION` && (district:=[`Region 1`]))",
     );
@@ -164,7 +170,7 @@ describe("toCrossSystemTypesenseFilter", () => {
 
   it("incarceration only, unrestricted → system filter only", () => {
     expect(
-      toCrossSystemTypesenseFilter(
+      toCrossSystemCaseloadTypesenseFilter(
         { incarceration: unrestrictedScope },
         "US_MI",
       ),
@@ -173,7 +179,7 @@ describe("toCrossSystemTypesenseFilter", () => {
 
   it("both systems with different scopes", () => {
     expect(
-      toCrossSystemTypesenseFilter(
+      toCrossSystemCaseloadTypesenseFilter(
         {
           supervision: districtScope,
           incarceration: unrestrictedScope,
@@ -186,7 +192,168 @@ describe("toCrossSystemTypesenseFilter", () => {
   });
 
   it("neither system → stateCode only (defense-in-depth fallback)", () => {
-    expect(toCrossSystemTypesenseFilter({}, "US_TN")).toBe(
+    expect(toCrossSystemCaseloadTypesenseFilter({}, "US_TN")).toBe(
+      "stateCode:=`US_TN`",
+    );
+  });
+});
+
+describe("compilePersonScopePredicate", () => {
+  it("unrestricted grant → null", () => {
+    expect(
+      compilePersonScopePredicate({ grants: [{ kind: "unrestricted" }] }),
+    ).toBeNull();
+  });
+
+  it("single byField grant", () => {
+    expect(
+      compilePersonScopePredicate({
+        grants: [{ kind: "byField", field: "district", ids: ["Region 1"] }],
+      }),
+    ).toBe("district:=[`Region 1`]");
+  });
+
+  it("byField grant with multiple ids", () => {
+    expect(
+      compilePersonScopePredicate({
+        grants: [
+          {
+            kind: "byField",
+            field: "officerId",
+            ids: ["staff-1", "staff-2"],
+          },
+        ],
+      }),
+    ).toBe("officerId:=[`staff-1`, `staff-2`]");
+  });
+
+  it("multiple byField grants → ORed", () => {
+    expect(
+      compilePersonScopePredicate({
+        grants: [
+          { kind: "byField", field: "district", ids: ["Region 1"] },
+          { kind: "byField", field: "officerId", ids: ["staff-1"] },
+        ],
+      }),
+    ).toBe("district:=[`Region 1`] || officerId:=[`staff-1`]");
+  });
+
+  it("empty-id grant is skipped", () => {
+    expect(
+      compilePersonScopePredicate({
+        grants: [
+          { kind: "byField", field: "district", ids: ["Region 1"] },
+          { kind: "byField", field: "officerId", ids: [] },
+        ],
+      }),
+    ).toBe("district:=[`Region 1`]");
+  });
+
+  it("no grants → impossible-match sentinel", () => {
+    expect(compilePersonScopePredicate({ grants: [] })).toBe(
+      "id:=`__no_match__`",
+    );
+  });
+
+  it("every grant empty → impossible-match sentinel", () => {
+    expect(
+      compilePersonScopePredicate({
+        grants: [{ kind: "byField", field: "officerId", ids: [] }],
+      }),
+    ).toBe("id:=`__no_match__`");
+  });
+
+  it("any unrestricted grant short-circuits even alongside other grants", () => {
+    expect(
+      compilePersonScopePredicate({
+        grants: [
+          { kind: "byField", field: "district", ids: ["Region 1"] },
+          { kind: "unrestricted" },
+        ],
+      }),
+    ).toBeNull();
+  });
+});
+
+describe("toPersonTypesenseFilter", () => {
+  const unrestrictedScope: PersonScope = { grants: [{ kind: "unrestricted" }] };
+  const districtScope: PersonScope = {
+    grants: [{ kind: "byField", field: "district", ids: ["Region 1"] }],
+  };
+
+  it("unrestricted scope → stateCode only", () => {
+    expect(
+      toPersonTypesenseFilter(unrestrictedScope, { stateCode: "US_TN" }),
+    ).toBe("stateCode:=`US_TN`");
+  });
+
+  it("district grant → stateCode AND district clause", () => {
+    expect(toPersonTypesenseFilter(districtScope, { stateCode: "US_TN" })).toBe(
+      "stateCode:=`US_TN` && (district:=[`Region 1`])",
+    );
+  });
+
+  it("district + officerId grants → ORed under stateCode", () => {
+    const scope: PersonScope = {
+      grants: [
+        { kind: "byField", field: "district", ids: ["Region 1"] },
+        { kind: "byField", field: "officerId", ids: ["staff-1"] },
+      ],
+    };
+    expect(toPersonTypesenseFilter(scope, { stateCode: "US_TN" })).toBe(
+      "stateCode:=`US_TN` && (district:=[`Region 1`] || officerId:=[`staff-1`])",
+    );
+  });
+
+  it("no grants → stateCode AND impossible-match sentinel", () => {
+    expect(
+      toPersonTypesenseFilter({ grants: [] }, { stateCode: "US_TN" }),
+    ).toBe("stateCode:=`US_TN` && (id:=`__no_match__`)");
+  });
+});
+
+describe("toCrossSystemPersonTypesenseFilter", () => {
+  const districtScope: PersonScope = {
+    grants: [{ kind: "byField", field: "district", ids: ["Region 1"] }],
+  };
+  const unrestrictedScope: PersonScope = { grants: [{ kind: "unrestricted" }] };
+
+  it("supervision only → single-system clause", () => {
+    expect(
+      toCrossSystemPersonTypesenseFilter(
+        { supervision: districtScope },
+        "US_TN",
+      ),
+    ).toBe(
+      "stateCode:=`US_TN` && (system:=`SUPERVISION` && (district:=[`Region 1`]))",
+    );
+  });
+
+  it("incarceration only, unrestricted → system filter only", () => {
+    expect(
+      toCrossSystemPersonTypesenseFilter(
+        { incarceration: unrestrictedScope },
+        "US_MI",
+      ),
+    ).toBe("stateCode:=`US_MI` && system:=`INCARCERATION`");
+  });
+
+  it("both systems with different scopes", () => {
+    expect(
+      toCrossSystemPersonTypesenseFilter(
+        {
+          supervision: districtScope,
+          incarceration: unrestrictedScope,
+        },
+        "US_MI",
+      ),
+    ).toBe(
+      "stateCode:=`US_MI` && ((system:=`SUPERVISION` && (district:=[`Region 1`])) || system:=`INCARCERATION`)",
+    );
+  });
+
+  it("neither system → stateCode only (defense-in-depth fallback)", () => {
+    expect(toCrossSystemPersonTypesenseFilter({}, "US_TN")).toBe(
       "stateCode:=`US_TN`",
     );
   });

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// Compiles a resolved StaffScope into a Typesense filter_by string.
+// Compiles a resolved CaseloadScope into a Typesense filter_by string.
 //
 // Typesense `filter_by` syntax:
 //   field:=value                — exact match
@@ -25,7 +25,13 @@
 //   ( ... )                     — grouping for precedence
 //   `value with spaces`         — backtick-quoted string for values with special chars
 
-import type { BaseScope, SingleWorkflowsSystem, StaffScope } from "./types";
+import type {
+  BaseScope,
+  CaseloadScope,
+  PersonGrant,
+  PersonScope,
+  SingleWorkflowsSystem,
+} from "./types";
 
 function quote(value: string): string {
   // Backtick-wrap to handle values with spaces, dashes, or other special chars.
@@ -55,7 +61,9 @@ function compileBase(base: BaseScope): string | null {
 // Returns just the user-scope predicate (base + optional supervisor expansion),
 // without any stateCode or system discriminators. Returns null if unrestricted.
 // Callers wrap with stateCode (and optional system) for the final filter_by.
-export function compileUserScopePredicate(scope: StaffScope): string | null {
+export function compileCaseloadScopePredicate(
+  scope: CaseloadScope,
+): string | null {
   const baseClause = compileBase(scope.base);
 
   if (!scope.expandToSupervisedStaff) return baseClause;
@@ -67,10 +75,10 @@ export function compileUserScopePredicate(scope: StaffScope): string | null {
   const supervisorClause = `supervisorExternalId:=${quote(userId)} || supervisorExternalIds:=[${quote(userId)}]`;
 
   // If base is unrestricted, the supervisor expansion is redundant —
-  // unrestricted already includes everything. resolveStaffScope won't produce
+  // unrestricted already includes everything. resolveCaseloadScope won't produce
   // this combination (it skips the expansion when base is unrestricted), but
-  // we guard here because compileUserScopePredicate is a public function and
-  // direct callers could construct any valid StaffScope shape.
+  // we guard here because compileCaseloadScopePredicate is a public function and
+  // direct callers could construct any valid CaseloadScope shape.
   if (scope.base.kind === "unrestricted") return null;
 
   // If base is `none`, the supervisor expansion IS the entire predicate
@@ -80,7 +88,7 @@ export function compileUserScopePredicate(scope: StaffScope): string | null {
   return `(${baseClause}) || ${supervisorClause}`;
 }
 
-export interface ToTypesenseFilterClauses {
+export interface ToCaseloadTypesenseFilterClauses {
   stateCode: string;
   // Optional. Include for collections that carry a `system` field
   // (e.g. Phase 2's unified `opportunities` collection). Phase 1's per-system
@@ -88,15 +96,15 @@ export interface ToTypesenseFilterClauses {
   system?: SingleWorkflowsSystem;
 }
 
-export function toTypesenseFilter(
-  scope: StaffScope,
-  options: ToTypesenseFilterClauses,
+export function toCaseloadTypesenseFilter(
+  scope: CaseloadScope,
+  options: ToCaseloadTypesenseFilterClauses,
 ): string {
   const stateClause = `stateCode:=${quote(options.stateCode)}`;
   const systemClause = options.system
     ? `system:=${quote(options.system)}`
     : null;
-  const userClause = compileUserScopePredicate(scope);
+  const userClause = compileCaseloadScopePredicate(scope);
 
   const clauses = [stateClause];
   if (systemClause !== null) clauses.push(systemClause);
@@ -108,39 +116,105 @@ export function toTypesenseFilter(
   return clauses.join(" && ");
 }
 
-// Combines per-system scopes into a single cross-system filter_by. Use when a
-// user has access to both SUPERVISION and INCARCERATION and a single scoped key
-// must cover both.
-export function toCrossSystemTypesenseFilter(
-  scopes: {
-    supervision?: StaffScope;
-    incarceration?: StaffScope;
-  },
+// Shared by toCrossSystemCaseloadTypesenseFilter/toCrossSystemPersonTypesenseFilter:
+// resolves each present per-system scope to its predicate, discriminates it
+// with a system:=X clause, and OR's the results under the shared stateCode.
+function buildCrossSystemFilter<Scope>(
+  scopes: { supervision?: Scope; incarceration?: Scope },
   stateCode: string,
+  compilePredicate: (scope: Scope) => string | null,
 ): string {
   const stateClause = `stateCode:=${quote(stateCode)}`;
 
-  const perSystemClauses: string[] = [];
-  if (scopes.supervision) {
-    const user = compileUserScopePredicate(scopes.supervision);
-    perSystemClauses.push(
-      user === null
-        ? `system:=${quote("SUPERVISION")}`
-        : `(system:=${quote("SUPERVISION")} && (${user}))`,
-    );
-  }
-  if (scopes.incarceration) {
-    const user = compileUserScopePredicate(scopes.incarceration);
-    perSystemClauses.push(
-      user === null
-        ? `system:=${quote("INCARCERATION")}`
-        : `(system:=${quote("INCARCERATION")} && (${user}))`,
-    );
-  }
+  const perSystemClauses = (
+    [
+      ["SUPERVISION", scopes.supervision],
+      ["INCARCERATION", scopes.incarceration],
+    ] as const
+  )
+    .filter(
+      (entry): entry is [SingleWorkflowsSystem, Scope] =>
+        entry[1] !== undefined,
+    )
+    .map(([system, scope]) => {
+      const user = compilePredicate(scope);
+      return user === null
+        ? `system:=${quote(system)}`
+        : `(system:=${quote(system)} && (${user}))`;
+    });
 
   if (perSystemClauses.length === 0) return stateClause;
   if (perSystemClauses.length === 1) {
     return `${stateClause} && ${perSystemClauses[0]}`;
   }
   return `${stateClause} && (${perSystemClauses.join(" || ")})`;
+}
+
+// Combines per-system scopes into a single cross-system filter_by. Use when a
+// user has access to both SUPERVISION and INCARCERATION and a single scoped key
+// must cover both.
+export function toCrossSystemCaseloadTypesenseFilter(
+  scopes: {
+    supervision?: CaseloadScope;
+    incarceration?: CaseloadScope;
+  },
+  stateCode: string,
+): string {
+  return buildCrossSystemFilter(
+    scopes,
+    stateCode,
+    compileCaseloadScopePredicate,
+  );
+}
+
+// --- Person scope (clients/residents) compilation ---------------------------
+
+function compileGrant(grant: PersonGrant): string | null {
+  if (grant.kind === "unrestricted") return null;
+  if (grant.ids.length === 0) return null;
+  const list = grant.ids.map(quote).join(", ");
+  return `${grant.field}:=[${list}]`;
+}
+
+// Returns just the user-scope predicate for a PersonScope, without any
+// stateCode or system discriminators. Returns null if unrestricted (any
+// grant being unrestricted makes the whole scope unrestricted). Returns
+// NEVER_MATCH_CLAUSE if there are no grants, or every grant has empty ids.
+export function compilePersonScopePredicate(scope: PersonScope): string | null {
+  if (scope.grants.some((grant) => grant.kind === "unrestricted")) return null;
+
+  const clauses = scope.grants
+    .map(compileGrant)
+    .filter((clause): clause is string => clause !== null);
+
+  if (clauses.length === 0) return NEVER_MATCH_CLAUSE;
+  return clauses.join(" || ");
+}
+
+export function toPersonTypesenseFilter(
+  scope: PersonScope,
+  options: { stateCode: string },
+): string {
+  const stateClause = `stateCode:=${quote(options.stateCode)}`;
+  const userClause = compilePersonScopePredicate(scope);
+
+  if (userClause === null) return stateClause;
+  // Wrap the user clause in parens to preserve OR precedence under the
+  // outer AND with stateCode.
+  return `${stateClause} && (${userClause})`;
+}
+
+// Combines per-system PersonScopes into a single cross-system filter_by, for
+// leadership users whose scoped key must cover both clients and residents in
+// one query (e.g. a future unified person collection carrying a `system`
+// field). Mirrors toCrossSystemCaseloadTypesenseFilter's system:=X discriminator
+// pattern.
+export function toCrossSystemPersonTypesenseFilter(
+  scopes: {
+    supervision?: PersonScope;
+    incarceration?: PersonScope;
+  },
+  stateCode: string,
+): string {
+  return buildCrossSystemFilter(scopes, stateCode, compilePersonScopePredicate);
 }
