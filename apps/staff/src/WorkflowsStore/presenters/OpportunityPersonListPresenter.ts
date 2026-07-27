@@ -139,6 +139,10 @@ export class OpportunityPersonListPresenter
       updateNavigablePeople: action,
       handleOpportunityClick: action,
       handleTabClick: action,
+      // Always returns the same constant; not derived from any observable
+      // state, so making it a computed just trips MobX's empty-derivation
+      // warning.
+      almostEligibilityDateHeader: false,
     });
   }
 

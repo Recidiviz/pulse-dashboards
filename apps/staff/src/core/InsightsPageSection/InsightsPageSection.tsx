@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { spacing, typography } from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React, { ReactNode } from "react";
 import styled from "styled-components";
@@ -93,4 +92,4 @@ const InsightsPageSection: React.FC<InsightsPageSectionProps> = ({
   );
 };
 
-export default observer(InsightsPageSection);
+export default InsightsPageSection;

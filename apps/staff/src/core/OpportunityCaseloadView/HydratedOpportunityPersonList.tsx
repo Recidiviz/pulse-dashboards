@@ -445,7 +445,14 @@ function EligibilityDateCell({
   );
 }
 
-function CurrentReviewerNameCell({ row }: { row: Row<Opportunity> }) {
+// react-table renders `cell` components in a separate reconciliation pass from
+// the observer-wrapped table component, so reads of MobX state here aren't
+// tracked unless the cell itself is wrapped in observer.
+const CurrentReviewerNameCell = observer(function CurrentReviewerNameCell({
+  row,
+}: {
+  row: Row<Opportunity>;
+}) {
   const {
     workflowsStore: { availableOfficersWithOrWithoutCaseloads },
   } = useRootStore();
@@ -458,7 +465,18 @@ function CurrentReviewerNameCell({ row }: { row: Row<Opportunity> }) {
       />
     );
   }
-}
+});
+
+const ReviewedByCell = observer(function ReviewedByCell({
+  row,
+}: {
+  row: Row<Opportunity>;
+}) {
+  const opp = row.original;
+  if (opp instanceof UsTxArsErsV2OpportunityBase) {
+    return opp.allPreviousReviewers.join(", ");
+  }
+});
 
 function AssignedStaffNameCell({ row }: { row: Row<Opportunity> }) {
   const {
@@ -504,7 +522,11 @@ export function EligibilityStatusCell({ row }: { row: Row<Opportunity> }) {
   return <EligibilityStatusPill opportunity={row.original} />;
 }
 
-export function LastViewedCell({ row }: { row: Row<Opportunity> }) {
+export const LastViewedCell = observer(function LastViewedCell({
+  row,
+}: {
+  row: Row<Opportunity>;
+}) {
   const {
     workflowsStore: { availableOfficersWithOrWithoutCaseloads },
   } = useRootStore();
@@ -523,7 +545,7 @@ export function LastViewedCell({ row }: { row: Row<Opportunity> }) {
   }
 
   return <>Never</>;
-}
+});
 
 const OpportunityCaseloadTable = observer(function OpportunityCaseloadTable({
   presenter,
@@ -1357,12 +1379,7 @@ const TableView = observer(function TableView({
     {
       header: "Reviewed By",
       id: "US_TX_ALL_REVIEWERS",
-      cell: ({ row }: { row: Row<Opportunity> }) => {
-        const opp = row.original;
-        if (opp instanceof UsTxArsErsV2OpportunityBase) {
-          return opp.allPreviousReviewers.join(", ");
-        }
-      },
+      cell: ReviewedByCell,
       enableSorting: false,
     },
     {

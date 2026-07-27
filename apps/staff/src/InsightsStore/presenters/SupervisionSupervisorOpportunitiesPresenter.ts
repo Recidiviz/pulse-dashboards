@@ -76,7 +76,6 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
     >(
       this,
       {
-        opportunityMapping: true,
         expectOfficersPopulated: true,
         expectSupervisorPopulated: true,
         supervisorPseudoId: true,

@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { Pill, spacing } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components";
 
@@ -29,11 +30,14 @@ const StyledPill = styled(Pill)`
   height: 22px;
 `;
 
-export const WorkflowsStatusPill = ({
+// Rendered as a nested child of PersonNameCell's own observer-tracked render,
+// so this needs its own observer wrapper to track person.isInCustody
+// (-> Client.supervisionLevel) as a reactive read.
+export const WorkflowsStatusPill = observer(function WorkflowsStatusPill({
   person,
 }: {
   person: JusticeInvolvedPerson;
-}) => {
+}) {
   if (person instanceof Client && person.isInCustody) {
     return (
       <StyledPill color={palette.pink} textColor={palette.pinkDark} filled>
@@ -41,4 +45,4 @@ export const WorkflowsStatusPill = ({
       </StyledPill>
     );
   }
-};
+});
