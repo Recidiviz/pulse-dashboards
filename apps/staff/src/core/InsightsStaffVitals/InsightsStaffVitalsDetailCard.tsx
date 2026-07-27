@@ -191,10 +191,10 @@ export const InsightsStaffVitalsDetailCard: React.FC<
     isNumeratorDenominatorEnabled && metricNumerator && metricDenominator;
 
   let hoverCta = `See ${hasOverdueClients ? "Overdue " : ""}${bodyDisplayName}s`;
-  let metricValueAdditionalText = ` clients with on-time ${bodyDisplayName.toLowerCase()}s`;
+  let metricValueAdditionalText = ` clients with on time ${bodyDisplayName.toLowerCase()}s`;
   if (["timely_contact", "timely_contact_due_date_based"].includes(metricId)) {
     hoverCta = `See ${bodyDisplayName}s Due Last Month`;
-    metricValueAdditionalText = ` ${bodyDisplayName.toLowerCase()}s completed on-time`;
+    metricValueAdditionalText = ` ${bodyDisplayName.toLowerCase()}s completed on time`;
   }
 
   const metricValueString = showNumberatorDenominator
