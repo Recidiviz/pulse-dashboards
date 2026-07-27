@@ -235,7 +235,10 @@ export interface Opportunity<
   caseNoteHeaders: string[];
   generateCaseNoteText?: string;
   notificationsByPage: OpportunityNotificationsByPage | undefined;
-  eligibilityStatusLabel: (includeReasons?: boolean) => string | null;
+  eligibilityStatusLabel: (
+    includeReasons?: boolean,
+    category?: OpportunityTabGroup,
+  ) => string | null;
   maxManualSnoozeDays(denialReasons: string[]): number | undefined;
   defaultManualSnoozeDays(denialReasons: string[]): number | undefined;
   opportunityBannerInfo?: OpportunityBannerInfo;
@@ -350,7 +353,8 @@ export type OpportunityTab =
 
   // For US_TX
   | "Awaiting Revisions"
-  | "Submitted for Review";
+  | "Submitted for Review"
+  | "Awaiting Review";
 
 // TODO (OBT-39704) Refactor OpportunityTabGroup to enums
 export type OpportunityTabGroup =

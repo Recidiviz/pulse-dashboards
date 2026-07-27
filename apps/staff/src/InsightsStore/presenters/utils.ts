@@ -29,6 +29,7 @@ import { Page } from "../../core/InsightsSupervisorPage/InsightsBreadcrumbs";
 import { insightsUrl } from "../../core/views";
 import { humanReadableTitleCase } from "../../utils";
 import { Opportunity, OpportunityTab } from "../../WorkflowsStore";
+import { OpportunityTabGroup } from "../../WorkflowsStore/Opportunity/types";
 import { isEligible } from "../../WorkflowsStore/utils";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import {
@@ -151,13 +152,17 @@ export function addSupervisorReviewCounts(
   oppDetail: RawOpportunityInfo,
   oppsByTab: Record<OpportunityTab, Opportunity[]>,
   reviewTabTitles: OpportunityTab[],
+  eligibilityCategory?: OpportunityTabGroup,
 ): void {
   const reviewOpps = reviewTabTitles.flatMap(
     (tabTitle) => oppsByTab[tabTitle] ?? [],
   );
 
   reviewOpps.forEach((opp) => {
-    const statusLabel = opp.eligibilityStatusLabel();
+    const statusLabel = opp.eligibilityStatusLabel(
+      undefined,
+      eligibilityCategory,
+    );
     if (statusLabel && oppDetail.supervisorReviewCounts) {
       oppDetail.supervisorReviewCounts[statusLabel] =
         (oppDetail.supervisorReviewCounts[statusLabel] ?? 0) + 1;

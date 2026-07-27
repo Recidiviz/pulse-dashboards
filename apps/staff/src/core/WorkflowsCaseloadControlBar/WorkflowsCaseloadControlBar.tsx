@@ -84,7 +84,13 @@ export function WorkflowsCaseloadControlBar<T extends string>(
     <TabControls>
       {tabs && (
         <WorkflowsCaseloadTabs
-          {...{ tabs, tabBadges, setActiveTab, activeTab, sortable }}
+          {...{
+            tabs,
+            tabBadges,
+            setActiveTab,
+            activeTab,
+            sortable,
+          }}
         />
       )}
       {Object.keys(rest).length > 0 && !supervisorHomepageReviewTable && (

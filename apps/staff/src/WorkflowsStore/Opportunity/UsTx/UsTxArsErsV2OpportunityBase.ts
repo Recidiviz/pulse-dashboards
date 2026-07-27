@@ -29,7 +29,7 @@ import {
 } from "../../../utils/formatStrings";
 import { Client } from "../../Client";
 import { OpportunityBase } from "../OpportunityBase";
-import { OpportunityTab } from "../types";
+import { OpportunityTab, OpportunityTabGroup } from "../types";
 
 export abstract class UsTxArsErsV2OpportunityBase<
   ReferralRecord extends DocumentData,
@@ -130,20 +130,35 @@ export abstract class UsTxArsErsV2OpportunityBase<
     return undefined;
   }
 
-  eligibilityStatusLabel(includeReasons?: boolean): string | null {
+  eligibilityStatusLabel(
+    includeReasons?: boolean,
+    category?: OpportunityTabGroup,
+  ): string | null {
     if (this.isGrantApproved) return this.grantApprovedStatusMessage;
     if (this.isInRevisionsRequested)
       return this.config.awaitingRevisionsTabTitle;
-    if (this.isInGrantReview) return this.supervisorReviewTabTitle;
-    return super.eligibilityStatusLabel(includeReasons);
+    if (this.isInGrantReview) {
+      // TODO (OBT-39704) Refactor OpportunityTabGroup to enums
+      return category === "REVIEW STATUS" &&
+        this.config.insightsSupervisorReviewTabTitle
+        ? this.config.insightsSupervisorReviewTabTitle
+        : this.supervisorReviewTabTitle;
+    }
+    return super.eligibilityStatusLabel(includeReasons, category);
   }
 
-  tabTitle(): OpportunityTab {
+  tabTitle(category?: OpportunityTabGroup): OpportunityTab {
     // Snoozed tab
     if (this.denied) return this.deniedTabTitle;
 
-    // Submitted for Review tab
-    if (this.isInSupervisorReview) return this.supervisorReviewTabTitle;
+    // Submitted for Review tab (Awaiting Review on the Insights homepage)
+    if (this.isInSupervisorReview) {
+      // TODO (OBT-39704) Refactor OpportunityTabGroup to enums
+      return category === "REVIEW STATUS" &&
+        this.config.insightsSupervisorReviewTabTitle
+        ? this.config.insightsSupervisorReviewTabTitle
+        : this.supervisorReviewTabTitle;
+    }
 
     // Awaiting Revisions tab
     if (this.isInRevisionsRequested)

@@ -67,6 +67,10 @@ export class UsTxArsErsV2Configuration extends ApiOpportunityConfiguration {
     return "Submitted for Review";
   }
 
+  get insightsSupervisorReviewTabTitle(): OpportunityTab {
+    return "Awaiting Review";
+  }
+
   get grantApprovedTabTitle(): OpportunityTab {
     return "Approved by Supervisor";
   }
@@ -84,7 +88,7 @@ export class UsTxArsErsV2Configuration extends ApiOpportunityConfiguration {
         this.deniedTabTitle,
       ],
       "REVIEW STATUS": [
-        this.supervisorReviewTabTitle,
+        this.insightsSupervisorReviewTabTitle,
         this.awaitingRevisionsTabTitle,
       ],
     };

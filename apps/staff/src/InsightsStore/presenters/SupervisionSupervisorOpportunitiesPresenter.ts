@@ -530,17 +530,36 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
           countByFunction,
           supportsSupervisorReview,
           supervisorReviewTabTitle,
+          insightsSupervisorReviewTabTitle,
           awaitingRevisionsTabTitle,
         } = this.opportunityConfigurationStore.opportunities[opportunityType];
 
-        const oppsByTab = opportunitiesByTabForType(opportunities);
+        // TODO (OBT-39704) Refactor OpportunityTabGroup to enums
+        const oppsByTab = opportunitiesByTabForType(
+          opportunities,
+          insightsSupervisorReviewTabTitle
+            ? "REVIEW STATUS"
+            : "ELIGIBILITY STATUS",
+        );
 
         const clientCount = countRelevantOpportunities(
           opportunities,
           countByFunction,
         );
 
-        if (this.isReviewCardEnabled && supportsSupervisorReview) {
+        // TODO (OBT-39704) Refactor OpportunityTabGroup to enums
+        if (
+          this.isReviewCardEnabled &&
+          supportsSupervisorReview &&
+          insightsSupervisorReviewTabTitle
+        ) {
+          addSupervisorReviewCounts(
+            oppDetail,
+            oppsByTab,
+            [insightsSupervisorReviewTabTitle, awaitingRevisionsTabTitle],
+            "REVIEW STATUS",
+          );
+        } else if (this.isReviewCardEnabled && supportsSupervisorReview) {
           addSupervisorReviewCounts(oppDetail, oppsByTab, [
             supervisorReviewTabTitle,
             awaitingRevisionsTabTitle,

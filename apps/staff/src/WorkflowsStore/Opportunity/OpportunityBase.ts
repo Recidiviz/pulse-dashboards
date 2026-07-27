@@ -1432,7 +1432,10 @@ export class OpportunityBase<
     return this.config.caseNotesTitle;
   }
 
-  eligibilityStatusLabel(includeReasons?: boolean): string | null {
+  eligibilityStatusLabel(
+    includeReasons?: boolean,
+    category?: OpportunityTabGroup,
+  ): string | null {
     const {
       almostEligible,
       almostEligibleStatusMessage,
