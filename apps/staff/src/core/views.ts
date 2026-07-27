@@ -36,6 +36,7 @@ export const DASHBOARD_VIEWS = {
   workflows: "workflows",
   insights: "insights",
   directorDashboard: "directorDashboard",
+  comingSoon: "comingSoon",
   psi: psiRootPath,
   sar: sarRootPath,
   revocations: "revocations", // lantern
@@ -65,6 +66,7 @@ export const DASHBOARD_PATHS: Record<string, string> = {
   methodologyOperations: `/${DASHBOARD_VIEWS.methodology}/operations`,
   insights: `/${DASHBOARD_VIEWS.insights}`,
   workflows: `/${DASHBOARD_VIEWS.workflows}`,
+  comingSoon: `/${DASHBOARD_VIEWS.comingSoon}`,
   psi: `/${DASHBOARD_VIEWS.psi}`,
 };
 

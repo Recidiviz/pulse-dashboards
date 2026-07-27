@@ -23,6 +23,7 @@ import { ProvisionedStateCode } from "./types";
 export const US_AZ = "US_AZ";
 export const US_AR = "US_AR";
 export const US_CA = "US_CA";
+export const US_CO = "US_CO";
 export const US_IA = "US_IA";
 export const US_ME = "US_ME";
 export const US_MI = "US_MI";
@@ -42,6 +43,7 @@ const NON_PATHWAYS_TENANTS = [
   US_AZ,
   US_AR,
   US_CA,
+  US_CO,
   US_IA,
   US_ME,
   US_MI,

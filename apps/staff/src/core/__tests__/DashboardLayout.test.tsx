@@ -25,6 +25,7 @@ import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
 import { UserAvatar } from "../Avatar";
 import DashboardLayout from "../DashboardLayout";
+import PageComingSoon from "../PageComingSoon";
 import PageInsights from "../PageInsights";
 import PageMethodology from "../PageMethodology";
 import PageSystem from "../PageSystem";
@@ -52,6 +53,7 @@ vi.mock("../PageInsights", () => {
   };
 });
 vi.mock("../PageMethodology");
+vi.mock("../PageComingSoon");
 vi.mock("../../components/NotFound");
 
 const mockUseRootStore = useRootStore as Mock;
@@ -68,6 +70,9 @@ describe("DashboardLayout", () => {
     (PageInsights as Mock).mockReturnValue(mockWithTestId("page-insights-id"));
     (PageMethodology as Mock).mockReturnValue(
       mockWithTestId("page-methodology-id"),
+    );
+    (PageComingSoon as Mock).mockReturnValue(
+      mockWithTestId("page-coming-soon-id"),
     );
     (NotFound as Mock).mockReturnValue(mockWithTestId("not-found-id"));
   });
@@ -248,6 +253,30 @@ describe("DashboardLayout", () => {
       });
 
       renderLayout(`/${DASHBOARD_VIEWS.workflows}/home`);
+
+      expect(screen.getByTestId("not-found-id")).toBeInTheDocument();
+    });
+  });
+
+  describe("PageComingSoon", () => {
+    it("renders if the tenant and user allow it", () => {
+      mockUseRootStore.mockReturnValue({
+        userStore: { userAllowedNavigation: { comingSoon: [] } },
+        currentTenantId: "US_CO",
+      });
+
+      renderLayout(DASHBOARD_PATHS.comingSoon);
+
+      expect(screen.getByTestId("page-coming-soon-id")).toBeInTheDocument();
+    });
+
+    it("doesn't render if the user doesn't allow it", () => {
+      mockUseRootStore.mockReturnValue({
+        userStore: { userAllowedNavigation: { workflows: [] } },
+        currentTenantId: "US_CO",
+      });
+
+      renderLayout(DASHBOARD_PATHS.comingSoon);
 
       expect(screen.getByTestId("not-found-id")).toBeInTheDocument();
     });

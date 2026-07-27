@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,30 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const stateCodes = {
-  US_AZ: "US_AZ",
-  US_AR: "US_AR",
-  US_CA: "US_CA",
-  US_CO: "US_CO",
-  US_IA: "US_IA",
-  US_ID: "US_ID",
-  US_ME: "US_ME",
-  US_MI: "US_MI",
-  US_MO: "US_MO",
-  US_NC: "US_NC",
-  US_ND: "US_ND",
-  US_NY: "US_NY",
-  US_NE: "US_NE",
-  US_OR: "US_OR",
-  US_PA: "US_PA",
-  US_TN: "US_TN",
-  US_TX: "US_TX",
-  US_UT: "US_UT",
-};
+import { TenantConfig } from "../core/models/types";
+import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 
-export const csgStateCodes = [
-  stateCodes.US_MO,
-  stateCodes.US_PA,
-  stateCodes.US_MI,
-  stateCodes.US_TN,
-];
+const US_CO_CONFIG = {
+  name: "Colorado",
+  stateCode: "CO",
+  // TODO(OBT-40957): Set the real SSO domain for CO users once known.
+  availableStateCodes: [dashboard.US_CO],
+  enableUserRestrictions: false,
+  navigation: {
+    comingSoon: [],
+  },
+} satisfies TenantConfig<"US_CO">;
+
+export default US_CO_CONFIG;

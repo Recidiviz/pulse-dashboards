@@ -24,6 +24,7 @@ import {
   US_AR,
   US_AZ,
   US_CA,
+  US_CO,
   US_IA,
   US_ME,
   US_MI,
@@ -41,6 +42,7 @@ import { CSG_CONFIG } from "./tenants/CSG";
 import US_AR_CONFIG from "./tenants/US_AR";
 import US_AZ_CONFIG from "./tenants/US_AZ";
 import US_CA_CONFIG from "./tenants/US_CA";
+import US_CO_CONFIG from "./tenants/US_CO";
 import US_IA_CONFIG from "./tenants/US_IA";
 import US_ID_CONFIG from "./tenants/US_ID";
 import US_ME_CONFIG from "./tenants/US_ME";
@@ -72,6 +74,7 @@ const SPECIFIC_TENANT_CONFIGS = {
   [US_AZ]: US_AZ_CONFIG,
   [US_AR]: US_AR_CONFIG,
   [US_CA]: US_CA_CONFIG,
+  [US_CO]: US_CO_CONFIG,
   [US_IA]: US_IA_CONFIG,
   [pathways.US_ID]: US_ID_CONFIG,
   [US_ME]: US_ME_CONFIG,

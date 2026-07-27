@@ -42,6 +42,7 @@ import {
 import CoreStoreProvider from "./CoreStoreProvider";
 import ErrorBoundary from "./ErrorBoundary";
 import { NavigationLayout } from "./NavigationLayout";
+import PageComingSoon from "./PageComingSoon";
 import PageDirectorDashboard from "./PageDirectorDashboard";
 import PageInsights from "./PageInsights";
 import PageMethodology from "./PageMethodology";
@@ -146,6 +147,10 @@ const DashboardLayout: React.FC = () => {
               <Route
                 path={`${DIRECTOR_DASHBOARD_PATHS.directorDashboard}/*`}
                 element={<PageDirectorDashboard />}
+              />
+              <Route
+                path={DASHBOARD_PATHS.comingSoon}
+                element={<PageComingSoon />}
               />
               <Route path={`${PSI_PATHS.psi}/*`} element={<PagePSI />} />
               <Route path={`${SAR_PATHS.sar}/*`} element={<PageSAR />} />
