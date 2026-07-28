@@ -19,8 +19,8 @@ import type { Request, Response } from "express";
 
 import { fetchOfflineUser } from "../../core";
 import { isOfflineMode } from "../../utils/isOfflineMode";
-import { mintCaseloadScopedKey } from "../typesense/caseloadScopedKey";
 import { initTypesenseScopedKeys } from "../typesense/init";
+import { mintPersonScopedKey } from "../typesense/personScopedKey";
 
 vi.mock("../../utils/isOfflineMode");
 vi.mock("../../core");
@@ -56,10 +56,6 @@ vi.mock("firebase-admin/firestore", () => ({
       }),
       where: (field: string, _op: string, value: string) => ({
         get: () => {
-          // Supervisor lookups only match supervisionStaff in healthy states —
-          // the parallel incarcerationStaff query is a Sentry canary in
-          // fetchSupervisedStaffExternalIds. `incarcerationSupervisors` lets a
-          // test force the violation to exercise the alert path.
           const mapsByCollectionAndField: Record<
             string,
             Map<string, string[]> | undefined
@@ -94,9 +90,6 @@ vi.mock("~@typesense/client", async (importOriginal) => {
     createLocalTypesenseClient: () => ({
       keys: () => ({
         generateScopedSearchKey: mockGenerateScopedSearchKey,
-        // Returns a value so the offline lazy-create path resolves; the
-        // non-offline tests short-circuit on TYPESENSE_API_SEARCH_KEY and
-        // never call this.
         create: vi.fn().mockResolvedValue({ value: "lazy-created-parent-key" }),
       }),
     }),
@@ -133,7 +126,6 @@ function makeUser(
 ) {
   return {
     email: overrides.email ?? "user@example.com",
-    // process.env.METADATA_NAMESPACE is undefined in tests, so the prefix is "undefined"
     undefinedapp_metadata: {
       ...(overrides.externalId === null
         ? {}
@@ -144,7 +136,6 @@ function makeUser(
   };
 }
 
-// Returns the filter_by string that the handler passed to generateScopedSearchKey.
 function lastFilterBy(): string {
   const lastCall = mockGenerateScopedSearchKey.mock.calls.at(-1);
   if (!lastCall) throw new Error("generateScopedSearchKey was not called");
@@ -158,13 +149,9 @@ beforeEach(async () => {
   fakeFirestore.userUpdates.clear();
   fakeFirestore.supervisionSupervisors.clear();
   fakeFirestore.incarcerationSupervisors.clear();
-  // Non-offline path: initTypesenseScopedKeys reads TYPESENSE_API_SEARCH_KEY
-  // directly.
   process.env["TYPESENSE_API_SEARCH_KEY"] = "test-parent-key";
   mockGenerateScopedSearchKey.mockReturnValue("test-scoped-key");
   vi.mocked(isOfflineMode).mockReturnValue(false);
-  // Mirrors the server bootstrap in index.js — populates the module-level
-  // searchOnlyParentKey before any request is served.
   await initTypesenseScopedKeys();
 });
 
@@ -172,10 +159,10 @@ beforeEach(async () => {
 // Validation
 // --------------------------------------------------------------------------
 
-describe("mintCaseloadScopedKey — validation", () => {
+describe("mintPersonScopedKey — validation", () => {
   test("returns 400 when currentTenantId is missing", async () => {
     const res = makeRes();
-    await mintCaseloadScopedKey(
+    await mintPersonScopedKey(
       makeReq({ system: "SUPERVISION" }, makeUser()),
       res,
     );
@@ -185,21 +172,9 @@ describe("mintCaseloadScopedKey — validation", () => {
     });
   });
 
-  test("returns 400 when system is missing", async () => {
-    const res = makeRes();
-    await mintCaseloadScopedKey(
-      makeReq({ currentTenantId: "US_TN" }, makeUser()),
-      res,
-    );
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({
-      error: expect.stringContaining("system"),
-    });
-  });
-
   test("returns 400 when system is invalid", async () => {
     const res = makeRes();
-    await mintCaseloadScopedKey(
+    await mintPersonScopedKey(
       makeReq({ currentTenantId: "US_TN", system: "BOGUS" }, makeUser()),
       res,
     );
@@ -208,7 +183,7 @@ describe("mintCaseloadScopedKey — validation", () => {
 
   test("returns 422 when user has no externalId", async () => {
     const res = makeRes();
-    await mintCaseloadScopedKey(
+    await mintPersonScopedKey(
       makeReq(
         { currentTenantId: "US_TN", system: "SUPERVISION" },
         makeUser({ externalId: null }),
@@ -223,14 +198,10 @@ describe("mintCaseloadScopedKey — validation", () => {
 // Recidiviz user (cross-state)
 // --------------------------------------------------------------------------
 
-// Recidiviz users have stateCode "recidiviz" in their app_metadata and no
-// externalId — they aren't in any tenant's staff collection. The mint endpoint
-// skips the Firestore lookup and grants unrestricted scope within whatever
-// tenant they're currently viewing.
-describe("mintCaseloadScopedKey — Recidiviz user (cross-state)", () => {
-  test("skips Firestore lookups and returns unrestricted filter for system=SUPERVISION", async () => {
+describe("mintPersonScopedKey — Recidiviz user (cross-state)", () => {
+  test("skips Firestore lookups and returns unrestricted filter", async () => {
     const res = makeRes();
-    await mintCaseloadScopedKey(
+    await mintPersonScopedKey(
       makeReq(
         { currentTenantId: "US_TN", system: "SUPERVISION" },
         makeUser({ stateCode: "recidiviz", externalId: null }),
@@ -240,25 +211,13 @@ describe("mintCaseloadScopedKey — Recidiviz user (cross-state)", () => {
     expect(mockGenerateScopedSearchKey).toHaveBeenCalledTimes(1);
     expect(lastFilterBy()).toBe("stateCode:=`US_TN`");
   });
-
-  test("returns unrestricted filter for system=ALL (no system discriminator since unrestricted covers all)", async () => {
-    const res = makeRes();
-    await mintCaseloadScopedKey(
-      makeReq(
-        { currentTenantId: "US_MI", system: "ALL" },
-        makeUser({ stateCode: "RECIDIVIZ", externalId: null }),
-      ),
-      res,
-    );
-    expect(lastFilterBy()).toBe("stateCode:=`US_MI`");
-  });
 });
 
 // --------------------------------------------------------------------------
 // Single-system state user paths
 // --------------------------------------------------------------------------
 
-describe("mintCaseloadScopedKey — single-system state user", () => {
+describe("mintPersonScopedKey — single-system state user", () => {
   test("US_TN SUPERVISION with district → district filter", async () => {
     fakeFirestore.supervisionStaff.set("us_tn_OFFICER123", {
       district: "Region 1",
@@ -266,7 +225,7 @@ describe("mintCaseloadScopedKey — single-system state user", () => {
     });
 
     const res = makeRes();
-    await mintCaseloadScopedKey(
+    await mintPersonScopedKey(
       makeReq({ currentTenantId: "US_TN", system: "SUPERVISION" }, makeUser()),
       res,
     );
@@ -276,14 +235,14 @@ describe("mintCaseloadScopedKey — single-system state user", () => {
     );
   });
 
-  test("US_TN INCARCERATION → unrestricted within state (per intentional resolver divergence from US_TN tenant config)", async () => {
+  test("US_TN INCARCERATION → unrestricted within state", async () => {
     fakeFirestore.incarcerationStaff.set("us_tn_OFFICER123", {
       district: "Facility 1",
       email: "officer@example.com",
     });
 
     const res = makeRes();
-    await mintCaseloadScopedKey(
+    await mintPersonScopedKey(
       makeReq(
         { currentTenantId: "US_TN", system: "INCARCERATION" },
         makeUser(),
@@ -294,30 +253,10 @@ describe("mintCaseloadScopedKey — single-system state user", () => {
     expect(lastFilterBy()).toBe("stateCode:=`US_TN`");
   });
 
-  test("uses system from request, not from staff record location", async () => {
-    // User exists ONLY in incarcerationStaff, but request says SUPERVISION —
-    // resolver should still use SUPERVISION as the system input.
-    fakeFirestore.incarcerationStaff.set("us_tn_OFFICER123", {
-      district: "Region 1",
-      email: "officer@example.com",
-    });
-
+  test("no staff record + no district → none base compiles to never-match sentinel", async () => {
+    // hasCaseload=false → base falls back to `none`, which carries no grant.
     const res = makeRes();
-    await mintCaseloadScopedKey(
-      makeReq({ currentTenantId: "US_TN", system: "SUPERVISION" }, makeUser()),
-      res,
-    );
-
-    // SUPERVISION baseline applies → district filter, NOT unrestricted
-    expect(lastFilterBy()).toBe(
-      "stateCode:=`US_TN` && (district:=[`Region 1`])",
-    );
-  });
-
-  test("no staff record + no FVs → none base compiles to never-match sentinel", async () => {
-    // hasCaseload=false → district base falls back to `none` (not byEmail)
-    const res = makeRes();
-    await mintCaseloadScopedKey(
+    await mintPersonScopedKey(
       makeReq({ currentTenantId: "US_TN", system: "SUPERVISION" }, makeUser()),
       res,
     );
@@ -325,15 +264,31 @@ describe("mintCaseloadScopedKey — single-system state user", () => {
     expect(lastFilterBy()).toBe("stateCode:=`US_TN` && (id:=`__no_match__`)");
   });
 
-  test("workflowsSupervisorSearch FV + user is supervisor → district OR supervisor expansion", async () => {
+  test("staff record with no district (hasCaseload=true) → own-caseload officerId grant", async () => {
+    fakeFirestore.supervisionStaff.set("us_tn_OFFICER123", {
+      email: "officer@example.com",
+    });
+
+    const res = makeRes();
+    await mintPersonScopedKey(
+      makeReq({ currentTenantId: "US_TN", system: "SUPERVISION" }, makeUser()),
+      res,
+    );
+
+    expect(lastFilterBy()).toBe(
+      "stateCode:=`US_TN` && (officerId:=[`OFFICER123`])",
+    );
+  });
+
+  test("workflowsSupervisorSearch FV + user is supervisor → district OR supervised-staff officerId grant", async () => {
     fakeFirestore.supervisionStaff.set("us_tn_OFFICER123", {
       district: "Region 1",
       email: "officer@example.com",
     });
-    fakeFirestore.supervisionSupervisors.set("OFFICER123", ["OFFICER123"]);
+    fakeFirestore.supervisionSupervisors.set("OFFICER123", ["STAFF456"]);
 
     const res = makeRes();
-    await mintCaseloadScopedKey(
+    await mintPersonScopedKey(
       makeReq(
         { currentTenantId: "US_TN", system: "SUPERVISION" },
         makeUser({
@@ -344,7 +299,33 @@ describe("mintCaseloadScopedKey — single-system state user", () => {
     );
 
     expect(lastFilterBy()).toBe(
-      "stateCode:=`US_TN` && ((district:=[`Region 1`]) || supervisorExternalId:=`OFFICER123` || supervisorExternalIds:=[`OFFICER123`])",
+      "stateCode:=`US_TN` && (district:=[`Region 1`] || officerId:=[`STAFF456`])",
+    );
+  });
+
+  test("workflowsSupervisorSearch FV + user is one of several supervisors (multiple staff via supervisorExternalIds) → district OR supervised-staff officerId grant", async () => {
+    fakeFirestore.supervisionStaff.set("us_tn_OFFICER123", {
+      district: "Region 1",
+      email: "officer@example.com",
+    });
+    fakeFirestore.supervisionSupervisors.set("OFFICER123", [
+      "STAFF456",
+      "STAFF789",
+    ]);
+
+    const res = makeRes();
+    await mintPersonScopedKey(
+      makeReq(
+        { currentTenantId: "US_TN", system: "SUPERVISION" },
+        makeUser({
+          featureVariants: { workflowsSupervisorSearch: true },
+        }),
+      ),
+      res,
+    );
+
+    expect(lastFilterBy()).toBe(
+      "stateCode:=`US_TN` && (district:=[`Region 1`] || officerId:=[`STAFF456`, `STAFF789`])",
     );
   });
 
@@ -353,10 +334,10 @@ describe("mintCaseloadScopedKey — single-system state user", () => {
       district: "Region 1",
       email: "officer@example.com",
     });
-    fakeFirestore.supervisionSupervisors.set("OFFICER123", ["OFFICER123"]);
+    fakeFirestore.supervisionSupervisors.set("OFFICER123", ["STAFF456"]);
 
     const res = makeRes();
-    await mintCaseloadScopedKey(
+    await mintPersonScopedKey(
       makeReq(
         { currentTenantId: "US_TN", system: "SUPERVISION" },
         makeUser({
@@ -382,7 +363,7 @@ describe("mintCaseloadScopedKey — single-system state user", () => {
     });
 
     const res = makeRes();
-    await mintCaseloadScopedKey(
+    await mintPersonScopedKey(
       makeReq({ currentTenantId: "US_TN", system: "SUPERVISION" }, makeUser()),
       res,
     );
@@ -392,19 +373,14 @@ describe("mintCaseloadScopedKey — single-system state user", () => {
     );
   });
 
-  test("fetchSupervisedStaffExternalIds canary: incarcerationStaff match fires Sentry, does NOT flip isSupervisor", async () => {
-    // Healthy invariant: only supervisionStaff docs carry supervisorExternalId.
-    // Simulate ETL drift by matching the officer on incarcerationStaff but NOT
-    // supervisionStaff. Expectation: Sentry.captureMessage is called; the
-    // supervision-side answer (empty) stays authoritative, so the filter does
-    // NOT include the supervisor expansion.
+  test("fetchSupervisedStaffExternalIds canary: incarcerationStaff match fires Sentry, does NOT expand scope", async () => {
     fakeFirestore.supervisionStaff.set("us_tn_OFFICER123", {
       district: "Region 1",
       email: "officer@example.com",
     });
-    fakeFirestore.incarcerationSupervisors.set("OFFICER123", ["OFFICER123"]);
+    fakeFirestore.incarcerationSupervisors.set("OFFICER123", ["STAFF456"]);
 
-    await mintCaseloadScopedKey(
+    await mintPersonScopedKey(
       makeReq(
         { currentTenantId: "US_TN", system: "SUPERVISION" },
         makeUser({ featureVariants: { workflowsSupervisorSearch: true } }),
@@ -420,7 +396,6 @@ describe("mintCaseloadScopedKey — single-system state user", () => {
         extra: expect.objectContaining({ externalId: "OFFICER123" }),
       }),
     );
-    // No supervisor expansion — supervision-side lookup returned empty.
     expect(lastFilterBy()).toBe(
       "stateCode:=`US_TN` && (district:=[`Region 1`])",
     );
@@ -431,7 +406,7 @@ describe("mintCaseloadScopedKey — single-system state user", () => {
 // system=ALL cross-system path
 // --------------------------------------------------------------------------
 
-describe("mintCaseloadScopedKey — system=ALL (cross-system)", () => {
+describe("mintPersonScopedKey — system=ALL (cross-system)", () => {
   test("US_MI ALL: SUPERVISION district-scoped + INCARCERATION unrestricted, combined via cross-system compiler", async () => {
     fakeFirestore.supervisionStaff.set("us_mi_OFFICER123", {
       district: "Region 3",
@@ -439,7 +414,7 @@ describe("mintCaseloadScopedKey — system=ALL (cross-system)", () => {
     });
 
     const res = makeRes();
-    await mintCaseloadScopedKey(
+    await mintPersonScopedKey(
       makeReq(
         { currentTenantId: "US_MI", system: "ALL" },
         makeUser({ stateCode: "US_MI" }),
@@ -447,7 +422,6 @@ describe("mintCaseloadScopedKey — system=ALL (cross-system)", () => {
       res,
     );
 
-    // SUPR gets district clause; INC has no user predicate (unrestricted).
     expect(lastFilterBy()).toBe(
       "stateCode:=`US_MI` && ((system:=`SUPERVISION` && (district:=[`Region 3`])) || system:=`INCARCERATION`)",
     );
@@ -458,7 +432,7 @@ describe("mintCaseloadScopedKey — system=ALL (cross-system)", () => {
 // Response shape
 // --------------------------------------------------------------------------
 
-describe("mintCaseloadScopedKey — response shape", () => {
+describe("mintPersonScopedKey — response shape", () => {
   test("returns scopedKey, ISO expiresAt, and typesenseHost", async () => {
     fakeFirestore.supervisionStaff.set("us_tn_OFFICER123", {
       district: "Region 1",
@@ -467,7 +441,7 @@ describe("mintCaseloadScopedKey — response shape", () => {
     process.env["TYPESENSE_HOST"] = "https://typesense-test.example.com";
 
     const res = makeRes();
-    await mintCaseloadScopedKey(
+    await mintPersonScopedKey(
       makeReq({ currentTenantId: "US_TN", system: "SUPERVISION" }, makeUser()),
       res,
     );
@@ -488,7 +462,7 @@ describe("mintCaseloadScopedKey — response shape", () => {
     );
 
     const res = makeRes();
-    await mintCaseloadScopedKey(
+    await mintPersonScopedKey(
       makeReq({ currentTenantId: "US_TN", system: "SUPERVISION" }),
       res,
     );
@@ -512,7 +486,7 @@ describe("mintCaseloadScopedKey — response shape", () => {
     });
 
     const res = makeRes();
-    await mintCaseloadScopedKey(
+    await mintPersonScopedKey(
       makeReq({ currentTenantId: "US_TN", system: "SUPERVISION" }, makeUser()),
       res,
     );

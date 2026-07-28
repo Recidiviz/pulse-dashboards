@@ -49,6 +49,8 @@ export interface UserScopeContext {
   hasCaseload: boolean;
   overrideDistrictIds: string[] | undefined;
   isSupervisor: boolean;
+  // staffExternalId of every staff member this user supervises.
+  supervisedStaffExternalIds: string[];
   // Raw FV bag from the JWT — consumers pick what they need. Kept as a bag
   // (not pre-filtered) so new scope-affecting FVs don't require touching
   // this file.
@@ -107,43 +109,41 @@ async function fetchStaffRecord(
   return null;
 }
 
-// Determines whether the user supervises >= 1 other staff member — used by
-// scope resolvers to layer the supervisor-expansion branch on top of the
-// user's base scope. `supervisorExternalId` is a supervision-side concept:
-// only `supervisionStaffRecordSchema` declares it (incarcerationStaffRecord
-// does not). The primary query below reflects that invariant.
-//
-// The parallel `incarcerationStaff` query is a runtime canary: if the BQ ETL
-// ever starts writing `supervisorExternalId` to incarceration staff docs (or
-// a tenant introduces a genuinely cross-system supervisor), we'll see it in
-// Sentry rather than silently returning a wrong scope. Doesn't affect the
-// return value — the supervision-side answer stays authoritative.
-async function fetchIsSupervisor(
+// Returns the staffExternalId of every staff member this user supervises —
+// used by scope resolvers to layer the supervisor-expansion branch on top of
+// the user's base scope.
+// `supervisorExternalIds` is a supervision-side concept: only
+// `supervisionStaffRecordSchema` declares it (incarcerationStaffRecord does
+// not). The primary query below reflects that invariant.
+async function fetchSupervisedStaffExternalIds(
   db: Firestore,
   externalId: string,
-): Promise<boolean> {
+): Promise<string[]> {
   const [suprSnap, incSnap] = await Promise.all([
     db
       .collection("supervisionStaff")
-      .where("supervisorExternalId", "==", externalId)
-      .limit(1)
+      .where("supervisorExternalIds", "array-contains", externalId)
       .get(),
     db
       .collection("incarcerationStaff")
       .where("supervisorExternalId", "==", externalId)
-      .limit(1)
       .get(),
   ]);
   if (!incSnap.empty) {
     Sentry.captureMessage(
-      "incarcerationStaff doc has supervisorExternalId set — cross-system supervisor invariant violated. See fetchIsSupervisor in userScopeContext.ts.",
+      "incarcerationStaff doc has supervisorExternalId set — cross-system supervisor invariant violated. See fetchSupervisedStaffExternalIds in userScopeContext.ts.",
       {
         level: "warning",
         extra: { externalId, docId: incSnap.docs[0]?.id },
       },
     );
   }
-  return !suprSnap.empty;
+  const staffExternalIds = new Set<string>();
+  for (const doc of suprSnap.docs) {
+    const staffExternalId = doc.data()["staffExternalId"] as string | undefined;
+    if (staffExternalId) staffExternalIds.add(staffExternalId);
+  }
+  return [...staffExternalIds];
 }
 
 async function fetchUserUpdates(
@@ -190,15 +190,16 @@ export async function resolveUserScopeContext(
       hasCaseload: false,
       overrideDistrictIds: undefined,
       isSupervisor: false,
+      supervisedStaffExternalIds: [],
       featureVariants,
     };
   }
 
   const userId = identity.userId as string;
   const db = getFirestore();
-  const [staff, isSupervisor, userUpdates] = await Promise.all([
+  const [staff, supervisedStaffExternalIds, userUpdates] = await Promise.all([
     fetchStaffRecord(db, currentTenantId, userId),
-    fetchIsSupervisor(db, userId),
+    fetchSupervisedStaffExternalIds(db, userId),
     fetchUserUpdates(db, currentTenantId, userId),
   ]);
 
@@ -213,7 +214,8 @@ export async function resolveUserScopeContext(
     overrideDistrictIds: userUpdates["overrideDistrictIds"] as
       | string[]
       | undefined,
-    isSupervisor,
+    isSupervisor: supervisedStaffExternalIds.length > 0,
+    supervisedStaffExternalIds,
     featureVariants,
   };
 }

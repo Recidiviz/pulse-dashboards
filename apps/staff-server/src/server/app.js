@@ -52,6 +52,7 @@ import {
   getLookerConfig,
 } from "./workflows/lookerEmbed";
 import { mintCaseloadScopedKey } from "./workflows/typesense/caseloadScopedKey";
+import { mintPersonScopedKey } from "./workflows/typesense/personScopedKey";
 
 config();
 
@@ -246,6 +247,10 @@ app.get("/token", asyncHandler(getFirebaseToken));
 // mints a scoped Typesense search API key for the authenticated user's
 // caseload search bar
 app.post("/workflows/caseload-scoped-key", asyncHandler(mintCaseloadScopedKey));
+
+// mints a scoped Typesense search API key for the authenticated user's
+// person (client/resident) search bar
+app.post("/workflows/person-scoped-key", asyncHandler(mintPersonScopedKey));
 
 app.get(
   "/api/impersonateAuth0User",
