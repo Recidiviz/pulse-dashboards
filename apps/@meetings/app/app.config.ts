@@ -136,14 +136,6 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         },
       ],
       [
-        "expo-build-properties",
-        {
-          android: {
-            targetSdkVersion: 35,
-          },
-        },
-      ],
-      [
         "expo-font",
         {
           fonts: [
