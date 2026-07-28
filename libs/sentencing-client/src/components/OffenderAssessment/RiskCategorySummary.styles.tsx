@@ -90,10 +90,16 @@ export const DomainList = styled.ul`
   gap: 0.25rem;
 `;
 
-export const DomainItem = styled.li`
-  color: ${palette.slate85};
+export const DomainText = styled.div`
   font-family: "Public Sans";
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 150%;
+`;
+export const EmptyState = styled(DomainText)`
+  color: ${palette.slate60};
+`;
+
+export const DomainItem = styled(DomainText)`
+  color: ${palette.slate85};
 `;

@@ -67,9 +67,13 @@ export const RiskCategorySummary: React.FC<RiskCategorySummaryProps> = ({
               <Styled.Chip $color={RISK_COLORS[level]}>{label}</Styled.Chip>
             </Styled.ColumnHeader>
             <Styled.DomainList>
-              {groupedDomains[level].map((domain) => (
-                <Styled.DomainItem key={domain}>{domain}</Styled.DomainItem>
-              ))}
+              {groupedDomains[level].length === 0 ? (
+                <Styled.EmptyState>No domains scored {label}</Styled.EmptyState>
+              ) : (
+                groupedDomains[level].map((domain) => (
+                  <Styled.DomainItem key={domain}>{domain}</Styled.DomainItem>
+                ))
+              )}
             </Styled.DomainList>
           </Styled.Column>
         ))}

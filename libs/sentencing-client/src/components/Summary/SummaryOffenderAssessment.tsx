@@ -176,7 +176,13 @@ export const SummaryOffenderAssessment: React.FC<SummaryOffenderAssessmentProps>
                     <Styled.CategoryColumnHeader>
                       Scored {RISK_LEVELS[level]}
                     </Styled.CategoryColumnHeader>
-                    <div>{groupedByRisk[level].join(", ") || "—"}</div>
+                    <div>
+                      {groupedByRisk[level].join(", ") || (
+                        <Styled.EmptyState>
+                          No domains scored {RISK_LEVELS[level]}
+                        </Styled.EmptyState>
+                      )}
+                    </div>
                   </Styled.CategoryColumn>
                 ))}
               </Styled.CategoryRow>

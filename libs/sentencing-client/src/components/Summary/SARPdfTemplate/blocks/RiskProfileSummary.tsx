@@ -23,7 +23,10 @@ import { Text, View } from "@react-pdf/renderer";
 import React from "react";
 
 import { formatLongDate, joinNonEmptyParts } from "../../../../utils/utils";
-import type { RiskLevelKey } from "../../../OffenderAssessment/constants";
+import {
+  RISK_LEVELS,
+  type RiskLevelKey,
+} from "../../../OffenderAssessment/constants";
 import { shouldShowOrasContent } from "../../../OffenderAssessment/utils";
 import {
   ageAtAssessment as getAgeAtAssessment,
@@ -57,7 +60,9 @@ const RiskProfileCol: React.FC<{
         </Text>
       ))
     ) : (
-      <Text style={{ fontSize: font.size.md, color: color.text.faint }}>—</Text>
+      <Text style={{ fontSize: font.size.md, color: color.text.muted }}>
+        No domains scored {RISK_LEVELS[level]}
+      </Text>
     )}
   </View>
 );

@@ -321,6 +321,10 @@ export const CategoryColumnHeader = styled.span`
   ${tableHeaderCellStyle}
 `;
 
+export const EmptyState = styled.span`
+  font-style: italic;
+`;
+
 export const CategoryColumn = styled.div`
   ${flexColumn}
   ${baseTextStyle}
