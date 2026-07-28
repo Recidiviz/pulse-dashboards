@@ -18,6 +18,8 @@
 import { appRouter, createContext, firebaseApp } from "~@jii/trpc";
 import { buildCommonServer } from "~server-setup-plugin";
 
+import { registerAuthRoutes } from "./routes";
+
 export function buildServer() {
   let firebaseAuthOptions;
 
@@ -41,6 +43,8 @@ export function buildServer() {
     trpcPrefix: "/api/trpc",
     firebaseAuthOptions,
   });
+
+  registerAuthRoutes(server);
 
   return server;
 }

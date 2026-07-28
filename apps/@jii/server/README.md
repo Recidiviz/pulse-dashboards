@@ -23,3 +23,11 @@ For one-off operations, you can use the `decode-token` script in this project. C
 For bulk operations, use the `decrypt-edovo-tokens` script instead: `nx decrypt-edovo-tokens @jii/server --input path/to/file.csv --output path/to/another/file.csv`. The input CSV must include the token in a column named `encrypted_edovo_token`, and the output CSV will contain the payload fields appended as new columns. This is useful for, e.g., pulling Segment events from BigQuery tables, which not coincidentally contain a column named `encrypted_edovo_token`.
 
 These scripts use the production encryption key by default. If you need to decrypt tokens from staging, use the `staging` configuration by including a `-c staging` argument in your command.
+
+## Testing the Auth0 roster check endpoint against staging or production
+
+`/api/v1/auth0-roster-check` (`src/server/routes.ts`) is called by Auth0 Actions (`retrieve-user-profile.js`/`gate-registration.js` in `libs/@jii/auth`) during login/registration to look up a user's permissions. Data platform permissions prevent us from running this endpoint locally, so to test it you have to sign a real token and hit the deployed staging or production instance directly.
+
+Use the `auth0-roster-check` script: `nx auth0-roster-check @jii/server -c staging --user-type RECIDIVIZ --email test@recidiviz.org` (pass `-h` or see the script file for the full set of options per user type — `RECIDIVIZ`/`STATE` take `--email`, `ORIJIN` takes `--user-id` and `--state-code`). Swap `-c staging` for `-c production` to hit production instead.
+
+This script needs the real Auth0-paired private key (`AUTH0_PRIVATE_KEY`) to sign a valid token, supplied via the target-specific SOPS files `env.auth0-roster-check.staging.enc.yaml`/`env.auth0-roster-check.production.enc.yaml` (`sops edit <file>` to add or view it). These same files are also where we keep a local copy of the secret that needs to be configured in the Auth0 Action itself (as `GOOGLE_APPLICATION_CREDENTIALS_PRIVATE_KEY`) — if that secret is ever rotated in the Auth0 dashboard, update it here too to maintain a record of it (you cannot view secret values in Auth0) and so that this script keeps working.

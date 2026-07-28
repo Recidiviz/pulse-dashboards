@@ -24,4 +24,18 @@ export default defineConfig(() => ({
   cacheDir: "../../../node_modules/.vite/apps/@jii/server",
 
   plugins: [tsconfigPaths()],
+  test: {
+    passWithNoTests: true,
+    mockReset: true,
+    unstubEnvs: true,
+    name: "@jii/server",
+    globals: true,
+    environment: "node",
+    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    reporters: ["default"],
+    coverage: {
+      reportsDirectory: "../../../coverage/apps/@jii/server",
+      provider: "v8",
+    },
+  },
 }));

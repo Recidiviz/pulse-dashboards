@@ -5,6 +5,22 @@
   "projectType": "application",
   "tags": ["scope:server"],
   "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@jii/prisma"],
+          "target": "prisma-generate"
+        }
+      ],
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.app.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
     "requires-sops-env:dev": {
       "continuous": true,
       "dependsOn": ["^prisma-generate", "^docker", "jwks-sim"],
@@ -82,6 +98,17 @@
         "production": {}
       },
       "defaultConfiguration": "production"
+    },
+    "requires-sops-env:auth0-roster-check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx src/tools/testAuth0RosterCheck.ts",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "staging": {},
+        "production": {}
+      }
     },
     "requires-sops-env:decrypt-edovo-tokens": {
       "executor": "nx:run-commands",
