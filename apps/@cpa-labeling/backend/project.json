@@ -26,12 +26,17 @@
         "cwd": "{workspaceRoot}"
       }
     },
-    "dev": {
+    "requires-sops-env:dev": {
       "executor": "nx:run-commands",
       "options": {
         "command": "uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8080",
         "cwd": "{projectRoot}"
-      }
+      },
+      "configurations": {
+        "prod": {},
+        "local-prod-reentry": {}
+      },
+      "defaultConfiguration": "prod"
     },
     "dev:docker": {
       "executor": "nx:run-commands",

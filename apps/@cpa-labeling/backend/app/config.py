@@ -8,10 +8,11 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
+    # Env vars are injected by the `requires-sops-env:` nx delegate (which
+    # decrypts env.<config>.enc.yaml into the process environment). No plaintext
+    # .env file is read.
     model_config = SettingsConfigDict(
         env_prefix="LABELING_",
-        env_file=".env",
-        env_file_encoding="utf-8",
         case_sensitive=False,
     )
 
