@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,38 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OfflineAuthHandler } from "./OfflineAuthHandler";
+import { z } from "zod";
 
-let handler: OfflineAuthHandler;
-
-beforeEach(() => {
-  handler = new OfflineAuthHandler();
+export const usNycResidentMetadataSchema = z.object({
+  stateCode: z.literal("US_NYC"),
 });
-
-test("mock user profile in offline mode", () => {
-  expect(handler.userProfile).toMatchInlineSnapshot(`
-    {
-      "allowedStates": [
-        "US_AR",
-        "US_AZ",
-        "US_CO",
-        "US_ID",
-        "US_MA",
-        "US_NC",
-        "US_ND",
-        "US_NE",
-        "US_NYC",
-        "US_TN",
-        "US_UT",
-      ],
-      "permissions": [
-        "enhanced",
-        "live_data",
-        "translator",
-        "global_write",
-        "all_resident_flags_enabled",
-      ],
-      "stateCode": "OFFLINE",
-    }
-  `);
-});
+export type UsNycResidentMetadata = z.output<
+  typeof usNycResidentMetadataSchema
+>;
+export type RawUsNycResidentMetadata = z.input<
+  typeof usNycResidentMetadataSchema
+>;

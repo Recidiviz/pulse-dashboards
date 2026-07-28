@@ -36,6 +36,8 @@ const allStateCodes = [
   "US_OK", "US_OR", "US_PA", "US_RI", "US_SC",
   "US_SD", "US_TN", "US_TX", "US_UT", "US_VT",
   "US_VA", "US_WA", "US_WV", "US_WI", "US_WY",
+  // Non-standard codes for jurisdictions with separate contracts
+  "US_NYC",
 ] as const;
 
 type StateCode = (typeof allStateCodes)[number];

@@ -26,6 +26,7 @@ import { usMoResidentMetadataSchema } from "./US_MO/metadata/schema";
 import { usNcResidentMetadataSchema } from "./US_NC/metadata/schema";
 import { usNdResidentMetadataSchema } from "./US_ND/metadata/schema";
 import { usNeResidentMetadataSchema } from "./US_NE/metadata/schema";
+import { usNycResidentMetadataSchema } from "./US_NYC/metadata/schema";
 import { usTnResidentMetadataSchema } from "./US_TN/metadata/schema";
 import { usUtResidentMetadataSchema } from "./US_UT/metadata/schema";
 
@@ -41,6 +42,7 @@ export const stateMetadataSchemas = [
   usNcResidentMetadataSchema,
   usNdResidentMetadataSchema,
   usNeResidentMetadataSchema,
+  usNycResidentMetadataSchema,
   usTnResidentMetadataSchema,
   usUtResidentMetadataSchema,
 ] as const;

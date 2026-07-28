@@ -51,6 +51,9 @@ export function StateSpecificRouter() {
       return <UsNdRouter />;
     case "US_NE":
       return <UsNeRouter />;
+    // TODO(OBT-40979): replace with <UsNycRouter /> once state lib is scaffolded
+    case "US_NYC":
+      return null;
     case "US_TN":
       return <UsTnRouter />;
     case "US_UT":

@@ -25,6 +25,7 @@ import { usMaResidentsConfig } from "./US_MA/residents/config";
 import { usNcResidentsConfig } from "./US_NC/residents/residentsConfig";
 import { usNdResidentsConfig } from "./US_ND/residents/residentsConfig";
 import { usNeResidentsConfig } from "./US_NE/residents/residentsConfig";
+import { usNycResidentsConfig } from "./US_NYC/residents/residentsConfig";
 import { usTnResidentsConfig } from "./US_TN/residents/residentsConfig";
 
 /**
@@ -39,6 +40,7 @@ export const residentsConfigByState: Record<StateCode, ResidentsConfig> = {
   US_NC: usNcResidentsConfig,
   US_ND: usNdResidentsConfig,
   US_NE: usNeResidentsConfig,
+  US_NYC: usNycResidentsConfig,
   US_TN: usTnResidentsConfig,
   // This config is just a placeholder for TS typing since Utah will always get redirect to the reentry tool
   US_UT: usIdResidentsConfig,

@@ -46,8 +46,14 @@ export class AboutVideoPresenter {
   }
 
   get stateCode(): keyof I18nResources & StateCode {
-    if (this.residentsStore.stateCode === "US_UT") {
-      throw new Error("Onboarding Video feature not enabled for US_UT");
+    if (
+      this.residentsStore.stateCode === "US_UT" ||
+      // TODO(OBT-41633): remove US_NYC from this check once NYC is added to the translations library
+      this.residentsStore.stateCode === "US_NYC"
+    ) {
+      throw new Error(
+        `Onboarding Video feature not enabled for ${this.residentsStore.stateCode}`,
+      );
     }
     return this.residentsStore.stateCode;
   }

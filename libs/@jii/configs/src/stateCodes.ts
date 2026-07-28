@@ -29,6 +29,7 @@ export const stateCodes = z.enum([
   "US_NC",
   "US_ND",
   "US_NE",
+  "US_NYC",
   "US_TN",
   "US_UT",
 ]);

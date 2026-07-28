@@ -58,6 +58,11 @@ export const stateConfigs: StateConfigArray<typeof stateCodes.options> = [
   },
   { stateCode: "US_ND", displayName: "North Dakota", urlSlug: "north-dakota" },
   { stateCode: "US_NE", displayName: "Nebraska", urlSlug: "nebraska" },
+  {
+    stateCode: "US_NYC",
+    displayName: "New York City",
+    urlSlug: "new-york-city",
+  },
   { stateCode: "US_TN", displayName: "Tennessee", urlSlug: "tennessee" },
   { stateCode: "US_UT", displayName: "Utah", urlSlug: "utah" },
 ];

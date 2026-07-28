@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { StateCode, stateCodes } from "~@jii/configs";
+import { stateCodes } from "~@jii/configs";
 import { getPrismaClientForStateCode } from "~@jii/prisma";
 import { ImportHandler } from "~data-import-plugin";
 
@@ -29,12 +29,14 @@ class JiiImportHandler<T, M> extends ImportHandler<T, M> {
     if (!shouldImport) return false;
 
     // add extra checks for state-specific imports, based on naming convention (name starts with state code)
-    const possibleStateCodePrefix = file.substring(0, 5).toUpperCase();
-    if (stateCodes.options.includes(possibleStateCodePrefix as StateCode)) {
+    const matchingStateCode = stateCodes.options.find(
+      (sc) => file.substring(0, sc.length).toUpperCase() === sc,
+    );
+    if (matchingStateCode) {
       // if prefix is a state code, only proceed if prefix matches the current state;
       // we don't expect these files to be exported for other states
       // (and even if they were, they'd be empty and useless)
-      return stateCode === possibleStateCodePrefix;
+      return stateCode === matchingStateCode;
     }
 
     return true;
