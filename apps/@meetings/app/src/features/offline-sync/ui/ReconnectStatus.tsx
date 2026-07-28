@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import BottomSheet, {
+import {
   BottomSheetBackdrop,
+  BottomSheetModal,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import clsx from "clsx";
@@ -203,7 +204,7 @@ export function ReconnectStatus({
   const [scrollEnabled, setScrollEnabled] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
   const insets = useSafeAreaInsets();
-  const bottomSheetRef = useRef<BottomSheet>(null);
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
   const { uploads, activeUploadedBytes, activeTotalBytes } =
     useOfflineUploads();
   const timeRemaining = useUploadTimeRemaining(
@@ -215,10 +216,10 @@ export function ReconnectStatus({
 
   const toggleExpanded = () => {
     if (isExpanded) {
-      bottomSheetRef.current?.close();
+      bottomSheetRef.current?.dismiss();
       setIsExpanded(false);
     } else {
-      bottomSheetRef.current?.snapToIndex(0);
+      bottomSheetRef.current?.present();
       setIsExpanded(true);
     }
   };
@@ -244,7 +245,7 @@ export function ReconnectStatus({
       // before we're actually done dequeueing our events
       if (uploadsComplete && !isVisible) {
         clearUploadStatuses();
-        bottomSheetRef.current?.close();
+        bottomSheetRef.current?.dismiss();
         setIsExpanded(false);
       }
     },
@@ -259,7 +260,7 @@ export function ReconnectStatus({
   );
 
   const dismiss = () => {
-    bottomSheetRef.current?.close();
+    bottomSheetRef.current?.dismiss();
     setIsDismissed(true);
   };
 
@@ -388,13 +389,12 @@ export function ReconnectStatus({
             {header}
           </FloatingCard>
         </FadeContainer>
-        <BottomSheet
+        <BottomSheetModal
           ref={bottomSheetRef}
-          index={-1}
           enableDynamicSizing
           enablePanDownToClose
           enableContentPanningGesture
-          onClose={() => setIsExpanded(false)}
+          onDismiss={() => setIsExpanded(false)}
           handleComponent={null}
           backdropComponent={(props) => (
             <BottomSheetBackdrop
@@ -412,7 +412,7 @@ export function ReconnectStatus({
             <View className="mb-5">{header}</View>
             {rowContent}
           </BottomSheetView>
-        </BottomSheet>
+        </BottomSheetModal>
       </>
     );
   }

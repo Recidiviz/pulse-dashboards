@@ -15,9 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import BottomSheet, {
+import {
   BottomSheetBackdrop,
   BottomSheetFooter,
+  BottomSheetModal,
   BottomSheetScrollView,
   BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
@@ -48,7 +49,7 @@ import { copyMeetingNotes } from "../lib/copyMeetingNotes";
 type Props = {
   meetingDetails: MeetingDetails;
   clientName: string;
-  bottomSheetRef: RefObject<BottomSheet | null>;
+  bottomSheetRef: RefObject<BottomSheetModal | null>;
   personId: string;
   canEdit?: boolean;
 };
@@ -71,7 +72,7 @@ const MeetingNotesSheet = ({
   const updateNotesMutation = useUpdateNotes({
     onSuccess: () => {
       showSnackbar("Changes saved");
-      bottomSheetRef.current?.close();
+      bottomSheetRef.current?.dismiss();
     },
     onError: () => showSnackbar("Failed to save changes"),
   });
@@ -80,7 +81,7 @@ const MeetingNotesSheet = ({
 
   const handleClose = () => {
     setActionItems(meetingDetails.actionItems || []);
-    bottomSheetRef.current?.close();
+    bottomSheetRef.current?.dismiss();
   };
 
   const handleSave = () => {
@@ -128,9 +129,8 @@ const MeetingNotesSheet = ({
     Platform.OS === "web" ? ScrollView : BottomSheetScrollView;
 
   return (
-    <BottomSheet
+    <BottomSheetModal
       ref={bottomSheetRef}
-      index={-1}
       snapPoints={snapPoints}
       enablePanDownToClose
       handleIndicatorStyle={{
@@ -214,7 +214,7 @@ const MeetingNotesSheet = ({
           <View className="w-full" style={{ height: FOOTER_HEIGHT }} />
         )}
       </ScrollableContainer>
-    </BottomSheet>
+    </BottomSheetModal>
   );
 };
 

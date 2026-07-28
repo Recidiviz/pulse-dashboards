@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import BottomSheet, { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Link } from "@react-navigation/native";
 import React, { useRef, useState } from "react";
 import {
@@ -99,7 +99,7 @@ const MeetingMobile = ({
     currentUserEmail === meetingDetails.staffEmail || isSkipAuthUser;
   const scrollY = useSharedValue(0);
   const draftCaseNoteSheetRef = useRef<BottomSheetModal>(null);
-  const meetingNotesSheetRef = useRef<BottomSheet>(null);
+  const meetingNotesSheetRef = useRef<BottomSheetModal>(null);
 
   const scrollHandler = useAnimatedScrollHandler((event) => {
     scrollY.value = event.contentOffset.y;
