@@ -40,8 +40,42 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "EXPO_NO_GIT_STATUS=1 nx prebuild @meetings/app --clean",
+          {
+            "command": "EXPO_NO_GIT_STATUS=1 nx prebuild @meetings/app --clean",
+            "forwardAllArgs": false
+          },
           "nx run-android @meetings/app --no-build-cache"
+        ],
+        "parallel": false,
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {},
+        "staging": {}
+      },
+      "defaultConfiguration": "dev"
+    },
+    "requires-sops-env:dev:android:fast": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "expo run:android",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {},
+        "staging": {}
+      },
+      "defaultConfiguration": "dev"
+    },
+    "requires-sops-env:dev:android:auto": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "scripts/android-wireless-connect.sh || true",
+            "forwardAllArgs": false
+          },
+          "EXPO_PUBLIC_SERVER_URL=\"http://$(scripts/get-lan-ip.sh):${PORT:-3002}/\" REACT_NATIVE_PACKAGER_HOSTNAME=\"$(scripts/get-lan-ip.sh)\" expo run:android --device"
         ],
         "parallel": false,
         "cwd": "{projectRoot}"
@@ -83,12 +117,17 @@
       },
       "defaultConfiguration": "dev"
     },
-    "dev:ios:auto": {
+    "requires-sops-env:dev:ios:auto": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "EXPO_PUBLIC_SERVER_URL=\"http://$(apps/@meetings/app/scripts/get-lan-ip.sh):${PORT:-3002}/\" nx dev:ios:fast @meetings/app",
-        "cwd": "{workspaceRoot}"
-      }
+        "command": "EXPO_PUBLIC_SERVER_URL=\"http://$(scripts/get-lan-ip.sh):${PORT:-3002}/\" REACT_NATIVE_PACKAGER_HOSTNAME=\"$(scripts/get-lan-ip.sh)\" expo run:ios --device",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {},
+        "staging": {}
+      },
+      "defaultConfiguration": "dev"
     },
     "requires-sops-env:web": {
       "executor": "nx:run-commands",

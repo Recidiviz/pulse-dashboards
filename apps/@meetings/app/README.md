@@ -48,7 +48,7 @@ nx sync-env-to-eas @meetings/app --configuration production
 ## Running locally
 
 1. Follow [instructions](../../@meetings/server/README.md) for running a local server
-1. There are three development targets: `web`, `dev:ios` (add `--device` to target a physical device), and `dev:android`. Run them using `nx` i.e. `nx web @meetings/app`
+1. There are three development targets: `web`, `dev:ios`, and `dev:android`. Run them using `nx` i.e. `nx web @meetings/app`. To target a physical device instead, see [Running locally on a physical device](#running-locally-on-a-physical-device) below.
    1. To run against the live staging backend specify `-c staging`
 
 ### Running locally on a physical device
@@ -63,9 +63,32 @@ nx sync-env-to-eas @meetings/app --configuration production
 1. Run the local server with `nx dev @meetings/server`.
 1. The "auto" config we use for easily deploying to native iOS devices skips the native prebuild step for speed, so it won't pick up changes to `app.config.ts`, native dependencies, plugins, permissions, or assets (like fonts) on its own. Before running it for the first time on a branch,
    or if you've made changes to any of those things, run `nx run @meetings/app:prebuild --platform ios --clean`
-1. Run `nx dev:ios:auto @meetings/app --device` to deploy to your device! This will (after signing into GCloud) make you select a device to deploy on which, if you've followed the previous steps, should include your physical iOS device.
+1. Run `nx dev:ios:auto @meetings/app` to deploy to your device! This will (after signing into GCloud) make you select a device to deploy on which, if you've followed the previous steps, should include your physical iOS device.
 
-**If your device shows "No development servers found"**: Enter the URL manually OR scan the QR code provided in the terminal when Expo finishes deploying the app. The IP address will be shown in the console under the QR code, something like http://192.168.0.127:8081.
+**If your device shows "No development servers found"**: Enter the URL manually OR scan the QR code provided in the terminal when Expo finishes deploying the app. The `:auto` targets set `REACT_NATIVE_PACKAGER_HOSTNAME` so the console/QR code should show your Mac's LAN IP (e.g. http://192.168.0.127:8081) rather than `127.0.0.1`; if it still shows the wrong address, use `scripts/get-lan-ip.sh` to find the correct one and enter it manually.
+
+#### Android
+
+1. Run the local server with `nx dev @meetings/server`.
+1. The "auto" config we use for easily deploying to native Android devices skips the native prebuild step for speed, so it won't pick up changes to `app.config.ts`, native dependencies, plugins, permissions, or assets (like fonts) on its own. Before running it for the first time on a branch,
+   or if you've made changes to any of those things, run `nx run @meetings/app:prebuild --platform android --clean`
+1. Connect your device using either option below, then confirm it's recognized by running `adb devices` — it should show up as `device` (not `unauthorized` or `offline`)
+
+**Option A: USB**
+
+1. Enable Developer options on your device: go to Settings > About phone and tap "Build number" seven times
+1. Enable USB debugging under Settings > System > Developer options
+1. Connect your device to your computer via USB and accept the "Allow USB debugging" prompt on the device
+
+**Option B: Wireless debugging**
+
+1. Enable Developer options (see above), then enable "Wireless debugging" under Settings > System > Developer options
+1. The first time pairing a given device, click on the Wireless debugging setting, then tap "Pair device with pairing code" and run `adb pair <ip>:<port>` in your mac terminal using the address shown on screen, entering the 6-digit code when prompted (your computer and device must be on the same Wi-Fi network)
+1. That's it for first-time setup — `nx dev:android:auto @meetings/app` automatically tries to reconnect to any already-paired device on future sessions (via `apps/@meetings/app/scripts/android-wireless-connect.sh`), as long as you haven't forgotten the device or switched networks. You can also run that script manually any time to reconnect without deploying, or to troubleshoot connection issues.
+
+1. Run `nx dev:android:auto @meetings/app` to deploy to your device! This will (after signing into GCloud) make you select a device to deploy on which, if you've followed the previous steps, should include your physical Android device.
+
+**If your device shows "No development servers found"**: Enter the URL manually OR scan the QR code provided in the terminal when Expo finishes deploying the app. The `:auto` targets set `REACT_NATIVE_PACKAGER_HOSTNAME` so the console/QR code should show your Mac's LAN IP (e.g. http://192.168.0.127:8081) rather than `127.0.0.1`; if it still shows the wrong address, use `scripts/get-lan-ip.sh` to find the correct one and enter it manually.
 
 ### Local Mode with Skip Authentication
 
