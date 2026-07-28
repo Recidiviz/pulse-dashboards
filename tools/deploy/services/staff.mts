@@ -56,7 +56,7 @@ export const staffBackend: ServiceDefinition = {
  * tools/deploy-staff-frontend.mts (single source of truth — also runnable
  * directly or via `nx deploy-cdn staff -- <env>`).
  */
-const cdnEnabledEnvs = new Set<ReleasePlan["env"]>(["staging"]);
+const cdnEnabledEnvs = new Set<ReleasePlan["env"]>(["staging", "production"]);
 
 /** Build and deploy the staff frontend to Firebase hosting. */
 export const staffFrontend: ServiceDefinition = {
