@@ -56,6 +56,13 @@ resource "google_container_node_pool" "primary_nodes" {
 
   node_config {
     machine_type = "e2-medium"
+
+    # Required by org policy constraints/compute.requireShieldedVm.
+    shielded_instance_config {
+      enable_secure_boot          = true
+      enable_integrity_monitoring = true
+    }
+
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform",
     ]
