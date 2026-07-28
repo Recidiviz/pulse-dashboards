@@ -18,7 +18,7 @@
 import { makeAutoObservable } from "mobx";
 
 import { IntakeAssessmentPresenter } from "~@jii/case-planning";
-import { UserStore } from "~@jii/data";
+import { ResidentRecord, UserStore } from "~@jii/data";
 import { UsIdTranslationsObject } from "~@jii/translation";
 import { WorkflowsResidentRecord } from "~datatypes";
 import { FirebaseAuthClient } from "~firebase-auth";
@@ -30,7 +30,7 @@ export class SurveyCardPresenter implements Hydratable {
   private intakeAuth: IntakeAssessmentPresenter;
 
   constructor(
-    resident: WorkflowsResidentRecord,
+    resident: WorkflowsResidentRecord | ResidentRecord,
     firebaseAuthClient: FirebaseAuthClient,
     userStore: UserStore,
     private copy: CardCopy,

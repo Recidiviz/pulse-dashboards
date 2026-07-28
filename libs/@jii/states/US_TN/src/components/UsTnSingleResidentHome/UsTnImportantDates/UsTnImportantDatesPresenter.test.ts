@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { WorkflowsResidentRecord } from "~datatypes";
+import { UsTnResidentJiiData } from "~datatypes";
 
 import { UsTnImportantDatesPresenter } from "./UsTnImportantDatesPresenter";
 
@@ -25,12 +25,10 @@ describe("UsTnImportantDatesPresenter tests", () => {
       const expirationDateOriginal = new Date("2025-04-01");
       const expirationDate = new Date("2024-12-01");
       const presenter = new UsTnImportantDatesPresenter({
-        metadata: {
-          stateCode: "US_TN",
-          expirationDate,
-          expirationDateOriginal,
-        },
-      } as never as WorkflowsResidentRecord);
+        stateCode: "US_TN",
+        expirationDate,
+        expirationDateOriginal,
+      } as never as UsTnResidentJiiData);
 
       expect(presenter.expirationDateReduced).toBe(true);
     });
@@ -39,12 +37,10 @@ describe("UsTnImportantDatesPresenter tests", () => {
       const expirationDateOriginal = new Date("2024-12-01");
       const expirationDate = new Date("2024-12-01");
       const presenter = new UsTnImportantDatesPresenter({
-        metadata: {
-          stateCode: "US_TN",
-          expirationDate,
-          expirationDateOriginal,
-        },
-      } as never as WorkflowsResidentRecord);
+        stateCode: "US_TN",
+        expirationDate,
+        expirationDateOriginal,
+      } as never as UsTnResidentJiiData);
 
       expect(presenter.expirationDateReduced).toBe(false);
     });
@@ -53,12 +49,10 @@ describe("UsTnImportantDatesPresenter tests", () => {
   describe("expirationDateReduction", () => {
     it("should return an empty string if the metadata state code is not US_TN", () => {
       const presenter = new UsTnImportantDatesPresenter({
-        metadata: {
-          stateCode: "US_CA",
-          expirationDate: new Date(),
-          expirationDateOriginal: new Date(),
-        },
-      } as never as WorkflowsResidentRecord);
+        stateCode: "US_CA",
+        expirationDate: new Date(),
+        expirationDateOriginal: new Date(),
+      } as never as UsTnResidentJiiData);
       expect(presenter.expirationDateReduction).toBe("");
     });
 
@@ -66,12 +60,10 @@ describe("UsTnImportantDatesPresenter tests", () => {
       const expirationDateOriginal = new Date("2025-04-01");
       const expirationDate = new Date("2024-12-01");
       const presenter = new UsTnImportantDatesPresenter({
-        metadata: {
-          stateCode: "US_TN",
-          expirationDate,
-          expirationDateOriginal,
-        },
-      } as never as WorkflowsResidentRecord);
+        stateCode: "US_TN",
+        expirationDate,
+        expirationDateOriginal,
+      } as never as UsTnResidentJiiData);
 
       expect(presenter.expirationDateReduction).toBe("121 days");
     });

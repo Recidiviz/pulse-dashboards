@@ -17,7 +17,7 @@
 
 import { makeAutoObservable } from "mobx";
 
-import { UserStore } from "~@jii/data";
+import { ResidentRecord, UserStore } from "~@jii/data";
 import { getUserFacingErrorMessage } from "~@reentry/frontend-shared";
 import { WorkflowsResidentRecord } from "~datatypes";
 import { FirebaseAuthClient } from "~firebase-auth";
@@ -36,7 +36,7 @@ export class IntakeAssessmentPresenter implements Hydratable {
   constructor(
     private readonly firebaseAuthClient: FirebaseAuthClient,
     private readonly userStore: UserStore,
-    private readonly resident: WorkflowsResidentRecord,
+    private readonly resident: WorkflowsResidentRecord | ResidentRecord,
   ) {
     makeAutoObservable(this, undefined, { autoBind: true });
 

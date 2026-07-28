@@ -20,6 +20,7 @@ import { ReactNode } from "react";
 
 import { HomepageSectionHeading } from "~@jii/common-ui";
 import {
+  useNewResidentData,
   useResidentMetadata,
   useRootStore,
   useSingleResidentContext,
@@ -107,11 +108,14 @@ const ManagedComponent = observer(function ManagedComponent({
 
 function usePresenter() {
   const { firebaseAuthClient, userStore } = useRootStore();
-  const { resident, opportunities, residentFlags } = useSingleResidentContext();
+  const { resident, opportunities } = useSingleResidentContext();
+  const stateData = useResidentMetadata("US_NE");
+  const newDataFlag = useNewResidentData();
   return new UsNeTodosPresenter(
     resident,
+    stateData,
     opportunities,
-    residentFlags,
+    newDataFlag,
     firebaseAuthClient,
     userStore,
   );

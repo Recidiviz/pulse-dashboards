@@ -19,6 +19,7 @@ import { format } from "date-fns";
 import { groupBy, mapValues } from "lodash";
 import { makeAutoObservable } from "mobx";
 
+import { ResidentRecord } from "~@jii/data";
 import {
   UsCoCreditType,
   UsCoEarnedCreditActivity,
@@ -92,7 +93,7 @@ export class UsCoCreditReportPresenter {
   readonly monthlyReports: UsCoMonthlyReports;
 
   constructor(
-    public readonly resident: WorkflowsResidentRecord,
+    public readonly resident: WorkflowsResidentRecord | ResidentRecord,
     metadata: UsCoResidentJiiData,
   ) {
     this.monthlyReports = processMonthlyReports(metadata);

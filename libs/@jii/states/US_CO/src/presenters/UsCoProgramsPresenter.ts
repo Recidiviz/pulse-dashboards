@@ -21,7 +21,7 @@ import { max, parseISO } from "date-fns";
 import { isUndefined, sortBy } from "lodash";
 import { makeAutoObservable, runInAction } from "mobx";
 
-import { DataAPI, ResidentFlags } from "~@jii/data";
+import { DataAPI, ResidentFlags, ResidentRecord } from "~@jii/data";
 import type { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
 import { WorkflowsResidentRecord } from "~datatypes";
 import {
@@ -43,7 +43,7 @@ export class UsCoProgramsPresenter implements Hydratable {
   showOnlyStarred = false;
 
   constructor(
-    private readonly resident: WorkflowsResidentRecord,
+    private readonly resident: WorkflowsResidentRecord | ResidentRecord,
     private readonly apiClient: DataAPI,
     private readonly residentFlags: ResidentFlags,
   ) {

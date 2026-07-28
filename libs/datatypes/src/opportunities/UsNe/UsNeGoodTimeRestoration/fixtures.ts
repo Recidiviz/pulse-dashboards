@@ -183,7 +183,7 @@ export const usNeGoodTimeRestorationFixtures = {
       nextMonthAfterLatestGoodTimeRestorationOrDenialDate: relativeFixtureDate({
         months: -1,
       }),
-      almostEligibleForJiiApp: false,
+      almostEligibleForJiiApp: true,
     },
   }),
   almostEligibleRecentClass1Mr: makeRecordFixture(

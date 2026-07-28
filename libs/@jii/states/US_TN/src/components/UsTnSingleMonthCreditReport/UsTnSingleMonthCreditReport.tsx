@@ -28,7 +28,6 @@ import {
   HomepageSectionHeading,
   RowDivider,
 } from "~@jii/common-ui";
-import { useSingleResidentContext } from "~@jii/data";
 import { EGT } from "~@jii/paths";
 import { withPresenterManager } from "~hydration-utils";
 
@@ -90,12 +89,10 @@ function ManagedComponent({
 }
 
 function usePresenter() {
-  const { resident } = useSingleResidentContext();
   const { reportDate } = useTypedParams(EGT.MonthlyReport);
   const { monthlyReports } = useUsTnSingleResidentDataContext();
 
   return new UsTnSingleMonthCreditReportPresenter(
-    resident,
     reportDate,
     monthlyReports[reportDate],
   );

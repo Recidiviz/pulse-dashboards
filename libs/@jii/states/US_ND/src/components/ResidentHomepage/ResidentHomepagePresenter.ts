@@ -17,13 +17,14 @@
 
 import { makeAutoObservable } from "mobx";
 
+import { ResidentRecord } from "~@jii/data";
 import { SentenceDatesData } from "~@jii/sentence-dates";
 import { UsNdResidentMetadata, WorkflowsResidentRecord } from "~datatypes";
 
 export class ResidentHomepagePresenter {
   constructor(
     private residentData: UsNdResidentMetadata,
-    private residentRecord: WorkflowsResidentRecord,
+    private residentRecord: WorkflowsResidentRecord | ResidentRecord,
   ) {
     makeAutoObservable(this);
   }

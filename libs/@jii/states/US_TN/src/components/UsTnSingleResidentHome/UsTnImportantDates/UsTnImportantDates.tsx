@@ -27,7 +27,7 @@ import {
   HomepageSectionHeading,
   RowDivider,
 } from "~@jii/common-ui";
-import { hydrateTemplate, useSingleResidentContext } from "~@jii/data";
+import { hydrateTemplate, useResidentMetadata } from "~@jii/data";
 import { CardDateInfo } from "~@jii/earned-good-time";
 import { State } from "~@jii/paths";
 import { useUsTnTranslations } from "~@jii/translation";
@@ -75,7 +75,7 @@ const ImportantDateCard = ({
 const ManagedComponent: FC<{
   presenter: UsTnImportantDatesPresenter;
 }> = observer(function UsTnImportantDates({ presenter }) {
-  const { metadata } = presenter;
+  const { residentData } = presenter;
   const { t } = useUsTnTranslations();
 
   return (
@@ -83,10 +83,13 @@ const ManagedComponent: FC<{
       <HomepageSectionHeading>
         {t(($) => $.importantDates.sectionHeading)}
       </HomepageSectionHeading>
-      <ImportantDateCard section="releaseEligibilityDate" metadata={metadata} />
+      <ImportantDateCard
+        section="releaseEligibilityDate"
+        metadata={residentData}
+      />
       <ImportantDateCard
         section="expirationDate"
-        metadata={metadata}
+        metadata={residentData}
         infoPageAnchorTag="expiration-date"
       >
         <ExpirationDateReduction presenter={presenter} />
@@ -101,11 +104,8 @@ const ExpirationDateReduction = ({
 }: {
   presenter: UsTnImportantDatesPresenter;
 }) => {
-  const {
-    expirationDateReduced,
-    expirationDateReduction,
-    resident: { metadata },
-  } = presenter;
+  const { expirationDateReduced, expirationDateReduction, residentData } =
+    presenter;
 
   if (!expirationDateReduced) return null;
 
@@ -119,7 +119,7 @@ const ExpirationDateReduction = ({
             <div>
               {hydrateTemplate(
                 "{{formatFullDateOptional expirationDateOriginal 'No original FXP date on record'}}",
-                metadata,
+                residentData,
               )}
             </div>
           </ActivityRow>
@@ -136,7 +136,7 @@ const ExpirationDateReduction = ({
             <div>
               {hydrateTemplate(
                 "{{formatFullDateOptional expirationDate 'No updated FXP date on record'}}",
-                metadata,
+                residentData,
               )}
             </div>
           </ActivityRow>
@@ -148,9 +148,9 @@ const ExpirationDateReduction = ({
 };
 
 function usePresenter() {
-  const { resident } = useSingleResidentContext();
+  const residentData = useResidentMetadata("US_TN");
 
-  return new UsTnImportantDatesPresenter(resident);
+  return new UsTnImportantDatesPresenter(residentData);
 }
 
 export const UsTnImportantDates = withPresenterManager({

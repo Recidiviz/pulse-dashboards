@@ -17,41 +17,30 @@
 
 import { differenceInDays } from "date-fns";
 
-import { WorkflowsResidentRecord } from "~datatypes";
+import { UsTnResidentJiiData } from "~datatypes";
 
 export class UsTnImportantDatesPresenter {
-  constructor(public readonly resident: WorkflowsResidentRecord) {}
-
-  get metadata() {
-    const { metadata } = this.resident;
-
-    if (metadata.stateCode !== "US_TN") {
-      throw new Error(
-        `Unexpected state code for UnTnImportantDatesPresenter ${metadata.stateCode}`,
-      );
-    }
-
-    return metadata;
-  }
+  constructor(public readonly residentData: UsTnResidentJiiData) {}
 
   get expirationDateReduced(): boolean {
-    const { metadata } = this.resident;
-    if (metadata.stateCode !== "US_TN") return false;
-    if (!metadata.expirationDate || !metadata.expirationDateOriginal)
+    const { residentData } = this;
+    if (residentData.stateCode !== "US_TN") return false;
+    if (!residentData.expirationDate || !residentData.expirationDateOriginal)
       return false;
 
-    return metadata.expirationDateOriginal > metadata.expirationDate;
+    return residentData.expirationDateOriginal > residentData.expirationDate;
   }
 
   get expirationDateReduction(): string {
-    const { metadata } = this.resident;
-    if (metadata.stateCode !== "US_TN") return "";
-    if (!metadata.expirationDate || !metadata.expirationDateOriginal) return "";
+    const { residentData } = this;
+    if (residentData.stateCode !== "US_TN") return "";
+    if (!residentData.expirationDate || !residentData.expirationDateOriginal)
+      return "";
 
     // TODO(#9283):[JII][TN] Move copy into a central location
     return `${differenceInDays(
-      metadata.expirationDateOriginal,
-      metadata.expirationDate,
+      residentData.expirationDateOriginal,
+      residentData.expirationDate,
     )} days`;
   }
 }

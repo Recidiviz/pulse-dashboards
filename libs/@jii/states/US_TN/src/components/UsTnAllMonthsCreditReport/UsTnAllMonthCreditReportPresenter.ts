@@ -17,6 +17,7 @@
 
 import { groupBy, mapValues } from "lodash";
 
+import { ResidentRecord } from "~@jii/data";
 import { WorkflowsResidentRecord } from "~datatypes";
 
 import {
@@ -26,7 +27,7 @@ import {
 
 export class UsTnAllMonthCreditReportPresenter {
   constructor(
-    public readonly resident: WorkflowsResidentRecord,
+    public readonly resident: WorkflowsResidentRecord | ResidentRecord,
     public readonly monthlyReports: UsTnMonthlyReports,
   ) {}
 

@@ -19,7 +19,7 @@ import { rem } from "polished";
 import styled from "styled-components";
 
 import { Card, CopyWrapper, GoButton } from "~@jii/common-ui";
-import { useSingleResidentContext } from "~@jii/data";
+import { firstNameLastName, useSingleResidentContext } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsNcTranslations } from "~@jii/translation";
 import { palette, spacing } from "~design-system";
@@ -55,7 +55,7 @@ export function UsNcRNAConfirmIdentity() {
       <RNADescription>
         <IdentityPart
           label={nameLabel}
-          value={`${resident.personName.givenNames} ${resident.personName.surname}`}
+          value={`${firstNameLastName(resident)}`}
         />
         <IdentityPart label={idLabel} value={resident.displayId} />
         <CopyWrapper>{description}</CopyWrapper>

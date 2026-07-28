@@ -17,7 +17,10 @@
 
 import { WorkflowsResidentMetadata, WorkflowsResidentRecord } from "~datatypes";
 
-import { useSingleResidentContext } from "../contexts/SingleResidentContext";
+import {
+  ResidentRecord,
+  useSingleResidentContext,
+} from "../contexts/SingleResidentContext";
 
 type StateCode = WorkflowsResidentRecord["metadata"]["stateCode"];
 
@@ -30,17 +33,31 @@ type StateCode = WorkflowsResidentRecord["metadata"]["stateCode"];
 export function useResidentMetadata<S extends NonNullable<StateCode>>(
   stateCode: S,
 ): WorkflowsResidentMetadata<S> {
-  const {
-    resident: { metadata },
-  } = useSingleResidentContext();
+  const { resident } = useSingleResidentContext();
 
-  if (stateCode === metadata.stateCode) {
+  // TODO(OBT-29541): metadata phased out with Workflows backend
+  let stateSpecificData:
+    | WorkflowsResidentRecord["metadata"]
+    | ResidentRecord["stateSpecificData"];
+  if ("metadata" in resident) {
+    stateSpecificData = resident.metadata;
+  } else {
+    stateSpecificData = resident.stateSpecificData;
+  }
+
+  if (!stateSpecificData) {
+    throw new Error(
+      `No state-specific data is present for resident ${resident.pseudonymizedId} in ${stateCode}`,
+    );
+  }
+
+  if (stateCode === stateSpecificData.stateCode) {
     // typescript can't infer this correctly,
     // but if the state codes match then this should be a safe assertion
-    return metadata as WorkflowsResidentMetadata<S>;
+    return stateSpecificData as WorkflowsResidentMetadata<S>;
   }
 
   throw new Error(
-    `Expecting ${stateCode} metadata but got ${metadata.stateCode}`,
+    `Expecting ${stateCode} metadata but got ${stateSpecificData.stateCode}`,
   );
 }

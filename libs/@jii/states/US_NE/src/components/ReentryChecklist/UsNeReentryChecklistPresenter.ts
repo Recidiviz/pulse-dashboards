@@ -19,9 +19,9 @@ import { captureException } from "@sentry/react";
 import { addDays, addMonths, addYears, isBefore, min } from "date-fns";
 import { flowResult, makeAutoObservable } from "mobx";
 
-import { DataAPI, ResidentFlags } from "~@jii/data";
+import { DataAPI, ResidentFlags, ResidentRecord } from "~@jii/data";
 import type { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
-import { WorkflowsResidentRecord } from "~datatypes";
+import { UsNeResidentJiiData, WorkflowsResidentRecord } from "~datatypes";
 import {
   Hydratable,
   HydratesFromSource,
@@ -59,7 +59,8 @@ export class UsNeReentryChecklistPresenter implements Hydratable {
   writeError?: string;
 
   constructor(
-    private readonly resident: WorkflowsResidentRecord,
+    private readonly resident: WorkflowsResidentRecord | ResidentRecord,
+    private readonly residentStateSpecificData: UsNeResidentJiiData,
     private readonly apiClient: DataAPI,
     private readonly residentFlags: ResidentFlags,
   ) {
@@ -108,11 +109,10 @@ export class UsNeReentryChecklistPresenter implements Hydratable {
    * Helper to get the closest date between PED and TRD
    */
   private getClosestPedOrTrd(): Date | null {
-    const metadata = this.resident.metadata;
-    if (metadata.stateCode !== "US_NE") return null;
+    const { residentStateSpecificData } = this;
 
-    const ped = metadata.paroleEligibilityDate;
-    const trd = metadata.tentativeReleaseDate;
+    const ped = residentStateSpecificData.paroleEligibilityDate;
+    const trd = residentStateSpecificData.tentativeReleaseDate;
 
     if (!ped && !trd) return null;
     if (!ped) return trd;
@@ -126,10 +126,10 @@ export class UsNeReentryChecklistPresenter implements Hydratable {
    * Set of documentType strings present in the resident's criticalDocuments metadata
    */
   private get residentDocuments(): Set<string> {
-    const metadata = this.resident.metadata;
-    if (metadata.stateCode !== "US_NE") return new Set();
+    const { residentStateSpecificData } = this;
+    if (residentStateSpecificData.stateCode !== "US_NE") return new Set();
     return new Set(
-      metadata.criticalDocuments
+      residentStateSpecificData.criticalDocuments
         .map((d) => d.documentType)
         .filter((t): t is string => t !== null),
     );

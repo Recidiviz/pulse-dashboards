@@ -15,39 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
-import { FC } from "react";
-import { Outlet } from "react-router-dom";
-import { useTypedParams } from "react-router-typesafe-routes/dom";
+import { memo } from "react";
 
-import { SingleResidentContextProvider, useResidentsContext } from "~@jii/data";
-import { PageHydratorWithErrorLogging } from "~@jii/layout";
-import { State } from "~@jii/paths";
-import { withPresenterManager } from "~hydration-utils";
+import { useNewResidentData } from "~@jii/data";
 
-import { SingleResidentHydratorPresenter } from "./SingleResidentHydratorPresenter";
+import { SingleResidentFirestoreHydrator } from "./SingleResidentFirestoreHydrator";
+import { SingleResidentTrpcHydrator } from "./SingleResidentTrpcHydrator";
 
-// isolating data access in its own component prevents it from throwing errors before hydration is complete
-const ManagedComponent: FC<{
-  presenter: SingleResidentHydratorPresenter;
-}> = observer(function SingleResidentHydrator({ presenter }) {
-  return (
-    <SingleResidentContextProvider value={presenter.residentData}>
-      <Outlet />
-    </SingleResidentContextProvider>
+export const SingleResidentHydrator = memo(function SingleResidentHydrator() {
+  return useNewResidentData() ? (
+    <SingleResidentTrpcHydrator />
+  ) : (
+    // TODO(OBT-29541): get rid of this entirely
+    <SingleResidentFirestoreHydrator />
   );
-});
-
-function usePresenter() {
-  const { personPseudoId } = useTypedParams(State.Resident);
-  const { residentsStore } = useResidentsContext();
-
-  return new SingleResidentHydratorPresenter(residentsStore, personPseudoId);
-}
-
-export const SingleResidentHydrator = withPresenterManager({
-  usePresenter,
-  managerIsObserver: false,
-  ManagedComponent,
-  HydratorComponent: PageHydratorWithErrorLogging,
 });

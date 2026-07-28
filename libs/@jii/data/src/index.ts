@@ -39,4 +39,5 @@ export * from "./hooks/useResidentMetadata";
 export * from "./hooks/useStateCodeFromSlug";
 export * from "./utils/date";
 export * from "./utils/iframe";
+export * from "./utils/people";
 export * from "./utils/stateCodeFromCurrentUrl";

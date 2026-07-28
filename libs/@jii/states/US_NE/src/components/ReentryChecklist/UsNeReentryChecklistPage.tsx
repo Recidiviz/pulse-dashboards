@@ -24,7 +24,11 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components";
 
 import { BackLink, SlateCopy, usePageTitle } from "~@jii/common-ui";
-import { useRootStore, useSingleResidentContext } from "~@jii/data";
+import {
+  useResidentMetadata,
+  useRootStore,
+  useSingleResidentContext,
+} from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsNeTranslations } from "~@jii/translation";
 import { Button, spacing } from "~design-system";
@@ -140,8 +144,14 @@ const ChecklistHydrator: FC<{
 
 function usePresenter() {
   const { resident, residentFlags } = useSingleResidentContext();
+  const stateData = useResidentMetadata("US_NE");
   const { apiClient } = useRootStore();
-  return new UsNeReentryChecklistPresenter(resident, apiClient, residentFlags);
+  return new UsNeReentryChecklistPresenter(
+    resident,
+    stateData,
+    apiClient,
+    residentFlags,
+  );
 }
 
 const UsNeReentryChecklistPage = withPresenterManager({

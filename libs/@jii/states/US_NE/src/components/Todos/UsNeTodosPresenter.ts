@@ -19,10 +19,12 @@ import { differenceInMonths } from "date-fns";
 import { makeAutoObservable } from "mobx";
 
 import { IntakeAssessmentPresenter } from "~@jii/case-planning";
-import { OpportunityData, ResidentFlags, UserStore } from "~@jii/data";
+import { OpportunityData, ResidentRecord, UserStore } from "~@jii/data";
 import { UsNeTranslationsObject } from "~@jii/translation";
 import {
   UsNeGoodTimeRestorationRecord,
+  usNeGoodTimeRestorationTodosCriterionEnum,
+  UsNeResidentJiiData,
   WorkflowsResidentRecord,
 } from "~datatypes";
 import { FirebaseAuthClient } from "~firebase-auth";
@@ -36,9 +38,10 @@ export class UsNeTodosPresenter implements Hydratable {
   readonly intakeAssessmentPresenter: IntakeAssessmentPresenter;
 
   constructor(
-    private readonly resident: WorkflowsResidentRecord,
+    resident: WorkflowsResidentRecord | ResidentRecord,
+    private readonly residentMetadata: UsNeResidentJiiData,
     private readonly opportunities: OpportunityData[],
-    private readonly residentFlags: ResidentFlags,
+    private readonly useNewResidentData: boolean,
     firebaseAuthClient: FirebaseAuthClient,
     userStore: UserStore,
   ) {
@@ -49,18 +52,6 @@ export class UsNeTodosPresenter implements Hydratable {
       userStore,
       resident,
     );
-  }
-
-  get residentMetadata() {
-    const { metadata } = this.resident;
-
-    if (metadata.stateCode !== "US_NE") {
-      throw new Error(
-        `Unexpected state code for UsNeTodosPresenter ${metadata.stateCode}`,
-      );
-    }
-
-    return metadata;
   }
 
   async hydrate(): Promise<void> {
@@ -102,10 +93,7 @@ export class UsNeTodosPresenter implements Hydratable {
     )?.opportunityRecord;
   }
 
-  /**
-   * Which Good Time Restoration todo should be shown, if any?
-   */
-  get goodTimeRestorationStatus():
+  private get goodTimeRestorationStatusFromOpportunity():
     | keyof UsNeTranslationsObject["home"]["todos"]["goodTimeRestoration"]
     | undefined {
     const { goodTimeRestorationOpportunityRecord } = this;
@@ -127,19 +115,71 @@ export class UsNeTodosPresenter implements Hydratable {
     return "almostEligible";
   }
 
-  // Only used/well defined when goodTimeRestorationStatus === "almostEligible"
-  get goodTimeRestorationMonthsRemaining(): number | undefined {
-    const ineligibleCriteria =
-      this.goodTimeRestorationOpportunityRecord?.ineligibleCriteria;
-    if (!ineligibleCriteria) {
-      return;
-    }
+  /**
+   * We expect and support at most one item in the array of todos
+   */
+  private get goodTimeRestorationTodo():
+    | UsNeResidentJiiData["goodTimeRestorationTodos"][number]
+    | undefined {
+    const { goodTimeRestorationTodos } = this.residentMetadata;
 
-    // At most one of these will exist in records marked as almostEligibleForJiiApp
-    const latestEligibleDate =
-      ineligibleCriteria.usNeLessThan3UdcMrsInPast6Months?.latestEligibleDate ??
-      ineligibleCriteria.usNeNoIdcMrsInPast6Months?.latestEligibleDate ??
-      ineligibleCriteria.usNeNoClass1MrsInLastYear?.latestEligibleDate;
+    return goodTimeRestorationTodos.length > 0
+      ? goodTimeRestorationTodos[0]
+      : undefined;
+  }
+
+  private get goodTimeRestorationStatusFromResident():
+    | keyof UsNeTranslationsObject["home"]["todos"]["goodTimeRestoration"]
+    | undefined {
+    const restorationReason = this.goodTimeRestorationTodo;
+    if (!restorationReason) return;
+
+    switch (restorationReason.criterion) {
+      case usNeGoodTimeRestorationTodosCriterionEnum.enum
+        .US_NE_NOT_IN_LTRH_FOR_90_DAYS:
+        return "ineligibleLTRH";
+      case usNeGoodTimeRestorationTodosCriterionEnum.enum
+        .US_NE_NO_ONGOING_CLINICAL_TREATMENT_PROGRAM_REFUSAL:
+        return "ineligibleTreatment";
+      default:
+        return "almostEligible";
+    }
+  }
+
+  /**
+   * Which Good Time Restoration todo should be shown, if any?
+   */
+  get goodTimeRestorationStatus():
+    | keyof UsNeTranslationsObject["home"]["todos"]["goodTimeRestoration"]
+    | undefined {
+    return this.useNewResidentData
+      ? this.goodTimeRestorationStatusFromResident
+      : this.goodTimeRestorationStatusFromOpportunity;
+  }
+
+  // Only supported when goodTimeRestorationStatus === "almostEligible"
+  get goodTimeRestorationMonthsRemaining(): number | undefined {
+    if (this.goodTimeRestorationStatus !== "almostEligible") return;
+
+    let latestEligibleDate: Date | undefined;
+
+    if (this.useNewResidentData) {
+      latestEligibleDate =
+        this.goodTimeRestorationTodo?.reason.latestEligibleDate;
+    } else {
+      const ineligibleCriteria =
+        this.goodTimeRestorationOpportunityRecord?.ineligibleCriteria;
+      if (!ineligibleCriteria) {
+        return;
+      }
+
+      // At most one of these will exist in records marked as almostEligibleForJiiApp
+      latestEligibleDate =
+        ineligibleCriteria.usNeLessThan3UdcMrsInPast6Months
+          ?.latestEligibleDate ??
+        ineligibleCriteria.usNeNoIdcMrsInPast6Months?.latestEligibleDate ??
+        ineligibleCriteria.usNeNoClass1MrsInLastYear?.latestEligibleDate;
+    }
 
     if (!latestEligibleDate) return;
     return Math.max(1, differenceInMonths(latestEligibleDate, new Date()));

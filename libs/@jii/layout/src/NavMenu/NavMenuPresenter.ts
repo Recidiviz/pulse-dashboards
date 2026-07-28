@@ -19,9 +19,11 @@ import { makeAutoObservable } from "mobx";
 
 import { SimpleNavLinkProps } from "~@jii/common-ui";
 import {
+  firstNameLastName,
   OfflineAuthHandler,
   OfflineUserId,
   offlineUsers,
+  ResidentRecord,
   RootStore,
   windowIsIframe,
 } from "~@jii/data";
@@ -34,7 +36,7 @@ export class NavMenuPresenter {
   constructor(
     public links: MenuLinks,
     private rootStore: RootStore,
-    public readonly resident?: WorkflowsResidentRecord,
+    public readonly resident?: WorkflowsResidentRecord | ResidentRecord,
   ) {
     makeAutoObservable(this, undefined, { autoBind: true });
   }
@@ -44,8 +46,7 @@ export class NavMenuPresenter {
   }
 
   get personName(): string | undefined {
-    if (!this.resident) return undefined;
-    return `${this.resident.personName.givenNames} ${this.resident.personName.surname}`;
+    return this.resident ? firstNameLastName(this.resident) : undefined;
   }
 
   get showLogout(): boolean {

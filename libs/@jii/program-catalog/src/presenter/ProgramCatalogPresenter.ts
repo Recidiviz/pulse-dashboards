@@ -21,7 +21,7 @@ import { max } from "date-fns";
 import { isUndefined, sortBy } from "lodash";
 import { makeAutoObservable, runInAction } from "mobx";
 
-import { DataAPI } from "~@jii/data";
+import { DataAPI, ResidentRecord } from "~@jii/data";
 import { WorkflowsResidentRecord } from "~datatypes";
 import {
   Hydratable,
@@ -43,7 +43,7 @@ export class ProgramCatalogPresenter implements Hydratable {
   selectedProgram?: Program;
 
   constructor(
-    private readonly resident: WorkflowsResidentRecord,
+    private readonly resident: WorkflowsResidentRecord | ResidentRecord,
     private readonly apiClient: DataAPI,
     readonly config: ProgramCatalogProps,
   ) {

@@ -49,6 +49,15 @@ export const usNeResidentCommonSchema = z.object({
 export type UsNeResidentCommon = z.infer<typeof usNeResidentCommonSchema>;
 export type RawUsNeResidentCommon = z.input<typeof usNeResidentCommonSchema>;
 
+// there are other criterion values in the underlying TES/Opportunity
+// but these are the only ones we expect to make it into the todos-specific field
+export const usNeGoodTimeRestorationTodosCriterionEnum = z.enum([
+  "US_NE_NO_IDC_MRS_IN_PAST_6_MONTHS",
+  "US_NE_LESS_THAN_3_UDC_MRS_IN_PAST_6_MONTHS",
+  "US_NE_NO_CLASS_1_MRS_IN_LAST_YEAR",
+  "US_NE_NOT_IN_LTRH_FOR_90_DAYS",
+  "US_NE_NO_ONGOING_CLINICAL_TREATMENT_PROGRAM_REFUSAL",
+]);
 // JII-only fields (extends common).
 // TODO(OBT-29535): remove this from the workflows schema and move to @jii/schemas
 export const usNeResidentJiiDataSchema = usNeResidentCommonSchema.extend({
@@ -90,7 +99,7 @@ export const usNeResidentJiiDataSchema = usNeResidentCommonSchema.extend({
   goodTimeRestorationTodos: z
     .array(
       z.object({
-        criterion: z.string(),
+        criterion: usNeGoodTimeRestorationTodosCriterionEnum,
         reason: z.object({ latestEligibleDate: dateStringSchema.optional() }),
       }),
     )

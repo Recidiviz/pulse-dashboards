@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,27 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeAutoObservable } from "mobx";
-
-import { ResidentRecord } from "~@jii/data";
 import { WorkflowsResidentRecord } from "~datatypes";
 
-import {
-  UsTnMonthlyReport,
-  UsTnMonthlyReports,
-} from "../../UsTnSingleResidentDataContext/context";
+import { ResidentRecord } from "../contexts/SingleResidentContext";
 
-export class UsTnMonthlyReportsPresenter {
-  constructor(
-    public readonly resident: WorkflowsResidentRecord | ResidentRecord,
-    private readonly monthlyReports: UsTnMonthlyReports,
-  ) {
-    makeAutoObservable(this, undefined, { autoBind: true });
+export function firstNameLastName(
+  resident: ResidentRecord | WorkflowsResidentRecord,
+) {
+  // TODO(OBT-29541): personName phased out with Workflows backend
+  let givenNames;
+  let surname;
+  if ("personName" in resident) {
+    givenNames = resident.personName.givenNames;
+    surname = resident.personName.surname;
+  } else {
+    givenNames = resident.givenNames;
+    surname = resident.surname;
   }
-
-  get mostRecentReports(): UsTnMonthlyReport[] {
-    return Object.values(this.monthlyReports)
-      .sort((a, b) => (b.date > a.date ? 1 : -1))
-      .slice(0, 8);
-  }
+  return `${givenNames} ${surname}`;
 }
