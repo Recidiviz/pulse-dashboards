@@ -312,7 +312,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         },
         supervisionUnrestrictedSearch: {},
         supervisorHomepageReviewCard: {
-          activeTenants: ["US_IA", "US_MI", "US_TX"],
+          activeTenants: ["US_AZ", "US_IA", "US_MI", "US_TX"],
         },
         supervisorHomepageReviewTable: { activeTenants: ["US_TX"] },
         supervisorHomepageWorkflows: {},
@@ -411,7 +411,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         hideWorkflowsOpportunities: undefined,
         hideWorkflowsResidentsPage: { activeTenants: ["US_NC"] },
         supervisorHomepageReviewCard: {
-          activeTenants: ["US_IA", "US_MI", "US_TX"],
+          activeTenants: ["US_AZ", "US_IA", "US_MI", "US_TX"],
         },
         supervisorHomepageReviewTable: { activeTenants: ["US_TX"] },
       };
