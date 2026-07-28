@@ -38,9 +38,9 @@ const runExecutor: PromiseExecutor = async (options, context) => {
 
   // these are all things that should be true of state projects, and not true of other projects
   const hasStateTag = !!projectConfig.tags?.includes(TYPE_TAGS.state);
-  const hasStateProjectName = /\/US_[a-zA-Z]{2}$/.test(projectName);
-  const isStateUppercase = /\/US_[A-Z]{2}$/.test(projectName);
-  const isInStatesFolder = /^libs\/@jii\/states\/US_[A-Z]{2}$/.test(
+  const hasStateProjectName = /\/US_[a-zA-Z]{2,3}$/.test(projectName);
+  const isStateUppercase = /\/US_[A-Z]{2,3}$/.test(projectName);
+  const isInStatesFolder = /^libs\/@jii\/states\/US_[A-Z]{2,3}$/.test(
     projectConfig.root,
   );
 
