@@ -15,20 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+export const ACCESS_DENIED = "access_denied";
 
-import { useUserContext } from "~@meetings/app/entities/user";
-import { useSetDocumentTitle } from "~@meetings/app/shared/lib/platform";
-import { NoAccessError } from "~@meetings/app/widgets/no-access";
-
-export function NoAccessScreen() {
-  useSetDocumentTitle("Access Denied - Recidiviz Meetings");
-  const { onLogout } = useUserContext();
-
-  return (
-    <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
-      <NoAccessError nextAction={onLogout} nextActionButtonLabel="Log Out" />
-    </SafeAreaView>
-  );
+/**
+ * True when an Auth0 post-login Action denied the login (`api.access.deny(...)`),
+ * e.g. a Recidiviz user with no state access. Both web and native error shapes
+ * expose this on `name`/`code`.
+ */
+export function isAccessDeniedError(error: unknown): boolean {
+  if (typeof error !== "object" || error === null) {
+    return false;
+  }
+  const { name, code } = error as { name?: unknown; code?: unknown };
+  return name === ACCESS_DENIED || code === ACCESS_DENIED;
 }

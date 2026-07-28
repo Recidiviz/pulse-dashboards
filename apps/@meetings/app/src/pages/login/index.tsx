@@ -16,7 +16,7 @@
 // =============================================================================
 
 import BottomSheet from "@gorhom/bottom-sheet";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -28,23 +28,55 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import LogoSvg from "~@meetings/app/shared/assets/icons/logo.svg";
 import { env } from "~@meetings/app/shared/config";
+import { isAccessDeniedError } from "~@meetings/app/shared/lib/auth";
 import { useSetDocumentTitle } from "~@meetings/app/shared/lib/platform";
 import PrimaryButton from "~@meetings/app/shared/ui/PrimaryButton";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
+import { NoAccessError } from "~@meetings/app/widgets/no-access";
 
 import { LearnMoreModal, LearnMoreSheet } from "./ui/LearnMore";
 
 export function LoginScreen({ onSkipAuth }: { onSkipAuth?: () => void }) {
-  useSetDocumentTitle("Login - Recidiviz Meetings");
-  const { authorize } = useAuth0();
+  const { authorize, error, clearCredentials } = useAuth0();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [learnMoreModalVisible, setLearnMoreModalVisible] = useState(false);
+  const [accessDeniedMessage, setAccessDeniedMessage] = useState<
+    string | undefined
+  >(undefined);
 
+  useSetDocumentTitle(
+    accessDeniedMessage !== undefined
+      ? "Access Denied - Recidiviz Meetings"
+      : "Login - Recidiviz Meetings",
+  );
+
+  // On web, `authorize()` triggers a full-page redirect and its promise never
+  // settles in this JS context - the Action's access_denied error surfaces
+  // here instead, once the app reloads after the redirect back.
+  useEffect(
+    function surfaceAuth0AccessErrorOnWeb() {
+      if (error && isAccessDeniedError(error)) {
+        setAccessDeniedMessage(error.message);
+      }
+    },
+    [error],
+  );
+
+  // On native, `authorize()` resolves/rejects in the same JS context, so this
+  // catch handles the access_denied case there.
   const handleContinue = async () => {
-    await authorize({
-      audience: env.EXPO_PUBLIC_AUTH0_AUDIENCE,
-      scope: "openid profile email offline_access",
-    });
+    try {
+      await authorize({
+        audience: env.EXPO_PUBLIC_AUTH0_AUDIENCE,
+        scope: "openid profile email offline_access",
+      });
+    } catch (caught) {
+      if (isAccessDeniedError(caught)) {
+        setAccessDeniedMessage(
+          caught instanceof Error ? caught.message : undefined,
+        );
+      }
+    }
   };
 
   const handleSkipAuth = () => {
@@ -64,6 +96,21 @@ export function LoginScreen({ onSkipAuth }: { onSkipAuth?: () => void }) {
         break;
     }
   };
+
+  if (accessDeniedMessage !== undefined) {
+    return (
+      <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
+        <NoAccessError
+          errorMessage={accessDeniedMessage}
+          nextActionButtonLabel="Back to Sign In"
+          nextAction={() => {
+            setAccessDeniedMessage(undefined);
+            clearCredentials();
+          }}
+        />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView className="flex-1">

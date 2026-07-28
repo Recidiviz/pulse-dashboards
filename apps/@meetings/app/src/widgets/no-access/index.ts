@@ -15,20 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-
-import { useUserContext } from "~@meetings/app/entities/user";
-import { useSetDocumentTitle } from "~@meetings/app/shared/lib/platform";
-import { NoAccessError } from "~@meetings/app/widgets/no-access";
-
-export function NoAccessScreen() {
-  useSetDocumentTitle("Access Denied - Recidiviz Meetings");
-  const { onLogout } = useUserContext();
-
-  return (
-    <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
-      <NoAccessError nextAction={onLogout} nextActionButtonLabel="Log Out" />
-    </SafeAreaView>
-  );
-}
+export { NoAccessError } from "./ui/NoAccessError";
