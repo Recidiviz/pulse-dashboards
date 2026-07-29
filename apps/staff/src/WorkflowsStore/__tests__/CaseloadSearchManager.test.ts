@@ -61,6 +61,9 @@ beforeEach(() => {
     activeSystem: "SUPERVISION",
     availableOfficers: [...mockSupervisionOfficers].sort(staffNameComparator),
     availableLocations: mockLocations,
+    // Real getter always returns an array; default it so reads of
+    // selectedSearchIds (which walks the supervisor chain) don't hit undefined.
+    staffSupervisedByCurrentUser: [],
   });
   searchStore = new SearchStore(workflowsStore as unknown as WorkflowsStore);
   manager = searchStore.caseloadSearchManager;
@@ -556,5 +559,142 @@ describe("search", () => {
 
     await manager.search("");
     expect((mockMultiSearch.mock.calls[1][0] as any).searches[0].q).toBe("*");
+  });
+});
+
+// Helper: build a multi_search response with one staff hit.
+function staffResponse(staffExternalId: string, givenNames: string) {
+  return {
+    results: [
+      {
+        hits: [
+          {
+            document: {
+              staffExternalId,
+              givenNames,
+              surname: "Smith",
+              stateCode: "US_ND",
+              pseudonymizedId: `p-${staffExternalId}`,
+            },
+          },
+        ],
+      },
+    ],
+  };
+}
+
+describe("searchable cache + resolveSelectedSearchables", () => {
+  let mockMultiSearch: ReturnType<typeof vi.fn>;
+  let errorSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    workflowsStore.systemConfigFor = vi.fn(() => ({
+      search: [{ searchType: "OFFICER", searchTitle: "officer" }],
+    }));
+    mockMultiSearch = vi.fn().mockResolvedValue({ results: [] });
+    manager.typesenseClient = {
+      multiSearch: mockMultiSearch,
+      reset: vi.fn(),
+      getScopedKey: vi.fn(),
+    } as any;
+    errorSpy = vi.spyOn(console, "error").mockImplementation(vi.fn());
+  });
+
+  afterEach(() => {
+    errorSpy.mockRestore();
+  });
+
+  test("search accumulates every returned searchable into the cache", async () => {
+    mockMultiSearch.mockResolvedValueOnce(staffResponse("OFF1", "Alice"));
+    await manager.search("alice");
+    expect(manager.searchableCache.get("OFF1")?.searchLabel).toBe(
+      "Alice Smith",
+    );
+
+    // A later query for a different name must not evict the earlier entry.
+    mockMultiSearch.mockResolvedValueOnce(staffResponse("OFF2", "Bob"));
+    await manager.search("bob");
+    expect(manager.searchableCache.get("OFF1")?.searchLabel).toBe(
+      "Alice Smith",
+    );
+    expect(manager.searchableCache.get("OFF2")?.searchLabel).toBe("Bob Smith");
+  });
+
+  test("resolveSelectedSearchables resolves from the cache after the item drops out of results", async () => {
+    // Type-for and select OFF1 — it lands in results and thus the cache.
+    mockMultiSearch.mockResolvedValueOnce(staffResponse("OFF1", "Alice"));
+    await manager.search("alice");
+
+    // Input clears -> a fresh seed query reseeds results without OFF1.
+    mockMultiSearch.mockResolvedValueOnce(staffResponse("OFF2", "Bob"));
+    await manager.search("");
+    expect(
+      manager.results.flatMap((g) => g.searchables).map((s) => s.searchId),
+    ).not.toContain("OFF1");
+
+    // Pill still resolves from the cache.
+    const resolved = manager.resolveSelectedSearchables(["OFF1"]);
+    expect(resolved.map((s) => s.searchId)).toEqual(["OFF1"]);
+  });
+
+  test("resolveSelectedSearchables skips ids with no cached searchable", () => {
+    expect(manager.resolveSelectedSearchables(["UNKNOWN"])).toEqual([]);
+  });
+});
+
+describe("warmSelectedSearchablesCache", () => {
+  let mockMultiSearch: ReturnType<typeof vi.fn>;
+  let errorSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    workflowsStore.systemConfigFor = vi.fn(() => ({
+      search: [{ searchType: "OFFICER", searchTitle: "officer" }],
+    }));
+    mockMultiSearch = vi.fn().mockResolvedValue({ results: [] });
+    manager.typesenseClient = {
+      multiSearch: mockMultiSearch,
+      reset: vi.fn(),
+      getScopedKey: vi.fn(),
+    } as any;
+    errorSpy = vi.spyOn(console, "error").mockImplementation(vi.fn());
+  });
+
+  afterEach(() => {
+    errorSpy.mockRestore();
+  });
+
+  test("fetches uncached ids by their collection's id field and caches them", async () => {
+    mockMultiSearch.mockResolvedValueOnce(staffResponse("OFF1", "Alice"));
+
+    await manager.warmSelectedSearchablesCache(["OFF1"]);
+
+    const search = (mockMultiSearch.mock.calls[0][0] as any).searches[0];
+    expect(search.filter_by).toBe(
+      "stateCode:=`US_ND` && staffExternalId:=[`OFF1`]",
+    );
+    expect(manager.resolveSelectedSearchables(["OFF1"])).toHaveLength(1);
+  });
+
+  test("no-ops without a network call when every id is already cached", async () => {
+    mockMultiSearch.mockResolvedValueOnce(staffResponse("OFF1", "Alice"));
+    await manager.search("alice");
+    mockMultiSearch.mockClear();
+
+    await manager.warmSelectedSearchablesCache(["OFF1"]);
+    expect(mockMultiSearch).not.toHaveBeenCalled();
+  });
+
+  test("only fetches the ids that aren't cached yet", async () => {
+    mockMultiSearch.mockResolvedValueOnce(staffResponse("OFF1", "Alice"));
+    await manager.search("alice");
+    mockMultiSearch.mockClear();
+    mockMultiSearch.mockResolvedValueOnce(staffResponse("OFF2", "Bob"));
+
+    await manager.warmSelectedSearchablesCache(["OFF1", "OFF2"]);
+
+    const search = (mockMultiSearch.mock.calls[0][0] as any).searches[0];
+    expect(search.filter_by).toBe(
+      "stateCode:=`US_ND` && staffExternalId:=[`OFF2`]",
+    );
   });
 });

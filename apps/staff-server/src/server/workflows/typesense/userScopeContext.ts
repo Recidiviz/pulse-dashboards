@@ -31,6 +31,7 @@ import {
 import type { RoleSubtype } from "~datatypes";
 
 import { fetchOfflineUser } from "../../core";
+import { fetchImpersonatedUserRestrictions } from "../../routes/api";
 import { getAppMetadata } from "../../utils/getAppMetadata";
 import { isOfflineMode } from "../../utils/isOfflineMode";
 
@@ -158,6 +159,61 @@ async function fetchUserUpdates(
   return snap.exists ? snap.data() ?? {} : {};
 }
 
+// Derives the non-Recidiviz scope context for a given (externalId, stateCode)
+// from Firestore: staff record (district, roleSubtype, email, hasCaseload),
+// supervisor status, and userUpdates (overrideDistrictIds). Shared by the
+// normal path (caller resolves themselves) and the impersonation path (a
+// Recidiviz user resolves the impersonated user) — both compute the same
+// staff-side scope, differing only in whose externalId + FVs feed in.
+async function buildFirestoreScopeContext(
+  userId: string,
+  stateCode: string,
+  featureVariants: Record<string, unknown>,
+  fallbackEmail: string,
+): Promise<UserScopeContext> {
+  const db = getFirestore();
+  const [staff, supervisedStaffExternalIds, userUpdates] = await Promise.all([
+    fetchStaffRecord(db, stateCode, userId),
+    fetchSupervisedStaffExternalIds(db, userId),
+    fetchUserUpdates(db, stateCode, userId),
+  ]);
+
+  return {
+    userId,
+    userEmail: (staff?.["email"] as string | undefined) ?? fallbackEmail,
+    isRecidivizUser: false,
+    district: (staff?.["district"] as string | undefined) ?? undefined,
+    roleSubtype:
+      (staff?.["roleSubtype"] as RoleSubtype | null | undefined) ?? null,
+    hasCaseload: staff !== null,
+    overrideDistrictIds: userUpdates["overrideDistrictIds"] as
+      | string[]
+      | undefined,
+    isSupervisor: supervisedStaffExternalIds.length > 0,
+    supervisedStaffExternalIds,
+    featureVariants,
+  };
+}
+
+async function resolveImpersonatedScopeContext(
+  impersonatedEmail: string,
+  currentTenantId: string,
+): Promise<UserScopeContext | null> {
+  const metadata = (await fetchImpersonatedUserRestrictions(
+    impersonatedEmail,
+  )) as { externalId?: string; featureVariants?: Record<string, unknown> };
+
+  const externalId = metadata?.externalId;
+  if (!externalId) return null;
+
+  return buildFirestoreScopeContext(
+    externalId,
+    currentTenantId,
+    metadata.featureVariants ?? {},
+    impersonatedEmail,
+  );
+}
+
 /**
  * Resolves the caller's identity + all shared context needed to compile a
  * scoped-key filter_by. Returns null when the request has neither a
@@ -173,6 +229,14 @@ export async function resolveUserScopeContext(
 ): Promise<UserScopeContext | null> {
   const identity = resolveRequestIdentity(req);
   const isRecidiviz = isRecidivizUser(identity.appMetadata);
+
+  const impersonatedEmail = (
+    req.body as { impersonatedEmail?: string } | undefined
+  )?.impersonatedEmail;
+  if (isRecidiviz && impersonatedEmail && !isOfflineMode()) {
+    return resolveImpersonatedScopeContext(impersonatedEmail, currentTenantId);
+  }
+
   if (!isRecidiviz && !identity.userId) return null;
 
   const featureVariants =
@@ -195,27 +259,10 @@ export async function resolveUserScopeContext(
     };
   }
 
-  const userId = identity.userId as string;
-  const db = getFirestore();
-  const [staff, supervisedStaffExternalIds, userUpdates] = await Promise.all([
-    fetchStaffRecord(db, currentTenantId, userId),
-    fetchSupervisedStaffExternalIds(db, userId),
-    fetchUserUpdates(db, currentTenantId, userId),
-  ]);
-
-  return {
-    userId,
-    userEmail: (staff?.["email"] as string | undefined) ?? identity.userEmail,
-    isRecidivizUser: false,
-    district: (staff?.["district"] as string | undefined) ?? undefined,
-    roleSubtype:
-      (staff?.["roleSubtype"] as RoleSubtype | null | undefined) ?? null,
-    hasCaseload: staff !== null,
-    overrideDistrictIds: userUpdates["overrideDistrictIds"] as
-      | string[]
-      | undefined,
-    isSupervisor: supervisedStaffExternalIds.length > 0,
-    supervisedStaffExternalIds,
+  return buildFirestoreScopeContext(
+    identity.userId as string,
+    currentTenantId,
     featureVariants,
-  };
+    identity.userEmail,
+  );
 }

@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { debounce } from "lodash";
-import { makeAutoObservable, reaction } from "mobx";
+import { comparer, makeAutoObservable, reaction } from "mobx";
 
 import {
   createScopedTypesenseClient,
@@ -28,6 +28,7 @@ import { pluralizeWord } from "~utils";
 import {
   collectionsBySearchType,
   locationIdsBySearchType,
+  Searchable,
   SearchableGroup,
 } from "../core/models/types";
 import { Location } from "./Location";
@@ -52,6 +53,14 @@ export class CaseloadSearchManager {
 
   results: SearchableGroup[] = [];
 
+  // Accumulates every searchable this manager has ever returned, keyed by
+  // searchId. The typeahead only ever holds the current query's page of
+  // results (per_page: 20), so a selected item can drop out of `results` as
+  // soon as the input clears and a fresh query reseeds them. Selected pills
+  // are resolved against this cache instead so they persist regardless of what
+  // the latest query returned. See resolveSelectedSearchables.
+  searchableCache: Map<string, Searchable> = new Map();
+
   searchPending = false;
 
   // Scoped client owns the mint/cache lifecycle. Constructed once.
@@ -67,10 +76,16 @@ export class CaseloadSearchManager {
 
     this.typesenseClient = createScopedTypesenseClient({
       mintEndpoint: `${import.meta.env.VITE_API_URL}/workflows/caseload-scoped-key`,
-      getMintRequestBody: () => ({
-        currentTenantId: this.workflowsStore.rootStore.currentTenantId,
-        system: this.workflowsStore.activeSystem,
-      }),
+      getMintRequestBody: () => {
+        const { rootStore } = this.workflowsStore;
+        return {
+          currentTenantId: rootStore.currentTenantId,
+          system: this.workflowsStore.activeSystem,
+          ...(rootStore.isImpersonating
+            ? { impersonatedEmail: rootStore.userStore.userEmail }
+            : {}),
+        };
+      },
       getAuthHeader: async () => {
         const getToken = this.workflowsStore.rootStore.userStore.getToken;
         if (!getToken) return null;
@@ -113,6 +128,18 @@ export class CaseloadSearchManager {
       },
       { fireImmediately: true },
     );
+
+    // Backfill the searchable cache for selections persisted from a prior
+    // session so their value pills render on load
+    reaction(
+      () => this.searchStore.selectedSearchIds,
+      (searchIds) => {
+        if (this.searchStore.isTypesenseSearchEnabled && searchIds.length) {
+          void this.warmSelectedSearchablesCache(searchIds);
+        }
+      },
+      { fireImmediately: true, equals: comparer.shallow },
+    );
   }
 
   private get workflowsStore(): WorkflowsStore {
@@ -121,6 +148,69 @@ export class CaseloadSearchManager {
 
   setSearchInput(value: string): void {
     this.searchInput = value;
+  }
+
+  // Resolves selected search ids to their Searchables for rendering value
+  // pills. Backed by the accumulating cache rather than the current `results`
+  // so a selected item's pill doesn't disappear once it drops out of the
+  // latest query's page. Ids with no cached searchable are skipped;
+  // warmSelectedSearchablesCache backfills them for selections persisted from
+  // a prior session.
+  resolveSelectedSearchables(searchIds: string[]): Searchable[] {
+    return searchIds
+      .map((searchId) => this.searchableCache.get(searchId))
+      .filter((searchable): searchable is Searchable => Boolean(searchable));
+  }
+
+  // Backfills the cache for selected ids that haven't yet surfaced in a
+  // typeahead query — e.g. selections persisted to Firestore from a prior
+  // session whose items fall outside the seed query's first page. Fetches the
+  // matching documents directly by id so their value pills render on load
+  // rather than only after the user happens to search for them.
+  async warmSelectedSearchablesCache(searchIds: string[]): Promise<void> {
+    if (!this.searchStore.isTypesenseSearchEnabled) return;
+
+    const missingIds = searchIds.filter((id) => !this.searchableCache.has(id));
+    if (missingIds.length === 0) return;
+
+    const stateCode = this.workflowsStore.rootStore.currentTenantId;
+    const activeSystem = this.workflowsStore.activeSystem;
+    if (!stateCode || !activeSystem) return;
+
+    const plan = buildTypesenseSearchPlan(
+      "*",
+      stateCode,
+      activeSystem,
+      this.workflowsStore,
+    );
+    if (plan.length === 0) return;
+
+    const idFieldByCollection = {
+      locations: "locationId",
+      supervisionStaff: "staffExternalId",
+      incarcerationStaff: "staffExternalId",
+    } as const;
+    const idFilter = missingIds.map((id) => `\`${id}\``).join(",");
+
+    const searches = plan.map((p) => ({
+      ...p.descriptor,
+      filter_by: `${p.descriptor.filter_by} && ${idFieldByCollection[p.collection]}:=[${idFilter}]`,
+      // A single collection can hold every selection (capped at
+      // SELECTED_SEARCH_LIMIT), so widen past the default per_page of 20.
+      per_page: missingIds.length,
+    }));
+
+    try {
+      const response = await this.typesenseClient.multiSearch({ searches });
+      const groups = composeSearchableGroups(response.results, plan);
+      for (const group of groups) {
+        for (const searchable of group.searchables) {
+          this.searchableCache.set(searchable.searchId, searchable);
+        }
+      }
+    } catch (err) {
+      console.error("Typesense selected-id cache warm-up failed:", err);
+    }
   }
 
   // Called by the search bar on every input change. Stores the raw input for
@@ -169,6 +259,11 @@ export class CaseloadSearchManager {
       });
 
       this.results = composeSearchableGroups(response.results, plan);
+      for (const group of this.results) {
+        for (const searchable of group.searchables) {
+          this.searchableCache.set(searchable.searchId, searchable);
+        }
+      }
     } catch (err) {
       console.error("Typesense search failed:", err);
       this.results = [];

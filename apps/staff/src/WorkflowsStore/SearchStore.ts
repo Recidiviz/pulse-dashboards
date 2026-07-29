@@ -214,6 +214,17 @@ export class SearchStore {
   }
 
   get selectedSearchables(): Searchable[] {
+    // Under Typesense, availableSearchables only holds the current typeahead
+    // page (per_page: 20), so a selected item can drop out of it as soon as
+    // the input clears and a fresh query reseeds the results — which would
+    // make its value pill vanish even though it's still selected. Resolve
+    // against the manager's accumulating cache instead so pills persist.
+    if (this.isTypesenseSearchEnabled) {
+      return this.caseloadSearchManager.resolveSelectedSearchables(
+        this.selectedSearchIds,
+      );
+    }
+
     const allSearchables = this.availableSearchables.flatMap(
       (searchableGroup) => searchableGroup.searchables,
     );

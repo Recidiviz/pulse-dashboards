@@ -25,6 +25,18 @@ import { initTypesenseScopedKeys } from "../typesense/init";
 vi.mock("../../utils/isOfflineMode");
 vi.mock("../../core");
 
+// Only fetchImpersonatedUserRestrictions is used from routes/api in the mint
+// path; stub it so impersonation tests don't hit the recidiviz-data auth API.
+const mockFetchImpersonatedUserRestrictions = vi.fn();
+vi.mock("../../routes/api", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../../routes/api")>();
+  return {
+    ...actual,
+    fetchImpersonatedUserRestrictions: (...args: unknown[]) =>
+      mockFetchImpersonatedUserRestrictions(...args),
+  };
+});
+
 const mockSentryCaptureMessage = vi.fn();
 vi.mock("@sentry/node", () => ({
   captureMessage: (...args: unknown[]) => mockSentryCaptureMessage(...args),
@@ -424,6 +436,150 @@ describe("mintCaseloadScopedKey — single-system state user", () => {
     expect(lastFilterBy()).toBe(
       "stateCode:=`US_TN` && (district:=[`Region 1`])",
     );
+  });
+});
+
+// --------------------------------------------------------------------------
+// Impersonation
+// --------------------------------------------------------------------------
+
+// A Recidiviz admin impersonating a state user mints with the admin's own JWT
+// (stateCode "recidiviz"), which would otherwise short-circuit to unrestricted
+// and leak the whole state. When the body carries `impersonatedEmail`, the
+// scope is resolved for the impersonated user instead — reproducing the scope
+// that user would get logging in themselves.
+describe("mintCaseloadScopedKey — impersonation", () => {
+  test("resolves the impersonated user's district scope, not the admin's unrestricted scope", async () => {
+    mockFetchImpersonatedUserRestrictions.mockResolvedValue({
+      externalId: "IMP123",
+      featureVariants: {},
+    });
+    fakeFirestore.supervisionStaff.set("us_tn_IMP123", {
+      district: "Region 5",
+      email: "impersonated@example.com",
+    });
+
+    const res = makeRes();
+    await mintCaseloadScopedKey(
+      makeReq(
+        {
+          currentTenantId: "US_TN",
+          system: "SUPERVISION",
+          impersonatedEmail: "impersonated@example.com",
+        },
+        makeUser({ stateCode: "recidiviz", externalId: null }),
+      ),
+      res,
+    );
+
+    expect(mockFetchImpersonatedUserRestrictions).toHaveBeenCalledWith(
+      "impersonated@example.com",
+    );
+    // District scope from the impersonated user's staff record — NOT the
+    // admin's `stateCode:=\`US_TN\`` unrestricted filter.
+    expect(lastFilterBy()).toBe(
+      "stateCode:=`US_TN` && (district:=[`Region 5`])",
+    );
+  });
+
+  test("honors the impersonated user's feature variants (supervisionUnrestrictedSearch)", async () => {
+    mockFetchImpersonatedUserRestrictions.mockResolvedValue({
+      externalId: "IMP123",
+      featureVariants: { supervisionUnrestrictedSearch: true },
+    });
+    fakeFirestore.supervisionStaff.set("us_tn_IMP123", {
+      district: "Region 5",
+      email: "impersonated@example.com",
+    });
+
+    const res = makeRes();
+    await mintCaseloadScopedKey(
+      makeReq(
+        {
+          currentTenantId: "US_TN",
+          system: "SUPERVISION",
+          impersonatedEmail: "impersonated@example.com",
+        },
+        makeUser({ stateCode: "recidiviz", externalId: null }),
+      ),
+      res,
+    );
+
+    expect(lastFilterBy()).toBe("stateCode:=`US_TN`");
+  });
+
+  test("returns 422 when the impersonated user has no externalId", async () => {
+    mockFetchImpersonatedUserRestrictions.mockResolvedValue({
+      featureVariants: {},
+    });
+
+    const res = makeRes();
+    await mintCaseloadScopedKey(
+      makeReq(
+        {
+          currentTenantId: "US_TN",
+          system: "SUPERVISION",
+          impersonatedEmail: "impersonated@example.com",
+        },
+        makeUser({ stateCode: "recidiviz", externalId: null }),
+      ),
+      res,
+    );
+
+    expect(res.status).toHaveBeenCalledWith(422);
+  });
+
+  test("ignores impersonatedEmail from a non-Recidiviz caller (no escalation)", async () => {
+    // A scoped state user cannot widen their scope by passing an email — the
+    // impersonation branch is gated on the caller genuinely being Recidiviz.
+    fakeFirestore.supervisionStaff.set("us_tn_OFFICER123", {
+      district: "Region 1",
+      email: "officer@example.com",
+    });
+
+    const res = makeRes();
+    await mintCaseloadScopedKey(
+      makeReq(
+        {
+          currentTenantId: "US_TN",
+          system: "SUPERVISION",
+          impersonatedEmail: "someone-elses-unrestricted-account@example.com",
+        },
+        makeUser(),
+      ),
+      res,
+    );
+
+    expect(mockFetchImpersonatedUserRestrictions).not.toHaveBeenCalled();
+    // Resolved as the caller themselves — their own district, not the
+    // impersonated target's scope.
+    expect(lastFilterBy()).toBe(
+      "stateCode:=`US_TN` && (district:=[`Region 1`])",
+    );
+  });
+
+  test("does not attempt impersonation in offline mode", async () => {
+    vi.mocked(isOfflineMode).mockReturnValue(true);
+    vi.mocked(fetchOfflineUser).mockReturnValue(
+      makeUser({
+        stateCode: "recidiviz",
+        externalId: null,
+      }) as unknown as ReturnType<typeof fetchOfflineUser>,
+    );
+
+    const res = makeRes();
+    await mintCaseloadScopedKey(
+      makeReq({
+        currentTenantId: "US_TN",
+        system: "SUPERVISION",
+        impersonatedEmail: "impersonated@example.com",
+      }),
+      res,
+    );
+
+    expect(mockFetchImpersonatedUserRestrictions).not.toHaveBeenCalled();
+    // Falls through to the Recidiviz unrestricted path.
+    expect(lastFilterBy()).toBe("stateCode:=`US_TN`");
   });
 });
 

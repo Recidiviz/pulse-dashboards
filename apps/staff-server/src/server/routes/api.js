@@ -361,6 +361,22 @@ export function sanitizeUserHash(userHash) {
   return userHash;
 }
 
+// Fetches a user's dashboard app metadata (state, external id, feature
+// variants, district, etc.) from the recidiviz-data auth API by email. Shared
+// by the impersonation HTTP endpoint and the Typesense scoped-key mint, which
+// needs the impersonated user's identity to compile their staff-visibility
+// scope. Throws on failure; callers decide how to surface it.
+export async function fetchImpersonatedUserRestrictions(email) {
+  const userHash = sanitizeUserHash(Base64.stringify(SHA256(email)));
+  const url = `${process.env.RECIDIVIZ_DATA_API_URL}/auth/users/${userHash}`;
+  const auth = new GoogleAuth({ credentials: serviceAccount });
+  const client = await auth.getIdTokenClient(
+    process.env.GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE,
+  );
+  const response = await client.request({ url });
+  return response.data;
+}
+
 export async function getImpersonatedUserRestrictions(req, res) {
   if (isOfflineMode()) {
     responder(res)(
@@ -370,15 +386,9 @@ export async function getImpersonatedUserRestrictions(req, res) {
   }
 
   const { impersonatedEmail: email } = req.query;
-  const userHash = sanitizeUserHash(Base64.stringify(SHA256(email)));
-  const url = `${process.env.RECIDIVIZ_DATA_API_URL}/auth/users/${userHash}`;
   try {
-    const auth = new GoogleAuth({ credentials: serviceAccount });
-    const client = await auth.getIdTokenClient(
-      process.env.GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE,
-    );
-    const response = await client.request({ url });
-    responder(res)(null, response.data);
+    const data = await fetchImpersonatedUserRestrictions(email);
+    responder(res)(null, data);
   } catch (error) {
     console.error(error);
     responder(res)(error);
