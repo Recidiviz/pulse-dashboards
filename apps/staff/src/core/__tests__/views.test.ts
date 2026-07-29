@@ -19,6 +19,7 @@ import {
   getRelativePath,
   INSIGHTS_PATHS,
   InsightsPage,
+  paroleUrl,
   WORKFLOWS_PATHS,
   WorkflowsPage,
 } from "../views";
@@ -73,4 +74,16 @@ describe("getRelativePath", () => {
       ).toEqual(INSIGHTS_RELATIVE_PATHS[routeName as InsightsPage]);
     },
   );
+});
+
+describe("paroleUrl", () => {
+  it("returns the docket path", () => {
+    expect(paroleUrl("docket")).toEqual("/parole/docket");
+  });
+
+  it("substitutes docId into the case profile path", () => {
+    expect(paroleUrl("caseProfile", { docId: "DOC-45821" })).toEqual(
+      "/parole/case/DOC-45821",
+    );
+  });
 });

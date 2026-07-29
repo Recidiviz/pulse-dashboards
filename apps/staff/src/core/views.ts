@@ -317,10 +317,12 @@ export type ParolePage = keyof typeof PAROLE_PAGES;
 
 export const PAROLE_PAGES = {
   docket: "docket",
+  caseProfile: "caseProfile",
 } as const;
 
 export const PAROLE_PATHS: Record<ParolePage, string> = {
   docket: `/${DASHBOARD_VIEWS.parole}/${PAROLE_PAGES.docket}`,
+  caseProfile: `/${DASHBOARD_VIEWS.parole}/case/:docId`,
 };
 
 /**
@@ -330,10 +332,25 @@ export function paroleRoute({ routeName }: { routeName: ParolePage }): string {
   return getRelativePath(PAROLE_PATHS[routeName]);
 }
 
+export function paroleUrl(routeName: "docket"): string;
+export function paroleUrl(
+  routeName: "caseProfile",
+  params: { docId: string },
+): string;
 /**
  * @returns an absolute path for the specified Parole route
  */
-export function paroleUrl(routeName: ParolePage): string {
+export function paroleUrl(
+  routeName: ParolePage,
+  params?: Record<string, string>,
+): string {
+  if (params) {
+    let path = PAROLE_PATHS[routeName];
+    Object.entries(params).forEach(([key, value]) => {
+      path = path.replace(`:${key}`, value);
+    });
+    return path;
+  }
   return PAROLE_PATHS[routeName];
 }
 

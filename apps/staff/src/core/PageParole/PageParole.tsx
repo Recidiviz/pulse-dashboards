@@ -33,6 +33,7 @@ import {
 } from "../NavigationLayout";
 import { MaxWidth } from "../sharedComponents";
 import { paroleRoute } from "../views";
+import { ParoleCaseProfile } from "./ParoleCaseProfile";
 import { ParoleDocketView } from "./ParoleDocketView";
 
 const Wrapper = styled.div`
@@ -82,6 +83,10 @@ const PageParole: React.FC = observer(function PageParole() {
           <Route
             path={paroleRoute({ routeName: "docket" })}
             element={<ParoleDocketView />}
+          />
+          <Route
+            path={paroleRoute({ routeName: "caseProfile" })}
+            element={<ParoleCaseProfile />}
           />
           <Route path="*" element={<NotFound />} />
         </Routes>

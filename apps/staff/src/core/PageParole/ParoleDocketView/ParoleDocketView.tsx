@@ -30,6 +30,7 @@ import { ParoleDocketPresenter } from "../../../ParoleStore/presenters/ParoleDoc
 import { CaseloadTable } from "../../CaseloadTable";
 import ModelHydrator from "../../ModelHydrator";
 import { SectionCard } from "../../SectionCard";
+import { paroleUrl } from "../../views";
 import { WorkflowsFilterDropdown } from "../../WorkflowsFilters/WorkflowsFilterDropdown";
 
 const Wrapper = styled.div`
@@ -162,6 +163,9 @@ const ParoleDocketList = observer(function ParoleDocketList({
           data={presenter.filteredHearings}
           columns={columns}
           initialState={{ sorting: [{ id: "hearingDate", desc: false }] }}
+          rowLinkUrl={(hearing) =>
+            paroleUrl("caseProfile", { docId: hearing.docId })
+          }
         />
       </SectionCard>
 
