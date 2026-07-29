@@ -134,11 +134,13 @@
     "continueLink": "Mira su tiempo ganado"
   },
   "programs": {
-    "pageDescription": "This page helps you find programs and activities that can provide Earned Good Time, Boosts, or Completion Credits off of your sentence.\n\nThis list will update from time to time. Look for the New label to see what was recently updated. If you are eligible for a particular program, please follow your facility process for signing up.",
-    "learnMoreLink": "Learn about Earned Good Time and Programs",
-    "modalCallToAction": "Sound interesting? Reach out to your CPO to see if this might be a good fit.",
+    "pageDescription": "Esta página te ayuda a encontrar programas y actividades que te pueden dar reducción de pena por buen comportamiento (EGT), tiempo adicional o créditos por finalización.\n\nEsta lista se actualiza de vez en cuando. Busca la etiqueta que dice 'Nuevo' para ver qué se actualizó recientemente. Si eres elegible para un programa en especial, sigue el proceso de tu instalación para inscribirte.",
+    "learnMoreLink": "Aprende sobre EGT, Tiempo adicional y Créditos por finalización",
+    "modalCallToAction": "¿Te interesa? Habla con tu CPO para ver si esto puede ser una buena opción para ti.",
     "homepageCta": {
-      "description": "Explore available programs, filter by facility, and find ones that are interesting to you."
+      "sectionHeader": "Lista de programas",
+      "description": "Explora los programas disponibles, filtra por instalación y encuentra los que te interesen.",
+      "link": "Ver la lista completa de programas"
     }
   }
 }

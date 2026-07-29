@@ -138,7 +138,9 @@
     "learnMoreLink": "[US_MA]programs.learnMoreLink",
     "modalCallToAction": "[US_MA]programs.modalCallToAction",
     "homepageCta": {
-      "description": "[US_MA]programs.homepageCta.description"
+      "sectionHeader": "[US_MA]programs.homepageCta.sectionHeader",
+      "description": "[US_MA]programs.homepageCta.description",
+      "link": "[US_MA]programs.homepageCta.link"
     }
   }
 }

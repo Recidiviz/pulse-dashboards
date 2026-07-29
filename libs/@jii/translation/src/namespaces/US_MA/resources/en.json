@@ -135,10 +135,12 @@
   },
   "programs": {
     "pageDescription": "This page helps you find programs and activities that can provide Earned Good Time, Boosts, or Completion Credits off of your sentence.\n\nThis list will update from time to time. Look for the New label to see what was recently updated. If you are eligible for a particular program, please follow your facility process for signing up.",
-    "learnMoreLink": "Learn about Earned Good Time and Programs",
+    "learnMoreLink": "Learn about EGT, Boosts, and Completion Credits",
     "modalCallToAction": "Sound interesting? Reach out to your CPO to see if this might be a good fit.",
     "homepageCta": {
-      "description": "Explore available programs, filter by facility, and find ones that are interesting to you."
+      "sectionHeader": "Program List",
+      "description": "Explore available programs, filter by facility, and find ones that are interesting to you.",
+      "link": "View full Program List"
     }
   }
 }

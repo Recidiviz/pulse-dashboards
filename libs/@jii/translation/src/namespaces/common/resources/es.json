@@ -33,5 +33,61 @@
   },
   "backLinks": {
     "home": "Volver al inicio"
+  },
+  "programs": {
+    "lastUpdated": "Esta información se actualizó por última vez en {{date, formatFullDate}}.",
+    "backLink": "Volver al inicio",
+    "pageTitle": "Reduce el tiempo de tu condena",
+    "resultsCount_one": "{{count}} resultado a continuación.",
+    "resultsCount_other": "{{count}} resultados a continuación.",
+    "resultsHint": "Toca cada tarjeta para obtener más información.",
+    "filters": {
+      "button": "Filtros",
+      "categoryLabel": "Seleccionar por categoría",
+      "facilityLabel": "Seleccionar por instalación",
+      "allCategories": "Todas las categorías",
+      "allFacilities": "Todas las instalaciones",
+      "onlyEarnCredits": "Mostrar solo los programas que otorgan créditos",
+      "onlyStarred": "Mostrar solo mis programas guardados",
+      "clearAll": "Borrar todo"
+    },
+    "card": {
+      "earnLabel": "GANA",
+      "daysOfCredit_zero": "no se obtienen créditos por logros",
+      "daysOfCredit_one": "hasta {{count}} día de crédito por logros",
+      "daysOfCredit_other": "hasta {{count}} días de crédito por logros",
+      "newBadge": "Nuevo"
+    },
+    "category": {
+      "programCount_one": "{{count}} programa",
+      "programCount_other": "{{count}} programas",
+      "programCountFiltered_one": "{{count}} programa (de {{total}} en total)",
+      "programCountFiltered_other": "{{count}} programas (de {{total}} en total)"
+    },
+    "modal": {
+      "earnSubtitle_zero": "no se obtienen créditos por logros",
+      "earnSubtitle_one": "Gana hasta {{count}} día de crédito por logros",
+      "earnSubtitle_other": "Gana hasta {{count}} días de crédito por logros",
+      "programDescription": "Descripción del programa",
+      "eligibility": "Elegibilidad",
+      "eligibilityPrereq": "Requisito previo: {{prereq}}",
+      "eligibilityNone": "Sin requisitos",
+      "availableFacilities": "Instalaciones disponibles",
+      "closeWindow": "Cerrar ventana"
+    },
+    "homepageCta": {
+      "sectionHeader": "Programación",
+      "heading": "Programas disponibles",
+      "description": "Explora los programas disponibles, filtra por instalación y guarda los que te interesen.",
+      "link": "Ver la lista completa de programas"
+    }
+  },
+  "onboardingVideo": {
+    "heading": "¿Qué es Opportunities?",
+    "description": "¿Quieres saber cómo funciona la aplicación Opportunities o cómo entender las fechas de tu condena? Mira este video para descubrirlo.",
+    "confirmClose": "Ir a la página “Acerca de”",
+    "cancelClose": "No importa, deja el video aquí",
+    "videoButtonAltText": "Abrir video",
+    "closeButtonAltText": "Cerrar video"
   }
 }
