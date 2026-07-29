@@ -1531,6 +1531,22 @@ describe("eligibilityStatusLabel", () => {
   });
 });
 
+describe("getPseudIdFromReviewerId", () => {
+  beforeEach(() => {
+    root.workflowsStore.supervisionStaffSubscription.data =
+      mockSupervisionOfficers;
+    root.workflowsStore.supervisionStaffWithOrWithoutCaseloadSubscription.data =
+      mockSupervisionOfficers;
+    root.workflowsStore.updateActiveSystem("SUPERVISION");
+  });
+
+  test("returns the pseudonymized ID for a known officer external ID", () => {
+    expect(
+      opp.getPseudoIdFromReviewerId(mockSupervisionOfficers[0].staffExternalId),
+    ).toBe(mockSupervisionOfficers[0].pseudonymizedId);
+  });
+});
+
 describe("setOfficerAction", () => {
   beforeEach(() => {
     vi.spyOn(root.firestoreStore, "updateOpportunityActionHistory");
@@ -1671,6 +1687,189 @@ describe("setOfficerAction", () => {
       currentReviewerId: "reviewer-123",
       stateCode: "US_XX",
     });
+  });
+
+  test("No previously assigned reviewer when current reviewer is the first", async () => {
+    root.workflowsStore.supervisionStaffWithOrWithoutCaseloadSubscription.data =
+      mockSupervisionOfficers;
+    root.workflowsStore.updateActiveSystem("SUPERVISION");
+    vi.spyOn(AnalyticsStore.prototype, "trackOpportunityApprovalActions");
+
+    // Current user is Officer #1
+    const officer = mockSupervisionOfficers[0];
+    vi.spyOn(root.userStore, "externalId", "get").mockReturnValue(
+      officer.staffExternalId,
+    );
+    vi.spyOn(root.userStore, "userPseudoId", "get").mockReturnValue(
+      officer.pseudonymizedId,
+    );
+
+    vi.spyOn(
+      root.firestoreStore,
+      "updateOpportunityActionHistory",
+    ).mockImplementation(async ({ actionHistory, currentReviewerId }) => {
+      const {
+        actionHistory: previousActionHistory,
+        currentReviewerId: previousCurrentReviewerId,
+        ...rest
+      } = updatesSub.data ?? {};
+      mockHydration({
+        updateData: {
+          ...rest,
+          actionHistory,
+          currentReviewerId,
+        },
+      });
+    });
+
+    await opp.setOfficerAction({
+      type: "APPROVAL",
+      // Assigned to Officer #2 next
+      reviewerId: mockSupervisionOfficers[1].staffExternalId,
+    });
+
+    expect(
+      root.analyticsStore.trackOpportunityApprovalActions,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        staffId: officer.pseudonymizedId,
+        assignedReviewerPseudoId: undefined,
+        nextReviewerPseudoId: mockSupervisionOfficers[1].pseudonymizedId,
+      }),
+    );
+  });
+
+  test("previous assigned reviewer matches active reviewer in straightforward review chain 001 assigns to 002 assigns to 003", async () => {
+    root.workflowsStore.supervisionStaffWithOrWithoutCaseloadSubscription.data =
+      mockSupervisionOfficers;
+    root.workflowsStore.updateActiveSystem("SUPERVISION");
+    vi.spyOn(AnalyticsStore.prototype, "trackOpportunityApprovalActions");
+
+    // First user is Officer #1
+    let officer = mockSupervisionOfficers[0];
+    vi.spyOn(root.userStore, "externalId", "get").mockReturnValue(
+      officer.staffExternalId,
+    );
+    vi.spyOn(root.userStore, "userPseudoId", "get").mockReturnValue(
+      officer.pseudonymizedId,
+    );
+
+    vi.spyOn(
+      root.firestoreStore,
+      "updateOpportunityActionHistory",
+    ).mockImplementation(async ({ actionHistory, currentReviewerId }) => {
+      const {
+        actionHistory: previousActionHistory,
+        currentReviewerId: previousCurrentReviewerId,
+        ...rest
+      } = updatesSub.data ?? {};
+      mockHydration({
+        updateData: {
+          ...rest,
+          actionHistory,
+          currentReviewerId,
+        },
+      });
+    });
+
+    // First approval
+    await opp.setOfficerAction({
+      type: "APPROVAL",
+      // Assigned to Officer #2 next
+      reviewerId: mockSupervisionOfficers[1].staffExternalId,
+    });
+
+    // Second user is Officer #2
+    officer = mockSupervisionOfficers[1];
+    vi.spyOn(root.userStore, "externalId", "get").mockReturnValue(
+      officer.staffExternalId,
+    );
+    vi.spyOn(root.userStore, "userPseudoId", "get").mockReturnValue(
+      officer.pseudonymizedId,
+    );
+
+    // Second approval
+    await opp.setOfficerAction({
+      type: "APPROVAL",
+      // Assigned to Officer #3 next
+      reviewerId: mockSupervisionOfficers[2].staffExternalId,
+    });
+
+    expect(
+      root.analyticsStore.trackOpportunityApprovalActions,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        staffId: officer.pseudonymizedId,
+        assignedReviewerPseudoId: mockSupervisionOfficers[1].pseudonymizedId,
+        nextReviewerPseudoId: mockSupervisionOfficers[2].pseudonymizedId,
+      }),
+    );
+  });
+
+  test("previous assigned reviewer differs from active reviewer in review chain 001 assigns to 002, 003 actually reviews and assigns to 004", async () => {
+    root.workflowsStore.supervisionStaffWithOrWithoutCaseloadSubscription.data =
+      mockSupervisionOfficers;
+    root.workflowsStore.updateActiveSystem("SUPERVISION");
+    vi.spyOn(AnalyticsStore.prototype, "trackOpportunityApprovalActions");
+
+    // First user is Officer #1
+    let officer = mockSupervisionOfficers[0];
+    vi.spyOn(root.userStore, "externalId", "get").mockReturnValue(
+      officer.staffExternalId,
+    );
+    vi.spyOn(root.userStore, "userPseudoId", "get").mockReturnValue(
+      officer.pseudonymizedId,
+    );
+
+    vi.spyOn(
+      root.firestoreStore,
+      "updateOpportunityActionHistory",
+    ).mockImplementation(async ({ actionHistory, currentReviewerId }) => {
+      const {
+        actionHistory: previousActionHistory,
+        currentReviewerId: previousCurrentReviewerId,
+        ...rest
+      } = updatesSub.data ?? {};
+      mockHydration({
+        updateData: {
+          ...rest,
+          actionHistory,
+          currentReviewerId,
+        },
+      });
+    });
+
+    // First approval
+    await opp.setOfficerAction({
+      type: "APPROVAL",
+      // Assigned to Officer #2 next
+      reviewerId: mockSupervisionOfficers[1].staffExternalId,
+    });
+
+    // Second approval comes from Officer #3
+    officer = mockSupervisionOfficers[2];
+    vi.spyOn(root.userStore, "externalId", "get").mockReturnValue(
+      officer.staffExternalId,
+    );
+    vi.spyOn(root.userStore, "userPseudoId", "get").mockReturnValue(
+      officer.pseudonymizedId,
+    );
+
+    await opp.setOfficerAction({
+      type: "APPROVAL",
+      // Assigned to Officer #4 next
+      reviewerId: mockSupervisionOfficers[3].staffExternalId,
+    });
+
+    expect(
+      root.analyticsStore.trackOpportunityApprovalActions,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        staffId: officer.pseudonymizedId,
+        assignedReviewerPseudoId: mockSupervisionOfficers[1].pseudonymizedId,
+        nextReviewerPseudoId: mockSupervisionOfficers[3].pseudonymizedId,
+      }),
+    );
   });
 });
 
@@ -1873,6 +2072,142 @@ describe("setSupervisorResponse", () => {
       currentReviewerId: "reviewer-123",
       stateCode: "US_XX",
     });
+  });
+
+  test("Previous assigned reviewer is the same as the current reviewer when current reviewer is sending back for revisions: 001 approves to 002, 002 sends back to 001 for revisions", async () => {
+    root.workflowsStore.supervisionStaffWithOrWithoutCaseloadSubscription.data =
+      mockSupervisionOfficers;
+    root.workflowsStore.updateActiveSystem("SUPERVISION");
+    vi.spyOn(AnalyticsStore.prototype, "trackOpportunityApprovalActions");
+
+    // First user is Officer #1
+    let officer = mockSupervisionOfficers[0];
+    vi.spyOn(root.userStore, "externalId", "get").mockReturnValue(
+      officer.staffExternalId,
+    );
+    vi.spyOn(root.userStore, "userPseudoId", "get").mockReturnValue(
+      officer.pseudonymizedId,
+    );
+
+    vi.spyOn(
+      root.firestoreStore,
+      "updateOpportunityActionHistory",
+    ).mockImplementation(async ({ actionHistory, currentReviewerId }) => {
+      const {
+        actionHistory: previousActionHistory,
+        currentReviewerId: previousCurrentReviewerId,
+        ...rest
+      } = updatesSub.data ?? {};
+      mockHydration({
+        updateData: {
+          ...rest,
+          actionHistory,
+          currentReviewerId,
+        },
+      });
+    });
+
+    // First approval
+    await opp.setOfficerAction({
+      type: "APPROVAL",
+      // Assigned to Officer #2 next
+      reviewerId: mockSupervisionOfficers[1].staffExternalId,
+    });
+
+    // Second user is Officer #2
+    officer = mockSupervisionOfficers[1];
+    vi.spyOn(root.userStore, "externalId", "get").mockReturnValue(
+      officer.staffExternalId,
+    );
+    vi.spyOn(root.userStore, "userPseudoId", "get").mockReturnValue(
+      officer.pseudonymizedId,
+    );
+
+    // Send back for revisions
+    await opp.setSupervisorResponse({
+      type: "REVISION",
+      notes: "Check in with stakeholder before moving forward.",
+      // Back to Officer #1 next
+      reviewerId: mockSupervisionOfficers[0].staffExternalId,
+    } as Omit<SupervisorResponse, "date" | "by">);
+
+    expect(
+      root.analyticsStore.trackOpportunityApprovalActions,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        staffId: officer.pseudonymizedId,
+        assignedReviewerPseudoId: officer.pseudonymizedId,
+        nextReviewerPseudoId: mockSupervisionOfficers[0].pseudonymizedId,
+      }),
+    );
+  });
+
+  test("Previous assigned reviewer differs from current reviewer when current reviewer is sending back for revisions and wasn't assigned: 001 approves to 002, 003 sends back to 001 for revisions", async () => {
+    root.workflowsStore.supervisionStaffWithOrWithoutCaseloadSubscription.data =
+      mockSupervisionOfficers;
+    root.workflowsStore.updateActiveSystem("SUPERVISION");
+    vi.spyOn(AnalyticsStore.prototype, "trackOpportunityApprovalActions");
+
+    // First user is Officer #1
+    let officer = mockSupervisionOfficers[0];
+    vi.spyOn(root.userStore, "externalId", "get").mockReturnValue(
+      officer.staffExternalId,
+    );
+    vi.spyOn(root.userStore, "userPseudoId", "get").mockReturnValue(
+      officer.pseudonymizedId,
+    );
+
+    vi.spyOn(
+      root.firestoreStore,
+      "updateOpportunityActionHistory",
+    ).mockImplementation(async ({ actionHistory, currentReviewerId }) => {
+      const {
+        actionHistory: previousActionHistory,
+        currentReviewerId: previousCurrentReviewerId,
+        ...rest
+      } = updatesSub.data ?? {};
+      mockHydration({
+        updateData: {
+          ...rest,
+          actionHistory,
+          currentReviewerId,
+        },
+      });
+    });
+
+    // First approval
+    await opp.setOfficerAction({
+      type: "APPROVAL",
+      // Assigned to Officer #2 next
+      reviewerId: mockSupervisionOfficers[1].staffExternalId,
+    });
+
+    // Second user is Officer #3
+    officer = mockSupervisionOfficers[2];
+    vi.spyOn(root.userStore, "externalId", "get").mockReturnValue(
+      officer.staffExternalId,
+    );
+    vi.spyOn(root.userStore, "userPseudoId", "get").mockReturnValue(
+      officer.pseudonymizedId,
+    );
+
+    // Send back for revisions
+    await opp.setSupervisorResponse({
+      type: "REVISION",
+      notes: "Check in with stakeholder before moving forward.",
+      // Back to Officer #1 next
+      reviewerId: mockSupervisionOfficers[0].staffExternalId,
+    } as Omit<SupervisorResponse, "date" | "by">);
+
+    expect(
+      root.analyticsStore.trackOpportunityApprovalActions,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        staffId: officer.pseudonymizedId,
+        assignedReviewerPseudoId: mockSupervisionOfficers[1].pseudonymizedId,
+        nextReviewerPseudoId: mockSupervisionOfficers[0].pseudonymizedId,
+      }),
+    );
   });
 });
 

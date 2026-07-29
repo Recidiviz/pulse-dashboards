@@ -110,6 +110,26 @@ const supervisionStaffTestFixtures = [
     supervisorExternalId: null,
     pseudonymizedId: "p002",
   },
+  {
+    email: "test-officer-3@example.com",
+    district: "DISTRICT 1",
+    staffExternalId: "XX_OFFICER3",
+    stateCode: "US_XX",
+    givenNames: "TestOfficer",
+    surname: "ThirdSurname",
+    supervisorExternalId: null,
+    pseudonymizedId: "p003",
+  },
+  {
+    email: "test-officer-4@example.com",
+    district: "DISTRICT 1",
+    staffExternalId: "XX_OFFICER4",
+    stateCode: "US_XX",
+    givenNames: "TestOfficer",
+    surname: "FouthSurname",
+    supervisorExternalId: null,
+    pseudonymizedId: "p004",
+  },
 ].map((r) => makeRecordFixture(supervisionStaffRecordSchema, r));
 
 export const mockSupervisionOfficers: Array<SupervisionStaffRecord["output"]> =

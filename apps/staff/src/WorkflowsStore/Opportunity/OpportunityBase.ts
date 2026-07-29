@@ -1147,6 +1147,15 @@ export class OpportunityBase<
     return this.actionHistory?.at(-1);
   }
 
+  getPseudoIdFromReviewerId(
+    reviewerId: string | undefined,
+  ): string | undefined {
+    if (!reviewerId) return undefined;
+    return this.rootStore.workflowsStore.availableOfficersWithOrWithoutCaseloads.find(
+      (s) => s.staffExternalId === reviewerId,
+    )?.pseudonymizedId;
+  }
+
   /**
    * Push a new officer action requiring supervisor approval onto the action history
    * timeline.
@@ -1171,6 +1180,9 @@ export class OpportunityBase<
       ...officerActionParams,
     };
 
+    const assignedReviewerId = this.getPseudoIdFromReviewerId(
+      this.currentReviewerId,
+    );
     const currentReviewerId =
       officerActionParams.type === "APPROVAL"
         ? officerActionParams.reviewerId
@@ -1206,6 +1218,8 @@ export class OpportunityBase<
       action: actionMetadata,
       currentStatus: originalStatus,
       subsequentStatus: this.reviewStatus,
+      assignedReviewerPseudoId: assignedReviewerId,
+      nextReviewerPseudoId: this.getPseudoIdFromReviewerId(currentReviewerId),
     });
   }
 
@@ -1303,6 +1317,9 @@ export class OpportunityBase<
       .slice(0, -1)
       .concat(updatedOfficerAction);
 
+    const assignedReviewerId = this.getPseudoIdFromReviewerId(
+      this.currentReviewerId,
+    );
     const currentReviewerId =
       supervisorResponse.type === "REVISION"
         ? supervisorResponse.reviewerId
@@ -1323,6 +1340,8 @@ export class OpportunityBase<
       action: actionMetadata,
       currentStatus: originalStatus,
       subsequentStatus: this.reviewStatus,
+      assignedReviewerPseudoId: assignedReviewerId,
+      nextReviewerPseudoId: this.getPseudoIdFromReviewerId(currentReviewerId),
     });
   }
 

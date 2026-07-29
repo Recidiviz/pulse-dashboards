@@ -244,6 +244,14 @@ describe("availableSearchables", () => {
           "searchId": "XX_OFFICER1",
           "searchLabel": "TestOfficer AlphabeticallySecond",
         },
+        {
+          "searchId": "XX_OFFICER4",
+          "searchLabel": "TestOfficer FouthSurname",
+        },
+        {
+          "searchId": "XX_OFFICER3",
+          "searchLabel": "TestOfficer ThirdSurname",
+        },
       ]
     `);
   });
@@ -356,6 +364,14 @@ describe("availableSearchables", () => {
             {
               "searchId": "XX_OFFICER1",
               "searchLabel": "TestOfficer AlphabeticallySecond",
+            },
+            {
+              "searchId": "XX_OFFICER4",
+              "searchLabel": "TestOfficer FouthSurname",
+            },
+            {
+              "searchId": "XX_OFFICER3",
+              "searchLabel": "TestOfficer ThirdSurname",
             },
           ],
         },

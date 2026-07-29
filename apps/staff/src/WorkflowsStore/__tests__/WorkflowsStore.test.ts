@@ -1515,10 +1515,10 @@ describe("searchStaffWithOrWithoutCaseloads", () => {
   });
 
   it("matches all officers that share the same givenNames", () => {
-    // Both fixture officers have givenNames "TestOfficer"
+    // All fixture officers have givenNames "TestOfficer"
     const results =
       workflowsStore.searchStaffWithOrWithoutCaseloads("TestOfficer");
-    expect(results).toHaveLength(2);
+    expect(results).toHaveLength(4);
   });
 
   it("respects the limit parameter", () => {

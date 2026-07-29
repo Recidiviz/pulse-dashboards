@@ -225,6 +225,7 @@ export type UsIaEarlyDischargeActionsMetadata = {
 };
 
 export type OpportunityApprovalActionsMetadata = OpportunityTrackingMetadata & {
+  // Who triggered the action
   staffId: string;
   action?: {
     type: string;
@@ -237,6 +238,10 @@ export type OpportunityApprovalActionsMetadata = OpportunityTrackingMetadata & {
   };
   currentStatus: string;
   subsequentStatus: string;
+  // Who the opportunity was assigned to at the time of the action
+  assignedReviewerPseudoId?: string;
+  // Who the opportunity was assigned to after the action
+  nextReviewerPseudoId?: string;
 };
 
 export type UsIaEarlyDischargeReferralFormSignatureMetadata = {
