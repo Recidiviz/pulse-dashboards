@@ -42,6 +42,7 @@ export const vitalsSupervisionContactsSchema = z.object({
   contactDueDate: dateStringSchema,
   contactCompleted: z.boolean(),
   contactCompletedDate: dateStringSchema.nullable(),
+  lateContactCompletedDate: dateStringSchema.nullable(),
 });
 
 export const supervisionVitalsMetricSchema = z.object({

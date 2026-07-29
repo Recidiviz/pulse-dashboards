@@ -197,9 +197,15 @@ export const VitalsContactrilldownTable = observer(
         {
           accessorKey: "contactCompletedDate",
           header: "Completed",
-          sortingFn: (a, b, colId) => {
-            const aVal = a.getValue<string | null>(colId);
-            const bVal = b.getValue<string | null>(colId);
+          sortingFn: (a, b) => {
+            // A missed contact that was eventually completed has its completion
+            // date in `lateContactCompletedDate`, so sort on whichever is set.
+            const aVal =
+              a.original.contactCompletedDate ??
+              a.original.lateContactCompletedDate;
+            const bVal =
+              b.original.contactCompletedDate ??
+              b.original.lateContactCompletedDate;
             if (!aVal && !bVal) return 0;
             if (!aVal) return -1;
             if (!bVal) return 1;
@@ -207,13 +213,29 @@ export const VitalsContactrilldownTable = observer(
           },
           // eslint-disable-next-line react/no-unstable-nested-components
           cell: (info) => {
-            const contactCompletedDate = info.row.getValue(
-              "contactCompletedDate",
-            )
-              ? formatWorkflowsDate(info.row.getValue("contactCompletedDate"))
-              : "";
+            const { contactCompletedDate, lateContactCompletedDate } =
+              info.row.original;
 
-            return <span>{contactCompletedDate}</span>;
+            // Completed on time: render normally.
+            if (contactCompletedDate) {
+              return <span>{formatWorkflowsDate(contactCompletedDate)}</span>;
+            }
+
+            // Missed but eventually completed: surface the late date in red.
+            if (lateContactCompletedDate) {
+              return (
+                <TooltipTrigger
+                  contents={`${bodyDisplayName} completed after due date`}
+                >
+                  <span style={{ color: palette.signal.error }}>
+                    {formatWorkflowsDate(lateContactCompletedDate)}
+                  </span>
+                </TooltipTrigger>
+              );
+            }
+
+            // Missed and never completed.
+            return <span />;
           },
         },
       ],

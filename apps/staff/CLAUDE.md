@@ -11,11 +11,15 @@ The staff app bundles four loosely-coupled products that share auth, routing, an
 | Product       | Code location                                                                | Backend / data source                                | State                             |
 | ------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------- | --------------------------------- |
 | **Workflows** | `src/WorkflowsStore/` (incl. `Opportunity/`, `Task/`), `src/core/Workflows*` | Firestore (direct) + Recidiviz API                   | `WorkflowsStore`                  |
-| **Insights**  | `src/InsightsStore/`, `src/core/Insights*`                                   | tRPC → `@sentencing/server`-style backend            | `InsightsStore`                   |
+| **Insights**  | `src/InsightsStore/`, `src/core/Insights*`                                   | REST → recidiviz-data outliers API (Cloud SQL)       | `InsightsStore`                   |
 | **Pathways**  | `src/core/` (most non-Insights/Workflows views)                              | Node/Express (`staff-server`) + Python (Case Triage) | `CoreStore`                       |
 | **Lantern**   | `src/lantern/`                                                               | Node/Express (`staff-server`)                        | `RootStore` (Lantern-only stores) |
 
 Lantern is a separate dashboard surfaced under the same app shell. Don't import Lantern code from `core/` or vice versa — they have parallel store trees.
+
+## State codes: US_ID vs US_IX (Idaho)
+
+Idaho is `US_ID` in the product (tenant configs, feature variants, routes, UI) but `US_IX` in the data platform (BigQuery `outliers_views`, ingest). When querying BQ for Idaho data, filter `state_code = 'US_IX'`. The Insights ETL relabels `US_IX` → `US_ID` on export, so the Cloud SQL DB and API responses the frontend sees use `US_ID`.
 
 ## Store hierarchy
 
@@ -53,6 +57,17 @@ When adding a state-specific feature, the change usually spans:
 - **`src/flags.ts`** (legacy) — environment-keyed booleans evaluated at build time. Existing usage is mostly the Pathways metric-backend swap. Don't reach for this for new feature gating; use a feature variant or tenant config instead.
 - **Feature variants** — per-user toggles managed via Firestore + Auth0. Use for staged rollouts and user-specific access. New variants must be documented; `tools/verifyFeatureVariantDocumentation.ts` enforces this in CI.
 - **Tenant configs** — per-state availability (above). Use for things that differ by jurisdiction.
+
+## Insights vitals drilldowns: data path + gating
+
+Vitals contact/task drilldown data is **not** read from BigQuery directly. Path: BQ `outliers_views.*` → GCS export (`gs://<project>-insights-etl-data/<US_ID>/`) → import into the Insights Cloud SQL DB → REST endpoints in recidiviz-data (`outliers_routes.py`, e.g. `/officer/{pseudoId}/vitals/contacts_drilldown`). When debugging an empty drilldown, check the GCS export file first (fastest, no DB creds) before suspecting BQ or the frontend.
+
+Two separate drilldowns are gated by two feature variants (`RootStore/types.ts`):
+
+- `operationsDrilldown` → task-based modal (`VitalsTaskDrilldownModal`), sourced from the Workflows caseload
+- `operationsContactsDrilldown` → BQ-backed contacts modal (`VitalsContactsDrilldownModal`)
+
+When the contacts variant is OFF for a tenant, the "timely contacts" card silently falls back to the task drilldown (`InsightsStaffVitals.tsx`) — which looks empty if the officer has no contact tasks, even though contact data exists. Enable per-tenant via `activeTenants`.
 
 ## Workflows opportunities
 
@@ -112,7 +127,7 @@ Prefer Playwright for new tests. Workflows Cucumber tests run against `nx offlin
 | Concern                   | Backend                               | Run locally with                                                  |
 | ------------------------- | ------------------------------------- | ----------------------------------------------------------------- |
 | Workflows reads/writes    | Firestore (direct from frontend)      | Firebase emulator (`nx offline staff`)                            |
-| Insights                  | tRPC over HTTP                        | mocked in offline; staging in `nx dev staff`                      |
+| Insights                  | REST → recidiviz-data outliers API    | mocked in offline; staging in `nx dev staff`                      |
 | Pathways metrics (legacy) | Node/Express in `staff-server`        | started by `nx dev staff`                                         |
 | Pathways metrics (new)    | Python/FastAPI in `recidiviz-data`    | `nx dev-be staff` (frontend) + Docker compose in `recidiviz-data` |
 | Auth                      | Auth0 (separate staging/prod tenants) | bypassed in offline mode                                          |

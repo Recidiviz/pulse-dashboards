@@ -32,6 +32,7 @@ export const rawSupervisionOfficerContactsFixture: z.input<
     contactDueDate: "2026-02-28",
     contactCompleted: true,
     contactCompletedDate: "2026-02-25",
+    lateContactCompletedDate: null,
   },
   {
     fullName: "Adams, Quinn",
@@ -43,6 +44,7 @@ export const rawSupervisionOfficerContactsFixture: z.input<
     contactDueDate: "2026-03-01",
     contactCompleted: false,
     contactCompletedDate: null,
+    lateContactCompletedDate: "2026-03-08",
   },
   {
     fullName: "Roberts, Frank",
@@ -54,6 +56,7 @@ export const rawSupervisionOfficerContactsFixture: z.input<
     contactDueDate: "2026-03-10",
     contactCompleted: false,
     contactCompletedDate: null,
+    lateContactCompletedDate: null,
   },
   {
     fullName: "Rivera, Jessica",
@@ -65,6 +68,7 @@ export const rawSupervisionOfficerContactsFixture: z.input<
     contactDueDate: "2026-02-15",
     contactCompleted: true,
     contactCompletedDate: "2026-02-14",
+    lateContactCompletedDate: null,
   },
   {
     fullName: "Wilson, Samuel",
@@ -76,6 +80,7 @@ export const rawSupervisionOfficerContactsFixture: z.input<
     contactDueDate: "2026-03-05",
     contactCompleted: true,
     contactCompletedDate: "2026-03-04",
+    lateContactCompletedDate: null,
   },
   {
     fullName: "Adams, Aaron",
@@ -87,6 +92,7 @@ export const rawSupervisionOfficerContactsFixture: z.input<
     contactDueDate: "2026-03-12",
     contactCompleted: false,
     contactCompletedDate: null,
+    lateContactCompletedDate: "2026-03-20",
   },
 ];
 
