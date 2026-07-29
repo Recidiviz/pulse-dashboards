@@ -34,8 +34,23 @@ type Auth0User = {
     stateCode: string;
     allowedStates?: string[];
     pseudonymizedId?: string;
+    // Raw Auth0 route entries, e.g. { psi_sarAccess: true } -- only the
+    // trailing "_" segment is the route key. Mirrors UserStore.routes.
+    routes?: Record<string, boolean>;
   };
 };
+
+// True if the caller has been granted the SAR product in Auth0 -- distinct
+// from resolving to a Staff row, which only means they were imported via
+// OMS/roster sync. Mirrors the frontend's UserStore.routes/userAllowedNavigation.
+export function resolveHasSARRouteAccess(
+  routes: Record<string, boolean> | undefined,
+) {
+  if (!routes) return false;
+  return Object.entries(routes).some(
+    ([key, isAllowed]) => isAllowed && key.split("_").pop() === "sarAccess",
+  );
+}
 
 export async function createContext(opts: CreateFastifyContextOptions) {
   const { req, res } = opts;
@@ -62,6 +77,7 @@ export async function createContext(opts: CreateFastifyContextOptions) {
   const authPayload = await verifyAuth0Token(opts);
 
   let staffPseudonymizedId: string | undefined;
+  let hasSARRouteAccess = false;
 
   if (authPayload) {
     const auth0User = authPayload as Auth0User;
@@ -83,6 +99,10 @@ export async function createContext(opts: CreateFastifyContextOptions) {
     if (!isRecidivizUser) {
       staffPseudonymizedId = auth0User[APP_METADATA_KEY]?.pseudonymizedId;
     }
+
+    hasSARRouteAccess = resolveHasSARRouteAccess(
+      auth0User[APP_METADATA_KEY]?.routes,
+    );
   }
 
   return {
@@ -91,5 +111,6 @@ export async function createContext(opts: CreateFastifyContextOptions) {
     isAuthorized: !!authPayload,
     prisma: prismaClient,
     staffPseudonymizedId,
+    hasSARRouteAccess,
   };
 }

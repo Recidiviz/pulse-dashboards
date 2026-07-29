@@ -42,14 +42,19 @@ import {
 describe("SAR router", () => {
   // Builds a tRPC caller directly (bypassing HTTP/createContext) with a given
   // staffPseudonymizedId, so tests can exercise both the staff-scoped access
-  // paths and the undefined (internal user) case per endpoint.
-  function makeCallerForStaff(staffPseudonymizedId: string | undefined) {
+  // paths and the undefined (internal user) case per endpoint. Defaults
+  // hasSARRouteAccess to true; only getSARsByClient reads it.
+  function makeCallerForStaff(
+    staffPseudonymizedId: string | undefined,
+    hasSARRouteAccess = true,
+  ) {
     return appRouter.createCaller({
       req: {} as never,
       res: {} as never,
       isAuthorized: true,
       prisma: testPrismaClient,
       staffPseudonymizedId,
+      hasSARRouteAccess,
     });
   }
 
@@ -987,6 +992,33 @@ describe("SAR router", () => {
       });
 
       const caller = makeCallerForStaff(fakeSARStaff.pseudonymizedId);
+      const sars = await caller.sar.getSARsByClient({
+        clientExternalId: fakeSARClient.externalId,
+      });
+
+      expect(sars).toHaveLength(1);
+      expect(sars[0].currentUserHasAccess).toBe(true);
+    });
+
+    test("the assignee has no access to an in-progress SAR without SAR product access, even though they're the assignee", async () => {
+      // fakeStaff is fakeSAR's assignee, but assignee-on-paper isn't the
+      // same as being granted the tool (hasSARRouteAccess: false).
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId, false);
+      const sars = await caller.sar.getSARsByClient({
+        clientExternalId: fakeSARClient.externalId,
+      });
+
+      expect(sars).toHaveLength(1);
+      expect(sars[0].currentUserHasAccess).toBe(false);
+    });
+
+    test("a SAR archived in OPII remains accessible to the assignee even without SAR product access", async () => {
+      await testPrismaClient.sentencingAssessmentReport.update({
+        where: { id: fakeSAR.id },
+        data: { completionDate: new Date("2020-01-01") },
+      });
+
+      const caller = makeCallerForStaff(fakeStaff.pseudonymizedId, false);
       const sars = await caller.sar.getSARsByClient({
         clientExternalId: fakeSARClient.externalId,
       });

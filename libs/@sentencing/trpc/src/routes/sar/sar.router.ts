@@ -300,15 +300,16 @@ export const sarRouter = router({
   // Tasks/Workflows, where the caller supervises the client but isn't necessarily
   // the PSI officer assigned to their SAR -- so every row is returned regardless
   // of caller. `currentUserHasAccess` (archived in OPII, or normal SAR access via
-  // `canAccessSARAssignee`) tells the Tasks FE whether to render a link; if not,
-  // the row still shows as plain status text. State isolation is already handled
-  // upstream by the per-state Prisma client, so no extra scoping is needed here.
+  // `canAccessSARAssignee` plus `hasSARRouteAccess`) tells the Tasks FE whether
+  // to render a link; if not, the row still shows as plain status text. State
+  // isolation is already handled upstream by the per-state Prisma client, so
+  // no extra scoping is needed here.
   getSARsByClient: baseProcedure
     .input(getSARsByClientInputSchema)
     .query(
       async ({
         input: { clientExternalId },
-        ctx: { prisma, staffPseudonymizedId },
+        ctx: { prisma, staffPseudonymizedId, hasSARRouteAccess },
       }) => {
         // Independent of each other (requestingStaff is only consumed below
         // in the per-row currentUserHasAccess computation, not in the query's
@@ -344,9 +345,15 @@ export const sarRouter = router({
           // internal user has no real assignee/supervisor relationship to
           // anything, so exempting them here would defeat the whole point of
           // gating the link to the assignee or their supervisor.
+          // hasSARRouteAccess also gates this branch: an assignee/supervisor
+          // on paper may not be onboarded to the tool yet (SAR rolls out
+          // gradually). Doesn't apply to isArchivedInOpii -- any PPO can view
+          // a finished report regardless of their own SAR access.
           const currentUserHasAccess =
             isArchivedInOpii(rest) ||
-            (!!requestingStaff && canAccessSARAssignee(requestingStaff, staff));
+            (!!requestingStaff &&
+              hasSARRouteAccess &&
+              canAccessSARAssignee(requestingStaff, staff));
 
           return {
             ...rest,
