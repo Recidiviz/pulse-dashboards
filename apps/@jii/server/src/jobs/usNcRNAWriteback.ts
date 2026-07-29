@@ -30,7 +30,7 @@ import {
   writebackAnswers,
   writebackLifeAreaNames,
 } from "~@jii/configs";
-import { getPrismaClientForStateCode, PrismaClient } from "~@jii/prisma";
+import { getPrismaClient, PrismaClient } from "~@jii/prisma";
 
 const completedUsNcRNASchema = z.object({
   pseudonymizedId: z.string(),
@@ -217,7 +217,7 @@ async function main() {
     return;
   }
 
-  const prismaClient = getPrismaClientForStateCode("US_NC");
+  const prismaClient = getPrismaClient({ stateCode: "US_NC", demo: false });
 
   console.log("Querying database...");
   const dbRecords = await getCompletedUsNcRNA(prismaClient);

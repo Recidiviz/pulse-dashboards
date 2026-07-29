@@ -240,6 +240,10 @@
           "additional-sops-env-files": ["{projectRoot}/env.dev.enc.yaml"]
         }
       }
+    },
+
+    "test": {
+      "dependsOn": ["^prepare-test-db"]
     }
   }
 }

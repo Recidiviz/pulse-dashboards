@@ -19,7 +19,7 @@ import * as Sentry from "@sentry/node";
 import tk from "timekeeper";
 
 import { allRNAQuestions, rnaQuestionConfig } from "~@jii/configs";
-import { getPrismaClientForStateCode, Prisma } from "~@jii/prisma";
+import { getPrismaClient, Prisma } from "~@jii/prisma";
 
 import {
   CompletedUsNcRNA,
@@ -215,7 +215,7 @@ describe("getFilePath", () => {
 });
 
 describe("getCompletedUsNcRNA", () => {
-  const testPrismaClient = getPrismaClientForStateCode("US_NC");
+  const testPrismaClient = getPrismaClient({ stateCode: "US_NC", demo: false });
 
   const tablesToReset: Prisma.ModelName[] = [
     "UsNcRNA",
