@@ -15,9 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { getPrismaClientForStateCode, Prisma } from "~@jii/prisma";
+import { getPrismaClient, Prisma } from "~@jii/prisma";
 
-export const testPrismaClient = getPrismaClientForStateCode("US_XX");
+import { testStateCode } from "./context";
+
+export const testPrismaClient = getPrismaClient({
+  stateCode: testStateCode,
+  demo: false,
+});
 
 const PRISMA_TABLES = Object.values(Prisma.ModelName);
 

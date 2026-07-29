@@ -22,7 +22,7 @@ import superjson from "superjson";
 import { beforeAll } from "vitest";
 import { ZodError } from "zod";
 
-import { getPrismaClientForStateCode } from "~@jii/prisma";
+import { getPrismaClient } from "~@jii/prisma";
 import { buildCommonServer } from "~server-setup-plugin";
 
 import { createContext } from "../context";
@@ -35,7 +35,7 @@ vi.mock("~@jii/prisma", () => {
   // we don't need to mock the entire library for these tests
   // and prisma has some special mocking requirements that we don't want to deal with here,
   // which is why this is only a partial implementation of the public api
-  return { getPrismaClientForStateCode: vi.fn() };
+  return { getPrismaClient: vi.fn() };
 });
 vi.mock("../helpers/firebaseAdmin");
 
@@ -87,8 +87,11 @@ afterAll(() => {
   testServer.close();
 });
 
+// needs to be a real state code, any will do
+const testStateCode = "US_NC";
+
 const defaultTestHeaders = {
-  StateCode: "US_XX",
+  StateCode: testStateCode,
   // this token gets processed by a third party library so we just rely on mocks below
   Authorization: "Bearer valid-token",
 };
@@ -97,7 +100,7 @@ const defaultTestHeaders = {
 const defaultAuthPayload = {
   app: "staff",
   sub: "abc123",
-  stateCode: "US_XX",
+  stateCode: testStateCode,
   recidivizAllowedStates: [],
   impersonator: false,
 };
@@ -144,7 +147,7 @@ describe.each([
   });
 
   test("require auth header", async () => {
-    client = makeTestClient({ StateCode: "US_XX" });
+    client = makeTestClient({ StateCode: testStateCode });
 
     await expect(proc()).rejects.toThrow(
       new TRPCError({
@@ -216,14 +219,14 @@ describe.each([
   test("database must support state code", async () => {
     const dbError = new Error("oops");
 
-    vi.mocked(getPrismaClientForStateCode).mockImplementation(() => {
+    vi.mocked(getPrismaClient).mockImplementation(() => {
       throw dbError;
     });
 
     await expect(proc()).rejects.toThrow(
       new TRPCError({
         code: "PRECONDITION_FAILED",
-        message: "Unsupported state code provided in request headers: US_XX",
+        message: `Unsupported state code provided in request headers: ${testStateCode}`,
         cause: dbError,
       }),
     );
@@ -232,8 +235,14 @@ describe.each([
   test("successful context creation", async () => {
     await expect(proc()).resolves.toBe(successResponse);
 
-    expect(getPrismaClientForStateCode).toHaveBeenCalledWith("US_XX");
-    expect(getFirestoreCollectionQuerier).toHaveBeenCalledWith("US_XX", false);
+    expect(getPrismaClient).toHaveBeenCalledWith({
+      stateCode: testStateCode,
+      demo: false,
+    });
+    expect(getFirestoreCollectionQuerier).toHaveBeenCalledWith(
+      testStateCode,
+      false,
+    );
   });
 
   test("successful context creation for demo request", async () => {
@@ -241,8 +250,14 @@ describe.each([
 
     await expect(proc()).resolves.toBe(successResponse);
 
-    expect(getPrismaClientForStateCode).toHaveBeenCalledWith("US_XX_DEMO");
-    expect(getFirestoreCollectionQuerier).toHaveBeenCalledWith("US_XX", true);
+    expect(getPrismaClient).toHaveBeenCalledWith({
+      stateCode: testStateCode,
+      demo: true,
+    });
+    expect(getFirestoreCollectionQuerier).toHaveBeenCalledWith(
+      testStateCode,
+      true,
+    );
   });
 
   test("Recidiviz users don't need state permissions for demo data", async () => {
@@ -277,7 +292,7 @@ test("Recidiviz users cannot write to prod", async () => {
   firebaseAuthMock.verifyIdToken.mockResolvedValue({
     ...defaultAuthPayload,
     stateCode: "RECIDIVIZ",
-    recidivizAllowedStates: ["US_XX"],
+    recidivizAllowedStates: [testStateCode],
   });
 
   // because we are testing this with a TRPC client, we can't verify the server-side error class
@@ -306,7 +321,7 @@ test("successful Recidiviz write", async () => {
   firebaseAuthMock.verifyIdToken.mockResolvedValue({
     ...defaultAuthPayload,
     stateCode: "RECIDIVIZ",
-    recidivizAllowedStates: ["US_XX"],
+    recidivizAllowedStates: [testStateCode],
   });
   await expect(client.testMutation.mutate()).resolves.toMatchInlineSnapshot(
     `"Mutated world!"`,

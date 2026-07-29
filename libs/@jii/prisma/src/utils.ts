@@ -15,6 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export function getDevDatabaseUrl(stateCode: string) {
-  return `postgresql://postgres:postgres@localhost:${process.env["DEV_PORT"]}/${stateCode.toLowerCase()}?schema=public`;
+export function getDevDatabaseUrl(dbName: string) {
+  return `postgresql://postgres:postgres@localhost:${process.env["DEV_PORT"]}/${dbName}?schema=public`;
 }

@@ -18,7 +18,7 @@
 import type { AuthorizedResidentUserContext } from "../procedures/firebaseAuthedResidentProcedure";
 import { baseProcedure } from "../procedures/init";
 import { userRouter } from "../router/routes/user/router";
-import { userId } from "./context";
+import { testStateCode, userId } from "./context";
 import { testPrismaClient } from "./prisma";
 
 /**
@@ -26,7 +26,7 @@ import { testPrismaClient } from "./prisma";
  * Reset to defaults in beforeEach so tests start with a clean slate.
  */
 export const mockCtx = {
-  stateCode: "US_XX",
+  stateCode: testStateCode,
 };
 
 vi.mock("../procedures/firebaseAuthedResidentProcedure", () => ({
@@ -45,7 +45,7 @@ vi.mock("../procedures/firebaseAuthedResidentProcedure", () => ({
 }));
 
 beforeEach(() => {
-  mockCtx.stateCode = "US_XX";
+  mockCtx.stateCode = testStateCode;
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { stateCodes } from "~@jii/configs";
-import { getPrismaClientForStateCode } from "~@jii/prisma";
+import { getPrismaClient } from "~@jii/prisma";
 import { ImportHandler } from "~data-import-plugin";
 
 import { FILE_NAME_TO_SCHEMA_AND_LOADER_FN } from "./constants";
@@ -52,7 +52,8 @@ export function getImportHandler() {
 
   return new JiiImportHandler({
     bucket,
-    getPrismaClientForStateCode,
+    getPrismaClientForStateCode: (stateCode: string) =>
+      getPrismaClient({ stateCode: stateCodes.parse(stateCode), demo: false }),
     filesToSchemasAndLoaderFns: FILE_NAME_TO_SCHEMA_AND_LOADER_FN,
   });
 }

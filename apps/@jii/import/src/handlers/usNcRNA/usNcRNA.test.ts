@@ -17,7 +17,7 @@
 
 import { z } from "zod";
 
-import { getPrismaClientForStateCode } from "~@jii/prisma";
+import { getPrismaClient } from "~@jii/prisma";
 import {
   dataProviderSingleton,
   MockImportHandler,
@@ -36,7 +36,7 @@ const STATE_CODE = "US_NC";
 const DATA_PROVIDER_FILE_NAME = `${STATE_CODE}/${NC_RNA_FILE_NAME}`;
 
 const importHandler = getImportHandler();
-const prismaClient = getPrismaClientForStateCode(STATE_CODE);
+const prismaClient = getPrismaClient({ stateCode: STATE_CODE, demo: false });
 
 const personData: z.input<typeof rnaWritebackSchema> = {
   pseudonymized_id: "test_pseudonymized_id",

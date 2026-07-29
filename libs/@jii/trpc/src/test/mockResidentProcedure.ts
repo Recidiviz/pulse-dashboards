@@ -20,7 +20,7 @@ import { Permission } from "~@jii/auth";
 import type { AuthorizedResidentUserContext } from "../procedures/firebaseAuthedResidentProcedure";
 import { baseProcedure } from "../procedures/init";
 import { residentRouter } from "../router/routes/resident/router";
-import { userId } from "./context";
+import { testStateCode, userId } from "./context";
 import { testPrismaClient } from "./prisma";
 
 export const testPseudonymizedId = "test-resident-id";
@@ -30,7 +30,7 @@ export const testPseudonymizedId = "test-resident-id";
  * Reset to defaults in beforeEach so tests start with a clean slate.
  */
 export const mockCtx = {
-  stateCode: "US_XX",
+  stateCode: testStateCode,
   pseudonymizedId: testPseudonymizedId,
   permissions: undefined as Permission[] | undefined,
 };
@@ -53,7 +53,7 @@ vi.mock("../procedures/firebaseAuthedResidentProcedure", () => ({
 }));
 
 beforeEach(() => {
-  mockCtx.stateCode = "US_XX";
+  mockCtx.stateCode = testStateCode;
   mockCtx.pseudonymizedId = testPseudonymizedId;
   mockCtx.permissions = undefined;
 });

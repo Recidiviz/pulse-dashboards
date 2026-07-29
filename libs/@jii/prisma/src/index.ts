@@ -18,4 +18,4 @@
 // Public entry point for the @jii/prisma package.
 export * from "./client/client";
 export * from "./client/models";
-export * from "./getPrismaClientForStateCode";
+export * from "./getPrismaClient";

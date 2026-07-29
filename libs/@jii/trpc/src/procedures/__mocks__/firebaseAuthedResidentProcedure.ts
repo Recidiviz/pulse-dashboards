@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { userId } from "../../test/context";
+import { testStateCode, userId } from "../../test/context";
 import { testPrismaClient } from "../../test/prisma";
 import type { AuthorizedResidentUserContext } from "../firebaseAuthedResidentProcedure";
 import { baseProcedure } from "../init";
@@ -28,9 +28,9 @@ export const firebaseAuthedResidentProcedure = baseProcedure.use((opts) => {
     ctx: {
       userId,
       userProfile: {
-        stateCode: "US_XX",
+        stateCode: testStateCode,
       },
-      stateCode: "US_XX",
+      stateCode: testStateCode,
       prisma: testPrismaClient,
     } satisfies AuthorizedResidentUserContext,
   });

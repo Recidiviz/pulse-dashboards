@@ -15,13 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { stateCodes } from "~@jii/configs";
+
 export function getEnabledStateCodes() {
   const ENABLED_STATE_DBS = process.env["ENABLED_STATE_DBS"];
 
   if (!ENABLED_STATE_DBS)
     throw new Error("No states specified in ENABLED_STATE_DBS");
 
-  const states = ENABLED_STATE_DBS.split(",").map((s) => s.toUpperCase());
+  const states = ENABLED_STATE_DBS.split(",").map((s) =>
+    stateCodes.parse(s.toUpperCase()),
+  );
 
   return states;
 }

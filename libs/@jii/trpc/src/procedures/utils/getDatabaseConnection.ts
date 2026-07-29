@@ -17,19 +17,21 @@
 
 import { TRPCError } from "@trpc/server";
 
-import { getPrismaClientForStateCode } from "~@jii/prisma";
+import { StateCode } from "~@jii/configs";
+import { getPrismaClient } from "~@jii/prisma";
 
 /**
  * Returns a Prisma client for the specified database (state specific, live data or demo),
  * or throws if the database is not configured
  */
-export function getDatabaseConnection(stateCode: string, useDemoDb: boolean) {
+export function getDatabaseConnection(
+  stateCode: StateCode,
+  useDemoDb: boolean,
+) {
   let prismaClient;
 
   try {
-    prismaClient = getPrismaClientForStateCode(
-      `${stateCode}${useDemoDb ? "_DEMO" : ""}`,
-    );
+    prismaClient = getPrismaClient({ stateCode, demo: useDemoDb });
   } catch (e) {
     throw new TRPCError({
       code: "PRECONDITION_FAILED",

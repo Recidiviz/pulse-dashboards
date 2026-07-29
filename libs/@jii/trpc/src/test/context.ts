@@ -15,4 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { StateCode } from "~@jii/configs";
+
 export const userId = "abc123";
+
+// tests use a fake state code for consistency;
+// in tests there is only a single DB so this shouldn't break anything
+export const testStateCode = "US_XX" as StateCode;

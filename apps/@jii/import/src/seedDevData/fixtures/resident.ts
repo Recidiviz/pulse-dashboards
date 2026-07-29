@@ -28,7 +28,7 @@ const rawResidentCommonByState = group(
   (r) => r.stateCode,
 );
 
-export const residentFixtures = Object.fromEntries(
+export const residentFixtures = new Map(
   getEnabledStateCodes().map((code) => [
     code,
     (rawResidentCommonByState.get(code) ?? []).map((r, i) =>

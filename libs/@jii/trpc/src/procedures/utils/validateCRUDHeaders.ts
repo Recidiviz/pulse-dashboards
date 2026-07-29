@@ -17,6 +17,8 @@
 
 import { TRPCError } from "@trpc/server";
 
+import { StateCode, stateCodes } from "~@jii/configs";
+
 import { TRPCFastifyRequest } from "../../context";
 
 // HTTP headers are flattened to lowercase in Fastify
@@ -29,13 +31,18 @@ const DEMO_DATA_HEADER_KEY = "usedemodata";
  * that they exist and are supported, BUT NOT that the caller has permission
  * to access the indicated database!
  */
-export function validateCRUDHeaders(req: TRPCFastifyRequest) {
-  const stateCode = req.headers[STATE_CODE_HEADER_KEY];
+export function validateCRUDHeaders(req: TRPCFastifyRequest): {
+  stateCode: StateCode;
+  isDemoRequest: boolean;
+} {
+  const stateCodeHeader = req.headers[STATE_CODE_HEADER_KEY];
 
-  if (!stateCode || typeof stateCode !== "string") {
+  const stateCode = stateCodes.safeParse(stateCodeHeader).data;
+
+  if (!stateCode) {
     throw new TRPCError({
       code: "PRECONDITION_FAILED",
-      message: `Unsupported state code provided in request headers: ${stateCode}`,
+      message: `Unsupported state code provided in request headers: ${stateCodeHeader}`,
     });
   }
   const isDemoRequest = req.headers[DEMO_DATA_HEADER_KEY] === "true";

@@ -22,6 +22,7 @@ import type { PrismaClient } from "~@jii/prisma";
 
 import { ReadOnlyStaffPermissionError } from "../errors";
 import type { AuthorizedResidentUserContext } from "../procedures/firebaseAuthedResidentProcedure";
+import { testStateCode } from "../test/context";
 import { residentRestrictedMiddleware } from "./residentRestrictedMiddleware";
 
 describe("residentRestrictedMiddleware", () => {
@@ -33,11 +34,11 @@ describe("residentRestrictedMiddleware", () => {
     permissions: AuthorizedUserProfile["permissions"] = [],
   ): AuthorizedResidentUserContext => ({
     userId: "user-123",
-    stateCode: "US_XX",
+    stateCode: testStateCode,
     prisma: mockPrisma,
     userProfile: {
       pseudonymizedId,
-      stateCode: "US_XX",
+      stateCode: testStateCode,
       permissions,
     },
   });
@@ -271,10 +272,10 @@ describe("residentRestrictedMiddleware", () => {
       permissions: AuthorizedUserProfile["permissions"] = [],
     ): AuthorizedResidentUserContext => ({
       userId: "staff-123",
-      stateCode: "US_XX",
+      stateCode: testStateCode,
       prisma: mockPrisma,
       userProfile: {
-        stateCode: "US_XX",
+        stateCode: testStateCode,
         permissions,
       },
     });

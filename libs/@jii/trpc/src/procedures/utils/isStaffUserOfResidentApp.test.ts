@@ -17,6 +17,7 @@
 
 import type { PrismaClient } from "~@jii/prisma";
 
+import { testStateCode } from "../../test/context";
 import type { AuthorizedResidentUserContext } from "../firebaseAuthedResidentProcedure";
 import { isStaffUserOfResidentApp } from "./isStaffUserOfResidentApp";
 
@@ -24,7 +25,7 @@ const mockPrisma = {} as PrismaClient;
 
 const baseCtx = {
   userId: "user-123",
-  stateCode: "US_XX",
+  stateCode: testStateCode,
   prisma: mockPrisma,
 };
 
@@ -32,7 +33,7 @@ test("returns false for a resident user", () => {
   const ctx: AuthorizedResidentUserContext = {
     ...baseCtx,
     userProfile: {
-      stateCode: "US_XX",
+      stateCode: testStateCode,
       externalId: "DOC123",
       pseudonymizedId: "pseudo-abc",
     },
@@ -45,7 +46,7 @@ test("returns true for a staff user", () => {
   const ctx: AuthorizedResidentUserContext = {
     ...baseCtx,
     userProfile: {
-      stateCode: "US_XX",
+      stateCode: testStateCode,
     },
   };
 
@@ -57,7 +58,7 @@ test("returns true for a Recidiviz employee", () => {
     ...baseCtx,
     userProfile: {
       stateCode: "RECIDIVIZ",
-      allowedStates: ["US_XX"],
+      allowedStates: [testStateCode],
     },
   };
 

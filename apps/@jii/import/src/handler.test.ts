@@ -32,7 +32,7 @@ vi.mock("@google-cloud/storage", () => ({
 
 // Mock Prisma so any state code is accepted without a real DB connection
 vi.mock("~@jii/prisma", () => ({
-  getPrismaClientForStateCode: () => ({ $disconnect: () => Promise.resolve() }),
+  getPrismaClient: () => ({ $disconnect: () => Promise.resolve() }),
 }));
 
 // Replace the loaderFns with spies so we can assert call/no-call without real DB writes

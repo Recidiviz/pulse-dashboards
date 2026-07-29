@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { getPrismaClientForStateCode } from "~@jii/prisma";
+import { getPrismaClient } from "~@jii/prisma";
 import {
   dataProviderSingleton,
   MockImportHandler,
@@ -34,7 +34,7 @@ const STATE_CODE = "US_NC";
 const DATA_PROVIDER_FILE_NAME = `${STATE_CODE}/${RESIDENTS_FILE_NAME}`;
 
 const importHandler = getImportHandler();
-const prismaClient = getPrismaClientForStateCode(STATE_CODE);
+const prismaClient = getPrismaClient({ stateCode: STATE_CODE, demo: false });
 
 const personData = {
   pseudonymized_id: "test_pseudo_id",

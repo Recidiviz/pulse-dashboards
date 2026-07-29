@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { getPrismaClientForStateCode } from "~@jii/prisma";
+import { getPrismaClient } from "~@jii/prisma";
 
 import { residentHandler } from "../handlers/resident/resident";
 import { residentFixtures } from "./fixtures/resident";
@@ -27,8 +27,8 @@ async function* toAsyncGenerator<T>(items: T[]) {
 }
 
 await Promise.all(
-  Object.entries(residentFixtures).map(async ([stateCode, fixtures]) => {
-    const prismaClient = getPrismaClientForStateCode(stateCode);
+  residentFixtures.entries().map(async ([stateCode, fixtures]) => {
+    const prismaClient = getPrismaClient({ stateCode, demo: false });
     console.log(`Seeding fixtures for ${stateCode}`);
     try {
       return await residentHandler(prismaClient, toAsyncGenerator(fixtures));

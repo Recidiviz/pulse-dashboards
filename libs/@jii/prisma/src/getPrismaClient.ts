@@ -17,15 +17,20 @@
 
 import { PrismaPg } from "@prisma/adapter-pg";
 
+import { StateCode } from "~@jii/configs";
+
 import { PrismaClient } from "./client/client";
 import { getDevDatabaseUrl } from "./utils";
 
 const prismaClients: Record<string, PrismaClient> = {};
 
-export function getPrismaClientForStateCode(stateCode: string) {
-  if (stateCode === "US_IX") {
-    stateCode = "US_ID";
-  }
+type PrismaClientOpts = {
+  stateCode: StateCode;
+  demo: boolean;
+};
+
+export function getPrismaClient({ stateCode, demo }: PrismaClientOpts) {
+  const stateDbName = `${stateCode}${demo ? "_DEMO" : ""}`.toLowerCase();
   const NODE_ENV = process.env["NODE_ENV"] ?? "";
   let dbUrl: string | undefined;
 
@@ -41,11 +46,11 @@ export function getPrismaClientForStateCode(stateCode: string) {
         dbUrl = process.env["DATABASE_URL"];
       } else if (process.env["USE_STAGING_DB"] === "true") {
         // this URL points you to the local CloudSQL proxy for the staging DB
-        dbUrl = `postgresql://${process.env["STAGING_DB_USER"]}:${process.env["STAGING_DB_PASSWORD"]}@localhost:5432/${stateCode.toLowerCase()}?host=127.0.0.1`;
+        dbUrl = `postgresql://${process.env["STAGING_DB_USER"]}:${process.env["STAGING_DB_PASSWORD"]}@localhost:5432/${stateDbName}?host=127.0.0.1`;
       } else {
         // otherwise use the local DB. we can construct the URL on the fly
         // from a predictable and non-sensitive template
-        dbUrl = getDevDatabaseUrl(stateCode);
+        dbUrl = getDevDatabaseUrl(stateDbName);
         console.log(dbUrl);
       }
       break;

@@ -22,7 +22,7 @@ import superjson from "superjson";
 import { beforeAll } from "vitest";
 import { ZodError } from "zod";
 
-import { getPrismaClientForStateCode } from "~@jii/prisma";
+import { getPrismaClient } from "~@jii/prisma";
 import { buildCommonServer } from "~server-setup-plugin";
 
 import { createContext } from "../context";
@@ -34,7 +34,7 @@ vi.mock("~@jii/prisma", () => {
   // we don't need to mock the entire library for these tests
   // and prisma has some special mocking requirements that we don't want to deal with here,
   // which is why this is only a partial implementation of the public api
-  return { getPrismaClientForStateCode: vi.fn() };
+  return { getPrismaClient: vi.fn() };
 });
 
 // needs to be different from the test server in firebaseAuthedStaffProcedure
@@ -82,8 +82,11 @@ afterAll(() => {
   testServer.close();
 });
 
+// needs to be a real state code, any will do
+const testStateCode = "US_MA";
+
 const defaultTestHeaders = {
-  StateCode: "US_XX",
+  StateCode: testStateCode,
   // this token gets processed by a third party library so we just rely on mocks below
   Authorization: "Bearer valid-token",
 };
@@ -92,7 +95,7 @@ const defaultTestHeaders = {
 const defaultAuthPayload = {
   app: "jii",
   sub: "abc123",
-  stateCode: "US_XX",
+  stateCode: testStateCode,
   permissions: ["live_data"],
 };
 
@@ -133,7 +136,7 @@ test("require state code in header", async () => {
 });
 
 test("require auth header", async () => {
-  client = makeTestClient({ StateCode: "US_XX" });
+  client = makeTestClient({ StateCode: testStateCode });
 
   await expect(client.test.query()).rejects.toThrow(
     new TRPCError({
@@ -202,14 +205,14 @@ test("Demo data requests must have permissions for requested state", async () =>
 test("database must support state code", async () => {
   const dbError = new Error("oops");
 
-  vi.mocked(getPrismaClientForStateCode).mockImplementation(() => {
+  vi.mocked(getPrismaClient).mockImplementation(() => {
     throw dbError;
   });
 
   await expect(client.test.query()).rejects.toThrow(
     new TRPCError({
       code: "PRECONDITION_FAILED",
-      message: "Unsupported state code provided in request headers: US_XX",
+      message: `Unsupported state code provided in request headers: ${testStateCode}`,
       cause: dbError,
     }),
   );
@@ -220,7 +223,10 @@ test("successful context creation", async () => {
     `"Hello, world!"`,
   );
 
-  expect(getPrismaClientForStateCode).toHaveBeenCalledWith("US_XX");
+  expect(getPrismaClient).toHaveBeenCalledWith({
+    stateCode: testStateCode,
+    demo: false,
+  });
 });
 
 test("successful context creation for demo request", async () => {
@@ -230,7 +236,10 @@ test("successful context creation for demo request", async () => {
     `"Hello, world!"`,
   );
 
-  expect(getPrismaClientForStateCode).toHaveBeenCalledWith("US_XX_DEMO");
+  expect(getPrismaClient).toHaveBeenCalledWith({
+    stateCode: testStateCode,
+    demo: true,
+  });
 });
 
 test("Recidiviz users don't need state permissions for demo data", async () => {
@@ -256,5 +265,8 @@ test("successful context creation without live_data permission", async () => {
     `"Hello, world!"`,
   );
 
-  expect(getPrismaClientForStateCode).toHaveBeenCalledWith("US_XX_DEMO");
+  expect(getPrismaClient).toHaveBeenCalledWith({
+    stateCode: testStateCode,
+    demo: true,
+  });
 });

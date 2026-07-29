@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { AuthorizedUserProfile, authorizedUserProfileSchema } from "~@jii/auth";
+import { StateCode } from "~@jii/configs";
 import { PrismaClient } from "~@jii/prisma";
 
 import type { TRPCFastifyRequest } from "../context";
@@ -46,7 +47,7 @@ async function validateAuthPayload(
 }
 
 function getDatabaseConnectionForPermissions(
-  stateCode: string,
+  stateCode: StateCode,
   isDemoRequest: boolean,
   permissions: AuthorizedUserProfile["permissions"],
 ) {
@@ -60,7 +61,7 @@ function getDatabaseConnectionForPermissions(
 export type AuthorizedResidentUserContext = {
   userId: string;
   userProfile: AuthorizedUserProfile;
-  stateCode: string;
+  stateCode: StateCode;
   prisma: PrismaClient;
 };
 

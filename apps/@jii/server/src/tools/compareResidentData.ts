@@ -18,7 +18,8 @@
 import { ArgumentParser } from "argparse";
 import { writeFileSync } from "fs";
 
-import { getPrismaClientForStateCode, Resident } from "~@jii/prisma";
+import { StateCode, stateCodes } from "~@jii/configs";
+import { getPrismaClient, Resident } from "~@jii/prisma";
 import { findStateSchema } from "~@jii/schemas";
 import { getFirestoreCollectionQuerier } from "~@jii/trpc";
 import {
@@ -74,7 +75,7 @@ type Args = {
 
 const args = parser.parse_args() as Args;
 
-function getStateCodesToCheck(): Array<string> {
+function getStateCodesToCheck(): Array<StateCode> {
   const source = args.states ?? process.env["ENABLED_STATE_DBS"];
 
   if (!source) {
@@ -83,7 +84,7 @@ function getStateCodesToCheck(): Array<string> {
     );
   }
 
-  return source.split(",").map((s) => s.trim().toUpperCase());
+  return source.split(",").map((s) => stateCodes.parse(s.trim().toUpperCase()));
 }
 
 // this maps corresponding fields in the Firestore and Prisma records,
@@ -186,12 +187,12 @@ function diffValues(
 }
 
 async function compareResident(
-  stateCode: string,
+  stateCode: StateCode,
   firestoreResident: WorkflowsResidentRecord,
 ): Promise<ResidentCheckResult> {
   const { pseudonymizedId } = firestoreResident;
   const messages: Array<string> = [];
-  const prisma = getPrismaClientForStateCode(stateCode);
+  const prisma = getPrismaClient({ stateCode, demo: false });
   const resident = await prisma.resident.findUnique({
     where: { pseudonymizedId },
   });
@@ -282,7 +283,7 @@ async function compareResident(
 }
 
 async function checkState(
-  stateCode: string,
+  stateCode: StateCode,
   sampleSize: number,
 ): Promise<{ summary: StateSummary; messages: Array<string> }> {
   const residentsQuery = getFirestoreCollectionQuerier(

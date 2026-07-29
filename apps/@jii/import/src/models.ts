@@ -91,6 +91,8 @@ export const processedResidentSchema = residentCommonSchema
     }
   });
 
+export type ProcessedResident = z.infer<typeof processedResidentSchema>;
+
 export const residentSchema = exportPreprocessSchema.pipe(
   processedResidentSchema,
 );

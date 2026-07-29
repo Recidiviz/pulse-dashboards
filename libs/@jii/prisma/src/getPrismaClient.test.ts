@@ -17,17 +17,19 @@
 
 import { PrismaPg } from "@prisma/adapter-pg";
 
+import { StateCode } from "~@jii/configs";
+
 import { PrismaClient } from "./client/client";
 import { getDevDatabaseUrl } from "./utils";
 
 vi.mock("@prisma/adapter-pg");
 vi.mock("./client/client", () => ({ PrismaClient: vi.fn() }));
 
-// getPrismaClientForStateCode.ts keeps a module-level `prismaClients` cache
+// getPrismaClient.ts keeps a module-level `prismaClients` cache
 // keyed by resolved connection string, so the SAME dbUrl resolved in two
 // different tests would silently be served from cache in the second test
 // (the mocked PrismaPg/PrismaClient constructors wouldn't be called again).
-let getPrismaClientForStateCode: typeof import("./getPrismaClientForStateCode").getPrismaClientForStateCode;
+let getPrismaClient: typeof import("./getPrismaClient").getPrismaClient;
 
 beforeEach(async () => {
   // need to return a unique object for each call
@@ -39,15 +41,21 @@ beforeEach(async () => {
   // specifically to reset the Prisma client cache. Mocks should be unaffected by this,
   // Vitest manages them separately
   vi.resetModules();
-  ({ getPrismaClientForStateCode } = await import(
-    "./getPrismaClientForStateCode"
-  ));
+  ({ getPrismaClient } = await import("./getPrismaClient"));
 });
 
-describe("getPrismaClientForStateCode", () => {
+const testStateCode = "US_XX" as StateCode;
+
+describe("getPrismaClient", () => {
   test("returns the same client instance for the same state code", () => {
-    const firstClient = getPrismaClientForStateCode("US_XX");
-    const secondClient = getPrismaClientForStateCode("US_XX");
+    const firstClient = getPrismaClient({
+      stateCode: testStateCode,
+      demo: false,
+    });
+    const secondClient = getPrismaClient({
+      stateCode: testStateCode,
+      demo: false,
+    });
 
     expect(secondClient).toBe(firstClient);
   });
@@ -57,7 +65,7 @@ describe("getPrismaClientForStateCode", () => {
       vi.stubEnv("NODE_ENV", "test");
       vi.stubEnv("DATABASE_URL", "postgresql://test-host/testdb");
 
-      getPrismaClientForStateCode("US_XX");
+      getPrismaClient({ stateCode: testStateCode, demo: false });
 
       expect(PrismaPg).toHaveBeenCalledExactlyOnceWith({
         connectionString: "postgresql://test-host/testdb",
@@ -68,9 +76,9 @@ describe("getPrismaClientForStateCode", () => {
       vi.stubEnv("NODE_ENV", "test");
       vi.stubEnv("DATABASE_URL", "");
 
-      expect(() => getPrismaClientForStateCode("US_XX")).toThrow(
-        "Attempted to access unsupported database for state US_XX",
-      );
+      expect(() =>
+        getPrismaClient({ stateCode: testStateCode, demo: false }),
+      ).toThrow("Attempted to access unsupported database for state US_XX");
     });
   });
 
@@ -78,10 +86,20 @@ describe("getPrismaClientForStateCode", () => {
     test("derives the connection string from the state code", () => {
       vi.stubEnv("NODE_ENV", "development");
 
-      getPrismaClientForStateCode("US_XX");
+      getPrismaClient({ stateCode: testStateCode, demo: false });
 
       expect(PrismaPg).toHaveBeenCalledExactlyOnceWith({
-        connectionString: getDevDatabaseUrl("US_XX"),
+        connectionString: getDevDatabaseUrl("us_xx"),
+      });
+    });
+
+    test("derives the connection string from the state code for demo data", () => {
+      vi.stubEnv("NODE_ENV", "development");
+
+      getPrismaClient({ stateCode: testStateCode, demo: true });
+
+      expect(PrismaPg).toHaveBeenCalledExactlyOnceWith({
+        connectionString: getDevDatabaseUrl("us_xx_demo"),
       });
     });
 
@@ -91,7 +109,7 @@ describe("getPrismaClientForStateCode", () => {
         vi.stubEnv("IS_OFFLINE", "true");
         vi.stubEnv("DATABASE_URL", "postgresql://offline-host/testdb");
 
-        getPrismaClientForStateCode("US_XX");
+        getPrismaClient({ stateCode: testStateCode, demo: false });
 
         expect(PrismaPg).toHaveBeenCalledExactlyOnceWith({
           connectionString: "postgresql://offline-host/testdb",
@@ -103,10 +121,10 @@ describe("getPrismaClientForStateCode", () => {
         vi.stubEnv("IS_OFFLINE", "true");
         vi.stubEnv("DATABASE_URL", "");
 
-        getPrismaClientForStateCode("US_XX");
+        getPrismaClient({ stateCode: testStateCode, demo: false });
 
         expect(PrismaPg).toHaveBeenCalledExactlyOnceWith({
-          connectionString: getDevDatabaseUrl("US_XX"),
+          connectionString: getDevDatabaseUrl("us_xx"),
         });
       });
     });
@@ -118,7 +136,7 @@ describe("getPrismaClientForStateCode", () => {
         vi.stubEnv("STAGING_DB_USER", "staging-user");
         vi.stubEnv("STAGING_DB_PASSWORD", "staging-password");
 
-        getPrismaClientForStateCode("US_XX");
+        getPrismaClient({ stateCode: testStateCode, demo: false });
 
         expect(PrismaPg).toHaveBeenCalledExactlyOnceWith({
           connectionString:
@@ -133,7 +151,7 @@ describe("getPrismaClientForStateCode", () => {
       vi.stubEnv("NODE_ENV", "production");
       vi.stubEnv("DATABASE_URL_US_XX", "postgresql://prod-host/us_xx");
 
-      getPrismaClientForStateCode("US_XX");
+      getPrismaClient({ stateCode: testStateCode, demo: false });
 
       expect(PrismaPg).toHaveBeenCalledExactlyOnceWith({
         connectionString: "postgresql://prod-host/us_xx",
@@ -143,9 +161,9 @@ describe("getPrismaClientForStateCode", () => {
     test("throws when the state-specific DATABASE_URL is not set", () => {
       vi.stubEnv("NODE_ENV", "production");
 
-      expect(() => getPrismaClientForStateCode("US_XX")).toThrow(
-        "Attempted to access unsupported database for state US_XX",
-      );
+      expect(() =>
+        getPrismaClient({ stateCode: testStateCode, demo: false }),
+      ).toThrow("Attempted to access unsupported database for state US_XX");
     });
   });
 });
