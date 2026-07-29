@@ -30,6 +30,8 @@ locals {
     auth0_action.force_e_mail_verification,
     auth0_action.update_user_restrictions,
     auth0_action.add_user_and_app_metadata_to_id_tokens,
+    auth0_action.idaho_th_set_provider_metadata,
+    auth0_action.idaho_th_set_staff_metadata,
     auth0_action.log_success_login_to_segment
   ])
 

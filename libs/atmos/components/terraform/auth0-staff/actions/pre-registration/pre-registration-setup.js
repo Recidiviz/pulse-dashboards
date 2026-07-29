@@ -21,6 +21,7 @@ const { Storage } = require("@google-cloud/storage");
 const {
   fetchUserRestrictions,
   getUserEmail,
+  isIdahoThClient,
 } = require("actions:recidiviz-action-helpers");
 
 /**
@@ -30,6 +31,9 @@ const {
  * @param {PreUserRegistrationAPI} api - Interface whose methods can be used to change the behavior of the signup.
  */
 exports.onExecutePreUserRegistration = async (event, api) => {
+  if (isIdahoThClient(event)) {
+    return;
+  }
   /**
    * This hook allows custom code to prevent creation of a user in the
    * database or to add custom app_metadata or user_metadata to a
