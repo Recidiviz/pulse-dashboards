@@ -37,6 +37,7 @@ export const DASHBOARD_VIEWS = {
   insights: "insights",
   directorDashboard: "directorDashboard",
   comingSoon: "comingSoon",
+  parole: "parole",
   psi: psiRootPath,
   sar: sarRootPath,
   revocations: "revocations", // lantern
@@ -67,6 +68,7 @@ export const DASHBOARD_PATHS: Record<string, string> = {
   insights: `/${DASHBOARD_VIEWS.insights}`,
   workflows: `/${DASHBOARD_VIEWS.workflows}`,
   comingSoon: `/${DASHBOARD_VIEWS.comingSoon}`,
+  parole: `/${DASHBOARD_VIEWS.parole}`,
   psi: `/${DASHBOARD_VIEWS.psi}`,
 };
 
@@ -309,6 +311,30 @@ export function insightsUrl(
     return path;
   }
   return INSIGHTS_PATHS[routeName];
+}
+
+export type ParolePage = keyof typeof PAROLE_PAGES;
+
+export const PAROLE_PAGES = {
+  docket: "docket",
+} as const;
+
+export const PAROLE_PATHS: Record<ParolePage, string> = {
+  docket: `/${DASHBOARD_VIEWS.parole}/${PAROLE_PAGES.docket}`,
+};
+
+/**
+ * @returns the relative route template string for a Parole page
+ */
+export function paroleRoute({ routeName }: { routeName: ParolePage }): string {
+  return getRelativePath(PAROLE_PATHS[routeName]);
+}
+
+/**
+ * @returns an absolute path for the specified Parole route
+ */
+export function paroleUrl(routeName: ParolePage): string {
+  return PAROLE_PATHS[routeName];
 }
 
 export function getRelativePath(absolutePath: string): string {

@@ -31,6 +31,7 @@ import { getJusticeInvolvedPersonTitle } from "../../WorkflowsStore/utils";
 import {
   DASHBOARD_VIEWS,
   DIRECTOR_DASHBOARD_PATHS,
+  paroleUrl,
   WorkflowsPathSection,
   workflowsUrl,
 } from "../views";
@@ -67,6 +68,7 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
     "milestones",
   );
   const enabledInsights = (userAllowedNavigation?.insights || []).length > 0;
+  const enabledParole = !!userAllowedNavigation?.parole;
   const enabledDirectorDashboard =
     (userAllowedNavigation?.directorDashboard || []).length > 0;
   const enableSystems = !supportsMultipleSystems || !isMobile;
@@ -88,6 +90,11 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
       {enabledInsights && (
         <NavLink to={`/${DASHBOARD_VIEWS.insights}`} role="menuitem">
           Overview
+        </NavLink>
+      )}
+      {enabledParole && (
+        <NavLink to={paroleUrl("docket")} role="menuitem">
+          Parole
         </NavLink>
       )}
       {enableWorkflows && (

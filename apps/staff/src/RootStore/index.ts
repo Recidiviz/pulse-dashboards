@@ -35,6 +35,7 @@ import OpportunitiesFilterStore from "../FilterStore/OpportunitiesFilterStore";
 import TasksFilterStore from "../FilterStore/TasksFilterStore";
 import FirestoreStore from "../FirestoreStore";
 import { InsightsStore } from "../InsightsStore/InsightsStore";
+import { ParoleStore } from "../ParoleStore/ParoleStore";
 import { TENANT_CONFIGS } from "../tenants";
 import { createJiiTrpcClient } from "../trpc/jii";
 import { getFirestoreProjectId } from "../utils/getFirestoreProjectId";
@@ -124,6 +125,8 @@ export class RootStore {
 
   insightsStore: InsightsStore;
 
+  paroleStore: ParoleStore;
+
   sentencingStore: SentencingStore;
 
   firebaseAuthClient: FirebaseAuthClient;
@@ -185,6 +188,8 @@ export class RootStore {
     );
 
     this.insightsStore = new InsightsStore(this);
+
+    this.paroleStore = new ParoleStore(this);
 
     this.sentencingStore = new SentencingStore(this);
 

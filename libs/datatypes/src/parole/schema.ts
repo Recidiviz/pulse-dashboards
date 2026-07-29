@@ -15,18 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TenantConfig } from "../core/models/types";
-import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
+import { z } from "zod";
 
-const US_CO_CONFIG = {
-  name: "Colorado",
-  stateCode: "CO",
-  // TODO(OBT-40957): Set the real SSO domain for CO users once known.
-  availableStateCodes: [dashboard.US_CO],
-  enableUserRestrictions: false,
-  navigation: {
-    parole: ["docket"],
-  },
-} satisfies TenantConfig<"US_CO">;
-
-export default US_CO_CONFIG;
+export const paroleHearingSchema = z.object({
+  docId: z.string(),
+  individualName: z.string(),
+  hearingDate: z.string(),
+  hearingType: z.string(),
+  facility: z.string(),
+});
+export type ParoleHearing = z.infer<typeof paroleHearingSchema>;

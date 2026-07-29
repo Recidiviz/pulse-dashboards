@@ -46,6 +46,7 @@ import PageComingSoon from "./PageComingSoon";
 import PageDirectorDashboard from "./PageDirectorDashboard";
 import PageInsights from "./PageInsights";
 import PageMethodology from "./PageMethodology";
+import PageParole from "./PageParole";
 import PagePSI from "./PagePSI";
 import PageSAR from "./PageSAR";
 import PageSystem from "./PageSystem";
@@ -58,6 +59,7 @@ import {
   DASHBOARD_VIEWS,
   DIRECTOR_DASHBOARD_PATHS,
   INSIGHTS_PATHS,
+  PAROLE_PATHS,
   WORKFLOWS_PATHS,
 } from "./views";
 
@@ -104,6 +106,7 @@ const DashboardLayout: React.FC = () => {
           className={cn("DashboardLayout", {
             Workflows: currentView === DASHBOARD_VIEWS.workflows,
             Insights: currentView === DASHBOARD_VIEWS.insights,
+            Parole: currentView === DASHBOARD_VIEWS.parole,
             PSI: currentView === DASHBOARD_VIEWS.psi,
             SAR: currentView === DASHBOARD_VIEWS.sar,
             DirectorDashboard:
@@ -151,6 +154,14 @@ const DashboardLayout: React.FC = () => {
               <Route
                 path={DASHBOARD_PATHS.comingSoon}
                 element={<PageComingSoon />}
+              />
+              <Route
+                path={`${DASHBOARD_PATHS.parole}/*`}
+                element={<PageParole />}
+              />
+              <Route
+                path={`${DASHBOARD_PATHS.parole}`}
+                element={<Navigate replace to={PAROLE_PATHS.docket} />}
               />
               <Route path={`${PSI_PATHS.psi}/*`} element={<PagePSI />} />
               <Route path={`${SAR_PATHS.sar}/*`} element={<PageSAR />} />

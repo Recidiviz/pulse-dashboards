@@ -125,6 +125,25 @@ describe("OverviewNavLinks tests", () => {
     );
   });
 
+  it("Should render a link for Parole if enabled", async () => {
+    rootStoreMock.userStore.userAllowedNavigation.parole = ["docket"];
+    renderLinks();
+
+    await waitFor(() =>
+      expect(
+        screen.getByRole("menuitem", { name: "Parole" }),
+      ).toBeInTheDocument(),
+    );
+  });
+
+  it("Should not render a link for Parole if user doesn't have parole permissions", () => {
+    renderLinks();
+
+    expect(
+      screen.queryByRole("menuitem", { name: "Parole" }),
+    ).not.toBeInTheDocument();
+  });
+
   it("Should render a link for Tasks page if enabled", async () => {
     rootStoreMock.workflowsStore.isSupervisionTasksLinkEnabled = true;
     renderLinks();

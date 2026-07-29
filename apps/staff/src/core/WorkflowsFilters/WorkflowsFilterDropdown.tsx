@@ -101,6 +101,12 @@ const FilterRightText = `
   border: none;
   padding-right: ${rem(spacing.xs)};
   margin-left: ${rem(spacing.xs)};
+  // Reserves a stable footprint for this slot so swapping its contents on
+  // hover (a count vs. the "ONLY" button) doesn't change the row's -- and
+  // therefore the max-content-sized column's -- total width.
+  min-width: ${rem(36)};
+  flex-shrink: 0;
+  text-align: right;
 `;
 
 const FilterCount = styled.div<{ $isZero: boolean }>`
@@ -132,6 +138,7 @@ const StyledFilterDropdownMenuItem = styled(DropdownMenuItem)<{
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: ${rem(spacing.sm)};
 
   &:last-child {
     margin-bottom: 0;
@@ -188,7 +195,9 @@ const FilterGroupColumns = styled.div`
 `;
 
 const FilterGroupColumn = styled.div`
-  width: ${rem(FILTER_COLUMN_WIDTH)};
+  width: max-content;
+  min-width: ${rem(FILTER_COLUMN_WIDTH)};
+  max-width: ${rem(FILTER_COLUMN_WIDTH * 1.6)};
 `;
 
 const ClearAllButton = styled(StyledFilterDropdownMenuItem)`

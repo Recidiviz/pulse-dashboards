@@ -50,7 +50,12 @@ import { useCoreStore } from "../CoreStoreProvider";
 import LanternLogo from "../LanternLogo";
 import RecidivizLogo from "../RecidivizLogo";
 import { hideWhenPrintingStyle } from "../sharedComponents";
-import { DASHBOARD_VIEWS, WorkflowsPage, workflowsUrl } from "../views";
+import {
+  DASHBOARD_VIEWS,
+  paroleUrl,
+  WorkflowsPage,
+  workflowsUrl,
+} from "../views";
 import { Separator } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
 import { SYSTEM_ID_TO_PATH } from "./OverviewNavLinks";
 
@@ -388,6 +393,20 @@ function InsightsLink({ enabled }: OptionalLinkProps) {
   );
 }
 
+function ParoleLink({ enabled }: OptionalLinkProps) {
+  const { isMobile } = useIsMobile(true);
+
+  if (!enabled) return null;
+  return (
+    <DropdownMenuItem>
+      <NavLink to={paroleUrl("docket")} role="menuitem">
+        {isMobile && <Icon kind={IconSVG.Operations} width={20} />}
+        Go to Parole
+      </NavLink>
+    </DropdownMenuItem>
+  );
+}
+
 function PSIStaffLink({
   enabled,
   staffPseudoId,
@@ -668,6 +687,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
     const enabledInsights =
       !!userAllowedNavigation.insights && includeInsightsWorkflowsLinks;
     const enabledPSI = !!userAllowedNavigation.psi;
+    const enabledParole = !!userAllowedNavigation.parole;
 
     const isInsightsView = view === DASHBOARD_VIEWS.insights;
     const isInsightsLanternState =
@@ -714,6 +734,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
         <WorkflowsLink enabled={enableWorkflows} homepage={homepage} />
         <WorkflowsSystemLinks />
         <InsightsLink enabled={enabledInsights} />
+        <ParoleLink enabled={enabledParole} />
         <PSISupervisorLink
           enabled={isPsiSupervisor}
           staffPseudoId={sentencingStore.staffPseudoId}

@@ -15,18 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TenantConfig } from "../core/models/types";
-import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
+import { makeAutoObservable } from "mobx";
 
-const US_CO_CONFIG = {
-  name: "Colorado",
-  stateCode: "CO",
-  // TODO(OBT-40957): Set the real SSO domain for CO users once known.
-  availableStateCodes: [dashboard.US_CO],
-  enableUserRestrictions: false,
-  navigation: {
-    parole: ["docket"],
-  },
-} satisfies TenantConfig<"US_CO">;
+import { RootStore } from "../RootStore";
+import { ParoleAPI } from "./api/interface";
+import { ParoleOfflineAPIClient } from "./api/ParoleOfflineAPIClient";
 
-export default US_CO_CONFIG;
+// TODO(OBT-41775): Point this at a real ParoleAPIClient once a Parole backend
+// exists. Until then, the offline/fixture client backs every environment,
+// not just isOfflineMode()/isTestEnv()/isDemoMode().
+export class ParoleStore {
+  apiClient: ParoleAPI;
+
+  constructor(public rootStore: RootStore) {
+    this.apiClient = this.getApiClient();
+
+    makeAutoObservable(this);
+  }
+
+  getApiClient(): ParoleAPI {
+    return new ParoleOfflineAPIClient(this);
+  }
+}

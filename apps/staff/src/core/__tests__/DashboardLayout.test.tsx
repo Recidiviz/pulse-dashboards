@@ -28,6 +28,7 @@ import DashboardLayout from "../DashboardLayout";
 import PageComingSoon from "../PageComingSoon";
 import PageInsights from "../PageInsights";
 import PageMethodology from "../PageMethodology";
+import PageParole from "../PageParole";
 import PageSystem from "../PageSystem";
 import PageVitals from "../PageVitals";
 import PageWorkflows from "../PageWorkflows";
@@ -53,6 +54,12 @@ vi.mock("../PageInsights", () => {
   };
 });
 vi.mock("../PageMethodology");
+vi.mock("../PageParole", () => {
+  return {
+    __esModule: true,
+    default: vi.fn(),
+  };
+});
 vi.mock("../PageComingSoon");
 vi.mock("../../components/NotFound");
 
@@ -71,6 +78,7 @@ describe("DashboardLayout", () => {
     (PageMethodology as Mock).mockReturnValue(
       mockWithTestId("page-methodology-id"),
     );
+    (PageParole as Mock).mockReturnValue(mockWithTestId("page-parole-id"));
     (PageComingSoon as Mock).mockReturnValue(
       mockWithTestId("page-coming-soon-id"),
     );
@@ -214,6 +222,60 @@ describe("DashboardLayout", () => {
       renderLayout(`${DASHBOARD_PATHS.insights}`);
 
       expect(screen.getByTestId("page-insights-id")).toBeInTheDocument();
+    });
+  });
+
+  describe("PageParole", () => {
+    it("renders if the tenant and user allow it", () => {
+      mockUseRootStore.mockReturnValue({
+        userStore: {
+          userAllowedNavigation: { parole: ["docket"] },
+        },
+        currentTenantId: "US_CO",
+      });
+
+      renderLayout(`${DASHBOARD_PATHS.parole}/docket`);
+
+      expect(screen.getByTestId("page-parole-id")).toBeInTheDocument();
+    });
+
+    it("doesn't render if the tenant doesn't allow it but the user does", () => {
+      mockUseRootStore.mockReturnValue({
+        userStore: {
+          userAllowedNavigation: { parole: ["docket"] },
+        },
+        currentTenantId: "US_XX",
+      });
+
+      renderLayout(`${DASHBOARD_PATHS.parole}/docket`);
+
+      expect(screen.getByTestId("not-found-id")).toBeInTheDocument();
+    });
+
+    it("doesn't render if the user doesn't allow it but the tenant does", () => {
+      mockUseRootStore.mockReturnValue({
+        userStore: {
+          userAllowedNavigation: { workflows: [] },
+        },
+        currentTenantId: "US_CO",
+      });
+
+      renderLayout(`${DASHBOARD_PATHS.parole}/docket`);
+
+      expect(screen.getByTestId("not-found-id")).toBeInTheDocument();
+    });
+
+    it("redirects /parole to /parole/docket", () => {
+      mockUseRootStore.mockReturnValue({
+        userStore: {
+          userAllowedNavigation: { parole: ["docket"] },
+        },
+        currentTenantId: "US_CO",
+      });
+
+      renderLayout(DASHBOARD_PATHS.parole);
+
+      expect(screen.getByTestId("page-parole-id")).toBeInTheDocument();
     });
   });
 

@@ -15,18 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TenantConfig } from "../core/models/types";
-import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
+import { ParoleHearing, paroleHearingsFixture } from "~datatypes";
 
-const US_CO_CONFIG = {
-  name: "Colorado",
-  stateCode: "CO",
-  // TODO(OBT-40957): Set the real SSO domain for CO users once known.
-  availableStateCodes: [dashboard.US_CO],
-  enableUserRestrictions: false,
-  navigation: {
-    parole: ["docket"],
-  },
-} satisfies TenantConfig<"US_CO">;
+import { ParoleStore } from "../ParoleStore";
+import { ParoleAPI } from "./interface";
 
-export default US_CO_CONFIG;
+export class ParoleOfflineAPIClient implements ParoleAPI {
+  constructor(public readonly paroleStore: ParoleStore) {}
+
+  async hearings(): Promise<Array<ParoleHearing>> {
+    return paroleHearingsFixture;
+  }
+}
