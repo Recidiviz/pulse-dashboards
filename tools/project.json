@@ -19,6 +19,27 @@
         "command": "vitest",
         "cwd": "{projectRoot}"
       }
+    },
+    "search-benchmark-capture-auth": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx src/capture-auth-state.mts",
+        "cwd": "{projectRoot}/search-benchmark"
+      }
+    },
+    "search-benchmark-benchmark": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx src/benchmark-search.mts",
+        "cwd": "{projectRoot}/search-benchmark"
+      }
+    },
+    "search-benchmark-batch": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx src/run-batch.mts",
+        "cwd": "{projectRoot}/search-benchmark"
+      }
     }
   },
   "tags": ["scope:server", "type:util"]
