@@ -14,9 +14,6 @@
         "dev": {
           "command": "docker compose up --wait"
         },
-        "ci": {
-          "command": "echo 'No docker for CI'"
-        },
         "test": {
           "command": "echo 'No docker for CI'"
         }
@@ -31,7 +28,7 @@
         "dev": {
           "command": "docker compose down"
         },
-        "ci": {
+        "test": {
           "command": "echo 'No docker for CI'"
         }
       },
@@ -49,9 +46,6 @@
       "configurations": {
         "dev": {
           "command": "tsx scripts/initDbs.mts"
-        },
-        "ci": {
-          "command": "echo 'No docker for CI'"
         },
         "test": {
           "command": "echo 'No docker for CI'"

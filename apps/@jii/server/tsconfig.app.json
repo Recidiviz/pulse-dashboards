@@ -5,6 +5,8 @@
     "src/**/*.spec.ts",
     "src/**/*.test.ts",
     "src/**/*.spec.tsx",
-    "src/**/*.test.tsx"
+    "src/**/*.test.tsx",
+    "src/setupTests.ts",
+    "src/setupTestsGlobal.ts"
   ]
 }

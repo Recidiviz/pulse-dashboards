@@ -227,6 +227,19 @@
         }
       },
       "defaultConfiguration": "dev"
+    },
+
+    "requires-sops-env:test-rna": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "vite-node scripts/usNcRNAWriteback.ts"
+      },
+      "metadata": {
+        "sops-env": {
+          "additional-sops-env-files": ["{projectRoot}/env.dev.enc.yaml"]
+        }
+      }
     }
   }
 }

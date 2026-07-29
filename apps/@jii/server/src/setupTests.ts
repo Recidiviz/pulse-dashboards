@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,29 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/// <reference types='vitest' />
-import { defineConfig } from "vite";
-import tsconfigPaths from "vite-tsconfig-paths";
+import jestExtendedMatchers from "jest-extended";
 
-export default defineConfig(() => ({
-  root: __dirname,
-  cacheDir: "../../../node_modules/.vite/apps/@jii/server",
-
-  plugins: [tsconfigPaths()],
-  test: {
-    passWithNoTests: true,
-    mockReset: true,
-    unstubEnvs: true,
-    name: "@jii/server",
-    globalSetup: ["src/setupTestsGlobal.ts"],
-    setupFiles: ["src/setupTests.ts"],
-    globals: true,
-    environment: "node",
-    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
-    reporters: ["default"],
-    coverage: {
-      reportsDirectory: "../../../coverage/apps/@jii/server",
-      provider: "v8",
-    },
-  },
-}));
+expect.extend(jestExtendedMatchers);

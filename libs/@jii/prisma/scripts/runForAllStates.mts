@@ -56,3 +56,6 @@ for (const state of getEnabledStates()) {
     process.stdout,
   );
 }
+
+// ensure the script doesn't hang once all the work is done
+process.exit(0);

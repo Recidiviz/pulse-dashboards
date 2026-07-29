@@ -478,3 +478,60 @@ export const rnaLifeAreaQuestionConfig = Object.fromEntries(
     ([_, config]) => config.format === "LIFE_AREA",
   ),
 );
+
+// Hardcoded values provided to us by NC that we should use for writeback
+export const writebackAnswers: Omit<
+  Record<RNAQuestionFormat, Record<string, string>>,
+  "LIFE_AREA"
+> = {
+  FREQUENCY: {
+    NEVER: "0",
+    RARELY: "1",
+    SOMETIMES: "2",
+    USUALLY: "3",
+    ALWAYS: "4",
+  },
+  DAYS_PER_WEEK_RADIO: {
+    ZERO: "0",
+    ONE_TO_TWO: "1",
+    THREE_TO_FIVE: "2",
+    SIX_TO_SEVEN: "3",
+  },
+  YES_NO: {
+    YES: "Y",
+    NO: "N",
+  },
+  RATIO: {
+    NONE: "0",
+    SOME: "1",
+    MOST: "2",
+    ALL: "3",
+  },
+  SOBRIETY: {
+    SOBER: "0",
+    JUST_ALCOHOL: "1",
+    JUST_DRUGS: "2",
+    BOTH: "3",
+  },
+  // maps digit strings "0" to "7" to themselves
+  DAYS_PER_WEEK_ENTRY: Object.fromEntries(
+    [...Array(8).keys()].map((i) => [`${i}`, `${i}`]),
+  ),
+};
+
+export const writebackLifeAreaNames: Partial<Record<RNAQuestionId, string>> = {
+  lifeAreaBehavior: "Behavior",
+  lifeAreaEmployability: "Employability",
+  lifeAreaAlcoholDrugs: "Alcohol&OtherDrugs",
+  lifeAreaEducation: "Education",
+  lifeAreaEmployment: "Employment",
+  lifeAreaFamilyFriends: "Family/Friends",
+  lifeAreaLifeSkills: "LifeSkills",
+  lifeAreaPhysicalMedical: "Physical/Medical",
+  lifeAreaMentalHealth: "MentalHealth",
+  lifeAreaFinancial: "Financial",
+  lifeAreaHousing: "Housing",
+  lifeAreaTransportation: "Transportation",
+  lifeAreaLegalStatus: "LegalStatus",
+  lifeAreaCustom: "Other",
+};

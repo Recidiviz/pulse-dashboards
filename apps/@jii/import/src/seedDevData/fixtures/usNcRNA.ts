@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,29 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/// <reference types='vitest' />
-import { defineConfig } from "vite";
-import tsconfigPaths from "vite-tsconfig-paths";
+import { z } from "zod";
 
-export default defineConfig(() => ({
-  root: __dirname,
-  cacheDir: "../../../node_modules/.vite/apps/@jii/server",
+import { rnaWritebackSchema } from "../../models";
 
-  plugins: [tsconfigPaths()],
-  test: {
-    passWithNoTests: true,
-    mockReset: true,
-    unstubEnvs: true,
-    name: "@jii/server",
-    globalSetup: ["src/setupTestsGlobal.ts"],
-    setupFiles: ["src/setupTests.ts"],
-    globals: true,
-    environment: "node",
-    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
-    reporters: ["default"],
-    coverage: {
-      reportsDirectory: "../../../coverage/apps/@jii/server",
-      provider: "v8",
-    },
+export const usNcRNAWritebackFixtures: z.output<typeof rnaWritebackSchema>[] = [
+  {
+    pseudonymized_id: "anonres001",
+    opus_id: "RES001",
+    seq_number: "002",
+    admit_date: new Date("2026-01-01"),
   },
-}));
+  {
+    pseudonymized_id: "anonres002",
+    opus_id: "RES002",
+    seq_number: null,
+    admit_date: new Date("2026-01-01"),
+  },
+];

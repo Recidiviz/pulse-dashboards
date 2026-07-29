@@ -18,7 +18,9 @@
 import { getPrismaClient } from "~@jii/prisma";
 
 import { residentHandler } from "../handlers/resident/resident";
+import { transformAndLoadRNAWritebackData } from "../handlers/usNcRNA/usNcRNA";
 import { residentFixtures } from "./fixtures/resident";
+import { usNcRNAWritebackFixtures } from "./fixtures/usNcRNA";
 
 async function* toAsyncGenerator<T>(items: T[]) {
   for (const item of items) {
@@ -31,7 +33,14 @@ await Promise.all(
     const prismaClient = getPrismaClient({ stateCode, demo: false });
     console.log(`Seeding fixtures for ${stateCode}`);
     try {
-      return await residentHandler(prismaClient, toAsyncGenerator(fixtures));
+      await residentHandler(prismaClient, toAsyncGenerator(fixtures));
+
+      if (stateCode === "US_NC") {
+        await transformAndLoadRNAWritebackData(
+          prismaClient,
+          toAsyncGenerator(usNcRNAWritebackFixtures),
+        );
+      }
     } catch (e) {
       console.error(`Seeding failed for ${stateCode}`);
       throw e;
