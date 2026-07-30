@@ -523,7 +523,7 @@ const FormPSV323D: React.FC = () => {
           <FormInput name="regionDirectorRemarks" />
         </Grid>
 
-        <Footer>PSV-323D (Rev. 07/01/2025)</Footer>
+        <Footer>PSV-323D (Rev. 02/10/2026)</Footer>
       </FormContainer>
     </PrintablePage>
   );
