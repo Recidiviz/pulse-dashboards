@@ -18,7 +18,7 @@
 import { observer } from "mobx-react-lite";
 import styled from "styled-components";
 
-import { Button, Modal, palette, spacing } from "~design-system";
+import { Button, Modal, palette, spacing, typography } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 import useIsMobile from "~utils/react/useIsMobile";
 
@@ -33,13 +33,13 @@ const AddMoreClientsHeader = styled.div`
   flex-direction: row;
   align-items: center;
   margin-bottom: 10px;
+  min-width: 80%;
+  flex-wrap: wrap;
 `;
 
-const OfficersList = styled.div`
+const Subheading = styled.div`
   padding: 0 5px;
-  color: ${palette.slate50};
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  ${typography.Sans16}
 `;
 
 const Footer = styled.div`
@@ -52,6 +52,7 @@ const Footer = styled.div`
   padding: ${spacing.sm}px;
   border-top: ${spacing.xxs}px solid ${palette.slate10};
   font-weight: 600;
+  ${typography.Sans14}
   flex: 0.1;
 `;
 
@@ -61,6 +62,7 @@ const AddMoreClientsButton = styled.button<{ $isDisabled: boolean }>`
     $isDisabled ? `${palette.slate30}` : `${palette.pine3}`};
   cursor: ${({ $isDisabled }) => ($isDisabled ? "not-allowed" : "pointer")};
   outline: none;
+  ${typography.Sans14}
   font-weight: 600;
   border: none;
   border-radius: 8px;
@@ -93,6 +95,7 @@ const CancelButton = styled.button`
   border-radius: 8px;
   display: flex;
   padding: 10px 18px;
+  ${typography.Sans14}
 
   &:active {
     outline: none;
@@ -105,10 +108,15 @@ const CloseButton = styled(Button)<{ $isTablet: boolean }>`
   position: absolute;
 
   ${({ $isTablet }) =>
-    $isTablet &&
-    `
+    $isTablet
+      ? `
       right: 0;
-    `}
+    `
+      : `min-width: 0;
+      min-height: 0;
+      padding: 0;
+
+   `}
 `;
 
 const ClientScrollWrapper = styled.div`
@@ -136,12 +144,6 @@ export const ManagedComponent = observer(function RoutePlannerAddMoreClients({
 }: {
   presenter: RoutePlannerTablePresenter;
 }) {
-  const {
-    workflowsStore: {
-      searchStore: { selectedSearchables },
-    },
-  } = useRootStore();
-
   const addMoreDisabled = presenter.potentialPeople.length === 0;
   const { isTablet } = useIsMobile(true);
   // display table according to selected officers
@@ -156,16 +158,17 @@ export const ManagedComponent = observer(function RoutePlannerAddMoreClients({
           aria-label="Close"
           $isTablet={isTablet}
         />
-        <Heading>Add more clients to route</Heading>
+        <Heading
+          style={{
+            paddingBottom: ".5rem",
+          }}
+        >
+          Add more clients
+        </Heading>
         <AddMoreClientsHeader>
-          {selectedSearchables.map((searchable) => (
-            <OfficersList key={searchable.searchId}>
-              {searchable.searchLabel}
-            </OfficersList>
-          ))}
-          <OfficersList>
-            {presenter.clientsInSelectedSearchesCount()} Clients
-          </OfficersList>
+          <Subheading style={{ color: `${palette.slate60}` }}>
+            {presenter.getSubheadingCopy()}
+          </Subheading>
         </AddMoreClientsHeader>
       </ModalHeader>
       <ClientScrollWrapper>

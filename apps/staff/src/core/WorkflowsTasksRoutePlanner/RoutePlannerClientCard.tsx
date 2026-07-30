@@ -45,6 +45,7 @@ import {
 import { InfoButton } from "../WorkflowsJusticeInvolvedPersonProfile/InfoButton";
 import { WorkflowsTooltip } from "../WorkflowsTooltip";
 import { RoutePlannerClientsPresenter } from "./RoutePlannerClientsPresenter";
+import { CheckboxContents, EmptyCheckbox, NumberedCheckbox } from "./styles";
 
 const BorderedClientCard = styled.div<{
   $selected: boolean;
@@ -193,35 +194,6 @@ const CallButton = styled(Button).attrs({ shape: "block" })`
 
   display: flex;
   gap: ${rem(spacing.sm)};
-`;
-
-export const BaseCheckbox = styled.span`
-  display: flex;
-  justify-content: center;
-  height: ${rem(16)};
-  width: ${rem(16)};
-  margin-right: ${rem(10)};
-  cursor: pointer;
-  border: 1px solid;
-  border-radius: ${rem(2)};
-`;
-
-export const EmptyCheckbox = styled(BaseCheckbox)<{
-  $selectable: boolean;
-}>`
-  border-color: ${palette.slate20};
-
-  ${({ $selectable }) => !$selectable && `cursor: not-allowed;`}
-`;
-
-export const NumberedCheckbox = styled(BaseCheckbox)`
-  border-color: ${palette.pine4};
-  background-color: ${palette.pine4};
-  color: ${palette.marble1};
-`;
-
-export const CheckboxContents = styled(Sans12)`
-  text-align: center;
 `;
 
 const Caret = styled(Icon)`

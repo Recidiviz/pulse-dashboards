@@ -148,7 +148,7 @@ const RouteInfo = styled(Sans14)`
 
 const AddressRowContainer = styled.div`
   display: flex;
-  gap: ${rem(spacing.md)};
+  gap: ${rem(spacing.xs)};
 `;
 
 const AddressNumber = styled.div`
@@ -201,8 +201,7 @@ const AddressRow = function AddressRow({
     <AddressRowContainer>
       <AddressNumber>{displayStar ? <Star /> : index}</AddressNumber>
       <AddressText>
-        {address}
-        {label && <AddressLabel>({label})</AddressLabel>}
+        {address} {label && <AddressLabel>({label})</AddressLabel>}
       </AddressText>
     </AddressRowContainer>
   );

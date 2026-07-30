@@ -23,14 +23,12 @@ import styled from "styled-components";
 import { palette, TooltipTrigger } from "~design-system";
 import useIsMobile from "~utils/react/useIsMobile";
 
+import { toTitleCase } from "../../../utils/formatStrings";
 import { Client } from "../../../WorkflowsStore";
 import { CaseloadTable } from "../../CaseloadTable/CaseloadTable";
 import { PersonNameElement } from "../../CaseloadTable/PersonNameCell";
 import { SupervisingOfficerNameCell } from "../../CaseloadTable/SupervisingOfficerNameCell";
-import {
-  TextCell,
-  TextCellObservable,
-} from "../../CaseloadView/AllCaseloadsTable/ClientsResidentsAllCaseloadsTable";
+import { TextCellObservable } from "../../CaseloadView/AllCaseloadsTable/ClientsResidentsAllCaseloadsTable";
 import {
   CaseloadPersonRowProps,
   clientSupervisionType,
@@ -39,11 +37,8 @@ import {
   personLevel,
 } from "../../CaseloadView/AllCaseloadsTable/utils";
 import { InfoButton } from "../../WorkflowsJusticeInvolvedPersonProfile/InfoButton";
-import {
-  CheckboxContents,
-  EmptyCheckbox,
-  NumberedCheckbox,
-} from "../RoutePlannerClientCard";
+import {} from "../RoutePlannerClientCard";
+import { CheckboxContents, EmptyCheckbox, NumberedCheckbox } from "../styles";
 import {
   RoutePlannerTablePresenter,
   TableColumnId,
@@ -72,6 +67,10 @@ function AssignedToCell({ row }: CaseloadRowProps) {
       staffTitle={"supervisor"}
     />
   );
+}
+
+function TextCellTitleCase({ getValue }: { getValue: () => unknown }) {
+  return toTitleCase(String(getValue() || "Unknown"));
 }
 
 function AddressCell({
@@ -104,13 +103,11 @@ function CheckBoxWrapper({
   isSelected,
   rank,
   isBadAddress,
-  isAlreadyPresent,
 }: {
   row: Row<Client>;
   isSelected: (person: Client) => boolean;
   rank: (person: Client) => number;
   isBadAddress: (person: Client) => boolean;
-  isAlreadyPresent: (person: Client) => boolean;
 }) {
   if (isBadAddress(row.original)) {
     return (
@@ -120,10 +117,6 @@ function CheckBoxWrapper({
       />
     );
   }
-  if (isAlreadyPresent(row.original))
-    return (
-      <EmptyCheckbox $selectable={false} style={{ cursor: "not-allowed" }} />
-    );
   if (!isSelected(row.original)) return <EmptyCheckbox $selectable={true} />;
   else
     return (
@@ -136,28 +129,18 @@ function CheckBoxWrapper({
 export function PersonNameWrapper<Person extends Client>({
   row,
   isBadAddress,
-  isAlreadyPresent,
 }: CaseloadPersonRowProps<Person> & {
   isBadAddress: (person: Client) => boolean;
-  isAlreadyPresent: (person: Client) => boolean;
 }) {
-  return (
-    <PersonNameCell
-      person={row.original}
-      isBadAddress={isBadAddress}
-      isAlreadyPresent={isAlreadyPresent}
-    />
-  );
+  return <PersonNameCell person={row.original} isBadAddress={isBadAddress} />;
 }
 
 export const PersonNameCell = observer(function PersonNameCell({
   person,
   isBadAddress,
-  isAlreadyPresent,
 }: {
   person: Client;
   isBadAddress: (person: Client) => boolean;
-  isAlreadyPresent: (person: Client) => boolean;
 }) {
   const { isMobile } = useIsMobile(true);
   // In TX, all JII are displayed with last name first.
@@ -170,9 +153,6 @@ export const PersonNameCell = observer(function PersonNameCell({
       <div>{displayName}</div>
       {isBadAddress(person) && (
         <NotAllowedCell>{"Address not found"}</NotAllowedCell>
-      )}
-      {isAlreadyPresent(person) && (
-        <NotAllowedCell>{"Already shown in your planner"}</NotAllowedCell>
       )}
     </PersonNameElementWrapper>
   );
@@ -187,14 +167,12 @@ function buildColumns({
   isSelected,
   getCardinal,
   isBadAddress,
-  isAlreadyPresent,
   getBadAddressCopy,
 }: {
   displayIdHeader: string;
   isSelected: (person: Client) => boolean;
   getCardinal: (person: Client) => number;
   isBadAddress: (person: Client) => boolean;
-  isAlreadyPresent: (person: Client) => boolean;
   getBadAddressCopy: () => string;
 }): ClientsResidentsColumnDef[] {
   return [
@@ -212,7 +190,6 @@ function buildColumns({
           row={row}
           isSelected={isSelected}
           isBadAddress={isBadAddress}
-          isAlreadyPresent={isAlreadyPresent}
         />
       ),
     },
@@ -223,11 +200,7 @@ function buildColumns({
       enableSorting: true,
       sortingFn: "text",
       cell: ({ row }) => (
-        <PersonNameWrapper
-          row={row}
-          isBadAddress={isBadAddress}
-          isAlreadyPresent={isAlreadyPresent}
-        />
+        <PersonNameWrapper row={row} isBadAddress={isBadAddress} />
       ),
     },
     {
@@ -253,7 +226,7 @@ function buildColumns({
       accessorFn: clientSupervisionType,
       enableSorting: true,
       sortingFn: "text",
-      cell: TextCell,
+      cell: TextCellTitleCase,
     },
     {
       header: "Supervision Level",
@@ -292,7 +265,6 @@ export const RoutePlannerTable = observer(function RoutePlannerTable({
     isSelected,
     getCardinal,
     isBadAddress,
-    isAlreadyPresent,
     getBadAddressCopy,
   } = presenter;
   const columns = useMemo(
@@ -302,30 +274,20 @@ export const RoutePlannerTable = observer(function RoutePlannerTable({
         isSelected,
         getCardinal,
         isBadAddress,
-        isAlreadyPresent,
         getBadAddressCopy,
       }),
-    [
-      displayIdHeader,
-      isSelected,
-      getCardinal,
-      isBadAddress,
-      isAlreadyPresent,
-      getBadAddressCopy,
-    ],
+    [displayIdHeader, isSelected, getCardinal, isBadAddress, getBadAddressCopy],
   );
   return (
     <CaseloadTable
       shouldHighlightRow={(e) => presenter.isSelected(e)}
       onRowClick={(e) => {
-        if (presenter.isBadAddress(e) || presenter.isAlreadyPresent(e)) return;
+        if (presenter.isBadAddress(e)) return;
         presenter.updateSelected(e);
       }}
       data={presenter.people}
       columns={columns}
-      shouldBlockSelectingRow={(e) =>
-        presenter.isBadAddress(e) || presenter.isAlreadyPresent(e)
-      }
+      shouldAppearUnselectable={(e) => presenter.isBadAddress(e)}
       enableProgressiveLoading={true}
       progressiveLoadingBatchSize={100}
       smallColumns={true}

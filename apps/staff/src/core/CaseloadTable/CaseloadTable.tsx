@@ -62,6 +62,7 @@ const SortableHeader = styled.div<{ $sortable?: boolean }>`
   display: inline-flex;
   align-items: center;
   gap: ${rem(spacing.sm)};
+  opacity: 100%;
   cursor: ${({ $sortable }) => ($sortable ? "pointer" : "default")};
 `;
 
@@ -70,6 +71,7 @@ const TableHeader = styled.thead`
   top: 0;
   margin: 0;
   width: 100%;
+  opacity: 100%;
   background-color: ${palette.marble1};
 `;
 
@@ -91,6 +93,7 @@ const Cell = styled.td<{
   $isMobile: boolean;
   $numColumns: number;
   $smallColumns: boolean;
+  $shouldAppearUnselectable: boolean;
 }>`
   ${SharedTableCellStyles}
 
@@ -117,8 +120,15 @@ const Cell = styled.td<{
     white-space: nowrap;
   }
 
+  ${({ $shouldAppearUnselectable }) =>
+    $shouldAppearUnselectable && `color: ${palette.slate50};`}
+
   ${PersonIdWithCopyIcon} {
-    color: ${palette.pine3};
+    ${({ $shouldAppearUnselectable }) =>
+      $shouldAppearUnselectable
+        ? `color: ${palette.slate50}`
+        : `color: ${palette.pine3}`};
+
     :hover,
     :focus {
       background-color: ${palette.marble5};
@@ -141,7 +151,8 @@ const Row = styled.tr<{
     ${({ $isSelected }) => $isSelected && "background-color: #EDF4FC;"}
     transition: all 0.15s ease-in-out;
     ${({ $shouldAppearUnselectable }) =>
-      $shouldAppearUnselectable && "opacity: 0.5; cursor: not-allowed"}
+      $shouldAppearUnselectable &&
+      `color: ${palette.slate60}; cursor: not-allowed`}
   }
 
   // Only show UsAzMarkSubmittedButton and NavigateToFormButton buttons on row hover
@@ -256,7 +267,7 @@ export type CaseloadTableProps<TData> = {
    * min-width of 100px of 125px (mobile and laptop breakpoints respectively)
    */
   smallColumns?: boolean;
-  shouldBlockSelectingRow?: (row: TData) => boolean;
+  shouldAppearUnselectable?: (row: TData) => boolean;
 };
 
 export const CaseloadTable = observer(function CaseloadTable<TData>({
@@ -265,7 +276,7 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
   columns,
   onRowClick,
   rowLinkUrl,
-  shouldBlockSelectingRow = () => false,
+  shouldAppearUnselectable = () => false,
   shouldHighlightRow = () => false,
   onRowRender = () => undefined,
   manualSorting = undefined,
@@ -366,6 +377,9 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
                 $isMobile={isMobile}
                 $numColumns={columns.length}
                 $smallColumns={smallColumns}
+                $shouldAppearUnselectable={shouldAppearUnselectable(
+                  row.original,
+                )}
               >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </Cell>
@@ -378,7 +392,7 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
                   if (onRowClick) onRowClick(row.original);
                 }}
                 $isSelected={shouldHighlightRow(row.original)}
-                $shouldAppearUnselectable={shouldBlockSelectingRow(
+                $shouldAppearUnselectable={shouldAppearUnselectable(
                   row.original,
                 )}
               >

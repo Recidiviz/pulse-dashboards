@@ -128,25 +128,30 @@ export class RoutePlannerTablePresenter {
     }
   }
 
-  clientsInSelectedSearchesCount(): number {
-    const { caseloadPersonsGrouped, selectedSearchables } =
-      this.rootStore.workflowsStore.searchStore;
-
-    let count = 0;
-    selectedSearchables?.forEach((searchable) => {
-      if (!caseloadPersonsGrouped[searchable.searchId]) return;
-      count += caseloadPersonsGrouped[searchable.searchId].filter(
-        (person: JusticeInvolvedPerson) => person instanceof Client,
-      ).length;
-    });
-    return count;
-  }
-
   // GENERAL DISPLAY
 
+  /**
+   * Returns individuals that assigned to an officer
+   * but do not have overdue or due contacts this month.
+   * Ensuring no repeats within the table and client cards.
+   */
+
   get people(): Client[] {
-    return this.rootStore.workflowsStore.searchStore.caseloadPersons.filter(
-      (person: JusticeInvolvedPerson) => person instanceof Client,
+    const alreadyPresentList = new Set<Client>();
+
+    const { selectedSearchables, caseloadPersons } =
+      this.rootStore.workflowsStore.searchStore;
+
+    const contacts = this.routePlannerClientStore.contacts;
+    selectedSearchables?.forEach(({ searchId }) => {
+      contacts[searchId]?.forEach((tasks) => {
+        alreadyPresentList.add(tasks[0].person);
+      });
+    });
+
+    return caseloadPersons.filter(
+      (person: JusticeInvolvedPerson): person is Client =>
+        person instanceof Client && !alreadyPresentList.has(person),
     );
   }
 
@@ -154,6 +159,12 @@ export class RoutePlannerTablePresenter {
     return this.rootStore.tenantStore.getDisplayIdCopy(
       this.rootStore.workflowsStore.activeSystem,
     );
+  }
+
+  // Different states choose to surface different clients in the Home Contact Route Planner
+  // When more states are added in - this will need to include their surfacing logic
+  getSubheadingCopy(): string {
+    return "Clients without home contacts due soon or overdue";
   }
 
   // ADDRESS FUNCTIONS
@@ -164,25 +175,5 @@ export class RoutePlannerTablePresenter {
 
   isBadAddress(e: Client): boolean {
     return this.routePlannerClientStore.hasBadAddress(e);
-  }
-
-  isAlreadyPresent(e: Client): boolean {
-    const alreadyPresentList: Client[] = [];
-
-    const { selectedSearchables } = this.rootStore.workflowsStore.searchStore;
-
-    const contacts = this.routePlannerClientStore.contacts;
-    selectedSearchables?.forEach(({ searchId }) => {
-      contacts[searchId]?.forEach((task) => {
-        alreadyPresentList.push(task[0].person);
-      });
-    });
-
-    let found = false;
-    alreadyPresentList.forEach((person) => {
-      if (person.pseudonymizedId === e.pseudonymizedId) found = true;
-    });
-
-    return found;
   }
 }

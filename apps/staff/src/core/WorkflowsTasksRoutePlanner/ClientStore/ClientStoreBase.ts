@@ -176,7 +176,7 @@ export default class RoutePlannerClientStore {
 
   /**
    * @returns Record mapping selected caseload IDs to a list of home contact tasks
-   * for each caseload.
+   * due for each person for each caseload.
    */
   get contacts(): Record<string, SupervisionTask<SupervisionTaskType>[][]> {
     return mapValues(
