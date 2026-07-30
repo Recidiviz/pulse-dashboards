@@ -15,9 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { addDays, format } from "date-fns";
+import { addDays, format, subYears } from "date-fns";
 
-import { ParoleHearing, paroleHearingSchema } from "./schema";
+import {
+  ParoleCase,
+  paroleCaseSchema,
+  ParoleHearing,
+  paroleHearingSchema,
+} from "./schema";
 
 // US_CO has no Parole backend yet (TODO(OBT-41775): replace this fixture with real
 // data once one exists). This is the same fixture data used in the Parole
@@ -95,3 +100,85 @@ export const paroleHearingsFixture: Array<ParoleHearing> = RAW_HEARINGS.map(
       hearingDate: iso(addDays(new Date(), daysFromNow)),
     }),
 );
+
+// US_CO has no Parole backend yet (TODO(OBT-41775): replace this fixture with
+// real data once one exists). Case-profile detail for each individual on the
+// docket above, keyed by docId. Anderson's case is hand-authored to match the
+// OBT-41624 design mock 1:1; the rest are generically derived from their
+// docket row so every docket link resolves to a valid profile. Harris (below)
+// has no hearing scheduled on her case profile -- despite appearing on the
+// docket -- so the profile page's "not scheduled" / no-badge states have
+// fixture coverage.
+const HEARING_TIME_BY_DOC_ID: Record<string, string> = {
+  "DOC-52903": "10:30 AM",
+  "DOC-61247": "1:00 PM",
+  "DOC-48392": "9:30 AM",
+  "DOC-71458": "11:00 AM",
+  "DOC-55729": "2:00 PM",
+  "DOC-63184": "10:00 AM",
+};
+
+const NO_HEARING_SCHEDULED_DOC_ID = "DOC-59402";
+
+const GENERIC_CASE_MANAGER_NAMES = [
+  "David Thompson",
+  "Robert Johnson",
+  "Maria Gonzalez",
+  "Kevin Park",
+  "Angela Wright",
+  "Brian Lee",
+  "Nicole Adams",
+];
+
+const CUSTODY_LEVELS = ["Minimum", "Medium", "Maximum"] as const;
+
+function buildAndersonCaseProfile(hearingDate: string): ParoleCase {
+  const today = new Date();
+  return paroleCaseSchema.parse({
+    docId: "DOC-45821",
+    name: "Anderson, Michael",
+    dob: iso(subYears(today, 40)),
+    currentFacility: "Central State Correctional Facility",
+    custodyLevel: "Minimum",
+    caseManagerName: "Jennifer Martinez",
+    hearingDate,
+    hearingTime: "9:00 AM",
+    sentenceStartDate: iso(subYears(today, 4)),
+    paroleEligibilityDate: iso(addDays(today, 20)),
+    mandatoryReleaseDate: iso(addDays(today, 700)),
+  });
+}
+
+function buildGenericCaseProfile(
+  hearing: ParoleHearing,
+  index: number,
+): ParoleCase {
+  const today = new Date();
+  const hasScheduledHearing = hearing.docId !== NO_HEARING_SCHEDULED_DOC_ID;
+  return paroleCaseSchema.parse({
+    docId: hearing.docId,
+    name: hearing.individualName,
+    dob: iso(subYears(today, 30 + index)),
+    currentFacility: hearing.facility,
+    custodyLevel: CUSTODY_LEVELS[index % CUSTODY_LEVELS.length],
+    caseManagerName:
+      GENERIC_CASE_MANAGER_NAMES[index % GENERIC_CASE_MANAGER_NAMES.length],
+    hearingDate: hasScheduledHearing ? hearing.hearingDate : undefined,
+    hearingTime: hasScheduledHearing
+      ? HEARING_TIME_BY_DOC_ID[hearing.docId]
+      : undefined,
+    sentenceStartDate: iso(subYears(today, 3 + (index % 4))),
+    paroleEligibilityDate: iso(addDays(today, 10 + index * 5)),
+    mandatoryReleaseDate: iso(addDays(today, 600 + index * 30)),
+  });
+}
+
+export const paroleCasesFixture: Record<string, ParoleCase> =
+  Object.fromEntries(
+    paroleHearingsFixture.map((hearing, index) => [
+      hearing.docId,
+      hearing.docId === "DOC-45821"
+        ? buildAndersonCaseProfile(hearing.hearingDate)
+        : buildGenericCaseProfile(hearing, index),
+    ]),
+  );

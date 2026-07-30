@@ -15,7 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ParoleHearing, paroleHearingsFixture } from "~datatypes";
+import {
+  ParoleCase,
+  paroleCasesFixture,
+  ParoleHearing,
+  paroleHearingsFixture,
+} from "~datatypes";
 
 import { ParoleStore } from "../ParoleStore";
 import { ParoleAPI } from "./interface";
@@ -25,5 +30,13 @@ export class ParoleOfflineAPIClient implements ParoleAPI {
 
   async hearings(): Promise<Array<ParoleHearing>> {
     return paroleHearingsFixture;
+  }
+
+  async caseDetail(docId: string): Promise<ParoleCase> {
+    const caseDetail = paroleCasesFixture[docId];
+    if (!caseDetail) {
+      throw new Error(`Parole case ${docId} not present in fixture data`);
+    }
+    return caseDetail;
   }
 }

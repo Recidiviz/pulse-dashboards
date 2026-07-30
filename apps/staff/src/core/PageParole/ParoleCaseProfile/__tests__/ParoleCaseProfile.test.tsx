@@ -18,7 +18,20 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
+import * as StoreProvider from "../../../../components/StoreProvider";
+import { ParoleStore } from "../../../../ParoleStore/ParoleStore";
+import { RootStore } from "../../../../RootStore";
 import { ParoleCaseProfile } from "../ParoleCaseProfile";
+
+vi.mock("../../../../components/StoreProvider");
+
+const useRootStoreMock = vi.mocked(StoreProvider.useRootStore);
+
+beforeEach(() => {
+  useRootStoreMock.mockReturnValue({
+    paroleStore: new ParoleStore(new RootStore()),
+  } as never);
+});
 
 function renderAtPath(path: string) {
   return render(
@@ -32,10 +45,10 @@ function renderAtPath(path: string) {
 }
 
 describe("ParoleCaseProfile", () => {
-  it("renders a link back to the docket", () => {
+  it("renders a link back to the docket", async () => {
     renderAtPath("/parole/case/DOC-45821");
 
-    const link = screen.getByRole("link", { name: /back to docket/i });
+    const link = await screen.findByRole("link", { name: /back to docket/i });
     expect(link).toHaveAttribute("href", "/parole/docket");
   });
 
@@ -46,5 +59,42 @@ describe("ParoleCaseProfile", () => {
     expect(
       screen.queryByRole("link", { name: /back to docket/i }),
     ).not.toBeInTheDocument();
+  });
+
+  describe("the identity/hearing info section", () => {
+    it("renders the individual's identity, hearing, and sentence info", async () => {
+      renderAtPath("/parole/case/DOC-45821");
+
+      expect(await screen.findByText("Anderson, Michael")).toBeInTheDocument();
+      expect(screen.getByText("DOC-45821")).toBeInTheDocument();
+      expect(screen.getByText(/Date of Birth:/)).toBeInTheDocument();
+      expect(
+        screen.getByText("Central State Correctional Facility"),
+      ).toBeInTheDocument();
+      expect(screen.getByText("Jennifer Martinez")).toBeInTheDocument();
+      expect(screen.getByText("Minimum")).toBeInTheDocument();
+      expect(screen.getByText("Sentence Information")).toBeInTheDocument();
+      expect(
+        screen.getByText("Parole Eligibility Date (PED)"),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText("Mandatory Release Date (MRD)"),
+      ).toBeInTheDocument();
+    });
+
+    it("renders a hearing-scheduled badge when a hearing is upcoming", async () => {
+      renderAtPath("/parole/case/DOC-45821");
+
+      expect(await screen.findByText("Hearing Scheduled")).toBeInTheDocument();
+      expect(screen.getByText("9:00 AM")).toBeInTheDocument();
+    });
+
+    it("renders no badge and a 'Not scheduled' hearing date when there is no upcoming hearing", async () => {
+      renderAtPath("/parole/case/DOC-59402");
+
+      expect(await screen.findByText("Harris, Patricia")).toBeInTheDocument();
+      expect(screen.getByText("Not scheduled")).toBeInTheDocument();
+      expect(screen.queryByText("Hearing Scheduled")).not.toBeInTheDocument();
+    });
   });
 });

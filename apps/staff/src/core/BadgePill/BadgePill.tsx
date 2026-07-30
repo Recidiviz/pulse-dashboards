@@ -33,7 +33,7 @@ export const BadgePillStyled = styled(Pill)<{
   vertical-align: text-top;
 `;
 
-const statusStyles = {
+export const statusStyles = {
   SLATE: {
     backgroundColor: palette.slate05,
     borderColor: palette.slate20,

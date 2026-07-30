@@ -15,29 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import styled from "styled-components";
 
-export const paroleHearingSchema = z.object({
-  docId: z.string(),
-  individualName: z.string(),
-  hearingDate: z.string(),
-  hearingType: z.string(),
-  facility: z.string(),
-});
-export type ParoleHearing = z.infer<typeof paroleHearingSchema>;
+import { SectionCardBody } from "../../SectionCard";
 
-export const paroleCaseSchema = z.object({
-  docId: z.string(),
-  name: z.string(),
-  dob: z.string(),
-  currentFacility: z.string(),
-  custodyLevel: z.string(),
-  caseManagerName: z.string(),
-  // Absent when this individual has no hearing currently scheduled.
-  hearingDate: z.string().optional(),
-  hearingTime: z.string().optional(),
-  sentenceStartDate: z.string(),
-  paroleEligibilityDate: z.string(),
-  mandatoryReleaseDate: z.string(),
-});
-export type ParoleCase = z.infer<typeof paroleCaseSchema>;
+export const PaddedSectionCardBody = styled(SectionCardBody)`
+  padding: 1rem;
+`;
