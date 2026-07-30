@@ -159,7 +159,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       requestHeaders: { "expo-channel-name": environment },
     },
     runtimeVersion: {
-      policy: "appVersion",
+      policy: "fingerprint",
     },
     experiments: {
       // https://expo.dev/changelog/mitigating-critical-security-vulnerability-in-react-server-components#react-versions-in-a-monorepo
