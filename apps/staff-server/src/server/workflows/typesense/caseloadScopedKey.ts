@@ -110,13 +110,13 @@ function resolveCaseloadScopeAndFilter(
 }
 
 /**
- * POST /workflows/caseload-scoped-key
+ * POST /api/:stateCode/workflows/caseload-scoped-key
  *
  * Mints a scoped Typesense API key for the authenticated user's caseload
  * search, filtered to their staff-visibility scope per the shared resolver
  * in ~@typesense/client/scope.
  *
- * Body: { currentTenantId: string, system: "SUPERVISION" | "INCARCERATION" | "ALL" }
+ * Body: { system: "SUPERVISION" | "INCARCERATION" | "ALL" }
  * Returns: { scopedKey: string, expiresAt: ISO8601, typesenseHost: string }
  */
 export async function mintCaseloadScopedKey(req: Request, res: Response) {

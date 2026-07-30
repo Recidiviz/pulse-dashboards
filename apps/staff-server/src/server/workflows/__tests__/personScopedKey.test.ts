@@ -101,7 +101,12 @@ vi.mock("~@typesense/client", async (importOriginal) => {
 // --------------------------------------------------------------------------
 
 function makeReq(body: Record<string, unknown>, user?: object): Request {
-  return { body, user } as unknown as Request;
+  const { currentTenantId, ...rest } = body;
+  return {
+    body: rest,
+    params: { stateCode: currentTenantId },
+    user,
+  } as unknown as Request;
 }
 
 function makeRes() {
@@ -160,18 +165,6 @@ beforeEach(async () => {
 // --------------------------------------------------------------------------
 
 describe("mintPersonScopedKey — validation", () => {
-  test("returns 400 when currentTenantId is missing", async () => {
-    const res = makeRes();
-    await mintPersonScopedKey(
-      makeReq({ system: "SUPERVISION" }, makeUser()),
-      res,
-    );
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({
-      error: expect.stringContaining("currentTenantId"),
-    });
-  });
-
   test("returns 400 when system is invalid", async () => {
     const res = makeRes();
     await mintPersonScopedKey(

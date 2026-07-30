@@ -34,10 +34,13 @@ interface ScopedKeyMintResponse {
 }
 
 export interface CreateScopedTypesenseClientConfig {
-  // Full URL of the mint endpoint (e.g. `${VITE_API_URL}/workflows/typesense-scoped-key`)
-  mintEndpoint: string;
+  // Builds the full URL of the mint endpoint (e.g.
+  // `${VITE_API_URL}/api/${stateCode}/workflows/caseload-scoped-key`).
+  // Re-evaluated on every mint so a tenant switch mints against the right
+  // state-scoped route (the state is a path param, enforced server-side by
+  // validateStateCode()).
+  mintEndpoint: () => string;
   // Builds the request body sent to the mint endpoint each time we re-mint.
-  // Most importantly returns `currentTenantId`. Re-evaluated on every mint.
   getMintRequestBody: () =>
     | Record<string, unknown>
     | Promise<Record<string, unknown>>;
@@ -94,7 +97,7 @@ export function createScopedTypesenseClient(
     };
     if (authHeader) headers["Authorization"] = authHeader;
 
-    const response = await fetchImpl(config.mintEndpoint, {
+    const response = await fetchImpl(config.mintEndpoint(), {
       method: "POST",
       headers,
       body: JSON.stringify(mintBody),

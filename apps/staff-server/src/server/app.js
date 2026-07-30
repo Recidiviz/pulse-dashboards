@@ -245,12 +245,18 @@ app.get("/health", (req, res) => {
 app.get("/token", asyncHandler(getFirebaseToken));
 
 // mints a scoped Typesense search API key for the authenticated user's
-// caseload search bar
-app.post("/workflows/caseload-scoped-key", asyncHandler(mintCaseloadScopedKey));
+// caseload search bar.
+app.post(
+  `${stateApiBaseRoute}workflows/caseload-scoped-key`,
+  asyncHandler(mintCaseloadScopedKey),
+);
 
 // mints a scoped Typesense search API key for the authenticated user's
 // person (client/resident) search bar
-app.post("/workflows/person-scoped-key", asyncHandler(mintPersonScopedKey));
+app.post(
+  `${stateApiBaseRoute}workflows/person-scoped-key`,
+  asyncHandler(mintPersonScopedKey),
+);
 
 app.get(
   "/api/impersonateAuth0User",

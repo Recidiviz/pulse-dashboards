@@ -75,11 +75,11 @@ export class CaseloadSearchManager {
     this.searchStore = searchStore;
 
     this.typesenseClient = createScopedTypesenseClient({
-      mintEndpoint: `${import.meta.env.VITE_API_URL}/workflows/caseload-scoped-key`,
+      mintEndpoint: () =>
+        `${import.meta.env.VITE_API_URL}/api/${this.workflowsStore.rootStore.currentTenantId}/workflows/caseload-scoped-key`,
       getMintRequestBody: () => {
         const { rootStore } = this.workflowsStore;
         return {
-          currentTenantId: rootStore.currentTenantId,
           system: this.workflowsStore.activeSystem,
           ...(rootStore.isImpersonating
             ? { impersonatedEmail: rootStore.userStore.userEmail }

@@ -280,6 +280,87 @@ describe("Server tests", () => {
     });
   });
 
+  // These two mint endpoints are mounted under stateApiBaseRoute specifically
+  // so validateStateCode() gates :stateCode before the handler ever runs.
+  // See mintScopedKeyHandler.ts.
+  // A prior describe block ("When a route handler throws an error") calls
+  // vi.doUnmock("express-jwt") and never re-mocks it — harmless there since
+  // it runs with AUTH_ENV=test, which skips checkJwt/validateStateCode
+  // entirely (see app.js's `authEnv !== "test"` guard). These blocks need
+  // AUTH_ENV=development so validateStateCode() actually runs, which means
+  // they also need checkJwt mocked, so re-establish it explicitly rather
+  // than relying on declaration order in this file.
+  const mockCheckJwt = () =>
+    vi.doMock("express-jwt", () => ({
+      default: vi.fn().mockImplementation(() => {
+        const validator = (req, res, next) => {
+          next();
+        };
+        validator.unless = vi
+          .fn()
+          .mockImplementation(() => (req, res, next) => {
+            next();
+          });
+        return validator;
+      }),
+    }));
+
+  describe("POST /api/:stateCode/workflows/caseload-scoped-key", () => {
+    beforeEach(async () => {
+      mockCheckJwt();
+      vi.stubEnv("IS_OFFLINE", "false");
+      vi.stubEnv("AUTH_ENV", "development");
+      vi.resetModules();
+      app = (await import("../../app.js")).app;
+    });
+
+    it("returns 401 when :stateCode doesn't match the caller's own state_code", () => {
+      return request(app)
+        .post("/api/US_TN/workflows/caseload-scoped-key")
+        .send({ system: "SUPERVISION" })
+        .then((response) => {
+          expect(response.statusCode).toEqual(401);
+        });
+    });
+
+    it("returns 404 when the route is hit without a :stateCode segment", () => {
+      return request(app)
+        .post("/workflows/caseload-scoped-key")
+        .send({ system: "SUPERVISION" })
+        .then((response) => {
+          expect(response.statusCode).toEqual(404);
+        });
+    });
+  });
+
+  describe("POST /api/:stateCode/workflows/person-scoped-key", () => {
+    beforeEach(async () => {
+      mockCheckJwt();
+      vi.stubEnv("IS_OFFLINE", "false");
+      vi.stubEnv("AUTH_ENV", "development");
+      vi.resetModules();
+      app = (await import("../../app.js")).app;
+    });
+
+    it("returns 401 when :stateCode doesn't match the caller's own state_code", () => {
+      return request(app)
+        .post("/api/US_TN/workflows/person-scoped-key")
+        .send({ system: "SUPERVISION" })
+        .then((response) => {
+          expect(response.statusCode).toEqual(401);
+        });
+    });
+
+    it("returns 404 when the route is hit without a :stateCode segment", () => {
+      return request(app)
+        .post("/workflows/person-scoped-key")
+        .send({ system: "SUPERVISION" })
+        .then((response) => {
+          expect(response.statusCode).toEqual(404);
+        });
+    });
+  });
+
   describe("getImpersonatedUserRestrictions", () => {
     beforeEach(async () => {
       vi.stubEnv("IS_OFFLINE", "true");

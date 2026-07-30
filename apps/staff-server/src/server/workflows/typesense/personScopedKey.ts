@@ -98,13 +98,13 @@ function resolvePersonScopeAndFilter(
 }
 
 /**
- * POST /workflows/person-scoped-key
+ * POST /api/:stateCode/workflows/person-scoped-key
  *
  * Mints a scoped Typesense API key for the authenticated user's person
  * (client/resident) search, filtered to their person-visibility scope per
  * the shared resolver in ~@typesense/client/scope.
  *
- * Body: { currentTenantId: string, system: "SUPERVISION" | "INCARCERATION" | "ALL" }
+ * Body: { system: "SUPERVISION" | "INCARCERATION" | "ALL" }
  * Returns: { scopedKey: string, expiresAt: ISO8601, typesenseHost: string }
  */
 export async function mintPersonScopedKey(req: Request, res: Response) {

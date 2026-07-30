@@ -60,10 +60,10 @@ export interface ScopeAndFilter {
 }
 
 /**
- * Validates the request body, resolves the shared user scope context, and
- * mints a scoped Typesense search key from the filter_by that
- * `resolveScopeAndFilter` compiles. `resolveScopeAndFilter` carries all the
- * logic that differs between caseload and person scoping.
+ * Validates the request, resolves the shared user scope context, and mints a
+ * scoped Typesense search key from the filter_by that `resolveScopeAndFilter`
+ * compiles. `resolveScopeAndFilter` carries all the logic that differs
+ * between caseload and person scoping.
  */
 export async function mintScopedKeyHandler(
   req: Request,
@@ -74,10 +74,8 @@ export async function mintScopedKeyHandler(
     ctx: UserScopeContext,
   ) => ScopeAndFilter,
 ) {
-  const { currentTenantId, system: requestedSystem } = req.body ?? {};
-  if (!currentTenantId) {
-    return res.status(400).json({ error: "currentTenantId is required" });
-  }
+  const currentTenantId = req.params["stateCode"]?.toUpperCase();
+  const { system: requestedSystem } = req.body ?? {};
   if (!isValidSystem(requestedSystem)) {
     return res.status(400).json({ error: invalidSystemMessage() });
   }
