@@ -114,7 +114,7 @@ describe("GET /api/v1/auth0-roster-check", () => {
     test("returns the user profile", async () => {
       vi.mocked(getRecidivizUserProfile).mockResolvedValue({
         stateCode: "RECIDIVIZ",
-        allowedStates: ["US_OZ"],
+        allowedStates: ["US_AZ"],
         permissions: ["enhanced"],
       });
       const token = sign({
@@ -132,7 +132,7 @@ describe("GET /api/v1/auth0-roster-check", () => {
       expect(JSON.parse(response.body)).toEqual({
         userProfile: {
           stateCode: "RECIDIVIZ",
-          allowedStates: ["US_OZ"],
+          allowedStates: ["US_AZ"],
           permissions: ["enhanced"],
         },
       });
@@ -144,7 +144,7 @@ describe("GET /api/v1/auth0-roster-check", () => {
 
   describe("ORIJIN users", () => {
     const orijinProfile: AuthorizedUserProfile = {
-      stateCode: "US_OZ",
+      stateCode: "US_AZ",
       externalId: "abc123",
       pseudonymizedId: "p123",
       permissions: ["live_data"],
@@ -155,7 +155,7 @@ describe("GET /api/v1/auth0-roster-check", () => {
       const token = sign({
         userType: "ORIJIN",
         userId: "abc123",
-        stateCode: "US_OZ",
+        stateCode: "US_AZ",
       });
 
       const response = await testServer.inject({
@@ -174,7 +174,7 @@ describe("GET /api/v1/auth0-roster-check", () => {
     test("falls back to the demo roster when not on the live roster", async () => {
       vi.mocked(checkResidentsRoster).mockResolvedValue(undefined);
       vi.mocked(checkDemoResidentsRoster).mockResolvedValue({
-        stateCode: "US_OZ",
+        stateCode: "US_AZ",
         externalId: "abc123",
         pseudonymizedId: "p123",
         permissions: [],
@@ -182,7 +182,7 @@ describe("GET /api/v1/auth0-roster-check", () => {
       const token = sign({
         userType: "ORIJIN",
         userId: "abc123",
-        stateCode: "US_OZ",
+        stateCode: "US_AZ",
       });
 
       const response = await testServer.inject({
@@ -194,7 +194,7 @@ describe("GET /api/v1/auth0-roster-check", () => {
       expect(response.statusCode).toBe(200);
       expect(JSON.parse(response.body)).toEqual({
         userProfile: {
-          stateCode: "US_OZ",
+          stateCode: "US_AZ",
           externalId: "abc123",
           pseudonymizedId: "p123",
           permissions: [],
@@ -208,7 +208,7 @@ describe("GET /api/v1/auth0-roster-check", () => {
       const token = sign({
         userType: "ORIJIN",
         userId: "abc123",
-        stateCode: "US_OZ",
+        stateCode: "US_AZ",
       });
 
       const response = await testServer.inject({
@@ -225,7 +225,7 @@ describe("GET /api/v1/auth0-roster-check", () => {
   describe("STATE users", () => {
     test("returns the admin panel profile when found", async () => {
       vi.mocked(checkAdminPanelPermissions).mockResolvedValue({
-        stateCode: "US_OZ",
+        stateCode: "US_AZ",
         district: "D1",
         permissions: ["enhanced"],
       });

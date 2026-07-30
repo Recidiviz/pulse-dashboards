@@ -17,6 +17,8 @@
 
 import { z } from "zod";
 
+import { stateCodes } from "~@jii/configs";
+
 export const edovoIdTokenPayloadSchema = z
   .object({
     inmate_id: z.string(),
@@ -39,10 +41,13 @@ export const edovoIdTokenPayloadSchema = z
       facilityState = "US_NYC";
     }
 
-    const normalizedUser = { ...user, facility_state: facilityState };
+    const normalizedUser = {
+      ...user,
+      facility_state: stateCodes.parse(facilityState),
+    };
 
     // For these states, Edovo's IDs here are zero-padded but ours are not
-    if (["US_ME", "US_NE", "US_AZ"].includes(normalizedUser.facility_state)) {
+    if (["US_NE", "US_AZ"].includes(normalizedUser.facility_state)) {
       return {
         ...normalizedUser,
         inmate_id: normalizedUser.inmate_id.replace(/^0+/, ""),

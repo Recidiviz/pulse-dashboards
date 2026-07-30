@@ -48,12 +48,12 @@ const mockSecrets: Record<string, string> = {
 };
 
 const mockRealUserProfile: AuthorizedUserProfile = {
-  stateCode: "US_OZ",
+  stateCode: "US_AR",
   externalId: "real-123",
   pseudonymizedId: "pseudo-real-123",
 };
 const mockDemoUserProfile: ResidentUserProfile = {
-  stateCode: "US_OZ",
+  stateCode: "US_AR",
   externalId: "demo-123",
   pseudonymizedId: "pseudo-demo-123",
   permissions: [],
@@ -115,7 +115,7 @@ beforeEach(async () => {
   authCaller = createAuthCaller(
     await createMockToken({
       inmate_id: "123456",
-      facility_state: "OZ",
+      facility_state: "AR",
     }),
   );
 
@@ -132,7 +132,7 @@ beforeEach(async () => {
     bucket: () => ({
       file: () => ({
         download: () => [
-          Buffer.from(JSON.stringify({ allowedStates: ["US_OZ"] })),
+          Buffer.from(JSON.stringify({ allowedStates: ["US_AR"] })),
         ],
       }),
     }),
@@ -167,7 +167,7 @@ test("succeeds with Recidiviz account lookup", async () => {
     firebaseToken: mockFirebaseTokenValue,
     user: {
       stateCode: "RECIDIVIZ",
-      allowedStates: ["US_OZ"],
+      allowedStates: ["US_AR"],
       permissions: ["enhanced", "live_data", "translator", "global_write"],
     },
   });
@@ -180,7 +180,7 @@ test("succeeds with magic payload for Securus test accounts", async () => {
   authCaller = createAuthCaller(
     await createMockToken({
       inmate_id: "123456",
-      facility_state: "OZ",
+      facility_state: "AR",
       // this is actually the only field that matters to the result here
       facility_name: "securus-test-1",
     }),
@@ -223,9 +223,8 @@ describe("NY facility state disambiguation", () => {
       }),
     );
 
-    await authCaller.edovoToken();
-
-    expect(checkResidentsRoster).toHaveBeenCalledWith("US_NY", "123456");
+    // US_NY is not actually a valid state code
+    await expect(authCaller.edovoToken).rejects.toThrow();
   });
 
   test("leaves state as US_NY when facility name is absent", async () => {
@@ -236,9 +235,8 @@ describe("NY facility state disambiguation", () => {
       }),
     );
 
-    await authCaller.edovoToken();
-
-    expect(checkResidentsRoster).toHaveBeenCalledWith("US_NY", "123456");
+    // US_NY is not actually a valid state code
+    await expect(authCaller.edovoToken).rejects.toThrow();
   });
 });
 
@@ -300,7 +298,7 @@ describe("language field handling", () => {
     authCaller = createAuthCaller(
       await createMockToken({
         inmate_id: "123456",
-        facility_state: "OZ",
+        facility_state: "AR",
         language: "es",
       }),
     );
@@ -325,7 +323,7 @@ describe("language field handling", () => {
     authCaller = createAuthCaller(
       await createMockToken({
         inmate_id: "123456",
-        facility_state: "OZ",
+        facility_state: "AR",
         language: "invalid-locale-code",
       }),
     );

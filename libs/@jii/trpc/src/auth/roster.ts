@@ -19,7 +19,10 @@ import { DocumentData, getFirestore } from "firebase-admin/firestore";
 import { z } from "zod";
 
 import { AuthorizedUserProfile, ResidentUserProfile } from "~@jii/auth";
+import { StateCode } from "~@jii/configs";
+import { getPrismaClient } from "~@jii/prisma";
 
+import { isUserFlagActive } from "../helpers/featureFlags";
 import { firebaseApp } from "../helpers/firebaseAdmin";
 
 // we aren't reusing the querier function from firebaseAdmin helpers here
@@ -51,24 +54,53 @@ async function getResidentRecordForDisplayId(
 }
 
 export async function checkResidentsRoster(
-  stateCode: string,
+  stateCode: StateCode,
   userId: string,
 ): Promise<AuthorizedUserProfile | undefined> {
-  let userResidentRecord;
-  if (["US_AR", "US_AZ", "US_CO", "US_NE"].includes(stateCode)) {
-    userResidentRecord = await getResidentRecordForDisplayId(stateCode, userId);
+  const lookupByDisplayId = ["US_AR", "US_AZ", "US_CO", "US_NE"].includes(
+    stateCode,
+  );
+  let personExternalId: string;
+  let pseudonymizedId: string;
+
+  const prisma = getPrismaClient({ stateCode, demo: false });
+  if (
+    await isUserFlagActive({
+      stateCode,
+      prisma,
+      userId,
+      flagId: "useNewResidentData",
+    })
+  ) {
+    const userRecord = await prisma.resident.findFirst({
+      where: {
+        displayId: lookupByDisplayId ? userId : undefined,
+        personExternalId: lookupByDisplayId ? undefined : userId,
+      },
+      select: { pseudonymizedId: true, personExternalId: true },
+    });
+    if (!userRecord) return;
+    ({ personExternalId, pseudonymizedId } = userRecord);
   } else {
-    userResidentRecord = (
-      await firestore()
-        .doc(`residents/${stateCode.toLowerCase()}_${userId.toLowerCase()}`)
-        .get()
-    ).data();
+    let userResidentRecord;
+    if (lookupByDisplayId) {
+      userResidentRecord = await getResidentRecordForDisplayId(
+        stateCode,
+        userId,
+      );
+    } else {
+      userResidentRecord = (
+        await firestore()
+          .doc(`residents/${stateCode.toLowerCase()}_${userId.toLowerCase()}`)
+          .get()
+      ).data();
+    }
+
+    if (!userResidentRecord) return;
+
+    ({ pseudonymizedId, personExternalId } =
+      getResidentIds(userResidentRecord));
   }
-
-  if (!userResidentRecord) return;
-
-  const { pseudonymizedId, personExternalId } =
-    getResidentIds(userResidentRecord);
 
   return {
     stateCode: stateCode,
@@ -79,21 +111,41 @@ export async function checkResidentsRoster(
 }
 
 export async function checkDemoResidentsRoster(
-  stateCode: string,
+  stateCode: StateCode,
   userId: string,
 ): Promise<ResidentUserProfile | undefined> {
-  const userDemoResidentRecord = (
-    await firestore()
-      .collection(`DEMO_residents`)
-      .where("stateCode", "==", stateCode)
-      .where("personExternalId", "==", userId)
-      .limit(1)
-      .get()
-  ).docs[0]?.data();
+  let pseudonymizedId: string;
+  const prisma = getPrismaClient({ stateCode, demo: true });
+  if (
+    await isUserFlagActive({
+      stateCode,
+      prisma,
+      userId,
+      flagId: "useNewResidentData",
+    })
+  ) {
+    const userRecord = await prisma.resident.findFirst({
+      where: {
+        personExternalId: userId,
+      },
+      select: { pseudonymizedId: true },
+    });
+    if (!userRecord) return;
+    ({ pseudonymizedId } = userRecord);
+  } else {
+    const userDemoResidentRecord = (
+      await firestore()
+        .collection(`DEMO_residents`)
+        .where("stateCode", "==", stateCode)
+        .where("personExternalId", "==", userId)
+        .limit(1)
+        .get()
+    ).docs[0]?.data();
 
-  if (!userDemoResidentRecord) return;
+    if (!userDemoResidentRecord) return;
 
-  const { pseudonymizedId } = getResidentIds(userDemoResidentRecord);
+    ({ pseudonymizedId } = getResidentIds(userDemoResidentRecord));
+  }
 
   return {
     stateCode: stateCode,

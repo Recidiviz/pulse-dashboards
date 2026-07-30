@@ -19,6 +19,7 @@ import { createVerifier } from "fast-jwt";
 import { FastifyInstance, FastifyRequest } from "fastify";
 import { z } from "zod";
 
+import { stateCodes } from "~@jii/configs";
 import {
   checkDemoResidentsRoster,
   checkResidentsRoster,
@@ -89,8 +90,15 @@ export function registerAuthRoutes(server: FastifyInstance) {
     }
 
     if (userData.userType === "ORIJIN") {
+      const stateCode = stateCodes.safeParse(userData.stateCode).data;
+      if (!stateCode) {
+        reply
+          .status(401)
+          .send({ error: `Invalid state code: ${userData.stateCode}` });
+        return;
+      }
       const userProfile = await checkResidentsRoster(
-        userData.stateCode,
+        stateCode,
         userData.userId,
       );
       if (userProfile) {
@@ -100,7 +108,7 @@ export function registerAuthRoutes(server: FastifyInstance) {
 
       // fallback: if not a real user, check if they're a demo user
       const demoUserProfile = await checkDemoResidentsRoster(
-        userData.stateCode,
+        stateCode,
         userData.userId,
       );
       if (demoUserProfile) {

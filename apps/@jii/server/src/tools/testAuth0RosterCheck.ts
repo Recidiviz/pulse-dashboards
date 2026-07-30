@@ -20,19 +20,20 @@ import { createSigner } from "fast-jwt";
 
 const parser = new ArgumentParser({
   description:
-    "Call the deployed auth0 roster check endpoint on staging or production, " +
-    "signing a test token with the real Auth0-paired private key. (Data platform permissions prevent " +
-    "us from running the endpoint locally.) That key should be supplied " +
-    "via a sops environment file for this script (e.g. `env.test-auth0-roster-check.staging.enc.yaml`). " +
-    "Select the environment via the nx configuration, e.g.:\n" +
-    "  nx test-auth0-roster-check @jii/server -c staging --user-type RECIDIVIZ --email test@recidiviz.org",
+    "Call the auth0 roster check endpoint, signing a test token with the real Auth0-paired " +
+    "private key. Defaults to a locally running server (via `nx dev jii`, or directly as `nx dev @jii/server`)." +
+    "STATE won't work locally since checkAdminPanelPermissions needs ADC " +
+    "permissions unavailable in local dev.\n" +
+    "Pass the nx configuration to hit staging or production instead, which also selects the " +
+    "matching sops secrets (e.g. `env.auth0-roster-check.staging.enc.yaml`):\n" +
+    "  nx auth0-roster-check @jii/server -c staging --user-type RECIDIVIZ --email test@recidiviz.org",
 });
 
-parser.add_argument("-u", "--user-type", {
+parser.add_argument("--user-type", {
   dest: "userType",
   required: true,
   choices: ["RECIDIVIZ", "ORIJIN", "STATE"],
-  help: "The userType claim to put in the signed token",
+  help: "The userType claim to put in the signed token.",
 });
 
 parser.add_argument("--email", {
@@ -87,15 +88,23 @@ const BASE_URLS: Record<string, string> = {
 
 async function main() {
   // set by nx from the `-c staging`/`-c production` configuration this script
-  // was invoked with, which is also what selects the matching sops secrets
+  // was invoked with, which is also what selects the matching sops secrets. Falls back to a
+  // locally running server otherwise.
   const configuration = process.env["NX_TASK_TARGET_CONFIGURATION"];
-  const baseUrl = configuration ? BASE_URLS[configuration] : undefined;
-  const privateKey = process.env["AUTH0_PRIVATE_KEY"];
-  if (!baseUrl || !privateKey) {
+
+  if (!configuration && args.userType === "STATE") {
     throw new Error(
-      "Run this via `nx test-auth0-roster-check @jii/server -c staging` " +
-        "or `-c production` so the environment (and its secrets) can be resolved",
+      "Cannot test STATE users locally due to admin panel permissions; try with staging or production configuration",
     );
+  }
+
+  const baseUrl = configuration
+    ? BASE_URLS[configuration]
+    : "http://localhost:4200";
+  const privateKey = process.env["AUTH0_PRIVATE_KEY"];
+
+  if (!privateKey) {
+    throw new Error("Missing required AUTH0_PRIVATE_KEY");
   }
 
   const sign = createSigner({

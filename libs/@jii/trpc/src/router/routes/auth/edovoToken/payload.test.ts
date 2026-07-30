@@ -19,36 +19,33 @@ import { stateCodes } from "~@jii/configs";
 
 import { edovoIdTokenPayloadSchema } from "./payload";
 
-test.each([
-  ...stateCodes.options,
-  // official support for ME was removed due to outdated legacy features,
-  // but we still have some edovo integration code that we want to keep around
-  "US_ME",
-] as const)("edovo payload schema for %s", (stateCode) => {
-  let incomingId = "1234";
-  let expectedId = "1234";
-  switch (stateCode) {
-    case "US_NE":
-    case "US_ME":
-    case "US_AZ":
-      incomingId = "00000" + incomingId;
-      break;
-    case "US_CO":
-      // CO specifically has a 6 digit limit
-      expectedId = "001234";
-      break;
-    default:
-      break;
-  }
+test.each([...stateCodes.options] as const)(
+  "edovo payload schema for %s",
+  (stateCode) => {
+    let incomingId = "1234";
+    let expectedId = "1234";
+    switch (stateCode) {
+      case "US_NE":
+      case "US_AZ":
+        incomingId = "00000" + incomingId;
+        break;
+      case "US_CO":
+        // CO specifically has a 6 digit limit
+        expectedId = "001234";
+        break;
+      default:
+        break;
+    }
 
-  expect(
-    edovoIdTokenPayloadSchema.parse({
-      inmate_id: incomingId,
-      // edovo payloads don't have the US_ prefix
-      facility_state: stateCode.substring(3),
-    }),
-  ).toEqual({
-    facility_state: stateCode,
-    inmate_id: expectedId,
-  });
-});
+    expect(
+      edovoIdTokenPayloadSchema.parse({
+        inmate_id: incomingId,
+        // edovo payloads don't have the US_ prefix
+        facility_state: stateCode.substring(3),
+      }),
+    ).toEqual({
+      facility_state: stateCode,
+      inmate_id: expectedId,
+    });
+  },
+);
