@@ -305,6 +305,60 @@ function buildAndersonCaseProfile(hearingDate: string): ParoleCase {
       },
     ],
     conductHistory: buildAndersonConductHistory(),
+    docPrograms: [
+      {
+        name: "Cognitive Behavioral Therapy",
+        completionDate: iso(subMonths(today, 4)),
+        type: "Treatment",
+        criminogenicNeed: "Antisocial Thinking",
+        status: "completed",
+      },
+      {
+        name: "Substance Abuse Treatment",
+        completionDate: iso(subMonths(today, 7)),
+        type: "Treatment",
+        criminogenicNeed: "Substance Abuse",
+        status: "completed",
+      },
+      {
+        name: "Vocational Training - Welding",
+        completionDate: null,
+        type: "Education/Vocational",
+        criminogenicNeed: "Employment",
+        status: "in-progress",
+      },
+      {
+        name: "Anger Management",
+        completionDate: null,
+        type: "Treatment",
+        criminogenicNeed: "Antisocial Thinking",
+        status: "recommended",
+      },
+    ],
+    edovoPrograms: [
+      {
+        title: "Financial Literacy Basics",
+        completionDate: iso(subMonths(today, 6)),
+        status: "completed",
+        result: "passed",
+        startDate: iso(subMonths(today, 7)),
+        durationDays: 28,
+      },
+      {
+        title: "Resume Building Workshop",
+        completionDate: iso(subMonths(today, 5)),
+        status: "completed",
+        result: "passed",
+        startDate: iso(subMonths(today, 6)),
+        durationDays: 13,
+      },
+      {
+        title: "Mindfulness and Stress Management",
+        completionDate: null,
+        status: "in-progress",
+        startDate: iso(subMonths(today, 2)),
+      },
+    ],
   });
 }
 
@@ -375,6 +429,10 @@ function buildGenericCaseProfile(
     mandatoryReleaseDate: iso(addDays(today, 600 + index * 30)),
     parolePlan: buildParolePlan(hearing.docId, index, today),
     attachments: buildAttachments(hearing.docId, index, today),
+    // Only Anderson's profile is hand-authored with program data (see comment
+    // above); the rest have none until a real backend exists.
+    docPrograms: [],
+    edovoPrograms: [],
   });
 }
 

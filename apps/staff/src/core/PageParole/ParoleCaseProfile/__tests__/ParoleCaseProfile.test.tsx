@@ -237,4 +237,47 @@ describe("ParoleCaseProfile", () => {
       ).not.toBeInTheDocument();
     });
   });
+
+  describe("the program participation section", () => {
+    it("renders only completed DOC and Edovo programs with their completion dates", async () => {
+      renderAtPath("/parole/case/DOC-45821");
+
+      expect(
+        await screen.findByText("Program Participation"),
+      ).toBeInTheDocument();
+
+      expect(screen.getByText("DOC Programs (2)")).toBeInTheDocument();
+      expect(
+        screen.getByText("Cognitive Behavioral Therapy"),
+      ).toBeInTheDocument();
+      expect(screen.getByText("Substance Abuse Treatment")).toBeInTheDocument();
+      expect(
+        screen.queryByText("Vocational Training - Welding"),
+      ).not.toBeInTheDocument();
+      expect(screen.queryByText("Anger Management")).not.toBeInTheDocument();
+
+      expect(screen.getByText("Edovo Programs (2)")).toBeInTheDocument();
+      expect(screen.getByText("Financial Literacy Basics")).toBeInTheDocument();
+      expect(screen.getByText("Resume Building Workshop")).toBeInTheDocument();
+      expect(
+        screen.queryByText("Mindfulness and Stress Management"),
+      ).not.toBeInTheDocument();
+    });
+
+    it("renders an empty state for a case with no programs on record", async () => {
+      renderAtPath("/parole/case/DOC-59402");
+
+      expect(
+        await screen.findByText("Program Participation"),
+      ).toBeInTheDocument();
+      expect(screen.getByText("DOC Programs (0)")).toBeInTheDocument();
+      expect(
+        screen.getByText("No completed DOC programs on record."),
+      ).toBeInTheDocument();
+      expect(screen.getByText("Edovo Programs (0)")).toBeInTheDocument();
+      expect(
+        screen.getByText("No completed Edovo programs on record."),
+      ).toBeInTheDocument();
+    });
+  });
 });

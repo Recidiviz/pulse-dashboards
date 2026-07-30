@@ -63,6 +63,33 @@ export const paroleConductRecordSchema = z.object({
   disposition: z.string(),
 });
 export type ParoleConductRecord = z.infer<typeof paroleConductRecordSchema>;
+export const PAROLE_PROGRAM_STATUS = z.enum([
+  "completed",
+  "in-progress",
+  "recommended",
+]);
+
+export const paroleDocProgramSchema = z.object({
+  name: z.string(),
+  completionDate: z.string().nullable(),
+  type: z.string(),
+  criminogenicNeed: z.string(),
+  status: PAROLE_PROGRAM_STATUS,
+});
+export type ParoleDocProgram = z.infer<typeof paroleDocProgramSchema>;
+
+export const PAROLE_EDOVO_STATUS = z.enum(["completed", "in-progress"]);
+export const PAROLE_EDOVO_RESULT = z.enum(["passed", "needs-improvement"]);
+
+export const paroleEdovoProgramSchema = z.object({
+  title: z.string(),
+  completionDate: z.string().nullable(),
+  status: PAROLE_EDOVO_STATUS,
+  result: PAROLE_EDOVO_RESULT.optional(),
+  startDate: z.string().optional(),
+  durationDays: z.number().optional(),
+});
+export type ParoleEdovoProgram = z.infer<typeof paroleEdovoProgramSchema>;
 
 export const paroleCaseSchema = z.object({
   docId: z.string(),
@@ -80,5 +107,7 @@ export const paroleCaseSchema = z.object({
   parolePlan: paroleParolePlanSchema,
   attachments: z.array(paroleAttachmentSchema),
   conductHistory: z.array(paroleConductRecordSchema),
+  docPrograms: z.array(paroleDocProgramSchema),
+  edovoPrograms: z.array(paroleEdovoProgramSchema),
 });
 export type ParoleCase = z.infer<typeof paroleCaseSchema>;

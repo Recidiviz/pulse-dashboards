@@ -37,6 +37,8 @@ const TEST_CASE: ParoleCase = {
   parolePlan: { onFile: true, lastUpdated: "2026-07-10", documents: [] },
   attachments: [],
   conductHistory: [],
+  docPrograms: [],
+  edovoPrograms: [],
 };
 
 describe("ParoleCaseProfilePresenter", () => {
