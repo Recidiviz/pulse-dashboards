@@ -15,11 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { addDays, format, subDays, subYears } from "date-fns";
+import { addDays, format, subDays, subMonths, subYears } from "date-fns";
 
 import {
   ParoleCase,
   paroleCaseSchema,
+  ParoleConductRecord,
+  paroleConductRecordSchema,
   ParoleHearing,
   paroleHearingSchema,
 } from "./schema";
@@ -148,6 +150,112 @@ const GENERIC_ATTACHMENT_AUTHORS = [
 
 const CUSTODY_LEVELS = ["Minimum", "Medium", "Maximum"] as const;
 
+// Institutional conduct records, keyed by how many months before the module
+// loads they occurred (see the `iso`/relative-date rationale above). Anderson
+// is hand-authored to match the OBT-41634 design mock 1:1 -- six records
+// split 4 Major / 2 Minor, with the two most recent falling within the past
+// year and the rest older, so the mock's "2 shown, 4 under 'See Older
+// Disciplinaries'" split always renders as designed.
+function buildConductRecord(
+  monthsAgo: number,
+  fields: Omit<ParoleConductRecord, "date">,
+): ParoleConductRecord {
+  return paroleConductRecordSchema.parse({
+    ...fields,
+    date: iso(subMonths(new Date(), monthsAgo)),
+  });
+}
+
+function buildAndersonConductHistory(): Array<ParoleConductRecord> {
+  return [
+    buildConductRecord(0, {
+      facility: "Western State Prison",
+      violation: "Refusal to Submit to Drug Test",
+      description:
+        "Refused random urinalysis screening without valid medical exemption.",
+      severity: "Major",
+      disposition: "30 days disciplinary segregation, loss of good time",
+    }),
+    buildConductRecord(2, {
+      facility: "Western State Prison",
+      violation: "Unauthorized Area",
+      description:
+        "Found in restricted maintenance corridor without authorization.",
+      severity: "Minor",
+      disposition: "Loss of privileges - 7 days",
+    }),
+    buildConductRecord(14, {
+      facility: "Western State Prison",
+      violation: "Threatening Behavior",
+      description: "Verbal threats toward staff member.",
+      severity: "Major",
+      disposition:
+        "30 days disciplinary segregation, anger management referral",
+    }),
+    buildConductRecord(21, {
+      facility: "Western State Prison",
+      violation: "Fighting",
+      description: "Physical altercation in dining hall.",
+      severity: "Major",
+      disposition: "45 days disciplinary segregation",
+    }),
+    buildConductRecord(29, {
+      facility: "Western State Prison",
+      violation: "Disobeying Orders",
+      description: "Refused work assignment.",
+      severity: "Minor",
+      disposition: "Loss of privileges - 14 days",
+    }),
+    buildConductRecord(34, {
+      facility: "Western State Prison",
+      violation: "Possession of Contraband",
+      description:
+        "Found with an unauthorized cell phone during a cell search.",
+      severity: "Major",
+      disposition: "60 days disciplinary segregation, loss of good time",
+    }),
+  ];
+}
+
+// Generic docket entries cycle through three conduct patterns by index so
+// the profile page's empty state, single-record state, and "See Older
+// Disciplinaries" toggle all get exercised across the fixture docket without
+// hand-authoring every case.
+function buildGenericConductHistory(
+  index: number,
+  facility: string,
+): Array<ParoleConductRecord> {
+  const pattern = index % 3;
+  if (pattern === 0) return [];
+  if (pattern === 1) {
+    return [
+      buildConductRecord(1, {
+        facility,
+        violation: "Failure to Report",
+        description: "Missed scheduled headcount.",
+        severity: "Minor",
+        disposition: "Loss of privileges - 3 days",
+      }),
+    ];
+  }
+  return [
+    buildConductRecord(1, {
+      facility,
+      violation: "Insubordination",
+      description: "Refused a direct order from a correctional officer.",
+      severity: "Major",
+      disposition: "14 days disciplinary segregation",
+    }),
+    buildConductRecord(16, {
+      facility,
+      violation: "Unauthorized Area",
+      description: "Found in a restricted area without authorization.",
+      severity: "Minor",
+      disposition: "Loss of privileges - 7 days",
+    }),
+  ];
+}
+
 function buildAndersonCaseProfile(hearingDate: string): ParoleCase {
   const today = new Date();
   return paroleCaseSchema.parse({
@@ -196,6 +304,7 @@ function buildAndersonCaseProfile(hearingDate: string): ParoleCase {
         uploadDate: iso(subDays(today, 40)),
       },
     ],
+    conductHistory: buildAndersonConductHistory(),
   });
 }
 
@@ -243,6 +352,11 @@ function buildGenericCaseProfile(
 ): ParoleCase {
   const today = new Date();
   const hasScheduledHearing = hearing.docId !== NO_HEARING_SCHEDULED_DOC_ID;
+  // Harris also anchors the "no disciplinary infractions" empty state, so her
+  // conduct history is deliberately empty rather than pattern-derived.
+  const conductHistory = hasScheduledHearing
+    ? buildGenericConductHistory(index, hearing.facility)
+    : [];
   return paroleCaseSchema.parse({
     docId: hearing.docId,
     name: hearing.individualName,
@@ -257,6 +371,7 @@ function buildGenericCaseProfile(
       : undefined,
     sentenceStartDate: iso(subYears(today, 3 + (index % 4))),
     paroleEligibilityDate: iso(addDays(today, 10 + index * 5)),
+    conductHistory,
     mandatoryReleaseDate: iso(addDays(today, 600 + index * 30)),
     parolePlan: buildParolePlan(hearing.docId, index, today),
     attachments: buildAttachments(hearing.docId, index, today),

@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
 import * as StoreProvider from "../../../../components/StoreProvider";
@@ -32,6 +33,21 @@ beforeEach(() => {
     paroleStore: new ParoleStore(new RootStore()),
   } as never);
 });
+
+// The label and value in rows like "Total Violations: 6" are separate
+// elements (the value is wrapped in a FactValue span), so the default
+// getByText match against a single node's own text never sees the full
+// string. Match on textContent of the closest common ancestor instead,
+// inspired by https://stackoverflow.com/a/68429756
+function getByTextAcrossElements(text: string) {
+  return screen.getByText((_, element) => {
+    const elementHasText = element?.textContent === text;
+    const childrenDontHaveText = Array.from(element?.children ?? []).every(
+      (child) => child.textContent !== text,
+    );
+    return Boolean(elementHasText && childrenDontHaveText);
+  });
+}
 
 function renderAtPath(path: string) {
   return render(
@@ -152,6 +168,72 @@ describe("ParoleCaseProfile", () => {
       ).not.toBeInTheDocument();
       expect(
         screen.queryByText("PAROLE PLAN NOT RECENTLY UPDATED"),
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  describe("the conduct history section", () => {
+    it("renders the violation summary and the most recent record", async () => {
+      renderAtPath("/parole/case/DOC-45821");
+
+      expect(
+        await screen.findByText("Institutional Conduct History"),
+      ).toBeInTheDocument();
+      // These counts are stable regardless of the current date -- they only
+      // depend on how many fixture records exist, not on which are "recent".
+      expect(
+        getByTextAcrossElements("Total Violations: 6"),
+      ).toBeInTheDocument();
+      expect(getByTextAcrossElements("Major: 4")).toBeInTheDocument();
+      expect(getByTextAcrossElements("Minor: 2")).toBeInTheDocument();
+
+      // Dated the day the fixture loads, so it's always within the past
+      // year and always visible without expanding older records.
+      expect(
+        screen.getByText("Refusal to Submit to Drug Test"),
+      ).toBeInTheDocument();
+      // Every Anderson fixture record shares this facility, so more than one
+      // visible record card can render it -- assert it appears, not that it's
+      // unique.
+      expect(
+        screen.getAllByText("Western State Prison").length,
+      ).toBeGreaterThan(0);
+    });
+
+    it("hides records older than a year until 'See Older Disciplinaries' is clicked", async () => {
+      const user = userEvent.setup();
+      renderAtPath("/parole/case/DOC-45821");
+
+      // Dated 34 months before the fixture loads, so it's always well
+      // outside the past year and always hidden until expanded.
+      expect(
+        await screen.findByText("Institutional Conduct History"),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByText("Possession of Contraband"),
+      ).not.toBeInTheDocument();
+
+      const toggle = screen.getByRole("button", {
+        name: /see older disciplinaries/i,
+      });
+      expect(toggle).toHaveAttribute("aria-expanded", "false");
+
+      await user.click(toggle);
+
+      expect(toggle).toHaveAttribute("aria-expanded", "true");
+      expect(screen.getByText("Possession of Contraband")).toBeInTheDocument();
+    });
+
+    it("renders a clean-record empty state when there is no conduct history", async () => {
+      renderAtPath("/parole/case/DOC-59402");
+
+      expect(await screen.findByText("Harris, Patricia")).toBeInTheDocument();
+      expect(
+        screen.getByText("No Disciplinary Infractions"),
+      ).toBeInTheDocument();
+      expect(screen.queryByText(/Total Violations:/)).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: /see older disciplinaries/i }),
       ).not.toBeInTheDocument();
     });
   });

@@ -30,6 +30,7 @@ import { BackLink } from "../../Link";
 import ModelHydrator from "../../ModelHydrator";
 import { paroleUrl } from "../../views";
 import { AttachmentsSection } from "../components/AttachmentsSection";
+import { ConductHistorySection } from "../components/ConductHistorySection";
 import { IdentityHeaderSection } from "../components/IdentityHeaderSection";
 
 // Page-level max-width/padding comes from PageParole's shared Main wrapper;
@@ -38,6 +39,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${rem(spacing.lg)};
+  padding-bottom: 1.5rem;
 `;
 
 const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
@@ -72,6 +74,8 @@ const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
         parolePlan={caseDetail.parolePlan}
         attachments={caseDetail.attachments}
       />
+
+      <ConductHistorySection conductHistory={caseDetail.conductHistory} />
     </Wrapper>
   );
 });

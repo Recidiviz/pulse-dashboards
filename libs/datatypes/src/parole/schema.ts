@@ -52,6 +52,17 @@ export const paroleAttachmentSchema = z.object({
   uploadDate: z.string(),
 });
 export type ParoleAttachment = z.infer<typeof paroleAttachmentSchema>;
+export const PAROLE_CONDUCT_SEVERITY = z.enum(["Major", "Minor"]);
+
+export const paroleConductRecordSchema = z.object({
+  date: z.string(),
+  facility: z.string(),
+  violation: z.string(),
+  description: z.string(),
+  severity: PAROLE_CONDUCT_SEVERITY,
+  disposition: z.string(),
+});
+export type ParoleConductRecord = z.infer<typeof paroleConductRecordSchema>;
 
 export const paroleCaseSchema = z.object({
   docId: z.string(),
@@ -68,5 +79,6 @@ export const paroleCaseSchema = z.object({
   mandatoryReleaseDate: z.string(),
   parolePlan: paroleParolePlanSchema,
   attachments: z.array(paroleAttachmentSchema),
+  conductHistory: z.array(paroleConductRecordSchema),
 });
 export type ParoleCase = z.infer<typeof paroleCaseSchema>;
