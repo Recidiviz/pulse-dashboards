@@ -199,6 +199,49 @@ test("succeeds with magic payload for Securus test accounts", async () => {
   });
 });
 
+describe("NY facility state disambiguation", () => {
+  test("maps to US_NYC when facility name starts with NYC DOC", async () => {
+    authCaller = createAuthCaller(
+      await createMockToken({
+        inmate_id: "123456",
+        facility_state: "NY",
+        facility_name: "NYC DOC: New York City Department of Correction, NY",
+      }),
+    );
+
+    await authCaller.edovoToken();
+
+    expect(checkResidentsRoster).toHaveBeenCalledWith("US_NYC", "123456");
+  });
+
+  test("leaves state as US_NY when facility name does not match", async () => {
+    authCaller = createAuthCaller(
+      await createMockToken({
+        inmate_id: "123456",
+        facility_state: "NY",
+        facility_name: "NYDOC: Some Upstate Facility",
+      }),
+    );
+
+    await authCaller.edovoToken();
+
+    expect(checkResidentsRoster).toHaveBeenCalledWith("US_NY", "123456");
+  });
+
+  test("leaves state as US_NY when facility name is absent", async () => {
+    authCaller = createAuthCaller(
+      await createMockToken({
+        inmate_id: "123456",
+        facility_state: "NY",
+      }),
+    );
+
+    await authCaller.edovoToken();
+
+    expect(checkResidentsRoster).toHaveBeenCalledWith("US_NY", "123456");
+  });
+});
+
 test("unknown user", async () => {
   // case where all roster lookups fail
   vi.mocked(checkResidentsRoster).mockResolvedValue(undefined);

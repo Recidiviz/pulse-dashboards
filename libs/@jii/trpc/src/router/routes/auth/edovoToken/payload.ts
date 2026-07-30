@@ -28,16 +28,35 @@ export const edovoIdTokenPayloadSchema = z
     language: z.string().optional(),
   })
   .transform((user) => {
-    // For these states, Edovo's IDs here are zero- padded but ours are not
-    if (["US_ME", "US_NE", "US_AZ"].includes(user.facility_state)) {
-      return { ...user, inmate_id: user.inmate_id.replace(/^0+/, "") };
-    }
-    // For these states, our IDs are zero-padded but Edovo's are not
-    if (["US_CO"].includes(user.facility_state)) {
-      return { ...user, inmate_id: user.inmate_id.padStart(6, "0") };
+    let facilityState = user.facility_state;
+
+    // Edovo uses "NY" for all NY facilities; since our state code for NYC is `US_NYC`,
+    // we use facility_name to distinguish it from a future NYDOC deployment
+    if (
+      user.facility_state === "US_NY" &&
+      user.facility_name?.startsWith("NYC DOC")
+    ) {
+      facilityState = "US_NYC";
     }
 
-    return user;
+    const normalizedUser = { ...user, facility_state: facilityState };
+
+    // For these states, Edovo's IDs here are zero-padded but ours are not
+    if (["US_ME", "US_NE", "US_AZ"].includes(normalizedUser.facility_state)) {
+      return {
+        ...normalizedUser,
+        inmate_id: normalizedUser.inmate_id.replace(/^0+/, ""),
+      };
+    }
+    // For these states, our IDs are zero-padded but Edovo's are not
+    if (["US_CO"].includes(normalizedUser.facility_state)) {
+      return {
+        ...normalizedUser,
+        inmate_id: normalizedUser.inmate_id.padStart(6, "0"),
+      };
+    }
+
+    return normalizedUser;
   });
 
 export type EdovoIdTokenPayload = z.infer<typeof edovoIdTokenPayloadSchema>;
