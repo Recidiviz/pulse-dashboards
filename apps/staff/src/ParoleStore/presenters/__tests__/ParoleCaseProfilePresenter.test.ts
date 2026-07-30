@@ -34,6 +34,8 @@ const TEST_CASE: ParoleCase = {
   sentenceStartDate: "2022-07-27",
   paroleEligibilityDate: "2026-08-16",
   mandatoryReleaseDate: "2028-06-26",
+  parolePlan: { onFile: true, lastUpdated: "2026-07-10", documents: [] },
+  attachments: [],
 };
 
 describe("ParoleCaseProfilePresenter", () => {

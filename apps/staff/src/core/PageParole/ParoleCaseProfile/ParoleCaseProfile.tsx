@@ -29,6 +29,7 @@ import { ParoleCaseProfilePresenter } from "../../../ParoleStore/presenters/Paro
 import { BackLink } from "../../Link";
 import ModelHydrator from "../../ModelHydrator";
 import { paroleUrl } from "../../views";
+import { AttachmentsSection } from "../components/AttachmentsSection";
 import { IdentityHeaderSection } from "../components/IdentityHeaderSection";
 
 // Page-level max-width/padding comes from PageParole's shared Main wrapper;
@@ -65,6 +66,11 @@ const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
         sentenceStartDate={caseDetail.sentenceStartDate}
         paroleEligibilityDate={caseDetail.paroleEligibilityDate}
         mandatoryReleaseDate={caseDetail.mandatoryReleaseDate}
+      />
+
+      <AttachmentsSection
+        parolePlan={caseDetail.parolePlan}
+        attachments={caseDetail.attachments}
       />
     </Wrapper>
   );

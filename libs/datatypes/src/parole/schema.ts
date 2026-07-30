@@ -26,6 +26,33 @@ export const paroleHearingSchema = z.object({
 });
 export type ParoleHearing = z.infer<typeof paroleHearingSchema>;
 
+export const paroleParolePlanDocumentSchema = z.object({
+  url: z.string(),
+  uploadDate: z.string(),
+});
+
+export const paroleParolePlanSchema = z.object({
+  onFile: z.boolean(),
+  // Absent when there is no parole plan on file.
+  lastUpdated: z.string().optional(),
+  documents: z.array(paroleParolePlanDocumentSchema),
+});
+export type ParolePlan = z.infer<typeof paroleParolePlanSchema>;
+
+export const PAROLE_ATTACHMENT_TYPE = z.enum([
+  "Victim Impact Letter",
+  "Letter of Support",
+  "Other",
+]);
+
+export const paroleAttachmentSchema = z.object({
+  name: z.string(),
+  type: PAROLE_ATTACHMENT_TYPE,
+  url: z.string(),
+  uploadDate: z.string(),
+});
+export type ParoleAttachment = z.infer<typeof paroleAttachmentSchema>;
+
 export const paroleCaseSchema = z.object({
   docId: z.string(),
   name: z.string(),
@@ -39,5 +66,7 @@ export const paroleCaseSchema = z.object({
   sentenceStartDate: z.string(),
   paroleEligibilityDate: z.string(),
   mandatoryReleaseDate: z.string(),
+  parolePlan: paroleParolePlanSchema,
+  attachments: z.array(paroleAttachmentSchema),
 });
 export type ParoleCase = z.infer<typeof paroleCaseSchema>;

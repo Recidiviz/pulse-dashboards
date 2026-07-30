@@ -91,3 +91,71 @@ export const SubsectionTitle = styled.div`
   color: ${palette.pine1};
   margin-bottom: ${rem(spacing.md)};
 `;
+
+export const isParolePlanStale = (lastUpdated: string): boolean => {
+  const updated = parseIsoDate(lastUpdated);
+  const today = new Date();
+  const daysDiff = Math.floor(
+    (today.getTime() - updated.getTime()) / (1000 * 60 * 60 * 24),
+  );
+  return daysDiff > 90;
+};
+
+export const EmptyState = styled.div`
+  color: ${palette.slate70};
+  font-style: italic;
+`;
+
+export const AlertBanner = styled.div`
+  background-color: rgba(255, 245, 245, 1);
+  border-color: ${palette.logoRed};
+  border-style: solid;
+  border-width: 0 0 0 ${rem(spacing.xs)};
+  padding: ${rem(spacing.md)};
+  padding-left: ${rem(22)};
+  display: flex;
+  gap: ${rem(spacing.md)};
+  margin-bottom: ${rem(spacing.md)};
+`;
+
+export const AlertHeading = styled.div`
+  font-weight: 700;
+  color: ${palette.logoRed};
+  margin-bottom: ${rem(4)};
+`;
+
+export const AlertBody = styled.div`
+  color: ${palette.pine1};
+`;
+
+export const DocumentList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+export const DocumentRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  & + & {
+    padding-top: 1rem;
+    border-top: 1px solid ${palette.slate10};
+  }
+`;
+
+export const DocumentInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 0.25em;
+`;
+
+export const DocumentLink = styled.a`
+  display: flex;
+  align-items: center;
+  gap: ${rem(spacing.xs)};
+  color: ${palette.signal.links};
+  font-weight: 600;
+`;

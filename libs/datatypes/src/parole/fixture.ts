@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { addDays, format, subYears } from "date-fns";
+import { addDays, format, subDays, subYears } from "date-fns";
 
 import {
   ParoleCase,
@@ -108,7 +108,10 @@ export const paroleHearingsFixture: Array<ParoleHearing> = RAW_HEARINGS.map(
 // docket row so every docket link resolves to a valid profile. Harris (below)
 // has no hearing scheduled on her case profile -- despite appearing on the
 // docket -- so the profile page's "not scheduled" / no-badge states have
-// fixture coverage.
+// fixture coverage. Brooks and Chen are similarly steered to cover the
+// Attachments section's stale-parole-plan and no-parole-plan-on-file banners
+// (see STALE_PAROLE_PLAN_DOC_ID / NO_PAROLE_PLAN_DOC_ID below), matching the
+// same two individuals used for this in the Parole POC.
 const HEARING_TIME_BY_DOC_ID: Record<string, string> = {
   "DOC-52903": "10:30 AM",
   "DOC-61247": "1:00 PM",
@@ -120,6 +123,11 @@ const HEARING_TIME_BY_DOC_ID: Record<string, string> = {
 
 const NO_HEARING_SCHEDULED_DOC_ID = "DOC-59402";
 
+// Brooks: parole plan on file, but not updated in over 90 days.
+const STALE_PAROLE_PLAN_DOC_ID = "DOC-52903";
+// Chen: no parole plan on file at all.
+const NO_PAROLE_PLAN_DOC_ID = "DOC-61247";
+
 const GENERIC_CASE_MANAGER_NAMES = [
   "David Thompson",
   "Robert Johnson",
@@ -128,6 +136,14 @@ const GENERIC_CASE_MANAGER_NAMES = [
   "Angela Wright",
   "Brian Lee",
   "Nicole Adams",
+];
+
+const GENERIC_ATTACHMENT_AUTHORS = [
+  "Family Member",
+  "Employer",
+  "Community Sponsor",
+  "Clergy",
+  "Case Worker",
 ];
 
 const CUSTODY_LEVELS = ["Minimum", "Medium", "Maximum"] as const;
@@ -146,7 +162,79 @@ function buildAndersonCaseProfile(hearingDate: string): ParoleCase {
     sentenceStartDate: iso(subYears(today, 4)),
     paroleEligibilityDate: iso(addDays(today, 20)),
     mandatoryReleaseDate: iso(addDays(today, 700)),
+    parolePlan: {
+      onFile: true,
+      lastUpdated: iso(subDays(today, 20)),
+      documents: [
+        {
+          url: "/documents/parole-plan-45821-v1.pdf",
+          uploadDate: iso(subDays(today, 20)),
+        },
+        {
+          url: "/documents/parole-plan-45821-v2.pdf",
+          uploadDate: iso(subDays(today, 25)),
+        },
+      ],
+    },
+    attachments: [
+      {
+        name: "Letter of Support - Rev. Thomas Mills",
+        type: "Letter of Support",
+        url: "/documents/support-letter-mills-45821.pdf",
+        uploadDate: iso(subDays(today, 22)),
+      },
+      {
+        name: "Letter of Support - Mary Anderson (Sister)",
+        type: "Letter of Support",
+        url: "/documents/support-letter-anderson-45821.pdf",
+        uploadDate: iso(subDays(today, 24)),
+      },
+      {
+        name: "Victim Impact Statement",
+        type: "Victim Impact Letter",
+        url: "/documents/victim-impact-45821.pdf",
+        uploadDate: iso(subDays(today, 40)),
+      },
+    ],
   });
+}
+
+function buildParolePlan(
+  docId: string,
+  index: number,
+  today: Date,
+): ParoleCase["parolePlan"] {
+  if (docId === NO_PAROLE_PLAN_DOC_ID) {
+    return { onFile: false, documents: [] };
+  }
+
+  const lastUpdated = iso(
+    subDays(today, docId === STALE_PAROLE_PLAN_DOC_ID ? 130 : 10 + index * 4),
+  );
+  return {
+    onFile: true,
+    lastUpdated,
+    documents: [
+      { url: `/documents/parole-plan-${docId}.pdf`, uploadDate: lastUpdated },
+    ],
+  };
+}
+
+function buildAttachments(
+  docId: string,
+  index: number,
+  today: Date,
+): ParoleCase["attachments"] {
+  const author =
+    GENERIC_ATTACHMENT_AUTHORS[index % GENERIC_ATTACHMENT_AUTHORS.length];
+  return [
+    {
+      name: `Letter of Support - ${author}`,
+      type: "Letter of Support",
+      url: `/documents/support-letter-${docId}.pdf`,
+      uploadDate: iso(subDays(today, 5 + index * 3)),
+    },
+  ];
 }
 
 function buildGenericCaseProfile(
@@ -170,6 +258,8 @@ function buildGenericCaseProfile(
     sentenceStartDate: iso(subYears(today, 3 + (index % 4))),
     paroleEligibilityDate: iso(addDays(today, 10 + index * 5)),
     mandatoryReleaseDate: iso(addDays(today, 600 + index * 30)),
+    parolePlan: buildParolePlan(hearing.docId, index, today),
+    attachments: buildAttachments(hearing.docId, index, today),
   });
 }
 
