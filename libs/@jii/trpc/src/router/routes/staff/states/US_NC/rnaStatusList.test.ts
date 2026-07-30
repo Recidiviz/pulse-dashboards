@@ -18,6 +18,9 @@
 import { formatISO } from "date-fns";
 import { freeze, reset } from "timekeeper";
 
+import { Prisma } from "~@jii/prisma";
+
+import { userId } from "../../../../../test/context";
 import { testPrismaClient } from "../../../../../test/prisma";
 import {
   caller,
@@ -77,6 +80,34 @@ const testInput = {
   lookupField: "facilityId" as const,
   lookupValue: ["abc123"],
 };
+
+// used to seed the DB for the Prisma-backed resident lookup codepath
+function buildResidentRecord(
+  overrides: Partial<Prisma.ResidentCreateInput> & {
+    pseudonymizedId: string;
+  },
+): Prisma.ResidentCreateInput {
+  return {
+    importedAt: testDate,
+    personExternalId: overrides.pseudonymizedId,
+    displayId: overrides.pseudonymizedId,
+    facilityId: null,
+    unitId: null,
+    officerId: null,
+    stateSpecificData: {},
+    ...overrides,
+  };
+}
+
+async function activateNewResidentDataFlag() {
+  await testPrismaClient.userFlagInstance.create({
+    data: {
+      userId,
+      flagId: "useNewResidentData",
+      effectiveAt: new Date(2020, 0, 1),
+    },
+  });
+}
 
 const mockQuerierObject = { where: vi.fn() };
 const mockFirestoreGet = {
@@ -341,5 +372,122 @@ describe("rnaStatusList", () => {
     expect((await caller.rnaStatusList(testInput))[0].status).toBe(
       "SUBMITTED_BY_STAFF",
     );
+  });
+
+  describe("when the useNewResidentData flag is active", () => {
+    beforeEach(async () => {
+      await activateNewResidentDataFlag();
+    });
+
+    test("looks up residents via Prisma, filtered by lookupField/lookupValue, instead of querying Firestore", async () => {
+      await testPrismaClient.resident.createMany({
+        data: [
+          ...testResidents.map((r) =>
+            buildResidentRecord({
+              pseudonymizedId: r.pseudonymizedId,
+              facilityId: "abc123",
+              stateSpecificData: r.metadata,
+            }),
+          ),
+          // different facilityId, so these should be excluded by the Prisma query
+          ...additionalResidents.map((r) =>
+            buildResidentRecord({
+              pseudonymizedId: r.pseudonymizedId,
+              facilityId: "some-other-facility",
+              stateSpecificData: r.metadata,
+            }),
+          ),
+        ],
+      });
+
+      const result = await caller.rnaStatusList(testInput);
+
+      expect(mockCollectionQuerier).not.toHaveBeenCalled();
+      expect(result).toHaveLength(testResidents.length);
+      expect(result).toEqual(
+        expect.arrayContaining(
+          testResidents.map((r) =>
+            expect.objectContaining({ pseudonymizedId: r.pseudonymizedId }),
+          ),
+        ),
+      );
+    });
+
+    test("supports lookup by officerId", async () => {
+      await testPrismaClient.resident.create({
+        data: buildResidentRecord({
+          pseudonymizedId: testResidents[0].pseudonymizedId,
+          officerId: "officer1",
+          stateSpecificData: testResidents[0].metadata,
+        }),
+      });
+
+      const result = await caller.rnaStatusList({
+        lookupField: "officerId",
+        lookupValue: ["officer1"],
+      });
+
+      expect(result).toEqual([
+        expect.objectContaining({
+          pseudonymizedId: testResidents[0].pseudonymizedId,
+        }),
+      ]);
+    });
+
+    test("computes UPCOMING and DUE status from due dates sourced via Prisma", async () => {
+      await testPrismaClient.resident.createMany({
+        data: testResidents.map((r) =>
+          buildResidentRecord({
+            pseudonymizedId: r.pseudonymizedId,
+            facilityId: "abc123",
+            stateSpecificData: r.metadata,
+          }),
+        ),
+      });
+
+      expect(await caller.rnaStatusList(testInput)).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            pseudonymizedId: "abc",
+            status: "UPCOMING",
+          }),
+          expect.objectContaining({ pseudonymizedId: "def", status: "DUE" }),
+          expect.objectContaining({
+            pseudonymizedId: "ghi",
+            status: "UPCOMING",
+          }),
+          expect.objectContaining({ pseudonymizedId: "jkl", status: "DUE" }),
+        ]),
+      );
+    });
+
+    test("still uses Prisma-sourced RNA records to compute assessment status", async () => {
+      await testPrismaClient.resident.create({
+        data: buildResidentRecord({
+          pseudonymizedId: testResidents[0].pseudonymizedId,
+          facilityId: "abc123",
+          stateSpecificData: testResidents[0].metadata,
+        }),
+      });
+      await testPrismaClient.usNcRNA.createMany({
+        data: [
+          {
+            pseudonymizedId: testResidents[0].pseudonymizedId,
+            createdAt: recentRNADate,
+            completedAt: recentRNADate,
+            answers: { foo: ["bar"] },
+          },
+        ],
+      });
+
+      const result = await caller.rnaStatusList(testInput);
+
+      expect(result).toEqual([
+        expect.objectContaining({
+          pseudonymizedId: testResidents[0].pseudonymizedId,
+          status: "COMPLETE",
+        }),
+      ]);
+    });
   });
 });

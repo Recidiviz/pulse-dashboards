@@ -17,6 +17,7 @@
 
 import { z } from "zod";
 
+import { StateCode } from "~@jii/configs";
 import { PrismaClient } from "~@jii/prisma";
 
 import { TRPCFastifyRequest } from "../context";
@@ -103,7 +104,7 @@ async function validateAuthPayload(
 export type AuthorizedStaffUserContext = {
   userId: string;
   userProfile: AuthorizedStaffAppUserProfile;
-  stateCode: string;
+  stateCode: StateCode;
   prisma: PrismaClient;
   firestoreCurrentStateQuerier: FirestoreCollectionQuerier;
 };

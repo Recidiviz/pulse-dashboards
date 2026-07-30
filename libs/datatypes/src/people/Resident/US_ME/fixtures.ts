@@ -34,6 +34,7 @@ export const rawUsMeResidentCommon: Array<RawResidentCommon> = [
     displayId: "dRES001",
     personName: { givenNames: "First", surname: "Resident" },
     facilityId: "FACILITY NAME",
+    officerId: "OFFICER5",
   },
   {
     stateCode: "US_ME",
@@ -42,6 +43,7 @@ export const rawUsMeResidentCommon: Array<RawResidentCommon> = [
     displayId: "dRES002",
     personName: { givenNames: "Second", surname: "Resident" },
     facilityId: "FACILITY NAME",
+    officerId: "OFFICER5",
   },
   {
     stateCode: "US_ME",
@@ -50,6 +52,7 @@ export const rawUsMeResidentCommon: Array<RawResidentCommon> = [
     displayId: "dRES003",
     personName: { givenNames: "Third", surname: "Resident" },
     facilityId: "FACILITY NAME",
+    officerId: "OFFICER5",
   },
   {
     stateCode: "US_ME",
@@ -58,6 +61,7 @@ export const rawUsMeResidentCommon: Array<RawResidentCommon> = [
     displayId: "dRES004",
     personName: { givenNames: "Fourth", surname: "Resident" },
     facilityId: "FACILITY NAME",
+    officerId: "OFFICER5",
   },
   {
     stateCode: "US_ME",
@@ -66,6 +70,7 @@ export const rawUsMeResidentCommon: Array<RawResidentCommon> = [
     displayId: "dRES005",
     personName: { givenNames: "Fifth", surname: "Resident" },
     facilityId: "FACILITY NAME",
+    officerId: "OFFICER5",
   },
   {
     stateCode: "US_ME",
@@ -74,6 +79,7 @@ export const rawUsMeResidentCommon: Array<RawResidentCommon> = [
     displayId: "dRES006",
     personName: { givenNames: "Sixth", surname: "Resident" },
     facilityId: "FACILITY NAME",
+    officerId: "OFFICER5",
   },
   {
     stateCode: "US_ME",
@@ -82,6 +88,7 @@ export const rawUsMeResidentCommon: Array<RawResidentCommon> = [
     displayId: "dRES007",
     personName: { givenNames: "Seventh", surname: "Resident" },
     facilityId: "FACILITY NAME",
+    officerId: "OFFICER5",
   },
   {
     stateCode: "US_ME",
@@ -90,6 +97,7 @@ export const rawUsMeResidentCommon: Array<RawResidentCommon> = [
     displayId: "dRES008",
     personName: { givenNames: "Eighth", surname: "Resident" },
     facilityId: "FACILITY NAME",
+    officerId: "OFFICER5",
   },
   {
     stateCode: "US_ME",
@@ -98,6 +106,7 @@ export const rawUsMeResidentCommon: Array<RawResidentCommon> = [
     displayId: "dRES009",
     personName: { givenNames: "Ninth", surname: "Resident" },
     facilityId: "FACILITY NAME",
+    officerId: "OFFICER5",
   },
   {
     stateCode: "US_ME",
@@ -106,6 +115,7 @@ export const rawUsMeResidentCommon: Array<RawResidentCommon> = [
     displayId: "dRES998",
     personName: { givenNames: "NoRelease", surname: "Resident" },
     facilityId: "FACILITY NAME",
+    officerId: "OFFICER5",
   },
   {
     stateCode: "US_ME",
@@ -114,6 +124,7 @@ export const rawUsMeResidentCommon: Array<RawResidentCommon> = [
     displayId: "dRES999",
     personName: { givenNames: "Ineligible", surname: "Resident" },
     facilityId: "FACILITY NAME",
+    officerId: "OFFICER5",
   },
 ];
 
@@ -124,7 +135,6 @@ export const usMeResidentCommon = rawUsMeResidentCommon.map((r) =>
 export const rawUsMeResidents: Array<RawWorkflowsResidentRecord> = [
   {
     ...rawUsMeResidentCommon[0],
-    officerId: "OFFICER5",
     stateCode: "US_ME",
     gender: "MALE",
     unitId: "UNIT A",
@@ -143,7 +153,6 @@ export const rawUsMeResidents: Array<RawWorkflowsResidentRecord> = [
   },
   {
     ...rawUsMeResidentCommon[1],
-    officerId: "OFFICER5",
     stateCode: "US_ME",
     gender: "FEMALE",
     unitId: "UNIT B",
@@ -162,7 +171,6 @@ export const rawUsMeResidents: Array<RawWorkflowsResidentRecord> = [
   },
   {
     ...rawUsMeResidentCommon[2],
-    officerId: "OFFICER5",
     stateCode: "US_ME",
     gender: "TRANS_FEMALE",
     unitId: "UNIT B",
@@ -181,7 +189,6 @@ export const rawUsMeResidents: Array<RawWorkflowsResidentRecord> = [
   },
   {
     ...rawUsMeResidentCommon[3],
-    officerId: "OFFICER5",
     stateCode: "US_ME",
     gender: "INTERNAL_UNKNOWN",
     unitId: "UNIT A",
@@ -200,7 +207,6 @@ export const rawUsMeResidents: Array<RawWorkflowsResidentRecord> = [
   },
   {
     ...rawUsMeResidentCommon[4],
-    officerId: "OFFICER5",
     stateCode: "US_ME",
     gender: "TRANS",
     unitId: "UNIT B",
@@ -219,7 +225,6 @@ export const rawUsMeResidents: Array<RawWorkflowsResidentRecord> = [
   },
   {
     ...rawUsMeResidentCommon[5],
-    officerId: "OFFICER5",
     stateCode: "US_ME",
     gender: "TRANS",
     unitId: "UNIT B",
@@ -238,7 +243,6 @@ export const rawUsMeResidents: Array<RawWorkflowsResidentRecord> = [
   },
   {
     ...rawUsMeResidentCommon[6],
-    officerId: "OFFICER5",
     stateCode: "US_ME",
     gender: "FEMALE",
     unitId: "UNIT B",
@@ -257,7 +261,6 @@ export const rawUsMeResidents: Array<RawWorkflowsResidentRecord> = [
   },
   {
     ...rawUsMeResidentCommon[7],
-    officerId: "OFFICER5",
     stateCode: "US_ME",
     gender: "TRANS",
     unitId: "UNIT A",
@@ -276,7 +279,6 @@ export const rawUsMeResidents: Array<RawWorkflowsResidentRecord> = [
   },
   {
     ...rawUsMeResidentCommon[8],
-    officerId: "OFFICER5",
     stateCode: "US_ME",
     gender: "MALE",
     unitId: "UNIT A",
@@ -298,7 +300,6 @@ export const rawUsMeResidents: Array<RawWorkflowsResidentRecord> = [
   },
   {
     ...rawUsMeResidentCommon[9],
-    officerId: "OFFICER5",
     stateCode: "US_ME",
     gender: "MALE",
     unitId: "UNIT B",
@@ -314,7 +315,6 @@ export const rawUsMeResidents: Array<RawWorkflowsResidentRecord> = [
   },
   {
     ...rawUsMeResidentCommon[10],
-    officerId: "OFFICER5",
     stateCode: "US_ME",
     gender: "MALE",
     unitId: "UNIT B",

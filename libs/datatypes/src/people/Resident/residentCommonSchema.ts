@@ -27,6 +27,7 @@ import { justiceInvolvedPersonRecordSchema } from "../JusticeInvolvedPerson/sche
 export const residentCommonSchema = justiceInvolvedPersonRecordSchema.extend({
   facilityId: nullishAsNull(z.string()),
   unitId: nullishAsNull(z.string()),
+  officerId: nullishAsNull(z.string()),
 });
 
 export type RawResidentCommon = z.input<typeof residentCommonSchema>;

@@ -33,7 +33,6 @@ const MISSING_DATE_SENTINEL = new Date(9999, 11, 1);
 export const workflowsResidentRecordSchema = residentCommonSchema
   .extend({
     facilityUnitId: z.string().nullish(),
-    officerId: z.string().nullish(),
     custodyLevel: z.string().nullish(),
     admissionDate: nullishAsUndefined(dateStringSchema),
     releaseDate: nullishAsUndefined(dateStringSchema).transform((d) => {

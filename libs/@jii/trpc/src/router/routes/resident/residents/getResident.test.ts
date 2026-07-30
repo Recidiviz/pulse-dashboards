@@ -43,6 +43,7 @@ const testResident = {
   surname: null,
   facilityId: null,
   unitId: null,
+  officerId: null,
   importedAt: new Date("2026-01-01"),
   stateSpecificData: { rawField: "rawValue" },
 };

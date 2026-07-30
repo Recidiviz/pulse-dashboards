@@ -51,6 +51,7 @@ exports[`schema for 'US_AR' 'AR_RES001' 1`] = `
     ],
     "stateCode": "US_AR",
   },
+  "officerId": null,
   "personExternalId": "AR_RES001",
   "personName": {
     "givenNames": "Sandra",
@@ -117,6 +118,7 @@ exports[`schema for 'US_AR' 'AR_RES002' 1`] = `
     ],
     "stateCode": "US_AR",
   },
+  "officerId": null,
   "personExternalId": "AR_RES002",
   "personName": {
     "givenNames": "Clayton",
@@ -183,6 +185,7 @@ exports[`schema for 'US_AR' 'AR_RES003' 1`] = `
     ],
     "stateCode": "US_AR",
   },
+  "officerId": null,
   "personExternalId": "AR_RES003",
   "personName": {
     "givenNames": "Robert",
@@ -251,6 +254,7 @@ exports[`schema for 'US_AR' 'AR_RES004' 1`] = `
     ],
     "stateCode": "US_AR",
   },
+  "officerId": null,
   "personExternalId": "AR_RES004",
   "personName": {
     "givenNames": "Alice",
@@ -319,6 +323,7 @@ exports[`schema for 'US_AR' 'AR_RES005' 1`] = `
     ],
     "stateCode": "US_AR",
   },
+  "officerId": null,
   "personExternalId": "AR_RES005",
   "personName": {
     "givenNames": "John",
@@ -366,6 +371,7 @@ exports[`schema for 'US_AR' 'AR_RES006' 1`] = `
     "programAchievement": [],
     "stateCode": "US_AR",
   },
+  "officerId": null,
   "personExternalId": "AR_RES006",
   "personName": {
     "givenNames": "Maria",
@@ -1537,6 +1543,7 @@ exports[`schema for 'US_CO' 'RES001' 1`] = `
     "sddTent": undefined,
     "stateCode": "US_CO",
   },
+  "officerId": null,
   "personExternalId": "RES001",
   "personName": {
     "givenNames": "John",
@@ -1570,6 +1577,7 @@ exports[`schema for 'US_CO' 'RES002' 1`] = `
     "sddTent": 2024-12-16T00:00:00.000Z,
     "stateCode": "US_CO",
   },
+  "officerId": null,
   "personExternalId": "RES002",
   "personName": {
     "givenNames": "Jane",
@@ -1604,6 +1612,7 @@ exports[`schema for 'US_ID' 'RES001' 1`] = `
     "stateCode": "US_ID",
     "tentativeParoleDate": "2025-02-10",
   },
+  "officerId": null,
   "personExternalId": "RES001",
   "personName": {
     "givenNames": "Andre",
@@ -1640,6 +1649,7 @@ exports[`schema for 'US_ID' 'RES002' 1`] = `
     "stateCode": "US_ID",
     "tentativeParoleDate": "2025-02-10",
   },
+  "officerId": null,
   "personExternalId": "RES002",
   "personName": {
     "givenNames": "Antonio",
@@ -1674,6 +1684,7 @@ exports[`schema for 'US_ID' 'RES003' 1`] = `
     "stateCode": "US_ID",
     "tentativeParoleDate": "2026-02-10",
   },
+  "officerId": null,
   "personExternalId": "RES003",
   "personName": {
     "givenNames": "Walter",
@@ -1708,6 +1719,7 @@ exports[`schema for 'US_ID' 'RES004' 1`] = `
     "stateCode": "US_ID",
     "tentativeParoleDate": "2025-09-10",
   },
+  "officerId": null,
   "personExternalId": "RES004",
   "personName": {
     "givenNames": "Nathan",
@@ -1830,6 +1842,7 @@ exports[`schema for 'US_MA' 'RES001' 1`] = `
     "totalStateCredit": 63.5,
     "totalStateCreditDaysCalculated": 63,
   },
+  "officerId": null,
   "personExternalId": "RES001",
   "personName": {
     "givenNames": "Laurence",
@@ -1975,6 +1988,7 @@ exports[`schema for 'US_MA' 'RES002' 1`] = `
     "totalStateCredit": 988,
     "totalStateCreditDaysCalculated": 0,
   },
+  "officerId": null,
   "personExternalId": "RES002",
   "personName": {
     "givenNames": "Dan",
@@ -2065,6 +2079,7 @@ exports[`schema for 'US_MA' 'RES003' 1`] = `
     "totalStateCredit": 133,
     "totalStateCreditDaysCalculated": 1,
   },
+  "officerId": null,
   "personExternalId": "RES003",
   "personName": {
     "givenNames": "Israel",
@@ -2098,6 +2113,7 @@ exports[`schema for 'US_MA' 'RES004' 1`] = `
     "totalStateCredit": 0,
     "totalStateCreditDaysCalculated": 0,
   },
+  "officerId": null,
   "personExternalId": "RES004",
   "personName": {
     "givenNames": "Marty",
@@ -2451,6 +2467,7 @@ exports[`schema for 'US_NC' 'RES001' 1`] = `
     "rnaDueDate": 2021-12-13T00:00:00.000Z,
     "stateCode": "US_NC",
   },
+  "officerId": null,
   "personExternalId": "RES001",
   "personName": {
     "givenNames": "Albert",
@@ -2478,6 +2495,7 @@ exports[`schema for 'US_NC' 'RES002' 1`] = `
     "rnaDueDate": 2022-01-07T00:00:00.000Z,
     "stateCode": "US_NC",
   },
+  "officerId": null,
   "personExternalId": "RES002",
   "personName": {
     "givenNames": "Sabrina",
@@ -2701,6 +2719,7 @@ exports[`schema for 'US_NE' 'RES001' 1`] = `
     "stateCode": "US_NE",
     "tentativeReleaseDate": 2024-03-16T00:00:00.000Z,
   },
+  "officerId": null,
   "personExternalId": "RES001",
   "personName": {
     "givenNames": "Joseph",
@@ -2831,6 +2850,7 @@ exports[`schema for 'US_NE' 'RES002' 1`] = `
     "stateCode": "US_NE",
     "tentativeReleaseDate": 2023-06-16T00:00:00.000Z,
   },
+  "officerId": null,
   "personExternalId": "RES002",
   "personName": {
     "givenNames": "Marcus",
@@ -2961,6 +2981,7 @@ exports[`schema for 'US_NE' 'RES003' 1`] = `
     "stateCode": "US_NE",
     "tentativeReleaseDate": 2025-08-16T00:00:00.000Z,
   },
+  "officerId": null,
   "personExternalId": "RES003",
   "personName": {
     "givenNames": "David",
@@ -3091,6 +3112,7 @@ exports[`schema for 'US_NE' 'RES004' 1`] = `
     "stateCode": "US_NE",
     "tentativeReleaseDate": 2024-09-16T00:00:00.000Z,
   },
+  "officerId": null,
   "personExternalId": "RES004",
   "personName": {
     "givenNames": "Robert",
@@ -3240,6 +3262,7 @@ exports[`schema for 'US_NE' 'RES005' 1`] = `
     "stateCode": "US_NE",
     "tentativeReleaseDate": 2023-11-16T00:00:00.000Z,
   },
+  "officerId": null,
   "personExternalId": "RES005",
   "personName": {
     "givenNames": "James",
@@ -3382,6 +3405,7 @@ exports[`schema for 'US_NE' 'RES006' 1`] = `
     "stateCode": "US_NE",
     "tentativeReleaseDate": 2024-07-16T00:00:00.000Z,
   },
+  "officerId": null,
   "personExternalId": "RES006",
   "personName": {
     "givenNames": "Christopher",
@@ -3510,6 +3534,7 @@ exports[`schema for 'US_NE' 'RES007' 1`] = `
     "stateCode": "US_NE",
     "tentativeReleaseDate": 2023-08-16T00:00:00.000Z,
   },
+  "officerId": null,
   "personExternalId": "RES007",
   "personName": {
     "givenNames": "Michael",
@@ -3636,6 +3661,7 @@ exports[`schema for 'US_TN' 'RES001' 1`] = `
     "sentenceEffectiveDate": 2019-05-08T00:00:00.000Z,
     "stateCode": "US_TN",
   },
+  "officerId": null,
   "personExternalId": "RES001",
   "personName": {
     "givenNames": "Carmen",
@@ -3762,6 +3788,7 @@ exports[`schema for 'US_TN' 'RES002' 1`] = `
     "sentenceEffectiveDate": 2019-05-08T00:00:00.000Z,
     "stateCode": "US_TN",
   },
+  "officerId": null,
   "personExternalId": "RES002",
   "personName": {
     "givenNames": "Jessica",
@@ -3889,6 +3916,7 @@ exports[`schema for 'US_TN' 'RES003' 1`] = `
     "sentenceEffectiveDate": 2019-05-08T00:00:00.000Z,
     "stateCode": "US_TN",
   },
+  "officerId": null,
   "personExternalId": "RES003",
   "personName": {
     "givenNames": "Fei",
@@ -4016,6 +4044,7 @@ exports[`schema for 'US_TN' 'RES004' 1`] = `
     "sentenceEffectiveDate": 2019-05-08T00:00:00.000Z,
     "stateCode": "US_TN",
   },
+  "officerId": null,
   "personExternalId": "RES004",
   "personName": {
     "givenNames": "Geoff",

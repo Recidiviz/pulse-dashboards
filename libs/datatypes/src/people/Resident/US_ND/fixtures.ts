@@ -34,6 +34,7 @@ export const rawUsNdResidentCommon: Array<RawResidentCommon> = [
     displayId: "RES003",
     personName: { givenNames: "Dakota", surname: "Johnson" },
     facilityId: "ND_DEMO_FACILITY",
+    officerId: "OFFICER3",
   },
   {
     stateCode: "US_ND",
@@ -42,6 +43,7 @@ export const rawUsNdResidentCommon: Array<RawResidentCommon> = [
     displayId: "RES004",
     personName: { givenNames: "Casey", surname: "Thompson" },
     facilityId: "ND_DEMO_FACILITY",
+    officerId: "OFFICER3",
   },
   {
     stateCode: "US_ND",
@@ -50,6 +52,7 @@ export const rawUsNdResidentCommon: Array<RawResidentCommon> = [
     displayId: "RES005",
     personName: { givenNames: "Riley", surname: "Martinez" },
     facilityId: "ND_DEMO_FACILITY",
+    officerId: "OFFICER3",
   },
 ];
 
@@ -65,7 +68,6 @@ export const rawUsNdResidents: Array<RawWorkflowsResidentRecord> = [
     recordId: "us_nd_nd_res003",
     gender: "MALE",
     unitId: "UNIT A",
-    officerId: "OFFICER3",
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ years: -2, months: -6 }),
     releaseDate: relativeFixtureDate({ years: 1, months: 6 }),
@@ -76,7 +78,6 @@ export const rawUsNdResidents: Array<RawWorkflowsResidentRecord> = [
     allEligibleOpportunities: ["usNdTransferToMinFacility"],
     stateCode: "US_ND",
     recordId: "us_nd_nd_res004",
-    officerId: "OFFICER3",
     gender: "FEMALE",
     unitId: "UNIT B",
     custodyLevel: "MINIMUM",
@@ -89,7 +90,6 @@ export const rawUsNdResidents: Array<RawWorkflowsResidentRecord> = [
     allEligibleOpportunities: ["usNdTransferToMinFacility"],
     stateCode: "US_ND",
     recordId: "us_nd_nd_res005",
-    officerId: "OFFICER3",
     gender: "MALE",
     unitId: "UNIT C",
     custodyLevel: "MINIMUM",

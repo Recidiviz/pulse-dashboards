@@ -28,6 +28,7 @@ model Resident {
     surname           String?
     facilityId        String?
     unitId            String?
+    officerId         String?
     stateSpecificData Json
 }
 

@@ -48,6 +48,7 @@ const personData = {
   }),
   facility_id: "FAC1",
   unit_id: "UN1",
+  officer_id: "OFF1",
   person_id: "1",
   state_specific_data: JSON.stringify({
     state_code: "US_NC",
@@ -81,6 +82,7 @@ describe("residentHandler", () => {
           "givenNames": "Jane",
           "importedAt": 2025-05-19T00:00:00.000Z,
           "middleNames": "Q",
+          "officerId": "OFF1",
           "personExternalId": "EXT001",
           "pseudonymizedId": "test_pseudo_id",
           "stateSpecificData": {
@@ -166,7 +168,7 @@ describe("residentHandler", () => {
     state_code: "US_NC",
     person_name: JSON.stringify({}),
     state_specific_data: JSON.stringify({ state_code: "US_NC" }),
-    // facility_id, unit_id omitted — nullish in schema
+    // facility_id, unit_id, officer_id omitted — nullish in schema
     // given_names, middle_names, surname omitted — nullish in fullNameSchema
   };
 
@@ -180,6 +182,7 @@ describe("residentHandler", () => {
     expect(result.surname).toBeNull();
     expect(result.facilityId).toBeNull();
     expect(result.unitId).toBeNull();
+    expect(result.officerId).toBeNull();
   });
 
   it("succeeds on update when all optional fields are missing", async () => {
@@ -200,6 +203,7 @@ describe("residentHandler", () => {
     expect(result.surname).toBeNull();
     expect(result.facilityId).toBeNull();
     expect(result.unitId).toBeNull();
+    expect(result.officerId).toBeNull();
   });
 
   it("fails when state_specific_data is missing for a state with a schema", async () => {

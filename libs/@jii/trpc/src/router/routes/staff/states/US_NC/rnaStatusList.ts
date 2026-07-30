@@ -19,7 +19,9 @@ import { rollup } from "d3-array";
 import { isAfter, subDays } from "date-fns";
 import { z } from "zod";
 
-import { dateStringSchemaWithoutTimeShift } from "../../../../../helpers/zod";
+import { usNcResidentMetadataSchema } from "~datatypes";
+
+import { isUserFlagActive } from "../../../../../helpers/featureFlags";
 import { getStatusOfExistingRNA, RNAAssessmentStatus } from "./rnaStatus";
 import { stateStaffProcedure } from "./stateStaffProcedure";
 
@@ -28,10 +30,7 @@ import { stateStaffProcedure } from "./stateStaffProcedure";
 const residentRecordFields = z.object({
   pseudonymizedId: z.string(),
   // note this is assuming only NC records will be fetched
-  metadata: z.object({
-    stateCode: z.literal("US_NC"),
-    rnaDueDate: dateStringSchemaWithoutTimeShift.nullish(),
-  }),
+  metadata: usNcResidentMetadataSchema,
 });
 
 export function validateCurrentRNA<T extends { createdAt: Date }>(
@@ -73,21 +72,50 @@ export const rnaStatusList = stateStaffProcedure
   )
   .query(
     async ({
-      ctx: { prisma, firestoreCurrentStateQuerier },
+      ctx: { prisma, firestoreCurrentStateQuerier, userId, stateCode },
       input: { lookupField, lookupValue },
     }) => {
-      // resident data is in Firestore, which we need to map this request to resident IDs
-      const residentsQuery = firestoreCurrentStateQuerier("residents")
-        .where(lookupField, "in", lookupValue)
-        .select("pseudonymizedId", "metadata");
+      let residentData: Array<{
+        pseudonymizedId: string;
+        rnaDueDate: Date | undefined;
+      }>;
 
-      const residents = (await residentsQuery.get()).docs.map((d) =>
-        residentRecordFields.parse(d.data()),
-      );
+      if (
+        await isUserFlagActive({
+          prisma,
+          flagId: "useNewResidentData",
+          userId,
+          stateCode,
+        })
+      ) {
+        residentData = (
+          await prisma.resident.findMany({
+            where: { [lookupField]: { in: lookupValue } },
+            select: { pseudonymizedId: true, stateSpecificData: true },
+          })
+        ).map(({ pseudonymizedId, stateSpecificData }) => {
+          const { rnaDueDate } =
+            usNcResidentMetadataSchema.parse(stateSpecificData);
+          return { pseudonymizedId, rnaDueDate };
+        });
+      } else {
+        // resident data is in Firestore, which we need to map this request to resident IDs
+        const residentsQuery = firestoreCurrentStateQuerier("residents")
+          .where(lookupField, "in", lookupValue)
+          .select("pseudonymizedId", "metadata");
+
+        residentData = (await residentsQuery.get()).docs.map((d) => {
+          const {
+            pseudonymizedId,
+            metadata: { rnaDueDate },
+          } = residentRecordFields.parse(d.data());
+          return { pseudonymizedId, rnaDueDate };
+        });
+      }
 
       const allRNARecords = await prisma.usNcRNA.findMany({
         where: {
-          pseudonymizedId: { in: residents.map((r) => r.pseudonymizedId) },
+          pseudonymizedId: { in: residentData.map((r) => r.pseudonymizedId) },
         },
         select: {
           id: true,
@@ -115,7 +143,7 @@ export const rnaStatusList = stateStaffProcedure
       );
 
       // compute a status for each resident and include applicable assessment data
-      return residents.map(
+      return residentData.map(
         (
           r,
         ): {
@@ -128,10 +156,7 @@ export const rnaStatusList = stateStaffProcedure
           submittedByStaffAt?: Date;
           enabledAt?: Date;
         } => {
-          const {
-            pseudonymizedId,
-            metadata: { rnaDueDate },
-          } = r;
+          const { pseudonymizedId, rnaDueDate } = r;
           const latestRNA = latestRNAByResident.get(pseudonymizedId);
 
           let currentRNA;
