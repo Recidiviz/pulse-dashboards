@@ -22,14 +22,10 @@ import { METRIC_TYPE_LABELS, METRIC_TYPES } from "../core/PageVitals/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { INSIGHTS_PAGES } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
-import UsIdContactTask from "../WorkflowsStore/Task/US_ID/UsIdContactTask";
-import UsIdEmploymentVerificationTask from "../WorkflowsStore/Task/US_ID/UsIdEmploymentVerificationTask";
 import UsIdEmploymentVerificationTaskV2 from "../WorkflowsStore/Task/US_ID/UsIdEmploymentVerificationTaskV2";
 import UsIdFaceToFaceContactTask from "../WorkflowsStore/Task/US_ID/UsIdFaceToFaceContactTask";
-import UsIdHomeVisitTask from "../WorkflowsStore/Task/US_ID/UsIdHomeVisitTask";
 import UsIdHomeVisitTaskV2 from "../WorkflowsStore/Task/US_ID/UsIdHomeVisitTaskV2";
 import UsIdLsirAssessmentTask from "../WorkflowsStore/Task/US_ID/UsIdLsirAssessmentTask";
-import UsIdRiskAssessmentTask from "../WorkflowsStore/Task/US_ID/UsIdRiskAssessmentTask";
 import UsIdStableAssessmentTask from "../WorkflowsStore/Task/US_ID/UsIdStableAssessmentTask";
 import { filterByUserDistrict } from "../WorkflowsStore/utils";
 
@@ -69,34 +65,7 @@ const US_ID_CONFIG = {
         constructor: UsIdStableAssessmentTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
-      // Legacy Tasks - TODO(#10615): Remove when UsIdTasksV2 is fully rolled out.
-      assessment: {
-        constructor: UsIdRiskAssessmentTask,
-        snoozeForOptionsInDays: [7, 30, 90],
-      },
-      // Legacy Tasks - TODO(#10615): Remove when UsIdTasksV2 is fully rolled out.
-      contact: {
-        constructor: UsIdContactTask,
-        snoozeForOptionsInDays: [7, 30, 90],
-      },
-      // Legacy Tasks - TODO(#10615): Remove when UsIdTasksV2 is fully rolled out.
-      homeVisit: {
-        constructor: UsIdHomeVisitTask,
-        snoozeForOptionsInDays: [7, 30, 90],
-      },
-      // Legacy Tasks - TODO(#10615): Remove when UsIdTasksV2 is fully rolled out.
-      employment: {
-        constructor: UsIdEmploymentVerificationTask,
-        snoozeForOptionsInDays: [7, 30, 90],
-      },
     },
-    categories: [
-      "ALL_TASKS_OLD",
-      "assessment",
-      "contact",
-      "homeVisit",
-      "employment",
-    ],
     filters: [
       {
         title: "Supervision Level",

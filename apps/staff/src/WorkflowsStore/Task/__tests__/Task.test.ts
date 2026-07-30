@@ -25,7 +25,7 @@ import { RootStore } from "../../../RootStore";
 import { Client } from "../../Client";
 import { homeVisitTaskRecord, supervisionTaskClientRecord } from "../fixtures";
 import { SupervisionTask, SupervisionTaskType } from "../types";
-import UsIdHomeVisitTask from "../US_ID/UsIdHomeVisitTask";
+import UsIdHomeVisitTaskV2 from "../US_ID/UsIdHomeVisitTaskV2";
 
 vi.mock("../../subscriptions");
 vi.mock("firebase/firestore");
@@ -42,7 +42,7 @@ function createTestUnit(
 ) {
   rootStore = new RootStore();
   mockPerson = new Client(supervisionTaskClientRecord, rootStore);
-  task = new UsIdHomeVisitTask(
+  task = new UsIdHomeVisitTaskV2(
     rootStore,
     homeVisitTaskRecord,
     mockPerson,
@@ -68,7 +68,7 @@ describe("Task", () => {
     });
 
     test("type", () => {
-      expect(task.type).toEqual("homeVisit");
+      expect(task.type).toEqual("usIdHomeVisit");
     });
 
     test("dueDate", () => {
@@ -175,7 +175,7 @@ describe("Task", () => {
       expect(
         rootStore.firestoreStore.updateSupervisionTask,
       ).toHaveBeenCalledWith(supervisionTaskClientRecord.recordId, {
-        homeVisit: {
+        usIdHomeVisit: {
           snoozeForDays: 30,
           snoozedBy: "test@email.gov",
           snoozedOn: testDate,
@@ -200,7 +200,7 @@ describe("Task", () => {
       expect(
         rootStore.firestoreStore.updateSupervisionTask,
       ).toHaveBeenCalledWith(supervisionTaskClientRecord.recordId, {
-        homeVisit: {
+        usIdHomeVisit: {
           snoozeForDays: 30,
           snoozedBy: "test@email.gov",
           snoozedOn: testDate,
@@ -225,7 +225,7 @@ describe("Task", () => {
       expect(
         rootStore.firestoreStore.updateSupervisionTask,
       ).toHaveBeenCalledWith(supervisionTaskClientRecord.recordId, {
-        homeVisit: {
+        usIdHomeVisit: {
           snoozeForDays: 30,
           snoozedBy: "test@email.gov",
           snoozedOn: testDate,
@@ -254,7 +254,7 @@ describe("Task", () => {
         expect(
           rootStore.firestoreStore.updateSupervisionTask,
         ).toHaveBeenCalledWith(supervisionTaskClientRecord.recordId, {
-          homeVisit: {
+          usIdHomeVisit: {
             snoozeForDays: 30,
             snoozedBy: "test@email.gov",
             snoozedOn: testDate,
@@ -279,7 +279,7 @@ describe("Task", () => {
       expect(
         rootStore.firestoreStore.updateSupervisionTask,
       ).toHaveBeenCalledWith(supervisionTaskClientRecord.recordId, {
-        homeVisit: deleteField(),
+        usIdHomeVisit: deleteField(),
       });
     });
 
@@ -296,7 +296,7 @@ describe("Task", () => {
       expect(
         rootStore.firestoreStore.updateSupervisionTask,
       ).toHaveBeenCalledWith(supervisionTaskClientRecord.recordId, {
-        homeVisit: deleteField(),
+        usIdHomeVisit: deleteField(),
       });
     });
   });
@@ -390,7 +390,7 @@ describe("Task", () => {
       expect(
         rootStore.firestoreStore.updateSupervisionTask,
       ).toHaveBeenCalledWith(supervisionTaskClientRecord.recordId, {
-        homeVisit: {
+        usIdHomeVisit: {
           snoozeForDays: "FOREVER",
           snoozedBy: "test@email.gov",
           snoozedOn: testDate,
@@ -416,7 +416,7 @@ describe("Task", () => {
       expect(
         rootStore.firestoreStore.updateSupervisionTask,
       ).toHaveBeenCalledWith(supervisionTaskClientRecord.recordId, {
-        homeVisit: {
+        usIdHomeVisit: {
           snoozeForDays: "FOREVER",
           snoozedBy: "test@email.gov",
           snoozedOn: testDate,
@@ -442,7 +442,7 @@ describe("Task", () => {
       expect(
         rootStore.firestoreStore.updateSupervisionTask,
       ).toHaveBeenCalledWith(supervisionTaskClientRecord.recordId, {
-        homeVisit: deleteField(),
+        usIdHomeVisit: deleteField(),
       });
     });
   });

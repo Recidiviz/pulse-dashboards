@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Sans14, Sans16, spacing, typography } from "@recidiviz/design-system";
+import { Sans16, spacing, typography } from "@recidiviz/design-system";
 import { uniqBy } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
@@ -23,13 +23,9 @@ import { useState } from "react";
 import styled from "styled-components";
 
 import { Icon, palette } from "~design-system";
-import { formatDate } from "~utils";
 
 import StopwatchIcon from "../../assets/static/images/stopwatch.svg?react";
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useFeatureVariants } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { formatWorkflowsDate } from "../../utils";
 import { SupervisionTask } from "../../WorkflowsStore";
@@ -40,7 +36,6 @@ import { PersonProfileProps } from "../WorkflowsJusticeInvolvedPersonProfile/typ
 import { NEED_DISPLAY_NAME } from "./fixtures";
 import { SnoozeTaskDropdown } from "./SnoozeTaskDropdown";
 import { snoozeTaskToast } from "./snoozeTaskToast";
-import { TaskDueDate } from "./styles";
 import { TaskSnoozeReasonForm } from "./TaskSnoozeReasonForm";
 
 const TasksWrapper = styled.div``;
@@ -48,18 +43,6 @@ const TaskItems = styled.div`
   display: flex;
   flex-flow: column nowrap;
   width: 100%;
-`;
-
-const TaskTitle = styled.div<{ isMobile: boolean }>`
-  display: flex;
-  flex-flow: row ${({ isMobile }) => (isMobile ? "wrap" : "nowrap")};
-  justify-content: flex-start;
-  align-items: center;
-  align-self: flex-start;
-
-  & > div {
-    font-size: ${rem(14)};
-  }
 `;
 
 const TaskItem = styled(Sans16)<{ showSnoozeDropdown?: boolean }>`
@@ -89,31 +72,6 @@ const TaskItem = styled(Sans16)<{ showSnoozeDropdown?: boolean }>`
 const TaskName = styled(Sans16)`
   color: ${palette.pine1};
   min-width: fit-content;
-`;
-
-const TaskDivider = styled(Sans16)`
-  color: ${palette.pine1};
-  margin: 0 0.5rem;
-`;
-
-const TaskDetails = styled(Sans14)`
-  color: ${palette.slate90};
-  align-self: flex-start;
-  padding: 0.5rem 0 0 0;
-  white-space: pre-line;
-`;
-
-const TaskContent = styled.div`
-  display: flex;
-  flex-flow: column;
-  justify-content: center;
-  align-items: flex-start;
-  grid-column-start: 1;
-`;
-
-const TaskSnoozedDate = styled(Sans14)`
-  color: ${palette.slate70};
-  line-height: 2;
 `;
 
 const TaskItemWrapper = styled.div`
@@ -278,6 +236,7 @@ export const SnoozedTaskInfo = ({ task }: { task: SupervisionTask }) => {
     </SnoozedTaskInfoBox>
   );
 };
+
 /**
  * Whether a snooze reason is mandatory for the given duration. Gated on the
  * tenant opting in via `snoozeReasonRequiredOverDays`: when set, snoozes longer
@@ -290,93 +249,6 @@ export const isSnoozeReasonRequired = (
 ): boolean => {
   if (requiredOverDays === undefined) return false;
   return days === "FOREVER" || days > requiredOverDays;
-};
-
-/**
- * TODO(#10615): Delete TaskPreview when UsIdTasksV2 is fully rolled out.
- */
-const TaskPreview = ({
-  task,
-  showSnoozeDropdown,
-}: {
-  task: SupervisionTask;
-  showSnoozeDropdown: boolean;
-}) => {
-  const { isMobile } = useIsMobile(true);
-  const { taskSnoozeReason } = useFeatureVariants();
-  const reasonEnabled = Boolean(taskSnoozeReason);
-  const [pendingSnoozeDays, setPendingSnoozeDays] =
-    useState<SnoozeOptions | null>(null);
-
-  // The parent owns the snooze write + toast so the dropdown and the
-  // reason form can stay presentational.
-  const persistSnooze = (days: SnoozeOptions, reason: string | undefined) => {
-    task.updateSupervisionTask(days, reason);
-    snoozeTaskToast(task, days, true, isMobile);
-  };
-
-  if (reasonEnabled && pendingSnoozeDays !== null) {
-    return (
-      <TaskItem showSnoozeDropdown={false} key={task.key}>
-        <TaskSnoozeReasonForm
-          required={isSnoozeReasonRequired(
-            pendingSnoozeDays,
-            task.person.supervisionTasks?.tasksConfig
-              ?.snoozeReasonRequiredOverDays,
-          )}
-          onCancel={() => setPendingSnoozeDays(null)}
-          onSave={(reason) => {
-            persistSnooze(pendingSnoozeDays, reason);
-            setPendingSnoozeDays(null);
-          }}
-        />
-      </TaskItem>
-    );
-  }
-
-  return (
-    <TaskItem showSnoozeDropdown={showSnoozeDropdown} key={task.key}>
-      <TaskContent>
-        <TaskTitle isMobile={isMobile}>
-          <TaskName>{task.displayName}</TaskName>
-          <TaskDivider> &bull; </TaskDivider>
-          <TaskDueDate
-            font={typography.Sans16}
-            marginLeft="0"
-            overdue={task.isOverdue && !task.isSnoozed}
-            title={task.dueDateDisplayShort}
-            isMobile={isMobile}
-          >
-            {task.dueDateDisplayShort}
-          </TaskDueDate>
-        </TaskTitle>
-        {task.snoozeInfo?.snoozedUntil && (
-          <TaskSnoozedDate>
-            {task.snoozeInfo.snoozedUntil === "FOREVER"
-              ? "Hidden from Tasks list permanently"
-              : "Hidden from Tasks list until " +
-                formatDate(task.snoozeInfo.snoozedUntil)}
-          </TaskSnoozedDate>
-        )}
-        <TaskDetails>{task.additionalDetails}</TaskDetails>
-      </TaskContent>
-      {showSnoozeDropdown && (
-        <SnoozeTaskDropdown
-          task={task}
-          taskConfig={
-            task.person.supervisionTasks?.tasksConfig?.tasks[task.type]
-          }
-          onSelectSnoozeDays={(days) => {
-            if (reasonEnabled) {
-              setPendingSnoozeDays(days);
-            } else {
-              persistSnooze(days, undefined);
-            }
-          }}
-        />
-      )}
-    </TaskItem>
-  );
 };
 
 const TaskPreviewV2 = ({ task }: { task: SupervisionTask }) => {
@@ -498,7 +370,6 @@ export const PreviewTasks = observer(function PreviewTasks({
   empty?: React.ReactNode;
   hideSnoozed?: boolean;
 }) {
-  const { isUsIdLegacyTasksEnabled } = useRootStore().workflowsStore;
   const sourceTasks =
     person.supervisionTasks?.[
       hideSnoozed ? "readyOrderedTasks" : "orderedTasks"
@@ -516,15 +387,6 @@ export const PreviewTasks = observer(function PreviewTasks({
     <TasksWrapper>
       <TaskItems>
         {tasks.map((task) => {
-          // Legacy Tasks - TODO(#10615): Remove TaskPreview when UsIdTasksV2 is fully rolled out.
-          if (isUsIdLegacyTasksEnabled)
-            return (
-              <TaskPreview
-                key={task.key}
-                task={task}
-                showSnoozeDropdown={showSnoozeDropdown}
-              />
-            );
           return <TaskPreviewV2 task={task} key={task.key} />;
         })}
         {needs.map((need) => {

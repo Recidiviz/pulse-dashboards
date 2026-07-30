@@ -27,29 +27,29 @@ describe("taskDueDateComparator", () => {
 
   it("sorts by overdue dates when all tasks are overdue", () => {
     const tasks = [
-      { dueDate: new Date(2020, 1, 1), type: "assessment" },
-      { dueDate: new Date(2018, 1, 1), type: "contact" },
-      { dueDate: new Date(2019, 1, 1), type: "homeVisit" },
+      { dueDate: new Date(2020, 1, 1), type: "usIdLsirAssessment" },
+      { dueDate: new Date(2018, 1, 1), type: "usIdFaceToFaceContact" },
+      { dueDate: new Date(2019, 1, 1), type: "usIdHomeVisit" },
     ] as SupervisionTask<SupervisionTaskType>[];
 
     expect(tasks.sort(taskDueDateComparator).map((t) => t.type)).toEqual([
-      "contact",
-      "homeVisit",
-      "assessment",
+      "usIdFaceToFaceContact",
+      "usIdHomeVisit",
+      "usIdLsirAssessment",
     ]);
   });
 
   it("sorts by upcoming by dates", () => {
     const tasks = [
-      { dueDate: new Date(2025, 1, 4), type: "homeVisit" },
-      { dueDate: new Date(2025, 1, 2), type: "assessment" },
-      { dueDate: new Date(2025, 1, 3), type: "contact" },
+      { dueDate: new Date(2025, 1, 4), type: "usIdHomeVisit" },
+      { dueDate: new Date(2025, 1, 2), type: "usIdLsirAssessment" },
+      { dueDate: new Date(2025, 1, 3), type: "usIdFaceToFaceContact" },
     ] as SupervisionTask<SupervisionTaskType>[];
 
     expect(tasks.sort(taskDueDateComparator).map((t) => t.type)).toEqual([
-      "assessment",
-      "contact",
-      "homeVisit",
+      "usIdLsirAssessment",
+      "usIdFaceToFaceContact",
+      "usIdHomeVisit",
     ]);
   });
 });

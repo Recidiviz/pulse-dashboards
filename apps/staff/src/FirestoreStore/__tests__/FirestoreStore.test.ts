@@ -389,7 +389,7 @@ describe("FirestoreStore", () => {
 
     test("updateSupervisionTask", async () => {
       const taskUpdate: SupervisionTaskUpdate = {
-        homeVisit: {
+        usIdHomeVisit: {
           snoozedBy: "test@test.org",
           snoozeForDays: 7,
           snoozedOn: "2023-01-01",
@@ -417,7 +417,7 @@ describe("FirestoreStore", () => {
 
     test("updateSupervisionTask persists snoozeReason when provided", async () => {
       const taskUpdate: SupervisionTaskUpdate = {
-        homeVisit: {
+        usIdHomeVisit: {
           snoozedBy: "test@test.org",
           snoozeForDays: 7,
           snoozedOn: "2023-01-01",

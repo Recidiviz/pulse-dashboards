@@ -114,21 +114,13 @@ export default class TasksFilterStore extends FilterStoreBase {
   }
 
   get filters(): FilterSection[] {
-    // TODO(#10615): Remove filter condition when UsIdTasksV2 is fully rolled out.
-    const visibleFilters = super.filters.filter(({ title }) => {
-      // Special case: hide "Task Type" filter for US_ID without v2 flag
-      if (title === "Task Type" && this.workflowsStore.isUsIdLegacyTasksEnabled)
-        return false;
-      return true;
-    });
-
     // When the `dynamicFilters` feature variant is on, extend each section that
     // opts in via `dynamic: true` (in the tenant config) with any values found
     // in the caseload data that the static config is missing, so every value
     // present in the data is selectable while the curated options are preserved.
-    if (!this.workflowsStore.isDynamicFiltersEnabled) return visibleFilters;
+    if (!this.workflowsStore.isDynamicFiltersEnabled) return super.filters;
 
-    return visibleFilters.map((section) =>
+    return super.filters.map((section) =>
       section.dynamic
         ? { ...section, options: this.dynamicOptionsForField(section) }
         : section,

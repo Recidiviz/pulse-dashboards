@@ -37,7 +37,6 @@ const CaseloadSelectWrapper = styled.div`
 const WorkflowsTasks = observer(function WorkflowsTasks() {
   const {
     workflowsStore: {
-      isUsIdLegacyTasksEnabled,
       justiceInvolvedPersonTitle,
       searchStore: { workflowsSearchFieldTitle, selectedSearchIds },
     },
@@ -66,7 +65,7 @@ const WorkflowsTasks = observer(function WorkflowsTasks() {
   );
 
   return (
-    <WorkflowsNavLayout limitedWidth={isUsIdLegacyTasksEnabled}>
+    <WorkflowsNavLayout limitedWidth={false}>
       <CaseloadSelectWrapper>
         <CaseloadSelect />
       </CaseloadSelectWrapper>

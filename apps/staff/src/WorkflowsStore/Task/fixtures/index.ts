@@ -55,13 +55,13 @@ export const supervisionTaskClientRecord: ClientRecord = {
   ],
 };
 
-export const homeVisitTaskRecord: SupervisionTaskRecord<"homeVisit"> = {
-  type: "homeVisit",
+export const homeVisitTaskRecord: SupervisionTaskRecord<"usIdHomeVisit"> = {
+  type: "usIdHomeVisit",
   details: {
-    caseType: "GENERAL",
-    supervisionLevel: "MEDIUM",
-    currentAddress: "123 Aloha rd.",
-    lastHomeVisit: "2023-01-02",
+    contactCadence: "monthly",
+    lastContactDate: "2023-01-02",
+    addressChangeContactDueDate: "2023-03-04",
+    addressChangeDate: "2023-02-01",
   },
   dueDate: "2023-03-04",
   taskDisplayName: "Home Visit",

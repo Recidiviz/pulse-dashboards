@@ -174,18 +174,10 @@ export const SUPERVISION_NEED_TYPES = ["employmentNeed"] as const;
 export type SupervisionNeedType = (typeof SUPERVISION_NEED_TYPES)[number];
 
 export const SUPERVISION_TASK_TYPES = [
-  // TODO(#10615): Remove 'homeVisit' v1 (keep v2, usIdHomeVisit) task type when UsIdTasksV2 is fully rolled out.
-  "homeVisit",
   "usIdHomeVisit",
-  // TODO(#10615): Remove 'assessment' v1 (keep v2, usIdRiskAssessment) task type when UsIdTasksV2 is fully rolled out.
-  "assessment",
   "usIdLsirAssessment",
   "usIdStableAssessment",
-  // TODO(#10615): Remove 'contact' v1 (keep v2, UsIdFaceToFaceContact) task type when UsIdTasksV2 is fully rolled out.
-  "contact",
   "usIdFaceToFaceContact",
-  // TODO(#10615): Remove 'employment' v1 (keep v2, usIdEmploymentVerification) task type when UsIdTasksV2 is fully rolled out.
-  "employment",
   "usIdEmploymentVerification",
   "usMoEmploymentVerification",
   "usMoInitialEmploymentVerificationIap",
@@ -242,18 +234,10 @@ export type SupervisionDetails =
   | UsTxAssessmentDetails;
 
 export type SupervisionDetailsForTask = {
-  // TODO(#10615): Remove 'homeVisit' v1 (keep v2, usIdHomeVisit) task type when UsIdTasksV2 is fully rolled out.
-  homeVisit: UsIdHomeVisitDetails;
   usIdHomeVisit: UsIdHomeVisitOrAddressChangeDetails;
-  // TODO(#10615): Remove 'assessment' v1 (keep v2, usIdRiskAssessment) task type when UsIdTasksV2 is fully rolled out.
-  assessment: UsIdAssessmentDetails;
-  // TODO(#10615): Remove 'contact' v1 (keep v2, UsIdFaceToFaceContact) task type when UsIdTasksV2 is fully rolled out.
   usIdLsirAssessment: UsIdLsirAssessmentDetails;
   usIdStableAssessment: UsIdStableAssessmentDetails;
-  contact: UsIdContactDetails;
-  // TODO(#10615): Remove 'employment' v1 (keep v2, usIdEmploymentVerification) task type when UsIdTasksV2 is fully rolled out.
   usIdFaceToFaceContact: UsIdTaskBaseDetails;
-  employment: UsIdEmploymentDetails;
   usIdEmploymentVerification: UsIdTaskBaseDetails;
   usMoPositiveHomeVisit: UsMoHomeVisitTaskDetails;
   usMoEmploymentVerification: UsMoTaskDetails;

@@ -229,13 +229,6 @@ export default class TenantStore {
       "DUE_THIS_WEEK",
       "DUE_THIS_MONTH",
     ];
-    // TODO(#10615): Remove when UsIdTasksV2 is fully rolled out.
-    if (
-      this.currentTenantId === "US_ID" &&
-      !this.rootStore.workflowsStore.isUsIdLegacyTasksEnabled
-    )
-      return tasksDefault;
-
     return this.tasksConfiguration?.categories ?? tasksDefault;
   }
 

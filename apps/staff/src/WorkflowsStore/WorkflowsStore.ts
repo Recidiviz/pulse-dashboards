@@ -1092,13 +1092,6 @@ export class WorkflowsStore implements Hydratable {
     return this.activePage.page === "tasks";
   }
 
-  get isUsIdLegacyTasksEnabled(): boolean {
-    return (
-      !this.featureVariants.usIdTasksV2 &&
-      this.rootStore.tenantStore.currentTenantId === "US_ID"
-    );
-  }
-
   get isDynamicFiltersEnabled(): boolean {
     return !!this.featureVariants.dynamicFilters;
   }

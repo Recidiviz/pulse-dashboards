@@ -318,7 +318,7 @@ describe("allTasksForCategory with custom tasks", () => {
     overrides: Partial<SupervisionTask> = {},
   ): SupervisionTask {
     return {
-      type: "assessment",
+      type: "usIdLsirAssessment",
       key: "sup-1",
       dueDate: new Date("2026-05-20"),
       isOverdue: false,
@@ -521,7 +521,7 @@ describe("allTasksForCategory with custom tasks", () => {
 
   it("filtering by type='customTask' narrows results to custom tasks only", () => {
     const supervisionTask = makeSupervisionTask({
-      type: "assessment",
+      type: "usIdLsirAssessment",
       key: "sup-1",
       dueDate: new Date("2026-05-20"),
     });
@@ -627,16 +627,13 @@ describe("dynamicFilters feature variant", () => {
   function buildDynamicStore({
     persons,
     flagOn,
-    isUsIdLegacyTasksEnabled = false,
   }: {
     persons: Partial<Client>[];
     flagOn: boolean;
-    isUsIdLegacyTasksEnabled?: boolean;
   }) {
     const ws = {
       caseloadPersons: persons,
       isDynamicFiltersEnabled: flagOn,
-      isUsIdLegacyTasksEnabled,
       searchStore: { selectedSearchIds: ["1"] },
     } as any as WorkflowsStore;
     return new TasksFilterStore(mockAnalyticsStore, dynamicTenantStore, ws);
@@ -783,20 +780,6 @@ describe("dynamicFilters feature variant", () => {
     ]);
   });
 
-  it("still drops the Task Type filter for US_ID legacy while applying dynamic options", () => {
-    const store = buildDynamicStore({
-      persons: [{ supervisionLevel: "High", caseType: "General" }],
-      flagOn: true,
-      isUsIdLegacyTasksEnabled: true,
-    });
-    expect(store.filters.find((f) => f.title === "Task Type")).toBeUndefined();
-    expect(optionsFor(store, "supervisionLevel")).toEqual([
-      { value: "Low" },
-      { value: "Medium" },
-      { value: "High" },
-    ]);
-  });
-
   describe("reconcileSelectedFilters", () => {
     // Unit-test the reconcile action directly with explicit option lists (the
     // constructor reaction feeds it `this.filters` in production). A
@@ -890,7 +873,6 @@ describe("dynamicFilters feature variant", () => {
     const ws = {
       caseloadPersons: [],
       isDynamicFiltersEnabled: false,
-      isUsIdLegacyTasksEnabled: false,
       searchStore: { selectedSearchIds: [] },
     } as any as WorkflowsStore;
 

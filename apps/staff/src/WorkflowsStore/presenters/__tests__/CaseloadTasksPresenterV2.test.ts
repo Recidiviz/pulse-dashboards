@@ -78,10 +78,10 @@ const mockTenantStore = {
         field: "type",
         type: "task",
         options: [
-          { value: "employment" },
-          { value: "assessment" },
-          { value: "homeVisit" },
-          { value: "contact" },
+          { value: "usIdEmploymentVerification" },
+          { value: "usIdLsirAssessment" },
+          { value: "usIdHomeVisit" },
+          { value: "usIdFaceToFaceContact" },
         ],
       },
     ],
@@ -184,11 +184,11 @@ describe("CaseloadTasksPresenterV2", () => {
       const workflowsStore = {
         ...mockWorkflowsStore,
         caseloadPersons: [
-          makePersonWithTasks(["employment"], {
+          makePersonWithTasks(["usIdEmploymentVerification"], {
             dateOffset: -1,
             overdue: true,
           }),
-          makePersonWithTasks(["contact"], { dateOffset: 0 }),
+          makePersonWithTasks(["usIdFaceToFaceContact"], { dateOffset: 0 }),
         ],
       } as any as WorkflowsStore;
 
@@ -212,8 +212,14 @@ describe("CaseloadTasksPresenterV2", () => {
       const workflowsStore = {
         ...mockWorkflowsStore,
         caseloadPersons: [
-          makePersonWithTasks(["employment", "contact"], { dateOffset: 0 }),
-          makePersonWithTasks(["employment", "assessment"], { dateOffset: 11 }),
+          makePersonWithTasks(
+            ["usIdEmploymentVerification", "usIdFaceToFaceContact"],
+            { dateOffset: 0 },
+          ),
+          makePersonWithTasks(
+            ["usIdEmploymentVerification", "usIdLsirAssessment"],
+            { dateOffset: 11 },
+          ),
         ],
       } as any as WorkflowsStore;
 
@@ -225,14 +231,14 @@ describe("CaseloadTasksPresenterV2", () => {
 
     it("logs category selection to the analytics store", () => {
       presenter = getPresenter({});
-      presenter.selectedTaskCategory = "employment";
+      presenter.selectedTaskCategory = "usIdEmploymentVerification";
       expect(
         mockAnalyticsStore.trackTaskTableCategorySelected,
       ).toHaveBeenLastCalledWith({
         newTabRowCount: 0,
         previousCategory: "ALL_TASKS",
         selectedCaseloadIds: ["1", "2"],
-        selectedCategory: "employment",
+        selectedCategory: "usIdEmploymentVerification",
       });
     });
   });
@@ -242,10 +248,19 @@ describe("CaseloadTasksPresenterV2", () => {
       const workflowsStore = {
         ...mockWorkflowsStore,
         caseloadPersons: [
-          makePersonWithTasks(["employment", "contact"], { dateOffset: 0 }),
-          makePersonWithTasks(["employment", "assessment"], { dateOffset: 11 }),
-          makePersonWithTasks(["homeVisit"], { dateOffset: 12 }),
-          makePersonWithTasks(["homeVisit"], { dateOffset: -1, overdue: true }),
+          makePersonWithTasks(
+            ["usIdEmploymentVerification", "usIdFaceToFaceContact"],
+            { dateOffset: 0 },
+          ),
+          makePersonWithTasks(
+            ["usIdEmploymentVerification", "usIdLsirAssessment"],
+            { dateOffset: 11 },
+          ),
+          makePersonWithTasks(["usIdHomeVisit"], { dateOffset: 12 }),
+          makePersonWithTasks(["usIdHomeVisit"], {
+            dateOffset: -1,
+            overdue: true,
+          }),
         ],
       } as any as WorkflowsStore;
 
@@ -292,12 +307,21 @@ describe("CaseloadTasksPresenterV2", () => {
       const workflowsStore = {
         ...mockWorkflowsStore,
         caseloadPersons: [
-          makePersonWithTasks(["employment", "contact"], {
+          makePersonWithTasks(
+            ["usIdEmploymentVerification", "usIdFaceToFaceContact"],
+            {
+              overdue: true,
+              dateOffset: -2,
+            },
+          ),
+          makePersonWithTasks(
+            ["usIdEmploymentVerification", "usIdLsirAssessment"],
+            { dateOffset: 1 },
+          ),
+          makePersonWithTasks(["usIdHomeVisit"], {
             overdue: true,
-            dateOffset: -2,
+            dateOffset: -1,
           }),
-          makePersonWithTasks(["employment", "assessment"], { dateOffset: 1 }),
-          makePersonWithTasks(["homeVisit"], { overdue: true, dateOffset: -1 }),
         ],
       } as any as WorkflowsStore;
 
@@ -313,14 +337,16 @@ describe("CaseloadTasksPresenterV2", () => {
     });
 
     it("filters people by selected task types", () => {
-      presenter.filterStore.toggleFilter("type", { value: "employment" });
+      presenter.filterStore.toggleFilter("type", {
+        value: "usIdEmploymentVerification",
+      });
       expect(presenter.clientsWithUpcomingTasks).toHaveLength(1);
       expect(presenter.clientsWithOverdueTasks).toHaveLength(1);
     });
 
     it("can filter by a single option", () => {
       presenter.filterStore.setOnlyFilterForField("type", {
-        value: "employment",
+        value: "usIdEmploymentVerification",
       });
       expect(presenter.clientsWithUpcomingTasks).toHaveLength(1);
       expect(presenter.clientsWithOverdueTasks).toHaveLength(1);
@@ -340,20 +366,23 @@ describe("CaseloadTasksPresenterV2", () => {
       const workflowsStore = {
         ...mockWorkflowsStore,
         caseloadPersons: [
-          makePersonWithTasks(["employment", "contact"], {
-            district: "D10",
-            supervisionLevel: "Low",
-          }),
-          makePersonWithTasks(["contact"], {
+          makePersonWithTasks(
+            ["usIdEmploymentVerification", "usIdFaceToFaceContact"],
+            {
+              district: "D10",
+              supervisionLevel: "Low",
+            },
+          ),
+          makePersonWithTasks(["usIdFaceToFaceContact"], {
             district: "D31",
             supervisionLevel: "Low",
             dateOffset: 7,
           }),
-          makePersonWithTasks(["contact"], {
+          makePersonWithTasks(["usIdFaceToFaceContact"], {
             district: "D7",
             supervisionLevel: "Medium",
           }),
-          makePersonWithTasks(["employment"], {
+          makePersonWithTasks(["usIdEmploymentVerification"], {
             district: "D31",
             supervisionLevel: "Limited",
           }),
@@ -434,15 +463,19 @@ describe("CaseloadTasksPresenterV2", () => {
 
   describe("allTasksForCategory", () => {
     beforeEach(() => {
-      const person1 = makePersonWithTasks(["employment"], { dateOffset: 0 });
-      const person2 = makePersonWithTasks(["assessment"], { dateOffset: 35 }); // Task due next month
-      const person3 = makePersonWithTasks(["contact"], {
+      const person1 = makePersonWithTasks(["usIdEmploymentVerification"], {
+        dateOffset: 0,
+      });
+      const person2 = makePersonWithTasks(["usIdLsirAssessment"], {
+        dateOffset: 35,
+      }); // Task due next month
+      const person3 = makePersonWithTasks(["usIdFaceToFaceContact"], {
         dateOffset: -1,
         overdue: true,
       });
 
       // Create a person with snoozed tasks
-      const personWithSnoozedTasks = makePersonWithTasks(["homeVisit"], {
+      const personWithSnoozedTasks = makePersonWithTasks(["usIdHomeVisit"], {
         dateOffset: 5,
       });
       if (personWithSnoozedTasks.supervisionTasks) {
@@ -465,7 +498,7 @@ describe("CaseloadTasksPresenterV2", () => {
       const nextMonthTasks = presenter.allTasksForCategory("DUE_NEXT_MONTH");
 
       expect(nextMonthTasks).toHaveLength(1);
-      expect(nextMonthTasks[0].type).toEqual("assessment");
+      expect(nextMonthTasks[0].type).toEqual("usIdLsirAssessment");
       expect(
         differenceInCalendarMonths(nextMonthTasks[0].dueDate, new Date()),
       ).toEqual(1);
@@ -492,7 +525,7 @@ describe("CaseloadTasksPresenterV2", () => {
       const hiddenTasks = presenter.allTasksForCategory("HIDDEN");
 
       expect(hiddenTasks).toHaveLength(1);
-      expect(hiddenTasks[0].type).toEqual("homeVisit");
+      expect(hiddenTasks[0].type).toEqual("usIdHomeVisit");
       expect(hiddenTasks[0].isSnoozed).toBeTrue();
     });
 
@@ -514,7 +547,7 @@ describe("CaseloadTasksPresenterV2", () => {
 
       // Apply a filter that excludes the hidden task
       presenter.filterStore.setOnlyFilterForField("type", {
-        value: "employment",
+        value: "usIdEmploymentVerification",
       });
 
       // Now we should have no hidden tasks
@@ -524,7 +557,7 @@ describe("CaseloadTasksPresenterV2", () => {
     it("ignores filters when applyFilter is false", () => {
       // Apply a filter that would exclude tasks
       presenter.filterStore.setOnlyFilterForField("type", {
-        value: "employment",
+        value: "usIdEmploymentVerification",
       });
 
       // When applyFilter is true, we should only get employment tasks
@@ -550,8 +583,10 @@ describe("CaseloadTasksPresenterV2", () => {
         workflowsStore: {
           ...mockWorkflowsStore,
           caseloadPersons: [
-            makePersonWithTasks(["employment"], { dateOffset: 2 }), // Due this week
-            makePersonWithTasks(["assessment"], { dateOffset: 15 }), // Due this month but not this week
+            makePersonWithTasks(["usIdEmploymentVerification"], {
+              dateOffset: 2,
+            }), // Due this week
+            makePersonWithTasks(["usIdLsirAssessment"], { dateOffset: 15 }), // Due this month but not this week
           ],
         } as any as WorkflowsStore,
         tenantStore: tenantStoreWithThisWeek,
@@ -562,11 +597,11 @@ describe("CaseloadTasksPresenterV2", () => {
 
       // Task due in 2 days should be in THIS_WEEK but not THIS_MONTH
       expect(thisWeekTasks).toHaveLength(1);
-      expect(thisWeekTasks[0].type).toEqual("employment");
+      expect(thisWeekTasks[0].type).toEqual("usIdEmploymentVerification");
 
       // Task due in 15 days should be in THIS_MONTH but not THIS_WEEK
       expect(thisMonthTasks).toHaveLength(1);
-      expect(thisMonthTasks[0].type).toEqual("assessment");
+      expect(thisMonthTasks[0].type).toEqual("usIdLsirAssessment");
 
       // Verify no overlap between the two categories
       const thisWeekTaskTypes = thisWeekTasks.map((t) => t.type);
@@ -588,8 +623,10 @@ describe("CaseloadTasksPresenterV2", () => {
         workflowsStore: {
           ...mockWorkflowsStore,
           caseloadPersons: [
-            makePersonWithTasks(["employment"], { dateOffset: 2 }), // Due this week
-            makePersonWithTasks(["assessment"], { dateOffset: 15 }), // Due this month but not this week
+            makePersonWithTasks(["usIdEmploymentVerification"], {
+              dateOffset: 2,
+            }), // Due this week
+            makePersonWithTasks(["usIdLsirAssessment"], { dateOffset: 15 }), // Due this month but not this week
           ],
         } as any as WorkflowsStore,
         tenantStore: tenantStoreWithoutThisWeek,
@@ -600,7 +637,10 @@ describe("CaseloadTasksPresenterV2", () => {
       // Both tasks should be in THIS_MONTH when THIS_WEEK is not available
       expect(thisMonthTasks).toHaveLength(2);
       const taskTypes = thisMonthTasks.map((t) => t.type).sort();
-      expect(taskTypes).toEqual(["assessment", "employment"]);
+      expect(taskTypes).toEqual([
+        "usIdEmploymentVerification",
+        "usIdLsirAssessment",
+      ]);
     });
   });
 });
