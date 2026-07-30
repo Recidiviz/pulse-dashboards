@@ -26,6 +26,7 @@ import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
 import { UsTxEarlyReleaseFromSupervisionForm } from "../../Forms/UsTxEarlyReleaseFromSupervisionForm/UsTxEarlyReleaseFromSupervisionForm";
 import { OpportunityBase } from "../../OpportunityBase";
+import { getDynamicCaseNoteHeaders } from "../UsTxArsErsSharedUtils";
 import type { UsTxEarlyReleaseFromSupervisionDraftData } from "../UsTxDraftData";
 
 // TODO OBT-32657 Clean up V1 opp
@@ -48,7 +49,7 @@ export class UsTxEarlyReleaseFromSupervisionOpportunity extends OpportunityBase<
   }
 
   // TODO(#8429): Add caseNoteHeaders field to the admin panel config
-  get caseNoteHeaders() {
-    return ["Current Fees", "Most Recent Payments"];
+  get caseNoteHeaders(): string[] {
+    return getDynamicCaseNoteHeaders(this);
   }
 }

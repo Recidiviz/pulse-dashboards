@@ -26,6 +26,7 @@ import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
 import { UsTxAnnualReportStatusForm } from "../../Forms/UsTxAnnualReportStatusForm/UsTxAnnualReportStatusForm";
 import { OpportunityBase } from "../../OpportunityBase";
+import { getDynamicCaseNoteHeaders } from "../UsTxArsErsSharedUtils";
 import type { UsTxAnnualReportStatusDraftData } from "../UsTxDraftData";
 
 // TODO OBT-32657 Clean up V1 opp
@@ -48,7 +49,7 @@ export class UsTxAnnualReportStatusOpportunity extends OpportunityBase<
   }
 
   // TODO(#8429): Add caseNoteHeaders field to the admin panel config
-  get caseNoteHeaders() {
-    return ["Current Fees", "Most Recent Payments"];
+  get caseNoteHeaders(): string[] {
+    return getDynamicCaseNoteHeaders(this);
   }
 }

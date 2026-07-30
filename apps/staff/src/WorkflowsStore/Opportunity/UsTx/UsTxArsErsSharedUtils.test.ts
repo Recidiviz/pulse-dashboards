@@ -16,6 +16,8 @@
 // =============================================================================
 
 import { UsTxAnnualReportStatusV2Form } from "../Forms/UsTxAnnualReportStatusV2Form/UsTxAnnualReportStatusV2Form";
+import type { Opportunity } from "../types";
+import { getDynamicCaseNoteHeaders } from "./UsTxArsErsSharedUtils";
 
 // Minimal fake form shape — userHasFilledNecessaryFields only reads these properties.
 function makeForm({
@@ -266,5 +268,59 @@ describe("form.userHasFilledNecessaryFields", () => {
       });
       expect(form.userHasFilledNecessaryFields()).toBe(true);
     });
+  });
+});
+
+describe("getDynamicCaseNoteHeaders", () => {
+  const mockOpp = (caseNoteTitles: string[]): Opportunity => {
+    return {
+      record: {
+        caseNotes: Object.fromEntries(caseNoteTitles.map((t) => [t, []])),
+      },
+    } as unknown as Opportunity;
+  };
+
+  it("returns both headers if either present", () => {
+    expect(
+      getDynamicCaseNoteHeaders(mockOpp(["Most Recent Payments"])),
+    ).toEqual(["Current Fees", "Most Recent Payments"]);
+    expect(getDynamicCaseNoteHeaders(mockOpp(["Current Fees"]))).toEqual([
+      "Current Fees",
+      "Most Recent Payments",
+    ]);
+    expect(
+      getDynamicCaseNoteHeaders(
+        mockOpp(["Current Fees", "Most Recent Payments"]),
+      ),
+    ).toEqual(["Current Fees", "Most Recent Payments"]);
+    expect(
+      getDynamicCaseNoteHeaders(
+        mockOpp(["Current Fees", "Most Recent Payments", "And Others"]),
+      ),
+    ).toEqual(["Current Fees", "Most Recent Payments"]);
+  });
+
+  it("returns [] if headers not present", () => {
+    expect(
+      getDynamicCaseNoteHeaders(
+        mockOpp(["Some header", "Other title about Most Recent Payments"]),
+      ),
+    ).toEqual([]);
+  });
+
+  it("returns [] if caseNotes is {} or undefined", () => {
+    expect(
+      getDynamicCaseNoteHeaders({
+        record: {
+          caseNotes: {},
+        },
+      } as unknown as Opportunity),
+    ).toEqual([]);
+
+    expect(
+      getDynamicCaseNoteHeaders({
+        record: {},
+      } as unknown as Opportunity),
+    ).toEqual([]);
   });
 });

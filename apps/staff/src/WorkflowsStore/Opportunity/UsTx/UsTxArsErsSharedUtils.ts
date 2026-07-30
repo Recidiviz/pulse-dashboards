@@ -19,8 +19,9 @@ import startOfMonth from "date-fns/startOfMonth";
 
 import type { UsTxArsErsSharedFormInformation } from "~datatypes";
 
-import { toTitleCase } from "../../../utils/formatStrings";
-import { Client } from "../../Client";
+import { toTitleCase } from "../../../utils";
+import type { Client } from "../../Client";
+import type { Opportunity } from "../types";
 
 /**
  * Draft data fields that are identical across the ARS and ERS forms (header
@@ -158,4 +159,17 @@ export function prefilledArsErsSharedDraftData(
       : "",
     regionDirectorName: regionDirector ? toTitleCase(regionDirector) : "",
   };
+}
+
+const HEADERS_TO_HOIST = ["Current Fees", "Most Recent Payments"];
+
+export function getDynamicCaseNoteHeaders(opportunity: Opportunity): string[] {
+  const { record } = opportunity;
+  if (!record) return [];
+
+  const { caseNotes } = record;
+  if (caseNotes && HEADERS_TO_HOIST.some((header) => header in caseNotes)) {
+    return HEADERS_TO_HOIST;
+  }
+  return [];
 }
