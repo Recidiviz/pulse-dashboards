@@ -72,9 +72,8 @@ export abstract class FirestoreExporter<T> {
         if (empty) break;
         lastDoc = docs[docs.length - 1];
         for (const doc of docs) {
-          const data = this.firestoreDocToExportData(doc);
-          if (data) {
-            jsons.push(JSON.stringify(data));
+          for (const record of this.firestoreDocToExportData(doc)) {
+            jsons.push(JSON.stringify(record));
           }
         }
       }
@@ -96,12 +95,13 @@ export abstract class FirestoreExporter<T> {
   abstract docsQuery(db: Firestore): Query<DocumentData>;
 
   /**
-   * Convert the raw firestore document to the export data type
-   * Undefined returned values will be filtered out
+   * Convert the raw firestore document to the export data type.
+   * Returns an array so a single document can expand into zero, one, or
+   * multiple export records; return an empty array to skip a document.
    */
   abstract firestoreDocToExportData(
     doc: QueryDocumentSnapshot<DocumentData>,
-  ): T | undefined;
+  ): T[];
 
   // Utilities
 

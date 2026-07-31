@@ -39,8 +39,8 @@ type SnoozeState = {
   user_input?: Record<string, string>;
 };
 
-class SnoozeExporter extends FirestoreExporter<SnoozeState> {
-  outputBucketEnvVar = "SNOOZE_OUTPUT_BUCKET";
+class WorkflowsSnoozeExporter extends FirestoreExporter<SnoozeState> {
+  outputBucketEnvVar = "WORKFLOWS_SNOOZE_OUTPUT_BUCKET";
 
   override get scheduleOptions(): ScheduleOptions {
     return {
@@ -65,9 +65,9 @@ class SnoozeExporter extends FirestoreExporter<SnoozeState> {
 
     const { denial, manualSnooze, autoSnooze } = doc.data();
 
-    if (!denial) return; // We searched for it, but double-check
+    if (!denial) return []; // We searched for it, but double-check
 
-    if (!denial.reasons || denial.reasons.length === 0) return; // No reasons means the denial isn't active anymore
+    if (!denial.reasons || denial.reasons.length === 0) return []; // No reasons means the denial isn't active anymore
 
     const snooze_start_date = denial.updated.date.toDate();
 
@@ -95,12 +95,12 @@ class SnoozeExporter extends FirestoreExporter<SnoozeState> {
       snoozeState.snooze_end_date &&
       isBefore(parseISO(snoozeState.snooze_end_date), startOfToday())
     ) {
-      return; // Drop snoozes that have ended
+      return []; // Drop snoozes that have ended
     }
 
-    return snoozeState;
+    return [snoozeState];
   }
 }
 
-const exporter = new SnoozeExporter();
-exports.exportSnoozeStates = exporter.createScheduledFunction();
+const exporter = new WorkflowsSnoozeExporter();
+exports.exportWorkflowsSnoozeStates = exporter.createScheduledFunction();

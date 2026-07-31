@@ -49,7 +49,7 @@ class OverrideDistrictExporter extends FirestoreExporter<OverrideDistrictExport>
       override_district_ids: overrideDistrictIds,
     };
 
-    return overrideDistrictExport;
+    return [overrideDistrictExport];
   }
 }
 

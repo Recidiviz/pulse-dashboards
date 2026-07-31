@@ -89,12 +89,22 @@ This function is scheduled to run every Friday at 11:59 PM PDT. It exports speci
 - To Deploy: Execute `nvm use 18` then `yarn deploy:staging` or `yarn deploy:production`
 - To Run: Can force run in the Google Cloud Scheduler.
 
-### `exportSnoozeStates`
+### `exportWorkflowsSnoozeStates`
 
-This function is scheduled to run every day at 8:00 AM UTC (Midnight PST.) It exports currently active snoozes into a Google Cloud Storage bucket.
+This function is scheduled to run every day at 8:00 AM UTC (Midnight PST.) It exports currently active Workflows opportunity snoozes into a Google Cloud Storage bucket.
 
 - Trigger: Cloud Scheduler (`0 8 * * *`).
 - Environment Variables:
-  - `SNOOZE_OUTPUT_BUCKET`: The GCS bucket to write to.
+  - `WORKFLOWS_SNOOZE_OUTPUT_BUCKET`: The GCS bucket to write to.
 - To Deploy: Execute `nvm use 18` then `yarn deploy:staging` or `yarn deploy:production`
-- To Run: `curl -X POST "https://us-central1-<PROJECT_ID>.cloudfunctions.net/exportSnoozeStates?=" -H "Authorization: bearer $(gcloud auth print-identity-token)"`
+- To Run: `curl -X POST "https://us-central1-<PROJECT_ID>.cloudfunctions.net/exportWorkflowsSnoozeStates?=" -H "Authorization: bearer $(gcloud auth print-identity-token)"`
+
+### `exportTasksSnoozeStates`
+
+This function is scheduled to run every day at 8:00 AM UTC (Midnight PST.) It exports currently active Tasks snoozes into a Google Cloud Storage bucket.
+
+- Trigger: Cloud Scheduler (`0 8 * * *`).
+- Environment Variables:
+  - `TASKS_SNOOZE_OUTPUT_BUCKET`: The GCS bucket to write to.
+- To Deploy: Execute `nvm use 18` then `yarn deploy:staging` or `yarn deploy:production`
+- To Run: `curl -X POST "https://us-central1-<PROJECT_ID>.cloudfunctions.net/exportTasksSnoozeStates?=" -H "Authorization: bearer $(gcloud auth print-identity-token)"`
