@@ -31,6 +31,7 @@ import CheckIcon from "react-native-heroicons/solid/CheckIcon";
 import PencilIcon from "react-native-heroicons/solid/PencilIcon";
 
 import { trpc } from "~@meetings/app/shared/api";
+import { extractError } from "~@meetings/app/shared/lib/errors";
 import { useIsMobileWidth } from "~@meetings/app/shared/lib/platform";
 import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 import { Button } from "~@meetings/app/shared/ui/Button";
@@ -40,6 +41,11 @@ import { HorizontalDivider } from "~@meetings/app/shared/ui/HorizontalDivider";
 import Modal from "~@meetings/app/shared/ui/Modal";
 import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
+
+function actionItemErrorMessage(fallback: string, error: unknown): string {
+  const message = extractError(error);
+  return message ? `${fallback}: ${message}` : fallback;
+}
 
 type ActionItem = {
   id: string;
@@ -77,9 +83,11 @@ export const ActionItemsTab = ({
     onSuccess: (data) => {
       setNewlyCreatedActionItemId(data.id);
     },
-    onError: () => {
+    onError: (error) => {
       setPendingAssignee(null);
-      showSnackbar("Failed to create action item");
+      showSnackbar(
+        actionItemErrorMessage("Failed to create action item", error),
+      );
     },
     onSettled: () => {
       utils.v1.meeting.getDetails.invalidate({ meetingId });
@@ -305,7 +313,7 @@ function ActionItemRow({
       );
       return { previousData };
     },
-    onError: (_err, _vars, context) => {
+    onError: (error, _vars, context) => {
       // If there was an error, roll back the optimistic update
       if (context?.previousData) {
         utils.v1.meeting.getDetails.setData(
@@ -313,6 +321,12 @@ function ActionItemRow({
           context.previousData,
         );
       }
+      showSnackbar(
+        actionItemErrorMessage(
+          "Failed to update action item completion",
+          error,
+        ),
+      );
     },
     onSettled: () => {
       utils.v1.meeting.getDetails.invalidate({ meetingId });
@@ -340,7 +354,7 @@ function ActionItemRow({
     onSuccess: () => {
       showSnackbar("Action item updated");
     },
-    onError: (_err, _vars, context) => {
+    onError: (error, _vars, context) => {
       // If there was an error, roll back the optimistic update
       if (context?.previousData) {
         utils.v1.meeting.getDetails.setData(
@@ -348,6 +362,9 @@ function ActionItemRow({
           context.previousData,
         );
       }
+      showSnackbar(
+        actionItemErrorMessage("Failed to update action item", error),
+      );
     },
     onSettled: () => {
       utils.v1.meeting.getDetails.invalidate({ meetingId });
@@ -357,6 +374,11 @@ function ActionItemRow({
   const softDeleteActionItem = trpc.v1.meeting.deleteActionItem.useMutation({
     onSuccess: () => {
       showSnackbar("Action item deleted");
+    },
+    onError: (error) => {
+      showSnackbar(
+        actionItemErrorMessage("Failed to delete action item", error),
+      );
     },
     onSettled: () => {
       utils.v1.meeting.getDetails.invalidate({ meetingId });
