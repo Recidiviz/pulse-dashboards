@@ -164,12 +164,14 @@ export class OfflineAPIClient {
     sarId: string;
     substance?: SubstanceType | null;
     ageOfRegularUse?: number | null;
+    admitsToCurrentUse?: boolean;
     lastUse?: Date | null;
     heaviestUse?: FrequencyOfUse | null;
     method?: MethodOfUse | null;
   }) {
     return {
       id: `offline-${Date.now()}`,
+      admitsToCurrentUse: input.admitsToCurrentUse ?? false,
       substance: input.substance ?? null,
       ageOfRegularUse: input.ageOfRegularUse ?? null,
       lastUse: input.lastUse ?? null,
@@ -182,6 +184,7 @@ export class OfflineAPIClient {
     id: string;
     substance?: SubstanceType | null;
     ageOfRegularUse?: number | null;
+    admitsToCurrentUse?: boolean;
     lastUse?: Date | null;
     heaviestUse?: FrequencyOfUse | null;
     method?: MethodOfUse | null;

@@ -352,6 +352,7 @@ export class APIClient {
     substance?: SubstanceType | null;
     otherSubstanceName?: string | null;
     ageOfRegularUse?: number | null;
+    admitsToCurrentUse?: boolean;
     lastUse?: Date | null;
     heaviestUse?: FrequencyOfUse | null;
     method?: MethodOfUse | null;
@@ -366,6 +367,7 @@ export class APIClient {
     substance?: SubstanceType | null;
     otherSubstanceName?: string | null;
     ageOfRegularUse?: number | null;
+    admitsToCurrentUse?: boolean;
     lastUse?: Date | null;
     heaviestUse?: FrequencyOfUse | null;
     method?: MethodOfUse | null;

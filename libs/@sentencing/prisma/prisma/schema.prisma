@@ -751,6 +751,7 @@ model DrugHistory {
   otherSubstanceName String?
   ageOfRegularUse    Int?
   lastUse            DateTime?
+  admitsToCurrentUse Boolean @default(false)
   heaviestUse        FrequencyOfUse?
   method             MethodOfUse?
 }

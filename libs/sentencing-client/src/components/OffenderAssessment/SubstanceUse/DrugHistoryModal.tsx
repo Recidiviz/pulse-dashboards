@@ -48,6 +48,7 @@ const EMPTY_FORM: Omit<DrugHistory, "id"> = {
   substance: null,
   otherSubstanceName: null,
   ageOfRegularUse: null,
+  admitsToCurrentUse: false,
   lastUse: null,
   heaviestUse: null,
   method: null,

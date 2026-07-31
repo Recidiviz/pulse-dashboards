@@ -227,6 +227,7 @@ export const createDrugHistorySchema = z.object({
   otherSubstanceName: z.string().nullable().optional(),
   ageOfRegularUse: z.number().int().nullable().optional(),
   lastUse: z.date().nullable().optional(),
+  admitsToCurrentUse: z.boolean().optional(),
   heaviestUse: frequencyOfUseEnum.nullable().optional(),
   method: methodOfUseEnum.nullable().optional(),
 });
@@ -239,6 +240,7 @@ export const updateDrugHistorySchema = z.object({
   lastUse: z.date().nullable().optional(),
   heaviestUse: frequencyOfUseEnum.nullable().optional(),
   method: methodOfUseEnum.nullable().optional(),
+  admitsToCurrentUse: z.boolean().optional(),
 });
 
 export const deleteDrugHistorySchema = z.object({

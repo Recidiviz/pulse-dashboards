@@ -396,6 +396,7 @@ describe("SAR router", () => {
         sarId: fakeSAR.id,
         substance: SubstanceType.Alcohol,
         ageOfRegularUse: 18,
+        admitsToCurrentUse: true,
         heaviestUse: FrequencyOfUse.Daily,
         method: MethodOfUse.Oral,
       });
@@ -404,6 +405,7 @@ describe("SAR router", () => {
         sarId: fakeSAR.id,
         substance: SubstanceType.Marijuana,
         ageOfRegularUse: null,
+        admitsToCurrentUse: false,
         heaviestUse: FrequencyOfUse.Weekly,
         method: MethodOfUse.Smoking,
       });
@@ -416,12 +418,14 @@ describe("SAR router", () => {
       expect(histories[0]).toMatchObject({
         substance: SubstanceType.Alcohol,
         ageOfRegularUse: 18,
+        admitsToCurrentUse: true,
         heaviestUse: FrequencyOfUse.Daily,
         method: MethodOfUse.Oral,
       });
       expect(histories[1]).toMatchObject({
         substance: SubstanceType.Marijuana,
         ageOfRegularUse: null,
+        admitsToCurrentUse: false,
         heaviestUse: FrequencyOfUse.Weekly,
         method: MethodOfUse.Smoking,
       });
