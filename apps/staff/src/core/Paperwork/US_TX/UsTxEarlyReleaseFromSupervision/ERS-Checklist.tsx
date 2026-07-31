@@ -596,7 +596,7 @@ const ERSChecklist: React.FC = () => {
           <FormInput name="regionDirectorRemarks" />
         </Grid>
 
-        <Footer>PSV-323A (Rev. 02/10/2026)</Footer>
+        <Footer>PSV-323A (Rev. 07/01/2025)</Footer>
       </FormContainer>
     </PrintablePage>
   );
