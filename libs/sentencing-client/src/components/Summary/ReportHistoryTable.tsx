@@ -18,13 +18,10 @@
 import React from "react";
 
 import { SAR } from "../../api";
-import {
-  formatBooleanDisplay,
-  formatDateRange,
-  formatMonthYear,
-} from "../../utils/utils";
+import { formatBooleanDisplay, formatDateRange } from "../../utils/utils";
 import {
   DRUG_HISTORY_COLUMNS,
+  formatLastUseDisplay,
   formatSubstanceName,
   FrequencyOfUseLabels,
   MethodOfUseLabels,
@@ -85,7 +82,7 @@ export const ReportDrugHistoryTable: React.FC<{
   const rows = drugHistories.map((h) => [
     formatSubstanceName(h.substance, h.otherSubstanceName),
     h.ageOfRegularUse != null ? String(h.ageOfRegularUse) : null,
-    h.lastUse ? formatMonthYear(h.lastUse) : null,
+    formatLastUseDisplay(h.admitsToCurrentUse, h.lastUse),
     h.heaviestUse ? FrequencyOfUseLabels[h.heaviestUse] : null,
     h.method ? MethodOfUseLabels[h.method] : null,
   ]);

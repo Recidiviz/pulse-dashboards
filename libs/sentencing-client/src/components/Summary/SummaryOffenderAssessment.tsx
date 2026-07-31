@@ -19,17 +19,17 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
-import {
-  formatBooleanDisplay,
-  formatDateRange,
-  formatMonthYear,
-} from "../../utils/utils";
+import { formatBooleanDisplay, formatDateRange } from "../../utils/utils";
 import { RISK_LEVEL_KEYS, RISK_LEVELS } from "../OffenderAssessment/constants";
+import { CurrentUseFootnote } from "../OffenderAssessment/HistoryCardStyles";
 import {
   DRUG_HISTORY_COLUMNS,
+  formatLastUseDisplay,
   formatSubstanceName,
   FrequencyOfUseLabels,
+  hasCurrentUse,
   MethodOfUseLabels,
+  SUBSTANCE_USE_CURRENT_USE_COPY,
 } from "../OffenderAssessment/SubstanceUse/constants";
 import { useStore } from "../StoreProvider/StoreProvider";
 import { MissingBadge } from "./MissingBadge";
@@ -144,9 +144,10 @@ export const SummaryOffenderAssessment: React.FC<SummaryOffenderAssessmentProps>
                         {history.ageOfRegularUse ?? "—"}
                       </Styled.TableDataCell>
                       <Styled.TableDataCell>
-                        {history.lastUse
-                          ? formatMonthYear(history.lastUse)
-                          : "—"}
+                        {formatLastUseDisplay(
+                          history.admitsToCurrentUse,
+                          history.lastUse,
+                        ) ?? "—"}
                       </Styled.TableDataCell>
                       <Styled.TableDataCell>
                         {history.heaviestUse
@@ -162,6 +163,12 @@ export const SummaryOffenderAssessment: React.FC<SummaryOffenderAssessmentProps>
                   ))}
                 </Styled.AssessmentTable>
               )}
+              {sarData?.drugHistories &&
+                hasCurrentUse(sarData.drugHistories) && (
+                  <CurrentUseFootnote>
+                    {SUBSTANCE_USE_CURRENT_USE_COPY}
+                  </CurrentUseFootnote>
+                )}
             </Styled.SectionBody>
           </Styled.DetailSubsection>
 

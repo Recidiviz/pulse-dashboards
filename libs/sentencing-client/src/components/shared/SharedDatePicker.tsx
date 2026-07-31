@@ -112,6 +112,7 @@ interface SharedDatePickerProps {
   onCalendarClose?: () => void;
   minDate?: Date | null;
   maxDate?: Date | null;
+  disabled?: boolean;
 }
 
 export const SharedDatePicker: React.FC<SharedDatePickerProps> = ({
@@ -125,6 +126,7 @@ export const SharedDatePicker: React.FC<SharedDatePickerProps> = ({
   onCalendarClose,
   minDate,
   maxDate,
+  disabled = false,
 }) => {
   return (
     <>
@@ -147,6 +149,7 @@ export const SharedDatePicker: React.FC<SharedDatePickerProps> = ({
           onCalendarClose={onCalendarClose}
           minDate={minDate ?? undefined}
           maxDate={maxDate ?? undefined}
+          disabled={disabled}
         />
       </CaseDetailsStyled.DatePickerWrapper>
       {resetButton}

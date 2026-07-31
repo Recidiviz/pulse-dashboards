@@ -20,10 +20,10 @@ import toast from "react-hot-toast";
 
 import { Icon, IconSVG } from "~design-system";
 
-import { formatMonthYear } from "../../../utils/utils";
 import * as Styled from "../HistoryItemStyles";
 import {
   DrugHistory,
+  formatLastUseDisplay,
   formatSubstanceName,
   FrequencyOfUseLabels,
   MethodOfUseLabels,
@@ -98,7 +98,8 @@ export const DrugHistoryItem: React.FC<DrugHistoryItemProps> = ({
           {history.ageOfRegularUse ?? "Not specified"}
         </Styled.DataCell>
         <Styled.DataCell>
-          {history.lastUse ? formatMonthYear(history.lastUse) : "Not specified"}
+          {formatLastUseDisplay(history.admitsToCurrentUse, history.lastUse) ??
+            "Not specified"}
         </Styled.DataCell>
         <Styled.DataCell>
           {history.heaviestUse

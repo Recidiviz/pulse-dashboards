@@ -21,6 +21,11 @@ import { Dropdown } from "../CaseDetails/Form/Elements/Dropdown";
 import { SharedDatePicker } from "../shared/SharedDatePicker";
 import { Banner } from "../shared/styles/Banner";
 import {
+  Checkbox,
+  CheckboxContainer,
+  CheckboxLabel,
+} from "../shared/styles/CheckboxStyles";
+import {
   AssessmentTypeDisplayNames,
   AssessmentTypeKey,
   ORAS_TOOL_KEYS,
@@ -28,9 +33,6 @@ import {
 import * as DomainCardStyled from "./DomainCard.styles";
 import {
   CancelButton,
-  Checkbox,
-  CheckboxContainer,
-  CheckboxLabel,
   DatePickerWrapper,
   dropdownStyles,
   FieldContainer,

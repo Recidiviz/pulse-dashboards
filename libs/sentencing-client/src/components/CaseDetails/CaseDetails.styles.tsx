@@ -1301,6 +1301,10 @@ export const dateInputCss = css`
   font-weight: 500;
   width: 150px;
   z-index: 1;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
 `;
 
 export const dateCalendarIconCss = css`

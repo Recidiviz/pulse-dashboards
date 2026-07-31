@@ -98,3 +98,11 @@ export const EmptyState = styled.div`
   color: ${palette.slate70};
   line-height: 1.5;
 `;
+
+export const CurrentUseFootnote = styled.div`
+  padding-top: 0.3rem;
+  font-family: "Public Sans";
+  font-size: 0.875rem;
+  color: ${palette.slate85};
+  line-height: 1.5;
+`;

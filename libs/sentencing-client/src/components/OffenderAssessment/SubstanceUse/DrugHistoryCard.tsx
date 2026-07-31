@@ -20,7 +20,12 @@ import React, { useState } from "react";
 
 import { OffenderAssessmentPresenter } from "../../../presenters/OffenderAssessmentPresenter";
 import * as Styled from "../HistoryCardStyles";
-import { DRUG_HISTORY_COLUMNS, DrugHistory } from "./constants";
+import {
+  DRUG_HISTORY_COLUMNS,
+  DrugHistory,
+  hasCurrentUse,
+  SUBSTANCE_USE_CURRENT_USE_COPY,
+} from "./constants";
 import { DrugHistoryItem } from "./DrugHistoryItem";
 import { DrugHistoryModal } from "./DrugHistoryModal";
 
@@ -38,6 +43,7 @@ export const DrugHistoryCard: React.FC<DrugHistoryCardProps> = observer(
     );
 
     const { drugHistories, clientFirstName } = presenter;
+    const showCurrentUseFootnote = hasCurrentUse(drugHistories);
 
     const handleAdd = () => {
       setEditingId(null);
@@ -104,6 +110,11 @@ export const DrugHistoryCard: React.FC<DrugHistoryCardProps> = observer(
                   />
                 ))}
               </Styled.HistoryList>
+              {showCurrentUseFootnote && (
+                <Styled.CurrentUseFootnote>
+                  {SUBSTANCE_USE_CURRENT_USE_COPY}
+                </Styled.CurrentUseFootnote>
+              )}
             </Styled.HistoryTable>
           ) : (
             <Styled.EmptyState>No substance use records</Styled.EmptyState>

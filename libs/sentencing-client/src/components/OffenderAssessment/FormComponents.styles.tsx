@@ -205,30 +205,6 @@ export const ORASTitle = styled.span`
   letter-spacing: -0.0225rem;
 `;
 
-export const CheckboxContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  align-self: stretch;
-`;
-
-export const Checkbox = styled.input`
-  width: 1rem;
-  height: 1rem;
-  accent-color: ${palette.pine4};
-  cursor: pointer;
-
-  &:disabled {
-    cursor: not-allowed;
-  }
-`;
-
-export const CheckboxLabel = styled.span`
-  font-family: "Public Sans";
-  font-size: 0.875rem;
-  color: ${palette.pine1};
-`;
-
 export const DatePickerWrapper = styled(BaseDatePickerWrapper)`
   .react-datepicker__input-container input {
     background-position: right 1rem center;

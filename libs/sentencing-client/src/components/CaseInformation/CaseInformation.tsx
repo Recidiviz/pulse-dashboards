@@ -19,6 +19,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
+import * as CheckboxStyled from "../shared/styles/CheckboxStyles";
 import * as Styled from "./CaseInformation.styles";
 import { EditableChargeField } from "./constants";
 import { JudgeSelector } from "./JudgeSelector";
@@ -51,15 +52,15 @@ export const CaseInformation: React.FC<CaseInformationProps> = observer(
         {/* Defendant declined checkbox */}
         <Styled.StaffInformationContainer>
           <Styled.CheckboxContainer>
-            <Styled.Checkbox
+            <CheckboxStyled.Checkbox
               type="checkbox"
               checked={defendantDeclinedToParticipate}
               onChange={handleDeclinedToggle}
               disabled={!!presenter.SARData?.completionDate}
             />
-            <Styled.CheckboxLabel>
+            <CheckboxStyled.CheckboxLabel>
               Defendant declined to participate in the SAR process
-            </Styled.CheckboxLabel>
+            </CheckboxStyled.CheckboxLabel>
           </Styled.CheckboxContainer>
 
           <JudgeSelector

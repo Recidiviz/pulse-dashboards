@@ -16,7 +16,10 @@
 // =============================================================================
 
 import { SAR } from "../../../api";
+import { formatMonthYear } from "../../../utils/utils";
 
+export const SUBSTANCE_USE_CURRENT_USE_COPY =
+  "* The defendant reports current use of this substance";
 export type DrugHistory = NonNullable<SAR["drugHistories"]>[number];
 export type SubstanceType = NonNullable<DrugHistory["substance"]>;
 export type FrequencyOfUse = NonNullable<DrugHistory["heaviestUse"]>;
@@ -92,4 +95,27 @@ export function formatSubstanceName(
   if (!substance) return null;
   if (substance === "Other") return otherSubstanceName ?? "Other";
   return SubstanceTypeLabels[substance as SubstanceType] ?? substance;
+}
+
+/**
+ * Returns the display label for the "Last Use" cell, or null if neither is set.
+ * e.g. "Current*", "01/2024", null
+ */
+export function formatLastUseDisplay(
+  admitsToCurrentUse: boolean | null | undefined,
+  lastUse: Date | string | null | undefined,
+): string | null {
+  if (admitsToCurrentUse) return "Current*";
+  if (lastUse) return formatMonthYear(lastUse);
+  return null;
+}
+
+/**
+ * Returns true if at least one drug history record shows current use.
+ * e.g. hasCurrentUse([{ admitsToCurrentUse: true, ... }]) => true
+ */
+export function hasCurrentUse(
+  histories: Pick<DrugHistory, "admitsToCurrentUse">[],
+): boolean {
+  return histories.some((history) => history.admitsToCurrentUse);
 }

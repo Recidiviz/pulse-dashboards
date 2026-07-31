@@ -21,6 +21,11 @@ import { Dropdown } from "../../CaseDetails/Form/Elements/Dropdown";
 import { Modal } from "../../Modal/Modal";
 import { SharedDatePicker } from "../../shared/SharedDatePicker";
 import {
+  Checkbox,
+  CheckboxContainer,
+  CheckboxLabel,
+} from "../../shared/styles/CheckboxStyles";
+import {
   ButtonRow,
   CancelButton,
   DatePickerWrapper,
@@ -201,16 +206,37 @@ export const DrugHistoryModal: React.FC<DrugHistoryModalProps> = ({
 
           <ModalStyled.Field>
             <ModalStyled.Label>Last Use</ModalStyled.Label>
-            <DatePickerWrapper>
-              <SharedDatePicker
-                selected={formData.lastUse ? new Date(formData.lastUse) : null}
-                onChange={(date) =>
-                  setFormData({ ...formData, lastUse: date ?? null })
-                }
-                placeholder="MM/YYYY"
-                monthYearOnly
-              />
-            </DatePickerWrapper>
+            <ModalStyled.FieldContent>
+              <DatePickerWrapper>
+                <SharedDatePicker
+                  selected={
+                    formData.lastUse ? new Date(formData.lastUse) : null
+                  }
+                  onChange={(date) =>
+                    setFormData({ ...formData, lastUse: date ?? null })
+                  }
+                  placeholder="MM/YYYY"
+                  disabled={!!formData.admitsToCurrentUse}
+                  monthYearOnly
+                />
+              </DatePickerWrapper>
+              <CheckboxContainer>
+                <Checkbox
+                  type="checkbox"
+                  checked={!!formData.admitsToCurrentUse}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      admitsToCurrentUse: e.target.checked,
+                      lastUse: e.target.checked ? null : formData.lastUse,
+                    })
+                  }
+                />
+                <CheckboxLabel>
+                  Client admits to current use of this substance
+                </CheckboxLabel>
+              </CheckboxContainer>
+            </ModalStyled.FieldContent>
           </ModalStyled.Field>
 
           <ModalStyled.Field>

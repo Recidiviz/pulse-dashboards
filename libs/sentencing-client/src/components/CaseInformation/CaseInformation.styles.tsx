@@ -19,12 +19,7 @@ import styled from "styled-components";
 
 import { palette } from "~design-system";
 
-import { CheckboxContainer as SharedCheckboxContainer } from "../OffenderAssessment/FormComponents.styles";
-
-export {
-  Checkbox,
-  CheckboxLabel,
-} from "../OffenderAssessment/FormComponents.styles";
+import { CheckboxContainer as SharedCheckboxContainer } from "../shared/styles/CheckboxStyles";
 
 export const CheckboxContainer = styled(SharedCheckboxContainer)`
   padding-left: 2.5rem;

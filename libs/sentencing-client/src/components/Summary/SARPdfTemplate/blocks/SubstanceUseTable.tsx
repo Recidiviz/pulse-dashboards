@@ -22,10 +22,12 @@
 import { Text } from "@react-pdf/renderer";
 import React from "react";
 
-import { formatDisplayDate } from "../../../../utils/utils";
 import {
+  formatLastUseDisplay,
   FrequencyOfUseLabels,
+  hasCurrentUse,
   MethodOfUseLabels,
+  SUBSTANCE_USE_CURRENT_USE_COPY,
   SubstanceTypeLabels,
 } from "../../../OffenderAssessment/SubstanceUse/constants";
 import {
@@ -35,7 +37,7 @@ import {
   TableRow,
 } from "../primitives/TableRow";
 import type { PdfStyle, SAR } from "../SARPdfTemplate.types";
-import { font } from "../tokens";
+import { color, font, space } from "../tokens";
 import { valueOrDash as v } from "../utils";
 
 type DrugRow = SAR["drugHistories"][number];
@@ -53,34 +55,47 @@ export const SubstanceUseTable: React.FC<{
   rows: DrugRow[];
   style?: PdfStyle;
 }> = ({ rows, style = {} }) => (
-  <Table style={style}>
-    <TableHeaderRow>
-      <TableHeaderCell style={{ flex: 2 }}>Substance</TableHeaderCell>
-      <TableHeaderCell style={{ flex: 1.5 }}>
-        Age of Regular Use
-      </TableHeaderCell>
-      <TableHeaderCell style={{ flex: 1.5 }}>Last Use</TableHeaderCell>
-      <TableHeaderCell style={{ flex: 1.5 }}>Heaviest Use</TableHeaderCell>
-      <TableHeaderCell style={{ flex: 1 }}>Method</TableHeaderCell>
-    </TableHeaderRow>
-    {rows.map((r, i) => (
-      <TableRow key={i}>
-        <Text style={{ fontSize: font.size.base, flex: 2 }}>
-          {substanceLabel(r)}
-        </Text>
-        <Text style={{ fontSize: font.size.base, flex: 1.5 }}>
-          {v(r.ageOfRegularUse)}
-        </Text>
-        <Text style={{ fontSize: font.size.base, flex: 1.5 }}>
-          {formatDisplayDate(r.lastUse)}
-        </Text>
-        <Text style={{ fontSize: font.size.base, flex: 1.5 }}>
-          {r.heaviestUse ? FrequencyOfUseLabels[r.heaviestUse] : "—"}
-        </Text>
-        <Text style={{ fontSize: font.size.base, flex: 1 }}>
-          {r.method ? MethodOfUseLabels[r.method] : "—"}
-        </Text>
-      </TableRow>
-    ))}
-  </Table>
+  <>
+    <Table style={style}>
+      <TableHeaderRow>
+        <TableHeaderCell style={{ flex: 2 }}>Substance</TableHeaderCell>
+        <TableHeaderCell style={{ flex: 1.5 }}>
+          Age of Regular Use
+        </TableHeaderCell>
+        <TableHeaderCell style={{ flex: 1.5 }}>Last Use</TableHeaderCell>
+        <TableHeaderCell style={{ flex: 1.5 }}>Heaviest Use</TableHeaderCell>
+        <TableHeaderCell style={{ flex: 1 }}>Method</TableHeaderCell>
+      </TableHeaderRow>
+      {rows.map((r, i) => (
+        <TableRow key={i}>
+          <Text style={{ fontSize: font.size.base, flex: 2 }}>
+            {substanceLabel(r)}
+          </Text>
+          <Text style={{ fontSize: font.size.base, flex: 1.5 }}>
+            {v(r.ageOfRegularUse)}
+          </Text>
+          <Text style={{ fontSize: font.size.base, flex: 1.5 }}>
+            {v(formatLastUseDisplay(r.admitsToCurrentUse, r.lastUse))}
+          </Text>
+          <Text style={{ fontSize: font.size.base, flex: 1.5 }}>
+            {r.heaviestUse ? FrequencyOfUseLabels[r.heaviestUse] : "—"}
+          </Text>
+          <Text style={{ fontSize: font.size.base, flex: 1 }}>
+            {r.method ? MethodOfUseLabels[r.method] : "—"}
+          </Text>
+        </TableRow>
+      ))}
+    </Table>
+    {hasCurrentUse(rows) && (
+      <Text
+        style={{
+          fontSize: font.size.xs,
+          color: color.text.default,
+          marginTop: space[8],
+        }}
+      >
+        {SUBSTANCE_USE_CURRENT_USE_COPY}
+      </Text>
+    )}
+  </>
 );

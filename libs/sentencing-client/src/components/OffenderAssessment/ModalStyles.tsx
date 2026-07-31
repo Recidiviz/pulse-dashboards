@@ -45,8 +45,7 @@ export const Container = styled.div`
 export const Header = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  padding: 2.5rem 2.5rem 2rem 2.5rem;
+  padding: 2.5rem 2.5rem 1rem 2.5rem;
 `;
 
 export const Title = styled.h2`
@@ -67,7 +66,6 @@ export const Description = styled.p`
   font-weight: 500;
   line-height: 120%; /* 1.05rem */
   letter-spacing: -0.00875rem;
-  padding: 0rem 2.5rem 0rem 2.5rem;
 `;
 
 export const Form = styled.div`
@@ -83,6 +81,12 @@ export const Form = styled.div`
 export const Field = styled.div`
   display: flex;
   flex-direction: column;
+`;
+
+export const FieldContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
 export const Label = styled.label`
