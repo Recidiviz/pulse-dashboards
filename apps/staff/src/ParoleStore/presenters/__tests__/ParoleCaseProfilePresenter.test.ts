@@ -39,6 +39,18 @@ const TEST_CASE: ParoleCase = {
   conductHistory: [],
   docPrograms: [],
   edovoPrograms: [],
+  offenseHistory: {
+    county: "Sangamon County",
+    docket: "2021-CF-0489",
+    conviction: "Armed Robbery",
+    classFelony: "Class X Felony",
+    sentence: "8 years",
+    dateOfOffense: "2021-07-30",
+    convictionDate: "2022-07-30",
+    offenseNarrative: "Defendant entered convenience store with firearm.",
+    priorConvictions: [],
+    victimInvolved: false,
+  },
 };
 
 describe("ParoleCaseProfilePresenter", () => {

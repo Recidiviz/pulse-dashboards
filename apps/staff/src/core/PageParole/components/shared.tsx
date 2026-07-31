@@ -69,6 +69,12 @@ export const FactValue = styled.div`
   font-weight: 600;
 `;
 
+// Spans two of FactGrid's three columns, for a fact whose value is too long
+// to sit comfortably in a single column (e.g. a free-text narrative).
+export const WideFactItem = styled.div`
+  grid-column: span 2;
+`;
+
 // Vertically stacks a SectionCardBody's groups (a fact grid, a divider, a
 // labeled subsection, ...) with consistent spacing via `gap`, rather than
 // each group managing its own margin/padding against its neighbors.
@@ -106,21 +112,36 @@ export const EmptyState = styled.div`
   font-style: italic;
 `;
 
-export const AlertBanner = styled.div`
-  background-color: rgba(255, 245, 245, 1);
-  border-color: ${palette.logoRed};
+// Alert-style banner, parameterized so both parole-plan alerts (default red)
+// and the victim-involved banner (overridden orange) can share it.
+// $textColor/$fontWeight only apply when passed, so callers that color their
+// own AlertHeading/AlertBody children aren't affected.
+export const AlertBanner = styled.div<{
+  $color?: string;
+  $backgroundColor?: string;
+  $textColor?: string;
+  $fontWeight?: string;
+  $alignItems?: string;
+  $marginBottom?: string;
+}>`
+  background-color: ${({ $backgroundColor }) =>
+    $backgroundColor ?? "rgba(255, 245, 245, 1)"};
+  border-color: ${({ $color }) => $color ?? palette.logoRed};
   border-style: solid;
   border-width: 0 0 0 ${rem(spacing.xs)};
   padding: ${rem(spacing.md)};
   padding-left: ${rem(22)};
   display: flex;
+  align-items: ${({ $alignItems }) => $alignItems ?? "stretch"};
   gap: ${rem(spacing.md)};
-  margin-bottom: ${rem(spacing.md)};
+  margin-bottom: ${({ $marginBottom }) => $marginBottom ?? rem(spacing.md)};
+  ${({ $textColor }) => $textColor && `color: ${$textColor};`}
+  ${({ $fontWeight }) => $fontWeight && `font-weight: ${$fontWeight};`}
 `;
 
-export const AlertHeading = styled.div`
+export const AlertHeading = styled.div<{ $color?: string }>`
   font-weight: 700;
-  color: ${palette.logoRed};
+  color: ${({ $color }) => $color ?? palette.logoRed};
   margin-bottom: ${rem(4)};
 `;
 

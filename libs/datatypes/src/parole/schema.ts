@@ -91,6 +91,26 @@ export const paroleEdovoProgramSchema = z.object({
 });
 export type ParoleEdovoProgram = z.infer<typeof paroleEdovoProgramSchema>;
 
+export const paroleConvictionSchema = z.object({
+  charge: z.string(),
+  date: z.string(),
+});
+export type ParoleConviction = z.infer<typeof paroleConvictionSchema>;
+
+export const paroleOffenseHistorySchema = z.object({
+  county: z.string(),
+  docket: z.string(),
+  conviction: z.string(),
+  classFelony: z.string(),
+  sentence: z.string(),
+  dateOfOffense: z.string(),
+  convictionDate: z.string(),
+  offenseNarrative: z.string(),
+  priorConvictions: z.array(paroleConvictionSchema),
+  victimInvolved: z.boolean(),
+});
+export type ParoleOffenseHistory = z.infer<typeof paroleOffenseHistorySchema>;
+
 export const paroleCaseSchema = z.object({
   docId: z.string(),
   name: z.string(),
@@ -109,5 +129,6 @@ export const paroleCaseSchema = z.object({
   conductHistory: z.array(paroleConductRecordSchema),
   docPrograms: z.array(paroleDocProgramSchema),
   edovoPrograms: z.array(paroleEdovoProgramSchema),
+  offenseHistory: paroleOffenseHistorySchema,
 });
 export type ParoleCase = z.infer<typeof paroleCaseSchema>;

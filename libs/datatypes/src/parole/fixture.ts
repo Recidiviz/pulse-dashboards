@@ -359,6 +359,22 @@ function buildAndersonCaseProfile(hearingDate: string): ParoleCase {
         startDate: iso(subMonths(today, 2)),
       },
     ],
+    offenseHistory: {
+      county: "Sangamon County",
+      docket: "2021-CF-0489",
+      conviction: "Armed Robbery",
+      classFelony: "Class X Felony",
+      sentence: "8 years",
+      dateOfOffense: iso(subYears(today, 5)),
+      convictionDate: iso(subYears(today, 4)),
+      offenseNarrative:
+        "Defendant entered convenience store with firearm and demanded cash from register. No injuries occurred. Defendant apprehended two blocks from scene.",
+      priorConvictions: [
+        { charge: "Theft", date: iso(subYears(today, 8)) },
+        { charge: "Assault", date: iso(subYears(today, 7)) },
+      ],
+      victimInvolved: true,
+    },
   });
 }
 
@@ -400,6 +416,27 @@ function buildAttachments(
   ];
 }
 
+function buildOffenseHistory(
+  index: number,
+  today: Date,
+): ParoleCase["offenseHistory"] {
+  return {
+    county: "Sample County",
+    docket: `2022-CF-0${100 + index}`,
+    conviction: "Burglary",
+    classFelony: "Class 2 Felony",
+    sentence: "6 years",
+    dateOfOffense: iso(subYears(today, 4)),
+    convictionDate: iso(subYears(today, 3 + (index % 4))),
+    offenseNarrative:
+      "Defendant entered an unoccupied residence and removed property without consent.",
+    // No prior convictions for the generic cases -- Anderson's hand-authored
+    // profile above is the one that exercises the "Prior Convictions" list.
+    priorConvictions: [],
+    victimInvolved: false,
+  };
+}
+
 function buildGenericCaseProfile(
   hearing: ParoleHearing,
   index: number,
@@ -433,6 +470,7 @@ function buildGenericCaseProfile(
     // above); the rest have none until a real backend exists.
     docPrograms: [],
     edovoPrograms: [],
+    offenseHistory: buildOffenseHistory(index, today),
   });
 }
 

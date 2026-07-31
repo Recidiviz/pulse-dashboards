@@ -32,6 +32,7 @@ import { paroleUrl } from "../../views";
 import { AttachmentsSection } from "../components/AttachmentsSection";
 import { ConductHistorySection } from "../components/ConductHistorySection";
 import { IdentityHeaderSection } from "../components/IdentityHeaderSection";
+import { OffenseHistorySection } from "../components/OffenseHistorySection";
 import { ProgramParticipationSection } from "../components/ProgramParticipationSection";
 
 // Page-level max-width/padding comes from PageParole's shared Main wrapper;
@@ -82,6 +83,8 @@ const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
         docPrograms={caseDetail.docPrograms}
         edovoPrograms={caseDetail.edovoPrograms}
       />
+
+      <OffenseHistorySection offenseHistory={caseDetail.offenseHistory} />
     </Wrapper>
   );
 });

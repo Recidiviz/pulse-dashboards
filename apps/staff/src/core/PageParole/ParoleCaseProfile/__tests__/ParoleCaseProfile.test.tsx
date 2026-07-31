@@ -280,4 +280,54 @@ describe("ParoleCaseProfile", () => {
       ).toBeInTheDocument();
     });
   });
+
+  describe("the offense & criminal history section", () => {
+    it("renders the current offense's facts", async () => {
+      renderAtPath("/parole/case/DOC-45821");
+
+      expect(
+        await screen.findByText("Offense & Criminal History"),
+      ).toBeInTheDocument();
+      expect(screen.getByText("Sangamon County")).toBeInTheDocument();
+      expect(screen.getByText("2021-CF-0489")).toBeInTheDocument();
+      expect(screen.getByText("Class X Felony")).toBeInTheDocument();
+      expect(screen.getByText("Armed Robbery")).toBeInTheDocument();
+      expect(screen.getByText("8 years")).toBeInTheDocument();
+      expect(
+        screen.getByText(/Defendant entered convenience store with firearm/),
+      ).toBeInTheDocument();
+    });
+
+    it("renders a banner when a victim was involved in the current offense", async () => {
+      renderAtPath("/parole/case/DOC-45821");
+
+      expect(
+        await screen.findByText("Victim involved in current offense"),
+      ).toBeInTheDocument();
+    });
+
+    it("renders no victim banner when no victim was involved", async () => {
+      renderAtPath("/parole/case/DOC-52903");
+
+      await screen.findByText("Offense & Criminal History");
+      expect(
+        screen.queryByText("Victim involved in current offense"),
+      ).not.toBeInTheDocument();
+    });
+
+    it("renders the list of prior convictions", async () => {
+      renderAtPath("/parole/case/DOC-45821");
+
+      expect(await screen.findByText("Prior Convictions")).toBeInTheDocument();
+      expect(screen.getByText(/Theft — Jul/)).toBeInTheDocument();
+      expect(screen.getByText(/Assault — Jul/)).toBeInTheDocument();
+    });
+
+    it("omits the prior convictions subsection when there are none", async () => {
+      renderAtPath("/parole/case/DOC-52903");
+
+      await screen.findByText("Offense & Criminal History");
+      expect(screen.queryByText("Prior Convictions")).not.toBeInTheDocument();
+    });
+  });
 });
