@@ -226,6 +226,18 @@ export const locationRecordFixtures: Array<LocationRecord> = [
   },
 
   //
+  // New York City
+  //
+
+  {
+    stateCode: "US_NYC",
+    system: "INCARCERATION",
+    idType: "facilityId",
+    locationId: "NYC_DEMO_FACILITY",
+    name: "NYC Demo Facility",
+  },
+
+  //
   // Utah
   //
 

@@ -26,6 +26,7 @@ import { UsMaRouter } from "~@jii/US_MA";
 import { UsNcRouter } from "~@jii/US_NC";
 import { UsNdRouter } from "~@jii/US_ND";
 import { UsNeRouter } from "~@jii/US_NE";
+import { UsNycRouter } from "~@jii/US_NYC";
 import { UsTnRouter } from "~@jii/US_TN";
 import { UsUtRouter } from "~@jii/US_UT";
 
@@ -51,9 +52,8 @@ export function StateSpecificRouter() {
       return <UsNdRouter />;
     case "US_NE":
       return <UsNeRouter />;
-    // TODO(OBT-40979): replace with <UsNycRouter /> once state lib is scaffolded
     case "US_NYC":
-      return null;
+      return <UsNycRouter />;
     case "US_TN":
       return <UsTnRouter />;
     case "US_UT":

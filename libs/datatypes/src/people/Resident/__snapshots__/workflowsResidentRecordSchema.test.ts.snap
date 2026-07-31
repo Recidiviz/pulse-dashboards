@@ -3549,6 +3549,48 @@ exports[`schema for 'US_NE' 'RES007' 1`] = `
 }
 `;
 
+exports[`schema for 'US_NYC' 'NYC_RES001' 1`] = `
+{
+  "allEligibleOpportunities": [],
+  "displayId": "RES001",
+  "facilityId": "NYC_DEMO_FACILITY",
+  "metadata": {
+    "stateCode": "US_NYC",
+  },
+  "personExternalId": "NYC_RES001",
+  "personName": {
+    "givenNames": "Alex",
+    "surname": "Rivera",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres_nyc_001",
+  "recordId": "us_nyc_nyc_res001",
+  "stateCode": "US_NYC",
+  "unitId": null,
+}
+`;
+
+exports[`schema for 'US_NYC' 'NYC_RES002' 1`] = `
+{
+  "allEligibleOpportunities": [],
+  "displayId": "RES002",
+  "facilityId": "NYC_DEMO_FACILITY",
+  "metadata": {
+    "stateCode": "US_NYC",
+  },
+  "personExternalId": "NYC_RES002",
+  "personName": {
+    "givenNames": "Jordan",
+    "surname": "Chen",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres_nyc_002",
+  "recordId": "us_nyc_nyc_res002",
+  "stateCode": "US_NYC",
+  "unitId": null,
+}
+`;
+
 exports[`schema for 'US_TN' 'RES001' 1`] = `
 {
   "admissionDate": 2019-05-30T00:00:00.000Z,

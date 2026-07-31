@@ -118,6 +118,31 @@ export const UsNeReentryChecklist = route("reentry-checklist");
 
 export const ReentryAssessment = route("reentry-assessment");
 
+export const ResourceExplorer = route(
+  "resources",
+  {},
+  {
+    Categories: route("categories"),
+    Groups: route("groups"),
+    ListTypeResults: route(
+      ":listType",
+      {},
+      {
+        CategoryResults: route(
+          ":category",
+          { searchParams: { subcategories: string().defined().array() } },
+          {
+            Detail: route(":resourceId", {
+              params: { resourceId: number().defined() },
+              searchParams: { backTarget: string() },
+            }),
+          },
+        ),
+      },
+    ),
+  },
+);
+
 export const UsCoMoreInformation = route(
   "more-information",
   {
@@ -143,6 +168,7 @@ export const State = route(":stateSlug", types(ReturnToPathFragment), {
       UsNdMoreInformation,
       UsNeMoreInformation,
       UsNeReentryChecklist,
+      ResourceExplorer,
       UsTnMoreInformation,
     },
   ),
