@@ -30,11 +30,14 @@ import {
 import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
 import ClockIcon from "react-native-heroicons/outline/ClockIcon";
 import ShareIcon from "react-native-heroicons/outline/ShareIcon";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import Animated, {
+  Easing,
   interpolate,
   useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
+  withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -66,6 +69,16 @@ import StaffFeedbackTab from "./StaffFeedbackTab";
 
 const HEADER_HEIGHT = 64;
 const AUDIO_PLAYER_HEIGHT = 72;
+const TABS_HEIGHT = 44;
+const TABS_GAP = 20;
+const CONTENT_GAP = 16;
+const CARD_CONTENT_EXPANDED = 168;
+const CARD_CONTENT_COLLAPSED = 108;
+const COLLAPSE_TRAVEL =
+  CARD_CONTENT_EXPANDED + TABS_GAP + TABS_HEIGHT - CARD_CONTENT_COLLAPSED;
+const COLLAPSE_AT = COLLAPSE_TRAVEL + 4;
+const EXPAND_AT = COLLAPSE_TRAVEL - 4;
+const COLLAPSE_DURATION = 250;
 
 type Props = {
   meetingId: string;
@@ -94,37 +107,50 @@ const MeetingMobile = ({
   const playButtonAreaHeight = insets.bottom + 76;
   const audioOffset =
     !!meetingDetails.audioUrl && isPlayerVisible ? AUDIO_PLAYER_HEIGHT : 0;
+  const chromeHeight =
+    CARD_CONTENT_EXPANDED + TABS_GAP + TABS_HEIGHT + audioOffset + CONTENT_GAP;
   const { email: currentUserEmail, isSkipAuthUser } = useUserContext();
   const isMeetingCreator =
     currentUserEmail === meetingDetails.staffEmail || isSkipAuthUser;
-  const scrollY = useSharedValue(0);
+  const collapse = useSharedValue(0);
+  const isCollapsed = useSharedValue(false);
   const draftCaseNoteSheetRef = useRef<BottomSheetModal>(null);
   const meetingNotesSheetRef = useRef<BottomSheetModal>(null);
 
   const scrollHandler = useAnimatedScrollHandler((event) => {
-    scrollY.value = event.contentOffset.y;
+    const y = event.contentOffset.y;
+    if (!isCollapsed.value && y > COLLAPSE_AT) {
+      isCollapsed.value = true;
+      collapse.value = withTiming(1, {
+        duration: COLLAPSE_DURATION,
+        easing: Easing.inOut(Easing.quad),
+      });
+    } else if (isCollapsed.value && y < EXPAND_AT) {
+      isCollapsed.value = false;
+      collapse.value = withTiming(0, {
+        duration: COLLAPSE_DURATION,
+        easing: Easing.inOut(Easing.quad),
+      });
+    }
   });
 
-  const headerStyle = useAnimatedStyle(() => {
-    const baseHeight = interpolate(
-      scrollY.value,
-      [0, 15, 35, 55],
-      [insets.top + 168, insets.top + 148, insets.top + 120, insets.top + 108],
-      "clamp",
-    );
-    const playerOffsetAtScroll = interpolate(
-      scrollY.value,
-      [50, 55],
-      [0, audioOffset],
-      "clamp",
-    );
-    return { height: baseHeight + playerOffsetAtScroll };
-  });
+  const cardStyle = useAnimatedStyle(() => ({
+    height:
+      insets.top +
+      interpolate(
+        collapse.value,
+        [0, 1],
+        [
+          CARD_CONTENT_EXPANDED + TABS_GAP + TABS_HEIGHT + audioOffset,
+          CARD_CONTENT_COLLAPSED + audioOffset,
+        ],
+      ),
+  }));
 
   const avatarStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(scrollY.value, [0, 25], [1, 0], "clamp"),
+    opacity: interpolate(collapse.value, [0, 0.5], [1, 0], "clamp"),
     transform: [
-      { scale: interpolate(scrollY.value, [0, 25], [1, 0.5], "clamp") },
+      { scale: interpolate(collapse.value, [0, 0.5], [1, 0.5], "clamp") },
     ],
   }));
 
@@ -134,10 +160,9 @@ const MeetingMobile = ({
 
   const movingTextStyle = useAnimatedStyle(() => {
     const translateY = interpolate(
-      scrollY.value,
-      [0, 45],
+      collapse.value,
+      [0, 1],
       [insets.top + HEADER_HEIGHT, insets.top + 12],
-      "clamp",
     );
 
     const textBlockWidth =
@@ -145,13 +170,12 @@ const MeetingMobile = ({
     const startTranslateX = 58 + textBlockWidth / 2 - width / 2;
 
     const translateX = interpolate(
-      scrollY.value,
-      [0, 45],
+      collapse.value,
+      [0, 1],
       [startTranslateX, 0],
-      "clamp",
     );
 
-    const scale = interpolate(scrollY.value, [0, 45], [1, 0.9], "clamp");
+    const scale = interpolate(collapse.value, [0, 1], [1, 0.9]);
 
     return {
       position: "absolute",
@@ -168,10 +192,9 @@ const MeetingMobile = ({
     transform: [
       {
         translateX: interpolate(
-          scrollY.value,
-          [0, 45],
+          collapse.value,
+          [0, 1],
           [0, (innerTextWidth.value - line1Width.value) / 2],
-          "clamp",
         ),
       },
     ],
@@ -181,54 +204,23 @@ const MeetingMobile = ({
     transform: [
       {
         translateX: interpolate(
-          scrollY.value,
-          [0, 45],
+          collapse.value,
+          [0, 1],
           [0, (innerTextWidth.value - line2Width.value) / 2],
-          "clamp",
         ),
       },
     ],
   }));
 
   const textPlaceholderStyle = useAnimatedStyle(() => ({
-    height: interpolate(scrollY.value, [15, 35], [44, 0], "clamp"),
-    marginBottom: interpolate(scrollY.value, [15, 35], [16, 0], "clamp"),
+    height: interpolate(collapse.value, [0, 1], [44, 0]),
+    marginBottom: interpolate(collapse.value, [0, 1], [16, 0]),
   }));
 
   const bottomDateStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(scrollY.value, [0, 15], [1, 0], "clamp"),
-    height: interpolate(scrollY.value, [0, 15], [45, 0], "clamp"),
-    marginBottom: interpolate(scrollY.value, [0, 15], [16, 0], "clamp"),
-  }));
-
-  const bottomViewStyles = useAnimatedStyle(() => ({
-    marginTop: interpolate(
-      scrollY.value,
-      [0, 55],
-      [-insets.top + 20, -insets.top],
-      "clamp",
-    ),
-    flex: 1,
-  }));
-
-  const bottomTabsStyle = useAnimatedStyle(() => ({
-    height: interpolate(
-      scrollY.value,
-      [50, 55],
-      [44 + audioOffset, 0],
-      "clamp",
-    ),
-    opacity: interpolate(scrollY.value, [50, 55], [1, 0], "clamp"),
-  }));
-
-  const topTabsStyle = useAnimatedStyle(() => ({
-    height: interpolate(
-      scrollY.value,
-      [50, 55],
-      [0, 44 + audioOffset],
-      "clamp",
-    ),
-    opacity: interpolate(scrollY.value, [50, 55], [0, 1], "clamp"),
+    opacity: interpolate(collapse.value, [0, 0.5], [1, 0], "clamp"),
+    height: interpolate(collapse.value, [0, 1], [45, 0]),
+    marginBottom: interpolate(collapse.value, [0, 1], [16, 0]),
   }));
 
   const onShare = async () => {
@@ -270,9 +262,82 @@ const MeetingMobile = ({
 
   return (
     <View className="flex-1 grow">
+      <KeyboardAwareScrollView
+        onScroll={scrollHandler}
+        scrollEventThrottle={16}
+        bottomOffset={24}
+        keyboardDismissMode="interactive"
+        className="mb-4 flex flex-1 flex-col gap-3 px-4"
+        contentContainerClassName="grow"
+        contentContainerStyle={{
+          paddingTop: chromeHeight,
+          paddingBottom: showPlayButton ? playButtonAreaHeight : 0,
+        }}
+      >
+        <View className="mx-auto mt-4 w-full max-w-[960px] flex-1">
+          {activeTab === Tab.DraftCaseNotes && (
+            <DraftCaseNoteTab
+              meetingId={meetingId}
+              caseNote={meetingDetails.caseNote || ""}
+              personId={person.personId.toString()}
+              canEdit={isMeetingCreator}
+              outputVote={
+                isMeetingCreator &&
+                meetingDetails.caseNote && (
+                  <OutputVote meetingDetails={meetingDetails} tab={activeTab} />
+                )
+              }
+            />
+          )}
+          {activeTab === Tab.ActionItems && (
+            <ActionItemsTab
+              items={meetingDetails.meetingActionItems}
+              outputVote={
+                isMeetingCreator &&
+                meetingDetails.meetingActionItems.length > 0 && (
+                  <OutputVote meetingDetails={meetingDetails} tab={activeTab} />
+                )
+              }
+              meetingId={meetingId}
+            />
+          )}
+          {activeTab === Tab.StaffFeedback && meetingDetails.staffFeedback && (
+            <StaffFeedbackTab
+              staffFeedback={meetingDetails.staffFeedback}
+              outputVote={
+                isMeetingCreator &&
+                meetingDetails.staffFeedback && (
+                  <OutputVote meetingDetails={meetingDetails} tab={activeTab} />
+                )
+              }
+            />
+          )}
+          {activeTab === Tab.Transcript &&
+            showTranscription &&
+            meetingDetails?.transcription && (
+              <MeetingTranscriptionTab
+                transcription={{
+                  ...meetingDetails.transcription,
+                  utterances: meetingDetails.transcription.utterances.map(
+                    (u) => ({
+                      ...u,
+                      confidence: u.confidence ?? 0,
+                      speaker: u.speaker ?? "Unknown",
+                    }),
+                  ),
+                }}
+                transcriptDeleted={!!meetingDetails.transcriptDeletedAt}
+                meetingStaffEmail={meetingDetails.staffEmail}
+                jiiName={person.fullName}
+                personType={personType}
+              />
+            )}
+        </View>
+      </KeyboardAwareScrollView>
+
       <Animated.View
-        className="fixed flex flex-col rounded-b-[24px] bg-white p-4"
-        style={[{ top: -insets.top, paddingTop: insets.top }, headerStyle]}
+        className="absolute inset-x-0 flex flex-col rounded-b-[24px] bg-white px-4"
+        style={[{ top: -insets.top, paddingTop: insets.top }, cardStyle]}
       >
         <View
           className="flex flex-row items-center justify-between"
@@ -326,24 +391,6 @@ const MeetingMobile = ({
         </Animated.View>
 
         <View className="flex flex-col">
-          <Animated.View style={[topTabsStyle]}>
-            {meetingDetails.audioUrl && isPlayerVisible && (
-              <View className="pb-4">
-                <AudioPlayer
-                  url={meetingDetails.audioUrl}
-                  onClose={() => setIsPlayerVisible(false)}
-                />
-              </View>
-            )}
-            <MeetingTabs
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-              isTranscriptionUnavailable={!meetingDetails?.transcription}
-              showTranscription={showTranscription}
-              showStaffFeedback={meetingDetails.staffFeedback != null}
-            />
-          </Animated.View>
-
           <Animated.View style={textPlaceholderStyle}>
             <Animated.View
               className="flex flex-row items-center gap-3"
@@ -381,12 +428,7 @@ const MeetingMobile = ({
             </View>
           </Animated.View>
         </View>
-      </Animated.View>
-      <Animated.View
-        className="flex flex-1 grow flex-col gap-4"
-        style={[bottomViewStyles]}
-      >
-        <Animated.View className="px-4" style={[bottomTabsStyle]}>
+        <View className="absolute inset-x-0 bottom-0 mx-4">
           {meetingDetails.audioUrl && isPlayerVisible && (
             <View className="pb-4">
               <AudioPlayer
@@ -402,105 +444,25 @@ const MeetingMobile = ({
             showTranscription={showTranscription}
             showStaffFeedback={meetingDetails.staffFeedback != null}
           />
-        </Animated.View>
-
-        <Animated.ScrollView
-          onScroll={scrollHandler}
-          className="flex flex-1 flex-col gap-3 px-4"
-          contentContainerClassName="grow"
-          contentContainerStyle={{
-            paddingBottom: showPlayButton ? playButtonAreaHeight : 0,
-          }}
-          scrollEventThrottle={16}
-        >
-          <View className="mx-auto mt-4 w-full max-w-[960px] flex-1">
-            {activeTab === Tab.DraftCaseNotes && (
-              <DraftCaseNoteTab
-                meetingId={meetingId}
-                caseNote={meetingDetails.caseNote || ""}
-                personId={person.personId.toString()}
-                canEdit={isMeetingCreator}
-                outputVote={
-                  isMeetingCreator &&
-                  meetingDetails.caseNote && (
-                    <OutputVote
-                      meetingDetails={meetingDetails}
-                      tab={activeTab}
-                    />
-                  )
-                }
-              />
-            )}
-            {activeTab === Tab.ActionItems && (
-              <ActionItemsTab
-                items={meetingDetails.meetingActionItems}
-                outputVote={
-                  isMeetingCreator &&
-                  meetingDetails.meetingActionItems.length > 0 && (
-                    <OutputVote
-                      meetingDetails={meetingDetails}
-                      tab={activeTab}
-                    />
-                  )
-                }
-                meetingId={meetingId}
-              />
-            )}
-            {activeTab === Tab.StaffFeedback &&
-              meetingDetails.staffFeedback && (
-                <StaffFeedbackTab
-                  staffFeedback={meetingDetails.staffFeedback}
-                  outputVote={
-                    isMeetingCreator &&
-                    meetingDetails.staffFeedback && (
-                      <OutputVote
-                        meetingDetails={meetingDetails}
-                        tab={activeTab}
-                      />
-                    )
-                  }
-                />
-              )}
-            {activeTab === Tab.Transcript &&
-              showTranscription &&
-              meetingDetails?.transcription && (
-                <MeetingTranscriptionTab
-                  transcription={{
-                    ...meetingDetails.transcription,
-                    utterances: meetingDetails.transcription.utterances.map(
-                      (u) => ({
-                        ...u,
-                        confidence: u.confidence ?? 0,
-                        speaker: u.speaker ?? "Unknown",
-                      }),
-                    ),
-                  }}
-                  transcriptDeleted={!!meetingDetails.transcriptDeletedAt}
-                  meetingStaffEmail={meetingDetails.staffEmail}
-                  jiiName={person.fullName}
-                  personType={personType}
-                />
-              )}
-          </View>
-        </Animated.ScrollView>
-
-        {showPlayButton && (
-          <View
-            className="absolute inset-x-0 items-center"
-            style={{ bottom: insets.bottom + 16 }}
-          >
-            <TouchableOpacity
-              onPress={() => setIsPlayerVisible(true)}
-              className="flex-row items-center gap-2 rounded-full bg-brand px-4 py-3"
-            >
-              <PlaySvg className="size-4 fill-on-brand" />
-              <Typography className="text-base font-semibold text-on-brand">
-                Play meeting
-              </Typography>
-            </TouchableOpacity>
-          </View>
-        )}
+        </View>
       </Animated.View>
+
+      {showPlayButton && (
+        <View
+          className="absolute inset-x-0 items-center"
+          style={{ bottom: insets.bottom + 16 }}
+        >
+          <TouchableOpacity
+            onPress={() => setIsPlayerVisible(true)}
+            className="flex-row items-center gap-2 rounded-full bg-brand px-4 py-3"
+          >
+            <PlaySvg className="size-4 fill-on-brand" />
+            <Typography className="text-base font-semibold text-on-brand">
+              Play meeting
+            </Typography>
+          </TouchableOpacity>
+        </View>
+      )}
       <DraftCaseNoteSheet
         meetingId={meetingId}
         notes={meetingDetails?.caseNote || ""}

@@ -24,6 +24,7 @@ import * as Sentry from "@sentry/react-native";
 import React from "react";
 import { Auth0Provider } from "react-native-auth0";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 
 import { PrPreviewProvider } from "~@meetings/app/features/pr-preview";
 import {
@@ -100,28 +101,30 @@ const App = () => {
   useSentryAppLifecycle();
   return (
     <GestureHandlerRootView>
-      <BottomSheetModalProvider>
-        <SnackbarProvider>
-          <Auth0Provider
-            domain={env.EXPO_PUBLIC_AUTH0_DOMAIN}
-            clientId={env.EXPO_PUBLIC_AUTH0_CLIENT_ID}
-            // useRefreshTokens and cacheLocation are web-only props (WebAuth0Options),
-            // not in the shared Auth0Options type, but read by WebAuth0Client on web
-            // and safely ignored on native.
-            {...{
-              useRefreshTokens: true,
-              cacheLocation: "localstorage",
-            }}
-          >
-            <PrPreviewProvider>
-              <AppErrorBoundary>
-                <AppNavigator />
-                <PortalHost />
-              </AppErrorBoundary>
-            </PrPreviewProvider>
-          </Auth0Provider>
-        </SnackbarProvider>
-      </BottomSheetModalProvider>
+      <KeyboardProvider>
+        <BottomSheetModalProvider>
+          <SnackbarProvider>
+            <Auth0Provider
+              domain={env.EXPO_PUBLIC_AUTH0_DOMAIN}
+              clientId={env.EXPO_PUBLIC_AUTH0_CLIENT_ID}
+              // useRefreshTokens and cacheLocation are web-only props (WebAuth0Options),
+              // not in the shared Auth0Options type, but read by WebAuth0Client on web
+              // and safely ignored on native.
+              {...{
+                useRefreshTokens: true,
+                cacheLocation: "localstorage",
+              }}
+            >
+              <PrPreviewProvider>
+                <AppErrorBoundary>
+                  <AppNavigator />
+                  <PortalHost />
+                </AppErrorBoundary>
+              </PrPreviewProvider>
+            </Auth0Provider>
+          </SnackbarProvider>
+        </BottomSheetModalProvider>
+      </KeyboardProvider>
     </GestureHandlerRootView>
   );
 };

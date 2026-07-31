@@ -16,7 +16,7 @@
 // =============================================================================
 
 import React, { useState } from "react";
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
 import MenuAlt2Icon from "react-native-heroicons/outline/MenuAlt2Icon";
 import DocumentSearchIcon from "react-native-heroicons/solid/DocumentSearchIcon";
 
@@ -122,7 +122,7 @@ const MeetingsTranscriptionTab = ({
     ) || [];
 
   return (
-    <ScrollView className="flex flex-col">
+    <View className="flex flex-col">
       <Typography className="mb-3 text-xl font-semibold text-primary">
         Transcript
       </Typography>
@@ -160,7 +160,7 @@ const MeetingsTranscriptionTab = ({
           </Typography>
         </View>
       ))}
-    </ScrollView>
+    </View>
   );
 };
 

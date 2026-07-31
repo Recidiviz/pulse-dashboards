@@ -19,7 +19,7 @@ import Clipboard from "@react-native-clipboard/clipboard";
 import { debounce } from "lodash";
 import { ReactNode, useCallback, useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
-import { ScrollView, TextInput } from "react-native-gesture-handler";
+import { TextInput } from "react-native-gesture-handler";
 import DocumentDuplicateIcon from "react-native-heroicons/solid/DocumentDuplicateIcon";
 
 import { useUpdateNotes } from "~@meetings/app/entities/meeting";
@@ -107,7 +107,7 @@ const DraftCaseNoteTab = ({
           </TouchableOpacity>
         </View>
       </View>
-      <ScrollView className="flex-1">
+      <View className="flex-1">
         <TextInput
           style={{
             outlineColor: "transparent",
@@ -126,7 +126,7 @@ const DraftCaseNoteTab = ({
           multiline
         />
         {outputVote}
-      </ScrollView>
+      </View>
     </View>
   );
 };
