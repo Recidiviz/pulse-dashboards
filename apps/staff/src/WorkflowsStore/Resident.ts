@@ -16,15 +16,12 @@
 // =============================================================================
 
 import { addYears } from "date-fns";
-import { uniqBy } from "lodash";
 
 import { WorkflowsResidentRecord } from "~datatypes";
 
 import { workflowsUrl } from "../core/views";
-import { PortionServedDates } from "../FirestoreStore";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
 import { PersonType } from "./types";
-import { fractionalDateBetweenTwoDates } from "./utils";
 
 const LIFE_SENTENCE_THRESHOLD = addYears(new Date(), 200);
 
@@ -104,50 +101,12 @@ export class Resident extends JusticeInvolvedPersonBase<WorkflowsResidentRecord>
     return this.rootStore.workflowsStore.systemConfigFor("INCARCERATION");
   }
 
-  get sccpEligibilityDate(): Date | undefined {
-    if (this.record.metadata.stateCode !== "US_ME") {
-      return;
-    }
-
-    return this.record.metadata.sccpEligibilityDate;
-  }
-
   get usTnFacilityAdmissionDate(): Date | undefined {
     return this.record.usTnFacilityAdmissionDate;
   }
 
   get metadata() {
     return this.record.metadata;
-  }
-
-  get portionServedDates(): PortionServedDates {
-    if (this.onLifeSentence) return [];
-
-    const startDate = this.record.admissionDate;
-    const endDate = this.record.releaseDate;
-    const halfTimeDate = fractionalDateBetweenTwoDates(startDate, endDate, 0.5);
-    const twoThirdsTimeDate = fractionalDateBetweenTwoDates(
-      startDate,
-      endDate,
-      2 / 3,
-    );
-
-    const opportunityDates: PortionServedDates = [];
-
-    if (this.metadata.stateCode === "US_ME") {
-      opportunityDates.push({
-        heading: "Half Time",
-        date: halfTimeDate,
-      });
-
-      if (this.metadata.portionServedNeeded === "2/3")
-        opportunityDates.push({
-          heading: "Two Thirds Time",
-          date: twoThirdsTimeDate,
-        });
-    }
-
-    return uniqBy(opportunityDates, "heading");
   }
 
   get personType(): PersonType {

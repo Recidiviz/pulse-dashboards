@@ -20,7 +20,6 @@ import { usAzResidentMetadataSchema } from "./US_AZ/metadata/schema";
 import { usCoResidentJiiDataSchema } from "./US_CO/metadata/schema";
 import { usIdResidentMetadataSchema } from "./US_ID/metadata/schema";
 import { usMaResidentJiiDataSchema } from "./US_MA/metadata/schema";
-import { usMeResidentMetadataSchema } from "./US_ME/metadata/schema";
 import { usMiResidentMetadataSchema } from "./US_MI/metadata/schema";
 import { usMoResidentMetadataSchema } from "./US_MO/metadata/schema";
 import { usNcResidentMetadataSchema } from "./US_NC/metadata/schema";
@@ -35,7 +34,6 @@ export const stateMetadataSchemas = [
   usAzResidentMetadataSchema,
   usCoResidentJiiDataSchema,
   usIdResidentMetadataSchema,
-  usMeResidentMetadataSchema,
   usMaResidentJiiDataSchema,
   usMiResidentMetadataSchema,
   usMoResidentMetadataSchema,

@@ -192,7 +192,6 @@ export interface Opportunity<
   tabTitle: (category?: OpportunityTabGroup) => OpportunityTab;
   compare: (other: Opportunity) => number;
   showEligibilityStatus: (component: Component) => boolean;
-  readonly portionServedRequirement?: string[];
   readonly denialConfirmationModalName?: DenialConfirmationModalName;
   isSubmitted: boolean;
   isPendingOverdue: boolean;

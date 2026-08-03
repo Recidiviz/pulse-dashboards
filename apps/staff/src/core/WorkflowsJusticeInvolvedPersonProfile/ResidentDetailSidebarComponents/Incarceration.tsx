@@ -21,7 +21,6 @@ import React from "react";
 import { useRootStore } from "../../../components/StoreProvider";
 import { formatWorkflowsDate } from "../../../utils";
 import WorkflowsOfficerName from "../../WorkflowsOfficerName";
-import { PartialTime } from "../PartialTime";
 import {
   DetailsHeading,
   DetailsList,
@@ -98,7 +97,6 @@ export function Incarceration({
           <SecureDetailsContent>
             {formatWorkflowsDate(resident.admissionDate)}
           </SecureDetailsContent>
-          <PartialTime person={resident} />
           {resident.stateCode !== "US_AZ" && (
             <ReleaseDate resident={resident} opportunity={opportunity} />
           )}

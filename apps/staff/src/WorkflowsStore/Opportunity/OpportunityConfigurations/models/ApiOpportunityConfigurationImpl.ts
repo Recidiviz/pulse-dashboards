@@ -285,8 +285,6 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
       return this.configurationObject.omsCriteriaHeader;
 
     switch (this.stateCode) {
-      case "US_ME":
-        return "Validated by data from CORIS";
       case "US_MI":
         return "Validated by data from COMS";
       default:

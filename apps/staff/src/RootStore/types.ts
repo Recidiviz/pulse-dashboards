@@ -105,10 +105,6 @@ export type FeatureVariant =
   | "usIdTasksV2"
   | "crcLikeBeds"
 
-  //// Maine
-  | "usMeCaseNoteSnooze"
-  | "usMoOverdueRHPilot"
-
   //// Michigan
   | "usMiFacilitySearch"
   | "usMiCaseManagerSearch"
@@ -118,6 +114,7 @@ export type FeatureVariant =
   | "usMiRestrictiveHousingV2Ineligible"
 
   //// Missouri
+  | "usMoOverdueRHPilot"
   | "usMoMyCaseload"
   | "customTasks"
   | "caseOverview"
@@ -237,7 +234,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usIdCaseManagerSearch: {},
   usIdCRCFacilitySearch: {},
   usTnSuspensionOfDirectSupervision: {},
-  usMeCaseNoteSnooze: {},
   outcomesModule: {},
   mandatoryMinimum: {},
   usTnCompliantReporting2025Policy: {},
@@ -372,7 +368,6 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         // via the admin panel to actually see the new Typesense search bar.
         typesenseCaseloadSearch: undefined,
         usOrEarnedDischargeSentence: undefined,
-        usMeCaseNoteSnooze: isDemoMode() ? undefined : {},
         outcomesModule: {
           activeTenants: ["US_AZ", "US_CA", "US_ID", "US_MI", "US_TN"],
         },

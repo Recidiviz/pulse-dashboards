@@ -33,8 +33,6 @@ import { UsIdCustodyLevelDowngradeConfiguration } from "./UsId/UsIdCustodyLevelD
 import { UsIdEarnedDischargeConfiguration } from "./UsId/UsIdEarnedDischargeConfiguration";
 import { UsIdOverdueFaceToFaceContactConfiguration } from "./UsId/UsIdOverdueFaceToFaceContactConfiguration";
 import { UsIdTransferToCRCLikeBedConfiguration } from "./UsId/UsIdTransferToCRCLikeBedConfiguration";
-import { UsMeEarlyTerminationConfiguration } from "./UsMe/UsMeEarlyTerminationConfiguration";
-import { UsMeSCCPConfiguration } from "./UsMe/UsMeSCCPConfiguration";
 import { UsMiAddInPersonSecurityClassificationCommitteeReviewV2Configuration } from "./UsMi/SCCReview/UsMiAddInPersonSecurityClassificationCommitteeReviewV2Configuration";
 import { UsMiSecurityClassificationCommitteeReviewV2Configuration } from "./UsMi/SCCReview/UsMiSecurityClassificationCommitteeReviewV2Configuration";
 import { UsMiWardenInPersonSecurityClassificationCommitteeReviewV2Configuration } from "./UsMi/SCCReview/UsMiWardenInPersonSecurityClassificationCommitteeReviewV2Configuration";
@@ -87,10 +85,6 @@ const customOpportunityConfigurations: Partial<
   usIdCustodyLevelDowngrade: UsIdCustodyLevelDowngradeConfiguration,
   usIdOverdueFaceToFaceContact: UsIdOverdueFaceToFaceContactConfiguration,
   usIdTransferToCRCLikeBed: UsIdTransferToCRCLikeBedConfiguration,
-
-  // Maine
-  usMeSCCP: UsMeSCCPConfiguration,
-  usMeEarlyTermination: UsMeEarlyTerminationConfiguration,
 
   // Michigan
   usMiCustodyLevelDowngrade: UsMiCustodyLevelDowngradeConfiguration,

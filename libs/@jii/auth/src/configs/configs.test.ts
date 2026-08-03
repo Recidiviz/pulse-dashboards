@@ -63,7 +63,7 @@ describe("user metadata schema", () => {
   test("for JII users", () => {
     expect(
       authorizedUserProfileSchema.parse({
-        stateCode: "US_ME",
+        stateCode: "US_CO",
         externalId: "123456",
         pseudonymizedId: "asnvawepeawhfeuawoghuil",
         permissions: ["live_data"],
@@ -75,7 +75,7 @@ describe("user metadata schema", () => {
           "live_data",
         ],
         "pseudonymizedId": "asnvawepeawhfeuawoghuil",
-        "stateCode": "US_ME",
+        "stateCode": "US_CO",
       }
     `);
   });
@@ -83,7 +83,7 @@ describe("user metadata schema", () => {
   test("all IDs must be present", () => {
     expect(() =>
       authorizedUserProfileSchema.parse({
-        stateCode: "US_ME",
+        stateCode: "US_CO",
         externalId: "123456",
       }),
     ).toThrowErrorMatchingInlineSnapshot(`
@@ -98,7 +98,7 @@ describe("user metadata schema", () => {
 
     expect(() =>
       authorizedUserProfileSchema.parse({
-        stateCode: "US_ME",
+        stateCode: "US_CO",
         pseudonymizedId: "adfasdfasdfase",
       }),
     ).toThrowErrorMatchingInlineSnapshot(`
@@ -116,13 +116,13 @@ describe("user metadata schema", () => {
     expect(
       authorizedUserProfileSchema.parse({
         stateCode: "RECIDIVIZ",
-        allowedStates: ["US_ME"],
+        allowedStates: ["US_CO"],
         permissions: ["enhanced", "live_data"],
       }),
     ).toMatchInlineSnapshot(`
       {
         "allowedStates": [
-          "US_ME",
+          "US_CO",
         ],
         "permissions": [
           "enhanced",
@@ -137,7 +137,7 @@ describe("user metadata schema", () => {
     expect(
       authorizedUserProfileSchema.parse({
         stateCode: "RECIDIVIZ",
-        allowedStates: ["US_ME"],
+        allowedStates: ["US_CO"],
         permissions: ["enhanced", "some_new_thing"],
       }).permissions,
     ).toEqual(["enhanced"]);

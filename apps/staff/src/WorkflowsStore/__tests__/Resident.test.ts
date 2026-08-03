@@ -107,20 +107,6 @@ test("release date falls back to sedDate for US_AZ when releaseDate is undefined
   expect(testResident.releaseDate).toEqual(new Date(2028, 2, 15));
 });
 
-test("SCCP eligibility date", () => {
-  record = {
-    ...record,
-    metadata: {
-      stateCode: "US_ME",
-      sccpEligibilityDate: new Date("2026-01-01"),
-      portionServedNeeded: "1/2",
-    },
-  };
-
-  createTestUnit();
-  expect(testResident.sccpEligibilityDate).toEqual(new Date(2026, 0, 1));
-});
-
 test("life sentence", () => {
   createTestUnit();
   expect(testResident.onLifeSentence).toBeFalse();

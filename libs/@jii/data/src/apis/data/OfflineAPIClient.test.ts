@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { residentsConfigByState } from "~@jii/configs";
-import { outputFixture, usAzResidents, usMeSccpFixtures } from "~datatypes";
 
 import { RootStore } from "../../datastores/RootStore";
 import { OfflineAPIClient } from "./OfflineAPIClient";
@@ -45,25 +44,14 @@ test("local config object", async () => {
   expect(fetched).toEqual(expectedConfig);
 });
 
-// TODO: revive this once we have AZ eligibility data
-test.skip("eligibility record", async () => {
-  const expectedRecord = outputFixture(
-    usMeSccpFixtures.RES004fullyEligibleHalfPortion,
-  );
-
-  const fetched = await api.residentEligibility(
-    stateCodeMock,
-    usAzResidents[3].personExternalId,
-    "usMeSCCP",
-  );
-
-  expect(fetched).toEqual(expectedRecord);
-});
-
 test("missing eligibility record", async () => {
   await expect(
-    api.residentEligibility(stateCodeMock, "does-not-exist", "usMeSCCP"),
+    api.residentEligibility(
+      stateCodeMock,
+      "does-not-exist",
+      "usNeGoodTimeRestoration",
+    ),
   ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `[Error: Unable to find usMeSCCP record for does-not-exist]`,
+    `[Error: Unable to find usNeGoodTimeRestoration record for does-not-exist]`,
   );
 });

@@ -64,7 +64,9 @@ test("unauthorized", () => {
     },
   );
 
-  render(<RequiresStateAuth stateUrlSlug="maine">protected</RequiresStateAuth>);
+  render(
+    <RequiresStateAuth stateUrlSlug="tennessee">protected</RequiresStateAuth>,
+  );
 
   expect(screen.queryByText("protected")).not.toBeInTheDocument();
   expect(screen.getByText("Authorization required")).toBeInTheDocument();

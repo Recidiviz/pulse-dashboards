@@ -186,7 +186,6 @@ describe("state baselines", () => {
       "US_AR",
       "US_AZ",
       "US_IA",
-      "US_ME",
       "US_MO",
       "US_ND",
       "US_NE",

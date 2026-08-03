@@ -29,7 +29,6 @@ import {
   UsCaSupervisionLevelDowngradeOpportunity,
   UsIdPastFTRDOpportunity,
   UsIdSupervisionLevelDowngradeOpportunity,
-  UsMeEarlyTerminationOpportunity,
   UsMiClassificationReviewOpportunity,
   UsMiCustodyLevelDowngradeOpportunity,
   UsMiEarlyDischargeOpportunity,
@@ -66,13 +65,6 @@ import { UsIdCRCResidentWorkerOpportunity } from "./UsId/UsIdCRCResidentWorkerOp
 import { UsIdCRCWorkReleaseOpportunity } from "./UsId/UsIdCRCWorkReleaseOpportunity";
 import { UsIdOverdueFaceToFaceContactOpportunity } from "./UsId/usIdOverdueFaceToFaceContact";
 import { UsIdTransferToCRCLikeBedOpportunity } from "./UsId/UsIdTransferToCRCLikeBedOpportunity";
-import {
-  UsMeFurloughReleaseOpportunity,
-  UsMeSCCPOpportunity,
-  UsMeWorkReleaseOpportunity,
-} from "./UsMe";
-import { UsMeAnnualReclassificationOpportunity } from "./UsMe/UsMeAnnualReclassificationOpportunity";
-import { UsMeMediumTrusteeOpportunity } from "./UsMe/UsMeMediumTrusteeOpportunity";
 import { usMiAddInPersonSecurityClassificationCommitteeReviewV2Opportunity } from "./UsMi/UsMiAddInPersonSecurityClassificationCommitteeReviewV2Opportunity";
 import { usMiReclassificationRequestOpportunity } from "./UsMi/UsMiReclassificationRequestOpportunity";
 import { usMiSecurityClassificationCommitteeReviewV2Opportunity } from "./UsMi/UsMiSecurityClassificationCommitteeReviewV2Opportunity";
@@ -159,14 +151,6 @@ export const opportunityConstructors = {
   usMiWardenInPersonSecurityClassificationCommitteeReviewV2:
     usMiWardenInPersonSecurityClassificationCommitteeReviewV2Opportunity,
   usMiCustodyLevelDowngrade: UsMiCustodyLevelDowngradeOpportunity,
-
-  // US_ME
-  usMeEarlyTermination: UsMeEarlyTerminationOpportunity,
-  usMeFurloughRelease: UsMeFurloughReleaseOpportunity,
-  usMeMediumTrustee: UsMeMediumTrusteeOpportunity,
-  usMeReclassificationReview: UsMeAnnualReclassificationOpportunity,
-  usMeSCCP: UsMeSCCPOpportunity,
-  usMeWorkRelease: UsMeWorkReleaseOpportunity,
 
   // US_MO
   usMoOverdueRestrictiveHousingInitialHearing:

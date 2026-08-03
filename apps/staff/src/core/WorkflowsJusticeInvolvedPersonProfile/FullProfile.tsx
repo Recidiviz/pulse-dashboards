@@ -66,7 +66,6 @@ import {
   OpportunitiesAccordion,
 } from "./OpportunitiesAccordion";
 import { UsIaActionPlansAndNotes } from "./OpportunityDetailSidebarComponents";
-import { PartialTime } from "./PartialTime";
 import { PreferredContact } from "./PreferredContact";
 import { ResidentHousing } from "./ResidentDetailSidebarComponents";
 import { SentenceProgress } from "./SentenceProgress";
@@ -248,14 +247,7 @@ const ClientDetails = observer(function ClientDetails({
 }: ClientProfileProps): React.ReactElement<any> {
   return (
     <>
-      {client.stateCode === "US_UT" ? (
-        <UsUtDates client={client} />
-      ) : (
-        <>
-          <PartialTime person={client} />
-          {client.portionServedDates.length > 0 && <Divider />}
-        </>
-      )}
+      {client.stateCode === "US_UT" && <UsUtDates client={client} />}
       {client.profileMilestones.length > 0 && (
         <>
           <Milestones client={client} />
@@ -294,8 +286,6 @@ const ResidentDetails = observer(function ResidentDetails({
 }: ResidentProfileProps): React.ReactElement<any> {
   return (
     <>
-      <PartialTime person={resident} />
-      {resident.portionServedDates.length > 0 && <Divider />}
       <ResidentHousing resident={resident} />
       <StateSpecificResidentInformation resident={resident} />
       <Divider />

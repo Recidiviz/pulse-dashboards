@@ -51,11 +51,11 @@ export const mockResidents: WorkflowsResidentRecord[] = [
     recordId: "999",
     personType: "RESIDENT",
     admissionDate: new Date("2023-03-23"),
-    allEligibleOpportunities: ["usMeSCCP"],
+    allEligibleOpportunities: ["usNdTransferToMinFacility"],
     custodyLevel: "MINIMUM",
     facilityId: "MOUNTAIN VIEW CORRECTIONAL FACILITY",
     officerId: "1",
-    stateCode: "US_ME",
+    stateCode: "US_ND",
     gender: "MALE",
     personName: {
       givenNames: "Bernie",

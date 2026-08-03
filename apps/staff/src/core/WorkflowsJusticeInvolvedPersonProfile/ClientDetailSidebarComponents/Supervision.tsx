@@ -21,7 +21,6 @@ import { useRootStore } from "../../../components/StoreProvider";
 import { formatWorkflowsDate } from "../../../utils";
 import WorkflowsOfficerName from "../../WorkflowsOfficerName";
 import { InfoButton } from "../InfoButton";
-import { PartialTime } from "../PartialTime";
 import {
   DetailsHeading,
   DetailsList,
@@ -58,7 +57,6 @@ export function Supervision({
               </InfoTooltipWrapper>
             )}
           </SecureDetailsContent>
-          <PartialTime person={client} />
           {(client.stateCode !== "US_MO" || client.expirationDate) && (
             <>
               <DetailsSubheading>{supervisionEndDateCopy}</DetailsSubheading>

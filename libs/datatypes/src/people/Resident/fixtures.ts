@@ -20,7 +20,6 @@ import { rawUsAzResidents, usAzResidents } from "./US_AZ/fixtures";
 import { rawUsCoResidents, usCoResidents } from "./US_CO/fixtures";
 import { rawUsIdResidents, usIdResidents } from "./US_ID/fixtures";
 import { rawUsMaResidents, usMaResidents } from "./US_MA/fixtures";
-import { rawUsMeResidents, usMeResidents } from "./US_ME/fixtures";
 import { rawUsNcResidents, usNcResidents } from "./US_NC/fixtures";
 import { rawUsNdResidents, usNdResidents } from "./US_ND/fixtures";
 import { rawUsNeResidents, usNeResidents } from "./US_NE/fixtures";
@@ -36,10 +35,8 @@ export {
   rawUsArResidents,
   rawUsCoResidents,
   rawUsMaResidents,
-  rawUsMeResidents,
   usCoResidents,
   usMaResidents,
-  usMeResidents,
 };
 
 export const allResidents: WorkflowsResidentRecord[] = [
@@ -48,7 +45,6 @@ export const allResidents: WorkflowsResidentRecord[] = [
   ...usCoResidents,
   ...usIdResidents,
   ...usMaResidents,
-  ...usMeResidents,
   ...usNcResidents,
   ...usNdResidents,
   ...usNeResidents,
@@ -62,7 +58,6 @@ export const rawAllResidents: RawWorkflowsResidentRecord[] = [
   ...rawUsCoResidents,
   ...rawUsIdResidents,
   ...rawUsMaResidents,
-  ...rawUsMeResidents,
   ...rawUsNcResidents,
   ...rawUsNdResidents,
   ...rawUsNeResidents,

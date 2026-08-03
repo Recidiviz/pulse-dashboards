@@ -65,7 +65,7 @@ test.each([
 test("no if url conditions are not met", () => {
   vi.stubGlobal("location", {
     hostname: "opportunities.app",
-    pathname: "/maine",
+    pathname: "/foo",
   });
 
   expect(isEdovoEnv()).toBeFalse();

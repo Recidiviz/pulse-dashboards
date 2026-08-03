@@ -40,7 +40,6 @@ import {
   ClientAddressUpdate,
   DeclineReason,
   MilestonesMessage,
-  PortionServedDates,
   TextMessageStatus,
   TextMessageStatuses,
 } from "../FirestoreStore/types";
@@ -56,11 +55,7 @@ import { CustomTasks } from "./Task/CustomTasks";
 import { SupervisionTasks } from "./Task/SupervisionTasks";
 import { SupervisionTaskInterface } from "./Task/types";
 import { JusticeInvolvedPerson, PersonType } from "./types";
-import {
-  clearPhoneNumberFormatting,
-  formatSupervisionType,
-  fractionalDateBetweenTwoDates,
-} from "./utils";
+import { clearPhoneNumberFormatting, formatSupervisionType } from "./utils";
 
 export const UNKNOWN = "Unknown" as const;
 
@@ -365,31 +360,6 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   get district() {
     return this.record.district ?? super.district;
-  }
-
-  get portionServedDates(): PortionServedDates {
-    const startDate = this.record.supervisionStartDate;
-    const endDate = this.record.expirationDate;
-
-    const opportunityDates: PortionServedDates = [];
-
-    const opportunities = Object.values(this.opportunities).flat();
-
-    opportunities.forEach((opp) => {
-      if ("portionServedRequirement" in opp) {
-        if (
-          opp.portionServedRequirement &&
-          opp.portionServedRequirement.includes("1/2")
-        ) {
-          opportunityDates.push({
-            heading: "Half Time",
-            date: fractionalDateBetweenTwoDates(startDate, endDate, 0.5),
-          });
-        }
-      }
-    });
-
-    return opportunityDates;
   }
 
   get formattedProbationSpecialConditions(): ParsedSpecialConditionOrString[] {

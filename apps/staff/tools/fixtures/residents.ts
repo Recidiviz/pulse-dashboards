@@ -28,7 +28,6 @@ import {
   RawWorkflowsResidentRecord,
 } from "~datatypes";
 
-import { usMeResidents } from "./residents/usMeResidents";
 import { usMiResidents } from "./residents/usMiResidents";
 import { usMoResidents } from "./residents/usMoResidents";
 import { usUtResidents } from "./residents/usUtResidents";
@@ -43,7 +42,6 @@ const data: Array<ResidentFixture | RawWorkflowsResidentRecord> = [
   ...rawUsCoResidents,
   ...rawUsIdResidents,
   ...rawUsMaResidents,
-  ...usMeResidents,
   ...usMiResidents,
   ...usMoResidents,
   ...rawUsNdResidents,

@@ -22,7 +22,6 @@ export * from "./types";
 export * from "./UsAr";
 export * from "./UsCa";
 export * from "./UsId";
-export * from "./UsMe";
 export * from "./UsMi";
 export * from "./UsMo";
 export * from "./UsNd";

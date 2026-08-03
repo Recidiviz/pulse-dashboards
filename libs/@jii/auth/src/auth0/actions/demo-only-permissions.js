@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-const EDOVO_STATES = ["US_ID", "US_ME"];
+const EDOVO_STATES = ["US_ID"];
 const ORIJIN_STATES = ["US_MA", "US_UT"];
 
 /**

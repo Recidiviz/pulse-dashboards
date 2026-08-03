@@ -18,15 +18,15 @@
 import { configure } from "mobx";
 
 import { TranslationStore, UserStore } from "~@jii/data";
-import { usMeResidents } from "~datatypes";
+import { usNdResidents } from "~datatypes";
 
 import { ResidentNavBarPresenter } from "./ResidentNavBarPresenter";
 
 let presenter: ResidentNavBarPresenter;
 let userStore: UserStore;
 
-const testResident = usMeResidents[0];
-const stateSlug = "maine";
+const testResident = usNdResidents[0];
+const stateSlug = "north-dakota";
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
@@ -52,7 +52,7 @@ describe("with resident route", () => {
 
   test("link to home", () => {
     expect(presenter.homeLink).toEqual({
-      to: `/maine/${testResident.pseudonymizedId}`,
+      to: `/north-dakota/${testResident.pseudonymizedId}`,
       end: true,
     });
   });
@@ -68,7 +68,7 @@ describe("with resident route", () => {
 
     expect(presenter.menuLinks.at(-1)).toEqual({
       children: "Search",
-      to: "/maine/search",
+      to: "/north-dakota/search",
       end: true,
     });
   });
@@ -90,7 +90,7 @@ describe("with non-resident route", () => {
 
     expect(presenter.menuLinks.at(-1)).toEqual({
       children: "Search",
-      to: "/maine/search",
+      to: "/north-dakota/search",
       end: true,
     });
   });

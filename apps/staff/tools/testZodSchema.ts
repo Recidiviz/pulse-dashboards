@@ -44,12 +44,6 @@ import {
   usIdOverdueFaceToFaceContactSchema,
   usIdPastFTRDSchema,
   usIdTransferToCRCLikeBedSchema,
-  usMeAnnualReclassificationSchema,
-  usMeEarlyTerminationSchema,
-  usMeFurloughReleaseSchema,
-  usMeMediumTrusteeSchema,
-  usMeSCCPSchema,
-  usMeWorkReleaseSchema,
   usMiAddInPersonSecurityClassificationCommitteeReviewV2Schema,
   usMiClassificationReviewSchemaForSupervisionLevelFormatter,
   usMiCustodyLevelDowngradeSchema,
@@ -138,14 +132,6 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
   usIdSupervisionLevelDowngrade:
     supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(),
   usIdOverdueFaceToFaceContact: usIdOverdueFaceToFaceContactSchema,
-
-  // US_ME
-  usMeEarlyTermination: usMeEarlyTerminationSchema,
-  usMeFurloughRelease: usMeFurloughReleaseSchema,
-  usMeMediumTrustee: usMeMediumTrusteeSchema,
-  usMeReclassificationReview: usMeAnnualReclassificationSchema,
-  usMeSCCP: usMeSCCPSchema,
-  usMeWorkRelease: usMeWorkReleaseSchema,
 
   // US_MI
   usMiAddInPersonSecurityClassificationCommitteeReviewV2:

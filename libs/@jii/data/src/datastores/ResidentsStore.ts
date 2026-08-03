@@ -188,7 +188,6 @@ export class ResidentsStore {
     const opportunityMap: OpportunityRecordMapping =
       this.residentOpportunityRecordsByExternalId.get(residentExternalId) ?? {};
 
-    //@ts-expect-error TypeScript can't verify that the opportunityId and eligibilityRecord types align here
     opportunityMap[opportunityId] = eligibilityRecord;
 
     if (!this.residentOpportunityRecordsByExternalId.has(residentExternalId)) {

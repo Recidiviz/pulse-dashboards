@@ -358,7 +358,7 @@ describe("WorkflowsHomepage", () => {
         activeSystem: "ALL",
         rootStore: {
           ...baseRootStoreMock,
-          currentTenantId: "US_ME",
+          currentTenantId: "US_ND",
         },
       },
     });

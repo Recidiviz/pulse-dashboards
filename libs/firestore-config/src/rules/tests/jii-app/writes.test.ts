@@ -30,8 +30,8 @@ import {
   testWriteToPersonalUpdateCollection,
 } from "../utils";
 import {
-  getEnhancedMEUser,
-  getMEUser,
+  getEnhancedNDUser,
+  getNDUser,
   getRecidivizUser,
   getStatelessUser,
   getXXUser,
@@ -57,8 +57,8 @@ describe("app = jii", () => {
   test.each([
     ["stateless", getStatelessUser, "user@stateless.com"],
     ["Recidiviz", getRecidivizUser, "user@recidiviz.org"],
-    ["ME", getMEUser, "user@us_me.gov"],
-    ["ME enhanced", getEnhancedMEUser, "enhanceduser@us_me.gov"],
+    ["ND", getNDUser, "user@us_nd.gov"],
+    ["ND enhanced", getEnhancedNDUser, "enhanceduser@us_nd.gov"],
     ["XX", getXXUser, "user@us_xx.gov"],
   ])(
     "%s user cannot write anything",
@@ -85,7 +85,7 @@ describe("app = jii", () => {
         [...SHARED_UPDATE_COLLECTION_NAMES],
         db,
         assertFails,
-        "US_ME",
+        "US_ND",
       );
 
       await testWriteToCollectionsForStateWithStateCodePrefix(

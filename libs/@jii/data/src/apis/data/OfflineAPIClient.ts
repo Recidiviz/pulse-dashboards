@@ -29,12 +29,7 @@ import {
   StateCode,
 } from "~@jii/configs";
 import type { JiiResidentAppRouter } from "~@jii/trpc-types";
-import {
-  outputFixture,
-  usMeSccpFixtures,
-  usMeWorkReleaseFixtures,
-  usNeGoodTimeRestorationFixtures,
-} from "~datatypes";
+import { outputFixture, usNeGoodTimeRestorationFixtures } from "~datatypes";
 import { FirestoreAPI, FirestoreOfflineAPIClient } from "~firestore-api";
 
 import { OpportunityRecord } from "../../configs/residentsOpportunitySchemas";
@@ -117,26 +112,6 @@ export class OfflineAPIClient implements DataAPI {
     let fixture: OpportunityRecord<O> | undefined;
 
     switch (opportunityId) {
-      case "usMeSCCP": {
-        const parsedFixture = Object.values(usMeSccpFixtures).find((f) =>
-          isMatch(outputFixture(f), {
-            stateCode: stateCode,
-            externalId: residentExternalId,
-          }),
-        );
-
-        fixture = parsedFixture ? outputFixture(parsedFixture) : undefined;
-        break;
-      }
-      case "usMeWorkRelease": {
-        fixture = Object.values(usMeWorkReleaseFixtures).find((f) =>
-          isMatch(f, {
-            stateCode: stateCode,
-            externalId: residentExternalId,
-          }),
-        );
-        break;
-      }
       case "usNeGoodTimeRestoration": {
         fixture = Object.values(usNeGoodTimeRestorationFixtures)
           .map(outputFixture)

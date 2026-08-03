@@ -21,7 +21,6 @@ import { rawUsAzResidentCommon, usAzResidentCommon } from "./US_AZ/fixtures";
 import { rawUsCoResidentCommon, usCoResidentCommon } from "./US_CO/fixtures";
 import { rawUsIdResidentCommon, usIdResidentCommon } from "./US_ID/fixtures";
 import { rawUsMaResidentCommon, usMaResidentCommon } from "./US_MA/fixtures";
-import { rawUsMeResidentCommon, usMeResidentCommon } from "./US_ME/fixtures";
 import { rawUsNcResidentCommon, usNcResidentCommon } from "./US_NC/fixtures";
 import { rawUsNdResidentCommon, usNdResidentCommon } from "./US_ND/fixtures";
 import { rawUsNeResidentCommon, usNeResidentCommon } from "./US_NE/fixtures";
@@ -33,7 +32,6 @@ export const allResidentCommon: ResidentCommon[] = [
   ...usCoResidentCommon,
   ...usIdResidentCommon,
   ...usMaResidentCommon,
-  ...usMeResidentCommon,
   ...usNcResidentCommon,
   ...usNdResidentCommon,
   ...usNeResidentCommon,
@@ -46,7 +44,6 @@ export const rawAllResidentCommon: RawResidentCommon[] = [
   ...rawUsCoResidentCommon,
   ...rawUsIdResidentCommon,
   ...rawUsMaResidentCommon,
-  ...rawUsMeResidentCommon,
   ...rawUsNcResidentCommon,
   ...rawUsNdResidentCommon,
   ...rawUsNeResidentCommon,

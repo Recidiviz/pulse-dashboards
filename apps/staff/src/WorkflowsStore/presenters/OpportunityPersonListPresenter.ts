@@ -207,11 +207,7 @@ export class OpportunityPersonListPresenter
       "ELIGIBILITY_DATE",
       () =>
         !almostEligibilityDateEnabled() &&
-        opportunities.some((opp) => !!opp.eligibilityDate) &&
-        !(
-          ["usMeEarlyTermination", "usMeSCCP"].includes(this.opportunityType) &&
-          opportunities.every((opp) => opp.almostEligible)
-        ),
+        opportunities.some((opp) => !!opp.eligibilityDate),
     );
     overrideColumn(
       "SNOOZE_ENDS_IN",

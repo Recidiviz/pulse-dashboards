@@ -26,9 +26,6 @@ import {
   incarcerationStaffFixtures,
   ParsedRecord,
   supervisionStaffFixtures,
-  usMeAnnualReclassificationFixtures,
-  usMeMediumTrusteeFixtures,
-  usMeSccpFixtures,
   usMiAddInPersonSecurityClassificationCommitteeReviewV2Fixtures,
   usMiCustodyLevelDowngradeFixtures,
   usMiSecurityClassificationCommitteeReviewV2Fixtures,
@@ -69,9 +66,6 @@ import { usIdOverdueFaceToFaceContactReferralsFixture } from "./fixtures/usIdOve
 import { usIdPastFtrdFixture } from "./fixtures/UsIdPastFtrdReferrals";
 import { usIdSupervisionLevelDowngradeReferrals } from "./fixtures/usIdSupervisionLevelDowngradeReferrals";
 import { usIdSupervisionTasksV2Data } from "./fixtures/usIdSupervisionTasksV2";
-import { usMeEarlyTerminationReferralsFixture } from "./fixtures/usMeEarlyTerminationReferrals";
-import { usMeFurloughReleaseFixture } from "./fixtures/UsMeFurloughReleaseReferrals";
-import { usMeWorkReleaseReferrals } from "./fixtures/usMeWorkReleaseReferrals";
 import { UsMiClassificationReviewReferralsFixture } from "./fixtures/usMiClassificationReviewReferrals";
 import { usMiEarlyDischargeReferralsFixture } from "./fixtures/usMiEarlyDischargeReferrals";
 import { usMiMinimumTelephoneReportingReferralsFixture } from "./fixtures/usMiMinimumTelephoneReportingReferrals";
@@ -165,9 +159,6 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
 > = {
   ...mapValues<Record<string, FixtureMapping>, FirestoreFixture<ParsedRecord>>(
     {
-      usMeSCCPReferrals: usMeSccpFixtures,
-      usMeMediumTrusteeReferrals: usMeMediumTrusteeFixtures,
-      usMeReclassificationReviewReferrals: usMeAnnualReclassificationFixtures,
       usMiCustodyLevelDowngradeReferrals: usMiCustodyLevelDowngradeFixtures,
       usMiSecurityClassificationCommitteeReviewV2Referrals:
         usMiSecurityClassificationCommitteeReviewV2Fixtures,
@@ -199,15 +190,12 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
   usIdCustodyLevelDowngradeReferrals,
   usIdOverdueFaceToFaceContactReferrals:
     usIdOverdueFaceToFaceContactReferralsFixture,
-  usMeWorkReleaseReferrals,
   usMiEarlyDischargeReferrals: usMiEarlyDischargeReferralsFixture,
   usMiClassificationReviewReferrals: UsMiClassificationReviewReferralsFixture,
   usMiMinimumTelephoneReportingReferrals:
     usMiMinimumTelephoneReportingReferralsFixture,
   usMiSupervisionLevelDowngradeReferrals,
   usMiPastFTRDReferrals: usMiPastFTRDReferralsFixture,
-  usMeEarlyTerminationReferrals: usMeEarlyTerminationReferralsFixture,
-  usMeFurloughReleaseReferrals: usMeFurloughReleaseFixture,
   usOrEarnedDischargeSentenceReferrals,
   usPaAdminSupervisionReferrals,
   usPaSpecialCircumstancesSupervisionReferrals,

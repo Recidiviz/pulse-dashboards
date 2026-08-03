@@ -175,51 +175,6 @@
       // start custom code
       languageDictionary.passwordInputPlaceholder = "Password";
       languageDictionary.usernameInputPlaceholder = "Username";
-
-      /* Lock widget internals do not let us ignore injected values during string formatting;
-       * in this case we do not want to display the domain for an enterprise Active Directory connection
-       * because it is only used internally by AD and is not meaningful to users. To do this
-       * we will format it in a standard and regex-detectible way, then detect it and delete it when it renders.
-       * */
-
-      // this should be used in the languageDictionary below as needed when customizing per connection
-      const facilityCodeFormatString = "[facility code: %s]";
-      // this should match the string defined above
-      const facilityCodeRegex = /\[facility code: .+?\]/;
-      function detectAndRemoveFacilityCodeText() {
-        const widgetObserver = new MutationObserver((records, observer) => {
-          records.forEach((record) => {
-            const target = record.target.querySelector(".auth0-lock-form p");
-            if (target) {
-              target.innerHTML = target.innerHTML.replace(
-                facilityCodeRegex,
-                "",
-              );
-
-              observer.disconnect();
-            }
-          });
-        });
-
-        widgetObserver.observe(
-          document.body.querySelector("#widget-container"),
-          { childList: true, subtree: true },
-        );
-      }
-
-      switch (connection) {
-        // these values should match the values in the Opportunities landing page configs
-        case "ME-Mountain-View-AD-Staging-Connection":
-        case "ME-Mountain-View-AD-Connection":
-          // unfortunately there is no way to make Lock ignore the %s parameter
-          // that is passed to this string when rendering the widget.
-          // The function called below should remove it before it is actually visible
-          languageDictionary.enterpriseActiveLoginInstructions = `Enter the username and password you use to log in to Maine DOC computers. ${facilityCodeFormatString}`;
-          languageDictionary.usernameInputPlaceholder =
-            "Username (e.g., john.smith)";
-          detectAndRemoveFacilityCodeText();
-          break;
-      }
       // end custom code
 
       if (config.dict && config.dict.signin && config.dict.signin.title) {

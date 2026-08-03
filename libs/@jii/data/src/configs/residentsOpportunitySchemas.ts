@@ -18,15 +18,9 @@
 import { z, ZodTypeAny } from "zod";
 
 import { IncarcerationOpportunityId } from "~@jii/configs";
-import {
-  usMeSCCPSchema,
-  usMeWorkReleaseSchema,
-  usNeGoodTimeRestorationSchema,
-} from "~datatypes";
+import { usNeGoodTimeRestorationSchema } from "~datatypes";
 
 export const residentOpportunitySchemas = {
-  usMeSCCP: usMeSCCPSchema,
-  usMeWorkRelease: usMeWorkReleaseSchema,
   usNeGoodTimeRestoration: usNeGoodTimeRestorationSchema,
 } satisfies Record<IncarcerationOpportunityId, ZodTypeAny>;
 

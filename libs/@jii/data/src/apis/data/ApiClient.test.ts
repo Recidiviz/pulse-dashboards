@@ -17,10 +17,9 @@
 
 import { waitFor } from "@testing-library/react";
 import { FirebaseApp } from "firebase/app";
-import { z } from "zod";
 
 import { residentsConfigByState } from "~@jii/configs";
-import { usAzResidents, usMeSccpFixtures } from "~datatypes";
+import { usAzResidents } from "~datatypes";
 import { FirebaseAuthClient } from "~firebase-auth";
 import { FilterParams, FirestoreAPIClient } from "~firestore-api";
 
@@ -74,47 +73,6 @@ test("authenticate", async () => {
 describe("after authentication", () => {
   beforeEach(async () => {
     await waitFor(() => expect(client.isAuthenticated).toBeTrue());
-  });
-
-  // TODO: revive this once we have AZ eligibility data
-  describe.skip("eligibility", () => {
-    const record = usMeSccpFixtures.RES004fullyEligibleHalfPortion.output;
-
-    test("exists", async () => {
-      vi.mocked(
-        FirestoreAPIClient.prototype.recordForExternalId,
-      ).mockResolvedValue(record);
-
-      const fetched = await client.residentEligibility(
-        stateCodeMock,
-        "abc123",
-        "usMeSCCP",
-      );
-
-      expect(
-        vi.mocked(FirestoreAPIClient.prototype.recordForExternalId).mock
-          .calls[0],
-      ).toEqual([
-        stateCodeMock,
-        { raw: "US_AZ-SCCPReferrals" },
-        "abc123",
-        expect.any(z.ZodType),
-      ]);
-
-      expect(fetched).toEqual(record);
-    });
-
-    test("does not exist", async () => {
-      vi.mocked(
-        FirestoreAPIClient.prototype.recordForExternalId,
-      ).mockResolvedValue(undefined);
-
-      await expect(
-        client.residentEligibility(stateCodeMock, "abc123", "usMeSCCP"),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[Error: Missing usMeSCCP record for abc123]`,
-      );
-    });
   });
 
   describe("residents", () => {

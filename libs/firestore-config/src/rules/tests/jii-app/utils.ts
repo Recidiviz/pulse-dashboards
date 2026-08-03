@@ -21,10 +21,10 @@ export function getStatelessUser(testEnv: RulesTestEnvironment) {
   return testEnv.authenticatedContext("user@stateless.com", { app: "jii" });
 }
 
-export function getMEUser(testEnv: RulesTestEnvironment) {
-  return testEnv.authenticatedContext("user@us_me.gov", {
+export function getNDUser(testEnv: RulesTestEnvironment) {
+  return testEnv.authenticatedContext("user@us_nd.gov", {
     app: "jii",
-    stateCode: "US_ME",
+    stateCode: "US_ND",
     externalId: "user",
     pseudonymizedId: "pid-user",
     recidivizAllowedStates: [],
@@ -32,29 +32,29 @@ export function getMEUser(testEnv: RulesTestEnvironment) {
   });
 }
 
-export function getEnhancedMEUser(testEnv: RulesTestEnvironment) {
-  return testEnv.authenticatedContext("enhanceduser@us_me.gov", {
+export function getEnhancedNDUser(testEnv: RulesTestEnvironment) {
+  return testEnv.authenticatedContext("enhanceduser@us_nd.gov", {
     app: "jii",
-    stateCode: "US_ME",
+    stateCode: "US_ND",
     recidivizAllowedStates: [],
     permissions: ["enhanced", "live_data"],
   });
 }
 
-export function getDemoMEUser(testEnv: RulesTestEnvironment) {
-  return testEnv.authenticatedContext("demouser@us_me.gov", {
+export function getDemoNDUser(testEnv: RulesTestEnvironment) {
+  return testEnv.authenticatedContext("demouser@us_nd.gov", {
     app: "jii",
-    stateCode: "US_ME",
+    stateCode: "US_ND",
     externalId: "demouser",
     recidivizAllowedStates: [],
     permissions: [],
   });
 }
 
-export function getEnhancedDemoMEUser(testEnv: RulesTestEnvironment) {
-  return testEnv.authenticatedContext("demouser@us_me.gov", {
+export function getEnhancedDemoNDUser(testEnv: RulesTestEnvironment) {
+  return testEnv.authenticatedContext("demouser@us_nd.gov", {
     app: "jii",
-    stateCode: "US_ME",
+    stateCode: "US_ND",
     recidivizAllowedStates: [],
     permissions: ["enhanced"],
   });
@@ -64,7 +64,7 @@ export function getRecidivizUser(testEnv: RulesTestEnvironment) {
   return testEnv.authenticatedContext("admin", {
     app: "jii",
     stateCode: "RECIDIVIZ",
-    recidivizAllowedStates: ["US_ME"],
+    recidivizAllowedStates: ["US_ND"],
     permissions: ["enhanced", "live_data"],
   });
 }
@@ -73,7 +73,7 @@ export function getDemoRecidivizUser(testEnv: RulesTestEnvironment) {
   return testEnv.authenticatedContext("demo", {
     app: "jii",
     stateCode: "RECIDIVIZ",
-    recidivizAllowedStates: ["US_ME"],
+    recidivizAllowedStates: ["US_ND"],
     permissions: ["enhanced"],
   });
 }
@@ -93,7 +93,7 @@ export function getMultistateUser(testEnv: RulesTestEnvironment) {
     app: "jii",
     stateCode: "PARTNER",
     recidivizAllowedStates: [],
-    allowedStates: ["US_ME", "US_XX"],
+    allowedStates: ["US_ND", "US_XX"],
     permissions: ["enhanced"],
   });
 }

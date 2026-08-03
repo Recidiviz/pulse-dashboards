@@ -74,7 +74,7 @@ vi.mock("firebase/firestore", async (importOriginal) => {
   };
 });
 
-type testStateCode = "US_ME" | "US_BB" | "US_MO" | "US_TN" | "US_XX" | "US_YY";
+type testStateCode = "US_ND" | "US_BB" | "US_MO" | "US_TN" | "US_XX" | "US_YY";
 const { stateConfigs } = vi.hoisted(() => {
   const stateConfigs: Record<testStateCode | "RECIDIVIZ", any> = {
     US_XX: {
@@ -133,10 +133,10 @@ const { stateConfigs } = vi.hoisted(() => {
       },
       availableStateCodes: ["US_BB"],
     },
-    US_ME: {
+    US_ND: {
       opportunityTypes: [],
       workflowsSupportedSystems: ["INCARCERATION", "SUPERVISION"],
-      availableStateCodes: ["US_ME"],
+      availableStateCodes: ["US_ND"],
       workflowsTasksConfig: {},
     },
     US_MO: {
@@ -157,7 +157,7 @@ const { stateConfigs } = vi.hoisted(() => {
     },
     RECIDIVIZ: {
       availableStateCodes: [
-        "US_ME",
+        "US_ND",
         "US_BB",
         "US_MO",
         "US_TN",
@@ -917,13 +917,13 @@ describe("isSupervisionTasksLinkEnabled", () => {
       navigation: {
         workflows: ["home", "tasks"],
       },
-    } as unknown as TenantConfig<"US_ME">);
-    setUser({}, "US_ME", {
+    } as unknown as TenantConfig<"US_ND">);
+    setUser({}, "US_ND", {
       tasks: true,
     });
     runInAction(() => {
       workflowsStore.updateActiveSystem("SUPERVISION");
-      rootStore.tenantStore.currentTenantId = "US_ME";
+      rootStore.tenantStore.currentTenantId = "US_ND";
     });
     await waitForHydration();
     expect(workflowsStore.isSupervisionTasksLinkEnabled).toBeTrue();
@@ -936,7 +936,7 @@ describe("isSupervisionTasksLinkEnabled", () => {
       "get",
     ).mockReturnValue({
       workflowsHomepage: "home",
-    } as unknown as TenantConfig<"US_ME">);
+    } as unknown as TenantConfig<"US_ND">);
     setUser({}, "US_MO", {
       tasks: true,
     });
@@ -955,13 +955,13 @@ describe("isSupervisionTasksLinkEnabled", () => {
       "get",
     ).mockReturnValue({
       workflowsHomepage: "home",
-    } as unknown as TenantConfig<"US_ME">);
-    setUser({}, "US_ME", {
+    } as unknown as TenantConfig<"US_ND">);
+    setUser({}, "US_ND", {
       tasks: false,
     });
     runInAction(() => {
       workflowsStore.updateActiveSystem("SUPERVISION");
-      rootStore.tenantStore.currentTenantId = "US_ME";
+      rootStore.tenantStore.currentTenantId = "US_ND";
     });
     await waitForHydration();
     expect(workflowsStore.isSupervisionTasksLinkEnabled).toBeFalse();
@@ -974,8 +974,8 @@ describe("isSupervisionTasksLinkEnabled", () => {
       "get",
     ).mockReturnValue({
       workflowsHomepage: "tasks",
-    } as unknown as TenantConfig<"US_ME">);
-    setUser({}, "US_ME", {
+    } as unknown as TenantConfig<"US_ND">);
+    setUser({}, "US_ND", {
       tasks: true,
     });
     runInAction(() => {
@@ -1079,7 +1079,7 @@ describe("Additional workflowsSupportedSystems testing", () => {
   });
 
   test("systems are gated by routes", () => {
-    setUser({}, "US_ME", {
+    setUser({}, "US_ND", {
       workflowsSupervision: true,
       workflowsFacilities: true,
     });
@@ -1087,19 +1087,19 @@ describe("Additional workflowsSupportedSystems testing", () => {
       expect.arrayContaining(["SUPERVISION", "INCARCERATION"]),
     );
 
-    setUser({}, "US_ME", {
+    setUser({}, "US_ND", {
       workflowsSupervision: true,
       workflowsFacilities: false,
     });
     expect(workflowsStore.workflowsSupportedSystems).toEqual(["SUPERVISION"]);
 
-    setUser({}, "US_ME", {
+    setUser({}, "US_ND", {
       workflowsSupervision: false,
       workflowsFacilities: true,
     });
     expect(workflowsStore.workflowsSupportedSystems).toEqual(["INCARCERATION"]);
 
-    setUser({}, "US_ME", {
+    setUser({}, "US_ND", {
       workflowsSupervision: false,
       workflowsFacilities: false,
     });

@@ -61,22 +61,6 @@ export * from "./opportunities/UsId/UsIdPastFTRD/schema";
 export * from "./opportunities/UsId/UsIdTransferToCRCLikeBed/fixtures";
 export * from "./opportunities/UsId/UsIdTransferToCRCLikeBed/schema";
 
-// UsMe Exports: Includes fixtures and schema related to US-ME opportunities
-// -----------------------------------------------------------------------------
-export { usMeDenialMetadataSchema } from "./opportunities/UsMe/common";
-export * from "./opportunities/UsMe/UsMeAnnualReclassification/fixtures";
-export * from "./opportunities/UsMe/UsMeAnnualReclassification/schema";
-export * from "./opportunities/UsMe/UsMeEarlyTermination/fixtures";
-export * from "./opportunities/UsMe/UsMeEarlyTermination/schema";
-export * from "./opportunities/UsMe/UsMeFurloughRelease/fixtures";
-export * from "./opportunities/UsMe/UsMeFurloughRelease/schema";
-export * from "./opportunities/UsMe/UsMeMediumTrustee/fixtures";
-export * from "./opportunities/UsMe/UsMeMediumTrustee/schema";
-export * from "./opportunities/UsMe/UsMeSCCP/fixtures";
-export * from "./opportunities/UsMe/UsMeSCCP/schema";
-export * from "./opportunities/UsMe/UsMeWorkRelease/fixtures";
-export * from "./opportunities/UsMe/UsMeWorkRelease/schema";
-
 // UsCa Exports: Includes fixtures and schema related to US-CA opportunities
 // -----------------------------------------------------------------------------
 export * from "./opportunities/UsCa/UsCaSupervisionLevelDowngrade/fixtures";
@@ -223,7 +207,6 @@ export * from "./people/Resident/US_ID/fixtures";
 export type * from "./people/Resident/US_ID/metadata/schema";
 export * from "./people/Resident/US_MA/metadata/fixtures";
 export * from "./people/Resident/US_MA/metadata/schema";
-export type * from "./people/Resident/US_ME/metadata/schema";
 export type * from "./people/Resident/US_MI/metadata/schema";
 export * from "./people/Resident/US_MO/metadata/schema";
 export * from "./people/Resident/US_NC/fixtures";

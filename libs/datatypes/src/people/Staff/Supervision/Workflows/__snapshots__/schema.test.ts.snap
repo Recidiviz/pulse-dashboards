@@ -71,20 +71,6 @@ exports[`supervision staff schema for 'US_ID' 'OFFICER6' 1`] = `
 }
 `;
 
-exports[`supervision staff schema for 'US_ME' 'OFFICER8' 1`] = `
-{
-  "email": "test-officer-8@example.com",
-  "givenNames": "Brittney",
-  "hasCaseload": true,
-  "pseudonymizedId": "p008",
-  "recordType": "supervisionStaff",
-  "staffExternalId": "OFFICER8",
-  "stateCode": "US_ME",
-  "supervisorExternalId": null,
-  "surname": "Chapman",
-}
-`;
-
 exports[`supervision staff schema for 'US_MI' 'OFFICER8' 1`] = `
 {
   "email": "test-officer-8@example.com",

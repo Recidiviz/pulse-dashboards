@@ -18,7 +18,6 @@
 import { isEqual } from "date-fns";
 import { z } from "zod";
 
-import { usMeXPortionServedEnum } from "../../opportunities/UsMe/UsMeSCCP/schema";
 import { dateStringSchema, nullishAsUndefined } from "../../utils/zod";
 import { personMetadataSchema } from "../utils/personMetadataSchema";
 import { workflowsJusticeInvolvedPersonMixinSchema } from "../WorkflowsJusticeInvolvedPerson/schema";
@@ -41,10 +40,7 @@ export const workflowsResidentRecordSchema = residentCommonSchema
       }
       return d;
     }),
-    portionServedNeeded: usMeXPortionServedEnum.nullish(),
-    sccpEligibilityDate: dateStringSchema.nullish(),
     usTnFacilityAdmissionDate: nullishAsUndefined(dateStringSchema),
-    usMePortionNeededEligibleDate: dateStringSchema.nullish(),
     gender: nullishAsUndefined(z.string()),
     metadata: personMetadataSchema([...stateMetadataSchemas]),
   })

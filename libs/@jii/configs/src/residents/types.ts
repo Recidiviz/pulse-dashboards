@@ -24,8 +24,6 @@ export type OpportunityConfig = {
 };
 
 export const incarcerationOpportunityIdEnum = z.enum([
-  "usMeSCCP",
-  "usMeWorkRelease",
   "usNeGoodTimeRestoration",
 ]);
 

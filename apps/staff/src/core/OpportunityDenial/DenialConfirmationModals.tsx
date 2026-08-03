@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { Opportunity } from "../../WorkflowsStore";
-import { DenialCaseNoteModal } from "./UsMe/DenialCaseNoteModal";
 import { DocstarsDenialModal } from "./UsNd/DocstarsDenialModal";
 import { TomisDenialModal } from "./UsTn/TomisDenialModal";
 
@@ -38,7 +37,6 @@ const TestingStub = ({ showModal }: DenialConfirmationModalProps) => (
 );
 
 export const DenialConfirmationModals = {
-  DenialCaseNoteModal,
   DocstarsDenialModal,
   TomisDenialModal,
   TestingStub,

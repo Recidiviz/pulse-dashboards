@@ -44,14 +44,6 @@ export const constructedOpportunityTypes = [
   "usIdOverdueFaceToFaceContact",
   "usIdTransferToCRCLikeBed",
 
-  // US_ME
-  "usMeSCCP",
-  "usMeReclassificationReview",
-  "usMeMediumTrustee",
-  "usMeWorkRelease",
-  "usMeEarlyTermination",
-  "usMeFurloughRelease",
-
   // US_MI
   "usMiClassificationReview",
   "usMiEarlyDischarge",

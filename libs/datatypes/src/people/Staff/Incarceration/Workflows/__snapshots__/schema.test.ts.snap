@@ -36,18 +36,6 @@ exports[`incarceration staff schema for 'US_AZ' 'OFFICER3' 1`] = `
 }
 `;
 
-exports[`incarceration staff schema for 'US_ME' 'OFFICER5' 1`] = `
-{
-  "email": "test-officer-5@example.com",
-  "givenNames": "Mikolaj",
-  "pseudonymizedId": "p005",
-  "recordType": "incarcerationStaff",
-  "staffExternalId": "OFFICER5",
-  "stateCode": "US_ME",
-  "surname": "Gomez",
-}
-`;
-
 exports[`incarceration staff schema for 'US_MI' 'MIOFFICER1' 1`] = `
 {
   "email": "test-officer-6@example.com",

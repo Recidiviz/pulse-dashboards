@@ -41,7 +41,7 @@ test("side effect", () => {
     {
       status: "authorized",
       userProfile: {
-        stateCode: "US_ME",
+        stateCode: "US_ND",
         externalId: "123456",
         pseudonymizedId: "test-pid",
       },

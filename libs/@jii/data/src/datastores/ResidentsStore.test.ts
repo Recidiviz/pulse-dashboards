@@ -20,12 +20,7 @@ import { flowResult } from "mobx";
 import tk from "timekeeper";
 
 import { residentsConfigByState } from "~@jii/configs";
-import {
-  outputFixture,
-  usAzResidents,
-  usMeResidents,
-  usMeSccpFixtures,
-} from "~datatypes";
+import { usAzResidents } from "~datatypes";
 import { FilterParams } from "~firestore-api";
 
 import { OfflineAPIClient } from "../apis/data/OfflineAPIClient";
@@ -114,92 +109,6 @@ describe("populate residents", () => {
 
     await flowResult(store.populateResidents(undefined, true));
     expect(OfflineAPIClient.prototype.residents).toHaveBeenCalledTimes(2);
-  });
-});
-
-// TODO: revive these when we have actual AZ eligibility data. The logic here still holds but
-// they'll fail in the meantime because we can't instantiate a store with US_ME
-describe.skip("populate resident eligibility", () => {
-  test("succeeds", async () => {
-    const expectedRes = usMeResidents[1];
-    const expectedEligibility = outputFixture(
-      usMeSccpFixtures.RES002eligibleToApplyBeforeXPortionServed,
-    );
-
-    expect(
-      store.residentOpportunityRecordsByExternalId.get(
-        expectedRes.personExternalId,
-      ),
-    ).toBeUndefined();
-
-    await flowResult(
-      store.populateOpportunityRecordByResidentId(
-        expectedRes.personExternalId,
-        "usMeSCCP",
-      ),
-    );
-
-    expect(
-      store.residentOpportunityRecordsByExternalId.get(
-        expectedRes.personExternalId,
-      ),
-    ).toEqual({ usMeSCCP: expectedEligibility });
-  });
-
-  test("succeeds for ineligible resident", async () => {
-    expect(
-      store.residentOpportunityRecordsByExternalId.get("RES999"),
-    ).toBeUndefined();
-
-    await flowResult(
-      store.populateOpportunityRecordByResidentId("RES999", "usMeSCCP"),
-    );
-
-    expect(store.residentOpportunityRecordsByExternalId.get("RES999")).toEqual(
-      expect.objectContaining({
-        usMeSCCP: outputFixture(usMeSccpFixtures.RES999Ineligible),
-      }),
-    );
-  });
-
-  test("fails", async () => {
-    await expect(async () =>
-      flowResult(
-        store.populateOpportunityRecordByResidentId(
-          "does-not-exist",
-          "usMeSCCP",
-        ),
-      ),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[Error: Unable to find usMeSCCP record for does-not-exist]`,
-    );
-  });
-
-  test("does not refetch if already populated", async () => {
-    const expectedRes = usMeResidents[1];
-
-    vi.spyOn(OfflineAPIClient.prototype, "residentEligibility");
-
-    await flowResult(
-      store.populateOpportunityRecordByResidentId(
-        expectedRes.personExternalId,
-        "usMeSCCP",
-      ),
-    );
-
-    expect(
-      OfflineAPIClient.prototype.residentEligibility,
-    ).toHaveBeenCalledTimes(1);
-
-    await flowResult(
-      store.populateOpportunityRecordByResidentId(
-        expectedRes.personExternalId,
-        "usMeSCCP",
-      ),
-    );
-    expect(
-      OfflineAPIClient.prototype.residentEligibility,
-    ).toHaveBeenCalledTimes(1);
   });
 });
 

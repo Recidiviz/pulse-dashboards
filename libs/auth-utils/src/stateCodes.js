@@ -22,7 +22,6 @@ export const stateCodes = {
   US_CO: "US_CO",
   US_IA: "US_IA",
   US_ID: "US_ID",
-  US_ME: "US_ME",
   US_MI: "US_MI",
   US_MO: "US_MO",
   US_NC: "US_NC",

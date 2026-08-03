@@ -20,10 +20,6 @@ import { UpdateLog } from "./metadata";
 export type PersonUpdateType = "preferredName" | "preferredContactMethod";
 export const contactMethods = ["Call", "Text", "Email", "None"];
 export type ContactMethodType = (typeof contactMethods)[number];
-export type PortionServedDates = {
-  heading: string;
-  date: Date | undefined;
-}[];
 
 /**
  * Person-level data generated within this application
