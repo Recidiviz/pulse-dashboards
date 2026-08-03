@@ -155,6 +155,10 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       Sentry.captureException(error, {
         tags: { meetingId },
         extra: { status },
+        fingerprint: [
+          "recording-init-error",
+          error instanceof Error ? error.message : String(error),
+        ],
       });
 
       await cleanupRecording();
