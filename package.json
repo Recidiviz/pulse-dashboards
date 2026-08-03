@@ -149,7 +149,7 @@
     "express-validator": "^6.8.1",
     "extensionless": "^1.9.9",
     "factory.ts": "^1.4.1",
-    "fast-jwt": "^6.2.4",
+    "fast-jwt": "^6.3.1",
     "fastify": "5.8.3",
     "fastify-auth0-verify": "^3.0.0",
     "fastify-type-provider-zod": "^4.0.0",
@@ -504,7 +504,7 @@
     "react-native-css-interop": "0.2.1",
     "tar-fs": "^2.1.4",
     "langsmith": "0.3.60",
-    "fast-jwt": ">=5.0.6"
+    "fast-jwt": ">=6.3.1"
   },
   "scripts": {
     "postinstall": "husky",
