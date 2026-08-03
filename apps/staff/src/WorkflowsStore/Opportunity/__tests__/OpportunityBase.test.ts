@@ -1575,6 +1575,7 @@ describe("setOfficerAction", () => {
       opportunity: opp,
       actionHistory: [expectedAction],
       currentReviewerId: undefined,
+      currentUserId: undefined,
       stateCode: "US_XX",
     });
   });
@@ -1599,6 +1600,7 @@ describe("setOfficerAction", () => {
       opportunity: opp,
       actionHistory: [expectedAction],
       currentReviewerId: undefined,
+      currentUserId: undefined,
       stateCode: "US_XX",
     });
   });
@@ -1625,6 +1627,7 @@ describe("setOfficerAction", () => {
       opportunity: opp,
       actionHistory: [expectedAction],
       currentReviewerId: undefined,
+      currentUserId: undefined,
       stateCode: "US_XX",
     });
   });
@@ -1661,6 +1664,7 @@ describe("setOfficerAction", () => {
       opportunity: opp,
       actionHistory: [existingAction, expectedAction],
       currentReviewerId: undefined,
+      currentUserId: undefined,
       stateCode: "US_XX",
     });
   });
@@ -1685,6 +1689,7 @@ describe("setOfficerAction", () => {
       opportunity: opp,
       actionHistory: [expectedAction],
       currentReviewerId: "reviewer-123",
+      currentUserId: "test-external-id",
       stateCode: "US_XX",
     });
   });
@@ -1928,6 +1933,7 @@ describe("setSupervisorResponse", () => {
       opportunity: opp,
       actionHistory: [testAction, expectedUpdatedAction],
       currentReviewerId: undefined,
+      currentUserId: undefined,
       stateCode: "US_XX",
     });
   });
@@ -1964,6 +1970,7 @@ describe("setSupervisorResponse", () => {
       opportunity: opp,
       actionHistory: [testAction, expectedUpdatedAction],
       currentReviewerId: undefined,
+      currentUserId: undefined,
       stateCode: "US_XX",
     });
   });
@@ -1998,6 +2005,7 @@ describe("setSupervisorResponse", () => {
       opportunity: opp,
       actionHistory: [testAction, expectedUpdatedAction],
       currentReviewerId: undefined,
+      currentUserId: undefined,
       stateCode: "US_XX",
     });
   });
@@ -2032,6 +2040,7 @@ describe("setSupervisorResponse", () => {
       opportunity: opp,
       actionHistory: [testAction, expectedUpdatedAction],
       currentReviewerId: undefined,
+      currentUserId: undefined,
       stateCode: "US_XX",
     });
   });
@@ -2070,6 +2079,7 @@ describe("setSupervisorResponse", () => {
       opportunity: opp,
       actionHistory: [testAction, expectedUpdatedAction],
       currentReviewerId: "reviewer-123",
+      currentUserId: "test-external-id",
       stateCode: "US_XX",
     });
   });

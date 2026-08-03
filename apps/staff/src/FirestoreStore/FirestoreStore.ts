@@ -18,6 +18,7 @@
 import { startOfToday } from "date-fns";
 import {
   and,
+  arrayUnion,
   collection,
   collectionGroup,
   connectFirestoreEmulator,
@@ -600,17 +601,22 @@ export default class FirestoreStore {
     opportunity,
     actionHistory,
     currentReviewerId,
+    currentUserId,
     stateCode,
   }: {
     opportunity: Opportunity;
     actionHistory: OfficerRequest[];
     currentReviewerId?: string;
+    currentUserId?: string;
     stateCode?: string;
   }): Promise<void> {
     const update = {
       actionHistory,
       currentReviewerId: currentReviewerId ?? deleteField(),
       stateCode: stateCode ?? opportunity.person.stateCode,
+      ...(currentUserId && {
+        allUniqueReviewerIds: arrayUnion(currentUserId),
+      }),
     };
     return this.updateOpportunity(opportunity, update);
   }

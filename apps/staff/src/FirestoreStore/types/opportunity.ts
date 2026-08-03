@@ -129,6 +129,11 @@ export type OpportunityUpdate = {
   // Equivalent to the most recent actionHistory reviewerId if it exists (when type is "APPROVAL")
   // Stored here for easier firestore querying
   currentReviewerId?: string;
+  // A list of ids of all staff members who have ever reviewed the opportunity
+  // The list of ids should be unique (since we update with arrayUnion)
+  // Equivalent to all reviewerIds in actionHistory if they exists (when type is "APPROVAL")
+  // Stored here for easier firestore querying
+  allUniqueReviewerIds?: string[];
 };
 
 export type OpportunityUpdateWithForm<FormType> = OpportunityUpdate & {

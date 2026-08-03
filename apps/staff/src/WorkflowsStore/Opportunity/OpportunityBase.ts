@@ -1207,6 +1207,7 @@ export class OpportunityBase<
       opportunity: this,
       actionHistory: updatedActionHistory,
       currentReviewerId,
+      currentUserId: currentReviewerId ? this.userId : undefined,
       stateCode: this.person.stateCode,
     });
 
@@ -1329,6 +1330,7 @@ export class OpportunityBase<
       opportunity: this,
       actionHistory: updatedActionHistory,
       currentReviewerId,
+      currentUserId: currentReviewerId ? this.userId : undefined,
       stateCode: this.person.stateCode,
     });
 

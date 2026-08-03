@@ -16,6 +16,7 @@
 // =============================================================================
 
 import {
+  arrayUnion,
   collectionGroup,
   deleteField,
   doc,
@@ -65,6 +66,7 @@ const mockSetDoc = setDoc as Mock;
 const mockDoc = doc as Mock;
 const mockDeleteField = deleteField as Mock;
 const mockServerTimestamp = serverTimestamp as Mock;
+const mockArrayUnion = arrayUnion as Mock;
 const mockCollectionGroup = collectionGroup as Mock;
 const mockDocumentId = documentId as Mock;
 const mockGetDocs = getDocs as Mock;
@@ -384,6 +386,9 @@ describe("FirestoreStore", () => {
       mockDoc.mockReturnValue("test-doc-ref");
       mockDeleteField.mockReturnValue("mock-delete-fn");
       mockServerTimestamp.mockReturnValue("mock-timestamp");
+      mockArrayUnion.mockImplementation(
+        (...elements) => `mock-array-union(${elements})`,
+      );
       store = new FirestoreStore({ rootStore: mockRootStore });
     });
 
@@ -765,7 +770,7 @@ describe("FirestoreStore", () => {
       ]);
     });
 
-    test("updateOpportunityActionHistory", async () => {
+    test("updateOpportunityActionHistory without a currentReviewerId", async () => {
       const update = [
         {
           type: "DENIAL" as any,
@@ -783,6 +788,9 @@ describe("FirestoreStore", () => {
         opportunity: opp,
         actionHistory: update,
       });
+      // arrayUnion() should not be called, and allUniqueReviewerIds should be
+      // omitted entirely, since arrayUnion(undefined) is rejected by Firestore.
+      expect(mockArrayUnion).not.toHaveBeenCalled();
       expect(mockSetDoc.mock.calls).toContainEqual([
         "test-doc-ref",
         {
@@ -803,6 +811,96 @@ describe("FirestoreStore", () => {
           ],
           currentReviewerId: "mock-delete-fn",
           stateCode: "US_ID",
+        },
+        {
+          merge: true,
+        },
+      ]);
+    });
+
+    test("updateOpportunityActionHistory with a currentReviewerId and currentUserId", async () => {
+      const update = [
+        {
+          type: "APPROVAL" as any,
+          reviewerId: "reviewer-1",
+          by: "test-officer-email",
+          date: mockServerTimestamp(),
+          isStale: false,
+        },
+      ];
+      await store.updateOpportunityActionHistory({
+        opportunity: opp,
+        actionHistory: update,
+        currentReviewerId: "reviewer-1",
+        currentUserId: "test-user-1",
+      });
+      expect(mockArrayUnion).toHaveBeenCalledExactlyOnceWith("test-user-1");
+      expect(mockSetDoc.mock.calls).toContainEqual([
+        "test-doc-ref",
+        {
+          actionHistory: [
+            {
+              by: "test-officer-email",
+              date: "mock-timestamp",
+              type: "APPROVAL",
+              reviewerId: "reviewer-1",
+              isStale: false,
+            },
+          ],
+          currentReviewerId: "reviewer-1",
+          stateCode: "US_ID",
+          allUniqueReviewerIds: "mock-array-union(test-user-1)",
+        },
+        {
+          merge: true,
+        },
+      ]);
+    });
+
+    test("updateOpportunityActionHistory does not duplicate a userId already present in allUniqueReviewerIds", async () => {
+      // Simulate Firestore's real arrayUnion semantics (dedupes against the array
+      // already stored on the document) instead of the default mock, which just
+      // echoes back its arguments.
+      const existingReviewerIds = ["test-user-1"];
+      mockArrayUnion.mockImplementation((...elements: string[]) => {
+        const union = new Set(existingReviewerIds);
+        elements.forEach((id) => union.add(id));
+        return Array.from(union);
+      });
+
+      const update = [
+        {
+          type: "APPROVAL" as any,
+          reviewerId: "reviewer-1",
+          by: "test-officer-email",
+          date: mockServerTimestamp(),
+          isStale: false,
+        },
+      ];
+      await store.updateOpportunityActionHistory({
+        opportunity: opp,
+        actionHistory: update,
+        currentReviewerId: "reviewer-1",
+        currentUserId: "test-user-1",
+      });
+
+      expect(mockArrayUnion).toHaveBeenCalledExactlyOnceWith("test-user-1");
+      expect(mockSetDoc.mock.calls).toContainEqual([
+        "test-doc-ref",
+        {
+          actionHistory: [
+            {
+              by: "test-officer-email",
+              date: "mock-timestamp",
+              type: "APPROVAL",
+              reviewerId: "reviewer-1",
+              isStale: false,
+            },
+          ],
+          currentReviewerId: "reviewer-1",
+          stateCode: "US_ID",
+          // test-user-1 was already present, so it appears only once, not twice.
+          allUniqueReviewerIds: ["test-user-1"],
         },
         {
           merge: true,
