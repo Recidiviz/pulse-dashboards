@@ -52,7 +52,8 @@ export const oppsBackend: ServiceDefinition = {
     await $`yarn atmos:apply apps/jii -s recidiviz-jii-${env}--jii -- -auto-approve \
           -var server_container_version=${currentRevision} \
           -var migrate_db_container_version=${currentRevision} \
-          -var import_job_container_version=${currentRevision}`.pipe(
+          -var import_job_container_version=${currentRevision} \
+          -var seed_job_container_version=${currentRevision}`.pipe(
       process.stdout,
     );
   },

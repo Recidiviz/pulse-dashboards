@@ -19,6 +19,7 @@ locals {
   # these correspond to the docker image tags specified in the project's container command
   server_image_name     = "jii-server"
   migrate_db_image_name = "jii-server"
+  import_image_name     = "jii-data-import"
 
   secrets = yamldecode(data.sops_file.secrets.raw)
 
@@ -60,6 +61,22 @@ locals {
         SENTRY_DSN       = "https://15a3451c0249dd034129780d4f801daf@o432474.ingest.us.sentry.io/4511576564629504"
         SENTRY_ENV       = var.import_job_sentry_env
         IMPORT_BUCKET_ID = module.gcs_bucket.names[var.etl_bucket_name]
+      }
+      ) : {
+      # The values are sensitive so we want to omit them from the plans
+      value = sensitive(value)
+      name  = key
+    }
+  ])
+
+  # This list needs to be marked as nonsensitive so it can be used in `for_each`
+  # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
+  seed_job_env_vars = nonsensitive([
+    for key, value in merge(
+      local.db_urls,
+      data.dotenv.prisma_env.entries,
+      {
+        SEED_DEMO = "true"
       }
       ) : {
       # The values are sensitive so we want to omit them from the plans
@@ -215,7 +232,7 @@ module "import_job" {
   source = "../../vendor/cloud-run-job-exec"
 
   name                          = var.import_job_name
-  image                         = "${var.artifact_registry_repo}/${var.import_job_name}:${var.import_job_container_version}"
+  image                         = "${var.artifact_registry_repo}/${local.import_image_name}:${var.import_job_container_version}"
   project_id                    = var.project_id
   location                      = var.location
   env_vars                      = local.import_job_env_vars
@@ -241,6 +258,36 @@ module "import_job" {
     memory = "2Gi"
     cpu    = 2
   }
+}
+
+# Job that will seed the demo DBs
+module "seed_job" {
+  source = "../../vendor/cloud-run-job-exec"
+
+  name = var.seed_job_name
+  # note this shares an image with the import job, they are built from the same app
+  image                         = "${var.artifact_registry_repo}/${local.import_image_name}:${var.seed_job_container_version}"
+  project_id                    = var.project_id
+  location                      = var.location
+  env_vars                      = local.seed_job_env_vars
+  cloud_run_deletion_protection = false
+  service_account_email         = google_service_account.default.email
+  exec                          = true
+  timeout                       = "3600s"
+  max_retries                   = 1
+  container_command             = ["node", "seedDevData/main.js"]
+
+  volumes = [{
+    name = "cloudsql"
+    cloud_sql_instance = {
+      instances = [module.database.connection_name]
+    }
+  }]
+
+  volume_mounts = [{
+    name       = "cloudsql"
+    mount_path = "/cloudsql"
+  }]
 }
 
 # Configure a Google Workflow that is executed when a pubsub notification to the GCS

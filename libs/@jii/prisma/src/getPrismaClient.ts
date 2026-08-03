@@ -56,7 +56,7 @@ export function getPrismaClient({ stateCode, demo }: PrismaClientOpts) {
       break;
     // otherwise assume we're in a deployment, where the state db url must be explicitly provided
     default:
-      dbUrl = process.env[`DATABASE_URL_${stateCode}`];
+      dbUrl = process.env[`DATABASE_URL_${stateDbName.toUpperCase()}`];
   }
 
   if (!dbUrl) {

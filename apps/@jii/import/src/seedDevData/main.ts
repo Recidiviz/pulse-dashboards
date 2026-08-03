@@ -28,9 +28,11 @@ async function* toAsyncGenerator<T>(items: T[]) {
   }
 }
 
+const demo = process.env["SEED_DEMO"] === "true";
+
 await Promise.all(
   residentFixtures.entries().map(async ([stateCode, fixtures]) => {
-    const prismaClient = getPrismaClient({ stateCode, demo: false });
+    const prismaClient = getPrismaClient({ stateCode, demo });
     console.log(`Seeding fixtures for ${stateCode}`);
     try {
       await residentHandler(prismaClient, toAsyncGenerator(fixtures));

@@ -80,7 +80,7 @@ variable "migrate_db_container_version" {
 
 variable "import_job_name" {
   type        = string
-  description = "The name of the job for running import from BQ to Postgres. Also used for the name of the Docker image and the Sentry project for this job."
+  description = "The name of the job for running import from BQ to Postgres. Also used as the Sentry project for this job."
   default     = "jii-data-import"
 }
 
@@ -141,4 +141,16 @@ variable "archive_bucket_name" {
 variable "import_job_sentry_env" {
   type        = string
   description = "The environment to be used when reporting issues to Sentry from the data import job"
+}
+
+variable "seed_job_name" {
+  type        = string
+  description = "The name of the job for seeding demo data in Postgres."
+  default     = "jii-data-seed"
+}
+
+variable "seed_job_container_version" {
+  type        = string
+  description = "The version tag of the image that will be used for the seed job"
+  default     = "latest"
 }
