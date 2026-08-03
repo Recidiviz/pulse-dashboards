@@ -243,6 +243,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.ADMISSION_REASON,
       FILTER_TYPES.RELIGION,
       FILTER_TYPES.MARITAL_STATUS,
+      FILTER_TYPES.TIME_AT_FACILITY,
     ],
   },
   prisonFacilityPopulation: {
@@ -261,6 +262,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.ADMISSION_REASON,
       FILTER_TYPES.RELIGION,
       FILTER_TYPES.MARITAL_STATUS,
+      FILTER_TYPES.TIME_AT_FACILITY,
     ],
   },
   prisonPopulationByAgeGroup: {
@@ -279,6 +281,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.ADMISSION_REASON,
       FILTER_TYPES.RELIGION,
       FILTER_TYPES.MARITAL_STATUS,
+      FILTER_TYPES.TIME_AT_FACILITY,
     ],
   },
   prisonPopulationByGender: {
@@ -297,6 +300,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.ADMISSION_REASON,
       FILTER_TYPES.RELIGION,
       FILTER_TYPES.MARITAL_STATUS,
+      FILTER_TYPES.TIME_AT_FACILITY,
     ],
   },
   prisonPopulationBySex: {
@@ -315,6 +319,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.ADMISSION_REASON,
       FILTER_TYPES.RELIGION,
       FILTER_TYPES.MARITAL_STATUS,
+      FILTER_TYPES.TIME_AT_FACILITY,
     ],
   },
   prisonPopulationByRace: {
@@ -333,6 +338,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.ADMISSION_REASON,
       FILTER_TYPES.RELIGION,
       FILTER_TYPES.MARITAL_STATUS,
+      FILTER_TYPES.TIME_AT_FACILITY,
     ],
   },
   prisonPopulationByEthnicity: {
@@ -351,6 +357,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.ADMISSION_REASON,
       FILTER_TYPES.RELIGION,
       FILTER_TYPES.MARITAL_STATUS,
+      FILTER_TYPES.TIME_AT_FACILITY,
     ],
   },
   prisonPopulationBySentenceLengthMin: {
@@ -369,6 +376,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.ADMISSION_REASON,
       FILTER_TYPES.RELIGION,
       FILTER_TYPES.MARITAL_STATUS,
+      FILTER_TYPES.TIME_AT_FACILITY,
     ],
   },
   prisonPopulationBySentenceLengthMax: {
@@ -387,6 +395,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.ADMISSION_REASON,
       FILTER_TYPES.RELIGION,
       FILTER_TYPES.MARITAL_STATUS,
+      FILTER_TYPES.TIME_AT_FACILITY,
     ],
   },
   prisonPopulationByChargeCountyCode: {
@@ -405,6 +414,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.ADMISSION_REASON,
       FILTER_TYPES.RELIGION,
       FILTER_TYPES.MARITAL_STATUS,
+      FILTER_TYPES.TIME_AT_FACILITY,
     ],
   },
   prisonPopulationByOffenseType: {
@@ -423,6 +433,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.ADMISSION_REASON,
       FILTER_TYPES.RELIGION,
       FILTER_TYPES.MARITAL_STATUS,
+      FILTER_TYPES.TIME_AT_FACILITY,
     ],
   },
   prisonPopulationByChargeDescription: {
@@ -441,6 +452,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.ADMISSION_REASON,
       FILTER_TYPES.RELIGION,
       FILTER_TYPES.MARITAL_STATUS,
+      FILTER_TYPES.TIME_AT_FACILITY,
     ],
   },
   prisonPopulationByAdmissionReason: {
@@ -459,6 +471,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.ADMISSION_REASON,
       FILTER_TYPES.RELIGION,
       FILTER_TYPES.MARITAL_STATUS,
+      FILTER_TYPES.TIME_AT_FACILITY,
     ],
   },
   prisonPopulationByReligion: {
@@ -477,6 +490,26 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.ADMISSION_REASON,
       FILTER_TYPES.RELIGION,
       FILTER_TYPES.MARITAL_STATUS,
+      FILTER_TYPES.TIME_AT_FACILITY,
+    ],
+  },
+  prisonPopulationByTimeAtFacility: {
+    enabledFilters: [
+      FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.SEX,
+      FILTER_TYPES.AGE_GROUP,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.ETHNICITY,
+      FILTER_TYPES.SENTENCE_LENGTH_MIN,
+      FILTER_TYPES.SENTENCE_LENGTH_MAX,
+      FILTER_TYPES.CHARGE_COUNTY_CODE,
+      FILTER_TYPES.OFFENSE_TYPE,
+      FILTER_TYPES.CHARGE_DESCRIPTION,
+      FILTER_TYPES.ADMISSION_REASON,
+      FILTER_TYPES.RELIGION,
+      FILTER_TYPES.MARITAL_STATUS,
+      FILTER_TYPES.TIME_AT_FACILITY,
     ],
   },
   prisonPopulationByMaritalStatus: {
@@ -495,6 +528,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.ADMISSION_REASON,
       FILTER_TYPES.RELIGION,
       FILTER_TYPES.MARITAL_STATUS,
+      FILTER_TYPES.TIME_AT_FACILITY,
     ],
   },
 };

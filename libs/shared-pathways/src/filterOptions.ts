@@ -556,6 +556,18 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
       return this.defaultOption.value;
     },
   },
+  [FILTER_TYPES.TIME_AT_FACILITY]: {
+    type: FILTER_TYPES.TIME_AT_FACILITY,
+    title: "Time at Facility",
+    setFilters: setFilters(FILTER_TYPES.TIME_AT_FACILITY),
+    options: [{ label: "All", value: "ALL" }],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+  },
 };
 
 export const IdPopulationFilterOptions: PopulationFilters = {
@@ -1503,6 +1515,10 @@ export const NyPopulationFilterOptions: PopulationFilters = {
     ...DefaultPopulationFilterOptions[FILTER_TYPES.MARITAL_STATUS],
     useDynamicOptions: true,
   },
+  [FILTER_TYPES.TIME_AT_FACILITY]: {
+    ...DefaultPopulationFilterOptions[FILTER_TYPES.TIME_AT_FACILITY],
+    useDynamicOptions: true,
+  },
   [FILTER_TYPES.DATE_IN_POPULATION]: {
     ...DefaultPopulationFilterOptions[FILTER_TYPES.DATE_IN_POPULATION],
     useDynamicOptions: true,
@@ -1707,6 +1723,9 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
   ],
   [FILTER_TYPES.MARITAL_STATUS]: [
     DefaultPopulationFilterOptions[FILTER_TYPES.MARITAL_STATUS].defaultValue,
+  ],
+  [FILTER_TYPES.TIME_AT_FACILITY]: [
+    DefaultPopulationFilterOptions[FILTER_TYPES.TIME_AT_FACILITY].defaultValue,
   ],
   [FILTER_TYPES.DATE_IN_POPULATION]: [
     DefaultPopulationFilterOptions[FILTER_TYPES.DATE_IN_POPULATION]

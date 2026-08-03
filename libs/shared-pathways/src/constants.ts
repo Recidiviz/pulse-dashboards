@@ -48,6 +48,10 @@ export const FILTER_TYPES = {
   CHARGE_DESCRIPTION: "chargeDescription",
   RELIGION: "religion",
   MARITAL_STATUS: "maritalStatus",
+  // NB: value is "monthsAtFacility" (not "timeAtFacility") because it is
+  // snake_cased and sent as the BE query/dimension key, which is
+  // "months_at_facility" — see Dimension.MONTHS_AT_FACILITY in recidiviz-data.
+  TIME_AT_FACILITY: "monthsAtFacility",
   DATE_IN_POPULATION: "dateInPopulation",
 } as const;
 
@@ -81,5 +85,6 @@ export const filtersOrder = [
   FILTER_TYPES.CHARGE_DESCRIPTION,
   FILTER_TYPES.RELIGION,
   FILTER_TYPES.MARITAL_STATUS,
+  FILTER_TYPES.TIME_AT_FACILITY,
   FILTER_TYPES.DATE_IN_POPULATION,
 ];
