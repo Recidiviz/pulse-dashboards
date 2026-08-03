@@ -17,6 +17,53 @@
 
 import { z } from "zod";
 
+export const PAROLE_RISK_TOOL = z.enum(["LSI", "PIT", "CARAS", "SRT"]);
+export type ParoleRiskTool = z.infer<typeof PAROLE_RISK_TOOL>;
+
+export const paroleSubcategoryScoreSchema = z.object({
+  name: z.string(),
+  score: z.number(),
+  maxScore: z.number(),
+});
+export type ParoleSubcategoryScore = z.infer<
+  typeof paroleSubcategoryScoreSchema
+>;
+
+// CARAS v7 doesn't score subcategories additively out of a max -- each item's
+// raw value is multiplied by a fixed logistic-regression coefficient and
+// summed into a log-odds, so its subcategories carry a coefficient instead of
+// a maxScore. `value * coefficient` is the item's contribution to the overall
+// risk score.
+export const paroleCarasFactorSchema = z.object({
+  name: z.string(),
+  value: z.number(),
+  coefficient: z.number(),
+});
+export type ParoleCarasFactor = z.infer<typeof paroleCarasFactorSchema>;
+
+export const paroleRiskAssessmentSchema = z.object({
+  tool: PAROLE_RISK_TOOL,
+  score: z.number(),
+  maxScore: z.number(),
+  date: z.string(),
+  // Present for LSI/PIT/SRT; absent for CARAS (see paroleCarasFactorSchema).
+  subcategories: z.array(paroleSubcategoryScoreSchema).optional(),
+  // Present for CARAS only.
+  carasFactors: z.array(paroleCarasFactorSchema).optional(),
+});
+export type ParoleRiskAssessment = z.infer<typeof paroleRiskAssessmentSchema>;
+
+export const paroleRiskOverviewPointSchema = z.object({
+  date: z.string(),
+  LSI: z.number().optional(),
+  PIT: z.number().optional(),
+  CARAS: z.number().optional(),
+  SRT: z.number().optional(),
+});
+export type ParoleRiskOverviewPoint = z.infer<
+  typeof paroleRiskOverviewPointSchema
+>;
+
 export const paroleHearingSchema = z.object({
   docId: z.string(),
   individualName: z.string(),
@@ -130,5 +177,7 @@ export const paroleCaseSchema = z.object({
   docPrograms: z.array(paroleDocProgramSchema),
   edovoPrograms: z.array(paroleEdovoProgramSchema),
   offenseHistory: paroleOffenseHistorySchema,
+  riskAssessments: z.array(paroleRiskAssessmentSchema),
+  riskOverviewHistory: z.array(paroleRiskOverviewPointSchema),
 });
 export type ParoleCase = z.infer<typeof paroleCaseSchema>;

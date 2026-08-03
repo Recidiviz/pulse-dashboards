@@ -17,6 +17,7 @@
 
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { format, subYears } from "date-fns";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
 import * as StoreProvider from "../../../../components/StoreProvider";
@@ -238,6 +239,48 @@ describe("ParoleCaseProfile", () => {
     });
   });
 
+  describe("the risk score trajectory section", () => {
+    it("defaults to the 'All' view showing every assessment type", async () => {
+      renderAtPath("/parole/case/DOC-45821");
+
+      expect(
+        await screen.findByText("Risk Score Trajectory"),
+      ).toBeInTheDocument();
+      expect(screen.getByText("All assessments")).toBeInTheDocument();
+      expect(
+        screen.getByText("4 assessment types selected"),
+      ).toBeInTheDocument();
+    });
+
+    it("shows the score, assessment date, and risk pill for a selected assessment tool", async () => {
+      const user = userEvent.setup();
+      renderAtPath("/parole/case/DOC-45821");
+
+      await screen.findByText("Risk Score Trajectory");
+      await user.click(screen.getByRole("button", { name: /^LSI/ }));
+
+      expect(screen.getByText("14 / 54")).toBeInTheDocument();
+      expect(
+        screen.getByText("Subcategory Breakdown (Most recent assessment)"),
+      ).toBeInTheDocument();
+    });
+
+    it("labels CARAS risk levels using its own probability bands", async () => {
+      const user = userEvent.setup();
+      renderAtPath("/parole/case/DOC-45821");
+
+      await screen.findByText("Risk Score Trajectory");
+      await user.click(screen.getByRole("button", { name: /^CARAS/ }));
+
+      // Anderson's fixture CARAS factors are fixed inputs to the logistic
+      // model, so this score (and its "Very Low" band) is deterministic
+      // regardless of when the test runs.
+      expect(screen.getByText("16 / 100")).toBeInTheDocument();
+      expect(screen.getByText("Very Low Risk — 16%")).toBeInTheDocument();
+      expect(screen.getByText("Assessed Apr 16, 2026")).toBeInTheDocument();
+    });
+  });
+
   describe("the program participation section", () => {
     it("renders only completed DOC and Edovo programs with their completion dates", async () => {
       renderAtPath("/parole/case/DOC-45821");
@@ -318,9 +361,20 @@ describe("ParoleCaseProfile", () => {
     it("renders the list of prior convictions", async () => {
       renderAtPath("/parole/case/DOC-45821");
 
+      // The fixture derives these dates as N years back from whichever day
+      // the fixture module happens to load, so the expected month must be
+      // computed the same way rather than hardcoded -- otherwise this test
+      // breaks every time the calendar rolls into a new month.
+      const theftMonth = format(subYears(new Date(), 8), "MMM");
+      const assaultMonth = format(subYears(new Date(), 7), "MMM");
+
       expect(await screen.findByText("Prior Convictions")).toBeInTheDocument();
-      expect(screen.getByText(/Theft — Jul/)).toBeInTheDocument();
-      expect(screen.getByText(/Assault — Jul/)).toBeInTheDocument();
+      expect(
+        screen.getByText(new RegExp(`Theft — ${theftMonth}`)),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(new RegExp(`Assault — ${assaultMonth}`)),
+      ).toBeInTheDocument();
     });
 
     it("omits the prior convictions subsection when there are none", async () => {

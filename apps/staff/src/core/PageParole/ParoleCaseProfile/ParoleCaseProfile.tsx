@@ -34,6 +34,7 @@ import { ConductHistorySection } from "../components/ConductHistorySection";
 import { IdentityHeaderSection } from "../components/IdentityHeaderSection";
 import { OffenseHistorySection } from "../components/OffenseHistorySection";
 import { ProgramParticipationSection } from "../components/ProgramParticipationSection";
+import { RiskAssessmentSection } from "../components/RiskAssessmentSection";
 
 // Page-level max-width/padding comes from PageParole's shared Main wrapper;
 // this only lays out the sections within it.
@@ -78,6 +79,11 @@ const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
       />
 
       <ConductHistorySection conductHistory={caseDetail.conductHistory} />
+
+      <RiskAssessmentSection
+        riskAssessments={caseDetail.riskAssessments}
+        riskOverviewHistory={caseDetail.riskOverviewHistory}
+      />
 
       <ProgramParticipationSection
         docPrograms={caseDetail.docPrograms}

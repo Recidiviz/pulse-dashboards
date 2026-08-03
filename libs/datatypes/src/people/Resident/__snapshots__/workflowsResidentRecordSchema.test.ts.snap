@@ -3230,6 +3230,7 @@ exports[`schema for 'US_NYC' 'NYC_RES001' 1`] = `
   "metadata": {
     "stateCode": "US_NYC",
   },
+  "officerId": null,
   "personExternalId": "NYC_RES001",
   "personName": {
     "givenNames": "Alex",
@@ -3251,6 +3252,7 @@ exports[`schema for 'US_NYC' 'NYC_RES002' 1`] = `
   "metadata": {
     "stateCode": "US_NYC",
   },
+  "officerId": null,
   "personExternalId": "NYC_RES002",
   "personName": {
     "givenNames": "Jordan",

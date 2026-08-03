@@ -18,6 +18,7 @@
 import { addDays, format, subDays, subMonths, subYears } from "date-fns";
 
 import {
+  ParoleCarasFactor,
   ParoleCase,
   paroleCaseSchema,
   ParoleConductRecord,
@@ -33,6 +34,80 @@ import {
 // than anchored to a fixed historical date) so that "upcoming hearings"
 // always look current in a demo, regardless of when `nx offline staff` is run.
 const iso = (date: Date): string => format(date, "yyyy-MM-dd");
+
+// CARAS v7's 12 items and their logistic-regression coefficients are fixed
+// properties of the tool itself, not per-person, so this pairs them with each
+// case's own raw item values rather than repeating the name/coefficient list
+// at every call site. Order matches the tool's published item order.
+const CARAS_FACTOR_COEFFICIENTS: Array<Omit<ParoleCarasFactor, "value">> = [
+  { name: "Age Group at First Arrest/Charge", coefficient: 0.32 },
+  { name: "Offense Degree", coefficient: 0.16 },
+  { name: "Offender Age", coefficient: -0.03 },
+  { name: "Escape Count", coefficient: 0.25 },
+  { name: "Substance Abuse Needs Level", coefficient: 0.18 },
+  { name: "Gang Membership", coefficient: 0.11 },
+  { name: "Prior Case Count", coefficient: 0.08 },
+  { name: "Offense Category", coefficient: 0.26 },
+  { name: "Criminal Attitude", coefficient: 0.18 },
+  { name: "COPD Count", coefficient: 0.09 },
+  { name: "Technical Violation Count", coefficient: 0.09 },
+  { name: "Custody Level", coefficient: 0.16 },
+];
+
+function buildCarasFactors(values: Array<number>): Array<ParoleCarasFactor> {
+  return CARAS_FACTOR_COEFFICIENTS.map((factor, i) => ({
+    ...factor,
+    value: values[i],
+  }));
+}
+
+// CARAS v7's overall score is a logistic-regression probability, not a sum of
+// points out of a max like the other tools -- summing each factor's own
+// contribution (value * coefficient) with the model's fixed intercept gives
+// the log-odds, which converts to a 0-100 "risk score" via the standard
+// logistic function. Deriving `score` from `carasFactors` here (rather than
+// hand-typing an independent number) keeps the subcategory chart and the
+// overall score mathematically consistent.
+const CARAS_INTERCEPT = -2.1;
+
+function computeCarasScore(factors: Array<ParoleCarasFactor>): number {
+  const logOdds =
+    CARAS_INTERCEPT +
+    factors.reduce((sum, f) => sum + f.value * f.coefficient, 0);
+  const probability = 1 / (1 + Math.exp(-logOdds));
+  return Math.round(probability * 100);
+}
+
+function buildCarasAssessment(
+  values: Array<number>,
+  date: string,
+): {
+  tool: "CARAS";
+  score: number;
+  maxScore: number;
+  date: string;
+  carasFactors: Array<ParoleCarasFactor>;
+} {
+  const carasFactors = buildCarasFactors(values);
+  return {
+    tool: "CARAS",
+    score: computeCarasScore(carasFactors),
+    maxScore: 100,
+    date,
+    carasFactors,
+  };
+}
+
+// One hand-verified value set per CARAS risk band (Very Low/Low/Medium/High/
+// Very High -- see getCarasRiskLevel in RiskAssessmentSection.tsx), computed
+// to land clearly inside each band rather than near a boundary.
+const GENERIC_CARAS_FACTOR_VALUES_BY_BAND: Array<Array<number>> = [
+  [1, 1, 45, 0, 1, 0, 0, 0, 0, 0, 0, 1], // Very Low (~7%)
+  [2, 2, 36, 0, 3, 0, 2, 1, 1, 0, 0, 2], // Low (~32%)
+  [2, 3, 35, 0, 4, 0, 2, 1, 2, 0, 0, 2], // Medium (~45%)
+  [3, 3, 32, 0, 4, 0, 2, 1, 2, 0, 1, 3], // High (~61%)
+  [4, 5, 26, 1, 5, 1, 3, 2, 3, 1, 1, 4], // Very High (~93%)
+];
 
 const RAW_HEARINGS: Array<
   Omit<ParoleHearing, "hearingDate"> & { daysFromNow: number }
@@ -305,6 +380,73 @@ function buildAndersonCaseProfile(hearingDate: string): ParoleCase {
       },
     ],
     conductHistory: buildAndersonConductHistory(),
+    riskAssessments: [
+      {
+        tool: "LSI",
+        score: 14,
+        maxScore: 54,
+        date: iso(subMonths(today, 3)),
+        subcategories: [
+          { name: "Criminal History", score: 3, maxScore: 10 },
+          { name: "Education/Employment", score: 3, maxScore: 10 },
+          { name: "Financial", score: 1, maxScore: 2 },
+          { name: "Family/Marital", score: 1, maxScore: 4 },
+          { name: "Accommodation", score: 1, maxScore: 3 },
+          { name: "Leisure/Recreation", score: 1, maxScore: 2 },
+          { name: "Companions", score: 1, maxScore: 5 },
+          { name: "Alcohol/Drug", score: 2, maxScore: 9 },
+          { name: "Emotional/Personal", score: 1, maxScore: 5 },
+          { name: "Attitude/Orientation", score: 0, maxScore: 4 },
+        ],
+      },
+      {
+        tool: "PIT",
+        score: 8,
+        maxScore: 40,
+        date: iso(subMonths(today, 5)),
+        subcategories: [
+          { name: "Disciplinary Incidents", score: 2, maxScore: 15 },
+          { name: "Substance Use History", score: 3, maxScore: 10 },
+          { name: "Program Non-Compliance", score: 1, maxScore: 8 },
+          { name: "Violence History", score: 2, maxScore: 7 },
+        ],
+      },
+      // Fixed date (not relative to `today`, unlike the rest of this file) to
+      // match the reference CARAS v7 sample assessment date exactly.
+      buildCarasAssessment([1, 3, 44, 0, 4, 0, 1, 0, 0, 0, 0, 1], "2026-04-16"),
+      {
+        tool: "SRT",
+        score: 7,
+        maxScore: 25,
+        date: iso(subMonths(today, 15)),
+        subcategories: [
+          { name: "Prior Record Score", score: 3, maxScore: 8 },
+          { name: "Age/Criminal Onset", score: 2, maxScore: 5 },
+          { name: "Social Stability", score: 1, maxScore: 6 },
+          { name: "Supervision Response", score: 1, maxScore: 6 },
+        ],
+      },
+    ],
+    riskOverviewHistory: [
+      // All four tools get a value at this earliest date so every
+      // trajectory line in the "All" view starts from the same point,
+      // rather than each line beginning wherever that tool's history
+      // happens to start.
+      { date: iso(subYears(today, 3)), LSI: 59, PIT: 50, CARAS: 52, SRT: 58 },
+      { date: iso(subMonths(today, 30)), SRT: 40 },
+      { date: iso(subMonths(today, 24)), LSI: 44, PIT: 30 },
+      { date: iso(subMonths(today, 18)), CARAS: 40 },
+      { date: iso(subMonths(today, 15)), SRT: 28 },
+      { date: iso(subMonths(today, 6)), LSI: 31, PIT: 35 },
+      { date: iso(subYears(today, 1)), CARAS: 26 },
+      { date: iso(subMonths(today, 5)), PIT: 40 },
+      // PIT and CARAS extend all the way to LSI's most recent point so their
+      // trajectory lines span the full chart. SRT deliberately stops at 15
+      // months ago (above) rather than being extended here -- that gap is
+      // what demonstrates the "assessment over 12 months stale" warning, so
+      // stretching it to match would undercut the scenario it's meant to show.
+      { date: iso(subMonths(today, 3)), LSI: 26, PIT: 34, CARAS: 18 },
+    ],
     docPrograms: [
       {
         name: "Cognitive Behavioral Therapy",
@@ -416,6 +558,48 @@ function buildAttachments(
   ];
 }
 
+function buildGenericRiskAssessments(
+  index: number,
+  today: Date,
+): Pick<ParoleCase, "riskAssessments" | "riskOverviewHistory"> {
+  const riskPct = 20 + ((index * 17) % 60); // varies 20-79%
+  return {
+    riskAssessments: [
+      {
+        tool: "LSI",
+        score: Math.round((riskPct / 100) * 54),
+        maxScore: 54,
+        date: iso(subMonths(today, 4)),
+      },
+      {
+        tool: "PIT",
+        score: Math.round((riskPct / 100) * 40),
+        maxScore: 40,
+        date: iso(subMonths(today, 6)),
+      },
+      buildCarasAssessment(
+        // Hand-tuned (not a smooth formula of `index`) so the generic cases
+        // cycle through all 5 CARAS risk bands rather than clustering in
+        // just one or two -- useful for demoing the full risk-level range.
+        GENERIC_CARAS_FACTOR_VALUES_BY_BAND[index % 5],
+        iso(subMonths(today, 8)),
+      ),
+      {
+        tool: "SRT",
+        score: Math.round((riskPct / 100) * 25),
+        maxScore: 25,
+        date: iso(subMonths(today, 10)),
+      },
+    ],
+    riskOverviewHistory: [
+      { date: iso(subMonths(today, 10)), SRT: riskPct },
+      { date: iso(subMonths(today, 8)), CARAS: riskPct },
+      { date: iso(subMonths(today, 6)), PIT: riskPct },
+      { date: iso(subMonths(today, 4)), LSI: riskPct },
+    ],
+  };
+}
+
 function buildOffenseHistory(
   index: number,
   today: Date,
@@ -471,6 +655,7 @@ function buildGenericCaseProfile(
     docPrograms: [],
     edovoPrograms: [],
     offenseHistory: buildOffenseHistory(index, today),
+    ...buildGenericRiskAssessments(index, today),
   });
 }
 
