@@ -256,6 +256,25 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
       return this.defaultOption.value;
     },
   },
+  [FILTER_TYPES.MARITAL_STATUS]: {
+    type: FILTER_TYPES.MARITAL_STATUS,
+    title: "Marital Status",
+    setFilters: setFilters(FILTER_TYPES.MARITAL_STATUS),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Never Married", value: "NEVER_MARRIED" },
+      { label: "Married", value: "MARRIED" },
+      { label: "Common Law", value: "COMMON_LAW" },
+      { label: "Separate/Divorce", value: "SEPARATE_DIVORCE" },
+      { label: "Widowed", value: "WIDOWED" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+  },
   [FILTER_TYPES.FACILITY]: {
     type: FILTER_TYPES.FACILITY,
     title: "Facility",
@@ -1480,6 +1499,10 @@ export const NyPopulationFilterOptions: PopulationFilters = {
     ...DefaultPopulationFilterOptions[FILTER_TYPES.RELIGION],
     useDynamicOptions: true,
   },
+  [FILTER_TYPES.MARITAL_STATUS]: {
+    ...DefaultPopulationFilterOptions[FILTER_TYPES.MARITAL_STATUS],
+    useDynamicOptions: true,
+  },
   [FILTER_TYPES.DATE_IN_POPULATION]: {
     ...DefaultPopulationFilterOptions[FILTER_TYPES.DATE_IN_POPULATION],
     useDynamicOptions: true,
@@ -1681,6 +1704,9 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
   ],
   [FILTER_TYPES.RELIGION]: [
     DefaultPopulationFilterOptions[FILTER_TYPES.RELIGION].defaultValue,
+  ],
+  [FILTER_TYPES.MARITAL_STATUS]: [
+    DefaultPopulationFilterOptions[FILTER_TYPES.MARITAL_STATUS].defaultValue,
   ],
   [FILTER_TYPES.DATE_IN_POPULATION]: [
     DefaultPopulationFilterOptions[FILTER_TYPES.DATE_IN_POPULATION]

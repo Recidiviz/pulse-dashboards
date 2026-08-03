@@ -194,6 +194,7 @@ describe("FiltersStore", () => {
         "prisonPopulationByChargeDescription",
         "prisonPopulationByAdmissionReason",
         "prisonPopulationByReligion",
+        "prisonPopulationByMaritalStatus",
       ] as const;
 
       prisonMetricKeys.forEach((metricKey) => {

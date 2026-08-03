@@ -60,7 +60,8 @@ export type DynamicFilterOptionMetadataKey =
   | "date_in_population_id_name_map"
   | "charge_description_id_name_map"
   | "admission_reason_id_name_map"
-  | "religion_id_name_map";
+  | "religion_id_name_map"
+  | "marital_status_id_name_map";
 export type DynamicFilterOptionKeyToFilterTypeMap = {
   [key in DynamicFilterOptionMetadataKey]: FilterType;
 };
@@ -78,6 +79,7 @@ export const dynamicFilterOptionMapToFilterType: DynamicFilterOptionKeyToFilterT
     charge_description_id_name_map: "chargeDescription",
     admission_reason_id_name_map: "admissionReason",
     religion_id_name_map: "religion",
+    marital_status_id_name_map: "maritalStatus",
   };
 
 export type DynamicFilterOptions = Record<FilterType, FilterOption[]>;

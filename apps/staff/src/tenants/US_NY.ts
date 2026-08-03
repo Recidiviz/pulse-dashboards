@@ -46,6 +46,7 @@ const US_NY_CONFIG: TenantConfig<"US_NY"> = {
       PATHWAYS_SECTIONS.countByChargeDescription,
       PATHWAYS_SECTIONS.countByAdmissionReason,
       PATHWAYS_SECTIONS.countByReligion,
+      PATHWAYS_SECTIONS.countByMaritalStatus,
     ],
     methodology: ["system"],
   },

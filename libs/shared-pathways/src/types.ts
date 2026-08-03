@@ -112,6 +112,7 @@ export type PrisonPopulationSnapshotRecord = {
   offenseType: string;
   chargeDescription: string;
   religion: string;
+  maritalStatus: string;
 };
 
 export type PrisonPopulationPersonLevelRecord = {
