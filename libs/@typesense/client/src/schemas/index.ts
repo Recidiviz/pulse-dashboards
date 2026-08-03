@@ -18,6 +18,18 @@
 import { CollectionFieldSchema } from "typesense/lib/Typesense/Collection";
 import type { CollectionCreateSchema } from "typesense/lib/Typesense/Collections";
 
+// Discriminates supervision vs incarceration on collections queried by a
+// cross-system caseload-scoped key. Stamped by backfill-fn's
+// constantFields for staff/person collections (each is inherently single-
+// system per collection); locations get their `system` derived from `idType`
+// upstream
+const systemField: CollectionFieldSchema = {
+  name: "system",
+  type: "string",
+  facet: true,
+  optional: true,
+};
+
 const staffCommonFields = [
   { name: "stateCode", type: "string", facet: true },
   { name: "staffExternalId", type: "string" },
@@ -25,6 +37,7 @@ const staffCommonFields = [
   { name: "email", type: "string", optional: true, infix: true },
   { name: "givenNames", type: "string", sort: true, infix: true },
   { name: "surname", type: "string", sort: true, infix: true },
+  systemField,
 ] as CollectionFieldSchema[];
 
 export const schemas: CollectionCreateSchema[] = [
@@ -54,6 +67,7 @@ export const schemas: CollectionCreateSchema[] = [
         infix: true,
       },
       { name: "district", type: "string", optional: true, facet: true },
+      systemField,
     ],
   },
   {
@@ -94,6 +108,7 @@ export const schemas: CollectionCreateSchema[] = [
         facet: true,
         infix: true,
       },
+      systemField,
     ],
   },
   {
@@ -113,7 +128,12 @@ export const schemas: CollectionCreateSchema[] = [
   {
     name: "incarcerationStaff",
     enable_nested_fields: true,
-    fields: staffCommonFields,
+    fields: [
+      ...staffCommonFields,
+      // Declared but never populated.
+      // Matches firestore schema null incarcerationStaff.distrct
+      { name: "district", type: "string", optional: true },
+    ],
   },
   {
     name: "locations",
@@ -123,6 +143,16 @@ export const schemas: CollectionCreateSchema[] = [
       { name: "idType", type: "string", facet: true },
       { name: "stateCode", type: "string", facet: true },
       { name: "name", type: "string", sort: true, infix: true },
+      // Declared here so the caseload-scoped key's byDistricts predicate
+      // (`district:=[...]`) passes Typesense's upfront schema check. On
+      // district-idType location docs, `district` is populated per-doc via
+      // backfill-fn's derivedFields "copy" hook (copies `locationId` → `district`
+      // when `idType === "districtId"`), since the district name already
+      // lives in `locationId` for those docs. Facility-idType docs leave
+      // `district` unset; the `system:=SUPERVISION` gate prevents them from
+      // reaching the district clause anyway.
+      { name: "district", type: "string", optional: true },
+      systemField,
     ],
   },
   {

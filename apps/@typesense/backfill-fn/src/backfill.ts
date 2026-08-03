@@ -176,6 +176,40 @@ export async function mapWithConcurrency<T, R>(
 export interface CollectionConfig {
   name: string;
   fields: string[];
+  /**
+   * Constants stamped onto every emitted doc from this source AFTER the
+   * source-field projection (so a constant with the same key as a source
+   * field wins). Used to inject discriminators — currently `system` on the
+   * caseload/person collections that either don't exist on
+   * the source doc or should be canonicalized. `id` is protected; a
+   * `constantFields.id` entry cannot clobber the docId.
+   */
+  constantFields?: Record<string, string>;
+  /**
+   * Per-doc derivations. Two variants, both discriminated by their key set:
+   *
+   * 1. **Value-map**: read `data[from]`, look it up in `valueMapping`, stamp
+   *    the mapped value into `into`. Used for `locations.system` derived
+   *    from `idType`. Source values not in `valueMapping` leave the target
+   *    unset (under-permissive default).
+   * 2. **Conditional copy**: if `data[when.field] === when.equals`, copy the
+   *    value of `data[copyFrom]` into `into`. Used for `locations.district`
+   *    on district-idType docs, where the district name already lives in
+   *    `locationId` and just needs to be surfaced under the `district` key
+   *    the byDistricts filter references.
+   *
+   * Applied BEFORE `constantFields` so an explicit constant still wins on
+   * key collision. `id` is protected regardless — always set from `docId`
+   * last, so neither variant can clobber it.
+   */
+  derivedFields?: Array<
+    | { from: string; into: string; valueMapping: Record<string, string> }
+    | {
+        copyFrom: string;
+        into: string;
+        when: { field: string; equals: string };
+      }
+  >;
 }
 
 export interface BackfillResult {
@@ -261,12 +295,26 @@ export function assignNested(
 // specific nested children in the schema without shipping their entire parent
 // object — important for residents where `metadata` is large but we only
 // index one sub-field.
+//
+// Order matters:
+//   1. Project source fields.
+//   2. Apply `derivedFields` — read a source field, map through a lookup,
+//      stamp the result into a target field (e.g. `locations.idType` →
+//      `system`). Unmapped source values leave the target unset.
+//   3. Apply `constantFields` — merges LAST so a constant wins against a
+//      colliding source or derived value. Whole point of the mechanism is to
+//      stamp a canonical value (e.g. `system: "SUPERVISION"`) regardless of
+//      what came from the source doc.
+//   4. Set `id` from `docId` — protected against any `constantFields.id` or
+//      `derivedFields.into: "id"` attempt.
 export function projectFields(
   data: FirestoreDoc,
   fields: string[],
   docId: string,
+  constantFields?: Record<string, string>,
+  derivedFields?: CollectionConfig["derivedFields"],
 ): FirestoreDoc {
-  const out: FirestoreDoc = { id: docId };
+  const out: FirestoreDoc = {};
   for (const f of fields) {
     if (f.includes(".")) {
       assignNested(out, data, f);
@@ -274,6 +322,29 @@ export function projectFields(
       out[f] = data[f];
     }
   }
+  if (derivedFields) {
+    for (const rule of derivedFields) {
+      if ("valueMapping" in rule) {
+        const raw = data[rule.from];
+        if (typeof raw === "string" && raw in rule.valueMapping) {
+          out[rule.into] = rule.valueMapping[raw];
+        }
+      } else {
+        // Conditional copy: only stamp when the guard field matches.
+        const guard = data[rule.when.field];
+        if (guard === rule.when.equals) {
+          const value = data[rule.copyFrom];
+          if (typeof value === "string") {
+            out[rule.into] = value;
+          }
+        }
+      }
+    }
+  }
+  if (constantFields) {
+    Object.assign(out, constantFields);
+  }
+  out["id"] = docId;
   return out;
 }
 
@@ -421,7 +492,7 @@ async function pruneStaleDocs(
 
 async function backfillCollection(
   client: TypesenseClient,
-  { name, fields }: CollectionConfig,
+  { name, fields, constantFields, derivedFields }: CollectionConfig,
   limiter: RateLimiter,
   batchSize: number,
   prune: boolean,
@@ -455,7 +526,13 @@ async function backfillCollection(
     for (const d of snapshot.docs) firestoreIds.add(d.id);
 
     const docs = snapshot.docs.map((d) =>
-      projectFields(d.data() as FirestoreDoc, fields, d.id),
+      projectFields(
+        d.data() as FirestoreDoc,
+        fields,
+        d.id,
+        constantFields,
+        derivedFields,
+      ),
     );
 
     try {

@@ -90,15 +90,19 @@ variable "firestore_database" {
 }
 
 variable "collections" {
-  type = list(object({
-    name   = string
-    fields = list(string)
-  }))
+  # Typed as `any` because this value flows straight through `jsonencode` into
+  # COLLECTIONS_JSON on the function, and the schema is owned by the TS side
+  # (libs/@typesense/client/src/export-collections.ts → CollectionConfig in
+  # apps/@typesense/backfill-fn/src/backfill.ts).
+  type        = any
   description = <<-EOT
     Collections to backfill. Mirror libs/@typesense/client/src/schemas/index.ts — keep in sync.
     Each entry's `fields` list determines which Firestore document fields are forwarded to Typesense
     (any other fields are dropped before import). The collection's Typesense schema MUST exist before
     backfill runs (provisioned by `nx provision '@typesense/tools' -c <env>`).
+
+    Passed verbatim to the function as COLLECTIONS_JSON; see the CollectionConfig
+    interface in apps/@typesense/backfill-fn/src/backfill.ts for the accepted shape.
   EOT
 }
 

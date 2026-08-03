@@ -28,9 +28,55 @@
 
 import { schemas } from "./schemas";
 
-const collections = schemas.map((s) => ({
-  name: s.name,
-  fields: (s.fields ?? []).map((f) => f.name),
-}));
+// Static `system` discriminator for each collection whose docs are inherently
+// single-system. backfill-fn stamps this onto every emitted doc via
+// `constantFields` so the cross-system caseload-scoped key's `system:=X`
+// filter_by works. `locations` is absent here — its docs are mixed (facilities
+// vs districts) and get `system` derived per-doc from `idType`; see
+// LOCATIONS_DERIVED_FIELDS below.
+const SYSTEM_BY_COLLECTION: Record<string, "SUPERVISION" | "INCARCERATION"> = {
+  clients: "SUPERVISION",
+  supervisionStaff: "SUPERVISION",
+  residents: "INCARCERATION",
+  incarcerationStaff: "INCARCERATION",
+};
+
+// Per-doc derivations for `locations`, applied by backfill-fn's derivedFields
+// hook.
+//   1. `system` from `idType`: `districtId` → SUPERVISION; every facility
+//      variant → INCARCERATION. Unmapped idTypes leave `system` unset (safe
+//      default).
+//   2. `district` copied from `locationId` on districtId-type docs only —
+//      for those docs the district name already lives in `locationId`, and
+//      the caseload-scoped key's byDistricts predicate references `district`.
+//      Facility-type docs leave `district` unset; the `system:=SUPERVISION`
+//      gate keeps them out of the byDistricts arm anyway.
+const LOCATIONS_DERIVED_FIELDS = [
+  {
+    from: "idType",
+    into: "system",
+    valueMapping: {
+      districtId: "SUPERVISION",
+      facilityId: "INCARCERATION",
+      facilityUnitId: "INCARCERATION",
+      crcFacilityId: "INCARCERATION",
+    },
+  },
+  {
+    copyFrom: "locationId",
+    into: "district",
+    when: { field: "idType", equals: "districtId" },
+  },
+];
+
+const collections = schemas.map((s) => {
+  const system = SYSTEM_BY_COLLECTION[s.name];
+  return {
+    name: s.name,
+    fields: (s.fields ?? []).map((f) => f.name),
+    ...(system && { constantFields: { system } }),
+    ...(s.name === "locations" && { derivedFields: LOCATIONS_DERIVED_FIELDS }),
+  };
+});
 
 process.stdout.write(JSON.stringify(collections));

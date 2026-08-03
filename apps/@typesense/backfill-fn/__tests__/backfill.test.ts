@@ -302,6 +302,214 @@ describe("projectFields", () => {
     );
     expect(result["id"]).toBe("us_id_OFFICER4");
   });
+
+  it("merges constantFields onto the projected doc", () => {
+    const result = projectFields(
+      { stateCode: "US_TEST", staffExternalId: "OFFICER4" },
+      ["stateCode", "staffExternalId"],
+      "us_test_OFFICER4",
+      { system: "SUPERVISION" },
+    );
+    expect(result).toEqual({
+      id: "us_test_OFFICER4",
+      stateCode: "US_TEST",
+      staffExternalId: "OFFICER4",
+      system: "SUPERVISION",
+    });
+  });
+
+  it("constantFields win over source values for the same key", () => {
+    // If a source doc happens to carry `system` from an earlier ETL revision,
+    // the canonical constant from the backfill config still wins.
+    const result = projectFields(
+      { stateCode: "US_TEST", system: "STALE_VALUE" },
+      ["stateCode", "system"],
+      "doc-1",
+      { system: "SUPERVISION" },
+    );
+    expect(result["system"]).toBe("SUPERVISION");
+  });
+
+  it("constantFields cannot clobber the id", () => {
+    // Defence in depth: a constantFields.id entry must never override docId,
+    // or two sources feeding the same target could collide.
+    const result = projectFields({}, [], "real-id", { id: "sneak" });
+    expect(result["id"]).toBe("real-id");
+  });
+
+  it("derivedFields maps a source value through a lookup and stamps the target", () => {
+    // The locations `system` hook relies on this — idType is projected AND
+    // used to derive `system` on the emitted doc.
+    const result = projectFields(
+      { idType: "districtId", stateCode: "US_TN" },
+      ["idType", "stateCode"],
+      "loc-1",
+      undefined,
+      [
+        {
+          from: "idType",
+          into: "system",
+          valueMapping: {
+            districtId: "SUPERVISION",
+            facilityId: "INCARCERATION",
+          },
+        },
+      ],
+    );
+    expect(result).toEqual({
+      id: "loc-1",
+      idType: "districtId",
+      stateCode: "US_TN",
+      system: "SUPERVISION",
+    });
+  });
+
+  it("derivedFields leaves the target unset when the source value has no mapping", () => {
+    // Safer than defaulting: a new idType introduced upstream shouldn't get
+    // silently classified as INCARCERATION just because that's the majority
+    // side today. Missing `system` under-permits — the caseload query
+    // returns nothing rather than the wrong thing.
+    const result = projectFields(
+      { idType: "unknownType" },
+      ["idType"],
+      "loc-1",
+      undefined,
+      [
+        {
+          from: "idType",
+          into: "system",
+          valueMapping: { districtId: "SUPERVISION" },
+        },
+      ],
+    );
+    expect(result).not.toHaveProperty("system");
+  });
+
+  it("derivedFields does nothing when the source field is missing", () => {
+    const result = projectFields(
+      { stateCode: "US_TN" },
+      ["stateCode"],
+      "loc-1",
+      undefined,
+      [
+        {
+          from: "idType",
+          into: "system",
+          valueMapping: { districtId: "SUPERVISION" },
+        },
+      ],
+    );
+    expect(result).not.toHaveProperty("system");
+  });
+
+  it("constantFields win over derivedFields on key collision", () => {
+    // If both are set for the same target key, the explicit constant is
+    // authoritative. Not expected in practice but the semantic should be
+    // stable.
+    const result = projectFields(
+      { idType: "districtId" },
+      ["idType"],
+      "loc-1",
+      { system: "CANONICAL" },
+      [
+        {
+          from: "idType",
+          into: "system",
+          valueMapping: { districtId: "SUPERVISION" },
+        },
+      ],
+    );
+    expect(result["system"]).toBe("CANONICAL");
+  });
+
+  it("derivedFields copy variant stamps a source field into another when the guard matches", () => {
+    // The locations `district` hook relies on this — district-idType docs
+    // already carry the district name in `locationId`, and we surface it
+    // under `district` for the byDistricts filter.
+    const result = projectFields(
+      { idType: "districtId", locationId: "DISTRICT 2" },
+      ["idType", "locationId"],
+      "loc-1",
+      undefined,
+      [
+        {
+          copyFrom: "locationId",
+          into: "district",
+          when: { field: "idType", equals: "districtId" },
+        },
+      ],
+    );
+    expect(result["district"]).toBe("DISTRICT 2");
+  });
+
+  it("derivedFields copy variant does nothing when the guard doesn't match", () => {
+    // A facility-idType location shouldn't get `district` populated — the
+    // system-side arm of the caseload filter matches it, not the district
+    // arm.
+    const result = projectFields(
+      { idType: "facilityId", locationId: "FACILITY 1" },
+      ["idType", "locationId"],
+      "loc-1",
+      undefined,
+      [
+        {
+          copyFrom: "locationId",
+          into: "district",
+          when: { field: "idType", equals: "districtId" },
+        },
+      ],
+    );
+    expect(result).not.toHaveProperty("district");
+  });
+
+  it("derivedFields copy variant does nothing when the source field is missing", () => {
+    const result = projectFields(
+      { idType: "districtId" },
+      ["idType"],
+      "loc-1",
+      undefined,
+      [
+        {
+          copyFrom: "locationId",
+          into: "district",
+          when: { field: "idType", equals: "districtId" },
+        },
+      ],
+    );
+    expect(result).not.toHaveProperty("district");
+  });
+
+  it("derivedFields supports both variants in the same array", () => {
+    // Real-world locations config: value-map for system + conditional copy
+    // for district. Both apply on the same doc.
+    const result = projectFields(
+      { idType: "districtId", locationId: "DISTRICT 2" },
+      ["idType", "locationId"],
+      "loc-1",
+      undefined,
+      [
+        {
+          from: "idType",
+          into: "system",
+          valueMapping: {
+            districtId: "SUPERVISION",
+            facilityId: "INCARCERATION",
+          },
+        },
+        {
+          copyFrom: "locationId",
+          into: "district",
+          when: { field: "idType", equals: "districtId" },
+        },
+      ],
+    );
+    expect(result).toMatchObject({
+      idType: "districtId",
+      locationId: "DISTRICT 2",
+      system: "SUPERVISION",
+      district: "DISTRICT 2",
+    });
+  });
 });
 
 describe("parseImportResponse", () => {
