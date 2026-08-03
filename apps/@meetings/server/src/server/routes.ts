@@ -629,6 +629,8 @@ export function registerTaskRoutes(app: FastifyInstance) {
               staffEmail: true,
               client: { select: { pseudonymizedId: true } },
               resident: { select: { pseudonymizedId: true } },
+              clientId: true,
+              residentId: true,
             },
           });
         } catch (e) {
@@ -663,11 +665,23 @@ export function registerTaskRoutes(app: FastifyInstance) {
           completedMeeting.resident?.pseudonymizedId ??
           meetingId;
 
+        let personType: "client" | "resident" | undefined;
+        if (completedMeeting.clientId != null) {
+          personType = "client";
+        } else if (completedMeeting.residentId != null) {
+          personType = "resident";
+        }
+        const personId = (
+          completedMeeting.clientId ?? completedMeeting.residentId
+        )?.toString();
+
         postMeetingCompletedNotification({
           staffEmail: completedMeeting.staffEmail,
           stateCode,
           personPseudoId,
           meetingId,
+          personType,
+          personId,
         }).catch((e) => {
           captureException(e);
           console.error(

@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import env from "~@meetings/trpc/env";
+
 const SLACK_WEBHOOK_URL = process.env["SLACK_WEBHOOK_URL"];
 const SLACK_NOTIFICATIONS_ENABLED =
   process.env["SLACK_NOTIFICATIONS_ENABLED"] === "true";
@@ -57,26 +59,70 @@ async function postSlackMessage(text: string): Promise<void> {
   }
 }
 
-export async function postMeetingCompletedNotification({
-  staffEmail,
+const MEETINGS_APP_URL_BY_DEPLOY_ENV: Record<string, string> = {
+  production: "https://meet.recidiviz.org",
+  staging: "https://meet-staging.recidiviz.org",
+};
+
+export function buildMeetingUrl({
   stateCode,
-  personPseudoId,
+  personType,
+  personId,
   meetingId,
 }: {
+  stateCode: string;
+  personType: "client" | "resident";
+  personId: string;
+  meetingId: string;
+}): string | null {
+  const baseUrl = MEETINGS_APP_URL_BY_DEPLOY_ENV[env.DEPLOY_ENV];
+  if (!baseUrl) return null;
+  const segment = personType === "client" ? "clients" : "residents";
+  return `${baseUrl}/${segment}/${encodeURIComponent(personId)}/meetings/${encodeURIComponent(meetingId)}?stateCode=${encodeURIComponent(stateCode)}`;
+}
+
+type MeetingCompletedParams = {
   staffEmail: string;
   stateCode: string;
   personPseudoId: string;
   meetingId: string;
-}): Promise<void> {
-  const text = [
+  personType?: "client" | "resident";
+  personId?: string;
+};
+
+export function buildMeetingCompletedMessage({
+  staffEmail,
+  stateCode,
+  personPseudoId,
+  meetingId,
+  personType,
+  personId,
+}: MeetingCompletedParams): string {
+  const lines = [
     "Meeting completed",
     `• Staff: ${staffEmail}`,
     `• State: ${stateCode}`,
     `• Client/Resident ID: ${personPseudoId}`,
     `• Meeting ID: ${meetingId}`,
-  ].join("\n");
+  ];
 
-  await postSlackMessage(text);
+  if (personType && personId) {
+    const meetingUrl = buildMeetingUrl({
+      stateCode,
+      personType,
+      personId,
+      meetingId,
+    });
+    if (meetingUrl) lines.push(`• <${meetingUrl}|View meeting>`);
+  }
+
+  return lines.join("\n");
+}
+
+export async function postMeetingCompletedNotification(
+  params: MeetingCompletedParams,
+): Promise<void> {
+  await postSlackMessage(buildMeetingCompletedMessage(params));
 }
 
 export async function postMeetingErrorNotification({

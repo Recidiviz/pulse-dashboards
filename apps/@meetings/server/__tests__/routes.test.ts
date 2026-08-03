@@ -31,9 +31,10 @@ import {
   testPrismaClient,
   testServer,
 } from "~@meetings/server/test/setup";
-import { fakeMeeting } from "~@meetings/server/test/setup/seed";
+import { fakeClient, fakeMeeting } from "~@meetings/server/test/setup/seed";
 import * as tasks from "~@meetings/tasks";
 import * as evaluators from "~@meetings/tasks/llm/evaluators";
+import * as slackService from "~@meetings/trpc/services/slack";
 
 const FAKE_ASSEMBLYAI_TRANSCRIPT_OBJECT = {
   confidence: 0.95,
@@ -1521,6 +1522,72 @@ describe("tasks", () => {
       expect(updatedMeeting.postMeetingProcessingStatus).toBe(
         PostMeetingProcessingStatus.COMPLETED,
       );
+    });
+
+    describe("completed Slack notification", () => {
+      let slackSpy: MockInstance;
+
+      beforeEach(() => {
+        slackSpy = vi
+          .spyOn(slackService, "postMeetingCompletedNotification")
+          .mockResolvedValue(undefined);
+      });
+
+      afterEach(() => {
+        slackSpy.mockRestore();
+      });
+
+      test("Should pass person link info for a client meeting", async () => {
+        const meeting = await testPrismaClient.meeting.create({
+          data: { ...fakeMeeting, id: "slack-client-meeting" },
+        });
+
+        const response = await testServer.inject({
+          method: "POST",
+          url: "/process-notetaking",
+          headers: { authorization: `Bearer token` },
+          body: { stateCode: "US_NE", meetingId: meeting.id },
+        });
+
+        expect(response.statusCode).toBe(200);
+        expect(slackSpy).toHaveBeenCalledWith({
+          staffEmail: fakeMeeting.staffEmail,
+          stateCode: "US_NE",
+          personPseudoId: fakeClient.pseudonymizedId,
+          meetingId: meeting.id,
+          personType: "client",
+          personId: fakeClient.personId.toString(),
+        });
+      });
+
+      test("Should omit person link info when meeting has no client or resident", async () => {
+        const meeting = await testPrismaClient.meeting.create({
+          data: {
+            id: "slack-no-person-meeting",
+            staffEmail: fakeMeeting.staffEmail,
+            startTime: new Date(),
+            recordingsGCSBucket: "test-bucket",
+            recordingsFolderPath: "slack-no-person-meeting",
+          },
+        });
+
+        const response = await testServer.inject({
+          method: "POST",
+          url: "/process-notetaking",
+          headers: { authorization: `Bearer token` },
+          body: { stateCode: "US_NE", meetingId: meeting.id },
+        });
+
+        expect(response.statusCode).toBe(200);
+        expect(slackSpy).toHaveBeenCalledWith({
+          staffEmail: fakeMeeting.staffEmail,
+          stateCode: "US_NE",
+          personPseudoId: meeting.id,
+          meetingId: meeting.id,
+          personType: undefined,
+          personId: undefined,
+        });
+      });
     });
 
     test("Should set error status if LLM processing fails", async () => {
