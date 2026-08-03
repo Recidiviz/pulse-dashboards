@@ -46,6 +46,7 @@ export const FILTER_TYPES = {
   CHARGE_COUNTY_CODE: "chargeCountyCode",
   OFFENSE_TYPE: "offenseType",
   CHARGE_DESCRIPTION: "chargeDescription",
+  RELIGION: "religion",
   DATE_IN_POPULATION: "dateInPopulation",
 } as const;
 
@@ -77,5 +78,6 @@ export const filtersOrder = [
   FILTER_TYPES.CHARGE_COUNTY_CODE,
   FILTER_TYPES.OFFENSE_TYPE,
   FILTER_TYPES.CHARGE_DESCRIPTION,
+  FILTER_TYPES.RELIGION,
   FILTER_TYPES.DATE_IN_POPULATION,
 ];

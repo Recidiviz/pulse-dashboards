@@ -94,6 +94,7 @@ const PATHWAYS_METRIC_IDS_BY_PAGE: Record<PathwaysPage, MetricId[]> = {
     "prisonPopulationByOffenseType",
     "prisonPopulationByChargeDescription",
     "prisonPopulationByAdmissionReason",
+    "prisonPopulationByReligion",
     "prisonPopulationPersonLevel",
   ],
   [PATHWAYS_PAGES.prisonToSupervision]: [

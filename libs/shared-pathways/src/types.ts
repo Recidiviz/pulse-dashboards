@@ -111,6 +111,7 @@ export type PrisonPopulationSnapshotRecord = {
   chargeCountyCode: string;
   offenseType: string;
   chargeDescription: string;
+  religion: string;
 };
 
 export type PrisonPopulationPersonLevelRecord = {

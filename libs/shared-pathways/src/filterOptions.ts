@@ -487,6 +487,18 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
       return this.defaultOption.value;
     },
   },
+  [FILTER_TYPES.RELIGION]: {
+    type: FILTER_TYPES.RELIGION,
+    title: "Religion",
+    setFilters: setFilters(FILTER_TYPES.RELIGION),
+    options: [{ label: "All", value: "ALL" }],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+  },
   [FILTER_TYPES.DATE_IN_POPULATION]: {
     type: FILTER_TYPES.DATE_IN_POPULATION,
     title: "As of",
@@ -1464,6 +1476,10 @@ export const NyPopulationFilterOptions: PopulationFilters = {
     title: "Admission Type",
     useDynamicOptions: true,
   },
+  [FILTER_TYPES.RELIGION]: {
+    ...DefaultPopulationFilterOptions[FILTER_TYPES.RELIGION],
+    useDynamicOptions: true,
+  },
   [FILTER_TYPES.DATE_IN_POPULATION]: {
     ...DefaultPopulationFilterOptions[FILTER_TYPES.DATE_IN_POPULATION],
     useDynamicOptions: true,
@@ -1662,6 +1678,9 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
   [FILTER_TYPES.CHARGE_DESCRIPTION]: [
     DefaultPopulationFilterOptions[FILTER_TYPES.CHARGE_DESCRIPTION]
       .defaultValue,
+  ],
+  [FILTER_TYPES.RELIGION]: [
+    DefaultPopulationFilterOptions[FILTER_TYPES.RELIGION].defaultValue,
   ],
   [FILTER_TYPES.DATE_IN_POPULATION]: [
     DefaultPopulationFilterOptions[FILTER_TYPES.DATE_IN_POPULATION]

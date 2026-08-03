@@ -96,6 +96,7 @@ export default class MetricsStore {
             this.prisonPopulationByChargeDescription,
           [PATHWAYS_SECTIONS.countByAdmissionReason]:
             this.prisonPopulationByAdmissionReason,
+          [PATHWAYS_SECTIONS.countByReligion]: this.prisonPopulationByReligion,
           [PATHWAYS_SECTIONS.personLevelDetail]:
             this.prisonPopulationPersonLevel,
         },
@@ -376,6 +377,17 @@ export default class MetricsStore {
       endpoint: "PrisonPopulationByDimensionCount",
       rootStore: this.rootStore,
       accessor: "admissionReason",
+      enableMetricModeToggle: true,
+      rotateLabels: true,
+    });
+  }
+
+  get prisonPopulationByReligion(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "prisonPopulationByReligion",
+      endpoint: "PrisonPopulationByDimensionCount",
+      rootStore: this.rootStore,
+      accessor: "religion",
       enableMetricModeToggle: true,
       rotateLabels: true,
     });

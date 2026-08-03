@@ -21,9 +21,5 @@
 export const COMING_SOON_SECTIONS_BY_TENANT: Partial<
   Record<string, Set<string>>
 > = {
-  US_NY: new Set([
-    "countByReligion",
-    "countByMaritalStatus",
-    "countByTimeAtFacility",
-  ]),
+  US_NY: new Set(["countByMaritalStatus", "countByTimeAtFacility"]),
 };

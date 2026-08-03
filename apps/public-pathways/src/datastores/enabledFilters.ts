@@ -41,6 +41,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.OFFENSE_TYPE,
       FILTER_TYPES.CHARGE_DESCRIPTION,
       FILTER_TYPES.ADMISSION_REASON,
+      FILTER_TYPES.RELIGION,
     ],
   },
   prisonFacilityPopulation: {
@@ -58,6 +59,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.OFFENSE_TYPE,
       FILTER_TYPES.CHARGE_DESCRIPTION,
       FILTER_TYPES.ADMISSION_REASON,
+      FILTER_TYPES.RELIGION,
     ],
   },
   prisonPopulationByAgeGroup: {
@@ -75,6 +77,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.OFFENSE_TYPE,
       FILTER_TYPES.CHARGE_DESCRIPTION,
       FILTER_TYPES.ADMISSION_REASON,
+      FILTER_TYPES.RELIGION,
     ],
   },
   prisonPopulationByGender: {
@@ -92,6 +95,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.OFFENSE_TYPE,
       FILTER_TYPES.CHARGE_DESCRIPTION,
       FILTER_TYPES.ADMISSION_REASON,
+      FILTER_TYPES.RELIGION,
     ],
   },
   prisonPopulationBySex: {
@@ -109,6 +113,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.OFFENSE_TYPE,
       FILTER_TYPES.CHARGE_DESCRIPTION,
       FILTER_TYPES.ADMISSION_REASON,
+      FILTER_TYPES.RELIGION,
     ],
   },
   prisonPopulationByRace: {
@@ -126,6 +131,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.OFFENSE_TYPE,
       FILTER_TYPES.CHARGE_DESCRIPTION,
       FILTER_TYPES.ADMISSION_REASON,
+      FILTER_TYPES.RELIGION,
     ],
   },
   prisonPopulationByEthnicity: {
@@ -143,6 +149,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.OFFENSE_TYPE,
       FILTER_TYPES.CHARGE_DESCRIPTION,
       FILTER_TYPES.ADMISSION_REASON,
+      FILTER_TYPES.RELIGION,
     ],
   },
   prisonPopulationBySentenceLengthMin: {
@@ -160,6 +167,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.OFFENSE_TYPE,
       FILTER_TYPES.CHARGE_DESCRIPTION,
       FILTER_TYPES.ADMISSION_REASON,
+      FILTER_TYPES.RELIGION,
     ],
   },
   prisonPopulationBySentenceLengthMax: {
@@ -177,6 +185,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.OFFENSE_TYPE,
       FILTER_TYPES.CHARGE_DESCRIPTION,
       FILTER_TYPES.ADMISSION_REASON,
+      FILTER_TYPES.RELIGION,
     ],
   },
   prisonPopulationByChargeCountyCode: {
@@ -194,6 +203,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.OFFENSE_TYPE,
       FILTER_TYPES.CHARGE_DESCRIPTION,
       FILTER_TYPES.ADMISSION_REASON,
+      FILTER_TYPES.RELIGION,
     ],
   },
   prisonPopulationByOffenseType: {
@@ -211,6 +221,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.OFFENSE_TYPE,
       FILTER_TYPES.CHARGE_DESCRIPTION,
       FILTER_TYPES.ADMISSION_REASON,
+      FILTER_TYPES.RELIGION,
     ],
   },
   prisonPopulationByChargeDescription: {
@@ -228,6 +239,7 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.OFFENSE_TYPE,
       FILTER_TYPES.CHARGE_DESCRIPTION,
       FILTER_TYPES.ADMISSION_REASON,
+      FILTER_TYPES.RELIGION,
     ],
   },
   prisonPopulationByAdmissionReason: {
@@ -245,6 +257,25 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.OFFENSE_TYPE,
       FILTER_TYPES.CHARGE_DESCRIPTION,
       FILTER_TYPES.ADMISSION_REASON,
+      FILTER_TYPES.RELIGION,
+    ],
+  },
+  prisonPopulationByReligion: {
+    enabledFilters: [
+      FILTER_TYPES.DATE_IN_POPULATION,
+      FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.SEX,
+      FILTER_TYPES.AGE_GROUP,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.ETHNICITY,
+      FILTER_TYPES.SENTENCE_LENGTH_MIN,
+      FILTER_TYPES.SENTENCE_LENGTH_MAX,
+      FILTER_TYPES.CHARGE_COUNTY_CODE,
+      FILTER_TYPES.OFFENSE_TYPE,
+      FILTER_TYPES.CHARGE_DESCRIPTION,
+      FILTER_TYPES.ADMISSION_REASON,
+      FILTER_TYPES.RELIGION,
     ],
   },
 };

@@ -37,6 +37,7 @@ type Dimensions = {
   [DIMENSION_TYPES.OFFENSE_TYPE]: string;
   [DIMENSION_TYPES.CHARGE_DESCRIPTION]: string;
   [DIMENSION_TYPES.ADMISSION_REASON]: string;
+  [DIMENSION_TYPES.RELIGION]: string;
 };
 
 export type Dimension = keyof Dimensions;
