@@ -29,6 +29,7 @@ import {
 } from "~datatypes";
 import { isHydrated } from "~hydration-utils";
 
+import { ClientOpportunityUpdateRecord } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import { TenantId } from "../../../RootStore/types";
 import UserStore from "../../../RootStore/UserStore";
@@ -54,7 +55,10 @@ import {
   getMockOpportunityConstructor,
   MockOpportunity,
 } from "../../mixins/__mocks__/MockOpportunity";
-import { CLIENTS_OFFICERS } from "../../models/offlineFixtures/ClientFixture";
+import {
+  clientFixture,
+  CLIENTS_OFFICERS,
+} from "../../models/offlineFixtures/ClientFixture";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
 import { SupervisionSupervisorOpportunitiesPresenter } from "../SupervisionSupervisorOpportunitiesPresenter";
 import {
@@ -662,6 +666,81 @@ describe("Opportunity details methods", () => {
         ) as RawOpportunityInfoByOpportunityType;
 
         expect(result.size).toBe(0);
+      });
+    });
+
+    describe("reviewer caseload hydration", () => {
+      const reviewerClientRecord = Object.values(clientFixture)[0];
+
+      function makePresenter(includeReviewerCaseload: boolean) {
+        // Use a supervisorPseudoId with no prior hydration in this test run
+        // (unlike `testSupervisor`, which the outer `presenter` already
+        // hydrated) so `hydrate()` actually runs `populate()` here instead of
+        // short-circuiting on state left behind by that other presenter.
+        const reviewerPresenter =
+          new SupervisionSupervisorOpportunitiesPresenter(
+            store,
+            officerWithNoClients.pseudonymizedId,
+            jiiStore,
+            oppConfigStore,
+            includeReviewerCaseload,
+          );
+        vi.spyOn(
+          reviewerPresenter,
+          "isWorkflowsEnabled",
+          "get",
+        ).mockReturnValue(true);
+        vi.spyOn(
+          reviewerPresenter,
+          "isInsightsSupervisorReviewTableEnabled",
+          "get",
+        ).mockReturnValue(true);
+        vi.spyOn(reviewerPresenter, "supervisorInfo", "get").mockReturnValue(
+          testSupervisor,
+        );
+        return reviewerPresenter;
+      }
+
+      beforeEach(() => {
+        vi.spyOn(
+          rootStore.firestoreStore,
+          "getOpportunityUpdatesForReviewerId",
+        ).mockResolvedValue([
+          { clientRecordId: reviewerClientRecord.recordId },
+        ] as ClientOpportunityUpdateRecord[]);
+        vi.spyOn(
+          rootStore.firestoreStore,
+          "getClientsForRecordIds",
+        ).mockResolvedValue([reviewerClientRecord]);
+      });
+
+      afterEach(() => {
+        jiiStore.caseloadByReviewerId.clear();
+      });
+
+      it("does not populate the reviewer caseload when includeReviewerCaseload is false", async () => {
+        const notificationsPresenter = makePresenter(false);
+
+        await notificationsPresenter.hydrate();
+
+        expect(isHydrated(notificationsPresenter)).toBeTrue();
+        expect(
+          jiiStore.caseloadByReviewerId.has(testSupervisor.externalId),
+        ).toBeFalse();
+      });
+
+      it("populates and hydrates the reviewer caseload when includeReviewerCaseload is true", async () => {
+        const detailPresenter = makePresenter(true);
+
+        await detailPresenter.hydrate();
+
+        expect(isHydrated(detailPresenter)).toBeTrue();
+        const reviewerCaseload = jiiStore.caseloadByReviewerId.get(
+          testSupervisor.externalId,
+        );
+        expect(reviewerCaseload).toHaveLength(1);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        expect(isHydrated(reviewerCaseload![0].opportunityManager)).toBeTrue();
       });
     });
   });

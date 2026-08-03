@@ -52,6 +52,7 @@ const usePresenter = () => {
         supervisionStore?.supervisorPseudoId,
         justiceInvolvedPersonsStore,
         opportunityConfigurationStore,
+        /* includeReviewerCaseload */ true,
       )
     : null;
 };

@@ -55,6 +55,10 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
     public supervisorPseudoId: string,
     justiceInvolvedPersonsStore: JusticeInvolvedPersonsStore,
     protected opportunityConfigurationStore: OpportunityConfigurationStore,
+    // Only components that render reviewer-derived data (e.g. the supervisor
+    // review table) need this presenter to populate/hydrate the reviewer
+    // caseload; other instances should leave the shared caseload alone.
+    private readonly includeReviewerCaseload = false,
   ) {
     super(supervisionStore);
 
@@ -132,10 +136,15 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
         ...this.allOfficers.map(
           (o) => () => this.expectCaseloadPopulated(o.externalId),
         ),
-        () =>
-          this.expectCaseloadPopulatedForReviewer(
-            this.supervisorInfo?.externalId,
-          ),
+        ...(this.includeReviewerCaseload &&
+        this.isInsightsSupervisorReviewTableEnabled
+          ? [
+              () =>
+                this.expectCaseloadPopulatedForReviewer(
+                  this.supervisorInfo?.externalId,
+                ),
+            ]
+          : []),
       ],
     });
   }
@@ -387,7 +396,10 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
    * Populates the caseload for the current supervisor as a reviewer.
    */
   async populateCaseloadForCurrentReviewer() {
-    if (!this.isInsightsSupervisorReviewTableEnabled) {
+    if (
+      !this.includeReviewerCaseload ||
+      !this.isInsightsSupervisorReviewTableEnabled
+    ) {
       return;
     }
 
