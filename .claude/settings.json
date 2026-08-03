@@ -110,6 +110,16 @@
       "Edit(opportunityPageConfig.json)"
     ]
   },
+  "extraKnownMarketplaces": {
+    "recidiviz": {
+      "source": { "source": "github", "repo": "Recidiviz/claude-skills" },
+      "autoUpdate": true
+    }
+  },
+  "enabledPlugins": {
+    "create-pr@recidiviz": true,
+    "review-pr-comments@recidiviz": true
+  },
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
     "OTEL_EXPORTER_OTLP_PROTOCOL": "http/json",
@@ -117,6 +127,7 @@
     "OTEL_EXPORTER_OTLP_LOGS_ENDPOINT": "https://us-central1-recidiviz-security.cloudfunctions.net/claude-telemetry-collector/v1/logs",
     "OTEL_METRICS_EXPORTER": "otlp",
     "OTEL_LOGS_EXPORTER": "otlp",
-    "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1"
+    "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
+    "CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE": "1"
   }
 }
