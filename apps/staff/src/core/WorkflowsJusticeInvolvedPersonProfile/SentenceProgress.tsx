@@ -99,6 +99,10 @@ const TimelineSentence = styled.line`
   stroke-width: ${rem(1)};
 `;
 
+const EmptyTimeline = styled(TimelineSentence)`
+  stroke-width: ${rem(2.5)};
+`;
+
 const TimelineToday = styled.circle`
   r: ${rem(4.5)};
 `;
@@ -166,6 +170,70 @@ function StateSpecificSupervisionDetails({
   }
 }
 
+export const usMoFallback = ({
+  header,
+  startDate,
+  endDate,
+  timelineLabels,
+  today,
+  officerId,
+}: {
+  header: string;
+  startDate?: Date;
+  endDate?: Date;
+  timelineLabels: TimelineLabels;
+  today: Date;
+  officerId?: string;
+}): React.ReactElement<any> => {
+  return (
+    <Wrapper className="SentenceProgress">
+      <VizHeader>
+        <div>
+          <Title>{header}</Title>
+          {startDate && (
+            <Sans14>{formatSentenceLength(startDate, today)}</Sans14>
+          )}
+        </div>
+        <OfficerAssignmentDisplay officerId={officerId} />
+      </VizHeader>
+      <TimelineChart>
+        <EmptyTimeline
+          stroke={palette.slate10}
+          x1="0%"
+          x2="100%"
+          y1="50%"
+          y2="50%"
+        />
+      </TimelineChart>
+      {!endDate && !startDate ? (
+        <TimelineDates>
+          <div>Missing Dates</div>
+        </TimelineDates>
+      ) : (
+        <TimelineDates>
+          <div>
+            {startDate ? (
+              <>
+                {timelineLabels.start}:{" "}
+                <span>{formatWorkflowsDate(startDate)}</span>
+              </>
+            ) : (
+              "No start date available"
+            )}
+          </div>
+          {endDate ? (
+            <div>
+              {timelineLabels.end}: <span>{formatWorkflowsDate(endDate)}</span>
+            </div>
+          ) : (
+            "No end date available"
+          )}
+        </TimelineDates>
+      )}
+    </Wrapper>
+  );
+};
+
 export const ProgressTimeline = ({
   header,
   startDate,
@@ -183,11 +251,21 @@ export const ProgressTimeline = ({
   timelineLabels: TimelineLabels;
   person: JusticeInvolvedPerson;
 }): React.ReactElement<any> => {
-  // can't visualize anything if we don't have both valid dates
-  if (!startDate || !endDate || endDate <= startDate)
-    return <>{fallbackComponent}</>;
-
+  const isMoClient = person instanceof Client && person.stateCode === "US_MO";
   const today = startOfDay(new Date());
+
+  if (!startDate || !endDate || endDate < startDate) {
+    if (!isMoClient) return <>{fallbackComponent}</>;
+
+    return usMoFallback({
+      header,
+      startDate,
+      endDate,
+      timelineLabels,
+      today,
+      officerId,
+    });
+  }
   const expired = endDate < today;
 
   const timelinePosition = scaleTime()
