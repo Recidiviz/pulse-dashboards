@@ -14,6 +14,13 @@
         ],
         "cwd": "{projectRoot}"
       }
+    },
+    "generate-ds001-tokens": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "node tools/ds001/generate.mjs"
+      }
     }
   }
 }

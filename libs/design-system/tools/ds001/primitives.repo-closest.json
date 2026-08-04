@@ -1,0 +1,2247 @@
+{
+  "Radii": {
+    "radius-sm": {
+      "$type": "number",
+      "$value": 4,
+      "$description": "Buttons/tags",
+      "$extensions": {
+        "com.figma.variableId": "VariableID:102:584"
+      }
+    },
+    "radius-md": {
+      "$type": "number",
+      "$value": 8,
+      "$description": "cards",
+      "$extensions": {
+        "com.figma.variableId": "VariableID:102:585"
+      }
+    },
+    "radius-max": {
+      "$type": "number",
+      "$value": 999,
+      "$extensions": {
+        "com.figma.variableId": "VariableID:102:586"
+      }
+    },
+    "radius-none": {
+      "$type": "number",
+      "$value": 0,
+      "$description": "ADDED BY Claude — 2026-06-11 token-gap fill pass (Full Style Guide audit, Robinson-authorized session)\nPURPOSE: Zero-radius primitive backing semantic Radii/banner-radius, previously raw-value.\nSOURCE: Staging banners are square-cornered.\nCURRENT VALUE: 0\nREVIEW: Keep if square corners are a real system option; else delete with banner-radius.",
+      "$extensions": {
+        "com.figma.variableId": "VariableID:3059:4",
+        "com.figma.scopes": ["CORNER_RADIUS"]
+      }
+    }
+  },
+  "Color": {
+    "Styling": {
+      "slate-20": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.16862745583057404, 0.3294117748737335, 0.4117647111415863
+          ],
+          "alpha": 0.20000000298023224,
+          "hex": "#2B5469"
+        },
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:587"
+        }
+      },
+      "slate-5": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.16862745583057404, 0.3294117748737335, 0.4117647111415863
+          ],
+          "alpha": 0.05000000074505806,
+          "hex": "#2B5469"
+        },
+        "$extensions": {
+          "com.figma.variableId": "VariableID:210:453",
+          "com.figma.scopes": ["ALL_SCOPES"]
+        }
+      },
+      "slate-06 (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.16862745583057404, 0.3294117748737335, 0.4117647111415863
+          ],
+          "alpha": 0.05999999865889549,
+          "hex": "#2B5469"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.slate06. Not in DS001 native palette (default column intentionally blank/transparent; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:7",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "slate-10": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.16862745583057404, 0.3294117748737335, 0.4117647111415863
+          ],
+          "alpha": 0.10000000149011612,
+          "hex": "#2B5469"
+        },
+        "$extensions": {
+          "com.figma.variableId": "VariableID:210:454",
+          "com.figma.scopes": ["ALL_SCOPES"]
+        }
+      },
+      "slate-12 (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.16862745583057404, 0.3294117748737335, 0.4117647111415863
+          ],
+          "alpha": 0.11999999731779099,
+          "hex": "#2B5469"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.slate12. Not in DS001 native palette (default column intentionally blank/transparent; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:8",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "slate-15 (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.16862745583057404, 0.3294117748737335, 0.4117647111415863
+          ],
+          "alpha": 0.15000000596046448,
+          "hex": "#2B5469"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.slate15. Not in DS001 native palette (default column intentionally blank/transparent; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:9",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "slate-30": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.16862745583057404, 0.3294117748737335, 0.4117647111415863
+          ],
+          "alpha": 0.30000001192092896,
+          "hex": "#2B5469"
+        },
+        "$extensions": {
+          "com.figma.variableId": "VariableID:210:455",
+          "com.figma.scopes": ["ALL_SCOPES"]
+        }
+      },
+      "slate-30-opaque (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.7607843279838562, 0.7960784435272217, 0.8156862854957581
+          ],
+          "alpha": 1,
+          "hex": "#C2CBD0"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.slate30Opaque. Not in DS001 native palette (default column intentionally blank/transparent; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:11",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "slate-40": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.16862745583057404, 0.3294117748737335, 0.4117647111415863
+          ],
+          "alpha": 0.4000000059604645,
+          "hex": "#2B5469"
+        },
+        "$extensions": {
+          "com.figma.variableId": "VariableID:210:456",
+          "com.figma.scopes": ["ALL_SCOPES"]
+        }
+      },
+      "slate-50": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.16862745583057404, 0.3294117748737335, 0.4117647111415863
+          ],
+          "alpha": 0.5,
+          "hex": "#2B5469"
+        },
+        "$extensions": {
+          "com.figma.variableId": "VariableID:210:457",
+          "com.figma.scopes": ["ALL_SCOPES"]
+        }
+      },
+      "slate-50-opaque (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.5843137502670288, 0.6627451181411743, 0.7058823704719543
+          ],
+          "alpha": 1,
+          "hex": "#95A9B4"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.slate50Opaque. Not in DS001 native palette (default column intentionally blank/transparent; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:12",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "slate-60": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.16862745583057404, 0.3294117748737335, 0.4117647111415863
+          ],
+          "alpha": 0.6000000238418579,
+          "hex": "#2B5469"
+        },
+        "$extensions": {
+          "com.figma.variableId": "VariableID:210:458",
+          "com.figma.scopes": ["ALL_SCOPES"]
+        }
+      },
+      "slate-70": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.16862745583057404, 0.3294117748737335, 0.4117647111415863
+          ],
+          "alpha": 0.699999988079071,
+          "hex": "#2B5469"
+        },
+        "$extensions": {
+          "com.figma.variableId": "VariableID:210:459",
+          "com.figma.scopes": ["ALL_SCOPES"]
+        }
+      },
+      "slate-80": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.16862745583057404, 0.3294117748737335, 0.4117647111415863
+          ],
+          "alpha": 0.800000011920929,
+          "hex": "#2B5469"
+        },
+        "$description": "threshold WCAG AA check",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:210:460",
+          "com.figma.scopes": ["ALL_SCOPES"]
+        }
+      },
+      "slate-85": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.16862745583057404, 0.3294117748737335, 0.4117647111415863
+          ],
+          "alpha": 0.8500000238418579,
+          "hex": "#2B5469"
+        },
+        "$extensions": {
+          "com.figma.variableId": "VariableID:210:461",
+          "com.figma.scopes": ["ALL_SCOPES"]
+        }
+      },
+      "slate-90 (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.16862745583057404, 0.3294117748737335, 0.4117647111415863
+          ],
+          "alpha": 0.8999999761581421,
+          "hex": "#2B5469"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.slate90. Not in DS001 native palette (default column intentionally blank/transparent; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:10",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "slate-100": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.16862745583057404, 0.3294117748737335, 0.4117647111415863
+          ],
+          "alpha": 1,
+          "hex": "#2B5469"
+        },
+        "$extensions": {
+          "com.figma.variableId": "VariableID:210:462",
+          "com.figma.scopes": ["ALL_SCOPES"]
+        }
+      },
+      "white-40 (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [1, 1, 1],
+          "alpha": 0.4000000059604645,
+          "hex": "#FFFFFF"
+        },
+        "$description": " Used @ 1px dropdown border on a pine1 background,\n  Paperwork/FormContainer.tsx:167\n                                                     Repo-only token — libs/design-system/src/styles/palette.ts · palette.white40. Not in DS001 native palette (default column intentionally blank/transparent; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:13",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "white-70 (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [1, 1, 1],
+          "alpha": 0.699999988079071,
+          "hex": "#FFFFFF"
+        },
+        "$description": "used @ Where: TripleDot icon color, Paperwork/FormContainer.tsx:341.     Repo-only token — libs/design-system/src/styles/palette.ts · palette.white70. Not in DS001 native palette (default column intentionally blank/transparent; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:14",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "white-80 (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [1, 1, 1],
+          "alpha": 0.800000011920929,
+          "hex": "#FFFFFF"
+        },
+        "$description": "used @   Where: Secondary/hover text: hover state of those same clear-all links, plus\n  headers in InsightsOnboardingPage/OutliersStaff.tsx,\n  InsightsSupervisorPageV2.tsx, and a chart label in\n  DispositionChart.styles.tsx\nRepo-only token — libs/design-system/src/styles/palette.ts · palette.white80. Not in DS001 native palette (default column intentionally blank/transparent; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:15",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "white-90 (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [1, 1, 1],
+          "alpha": 0.8999999761581421,
+          "hex": "#FFFFFF"
+        },
+        "$description": " Primary text on dark: dropdown labels, checkbox text, and clear-all\n  link      \n  in @jii/program-catalog/FilterSection.tsx and                              \n  @jii/states/US_CO/UsCoProgramsList/FilterPanel.tsxRepo-only token — libs/design-system/src/styles/palette.ts · palette.white90. Not in DS001 native palette (default column intentionally blank/transparent; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:16",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "teal-tint-10": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.545098066329956, 0.6941176652908325, 0.729411780834198
+          ],
+          "alpha": 1,
+          "hex": "#8BB1BA"
+        },
+        "$description": "⚠️ REVIEW REQUIRED — added 2026-05-06 during DS001 date-card + course-catalog component build. Cyan-tinted highlight bg #8BB1BA @ 10% used on highlighted/upcoming date cards. Confirm whether this is its own primitive or should derive from existing cornflower/info as an alpha tint.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:602:4",
+          "com.figma.scopes": ["ALL_SCOPES"]
+        }
+      },
+      "border-dashed": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.16862745583057404, 0.3294117748737335, 0.4117647111415863
+          ],
+          "alpha": 0.20000000298023224,
+          "hex": "#2B5469"
+        },
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:588"
+        }
+      },
+      "border-subtle": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.16862745583057404, 0.3294117748737335, 0.4117647111415863
+          ],
+          "alpha": 0.20000000298023224,
+          "hex": "#2B5469"
+        },
+        "$description": "card outline, 1px card borders",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:589"
+        }
+      },
+      "border-faint": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.16862745583057404, 0.3294117748737335, 0.4117647111415863
+          ],
+          "alpha": 0.10000000149011612,
+          "hex": "#2B5469"
+        },
+        "$description": "faint dividers",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:590"
+        }
+      },
+      "surface-badge": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.16862745583057404, 0.3294117748737335, 0.4117647111415863
+          ],
+          "alpha": 0.10000000149011612,
+          "hex": "#2B5469"
+        },
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:591"
+        }
+      },
+      "surface-callout": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.16862745583057404, 0.3294117748737335, 0.4117647111415863
+          ],
+          "alpha": 0.05000000074505806,
+          "hex": "#2B5469"
+        },
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:592"
+        }
+      },
+      "surface-hover": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.16862745583057404, 0.3294117748737335, 0.4117647111415863
+          ],
+          "alpha": 0.20000000298023224,
+          "hex": "#2B5469"
+        },
+        "$description": "bg hover over menu item",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:593"
+        }
+      },
+      "text-label": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.16862745583057404, 0.3294117748737335, 0.4117647111415863
+          ],
+          "alpha": 0.8500000238418579,
+          "hex": "#2B5469"
+        },
+        "$description": "Nav items, field labels, metadata, placeholder text.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:594"
+        }
+      },
+      "navy": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.0313725508749485, 0.13333334028720856, 0.2862745225429535
+          ],
+          "alpha": 1,
+          "hex": "#082249"
+        },
+        "$description": "renamed from tooltip in palette.ts and moved to styling primitives Repo-only token — libs/design-system/src/styles/palette.ts · palette.signal.tooltip. Not in DS001 native palette (default column intentionally blank/transparent; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3611:33",
+          "com.figma.hiddenFromPublishing": true,
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      }
+    },
+    "Main": {
+      "pine-1": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0, 0.20000000298023224, 0.1921568661928177],
+          "alpha": 1,
+          "hex": "#003331"
+        },
+        "$description": "body text and headings",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:597"
+        }
+      },
+      "pine-2": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0, 0.3019607961177826, 0.2823529541492462],
+          "alpha": 1,
+          "hex": "#004D48"
+        },
+        "$description": "need to switch pine",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:104:2237"
+        }
+      },
+      "pine-3": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0, 0.42352941632270813, 0.40392157435417175],
+          "alpha": 1,
+          "hex": "#006C67"
+        },
+        "$description": "Action, CTA, links primary buttons active nav states",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:598"
+        }
+      },
+      "pine-4": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0, 0.4000000059604645, 0.37254902720451355],
+          "alpha": 1,
+          "hex": "#00665F"
+        },
+        "$description": "Borders on secondary buttons and input icons",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:599"
+        }
+      },
+      "pine-muted": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.5843137502670288, 0.6627451181411743, 0.7058823704719543
+          ],
+          "alpha": 1,
+          "hex": "#95A9B4"
+        },
+        "$description": "Loading spinner, soft UI accents",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:600"
+        }
+      },
+      "pine-deep": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.003921568859368563, 0.13725490868091583, 0.13333334028720856
+          ],
+          "alpha": 1,
+          "hex": "#012322"
+        },
+        "$description": "⚠️ REVIEW REQUIRED — added 2026-05-06 during DS001 date-card + course-catalog component build. Pine #012322 from v2 (darkest pine — used as course card image bg). No exact match: existing pine-1 resolves to #003331 (slightly lighter). Confirm whether to keep #012322 as a distinct primitive or migrate references to pine-1.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:602:9",
+          "com.figma.scopes": ["ALL_SCOPES"]
+        }
+      },
+      "pine-3 (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0, 0.3019607961177826, 0.2823529541492462],
+          "alpha": 1,
+          "hex": "#004D48"
+        },
+        "$description": "used in 103 placesRepo-only token — libs/design-system/src/styles/palette.ts · palette.pine3. Not in DS001 native palette (default column intentionally blank/transparent; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:17",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "signal-links": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0, 0.42352941632270813, 0.40392157435417175],
+          "alpha": 1,
+          "hex": "#006C67"
+        },
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3630:695",
+          "com.figma.scopes": ["ALL_SCOPES"]
+        }
+      }
+    },
+    "Backgrounds": {
+      "marble-1": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [1, 1, 1],
+          "alpha": 1,
+          "hex": "#FFFFFF"
+        },
+        "$description": "Card backgrounds and button text.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:601"
+        }
+      },
+      "marble-2": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.9764705896377563, 0.9803921580314636, 0.9803921580314636
+          ],
+          "alpha": 1,
+          "hex": "#F9FAFA"
+        },
+        "$description": "The Page Background. Used for the \"Off-white\" body area.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:602"
+        }
+      },
+      "grey-base": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.16862745583057404, 0.3294117748737335, 0.4117647111415863
+          ],
+          "alpha": 1,
+          "hex": "#2B5469"
+        },
+        "$description": "The foundation for metadata",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:603"
+        }
+      },
+      "black": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.003921568859368563, 0.13725490868091583, 0.13333334028720856
+          ],
+          "alpha": 1,
+          "hex": "#012322"
+        },
+        "$description": "High-contrast descriptions",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:604"
+        }
+      },
+      "text-subtle (delete maybe? same as grey-base)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.16862745583057404, 0.3294117748737335, 0.4117647111415863
+          ],
+          "alpha": 0.699999988079071,
+          "hex": "#2B5469"
+        },
+        "$description": "last updated banner",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:605"
+        }
+      },
+      "grey-light": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.95686274766922, 0.9607843160629272, 0.9607843160629272
+          ],
+          "alpha": 1,
+          "hex": "#F4F5F5"
+        },
+        "$description": "ADDED BY Claude — 2026-06-11 token-gap fill pass (Full Style Guide audit, Robinson-authorized session)\nPURPOSE: Primitive backing for semantic Color/Surface/surface-notice (#F4F5F5), which was a raw-value semantic with no primitive to alias.\nSOURCE: Staging FullWidthBanner fill #F4F5F5 (Banner build 2026-05-20).\nCURRENT VALUE: {\"r\":0.956862745,\"g\":0.960784314,\"b\":0.960784314,\"a\":1}\nREVIEW: Confirm name fits Backgrounds group (marble-1/marble-2/grey-base); close to marble-2 #F9FAFA — decide if they consolidate.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3059:2",
+          "com.figma.scopes": ["FRAME_FILL", "SHAPE_FILL"]
+        }
+      },
+      "marble-4 (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.9372549057006836, 0.9450980424880981, 0.9450980424880981
+          ],
+          "alpha": 1,
+          "hex": "#EFF1F1"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.marble4. Not in DS001 native palette (default column intentionally blank/transparent; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:5",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "marble-5 (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.9137254953384399, 0.929411768913269, 0.929411768913269
+          ],
+          "alpha": 1,
+          "hex": "#E9EDED"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.marble5. Not in DS001 native palette (default column intentionally blank/transparent; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:6",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      }
+    },
+    "Feedback": {
+      "success": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.14509804546833038, 0.7215686440467834, 0.5803921818733215
+          ],
+          "alpha": 1,
+          "hex": "#25B894"
+        },
+        "$description": "active links/toggles",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:606"
+        }
+      },
+      "success-bg": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.14509804546833038, 0.7215686440467834, 0.5803921818733215
+          ],
+          "alpha": 1,
+          "hex": "#25B894"
+        },
+        "$description": "active links/toggles",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:607"
+        }
+      },
+      "focus": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.13725490868091583, 0.48627451062202454, 0.686274528503418
+          ],
+          "alpha": 1,
+          "hex": "#237CAF"
+        },
+        "$description": "accessibility outlines",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:608"
+        }
+      },
+      "error": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.6431372761726379, 0.2235294133424759, 0.2235294133424759
+          ],
+          "alpha": 1,
+          "hex": "#A43939"
+        },
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:609"
+        }
+      },
+      "error-bg": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.6431372761726379, 0.2235294133424759, 0.2235294133424759
+          ],
+          "alpha": 1,
+          "hex": "#A43939"
+        },
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:610"
+        }
+      },
+      "attention": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.7803921699523926, 0.5607843399047852, 0.21960784494876862
+          ],
+          "alpha": 1,
+          "hex": "#C78F38"
+        },
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:611"
+        }
+      },
+      "attention-bg": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.7803921699523926, 0.5607843399047852, 0.21960784494876862
+          ],
+          "alpha": 1,
+          "hex": "#C78F38"
+        },
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:612"
+        }
+      },
+      "info": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.13725490868091583, 0.48627451062202454, 0.686274528503418
+          ],
+          "alpha": 1,
+          "hex": "#237CAF"
+        },
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:614"
+        }
+      },
+      "info-bg": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.13725490868091583, 0.48627451062202454, 0.686274528503418
+          ],
+          "alpha": 1,
+          "hex": "#237CAF"
+        },
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:615"
+        }
+      },
+      "focus-strong": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.14509804546833038, 0.38823530077934265, 0.43529412150382996
+          ],
+          "alpha": 1,
+          "hex": "#25636F"
+        },
+        "$description": "ADDED BY Claude — 2026-06-11 token-gap fill pass (Full Style Guide audit, Robinson-authorized session)\nPURPOSE: Primitive backing for semantic Color/Border/border-focus-strong (#135079), previously raw-value.\nSOURCE: Banner build 2026-05-20: focus darkened for ≥3:1 on tinted surfaces. CONTRAST STILL UNVERIFIED across all status-*-bg tints.\nCURRENT VALUE: {\"r\":0.074509804,\"g\":0.31372549,\"b\":0.474509804,\"a\":1}\nREVIEW: Verify contrast; decide relationship to Color/Feedback/focus (#237CAF).",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3059:3",
+          "com.figma.scopes": ["STROKE"]
+        }
+      },
+      "warning": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.7058823704719543, 0.1764705926179886, 0.1764705926179886
+          ],
+          "alpha": 1,
+          "hex": "#B42D2D"
+        },
+        "$description": "ADDED BY Claude — 2026-07-14 Chip tokenization pass (Robinson-authorized). PURPOSE: Warning/caution status hue; DS001 had Feedback success + error primitives but no warning. SOURCE: Chip yellow variant (libs/@jii/common-ui/src/Chip.tsx) — staging used text #A82C00 / bg #FFF8DE / border #FCD579 (three inconsistent hues); consolidated to a single amber to match the success/error single-hue model. VALUE: #B45309 (amber-700, ~4.9:1 on white). REVIEW REQUIRED: confirm exact brand amber + contrast on the -bg tint; value provisional.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3273:2"
+        }
+      },
+      "warning-bg": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.7058823704719543, 0.1764705926179886, 0.1764705926179886
+          ],
+          "alpha": 1,
+          "hex": "#B42D2D"
+        },
+        "$description": "ADDED BY Claude — 2026-07-14 Chip tokenization pass (Robinson-authorized). PURPOSE: Warning surface tint. VALUE: Color/Feedback/warning (#B45309) at 10% alpha — mirrors success-bg/error-bg (fg hue @ 0.1). REVIEW REQUIRED: confirm with warning fg.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3273:3"
+        }
+      },
+      "tooltip (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.0313725508749485, 0.13333334028720856, 0.2862745225429535
+          ],
+          "alpha": 1,
+          "hex": "#082249"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.signal.tooltip. Not in DS001 native palette (default column intentionally blank/transparent; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:23",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "selected (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.21568627655506134, 0.5921568870544434, 0.8039215803146362
+          ],
+          "alpha": 1,
+          "hex": "#3797CD"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.signal.selected. Not in DS001 native palette (default column intentionally blank/transparent; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:24",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "important (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.8784313797950745, 0.658823549747467, 0.32156863808631897
+          ],
+          "alpha": 1,
+          "hex": "#E0A852"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.signal.important. Not in DS001 native palette (default column intentionally blank/transparent; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:25",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "chip-warning-text (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.658823549747467, 0.1725490242242813, 0],
+          "alpha": 1,
+          "hex": "#A82C00"
+        },
+        "$description": "Repo-only token — libs/@jii/common-ui/src/Chip.tsx · statusStyles.yellow.color. Raw hardcoded hex, never in the repo palette. Default column intentionally blank/transparent; value in 'Repo · closest'. True source hue behind the provisional warning #b45309.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3497:5",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "chip-warning-border (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.9882352948188782, 0.8352941274642944, 0.4745098054409027
+          ],
+          "alpha": 1,
+          "hex": "#FCD579"
+        },
+        "$description": "Repo-only token — libs/@jii/common-ui/src/Chip.tsx · statusStyles.yellow.borderColor. Raw hardcoded hex, never in the repo palette. Default column intentionally blank/transparent; value in 'Repo · closest'.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3497:6",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "chip-warning-bg (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [1, 0.9725490212440491, 0.8705882430076599],
+          "alpha": 1,
+          "hex": "#FFF8DE"
+        },
+        "$description": "Repo-only token — libs/@jii/common-ui/src/Chip.tsx · statusStyles.yellow.backgroundColor. Raw hardcoded hex, never in the repo palette. Default column intentionally blank/transparent; value in 'Repo · closest'.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3497:7",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "chip-success-text (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0, 0.4117647111415863, 0.0313725508749485],
+          "alpha": 1,
+          "hex": "#006908"
+        },
+        "$description": "Repo-only token — libs/@jii/common-ui/src/Chip.tsx · statusStyles.green.color. Raw hardcoded hex, never in the repo palette. Default column intentionally blank/transparent; value in 'Repo · closest'.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3497:8",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "chip-success-border (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.6509804129600525, 0.9215686321258545, 0.5176470875740051
+          ],
+          "alpha": 1,
+          "hex": "#A6EB84"
+        },
+        "$description": "Repo-only token — libs/@jii/common-ui/src/Chip.tsx · statusStyles.green.borderColor. Raw hardcoded hex, never in the repo palette. Default column intentionally blank/transparent; value in 'Repo · closest'.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3497:9",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "chip-success-bg (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.9372549057006836, 1, 0.8980392217636108],
+          "alpha": 1,
+          "hex": "#EFFFE5"
+        },
+        "$description": "Repo-only token — libs/@jii/common-ui/src/Chip.tsx · statusStyles.green.backgroundColor. Raw hardcoded hex, never in the repo palette. Default column intentionally blank/transparent; value in 'Repo · closest'.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3497:10",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      }
+    },
+    "Data": {
+      "Color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [1, 1, 1],
+          "alpha": 1,
+          "hex": "#FFFFFF"
+        },
+        "$extensions": {
+          "com.figma.variableId": "VariableID:210:466",
+          "com.figma.scopes": ["ALL_SCOPES"]
+        }
+      },
+      "forest": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.14509804546833038, 0.38823530077934265, 0.43529412150382996
+          ],
+          "alpha": 1,
+          "hex": "#25636F"
+        },
+        "$description": "⚠️ REVIEW REQUIRED — added 2026-05-06 during DS001 date-card + course-catalog component build. Forest #25636F used as top accent fill on \"special program\" date card variants. Confirm naming (Color/Data vs new Color/Accent group).",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:602:2",
+          "com.figma.scopes": ["ALL_SCOPES"]
+        }
+      },
+      "cornflower": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.32549020648002625, 0.501960813999176, 0.7764706015586853
+          ],
+          "alpha": 1,
+          "hex": "#5380C6"
+        },
+        "$description": "⚠️ REVIEW REQUIRED — added 2026-05-06 during DS001 date-card + course-catalog component build. Cornflower #1D79BF used as border + date text on highlighted date cards. Distinct from Color/Feedback/info (#237CAF). Confirm whether to keep separate or alias to info.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:602:6",
+          "com.figma.scopes": ["ALL_SCOPES"]
+        }
+      },
+      "forest-2 (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0, 0.29411765933036804, 0.35686275362968445],
+          "alpha": 1,
+          "hex": "#004B5B"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.data.forest2. Not in DS001 native palette (default column blank; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:2218",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "gold-1 (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.8784313797950745, 0.658823549747467, 0.32156863808631897
+          ],
+          "alpha": 1,
+          "hex": "#E0A852"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.data.gold1. Not in DS001 native palette (default column blank; value in 'Repo · closest'). Identical value to signal.important.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:2219",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "crimson-1 (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.7921568751335144, 0.2666666805744171, 0.2862745225429535
+          ],
+          "alpha": 1,
+          "hex": "#CA4449"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.data.crimson1. Not in DS001 native palette (default column blank; value in 'Repo · closest'). Used by red Chip.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:2220",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "crimson-2 (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.7137255072593689, 0.14509804546833038, 0.239215686917305
+          ],
+          "alpha": 1,
+          "hex": "#B6253D"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.data.crimson2. Not in DS001 native palette (default column blank; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:2221",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "indigo-1 (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.2823529541492462, 0.3764705955982208, 0.5843137502670288
+          ],
+          "alpha": 1,
+          "hex": "#486095"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.data.indigo1. Not in DS001 native palette (default column blank; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:2222",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "indigo-2 (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.19607843458652496, 0.3019607961177826, 0.5215686559677124
+          ],
+          "alpha": 1,
+          "hex": "#324D85"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.data.indigo2. Not in DS001 native palette (default column blank; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:2223",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "indigo-10 (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.2823529541492462, 0.3764705955982208, 0.5843137502670288
+          ],
+          "alpha": 0.10000000149011612,
+          "hex": "#486095"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.data.indigo10. Not in DS001 native palette (default column blank; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:2224",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "teal-1 (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.545098066329956, 0.6941176652908325, 0.729411780834198
+          ],
+          "alpha": 1,
+          "hex": "#8BB1BA"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.data.teal1. Not in DS001 native palette (default column blank; value in 'Repo · closest'). Opaque base of teal-tint-10.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:2225",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "teal-2 (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.3803921639919281, 0.5568627715110779, 0.5960784554481506
+          ],
+          "alpha": 1,
+          "hex": "#618E98"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.data.teal2. Not in DS001 native palette (default column blank; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:2226",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "salmon-1 (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.8666666746139526, 0.5960784554481506, 0.615686297416687
+          ],
+          "alpha": 1,
+          "hex": "#DD989D"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.data.salmon1. Not in DS001 native palette (default column blank; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:2227",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "salmon-2 (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.7843137383460999, 0.45490196347236633, 0.48235294222831726
+          ],
+          "alpha": 1,
+          "hex": "#C8747B"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.data.salmon2. Not in DS001 native palette (default column blank; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:2228",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "spring-1 (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.7176470756530762, 0.8313725590705872, 0.5647059082984924
+          ],
+          "alpha": 1,
+          "hex": "#B7D490"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.data.spring1. Not in DS001 native palette (default column blank; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:2229",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "bermuda (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.6235294342041016, 0.35686275362968445, 0.5176470875740051
+          ],
+          "alpha": 1,
+          "hex": "#9F5B84"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.data.bermuda. Not in DS001 native palette (default column blank; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:2230",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "Profile": {
+        "profile-1 (repo)": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.529411792755127, 0.4901960790157318, 0.529411792755127
+            ],
+            "alpha": 1,
+            "hex": "#877D87"
+          },
+          "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.data.profileColorOrder[0]. Not in DS001 native palette (default column blank; value in 'Repo · closest').",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:3489:2231",
+            "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+          }
+        },
+        "profile-2 (repo)": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.5411764979362488, 0.3960784375667572, 0.30588236451148987
+            ],
+            "alpha": 1,
+            "hex": "#8A654E"
+          },
+          "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.data.profileColorOrder[1]. Not in DS001 native palette (default column blank; value in 'Repo · closest').",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:3489:2232",
+            "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+          }
+        },
+        "profile-3 (repo)": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.4000000059604645, 0.5333333611488342, 0.4000000059604645
+            ],
+            "alpha": 1,
+            "hex": "#668866"
+          },
+          "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.data.profileColorOrder[2]. Not in DS001 native palette (default column blank; value in 'Repo · closest').",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:3489:2233",
+            "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+          }
+        },
+        "profile-4 (repo)": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.5921568870544434, 0.5137255191802979, 0.41960784792900085
+            ],
+            "alpha": 1,
+            "hex": "#97836B"
+          },
+          "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.data.profileColorOrder[3]. Not in DS001 native palette (default column blank; value in 'Repo · closest').",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:3489:2234",
+            "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+          }
+        },
+        "profile-5 (repo)": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.30980393290519714, 0.43529412150382996, 0.48235294222831726
+            ],
+            "alpha": 1,
+            "hex": "#4F6F7B"
+          },
+          "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.data.profileColorOrder[4]. Not in DS001 native palette (default column blank; value in 'Repo · closest').",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:3489:2235",
+            "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+          }
+        },
+        "profile-6 (repo)": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.32549020648002625, 0.27450981736183167, 0.27450981736183167
+            ],
+            "alpha": 1,
+            "hex": "#534646"
+          },
+          "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.data.profileColorOrder[5]. Not in DS001 native palette (default column blank; value in 'Repo · closest').",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:3489:2236",
+            "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+          }
+        },
+        "profile-7 (repo)": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.4000000059604645, 0.5333333611488342, 0.4000000059604645
+            ],
+            "alpha": 1,
+            "hex": "#668866"
+          },
+          "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.data.profileColorOrder[6]. Not in DS001 native palette (default column blank; value in 'Repo · closest').",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:3489:2237",
+            "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+          }
+        },
+        "profile-8 (repo)": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.5411764979362488, 0.3960784375667572, 0.30588236451148987
+            ],
+            "alpha": 1,
+            "hex": "#8A654E"
+          },
+          "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.data.profileColorOrder[7]. Not in DS001 native palette (default column blank; value in 'Repo · closest').",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:3489:2238",
+            "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+          }
+        }
+      }
+    },
+    "Alerts": {
+      "Color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [1, 1, 1],
+          "alpha": 1,
+          "hex": "#FFFFFF"
+        },
+        "$extensions": {
+          "com.figma.variableId": "VariableID:210:467",
+          "com.figma.scopes": ["ALL_SCOPES"]
+        }
+      }
+    },
+    "Brand": {
+      "opportunities-app-green (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0, 0.6509804129600525, 0.6078431606292725],
+          "alpha": 1,
+          "hex": "#00A69B"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.opportunitiesAppGreen. Not in DS001 native palette (default column intentionally blank/transparent; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:18",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "logo-blue (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0, 0.6313725709915161, 1],
+          "alpha": 1,
+          "hex": "#00A1FF"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.logoBlue. Not in DS001 native palette (default column intentionally blank/transparent; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:19",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "logo-red (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.8784313797950745, 0.054901961237192154, 0],
+          "alpha": 1,
+          "hex": "#E00E00"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.logoRed. Not in DS001 native palette (default column intentionally blank/transparent; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:20",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "pink (repo) in feedback": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [1, 0.8627451062202454, 0.8980392217636108],
+          "alpha": 1,
+          "hex": "#FFDCE5"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.pink. Not in DS001 native palette (default column intentionally blank/transparent; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:21",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      },
+      "pink-dark (repo) in feedback": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.2980392277240753, 0.0470588244497776, 0.10980392247438431
+          ],
+          "alpha": 1,
+          "hex": "#4C0C1C"
+        },
+        "$description": "Repo-only token — libs/design-system/src/styles/palette.ts · palette.pinkDark. Not in DS001 native palette (default column intentionally blank/transparent; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:22",
+          "com.figma.scopes": ["ALL_FILLS", "STROKE"]
+        }
+      }
+    },
+    "Text": {
+      "text-primary (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.18431372940540314, 0.21568627655506134, 0.21568627655506134
+          ],
+          "alpha": 1,
+          "hex": "#2F3737"
+        },
+        "$description": "Repo-only primitive — libs/design-system/src/styles/palette.ts:126 · palette.text.primary = rgba(47, 55, 55, 1) = #2F3737. Not in the DS001 native palette; the default column is intentionally blank and the value lives in the \"Repo · closest\" mode.\n\nA bare literal in the repo palette, not derived from the slate or pine ramps — unlike its siblings text.caption (slate85), text.links (signal.links) and text.normal (pine4).\n\nHidden from publishing and scoped to TEXT_FILL as of 2026-07-30: bind the component-scoped semantic, never this primitive.\n\nConsumed by 1 semantic:\n· Color/Text/text-details-content — DetailsContent, the <dd> in profile sidebar definition pairs (52 files).\n\nRepo sites NOT covered by a semantic: DownloadUserDataButton, apps/staff/src/core/InsightsSupervisorsListPage/InsightsSupervisorsListPage.tsx:86 — the only button in the monorepo painted this color, left out as a one-off rather than given a token.\n\nTotal repo footprint: 2 call sites, both in the staff app. Nothing in JII or Meetings uses this value. The text-primary Tailwind class in apps/@meetings/app is unrelated (tailwind.config.js:37 = #0D2B3A).",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:26",
+          "com.figma.hiddenFromPublishing": true,
+          "com.figma.scopes": ["TEXT_FILL"]
+        }
+      },
+      "text-secondary (repo)": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.3686274588108063, 0.4313725531101227, 0.4313725531101227
+          ],
+          "alpha": 1,
+          "hex": "#5E6E6E"
+        },
+        "$description": "Repo-only primitive — libs/design-system/src/styles/palette.ts:127 · palette.text.secondary = rgba(94, 110, 110, 1) = #5E6E6E. Not in the DS001 native palette; the default column is intentionally blank and the value lives in the \"Repo · closest\" mode.\n\nA bare literal in the repo palette, not derived from the slate or pine ramps.\n\nHidden from publishing and scoped to TEXT_FILL as of 2026-07-30: bind the component-scoped semantic, never this primitive.\n\nConsumed by 7 semantics, one per component:\n· Color/Text/text-details-subheading — DetailsSubheading, the <dt> label\n· Color/Text/text-programming-title — Programming Title (a DetailsContent override)\n· Color/Text/text-person-id — PersonId\n· Color/Text/text-person-capsule-status — JusticeInvolvedPersonCapsule status line\n· Color/Text/text-caseload-tab-inactive — WorkflowsCaseloadTabs rest state\n· Color/Text/text-person-lookup-placeholder — PersonLookup ::placeholder\n· Color/Text/text-caseload-select-placeholder — CaseloadSelect react-select placeholder\n\nAll 8 repo call sites are covered. Split one-per-component rather than aliased to a single muted token because these move independently: placeholder contrast is an accessibility decision, tab rest state is a navigation decision, and the subheading is locked to text-details-content as a pair.\n\nTotal repo footprint: 8 call sites, all in the staff app. Nothing in JII or Meetings uses this value.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:27",
+          "com.figma.hiddenFromPublishing": true,
+          "com.figma.scopes": ["TEXT_FILL"]
+        }
+      }
+    }
+  },
+  "Spacer": {
+    "space-0": {
+      "$type": "number",
+      "$value": 1,
+      "$extensions": {
+        "com.figma.variableId": "VariableID:196:62"
+      }
+    },
+    "space-2": {
+      "$type": "number",
+      "$value": 1,
+      "$description": "pixel nudge",
+      "$extensions": {
+        "com.figma.variableId": "VariableID:102:616"
+      }
+    },
+    "space-4": {
+      "$type": "number",
+      "$value": 4,
+      "$description": "Grid Unit, base increment",
+      "$extensions": {
+        "com.figma.variableId": "VariableID:102:617"
+      }
+    },
+    "space-8": {
+      "$type": "number",
+      "$value": 8,
+      "$description": "2 grid units. Standard small spacing",
+      "$extensions": {
+        "com.figma.variableId": "VariableID:102:618"
+      }
+    },
+    "space-12": {
+      "$type": "number",
+      "$value": 8,
+      "$description": "3 grid units. Component gap.",
+      "$extensions": {
+        "com.figma.variableId": "VariableID:102:619"
+      }
+    },
+    "space-16": {
+      "$type": "number",
+      "$value": 16,
+      "$description": "4 grid units. Base spacing (1rem).",
+      "$extensions": {
+        "com.figma.variableId": "VariableID:102:620"
+      }
+    },
+    "space-20": {
+      "$type": "number",
+      "$value": 16,
+      "$description": "5 grid units. Type-specific spacing. list indents",
+      "$extensions": {
+        "com.figma.variableId": "VariableID:102:621"
+      }
+    },
+    "space-24": {
+      "$type": "number",
+      "$value": 24,
+      "$description": "6 grid units. Primary text leading. (for 16pt type)/ Card Padding",
+      "$extensions": {
+        "com.figma.variableId": "VariableID:102:622"
+      }
+    },
+    "space-28": {
+      "$type": "number",
+      "$value": 24,
+      "$extensions": {
+        "com.figma.variableId": "VariableID:102:623"
+      }
+    },
+    "space-32": {
+      "$type": "number",
+      "$value": 32,
+      "$description": "footer padding and banner gaps",
+      "$extensions": {
+        "com.figma.variableId": "VariableID:102:624"
+      }
+    },
+    "space-36": {
+      "$type": "number",
+      "$value": 32,
+      "$extensions": {
+        "com.figma.variableId": "VariableID:460:1062"
+      }
+    },
+    "space-38": {
+      "$type": "number",
+      "$value": 32,
+      "$extensions": {
+        "com.figma.variableId": "VariableID:102:625"
+      }
+    },
+    "space-40": {
+      "$type": "number",
+      "$value": 32,
+      "$extensions": {
+        "com.figma.variableId": "VariableID:102:626"
+      }
+    },
+    "space-44": {
+      "$type": "number",
+      "$value": 48,
+      "$extensions": {
+        "com.figma.variableId": "VariableID:102:627"
+      }
+    },
+    "space-48": {
+      "$type": "number",
+      "$value": 48,
+      "$description": "large vertical gaps between major sections",
+      "$extensions": {
+        "com.figma.variableId": "VariableID:102:628"
+      }
+    },
+    "space-52": {
+      "$type": "number",
+      "$value": 48,
+      "$extensions": {
+        "com.figma.variableId": "VariableID:102:629"
+      }
+    },
+    "space-64": {
+      "$type": "number",
+      "$value": 48,
+      "$extensions": {
+        "com.figma.variableId": "VariableID:102:630"
+      }
+    },
+    "space-6": {
+      "$type": "number",
+      "$value": 4,
+      "$description": "ADDED BY Claude — 2026-06-11 token-gap fill pass (Full Style Guide audit, Robinson-authorized session)\nPURPOSE: Fills the 4→8 jump in the spacer scale; backs semantic Layout/Spacing/inset-pill-x.\nSOURCE: Badge/StatusPill sm variants use 6px horizontal padding (raw, measured in component set 829:3806).\nCURRENT VALUE: 6\nREVIEW: Decide if 6 enters the global scale or stays pill-scoped.",
+      "$extensions": {
+        "com.figma.variableId": "VariableID:3059:7"
+      }
+    },
+    "space-10": {
+      "$type": "number",
+      "$value": 8,
+      "$description": "ADDED BY Claude — 2026-06-11 token-gap fill pass (Full Style Guide audit, Robinson-authorized session)\nPURPOSE: Fills the 8→12 jump in the spacer scale; backs semantic Layout/Spacing/gap-row.\nSOURCE: Card (1013:136) breakdown rows use 10px itemSpacing (raw, ×9 nodes).\nCURRENT VALUE: 10\nREVIEW: Decide if 10 enters the global scale or should snap to 8/12 instead.",
+      "$extensions": {
+        "com.figma.variableId": "VariableID:3059:8"
+      }
+    },
+    "space-1 (repo)": {
+      "$type": "number",
+      "$value": 1,
+      "$description": "Repo-only — libs/design-system/src/styles/spacing.ts (published @recidiviz/design-system) · spacing.xxs (1px hairline). Not in DS001 native scale (default column 0 = blank; value in 'Repo · closest').",
+      "$extensions": {
+        "com.figma.variableId": "VariableID:3489:2244",
+        "com.figma.scopes": ["WIDTH_HEIGHT", "GAP"]
+      }
+    }
+  },
+  "Layout": {
+    "Breakpoint": {
+      "breakpoint-xs": {
+        "$type": "number",
+        "$value": 320,
+        "$description": "Smallest embedded container state. Below this width use Compact mode.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:631"
+        }
+      },
+      "breakpoint-sm": {
+        "$type": "number",
+        "$value": 600,
+        "$description": "Max width for mobile breakpoint. Gutters switch to gutter-sm at or below this value.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:632"
+        }
+      },
+      "breakpoint-md": {
+        "$type": "number",
+        "$value": 700,
+        "$description": "Max width for tablet breakpoint. Gutters use gutter-md between breakpoint-sm and this value.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:633"
+        }
+      },
+      "breakpoint-lg": {
+        "$type": "number",
+        "$value": 900,
+        "$description": "Max width for desktop breakpoint. Gutters use gutter-lg up to this value, gutter-max above.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:634"
+        }
+      }
+    },
+    "Container": {
+      "max-width": {
+        "$type": "number",
+        "$value": 800,
+        "$description": "Main content container max-width",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:635"
+        }
+      },
+      "max-narrow": {
+        "$type": "number",
+        "$value": 640,
+        "$description": "Narrow reading container max-width (focused text, forms, modals)",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:636"
+        }
+      },
+      "content-width": {
+        "$type": "number",
+        "$value": 800,
+        "$description": "Main content container max-width",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:697",
+          "com.figma.aliasData": {
+            "targetVariableId": "VariableID:74b19ea2cd7e03acf00f2815c7ab0ae34497093d/2:1000",
+            "targetVariableName": "Spacer/Layout/max-width",
+            "targetVariableSetId": "VariableCollectionId:b2be8929237d1cf476a2b9f50f13d88f50daeb5b/2:931",
+            "targetVariableSetName": "Primitives"
+          }
+        }
+      }
+    },
+    "Gutter": {
+      "gutter-xs": {
+        "$type": "number",
+        "$value": "{Spacer.space-8}",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:637"
+        }
+      },
+      "gutter-sm": {
+        "$type": "number",
+        "$value": "{Spacer.space-16}",
+        "$description": "Page gutter at breakpoint-sm (≤ 516px)",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:638"
+        }
+      },
+      "gutter-md": {
+        "$type": "number",
+        "$value": "{Spacer.space-32}",
+        "$description": "Page gutter between breakpoint-sm and breakpoint-md (517–700px)",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:639"
+        }
+      },
+      "gutter-lg": {
+        "$type": "number",
+        "$value": "{Spacer.space-48}",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:640"
+        }
+      },
+      "gutter-max": {
+        "$type": "number",
+        "$value": "{Spacer.space-64}",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:641"
+        }
+      }
+    },
+    "Spacing": {
+      "inset-page": {
+        "$type": "number",
+        "$value": 24,
+        "$description": "Page-level padding inside container edges",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:693",
+          "com.figma.aliasData": {
+            "targetVariableId": "VariableID:6d015951722905af879c619a9a1b739aa2b1bfa0/2:984",
+            "targetVariableName": "Spacer/space-24",
+            "targetVariableSetId": "VariableCollectionId:b2be8929237d1cf476a2b9f50f13d88f50daeb5b/2:931",
+            "targetVariableSetName": "Primitives"
+          }
+        }
+      },
+      "inset-card": {
+        "$type": "number",
+        "$value": 16,
+        "$description": "Card internal padding",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:692",
+          "com.figma.aliasData": {
+            "targetVariableId": "VariableID:b1057297789f89487b6c5a5995601c589518cea5/2:982",
+            "targetVariableName": "Spacer/space-16",
+            "targetVariableSetId": "VariableCollectionId:b2be8929237d1cf476a2b9f50f13d88f50daeb5b/2:931",
+            "targetVariableSetName": "Primitives"
+          }
+        }
+      },
+      "gap-stack": {
+        "$type": "number",
+        "$value": 16,
+        "$description": "Vertical gap between stacked components",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:690",
+          "com.figma.aliasData": {
+            "targetVariableId": "VariableID:b1057297789f89487b6c5a5995601c589518cea5/2:982",
+            "targetVariableName": "Spacer/space-16",
+            "targetVariableSetId": "VariableCollectionId:b2be8929237d1cf476a2b9f50f13d88f50daeb5b/2:931",
+            "targetVariableSetName": "Primitives"
+          }
+        }
+      },
+      "gap-inline": {
+        "$type": "number",
+        "$value": 8,
+        "$description": "Horizontal gap between inline items (icon + label)",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:691",
+          "com.figma.aliasData": {
+            "targetVariableId": "VariableID:b41fea5c910f3968dba46048109f22aaf0d8ebfd/2:980",
+            "targetVariableName": "Spacer/space-8",
+            "targetVariableSetId": "VariableCollectionId:b2be8929237d1cf476a2b9f50f13d88f50daeb5b/2:931",
+            "targetVariableSetName": "Primitives"
+          }
+        }
+      },
+      "gap-section": {
+        "$type": "number",
+        "$value": 32,
+        "$description": "Vertical gap between major page sections",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:689",
+          "com.figma.aliasData": {
+            "targetVariableId": "VariableID:0ea289b2ae3a1ba85c1f62e0b1b50d985db76427/2:986",
+            "targetVariableName": "Spacer/space-32",
+            "targetVariableSetId": "VariableCollectionId:b2be8929237d1cf476a2b9f50f13d88f50daeb5b/2:931",
+            "targetVariableSetName": "Primitives"
+          }
+        }
+      }
+    }
+  },
+  "Typography": {
+    "Size": {
+      "sm": {
+        "$type": "number",
+        "$value": 12,
+        "$description": "Brow/Microcopy/Legal/SmallTags",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:642"
+        }
+      },
+      "caption": {
+        "$type": "number",
+        "$value": 14,
+        "$description": "Card Labels & Metadata",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:643"
+        }
+      },
+      "body": {
+        "$type": "number",
+        "$value": 16,
+        "$description": "Primary Reading Text (1rem)",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:644"
+        }
+      },
+      "size-18 (repo)": {
+        "$type": "number",
+        "$value": 18,
+        "$description": "Repo-only — libs/design-system/src/scss/typography/_variables.module.scss · font-sans-18 (18px). Not in DS001 native scale (default column 0 = blank; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:2245",
+          "com.figma.scopes": ["FONT_SIZE"]
+        }
+      },
+      "heading-sm": {
+        "$type": "number",
+        "$value": 24,
+        "$description": "Section Titles (e.g., \"Important Dates\")",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:645"
+        }
+      },
+      "size-26": {
+        "$type": "number",
+        "$value": 24,
+        "$description": "⚠️ REVIEW REQUIRED — added 2026-05-06 during DS001 date-card + course-catalog component build. Course catalog card title font size. No prior step at 26px — closest existing are size-heading-sm (24) and size-heading-md (34). Confirm whether 26 becomes a permanent scale step or course title aligns to 24.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:602:10"
+        }
+      },
+      "heading-md": {
+        "$type": "number",
+        "$value": 34,
+        "$description": "Standard Page Titles (2.125rem)",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:646"
+        }
+      },
+      "heading-lg": {
+        "$type": "number",
+        "$value": 40,
+        "$description": "Hero H1 (Massive Title)",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:647"
+        }
+      },
+      "size-56 (repo)": {
+        "$type": "number",
+        "$value": 56,
+        "$description": "Repo-only — libs/design-system/src/scss/typography/_variables.module.scss · font-header-56 (article header, dead in JII). Not in DS001 native scale (default column 0 = blank; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:2246",
+          "com.figma.scopes": ["FONT_SIZE"]
+        }
+      },
+      "md": {
+        "$type": "number",
+        "$value": 19,
+        "$extensions": {
+          "com.figma.variableId": "VariableID:349:3"
+        }
+      },
+      "display-sm": {
+        "$type": "number",
+        "$value": 32,
+        "$extensions": {
+          "com.figma.variableId": "VariableID:349:4"
+        }
+      },
+      "display-md": {
+        "$type": "number",
+        "$value": 48,
+        "$extensions": {
+          "com.figma.variableId": "VariableID:349:5"
+        }
+      },
+      "size-88 (repo)": {
+        "$type": "number",
+        "$value": 88,
+        "$description": "Repo-only — libs/design-system/src/scss/typography/_variables.module.scss · font-header-88 (article header, dead in JII). Not in DS001 native scale (default column 0 = blank; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:2247",
+          "com.figma.scopes": ["FONT_SIZE"]
+        }
+      }
+    },
+    "Tracking": {
+      "compact": {
+        "$type": "number",
+        "$value": -0.03999999910593033,
+        "$description": "to compress larger type sizes, heroes and large serifs sets",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:648"
+        }
+      },
+      "md-tight": {
+        "$type": "number",
+        "$value": -0.019999999552965164,
+        "$description": "tighten medium card headings and titles",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:649"
+        }
+      },
+      "tight": {
+        "$type": "number",
+        "$value": -0.009999999776482582,
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:650"
+        }
+      },
+      "normal": {
+        "$type": "number",
+        "$value": 0,
+        "$description": "legible for body and reading",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:651"
+        }
+      },
+      "serif-tight (repo)": {
+        "$type": "number",
+        "$value": -0.029999999329447746,
+        "$description": "Repo-only — libs/design-system/src/scss/typography/_variables.module.scss · letter-spacing -0.03em (serif-24). Not in DS001 native scale (default column 0 = blank; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:2249",
+          "com.figma.scopes": ["LETTER_SPACING"]
+        }
+      }
+    },
+    "LineHeight": {
+      "sm": {
+        "$type": "number",
+        "$value": "{Spacer.space-16}",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:652"
+        }
+      },
+      "caption": {
+        "$type": "number",
+        "$value": "{Spacer.space-20}",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:653"
+        }
+      },
+      "body": {
+        "$type": "number",
+        "$value": "{Spacer.space-24}",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:654"
+        }
+      },
+      "heading-sm": {
+        "$type": "number",
+        "$value": "{Spacer.space-32}",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:655"
+        }
+      },
+      "heading-md": {
+        "$type": "number",
+        "$value": "{Spacer.space-40}",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:656"
+        }
+      },
+      "heading-lg": {
+        "$type": "number",
+        "$value": "{Spacer.space-48}",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:657"
+        }
+      },
+      "lh-140": {
+        "$type": "number",
+        "$value": 140,
+        "$extensions": {
+          "com.figma.variableId": "VariableID:349:6"
+        }
+      },
+      "lh-150": {
+        "$type": "number",
+        "$value": 150,
+        "$extensions": {
+          "com.figma.variableId": "VariableID:349:7"
+        }
+      },
+      "lh-160": {
+        "$type": "number",
+        "$value": 160,
+        "$extensions": {
+          "com.figma.variableId": "VariableID:349:8"
+        }
+      },
+      "lh-170": {
+        "$type": "number",
+        "$value": 170,
+        "$extensions": {
+          "com.figma.variableId": "VariableID:349:9"
+        }
+      },
+      "lh-120 (repo)": {
+        "$type": "number",
+        "$value": 120,
+        "$description": "Repo-only — libs/design-system/src/scss/typography/_variables.module.scss · $ui-line-height 1.2 (120%, used by every UI type style). Not in DS001 native scale (default column 0 = blank; value in 'Repo · closest').",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:3489:2248",
+          "com.figma.scopes": ["LINE_HEIGHT"]
+        }
+      }
+    },
+    "Weight": {
+      "Regular": {
+        "$type": "number",
+        "$value": 400,
+        "$description": "Page titles and reading text",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:658"
+        }
+      },
+      "Medium": {
+        "$type": "number",
+        "$value": 500,
+        "$description": "Body, Button, Nav - Public Sans",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:659"
+        }
+      },
+      "Bold": {
+        "$type": "number",
+        "$value": 700,
+        "$description": "Strong tags and high emphasis dates",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:660"
+        }
+      }
+    },
+    "Font": {
+      "serif": {
+        "$type": "string",
+        "$value": "Libre Baskerville",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:661",
+          "com.figma.type": "string"
+        }
+      },
+      "sans": {
+        "$type": "string",
+        "$value": "Public Sans",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:102:662",
+          "com.figma.type": "string"
+        }
+      }
+    },
+    "ParagraphSpacing": {
+      "paragraph-spacing-none": {
+        "$type": "number",
+        "$value": 0,
+        "$description": "Indented copy (not used currently), match to css if updated",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:112:1055"
+        }
+      },
+      "paragraph-spacing-sm": {
+        "$type": "number",
+        "$value": 8,
+        "$description": "0.5em.Dense contexts, list items, match to css if updated\n",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:112:1056"
+        }
+      },
+      "paragraph-spacing-md": {
+        "$type": "number",
+        "$value": 16,
+        "$description": "1em. Standard. match to css if updated",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:112:1057"
+        }
+      }
+    }
+  },
+  "Stroke": {
+    "thin": {
+      "$type": "number",
+      "$value": 1,
+      "$description": "standard border width for cards and badges",
+      "$extensions": {
+        "com.figma.variableId": "VariableID:102:663"
+      }
+    },
+    "thick": {
+      "$type": "number",
+      "$value": 2,
+      "$description": "high emphasis elements or \"focused on\"",
+      "$extensions": {
+        "com.figma.variableId": "VariableID:102:664"
+      }
+    },
+    "accent": {
+      "$type": "number",
+      "$value": 4,
+      "$extensions": {
+        "com.figma.variableId": "VariableID:102:665"
+      }
+    },
+    "none": {
+      "$type": "number",
+      "$value": 0,
+      "$description": "ADDED BY Claude — 2026-06-11 token-gap fill pass (Full Style Guide audit, Robinson-authorized session)\nPURPOSE: Zero-weight primitive backing semantic Stroke/stroke-none (suppressed edges on accent-only borders), previously raw-value.\nSOURCE: Banner build 2026-05-20.\nCURRENT VALUE: 0\nREVIEW: Confirm zero-weight-token approach vs per-side stroke weights without a token.",
+      "$extensions": {
+        "com.figma.variableId": "VariableID:3059:5",
+        "com.figma.scopes": ["STROKE_FLOAT"]
+      }
+    },
+    "regular": {
+      "$type": "number",
+      "$value": 1.5,
+      "$description": "ADDED BY Claude — 2026-06-11 token-gap fill pass (Full Style Guide audit, Robinson-authorized session)\nPURPOSE: 1.5px stroke primitive backing semantics Stroke/icon-weight-sm and icon-weight-md, both previously raw 1.5.\nSOURCE: Icon vector strokes measured 1.5 in Date Card chevrons and Card dot markers.\nCURRENT VALUE: 1.5\nREVIEW: icon-weight-sm and icon-weight-md currently both = 1.5 — decide whether md should differ or the pair collapses to one token.",
+      "$extensions": {
+        "com.figma.variableId": "VariableID:3059:6",
+        "com.figma.scopes": ["STROKE_FLOAT"]
+      }
+    }
+  },
+  "Size": {
+    "icon-sm": {
+      "$type": "number",
+      "$value": 16,
+      "$description": "FLAGGED — Added during Icon library v9 build (2026-05-20) per critique. Review naming and scope before publish.\n\nIcon canvas dimension at small size. Was raw 16 in v8; Spacer/space-16 exists at the same value but is spacer-scoped, not icon-scoped.",
+      "$extensions": {
+        "com.figma.variableId": "VariableID:3003:2"
+      }
+    },
+    "icon-md": {
+      "$type": "number",
+      "$value": 24,
+      "$description": "FLAGGED — Added during Icon library v9 build (2026-05-20) per critique. Review naming and scope before publish.\n\nIcon canvas dimension at medium size. Was raw 24 in v8; Spacer/space-24 exists at the same value but is spacer-scoped, not icon-scoped.",
+      "$extensions": {
+        "com.figma.variableId": "VariableID:3003:3"
+      }
+    }
+  },
+  "$extensions": {
+    "com.figma.modeName": "Repo · closest"
+  }
+}
