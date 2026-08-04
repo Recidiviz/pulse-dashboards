@@ -83,10 +83,12 @@ export class SpecialistCore {
     }
 
     // LangSmith environment variables (optional):
-    // - LANGCHAIN_API_KEY: API key for LangSmith
+    // - LANGSMITH_API_KEY or LANGCHAIN_API_KEY: API key for LangSmith (either name enables tracing)
     // - LANGCHAIN_PROJECT: Project name (e.g., "Meetings Module (development)")
     // - LANGCHAIN_TRACING_V2: Set to "true" to enable tracing
-    const langsmithEnabled = Boolean(process.env["LANGCHAIN_API_KEY"]);
+    const langsmithEnabled = Boolean(
+      process.env["LANGSMITH_API_KEY"] ?? process.env["LANGCHAIN_API_KEY"],
+    );
 
     const baseOpenAI = new OpenAI({
       apiKey: openaiKey,

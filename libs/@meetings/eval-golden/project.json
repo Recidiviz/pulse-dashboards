@@ -1,0 +1,51 @@
+{
+  "name": "@meetings/eval-golden",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/@meetings/eval-golden/src",
+  "projectType": "library",
+  "tags": ["meetings", "scope:server"],
+  "metadata": {
+    "sops-env": {
+      "override-sops-env-project": "@meetings/server"
+    }
+  },
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.lib.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "requires-sops-env:mirror-prompt": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx src/cli/mirror-prompt.ts",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {}
+      },
+      "defaultConfiguration": "dev"
+    },
+    "requires-sops-env:regression": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx src/cli/regression.ts",
+        "cwd": "{projectRoot}"
+      },
+      "inputs": [
+        "{projectRoot}/**/*",
+        "{workspaceRoot}/libs/@meetings/tasks/src/llm/**/*",
+        "{workspaceRoot}/libs/@meetings/config/src/**/*"
+      ],
+      "configurations": {
+        "dev": {}
+      },
+      "defaultConfiguration": "dev"
+    }
+  }
+}

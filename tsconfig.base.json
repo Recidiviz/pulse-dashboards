@@ -65,6 +65,7 @@
       "~@meetings/app/*": ["./apps/@meetings/app/src/*"],
       "~@meetings/config": ["./libs/@meetings/config/src/index.ts"],
       "~@meetings/config/*": ["./libs/@meetings/config/src/*"],
+      "~@meetings/eval-golden/*": ["./libs/@meetings/eval-golden/src/*"],
       "~@meetings/import": ["./apps/@meetings/import/src/index.ts"],
       "~@meetings/import/*": ["./apps/@meetings/import/src/*"],
       "~@meetings/import/test/*": ["./apps/@meetings/import/__tests__/*"],
