@@ -137,14 +137,14 @@ export const mockApiOpportunityConfigurationResponse = {
       zeroGrantsTooltip: null,
     },
     usNeGoodTimeRestoration: {
-      callToAction: "",
-      caseNotesTitle: " Relevant Case Notes",
+      callToAction: null,
+      caseNotesTitle: "Relevant Case Notes",
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
       denialReasons: [
         {
-          key: " Good Time Restoration Appeal Pending",
+          key: "Good Time Restoration Appeal Pending",
           text: "A good time restoration appeal is pending for this resident",
         },
         { key: "Circumstances", text: "Has other exigent circumstances" },
