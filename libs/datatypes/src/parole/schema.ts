@@ -162,6 +162,7 @@ export const paroleCaseSchema = z.object({
   docId: z.string(),
   name: z.string(),
   dob: z.string(),
+  gender: z.string(),
   currentFacility: z.string(),
   custodyLevel: z.string(),
   caseManagerName: z.string(),

@@ -30,11 +30,12 @@ import { BackLink } from "../../Link";
 import ModelHydrator from "../../ModelHydrator";
 import { paroleUrl } from "../../views";
 import { AttachmentsSection } from "../components/AttachmentsSection";
+import { CaseProfileSidebar } from "../components/CaseProfileSidebar";
 import { ConductHistorySection } from "../components/ConductHistorySection";
-import { IdentityHeaderSection } from "../components/IdentityHeaderSection";
 import { OffenseHistorySection } from "../components/OffenseHistorySection";
 import { ProgramParticipationSection } from "../components/ProgramParticipationSection";
 import { RiskAssessmentSection } from "../components/RiskAssessmentSection";
+import { PAROLE_SECTION_IDS, SectionAnchor } from "../components/shared";
 
 // Page-level max-width/padding comes from PageParole's shared Main wrapper;
 // this only lays out the sections within it.
@@ -43,6 +44,30 @@ const Wrapper = styled.div`
   flex-direction: column;
   gap: ${rem(spacing.lg)};
   padding-bottom: 1.5rem;
+`;
+
+// Left sidebar takes up 30% of the available width; the existing sections
+// share the rest. No align-items override here (default is stretch) so the
+// sidebar's height matches the taller MainColumn, giving its sticky section
+// nav room to travel as the page scrolls.
+const CaseProfileLayout = styled.div`
+  display: flex;
+  gap: ${rem(spacing.lg)};
+`;
+
+const SidebarColumn = styled.div`
+  flex: 0 0 30%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+`;
+
+const MainColumn = styled.div`
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(spacing.lg)};
 `;
 
 const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
@@ -59,38 +84,54 @@ const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
     <Wrapper>
       <BackLink fallbackUrl={paroleUrl("docket")}>Back to Docket</BackLink>
 
-      <IdentityHeaderSection
-        name={caseDetail.name}
-        docId={caseDetail.docId}
-        dob={caseDetail.dob}
-        hearingDate={caseDetail.hearingDate}
-        hearingTime={caseDetail.hearingTime}
-        currentFacility={caseDetail.currentFacility}
-        custodyLevel={caseDetail.custodyLevel}
-        caseManagerName={caseDetail.caseManagerName}
-        sentenceStartDate={caseDetail.sentenceStartDate}
-        paroleEligibilityDate={caseDetail.paroleEligibilityDate}
-        mandatoryReleaseDate={caseDetail.mandatoryReleaseDate}
-      />
+      <CaseProfileLayout>
+        <SidebarColumn>
+          <CaseProfileSidebar
+            name={caseDetail.name}
+            docId={caseDetail.docId}
+            custodyLevel={caseDetail.custodyLevel}
+            gender={caseDetail.gender}
+            dob={caseDetail.dob}
+            hearingDate={caseDetail.hearingDate}
+            currentFacility={caseDetail.currentFacility}
+            caseManagerName={caseDetail.caseManagerName}
+            sentenceStartDate={caseDetail.sentenceStartDate}
+            paroleEligibilityDate={caseDetail.paroleEligibilityDate}
+            mandatoryReleaseDate={caseDetail.mandatoryReleaseDate}
+          />
+        </SidebarColumn>
 
-      <AttachmentsSection
-        parolePlan={caseDetail.parolePlan}
-        attachments={caseDetail.attachments}
-      />
+        <MainColumn>
+          <SectionAnchor id={PAROLE_SECTION_IDS.offenseHistory}>
+            <OffenseHistorySection offenseHistory={caseDetail.offenseHistory} />
+          </SectionAnchor>
 
-      <ConductHistorySection conductHistory={caseDetail.conductHistory} />
+          <SectionAnchor id={PAROLE_SECTION_IDS.riskAssessment}>
+            <RiskAssessmentSection
+              riskAssessments={caseDetail.riskAssessments}
+              riskOverviewHistory={caseDetail.riskOverviewHistory}
+            />
+          </SectionAnchor>
 
-      <RiskAssessmentSection
-        riskAssessments={caseDetail.riskAssessments}
-        riskOverviewHistory={caseDetail.riskOverviewHistory}
-      />
+          <SectionAnchor id={PAROLE_SECTION_IDS.programParticipation}>
+            <ProgramParticipationSection
+              docPrograms={caseDetail.docPrograms}
+              edovoPrograms={caseDetail.edovoPrograms}
+            />
+          </SectionAnchor>
 
-      <ProgramParticipationSection
-        docPrograms={caseDetail.docPrograms}
-        edovoPrograms={caseDetail.edovoPrograms}
-      />
+          <SectionAnchor id={PAROLE_SECTION_IDS.conductHistory}>
+            <ConductHistorySection conductHistory={caseDetail.conductHistory} />
+          </SectionAnchor>
 
-      <OffenseHistorySection offenseHistory={caseDetail.offenseHistory} />
+          <SectionAnchor id={PAROLE_SECTION_IDS.attachments}>
+            <AttachmentsSection
+              parolePlan={caseDetail.parolePlan}
+              attachments={caseDetail.attachments}
+            />
+          </SectionAnchor>
+        </MainColumn>
+      </CaseProfileLayout>
     </Wrapper>
   );
 });

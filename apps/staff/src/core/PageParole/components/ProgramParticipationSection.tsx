@@ -31,7 +31,7 @@ import { Icon, IconSVG, palette } from "~design-system";
 
 import { SectionCard, SectionCardHeader } from "../../SectionCard";
 import { PaddedSectionCardBody } from "./PaddedSectionCardBody";
-import { formatDate } from "./shared";
+import { FactLabel, FactStack, formatDate } from "./shared";
 
 const StyledAccordion = styled(Accordion)`
   display: flex;
@@ -70,27 +70,24 @@ const AccordionButton = styled(AccordionItemButton)`
 `;
 
 const AccordionBody = styled(AccordionItemPanel)`
-  display: flex;
-  flex-direction: column;
-  gap: ${rem(spacing.md)};
-  padding: ${rem(spacing.md)} ${rem(spacing.md)};
+  padding: 1rem;
 `;
 
 const ProgramRow = styled.div`
+  padding: 1rem 0;
+
+  &:first-child {
+    padding-top: 0;
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+
   &:not(:last-child) {
     border-bottom: 1px solid ${palette.slate10};
     padding-bottom: ${rem(spacing.md)};
   }
-`;
-
-const ProgramName = styled.div`
-  font-weight: 600;
-  color: ${palette.pine1};
-`;
-
-const ProgramMeta = styled.div`
-  color: ${palette.slate70};
-  font-size: 13px;
 `;
 
 const EmptyState = styled.div`
@@ -135,12 +132,14 @@ export function ProgramParticipationSection({
               ) : (
                 completedDocPrograms.map((program) => (
                   <ProgramRow key={program.name}>
-                    <ProgramName>{program.name}</ProgramName>
-                    {program.completionDate && (
-                      <ProgramMeta>
-                        Completed: {formatDate(program.completionDate)}
-                      </ProgramMeta>
-                    )}
+                    <FactStack>
+                      <div>{program.name}</div>
+                      {program.completionDate && (
+                        <FactLabel>
+                          Completed: {formatDate(program.completionDate)}
+                        </FactLabel>
+                      )}
+                    </FactStack>
                   </ProgramRow>
                 ))
               )}
@@ -160,12 +159,14 @@ export function ProgramParticipationSection({
               ) : (
                 completedEdovoPrograms.map((program) => (
                   <ProgramRow key={program.title}>
-                    <ProgramName>{program.title}</ProgramName>
-                    {program.completionDate && (
-                      <ProgramMeta>
-                        Completed: {formatDate(program.completionDate)}
-                      </ProgramMeta>
-                    )}
+                    <FactStack>
+                      <div>{program.title}</div>
+                      {program.completionDate && (
+                        <FactLabel>
+                          Completed: {formatDate(program.completionDate)}
+                        </FactLabel>
+                      )}
+                    </FactStack>
                   </ProgramRow>
                 ))
               )}

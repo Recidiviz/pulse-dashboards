@@ -198,6 +198,19 @@ const HEARING_TIME_BY_DOC_ID: Record<string, string> = {
   "DOC-63184": "10:00 AM",
 };
 
+// Keyed by docId (rather than derived from `individualName`) so it stays
+// correct even if a fixture name is ever reworded.
+const GENDER_BY_DOC_ID: Record<string, string> = {
+  "DOC-45821": "Male", // Anderson, Michael
+  "DOC-52903": "Female", // Brooks, Sarah
+  "DOC-61247": "Male", // Chen, David
+  "DOC-48392": "Female", // Davis, Jennifer
+  "DOC-71458": "Male", // Evans, Robert
+  "DOC-55729": "Female", // Foster, Maria
+  "DOC-63184": "Male", // Garcia, Carlos
+  "DOC-59402": "Female", // Harris, Patricia
+};
+
 const NO_HEARING_SCHEDULED_DOC_ID = "DOC-59402";
 
 // Brooks: parole plan on file, but not updated in over 90 days.
@@ -337,6 +350,7 @@ function buildAndersonCaseProfile(hearingDate: string): ParoleCase {
     docId: "DOC-45821",
     name: "Anderson, Michael",
     dob: iso(subYears(today, 40)),
+    gender: GENDER_BY_DOC_ID["DOC-45821"],
     currentFacility: "Central State Correctional Facility",
     custodyLevel: "Minimum",
     caseManagerName: "Jennifer Martinez",
@@ -636,6 +650,7 @@ function buildGenericCaseProfile(
     docId: hearing.docId,
     name: hearing.individualName,
     dob: iso(subYears(today, 30 + index)),
+    gender: GENDER_BY_DOC_ID[hearing.docId],
     currentFacility: hearing.facility,
     custodyLevel: CUSTODY_LEVELS[index % CUSTODY_LEVELS.length],
     caseManagerName:

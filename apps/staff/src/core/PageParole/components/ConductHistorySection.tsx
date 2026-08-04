@@ -26,7 +26,7 @@ import { Icon, IconSVG, palette } from "~design-system";
 
 import { SectionCard, SectionCardHeader } from "../../SectionCard";
 import { PaddedSectionCardBody } from "./PaddedSectionCardBody";
-import { FactValue, formatDate, parseIsoDate, SectionStack } from "./shared";
+import { FactLabel, formatDate, parseIsoDate, SectionStack } from "./shared";
 
 const SummaryRow = styled.div`
   display: flex;
@@ -119,13 +119,13 @@ function ConductRecordCard({ record }: { record: ParoleConductRecord }) {
         <RecordDate>{formatDate(record.date)}</RecordDate>
       </RecordHeader>
       <div>
-        Facility: <FactValue as="span">{record.facility}</FactValue>
+        Facility: <FactLabel as="span">{record.facility}</FactLabel>
       </div>
       <div>
-        Description: <FactValue as="span">{record.description}</FactValue>
+        Description: <FactLabel as="span">{record.description}</FactLabel>
       </div>
       <div>
-        Disposition: <FactValue as="span">{record.disposition}</FactValue>
+        Disposition: <FactLabel as="span">{record.disposition}</FactLabel>
       </div>
     </RecordCard>
   );
@@ -181,13 +181,13 @@ export function ConductHistorySection({
           <SummaryRow>
             <span>
               Total Violations:{" "}
-              <FactValue as="span">{conductHistory.length}</FactValue>
+              <FactLabel as="span">{conductHistory.length}</FactLabel>
             </span>
             <span>
-              Major: <FactValue as="span">{majorCount}</FactValue>
+              Major: <FactLabel as="span">{majorCount}</FactLabel>
             </span>
             <span>
-              Minor: <FactValue as="span">{minorCount}</FactValue>
+              Minor: <FactLabel as="span">{minorCount}</FactLabel>
             </span>
           </SummaryRow>
           {recentRecords.map((record, idx) => (

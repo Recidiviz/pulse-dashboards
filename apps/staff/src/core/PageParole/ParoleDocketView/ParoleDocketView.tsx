@@ -32,6 +32,7 @@ import ModelHydrator from "../../ModelHydrator";
 import { SectionCard } from "../../SectionCard";
 import { paroleUrl } from "../../views";
 import { WorkflowsFilterDropdown } from "../../WorkflowsFilters/WorkflowsFilterDropdown";
+import { parseIsoDate } from "../components/shared";
 
 const Wrapper = styled.div`
   display: flex;
@@ -85,7 +86,7 @@ function renderCellText(value: unknown, leadingInset = false): JSX.Element {
 }
 
 const formatHearingDate = (dateString: string) =>
-  new Date(dateString).toLocaleDateString("en-US", {
+  parseIsoDate(dateString).toLocaleDateString("en-US", {
     month: "long",
     year: "numeric",
     day: "numeric",

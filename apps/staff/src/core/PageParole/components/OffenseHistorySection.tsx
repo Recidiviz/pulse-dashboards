@@ -24,7 +24,7 @@ import {
   AlertBanner,
   FactGrid,
   FactLabel,
-  FactValue,
+  FactStack,
   formatDate,
   Hr,
   SectionStack,
@@ -66,41 +66,43 @@ export function OffenseHistorySection({
           <div>
             <SubsectionTitle>Current Offense</SubsectionTitle>
             <FactGrid>
-              <div>
-                <FactLabel>County</FactLabel>
-                <FactValue>{offenseHistory.county}</FactValue>
-              </div>
-              <div>
-                <FactLabel>Docket</FactLabel>
-                <FactValue>{offenseHistory.docket}</FactValue>
-              </div>
-              <div>
-                <FactLabel>Class Felony</FactLabel>
-                <FactValue>{offenseHistory.classFelony}</FactValue>
-              </div>
-              <div>
-                <FactLabel>Conviction</FactLabel>
-                <FactValue>{offenseHistory.conviction}</FactValue>
-              </div>
-              <div>
-                <FactLabel>Sentence</FactLabel>
-                <FactValue>{offenseHistory.sentence}</FactValue>
-              </div>
-              <div>
-                <FactLabel>Date of Offense</FactLabel>
-                <FactValue>
+              <FactStack>
+                <div>County</div>
+                <FactLabel>{offenseHistory.county}</FactLabel>
+              </FactStack>
+              <FactStack>
+                <div>Docket</div>
+                <FactLabel>{offenseHistory.docket}</FactLabel>
+              </FactStack>
+              <FactStack>
+                <div>Class Felony</div>
+                <FactLabel>{offenseHistory.classFelony}</FactLabel>
+              </FactStack>
+              <FactStack>
+                <div>Conviction</div>
+                <FactLabel>{offenseHistory.conviction}</FactLabel>
+              </FactStack>
+              <FactStack>
+                <div>Sentence</div>
+                <FactLabel>{offenseHistory.sentence}</FactLabel>
+              </FactStack>
+              <FactStack>
+                <div>Date of Offense</div>
+                <FactLabel>
                   {formatDate(offenseHistory.dateOfOffense)}
-                </FactValue>
-              </div>
-              <div>
-                <FactLabel>Conviction Date</FactLabel>
-                <FactValue>
+                </FactLabel>
+              </FactStack>
+              <FactStack>
+                <div>Conviction Date</div>
+                <FactLabel>
                   {formatDate(offenseHistory.convictionDate)}
-                </FactValue>
-              </div>
+                </FactLabel>
+              </FactStack>
               <WideFactItem>
-                <FactLabel>Brief Description of Offense</FactLabel>
-                <FactValue>{offenseHistory.offenseNarrative}</FactValue>
+                <FactStack>
+                  <div>Brief Description of Offense</div>
+                  <FactLabel>{offenseHistory.offenseNarrative}</FactLabel>
+                </FactStack>
               </WideFactItem>
             </FactGrid>
           </div>

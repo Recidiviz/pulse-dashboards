@@ -21,6 +21,8 @@ import styled from "styled-components";
 
 import { palette } from "~design-system";
 
+import { NAV_BAR_HEIGHT } from "../../NavigationLayout";
+
 // Styled primitives and formatters shared across two or more
 // ParoleCaseProfile section components.
 
@@ -64,9 +66,10 @@ export const FactLabel = styled.div`
   margin-bottom: 0.25rem;
 `;
 
-export const FactValue = styled.div`
-  color: ${palette.pine1};
-  font-weight: 600;
+export const FactStack = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25em;
 `;
 
 // Spans two of FactGrid's three columns, for a fact whose value is too long
@@ -180,3 +183,27 @@ export const DocumentLink = styled.a`
   color: ${palette.signal.links};
   font-weight: 600;
 `;
+
+// Anchor targets for CaseProfileSidebar's "jump to section" nav, keyed the
+// same way on both ends so a rename can't silently desync the nav from the
+// sections it scrolls to.
+export const PAROLE_SECTION_IDS = {
+  offenseHistory: "parole-section-offense-history",
+  riskAssessment: "parole-section-risk-assessment",
+  programParticipation: "parole-section-program-participation",
+  conductHistory: "parole-section-conduct-history",
+  attachments: "parole-section-attachments",
+} as const;
+
+// Wraps a MainColumn section so it can be an anchor target. scroll-margin-top
+// keeps the section's heading from landing underneath the fixed top nav bar
+// when scrolled to.
+export const SectionAnchor = styled.div`
+  scroll-margin-top: ${rem(NAV_BAR_HEIGHT + spacing.lg)};
+`;
+
+export function scrollToSection(sectionId: string): void {
+  document
+    .getElementById(sectionId)
+    ?.scrollIntoView({ behavior: "smooth", block: "start" });
+}

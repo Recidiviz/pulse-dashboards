@@ -23,6 +23,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import * as StoreProvider from "../../../../components/StoreProvider";
 import { ParoleStore } from "../../../../ParoleStore/ParoleStore";
 import { RootStore } from "../../../../RootStore";
+import { PAROLE_SECTION_IDS } from "../../components/shared";
 import { ParoleCaseProfile } from "../ParoleCaseProfile";
 
 vi.mock("../../../../components/StoreProvider");
@@ -36,7 +37,7 @@ beforeEach(() => {
 });
 
 // The label and value in rows like "Total Violations: 6" are separate
-// elements (the value is wrapped in a FactValue span), so the default
+// elements (the value is wrapped in a FactLabel span), so the default
 // getByText match against a single node's own text never sees the full
 // string. Match on textContent of the closest common ancestor instead,
 // inspired by https://stackoverflow.com/a/68429756
@@ -48,6 +49,17 @@ function getByTextAcrossElements(text: string) {
     );
     return Boolean(elementHasText && childrenDontHaveText);
   });
+}
+
+// CaseProfileSidebar's "jump to section" nav repeats each section's heading
+// text in its own button (e.g. "Attachments" appears as both a nav button and
+// the section's SectionCardHeader), so a plain findByText/getByText match is
+// ambiguous. Scope the match to non-button elements to get the section
+// heading specifically.
+function findSectionHeading(text: string) {
+  return screen.findByText(
+    (content, element) => content === text && element?.tagName !== "BUTTON",
+  );
 }
 
 function renderAtPath(path: string) {
@@ -79,18 +91,25 @@ describe("ParoleCaseProfile", () => {
   });
 
   describe("the identity/hearing info section", () => {
-    it("renders the individual's identity, hearing, and sentence info", async () => {
+    it("renders the individual's identity, personal, hearing, and sentence info", async () => {
       renderAtPath("/parole/case/DOC-45821");
 
       expect(await screen.findByText("Anderson, Michael")).toBeInTheDocument();
       expect(screen.getByText("DOC-45821")).toBeInTheDocument();
-      expect(screen.getByText(/Date of Birth:/)).toBeInTheDocument();
+      expect(
+        getByTextAcrossElements("Incarcerated | Minimum"),
+      ).toBeInTheDocument();
+      expect(screen.getByText("Personal Details")).toBeInTheDocument();
+      expect(screen.getByText("Male")).toBeInTheDocument();
+      // Anderson's dob is exactly 40 years before "today" in the fixture, so
+      // the computed age is stable regardless of which day the test runs.
+      expect(screen.getByText("40")).toBeInTheDocument();
+      expect(screen.getByText("Hearing Info")).toBeInTheDocument();
       expect(
         screen.getByText("Central State Correctional Facility"),
       ).toBeInTheDocument();
       expect(screen.getByText("Jennifer Martinez")).toBeInTheDocument();
-      expect(screen.getByText("Minimum")).toBeInTheDocument();
-      expect(screen.getByText("Sentence Information")).toBeInTheDocument();
+      expect(screen.getByText("Sentence Info")).toBeInTheDocument();
       expect(
         screen.getByText("Parole Eligibility Date (PED)"),
       ).toBeInTheDocument();
@@ -99,27 +118,70 @@ describe("ParoleCaseProfile", () => {
       ).toBeInTheDocument();
     });
 
-    it("renders a hearing-scheduled badge when a hearing is upcoming", async () => {
+    it("renders the upcoming hearing date when a hearing is scheduled", async () => {
       renderAtPath("/parole/case/DOC-45821");
 
-      expect(await screen.findByText("Hearing Scheduled")).toBeInTheDocument();
-      expect(screen.getByText("9:00 AM")).toBeInTheDocument();
+      expect(await screen.findByText("Hearing Date")).toBeInTheDocument();
+      // The fixture's hearing date is relative to "today", so only assert
+      // that a real date rendered in place of the "Not scheduled" fallback.
+      expect(screen.queryByText("Not scheduled")).not.toBeInTheDocument();
     });
 
-    it("renders no badge and a 'Not scheduled' hearing date when there is no upcoming hearing", async () => {
+    it("renders 'Not scheduled' as the hearing date when there is no upcoming hearing", async () => {
       renderAtPath("/parole/case/DOC-59402");
 
       expect(await screen.findByText("Harris, Patricia")).toBeInTheDocument();
       expect(screen.getByText("Not scheduled")).toBeInTheDocument();
-      expect(screen.queryByText("Hearing Scheduled")).not.toBeInTheDocument();
     });
+  });
+
+  describe("the section quick-nav", () => {
+    // jsdom doesn't implement scrollIntoView, so CaseProfileSidebar's click
+    // handler would throw without a stub. Assigning our own mock also lets
+    // these tests assert which element it was called on.
+    const scrollIntoViewMock = vi.fn();
+
+    beforeEach(() => {
+      scrollIntoViewMock.mockClear();
+      Element.prototype.scrollIntoView = scrollIntoViewMock;
+    });
+
+    afterAll(() => {
+      Reflect.deleteProperty(Element.prototype, "scrollIntoView");
+    });
+
+    // Order matches CaseProfileSidebar's SECTION_NAV_ITEMS, which is meant to
+    // match the MainColumn section render order (see OBT-42664).
+    const NAV_ITEMS: ReadonlyArray<[label: string, sectionId: string]> = [
+      ["Offense & Criminal History", PAROLE_SECTION_IDS.offenseHistory],
+      ["Risk Score Trajectory", PAROLE_SECTION_IDS.riskAssessment],
+      ["Program Participation", PAROLE_SECTION_IDS.programParticipation],
+      ["Institutional Conduct History", PAROLE_SECTION_IDS.conductHistory],
+      ["Attachments", PAROLE_SECTION_IDS.attachments],
+    ];
+
+    it.each(NAV_ITEMS)(
+      "scrolls to the %s section when its quick-nav item is clicked",
+      async (label, sectionId) => {
+        const user = userEvent.setup();
+        renderAtPath("/parole/case/DOC-45821");
+
+        await findSectionHeading(label);
+        await user.click(screen.getByRole("button", { name: label }));
+
+        expect(scrollIntoViewMock).toHaveBeenCalledTimes(1);
+        expect(scrollIntoViewMock.mock.instances[0]).toBe(
+          document.getElementById(sectionId),
+        );
+      },
+    );
   });
 
   describe("the attachments section", () => {
     it("merges the parole plan documents and attachments into one newest-to-oldest list", async () => {
       renderAtPath("/parole/case/DOC-45821");
 
-      expect(await screen.findByText("Attachments")).toBeInTheDocument();
+      expect(await findSectionHeading("Attachments")).toBeInTheDocument();
 
       // Matches only each row's name (e.g. "Letter of Support - Rev. Thomas
       // Mills"), not its detail label (e.g. "Uploaded: Jul 8, 2026").
@@ -163,7 +225,7 @@ describe("ParoleCaseProfile", () => {
     it("renders neither banner when the parole plan is on file and current", async () => {
       renderAtPath("/parole/case/DOC-45821");
 
-      await screen.findByText("Attachments");
+      await findSectionHeading("Attachments");
       expect(
         screen.queryByText("NO PAROLE PLAN ON FILE"),
       ).not.toBeInTheDocument();
@@ -178,7 +240,7 @@ describe("ParoleCaseProfile", () => {
       renderAtPath("/parole/case/DOC-45821");
 
       expect(
-        await screen.findByText("Institutional Conduct History"),
+        await findSectionHeading("Institutional Conduct History"),
       ).toBeInTheDocument();
       // These counts are stable regardless of the current date -- they only
       // depend on how many fixture records exist, not on which are "recent".
@@ -208,7 +270,7 @@ describe("ParoleCaseProfile", () => {
       // Dated 34 months before the fixture loads, so it's always well
       // outside the past year and always hidden until expanded.
       expect(
-        await screen.findByText("Institutional Conduct History"),
+        await findSectionHeading("Institutional Conduct History"),
       ).toBeInTheDocument();
       expect(
         screen.queryByText("Possession of Contraband"),
@@ -244,7 +306,7 @@ describe("ParoleCaseProfile", () => {
       renderAtPath("/parole/case/DOC-45821");
 
       expect(
-        await screen.findByText("Risk Score Trajectory"),
+        await findSectionHeading("Risk Score Trajectory"),
       ).toBeInTheDocument();
       expect(screen.getByText("All assessments")).toBeInTheDocument();
       expect(
@@ -256,7 +318,7 @@ describe("ParoleCaseProfile", () => {
       const user = userEvent.setup();
       renderAtPath("/parole/case/DOC-45821");
 
-      await screen.findByText("Risk Score Trajectory");
+      await findSectionHeading("Risk Score Trajectory");
       await user.click(screen.getByRole("button", { name: /^LSI/ }));
 
       expect(screen.getByText("14 / 54")).toBeInTheDocument();
@@ -269,7 +331,7 @@ describe("ParoleCaseProfile", () => {
       const user = userEvent.setup();
       renderAtPath("/parole/case/DOC-45821");
 
-      await screen.findByText("Risk Score Trajectory");
+      await findSectionHeading("Risk Score Trajectory");
       await user.click(screen.getByRole("button", { name: /^CARAS/ }));
 
       // Anderson's fixture CARAS factors are fixed inputs to the logistic
@@ -286,7 +348,7 @@ describe("ParoleCaseProfile", () => {
       renderAtPath("/parole/case/DOC-45821");
 
       expect(
-        await screen.findByText("Program Participation"),
+        await findSectionHeading("Program Participation"),
       ).toBeInTheDocument();
 
       expect(screen.getByText("DOC Programs (2)")).toBeInTheDocument();
@@ -311,7 +373,7 @@ describe("ParoleCaseProfile", () => {
       renderAtPath("/parole/case/DOC-59402");
 
       expect(
-        await screen.findByText("Program Participation"),
+        await findSectionHeading("Program Participation"),
       ).toBeInTheDocument();
       expect(screen.getByText("DOC Programs (0)")).toBeInTheDocument();
       expect(
@@ -329,7 +391,7 @@ describe("ParoleCaseProfile", () => {
       renderAtPath("/parole/case/DOC-45821");
 
       expect(
-        await screen.findByText("Offense & Criminal History"),
+        await findSectionHeading("Offense & Criminal History"),
       ).toBeInTheDocument();
       expect(screen.getByText("Sangamon County")).toBeInTheDocument();
       expect(screen.getByText("2021-CF-0489")).toBeInTheDocument();
@@ -352,7 +414,7 @@ describe("ParoleCaseProfile", () => {
     it("renders no victim banner when no victim was involved", async () => {
       renderAtPath("/parole/case/DOC-52903");
 
-      await screen.findByText("Offense & Criminal History");
+      await findSectionHeading("Offense & Criminal History");
       expect(
         screen.queryByText("Victim involved in current offense"),
       ).not.toBeInTheDocument();
@@ -380,7 +442,7 @@ describe("ParoleCaseProfile", () => {
     it("omits the prior convictions subsection when there are none", async () => {
       renderAtPath("/parole/case/DOC-52903");
 
-      await screen.findByText("Offense & Criminal History");
+      await findSectionHeading("Offense & Criminal History");
       expect(screen.queryByText("Prior Convictions")).not.toBeInTheDocument();
     });
   });

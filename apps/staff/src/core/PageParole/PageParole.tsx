@@ -26,6 +26,7 @@ import { palette } from "~design-system";
 
 import NotFound from "../../components/NotFound";
 import useIsMobile from "../../hooks/useIsMobile";
+import cssVars from "../CoreConstants.module.scss";
 import {
   NAV_BAR_HEIGHT,
   NavigationLayout,
@@ -53,7 +54,7 @@ const Main = styled.main<{ isMobile?: boolean }>`
   padding: ${({ isMobile }) =>
     isMobile
       ? `${rem(spacing.lg)} ${rem(spacing.md)}`
-      : `${rem(spacing.xl)} ${rem(spacing.lg)}`};
+      : `${rem(spacing.xl)} ${rem(spacing.md)}`};
 
   /* leaving extra space for the Intercom button */
   ${({ isMobile }) =>
@@ -67,6 +68,14 @@ const Main = styled.main<{ isMobile?: boolean }>`
 
   margin: 0 auto;
   ${MaxWidth}
+
+  /* Parole's sidebar layout needs more horizontal room than the shared
+  75vw cap gives the Workflows pages this mixin was designed for. */
+  max-width: 92vw;
+
+  @media screen and (max-width: ${cssVars.breakpointSm}) {
+    max-width: 95vw;
+  }
 `;
 
 const PageParole: React.FC = observer(function PageParole() {

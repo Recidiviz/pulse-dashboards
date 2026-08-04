@@ -26,6 +26,7 @@ const TEST_CASE: ParoleCase = {
   docId: "DOC-45821",
   name: "Anderson, Michael",
   dob: "1986-07-27",
+  gender: "Male",
   currentFacility: "Central State Correctional Facility",
   custodyLevel: "Minimum",
   caseManagerName: "Jennifer Martinez",
