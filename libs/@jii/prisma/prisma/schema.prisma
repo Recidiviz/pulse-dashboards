@@ -32,6 +32,12 @@ model Resident {
     stateSpecificData Json
 }
 
+model IncarcerationFacility {
+    importedAt DateTime
+    id         String   @id
+    name       String?
+}
+
 // Resident Flags tell the frontend to behave differently for specific residents
 // during testing or rollouts. This enum defines the set of flags that can be set.
 // When adding a flag here, also update ResidentFlag in libs/@jii/configs/src/residents/types.ts.
