@@ -30,7 +30,7 @@ git rev-parse --abbrev-ref HEAD
 ### Step 2: Run affected tests
 
 ```bash
-yarn nx affected -t test --base=origin/main
+yarn nx affected -t test --base=origin/main -- --run
 ```
 
 Capture the exit code and full output. Note which project(s) had failing tests.
@@ -60,7 +60,7 @@ If the user says **yes**, attempt to fix the failing code:
   ```
 - **Always re-run both checks after making changes**, even if only one was failing originally — fixes can introduce new failures in the other:
   ```bash
-  yarn nx affected -t test --base=origin/main
+  yarn nx affected -t test --base=origin/main -- --run
   yarn nx affected -t typecheck --configuration test --base=origin/main
   ```
 - If both re-runs pass, proceed to linting (Step 5).
@@ -143,6 +143,7 @@ Confirm with the resulting commit hash.
 ## Important Notes
 
 - Always use `--base=origin/main` so affected detection matches CI exactly.
+- `-- --run` must not be omitted from the test commands. The `test` target invokes Vitest without it, so the run enters watch mode and hangs instead of reporting pass/fail — the check never returns and the skill stalls.
 - `--max-warnings 0` and `--no-warn-ignored` must not be omitted from the lint check — they are what makes it match CI.
 - Linting runs **after** tests and typecheck (and any fixes) so ESLint autofix covers all code changes made in this session.
 - When fixing failures, keep changes minimal and surgical. Do not refactor surrounding code.
