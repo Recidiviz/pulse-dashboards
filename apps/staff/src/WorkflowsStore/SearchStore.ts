@@ -30,6 +30,7 @@ import { CaseloadSearchable } from "./CaseloadSearchable";
 import { CaseloadSearchManager } from "./CaseloadSearchManager";
 import { Location } from "./Location";
 import { Officer } from "./Officer";
+import { PersonSearchManager } from "./PersonSearchManager";
 import { SearchManager } from "./SearchManager";
 import { JusticeInvolvedPerson } from "./types";
 import { WorkflowsStore } from "./WorkflowsStore";
@@ -60,6 +61,11 @@ export class SearchStore {
   // in this store's constructor.
   caseloadSearchManager: CaseloadSearchManager;
 
+  // Delegate for the Typesense-backed nav-bar person search. Owns its own
+  // scoped-key client and multi_search plan. Constructed once in this store's
+  // constructor.
+  personSearchManager: PersonSearchManager;
+
   constructor(workflowsStore: WorkflowsStore) {
     this.workflowsStore = workflowsStore;
 
@@ -68,6 +74,7 @@ export class SearchStore {
     this.clientSearchManager = new SearchManager(this, "CLIENT");
     this.residentSearchManager = new SearchManager(this, "RESIDENT");
     this.caseloadSearchManager = new CaseloadSearchManager(this);
+    this.personSearchManager = new PersonSearchManager(this);
 
     // update the searchTypeOverride on tenant change
     reaction(

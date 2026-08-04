@@ -146,6 +146,28 @@ export interface TypesenseSearchResult {
   hits?: Array<{ document: Record<string, unknown> }>;
 }
 
+/**
+ * One entry in PersonSearchManager's multi_search plan.
+ */
+export interface PlannedPersonSearch {
+  descriptor: Record<string, unknown>;
+  collection: "clients" | "residents" | "clientUpdatesV2";
+}
+
+/**
+ * A single client/resident search hit, composed from the clients/residents
+ * multi_search result and (for unrestricted callers) cross-referenced against
+ * the clientUpdatesV2 result for a preferredName override.
+ */
+export interface PersonSearchResult {
+  personType: "CLIENT" | "RESIDENT";
+  personExternalId: string;
+  pseudonymizedId: string;
+  givenNames?: string;
+  surname?: string;
+  preferredName?: string;
+}
+
 export type PersonRecordType =
   | WorkflowsJusticeInvolvedPersonRecord
   | ClientRecord

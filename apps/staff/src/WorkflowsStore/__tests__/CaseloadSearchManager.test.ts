@@ -44,6 +44,9 @@ beforeEach(() => {
     },
     rootStore: {
       currentTenantId: "US_ND",
+      userStore: {
+        getToken: vi.fn(),
+      },
       firestoreStore: {
         updateSelectedSearchIds: vi.fn(),
       },
