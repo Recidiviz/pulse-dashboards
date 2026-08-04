@@ -275,6 +275,30 @@ export default class FirestoreStore {
       });
   }
 
+  async getResidentByPersonExternalId(
+    stateCode: string,
+    personExternalId: string,
+  ): Promise<WorkflowsResidentRecord | undefined> {
+    const results = await getDocs(
+      query(
+        this.collection({ key: "residents" }),
+        where("personExternalId", "==", personExternalId),
+        where("stateCode", "==", stateCode),
+        limit(1),
+      ),
+    );
+
+    // Unlike getClient/getResident above, most people queried this way have no
+    // matching Resident doc at all (most clients are not currently incarcerated),
+    // so the no-match case must resolve to undefined rather than throw.
+    const result = results.docs[0];
+    if (result?.exists())
+      return workflowsResidentRecordSchema.parse({
+        ...result.data(),
+        recordId: result.id,
+      });
+  }
+
   private get userUpdatesKey() {
     const email = this.rootStore.userStore.user?.email?.toLowerCase();
     if (!email) {

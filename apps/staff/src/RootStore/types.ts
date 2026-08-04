@@ -147,6 +147,7 @@ export type FeatureVariant =
   | "usTn2026ClassificationPolicyPilot"
   | "usTnRcafV2"
   | "usTnRcafV1"
+  | "clientProfileWarmHandoff"
 
   // INSIGHTS
   | "insightsLeadershipPageAllDistricts"
@@ -253,6 +254,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usTn2026ClassificationPolicyPilot: {},
   usTnRcafV2: {},
   usTnRcafV1: {},
+  clientProfileWarmHandoff: {},
   insightsStaffUsage: {},
   insightsConsistentLoginPill: {},
   insightsHideOfficersWithoutEligibleCaseload: {},
@@ -372,6 +374,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         // via the admin panel to actually see the new Typesense search bar.
         typesenseCaseloadSearch: undefined,
         usOrEarnedDischargeSentence: undefined,
+        clientProfileWarmHandoff: undefined,
         outcomesModule: {
           activeTenants: ["US_AZ", "US_CA", "US_ID", "US_MI", "US_TN"],
         },

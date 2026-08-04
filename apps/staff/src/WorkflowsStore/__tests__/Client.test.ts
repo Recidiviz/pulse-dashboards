@@ -107,6 +107,7 @@ describe("Client", () => {
         updateMilestonesMessages: vi.fn(),
         doc: vi.fn(),
         collection: vi.fn(),
+        getResidentByPersonExternalId: vi.fn(),
       } as unknown as FirestoreStore,
       apiStore: {
         postExternalSMSMessage: vi.fn(),
@@ -545,6 +546,77 @@ describe("Client", () => {
       testClient = new Client({ ...record }, rootStore);
 
       expect(testClient.sentencedBy).toBeUndefined();
+    });
+  });
+
+  describe("fetchWarmHandoffResident", () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    test("resolves undefined and never queries Firestore when the feature variant is off", async () => {
+      vi.spyOn(
+        rootStore.workflowsStore,
+        "featureVariants",
+        "get",
+      ).mockReturnValue({});
+      createTestUnit();
+
+      const result = await testClient.fetchWarmHandoffResident();
+
+      expect(result).toBeUndefined();
+      expect(testClient.warmHandoffResidentMetadata).toBeUndefined();
+      expect(
+        mockRootStore.firestoreStore.getResidentByPersonExternalId,
+      ).not.toHaveBeenCalled();
+    });
+
+    test("queries Firestore by stateCode + personExternalId and caches the result when the feature variant is on", async () => {
+      vi.spyOn(
+        rootStore.workflowsStore,
+        "featureVariants",
+        "get",
+      ).mockReturnValue({ clientProfileWarmHandoff: {} });
+      const residentRecord = {
+        metadata: { stateCode: "US_XX", phoneNumber: "1112223333" },
+      };
+      (
+        mockRootStore.firestoreStore.getResidentByPersonExternalId as Mock
+      ).mockResolvedValue(residentRecord);
+      createTestUnit();
+
+      const result = await testClient.fetchWarmHandoffResident();
+
+      expect(
+        mockRootStore.firestoreStore.getResidentByPersonExternalId,
+      ).toHaveBeenCalledWith("US_XX", "PERSON1");
+      expect(result).toEqual(residentRecord);
+      expect(testClient.warmHandoffResidentMetadata).toEqual(
+        residentRecord.metadata,
+      );
+
+      // Second call is served from cache, not a second Firestore query.
+      await testClient.fetchWarmHandoffResident();
+      expect(
+        mockRootStore.firestoreStore.getResidentByPersonExternalId,
+      ).toHaveBeenCalledTimes(1);
+    });
+
+    test("resolves undefined without throwing when there is no matching Resident doc", async () => {
+      vi.spyOn(
+        rootStore.workflowsStore,
+        "featureVariants",
+        "get",
+      ).mockReturnValue({ clientProfileWarmHandoff: {} });
+      (
+        mockRootStore.firestoreStore.getResidentByPersonExternalId as Mock
+      ).mockResolvedValue(undefined);
+      createTestUnit();
+
+      const result = await testClient.fetchWarmHandoffResident();
+
+      expect(result).toBeUndefined();
+      expect(testClient.warmHandoffResidentMetadata).toBeUndefined();
     });
   });
 });

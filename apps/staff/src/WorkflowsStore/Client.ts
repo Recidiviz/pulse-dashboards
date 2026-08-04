@@ -19,7 +19,13 @@ import { subYears } from "date-fns";
 import dedent from "dedent";
 import { deleteField, FieldValue, serverTimestamp } from "firebase/firestore";
 import { capitalize, mapValues, toUpper } from "lodash";
-import { action, makeObservable, override } from "mobx";
+import {
+  action,
+  makeObservable,
+  observable,
+  override,
+  runInAction,
+} from "mobx";
 import { format as formatPhone, uglify } from "phone-fns";
 import { toast } from "react-hot-toast";
 
@@ -31,6 +37,7 @@ import {
   MilestoneType,
   profileMilestoneTypes,
   SpecialConditionCode,
+  WorkflowsResidentRecord,
 } from "~datatypes";
 
 import { reasonsIncludesOtherKey } from "../core/utils/workflowsUtils";
@@ -164,6 +171,12 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   customTasks?: CustomTasks;
 
+  _warmHandoffResidentRecord?: WorkflowsResidentRecord;
+
+  private warmHandoffResidentPromise?: Promise<
+    WorkflowsResidentRecord | undefined
+  >;
+
   constructor(record: ClientRecord, rootStore: RootStore) {
     super(record, rootStore, createClientSupervisionTasks);
 
@@ -191,6 +204,8 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
       milestonesMessageStatus: true,
       updateMilestonesPhoneNumber: action,
       updateMilestonesTextMessage: action,
+      _warmHandoffResidentRecord: observable,
+      fetchWarmHandoffResident: action,
     });
     this.updateRecord(record);
   }
@@ -222,6 +237,40 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   get metadata() {
     return this.record.metadata ?? {};
+  }
+
+  /**
+   * The warm-handoff metadata (Vantage risk assessment, sentences,
+   * phone/address) ingested onto this person's Resident record, resolved via
+   * {@link fetchWarmHandoffResident}.
+   */
+  get warmHandoffResidentMetadata() {
+    return this._warmHandoffResidentRecord?.metadata;
+  }
+
+  /**
+   * Resolves and caches the Resident record for this same person, keyed by
+   * stateCode + personExternalId. Gated behind the `clientProfileWarmHandoff`
+   * feature variant; resolves to `undefined` (never throws) when the variant
+   * is off or no matching Resident doc exists.
+   */
+  async fetchWarmHandoffResident(): Promise<
+    WorkflowsResidentRecord | undefined
+  > {
+    if (!this.rootStore.workflowsStore.featureVariants.clientProfileWarmHandoff)
+      return undefined;
+
+    if (this.warmHandoffResidentPromise) return this.warmHandoffResidentPromise;
+
+    this.warmHandoffResidentPromise = this.rootStore.firestoreStore
+      .getResidentByPersonExternalId(this.stateCode, this.externalId)
+      .then((residentRecord) => {
+        runInAction(() => {
+          this._warmHandoffResidentRecord = residentRecord;
+        });
+        return residentRecord;
+      });
+    return this.warmHandoffResidentPromise;
   }
 
   get currentPhysicalResidenceAddressStructured() {

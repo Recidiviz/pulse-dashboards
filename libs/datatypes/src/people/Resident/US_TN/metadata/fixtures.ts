@@ -126,4 +126,28 @@ export const usTnResidentJiiDataFixture: RawUsTnResidentJiiData = {
 export const usTnResidentMetadata = {
   ...usTnResidentJiiDataFixture,
   latestClassificationDate: relativeFixtureDate({ days: -172 }),
+  latestVantageRiskAssessment: {
+    assessmentDate: relativeFixtureDate({ days: -60 }),
+    assessmentType: "STRONG_R2",
+    assessmentLevel: "HIGH",
+    assessmentLevelRawText: "HV",
+  },
+  convictionDate: relativeFixtureDate({ years: -2, days: -222 }),
+  tnSentences: [
+    {
+      imposedDate: relativeFixtureDate({ years: -2, days: -222 }),
+      offenseDate: relativeFixtureDate({ years: -2, days: -260 }),
+      statute: "39-13-210",
+      description: "Manslaughter",
+      classificationType: "Felony",
+      classificationSubtype: "C",
+      countyCode: "047",
+      isViolent: true,
+      isSexOffense: false,
+    },
+  ],
+  iscSentences: [],
+  diversionSentences: [],
+  phoneNumber: "6155551234",
+  address: "123 Main St, Nashville, TN 37201",
 };

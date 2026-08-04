@@ -55,8 +55,40 @@ export const usTnResidentJiiDataSchema = usTnResidentCommonSchema.extend({
 export type UsTnResidentJiiData = z.infer<typeof usTnResidentJiiDataSchema>;
 export type RawUsTnResidentJiiData = z.input<typeof usTnResidentJiiDataSchema>;
 
+export const usTnSentenceSchema = z.object({
+  imposedDate: dateStringSchema.nullable(),
+  offenseDate: dateStringSchema.nullable(),
+  statute: z.string().nullable(),
+  description: z.string().nullable(),
+  classificationType: z.string().nullable(),
+  classificationSubtype: z.string().nullable(),
+  countyCode: z.string().nullable(),
+  isViolent: z.boolean().nullable(),
+  isSexOffense: z.boolean().nullable(),
+});
+export type UsTnSentence = z.output<typeof usTnSentenceSchema>;
+
+export const usTnVantageRiskAssessmentSchema = z.object({
+  assessmentDate: dateStringSchema.nullable(),
+  assessmentType: z.string().nullable(),
+  assessmentLevel: z.string().nullable(),
+  assessmentLevelRawText: z.string().nullable(),
+});
+export type UsTnVantageRiskAssessment = z.output<
+  typeof usTnVantageRiskAssessmentSchema
+>;
+
 export const usTnResidentMetadataSchema = usTnResidentJiiDataSchema.extend({
   latestClassificationDate: dateStringSchema.nullable().optional(),
+  latestVantageRiskAssessment: usTnVantageRiskAssessmentSchema
+    .nullable()
+    .optional(),
+  convictionDate: dateStringSchema.nullable().optional(),
+  tnSentences: z.array(usTnSentenceSchema).nullable().optional(),
+  iscSentences: z.array(usTnSentenceSchema).nullable().optional(),
+  diversionSentences: z.array(usTnSentenceSchema).nullable().optional(),
+  phoneNumber: z.string().nullable().optional(),
+  address: z.string().nullable().optional(),
 });
 
 export type UsTnResidentMetadata = z.output<typeof usTnResidentMetadataSchema>;

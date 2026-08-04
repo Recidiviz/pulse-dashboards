@@ -35,7 +35,12 @@ import tk from "timekeeper";
 import { expect, Mock } from "vitest";
 
 import { isOfflineMode } from "~client-env-utils";
-import { clientRecordSchema, RawClientRecord } from "~datatypes";
+import {
+  clientRecordSchema,
+  RawClientRecord,
+  RawWorkflowsResidentRecord,
+  workflowsResidentRecordSchema,
+} from "~datatypes";
 
 import { fetchFirebaseToken } from "../../api/fetchFirebaseToken";
 import { RootStore } from "../../RootStore";
@@ -1325,6 +1330,69 @@ describe("FirestoreStore", () => {
       });
       expect(inQueryBatches.flat()).toEqual(recordIds);
       expect(mockGetDocs).toHaveBeenCalledTimes(3);
+    });
+  });
+
+  describe("getResidentByPersonExternalId", () => {
+    const rawResident: RawWorkflowsResidentRecord = {
+      recordId: "us_xx_res001",
+      personName: {
+        givenNames: "Carmen",
+        surname: "Reyes",
+      },
+      personExternalId: "RES001",
+      displayId: "dRES001",
+      pseudonymizedId: "anonres001",
+      stateCode: "US_CA",
+      allEligibleOpportunities: [],
+      metadata: { stateCode: "US_CA" },
+    };
+
+    beforeEach(() => {
+      mockWhere.mockImplementation(
+        (field: string, op: string, value: unknown) => ({
+          field,
+          op,
+          value,
+        }),
+      );
+      mockQuery.mockImplementation((...args: unknown[]) => args);
+    });
+
+    test("queries residents by personExternalId + stateCode and parses the result", async () => {
+      mockGetDocs.mockResolvedValue({
+        docs: [
+          {
+            id: rawResident.recordId,
+            exists: () => true,
+            data: () => omit(rawResident, "recordId"),
+          },
+        ],
+      });
+
+      const result = await store.getResidentByPersonExternalId(
+        "US_CA",
+        "RES001",
+      );
+
+      expect(mockWhere).toHaveBeenCalledWith(
+        "personExternalId",
+        "==",
+        "RES001",
+      );
+      expect(mockWhere).toHaveBeenCalledWith("stateCode", "==", "US_CA");
+      expect(result).toEqual(workflowsResidentRecordSchema.parse(rawResident));
+    });
+
+    test("resolves undefined without throwing when there is no matching Resident doc", async () => {
+      mockGetDocs.mockResolvedValue({ docs: [] });
+
+      const result = await store.getResidentByPersonExternalId(
+        "US_CA",
+        "UNKNOWN",
+      );
+
+      expect(result).toBeUndefined();
     });
   });
 
