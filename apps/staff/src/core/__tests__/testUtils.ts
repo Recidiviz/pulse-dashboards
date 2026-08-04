@@ -222,6 +222,7 @@ export const mockOpportunity: Opportunity<Client> = {
     enableWorkflowsFilter: false,
     hidePreviewModal: false,
     enableSupervisorReviewChain: false,
+    hideWorkflowsTabGroupSelector: false,
   },
   sentryTrackingId: undefined,
   instanceDetails: undefined,

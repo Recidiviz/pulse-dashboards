@@ -124,6 +124,7 @@ export const mockUsXxOppConfig: OpportunityConfiguration = {
   enableWorkflowsFilter: false,
   hidePreviewModal: false,
   enableSupervisorReviewChain: false,
+  hideWorkflowsTabGroupSelector: false,
 };
 
 export const mockUsXxTwoOppConfig: OpportunityConfiguration = {

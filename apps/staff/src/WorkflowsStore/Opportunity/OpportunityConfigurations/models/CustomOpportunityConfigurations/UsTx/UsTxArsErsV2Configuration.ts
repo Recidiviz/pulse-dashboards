@@ -59,6 +59,10 @@ export class UsTxArsErsV2Configuration extends ApiOpportunityConfiguration {
     return true;
   }
 
+  get hideWorkflowsTabGroupSelector(): boolean {
+    return true;
+  }
+
   get supportsSupervisorReview(): boolean {
     return true;
   }

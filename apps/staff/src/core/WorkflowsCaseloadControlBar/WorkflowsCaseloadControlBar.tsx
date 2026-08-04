@@ -24,7 +24,6 @@ import styled, { css } from "styled-components";
 
 import { palette } from "~design-system";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
 import WorkflowsCaseloadTabs from "./WorkflowsCaseloadTabs";
 import { WorkflowsTabGroupSelector } from "./WorkflowsTabGroupSelector";
 
@@ -53,7 +52,10 @@ const TabControls = styled.div`
 `;
 
 type WorkflowsCaseloadControlBarPropsWithoutTabControls<T extends string> =
-  Parameters<typeof WorkflowsCaseloadTabs<T>>[0] & { actions?: ReactNode };
+  Parameters<typeof WorkflowsCaseloadTabs<T>>[0] & {
+    actions?: ReactNode;
+    hideWorkflowsTabGroupSelector?: boolean;
+  };
 
 type WorkflowsCaseloadControlBarProps<T extends string> =
   WorkflowsCaseloadControlBarPropsWithoutTabControls<T> &
@@ -77,9 +79,9 @@ export function WorkflowsCaseloadControlBar<T extends string>(
     setActiveTab,
     sortable,
     actions,
+    hideWorkflowsTabGroupSelector,
     ...rest
   } = props;
-  const { supervisorHomepageReviewTable } = useFeatureVariants();
   return (
     <TabControls>
       {tabs && (
@@ -93,7 +95,7 @@ export function WorkflowsCaseloadControlBar<T extends string>(
           }}
         />
       )}
-      {Object.keys(rest).length > 0 && !supervisorHomepageReviewTable && (
+      {Object.keys(rest).length > 0 && !hideWorkflowsTabGroupSelector && (
         <WorkflowsTabGroupSelector
           {...(rest as Parameters<typeof WorkflowsTabGroupSelector>[0])}
         />

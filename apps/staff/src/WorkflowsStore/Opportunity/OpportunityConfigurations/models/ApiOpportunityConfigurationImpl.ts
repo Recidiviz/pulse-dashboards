@@ -611,4 +611,8 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   get enableSupervisorReviewChain(): boolean {
     return false;
   }
+
+  get hideWorkflowsTabGroupSelector(): boolean {
+    return false;
+  }
 }

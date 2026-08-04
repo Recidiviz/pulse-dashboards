@@ -1591,6 +1591,9 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
                 activeTabGroup={presenter.activeTabGroup as string}
                 tabGroups={presenter.displayTabGroups as string[]}
                 sortable={presenter.shouldShowAllTabs}
+                hideWorkflowsTabGroupSelector={
+                  presenter.config.hideWorkflowsTabGroupSelector
+                }
                 actions={
                   !presenter.showListView ? (
                     <DownloadCaseloadButton
