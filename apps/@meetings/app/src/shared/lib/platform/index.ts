@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export type { HapticType } from "./useHaptic";
+export { useHaptic } from "./useHaptic";
 export { useIsMobileWidth } from "./useIsMobileWidth";
 export { usePlatform } from "./usePlatform";
 export { useSetDocumentTitle } from "./useSetDocumentTitle";

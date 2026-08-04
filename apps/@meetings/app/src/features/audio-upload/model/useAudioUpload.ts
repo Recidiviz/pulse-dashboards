@@ -27,6 +27,7 @@ import {
   AbortError,
   FileValidationError,
 } from "~@meetings/app/shared/lib/errors";
+import { useHaptic } from "~@meetings/app/shared/lib/platform";
 
 import { trpc, useUploadSegment } from "../../../shared/api";
 import { deserializeFile } from "../lib/deserializeFile";
@@ -38,6 +39,7 @@ export function useAudioUpload() {
   const store = useAudioUploadStore();
   const person = useAudioUploadStore((s) => s.person);
   const uploadSegment = useUploadSegment();
+  const haptic = useHaptic();
   const endMeetingMutation = useEndMeeting();
   const discardMeetingMutation = useDiscardMeeting();
   const { mutateAsync: deleteRecordings } =
@@ -130,6 +132,7 @@ export function useAudioUpload() {
         );
 
         store.setStatus("uploaded");
+        haptic.success();
       } catch (error) {
         if (error instanceof AbortError) {
           store.setFile(null);
@@ -151,7 +154,14 @@ export function useAudioUpload() {
         console.error("Failed to add file:", error);
       }
     },
-    [store, person, uploadSegment, deleteRecordings, createMeetingAsync],
+    [
+      store,
+      person,
+      uploadSegment,
+      deleteRecordings,
+      createMeetingAsync,
+      haptic,
+    ],
   );
 
   const removeFile = useCallback(async () => {

@@ -19,6 +19,7 @@ import { useMutation } from "@tanstack/react-query";
 import type { inferRouterInputs } from "@trpc/server";
 
 import { Person, PersonType } from "~@meetings/app/shared/api";
+import { useHaptic } from "~@meetings/app/shared/lib/platform";
 import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 import type { AppRouter } from "~@meetings/trpc-types";
@@ -38,6 +39,7 @@ type Params = inferRouterInputs<AppRouter>["v1"]["meeting"]["endMeeting"] & {
 
 export function useEndMeeting() {
   const { showSnackbar } = useSnackbar();
+  const haptic = useHaptic();
   const { isOnline } = useIsOnline();
   const { dispatch: dispatchOfflineEvent } = useOfflineEventFactory();
   const { endMeeting } = useMeetingActions();
@@ -73,6 +75,7 @@ export function useEndMeeting() {
 
       return endMeeting({ ...vars, personId, personType });
     },
+    onSuccess: () => haptic.success(),
     onError: () => showSnackbar("Failed to end meeting. Please try again."),
   });
 }
