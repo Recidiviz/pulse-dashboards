@@ -24,6 +24,7 @@ import styled from "styled-components";
 import { OpportunityCardInfo } from "~datatypes";
 import { palette } from "~design-system";
 
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { insightsUrl } from "../views";
 import {
@@ -112,11 +113,21 @@ type InsightsSupervisorOpportunityReviewCardProps = {
 export const InsightsSupervisorOpportunityReviewCard: React.FC<
   InsightsSupervisorOpportunityReviewCardProps
 > = ({
-  opportunityInfo: { label, supervisorReviewCounts, urlSection },
+  opportunityInfo: {
+    label,
+    supervisorReviewCounts,
+    urlSection,
+    opportunityType,
+  },
   supervisorPseudoId,
   supervisorLabel,
 }) => {
   const { isMobile } = useIsMobile(true);
+  const {
+    analyticsStore,
+    userStore: { userPseudoId },
+    tenantStore: { stateCode },
+  } = useRootStore();
 
   if (!supervisorReviewCounts) return null;
 
@@ -128,6 +139,14 @@ export const InsightsSupervisorOpportunityReviewCard: React.FC<
         supervisorPseudoId,
         opportunityTypeUrl: urlSection,
       })}
+      onClick={() => {
+        analyticsStore.trackInsightsSupervisorOpportunityReviewCardClicked({
+          stateCode,
+          supervisorPseudonymizedId: supervisorPseudoId,
+          opportunityType,
+          viewedBy: userPseudoId,
+        });
+      }}
     >
       <CardWrapper>
         <CardHeader>

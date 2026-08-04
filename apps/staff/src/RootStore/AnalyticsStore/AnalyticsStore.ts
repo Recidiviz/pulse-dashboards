@@ -91,6 +91,13 @@ type OperationsDrilldownViewedMetadata = {
   metricId: string;
 };
 
+type SupervisorOpportunityReviewCardClickedMetadata = {
+  stateCode: string;
+  supervisorPseudonymizedId: string;
+  opportunityType: OpportunityType;
+  viewedBy?: string;
+};
+
 type ClientPageTrackingMetadata = {
   clientPseudonymizedId: string;
   outcomeDate: Date;
@@ -508,6 +515,15 @@ export default class AnalyticsStore {
     metadata: OperationsDrilldownViewedMetadata,
   ): void {
     this.track("frontend.outliers_operations_drilldown_viewed", metadata);
+  }
+
+  trackInsightsSupervisorOpportunityReviewCardClicked(
+    metadata: SupervisorOpportunityReviewCardClickedMetadata,
+  ): void {
+    this.track(
+      "frontend.outliers_supervisor_opportunity_review_card_clicked",
+      metadata,
+    );
   }
 
   trackUserDataDownloadButtonClicked(
