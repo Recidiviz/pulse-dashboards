@@ -131,6 +131,7 @@ export async function transformAndLoadSARData(
     // Build the base SAR record (always written)
     const baseFields: Record<string, unknown> = {
       externalId: sarData.external_id,
+      investigationType: sarData.investigation_type,
       dueDate: sarData.due_date ?? null,
       courtDate: sarData.court_date ?? null,
       completionDate: sarData.completion_date ?? null,

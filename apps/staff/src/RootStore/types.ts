@@ -181,6 +181,7 @@ export type FeatureVariant =
   | "reactPdfSAR"
   | "SARImportEmploymentRecords"
   | "SARSexualHistory"
+  | "PSRBuilder"
 
   // HOME CONTACT ROUTE PLANNER
   | "HCRPAddMoreClients";
@@ -289,6 +290,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   reactPdfSAR: {},
   SARImportEmploymentRecords: {},
   SARSexualHistory: {},
+  PSRBuilder: {},
   splitParoleProbationOutcomes: {},
   supervisorHomepageReviewCard: {},
   insightsSupervisorOpportunityNotifications: {},
@@ -403,6 +405,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         SARSignature: { activeTenants: ["US_MO"] },
         SARManualORAS: { activeTenants: ["US_MO"] },
         SARImportEmploymentRecords: { activeTenants: ["US_MO"] },
+        PSRBuilder: { activeTenants: ["US_MO"] },
         SARSexualHistory: { activeTenants: ["US_MO"] },
         sentenceProgressV2: { activeTenants: ["US_ND"] },
         hideWorkflowsOpportunities: undefined,

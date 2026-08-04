@@ -21,6 +21,7 @@ import {
   AssessmentType,
   CaseStatus,
   Gender,
+  InvestigationType,
   LevelOfEducation,
   NeedToBeAddressed,
   OnboardingTopic,
@@ -269,6 +270,7 @@ export const fakeSARStaff = {
 export const fakeSAR = {
   externalId: "sar-ext-1",
   id: "sar-1",
+  investigationType: InvestigationType.SAR,
   status: CaseStatus.InProgress,
   requestingJudgeName: faker.person.fullName(),
   dateRequested: faker.date.recent(),

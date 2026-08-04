@@ -270,6 +270,7 @@ export const sarRouter = router({
             dueDate: true,
             courtDate: true,
             completionDate: true,
+            investigationType: true,
             staff: {
               select: {
                 pseudonymizedId: true,
@@ -328,6 +329,7 @@ export const sarRouter = router({
               status: true,
               completionDate: true,
               updatedAt: true,
+              investigationType: true,
               staff: {
                 select: {
                   pseudonymizedId: true,

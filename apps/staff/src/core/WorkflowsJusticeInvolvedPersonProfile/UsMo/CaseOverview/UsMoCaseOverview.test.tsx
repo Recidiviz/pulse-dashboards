@@ -168,6 +168,7 @@ describe("UsMoCaseOverview", () => {
               status: "InProgress",
               completionDate: null,
               courtDate: null,
+              investigationType: "SAR",
               staff: { pseudonymizedId: "staff-1" },
             },
           ]),

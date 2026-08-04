@@ -22,6 +22,7 @@ import { describe, expect, test } from "vitest";
 import {
   CaseStatus,
   FrequencyOfUse,
+  InvestigationType,
   LevelOfEducation,
   MethodOfUse,
   NeedToBeAddressed,
@@ -43,7 +44,7 @@ describe("SAR router", () => {
   // Builds a tRPC caller directly (bypassing HTTP/createContext) with a given
   // staffPseudonymizedId, so tests can exercise both the staff-scoped access
   // paths and the undefined (internal user) case per endpoint. Defaults
-  // hasSARRouteAccess to true; only getSARsByClient reads it.
+  // hasSARRouteAccess to true.
   function makeCallerForStaff(
     staffPseudonymizedId: string | undefined,
     hasSARRouteAccess = true,
@@ -841,6 +842,7 @@ describe("SAR router", () => {
         updatedAt: expect.any(Date),
         staff: { pseudonymizedId: fakeStaff.pseudonymizedId },
         currentUserHasAccess: true,
+        investigationType: InvestigationType.SAR,
       });
     });
 
@@ -849,6 +851,7 @@ describe("SAR router", () => {
         data: {
           externalId: "sar-ext-2",
           id: "sar-2",
+          investigationType: InvestigationType.SAR,
           status: CaseStatus.Complete,
           client: { connect: { externalId: fakeSARClient.externalId } },
           staff: { connect: { externalId: fakeStaff.externalId } },
@@ -897,6 +900,7 @@ describe("SAR router", () => {
         data: {
           externalId: "sar-ext-other-staff",
           id: "sar-other-staff",
+          investigationType: InvestigationType.SAR,
           status: CaseStatus.InProgress,
           client: { connect: { externalId: fakeSARClient.externalId } },
           staff: { connect: { externalId: fakeSARStaff.externalId } },
@@ -1042,6 +1046,7 @@ describe("SAR router", () => {
         data: {
           externalId: "sar-ext-other-staff",
           id: "sar-other-staff",
+          investigationType: InvestigationType.SAR,
           status: CaseStatus.InProgress,
           client: { connect: { externalId: fakeSARClient.externalId } },
           staff: { connect: { externalId: fakeSARStaff.externalId } },
@@ -1089,6 +1094,7 @@ describe("SAR router", () => {
           "currentUserHasAccess",
           "externalId",
           "id",
+          "investigationType",
           "staff",
           "status",
           "updatedAt",

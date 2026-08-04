@@ -70,6 +70,8 @@ const opportunityStatus = z.enum(["Active", "Inactive"]);
 
 const caseIdsSchema = zu.stringToJSON().pipe(z.array(z.string()));
 
+const investigationType = z.enum(["PSR", "SAR"]);
+
 // Title case helper (converts "HELLO WORLD" to "Hello World")
 // Matches pattern used in libs/sentencing-client/src/utils/utils.ts
 const titleCase = (str: string | null | undefined): string | null => {
@@ -150,6 +152,7 @@ export const SARImportSchema = z.object({
   state_code: stateCode,
   staff_id: z.string(),
   client_id: z.string(),
+  investigation_type: investigationType,
   due_date: z.coerce.date().nullish(),
   court_date: z.coerce.date().nullish(),
   completion_date: z.coerce.date().nullish(),

@@ -123,7 +123,8 @@ export type FeatureVariant =
   | "SARManualORAS"
   | "reactPdfSAR"
   | "SARImportEmploymentRecords"
-  | "SARSexualHistory";
+  | "SARSexualHistory"
+  | "PSRBuilder";
 
 export type FeatureVariantValue = {
   activeDate?: Date;

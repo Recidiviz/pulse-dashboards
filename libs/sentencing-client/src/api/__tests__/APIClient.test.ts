@@ -56,6 +56,9 @@ beforeEach(() => {
           .fn()
           .mockResolvedValue(StaffInfoFixture.sentencingAssessmentReports),
       },
+      getSARsByClient: {
+        query: vi.fn().mockResolvedValue([]),
+      },
       updateSAR: {
         mutate: vi.fn(),
       },
@@ -191,6 +194,73 @@ test("getStaffInfo should not fetch SARs if user lacks sarAccess permission", as
 
   // Should return empty array for SARs
   expect(result.sentencingAssessmentReports).toEqual([]);
+});
+
+test("getStaffInfo filters out PSR reports when PSRBuilder is off", async () => {
+  sentencingStore.rootStore.userStore.routes.push(["sar", true]);
+  mockTRPCClient.sar.getSARsForStaff.query.mockResolvedValueOnce([
+    { id: "sar-1", investigationType: "SAR" },
+    { id: "psr-1", investigationType: "PSR" },
+  ]);
+
+  const result = await apiClient.getStaffInfo();
+
+  expect(result.sentencingAssessmentReports).toEqual([
+    { id: "sar-1", investigationType: "SAR" },
+  ]);
+
+  sentencingStore.rootStore.userStore.routes.pop();
+});
+
+test("getStaffInfo includes PSR reports when PSRBuilder is active", async () => {
+  sentencingStore.rootStore.userStore.routes.push(["sar", true]);
+  sentencingStore.rootStore.userStore.activeFeatureVariants = {
+    PSRBuilder: {},
+  };
+  const sars = [
+    { id: "sar-1", investigationType: "SAR" },
+    { id: "psr-1", investigationType: "PSR" },
+  ];
+  mockTRPCClient.sar.getSARsForStaff.query.mockResolvedValueOnce(sars);
+
+  const result = await apiClient.getStaffInfo();
+
+  expect(result.sentencingAssessmentReports).toEqual(sars);
+
+  sentencingStore.rootStore.userStore.routes.pop();
+  sentencingStore.rootStore.userStore.activeFeatureVariants = {};
+});
+
+test("getSARsByClient filters out PSR reports when PSRBuilder is off", async () => {
+  const sars = [
+    { id: "sar-1", investigationType: "SAR" },
+    { id: "psr-1", investigationType: "PSR" },
+  ];
+  mockTRPCClient.sar.getSARsByClient.query.mockResolvedValueOnce(sars);
+
+  const result = await apiClient.getSARsByClient("client-ext-1");
+
+  expect(result).toEqual([{ id: "sar-1", investigationType: "SAR" }]);
+  expect(mockTRPCClient.sar.getSARsByClient.query).toHaveBeenCalledWith({
+    clientExternalId: "client-ext-1",
+  });
+});
+
+test("getSARsByClient includes PSR reports when PSRBuilder is active", async () => {
+  sentencingStore.rootStore.userStore.activeFeatureVariants = {
+    PSRBuilder: {},
+  };
+  const sars = [
+    { id: "sar-1", investigationType: "SAR" },
+    { id: "psr-1", investigationType: "PSR" },
+  ];
+  mockTRPCClient.sar.getSARsByClient.query.mockResolvedValueOnce(sars);
+
+  const result = await apiClient.getSARsByClient("client-ext-1");
+
+  expect(result).toEqual(sars);
+
+  sentencingStore.rootStore.userStore.activeFeatureVariants = {};
 });
 
 test("setIsFirstLogin calls the updateStaff endpoint with the correct arguments", async () => {

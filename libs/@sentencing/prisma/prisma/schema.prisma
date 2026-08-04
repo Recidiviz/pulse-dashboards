@@ -327,6 +327,11 @@ enum DomainRiskLevel {
   HIGH
 }
 
+enum InvestigationType {
+  SAR
+  PSR
+}
+
 enum SubstanceType {
   Alcohol
   Marijuana
@@ -608,6 +613,7 @@ model SentencingAssessmentReport {
   dueDate            DateTime?
   courtDate          DateTime?
   completionDate     DateTime?
+  investigationType  InvestigationType @default(SAR)
 
   client   Client @relation(fields: [clientId], references: [externalId])
   clientId String

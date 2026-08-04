@@ -141,7 +141,12 @@ export class APIClient {
 
     return {
       ...staffData,
-      sentencingAssessmentReports,
+      sentencingAssessmentReports: this.sentencingStore.activeFeatureVariants
+        .PSRBuilder
+        ? sentencingAssessmentReports
+        : sentencingAssessmentReports.filter(
+            (sar) => sar.investigationType === "SAR",
+          ),
     };
   }
 
@@ -218,9 +223,13 @@ export class APIClient {
     if (!this.trpcClient)
       return Promise.reject({ message: "No tRPC client initialized" });
 
-    return await this.trpcClient.sar.getSARsByClient.query({
+    const sars = await this.trpcClient.sar.getSARsByClient.query({
       clientExternalId,
     });
+
+    return this.sentencingStore.activeFeatureVariants.PSRBuilder
+      ? sars
+      : sars.filter((sar) => sar.investigationType === "SAR");
   }
 
   async updateCaseDetails(caseId: string, attributes: FormAttributes) {

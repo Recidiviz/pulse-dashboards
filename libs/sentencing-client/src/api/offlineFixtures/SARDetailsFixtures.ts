@@ -29,6 +29,7 @@ export const SARDetailsFixture: { [sarId: string]: SAR } = {
     updatedAt: new Date(),
     defendantDeclinedToParticipate: false,
     mostSevereOffenseName: null,
+    investigationType: "SAR",
     client: {
       externalId: "SAR-123456",
       fullName: "John Doe",
