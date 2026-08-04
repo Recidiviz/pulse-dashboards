@@ -7,32 +7,52 @@
     "pageTitle": "[US_NE]home.pageTitle",
     "noSentenceFallback": "[US_NE]home.noSentenceFallback",
     "headerFields": {
-      "numHoldsAndDetainers": {
-        "label": "[US_NE]home.headerFields.numHoldsAndDetainers.label",
-        "value": "[US_NE]home.headerFields.numHoldsAndDetainers.value"
+      "labels": {
+        "numHoldsAndDetainers": "[US_NE]home.headerFields.labels.numHoldsAndDetainers",
+        "numNotifiers": "[US_NE]home.headerFields.labels.numNotifiers",
+        "deadTime": "[US_NE]home.headerFields.labels.deadTime",
+        "minimumSentence": "[US_NE]home.headerFields.labels.minimumSentence",
+        "maximumSentence": "[US_NE]home.headerFields.labels.maximumSentence",
+        "goodTime": "[US_NE]home.headerFields.labels.goodTime"
       },
-      "numNotifiers": {
-        "label": "[US_NE]home.headerFields.numNotifiers.label",
-        "value": "[US_NE]home.headerFields.numNotifiers.value"
-      },
-      "deadTime": {
-        "label": "[US_NE]home.headerFields.deadTime.label",
-        "value_one": "[US_NE]home.headerFields.deadTime.value_one",
-        "value_other": "[US_NE]home.headerFields.deadTime.value_other"
-      },
-      "minimumSentence": {
-        "label": "[US_NE]home.headerFields.minimumSentence.label",
-        "value_one": "[US_NE]home.headerFields.minimumSentence.value_one",
-        "value_other": "[US_NE]home.headerFields.minimumSentence.value_other"
-      },
-      "maximumSentence": {
-        "label": "[US_NE]home.headerFields.maximumSentence.label",
-        "value_one": "[US_NE]home.headerFields.maximumSentence.value_one",
-        "value_other": "[US_NE]home.headerFields.maximumSentence.value_other"
-      },
-      "goodTimeLaw": {
-        "label": "[US_NE]home.headerFields.goodTimeLaw.label",
-        "value": "[US_NE]home.headerFields.goodTimeLaw.value"
+      "formatters": {
+        "numHoldsAndDetainers": {
+          "value": "[US_NE]home.headerFields.formatters.numHoldsAndDetainers.value"
+        },
+        "numNotifiers": {
+          "value": "[US_NE]home.headerFields.formatters.numNotifiers.value"
+        },
+        "deadTimeDays": {
+          "value_one": "[US_NE]home.headerFields.formatters.deadTimeDays.value_one",
+          "value_other": "[US_NE]home.headerFields.formatters.deadTimeDays.value_other"
+        },
+        "minimumSentenceYears": {
+          "value_one": "[US_NE]home.headerFields.formatters.minimumSentenceYears.value_one",
+          "value_other": "[US_NE]home.headerFields.formatters.minimumSentenceYears.value_other"
+        },
+        "minimumSentenceMonths": {
+          "value_one": "[US_NE]home.headerFields.formatters.minimumSentenceMonths.value_one",
+          "value_other": "[US_NE]home.headerFields.formatters.minimumSentenceMonths.value_other"
+        },
+        "minimumSentenceDays": {
+          "value_one": "[US_NE]home.headerFields.formatters.minimumSentenceDays.value_one",
+          "value_other": "[US_NE]home.headerFields.formatters.minimumSentenceDays.value_other"
+        },
+        "maximumSentenceYears": {
+          "value_one": "[US_NE]home.headerFields.formatters.maximumSentenceYears.value_one",
+          "value_other": "[US_NE]home.headerFields.formatters.maximumSentenceYears.value_other"
+        },
+        "maximumSentenceMonths": {
+          "value_one": "[US_NE]home.headerFields.formatters.maximumSentenceMonths.value_one",
+          "value_other": "[US_NE]home.headerFields.formatters.maximumSentenceMonths.value_other"
+        },
+        "maximumSentenceDays": {
+          "value_one": "[US_NE]home.headerFields.formatters.maximumSentenceDays.value_one",
+          "value_other": "[US_NE]home.headerFields.formatters.maximumSentenceDays.value_other"
+        },
+        "goodTimeLawNumber": {
+          "value": "[US_NE]home.headerFields.formatters.goodTimeLawNumber.value"
+        }
       }
     },
     "todos": {

@@ -7,32 +7,52 @@
     "pageTitle": "Aprenda más sobre su sentencia",
     "noSentenceFallback": "Los detalles de su sentencia aún no han sido confirmados por NDCS. Comuníquese con la oficina de registros para obtener más información.",
     "headerFields": {
-      "numHoldsAndDetainers": {
-        "label": "Detenciones/Retenciones Pendientes:",
-        "value": "{{count, number}}"
+      "labels": {
+        "numHoldsAndDetainers": "Detenciones/Retenciones Pendientes:",
+        "numNotifiers": "Notificaciones Pendientes:",
+        "deadTime": "Tiempo muerto",
+        "minimumSentence": "Sentencia Mínima:",
+        "maximumSentence": "Sentencia Máxima:",
+        "goodTime": "Ley de tiempo de buena conducta:"
       },
-      "numNotifiers": {
-        "label": "Notificaciones Pendientes:",
-        "value": "{{count, number}}"
-      },
-      "deadTime": {
-        "label": "Tiempo muerto",
-        "value_one": "{{count, number}} Día",
-        "value_other": "{{count, number}} Días"
-      },
-      "minimumSentence": {
-        "label": "Sentencia Mínima:",
-        "value_one": "{{count, number}} Año",
-        "value_other": "{{count, number}} Años"
-      },
-      "maximumSentence": {
-        "label": "Sentencia Máxima:",
-        "value_one": "{{count, number}} Año",
-        "value_other": "{{count, number}} Años"
-      },
-      "goodTimeLaw": {
-        "label": "Ley de tiempo de buena conducta:",
-        "value": "LB {{goodTimeLawNumber}}"
+      "formatters": {
+        "numHoldsAndDetainers": {
+          "value": "{{count, number}}"
+        },
+        "numNotifiers": {
+          "value": "{{count, number}}"
+        },
+        "deadTimeDays": {
+          "value_one": "{{count, number}} Día",
+          "value_other": "{{count, number}} Días"
+        },
+        "minimumSentenceYears": {
+          "value_one": "{{count, number}} Año",
+          "value_other": "{{count, number}} Años"
+        },
+        "minimumSentenceMonths": {
+          "value_one": "{{count, number}} Mes",
+          "value_other": "{{count, number}} Meses"
+        },
+        "minimumSentenceDays": {
+          "value_one": "{{count, number}} Día",
+          "value_other": "{{count, number}} Días"
+        },
+        "maximumSentenceYears": {
+          "value_one": "{{count, number}} Año",
+          "value_other": "{{count, number}} Años"
+        },
+        "maximumSentenceMonths": {
+          "value_one": "{{count, number}} Mes",
+          "value_other": "{{count, number}} Meses"
+        },
+        "maximumSentenceDays": {
+          "value_one": "{{count, number}} Día",
+          "value_other": "{{count, number}} Días"
+        },
+        "goodTimeLawNumber": {
+          "value": "LB {{goodTimeLawNumber}}"
+        }
       }
     },
     "todos": {

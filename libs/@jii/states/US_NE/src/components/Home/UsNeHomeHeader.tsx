@@ -16,27 +16,15 @@
 // =============================================================================
 
 import { Header34, Sans14, spacing } from "@recidiviz/design-system";
-import { isNumber } from "lodash";
 import { observer } from "mobx-react-lite";
 import styled from "styled-components";
 
 import { useResidentMetadata } from "~@jii/data";
-import { LastUpdatedBanner } from "~@jii/layout";
 import { useUsNeTranslations } from "~@jii/translation";
-import type { UsNeResidentMetadata } from "~datatypes";
 import { palette } from "~design-system";
+import { withPresenterManager } from "~hydration-utils";
 
-const headerFields = [
-  { key: "numHoldsAndDetainers", metadataField: "numHoldsAndDetainers" },
-  { key: "numNotifiers", metadataField: "numNotifiers" },
-  { key: "deadTime", metadataField: "deadTimeDays" },
-  { key: "minimumSentence", metadataField: "minimumSentenceYears" },
-  { key: "maximumSentence", metadataField: "maximumSentenceYears" },
-  { key: "goodTimeLaw", metadataField: "goodTimeLawNumber" },
-] as const satisfies {
-  key: string;
-  metadataField: keyof UsNeResidentMetadata;
-}[];
+import { UsNeHomeHeaderPresenter } from "./UsNeHomeHeaderPresenter";
 
 const HeaderFieldsContainer = styled.div`
   display: flex;
@@ -56,45 +44,39 @@ const SubtitleLabel = styled(Sans14)`
   margin-right: 4px;
 `;
 
-const UsNeHomeHeader = observer(function UsNeHomeHeader({
-  sentenceLastModifiedDate,
+const ManagedComponent = observer(function UsNeHomeHeader({
+  presenter,
 }: {
-  sentenceLastModifiedDate: Date;
+  presenter: UsNeHomeHeaderPresenter;
 }) {
-  const metadata = useResidentMetadata("US_NE");
-  const { t } = useUsNeTranslations();
-
-  const visibleFields = headerFields.filter(
-    ({ metadataField }) => metadata[metadataField] !== null,
-  );
+  const { pageTitle, headerText } = presenter;
 
   return (
-    <>
-      <LastUpdatedBanner
-        overrideCopy={t(($) => $.lastUpdated, { sentenceLastModifiedDate })}
-      />
-      <header>
-        <Header34 as="h1">{t(($) => $.home.pageTitle)}</Header34>
-        <HeaderFieldsContainer>
-          {visibleFields.map(({ key, metadataField }) => (
-            <HeaderField key={key}>
-              <SubtitleLabel>
-                {t(($) => $.home.headerFields[key].label)}
-              </SubtitleLabel>
-              <span>
-                {t(($) => $.home.headerFields[key].value, {
-                  ...metadata,
-                  count: isNumber(metadata[metadataField])
-                    ? metadata[metadataField]
-                    : undefined,
-                })}
-              </span>
-            </HeaderField>
-          ))}
-        </HeaderFieldsContainer>
-      </header>
-    </>
+    <header>
+      <Header34 as="h1">{pageTitle}</Header34>
+      <HeaderFieldsContainer>
+        {headerText.map(({ label, content }) => (
+          <HeaderField key={label}>
+            <SubtitleLabel>{label}</SubtitleLabel>
+            <span>{content}</span>
+          </HeaderField>
+        ))}
+      </HeaderFieldsContainer>
+    </header>
   );
+});
+
+function usePresenter() {
+  const stateSpecificData = useResidentMetadata("US_NE");
+  const { t } = useUsNeTranslations();
+
+  return new UsNeHomeHeaderPresenter(stateSpecificData, t);
+}
+
+export const UsNeHomeHeader = withPresenterManager({
+  usePresenter,
+  ManagedComponent,
+  managerIsObserver: false,
 });
 
 export default UsNeHomeHeader;

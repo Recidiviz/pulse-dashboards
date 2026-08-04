@@ -7,32 +7,52 @@
     "pageTitle": "Learn More About Your Sentence",
     "noSentenceFallback": "Your sentence details have still not been confirmed by NDCS. Contact Records for more information.",
     "headerFields": {
-      "numHoldsAndDetainers": {
-        "label": "Open Detainers/Holds:",
-        "value": "{{count, number}}"
+      "labels": {
+        "numHoldsAndDetainers": "Open Detainers/Holds:",
+        "numNotifiers": "Open Notifiers:",
+        "deadTime": "Dead Time:",
+        "minimumSentence": "Minimum Sentence:",
+        "maximumSentence": "Maximum Sentence:",
+        "goodTime": "Good Time Law:"
       },
-      "numNotifiers": {
-        "label": "Open Notifiers:",
-        "value": "{{count, number}}"
-      },
-      "deadTime": {
-        "label": "Dead Time:",
-        "value_one": "{{count, number}} Day",
-        "value_other": "{{count, number}} Days"
-      },
-      "minimumSentence": {
-        "label": "Minimum Sentence:",
-        "value_one": "{{count, number}} Yr",
-        "value_other": "{{count, number}} Yrs"
-      },
-      "maximumSentence": {
-        "label": "Maximum Sentence:",
-        "value_one": "{{count, number}} Yr",
-        "value_other": "{{count, number}} Yrs"
-      },
-      "goodTimeLaw": {
-        "label": "Good Time Law:",
-        "value": "LB {{goodTimeLawNumber}}"
+      "formatters": {
+        "numHoldsAndDetainers": {
+          "value": "{{count, number}}"
+        },
+        "numNotifiers": {
+          "value": "{{count, number}}"
+        },
+        "deadTimeDays": {
+          "value_one": "{{count, number}} Day",
+          "value_other": "{{count, number}} Days"
+        },
+        "minimumSentenceYears": {
+          "value_one": "{{count, number}} Yr",
+          "value_other": "{{count, number}} Yrs"
+        },
+        "minimumSentenceMonths": {
+          "value_one": "{{count, number}} Month",
+          "value_other": "{{count, number}} Months"
+        },
+        "minimumSentenceDays": {
+          "value_one": "{{count, number}} Day",
+          "value_other": "{{count, number}} Days"
+        },
+        "maximumSentenceYears": {
+          "value_one": "{{count, number}} Yr",
+          "value_other": "{{count, number}} Yrs"
+        },
+        "maximumSentenceMonths": {
+          "value_one": "{{count, number}} Month",
+          "value_other": "{{count, number}} Months"
+        },
+        "maximumSentenceDays": {
+          "value_one": "{{count, number}} Day",
+          "value_other": "{{count, number}} Days"
+        },
+        "goodTimeLawNumber": {
+          "value": "LB {{goodTimeLawNumber}}"
+        }
       }
     },
     "todos": {

@@ -17,6 +17,7 @@
 
 import { PageContainer, usePageTitle } from "~@jii/common-ui";
 import { useResidentMetadata } from "~@jii/data";
+import { LastUpdatedBanner } from "~@jii/layout";
 import { useUsNeTranslations } from "~@jii/translation";
 
 import { UsNeTodos } from "../Todos/UsNeTodos";
@@ -36,9 +37,12 @@ const UsNeSingleResidentHome = () => {
 
   return (
     <PageContainer>
-      <UsNeHomeHeader
-        sentenceLastModifiedDate={metadata.sentenceLastModifiedDate}
+      <LastUpdatedBanner
+        overrideCopy={t(($) => $.lastUpdated, {
+          sentenceLastModifiedDate: metadata.sentenceLastModifiedDate,
+        })}
       />
+      <UsNeHomeHeader />
       <UsNeTodos />
       <UsNeDateCardGroup />
       <UsNeGoodTimeCardGroup />
