@@ -291,6 +291,9 @@ const US_TX_CONFIG = {
     directorDashboard: [DIRECTOR_DASHBOARD_PAGES.supervision],
     workflows: ["home", "tasks", "clients"],
   },
+  featureVariants: {
+    logInToOwnSupervisorPage: {},
+  },
   directorDashboard: {
     navTitle: "Regional Dashboard",
     lookerDashboard: "texas_region_metrics",

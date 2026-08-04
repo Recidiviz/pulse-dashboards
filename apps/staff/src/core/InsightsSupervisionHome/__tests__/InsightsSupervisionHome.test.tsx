@@ -76,7 +76,11 @@ function setupBasicMocks() {
   insightsStore.supervisionStore = supervisionStore;
 
   // Always mock userAppMetadata to prevent "No state code set for user" error
-  vi.spyOn(insightsStore.rootStore.userStore, "userAppMetadata", "get").mockReturnValue({
+  vi.spyOn(
+    insightsStore.rootStore.userStore,
+    "userAppMetadata",
+    "get",
+  ).mockReturnValue({
     pseudonymizedId: "hashed-user123",
     stateCode: "us_mi",
     routes: observable({}),
@@ -119,7 +123,11 @@ describe("InsightsSupervisionHome routing", () => {
   };
 
   const mockUserWithSupervisorsListAccess = () => {
-    vi.spyOn(insightsStore.rootStore.userStore, "userAppMetadata", "get").mockReturnValue({
+    vi.spyOn(
+      insightsStore.rootStore.userStore,
+      "userAppMetadata",
+      "get",
+    ).mockReturnValue({
       pseudonymizedId: "hashed-admin123",
       stateCode: "us_mi",
       routes: observable({ "insights_supervision_supervisors-list": true }),
@@ -127,30 +135,68 @@ describe("InsightsSupervisionHome routing", () => {
   };
 
   const mockSupervisorUser = () => {
-    vi.spyOn(insightsStore.rootStore.userStore, "userAppMetadata", "get").mockReturnValue({
+    vi.spyOn(
+      insightsStore.rootStore.userStore,
+      "userAppMetadata",
+      "get",
+    ).mockReturnValue({
       pseudonymizedId: "hashed-supervisor123",
       stateCode: "us_mi",
       routes: observable({ "insights_supervision_supervisors-list": false }),
     });
-    vi.spyOn(supervisionStore, "currentSupervisorUser", "get").mockReturnValue(mockSupervisor);
+    vi.spyOn(supervisionStore, "currentSupervisorUser", "get").mockReturnValue(
+      mockSupervisor,
+    );
   };
 
   const mockOfficerUser = () => {
-    vi.spyOn(insightsStore.rootStore.userStore, "userAppMetadata", "get").mockReturnValue({
+    vi.spyOn(
+      insightsStore.rootStore.userStore,
+      "userAppMetadata",
+      "get",
+    ).mockReturnValue({
       pseudonymizedId: "hashed-officer123",
       stateCode: "us_mi",
       routes: observable({ "insights_supervision_supervisors-list": false }),
     });
-    vi.spyOn(supervisionStore, "currentOfficerUser", "get").mockReturnValue(mockOfficer);
-    vi.spyOn(supervisionStore, "currentSupervisorUser", "get").mockReturnValue(undefined);
+    vi.spyOn(supervisionStore, "currentOfficerUser", "get").mockReturnValue(
+      mockOfficer,
+    );
+    vi.spyOn(supervisionStore, "currentSupervisorUser", "get").mockReturnValue(
+      undefined,
+    );
   };
-
 
   describe("when user can access all supervisors", () => {
     test("redirects to supervisors list page", () => {
       mockUserWithSupervisorsListAccess();
       const router = createTestRouter();
-      expect(router.state.location.pathname).toBe(insightsUrl("supervisionSupervisorsList"));
+      expect(router.state.location.pathname).toBe(
+        insightsUrl("supervisionSupervisorsList"),
+      );
+    });
+
+    describe("when the logInToOwnSupervisorPage feature variant is active and the user is also a supervisor", () => {
+      test("redirects to their own supervisor page instead of the list", () => {
+        mockUserWithSupervisorsListAccess();
+        vi.spyOn(
+          supervisionStore,
+          "currentSupervisorUser",
+          "get",
+        ).mockReturnValue(mockSupervisor);
+        vi.spyOn(
+          supervisionStore,
+          "userShouldLogInToOwnSupervisorPage",
+          "get",
+        ).mockReturnValue(true);
+
+        const router = createTestRouter();
+        expect(router.state.location.pathname).toBe(
+          insightsUrl("supervisionSupervisor", {
+            supervisorPseudoId: "hashed-supervisor123",
+          }),
+        );
+      });
     });
   });
 
@@ -159,7 +205,9 @@ describe("InsightsSupervisionHome routing", () => {
       mockSupervisorUser();
       const router = createTestRouter();
       expect(router.state.location.pathname).toBe(
-        insightsUrl("supervisionSupervisor", { supervisorPseudoId: "hashed-supervisor123" })
+        insightsUrl("supervisionSupervisor", {
+          supervisorPseudoId: "hashed-supervisor123",
+        }),
       );
     });
   });
@@ -169,29 +217,46 @@ describe("InsightsSupervisionHome routing", () => {
       mockOfficerUser();
       const router = createTestRouter();
       expect(router.state.location.pathname).toBe(
-        insightsUrl("supervisionStaff", { officerPseudoId: "hashed-officer123" })
+        insightsUrl("supervisionStaff", {
+          officerPseudoId: "hashed-officer123",
+        }),
       );
     });
   });
 
   describe("when user has no access permissions", () => {
     test("shows error message for users with no permissions", async () => {
-      vi.spyOn(insightsStore.rootStore.userStore, "userAppMetadata", "get").mockReturnValue({
+      vi.spyOn(
+        insightsStore.rootStore.userStore,
+        "userAppMetadata",
+        "get",
+      ).mockReturnValue({
         pseudonymizedId: "hashed-nouser123",
         stateCode: "us_mi",
         routes: observable({}),
       });
 
-      vi.spyOn(supervisionStore, "currentOfficerUser", "get").mockReturnValue(undefined);
-      vi.spyOn(supervisionStore, "currentSupervisorUser", "get").mockReturnValue(undefined);
-      vi.spyOn(supervisionStore, "userCanAccessAllSupervisors", "get").mockReturnValue(false);
+      vi.spyOn(supervisionStore, "currentOfficerUser", "get").mockReturnValue(
+        undefined,
+      );
+      vi.spyOn(
+        supervisionStore,
+        "currentSupervisorUser",
+        "get",
+      ).mockReturnValue(undefined);
+      vi.spyOn(
+        supervisionStore,
+        "userCanAccessAllSupervisors",
+        "get",
+      ).mockReturnValue(false);
 
       // Check for the error message content using CSS class selectors
       // because screen.getByText is not working
       const { container } = render(<InsightsSupervisionHome />);
-      
-      expect(container.querySelector('.StatusMessage__title')).toHaveTextContent("Sorry, we’re having trouble loading this page");
 
+      expect(
+        container.querySelector(".StatusMessage__title"),
+      ).toHaveTextContent("Sorry, we’re having trouble loading this page");
     });
   });
 
@@ -204,21 +269,31 @@ describe("InsightsSupervisionHome routing", () => {
       createTestRouter();
 
       const testIds = ["supervisors-list", "supervisor-page", "staff-page"];
-      testIds.forEach(testId => {
+      testIds.forEach((testId) => {
         expect(screen.queryByTestId(testId)).not.toBeInTheDocument();
       });
-      expect(screen.queryByRole("button", { name: "Reload" })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: "Reload" }),
+      ).not.toBeInTheDocument();
     });
   });
 
   describe("redirect waits for supervision store to be hydrated", () => {
     test("waits for supervision store before redirecting", async () => {
-      vi.spyOn(insightsStore.rootStore.userStore, "userAppMetadata", "get").mockReturnValue({
+      vi.spyOn(
+        insightsStore.rootStore.userStore,
+        "userAppMetadata",
+        "get",
+      ).mockReturnValue({
         pseudonymizedId: "hashed-supervisor123",
         stateCode: "us_mi",
       });
 
-      vi.spyOn(supervisionStore, "currentSupervisorUser", "get").mockReturnValue(mockSupervisor);
+      vi.spyOn(
+        supervisionStore,
+        "currentSupervisorUser",
+        "get",
+      ).mockReturnValue(mockSupervisor);
 
       runInAction(() => {
         insightsStore.supervisionStore = undefined;
@@ -235,7 +310,9 @@ describe("InsightsSupervisionHome routing", () => {
 
       render(<RouterProvider router={router} />);
       expect(router.state.location.pathname).toBe(
-        insightsUrl("supervisionSupervisor", { supervisorPseudoId: "hashed-supervisor123" })
+        insightsUrl("supervisionSupervisor", {
+          supervisorPseudoId: "hashed-supervisor123",
+        }),
       );
     });
   });

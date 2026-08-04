@@ -166,6 +166,7 @@ export type FeatureVariant =
   | "supervisorHomepageReviewCard"
   | "insightsSupervisorOpportunityNotifications"
   | "supervisorHomepageReviewTable"
+  | "logInToOwnSupervisorPage"
 
   // SENTENCING
   | "offenseOverrideControls"
@@ -292,6 +293,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   supervisorHomepageReviewCard: {},
   insightsSupervisorOpportunityNotifications: {},
   supervisorHomepageReviewTable: {},
+  logInToOwnSupervisorPage: {},
   sentenceProgressV2: {},
   hideWorkflowsOpportunities: {},
   hideWorkflowsResidentsPage: {},

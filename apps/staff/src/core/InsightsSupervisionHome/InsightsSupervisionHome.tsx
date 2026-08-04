@@ -30,27 +30,34 @@ export const InsightsSupervisionHome = observer(
 
     if (!supervisionStore) return null;
 
+    const supervisorPseudoId =
+      supervisionStore.currentSupervisorUser?.pseudonymizedId;
+    const toOwnSupervisorPage = supervisorPseudoId && (
+      <Navigate
+        replace
+        to={insightsUrl("supervisionSupervisor", { supervisorPseudoId })}
+      />
+    );
+
+    // For states with the logInToOwnSupervisorPage feature variant enabled (like US_TX),
+    // users should navigate to their own supervisor home page on login, even if they have
+    // access to the supervisionSupervisorsList page
+    if (
+      supervisionStore.userShouldLogInToOwnSupervisorPage &&
+      toOwnSupervisorPage
+    ) {
+      return toOwnSupervisorPage;
+    }
+
     if (supervisionStore.userCanAccessAllSupervisors) {
       return <Navigate to={insightsUrl("supervisionSupervisorsList")} />;
     }
 
-    if (
-      supervisionStore.currentSupervisorUser
-    ) {
-      return (
-        <Navigate
-          replace
-          to={insightsUrl("supervisionSupervisor", {
-            supervisorPseudoId:
-              supervisionStore.currentSupervisorUser.pseudonymizedId,
-          })}
-        />
-      );
+    if (toOwnSupervisorPage) {
+      return toOwnSupervisorPage;
     }
 
-    if (
-      supervisionStore.currentOfficerUser
-    ) {
+    if (supervisionStore.currentOfficerUser) {
       return (
         <Navigate
           replace

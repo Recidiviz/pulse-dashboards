@@ -211,6 +211,17 @@ export class InsightsSupervisionStore {
     );
   }
 
+  /**
+   * Indicates whether the user should land on their own supervisor page on
+   * login rather than the supervisors list, even if they can access the list.
+   */
+  get userShouldLogInToOwnSupervisorPage(): boolean {
+    return (
+      "logInToOwnSupervisorPage" in
+      this.insightsStore.rootStore.userStore.activeFeatureVariants
+    );
+  }
+
   get userCanHideOfficersWithoutEligibleCaseload(): boolean {
     return (
       "insightsHideOfficersWithoutEligibleCaseload" in
