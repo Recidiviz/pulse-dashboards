@@ -26,6 +26,7 @@ import {
   ClientInfo,
   clientInfoFixture,
   getMockConfigsByTenantId,
+  getSupervisionOfficerVitalsMetricFixture,
   InsightsConfig,
   InsightsConfigFixture,
   LATEST_END_DATE,
@@ -44,7 +45,6 @@ import {
   supervisionOfficerOutcomesFixture,
   SupervisionOfficerSupervisor,
   supervisionOfficerSupervisorsFixture,
-  supervisionOfficerVitalsMetricFixture,
   SupervisionVitalsMetric,
   UserInfo,
   VitalsSupervisionContacts,
@@ -293,21 +293,24 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
       (s) => s.pseudonymizedId === supervisorPseudoId,
     );
     if (!supervisor) return [];
-    return supervisionOfficerVitalsMetricFixture.map((metric) => {
-      return {
-        ...metric,
-        vitalsMetrics: metric.vitalsMetrics.filter((metricForOfficer) => {
-          const officersForSupervisor = supervisionOfficerFixture
-            .filter((o) =>
-              o.supervisorExternalIds.includes(supervisor?.externalId),
-            )
-            .map((o) => o.pseudonymizedId);
-          return officersForSupervisor.includes(
-            metricForOfficer.officerPseudonymizedId,
-          );
-        }),
-      };
-    });
+    const { currentTenantId } = this.insightsStore.rootStore;
+    return getSupervisionOfficerVitalsMetricFixture(currentTenantId).map(
+      (metric) => {
+        return {
+          ...metric,
+          vitalsMetrics: metric.vitalsMetrics.filter((metricForOfficer) => {
+            const officersForSupervisor = supervisionOfficerFixture
+              .filter((o) =>
+                o.supervisorExternalIds.includes(supervisor?.externalId),
+              )
+              .map((o) => o.pseudonymizedId);
+            return officersForSupervisor.includes(
+              metricForOfficer.officerPseudonymizedId,
+            );
+          }),
+        };
+      },
+    );
   }
 
   async vitalsForOfficer(
@@ -315,15 +318,18 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
   ): Promise<Array<SupervisionVitalsMetric>> {
     const hasVitalsMetrics = (await this.init()).vitalsMetrics.length > 0;
     if (!hasVitalsMetrics) return [];
-    return supervisionOfficerVitalsMetricFixture.map((metric) => {
-      return {
-        ...metric,
-        vitalsMetrics: metric.vitalsMetrics.filter(
-          (metricForOfficer) =>
-            officerPseudoId === metricForOfficer.officerPseudonymizedId,
-        ),
-      };
-    });
+    const { currentTenantId } = this.insightsStore.rootStore;
+    return getSupervisionOfficerVitalsMetricFixture(currentTenantId).map(
+      (metric) => {
+        return {
+          ...metric,
+          vitalsMetrics: metric.vitalsMetrics.filter(
+            (metricForOfficer) =>
+              officerPseudoId === metricForOfficer.officerPseudonymizedId,
+          ),
+        };
+      },
+    );
   }
 
   async vitalsContactsDrilldownForOfficer(

@@ -15,13 +15,34 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { getMockConfigsByTenantId } from "../../config/InsightsConfig/fixtures/fixture";
 import { rawSupervisionOfficerFixture } from "../../people/Staff/Supervision/Insights/SupervisionOfficer/fixture";
 import { relativeFixtureDate } from "../../utils/zod";
-import { VITALS_METRIC_IDS } from "../utils/constants";
+import { VITALS_METRIC_IDS, VitalsMetricId } from "../utils/constants";
 import {
   RawSupervisionVitalsMetric,
   supervisionVitalsMetricSchema,
 } from "./schema";
+
+// ND uses timely_contact, ID and TX use timely_contact_due_date_based
+const CONTACT_VITALS_METRIC_IDS: VitalsMetricId[] = [
+  VITALS_METRIC_IDS.enum.timely_contact,
+  VITALS_METRIC_IDS.enum.timely_contact_due_date_based,
+];
+
+// timely_contact default maintains behavior before any tenants used
+// timely_contact_due_date_based -- fine to change in the future as needed.
+const getContactVitalsMetricId = (tenantId?: string): VitalsMetricId => {
+  const configuredIds =
+    (tenantId && getMockConfigsByTenantId()[tenantId]?.vitalsMetrics) || [];
+  return (
+    configuredIds
+      .map((m) => m.metricId)
+      .find((metricId): metricId is VitalsMetricId =>
+        CONTACT_VITALS_METRIC_IDS.includes(metricId as VitalsMetricId),
+      ) ?? VITALS_METRIC_IDS.enum.timely_contact
+  );
+};
 
 const timelyContactValues = [
   {
@@ -112,9 +133,12 @@ const timelyRiskAssessmentValues = [
 const allOfficerPseudoIds = rawSupervisionOfficerFixture.map(
   (o) => o.pseudonymizedId,
 );
-export const rawSupervisionVitalsMetricFixture: RawSupervisionVitalsMetric[] = [
+
+export const getRawSupervisionVitalsMetricFixture = (
+  tenantId?: string,
+): RawSupervisionVitalsMetric[] => [
   {
-    metricId: VITALS_METRIC_IDS.enum.timely_contact,
+    metricId: getContactVitalsMetricId(tenantId),
     vitalsMetrics: timelyContactValues.map((contact, idx) => {
       return {
         ...contact,
@@ -137,7 +161,13 @@ export const rawSupervisionVitalsMetricFixture: RawSupervisionVitalsMetric[] = [
   },
 ];
 
-export const supervisionOfficerVitalsMetricFixture =
-  rawSupervisionVitalsMetricFixture.map((m) =>
+export const rawSupervisionVitalsMetricFixture =
+  getRawSupervisionVitalsMetricFixture();
+
+export const getSupervisionOfficerVitalsMetricFixture = (tenantId?: string) =>
+  getRawSupervisionVitalsMetricFixture(tenantId).map((m) =>
     supervisionVitalsMetricSchema.parse(m),
   );
+
+export const supervisionOfficerVitalsMetricFixture =
+  getSupervisionOfficerVitalsMetricFixture();
