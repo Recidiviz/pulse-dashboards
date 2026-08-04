@@ -17,7 +17,7 @@
 
 import { describe, expect, it } from "vitest";
 
-import { camelCaseObject } from "./camelCaseObject";
+import { camelCaseObject } from "../camelCaseObject";
 
 describe("camelCaseObject", () => {
   it("converts top-level snake_case keys", () => {

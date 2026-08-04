@@ -19,8 +19,7 @@ import { z } from "zod";
 
 import { findStateSchema } from "~@jii/schemas";
 import { dateStringSchema, residentCommonSchema } from "~datatypes";
-
-import { camelCaseObject } from "./utils/camelCaseObject";
+import { camelCaseObject } from "~utils";
 
 export const rnaWritebackSchema = z.object({
   pseudonymized_id: z.string(),
