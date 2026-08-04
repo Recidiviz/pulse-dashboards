@@ -343,6 +343,7 @@ export default class MetricsStore implements PathwaysMetricStore {
       store: this,
       fetchMetrics: this.fetchMetrics,
       accessor: "religion",
+      enableMetricModeToggle: true,
       rotateLabels: true,
     });
   }
@@ -354,6 +355,8 @@ export default class MetricsStore implements PathwaysMetricStore {
       store: this,
       fetchMetrics: this.fetchMetrics,
       accessor: "maritalStatus",
+      enableMetricModeToggle: true,
+      rotateLabels: true,
     });
   }
 
