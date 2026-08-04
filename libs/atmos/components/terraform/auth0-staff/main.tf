@@ -36,6 +36,14 @@ resource "auth0_action_module" "recidiviz_action_helpers" {
     value = data.sops_file.action_configs.data["IDAHO_TH_CLIENT_ID"]
   }
   secrets {
+    name  = "IDAHO_TH_BACKEND_API_URL"
+    value = data.sops_file.action_configs.data["IDAHO_TH_BACKEND_API_URL"]
+  }
+  secrets {
+    name  = "IDAHO_TH_BACKEND_WEBHOOK_SECRET"
+    value = data.sops_file.action_configs.data["IDAHO_TH_BACKEND_WEBHOOK_SECRET"]
+  }
+  secrets {
     name  = "GOOGLE_APPLICATION_CREDENTIALS_JSON"
     value = data.sops_file.action_configs.data["GOOGLE_APPLICATION_CREDENTIALS_JSON"]
   }

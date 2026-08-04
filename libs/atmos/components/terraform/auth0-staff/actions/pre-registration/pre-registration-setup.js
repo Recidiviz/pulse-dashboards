@@ -24,6 +24,8 @@ const {
   isIdahoThClient,
 } = require("actions:recidiviz-action-helpers");
 
+const IDAHO_TH_PASSWORDLESS_CONNECTION = "email";
+
 /**
  * Handler that will be called during the execution of a PreUserRegistration flow.
  *
@@ -31,9 +33,25 @@ const {
  * @param {PreUserRegistrationAPI} api - Interface whose methods can be used to change the behavior of the signup.
  */
 exports.onExecutePreUserRegistration = async (event, api) => {
-  if (isIdahoThClient(event)) {
+  // Providers on the Idaho TH app are gated by
+  // idaho-th-deny-unprovisioned-provider. Auth0 runs every action in the
+  // trigger, so skip staff roster / domain logic for that passwordless path
+  // only — Idaho TH staff registrations should still run through this action.
+  const connectionName = (event.connection?.name || "").trim();
+  if (
+    isIdahoThClient(event) &&
+    connectionName === IDAHO_TH_PASSWORDLESS_CONNECTION
+  ) {
     return;
   }
+
+  // Init before any branch below reports to Sentry, or captures are dropped on
+  // an unbound hub.
+  Sentry.init({
+    dsn: event.secrets.SENTRY_DSN,
+    environment: event.secrets.SENTRY_ENV,
+  });
+
   /**
    * This hook allows custom code to prevent creation of a user in the
    * database or to add custom app_metadata or user_metadata to a
@@ -75,10 +93,6 @@ exports.onExecutePreUserRegistration = async (event, api) => {
     credentials,
   });
 
-  Sentry.init({
-    dsn: event.secrets.SENTRY_DSN,
-    environment: event.secrets.SENTRY_ENV,
-  });
   const clientMessage =
     "There was a problem registering your account. Please contact feedback@recidiviz.org.";
 

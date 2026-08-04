@@ -18,8 +18,39 @@
 resource "auth0_trigger_actions" "pre_user_registration" {
   trigger = "pre-user-registration"
   actions {
+    display_name = auth0_action.idaho_th_deny_unprovisioned_provider.name
+    id           = auth0_action.idaho_th_deny_unprovisioned_provider.id
+  }
+  actions {
     display_name = auth0_action.pre_registration_setup.name
     id           = auth0_action.pre_registration_setup.id
+  }
+}
+
+resource "auth0_action" "idaho_th_deny_unprovisioned_provider" {
+  code    = file("${path.module}/actions/pre-registration/idaho-th-deny-unprovisioned-provider.js")
+  deploy  = true
+  name    = "[TF-managed][ID-TH] Deny unprovisioned provider sign-up"
+  runtime = "node22"
+  dependencies {
+    name    = "@sentry/node"
+    version = "6.11.0"
+  }
+  supported_triggers {
+    id      = "pre-user-registration"
+    version = "v2"
+  }
+  modules {
+    module_id         = auth0_action_module.recidiviz_action_helpers.id
+    module_version_id = auth0_action_module.recidiviz_action_helpers.version_id
+  }
+  secrets {
+    name  = "SENTRY_DSN"
+    value = data.sops_file.action_configs.data["SENTRY_DSN"]
+  }
+  secrets {
+    name  = "SENTRY_ENV"
+    value = data.sops_file.action_configs.data["SENTRY_ENV"]
   }
 }
 

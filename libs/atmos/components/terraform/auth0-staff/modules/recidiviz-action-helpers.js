@@ -15,9 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+const { createHmac, randomUUID } = require("crypto");
 const { GoogleAuth } = require("google-auth-library");
 const Base64 = require("crypto-js/enc-base64");
 const SHA256 = require("crypto-js/sha256");
+
+const IDAHO_TH_WEBHOOK_TIMEOUT_MS = 5000;
 
 /**
  * Helper to check for a users email across common places an SSO-provider
@@ -26,6 +29,16 @@ const SHA256 = require("crypto-js/sha256");
 function getUserEmail(event) {
   const { email, emailaddress, emailAddress } = event.user;
   return email ?? emailaddress ?? emailAddress;
+}
+
+/**
+ * Canonical form of an email used as a provider linking key. Action-side
+ * normalize is strict about what we send; the idaho-th backend independently
+ * re-normalizes and matches case-insensitively
+ * (`findHousingProviderByEmail` on prototype/idaho-transitional-housing-v2).
+ */
+function normalizeEmail(email) {
+  return (email || "").trim().toLowerCase();
 }
 
 /**
@@ -77,8 +90,79 @@ async function fetchUserRestrictions(userEmail) {
   return apiResponse.data;
 }
 
+function joinIdahoThBackendUrl(baseUrl, path) {
+  return `${String(baseUrl).replace(/\/$/, "")}/${path.replace(/^\//, "")}`;
+}
+
+/**
+ * Normalize a webhook path to the Fastify form used in the HMAC payload
+ * (`/internal/...`). Callers often pass a relative path without a leading slash.
+ *
+ * This does not import SIGNED_WEBHOOK_ROUTES — Auth0 Actions cannot share the
+ * idaho-th backend module. After normalization, the string MUST equal the
+ * matching entry in SIGNED_WEBHOOK_ROUTES on the idaho-th backend
+ * (prototype/idaho-transitional-housing-v2:
+ * libs/@idaho-th/trpc/src/auth/webhookSignature.ts), because the backend signs
+ * and verifies `${route}.${timestamp}.${nonce}.${rawBody}` with that exact route.
+ */
+function toSignedWebhookRoute(path) {
+  return path.startsWith("/") ? path : `/${path}`;
+}
+
+/**
+ * POST a signed Idaho TH backend webhook from an Auth0 Action.
+ *
+ * Uses action-module secrets (see auth0_action_module.recidiviz_action_helpers):
+ * - IDAHO_TH_BACKEND_API_URL
+ * - IDAHO_TH_BACKEND_WEBHOOK_SECRET
+ *
+ * Signs `${route}.${timestamp}.${nonce}.${rawBody}` with HMAC-SHA256 and sends
+ * the shared secret plus signature headers expected by /internal/* webhooks. The
+ * route binds the signature to a single endpoint.
+ *
+ * @param {string} path - Relative path, e.g. "internal/link-provider"
+ * @param {object} payload - JSON body
+ */
+async function callIdahoThSignedWebhook(path, payload) {
+  const baseUrl = actions.secrets.IDAHO_TH_BACKEND_API_URL;
+  const secret = actions.secrets.IDAHO_TH_BACKEND_WEBHOOK_SECRET;
+
+  if (!baseUrl || !secret) {
+    throw new Error(
+      "Missing Auth0 Action module secrets: IDAHO_TH_BACKEND_API_URL and/or IDAHO_TH_BACKEND_WEBHOOK_SECRET",
+    );
+  }
+
+  // Sign the exact bytes we send. The backend recomputes the HMAC over the raw
+  // body, so any tampering in transit (or a body that doesn't match the
+  // signature) is rejected. The timestamp bounds replay; the nonce makes each
+  // request single-use; the route prevents cross-endpoint replay.
+  const route = toSignedWebhookRoute(path);
+  const body = JSON.stringify(payload);
+  const timestamp = Date.now().toString();
+  const nonce = randomUUID();
+  const signature = createHmac("sha256", secret)
+    .update(`${route}.${timestamp}.${nonce}.${body}`)
+    .digest("hex");
+
+  return fetch(joinIdahoThBackendUrl(baseUrl, path), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-webhook-secret": secret,
+      "x-idaho-th-timestamp": timestamp,
+      "x-idaho-th-nonce": nonce,
+      "x-idaho-th-signature": signature,
+    },
+    body,
+    signal: AbortSignal.timeout(IDAHO_TH_WEBHOOK_TIMEOUT_MS),
+  });
+}
+
 module.exports = {
+  callIdahoThSignedWebhook,
   fetchUserRestrictions,
   getUserEmail,
   isIdahoThClient,
+  normalizeEmail,
 };

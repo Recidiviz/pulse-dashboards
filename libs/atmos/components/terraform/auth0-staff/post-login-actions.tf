@@ -286,18 +286,6 @@ resource "auth0_action" "idaho_th_set_provider_metadata" {
     id      = "post-login"
     version = "v3"
   }
-  secrets {
-    name  = "IDAHO_TH_CLIENT_ID"
-    value = data.sops_file.action_configs.data["IDAHO_TH_CLIENT_ID"]
-  }
-  secrets {
-    name  = "IDAHO_TH_BACKEND_API_URL"
-    value = data.sops_file.action_configs.data["IDAHO_TH_BACKEND_API_URL"]
-  }
-  secrets {
-    name  = "IDAHO_TH_BACKEND_WEBHOOK_SECRET"
-    value = data.sops_file.action_configs.data["IDAHO_TH_BACKEND_WEBHOOK_SECRET"]
-  }
 }
 
 resource "auth0_action" "idaho_th_set_staff_metadata" {
@@ -316,10 +304,6 @@ resource "auth0_action" "idaho_th_set_staff_metadata" {
   supported_triggers {
     id      = "post-login"
     version = "v3"
-  }
-  secrets {
-    name  = "IDAHO_TH_CLIENT_ID"
-    value = data.sops_file.action_configs.data["IDAHO_TH_CLIENT_ID"]
   }
   secrets {
     name  = "ENVIRONMENT"

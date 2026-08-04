@@ -38,16 +38,8 @@
  * - libs/@idaho-th/shared/src/constants/auth.ts (USER_ROLE, AUTH0_CONNECTION)
  * - libs/@idaho-th/trpc/src/auth/constants.ts (AUTH0_NAMESPACE, APP_METADATA_KEY)
  *
- * Required Action secrets:
- * - IDAHO_TH_CLIENT_ID — Auth0 application (client) id of the Idaho TH app.
- *   Comma-separated list supported. If unset, the action does not scope by app
- *   (set it in every environment to avoid touching other apps in the tenant).
- * - IDAHO_TH_BACKEND_API_URL — base URL with trailing slash, e.g. https://api.example.com/
- * - IDAHO_TH_BACKEND_WEBHOOK_SECRET — shared secret for POST /internal/link-provider.
- *   Sent as the x-webhook-secret header AND used to HMAC-SHA256 sign each request
- *   (signature over `${timestamp}.${nonce}.${rawBody}`, with x-idaho-th-timestamp,
- *   x-idaho-th-nonce, x-idaho-th-signature headers). Must match the backend's
- *   BACKEND_WEBHOOK_SECRET exactly.
+ * Backend webhook secrets (IDAHO_TH_BACKEND_*) and IDAHO_TH_CLIENT_ID live on
+ * the shared action module (recidiviz-action-helpers), not on this action.
  *
  * Provider `pseudonymizedId` reconciliation:
  * - On every provider login, the Action calls POST /internal/link-provider.
@@ -59,14 +51,20 @@
  * @param {PostLoginAPI} api - Methods to change the behavior of the login.
  */
 
-const { createHmac, randomUUID } = require("crypto");
-const { isIdahoThClient } = require("actions:recidiviz-action-helpers");
+const { randomUUID } = require("crypto");
+const {
+  callIdahoThSignedWebhook,
+  isIdahoThClient,
+  normalizeEmail,
+} = require("actions:recidiviz-action-helpers");
 
 const NAMESPACE = "https://idaho_th.recidiviz.org";
 const STATE_CODE = "US_ID";
 const ROLE_PROVIDER = "provider";
+// Must match SIGNED_WEBHOOK_ROUTES.linkProvider on
+// prototype/idaho-transitional-housing-v2
+// (libs/@idaho-th/trpc/src/auth/webhookSignature.ts).
 const LINK_PROVIDER_PATH = "internal/link-provider";
-const LINK_REQUEST_TIMEOUT_MS = 5000;
 
 const PASSWORDLESS_CONNECTION_NAMES = new Set(["email"]);
 const STAFF_CONNECTION_NAMES = new Set([
@@ -75,52 +73,8 @@ const STAFF_CONNECTION_NAMES = new Set([
   // "idaho-state-sso", // uncomment when IDOC AD SSO is configured
 ]);
 
-function joinBackendUrl(baseUrl, path) {
-  return `${String(baseUrl).replace(/\/$/, "")}/${path.replace(/^\//, "")}`;
-}
-
 function isNonEmptyString(value) {
   return typeof value === "string" && value.length > 0;
-}
-
-async function callLinkProviderWebhook(
-  event,
-  { email, auth0Sub, pseudonymizedId },
-) {
-  const baseUrl = event.secrets.IDAHO_TH_BACKEND_API_URL;
-  const secret = event.secrets.IDAHO_TH_BACKEND_WEBHOOK_SECRET;
-
-  if (!baseUrl || !secret) {
-    throw new Error(
-      "Missing Auth0 Action secrets: BACKEND_API_URL and/or BACKEND_WEBHOOK_SECRET",
-    );
-  }
-
-  // Sign the exact bytes we send. The backend recomputes the HMAC over the raw
-  // body, so any tampering in transit (or a body that doesn't match the
-  // signature) is rejected. The timestamp bounds replay; the nonce makes each
-  // request single-use.
-  const body = JSON.stringify({ email, auth0Sub, pseudonymizedId });
-  const timestamp = Date.now().toString();
-  const nonce = randomUUID();
-  const signature = createHmac("sha256", secret)
-    .update(`${timestamp}.${nonce}.${body}`)
-    .digest("hex");
-
-  const signal = AbortSignal.timeout(LINK_REQUEST_TIMEOUT_MS);
-
-  return fetch(joinBackendUrl(baseUrl, LINK_PROVIDER_PATH), {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-webhook-secret": secret,
-      "x-idaho-th-timestamp": timestamp,
-      "x-idaho-th-nonce": nonce,
-      "x-idaho-th-signature": signature,
-    },
-    body,
-    signal,
-  });
 }
 
 /**
@@ -133,7 +87,7 @@ async function reconcileProviderIdentity(event, api, { email, auth0Sub }) {
   const provisionalPseudonymizedId =
     event.user.app_metadata?.pseudonymizedId || randomUUID();
 
-  const res = await callLinkProviderWebhook(event, {
+  const res = await callIdahoThSignedWebhook(LINK_PROVIDER_PATH, {
     email,
     auth0Sub,
     pseudonymizedId: provisionalPseudonymizedId,
@@ -212,9 +166,7 @@ exports.onExecutePostLogin = async (event, api) => {
     return;
   }
 
-  // Normalize identically to the backend (trim + lowercase) so the linking key
-  // matches on both sides.
-  const email = (event.user.email || "").trim().toLowerCase();
+  const email = normalizeEmail(event.user.email);
 
   if (!email || !event.user.user_id) {
     api.access.deny("Provider account is missing required identity fields.");
