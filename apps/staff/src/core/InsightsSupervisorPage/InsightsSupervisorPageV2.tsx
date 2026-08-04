@@ -18,9 +18,10 @@
 import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
 import styled from "styled-components";
 
+import { SHPModule } from "~datatypes";
 import { palette } from "~design-system";
 import { pluralize } from "~utils";
 
@@ -29,7 +30,6 @@ import {
   useRootStore,
 } from "../../components/StoreProvider";
 import { SupervisionSupervisorPagePresenter } from "../../InsightsStore/presenters/SupervisionSupervisorPagePresenter";
-import { shouldDisplayOpportunitiesModuleFirst } from "../../InsightsStore/presenters/utils";
 import { toTitleCase } from "../../utils";
 import InsightsHighlightedOfficersBanner, {
   shouldShowHighlightedOfficersBanner,
@@ -98,7 +98,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     pageTitle,
     highlightedOfficersByMetric,
     userCanSubmitRosterChangeRequest,
-    isUsageLoginActivityModuleDisplayed,
+    orderedModules,
     pluralizeAcronym,
     labelIsAcronym,
     previousPages,
@@ -172,6 +172,18 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     setInitialPageLoad(false);
   }
 
+  const moduleMapping: Record<SHPModule, ReactNode> = {
+    OPP_NOTIFICATIONS: <InsightsSupervisorOpportunityNotificationsSection />,
+    OUTCOMES: (
+      <InsightsOutcomesModule labels={labels} timePeriod={timePeriod} />
+    ),
+    OPPORTUNITIES: <InsightsSupervisorOpportunityDetailSection />,
+    VITALS: (
+      <InsightsSupervisorVitals supervisorPseudoId={supervisorPseudoId} />
+    ),
+    USAGE: <InsightsManagedUsageCard />,
+  };
+
   return (
     <InsightsPageLayout
       pageTitle={pageTitle}
@@ -194,21 +206,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
         ) : undefined
       }
     >
-      <InsightsSupervisorOpportunityNotificationsSection />
-      {shouldDisplayOpportunitiesModuleFirst(currentTenantId) && (
-        <InsightsSupervisorOpportunityDetailSection />
-      )}
-      {isUsageLoginActivityModuleDisplayed({
-        loginModulePosition: "TOP",
-      }) && <InsightsManagedUsageCard />}
-      <InsightsOutcomesModule labels={labels} timePeriod={timePeriod} />
-      {!shouldDisplayOpportunitiesModuleFirst(currentTenantId) && (
-        <InsightsSupervisorOpportunityDetailSection />
-      )}
-      <InsightsSupervisorVitals supervisorPseudoId={supervisorPseudoId} />
-      {isUsageLoginActivityModuleDisplayed({
-        loginModulePosition: "BOTTOM",
-      }) && <InsightsManagedUsageCard />}
+      {orderedModules.map((moduleName) => moduleMapping[moduleName])}
     </InsightsPageLayout>
   );
 });

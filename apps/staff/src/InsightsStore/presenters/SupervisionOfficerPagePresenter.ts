@@ -17,6 +17,7 @@
 
 import { makeObservable, override } from "mobx";
 
+import { SHPModule } from "~datatypes";
 import { HydratesFromSource } from "~hydration-utils";
 
 import { Page } from "../../core/InsightsSupervisorPage/InsightsBreadcrumbs";
@@ -124,5 +125,9 @@ export class SupervisionOfficerPagePresenter extends WithJusticeInvolvedPersonSt
   get insightsNumDaysWithoutLogin(): number {
     return this.supervisionStore.insightsStore.rootStore.tenantStore
       .insightsNumDaysWithoutLogin;
+  }
+
+  get orderedModules(): SHPModule[] {
+    return this.supervisionStore.orderedModules;
   }
 }

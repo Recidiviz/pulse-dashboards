@@ -43,6 +43,19 @@ export const insightsConfigMetricsSchema = z.object({
     .transform((x) => x ?? undefined),
 });
 
+/*
+ * Enum defining different SHP module types
+ */
+export const SHPModuleEnumSchema = z.enum([
+  "OPP_NOTIFICATIONS",
+  "OPPORTUNITIES",
+  "USAGE",
+  "OUTCOMES",
+  "VITALS",
+]);
+
+export type SHPModule = z.infer<typeof SHPModuleEnumSchema>;
+
 export const insightsConfigSchema = z.object({
   supervisionOfficerLabel: z.string(),
   supervisionDistrictLabel: z.string(),
@@ -79,6 +92,7 @@ export const insightsConfigSchema = z.object({
   ),
   caseloadCategories: z.array(caseloadCategorySchema).optional(),
   actionStrategyCopy: actionStrategyCopySchema,
+  orderedModules: z.array(SHPModuleEnumSchema).optional(),
 });
 
 export type InsightsConfig = z.infer<typeof insightsConfigSchema>;

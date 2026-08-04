@@ -18,8 +18,9 @@
 import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 
+import { SHPModule } from "~datatypes";
 import { withPresenterManager } from "~hydration-utils";
 
 import {
@@ -27,7 +28,6 @@ import {
   useRootStore,
 } from "../../components/StoreProvider";
 import { SupervisionOfficerPagePresenter } from "../../InsightsStore/presenters/SupervisionOfficerPagePresenter";
-import { shouldDisplayOpportunitiesModuleFirst } from "../../InsightsStore/presenters/utils";
 import { shouldShowHighlightedOfficersBanner } from "../InsightsHighlightedOfficersBanner";
 import { ManagedStaffHighlightedOfficersBanner } from "../InsightsHighlightedOfficersBanner/InsightsManagedStaffHighlightedOfficersBanner";
 import InsightsPageLayout from "../InsightsPageLayout";
@@ -68,6 +68,7 @@ const ManagedComponent = observer(function StaffPage({
     userCanViewConsistentLoginPill,
     isCurrentOfficerUserRestrictedFromSupervisorsList,
     previousPages,
+    orderedModules,
   } = presenter;
 
   type InfoItem = NonNullable<
@@ -106,6 +107,14 @@ const ManagedComponent = observer(function StaffPage({
     setInitialPageLoad(false);
   }
 
+  const moduleMapping: Partial<Record<SHPModule, ReactNode>> = {
+    OUTCOMES: !isCurrentOfficerUserRestrictedFromSupervisorsList && (
+      <InsightsStaffOutcomesSection />
+    ),
+    OPPORTUNITIES: <InsightsOpportunitySummary />,
+    VITALS: <InsightsStaffVitals officerPseudoId={officerPseudoId} />,
+  };
+
   return (
     <InsightsPageLayout
       pageTitle={
@@ -140,16 +149,7 @@ const ManagedComponent = observer(function StaffPage({
         ) : undefined
       }
     >
-      {shouldDisplayOpportunitiesModuleFirst(currentTenantId) && (
-        <InsightsOpportunitySummary />
-      )}
-      {!isCurrentOfficerUserRestrictedFromSupervisorsList && (
-        <InsightsStaffOutcomesSection />
-      )}
-      {!shouldDisplayOpportunitiesModuleFirst(currentTenantId) && (
-        <InsightsOpportunitySummary />
-      )}
-      <InsightsStaffVitals officerPseudoId={officerPseudoId} />
+      {orderedModules.map((moduleName) => moduleMapping[moduleName])}
     </InsightsPageLayout>
   );
 });

@@ -172,6 +172,8 @@ const InsightsUsageCard: React.FC<{
 const ManagedComponent: React.FC<{
   presenter: SupervisionSupervisorPagePresenter;
 }> = observer(function SupervisorPagePresenter({ presenter }) {
+  if (!presenter.userCanViewUsageActivity) return null;
+
   const officerLabel = presenter.labels.supervisionOfficerLabel;
   const numDays = presenter.insightsNumDaysWithoutLogin;
 

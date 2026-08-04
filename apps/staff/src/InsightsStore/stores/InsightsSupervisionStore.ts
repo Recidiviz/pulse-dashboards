@@ -33,6 +33,7 @@ import {
   MetricConfig,
   RosterChangeRequest,
   RosterChangeRequestResponse,
+  SHPModule,
   SupervisionOfficer,
   SupervisionOfficerMetricEvent,
   SupervisionOfficerOutcomes,
@@ -294,6 +295,47 @@ export class InsightsSupervisionStore {
 
   get methodologyUrl(): string {
     return this.config.learnMoreUrl;
+  }
+
+  /**
+   * Per-state ordering of the SHP modules, used for both
+   * the supervisor's homepage and the staff page.
+   *
+   * TODO(OBT-40776): Remove hard-coding once backend is connected.
+   */
+  get orderedModules(): SHPModule[] {
+    const { currentTenantId } = this.insightsStore.rootStore;
+
+    if (this.config.orderedModules) return this.config.orderedModules;
+
+    switch (currentTenantId) {
+      case "US_AZ":
+      case "US_MI":
+        return [
+          "OPP_NOTIFICATIONS",
+          "OPPORTUNITIES", // Opportunities module prior to outcomes
+          "OUTCOMES",
+          "VITALS",
+          "USAGE",
+        ];
+      case "US_ID":
+        return [
+          "OPP_NOTIFICATIONS",
+          "USAGE", // Usage at top of page
+          "OUTCOMES",
+          "OPPORTUNITIES",
+          "VITALS",
+        ];
+    }
+
+    // Default module order
+    return [
+      "OPP_NOTIFICATIONS",
+      "OUTCOMES",
+      "OPPORTUNITIES",
+      "VITALS",
+      "USAGE",
+    ];
   }
 
   get labels(): ConfigLabels {

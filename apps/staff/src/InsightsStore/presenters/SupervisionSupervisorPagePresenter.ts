@@ -18,7 +18,11 @@
 import { flowResult, makeAutoObservable } from "mobx";
 import pluralize from "pluralize";
 
-import { SupervisionOfficer, SupervisionOfficerSupervisor } from "~datatypes";
+import {
+  SHPModule,
+  SupervisionOfficer,
+  SupervisionOfficerSupervisor,
+} from "~datatypes";
 import {
   Hydratable,
   HydratesFromSource,
@@ -173,18 +177,6 @@ export class SupervisionSupervisorPagePresenter implements Hydratable {
     return this.supervisionStore.supervisorInfo(this.supervisorPseudoId);
   }
 
-  isUsageLoginActivityModuleDisplayed = ({
-    loginModulePosition,
-  }: {
-    loginModulePosition: "TOP" | "BOTTOM";
-  }): boolean => {
-    if (!this.userCanViewUsageActivity) return false;
-
-    const { currentTenantId } = this.supervisionStore.insightsStore.rootStore;
-    if (loginModulePosition === "TOP") return currentTenantId === "US_ID";
-    else return currentTenantId !== "US_ID";
-  };
-
   /**
    * Provides information about the currently selected supervisor's
    * supervision location, whether it is by unit or by district
@@ -300,5 +292,9 @@ export class SupervisionSupervisorPagePresenter implements Hydratable {
     // when the acronym is plural, we want a lowercase "s"
     // for example "CROs" rather than "CROS" or "cros"
     return acronym + pluralize(acronym, count).split(acronym)[1].toLowerCase();
+  }
+
+  get orderedModules(): SHPModule[] {
+    return this.supervisionStore.orderedModules;
   }
 }

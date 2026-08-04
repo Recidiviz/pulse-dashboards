@@ -170,15 +170,6 @@ export function addSupervisorReviewCounts(
   });
 }
 
-/**
- * Checks if the given tenant is Arizona or Michigan to display the opportunities module first.
- */
-export function shouldDisplayOpportunitiesModuleFirst(
-  currentTenantId?: string,
-): boolean {
-  return currentTenantId === "US_AZ" || currentTenantId === "US_MI";
-}
-
 export function getLocationWithoutLabel(
   location: string | undefined,
   label: string,
