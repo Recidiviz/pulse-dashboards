@@ -111,10 +111,12 @@ function getPresenter({
   workflowsStore = mockWorkflowsStore,
   tenantStore = mockTenantStore,
   analyticsStore = mockAnalyticsStore,
+  featureVariants = {},
 }: {
   workflowsStore?: WorkflowsStore;
   tenantStore?: TenantStore;
   analyticsStore?: AnalyticsStore;
+  featureVariants?: Record<string, unknown>;
 } = {}): MyCaseloadPresenter {
   const filterStore = new TasksFilterStore(
     analyticsStore,
@@ -126,6 +128,7 @@ function getPresenter({
     tenantStore,
     filterStore,
     analyticsStore,
+    featureVariants,
   );
 }
 

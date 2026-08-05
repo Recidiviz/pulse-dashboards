@@ -25,6 +25,7 @@ import { FilterPresenter } from "../../FilterStore/FilterPresenter";
 import TasksFilterStore from "../../FilterStore/TasksFilterStore";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import TenantStore from "../../RootStore/TenantStore";
+import { FeatureVariantRecord } from "../../RootStore/types";
 import {
   Client,
   ClientTasksSummary,
@@ -83,6 +84,7 @@ export class MyCaseloadPresenter
     protected tenantStore: TenantStore,
     public readonly filterStore: TasksFilterStore,
     protected analyticsStore: AnalyticsStore,
+    protected featureVariants: FeatureVariantRecord,
   ) {
     makeAutoObservable(this);
   }
@@ -116,6 +118,13 @@ export class MyCaseloadPresenter
     return (
       person.pseudonymizedId ===
       this.workflowsStore.selectedPerson?.pseudonymizedId
+    );
+  }
+
+  get shouldSortByLastName(): boolean {
+    return (
+      this.tenantStore.currentTenantId === "US_MO" &&
+      !!this.featureVariants.usMoMyCaseload
     );
   }
 

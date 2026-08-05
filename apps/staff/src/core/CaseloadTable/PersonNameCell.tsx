@@ -20,6 +20,7 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components";
 
+import { useFeatureVariants } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { WorkflowsStatusPill } from "../WorkflowsStatusPill/WorkflowsStatusPill";
@@ -40,11 +41,15 @@ export const PersonNameCell = observer(function PersonNameCell({
   person: JusticeInvolvedPerson;
 }) {
   const { isMobile } = useIsMobile(true);
+  const { usMoMyCaseload } = useFeatureVariants();
   // In TX, all JII are displayed with last name first.
   // In MI, all residents are displayed with last name first.
   const shouldDisplayNameLastFirst =
     person.stateCode === "US_TX" ||
-    (person.stateCode === "US_MI" && person.personType === "RESIDENT");
+    (person.stateCode === "US_MI" && person.personType === "RESIDENT") ||
+    (usMoMyCaseload &&
+      person.stateCode === "US_MO" &&
+      person.personType === "CLIENT");
   const displayName = shouldDisplayNameLastFirst
     ? person.displayPreferredNameLastFirst
     : person.displayPreferredName;

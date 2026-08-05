@@ -22,7 +22,10 @@ import { pluralizeWord } from "~utils";
 
 import { FilterField, FilterOption, FilterType } from "../../core/models/types";
 import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
-import { TaskTableColumnId } from "../../core/WorkflowsTasks/TasksTable";
+import {
+  TasksTablePresenter,
+  TaskTableColumnId,
+} from "../../core/WorkflowsTasks/TasksTable";
 import { FilterPresenter } from "../../FilterStore/FilterPresenter";
 import TasksFilterStore from "../../FilterStore/TasksFilterStore";
 import FirestoreStore from "../../FirestoreStore";
@@ -57,7 +60,10 @@ function sortPeopleByNextTaskDueDate(
 }
 
 export class CaseloadTasksPresenterV2
-  implements TableViewSelectInterface, FilterPresenter<TasksFilterStore>
+  implements
+    TasksTablePresenter,
+    TableViewSelectInterface,
+    FilterPresenter<TasksFilterStore>
 {
   private _selectedCategory: SupervisionTaskCategory | undefined = undefined;
   private tableViewSelectPresenter: TableViewSelectPresenter;
@@ -145,6 +151,10 @@ export class CaseloadTasksPresenterV2
   // Selection controls
   selectPerson(person: JusticeInvolvedPerson) {
     this.workflowsStore.updateSelectedPerson(person.pseudonymizedId);
+  }
+
+  get shouldSortByLastName(): boolean {
+    return this.tenantStore.stateCode === "US_TX";
   }
 
   shouldHighlightRow({ person }: TasksRowEntity): boolean {

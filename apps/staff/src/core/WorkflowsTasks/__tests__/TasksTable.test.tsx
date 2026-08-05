@@ -19,12 +19,21 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { addDays, subDays } from "date-fns";
 import { MemoryRouter } from "react-router-dom";
 
+import { useFeatureVariants } from "../../../components/StoreProvider";
 import {
   ClientTasksSummary,
   CustomTaskItem,
   SupervisionTask,
 } from "../../../WorkflowsStore/Task/types";
 import { TasksTable, TasksTablePresenter } from "../TasksTable";
+
+vi.mock("../../../components/StoreProvider");
+
+const mockUseFeatureVariants = vi.mocked(useFeatureVariants);
+
+beforeEach(() => {
+  mockUseFeatureVariants.mockReturnValue({});
+});
 
 function makeTask(displayName: string, dueDate: Date): SupervisionTask {
   return { displayName, dueDate } as unknown as SupervisionTask;

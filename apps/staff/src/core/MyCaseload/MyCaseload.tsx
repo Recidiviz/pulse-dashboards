@@ -26,7 +26,10 @@ import styled from "styled-components";
 import { palette, typography } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { TasksRowEntity } from "../../WorkflowsStore/Task/types";
 import { CaseloadSelect } from "../CaseloadSelect";
@@ -192,11 +195,13 @@ const ManagedComponent = observer(function MyCaseload({
 function usePresenter() {
   const { workflowsStore, tenantStore, analyticsStore, tasksFilterStore } =
     useRootStore();
+  const featureVariants = useFeatureVariants();
   return new MyCaseloadPresenter(
     workflowsStore,
     tenantStore,
     tasksFilterStore,
     analyticsStore,
+    featureVariants,
   );
 }
 

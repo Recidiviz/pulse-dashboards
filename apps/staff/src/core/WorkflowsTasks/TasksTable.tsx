@@ -211,6 +211,7 @@ export interface TasksTablePresenter {
   selectedTaskCategory: SupervisionTaskCategory;
   selectPerson(person: JusticeInvolvedPerson): void;
   shouldHighlightRow(entity: TasksRowEntity): boolean;
+  shouldSortByLastName: boolean;
 }
 
 export const EmptyTasksTabView = ({
@@ -241,6 +242,7 @@ export const EmptyTasksTabView = ({
 const getColumnDefs = (presenter: {
   displayIdHeader: string;
   showOneRowPerClient: boolean;
+  shouldSortByLastName: boolean;
 }) =>
   [
     {
@@ -251,13 +253,13 @@ const getColumnDefs = (presenter: {
       },
       enableSorting: true,
       sortingFn: (rowA, rowB) => {
-        if (rowA.original.person.stateCode === "US_TX") {
-          const lastB = rowB.original.person.displayName.split(" ")[1];
-          const lastA = rowA.original.person.displayName.split(" ")[1];
+        if (presenter.shouldSortByLastName) {
+          const lastB = rowB.original.person.displayPreferredName.split(" ")[1];
+          const lastA = rowA.original.person.displayPreferredName.split(" ")[1];
           return lastA < lastB ? 1 : -1;
         }
-        return rowA.original.person.displayName <
-          rowB.original.person.displayName
+        return rowA.original.person.displayPreferredName <
+          rowB.original.person.displayPreferredName
           ? 1
           : -1;
       },
