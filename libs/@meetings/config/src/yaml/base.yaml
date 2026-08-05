@@ -2,12 +2,13 @@
 # Agency-specific YAMLs override individual fields on top of these defaults.
 # This file is not a valid AgencyConfig on its own (no name/stateCode).
 
-version: 4
+version: 5
 
 # ── Infrastructure defaults ──────────────────────────────────
 audioTTLDays: 30
 transcriptTTLDays: 30
 showTranscriptions: true
+showCNI: false
 
 # ── LLM defaults ─────────────────────────────────────────────
 glossary:

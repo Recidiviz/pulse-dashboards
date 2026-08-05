@@ -63,6 +63,7 @@ describe("ProductionPipeline", () => {
     version: 1,
     baseVersion: 1,
     showTranscriptions: true,
+    showCNI: false,
     staffFeedbackEnabled: true,
     audioPlaybackEnabled: false,
     audioTTLDays: 30,

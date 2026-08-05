@@ -1,11 +1,12 @@
 name: Demo
 stateCode: US_DEMO
-version: 6
+version: 7
 
 audioTTLDays: null
 transcriptTTLDays: null
 staffFeedbackEnabled: true
 audioPlaybackEnabled: true
+showCNI: true
 meetingTypes:
   - type: Assessment
     visible: true

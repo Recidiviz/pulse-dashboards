@@ -58,6 +58,7 @@ describe("SpecialistCore", () => {
     stateCode: "US_XX",
     version: 1,
     showTranscriptions: true,
+    showCNI: false,
     staffFeedbackEnabled: true,
     audioPlaybackEnabled: false,
     audioTTLDays: 30,
