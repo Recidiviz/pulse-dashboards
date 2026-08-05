@@ -86,6 +86,13 @@ const ReviewChainButtons = styled.div`
   gap: ${rem(4)};
 `;
 
+const SubmitButtonText = styled.span`
+  color: ${palette.marble1};
+  ${typography.Sans12};
+  line-height: 100%; /* 12px */
+  letter-spacing: ${rem(-0.12)};
+`;
+
 const StyledSubmitButton = styled(Button)`
   display: flex;
   height: ${rem(40)};
@@ -97,16 +104,23 @@ const StyledSubmitButton = styled(Button)`
   border-radius: ${rem(4)};
   background: ${palette.pine4};
 
+  &:hover:not(:disabled) {
+    background: ${palette.pine3};
+  }
+
+  &:active:not(:disabled) {
+    background: ${palette.pine2};
+  }
+
   &:disabled {
     cursor: default;
-  }
-`;
+    background: transparent;
+    border: 1px solid ${palette.pine3};
 
-const SubmitButtonText = styled.span`
-  color: ${palette.marble1};
-  ${typography.Sans12};
-  line-height: 100%; /* 12px */
-  letter-spacing: ${rem(-0.12)};
+    ${SubmitButtonText} {
+      color: ${palette.pine4};
+    }
+  }
 `;
 
 const StyledButton = styled(Button).attrs({
