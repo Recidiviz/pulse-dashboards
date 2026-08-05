@@ -125,15 +125,12 @@ export class UsTxEarlyReleaseFromSupervisionV2Form extends FormBase<
     const fieldAuthors = this?.fieldAuthors;
 
     const isFieldFilled = (
-      field: string | string[],
+      field: string,
       data: Record<string, any> | undefined,
-    ) =>
-      Array.isArray(field) ? field.some((f) => !!data?.[f]) : !!data?.[field];
+    ) => !!data?.[field];
 
-    const isFieldByCurrentUser = (field: string | string[]) =>
-      Array.isArray(field)
-        ? field.some((f) => fieldAuthors?.[f] === currentUserId)
-        : fieldAuthors?.[field] === currentUserId;
+    const isFieldByCurrentUser = (field: string) =>
+      fieldAuthors?.[field] === currentUserId;
 
     // A block is "started" if any user has written any of its fields into draftData.
     // Every started block must be fully complete in formData before submission is allowed.

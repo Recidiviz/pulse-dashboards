@@ -216,11 +216,11 @@ describe("form.userHasFilledNecessaryFields", () => {
           supervisingOfficerRecommendCheckNo: "user1",
         },
       });
-      expect(form.userHasFilledNecessaryFields()).toBe(true);
+      expect(form.userHasFilledNecessaryFields()).toBe(false);
     });
 
-    it("when the block's checkbox field is satisfied by formData having the alternate option", () => {
-      // fieldAuthors has CheckYes, formData has CheckNo — either satisfies the string[] requirement.
+    it("when the block's checkbox field is not satisfied by formData having the alternate option", () => {
+      // fieldAuthors has CheckYes, formData has CheckNo. CheckNo does not satisfy the requirement.
       const draftData = {
         officerName: "Officer Jane",
         supervisingOfficerSignature: "sig",
@@ -240,7 +240,7 @@ describe("form.userHasFilledNecessaryFields", () => {
         formData,
         fieldAuthors: paroleOfficerFieldAuthors,
       });
-      expect(form.userHasFilledNecessaryFields()).toBe(true);
+      expect(form.userHasFilledNecessaryFields()).toBe(false);
     });
 
     it("when multiple blocks are started and all are complete", () => {
