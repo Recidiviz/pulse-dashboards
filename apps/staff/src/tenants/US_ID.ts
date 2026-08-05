@@ -162,6 +162,7 @@ const US_ID_CONFIG = {
     insights: [INSIGHTS_PAGES.supervision],
     workflows: ["home", "clients", "tasks", "residents"],
     operations: [],
+    parole: ["docket"],
     system: [
       PATHWAYS_PAGES.libertyToPrison,
       PATHWAYS_PAGES.prison,

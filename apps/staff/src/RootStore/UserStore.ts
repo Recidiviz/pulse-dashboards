@@ -24,7 +24,7 @@ import {
   User,
 } from "@auth0/auth0-spa-js";
 import * as Sentry from "@sentry/react";
-import { intersection } from "lodash";
+import { cloneDeep, intersection } from "lodash";
 import {
   action,
   computed,
@@ -55,6 +55,7 @@ import { capitalizeName } from "../utils";
 import isIE11 from "../utils/isIE11";
 import { getAllowedMethodology } from "../utils/navigation";
 import type RootStore from ".";
+import { US_ID } from "./TenantStore/pathwaysTenants";
 import {
   ActiveFeatureVariantRecord,
   defaultRecidivizUserFeatureVariantsActive,
@@ -515,9 +516,9 @@ export default class UserStore {
     if (!this.rootStore?.currentTenantId) return {};
     const { navigation, insightsLanternState } =
       TENANT_CONFIGS[this.rootStore.currentTenantId];
+    if (!navigation) return {};
 
-    const allowed = navigation;
-    if (!allowed) return {};
+    const allowed = cloneDeep(navigation);
 
     if (this.isCSGUser) {
       delete allowed.workflows;
@@ -527,8 +528,18 @@ export default class UserStore {
       }
     }
 
+    // The parole board dashboard's data layer isn't ready for US_ID yet, so hide
+    // it there until the usIdParoleBoard feature variant is granted. US_CO's
+    // parole nav stays unconditional since no CO users have app access yet.
+    if (
+      this.rootStore?.currentTenantId === US_ID &&
+      !this.activeFeatureVariants.usIdParoleBoard
+    ) {
+      delete allowed.parole;
+    }
+
     /* Remove pages that may be allowed for the tenant but restricted for the user */
-    Object.entries(navigation).forEach((navigationEntry) => {
+    Object.entries(allowed).forEach((navigationEntry) => {
       const page = navigationEntry[0] as NavigationSection;
       const allConfiguredSubpages = navigationEntry[1];
 

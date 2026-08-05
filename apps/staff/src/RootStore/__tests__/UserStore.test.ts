@@ -1066,6 +1066,116 @@ describe("userAllowedNavigation", () => {
   });
 });
 
+describe("parole board feature variant gating (usIdParoleBoard)", () => {
+  function buildStore(currentTenantId: string): UserStore {
+    return new UserStore({
+      authSettings: testAuthSettings,
+      rootStore: {
+        currentTenantId,
+        firestoreStore: {
+          authenticate: vi.fn(),
+        },
+        tenantStore: {
+          tenantFeatureVariants: {},
+        },
+      } as unknown as typeof RootStore,
+    });
+  }
+
+  test("US_ID: hides parole nav without the usIdParoleBoard feature variant", async () => {
+    TENANT_CONFIGS.US_ID.navigation = {
+      ...TENANT_CONFIGS.US_ID.navigation,
+      parole: ["docket"],
+    };
+    mockIsAuthenticated.mockResolvedValue(true);
+    mockGetUser.mockResolvedValue({
+      email_verified: true,
+      [metadataField]: {
+        stateCode: "US_ID",
+        routes: { parole: true },
+      },
+    });
+    const store = buildStore("US_ID");
+    await store.authorize(mockHandleUrl);
+
+    expect(store.userAllowedNavigation?.parole).toBeUndefined();
+  });
+
+  test("US_ID: shows parole nav once the usIdParoleBoard feature variant is granted", async () => {
+    TENANT_CONFIGS.US_ID.navigation = {
+      ...TENANT_CONFIGS.US_ID.navigation,
+      parole: ["docket"],
+    };
+    mockIsAuthenticated.mockResolvedValue(true);
+    mockGetUser.mockResolvedValue({
+      email_verified: true,
+      [metadataField]: {
+        stateCode: "US_ID",
+        routes: { parole: true },
+        featureVariants: { usIdParoleBoard: true },
+      },
+    });
+    const store = buildStore("US_ID");
+    await store.authorize(mockHandleUrl);
+
+    expect(store.userAllowedNavigation?.parole).toEqual(["docket"]);
+  });
+
+  test("US_CO: shows parole nav regardless of the usIdParoleBoard feature variant", async () => {
+    mockIsAuthenticated.mockResolvedValue(true);
+    mockGetUser.mockResolvedValue({
+      email_verified: true,
+      [metadataField]: {
+        stateCode: "US_CO",
+        routes: { parole: true },
+      },
+    });
+    const store = buildStore("US_CO");
+    await store.authorize(mockHandleUrl);
+
+    expect(store.userAllowedNavigation?.parole).toEqual(
+      TENANT_CONFIGS.US_CO.navigation?.parole,
+    );
+  });
+
+  test("US_ID: gating a user without the feature variant does not mutate the shared tenant config", async () => {
+    TENANT_CONFIGS.US_ID.navigation = {
+      ...TENANT_CONFIGS.US_ID.navigation,
+      parole: ["docket"],
+    };
+    mockIsAuthenticated.mockResolvedValue(true);
+
+    mockGetUser.mockResolvedValue({
+      email_verified: true,
+      [metadataField]: {
+        stateCode: "US_ID",
+        routes: { parole: true },
+      },
+    });
+    const storeWithoutFv = buildStore("US_ID");
+    await storeWithoutFv.authorize(mockHandleUrl);
+    expect(storeWithoutFv.userAllowedNavigation?.parole).toBeUndefined();
+
+    // The shared tenant config itself must be untouched by the gating above,
+    // regardless of whether this getter has already run for another user/session.
+    expect(TENANT_CONFIGS.US_ID.navigation?.parole).toEqual(["docket"]);
+
+    // A second user in the same session with the feature variant granted should
+    // still see parole -- proving the prior gated call didn't strip it permanently.
+    mockGetUser.mockResolvedValue({
+      email_verified: true,
+      [metadataField]: {
+        stateCode: "US_ID",
+        routes: { parole: true },
+        featureVariants: { usIdParoleBoard: true },
+      },
+    });
+    const storeWithFv = buildStore("US_ID");
+    await storeWithFv.authorize(mockHandleUrl);
+    expect(storeWithFv.userAllowedNavigation?.parole).toEqual(["docket"]);
+  });
+});
+
 test("does not identify authorized users without ID hash", async () => {
   mockIsAuthenticated.mockResolvedValue(true);
   mockGetUser.mockResolvedValue({
@@ -1301,6 +1411,7 @@ describe("feature variants", () => {
         "usIdCRCFacilitySearch": {},
         "usIdCaseManagerSearch": {},
         "usIdDistrictSearch": {},
+        "usIdParoleBoard": {},
         "usIdTasksV2": {},
         "usMiCaseManagerSearch": {},
         "usMiCustodyLevelDowngrade": {},
@@ -1391,6 +1502,7 @@ describe("feature variants", () => {
         "usIdCRCFacilitySearch": {},
         "usIdCaseManagerSearch": {},
         "usIdDistrictSearch": {},
+        "usIdParoleBoard": {},
         "usIdTasksV2": {},
         "usMiCaseManagerSearch": {},
         "usMiCustodyLevelDowngrade": {},
@@ -1479,6 +1591,7 @@ describe("feature variants", () => {
         "usIdCRCFacilitySearch": {},
         "usIdCaseManagerSearch": {},
         "usIdDistrictSearch": {},
+        "usIdParoleBoard": {},
         "usIdTasksV2": {},
         "usMiCaseManagerSearch": {},
         "usMiCustodyLevelDowngrade": {},
