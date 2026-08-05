@@ -49,7 +49,11 @@ import {
   storeUTMParams,
   type UTMParams,
 } from "../../utils/utmParams";
-import { OpportunityStatus, OpportunityTab } from "../../WorkflowsStore";
+import {
+  OpportunityStatus,
+  OpportunityTab,
+  PersonType,
+} from "../../WorkflowsStore";
 import type { SnoozeOptions } from "../../WorkflowsStore/Task/types";
 import {
   SupervisionNeedType,
@@ -272,6 +276,23 @@ export type NavigateToPersonProfileLinkClickedMetadata = {
   justiceInvolvedPersonId: string;
   opportunityType: OpportunityType;
 };
+
+export type PersonSearchResultClickedMetadata = {
+  justiceInvolvedPersonId: string;
+  personType: PersonType;
+  searchInput: string;
+};
+
+// Categorizes the search query's shape for analytics without transmitting the raw value itself
+// TODO: Verify this is the desired behaviour (OBT-42980)
+function classifySearchInput(value: string): "id" | "name" | "other" {
+  const trimmed = value.trim();
+  // if any digit present, classify as ID search
+  if (/\d/.test(trimmed)) return "id";
+  // if only letters and characters common in names, classify as name search
+  if (/^[a-z'\-. ]+$/i.test(trimmed)) return "name";
+  return "other";
+}
 
 export type WorkflowsHomepageCardClickedMetadata = {
   destinationUrl: string;
@@ -814,6 +835,16 @@ export default class AnalyticsStore {
     metadata: NavigateToPersonProfileLinkClickedMetadata,
   ) {
     this.track("frontend.navigate_to_person_profile_link_clicked", metadata);
+  }
+
+  trackPersonSearchResultClicked({
+    searchInput,
+    ...metadata
+  }: PersonSearchResultClickedMetadata) {
+    this.track("frontend.person_search_result_clicked", {
+      ...metadata,
+      searchInputType: classifySearchInput(searchInput),
+    });
   }
 
   trackLastLoginUsageModuleViewed(metadata: LastLoginUsageModuleMetadata) {

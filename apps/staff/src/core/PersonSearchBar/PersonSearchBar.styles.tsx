@@ -76,8 +76,12 @@ export const personSearchBarStyles: StylesConfig<
     ...searchBarPlaceholderStyles(base),
     fontSize: personSearchBarFontSize,
   }),
-  control: (base) => ({
-    ...searchBarControlStyles(base),
+  input: (base) => ({
+    ...base,
+    fontSize: personSearchBarFontSize,
+  }),
+  control: (base, state) => ({
+    ...searchBarControlStyles(base, state),
     borderRadius: rem(4),
   }),
   menu: (base) => searchBarMenuStyles(base),
@@ -90,9 +94,10 @@ export const personSearchBarStyles: StylesConfig<
     ...searchBarGroupHeadingStyles(base),
     padding: `${rem(spacing.xs)} ${rem(spacing.md)}`,
   }),
-  option: (base) => ({
+  option: (base, state) => ({
     ...base,
-    backgroundColor: "transparent",
+    // isFocused covers both keyboard arrow-key highlighting and mouse hover
+    backgroundColor: state.isFocused ? palette.slate10 : "transparent",
     padding: `${rem(spacing.sm)} ${rem(spacing.md)}`,
     ...searchBarOptionHoverStyle,
   }),

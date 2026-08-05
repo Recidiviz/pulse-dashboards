@@ -76,3 +76,28 @@ window.scrollTo = vi.fn();
 window.prompt = vi.fn();
 
 window.ResizeObserver = ResizeObserver;
+
+class MockIntersectionObserver implements IntersectionObserver {
+  readonly root: Element | Document | null = null;
+
+  readonly rootMargin: string = "";
+
+  readonly scrollMargin: string = "";
+
+  readonly thresholds: ReadonlyArray<number> = [];
+
+  constructor(
+    private callback: IntersectionObserverCallback,
+    private options?: IntersectionObserverInit,
+  ) {}
+
+  observe = vi.fn();
+
+  unobserve = vi.fn();
+
+  disconnect = vi.fn();
+
+  takeRecords = vi.fn((): IntersectionObserverEntry[] => []);
+}
+
+window.IntersectionObserver = MockIntersectionObserver;

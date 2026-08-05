@@ -17,10 +17,12 @@
 
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ReactSelect, { components, GroupBase, OptionProps } from "react-select";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { PersonSearchResult, PersonType } from "../../WorkflowsStore/types";
+import { workflowsUrl } from "../views";
 import { createMenuListWithScrollShadow } from "../WorkflowsSearchBar/WorkflowsSearchBar.styles";
 import {
   OptionExternalId,
@@ -92,7 +94,9 @@ export const PersonSearchBar = observer(function PersonSearchBar() {
     workflowsStore: {
       searchStore: { personSearchManager },
     },
+    analyticsStore,
   } = useRootStore();
+  const navigate = useNavigate();
 
   const [inputValue, setInputValue] = useState("");
 
@@ -122,11 +126,30 @@ export const PersonSearchBar = observer(function PersonSearchBar() {
             personSearchManager.results.length,
           ),
         }}
-        // Selecting/navigating to a result is intentionally out of scope for
-        // this component (TODO: OBT-40289)
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        onChange={() => {}}
-        placeholder="Search for a client or resident …"
+        onChange={(option) => {
+          if (!option) return;
+          const { result } = option;
+
+          analyticsStore.trackPersonSearchResultClicked({
+            justiceInvolvedPersonId: result.pseudonymizedId,
+            personType: result.personType,
+            searchInput: inputValue,
+          });
+
+          setInputValue("");
+
+          navigate(
+            workflowsUrl(
+              result.personType === "CLIENT"
+                ? "clientProfile"
+                : "residentProfile",
+              { justiceInvolvedPersonId: result.pseudonymizedId },
+            ),
+          );
+        }}
+        // TODO: Make this placeholder text dynamic (OBT-42981)
+        // Should be "Search for a client …" vs. "Search for a resident …"
+        // depending on user role and permissions
         styles={personSearchBarStyles}
       />
     </PersonSearchBarContainer>

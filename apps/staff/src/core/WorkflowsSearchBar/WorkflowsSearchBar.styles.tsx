@@ -30,9 +30,11 @@ import { palette, spacing, zindex } from "~design-system";
 
 export const searchBarControlStyles = (
   base: CSSObjectWithLabel,
+  state?: { isFocused: boolean },
 ): CSSObjectWithLabel => ({
   ...base,
-  borderColor: palette.slate30,
+  backgroundColor: state?.isFocused ? palette.slate05 : base.backgroundColor,
+  borderColor: `${palette.slate30} !important`,
   boxShadow: "none",
   minHeight: rem(40),
 });

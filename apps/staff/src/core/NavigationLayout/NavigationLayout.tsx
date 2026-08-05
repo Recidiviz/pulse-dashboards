@@ -102,7 +102,17 @@ const PersonSearchBarSlot = styled.div`
   width: ${rem(280)};
   margin-left: ${rem(spacing.md)};
   margin-right: ${rem(spacing.md)};
+
+  &:focus {
+    outline: none;
+  }
 `;
+
+function PersonSearchBar({ children }: { children?: React.ReactNode }) {
+  if (!children) return null;
+
+  return <PersonSearchBarSlot>{children}</PersonSearchBarSlot>;
+}
 
 const NavMenu = styled.div<{ alignBottom?: boolean }>`
   display: flex;
@@ -782,9 +792,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
                 alignBottom={isMobile && isFixed}
                 data-intercom-target="Profile"
               >
-                {personSearchBar && (
-                  <PersonSearchBarSlot>{personSearchBar}</PersonSearchBarSlot>
-                )}
+                <PersonSearchBar>{personSearchBar}</PersonSearchBar>
                 <NavLinks role="none">{children}</NavLinks>
                 {isMobile ? (
                   <>
