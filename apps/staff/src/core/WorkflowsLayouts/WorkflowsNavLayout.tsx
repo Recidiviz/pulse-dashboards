@@ -23,13 +23,17 @@ import styled from "styled-components";
 
 import { palette } from "~design-system";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import {
   NAV_BAR_HEIGHT,
   NavigationLayout,
   OverviewNavLinks,
 } from "../NavigationLayout";
+import { PersonSearchBar } from "../PersonSearchBar";
 import { MaxWidth } from "../sharedComponents";
 import { WorkflowsBackButton } from "./WorkflowsBackButton";
 
@@ -95,6 +99,7 @@ export const WorkflowsNavLayout: React.FC<{
     workflowsStore: { activePageIsTasks },
     tenantStore,
   } = useRootStore();
+  const { typesensePersonSearch } = useFeatureVariants();
   const { isMobile, isLaptop } = useIsMobile(true);
 
   const workflowsMethodologyUrl = tenantStore.workflowsMethodologyUrl;
@@ -108,6 +113,7 @@ export const WorkflowsNavLayout: React.FC<{
         externalMethodologyUrl={
           activePageIsTasks ? tasksMethodology : workflowsMethodologyUrl
         }
+        personSearchBar={typesensePersonSearch && <PersonSearchBar />}
       >
         <OverviewNavLinks />
       </NavigationLayout>

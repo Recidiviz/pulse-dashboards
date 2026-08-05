@@ -30,6 +30,7 @@ import {
 } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { NavigationLayout, OverviewNavLinks } from "../NavigationLayout";
+import { PersonSearchBar } from "../PersonSearchBar";
 import { INSIGHTS_PATHS } from "../views";
 
 export const INTERCOM_HEIGHT = 64;
@@ -70,7 +71,7 @@ const InsightsNavLayout: React.FC<{ children?: React.ReactNode }> = ({
   const {
     insightsStore: { supervisionStore },
   } = useRootStore();
-  const { insightsOnboarding } = useFeatureVariants();
+  const { insightsOnboarding, typesensePersonSearch } = useFeatureVariants();
 
   const pathParts = pathname.split("/");
 
@@ -94,6 +95,7 @@ const InsightsNavLayout: React.FC<{ children?: React.ReactNode }> = ({
       {!isHideNavLayout && (
         <NavigationLayout
           externalMethodologyUrl={supervisionStore?.methodologyUrl}
+          personSearchBar={typesensePersonSearch && <PersonSearchBar />}
         >
           <OverviewNavLinks />
         </NavigationLayout>

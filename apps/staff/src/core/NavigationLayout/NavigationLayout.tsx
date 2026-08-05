@@ -97,6 +97,13 @@ const NavContainer = styled.div<{
   ${hideWhenPrintingStyle}
 `;
 
+const PersonSearchBarSlot = styled.div`
+  flex: 0 0 auto;
+  width: ${rem(280)};
+  margin-left: ${rem(spacing.md)};
+  margin-right: ${rem(spacing.md)};
+`;
+
 const NavMenu = styled.div<{ alignBottom?: boolean }>`
   display: flex;
   align-items: center;
@@ -644,6 +651,7 @@ type NavigationLayoutProps = {
   externalMethodologyUrl?: string;
   isNaked?: boolean;
   children?: React.ReactNode;
+  personSearchBar?: React.ReactNode;
   topOffset?: number;
 };
 
@@ -652,6 +660,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
     backgroundColor,
     externalMethodologyUrl,
     children,
+    personSearchBar,
     isFixed = true,
     isNaked = false,
     topOffset = 0,
@@ -773,6 +782,9 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
                 alignBottom={isMobile && isFixed}
                 data-intercom-target="Profile"
               >
+                {personSearchBar && (
+                  <PersonSearchBarSlot>{personSearchBar}</PersonSearchBarSlot>
+                )}
                 <NavLinks role="none">{children}</NavLinks>
                 {isMobile ? (
                   <>

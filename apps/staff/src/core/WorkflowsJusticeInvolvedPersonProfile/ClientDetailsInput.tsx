@@ -73,18 +73,14 @@ function useReactiveClientInput<E extends HTMLInputElement>(
   const fetchFromStore = () => (client?.updates?.[updateType] as string) || "";
   const [value, setValue] = useState<ReactiveInputValue>(text);
 
-  const updateFirestoreRef = useRef(
-    debounce((valueToStore: string) => {
-      client.updatePerson(updateType, valueToStore);
-    }, INPUT_DELAY),
-  );
+  // Recreated whenever `client`/`updateType` change (e.g. the profile page
+  // navigates to a different person without remounting this component), so
+  // the debounced writer never closes over a stale `client`.
+  const updateFirestoreRef = useRef<ReturnType<typeof debounce> | null>(null);
 
   const onChange = (event: React.ChangeEvent<E>) => {
     setValue(event.target.value);
-
-    if (updateFirestoreRef.current) {
-      updateFirestoreRef.current(event.target.value);
-    }
+    updateFirestoreRef.current?.(event.target.value);
   };
 
   const onBlur = (event: React.FocusEvent<E>) => {
@@ -94,15 +90,29 @@ function useReactiveClientInput<E extends HTMLInputElement>(
   };
 
   useEffect(() => {
-    return reaction(
+    setValue(text);
+
+    const debouncedUpdate = debounce((valueToStore: string) => {
+      client.updatePerson(updateType, valueToStore);
+    }, INPUT_DELAY);
+    updateFirestoreRef.current = debouncedUpdate;
+
+    const disposeReaction = reaction(
       () => fetchFromStore(),
       (newValue) => {
         setValue(newValue);
       },
       { name: `useReactiveInput(${text})` },
     );
+
+    return () => {
+      // Flush rather than cancel: an edit made just before navigating to a
+      // different person should still be saved for the person it was made on.
+      debouncedUpdate.flush();
+      disposeReaction();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [client, updateType]);
 
   return [value, onChange, onBlur];
 }

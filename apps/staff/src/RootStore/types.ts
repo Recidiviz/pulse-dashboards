@@ -83,6 +83,7 @@ export type FeatureVariant =
   | "tasksRoutePlanner"
   | "workflowsSupervisorSearch"
   | "typesenseCaseloadSearch"
+  | "typesensePersonSearch"
   | "sentenceProgressV2"
   | "useRecordForIneligibleOpps"
 
@@ -223,6 +224,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   hideDenialRevert: {},
   workflowsSupervisorSearch: {},
   typesenseCaseloadSearch: {},
+  typesensePersonSearch: {},
   supervisorHomepageWorkflows: {},
   supervisorHomepageVitals: {},
   usPaSpecialCircumstances: {},
@@ -376,6 +378,9 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         // Off for Recidiviz users during phase 1 build-out — opt in per-user
         // via the admin panel to actually see the new Typesense search bar.
         typesenseCaseloadSearch: undefined,
+        // Off for Recidiviz users during phase 1 build-out — opt in per-user
+        // via the admin panel to actually see the new Typesense person search.
+        typesensePersonSearch: undefined,
         usOrEarnedDischargeSentence: undefined,
         clientProfileWarmHandoff: undefined,
         outcomesModule: {

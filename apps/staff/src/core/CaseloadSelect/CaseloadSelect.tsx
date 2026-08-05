@@ -21,12 +21,10 @@ import {
   Sans14,
   Serif24,
   spacing,
-  zindex,
 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import React from "react";
-import { useInView } from "react-intersection-observer";
 import ReactSelect, {
   ClearIndicatorProps,
   components,
@@ -47,6 +45,17 @@ import { pluralizeWord } from "~utils";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { Searchable, SearchableGroup, SearchIcon } from "../models/types";
+import {
+  createMenuListWithScrollShadow,
+  searchBarContainerStyles,
+  searchBarControlStyles,
+  searchBarGroupHeadingStyles,
+  searchBarGroupStyles,
+  searchBarMenuStyles,
+  searchBarOptionHoverStyle,
+  searchBarOptionTextColor,
+  searchBarPlaceholderStyles,
+} from "../WorkflowsSearchBar/WorkflowsSearchBar.styles";
 
 // This is a query limitation imposed by Firestore
 const SELECTED_SEARCH_LIMIT = 30;
@@ -247,71 +256,34 @@ const ClearAll = (searchFieldTitle: string, searchTitleIgnoreCase = false) =>
     );
   };
 
-export const ScrollShadow = styled.div<{
-  show: boolean;
-  side: "top" | "bottom";
-}>`
-  background: linear-gradient(
-    ${({ side }) => (side === "top" ? 180 : 360)}deg,
-    ${palette.marble1} 3.13%,
-    transparent 109.62%
-  );
-  pointer-events: none;
-  position: absolute;
-  opacity: ${({ show }) => (show ? 1 : 0)};
-  transition: all 200ms ease;
-  ${({ side }) => side === "bottom" && "bottom: 0;"}
-  width: 100%;
-  height: 3em;
-  z-index: ${zindex.tooltip - 1};
-`;
-
 export const MenuListWithShadow = (
   entriesNumber: number,
   isDisabled: boolean,
   searchFieldTitle: string,
   searchTitleIgnoreCase?: boolean,
-) =>
-  function MenuList({ children, ...props }: MenuListProps<SelectOption, true>) {
-    const topShadow = useInView();
-    const bottomShadow = useInView();
-    const MIN_ENTRIES_FOR_SCROLLABLE_MENU = 9;
+) => {
+  const BaseMenuList = createMenuListWithScrollShadow<SelectOption, true>(
+    entriesNumber,
+  );
 
+  return function MenuList(props: MenuListProps<SelectOption, true>) {
     return (
-      <>
-        <ScrollShadow
-          show={
-            !!topShadow.entry &&
-            !topShadow.inView &&
-            entriesNumber >= MIN_ENTRIES_FOR_SCROLLABLE_MENU
-          }
-          side="top"
-        />
-        <components.MenuList {...props}>
-          <div ref={topShadow.ref} />
-          {isDisabled && (
-            <DisabledMessage>
-              Cannot select more than {SELECTED_SEARCH_LIMIT}{" "}
-              {pluralizeWord({
-                term: searchFieldTitle,
-                justAppendS: searchTitleIgnoreCase,
-              })}
-              .
-            </DisabledMessage>
-          )}
-          {children}
-          <div ref={bottomShadow.ref} />
-        </components.MenuList>
-        <ScrollShadow
-          show={
-            !bottomShadow.inView &&
-            entriesNumber >= MIN_ENTRIES_FOR_SCROLLABLE_MENU
-          }
-          side="bottom"
-        />
-      </>
+      <BaseMenuList {...props}>
+        {isDisabled && (
+          <DisabledMessage>
+            Cannot select more than {SELECTED_SEARCH_LIMIT}{" "}
+            {pluralizeWord({
+              term: searchFieldTitle,
+              justAppendS: searchTitleIgnoreCase,
+            })}
+            .
+          </DisabledMessage>
+        )}
+        {props.children}
+      </BaseMenuList>
     );
   };
+};
 
 const CaseloadSelectContainer = styled(Sans14)`
   justify-content: space-between;
@@ -372,10 +344,7 @@ export const caseloadSelectStyles = (
   hideIndicators: boolean,
   disableAdditionalSelections: boolean,
 ): Partial<StylesConfig<SelectOption, true, GroupBase<SelectOption>>> => ({
-  placeholder: (base) => ({
-    ...base,
-    color: palette.text.secondary,
-  }),
+  placeholder: (base) => searchBarPlaceholderStyles(base),
   clearIndicator: (base) => ({
     ...base,
     color: palette.slate85,
@@ -425,8 +394,7 @@ export const caseloadSelectStyles = (
     color: palette.slate60,
   }),
   container: (base) => ({
-    ...base,
-    fontSize: rem(16),
+    ...searchBarContainerStyles(base),
 
     ...(isMobile
       ? {
@@ -443,26 +411,21 @@ export const caseloadSelectStyles = (
     maxHeight: isMobile ? "unset" : rem(300),
   }),
   control: (base, state) => ({
-    ...base,
+    ...searchBarControlStyles(base),
     borderStyle: "solid",
     borderColor: `${palette.slate30} !important`,
     borderWidth: "1px",
     borderBottomWidth: state.menuIsOpen ? "0" : "1px",
     borderRadius: state.menuIsOpen ? "4px 4px 0 0" : rem(4),
     background: "#fff",
-    minheight: rem(40),
     padding: rem(5),
     margin: 0,
-    boxShadow: "none",
   }),
   menu: (base) => ({
-    ...base,
-    zIndex: zindex.tooltip - 1,
+    ...searchBarMenuStyles(base, isMobile),
     margin: 0,
-    border: `1px solid rgba(43, 84, 105, 0.30)`,
     borderTop: `1px solid ${palette.slate20}`,
     borderRadius: "0 0 4px 4px",
-    boxShadow: !isMobile ? `0px 10px 40px ${palette.slate20}` : "none",
 
     // By default the menu is absolutely positioned, but on mobile devices
     // we want it to take up the whole screen
@@ -478,34 +441,19 @@ export const caseloadSelectStyles = (
   option: (base) => ({
     ...base,
     backgroundColor: "none",
-    color: disableAdditionalSelections ? palette.slate20 : palette.pine3,
+    color: disableAdditionalSelections
+      ? palette.slate20
+      : searchBarOptionTextColor,
     pointerEvents: disableAdditionalSelections ? "none" : "initial",
     padding: isMobile
       ? `${rem(10)} ${rem(spacing.xl)}`
       : `${rem(spacing.sm)} ${rem(spacing.md)}`,
-
-    "&:hover": {
-      backgroundColor: palette.slate10,
-    },
+    ...searchBarOptionHoverStyle,
   }),
-  group: (base) => ({
-    ...base,
-    paddingTop: `${rem(spacing.sm)}`,
-    borderBottom: `1px solid ${palette.slate10}`,
-
-    "&:nth-last-child(2)": {
-      paddingTop: `${rem(spacing.md)}`,
-      borderBottom: "none",
-    },
-  }),
+  group: (base) => searchBarGroupStyles(base),
   groupHeading: (base) => ({
-    ...base,
+    ...searchBarGroupHeadingStyles(base),
     padding: `${rem(2)} ${rem(spacing.md)}`,
-    marginBottom: `${rem(8)}`,
-    color: palette.slate60,
-    fontSize: `${rem(12)}`,
-    lineHeight: `${rem(14.4)}`,
-    textTransform: "capitalize",
   }),
 });
 

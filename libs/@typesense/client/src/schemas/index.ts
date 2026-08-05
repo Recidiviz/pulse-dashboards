@@ -52,7 +52,7 @@ export const schemas: CollectionCreateSchema[] = [
         facet: true,
       },
       { name: "pseudonymizedId", type: "string" },
-      { name: "personExternalId", type: "string" },
+      { name: "personExternalId", type: "string", infix: true },
       { name: "officerId", type: "string", facet: true },
       {
         name: "personName.givenNames",
@@ -81,7 +81,7 @@ export const schemas: CollectionCreateSchema[] = [
         facet: true,
       },
       { name: "pseudonymizedId", type: "string" },
-      { name: "personExternalId", type: "string" },
+      { name: "personExternalId", type: "string", infix: true },
       { name: "officerId", type: "string", optional: true, facet: true },
       {
         name: "personName.givenNames",
@@ -160,7 +160,7 @@ export const schemas: CollectionCreateSchema[] = [
     enable_nested_fields: true,
     fields: [
       { name: "stateCode", type: "string", facet: true },
-      { name: "preferredName", type: "string", optional: true },
+      { name: "preferredName", type: "string", optional: true, infix: true },
     ],
   },
 ];

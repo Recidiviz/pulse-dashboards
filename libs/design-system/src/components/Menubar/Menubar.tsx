@@ -44,7 +44,7 @@ const MenuBarElement = styled.nav<{
   }
 
   ${({ focusBorderColor }) => css`
-    &:has(:focus-visible) {
+    &:has([role="menuitem"]:focus-visible) {
       box-shadow:
         -1px 1px 1px 1px ${focusBorderColor || palette.signal.links},
         1px -1px 1px 1px ${focusBorderColor || palette.signal.links};
