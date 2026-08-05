@@ -280,6 +280,17 @@
         "production": {}
       }
     },
+    "requires-sops-env:patch-label-studio-tasks": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx scripts/patch-label-studio-tasks.ts",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "staging": {},
+        "production": {}
+      }
+    },
     "requires-sops-env:run-llmaj-evaluations": {
       "executor": "nx:run-commands",
       "options": {
