@@ -62,6 +62,7 @@ components:
           - NotetakingPipelineRun
           - NotetakingAgentExecution
           - NotetakingEvaluationRun
+          - CaseNoteInsightsFeedback
         service_account_email: "{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
         postgresql:
           host: !terraform.state cloud-sql-proxy recidiviz-dashboard-staging--shared-infra cloud_sql_proxy_ip

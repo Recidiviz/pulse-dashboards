@@ -111,6 +111,7 @@ const person: Person = {
   },
   primaryMetadata: "test",
   lastMeeting: "Jan 1, 2026",
+  caseNoteInsightsSummaries: [],
 };
 
 function renderCard(staffEmail: string) {

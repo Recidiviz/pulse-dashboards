@@ -17,6 +17,8 @@
 
 import { z } from "zod";
 
+import { OutputVoteValue } from "~@meetings/prisma/client";
+
 export const createMeetingInputSchema = z.object({
   clientId: z.bigint(),
   startTime: z.date(),
@@ -57,3 +59,56 @@ export const listInputSchema = z
     sort: listSortSchema,
   })
   .optional();
+
+const cniFieldSchema = z.object({
+  fieldValue: z.string(),
+  quotes: z.array(z.string()),
+  lastVerifiedDate: z.coerce.date(),
+});
+
+const cniEmploymentFieldsSchema = z.object({
+  primaryStatus: cniFieldSchema,
+  employers: z.array(
+    z
+      .object({
+        jobTitle: cniFieldSchema,
+        employerName: cniFieldSchema,
+        employerLocation: cniFieldSchema,
+        payRateAmount: cniFieldSchema,
+        employmentType: cniFieldSchema,
+        searchStatus: cniFieldSchema,
+      })
+      .partial(),
+  ),
+});
+
+const cniHousingFieldsSchema = z
+  .object({
+    housedType: cniFieldSchema,
+    dependentHousingType: cniFieldSchema,
+    temporaryHousingName: cniFieldSchema,
+    address: cniFieldSchema,
+    temporaryHousingType: cniFieldSchema,
+  })
+  .partial()
+  .extend({ primaryStatus: cniFieldSchema });
+
+export const submitCNIFeedbackInputSchema = z.object({
+  clientId: z.bigint(),
+  vote: z.nativeEnum(OutputVoteValue),
+  message: z.string().max(10000),
+  snapshot: z.object({
+    displayText: z.string(),
+    summarySnapshots: z.array(
+      z.object({
+        summaryId: z.string(),
+        cniSnapshot: z.union([
+          cniEmploymentFieldsSchema,
+          cniHousingFieldsSchema,
+        ]),
+        // purposefully loosely defined, since the runId infra is still being iterated
+        cniRunIDs: z.object({}).catchall(z.string()),
+      }),
+    ),
+  }),
+});

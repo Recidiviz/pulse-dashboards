@@ -122,6 +122,9 @@ model Client {
 
   meetings Meeting[]
 
+  caseNoteInsightsSummaries CaseNoteInsightsSummary[]
+  caseNoteInsightsFeedback  CaseNoteInsightsFeedback[]
+
   // Whether or not the client appeared in the most recent export. Needed to ensure we don't delete
   // meetings when clients are removed.
   isActive       Boolean  @default(true)
@@ -428,4 +431,49 @@ model AgencyConfig {
   parentId String?
 
   @@id([id, version])
+}
+
+// Note that this is distinct from the meeting pipeline's generated + editable 
+// case note. The CNI summary is imported information from the CNI BQ infra.
+model CaseNoteInsightsSummary {
+  id        String    @id @default(cuid())
+  stateCode StateCode
+
+  client   Client @relation(fields: [clientId], references: [personId])
+  clientId BigInt
+
+  // The category of this summary, e.g. "housing", "employment". Defined upstream
+  // by the CNI BQ pipeline / agency config; a client can have one summary per category.
+  category String
+
+  /// [CNIFields]
+  cniFields Json
+
+  // Relevant airflow, document, or LLM hashes for tracing purposes
+  // e.g. extractorVersionId, documentContentsId
+
+  /// [CNIRunIDs]
+  cniRunIds Json
+
+  lastImportedAt DateTime
+
+  @@unique([clientId, category])
+}
+
+// Feedback for Case Note Insights, to be exported to BigQuery.
+model CaseNoteInsightsFeedback {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  client   Client @relation(fields: [clientId], references: [personId])
+  clientId BigInt
+
+  authorEmail String
+  vote        OutputVoteValue
+  message     String
+
+  // Snapshot of what the user actually saw for each linked summary, i.e. the FE-built display 
+  // text. Plus a nested struct of all relevant CNI summary info (summaryId, fields, run IDs)
+  //  — captured at feedback time since summaries can change daily when the calc dag reruns.
+  summariesSnapshot Json
 }

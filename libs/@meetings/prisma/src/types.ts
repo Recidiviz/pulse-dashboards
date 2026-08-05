@@ -28,6 +28,35 @@ declare global {
       whatYouDidWell: string[];
       growthOpportunities: string[];
     };
+    type CNIField = {
+      fieldValue: string; // e.g. "employed"
+      quotes: string[]; // Supporting quotes/citations for this field
+      lastVerifiedDate: string; // The most recent date of a quote that supported this field
+    };
+    type CNIEmploymentFields = {
+      primaryStatus: CNIField;
+      employers: Array<
+        Partial<{
+          jobTitle: CNIField;
+          employerName: CNIField;
+          employerLocation: CNIField;
+          payRateAmount: CNIField;
+          employmentType: CNIField;
+          searchStatus: CNIField;
+        }>
+      >;
+    };
+    type CNIHousingFields = Partial<{
+      housedType: CNIField;
+      dependentHousingType: CNIField;
+      temporaryHousingName: CNIField;
+      temporaryHousingType: CNIField;
+      unhousedLocation: CNIField;
+      address: CNIField;
+    }> & { primaryStatus: CNIField };
+    type CNIFields = CNIEmploymentFields | CNIHousingFields;
+
+    type CNIRunIDs = Record<string, string>;
   }
 }
 

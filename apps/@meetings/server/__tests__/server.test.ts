@@ -81,6 +81,7 @@ describe("server", () => {
           staffEmail: null,
         },
         staffEmails: [fakeStaff.email],
+        caseNoteInsightsSummaries: [],
       },
     ]);
   });

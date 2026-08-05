@@ -19,7 +19,10 @@ import { faker } from "@faker-js/faker";
 import { createId } from "@paralleldrive/cuid2";
 import { TRPCError } from "@trpc/server";
 
-import { PostMeetingProcessingStatus } from "~@meetings/prisma/client";
+import {
+  OutputVoteValue,
+  PostMeetingProcessingStatus,
+} from "~@meetings/prisma/client";
 import { IMPERSONATED_EMAIL_HEADER_KEY } from "~@meetings/trpc/context";
 import env from "~@meetings/trpc/env";
 import {
@@ -34,6 +37,24 @@ import {
   fakeStaff,
   pseudoMeetingType,
 } from "~@meetings/trpc/test/setup/seed";
+
+const fakeCNIFeedbackSnapshot = {
+  displayText: "Client is employed full-time.",
+  summarySnapshots: [
+    {
+      summaryId: "summary-1",
+      cniSnapshot: {
+        primaryStatus: {
+          fieldValue: "Employed",
+          quotes: ["I have a job"],
+          lastVerifiedDate: new Date("2026-01-01"),
+        },
+        employers: [],
+      },
+      cniRunIDs: { primaryStatus: "run-1" },
+    },
+  ],
+};
 
 describe("client router", () => {
   describe("state user", () => {
@@ -187,6 +208,7 @@ describe("client router", () => {
               staffEmail: null,
             },
             staffEmails: [fakeStaff[0].email],
+            caseNoteInsightsSummaries: [],
           },
           {
             personId: fakeClients[1].personId,
@@ -203,6 +225,7 @@ describe("client router", () => {
               staffEmail: null,
             },
             staffEmails: [fakeStaff[1].email],
+            caseNoteInsightsSummaries: [],
           },
           {
             personId: fakeClients[3].personId,
@@ -219,6 +242,7 @@ describe("client router", () => {
               staffEmail: fakeStaff[0].email,
             },
             staffEmails: [fakeStaff[0].email],
+            caseNoteInsightsSummaries: [],
           },
         ]);
       });
@@ -361,6 +385,7 @@ describe("client router", () => {
             staffEmail: null,
           },
           staffEmails: [fakeStaff[0].email],
+          caseNoteInsightsSummaries: [],
         });
       });
 
@@ -370,6 +395,40 @@ describe("client router", () => {
             personId: BigInt(999),
           }),
         ).rejects.toThrow("Client not found or access denied");
+      });
+    });
+
+    describe("submitCNIFeedback", () => {
+      test("Creates a CNI feedback record", async () => {
+        const message = "This summary was very helpful.";
+
+        const result = await testTRPCClient.v1.client.submitCNIFeedback.mutate({
+          clientId: fakeClients[0].personId,
+          vote: OutputVoteValue.UP,
+          message,
+          snapshot: fakeCNIFeedbackSnapshot,
+        });
+
+        expect(result).toBeUndefined();
+
+        const feedback =
+          await testPrismaClient.caseNoteInsightsFeedback.findMany({
+            where: { clientId: fakeClients[0].personId },
+          });
+        expect(feedback).toHaveLength(1);
+        expect(feedback[0]).toEqual(
+          expect.objectContaining({
+            clientId: fakeClients[0].personId,
+            authorEmail: fakeStaff[0].email,
+            vote: OutputVoteValue.UP,
+            message,
+            // Json columns can't store Date instances, so lastVerifiedDate comes
+            // back as the ISO string it was serialized to on write.
+            summariesSnapshot: JSON.parse(
+              JSON.stringify(fakeCNIFeedbackSnapshot),
+            ),
+          }),
+        );
       });
     });
   });
@@ -550,6 +609,53 @@ describe("client router", () => {
         expect(resultIds).not.toContain(ownInProgressMeeting.id);
         expect(resultIds).not.toContain(fakeActiveMeeting.id);
         expect(result.length).toBe(1);
+      });
+    });
+
+    describe("submitCNIFeedback", () => {
+      test("Allows recidiviz users to submit CNI feedback outside of production", async () => {
+        const result = await testTRPCClient.v1.client.submitCNIFeedback.mutate({
+          clientId: fakeClients[0].personId,
+          vote: OutputVoteValue.DOWN,
+          message: "This summary was inaccurate.",
+          snapshot: fakeCNIFeedbackSnapshot,
+        });
+
+        expect(result).toBeUndefined();
+
+        const feedback =
+          await testPrismaClient.caseNoteInsightsFeedback.findMany({
+            where: { clientId: fakeClients[0].personId },
+          });
+        expect(feedback).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              clientId: fakeClients[0].personId,
+              authorEmail: "test@recidiviz.org",
+              vote: OutputVoteValue.DOWN,
+            }),
+          ]),
+        );
+      });
+
+      test("Blocks recidiviz users from submitting CNI feedback in production", async () => {
+        const originalDeployEnv = env.DEPLOY_ENV;
+        env.DEPLOY_ENV = "production";
+
+        try {
+          await expect(
+            testTRPCClient.v1.client.submitCNIFeedback.mutate({
+              clientId: fakeClients[0].personId,
+              vote: OutputVoteValue.UP,
+              message: "This summary was helpful.",
+              snapshot: fakeCNIFeedbackSnapshot,
+            }),
+          ).rejects.toThrow(
+            "Recidiviz users may not give CNI feedback in production",
+          );
+        } finally {
+          env.DEPLOY_ENV = originalDeployEnv;
+        }
       });
     });
   });

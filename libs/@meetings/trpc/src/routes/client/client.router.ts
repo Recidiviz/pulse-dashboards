@@ -15,15 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { Prisma } from "~@meetings/prisma/client";
+import env from "~@meetings/trpc/env";
 import { auth0Procedure, router } from "~@meetings/trpc/init";
 import {
   createMeetingInputSchema,
   getMeetingsInputSchema,
   listInputSchema,
   listSortSchema,
+  submitCNIFeedbackInputSchema,
 } from "~@meetings/trpc/routes/client/client.schema";
 import {
   createMeetingForPerson,
@@ -51,6 +54,7 @@ const querySelect = {
       caseNote: true,
     },
   },
+  caseNoteInsightsSummaries: true,
 } satisfies Prisma.ClientSelect;
 
 type ListSort = z.infer<typeof listSortSchema> | undefined;
@@ -170,4 +174,32 @@ export const clientRouter = router({
 
       return enrichPersonWithMeetingInfo({ prisma, user, person: client });
     }),
+
+  submitCNIFeedback: auth0Procedure
+    .input(submitCNIFeedbackInputSchema)
+    .mutation(
+      async ({
+        input: { clientId, message, vote, snapshot },
+        ctx: { prisma, user },
+      }) => {
+        if (
+          env.DEPLOY_ENV === "production" &&
+          (user.isRecidivizUser || user.impersonatedBy)
+        ) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Recidiviz users may not give CNI feedback in production",
+          });
+        }
+        await prisma.caseNoteInsightsFeedback.create({
+          data: {
+            authorEmail: user.email,
+            vote,
+            summariesSnapshot: snapshot,
+            message,
+            clientId,
+          },
+        });
+      },
+    ),
 });
