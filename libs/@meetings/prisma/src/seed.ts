@@ -26,6 +26,7 @@ import {
   StateCode,
 } from "~@meetings/prisma/client";
 import {
+  CLIENT_CNI_SUMMARIES,
   DEMO_PEOPLE,
   DemoPerson,
   displaySpeaker,
@@ -201,6 +202,29 @@ export async function main(prisma: PrismaClient) {
         { clientId: personId },
         order++,
       );
+      if (clientIndex <= CLIENT_CNI_SUMMARIES.length) {
+        for (const summary of CLIENT_CNI_SUMMARIES[clientIndex - 1]) {
+          await prisma.caseNoteInsightsSummary.upsert({
+            where: { id: `cni-id-${summary.category}-${clientIndex}` },
+            create: {
+              stateCode: StateCode.US_DEMO,
+              clientId: personId,
+              id: `cni-id-${summary.category}-${clientIndex}`,
+              category: summary.category,
+              cniFields: summary.fields,
+              cniRunIds: {
+                extractorId: `extractor-id-${summary.category}-${clientIndex}`,
+              },
+              lastImportedAt: importedAt,
+            },
+            update: {
+              category: summary.category,
+              cniFields: summary.fields,
+              lastImportedAt: importedAt,
+            },
+          });
+        }
+      }
     } else {
       const idx = ++residentIndex;
       const personId = BigInt(idx);

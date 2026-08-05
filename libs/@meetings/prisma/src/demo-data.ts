@@ -1266,3 +1266,153 @@ SUPPORT NEED: The resident reports difficulty with paperwork ("the forms make me
 ];
 
 export const DEMO_PEOPLE: DemoPerson[] = [...CLIENTS, ...RESIDENTS];
+
+// ===========================================================================
+// CASE NOTE INSIGHTS (CNI) SUMMARIES - associated with a particular client
+// ===========================================================================
+
+type CNIField = {
+  fieldValue: string; // e.g. "employed"
+  quotes: string[]; // Supporting quotes/citations for this field
+  lastVerifiedDate: string; // The most recent date of a quote that supported this field
+};
+type CNIEmploymentFields = {
+  primaryStatus: CNIField;
+  searchStatus: CNIField;
+
+  employers: Array<
+    Partial<{
+      jobTitle: CNIField;
+      employerName: CNIField;
+      employerLocation: CNIField;
+      payRateAmount: CNIField;
+      employmentType: CNIField;
+    }>
+  >;
+};
+type CNIHousingFields = Partial<{
+  housedType: CNIField;
+  dependentHousingType: CNIField;
+  temporaryHousingName: CNIField;
+  address: CNIField;
+  temporaryHousingType: CNIField;
+}> & { primaryStatus: CNIField };
+type CNIFields = CNIEmploymentFields | CNIHousingFields;
+
+export type DemoCNISummary = {
+  category: string;
+  fields: CNIFields;
+};
+
+export const CLIENT_CNI_SUMMARIES: DemoCNISummary[][] = [
+  [
+    {
+      category: "housing",
+      fields: {
+        primaryStatus: {
+          fieldValue: "housed",
+          quotes: ["She verified her address"],
+          lastVerifiedDate: "2026-07-14",
+        },
+        housedType: {
+          fieldValue: "dependent",
+          quotes: [
+            "She likes living with her mother",
+            "her mother and her split rent",
+          ],
+          lastVerifiedDate: "2026-07-14",
+        },
+        address: {
+          fieldValue: "123 Jackson St",
+          quotes: ["123 Jackson St"],
+          lastVerifiedDate: "2026-07-14",
+        },
+      },
+    },
+    {
+      category: "employment",
+      fields: {
+        primaryStatus: {
+          fieldValue: "employed",
+          quotes: ["She is enjoying her job."],
+          lastVerifiedDate: "2026-07-20",
+        },
+        employers: [
+          {
+            employerName: {
+              fieldValue: "Diner",
+              quotes: ["I'm still at the Diner"],
+              lastVerifiedDate: "2026-07-20",
+            },
+            employmentType: {
+              fieldValue: "employee_pt",
+              quotes: ["it's part time work"],
+              lastVerifiedDate: "2026-07-20",
+            },
+          },
+        ],
+      },
+    },
+  ],
+
+  [
+    {
+      category: "housing",
+      fields: {
+        primaryStatus: {
+          fieldValue: "housed",
+          quotes: ["She likes living at the Temporary Housing"],
+          lastVerifiedDate: "2026-07-14",
+        },
+        housedType: {
+          fieldValue: "temporary_housing",
+          quotes: [
+            "would like to continue living at Temporary Housing after the funding is up in order to gain stability",
+          ],
+          lastVerifiedDate: "2026-07-14",
+        },
+        temporaryHousingName: {
+          fieldValue: "Temporary Housing",
+          quotes: ["at Temporary Housing"],
+          lastVerifiedDate: "2026-07-14",
+        },
+      },
+    },
+    {
+      category: "employment",
+      fields: {
+        primaryStatus: {
+          fieldValue: "employed",
+          quotes: [
+            "She's trying to switch to a desk job at current employment.",
+          ],
+          lastVerifiedDate: "2026-07-20",
+        },
+        employers: [
+          {
+            employerName: {
+              fieldValue: "Tractor Supply",
+              quotes: ["at Tractor Supply"],
+              lastVerifiedDate: "2026-07-20",
+            },
+          },
+          {
+            employerName: {
+              fieldValue: "County Hospital",
+              quotes: ["supervisor at the hospital"],
+              lastVerifiedDate: "2026-07-20",
+            },
+            jobTitle: {
+              fieldValue: "supervisor",
+              quotes: [
+                "I want to supervise fewer people",
+                "supervisor at the hospital",
+              ],
+              lastVerifiedDate: "2026-07-20",
+            },
+          },
+        ],
+      },
+    },
+  ],
+];

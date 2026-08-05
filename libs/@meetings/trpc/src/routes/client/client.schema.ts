@@ -68,6 +68,7 @@ const cniFieldSchema = z.object({
 
 const cniEmploymentFieldsSchema = z.object({
   primaryStatus: cniFieldSchema,
+  searchStatus: cniFieldSchema.optional(),
   employers: z.array(
     z
       .object({
@@ -76,7 +77,6 @@ const cniEmploymentFieldsSchema = z.object({
         employerLocation: cniFieldSchema,
         payRateAmount: cniFieldSchema,
         employmentType: cniFieldSchema,
-        searchStatus: cniFieldSchema,
       })
       .partial(),
   ),

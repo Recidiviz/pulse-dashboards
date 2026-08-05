@@ -35,6 +35,8 @@ declare global {
     };
     type CNIEmploymentFields = {
       primaryStatus: CNIField;
+      searchStatus: CNIField;
+
       employers: Array<
         Partial<{
           jobTitle: CNIField;
@@ -42,7 +44,6 @@ declare global {
           employerLocation: CNIField;
           payRateAmount: CNIField;
           employmentType: CNIField;
-          searchStatus: CNIField;
         }>
       >;
     };
