@@ -152,7 +152,7 @@ export const SARImportSchema = z.object({
   state_code: stateCode,
   staff_id: z.string(),
   client_id: z.string(),
-  investigation_type: investigationType,
+  investigation_type: investigationType.optional(),
   due_date: z.coerce.date().nullish(),
   court_date: z.coerce.date().nullish(),
   completion_date: z.coerce.date().nullish(),
