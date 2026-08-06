@@ -25,7 +25,7 @@ import { CaseloadSelect } from "../CaseloadSelect";
 import CaseloadTypeSelect from "../CaseloadTypeSelect/CaseloadTypeSelect";
 import ModelHydrator from "../ModelHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
-import WorkflowsResults from "../WorkflowsResults";
+import WorkflowsResults, { WorkflowsResultsHeader } from "../WorkflowsResults";
 import { OpportunitySummaries } from "./OpportunitySummaries";
 import { TasksSummary } from "./TasksSummary";
 import { TasksCards } from "./WorkflowsHomepageTasksCards";
@@ -42,15 +42,24 @@ const ManagedComponent = observer(function WorkflowsHomepage({
     showTasksSummaryBottom,
     showTasksSummaryCard,
     tasks,
-    ctaAndHeaderText: { headerText, ctaText },
+    aboveHeaderCopy,
+    workflowsResultCopy,
   } = presenter;
 
   return (
     <WorkflowsNavLayout>
+      <WorkflowsResultsHeader
+        headerText={aboveHeaderCopy.headerText}
+        callToActionText={aboveHeaderCopy.callToActionText}
+        align="center"
+      />
       <CaseloadTypeSelect />
       <CaseloadSelect />
       <ModelHydrator hydratable={presenter}>
-        <WorkflowsResults headerText={headerText} callToActionText={ctaText}>
+        <WorkflowsResults
+          headerText={workflowsResultCopy.headerText}
+          callToActionText={workflowsResultCopy.callToActionText}
+        >
           {showTasksSummaryCard && <TasksCards tasks={tasks} />}
           {hasOpportunities &&
             activeOpportunityTypes &&

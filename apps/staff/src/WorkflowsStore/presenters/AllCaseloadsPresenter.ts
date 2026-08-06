@@ -17,8 +17,6 @@
 
 import { makeAutoObservable } from "mobx";
 
-import { pluralizeWord } from "~utils";
-
 import type { ClientsResidentsTableColumnId } from "../../core/CaseloadView/AllCaseloadsTable/utils";
 import { formatSupervisionEndDatePhrase } from "../../core/WorkflowsJusticeInvolvedPersonProfile/utils";
 import { RootStore } from "../../RootStore";
@@ -74,6 +72,10 @@ export class AllCaseloadsPresenter implements TableViewSelectInterface {
     );
   }
 
+  get isTypesenseSearchEnabled(): boolean {
+    return this.rootStore.workflowsStore.searchStore.isTypesenseSearchEnabled;
+  }
+
   get initialHeaderText(): string {
     return `All ${toTitleCase(
       this.rootStore.workflowsStore.justiceInvolvedPersonTitle,
@@ -87,10 +89,7 @@ export class AllCaseloadsPresenter implements TableViewSelectInterface {
       },
     } = this.rootStore;
 
-    return `Search for ${pluralizeWord({
-      term: workflowsSearchFieldTitle,
-      justAppendS: this.searchTitleIgnoreCase,
-    })} above to view their entire caseload.`;
+    return `Search for ${workflowsSearchFieldTitle} above to view their entire caseload.`;
   }
 
   get hydratedHeaderText(): string {

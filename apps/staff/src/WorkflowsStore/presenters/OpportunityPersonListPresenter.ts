@@ -655,10 +655,13 @@ export class OpportunityPersonListPresenter
 
   get searchIdsNotSelectedCtaText() {
     const {
-      searchStore: { workflowsSearchFieldTitle },
+      searchStore: { workflowsSearchFieldTitle, isTypesenseSearchEnabled },
       justiceInvolvedPersonTitle,
     } = this.workflowsStore;
-    return `Search for ${pluralize(workflowsSearchFieldTitle)} above to review and refer eligible ${pluralize(justiceInvolvedPersonTitle)} for opportunities.`;
+
+    return isTypesenseSearchEnabled && workflowsSearchFieldTitle
+      ? `Start typing the name of ${workflowsSearchFieldTitle} above to review and refer eligible ${pluralize(justiceInvolvedPersonTitle)} for opportunities.`
+      : `Search above to review and refer eligible ${pluralize(justiceInvolvedPersonTitle)} for opportunities.`;
   }
 
   get emptyTabText() {

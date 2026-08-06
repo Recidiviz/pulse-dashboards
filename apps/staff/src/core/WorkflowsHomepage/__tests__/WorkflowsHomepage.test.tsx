@@ -49,6 +49,7 @@ const baseWorkflowsStoreMock = {
   opportunityTypes: ["earlyTermination"],
   allOpportunitiesByType: { earlyTermination: [] },
   hasOpportunities: () => false,
+  caseloadLoaded: () => true,
   user: { info: { givenNames: "Recidiviz" } },
   justiceInvolvedPersonTitle: "client",
   rootStore: {
@@ -167,21 +168,20 @@ describe("WorkflowsHomepage", () => {
 
     expect(
       screen.getByText(
-        "None of the clients on the selected officer's caseloads are eligible for opportunities. Search for another officer.",
+        "None of the selected caseloads have eligible opportunities. Search for another caseload.",
       ),
     ).toBeInTheDocument();
   });
 
-  test("render no results from multiple officers", () => {
+  test("render no results from multiple selected caseloads", () => {
     useRootStoreMock.mockReturnValue({
       ...baseRootStoreMock,
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         opportunitiesLoaded: () => true,
         searchStore: {
-          searchTitleOverride: () => "location",
           selectedSearchIds: ["123", "456"],
-          workflowsSearchFieldTitle: "officer",
+          workflowsSearchFieldTitle: "an officer",
         },
       },
     });
@@ -192,36 +192,10 @@ describe("WorkflowsHomepage", () => {
       </BrowserRouter>,
     );
 
+    // Copy no longer varies with the noun or the selected count.
     expect(
       screen.getByText(
-        "None of the clients on the selected officers' caseloads are eligible for opportunities. Search for another officer.",
-      ),
-    ).toBeInTheDocument();
-  });
-
-  test("render no results respects officer title override", () => {
-    useRootStoreMock.mockReturnValue({
-      ...baseRootStoreMock,
-      workflowsStore: {
-        ...baseWorkflowsStoreMock,
-        opportunitiesLoaded: () => true,
-        searchStore: {
-          workflowsSearchFieldTitle: "unicorn",
-          selectedSearchIds: ["123"],
-          searchTitleOverride: () => "location",
-        },
-      },
-    });
-
-    render(
-      <BrowserRouter>
-        <WorkflowsHomepage />
-      </BrowserRouter>,
-    );
-
-    expect(
-      screen.getByText(
-        "None of the clients on the selected unicorn's caseloads are eligible for opportunities. Search for another unicorn.",
+        "None of the selected caseloads have eligible opportunities. Search for another caseload.",
       ),
     ).toBeInTheDocument();
   });

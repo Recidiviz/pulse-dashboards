@@ -40,7 +40,6 @@ import ReactSelect, {
 import styled from "styled-components";
 
 import { Button, Icon, IconSVG, palette } from "~design-system";
-import { pluralizeWord } from "~utils";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
@@ -241,26 +240,15 @@ export const ValueRemover = (props: MultiValueRemoveProps<SelectOption>) => {
   );
 };
 
-const ClearAll = (searchFieldTitle: string, searchTitleIgnoreCase = false) =>
-  function ClearAllButton(props: ClearIndicatorProps<SelectOption, true>) {
-    return (
-      <components.ClearIndicator {...props}>
-        <>
-          Clear{" "}
-          {pluralizeWord({
-            term: searchFieldTitle,
-            justAppendS: searchTitleIgnoreCase,
-          })}
-        </>
-      </components.ClearIndicator>
-    );
-  };
+const ClearAll = (props: ClearIndicatorProps<SelectOption, true>) => {
+  return (
+    <components.ClearIndicator {...props}>Clear all</components.ClearIndicator>
+  );
+};
 
 export const MenuListWithShadow = (
   entriesNumber: number,
   isDisabled: boolean,
-  searchFieldTitle: string,
-  searchTitleIgnoreCase?: boolean,
 ) => {
   const BaseMenuList = createMenuListWithScrollShadow<SelectOption, true>(
     entriesNumber,
@@ -271,12 +259,7 @@ export const MenuListWithShadow = (
       <BaseMenuList {...props}>
         {isDisabled && (
           <DisabledMessage>
-            Cannot select more than {SELECTED_SEARCH_LIMIT}{" "}
-            {pluralizeWord({
-              term: searchFieldTitle,
-              justAppendS: searchTitleIgnoreCase,
-            })}
-            .
+            Cannot select more than {SELECTED_SEARCH_LIMIT} items.
           </DisabledMessage>
         )}
         {props.children}
@@ -463,38 +446,26 @@ export const CaseloadSelect = observer(function CaseloadSelect({
   const { workflowsStore, analyticsStore } = useRootStore();
   const { isMobile } = useIsMobile(true);
   const {
-    supportsMultipleSystems,
-    activeSystem,
-    activeSystemConfig,
     searchStore: {
       selectedSearchables,
       selectedSearchIds,
       searchType,
       availableSearchables,
-      searchTitleOverride,
       updateSelectedSearch,
       isTypesenseSearchEnabled,
       caseloadSearchManager,
+      workflowsSearchFieldTitle,
     },
   } = workflowsStore;
 
   const searchableGroups = availableSearchables;
-
-  const searchTitle =
-    supportsMultipleSystems && activeSystem === "ALL" && searchType === "ALL"
-      ? "caseload"
-      : searchTitleOverride(activeSystem, "caseload");
-
-  const searchTitleIgnoreCase = activeSystemConfig?.search.filter(
-    (search) => search.searchType === searchType,
-  )[0]?.searchTitleIgnoreCase;
 
   const customComponents: SelectComponentsConfig<
     SelectOption,
     true,
     GroupBase<SelectOption>
   > = {
-    ClearIndicator: ClearAll(searchTitle, searchTitleIgnoreCase),
+    ClearIndicator: ClearAll,
     DropdownIndicator: null,
     IndicatorsContainer: Indicators(isMobile),
     MultiValueRemove: ValueRemover,
@@ -513,8 +484,6 @@ export const CaseloadSelect = observer(function CaseloadSelect({
   customComponents.MenuList = MenuListWithShadow(
     numAvailableSearchables,
     disableAdditionalSelections,
-    searchTitle,
-    searchTitleIgnoreCase,
   );
 
   const defaultOptions = {
@@ -545,7 +514,9 @@ export const CaseloadSelect = observer(function CaseloadSelect({
         }
       : {}),
     options: buildSelectOptionsFromSearchableGroup(searchableGroups),
-    placeholder: `Search for one or more ${pluralizeWord({ term: searchTitle, justAppendS: searchTitleIgnoreCase })} …`,
+    placeholder: isTypesenseSearchEnabled
+      ? `Search for ${workflowsSearchFieldTitle} …`
+      : "Search for one or more caseloads …",
     styles: caseloadSelectStyles(
       isMobile,
       hideIndicators,

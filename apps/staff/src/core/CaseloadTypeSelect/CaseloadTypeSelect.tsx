@@ -34,8 +34,14 @@ const CaseloadTypeSelect = observer(
       rootStore: { currentTenantId },
       systemConfigFor,
       workflowsSupportedSystems,
-      searchStore: { searchType, handleSearchPillClick },
+      searchStore: {
+        searchType,
+        handleSearchPillClick,
+        isTypesenseSearchEnabled,
+      },
     } = workflowsStore;
+
+    if (isTypesenseSearchEnabled) return null;
 
     if (!currentTenantId || !activeSystem || !workflowsSupportedSystems)
       return null;

@@ -130,7 +130,7 @@ export const SupervisionOfficerSelect = ({
         Option,
         ClearIndicator,
         MultiValue: MultiValueOverride,
-        MenuList: MenuListWithShadow(options.length, false, staffLabel),
+        MenuList: MenuListWithShadow(options.length, false),
       }}
     />
   );

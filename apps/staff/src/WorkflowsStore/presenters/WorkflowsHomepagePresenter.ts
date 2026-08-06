@@ -17,8 +17,8 @@
 
 import { isEmpty } from "lodash";
 import pluralize from "pluralize";
-import simplur from "simplur";
 
+import { SystemId } from "~datatypes";
 import {
   compositeHydrationState,
   Hydratable,
@@ -108,6 +108,34 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
     return labels.join(" and ");
   }
 
+  // Resolves the human-facing noun to describe search hits for a given
+  // system, defaulting to a fallback when the tenant has no titles configured
+  // for that system. Officer-shaped titles get swapped for "caseload" — same
+  // callback semantics the old SearchStore.searchTitleOverride had, inlined
+  // here since this is the only consumer that still needs it.
+  private titleForSystem(
+    system: SystemId | undefined,
+    fallback: string,
+  ): string {
+    if (!system || system === "ALL") return fallback;
+    const { searchTypeOverride } = this.workflowsStore.searchStore;
+    const search = this.workflowsStore.systemConfigFor(system).search;
+
+    let resolved = fallback;
+    if (searchTypeOverride) {
+      const selected = search.find((s) => s.searchType === searchTypeOverride);
+      if (selected) resolved = selected.searchTitle;
+    } else if (search.length === 1 && search[0].searchTitle) {
+      resolved = search[0].searchTitle;
+    }
+
+    return ["case manager", "officer", "agent", "supervision officer"].includes(
+      resolved,
+    )
+      ? "caseload"
+      : resolved;
+  }
+
   private get searchResultLabel() {
     const {
       activeSystem,
@@ -115,39 +143,39 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
     } = this.workflowsStore;
 
     const searchIdsCount = selectedSearchIds.length;
-
-    const replaceOfficerTitleCallback = (value: string) => {
-      return [
-        "case manager",
-        "officer",
-        "agent",
-        "supervision officer",
-      ].includes(value)
-        ? "caseload"
-        : value;
-    };
-    const incarcerationSearchOverride =
-      this.workflowsStore.searchStore.searchTitleOverride(
-        "INCARCERATION",
-        "location",
-        replaceOfficerTitleCallback,
-      );
-    const activeSystemSearchOverride =
-      this.workflowsStore.searchStore.searchTitleOverride(
-        activeSystem,
-        "caseload",
-        replaceOfficerTitleCallback,
-      );
+    const incarcerationTitle = this.titleForSystem("INCARCERATION", "location");
+    const activeSystemTitle = this.titleForSystem(activeSystem, "caseload");
 
     return activeSystem === "ALL" &&
       !searchTypeOverride &&
-      incarcerationSearchOverride !== "caseload"
-      ? `${pluralize("caseload", searchIdsCount)} and/or ${pluralize(incarcerationSearchOverride, searchIdsCount)}`
-      : pluralize(activeSystemSearchOverride, searchIdsCount);
+      incarcerationTitle !== "caseload"
+      ? `${pluralize("caseload", searchIdsCount)} and/or ${pluralize(incarcerationTitle, searchIdsCount)}`
+      : pluralize(activeSystemTitle, searchIdsCount);
   }
 
   get userGivenNames() {
     return this.workflowsStore.user?.info.givenNames;
+  }
+
+  get isTypesenseSearchEnabled(): boolean {
+    return this.workflowsStore.searchStore.isTypesenseSearchEnabled;
+  }
+
+  get isCaseloadLoaded(): boolean {
+    return this.workflowsStore.caseloadLoaded();
+  }
+
+  get welcomeCtaAndHeaderText(): { ctaText: string; headerText: string } {
+    const { workflowsSearchFieldTitle, listOfSelectedOpportunities } =
+      this.labels;
+    const salutation = this.userGivenNames
+      ? `Hi, ${this.userGivenNames}.`
+      : "Hi.";
+    const ctaText =
+      this.isTypesenseSearchEnabled && workflowsSearchFieldTitle
+        ? `Start typing the name of ${workflowsSearchFieldTitle} above to review and refer people eligible for opportunities like ${listOfSelectedOpportunities}.`
+        : `Search above to review and refer people eligible for opportunities like ${listOfSelectedOpportunities}.`;
+    return { headerText: salutation, ctaText };
   }
 
   get labels() {
@@ -209,12 +237,7 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
   }
 
   get ctaAndHeaderText(): { ctaText?: string; headerText?: string } {
-    const {
-      workflowsSearchFieldTitle,
-      justiceInvolvedPersonTitle,
-      listOfSelectedOpportunities,
-      searchResultLabel,
-    } = this.labels;
+    const { searchResultLabel } = this.labels;
 
     const selectedSearchIdsCount = this.selectedSearchIds?.length || 0;
 
@@ -230,35 +253,58 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
     const salutation = this.userGivenNames
       ? `Hi, ${this.userGivenNames}.`
       : "Hi.";
-    // If no search ids are selected, show a welcome message
-    if (selectedSearchIdsCount === 0)
-      return {
-        headerText: salutation,
-        ctaText: this.supportsMultipleSystems
-          ? `Search above to review and refer people eligible for opportunities like ${listOfSelectedOpportunities}.`
-          : `Search for ${pluralize(
-              workflowsSearchFieldTitle,
-            )} above to review and refer eligible ${justiceInvolvedPersonTitle}s for
-                opportunities like ${listOfSelectedOpportunities}.`,
-      };
-    // Else if no opportunities are found, show a call to action to select another search id
-    else if (noSearchResults)
-      return {
-        ctaText:
-          this.supportsMultipleSystems ||
-          workflowsSearchFieldTitle === "caseload"
-            ? "None of the selected caseloads are eligible for opportunities. Search for another caseload."
-            : simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
-                selectedSearchIdsCount,
-              ]} ${pluralize(
-                workflowsSearchFieldTitle,
-                selectedSearchIdsCount,
-              )}['s|'] caseloads are eligible for opportunities. Search for another ${workflowsSearchFieldTitle}.`,
-      };
-    // else show the header text with the number of opportunities found
-    else
-      return {
-        headerText: `${salutation} We’ve found some outstanding items across ${selectedSearchIdsCount} ${searchResultLabel}`,
-      };
+    // If no search ids are selected, show a welcome message.
+    if (selectedSearchIdsCount === 0) {
+      return this.welcomeCtaAndHeaderText;
+    }
+
+    const noResultsCta =
+      "None of the selected caseloads have eligible opportunities. Search for another caseload.";
+    const foundItems = `We’ve found some outstanding items across ${selectedSearchIdsCount} ${searchResultLabel}`;
+
+    // Without the FV, keep the original single-header styling: the "no results"
+    // copy is a lone CTA and the "found items" copy is one Serif header line.
+    if (!this.isTypesenseSearchEnabled) {
+      return noSearchResults
+        ? { ctaText: noResultsCta }
+        : { headerText: `${salutation} ${foundItems}` };
+    }
+
+    // With the FV, the salutation is the header and the detail renders on the
+    // line below it (styled like the welcome copy's CTA).
+    return noSearchResults
+      ? { headerText: salutation, ctaText: noResultsCta }
+      : { headerText: salutation, ctaText: `${foundItems}.` };
+  }
+
+  // Copy for the header rendered above the search bar (typesense search FV):
+  // the welcome greeting until the selected caseload's results are ready, then
+  // the found / no-results copy. Empty when the FV is off (the copy renders
+  // below the search bar instead — see `workflowsResultCopy`).
+  get aboveHeaderCopy(): { headerText?: string; callToActionText?: string } {
+    if (!this.isTypesenseSearchEnabled) return {};
+
+    const resultsReady =
+      this.selectedSearchIds.length > 0 &&
+      this.isCaseloadLoaded &&
+      isHydrated(this);
+
+    const { headerText, ctaText } = resultsReady
+      ? this.ctaAndHeaderText
+      : this.welcomeCtaAndHeaderText;
+
+    return { headerText, callToActionText: ctaText };
+  }
+
+  // Copy for the WorkflowsResults header below the search bar. Empty when the
+  // typesense search FV moves the copy above the search bar.
+  get workflowsResultCopy(): {
+    headerText?: string;
+    callToActionText?: string;
+  } {
+    if (this.isTypesenseSearchEnabled) return {};
+
+    const { headerText, ctaText } = this.ctaAndHeaderText;
+    return { headerText, callToActionText: ctaText };
   }
 }

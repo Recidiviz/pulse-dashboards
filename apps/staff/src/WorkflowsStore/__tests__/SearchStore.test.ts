@@ -99,6 +99,7 @@ beforeEach(() => {
       search: [{ searchType: "OFFICER", searchTitle: "officer" }],
     },
     activeSystem: "SUPERVISION",
+    workflowsSupportedSystems: ["SUPERVISION"],
     availableOfficers: [...mockSupervisionOfficers].sort(staffNameComparator),
     availableLocations: mockLocations,
   });
@@ -109,115 +110,73 @@ afterEach(() => {
   vi.resetAllMocks();
 });
 
-describe("searchTitleOverride", () => {
-  test("when system == ALL returns the default title", () => {
-    expect(searchStore.searchTitleOverride("ALL", "default")).toEqual(
-      "default",
+describe("workflowsSearchFieldTitle (phrase form)", () => {
+  test("prepends the article 'a' for one constant-initial title", () => {
+    workflowsStore.systemConfigFor = () => ({
+      search: [{ searchType: "DISTRICT", searchTitle: "district" }],
+    });
+    expect(searchStore.workflowsSearchFieldTitle).toEqual("a district");
+  });
+
+  test("prepends the article 'an' for one vowel-initial title", () => {
+    // Default mock has searchTitle: "officer" already; supported = SUPERVISION.
+    expect(searchStore.workflowsSearchFieldTitle).toEqual("an officer");
+  });
+
+  test("joins two titles with 'or' (no oxford comma)", () => {
+    workflowsStore.systemConfigFor = (system: string) =>
+      system === "SUPERVISION"
+        ? {
+            search: [
+              { searchType: "OFFICER", searchTitle: "officer" },
+              { searchType: "DISTRICT", searchTitle: "district" },
+            ],
+          }
+        : { search: [] };
+    expect(searchStore.workflowsSearchFieldTitle).toEqual(
+      "an officer or district",
     );
   });
 
-  test("when there is a searchTypeOverride it returns corresponding searchTitle", () => {
-    workflowsStore.systemConfigFor = vi.fn((system) => ({
+  test("joins 3+ titles with commas and a final 'or' (oxford comma), deduped across systems", () => {
+    workflowsStore.activeSystem = "ALL";
+    workflowsStore.workflowsSupportedSystems = ["SUPERVISION", "INCARCERATION"];
+    workflowsStore.systemConfigFor = (system: string) =>
+      system === "SUPERVISION"
+        ? {
+            search: [
+              { searchType: "OFFICER", searchTitle: "officer" },
+              { searchType: "DISTRICT", searchTitle: "district" },
+            ],
+          }
+        : {
+            search: [
+              // "officer" here should dedupe against SUPERVISION's "officer"
+              { searchType: "INCARCERATION_OFFICER", searchTitle: "officer" },
+              { searchType: "FACILITY", searchTitle: "facility" },
+            ],
+          };
+    expect(searchStore.workflowsSearchFieldTitle).toEqual(
+      "an officer, district, or facility",
+    );
+  });
+
+  test("article is chosen from the first title, not the last", () => {
+    workflowsStore.systemConfigFor = () => ({
       search: [
-        {
-          searchType: "OFFICER",
-          searchTitle: "officer title",
-          searchField: "any",
-        },
-        {
-          searchType: "DISTRICT",
-          searchTitle: "location title",
-          searchField: "any",
-        },
+        // "district" (consonant) then "officer" (vowel) → article is "a"
+        { searchType: "DISTRICT", searchTitle: "district" },
+        { searchType: "OFFICER", searchTitle: "officer" },
       ],
-    }));
-    searchStore.setSearchTypeOverride("DISTRICT");
-    expect(searchStore.searchTitleOverride("SUPERVISION", "default")).toEqual(
-      "location title",
+    });
+    expect(searchStore.workflowsSearchFieldTitle).toEqual(
+      "a district or officer",
     );
   });
 
-  test("when there is only one corresponding searchConfigs and no searchTypeOverride, it returns the search title", () => {
-    expect(searchStore.searchTitleOverride("SUPERVISION", "default")).toEqual(
-      "officer",
-    );
-  });
-
-  test("when there are more than one corresponding searchConfigs and no searchTypeOverride, it returns the default", () => {
-    workflowsStore.systemConfigFor = vi.fn((system) => ({
-      search: [
-        {
-          searchType: "OFFICER",
-          searchTitle: "officer title",
-          searchField: "any",
-        },
-        {
-          searchType: "DISTRICT",
-          searchTitle: "location title",
-          searchField: "any",
-        },
-      ],
-    }));
-    expect(searchStore.searchTitleOverride("SUPERVISION", "default")).toEqual(
-      "default",
-    );
-  });
-
-  test("it applies the callbackFn", () => {
-    const callback = (value: string) => {
-      return [
-        "case manager",
-        "officer",
-        "agent",
-        "supervision officer",
-      ].includes(value)
-        ? "replacement value"
-        : value;
-    };
-    expect(
-      searchStore.searchTitleOverride("SUPERVISION", "default", callback),
-    ).toEqual("replacement value");
-  });
-});
-
-describe("workflowsSearchFieldTitle", () => {
-  test("without specificied searchTitleOverride", async () => {
-    expect(searchStore.workflowsSearchFieldTitle).toEqual("officer");
-  });
-
-  test("with specificied searchTitleOverride", async () => {
-    workflowsStore.systemConfigFor = () => {
-      return {
-        search: [
-          {
-            searchType: "FACILITY",
-            searchField: ["facilityId"],
-            searchTitle: "location",
-          },
-        ],
-      };
-    };
-    expect(searchStore.workflowsSearchFieldTitle).toEqual("location");
-  });
-
-  test("with multiple search configs per active system defaults to officer", async () => {
-    workflowsStore.systemConfigFor = () => {
-      return {
-        search: [
-          {
-            searchType: "FACILITY",
-            searchField: ["facilityId"],
-            searchTitle: "location",
-          },
-          {
-            searchType: "OFFICER",
-            searchField: ["officerId"],
-            searchTitle: "case manager",
-          },
-        ],
-      };
-    };
-    expect(searchStore.workflowsSearchFieldTitle).toEqual("officer");
+  test("returns empty string when the tenant has no supported systems", () => {
+    workflowsStore.workflowsSupportedSystems = undefined;
+    expect(searchStore.workflowsSearchFieldTitle).toEqual("");
   });
 });
 

@@ -171,7 +171,7 @@ describe("buildTypesenseSearchPlan", () => {
     const plan = buildTypesenseSearchPlan("al", "US_UT", "SUPERVISION", store);
     expect(plan).toHaveLength(1);
     expect(plan[0].collection).toBe("supervisionStaff");
-    expect(plan[0].groupLabel).toBe("agents");
+    expect(plan[0].groupLabel).toBe("agent");
     expect(plan[0].descriptor).toMatchObject({
       collection: "supervisionStaff",
       q: "al",
@@ -270,7 +270,7 @@ describe("buildTypesenseSearchPlan", () => {
     ]);
   });
 
-  test("group label uses justAppendS when config sets searchTitleIgnoreCase", () => {
+  test("group label is the unmodified searchTitle", () => {
     const store = makeMockWorkflowsStore({
       SUPERVISION: {
         search: [
@@ -284,8 +284,7 @@ describe("buildTypesenseSearchPlan", () => {
     });
 
     const plan = buildTypesenseSearchPlan("*", "US_XX", "SUPERVISION", store);
-    // justAppendS: true → simple "s" suffix, bypassing pluralize's irregulars
-    expect(plan[0].groupLabel).toBe("staffs");
+    expect(plan[0].groupLabel).toBe("staff");
   });
 
   test("preserves tenant-config order of search entries within a system", () => {
@@ -501,7 +500,7 @@ describe("search", () => {
 
     await manager.search("alice");
     expect(manager.results).toHaveLength(1);
-    expect(manager.results[0].groupLabel).toBe("officers");
+    expect(manager.results[0].groupLabel).toBe("officer");
   });
 
   test("toggles searchPending around the request", async () => {

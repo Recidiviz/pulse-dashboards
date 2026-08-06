@@ -16,3 +16,4 @@
 // =============================================================================
 
 export { default } from "./WorkflowsResults";
+export { WorkflowsResultsHeader } from "./WorkflowsResultsHeader";

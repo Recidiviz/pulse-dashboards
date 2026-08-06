@@ -145,7 +145,7 @@ const US_ID_CONFIG = {
         {
           searchType: "DISTRICT",
           searchField: ["district"],
-          searchTitle: "District",
+          searchTitle: "district",
           restrictedToFeatureVariant: "usIdDistrictSearch",
         },
         {

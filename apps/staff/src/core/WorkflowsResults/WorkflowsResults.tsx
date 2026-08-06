@@ -75,7 +75,6 @@ function WorkflowsResults({
   children,
 }: WorkflowsResultsProps): React.ReactElement<any> | null {
   const { isMobile } = useIsMobile(true);
-
   return (
     <WorkflowsResultsWrapper
       verticallyCentered={!!callToActionText && isMobile}

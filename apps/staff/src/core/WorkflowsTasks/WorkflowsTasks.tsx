@@ -16,17 +16,14 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import simplur from "simplur";
 import styled from "styled-components";
-
-import { pluralizeWord } from "~utils";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { MaxWidthWithSidebar } from "../sharedComponents";
 import { CaseloadTasksHydrator } from "../TasksHydrator/TasksHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
-import WorkflowsResults from "../WorkflowsResults";
+import WorkflowsResults, { WorkflowsResultsHeader } from "../WorkflowsResults";
 import { TasksBodyContainer } from "./styles";
 import { WorkflowsTasksBodyV2 } from "./WorkflowsTasksBodyV2";
 
@@ -38,39 +35,49 @@ const WorkflowsTasks = observer(function WorkflowsTasks() {
   const {
     workflowsStore: {
       justiceInvolvedPersonTitle,
-      searchStore: { workflowsSearchFieldTitle, selectedSearchIds },
+      searchStore: {
+        workflowsSearchFieldTitle,
+        isTypesenseSearchEnabled,
+        selectedSearchIds,
+      },
     },
   } = useRootStore();
 
   const empty = (
     <TasksBodyContainer>
       <WorkflowsResults
-        callToActionText={simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
-          selectedSearchIds.length,
-        ]} ${pluralizeWord({
-          term: workflowsSearchFieldTitle,
-          count: selectedSearchIds.length,
-        })}['s|'] caseloads have any tasks. Search for another ${workflowsSearchFieldTitle}.`}
+        callToActionText={`None of the ${justiceInvolvedPersonTitle}s on the selected caseloads have any tasks. Search for another caseload.`}
       />
     </TasksBodyContainer>
   );
 
-  const initial = (
-    <TasksBodyContainer>
-      <WorkflowsResults
-        headerText="Tasks"
-        callToActionText={`Search for ${workflowsSearchFieldTitle}s above to review ${justiceInvolvedPersonTitle}s who have upcoming or overdue tasks.`}
-      />
-    </TasksBodyContainer>
+  const initialCta =
+    isTypesenseSearchEnabled && workflowsSearchFieldTitle
+      ? `Start typing the name of ${workflowsSearchFieldTitle} above to review ${justiceInvolvedPersonTitle}s who have upcoming or overdue tasks.`
+      : `Search above to review ${justiceInvolvedPersonTitle}s who have upcoming or overdue tasks.`;
+
+  const isInitial = !selectedSearchIds.length;
+
+  const header = (
+    <WorkflowsResultsHeader
+      headerText={isInitial ? "Tasks" : undefined}
+      callToActionText={isInitial ? initialCta : undefined}
+      verticallyCentered={!isTypesenseSearchEnabled}
+    />
   );
 
   return (
     <WorkflowsNavLayout limitedWidth={false}>
+      {isTypesenseSearchEnabled && header}
       <CaseloadSelectWrapper>
         <CaseloadSelect />
       </CaseloadSelectWrapper>
       <CaseloadTasksHydrator
-        initial={initial}
+        initial={
+          isTypesenseSearchEnabled ? null : (
+            <TasksBodyContainer>{header}</TasksBodyContainer>
+          )
+        }
         empty={empty}
         hydrated={<WorkflowsTasksBodyV2 />}
       />

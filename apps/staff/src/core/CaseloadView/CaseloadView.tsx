@@ -15,15 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import React from "react";
+import React, { useMemo } from "react";
 import styled from "styled-components";
 
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
+import { AllCaseloadsPresenter } from "../../WorkflowsStore/presenters/AllCaseloadsPresenter";
 import { CaseloadSelect } from "../CaseloadSelect";
 import CaseloadTypeSelect from "../CaseloadTypeSelect/CaseloadTypeSelect";
 import { PersonLookup } from "../PersonLookup";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
+import { WorkflowsResultsHeader } from "../WorkflowsResults";
 import { AllCaseloads } from "./AllCaseloads";
 
 const SelectRow = styled.div<{ $isMobile: boolean }>`
@@ -33,17 +37,41 @@ const SelectRow = styled.div<{ $isMobile: boolean }>`
   align-items: ${({ $isMobile }) => ($isMobile ? "stretch" : "flex-start")};
 `;
 
-export const CaseloadView: React.FC = () => {
+export const CaseloadView: React.FC = observer(function CaseloadView() {
   const { isMobile } = useIsMobile(true);
+  const rootStore = useRootStore();
+  const presenter = useMemo(
+    () => new AllCaseloadsPresenter(rootStore),
+    [rootStore],
+  );
+
+  const { isTypesenseSearchEnabled } = presenter;
+
+  const isInitial =
+    !rootStore.workflowsStore.searchStore.selectedSearchIds.length;
+
+  const header = (
+    <WorkflowsResultsHeader
+      headerText={isInitial ? presenter.initialHeaderText : undefined}
+      callToActionText={
+        isInitial ? presenter.initialCallToActionText : undefined
+      }
+      verticallyCentered={!isTypesenseSearchEnabled}
+    />
+  );
 
   return (
     <WorkflowsNavLayout>
+      {isTypesenseSearchEnabled && header}
       <CaseloadTypeSelect />
       <SelectRow $isMobile={isMobile}>
         <CaseloadSelect />
         <PersonLookup />
       </SelectRow>
-      <AllCaseloads />
+      <AllCaseloads
+        presenter={presenter}
+        initialContent={isTypesenseSearchEnabled ? null : header}
+      />
     </WorkflowsNavLayout>
   );
-};
+});

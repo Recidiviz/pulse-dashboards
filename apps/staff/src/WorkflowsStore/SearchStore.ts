@@ -16,6 +16,7 @@
 // =============================================================================
 
 import assertNever from "assert-never";
+import { intersection, uniq } from "lodash";
 import { makeAutoObservable, reaction, when } from "mobx";
 
 import { SystemId } from "~datatypes";
@@ -381,41 +382,49 @@ export class SearchStore {
     this.searchTypeOverride = override;
   }
 
-  /**
-   * Title to display for the search bar in workflows
-   */
-  get workflowsSearchFieldTitle(): string {
-    return this.searchTitleOverride(
-      this.workflowsStore.activeSystem,
-      "officer",
+  // Deduped list of the searchTitles the tenant lets this user search by for
+  // the currently active system: only SUPERVISION or INCARCERATION titles
+  // when a single system is active; both, deduped, when `activeSystem` is
+  // "ALL". Kept private — external consumers should read
+  // `workflowsSearchFieldTitle` for the human-facing phrase.
+  private get enabledSearchTitles(): string[] {
+    const { activeSystem, workflowsSupportedSystems, systemConfigFor } =
+      this.workflowsStore;
+    if (!activeSystem || !workflowsSupportedSystems) return [];
+    const supported: Exclude<SystemId, "ALL">[] = intersection(
+      ["SUPERVISION", "INCARCERATION"] as Exclude<SystemId, "ALL">[],
+      workflowsSupportedSystems as Exclude<SystemId, "ALL">[],
+    );
+    const systems: Exclude<SystemId, "ALL">[] =
+      activeSystem === "ALL"
+        ? supported
+        : supported.filter((s) => s === activeSystem);
+    return uniq(
+      systems.flatMap((system) =>
+        systemConfigFor(system).search.map((sc) => sc.searchTitle),
+      ),
     );
   }
 
-  searchTitleOverride(
-    system: SystemId | undefined,
-    defaultTitle: string,
-    // include an optional callback in case additional logic needs to be applied
-    callbackFn: (title: string) => string = (title) => title,
-  ): string {
-    if (!system || system === "ALL") return callbackFn(defaultTitle);
-    const searchConfig = this.workflowsStore.systemConfigFor(system).search;
-
-    // If there is a search type override (a search pill is selected),
-    // find the associated search config and return that title
-    if (this.searchTypeOverride) {
-      const selectedSearchConfig = searchConfig.find(
-        (search) => search.searchType === this.searchTypeOverride,
-      );
-      if (selectedSearchConfig)
-        return callbackFn(selectedSearchConfig.searchTitle);
-    }
-
-    // If there is a single search config for the current system, return that title,
-    if (searchConfig.length === 1 && searchConfig[0].searchTitle)
-      return callbackFn(searchConfig[0].searchTitle);
-
-    // otherwise return the defaultTitle
-    return callbackFn(defaultTitle);
+  /**
+   * Natural-language phrase listing every searchable thing the tenant lets
+   * this user search by, e.g. `"an officer"` / `"an officer or district"` /
+   * `"an officer, district, or facility"`. Meant to slot into copy like:
+   *
+   *   Start typing the name of {workflowsSearchFieldTitle} above to…
+   *
+   * Returns `""` when the tenant has no configured search titles (edge case
+   * — callers should fall back to a generic CTA).
+   */
+  get workflowsSearchFieldTitle(): string {
+    const titles = this.enabledSearchTitles;
+    if (titles.length === 0) return "";
+    const article = /^[aeiou]/i.test(titles[0]) ? "an" : "a";
+    if (titles.length === 1) return `${article} ${titles[0]}`;
+    if (titles.length === 2) return `${article} ${titles[0]} or ${titles[1]}`;
+    const [first, ...rest] = titles;
+    const last = rest.pop();
+    return `${article} ${first}, ${rest.join(", ")}, or ${last}`;
   }
 
   /**

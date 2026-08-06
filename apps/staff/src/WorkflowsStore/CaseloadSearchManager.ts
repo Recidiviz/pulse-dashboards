@@ -23,7 +23,6 @@ import {
   type ScopedTypesenseClient,
 } from "~@typesense/client";
 import { SystemId } from "~datatypes";
-import { pluralizeWord } from "~utils";
 
 import {
   collectionsBySearchType,
@@ -312,10 +311,7 @@ export function buildTypesenseSearchPlan(
         ];
       if (!collection) continue;
 
-      const groupLabel = pluralizeWord({
-        term: sc.searchTitle,
-        justAppendS: sc.searchTitleIgnoreCase,
-      });
+      const groupLabel = sc.searchTitle;
 
       if (collection === "locations") {
         const idType =

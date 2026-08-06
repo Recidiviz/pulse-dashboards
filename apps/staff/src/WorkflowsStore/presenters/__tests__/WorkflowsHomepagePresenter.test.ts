@@ -33,14 +33,22 @@ const MOCK_OPPORTUNITY_CONFIG = {
 beforeEach(() => {
   workflowsStore = {
     activeSystem: "INCARCERATION",
-    rootStore: { currentTenantId: "mockTenant" },
+    rootStore: {
+      currentTenantId: "mockTenant",
+      tenantStore: { currentTenantConfig: undefined },
+      userStore: { canUserAccessTasks: false },
+    },
     user: { info: { givenNames: "John Doe" } },
     supportsMultipleSystems: true,
     opportunityTypes: MOCK_OPPORTUNITY_TYPES,
+    // Empty per-system search config keeps searchResultLabel + titleForSystem
+    // resolving cleanly to their defaults; individual tests can override.
+    systemConfigFor: () => ({ search: [] }),
     searchStore: {
       workflowsSearchFieldTitle: "field title",
-      searchTitleOverride: () => "case manager",
       selectedSearchIds: ["id1", "id2"],
+      isTypesenseSearchEnabled: true,
+      searchTypeOverride: undefined,
     },
   } as unknown as WorkflowsStore;
 
@@ -77,8 +85,15 @@ describe("WorkflowsHomepagePresenter", () => {
 
   describe("searchResultLabel tests", () => {
     it("returns pluralized caseload and location when activeSystem is ALL", () => {
-      workflowsStore.activeSystem = "ALL";
-      workflowsStore.searchStore.searchTitleOverride = () => "location";
+      const ws = workflowsStore as any;
+      ws.activeSystem = "ALL";
+      // INCARCERATION resolves to "location" (single search config); no pill
+      // override is set, so the ALL-mode branch fires "caseloads and/or locations".
+      ws.systemConfigFor = (system: "SUPERVISION" | "INCARCERATION") =>
+        system === "INCARCERATION"
+          ? { search: [{ searchType: "FACILITY", searchTitle: "location" }] }
+          : { search: [] };
+      ws.searchStore.searchTypeOverride = undefined;
       vi.spyOn(
         workflowsStore.rootStore,
         "currentTenantId",
@@ -88,6 +103,46 @@ describe("WorkflowsHomepagePresenter", () => {
       // Accessing private property via @ts-ignore for testing
       // @ts-ignore
       expect(presenter.searchResultLabel).toBe("caseloads and/or locations");
+    });
+  });
+
+  // These tests verify the presenter WIRES the searchStore's
+  // `workflowsSearchFieldTitle` into the CTA copy — the phrase-generation
+  // logic itself is unit-tested in SearchStore.test.ts, so here we just mock
+  // the getter as a fixed string.
+  describe("ctaAndHeaderText — no-search welcome message", () => {
+    function noSearchSelectedWith({
+      phrase,
+      typesenseEnabled = true,
+    }: {
+      phrase: string;
+      typesenseEnabled?: boolean;
+    }) {
+      const ws = workflowsStore as any;
+      ws.searchStore.selectedSearchIds = [];
+      ws.searchStore.workflowsSearchFieldTitle = phrase;
+      ws.searchStore.isTypesenseSearchEnabled = typesenseEnabled;
+    }
+
+    it("uses the 'Start typing the name of {phrase}' copy when FV is on and a phrase is available", () => {
+      noSearchSelectedWith({ phrase: "an officer, district, or facility" });
+      expect(presenter.ctaAndHeaderText.ctaText).toBe(
+        "Start typing the name of an officer, district, or facility above to review and refer people eligible for opportunities like Opportunity Type 1 and Opportunity Type 2.",
+      );
+    });
+
+    it("falls back to the generic 'Search above' copy when the phrase is empty", () => {
+      noSearchSelectedWith({ phrase: "" });
+      expect(presenter.ctaAndHeaderText.ctaText).toBe(
+        "Search above to review and refer people eligible for opportunities like Opportunity Type 1 and Opportunity Type 2.",
+      );
+    });
+
+    it("falls back to the generic 'Search above' copy when the caseload-search FV is off", () => {
+      noSearchSelectedWith({ phrase: "an officer", typesenseEnabled: false });
+      expect(presenter.ctaAndHeaderText.ctaText).toBe(
+        "Search above to review and refer people eligible for opportunities like Opportunity Type 1 and Opportunity Type 2.",
+      );
     });
   });
 });

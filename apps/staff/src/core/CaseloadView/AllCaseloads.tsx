@@ -22,9 +22,7 @@ import React from "react";
 import styled from "styled-components";
 
 import { palette } from "~design-system";
-import { withPresenterManager } from "~hydration-utils";
 
-import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { AllCaseloadsPresenter } from "../../WorkflowsStore/presenters/AllCaseloadsPresenter";
 import CaseloadHydrator from "../CaseloadHydrator/CaseloadHydrator";
@@ -68,10 +66,12 @@ const AllCaseloadsViz = observer(function AllCaseloadsViz({
   return <AllCaseloadsList />;
 });
 
-const ManagedComponent = observer(function AllCaseloads({
+export const AllCaseloads = observer(function AllCaseloads({
   presenter,
+  initialContent = null,
 }: {
   presenter: AllCaseloadsPresenter;
+  initialContent?: React.ReactNode;
 }) {
   const { isMobile } = useIsMobile(true);
 
@@ -88,12 +88,7 @@ const ManagedComponent = observer(function AllCaseloads({
 
   return (
     <CaseloadHydrator
-      initial={
-        <WorkflowsResults
-          headerText={presenter.initialHeaderText}
-          callToActionText={presenter.initialCallToActionText}
-        />
-      }
+      initial={initialContent}
       hydrated={
         <WorkflowsResults>
           {hydratedHeader}
@@ -103,16 +98,4 @@ const ManagedComponent = observer(function AllCaseloads({
       empty={null}
     />
   );
-});
-
-function usePresenter() {
-  const rootStore = useRootStore();
-
-  return new AllCaseloadsPresenter(rootStore);
-}
-
-export const AllCaseloads = withPresenterManager({
-  usePresenter,
-  ManagedComponent,
-  managerIsObserver: true,
 });
