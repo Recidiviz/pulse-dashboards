@@ -25,6 +25,7 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { AllCaseloadsPresenter } from "../../WorkflowsStore/presenters/AllCaseloadsPresenter";
 import { CaseloadSelect } from "../CaseloadSelect";
 import CaseloadTypeSelect from "../CaseloadTypeSelect/CaseloadTypeSelect";
+import { TableViewToggle } from "../OpportunityCaseloadView/TableViewToggle";
 import { PersonLookup } from "../PersonLookup";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import { WorkflowsResultsHeader } from "../WorkflowsResults";
@@ -47,16 +48,12 @@ export const CaseloadView: React.FC = observer(function CaseloadView() {
 
   const { isTypesenseSearchEnabled } = presenter;
 
-  const isInitial =
-    !rootStore.workflowsStore.searchStore.selectedSearchIds.length;
-
   const header = (
     <WorkflowsResultsHeader
-      headerText={isInitial ? presenter.initialHeaderText : undefined}
-      callToActionText={
-        isInitial ? presenter.initialCallToActionText : undefined
-      }
+      headerText={presenter.headerText}
+      callToActionText={presenter.headerCallToActionText}
       verticallyCentered={!isTypesenseSearchEnabled}
+      align="center"
     />
   );
 
@@ -67,6 +64,9 @@ export const CaseloadView: React.FC = observer(function CaseloadView() {
       <SelectRow $isMobile={isMobile}>
         <CaseloadSelect />
         <PersonLookup />
+        {presenter.showTableViewToggleInSearchRow && (
+          <TableViewToggle presenter={presenter} />
+        )}
       </SelectRow>
       <AllCaseloads
         presenter={presenter}

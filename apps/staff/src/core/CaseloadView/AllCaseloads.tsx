@@ -75,7 +75,8 @@ export const AllCaseloads = observer(function AllCaseloads({
 }) {
   const { isMobile } = useIsMobile(true);
 
-  const hydratedHeader = (
+  const showheader = !presenter.isTypesenseSearchEnabled;
+  const hydratedHeader = showheader ? (
     <HeaderRow $isMobile={isMobile}>
       <HeaderText $isMobile={isMobile}>
         {presenter.hydratedHeaderText}
@@ -84,7 +85,7 @@ export const AllCaseloads = observer(function AllCaseloads({
         <TableViewToggle presenter={presenter} />
       )}
     </HeaderRow>
-  );
+  ) : null;
 
   return (
     <CaseloadHydrator

@@ -89,7 +89,47 @@ export class AllCaseloadsPresenter implements TableViewSelectInterface {
       },
     } = this.rootStore;
 
+    if (this.isTypesenseSearchEnabled) {
+      return `Start typing the name of ${workflowsSearchFieldTitle} to view their entire caseload.`;
+    }
+
     return `Search for ${workflowsSearchFieldTitle} above to view their entire caseload.`;
+  }
+
+  get isInitial(): boolean {
+    return !this.rootStore.workflowsStore.searchStore.selectedSearchIds.length;
+  }
+
+  // True once the selected caseload has loaded with at least one person (matches
+  // CaseloadHydrator's "hydrated" state).
+  get hasResults(): boolean {
+    const { workflowsStore } = this.rootStore;
+    return (
+      !this.isInitial &&
+      workflowsStore.caseloadLoaded() &&
+      workflowsStore.caseloadPersons.length > 0
+    );
+  }
+
+  // Header shown with the caseload selects: keep the base "All Clients" header
+  // visible while a search hydrates, then add the "(N)" count once results load.
+  get headerText(): string {
+    return this.hasResults ? this.hydratedHeaderText : this.initialHeaderText;
+  }
+
+  get headerCallToActionText(): string | undefined {
+    return this.isInitial ? this.initialCallToActionText : undefined;
+  }
+
+  // Whether to show the table-view toggle in line with the search bar (typesense
+  // FV, once results are in). `showTableViewToggle` is reused by the non-FV
+  // results header, so the search-row-specific conditions live here.
+  get showTableViewToggleInSearchRow(): boolean {
+    return (
+      this.isTypesenseSearchEnabled &&
+      this.hasResults &&
+      this.showTableViewToggle
+    );
   }
 
   get hydratedHeaderText(): string {
