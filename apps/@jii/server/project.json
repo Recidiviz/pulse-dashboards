@@ -242,6 +242,19 @@
       }
     },
 
+    "requires-sops-env:test-resource-api": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "vite-node src/tools/testResourceApi.ts"
+      },
+      "metadata": {
+        "sops-env": {
+          "additional-sops-env-files": ["{projectRoot}/env.offline.enc.yaml"]
+        }
+      }
+    },
+
     "test": {
       "dependsOn": ["^prepare-test-db"]
     }

@@ -31,6 +31,7 @@ import {
 } from "./programs/schema";
 import { getResident } from "./residents/getResident";
 import { getResidentsInFacility } from "./residents/getResidentsInFacility";
+import { resourcesRouter } from "./resources/router";
 
 export const residentRouter = router({
   getResident,
@@ -93,6 +94,8 @@ export const residentRouter = router({
         isStarred: starredKeys.has(`${program.programId}:${program.title}`),
       }));
     }),
+
+  resources: resourcesRouter,
 
   setStarredProgram: firebaseAuthedResidentProcedure
     .input(setStarredProgramInputSchema)
