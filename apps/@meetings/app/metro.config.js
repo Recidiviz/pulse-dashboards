@@ -46,13 +46,13 @@ const matchPath =
  */
 const customConfig = {
   cacheVersion: "@meetings/app",
-  watchFolders: [monorepoRoot],
+  watchFolders: [...defaultConfig.watchFolders, monorepoRoot],
   transformer: {
     babelTransformerPath: require.resolve("react-native-svg-transformer"),
   },
   resolver: {
     assetExts: assetExts.filter((ext) => ext !== "svg"),
-    sourceExts: [...sourceExts, "cjs", "mjs", "svg"],
+    sourceExts: [...sourceExts, "svg"],
     // Fixes 'import.meta' errors on web (for example for zustand lib) by enabling proper ESM resolution for browser
     // https://github.com/expo/expo/issues/30323
     unstable_conditionNames: ["browser", "require", "react-native"],

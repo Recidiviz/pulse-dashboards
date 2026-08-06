@@ -38,6 +38,11 @@ module.exports = {
       "@react-native-community/netinfo/jest/netinfo-mock.js",
     "^@paralleldrive/cuid2$": "<rootDir>/__mocks__/@paralleldrive/cuid2.js",
     "^react-native-auth0$": "<rootDir>/__mocks__/react-native-auth0.js",
+    "async-require/(setup|messageSocket)$":
+      "<rootDir>/__mocks__/expo-async-require-setup.js",
+    "^react-native-worklets$": require.resolve(
+      "react-native-worklets/src/mock",
+    ),
     // The react-native Jest environment restricts export conditions to
     // ['require', 'react-native'], which yaml's exports map doesn't satisfy,
     // so it falls back to the ESM browser build and fails to parse.
@@ -51,6 +56,11 @@ module.exports = {
       "babel-jest",
       {
         configFile: __dirname + "/.babelrc.js",
+        caller: {
+          name: "metro",
+          bundler: "metro",
+          platform: "ios",
+        },
       },
     ],
     "^.+\\.(bmp|gif|jpg|jpeg|mp4|png|psd|svg|webp|ttf|otf|m4v|mov|mp4|mpeg|mpg|webm|aac|aiff|caf|m4a|mp3|wav|html|pdf|obj)$":

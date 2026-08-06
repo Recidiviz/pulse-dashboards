@@ -78,7 +78,6 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     icon: "./src/shared/assets/images/Apple_icon.png",
     scheme,
     userInterfaceStyle: "automatic",
-    newArchEnabled: true,
     ios: {
       supportsTablet: false,
       bundleIdentifier: bundleIdentifier,
@@ -135,6 +134,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
             "The app uses the microphone to record your meeting.",
         },
       ],
+      "@react-native-community/datetimepicker",
       [
         "expo-font",
         {
