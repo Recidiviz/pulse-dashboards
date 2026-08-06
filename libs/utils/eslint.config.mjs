@@ -19,9 +19,7 @@
 
 import tseslint from "typescript-eslint";
 
-import baseConfig, {
-  designSystemRestrictedImports,
-} from "../../eslint.config.mjs";
+import baseConfig, { esmRestrictedImports } from "../../eslint.config.mjs";
 
 export default tseslint.config(baseConfig, {
   files: ["**/*.*js", "**/*.*jsx", "**/*.*ts", "**/*.*tsx"],
@@ -29,15 +27,7 @@ export default tseslint.config(baseConfig, {
     "no-restricted-imports": [
       "error",
       {
-        paths: [
-          // Need to include these again because eslint doesn't deep merge rules
-          {
-            name: "styled-components",
-            message: "Please import from styled-components/macro.",
-          },
-
-          designSystemRestrictedImports,
-        ],
+        paths: [...esmRestrictedImports],
       },
     ],
   },

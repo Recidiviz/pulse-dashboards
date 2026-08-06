@@ -275,7 +275,7 @@ module "seed_job" {
   exec                          = true
   timeout                       = "3600s"
   max_retries                   = 1
-  container_command             = ["node", "seedDevData/main.js"]
+  container_command             = ["dumb-init", "node", "--import=extensionless/register", "seedDevData/main.js"]
 
   volumes = [{
     name = "cloudsql"
