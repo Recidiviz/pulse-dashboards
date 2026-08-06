@@ -192,6 +192,12 @@ service cloud.firestore {
       allow write: if appIsStaff() && allowPersonUpdates(clientId);
     }
 
+    // demo-prefixed counterpart of the clientOpportunityUpdates collectionGroup rule above;
+    // demo mode prefixes all collection names, so this needs its own explicit match.
+    match /{path=**}/DEMO_clientOpportunityUpdates/{docId} {
+      allow read: if appIsStaff() && (recidivizAllowedStatesIncludesTarget("DEMO_clientOpportunityUpdates") || stateCodeMatchesTarget());
+    }
+
     match /DEMO2_featureVariants/{record} {
       allow read: if appIsStaff() && usernameMatches(record);
     }

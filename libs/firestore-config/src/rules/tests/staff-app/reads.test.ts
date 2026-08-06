@@ -241,6 +241,53 @@ describe("app = staff", () => {
     );
   });
 
+  // demo mode prefixes every collection name with "DEMO_"; this covers the
+  // same query shape against that prefixed collectionGroup.
+  describe("DEMO_clientOpportunityUpdates (collectionGroup)", () => {
+    beforeEach(async () => {
+      await seedClientOpportunityUpdate(
+        testEnv,
+        "US_TN",
+        "DEMO_clientOpportunityUpdates",
+      );
+      await seedClientOpportunityUpdate(
+        testEnv,
+        "US_CA",
+        "DEMO_clientOpportunityUpdates",
+      );
+    });
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("TN user can query DEMO_clientOpportunityUpdates for their own state", async () => {
+      await testCollectionGroupOpportunityUpdateRead(
+        getTNUser(testEnv).firestore(),
+        assertSucceeds,
+        "US_TN",
+        "DEMO_clientOpportunityUpdates",
+      );
+    });
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("Recidiviz user can query DEMO_clientOpportunityUpdates from recidivizAllowedStates", async () => {
+      await testCollectionGroupOpportunityUpdateRead(
+        getRecidivizUser(testEnv).firestore(),
+        assertSucceeds,
+        "US_TN",
+        "DEMO_clientOpportunityUpdates",
+      );
+    });
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("stateless user cannot query DEMO_clientOpportunityUpdates", async () => {
+      await testCollectionGroupOpportunityUpdateRead(
+        getStatelessUser(testEnv).firestore(),
+        assertFails,
+        "US_TN",
+        "DEMO_clientOpportunityUpdates",
+      );
+    });
+  });
+
   describe("clientUpdatesV2/{clientId}/custom_tasks/{taskId}", () => {
     // The recursive rule on clientUpdatesV2 covers this subcollection; these
     // tests confirm the stateCode-prefix policy still gates reads from it.

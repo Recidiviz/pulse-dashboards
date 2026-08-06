@@ -230,6 +230,7 @@ export async function testReadCustomTaskForState(
 export async function seedClientOpportunityUpdate(
   testEnv: RulesTestEnvironment,
   stateCode: string,
+  collectionName = "clientOpportunityUpdates",
 ) {
   await testEnv.withSecurityRulesDisabled(async (context) => {
     await setDoc(
@@ -237,7 +238,7 @@ export async function seedClientOpportunityUpdate(
         context.firestore(),
         "clientUpdatesV2",
         `${stateCode}_someClient`,
-        "clientOpportunityUpdates",
+        collectionName,
         "someOpportunity",
       ),
       { stateCode },
@@ -252,11 +253,12 @@ export async function testCollectionGroupOpportunityUpdateRead(
   db: FirestoreInstance,
   assertFn: AssertFn,
   stateCode: string,
+  collectionName = "clientOpportunityUpdates",
 ) {
   await assertFn(
     getDocs(
       query(
-        collectionGroup(db, "clientOpportunityUpdates"),
+        collectionGroup(db, collectionName),
         where("stateCode", "==", stateCode),
       ),
     ),
