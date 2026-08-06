@@ -93,6 +93,7 @@ export const AgencyConfigFileSchema = z.object({
 
   // ── Infrastructure ────────────────────────────────────────
   showTranscriptions: z.boolean().optional(),
+  showCNI: z.boolean().optional(),
   staffFeedbackEnabled: z.boolean().optional(),
   audioPlaybackEnabled: z.boolean().optional(),
   audioTTLDays: z.number().int().min(7).nullable().optional(),
