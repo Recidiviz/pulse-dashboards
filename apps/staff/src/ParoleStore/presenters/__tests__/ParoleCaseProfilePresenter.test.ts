@@ -104,4 +104,17 @@ describe("ParoleCaseProfilePresenter", () => {
 
     expect(presenter.caseDetail).toEqual(TEST_CASE);
   });
+
+  test("sections reflects the current tenant's paroleConfig", () => {
+    const rootStore = new RootStore();
+    rootStore.tenantStore.currentTenantId = "US_CO";
+    const tenantScopedPresenter = new ParoleCaseProfilePresenter(
+      new ParoleStore(rootStore),
+      "DOC-45821",
+    );
+
+    expect(tenantScopedPresenter.sections).toEqual(
+      rootStore.tenantStore.currentTenantConfig?.paroleConfig?.sections,
+    );
+  });
 });

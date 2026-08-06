@@ -17,6 +17,7 @@
 
 import { makeAutoObservable } from "mobx";
 
+import { ParoleConfig } from "../core/models/types";
 import { RootStore } from "../RootStore";
 import { ParoleAPI } from "./api/interface";
 import { ParoleOfflineAPIClient } from "./api/ParoleOfflineAPIClient";
@@ -35,5 +36,21 @@ export class ParoleStore {
 
   getApiClient(): ParoleAPI {
     return new ParoleOfflineAPIClient(this);
+  }
+
+  get config(): ParoleConfig {
+    const { currentTenantId, currentTenantConfig } = this.rootStore.tenantStore;
+    if (!currentTenantConfig) {
+      throw new Error(
+        "ParoleStore.config accessed with no current tenant configured",
+      );
+    }
+    if (!currentTenantConfig.paroleConfig) {
+      throw new Error(
+        `Tenant [${currentTenantId}] has no paroleConfig set. Add one in ` +
+          `tenants/<STATE>.ts to enable the Parole board for this tenant.`,
+      );
+    }
+    return currentTenantConfig.paroleConfig;
   }
 }

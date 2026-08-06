@@ -31,8 +31,10 @@ vi.mock("../../../../components/StoreProvider");
 const useRootStoreMock = vi.mocked(StoreProvider.useRootStore);
 
 beforeEach(() => {
+  const rootStore = new RootStore();
+  rootStore.tenantStore.currentTenantId = "US_CO";
   useRootStoreMock.mockReturnValue({
-    paroleStore: new ParoleStore(new RootStore()),
+    paroleStore: new ParoleStore(rootStore),
   } as never);
 });
 

@@ -19,11 +19,11 @@ import { spacing, typography } from "@recidiviz/design-system";
 import { ColumnDef } from "@tanstack/react-table";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { useState } from "react";
 import styled from "styled-components";
 
 import { ParoleHearing } from "~datatypes";
 import { palette } from "~design-system";
+import { withPresenterManager } from "~hydration-utils";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import { ParoleDocketPresenter } from "../../../ParoleStore/presenters/ParoleDocketPresenter";
@@ -178,13 +178,14 @@ const ParoleDocketList = observer(function ParoleDocketList({
   );
 });
 
-export function ParoleDocketView() {
+function usePresenter() {
   const { paroleStore } = useRootStore();
-  const [presenter] = useState(() => new ParoleDocketPresenter(paroleStore));
-
-  return (
-    <ModelHydrator hydratable={presenter}>
-      <ParoleDocketList presenter={presenter} />
-    </ModelHydrator>
-  );
+  return new ParoleDocketPresenter(paroleStore);
 }
+
+export const ParoleDocketView = withPresenterManager({
+  usePresenter,
+  ManagedComponent: ParoleDocketList,
+  managerIsObserver: false,
+  HydratorComponent: ModelHydrator,
+});

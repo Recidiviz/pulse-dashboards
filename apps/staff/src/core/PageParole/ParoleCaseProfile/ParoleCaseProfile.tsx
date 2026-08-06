@@ -18,23 +18,19 @@
 import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
+import { withPresenterManager } from "~hydration-utils";
+
 import NotFound from "../../../components/NotFound";
 import { useRootStore } from "../../../components/StoreProvider";
-import { ParoleStore } from "../../../ParoleStore/ParoleStore";
 import { ParoleCaseProfilePresenter } from "../../../ParoleStore/presenters/ParoleCaseProfilePresenter";
 import { BackLink } from "../../Link";
 import ModelHydrator from "../../ModelHydrator";
 import { paroleUrl } from "../../views";
-import { AttachmentsSection } from "../components/AttachmentsSection";
 import { CaseProfileSidebar } from "../components/CaseProfileSidebar";
-import { ConductHistorySection } from "../components/ConductHistorySection";
-import { OffenseHistorySection } from "../components/OffenseHistorySection";
-import { ProgramParticipationSection } from "../components/ProgramParticipationSection";
-import { RiskAssessmentSection } from "../components/RiskAssessmentSection";
+import { ParoleSectionComponents } from "../components/ParoleSectionComponents";
 import { PAROLE_SECTION_IDS, SectionAnchor } from "../components/shared";
 
 // Page-level max-width/padding comes from PageParole's shared Main wrapper;
@@ -98,67 +94,41 @@ const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
             sentenceStartDate={caseDetail.sentenceStartDate}
             paroleEligibilityDate={caseDetail.paroleEligibilityDate}
             mandatoryReleaseDate={caseDetail.mandatoryReleaseDate}
+            sections={presenter.sections}
           />
         </SidebarColumn>
 
         <MainColumn>
-          <SectionAnchor id={PAROLE_SECTION_IDS.offenseHistory}>
-            <OffenseHistorySection offenseHistory={caseDetail.offenseHistory} />
-          </SectionAnchor>
-
-          <SectionAnchor id={PAROLE_SECTION_IDS.riskAssessment}>
-            <RiskAssessmentSection
-              riskAssessments={caseDetail.riskAssessments}
-              riskOverviewHistory={caseDetail.riskOverviewHistory}
-            />
-          </SectionAnchor>
-
-          <SectionAnchor id={PAROLE_SECTION_IDS.programParticipation}>
-            <ProgramParticipationSection
-              docPrograms={caseDetail.docPrograms}
-              edovoPrograms={caseDetail.edovoPrograms}
-            />
-          </SectionAnchor>
-
-          <SectionAnchor id={PAROLE_SECTION_IDS.conductHistory}>
-            <ConductHistorySection conductHistory={caseDetail.conductHistory} />
-          </SectionAnchor>
-
-          <SectionAnchor id={PAROLE_SECTION_IDS.attachments}>
-            <AttachmentsSection
-              parolePlan={caseDetail.parolePlan}
-              attachments={caseDetail.attachments}
-            />
-          </SectionAnchor>
+          {presenter.sections.map((sectionName) => (
+            <SectionAnchor
+              key={sectionName}
+              id={PAROLE_SECTION_IDS[sectionName]}
+            >
+              {ParoleSectionComponents[sectionName](caseDetail)}
+            </SectionAnchor>
+          ))}
         </MainColumn>
       </CaseProfileLayout>
     </Wrapper>
   );
 });
 
+function usePresenter({ docId }: { docId: string }) {
+  const { paroleStore } = useRootStore();
+  return new ParoleCaseProfilePresenter(paroleStore, docId);
+}
+
+const ParoleCaseProfileHydrator = withPresenterManager({
+  usePresenter,
+  ManagedComponent: ParoleCaseProfileContents,
+  managerIsObserver: false,
+  HydratorComponent: ModelHydrator,
+});
+
 export function ParoleCaseProfile() {
   const { docId } = useParams<{ docId: string }>();
-  const { paroleStore } = useRootStore();
 
   if (!docId) return <NotFound />;
 
-  return <ParoleCaseProfileHydrator docId={docId} paroleStore={paroleStore} />;
-}
-
-function ParoleCaseProfileHydrator({
-  docId,
-  paroleStore,
-}: {
-  docId: string;
-  paroleStore: ParoleStore;
-}) {
-  const [presenter] = useState(
-    () => new ParoleCaseProfilePresenter(paroleStore, docId),
-  );
-
-  return (
-    <ModelHydrator hydratable={presenter}>
-      <ParoleCaseProfileContents presenter={presenter} />
-    </ModelHydrator>
-  );
+  return <ParoleCaseProfileHydrator docId={docId} />;
 }

@@ -26,6 +26,10 @@ import { NAV_BAR_HEIGHT } from "../../NavigationLayout";
 import { SectionCard } from "../../SectionCard";
 import { PaddedSectionCardBody } from "./PaddedSectionCardBody";
 import {
+  PAROLE_SECTION_LABELS,
+  ParoleSectionName,
+} from "./ParoleSectionComponents";
+import {
   calculateAge,
   FactLabel,
   FactStack,
@@ -104,28 +108,6 @@ const SectionNavButton = styled.button`
   }
 `;
 
-// Order matches the MainColumn section render order in ParoleCaseProfile, per
-// OBT-42664 ("update the section order to match the left-nav").
-const SECTION_NAV_ITEMS: ReadonlyArray<{ label: string; sectionId: string }> = [
-  {
-    label: "Offense & Criminal History",
-    sectionId: PAROLE_SECTION_IDS.offenseHistory,
-  },
-  {
-    label: "Risk Score Trajectory",
-    sectionId: PAROLE_SECTION_IDS.riskAssessment,
-  },
-  {
-    label: "Program Participation",
-    sectionId: PAROLE_SECTION_IDS.programParticipation,
-  },
-  {
-    label: "Institutional Conduct History",
-    sectionId: PAROLE_SECTION_IDS.conductHistory,
-  },
-  { label: "Attachments", sectionId: PAROLE_SECTION_IDS.attachments },
-];
-
 export function CaseProfileSidebar({
   name,
   docId,
@@ -138,6 +120,7 @@ export function CaseProfileSidebar({
   sentenceStartDate,
   paroleEligibilityDate,
   mandatoryReleaseDate,
+  sections,
 }: {
   name: string;
   docId: string;
@@ -150,6 +133,7 @@ export function CaseProfileSidebar({
   sentenceStartDate: string;
   paroleEligibilityDate: string;
   mandatoryReleaseDate: string;
+  sections: ParoleSectionName[];
 }) {
   return (
     <>
@@ -230,14 +214,16 @@ export function CaseProfileSidebar({
       <SectionNavCard>
         <NavCardBody>
           <SectionNav>
-            {SECTION_NAV_ITEMS.map((item, index) => (
-              <Fragment key={item.sectionId}>
+            {sections.map((sectionName, index) => (
+              <Fragment key={sectionName}>
                 {index > 0 && <Hr />}
                 <SectionNavButton
                   type="button"
-                  onClick={() => scrollToSection(item.sectionId)}
+                  onClick={() =>
+                    scrollToSection(PAROLE_SECTION_IDS[sectionName])
+                  }
                 >
-                  {item.label}
+                  {PAROLE_SECTION_LABELS[sectionName]}
                 </SectionNavButton>
               </Fragment>
             ))}

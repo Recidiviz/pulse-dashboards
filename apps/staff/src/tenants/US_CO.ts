@@ -27,6 +27,16 @@ const US_CO_CONFIG = {
   navigation: {
     parole: ["docket"],
   },
+  // TODO(OBT-43104): Add "alerts" once the CO-only Alerts section is built.
+  paroleConfig: {
+    sections: [
+      "offenseHistory",
+      "riskAssessment",
+      "programParticipation",
+      "conductHistory",
+      "attachments",
+    ],
+  },
 } satisfies TenantConfig<"US_CO">;
 
 export default US_CO_CONFIG;

@@ -219,6 +219,15 @@ const US_ID_CONFIG = {
     psi: [],
     methodology: ["system", "operations"],
   },
+  paroleConfig: {
+    sections: [
+      "offenseHistory",
+      "riskAssessment",
+      "programParticipation",
+      "conductHistory",
+      "attachments",
+    ],
+  },
   tableColumns: enabledTableColumns[pathways.US_ID],
   vitalsMetrics: [
     {

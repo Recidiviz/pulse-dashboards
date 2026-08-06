@@ -55,6 +55,7 @@ import type {
   SupervisionTaskRecord,
   SupervisionTaskType,
 } from "../../WorkflowsStore/Task/types";
+import { ParoleSectionName } from "../PageParole/components/ParoleSectionComponents";
 import { VitalsMetric } from "../PageVitals/types";
 import { TableColumns } from "../types/charts";
 import { Navigation } from "../types/navigation";
@@ -112,6 +113,17 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
     navTitle: string;
     lookerDashboard: string;
   };
+
+  // Parole
+  paroleConfig?: ParoleConfig;
+};
+
+/**
+ * State-specific behavior for the Parole case profile page. Required for any
+ * tenant with Parole nav enabled -- ParoleStore.config throws otherwise.
+ */
+export type ParoleConfig = {
+  sections: ParoleSectionName[];
 };
 
 /**
