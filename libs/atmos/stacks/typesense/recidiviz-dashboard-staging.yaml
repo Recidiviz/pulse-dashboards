@@ -33,13 +33,16 @@ components:
         # this project — see the endpoint_ip / cert_dns_authorization_record outputs.
         hostname: typesense-staging.recidiviz.org
 
-        # Origins permitted to send browser requests directly to the cluster. Staging
-        # includes localhost:3000 so devs can run `nx dev staff` against this cluster.
-        # Defense-in-depth on top of per-user scoped-key filtering — see
-        # variables.tf for the security rationale.
+        # "*" is the component's sentinel for "CORS on, no allowlist" — it enables CORS
+        # with an EMPTY --cors-domains, which is what makes Typesense answer every origin
+        # with `Access-Control-Allow-Origin: *`. It is NOT a pattern: Typesense matches
+        # the Origin header by exact string, so no wildcard entry can cover the preview
+        # apps' dynamic URLs. CORS here is only defense-in-depth against scoped-key theft
+        # from a malicious page — meaningful in production, but with preview origins
+        # churning, allow-all is the reasonable staging trade-off. Access still requires a
+        # scoped key, and the Cloud Armor WAF + per-IP rate limit are unaffected.
         cors_domains:
-          - http://localhost:3000
-          - https://dashboard-staging.recidiviz.org
+          - "*"
 
         # Refuse TLS < 1.2 handshakes at the Gateway frontend (GovRAMP AC-17(2))
         min_tls_version: TLS_1_2
@@ -82,10 +85,10 @@ components:
         hostname: typesense-staging.recidiviz.org
 
         # Mirror primary so the failover flip (mode: standby → primary + apply)
-        # brings up CORS correctly without a second config edit.
+        # brings up CORS correctly without a second config edit. See the primary
+        # stack above for what "*" means.
         cors_domains:
-          - http://localhost:3000
-          - https://dashboard-staging.recidiviz.org
+          - "*"
 
         # Mirror primary — the failover flip should come up with the same
         # TLS floor (GovRAMP AC-17(2)). No-op in standby (count = 0).

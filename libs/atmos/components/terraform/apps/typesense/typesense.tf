@@ -12,6 +12,21 @@
 # and reconcile the values marked "VERIFY" below. See README.md.
 # =============================================================================
 
+locals {
+  # Typesense matches the browser's Origin header against --cors-domains by EXACT
+  # string equality (http_server.cpp: `cors_domains.count(origin_str) == 0`). There is
+  # no wildcard or suffix matching, so "https://*.preview.example.org" never matches
+  # anything. What DOES allow every origin is enabling CORS with an EMPTY domain list —
+  # then Typesense answers with `Access-Control-Allow-Origin: *`.
+  #
+  # So `cors_domains = ["*"]` in a stack is the sentinel for "CORS on, no allowlist":
+  # it enables CORS and passes an empty TYPESENSE_CORS_DOMAINS through to the server.
+  # An empty list still means CORS off entirely (no CORS headers at all).
+  cors_allow_all_origins = contains(var.cors_domains, "*")
+  cors_enabled           = length(var.cors_domains) > 0
+  cors_domains           = local.cors_allow_all_origins ? "" : join(",", var.cors_domains)
+}
+
 # Read the bootstrap admin API key from the SOPS-encrypted secrets file.
 data "sops_file" "secrets" {
   source_file = "${path.module}/secrets/${var.project_id}.enc.yaml"
@@ -70,9 +85,11 @@ resource "kubectl_manifest" "typesense_cluster" {
         name = kubernetes_secret.typesense_admin_api_key[0].metadata[0].name
       }
 
-      # CORS for browser clients: the staff dashboard search bar calls Typesense directly
-      enableCors  = length(var.cors_domains) > 0
-      corsDomains = join(",", var.cors_domains)
+      # CORS for browser clients: the staff dashboard search bar calls Typesense directly.
+      # The operator renders these into TYPESENSE_ENABLE_CORS / TYPESENSE_CORS_DOMAINS.
+      # See the cors_* locals at the top of this file for the "*" (allow-all) sentinel.
+      enableCors  = local.cors_enabled
+      corsDomains = local.cors_domains
 
       # Extra Typesense server settings, mounted by the operator as `envFrom` on the typesense-server
       # Environment variables listed here will be set so long as they don't conflict with builtin

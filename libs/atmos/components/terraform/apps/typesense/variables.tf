@@ -53,9 +53,22 @@ variable "cors_domains" {
     --cors-domains via TYPESENSE_CORS_DOMAINS and enables CORS only when the list is
     non-empty. Scoped keys already enforce per-user filtering, so this is
     defense-in-depth against scoped-key theft from a malicious page rather than the
-    primary access control. Keep production tight (no localhost); staging can include
-    local dev.
+    primary access control. Keep production tight (no localhost).
+
+    Entries are matched against the browser's Origin header by EXACT string — Typesense
+    supports no wildcards or suffix matching, so a per-entry pattern like
+    "https://*.example.org" matches nothing. The single-element list ["*"] is a sentinel
+    meaning "enable CORS with no allowlist", which makes Typesense answer every origin
+    with `Access-Control-Allow-Origin: *`. Use it only where origins are genuinely
+    unpredictable (staging preview apps).
   EOT
+
+  validation {
+    # "*" is all-or-nothing: mixing it with real origins reads like "these plus more"
+    # but silently allows everything, so make that a config error instead.
+    condition     = !contains(var.cors_domains, "*") || length(var.cors_domains) == 1
+    error_message = "cors_domains: \"*\" allows every origin and cannot be combined with specific origins — use either [\"*\"] alone or an explicit list."
+  }
 }
 
 variable "typesense_image" {
