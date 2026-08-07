@@ -1962,7 +1962,7 @@ describe("tasks", () => {
       await testPrismaClient.notetakingEvaluationRun.create({
         data: {
           pipelineRunId: pipelineRun.id,
-          evaluatorVersion: "1",
+          evaluatorVersion: evaluators.EVALUATOR_VERSION,
           scores: {},
         },
       });
@@ -2003,7 +2003,9 @@ describe("tasks", () => {
           include: { evaluationRuns: true },
         });
       expect(pipelineRun.evaluationRuns).toHaveLength(1);
-      expect(pipelineRun.evaluationRuns[0].evaluatorVersion).toBe("1");
+      expect(pipelineRun.evaluationRuns[0].evaluatorVersion).toBe(
+        evaluators.EVALUATOR_VERSION,
+      );
     });
 
     test("Should return 200 and skip if meeting has no audio path", async () => {

@@ -46,15 +46,42 @@ GRADING SCALE (apply to each transcript separately):
 
 const GRADING_SCALE_TEXT = `
 GRADING SCALE:
-- GOOD: Broadly accurate. Minor condensing, paraphrasing, or small omissions are
-  acceptable — these would appear in human-written notes too. A caseworker reading
-  this note would have a reliable picture of the meeting.
-- PARTIAL: Contains significant inaccuracies or omits important information, but
-  nothing likely to cause real harm or materially affect the caseworker's decisions.
-- BAD: Could actively mislead a caseworker — for example: attributes statements to
-  the wrong person, misrepresents the client's situation, invents facts not in the
-  transcript, or omits information critical to the client's safety, legal standing,
-  or supervision conditions.`.trim();
+- GOOD: Broadly accurate. Minor condensing, paraphrasing, small omissions, or small
+  mistakes in attribution (e.g. mixing up whether the client or staff said something or
+  which of them an action item is assigned to) are acceptable. A caseworker reading this
+  note would have a reliable picture of the meeting.
+- PARTIAL: Contains significant inaccuracies, but don't rise to the level of BAD
+  (below). "Significant" here means something that makes a material difference; slight
+  mischaracterizations, speculation, mistakes about timing that don't affect anything
+  material, contradictions that are obviously resolved from context, or small
+  exaggerations should be noted but don't rise to the level of PARTIAL. For employment,
+  only mistakes in employer name, employment status, or egregious differences in things
+  like wages count as PARTIAL. Mistakes related to financial obligations only count as
+  PARTIAL if they're related to legal requirements.
+- BAD: Contains errors that could actively mislead a caseworker *and* cause real harm or
+  materially affect a high-stakes decision related to a parole/probation violation.
+  Mistakes include misrepresenting the client's situation or inventing facts not in the
+  transcript. This covers incorrect information both about whether a violation occurred,
+  or that could cause a violation to occur (e.g. an incorrect date that could cause an
+  important deadline to be missed). BAD is reserved for the highest-scrutiny categories:
+  violations, criminal activity, conditions of supervision (e.g. completing programming
+  or failing to comply, travel outside certain areas), or an imminent risk to physical
+  safety. An invented fact or misrepresentation is BAD only when it falls in one of
+  those categories and could lead to a violation, a related change in criminal justice
+  status (like a release date), or safety risk. Errors outside them — e.g. logistics,
+  appointment dates or locations, transportation details, which resources to use,
+  housing/employment status, etc. — should be noted but graded GOOD or PARTIAL. Note
+  that mistakenly claiming travel outside a city/county/state for someone on parole can
+  count as at least a PARTIAL mistake, if not BAD, because there are often travel
+  restrictions. Omissions never rise to the level of BAD.
+  
+  Mistakes that don't rise to the level of PARTIAL/BAD should still be noted but do not
+  count against the grade.
+  Omissions don't count against the grade, except if noted in further instructions
+  below.
+  CLARIFY items should never be the reason for a PARTIAL/BAD grade, even if the issue is
+  already clear and the clarification is unnecessary. In this case simply note this but
+  don't use it to penalize the grade.`.trim();
 
 export const EVALUATOR_PROMPTS = {
   TRANSCRIPT_COMPARISON: {
@@ -105,7 +132,8 @@ export const EVALUATOR_PROMPTS = {
       WHAT TO CHECK:
       1. Accuracy — Are the facts supported by the transcript?
       2. Attribution — Are statements attributed to the right speaker (staff vs. client)?
-      3. Completeness — Are significant topics from the meeting represented?
+      3. Completeness — Are significant topics from the meeting represented? 
+        Omissions should be noted, but don't count against the grade unless the entire case note is empty in which case the grade should be PARTIAL.
       4. Hallucination — Does the note contain anything not present in the transcript?
 
       Base your evaluation on the transcript provided. If a KNOWN CONTEXT block is included in the user message, you may treat those facts as ground truth even if they do not appear in the transcript — but do not use any other outside knowledge.
@@ -142,11 +170,19 @@ export const EVALUATOR_PROMPTS = {
 
       WHAT TO CHECK:
       - Coverage — Were tasks assigned in the transcript captured?
-      - Assignment — Is each task attributed to the right person?
+        Omissions should be noted, but don't count against the grade unless there are no action items at all even though there should be, in which case the grade should be PARTIAL.
+      - Assignment — Is each task attributed to the right person? Misattributions should be noted, but assigning to the wrong person doesn't rise to the level of a PARTIAL or BAD grade.
       - Hallucination — Are there tasks listed that were never discussed?
       - Deadlines — Are any deadlines invented rather than explicitly stated?
 
       Base your evaluation on the transcript provided. If a KNOWN CONTEXT block is included in the user message, you may treat those facts as ground truth even if they do not appear in the transcript — but do not use any other outside knowledge.
+
+      The following things should not count as a reason for a PARTIAL/BAD grade even if they're wrong, as long as they're not actively harmful:
+      - potentially superfluous items (e.g. they may have already been completed)
+      - conditional items (e.g. "update address if you move" when the client doesn't plan to move)
+      - clarification items (even if the issue doesn't need clarification)
+      - missing deadlines
+      Such issues should be noted but shouldn't count against the grade.
 
       ADDITIONAL OUTPUTS:
       Before assigning a grade, also extract:

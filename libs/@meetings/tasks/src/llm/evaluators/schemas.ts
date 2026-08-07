@@ -24,7 +24,7 @@ import type { ActionItem } from "~@meetings/tasks/llm/schemas";
 // Bump this string whenever any evaluator prompt changes.
 // The script uses this to find pipeline runs that have not yet been evaluated
 // at the current version.
-export const EVALUATOR_VERSION = "1";
+export const EVALUATOR_VERSION = "2";
 
 export const TranscriptComparisonOutputSchema = z.object({
   rationale: z.string(),
