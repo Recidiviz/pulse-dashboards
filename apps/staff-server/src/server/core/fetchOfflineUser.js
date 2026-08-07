@@ -46,6 +46,7 @@ export function fetchOfflineUser({
         // Note: routes are only checked if the offline user's state code is updated to a real
         // state (not "recidiviz"). The routes commented out here are provided to make it easier
         // to toggle them on and off when testing.
+        // parole: true,
         // system_prison: true,
         // system_supervision: true,
         // operations: true,

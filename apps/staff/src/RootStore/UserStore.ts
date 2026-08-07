@@ -55,7 +55,6 @@ import { capitalizeName } from "../utils";
 import isIE11 from "../utils/isIE11";
 import { getAllowedMethodology } from "../utils/navigation";
 import type RootStore from ".";
-import { US_ID } from "./TenantStore/pathwaysTenants";
 import {
   ActiveFeatureVariantRecord,
   defaultRecidivizUserFeatureVariantsActive,
@@ -526,16 +525,6 @@ export default class UserStore {
       if (!insightsLanternState) {
         delete allowed.insights;
       }
-    }
-
-    // The parole board dashboard's data layer isn't ready for US_ID yet, so hide
-    // it there until the usIdParoleBoard feature variant is granted. US_CO's
-    // parole nav stays unconditional since no CO users have app access yet.
-    if (
-      this.rootStore?.currentTenantId === US_ID &&
-      !this.activeFeatureVariants.usIdParoleBoard
-    ) {
-      delete allowed.parole;
     }
 
     /* Remove pages that may be allowed for the tenant but restricted for the user */

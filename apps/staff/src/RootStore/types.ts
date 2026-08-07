@@ -103,7 +103,6 @@ export type FeatureVariant =
   | "usIdCaseManagerSearch"
   | "usIdCRCFacilitySearch"
   | "usIdDistrictSearch"
-  | "usIdParoleBoard"
   | "usIdTasksV2"
   | "crcLikeBeds"
 
@@ -279,7 +278,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usNcCrrApprover: {},
   indefiniteSnooze: {},
   usIdDistrictSearch: {},
-  usIdParoleBoard: {},
   usIaFinesAndFees: {},
   customTasks: {},
   taskSnoozeReason: {},
@@ -338,7 +336,6 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         clientsResidentsTableViewToggle: {},
         usIdCaseManagerSearch: {},
         usIdCRCFacilitySearch: {},
-        usIdParoleBoard: { activeTenants: ["US_ID"] },
         usMiCaseManagerSearch: {},
         usMiCustodyLevelDowngrade: {},
         usMiRestrictiveHousingV2Ineligible: { activeTenants: ["US_MI"] },
