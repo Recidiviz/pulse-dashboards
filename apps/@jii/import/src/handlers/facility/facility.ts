@@ -18,14 +18,14 @@
 import { PrismaClient } from "~@jii/prisma";
 import { LoaderFn } from "~data-import-plugin";
 
-import { facilitySchema } from "../../models";
+import { facilityImportSchema } from "../../models";
 import { DEFAULT_BATCH_SIZE, runBatchImport } from "../../utils/batchImport";
 
 export const BATCH_SIZE = DEFAULT_BATCH_SIZE; // facility.test.ts imports this
 
 export const facilityHandler: LoaderFn<
   PrismaClient,
-  typeof facilitySchema
+  typeof facilityImportSchema
 > = async (prismaClient, data) => {
   await runBatchImport({
     prismaClient,

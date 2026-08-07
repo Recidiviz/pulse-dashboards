@@ -17,23 +17,29 @@
 
 import { z } from "zod";
 
-import { rnaWritebackSchema } from "../../models";
+import { StateCode } from "~@jii/configs";
 
-const rawUsNcRNAWritebackFixtures: z.input<typeof rnaWritebackSchema>[] = [
-  {
-    pseudonymizedId: "anonres001",
-    opusId: "RES001",
-    seqNumber: "002",
-    admitDate: "2026-01-01",
-  },
-  {
-    pseudonymizedId: "anonres002",
-    opusId: "RES002",
-    seqNumber: null,
-    admitDate: "2026-01-01",
-  },
-];
+import { rnaWritebackImportSchema } from "../../models";
 
-export const usNcRNAWritebackFixtures = rawUsNcRNAWritebackFixtures.map((f) =>
-  rnaWritebackSchema.parse(f),
-);
+export const usNcRNAWritebackFixtures: Map<
+  StateCode,
+  z.input<typeof rnaWritebackImportSchema>[]
+> = new Map([
+  [
+    "US_NC",
+    [
+      {
+        pseudonymizedId: "anonres001",
+        opusId: "RES001",
+        seqNumber: "002",
+        admitDate: "2026-01-01",
+      },
+      {
+        pseudonymizedId: "anonres002",
+        opusId: "RES002",
+        seqNumber: null,
+        admitDate: "2026-01-01",
+      },
+    ],
+  ],
+]);

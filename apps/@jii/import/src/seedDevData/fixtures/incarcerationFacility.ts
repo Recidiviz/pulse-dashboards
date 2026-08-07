@@ -15,25 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PrismaClient } from "~@jii/prisma";
-import { LoaderFn } from "~data-import-plugin";
+import { StateCode } from "~@jii/configs";
+import { locationRecordFixtures } from "~datatypes";
 
-import { residentImportSchema } from "../../models";
-import { DEFAULT_BATCH_SIZE, runBatchImport } from "../../utils/batchImport";
+import { getEnabledStateCodes } from "../../utils/getEnabledStateCodes";
+import { buildFixtureMap } from "./buildFixtureMap";
 
-export const BATCH_SIZE = DEFAULT_BATCH_SIZE; // resident.test.ts imports this
+const allFacilityFixtures = locationRecordFixtures
+  .filter(
+    (r) =>
+      getEnabledStateCodes().includes(r.stateCode as StateCode) &&
+      r.system === "INCARCERATION" &&
+      r.idType === "facilityId",
+  )
+  .map((r) => ({
+    id: r.locationId,
+    name: r.name,
+    stateCode:
+      // we already verified this in the filter step above
+      r.stateCode as StateCode,
+  }));
 
-export const residentHandler: LoaderFn<
-  PrismaClient,
-  typeof residentImportSchema
-> = async (prismaClient, data) => {
-  await runBatchImport({
-    prismaClient,
-    model: prismaClient.resident,
-    tableName: "Resident",
-    idField: "pseudonymizedId",
-    pruneStale: true,
-    batchSize: BATCH_SIZE,
-    data,
-  });
-};
+export const facilityFixtures = buildFixtureMap(allFacilityFixtures);

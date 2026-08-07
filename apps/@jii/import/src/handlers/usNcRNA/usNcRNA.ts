@@ -18,7 +18,7 @@
 import { PrismaClient } from "~@jii/prisma";
 import { LoaderFn } from "~data-import-plugin";
 
-import { rnaWritebackSchema } from "../../models";
+import { rnaWritebackImportSchema } from "../../models";
 import { DEFAULT_BATCH_SIZE, runBatchImport } from "../../utils/batchImport";
 
 export const BATCH_SIZE = DEFAULT_BATCH_SIZE; // usNcRNA.test.ts imports this
@@ -30,7 +30,7 @@ export const BATCH_SIZE = DEFAULT_BATCH_SIZE; // usNcRNA.test.ts imports this
  */
 export const transformAndLoadRNAWritebackData: LoaderFn<
   PrismaClient,
-  typeof rnaWritebackSchema
+  typeof rnaWritebackImportSchema
 > = async (prismaClient, data) => {
   await runBatchImport({
     prismaClient,

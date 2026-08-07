@@ -15,25 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PrismaClient } from "~@jii/prisma";
-import { LoaderFn } from "~data-import-plugin";
+import { group } from "d3-array";
 
-import { residentImportSchema } from "../../models";
-import { DEFAULT_BATCH_SIZE, runBatchImport } from "../../utils/batchImport";
+import { stateCodes } from "~@jii/configs";
 
-export const BATCH_SIZE = DEFAULT_BATCH_SIZE; // resident.test.ts imports this
+import { getEnabledStateCodes } from "../../utils/getEnabledStateCodes";
 
-export const residentHandler: LoaderFn<
-  PrismaClient,
-  typeof residentImportSchema
-> = async (prismaClient, data) => {
-  await runBatchImport({
-    prismaClient,
-    model: prismaClient.resident,
-    tableName: "Resident",
-    idField: "pseudonymizedId",
-    pruneStale: true,
-    batchSize: BATCH_SIZE,
-    data,
-  });
-};
+export function buildFixtureMap<F extends { stateCode: string }>(
+  fixtures: Array<F>,
+) {
+  const fixturesByStateCode = group(fixtures, (r) =>
+    stateCodes.parse(r.stateCode),
+  );
+
+  return new Map(
+    getEnabledStateCodes().map((code) => [
+      code,
+      fixturesByStateCode.get(code) ?? [],
+    ]),
+  );
+}

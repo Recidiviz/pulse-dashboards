@@ -37,21 +37,21 @@ export interface BatchImportModel<CreateInput> {
  * Any other transformation a model needs should happen in its import schema, so that a parsed
  * record is already in the shape its table expects.
  */
-export type ImportRow<Item> = Item & { importedAt: Date };
+export type ImportRow<ImportRecord> = ImportRecord & { importedAt: Date };
 
-export interface BatchImportOptions<Item extends BulkUpdateEntry> {
+export interface BatchImportOptions<ImportRecord extends BulkUpdateEntry> {
   prismaClient: PrismaClient;
   /** The Prisma delegate for the target model, e.g. prismaClient.resident. */
-  model: BatchImportModel<ImportRow<Item>>;
+  model: BatchImportModel<ImportRow<ImportRecord>>;
   // Prisma's generated client doesn't expose a model's underlying Postgres table name
   // at runtime off its delegate object, so bulkUpdate's raw SQL needs it supplied directly.
   /** The Postgres table name, usually the model name in PascalCase, e.g. "Resident". */
   tableName: string;
-  // BulkUpdateEntry's index signature means `keyof Item` alone could include
+  // BulkUpdateEntry's index signature means `keyof ImportRecord` alone could include
   // `number`, so this needs the `& string` to restrict it to normal object properties.
   /** Column that uniquely identifies a row. */
-  idField: keyof Item & string;
-  data: AsyncIterable<Item>;
+  idField: keyof ImportRecord & string;
+  data: AsyncIterable<ImportRecord>;
   batchSize: number;
   /** Whether to delete rows whose importedAt predates this run, once the import completes. */
   pruneStale: boolean;
@@ -72,8 +72,8 @@ function requireStringId(input: unknown) {
  * Each parsed record is written as-is, stamped with this run's import timestamp, so any
  * transformation a model needs should happen in its import schema.
  */
-export async function runBatchImport<Item extends BulkUpdateEntry>(
-  options: BatchImportOptions<Item>,
+export async function runBatchImport<ImportRecord extends BulkUpdateEntry>(
+  options: BatchImportOptions<ImportRecord>,
 ): Promise<void> {
   const {
     prismaClient,
@@ -94,8 +94,8 @@ export async function runBatchImport<Item extends BulkUpdateEntry>(
     ),
   );
 
-  let createBatch: ImportRow<Item>[] = [];
-  let updateBatch: ImportRow<Item>[] = [];
+  let createBatch: ImportRow<ImportRecord>[] = [];
+  let updateBatch: ImportRow<ImportRecord>[] = [];
 
   const flushCreateBatch = async () => {
     if (createBatch.length === 0) return;
@@ -109,8 +109,8 @@ export async function runBatchImport<Item extends BulkUpdateEntry>(
     updateBatch = [];
   };
 
-  for await (const item of data) {
-    const row: ImportRow<Item> = { ...item, importedAt };
+  for await (const record of data) {
+    const row: ImportRow<ImportRecord> = { ...record, importedAt };
 
     if (existingIds.has(requireStringId(row[idField]))) {
       updateBatch.push(row);

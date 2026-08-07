@@ -15,27 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { group } from "d3-array";
-
 import { rawAllResidentCommon } from "~datatypes";
 
-import { residentSchema } from "../../models";
-import { getEnabledStateCodes } from "../../utils/getEnabledStateCodes";
+import { buildFixtureMap } from "./buildFixtureMap";
 import { rawResidentStateDataFixtures } from "./residentStateData";
 
-const rawResidentCommonByState = group(
-  rawAllResidentCommon,
-  (r) => r.stateCode,
-);
+const residentFixturesWithoutSSD = buildFixtureMap(rawAllResidentCommon);
 
 export const residentFixtures = new Map(
-  getEnabledStateCodes().map((code) => [
-    code,
-    (rawResidentCommonByState.get(code) ?? []).map((r, i) =>
-      residentSchema.parse({
-        ...r,
-        stateSpecificData: rawResidentStateDataFixtures.get(code)?.[i],
-      }),
-    ),
+  Array.from(residentFixturesWithoutSSD, ([stateCode, records]) => [
+    stateCode,
+    records.map((r, i) => ({
+      ...r,
+      stateSpecificData: rawResidentStateDataFixtures.get(stateCode)?.[i],
+    })),
   ]),
 );

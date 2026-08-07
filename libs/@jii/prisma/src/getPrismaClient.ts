@@ -51,7 +51,6 @@ export function getPrismaClient({ stateCode, demo }: PrismaClientOpts) {
         // otherwise use the local DB. we can construct the URL on the fly
         // from a predictable and non-sensitive template
         dbUrl = getDevDatabaseUrl(stateDbName);
-        console.log(dbUrl);
       }
       break;
     // otherwise assume we're in a deployment, where the state db url must be explicitly provided

@@ -45,6 +45,6 @@ type Args = {
 const { stateCode } = parser.parse_args() as Args;
 
 console.log(`Starting Prisma Studio for ${stateCode}`);
-await $`DATABASE_URL=${getDevDatabaseUrl(stateCode)} yarn prisma studio`.pipe(
+await $`DATABASE_URL=${getDevDatabaseUrl(stateCode.toLowerCase())} yarn prisma studio`.pipe(
   process.stdout,
 );

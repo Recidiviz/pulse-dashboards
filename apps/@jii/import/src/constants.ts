@@ -23,7 +23,11 @@ import { camelCaseObject } from "~utils";
 import { facilityHandler } from "./handlers/facility/facility";
 import { residentHandler } from "./handlers/resident/resident";
 import { transformAndLoadRNAWritebackData } from "./handlers/usNcRNA/usNcRNA";
-import { facilitySchema, residentSchema, rnaWritebackSchema } from "./models";
+import {
+  facilityImportSchema,
+  residentImportSchema,
+  rnaWritebackImportSchema,
+} from "./models";
 
 // Filenames based on view_id values
 // in https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/jii
@@ -68,11 +72,11 @@ function rawExport<Schema extends z.ZodTypeAny>({
 
 export const FILE_NAME_TO_SCHEMA_AND_LOADER_FN = {
   [NC_RNA_FILE_NAME]: rawExport({
-    schema: rnaWritebackSchema,
+    schema: rnaWritebackImportSchema,
     loaderFn: transformAndLoadRNAWritebackData,
   }),
   [RESIDENTS_FILE_NAME]: rawExport({
-    schema: residentSchema,
+    schema: residentImportSchema,
     loaderFn: residentHandler,
     rawFieldSchemas: {
       person_name: jsonStringToObjectSchema,
@@ -81,7 +85,7 @@ export const FILE_NAME_TO_SCHEMA_AND_LOADER_FN = {
     },
   }),
   [FACILITY_FILE_NAME]: rawExport({
-    schema: facilitySchema,
+    schema: facilityImportSchema,
     loaderFn: facilityHandler,
   }),
 };

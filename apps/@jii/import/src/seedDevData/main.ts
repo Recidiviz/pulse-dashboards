@@ -15,10 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { getPrismaClient } from "~@jii/prisma";
+import { StateCode } from "~@jii/configs";
+import { getPrismaClient, PrismaClient } from "~@jii/prisma";
 
+import { facilityHandler } from "../handlers/facility/facility";
 import { residentHandler } from "../handlers/resident/resident";
 import { transformAndLoadRNAWritebackData } from "../handlers/usNcRNA/usNcRNA";
+import {
+  facilityImportSchema,
+  residentImportSchema,
+  rnaWritebackImportSchema,
+} from "../models";
+import { getEnabledStateCodes } from "../utils/getEnabledStateCodes";
+import { facilityFixtures } from "./fixtures/incarcerationFacility";
 import { residentFixtures } from "./fixtures/resident";
 import { usNcRNAWritebackFixtures } from "./fixtures/usNcRNA";
 
@@ -30,26 +39,98 @@ async function* toAsyncGenerator<T>(items: T[]) {
 
 const demo = process.env["SEED_DEMO"] === "true";
 
-await Promise.all(
-  residentFixtures.entries().map(async ([stateCode, fixtures]) => {
-    const prismaClient = getPrismaClient({ stateCode, demo });
-    console.log(`Seeding fixtures for ${stateCode}`);
-    try {
-      await residentHandler(prismaClient, toAsyncGenerator(fixtures));
+type SeedOpts<ModelRecord> = {
+  stateCode: StateCode;
+  prismaClient: PrismaClient;
+  fixtureMap: Map<StateCode, Array<unknown>>;
+  // The LoaderFn type is normally used for handlers, but it takes the schema as an argument
+  // rather than its output. That breaks the generic type mapping for this function, which
+  // only works cleanly if the record shape itself is provided. Thus we redefine a compatible type here
+  importHandler: (
+    prismaClient: PrismaClient,
+    data: AsyncGenerator<ModelRecord>,
+  ) => Promise<void>;
+  // Similarly, this is a duck type for the more idiomatic z.ZodType, which takes multiple
+  // arguments that overcomplicate our generic type mapping and cause spurious failures.
+  // They don't affect the .parse() signature, which is the only thing we care about here
+  importSchema: { parse(data: unknown): ModelRecord };
+  modelLabel: string;
+  logSkippedStates?: boolean;
+};
 
-      if (stateCode === "US_NC") {
-        await transformAndLoadRNAWritebackData(
-          prismaClient,
-          toAsyncGenerator(usNcRNAWritebackFixtures),
-        );
-      }
+let success = true;
+
+/**
+ * This function parallels our ImportHandler subclass, using the same model-specific import schemas and handler functions
+ * but operating on local fixture objects rather than platform exports. These may have a different shape
+ * than the raw data (some are shared with Workflows) in addition to coming from a different source.
+ * The environment variable SEED_DEMO may be used for seeding the demo DBs in staging/prod; by default it hits the main
+ * state DBS which are assumed to be in a local environment.
+ */
+async function seedModel<ModelRecord>({
+  stateCode,
+  prismaClient,
+  fixtureMap,
+  modelLabel,
+  importHandler,
+  logSkippedStates = true,
+  importSchema,
+}: SeedOpts<ModelRecord>) {
+  const fixtures = fixtureMap.get(stateCode);
+  if (fixtures && fixtures.length > 0) {
+    try {
+      await importHandler(
+        prismaClient,
+        toAsyncGenerator(fixtures.map((f) => importSchema.parse(f))),
+      );
+      console.log(`Successfully seeded ${modelLabel} for ${stateCode}`);
     } catch (e) {
-      console.error(`Seeding failed for ${stateCode}`);
-      throw e;
+      console.error(`Seeding ${modelLabel} failed for ${stateCode}`);
+      console.error(e);
+      success = false;
     }
+  } else {
+    if (logSkippedStates)
+      console.log(
+        `Skipping ${modelLabel} for ${stateCode}; no fixtures available`,
+      );
+  }
+}
+
+const stateCodesToSeed = getEnabledStateCodes();
+
+await Promise.all(
+  stateCodesToSeed.map(async (stateCode) => {
+    const prismaClient = getPrismaClient({ stateCode, demo });
+    const baseOpts = { prismaClient, stateCode };
+    await Promise.all([
+      seedModel({
+        modelLabel: "residents",
+        fixtureMap: residentFixtures,
+        importHandler: residentHandler,
+        importSchema: residentImportSchema,
+        ...baseOpts,
+      }),
+      seedModel({
+        modelLabel: "incarceration facilities",
+        fixtureMap: facilityFixtures,
+        importHandler: facilityHandler,
+        importSchema: facilityImportSchema,
+        ...baseOpts,
+      }),
+      seedModel({
+        modelLabel: "RNA writeback",
+        fixtureMap: usNcRNAWritebackFixtures,
+        importHandler: transformAndLoadRNAWritebackData,
+        importSchema: rnaWritebackImportSchema,
+        logSkippedStates: false,
+        ...baseOpts,
+      }),
+    ]);
   }),
 );
 
 console.log("Seeding complete");
+
 // ensure the script doesn't hang once all the work is done
-process.exit(0);
+process.exit(success ? 0 : 1);

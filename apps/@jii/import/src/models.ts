@@ -33,7 +33,7 @@ import {
  * directly for fixture data that doesn't require them.
  */
 
-export const rnaWritebackSchema = z.object({
+export const rnaWritebackImportSchema = z.object({
   pseudonymizedId: z.string(),
   seqNumber: nullishAsNull(z.string()),
   opusId: z.string(),
@@ -47,7 +47,7 @@ const personNameDefaults: Record<keyof FullName, null> = {
   surname: null,
 };
 
-export const residentSchema = residentCommonSchema
+export const residentImportSchema = residentCommonSchema
   .extend({
     // this is a plain object with passthrough because our goal here is to validate it
     // against existing SSD schemas while still storing the original input in the DB.
@@ -113,9 +113,9 @@ export const residentSchema = residentCommonSchema
     },
   );
 
-export type ImportedResident = z.infer<typeof residentSchema>;
+export type ImportedResident = z.infer<typeof residentImportSchema>;
 
-export const facilitySchema = z.object({
+export const facilityImportSchema = z.object({
   id: z.string(),
   name: nullishAsNull(z.string()),
 });
