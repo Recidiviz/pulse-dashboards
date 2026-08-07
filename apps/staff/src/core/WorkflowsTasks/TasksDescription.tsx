@@ -21,11 +21,14 @@ import React from "react";
 import { RoutePlannerLink } from "../WorkflowsTasksRoutePlanner/RoutePlannerLink";
 import { TasksDescriptionContainer } from "./styles";
 
-export const TasksDescription: React.FC<{
+// The description copy (markdown) plus the optional route planner link, without
+// the `TasksDescriptionContainer` styling — so it can be rendered inside another
+// styled container (e.g. the shared `WorkflowsResultsHeader` CTA text).
+export const TasksDescriptionContent: React.FC<{
   children: string;
   showRoutePlannerLink?: boolean;
 }> = ({ children, showRoutePlannerLink = false }) => (
-  <TasksDescriptionContainer>
+  <>
     <Markdown
       options={{
         forceInline: true,
@@ -43,5 +46,16 @@ export const TasksDescription: React.FC<{
     </Markdown>
 
     {showRoutePlannerLink && <RoutePlannerLink />}
+  </>
+);
+
+export const TasksDescription: React.FC<{
+  children: string;
+  showRoutePlannerLink?: boolean;
+}> = ({ children, showRoutePlannerLink = false }) => (
+  <TasksDescriptionContainer>
+    <TasksDescriptionContent showRoutePlannerLink={showRoutePlannerLink}>
+      {children}
+    </TasksDescriptionContent>
   </TasksDescriptionContainer>
 );

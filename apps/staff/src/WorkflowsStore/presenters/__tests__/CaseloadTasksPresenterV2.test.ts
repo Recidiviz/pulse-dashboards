@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { addDays, differenceInCalendarMonths } from "date-fns";
+import { observable, runInAction } from "mobx";
 import tk from "timekeeper";
 
 import { SupervisionTaskCategory } from "../../../core/WorkflowsTasks/fixtures";
@@ -227,6 +228,72 @@ describe("CaseloadTasksPresenterV2", () => {
 
       // DUE_THIS_WEEK should be selected since OVERDUE has 0 tasks but DUE_THIS_WEEK has tasks
       expect(presenter.selectedTaskCategory).toEqual("DUE_THIS_WEEK");
+    });
+
+    it("drops the selected category when the search changes", () => {
+      const tenantStore = {
+        ...mockTenantStore,
+        taskCategories: [
+          "OVERDUE",
+          "DUE_THIS_WEEK",
+          "ALL_TASKS",
+          "DUE_THIS_MONTH",
+        ],
+      } as any as TenantStore;
+
+      // The presenter backs the whole page, so it survives a caseload switch;
+      // an observable store lets the search-change reaction fire.
+      const workflowsStore = observable(
+        {
+          ...mockWorkflowsStore,
+          caseloadPersons: [
+            makePersonWithTasks(["usIdEmploymentVerification"], {
+              dateOffset: -1,
+              overdue: true,
+            }),
+          ],
+          searchStore: { selectedSearchIds: ["1"] },
+        },
+        {},
+        { deep: false },
+      ) as any as WorkflowsStore;
+
+      presenter = getPresenter({ workflowsStore, tenantStore });
+      presenter.selectedTaskCategory = "OVERDUE";
+      expect(presenter.selectedTaskCategory).toEqual("OVERDUE");
+
+      // Switch to a caseload whose only tasks are due this week
+      runInAction(() => {
+        (workflowsStore as any).caseloadPersons = [
+          makePersonWithTasks(["usIdFaceToFaceContact"], { dateOffset: 0 }),
+        ];
+        (workflowsStore as any).searchStore = { selectedSearchIds: ["2"] };
+      });
+
+      // OVERDUE is empty for the new caseload, so the default recomputes
+      expect(presenter.selectedTaskCategory).toEqual("DUE_THIS_WEEK");
+    });
+
+    it("keeps the selected category when the search is unchanged", () => {
+      const workflowsStore = observable(
+        {
+          ...mockWorkflowsStore,
+          searchStore: { selectedSearchIds: ["1", "2"] },
+        },
+        {},
+        { deep: false },
+      ) as any as WorkflowsStore;
+
+      presenter = getPresenter({ workflowsStore });
+      presenter.selectedTaskCategory = "DUE_THIS_MONTH";
+
+      // A new array with the same ids (e.g. from a user-record update) is not
+      // a search change
+      runInAction(() => {
+        (workflowsStore as any).searchStore = { selectedSearchIds: ["1", "2"] };
+      });
+
+      expect(presenter.selectedTaskCategory).toEqual("DUE_THIS_MONTH");
     });
 
     it("logs category selection to the analytics store", () => {

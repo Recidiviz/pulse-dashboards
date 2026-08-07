@@ -77,9 +77,19 @@ const CallToActionText = styled(Sans18)`
   min-height: 2lh;
 `;
 
+// Renders next to the header text (e.g. an understaffed pill). Inline so it
+// flows with the header and stays centered/left per the parent's alignment.
+const HeaderAccessory = styled.span`
+  display: inline-flex;
+  vertical-align: middle;
+  margin-left: 0.5rem;
+`;
+
 type WorkflowsResultsHeaderProps = {
   headerText?: string;
-  callToActionText?: string;
+  callToActionText?: React.ReactNode;
+  /** Optional element rendered next to the header text (e.g. a pill). */
+  headerAccessory?: React.ReactNode;
   /**
    * When true (and a CTA is present), reproduces the original full-height
    * "hero" spacing — vertically centered on mobile, large top margin on
@@ -99,6 +109,7 @@ type WorkflowsResultsHeaderProps = {
 export function WorkflowsResultsHeader({
   headerText,
   callToActionText,
+  headerAccessory,
   verticallyCentered = false,
   align = "center",
 }: WorkflowsResultsHeaderProps): React.ReactElement {
@@ -133,6 +144,9 @@ export function WorkflowsResultsHeader({
               $hasCta={Boolean(shown.callToActionText)}
             >
               {shown.headerText}
+              {headerAccessory && (
+                <HeaderAccessory>{headerAccessory}</HeaderAccessory>
+              )}
             </HeaderText>
           )}
           {shown.callToActionText && (

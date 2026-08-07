@@ -21,12 +21,7 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components";
 
-import { withPresenterManager } from "~hydration-utils";
-
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useFeatureVariants } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
 import { TableViewToggle } from "../OpportunityCaseloadView/TableViewToggle";
@@ -62,16 +57,20 @@ const TableControls = styled.div<{ $isMobile: boolean }>`
   display: flex;
   flex-direction: row;
   gap: ${({ $isMobile }) => ($isMobile ? rem(spacing.lg) : rem(spacing.md))};
+  // Keep the controls right-aligned in the top bar even when the left-hand item
+  // (route planner link / description) is absent.
+  margin-left: auto;
 `;
 
 export type WorkflowsTasksBodyV2Props = {
   presenter: CaseloadTasksPresenterV2;
 };
 
-export const ManagedComponent = observer(function WorkflowsTasksBodyV2({
+export const WorkflowsTasksBodyV2 = observer(function WorkflowsTasksBodyV2({
   presenter,
 }: WorkflowsTasksBodyV2Props) {
   const { isMobile } = useIsMobile(true);
+  const { typesenseCaseloadSearch } = useFeatureVariants();
 
   const tabBadges = {
     ALL_TASKS: presenter.countForCategory("ALL_TASKS"),
@@ -90,20 +89,26 @@ export const ManagedComponent = observer(function WorkflowsTasksBodyV2({
 
   return (
     <>
-      <TasksHeader>
-        Tasks
-        <WorkflowsUnderstaffedPill />
-      </TasksHeader>
+      {!typesenseCaseloadSearch && (
+        <>
+          <TasksHeader>
+            Tasks
+            <WorkflowsUnderstaffedPill />
+          </TasksHeader>
+          <TasksTopbarContainer $isMobile={isMobile}>
+            <TasksDescription
+              showRoutePlannerLink={presenter.showRoutePlannerLink}
+            >
+              {presenter.pageDescriptionMarkdown}
+            </TasksDescription>
+            <TableControls $isMobile={isMobile}>
+              <TableViewToggle presenter={presenter} />
+              <WorkflowsFilterDropdown presenter={presenter} />
+            </TableControls>
+          </TasksTopbarContainer>
+        </>
+      )}
 
-      <TasksTopbarContainer $isMobile={isMobile}>
-        <TasksDescription showRoutePlannerLink={presenter.showRoutePlannerLink}>
-          {presenter.pageDescriptionMarkdown}
-        </TasksDescription>
-        <TableControls $isMobile={isMobile}>
-          <TableViewToggle presenter={presenter} />
-          <WorkflowsFilterDropdown presenter={presenter} />
-        </TableControls>
-      </TasksTopbarContainer>
       {presenter.showListView ? (
         <TasksList presenter={presenter} />
       ) : (
@@ -123,29 +128,4 @@ export const ManagedComponent = observer(function WorkflowsTasksBodyV2({
       <TaskPreviewModal presenter={presenter} />
     </>
   );
-});
-
-function usePresenter() {
-  const {
-    workflowsStore,
-    analyticsStore,
-    tenantStore,
-    firestoreStore,
-    tasksFilterStore,
-  } = useRootStore();
-  const featureVariants = useFeatureVariants();
-  return new CaseloadTasksPresenterV2(
-    workflowsStore,
-    tenantStore,
-    tasksFilterStore,
-    analyticsStore,
-    firestoreStore,
-    featureVariants,
-  );
-}
-
-export const WorkflowsTasksBodyV2 = withPresenterManager({
-  usePresenter,
-  managerIsObserver: true,
-  ManagedComponent,
 });

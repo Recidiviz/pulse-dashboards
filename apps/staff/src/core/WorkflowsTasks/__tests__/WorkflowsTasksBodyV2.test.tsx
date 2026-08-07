@@ -26,7 +26,7 @@ import { MemoryRouter } from "react-router-dom";
 import * as StoreProvider from "../../../components/StoreProvider";
 import useIsMobile from "../../../hooks/useIsMobile";
 import { CaseloadTasksPresenterV2 } from "../../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
-import { ManagedComponent as WorkflowsTasksBodyV2 } from "../WorkflowsTasksBodyV2";
+import { WorkflowsTasksBodyV2 } from "../WorkflowsTasksBodyV2";
 
 vi.mock("../../../components/StoreProvider");
 vi.mock("../../../hooks/useIsMobile");

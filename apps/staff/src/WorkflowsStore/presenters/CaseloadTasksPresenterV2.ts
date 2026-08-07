@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { groupBy } from "lodash";
-import { action, makeAutoObservable, reaction } from "mobx";
+import { action, comparer, makeAutoObservable, reaction } from "mobx";
 
 import { pluralizeWord } from "~utils";
 
@@ -86,8 +86,22 @@ export class CaseloadTasksPresenterV2
           this.updateNavigablePeople();
       },
     );
+    // The selected tab belongs to a single search: a category the user picked
+    // for the previous caseload may be empty for the next one, and
+    // `selectedCategory` only falls back to the first non-empty category while
+    // nothing has been picked. This presenter outlives a search (it backs the
+    // whole page, not just the hydrated table), so clear the selection here.
+    reaction(
+      () => this.workflowsStore.searchStore.selectedSearchIds,
+      () => this.resetSelectedCategory(),
+      // `selectedSearchIds` returns a new array whenever the user record
+      // updates, so compare contents rather than identity
+      { equals: comparer.shallow },
+    );
+
     makeAutoObservable(this, {
       updateNavigablePeople: action,
+      resetSelectedCategory: action,
     });
 
     this.tableViewSelectPresenter = new TableViewSelectPresenter(
@@ -134,6 +148,14 @@ export class CaseloadTasksPresenterV2
     });
 
     this._selectedCategory = newCategory;
+  }
+
+  /**
+   * Drops the user's tab selection so `selectedCategory` recomputes its default
+   * from the categories available for the current search.
+   */
+  resetSelectedCategory(): void {
+    this._selectedCategory = undefined;
   }
 
   get selectedCategory(): SupervisionTaskCategory {
@@ -249,6 +271,56 @@ export class CaseloadTasksPresenterV2
   // Text shown at the top of the Tasks page
   get pageDescriptionMarkdown() {
     return this.tenantStore.tasksPageDescriptionMarkdown;
+  }
+
+  get isTypesenseSearchEnabled(): boolean {
+    return this.workflowsStore.searchStore.isTypesenseSearchEnabled;
+  }
+
+  get isInitial(): boolean {
+    return !this.workflowsStore.searchStore.selectedSearchIds.length;
+  }
+
+  // True once a searched caseload has loaded with at least one task.
+  get hasTasks(): boolean {
+    return (
+      !this.isInitial &&
+      this.workflowsStore.supervisionTasksLoaded() &&
+      this.workflowsStore.hasSupervisionTasks
+    );
+  }
+
+  // True once a searched caseload has loaded but has no tasks.
+  get noTasks(): boolean {
+    return (
+      !this.isInitial &&
+      this.workflowsStore.supervisionTasksLoaded() &&
+      !this.workflowsStore.hasSupervisionTasks
+    );
+  }
+
+  get initialCallToActionText(): string {
+    const { workflowsSearchFieldTitle } = this.workflowsStore.searchStore;
+    const { justiceInvolvedPersonTitle } = this.workflowsStore;
+    // With the FV the prompt renders above the search bar, so it points "below";
+    // otherwise it renders below the search, so "above".
+    const searchLocation = this.isTypesenseSearchEnabled ? "below" : "above";
+    return this.isTypesenseSearchEnabled && workflowsSearchFieldTitle
+      ? `Start typing the name of ${workflowsSearchFieldTitle} ${searchLocation} to review ${justiceInvolvedPersonTitle}s who have upcoming or overdue tasks.`
+      : `Search ${searchLocation} to review ${justiceInvolvedPersonTitle}s who have upcoming or overdue tasks.`;
+  }
+
+  get emptyCallToActionText(): string {
+    return `None of the ${this.workflowsStore.justiceInvolvedPersonTitle}s on the selected caseloads have any tasks. Search for another caseload.`;
+  }
+
+  // Subheader shown above the search bar (FV): the search prompt before a search
+  // and the "no tasks" message when a searched caseload has none. Undefined
+  // while loading or once tasks load — the page description renders instead.
+  get subheaderCopy(): string | undefined {
+    if (this.isInitial) return this.initialCallToActionText;
+    if (this.noTasks) return this.emptyCallToActionText;
+    return undefined;
   }
 
   get displayIdHeader() {
