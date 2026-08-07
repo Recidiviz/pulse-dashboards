@@ -295,6 +295,102 @@ exports[`supervision staff schema for 'US_TX' 'OFFICER5' 1`] = `
 }
 `;
 
+exports[`supervision staff schema for 'US_TX' 'agonzalez123' 1`] = `
+{
+  "district": "DISTRICT 1",
+  "email": "tx-test-supervisor-gonzalez@example.com",
+  "givenNames": "Alejandro",
+  "hasCaseload": false,
+  "pseudonymizedId": "hashed-agonzalez123",
+  "recordType": "supervisionStaff",
+  "roleSubtype": "SUPERVISION_OFFICER_SUPERVISOR",
+  "staffExternalId": "agonzalez123",
+  "stateCode": "US_TX",
+  "supervisorExternalId": null,
+  "surname": "Gonzalez",
+}
+`;
+
+exports[`supervision staff schema for 'US_TX' 'cmatterson567' 1`] = `
+{
+  "district": "DISTRICT 42",
+  "email": "tx-test-supervisor-matterson@example.com",
+  "givenNames": "Cora",
+  "hasCaseload": false,
+  "pseudonymizedId": "hashed-cmatterson567",
+  "recordType": "supervisionStaff",
+  "roleSubtype": "SUPERVISION_OFFICER_SUPERVISOR",
+  "staffExternalId": "cmatterson567",
+  "stateCode": "US_TX",
+  "supervisorExternalId": null,
+  "surname": "Matterson",
+}
+`;
+
+exports[`supervision staff schema for 'US_TX' 'cthomas321' 1`] = `
+{
+  "district": "DISTRICT 81",
+  "email": "tx-test-supervisor-thomas@example.com",
+  "givenNames": "Charles",
+  "hasCaseload": false,
+  "pseudonymizedId": "hashed-cthomas321",
+  "recordType": "supervisionStaff",
+  "roleSubtype": "SUPERVISION_OFFICER_SUPERVISOR",
+  "staffExternalId": "cthomas321",
+  "stateCode": "US_TX",
+  "supervisorExternalId": null,
+  "surname": "Thomas",
+}
+`;
+
+exports[`supervision staff schema for 'US_TX' 'dlee456' 1`] = `
+{
+  "district": "DISTRICT 23",
+  "email": "tx-test-supervisor-lee@example.com",
+  "givenNames": "David",
+  "hasCaseload": false,
+  "pseudonymizedId": "hashed-dlee456",
+  "recordType": "supervisionStaff",
+  "roleSubtype": "SUPERVISION_OFFICER_SUPERVISOR",
+  "staffExternalId": "dlee456",
+  "stateCode": "US_TX",
+  "supervisorExternalId": null,
+  "surname": "Lee",
+}
+`;
+
+exports[`supervision staff schema for 'US_TX' 'jwilliams345' 1`] = `
+{
+  "district": "DISTRICT 1",
+  "email": "tx-test-supervisor-williams@example.com",
+  "givenNames": "Jared",
+  "hasCaseload": false,
+  "pseudonymizedId": "hashed-jwilliams345",
+  "recordType": "supervisionStaff",
+  "roleSubtype": "SUPERVISION_OFFICER_SUPERVISOR",
+  "staffExternalId": "jwilliams345",
+  "stateCode": "US_TX",
+  "supervisorExternalId": null,
+  "surname": "Williams",
+}
+`;
+
+exports[`supervision staff schema for 'US_TX' 'rsmith789' 1`] = `
+{
+  "district": "DISTRICT 42",
+  "email": "tx-test-supervisor-smith@example.com",
+  "givenNames": "Rosa",
+  "hasCaseload": false,
+  "pseudonymizedId": "hashed-rsmith789",
+  "recordType": "supervisionStaff",
+  "roleSubtype": "SUPERVISION_OFFICER_SUPERVISOR",
+  "staffExternalId": "rsmith789",
+  "stateCode": "US_TX",
+  "supervisorExternalId": null,
+  "surname": "Smith",
+}
+`;
+
 exports[`supervision staff schema for 'US_UT' 'UTOFFICER1' 1`] = `
 {
   "email": null,

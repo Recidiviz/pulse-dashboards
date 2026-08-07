@@ -22,6 +22,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
+import { isDemoMode, isOfflineMode } from "~client-env-utils";
 import { StaffRecord } from "~datatypes";
 import { palette } from "~design-system";
 
@@ -89,11 +90,20 @@ export const SubmitRevisionModal = observer(function SubmitRevisionModal({
   const navigate = useNavigate();
   const { availableOfficersWithOrWithoutCaseloads } = workflowsStore;
 
-  const previousReviewerIds = new Set(
-    opportunity.actionHistory
-      ?.map((a) => a.type === "APPROVAL" && a.updateById)
-      .filter(Boolean),
-  );
+  const previousReviewerIds =
+    // Since we don't have impersonation in demo, we can't populate a real list
+    // of prior reviewers (they're all Demo Jones). Instead, show all possible
+    // reviewers in the dropdown. This enables the "send back for revisions"
+    // flow, which otherwise isn't usable in demo.
+    isDemoMode() || isOfflineMode()
+      ? new Set(
+          availableOfficersWithOrWithoutCaseloads.map((o) => o.staffExternalId),
+        )
+      : new Set(
+          opportunity.actionHistory
+            ?.map((a) => a.type === "APPROVAL" && a.updateById)
+            .filter(Boolean),
+        );
 
   const currentReviewerId = opportunity.currentReviewerId;
 

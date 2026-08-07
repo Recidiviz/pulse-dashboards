@@ -273,6 +273,87 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     },
   },
 
+  /* Supervisors for US_TX. These mirror the Insights supervisor fixtures in
+     `Insights/SupervisionOfficerSupervisor/fixture.ts`. This supports the
+     end-to-end US_TX ARS/ERS approval chain: these supervisors are surfaced in
+     the "send to" dropdown, and because their external IDs match the fixtures
+     in Insights, navigating to their profile in Insights will actually surface
+     the pending review.
+     `hasCaseload: false` keeps them out of caseload search while still making
+     them visible in the "send to" dropdown. */
+  {
+    email: "tx-test-supervisor-gonzalez@example.com",
+    district: "DISTRICT 1",
+    staffExternalId: "agonzalez123",
+    stateCode: "US_TX",
+    givenNames: "Alejandro",
+    surname: "Gonzalez",
+    supervisorExternalId: null,
+    pseudonymizedId: "hashed-agonzalez123",
+    hasCaseload: false,
+    roleSubtype: "SUPERVISION_OFFICER_SUPERVISOR" as const,
+  },
+  {
+    email: "tx-test-supervisor-lee@example.com",
+    district: "DISTRICT 23",
+    staffExternalId: "dlee456",
+    stateCode: "US_TX",
+    givenNames: "David",
+    surname: "Lee",
+    supervisorExternalId: null,
+    pseudonymizedId: "hashed-dlee456",
+    hasCaseload: false,
+    roleSubtype: "SUPERVISION_OFFICER_SUPERVISOR" as const,
+  },
+  {
+    email: "tx-test-supervisor-smith@example.com",
+    district: "DISTRICT 42",
+    staffExternalId: "rsmith789",
+    stateCode: "US_TX",
+    givenNames: "Rosa",
+    surname: "Smith",
+    supervisorExternalId: null,
+    pseudonymizedId: "hashed-rsmith789",
+    hasCaseload: false,
+    roleSubtype: "SUPERVISION_OFFICER_SUPERVISOR" as const,
+  },
+  {
+    email: "tx-test-supervisor-thomas@example.com",
+    district: "DISTRICT 81",
+    staffExternalId: "cthomas321",
+    stateCode: "US_TX",
+    givenNames: "Charles",
+    surname: "Thomas",
+    supervisorExternalId: null,
+    pseudonymizedId: "hashed-cthomas321",
+    hasCaseload: false,
+    roleSubtype: "SUPERVISION_OFFICER_SUPERVISOR" as const,
+  },
+  {
+    email: "tx-test-supervisor-matterson@example.com",
+    district: "DISTRICT 42",
+    staffExternalId: "cmatterson567",
+    stateCode: "US_TX",
+    givenNames: "Cora",
+    surname: "Matterson",
+    supervisorExternalId: null,
+    pseudonymizedId: "hashed-cmatterson567",
+    hasCaseload: false,
+    roleSubtype: "SUPERVISION_OFFICER_SUPERVISOR" as const,
+  },
+  {
+    email: "tx-test-supervisor-williams@example.com",
+    district: "DISTRICT 1",
+    staffExternalId: "jwilliams345",
+    stateCode: "US_TX",
+    givenNames: "Jared",
+    surname: "Williams",
+    supervisorExternalId: null,
+    pseudonymizedId: "hashed-jwilliams345",
+    hasCaseload: false,
+    roleSubtype: "SUPERVISION_OFFICER_SUPERVISOR" as const,
+  },
+
   // US_UT - UTAH
   {
     email: null,
