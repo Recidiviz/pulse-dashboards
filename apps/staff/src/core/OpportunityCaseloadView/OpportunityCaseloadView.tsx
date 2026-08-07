@@ -22,11 +22,15 @@ import styled from "styled-components";
 
 import { withPresenterManager } from "~hydration-utils";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { OpportunityCaseloadViewPresenter } from "../../WorkflowsStore/presenters/OpportunityCaseloadViewPresenter";
 import { CaseloadSelect } from "../CaseloadSelect";
 import ModelHydrator from "../ModelHydrator";
+import { SCROLL_PADDING } from "../NavigationLayout";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import { HydratedOpportunityPersonList } from "./HydratedOpportunityPersonList";
 
@@ -36,6 +40,14 @@ const Wrapper = styled.div`
   height: 100%;
 `;
 
+// A real block-level spacer, rendered as a sibling of the (possibly
+// overflowing) opportunity list/grid content rather than relying on
+// Wrapper's own height, since Wrapper's height:100% caps its box regardless
+// of how far its overflowing children actually extend.
+const ScrollBuffer = styled.div`
+  height: ${rem(SCROLL_PADDING)};
+`;
+
 const ManagedComponent = observer(function OpportunityCaseloadView({
   presenter,
 }: {
@@ -43,6 +55,7 @@ const ManagedComponent = observer(function OpportunityCaseloadView({
 }) {
   const { opportunityType } = presenter;
   const { isTablet } = useIsMobile(true);
+  const { classificationScrollBuffer } = useFeatureVariants();
 
   return (
     // The Workflows layout should fill the screen.
@@ -51,6 +64,7 @@ const ManagedComponent = observer(function OpportunityCaseloadView({
         {isTablet && <CaseloadSelect />}
         <ModelHydrator hydratable={presenter}>
           <HydratedOpportunityPersonList opportunityType={opportunityType} />
+          {classificationScrollBuffer && <ScrollBuffer />}
         </ModelHydrator>
       </Wrapper>
     </WorkflowsNavLayout>

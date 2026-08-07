@@ -61,6 +61,8 @@ import { SYSTEM_ID_TO_PATH } from "./OverviewNavLinks";
 
 export const NAV_BAR_HEIGHT = 64;
 
+export const SCROLL_PADDING = 240;
+
 const Wrapper = styled.div`
   height: ${rem(NAV_BAR_HEIGHT)};
 `;

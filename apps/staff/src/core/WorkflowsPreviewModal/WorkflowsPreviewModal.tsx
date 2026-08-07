@@ -23,9 +23,12 @@ import styled from "styled-components";
 
 import { Button, Icon, palette } from "~design-system";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { NAV_BAR_HEIGHT } from "../NavigationLayout";
+import { NAV_BAR_HEIGHT, SCROLL_PADDING } from "../NavigationLayout";
 import { FOOTER_HEIGHT } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfileFooter";
 import useModalTimeoutDismissal from "./hooks/useModalTimeoutDismissal";
 import WorkflowsPreviewModalContext from "./WorkflowsPreviewModalContext";
@@ -118,7 +121,7 @@ const ModalControls = styled.div`
   }
 `;
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ $extraScrollBuffer?: boolean }>`
   padding: ${rem(spacing.lg)} ${rem(spacing.md)};
   flex: 1; // expand as much as possible, which pushes the footer down
 
@@ -127,6 +130,10 @@ const Wrapper = styled.div`
   }
   max-height: calc(100% - ${FOOTER_HEIGHT}px);
   overflow-y: auto;
+
+  ${({ $extraScrollBuffer }) =>
+    $extraScrollBuffer &&
+    `padding-bottom: ${rem(spacing.lg + SCROLL_PADDING)};`}
 `;
 
 const Footer = styled.div`
@@ -159,6 +166,7 @@ export const WorkflowsPreviewModal: FC<PreviewModalProps> = observer(
     contentRef,
   }: PreviewModalProps): JSX.Element {
     const { workflowsStore } = useRootStore();
+    const { classificationScrollBuffer } = useFeatureVariants();
     const { isMobile } = useIsMobile(true);
     const CLOSE_TIMEOUT_MS = 1000;
     const MODAL_WIDTH = 480;
@@ -232,7 +240,12 @@ export const WorkflowsPreviewModal: FC<PreviewModalProps> = observer(
           </Button>
         </ModalControls>
         <WorkflowsPreviewModalContext.Provider value={contextValue}>
-          <Wrapper className="WorkflowsPreviewModal">{pageContent}</Wrapper>
+          <Wrapper
+            className="WorkflowsPreviewModal"
+            $extraScrollBuffer={!!classificationScrollBuffer}
+          >
+            {pageContent}
+          </Wrapper>
         </WorkflowsPreviewModalContext.Provider>
         {footerContent && <Footer>{footerContent}</Footer>}
       </StyledDrawerModal>

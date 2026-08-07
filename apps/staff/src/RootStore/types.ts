@@ -69,6 +69,7 @@ export type FeatureVariant =
 
   //// General
   | "caseNoteSearch"
+  | "classificationScrollBuffer"
   | "clientsResidentsTableViewToggle"
   | "dynamicFilters"
   | "formRevertButton"
@@ -228,6 +229,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   supervisorHomepageVitals: {},
   usPaSpecialCircumstances: {},
   caseNoteSearch: {},
+  classificationScrollBuffer: {},
   clientsResidentsTableViewToggle: {},
   dynamicFilters: {},
   actionStrategies: {},

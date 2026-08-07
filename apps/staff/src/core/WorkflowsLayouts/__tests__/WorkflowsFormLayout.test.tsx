@@ -19,7 +19,10 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { Mock } from "vitest";
 
-import { useRootStore } from "../../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../../components/StoreProvider";
 import { RootStore } from "../../../RootStore";
 import { WorkflowsFormLayoutPresenter } from "../../../WorkflowsStore/presenters/WorkflowsFormLayoutPresenter";
 import { OpportunitySidePanelProvider } from "../../WorkflowsJusticeInvolvedPersonProfile/OpportunitySidePanelContext";
@@ -60,6 +63,7 @@ vi.mock(
 );
 
 const useRootStoreMock = useRootStore as Mock;
+const useFeatureVariantsMock = useFeatureVariants as Mock;
 const WorkflowsFormLayoutPresenterMock =
   WorkflowsFormLayoutPresenter as unknown as Mock;
 
@@ -89,6 +93,7 @@ function renderFormLayout({
     firestoreStore: {},
     tenantStore: {},
   } as unknown as RootStore);
+  useFeatureVariantsMock.mockReturnValue({});
 
   // MemoryRouter assigns location.key = "default" only to the first (index 0)
   // entry. Placing the form path at index 1 gives it a non-default key,

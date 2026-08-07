@@ -32,6 +32,7 @@ import {
   NAV_BAR_HEIGHT,
   NavigationLayout,
   OverviewNavLinks,
+  SCROLL_PADDING,
 } from "../NavigationLayout";
 import { PersonSearchBar } from "../PersonSearchBar";
 import { MaxWidth } from "../sharedComponents";
@@ -73,6 +74,14 @@ const Main = styled.main<{
         ${MaxWidth}`}
 `;
 
+// A real block-level spacer (rather than padding on Main) so the buffer still
+// shows up after the last row even when the list content overflows Main's
+// own height — padding on an overflowing, non-scrolling box gets painted
+// over by the overflow instead of reserving visible space.
+const ScrollBuffer = styled.div`
+  height: ${rem(SCROLL_PADDING)};
+`;
+
 const BackButtonWrapper = styled.div<{
   $fixed: boolean;
   $isMobile: boolean;
@@ -99,7 +108,8 @@ export const WorkflowsNavLayout: React.FC<{
     workflowsStore: { activePageIsTasks },
     tenantStore,
   } = useRootStore();
-  const { typesensePersonSearch } = useFeatureVariants();
+  const { typesensePersonSearch, classificationScrollBuffer } =
+    useFeatureVariants();
   const { isMobile, isLaptop } = useIsMobile(true);
 
   const workflowsMethodologyUrl = tenantStore.workflowsMethodologyUrl;
@@ -125,6 +135,7 @@ export const WorkflowsNavLayout: React.FC<{
       </BackButtonWrapper>
       <Main isMobile={isMobile} $limitedWidth={limitedWidth}>
         {children}
+        {classificationScrollBuffer && <ScrollBuffer />}
       </Main>
     </Wrapper>
   );

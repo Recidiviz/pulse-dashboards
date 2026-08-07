@@ -25,14 +25,21 @@ import { OpportunityType } from "~datatypes";
 import { palette } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { WorkflowsFormLayoutPresenter } from "../../WorkflowsStore/presenters/WorkflowsFormLayoutPresenter";
 import cssVars from "../CoreConstants.module.scss";
 import { usePersonTracking } from "../hooks/usePersonTracking";
 import ModelHydrator from "../ModelHydrator";
 import { NavigationBackButton } from "../NavigationBackButton";
-import { NAV_BAR_HEIGHT, NavigationLayout } from "../NavigationLayout";
+import {
+  NAV_BAR_HEIGHT,
+  NavigationLayout,
+  SCROLL_PADDING,
+} from "../NavigationLayout";
 import { OpportunityPreviewPanel } from "../OpportunityCaseloadView/OpportunityPreviewPanel";
 import { OpportunityFormProvider } from "../Paperwork/OpportunityFormContext";
 import { FormUsIaEarlyDischargeParole } from "../Paperwork/US_IA/EarlyDischarge/FormUsIaEarlyDischargeParole";
@@ -81,13 +88,17 @@ const Sidebar = styled.div`
   background: ${palette.marble1};
 `;
 
-const SidebarSection = styled.section`
+const SidebarSection = styled.section<{ $extraScrollBuffer?: boolean }>`
   position: sticky;
   inset: 0;
   max-height: ${`calc(100vh - ${rem(NAV_BAR_HEIGHT)})`};
   overflow-y: auto;
 
   padding: ${rem(spacing.lg)} ${rem(spacing.md)};
+
+  ${({ $extraScrollBuffer }) =>
+    $extraScrollBuffer &&
+    `padding-bottom: ${rem(spacing.lg + SCROLL_PADDING)};`}
 
   &:first-child {
     border-bottom: 1px solid ${palette.slate20};
@@ -171,6 +182,7 @@ const HydratedWorkflowsFormLayout = observer(
     presenter: WorkflowsFormLayoutPresenter;
   }) {
     const { currentView, setCurrentView } = useOpportunitySidePanel();
+    const { classificationScrollBuffer } = useFeatureVariants();
     const navigate = useNavigate();
     const { pathname, key: locationKey } = useLocation();
     const { officerPseudoId, supervisorPseudoId } = useParams();
@@ -232,7 +244,7 @@ const HydratedWorkflowsFormLayout = observer(
             externalMethodologyUrl={workflowsMethodologyUrl}
             isFixed={false}
           />
-          <SidebarSection>
+          <SidebarSection $extraScrollBuffer={!!classificationScrollBuffer}>
             <BackButtonWrapper>
               <NavigationBackButton action={{ onClick: handleBack }}>
                 Back
