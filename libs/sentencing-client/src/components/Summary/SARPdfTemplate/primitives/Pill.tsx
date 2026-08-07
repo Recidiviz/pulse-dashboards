@@ -28,7 +28,9 @@ export const Pill: React.FC<{
   value: string;
   style?: PdfStyle;
 }> = ({ icon, label, value, style = {} }) => (
-  <View style={[{}, style]}>
+  // Renders as a single unbreakable unit so the label and full value list
+  // move together to the next page rather than splitting across the break.
+  <View style={[{}, style]} wrap={false}>
     <View
       style={{
         flexDirection: "row",

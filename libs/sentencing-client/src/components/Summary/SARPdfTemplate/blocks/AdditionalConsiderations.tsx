@@ -56,7 +56,10 @@ export const AdditionalConsiderations: React.FC<{ style?: PdfStyle }> = ({
   }
   if (!pills.length) return null;
   return (
-    <View style={style}>
+    // wrap={false} keeps the section heading and its pills as one unit, so a
+    // pill that doesn't fit in the remaining page space carries the heading
+    // to the next page with it instead of orphaning the heading alone.
+    <View style={style} wrap={false}>
       <SectionHeading
         title={"ADDITIONAL CONSIDERATIONS"}
         meta="As determined by report author"

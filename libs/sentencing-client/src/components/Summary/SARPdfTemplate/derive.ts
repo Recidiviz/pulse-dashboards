@@ -172,6 +172,8 @@ export interface DocTreatmentGroup {
   /** Count + label, e.g. "3 Cognitive Programs". */
   title: string;
   entries: Array<{ date: string; name: string }>;
+  /** Entries dropped by the per-category cap; render as "and N more" when > 0. */
+  overflowCount: number;
 }
 
 /**
@@ -204,12 +206,14 @@ export const docTreatmentGroups = (sar: SAR): DocTreatmentGroup[] => {
   return [...grouped.entries()].map(([category, rows]) => {
     const labels = TREATMENT_PROGRAM_CATEGORY_LABELS[category];
     const title = `${rows.length} ${rows.length === 1 ? labels.singular : labels.plural}`;
+    const visible = rows.slice(0, MAX_DOC_HISTORIES_PER_CATEGORY);
     return {
       title,
-      entries: rows.slice(0, MAX_DOC_HISTORIES_PER_CATEGORY).map((h) => ({
+      entries: visible.map((h) => ({
         date: formatDisplayDate(h.completedOn),
         name: h.programName ?? "—",
       })),
+      overflowCount: rows.length - visible.length,
     };
   });
 };

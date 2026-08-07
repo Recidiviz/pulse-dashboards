@@ -96,6 +96,11 @@ export const PriorTreatmentSection: React.FC<{ style?: PdfStyle }> = ({
                     <Text>{e.name}</Text>
                   </View>
                 ))}
+                {g.overflowCount > 0 ? (
+                  <Text style={{ fontSize: font.size.sm, fontStyle: "italic" }}>
+                    and {g.overflowCount} more
+                  </Text>
+                ) : null}
               </View>
             ))}
           </View>
