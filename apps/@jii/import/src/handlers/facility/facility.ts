@@ -15,25 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { PrismaClient } from "~@jii/prisma";
+import { LoaderFn } from "~data-import-plugin";
 
-import { rnaWritebackSchema } from "../../models";
+import { facilitySchema } from "../../models";
+import { DEFAULT_BATCH_SIZE, runBatchImport } from "../../utils/batchImport";
 
-const rawUsNcRNAWritebackFixtures: z.input<typeof rnaWritebackSchema>[] = [
-  {
-    pseudonymizedId: "anonres001",
-    opusId: "RES001",
-    seqNumber: "002",
-    admitDate: "2026-01-01",
-  },
-  {
-    pseudonymizedId: "anonres002",
-    opusId: "RES002",
-    seqNumber: null,
-    admitDate: "2026-01-01",
-  },
-];
+export const BATCH_SIZE = DEFAULT_BATCH_SIZE; // facility.test.ts imports this
 
-export const usNcRNAWritebackFixtures = rawUsNcRNAWritebackFixtures.map((f) =>
-  rnaWritebackSchema.parse(f),
-);
+export const facilityHandler: LoaderFn<
+  PrismaClient,
+  typeof facilitySchema
+> = async (prismaClient, data) => {
+  await runBatchImport({
+    prismaClient,
+    model: prismaClient.incarcerationFacility,
+    tableName: "IncarcerationFacility",
+    idField: "id",
+    pruneStale: true,
+    batchSize: BATCH_SIZE,
+    data,
+  });
+};

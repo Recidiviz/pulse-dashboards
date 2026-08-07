@@ -15,36 +15,39 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { toTitleCase } from "@artsy/to-title-case";
+import { mapValues } from "lodash-es";
 import { z } from "zod";
 
 import { findStateSchema } from "~@jii/schemas";
-import { dateStringSchema, residentCommonSchema } from "~datatypes";
-import { camelCaseObject } from "~utils";
+import {
+  dateStringSchema,
+  FullName,
+  nullishAsNull,
+  residentCommonSchema,
+} from "~datatypes";
+
+/*
+ * Schemas in this file describe records that have already had the raw-export transformations
+ * applied (see FILE_NAME_TO_SCHEMA_AND_LOADER_FN in constants.ts), so they can also be used
+ * directly for fixture data that doesn't require them.
+ */
 
 export const rnaWritebackSchema = z.object({
-  pseudonymized_id: z.string(),
-  seq_number: z.string().nullish(),
-  opus_id: z.string(),
-  admit_date: dateStringSchema.nullable(),
+  pseudonymizedId: z.string(),
+  seqNumber: nullishAsNull(z.string()),
+  opusId: z.string(),
+  admitDate: dateStringSchema.nullable(),
 });
 
-// JSON fields are exported as strings and need to be parsed
-const jsonStringToObjectSchema = z.string().transform((s) => JSON.parse(s));
+// we'll use this to make sure no fields are missing when we spread the name blobs
+const personNameDefaults: Record<keyof FullName, null> = {
+  givenNames: null,
+  middleNames: null,
+  surname: null,
+};
 
-const exportPreprocessSchema = z
-  .object({
-    person_name: jsonStringToObjectSchema,
-    // not every state will have this, though we do expect it to exist consistently within a state
-    state_specific_data: jsonStringToObjectSchema.optional(),
-  })
-  .passthrough()
-  .transform(camelCaseObject);
-
-/**
- * schema for Resident data that has already passed through the BigQuery preprocessing step
- * (or that comes from a fixture file that does not require it)
- */
-export const processedResidentSchema = residentCommonSchema
+export const residentSchema = residentCommonSchema
   .extend({
     // this is a plain object with passthrough because our goal here is to validate it
     // against existing SSD schemas while still storing the original input in the DB.
@@ -88,10 +91,31 @@ export const processedResidentSchema = residentCommonSchema
         message: `Missing required state-specific data for ${d.stateCode}`,
       });
     }
-  });
+  })
+  .transform(
+    ({
+      personName,
+      // removing stateCode from the final import payload, it's not part of the Prisma model
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      stateCode,
+      ...passthroughFields
+    }) => {
+      const personNameData = mapValues(
+        // because we're spreading this into columns in the SQL query,
+        // we have to make sure there are no missing fields, or we may get
+        // a SQL syntax error in bulkUpdate
+        { ...personNameDefaults, ...personName },
+        // names come through in UPPERCASE which is not what we want to display
+        // TODO(OBT-29534): switch to nameCase, but using titleCase here for comparison to old data
+        (v) => (v ? toTitleCase(v.toLowerCase()) : v),
+      );
+      return { ...personNameData, ...passthroughFields };
+    },
+  );
 
-export type ProcessedResident = z.infer<typeof processedResidentSchema>;
+export type ImportedResident = z.infer<typeof residentSchema>;
 
-export const residentSchema = exportPreprocessSchema.pipe(
-  processedResidentSchema,
-);
+export const facilitySchema = z.object({
+  id: z.string(),
+  name: nullishAsNull(z.string()),
+});

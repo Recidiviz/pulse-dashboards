@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
-
 import { getPrismaClient } from "~@jii/prisma";
 import {
   dataProviderSingleton,
@@ -25,8 +23,8 @@ import {
 
 import { NC_RNA_FILE_NAME } from "../../constants";
 import { getImportHandler } from "../../handler";
-import { rnaWritebackSchema } from "../../models";
 import { resetDb } from "../../testUtils";
+import { BATCH_SIZE } from "./usNcRNA";
 
 vi.mock("~data-import-plugin", () => ({
   ImportHandler: MockImportHandler,
@@ -38,7 +36,8 @@ const DATA_PROVIDER_FILE_NAME = `${STATE_CODE}/${NC_RNA_FILE_NAME}`;
 const importHandler = getImportHandler();
 const prismaClient = getPrismaClient({ stateCode: STATE_CODE, demo: false });
 
-const personData: z.input<typeof rnaWritebackSchema> = {
+// raw export data, as it looks before the import handler transforms it
+const personData = {
   pseudonymized_id: "test_pseudonymized_id",
   seq_number: "1",
   opus_id: "test_opus_id",
@@ -134,7 +133,7 @@ describe("transformAndLoadRNAWritebackData", () => {
   });
 
   it("correctly imports more than BATCH_SIZE people", async () => {
-    const manyPeople = Array.from({ length: 501 }, (_, i) => ({
+    const manyPeople = Array.from({ length: BATCH_SIZE + 1 }, (_, i) => ({
       ...personData,
       pseudonymized_id: `${personData.pseudonymized_id}${i}`,
       opus_id: `${personData.opus_id}${i}`,

@@ -15,15 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PrismaClient, UsNcRNAWritebackDataCreateInput } from "~@jii/prisma";
+import { PrismaClient } from "~@jii/prisma";
 import { LoaderFn } from "~data-import-plugin";
 
 import { rnaWritebackSchema } from "../../models";
-import {
-  bulkUpdate,
-  type BulkUpdateEntries,
-  BulkUpdateEntry,
-} from "../../utils/bulkUpdate";
+import { DEFAULT_BATCH_SIZE, runBatchImport } from "../../utils/batchImport";
+
+export const BATCH_SIZE = DEFAULT_BATCH_SIZE; // usNcRNA.test.ts imports this
 
 /**
  * Loads data to the UsNcRNAWriteback table in batches of 500 records at a time,
@@ -34,57 +32,13 @@ export const transformAndLoadRNAWritebackData: LoaderFn<
   PrismaClient,
   typeof rnaWritebackSchema
 > = async (prismaClient, data) => {
-  const BATCH_SIZE = 500;
-  const importedAt = new Date();
-
-  const existingPseudoIds = new Set(
-    (
-      await prismaClient.usNcRNAWritebackData.findMany({
-        select: {
-          pseudonymizedId: true,
-        },
-      })
-    ).map(({ pseudonymizedId }) => pseudonymizedId),
-  );
-
-  let createBatch: UsNcRNAWritebackDataCreateInput[] = [];
-  let updateBatch: BulkUpdateEntries = [];
-
-  const flushCreateBatch = async () => {
-    if (createBatch.length === 0) return;
-    await prismaClient.usNcRNAWritebackData.createMany({ data: createBatch });
-    createBatch = [];
-  };
-
-  const flushUpdateBatch = async () => {
-    if (updateBatch.length === 0) return;
-    await bulkUpdate(
-      prismaClient,
-      "UsNcRNAWritebackData",
-      ["pseudonymizedId"],
-      updateBatch,
-    );
-    updateBatch = [];
-  };
-
-  for await (const d of data) {
-    const newRNAData = {
-      pseudonymizedId: d.pseudonymized_id,
-      opusId: d.opus_id,
-      seqNumber: d.seq_number ?? null,
-      admitDate: d.admit_date,
-      importedAt,
-    } satisfies UsNcRNAWritebackDataCreateInput & BulkUpdateEntry;
-
-    if (existingPseudoIds.has(d.pseudonymized_id)) {
-      updateBatch.push(newRNAData);
-      if (updateBatch.length >= BATCH_SIZE) await flushUpdateBatch();
-    } else {
-      createBatch.push(newRNAData);
-      if (createBatch.length >= BATCH_SIZE) await flushCreateBatch();
-    }
-  }
-
-  await flushCreateBatch();
-  await flushUpdateBatch();
+  await runBatchImport({
+    prismaClient,
+    model: prismaClient.usNcRNAWritebackData,
+    tableName: "UsNcRNAWritebackData",
+    idField: "pseudonymizedId",
+    batchSize: BATCH_SIZE,
+    pruneStale: false,
+    data,
+  });
 };

@@ -19,7 +19,7 @@ import { group } from "d3-array";
 
 import { rawAllResidentCommon } from "~datatypes";
 
-import { processedResidentSchema } from "../../models";
+import { residentSchema } from "../../models";
 import { getEnabledStateCodes } from "../../utils/getEnabledStateCodes";
 import { rawResidentStateDataFixtures } from "./residentStateData";
 
@@ -32,7 +32,7 @@ export const residentFixtures = new Map(
   getEnabledStateCodes().map((code) => [
     code,
     (rawResidentCommonByState.get(code) ?? []).map((r, i) =>
-      processedResidentSchema.parse({
+      residentSchema.parse({
         ...r,
         stateSpecificData: rawResidentStateDataFixtures.get(code)?.[i],
       }),

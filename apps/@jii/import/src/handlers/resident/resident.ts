@@ -15,108 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { toTitleCase } from "@artsy/to-title-case";
-import { mapValues } from "lodash-es";
-
-import { PrismaClient, ResidentCreateInput } from "~@jii/prisma";
+import { PrismaClient } from "~@jii/prisma";
 import { LoaderFn } from "~data-import-plugin";
-import { FullName } from "~datatypes";
 
 import { residentSchema } from "../../models";
-import {
-  bulkUpdate,
-  type BulkUpdateEntries,
-  BulkUpdateEntry,
-} from "../../utils/bulkUpdate";
+import { DEFAULT_BATCH_SIZE, runBatchImport } from "../../utils/batchImport";
 
-export const BATCH_SIZE = 500;
-
-// we'll use this to make sure no fields are missing when we spread the name blobs
-const personNameDefaults: Record<keyof FullName, null> = {
-  givenNames: null,
-  middleNames: null,
-  surname: null,
-};
+export const BATCH_SIZE = DEFAULT_BATCH_SIZE; // resident.test.ts imports this
 
 export const residentHandler: LoaderFn<
   PrismaClient,
   typeof residentSchema
 > = async (prismaClient, data) => {
-  const importTimestamp = new Date();
-
-  // existing residents will be updated, new ones will be created
-  const existingResidentIds = new Set(
-    (
-      await prismaClient.resident.findMany({
-        select: { pseudonymizedId: true },
-      })
-    ).map((r) => r.pseudonymizedId),
-  );
-
-  let createBatch: ResidentCreateInput[] = [];
-  let updateBatch: BulkUpdateEntries = [];
-
-  const flushCreateBatch = async () => {
-    if (createBatch.length === 0) return;
-    await prismaClient.resident.createMany({ data: createBatch });
-    createBatch = [];
-  };
-
-  const flushUpdateBatch = async () => {
-    if (updateBatch.length === 0) return;
-    await bulkUpdate(
-      prismaClient,
-      "Resident",
-      ["pseudonymizedId"],
-      updateBatch,
-    );
-    updateBatch = [];
-  };
-
-  for await (const d of data) {
-    const {
-      personName,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      stateCode,
-      ...passthroughFields
-    } = d;
-
-    const personNameData = mapValues(
-      // because we're spreading this into columns in the SQL query,
-      // we have to make sure there are no missing fields, or we may get
-      // a SQL syntax error in bulkUpdate
-      { ...personNameDefaults, ...personName },
-      // names come through in UPPERCASE which is not what we want to display
-      // TODO(OBT-29534): switch to nameCase, but using titleCase here for comparison to old data
-      (v) => (v ? toTitleCase(v.toLowerCase()) : v),
-    );
-
-    const newResidentData = {
-      ...passthroughFields,
-      ...personNameData,
-      importedAt: importTimestamp,
-      // we don't actually have to include state code in the import,
-      // data has already been segmented by state
-    } satisfies ResidentCreateInput & BulkUpdateEntry;
-
-    if (existingResidentIds.has(d.pseudonymizedId)) {
-      updateBatch.push(newResidentData);
-    } else {
-      createBatch.push(newResidentData);
-    }
-    if (createBatch.length >= BATCH_SIZE) {
-      await flushCreateBatch();
-    }
-    if (updateBatch.length >= BATCH_SIZE) {
-      await flushUpdateBatch();
-    }
-  }
-
-  await flushCreateBatch();
-  await flushUpdateBatch();
-
-  // residents no longer active can be dropped from the table
-  await prismaClient.resident.deleteMany({
-    where: { importedAt: { lt: importTimestamp } },
+  await runBatchImport({
+    prismaClient,
+    model: prismaClient.resident,
+    tableName: "Resident",
+    idField: "pseudonymizedId",
+    pruneStale: true,
+    batchSize: BATCH_SIZE,
+    data,
   });
 };
