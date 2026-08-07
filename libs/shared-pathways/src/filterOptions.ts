@@ -1517,6 +1517,7 @@ export const NyPopulationFilterOptions: PopulationFilters = {
   },
   [FILTER_TYPES.TIME_AT_FACILITY]: {
     ...DefaultPopulationFilterOptions[FILTER_TYPES.TIME_AT_FACILITY],
+    title: "Time at Housing Facility",
     useDynamicOptions: true,
   },
   [FILTER_TYPES.DATE_IN_POPULATION]: {

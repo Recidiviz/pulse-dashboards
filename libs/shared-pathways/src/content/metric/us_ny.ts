@@ -90,9 +90,9 @@ const content: StateSpecificMetricCopy = {
       "The chart describes the number of people from each marital status as of the date specified in the chart title.",
   },
   prisonPopulationByTimeAtFacility: {
-    title: "Prison population by time at facility",
+    title: "Prison population by time at housing facility",
     methodology:
-      "The chart describes the number of people from each time at facility as of the date specified in the chart title.",
+      "The chart describes the number of people from each time at each housing facility as of the date specified in the chart title.",
   },
 };
 
