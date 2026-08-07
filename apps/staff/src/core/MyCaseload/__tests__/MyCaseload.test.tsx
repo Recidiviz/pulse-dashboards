@@ -105,7 +105,7 @@ function setupStoreMock(
 ) {
   useFeatureVariantsMock.mockReturnValue({ usMoMyCaseload: {} });
   useRootStoreMock.mockReturnValue({
-    workflowsStore: {},
+    workflowsStore: { searchStore: { isTypesenseSearchEnabled: false } },
     tenantStore: {},
     analyticsStore: {},
     firestoreStore: {},

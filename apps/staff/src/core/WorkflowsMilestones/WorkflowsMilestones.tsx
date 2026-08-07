@@ -29,21 +29,32 @@ import MilestonesCaseloadView from "./MilestonesCaseloadView";
 const WorkflowsMilestones = observer(
   function WorkflowsMilestones(): React.ReactElement<any> | null {
     const {
-      workflowsStore: { justiceInvolvedPersonTitle },
+      workflowsStore: {
+        justiceInvolvedPersonTitle,
+        searchStore: { isTypesenseSearchEnabled },
+      },
     } = useRootStore();
 
     const title = pluralizeWord({ term: justiceInvolvedPersonTitle });
 
+    // With the typesense search FV, the header + subheader render above the
+    // search bar (consistent with the other caseload pages); otherwise they
+    // render below it, as before.
+    const header = (
+      <>
+        <Heading>Congratulate your {title} on their progress</Heading>
+        <SubHeading>
+          Send a text message to celebrate your {title}&apos; milestones. This
+          list will refresh every month.
+        </SubHeading>
+      </>
+    );
+
     return (
       <WorkflowsNavLayout>
+        {isTypesenseSearchEnabled && header}
         <CaseloadSelect />
-        <>
-          <Heading>Congratulate your {title} on their progress</Heading>
-          <SubHeading>
-            Send a text message to celebrate your {title}&apos; milestones. This
-            list will refresh every month.
-          </SubHeading>
-        </>
+        {!isTypesenseSearchEnabled && header}
         <MilestonesCaseloadView />
       </WorkflowsNavLayout>
     );

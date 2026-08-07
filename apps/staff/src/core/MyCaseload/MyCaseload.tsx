@@ -116,6 +116,11 @@ const ManagedComponent = observer(function MyCaseload({
   const [searchParams] = useSearchParams();
   const location = useLocation();
   const { isMobile } = useIsMobile(true);
+  const {
+    workflowsStore: {
+      searchStore: { isTypesenseSearchEnabled },
+    },
+  } = useRootStore();
 
   // URL → presenter (continuous). A missing / unknown slug (e.g. no `?tab=` on
   // first load, or a stale ?tab=due-next-month from a Tasks-page bookmark)
@@ -157,19 +162,26 @@ const ManagedComponent = observer(function MyCaseload({
     [],
   );
 
+  const header = (
+    <>
+      <MyCaseloadHeading>My Caseload</MyCaseloadHeading>
+      <MyCaseloadSubtitle>
+        Use this list of clients to plan your week and prepare for upcoming
+        touchpoints.
+      </MyCaseloadSubtitle>
+    </>
+  );
+
   return (
     <WorkflowsNavLayout limitedWidth={false}>
+      {isTypesenseSearchEnabled && header}
       <CaseloadSelectWrapper>
         <SelectRow $isMobile={isMobile}>
           <CaseloadSelect />
           <PersonLookup />
         </SelectRow>
       </CaseloadSelectWrapper>
-      <MyCaseloadHeading>My Caseload</MyCaseloadHeading>
-      <MyCaseloadSubtitle>
-        Use this list of clients to plan your week and prepare for upcoming
-        touchpoints.
-      </MyCaseloadSubtitle>
+      {!isTypesenseSearchEnabled && header}
       <CaseloadTasksHydrator
         emptyWhenNoClients
         initial={<MyCaseloadInitialState />}
