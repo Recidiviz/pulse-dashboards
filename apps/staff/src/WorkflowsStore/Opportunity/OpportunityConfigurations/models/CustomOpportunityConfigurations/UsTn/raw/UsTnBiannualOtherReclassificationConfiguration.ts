@@ -26,6 +26,7 @@ export const usTnBiannualOtherReclassificationConfiguration: IApiOpportunityConf
     dynamicEligibilityText:
       "[person|people] have paperwork in progress for a bi-annual or other reclassification",
     urlSection: "biannual",
+    hideIneligibleStatusPillOnProfile: true,
     // Place at the bottom
     homepagePosition: 21,
   };

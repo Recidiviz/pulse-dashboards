@@ -326,6 +326,10 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return this.configurationObject.showIneligibleFormButtons;
   }
 
+  get hideIneligibleStatusPillOnProfile() {
+    return this.configurationObject.hideIneligibleStatusPillOnProfile;
+  }
+
   // This field controls if the opportunity manager will hydrate an opportunity
   // record when we instantiate a JII instance even if the record says
   // the person is ineligible.

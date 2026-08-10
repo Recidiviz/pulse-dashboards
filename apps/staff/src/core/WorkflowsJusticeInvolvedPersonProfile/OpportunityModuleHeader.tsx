@@ -63,7 +63,10 @@ export const OpportunityModuleHeader: React.FC<OpportunityModuleHeaderProps> =
     const isFullProfilePage = isClientProfile || isResidentProfile;
 
     const showStatusPill =
-      isFullProfilePage || opportunity.isSubmitted || !opportunity.isIneligible;
+      (isFullProfilePage &&
+        !opportunity.config.hideIneligibleStatusPillOnProfile) ||
+      opportunity.isSubmitted ||
+      !opportunity.isIneligible;
     return (
       <TitleText>
         <OpportunityLabelWithPill>

@@ -86,6 +86,7 @@ export interface OpportunityConfiguration {
   supportsSubmitted: boolean;
   supportsIneligible: boolean;
   showIneligibleFormButtons: boolean;
+  hideIneligibleStatusPillOnProfile?: boolean;
   hydrateIneligibleRecordsInOpportunityManager: boolean;
   highlightCasesOnHomepage: boolean;
   highlightedCaseCtaCopy: string;
