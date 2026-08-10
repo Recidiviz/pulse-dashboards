@@ -33,8 +33,8 @@ describe("dateWindowString", () => {
     vi.setSystemTime(TODAY);
   });
 
-  it("uses the previous month month for period starting in 0", () => {
-    expect(dateWindowString("0-6", mockRecord)).toBe("Jan 2026 - May 2026");
+  it("uses the current month for the near endpoint of the 0-6 period", () => {
+    expect(dateWindowString("0-6", mockRecord)).toBe("Jan 2026 - Jun 2026");
   });
 
   it.each([

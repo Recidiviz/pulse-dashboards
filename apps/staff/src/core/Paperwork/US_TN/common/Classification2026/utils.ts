@@ -76,9 +76,12 @@ export function dateWindowString(
   // turn each endpoint into a Date
   const endpointDates = endpoints.map((e) => dateForPeriodEndpoint(e, record));
 
-  // the nearest endpoint should display the previous month since
-  // we're displaying month granularity
-  endpointDates[0] = subMonths(endpointDates[0], 1);
+  // the near endpoint of every window except "0" is a stored boundary field
+  // marking the end of the *previous* window, so shift it back a month to
+  // avoid overlap. "0" is just today's date and needs no adjustment.
+  if (endpoints[0] !== "0") {
+    endpointDates[0] = subMonths(endpointDates[0], 1);
+  }
 
   // turn into strings, reverse to put older date first, and join with a dash
   return endpointDates.map(formatWorkflowsDateMonthYear).reverse().join(" - ");
