@@ -28,6 +28,7 @@ module.exports = {
     "./src/widgets/**/*.{js,jsx,ts,tsx}",
     "./src/entities/**/*.{js,jsx,ts,tsx}",
   ],
+  darkMode: "class",
   presets: [require("nativewind/preset")],
   theme: {
     extend: {
