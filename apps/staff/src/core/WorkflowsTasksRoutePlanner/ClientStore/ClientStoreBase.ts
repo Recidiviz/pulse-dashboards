@@ -156,6 +156,7 @@ export default class RoutePlannerClientStore {
   }
 
   hasBadAddress(person: Client): boolean {
+    if (!person.formattedAddress) return true;
     const { validatedAddressUpdate } = person;
     return Boolean(
       validatedAddressUpdate &&
