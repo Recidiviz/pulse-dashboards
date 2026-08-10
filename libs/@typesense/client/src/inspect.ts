@@ -20,17 +20,31 @@
 //   summary                 Print names + doc counts + field counts.
 //   schema --collection=X   Print the full field schema for collection X.
 //
+// Run with --help (or `<subcommand> --help`) for the full usage reference.
+//
 // Reads TYPESENSE_HOST and TYPESENSE_API_INSPECT_KEY from the environment (typically
 // loaded by the SOPS plugin from env.<env>.enc.yaml). Admin key is required so the
 // script can hit `/collections` endpoints (the search-only TYPESENSE_API_SEARCH_KEY
 // used by client.ts would 401 here). No writes — safe to run against any cluster.
 
+import { Command } from "@commander-js/extra-typings";
+
 import { createTypesenseClient } from "./client";
 
-type Subcommand = "list" | "summary" | "schema";
-
-function isSubcommand(value: string): value is Subcommand {
-  return value === "list" || value === "summary" || value === "schema";
+// Env is read lazily, per subcommand, so `--help` works without a configured
+// cluster.
+function createInspectClient() {
+  const host = process.env["TYPESENSE_HOST"];
+  const apiKey = process.env["TYPESENSE_API_INSPECT_KEY"];
+  if (!host) {
+    console.error("TYPESENSE_HOST is required");
+    process.exit(1);
+  }
+  if (!apiKey) {
+    console.error("TYPESENSE_API_INSPECT_KEY is required");
+    process.exit(1);
+  }
+  return createTypesenseClient({ host, apiKey });
 }
 
 function printTable(rows: Array<Record<string, string | number>>): void {
@@ -51,69 +65,54 @@ function printTable(rows: Array<Record<string, string | number>>): void {
   }
 }
 
-function parseCollectionArg(): string | undefined {
-  // Accept either `--collection=foo` or `--collection foo`.
-  for (let i = 0; i < process.argv.length; i++) {
-    const arg = process.argv[i];
-    if (arg.startsWith("--collection="))
-      return arg.slice("--collection=".length);
-    if (arg === "--collection") return process.argv[i + 1];
-  }
-  return undefined;
-}
+const program = new Command()
+  .name("inspect")
+  .description("Read-only introspection of a remote Typesense cluster");
 
-async function main(): Promise<void> {
-  const host = process.env["TYPESENSE_HOST"];
-  const apiKey = process.env["TYPESENSE_API_INSPECT_KEY"];
-  if (!host) {
-    console.error("TYPESENSE_HOST is required");
-    process.exit(1);
-  }
-  if (!apiKey) {
-    console.error("TYPESENSE_API_INSPECT_KEY is required");
-    process.exit(1);
-  }
-
-  const subcommand = process.argv[2];
-  if (!subcommand || !isSubcommand(subcommand)) {
-    console.error(
-      `Usage: tsx src/inspect.ts <list|summary|schema> [--collection=<name>]`,
-    );
-    process.exit(1);
-  }
-
-  const client = createTypesenseClient({ host, apiKey });
-
-  if (subcommand === "list") {
-    const collections = await client.collections().retrieve();
+program
+  .command("list")
+  .description("Print collection names, one per line")
+  .action(async () => {
+    const collections = await createInspectClient().collections().retrieve();
     for (const c of collections) console.info(c.name);
-    return;
-  }
+  });
 
-  if (subcommand === "summary") {
-    const collections = await client.collections().retrieve();
-    const rows = collections.map((c) => ({
-      name: c.name,
-      docs: c.num_documents,
-      fields: c.fields?.length ?? 0,
-    }));
-    printTable(rows);
-    return;
-  }
-
-  // schema
-  const collection = parseCollectionArg();
-  if (!collection) {
-    console.error(
-      "schema requires --collection=<name>, e.g. --collection=supervisionStaff",
+program
+  .command("summary")
+  .description("Print collection names with document and field counts")
+  .action(async () => {
+    const collections = await createInspectClient().collections().retrieve();
+    printTable(
+      collections.map((c) => ({
+        name: c.name,
+        docs: c.num_documents,
+        fields: c.fields?.length ?? 0,
+      })),
     );
-    process.exit(1);
-  }
-  const result = await client.collections(collection).retrieve();
-  console.info(JSON.stringify(result, null, 2));
-}
+  });
 
-main().catch((err) => {
+program
+  .command("schema")
+  .description("Print the full field schema for a collection")
+  .requiredOption("--collection <name>", "Collection to describe")
+  .action(async (options) => {
+    // The nx target substitutes `--collection={args.collection}`, which yields
+    // an empty value rather than an absent flag when the caller omits it — so
+    // commander's required-option check alone isn't enough here.
+    const collection = options.collection.trim();
+    if (!collection) {
+      console.error(
+        "schema requires --collection=<name>, e.g. --collection=supervisionStaff",
+      );
+      process.exit(1);
+    }
+    const result = await createInspectClient()
+      .collections(collection)
+      .retrieve();
+    console.info(JSON.stringify(result, null, 2));
+  });
+
+program.parseAsync().catch((err) => {
   const message = err instanceof Error ? err.message : String(err);
   console.error(message);
   process.exit(1);

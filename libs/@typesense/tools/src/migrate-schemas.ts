@@ -49,18 +49,32 @@
  * multiple PATCHes ever targeted the same collection.
  */
 
+import { Command } from "@commander-js/extra-typings";
 import type { CollectionUpdateSchema } from "typesense/lib/Typesense/Collection";
 import type { CollectionCreateSchema } from "typesense/lib/Typesense/Collections";
 
 import { createTypesenseClient, schemas } from "~@typesense/client";
 
+import { parseBooleanFlag } from "./cli";
+
 type LocalField = NonNullable<CollectionCreateSchema["fields"]>[number];
 type LiveField = LocalField & { drop?: boolean };
 
-function hasFlag(name: string): boolean {
-  return process.argv.some(
-    (arg) => arg === `--${name}` || arg === `--${name}=true`,
-  );
+function parseArgs(): { dryRun: boolean } {
+  const program = new Command()
+    .name("migrate-schemas")
+    .description(
+      "Reconcile live Typesense collection schemas against the local declarations, applying non-destructive add/drop mutations",
+    )
+    .option(
+      "--dry-run [bool]",
+      "Print the plan and exit without mutating anything",
+      parseBooleanFlag,
+      false,
+    )
+    .parse();
+
+  return { dryRun: program.opts().dryRun };
 }
 
 // Attributes we compare when checking for in-place modifications. Anything
@@ -200,6 +214,9 @@ export function checkOptionalOnAdds(diff: SchemaDiff): string[] {
 }
 
 async function main(): Promise<void> {
+  // Parse before the env checks so `--help` works without a configured cluster.
+  const { dryRun } = parseArgs();
+
   const host = process.env["TYPESENSE_HOST"];
   const apiKey = process.env["TYPESENSE_API_WRITE_KEY"];
   if (!host) {
@@ -213,7 +230,6 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  const dryRun = hasFlag("dry-run");
   // Schema PATCH on object-type fields (with auto-expanded children) can take
   // tens of seconds on collections with non-trivial doc counts. The client's
   // default 5s timeout is set for search/document traffic and is too short

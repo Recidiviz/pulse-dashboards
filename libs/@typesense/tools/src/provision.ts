@@ -22,9 +22,14 @@
 // Usage:
 //   nx provision '@typesense/tools' -c staging                  (safe: create-if-not-exists)
 //   nx provision '@typesense/tools' -c staging -- --recreate    (DESTRUCTIVE: drop + recreate)
+//   nx provision '@typesense/tools' -c staging -- --help        (full flag reference)
 //
-// Default behavior is create-if-not-exists — safe to re-run, won't touch
-// existing collections or their data.
+//   Limit to specific collections (repeatable and/or comma-separated):
+//   nx provision '@typesense/tools' -c staging -- --collection=opportunities
+//   nx provision '@typesense/tools' -c staging -- --collection=opportunities,clients
+//
+// Default behavior is create-if-not-exists across every schema — safe to
+// re-run, won't touch existing collections or their data.
 //
 // ⚠️  --recreate is DESTRUCTIVE.
 // It drops each matching collection (deleting ALL DOCUMENTS in it) and
@@ -34,23 +39,72 @@
 
 import * as readline from "node:readline";
 
+import { Command } from "@commander-js/extra-typings";
 import type { Client as TypesenseClient } from "typesense";
 
 import { createTypesenseClient, schemas } from "~@typesense/client";
 
-// Detects boolean CLI flags in any of the forms nx might pass them through as:
-//   --foo            (bare)
-//   --foo=true       (nx normalizes bare bools to =true when forwarding)
-//   --foo=1          (rare, but handle for completeness)
-// Returns false for absent flag, --foo=false, or --foo=0.
-function hasFlag(flag: string): boolean {
-  const prefix = `--${flag}`;
-  return process.argv.some((arg) => {
-    if (arg === prefix) return true;
-    if (!arg.startsWith(`${prefix}=`)) return false;
-    const value = arg.slice(prefix.length + 1).toLowerCase();
-    return value !== "false" && value !== "0";
-  });
+import { parseBooleanFlag } from "./cli";
+
+interface ScriptArgs {
+  collections: string[];
+  recreate: boolean;
+  skipPrompts: boolean;
+}
+
+function parseArgs(): ScriptArgs {
+  const available = schemas.map((schema) => schema.name).join(", ");
+
+  const program = new Command()
+    .name("provision")
+    .description(
+      "Create Typesense collections from the shared schema set on a remote cluster",
+    )
+    .option(
+      "--collection <names>",
+      `Collection(s) to provision — repeatable and/or comma-separated. Defaults to all: ${available}`,
+      (value: string, previous: string[]) => [
+        ...previous,
+        ...value
+          .split(",")
+          .map((name) => name.trim())
+          .filter(Boolean),
+      ],
+      [] as string[],
+    )
+    .option(
+      "--recreate [bool]",
+      "DESTRUCTIVE: drop and recreate each targeted collection, deleting all of its documents",
+      parseBooleanFlag,
+      false,
+    )
+    .option(
+      "--skip-prompts [bool]",
+      "Skip the destructive-action confirmation prompt (CI / automation only)",
+      parseBooleanFlag,
+      false,
+    )
+    .parse();
+
+  const options = program.opts();
+
+  // Unknown names are a hard error rather than a silent no-op — a typo here
+  // would otherwise look like a successful run that provisioned nothing.
+  const unknown = options.collection.filter(
+    (name) => !schemas.some((schema) => schema.name === name),
+  );
+  if (unknown.length > 0) {
+    console.error(
+      `Unknown collection(s): ${unknown.join(", ")}\nAvailable: ${available}`,
+    );
+    process.exit(1);
+  }
+
+  return {
+    collections: options.collection,
+    recreate: options.recreate,
+    skipPrompts: options.skipPrompts,
+  };
 }
 
 // Reads a single line from stdin and resolves with the trimmed answer.
@@ -108,6 +162,9 @@ async function provisionCollection(
 }
 
 async function main(): Promise<void> {
+  // Parse before the env checks so `--help` works without a configured cluster.
+  const { collections: requested, recreate, skipPrompts } = parseArgs();
+
   // Require explicit env vars — no offline-style defaults. Pointing this at
   // localhost or running it against the wrong cluster would be very bad.
   const host = process.env["TYPESENSE_HOST"];
@@ -125,8 +182,13 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  const recreate = hasFlag("recreate");
-  const skipPrompts = hasFlag("skip-prompts");
+  // Narrow the schema set to the requested collections, so a new collection can
+  // be provisioned without touching the ones already in use.
+  const targetSchemas =
+    requested.length > 0
+      ? schemas.filter((schema) => requested.includes(schema.name))
+      : schemas;
+
   const client = createTypesenseClient({ host, apiKey });
 
   // Confirm we can reach the cluster before doing anything destructive.
@@ -136,18 +198,18 @@ async function main(): Promise<void> {
     process.exit(1);
   }
   console.info(
-    `Connected to ${host} — provisioning ${schemas.length} collections${recreate ? " (recreate mode)" : ""}`,
+    `Connected to ${host} — provisioning ${targetSchemas.length} collection(s)${requested.length > 0 ? `: ${targetSchemas.map((s) => s.name).join(", ")}` : ""}${recreate ? " (recreate mode)" : ""}`,
   );
 
   // Destructive-action confirmation gate. --recreate drops + recreates every
-  // collection in the schema set (which exists in the cluster), permanently
-  // deleting all documents. Show the operator exactly which collections will
-  // be affected and require an explicit "yes" before proceeding.
+  // targeted collection (which exists in the cluster), permanently deleting
+  // all documents. Show the operator exactly which collections will be
+  // affected and require an explicit "yes" before proceeding.
   // --skip-prompts bypasses the prompt for automation; a non-TTY context
   // (no stdin) fails closed unless --skip-prompts was passed.
   if (recreate && !skipPrompts) {
     const existing: string[] = [];
-    for (const schema of schemas) {
+    for (const schema of targetSchemas) {
       // eslint-disable-next-line no-await-in-loop -- short, ordered listing
       if (await collectionExists(client, schema.name)) {
         existing.push(schema.name);
@@ -185,7 +247,7 @@ async function main(): Promise<void> {
   }
 
   /* eslint-disable no-await-in-loop -- intentional: sequential output is easier to read */
-  for (const schema of schemas) {
+  for (const schema of targetSchemas) {
     try {
       const result = await provisionCollection(client, schema, recreate);
       console.info(`[${schema.name}] ${result}`);
