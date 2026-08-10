@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import downloadjs from "downloadjs";
 import { autorun, when } from "mobx";
 
 import { isHydrated } from "~hydration-utils";
@@ -37,6 +38,10 @@ vi.mock("~shared-pathways", async (importOriginal) => {
     downloadChartAsData: vi.fn().mockResolvedValue(undefined),
   };
 });
+
+vi.mock("downloadjs", () => ({
+  default: vi.fn(),
+}));
 
 const mockRootStore = {
   currentTenantId: "US_NY",
@@ -197,6 +202,91 @@ describe("MetricsStore", () => {
       ]);
 
       dispose();
+    });
+  });
+
+  describe("downloadIndividualLevelData", () => {
+    const BASE_URL = "http://localhost:5000";
+
+    beforeEach(() => {
+      vi.stubEnv("VITE_PUBLIC_PATHWAYS_API_URL_BASE", BASE_URL);
+      vi.mocked(downloadjs).mockClear();
+    });
+
+    describe("bulk export (snapshotDate is null)", () => {
+      it("requests the bulk endpoint and downloads using the filename from the Content-Disposition header", async () => {
+        fetchMock.mockResponse("fake zip contents", {
+          headers: {
+            "Content-Disposition":
+              'attachment; filename="us_ny_individual_level_data_last_5_years_2022-08-03.zip"',
+          },
+        });
+
+        await metricsStore.downloadIndividualLevelData(null);
+
+        expect(fetchMock.mock.calls[0][0]).toEqual(
+          `${BASE_URL}/public_pathways/US_NY/PrisonPopulationIndividualLevelBulk`,
+        );
+        expect(downloadjs).toHaveBeenCalledOnce();
+        const [blob, filename] = vi.mocked(downloadjs).mock.calls[0];
+        expect(filename).toBe(
+          "us_ny_individual_level_data_last_5_years_2022-08-03.zip",
+        );
+        await expect((blob as Blob).text()).resolves.toBe("fake zip contents");
+      });
+
+      it("falls back to a default filename when Content-Disposition is missing", async () => {
+        fetchMock.mockResponse("fake zip contents");
+
+        await metricsStore.downloadIndividualLevelData(null);
+
+        const [, filename] = vi.mocked(downloadjs).mock.calls[0];
+        expect(filename).toBe("individual_level_data_last_5_years.zip");
+      });
+    });
+
+    describe("single snapshot (snapshotDate is given)", () => {
+      it("requests the snapshot endpoint with year/month query params and downloads using the filename from the Content-Disposition header", async () => {
+        fetchMock.mockResponse("fake csv contents", {
+          headers: {
+            "Content-Disposition":
+              'attachment; filename="us_ny_individual_level_data_2021-12-01.csv"',
+          },
+        });
+
+        await metricsStore.downloadIndividualLevelData(new Date(2021, 11, 15));
+
+        expect(fetchMock.mock.calls[0][0]).toEqual(
+          `${BASE_URL}/public_pathways/US_NY/PrisonPopulationIndividualLevel?year=2021&month=12`,
+        );
+        const [blob, filename] = vi.mocked(downloadjs).mock.calls[0];
+        expect(filename).toBe("us_ny_individual_level_data_2021-12-01.csv");
+        await expect((blob as Blob).text()).resolves.toBe("fake csv contents");
+      });
+
+      it("falls back to a default filename when Content-Disposition is missing", async () => {
+        fetchMock.mockResponse("fake csv contents");
+
+        await metricsStore.downloadIndividualLevelData(new Date(2021, 11, 15));
+
+        const [, filename] = vi.mocked(downloadjs).mock.calls[0];
+        expect(filename).toBe("individual_level_data.csv");
+      });
+    });
+
+    it("rejects and does not call downloadjs when the response is not ok", async () => {
+      fetchMock.mockResponse(JSON.stringify({ message: "boom" }), {
+        status: 500,
+        statusText: "Internal Server Error",
+      });
+
+      await expect(
+        metricsStore.downloadIndividualLevelData(null),
+      ).rejects.toThrow(
+        'Fetching file from API failed.\nStatus: 500 - Internal Server Error\nErrors: "boom"',
+      );
+
+      expect(downloadjs).not.toHaveBeenCalled();
     });
   });
 });

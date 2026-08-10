@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import downloadjs from "downloadjs";
 import { makeAutoObservable } from "mobx";
 
 import {
@@ -31,9 +32,19 @@ import {
 } from "~shared-pathways";
 import { formatDate, ZipFileEntry } from "~utils";
 
-import { callPublicPathwaysApi } from "../api/metricsClient";
+import {
+  callPublicPathwaysApi,
+  fetchPublicPathwaysFile,
+} from "../api/metricsClient";
 import { PUBLIC_PATHWAYS_TENANT } from "../tenantId";
 import type { RootStore } from "./RootStore";
+
+const INDIVIDUAL_LEVEL_SNAPSHOT_ENDPOINT = "PrisonPopulationIndividualLevel";
+const INDIVIDUAL_LEVEL_BULK_EXPORT_ENDPOINT =
+  "PrisonPopulationIndividualLevelBulk";
+const DEFAULT_INDIVIDUAL_LEVEL_SNAPSHOT_FILENAME = "individual_level_data.csv";
+const DEFAULT_INDIVIDUAL_LEVEL_BULK_EXPORT_FILENAME =
+  "individual_level_data_last_5_years.zip";
 
 export default class MetricsStore implements PathwaysMetricStore {
   private readonly rootStore: RootStore;
@@ -130,6 +141,30 @@ export default class MetricsStore implements PathwaysMetricStore {
       methodologyPDF,
       dateInPopulation,
     });
+  }
+
+  /**
+   * Downloads either a single month/year snapshot (when `snapshotDate` is
+   * given) or the bulk last-5-years zip export (when it's `null`).
+   */
+  async downloadIndividualLevelData(snapshotDate: Date | null): Promise<void> {
+    const endpoint = snapshotDate
+      ? `public_pathways/${this.currentTenantId}/${INDIVIDUAL_LEVEL_SNAPSHOT_ENDPOINT}?${new URLSearchParams(
+          {
+            year: String(snapshotDate.getFullYear()),
+            month: String(snapshotDate.getMonth() + 1),
+          },
+        ).toString()}`
+      : `public_pathways/${this.currentTenantId}/${INDIVIDUAL_LEVEL_BULK_EXPORT_ENDPOINT}`;
+    const defaultFilename = snapshotDate
+      ? DEFAULT_INDIVIDUAL_LEVEL_SNAPSHOT_FILENAME
+      : DEFAULT_INDIVIDUAL_LEVEL_BULK_EXPORT_FILENAME;
+
+    const { blob, filename } = await fetchPublicPathwaysFile(endpoint, () =>
+      this.rootStore.userStore.getTokenSilently(),
+    );
+
+    downloadjs(blob, filename ?? defaultFilename);
   }
 
   private fetchMetrics = <R extends MetricRecord>(

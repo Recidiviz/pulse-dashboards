@@ -114,8 +114,17 @@ export default class AnalyticsStore {
     });
   }
 
-  trackDownloadClicked({ metricId }: { metricId: string }): void {
-    this.track("frontend.public_pathways_download_clicked", { metricId });
+  trackDownloadClicked({
+    metricId,
+    downloadType,
+  }: {
+    metricId: string;
+    downloadType: "chart_data" | "individual_level_data";
+  }): void {
+    this.track("frontend.public_pathways_download_clicked", {
+      metricId,
+      downloadType,
+    });
   }
 
   trackMethodologyLinkClicked(): void {

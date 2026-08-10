@@ -52,22 +52,12 @@ describe("Header", () => {
     });
   });
 
-  it("calls trackDownloadClicked with the current metric id when Download is clicked", () => {
+  it("renders a Download menu button", () => {
     render(<Header />, { wrapper });
 
-    fireEvent.click(screen.getByRole("button", { name: /Download/i }));
-
-    expect(mockTrackDownloadClicked).toHaveBeenCalledWith({
-      metricId: "prisonPopulationOverTime",
-    });
-  });
-
-  it("calls download when Download is clicked", () => {
-    render(<Header />, { wrapper });
-
-    fireEvent.click(screen.getByRole("button", { name: /Download/i }));
-
-    expect(mockDownload).toHaveBeenCalled();
+    expect(
+      screen.getByRole("button", { name: /Download/i }),
+    ).toBeInTheDocument();
   });
 
   it("calls trackMethodologyLinkClicked when How it works is clicked", () => {

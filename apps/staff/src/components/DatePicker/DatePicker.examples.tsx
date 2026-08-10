@@ -15,19 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import * as ReactDOM from "react-dom/client";
-import ReactModal from "react-modal";
-import { BrowserRouter } from "react-router-dom";
+import { ReactNode, useState } from "react";
 
-import { App } from "./components/App/App";
+import { DatePicker } from "./DatePicker";
+import { MonthYearHeader } from "./MonthYearHeader";
 
-// safe to assert that this exists, see index.html
-const container = document.getElementById("root") as HTMLElement;
+// Required by the custom CSF indexer. Title auto-derives from the file path.
+export default {};
 
-ReactDOM.createRoot(container).render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
+const Frame = ({ children }: { children: ReactNode }) => (
+  <div style={{ width: 320, padding: 24 }}>{children}</div>
 );
 
-ReactModal.setAppElement(container);
+export const MonthYearPicker = () => {
+  const [selected, setSelected] = useState<Date | null>(new Date());
+  return (
+    <Frame>
+      <DatePicker
+        selected={selected}
+        onChange={setSelected}
+        inline
+        showMonthYearPicker
+        dateFormat="MM/yyyy"
+        renderCustomHeader={(headerProps) => (
+          <MonthYearHeader {...headerProps} />
+        )}
+      />
+    </Frame>
+  );
+};

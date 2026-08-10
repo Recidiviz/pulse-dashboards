@@ -20,10 +20,11 @@ import { rem } from "polished";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-import { Icon, spacing } from "~design-system";
+import { spacing } from "~design-system";
 
 import { publicPathwaysPalette } from "../../styles/publicPathwaysPalette";
 import { publicPathwaysTypography } from "../../styles/publicPathwaysTypography";
+import { DownloadMenu } from "../DownloadMenu/DownloadMenu";
 import { useRootStore } from "../StoreProvider";
 
 const HeaderWrapper = styled.header`
@@ -92,30 +93,6 @@ const NavLink = styled(Link)`
   }
 `;
 
-const DownloadButton = styled.button`
-  ${publicPathwaysTypography.Sans14}
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  width: fit-content;
-  min-width: 110px;
-  height: 38px;
-  gap: 8px;
-  padding: 8px 16px;
-  border-radius: 50px;
-  border: 1px solid ${publicPathwaysPalette.signal.links};
-  background-color: ${publicPathwaysPalette.signal.links};
-  color: white;
-  cursor: pointer;
-  outline: none;
-
-  &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.palette.focusColor};
-    outline-offset: 2px;
-  }
-`;
-
 type HeaderProps = {
   hideActions?: boolean;
 };
@@ -123,7 +100,7 @@ type HeaderProps = {
 export const Header = observer(function Header({
   hideActions = false,
 }: HeaderProps) {
-  const { analyticsStore, metricsStore } = useRootStore();
+  const { analyticsStore } = useRootStore();
 
   return (
     <HeaderWrapper>
@@ -150,18 +127,7 @@ export const Header = observer(function Header({
               How it works
             </NavLink>
           </SiteNav>
-          <DownloadButton
-            type="button"
-            onClick={() => {
-              metricsStore.download();
-              analyticsStore.trackDownloadClicked({
-                metricId: metricsStore.current.id,
-              });
-            }}
-          >
-            <Icon kind="DownloadArrowThin" color="white" size={12} />
-            Download
-          </DownloadButton>
+          <DownloadMenu />
         </HeaderActions>
       )}
     </HeaderWrapper>
