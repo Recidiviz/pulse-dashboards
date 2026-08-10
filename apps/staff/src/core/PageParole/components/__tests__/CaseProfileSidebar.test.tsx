@@ -34,6 +34,7 @@ const REQUIRED_PROPS = {
   sentenceStartDate: "2022-07-27",
   paroleEligibilityDate: "2026-08-16",
   mandatoryReleaseDate: "2028-06-26",
+  isParoleReturn: false,
 };
 
 // Renders each section's PAROLE_SECTION_IDS target alongside the sidebar, the
@@ -63,6 +64,24 @@ describe("CaseProfileSidebar", () => {
 
   afterAll(() => {
     Reflect.deleteProperty(Element.prototype, "scrollIntoView");
+  });
+
+  it("does not render the parole return banner by default", () => {
+    renderSidebar(["attachments"]);
+
+    expect(screen.queryByText("Parole Return")).not.toBeInTheDocument();
+  });
+
+  it("renders the parole return banner when isParoleReturn is true", () => {
+    render(
+      <CaseProfileSidebar
+        {...REQUIRED_PROPS}
+        isParoleReturn
+        sections={["attachments"]}
+      />,
+    );
+
+    expect(screen.getByText("Parole Return")).toBeInTheDocument();
   });
 
   it("renders the nav from the sections prop, not a fixed list", () => {

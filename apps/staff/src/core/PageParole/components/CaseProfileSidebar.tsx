@@ -20,7 +20,7 @@ import { rem } from "polished";
 import { Fragment } from "react";
 import styled from "styled-components";
 
-import { palette } from "~design-system";
+import { Icon, IconSVG, palette } from "~design-system";
 
 import { NAV_BAR_HEIGHT } from "../../NavigationLayout";
 import { SectionCard } from "../../SectionCard";
@@ -30,6 +30,7 @@ import {
   ParoleSectionName,
 } from "./ParoleSectionComponents";
 import {
+  AlertBanner,
   calculateAge,
   FactLabel,
   FactStack,
@@ -40,6 +41,9 @@ import {
   SectionStack,
   SubsectionTitle,
 } from "./shared";
+
+const PAROLE_RETURN_COLOR = palette.signal.notification;
+const PAROLE_RETURN_BACKGROUND_COLOR = "rgba(35, 124, 175, 0.08)";
 
 const NameHeading = styled.div`
   ${typography.Serif24}
@@ -67,6 +71,11 @@ const FactRowStack = styled(FactStack)`
 const FullWidthHr = styled(Hr)`
   width: auto;
   margin: 0 -1rem;
+`;
+
+const FullWidthAlertBanner = styled(AlertBanner)`
+  margin-left: -1rem;
+  margin-right: -1rem;
 `;
 
 const InfoCard = styled(SectionCard)`
@@ -120,6 +129,7 @@ export function CaseProfileSidebar({
   sentenceStartDate,
   paroleEligibilityDate,
   mandatoryReleaseDate,
+  isParoleReturn,
   sections,
 }: {
   name: string;
@@ -133,6 +143,7 @@ export function CaseProfileSidebar({
   sentenceStartDate: string;
   paroleEligibilityDate: string;
   mandatoryReleaseDate: string;
+  isParoleReturn: boolean | undefined;
   sections: ParoleSectionName[];
 }) {
   return (
@@ -140,6 +151,23 @@ export function CaseProfileSidebar({
       <InfoCard>
         <PaddedSectionCardBody>
           <SectionStack>
+            {isParoleReturn && (
+              <FullWidthAlertBanner
+                $color={PAROLE_RETURN_COLOR}
+                $backgroundColor={PAROLE_RETURN_BACKGROUND_COLOR}
+                $textColor={PAROLE_RETURN_COLOR}
+                $fontWeight="600"
+                $alignItems="center"
+                $marginBottom="0"
+              >
+                <Icon
+                  kind={IconSVG.Info}
+                  width={16}
+                  color={PAROLE_RETURN_COLOR}
+                />
+                Parole Return
+              </FullWidthAlertBanner>
+            )}
             <div>
               <NameHeading>{name}</NameHeading>
               <DocId>{docId}</DocId>

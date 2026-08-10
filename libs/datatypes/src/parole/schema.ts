@@ -166,9 +166,9 @@ export const paroleCaseSchema = z.object({
   currentFacility: z.string(),
   custodyLevel: z.string(),
   caseManagerName: z.string(),
-  // Absent when this individual has no hearing currently scheduled.
   hearingDate: z.string().optional(),
   hearingTime: z.string().optional(),
+  isParoleReturn: z.boolean().optional(),
   sentenceStartDate: z.string(),
   paroleEligibilityDate: z.string(),
   mandatoryReleaseDate: z.string(),

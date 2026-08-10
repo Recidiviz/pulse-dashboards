@@ -217,6 +217,9 @@ const NO_HEARING_SCHEDULED_DOC_ID = "DOC-59402";
 const STALE_PAROLE_PLAN_DOC_ID = "DOC-52903";
 // Chen: no parole plan on file at all.
 const NO_PAROLE_PLAN_DOC_ID = "DOC-61247";
+// Chen is also the fixture's parole-return case, so the General Info banner
+// has coverage alongside his other flagged states above.
+const PAROLE_RETURN_DOC_ID = "DOC-61247";
 
 const GENERIC_CASE_MANAGER_NAMES = [
   "David Thompson",
@@ -356,6 +359,7 @@ function buildAndersonCaseProfile(hearingDate: string): ParoleCase {
     caseManagerName: "Jennifer Martinez",
     hearingDate,
     hearingTime: "9:00 AM",
+    isParoleReturn: false,
     sentenceStartDate: iso(subYears(today, 4)),
     paroleEligibilityDate: iso(addDays(today, 20)),
     mandatoryReleaseDate: iso(addDays(today, 700)),
@@ -659,6 +663,7 @@ function buildGenericCaseProfile(
     hearingTime: hasScheduledHearing
       ? HEARING_TIME_BY_DOC_ID[hearing.docId]
       : undefined,
+    isParoleReturn: hearing.docId === PAROLE_RETURN_DOC_ID,
     sentenceStartDate: iso(subYears(today, 3 + (index % 4))),
     paroleEligibilityDate: iso(addDays(today, 10 + index * 5)),
     conductHistory,
