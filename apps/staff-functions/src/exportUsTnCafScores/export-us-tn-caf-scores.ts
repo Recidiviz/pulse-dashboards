@@ -193,6 +193,9 @@ function processRecord(
   out.state_code = "US_TN";
   // slice off the leading us_tn_
   out.OFFENDERID = personRecordKey.slice(6);
+  // does not get written to postgres but is used in error logging
+  // so we don't print out PII
+  out.pseudonymizedId = personRecord.pseudonymizedId;
   // eslint-disable-next-line no-nested-ternary
   out.ClassificationType = isDcaf ? "DCAF" : isRcafV2 ? "RCAF_V2" : "RCAF";
   out.AssessmentDate = assessmentDate.toISOString().split("T")[0];
@@ -518,16 +521,19 @@ async function runTransfer() {
     max: 5,
   });
 
-  const res = [];
   for (const update of updatesToUpload) {
-    res.push(
+    try {
       // eslint-disable-next-line no-await-in-loop
       await pool.query(
         query,
-        //
         CSV_COLUMN_ORDER.map((c) => update[c]),
-      ),
-    );
+      );
+    } catch (e) {
+      console.error(
+        `Error writing update for pseudonymizedId ${update.pseudonymizedId}`,
+      );
+      console.error(e);
+    }
   }
 
   console.info("Updates written to postgres. Exiting.");
