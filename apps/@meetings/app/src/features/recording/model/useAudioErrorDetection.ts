@@ -17,6 +17,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import { MicStatus } from "./types";
+
 const NO_AUDIO_WARNING_DELAY_MS = 5_000;
 
 type Params = {
@@ -25,7 +27,7 @@ type Params = {
 };
 
 export function useAudioErrorDetection({ isRecording, audioLevel }: Params): {
-  micStatus: "error" | "speaking" | "silent";
+  micStatus: MicStatus;
   hasAudioError: boolean;
   setHasAudioError: (status: boolean) => void;
 } {

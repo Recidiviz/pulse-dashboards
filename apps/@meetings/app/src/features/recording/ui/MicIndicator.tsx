@@ -32,17 +32,22 @@ import Animated, {
 import MicrophoneMutedSvg from "~@meetings/app/shared/assets/icons/microphone-muted.svg";
 import { theme } from "~@meetings/app/shared/config";
 
+import { MicStatus } from "../model";
+
 // How long to keep the bars "active" after the last `speaking` signal, so brief
 // pauses between words don't collapse the animation.
 const ACTIVE_HOLD_MS = 1000;
 // Base (unscaled) bar height in px; all scales below are expressed as fractions
 // of it so the visual sizes stay readable.
-const BAR_HEIGHT = 15;
+const STANDARD_BAR_HEIGHT = 15;
+const LARGE_BAR_HEIGHT = 40;
 // Bottom of the pulse range (~7px) — the shortest a bar gets while pulsing.
-const MIN_SCALE = 7 / BAR_HEIGHT;
+const STANDARD_MIN_SCALE = 7 / STANDARD_BAR_HEIGHT;
+const LARGE_MIN_SCALE = 18 / LARGE_BAR_HEIGHT;
 // Flat resting height (~8px) shown while inactive, slightly above MIN_SCALE so
 // idle bars don't look fully collapsed.
-const SILENCE_SCALE = 8 / BAR_HEIGHT;
+const STANDARD_SILENCE_SCALE = 8 / STANDARD_BAR_HEIGHT;
+const LARGE_SILENCE_SCALE = 20 / LARGE_BAR_HEIGHT;
 // Per-bar pulse durations (ms). Intentionally mismatched so the bars drift out
 // of phase and shimmer instead of moving in unison.
 const BAR_SPEEDS = [260, 200, 310, 240];
@@ -54,17 +59,23 @@ const ACTIVE_FADE_MS = 200;
 // Easing for the pulse oscillation; in-out gives the bar a soft top/bottom.
 const PULSE_EASING = Easing.inOut(Easing.ease);
 
-type Variant = "compact" | "full";
+type Variant = "compact" | "full" | "large";
 
 type BarProps = {
   index: number;
   active: boolean;
   level: number;
+  variant?: Variant;
 };
 
-function Bar({ index, active, level }: BarProps) {
+function Bar({ index, active, level, variant }: BarProps) {
+  const barHeight =
+    variant === "large" ? LARGE_BAR_HEIGHT : STANDARD_BAR_HEIGHT;
+  const minScale = variant === "large" ? LARGE_MIN_SCALE : STANDARD_MIN_SCALE;
+  const silenceScale =
+    variant === "large" ? LARGE_SILENCE_SCALE : STANDARD_SILENCE_SCALE;
   const progress = useSharedValue(0);
-  const peak = useSharedValue(MIN_SCALE);
+  const peak = useSharedValue(minScale);
   const activeMix = useSharedValue(0);
 
   useEffect(() => {
@@ -79,9 +90,10 @@ function Bar({ index, active, level }: BarProps) {
     // Treat `level` (0–1) as a percentage of the range between the resting
     // minimum and full height, so louder audio pulses the bar higher.
     const clampedLevel = Math.min(Math.max(level, 0), 1);
-    peak.value = withTiming(MIN_SCALE + (1 - MIN_SCALE) * clampedLevel, {
+    peak.value = withTiming(minScale + (1 - minScale) * clampedLevel, {
       duration: LEVEL_FOLLOW_MS,
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [level, peak]);
 
   useEffect(() => {
@@ -89,8 +101,8 @@ function Bar({ index, active, level }: BarProps) {
   }, [active, activeMix]);
 
   const animatedStyle = useAnimatedStyle(() => {
-    const pulse = interpolate(progress.value, [0, 1], [MIN_SCALE, peak.value]);
-    const scaleY = SILENCE_SCALE + (pulse - SILENCE_SCALE) * activeMix.value;
+    const pulse = interpolate(progress.value, [0, 1], [minScale, peak.value]);
+    const scaleY = silenceScale + (pulse - silenceScale) * activeMix.value;
     return { transform: [{ scaleY }] };
   });
 
@@ -98,9 +110,9 @@ function Bar({ index, active, level }: BarProps) {
     <Animated.View
       style={[
         {
-          height: BAR_HEIGHT,
-          width: 2.5,
-          borderRadius: 1.25,
+          height: barHeight,
+          width: variant === "large" ? 6 : 2.5,
+          borderRadius: variant === "large" ? 999 : 1.25,
           backgroundColor: active
             ? theme["colors"]["brand"]
             : theme["colors"]["tertiary"],
@@ -117,6 +129,7 @@ function MutedMicIcon({ variant }: { variant: Variant }) {
       className={clsx("fill-attention", {
         "size-4": variant === "compact",
         "size-5": variant === "full",
+        "size-16": variant === "large",
       })}
     />
   );
@@ -125,7 +138,7 @@ function MutedMicIcon({ variant }: { variant: Variant }) {
 type Props = {
   variant: Variant;
   level: number;
-  status: "speaking" | "silent" | "error";
+  status: MicStatus;
 };
 
 export const MicIndicator = memo(function MicIndicator({
@@ -165,12 +178,18 @@ export const MicIndicator = memo(function MicIndicator({
   const bars = (
     <View className="flex-row items-center gap-1">
       {BAR_SPEEDS.map((_, i) => (
-        <Bar key={i} index={i} active={visuallyActive} level={level} />
+        <Bar
+          key={i}
+          index={i}
+          active={visuallyActive}
+          level={level}
+          variant={variant}
+        />
       ))}
     </View>
   );
 
-  if (variant === "full") {
+  if (variant === "full" || variant === "large") {
     return (
       <View className="flex-row items-center gap-2">
         {isError ? (
@@ -178,7 +197,8 @@ export const MicIndicator = memo(function MicIndicator({
         ) : (
           <MicrophoneIcon
             className={clsx(
-              "size-5",
+              variant === "full" && "size-5",
+              variant === "large" && "size-16",
               visuallyActive ? "fill-brand" : "fill-tertiary",
             )}
           />

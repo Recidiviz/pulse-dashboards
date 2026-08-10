@@ -15,18 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { create } from "zustand";
-
-import { OnboardingStep } from "../config";
-
-type OnboardingStore = {
-  step: OnboardingStep;
-  setStep: (step: OnboardingStep) => void;
-  reset: () => void;
-};
-
-export const useOnboardingStore = create<OnboardingStore>()((set) => ({
-  step: OnboardingStep.Welcome,
-  setStep: (step) => set({ step: step }),
-  reset: () => set({ step: OnboardingStep.Welcome }),
-}));
+export type MicErrorType = "permission-denied" | "in-use" | "not-found";

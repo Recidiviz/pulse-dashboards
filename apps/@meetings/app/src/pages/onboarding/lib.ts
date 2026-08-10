@@ -15,18 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { create } from "zustand";
+import { MicErrorType } from "./model/types";
 
-import { OnboardingStep } from "../config";
-
-type OnboardingStore = {
-  step: OnboardingStep;
-  setStep: (step: OnboardingStep) => void;
-  reset: () => void;
-};
-
-export const useOnboardingStore = create<OnboardingStore>()((set) => ({
-  step: OnboardingStep.Welcome,
-  setStep: (step) => set({ step: step }),
-  reset: () => set({ step: OnboardingStep.Welcome }),
-}));
+export function getMicErrorType(error: unknown): MicErrorType {
+  const name = error instanceof DOMException ? error.name : undefined;
+  switch (name) {
+    case "NotReadableError":
+    case "TrackStartError":
+      // The OS/another app has an exclusive lock on the mic.
+      return "in-use";
+    case "NotFoundError":
+    case "DevicesNotFoundError":
+      // No mic device is present at all — likely disabled or missing.
+      return "not-found";
+    case "NotAllowedError":
+    case "PermissionDeniedError":
+    case "SecurityError":
+    default:
+      // Treat anything unrecognized as a permission issue, since that's the
+      // most common and most actionable case (check browser/OS settings).
+      return "permission-denied";
+  }
+}

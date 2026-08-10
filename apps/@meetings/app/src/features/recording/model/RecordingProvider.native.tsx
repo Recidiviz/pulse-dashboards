@@ -31,7 +31,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Alert } from "react-native";
+import { Alert, Linking } from "react-native";
 
 import {
   useDiscardMeeting,
@@ -339,13 +339,6 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
    *   recover instead of locking the UI
    */
   const initializeRecording = useCallback(async () => {
-    const permissionStatus =
-      await AudioModule.requestRecordingPermissionsAsync();
-    if (!permissionStatus.granted) {
-      Alert.alert("Permission to access microphone was denied");
-      return;
-    }
-
     await setAudioModeAsync({
       playsInSilentMode: true,
       allowsRecording: true,
@@ -410,6 +403,22 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
   const startRecording = async () => {
     Sentry.setTag("meetingId", meetingId);
     try {
+      const permissionStatus =
+        await AudioModule.requestRecordingPermissionsAsync();
+      if (!permissionStatus.granted) {
+        if (!permissionStatus.canAskAgain) {
+          Alert.alert(
+            "Permission to access microphone was denied",
+            "Please enable microphone access in Settings.",
+            [
+              { text: "Cancel", style: "cancel" },
+              { text: "Open Settings", onPress: () => Linking.openSettings() },
+            ],
+          );
+        }
+        return;
+      }
+
       await audioRecorder.prepareToRecordAsync();
       audioRecorder.record({ forDuration: MAX_RECORDING_SECONDS });
       if (audioRecorder.uri) {

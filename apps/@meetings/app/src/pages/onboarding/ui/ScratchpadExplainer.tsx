@@ -15,27 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Platform, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 
 import WordmarkSvg from "~@meetings/app/shared/assets/icons/wordmark.svg";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import ScratchpadExplainerImage from "../assets/scratchpad-explainer.svg";
-import { OnboardingMobileStep, OnboardingWebStep } from "../config";
+import { OnboardingStep } from "../config";
 import { useOnboardingStore } from "../model/store";
 import { DescriptionContainer } from "./DescriptionContainer";
 
 export function ScratchpadExplainer() {
-  const setNextWebStep = useOnboardingStore((state) => state.setWebStep);
-  const setNextMobileStep = useOnboardingStore((state) => state.setMobileStep);
-
-  const setNextStep = () => {
-    if (Platform.OS === "web") {
-      setNextWebStep(OnboardingWebStep.ProTip1);
-    } else {
-      setNextMobileStep(OnboardingMobileStep.ProTip1);
-    }
-  };
+  const setNextStep = useOnboardingStore((state) => state.setStep);
 
   return (
     <View className="flex size-full flex-1 flex-col gap-5 md:flex-row-reverse">
@@ -59,7 +50,7 @@ export function ScratchpadExplainer() {
         </DescriptionContainer>
         <TouchableOpacity
           className="mt-auto w-full rounded-full bg-brand  px-5 py-3 md:mt-0 md:w-fit"
-          onPress={setNextStep}
+          onPress={() => setNextStep(OnboardingStep.ProTip1)}
         >
           <Typography className="text-center text-base font-semibold leading-[18px] text-on-brand">
             Got it

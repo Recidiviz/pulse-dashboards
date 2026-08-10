@@ -28,6 +28,8 @@ export type Status =
   | "discarding"
   | "ending";
 
+export type MicStatus = "speaking" | "silent" | "error";
+
 export type RecordingProviderProps = {
   children: ReactNode;
 };

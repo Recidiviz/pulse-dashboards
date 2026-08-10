@@ -167,7 +167,7 @@ describe("RecordingProvider (native)", () => {
 
     (
       AudioModule.requestRecordingPermissionsAsync as jest.Mock
-    ).mockResolvedValue({ granted: true });
+    ).mockResolvedValue({ granted: true, canAskAgain: true });
     (setAudioModeAsync as jest.Mock).mockResolvedValue(undefined);
     (FileSystem.getInfoAsync as jest.Mock).mockResolvedValue({ exists: true });
 
@@ -189,9 +189,7 @@ describe("RecordingProvider (native)", () => {
       wrapper: buildWrapper(),
     });
 
-    await waitFor(() =>
-      expect(AudioModule.requestRecordingPermissionsAsync).toHaveBeenCalled(),
-    );
+    await waitFor(() => expect(setAudioModeAsync).toHaveBeenCalled());
 
     expect(result.current.status).toBe("idle");
     expect(result.current.isRecording).toBe(false);
@@ -216,6 +214,46 @@ describe("RecordingProvider (native)", () => {
       expect(storage.saveRecordingUri).toHaveBeenCalledWith(RECORDING_URI);
       expect(mockTimerStart).toHaveBeenCalled();
       expect(mockSetStatus).toHaveBeenCalledWith("recording");
+    });
+
+    it("shows alert with Open Settings when permission is permanently denied", async () => {
+      (
+        AudioModule.requestRecordingPermissionsAsync as jest.Mock
+      ).mockResolvedValue({ granted: false, canAskAgain: false });
+
+      const { result } = renderHook(() => useRecording<"native">(), {
+        wrapper: buildWrapper(),
+      });
+
+      await act(async () => {
+        await result.current.startRecording();
+      });
+
+      expect(Alert.alert).toHaveBeenCalledWith(
+        "Permission to access microphone was denied",
+        "Please enable microphone access in Settings.",
+        expect.arrayContaining([
+          expect.objectContaining({ text: "Open Settings" }),
+        ]),
+      );
+      expect(mockAudioRecorder.prepareToRecordAsync).not.toHaveBeenCalled();
+    });
+
+    it("returns early without alert when permission denied but can ask again", async () => {
+      (
+        AudioModule.requestRecordingPermissionsAsync as jest.Mock
+      ).mockResolvedValue({ granted: false, canAskAgain: true });
+
+      const { result } = renderHook(() => useRecording<"native">(), {
+        wrapper: buildWrapper(),
+      });
+
+      await act(async () => {
+        await result.current.startRecording();
+      });
+
+      expect(Alert.alert).not.toHaveBeenCalled();
+      expect(mockAudioRecorder.prepareToRecordAsync).not.toHaveBeenCalled();
     });
   });
 
@@ -542,25 +580,6 @@ describe("RecordingProvider (native)", () => {
   });
 
   describe("initializeRecording", () => {
-    it("shows alert and returns early when microphone permission is denied", async () => {
-      (
-        AudioModule.requestRecordingPermissionsAsync as jest.Mock
-      ).mockResolvedValue({ granted: false });
-
-      renderHook(() => useRecording<"native">(), {
-        wrapper: buildWrapper(),
-      });
-
-      await waitFor(() =>
-        expect(AudioModule.requestRecordingPermissionsAsync).toHaveBeenCalled(),
-      );
-
-      expect(Alert.alert).toHaveBeenCalledWith(
-        "Permission to access microphone was denied",
-      );
-      expect(setAudioModeAsync).not.toHaveBeenCalled();
-    });
-
     it("resets to idle and removes URI when persisted file is missing", async () => {
       (storage.getRecordingState as jest.Mock).mockResolvedValue("recording");
       (storage.getRecordingUri as jest.Mock).mockResolvedValue(RECORDING_URI);
@@ -677,9 +696,7 @@ describe("RecordingProvider (native)", () => {
       });
 
       // Wait for initial mount effects to settle (prevRef gets set to true)
-      await waitFor(() =>
-        expect(AudioModule.requestRecordingPermissionsAsync).toHaveBeenCalled(),
-      );
+      await waitFor(() => expect(setAudioModeAsync).toHaveBeenCalled());
 
       // Simulate the recorder stopping (90-min limit reached)
       await act(async () => {

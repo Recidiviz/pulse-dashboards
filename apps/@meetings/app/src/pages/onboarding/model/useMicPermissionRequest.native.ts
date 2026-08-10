@@ -15,18 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { create } from "zustand";
+import { AudioModule } from "expo-audio";
+import { useCallback, useState } from "react";
 
-import { OnboardingStep } from "../config";
+export function useMicPermissionRequest() {
+  const [isRequesting, setIsRequesting] = useState(false);
 
-type OnboardingStore = {
-  step: OnboardingStep;
-  setStep: (step: OnboardingStep) => void;
-  reset: () => void;
-};
+  const requestPermission = useCallback(async (): Promise<boolean> => {
+    setIsRequesting(true);
+    try {
+      const status = await AudioModule.requestRecordingPermissionsAsync();
+      return status.granted;
+    } catch {
+      return false;
+    } finally {
+      setIsRequesting(false);
+    }
+  }, []);
 
-export const useOnboardingStore = create<OnboardingStore>()((set) => ({
-  step: OnboardingStep.Welcome,
-  setStep: (step) => set({ step: step }),
-  reset: () => set({ step: OnboardingStep.Welcome }),
-}));
+  return { requestPermission, isRequesting };
+}

@@ -15,6 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export * from "./config";
+export { dbToAudioLevel, rmsToAudioLevel } from "./lib/audioLevel";
 export { RecordingProvider, useRecording } from "./model";
+export * from "./model/types";
 export { MeetingControlsMobile } from "./ui/MeetingControlsMobile";
 export { MeetingModalMobile } from "./ui/MeetingModalMobile";
+export { MicIndicator } from "./ui/MicIndicator";
