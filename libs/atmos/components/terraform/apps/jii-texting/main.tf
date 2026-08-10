@@ -176,6 +176,7 @@ module "import_job" {
   cloud_run_deletion_protection = false
   exec                          = false
   timeout                       = "21600s"
+  limits                        = { memory = "1Gi", cpu = "1" }
   max_retries                   = 1
   volumes                       = [{ name = "cloudsql", cloud_sql_instance = { instances = [module.database.connection_name] } }]
   volume_mounts                 = [{ name = "cloudsql", mount_path = "/cloudsql" }]
