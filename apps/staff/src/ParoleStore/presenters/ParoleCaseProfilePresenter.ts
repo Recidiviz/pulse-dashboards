@@ -20,7 +20,7 @@ import { makeAutoObservable, runInAction } from "mobx";
 import { ParoleCase } from "~datatypes";
 import { Hydratable, HydratesFromSource } from "~hydration-utils";
 
-import { ParoleSectionName } from "../../core/PageParole/components/ParoleSectionComponents";
+import { ParoleConfig } from "../../core/models/types";
 import { ParoleStore } from "../ParoleStore";
 
 /**
@@ -73,9 +73,7 @@ export class ParoleCaseProfilePresenter implements Hydratable {
     return this.caseDetailValue;
   }
 
-  // MainColumn sections to render, in order -- state-specific via
-  // ParoleStore.config, looked up against ParoleSectionComponents.
-  get sections(): Array<ParoleSectionName> {
-    return this.paroleStore.config.sections;
+  get config(): ParoleConfig {
+    return this.paroleStore.config;
   }
 }

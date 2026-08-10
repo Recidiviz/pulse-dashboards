@@ -227,6 +227,10 @@ const US_ID_CONFIG = {
       "conductHistory",
       "attachments",
     ],
+    conductClassificationColors: {
+      Major: "SLATE_DARK",
+      Minor: "SLATE_DARK",
+    },
   },
   tableColumns: enabledTableColumns[pathways.US_ID],
   vitalsMetrics: [

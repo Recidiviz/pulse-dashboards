@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { paroleCasesFixture } from "./fixture";
+import { paroleCasesFixtureByState } from "./fixture";
 import { PAROLE_RISK_TOOL, ParoleRiskTool } from "./schema";
 
 describe("Anderson's (DOC-45821) risk overview history", () => {
-  const { riskOverviewHistory } = paroleCasesFixture["DOC-45821"];
+  const { riskOverviewHistory } = paroleCasesFixtureByState.US_CO["DOC-45821"];
   const dates = riskOverviewHistory.map((point) => point.date);
   const earliestDate = dates[0];
   const latestDate = dates[dates.length - 1];

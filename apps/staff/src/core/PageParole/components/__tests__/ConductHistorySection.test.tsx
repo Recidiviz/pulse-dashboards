@@ -19,7 +19,13 @@ import { render, screen } from "@testing-library/react";
 
 import { ParoleConductRecord } from "~datatypes";
 
+import { PaletteKey, statusStyles } from "../../../BadgePill/BadgePill";
 import { ConductHistorySection } from "../ConductHistorySection";
+
+const DEFAULT_CONDUCT_CLASSIFICATION_COLORS: Record<string, PaletteKey> = {
+  Major: "SLATE_DARK",
+  Minor: "SLATE_DARK",
+};
 
 function makeRecord(fields: Partial<ParoleConductRecord>): ParoleConductRecord {
   return {
@@ -46,7 +52,12 @@ describe("ConductHistorySection", () => {
 
   it("treats a record from a few days ago as recent even across a calendar-year boundary", () => {
     const record = makeRecord({ date: "2025-12-31", violation: "Fighting" });
-    render(<ConductHistorySection conductHistory={[record]} />);
+    render(
+      <ConductHistorySection
+        conductHistory={[record]}
+        conductClassificationColors={DEFAULT_CONDUCT_CLASSIFICATION_COLORS}
+      />,
+    );
 
     expect(screen.getByText("Fighting")).toBeInTheDocument();
     expect(
@@ -56,11 +67,83 @@ describe("ConductHistorySection", () => {
 
   it("still hides a record from over a year ago", () => {
     const record = makeRecord({ date: "2024-12-01", violation: "Fighting" });
-    render(<ConductHistorySection conductHistory={[record]} />);
+    render(
+      <ConductHistorySection
+        conductHistory={[record]}
+        conductClassificationColors={DEFAULT_CONDUCT_CLASSIFICATION_COLORS}
+      />,
+    );
 
     expect(screen.queryByText("Fighting")).not.toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /see older disciplinaries/i }),
     ).toBeInTheDocument();
+  });
+
+  it("renders a colored badge using severity as its label when the tenant config has a matching color", () => {
+    const record = makeRecord({
+      date: "2025-12-31",
+      violation: "Fighting",
+      severity: "Class 1",
+    });
+    render(
+      <ConductHistorySection
+        conductHistory={[record]}
+        conductClassificationColors={{ "Class 1": "BLUE" }}
+      />,
+    );
+
+    expect(screen.getByText("Class 1")).toHaveStyleRule(
+      "background-color",
+      statusStyles.BLUE.backgroundColor,
+    );
+  });
+
+  it("defaults to the SLATE_DARK color when the record's severity has no matching color entry", () => {
+    const record = makeRecord({
+      date: "2025-12-31",
+      violation: "Fighting",
+      severity: "Class 1",
+    });
+    render(
+      <ConductHistorySection
+        conductHistory={[record]}
+        conductClassificationColors={{ "Class 2": "GREEN" }}
+      />,
+    );
+
+    expect(screen.getByText("Class 1")).toHaveStyleRule(
+      "background-color",
+      statusStyles.SLATE_DARK.backgroundColor,
+    );
+  });
+
+  it("summarizes violation counts by whichever severity labels appear in the case's history", () => {
+    const records = [
+      makeRecord({
+        date: "2025-12-31",
+        violation: "Refusal to Submit to Drug Test",
+        severity: "Class 1",
+      }),
+      makeRecord({
+        date: "2025-12-30",
+        violation: "Fighting",
+        severity: "Class 1",
+      }),
+      makeRecord({
+        date: "2025-12-29",
+        violation: "Unauthorized Area",
+        severity: "Class 2",
+      }),
+    ];
+    const { container } = render(
+      <ConductHistorySection
+        conductHistory={records}
+        conductClassificationColors={{ "Class 1": "BLUE", "Class 2": "GREEN" }}
+      />,
+    );
+
+    expect(container.textContent).toContain("Class 1: 2");
+    expect(container.textContent).toContain("Class 2: 1");
   });
 });

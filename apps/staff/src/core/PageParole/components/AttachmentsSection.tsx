@@ -18,7 +18,7 @@
 import { ParoleAttachment, ParolePlan } from "~datatypes";
 import { Icon, IconSVG } from "~design-system";
 
-import { SectionCard, SectionCardHeader } from "../../SectionCard";
+import { SectionCardHeader } from "../../SectionCard";
 import { PaddedSectionCardBody } from "./PaddedSectionCardBody";
 import {
   AlertBanner,
@@ -32,6 +32,7 @@ import {
   FactLabel,
   formatDate,
   isParolePlanStale,
+  SectionCard,
 } from "./shared";
 
 type AttachmentListItem = {

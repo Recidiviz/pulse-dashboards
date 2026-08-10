@@ -35,6 +35,12 @@ import {
 // always look current in a demo, regardless of when `nx offline staff` is run.
 const iso = (date: Date): string => format(date, "yyyy-MM-dd");
 
+// The two Parole-enabled tenants, each with its own conduct classification
+// scheme (see US_CO.ts/US_ID.ts paroleConfig.conductClassificationColors) --
+// used to vary conduct history severities below so both states' schemes are
+// demoable via `nx offline staff`.
+export type ParoleFixtureStateCode = "US_CO" | "US_ID";
+
 // CARAS v7's 12 items and their logistic-regression coefficients are fixed
 // properties of the tool itself, not per-person, so this pairs them with each
 // case's own raw item values rather than repeating the name/coefficient list
@@ -257,55 +263,81 @@ function buildConductRecord(
   });
 }
 
-function buildAndersonConductHistory(): Array<ParoleConductRecord> {
-  return [
-    buildConductRecord(0, {
-      facility: "Western State Prison",
-      violation: "Refusal to Submit to Drug Test",
-      description:
-        "Refused random urinalysis screening without valid medical exemption.",
-      severity: "Major",
-      disposition: "30 days disciplinary segregation, loss of good time",
-    }),
-    buildConductRecord(2, {
-      facility: "Western State Prison",
-      violation: "Unauthorized Area",
-      description:
-        "Found in restricted maintenance corridor without authorization.",
-      severity: "Minor",
-      disposition: "Loss of privileges - 7 days",
-    }),
-    buildConductRecord(14, {
-      facility: "Western State Prison",
-      violation: "Threatening Behavior",
-      description: "Verbal threats toward staff member.",
-      severity: "Major",
-      disposition:
-        "30 days disciplinary segregation, anger management referral",
-    }),
-    buildConductRecord(21, {
-      facility: "Western State Prison",
-      violation: "Fighting",
-      description: "Physical altercation in dining hall.",
-      severity: "Major",
-      disposition: "45 days disciplinary segregation",
-    }),
-    buildConductRecord(29, {
-      facility: "Western State Prison",
-      violation: "Disobeying Orders",
-      description: "Refused work assignment.",
-      severity: "Minor",
-      disposition: "Loss of privileges - 14 days",
-    }),
-    buildConductRecord(34, {
-      facility: "Western State Prison",
-      violation: "Possession of Contraband",
-      description:
-        "Found with an unauthorized cell phone during a cell search.",
-      severity: "Major",
-      disposition: "60 days disciplinary segregation, loss of good time",
-    }),
-  ];
+// Each record's severity varies by state -- CO uses its Class 1/2/3 scheme,
+// ID uses Major/Minor -- but the underlying incident (facility, violation,
+// description, disposition) is the same fixture "story" either way. The 4
+// Major / 2 Minor split under US_ID matches the OBT-41634 design mock this
+// was originally hand-authored against.
+const ANDERSON_CONDUCT_RECORDS: Array<{
+  monthsAgo: number;
+  facility: string;
+  violation: string;
+  description: string;
+  disposition: string;
+  severityByState: Record<ParoleFixtureStateCode, string>;
+}> = [
+  {
+    monthsAgo: 0,
+    facility: "Western State Prison",
+    violation: "Refusal to Submit to Drug Test",
+    description:
+      "Refused random urinalysis screening without valid medical exemption.",
+    disposition: "30 days disciplinary segregation, loss of good time",
+    severityByState: { US_CO: "Class 1", US_ID: "Major" },
+  },
+  {
+    monthsAgo: 2,
+    facility: "Western State Prison",
+    violation: "Unauthorized Area",
+    description:
+      "Found in restricted maintenance corridor without authorization.",
+    disposition: "Loss of privileges - 7 days",
+    severityByState: { US_CO: "Class 3", US_ID: "Minor" },
+  },
+  {
+    monthsAgo: 14,
+    facility: "Western State Prison",
+    violation: "Threatening Behavior",
+    description: "Verbal threats toward staff member.",
+    disposition: "30 days disciplinary segregation, anger management referral",
+    severityByState: { US_CO: "Class 2", US_ID: "Major" },
+  },
+  {
+    monthsAgo: 21,
+    facility: "Western State Prison",
+    violation: "Fighting",
+    description: "Physical altercation in dining hall.",
+    disposition: "45 days disciplinary segregation",
+    severityByState: { US_CO: "Class 1", US_ID: "Major" },
+  },
+  {
+    monthsAgo: 29,
+    facility: "Western State Prison",
+    violation: "Disobeying Orders",
+    description: "Refused work assignment.",
+    disposition: "Loss of privileges - 14 days",
+    severityByState: { US_CO: "Class 3", US_ID: "Minor" },
+  },
+  {
+    monthsAgo: 34,
+    facility: "Western State Prison",
+    violation: "Possession of Contraband",
+    description: "Found with an unauthorized cell phone during a cell search.",
+    disposition: "60 days disciplinary segregation, loss of good time",
+    severityByState: { US_CO: "Class 2", US_ID: "Major" },
+  },
+];
+
+function buildAndersonConductHistory(
+  stateCode: ParoleFixtureStateCode,
+): Array<ParoleConductRecord> {
+  return ANDERSON_CONDUCT_RECORDS.map(
+    ({ monthsAgo, severityByState, ...fields }) =>
+      buildConductRecord(monthsAgo, {
+        ...fields,
+        severity: severityByState[stateCode],
+      }),
+  );
 }
 
 // Generic docket entries cycle through three conduct patterns by index so
@@ -315,7 +347,11 @@ function buildAndersonConductHistory(): Array<ParoleConductRecord> {
 function buildGenericConductHistory(
   index: number,
   facility: string,
+  stateCode: ParoleFixtureStateCode,
 ): Array<ParoleConductRecord> {
+  const classOne = stateCode === "US_CO" ? "Class 1" : "Major";
+  const classThree = stateCode === "US_CO" ? "Class 3" : "Minor";
+
   const pattern = index % 3;
   if (pattern === 0) return [];
   if (pattern === 1) {
@@ -324,7 +360,7 @@ function buildGenericConductHistory(
         facility,
         violation: "Failure to Report",
         description: "Missed scheduled headcount.",
-        severity: "Minor",
+        severity: classThree,
         disposition: "Loss of privileges - 3 days",
       }),
     ];
@@ -334,20 +370,23 @@ function buildGenericConductHistory(
       facility,
       violation: "Insubordination",
       description: "Refused a direct order from a correctional officer.",
-      severity: "Major",
+      severity: classOne,
       disposition: "14 days disciplinary segregation",
     }),
     buildConductRecord(16, {
       facility,
       violation: "Unauthorized Area",
       description: "Found in a restricted area without authorization.",
-      severity: "Minor",
+      severity: classThree,
       disposition: "Loss of privileges - 7 days",
     }),
   ];
 }
 
-function buildAndersonCaseProfile(hearingDate: string): ParoleCase {
+function buildAndersonCaseProfile(
+  hearingDate: string,
+  stateCode: ParoleFixtureStateCode,
+): ParoleCase {
   const today = new Date();
   return paroleCaseSchema.parse({
     docId: "DOC-45821",
@@ -397,7 +436,7 @@ function buildAndersonCaseProfile(hearingDate: string): ParoleCase {
         uploadDate: iso(subDays(today, 40)),
       },
     ],
-    conductHistory: buildAndersonConductHistory(),
+    conductHistory: buildAndersonConductHistory(stateCode),
     riskAssessments: [
       {
         tool: "LSI",
@@ -642,13 +681,14 @@ function buildOffenseHistory(
 function buildGenericCaseProfile(
   hearing: ParoleHearing,
   index: number,
+  stateCode: ParoleFixtureStateCode,
 ): ParoleCase {
   const today = new Date();
   const hasScheduledHearing = hearing.docId !== NO_HEARING_SCHEDULED_DOC_ID;
   // Harris also anchors the "no disciplinary infractions" empty state, so her
   // conduct history is deliberately empty rather than pattern-derived.
   const conductHistory = hasScheduledHearing
-    ? buildGenericConductHistory(index, hearing.facility)
+    ? buildGenericConductHistory(index, hearing.facility, stateCode)
     : [];
   return paroleCaseSchema.parse({
     docId: hearing.docId,
@@ -679,12 +719,27 @@ function buildGenericCaseProfile(
   });
 }
 
-export const paroleCasesFixture: Record<string, ParoleCase> =
-  Object.fromEntries(
+function buildParoleCasesFixture(
+  stateCode: ParoleFixtureStateCode,
+): Record<string, ParoleCase> {
+  return Object.fromEntries(
     paroleHearingsFixture.map((hearing, index) => [
       hearing.docId,
       hearing.docId === "DOC-45821"
-        ? buildAndersonCaseProfile(hearing.hearingDate)
-        : buildGenericCaseProfile(hearing, index),
+        ? buildAndersonCaseProfile(hearing.hearingDate, stateCode)
+        : buildGenericCaseProfile(hearing, index, stateCode),
     ]),
   );
+}
+
+// Keyed by state so `nx offline staff` can serve each Parole-enabled
+// tenant its own conduct classification scheme (see ParoleOfflineAPIClient)
+// -- the rest of the case data (offense history, risk assessments, etc.) is
+// identical across states, only conductHistory severities differ.
+export const paroleCasesFixtureByState: Record<
+  ParoleFixtureStateCode,
+  Record<string, ParoleCase>
+> = {
+  US_CO: buildParoleCasesFixture("US_CO"),
+  US_ID: buildParoleCasesFixture("US_ID"),
+};

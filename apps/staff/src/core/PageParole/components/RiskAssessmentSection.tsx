@@ -30,9 +30,9 @@ import {
 import { palette } from "~design-system";
 
 import { WorkflowsBadgePill } from "../../BadgePill/BadgePill";
-import { SectionCard, SectionCardHeader } from "../../SectionCard";
+import { SectionCardHeader } from "../../SectionCard";
 import { PaddedSectionCardBody } from "./PaddedSectionCardBody";
-import { EmptyState, Hr, parseIsoDate } from "./shared";
+import { EmptyState, Hr, parseIsoDate, SectionCard } from "./shared";
 
 const TOOL_COLORS: Record<ParoleRiskTool, string> = {
   LSI: "#0B5394",

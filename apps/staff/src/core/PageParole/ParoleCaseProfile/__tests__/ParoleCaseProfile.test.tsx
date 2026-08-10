@@ -30,12 +30,22 @@ vi.mock("../../../../components/StoreProvider");
 
 const useRootStoreMock = vi.mocked(StoreProvider.useRootStore);
 
+let rootStore: RootStore;
+
 beforeEach(() => {
-  const rootStore = new RootStore();
+  rootStore = new RootStore();
   rootStore.tenantStore.currentTenantId = "US_CO";
-  useRootStoreMock.mockReturnValue({
-    paroleStore: new ParoleStore(rootStore),
-  } as never);
+  const paroleStore = new ParoleStore(rootStore);
+  // mockImplementation (not mockReturnValue) so each call reads the current
+  // currentTenantId live -- needed to simulate a tenant switch mid-test
+  // without navigating to a new route.
+  useRootStoreMock.mockImplementation(
+    () =>
+      ({
+        paroleStore,
+        currentTenantId: rootStore.tenantStore.currentTenantId,
+      }) as never,
+  );
 });
 
 // The label and value in rows like "Total Violations: 6" are separate
@@ -249,8 +259,9 @@ describe("ParoleCaseProfile", () => {
       expect(
         getByTextAcrossElements("Total Violations: 6"),
       ).toBeInTheDocument();
-      expect(getByTextAcrossElements("Major: 4")).toBeInTheDocument();
-      expect(getByTextAcrossElements("Minor: 2")).toBeInTheDocument();
+      expect(getByTextAcrossElements("Class 1: 2")).toBeInTheDocument();
+      expect(getByTextAcrossElements("Class 2: 2")).toBeInTheDocument();
+      expect(getByTextAcrossElements("Class 3: 2")).toBeInTheDocument();
 
       // Dated the day the fixture loads, so it's always within the past
       // year and always visible without expanding older records.
@@ -263,6 +274,32 @@ describe("ParoleCaseProfile", () => {
       expect(
         screen.getAllByText("Western State Prison").length,
       ).toBeGreaterThan(0);
+    });
+
+    it("re-hydrates with the new tenant's conduct data when the tenant changes without navigating away", async () => {
+      const { rerender } = renderAtPath("/parole/case/DOC-45821");
+
+      expect(
+        await findSectionHeading("Institutional Conduct History"),
+      ).toBeInTheDocument();
+      expect(getByTextAcrossElements("Class 1: 2")).toBeInTheDocument();
+
+      rootStore.tenantStore.currentTenantId = "US_ID";
+      rerender(
+        <MemoryRouter initialEntries={["/parole/case/DOC-45821"]}>
+          <Routes>
+            <Route path="/parole/case/:docId" element={<ParoleCaseProfile />} />
+            <Route path="*" element={<ParoleCaseProfile />} />
+          </Routes>
+        </MemoryRouter>,
+      );
+
+      expect(
+        await findSectionHeading("Institutional Conduct History"),
+      ).toBeInTheDocument();
+      expect(getByTextAcrossElements("Major: 4")).toBeInTheDocument();
+      expect(getByTextAcrossElements("Minor: 2")).toBeInTheDocument();
+      expect(screen.queryByText("Class 1: 2")).not.toBeInTheDocument();
     });
 
     it("hides records older than a year until 'See Older Disciplinaries' is clicked", async () => {

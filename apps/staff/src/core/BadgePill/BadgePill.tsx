@@ -39,6 +39,13 @@ export const statusStyles = {
     borderColor: palette.slate20,
     color: palette.slate80,
   },
+  // Solid dark-grey/white variant, for callers that want a plain, low-
+  // emphasis tag rather than SLATE's light outline style.
+  SLATE_DARK: {
+    backgroundColor: palette.slate70,
+    borderColor: palette.slate70,
+    color: palette.white,
+  },
   PURPLE: {
     backgroundColor: "rgb(242,240,245)",
     borderColor: "rgb(137,115,165)",

@@ -29,9 +29,9 @@ import styled from "styled-components";
 import { ParoleDocProgram, ParoleEdovoProgram } from "~datatypes";
 import { Icon, IconSVG, palette } from "~design-system";
 
-import { SectionCard, SectionCardHeader } from "../../SectionCard";
+import { SectionCardHeader } from "../../SectionCard";
 import { PaddedSectionCardBody } from "./PaddedSectionCardBody";
-import { FactLabel, FactStack, formatDate } from "./shared";
+import { FactLabel, FactStack, formatDate, SectionCard } from "./shared";
 
 const StyledAccordion = styled(Accordion)`
   display: flex;

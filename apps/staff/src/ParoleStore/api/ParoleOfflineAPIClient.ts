@@ -17,7 +17,8 @@
 
 import {
   ParoleCase,
-  paroleCasesFixture,
+  paroleCasesFixtureByState,
+  ParoleFixtureStateCode,
   ParoleHearing,
   paroleHearingsFixture,
 } from "~datatypes";
@@ -33,10 +34,30 @@ export class ParoleOfflineAPIClient implements ParoleAPI {
   }
 
   async caseDetail(docId: string): Promise<ParoleCase> {
-    const caseDetail = paroleCasesFixture[docId];
+    const caseDetail = this.casesFixture[docId];
     if (!caseDetail) {
       throw new Error(`Parole case ${docId} not present in fixture data`);
     }
     return caseDetail;
+  }
+
+  // Serves each Parole-enabled tenant its own conduct classification scheme
+  // (see fixture.ts's ParoleFixtureStateCode) so `nx offline staff` can be
+  // used to visually check both US_CO's and US_ID's config.
+  private get casesFixture(): Record<string, ParoleCase> {
+    const { currentTenantId } = this.paroleStore.rootStore.tenantStore;
+    if (!this.isParoleFixtureStateCode(currentTenantId)) {
+      throw new Error(
+        `No Parole fixture data for tenant [${currentTenantId}]. Add one ` +
+          "in libs/datatypes/src/parole/fixture.ts.",
+      );
+    }
+    return paroleCasesFixtureByState[currentTenantId];
+  }
+
+  private isParoleFixtureStateCode(
+    tenantId: string | undefined,
+  ): tenantId is ParoleFixtureStateCode {
+    return tenantId === "US_CO" || tenantId === "US_ID";
   }
 }

@@ -18,7 +18,7 @@
 import { ParoleOffenseHistory } from "~datatypes";
 import { Icon, IconSVG } from "~design-system";
 
-import { SectionCard, SectionCardHeader } from "../../SectionCard";
+import { SectionCardHeader } from "../../SectionCard";
 import { PaddedSectionCardBody } from "./PaddedSectionCardBody";
 import {
   AlertBanner,
@@ -27,6 +27,7 @@ import {
   FactStack,
   formatDate,
   Hr,
+  SectionCard,
   SectionStack,
   SubsectionTitle,
   WideFactItem,

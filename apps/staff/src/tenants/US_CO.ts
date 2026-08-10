@@ -38,6 +38,11 @@ const US_CO_CONFIG = {
     ],
     docketSubheading: "Hearings in the next two weeks",
     docketSearchEnabled: true,
+    conductClassificationColors: {
+      "Class 1": "BLUE",
+      "Class 2": "GREEN",
+      "Class 3": "PURPLE",
+    },
   },
 } satisfies TenantConfig<"US_CO">;
 

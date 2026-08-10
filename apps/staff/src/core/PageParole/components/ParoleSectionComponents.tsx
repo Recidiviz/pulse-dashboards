@@ -17,6 +17,7 @@
 
 import { ParoleCase } from "~datatypes";
 
+import { ParoleConfig } from "../../models/types";
 import { AttachmentsSection } from "./AttachmentsSection";
 import { ConductHistorySection } from "./ConductHistorySection";
 import { OffenseHistorySection } from "./OffenseHistorySection";
@@ -48,8 +49,11 @@ export const ParoleSectionComponents = {
       edovoPrograms={caseDetail.edovoPrograms}
     />
   ),
-  conductHistory: (caseDetail: ParoleCase) => (
-    <ConductHistorySection conductHistory={caseDetail.conductHistory} />
+  conductHistory: (caseDetail: ParoleCase, config: ParoleConfig) => (
+    <ConductHistorySection
+      conductHistory={caseDetail.conductHistory}
+      conductClassificationColors={config.conductClassificationColors}
+    />
   ),
   attachments: (caseDetail: ParoleCase) => (
     <AttachmentsSection

@@ -26,6 +26,7 @@ import { withPresenterManager } from "~hydration-utils";
 import NotFound from "../../../components/NotFound";
 import { useRootStore } from "../../../components/StoreProvider";
 import { ParoleCaseProfilePresenter } from "../../../ParoleStore/presenters/ParoleCaseProfilePresenter";
+import { TenantId } from "../../../RootStore/types";
 import { BackLink } from "../../Link";
 import ModelHydrator from "../../ModelHydrator";
 import { paroleUrl } from "../../views";
@@ -95,17 +96,20 @@ const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
             paroleEligibilityDate={caseDetail.paroleEligibilityDate}
             mandatoryReleaseDate={caseDetail.mandatoryReleaseDate}
             isParoleReturn={caseDetail.isParoleReturn}
-            sections={presenter.sections}
+            sections={presenter.config.sections}
           />
         </SidebarColumn>
 
         <MainColumn>
-          {presenter.sections.map((sectionName) => (
+          {presenter.config.sections.map((sectionName) => (
             <SectionAnchor
               key={sectionName}
               id={PAROLE_SECTION_IDS[sectionName]}
             >
-              {ParoleSectionComponents[sectionName](caseDetail)}
+              {ParoleSectionComponents[sectionName](
+                caseDetail,
+                presenter.config,
+              )}
             </SectionAnchor>
           ))}
         </MainColumn>
@@ -114,7 +118,12 @@ const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
   );
 });
 
-function usePresenter({ docId }: { docId: string }) {
+function usePresenter({
+  docId,
+}: {
+  docId: string;
+  currentTenantId: TenantId | undefined;
+}) {
   const { paroleStore } = useRootStore();
   return new ParoleCaseProfilePresenter(paroleStore, docId);
 }
@@ -128,8 +137,14 @@ const ParoleCaseProfileHydrator = withPresenterManager({
 
 export function ParoleCaseProfile() {
   const { docId } = useParams<{ docId: string }>();
+  const { currentTenantId } = useRootStore();
 
   if (!docId) return <NotFound />;
 
-  return <ParoleCaseProfileHydrator docId={docId} />;
+  return (
+    <ParoleCaseProfileHydrator
+      docId={docId}
+      currentTenantId={currentTenantId}
+    />
+  );
 }

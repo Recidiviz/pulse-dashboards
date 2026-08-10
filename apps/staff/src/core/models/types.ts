@@ -55,6 +55,7 @@ import type {
   SupervisionTaskRecord,
   SupervisionTaskType,
 } from "../../WorkflowsStore/Task/types";
+import { PaletteKey } from "../BadgePill/BadgePill";
 import { ParoleSectionName } from "../PageParole/components/ParoleSectionComponents";
 import { VitalsMetric } from "../PageVitals/types";
 import { TableColumns } from "../types/charts";
@@ -129,6 +130,8 @@ export type ParoleConfig = {
   docketSubheading?: string;
   /** Enables the docket table's name/DOC ID search input. Omit to hide it. */
   docketSearchEnabled?: boolean;
+  /** A mapping from ParoleConductRecord.severity to a PaletteKey for the severity tag in the ConductHistorySection. */
+  conductClassificationColors: Record<string, PaletteKey>;
 };
 
 /**

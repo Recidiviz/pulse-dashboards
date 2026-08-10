@@ -62,7 +62,9 @@ describe("ParoleCaseProfilePresenter", () => {
   let presenter: ParoleCaseProfilePresenter;
 
   beforeEach(() => {
-    paroleStore = new ParoleStore(new RootStore());
+    const rootStore = new RootStore();
+    rootStore.tenantStore.currentTenantId = "US_CO";
+    paroleStore = new ParoleStore(rootStore);
     presenter = new ParoleCaseProfilePresenter(paroleStore, "DOC-45821");
   });
 
@@ -106,16 +108,9 @@ describe("ParoleCaseProfilePresenter", () => {
     expect(presenter.caseDetail).toEqual(TEST_CASE);
   });
 
-  test("sections reflects the current tenant's paroleConfig", () => {
-    const rootStore = new RootStore();
-    rootStore.tenantStore.currentTenantId = "US_CO";
-    const tenantScopedPresenter = new ParoleCaseProfilePresenter(
-      new ParoleStore(rootStore),
-      "DOC-45821",
-    );
-
-    expect(tenantScopedPresenter.sections).toEqual(
-      rootStore.tenantStore.currentTenantConfig?.paroleConfig?.sections,
+  test("config reflects the current tenant's paroleConfig", () => {
+    expect(presenter.config).toEqual(
+      paroleStore.rootStore.tenantStore.currentTenantConfig?.paroleConfig,
     );
   });
 });

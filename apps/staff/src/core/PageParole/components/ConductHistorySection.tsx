@@ -24,9 +24,16 @@ import styled from "styled-components";
 import { ParoleConductRecord } from "~datatypes";
 import { Icon, IconSVG, palette } from "~design-system";
 
-import { SectionCard, SectionCardHeader } from "../../SectionCard";
+import { PaletteKey, WorkflowsBadgePill } from "../../BadgePill/BadgePill";
+import { SectionCardHeader } from "../../SectionCard";
 import { PaddedSectionCardBody } from "./PaddedSectionCardBody";
-import { FactLabel, formatDate, parseIsoDate, SectionStack } from "./shared";
+import {
+  FactLabel,
+  formatDate,
+  parseIsoDate,
+  SectionCard,
+  SectionStack,
+} from "./shared";
 
 const SummaryRow = styled.div`
   display: flex;
@@ -49,7 +56,7 @@ const NoInfractionsHeading = styled.div`
 const RecordCard = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${rem(spacing.xs)};
+  gap: ${rem(spacing.sm)};
   background: ${palette.marble2};
   border: 1px solid ${palette.slate20};
   border-radius: ${rem(6)};
@@ -74,14 +81,11 @@ const RecordDate = styled.span`
   color: ${palette.slate70};
 `;
 
-const SeverityTag = styled.span`
-  ${typography.Sans12}
-  background: ${palette.slate70};
-  color: ${palette.white};
-  font-weight: 700;
+// WorkflowsBadgePill doesn't expose a className, so this can't restyle it
+// directly -- text-transform is inherited, so wrapping it is enough to force
+// its label uppercase without touching the shared component.
+const UppercaseBadgeWrapper = styled.span`
   text-transform: uppercase;
-  padding: ${rem(2)} ${rem(6)};
-  border-radius: ${rem(4)};
 `;
 
 const ToggleButton = styled.button`
@@ -108,12 +112,47 @@ function isWithinPastYear(dateString: string): boolean {
   return parseIsoDate(dateString) >= subYears(new Date(), 1);
 }
 
-function ConductRecordCard({ record }: { record: ParoleConductRecord }) {
+function countsBySeverity(
+  conductHistory: Array<ParoleConductRecord>,
+): Array<[string, number]> {
+  const counts = new Map<string, number>();
+  for (const record of conductHistory) {
+    counts.set(record.severity, (counts.get(record.severity) ?? 0) + 1);
+  }
+  return [...counts.entries()].sort(([a], [b]) => a.localeCompare(b));
+}
+
+function ConductTag({
+  record,
+  conductClassificationColors,
+}: {
+  record: ParoleConductRecord;
+  conductClassificationColors: Record<string, PaletteKey>;
+}) {
+  const color = conductClassificationColors[record.severity] ?? "SLATE_DARK";
+
+  return (
+    <UppercaseBadgeWrapper>
+      <WorkflowsBadgePill text={record.severity} palette={color} />
+    </UppercaseBadgeWrapper>
+  );
+}
+
+function ConductRecordCard({
+  record,
+  conductClassificationColors,
+}: {
+  record: ParoleConductRecord;
+  conductClassificationColors: Record<string, PaletteKey>;
+}) {
   return (
     <RecordCard>
       <RecordHeader>
         <RecordTitle>
-          <SeverityTag>{record.severity}</SeverityTag>
+          <ConductTag
+            record={record}
+            conductClassificationColors={conductClassificationColors}
+          />
           {record.violation}
         </RecordTitle>
         <RecordDate>{formatDate(record.date)}</RecordDate>
@@ -133,8 +172,10 @@ function ConductRecordCard({ record }: { record: ParoleConductRecord }) {
 
 export function ConductHistorySection({
   conductHistory,
+  conductClassificationColors,
 }: {
   conductHistory: Array<ParoleConductRecord>;
+  conductClassificationColors: Record<string, PaletteKey>;
 }) {
   const [showOlder, setShowOlder] = useState(false);
 
@@ -158,10 +199,7 @@ export function ConductHistorySection({
     );
   }
 
-  const majorCount = conductHistory.filter(
-    (record) => record.severity === "Major",
-  ).length;
-  const minorCount = conductHistory.length - majorCount;
+  const severityCounts = countsBySeverity(conductHistory);
 
   const sortedConductHistory = [...conductHistory].sort(
     (a, b) => parseIsoDate(b.date).getTime() - parseIsoDate(a.date).getTime(),
@@ -183,18 +221,18 @@ export function ConductHistorySection({
               Total Violations:{" "}
               <FactLabel as="span">{conductHistory.length}</FactLabel>
             </span>
-            <span>
-              Major: <FactLabel as="span">{majorCount}</FactLabel>
-            </span>
-            <span>
-              Minor: <FactLabel as="span">{minorCount}</FactLabel>
-            </span>
+            {severityCounts.map(([severity, count]) => (
+              <span key={severity}>
+                {severity}: <FactLabel as="span">{count}</FactLabel>
+              </span>
+            ))}
           </SummaryRow>
           {recentRecords.map((record, idx) => (
             <ConductRecordCard
               // eslint-disable-next-line react/no-array-index-key
               key={`${record.date}-${record.violation}-${idx}`}
               record={record}
+              conductClassificationColors={conductClassificationColors}
             />
           ))}
           {olderRecords.length > 0 && (
@@ -213,6 +251,7 @@ export function ConductHistorySection({
                     // eslint-disable-next-line react/no-array-index-key
                     key={`${record.date}-${record.violation}-${idx}`}
                     record={record}
+                    conductClassificationColors={conductClassificationColors}
                   />
                 ))}
             </>

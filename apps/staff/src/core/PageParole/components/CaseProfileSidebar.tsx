@@ -23,7 +23,6 @@ import styled from "styled-components";
 import { Icon, IconSVG, palette } from "~design-system";
 
 import { NAV_BAR_HEIGHT } from "../../NavigationLayout";
-import { SectionCard } from "../../SectionCard";
 import { PaddedSectionCardBody } from "./PaddedSectionCardBody";
 import {
   PAROLE_SECTION_LABELS,
@@ -38,6 +37,7 @@ import {
   Hr,
   PAROLE_SECTION_IDS,
   scrollToSection,
+  SectionCard,
   SectionStack,
   SubsectionTitle,
 } from "./shared";

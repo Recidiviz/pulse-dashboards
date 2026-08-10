@@ -22,9 +22,14 @@ import styled from "styled-components";
 import { palette } from "~design-system";
 
 import { NAV_BAR_HEIGHT } from "../../NavigationLayout";
+import { SectionCard as BaseSectionCard } from "../../SectionCard";
 
 // Styled primitives and formatters shared across two or more
 // ParoleCaseProfile section components.
+
+export const SectionCard = styled(BaseSectionCard)`
+  overflow: hidden;
+`;
 
 // `new Date("yyyy-MM-dd")` parses the string as UTC midnight per spec, which
 // silently rolls back to the previous calendar day once formatted in any
