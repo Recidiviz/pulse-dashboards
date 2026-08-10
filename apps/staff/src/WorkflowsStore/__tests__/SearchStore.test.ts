@@ -404,11 +404,30 @@ describe("selectedSearchIds", () => {
       const mockStoredOfficers = ["OFFICER1", "OFFICER3"];
 
       workflowsStore.user.updates = {
-        stateCode: mockOfficer.info.stateCode,
+        stateCode: "US_ND",
         selectedSearchIds: mockStoredOfficers,
       };
 
       expect(searchStore.selectedSearchIds).toEqual(mockStoredOfficers);
+    });
+
+    test("ignores a selection saved under a different tenant", () => {
+      // userUpdates is keyed by email alone, so switching tenants leaves the
+      // previous tenant's ids in the record until the clearing write lands.
+      workflowsStore.user.updates = {
+        stateCode: "US_MO",
+        selectedSearchIds: ["US_MO_OFFICER"],
+      };
+
+      expect(searchStore.selectedSearchIds).toEqual([]);
+    });
+
+    test("keeps a selection saved with no stateCode", () => {
+      workflowsStore.user.updates = {
+        selectedSearchIds: ["OFFICER1"],
+      };
+
+      expect(searchStore.selectedSearchIds).toEqual(["OFFICER1"]);
     });
 
     test("uses selectedSearchIdsForImpersonation for impersonated user", async () => {
@@ -514,6 +533,50 @@ describe("selectedSearchIds", () => {
         searchStore.selectedSearchIds[0],
         "ID2",
       ]);
+    });
+  });
+
+  describe("switching tenants", () => {
+    beforeEach(() => {
+      workflowsStore.featureVariants = { workflowsSupervisorSearch: {} };
+      workflowsStore.user = {
+        ...mockSupervisor,
+        info: { ...(mockSupervisor.info as UserRecord), hasCaseload: false },
+      };
+      workflowsStore.staffSupervisedByCurrentUser = supervisedStaff;
+    });
+
+    test("drops the previous tenant's ids even when officers load after the switch", () => {
+      searchStore.updateSelectedSearch(["US_ID_OFFICER"]);
+      expect(searchStore.selectedSearchIds).toEqual(["US_ID_OFFICER"]);
+
+      // Officers are tenant-scoped, so on the way into a new tenant they are
+      // briefly empty — which makes the user read as *not* a supervisor with
+      // staff at the moment the tenant reaction runs.
+      workflowsStore.staffSupervisedByCurrentUser = [];
+      workflowsStore.rootStore.currentTenantId = "US_MO";
+
+      // The new tenant's officers arrive, restoring supervisor status.
+      workflowsStore.staffSupervisedByCurrentUser = supervisedStaff;
+
+      expect(searchStore.selectedSearchIds).not.toContain("US_ID_OFFICER");
+    });
+
+    test("clears the local overrides even while the user record is momentarily absent", () => {
+      searchStore.updateSelectedSearch(["US_ID_OFFICER"]);
+      expect(searchStore.selectedSearchIdsForSupervisorsWithStaff).toEqual([
+        "US_ID_OFFICER",
+      ]);
+
+      // updateSelectedSearch early-returns without a user, so the clear has to
+      // happen outside it.
+      workflowsStore.user = undefined;
+      workflowsStore.rootStore.currentTenantId = "US_MO";
+
+      expect(
+        searchStore.selectedSearchIdsForSupervisorsWithStaff,
+      ).toBeUndefined();
+      expect(searchStore.selectedSearchIdsForImpersonation).toBeUndefined();
     });
   });
 });

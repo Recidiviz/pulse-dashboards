@@ -96,7 +96,7 @@ export class SearchStore {
     reaction(
       () => [this.workflowsStore.rootStore.currentTenantId],
       () => {
-        this.updateSelectedSearch([]);
+        this.clearSelectedSearchForTenantChange();
       },
     );
 
@@ -202,7 +202,25 @@ export class SearchStore {
       return this.selectedSearchIdsForImpersonation ?? [];
     }
 
+    // A record with no stateCode at all is left alone — it predates the field
+    // and there's nothing to place it in the wrong tenant.
+    const stateCodeForUpdates = user.updates?.stateCode;
+    if (
+      stateCodeForUpdates &&
+      stateCodeForUpdates !== this.workflowsStore.rootStore.currentTenantId
+    ) {
+      return [];
+    }
+
     return user.updates?.selectedSearchIds ?? [];
+  }
+
+  // Returns the local selected-search overrides to the state they'd be in on a
+  // fresh load into the new tenant, then clears the persisted selection.
+  clearSelectedSearchForTenantChange(): void {
+    this.updateSelectedSearch([]);
+    this.selectedSearchIdsForSupervisorsWithStaff = undefined;
+    this.selectedSearchIdsForImpersonation = undefined;
   }
 
   updateSelectedSearch(searchIds: string[]): void {
@@ -227,6 +245,8 @@ export class SearchStore {
     // the input clears and a fresh query reseeds the results — which would
     // make its value pill vanish even though it's still selected. Resolve
     // against the manager's accumulating cache instead so pills persist.
+    // The manager scopes that cache to the active system, matching the
+    // system-scoping the Firestore path below gets from availableSearchables.
     if (this.isTypesenseSearchEnabled) {
       return this.caseloadSearchManager.resolveSelectedSearchables(
         this.selectedSearchIds,

@@ -23,7 +23,12 @@ import {
   WorkflowsResidentRecord,
 } from "~datatypes";
 
-import { AnyWorkflowsSystemConfig, StaffFilter } from "../core/models/types";
+import {
+  AnyWorkflowsSystemConfig,
+  SearchableGroup,
+  SearchType,
+  StaffFilter,
+} from "../core/models/types";
 import { CombinedUserRecord, PersonUpdateRecord } from "../FirestoreStore";
 import { ActiveFeatureVariantRecord } from "../RootStore/types";
 import { Client } from "./Client";
@@ -134,6 +139,15 @@ export interface PlannedTypesenseSearch {
   descriptor: Record<string, unknown>;
   collection: "locations" | "supervisionStaff" | "incarcerationStaff";
   groupLabel: string;
+  searchType: SearchType;
+}
+
+/**
+ * A SearchableGroup produced by a Typesense plan, tagged with the searchType
+ * that produced it.
+ */
+export interface TypesenseSearchableGroup extends SearchableGroup {
+  searchType: SearchType;
 }
 
 /**

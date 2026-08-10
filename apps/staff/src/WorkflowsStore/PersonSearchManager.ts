@@ -17,7 +17,7 @@
 
 import * as Sentry from "@sentry/react";
 import { debounce } from "lodash";
-import { makeAutoObservable, observable, reaction } from "mobx";
+import { makeAutoObservable, observable, reaction, runInAction } from "mobx";
 
 import {
   createScopedTypesenseClient,
@@ -153,17 +153,19 @@ export class PersonSearchManager {
 
       if (!isCurrent()) return;
 
-      this.results = composePersonSearchResults(
-        response.results,
-        plan,
-        this.resultsCache,
-      );
+      runInAction(() => {
+        this.results = composePersonSearchResults(
+          response.results,
+          plan,
+          this.resultsCache,
+        );
+      });
     } catch (err) {
       console.error("Typesense person search failed:", err);
       Sentry.captureException(err);
-      if (isCurrent()) this.results = [];
+      if (isCurrent()) runInAction(() => (this.results = []));
     } finally {
-      if (isCurrent()) this.searchPending = false;
+      if (isCurrent()) runInAction(() => (this.searchPending = false));
     }
   }
 }

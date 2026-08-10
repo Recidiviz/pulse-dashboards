@@ -26,6 +26,7 @@ import {
   buildTypesenseSearchPlan,
   CaseloadSearchManager,
   composeSearchableGroups,
+  resetSearchPlanCache,
 } from "../CaseloadSearchManager";
 import { SearchStore } from "../SearchStore";
 import { PlannedTypesenseSearch } from "../types";
@@ -37,6 +38,8 @@ let workflowsStore: any;
 let manager: CaseloadSearchManager;
 
 beforeEach(() => {
+  resetSearchPlanCache();
+
   workflowsStore = observable({
     user: {
       ...mockOfficer,
@@ -303,6 +306,114 @@ describe("buildTypesenseSearchPlan", () => {
       "supervisionStaff",
     ]);
   });
+
+  describe("memoization", () => {
+    // Mirrors the real systemConfigFor: reads a static config and filters it by
+    // restrictedToFeatureVariant. A cache hit means it isn't called at all.
+    function makeStore(activeVariants: string[]) {
+      const staticSearch = [
+        { searchType: "OFFICER", searchTitle: "officer" },
+        {
+          searchType: "DISTRICT",
+          searchTitle: "district",
+          restrictedToFeatureVariant: "usIdDistrictSearch",
+        },
+      ];
+      const featureVariants = Object.fromEntries(
+        activeVariants.map((name) => [name, {}]),
+      );
+      return {
+        systemConfigFor: vi.fn(() => ({
+          search: staticSearch.filter(
+            (sc) =>
+              !sc.restrictedToFeatureVariant ||
+              sc.restrictedToFeatureVariant in featureVariants,
+          ),
+        })),
+        featureVariants,
+      } as unknown as WorkflowsStore;
+    }
+
+    test("reuses the cached plan across different queries", () => {
+      const store = makeStore([]);
+      buildTypesenseSearchPlan("a", "US_ID", "SUPERVISION", store);
+      vi.mocked(store.systemConfigFor).mockClear();
+
+      buildTypesenseSearchPlan("bb", "US_ID", "SUPERVISION", store);
+      buildTypesenseSearchPlan("ccc", "US_ID", "SUPERVISION", store);
+      expect(store.systemConfigFor).not.toHaveBeenCalled();
+    });
+
+    test("stamps q per call without sharing descriptors", () => {
+      const store = makeStore([]);
+      const a = buildTypesenseSearchPlan(
+        "alice",
+        "US_ID",
+        "SUPERVISION",
+        store,
+      );
+      const b = buildTypesenseSearchPlan("bob", "US_ID", "SUPERVISION", store);
+
+      expect(a[0].descriptor.q).toBe("alice");
+      expect(b[0].descriptor.q).toBe("bob");
+      expect(a[0].descriptor).not.toBe(b[0].descriptor);
+    });
+
+    test("a feature variant flip rediscovers the newly enabled searchType", () => {
+      expect(
+        buildTypesenseSearchPlan(
+          "*",
+          "US_ID",
+          "SUPERVISION",
+          makeStore([]),
+        ).map((p) => p.searchType),
+      ).toEqual(["OFFICER"]);
+
+      // The gated entry is filtered out upstream, so the only way this surfaces
+      // is if the variant change invalidated the cached plan.
+      expect(
+        buildTypesenseSearchPlan(
+          "*",
+          "US_ID",
+          "SUPERVISION",
+          makeStore(["usIdDistrictSearch"]),
+        ).map((p) => p.searchType),
+      ).toEqual(["OFFICER", "DISTRICT"]);
+    });
+
+    // Unrelated variants invalidate too — deliberate, since variants change
+    // rarely and the rebuild is cheap.
+    test("an unrelated variant change rebuilds an equivalent plan", () => {
+      const before = buildTypesenseSearchPlan(
+        "*",
+        "US_ID",
+        "SUPERVISION",
+        makeStore(["somethingElse"]),
+      );
+      const after = buildTypesenseSearchPlan(
+        "*",
+        "US_ID",
+        "SUPERVISION",
+        makeStore(["somethingElse", "andAnother"]),
+      );
+      expect(after.map((p) => p.searchType)).toEqual(
+        before.map((p) => p.searchType),
+      );
+    });
+
+    test("rebuilds on tenant and active-system changes", () => {
+      const store = makeStore([]);
+
+      const tn = buildTypesenseSearchPlan("*", "US_TN", "SUPERVISION", store);
+      const ca = buildTypesenseSearchPlan("*", "US_CA", "SUPERVISION", store);
+      expect(tn[0].descriptor.filter_by).toContain("US_TN");
+      expect(ca[0].descriptor.filter_by).toContain("US_CA");
+
+      const sup = buildTypesenseSearchPlan("*", "US_TN", "SUPERVISION", store);
+      const all = buildTypesenseSearchPlan("*", "US_TN", "ALL", store);
+      expect(all.length).toBeGreaterThan(sup.length);
+    });
+  });
 });
 
 describe("composeSearchableGroups", () => {
@@ -310,11 +421,13 @@ describe("composeSearchableGroups", () => {
     descriptor: {},
     collection: "supervisionStaff",
     groupLabel: "officers",
+    searchType: "OFFICER",
   };
   const locationsPlan: PlannedTypesenseSearch = {
     descriptor: {},
     collection: "locations",
     groupLabel: "districts",
+    searchType: "DISTRICT",
   };
 
   test("returns empty array when all results are empty", () => {
@@ -404,6 +517,7 @@ describe("composeSearchableGroups", () => {
           descriptor: {},
           collection: "incarcerationStaff",
           groupLabel: "case managers",
+          searchType: "INCARCERATION_OFFICER",
         },
       ],
     );
@@ -443,11 +557,13 @@ describe("composeSearchableGroups", () => {
       descriptor: {},
       collection: "locations",
       groupLabel: "facilities",
+      searchType: "FACILITY",
     };
     const unitPlan: PlannedTypesenseSearch = {
       descriptor: {},
       collection: "locations",
       groupLabel: "units",
+      searchType: "FACILITY_UNIT",
     };
 
     const groups = composeSearchableGroups(
@@ -543,6 +659,9 @@ describe("search", () => {
     workflowsStore.systemConfigFor = vi.fn(() => ({
       search: [{ searchType: "CASELOAD", searchTitle: "caseload" }],
     }));
+    // Only a mock can swap the config without touching tenant/system/variants,
+    // so the plan cached at construction needs clearing.
+    resetSearchPlanCache();
 
     await manager.search("alice");
     expect(mockMultiSearch).not.toHaveBeenCalled();
@@ -609,17 +728,19 @@ describe("searchable cache + resolveSelectedSearchables", () => {
   test("search accumulates every returned searchable into the cache", async () => {
     mockMultiSearch.mockResolvedValueOnce(staffResponse("OFF1", "Alice"));
     await manager.search("alice");
-    expect(manager.searchableCache.get("OFF1")?.searchLabel).toBe(
+    expect(manager.searchableCache.get("OFF1")?.searchable.searchLabel).toBe(
       "Alice Smith",
     );
 
     // A later query for a different name must not evict the earlier entry.
     mockMultiSearch.mockResolvedValueOnce(staffResponse("OFF2", "Bob"));
     await manager.search("bob");
-    expect(manager.searchableCache.get("OFF1")?.searchLabel).toBe(
+    expect(manager.searchableCache.get("OFF1")?.searchable.searchLabel).toBe(
       "Alice Smith",
     );
-    expect(manager.searchableCache.get("OFF2")?.searchLabel).toBe("Bob Smith");
+    expect(manager.searchableCache.get("OFF2")?.searchable.searchLabel).toBe(
+      "Bob Smith",
+    );
   });
 
   test("resolveSelectedSearchables resolves from the cache after the item drops out of results", async () => {
@@ -641,6 +762,170 @@ describe("searchable cache + resolveSelectedSearchables", () => {
 
   test("resolveSelectedSearchables skips ids with no cached searchable", () => {
     expect(manager.resolveSelectedSearchables(["UNKNOWN"])).toEqual([]);
+  });
+
+  test("resolveSelectedSearchables drops selections from another system", async () => {
+    // Answers per system like the real one, so switching pages changes
+    // activeSystem rather than the config function.
+    workflowsStore.systemConfigFor = vi.fn((system: string) =>
+      system === "INCARCERATION"
+        ? {
+            search: [
+              {
+                searchType: "INCARCERATION_OFFICER",
+                searchTitle: "case manager",
+              },
+            ],
+          }
+        : { search: [{ searchType: "OFFICER", searchTitle: "officer" }] },
+    );
+
+    // A supervision officer is selected while on a SUPERVISION page.
+    mockMultiSearch.mockResolvedValueOnce(staffResponse("OFF1", "Alice"));
+    await manager.search("alice");
+    expect(manager.resolveSelectedSearchables(["OFF1"])).toHaveLength(1);
+
+    // The user navigates to an incarceration page. The cache still holds the
+    // supervision officer, but it must not resolve here.
+    workflowsStore.activeSystem = "INCARCERATION";
+    expect(manager.resolveSelectedSearchables(["OFF1"])).toEqual([]);
+
+    // Navigating back restores it — the ids themselves were never cleared.
+    workflowsStore.activeSystem = "SUPERVISION";
+    expect(
+      manager.resolveSelectedSearchables(["OFF1"]).map((s) => s.searchId),
+    ).toEqual(["OFF1"]);
+  });
+
+  test("resolveSelectedSearchables keeps both systems' selections in ALL mode", async () => {
+    workflowsStore.activeSystem = "ALL";
+    workflowsStore.systemConfigFor = vi.fn((system: string) =>
+      system === "INCARCERATION"
+        ? {
+            search: [
+              {
+                searchType: "INCARCERATION_OFFICER",
+                searchTitle: "case manager",
+              },
+            ],
+          }
+        : { search: [{ searchType: "OFFICER", searchTitle: "officer" }] },
+    );
+
+    mockMultiSearch.mockResolvedValueOnce({
+      results: [
+        staffResponse("OFF1", "Alice").results[0],
+        staffResponse("INC1", "Bob").results[0],
+      ],
+    });
+    await manager.search("*");
+
+    expect(
+      manager
+        .resolveSelectedSearchables(["OFF1", "INC1"])
+        .map((s) => s.searchId),
+    ).toEqual(["OFF1", "INC1"]);
+  });
+
+  test("resolveSelectedSearchables drops everything when there is no active system", async () => {
+    mockMultiSearch.mockResolvedValueOnce(staffResponse("OFF1", "Alice"));
+    await manager.search("alice");
+
+    workflowsStore.activeSystem = undefined;
+    expect(manager.resolveSelectedSearchables(["OFF1"])).toEqual([]);
+  });
+});
+
+describe("tenant change", () => {
+  let mockMultiSearch: ReturnType<typeof vi.fn>;
+  let errorSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    workflowsStore.systemConfigFor = vi.fn(() => ({
+      search: [{ searchType: "OFFICER", searchTitle: "officer" }],
+    }));
+    mockMultiSearch = vi.fn().mockResolvedValue({ results: [] });
+    manager.typesenseClient = {
+      multiSearch: mockMultiSearch,
+      reset: vi.fn(),
+      getScopedKey: vi.fn(),
+    } as any;
+    errorSpy = vi.spyOn(console, "error").mockImplementation(vi.fn());
+  });
+
+  afterEach(() => {
+    errorSpy.mockRestore();
+  });
+
+  test("wipes cache, results and input when currentTenantId changes", async () => {
+    mockMultiSearch.mockResolvedValueOnce(staffResponse("OFF1", "Alice"));
+    await manager.search("alice");
+    expect(manager.resolveSelectedSearchables(["OFF1"])).toHaveLength(1);
+    expect(manager.results).toHaveLength(1);
+    expect(manager.searchInput).toBe("alice");
+
+    workflowsStore.rootStore.currentTenantId = "US_TN";
+
+    // The previous state's officer must not survive as a selected pill.
+    expect(manager.searchableCache.size).toBe(0);
+    expect(manager.resolveSelectedSearchables(["OFF1"])).toEqual([]);
+    expect(manager.searchInput).toBe("");
+  });
+
+  test("re-keys and reseeds the dropdown for the new tenant", async () => {
+    mockMultiSearch.mockClear();
+    workflowsStore.rootStore.currentTenantId = "US_TN";
+
+    // Scoped key is invalidated (its filter_by is baked per tenant)...
+    expect(manager.typesenseClient.reset).toHaveBeenCalled();
+    // ...and a seed query goes out scoped to the new state.
+    const search = (mockMultiSearch.mock.calls[0][0] as any).searches[0];
+    expect(search.q).toBe("*");
+    expect(search.filter_by).toBe("stateCode:=`US_TN`");
+  });
+
+  test("a system change does NOT wipe the cache", async () => {
+    mockMultiSearch.mockResolvedValueOnce(staffResponse("OFF1", "Alice"));
+    await manager.search("alice");
+
+    workflowsStore.activeSystem = "ALL";
+
+    // Still cached — only the active-system filter decides what resolves, so
+    // navigating back restores the pill.
+    expect(manager.searchableCache.has("OFF1")).toBe(true);
+  });
+
+  test("drops an in-flight search response that lands after a tenant change", async () => {
+    let resolveMultiSearch!: (v: any) => void;
+    mockMultiSearch.mockReturnValueOnce(
+      new Promise((res) => {
+        resolveMultiSearch = res;
+      }),
+    );
+
+    const promise = manager.search("alice");
+    workflowsStore.rootStore.currentTenantId = "US_TN";
+    resolveMultiSearch(staffResponse("OFF1", "Alice"));
+    await promise;
+
+    expect(manager.searchableCache.has("OFF1")).toBe(false);
+    expect(manager.results).toEqual([]);
+  });
+
+  test("drops an in-flight cache warm-up that lands after a tenant change", async () => {
+    let resolveMultiSearch!: (v: any) => void;
+    mockMultiSearch.mockReturnValueOnce(
+      new Promise((res) => {
+        resolveMultiSearch = res;
+      }),
+    );
+
+    const promise = manager.warmSelectedSearchablesCache(["OFF1"]);
+    workflowsStore.rootStore.currentTenantId = "US_TN";
+    resolveMultiSearch(staffResponse("OFF1", "Alice"));
+    await promise;
+
+    expect(manager.searchableCache.has("OFF1")).toBe(false);
   });
 });
 
@@ -698,5 +983,30 @@ describe("warmSelectedSearchablesCache", () => {
     expect(search.filter_by).toBe(
       "stateCode:=`US_ND` && staffExternalId:=[`OFF2`]",
     );
+  });
+
+  test("re-fetches ids cached under a different system", async () => {
+    // Cached while SUPERVISION was active.
+    mockMultiSearch.mockResolvedValueOnce(staffResponse("OFF1", "Alice"));
+    await manager.search("alice");
+    mockMultiSearch.mockClear();
+
+    // On an incarceration page the cached entry no longer resolves, so the
+    // warm-up asks this system's collection for it (and gets nothing back).
+    workflowsStore.systemConfigFor = vi.fn(() => ({
+      search: [
+        { searchType: "INCARCERATION_OFFICER", searchTitle: "case manager" },
+      ],
+    }));
+    workflowsStore.activeSystem = "INCARCERATION";
+    // Discard the seed search the system-change reaction kicks off.
+    mockMultiSearch.mockClear();
+    mockMultiSearch.mockResolvedValueOnce({ results: [{ hits: [] }] });
+
+    await manager.warmSelectedSearchablesCache(["OFF1"]);
+
+    const search = (mockMultiSearch.mock.calls[0][0] as any).searches[0];
+    expect(search.collection).toBe("incarcerationStaff");
+    expect(manager.resolveSelectedSearchables(["OFF1"])).toEqual([]);
   });
 });
