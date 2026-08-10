@@ -39,6 +39,8 @@ export class ParoleDocketPresenter
 {
   private hearings?: Array<ParoleHearing>;
 
+  searchQuery = "";
+
   readonly filterStore: ParoleFilterStore;
 
   constructor(private paroleStore: ParoleStore) {
@@ -79,15 +81,22 @@ export class ParoleDocketPresenter
     return Array.from(new Set((this.hearings ?? []).map((h) => h[field])));
   }
 
-  // FilterPresenter surface (WorkflowsFilterDropdown)
+  setSearchQuery(query: string): void {
+    this.searchQuery = query;
+  }
+
+  get docketSubheading(): string | undefined {
+    return this.paroleStore.config.docketSubheading;
+  }
+
+  get docketSearchEnabled(): boolean {
+    return Boolean(this.paroleStore.config.docketSearchEnabled);
+  }
 
   trackFilterDropdownOpened(): void {
     // No analytics tracking for the Parole docket yet.
   }
 
-  // Count of hearings matching this option's value for this field, over the
-  // full unfiltered docket -- not re-scoped by whatever else is currently
-  // selected, matching MyCaseload's numItems semantics.
   numItems(type: FilterType, field: FilterField, option: FilterOption): number {
     if (type !== "parole") return 0;
 
@@ -98,12 +107,20 @@ export class ParoleDocketPresenter
 
   get filteredHearings(): Array<ParoleHearing> {
     const selected = this.filterStore.selectedFilters;
-    return (this.hearings ?? []).filter((hearing) =>
-      Object.entries(selected).every(([field, values]) => {
+    const query = this.searchQuery.trim().toLowerCase();
+    return (this.hearings ?? []).filter((hearing) => {
+      if (
+        query &&
+        !hearing.individualName.toLowerCase().includes(query) &&
+        !hearing.docId.toLowerCase().includes(query)
+      )
+        return false;
+
+      return Object.entries(selected).every(([field, values]) => {
         if (!values || values.length === 0) return true;
         return values.includes(hearing[field as ParoleHearingFilterField]);
-      }),
-    );
+      });
+    });
   }
 
   get totalHearingsCount(): number {

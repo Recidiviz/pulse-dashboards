@@ -36,6 +36,8 @@ const US_CO_CONFIG = {
       "conductHistory",
       "attachments",
     ],
+    docketSubheading: "Hearings in the next two weeks",
+    docketSearchEnabled: true,
   },
 } satisfies TenantConfig<"US_CO">;
 

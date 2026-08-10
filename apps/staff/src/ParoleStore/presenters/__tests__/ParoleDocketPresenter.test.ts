@@ -145,5 +145,40 @@ describe("ParoleDocketPresenter", () => {
         presenter.numItems("person", "facility", { value: "Facility B" }),
       ).toBe(0);
     });
+
+    it("filters hearings by search query matching name or DOC ID, case-insensitively", () => {
+      presenter.setSearchQuery("brooks");
+      expect(presenter.filteredHearings).toEqual([TEST_HEARINGS[1]]);
+
+      presenter.setSearchQuery("2");
+      expect(presenter.filteredHearings).toEqual([TEST_HEARINGS[1]]);
+    });
+
+    it("combines search query with selected filters, ANDed together", () => {
+      presenter.setSearchQuery("chen");
+      presenter.filterStore.setFilter("facility", { value: "Facility A" });
+
+      expect(presenter.filteredHearings).toEqual([]);
+    });
+  });
+});
+
+describe("ParoleDocketPresenter docket display config", () => {
+  it("exposes docketSubheading and docketSearchEnabled from the tenant's paroleConfig", () => {
+    const rootStore = new RootStore();
+    rootStore.tenantStore.currentTenantId = "US_CO";
+    const presenter = new ParoleDocketPresenter(new ParoleStore(rootStore));
+
+    expect(presenter.docketSubheading).toBe("Hearings in the next two weeks");
+    expect(presenter.docketSearchEnabled).toBe(true);
+  });
+
+  it("hides the subheading and search for tenants that don't configure them", () => {
+    const rootStore = new RootStore();
+    rootStore.tenantStore.currentTenantId = "US_ID";
+    const presenter = new ParoleDocketPresenter(new ParoleStore(rootStore));
+
+    expect(presenter.docketSubheading).toBeUndefined();
+    expect(presenter.docketSearchEnabled).toBe(false);
   });
 });

@@ -120,10 +120,15 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
 
 /**
  * State-specific behavior for the Parole case profile page. Required for any
- * tenant with Parole nav enabled -- ParoleStore.config throws otherwise.
+ * tenant with Parole nav enabled
  */
 export type ParoleConfig = {
+  /** Ordered list of sections to show on the Parole case profile page. */
   sections: ParoleSectionName[];
+  /** Subheading shown under the docket table's title. Omit to hide it. */
+  docketSubheading?: string;
+  /** Enables the docket table's name/DOC ID search input. Omit to hide it. */
+  docketSearchEnabled?: boolean;
 };
 
 /**

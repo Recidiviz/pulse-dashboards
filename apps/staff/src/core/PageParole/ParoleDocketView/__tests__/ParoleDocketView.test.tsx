@@ -29,11 +29,17 @@ vi.mock("../../../../hooks/useIsMobile");
 
 const useRootStoreMock = vi.mocked(StoreProvider.useRootStore);
 
+function mockCurrentTenant(tenantId: "US_CO" | "US_ID") {
+  const rootStore = new RootStore();
+  rootStore.tenantStore.currentTenantId = tenantId;
+  useRootStoreMock.mockReturnValue({
+    paroleStore: new ParoleStore(rootStore),
+  } as never);
+}
+
 beforeEach(() => {
   vi.mocked(useIsMobile).mockReturnValue({ isMobile: false, isTablet: false });
-  useRootStoreMock.mockReturnValue({
-    paroleStore: new ParoleStore(new RootStore()),
-  } as never);
+  mockCurrentTenant("US_CO");
 });
 
 describe("ParoleDocketView row links", () => {
@@ -49,5 +55,40 @@ describe("ParoleDocketView row links", () => {
     links.forEach((link) => {
       expect(link.getAttribute("href")).toMatch(/^\/parole\/case\/.+$/);
     });
+  });
+});
+
+describe("ParoleDocketView docket subheading and search", () => {
+  it("shows the subheading and search input for a tenant that configures them", async () => {
+    mockCurrentTenant("US_CO");
+    render(
+      <MemoryRouter>
+        <ParoleDocketView />
+      </MemoryRouter>,
+    );
+
+    expect(
+      await screen.findByText("Hearings in the next two weeks"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Search by name or DOC ID"),
+    ).toBeInTheDocument();
+  });
+
+  it("hides the subheading and search input for a tenant that doesn't configure them", async () => {
+    mockCurrentTenant("US_ID");
+    render(
+      <MemoryRouter>
+        <ParoleDocketView />
+      </MemoryRouter>,
+    );
+
+    await screen.findAllByRole("link");
+    expect(
+      screen.queryByText("Hearings in the next two weeks"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByPlaceholderText("Search by name or DOC ID"),
+    ).not.toBeInTheDocument();
   });
 });
