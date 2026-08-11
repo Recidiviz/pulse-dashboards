@@ -104,19 +104,7 @@ describe("getPrismaClient", () => {
     });
 
     describe("offline mode", () => {
-      test("passes DATABASE_URL as the connection string", () => {
-        vi.stubEnv("NODE_ENV", "development");
-        vi.stubEnv("IS_OFFLINE", "true");
-        vi.stubEnv("DATABASE_URL", "postgresql://offline-host/testdb");
-
-        getPrismaClient({ stateCode: testStateCode, demo: false });
-
-        expect(PrismaPg).toHaveBeenCalledExactlyOnceWith({
-          connectionString: "postgresql://offline-host/testdb",
-        });
-      });
-
-      test("falls back to the per-state dev DB when DATABASE_URL is not set", () => {
+      test("derives the connection string from the state code", () => {
         vi.stubEnv("NODE_ENV", "development");
         vi.stubEnv("IS_OFFLINE", "true");
         vi.stubEnv("DATABASE_URL", "");

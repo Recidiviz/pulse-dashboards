@@ -20,6 +20,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { StateCode } from "~@jii/configs";
 
 import { PrismaClient } from "./client/client";
+import { resolveDatabaseTarget } from "./databaseTarget";
 import { getLocalDatabaseUrl } from "./utils";
 
 const prismaClients: Record<string, PrismaClient> = {};
@@ -31,31 +32,26 @@ type PrismaClientOpts = {
 
 export function getPrismaClient({ stateCode, demo }: PrismaClientOpts) {
   const stateDbName = `${stateCode}${demo ? "_DEMO" : ""}`.toLowerCase();
-  const NODE_ENV = process.env["NODE_ENV"] ?? "";
   let dbUrl: string | undefined;
 
   // Because infra differs across environments, the way we resolve DB URLs does as well.
-  switch (NODE_ENV) {
-    // in test environments for convenience we collapse all states into single DB
-    case "test":
+  switch (resolveDatabaseTarget()) {
+    // in the test environment for convenience we collapse all states into single DB
+    case "local-test":
       dbUrl = process.env["DATABASE_URL"];
       break;
-    case "development":
-      // this is only expected when running e2e tests against offline mode
-      if (process.env["IS_OFFLINE"] === "true" && process.env["DATABASE_URL"]) {
-        dbUrl = process.env["DATABASE_URL"];
-      } else if (process.env["USE_STAGING_DB"] === "true") {
-        // this URL points you to the local CloudSQL proxy for the staging DB
-        dbUrl = `postgresql://${process.env["STAGING_DB_USER"]}:${process.env["STAGING_DB_PASSWORD"]}@localhost:5432/${stateDbName}?host=127.0.0.1`;
-      } else {
-        // otherwise use the local DB. we can construct the URL on the fly
-        // from a predictable and non-sensitive template
-        dbUrl = getLocalDatabaseUrl(stateDbName);
-      }
+    // this URL points you to the local CloudSQL proxy for the staging DB
+    case "staging-proxy":
+      dbUrl = `postgresql://${process.env["STAGING_DB_USER"]}:${process.env["STAGING_DB_PASSWORD"]}@localhost:5432/${stateDbName}?host=127.0.0.1`;
       break;
-    // otherwise assume we're in a deployment, where the state db url must be explicitly provided
-    default:
+    // the local DB URL can be constructed on the fly
+    case "local-dev":
+      dbUrl = getLocalDatabaseUrl(stateDbName);
+      break;
+    // in a deployment, the state db url must be explicitly provided to the container
+    case "deployed":
       dbUrl = process.env[`DATABASE_URL_${stateDbName.toUpperCase()}`];
+      break;
   }
 
   if (!dbUrl) {

@@ -16,7 +16,11 @@
 // =============================================================================
 
 import { StateCode } from "~@jii/configs";
-import { getPrismaClient, PrismaClient } from "~@jii/prisma";
+import {
+  getPrismaClient,
+  isRealDatabaseEnvironment,
+  PrismaClient,
+} from "~@jii/prisma";
 
 import { facilityHandler } from "../handlers/facility/facility";
 import { residentHandler } from "../handlers/resident/resident";
@@ -37,7 +41,18 @@ async function* toAsyncGenerator<T>(items: T[]) {
   }
 }
 
+// this should be false locally (there are no demo DBs in the dev environment) and true in GCP
 const demo = process.env["SEED_DEMO"] === "true";
+
+// this guards against accidentally destroying real data in staging or prod, since the same environment
+// serves both real and demo data there. This relies on logic shared with Prisma to decide which DB to connect to,
+// to ensure both determinations stay in sync.
+if (isRealDatabaseEnvironment() && !demo) {
+  throw new Error(
+    "Refusing to seed the non-demo state databases in a real database environment. " +
+      "SEED_DEMO must be set to 'true' when running against a deployed or staging database.",
+  );
+}
 
 type SeedOpts<ModelRecord> = {
   stateCode: StateCode;
