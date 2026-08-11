@@ -182,6 +182,12 @@ const DERIVATIONS: Derivation[] = [
   // Patches the stale pre-state-split audio gs:// path (see #14821) onto
   // tasks synced before move-audio-to-state-folders.ts moved the objects.
   { field: "audio", derive: deriveMigratedAudioPath },
+  // Add state_code and recording_date as top-level fields, similar to meeting_id
+  { field: "state_code", derive: (data) => metaString(data, "State") },
+  {
+    field: "recording_date",
+    derive: (data) => metaString(data, "Recording date"),
+  },
 ];
 
 /**

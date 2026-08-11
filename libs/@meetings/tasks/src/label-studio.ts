@@ -91,8 +91,11 @@ export function buildLabelStudioTask(
         )
       : null;
 
+  const recordingDate = meeting.startTime.toISOString().split("T")[0];
   return {
     meeting_id: meeting.id,
+    state_code: stateCode,
+    recording_date: recordingDate,
 
     // Allows us to use the label studio UI to randomly assign each task to an annotator by having a
     // range of numbers that correspond to each annotator. Doing it as a random number instead of
@@ -122,7 +125,7 @@ export function buildLabelStudioTask(
     // ── Meta (human-readable labels for Label Studio <Table> widget) ────
     meta: {
       State: stateCode,
-      "Recording date": meeting.startTime.toISOString().split("T")[0],
+      "Recording date": recordingDate,
       Duration:
         durationSeconds !== null ? formatDuration(durationSeconds) : null,
       "Meeting ID": meeting.id,
