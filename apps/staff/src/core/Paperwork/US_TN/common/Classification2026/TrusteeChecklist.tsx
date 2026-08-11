@@ -398,7 +398,7 @@ export const TrusteeChecklist = observer(function TrusteeChecklist({
 
               <TrusteeCriteriaRow dataKey="trusteeNoViolentFelonyConvictionPast5YearsIncarceration">
                 Inmate has no court-prosecuted felony convictions for a
-                violent/assaultive offense committed during the past 5 years of
+                violent/assaultive offense convicted during the past 5 years of
                 incarceration
               </TrusteeCriteriaRow>
             </tbody>
