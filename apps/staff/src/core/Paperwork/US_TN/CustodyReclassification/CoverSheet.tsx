@@ -417,7 +417,7 @@ function HeaderSection({ oppType }: { oppType: OpportunityType }) {
       Name of Chief Counselor Finalizing Classification Form:{" "}
       <FormInput name="finalizingCounselor" />
       <br />
-      Date of Final Approval and Entry in OMS / Recidiviz Tool, with any edits:{" "}
+      Date of Final Approval by Chief Counselor:{" "}
       <FormInput name="finalApprovalDate" />
       {showTrusteeSection && (
         <>
