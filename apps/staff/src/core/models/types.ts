@@ -101,6 +101,12 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
   incarcerationStaffTitleOverride?: string;
   custodyLevelCopy?: Record<string, string>;
 
+  // Client Profile
+  clientProfileConfig?: {
+    sections: ClientDetailComponentName[];
+    rightColumnSections?: ClientDetailComponentName[];
+  };
+
   // Session
   sessionTimeoutMinutes?: number;
 

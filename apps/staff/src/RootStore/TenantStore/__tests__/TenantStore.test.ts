@@ -46,3 +46,43 @@ describe("TenantStore.tasksTableColumns", () => {
     ]);
   });
 });
+
+describe("TenantStore.clientProfileSections / clientProfileRightColumnSections", () => {
+  it("returns undefined when there is no current tenant", () => {
+    const tenantStore = buildTenantStore();
+    expect(tenantStore.clientProfileSections).toBeUndefined();
+    expect(tenantStore.clientProfileRightColumnSections).toBeUndefined();
+  });
+
+  it("returns undefined when the tenant config has no clientProfileConfig", () => {
+    const tenantStore = buildTenantStore();
+    tenantStore.tenantConfigs = {
+      US_TN: {},
+    } as unknown as TenantConfigs;
+    tenantStore.setCurrentTenantId("US_TN");
+
+    expect(tenantStore.clientProfileSections).toBeUndefined();
+    expect(tenantStore.clientProfileRightColumnSections).toBeUndefined();
+  });
+
+  it("returns the tenant's configured sections when clientProfileConfig is present", () => {
+    const tenantStore = buildTenantStore();
+    tenantStore.tenantConfigs = {
+      US_TN: {
+        clientProfileConfig: {
+          sections: ["Contact", "FinesAndFees"],
+          rightColumnSections: ["SpecialConditions"],
+        },
+      },
+    } as unknown as TenantConfigs;
+    tenantStore.setCurrentTenantId("US_TN");
+
+    expect(tenantStore.clientProfileSections).toEqual([
+      "Contact",
+      "FinesAndFees",
+    ]);
+    expect(tenantStore.clientProfileRightColumnSections).toEqual([
+      "SpecialConditions",
+    ]);
+  });
+});

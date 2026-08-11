@@ -66,6 +66,11 @@ import {
   OpportunitiesAccordion,
 } from "./OpportunitiesAccordion";
 import { UsIaActionPlansAndNotes } from "./OpportunityDetailSidebarComponents";
+import {
+  ClientDetailComponentName,
+  ClientDetailSidebarComponents,
+  DetailsSection as SidebarComponentSection,
+} from "./OpportunityProfile";
 import { PreferredContact } from "./PreferredContact";
 import { ResidentHousing } from "./ResidentDetailSidebarComponents";
 import { SentenceProgress } from "./SentenceProgress";
@@ -242,9 +247,65 @@ function AdditionalDetails({
   return <div />;
 }
 
+/**
+ * Maps a tenant's `clientProfileConfig` section list over the shared
+ * `ClientDetailSidebarComponents` registry
+ */
+function renderConfiguredClientProfileSections(
+  sections: ClientDetailComponentName[] | undefined,
+  client: Client,
+): React.ReactElement<any> | null {
+  if (!sections?.length) return null;
+
+  return (
+    <>
+      {sections.map((componentName) => {
+        const Component = ClientDetailSidebarComponents[componentName];
+        return (
+          <SidebarComponentSection key={componentName}>
+            <Component client={client} />
+          </SidebarComponentSection>
+        );
+      })}
+    </>
+  );
+}
+
+function AdditionalDetailsWithOptionalHeading({
+  person,
+  sidebarHeadingText,
+  showHeading,
+}: PersonProfileProps & {
+  sidebarHeadingText: string;
+  showHeading: boolean;
+}): React.ReactElement<any> {
+  if (!showHeading) {
+    return <AdditionalDetails person={person} />;
+  }
+
+  return (
+    <div>
+      <SectionHeading>{sidebarHeadingText}</SectionHeading>
+      <Divider />
+      <AdditionalDetails person={person} />
+    </div>
+  );
+}
+
 const ClientDetails = observer(function ClientDetails({
   client,
 }: ClientProfileProps): React.ReactElement<any> {
+  const { clientProfileWarmHandoff } = useFeatureVariants();
+  const { tenantStore } = useRootStore();
+
+  const configuredSections = clientProfileWarmHandoff
+    ? renderConfiguredClientProfileSections(
+        tenantStore.clientProfileSections,
+        client,
+      )
+    : null;
+  if (configuredSections) return configuredSections;
+
   return (
     <>
       {client.stateCode === "US_UT" && <UsUtDates client={client} />}
@@ -374,11 +435,13 @@ export const FullProfile = observer(
     const {
       workflowsStore: { selectedPerson: person },
       userStore,
+      tenantStore,
     } = useRootStore();
     const { isTablet, isMobile } = useIsMobile(true);
     const {
       caseNoteSearch,
       caseOverview,
+      clientProfileWarmHandoff,
       customTasks,
       hideWorkflowsOpportunities,
       recentCaseNotes,
@@ -408,6 +471,11 @@ export const FullProfile = observer(
     const isMoClient = person instanceof Client && person.stateCode === "US_MO";
 
     const hideOpportunitiesSection = isMoClient || hideWorkflowsOpportunities;
+
+    const usesConfigDrivenClientProfile =
+      person instanceof Client &&
+      clientProfileWarmHandoff &&
+      !!tenantStore.clientProfileSections?.length;
 
     const queryClient = new QueryClient();
 
@@ -564,11 +632,11 @@ export const FullProfile = observer(
                   </div>
                 ))}
               {isMoClient ? null : (
-                <div>
-                  <SectionHeading>{sidebarHeadingText}</SectionHeading>
-                  <Divider />
-                  <AdditionalDetails person={person} />
-                </div>
+                <AdditionalDetailsWithOptionalHeading
+                  person={person}
+                  sidebarHeadingText={sidebarHeadingText}
+                  showHeading={!usesConfigDrivenClientProfile}
+                />
               )}
             </ProfileDetailsWrapper>
             <RightColumn>
@@ -590,6 +658,12 @@ export const FullProfile = observer(
                 person instanceof Client &&
                 person.stateCode === "US_MO" && (
                   <UsMoCasePlanning client={person} />
+                )}
+              {person instanceof Client &&
+                clientProfileWarmHandoff &&
+                renderConfiguredClientProfileSections(
+                  tenantStore.clientProfileRightColumnSections,
+                  person,
                 )}
             </RightColumn>
           </Content>

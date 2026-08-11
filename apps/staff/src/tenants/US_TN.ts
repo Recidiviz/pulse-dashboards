@@ -108,6 +108,10 @@ const US_TN_CONFIG = {
   featureVariants: {
     outcomesModule: {},
   },
+  clientProfileConfig: {
+    sections: ["Contact", "FinesAndFees"],
+    rightColumnSections: ["SpecialConditions"],
+  },
 } satisfies TenantConfig<"US_TN">;
 
 export default US_TN_CONFIG;

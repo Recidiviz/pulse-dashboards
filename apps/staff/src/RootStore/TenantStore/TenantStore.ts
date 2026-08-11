@@ -277,6 +277,31 @@ export default class TenantStore {
   }
 
   /**
+   * Config-driven "Additional information" sections for the main Client
+   * Profile page (`FullProfile.tsx`), if this tenant has opted in — see
+   * `TenantConfig.clientProfileConfig`. `undefined` when the tenant hasn't
+   * defined one, so `FullProfile.tsx` can fall back to its legacy hardcoded
+   * composition.
+   */
+  get clientProfileSections(): ClientDetailComponentName[] | undefined {
+    if (!this.currentTenantId) return undefined;
+
+    return this.tenantConfigs[this.currentTenantId].clientProfileConfig
+      ?.sections;
+  }
+
+  /** Right-column counterpart to `clientProfileSections` — see
+   * `TenantConfig.clientProfileConfig.rightColumnSections`. */
+  get clientProfileRightColumnSections():
+    | ClientDetailComponentName[]
+    | undefined {
+    if (!this.currentTenantId) return undefined;
+
+    return this.tenantConfigs[this.currentTenantId].clientProfileConfig
+      ?.rightColumnSections;
+  }
+
+  /**
    * Returns the boolean from the tenant config which specifies whether to display the supervisor's
    * supervisionUnit rather than the supervisionDistrict on the Supervisor Page (and Staff page in legacy layout)
    */
