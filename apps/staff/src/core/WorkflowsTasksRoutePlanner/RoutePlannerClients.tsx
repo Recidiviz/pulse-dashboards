@@ -80,8 +80,8 @@ export const RoutePlannerClients = observer(function RoutePlannerClients({
   const numberOfAdded = getAddMorePeople.length;
   if (noContacts || noOfficers) {
     const emptyStateText = noOfficers
-      ? "Select one or more caseloads to see a list of suggested clients with home contacts due this month."
-      : "None of the selected officers have contacts due this month.";
+      ? "Select one or more caseloads to see a list of suggested clients with home contacts due."
+      : "None of the selected officers have contacts due.";
 
     return (
       <ClientsWrapper>
@@ -115,10 +115,11 @@ export const RoutePlannerClients = observer(function RoutePlannerClients({
         if (!contacts[searchId]) return null;
 
         const numContacts = contacts[searchId].length;
+        const singleContact = numContacts === 1;
         return (
           <React.Fragment key={searchId}>
             <OfficerSectionLabel>
-              <span className="fs-exclude">{`${numContacts} contacts due this month for ${searchLabel}`}</span>
+              <span className="fs-exclude">{`${numContacts} home ${singleContact ? "contact" : "contacts"} due for ${searchLabel}`}</span>
             </OfficerSectionLabel>
 
             {numContacts > 0 ? (
@@ -135,9 +136,7 @@ export const RoutePlannerClients = observer(function RoutePlannerClients({
               </ClientCardGrid>
             ) : (
               <EmptyStateWrapper>
-                <EmptyStateText>
-                  {"No home contacts due this month."}
-                </EmptyStateText>
+                <EmptyStateText>{"No home contacts due."}</EmptyStateText>
               </EmptyStateWrapper>
             )}
           </React.Fragment>
