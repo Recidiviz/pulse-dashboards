@@ -15,66 +15,38 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { flowResult, makeAutoObservable } from "mobx";
-
 import { ResidentsStore, UiStore, UserStore } from "~@jii/data";
-import {
-  Hydratable,
-  HydratesFromSource,
-  HydrationState,
-} from "~hydration-utils";
+import { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
 
 type SelectOption = { label: string; value: string };
 
-export class ResidentsSearchPresenter implements Hydratable {
-  private hydrationSource: HydratesFromSource;
-
+export class ResidentsSearchPresenter {
   constructor(
+    private facilities: JiiResidentAppRouterOutputs["resident"]["getFacilities"],
     private residentsStore: ResidentsStore,
     private uiStore: UiStore,
     private userStore: UserStore,
-  ) {
-    makeAutoObservable(this, undefined, { autoBind: true });
-
-    this.hydrationSource = new HydratesFromSource({
-      populate: async () => {
-        await flowResult(this.residentsStore.populateLocations());
-      },
-      expectPopulated: [this.expectLocationsPopulated],
-    });
-  }
-
-  private expectLocationsPopulated() {
-    if (!this.residentsStore.locations.length) {
-      throw new Error("Locations data is not populated");
-    }
-  }
-
-  get hydrationState(): HydrationState {
-    return this.hydrationSource.hydrationState;
-  }
-
-  async hydrate(): Promise<void> {
-    return this.hydrationSource.hydrate();
-  }
-
-  private get facilities() {
-    return this.residentsStore.locations.filter(
-      (l) => l.system === "INCARCERATION" && l.idType === "facilityId",
-    );
-  }
+  ) {}
 
   get residentFilterOptions(): Array<SelectOption> {
-    let { facilities } = this;
+    // broadens the type back to an array so we can filter it
+    let facilities = [...this.facilities];
     const { district } = this.userStore;
     const { limitDistrictSearchOptions } = this.residentsStore.config;
 
     if (limitDistrictSearchOptions && district) {
-      facilities = facilities.filter((f) => f.locationId === district);
+      facilities = facilities.filter((f) => f.id === district);
     }
 
+    // this should only happen as a result of the preceding filter step,
+    // since the input data is guaranteed nonempty
+    if (facilities.length === 0)
+      throw new Error(
+        "You don't have permission to search any known facilities.",
+      );
+
     return facilities.map((facility) => ({
-      value: facility.locationId,
+      value: facility.id,
       label: facility.name,
     }));
   }

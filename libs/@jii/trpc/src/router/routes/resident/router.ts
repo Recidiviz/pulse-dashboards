@@ -24,6 +24,7 @@ import { typedFromEntries } from "~utils";
 import { residentRestrictedMiddleware } from "../../../middleware/residentRestrictedMiddleware";
 import { firebaseAuthedResidentProcedure } from "../../../procedures/firebaseAuthedResidentProcedure";
 import { router } from "../../../procedures/init";
+import { getFacilities } from "./facilities/getFacilities";
 import { fetchProgramsForState } from "./programs/fetchPrograms";
 import {
   getProgramsInputSchema,
@@ -35,6 +36,7 @@ import { resourcesRouter } from "./resources/router";
 
 export const residentRouter = router({
   getResident,
+  getFacilities,
   getResidentsInFacility,
   getFlags: firebaseAuthedResidentProcedure
     .input(z.object({ pseudonymizedId: z.string() }))

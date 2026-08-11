@@ -15,18 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { waitFor } from "@testing-library/react";
-import { configure, set } from "mobx";
+import { configure } from "mobx";
 
 import { residentsConfigByState } from "~@jii/configs";
 import { ResidentsStore, RootStore } from "~@jii/data";
-import { locationRecordFixtures } from "~datatypes";
+import { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
 
 import { ResidentsSearchPresenter } from "./ResidentsSearchPresenter";
 
 let residentsStore: ResidentsStore;
 let presenter: ResidentsSearchPresenter;
 let rootStore: RootStore;
+
+const testFacilities: JiiResidentAppRouterOutputs["resident"]["getFacilities"] =
+  [
+    { id: "DEMO FACILITY", name: "Demo Facility" },
+    { id: "DEMO FACILITY 2", name: "Demo Facility 2" },
+  ];
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
@@ -46,6 +51,7 @@ beforeEach(() => {
     residentsConfigByState.US_MA,
   );
   presenter = new ResidentsSearchPresenter(
+    testFacilities,
     residentsStore,
     rootStore.uiStore,
     rootStore.userStore,
@@ -56,32 +62,8 @@ afterEach(() => {
   configure({ safeDescriptors: true });
 });
 
-describe("hydration", () => {
-  test("needs hydration", () => {
-    expect(presenter.hydrationState.status).toBe("needs hydration");
-    expect(presenter.residentFilterOptions).toEqual([]);
-  });
-
-  test("already hydrated", () => {
-    set(residentsStore.locations, [
-      [locationRecordFixtures.find((r) => r.stateCode === "US_MA")],
-    ]);
-
-    expect(presenter.hydrationState.status).toBe("hydrated");
-  });
-
-  test("hydrate", async () => {
-    vi.spyOn(residentsStore, "populateResidents");
-    expect(presenter.hydrationState.status).toBe("needs hydration");
-
-    presenter.hydrate();
-
-    expect(presenter.hydrationState.status).toBe("loading");
-
-    await waitFor(() =>
-      expect(presenter.hydrationState.status).toBe("hydrated"),
-    );
-
+describe("residentFilterOptions", () => {
+  test("maps facilities to select options", () => {
     expect(presenter.residentFilterOptions).toMatchInlineSnapshot(`
       [
         {
@@ -94,16 +76,98 @@ describe("hydration", () => {
         },
       ]
     `);
+  });
+});
+
+describe("district restriction", () => {
+  function mockDistrict(district: string) {
+    vi.spyOn(
+      rootStore.userStore.authManager,
+      "authState",
+      "get",
+    ).mockReturnValue({
+      status: "authorized",
+      userProfile: {
+        stateCode: "US_MA",
+        district,
+      },
+    });
+  }
+
+  test("limits options to the facility matching the user's district when enabled", () => {
+    mockDistrict("DEMO FACILITY 2");
+    const restrictedPresenter = new ResidentsSearchPresenter(
+      testFacilities,
+      new ResidentsStore(rootStore, "US_MA", {
+        ...residentsConfigByState.US_MA,
+        limitDistrictSearchOptions: true,
+      }),
+      rootStore.uiStore,
+      rootStore.userStore,
+    );
+
+    expect(restrictedPresenter.residentFilterOptions).toEqual([
+      { label: "Demo Facility 2", value: "DEMO FACILITY 2" },
+    ]);
+  });
+
+  test("throws when the user's district matches no known facility", () => {
+    mockDistrict("UNKNOWN DISTRICT");
+    const restrictedPresenter = new ResidentsSearchPresenter(
+      testFacilities,
+      new ResidentsStore(rootStore, "US_MA", {
+        ...residentsConfigByState.US_MA,
+        limitDistrictSearchOptions: true,
+      }),
+      rootStore.uiStore,
+      rootStore.userStore,
+    );
+
+    expect(() => restrictedPresenter.residentFilterOptions).toThrow(
+      "You don't have permission to search any known facilities.",
+    );
+  });
+
+  test("does not limit options when disabled, even if the user has a district", () => {
+    mockDistrict("DEMO FACILITY 2");
+
+    expect(presenter.residentFilterOptions).toHaveLength(2);
+  });
+
+  test("does not limit options when enabled but the user has no district", () => {
+    const restrictedPresenter = new ResidentsSearchPresenter(
+      testFacilities,
+      new ResidentsStore(rootStore, "US_MA", {
+        ...residentsConfigByState.US_MA,
+        limitDistrictSearchOptions: true,
+      }),
+      rootStore.uiStore,
+      rootStore.userStore,
+    );
+
+    expect(restrictedPresenter.residentFilterOptions).toHaveLength(2);
+  });
+});
+
+describe("residentFilterDefaultOption", () => {
+  test("is undefined when no filter has been selected", () => {
     expect(presenter.residentFilterDefaultOption).toBeUndefined();
+  });
+
+  test("returns the option matching a preexisting value in the ui store", () => {
+    rootStore.uiStore.selectedFacilityIdFilterOptionValue = "DEMO FACILITY 2";
+
+    expect(presenter.residentFilterDefaultOption).toMatchInlineSnapshot(`
+      {
+        "label": "Demo Facility 2",
+        "value": "DEMO FACILITY 2",
+      }
+    `);
   });
 });
 
 describe("facility filter", () => {
-  beforeEach(async () => {
-    await presenter.hydrate();
-  });
-
-  test("set value", async () => {
+  test("set value", () => {
     presenter.setResidentsFilter("DEMO FACILITY");
     expect(presenter.residentFilterDefaultOption).toMatchInlineSnapshot(`
       {

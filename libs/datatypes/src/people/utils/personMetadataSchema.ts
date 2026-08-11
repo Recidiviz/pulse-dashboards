@@ -17,12 +17,7 @@
 
 import { z } from "zod";
 
-// z.enum() reqires this constraint
-type AtLeastOne<T> = [T, ...T[]];
-
-function isAtLeastOne<T>(arr: T[]): arr is AtLeastOne<T> {
-  return arr.length > 0;
-}
+import { AtLeastOne, isAtLeastOne } from "~utils";
 
 // prettier-ignore
 const allStateCodes = [

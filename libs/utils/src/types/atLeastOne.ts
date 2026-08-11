@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,9 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./camelCaseObject";
-export * from "./downloads";
-export * from "./formatStrings";
-export * from "./react/useRequiredContext";
-export * from "./types/atLeastOne";
-export * from "./types/typedFromEntries";
+/**
+ * Requires an array to be nonempty
+ */
+export type AtLeastOne<T> = [T, ...T[]];
+
+export function isAtLeastOne<T>(arr: T[]): arr is AtLeastOne<T> {
+  return arr.length > 0;
+}
