@@ -16,6 +16,7 @@
 // =============================================================================
 
 import downloadjs from "downloadjs";
+import JSZip from "jszip";
 import { makeAutoObservable } from "mobx";
 
 import {
@@ -164,7 +165,55 @@ export default class MetricsStore implements PathwaysMetricStore {
       this.rootStore.userStore.getTokenSilently(),
     );
 
-    downloadjs(blob, filename ?? defaultFilename);
+    let methodologyPDF: ArrayBuffer | null = null;
+    try {
+      const response = await fetch(
+        "/New York State DOCCS Dashboard Methodology.pdf",
+      );
+      if (response.ok) {
+        methodologyPDF = await response.arrayBuffer();
+      }
+    } catch {
+      // methodology PDF is optional; proceed without it if unavailable
+    }
+
+    const zip = new JSZip();
+
+    if (snapshotDate) {
+      zip.file(filename ?? defaultFilename, await blob.arrayBuffer(), {
+        binary: true,
+      });
+    } else {
+      // The bulk export blob is itself a zip of monthly CSVs. Unzip it and
+      // add its entries directly, rather than nesting that zip as a single
+      // file, so the download is always a flat zip of CSVs (+ the PDF).
+      const bulkZip = await JSZip.loadAsync(await blob.arrayBuffer());
+      await Promise.all(
+        Object.values(bulkZip.files)
+          .filter((entry) => !entry.dir)
+          .map(async (entry) => {
+            zip.file(entry.name, await entry.async("arraybuffer"), {
+              binary: true,
+            });
+          }),
+      );
+    }
+
+    if (methodologyPDF) {
+      zip.file(
+        "New York State DOCCS Dashboard Methodology.pdf",
+        methodologyPDF,
+        {
+          binary: true,
+        },
+      );
+    }
+
+    const content = await zip.generateAsync({
+      type: "blob",
+      compression: "DEFLATE",
+    });
+    downloadjs(content, "export_data.zip");
   }
 
   private fetchMetrics = <R extends MetricRecord>(

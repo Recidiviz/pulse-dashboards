@@ -25,6 +25,7 @@ import { convertToSlug } from "./utils";
 export type MethodologyBlockContent = {
   title: string;
   methodology?: string;
+  subpoints?: string;
 };
 
 const BlockWrapper = styled.div`
@@ -76,6 +77,7 @@ const ContentBlock: React.FC<Props> = ({ content, subBlock = false }) => {
         )}
         <BlockContent>
           <Markdown>{content.methodology || ""}</Markdown>
+          {content.subpoints && <Markdown>{content.subpoints}</Markdown>}
         </BlockContent>
       </BlockWrapper>
     </AnchorSection>

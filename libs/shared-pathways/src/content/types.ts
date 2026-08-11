@@ -44,6 +44,7 @@ export type MetricContent = {
   chartXAxisTitle?: string;
   chartYAxisTitle?: string;
   methodology?: string;
+  subpoints?: string;
 };
 
 export type MetricCopy = {

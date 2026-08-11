@@ -78,6 +78,8 @@ const content: StateSpecificMetricCopy = {
     title: "Prison population by latest admission type",
     methodology:
       "The chart describes the number of people by latest admission type as of the date specified in the chart title.",
+    subpoints:
+      "* JS Admission = Judicially Sanctioned by the court to participate in a drug treatment program at DOCCS.  These individuals are admitted to DOCCS facilities and are also under parole supervision. \n* PDP Admission = Admitted to DOCCS to participate in a Parole Diversion Program as the result of a parole violation.  These individuals are admitted to DOCCS facilities and are also under parole supervision.  This program was discontinued in 2022.\n* No New Term PV = Returned to DOCCS custody for violating the conditions of parole in an important respect.\n* New Term PV = Admitted to DOCCS for a new conviction that occurred while they were on parole supervision.",
   },
   prisonPopulationByReligion: {
     title: "Prison population by religion",

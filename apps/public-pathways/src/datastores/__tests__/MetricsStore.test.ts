@@ -16,6 +16,7 @@
 // =============================================================================
 
 import downloadjs from "downloadjs";
+import JSZip from "jszip";
 import { autorun, when } from "mobx";
 
 import { isHydrated } from "~hydration-utils";
@@ -42,6 +43,38 @@ vi.mock("~shared-pathways", async (importOriginal) => {
 vi.mock("downloadjs", () => ({
   default: vi.fn(),
 }));
+
+// Real JSZip round-trips through jsdom's incomplete Blob/ArrayBuffer support
+// unreliably (its ArrayBuffer instanceof check can fail purely due to how the
+// test environment constructs buffers, unrelated to the code under test), so
+// zip building is faked here. The fake stores whatever's passed to `.file()`
+// verbatim and returns it from `generateAsync()`, letting tests assert on the
+// exported file names/content without touching real zip binary handling.
+type FakeZipEntry = {
+  name: string;
+  dir?: boolean;
+  async: () => Promise<unknown>;
+};
+vi.mock("jszip", () => {
+  class FakeJSZip {
+    files: Record<string, unknown> = {};
+
+    file(name: string, data: unknown) {
+      this.files[name] = data;
+      return this;
+    }
+
+    async generateAsync() {
+      return this.files;
+    }
+
+    static loadAsync =
+      vi.fn<
+        (data: unknown) => Promise<{ files: Record<string, FakeZipEntry> }>
+      >();
+  }
+  return { default: FakeJSZip };
+});
 
 const mockRootStore = {
   currentTenantId: "US_NY",
@@ -213,40 +246,91 @@ describe("MetricsStore", () => {
       vi.mocked(downloadjs).mockClear();
     });
 
-    describe("bulk export (snapshotDate is null)", () => {
-      it("requests the bulk endpoint and downloads using the filename from the Content-Disposition header", async () => {
-        fetchMock.mockResponse("fake zip contents", {
-          headers: {
-            "Content-Disposition":
-              'attachment; filename="us_ny_individual_level_data_last_5_years_2022-08-03.zip"',
-          },
-        });
+    const METHODOLOGY_PDF_ENTRY =
+      "New York State DOCCS Dashboard Methodology.pdf";
 
+    // downloadjs's real signature doesn't overlap with the fake zip's plain
+    // {filename: content} export shape, so extracting its mock call args
+    // needs to go through `unknown` first.
+    const lastDownloadjsCall = (): [Record<string, unknown>, string] =>
+      vi.mocked(downloadjs).mock.calls[0] as unknown as [
+        Record<string, unknown>,
+        string,
+      ];
+
+    describe("bulk export (snapshotDate is null)", () => {
+      beforeEach(() => {
+        fetchMock.mockResponse("fake bulk export blob contents");
+        vi.mocked(JSZip.loadAsync).mockResolvedValue({
+          files: {
+            "us_ny_individual_level_data_2024-04-01.csv": {
+              name: "us_ny_individual_level_data_2024-04-01.csv",
+              dir: false,
+              async: async () => "a,b\n1,2",
+            },
+            "us_ny_individual_level_data_2024-05-01.csv": {
+              name: "us_ny_individual_level_data_2024-05-01.csv",
+              dir: false,
+              async: async () => "a,b\n3,4",
+            },
+            // A directory entry, as real zips include for their contents'
+            // parent folders; must be excluded from the flattened export.
+            "some-folder/": {
+              name: "some-folder/",
+              dir: true,
+              async: async () => "",
+            },
+          },
+        } as unknown as Awaited<ReturnType<typeof JSZip.loadAsync>>);
+      });
+
+      it("requests the bulk endpoint and flattens its CSV entries into the export, alongside the methodology PDF", async () => {
         await metricsStore.downloadIndividualLevelData(null);
 
         expect(fetchMock.mock.calls[0][0]).toEqual(
           `${BASE_URL}/public_pathways/US_NY/PrisonPopulationIndividualLevelBulk`,
         );
         expect(downloadjs).toHaveBeenCalledOnce();
-        const [blob, filename] = vi.mocked(downloadjs).mock.calls[0];
-        expect(filename).toBe(
-          "us_ny_individual_level_data_last_5_years_2022-08-03.zip",
+        const [exportFiles, exportFilename] = lastDownloadjsCall();
+        expect(exportFilename).toBe("export_data.zip");
+
+        expect(Object.keys(exportFiles).sort()).toEqual(
+          [
+            "us_ny_individual_level_data_2024-04-01.csv",
+            "us_ny_individual_level_data_2024-05-01.csv",
+            METHODOLOGY_PDF_ENTRY,
+          ].sort(),
         );
-        await expect((blob as Blob).text()).resolves.toBe("fake zip contents");
+        expect(exportFiles["us_ny_individual_level_data_2024-04-01.csv"]).toBe(
+          "a,b\n1,2",
+        );
+        expect(exportFiles["us_ny_individual_level_data_2024-05-01.csv"]).toBe(
+          "a,b\n3,4",
+        );
       });
 
-      it("falls back to a default filename when Content-Disposition is missing", async () => {
-        fetchMock.mockResponse("fake zip contents");
+      it("still exports the CSVs, without the methodology PDF, when the methodology PDF fetch fails", async () => {
+        fetchMock.mockResponseOnce("fake bulk export blob contents");
+        fetchMock.mockResponseOnce("", {
+          status: 404,
+          statusText: "Not Found",
+        });
 
         await metricsStore.downloadIndividualLevelData(null);
 
-        const [, filename] = vi.mocked(downloadjs).mock.calls[0];
-        expect(filename).toBe("individual_level_data_last_5_years.zip");
+        const [exportFiles] = lastDownloadjsCall();
+        expect(Object.keys(exportFiles).sort()).toEqual(
+          [
+            "us_ny_individual_level_data_2024-04-01.csv",
+            "us_ny_individual_level_data_2024-05-01.csv",
+          ].sort(),
+        );
+        expect(exportFiles).not.toHaveProperty(METHODOLOGY_PDF_ENTRY);
       });
     });
 
     describe("single snapshot (snapshotDate is given)", () => {
-      it("requests the snapshot endpoint with year/month query params and downloads using the filename from the Content-Disposition header", async () => {
+      it("requests the snapshot endpoint with year/month query params and zips the response using the filename from the Content-Disposition header, alongside the methodology PDF", async () => {
         fetchMock.mockResponse("fake csv contents", {
           headers: {
             "Content-Disposition":
@@ -259,18 +343,44 @@ describe("MetricsStore", () => {
         expect(fetchMock.mock.calls[0][0]).toEqual(
           `${BASE_URL}/public_pathways/US_NY/PrisonPopulationIndividualLevel?year=2021&month=12`,
         );
-        const [blob, filename] = vi.mocked(downloadjs).mock.calls[0];
-        expect(filename).toBe("us_ny_individual_level_data_2021-12-01.csv");
-        await expect((blob as Blob).text()).resolves.toBe("fake csv contents");
+        const [exportFiles, exportFilename] = lastDownloadjsCall();
+        expect(exportFilename).toBe("export_data.zip");
+
+        expect(Object.keys(exportFiles).sort()).toEqual(
+          [
+            "us_ny_individual_level_data_2021-12-01.csv",
+            METHODOLOGY_PDF_ENTRY,
+          ].sort(),
+        );
       });
 
-      it("falls back to a default filename when Content-Disposition is missing", async () => {
+      it("falls back to a default filename for the bundled export when Content-Disposition is missing", async () => {
         fetchMock.mockResponse("fake csv contents");
 
         await metricsStore.downloadIndividualLevelData(new Date(2021, 11, 15));
 
-        const [, filename] = vi.mocked(downloadjs).mock.calls[0];
-        expect(filename).toBe("individual_level_data.csv");
+        const [exportFiles] = lastDownloadjsCall();
+        expect(Object.keys(exportFiles)).toContain("individual_level_data.csv");
+      });
+
+      it("still exports the CSV, without the methodology PDF, when the methodology PDF fetch fails", async () => {
+        fetchMock.mockResponseOnce("fake csv contents", {
+          headers: {
+            "Content-Disposition":
+              'attachment; filename="us_ny_individual_level_data_2021-12-01.csv"',
+          },
+        });
+        fetchMock.mockResponseOnce("", {
+          status: 404,
+          statusText: "Not Found",
+        });
+
+        await metricsStore.downloadIndividualLevelData(new Date(2021, 11, 15));
+
+        const [exportFiles] = lastDownloadjsCall();
+        expect(Object.keys(exportFiles)).toEqual([
+          "us_ny_individual_level_data_2021-12-01.csv",
+        ]);
       });
     });
 

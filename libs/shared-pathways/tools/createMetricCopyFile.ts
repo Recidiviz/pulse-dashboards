@@ -60,6 +60,9 @@ const createMetricCopyFile = async (
           ...(row.get("Y-Axis title")
             ? { chartYAxisTitle: row.get("Y-Axis title") }
             : {}),
+          ...(row.get("Subpoints")
+            ? { subpoints: convertCurlyQuotesToStraight(row.get("Subpoints")) }
+            : {}),
         },
       ]),
     ) as MetricContent;
