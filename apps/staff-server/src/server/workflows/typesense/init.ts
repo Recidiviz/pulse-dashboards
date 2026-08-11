@@ -19,13 +19,20 @@
 // endpoint on this server. All mint handlers (caseload, and future person)
 // derive their scoped keys from the same SEARCH-only parent key managed here.
 
-import type { Client as TypesenseClient } from "typesense";
+import { type Client as TypesenseClient, Errors } from "typesense";
 
 import { createLocalTypesenseClient } from "~@typesense/client";
 
 import { isOfflineMode } from "../../utils/isOfflineMode";
 
 export const SCOPED_KEY_TTL_SECONDS = 3600;
+
+// Offline only. Typesense returns a key's `value` exactly once, at creation
+// (`GET /keys` exposes only `value_prefix`), so a generated key can't be looked
+// up on a later boot — pinning the value is what makes provisioning idempotent.
+// Not a secret: offline's admin bootstrap key is the hardcoded "xyz" in
+// libs/@typesense/tools/docker-compose.yaml.
+export const OFFLINE_PARENT_KEY = "offline-scoped-key-parent";
 
 let typesenseClient: TypesenseClient | null = null;
 export function getTypesenseClient(): TypesenseClient {
@@ -35,13 +42,8 @@ export function getTypesenseClient(): TypesenseClient {
   return typesenseClient;
 }
 
-let searchOnlyParentKey: string | null = null;
-export function getSearchOnlyParentKey(): string | null {
-  return searchOnlyParentKey;
-}
-
 /**
- * Prepares the search-only parent key that every scoped-key mint handler
+ * Resolves the search-only parent key that every scoped-key mint handler
  * derives from.
  *
  * `generateScopedSearchKey` only enforces scope when the parent is a SEARCH-only
@@ -53,32 +55,25 @@ export function getSearchOnlyParentKey(): string | null {
  *     libs/@typesense/client/env.<env>.enc.yaml and surfaced here via the
  *     SOPS plugin's `additional-sops-env-files`.
  *   - offline: no `TYPESENSE_API_SEARCH_KEY` env is set; the client uses the
- *     admin bootstrap key ("xyz") to talk to local Typesense, and we mint a
- *     fresh search-only sub-key from it. Orphan keys pile up in the offline
- *     cluster across restarts — fine for offline dev.
- *
- * Fired-and-forgotten from index.js AFTER `server.listen(...)`. Failure here
- * doesn't block the rest of the server — the mint endpoints return 500s with
- * a clear message until this resolves. This is a deliberate pre-prod stance
- * while Typesense-backed search is behind a flag; before it ships, flip
- * index.js to await this and exit on failure so a misconfigured env is caught
- * at boot rather than at first search.
+ *     admin bootstrap key ("xyz") to talk to local Typesense, and we provision
+ *     `OFFLINE_PARENT_KEY` as a search-only sub-key of it.
  */
-export async function initTypesenseScopedKeys(): Promise<void> {
+async function resolveSearchOnlyParentKey(): Promise<string> {
   if (isOfflineMode()) {
     const admin = getTypesenseClient();
-    const created = await admin.keys().create({
-      actions: ["documents:search"],
-      collections: ["*"],
-      description: "scoped-key-parent (auto-created for offline dev)",
-    });
-    if (!created.value) {
-      throw new Error(
-        "Typesense did not return a value on key create — cannot derive scoped keys",
-      );
+    try {
+      await admin.keys().create({
+        actions: ["documents:search"],
+        collections: ["*"],
+        description: "scoped-key-parent (auto-provisioned for offline dev)",
+        value: OFFLINE_PARENT_KEY,
+      });
+    } catch (err) {
+      // 409 — already provisioned, the steady state after the first boot.
+      // Anything else (Typesense not up yet) propagates so callers can retry.
+      if (!(err instanceof Errors.ObjectAlreadyExists)) throw err;
     }
-    searchOnlyParentKey = created.value;
-    return;
+    return OFFLINE_PARENT_KEY;
   }
 
   const key = process.env["TYPESENSE_API_SEARCH_KEY"];
@@ -87,5 +82,36 @@ export async function initTypesenseScopedKeys(): Promise<void> {
       "TYPESENSE_API_SEARCH_KEY is not set — cannot mint scoped Typesense keys",
     );
   }
-  searchOnlyParentKey = key;
+  return key;
+}
+
+let searchOnlyParentKey: Promise<string> | null = null;
+
+/**
+ * Concurrent callers share one in-flight resolution.
+ *
+ * A failure drops the memo rather than caching the rejection, which offline
+ * mode needs: `nx offline staff` starts this server and the Typesense container
+ * in parallel, so boot-time resolution often loses the race. Without the retry
+ * the process would serve 500s until restarted.
+ */
+export function ensureSearchOnlyParentKey(): Promise<string> {
+  if (!searchOnlyParentKey) {
+    searchOnlyParentKey = resolveSearchOnlyParentKey().catch((err) => {
+      searchOnlyParentKey = null;
+      throw err;
+    });
+  }
+  return searchOnlyParentKey;
+}
+
+/**
+ * Warms the parent key at boot. Fired-and-forgotten from index.js AFTER
+ * `server.listen(...)`: a failure isn't terminal, since the mint endpoints
+ * retry via `ensureSearchOnlyParentKey` — and this server also serves the
+ * Pathways/Lantern/Workflows routes, which shouldn't be blocked by it.
+ */
+export async function initTypesenseScopedKeys(): Promise<void> {
+  searchOnlyParentKey = null;
+  await ensureSearchOnlyParentKey();
 }

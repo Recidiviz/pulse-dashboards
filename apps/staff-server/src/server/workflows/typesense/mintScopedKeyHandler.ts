@@ -27,7 +27,7 @@ import type { SystemId } from "~datatypes";
 
 import { isOfflineMode } from "../../utils/isOfflineMode";
 import {
-  getSearchOnlyParentKey,
+  ensureSearchOnlyParentKey,
   getTypesenseClient,
   SCOPED_KEY_TTL_SECONDS,
 } from "./init";
@@ -85,13 +85,15 @@ export async function mintScopedKeyHandler(
     return res.status(422).json({ error: "User has no externalId" });
   }
 
-  const parentKey = getSearchOnlyParentKey();
-  if (!parentKey) {
-    // Server didn't call initTypesenseScopedKeys() before serving — a
-    // bootstrap wiring bug, not a runtime condition. Surface as 500 with a
-    // clear message.
+  let parentKey: string;
+  try {
+    parentKey = await ensureSearchOnlyParentKey();
+  } catch (err) {
+    // The memo was dropped, so the next request retries.
     return res.status(500).json({
-      error: "Typesense scoped-key parent not initialized on server startup",
+      error: `Typesense scoped-key parent unavailable: ${
+        err instanceof Error ? err.message : String(err)
+      }`,
     });
   }
 

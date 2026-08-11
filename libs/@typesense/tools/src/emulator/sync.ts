@@ -49,14 +49,9 @@ function subscribeToCollection(
   // the bulk import), but process any edit made after — even if it lands in
   // the very first onSnapshot fire.
   const subscribedAtMs = Date.now();
-  console.info(`[${collectionName}] subscribed`);
 
   return db.collection(collectionName).onSnapshot(
     (snapshot) => {
-      console.info(
-        `[${collectionName}] snapshot: ${snapshot.docChanges().length} change(s)`,
-      );
-
       for (const change of snapshot.docChanges()) {
         const data = change.doc.data();
         const id = change.doc.id;
@@ -66,7 +61,6 @@ function subscribeToCollection(
             .collections(collectionName)
             .documents(id)
             .delete()
-            .then(() => console.info(`[${collectionName}] deleted ${id}`))
             .catch((err: Error) =>
               console.error(
                 `[${collectionName}] delete ${id} failed:`,
@@ -86,7 +80,6 @@ function subscribeToCollection(
           .collections(collectionName)
           .documents()
           .upsert({ ...data, id })
-          .then(() => console.info(`[${collectionName}] upserted ${id}`))
           .catch((err: Error) =>
             console.error(
               `[${collectionName}] upsert ${id} failed:`,
@@ -110,15 +103,10 @@ async function main() {
     waitForFirestoreEmulator(db),
   ]);
 
-  /* eslint-disable no-await-in-loop -- collections are seeded sequentially to keep log output ordered */
+  /* eslint-disable no-await-in-loop -- collections are seeded sequentially */
   for (const schema of schemas) {
     await dropAndCreateCollection(typesense, schema);
-    const count = await importCollection(typesense, db, schema.name);
-    console.info(
-      count === 0
-        ? `[${schema.name}] initial: no docs in Firestore emulator`
-        : `[${schema.name}] initial: imported ${count} docs`,
-    );
+    await importCollection(typesense, db, schema.name);
   }
   /* eslint-enable no-await-in-loop */
 
