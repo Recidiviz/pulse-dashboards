@@ -23,6 +23,12 @@ import { firebaseAuthedResidentProcedure } from "../../../procedures/firebaseAut
 
 export const getFlags = firebaseAuthedResidentProcedure.query(
   async ({ ctx }) => {
+    if (ctx.userProfile.permissions?.includes("all_user_flags_enabled")) {
+      return typedFromEntries(
+        Object.values(UserFlagId).map((id) => [id, true]),
+      );
+    }
+
     const rows = await ctx.prisma.userFlagInstance.findMany({
       where: {
         userId: ctx.userId,

@@ -49,16 +49,41 @@
         },
         "test": {
           "command": "echo 'No docker for CI'"
+        },
+        "e2e": {
+          "command": "tsx scripts/initDbs.mts"
         }
       },
       "defaultConfiguration": "dev"
     },
     "prepare-test-db": {
+      "metadata": {
+        "description": "Resets the DB for unit tests, which only use the default postgres DB. Requires a DATABASE_URL to be specified in the env."
+      },
       "dependsOn": ["init-db"],
       "executor": "nx:run-commands",
       "options": {
         "command": "prisma migrate reset --force",
         "cwd": "{projectRoot}"
+      }
+    },
+    "prepare-e2e-db": {
+      "metadata": {
+        "description": "Resets and seeds state DBs in docker for e2e tests."
+      },
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{workspaceRoot}",
+        "commands": [
+          "nx prisma-reset @jii/prisma -c e2e --force",
+          "nx seed @jii/import -c e2e"
+        ],
+        "parallel": false
+      },
+      "configurations": {
+        "ci": {
+          "commands": ["echo 'skipping in CI'"]
+        }
       }
     },
     "prisma-deploy": {
@@ -95,7 +120,7 @@
     },
     "prisma-migrate": {
       "metadata": {
-        "description": "Verifies migrations for all state DBs (prisma migrate dev). Will prompt if a new migration is needed."
+        "description": "Verifies migrations for all state DBs (prisma migrate dev). Requires a --name argument if a new migration is needed."
       },
       "dependsOn": ["init-db"],
       "executor": "nx:run-commands",
@@ -142,7 +167,7 @@
     },
     "prisma-reset": {
       "metadata": {
-        "description": "Wipes all state DBs and reruns migrations (prisma migrate reset)"
+        "description": "Wipes all state DBs and reruns migrations (prisma migrate reset). Requires a --force argument"
       },
       "dependsOn": ["init-db"],
       "executor": "nx:run-commands",
@@ -151,6 +176,9 @@
       },
       "configurations": {
         "dev": {
+          "command": "tsx scripts/runForAllStates.mts --prisma-cmd=\"migrate reset\""
+        },
+        "e2e": {
           "command": "tsx scripts/runForAllStates.mts --prisma-cmd=\"migrate reset\""
         },
         "test": {
@@ -186,6 +214,9 @@
       "options": {
         "command": "tsx scripts/studioDev.mts",
         "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "e2e": {}
       }
     },
     "prisma-validate": {

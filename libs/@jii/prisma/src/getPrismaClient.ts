@@ -20,7 +20,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { StateCode } from "~@jii/configs";
 
 import { PrismaClient } from "./client/client";
-import { getDevDatabaseUrl } from "./utils";
+import { getLocalDatabaseUrl } from "./utils";
 
 const prismaClients: Record<string, PrismaClient> = {};
 
@@ -50,7 +50,7 @@ export function getPrismaClient({ stateCode, demo }: PrismaClientOpts) {
       } else {
         // otherwise use the local DB. we can construct the URL on the fly
         // from a predictable and non-sensitive template
-        dbUrl = getDevDatabaseUrl(stateDbName);
+        dbUrl = getLocalDatabaseUrl(stateDbName);
       }
       break;
     // otherwise assume we're in a deployment, where the state db url must be explicitly provided

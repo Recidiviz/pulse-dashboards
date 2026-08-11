@@ -20,7 +20,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { StateCode } from "~@jii/configs";
 
 import { PrismaClient } from "./client/client";
-import { getDevDatabaseUrl } from "./utils";
+import { getLocalDatabaseUrl } from "./utils";
 
 vi.mock("@prisma/adapter-pg");
 vi.mock("./client/client", () => ({ PrismaClient: vi.fn() }));
@@ -89,7 +89,7 @@ describe("getPrismaClient", () => {
       getPrismaClient({ stateCode: testStateCode, demo: false });
 
       expect(PrismaPg).toHaveBeenCalledExactlyOnceWith({
-        connectionString: getDevDatabaseUrl("us_xx"),
+        connectionString: getLocalDatabaseUrl("us_xx"),
       });
     });
 
@@ -99,7 +99,7 @@ describe("getPrismaClient", () => {
       getPrismaClient({ stateCode: testStateCode, demo: true });
 
       expect(PrismaPg).toHaveBeenCalledExactlyOnceWith({
-        connectionString: getDevDatabaseUrl("us_xx_demo"),
+        connectionString: getLocalDatabaseUrl("us_xx_demo"),
       });
     });
 
@@ -124,7 +124,7 @@ describe("getPrismaClient", () => {
         getPrismaClient({ stateCode: testStateCode, demo: false });
 
         expect(PrismaPg).toHaveBeenCalledExactlyOnceWith({
-          connectionString: getDevDatabaseUrl("us_xx"),
+          connectionString: getLocalDatabaseUrl("us_xx"),
         });
       });
     });

@@ -17,22 +17,26 @@
 
 import { $ } from "zx";
 
+import { getLocalDatabasePort } from "../src/utils";
 import { getEnabledStates } from "./utils";
 
 $.verbose = false;
 
-for (const state of getEnabledStates()) {
-  console.log(`creating DB for ${state}`);
-  try {
-    // eslint-disable-next-line no-await-in-loop
-    await $`createdb ${state} -h localhost -p ${process.env["DEV_PORT"]}`.pipe(
-      process.stdout,
-    );
-  } catch (e) {
-    if (e instanceof Error && e.message.includes("already exists")) {
-      console.log("already exists");
-      continue;
+const port = getLocalDatabasePort();
+
+await Promise.all(
+  getEnabledStates().map(async (state) => {
+    console.log(`creating DB for ${state}`);
+    try {
+      await $`createdb ${state} -h localhost -p ${port} -w`.pipe(
+        process.stdout,
+      );
+    } catch (e) {
+      if (e instanceof Error && e.message.includes("already exists")) {
+        console.log("already exists");
+        return;
+      }
+      throw e;
     }
-    throw e;
-  }
-}
+  }),
+);

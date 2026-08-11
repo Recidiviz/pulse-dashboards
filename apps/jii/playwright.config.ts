@@ -66,11 +66,16 @@ export default defineConfig({
     },
   ],
   webServer: {
-    // TUI hijacks the process and stops Playwright from starting up
-    command: "NX_TUI=false nx offline-e2e jii",
+    // TUI hijacks the process and stops Playwright from starting up.
+    // passing the CI configuration because we set up the environment differently in CI to decrease flakiness
+    command: `NX_TUI=false nx offline-e2e jii ${process.env["CI"] === "true" ? "-c ci" : ""}`,
+    // wait for the server to be available on this port, it takes longer to start up than the frontend
+    port: 4210,
     cwd: join(__dirname, "../../"),
-    url: baseURL,
     reuseExistingServer: false,
+    // seeing the server output may help with debugging
+    stdout: "pipe",
+    stderr: "pipe",
   },
   // overriding the default to keep platform out of the filename
   // (otherwise dev and CI expect different snapshot files).

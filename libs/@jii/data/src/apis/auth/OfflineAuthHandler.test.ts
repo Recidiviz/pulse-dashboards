@@ -45,6 +45,7 @@ test("mock user profile in offline mode", () => {
         "translator",
         "global_write",
         "all_resident_flags_enabled",
+        "all_user_flags_enabled",
       ],
       "stateCode": "OFFLINE",
     }

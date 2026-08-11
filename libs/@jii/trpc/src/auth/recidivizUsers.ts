@@ -65,7 +65,11 @@ export async function getRecidivizUserProfile(
       process.env["DEPLOY_ENV"] ?? "",
     )
   ) {
-    permissions.push("global_write");
+    permissions.push(
+      "global_write",
+      "all_resident_flags_enabled",
+      "all_user_flags_enabled",
+    );
   }
 
   return {

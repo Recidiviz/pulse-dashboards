@@ -168,7 +168,14 @@ test("succeeds with Recidiviz account lookup", async () => {
     user: {
       stateCode: "RECIDIVIZ",
       allowedStates: ["US_AR"],
-      permissions: ["enhanced", "live_data", "translator", "global_write"],
+      permissions: [
+        "enhanced",
+        "live_data",
+        "translator",
+        "global_write",
+        "all_resident_flags_enabled",
+        "all_user_flags_enabled",
+      ],
     },
   });
 });

@@ -15,6 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export function getDevDatabaseUrl(dbName: string) {
-  return `postgresql://postgres:postgres@localhost:${process.env["DEV_PORT"]}/${dbName}?schema=public`;
+export function getLocalDatabasePort() {
+  return process.env["IS_E2E"] === "true"
+    ? process.env["TEST_PORT"]
+    : process.env["DEV_PORT"];
+}
+
+export function getLocalDatabaseUrl(dbName: string) {
+  const port = getLocalDatabasePort();
+
+  return `postgresql://postgres:postgres@localhost:${port}/${dbName}?schema=public`;
 }

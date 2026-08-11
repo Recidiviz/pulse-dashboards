@@ -18,7 +18,7 @@
 import { ArgumentParser } from "argparse";
 import { $ } from "zx";
 
-import { getDevDatabaseUrl } from "../src/utils";
+import { getLocalDatabaseUrl } from "../src/utils";
 import { getEnabledStates } from "./utils";
 
 $.verbose = false;
@@ -45,17 +45,21 @@ const [{ prismaCmd }, extraArgs] = parser.parse_known_args() as [
 const prismaArgs = [...prismaCmd.split(" "), ...extraArgs];
 
 // we don't actually develop against the default db but we may want to use it for e.g. prisma generate
-await $`DATABASE_URL=${getDevDatabaseUrl("postgres")} yarn prisma ${prismaArgs}`.pipe(
-  process.stdout,
-);
+// .stdio("ignore") closes stdin so Prisma sees a non-TTY environment and fails fast on
+// missing required args instead of hanging on an interactive prompt.
+await $`DATABASE_URL=${getLocalDatabaseUrl("postgres")} yarn prisma ${prismaArgs}`
+  .stdio("ignore")
+  .pipe(process.stdout);
 
-for (const state of getEnabledStates()) {
-  console.log(`Running "prisma ${prismaCmd}" for ${state}`);
-  // eslint-disable-next-line no-await-in-loop
-  await $`DATABASE_URL=${getDevDatabaseUrl(state)} yarn prisma ${prismaArgs}`.pipe(
-    process.stdout,
-  );
-}
+// try doing this in parallel
+await Promise.all(
+  getEnabledStates().map(async (state) => {
+    console.log(`Running "prisma ${prismaCmd}" for ${state}`);
+    await $`DATABASE_URL=${getLocalDatabaseUrl(state)} yarn prisma ${prismaArgs}`
+      .stdio("ignore")
+      .pipe(process.stdout);
+  }),
+);
 
 // ensure the script doesn't hang once all the work is done
 process.exit(0);

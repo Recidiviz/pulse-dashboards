@@ -124,11 +124,12 @@
     },
     "offline-e2e": {
       "continuous": true,
-      "dependsOn": ["^prisma-generate", "^prepare-test-db"],
+      "dependsOn": ["^prisma-generate", "^prepare-e2e-db"],
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "vite-node --watch src/main.ts"
+        "command": "vite-node --watch src/main.ts",
+        "envFile": "{workspaceRoot}/libs/@jii/prisma/.env"
       }
     },
     "create-base-package-json": {
