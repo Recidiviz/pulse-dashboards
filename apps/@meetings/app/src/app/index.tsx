@@ -118,12 +118,12 @@ const App = () => {
               <PrPreviewProvider>
                 <AppErrorBoundary>
                   <AppNavigator />
-                  <PortalHost />
                 </AppErrorBoundary>
               </PrPreviewProvider>
             </Auth0Provider>
           </SnackbarProvider>
         </BottomSheetModalProvider>
+        <PortalHost />
       </KeyboardProvider>
     </GestureHandlerRootView>
   );

@@ -15,24 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ReactNode } from "react";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { ReactNode, useRef } from "react";
 import {
   ActivityIndicator,
   Keyboard,
-  TextInput,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
+import { getPersonType } from "~@meetings/app/entities/person";
 import {
   MeetingControlsMobile,
   useRecording,
 } from "~@meetings/app/features/recording";
-import { Person } from "~@meetings/app/shared/api";
-import NotesSvg from "~@meetings/app/shared/assets/icons/arrows-poin-outting-in.svg";
+import { Person, trpc } from "~@meetings/app/shared/api";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
+
+import { CaseNoteSummaryCard } from "./CaseNoteSummaryCard";
+import { CaseNoteSummarySheet } from "./CaseNoteSummarySheet";
+import { NotepadCard } from "./NotepadCard";
+import { NotepadSheet } from "./NotepadSheet";
 
 type Props = {
   person: Person;
@@ -46,6 +51,17 @@ export const NewMeeting = ({
   header,
 }: Props) => {
   const insets = useSafeAreaInsets();
+  const notepadSheetRef = useRef<BottomSheetModal>(null);
+  const caseNoteSummarySheetRef = useRef<BottomSheetModal>(null);
+
+  const isClient = getPersonType(person) === "client";
+
+  const { data: client } = trpc.v1.client.get.useQuery(
+    { personId: person.personId },
+    { enabled: isClient },
+  );
+
+  const summaries = client?.caseNoteInsightsSummaries;
 
   const {
     meetingType,
@@ -107,25 +123,32 @@ export const NewMeeting = ({
             </Typography>
           </View>
         </View>
-        <View className="flex-1 bg-secondary px-6">
-          <View className="mt-6">
-            <View className="mb-2 flex-row items-center">
-              <NotesSvg className="size-5 text-secondary" />
-              <Typography className="ml-2 text-lg font-semibold text-primary">
-                Notepad
-              </Typography>
-            </View>
-
-            <TextInput
-              className="h-full text-primary"
-              value={note}
-              onChangeText={setNote}
-              placeholder="Write your notes..."
-              maxLength={100000}
-              multiline
-              textAlignVertical="top"
-            />
-          </View>
+        <View className="flex-1 gap-4 bg-secondary px-4 pt-4">
+          <NotepadCard
+            note={note ?? ""}
+            onPress={() => notepadSheetRef.current?.present()}
+          />
+          <NotepadSheet
+            note={note ?? ""}
+            onConfirm={setNote}
+            ref={notepadSheetRef}
+          />
+          {isClient && (
+            <>
+              <CaseNoteSummaryCard
+                summaries={summaries}
+                onPress={() => caseNoteSummarySheetRef.current?.present()}
+                person={person}
+              />
+              {summaries && (
+                <CaseNoteSummarySheet
+                  ref={caseNoteSummarySheetRef}
+                  summaries={summaries}
+                  person={person}
+                />
+              )}
+            </>
+          )}
         </View>
         <MeetingControlsMobile />
       </View>

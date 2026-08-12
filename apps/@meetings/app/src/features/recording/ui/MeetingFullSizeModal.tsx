@@ -36,6 +36,7 @@ import { RecordingIndicator } from "../../../shared/ui/RecordingIndicator";
 import { Typography } from "../../../shared/ui/Typography";
 import { useRecording } from "..";
 import { useAudioErrorDetection } from "../model/useAudioErrorDetection";
+import { MeetingSidePanel } from "./MeetingSidePanel";
 import { MicIndicator } from "./MicIndicator";
 
 type Props = {
@@ -165,6 +166,7 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
               editable={!isModalDisabled}
             />
           </View>
+          <MeetingSidePanel person={person} />
           {/* {showLiveTranscript && (
             <View className="min-w-[300px] flex-1 gap-5 border-l border-[#EDF1F1] py-5">
               <View className="flex-row items-center gap-1.5 px-8">

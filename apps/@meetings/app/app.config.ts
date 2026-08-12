@@ -141,6 +141,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
           fonts: [
             "./src/shared/assets/fonts/LibreBaskerville-Bold.ttf",
             "./src/shared/assets/fonts/Inter.ttf",
+            "./src/shared/assets/fonts/Inter-Medium.ttf",
           ],
         },
       ],
