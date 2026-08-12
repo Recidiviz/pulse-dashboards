@@ -25,8 +25,13 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import {
+  getShowCNI,
+  useAgencyConfigs,
+} from "~@meetings/app/entities/agency-config";
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
 import { getPersonType } from "~@meetings/app/entities/person";
+import { useStateSelection } from "~@meetings/app/entities/state-code";
 import {
   MeetingControlsMobile,
   useRecording,
@@ -54,11 +59,14 @@ export const NewMeeting = ({
   const notepadSheetRef = useRef<BottomSheetModal>(null);
   const caseNoteSummarySheetRef = useRef<BottomSheetModal>(null);
 
+  const { selectedStateCode } = useStateSelection();
+  const { agencyConfigs } = useAgencyConfigs();
+  const showCNI = getShowCNI(agencyConfigs, selectedStateCode);
   const isClient = getPersonType(person) === "client";
 
   const { data: client } = trpc.v1.client.get.useQuery(
     { personId: person.personId },
-    { enabled: isClient },
+    { enabled: isClient && showCNI },
   );
 
   const summaries = client?.caseNoteInsightsSummaries;
@@ -133,7 +141,7 @@ export const NewMeeting = ({
             onConfirm={setNote}
             ref={notepadSheetRef}
           />
-          {isClient && (
+          {isClient && showCNI && (
             <>
               <CaseNoteSummaryCard
                 summaries={summaries}

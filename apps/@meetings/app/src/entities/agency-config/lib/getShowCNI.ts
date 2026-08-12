@@ -15,8 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { getShowCNI } from "./lib/getShowCNI";
-export {
-  AgencyConfigProvider,
-  useAgencyConfigs,
-} from "./model/AgencyConfigContext";
+import { IS_PROD } from "~@meetings/app/shared/config";
+import type { AgencyConfig } from "~@meetings/config";
+
+export function getShowCNI(
+  agencyConfigs: Record<string, AgencyConfig>,
+  stateCode: string,
+) {
+  if (IS_PROD) return false;
+
+  return agencyConfigs[stateCode]?.showCNI ?? false;
+}
