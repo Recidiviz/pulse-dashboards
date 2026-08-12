@@ -166,6 +166,42 @@ function splitDeepgramUtteranceBySpeaker(
   });
 }
 
+function countWords(text: string): number {
+  return text.split(/\s+/).filter(Boolean).length;
+}
+
+function mergeAdjacentSameSpeakerUtterances(
+  utterances: CleanedUtterance[],
+): CleanedUtterance[] {
+  const merged: CleanedUtterance[] = [];
+
+  for (const current of utterances) {
+    const previous = merged.at(-1);
+
+    if (!previous || previous.speaker !== current.speaker) {
+      merged.push({ ...current });
+      continue;
+    }
+
+    const previousWords = countWords(previous.text);
+    const currentWords = countWords(current.text);
+    const totalWords = previousWords + currentWords;
+
+    previous.text = `${previous.text} ${current.text}`.trim();
+    previous.endTimeMs = current.endTimeMs;
+    previous.confidence = totalWords
+      ? Math.round(
+          ((previous.confidence * previousWords +
+            current.confidence * currentWords) /
+            totalWords) *
+            10000,
+        ) / 10000
+      : previous.confidence;
+  }
+
+  return merged;
+}
+
 type HandleTranscriptionParams = {
   meetingId: string;
   recordingsGCSBucket: string;
@@ -239,9 +275,11 @@ export async function handleTranscriptions(params: HandleTranscriptionParams) {
 
   if (deepgramResult.status === "fulfilled") {
     const deepgramTranscriptionResult = deepgramResult.value;
-    const cleanedDeepgramUtterances = (
-      deepgramTranscriptionResult.results.utterances ?? []
-    ).flatMap(splitDeepgramUtteranceBySpeaker);
+    const cleanedDeepgramUtterances = mergeAdjacentSameSpeakerUtterances(
+      (deepgramTranscriptionResult.results.utterances ?? []).flatMap(
+        splitDeepgramUtteranceBySpeaker,
+      ),
+    );
 
     transcriptions.push({
       provider: TranscriptionProvider.DEEPGRAM,
