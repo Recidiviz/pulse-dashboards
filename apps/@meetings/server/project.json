@@ -291,6 +291,17 @@
         "production": {}
       }
     },
+    "requires-sops-env:dedupe-label-studio-tasks": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx scripts/dedupe-label-studio-tasks.ts",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "staging": {},
+        "production": {}
+      }
+    },
     "requires-sops-env:run-llmaj-evaluations": {
       "executor": "nx:run-commands",
       "options": {

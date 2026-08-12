@@ -20,6 +20,7 @@ import { subDays } from "date-fns";
 
 import { AGENCY_CONFIGS } from "~@meetings/config/loader";
 import { getPrismaClientForStateCode } from "~@meetings/prisma";
+import { LABEL_STUDIO_TASK_FILENAME } from "~@meetings/tasks";
 import { logger } from "~server-setup-plugin/logger";
 
 interface CleanupStats {
@@ -104,8 +105,6 @@ async function deleteGCSFile(
     throw error;
   }
 }
-
-const LABEL_STUDIO_TASK_FILENAME = "label-studio-task.json";
 
 /**
  * Remove transcript fields from the Label Studio task JSON in GCS.

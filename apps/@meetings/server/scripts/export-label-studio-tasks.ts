@@ -43,6 +43,7 @@ import { AGENCY_CONFIGS } from "~@meetings/config/loader";
 import { PrismaClient, StateCode } from "~@meetings/prisma/client";
 import {
   buildLabelStudioTask,
+  LABEL_STUDIO_TASK_FILENAME,
   LabelStudioMeeting,
   labelStudioMeetingInclude,
 } from "~@meetings/tasks";
@@ -145,7 +146,7 @@ async function exportMeetingsForStateCode(
       }
 
       const task = buildLabelStudioTask(meeting, stateCode);
-      const outputPath = `${meeting.recordingsFolderPath}/label-studio-task.json`;
+      const outputPath = `${meeting.recordingsFolderPath}/${LABEL_STUDIO_TASK_FILENAME}`;
       const taskJson = JSON.stringify(task, null, 2);
 
       if (dryRun) {

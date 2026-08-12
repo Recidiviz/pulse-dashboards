@@ -173,10 +173,39 @@ export class LabelStudioClient {
     return tasks;
   }
 
-  async listAnnotationsForTask(
-    taskId: number,
-  ): Promise<{ completed_by: number; result: LabelStudioResult[] }[]> {
+  async listAnnotationsForTask(taskId: number): Promise<
+    {
+      id: number;
+      completed_by: number;
+      result: LabelStudioResult[];
+      created_at: string;
+      lead_time: number | null;
+      was_cancelled: boolean;
+      ground_truth: boolean;
+    }[]
+  > {
     return this.request(`/api/tasks/${taskId}/annotations/`);
+  }
+
+  /**
+   * List GCS export ("target") storages configured for a project — the
+   * *outbound* side, distinct from the GCS import ("source") storage the
+   * rest of this client's methods deal with. A project can have any number
+   * configured (including zero, e.g. staging currently has none); each
+   * exports annotations to `<bucket>/<prefix>/<annotation_id>` on manual
+   * "Sync Storage" clicks in the Label Studio UI, one JSON file per
+   * annotation, embedding a full snapshot of the annotation and its task's
+   * data as of the sync. There's no API trigger for this sync (it's UI-only)
+   * and no built-in dedup — an annotation that's already been exported,
+   * then recreated under a new id (e.g. via `createAnnotation`, migrating it
+   * to a different task), gets exported *again* under the new id on the next
+   * sync, leaving the original file behind as an orphan referencing a
+   * since-deleted task. See `dedupe-label-studio-tasks.ts` for the cleanup.
+   */
+  async listExportStorages(
+    projectId: number,
+  ): Promise<{ id: number; bucket: string; prefix: string }[]> {
+    return this.request(`/api/storages/export/gcs?project=${projectId}`);
   }
 
   /**
@@ -192,6 +221,55 @@ export class LabelStudioClient {
     await this.request(`/api/tasks/${taskId}/`, {
       method: "PATCH",
       body: JSON.stringify({ data }),
+    });
+  }
+
+  /** Delete a task. Its annotations are deleted along with it. */
+  async deleteTask(taskId: number): Promise<void> {
+    await this.request(`/api/tasks/${taskId}/`, { method: "DELETE" });
+  }
+
+  /**
+   * Create a new annotation on a task — used to migrate an annotation from
+   * one task to another (e.g. when deduping tasks that point at the same
+   * meeting). Every field here was confirmed against the staging instance
+   * (2026-08-06) to persist as given, rather than being overridden by the
+   * server: `completedBy` (attribution — distinct from the requesting
+   * service account's own identity), `leadTime`, `wasCancelled`, and
+   * `groundTruth`. `created_at`/`updated_at` are *not* preservable this way
+   * — Label Studio always stamps those to the time of this call, regardless
+   * of what's sent — so a migrated annotation will show today's date, not
+   * the original completion date.
+   */
+  async createAnnotation(
+    taskId: number,
+    {
+      result,
+      completedBy,
+      leadTime,
+      wasCancelled,
+      groundTruth,
+    }: {
+      result: LabelStudioResult[];
+      completedBy?: number;
+      leadTime?: number | null;
+      wasCancelled?: boolean;
+      groundTruth?: boolean;
+    },
+  ): Promise<{
+    id: number;
+    completed_by: number;
+    result: LabelStudioResult[];
+  }> {
+    return this.request(`/api/tasks/${taskId}/annotations/`, {
+      method: "POST",
+      body: JSON.stringify({
+        result,
+        ...(completedBy !== undefined && { completed_by: completedBy }),
+        ...(leadTime !== undefined && { lead_time: leadTime }),
+        ...(wasCancelled !== undefined && { was_cancelled: wasCancelled }),
+        ...(groundTruth !== undefined && { ground_truth: groundTruth }),
+      }),
     });
   }
 }

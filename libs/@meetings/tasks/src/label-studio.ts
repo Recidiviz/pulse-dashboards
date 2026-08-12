@@ -136,6 +136,24 @@ export function buildLabelStudioTask(
 }
 
 /**
+ * Basename of the per-meeting Label Studio task JSON file, written by
+ * `exportLabelStudioTask` to `{recordingsFolderPath}/{LABEL_STUDIO_TASK_FILENAME}`.
+ *
+ * ⚠️ This filename (combined with `recordingsFolderPath`) is the GCS key Label
+ * Studio's Sync Storage uses to recognize a task it has already imported —
+ * Sync Storage is purely additive, so any object at a key it hasn't seen
+ * before becomes a *new* task, and it never dedupes or removes tasks whose
+ * object disappears. If a future migration moves/renames this file (e.g. as
+ * part of reorganizing where audio recordings live), already-synced tasks'
+ * keys change and the next Sync Storage will import duplicates of every
+ * affected meeting — this happened in practice with the #14821 state-code
+ * audio storage split, cleaned up via `dedupe-label-studio-tasks.ts`. Any
+ * script that moves objects under a meeting's recordings folder should leave
+ * this file where Label Studio already knows about it.
+ */
+export const LABEL_STUDIO_TASK_FILENAME = "label-studio-task.json";
+
+/**
  * Build and upload a Label Studio task JSON file to GCS for a completed meeting.
  *
  * The file is written to `{recordingsFolderPath}/label-studio-task.json` in the
@@ -148,7 +166,7 @@ export async function exportLabelStudioTask(
 ): Promise<void> {
   const task = buildLabelStudioTask(meeting, stateCode, needsRecidivizReview);
   const taskJson = JSON.stringify(task, null, 2);
-  const fileName = "label-studio-task.json";
+  const fileName = LABEL_STUDIO_TASK_FILENAME;
 
   if (process.env["IS_LOCAL_MODE"] === "true") {
     const localStorageDir =
