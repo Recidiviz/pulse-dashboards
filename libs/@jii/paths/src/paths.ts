@@ -122,22 +122,19 @@ export const ResourceExplorer = route(
   "resources",
   {},
   {
-    Categories: route("categories"),
-    Groups: route("groups"),
-    ListTypeResults: route(
-      ":listType",
-      {},
+    CategoryResults: route(
+      "categories/:category",
       {
-        CategoryResults: route(
-          ":category",
-          { searchParams: { subcategories: string().defined().array() } },
-          {
-            Detail: route(":resourceId", {
-              params: { resourceId: number().defined() },
-              searchParams: { backTarget: string() },
-            }),
-          },
-        ),
+        searchParams: {
+          subcategories: string().defined().array(),
+          tags: string().defined().array(),
+        },
+      },
+      {
+        Detail: route(":resourceId", {
+          params: { resourceId: number().defined() },
+          searchParams: { backTarget: string() },
+        }),
       },
     ),
   },
