@@ -22,8 +22,8 @@ import DocumentSearchIcon from "react-native-heroicons/solid/DocumentSearchIcon"
 
 import { useAgencyConfigs } from "~@meetings/app/entities/agency-config";
 import { formatSpeakerLabel } from "~@meetings/app/entities/meeting";
+import { useStateSelection } from "~@meetings/app/entities/state-code";
 import { useUserContext } from "~@meetings/app/entities/user";
-import { useStateSelection } from "~@meetings/app/features/state-selection";
 import { PersonType } from "~@meetings/app/shared/api";
 import SearchBar from "~@meetings/app/shared/ui/SearchBar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";

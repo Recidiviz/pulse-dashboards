@@ -17,8 +17,8 @@
 
 import { View } from "react-native";
 
+import { useStateSelection } from "~@meetings/app/entities/state-code";
 import { useImpersonationStore } from "~@meetings/app/features/impersonation";
-import { useStateSelection } from "~@meetings/app/features/state-selection";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 export const StatusBanners = () => {

@@ -41,12 +41,12 @@ import {
   useMeetingTypeStore,
   validateAndStart,
 } from "~@meetings/app/entities/meeting-type";
+import { useStateSelection } from "~@meetings/app/entities/state-code";
 import { useAudioUploadStore } from "~@meetings/app/features/audio-upload";
 import {
   MeetingControlsMobile,
   useRecording,
 } from "~@meetings/app/features/recording";
-import { useStateSelection } from "~@meetings/app/features/state-selection";
 import { useAnalytics } from "~@meetings/app/shared/analytics";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 import { useIsMobileWidth } from "~@meetings/app/shared/lib/platform";

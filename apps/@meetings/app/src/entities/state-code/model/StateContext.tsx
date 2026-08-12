@@ -18,9 +18,8 @@
 import * as Sentry from "@sentry/react-native";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-import { useAgencyConfigs } from "~@meetings/app/entities/agency-config";
-import { useUserContext } from "~@meetings/app/entities/user";
 import { getItem, saveItem } from "~@meetings/app/shared/lib/storage";
+import type { AgencyConfig } from "~@meetings/config";
 
 import { stateCodeParam } from "./stateCodeParam";
 
@@ -52,13 +51,18 @@ const SELECTED_STATE_KEY = "selectedStateCode";
 export const StateCodeProvider: React.FC<{
   children: React.ReactNode;
   selectedStateRef: React.RefObject<StateCode | null>;
-}> = ({ children, selectedStateRef }) => {
-  const {
-    isSkipAuthUser,
-    recidivizAllowedStates,
-    stateCode: userStateCode,
-  } = useUserContext();
-  const { agencyConfigs } = useAgencyConfigs();
+  isSkipAuthUser: boolean;
+  recidivizAllowedStates: string[];
+  userStateCode: string | undefined;
+  agencyConfigs: Record<string, AgencyConfig>;
+}> = ({
+  children,
+  selectedStateRef,
+  isSkipAuthUser,
+  recidivizAllowedStates,
+  userStateCode,
+  agencyConfigs,
+}) => {
   // For state users, initialize directly to their state code so the ref is correct before the
   // sync effect runs and overwrites it. Recidiviz users and skip-auth users start at the default
   // and load from storage in the effect below.

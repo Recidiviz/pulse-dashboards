@@ -21,17 +21,20 @@ import { httpBatchLink } from "@trpc/client";
 import React, { useEffect, useRef, useState } from "react";
 import superjson from "superjson";
 
-import { AgencyConfigProvider } from "~@meetings/app/entities/agency-config";
+import {
+  AgencyConfigProvider,
+  useAgencyConfigs,
+} from "~@meetings/app/entities/agency-config";
+import {
+  DEFAULT_STATE_CODE,
+  StateCode,
+  StateCodeProvider,
+} from "~@meetings/app/entities/state-code";
 import {
   ACCESS_TOKEN_MIN_TTL_SECONDS,
   useUserContext,
 } from "~@meetings/app/entities/user";
 import { useImpersonationStore } from "~@meetings/app/features/impersonation";
-import {
-  DEFAULT_STATE_CODE,
-  StateCode,
-  StateCodeProvider,
-} from "~@meetings/app/features/state-selection";
 import { trpc } from "~@meetings/app/shared/api";
 import { env } from "~@meetings/app/shared/config";
 import { queryCachePersister } from "~@meetings/app/shared/lib/queryCachePersister";
@@ -47,6 +50,36 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+/**
+ * Passes the user and agency config values StateCodeProvider needs
+ */
+const ConnectedStateCodeProvider = ({
+  children,
+  selectedStateRef,
+}: {
+  children: React.ReactNode;
+  selectedStateRef: React.RefObject<StateCode>;
+}) => {
+  const {
+    isSkipAuthUser,
+    recidivizAllowedStates,
+    stateCode: userStateCode,
+  } = useUserContext();
+  const { agencyConfigs } = useAgencyConfigs();
+
+  return (
+    <StateCodeProvider
+      selectedStateRef={selectedStateRef}
+      isSkipAuthUser={isSkipAuthUser}
+      recidivizAllowedStates={recidivizAllowedStates}
+      userStateCode={userStateCode}
+      agencyConfigs={agencyConfigs}
+    >
+      {children}
+    </StateCodeProvider>
+  );
+};
 
 /**
  * Sets up tRPC client and provides it to the app.
@@ -127,9 +160,9 @@ const AuthenticatedApp: React.FC = () => {
         persistOptions={{ persister: queryCachePersister, maxAge: ONE_WEEK_MS }}
       >
         <AgencyConfigProvider>
-          <StateCodeProvider selectedStateRef={selectedStateRef}>
+          <ConnectedStateCodeProvider selectedStateRef={selectedStateRef}>
             <AuthenticatedContent />
-          </StateCodeProvider>
+          </ConnectedStateCodeProvider>
         </AgencyConfigProvider>
       </PersistQueryClientProvider>
     </trpc.Provider>

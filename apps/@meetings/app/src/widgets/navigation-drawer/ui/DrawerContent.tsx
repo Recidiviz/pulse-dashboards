@@ -25,8 +25,8 @@ import XIcon from "react-native-heroicons/outline/XIcon";
 import UsersIcon from "react-native-heroicons/solid/UsersIcon";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { useStateSelection } from "~@meetings/app/entities/state-code";
 import { useUserContext } from "~@meetings/app/entities/user";
-import { useStateSelection } from "~@meetings/app/features/state-selection";
 import BgAvatarImage from "~@meetings/app/shared/assets/images/bg-avatar.png";
 import { IS_PROD } from "~@meetings/app/shared/config";
 import { getInitials } from "~@meetings/app/shared/lib/format";

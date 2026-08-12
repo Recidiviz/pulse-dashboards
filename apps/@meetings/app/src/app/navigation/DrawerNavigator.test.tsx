@@ -19,9 +19,9 @@ import { render, screen } from "@testing-library/react-native";
 import React from "react";
 
 import { useAgencyConfigs } from "~@meetings/app/entities/agency-config";
+import { useStateSelection } from "~@meetings/app/entities/state-code";
 import * as UserContext from "~@meetings/app/entities/user";
 import * as UserModule from "~@meetings/app/entities/user";
-import { useStateSelection } from "~@meetings/app/features/state-selection";
 
 import DrawerNavigator from "./DrawerNavigator";
 
@@ -78,7 +78,7 @@ jest.mock("~@meetings/app/entities/user", () => ({
   useUserContext: jest.fn(),
 }));
 
-jest.mock("~@meetings/app/features/state-selection", () => ({
+jest.mock("~@meetings/app/entities/state-code", () => ({
   useStateSelection: jest.fn(),
 }));
 

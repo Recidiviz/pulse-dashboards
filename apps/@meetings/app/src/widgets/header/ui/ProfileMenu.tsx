@@ -29,9 +29,9 @@ import ChevronDownIcon from "react-native-heroicons/outline/ChevronDownIcon";
 import ChevronUpIcon from "react-native-heroicons/outline/ChevronUpIcon";
 import ExternalLinkIcon from "react-native-heroicons/outline/ExternalLinkIcon";
 
+import { useStateSelection } from "~@meetings/app/entities/state-code";
 import { useUserContext } from "~@meetings/app/entities/user";
 import { ImpersonationModal } from "~@meetings/app/features/impersonation";
-import { useStateSelection } from "~@meetings/app/features/state-selection";
 import BgAvatarImage from "~@meetings/app/shared/assets/images/bg-avatar.png";
 import { IS_PROD } from "~@meetings/app/shared/config";
 import { getInitials } from "~@meetings/app/shared/lib/format";

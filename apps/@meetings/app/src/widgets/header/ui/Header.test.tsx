@@ -23,11 +23,11 @@ import {
 import { fireEvent, render, waitFor } from "@testing-library/react-native";
 import React from "react";
 
-import { UserContextProvider } from "~@meetings/app/entities/user";
 import {
   StateCode,
   StateCodeProvider,
-} from "~@meetings/app/features/state-selection";
+} from "~@meetings/app/entities/state-code";
+import { UserContextProvider } from "~@meetings/app/entities/user";
 
 import { Header } from "./Header";
 
@@ -122,7 +122,13 @@ describe("Header", () => {
     it("navigates to Clients when logo is pressed (changed from Home)", async () => {
       const { getByTestId } = render(
         <UserContextProvider isSkipAuthUser={false}>
-          <StateCodeProvider selectedStateRef={selectedStateRef}>
+          <StateCodeProvider
+            selectedStateRef={selectedStateRef}
+            isSkipAuthUser={false}
+            recidivizAllowedStates={["US_NE"]}
+            userStateCode="US_NE"
+            agencyConfigs={{}}
+          >
             <NavigationContainer>
               <Header />
             </NavigationContainer>

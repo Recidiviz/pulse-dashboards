@@ -33,7 +33,7 @@ import { useAgencyConfigs } from "~@meetings/app/entities/agency-config";
 import {
   StateCode,
   useStateSelection,
-} from "~@meetings/app/features/state-selection";
+} from "~@meetings/app/entities/state-code";
 import { trpc } from "~@meetings/app/shared/api";
 import { theme } from "~@meetings/app/shared/config";
 import { RootStackParamList } from "~@meetings/app/shared/config";
