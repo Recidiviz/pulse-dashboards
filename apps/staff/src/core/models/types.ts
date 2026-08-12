@@ -19,6 +19,7 @@ import {
   ClientRecord,
   LocationRecord,
   MilestoneType,
+  ParoleRiskTool,
   StaffRecord,
   SystemId,
   WorkflowsResidentRecord,
@@ -138,6 +139,21 @@ export type ParoleConfig = {
   docketSearchEnabled?: boolean;
   /** A mapping from ParoleConductRecord.severity to a PaletteKey for the severity tag in the ConductHistorySection. */
   conductClassificationColors: Record<string, PaletteKey>;
+  // Absent for any tenant that hasn't opted into the redesigned Risk Score
+  // Trajectory section (raw-score axis, CARAS component list, custom
+  // aggregate-view label/tool-subset) -- RiskAssessmentSection falls back to
+  // its original LSI/PIT/CARAS/SRT, percent-of-max, CARAS-bar-chart behavior
+  // when this is unset.
+  riskAssessmentConfig?: ParoleRiskAssessmentConfig;
+};
+
+export type ParoleRiskAssessmentConfig = {
+  // Tools this tenant's Risk Score Trajectory section shows a legend
+  // button/line for, in display order.
+  tools: Array<ParoleRiskTool>;
+  // The subset of `tools` (and the label) shown for the trajectory chart's
+  // aggregate view, when no single tool is selected.
+  aggregateView: { label: string; tools: Array<ParoleRiskTool> };
 };
 
 /**

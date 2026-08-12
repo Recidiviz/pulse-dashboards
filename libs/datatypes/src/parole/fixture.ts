@@ -15,7 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { addDays, format, subDays, subMonths, subYears } from "date-fns";
+import {
+  addDays,
+  format,
+  parseISO,
+  subDays,
+  subMonths,
+  subYears,
+} from "date-fns";
 
 import {
   ParoleCarasFactor,
@@ -388,6 +395,16 @@ function buildAndersonCaseProfile(
   stateCode: ParoleFixtureStateCode,
 ): ParoleCase {
   const today = new Date();
+  // LSI/PIT/SRT/CARAS each have a fixed most-recent assessment date (matching
+  // verified real assessment dates, OBT-43413) rather than one relative to
+  // `today` like the rest of this file. Their earlier history points are
+  // anchored to that same fixed date -- not to `today` -- so they're
+  // guaranteed to stay chronologically before it forever, regardless of how
+  // far `today` drifts forward; anchoring to `today` instead would eventually
+  // put a "historical" point after the fixed date it's supposed to precede.
+  const lsiPitAnchor = parseISO("2025-06-26");
+  const srtAnchor = parseISO("2026-03-19");
+  const carasAnchor = parseISO("2026-04-16");
   return paroleCaseSchema.parse({
     docId: "DOC-45821",
     name: "Anderson, Michael",
@@ -437,72 +454,193 @@ function buildAndersonCaseProfile(
       },
     ],
     conductHistory: buildAndersonConductHistory(stateCode),
+    // Full assessment history per tool -- the most recent entry per tool
+    // carries the real subcategory/CARAS-factor breakdown; earlier entries
+    // are bare score/date pairs, matching what a real historical record
+    // would actually have on file. The trajectory chart and the "current"
+    // per-tool detail are both derived from this single array (see
+    // RiskAssessmentSection.utils.ts), so there's nothing else to keep in
+    // sync.
     riskAssessments: [
+      // LSI: fixed most-recent date (matching a verified real assessment,
+      // OBT-43413), so its history is anchored to `lsiPitAnchor` rather than
+      // `today`.
       {
         tool: "LSI",
-        score: 14,
+        score: 32,
         maxScore: 54,
-        date: iso(subMonths(today, 3)),
+        date: iso(subYears(lsiPitAnchor, 3)),
+      },
+      {
+        tool: "LSI",
+        score: 24,
+        maxScore: 54,
+        date: iso(subYears(lsiPitAnchor, 2)),
+      },
+      {
+        tool: "LSI",
+        score: 17,
+        maxScore: 54,
+        date: iso(subMonths(lsiPitAnchor, 2)),
+      },
+      {
+        tool: "LSI",
+        score: 31,
+        maxScore: 54,
+        date: "2025-06-26",
         subcategories: [
-          { name: "Criminal History", score: 3, maxScore: 10 },
-          { name: "Education/Employment", score: 3, maxScore: 10 },
+          { name: "Criminal History", score: 9, maxScore: 10 },
+          { name: "Education/Employment", score: 7, maxScore: 10 },
           { name: "Financial", score: 1, maxScore: 2 },
-          { name: "Family/Marital", score: 1, maxScore: 4 },
+          { name: "Family/Marital", score: 3, maxScore: 4 },
           { name: "Accommodation", score: 1, maxScore: 3 },
-          { name: "Leisure/Recreation", score: 1, maxScore: 2 },
-          { name: "Companions", score: 1, maxScore: 5 },
+          { name: "Leisure/Recreation", score: 2, maxScore: 2 },
+          { name: "Companions", score: 4, maxScore: 5 },
           { name: "Alcohol/Drug", score: 2, maxScore: 9 },
-          { name: "Emotional/Personal", score: 1, maxScore: 5 },
-          { name: "Attitude/Orientation", score: 0, maxScore: 4 },
+          { name: "Emotional/Personal", score: 0, maxScore: 5 },
+          { name: "Attitude/Orientation", score: 2, maxScore: 4 },
         ],
+      },
+      // PIT: same verified assessment day as LSI, so it shares `lsiPitAnchor`.
+      {
+        tool: "PIT",
+        score: 20,
+        maxScore: 39,
+        date: iso(subYears(lsiPitAnchor, 3)),
       },
       {
         tool: "PIT",
-        score: 8,
-        maxScore: 40,
-        date: iso(subMonths(today, 5)),
+        score: 12,
+        maxScore: 39,
+        date: iso(subYears(lsiPitAnchor, 2)),
+      },
+      {
+        tool: "PIT",
+        score: 14,
+        maxScore: 39,
+        date: iso(subMonths(lsiPitAnchor, 2)),
+      },
+      {
+        tool: "PIT",
+        score: 28,
+        maxScore: 39,
+        date: "2025-06-26",
         subcategories: [
-          { name: "Disciplinary Incidents", score: 2, maxScore: 15 },
-          { name: "Substance Use History", score: 3, maxScore: 10 },
-          { name: "Program Non-Compliance", score: 1, maxScore: 8 },
-          { name: "Violence History", score: 2, maxScore: 7 },
+          { name: "Criminal History", score: 9, maxScore: 10 },
+          {
+            name: "Education, Employment, and Financial Situation",
+            score: 7,
+            maxScore: 6,
+          },
+          { name: "Family and Social Support", score: 4, maxScore: 6 },
+          {
+            name: "Substance Abuse and Mental Health",
+            score: 1,
+            maxScore: 5,
+          },
+          {
+            name: "Criminal Attitudes and Behavioral Patterns",
+            score: 7,
+            maxScore: 11,
+          },
         ],
       },
-      // Fixed date (not relative to `today`, unlike the rest of this file) to
-      // match the reference CARAS v7 sample assessment date exactly.
+      // CARAS: fixed most-recent date (matching the reference CARAS v7
+      // sample assessment), so its history is anchored to `carasAnchor`.
+      {
+        tool: "CARAS",
+        score: 52,
+        maxScore: 100,
+        date: iso(subYears(carasAnchor, 3)),
+      },
+      {
+        tool: "CARAS",
+        score: 40,
+        maxScore: 100,
+        date: iso(subMonths(carasAnchor, 18)),
+      },
+      {
+        tool: "CARAS",
+        score: 26,
+        maxScore: 100,
+        date: iso(subMonths(carasAnchor, 6)),
+      },
+      {
+        tool: "CARAS",
+        score: 16,
+        maxScore: 100,
+        date: iso(subMonths(carasAnchor, 1)),
+      },
       buildCarasAssessment([1, 3, 44, 0, 4, 0, 1, 0, 0, 0, 0, 1], "2026-04-16"),
+      // SRT: fixed most-recent date, anchored to `srtAnchor`.
       {
         tool: "SRT",
-        score: 7,
-        maxScore: 25,
-        date: iso(subMonths(today, 15)),
+        score: 18,
+        maxScore: 44,
+        date: iso(subYears(srtAnchor, 2)),
+      },
+      {
+        tool: "SRT",
+        score: 12,
+        maxScore: 44,
+        date: iso(subMonths(srtAnchor, 9)),
+      },
+      {
+        tool: "SRT",
+        score: 30,
+        maxScore: 44,
+        date: "2026-03-19",
         subcategories: [
-          { name: "Prior Record Score", score: 3, maxScore: 8 },
-          { name: "Age/Criminal Onset", score: 2, maxScore: 5 },
-          { name: "Social Stability", score: 1, maxScore: 6 },
-          { name: "Supervision Response", score: 1, maxScore: 6 },
+          { name: "Criminal History", score: 11, maxScore: 12 },
+          {
+            name: "Education, Employment, and Financial Situation",
+            score: 8,
+            maxScore: 9,
+          },
+          {
+            name: "Substance Abuse and Mental Health",
+            score: 3,
+            maxScore: 4,
+          },
+          {
+            name: "Criminal Attitudes and Behavioral Patterns",
+            score: 8,
+            maxScore: 19,
+          },
         ],
       },
-    ],
-    riskOverviewHistory: [
-      // All four tools get a value at this earliest date so every
-      // trajectory line in the "All" view starts from the same point,
-      // rather than each line beginning wherever that tool's history
-      // happens to start.
-      { date: iso(subYears(today, 3)), LSI: 59, PIT: 50, CARAS: 52, SRT: 58 },
-      { date: iso(subMonths(today, 30)), SRT: 40 },
-      { date: iso(subMonths(today, 24)), LSI: 44, PIT: 30 },
-      { date: iso(subMonths(today, 18)), CARAS: 40 },
-      { date: iso(subMonths(today, 15)), SRT: 28 },
-      { date: iso(subMonths(today, 6)), LSI: 31, PIT: 35 },
-      { date: iso(subYears(today, 1)), CARAS: 26 },
-      { date: iso(subMonths(today, 5)), PIT: 40 },
-      // PIT and CARAS extend all the way to LSI's most recent point so their
-      // trajectory lines span the full chart. SRT deliberately stops at 15
-      // months ago (above) rather than being extended here -- that gap is
-      // what demonstrates the "assessment over 12 months stale" warning, so
-      // stretching it to match would undercut the scenario it's meant to show.
-      { date: iso(subMonths(today, 3)), LSI: 26, PIT: 34, CARAS: 18 },
+      // Placeholder data (OBT-43413) -- US_CO has no real RT/CST source yet,
+      // so these mirror the shape of the verified LSI/PIT/SRT data above
+      // rather than real assessment values. RT/CST have no fixed reference
+      // date, so -- unlike LSI/PIT/SRT/CARAS above -- their history is
+      // anchored to `today` throughout, which keeps every entry for a given
+      // tool consistently ordered relative to each other no matter when
+      // `today` is.
+      { tool: "RT", score: 16, maxScore: 28, date: iso(subMonths(today, 10)) },
+      {
+        tool: "RT",
+        score: 12,
+        maxScore: 28,
+        date: iso(subMonths(today, 4)),
+        subcategories: [
+          { name: "Criminal History", score: 5, maxScore: 10 },
+          { name: "Employment/Education", score: 4, maxScore: 10 },
+          { name: "Social Support", score: 3, maxScore: 8 },
+        ],
+      },
+      { tool: "CST", score: 22, maxScore: 49, date: iso(subMonths(today, 6)) },
+      {
+        tool: "CST",
+        score: 18,
+        maxScore: 49,
+        date: iso(subMonths(today, 2)),
+        subcategories: [
+          { name: "Criminal History", score: 6, maxScore: 15 },
+          { name: "Employment/Education", score: 5, maxScore: 14 },
+          { name: "Substance Abuse", score: 4, maxScore: 10 },
+          { name: "Social Support", score: 3, maxScore: 10 },
+        ],
+      },
     ],
     docPrograms: [
       {
@@ -618,7 +756,7 @@ function buildAttachments(
 function buildGenericRiskAssessments(
   index: number,
   today: Date,
-): Pick<ParoleCase, "riskAssessments" | "riskOverviewHistory"> {
+): Pick<ParoleCase, "riskAssessments"> {
   const riskPct = 20 + ((index * 17) % 60); // varies 20-79%
   return {
     riskAssessments: [
@@ -647,12 +785,6 @@ function buildGenericRiskAssessments(
         maxScore: 25,
         date: iso(subMonths(today, 10)),
       },
-    ],
-    riskOverviewHistory: [
-      { date: iso(subMonths(today, 10)), SRT: riskPct },
-      { date: iso(subMonths(today, 8)), CARAS: riskPct },
-      { date: iso(subMonths(today, 6)), PIT: riskPct },
-      { date: iso(subMonths(today, 4)), LSI: riskPct },
     ],
   };
 }

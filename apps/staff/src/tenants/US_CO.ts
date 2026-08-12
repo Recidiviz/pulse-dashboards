@@ -43,6 +43,17 @@ const US_CO_CONFIG = {
       "Class 2": "GREEN",
       "Class 3": "PURPLE",
     },
+    // OBT-43413: CO-specific Risk Score Trajectory redesign (raw-score axis,
+    // CARAS component list, RT/CST tools, "Entire CTAP Suite" aggregate
+    // view). Other tenants (e.g. US_ID) omit this and keep the original
+    // LSI/PIT/CARAS/SRT percent-of-max behavior.
+    riskAssessmentConfig: {
+      tools: ["LSI", "PIT", "CARAS", "SRT", "RT", "CST"],
+      aggregateView: {
+        label: "Entire CTAP Suite",
+        tools: ["RT", "SRT", "PIT"],
+      },
+    },
   },
 } satisfies TenantConfig<"US_CO">;
 

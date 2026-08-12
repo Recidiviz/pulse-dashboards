@@ -17,7 +17,14 @@
 
 import { z } from "zod";
 
-export const PAROLE_RISK_TOOL = z.enum(["LSI", "PIT", "CARAS", "SRT"]);
+export const PAROLE_RISK_TOOL = z.enum([
+  "LSI",
+  "PIT",
+  "CARAS",
+  "SRT",
+  "RT",
+  "CST",
+]);
 export type ParoleRiskTool = z.infer<typeof PAROLE_RISK_TOOL>;
 
 export const paroleSubcategoryScoreSchema = z.object({
@@ -52,17 +59,6 @@ export const paroleRiskAssessmentSchema = z.object({
   carasFactors: z.array(paroleCarasFactorSchema).optional(),
 });
 export type ParoleRiskAssessment = z.infer<typeof paroleRiskAssessmentSchema>;
-
-export const paroleRiskOverviewPointSchema = z.object({
-  date: z.string(),
-  LSI: z.number().optional(),
-  PIT: z.number().optional(),
-  CARAS: z.number().optional(),
-  SRT: z.number().optional(),
-});
-export type ParoleRiskOverviewPoint = z.infer<
-  typeof paroleRiskOverviewPointSchema
->;
 
 export const paroleHearingSchema = z.object({
   docId: z.string(),
@@ -177,7 +173,12 @@ export const paroleCaseSchema = z.object({
   docPrograms: z.array(paroleDocProgramSchema),
   edovoPrograms: z.array(paroleEdovoProgramSchema),
   offenseHistory: paroleOffenseHistorySchema,
+  // Full assessment history per tool, not just the most recent one -- the
+  // trajectory chart is derived from this at render time (see
+  // RiskAssessmentSection.utils.ts) rather than duplicated into a separate
+  // chart-shaped field, so there's a single source of truth for risk data.
+  // Only the most recent entry per tool is expected to carry `subcategories`/
+  // `carasFactors`; earlier entries may be bare score/date pairs.
   riskAssessments: z.array(paroleRiskAssessmentSchema),
-  riskOverviewHistory: z.array(paroleRiskOverviewPointSchema),
 });
 export type ParoleCase = z.infer<typeof paroleCaseSchema>;

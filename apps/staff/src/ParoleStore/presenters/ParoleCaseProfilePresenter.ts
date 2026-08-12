@@ -73,6 +73,11 @@ export class ParoleCaseProfilePresenter implements Hydratable {
     return this.caseDetailValue;
   }
 
+  // The tenant's full Parole config -- MainColumn sections to render (in
+  // order) come from `config.sections`, looked up against
+  // ParoleSectionComponents; individual sections read whatever other
+  // state-specific display config they need (e.g. riskAssessmentConfig)
+  // directly off this same object.
   get config(): ParoleConfig {
     return this.paroleStore.config;
   }

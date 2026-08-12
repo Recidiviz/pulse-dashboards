@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { format, subYears } from "date-fns";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
@@ -341,15 +341,23 @@ describe("ParoleCaseProfile", () => {
   });
 
   describe("the risk score trajectory section", () => {
-    it("defaults to the 'All' view showing every assessment type", async () => {
+    it("defaults to US_CO's 'Entire CTAP Suite' aggregate view", async () => {
       renderAtPath("/parole/case/DOC-45821");
 
       expect(
         await findSectionHeading("Risk Score Trajectory"),
       ).toBeInTheDocument();
-      expect(screen.getByText("All assessments")).toBeInTheDocument();
+      // US_CO's riskAssessmentConfig limits the aggregate view to its
+      // curated tool set (RT, SRT, PIT), not every tool with an assessment.
+      const assessmentCount = screen.getByText("3 assessment types selected");
+      expect(assessmentCount).toBeInTheDocument();
+      // US_CO has a custom riskAssessmentConfig, so the aggregate view uses
+      // its "Entire CTAP Suite" label instead of the default. Scoped to the
+      // header (not the legend toggle, which shows the same label).
       expect(
-        screen.getByText("4 assessment types selected"),
+        within(assessmentCount.parentElement as HTMLElement).getByText(
+          "Entire CTAP Suite",
+        ),
       ).toBeInTheDocument();
     });
 
@@ -360,7 +368,7 @@ describe("ParoleCaseProfile", () => {
       await findSectionHeading("Risk Score Trajectory");
       await user.click(screen.getByRole("button", { name: /^LSI/ }));
 
-      expect(screen.getByText("14 / 54")).toBeInTheDocument();
+      expect(screen.getByText("31 / 54")).toBeInTheDocument();
       expect(
         screen.getByText("Subcategory Breakdown (Most recent assessment)"),
       ).toBeInTheDocument();
@@ -377,7 +385,9 @@ describe("ParoleCaseProfile", () => {
       // model, so this score (and its "Very Low" band) is deterministic
       // regardless of when the test runs.
       expect(screen.getByText("16 / 100")).toBeInTheDocument();
-      expect(screen.getByText("Very Low Risk — 16%")).toBeInTheDocument();
+      // US_CO's custom riskAssessmentConfig suppresses the "-- {pct}%" badge
+      // suffix, so only the band label itself renders.
+      expect(screen.getByText("Very Low Risk")).toBeInTheDocument();
       expect(screen.getByText("Assessed Apr 16, 2026")).toBeInTheDocument();
     });
   });

@@ -16,39 +16,45 @@
 // =============================================================================
 
 import { paroleCasesFixtureByState } from "./fixture";
-import { PAROLE_RISK_TOOL, ParoleRiskTool } from "./schema";
+import {
+  PAROLE_RISK_TOOL,
+  ParoleRiskAssessment,
+  ParoleRiskTool,
+} from "./schema";
 
-describe("Anderson's (DOC-45821) risk overview history", () => {
-  const { riskOverviewHistory } = paroleCasesFixtureByState.US_CO["DOC-45821"];
-  const dates = riskOverviewHistory.map((point) => point.date);
-  const earliestDate = dates[0];
-  const latestDate = dates[dates.length - 1];
+describe("Anderson's (DOC-45821) risk assessment history", () => {
+  const { riskAssessments } = paroleCasesFixtureByState.US_CO["DOC-45821"];
 
-  const toolsPresentOn = (date: string): Array<ParoleRiskTool> =>
-    PAROLE_RISK_TOOL.options.filter((tool) =>
-      riskOverviewHistory.some(
-        (point) => point.date === date && point[tool] !== undefined,
-      ),
-    );
+  const latestByTool = (tool: ParoleRiskTool): ParoleRiskAssessment =>
+    riskAssessments
+      .filter((a) => a.tool === tool)
+      .reduce((latest, a) => (a.date > latest.date ? a : latest));
 
-  it("gives every tool a value on the earliest date, so their trajectory lines share a common start", () => {
-    expect(toolsPresentOn(earliestDate).sort()).toEqual(
-      [...PAROLE_RISK_TOOL.options].sort(),
-    );
-  });
+  // The trajectory chart and the "current" per-tool detail (subcategory/
+  // CARAS-factor breakdown) are both derived from `riskAssessments` by
+  // picking each tool's most recent entry (see
+  // RiskAssessmentSection.utils.ts) -- so the entry carrying that detail
+  // must actually be the chronologically latest one for its tool, or the
+  // detail view would silently show the wrong assessment.
+  it.each(PAROLE_RISK_TOOL.options)(
+    "gives %s's chronologically latest entry the detailed breakdown",
+    (tool) => {
+      const latest = latestByTool(tool);
+      const hasDetail =
+        tool === "CARAS"
+          ? latest.carasFactors !== undefined
+          : latest.subcategories !== undefined;
+      expect(hasDetail).toBe(true);
+    },
+  );
 
-  it("extends LSI and PIT and CARAS to the latest date, so their lines span the full chart", () => {
-    expect(toolsPresentOn(latestDate).sort()).toEqual(
-      ["CARAS", "LSI", "PIT"].sort(),
-    );
-  });
+  it.each(["LSI", "PIT"] as const)(
+    "keeps %s's most recent assessment over 12 months old, to demonstrate a stale assessment",
+    (tool) => {
+      const daysAgo = (dateString: string) =>
+        (Date.now() - new Date(dateString).getTime()) / (1000 * 60 * 60 * 24);
 
-  it("deliberately stops SRT's line before the latest date, to demonstrate a stale (12+ month) assessment", () => {
-    expect(toolsPresentOn(latestDate)).not.toContain("SRT");
-
-    const srtDates = riskOverviewHistory
-      .filter((point) => point.SRT !== undefined)
-      .map((point) => point.date);
-    expect(srtDates[srtDates.length - 1]).not.toEqual(latestDate);
-  });
+      expect(daysAgo(latestByTool(tool).date)).toBeGreaterThan(365);
+    },
+  );
 });

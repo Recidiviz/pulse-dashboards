@@ -18,8 +18,9 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { ParoleRiskAssessment, ParoleRiskOverviewPoint } from "~datatypes";
+import { ParoleRiskAssessment } from "~datatypes";
 
+import type { ParoleRiskAssessmentConfig } from "../../../models/types";
 import { RiskAssessmentSection } from "../RiskAssessmentSection";
 
 const RISK_ASSESSMENTS: Array<ParoleRiskAssessment> = [
@@ -57,11 +58,6 @@ const RISK_ASSESSMENTS: Array<ParoleRiskAssessment> = [
   },
 ];
 
-const RISK_OVERVIEW_HISTORY: Array<ParoleRiskOverviewPoint> = [
-  { date: "2025-01-01", LSI: 20, PIT: 55 },
-  { date: "2026-06-01", LSI: 10, PIT: 45, CARAS: 40, SRT: 70 },
-];
-
 describe("RiskAssessmentSection", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
@@ -72,12 +68,7 @@ describe("RiskAssessmentSection", () => {
   });
 
   it("defaults to the 'All' view with a trajectory chart of all assessments", () => {
-    render(
-      <RiskAssessmentSection
-        riskAssessments={RISK_ASSESSMENTS}
-        riskOverviewHistory={RISK_OVERVIEW_HISTORY}
-      />,
-    );
+    render(<RiskAssessmentSection riskAssessments={RISK_ASSESSMENTS} />);
 
     expect(screen.getByText("Risk Score Trajectory")).toBeInTheDocument();
     expect(
@@ -92,12 +83,7 @@ describe("RiskAssessmentSection", () => {
 
   it("only allows a single assessment tool to be selected at a time", async () => {
     const user = userEvent.setup();
-    render(
-      <RiskAssessmentSection
-        riskAssessments={RISK_ASSESSMENTS}
-        riskOverviewHistory={RISK_OVERVIEW_HISTORY}
-      />,
-    );
+    render(<RiskAssessmentSection riskAssessments={RISK_ASSESSMENTS} />);
 
     await user.click(screen.getByRole("button", { name: /^LSI/ }));
     expect(screen.getByText("10 / 100")).toBeInTheDocument();
@@ -109,12 +95,7 @@ describe("RiskAssessmentSection", () => {
 
   it("shows the score, assessment date, a risk pill, and a subcategory breakdown chart for a selected tool", async () => {
     const user = userEvent.setup();
-    render(
-      <RiskAssessmentSection
-        riskAssessments={RISK_ASSESSMENTS}
-        riskOverviewHistory={RISK_OVERVIEW_HISTORY}
-      />,
-    );
+    render(<RiskAssessmentSection riskAssessments={RISK_ASSESSMENTS} />);
 
     await user.click(screen.getByRole("button", { name: /^LSI/ }));
 
@@ -128,12 +109,7 @@ describe("RiskAssessmentSection", () => {
 
   it("labels risk levels using the generic tool thresholds", async () => {
     const user = userEvent.setup();
-    render(
-      <RiskAssessmentSection
-        riskAssessments={RISK_ASSESSMENTS}
-        riskOverviewHistory={RISK_OVERVIEW_HISTORY}
-      />,
-    );
+    render(<RiskAssessmentSection riskAssessments={RISK_ASSESSMENTS} />);
 
     await user.click(screen.getByRole("button", { name: /^PIT/ }));
     expect(screen.getByText("Medium Risk — 45%")).toBeInTheDocument();
@@ -144,12 +120,7 @@ describe("RiskAssessmentSection", () => {
 
   it("labels CARAS risk levels using its own probability bands instead of the generic thresholds", async () => {
     const user = userEvent.setup();
-    render(
-      <RiskAssessmentSection
-        riskAssessments={RISK_ASSESSMENTS}
-        riskOverviewHistory={RISK_OVERVIEW_HISTORY}
-      />,
-    );
+    render(<RiskAssessmentSection riskAssessments={RISK_ASSESSMENTS} />);
 
     await user.click(screen.getByRole("button", { name: /^CARAS/ }));
     // A CARAS score of 40 (probability 0.40) falls in the Medium band
@@ -160,12 +131,7 @@ describe("RiskAssessmentSection", () => {
 
   it("warns when the selected assessment is over 12 months stale", async () => {
     const user = userEvent.setup();
-    render(
-      <RiskAssessmentSection
-        riskAssessments={RISK_ASSESSMENTS}
-        riskOverviewHistory={RISK_OVERVIEW_HISTORY}
-      />,
-    );
+    render(<RiskAssessmentSection riskAssessments={RISK_ASSESSMENTS} />);
 
     await user.click(screen.getByRole("button", { name: /^SRT/ }));
     expect(
@@ -179,9 +145,7 @@ describe("RiskAssessmentSection", () => {
   });
 
   it("shows an empty state when there are no risk assessments", () => {
-    render(
-      <RiskAssessmentSection riskAssessments={[]} riskOverviewHistory={[]} />,
-    );
+    render(<RiskAssessmentSection riskAssessments={[]} />);
 
     expect(screen.getByText("Risk Score Trajectory")).toBeInTheDocument();
     expect(
@@ -206,14 +170,114 @@ describe("RiskAssessmentSection", () => {
       },
     ];
 
+    render(<RiskAssessmentSection riskAssessments={borderlineAssessments} />);
+
+    await user.click(screen.getByRole("button", { name: /^LSI/ }));
+    expect(screen.getByText("Medium Risk — 60%")).toBeInTheDocument();
+  });
+});
+
+// A tenant that supplies riskAssessmentConfig (e.g. US_CO) gets a redesigned
+// display -- raw scores instead of percentages, a custom aggregate view, and
+// a plain CARAS component list. Every test above renders with no config at
+// all and pins that a tenant which doesn't opt in (e.g. US_ID) sees no
+// behavior change from any of this.
+describe("RiskAssessmentSection with a custom riskAssessmentConfig", () => {
+  const CUSTOM_CONFIG: ParoleRiskAssessmentConfig = {
+    tools: ["LSI", "PIT", "CARAS", "SRT"],
+    aggregateView: { label: "Entire CTAP Suite", tools: ["PIT", "SRT"] },
+  };
+
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date(2026, 6, 15));
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("shows raw scores instead of percentages in the legend and risk pill", async () => {
+    const user = userEvent.setup();
     render(
       <RiskAssessmentSection
-        riskAssessments={borderlineAssessments}
-        riskOverviewHistory={RISK_OVERVIEW_HISTORY}
+        riskAssessments={RISK_ASSESSMENTS}
+        riskAssessmentConfig={CUSTOM_CONFIG}
+      />,
+    );
+
+    expect(screen.getByText("10")).toBeInTheDocument();
+    expect(screen.queryByText("10%")).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: /^LSI/ }));
+    expect(screen.getByText("Low Risk")).toBeInTheDocument();
+    expect(screen.queryByText(/Low Risk —/)).not.toBeInTheDocument();
+  });
+
+  it("renders the configured aggregate view label and tool subset", () => {
+    render(
+      <RiskAssessmentSection
+        riskAssessments={RISK_ASSESSMENTS}
+        riskAssessmentConfig={CUSTOM_CONFIG}
+      />,
+    );
+
+    expect(screen.getAllByText("Entire CTAP Suite").length).toBeGreaterThan(0);
+    expect(screen.getByText("2 assessment types selected")).toBeInTheDocument();
+  });
+
+  it("shows a raw-score trajectory subtitle for a selected tool", async () => {
+    const user = userEvent.setup();
+    render(
+      <RiskAssessmentSection
+        riskAssessments={RISK_ASSESSMENTS}
+        riskAssessmentConfig={CUSTOM_CONFIG}
       />,
     );
 
     await user.click(screen.getByRole("button", { name: /^LSI/ }));
-    expect(screen.getByText("Medium Risk — 60%")).toBeInTheDocument();
+    expect(
+      screen.getByText("Trajectory out of a maximum of 100 points"),
+    ).toBeInTheDocument();
+  });
+
+  it("renders CARAS as a plain component list instead of a bar chart", async () => {
+    const user = userEvent.setup();
+    render(
+      <RiskAssessmentSection
+        riskAssessments={RISK_ASSESSMENTS}
+        riskAssessmentConfig={CUSTOM_CONFIG}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /^CARAS/ }));
+    expect(
+      screen.getByText("Individual Components of the CARAS"),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Offender Age")).toBeInTheDocument();
+    expect(
+      screen.queryByText("Subcategory Breakdown (Most recent assessment)"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("only renders tools included in the config, hiding any others present in the data", () => {
+    const narrowConfig: ParoleRiskAssessmentConfig = {
+      tools: ["LSI", "PIT"],
+      aggregateView: { label: "Entire CTAP Suite", tools: ["LSI", "PIT"] },
+    };
+
+    render(
+      <RiskAssessmentSection
+        riskAssessments={RISK_ASSESSMENTS}
+        riskAssessmentConfig={narrowConfig}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: /^LSI/ })).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /^SRT/ }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /^CARAS/ }),
+    ).not.toBeInTheDocument();
   });
 });

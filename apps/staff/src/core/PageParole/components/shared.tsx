@@ -38,8 +38,19 @@ export const SectionCard = styled(BaseSectionCard)`
 export const parseIsoDate = (dateString: string): Date =>
   new Date(`${dateString}T00:00:00`);
 
-export const formatDate = (dateString: string) =>
-  parseIsoDate(dateString).toLocaleDateString("en-US", {
+// Dates arrive as "yyyy-MM-dd" fixture strings, as Date objects built from
+// chart coordinates, or -- despite what semiotic's own types (and ours,
+// matching them) claim -- sometimes as a raw timestamp number from inside a
+// semiotic tooltip callback. Handle all three explicitly rather than trusting
+// the declared type, since only the `instanceof Date` check is actually safe.
+export const toSafeDate = (date: string | number | Date): Date => {
+  if (date instanceof Date) return date;
+  if (typeof date === "string") return parseIsoDate(date);
+  return new Date(date);
+};
+
+export const formatDate = (date: string | number | Date) =>
+  toSafeDate(date).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",

@@ -17,7 +17,7 @@
 
 import { ParoleCase } from "~datatypes";
 
-import { ParoleConfig } from "../../models/types";
+import type { ParoleConfig } from "../../models/types";
 import { AttachmentsSection } from "./AttachmentsSection";
 import { ConductHistorySection } from "./ConductHistorySection";
 import { OffenseHistorySection } from "./OffenseHistorySection";
@@ -31,16 +31,18 @@ import { RiskAssessmentSection } from "./RiskAssessmentSection";
   the fields a section component actually needs off of ParoleCase -- rather
   than widening every section component to a single generic `caseDetail`
   prop -- so each component's own signature keeps documenting exactly what
-  it reads.
+  it reads. Every entry takes the tenant's full ParoleConfig as a second
+  argument (even though only riskAssessment currently reads it) so callers
+  can invoke every section the same way.
 */
 export const ParoleSectionComponents = {
   offenseHistory: (caseDetail: ParoleCase) => (
     <OffenseHistorySection offenseHistory={caseDetail.offenseHistory} />
   ),
-  riskAssessment: (caseDetail: ParoleCase) => (
+  riskAssessment: (caseDetail: ParoleCase, config: ParoleConfig) => (
     <RiskAssessmentSection
       riskAssessments={caseDetail.riskAssessments}
-      riskOverviewHistory={caseDetail.riskOverviewHistory}
+      riskAssessmentConfig={config.riskAssessmentConfig}
     />
   ),
   programParticipation: (caseDetail: ParoleCase) => (
