@@ -31,6 +31,34 @@ export type BulkUpdateEntry = {
 };
 export type BulkUpdateEntries = BulkUpdateEntry[];
 
+// all values from the entry object should be accessed via this utility, which formats them in a SQL-compliant manner
+function getProcessedField(entry: BulkUpdateEntry, field: string) {
+  const value = entry[field];
+  if (Array.isArray(value)) {
+    // Only string arrays are supported; other element types require a
+    // different PostgreSQL cast and should be added explicitly if needed.
+    if (value.some((v) => typeof v !== "string")) {
+      throw new Error(
+        `bulkUpdate only supports string[] arrays, got non-string element in field "${field}"`,
+      );
+    }
+    const escaped = value.map((v) => `'${v.replace(/'/g, "''")}'`);
+    return `ARRAY[${escaped.join(", ")}]::text[]`;
+  } else if (typeof value === "string") {
+    // Handle strings and escape single quotes
+    return `'${value.replace(/'/g, "''")}'`;
+  } else if (value instanceof Date) {
+    // Convert Date to ISO 8601 string format
+    return `'${value.toISOString()}'::timestamp`;
+  } else if (value === null || value === undefined) {
+    return "NULL";
+  } else if (typeof value === "object") {
+    // escape single quotes in JSON strings
+    return `'${JSON.stringify(value).replace(/'/g, "''")}'::json`;
+  }
+  // Others are used as-is
+  return value;
+}
 /**
  * Helper function to perform a bulk update on a Prisma table.
  * This function constructs a raw SQL query to update multiple rows in a single transaction.
@@ -58,35 +86,9 @@ export async function bulkUpdate(
 
   const valuesSql = entries
     .map((entry) => {
-      const values = fields.map((field) => {
-        const value = entry[field];
-        if (Array.isArray(value)) {
-          // Only string arrays are supported; other element types require a
-          // different PostgreSQL cast and should be added explicitly if needed.
-          if (value.some((v) => typeof v !== "string")) {
-            throw new Error(
-              `bulkUpdate only supports string[] arrays, got non-string element in field "${field}"`,
-            );
-          }
-          const escaped = value.map((v) => `'${v.replace(/'/g, "''")}'`);
-          return `ARRAY[${escaped.join(", ")}]::text[]`;
-        } else if (typeof value === "string") {
-          // Handle strings and escape single quotes
-          return `'${value.replace(/'/g, "''")}'`;
-        } else if (value instanceof Date) {
-          // Convert Date to ISO 8601 string format
-          return `'${value.toISOString()}'::timestamp`;
-        } else if (value === null || value === undefined) {
-          return "NULL";
-        } else if (typeof value === "object") {
-          // escape single quotes in JSON strings
-          return `'${JSON.stringify(value).replace(/'/g, "''")}'::json`;
-        }
-        // Others are used as-is
-        return value;
-      });
+      const values = fields.map((field) => getProcessedField(entry, field));
 
-      return `(${idColumnNames.map((idCol) => `'${entry[idCol]}'`).join(", ")}, ${values.join(", ")})`;
+      return `(${idColumnNames.map((idCol) => getProcessedField(entry, idCol)).join(", ")}, ${values.join(", ")})`;
     })
     .join(", ");
 

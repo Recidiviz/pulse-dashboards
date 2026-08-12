@@ -130,6 +130,30 @@ describe("facilityHandler", () => {
     expect(deleted).toBeNull();
   });
 
+  it("creates and updates a facility whose ID contains a single quote", async () => {
+    const facilityWithQuote = { id: "FAC'1", name: "Facility O'Brien" };
+
+    dataProviderSingleton.setData(DATA_PROVIDER_FILE_NAME, [facilityWithQuote]);
+    await importHandler.import(STATE_CODE, [FACILITY_FILE_NAME]);
+
+    const created = await prismaClient.incarcerationFacility.findUniqueOrThrow({
+      where: { id: facilityWithQuote.id },
+    });
+    expect(created.name).toBe(facilityWithQuote.name);
+
+    vi.setSystemTime(new Date("2025-05-20"));
+    dataProviderSingleton.setData(DATA_PROVIDER_FILE_NAME, [
+      { ...facilityWithQuote, name: "Facility O'Brien Renamed" },
+    ]);
+    await importHandler.import(STATE_CODE, [FACILITY_FILE_NAME]);
+
+    const updated = await prismaClient.incarcerationFacility.findUniqueOrThrow({
+      where: { id: facilityWithQuote.id },
+    });
+    expect(updated.name).toBe("Facility O'Brien Renamed");
+    expect(updated.importedAt).toEqual(new Date("2025-05-20"));
+  });
+
   it("correctly imports more than BATCH_SIZE facilities", async () => {
     const manyFacilities = Array.from({ length: BATCH_SIZE + 1 }, (_, i) => ({
       id: `${facilityData.id}${i}`,
