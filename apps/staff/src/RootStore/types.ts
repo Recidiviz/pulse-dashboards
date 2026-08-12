@@ -114,6 +114,7 @@ export type FeatureVariant =
   | "usMiPositiveOutcomesBanner"
   | "usMiRestrictiveHousingV2"
   | "usMiRestrictiveHousingV2Ineligible"
+  | "usMiClassification"
 
   //// Missouri
   | "usMoOverdueRHPilot"
@@ -276,6 +277,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usMiFacilitySearch: {},
   usMiRestrictiveHousingV2: {},
   usMiRestrictiveHousingV2Ineligible: {},
+  usMiClassification: {},
   usNcCrrApprovalFlow: {},
   usNcCrrApprover: {},
   indefiniteSnooze: {},
@@ -341,6 +343,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usMiCaseManagerSearch: {},
         usMiCustodyLevelDowngrade: {},
         usMiRestrictiveHousingV2Ineligible: { activeTenants: ["US_MI"] },
+        usMiClassification: {},
         usMiFacilitySearch: {},
         usMiRestrictiveHousingV2: {},
         usMoOverdueRHPilot: {},

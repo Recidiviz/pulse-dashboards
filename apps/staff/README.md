@@ -277,6 +277,9 @@ See the [Yarn documentation](https://yarnpkg.com/en/docs) for more details and a
 
 [Vitest](https://vitest.dev/) is our testing framework. It provides a friendly testing API, a powerful and easy-to-use mocking functionality, and plenty of speed. Snapshot testing is also a nice feature but should be used with caution. It is served best as a supplement, rather than a substitute, of a robust set of unit tests that properly describes what a piece of code is intended to do.
 
+If you have added something in that has an existing snapshot, you will likely receive an error of "Snapshot Mismatched" when you run "nx test staff". This happens often when a new feature variant is added in.
+To update the snapshot you can run: 'nx staff test -u'
+
 To execute tests, see [Linting & running tests](#linting--running-tests).
 
 To add new tests, create a file with the same name as the file you are testing and append the extension `.test.ts`. This file should be located in the same directory as the file you are testing.
