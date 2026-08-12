@@ -15,28 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Route, Routes } from "react-router-dom";
+import { Loading } from "@recidiviz/design-system";
+import { ErrorBoundary } from "@sentry/react";
+import { Suspense } from "react";
 
-import { NotFound } from "~@jii/common-ui";
-import { ResourceExplorer } from "~@jii/paths";
+import { ErrorPageMainContent } from "~@jii/layout";
 
-import { UsNycResourcesLayout } from "./UsNycResourcesLayout";
-
-export function UsNycRouter() {
+export function QueryBoundary({ children }: { children: React.ReactNode }) {
   return (
-    <Routes>
-      <Route index element={null} />
-      <Route path={ResourceExplorer.path} element={<UsNycResourcesLayout />}>
-        <Route index element={null} />
-        <Route path={ResourceExplorer.CategoryResults.path} element={null}>
-          <Route
-            path={ResourceExplorer.CategoryResults.Detail.path}
-            element={null}
-          />
-        </Route>
-        <Route path="*" element={<NotFound />} />
-      </Route>
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+    <ErrorBoundary fallback={ErrorPageMainContent}>
+      <Suspense fallback={<Loading />}>{children}</Suspense>
+    </ErrorBoundary>
   );
 }

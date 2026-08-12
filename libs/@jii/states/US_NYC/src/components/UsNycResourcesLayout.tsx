@@ -15,28 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Route, Routes } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
-import { NotFound } from "~@jii/common-ui";
-import { ResourceExplorer } from "~@jii/paths";
+import { QueryBoundary } from "./QueryBoundary";
 
-import { UsNycResourcesLayout } from "./UsNycResourcesLayout";
-
-export function UsNycRouter() {
+export function UsNycResourcesLayout() {
   return (
-    <Routes>
-      <Route index element={null} />
-      <Route path={ResourceExplorer.path} element={<UsNycResourcesLayout />}>
-        <Route index element={null} />
-        <Route path={ResourceExplorer.CategoryResults.path} element={null}>
-          <Route
-            path={ResourceExplorer.CategoryResults.Detail.path}
-            element={null}
-          />
-        </Route>
-        <Route path="*" element={<NotFound />} />
-      </Route>
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+    <QueryBoundary>
+      <Outlet />
+    </QueryBoundary>
   );
 }
