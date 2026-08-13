@@ -102,6 +102,19 @@ export const US_TX_ARS_ERS_BLOCKING_SUBMIT_FIELDS: Record<string, string[]> = {
   ],
 };
 
+// The remarks field for each role in the review chain, keyed the same as
+// US_TX_ARS_ERS_BLOCKING_SUBMIT_FIELDS. Remarks are never required to submit, but
+// while a step is in "revisions requested" status, that step's own blocking fields are
+// often already complete from a prior submission — so editing only the remarks field is
+// accepted as evidence that the requested revision was addressed.
+export const US_TX_ARS_ERS_REMARKS_FIELDS: Record<string, string> = {
+  paroleOfficer: "supervisingOfficerRemarks",
+  unitSupervisor: "unitSupervisorRemarks",
+  paroleSupervisor: "paroleSupervisorRemarks",
+  assistantRegionDirector: "assistantRegionDirectorRemarks",
+  regionDirector: "regionDirectorRemarks",
+};
+
 export function prefilledArsErsSharedDraftData(
   client: Client,
   formInformation: UsTxArsErsSharedFormInformation,

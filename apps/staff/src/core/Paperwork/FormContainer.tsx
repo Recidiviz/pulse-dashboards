@@ -315,6 +315,16 @@ export const FormContainer = observer(function FormContainer({
     }
   };
 
+  let submitButtonTooltip = undefined;
+
+  if (!userHasFilledNecessaryFields && opportunity.isInRevisionsRequested) {
+    submitButtonTooltip =
+      "Edit Name, Signature, Date, Recommendation or Remarks fields";
+  } else if (!userHasFilledNecessaryFields) {
+    submitButtonTooltip =
+      "Add Name, Signature, Date, and Recommendation to form";
+  }
+
   return (
     <FormContainerElement>
       <FormHeaderBar>
@@ -336,13 +346,7 @@ export const FormContainer = observer(function FormContainer({
         {opportunity.config.enableSupervisorReviewChain ? (
           <>
             <ReviewChainButtons>
-              <TooltipTrigger
-                contents={
-                  !userHasFilledNecessaryFields
-                    ? "Add Signature, Date, and Recommendation to form"
-                    : undefined
-                }
-              >
+              <TooltipTrigger contents={submitButtonTooltip}>
                 <SubmitButton
                   disabled={!userHasFilledNecessaryFields}
                   onClick={() => setOpenModal("approval")}

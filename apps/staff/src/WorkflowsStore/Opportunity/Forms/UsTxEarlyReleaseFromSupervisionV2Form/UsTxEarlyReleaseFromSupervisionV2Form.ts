@@ -27,6 +27,7 @@ import { OpportunityFormComponentName } from "../../../../core/WorkflowsLayouts"
 import {
   prefilledArsErsSharedDraftData,
   US_TX_ARS_ERS_BLOCKING_SUBMIT_FIELDS,
+  US_TX_ARS_ERS_REMARKS_FIELDS,
 } from "../../UsTx/UsTxArsErsSharedUtils";
 import type { UsTxEarlyReleaseFromSupervisionV2DraftData } from "../../UsTx/UsTxDraftData";
 import { UsTxEarlyReleaseFromSupervisionV2Opportunity } from "../../UsTx/UsTxEarlyReleaseFromSupervisionV2Opportunity/UsTxEarlyReleaseFromSupervisionV2Opportunity";
@@ -147,10 +148,16 @@ export class UsTxEarlyReleaseFromSupervisionV2Form extends FormBase<
     // The current user must have personally authored at least one blocking field.
     // This prevents a user who only filled non-blocking fields (e.g. remarks) from
     // submitting on the strength of a different user's blocking-field edits.
-    const atLeastOneBlockStarted = Object.values(
+    // Exception: while the opportunity is in "revisions requested" status, a role's
+    // blocking fields are often already complete from a prior submission, so editing
+    // that role's remarks field also counts.
+    const atLeastOneBlockStarted = Object.entries(
       US_TX_ARS_ERS_BLOCKING_SUBMIT_FIELDS,
-    ).some((formValues) =>
-      formValues.some((field) => isFieldByCurrentUser(field)),
+    ).some(
+      ([role, formValues]) =>
+        formValues.some((field) => isFieldByCurrentUser(field)) ||
+        (this?.opportunity?.isInRevisionsRequested &&
+          isFieldByCurrentUser(US_TX_ARS_ERS_REMARKS_FIELDS[role])),
     );
 
     return (
