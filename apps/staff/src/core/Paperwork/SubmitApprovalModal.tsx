@@ -18,7 +18,7 @@
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { StaffRecord } from "~datatypes";
 
@@ -27,7 +27,7 @@ import { WorkflowsStore } from "../../WorkflowsStore";
 import { Opportunity } from "../../WorkflowsStore/Opportunity";
 import { OpportunityStatusUpdateToast } from "../opportunityStatusUpdateToast";
 import { StaffLookup } from "../PersonLookup/StaffLookup";
-import { workflowsUrl } from "../views";
+import { navigateBackFromOpportunityForm } from "../utils/workflowsUtils";
 import {
   CancelButton,
   ModalFooter,
@@ -50,6 +50,8 @@ export const SubmitApprovalModal = observer(function SubmitApprovalModal({
   opportunity,
 }: SubmitApprovalModalProps) {
   const navigate = useNavigate();
+  const { pathname, key: locationKey } = useLocation();
+  const { officerPseudoId, supervisorPseudoId } = useParams();
   const [selectedStaff, setSelectedStaff] = useState<StaffRecord | null>(null);
 
   return (
@@ -100,11 +102,15 @@ export const SubmitApprovalModal = observer(function SubmitApprovalModal({
               },
             );
             onCloseFn();
-            navigate(
-              workflowsUrl("opportunityClients", {
-                urlSection: opportunity.config.urlSection,
-              }),
-            );
+
+            navigateBackFromOpportunityForm({
+              navigate,
+              pathname,
+              urlSection: opportunity.config.urlSection,
+              officerPseudoId,
+              supervisorPseudoId,
+              locationKey,
+            });
           }}
         >
           Forward

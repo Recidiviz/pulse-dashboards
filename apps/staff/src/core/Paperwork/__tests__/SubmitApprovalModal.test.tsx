@@ -18,6 +18,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { useState } from "react";
 import ReactModal from "react-modal";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 
 import { mockOpportunity } from "../../__tests__/testUtils";
 import { SubmitApprovalModal } from "../SubmitApprovalModal";
@@ -85,9 +86,16 @@ vi.mock("../../PersonLookup/StaffLookup", () => ({
 vi.mock("../../views", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../../views")>()),
   workflowsUrl: () => "/test-url",
+  insightsUrl: (routeName: string) => `/test-insights-url-${routeName}`,
 }));
 
-function setup(overrides: Partial<typeof mockOpportunity> = {}) {
+function setup(
+  overrides: Partial<typeof mockOpportunity> = {},
+  {
+    path = "/workflows/some-opportunity",
+    initialEntry = "/workflows/some-opportunity",
+  }: { path?: string; initialEntry?: string } = {},
+) {
   const onCloseFn = vi.fn();
   const opportunity = {
     ...mockOpportunity,
@@ -98,12 +106,21 @@ function setup(overrides: Partial<typeof mockOpportunity> = {}) {
   };
 
   render(
-    <SubmitApprovalModal
-      showModal
-      onCloseFn={onCloseFn}
-      opportunity={opportunity as any}
-      workflowsStore={{} as any}
-    />,
+    <MemoryRouter initialEntries={[initialEntry]}>
+      <Routes>
+        <Route
+          path={path}
+          element={
+            <SubmitApprovalModal
+              showModal
+              onCloseFn={onCloseFn}
+              opportunity={opportunity as any}
+              workflowsStore={{} as any}
+            />
+          }
+        />
+      </Routes>
+    </MemoryRouter>,
   );
 
   return { onCloseFn, opportunity };
@@ -206,6 +223,38 @@ describe("ForwardButton", () => {
     selectOfficerViaLookup();
     fireEvent.click(screen.getByRole("button", { name: "Forward" }));
     expect(mockNavigate).toHaveBeenCalledWith("/test-url");
+  });
+
+  it("navigates to the insights officer opportunity page when opened from an Insights officer route", () => {
+    setup(
+      {},
+      {
+        path: "/insights/supervision/staff/:officerPseudoId/opportunity/:opportunityTypeUrl/:clientPseudoId/:opportunityPseudoId",
+        initialEntry:
+          "/insights/supervision/staff/officer1/opportunity/some-opportunity/client1/opp1",
+      },
+    );
+    selectOfficerViaLookup();
+    fireEvent.click(screen.getByRole("button", { name: "Forward" }));
+    expect(mockNavigate).toHaveBeenCalledWith(
+      "/test-insights-url-supervisionOpportunity",
+    );
+  });
+
+  it("navigates to the insights supervisor opportunity page when opened from an Insights supervisor route", () => {
+    setup(
+      {},
+      {
+        path: "/insights/supervision/supervisor/:supervisorPseudoId/opportunity/:opportunityTypeUrl/:clientPseudoId/:opportunityPseudoId",
+        initialEntry:
+          "/insights/supervision/supervisor/supervisor1/opportunity/some-opportunity/client1/opp1",
+      },
+    );
+    selectOfficerViaLookup();
+    fireEvent.click(screen.getByRole("button", { name: "Forward" }));
+    expect(mockNavigate).toHaveBeenCalledWith(
+      "/test-insights-url-supervisionSupervisorOpportunity",
+    );
   });
 
   it("shows a toast notification after forwarding", () => {

@@ -19,7 +19,7 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
@@ -31,7 +31,7 @@ import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { WorkflowsStore } from "../../WorkflowsStore";
 import { Opportunity } from "../../WorkflowsStore/Opportunity";
 import { OpportunityStatusUpdateToast } from "../opportunityStatusUpdateToast";
-import { workflowsUrl } from "../views";
+import { navigateBackFromOpportunityForm } from "../utils/workflowsUtils";
 import WorkflowsOfficerName from "../WorkflowsOfficerName/WorkflowsOfficerName";
 import {
   CancelButton,
@@ -88,6 +88,8 @@ export const SubmitRevisionModal = observer(function SubmitRevisionModal({
   workflowsStore,
 }: submitRevisionModalProps) {
   const navigate = useNavigate();
+  const { pathname, key: locationKey } = useLocation();
+  const { officerPseudoId, supervisorPseudoId } = useParams();
   const { availableOfficersWithOrWithoutCaseloads } = workflowsStore;
 
   const previousReviewerIds =
@@ -205,11 +207,15 @@ export const SubmitRevisionModal = observer(function SubmitRevisionModal({
             setReason("");
 
             onCloseFn();
-            navigate(
-              workflowsUrl("opportunityClients", {
-                urlSection: opportunity.config.urlSection,
-              }),
-            );
+
+            navigateBackFromOpportunityForm({
+              navigate,
+              pathname,
+              urlSection: opportunity.config.urlSection,
+              officerPseudoId,
+              supervisorPseudoId,
+              locationKey,
+            });
           }}
         >
           Send

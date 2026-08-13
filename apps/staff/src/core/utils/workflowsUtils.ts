@@ -17,11 +17,13 @@
 
 import { some } from "lodash";
 import { rgba } from "polished";
+import { NavigateFunction } from "react-router-dom";
 
 import { palette } from "~design-system";
 
 import { type Opportunity } from "../../WorkflowsStore";
 import { OTHER_KEY } from "../../WorkflowsStore/utils";
+import { INSIGHTS_PATHS, insightsUrl, workflowsUrl } from "../views";
 
 export const OPPORTUNITY_STATUS_COLORS = {
   eligible: {
@@ -172,4 +174,83 @@ export function reasonsIncludesKey(key: string, reasons?: string[]) {
   return some(reasons, (reason) =>
     reason.toUpperCase().includes(key.toUpperCase()),
   );
+}
+
+/**
+ * Resolves the Insights URL to return to after leaving an opportunity form
+ * (via the Back button or after submitting/forwarding it), if the form was
+ * reached from an Insights page. Returns undefined otherwise, so callers can
+ * fall back to their own (Workflows or browser-history) navigation.
+ */
+export function getInsightsOpportunityUrl({
+  pathname,
+  urlSection,
+  officerPseudoId,
+  supervisorPseudoId,
+}: {
+  pathname: string;
+  urlSection: string | undefined;
+  officerPseudoId: string | undefined;
+  supervisorPseudoId: string | undefined;
+}): string | undefined {
+  if (!urlSection || !pathname.startsWith(INSIGHTS_PATHS.supervision)) {
+    return undefined;
+  }
+
+  if (officerPseudoId) {
+    return insightsUrl("supervisionOpportunity", {
+      officerPseudoId,
+      opportunityTypeUrl: urlSection,
+    });
+  }
+
+  if (supervisorPseudoId) {
+    return insightsUrl("supervisionSupervisorOpportunity", {
+      supervisorPseudoId,
+      opportunityTypeUrl: urlSection,
+    });
+  }
+
+  return undefined;
+}
+
+/**
+ * Navigates back from an opportunity form (via the Back button or after
+ * submitting/forwarding it) to the Insights page it was reached from, if any;
+ * otherwise falls back to in-app history or the opportunity's caseload page.
+ */
+export function navigateBackFromOpportunityForm({
+  navigate,
+  pathname,
+  urlSection,
+  officerPseudoId,
+  supervisorPseudoId,
+  locationKey,
+}: {
+  navigate: NavigateFunction;
+  pathname: string;
+  urlSection: string | undefined;
+  officerPseudoId: string | undefined;
+  supervisorPseudoId: string | undefined;
+  locationKey: string;
+}): void {
+  const insightsDestination = getInsightsOpportunityUrl({
+    pathname,
+    urlSection,
+    officerPseudoId,
+    supervisorPseudoId,
+  });
+
+  if (insightsDestination) {
+    navigate(insightsDestination);
+  } else if (urlSection && locationKey === "default") {
+    navigate(workflowsUrl("opportunityClients", { urlSection }));
+  } else {
+    // Prefer navigate(-1) over passing previousPage through link state so
+    // that any new entry point to this form works correctly without needing
+    // to remember to thread the state key through.
+    // location.key is 'default' only on a fresh deep link; any other value
+    // means React Router pushed this entry, so navigate(-1) stays in-app.
+    navigate(-1);
+  }
 }

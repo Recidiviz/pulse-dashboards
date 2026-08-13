@@ -168,8 +168,8 @@ describe("Opportunity methods", () => {
       await presenter.hydrate();
     });
 
-    it("opportunities should be not defined", () => {
-      expect(presenter.opportunities).toBeUndefined();
+    it("opportunities is empty", () => {
+      expect(presenter.opportunities).toBeEmpty();
     });
 
     it("opportunitiesByType is empty", () => {
@@ -288,7 +288,7 @@ describe("Opportunity methods", () => {
         ]);
         jiiStore.caseloadByReviewerId.set(REVIEWER_EXTERNAL_ID, [client]);
 
-        expect(presenter.opportunities).toBeUndefined();
+        expect(presenter.opportunities).toBeEmpty();
       });
 
       it("ignores the reviewer caseload when the review table is disabled", () => {

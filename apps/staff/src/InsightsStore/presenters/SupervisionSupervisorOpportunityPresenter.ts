@@ -160,8 +160,11 @@ export class SupervisionSupervisorOpportunityPresenter extends SupervisionSuperv
     return oppsByType;
   }
 
-  get opportunities(): Opportunity[] | undefined {
-    return this.opportunitiesByType?.[this.opportunityType];
+  // Empty (rather than undefined) once hydrated, so a reviewer with zero
+  // opportunities of this type currently assigned for review is a valid
+  // empty state, not a "not found" state (see InsightsSupervisorOpportunityPage).
+  get opportunities(): Opportunity[] {
+    return this.opportunitiesByType[this.opportunityType] ?? [];
   }
 
   get displayTabGroups(): OpportunityTabGroup[] {
@@ -187,7 +190,12 @@ export class SupervisionSupervisorOpportunityPresenter extends SupervisionSuperv
   }
 
   get opportunityLabel(): string {
-    return this.opportunities?.[0].config.label ?? "";
+    // Read from the config rather than an opportunity instance, since the
+    // reviewer's queue for this type may legitimately be empty.
+    return (
+      this.opportunityConfigurationStore.opportunities[this.opportunityType]
+        ?.label ?? ""
+    );
   }
 
   get clients(): JusticeInvolvedPerson[] {

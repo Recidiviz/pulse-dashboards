@@ -17,6 +17,7 @@
 
 import { fireEvent, render, screen } from "@testing-library/react";
 import ReactModal from "react-modal";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 
 import { mockOpportunity } from "../../__tests__/testUtils";
 import { SubmitRevisionModal } from "../SubmitRevisionModal";
@@ -38,6 +39,7 @@ vi.mock("../../WorkflowsOfficerName/WorkflowsOfficerName", () => ({
 vi.mock("../../views", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../../views")>()),
   workflowsUrl: () => "/test-url",
+  insightsUrl: (routeName: string) => `/test-insights-url-${routeName}`,
 }));
 
 const mockOfficer = {
@@ -49,7 +51,13 @@ const mockWorkflowsStore = {
   availableOfficersWithOrWithoutCaseloads: [mockOfficer],
 };
 
-function setup(overrides: Partial<typeof mockOpportunity> = {}) {
+function setup(
+  overrides: Partial<typeof mockOpportunity> = {},
+  {
+    path = "/workflows/some-opportunity",
+    initialEntry = "/workflows/some-opportunity",
+  }: { path?: string; initialEntry?: string } = {},
+) {
   const onCloseFn = vi.fn();
   const opportunity = {
     ...mockOpportunity,
@@ -62,12 +70,21 @@ function setup(overrides: Partial<typeof mockOpportunity> = {}) {
   };
 
   render(
-    <SubmitRevisionModal
-      showModal
-      onCloseFn={onCloseFn}
-      opportunity={opportunity as any}
-      workflowsStore={mockWorkflowsStore as any}
-    />,
+    <MemoryRouter initialEntries={[initialEntry]}>
+      <Routes>
+        <Route
+          path={path}
+          element={
+            <SubmitRevisionModal
+              showModal
+              onCloseFn={onCloseFn}
+              opportunity={opportunity as any}
+              workflowsStore={mockWorkflowsStore as any}
+            />
+          }
+        />
+      </Routes>
+    </MemoryRouter>,
   );
 
   return { onCloseFn, opportunity };
@@ -185,6 +202,40 @@ describe("SendButton", () => {
     expect(mockNavigate).toHaveBeenCalledWith("/test-url");
   });
 
+  it("navigates to the insights officer opportunity page when opened from an Insights officer route", () => {
+    setup(
+      {},
+      {
+        path: "/insights/supervision/staff/:officerPseudoId/opportunity/:opportunityTypeUrl/:clientPseudoId/:opportunityPseudoId",
+        initialEntry:
+          "/insights/supervision/staff/officer1/opportunity/some-opportunity/client1/opp1",
+      },
+    );
+    selectOfficer();
+    enterReason();
+    fireEvent.click(screen.getByRole("button", { name: "Send" }));
+    expect(mockNavigate).toHaveBeenCalledWith(
+      "/test-insights-url-supervisionOpportunity",
+    );
+  });
+
+  it("navigates to the insights supervisor opportunity page when opened from an Insights supervisor route", () => {
+    setup(
+      {},
+      {
+        path: "/insights/supervision/supervisor/:supervisorPseudoId/opportunity/:opportunityTypeUrl/:clientPseudoId/:opportunityPseudoId",
+        initialEntry:
+          "/insights/supervision/supervisor/supervisor1/opportunity/some-opportunity/client1/opp1",
+      },
+    );
+    selectOfficer();
+    enterReason();
+    fireEvent.click(screen.getByRole("button", { name: "Send" }));
+    expect(mockNavigate).toHaveBeenCalledWith(
+      "/test-insights-url-supervisionSupervisorOpportunity",
+    );
+  });
+
   it("shows a toast notification after sending", () => {
     setup();
     selectOfficer();
@@ -249,12 +300,21 @@ describe("Officer dropdown", () => {
     };
 
     render(
-      <SubmitRevisionModal
-        showModal
-        onCloseFn={vi.fn()}
-        opportunity={opportunity as any}
-        workflowsStore={workflowsStoreWithBoth as any}
-      />,
+      <MemoryRouter initialEntries={["/workflows/some-opportunity"]}>
+        <Routes>
+          <Route
+            path="/workflows/some-opportunity"
+            element={
+              <SubmitRevisionModal
+                showModal
+                onCloseFn={vi.fn()}
+                opportunity={opportunity as any}
+                workflowsStore={workflowsStoreWithBoth as any}
+              />
+            }
+          />
+        </Routes>
+      </MemoryRouter>,
     );
 
     openDropdown();

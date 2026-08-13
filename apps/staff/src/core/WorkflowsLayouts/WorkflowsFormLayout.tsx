@@ -53,7 +53,7 @@ import { WorkflowsFormUsTnSuspensionOfDirectSupervision } from "../Paperwork/US_
 import { FormUsTnDiagnosticClassification2026 } from "../Paperwork/US_TN/UsTnDiagnosticClassification2026/FormUsTnDiagnosticClassification2026";
 import { FormUsTnReclassification2026 } from "../Paperwork/US_TN/UsTnReclassification2026/FormUsTnReclassification2026";
 import { FormUsTnReclassification2026V2 } from "../Paperwork/US_TN/UsTnReclassification2026V2/FormUsTnReclassification2026V2";
-import { INSIGHTS_PATHS, insightsUrl, workflowsUrl } from "../views";
+import { navigateBackFromOpportunityForm } from "../utils/workflowsUtils";
 import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
 import WorkflowsEarlyTerminationDeferredForm from "../WorkflowsEarlyTerminationDeferredForm/WorkflowsEarlyTerminationDeferredForm";
 import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
@@ -200,38 +200,14 @@ const HydratedWorkflowsFormLayout = observer(
 
     const handleBack = () => {
       if (currentView === "OPPORTUNITY_PREVIEW") {
-        const isInsights = pathname.startsWith(INSIGHTS_PATHS.supervision);
-        const urlSection = selectedOpportunity?.config.urlSection;
-        if (isInsights && urlSection && officerPseudoId) {
-          navigate(
-            insightsUrl("supervisionOpportunity", {
-              officerPseudoId: officerPseudoId,
-              opportunityTypeUrl: urlSection,
-            }),
-          );
-        } else if (isInsights && urlSection && supervisorPseudoId) {
-          navigate(
-            insightsUrl("supervisionSupervisorOpportunity", {
-              supervisorPseudoId: supervisorPseudoId,
-              opportunityTypeUrl: urlSection,
-            }),
-          );
-        } else if (locationKey !== "default") {
-          // Prefer navigate(-1) over passing previousPage through link state so
-          // that any new entry point to this form works correctly without needing
-          // to remember to thread the state key through.
-          // location.key is 'default' only on a fresh deep link; any other value
-          // means React Router pushed this entry, so navigate(-1) stays in-app.
-          navigate(-1);
-        } else if (selectedOpportunity?.config.urlSection) {
-          const parentUrl = workflowsUrl("opportunityClients", {
-            urlSection,
-          });
-
-          navigate(parentUrl);
-        } else {
-          navigate(-1);
-        }
+        navigateBackFromOpportunityForm({
+          navigate,
+          pathname,
+          urlSection: selectedOpportunity?.config.urlSection,
+          officerPseudoId,
+          supervisorPseudoId,
+          locationKey,
+        });
       } else {
         setCurrentView("OPPORTUNITY_PREVIEW");
       }

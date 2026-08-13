@@ -52,21 +52,17 @@ export const SupervisorOpportunityPageWithPresenter = observer(
       supervisorInfo,
       previousPages,
       opportunityType,
-      opportunities,
       opportunityLabel,
       opportunitiesByType,
     } = presenter;
 
     // If the presenter is hydrated and we're on an opportunity page, this stuff should
-    // never be missing in practice.
-    // TODO(#6983): the opportunities and opportunitiesByType are missing initially.
+    // never be missing in practice. Note `opportunities` is deliberately excluded here --
+    // a reviewer with zero opportunities of this type currently assigned for review is a
+    // valid, successfully-hydrated empty state, not a "not found" state.
+    // TODO(#6983): opportunitiesByType is missing initially.
     if (!isHydrated(presenter)) return null;
-    if (
-      !supervisorInfo ||
-      !opportunityType ||
-      !opportunities ||
-      !opportunitiesByType
-    )
+    if (!supervisorInfo || !opportunityType || !opportunitiesByType)
       return <NotFound />;
 
     return (
