@@ -147,23 +147,25 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
         </FilterSection>
 
         <CategoriesList>
-          {presenter.filteredProgramsByCategory.map(({ name, programs }) => (
-            <CategorySection
-              key={name}
-              categoryName={name}
-              programCount={programs.length}
-              totalCount={presenter.totalProgramsByCategory.get(name)}
-            >
-              {programs.map((program) => (
-                <ProgramCard
-                  key={`${program.programId}-${program.title}`}
-                  program={program}
-                  onToggleStar={handleToggleStar}
-                  onClick={setSelectedProgram}
-                />
-              ))}
-            </CategorySection>
-          ))}
+          {presenter.filteredProgramsByCategory.map(
+            ({ category, programs }) => (
+              <CategorySection
+                key={category.key}
+                categoryName={category.label}
+                programCount={programs.length}
+                totalCount={presenter.totalProgramsByCategory.get(category.key)}
+              >
+                {programs.map((program) => (
+                  <ProgramCard
+                    key={`${program.programId}-${program.title}`}
+                    program={program}
+                    onToggleStar={handleToggleStar}
+                    onClick={setSelectedProgram}
+                  />
+                ))}
+              </CategorySection>
+            ),
+          )}
         </CategoriesList>
 
         <ProgramDetailModal

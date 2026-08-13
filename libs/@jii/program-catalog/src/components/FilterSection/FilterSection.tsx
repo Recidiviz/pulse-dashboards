@@ -24,7 +24,7 @@ import { Checkbox, Selector } from "~@jii/common-ui";
 import { Icon, palette } from "~design-system";
 
 import { ProgramCatalogPresenter } from "../../presenter/ProgramCatalogPresenter";
-import { TFn } from "../../types";
+import { LabeledValue, TFn } from "../../types";
 
 const ResultsCount = styled.p`
   ${typography.Sans14};
@@ -204,10 +204,22 @@ export const FilterSection: FC<FilterSectionProps> = ({
     clearAllFilters,
   } = presenter;
 
-  const allCategoriesLabel = t(($) => $.programs.filters.allCategories);
-  const allFacilitiesLabel = t(($) => $.programs.filters.allFacilities);
+  const toOption = ({ key, label }: LabeledValue) => ({
+    label,
+    value: key,
+  });
 
-  const toOption = (value: string) => ({ label: value, value });
+  const allCategoriesOption = {
+    label: t(($) => $.programs.filters.allCategories),
+    value: undefined,
+  };
+  const allFacilitiesOption = {
+    label: t(($) => $.programs.filters.allFacilities),
+    value: undefined,
+  };
+
+  const categoryOptions = [allCategoriesOption, ...categories.map(toOption)];
+  const facilityOptions = [allFacilitiesOption, ...facilities.map(toOption)];
 
   const checkboxProps = {
     $size: 16,
@@ -245,15 +257,11 @@ export const FilterSection: FC<FilterSectionProps> = ({
             </DropdownLabel>
             <Selector
               labelId="category-select-label"
-              placeholder={allCategoriesLabel}
-              options={[
-                { label: allCategoriesLabel, value: undefined },
-                ...categories.map(toOption),
-              ]}
+              placeholder={allCategoriesOption.label}
+              options={categoryOptions}
               value={
-                selectedCategory
-                  ? toOption(selectedCategory)
-                  : { label: allCategoriesLabel, value: undefined }
+                categoryOptions.find((o) => o.value === selectedCategory) ??
+                allCategoriesOption
               }
               onChange={setSelectedCategory}
             />
@@ -265,15 +273,11 @@ export const FilterSection: FC<FilterSectionProps> = ({
             </DropdownLabel>
             <Selector
               labelId="facility-select-label"
-              placeholder={allFacilitiesLabel}
-              options={[
-                { label: allFacilitiesLabel, value: undefined },
-                ...facilities.map(toOption),
-              ]}
+              placeholder={allFacilitiesOption.label}
+              options={facilityOptions}
               value={
-                selectedFacility
-                  ? toOption(selectedFacility)
-                  : { label: allFacilitiesLabel, value: undefined }
+                facilityOptions.find((o) => o.value === selectedFacility) ??
+                allFacilitiesOption
               }
               onChange={setSelectedFacility}
             />

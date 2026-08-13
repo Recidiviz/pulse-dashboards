@@ -73,6 +73,7 @@
       "eligibilityPrereq": "Requisito previo: {{prereq}}",
       "eligibilityNone": "Sin requisitos",
       "availableFacilities": "Instalaciones disponibles",
+      "allFacilities": "Todas las instalaciones",
       "closeWindow": "Cerrar ventana"
     },
     "homepageCta": {

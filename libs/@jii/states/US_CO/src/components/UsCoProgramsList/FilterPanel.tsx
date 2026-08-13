@@ -138,10 +138,22 @@ export const FilterPanel: FC<FilterPanelProps> = ({ presenter }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { t } = useUsCoTranslations();
 
-  const allCategoriesLabel = t(($) => $.programs.filters.allCategories);
-  const allFacilitiesLabel = t(($) => $.programs.filters.allFacilities);
+  const allCategoriesOption = {
+    label: t(($) => $.programs.filters.allCategories),
+    value: undefined,
+  };
+  const allFacilitiesOption = {
+    label: t(($) => $.programs.filters.allFacilities),
+    value: undefined,
+  };
 
-  const toOption = (value: string) => ({ label: value, value });
+  const toOption = ({ key, label }: { key: string; label: string }) => ({
+    label,
+    value: key,
+  });
+
+  const categoryOptions = [allCategoriesOption, ...categories.map(toOption)];
+  const facilityOptions = [allFacilitiesOption, ...facilities.map(toOption)];
 
   const checkboxProps = {
     $size: 16,
@@ -178,15 +190,11 @@ export const FilterPanel: FC<FilterPanelProps> = ({ presenter }) => {
               </DropdownLabel>
               <Selector
                 labelId="category-select-label"
-                placeholder={allCategoriesLabel}
-                options={[
-                  { label: allCategoriesLabel, value: undefined },
-                  ...categories.map(toOption),
-                ]}
+                placeholder={allCategoriesOption.label}
+                options={categoryOptions}
                 value={
-                  selectedCategory
-                    ? toOption(selectedCategory)
-                    : { label: allCategoriesLabel, value: undefined }
+                  categoryOptions.find((o) => o.value === selectedCategory) ??
+                  allCategoriesOption
                 }
                 onChange={setSelectedCategory}
               />
@@ -198,15 +206,11 @@ export const FilterPanel: FC<FilterPanelProps> = ({ presenter }) => {
                 </DropdownLabel>
                 <Selector
                   labelId="facility-select-label"
-                  placeholder={allFacilitiesLabel}
-                  options={[
-                    { label: allFacilitiesLabel, value: undefined },
-                    ...facilities.map(toOption),
-                  ]}
+                  placeholder={allFacilitiesOption.label}
+                  options={facilityOptions}
                   value={
-                    selectedFacility
-                      ? toOption(selectedFacility)
-                      : { label: allFacilitiesLabel, value: undefined }
+                    facilityOptions.find((o) => o.value === selectedFacility) ??
+                    allFacilitiesOption
                   }
                   onChange={setSelectedFacility}
                 />

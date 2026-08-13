@@ -20,11 +20,12 @@ import { TRPCError } from "@trpc/server";
 
 import { createCachedCall } from "../../../../helpers/createCachedCall";
 import { getSheetData } from "../../../../helpers/googleSheets";
+import { processProgram } from "./processProgram";
 import { ProgramFromSheet, programFromSheetSchema } from "./schema";
 import { US_AR_CONFIG } from "./stateConfigs/US_AR";
 import { US_CO_CONFIG } from "./stateConfigs/US_CO";
 import { US_MA_CONFIG } from "./stateConfigs/US_MA";
-import type { ProgramsConfig } from "./types";
+import type { ProcessedProgram, ProgramsConfig } from "./types";
 
 async function fetchProgramsForConfig(
   config: ProgramsConfig,
@@ -65,9 +66,9 @@ const cachedFetchersByState = Object.fromEntries(
   ]),
 );
 
-export function fetchProgramsForState(
+export async function fetchProgramsForState(
   stateCode: string,
-): Promise<ProgramFromSheet[]> {
+): Promise<ProcessedProgram[]> {
   const fetcher = cachedFetchersByState[stateCode];
   if (!fetcher) {
     throw new TRPCError({
@@ -75,5 +76,5 @@ export function fetchProgramsForState(
       message: `No programs configured for ${stateCode}`,
     });
   }
-  return fetcher();
+  return (await fetcher()).map(processProgram);
 }

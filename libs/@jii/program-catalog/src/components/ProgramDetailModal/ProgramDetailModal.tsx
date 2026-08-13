@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { Modal as ModalBase, typography } from "@recidiviz/design-system";
-import { upperFirst } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC } from "react";
@@ -151,20 +150,6 @@ type ProgramDetailModalProps = {
   t: TFn;
 };
 
-// TODO: Once Colorado uses this logic too, move it into the server
-function buildEligibilityItems(program: Program, t: TFn): string[] {
-  const { eligibilityRequirements } = program;
-
-  if (["None", ""].includes(eligibilityRequirements)) {
-    return [t(($) => $.programs.modal.eligibilityNone)];
-  }
-
-  return program.eligibilityRequirements
-    .split(/\s*;\s*(?:and\s*)?/)
-    .filter(Boolean)
-    .map(upperFirst);
-}
-
 const ProgramDetailModalComponent: FC<ProgramDetailModalProps> = ({
   program,
   isOpen,
@@ -174,7 +159,11 @@ const ProgramDetailModalComponent: FC<ProgramDetailModalProps> = ({
   showStars,
   t,
 }) => {
-  const eligibilityItems = program ? buildEligibilityItems(program, t) : [];
+  // the server parses the sheet's requirements; an empty list is what "no
+  // requirements" looks like, and the copy for that case belongs here
+  const eligibilityItems = program?.eligibilityRequirements.length
+    ? program.eligibilityRequirements
+    : [t(($) => $.programs.modal.eligibilityNone)];
 
   return (
     <StyledModal isOpen={isOpen} onRequestClose={onClose}>
@@ -243,9 +232,15 @@ const ProgramDetailModalComponent: FC<ProgramDetailModalProps> = ({
                 {t(($) => $.programs.modal.availableFacilities)}
               </SectionHeading>
               <FacilitiesList>
-                {program.facilitiesOffered.map((facility) => (
-                  <FacilityBadge key={facility}>{facility}</FacilityBadge>
-                ))}
+                {program.availableAtAllFacilities ? (
+                  <FacilityBadge>
+                    {t(($) => $.programs.modal.allFacilities)}
+                  </FacilityBadge>
+                ) : (
+                  program.facilitiesOffered.map(({ key, label }) => (
+                    <FacilityBadge key={key}>{label}</FacilityBadge>
+                  ))
+                )}
               </FacilitiesList>
             </Section>
 

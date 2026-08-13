@@ -56,6 +56,7 @@ const commonProgramCatalogContentsSchema = z.object({
     eligibilityPrereq: z.string(),
     eligibilityNone: z.string(),
     availableFacilities: z.string(),
+    allFacilities: z.string(),
     closeWindow: z.string(),
   }),
   homepageCta: z.object({

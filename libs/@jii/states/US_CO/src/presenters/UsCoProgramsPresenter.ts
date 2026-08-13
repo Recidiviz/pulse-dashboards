@@ -16,9 +16,9 @@
 // =============================================================================
 
 import { captureException } from "@sentry/react";
-import { groups, rollup } from "d3-array";
+import { group, rollup } from "d3-array";
 import { max, parseISO } from "date-fns";
-import { isUndefined, sortBy } from "lodash";
+import { isUndefined, sortBy, uniqBy } from "lodash";
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { DataAPI, ResidentFlags, ResidentRecord } from "~@jii/data";
@@ -85,14 +85,14 @@ export class UsCoProgramsPresenter implements Hydratable {
 
     if (this.isYOSResident) {
       this.programs = this.programs?.filter((p) =>
-        p.facilitiesOffered.includes("Youthful Offender System"),
+        p.facilitiesOffered.some((f) => f.key === "Youthful Offender System"),
       );
     } else {
       // Hide YOS-only programs for everyone else
       this.programs = this.programs?.filter(
         (p) =>
           p.facilitiesOffered.length > 1 ||
-          p.facilitiesOffered[0] !== "Youthful Offender System",
+          p.facilitiesOffered[0]?.key !== "Youthful Offender System",
       );
     }
   }
@@ -117,32 +117,31 @@ export class UsCoProgramsPresenter implements Hydratable {
   }
 
   get filteredProgramsByCategory(): {
-    name: string;
+    category: UsCoProgram["category"];
     programs: UsCoProgram[];
   }[] {
-    if (!this.programs) return [];
-    const unsortedCategories = groups(
+    const programsByCategoryKey = group(
       this.filteredPrograms,
-      (p) => p.category,
-    ).map(([name, programs]) => ({ name, programs }));
-    return sortBy(unsortedCategories, "name");
-  }
-
-  get categories(): string[] {
-    if (!this.programs) return [];
-    const categories = new Set(this.programs.map((p) => p.category));
-    return Array.from(categories).sort();
-  }
-
-  get facilities(): string[] {
-    if (!this.programs) return [];
-    const facilities = new Set(
-      this.programs.flatMap((p) => p.facilitiesOffered),
+      (p) => p.category.key,
     );
-    // Remove "All facilities" from dropdown options - it's a special value meaning
-    // "available at all facilities", not a real facility to filter by
-    facilities.delete("All facilities");
-    return Array.from(facilities).sort();
+    return this.categories.flatMap((category) => {
+      const programs = programsByCategoryKey.get(category.key);
+      return programs ? [{ category, programs }] : [];
+    });
+  }
+
+  get categories(): UsCoProgram["category"][] {
+    if (!this.programs) return [];
+    const categories = this.programs.map((p) => p.category);
+    return sortBy(uniqBy(categories, "key"), "label");
+  }
+
+  get facilities(): UsCoProgram["facilitiesOffered"] {
+    if (!this.programs) return [];
+    // programs available everywhere carry no facilities, so they contribute
+    // nothing here — there is no magic value to filter back out
+    const facilities = this.programs.flatMap((p) => p.facilitiesOffered);
+    return sortBy(uniqBy(facilities, "key"), "label");
   }
 
   get filteredPrograms(): UsCoProgram[] {
@@ -158,16 +157,19 @@ export class UsCoProgramsPresenter implements Hydratable {
       }
 
       // Category filter
-      if (this.selectedCategory && program.category !== this.selectedCategory) {
+      if (
+        this.selectedCategory &&
+        program.category.key !== this.selectedCategory
+      ) {
         return false;
       }
 
       // Facility filter
-      // When a specific facility is selected, also show programs available at "All facilities"
+      // When a specific facility is selected, also show programs available everywhere
       if (
         this.selectedFacility &&
-        !program.facilitiesOffered.includes(this.selectedFacility) &&
-        !program.facilitiesOffered.includes("All facilities")
+        !program.availableAtAllFacilities &&
+        !program.facilitiesOffered.some((f) => f.key === this.selectedFacility)
       ) {
         return false;
       }
@@ -193,7 +195,7 @@ export class UsCoProgramsPresenter implements Hydratable {
     return rollup(
       this.programs ?? [],
       (v) => v.length,
-      (d) => d.category,
+      (d) => d.category.key,
     );
   }
 

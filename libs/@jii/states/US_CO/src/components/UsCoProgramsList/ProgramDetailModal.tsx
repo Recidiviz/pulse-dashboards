@@ -148,8 +148,6 @@ type ProgramDetailModalProps = {
   onToggleStar: (program: UsCoProgram) => void;
 };
 
-const isEmpty = (str: string) => ["None", ""].includes(str);
-
 const ProgramDetailModalComponent: FC<ProgramDetailModalProps> = ({
   program,
   isOpen,
@@ -161,10 +159,8 @@ const ProgramDetailModalComponent: FC<ProgramDetailModalProps> = ({
   const eligibilityItems: string[] = [];
 
   if (program) {
-    if (!isEmpty(program.eligibilityRequirements)) {
-      eligibilityItems.push(program.eligibilityRequirements);
-    }
-    if (!isEmpty(program.prerequisites ?? "")) {
+    eligibilityItems.push(...program.eligibilityRequirements);
+    if (program.prerequisites) {
       eligibilityItems.push(
         t(($) => $.programs.modal.eligibilityPrereq, {
           prereq: program.prerequisites,
@@ -240,9 +236,15 @@ const ProgramDetailModalComponent: FC<ProgramDetailModalProps> = ({
                 {t(($) => $.programs.modal.availableFacilities)}
               </SectionHeading>
               <FacilitiesList>
-                {program.facilitiesOffered.map((facility) => (
-                  <FacilityBadge key={facility}>{facility}</FacilityBadge>
-                ))}
+                {program.availableAtAllFacilities ? (
+                  <FacilityBadge>
+                    {t(($) => $.programs.modal.allFacilities)}
+                  </FacilityBadge>
+                ) : (
+                  program.facilitiesOffered.map(({ key, label }) => (
+                    <FacilityBadge key={key}>{label}</FacilityBadge>
+                  ))
+                )}
               </FacilitiesList>
             </Section>
 

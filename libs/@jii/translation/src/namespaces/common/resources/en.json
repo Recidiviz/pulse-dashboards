@@ -73,6 +73,7 @@
       "eligibilityPrereq": "Prerequisite: {{prereq}}",
       "eligibilityNone": "No requirements needed",
       "availableFacilities": "Available Facilities",
+      "allFacilities": "All facilities",
       "closeWindow": "Close window"
     },
     "homepageCta": {

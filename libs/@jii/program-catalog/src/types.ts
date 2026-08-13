@@ -27,6 +27,12 @@ import type { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
 export type Program =
   JiiResidentAppRouterOutputs["resident"]["getPrograms"][number];
 
+/**
+ * A value the code identifies by its (English) `key` and displays as `label`.
+ * Categories and facilities are both this shape.
+ */
+export type LabeledValue = Program["category"];
+
 export type StateCodeWithProgramCatalog = keyof PickByValue<
   I18nResources,
   StateProgramCatalogResources

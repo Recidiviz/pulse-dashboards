@@ -73,6 +73,7 @@
       "eligibilityPrereq": "[common]programs.modal.eligibilityPrereq",
       "eligibilityNone": "[common]programs.modal.eligibilityNone",
       "availableFacilities": "[common]programs.modal.availableFacilities",
+      "allFacilities": "[common]programs.modal.allFacilities",
       "closeWindow": "[common]programs.modal.closeWindow"
     },
     "homepageCta": {

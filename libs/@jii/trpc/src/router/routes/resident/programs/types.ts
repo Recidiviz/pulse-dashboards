@@ -22,3 +22,17 @@ export type ProgramsConfig = {
   sheetRange: string;
   fixtures: ProgramFromSheet[];
 };
+
+/**
+ * A sheet row after processProgram has processed it.
+ * Clients receive this plus `isStarred`, which `getPrograms` adds from Postgres.
+ */
+export type ProcessedProgram = Omit<
+  ProgramFromSheet,
+  "category" | "facilitiesOffered" | "eligibilityRequirements"
+> & {
+  category: { key: string; label: string };
+  facilitiesOffered: { key: string; label: string }[];
+  availableAtAllFacilities: boolean;
+  eligibilityRequirements: string[];
+};

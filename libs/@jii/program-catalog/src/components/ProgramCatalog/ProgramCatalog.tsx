@@ -112,28 +112,30 @@ const ManagedComponent: FC<{ presenter: ProgramCatalogPresenter }> = observer(
         />
 
         <CategoriesList>
-          {presenter.filteredProgramsByCategory.map(({ name, programs }) => (
-            <CategorySection
-              key={name}
-              categoryName={name}
-              programCount={programs.length}
-              totalCount={presenter.totalProgramsByCategory.get(name)}
-              t={t}
-              defaultExpanded={defaultExpanded}
-            >
-              {programs.map((program) => (
-                <ProgramCard
-                  key={`${program.programId}-${program.title}`}
-                  program={program}
-                  onToggleStar={handleToggleStar}
-                  onClick={presenter.setSelectedProgram}
-                  showCredits={showCredits}
-                  showStars={showStars}
-                  t={t}
-                />
-              ))}
-            </CategorySection>
-          ))}
+          {presenter.filteredProgramsByCategory.map(
+            ({ category, programs }) => (
+              <CategorySection
+                key={category.key}
+                categoryName={category.label}
+                programCount={programs.length}
+                totalCount={presenter.totalProgramsByCategory.get(category.key)}
+                t={t}
+                defaultExpanded={defaultExpanded}
+              >
+                {programs.map((program) => (
+                  <ProgramCard
+                    key={`${program.programId}-${program.title}`}
+                    program={program}
+                    onToggleStar={handleToggleStar}
+                    onClick={presenter.setSelectedProgram}
+                    showCredits={showCredits}
+                    showStars={showStars}
+                    t={t}
+                  />
+                ))}
+              </CategorySection>
+            ),
+          )}
         </CategoriesList>
 
         <ProgramDetailModal
