@@ -517,6 +517,7 @@ export class WorkflowsStore implements Hydratable {
       ignoreLocation: true, // Search entire string, not just beginning
       minMatchCharLength: 2,
       includeScore: true,
+      useTokenSearch: true,
     });
 
     const results = fuse.search(searchTerm, { limit });
