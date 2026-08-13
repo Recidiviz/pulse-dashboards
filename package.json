@@ -199,7 +199,7 @@
     "morgan": "^1.9.1",
     "multer": "^2.1.0",
     "nativewind": "^4.2.1",
-    "next": "15.5.14",
+    "next": "15.5.21",
     "next-remove-imports": "^1.0.12",
     "node-cache": "^5.1.0",
     "nosleep.js": "^0.12.0",
@@ -502,7 +502,10 @@
     "react-native-css-interop": "0.2.1",
     "tar-fs": "^2.1.4",
     "langsmith": "0.3.60",
-    "fast-jwt": ">=6.3.1"
+    "fast-jwt": ">=6.3.1",
+    "undici": ">=7.29.0 <8.0.0",
+    "find-my-way": ">=9.7.0",
+    "sharp": ">=0.35.0"
   },
   "scripts": {
     "postinstall": "husky",
