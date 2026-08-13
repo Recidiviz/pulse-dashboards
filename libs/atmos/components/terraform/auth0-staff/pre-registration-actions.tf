@@ -15,20 +15,29 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # =============================================================================
 
+locals {
+  auth0_pre_registration_actions = var.deploy_environment == "staging" ? tolist([
+    auth0_action.pre_registration_setup
+    ]) : tolist([
+    auth0_action.pre_registration_setup,
+    auth0_action.idaho_th_deny_unprovisioned_provider[0]
+  ])
+}
+
 resource "auth0_trigger_actions" "pre_user_registration" {
   trigger = "pre-user-registration"
-  actions {
-    display_name = auth0_action.idaho_th_deny_unprovisioned_provider.name
-    id           = auth0_action.idaho_th_deny_unprovisioned_provider.id
-  }
-  actions {
-    display_name = auth0_action.pre_registration_setup.name
-    id           = auth0_action.pre_registration_setup.id
+  dynamic "actions" {
+    for_each = { for index, action in local.auth0_pre_registration_actions : index => action }
+    content {
+      display_name = actions.value.name
+      id           = actions.value.id
+    }
   }
 }
 
 resource "auth0_action" "idaho_th_deny_unprovisioned_provider" {
   code    = file("${path.module}/actions/pre-registration/idaho-th-deny-unprovisioned-provider.js")
+  count   = var.deploy_environment == "production" ? 1 : 0
   deploy  = true
   name    = "[TF-managed][ID-TH] Deny unprovisioned provider sign-up"
   runtime = "node22"

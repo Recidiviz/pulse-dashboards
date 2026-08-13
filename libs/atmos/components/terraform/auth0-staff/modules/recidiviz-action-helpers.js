@@ -96,14 +96,6 @@ function joinIdahoThBackendUrl(baseUrl, path) {
 
 /**
  * Normalize a webhook path to the Fastify form used in the HMAC payload
- * (`/internal/...`). Callers often pass a relative path without a leading slash.
- *
- * This does not import SIGNED_WEBHOOK_ROUTES — Auth0 Actions cannot share the
- * idaho-th backend module. After normalization, the string MUST equal the
- * matching entry in SIGNED_WEBHOOK_ROUTES on the idaho-th backend
- * (prototype/idaho-transitional-housing-v2:
- * libs/@idaho-th/trpc/src/auth/webhookSignature.ts), because the backend signs
- * and verifies `${route}.${timestamp}.${nonce}.${rawBody}` with that exact route.
  */
 function toSignedWebhookRoute(path) {
   return path.startsWith("/") ? path : `/${path}`;
