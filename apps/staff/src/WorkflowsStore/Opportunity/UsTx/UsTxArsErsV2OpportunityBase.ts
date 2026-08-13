@@ -116,11 +116,11 @@ export abstract class UsTxArsErsV2OpportunityBase<
   }
 
   get grantApprovedTabTitle(): OpportunityTab {
-    return "Approved by Supervisor";
+    return "Approved in OIMS";
   }
 
   get grantApprovedStatusMessage(): string {
-    return "Approved by Supervisor";
+    return "Approved in OIMS";
   }
 
   get customStatusPalette(): StatusPalette | undefined {

@@ -353,7 +353,8 @@ export type OpportunityTab =
   // For US_TX
   | "Awaiting Revisions"
   | "Submitted for Review"
-  | "Awaiting Review";
+  | "Awaiting Review"
+  | "Approved in OIMS";
 
 // TODO (OBT-39704) Refactor OpportunityTabGroup to enums
 export type OpportunityTabGroup =

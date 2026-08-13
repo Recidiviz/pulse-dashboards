@@ -45,7 +45,7 @@ export class UsTxArsErsV2Configuration extends ApiOpportunityConfiguration {
   }
 
   // Granted records (metadata.grantedAt set by ETL) have isEligible: false in
-  // Firestore. We need to fetch them so the "Approved by Supervisor" tab is populated
+  // Firestore. We need to fetch them so the "Approved in OIMS" tab is populated
   // for 90 days after the opportunity is granted.
   get hydrateIneligibleRecordsInOpportunityManager() {
     return true;
@@ -76,7 +76,7 @@ export class UsTxArsErsV2Configuration extends ApiOpportunityConfiguration {
   }
 
   get grantApprovedTabTitle(): OpportunityTab {
-    return "Approved by Supervisor";
+    return "Approved in OIMS";
   }
 
   // Adding this here as opposed to the admin panel since this gives us
