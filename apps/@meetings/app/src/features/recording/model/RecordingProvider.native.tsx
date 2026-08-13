@@ -31,7 +31,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Alert, Linking } from "react-native";
+import { Alert, Linking, Platform } from "react-native";
 
 import {
   useDiscardMeeting,
@@ -43,14 +43,13 @@ import { useAnalytics } from "~@meetings/app/shared/analytics";
 import { useUploadSegment } from "~@meetings/app/shared/api";
 import { extractError } from "~@meetings/app/shared/lib/errors";
 import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
+import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 import { AUDIO_FORMATS } from "~@meetings/config";
 
-import { AUDIO_LEVEL_INTERVAL_MS } from "../config";
+import { AUDIO_LEVEL_INTERVAL_MS, MAX_RECORDING_MS } from "../config";
 import { dbToAudioLevel } from "../lib/audioLevel";
-import {
-  requestNotificationPermissions,
-  sendNotification,
-} from "../lib/notifications";
+import { configureAudioMode } from "../lib/audioMode";
+import { sendNotification } from "../lib/notifications";
 import {
   getRecordingState,
   getRecordingUri,
@@ -66,13 +65,19 @@ import { useNote } from "./useNote";
 import { usePersistedFileDuration } from "./usePersistedFileDuration.native";
 import { useRecordingStatus } from "./useRecordingStatus";
 
-const MAX_RECORDING_SECONDS = 90 * 60; // 90 minutes
+const MAX_RECORDING_SECONDS = MAX_RECORDING_MS / 1000;
+
+// Slack when comparing a stopped segment's recorded duration against the
+// recording limit, so rounding in expo-audio's own cutoff doesn't make a
+// limit-driven stop look like a user-driven one.
+const RECORDING_LIMIT_TOLERANCE_MS = 5000;
 
 export const RecordingContext = createContext<RecordingNative | null>(null);
 
 export const RecordingProvider = ({ children }: RecordingProviderProps) => {
   const { track } = useAnalytics();
   const uploadSegment = useUploadSegment();
+  const { showSnackbar } = useSnackbar();
 
   /**
    * status = the UI state machine.
@@ -101,6 +106,14 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
   const [persistedRecordingUri, setPersistedRecordingUri] = useState<
     string | null
   >(null);
+
+  // Whether the audio session is currently allowed to record in the background.
+  // Only false on Android when POST_NOTIFICATIONS was declined; see
+  // configureAudioMode().
+  const allowsBackgroundRecordingRef = useRef(false);
+  // Warn the user once per app session that leaving the app will stop
+  // recording, rather than on every resume.
+  const hasWarnedBackgroundUnavailableRef = useRef(false);
 
   const {
     meetingId,
@@ -391,7 +404,6 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       const persistedUri = await getRecordingUri();
       setPersistedRecordingUri(persistedUri);
       await initializeRecording();
-      requestNotificationPermissions();
     })();
     isInitialized.current = true;
   }, [hasHydrated, initializeRecording]);
@@ -417,6 +429,25 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
           );
         }
         return;
+      }
+
+      if (!allowsBackgroundRecordingRef.current) {
+        const { allowsBackgroundRecording } = await configureAudioMode();
+        allowsBackgroundRecordingRef.current = allowsBackgroundRecording;
+
+        if (
+          !allowsBackgroundRecording &&
+          !hasWarnedBackgroundUnavailableRef.current
+        ) {
+          hasWarnedBackgroundUnavailableRef.current = true;
+          // We only care about this permission on android
+          if (Platform.OS === "android") {
+            showSnackbar(
+              "Notifications are turned off, so this recording will stop if you leave the app. Enable notifications in Settings to keep recording in the background.",
+              6000,
+            );
+          }
+        }
       }
 
       await audioRecorder.prepareToRecordAsync();
@@ -455,10 +486,61 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
   };
 
   /**
-   * togglePauseResume()
-   * - If paused → resume (start recording)
-   * - If recording → pause (sync notes to server, upload file)
+   * pauseRecording()
+   * Stops the recorder, syncs notes, and uploads the segment, leaving the meeting
+   * open at "paused".
    */
+  const pauseRecording = async () => {
+    if (!meetingId) return;
+
+    // Sync notes to server when pausing
+    updateNotesMutation.mutate(
+      {
+        meetingId,
+        userNotepadNotes: note,
+      },
+      {
+        onError: (err) => console.error("Failed to update notes:", err),
+      },
+    );
+
+    const duration = timer.stop();
+    if (duration) setPersistedDurationMs(duration);
+
+    if (!isOnline) {
+      // Offline: stop the recorder (if still active) and save the URI locally,
+      // skipping upload. The recorder may already be stopped by the time we
+      // get here (e.g. the externally-triggered-stop path below, where
+      // recorderState.isRecording has already flipped to false), so fall back
+      // to the previously saved URI the same way stopRecorder() does.
+      const savedUri = await getRecordingUri();
+      if (recorderState.isRecording) {
+        await audioRecorder.stop();
+      }
+      const uri = audioRecorder.uri || savedUri;
+      if (uri) {
+        await saveRecordingUri(uri);
+        setPersistedRecordingUri(uri);
+      }
+      await setStatus("paused");
+      return;
+    }
+
+    await setStatus("uploading");
+
+    track("recording_paused", {
+      meetingId,
+      personId: person?.personId?.toString(),
+    });
+
+    await stopRecorder();
+    await uploadRecording();
+
+    Sentry.logger.info("recording.pause", { meetingId });
+
+    await setStatus("paused");
+  };
+
   const togglePauseResume = async () => {
     if (status === "uploading" || !meetingId) return;
 
@@ -469,50 +551,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       await startRecording();
       Sentry.logger.info("recording.resume", { meetingId });
     } else if (status === "recording") {
-      // Sync notes to server when pausing
-      updateNotesMutation.mutate(
-        {
-          meetingId,
-          userNotepadNotes: note,
-        },
-        {
-          onError: (err) => console.error("Failed to update notes:", err),
-        },
-      );
-
-      const duration = timer.stop();
-      if (duration) setPersistedDurationMs(duration);
-
-      if (!isOnline) {
-        // Offline: stop the recorder and save the URI locally; skip upload
-        if (recorderState.isRecording) {
-          await audioRecorder.stop();
-          const uri = audioRecorder.uri;
-          if (uri) {
-            await saveRecordingUri(uri);
-            setPersistedRecordingUri(uri);
-          }
-        }
-        await setStatus("paused");
-        return;
-      }
-
-      await setStatus("uploading");
-
-      Sentry.logger.info("recording.resume", { meetingId });
-      track("recording_paused", {
-        meetingId,
-        personId: person?.personId?.toString(),
-      });
-
-      await stopRecorder();
-      await uploadRecording();
-
-      Sentry.logger.info("recording.pause", { meetingId });
-
-      setStatus("paused");
-
-      await setStatus("paused");
+      await pauseRecording();
     }
   };
 
@@ -609,7 +648,6 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     }
   };
 
-  // Auto-stop recording when 90-minute limit is reached
   const prevRecorderStateRef = useRef(recorderState.isRecording);
   useEffect(() => {
     const prevIsRecording = prevRecorderStateRef.current;
@@ -619,14 +657,24 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       prevIsRecording &&
       !recorderState.isRecording
     ) {
+      const segmentMs = recorderState.durationMillis;
+      const reachedRecordingLimit =
+        segmentMs >= MAX_RECORDING_MS - RECORDING_LIMIT_TOLERANCE_MS;
+
       (async () => {
-        setStatus("uploading");
-        await stopRecorder();
-        await uploadRecording();
-        setStatus("paused");
+        Sentry.logger.info("recording.stopped.externally", {
+          meetingId,
+          segmentMs,
+          reachedRecordingLimit,
+        });
+
+        await pauseRecording();
+
         sendNotification(
           "Recording Paused",
-          "90 minute-at-a-time recording limit reached. Pausing Recording",
+          reachedRecordingLimit
+            ? "90 minute-at-a-time recording limit reached. Pausing Recording"
+            : "Your meeting is paused and saved. Open the app to resume or end it.",
         );
       })();
     }

@@ -25,7 +25,7 @@ import {
 } from "expo-audio";
 import * as FileSystem from "expo-file-system/legacy";
 import React from "react";
-import { Alert } from "react-native";
+import { Alert, Platform } from "react-native";
 
 import {
   useDiscardMeeting,
@@ -36,6 +36,7 @@ import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 import { AUDIO_FORMATS } from "~@meetings/config";
 
 import { useUploadSegment } from "../../../../shared/api";
+import { MAX_RECORDING_MS } from "../../config";
 import * as notifications from "../../lib/notifications";
 import * as storage from "../../lib/storage";
 import { RecordingProvider, useRecording } from "..";
@@ -80,6 +81,10 @@ jest.mock("../../lib/storage");
 jest.mock("../store");
 jest.mock("~@meetings/app/shared/analytics", () => ({
   useAnalytics: () => ({ track: jest.fn() }),
+}));
+const mockShowSnackbar = jest.fn();
+jest.mock("~@meetings/app/shared/ui/Snackbar", () => ({
+  useSnackbar: () => ({ showSnackbar: mockShowSnackbar, isShowing: false }),
 }));
 
 const mockPerson = {
@@ -177,11 +182,17 @@ describe("RecordingProvider (native)", () => {
     (storage.removeRecordingUri as jest.Mock).mockResolvedValue(undefined);
     (storage.setRecordingState as jest.Mock).mockResolvedValue(undefined);
 
-    (notifications.requestNotificationPermissions as jest.Mock).mockReturnValue(
-      undefined,
-    );
+    (
+      notifications.requestNotificationPermissions as jest.Mock
+    ).mockResolvedValue("granted");
     (notifications.sendNotification as jest.Mock).mockReturnValue(undefined);
     (useIsOnline as jest.Mock).mockReturnValue({ isOnline: true });
+  });
+
+  // Some tests spy on console/Alert; without this the stubs would leak into
+  // later tests.
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it("provides correct initial context values", async () => {
@@ -254,6 +265,48 @@ describe("RecordingProvider (native)", () => {
 
       expect(Alert.alert).not.toHaveBeenCalled();
       expect(mockAudioRecorder.prepareToRecordAsync).not.toHaveBeenCalled();
+    });
+
+    it("enables background recording on the audio session", async () => {
+      const { result } = renderHook(() => useRecording<"native">(), {
+        wrapper: buildWrapper(),
+      });
+
+      await act(async () => {
+        await result.current.startRecording();
+      });
+
+      expect(setAudioModeAsync).toHaveBeenCalledWith(
+        expect.objectContaining({
+          allowsRecording: true,
+          allowsBackgroundRecording: true,
+        }),
+      );
+    });
+
+    it("warns that recording will stop in the background when Android notifications are denied", async () => {
+      const originalPlatformOS = Platform.OS;
+      Platform.OS = "android";
+      (
+        notifications.requestNotificationPermissions as jest.Mock
+      ).mockResolvedValue("denied");
+
+      try {
+        const { result } = renderHook(() => useRecording<"native">(), {
+          wrapper: buildWrapper(),
+        });
+
+        await act(async () => {
+          await result.current.startRecording();
+        });
+
+        expect(mockShowSnackbar).toHaveBeenCalledWith(
+          expect.stringContaining("Enable notifications in Settings"),
+          6000,
+        );
+      } finally {
+        Platform.OS = originalPlatformOS;
+      }
     });
   });
 
@@ -580,6 +633,18 @@ describe("RecordingProvider (native)", () => {
   });
 
   describe("initializeRecording", () => {
+    it("does not request notification permission on app launch", async () => {
+      renderHook(() => useRecording<"native">(), {
+        wrapper: buildWrapper(),
+      });
+
+      await waitFor(() => expect(setAudioModeAsync).toHaveBeenCalled());
+
+      expect(
+        notifications.requestNotificationPermissions,
+      ).not.toHaveBeenCalled();
+    });
+
     it("resets to idle and removes URI when persisted file is missing", async () => {
       (storage.getRecordingState as jest.Mock).mockResolvedValue("recording");
       (storage.getRecordingUri as jest.Mock).mockResolvedValue(RECORDING_URI);
@@ -678,8 +743,13 @@ describe("RecordingProvider (native)", () => {
     });
   });
 
-  describe("auto-stop at 90-minute limit", () => {
-    it("uploads, sets paused and sends notification when recorder stops unexpectedly", async () => {
+  describe("recorder stopping without the app asking", () => {
+    /**
+     * Mounts a provider mid-recording and returns a trigger that flips the
+     * recorder to stopped, which is what both the 90-minute cutoff and the
+     * notification's Stop button look like from JS.
+     */
+    async function renderMidRecording() {
       (useRecordingStatus as jest.Mock).mockReturnValue([
         "recording",
         mockSetStatus,
@@ -687,33 +757,99 @@ describe("RecordingProvider (native)", () => {
       (storage.getRecordingUri as jest.Mock).mockResolvedValue(RECORDING_URI);
 
       let mockIsRecording = true;
+      let mockDurationMillis = 0;
       (useAudioRecorderState as jest.Mock).mockImplementation(() => ({
         isRecording: mockIsRecording,
+        durationMillis: mockDurationMillis,
       }));
 
-      const { rerender } = renderHook(() => useRecording<"native">(), {
+      const { result, rerender } = renderHook(() => useRecording<"native">(), {
         wrapper: buildWrapper(),
       });
 
       // Wait for initial mount effects to settle (prevRef gets set to true)
       await waitFor(() => expect(setAudioModeAsync).toHaveBeenCalled());
 
-      // Simulate the recorder stopping (90-min limit reached)
-      await act(async () => {
-        mockIsRecording = false;
-        (rerender as VoidFunction)();
-      });
+      return {
+        result,
+        setDurationMillis: (ms: number) => {
+          mockDurationMillis = ms;
+        },
+        stopRecorder: async () => {
+          await act(async () => {
+            mockIsRecording = false;
+            (rerender as VoidFunction)();
+          });
+          await waitFor(() =>
+            expect(mockSetStatus).toHaveBeenCalledWith("paused"),
+          );
+        },
+      };
+    }
 
-      await waitFor(() =>
-        expect(mockSetStatus).toHaveBeenCalledWith("uploading"),
-      );
+    it("pauses through the shared pause flow when the 90-minute limit is reached", async () => {
+      const { result, setDurationMillis, stopRecorder } =
+        await renderMidRecording();
+
+      // Start a segment, then report a recorded duration past the recording limit.
+      await act(async () => {
+        await result.current.startRecording();
+      });
+      setDurationMillis(MAX_RECORDING_MS + 1000);
+
+      await stopRecorder();
 
       expect(mockUploadSegment).toHaveBeenCalled();
       expect(mockSetStatus).toHaveBeenCalledWith("paused");
       expect(notifications.sendNotification).toHaveBeenCalledWith(
         "Recording Paused",
-        expect.any(String),
+        expect.stringContaining("90 minute"),
       );
+      expect(mockEndMeeting).not.toHaveBeenCalled();
+    });
+
+    it("pauses rather than ends when stopped early, as the notification's Stop button does", async () => {
+      const { stopRecorder } = await renderMidRecording();
+
+      await stopRecorder();
+
+      await waitFor(() => expect(mockSetStatus).toHaveBeenCalledWith("paused"));
+      expect(mockUploadSegment).toHaveBeenCalled();
+      // Ending a meeting stays an explicit in-app action.
+      expect(mockEndMeeting).not.toHaveBeenCalled();
+      expect(notifications.sendNotification).toHaveBeenCalledWith(
+        "Recording Paused",
+        expect.stringContaining("Open the app"),
+      );
+    });
+
+    it("syncs notes and stops the duration timer, matching an explicit pause", async () => {
+      const { stopRecorder } = await renderMidRecording();
+
+      await stopRecorder();
+
+      // These were skipped before the shared pause flow: the timer kept ticking
+      // and notes never reached the server.
+      await waitFor(() => expect(mockTimerStop).toHaveBeenCalled());
+      expect(mockUpdateNotes).toHaveBeenCalledWith(
+        expect.objectContaining({ meetingId: MEETING_ID }),
+        expect.anything(),
+      );
+      expect(mockSetPersistedDurationMs).toHaveBeenCalledWith(5000);
+    });
+
+    it("still persists the recording URI when offline, even though the recorder already stopped itself", async () => {
+      (useIsOnline as jest.Mock).mockReturnValue({ isOnline: false });
+      const { stopRecorder } = await renderMidRecording();
+
+      await stopRecorder();
+
+      // The recorder is already stopped by the time this path runs, so we
+      // shouldn't call stop() again -- but the URI still needs to be saved.
+      expect(mockAudioRecorder.stop).not.toHaveBeenCalled();
+      expect(storage.saveRecordingUri).toHaveBeenCalledWith(RECORDING_URI);
+      expect(mockSetStatus).toHaveBeenCalledWith("paused");
+      expect(mockUploadSegment).not.toHaveBeenCalled();
     });
   });
 });
