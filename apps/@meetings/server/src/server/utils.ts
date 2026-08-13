@@ -18,6 +18,7 @@
 import { SyncPrerecordedResponse } from "@deepgram/sdk";
 import { CloudTasksClient, protos } from "@google-cloud/tasks";
 import { captureException, getTraceData } from "@sentry/node";
+import { Transcript } from "assemblyai";
 
 import { AGENCY_CONFIGS } from "~@meetings/config/loader";
 import {
@@ -32,6 +33,15 @@ import {
 } from "~@meetings/tasks";
 import { ProductionPipeline, TranscriptInput } from "~@meetings/tasks/llm";
 import { utterancesToRawText } from "~@meetings/tasks/llm/utils";
+import { logger } from "~server-setup-plugin/logger";
+
+// The confidence threshold we use to determine when to try Deepgram
+const MIN_CONFIDENCE_THRESHOLD = 0.9;
+
+// Of ~250 meetings, this is the deviation we've seen between AssemblyAI and Deepgram.
+// A bit magic-numbery, but we want to avoid using Deepgram unless AssemblyAI is clearly underperforming
+// and this will aid that
+const DEEPGRAM_CONFIDENCE_PENALTY = 0.04;
 
 export function queueTranscriptionTaskLocal(
   stateCode: string,
@@ -217,24 +227,68 @@ export async function handleTranscriptions(params: HandleTranscriptionParams) {
     keywords = [],
   } = params;
 
-  const [assemblyAIResult, deepgramResult] = await Promise.allSettled([
-    transcribeAudioWithAssemblyAI(
+  let assemblyAIResult:
+    | { status: "fulfilled"; value: Transcript }
+    | { status: "rejected"; reason: unknown };
+
+  let deepgramResult:
+    | { status: "fulfilled"; value: SyncPrerecordedResponse }
+    | { status: "rejected"; reason: unknown }
+    | null = null;
+
+  // Ideally, we only use AssemblyAI and not deepgram. Deepgram acts as a fallback for
+  // - Failing AssemblyAI transcription
+  // - An outlier of AssemblyAI confidence
+  try {
+    const assemblyTranscription = await transcribeAudioWithAssemblyAI(
       recordingsGCSBucket,
       finalRecordingGCSPath,
       env.ASSEMBLYAI_API_KEY,
       keywords,
-    ),
-    transcribeAudioWithDeepgram(
-      recordingsGCSBucket,
-      finalRecordingGCSPath,
-      env.DEEPGRAM_API_KEY,
-      keywords,
-    ),
-  ]);
+    );
+    assemblyAIResult = { status: "fulfilled", value: assemblyTranscription };
+  } catch (error) {
+    assemblyAIResult = { status: "rejected", reason: error };
+  }
+
+  const tryDeepgram =
+    assemblyAIResult.status === "rejected" ||
+    (assemblyAIResult?.value?.confidence ?? 0.0) < MIN_CONFIDENCE_THRESHOLD;
+
+  if (tryDeepgram) {
+    logger.info(
+      "Trying Deepgram transcription because AssemblyAI wasn't sufficient",
+      {
+        meetingId,
+        assemblyAIStatus: assemblyAIResult.status,
+        assemblyAIConfidence:
+          assemblyAIResult.status === "fulfilled"
+            ? assemblyAIResult.value.confidence
+            : undefined,
+        reason:
+          assemblyAIResult.status === "rejected"
+            ? "assemblyai_failed"
+            : "low_confidence",
+      },
+    );
+
+    try {
+      const deepgramTranscription = await transcribeAudioWithDeepgram(
+        recordingsGCSBucket,
+        finalRecordingGCSPath,
+        env.DEEPGRAM_API_KEY,
+        keywords,
+      );
+
+      deepgramResult = { status: "fulfilled", value: deepgramTranscription };
+    } catch (error) {
+      deepgramResult = { status: "rejected", reason: error };
+    }
+  }
 
   if (
     assemblyAIResult.status === "rejected" &&
-    deepgramResult.status === "rejected"
+    deepgramResult?.status === "rejected"
   ) {
     throw new Error(`Both AssemblyAI and Deepgram transcriptions failed with these errors:
             AssemblyAI: ${assemblyAIResult.reason}
@@ -273,7 +327,7 @@ export async function handleTranscriptions(params: HandleTranscriptionParams) {
     });
   }
 
-  if (deepgramResult.status === "fulfilled") {
+  if (deepgramResult?.status === "fulfilled") {
     const deepgramTranscriptionResult = deepgramResult.value;
     const cleanedDeepgramUtterances = mergeAdjacentSameSpeakerUtterances(
       (deepgramTranscriptionResult.results.utterances ?? []).flatMap(
@@ -281,13 +335,15 @@ export async function handleTranscriptions(params: HandleTranscriptionParams) {
       ),
     );
 
+    const deepgramConfidence =
+      (deepgramTranscriptionResult.results.channels[0]?.alternatives[0]
+        ?.confidence ?? 0) - DEEPGRAM_CONFIDENCE_PENALTY;
+
     transcriptions.push({
       provider: TranscriptionProvider.DEEPGRAM,
       transcriptObject:
         deepgramTranscriptionResult as PrismaJson.TranscriptType,
-      confidence:
-        deepgramTranscriptionResult.results.channels[0]?.alternatives[0]
-          ?.confidence ?? 0,
+      confidence: deepgramConfidence,
       summary: deepgramTranscriptionResult.results.summary?.result,
       utterances: {
         createMany: {
@@ -295,7 +351,7 @@ export async function handleTranscriptions(params: HandleTranscriptionParams) {
         },
       },
     });
-  } else {
+  } else if (deepgramResult !== null) {
     captureException("Deepgram transcription failed", {
       tags: { meetingId },
       extra: { error: deepgramResult.reason },

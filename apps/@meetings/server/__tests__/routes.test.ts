@@ -471,7 +471,73 @@ describe("tasks", () => {
       );
     });
 
+    test("Should not call Deepgram if AssemblyAI's confidence is above the threshold", async () => {
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/transcribe-audio",
+        headers: { authorization: `Bearer token` },
+        body: {
+          stateCode: "US_NE",
+          meetingId: fakeMeeting.id,
+        },
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(mockTranscribeAudioWithDeepgram).not.toHaveBeenCalled();
+
+      const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
+        where: { id: fakeMeeting.id },
+        include: { transcriptions: true },
+      });
+
+      expect(meeting.transcriptions).toHaveLength(1);
+      expect(meeting.transcriptions[0].provider).toBe(
+        TranscriptionProvider.ASSEMBLYAI,
+      );
+    });
+
+    test("Should call Deepgram and apply the confidence penalty if AssemblyAI fails outright", async () => {
+      mockTranscribeAudioWithAssemblyAI.mockImplementationOnce(async () => {
+        throw new Error("Assembly transcription failed");
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/transcribe-audio",
+        headers: { authorization: `Bearer token` },
+        body: {
+          stateCode: "US_NE",
+          meetingId: fakeMeeting.id,
+        },
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(mockTranscribeAudioWithDeepgram).toHaveBeenCalled();
+
+      const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
+        where: { id: fakeMeeting.id },
+        include: { transcriptions: true },
+      });
+
+      expect(meeting.transcriptions).toHaveLength(1);
+      expect(meeting.transcriptions[0]).toEqual(
+        expect.objectContaining({
+          provider: TranscriptionProvider.DEEPGRAM,
+          // Raw Deepgram confidence (0.5) minus the calibration penalty (0.04)
+          confidence: 0.46,
+        }),
+      );
+    });
+
     test("Should return 200 if at least one transcription passes and capture any errors", async () => {
+      // Below MIN_CONFIDENCE_THRESHOLD so Deepgram is attempted as a backup.
+      const lowConfidenceAssemblyAIResult = {
+        ...FAKE_ASSEMBLYAI_TRANSCRIPT_OBJECT,
+        confidence: 0.5,
+      };
+      mockTranscribeAudioWithAssemblyAI.mockImplementationOnce(
+        vi.fn().mockResolvedValue(lowConfidenceAssemblyAIResult),
+      );
       mockTranscribeAudioWithDeepgram.mockImplementationOnce(async () => {
         throw new Error("Deepgram transcription failed");
       });
@@ -503,8 +569,8 @@ describe("tasks", () => {
           transcriptions: [
             expect.objectContaining({
               provider: TranscriptionProvider.ASSEMBLYAI,
-              transcriptObject: FAKE_ASSEMBLYAI_TRANSCRIPT_OBJECT,
-              confidence: 0.95,
+              transcriptObject: lowConfidenceAssemblyAIResult,
+              confidence: 0.5,
               utterances: expect.arrayContaining([
                 expect.objectContaining({
                   text: "This is the second mock transcription sentence.",
@@ -535,6 +601,15 @@ describe("tasks", () => {
     });
 
     test("Should return 200 and store both transcripts if both transcriptions work", async () => {
+      // Below MIN_CONFIDENCE_THRESHOLD so Deepgram is attempted as a backup.
+      const lowConfidenceAssemblyAIResult = {
+        ...FAKE_ASSEMBLYAI_TRANSCRIPT_OBJECT,
+        confidence: 0.5,
+      };
+      mockTranscribeAudioWithAssemblyAI.mockImplementationOnce(
+        vi.fn().mockResolvedValue(lowConfidenceAssemblyAIResult),
+      );
+
       const response = await testServer.inject({
         method: "POST",
         url: "/transcribe-audio",
@@ -562,8 +637,8 @@ describe("tasks", () => {
           transcriptions: [
             expect.objectContaining({
               provider: TranscriptionProvider.ASSEMBLYAI,
-              transcriptObject: FAKE_ASSEMBLYAI_TRANSCRIPT_OBJECT,
-              confidence: 0.95,
+              transcriptObject: lowConfidenceAssemblyAIResult,
+              confidence: 0.5,
               summary: "This is a mock summary of the transcription.",
               utterances: expect.arrayContaining([
                 expect.objectContaining({
@@ -585,7 +660,8 @@ describe("tasks", () => {
             expect.objectContaining({
               provider: TranscriptionProvider.DEEPGRAM,
               transcriptObject: FAKE_DEEPGRAM_TRANSCRIPT_OBJECT,
-              confidence: 0.5,
+              // Raw Deepgram confidence (0.5) minus the calibration penalty (0.04)
+              confidence: 0.46,
               summary: "This is a mock summary of the transcription.",
               utterances: expect.arrayContaining([
                 expect.objectContaining({
@@ -672,6 +748,13 @@ describe("tasks", () => {
           ],
         },
       };
+      // Below MIN_CONFIDENCE_THRESHOLD so Deepgram is attempted as a backup.
+      mockTranscribeAudioWithAssemblyAI.mockImplementationOnce(
+        vi.fn().mockResolvedValue({
+          ...FAKE_ASSEMBLYAI_TRANSCRIPT_OBJECT,
+          confidence: 0.5,
+        }),
+      );
       mockTranscribeAudioWithDeepgram.mockImplementationOnce(
         vi.fn().mockResolvedValue(splitSpeakerDeepgramResult),
       );
@@ -807,7 +890,8 @@ describe("tasks", () => {
       );
       expect(deepgram).toEqual(
         expect.objectContaining({
-          confidence: 0.75,
+          // Raw Deepgram confidence (0.75) minus the calibration penalty (0.04)
+          confidence: 0.71,
           summary: "Updated Deepgram summary from retry.",
           transcriptObject: updatedDeepgramResult,
           utterances: [
