@@ -17,6 +17,7 @@
 
 import { $ } from "zx";
 
+import { jiiProject } from "../config.mts";
 import type { DeployEnv, ReleasePlan, ServiceDefinition } from "../types.mts";
 
 /** Deploy a `-m` message for the Opportunities frontend/storybook: just the commit on
@@ -34,6 +35,7 @@ const oppsBackendEnvironments: DeployEnv[] = ["staging", "production"];
 export const oppsFunctions: ServiceDefinition = {
   displayName: "Opportunities Cloud Functions",
   environments: oppsBackendEnvironments,
+  pamProjects: (env) => [jiiProject(env)],
   async deploy(plan) {
     await $`nx deploy jii-functions --configuration ${plan.env}`.pipe(
       process.stdout,
@@ -45,6 +47,7 @@ export const oppsFunctions: ServiceDefinition = {
 export const oppsBackend: ServiceDefinition = {
   displayName: "Opportunities Backend Services",
   environments: oppsBackendEnvironments,
+  pamProjects: (env) => [jiiProject(env)],
   requiredImages: () => ["@jii/server", "@jii/import"],
   async deploy(plan) {
     const { env, currentRevision } = plan;
@@ -63,6 +66,7 @@ export const oppsBackend: ServiceDefinition = {
 export const oppsFrontend: ServiceDefinition = {
   displayName: "Opportunities Frontend",
   environments: ["staging", "demo", "production"],
+  pamProjects: (env) => [jiiProject(env)],
   async build(plan) {
     // building separately because we want to pass extra args
     // to the deploy command but not the build command
@@ -81,6 +85,7 @@ export const oppsFrontend: ServiceDefinition = {
 export const oppsStorybook: ServiceDefinition = {
   displayName: "Opportunities Storybook",
   environments: ["staging", "production"],
+  pamProjects: (env) => [jiiProject(env)],
   async deploy(plan) {
     // deploy target includes build
     await $`nx deploy @jii/storybook --configuration ${plan.env} -m "${deployMessage(plan)}"`.pipe(

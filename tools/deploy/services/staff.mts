@@ -17,12 +17,14 @@
 
 import { $, chalk } from "zx";
 
+import { dashboardProject } from "../config.mts";
 import type { ReleasePlan, ServiceDefinition } from "../types.mts";
 
 /** Build and deploy the staff App Engine backend (staff-server). */
 export const staffBackend: ServiceDefinition = {
   displayName: "Staff Backend",
   environments: ["staging", "demo", "production"],
+  pamProjects: (env) => [dashboardProject(env)],
   async build() {
     await $`nx build staff-server`.pipe(process.stdout);
   },
@@ -62,6 +64,20 @@ const cdnEnabledEnvs = new Set<ReleasePlan["env"]>(["staging", "production"]);
 export const staffFrontend: ServiceDefinition = {
   displayName: "Staff Frontend",
   environments: ["staging", "demo", "production"],
+  // Firebase Hosting target (+ Cloud CDN on staging/prod), per .firebaserc.
+  pamProjects: (env) => {
+    switch (env) {
+      case "production":
+        return ["recidiviz-dashboard", "recidiviz-dashboard-production"];
+      case "demo":
+        return ["recidiviz-dashboard-demo"];
+      default:
+        return [
+          "recidiviz-dashboard-stag-e1108",
+          "recidiviz-dashboard-staging",
+        ];
+    }
+  },
   async build(plan) {
     switch (plan.env) {
       case "production":

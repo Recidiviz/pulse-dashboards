@@ -17,7 +17,7 @@
 
 import { $ } from "zx";
 
-import { dashboardStack } from "../config.mts";
+import { dashboardProject, dashboardStack } from "../config.mts";
 import type { ServiceDefinition } from "../types.mts";
 
 /**
@@ -27,6 +27,7 @@ import type { ServiceDefinition } from "../types.mts";
 export const jiiTexting: ServiceDefinition = {
   displayName: "JII Texting Backend Services",
   environments: ["staging", "demo", "production"],
+  pamProjects: (env) => [dashboardProject(env)],
   defaultChecked: ["staging", "production"],
   requiredImages: (env) => [
     "@jii-texting/server",

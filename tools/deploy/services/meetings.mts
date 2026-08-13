@@ -17,7 +17,7 @@
 
 import { $ } from "zx";
 
-import { dashboardStack } from "../config.mts";
+import { dashboardProject, dashboardStack } from "../config.mts";
 import type { ServiceDefinition } from "../types.mts";
 
 /**
@@ -28,6 +28,7 @@ import type { ServiceDefinition } from "../types.mts";
 export const meetingsBackend: ServiceDefinition = {
   displayName: "Meetings Backend Services",
   environments: ["staging", "production"],
+  pamProjects: (env) => [dashboardProject(env)],
   requiredImages: () => [
     "@meetings/server",
     "@meetings/import",
@@ -66,6 +67,11 @@ export const meetingsBackend: ServiceDefinition = {
 export const meetingsFrontend: ServiceDefinition = {
   displayName: "Meetings Frontend",
   environments: ["staging", "production"],
+  // Expo/Firebase deploys to the recidiviz-meetings* projects, per .firebaserc.
+  pamProjects: (env) =>
+    env === "production"
+      ? ["recidiviz-meetings"]
+      : ["recidiviz-meetings-staging"],
   async deploy(plan) {
     // Remove .env.local if it exists, as it interferes with the deploy target
     await $`rm -f apps/@meetings/app/.env.local`.pipe(process.stdout);

@@ -19,6 +19,11 @@ import "zx/globals";
 
 import inquirer from "inquirer";
 
+// TODO(COS-27): convert this file to .mts so it can import the tools/ PAM helper
+// across the nx project boundary without the disable below.
+// eslint-disable-next-line @nx/enforce-module-boundaries -- deploy scripts share the tools/ PAM helper
+import { requestPamDeployGrant } from "../../../../../tools/deploy/pam.mjs";
+
 // Jobs
 const JOBS = {
   "force-reset-db": {
@@ -140,6 +145,11 @@ async function main() {
     console.log("❌ Deployment cancelled.");
     process.exit(0);
   }
+
+  // Request a just-in-time PAM deploy-app grant so this job deploy holds the roles
+  // it needs without any standing access. Reentry jobs deploy to recidiviz-rnd-planner
+  // in every environment. Non-fatal: warns and continues if PAM is unavailable.
+  await requestPamDeployGrant("recidiviz-rnd-planner");
 
   // Deploy the job
   console.log(`\nDeploying job '${selectedJob}' to ${environment}...`);

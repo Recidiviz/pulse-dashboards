@@ -40,6 +40,30 @@ export function dashboardStack(env: DeployEnv, name: string): string {
     : `recidiviz-dashboard-${env}--${name}`;
 }
 
+/**
+ * Real GCP project the dashboard-family atmos backends (sentencing, case-notes, jii-texting,
+ * meetings) and the Staff App Engine backend deploy into — the `project_id` in
+ * `libs/atmos/stacks/<component>/recidiviz-dashboard-<env>.yaml` (demo shares staging infra).
+ * Distinct from {@link dashboardStack}, which returns the atmos stack name, not the project.
+ * Used to target the PAM deploy-app grant; keep in sync with those stacks.
+ */
+export function dashboardProject(env: DeployEnv): string {
+  return env === "production"
+    ? "recidiviz-dashboard-production"
+    : "recidiviz-dashboard-staging";
+}
+
+/**
+ * Real GCP project the Opportunities (JII) atmos backend and JII Firebase frontends deploy
+ * into — `libs/atmos/stacks/jii/recidiviz-jii-<env>.yaml` and the `.firebaserc` `jii-<env>`
+ * aliases.
+ */
+export function jiiProject(env: DeployEnv): string {
+  return env === "production"
+    ? "recidiviz-jii-production"
+    : "recidiviz-jii-staging";
+}
+
 // Labels (by ID, like the Slack channel IDs above) used to record where a ticket's
 // change has been deployed. Live under the "Deploy Status" label group in Linear.
 // "Staging"/"Production" were already taken by the pre-existing "Environment" group

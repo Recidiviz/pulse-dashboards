@@ -25,6 +25,8 @@ import { WebClient as SlackClient } from "@slack/web-api";
 import inquirer from "inquirer";
 import { inc } from "semver";
 
+import { requestPamDeployGrant } from "./deploy/pam.mjs";
+
 const dryRun = process.argv.includes("--dry-run");
 if (dryRun) {
   console.log("🏃 Dry run mode: skipping installs, deploys, and Slack posting");
@@ -183,6 +185,11 @@ if (deployEnv === "production") {
 }
 
 if (!dryRun) {
+  // Request a just-in-time PAM deploy-app grant so this deploy holds the roles it
+  // needs without any standing access. All Reentry environments deploy to the same
+  // project. Non-fatal: warns and continues if PAM is unavailable.
+  await requestPamDeployGrant("recidiviz-rnd-planner");
+
   console.log("Running nx reset...");
   await $`nx reset`.pipe(process.stdout);
 

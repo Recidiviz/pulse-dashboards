@@ -31,11 +31,12 @@ import {
   extractLinearTicketIds,
   setDeployStatusLabel,
 } from "./deploy/linear.mts";
+import { requestPamDeployGrant } from "./deploy/pam.mjs";
 import { checkCleanRepo, checkCredentials } from "./deploy/preflight.mts";
 import { runPreviewDeploy } from "./deploy/preview.mts";
 import { promptDeployEnv, promptServices } from "./deploy/prompts.mts";
 import { finalizeProduction, preparePlan } from "./deploy/release.mts";
-import { services } from "./deploy/services/index.mts";
+import { type ServiceKey, services } from "./deploy/services/index.mts";
 import { postDeployNotification } from "./deploy/slack.mts";
 import type { PublishedRelease } from "./deploy/types.mts";
 
@@ -71,6 +72,25 @@ const ticketIds = extractLinearTicketIds(plan.shippedCommitMessages);
 
 // --- Service selection -------------------------------------------------------
 const selected = await promptServices(deployEnv);
+
+// --- PAM deploy-app elevation ------------------------------------------------
+// Request a just-in-time deploy-app grant on each GCP project the selected services will deploy
+// to (each service declares its target projects via `pamProjects`), so the operator deploys
+// holding no standing access. Requested concurrently and WITHOUT blocking on IAM propagation --
+// the setup steps below (nx reset / yarn install / atmos) give the grants ample time to
+// propagate, so the ~20s propagation delay is paid once (overlapped) rather than per grant.
+// Non-fatal (see ./deploy/pam.mjs): a failure warns and continues.
+const pamProjects = new Set(
+  [...selected]
+    .filter((key): key is ServiceKey => key in services)
+    .filter((key) => services[key].environments.includes(deployEnv))
+    .flatMap((key) => services[key].pamProjects?.(deployEnv) ?? []),
+);
+await Promise.all(
+  [...pamProjects].map((projectId) =>
+    requestPamDeployGrant(projectId, { waitForPropagation: false }),
+  ),
+);
 
 // --- Setup -------------------------------------------------------------------
 console.log("Running nx reset...");

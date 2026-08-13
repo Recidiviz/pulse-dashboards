@@ -39,6 +39,13 @@ export interface ServiceDefinition {
   defaultChecked?: DeployEnv[];
   /** Backend Docker images that must exist before deploying (built in GitHub Actions). */
   requiredImages?: (env: DeployEnv) => string[];
+  /**
+   * GCP project(s) this service deploys to in the given env, so `deploy.mts` can request a
+   * just-in-time PAM deploy-app grant on each before deploying. Omit for services that need no
+   * elevation (e.g. data-only fixture loads). Mirrors the atmos stack `project_id` /
+   * `.firebaserc` alias the service actually deploys to.
+   */
+  pamProjects?: (env: DeployEnv) => string[];
   /** One-time build phase, run OUTSIDE the retry loop. Omit when there's nothing to build. */
   build?: (plan: ReleasePlan) => Promise<void>;
   /** Deploy commands, run INSIDE the retry loop. */
