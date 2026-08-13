@@ -64,11 +64,9 @@ export type CustomTaskUpdateInput = Partial<
  *
  * Routing the create through `.parse()` ensures every field with a Zod
  * `.default(...)` on the parent schema lands in the Firestore document.
- * Today that's `deletedOn: null` — required by `CustomTasksSubscription`'s
- * `where("deletedOn", "==", null)` filter. Firestore has no way to match
- * documents that omit the field, so the create path must always write it.
- * Any future defaulted field is picked up the same way with no
- * FirestoreStore change.
+ * Firestore has no way to match documents that omit the field, so the
+ * create path must always write it. Any future defaulted field is picked
+ * up the same way with no FirestoreStore change.
  */
 export const customTaskCreatePayloadSchema = customTaskSchema.omit({
   createdOn: true,

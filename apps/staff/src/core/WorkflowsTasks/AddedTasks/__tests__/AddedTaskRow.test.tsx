@@ -94,8 +94,8 @@ describe("AddedTaskRow", () => {
     expect(findKebabButton()).toBeInTheDocument();
   });
 
-  test("non-recurring task does NOT render a Repeats caption", () => {
-    render(
+  test("non-recurring, non-completed, non-deleted task renders no caption", () => {
+    const { container } = render(
       <AddedTaskRow
         task={makeRecord({ recurrence: null })}
         customTasks={makeCustomTasksMock()}
@@ -104,10 +104,10 @@ describe("AddedTaskRow", () => {
         onEditEnd={vi.fn()}
       />,
     );
-    expect(screen.queryByText(/repeats/i)).toBeNull();
+    expect(container.querySelector('[class*="RowCaption"]')).toBeNull();
   });
 
-  test("recurring task renders a Repeats caption derived from the stored RRULE", () => {
+  test("recurring task renders a caption derived from the stored RRULE", () => {
     render(
       <AddedTaskRow
         task={makeRecord({ recurrence: "FREQ=WEEKLY;BYDAY=FR" })}
@@ -117,7 +117,7 @@ describe("AddedTaskRow", () => {
         onEditEnd={vi.fn()}
       />,
     );
-    expect(screen.getByText(/repeats.*friday/i)).toBeInTheDocument();
+    expect(screen.getByText(/every week.*friday/i)).toBeInTheDocument();
   });
 
   describe("derived completion state for recurring tasks", () => {
@@ -127,7 +127,7 @@ describe("AddedTaskRow", () => {
       vi.setSystemTime(new Date(2026, 5, 22));
     });
 
-    test("recurring task completed in the current cycle renders as completed and shows the next cycle's date", () => {
+    test("recurring task completed in the current cycle renders as completed and hides the due date", () => {
       // Weekly on Friday; dueDate = Jun 19; completedOn = Jun 19 17:00.
       // Current cycle (Jun 19) is done; next cycle is Jun 26.
       render(
@@ -145,8 +145,7 @@ describe("AddedTaskRow", () => {
         />,
       );
       expect(screen.getByRole("checkbox")).toBeChecked();
-      // Next cycle (Jun 26) is 4 days out from the pinned Jun 22 "now".
-      expect(screen.getByText(/Due in 4 days/)).toBeInTheDocument();
+      expect(screen.queryByText(/Due/)).toBeNull();
     });
 
     test("recurring task with completedOn from a past cycle auto-resets to incomplete", () => {
@@ -315,7 +314,7 @@ describe("AddedTaskRow", () => {
       expect(dueDate).toHaveStyleRule("color", palette.slate70);
     });
 
-    test("a completed task with a past due date is muted slate, never red", () => {
+    test("a completed task hides the due date entirely, even overdue", () => {
       render(
         <AddedTaskRow
           task={makeRecord({
@@ -328,9 +327,23 @@ describe("AddedTaskRow", () => {
           onEditEnd={vi.fn()}
         />,
       );
-      const dueDate = screen.getByText(/Due 17 days ago/);
-      expect(dueDate).not.toHaveStyleRule("color", palette.signal.error);
-      expect(dueDate).toHaveStyleRule("color", palette.slate60);
+      expect(screen.queryByText(/Due/)).toBeNull();
+    });
+
+    test("a deleted task hides the due date entirely, even overdue", () => {
+      render(
+        <AddedTaskRow
+          task={makeRecord({
+            dueDate: new Date(2026, 4, 1),
+            deletedOn: new Date(2026, 4, 2),
+          })}
+          customTasks={makeCustomTasksMock()}
+          isEditing={false}
+          onEditStart={vi.fn()}
+          onEditEnd={vi.fn()}
+        />,
+      );
+      expect(screen.queryByText(/Due/)).toBeNull();
     });
   });
 
@@ -561,5 +574,50 @@ describe("AddedTaskRow", () => {
       expect(customTasks.deleteCustomTask).not.toHaveBeenCalled();
       expect(screen.getByText("Keep me")).toBeInTheDocument();
     });
+  });
+});
+
+describe("AddedTaskRow caption dot separators", () => {
+  // Same pinned-time scenario as the `getTaskCaptionParts` tests in
+  // customTaskStatus.test.ts, so `isTaskCompleted` resolves deterministically
+  // regardless of real "now".
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date(2026, 5, 22));
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  test("renders no dot when there's only one caption part", () => {
+    const { container } = render(
+      <AddedTaskRow
+        task={makeRecord({ recurrence: "FREQ=WEEKLY;BYDAY=FR" })}
+        customTasks={makeCustomTasksMock()}
+        isEditing={false}
+        onEditStart={vi.fn()}
+        onEditEnd={vi.fn()}
+      />,
+    );
+    expect(container.querySelectorAll('[class*="CaptionDot"]')).toHaveLength(0);
+  });
+
+  test("renders a dot between each pair of caption parts", () => {
+    const { container } = render(
+      <AddedTaskRow
+        task={makeRecord({
+          dueDate: new Date(2026, 5, 19),
+          recurrence: "FREQ=WEEKLY;BYDAY=FR",
+          completedOn: new Date(2026, 5, 19, 17),
+          deletedOn: new Date(2026, 5, 20),
+        })}
+        customTasks={makeCustomTasksMock()}
+        isEditing={false}
+        onEditStart={vi.fn()}
+        onEditEnd={vi.fn()}
+      />,
+    );
+    // 3 caption parts (recurrence, completed, deleted) -> 2 separating dots.
+    expect(container.querySelectorAll('[class*="CaptionDot"]')).toHaveLength(2);
   });
 });

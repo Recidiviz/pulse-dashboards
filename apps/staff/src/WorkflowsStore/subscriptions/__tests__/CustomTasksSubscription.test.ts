@@ -16,7 +16,7 @@
 // =============================================================================
 
 import * as Sentry from "@sentry/react";
-import { onSnapshot, query, where } from "firebase/firestore";
+import { onSnapshot, query } from "firebase/firestore";
 import { Mock } from "vitest";
 
 import FirestoreStore from "../../../FirestoreStore";
@@ -29,7 +29,6 @@ vi.mock("@sentry/react");
 
 const onSnapshotMock = onSnapshot as Mock;
 const queryMock = query as Mock;
-const whereMock = where as Mock;
 
 const RECORD_ID = "us_mo_123";
 const VALID_UUID = "8e58e96f-3a8d-4f2a-9fa6-1b1c3b4f0e2a";
@@ -74,14 +73,13 @@ beforeEach(() => {
 });
 
 describe("CustomTasksSubscription", () => {
-  test("dataSource queries the per-record custom_tasks subcollection with the soft-delete filter", () => {
+  test("dataSource queries the per-record custom_tasks subcollection, unfiltered", () => {
     void sub.dataSource;
 
     expect(firestoreStoreMock.customTasksCollection).toHaveBeenCalledWith(
       RECORD_ID,
     );
-    expect(whereMock).toHaveBeenCalledWith("deletedOn", "==", null);
-    expect(queryMock).toHaveBeenCalled();
+    expect(queryMock).toHaveBeenCalledWith("mock-collection");
   });
 
   test("hydrates with valid records on the first snapshot", () => {

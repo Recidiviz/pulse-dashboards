@@ -493,8 +493,7 @@ export default class FirestoreStore {
   }
 
   /**
-   * Soft-deletes a custom task by stamping `deletedOn`. The subscription
-   * filters these out server-side via `where("deletedOn", "==", null)`.
+   * Soft-deletes a custom task by stamping `deletedOn`.
    */
   async softDeleteCustomTask(recordId: string, taskId: string): Promise<void> {
     const taskDocRef = this.doc(

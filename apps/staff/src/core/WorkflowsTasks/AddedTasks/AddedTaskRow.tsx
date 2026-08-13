@@ -17,22 +17,23 @@
 
 import { Sans12, Sans14, spacing } from "@recidiviz/design-system";
 import { addDays, isPast } from "date-fns";
-import { Timestamp } from "firebase/firestore";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import styled from "styled-components";
 
 import { Button, palette } from "~design-system";
 
 import { CheckboxInput } from "../../../components/Checkbox";
-import { describeRecurrence } from "../../../components/DatePicker";
 import { CustomTaskRecord } from "../../../FirestoreStore";
 import { formatDueDateFromToday } from "../../../utils";
 import { CustomTasks } from "../../../WorkflowsStore/Task/CustomTasks";
 import {
   getNextDueDate,
+  getTaskCaptionParts,
   isTaskCompleted,
+  isTaskDeleted,
+  toRequiredDate,
 } from "../../../WorkflowsStore/Task/customTaskStatus";
 import { AddedTaskForm, AddedTaskFormValues } from "./AddedTaskForm";
 import { AddedTaskKebab } from "./AddedTaskKebab";
@@ -76,21 +77,29 @@ const RowTitle = styled(Sans14)<{ $completed: boolean }>`
   color: ${({ $completed }) => ($completed ? palette.slate70 : palette.pine2)};
 `;
 
-const RowRecurrenceCaption = styled(Sans12)<{ $completed: boolean }>`
+const RowCaption = styled(Sans12)<{ $completed: boolean }>`
   color: ${({ $completed }) =>
     $completed ? palette.slate60 : palette.slate70};
   font-style: italic;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  text-wrap: wrap;
 `;
 
-const RowDueDate = styled(Sans14)<{ $completed: boolean; $overdue: boolean }>`
-  color: ${({ $completed, $overdue }) => {
-    if ($completed) return palette.slate60;
-    if ($overdue) return palette.signal.error;
-    return palette.slate70;
-  }};
+// Separator between caption parts (recurrence / completed / deleted).
+const CaptionDot = styled.span<{ $completed: boolean }>`
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  margin: 0 6px;
+  vertical-align: middle;
+  border-radius: 50%;
+  background: ${({ $completed }) =>
+    $completed ? palette.slate60 : palette.slate70};
+`;
+
+// Only rendered for outstanding (not completed, not deleted) tasks
+const RowDueDate = styled(Sans14)<{ $overdue: boolean }>`
+  color: ${({ $overdue }) =>
+    $overdue ? palette.signal.error : palette.slate70};
   white-space: nowrap;
 `;
 
@@ -131,10 +140,6 @@ type AddedTaskRowProps = {
   onEditEnd: () => void;
 };
 
-function dueDateAsDate(value: Date | Timestamp): Date {
-  return value instanceof Timestamp ? value.toDate() : value;
-}
-
 /**
  * One row in the Added Tasks list. Owns its own delete-confirmation
  * state (view-local; not surfaced to MobX) but defers edit-mode
@@ -149,11 +154,12 @@ export const AddedTaskRow = observer(function AddedTaskRow({
 }: AddedTaskRowProps) {
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
 
-  const recurrenceCaption = describeRecurrence(task.recurrence ?? null);
   // Derived "is this task currently done?" — for recurring tasks this rolls
   // over automatically once `now` passes the next scheduled occurrence,
   // without any backend write.
   const completed = isTaskCompleted(task);
+  const deleted = isTaskDeleted(task);
+  const captionParts = getTaskCaptionParts(task, completed);
   const nextDueDate = getNextDueDate(task);
   // Mirror the supervision-task overdue rule (`Task.isOverdue`): a task is
   // overdue once `now` is past its due date plus a two-day grace window.
@@ -164,9 +170,8 @@ export const AddedTaskRow = observer(function AddedTaskRow({
     return (
       <RowWrapper>
         <AddedTaskForm
-          mode="edit"
           initialTitle={task.title}
-          initialDueDate={dueDateAsDate(task.dueDate)}
+          initialDueDate={toRequiredDate(task.dueDate)}
           initialRecurrence={task.recurrence ?? null}
           initialCompleted={task.completedOn != null}
           onSave={(values: AddedTaskFormValues) => {
@@ -226,15 +231,24 @@ export const AddedTaskRow = observer(function AddedTaskRow({
         />
         <RowTitleColumn>
           <RowTitle $completed={completed}>{task.title}</RowTitle>
-          {recurrenceCaption && (
-            <RowRecurrenceCaption $completed={completed}>
-              Repeats {recurrenceCaption}
-            </RowRecurrenceCaption>
+          {captionParts.length > 0 && (
+            <RowCaption $completed={completed}>
+              {captionParts.map((part, index) => (
+                <Fragment key={part}>
+                  {index > 0 && (
+                    <CaptionDot aria-hidden="true" $completed={completed} />
+                  )}
+                  {part}
+                </Fragment>
+              ))}
+            </RowCaption>
           )}
         </RowTitleColumn>
-        <RowDueDate $completed={completed} $overdue={overdue}>
-          Due {formatDueDateFromToday(nextDueDate)}
-        </RowDueDate>
+        {!completed && !deleted && (
+          <RowDueDate $overdue={overdue}>
+            Due {formatDueDateFromToday(nextDueDate)}
+          </RowDueDate>
+        )}
         <AddedTaskKebab
           onEditClick={completed ? undefined : onEditStart}
           onDeleteClick={() => setIsConfirmingDelete(true)}

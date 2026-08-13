@@ -117,10 +117,7 @@ describe("FirestoreStore custom-task methods", () => {
             dueDate: FAKE_DUE_DATE,
             // Both `deletedOn` and `recurrence` are written explicitly
             // because they flow in via `customTaskCreatePayloadSchema.parse`
-            // from the schema's `.default(null)`. `deletedOn` in particular
-            // is what `CustomTasksSubscription`'s
-            // `where("deletedOn", "==", null)` filter requires — without it
-            // the subscription drops the doc entirely. Pin both here.
+            // from the schema's `.default(null)`.
             recurrence: null,
             deletedOn: null,
             createdOn: "mock-timestamp",

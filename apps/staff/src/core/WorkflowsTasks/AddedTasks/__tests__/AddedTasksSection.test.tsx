@@ -126,7 +126,7 @@ describe("AddedTasksSection", () => {
     const { container } = render(
       <AddedTasksSection
         person={makePerson(undefined)}
-        showCompleted={false}
+        showPastTasks={false}
       />,
     );
     expect(container).toBeEmptyDOMElement();
@@ -144,7 +144,7 @@ describe("AddedTasksSection", () => {
     renderInBoundary(
       <AddedTasksSection
         person={makePerson(customTasks)}
-        showCompleted={false}
+        showPastTasks={false}
       />,
     );
     expect(screen.getByLabelText("Loading added tasks")).toBeInTheDocument();
@@ -161,7 +161,7 @@ describe("AddedTasksSection", () => {
     renderInBoundary(
       <AddedTasksSection
         person={makePerson(customTasks)}
-        showCompleted={false}
+        showPastTasks={false}
       />,
     );
     expect(screen.getByLabelText("Loading added tasks")).toBeInTheDocument();
@@ -175,7 +175,7 @@ describe("AddedTasksSection", () => {
     renderInBoundary(
       <AddedTasksSection
         person={makePerson(customTasks)}
-        showCompleted={false}
+        showPastTasks={false}
       />,
     );
     // The section renders AddedTasksError inline rather than throwing to the
@@ -192,7 +192,7 @@ describe("AddedTasksSection", () => {
     renderInBoundary(
       <AddedTasksSection
         person={makePerson(customTasks)}
-        showCompleted={false}
+        showPastTasks={false}
       />,
     );
     fireEvent.click(screen.getByRole("button", { name: /retry/i }));
@@ -206,7 +206,7 @@ describe("AddedTasksSection", () => {
     renderInBoundary(
       <AddedTasksSection
         person={makePerson(customTasks)}
-        showCompleted={false}
+        showPastTasks={false}
       />,
     );
     expect(screen.getByLabelText("Loading added tasks")).toBeInTheDocument();
@@ -233,7 +233,7 @@ describe("AddedTasksSection", () => {
     renderInBoundary(
       <AddedTasksSection
         person={makePerson(customTasks)}
-        showCompleted={false}
+        showPastTasks={false}
       />,
     );
     expect(screen.getByText(/no added tasks yet/i)).toBeInTheDocument();
@@ -253,14 +253,14 @@ describe("AddedTasksSection", () => {
     renderInBoundary(
       <AddedTasksSection
         person={makePerson(customTasks)}
-        showCompleted={false}
+        showPastTasks={false}
       />,
     );
     expect(screen.getByText("First")).toBeInTheDocument();
     expect(screen.getByText("Second")).toBeInTheDocument();
   });
 
-  test("with showCompleted=false renders only outstandingOrderedTasks and hides completed", () => {
+  test("with showPastTasks=false renders only outstandingOrderedTasks and hides completed", () => {
     const customTasks = makeCustomTasksMock({
       hydrationState: { status: "hydrated" },
       outstandingOrderedTasks: [makeRecord({ id: "a", title: "Outstanding" })],
@@ -272,14 +272,14 @@ describe("AddedTasksSection", () => {
     renderInBoundary(
       <AddedTasksSection
         person={makePerson(customTasks)}
-        showCompleted={false}
+        showPastTasks={false}
       />,
     );
     expect(screen.getByText("Outstanding")).toBeInTheDocument();
     expect(screen.queryByText("Completed")).not.toBeInTheDocument();
   });
 
-  test("with showCompleted=true renders allOrderedTasks including completed", () => {
+  test("with showPastTasks=true renders allOrderedTasks including completed", () => {
     const customTasks = makeCustomTasksMock({
       hydrationState: { status: "hydrated" },
       outstandingOrderedTasks: [makeRecord({ id: "a", title: "Outstanding" })],
@@ -289,7 +289,7 @@ describe("AddedTasksSection", () => {
       ],
     });
     renderInBoundary(
-      <AddedTasksSection person={makePerson(customTasks)} showCompleted />,
+      <AddedTasksSection person={makePerson(customTasks)} showPastTasks />,
     );
     expect(screen.getByText("Outstanding")).toBeInTheDocument();
     expect(screen.getByText("Completed")).toBeInTheDocument();
@@ -303,7 +303,7 @@ describe("AddedTasksSection", () => {
     renderInBoundary(
       <AddedTasksSection
         person={makePerson(customTasks)}
-        showCompleted={false}
+        showPastTasks={false}
       />,
     );
     fireEvent.click(screen.getByRole("button", { name: /\+ add new task/i }));
@@ -321,7 +321,7 @@ describe("AddedTasksSection", () => {
     renderInBoundary(
       <AddedTasksSection
         person={makePerson(customTasks)}
-        showCompleted={false}
+        showPastTasks={false}
       />,
     );
     const cta = screen.getByRole("button", { name: /\+ add new task/i });
@@ -338,7 +338,7 @@ describe("AddedTasksSection", () => {
     renderInBoundary(
       <AddedTasksSection
         person={makePerson(customTasks)}
-        showCompleted={false}
+        showPastTasks={false}
       />,
     );
     fireEvent.click(screen.getByRole("button", { name: /\+ add new task/i }));
@@ -380,7 +380,7 @@ describe("AddedTasksSection", () => {
     renderInBoundary(
       <AddedTasksSection
         person={makePerson(customTasks)}
-        showCompleted={false}
+        showPastTasks={false}
       />,
     );
     fireEvent.click(screen.getByRole("button", { name: /\+ add new task/i }));
@@ -417,7 +417,7 @@ describe("AddedTasksSection", () => {
     renderInBoundary(
       <AddedTasksSection
         person={makePerson(customTasks)}
-        showCompleted={false}
+        showPastTasks={false}
       />,
     );
     fireEvent.click(screen.getByRole("button", { name: /\+ add new task/i }));

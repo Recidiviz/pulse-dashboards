@@ -146,7 +146,6 @@ export type AddedTaskFormValues = {
 };
 
 type AddedTaskFormProps = {
-  mode: "add" | "edit";
   initialTitle?: string;
   initialDueDate?: Date;
   initialRecurrence?: Recurrence;
@@ -163,11 +162,9 @@ const MAX_TITLE_LENGTH = 200;
 /**
  * Inline form used for both adding and editing a custom task. State is
  * fully local — the parent decides when to mount/unmount this form, and
- * just receives the saved values via `onSave`. In "edit" mode the
- * `initialTitle` / `initialDueDate` pre-populate the fields.
+ * just receives the saved values via `onSave`.
  */
 export function AddedTaskForm({
-  mode,
   initialTitle = "",
   initialDueDate,
   initialRecurrence,

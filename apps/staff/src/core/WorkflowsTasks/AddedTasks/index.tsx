@@ -63,13 +63,13 @@ function AddedTasks({
     () => import("./AddedTasksSection"),
   );
 
-  const [showCompleted, setShowCompleted] = useState(false);
+  const [showPastTasks, setShowPastTasks] = useState(false);
 
   const filter = (
     <TaskSectionFilter
-      label="Show Completed"
-      checked={showCompleted}
-      onChange={setShowCompleted}
+      label="Show past tasks"
+      checked={showPastTasks}
+      onChange={setShowPastTasks}
       testId="added-tasks-filter"
     />
   );
@@ -94,7 +94,7 @@ function AddedTasks({
     <ErrorBoundary fallback={fallback}>
       {renderShell(
         <Suspense fallback={<AddedTasksSkeleton />}>
-          <AddedTasksSection person={client} showCompleted={showCompleted} />
+          <AddedTasksSection person={client} showPastTasks={showPastTasks} />
         </Suspense>,
         filter,
       )}

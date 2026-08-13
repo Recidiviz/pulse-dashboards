@@ -143,10 +143,7 @@ describe("customTaskSchema", () => {
 
 describe("customTaskCreatePayloadSchema", () => {
   // This schema is what `FirestoreStore.createCustomTask` runs its payload
-  // through. The tests below pin the create-side invariant that the
-  // subscription's `where("deletedOn", "==", null)` filter relies on:
-  // every defaulted field on the parent schema must land in the parsed
-  // output so it gets written to Firestore.
+  // through.
   function baseCreatePayload() {
     return {
       id: VALID_UUID,

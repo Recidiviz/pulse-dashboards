@@ -18,7 +18,12 @@
 import { Timestamp } from "firebase/firestore";
 
 import { CustomTaskRecord } from "../../../FirestoreStore";
-import { getNextDueDate, isTaskCompleted } from "../customTaskStatus";
+import {
+  getNextDueDate,
+  getTaskCaptionParts,
+  isTaskCompleted,
+  isTaskDeleted,
+} from "../customTaskStatus";
 
 const BASE: Pick<CustomTaskRecord, "completedOn" | "dueDate" | "recurrence"> = {
   completedOn: null,
@@ -165,5 +170,125 @@ describe("isTaskCompleted", () => {
         new Date(2026, 6, 19),
       ),
     ).toBe(false);
+  });
+});
+
+describe("isTaskDeleted", () => {
+  test("null deletedOn → not deleted", () => {
+    expect(isTaskDeleted({ deletedOn: null })).toBe(false);
+  });
+
+  test("Date-valued deletedOn → deleted", () => {
+    expect(isTaskDeleted({ deletedOn: new Date(2026, 5, 19) })).toBe(true);
+  });
+
+  test("Timestamp-valued deletedOn → deleted", () => {
+    expect(
+      isTaskDeleted({ deletedOn: Timestamp.fromDate(new Date(2026, 5, 19)) }),
+    ).toBe(true);
+  });
+
+  // Regression: a prior implementation compared `deletedOn` against `now`
+  // and was therefore always false, since `deletedOn` is stamped via
+  // `serverTimestamp()` at delete time and so is never in the future.
+  test("a deletedOn timestamp far in the past is still deleted", () => {
+    expect(isTaskDeleted({ deletedOn: new Date(2000, 0, 1) })).toBe(true);
+  });
+});
+
+describe("getTaskCaptionParts", () => {
+  test("returns no parts when there's no recurrence and the task is neither completed nor deleted", () => {
+    expect(getTaskCaptionParts({ ...BASE, deletedOn: null }, false)).toEqual(
+      [],
+    );
+  });
+
+  // Present tense while the recurrence is still active (not deleted).
+  test("returns the recurrence description alone, present tense", () => {
+    expect(
+      getTaskCaptionParts(
+        { ...BASE, recurrence: "FREQ=WEEKLY;BYDAY=FR", deletedOn: null },
+        false,
+      ),
+    ).toEqual(["Repeats every week on Friday"]);
+  });
+
+  // Past tense once deletion has ended the recurrence.
+  test("switches to past tense ('Repeated') when the recurring task is deleted", () => {
+    expect(
+      getTaskCaptionParts({
+        ...BASE,
+        recurrence: "FREQ=WEEKLY;BYDAY=FR",
+        deletedOn: new Date(2026, 5, 20),
+      }),
+    ).toEqual([
+      "Repeated every week on Friday",
+      `Deleted ${new Date(2026, 5, 20).toLocaleDateString("en-US")}`,
+    ]);
+  });
+
+  // Regression: Firestore's `Timestamp` has no `toLocaleString` of its own,
+  // so it fell through to `Object.prototype.toLocaleString`, which just
+  // calls `.toString()` — rendering "Timestamp(seconds=..., nanoseconds=...)"
+  // instead of a date.
+  test("formats a Timestamp-valued completedOn as a date, not the raw Timestamp", () => {
+    const completedOn = new Date(2026, 5, 19, 17);
+    const parts = getTaskCaptionParts(
+      {
+        ...BASE,
+        completedOn: Timestamp.fromDate(completedOn),
+        deletedOn: null,
+      },
+      true,
+    );
+    expect(parts).toEqual([
+      `Completed ${completedOn.toLocaleDateString("en-US")}`,
+    ]);
+    expect(parts.join()).not.toContain("Timestamp(seconds=");
+  });
+
+  test("formats a Date-valued deletedOn", () => {
+    const deletedOn = new Date(2026, 5, 20);
+    expect(getTaskCaptionParts({ ...BASE, deletedOn }, false)).toEqual([
+      `Deleted ${deletedOn.toLocaleDateString("en-US")}`,
+    ]);
+  });
+
+  test("includes both a recurrence part and a 'Last completed' part when recurring and completed", () => {
+    const completedOn = new Date(2026, 5, 19, 17);
+    const parts = getTaskCaptionParts(
+      {
+        ...BASE,
+        recurrence: "FREQ=WEEKLY;BYDAY=FR",
+        completedOn,
+        deletedOn: null,
+      },
+      true,
+    );
+    expect(parts).toEqual([
+      "Repeats every week on Friday",
+      `Last completed ${completedOn.toLocaleDateString("en-US")}`,
+    ]);
+  });
+
+  test("includes all three parts when recurring, completed, and deleted", () => {
+    const completedOn = new Date(2026, 5, 19, 17);
+    const deletedOn = new Date(2026, 5, 20);
+    const parts = getTaskCaptionParts(
+      { ...BASE, recurrence: "FREQ=WEEKLY;BYDAY=FR", completedOn, deletedOn },
+      true,
+    );
+    expect(parts).toEqual([
+      "Repeated every week on Friday",
+      `Last completed ${completedOn.toLocaleDateString("en-US")}`,
+      `Deleted ${deletedOn.toLocaleDateString("en-US")}`,
+    ]);
+  });
+
+  test("derives `completed` itself when the second argument is omitted", () => {
+    const completedOn = new Date(2026, 5, 19);
+    expect(
+      getTaskCaptionParts({ ...BASE, completedOn, deletedOn: null }),
+    ).toEqual([`Completed ${completedOn.toLocaleDateString("en-US")}`]);
   });
 });

@@ -265,6 +265,23 @@ describe("CustomTasks", () => {
 
       expect(customTasks.outstandingOrderedTasks).toEqual([]);
     });
+
+    test("excludes a deleted task even when it isn't completed", () => {
+      const active = makeRecord({
+        id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        title: "Active",
+      });
+      const deleted = makeRecord({
+        id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+        title: "Deleted",
+        deletedOn: new Date("2026-05-14"),
+      });
+      subscriptionInstance.data = [active, deleted];
+
+      expect(customTasks.outstandingOrderedTasks.map((t) => t.title)).toEqual([
+        "Active",
+      ]);
+    });
   });
 
   describe("allOrderedTasks", () => {
@@ -329,6 +346,33 @@ describe("CustomTasks", () => {
       expect(customTasks.allOrderedTasks.map((t) => t.title)).toEqual([
         "Date due",
         "Timestamp due",
+      ]);
+    });
+
+    test("includes deleted tasks, interleaved with the rest by next due date", () => {
+      const active = makeRecord({
+        id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        title: "Active",
+        dueDate: new Date("2026-08-01"),
+      });
+      const deletedEarly = makeRecord({
+        id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+        title: "Deleted early",
+        dueDate: new Date("2026-06-01"),
+        deletedOn: new Date("2026-05-15"),
+      });
+      const deletedLate = makeRecord({
+        id: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+        title: "Deleted late",
+        dueDate: new Date("2026-07-01"),
+        deletedOn: new Date("2026-05-16"),
+      });
+      subscriptionInstance.data = [active, deletedEarly, deletedLate];
+
+      expect(customTasks.allOrderedTasks.map((t) => t.title)).toEqual([
+        "Deleted early",
+        "Deleted late",
+        "Active",
       ]);
     });
   });
@@ -639,6 +683,23 @@ describe("CustomTasks", () => {
         "sort-recurring",
         "sort-early",
         "sort-late",
+      ]);
+    });
+
+    test("excludes a deleted task even when it isn't completed", () => {
+      const active = makeRecord({
+        id: "active-1",
+        title: "Active",
+      });
+      const deleted = makeRecord({
+        id: "deleted-1",
+        title: "Deleted",
+        deletedOn: new Date("2026-05-14"),
+      });
+      subscriptionInstance.data = [active, deleted];
+
+      expect(customTasks.activeTaskItems.map((i) => i.key)).toEqual([
+        "active-1",
       ]);
     });
   });

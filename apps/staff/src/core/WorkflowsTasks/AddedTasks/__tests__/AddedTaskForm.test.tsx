@@ -58,7 +58,7 @@ function pickFutureDate() {
 describe("AddedTaskForm", () => {
   describe("add mode", () => {
     test("renders with empty fields and Save disabled", () => {
-      render(<AddedTaskForm mode="add" onSave={vi.fn()} onCancel={vi.fn()} />);
+      render(<AddedTaskForm onSave={vi.fn()} onCancel={vi.fn()} />);
       expect(
         screen.getByLabelText("Task title", { selector: "input" }),
       ).toHaveValue("");
@@ -68,7 +68,7 @@ describe("AddedTaskForm", () => {
     });
 
     test("Save remains disabled when only the title is filled", () => {
-      render(<AddedTaskForm mode="add" onSave={vi.fn()} onCancel={vi.fn()} />);
+      render(<AddedTaskForm onSave={vi.fn()} onCancel={vi.fn()} />);
       fireEvent.change(screen.getByLabelText("Task title"), {
         target: { value: "Call client" },
       });
@@ -76,13 +76,13 @@ describe("AddedTaskForm", () => {
     });
 
     test("Save remains disabled when only the due date is filled", () => {
-      render(<AddedTaskForm mode="add" onSave={vi.fn()} onCancel={vi.fn()} />);
+      render(<AddedTaskForm onSave={vi.fn()} onCancel={vi.fn()} />);
       pickFutureDate();
       expect(screen.getByRole("button", { name: /^save$/i })).toBeDisabled();
     });
 
     test("Save remains disabled when the title is whitespace-only", () => {
-      render(<AddedTaskForm mode="add" onSave={vi.fn()} onCancel={vi.fn()} />);
+      render(<AddedTaskForm onSave={vi.fn()} onCancel={vi.fn()} />);
       fireEvent.change(screen.getByLabelText("Task title"), {
         target: { value: "   " },
       });
@@ -92,7 +92,7 @@ describe("AddedTaskForm", () => {
 
     test("Save becomes enabled with valid inputs and calls onSave with parsed values", () => {
       const onSave = vi.fn();
-      render(<AddedTaskForm mode="add" onSave={onSave} onCancel={vi.fn()} />);
+      render(<AddedTaskForm onSave={onSave} onCancel={vi.fn()} />);
 
       fireEvent.change(screen.getByLabelText("Task title"), {
         target: { value: "  Call client  " },
@@ -116,7 +116,7 @@ describe("AddedTaskForm", () => {
 
     test("selecting Every week and submitting emits the matching RRULE in recurrence", () => {
       const onSave = vi.fn();
-      render(<AddedTaskForm mode="add" onSave={onSave} onCancel={vi.fn()} />);
+      render(<AddedTaskForm onSave={onSave} onCancel={vi.fn()} />);
 
       fireEvent.change(screen.getByLabelText("Task title"), {
         target: { value: "Weekly check-in" },
@@ -139,7 +139,7 @@ describe("AddedTaskForm", () => {
     test("Cancel calls onCancel and does not call onSave", () => {
       const onSave = vi.fn();
       const onCancel = vi.fn();
-      render(<AddedTaskForm mode="add" onSave={onSave} onCancel={onCancel} />);
+      render(<AddedTaskForm onSave={onSave} onCancel={onCancel} />);
       fireEvent.click(screen.getByRole("button", { name: /cancel/i }));
       expect(onCancel).toHaveBeenCalledTimes(1);
       expect(onSave).not.toHaveBeenCalled();
@@ -147,7 +147,7 @@ describe("AddedTaskForm", () => {
 
     test("clicking the due-date affordance opens the calendar popper", () => {
       const { container } = render(
-        <AddedTaskForm mode="add" onSave={vi.fn()} onCancel={vi.fn()} />,
+        <AddedTaskForm onSave={vi.fn()} onCancel={vi.fn()} />,
       );
       fireEvent.click(screen.getByRole("button", { name: "Enter Date" }));
       expect(container.querySelector(".react-datepicker")).not.toBeNull();
@@ -158,7 +158,6 @@ describe("AddedTaskForm", () => {
     test("pre-populates fields from initialTitle and initialDueDate", () => {
       render(
         <AddedTaskForm
-          mode="edit"
           initialTitle="Send reminder"
           initialDueDate={FUTURE_DATE}
           onSave={vi.fn()}
@@ -178,7 +177,6 @@ describe("AddedTaskForm", () => {
     test("pre-populates the recurrence chip from initialRecurrence", () => {
       render(
         <AddedTaskForm
-          mode="edit"
           initialTitle="Weekly check-in"
           initialDueDate={FUTURE_DATE}
           initialRecurrence={buildRecurrenceRule("MONTHLY", FUTURE_DATE)}
@@ -200,7 +198,6 @@ describe("AddedTaskForm", () => {
       const onSave = vi.fn();
       render(
         <AddedTaskForm
-          mode="edit"
           initialTitle="Send reminder"
           initialDueDate={FUTURE_DATE}
           onSave={onSave}

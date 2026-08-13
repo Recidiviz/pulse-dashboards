@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Query, query, where } from "firebase/firestore";
+import { Query, query } from "firebase/firestore";
 
 import FirestoreStore, {
   CustomTaskRecord,
@@ -25,19 +25,10 @@ import { FirestoreQuerySubscription } from "./FirestoreQuerySubscription";
 
 /**
  * Subscribes to the `clientUpdatesV2/{recordId}/custom_tasks` subcollection.
- * Soft-deleted tasks are filtered out server-side via
- * `where("deletedOn", "==", null)` — a single-field filter that Firestore
- * indexes automatically, so no composite index is required.
  *
- * **Cross-file invariant:** Firestore's per-field index only matches docs
- * where the field exists, and Firestore has no "field missing" filter (no
- * `!=`, `not-in`, `or()`, or `orderBy` trick recovers absent fields). So
- * the create path must always write `deletedOn` explicitly. That invariant
- * is enforced at `FirestoreStore.createCustomTask`, which routes its
- * payload through `customTaskCreatePayloadSchema.parse(...)` so the
- * schema's `.default(null)` lands in the document on every create. If
- * tasks ever stop showing up after a successful create, check that the
- * schema default still flows through there.
+ * Returns every task regardless of `completedOn`/`deletedOn` — soft-deleted
+ * tasks are not filtered out server-side. Callers that need an active-only
+ * view (`CustomTasks.outstandingOrderedTasks`) filter client-side instead.
  *
  * Records that fail `customTaskSchema.parse` are dropped (and reported to
  * Sentry) by the parent `FirestoreQuerySubscription.updateData` so a single
@@ -57,9 +48,6 @@ export class CustomTasksSubscription extends FirestoreQuerySubscription<CustomTa
   }
 
   get dataSource(): Query | undefined {
-    return query(
-      this.firestoreStore.customTasksCollection(this.recordId),
-      where("deletedOn", "==", null),
-    );
+    return query(this.firestoreStore.customTasksCollection(this.recordId));
   }
 }

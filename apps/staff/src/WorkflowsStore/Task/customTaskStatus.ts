@@ -18,10 +18,20 @@
 import { Timestamp } from "firebase/firestore";
 import { RRule } from "rrule";
 
+import { describeRecurrence } from "../../components/DatePicker";
 import { CustomTaskRecord } from "../../FirestoreStore";
 
-function toDate(value: Timestamp | Date | null | undefined): Date | null {
+// For a nullable field (`completedOn`, `deletedOn`).
+export function toDate(
+  value: Date | Timestamp | null | undefined,
+): Date | null {
   if (value == null) return null;
+  return value instanceof Timestamp ? value.toDate() : value;
+}
+
+// For a required field (`dueDate`) — keeps a non-nullable `Date` at the
+// call site instead of forcing a fallback or assertion around `toDate()`.
+export function toRequiredDate(value: Date | Timestamp): Date {
   return value instanceof Timestamp ? value.toDate() : value;
 }
 
@@ -50,7 +60,7 @@ export function getNextDueDate(
   task: Pick<CustomTaskRecord, "dueDate" | "recurrence" | "completedOn">,
   now: Date = new Date(),
 ): Date {
-  const dueDate = toDate(task.dueDate) ?? now;
+  const dueDate = toRequiredDate(task.dueDate);
   if (!task.recurrence) return dueDate;
 
   const rule = parseRuleWithDtstart(task.recurrence, dueDate);
@@ -80,4 +90,53 @@ export function isTaskCompleted(
   if (!task.completedOn) return false;
   if (!task.recurrence) return true;
   return getNextDueDate(task, now) > now;
+}
+
+/**
+ * Whether a task has been soft-deleted. Unlike completion, deletion isn't
+ * time-relative — there's no recurring-rollover concept for it, so once
+ * `deletedOn` is stamped the task stays deleted (no `now` to compare
+ * against).
+ */
+export function isTaskDeleted(
+  task: Pick<CustomTaskRecord, "deletedOn">,
+): boolean {
+  return toDate(task.deletedOn) !== null;
+}
+
+// e.g. ["Repeats every week on Friday", "Last completed 6/19/2026"]
+export function getTaskCaptionParts(
+  task: Pick<
+    CustomTaskRecord,
+    "recurrence" | "completedOn" | "deletedOn" | "dueDate"
+  >,
+  completed: boolean = isTaskCompleted(task),
+): string[] {
+  const parts: string[] = [];
+  const deleted = isTaskDeleted(task);
+
+  const recurrence = describeRecurrence(task.recurrence ?? null);
+  // Present tense while the rule is still active; past tense once deletion
+  // has ended it — "Repeats every week" vs. "Repeated every week".
+  if (recurrence) {
+    parts.push(`${deleted ? "Repeated" : "Repeats"} ${recurrence}`);
+  }
+
+  if (completed) {
+    const completedString = toDate(task.completedOn)?.toLocaleDateString(
+      "en-US",
+    );
+    parts.push(
+      recurrence
+        ? `Last completed ${completedString}`
+        : `Completed ${completedString}`,
+    );
+  }
+  if (deleted) {
+    parts.push(
+      `Deleted ${toDate(task.deletedOn)?.toLocaleDateString("en-US")}`,
+    );
+  }
+
+  return parts;
 }

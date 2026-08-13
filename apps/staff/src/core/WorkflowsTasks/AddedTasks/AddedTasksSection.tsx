@@ -59,7 +59,7 @@ const TaskDivider = styled.hr`
 
 type AddedTasksSectionProps = {
   person: Client;
-  showCompleted: boolean;
+  showPastTasks: boolean;
 };
 
 /**
@@ -84,7 +84,7 @@ type AddedTasksSectionProps = {
  */
 const AddedTasksSection = observer(function AddedTasksSection({
   person,
-  showCompleted,
+  showPastTasks,
 }: AddedTasksSectionProps) {
   const { customTasks } = person;
 
@@ -101,7 +101,7 @@ const AddedTasksSection = observer(function AddedTasksSection({
   // observes the subscription's `data`, which keeps its lazy Firestore listener
   // alive across every hydration transition. Returning early before this read
   // would drop the observation and tear the listener down mid-load.
-  const tasks = showCompleted
+  const tasks = showPastTasks
     ? customTasks.allOrderedTasks
     : customTasks.outstandingOrderedTasks;
 
@@ -151,7 +151,6 @@ const AddedTasksSection = observer(function AddedTasksSection({
         <div key={pendingId}>
           <TaskDivider />
           <AddedTaskForm
-            mode="add"
             onSave={handleAddSave(pendingId)}
             onCancel={handleAddCancel(pendingId)}
           />

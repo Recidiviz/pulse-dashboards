@@ -164,7 +164,7 @@ describe("AddedTasks container", () => {
     );
   });
 
-  test("passes the Show Completed filter node to renderShell", async () => {
+  test("passes the Show past tasks filter node to renderShell", async () => {
     const customTasks = makeCustomTasksMock({
       hydrationState: { status: "hydrated" },
     });
@@ -176,7 +176,7 @@ describe("AddedTasks container", () => {
     await waitFor(
       () =>
         expect(
-          screen.getByRole("button", { name: /filter: show completed/i }),
+          screen.getByRole("button", { name: /filter: show past tasks/i }),
         ).toBeInTheDocument(),
       { timeout: 5000 },
     );

@@ -31,7 +31,11 @@ import type { RootStore } from "../../RootStore";
 import { formatDueDateFromToday } from "../../utils";
 import { Client } from "../Client";
 import { CustomTasksSubscription } from "../subscriptions/CustomTasksSubscription";
-import { getNextDueDate, isTaskCompleted } from "./customTaskStatus";
+import {
+  getNextDueDate,
+  isTaskCompleted,
+  isTaskDeleted,
+} from "./customTaskStatus";
 import { CUSTOM_TASK_TYPE, CustomTaskItem } from "./types";
 
 /**
@@ -111,21 +115,20 @@ export class CustomTasks implements Hydratable {
   }
 
   /**
-   * The not-yet-completed tasks, ordered the way a row actually displays
-   * them. Excludes records that are currently completed — for recurring
-   * tasks this defers to `isTaskCompleted`'s auto-rollover logic, so a task
-   * whose `completedOn` predates its next occurrence reappears here. Sorted
-   * ascending by the resolved next due date (`getNextDueDate`), so the
-   * soonest-due item is first.
-   *
-   * Soft-deleted docs are already filtered out by the subscription's
-   * `where("deletedOn", "==", null)` clause, so no client-side filtering
-   * is needed here.
+   * The not-yet-completed, not-deleted tasks, ordered the way a row actually
+   * displays them. Excludes records that are currently completed — for
+   * recurring tasks this defers to `isTaskCompleted`'s auto-rollover logic,
+   * so a task whose `completedOn` predates its next occurrence reappears
+   * here — and excludes soft-deleted records outright, regardless of
+   * completion state. Sorted ascending by the resolved next due date
+   * (`getNextDueDate`), so the soonest-due item is first.
    */
   get outstandingOrderedTasks(): CustomTaskRecord[] {
     const now = new Date();
     return (this.taskSubscription.data ?? [])
-      .filter((record) => !isTaskCompleted(record, now))
+      .filter(
+        (record) => !isTaskCompleted(record, now) && !isTaskDeleted(record),
+      )
       .sort(
         (a, b) =>
           getNextDueDate(a, now).getTime() - getNextDueDate(b, now).getTime(),
@@ -133,12 +136,11 @@ export class CustomTasks implements Hydratable {
   }
 
   /**
-   * Every task, completed or not, ordered ascending by the resolved next
-   * due date (`getNextDueDate`). Completed records are interleaved among the
-   * incomplete ones strictly by date rather than grouped at the end.
-   *
-   * Soft-deleted docs are already filtered out by the subscription's
-   * `where("deletedOn", "==", null)` clause.
+   * Every task — completed, deleted, or neither — ordered ascending by the
+   * resolved next due date (`getNextDueDate`). Nothing is filtered out here;
+   * callers wanting an active-only view use `outstandingOrderedTasks`
+   * instead. Completed and deleted records are interleaved among the rest
+   * strictly by date rather than grouped separately.
    */
   get allOrderedTasks(): CustomTaskRecord[] {
     const now = new Date();
@@ -151,16 +153,18 @@ export class CustomTasks implements Hydratable {
   /**
    * View-model projection of `orderedTasks` for the Tasks-dashboard table.
    * Skips records that are currently completed (for recurring tasks this
-   * uses the auto-rollover logic in `isTaskCompleted`), resolves the
-   * next-occurrence `dueDate` via `getNextDueDate`, and computes the
-   * display strings the column renderers expect. Sorted ascending by
-   * resolved `dueDate` so the earliest-due item is first.
+   * uses the auto-rollover logic in `isTaskCompleted`) or soft-deleted,
+   * resolves the next-occurrence `dueDate` via `getNextDueDate`, and
+   * computes the display strings the column renderers expect. Sorted
+   * ascending by resolved `dueDate` so the earliest-due item is first.
    */
   get activeTaskItems(): CustomTaskItem[] {
     const now = new Date();
     const startOfToday = startOfDay(now);
     return (this.taskSubscription.data ?? [])
-      .filter((record) => !isTaskCompleted(record, now))
+      .filter(
+        (record) => !isTaskCompleted(record, now) && !isTaskDeleted(record),
+      )
       .map((record): CustomTaskItem => {
         const dueDate = getNextDueDate(record, now);
         const dueDateFromToday = formatDueDateFromToday(dueDate);
