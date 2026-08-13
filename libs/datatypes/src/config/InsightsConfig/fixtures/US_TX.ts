@@ -80,12 +80,12 @@ export const US_TX: InsightsConfig = {
   vitalsMetrics: [
     {
       metricId: "timely_risk_assessment",
-      titleDisplayName: "Timely Risk Assessment",
+      titleDisplayName: "Assessment Completion Rate",
       bodyDisplayName: "Assessment",
     },
     {
       metricId: "timely_contact_due_date_based",
-      titleDisplayName: "Timely Contact",
+      titleDisplayName: "Contact Completion Rate",
       bodyDisplayName: "Contact",
     },
   ],
