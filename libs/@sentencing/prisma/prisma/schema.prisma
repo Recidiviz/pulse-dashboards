@@ -660,7 +660,7 @@ model SentencingAssessmentReport {
   peerAssociatesRiskLevel       DomainRiskLevel?
   criminalBehaviorRiskLevel     DomainRiskLevel?
   involvesSexCrime              Boolean @default(false)
-  static9RRCompleted            Boolean @default(false)
+  static99RCompleted            Boolean @default(false)
   noORASDomainReason            String?
   ORASDomainsAvailable          Boolean @default(true)
 

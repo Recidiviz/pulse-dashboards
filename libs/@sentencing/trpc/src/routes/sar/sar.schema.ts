@@ -171,7 +171,7 @@ export const updateSARSchema = z.object({
     supervisorTitle: z.string().nullish(),
     supervisorLastSignedAt: z.date().nullish(),
     involvesSexCrime: z.boolean().optional(),
-    static9RRCompleted: z.boolean().optional(),
+    static99RCompleted: z.boolean().optional(),
     // Assessment metadata
     assessmentScore: z.number().int().nullish(),
     assessmentType: assessmentTypeEnum.nullish(),

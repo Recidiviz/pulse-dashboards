@@ -62,7 +62,7 @@ export type UpsertSARInput = Pick<
   | "assessmentAdministeredBy"
   | "noORASDomainReason"
   | "involvesSexCrime"
-  | "static9RRCompleted"
+  | "static99RCompleted"
   | "ORASDomainsAvailable"
   | "criminalHistoryLevel"
   | "educationLevelScore"

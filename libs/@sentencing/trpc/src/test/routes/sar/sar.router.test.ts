@@ -89,7 +89,7 @@ describe("SAR router", () => {
           noORASDomainReason: null,
           ORASDomainsAvailable: true,
           involvesSexCrime: false,
-          static9RRCompleted: false,
+          static99RCompleted: false,
           criminalHistoryLevel: fakeSAR.criminalHistoryLevel,
           educationLevelScore: fakeSAR.educationLevelScore,
           neighborhoodLevel: fakeSAR.neighborhoodLevel,
