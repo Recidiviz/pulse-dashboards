@@ -19,7 +19,6 @@ import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React from "react";
 
-import { Banner } from "../shared/styles/Banner";
 import { useStore } from "../StoreProvider/StoreProvider";
 import {
   AssessmentTypeKey,
@@ -34,7 +33,6 @@ import { getOrasUpdatedText } from "./utils";
 interface ORASHeaderProps {
   orasUpdatedText: string;
   hasORASData: boolean;
-  hasBanner: boolean;
   children: React.ReactNode;
   onOpenForm: () => void;
 }
@@ -53,7 +51,6 @@ interface OrasAssessmentScoreCardProps {
 const ORASCardWrapper = observer(function ORASCardWrapper({
   orasUpdatedText,
   hasORASData,
-  hasBanner,
   children,
   onOpenForm,
 }: ORASHeaderProps) {
@@ -64,9 +61,6 @@ const ORASCardWrapper = observer(function ORASCardWrapper({
         <ORASTitle>ORAS Assessment Score</ORASTitle>
         <Styled.ORASUpdatedText>{orasUpdatedText}</Styled.ORASUpdatedText>
       </Styled.CardTitle>
-      {hasBanner && (
-        <Banner>ORAS data regularly updated on Monday evenings.</Banner>
-      )}
       {children}
       {activeFeatureVariants["SARManualORAS"] && (
         <Styled.ORASFormButton onClick={onOpenForm}>
@@ -98,27 +92,23 @@ export const OrasAssessmentScoreCard: React.FC<
     ORASLastUpdatedAt,
     ORASEnteredManually,
   );
-  const hasBanner = !ORASEnteredManually;
   const headerProps = {
     orasUpdatedText,
     hasORASData,
-    hasBanner,
     onOpenForm,
   };
 
   if (!assessmentDate) {
     return (
       <ORASCardWrapper {...headerProps}>
-        <Styled.EmptyState $hasBanner={hasBanner}>
-          No ORAS assessment on file.
-        </Styled.EmptyState>
+        <Styled.EmptyState>No ORAS assessment on file.</Styled.EmptyState>
       </ORASCardWrapper>
     );
   }
 
   return (
     <ORASCardWrapper {...headerProps}>
-      <Styled.CardContent $hasBanner={hasBanner}>
+      <Styled.CardContent>
         <OrasScoreDonut score={assessmentScore} maxScore={maxScore} />
         <Styled.MetadataSection>
           <Styled.MetadataItem>

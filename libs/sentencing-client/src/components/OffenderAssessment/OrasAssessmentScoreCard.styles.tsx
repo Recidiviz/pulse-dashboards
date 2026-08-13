@@ -44,11 +44,11 @@ export const ORASUpdatedText = styled.span`
   letter-spacing: -0.15px;
 `;
 
-export const CardContent = styled.div<{ $hasBanner: boolean }>`
+export const CardContent = styled.div`
   display: flex;
   gap: 2.5rem;
   align-items: center;
-  padding: ${({ $hasBanner }) => ($hasBanner ? "2rem" : "0")} 1rem 0 0;
+  padding: 0 1rem 0 0;
 `;
 
 export const MetadataSection = styled.div`
@@ -89,7 +89,7 @@ export const ORASFormButton = styled(Button).attrs({
   padding: 10px 16px;
 `;
 
-export const EmptyState = styled.div<{ $hasBanner: boolean }>`
+export const EmptyState = styled.div`
   color: ${palette.slate60};
   text-align: center;
   font-family: "Public Sans";
@@ -97,5 +97,4 @@ export const EmptyState = styled.div<{ $hasBanner: boolean }>`
   font-weight: 500;
   line-height: 120%;
   letter-spacing: -0.00875rem;
-  padding-top: ${({ $hasBanner }) => ($hasBanner ? "1.5rem" : "0")};
 `;
