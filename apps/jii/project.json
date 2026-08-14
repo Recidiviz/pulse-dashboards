@@ -32,23 +32,15 @@
         "parallel": false
       }
     },
-    "dev-spa": {
+    "dev": {
       "executor": "nx:run-commands",
-      "dependsOn": ["sync-cpa-intake-videos"],
+      "dependsOn": [
+        { "projects": ["@jii/server"], "target": "dev" },
+        "sync-cpa-intake-videos"
+      ],
       "options": {
         "commands": ["vite dev"],
         "cwd": "{projectRoot}"
-      }
-    },
-    "dev": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "nx dev jii-functions",
-          "nx dev-spa jii",
-          "nx dev @jii/server"
-        ],
-        "cwd": "{workspaceRoot}"
       },
       "configurations": {
         "live": {},
