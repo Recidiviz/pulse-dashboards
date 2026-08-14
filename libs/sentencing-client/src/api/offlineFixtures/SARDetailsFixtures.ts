@@ -77,6 +77,7 @@ export const SARDetailsFixture: { [sarId: string]: SAR } = {
     drugHistories: [],
     employmentHistories: [],
     priorTreatmentHistories: [],
+    isVictimImpactOnly: false,
 
     status: "InProgress",
     needsToBeAddressed: [],

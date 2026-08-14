@@ -271,6 +271,7 @@ export const sarRouter = router({
             courtDate: true,
             completionDate: true,
             investigationType: true,
+            isVictimImpactOnly: true,
             staff: {
               select: {
                 pseudonymizedId: true,

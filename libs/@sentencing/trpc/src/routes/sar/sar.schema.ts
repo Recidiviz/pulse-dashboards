@@ -29,6 +29,7 @@ import {
 } from "~@sentencing/prisma/client";
 import {
   CaseStatusEnum,
+  InvestigationTypeEnum,
   NeedsToBeAddressedEnum,
 } from "~@sentencing/trpc/routes/common/constants";
 import {
@@ -122,6 +123,7 @@ export const updateSARSchema = z.object({
   id: z.string(),
   attributes: z.object({
     status: CaseStatusEnum.optional(),
+    investigationType: InvestigationTypeEnum.optional(),
     address: z.string().nullable().optional(),
     requestingJudgeName: z.string().nullish(),
     division: z.string().nullish(),
@@ -172,6 +174,7 @@ export const updateSARSchema = z.object({
     supervisorLastSignedAt: z.date().nullish(),
     involvesSexCrime: z.boolean().optional(),
     static99RCompleted: z.boolean().optional(),
+    isVictimImpactOnly: z.boolean().optional(),
     // Assessment metadata
     assessmentScore: z.number().int().nullish(),
     assessmentType: assessmentTypeEnum.nullish(),

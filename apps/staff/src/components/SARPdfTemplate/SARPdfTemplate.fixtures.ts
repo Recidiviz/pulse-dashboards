@@ -185,6 +185,7 @@ export const mockSAR: SAR = {
   drugHistories: [],
   employmentHistories: [],
   priorTreatmentHistories: [],
+  isVictimImpactOnly: false,
   client: {
     fullName: "JORDAN A SAMPLE",
     gender: "MALE",

@@ -663,6 +663,7 @@ model SentencingAssessmentReport {
   static99RCompleted            Boolean @default(false)
   noORASDomainReason            String?
   ORASDomainsAvailable          Boolean @default(true)
+  isVictimImpactOnly            Boolean @default(false)
 
   // Free text sections
   defendantStatement            String?

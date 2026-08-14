@@ -20,6 +20,7 @@ import { z } from "zod";
 import {
   CaseStatus,
   Client,
+  InvestigationType,
   NeedToBeAddressed,
   Plea,
   Prisma,
@@ -72,3 +73,4 @@ export const GenderToDisplayName: Record<Client["gender"], string> = {
 export const CaseStatusEnum = z.nativeEnum(CaseStatus);
 export const NeedsToBeAddressedEnum = z.nativeEnum(NeedToBeAddressed);
 export const PleaEnum = z.nativeEnum(Plea);
+export const InvestigationTypeEnum = z.nativeEnum(InvestigationType);
