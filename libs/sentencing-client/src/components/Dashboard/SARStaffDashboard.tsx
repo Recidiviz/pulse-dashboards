@@ -25,10 +25,7 @@ import { StaffPresenter } from "../../presenters/StaffPresenter";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { CaseListTable } from "./CaseListTable";
 import * as Styled from "./Dashboard.styles";
-import {
-  buildSupervisorColumns,
-  SAR_DASHBOARD_COLUMNS,
-} from "./utils/dashboardColumns";
+import { buildSARColumns } from "./utils/dashboardColumns";
 
 const ManagedComponent = observer(function SARStaffDashboard({
   presenter,
@@ -40,16 +37,17 @@ const ManagedComponent = observer(function SARStaffDashboard({
     sarTableData,
     geoConfig,
     isSupervisor,
+    activeFeatureVariants,
     trackSARDashboardPageViewed,
     trackIndividualCaseClicked,
     trackRecommendationStatusFilterChanged,
     trackDashboardSortOrderChanged,
   } = presenter;
-
   const [initialPageLoad, setInitialPageLoad] = useState(true);
   const columns = useMemo(
-    () => buildSupervisorColumns(SAR_DASHBOARD_COLUMNS, isSupervisor),
-    [isSupervisor],
+    () =>
+      buildSARColumns(isSupervisor, Boolean(activeFeatureVariants.PSRBuilder)),
+    [isSupervisor, activeFeatureVariants.PSRBuilder],
   );
 
   if (!staffPseudoId || !sarTableData) return null;

@@ -29,6 +29,7 @@ import {
   RecommendationStatusFilter,
 } from "../components/Dashboard/types";
 import { StaffStore } from "../datastores/StaffStore";
+import { ActiveFeatureVariants } from "../datastores/types";
 import { GEO_CONFIG } from "../geoConfigs/geoConfigs";
 
 export class StaffPresenter implements Hydratable {
@@ -77,6 +78,10 @@ export class StaffPresenter implements Hydratable {
 
   get isSupervisor() {
     return this.staffStore.sentencingStore.isSupervisor;
+  }
+
+  get activeFeatureVariants(): ActiveFeatureVariants {
+    return this.staffStore.sentencingStore.activeFeatureVariants;
   }
 
   get hydrationState(): HydrationState {

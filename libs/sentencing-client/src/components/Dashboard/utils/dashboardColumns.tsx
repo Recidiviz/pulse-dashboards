@@ -19,6 +19,7 @@ import { ColumnDef, Row } from "@tanstack/react-table";
 import moment from "moment";
 
 import { isSARArchived } from "~@sentencing/trpc-types";
+import { StaffSAR } from "~sentencing-client/api";
 
 import { sortFullNameByLastNameDescending } from "../../../utils/sorting";
 import {
@@ -164,12 +165,63 @@ export const ASSIGNED_TO_COLUMN: ColumnDef<CaseListTableCase> = {
   },
 };
 
+// SAR-only column. Add it to dashboards via buildSARColumns, not directly,
+// so the PSRBuilder feature-variant gating is respected.
+export const REPORT_TYPE_COLUMN: ColumnDef<CaseListTableCase> = {
+  header: "Report Type",
+  accessorKey: "investigationType",
+  sortingFn: (rowA: Row<CaseListTableCase>, rowB: Row<CaseListTableCase>) => {
+    const investigationTypeOrder: Record<
+      StaffSAR["investigationType"],
+      number
+    > = {
+      SAR: 0,
+      PSR: 1,
+    };
+
+    // investigationType only exists on StaffSAR, not PSI Cases (StaffCase)
+    const investigationTypeA =
+      "investigationType" in rowA.original
+        ? rowA.original.investigationType
+        : undefined;
+    const investigationTypeB =
+      "investigationType" in rowB.original
+        ? rowB.original.investigationType
+        : undefined;
+
+    if (!investigationTypeA || !investigationTypeB) return 0;
+
+    return (
+      investigationTypeOrder[investigationTypeA] -
+      investigationTypeOrder[investigationTypeB]
+    );
+  },
+  cell: (info) => {
+    const investigationType = info.getValue() as
+      | StaffSAR["investigationType"]
+      | undefined;
+    // isVictimImpactOnly only exists on StaffSAR, not PSI Cases (StaffCase)
+    const isVictimImpactOnly =
+      "isVictimImpactOnly" in info.row.original
+        ? info.row.original.isVictimImpactOnly
+        : undefined;
+    if (investigationType === "SAR") {
+      return "SAR";
+    } else if (investigationType === "PSR" && isVictimImpactOnly === false) {
+      return "Partial SAR";
+    } else {
+      return "Partial SAR (Victim Impact)";
+    }
+  },
+};
+
 export const SAR_DASHBOARD_COLUMNS: ColumnDef<CaseListTableCase>[] = [
   NAME_COLUMN,
   ID_COLUMN,
   DUE_DATE_COLUMN,
   COURT_DATE_COLUMN,
   SAR_STATUS_COLUMN,
+  REPORT_TYPE_COLUMN,
 ];
 
 export const PSI_DASHBOARD_COLUMNS: ColumnDef<CaseListTableCase>[] = [
@@ -211,4 +263,14 @@ export function buildSupervisorColumns(
     ASSIGNED_TO_COLUMN,
     baseColumns[baseColumns.length - 1],
   ];
+}
+
+export function buildSARColumns(
+  isSupervisor: boolean,
+  isPSRBuilderActive: boolean,
+): ColumnDef<CaseListTableCase>[] {
+  const columns = buildSupervisorColumns(SAR_DASHBOARD_COLUMNS, isSupervisor);
+  return isPSRBuilderActive
+    ? columns
+    : columns.filter((column) => column !== REPORT_TYPE_COLUMN);
 }
