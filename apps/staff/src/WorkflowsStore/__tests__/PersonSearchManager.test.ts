@@ -38,7 +38,6 @@ beforeEach(() => {
     rootStore: {
       currentTenantId: "US_ND",
       userStore: {
-        isRecidivizUser: false,
         getToken: vi.fn(),
       },
       firestoreStore: {
@@ -61,46 +60,39 @@ afterEach(() => {
 
 describe("buildPersonSearchPlan", () => {
   test("always includes clients + residents", () => {
-    const plan = buildPersonSearchPlan("alice", "US_TN", false);
+    const plan = buildPersonSearchPlan("alice", "US_TN");
     expect(plan.map((p) => p.collection)).toEqual(["clients", "residents"]);
   });
 
-  test("clients/residents descriptors: query_by, filter_by", () => {
-    const plan = buildPersonSearchPlan("al", "US_UT", false);
+  test("clients/residents descriptors: query_by (incl. preferredName), filter_by", () => {
+    const plan = buildPersonSearchPlan("al", "US_UT");
     expect(plan[0].descriptor).toMatchObject({
       collection: "clients",
       q: "al",
-      query_by: "personName.givenNames,personName.surname,personExternalId",
+      query_by:
+        "personName.givenNames,personName.surname,personExternalId,preferredName",
       filter_by: "stateCode:=`US_UT`",
       infix: "always",
-      num_typos: 2,
+      num_typos: "2,2,0,2",
     });
     expect(plan[1].descriptor).toMatchObject({
       collection: "residents",
       q: "al",
-      query_by: "personName.givenNames,personName.surname,personExternalId",
+      query_by:
+        "personName.givenNames,personName.surname,personExternalId,preferredName",
       filter_by: "stateCode:=`US_UT`",
+      num_typos: "2,2,0,2",
     });
   });
 
-  test("omits clientUpdatesV2 when caller is not unrestricted", () => {
-    const plan = buildPersonSearchPlan("alice", "US_TN", false);
-    expect(plan.map((p) => p.collection)).not.toContain("clientUpdatesV2");
-  });
-
-  test("includes clientUpdatesV2 when caller is unrestricted", () => {
-    const plan = buildPersonSearchPlan("alice", "US_TN", true);
-    expect(plan.map((p) => p.collection)).toEqual([
-      "clients",
-      "residents",
-      "clientUpdatesV2",
-    ]);
-    expect(plan[2].descriptor).toMatchObject({
-      collection: "clientUpdatesV2",
-      q: "alice",
-      query_by: "preferredName",
-      filter_by: "stateCode:=`US_TN`",
-    });
+  test("disables typo tolerance for personExternalId only", () => {
+    const plan = buildPersonSearchPlan("al", "US_UT");
+    const fields = (plan[0].descriptor.query_by as string).split(",");
+    const typos = (plan[0].descriptor.num_typos as string).split(",");
+    expect(typos[fields.indexOf("personExternalId")]).toBe("0");
+    expect(typos[fields.indexOf("personName.givenNames")]).toBe("2");
+    expect(typos[fields.indexOf("personName.surname")]).toBe("2");
+    expect(typos[fields.indexOf("preferredName")]).toBe("2");
   });
 });
 
@@ -112,10 +104,6 @@ describe("composePersonSearchResults", () => {
   const residentsPlan: PlannedPersonSearch = {
     descriptor: {},
     collection: "residents",
-  };
-  const clientUpdatesPlan: PlannedPersonSearch = {
-    descriptor: {},
-    collection: "clientUpdatesV2",
   };
 
   test("returns empty array when all results are empty", () => {
@@ -186,7 +174,7 @@ describe("composePersonSearchResults", () => {
     ]);
   });
 
-  test("merges preferredName onto the matching client/resident hit by id", () => {
+  test("reads preferredName directly off the client/resident document", () => {
     const clientHit = {
       hits: [
         {
@@ -195,34 +183,20 @@ describe("composePersonSearchResults", () => {
             personExternalId: "c1",
             pseudonymizedId: "p1",
             personName: { givenNames: "Alice", surname: "Smith" },
+            preferredName: "Ali",
           },
         },
       ],
     };
-    const clientUpdatesHit = {
-      hits: [{ document: { id: "US_XX_c1", preferredName: "Ali" } }],
-    };
 
     const results = composePersonSearchResults(
-      [clientHit, { hits: [] }, clientUpdatesHit],
-      [clientsPlan, residentsPlan, clientUpdatesPlan],
+      [clientHit, { hits: [] }],
+      [clientsPlan, residentsPlan],
     );
     expect(results[0].preferredName).toBe("Ali");
   });
 
-  test("drops a clientUpdatesV2 hit with no matching client/resident hit", () => {
-    const clientUpdatesHit = {
-      hits: [{ document: { id: "US_XX_c1", preferredName: "Alice" } }],
-    };
-
-    const results = composePersonSearchResults(
-      [{ hits: [] }, { hits: [] }, clientUpdatesHit],
-      [clientsPlan, residentsPlan, clientUpdatesPlan],
-    );
-    expect(results).toEqual([]);
-  });
-
-  test("no-op when clientUpdatesV2 wasn't in the plan at all", () => {
+  test("preferredName is undefined when absent from the document", () => {
     const clientHit = {
       hits: [
         {
@@ -398,19 +372,14 @@ describe("search", () => {
     );
   });
 
-  test("does not include clientUpdatesV2 in the plan for a non-Recidiviz user", async () => {
+  test("always searches clients + residents, regardless of restriction", async () => {
     await manager.search("alice");
     const searches = (mockMultiSearch.mock.calls[0][0] as any).searches;
     expect(searches).toHaveLength(2);
-  });
-
-  test("includes clientUpdatesV2 in the plan for a Recidiviz user", async () => {
-    workflowsStore.rootStore.userStore.isRecidivizUser = true;
-
-    await manager.search("alice");
-    const searches = (mockMultiSearch.mock.calls[0][0] as any).searches;
-    expect(searches).toHaveLength(3);
-    expect(searches[2].collection).toBe("clientUpdatesV2");
+    expect(searches.map((s: any) => s.collection)).toEqual([
+      "clients",
+      "residents",
+    ]);
   });
 
   test("stale responses are dropped: only the latest search's results are committed", async () => {

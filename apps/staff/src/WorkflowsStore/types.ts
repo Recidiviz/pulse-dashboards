@@ -165,13 +165,12 @@ export interface TypesenseSearchResult {
  */
 export interface PlannedPersonSearch {
   descriptor: Record<string, unknown>;
-  collection: "clients" | "residents" | "clientUpdatesV2";
+  collection: "clients" | "residents";
 }
 
 /**
  * A single client/resident search hit, composed from the clients/residents
- * multi_search result and (for unrestricted callers) cross-referenced against
- * the clientUpdatesV2 result for a preferredName override.
+ * multi_search result.
  */
 export interface PersonSearchResult {
   personType: "CLIENT" | "RESIDENT";

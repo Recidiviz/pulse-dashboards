@@ -66,6 +66,7 @@ export const schemas: CollectionCreateSchema[] = [
         optional: true,
         infix: true,
       },
+      { name: "preferredName", type: "string", optional: true, infix: true },
       { name: "district", type: "string", optional: true, facet: true },
       systemField,
     ],
@@ -95,6 +96,7 @@ export const schemas: CollectionCreateSchema[] = [
         optional: true,
         infix: true,
       },
+      { name: "preferredName", type: "string", optional: true, infix: true },
       { name: "facilityId", type: "string", optional: true, facet: true },
       { name: "facilityUnitId", type: "string", optional: true, facet: true },
       // Used by US_ID tenant config (searchField: ["metadata", "crcFacilities"])

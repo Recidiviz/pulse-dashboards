@@ -47,8 +47,8 @@ export class PersonSearchManager {
 
   // Caches composed PersonSearchResults across searches, keyed by
   // pseudonymizedId. A hit is served as-is without checking whether the
-  // person's underlying data has changed. Person name and ID will be fresh
-  // because of daily ETL, and`preferredName` staleness is an acceptable tradeoff.
+  // person's underlying data has changed. All fields (name, ID, preferredName)
+  // are only as fresh as the daily ETL, which is an acceptable tradeoff.
   private resultsCache = new Map<string, PersonSearchResult>();
 
   private debouncedSearch = debounce((query: string) => {
@@ -121,9 +121,8 @@ export class PersonSearchManager {
 
   /**
    * Runs a Typesense `multi_search` against the clients + residents
-   * collections (plus, for unrestricted callers, clientUpdatesV2 for a
-   * preferredName cross-reference) and exposes the results for the nav-bar
-   * person search to render.
+   * collections and exposes the results for the nav-bar person search to
+   * render.
    */
   async search(query: string): Promise<void> {
     const token = ++this.currentSearchToken;
@@ -141,11 +140,7 @@ export class PersonSearchManager {
         return;
       }
 
-      const plan = buildPersonSearchPlan(
-        q,
-        stateCode,
-        this.workflowsStore.rootStore.userStore.isRecidivizUser,
-      );
+      const plan = buildPersonSearchPlan(q, stateCode);
 
       const response = await this.typesenseClient.multiSearch({
         searches: plan.map((p) => p.descriptor),
@@ -170,54 +165,38 @@ export class PersonSearchManager {
   }
 }
 
+// Fields searched for a person-name query, in the order Typesense expects
+// for `query_by`. `num_typos` is a comma list keyed to that same order, so
+// personExternalId can opt out of typo tolerance.
+const PERSON_SEARCH_FIELDS: Array<{ field: string; numTypos: number }> = [
+  { field: "personName.givenNames", numTypos: 2 },
+  { field: "personName.surname", numTypos: 2 },
+  { field: "personExternalId", numTypos: 0 },
+  { field: "preferredName", numTypos: 2 },
+];
+
 // Builds the Typesense multi_search plan for a person-name query.
 export function buildPersonSearchPlan(
   q: string,
   stateCode: string,
-  includeClientUpdates: boolean,
 ): PlannedPersonSearch[] {
   const sharedSearchParams = {
     infix: "always" as const,
-    num_typos: 2,
+    query_by: PERSON_SEARCH_FIELDS.map(({ field }) => field).join(","),
+    num_typos: PERSON_SEARCH_FIELDS.map(({ numTypos }) => numTypos).join(","),
     filter_by: `stateCode:=\`${stateCode}\``,
   };
 
-  const plan: PlannedPersonSearch[] = [
+  return [
     {
-      descriptor: {
-        collection: "clients",
-        q,
-        query_by: "personName.givenNames,personName.surname,personExternalId",
-        ...sharedSearchParams,
-      },
+      descriptor: { collection: "clients", q, ...sharedSearchParams },
       collection: "clients",
     },
     {
-      descriptor: {
-        collection: "residents",
-        q,
-        query_by: "personName.givenNames,personName.surname,personExternalId",
-        ...sharedSearchParams,
-      },
+      descriptor: { collection: "residents", q, ...sharedSearchParams },
       collection: "residents",
     },
   ];
-
-  // Add clientUpdatesV2 to the plan (for preferredName)
-  // TODO (#OBT-42690) Make second request, extend to restricted users
-  if (includeClientUpdates) {
-    plan.push({
-      descriptor: {
-        collection: "clientUpdatesV2",
-        q,
-        query_by: "preferredName",
-        ...sharedSearchParams,
-      },
-      collection: "clientUpdatesV2",
-    });
-  }
-
-  return plan;
 }
 
 // Consumes the multi_search response results (parallel to `plan`) and
@@ -230,23 +209,9 @@ export function composePersonSearchResults(
   plan: PlannedPersonSearch[],
   cache?: Map<string, PersonSearchResult>,
 ): PersonSearchResult[] {
-  // compose the `clientUpdatesV2` results into a map of preferredName by id
-  const clientUpdatesIndex = plan.findIndex(
-    (p) => p.collection === "clientUpdatesV2",
-  );
-  const preferredNameById = new Map<string, string>();
-  results[clientUpdatesIndex]?.hits?.forEach((h) => {
-    const { id, preferredName } = h.document;
-    if (typeof id === "string" && typeof preferredName === "string") {
-      preferredNameById.set(id, preferredName);
-    }
-  });
-
-  // compose the `clients` and `residents` results
   const personResults: PersonSearchResult[] = [];
   results.forEach((r, i) => {
     const p = plan[i];
-    if (p.collection === "clientUpdatesV2") return;
     const personType = p.collection === "clients" ? "CLIENT" : "RESIDENT";
 
     r.hits?.forEach((h) => {
@@ -259,7 +224,7 @@ export function composePersonSearchResults(
         return;
       }
 
-      const id = doc.id;
+      // TODO (OBT-44165): Use `displayPersonExternalId` instead of `personExternalId`
       const built: PersonSearchResult = {
         personType,
         personExternalId: doc.personExternalId as string,
@@ -268,7 +233,7 @@ export function composePersonSearchResults(
           ?.givenNames,
         surname: (doc.personName as { surname?: string } | undefined)?.surname,
         preferredName:
-          typeof id === "string" ? preferredNameById.get(id) : undefined,
+          typeof doc.preferredName === "string" ? doc.preferredName : undefined,
       };
       cache?.set(pseudonymizedId, built);
       personResults.push(built);
