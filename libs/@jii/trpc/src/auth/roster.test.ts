@@ -15,7 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { createVerifier } from "fast-jwt";
 import { getFirestore } from "firebase-admin/firestore";
+import tk from "timekeeper";
 
 import { StateCode } from "~@jii/configs";
 import { getPrismaClient, Prisma } from "~@jii/prisma";
@@ -25,6 +27,9 @@ import { userId } from "../test/context";
 import { testPrismaClient } from "../test/prisma";
 import { checkDemoResidentsRoster, checkResidentsRoster } from "./roster";
 
+// random string, not a secret that's used for anything
+const testIntercomSigningKey =
+  "8bf3263bc6527e57dd73414757249c049297387998fa29cf7e8685115aa2bdbf";
 // a state that looks up residents by displayId
 const displayIdState: StateCode = "US_CO";
 // a state that looks up residents by personExternalId
@@ -84,6 +89,8 @@ function mockFirestoreRecord(payload: Record<string, unknown>) {
   mockFirestore.get.mockResolvedValue({ docs: [{ data }], data });
 }
 
+const verifyIntercomToken = createVerifier({ key: testIntercomSigningKey });
+
 beforeEach(async () => {
   // mockReset (configured globally) clears mock implementations before each
   // test, so all the mocks have to be rewired here rather than at module scope
@@ -104,6 +111,8 @@ beforeEach(async () => {
   const actual =
     await vi.importActual<typeof import("~@jii/prisma")>("~@jii/prisma");
   vi.mocked(getPrismaClient).mockImplementation(actual.getPrismaClient);
+
+  vi.stubEnv("INTERCOM_WEB_SDK_SECRET_KEY", testIntercomSigningKey);
 });
 
 afterEach(() => {
@@ -122,7 +131,9 @@ describe("checkResidentsRoster", () => {
 
   describe("when the useNewResidentData flag is active", () => {
     beforeEach(() => {
-      vi.mocked(isUserFlagActive).mockResolvedValue(true);
+      vi.mocked(isUserFlagActive).mockImplementation(
+        async ({ flagId }) => flagId === "useNewResidentData",
+      );
     });
 
     test("returns an AuthorizedUserProfile built from the resident record", async () => {
@@ -192,6 +203,30 @@ describe("checkResidentsRoster", () => {
 
       expect(getFirestore).not.toHaveBeenCalled();
     });
+
+    test("includes Intercom token when flag is active", async () => {
+      vi.mocked(isUserFlagActive).mockImplementation(
+        async ({ flagId }) =>
+          flagId === "useNewResidentData" || flagId === "intercom",
+      );
+
+      await testPrismaClient.resident.create({
+        data: buildResidentRecord({
+          pseudonymizedId: "anonres1",
+          personExternalId: userId,
+        }),
+      });
+
+      // freezing so the timestamp in the payload will be consistent
+      const result = await tk.withFreeze(new Date("2026-08-13"), async () => {
+        return checkResidentsRoster(externalIdState, userId);
+      });
+
+      expect(verifyIntercomToken(result?.intercomToken ?? "")).toEqual({
+        user_id: "anonres1",
+        iat: 1786579200,
+      });
+    });
   });
 
   describe("when the useNewResidentData flag is not active", () => {
@@ -249,7 +284,9 @@ describe("checkDemoResidentsRoster", () => {
 
   describe("when the useNewResidentData flag is active", () => {
     beforeEach(() => {
-      vi.mocked(isUserFlagActive).mockResolvedValue(true);
+      vi.mocked(isUserFlagActive).mockImplementation(
+        async ({ flagId }) => flagId === "useNewResidentData",
+      );
     });
 
     test("returns a ResidentUserProfile built from the resident record", async () => {

@@ -66,11 +66,13 @@ describe("user metadata schema", () => {
         stateCode: "US_CO",
         externalId: "123456",
         pseudonymizedId: "asnvawepeawhfeuawoghuil",
+        intercomToken: "eryiweyrwroywerowy",
         permissions: ["live_data"],
       }),
     ).toMatchInlineSnapshot(`
       {
         "externalId": "123456",
+        "intercomToken": "eryiweyrwroywerowy",
         "permissions": [
           "live_data",
         ],
@@ -110,6 +112,17 @@ describe("user metadata schema", () => {
         }
       ]]
     `);
+  });
+
+  test("intercom token is optional", () => {
+    expect(() =>
+      authorizedUserProfileSchema.parse({
+        stateCode: "US_CO",
+        externalId: "123456",
+        pseudonymizedId: "asnvawepeawhfeuawoghuil",
+        permissions: ["live_data"],
+      }),
+    ).not.toThrow();
   });
 
   test("for Recidiviz users", () => {

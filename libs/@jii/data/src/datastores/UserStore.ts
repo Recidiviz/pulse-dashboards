@@ -23,6 +23,7 @@ import { isDemoMode } from "~client-env-utils";
 
 import { AuthManager } from "../apis/auth/AuthManager";
 import { isAuthorizedState } from "../apis/auth/types";
+import { IntercomClient } from "../apis/Intercom/IntercomClient";
 import {
   SegmentClient,
   SegmentClientExternals,
@@ -33,16 +34,20 @@ import { TranslationStore } from "./TranslationStore";
 export class UserStore {
   segmentClient: SegmentClient;
 
+  intercomClient: IntercomClient;
+
   authManager: AuthManager;
 
   constructor(translationStore: TranslationStore) {
     makeAutoObservable(
       this,
-      { authManager: false, segmentClient: false },
+      { authManager: false, segmentClient: false, intercomClient: false },
       { autoBind: true },
     );
 
     this.authManager = new AuthManager(translationStore);
+
+    this.intercomClient = new IntercomClient();
 
     this.segmentClient = new SegmentClient(
       new SegmentExternals(this, translationStore),
@@ -94,13 +99,33 @@ export class UserStore {
   }
 
   logOut() {
+    this.intercomClient.logOut();
     this.authManager.authClient?.logOut();
   }
 
   identifyToTrackers() {
+    const { authState } = this;
+    if (!isAuthorizedState(authState)) return;
+
     // non-JII users (e.g. Recidiviz employees) will not have this property
-    if (this.pseudonymizedId) {
-      this.segmentClient.identify(this.pseudonymizedId);
+    const { pseudonymizedId } = this;
+    if (pseudonymizedId) {
+      this.segmentClient.identify(pseudonymizedId);
+
+      const {
+        userProfile: { stateCode, intercomToken, externalId },
+      } = authState;
+
+      // presence of this token is taken as a signal
+      // that Intercom should be enabled for this user.
+      if (intercomToken) {
+        this.intercomClient.init({
+          externalId,
+          intercomToken,
+          pseudonymizedId,
+          stateCode,
+        });
+      }
     }
   }
 

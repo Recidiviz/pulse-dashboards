@@ -19,6 +19,7 @@ import { configure } from "mobx";
 
 import { isDemoMode, isOfflineMode, isTestEnv } from "~client-env-utils";
 
+import { IntercomClient } from "../apis/Intercom/IntercomClient";
 import { SegmentClient } from "../apis/Segment/SegmentClient";
 import { TranslationStore } from "./TranslationStore";
 import { UserStore } from "./UserStore";
@@ -45,6 +46,7 @@ beforeEach(() => {
       stateCode: "US_NE",
       externalId: "123456",
       pseudonymizedId: "test-pid",
+      intercomToken: "test-hash",
     },
   });
 });
@@ -167,15 +169,25 @@ test("reads pseudonymizedId from app metadata", () => {
 test("log out", () => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   vi.spyOn(store.authManager.authClient!, "logOut");
+  vi.spyOn(store.intercomClient, "logOut");
 
   store.logOut();
   expect(store.authManager.authClient?.logOut).toHaveBeenCalled();
+  expect(store.intercomClient.logOut).toHaveBeenCalled();
 });
 
 test("identify to trackers", () => {
+  vi.spyOn(IntercomClient.prototype, "init");
   vi.spyOn(SegmentClient.prototype, "identify");
 
   store.identifyToTrackers();
+
+  expect(IntercomClient.prototype.init).toHaveBeenCalledWith({
+    stateCode: "US_NE",
+    pseudonymizedId: "test-pid",
+    intercomToken: "test-hash",
+    externalId: "123456",
+  });
 
   expect(SegmentClient.prototype.identify).toHaveBeenCalledExactlyOnceWith(
     "test-pid",
@@ -183,6 +195,7 @@ test("identify to trackers", () => {
 });
 
 test("do not identify to trackers when user has no pseudo ID", () => {
+  vi.spyOn(IntercomClient.prototype, "init");
   vi.spyOn(SegmentClient.prototype, "identify");
 
   vi.spyOn(store.authManager, "authState", "get").mockReturnValue({
@@ -195,7 +208,27 @@ test("do not identify to trackers when user has no pseudo ID", () => {
 
   store.identifyToTrackers();
 
+  expect(IntercomClient.prototype.init).not.toHaveBeenCalled();
   expect(SegmentClient.prototype.identify).not.toHaveBeenCalled();
+});
+
+test("do not identify to Intercom when user has no intercomUserHash", () => {
+  vi.spyOn(IntercomClient.prototype, "init");
+  vi.spyOn(SegmentClient.prototype, "identify");
+
+  vi.spyOn(store.authManager, "authState", "get").mockReturnValue({
+    status: "authorized",
+    userProfile: {
+      stateCode: "RECIDIVIZ",
+      allowedStates: ["US_NE"],
+      pseudonymizedId: "test-pid",
+    },
+  });
+
+  store.identifyToTrackers();
+
+  expect(IntercomClient.prototype.init).not.toHaveBeenCalled();
+  expect(SegmentClient.prototype.identify).toHaveBeenCalled();
 });
 
 test("allowed states", () => {

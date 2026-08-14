@@ -49,7 +49,7 @@ type ResidentFlag =
 
 // this type must stay in sync with the UserFlagId enum
 // defined in the prisma schema.
-type UserFlag = "useNewResidentData";
+type UserFlag = "useNewResidentData" | "intercom";
 
 export type ResidentsConfig = {
   home: {

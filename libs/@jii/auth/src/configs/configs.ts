@@ -82,6 +82,9 @@ export const residentUserProfileSchema = z.object({
   stateCode: z.string(),
   externalId: z.string(),
   pseudonymizedId: z.string(),
+  // Intercom is not generally available due to network restrictions
+  // that vary per external partners; this value is required to enable it.
+  intercomToken: z.string().optional(),
   // accepts and discards unknown strings, to avoid breaking if new permissions are added before schema update
   permissions: z
     .array(z.string())
@@ -101,6 +104,7 @@ export const authorizedUserProfileSchema = z
     stateCode: residentUserProfileSchema.shape.stateCode,
     externalId: residentUserProfileSchema.shape.externalId.optional(),
     pseudonymizedId: residentUserProfileSchema.shape.pseudonymizedId.optional(),
+    intercomToken: residentUserProfileSchema.shape.intercomToken,
     permissions: residentUserProfileSchema.shape.permissions.optional(),
     allowedStates: z.array(z.string()).optional(),
     district: z.string().nullable().optional(),

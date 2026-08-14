@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { createSigner, SignerPayload } from "fast-jwt";
 import { DocumentData, getFirestore } from "firebase-admin/firestore";
 import { z } from "zod";
 
@@ -35,6 +36,14 @@ function getResidentIds(residentRecord: DocumentData) {
   return z
     .object({ personExternalId: z.string(), pseudonymizedId: z.string() })
     .parse(residentRecord);
+}
+
+// signer creation is function-scoped rather than module-scoped
+// so that an error with the key doesn't bring down the entire app
+function signIntercomJwt(payload: SignerPayload) {
+  return createSigner({
+    key: process.env["INTERCOM_WEB_SDK_SECRET_KEY"],
+  })(payload);
 }
 
 async function getResidentRecordForDisplayId(
@@ -102,10 +111,23 @@ export async function checkResidentsRoster(
       getResidentIds(userResidentRecord));
   }
 
+  let intercomToken: string | undefined;
+  if (
+    await isUserFlagActive({
+      stateCode,
+      prisma,
+      userId,
+      flagId: "intercom",
+    })
+  ) {
+    intercomToken = signIntercomJwt({ user_id: pseudonymizedId });
+  }
+
   return {
     stateCode: stateCode,
     externalId: personExternalId,
     pseudonymizedId,
+    intercomToken,
     permissions: ["live_data"],
   };
 }
@@ -147,10 +169,23 @@ export async function checkDemoResidentsRoster(
     ({ pseudonymizedId } = getResidentIds(userDemoResidentRecord));
   }
 
+  let intercomToken: string | undefined;
+  if (
+    await isUserFlagActive({
+      stateCode,
+      prisma,
+      userId,
+      flagId: "intercom",
+    })
+  ) {
+    intercomToken = signIntercomJwt({ user_id: pseudonymizedId });
+  }
+
   return {
     stateCode: stateCode,
     externalId: userId,
     pseudonymizedId,
+    intercomToken,
     permissions: [],
   };
 }
