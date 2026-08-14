@@ -17,66 +17,75 @@
 
 import { z } from "zod";
 
-export const MeetingTypeConfigEntrySchema = z.object({
-  extractionNote: z.string().optional(),
-  caseNoteGuidance: z.string().optional(),
-});
+export const MeetingTypeConfigEntrySchema = z
+  .object({
+    extractionNote: z.string().optional(),
+    caseNoteGuidance: z.string().optional(),
+  })
+  .describe("Prompt customizations for a specific meeting type.");
 
-export const OutputSpecSchema = z.object({
-  id: z.string().describe("Unique identifier for this output section"),
-  label: z.string().describe("Human-readable label"),
-  promptGuidance: z
-    .string()
-    .describe("LLM instructions for producing this output section"),
-  subheaders: z
-    .array(z.string())
-    .optional()
-    .describe("Optional subheaders to include in the output"),
-});
+export const OutputSpecSchema = z
+  .object({
+    id: z.string().describe("Unique identifier for this output section"),
+    label: z.string().describe("Human-readable label"),
+    promptGuidance: z
+      .string()
+      .describe("LLM instructions for producing this output section"),
+    subheaders: z
+      .array(z.string())
+      .optional()
+      .describe("Optional subheaders to include in the output"),
+  })
+  .describe("A single structured output section produced by the LLM pipeline.");
 
-// MeetingTypeSchema
-export const MeetingTypeSchema = z.object({
-  type: z
-    .string()
-    .describe("Type of the meeting, e.g. 'Assessment', 'Collateral Contact'"),
-  isCategoryRequired: z
-    .boolean()
-    .optional()
-    .describe("Whether a category is required for this meeting type"),
-  // Visible used here so that we can very easily test configs as they are written without bouncing
-  // back and forth between US_DEMO. Recidiviz users will still see these meeting types.
-  visible: z
-    .boolean()
-    .describe(
-      "Whether this meeting type is visible in the frontend to non-recidiviz users.",
-    )
-    .default(true),
-  categories: z
-    .array(z.string())
-    .optional()
-    .describe("Optional list of categories for this meeting type"),
-  categoryType: z
-    .string()
-    .optional()
-    .describe(
-      "Category type, e.g. 'Relationship' for collateral meeting type, used in some front parts like placeholder, error, etc.",
+export const MeetingTypeSchema = z
+  .object({
+    type: z
+      .string()
+      .describe("Type of the meeting, e.g. 'Assessment', 'Collateral Contact'"),
+    isCategoryRequired: z
+      .boolean()
+      .optional()
+      .describe("Whether a category is required for this meeting type"),
+    // Visible used here so that we can very easily test configs as they are written without bouncing
+    // back and forth between US_DEMO. Recidiviz users will still see these meeting types.
+    visible: z
+      .boolean()
+      .describe(
+        "Whether this meeting type is visible in the frontend to non-recidiviz users.",
+      )
+      .default(true),
+    categories: z
+      .array(z.string())
+      .optional()
+      .describe("Optional list of categories for this meeting type"),
+    categoryType: z
+      .string()
+      .optional()
+      .describe(
+        "Category type, e.g. 'Relationship' for collateral meeting type, used in some front parts like placeholder, error, etc.",
+      ),
+    promptConfig: MeetingTypeConfigEntrySchema.optional().describe(
+      "Contains config for any prompt changes this config may inject to our prompts",
     ),
-  promptConfig: MeetingTypeConfigEntrySchema.optional().describe(
-    "Contains config for any prompt changes this config may inject to our prompts",
-  ),
-});
+  })
+  .describe("A single meeting type available to this agency's staff.");
 
 /**
  * Labels/copy for common terms used in UI.
  * Default values for each field should be defined
- * in the base agency config (base.yaml).
+ * in the base agency config.
  */
-const LabelsSchema = z.object({
-  supervisionStaff: z.string().optional(),
-  facilitiesStaff: z.string().optional(),
-  client: z.string().optional(),
-  resident: z.string().optional(),
-});
+export const LabelsSchema = z
+  .object({
+    supervisionStaff: z.string().optional(),
+    facilitiesStaff: z.string().optional(),
+    client: z.string().optional(),
+    resident: z.string().optional(),
+  })
+  .describe(
+    "Labels/copy for common terms used in UI. Defaults are set in the base config.",
+  );
 
 /**
  * Schema for a raw agency YAML file.
@@ -85,46 +94,82 @@ const LabelsSchema = z.object({
  * Use `additional*` variants to extend the base instead — mergeWithBase
  * applies them on top before validation.
  */
-export const AgencyConfigFileSchema = z.object({
-  // ── Metadata ──────────────────────────────────────────────
-  name: z.string(),
-  stateCode: z.string(),
-  version: z.number().int().positive().default(1),
+export const AgencyConfigFileSchema = z
+  .object({
+    // ── Metadata ──────────────────────────────────────────────
+    name: z.string(),
+    stateCode: z.string(),
+    version: z.number().int().positive().default(1),
 
-  // ── Infrastructure ────────────────────────────────────────
-  showTranscriptions: z.boolean().optional(),
-  showCNI: z.boolean().optional(),
-  staffFeedbackEnabled: z.boolean().optional(),
-  audioPlaybackEnabled: z.boolean().optional(),
-  audioTTLDays: z.number().int().min(7).nullable().optional(),
-  transcriptTTLDays: z.number().int().min(7).nullable().optional(),
-  /** Replaces base keywords entirely */
-  keywords: z.array(z.string()).optional(),
-  /** Appended to base keywords */
-  additionalKeywords: z.array(z.string()).optional(),
-  /** Each state has its own meeting types list */
-  meetingTypes: z.array(MeetingTypeSchema).optional(),
-  /** Labels/copy for common terms used in UI */
-  labels: LabelsSchema.optional(),
+    // ── Infrastructure ────────────────────────────────────────
+    showTranscriptions: z.boolean().optional(),
+    showCNI: z.boolean().optional(),
+    staffFeedbackEnabled: z.boolean().optional(),
+    audioPlaybackEnabled: z.boolean().optional(),
+    audioTTLDays: z.number().int().min(7).nullable().optional(),
+    transcriptTTLDays: z.number().int().min(7).nullable().optional(),
+    /** Replaces base keywords entirely */
+    keywords: z
+      .array(z.string())
+      .optional()
+      .describe("Replaces base keywords entirely"),
+    /** Appended to base keywords */
+    additionalKeywords: z
+      .array(z.string())
+      .optional()
+      .describe("Appended to base keywords"),
+    /** Each state has its own meeting types list */
+    meetingTypes: z
+      .array(MeetingTypeSchema)
+      .optional()
+      .describe("Each state has its own meeting types list"),
+    /** Labels/copy for common terms used in UI */
+    labels: LabelsSchema.optional().describe(
+      "Labels/copy for common terms used in UI",
+    ),
 
-  // ── LLM ───────────────────────────────────────────────────
-  /** Replaces base glossary entirely */
-  glossary: z.record(z.string()).optional(),
-  /** Merged on top of base glossary */
-  additionalGlossary: z.record(z.string()).optional(),
-  /** Replaces base rules entirely */
-  rules: z.array(z.string()).optional(),
-  /** Appended to base rules */
-  additionalRules: z.array(z.string()).optional(),
-  /** Replaces base outputs entirely */
-  outputs: z.array(OutputSpecSchema).optional(),
-  /** Appended to base outputs */
-  additionalOutputs: z.array(OutputSpecSchema).optional(),
-  /** Patches specific fields of existing outputs by id, without replacing them */
-  outputPatches: z
-    .record(OutputSpecSchema.omit({ id: true }).partial())
-    .optional(),
-});
+    // ── LLM ───────────────────────────────────────────────────
+    /** Replaces base glossary entirely */
+    glossary: z
+      .record(z.string())
+      .optional()
+      .describe("Replaces base glossary entirely"),
+    /** Merged on top of base glossary */
+    additionalGlossary: z
+      .record(z.string())
+      .optional()
+      .describe("Merged on top of base glossary"),
+    /** Replaces base rules entirely */
+    rules: z
+      .array(z.string())
+      .optional()
+      .describe("Replaces base rules entirely"),
+    /** Appended to base rules */
+    additionalRules: z
+      .array(z.string())
+      .optional()
+      .describe("Appended to base rules"),
+    /** Replaces base outputs entirely */
+    outputs: z
+      .array(OutputSpecSchema)
+      .optional()
+      .describe("Replaces base outputs entirely"),
+    /** Appended to base outputs */
+    additionalOutputs: z
+      .array(OutputSpecSchema)
+      .optional()
+      .describe("Appended to base outputs"),
+    /** Patches specific fields of existing outputs by id, without replacing them */
+    outputPatches: z
+      .record(OutputSpecSchema.omit({ id: true }).partial())
+      .optional()
+      .describe(
+        "Patches specific fields of existing outputs by id, without replacing them",
+      ),
+  })
+  .describe(
+    "Use plain fields (`glossary`, `keywords`, etc.) to fully replace the base values. Use `additional*` variants to extend the base instead — mergeWithBase applies them on top before validation",
+  );
 
 /**
  * Base YAML omits name/stateCode — leave them out when validating
@@ -132,7 +177,9 @@ export const AgencyConfigFileSchema = z.object({
 export const BaseConfigFileSchema = AgencyConfigFileSchema.omit({
   name: true,
   stateCode: true,
-});
+}).describe(
+  "Fields to be configured by the base file. Omits name and stateCode.",
+);
 
 /**
  * The result of merging the base config with an agency YAML

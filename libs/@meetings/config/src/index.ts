@@ -16,6 +16,14 @@
 // =============================================================================
 
 export { AUDIO_FORMATS } from "~@meetings/config/audio";
+export type {
+  ConfigFieldDoc,
+  ConfigSchemaSection,
+} from "~@meetings/config/configFieldDocs";
+export {
+  getConfigFieldDocs,
+  getConfigSchemaSections,
+} from "~@meetings/config/configFieldDocs";
 export { generateConfigKey } from "~@meetings/config/configKey";
 export { mergeWithBase } from "~@meetings/config/merge";
 export { newAgencyConfigYamlTemplate } from "~@meetings/config/newConfigTemplate";

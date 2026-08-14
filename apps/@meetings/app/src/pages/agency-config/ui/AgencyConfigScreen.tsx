@@ -25,10 +25,12 @@ import Editor, { Monaco } from "@monaco-editor/react";
 import type { editor } from "monaco-editor";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
+import QuestionMarkCircleIcon from "react-native-heroicons/outline/QuestionMarkCircleIcon";
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
 
 import { trpc } from "~@meetings/app/shared/api";
 import { DEPLOY_ENV_LABEL } from "~@meetings/app/shared/config";
@@ -41,8 +43,10 @@ import { Typography } from "~@meetings/app/shared/ui/Typography";
 import { Header } from "~@meetings/app/widgets/header";
 import {
   AgencyConfigFileSchema,
+  AgencyConfigSchema,
   BaseConfigFileSchema,
   MEETINGS_STATE_CODES,
+  mergeWithBase,
   newAgencyConfigYamlTemplate,
 } from "~@meetings/config";
 
@@ -53,9 +57,26 @@ import {
   parseIdentity,
   parseVersion,
 } from "../lib/configValidation";
+import { AgencyConfigFieldsModal } from "./AgencyConfigFieldsModal";
 
 // Currently only one base exists, all agency configs default to merge with this base
 const BASE_CONFIG_ID = "base";
+
+// Keeps whatever top-level fields currently validate and drops the rest,
+// rather than blocking the whole preview on one bad field — the "This is an
+// approximation" banner already tells the user something's off.
+function pickValidFields(
+  merged: Record<string, unknown>,
+): Record<string, unknown> {
+  const result: Record<string, unknown> = {};
+  for (const [key, fieldSchema] of Object.entries(AgencyConfigSchema.shape)) {
+    const fieldResult = fieldSchema.safeParse(merged[key]);
+    if (fieldResult.success) {
+      result[key] = fieldResult.data;
+    }
+  }
+  return result;
+}
 
 export const AgencyConfigScreen = () => {
   const insets = useSafeAreaInsets();
@@ -65,6 +86,8 @@ export const AgencyConfigScreen = () => {
   const [selectedConfigId, setSelectedConfigId] = useState("");
   const [editedConfigText, setEditedConfigText] = useState("");
   const [hasValidationErrors, setHasValidationErrors] = useState(false);
+  const [isFieldsModalOpen, setIsFieldsModalOpen] = useState(false);
+  const [isPreviewEnabled, setIsPreviewEnabled] = useState(false);
 
   const snackbar = useSnackbar();
 
@@ -143,11 +166,51 @@ export const AgencyConfigScreen = () => {
   const hasUnsavedChanges =
     !!editedConfigText && editedConfigText !== savedConfig?.config;
 
+  // The template text is not itself a "change" when creating new — only
+  // deviations from it should offer an undo.
+  const originalConfigText = isCreatingNew
+    ? newAgencyConfigYamlTemplate(selectedConfigId.toUpperCase())
+    : savedConfig?.config ?? "";
+  const hasChangesToUndo = editedConfigText !== originalConfigText;
+
   // configs created in the UI are agency configs not bases
-  const configSchema: ConfigSchema =
-    isCreatingNew || savedConfig?.parentId
-      ? AgencyConfigFileSchema
-      : BaseConfigFileSchema;
+  const isAgencyConfig =
+    !selectedConfigId || isCreatingNew || !!savedConfig?.parentId;
+  const configSchema: ConfigSchema = isAgencyConfig
+    ? AgencyConfigFileSchema
+    : BaseConfigFileSchema;
+  const isReadOnly =
+    !MEETINGS_STATE_CODES.includes(selectedConfigId.toUpperCase()) &&
+    isAgencyConfig;
+
+  // Only needed to render the merged preview pane for agency configs — base
+  // configs have nothing to merge with.
+  const { data: baseConfigForPreview } = trpc.v1.config.getByState.useQuery(
+    { id: BASE_CONFIG_ID },
+    { enabled: isAgencyConfig && isPreviewEnabled },
+  );
+
+  const computeMergedPreview = (agencyConfigText: string): string | null => {
+    if (!isAgencyConfig || !isPreviewEnabled || !baseConfigForPreview) {
+      return null;
+    }
+    try {
+      // Parsed raw (not schema-validated) so a bad value in one field doesn't
+      // block the rest of the config from previewing.
+      const rawBase = parseYaml(baseConfigForPreview.config);
+      const rawAgency = parseYaml(agencyConfigText);
+      const merged = mergeWithBase(rawBase, rawAgency);
+      const mergedResult = AgencyConfigSchema.safeParse(merged);
+      const previewData = mergedResult.success
+        ? mergedResult.data
+        : pickValidFields(merged);
+      return stringifyYaml(previewData, { nullStr: "" });
+    } catch {
+      return null;
+    }
+  };
+
+  const mergedPreviewText = computeMergedPreview(editedConfigText);
 
   const originalVersion = savedConfig
     ? parseVersion(savedConfig.config, configSchema)
@@ -165,6 +228,10 @@ export const AgencyConfigScreen = () => {
       newConfig: editedConfigText,
       parentId: isCreatingNew ? BASE_CONFIG_ID : savedConfig?.parentId ?? null,
     });
+  };
+
+  const handleUndo = () => {
+    setEditedConfigText(originalConfigText);
   };
   const monacoRef = useRef<Monaco | null>(null);
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
@@ -227,14 +294,22 @@ export const AgencyConfigScreen = () => {
     >
       <Header />
       <View className="flex-1 px-4 pb-6 pt-10 md:px-10">
-        <View className="mx-auto w-full max-w-[960px] flex-1">
+        <View className="mx-auto w-full max-w-[1240px] flex-1">
           {/* Toolbar: relative + z-50 is critical so the dropdown renders above Monaco */}
           <View className="relative z-50 mb-6">
-            <Typography variant="heading-1">Agency Configurations</Typography>
+            <View className="flex-row items-center gap-2">
+              <Typography variant="heading-1">Agency Configurations</Typography>
+              <TouchableOpacity
+                onPress={() => setIsFieldsModalOpen(true)}
+                accessibilityLabel="View available config fields"
+              >
+                <QuestionMarkCircleIcon className="size-5 stroke-tertiary" />
+              </TouchableOpacity>
+            </View>
             <Typography className="my-2" variant="body-s-regular">
               View and edit agency configs for {DEPLOY_ENV_LABEL}.
             </Typography>
-            <View className="flex-row items-center justify-between pt-3">
+            <View className="min-h-[30px] flex-col items-start gap-3 pt-3 sm:flex-row sm:items-center sm:justify-between">
               {isLoading ? (
                 <Typography>Loading…</Typography>
               ) : (
@@ -246,73 +321,161 @@ export const AgencyConfigScreen = () => {
                   onSelect={handleSelect}
                   label="Select existing agency"
                   defaultEmptyValue
-                  className="my-1"
+                  className="my-2"
                 />
               )}
-              {hasUnsavedChanges && (
-                <TouchableOpacity onPress={handleSave} disabled={!canSave}>
-                  <View
-                    className={`flex-row items-center gap-1 rounded-full px-4 py-2 ${
-                      canSave ? "bg-brand" : "bg-disabled"
-                    }`}
-                  >
-                    <Typography
-                      className={`text-sm font-semibold leading-4 ${
-                        canSave ? "text-on-brand" : "text-on-disabled"
-                      }`}
-                    >
-                      {isCreatingNew
-                        ? "Create config"
-                        : "Save as a new version"}
-                    </Typography>
-                  </View>
-                </TouchableOpacity>
+              {(hasChangesToUndo || hasUnsavedChanges) && (
+                <View className="flex-row items-center gap-3">
+                  {hasChangesToUndo && (
+                    <Button variant="tertiary" onPress={handleUndo}>
+                      Undo all changes
+                    </Button>
+                  )}
+                  {hasUnsavedChanges && (
+                    <TouchableOpacity onPress={handleSave} disabled={!canSave}>
+                      <View
+                        className={`flex-row items-center gap-1 rounded-full px-4 py-3 ${
+                          canSave ? "bg-brand" : "bg-disabled"
+                        }`}
+                      >
+                        <Typography
+                          className={`text-sm font-semibold leading-4 ${
+                            canSave ? "text-on-brand" : "text-on-disabled"
+                          }`}
+                        >
+                          {isCreatingNew
+                            ? "Create config"
+                            : "Save as a new version"}
+                        </Typography>
+                      </View>
+                    </TouchableOpacity>
+                  )}
+                </View>
               )}
             </View>
           </View>
           {!isLoading && selectedConfigId && (
-            <View className="flex-1 overflow-hidden rounded-lg shadow-sm">
-              <Editor
-                height="100%"
-                defaultLanguage="yaml"
-                theme="vs"
-                value={editedConfigText}
-                onChange={(val) => setEditedConfigText(val ?? "")}
-                onMount={handleEditorDidMount}
-                options={{
-                  fixedOverflowWidgets: true, // Forces Monaco popups to absolute float, preventing clipping
-                  minimap: { enabled: false },
-                  padding: { top: 16, bottom: 16 },
-                  fontSize: 14,
-                  fontFamily: "monospace",
-                  lineNumbers: "on",
-                  scrollBeyondLastLine: true,
-                  automaticLayout: true,
-                  renderLineHighlight: "none",
-                }}
-              />
-            </View>
-          )}
-          {!isLoading && missingStateCodes.length > 0 && (
-            <View className="mt-6 flex-row items-center gap-2">
-              <Typography className="text-sm text-secondary md:text-base">
-                Create a new config for:
-              </Typography>
-              <View className="flex-row flex-wrap gap-2">
-                {missingStateCodes.map((stateCode) => (
-                  <Button
-                    key={stateCode}
-                    variant="secondary"
-                    onPress={() => handleCreateNew(stateCode)}
-                  >
-                    {stateCode}
-                  </Button>
-                ))}
+            <View className="flex-1 flex-col gap-4 overflow-hidden md:flex-row">
+              <View className="flex-1 flex-col overflow-hidden rounded-lg shadow-sm">
+                {isReadOnly && (
+                  <View className="border-b border-subtle bg-secondary px-3 py-2">
+                    <Typography className="text-xs font-semibold uppercase tracking-wide text-tertiary">
+                      (read-only) This state is not currently enabled in the
+                      Meetings app. Please enable to edit.
+                    </Typography>
+                  </View>
+                )}
+                <View className="flex-1 overflow-hidden rounded-lg shadow-sm">
+                  <Editor
+                    height="100%"
+                    defaultLanguage="yaml"
+                    theme="vs"
+                    value={editedConfigText}
+                    onChange={(val) => setEditedConfigText(val ?? "")}
+                    onMount={handleEditorDidMount}
+                    options={{
+                      fixedOverflowWidgets: true, // Forces Monaco popups to absolute float, preventing clipping
+                      minimap: { enabled: false },
+                      padding: { top: 16, bottom: 16 },
+                      fontSize: 14,
+                      fontFamily: "monospace",
+                      lineNumbers: isReadOnly ? "off" : "on",
+                      scrollBeyondLastLine: true,
+                      automaticLayout: true,
+                      renderLineHighlight: "none",
+                      wordWrap: "on",
+                      readOnly: isReadOnly,
+                    }}
+                  />
+                </View>
               </View>
+              {isAgencyConfig && isPreviewEnabled && (
+                <View className="flex-1 flex-col overflow-hidden rounded-lg shadow-sm">
+                  <View className="border-b border-subtle bg-secondary px-3 py-2">
+                    <Typography className="text-xs font-semibold uppercase tracking-wide text-tertiary">
+                      (read-only) Preview merged with:{" "}
+                      {selectedAgencyConfig?.parentId ?? "base"}
+                    </Typography>
+                  </View>
+                  <View className="flex-1">
+                    <Editor
+                      height="100%"
+                      defaultLanguage="yaml"
+                      theme="vs"
+                      value={mergedPreviewText ?? ""}
+                      options={{
+                        readOnly: true,
+                        domReadOnly: true,
+                        fixedOverflowWidgets: true,
+                        minimap: { enabled: false },
+                        padding: { top: 8 },
+                        fontSize: 14,
+                        fontFamily: "monospace",
+                        lineNumbers: "off",
+                        scrollBeyondLastLine: false,
+                        renderLineHighlight: "none",
+                        wordWrap: "on",
+                      }}
+                    />
+                  </View>
+                  {!canSave && hasUnsavedChanges && (
+                    <View className="border-b border-subtle bg-secondary px-3 py-2">
+                      <Typography className="text-xs font-semibold tracking-wide text-tertiary">
+                        This is an approximation. Please fix the issues in the
+                        editor to see the true merged version.
+                      </Typography>
+                    </View>
+                  )}
+                </View>
+              )}
             </View>
           )}
+          {!isLoading &&
+            (missingStateCodes.length > 0 ||
+              (selectedConfigId && isAgencyConfig)) && (
+              <View className="flex-col-reverse items-start gap-3 pt-3 sm:flex-row sm:items-center sm:justify-between">
+                {missingStateCodes.length > 0 && (
+                  <View className="flex-row items-center gap-2">
+                    <Typography className="text-sm text-secondary md:text-base">
+                      Create a new config for:
+                    </Typography>
+                    <View className="flex-row flex-wrap gap-2">
+                      {missingStateCodes.map((stateCode) => (
+                        <Button
+                          key={stateCode}
+                          variant="secondary"
+                          onPress={() => handleCreateNew(stateCode)}
+                        >
+                          {stateCode}
+                        </Button>
+                      ))}
+                    </View>
+                  </View>
+                )}
+                <View className="w-full flex-row justify-start sm:flex-1 sm:justify-end">
+                  {selectedConfigId && isAgencyConfig && (
+                    <Button
+                      variant={isPreviewEnabled ? "tertiary" : "secondary"}
+                      onPress={() => setIsPreviewEnabled((prev) => !prev)}
+                      className="border border-subtle"
+                    >
+                      {isPreviewEnabled
+                        ? "Hide merged preview"
+                        : "Show merged preview"}
+                    </Button>
+                  )}
+                </View>
+              </View>
+            )}
         </View>
       </View>
+      {isFieldsModalOpen && (
+        <AgencyConfigFieldsModal
+          schema={configSchema}
+          rootName={isAgencyConfig ? "Agency Config" : "Base Config"}
+          onClose={() => setIsFieldsModalOpen(false)}
+        />
+      )}
     </SafeAreaView>
   );
 };
