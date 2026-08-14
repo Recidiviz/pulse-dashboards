@@ -20,14 +20,16 @@ import { Route, Routes } from "react-router-dom";
 import { NotFound } from "~@jii/common-ui";
 import { ResourceExplorer } from "~@jii/paths";
 
+import { PageUsNycCRELanding } from "../pages/PageUsNycCRELanding/PageUsNycCRELanding";
+import { PageUsNycHome } from "../pages/PageUsNycHome/PageUsNycHome";
 import { UsNycResourcesLayout } from "./UsNycResourcesLayout";
 
 export function UsNycRouter() {
   return (
     <Routes>
-      <Route index element={null} />
+      <Route index element={<PageUsNycHome />} />
       <Route path={ResourceExplorer.path} element={<UsNycResourcesLayout />}>
-        <Route index element={null} />
+        <Route index element={<PageUsNycCRELanding />} />
         <Route path={ResourceExplorer.CategoryResults.path} element={null}>
           <Route
             path={ResourceExplorer.CategoryResults.Detail.path}
