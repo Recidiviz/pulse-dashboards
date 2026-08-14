@@ -57,6 +57,11 @@ export const findRange = (
   return null;
 };
 
+export interface ConfigIdentity {
+  name?: string;
+  stateCode?: string;
+}
+
 // Validate YAML text against the Zod schema directly, producing Monaco
 // markers. This runs entirely on the main thread (no monaco-yaml/worker),
 // since Expo's Metro bundler can't build the separate worker chunk that
@@ -66,6 +71,7 @@ export const computeMarkers = (
   text: string,
   schema: ConfigSchema,
   minVersion: number | null,
+  originalIdentity: ConfigIdentity | null = null,
 ): editor.IMarkerData[] => {
   const lineCounter = new LineCounter();
   const doc = parseDocument(text, { lineCounter });
@@ -73,11 +79,12 @@ export const computeMarkers = (
   const toMarker = (
     [start, end]: [number, number],
     message: string,
+    severity: editor.IMarkerData["severity"] = monaco.MarkerSeverity.Error,
   ): editor.IMarkerData => {
     const from = lineCounter.linePos(start);
     const to = lineCounter.linePos(end);
     return {
-      severity: monaco.MarkerSeverity.Error,
+      severity,
       message,
       startLineNumber: from.line,
       startColumn: from.col,
@@ -92,7 +99,8 @@ export const computeMarkers = (
     );
   }
 
-  const result = schema.safeParse(doc.toJS());
+  const parsedJs = doc.toJS();
+  const result = schema.safeParse(parsedJs);
   if (!result.success) {
     return result.error.issues.map((issue) => {
       const field = pathToString(issue.path) || "(root)";
@@ -104,16 +112,73 @@ export const computeMarkers = (
     });
   }
 
-  if (minVersion !== null && result.data.version <= minVersion) {
-    return [
-      toMarker(
-        findRange(doc, ["version"]) ?? [0, text.length],
-        `Version must be increased from ${minVersion} before saving (currently ${result.data.version})`,
-      ),
-    ];
+  const parsedConfig = result.data;
+  const markers: editor.IMarkerData[] = [];
+
+  // Fields the schema doesn't recognize are silently stripped at runtime
+  // (the schema is not strict so loading configs saved under an older
+  // version don't break if a field is removed) — surfaced here as a warning
+  // rather than a blocking error, alterting to it being ignored later.
+  const strictResult = schema.strict().safeParse(parsedJs);
+  if (!strictResult.success) {
+    const unrecognized = strictResult.error.issues.find(
+      (issue) => issue.code === "unrecognized_keys",
+    );
+    if (unrecognized && "keys" in unrecognized) {
+      for (const key of unrecognized.keys) {
+        markers.push(
+          toMarker(
+            findRange(doc, [key]) ?? [0, text.length],
+            `Unrecognized field "${key}" — this will be ignored`,
+            monaco.MarkerSeverity.Warning,
+          ),
+        );
+      }
+    }
   }
 
-  return [];
+  if (minVersion !== null && parsedConfig.version <= minVersion) {
+    markers.push(
+      toMarker(
+        findRange(doc, ["version"]) ?? [0, text.length],
+        `Version must be increased from ${minVersion} before saving (currently ${parsedConfig.version})`,
+      ),
+    );
+  }
+
+  // Warns when name field changes and blocks when stateCode differs from the
+  // original — automating a check a PR review would've previously caught, without
+  // gatekeeping the save, same as the old YAML-review process never did either.
+  if (originalIdentity) {
+    if (
+      originalIdentity.name !== undefined &&
+      "name" in parsedConfig &&
+      parsedConfig.name !== originalIdentity.name
+    ) {
+      markers.push(
+        toMarker(
+          findRange(doc, ["name"]) ?? [0, text.length],
+          `"name" changed from "${originalIdentity.name}" — double check this config is for the right agency`,
+          monaco.MarkerSeverity.Warning,
+        ),
+      );
+    }
+    if (
+      originalIdentity.stateCode !== undefined &&
+      "stateCode" in parsedConfig &&
+      parsedConfig.stateCode !== originalIdentity.stateCode
+    ) {
+      markers.push(
+        toMarker(
+          findRange(doc, ["stateCode"]) ?? [0, text.length],
+          `"stateCode" cannot be changed from "${originalIdentity.stateCode}"`,
+          monaco.MarkerSeverity.Error,
+        ),
+      );
+    }
+  }
+
+  return markers;
 };
 
 export const parseVersion = (
@@ -126,4 +191,23 @@ export const parseVersion = (
   }
   const result = schema.safeParse(doc.toJS());
   return result.success ? result.data.version : null;
+};
+
+export const parseIdentity = (
+  yamlText: string,
+  schema: ConfigSchema,
+): ConfigIdentity | null => {
+  const doc = parseDocument(yamlText);
+  if (doc.errors.length > 0) {
+    return null;
+  }
+  const result = schema.safeParse(doc.toJS());
+  if (!result.success) {
+    return null;
+  }
+  const data = result.data as { name?: unknown; stateCode?: unknown };
+  if (typeof data.name !== "string" || typeof data.stateCode !== "string") {
+    return null;
+  }
+  return { name: data.name, stateCode: data.stateCode };
 };

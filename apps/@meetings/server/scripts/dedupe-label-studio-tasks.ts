@@ -109,7 +109,7 @@ import { Command } from "@commander-js/extra-typings";
 import { Storage } from "@google-cloud/storage";
 import { PrismaPg } from "@prisma/adapter-pg";
 
-import { AGENCY_CONFIGS } from "~@meetings/config/loader";
+import { MEETINGS_STATE_CODES } from "~@meetings/config";
 import { PrismaClient, StateCode } from "~@meetings/prisma/client";
 import { LABEL_STUDIO_TASK_FILENAME } from "~@meetings/tasks";
 import {
@@ -398,7 +398,7 @@ async function planGroup(
   }
   const state = states.values().next().value as string;
 
-  const configuredStateCodes = Object.keys(AGENCY_CONFIGS);
+  const configuredStateCodes = MEETINGS_STATE_CODES;
   if (!configuredStateCodes.includes(state)) {
     return {
       kind: "manual-review",

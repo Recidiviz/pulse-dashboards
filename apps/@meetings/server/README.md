@@ -48,10 +48,11 @@ Instructions for updating the prisma schema are in the [prisma README](../../lib
 
 See [PR #13148](https://github.com/Recidiviz/pulse-dashboards/pull/13148) for the most up-to-date example of what's involved in adding a new state (as of April 2026). At a high level:
 
-1. Create a state config file at `libs/@meetings/config/src/US_XX.yaml` with the state's name, state code, and department keyword(s). Adding a config will automatically add the state to the UI.
+1. Add the uppercase state code to `MEETINGS_STATE_CODES` in `libs/@meetings/config/src/stateCodes.ts`.
 2. Add the lowercase state code to `additional_databases` in `libs/atmos/components/terraform/apps/meetings/main.tf`.
-3. Update `DATABASE_STATE_CODES` in `libs/atmos/components/terraform/apps/meetings/environments/env.job.migrate_db.enc.yaml.
+3. Update `DATABASE_STATE_CODES` in ` libs/atmos/components/terraform/apps/meetings/environments/env.job.migrate_db.enc.yaml`.
 4. Add the state's meetings export in `recidiviz-data` — see [recidiviz-data PR #71761](https://github.com/Recidiviz/recidiviz-data/pull/71761) as an example.
+5. Use the Agency Config UI to add the new config in the desired environment. Completing this will make the state visible on the UI once refreshed. Must first complete step 1.
 
 ### Why the Prisma schema and migration files are included in the build
 

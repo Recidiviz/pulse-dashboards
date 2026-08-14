@@ -18,9 +18,9 @@
 import { Storage } from "@google-cloud/storage";
 import { subDays } from "date-fns";
 
-import { AGENCY_CONFIGS } from "~@meetings/config/loader";
 import { getPrismaClientForStateCode } from "~@meetings/prisma";
 import { LABEL_STUDIO_TASK_FILENAME } from "~@meetings/tasks";
+import { getAgencyConfigs } from "~@meetings/trpc/routes/config/utils";
 import { logger } from "~server-setup-plugin/logger";
 
 interface CleanupStats {
@@ -369,7 +369,7 @@ export async function cleanupStateData(
 
 export async function cleanupMeetingData(dryRun = true): Promise<void> {
   const results = await Promise.allSettled(
-    Object.values(AGENCY_CONFIGS).map((config) =>
+    Object.values(await getAgencyConfigs()).map((config) =>
       cleanupStateData(
         config.stateCode,
         config.audioTTLDays ?? null,

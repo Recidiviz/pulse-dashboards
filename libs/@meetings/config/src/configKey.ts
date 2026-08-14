@@ -15,14 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { AUDIO_FORMATS } from "~@meetings/config/audio";
-export { generateConfigKey } from "~@meetings/config/configKey";
-export { mergeWithBase } from "~@meetings/config/merge";
-export { newAgencyConfigYamlTemplate } from "~@meetings/config/newConfigTemplate";
-export { MEETINGS_STATE_CODES } from "~@meetings/config/stateCodes";
-export type { AgencyConfig, AgencyConfigFile } from "~@meetings/config/types";
-export {
-  AgencyConfigFileSchema,
-  AgencyConfigSchema,
-  BaseConfigFileSchema,
-} from "~@meetings/config/types";
+import { AgencyConfig } from "~@meetings/config/types";
+
+// TODO (OBT-43211): include the environment as agency config versions diverge across environments
+export function generateConfigKey(config: AgencyConfig): string {
+  return `${config.stateCode}@v${config.version}-base@v${config.baseVersion}`;
+}

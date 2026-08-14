@@ -22,12 +22,21 @@ import sentryTestkit from "sentry-testkit";
 import { beforeAll, beforeEach } from "vitest";
 import { mock } from "vitest-mock-extended";
 
-import { getPrismaClientForStateCode } from "~@meetings/prisma";
+import {
+  getGlobalPrismaClient,
+  getPrismaClientForStateCode,
+} from "~@meetings/prisma";
 import { StateCode } from "~@meetings/prisma/client";
 import { buildServer } from "~@meetings/server/server";
-import { fakeStaff, seed } from "~@meetings/server/test/setup/seed";
+import {
+  agencyConfigSeedRows,
+  fakeStaff,
+  seed,
+} from "~@meetings/server/test/setup/seed";
 import { resetDb } from "~@meetings/server/test/setup/utils";
+
 export const testPrismaClient = getPrismaClientForStateCode(StateCode.US_NE);
+export const testGlobalPrismaClient = getGlobalPrismaClient();
 
 const { testkit, sentryTransport } = sentryTestkit();
 
@@ -139,6 +148,9 @@ beforeAll(async () => {
 beforeEach(async () => {
   await resetDb(testPrismaClient);
   await seed(testPrismaClient);
+  await testGlobalPrismaClient.agencyConfig.createMany({
+    data: agencyConfigSeedRows(),
+  });
 
   testkit.reset();
 });

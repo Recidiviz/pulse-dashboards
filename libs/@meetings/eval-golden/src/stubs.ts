@@ -23,7 +23,7 @@
  * to reflect real data.
  */
 
-import type { AgencyConfig } from "~@meetings/config/types";
+import type { AgencyConfig } from "~@meetings/config";
 import type { Client } from "~@meetings/prisma/client";
 import type { TranscriptInput } from "~@meetings/tasks/llm/schemas";
 

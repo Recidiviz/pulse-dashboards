@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
+import { stringify } from "yaml";
 
 import {
   Prisma,
@@ -24,6 +25,49 @@ import {
   TranscriptionProvider,
 } from "~@meetings/prisma/client";
 import env from "~@meetings/trpc/env";
+
+// Synthetic AgencyConfig fixtures — not read from the real config data, so
+// these tests don't depend on production config content. US_NE/US_DEMO are
+// the two state codes exercised ambiently across the trpc test suite.
+const testBaseAgencyConfig = {
+  version: 1,
+  audioTTLDays: 30,
+  transcriptTTLDays: 30,
+  showTranscriptions: true,
+  staffFeedbackEnabled: false,
+  audioPlaybackEnabled: false,
+};
+
+const testAgencyConfigsByStateCode: Record<string, object> = {
+  US_NE: { name: "Nebraska", stateCode: "US_NE", version: 1 },
+  // meetingTypes includes "Collateral Contact" with isCategoryRequired: true —
+  // client.router.test.ts exercises that specific business rule for US_DEMO.
+  US_DEMO: {
+    name: "Demo",
+    stateCode: "US_DEMO",
+    version: 1,
+    meetingTypes: [{ type: "Collateral Contact", isCategoryRequired: true }],
+  },
+};
+
+export function agencyConfigSeedRows(): Prisma.AgencyConfigCreateManyInput[] {
+  return [
+    {
+      id: "base",
+      version: 1,
+      parentId: null,
+      config: stringify(testBaseAgencyConfig),
+    },
+    ...Object.entries(testAgencyConfigsByStateCode).map(
+      ([stateCode, config]) => ({
+        id: stateCode.toLowerCase(),
+        version: 1,
+        parentId: "base",
+        config: stringify(config),
+      }),
+    ),
+  ];
+}
 
 export const intakeId = "intake-1";
 export const clientPseudoId1 = "client-pid-1";

@@ -32,7 +32,6 @@ import { run_v2 } from "googleapis";
 import { z } from "zod";
 
 import { AUDIO_FORMATS } from "~@meetings/config";
-import { AGENCY_CONFIGS } from "~@meetings/config/configs";
 import { getPrismaClientForStateCode } from "~@meetings/prisma";
 import {
   PostMeetingProcessingStatus,
@@ -64,6 +63,7 @@ import {
   VerificationOutputSchema,
 } from "~@meetings/tasks/llm/schemas";
 import { formatTranscripts } from "~@meetings/tasks/llm/utils";
+import { getAgencyConfig } from "~@meetings/trpc/routes/config/utils";
 import { getPersonNameTokens } from "~@meetings/trpc/routes/meeting.helpers";
 import { queueStitchingTask } from "~@meetings/trpc/routes/meeting/utils";
 import {
@@ -442,7 +442,8 @@ export function registerTaskRoutes(app: FastifyInstance) {
             throw new Error("Final recording GCS path is not set for meeting");
           }
 
-          const agencyKeywords = AGENCY_CONFIGS[stateCode]?.keywords ?? [];
+          const agencyKeywords =
+            (await getAgencyConfig(stateCode))?.keywords ?? [];
 
           const person = meeting.client ?? meeting.resident;
           const personNameTokens = person ? getPersonNameTokens(person) : [];

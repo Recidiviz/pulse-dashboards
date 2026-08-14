@@ -16,12 +16,59 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
+import { stringify } from "yaml";
 
 import { Prisma, PrismaClient, StateCode } from "~@meetings/prisma/client";
 
 // Use a fixed seed so faker generates the same values across module re-evaluations
 // (vitest re-evaluates setupFiles for each test file)
 faker.seed(1234);
+
+// Synthetic AgencyConfig so meeting-artifact-cleanup.test.ts can test with different TTL
+const testBaseAgencyConfig = { version: 1, showTranscriptions: true };
+
+const testAgencyConfigsByStateCode: Record<string, object> = {
+  US_NE: {
+    name: "Nebraska",
+    stateCode: "US_NE",
+    version: 1,
+    audioTTLDays: 30,
+    transcriptTTLDays: 30,
+  },
+  US_ME: {
+    name: "Maine",
+    stateCode: "US_ME",
+    version: 1,
+    audioTTLDays: 30,
+    transcriptTTLDays: null,
+  },
+  US_TN: {
+    name: "Tennessee",
+    stateCode: "US_TN",
+    version: 1,
+    audioTTLDays: null,
+    transcriptTTLDays: null,
+  },
+};
+
+export function agencyConfigSeedRows(): Prisma.AgencyConfigCreateManyInput[] {
+  return [
+    {
+      id: "base",
+      version: 1,
+      parentId: null,
+      config: stringify(testBaseAgencyConfig),
+    },
+    ...Object.entries(testAgencyConfigsByStateCode).map(
+      ([stateCode, config]) => ({
+        id: stateCode.toLowerCase(),
+        version: 1,
+        parentId: "base",
+        config: stringify(config),
+      }),
+    ),
+  ];
+}
 
 export const intakeId = "intake-1";
 export const clientPseudoId = "client-pid-1";

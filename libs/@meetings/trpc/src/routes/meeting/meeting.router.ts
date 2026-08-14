@@ -22,7 +22,6 @@ import { TRPCError } from "@trpc/server";
 import _ from "lodash";
 import { z } from "zod";
 
-import { AGENCY_CONFIGS } from "~@meetings/config/loader";
 import {
   ApprovalValue,
   NoteSection,
@@ -38,6 +37,7 @@ import {
   StaffFeedbackOutputSchema,
 } from "~@meetings/tasks";
 import { auth0Procedure, router } from "~@meetings/trpc/init";
+import { getAgencyConfig } from "~@meetings/trpc/routes/config/utils";
 import { deriveValidationErrorType } from "~@meetings/trpc/routes/meeting.helpers";
 import {
   approveSectionInputSchema,
@@ -157,7 +157,7 @@ export const meetingRouter = router({
             latestPipelineRun?.errorDetails,
           );
 
-          const stateConfig = AGENCY_CONFIGS[stateCode];
+          const stateConfig = await getAgencyConfig(stateCode);
 
           const includeTranscription = stateConfig?.showTranscriptions ?? true;
           const supportsAudioPlayback =
@@ -496,7 +496,7 @@ export const meetingRouter = router({
         ctx: { prisma, stateCode, user, isSkipAuth },
       }) => {
         const staffFeedbackEnabled =
-          AGENCY_CONFIGS[stateCode]?.staffFeedbackEnabled ?? false;
+          (await getAgencyConfig(stateCode))?.staffFeedbackEnabled ?? false;
         if (tab === OutputVoteTab.STAFF_FEEDBACK && !staffFeedbackEnabled) {
           throw new TRPCError({
             code: "FORBIDDEN",
@@ -554,7 +554,7 @@ export const meetingRouter = router({
         ctx: { prisma, stateCode, user, isSkipAuth },
       }) => {
         const staffFeedbackEnabled =
-          AGENCY_CONFIGS[stateCode]?.staffFeedbackEnabled ?? false;
+          (await getAgencyConfig(stateCode))?.staffFeedbackEnabled ?? false;
         if (tab === OutputVoteTab.STAFF_FEEDBACK && !staffFeedbackEnabled) {
           throw new TRPCError({
             code: "FORBIDDEN",

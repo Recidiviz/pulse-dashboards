@@ -23,13 +23,16 @@ import { AgencyConfigFileSchema } from "~@meetings/config";
 import {
   computeMarkers,
   findRange,
+  parseIdentity,
   parseVersion,
   pathToString,
 } from "./configValidation";
 
-// computeMarkers only reads monaco.MarkerSeverity.Error, so a minimal stub
-// stands in for the full Monaco instance.
-const fakeMonaco = { MarkerSeverity: { Error: 8 } } as unknown as Monaco;
+// computeMarkers only reads monaco.MarkerSeverity.Error/Warning, so a minimal
+// stub stands in for the full Monaco instance.
+const fakeMonaco = {
+  MarkerSeverity: { Error: 8, Warning: 4 },
+} as unknown as Monaco;
 
 function assertRange(
   range: [number, number] | null,
@@ -173,6 +176,118 @@ describe("computeMarkers", () => {
 
     expect(markers).toEqual([]);
   });
+
+  it("warns (not errors) when name differs from the original identity", () => {
+    const text = "name: Renamed Agency\nstateCode: US_XX\nversion: 3\n";
+
+    const markers = computeMarkers(
+      fakeMonaco,
+      text,
+      AgencyConfigFileSchema,
+      null,
+      { name: "Test Agency", stateCode: "US_XX" },
+    );
+
+    expect(markers).toHaveLength(1);
+    expect(markers[0].severity).toBe(fakeMonaco.MarkerSeverity.Warning);
+    expect(markers[0].message).toBe(
+      '"name" changed from "Test Agency" — double check this config is for the right agency',
+    );
+  });
+
+  it("errors when stateCode differs from the original identity", () => {
+    const text = "name: Test Agency\nstateCode: US_YY\nversion: 3\n";
+
+    const markers = computeMarkers(
+      fakeMonaco,
+      text,
+      AgencyConfigFileSchema,
+      null,
+      { name: "Test Agency", stateCode: "US_XX" },
+    );
+
+    expect(markers).toHaveLength(1);
+    expect(markers[0].severity).toBe(fakeMonaco.MarkerSeverity.Error);
+    expect(markers[0].message).toBe(
+      '"stateCode" cannot be changed from "US_XX"',
+    );
+  });
+
+  it("reports both name and stateCode changes together", () => {
+    const text = "name: Renamed Agency\nstateCode: US_YY\nversion: 3\n";
+
+    const markers = computeMarkers(
+      fakeMonaco,
+      text,
+      AgencyConfigFileSchema,
+      null,
+      { name: "Test Agency", stateCode: "US_XX" },
+    );
+
+    expect(markers).toHaveLength(2);
+  });
+
+  it("allows matching name and stateCode against the original identity", () => {
+    const text = "name: Test Agency\nstateCode: US_XX\nversion: 3\n";
+
+    const markers = computeMarkers(
+      fakeMonaco,
+      text,
+      AgencyConfigFileSchema,
+      null,
+      { name: "Test Agency", stateCode: "US_XX" },
+    );
+
+    expect(markers).toEqual([]);
+  });
+
+  it("only warns on stateCode when the original identity has no name (creating new)", () => {
+    const text = "name: Some New Agency\nstateCode: US_YY\nversion: 1\n";
+
+    const markers = computeMarkers(
+      fakeMonaco,
+      text,
+      AgencyConfigFileSchema,
+      null,
+      { stateCode: "US_XX" },
+    );
+
+    expect(markers).toHaveLength(1);
+    expect(markers[0].severity).toBe(fakeMonaco.MarkerSeverity.Error);
+    expect(markers[0].message).toContain("stateCode");
+  });
+
+  it("does not warn on name when the original identity has no name (creating new)", () => {
+    const text = "name: Some New Agency\nstateCode: US_XX\nversion: 1\n";
+
+    const markers = computeMarkers(
+      fakeMonaco,
+      text,
+      AgencyConfigFileSchema,
+      null,
+      { stateCode: "US_XX" },
+    );
+
+    expect(markers).toEqual([]);
+  });
+
+  it("warns (not errors) on an unrecognized field", () => {
+    const text =
+      "name: Test Agency\nstateCode: US_XX\nversion: 1\nbogusField: true\n";
+
+    const markers = computeMarkers(
+      fakeMonaco,
+      text,
+      AgencyConfigFileSchema,
+      null,
+    );
+
+    expect(markers).toHaveLength(1);
+    expect(markers[0].severity).toBe(fakeMonaco.MarkerSeverity.Warning);
+    expect(markers[0].message).toBe(
+      'Unrecognized field "bogusField" — this will be ignored',
+    );
+  });
 });
 
 describe("parseVersion", () => {
@@ -192,5 +307,28 @@ describe("parseVersion", () => {
     const text = "stateCode: US_XX\nversion: 1\n";
 
     expect(parseVersion(text, AgencyConfigFileSchema)).toBeNull();
+  });
+});
+
+describe("parseIdentity", () => {
+  it("returns the name and stateCode from valid yaml", () => {
+    const text = "name: Test Agency\nstateCode: US_XX\nversion: 5\n";
+
+    expect(parseIdentity(text, AgencyConfigFileSchema)).toEqual({
+      name: "Test Agency",
+      stateCode: "US_XX",
+    });
+  });
+
+  it("returns null for unparsable yaml", () => {
+    const text = "name: [unterminated\n";
+
+    expect(parseIdentity(text, AgencyConfigFileSchema)).toBeNull();
+  });
+
+  it("returns null when the document fails schema validation", () => {
+    const text = "stateCode: US_XX\nversion: 1\n";
+
+    expect(parseIdentity(text, AgencyConfigFileSchema)).toBeNull();
   });
 });

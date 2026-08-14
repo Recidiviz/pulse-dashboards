@@ -24,7 +24,6 @@ import {
   AgencyConfigFileSchema,
   BaseConfigFileSchema,
 } from "~@meetings/config";
-import { AGENCY_CONFIGS } from "~@meetings/config/loader";
 import { getGlobalPrismaClient } from "~@meetings/prisma";
 import { type AgencyConfig as AgencyConfigRow } from "~@meetings/prisma/client";
 import {
@@ -32,11 +31,15 @@ import {
   recidivizStatelessProcedure,
   router,
 } from "~@meetings/trpc/init";
+import { getAgencyConfigs } from "~@meetings/trpc/routes/config/utils";
 
 export const configRouter = router({
-  getAll: auth0Procedure.query((): Record<string, AgencyConfig> => {
-    return AGENCY_CONFIGS;
-  }),
+  getAll: auth0Procedure.query(
+    async (): Promise<Record<string, AgencyConfig>> => {
+      return getAgencyConfigs();
+    },
+  ),
+
   getNames: recidivizStatelessProcedure.query(
     async (): Promise<Record<string, string | undefined>> => {
       const prisma = getGlobalPrismaClient();
@@ -128,22 +131,33 @@ export const configRouter = router({
         });
       }
 
-      const parseResult = schema.safeParse(parsedYaml);
-      if (!parseResult.success) {
+      const newConfigParseResult = schema.safeParse(parsedYaml);
+      if (!newConfigParseResult.success) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Configuration validation failed.",
-          cause: parseResult.error,
+          cause: newConfigParseResult.error,
         });
       }
 
-      const newVersion = parseResult.data.version;
+      const newVersion = newConfigParseResult.data.version;
       const latestVersionNumber = agencyConfigLatestVersion?.version ?? 0;
       if (newVersion <= latestVersionNumber) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: `Invalid version number. Must be greater than ${latestVersionNumber}.`,
         });
+      }
+
+      if (input.parentId) {
+        const { stateCode: newStateCode } =
+          newConfigParseResult.data as z.infer<typeof AgencyConfigFileSchema>;
+        if (newStateCode !== input.id.toUpperCase()) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Id and stateCode mismatch.",
+          });
+        }
       }
 
       return await prisma.agencyConfig.create({

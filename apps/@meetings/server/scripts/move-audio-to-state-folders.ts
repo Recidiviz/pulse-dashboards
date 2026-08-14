@@ -45,7 +45,7 @@ import { Command } from "@commander-js/extra-typings";
 import { File, Storage } from "@google-cloud/storage";
 import { PrismaPg } from "@prisma/adapter-pg";
 
-import { AGENCY_CONFIGS } from "~@meetings/config/loader";
+import { MEETINGS_STATE_CODES } from "~@meetings/config";
 import { PrismaClient, StateCode } from "~@meetings/prisma/client";
 
 interface ScriptArgs {
@@ -55,7 +55,7 @@ interface ScriptArgs {
 }
 
 function parseArgs(): ScriptArgs {
-  const configuredStateCodes = Object.keys(AGENCY_CONFIGS);
+  const configuredStateCodes = MEETINGS_STATE_CODES;
 
   const program = new Command()
     .name("move-audio-to-state-folders")
@@ -78,7 +78,7 @@ function parseArgs(): ScriptArgs {
 
   const options = program.opts();
 
-  const rawStateCodes: string[] = options.stateCodes
+  const rawStateCodes: readonly string[] = options.stateCodes
     ? options.stateCodes.split(",").map((s: string) => s.trim())
     : configuredStateCodes;
 
@@ -270,11 +270,12 @@ async function moveAudioStorageForStateCode(
 async function main() {
   console.log("Meeting Audio Storage Migration\n");
 
-  const { stateCodes, meetingId, dryRun } = parseArgs();
   const dbUrlTemplate = process.env["DATABASE_URL_TEMPLATE"];
   if (!dbUrlTemplate) {
     throw new Error("Missing DATABASE_URL_TEMPLATE environment variable");
   }
+
+  const { stateCodes, meetingId, dryRun } = parseArgs();
 
   const storage = new Storage();
 

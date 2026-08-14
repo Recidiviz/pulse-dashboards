@@ -18,7 +18,6 @@
 import { subDays } from "date-fns";
 import { describe, expect, test, vi } from "vitest";
 
-import { AGENCY_CONFIGS } from "~@meetings/config/loader";
 import { TranscriptionProvider } from "~@meetings/prisma/client";
 import {
   cleanupMeetingData,
@@ -26,6 +25,7 @@ import {
 } from "~@meetings/server/jobs/meeting-artifact-cleanup";
 import { testPrismaClient } from "~@meetings/server/test/setup";
 import { fakeClient, fakeStaff } from "~@meetings/server/test/setup/seed";
+import { getAgencyConfigs } from "~@meetings/trpc/routes/config/utils";
 
 const mockGetPrismaClientForStateCode = vi.hoisted(() => vi.fn());
 
@@ -581,10 +581,10 @@ describe("cleanupMeetingData", () => {
     await expect(cleanupMeetingData(true)).resolves.toBeUndefined();
   });
 
-  test("attempts cleanup for every state in AGENCY_CONFIGS that has at least one TTL configured", async () => {
+  test("attempts cleanup for every configured state that has at least one TTL configured", async () => {
     await cleanupMeetingData(true);
 
-    const configsWithTTL = Object.values(AGENCY_CONFIGS).filter(
+    const configsWithTTL = Object.values(await getAgencyConfigs()).filter(
       (config) =>
         config.audioTTLDays !== null || config.transcriptTTLDays !== null,
     );

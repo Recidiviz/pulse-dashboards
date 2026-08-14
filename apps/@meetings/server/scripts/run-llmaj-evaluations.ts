@@ -39,7 +39,7 @@
 import { Command } from "@commander-js/extra-typings";
 import { PrismaPg } from "@prisma/adapter-pg";
 
-import { AGENCY_CONFIGS } from "~@meetings/config/loader";
+import { MEETINGS_STATE_CODES } from "~@meetings/config";
 import { Prisma, PrismaClient, StateCode } from "~@meetings/prisma/client";
 import {
   createEvaluatorClients,
@@ -70,7 +70,7 @@ interface ScriptArgs {
 }
 
 function parseArgs(): ScriptArgs {
-  const configuredStateCodes = Object.keys(AGENCY_CONFIGS);
+  const configuredStateCodes = MEETINGS_STATE_CODES;
 
   const program = new Command()
     .name("run-llmaj-evaluations")
@@ -97,7 +97,7 @@ function parseArgs(): ScriptArgs {
 
   const options = program.opts();
 
-  const rawStateCodes: string[] = options.stateCodes
+  const rawStateCodes: readonly string[] = options.stateCodes
     ? options.stateCodes.split(",").map((s: string) => s.trim())
     : configuredStateCodes;
 
@@ -509,12 +509,12 @@ async function main() {
     `\n${c.bold}${c.cyan}🔍 LLM-as-a-Judge Evaluation${c.reset}  ${c.dim}version=${EVALUATOR_VERSION}${c.reset}\n`,
   );
 
-  const { stateCodes, meetingId, since, dryRun } = parseArgs();
-
   const dbUrlTemplate = process.env["DATABASE_URL_TEMPLATE"];
   if (!dbUrlTemplate) {
     throw new Error("Missing DATABASE_URL_TEMPLATE environment variable");
   }
+
+  const { stateCodes, meetingId, since, dryRun } = parseArgs();
 
   if (dryRun) {
     console.log(

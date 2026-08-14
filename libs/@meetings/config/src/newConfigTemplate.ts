@@ -15,14 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { AUDIO_FORMATS } from "~@meetings/config/audio";
-export { generateConfigKey } from "~@meetings/config/configKey";
-export { mergeWithBase } from "~@meetings/config/merge";
-export { newAgencyConfigYamlTemplate } from "~@meetings/config/newConfigTemplate";
-export { MEETINGS_STATE_CODES } from "~@meetings/config/stateCodes";
-export type { AgencyConfig, AgencyConfigFile } from "~@meetings/config/types";
-export {
-  AgencyConfigFileSchema,
-  AgencyConfigSchema,
-  BaseConfigFileSchema,
-} from "~@meetings/config/types";
+import { z } from "zod";
+
+import { AgencyConfigFileSchema } from "~@meetings/config/types";
+
+export function newAgencyConfigYamlTemplate(stateCode?: string): string {
+  const requiredFieldsAndDefaultVals = Object.entries(
+    AgencyConfigFileSchema.shape,
+  )
+    .filter(([, value]) => !(value instanceof z.ZodOptional))
+    .map(([key, value]) => {
+      if (key === "stateCode" && stateCode) {
+        return `${key}: ${stateCode}`;
+      }
+      if (value instanceof z.ZodDefault) {
+        return `${key}: ${String(value._def.defaultValue())}`;
+      }
+      return `${key}: `;
+    })
+    .join("\n");
+
+  return requiredFieldsAndDefaultVals;
+}

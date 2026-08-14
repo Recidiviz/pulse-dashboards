@@ -15,6 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+// @monaco-editor/react loads the editor engine from cdn.jsdelivr.net at a
+// version baked into @monaco-editor/loader's own code (not derived from our
+// package.json). firebase.meetings.json's CSP pins that exact URL, so
+// monaco-editor/@monaco-editor/react/@monaco-editor/loader are version-locked
+// (exact, no ^) in package.json — bumping any of them requires updating the
+// CSP entry to match, or Monaco silently stops loading in deployed envs.
 import Editor, { Monaco } from "@monaco-editor/react";
 import type { editor } from "monaco-editor";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -28,6 +34,7 @@ import { trpc } from "~@meetings/app/shared/api";
 import { DEPLOY_ENV_LABEL } from "~@meetings/app/shared/config";
 import { humanReadableTitleCase } from "~@meetings/app/shared/lib/format";
 import { useSetDocumentTitle } from "~@meetings/app/shared/lib/platform";
+import { Button } from "~@meetings/app/shared/ui/Button";
 import Dropdown from "~@meetings/app/shared/ui/Dropdown";
 import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
@@ -35,14 +42,20 @@ import { Header } from "~@meetings/app/widgets/header";
 import {
   AgencyConfigFileSchema,
   BaseConfigFileSchema,
+  MEETINGS_STATE_CODES,
+  newAgencyConfigYamlTemplate,
 } from "~@meetings/config";
 
 import {
   computeMarkers,
   ConfigSchema,
   MARKER_OWNER,
+  parseIdentity,
   parseVersion,
 } from "../lib/configValidation";
+
+// Currently only one base exists, all agency configs default to merge with this base
+const BASE_CONFIG_ID = "base";
 
 export const AgencyConfigScreen = () => {
   const insets = useSafeAreaInsets();
@@ -58,15 +71,25 @@ export const AgencyConfigScreen = () => {
   const { data: agencyIdToName, isLoading } =
     trpc.v1.config.getNames.useQuery(undefined);
 
+  const isCreatingNew =
+    !!selectedConfigId &&
+    !!agencyIdToName &&
+    !(selectedConfigId in agencyIdToName);
+
   const { data: selectedAgencyConfig } = trpc.v1.config.getByState.useQuery(
     { id: selectedConfigId },
-    { enabled: !!selectedConfigId },
+    { enabled: !!selectedConfigId && !isCreatingNew },
   );
+
+  // null when creating new so we don't derive everything from stale cache
+  const savedConfig = isCreatingNew ? undefined : selectedAgencyConfig;
 
   const addNewConfig = trpc.v1.config.saveNewConfig.useMutation({
     onSuccess: () => {
       // So just-saved content is used for tracking unsaved-changes/updated version
       utils.v1.config.getByState.invalidate({ id: selectedConfigId });
+      utils.v1.config.getNames.invalidate();
+      utils.v1.config.getAll.invalidate();
       snackbar.showSnackbar("Changes saved.");
     },
     onError: () => {
@@ -76,9 +99,13 @@ export const AgencyConfigScreen = () => {
 
   useEffect(
     function initializeConfigTextOnSelect() {
-      setEditedConfigText(selectedAgencyConfig?.config ?? "");
+      // handleCreateNew sets editedConfigText to the starter template, so we don't want to overwrite here
+      if (isCreatingNew) {
+        return;
+      }
+      setEditedConfigText(savedConfig?.config ?? "");
     },
-    [selectedAgencyConfig],
+    [savedConfig, isCreatingNew],
   );
 
   const displayNameToId = agencyIdToName
@@ -95,19 +122,35 @@ export const AgencyConfigScreen = () => {
 
   const displayNames = Object.keys(displayNameToId).sort();
 
+  const selectedDisplayName =
+    Object.entries(displayNameToId).find(
+      ([, id]) => id === selectedConfigId,
+    )?.[0] ?? (isCreatingNew ? `${selectedConfigId.toUpperCase()}` : undefined);
+
+  const missingStateCodes = MEETINGS_STATE_CODES.filter(
+    (stateCode) => !(stateCode.toLowerCase() in (agencyIdToName ?? {})),
+  );
+
   const handleSelect = (displayName: string) => {
     setSelectedConfigId(displayNameToId[displayName]);
   };
 
+  const handleCreateNew = (stateCode: string) => {
+    setSelectedConfigId(stateCode.toLowerCase());
+    setEditedConfigText(newAgencyConfigYamlTemplate(stateCode));
+  };
+
   const hasUnsavedChanges =
-    !!editedConfigText && editedConfigText !== selectedAgencyConfig?.config;
+    !!editedConfigText && editedConfigText !== savedConfig?.config;
 
-  const configSchema: ConfigSchema = selectedAgencyConfig?.parentId
-    ? AgencyConfigFileSchema
-    : BaseConfigFileSchema;
+  // configs created in the UI are agency configs not bases
+  const configSchema: ConfigSchema =
+    isCreatingNew || savedConfig?.parentId
+      ? AgencyConfigFileSchema
+      : BaseConfigFileSchema;
 
-  const originalVersion = selectedAgencyConfig
-    ? parseVersion(selectedAgencyConfig.config, configSchema)
+  const originalVersion = savedConfig
+    ? parseVersion(savedConfig.config, configSchema)
     : null;
 
   const canSave =
@@ -120,7 +163,7 @@ export const AgencyConfigScreen = () => {
     addNewConfig.mutate({
       id: selectedConfigId,
       newConfig: editedConfigText,
-      parentId: selectedAgencyConfig?.parentId ?? null,
+      parentId: isCreatingNew ? BASE_CONFIG_ID : savedConfig?.parentId ?? null,
     });
   };
   const monacoRef = useRef<Monaco | null>(null);
@@ -134,11 +177,30 @@ export const AgencyConfigScreen = () => {
         return;
       }
       const minVersion = hasUnsavedChanges ? originalVersion : null;
-      const markers = computeMarkers(monaco, text, configSchema, minVersion);
+      const originalIdentity = savedConfig
+        ? parseIdentity(savedConfig.config, configSchema)
+        : { stateCode: selectedConfigId.toUpperCase() };
+      const markers = computeMarkers(
+        monaco,
+        text,
+        configSchema,
+        minVersion,
+        originalIdentity,
+      );
       monaco.editor.setModelMarkers(model, MARKER_OWNER, markers);
-      setHasValidationErrors(markers.length > 0);
+      setHasValidationErrors(
+        markers.some(
+          (marker) => marker.severity === monaco.MarkerSeverity.Error,
+        ),
+      );
     },
-    [hasUnsavedChanges, originalVersion, configSchema],
+    [
+      hasUnsavedChanges,
+      originalVersion,
+      configSchema,
+      savedConfig,
+      selectedConfigId,
+    ],
   );
 
   const handleEditorDidMount = (
@@ -177,10 +239,12 @@ export const AgencyConfigScreen = () => {
                 <Typography>Loading…</Typography>
               ) : (
                 <Dropdown
+                  key={selectedDisplayName ?? "none"}
+                  value={selectedDisplayName}
                   variant="text"
                   options={displayNames}
                   onSelect={handleSelect}
-                  placeholder="Select an agency"
+                  label="Select existing agency"
                   defaultEmptyValue
                   className="my-1"
                 />
@@ -197,7 +261,9 @@ export const AgencyConfigScreen = () => {
                         canSave ? "text-on-brand" : "text-on-disabled"
                       }`}
                     >
-                      Save as a new version
+                      {isCreatingNew
+                        ? "Create config"
+                        : "Save as a new version"}
                     </Typography>
                   </View>
                 </TouchableOpacity>
@@ -225,6 +291,24 @@ export const AgencyConfigScreen = () => {
                   renderLineHighlight: "none",
                 }}
               />
+            </View>
+          )}
+          {!isLoading && missingStateCodes.length > 0 && (
+            <View className="mt-6 flex-row items-center gap-2">
+              <Typography className="text-sm text-secondary md:text-base">
+                Create a new config for:
+              </Typography>
+              <View className="flex-row flex-wrap gap-2">
+                {missingStateCodes.map((stateCode) => (
+                  <Button
+                    key={stateCode}
+                    variant="secondary"
+                    onPress={() => handleCreateNew(stateCode)}
+                  >
+                    {stateCode}
+                  </Button>
+                ))}
+              </View>
             </View>
           )}
         </View>

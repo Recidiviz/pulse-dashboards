@@ -26,8 +26,7 @@
 
 import { traceable } from "langsmith/traceable";
 
-import { generateConfigKey } from "~@meetings/config/loader";
-import type { AgencyConfig } from "~@meetings/config/types";
+import { type AgencyConfig, generateConfigKey } from "~@meetings/config";
 import type { PrismaClient } from "~@meetings/prisma/client";
 import { Person } from "~@meetings/prisma/types";
 import { TranscriptValidationError } from "~@meetings/tasks/errors";

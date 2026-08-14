@@ -19,7 +19,6 @@ import { TRPCError } from "@trpc/server";
 import keyBy from "lodash/keyBy";
 import uniqBy from "lodash/uniqBy";
 
-import { AGENCY_CONFIGS } from "~@meetings/config/loader";
 import {
   PostMeetingProcessingStatus,
   Prisma,
@@ -28,6 +27,7 @@ import {
 } from "~@meetings/prisma/client";
 import { ValidationError } from "~@meetings/tasks";
 import env from "~@meetings/trpc/env";
+import { getAgencyConfig } from "~@meetings/trpc/routes/config/utils";
 import { AuthUser } from "~@meetings/trpc/types";
 
 // Pipeline runs from before PR #12855 don't have validationErrorType in
@@ -86,7 +86,10 @@ export async function createMeetingForPerson({
     });
   }
 
-  const currentAgencyConfig = AGENCY_CONFIGS[stateCode];
+  const currentAgencyConfig = await getAgencyConfig(stateCode);
+  if (!currentAgencyConfig) {
+    throw new Error(`No agency config found for state code: ${stateCode}`);
+  }
   const agencyConfigMeetingType = currentAgencyConfig.meetingTypes.find(
     (item) => item.type === meetingType,
   );

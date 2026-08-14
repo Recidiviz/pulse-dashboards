@@ -10749,7 +10749,8 @@ __metadata:
     "@expo/metro-runtime": "npm:~55.0.12"
     "@feature-sliced/steiger-plugin": "npm:^0.5.7"
     "@gorhom/bottom-sheet": "npm:^5.2.7"
-    "@monaco-editor/react": "npm:^4.7.0"
+    "@monaco-editor/loader": "npm:1.7.0"
+    "@monaco-editor/react": "npm:4.7.0"
     "@nx/detox": "npm:*"
     "@nx/rollup": "npm:*"
     "@paralleldrive/cuid2": "npm:^3.3.0"
@@ -10785,7 +10786,7 @@ __metadata:
     expo-status-bar: "npm:~55.0.6"
     expo-system-ui: "npm:~55.0.20"
     expo-updates: "npm:~55.0.26"
-    monaco-editor: "npm:^0.55.1"
+    monaco-editor: "npm:0.55.1"
     nativewind: "npm:^4.2.1"
     picocolors: "npm:*"
     react: "npm:^19.0.0"
@@ -11437,7 +11438,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@monaco-editor/loader@npm:^1.5.0":
+"@monaco-editor/loader@npm:1.7.0, @monaco-editor/loader@npm:^1.5.0":
   version: 1.7.0
   resolution: "@monaco-editor/loader@npm:1.7.0"
   dependencies:
@@ -11446,7 +11447,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@monaco-editor/react@npm:^4.7.0":
+"@monaco-editor/react@npm:4.7.0":
   version: 4.7.0
   resolution: "@monaco-editor/react@npm:4.7.0"
   dependencies:
@@ -47065,7 +47066,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"monaco-editor@npm:^0.55.1":
+"monaco-editor@npm:0.55.1":
   version: 0.55.1
   resolution: "monaco-editor@npm:0.55.1"
   dependencies:
@@ -53843,7 +53844,8 @@ __metadata:
     "@material/select": "npm:^14.0.0"
     "@material/textfield": "npm:^14.0.0"
     "@mdxeditor/editor": "npm:^3.30.1"
-    "@monaco-editor/react": "npm:^4.7.0"
+    "@monaco-editor/loader": "npm:1.7.0"
+    "@monaco-editor/react": "npm:4.7.0"
     "@mui/icons-material": "npm:^6.1.1"
     "@mui/lab": "npm:^6.0.0-beta.10"
     "@mui/material": "npm:^6.1.1"
@@ -54108,7 +54110,7 @@ __metadata:
     mock-jwks: "npm:^3.3.5"
     modern-normalize: "npm:^2.0.0"
     moment: "npm:^2.29.4"
-    monaco-editor: "npm:^0.55.1"
+    monaco-editor: "npm:0.55.1"
     morgan: "npm:^1.9.1"
     msw: "npm:^2.7.3"
     multer: "npm:^2.1.0"

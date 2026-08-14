@@ -29,7 +29,7 @@ import dedent from "dedent";
 import { wrapOpenAI } from "langsmith/wrappers";
 import OpenAI from "openai";
 
-import { generateConfigKey } from "~@meetings/config/loader";
+import { generateConfigKey } from "~@meetings/config";
 import type {
   AgencyConfig,
   MeetingTypeConfigEntry,

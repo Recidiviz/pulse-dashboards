@@ -15,12 +15,33 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { stringify } from "yaml";
+
 import {
   initFastifyAndSetUser,
   testGlobalPrismaClient,
   testTRPCClient,
 } from "~@meetings/trpc/test/setup";
 import { fakeStaff } from "~@meetings/trpc/test/setup/seed";
+
+const FAKE_AGENCY_CONFIG = {
+  name: "Nebraska",
+  stateCode: "US_NE",
+  version: 1,
+  baseVersion: 1,
+  showTranscriptions: true,
+  showCNI: false,
+  staffFeedbackEnabled: false,
+  audioPlaybackEnabled: false,
+  audioTTLDays: 30,
+  transcriptTTLDays: 30,
+  keywords: [],
+  meetingTypes: [],
+  labels: {},
+  glossary: {},
+  rules: [],
+  outputs: [],
+};
 
 describe("config router", () => {
   beforeEach(async () => {
@@ -30,6 +51,57 @@ describe("config router", () => {
         stateCode: "recidiviz",
         allowedStates: ["US_NE"],
       },
+    });
+  });
+
+  describe("getAll", () => {
+    beforeEach(async () => {
+      await testGlobalPrismaClient.agencyConfig.create({
+        data: { id: "base", version: 1, parentId: null, config: "version: 1" },
+      });
+      await testGlobalPrismaClient.agencyConfig.create({
+        data: {
+          id: "us_ne",
+          parentId: "base",
+          version: 1,
+          config: stringify({
+            name: "Nebraska",
+            stateCode: "US_NE",
+            version: 1,
+            showTranscriptions: true,
+            showCNI: false,
+            staffFeedbackEnabled: false,
+            audioPlaybackEnabled: false,
+            audioTTLDays: 30,
+            transcriptTTLDays: 30,
+            keywords: [],
+            meetingTypes: [],
+            labels: {},
+            glossary: {},
+            rules: [],
+            outputs: [],
+          }),
+        },
+      });
+    });
+
+    test("returns configs read fresh from the database", async () => {
+      const result = await testTRPCClient.v1.config.getAll.query();
+
+      expect(result).toEqual({ US_NE: FAKE_AGENCY_CONFIG });
+    });
+
+    test("does not require recidiviz admin permissions", async () => {
+      await initFastifyAndSetUser({
+        "https://dashboard.recidiviz.org/email_address": fakeStaff[0].email,
+        "https://dashboard.recidiviz.org/app_metadata": {
+          stateCode: "US_NE",
+        },
+      });
+
+      await expect(testTRPCClient.v1.config.getAll.query()).resolves.toEqual({
+        US_NE: FAKE_AGENCY_CONFIG,
+      });
     });
   });
 
@@ -65,7 +137,7 @@ describe("config router", () => {
           id: "us_ne",
           parentId: "test_base",
           version: 1,
-          config: "name: Nebraska 1 \nversion: 1",
+          config: "name: Nebraska \nversion: 1",
         },
       });
       await testGlobalPrismaClient.agencyConfig.create({
@@ -73,7 +145,7 @@ describe("config router", () => {
           id: "us_ne",
           parentId: "test_base",
           version: 2,
-          config: "name: Nebraska 2 \nversion: 2",
+          config: "name: Nebraska \nversion: 2",
         },
       });
       await testGlobalPrismaClient.agencyConfig.create({
@@ -82,7 +154,7 @@ describe("config router", () => {
 
       const result = await testTRPCClient.v1.config.getNames.query();
 
-      expect(result).toEqual({ us_ne: "Nebraska 2", base: undefined });
+      expect(result).toEqual({ us_ne: "Nebraska", base: undefined });
     });
 
     test("Should return an empty object when there are no configs", async () => {
@@ -140,86 +212,89 @@ describe("config router", () => {
           id: "us_ne",
           parentId: "test_base",
           version: 1,
-          config: "name: Nebraska 1 \nversion: 1 \nstateCode: US_NE",
+          config: "name: Nebraska \nversion: 1 \nstateCode: US_NE",
         },
       });
     });
-    test("Successfully adds updated configs", async () => {
-      const updatedBaseConfig = "version: 2";
-      const baseResult = await testTRPCClient.v1.config.saveNewConfig.mutate({
-        id: "test_base",
-        parentId: null,
-        newConfig: updatedBaseConfig,
-      });
-
-      expect(baseResult).toEqual({
-        id: "test_base",
-        parentId: null,
-        version: 2,
-        config: updatedBaseConfig,
-      });
-      await expect(
-        testTRPCClient.v1.config.getByState.query({ id: "test_base" }),
-      ).resolves.toEqual(baseResult);
-
-      const updatedAgencyConfig =
-        "name: Nebraska 2 \nversion: 2 \nstateCode: US_NE";
-      const agencyResult = await testTRPCClient.v1.config.saveNewConfig.mutate({
-        id: "us_ne",
-        parentId: "test_base",
-        newConfig: updatedAgencyConfig,
-      });
-
-      expect(agencyResult).toEqual({
-        id: "us_ne",
-        parentId: "test_base",
-        version: 2,
-        config: updatedAgencyConfig,
-      });
-      await expect(
-        testTRPCClient.v1.config.getByState.query({ id: "us_ne" }),
-      ).resolves.toEqual(agencyResult);
-    });
-
-    test("throws BAD_REQUEST when given bad yaml", async () => {
-      const invalidYamlNewBase =
-        "version: 2 \n  name: base \n  stateCode: null";
-      await expect(
-        testTRPCClient.v1.config.saveNewConfig.mutate({
+    describe("validation of config", () => {
+      test("Successfully adds updated configs", async () => {
+        const updatedBaseConfig = "version: 2";
+        const baseResult = await testTRPCClient.v1.config.saveNewConfig.mutate({
           id: "test_base",
-          newConfig: invalidYamlNewBase,
           parentId: null,
-        }),
-      ).rejects.toThrow("Invalid YAML syntax.");
+          newConfig: updatedBaseConfig,
+        });
 
-      const invalidYamlNewAgencyConfig =
-        "name: Nebraska 2 \n  version: 2 \n  stateCode: US_NE";
-      await expect(
-        testTRPCClient.v1.config.saveNewConfig.mutate({
-          id: "us_ne",
-          newConfig: invalidYamlNewAgencyConfig,
-          parentId: "test_base",
-        }),
-      ).rejects.toThrow("Invalid YAML syntax.");
-    });
-    test("throws BAD_REQUEST when fails to validate against zod schemas", async () => {
-      const invalidNewBase = "version: false";
-      await expect(
-        testTRPCClient.v1.config.saveNewConfig.mutate({
+        expect(baseResult).toEqual({
           id: "test_base",
-          newConfig: invalidNewBase,
           parentId: null,
-        }),
-      ).rejects.toThrow("Configuration validation failed.");
-      const invaidNewAgencyConfig =
-        "name: Nebraska \nversion: one \nstateCode: US_NE";
-      await expect(
-        testTRPCClient.v1.config.saveNewConfig.mutate({
+          version: 2,
+          config: updatedBaseConfig,
+        });
+        await expect(
+          testTRPCClient.v1.config.getByState.query({ id: "test_base" }),
+        ).resolves.toEqual(baseResult);
+
+        const updatedAgencyConfig =
+          "name: Nebraska \nversion: 2 \nstateCode: US_NE";
+        const agencyResult =
+          await testTRPCClient.v1.config.saveNewConfig.mutate({
+            id: "us_ne",
+            parentId: "test_base",
+            newConfig: updatedAgencyConfig,
+          });
+
+        expect(agencyResult).toEqual({
           id: "us_ne",
-          newConfig: invaidNewAgencyConfig,
           parentId: "test_base",
-        }),
-      ).rejects.toThrow("Configuration validation failed.");
+          version: 2,
+          config: updatedAgencyConfig,
+        });
+        await expect(
+          testTRPCClient.v1.config.getByState.query({ id: "us_ne" }),
+        ).resolves.toEqual(agencyResult);
+      });
+
+      test("throws BAD_REQUEST when given bad yaml", async () => {
+        const invalidYamlNewBase =
+          "version: 2 \n  name: base \n  stateCode: null";
+        await expect(
+          testTRPCClient.v1.config.saveNewConfig.mutate({
+            id: "test_base",
+            newConfig: invalidYamlNewBase,
+            parentId: null,
+          }),
+        ).rejects.toThrow("Invalid YAML syntax.");
+
+        const invalidYamlNewAgencyConfig =
+          "name: Nebraska 2 \n  version: 2 \n  stateCode: US_NE";
+        await expect(
+          testTRPCClient.v1.config.saveNewConfig.mutate({
+            id: "us_ne",
+            newConfig: invalidYamlNewAgencyConfig,
+            parentId: "test_base",
+          }),
+        ).rejects.toThrow("Invalid YAML syntax.");
+      });
+      test("throws BAD_REQUEST when fails to validate against zod schemas", async () => {
+        const invalidNewBase = "version: false";
+        await expect(
+          testTRPCClient.v1.config.saveNewConfig.mutate({
+            id: "test_base",
+            newConfig: invalidNewBase,
+            parentId: null,
+          }),
+        ).rejects.toThrow("Configuration validation failed.");
+        const invaidNewAgencyConfig =
+          "name: Nebraska \nversion: one \nstateCode: US_NE";
+        await expect(
+          testTRPCClient.v1.config.saveNewConfig.mutate({
+            id: "us_ne",
+            newConfig: invaidNewAgencyConfig,
+            parentId: "test_base",
+          }),
+        ).rejects.toThrow("Configuration validation failed.");
+      });
     });
 
     describe("version control", () => {
@@ -245,7 +320,7 @@ describe("config router", () => {
       });
       test("Allows adding non sequential versions", async () => {
         const newAgencyConfig =
-          "name: Nebraska 2 \nversion: 4 \nstateCode: US_NE";
+          "name: Nebraska \nversion: 4 \nstateCode: US_NE";
         const agencyResult =
           await testTRPCClient.v1.config.saveNewConfig.mutate({
             id: "us_ne",

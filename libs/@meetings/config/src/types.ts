@@ -82,8 +82,8 @@ const LabelsSchema = z.object({
  * Schema for a raw agency YAML file.
  *
  * Use plain fields (`glossary`, `keywords`, etc.) to fully replace the base.
- * Use `additional*` variants to extend the base instead — the loader merges
- * them on top before validation.
+ * Use `additional*` variants to extend the base instead — mergeWithBase
+ * applies them on top before validation.
  */
 export const AgencyConfigFileSchema = z.object({
   // ── Metadata ──────────────────────────────────────────────

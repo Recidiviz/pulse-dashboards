@@ -27,10 +27,12 @@ import { IMPERSONATED_EMAIL_HEADER_KEY } from "~@meetings/trpc/context";
 import env from "~@meetings/trpc/env";
 import {
   initFastifyAndSetUser,
+  testGlobalPrismaClient,
   testPrismaClient,
   testTRPCClient,
 } from "~@meetings/trpc/test/setup";
 import {
+  agencyConfigSeedRows,
   fakeActiveMeeting,
   fakeClients,
   fakeInactiveMeeting,
@@ -55,6 +57,15 @@ const fakeCNIFeedbackSnapshot = {
     },
   ],
 };
+
+// createMeeting exercises createMeetingForPerson, which does an unguarded
+// AgencyConfig lookup for the request's stateCode — seed a baseline so US_NE
+// and US_DEMO configs exist.
+beforeEach(async () => {
+  await testGlobalPrismaClient.agencyConfig.createMany({
+    data: agencyConfigSeedRows(),
+  });
+});
 
 describe("client router", () => {
   describe("state user", () => {

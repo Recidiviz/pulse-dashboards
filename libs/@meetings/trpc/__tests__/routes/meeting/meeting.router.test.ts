@@ -17,7 +17,6 @@
 
 import {
   afterAll,
-  afterEach,
   beforeAll,
   beforeEach,
   describe,
@@ -25,9 +24,9 @@ import {
   test,
   vi,
 } from "vitest";
+import { stringify } from "yaml";
 
 import { AUDIO_FORMATS } from "~@meetings/config";
-import { AGENCY_CONFIGS } from "~@meetings/config/loader";
 import {
   ApprovalValue,
   NoteSection,
@@ -38,6 +37,7 @@ import {
 import * as meetingsTasks from "~@meetings/tasks";
 import {
   mockCloudTasksClient,
+  testGlobalPrismaClient,
   testkit,
   testPrismaClient,
   testTRPCClient,
@@ -52,15 +52,14 @@ import {
 
 const FAKE_DATE = new Date("2025-10-19");
 
-// Default agency config for US_NE with staffFeedbackEnabled toggled on. The
-// existing fixtures use US_NE, but the global default for the flag is `false`,
-// so any test exercising staff-feedback paths must opt-in.
-function setUSNEStaffFeedback(enabled: boolean) {
-  AGENCY_CONFIGS["US_NE"] = {
+// staffFeedbackEnabled defaults to false; upserted at a fixed version since
+// a test may flip it more than once.
+async function setUSNEStaffFeedback(enabled: boolean) {
+  const config = stringify({
     baseVersion: 1,
     name: "Nebraska",
     stateCode: "US_NE",
-    version: 1,
+    version: 2,
     showTranscriptions: true,
     showCNI: false,
     staffFeedbackEnabled: enabled,
@@ -73,8 +72,21 @@ function setUSNEStaffFeedback(enabled: boolean) {
     rules: [],
     outputs: [],
     labels: {},
-  };
+  });
+  await testGlobalPrismaClient.agencyConfig.upsert({
+    where: { id_version: { id: "us_ne", version: 2 } },
+    create: { id: "us_ne", parentId: "base", version: 2, config },
+    update: { config },
+  });
 }
+
+// Seeds only a "base" row — no us_ne row by default, so tests opt in via
+// the helpers above.
+beforeEach(async () => {
+  await testGlobalPrismaClient.agencyConfig.create({
+    data: { id: "base", version: 1, parentId: null, config: "version: 1" },
+  });
+});
 
 describe("meeting router", () => {
   describe("getDetails", () => {
@@ -90,8 +102,7 @@ describe("meeting router", () => {
     });
 
     test("Should return meeting details if it exists", async () => {
-      // remove US_NE in AGENCY_CONFIGS, so showTranscriptions defaults to true
-      delete AGENCY_CONFIGS["US_NE"];
+      // No US_NE row is seeded by default, so showTranscriptions falls back to true.
       const result = await testTRPCClient.v1.meeting.getDetails.query({
         meetingId: fakeActiveMeeting.id,
       });
@@ -147,213 +158,204 @@ describe("meeting router", () => {
 
     test("Should return meeting details if it exists without transcription", async () => {
       // Set showTranscriptions: false for US_NE via the agency config
-      AGENCY_CONFIGS["US_NE"] = {
-        baseVersion: 1,
-        name: "Nebraska",
-        stateCode: "US_NE",
-        version: 1,
-        showTranscriptions: false,
-        showCNI: false,
-        staffFeedbackEnabled: false,
-        audioPlaybackEnabled: false,
-        audioTTLDays: 30,
-        transcriptTTLDays: 30,
-        meetingTypes: [],
-        keywords: [],
-        glossary: {},
-        rules: [],
-        outputs: [],
-        labels: {},
-      };
+      await testGlobalPrismaClient.agencyConfig.create({
+        data: {
+          id: "us_ne",
+          parentId: "base",
+          version: 2,
+          config: stringify({
+            baseVersion: 1,
+            name: "Nebraska",
+            stateCode: "US_NE",
+            version: 2,
+            showTranscriptions: false,
+            showCNI: false,
+            staffFeedbackEnabled: false,
+            audioPlaybackEnabled: false,
+            audioTTLDays: 30,
+            transcriptTTLDays: 30,
+            meetingTypes: [],
+            keywords: [],
+            glossary: {},
+            rules: [],
+            outputs: [],
+            labels: {},
+          }),
+        },
+      });
 
-      try {
-        const result = await testTRPCClient.v1.meeting.getDetails.query({
-          meetingId: fakeActiveMeeting.id,
-        });
+      const result = await testTRPCClient.v1.meeting.getDetails.query({
+        meetingId: fakeActiveMeeting.id,
+      });
 
-        expect(result).toEqual({
-          id: fakeActiveMeeting.id,
-          meetingType: pseudoMeetingType,
-          meetingTypeCategory: null,
-          startTime: fakeActiveMeeting.startTime,
-          endTime: null,
-          durationMs: null,
-          postMeetingProcessingStatus: PostMeetingProcessingStatus.NOT_STARTED,
-          userNotepadNotes: "Sample meeting notes.",
-          caseNote: fakeActiveMeeting.caseNote,
-          staffEmail: fakeActiveMeeting.staffEmail,
-          actionItems: [],
-          meetingActionItems: [],
-          structuredActionItems: [],
-          staffFeedback: null,
-          currentOutputVotes: null,
-          caseNoteEditedAt: null,
-          actionItemsEditedAt: null,
-          approvals: {
-            caseNote: false,
-            actionItems: false,
-          },
-          validationErrorType: null,
-          transcriptDeletedAt: null,
-          audioUrl: null,
-          transcription: undefined,
-        });
-      } finally {
-        delete AGENCY_CONFIGS["US_NE"];
-      }
+      expect(result).toEqual({
+        id: fakeActiveMeeting.id,
+        meetingType: pseudoMeetingType,
+        meetingTypeCategory: null,
+        startTime: fakeActiveMeeting.startTime,
+        endTime: null,
+        durationMs: null,
+        postMeetingProcessingStatus: PostMeetingProcessingStatus.NOT_STARTED,
+        userNotepadNotes: "Sample meeting notes.",
+        caseNote: fakeActiveMeeting.caseNote,
+        staffEmail: fakeActiveMeeting.staffEmail,
+        actionItems: [],
+        meetingActionItems: [],
+        structuredActionItems: [],
+        staffFeedback: null,
+        currentOutputVotes: null,
+        caseNoteEditedAt: null,
+        actionItemsEditedAt: null,
+        approvals: {
+          caseNote: false,
+          actionItems: false,
+        },
+        validationErrorType: null,
+        transcriptDeletedAt: null,
+        audioUrl: null,
+        transcription: undefined,
+      });
     });
 
     test("Should return staffFeedback and currentOutputVotes tied to the latest feedback content", async () => {
-      setUSNEStaffFeedback(true);
-      try {
-        const generatedAt = new Date("2026-04-01T00:00:00.000Z");
-        const currentPipelineRunId = "pipeline-run-current";
-        const oldPipelineRunId = "pipeline-run-old";
+      await setUSNEStaffFeedback(true);
+      const generatedAt = new Date("2026-04-01T00:00:00.000Z");
+      const currentPipelineRunId = "pipeline-run-current";
+      const oldPipelineRunId = "pipeline-run-old";
 
-        await testPrismaClient.meeting.update({
-          where: { id: fakeActiveMeeting.id },
-          data: {
-            staffFeedback: {
-              whatYouDidWell: [
-                "You acknowledged the client's concern about housing.",
-              ],
-              growthOpportunities: ["A reflection might have helped here."],
-            },
-            staffFeedbackGeneratedAt: generatedAt,
-            outputsPipelineRunId: currentPipelineRunId,
+      await testPrismaClient.meeting.update({
+        where: { id: fakeActiveMeeting.id },
+        data: {
+          staffFeedback: {
+            whatYouDidWell: [
+              "You acknowledged the client's concern about housing.",
+            ],
+            growthOpportunities: ["A reflection might have helped here."],
           },
-        });
+          staffFeedbackGeneratedAt: generatedAt,
+          outputsPipelineRunId: currentPipelineRunId,
+        },
+      });
 
-        // A vote against the *previous* feedback content - should be ignored.
-        await testPrismaClient.outputVote.create({
-          data: {
-            meetingId: fakeActiveMeeting.id,
-            voterEmail: fakeStaff[0].email,
-            vote: OutputVoteValue.UP,
-            tab: OutputVoteTab.STAFF_FEEDBACK,
-            pipelineRunId: oldPipelineRunId,
-          },
-        });
-
-        // Two votes against the current feedback. The most recent (DOWN) wins.
-        await testPrismaClient.outputVote.create({
-          data: {
-            meetingId: fakeActiveMeeting.id,
-            voterEmail: fakeStaff[0].email,
-            vote: OutputVoteValue.UP,
-            tab: OutputVoteTab.STAFF_FEEDBACK,
-            pipelineRunId: currentPipelineRunId,
-          },
-        });
-        await testPrismaClient.outputVote.create({
-          data: {
-            meetingId: fakeActiveMeeting.id,
-            voterEmail: fakeStaff[0].email,
-            vote: OutputVoteValue.DOWN,
-            tab: OutputVoteTab.STAFF_FEEDBACK,
-            pipelineRunId: currentPipelineRunId,
-          },
-        });
-
-        const result = await testTRPCClient.v1.meeting.getDetails.query({
+      // A vote against the *previous* feedback content - should be ignored.
+      await testPrismaClient.outputVote.create({
+        data: {
           meetingId: fakeActiveMeeting.id,
-        });
+          voterEmail: fakeStaff[0].email,
+          vote: OutputVoteValue.UP,
+          tab: OutputVoteTab.STAFF_FEEDBACK,
+          pipelineRunId: oldPipelineRunId,
+        },
+      });
 
-        expect(result.staffFeedback).toEqual({
-          whatYouDidWell: [
-            "You acknowledged the client's concern about housing.",
-          ],
-          growthOpportunities: ["A reflection might have helped here."],
-          generatedAt,
-        });
-        expect(result.currentOutputVotes).toEqual({
-          [OutputVoteTab.STAFF_FEEDBACK]: {
-            vote: OutputVoteValue.DOWN,
-            message: null,
-          },
-        });
-      } finally {
-        delete AGENCY_CONFIGS["US_NE"];
-      }
+      // Two votes against the current feedback. The most recent (DOWN) wins.
+      await testPrismaClient.outputVote.create({
+        data: {
+          meetingId: fakeActiveMeeting.id,
+          voterEmail: fakeStaff[0].email,
+          vote: OutputVoteValue.UP,
+          tab: OutputVoteTab.STAFF_FEEDBACK,
+          pipelineRunId: currentPipelineRunId,
+        },
+      });
+      await testPrismaClient.outputVote.create({
+        data: {
+          meetingId: fakeActiveMeeting.id,
+          voterEmail: fakeStaff[0].email,
+          vote: OutputVoteValue.DOWN,
+          tab: OutputVoteTab.STAFF_FEEDBACK,
+          pipelineRunId: currentPipelineRunId,
+        },
+      });
+
+      const result = await testTRPCClient.v1.meeting.getDetails.query({
+        meetingId: fakeActiveMeeting.id,
+      });
+
+      expect(result.staffFeedback).toEqual({
+        whatYouDidWell: [
+          "You acknowledged the client's concern about housing.",
+        ],
+        growthOpportunities: ["A reflection might have helped here."],
+        generatedAt,
+      });
+      expect(result.currentOutputVotes).toEqual({
+        [OutputVoteTab.STAFF_FEEDBACK]: {
+          vote: OutputVoteValue.DOWN,
+          message: null,
+        },
+      });
     });
 
     test("Should ignore votes from other users when reporting currentOutputVotes", async () => {
-      setUSNEStaffFeedback(true);
-      try {
-        const generatedAt = new Date("2026-04-01T00:00:00.000Z");
-        const pipelineRunId = "pipeline-run-abc";
+      await setUSNEStaffFeedback(true);
+      const generatedAt = new Date("2026-04-01T00:00:00.000Z");
+      const pipelineRunId = "pipeline-run-abc";
 
-        await testPrismaClient.meeting.update({
-          where: { id: fakeActiveMeeting.id },
-          data: {
-            staffFeedback: {
-              whatYouDidWell: [],
-              growthOpportunities: [],
-            },
-            staffFeedbackGeneratedAt: generatedAt,
-            outputsPipelineRunId: pipelineRunId,
+      await testPrismaClient.meeting.update({
+        where: { id: fakeActiveMeeting.id },
+        data: {
+          staffFeedback: {
+            whatYouDidWell: [],
+            growthOpportunities: [],
           },
-        });
+          staffFeedbackGeneratedAt: generatedAt,
+          outputsPipelineRunId: pipelineRunId,
+        },
+      });
 
-        // Another user voted, but the test client is fakeStaff[0].
-        await testPrismaClient.outputVote.create({
-          data: {
-            meetingId: fakeActiveMeeting.id,
-            voterEmail: "someone-else@example.com",
-            vote: OutputVoteValue.UP,
-            tab: OutputVoteTab.STAFF_FEEDBACK,
-            pipelineRunId,
-          },
-        });
-
-        const result = await testTRPCClient.v1.meeting.getDetails.query({
+      // Another user voted, but the test client is fakeStaff[0].
+      await testPrismaClient.outputVote.create({
+        data: {
           meetingId: fakeActiveMeeting.id,
-        });
+          voterEmail: "someone-else@example.com",
+          vote: OutputVoteValue.UP,
+          tab: OutputVoteTab.STAFF_FEEDBACK,
+          pipelineRunId,
+        },
+      });
 
-        expect(result.currentOutputVotes).toBeNull();
-      } finally {
-        delete AGENCY_CONFIGS["US_NE"];
-      }
+      const result = await testTRPCClient.v1.meeting.getDetails.query({
+        meetingId: fakeActiveMeeting.id,
+      });
+
+      expect(result.currentOutputVotes).toBeNull();
     });
 
     test("Should return staffFeedback: null when staffFeedbackEnabled is false for the agency", async () => {
-      setUSNEStaffFeedback(false);
-      try {
-        const generatedAt = new Date("2026-04-01T00:00:00.000Z");
-        const pipelineRunId = "pipeline-run-disabled";
+      await setUSNEStaffFeedback(false);
+      const generatedAt = new Date("2026-04-01T00:00:00.000Z");
+      const pipelineRunId = "pipeline-run-disabled";
 
-        await testPrismaClient.meeting.update({
-          where: { id: fakeActiveMeeting.id },
-          data: {
-            staffFeedback: {
-              whatYouDidWell: ["This should be hidden."],
-              growthOpportunities: [],
-            },
-            staffFeedbackGeneratedAt: generatedAt,
-            outputsPipelineRunId: pipelineRunId,
+      await testPrismaClient.meeting.update({
+        where: { id: fakeActiveMeeting.id },
+        data: {
+          staffFeedback: {
+            whatYouDidWell: ["This should be hidden."],
+            growthOpportunities: [],
           },
-        });
+          staffFeedbackGeneratedAt: generatedAt,
+          outputsPipelineRunId: pipelineRunId,
+        },
+      });
 
-        // A real vote exists for this user — should also be hidden when off.
-        await testPrismaClient.outputVote.create({
-          data: {
-            meetingId: fakeActiveMeeting.id,
-            voterEmail: fakeStaff[0].email,
-            vote: OutputVoteValue.UP,
-            tab: OutputVoteTab.STAFF_FEEDBACK,
-            pipelineRunId,
-          },
-        });
-
-        const result = await testTRPCClient.v1.meeting.getDetails.query({
+      // A real vote exists for this user — should also be hidden when off.
+      await testPrismaClient.outputVote.create({
+        data: {
           meetingId: fakeActiveMeeting.id,
-        });
+          voterEmail: fakeStaff[0].email,
+          vote: OutputVoteValue.UP,
+          tab: OutputVoteTab.STAFF_FEEDBACK,
+          pipelineRunId,
+        },
+      });
 
-        expect(result.staffFeedback).toBeNull();
-        expect(result.currentOutputVotes).toBeNull();
-      } finally {
-        delete AGENCY_CONFIGS["US_NE"];
-      }
+      const result = await testTRPCClient.v1.meeting.getDetails.query({
+        meetingId: fakeActiveMeeting.id,
+      });
+
+      expect(result.staffFeedback).toBeNull();
+      expect(result.currentOutputVotes).toBeNull();
     });
 
     test("Should parse JSON-encoded actionItems from database", async () => {
@@ -369,12 +371,12 @@ describe("meeting router", () => {
     });
 
     describe("audioUrl", () => {
-      function setUSNEAudioPlayback(enabled: boolean) {
-        AGENCY_CONFIGS["US_NE"] = {
+      async function setUSNEAudioPlayback(enabled: boolean) {
+        const config = stringify({
           baseVersion: 1,
           name: "Nebraska",
           stateCode: "US_NE",
-          version: 1,
+          version: 2,
           showTranscriptions: true,
           showCNI: false,
           staffFeedbackEnabled: false,
@@ -387,15 +389,16 @@ describe("meeting router", () => {
           rules: [],
           outputs: [],
           labels: {},
-        };
+        });
+        await testGlobalPrismaClient.agencyConfig.upsert({
+          where: { id_version: { id: "us_ne", version: 2 } },
+          create: { id: "us_ne", parentId: "base", version: 2, config },
+          update: { config },
+        });
       }
 
-      afterEach(() => {
-        delete AGENCY_CONFIGS["US_NE"];
-      });
-
       test("Should return audioUrl: null when audioPlaybackEnabled is false", async () => {
-        setUSNEAudioPlayback(false);
+        await setUSNEAudioPlayback(false);
         await testPrismaClient.meeting.update({
           where: { id: fakeActiveMeeting.id },
           data: { finalRecordingGCSPath: "meeting-1/final.m4a" },
@@ -409,7 +412,7 @@ describe("meeting router", () => {
       });
 
       test("Should return audioUrl: null when finalRecordingGCSPath is null", async () => {
-        setUSNEAudioPlayback(true);
+        await setUSNEAudioPlayback(true);
 
         const result = await testTRPCClient.v1.meeting.getDetails.query({
           meetingId: fakeActiveMeeting.id,
@@ -419,7 +422,7 @@ describe("meeting router", () => {
       });
 
       test("Should return audioUrl: null when audio has been deleted", async () => {
-        setUSNEAudioPlayback(true);
+        await setUSNEAudioPlayback(true);
         await testPrismaClient.meeting.update({
           where: { id: fakeActiveMeeting.id },
           data: {
@@ -436,7 +439,7 @@ describe("meeting router", () => {
       });
 
       test("Should return a signed audioUrl when enabled and recording exists", async () => {
-        setUSNEAudioPlayback(true);
+        await setUSNEAudioPlayback(true);
         await testPrismaClient.meeting.update({
           where: { id: fakeActiveMeeting.id },
           data: { finalRecordingGCSPath: "meeting-1/final.m4a" },
@@ -718,16 +721,12 @@ describe("meeting router", () => {
   });
 
   describe("voteFeedback", () => {
-    beforeEach(() => {
-      setUSNEStaffFeedback(true);
-    });
-
-    afterEach(() => {
-      delete AGENCY_CONFIGS["US_NE"];
+    beforeEach(async () => {
+      await setUSNEStaffFeedback(true);
     });
 
     test("Should throw FORBIDDEN when staffFeedbackEnabled is false for the agency", async () => {
-      setUSNEStaffFeedback(false);
+      await setUSNEStaffFeedback(false);
 
       await expect(
         testTRPCClient.v1.meeting.submitOutputVote.mutate({
@@ -860,16 +859,12 @@ describe("meeting router", () => {
   describe("submitOutputVoteMessage", () => {
     const pipelineRunId = "pipeline-run-feedback";
 
-    beforeEach(() => {
-      setUSNEStaffFeedback(true);
-    });
-
-    afterEach(() => {
-      delete AGENCY_CONFIGS["US_NE"];
+    beforeEach(async () => {
+      await setUSNEStaffFeedback(true);
     });
 
     test("Should throw FORBIDDEN when staffFeedbackEnabled is false for the agency", async () => {
-      setUSNEStaffFeedback(false);
+      await setUSNEStaffFeedback(false);
 
       await expect(
         testTRPCClient.v1.meeting.submitOutputVoteMessage.mutate({

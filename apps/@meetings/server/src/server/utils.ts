@@ -20,7 +20,6 @@ import { CloudTasksClient, protos } from "@google-cloud/tasks";
 import { captureException, getTraceData } from "@sentry/node";
 import { Transcript } from "assemblyai";
 
-import { AGENCY_CONFIGS } from "~@meetings/config/loader";
 import {
   PostMeetingProcessingStatus,
   PrismaClient,
@@ -33,6 +32,7 @@ import {
 } from "~@meetings/tasks";
 import { ProductionPipeline, TranscriptInput } from "~@meetings/tasks/llm";
 import { utterancesToRawText } from "~@meetings/tasks/llm/utils";
+import { getAgencyConfig } from "~@meetings/trpc/routes/config/utils";
 import { logger } from "~server-setup-plugin/logger";
 
 // The confidence threshold we use to determine when to try Deepgram
@@ -559,7 +559,7 @@ export async function handleNotetakingProcessing(
     );
   }
 
-  const agencyConfig = AGENCY_CONFIGS[meetingPerson.stateCode];
+  const agencyConfig = await getAgencyConfig(meetingPerson.stateCode);
   if (!agencyConfig) {
     throw new Error(
       `No agency config found for state code: ${meetingPerson.stateCode}`,
