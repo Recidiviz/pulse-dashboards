@@ -16,14 +16,24 @@
 // =============================================================================
 
 import { typography } from "@recidiviz/design-system";
+import { useMemo } from "react";
 import styled, { css } from "styled-components";
 
-import { Button, palette } from "~design-system";
-
 import {
-  buildRecurrenceRule,
+  Button,
+  Dropdown,
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownToggle,
+  palette,
+} from "~design-system";
+
+import { NumberStepper } from "../NumberStepper";
+import {
   describeRecurrence,
   RecurrenceFreq,
+  RecurrenceUnit,
+  resolveRecurrenceRule,
 } from "./recurrence";
 
 const Wrapper = styled.div`
@@ -95,18 +105,52 @@ const Hint = styled.div`
   font-style: italic;
 `;
 
+const CustomFrequencyWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: ${palette.slate05};
+  padding: 8px;
+  border-radius: 4px;
+`;
+
+const CustomFrequencyButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+  color: ${palette.slate80};
+`;
+
+const UnitDropdownToggle = styled(DropdownToggle)`
+  background-color: ${palette.marble1};
+`;
+
 const FREQ_OPTIONS: ReadonlyArray<{ freq: RecurrenceFreq; label: string }> = [
   { freq: "NONE", label: "None" },
-  { freq: "DAILY", label: "Every day" },
   { freq: "WEEKLY", label: "Every week" },
   { freq: "MONTHLY", label: "Every month" },
   { freq: "YEARLY", label: "Every year" },
+  { freq: "CUSTOM", label: "Custom" },
+];
+
+const CUSTOM_FREQUENCY_OPTIONS: ReadonlyArray<{
+  freq: RecurrenceUnit;
+  label: string;
+}> = [
+  { freq: "DAILY", label: "day(s)" },
+  { freq: "WEEKLY", label: "week(s)" },
+  { freq: "MONTHLY", label: "month(s)" },
+  { freq: "YEARLY", label: "year(s)" },
 ];
 
 export interface RecurrenceFooterProps {
   selectedFreq: RecurrenceFreq;
   anchorDate: Date | null;
   onFreqChange: (freq: RecurrenceFreq) => void;
+  customInterval: number;
+  customUnit: RecurrenceUnit;
+  onCustomFreqChange: (unit: RecurrenceUnit, interval: number) => void;
 }
 
 /**
@@ -121,10 +165,33 @@ export function RecurrenceFooter({
   selectedFreq,
   anchorDate,
   onFreqChange,
+  customInterval,
+  customUnit,
+  onCustomFreqChange,
 }: RecurrenceFooterProps) {
-  const hintText = describeRecurrence(
-    buildRecurrenceRule(selectedFreq, anchorDate),
+  // Derived rather than a separate prop — `selectedFreq` is already the
+  // source of truth for which section is showing.
+  const customFreq = selectedFreq === "CUSTOM";
+
+  const hintText = useMemo(
+    () =>
+      describeRecurrence(
+        resolveRecurrenceRule(
+          selectedFreq,
+          anchorDate,
+          customUnit,
+          customInterval,
+        ),
+      ),
+    [selectedFreq, anchorDate, customUnit, customInterval],
   );
+
+  // Derived rather than tracked separately — the unit is the source of
+  // truth (and the only thing the parent needs to persist); the label is
+  // just its display string.
+  const customUnitLabel =
+    CUSTOM_FREQUENCY_OPTIONS.find((option) => option.freq === customUnit)
+      ?.label ?? CUSTOM_FREQUENCY_OPTIONS[0].label;
 
   return (
     <Wrapper>
@@ -145,6 +212,37 @@ export function RecurrenceFooter({
         })}
       </ChipRow>
       {hintText && <Hint>Will repeat {hintText}</Hint>}
+      {customFreq && (
+        <CustomFrequencyWrapper>
+          <CustomFrequencyButtonContainer>
+            <div>Repeat every</div>
+            <NumberStepper
+              value={customInterval}
+              onChange={(next) => onCustomFreqChange(customUnit, next)}
+              min={1}
+              max={31}
+              aria-label="Repeat interval"
+            />
+            <Dropdown>
+              <UnitDropdownToggle showCaret>
+                {customUnitLabel}
+              </UnitDropdownToggle>
+              <DropdownMenu>
+                {CUSTOM_FREQUENCY_OPTIONS.map((option) => (
+                  <DropdownMenuItem
+                    key={option.freq}
+                    onClick={() =>
+                      onCustomFreqChange(option.freq, customInterval)
+                    }
+                  >
+                    {option.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+          </CustomFrequencyButtonContainer>
+        </CustomFrequencyWrapper>
+      )}
     </Wrapper>
   );
 }

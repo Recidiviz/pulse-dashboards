@@ -22,6 +22,15 @@ import { RecurrenceFooter } from "../RecurrenceFooter";
 // Friday, June 19, 2026 — stable weekly anchor across the suite.
 const FRIDAY = new Date(2026, 5, 19);
 
+// Placeholder values for the tests in the `describe` block below, none of
+// which exercise the custom-recurrence section (see the second `describe`
+// block for that) — just here to satisfy the now-required controlled props.
+const customProps = {
+  customInterval: 1,
+  customUnit: "WEEKLY" as const,
+  onCustomFreqChange: vi.fn(),
+};
+
 describe("RecurrenceFooter", () => {
   test("renders all five frequency chips", () => {
     render(
@@ -29,13 +38,14 @@ describe("RecurrenceFooter", () => {
         selectedFreq="NONE"
         anchorDate={FRIDAY}
         onFreqChange={vi.fn()}
+        {...customProps}
       />,
     );
     expect(screen.getByRole("button", { name: "None" })).toBeVisible();
-    expect(screen.getByRole("button", { name: "Every day" })).toBeVisible();
     expect(screen.getByRole("button", { name: "Every week" })).toBeVisible();
     expect(screen.getByRole("button", { name: "Every month" })).toBeVisible();
     expect(screen.getByRole("button", { name: "Every year" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Custom" })).toBeVisible();
   });
 
   test("marks the selected chip with aria-pressed=true; others false", () => {
@@ -44,6 +54,7 @@ describe("RecurrenceFooter", () => {
         selectedFreq="WEEKLY"
         anchorDate={FRIDAY}
         onFreqChange={vi.fn()}
+        {...customProps}
       />,
     );
     expect(screen.getByRole("button", { name: "Every week" })).toHaveAttribute(
@@ -63,6 +74,7 @@ describe("RecurrenceFooter", () => {
         selectedFreq="NONE"
         anchorDate={FRIDAY}
         onFreqChange={onFreqChange}
+        {...customProps}
       />,
     );
     fireEvent.click(screen.getByRole("button", { name: "Every week" }));
@@ -76,6 +88,7 @@ describe("RecurrenceFooter", () => {
         selectedFreq="DAILY"
         anchorDate={FRIDAY}
         onFreqChange={onFreqChange}
+        {...customProps}
       />,
     );
     fireEvent.click(screen.getByRole("button", { name: "None" }));
@@ -88,6 +101,7 @@ describe("RecurrenceFooter", () => {
         selectedFreq="WEEKLY"
         anchorDate={FRIDAY}
         onFreqChange={vi.fn()}
+        {...customProps}
       />,
     );
     expect(screen.getByText(/will repeat.*friday/i)).toBeVisible();
@@ -99,6 +113,7 @@ describe("RecurrenceFooter", () => {
         selectedFreq="NONE"
         anchorDate={FRIDAY}
         onFreqChange={vi.fn()}
+        {...customProps}
       />,
     );
     expect(screen.queryByText(/will repeat/i)).toBeNull();
@@ -110,8 +125,88 @@ describe("RecurrenceFooter", () => {
         selectedFreq="WEEKLY"
         anchorDate={null}
         onFreqChange={vi.fn()}
+        {...customProps}
       />,
     );
     expect(screen.queryByText(/will repeat/i)).toBeNull();
+  });
+});
+
+describe("RecurrenceFooter custom recurrence section", () => {
+  test("is hidden when selectedFreq is not CUSTOM", () => {
+    render(
+      <RecurrenceFooter
+        selectedFreq="WEEKLY"
+        anchorDate={FRIDAY}
+        onFreqChange={vi.fn()}
+        {...customProps}
+      />,
+    );
+    expect(screen.queryByLabelText("Repeat interval")).toBeNull();
+  });
+
+  test("renders the interval stepper and unit dropdown when selectedFreq is CUSTOM", () => {
+    render(
+      <RecurrenceFooter
+        selectedFreq="CUSTOM"
+        anchorDate={FRIDAY}
+        onFreqChange={vi.fn()}
+        customInterval={3}
+        customUnit="WEEKLY"
+        onCustomFreqChange={vi.fn()}
+      />,
+    );
+    expect(screen.getByLabelText("Repeat interval")).toHaveValue(3);
+    expect(screen.getByRole("button", { name: "week(s)" })).toBeVisible();
+  });
+
+  test("clicking a unit in the dropdown emits it with the current interval", () => {
+    const onCustomFreqChange = vi.fn();
+    render(
+      <RecurrenceFooter
+        selectedFreq="CUSTOM"
+        anchorDate={FRIDAY}
+        onFreqChange={vi.fn()}
+        customInterval={3}
+        customUnit="DAILY"
+        onCustomFreqChange={onCustomFreqChange}
+      />,
+    );
+    // The unit dropdown's menu items are disabled until the toggle opens it.
+    fireEvent.click(screen.getByRole("button", { name: "day(s)" }));
+    fireEvent.click(screen.getByRole("menuitem", { name: "week(s)" }));
+    expect(onCustomFreqChange).toHaveBeenCalledWith("WEEKLY", 3);
+  });
+
+  test("bumping the interval stepper emits the current unit with the new interval", () => {
+    const onCustomFreqChange = vi.fn();
+    render(
+      <RecurrenceFooter
+        selectedFreq="CUSTOM"
+        anchorDate={FRIDAY}
+        onFreqChange={vi.fn()}
+        customInterval={3}
+        customUnit="WEEKLY"
+        onCustomFreqChange={onCustomFreqChange}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Increase" }));
+    expect(onCustomFreqChange).toHaveBeenCalledWith("WEEKLY", 4);
+  });
+
+  test("hint reflects the custom unit and interval, not the plain CUSTOM freq", () => {
+    render(
+      <RecurrenceFooter
+        selectedFreq="CUSTOM"
+        anchorDate={FRIDAY}
+        onFreqChange={vi.fn()}
+        customInterval={3}
+        customUnit="WEEKLY"
+        onCustomFreqChange={vi.fn()}
+      />,
+    );
+    expect(
+      screen.getByText(/will repeat every 3 weeks.*friday/i),
+    ).toBeVisible();
   });
 });

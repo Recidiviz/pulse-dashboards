@@ -117,4 +117,10 @@ describe("describeRecurrence", () => {
     const rrule = buildRecurrenceRule("DAILY", ANCHOR);
     expect(describeRecurrence(rrule)).toMatch(/day/i);
   });
+
+  test("custom YEARLY interval reorders month before day", () => {
+    // rrule's toText() otherwise renders this as "every 4 years June on the 18th"
+    const rrule = buildRecurrenceRule("YEARLY", ANCHOR, 4);
+    expect(describeRecurrence(rrule)).toBe("every 4 years on June 18th");
+  });
 });

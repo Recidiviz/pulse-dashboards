@@ -20,9 +20,12 @@ import * as React from "react";
 import { DatePicker, DatePickerProps } from "./DatePicker";
 import {
   buildRecurrenceRule,
+  getRecurrenceCustomFields,
   getRecurrenceFreq,
   Recurrence,
   RecurrenceFreq,
+  RecurrenceUnit,
+  resolveRecurrenceRule,
 } from "./recurrence";
 import { RecurrenceFooter } from "./RecurrenceFooter";
 
@@ -40,101 +43,55 @@ export interface DatePickerWithRecurrenceProps
   onChange: (next: DateWithRecurrence) => void;
 }
 
-// Module-level so it keeps stable identity across renders — react-datepicker
-// treats `calendarContainer` as a component type, and a fresh function each
-// render would force an unnecessary remount of the popper subtree.
-type FooterContainerProps = {
-  className?: string;
-  children?: React.ReactNode;
-  selectedFreq: RecurrenceFreq;
-  anchorDate: Date | null;
-  onFreqChange: (freq: RecurrenceFreq) => void;
-};
-
-const FooterContainer: React.FC<FooterContainerProps> = ({
-  className,
-  children,
-  selectedFreq,
-  anchorDate,
-  onFreqChange,
-}) => (
-  <div className={className}>
-    {children}
-    <RecurrenceFooter
-      selectedFreq={selectedFreq}
-      anchorDate={anchorDate}
-      onFreqChange={onFreqChange}
-    />
-  </div>
-);
-
 /**
  * Date + recurrence picker. Wraps `DatePicker`, injects the "Repeat" footer
- * via the `calendarContainer` slot, and bundles both inputs behind a single
+ * via the `children` slot, and bundles both inputs behind a single
  * `value` / `onChange` contract.
  *
  * The persisted `recurrence` is an iCal RRULE string (or `null` for one-off).
- * The pending chip selection — i.e., the user picking "Every week" before
- * picking a date — lives in component-local state so it survives across the
- * intermediate render where the resolved RRULE is still `null`. Once both
- * inputs are present, `buildRecurrenceRule` resolves them to a string and
- * the parent receives a fully-derived `DateWithRecurrence`.
+ * Which chip/custom-unit/custom-interval the footer shows is component-local
+ * state, seeded once from the persisted RRULE on mount (so reopening an
+ * existing custom recurrence shows "Custom" selected with the right unit and
+ * interval) and from then on changed only by explicit chip/dropdown/stepper
+ * interactions — never re-derived from `value` afterward. That's deliberate:
+ * every one of our own edits round-trips back through the parent as a new
+ * `value` prop, and re-deriving from it on every change would fight the
+ * user's current selection instead of just reflecting it.
  */
 export function DatePickerWithRecurrence({
   value,
   onChange,
   ...rest
 }: DatePickerWithRecurrenceProps) {
-  // Pending freq survives chip clicks that emit `recurrence: null` (because
-  // there's no anchor yet). Initialised from the stored rrule; re-synced
-  // when the parent supplies a non-null rrule (e.g. edit-mode hydration).
   const [pendingFreq, setPendingFreq] = React.useState<RecurrenceFreq>(() =>
     getRecurrenceFreq(value.recurrence),
   );
+  const [{ unit: customUnit, interval: customInterval }, setCustomFields] =
+    React.useState(() => getRecurrenceCustomFields(value.recurrence));
 
-  React.useEffect(() => {
-    if (value.recurrence !== null) {
-      setPendingFreq(getRecurrenceFreq(value.recurrence));
-    }
-  }, [value.recurrence]);
+  // Shared `onChange` shape for the handlers below.
+  const emitChange = (date: Date | null, recurrence: Recurrence) => {
+    onChange({ date: date ?? new Date(), recurrence });
+  };
 
   const handleDateChange = (date: Date | null) => {
-    onChange({
-      date: date ?? new Date(),
-      recurrence: buildRecurrenceRule(pendingFreq, date),
-    });
+    emitChange(
+      date,
+      resolveRecurrenceRule(pendingFreq, date, customUnit, customInterval),
+    );
   };
 
   const handleFreqChange = (freq: RecurrenceFreq) => {
     setPendingFreq(freq);
-    onChange({
-      date: value.date ?? new Date(),
-      recurrence: buildRecurrenceRule(freq, value.date),
-    });
+    if (freq !== "CUSTOM") {
+      emitChange(value.date, buildRecurrenceRule(freq, value.date));
+    }
   };
 
-  const calendarContainer = React.useCallback(
-    ({
-      className,
-      children,
-    }: {
-      className?: string;
-      children?: React.ReactNode;
-    }) => (
-      <FooterContainer
-        className={className}
-        selectedFreq={pendingFreq}
-        anchorDate={value.date}
-        onFreqChange={handleFreqChange}
-      >
-        {children}
-      </FooterContainer>
-    ),
-    // `handleFreqChange` closes over the current onChange + value; intentionally
-    // narrow deps so we re-render only when the inputs to the footer change.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [pendingFreq, value.date],
-  );
+  const handleCustomFreqChange = (unit: RecurrenceUnit, interval: number) => {
+    setCustomFields({ unit, interval });
+    emitChange(value.date, buildRecurrenceRule(unit, value.date, interval));
+  };
 
   // `DatePickerProps` is a discriminated union (plain / `selectsRange` /
   // `selectsMultiple`); spreading our `Omit<...>` subset can't be narrowed
@@ -145,7 +102,16 @@ export function DatePickerWithRecurrence({
     ...rest,
     selected: value.date,
     onChange: handleDateChange,
-    calendarContainer,
+    children: (
+      <RecurrenceFooter
+        selectedFreq={pendingFreq}
+        anchorDate={value.date}
+        onFreqChange={handleFreqChange}
+        customInterval={customInterval}
+        customUnit={customUnit}
+        onCustomFreqChange={handleCustomFreqChange}
+      />
+    ),
   } as DatePickerProps;
 
   return <DatePicker {...mergedProps} />;
