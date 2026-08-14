@@ -38,6 +38,7 @@ describe("get properties for user in auth token", () => {
     expect(await c.getProperties()).toMatchInlineSnapshot(`
       {
         "hasSeenOnboarding": 2025-12-10T11:14:00.000Z,
+        "hasSeenResourcesOnboarding": null,
         "hideAboutVideoFromHomePage": null,
       }
     `);
@@ -51,6 +52,7 @@ test("set properties for user in auth token", async () => {
   expect(result).toMatchInlineSnapshot(`
     {
       "hasSeenOnboarding": 2025-12-10T11:43:00.000Z,
+      "hasSeenResourcesOnboarding": null,
       "hideAboutVideoFromHomePage": null,
       "id": "abc123",
     }
@@ -66,6 +68,7 @@ test("set multiple properties at once", async () => {
   expect(result).toMatchInlineSnapshot(`
     {
       "hasSeenOnboarding": 2025-12-10T11:43:00.000Z,
+      "hasSeenResourcesOnboarding": null,
       "hideAboutVideoFromHomePage": 2025-12-10T12:44:00.000Z,
       "id": "abc123",
     }
@@ -83,6 +86,7 @@ test("setting one property doesn't affect another", async () => {
   expect(result).toMatchInlineSnapshot(`
     {
       "hasSeenOnboarding": 2025-12-10T11:43:00.000Z,
+      "hasSeenResourcesOnboarding": null,
       "hideAboutVideoFromHomePage": 2025-12-10T12:44:00.000Z,
       "id": "abc123",
     }

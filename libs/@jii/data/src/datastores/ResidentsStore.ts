@@ -314,4 +314,8 @@ export class ResidentsStore {
     // only effect to user is that the video will pop up again on the home page for them
     await this.setUserProperties({ hideAboutVideoFromHomePage: hiddenTime });
   }
+
+  async setUserResourcesOnboardingSeen() {
+    await this.setUserProperties({ hasSeenResourcesOnboarding: new Date() });
+  }
 }

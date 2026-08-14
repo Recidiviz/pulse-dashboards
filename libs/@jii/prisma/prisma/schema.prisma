@@ -13,9 +13,10 @@ datasource db {
 // More specifically, this model should be used for USER-GENERATED data only;
 // for admin-generated user settings see the UserFlag models.
 model UserProperties {
-    id                         String    @id
-    hasSeenOnboarding          DateTime?
-    hideAboutVideoFromHomePage DateTime?
+    id                            String    @id
+    hasSeenOnboarding             DateTime?
+    hideAboutVideoFromHomePage    DateTime?
+    hasSeenResourcesOnboarding    DateTime?
 }
 
 model Resident {
