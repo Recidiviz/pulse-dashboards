@@ -20,6 +20,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ReactSelect, { components, GroupBase, OptionProps } from "react-select";
 
+import { SystemId } from "~datatypes";
+
 import { useRootStore } from "../../components/StoreProvider";
 import { PersonSearchResult, PersonType } from "../../WorkflowsStore/types";
 import { workflowsUrl } from "../views";
@@ -89,9 +91,21 @@ function PersonOption(props: OptionProps<PersonSearchOption, false>) {
   );
 }
 
+function buildPlaceholder(workflowsSupportedSystems: SystemId[] | undefined) {
+  const hasSupervision = workflowsSupportedSystems?.includes("SUPERVISION");
+  const hasIncarceration = workflowsSupportedSystems?.includes("INCARCERATION");
+
+  if (hasSupervision && !hasIncarceration)
+    return "Search for a client by name or ID …";
+  if (hasIncarceration && !hasSupervision)
+    return "Search for a resident by name or ID …";
+  return "Search for a client/resident by name or ID …";
+}
+
 export const PersonSearchBar = observer(function PersonSearchBar() {
   const {
     workflowsStore: {
+      workflowsSupportedSystems,
       searchStore: { personSearchManager },
     },
     analyticsStore,
@@ -147,9 +161,7 @@ export const PersonSearchBar = observer(function PersonSearchBar() {
             ),
           );
         }}
-        // TODO: Make this placeholder text dynamic (OBT-42981)
-        // Should be "Search for a client …" vs. "Search for a resident …"
-        // depending on user role and permissions
+        placeholder={buildPlaceholder(workflowsSupportedSystems)}
         styles={personSearchBarStyles}
       />
     </PersonSearchBarContainer>

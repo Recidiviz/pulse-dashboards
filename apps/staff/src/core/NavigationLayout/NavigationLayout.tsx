@@ -39,7 +39,10 @@ import {
 import { psiUrl, sarUrl } from "~sentencing-client";
 
 import Drawer from "../../components/Drawer/Drawer";
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import useLogout from "../../hooks/useLogout";
 import { TenantId } from "../../RootStore/types";
@@ -48,6 +51,7 @@ import { getJusticeInvolvedPersonTitle } from "../../WorkflowsStore/utils";
 import { UserAvatar } from "../Avatar";
 import { useCoreStore } from "../CoreStoreProvider";
 import LanternLogo from "../LanternLogo";
+import { PersonSearchBar } from "../PersonSearchBar";
 import RecidivizLogo from "../RecidivizLogo";
 import { hideWhenPrintingStyle } from "../sharedComponents";
 import {
@@ -101,7 +105,7 @@ const NavContainer = styled.div<{
 
 const PersonSearchBarSlot = styled.div`
   flex: 0 0 auto;
-  width: ${rem(280)};
+  width: ${rem(320)};
   margin-left: ${rem(spacing.md)};
   margin-right: ${rem(spacing.md)};
 
@@ -110,11 +114,15 @@ const PersonSearchBarSlot = styled.div`
   }
 `;
 
-function PersonSearchBar({ children }: { children?: React.ReactNode }) {
-  if (!children) return null;
-
-  return <PersonSearchBarSlot>{children}</PersonSearchBarSlot>;
-}
+// Views where the person search bar should be shown, when the
+// typesensePersonSearch feature variant is enabled.
+const SEARCH_BAR_ALLOWED_VIEWS: string[] = [
+  DASHBOARD_VIEWS.workflows,
+  DASHBOARD_VIEWS.insights,
+  DASHBOARD_VIEWS.directorDashboard,
+  DASHBOARD_VIEWS.comingSoon,
+  DASHBOARD_VIEWS.parole,
+];
 
 const NavMenu = styled.div<{ alignBottom?: boolean }>`
   display: flex;
@@ -663,7 +671,6 @@ type NavigationLayoutProps = {
   externalMethodologyUrl?: string;
   isNaked?: boolean;
   children?: React.ReactNode;
-  personSearchBar?: React.ReactNode;
   topOffset?: number;
 };
 
@@ -672,7 +679,6 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
     backgroundColor,
     externalMethodologyUrl,
     children,
-    personSearchBar,
     isFixed = true,
     isNaked = false,
     topOffset = 0,
@@ -680,8 +686,11 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
     const { pathname } = useLocation();
     const { isMobile } = useIsMobile(true);
     const [drawerIsOpen, setDrawerIsOpen] = React.useState(false);
+    const { typesensePersonSearch } = useFeatureVariants();
 
     const view = pathname.split("/")[1];
+    const showPersonSearchBar =
+      typesensePersonSearch && SEARCH_BAR_ALLOWED_VIEWS.includes(view);
     const {
       currentTenantId,
       userStore,
@@ -794,7 +803,11 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
                 alignBottom={isMobile && isFixed}
                 data-intercom-target="Profile"
               >
-                <PersonSearchBar>{personSearchBar}</PersonSearchBar>
+                {showPersonSearchBar && (
+                  <PersonSearchBarSlot>
+                    <PersonSearchBar />
+                  </PersonSearchBarSlot>
+                )}
                 <NavLinks role="none">{children}</NavLinks>
                 {isMobile ? (
                   <>

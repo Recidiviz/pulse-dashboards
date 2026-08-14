@@ -20,7 +20,11 @@ import { MemoryRouter, useLocation } from "react-router-dom";
 import { useQueryParams } from "use-query-params";
 import { Mock } from "vitest";
 
-import { useRootStore, useUserStore } from "../../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+  useUserStore,
+} from "../../../components/StoreProvider";
 import useIsMobile from "../../../hooks/useIsMobile";
 import RootStore from "../../../RootStore";
 import TenantStore from "../../../RootStore/TenantStore/TenantStore";
@@ -49,6 +53,7 @@ let coreStoreMock: any;
 const useRootStoreMock = useRootStore as Mock;
 const useCoreStoreMock = useCoreStore as Mock;
 const useUserStoreMock = useUserStore as Mock;
+const useFeatureVariantsMock = useFeatureVariants as Mock;
 const useQueryParamsMock = useQueryParams as Mock;
 
 describe("CoreLayout tests", () => {
@@ -108,6 +113,7 @@ describe("CoreLayout tests", () => {
       },
     });
     useQueryParamsMock.mockReturnValue(["query", vi.fn()]);
+    useFeatureVariantsMock.mockReturnValue({});
   });
 
   it("Should render a link for each page option", () => {

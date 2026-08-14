@@ -34,7 +34,6 @@ import {
   OverviewNavLinks,
   SCROLL_PADDING,
 } from "../NavigationLayout";
-import { PersonSearchBar } from "../PersonSearchBar";
 import { MaxWidth } from "../sharedComponents";
 import { WorkflowsBackButton } from "./WorkflowsBackButton";
 
@@ -108,8 +107,7 @@ export const WorkflowsNavLayout: React.FC<{
     workflowsStore: { activePageIsTasks },
     tenantStore,
   } = useRootStore();
-  const { typesensePersonSearch, classificationScrollBuffer } =
-    useFeatureVariants();
+  const { classificationScrollBuffer } = useFeatureVariants();
   const { isMobile, isLaptop } = useIsMobile(true);
 
   const workflowsMethodologyUrl = tenantStore.workflowsMethodologyUrl;
@@ -123,7 +121,6 @@ export const WorkflowsNavLayout: React.FC<{
         externalMethodologyUrl={
           activePageIsTasks ? tasksMethodology : workflowsMethodologyUrl
         }
-        personSearchBar={typesensePersonSearch && <PersonSearchBar />}
       >
         <OverviewNavLinks />
       </NavigationLayout>
