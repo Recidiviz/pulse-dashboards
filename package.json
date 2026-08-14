@@ -505,7 +505,13 @@
     "fast-jwt": ">=6.3.1",
     "undici": ">=7.29.0 <8.0.0",
     "find-my-way": ">=9.7.0",
-    "sharp": ">=0.35.0"
+    "sharp": ">=0.35.0",
+    "tar": ">=7.5.19",
+    "form-data": ">=4.0.4",
+    "websocket-driver": ">=0.7.5",
+    "protobufjs@^6": ">=6.11.4 <7.0.0",
+    "protobufjs@6.11.2": ">=6.11.4 <7.0.0",
+    "protobufjs@7.2.4": ">=7.5.5 <8.0.0"
   },
   "scripts": {
     "postinstall": "husky",
