@@ -132,6 +132,7 @@ export const schemas: CollectionCreateSchema[] = [
         facet: true,
         optional: true,
       },
+      { name: "hasCaseload", type: "bool", facet: true, optional: false },
     ],
   },
   {

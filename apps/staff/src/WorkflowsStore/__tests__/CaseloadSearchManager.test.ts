@@ -179,8 +179,36 @@ describe("buildTypesenseSearchPlan", () => {
       collection: "supervisionStaff",
       q: "al",
       query_by: "givenNames,surname,email",
-      filter_by: "stateCode:=`US_UT`",
+      filter_by: "stateCode:=`US_UT` && hasCaseload:=true",
     });
+  });
+
+  test("supervision staff search excludes officers without a caseload", () => {
+    const store = makeMockWorkflowsStore({
+      SUPERVISION: {
+        search: [{ searchType: "OFFICER", searchTitle: "agent" }],
+      },
+    });
+
+    const plan = buildTypesenseSearchPlan("*", "US_UT", "SUPERVISION", store);
+    expect(plan[0].descriptor.filter_by).toBe(
+      "stateCode:=`US_UT` && hasCaseload:=true",
+    );
+  });
+
+  test("incarceration staff search omits the hasCaseload clause", () => {
+    const store = makeMockWorkflowsStore({
+      INCARCERATION: {
+        search: [
+          { searchType: "INCARCERATION_OFFICER", searchTitle: "case manager" },
+        ],
+      },
+    });
+
+    const plan = buildTypesenseSearchPlan("*", "US_MI", "INCARCERATION", store);
+    // The field isn't on the incarcerationStaff collection at all, so filtering
+    // on it would be a Typesense error rather than an empty result set.
+    expect(plan[0].descriptor.filter_by).toBe("stateCode:=`US_MI`");
   });
 
   test("location search: idType filter appended to filter_by, query_by is name", () => {
@@ -881,7 +909,7 @@ describe("tenant change", () => {
     // ...and a seed query goes out scoped to the new state.
     const search = (mockMultiSearch.mock.calls[0][0] as any).searches[0];
     expect(search.q).toBe("*");
-    expect(search.filter_by).toBe("stateCode:=`US_TN`");
+    expect(search.filter_by).toBe("stateCode:=`US_TN` && hasCaseload:=true");
   });
 
   test("a system change does NOT wipe the cache", async () => {
@@ -956,8 +984,11 @@ describe("warmSelectedSearchablesCache", () => {
     await manager.warmSelectedSearchablesCache(["OFF1"]);
 
     const search = (mockMultiSearch.mock.calls[0][0] as any).searches[0];
+    // The plan's hasCaseload clause carries into the by-id refetch, matching
+    // the Firestore path: selected pills resolve from availableOfficers, which
+    // is itself restricted to officers with a caseload.
     expect(search.filter_by).toBe(
-      "stateCode:=`US_ND` && staffExternalId:=[`OFF1`]",
+      "stateCode:=`US_ND` && hasCaseload:=true && staffExternalId:=[`OFF1`]",
     );
     expect(manager.resolveSelectedSearchables(["OFF1"])).toHaveLength(1);
   });
@@ -981,7 +1012,7 @@ describe("warmSelectedSearchablesCache", () => {
 
     const search = (mockMultiSearch.mock.calls[0][0] as any).searches[0];
     expect(search.filter_by).toBe(
-      "stateCode:=`US_ND` && staffExternalId:=[`OFF2`]",
+      "stateCode:=`US_ND` && hasCaseload:=true && staffExternalId:=[`OFF2`]",
     );
   });
 

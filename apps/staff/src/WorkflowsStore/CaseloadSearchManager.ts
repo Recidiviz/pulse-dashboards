@@ -510,11 +510,19 @@ function buildSearchPlanTemplate(
           searchType: sc.searchType,
         });
       } else {
+        // Parity with StaffSubscription's Firestore query, which restricts the
+        // supervision dropdown to officers who have a caseload.
+        const filter_by =
+          collection === "supervisionStaff"
+            ? `${sharedSearchParams.filter_by} && hasCaseload:=true`
+            : sharedSearchParams.filter_by;
+
         plan.push({
           descriptor: {
             collection,
             query_by: "givenNames,surname,email",
             ...sharedSearchParams,
+            filter_by,
           },
           collection,
           groupLabel,
