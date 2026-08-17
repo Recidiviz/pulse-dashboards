@@ -40,17 +40,17 @@ import {
 // import, export-diff, delete) can be driven without a live cluster or emulator.
 // ---------------------------------------------------------------------------
 
-interface FakeDoc {
+type FakeDoc = {
   id: string;
   data: Record<string, unknown>;
-}
+};
 
 // Merge sources are addressed by document PATH, not id — that's what carries
 // the parent record id for a subcollection doc.
-interface FakePathDoc {
+type FakePathDoc = {
   path: string;
   data: Record<string, unknown>;
-}
+};
 
 type FakeSnapshot = {
   empty: boolean;

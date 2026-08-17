@@ -176,3 +176,32 @@ components:
         invoker_members:
           - serviceAccount:dashboard-metrics-production@{{ .settings.context.data_platform_project_id }}.iam.gserviceaccount.com
           - serviceAccount:application-data-import-cr@{{ .settings.context.data_platform_project_id }}.iam.gserviceaccount.com
+
+    # Firestore-triggered Cloud Functions that patch user-written updates onto
+    # the Typesense record they update — preferredName onto clients/residents,
+    # officer-action fields onto opportunities. Partial updates, so they don't
+    # clobber the ETL fields the backfill below owns. Handles what the extension
+    # above cannot: composing a doc id from the ancestor path, and writing part
+    # of a document rather than all of it.
+    # See the component README for the full why:
+    # libs/atmos/components/terraform/apps/typesense-sync/README.md
+    apps/typesense-sync:
+      vars:
+        # Region the functions run in. Mirrors the backfill function.
+        region: us-east1
+
+        # Eventarc trigger location — must be the FIRESTORE database's location.
+        # Production Firestore is the nam5 multi-region, NOT us-east1: setting
+        # this to the run region creates triggers that never fire.
+        firestore_database_location: nam5
+
+        firestore_database: (default)
+
+        typesense_host: typesense.recidiviz.org
+
+        # Absolute path to the workspace root, used by the component to locate
+        # the nx-built function bundle at
+        # $${workspace_root}/dist/apps/@typesense/sync-fn. Read from
+        # $NX_WORKSPACE_ROOT (set automatically by `nx deploy`); TF validation
+        # in the component fails loudly if it's empty.
+        workspace_root: '{{ env.Getenv "NX_WORKSPACE_ROOT" }}'

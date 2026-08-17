@@ -106,9 +106,9 @@ export function resolvePruneStale(): boolean {
   return raw.trim().toLowerCase() !== "false";
 }
 
-export interface RateLimiter {
+export type RateLimiter = {
   take(): Promise<void>;
-}
+};
 
 // Minimum-interval limiter: hands out permits no closer together than
 // `1000 / ratePerSec` ms. Each caller synchronously reserves the next slot
@@ -173,7 +173,7 @@ export async function mapWithConcurrency<T, R>(
   return results;
 }
 
-export interface CollectionConfig {
+export type CollectionConfig = {
   /**
    * Typesense target collection. Several configs may share one target (every
    * per-state opportunity source → `opportunities`).
@@ -236,7 +236,7 @@ export interface CollectionConfig {
    * document, so a re-run repairs anything sync-fn missed.
    */
   mergeSources?: MergeSource[];
-}
+};
 
 /**
  * Prepend a constant to the Firestore doc id. Required for multi-source targets
@@ -244,10 +244,10 @@ export interface CollectionConfig {
  * person's `compliantReporting` and `LSU` opportunity records both key
  * `<state>_<externalId>`).
  */
-export interface DocIdPrefixOverride {
+export type DocIdPrefixOverride = {
   type: "prefix";
   prefix: string;
-}
+};
 
 /**
  * Compose the doc id from document FIELDS rather than the Firestore doc id,
@@ -264,7 +264,7 @@ export interface DocIdPrefixOverride {
  * `externalId` on the document is always the person's external id, so the
  * field-composed key stays aligned with the person record id either way.
  */
-export interface DocIdFieldsOverride {
+export type DocIdFieldsOverride = {
   type: "fields";
   fields: string[];
   /**
@@ -273,9 +273,9 @@ export interface DocIdFieldsOverride {
    * to match the record-id convention for sync-fn to reach it.
    */
   lowercaseFields?: string[];
-}
+};
 
-export interface MergeSource {
+export type MergeSource = {
   /** Firestore collection (or collection-group) holding the merge documents. */
   sourceCollection: string;
   /**
@@ -285,7 +285,7 @@ export interface MergeSource {
   collectionGroup?: boolean;
   /** Fields copied from the merge document. Anything else is dropped. */
   fields: string[];
-}
+};
 
 // Instantiates template configs (currently `opportunities`) that don't
 // statically enumerate their sources. The ETL calls backfill-fn once per source
@@ -361,19 +361,19 @@ export function buildPruneFilter(
   return [...clauses.entries()].map(([k, v]) => `${k}:=${v}`).join(" && ");
 }
 
-export interface BackfillResult {
+export type BackfillResult = {
   name: string;
   pages: number;
   imported: number;
   failed: number;
   // Stale Typesense docs deleted because their id was absent from Firestore.
   deleted: number;
-}
+};
 
-export interface BackfillSummary {
+export type BackfillSummary = {
   collections: BackfillResult[];
   totals: { imported: number; failed: number; deleted: number };
-}
+};
 
 type FirestoreDoc = Record<string, unknown>;
 
@@ -382,10 +382,10 @@ type ImportEntry = { success: true } | { success: false; error?: string };
 
 // Shape Typesense's client throws when EVERY doc in the bulk fails. The error
 // object carries the same per-line results that a success response returns.
-interface TypesenseImportError extends Error {
+type TypesenseImportError = Error & {
   httpStatus?: number;
   importResults?: ImportEntry[];
-}
+};
 
 function buildTypesenseClient(): TypesenseClient {
   // The function ships three separate env vars (TYPESENSE_HOSTS / PORT / PROTOCOL)

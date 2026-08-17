@@ -58,9 +58,11 @@ yalc.lock
 !apps/@meetings/app/package.json
 # this is for a standalone auth0 cli script
 !tools/auth0/package.json
-# runtime manifest for the typesense-backfill Cloud Function — copied into
-# dist/ at build time and shipped in the deploy zip
+# runtime manifests for the typesense Cloud Functions — copied into dist/ at
+# build time and shipped in the deploy zip. nx's asset glob skips ignored
+# files, so an ignored manifest is silently omitted from the bundle.
 !apps/@typesense/backfill-fn/runtime/package.json
+!apps/@typesense/sync-fn/runtime/package.json
 
 # Redis dump
 dump.rdb
