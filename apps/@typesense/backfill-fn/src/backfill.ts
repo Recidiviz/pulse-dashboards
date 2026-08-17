@@ -220,12 +220,71 @@ export interface CollectionConfig {
       }
   >;
   /**
-   * Prepended to the Firestore doc id when composing the Typesense doc id.
-   * Required for multi-source targets so docs with the same Firestore id
-   * across sources don't collide (e.g. one person's `compliantReporting` and
-   * `LSU` opportunity records share `<state>_<externalId>`).
+   * How to compose the Typesense doc id. Omit to use the Firestore doc id
+   * unchanged. A field-composed id is already unique across sources, so it
+   * takes no prefix.
    */
-  docIdPrefix?: string;
+  docIdOverrides?: DocIdPrefixOverride | DocIdFieldsOverride;
+  /**
+   * Additional Firestore collections whose fields are merged onto documents
+   * this config emits, keyed by document path (see `mergeDocIdFromPath`).
+   *
+   * This is what lets user-written updates live ON the record they update
+   * instead of in a parallel Typesense collection — Typesense has no joins, so
+   * a separate collection would force every query to fan out and merge
+   * client-side. It also makes the backfill authoritative for the whole
+   * document, so a re-run repairs anything sync-fn missed.
+   */
+  mergeSources?: MergeSource[];
+}
+
+/**
+ * Prepend a constant to the Firestore doc id. Required for multi-source targets
+ * so docs with the same Firestore id across sources don't collide (e.g. one
+ * person's `compliantReporting` and `LSU` opportunity records both key
+ * `<state>_<externalId>`).
+ */
+export interface DocIdPrefixOverride {
+  type: "prefix";
+  prefix: string;
+}
+
+/**
+ * Compose the doc id from document FIELDS rather than the Firestore doc id,
+ * joining the values with `_` and skipping absent ones.
+ *
+ * Needed wherever a second writer has to address the same document without
+ * seeing the Firestore doc id. `opportunities` uses
+ * `["stateCode", "externalId", "opportunityType", "opportunityId"]`, which
+ * yields `us_tn_123_usTnExpiration` — exactly what sync-fn composes from the
+ * update's Firestore path, so both writers land on one document.
+ *
+ * Composing from FIELDS rather than the doc id matters for multi-instance
+ * opportunities: the ETL keys those `us_or_1234_<opportunityId>`, but
+ * `externalId` on the document is always the person's external id, so the
+ * field-composed key stays aligned with the person record id either way.
+ */
+export interface DocIdFieldsOverride {
+  type: "fields";
+  fields: string[];
+  /**
+   * Fields to lowercase before joining. `stateCode` is stored uppercase
+   * (`US_TN`) but person record ids are lowercase (`us_tn_123`), and the id has
+   * to match the record-id convention for sync-fn to reach it.
+   */
+  lowercaseFields?: string[];
+}
+
+export interface MergeSource {
+  /** Firestore collection (or collection-group) holding the merge documents. */
+  sourceCollection: string;
+  /**
+   * Query as a collection group rather than a root collection. Required for
+   * subcollections — `clientOpportunityUpdates` exists once per person.
+   */
+  collectionGroup?: boolean;
+  /** Fields copied from the merge document. Anything else is dropped. */
+  fields: string[];
 }
 
 // Instantiates template configs (currently `opportunities`) that don't
@@ -242,13 +301,46 @@ export function instantiateFromSourceCollection(
       : {
           ...config,
           sourceCollection,
-          docIdPrefix: config.docIdPrefix ?? sourceCollection,
+          docIdOverrides: config.docIdOverrides ?? {
+            type: "prefix",
+            prefix: sourceCollection,
+          },
           constantFields: {
             ...config.constantFields,
             sourceCollection,
           },
         },
   );
+}
+
+// Composes the Typesense doc id from document fields. Absent, empty or
+// non-string values are skipped rather than emitting a bare `_`, so an
+// opportunity without an `opportunityId` yields `us_tn_123_usTnExpiration`
+// while one with it yields `us_tn_123_usTnExpiration_span2`. Returns undefined
+// when nothing usable was found, so callers can fall back to the Firestore id.
+export function composeDocIdFromFields(
+  data: Record<string, unknown>,
+  docIdFields: string[],
+  lowercaseFields: string[] = [],
+): string | undefined {
+  const lower = new Set(lowercaseFields);
+  const parts: string[] = [];
+  for (const field of docIdFields) {
+    const value = data[field];
+    if (typeof value !== "string" || value === "") continue;
+    parts.push(lower.has(field) ? value.toLowerCase() : value);
+  }
+  return parts.length > 0 ? parts.join("_") : undefined;
+}
+
+// Derives the target doc id from a merge document's Firestore path by taking
+// the document-id segments (the odd ones) and joining them with `_`:
+//
+//   clientUpdatesV2/us_tn_123                                  → us_tn_123
+//   clientUpdatesV2/us_tn_123/clientOpportunityUpdates/usTnLSU → us_tn_123_usTnLSU
+export function mergeDocIdFromPath(path: string): string {
+  const segments = path.split("/");
+  return segments.filter((_, i) => i % 2 === 1).join("_");
 }
 
 // Build the Typesense filter_by string used by the prune pass so it only
@@ -546,6 +638,38 @@ async function pruneStaleDocs(
   return deleted;
 }
 
+// Held in memory for the duration of the collection's backfill: these are
+// user-written updates (tens per day), orders of magnitude smaller than the ETL
+// collections they decorate.
+async function loadMergeDocuments(
+  db: firestore.Firestore,
+  { sourceCollection, collectionGroup, fields }: MergeSource,
+  stateCode: string | undefined,
+): Promise<Map<string, FirestoreDoc>> {
+  const ref = collectionGroup
+    ? db.collectionGroup(sourceCollection)
+    : db.collection(sourceCollection);
+
+  // Subcollection update docs don't carry stateCode (only the parent person doc
+  // does), so a where() would zero the scan. The composed key is already
+  // state-qualified via the record id, so an unfiltered scan stays correct —
+  // out-of-state entries simply never match a target doc.
+  const snapshot = await ref.get();
+
+  const byId = new Map<string, FirestoreDoc>();
+  for (const doc of snapshot.docs) {
+    const id = mergeDocIdFromPath(doc.ref.path);
+    if (stateCode && !id.startsWith(`${stateCode.toLowerCase()}_`)) continue;
+    const data = doc.data() as FirestoreDoc;
+    const picked: FirestoreDoc = {};
+    for (const field of fields) {
+      if (field in data) picked[field] = data[field];
+    }
+    byId.set(id, picked);
+  }
+  return byId;
+}
+
 async function backfillCollection(
   client: TypesenseClient,
   {
@@ -554,7 +678,8 @@ async function backfillCollection(
     fields,
     constantFields,
     derivedFields,
-    docIdPrefix,
+    docIdOverrides,
+    mergeSources,
   }: CollectionConfig,
   limiter: RateLimiter,
   batchSize: number,
@@ -570,6 +695,21 @@ async function backfillCollection(
   // partition (constantFields + stateCode), so the two stay in sync.
   const base = stateCode ? ref.where("stateCode", "==", stateCode) : ref;
   const tag = logTag(name, stateCode);
+
+  // Merge docs never create Typesense documents on their own — they only
+  // decorate ETL-sourced ones — so an update whose opportunity has dropped out
+  // of the ETL is simply not applied, and the prune below removes the stale
+  // document as usual.
+  const mergeDocs = new Map<string, FirestoreDoc>();
+  for (const mergeSource of mergeSources ?? []) {
+    const loaded = await loadMergeDocuments(db, mergeSource, stateCode);
+    for (const [id, data] of loaded) {
+      mergeDocs.set(id, { ...mergeDocs.get(id), ...data });
+    }
+  }
+  if (mergeSources?.length) {
+    console.info(`${tag} merge: loaded ${mergeDocs.size} update doc(s)`);
+  }
 
   let imported = 0;
   let failed = 0;
@@ -587,20 +727,41 @@ async function backfillCollection(
     if (snapshot.empty) break;
     pages += 1;
 
-    const toTypesenseId = (fsId: string): string =>
-      docIdPrefix ? `${docIdPrefix}_${fsId}` : fsId;
+    const toTypesenseId = (fsId: string, data: FirestoreDoc): string => {
+      if (docIdOverrides?.type === "fields") {
+        // Only reachable for a malformed doc carrying none of the id fields —
+        // the ETL shouldn't emit one.
+        return (
+          composeDocIdFromFields(
+            data,
+            docIdOverrides.fields,
+            docIdOverrides.lowercaseFields,
+          ) ?? fsId
+        );
+      }
+      return docIdOverrides ? `${docIdOverrides.prefix}_${fsId}` : fsId;
+    };
 
-    for (const d of snapshot.docs) firestoreIds.add(toTypesenseId(d.id));
+    const docs = snapshot.docs.map((d) => {
+      const data = d.data() as FirestoreDoc;
+      const id = toTypesenseId(d.id, data);
+      firestoreIds.add(id);
 
-    const docs = snapshot.docs.map((d) =>
-      projectFields(
-        d.data() as FirestoreDoc,
+      const projected = projectFields(
+        data,
         fields,
-        toTypesenseId(d.id),
+        id,
         constantFields,
         derivedFields,
-      ),
-    );
+      );
+
+      // Merged fields win over the ETL projection: the officer's action is the
+      // newer truth for the fields it owns.
+      const merged = mergeDocs.get(id);
+      // `id` re-applied last so a stray merge field can't clobber it, matching
+      // projectFields' own protection.
+      return merged ? { ...projected, ...merged, id } : projected;
+    });
 
     try {
       // Gate every import through the shared limiter so the combined request

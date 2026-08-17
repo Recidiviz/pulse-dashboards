@@ -74,6 +74,31 @@ const LOCATIONS_DERIVED_FIELDS = [
 // Not a direct 1:1 Firestore↔Typesense pair — emitted as a template below.
 const BACKFILL_FN_EXCLUDED = new Set(["opportunities"]);
 
+// User-written updates merged onto the record they update. See
+// CollectionConfig.mergeSources in backfill-fn for the mechanism.
+const PERSON_MERGE_SOURCES = [
+  {
+    sourceCollection: "clientUpdatesV2",
+    fields: ["preferredName"],
+  },
+];
+
+const OPPORTUNITY_MERGE_SOURCES = [
+  {
+    sourceCollection: "clientOpportunityUpdates",
+    collectionGroup: true,
+    fields: [
+      "denial",
+      "manualSnooze",
+      "autoSnooze",
+      "submitted",
+      "actionHistory",
+    ],
+  },
+];
+
+const PERSON_COLLECTIONS = new Set(["clients", "residents"]);
+
 const baseCollections = schemas
   .filter((s) => !BACKFILL_FN_EXCLUDED.has(s.name))
   .map((s) => {
@@ -84,6 +109,12 @@ const baseCollections = schemas
       ...(system && { constantFields: { system } }),
       ...(s.name === "locations" && {
         derivedFields: LOCATIONS_DERIVED_FIELDS,
+      }),
+      // clients/residents doc ids are already `<lowercase state>_<externalId>`,
+      // the same key clientUpdatesV2 is filed under, so the merge needs no id
+      // translation on either side.
+      ...(PERSON_COLLECTIONS.has(s.name) && {
+        mergeSources: PERSON_MERGE_SOURCES,
       }),
     };
   });
@@ -98,6 +129,14 @@ const opportunityTemplate = {
     "isEligible",
     "isAlmostEligible",
   ],
+  // Changing this rewrites every opportunity id: the next backfill writes the
+  // new ones and the prune sweeps the old.
+  docIdOverrides: {
+    type: "fields",
+    fields: ["stateCode", "externalId", "opportunityType", "opportunityId"],
+    lowercaseFields: ["stateCode"],
+  },
+  mergeSources: OPPORTUNITY_MERGE_SOURCES,
 };
 
 const collections = [...baseCollections, opportunityTemplate];

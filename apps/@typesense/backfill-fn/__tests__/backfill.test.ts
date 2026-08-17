@@ -18,10 +18,12 @@
 import {
   assignNested,
   buildPruneFilter,
+  composeDocIdFromFields,
   createRateLimiter,
   instantiateFromSourceCollection,
   isValidStateCode,
   mapWithConcurrency,
+  mergeDocIdFromPath,
   parseImportResponse,
   projectFields,
   resolveBatchSize,
@@ -43,10 +45,21 @@ interface FakeDoc {
   data: Record<string, unknown>;
 }
 
+// Merge sources are addressed by document PATH, not id — that's what carries
+// the parent record id for a subcollection doc.
+interface FakePathDoc {
+  path: string;
+  data: Record<string, unknown>;
+}
+
 type FakeSnapshot = {
   empty: boolean;
   size: number;
-  docs: Array<{ id: string; data: () => Record<string, unknown> }>;
+  docs: Array<{
+    id: string;
+    data: () => Record<string, unknown>;
+    ref: { path: string };
+  }>;
 };
 
 type FakeQuery = {
@@ -57,7 +70,10 @@ type FakeQuery = {
   get: () => Promise<FakeSnapshot>;
 };
 
-type FakeFirestore = { collection: (name: string) => FakeQuery };
+type FakeFirestore = {
+  collection: (name: string) => FakeQuery;
+  collectionGroup: (name: string) => FakeQuery;
+};
 
 type FakeTypesenseClient = {
   collections: (name: string) => {
@@ -95,7 +111,13 @@ vi.mock("~@typesense/client", () => ({
 // Serves a fixed set of docs per collection, honoring the stateCode equality
 // filter and the id-ordered pagination (orderBy(documentId) + startAfter) that
 // backfillCollection relies on.
-function makeFirestore(collections: Record<string, FakeDoc[]>): FakeFirestore {
+// `groups` registers docs reachable via collectionGroup(), keyed by group name,
+// each carrying its full Firestore path so mergeDocIdFromPath has something to
+// parse.
+function makeFirestore(
+  collections: Record<string, FakeDoc[]>,
+  groups: Record<string, FakePathDoc[]> = {},
+): FakeFirestore {
   function query(
     name: string,
     opts: { state?: string; afterId?: string; limit?: number },
@@ -124,12 +146,44 @@ function makeFirestore(collections: Record<string, FakeDoc[]>): FakeFirestore {
         return {
           empty: page.length === 0,
           size: page.length,
-          docs: page.map((d) => ({ id: d.id, data: () => d.data })),
+          docs: page.map((d) => ({
+            id: d.id,
+            data: () => d.data,
+            ref: { path: `${name}/${d.id}` },
+          })),
         };
       },
     };
   }
-  return { collection: (name) => query(name, {}) };
+
+  // Collection groups are read whole (no paging or state filter), matching how
+  // loadMergeDocuments queries them.
+  function groupQuery(name: string): FakeQuery {
+    const self: FakeQuery = {
+      where: () => self,
+      orderBy: () => self,
+      limit: () => self,
+      startAfter: () => self,
+      get: async () => {
+        const docs = groups[name] ?? [];
+        return {
+          empty: docs.length === 0,
+          size: docs.length,
+          docs: docs.map((d) => ({
+            id: d.path.split("/").pop() ?? "",
+            data: () => d.data,
+            ref: { path: d.path },
+          })),
+        };
+      },
+    };
+    return self;
+  }
+
+  return {
+    collection: (name) => query(name, {}),
+    collectionGroup: (name) => groupQuery(name),
+  };
 }
 
 // `id` is required; any other keys are
@@ -756,7 +810,7 @@ describe("instantiateFromSourceCollection", () => {
     );
   });
 
-  it("fills in sourceCollection, docIdPrefix, and constantFields.sourceCollection on template configs", () => {
+  it("fills in sourceCollection, docIdOverrides, and constantFields.sourceCollection on template configs", () => {
     // The opportunity ETL trigger relies on this — a bare template config
     // gets instantiated per-source at trigger time.
     const result = instantiateFromSourceCollection(
@@ -768,7 +822,10 @@ describe("instantiateFromSourceCollection", () => {
         name: "opportunities",
         fields: ["externalId", "opportunityType"],
         sourceCollection: "US_TN-compliantReportingReferrals",
-        docIdPrefix: "US_TN-compliantReportingReferrals",
+        docIdOverrides: {
+          type: "prefix",
+          prefix: "US_TN-compliantReportingReferrals",
+        },
         constantFields: {
           sourceCollection: "US_TN-compliantReportingReferrals",
         },
@@ -785,7 +842,10 @@ describe("instantiateFromSourceCollection", () => {
         name: "opportunities",
         sourceCollection: "US_ID-LSUReferrals",
         fields: ["externalId"],
-        docIdPrefix: "US_ID-LSUReferrals",
+        docIdOverrides: {
+          type: "prefix" as const,
+          prefix: "US_ID-LSUReferrals",
+        },
         constantFields: { sourceCollection: "US_ID-LSUReferrals" },
       },
     ];
@@ -794,7 +854,7 @@ describe("instantiateFromSourceCollection", () => {
     ).toEqual(configs);
   });
 
-  it("preserves an explicit docIdPrefix over the source-derived default", () => {
+  it("preserves an explicit docIdOverrides over the source-derived default", () => {
     // Defensive: if a caller ever supplies a template with a custom prefix,
     // instantiation should keep it instead of overwriting with the source name.
     const [result] = instantiateFromSourceCollection(
@@ -802,12 +862,40 @@ describe("instantiateFromSourceCollection", () => {
         {
           name: "opportunities",
           fields: ["externalId"],
-          docIdPrefix: "custom-prefix",
+          docIdOverrides: { type: "prefix" as const, prefix: "custom-prefix" },
         },
       ],
       "US_TN-somethingReferrals",
     );
-    expect(result?.docIdPrefix).toBe("custom-prefix");
+    expect(result?.docIdOverrides).toEqual({
+      type: "prefix",
+      prefix: "custom-prefix",
+    });
+  });
+
+  it("leaves a field-composed id alone rather than making it a prefix", () => {
+    // A field-composed id is already unique across sources, and sync-fn
+    // composes the same id from the update's Firestore path — a prefix here
+    // would put the two writers on different documents.
+    const [result] = instantiateFromSourceCollection(
+      [
+        {
+          name: "opportunities",
+          fields: ["externalId"],
+          docIdOverrides: {
+            type: "fields" as const,
+            fields: ["stateCode", "externalId", "opportunityType"],
+            lowercaseFields: ["stateCode"],
+          },
+        },
+      ],
+      "US_TN-compliantReportingReferrals",
+    );
+    expect(result?.docIdOverrides).toEqual({
+      type: "fields",
+      fields: ["stateCode", "externalId", "opportunityType"],
+      lowercaseFields: ["stateCode"],
+    });
   });
 
   it("merges into (not replaces) existing constantFields", () => {
@@ -1220,7 +1308,7 @@ describe("runBackfill — state-scoped backfill + prune", () => {
   });
 });
 
-describe("runBackfill — multi-source targets (constantFields + docIdPrefix)", () => {
+describe("runBackfill — multi-source targets (constantFields + docIdOverrides)", () => {
   const savedRate = process.env["BACKFILL_IMPORT_RATE_PER_SEC"];
 
   beforeEach(() => {
@@ -1258,14 +1346,14 @@ describe("runBackfill — multi-source targets (constantFields + docIdPrefix)", 
           stateCode: "US_TN",
           opportunityType: "compliantReporting",
         },
-        docIdPrefix: "compliantReporting",
+        docIdOverrides: { type: "prefix", prefix: "compliantReporting" },
       },
       {
         name: "opportunities",
         sourceCollection: "US_TN_LSU",
         fields: ["externalId"],
         constantFields: { stateCode: "US_TN", opportunityType: "LSU" },
-        docIdPrefix: "LSU",
+        docIdOverrides: { type: "prefix", prefix: "LSU" },
       },
     ]);
 
@@ -1327,7 +1415,7 @@ describe("runBackfill — multi-source targets (constantFields + docIdPrefix)", 
           stateCode: "US_TN",
           opportunityType: "compliantReporting",
         },
-        docIdPrefix: "compliantReporting",
+        docIdOverrides: { type: "prefix", prefix: "compliantReporting" },
       },
     ]);
 
@@ -1366,7 +1454,7 @@ describe("runBackfill — multi-source targets (constantFields + docIdPrefix)", 
             stateCode: "US_TN",
             opportunityType: "compliantReporting",
           },
-          docIdPrefix: "compliantReporting",
+          docIdOverrides: { type: "prefix", prefix: "compliantReporting" },
         },
         {
           name: "opportunities",
@@ -1376,7 +1464,7 @@ describe("runBackfill — multi-source targets (constantFields + docIdPrefix)", 
             stateCode: "US_ID",
             opportunityType: "compliantReporting",
           },
-          docIdPrefix: "compliantReporting",
+          docIdOverrides: { type: "prefix", prefix: "compliantReporting" },
         },
       ],
       "US_TN",
@@ -1421,7 +1509,7 @@ describe("runBackfill — multi-source targets (constantFields + docIdPrefix)", 
             stateCode: "US_TN",
             opportunityType: "compliantReporting",
           },
-          docIdPrefix: "compliantReporting",
+          docIdOverrides: { type: "prefix", prefix: "compliantReporting" },
         },
       ],
       "US_TN",
@@ -1511,5 +1599,402 @@ describe("runBackfill — template config + invocation sourceCollection", () => 
       undefined,
     );
     expect(summary.totals).toEqual({ imported: 0, failed: 0, deleted: 0 });
+  });
+});
+
+describe("composeDocIdFromFields", () => {
+  const OPPORTUNITY_ID_FIELDS = [
+    "stateCode",
+    "externalId",
+    "opportunityType",
+    "opportunityId",
+  ];
+
+  it("joins the declared fields, lowercasing only what's asked for", () => {
+    // Must equal what sync-fn composes from the update's Firestore path
+    // (`clientUpdatesV2/us_tn_123/clientOpportunityUpdates/usTnExpiration`),
+    // or the two writers address different documents.
+    expect(
+      composeDocIdFromFields(
+        {
+          stateCode: "US_TN",
+          externalId: "123",
+          opportunityType: "usTnExpiration",
+        },
+        OPPORTUNITY_ID_FIELDS,
+        ["stateCode"],
+      ),
+    ).toBe("us_tn_123_usTnExpiration");
+  });
+
+  it("appends opportunityId for repeated eligibility spans", () => {
+    expect(
+      composeDocIdFromFields(
+        {
+          stateCode: "US_TN",
+          externalId: "123",
+          opportunityType: "usTnExpiration",
+          opportunityId: "span2",
+        },
+        OPPORTUNITY_ID_FIELDS,
+        ["stateCode"],
+      ),
+    ).toBe("us_tn_123_usTnExpiration_span2");
+  });
+
+  it("skips absent and empty values rather than emitting a bare separator", () => {
+    expect(
+      composeDocIdFromFields(
+        { stateCode: "US_TN", externalId: "", opportunityType: "usTnLSU" },
+        OPPORTUNITY_ID_FIELDS,
+        ["stateCode"],
+      ),
+    ).toBe("us_tn_usTnLSU");
+  });
+
+  it("returns undefined when nothing usable is present, so callers fall back", () => {
+    expect(
+      composeDocIdFromFields({ isEligible: true }, OPPORTUNITY_ID_FIELDS),
+    ).toBeUndefined();
+  });
+});
+
+describe("mergeDocIdFromPath", () => {
+  it("keys a person update by its record id", () => {
+    expect(mergeDocIdFromPath("clientUpdatesV2/us_tn_123")).toBe("us_tn_123");
+  });
+
+  it("keys a subcollection update by record id + doc id", () => {
+    expect(
+      mergeDocIdFromPath(
+        "clientUpdatesV2/us_tn_123/clientOpportunityUpdates/usTnExpiration",
+      ),
+    ).toBe("us_tn_123_usTnExpiration");
+  });
+
+  it("agrees with composeDocIdFromFields on the same record", () => {
+    // The correspondence the whole merged-collection design rests on.
+    expect(
+      mergeDocIdFromPath(
+        "clientUpdatesV2/us_tn_123/clientOpportunityUpdates/usTnExpiration_span2",
+      ),
+    ).toBe(
+      composeDocIdFromFields(
+        {
+          stateCode: "US_TN",
+          externalId: "123",
+          opportunityType: "usTnExpiration",
+          opportunityId: "span2",
+        },
+        ["stateCode", "externalId", "opportunityType", "opportunityId"],
+        ["stateCode"],
+      ),
+    );
+  });
+});
+
+describe("runBackfill — merging user updates onto the record", () => {
+  beforeEach(() => {
+    firestoreHolder.current = undefined;
+    typesenseHolder.current = undefined;
+  });
+
+  const OPPORTUNITY_CONFIG = {
+    name: "opportunities",
+    fields: ["stateCode", "externalId", "opportunityType", "isEligible"],
+    docIdOverrides: {
+      type: "fields" as const,
+      fields: ["stateCode", "externalId", "opportunityType", "opportunityId"],
+      lowercaseFields: ["stateCode"],
+    },
+    mergeSources: [
+      {
+        sourceCollection: "clientOpportunityUpdates",
+        collectionGroup: true,
+        fields: ["denial", "submitted"],
+      },
+    ],
+  };
+
+  it("merges the officer's action onto the ETL-sourced opportunity", async () => {
+    firestoreHolder.current = makeFirestore(
+      {
+        "US_TN-compliantReportingReferrals": [
+          {
+            id: "us_tn_123",
+            data: {
+              stateCode: "US_TN",
+              externalId: "123",
+              opportunityType: "usTnExpiration",
+              isEligible: true,
+            },
+          },
+        ],
+      },
+      {
+        clientOpportunityUpdates: [
+          {
+            path: "clientUpdatesV2/us_tn_123/clientOpportunityUpdates/usTnExpiration",
+            data: { denial: { reasons: ["X"] }, submitted: { by: "o@e.com" } },
+          },
+        ],
+      },
+    );
+    const ts = makeTypesense({ opportunities: [] });
+    typesenseHolder.current = ts.client;
+
+    await runBackfill(
+      [OPPORTUNITY_CONFIG],
+      "US_TN",
+      "US_TN-compliantReportingReferrals",
+    );
+
+    // One document carrying both halves.
+    expect(ts.importedDocs["opportunities"]).toEqual([
+      expect.objectContaining({
+        id: "us_tn_123_usTnExpiration",
+        isEligible: true,
+        opportunityType: "usTnExpiration",
+        denial: { reasons: ["X"] },
+        submitted: { by: "o@e.com" },
+      }),
+    ]);
+  });
+
+  it("leaves update fields off an opportunity nobody has acted on", async () => {
+    firestoreHolder.current = makeFirestore(
+      {
+        "US_TN-compliantReportingReferrals": [
+          {
+            id: "us_tn_999",
+            data: {
+              stateCode: "US_TN",
+              externalId: "999",
+              opportunityType: "usTnExpiration",
+              isEligible: true,
+            },
+          },
+        ],
+      },
+      { clientOpportunityUpdates: [] },
+    );
+    const ts = makeTypesense({ opportunities: [] });
+    typesenseHolder.current = ts.client;
+
+    await runBackfill(
+      [OPPORTUNITY_CONFIG],
+      "US_TN",
+      "US_TN-compliantReportingReferrals",
+    );
+
+    const [doc] = ts.importedDocs["opportunities"];
+    expect(doc).not.toHaveProperty("denial");
+    expect(doc).not.toHaveProperty("submitted");
+  });
+
+  it("matches a multi-instance opportunity whose Firestore doc id differs from the composed id", async () => {
+    // The Oregon shape: the ETL keys the document `us_or_1234_<opportunityId>`,
+    // but `externalId` on the document is still the person's id. Composing from
+    // fields rather than parsing the doc id is what makes this line up with the
+    // update path `clientUpdatesV2/us_or_1234/.../usOrEarnedDischarge_span2`.
+    firestoreHolder.current = makeFirestore(
+      {
+        "US_OR-earnedDischargeReferrals": [
+          {
+            id: "us_or_1234_span2",
+            data: {
+              stateCode: "US_OR",
+              externalId: "1234",
+              opportunityType: "usOrEarnedDischarge",
+              opportunityId: "span2",
+              isEligible: true,
+            },
+          },
+        ],
+      },
+      {
+        clientOpportunityUpdates: [
+          {
+            path: "clientUpdatesV2/us_or_1234/clientOpportunityUpdates/usOrEarnedDischarge_span2",
+            data: { denial: { reasons: ["OR"] } },
+          },
+        ],
+      },
+    );
+    const ts = makeTypesense({ opportunities: [] });
+    typesenseHolder.current = ts.client;
+
+    await runBackfill(
+      [OPPORTUNITY_CONFIG],
+      "US_OR",
+      "US_OR-earnedDischargeReferrals",
+    );
+
+    expect(ts.importedDocs["opportunities"]).toEqual([
+      expect.objectContaining({
+        id: "us_or_1234_usOrEarnedDischarge_span2",
+        denial: { reasons: ["OR"] },
+      }),
+    ]);
+  });
+
+  it("preserves externalId casing so mixed-case person ids still match", async () => {
+    // Person record ids are `<lowercase state>_<externalId>` with the external
+    // id left as-is (us_ne_RES001), so only stateCode may be lowercased.
+    firestoreHolder.current = makeFirestore(
+      {
+        "US_NE-goodTimeReferrals": [
+          {
+            id: "us_ne_RES001",
+            data: {
+              stateCode: "US_NE",
+              externalId: "RES001",
+              opportunityType: "usNeGoodTimeRestoration",
+              isEligible: true,
+            },
+          },
+        ],
+      },
+      {
+        clientOpportunityUpdates: [
+          {
+            path: "clientUpdatesV2/us_ne_RES001/clientOpportunityUpdates/usNeGoodTimeRestoration",
+            data: { submitted: { by: "o@e.com" } },
+          },
+        ],
+      },
+    );
+    const ts = makeTypesense({ opportunities: [] });
+    typesenseHolder.current = ts.client;
+
+    await runBackfill([OPPORTUNITY_CONFIG], "US_NE", "US_NE-goodTimeReferrals");
+
+    expect(ts.importedDocs["opportunities"]).toEqual([
+      expect.objectContaining({
+        id: "us_ne_RES001_usNeGoodTimeRestoration",
+        submitted: { by: "o@e.com" },
+      }),
+    ]);
+  });
+
+  it("ignores an update whose opportunity is no longer in the ETL source", async () => {
+    // Merge docs only decorate; they never create a Typesense document, so a
+    // dropped opportunity stays dropped and the prune stays correct.
+    firestoreHolder.current = makeFirestore(
+      { "US_TN-compliantReportingReferrals": [] },
+      {
+        clientOpportunityUpdates: [
+          {
+            path: "clientUpdatesV2/us_tn_123/clientOpportunityUpdates/usTnExpiration",
+            data: { denial: { reasons: ["X"] } },
+          },
+        ],
+      },
+    );
+    const ts = makeTypesense({ opportunities: [] });
+    typesenseHolder.current = ts.client;
+
+    const summary = await runBackfill(
+      [OPPORTUNITY_CONFIG],
+      "US_TN",
+      "US_TN-compliantReportingReferrals",
+    );
+
+    expect(ts.importedDocs["opportunities"]).toBeUndefined();
+    expect(summary.totals.imported).toBe(0);
+  });
+
+  it("skips updates belonging to a different state when the run is scoped", async () => {
+    firestoreHolder.current = makeFirestore(
+      {
+        "US_TN-compliantReportingReferrals": [
+          {
+            id: "us_tn_123",
+            data: {
+              stateCode: "US_TN",
+              externalId: "123",
+              opportunityType: "usTnExpiration",
+              isEligible: true,
+            },
+          },
+        ],
+      },
+      {
+        clientOpportunityUpdates: [
+          {
+            path: "clientUpdatesV2/us_id_123/clientOpportunityUpdates/usTnExpiration",
+            data: { denial: { reasons: ["WRONG STATE"] } },
+          },
+        ],
+      },
+    );
+    const ts = makeTypesense({ opportunities: [] });
+    typesenseHolder.current = ts.client;
+
+    await runBackfill(
+      [OPPORTUNITY_CONFIG],
+      "US_TN",
+      "US_TN-compliantReportingReferrals",
+    );
+
+    const [doc] = ts.importedDocs["opportunities"];
+    expect(doc).not.toHaveProperty("denial");
+  });
+
+  it("merges preferredName onto a person record by record id", async () => {
+    firestoreHolder.current = makeFirestore({
+      clients: [
+        {
+          id: "us_tn_123",
+          data: { stateCode: "US_TN", personExternalId: "123" },
+        },
+      ],
+      clientUpdatesV2: [
+        { id: "us_tn_123", data: { preferredName: "Bo", stateCode: "us_tn" } },
+      ],
+    });
+    const ts = makeTypesense({ clients: [] });
+    typesenseHolder.current = ts.client;
+
+    await runBackfill([
+      {
+        name: "clients",
+        fields: ["stateCode", "personExternalId"],
+        mergeSources: [
+          { sourceCollection: "clientUpdatesV2", fields: ["preferredName"] },
+        ],
+      },
+    ]);
+
+    expect(ts.importedDocs["clients"]).toEqual([
+      expect.objectContaining({ id: "us_tn_123", preferredName: "Bo" }),
+    ]);
+  });
+
+  it("does not let a merge field overwrite the composed id", async () => {
+    firestoreHolder.current = makeFirestore({
+      clients: [{ id: "us_tn_123", data: { stateCode: "US_TN" } }],
+      clientUpdatesV2: [
+        { id: "us_tn_123", data: { preferredName: "Bo", id: "hijacked" } },
+      ],
+    });
+    const ts = makeTypesense({ clients: [] });
+    typesenseHolder.current = ts.client;
+
+    await runBackfill([
+      {
+        name: "clients",
+        fields: ["stateCode"],
+        mergeSources: [
+          {
+            sourceCollection: "clientUpdatesV2",
+            fields: ["preferredName", "id"],
+          },
+        ],
+      },
+    ]);
+
+    const [doc] = ts.importedDocs["clients"];
+    expect(doc["id"]).toBe("us_tn_123");
   });
 });

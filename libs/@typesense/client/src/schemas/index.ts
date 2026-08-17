@@ -68,6 +68,10 @@ export const schemas: CollectionCreateSchema[] = [
       },
       { name: "preferredName", type: "string", optional: true, infix: true },
       { name: "district", type: "string", optional: true, facet: true },
+      // User-set override merged from `clientUpdatesV2/{recordId}`. Read this
+      // one, not the `clientUpdatesV2` collection, which is still written
+      // during the frontend swap.
+      { name: "preferredName", type: "string", optional: true, infix: true },
       systemField,
     ],
   },
@@ -110,6 +114,9 @@ export const schemas: CollectionCreateSchema[] = [
         facet: true,
         infix: true,
       },
+      // See the note on clients.preferredName — `clientUpdatesV2` feeds both
+      // person collections.
+      { name: "preferredName", type: "string", optional: true, infix: true },
       systemField,
     ],
   },
@@ -157,6 +164,9 @@ export const schemas: CollectionCreateSchema[] = [
       systemField,
     ],
   },
+  // Transitional. Both copies of `preferredName` stay in sync: the extension
+  // and the base-collection backfill write here, the merge pass writes
+  // `clients`/`residents`. Delete once nothing reads this collection.
   {
     name: "clientUpdatesV2",
     enable_nested_fields: true,
@@ -167,6 +177,9 @@ export const schemas: CollectionCreateSchema[] = [
   },
   {
     name: "opportunities",
+    // Update fields below are objects, so nested fields must be enabled even
+    // though nothing on the ETL side is nested.
+    enable_nested_fields: true,
     fields: [
       { name: "stateCode", type: "string", facet: true },
       { name: "opportunityType", type: "string", facet: true },
@@ -182,6 +195,19 @@ export const schemas: CollectionCreateSchema[] = [
       // discriminator to isolate a single source's partition — not consumed by
       // the frontend.
       { name: "sourceCollection", type: "string", facet: true },
+
+      // Officer-written state merged from
+      // `clientUpdatesV2/{recordId}/clientOpportunityUpdates/{docId}`. Written
+      // by two paths: backfill-fn reconciles them alongside the ETL fields on
+      // every run, sync-fn partial-updates them on write. Optional because an
+      // opportunity nobody has acted on has none of them.
+      { name: "denial", type: "object", index: false, optional: true },
+      { name: "manualSnooze", type: "object", index: false, optional: true },
+      { name: "autoSnooze", type: "object", index: false, optional: true },
+      { name: "submitted", type: "object", index: false, optional: true },
+      // Real Firestore field is `actionHistory: OfficerRequest[]`; drives
+      // `latestAction` → `isInSupervisorReview`/`isGrantApproved`/etc.
+      { name: "actionHistory", type: "object[]", index: false, optional: true },
     ],
   },
 ];
