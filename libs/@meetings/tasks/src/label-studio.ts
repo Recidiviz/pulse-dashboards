@@ -85,11 +85,7 @@ export function buildLabelStudioTask(
   const bestTranscription = meeting.transcriptions[0];
 
   const durationSeconds =
-    meeting.endTime && meeting.startTime
-      ? Math.floor(
-          (meeting.endTime.getTime() - meeting.startTime.getTime()) / 1000,
-        )
-      : null;
+    meeting.durationMs !== null ? Math.floor(meeting.durationMs / 1000) : null;
 
   const recordingDate = meeting.startTime.toISOString().split("T")[0];
   return {

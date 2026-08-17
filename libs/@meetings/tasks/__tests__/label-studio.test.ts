@@ -39,6 +39,7 @@ function makeMeeting(
 ): LabelStudioMeeting {
   return {
     id: "meeting-1",
+    durationMs: 1800000, // 30 minutes
     startTime: new Date("2026-03-15T10:00:00Z"),
     endTime: new Date("2026-03-15T10:30:00Z"),
     recordingsGCSBucket: "test-bucket",
@@ -102,6 +103,15 @@ describe("buildLabelStudioTask", () => {
     );
   });
 
+  test("rounds duration down to whole seconds when durationMs has a fractional second", () => {
+    const task = buildLabelStudioTask(
+      makeMeeting({ durationMs: 95500 }), // 1m 35.5s
+      "US_NE",
+    );
+
+    expect(task.meta.Duration).toBe("1m 35s");
+  });
+
   test("selects deepgram as best provider when it has highest confidence", () => {
     const task = buildLabelStudioTask(
       makeMeeting({
@@ -123,9 +133,9 @@ describe("buildLabelStudioTask", () => {
     const task = buildLabelStudioTask(
       makeMeeting({
         finalRecordingGCSPath: null,
-        endTime: null,
         caseNote: null,
         structuredActionItems: null,
+        durationMs: null,
       }),
       "US_NE",
     );
