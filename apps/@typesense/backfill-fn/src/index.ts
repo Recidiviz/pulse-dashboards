@@ -86,6 +86,16 @@ function extractStateCode(
   return { stateCode: trimmed };
 }
 
+// Optional per-invocation Firestore source-collection name, used to instantiate
+// the `opportunities` template config.
+function extractSourceCollection(body: unknown): string | undefined {
+  if (!body || typeof body !== "object") return undefined;
+  const raw = (body as { sourceCollection?: unknown }).sourceCollection;
+  if (typeof raw !== "string") return undefined;
+  const trimmed = raw.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
 export async function backfill(req: Request, res: Response): Promise<void> {
   const startedAt = Date.now();
 
@@ -122,22 +132,30 @@ export async function backfill(req: Request, res: Response): Promise<void> {
   }
   const { stateCode } = stateResult;
 
+  // Optional per-invocation source: POST `{ "sourceCollection":
+  // "US_XX-<opportunity>Referrals" }`. The opportunity ETL trigger fires per
+  // source, so this is the common path for `collections: ["opportunities"]`.
+  const sourceCollection = extractSourceCollection(req.body);
+
   console.info(
-    `[backfill] starting${stateCode ? ` (state=${stateCode})` : ""}: ${targets
+    `[backfill] starting${stateCode ? ` (state=${stateCode})` : ""}${sourceCollection ? ` (source=${sourceCollection})` : ""}: ${targets
       .map((c) => c.name)
       .join(", ")}`,
   );
 
   try {
-    const result = await runBackfill(targets, stateCode);
+    const result = await runBackfill(targets, stateCode, sourceCollection);
     const durationMs = Date.now() - startedAt;
     console.info(
-      `[backfill] complete${stateCode ? ` (state=${stateCode})` : ""} in ${durationMs}ms`,
+      `[backfill] complete${stateCode ? ` (state=${stateCode})` : ""}${sourceCollection ? ` (source=${sourceCollection})` : ""} in ${durationMs}ms`,
       result,
     );
-    res
-      .status(200)
-      .json({ durationMs, stateCode: stateCode ?? null, ...result });
+    res.status(200).json({
+      durationMs,
+      stateCode: stateCode ?? null,
+      sourceCollection: sourceCollection ?? null,
+      ...result,
+    });
   } catch (err) {
     const durationMs = Date.now() - startedAt;
     const message = err instanceof Error ? err.message : String(err);

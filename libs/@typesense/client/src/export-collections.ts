@@ -16,15 +16,17 @@
 // =============================================================================
 
 // Emits the canonical collection→fields mapping as a single JSON array on
-// stdout. Consumed by atmos stack files via the `!exec` YAML tag so the same
-// schema definitions drive both:
-//   - the Typesense collection schemas (via provision.ts and inspect.ts)
-//   - the Firebase extension's FIRESTORE_COLLECTION_FIELDS_LIST and
-//     FIRESTORE_COLLECTION_PATHS params (via apps/firestore-typesense-search)
-//   - the typesense-backfill Cloud Function's COLLECTIONS_JSON env var
+// stdout. Consumed by atmos stack files via the `!exec` YAML tag so the
+// schema definitions drive the typesense-backfill Cloud Function's
+// COLLECTIONS_JSON env var (see libs/atmos/stacks/typesense/*.yaml).
 //
 // Output is pure JSON with no decoration — any noise breaks the YAML parse on
 // the atmos side. Stderr is unused.
+//
+// Alongside the base entries, emits a template config for the unified
+// `opportunities` target: it carries no source, and the caller (typically the
+// per-source opportunity ETL trigger) POSTs `{ sourceCollection: "US_XX-..." }`
+// for backfill-fn to instantiate it at runtime.
 
 import { schemas } from "./schemas";
 
@@ -69,14 +71,35 @@ const LOCATIONS_DERIVED_FIELDS = [
   },
 ];
 
-const collections = schemas.map((s) => {
-  const system = SYSTEM_BY_COLLECTION[s.name];
-  return {
-    name: s.name,
-    fields: (s.fields ?? []).map((f) => f.name),
-    ...(system && { constantFields: { system } }),
-    ...(s.name === "locations" && { derivedFields: LOCATIONS_DERIVED_FIELDS }),
-  };
-});
+// Not a direct 1:1 Firestore↔Typesense pair — emitted as a template below.
+const BACKFILL_FN_EXCLUDED = new Set(["opportunities"]);
+
+const baseCollections = schemas
+  .filter((s) => !BACKFILL_FN_EXCLUDED.has(s.name))
+  .map((s) => {
+    const system = SYSTEM_BY_COLLECTION[s.name];
+    return {
+      name: s.name,
+      fields: (s.fields ?? []).map((f) => f.name),
+      ...(system && { constantFields: { system } }),
+      ...(s.name === "locations" && {
+        derivedFields: LOCATIONS_DERIVED_FIELDS,
+      }),
+    };
+  });
+
+const opportunityTemplate = {
+  name: "opportunities",
+  fields: [
+    "stateCode",
+    "opportunityType",
+    "externalId",
+    "opportunityId",
+    "isEligible",
+    "isAlmostEligible",
+  ],
+};
+
+const collections = [...baseCollections, opportunityTemplate];
 
 process.stdout.write(JSON.stringify(collections));

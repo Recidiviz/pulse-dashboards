@@ -174,15 +174,24 @@ export async function mapWithConcurrency<T, R>(
 }
 
 export interface CollectionConfig {
+  /**
+   * Typesense target collection. Several configs may share one target (every
+   * per-state opportunity source → `opportunities`).
+   */
   name: string;
+  /**
+   * Firestore source collection. Defaults to `name`. Set when several
+   * Firestore collections feed a single Typesense target.
+   */
+  sourceCollection?: string;
   fields: string[];
   /**
    * Constants stamped onto every emitted doc from this source AFTER the
    * source-field projection (so a constant with the same key as a source
-   * field wins). Used to inject discriminators — currently `system` on the
-   * caseload/person collections that either don't exist on
-   * the source doc or should be canonicalized. `id` is protected; a
-   * `constantFields.id` entry cannot clobber the docId.
+   * field wins). Used to inject discriminators — `system` on the caseload/
+   * person collections, `sourceCollection` on per-source opportunity feeds —
+   * that either don't exist on the source doc or should be canonicalized.
+   * `id` is protected; a `constantFields.id` entry cannot clobber the docId.
    */
   constantFields?: Record<string, string>;
   /**
@@ -210,6 +219,54 @@ export interface CollectionConfig {
         when: { field: string; equals: string };
       }
   >;
+  /**
+   * Prepended to the Firestore doc id when composing the Typesense doc id.
+   * Required for multi-source targets so docs with the same Firestore id
+   * across sources don't collide (e.g. one person's `compliantReporting` and
+   * `LSU` opportunity records share `<state>_<externalId>`).
+   */
+  docIdPrefix?: string;
+}
+
+// Instantiates template configs (currently `opportunities`) that don't
+// statically enumerate their sources. The ETL calls backfill-fn once per source
+// with `{ collections: ["opportunities"], sourceCollection: "US_XX-..." }`.
+export function instantiateFromSourceCollection(
+  configs: CollectionConfig[],
+  sourceCollection: string | undefined,
+): CollectionConfig[] {
+  if (!sourceCollection) return configs;
+  return configs.map((config) =>
+    config.sourceCollection
+      ? config
+      : {
+          ...config,
+          sourceCollection,
+          docIdPrefix: config.docIdPrefix ?? sourceCollection,
+          constantFields: {
+            ...config.constantFields,
+            sourceCollection,
+          },
+        },
+  );
+}
+
+// Build the Typesense filter_by string used by the prune pass so it only
+// touches docs belonging to THIS source's partition of the target collection.
+// Multi-source targets rely on this — without it, backfilling
+// `US_TN_compliantReporting → opportunities` would prune every LSU doc in
+// `opportunities` too. Empty when neither scope is set (whole-target prune).
+export function buildPruneFilter(
+  constantFields: Record<string, string> | undefined,
+  stateCode: string | undefined,
+): string | undefined {
+  const clauses = new Map<string, string>();
+  if (constantFields) {
+    for (const [k, v] of Object.entries(constantFields)) clauses.set(k, v);
+  }
+  if (stateCode) clauses.set("stateCode", stateCode);
+  if (clauses.size === 0) return undefined;
+  return [...clauses.entries()].map(([k, v]) => `${k}:=${v}`).join(" && ");
 }
 
 export interface BackfillResult {
@@ -424,9 +481,11 @@ async function pruneStaleDocs(
   firestoreIds: Set<string>,
   limiter: RateLimiter,
   stateCode?: string,
+  constantFields?: Record<string, string>,
 ): Promise<number> {
   const scope = stateCode ? `state ${stateCode}` : "collection";
   const tag = logTag(name, stateCode);
+  const filterBy = buildPruneFilter(constantFields, stateCode);
 
   // Safety valve: an empty Firestore scan would mark EVERY in-scope Typesense
   // doc stale. That almost always means a misconfiguration or an ETL that hasn't
@@ -439,9 +498,6 @@ async function pruneStaleDocs(
     return 0;
   }
 
-  // Pull just the ids currently in Typesense, scoped to the same state as the
-  // scan so cross-state docs can't be delete candidates. export() streams the
-  // matching docs as JSONL; include_fields=id keeps each line tiny.
   await limiter.take();
   let exported: string;
   try {
@@ -449,8 +505,8 @@ async function pruneStaleDocs(
       .collections(name)
       .documents()
       .export(
-        stateCode
-          ? { include_fields: "id", filter_by: `stateCode:=${stateCode}` }
+        filterBy
+          ? { include_fields: "id", filter_by: filterBy }
           : { include_fields: "id" },
       );
   } catch (err) {
@@ -492,18 +548,26 @@ async function pruneStaleDocs(
 
 async function backfillCollection(
   client: TypesenseClient,
-  { name, fields, constantFields, derivedFields }: CollectionConfig,
+  {
+    name,
+    sourceCollection,
+    fields,
+    constantFields,
+    derivedFields,
+    docIdPrefix,
+  }: CollectionConfig,
   limiter: RateLimiter,
   batchSize: number,
   prune: boolean,
   stateCode?: string,
 ): Promise<BackfillResult> {
   const db = firestore();
-  const ref = db.collection(name);
-  // When scoped to a single state, filter the scan to that state. The prune
-  // reads the SAME `stateCode` and filters its Typesense export identically, so
-  // the two always operate on the same partition — otherwise the prune would
-  // treat every other state's docs as stale and delete them.
+  const source = sourceCollection ?? name;
+  const ref = db.collection(source);
+  // When scoped to a single state, filter the scan to that state. Relies on the
+  // ETL validating `stateCode` on every document it writes — a document without
+  // it is silently excluded here and never indexed. The prune reads the same
+  // partition (constantFields + stateCode), so the two stay in sync.
   const base = stateCode ? ref.where("stateCode", "==", stateCode) : ref;
   const tag = logTag(name, stateCode);
 
@@ -523,13 +587,16 @@ async function backfillCollection(
     if (snapshot.empty) break;
     pages += 1;
 
-    for (const d of snapshot.docs) firestoreIds.add(d.id);
+    const toTypesenseId = (fsId: string): string =>
+      docIdPrefix ? `${docIdPrefix}_${fsId}` : fsId;
+
+    for (const d of snapshot.docs) firestoreIds.add(toTypesenseId(d.id));
 
     const docs = snapshot.docs.map((d) =>
       projectFields(
         d.data() as FirestoreDoc,
         fields,
-        d.id,
+        toTypesenseId(d.id),
         constantFields,
         derivedFields,
       ),
@@ -612,7 +679,14 @@ async function backfillCollection(
   // The full Firestore scan completed without throwing, so `firestoreIds` is
   // authoritative — safe to delete anything in Typesense that isn't in it.
   const deleted = prune
-    ? await pruneStaleDocs(client, name, firestoreIds, limiter, stateCode)
+    ? await pruneStaleDocs(
+        client,
+        name,
+        firestoreIds,
+        limiter,
+        stateCode,
+        constantFields,
+      )
     : 0;
 
   console.info(
@@ -624,8 +698,27 @@ async function backfillCollection(
 export async function runBackfill(
   collectionsConfig: CollectionConfig[],
   stateCode?: string,
+  sourceCollection?: string,
 ): Promise<BackfillSummary> {
   const client = buildTypesenseClient();
+
+  // A bare `{ collections: ["opportunities"] }` invocation (no
+  // sourceCollection) falls through to backfillCollection using `name` as the
+  // Firestore source — an empty scan of the non-existent top-level
+  // `opportunities` collection. The empty-scan safety valve in the prune
+  // prevents any deletion, so the response is `{ imported: 0, deleted: 0 }`.
+  const instantiated = instantiateFromSourceCollection(
+    collectionsConfig,
+    sourceCollection,
+  );
+
+  const inScope = stateCode
+    ? instantiated.filter(
+        (c) =>
+          !c.constantFields?.["stateCode"] ||
+          c.constantFields["stateCode"] === stateCode,
+      )
+    : instantiated;
 
   // Process collections through a bounded worker pool rather than one-at-a-time,
   // overlapping the slow tail of large collections against the rest. A single
@@ -636,7 +729,7 @@ export async function runBackfill(
   const batchSize = resolveBatchSize();
   const prune = resolvePruneStale();
   const results = await mapWithConcurrency(
-    collectionsConfig,
+    inScope,
     resolveConcurrency(),
     (config) =>
       backfillCollection(client, config, limiter, batchSize, prune, stateCode),

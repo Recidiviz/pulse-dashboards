@@ -165,6 +165,25 @@ export const schemas: CollectionCreateSchema[] = [
       { name: "preferredName", type: "string", optional: true, infix: true },
     ],
   },
+  {
+    name: "opportunities",
+    fields: [
+      { name: "stateCode", type: "string", facet: true },
+      { name: "opportunityType", type: "string", facet: true },
+      { name: "externalId", type: "string" },
+      // Distinguishes repeated eligibility spans. Firestore keys these as
+      // `<stateCode>_<externalId>_<opportunityId>` when set — see
+      // WorkflowsStore/CLAUDE.md "Repeated-eligibility-span footgun".
+      { name: "opportunityId", type: "string", optional: true },
+      { name: "isEligible", type: "bool", facet: true },
+      { name: "isAlmostEligible", type: "bool", facet: true },
+      // Firestore source-collection name (e.g. `US_TN-compliantReportingReferrals`).
+      // Stamped by backfill-fn per source; used only as the prune's `filter_by`
+      // discriminator to isolate a single source's partition — not consumed by
+      // the frontend.
+      { name: "sourceCollection", type: "string", facet: true },
+    ],
+  },
 ];
 
 export const collectionNames = schemas.map((s) => s.name);

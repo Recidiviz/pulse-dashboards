@@ -17,7 +17,9 @@
 
 import {
   assignNested,
+  buildPruneFilter,
   createRateLimiter,
+  instantiateFromSourceCollection,
   isValidStateCode,
   mapWithConcurrency,
   parseImportResponse,
@@ -130,14 +132,14 @@ function makeFirestore(collections: Record<string, FakeDoc[]>): FakeFirestore {
   return { collection: (name) => query(name, {}) };
 }
 
-interface TypesenseDoc {
-  id: string;
-  stateCode?: string;
-}
+// `id` is required; any other keys are
+// arbitrary so callers can pin constantFields discriminators (stateCode,
+// opportunityType, …) that the filter_by parser matches on.
+type TypesenseDoc = Record<string, unknown> & { id: string };
 
-// Records imports/exports/deletes for assertions. export() honors a
-// `stateCode:=X` filter_by so the fake mirrors the cluster's scoping — the whole
-// point of the state-scoped prune.
+// Records imports/exports/deletes for assertions. export() honors filter_by
+// as either a single `key:=value` clause or several joined by ` && `, matching
+// how buildPruneFilter emits them — so the fake mirrors the cluster's scoping.
 function makeTypesense(existing: Record<string, TypesenseDoc[]>) {
   const importedDocs: Record<string, Array<Record<string, unknown>>> = {};
   const deletedIds: Record<string, string[]> = {};
@@ -155,10 +157,15 @@ function makeTypesense(existing: Record<string, TypesenseDoc[]>) {
         export: async (options) => {
           exportOptions.push({ name, filter_by: options?.filter_by });
           let docs = existing[name] ?? [];
-          const match = options?.filter_by
-            ? /^stateCode:=(.+)$/.exec(options.filter_by)
-            : null;
-          if (match) docs = docs.filter((d) => d.stateCode === match[1]);
+          if (options?.filter_by) {
+            const clauses = options.filter_by
+              .split(/\s*&&\s*/)
+              .map((c) => c.match(/^(\w+):=(.+)$/))
+              .filter((m): m is RegExpMatchArray => m !== null);
+            for (const [, key, value] of clauses) {
+              docs = docs.filter((d) => d[key] === value);
+            }
+          }
           return docs.map((d) => JSON.stringify({ id: d.id })).join("\n");
         },
         delete: async () => {
@@ -704,6 +711,136 @@ describe("isValidStateCode", () => {
   });
 });
 
+describe("buildPruneFilter", () => {
+  it("returns undefined with no scope arguments (whole-collection prune)", () => {
+    expect(buildPruneFilter(undefined, undefined)).toBeUndefined();
+  });
+
+  it("uses the invocation stateCode when only that is set", () => {
+    expect(buildPruneFilter(undefined, "US_ID")).toBe("stateCode:=US_ID");
+  });
+
+  it("joins constantFields into an AND expression", () => {
+    // Multi-source targets need this — a `US_TN_compliantReporting` source
+    // must only prune docs in `opportunities` where BOTH stateCode AND
+    // opportunityType match, otherwise it would delete every other opp type.
+    expect(
+      buildPruneFilter(
+        { stateCode: "US_TN", opportunityType: "compliantReporting" },
+        undefined,
+      ),
+    ).toBe("stateCode:=US_TN && opportunityType:=compliantReporting");
+  });
+
+  it("invocation stateCode overrides constantFields.stateCode when both are set", () => {
+    // runBackfill filters mismatched sources out before we get here, so the
+    // values should never disagree in practice — but be defensive because
+    // prune deletes: the more explicit invocation-level arg wins.
+    expect(
+      buildPruneFilter(
+        { stateCode: "US_TN", opportunityType: "compliantReporting" },
+        "US_ID",
+      ),
+    ).toBe("stateCode:=US_ID && opportunityType:=compliantReporting");
+  });
+});
+
+describe("instantiateFromSourceCollection", () => {
+  it("returns the input unchanged when no sourceCollection is supplied", () => {
+    const configs = [
+      { name: "clients", fields: ["stateCode"] },
+      { name: "opportunities", fields: ["externalId"] },
+    ];
+    expect(instantiateFromSourceCollection(configs, undefined)).toEqual(
+      configs,
+    );
+  });
+
+  it("fills in sourceCollection, docIdPrefix, and constantFields.sourceCollection on template configs", () => {
+    // The opportunity ETL trigger relies on this — a bare template config
+    // gets instantiated per-source at trigger time.
+    const result = instantiateFromSourceCollection(
+      [{ name: "opportunities", fields: ["externalId", "opportunityType"] }],
+      "US_TN-compliantReportingReferrals",
+    );
+    expect(result).toEqual([
+      {
+        name: "opportunities",
+        fields: ["externalId", "opportunityType"],
+        sourceCollection: "US_TN-compliantReportingReferrals",
+        docIdPrefix: "US_TN-compliantReportingReferrals",
+        constantFields: {
+          sourceCollection: "US_TN-compliantReportingReferrals",
+        },
+      },
+    ]);
+  });
+
+  it("does NOT overwrite a config that already carries its own sourceCollection", () => {
+    // Statically-enumerated multi-source targets (if any) shouldn't be
+    // clobbered by an invocation-level sourceCollection meant for a
+    // different template.
+    const configs = [
+      {
+        name: "opportunities",
+        sourceCollection: "US_ID-LSUReferrals",
+        fields: ["externalId"],
+        docIdPrefix: "US_ID-LSUReferrals",
+        constantFields: { sourceCollection: "US_ID-LSUReferrals" },
+      },
+    ];
+    expect(
+      instantiateFromSourceCollection(configs, "some-other-source"),
+    ).toEqual(configs);
+  });
+
+  it("preserves an explicit docIdPrefix over the source-derived default", () => {
+    // Defensive: if a caller ever supplies a template with a custom prefix,
+    // instantiation should keep it instead of overwriting with the source name.
+    const [result] = instantiateFromSourceCollection(
+      [
+        {
+          name: "opportunities",
+          fields: ["externalId"],
+          docIdPrefix: "custom-prefix",
+        },
+      ],
+      "US_TN-somethingReferrals",
+    );
+    expect(result?.docIdPrefix).toBe("custom-prefix");
+  });
+
+  it("merges into (not replaces) existing constantFields", () => {
+    const [result] = instantiateFromSourceCollection(
+      [
+        {
+          name: "opportunities",
+          fields: ["externalId"],
+          constantFields: { pipelineVersion: "v2" },
+        },
+      ],
+      "US_TN-somethingReferrals",
+    );
+    expect(result?.constantFields).toEqual({
+      pipelineVersion: "v2",
+      sourceCollection: "US_TN-somethingReferrals",
+    });
+  });
+
+  it("applies the invocation sourceCollection to ANY config that lacks its own", () => {
+    // Instantiation is name-blind: any config lacking a static sourceCollection
+    // gets the invocation's value, not just the opportunities template.
+    const [result] = instantiateFromSourceCollection(
+      [{ name: "clients", fields: ["stateCode"] }],
+      "US_TN-somethingReferrals",
+    );
+    expect(result).toMatchObject({
+      name: "clients",
+      sourceCollection: "US_TN-somethingReferrals",
+    });
+  });
+});
+
 describe("selectStaleIds", () => {
   it("returns exported ids that are absent from the keep set", () => {
     const exported = '{"id":"a"}\n{"id":"b"}\n{"id":"c"}';
@@ -1080,5 +1217,299 @@ describe("runBackfill — state-scoped backfill + prune", () => {
       imported: 3,
       deleted: 1,
     });
+  });
+});
+
+describe("runBackfill — multi-source targets (constantFields + docIdPrefix)", () => {
+  const savedRate = process.env["BACKFILL_IMPORT_RATE_PER_SEC"];
+
+  beforeEach(() => {
+    process.env["BACKFILL_IMPORT_RATE_PER_SEC"] = "0";
+    delete process.env["BACKFILL_PRUNE_STALE"];
+  });
+
+  afterEach(() => {
+    if (savedRate === undefined)
+      delete process.env["BACKFILL_IMPORT_RATE_PER_SEC"];
+    else process.env["BACKFILL_IMPORT_RATE_PER_SEC"] = savedRate;
+    firestoreHolder.current = undefined;
+    typesenseHolder.current = undefined;
+  });
+
+  it("reads from sourceCollection, stamps constantFields, and prefixes docIds", async () => {
+    firestoreHolder.current = makeFirestore({
+      // The unified Typesense target is `opportunities`, but the Firestore
+      // source is per-state, per-opp. Same-person collision: both `US_TN_CR`
+      // and `US_TN_LSU` key their record for person ABC as `US_TN_ABC`.
+      US_TN_compliantReporting: [
+        { id: "US_TN_ABC", data: { externalId: "ABC" } },
+      ],
+      US_TN_LSU: [{ id: "US_TN_ABC", data: { externalId: "ABC" } }],
+    });
+    const ts = makeTypesense({ opportunities: [] });
+    typesenseHolder.current = ts.client;
+
+    const summary = await runBackfill([
+      {
+        name: "opportunities",
+        sourceCollection: "US_TN_compliantReporting",
+        fields: ["externalId"],
+        constantFields: {
+          stateCode: "US_TN",
+          opportunityType: "compliantReporting",
+        },
+        docIdPrefix: "compliantReporting",
+      },
+      {
+        name: "opportunities",
+        sourceCollection: "US_TN_LSU",
+        fields: ["externalId"],
+        constantFields: { stateCode: "US_TN", opportunityType: "LSU" },
+        docIdPrefix: "LSU",
+      },
+    ]);
+
+    // Both source docs land in `opportunities` with prefixed ids — no collision.
+    const imported = ts.importedDocs["opportunities"] ?? [];
+    expect(imported.map((d) => d["id"]).sort()).toEqual([
+      "LSU_US_TN_ABC",
+      "compliantReporting_US_TN_ABC",
+    ]);
+    // constantFields stamped on every emitted doc.
+    expect(imported.every((d) => d["stateCode"] === "US_TN")).toBe(true);
+    expect(imported.map((d) => d["opportunityType"]).sort()).toEqual([
+      "LSU",
+      "compliantReporting",
+    ]);
+    expect(summary.totals).toEqual({ imported: 2, failed: 0, deleted: 0 });
+  });
+
+  it("prunes only within its own (stateCode, opportunityType) partition", async () => {
+    firestoreHolder.current = makeFirestore({
+      US_TN_compliantReporting: [{ id: "keep", data: { externalId: "K" } }],
+    });
+    const ts = makeTypesense({
+      opportunities: [
+        // Prefixed CR doc matching Firestore → survives.
+        {
+          id: "compliantReporting_keep",
+          stateCode: "US_TN",
+          opportunityType: "compliantReporting",
+        },
+        // Prefixed CR doc absent from Firestore → THIS partition's stragler.
+        {
+          id: "compliantReporting_stale",
+          stateCode: "US_TN",
+          opportunityType: "compliantReporting",
+        },
+        // Different opp type in the same state → must NOT be deleted by CR run.
+        {
+          id: "LSU_alive",
+          stateCode: "US_TN",
+          opportunityType: "LSU",
+        },
+        // Different state, same opp type → must NOT be deleted either.
+        {
+          id: "compliantReporting_othertate",
+          stateCode: "US_ID",
+          opportunityType: "compliantReporting",
+        },
+      ],
+    });
+    typesenseHolder.current = ts.client;
+
+    await runBackfill([
+      {
+        name: "opportunities",
+        sourceCollection: "US_TN_compliantReporting",
+        fields: ["externalId"],
+        constantFields: {
+          stateCode: "US_TN",
+          opportunityType: "compliantReporting",
+        },
+        docIdPrefix: "compliantReporting",
+      },
+    ]);
+
+    // Export scoped to this source's partition only.
+    expect(ts.exportOptions).toEqual([
+      {
+        name: "opportunities",
+        filter_by: "stateCode:=US_TN && opportunityType:=compliantReporting",
+      },
+    ]);
+    // Only the in-partition stragler deleted.
+    expect(ts.deletedIds["opportunities"]).toEqual([
+      "compliantReporting_stale",
+    ]);
+  });
+
+  it("skips sources whose constantFields.stateCode doesn't match the invocation stateCode", async () => {
+    firestoreHolder.current = makeFirestore({
+      US_TN_compliantReporting: [
+        { id: "US_TN_ABC", data: { stateCode: "US_TN" } },
+      ],
+      US_ID_compliantReporting: [
+        { id: "US_ID_XYZ", data: { stateCode: "US_ID" } },
+      ],
+    });
+    const ts = makeTypesense({ opportunities: [] });
+    typesenseHolder.current = ts.client;
+
+    await runBackfill(
+      [
+        {
+          name: "opportunities",
+          sourceCollection: "US_TN_compliantReporting",
+          fields: [],
+          constantFields: {
+            stateCode: "US_TN",
+            opportunityType: "compliantReporting",
+          },
+          docIdPrefix: "compliantReporting",
+        },
+        {
+          name: "opportunities",
+          sourceCollection: "US_ID_compliantReporting",
+          fields: [],
+          constantFields: {
+            stateCode: "US_ID",
+            opportunityType: "compliantReporting",
+          },
+          docIdPrefix: "compliantReporting",
+        },
+      ],
+      "US_TN",
+    );
+
+    // Only the US_TN source ran; US_ID source was skipped entirely (no
+    // import, no export, no delete).
+    const imported = ts.importedDocs["opportunities"] ?? [];
+    expect(imported.map((d) => d["id"])).toEqual([
+      "compliantReporting_US_TN_ABC",
+    ]);
+    expect(ts.exportOptions).toEqual([
+      {
+        name: "opportunities",
+        filter_by: "stateCode:=US_TN && opportunityType:=compliantReporting",
+      },
+    ]);
+  });
+
+  it("filters an opportunity source scan by stateCode even when constantFields pins the state", async () => {
+    // The ETL validates `stateCode` on every opportunity document it writes, so
+    // the scan is always state-filtered — including for sources whose
+    // constantFields already pin the state. A document missing `stateCode` is
+    // silently excluded, which is only safe because of that ETL guarantee.
+    firestoreHolder.current = makeFirestore({
+      US_TN_compliantReporting: [
+        { id: "US_TN_ABC", data: { externalId: "ABC", stateCode: "US_TN" } },
+        { id: "US_ID_XYZ", data: { externalId: "XYZ", stateCode: "US_ID" } },
+        { id: "US_TN_NOSC", data: { externalId: "NOSC" } },
+      ],
+    });
+    const ts = makeTypesense({ opportunities: [] });
+    typesenseHolder.current = ts.client;
+
+    const summary = await runBackfill(
+      [
+        {
+          name: "opportunities",
+          sourceCollection: "US_TN_compliantReporting",
+          fields: ["externalId"],
+          constantFields: {
+            stateCode: "US_TN",
+            opportunityType: "compliantReporting",
+          },
+          docIdPrefix: "compliantReporting",
+        },
+      ],
+      "US_TN",
+    );
+
+    expect(summary.totals.imported).toBe(1);
+    expect(ts.importedDocs["opportunities"]).toEqual([
+      expect.objectContaining({ externalId: "ABC" }),
+    ]);
+  });
+});
+
+describe("runBackfill — template config + invocation sourceCollection", () => {
+  const savedRate = process.env["BACKFILL_IMPORT_RATE_PER_SEC"];
+
+  beforeEach(() => {
+    process.env["BACKFILL_IMPORT_RATE_PER_SEC"] = "0";
+    delete process.env["BACKFILL_PRUNE_STALE"];
+  });
+
+  afterEach(() => {
+    if (savedRate === undefined)
+      delete process.env["BACKFILL_IMPORT_RATE_PER_SEC"];
+    else process.env["BACKFILL_IMPORT_RATE_PER_SEC"] = savedRate;
+    firestoreHolder.current = undefined;
+    typesenseHolder.current = undefined;
+  });
+
+  it("instantiates a template config from the invocation sourceCollection", async () => {
+    // The path the opportunity ETL trigger takes: the named Firestore source
+    // imports into the shared `opportunities` target, prefixed and stamped.
+    firestoreHolder.current = makeFirestore({
+      "US_TN-compliantReportingReferrals": [
+        {
+          id: "US_TN_ABC",
+          data: {
+            externalId: "ABC",
+            opportunityType: "compliantReporting",
+            stateCode: "US_TN",
+          },
+        },
+      ],
+    });
+    const ts = makeTypesense({ opportunities: [] });
+    typesenseHolder.current = ts.client;
+
+    const summary = await runBackfill(
+      [
+        {
+          name: "opportunities",
+          fields: ["externalId", "opportunityType", "stateCode"],
+        },
+      ],
+      undefined,
+      "US_TN-compliantReportingReferrals",
+    );
+
+    const imported = ts.importedDocs["opportunities"] ?? [];
+    expect(imported).toHaveLength(1);
+    expect(imported[0]).toMatchObject({
+      id: "US_TN-compliantReportingReferrals_US_TN_ABC",
+      externalId: "ABC",
+      opportunityType: "compliantReporting",
+      stateCode: "US_TN",
+      sourceCollection: "US_TN-compliantReportingReferrals",
+    });
+    // Prune scoped to just this source's partition.
+    expect(ts.exportOptions).toEqual([
+      {
+        name: "opportunities",
+        filter_by: "sourceCollection:=US_TN-compliantReportingReferrals",
+      },
+    ]);
+    expect(summary.totals).toEqual({ imported: 1, failed: 0, deleted: 0 });
+  });
+
+  it("a bare invocation of the template (no sourceCollection) scans the target name and returns zero imports", async () => {
+    // A caller mistake surfaces as `{ imported: 0 }` rather than an error —
+    // safe, because the prune's empty-scan valve blocks any delete.
+    firestoreHolder.current = makeFirestore({});
+    const ts = makeTypesense({ opportunities: [] });
+    typesenseHolder.current = ts.client;
+
+    const summary = await runBackfill(
+      [{ name: "opportunities", fields: ["externalId"] }],
+      undefined,
+      undefined,
+    );
+    expect(summary.totals).toEqual({ imported: 0, failed: 0, deleted: 0 });
   });
 });
