@@ -93,7 +93,7 @@ const CellText = styled.span`
 `;
 
 function renderCellText(value: unknown, leadingInset = false): JSX.Element {
-  const text = value as string;
+  const text = typeof value === "string" ? value : String(value ?? "");
   return (
     <CellContent $leadingInset={leadingInset}>
       <CellText title={text}>{text}</CellText>
@@ -120,6 +120,52 @@ function renderNameHeader(): JSX.Element {
   return <HeaderLabel>Name</HeaderLabel>;
 }
 
+// None of these entries depend on props/state, so this is built once at
+// module load instead of on every render -- a fresh array identity each
+// render would defeat CaseloadTable's (@tanstack/react-table) memoization of
+// column/sort state.
+const COLUMNS: Array<ColumnDef<ParoleHearing>> = [
+  {
+    header: renderNameHeader,
+    id: "individualName",
+    accessorKey: "individualName",
+    enableSorting: true,
+    sortingFn: "alphanumeric",
+    cell: (info) => renderCellText(info.getValue(), true),
+  },
+  {
+    header: "DOC ID",
+    id: "docId",
+    accessorKey: "docId",
+    enableSorting: false,
+    cell: (info) => renderCellText(info.getValue()),
+  },
+  {
+    header: "Hearing Date",
+    id: "hearingDate",
+    // hearingDate is a "yyyy-MM-dd" ISO string, so lexicographic (alphanumeric)
+    // sorting is equivalent to chronological sorting.
+    accessorKey: "hearingDate",
+    enableSorting: true,
+    sortingFn: "alphanumeric",
+    cell: (info) => renderHearingDateCell(info.getValue()),
+  },
+  {
+    header: "Hearing Type",
+    id: "hearingType",
+    accessorKey: "hearingType",
+    enableSorting: false,
+    cell: (info) => renderCellText(info.getValue()),
+  },
+  {
+    header: "Facility",
+    id: "facility",
+    accessorKey: "facility",
+    enableSorting: false,
+    cell: (info) => renderCellText(info.getValue()),
+  },
+];
+
 /**
  * Renders the docket's filter bar (search + facility/hearing-type dropdown)
  * and the hearings table beneath it. Grouped together because the filter bar
@@ -130,48 +176,6 @@ export const ParoleDocketTable = observer(function ParoleDocketTable({
 }: {
   presenter: ParoleDocketPresenter;
 }) {
-  const columns: Array<ColumnDef<ParoleHearing>> = [
-    {
-      header: renderNameHeader,
-      id: "individualName",
-      accessorKey: "individualName",
-      enableSorting: true,
-      sortingFn: "alphanumeric",
-      cell: (info) => renderCellText(info.getValue(), true),
-    },
-    {
-      header: "DOC ID",
-      id: "docId",
-      accessorKey: "docId",
-      enableSorting: false,
-      cell: (info) => renderCellText(info.getValue()),
-    },
-    {
-      header: "Hearing Date",
-      id: "hearingDate",
-      // hearingDate is a "yyyy-MM-dd" ISO string, so lexicographic (alphanumeric)
-      // sorting is equivalent to chronological sorting.
-      accessorKey: "hearingDate",
-      enableSorting: true,
-      sortingFn: "alphanumeric",
-      cell: (info) => renderHearingDateCell(info.getValue()),
-    },
-    {
-      header: "Hearing Type",
-      id: "hearingType",
-      accessorKey: "hearingType",
-      enableSorting: false,
-      cell: (info) => renderCellText(info.getValue()),
-    },
-    {
-      header: "Facility",
-      id: "facility",
-      accessorKey: "facility",
-      enableSorting: false,
-      cell: (info) => renderCellText(info.getValue()),
-    },
-  ];
-
   return (
     <>
       <FilterBar>
@@ -193,7 +197,7 @@ export const ParoleDocketTable = observer(function ParoleDocketTable({
       <SectionCard>
         <CaseloadTable
           data={presenter.filteredHearings}
-          columns={columns}
+          columns={COLUMNS}
           initialState={{ sorting: [{ id: "hearingDate", desc: false }] }}
           rowLinkUrl={(hearing) =>
             paroleUrl("caseProfile", { docId: hearing.docId })

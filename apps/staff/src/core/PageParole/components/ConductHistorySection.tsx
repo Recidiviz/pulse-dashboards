@@ -108,6 +108,10 @@ const ToggleButton = styled.button`
   }
 `;
 
+// Referenced by the ToggleButton's aria-controls so assistive tech can
+// associate the toggle with the region it reveals.
+const OLDER_DISCIPLINARIES_ID = "conduct-history-older-disciplinaries";
+
 function isWithinPastYear(dateString: string): boolean {
   return parseIsoDate(dateString) >= subYears(new Date(), 1);
 }
@@ -189,6 +193,7 @@ export function ConductHistorySection({
               kind={IconSVG.Success}
               width={20}
               color={palette.signal.highlight}
+              aria-hidden="true"
             />
             <NoInfractionsHeading>
               No Disciplinary Infractions
@@ -240,20 +245,24 @@ export function ConductHistorySection({
               <ToggleButton
                 type="button"
                 aria-expanded={showOlder}
+                aria-controls={OLDER_DISCIPLINARIES_ID}
                 onClick={() => setShowOlder((prev) => !prev)}
               >
-                <Icon kind={IconSVG.Caret} width={10} />
+                <Icon kind={IconSVG.Caret} width={10} aria-hidden="true" />
                 See Older Disciplinaries ({olderRecords.length})
               </ToggleButton>
-              {showOlder &&
-                olderRecords.map((record, idx) => (
-                  <ConductRecordCard
-                    // eslint-disable-next-line react/no-array-index-key
-                    key={`${record.date}-${record.violation}-${idx}`}
-                    record={record}
-                    conductClassificationColors={conductClassificationColors}
-                  />
-                ))}
+              {showOlder && (
+                <SectionStack id={OLDER_DISCIPLINARIES_ID}>
+                  {olderRecords.map((record, idx) => (
+                    <ConductRecordCard
+                      // eslint-disable-next-line react/no-array-index-key
+                      key={`${record.date}-${record.violation}-${idx}`}
+                      record={record}
+                      conductClassificationColors={conductClassificationColors}
+                    />
+                  ))}
+                </SectionStack>
+              )}
             </>
           )}
         </SectionStack>

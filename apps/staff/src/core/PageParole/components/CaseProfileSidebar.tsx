@@ -164,6 +164,7 @@ export function CaseProfileSidebar({
                   kind={IconSVG.Info}
                   width={16}
                   color={PAROLE_RETURN_COLOR}
+                  aria-hidden="true"
                 />
                 Parole Return
               </FullWidthAlertBanner>

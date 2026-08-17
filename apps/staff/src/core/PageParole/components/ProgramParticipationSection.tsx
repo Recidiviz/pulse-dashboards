@@ -123,7 +123,7 @@ export function ProgramParticipationSection({
             <AccordionItemHeading>
               <AccordionButton>
                 DOC Programs ({completedDocPrograms.length})
-                <Icon kind={IconSVG.DownChevron} size={10} />
+                <Icon kind={IconSVG.DownChevron} size={10} aria-hidden="true" />
               </AccordionButton>
             </AccordionItemHeading>
             <AccordionBody>
@@ -150,7 +150,7 @@ export function ProgramParticipationSection({
             <AccordionItemHeading>
               <AccordionButton>
                 Edovo Programs ({completedEdovoPrograms.length})
-                <Icon kind={IconSVG.DownChevron} size={10} />
+                <Icon kind={IconSVG.DownChevron} size={10} aria-hidden="true" />
               </AccordionButton>
             </AccordionItemHeading>
             <AccordionBody>

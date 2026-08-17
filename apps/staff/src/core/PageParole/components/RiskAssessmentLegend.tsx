@@ -23,6 +23,7 @@ import { ParoleRiskAssessment, ParoleRiskTool } from "~datatypes";
 import { palette } from "~design-system";
 
 import { TOOL_COLORS } from "./RiskAssessmentSection.styles";
+import { safeScorePct } from "./shared";
 
 const ALL_CARD_COLOR = palette.pine1;
 
@@ -113,7 +114,7 @@ export function RiskAssessmentLegend({
               {hasCustomConfig
                 ? assessment.score
                 : `${Math.round(
-                    (assessment.score / assessment.maxScore) * 100,
+                    safeScorePct(assessment.score, assessment.maxScore),
                   )}%`}
             </MetricPct>
           </MetricSelectorItem>

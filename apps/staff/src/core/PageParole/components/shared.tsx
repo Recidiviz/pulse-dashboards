@@ -56,6 +56,14 @@ export const formatDate = (date: string | number | Date) =>
     year: "numeric",
   });
 
+/**
+ * Returns `score` as a percentage of `maxScore`, or `0` if `maxScore` isn't
+ * positive (guards against a malformed assessment rendering
+ * `NaN%`/`Infinity%` instead of failing safely).
+ */
+export const safeScorePct = (score: number, maxScore: number): number =>
+  maxScore > 0 ? (score / maxScore) * 100 : 0;
+
 export const calculateAge = (dob: string): number => {
   const birthDate = parseIsoDate(dob);
   const today = new Date();
@@ -130,6 +138,28 @@ export const EmptyState = styled.div`
   color: ${palette.slate70};
   font-style: italic;
 `;
+
+const SAFE_DOCUMENT_URL_SCHEMES = ["http:", "https:"];
+
+/**
+ * Attachment/document URLs come from upstream case data, not a live HTTP
+ * user input -- but rendering one directly as an <a href> with no scheme
+ * check would still let a malformed or corrupted record (e.g. a
+ * `javascript:` URL) execute on click. Document URLs are root-relative
+ * paths (e.g. "/documents/foo.pdf"), so resolve against the current origin
+ * rather than parsing as an absolute URL -- a relative path then inherits
+ * the origin's http(s) scheme, while an absolute `javascript:`/`data:` URL
+ * keeps its own (rejected) scheme.
+ */
+export const isSafeDocumentUrl = (url: string): boolean => {
+  try {
+    return SAFE_DOCUMENT_URL_SCHEMES.includes(
+      new URL(url, window.location.origin).protocol,
+    );
+  } catch {
+    return false;
+  }
+};
 
 // Alert-style banner, parameterized so both parole-plan alerts (default red)
 // and the victim-involved banner (overridden orange) can share it.

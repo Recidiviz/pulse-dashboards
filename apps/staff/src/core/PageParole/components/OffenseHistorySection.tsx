@@ -59,6 +59,7 @@ export function OffenseHistorySection({
                 kind={IconSVG.Alert}
                 width={16}
                 color={VICTIM_ALERT_COLOR}
+                aria-hidden="true"
               />
               Victim involved in current offense
             </AlertBanner>

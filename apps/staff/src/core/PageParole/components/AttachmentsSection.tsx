@@ -32,6 +32,8 @@ import {
   FactLabel,
   formatDate,
   isParolePlanStale,
+  isSafeDocumentUrl,
+  parseIsoDate,
   SectionCard,
 } from "./shared";
 
@@ -72,7 +74,8 @@ function buildAttachmentList(
 
   return [...parolePlanItems, ...attachmentItems].sort(
     (a, b) =>
-      new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime(),
+      parseIsoDate(b.uploadDate).getTime() -
+      parseIsoDate(a.uploadDate).getTime(),
   );
 }
 
@@ -91,7 +94,7 @@ export function AttachmentsSection({
       <PaddedSectionCardBody>
         {!parolePlan.onFile && (
           <AlertBanner>
-            <Icon kind={IconSVG.Alert} width={20} />
+            <Icon kind={IconSVG.Alert} width={20} aria-hidden="true" />
             <div>
               <AlertHeading>NO PAROLE PLAN ON FILE</AlertHeading>
               <AlertBody>
@@ -106,7 +109,7 @@ export function AttachmentsSection({
           parolePlan.lastUpdated &&
           isParolePlanStale(parolePlan.lastUpdated) && (
             <AlertBanner>
-              <Icon kind={IconSVG.Alert} width={20} />
+              <Icon kind={IconSVG.Alert} width={20} aria-hidden="true" />
               <div>
                 <AlertHeading>PAROLE PLAN NOT RECENTLY UPDATED</AlertHeading>
                 <AlertBody>
@@ -127,10 +130,16 @@ export function AttachmentsSection({
                   <div>{item.name}</div>
                   <FactLabel>{item.detailLabel}</FactLabel>
                 </DocumentInfo>
-                <DocumentLink href={item.url} download>
-                  <Icon kind={IconSVG.Download} width={14} />
-                  View
-                </DocumentLink>
+                {isSafeDocumentUrl(item.url) && (
+                  <DocumentLink href={item.url} download>
+                    <Icon
+                      kind={IconSVG.Download}
+                      width={14}
+                      aria-hidden="true"
+                    />
+                    View
+                  </DocumentLink>
+                )}
               </DocumentRow>
             ))}
           </DocumentList>

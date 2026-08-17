@@ -90,10 +90,20 @@ function wrapLabelText(text: string): Array<string> {
   return lines;
 }
 
-// Hoisted to module scope (unlike the tooltipContent callbacks below, which
-// need each render's own barChartBounds) so React doesn't treat this as an
-// unstable component definition recreated every render.
-function renderSubcategoryBarLabel(name: unknown): JSX.Element {
+/**
+ * Hoisted to module scope (unlike the tooltipContent callbacks below, which
+ * need each render's own barChartBounds) so React doesn't treat this as an
+ * unstable component definition recreated every render.
+ *
+ * semiotic's own type for `oLabel` (see OrdinalFrameProps in
+ * semiotic/lib/types/ordinalTypes.d.ts) declares its render-function
+ * overload as returning the DOM's `Element`, not a React element -- even
+ * though semiotic renders whatever this returns as JSX. The cast below is a
+ * real interop gap (a React element isn't structurally a DOM Element), but
+ * it's contained to this one return statement instead of being repeated as
+ * an `as unknown as string` cast at every `oLabel=` call site.
+ */
+function renderSubcategoryBarLabel(name?: unknown): string | Element {
   const lines = wrapLabelText(name as string);
   // Centers the wrapped block on the bar's row: first line shifts up by
   // half the block's height, each next line steps down one line height.
@@ -111,7 +121,7 @@ function renderSubcategoryBarLabel(name: unknown): JSX.Element {
         </tspan>
       ))}
     </text>
-  );
+  ) as unknown as Element;
 }
 
 // The right-hand panel next to the trajectory chart: a plain numbered list
@@ -221,10 +231,21 @@ export function SubcategoryBreakdownChart({
     }
 
     if (!carasFactorData) return null;
+    type CarasFactorDatum = (typeof carasFactorData)[number];
+    const carasFactorSummary = carasFactorData
+      .map(
+        (f) =>
+          `${f.name} contribution ${f.contribution >= 0 ? "+" : ""}${f.contribution.toFixed(2)}`,
+      )
+      .join(", ");
     return (
       <ChartColumn>
         <ChartTitle>Subcategory Breakdown (Most recent assessment)</ChartTitle>
-        <ChartWrapper ref={barChartRef}>
+        <ChartWrapper
+          ref={barChartRef}
+          role="img"
+          aria-label={`Subcategory breakdown for CARAS: ${carasFactorSummary}`}
+        >
           {barChartBounds.width > 0 && (
             <ResponsiveOrdinalFrame
               // Remounts on tool switch so semiotic doesn't try to animate
@@ -241,12 +262,12 @@ export function SubcategoryBreakdownChart({
               oAccessor="name"
               oPadding={12}
               rAccessor="contribution"
-              style={(d: any) => ({
+              style={(d: CarasFactorDatum) => ({
                 fill: d.contribution >= 0 ? TOOL_COLORS.CARAS : palette.slate30,
                 rx: 3,
               })}
               margin={{ left: 220, right: 8, top: 8, bottom: 30 }}
-              oLabel={renderSubcategoryBarLabel as unknown as string}
+              oLabel={renderSubcategoryBarLabel}
               axes={[
                 {
                   orient: "bottom",
@@ -272,11 +293,18 @@ export function SubcategoryBreakdownChart({
   }
 
   if (!subcategoryBarData) return null;
+  const subcategoryBarSummary = subcategoryBarData
+    .map((s) => `${s.name} ${s.score} of ${s.score + s.remaining}`)
+    .join(", ");
 
   return (
     <ChartColumn>
       <ChartTitle>Subcategory Breakdown (Most recent assessment)</ChartTitle>
-      <ChartWrapper ref={barChartRef}>
+      <ChartWrapper
+        ref={barChartRef}
+        role="img"
+        aria-label={`Subcategory breakdown for ${assessment.tool}: ${subcategoryBarSummary}`}
+      >
         {barChartBounds.width > 0 && (
           <ResponsiveOrdinalFrame
             // See the CARAS branch above for why this is keyed by tool.
@@ -297,7 +325,7 @@ export function SubcategoryBreakdownChart({
               rx: 3,
             })}
             margin={{ left: 140, right: 8, top: 8, bottom: 30 }}
-            oLabel={renderSubcategoryBarLabel as unknown as string}
+            oLabel={renderSubcategoryBarLabel}
             axes={[
               {
                 orient: "bottom",

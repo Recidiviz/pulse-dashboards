@@ -78,6 +78,21 @@ export function RiskTrajectoryChart({
     [hasCustomConfig, lineChartBounds],
   );
 
+  // A per-line summary of the most recent point, for the aria-label below --
+  // the tooltip already surfaces the same "value as of date" pairing per
+  // point on hover, so this mirrors that rather than inventing a new format.
+  // Labeled "latest score" rather than "trajectory": each line's individual
+  // values don't encode movement on their own, only the plotted shape does.
+  const latestScoreSummary = trajectoryLines
+    .map((line) => {
+      const latest = line.coordinates.at(-1);
+      if (!latest) return `${line.tool}: no data`;
+      const suffix = hasCustomConfig ? "" : "%";
+      const count = line.coordinates.length;
+      return `${line.tool} ${Math.round(latest.value)}${suffix} as of ${formatDate(latest.date)} (${count} assessment${count === 1 ? "" : "s"})`;
+    })
+    .join("; ");
+
   return (
     <ChartColumn>
       <ChartTitle>
@@ -86,7 +101,11 @@ export function RiskTrajectoryChart({
           : "Trajectory - percent of max scores"}
       </ChartTitle>
       {trajectoryLines.length > 0 && (
-        <ChartWrapper ref={lineChartRef}>
+        <ChartWrapper
+          ref={lineChartRef}
+          role="img"
+          aria-label={`Latest risk score: ${latestScoreSummary}`}
+        >
           {lineChartBounds.width > 0 && (
             <ResponsiveXYFrame
               // Remounts on tool switch so semiotic doesn't try to animate
@@ -103,7 +122,7 @@ export function RiskTrajectoryChart({
                 tool: l.tool,
                 coordinates: l.coordinates,
               }))}
-              lineStyle={(l: any) => ({
+              lineStyle={(l: RiskTrajectoryLine) => ({
                 stroke: l.color,
                 strokeWidth: 2,
               })}
@@ -112,7 +131,10 @@ export function RiskTrajectoryChart({
               yExtent={hasCustomConfig ? [0, yMax] : [0, 100]}
               margin={{ left: 48, right: 20, top: 10, bottom: 30 }}
               showLinePoints
-              pointStyle={(p: any) => ({
+              pointStyle={(p: {
+                parentLine?: { color: string };
+                color?: string;
+              }) => ({
                 r: 5,
                 fill: p.parentLine?.color ?? p.color,
                 stroke: palette.white,

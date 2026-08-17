@@ -15,11 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing, typography } from "@recidiviz/design-system";
+import { ErrorPage, spacing, typography } from "@recidiviz/design-system";
+import { ErrorBoundary } from "@sentry/react";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import React from "react";
-import { Route, Routes } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Route, Routes, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
 import { palette } from "~design-system";
@@ -79,28 +80,41 @@ const Main = styled.main<{ isMobile?: boolean }>`
 `;
 
 const PageParole: React.FC = observer(function PageParole() {
-  window.scrollTo({ top: 0 });
   const { isMobile } = useIsMobile(true);
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [pathname]);
 
   return (
-    <Wrapper>
-      <NavigationLayout>
-        <OverviewNavLinks />
-      </NavigationLayout>
-      <Main isMobile={isMobile}>
-        <Routes>
-          <Route
-            path={paroleRoute({ routeName: "docket" })}
-            element={<ParoleDocketView />}
-          />
-          <Route
-            path={paroleRoute({ routeName: "caseProfile" })}
-            element={<ParoleCaseProfile />}
-          />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Main>
-    </Wrapper>
+    <ErrorBoundary
+      fallback={
+        <ErrorPage headerText="Sorry, it looks like something went wrong...">
+          Please try refreshing the page or reach out to your contact at
+          Recidiviz for more assistance.
+        </ErrorPage>
+      }
+    >
+      <Wrapper>
+        <NavigationLayout>
+          <OverviewNavLinks />
+        </NavigationLayout>
+        <Main isMobile={isMobile}>
+          <Routes>
+            <Route
+              path={paroleRoute({ routeName: "docket" })}
+              element={<ParoleDocketView />}
+            />
+            <Route
+              path={paroleRoute({ routeName: "caseProfile" })}
+              element={<ParoleCaseProfile />}
+            />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Main>
+      </Wrapper>
+    </ErrorBoundary>
   );
 });
 

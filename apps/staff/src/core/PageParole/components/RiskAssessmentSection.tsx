@@ -34,7 +34,13 @@ import {
   latestAssessmentsByTool,
 } from "./RiskAssessmentSection.utils";
 import { RiskTrajectoryChart, RiskTrajectoryLine } from "./RiskTrajectoryChart";
-import { EmptyState, Hr, parseIsoDate, SectionCard } from "./shared";
+import {
+  EmptyState,
+  Hr,
+  parseIsoDate,
+  safeScorePct,
+  SectionCard,
+} from "./shared";
 import { SubcategoryBreakdownChart } from "./SubcategoryBreakdownChart";
 
 // Tool set and aggregate-view labels used whenever a tenant doesn't supply
@@ -129,7 +135,7 @@ export function RiskAssessmentSection({
               // its own `maxScore`, not just the tool's current one.
               value: hasCustomConfig
                 ? assessment.score
-                : (assessment.score / assessment.maxScore) * 100,
+                : safeScorePct(assessment.score, assessment.maxScore),
             }),
           ),
         }))
@@ -159,7 +165,7 @@ export function RiskAssessmentSection({
   }
 
   const selectedRawPct = selectedAssessment
-    ? (selectedAssessment.score / selectedAssessment.maxScore) * 100
+    ? safeScorePct(selectedAssessment.score, selectedAssessment.maxScore)
     : null;
   const getSelectedRiskLevel =
     selectedAssessment?.tool === "CARAS" ? getCarasRiskLevel : getRiskLevel;
