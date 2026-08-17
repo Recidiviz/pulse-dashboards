@@ -133,6 +133,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
           microphonePermission:
             "The app uses the microphone to record your meeting.",
           enableBackgroundRecording: true,
+          enableBackgroundPlayback: false,
         },
       ],
       "@react-native-community/datetimepicker",
