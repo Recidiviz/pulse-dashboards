@@ -45,7 +45,7 @@ const Table = styled.table`
 
   th,
   td {
-    padding: ${rem(spacing.md)} 0;
+    padding: ${rem(spacing.md)} ${rem(spacing.xs)};
     text-align: left;
   }
 

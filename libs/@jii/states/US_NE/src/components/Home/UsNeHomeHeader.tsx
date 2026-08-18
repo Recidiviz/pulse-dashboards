@@ -57,7 +57,7 @@ const ManagedComponent = observer(function UsNeHomeHeader({
       <HeaderFieldsContainer>
         {headerText.map(({ label, content }) => (
           <HeaderField key={label}>
-            <SubtitleLabel>{label}</SubtitleLabel>
+            <SubtitleLabel>{label}:</SubtitleLabel>
             <span>{content}</span>
           </HeaderField>
         ))}

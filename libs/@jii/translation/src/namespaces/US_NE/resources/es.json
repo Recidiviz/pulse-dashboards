@@ -8,12 +8,13 @@
     "noSentenceFallback": "Los detalles de su sentencia aún no han sido confirmados por NDCS. Comuníquese con la oficina de registros para obtener más información.",
     "headerFields": {
       "labels": {
-        "numHoldsAndDetainers": "Detenciones/Retenciones Pendientes:",
-        "numNotifiers": "Notificaciones Pendientes:",
-        "deadTime": "Tiempo muerto",
-        "minimumSentence": "Sentencia Mínima:",
-        "maximumSentence": "Sentencia Máxima:",
-        "goodTime": "Ley de tiempo de buena conducta:"
+        "numHoldsAndDetainers": "Detenciones/Retenciones Pendientes",
+        "numNotifiers": "Notificaciones Pendientes",
+        "deadTime": "Tiempo Muerto",
+        "mandatoryMinimumSentence": "Pena Mínima Obligatoria",
+        "minimumSentence": "Sentencia Mínima",
+        "maximumSentence": "Sentencia Máxima",
+        "goodTime": "Ley de Tiempo de Buena Conducta"
       },
       "formatters": {
         "numHoldsAndDetainers": {
@@ -23,6 +24,18 @@
           "value": "{{count, number}}"
         },
         "deadTimeDays": {
+          "value_one": "{{count, number}} Día",
+          "value_other": "{{count, number}} Días"
+        },
+        "mandatoryMinimumSentenceYears": {
+          "value_one": "{{count, number}} Año",
+          "value_other": "{{count, number}} Años"
+        },
+        "mandatoryMinimumSentenceMonths": {
+          "value_one": "{{count, number}} Mes",
+          "value_other": "{{count, number}} Meses"
+        },
+        "mandatoryMinimumSentenceDays": {
           "value_one": "{{count, number}} Día",
           "value_other": "{{count, number}} Días"
         },
@@ -249,7 +262,7 @@
   "infoPages": {
     "mmtd": {
       "heading": "Fecha Mínima Obligatoria (MMTD)",
-      "body": "Su Fecha Mínima Obligatoria (MMTD) es la fecha en que finaliza la parte mínima requerida de su sentencia. La ley establece la fecha mínima obligatoria con base en el total de su sentencia combinada.\n\nSi su sentencia tiene un mínimo obligatorio, debe cumplir todo ese tiempo antes de que se aplique o se obtenga el tiempo por buena conducta.   \n\n<PolicyCallout text=\"Para más información, investigue\n\n-**Nebraska Revised Statute 28-105**\n-**Nebraska Revised Statute 83-1,107**\n \nen la Biblioteca Legal.\n\nAlternativamente, envíe sus preguntas al personal de la oficina de registros de su instalación a través de una Solicitud de Entrevista de Recluso (IIR).\" />\n"
+      "body": "Su Fecha Mínima Obligatoria (MMTD) es la fecha en que finaliza la parte mínima requerida de su sentencia. La ley establece la fecha mínima obligatoria con base en el total de su sentencia combinada.\n\nSi su sentencia tiene un mínimo obligatorio, debe cumplir todo ese tiempo antes de que se aplique o se obtenga el tiempo por buena conducta.   \n\n<PolicyCallout text=\"Para más información, investigue los estatutos en la Biblioteca Legal:\n- **Nebraska Revised Statute 28-105**\n- **Nebraska Revised Statute 83-1,107**\n\nComo alternativa, envíe sus preguntas al personal de la oficina de registros de su centro mediante una Solicitud de Entrevista con el Recluso (IIR).\" />\n"
     },
     "ped": {
       "heading": "Fecha de Elegibilidad de Libertad Condicional (PED)",
@@ -257,7 +270,7 @@
     },
     "trd": {
       "heading": "Fecha Tentativa de Salida (TRD)",
-      "body": "Su Fecha Tentativa de Liberación (TRD) es la fecha estimada en que será liberado de prisión. Esta fecha puede cambiar debido a una medida disciplinaria, un cambio en el cumplimiento de los plazos, la revocación de la libertad condicional o un cambio en la ley o su interpretación.\n\nSi se modifica su fecha de elegibilidad para libertad condicional o su fecha tentativa de liberación, se le notificará por escrito la nueva fecha tentativa de liberación o de elegibilidad para libertad condicional. \n\n<PolicyCallout text=\"\nPara más información, consulte el\n- **Nebraska Revised Statute 28-105**\n- **Nebraska Revised Statute 83-1,107**\n\nen la Biblioteca Legal.\n\nComo alternativa, envíe sus preguntas al personal de la oficina de registros de su centro mediante una Solicitud de Entrevista con el Recluso (IIR).\"/>\n"
+      "body": "Su Fecha Tentativa de Liberación (TRD) es la fecha estimada en que será liberado de prisión. Esta fecha puede cambiar debido a una medida disciplinaria, un cambio en el cumplimiento de los plazos, la revocación de la libertad condicional o un cambio en la ley o su interpretación.\n\nSi se modifica su fecha de elegibilidad para libertad condicional o su fecha tentativa de liberación, se le notificará por escrito la nueva fecha tentativa de liberación o de elegibilidad para libertad condicional. \n\n<PolicyCallout text=\"Para más información, investigue los estatutos en la Biblioteca Legal:\n- **Nebraska Revised Statute 28-105**\n- **Nebraska Revised Statute 83-1,107**\n\nComo alternativa, envíe sus preguntas al personal de la oficina de registros de su centro mediante una Solicitud de Entrevista con el Recluso (IIR).\"/>\n"
     },
     "gbmd": {
       "heading": "Saldo de Tiempo de Buena Conducta/Libertad Obligatoria (GB/MD) ",

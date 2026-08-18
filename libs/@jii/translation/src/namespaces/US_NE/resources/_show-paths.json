@@ -11,6 +11,7 @@
         "numHoldsAndDetainers": "[US_NE]home.headerFields.labels.numHoldsAndDetainers",
         "numNotifiers": "[US_NE]home.headerFields.labels.numNotifiers",
         "deadTime": "[US_NE]home.headerFields.labels.deadTime",
+        "mandatoryMinimumSentence": "[US_NE]home.headerFields.labels.mandatoryMinimumSentence",
         "minimumSentence": "[US_NE]home.headerFields.labels.minimumSentence",
         "maximumSentence": "[US_NE]home.headerFields.labels.maximumSentence",
         "goodTime": "[US_NE]home.headerFields.labels.goodTime"
@@ -25,6 +26,18 @@
         "deadTimeDays": {
           "value_one": "[US_NE]home.headerFields.formatters.deadTimeDays.value_one",
           "value_other": "[US_NE]home.headerFields.formatters.deadTimeDays.value_other"
+        },
+        "mandatoryMinimumSentenceYears": {
+          "value_one": "[US_NE]home.headerFields.formatters.mandatoryMinimumSentenceYears.value_one",
+          "value_other": "[US_NE]home.headerFields.formatters.mandatoryMinimumSentenceYears.value_other"
+        },
+        "mandatoryMinimumSentenceMonths": {
+          "value_one": "[US_NE]home.headerFields.formatters.mandatoryMinimumSentenceMonths.value_one",
+          "value_other": "[US_NE]home.headerFields.formatters.mandatoryMinimumSentenceMonths.value_other"
+        },
+        "mandatoryMinimumSentenceDays": {
+          "value_one": "[US_NE]home.headerFields.formatters.mandatoryMinimumSentenceDays.value_one",
+          "value_other": "[US_NE]home.headerFields.formatters.mandatoryMinimumSentenceDays.value_other"
         },
         "minimumSentenceYears": {
           "value_one": "[US_NE]home.headerFields.formatters.minimumSentenceYears.value_one",

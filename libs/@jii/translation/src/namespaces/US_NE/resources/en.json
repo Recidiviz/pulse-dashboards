@@ -8,12 +8,13 @@
     "noSentenceFallback": "Your sentence details have still not been confirmed by NDCS. Contact Records for more information.",
     "headerFields": {
       "labels": {
-        "numHoldsAndDetainers": "Open Detainers/Holds:",
-        "numNotifiers": "Open Notifiers:",
-        "deadTime": "Dead Time:",
-        "minimumSentence": "Minimum Sentence:",
-        "maximumSentence": "Maximum Sentence:",
-        "goodTime": "Good Time Law:"
+        "numHoldsAndDetainers": "Open Detainers/Holds",
+        "numNotifiers": "Open Notifiers",
+        "deadTime": "Dead Time",
+        "mandatoryMinimumSentence": "Mandatory Minimum Sentence",
+        "minimumSentence": "Minimum Sentence",
+        "maximumSentence": "Maximum Sentence",
+        "goodTime": "Good Time Law"
       },
       "formatters": {
         "numHoldsAndDetainers": {
@@ -26,9 +27,21 @@
           "value_one": "{{count, number}} Day",
           "value_other": "{{count, number}} Days"
         },
+        "mandatoryMinimumSentenceYears": {
+          "value_one": "{{count, number}} Year",
+          "value_other": "{{count, number}} Years"
+        },
+        "mandatoryMinimumSentenceMonths": {
+          "value_one": "{{count, number}} Month",
+          "value_other": "{{count, number}} Months"
+        },
+        "mandatoryMinimumSentenceDays": {
+          "value_one": "{{count, number}} Day",
+          "value_other": "{{count, number}} Days"
+        },
         "minimumSentenceYears": {
-          "value_one": "{{count, number}} Yr",
-          "value_other": "{{count, number}} Yrs"
+          "value_one": "{{count, number}} Year",
+          "value_other": "{{count, number}} Years"
         },
         "minimumSentenceMonths": {
           "value_one": "{{count, number}} Month",
@@ -39,8 +52,8 @@
           "value_other": "{{count, number}} Days"
         },
         "maximumSentenceYears": {
-          "value_one": "{{count, number}} Yr",
-          "value_other": "{{count, number}} Yrs"
+          "value_one": "{{count, number}} Year",
+          "value_other": "{{count, number}} Years"
         },
         "maximumSentenceMonths": {
           "value_one": "{{count, number}} Month",
@@ -66,12 +79,12 @@
         },
         "ineligibleLTRH": {
           "title": "Become Eligible For Good Time Restoration",
-          "body": "Despite no disqualifying recent Misconduct Reports, facility staff have noted you are currently ineligible for good time restoration due to your current or recent placement in Long-Term Restrictive Housing. Please speak with facility staff for more detail.\n\nYou currently have {{goodTimeLostDaysRestorable}} total days lost.",
+          "body": "Despite no disqualifying recent Misconduct Reports, facility staff have noted you are currently ineligible for good time restoration due to your current or recent placement in Long-Term Restrictive Housing. Please speak with facility staff for more detail.\n\nYou currently have {{goodTimeLostDaysRestorable, number}} total days lost.",
           "linkText": "Learn More"
         },
         "ineligibleTreatment": {
           "title": "Become Eligible For Good Time Restoration",
-          "body": "Despite no disqualifying recent Misconduct Reports, facility staff have noted you are currently ineligible for good time restoration due to your refusal of recommended clinical programming. Please speak with facility staff for more detail.\n\nYou currently have {{goodTimeLostDaysRestorable}} total days lost.",
+          "body": "Despite no disqualifying recent Misconduct Reports, facility staff have noted you are currently ineligible for good time restoration due to your refusal of recommended clinical programming. Please speak with facility staff for more detail.\n\nYou currently have {{goodTimeLostDaysRestorable, number}} total days lost.",
           "linkText": "Learn More"
         }
       },
@@ -121,14 +134,14 @@
           "label": "Lost Good Time (Restorable)",
           "value_one": "{{count, number}} Day",
           "value_other": "{{count, number}} Days",
-          "summary_zero": "You do not have any lost good time days that are restorable.",
+          "summary_zero": "You have not lost any good time days that are restorable.",
           "summary_other": "This good time has been removed due to misconduct reports (MRs). You may apply to have these days restored after some time without misconduct reports. Ask your case manager for specific details on when you are eligible to ask for time back."
         },
         "lgtn": {
           "label": "Lost Good Time (Non-Restorable)",
           "value_one": "{{count, number}} Day",
           "value_other": "{{count, number}} Days",
-          "summary_zero": "You do not have any lost good time days that are not restorable.",
+          "summary_zero": "You have not lost any good time days that are not restorable.",
           "summary_other": "This good time has been lost due to misconduct reports (MRs). It is not possible to restore these days.\n\nThis is already applied to your Tentative Release Date (TRD)."
         },
         "lb191": {
@@ -249,15 +262,15 @@
   "infoPages": {
     "mmtd": {
       "heading": "Mandatory Minimum Term Date (MMTD)",
-      "body": "Your Mandatory Minimum Term Date (MMTD) is the date when the required minimum part of your sentence ends. The mandatory minimum term is set by the law based on your total combined sentence.\n\nIf your sentence has a mandatory minimum, you must serve all of that time before good time is applied or earned.\n\n<PolicyCallout text=\"For more information, research\n\n- **Nebraska Revised Statute 28-105**\n- **Nebraska Revised Statute 83-1,107**\n\nin the Law Library.\n\nAlternatively, submit your questions to the records office personnel in your facility on an Inmate Interview Request (IIR).\" />\n"
+      "body": "Your Mandatory Minimum Term Date (MMTD) is the date when the required minimum part of your sentence ends. The mandatory minimum term is set by the law based on your total combined sentence.\n\nIf your sentence has a mandatory minimum, you must serve all of that time before good time is applied or earned.\n\n<PolicyCallout text=\"For more information, research the statutes below in the Law Library. \n\nAlternatively, submit your questions to the records office personnel in your facility on an Inmate Interview Request (IIR).\n\nStatutes to Research:\n\n- **Nebraska Revised Statute 28-105**\n- **Nebraska Revised Statute 83-1,107**\" />\n"
     },
     "ped": {
       "heading": "Parole Eligibility Date (PED)",
-      "body": "The Parole Eligibility Date (PED) is the date you are first eligible for parole. The Nebraska Board of Parole sets Parole Hearing Dates based on the outcomes of reviews. At the hearing, the Nebraska Board of Parole will make a decision on whether to grant parole, deny parole, or defer the decision to a later date.\n\nYour PED depends on your sentence terms and any changes to your good time.\n\nA mandatory minimum sentence is the minimum time you must serve before becoming eligible for parole. Your Parole Eligibility Date can never be before the mandatory minimum sentence date.\n\nYou are eligible for parole upon the earliest date of the following:\n\n- (a) “When the person has served one-half the minimum term of his or her sentence as provided in Nebraska Revised Statute §§ 83-1,107 and 83-1,108”;\n- (b) “If serving max term of 20 years or less, two years prior to the person’s mandatory discharge date” (Tentative Release Date); or\n- (c) “If serving a max term of more than 20 years, when the person has served eighty percent of the time until the person’s mandatory discharge date” (Tentative Release Date)\n\nIf your parole eligibility date or tentative release date is changed, you will be given written notice of the new tentative release date or parole eligibility date.\n\nChanges related to parole eligibility dates from LB 50 have already been reflected in dates.\n\n<PolicyCallout text=\"For more information, research\n**Nebraska Revised Statute 83-1,110**\nin the Law Library.\n\nAlternatively, submit your questions to the records office personnel in your facility on an Inmate Interview Request (IIR).\"\n/>\n"
+      "body": "The Parole Eligibility Date (PED) is the date you are first eligible for parole. The Nebraska Board of Parole sets Parole Hearing Dates based on the outcomes of reviews. At the hearing, the Nebraska Board of Parole will make a decision on whether to grant parole, deny parole, or defer the decision to a later date.\n\nYour PED depends on your sentence terms and any changes to your good time.\n\nA mandatory minimum sentence is the minimum time you must serve before becoming eligible for parole. Your Parole Eligibility Date can never be before the mandatory minimum sentence date.\n\nYou are eligible for parole upon the earliest date of the following:\n\n- (a) “When the person has served one-half the minimum term of his or her sentence as provided in Nebraska Revised Statute §§ 83-1,107 and 83-1,108”;\n- (b) “If serving max term of 20 years or less, two years prior to the person’s mandatory discharge date” (Tentative Release Date); or\n- (c) “If serving a max term of more than 20 years, when the person has served eighty percent of the time until the person’s mandatory discharge date” (Tentative Release Date)\n\nIf your parole eligibility date or tentative release date is changed, you will be given written notice of the new tentative release date or parole eligibility date.\n\nChanges related to parole eligibility dates from LB 50 have already been reflected in dates.\n\n<PolicyCallout text=\"For more information, research\n**Nebraska Revised Statute 83-1,110**\nin the Law Library.\n\nAlternatively, submit your questions to the records office personnel in your facility on an Inmate Interview Request (IIR).\"\n/>"
     },
     "trd": {
       "heading": "Tentative Release Date (TRD)",
-      "body": "Your Tentative Release Date (TRD) is the estimated date you will be released from incarceration. This date can be changed as a result of a disciplinary action, a change in good time, a parole revocation, or a change in the law or the interpretation of the law.\n\nIf your parole eligibility date or tentative release date is changed, you will be given written notice of the new tentative release date or parole eligibility date.\n\n<PolicyCallout text=\"For more information, research\n\n- **Nebraska Revised Statute 28-105**\n- **Nebraska Revised Statute 83-1,107**\n\n  in the Law Library.\n\n  Alternatively, submit your questions to the records office personnel in your facility on an Inmate Interview Request (IIR).\" />\n"
+      "body": "Your Tentative Release Date (TRD) is the estimated date you will be released from incarceration. This date can be changed as a result of a disciplinary action, a change in good time, a parole revocation, or a change in the law or the interpretation of the law.\n\nIf your parole eligibility date or tentative release date is changed, you will be given written notice of the new tentative release date or parole eligibility date.\n\n<PolicyCallout text=\"For more information, research the statutes below in the Law Library.\n\nAlternatively, submit your questions to the records office personnel in your facility on an Inmate Interview Request (IIR).\n\nStatutes to Research:\n- **Nebraska Revised Statute 28-105**\n- **Nebraska Revised Statute 83-1,107**\" />\n"
     },
     "gbmd": {
       "heading": "Good Time Balance/Mandatory Discharge (GB/MD)",

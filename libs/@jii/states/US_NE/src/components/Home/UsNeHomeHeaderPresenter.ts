@@ -26,6 +26,14 @@ const headerFields = [
   { key: "numNotifiers", fields: ["numNotifiers"] },
   { key: "deadTime", fields: ["deadTimeDays"] },
   {
+    key: "mandatoryMinimumSentence",
+    fields: [
+      "mandatoryMinimumSentenceYears",
+      "mandatoryMinimumSentenceMonths",
+      "mandatoryMinimumSentenceDays",
+    ],
+  },
+  {
     key: "minimumSentence",
     fields: [
       "minimumSentenceYears",

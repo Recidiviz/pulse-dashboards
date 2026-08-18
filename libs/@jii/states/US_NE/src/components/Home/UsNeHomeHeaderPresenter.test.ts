@@ -89,7 +89,7 @@ function createPresenter(stateSpecificData: UsNeResidentMetadata) {
 describe("headerText", () => {
   it("has a value for each relevant header field", () => {
     const presenter = createPresenter(baseData);
-    expect(presenter.headerText).toHaveLength(6);
+    expect(presenter.headerText).toHaveLength(7);
   });
 
   it("filters out null values", () => {
@@ -109,7 +109,7 @@ describe("headerText", () => {
 
     const presenter = createPresenter(dataWithNulls);
 
-    expect(presenter.headerText).toHaveLength(2);
+    expect(presenter.headerText).toHaveLength(3);
   });
 
   describe("minimumSentence/maximumSentence", () => {
