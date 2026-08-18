@@ -17,16 +17,21 @@
 
 import { transform } from "../../../core/Paperwork/US_TN/CompliantReporting/Transformer";
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
-import {
-  CompliantReportingDraftData,
-  CompliantReportingOpportunity,
-} from "../UsTn";
 import { UsTnCompliantReporting2025PolicyOpportunity } from "../UsTn/UsTnCompliantReporting2025PolicyOpportunity";
+import type {
+  CompliantReportingDraftData,
+  CompliantReportingTransformedETLFormInput,
+} from "./CompliantReportingFormTypes";
 import { FormBase } from "./FormBase";
+
+export type {
+  CompliantReportingDraftData,
+  CompliantReportingTransformedETLFormInput,
+};
 
 export class CompliantReportingForm extends FormBase<
   CompliantReportingDraftData,
-  CompliantReportingOpportunity | UsTnCompliantReporting2025PolicyOpportunity
+  UsTnCompliantReporting2025PolicyOpportunity
 > {
   navigateToFormText = "Auto-fill referral";
 

@@ -222,8 +222,8 @@ describe.each(officerCases)("test officer %s", (label, testOfficer) => {
       for (const client of presenter.clients ?? []) {
         vi.spyOn(client, "opportunities", "get")
           .mockResolvedValueOnce({
-            compliantReporting: {
-              type: "compliantReporting",
+            earlyTermination: {
+              type: "earlyTermination",
             },
           } as any as OpportunityMapping)
           .mockResolvedValueOnce({
@@ -242,7 +242,7 @@ describe.each(officerCases)("test officer %s", (label, testOfficer) => {
 
       expect(opportunitiesByType).toBeDefined();
       expect(opportunitiesByType?.pastFTRD.length).toEqual(1);
-      expect(opportunitiesByType?.compliantReporting.length).toEqual(1);
+      expect(opportunitiesByType?.earlyTermination.length).toEqual(1);
       expect(opportunitiesByType?.LSU.length).toEqual(2);
     });
 

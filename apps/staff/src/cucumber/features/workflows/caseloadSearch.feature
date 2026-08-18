@@ -16,7 +16,7 @@ Feature: Use the caseload search bar
             | stateCode | page               | searchValue   | secondSearchValue |
             | US_TN     | home               | Test Officer1 | Test Officer2     |
             | US_TN     | clients            | Test Officer1 | Test Officer2     |
-            | US_TN     | compliantReporting | Test Officer1 | Test Officer2     |
+            | US_TN     | usTnCompliantReporting2025Policy | Test Officer1 | Test Officer2     |
 
 
     Scenario Outline: Clearing officers from the search

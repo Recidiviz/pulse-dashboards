@@ -174,7 +174,7 @@ const mockEligibleClient: ClientRecord = {
   personExternalId: "101",
   displayId: "d101",
   pseudonymizedId: "p101",
-  allEligibleOpportunities: ["compliantReporting"],
+  allEligibleOpportunities: ["earlyTermination"],
 };
 
 const mockLsuEligibleClient: ClientRecord = {

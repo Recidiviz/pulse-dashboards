@@ -139,7 +139,6 @@ export type FeatureVariant =
   | "usPaUnclearEligibility"
 
   //// Tennessee
-  | "usTnCompliantReporting2025Policy"
   | "usTnCompliantReportingWriteback"
   | "usTnDoNotMarkPendingOnDownload"
   | "usTnExpiration"
@@ -244,7 +243,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usTnSuspensionOfDirectSupervision: {},
   outcomesModule: {},
   mandatoryMinimum: {},
-  usTnCompliantReporting2025Policy: {},
   usTnCompliantReportingWriteback: {},
   usTnDoNotMarkPendingOnDownload: {},
   reportIncorrectRosters: {},
@@ -352,7 +350,6 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usTnExpirationSubmitToTomis: {},
         usTnSuspensionOfDirectSupervision: {},
         zeroGrantsFlag: { activeTenants: ["US_ID", "US_MI", "US_TN", "US_PA"] },
-        usTnCompliantReporting2025Policy: {},
         usTnInitialClassification: {},
         usTnTEPENotesForAll: {},
         usMoSarInClientsPage: { activeTenants: ["US_MO"] },
@@ -388,8 +385,6 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         outcomesModule: {
           activeTenants: ["US_AZ", "US_CA", "US_ID", "US_MI", "US_TN"],
         },
-        usTnCompliantReporting2025Policy: isDemoMode() ? undefined : {},
-
         // TODO(recidiviz-data/#75828): Remove once we support 2026 versions in demo mode
         usTn2026ClassificationPolicyPilot: isDemoMode() ? undefined : {},
         usTnRcafV1: undefined,

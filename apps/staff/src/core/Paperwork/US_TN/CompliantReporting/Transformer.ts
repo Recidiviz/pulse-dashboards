@@ -38,8 +38,6 @@ import { formatDate } from "~utils";
 import { formatAsCurrency, formatWorkflowsDate } from "../../../../utils";
 import type {
   Client,
-  CompliantReportingOpportunity,
-  CompliantReportingReferralRecord,
   CompliantReportingTransformedETLFormInput,
 } from "../../../../WorkflowsStore";
 import { UsTnCompliantReporting2025PolicyOpportunity } from "../../../../WorkflowsStore/Opportunity/UsTn/UsTnCompliantReporting2025PolicyOpportunity";
@@ -60,12 +58,8 @@ function formatSentenceLength(
 
 export const transform = (
   client: Client,
-  record:
-    | CompliantReportingReferralRecord
-    | UsTnCompliantReporting2025PolicyReferralRecord,
-  opportunity:
-    | CompliantReportingOpportunity
-    | UsTnCompliantReporting2025PolicyOpportunity,
+  record: UsTnCompliantReporting2025PolicyReferralRecord,
+  opportunity: UsTnCompliantReporting2025PolicyOpportunity,
 ): CompliantReportingTransformedETLFormInput => {
   const { formInformation } = record;
 

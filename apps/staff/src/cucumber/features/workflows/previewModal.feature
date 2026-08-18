@@ -15,7 +15,7 @@ Feature: Interact with the preview modal on the opportunity page
 
         Examples:
             | stateCode | searchValue   | personName   | opportunityType    | criteriaText                                      | detailsText               | buttonText         |
-            | US_TN     | Test Officer1 | Linet Hansen | compliantReporting | No sanctions higher than Level 1 in the last year | Parole Special Conditions | Auto-fill referral |
+            | US_TN     | Test Officer1 | Linet Hansen | usTnCompliantReporting2025Policy | No sanctions higher than Level 1 in the last year | Parole Special Conditions | Auto-fill referral |
 
     Scenario Outline: Update eligibility from preview modal
         Given I am a "<stateCode>" user on the "<opportunityType>" page
@@ -31,7 +31,7 @@ Feature: Interact with the preview modal on the opportunity page
 
         Examples:
             | stateCode | opportunityType    | checkboxLabel                         | checkboxValue | personName   | searchValue   |
-            | US_TN     | compliantReporting | DECF: No effort to pay fine and costs | DECF          | Linet Hansen | Test Officer1 |
+            | US_TN     | usTnCompliantReporting2025Policy | DECF: No effort to pay fine and costs | DECF          | Linet Hansen | Test Officer1 |
 
     Scenario Outline: Navigate to form from preview modal
         Given I am a "<stateCode>" user on the "<opportunityType>" page
@@ -42,7 +42,7 @@ Feature: Interact with the preview modal on the opportunity page
 
         Examples:
             | stateCode | searchValue   | personName   | opportunityType    |
-            | US_TN     | Test Officer1 | Linet Hansen | compliantReporting |
+            | US_TN     | Test Officer1 | Linet Hansen | usTnCompliantReporting2025Policy |
 
     Scenario Outline: Navigate to person profile from preview modal
         Given I am a "<stateCode>" user on the "<opportunityType>" page
@@ -53,4 +53,4 @@ Feature: Interact with the preview modal on the opportunity page
 
         Examples:
             | stateCode | searchValue   | personName   | opportunityType    | personID |
-            | US_TN     | Test Officer1 | Linet Hansen | compliantReporting | p101     |
+            | US_TN     | Test Officer1 | Linet Hansen | usTnCompliantReporting2025Policy | p101     |

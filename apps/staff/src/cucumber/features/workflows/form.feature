@@ -13,7 +13,7 @@ Feature: Fill and export the Workflows form
 
         Examples:
             | stateCode | pseudonymizedId | opportunityType    | formText                     | criteriaText                                                    | detailsText                  |
-            | US_TN     | p101            | compliantReporting | Telephone Reporting Referral | Valid current offenses:                                         | Probation Special Conditions |
+            | US_TN     | p101            | usTnCompliantReporting2025Policy | Telephone Reporting Referral | Valid current offenses:                                         | Probation Special Conditions |
             | US_TN     | p101            | usTnExpiration     | Expiration date              | No zero tolerance codes since most recent sentence imposed date | Relevant Contact Notes       |
 
     Scenario Outline: Update the form
@@ -23,7 +23,7 @@ Feature: Fill and export the Workflows form
 
         Examples:
             | stateCode | pseudonymizedId | opportunityType    | inputId         |
-            | US_TN     | p101            | compliantReporting | clientFullName  |
+            | US_TN     | p101            | usTnCompliantReporting2025Policy | clientFullName  |
             | US_TN     | p101            | usTnExpiration     | currentOffenses |
 
     @remove-temp-directory
@@ -35,7 +35,7 @@ Feature: Fill and export the Workflows form
 
         Examples:
             | stateCode | pseudonymizedId | opportunityType    | exportButtonText | filename                                |
-            | US_TN     | p101            | compliantReporting | Download PDF     | Linet Hansen - Form CR3947 Rev05-18.pdf |
+            | US_TN     | p101            | usTnCompliantReporting2025Policy | Download PDF     | Linet Hansen - Form CR3947 Rev05-18.pdf |
 
     Scenario Outline: Mark client as ineligible
         Given I am a "<stateCode>" user on the "<opportunityType>" form page for "<pseudonymizedId>"
@@ -46,7 +46,7 @@ Feature: Fill and export the Workflows form
 
         Examples:
             | stateCode | pseudonymizedId | opportunityType    | checkboxValue |
-            | US_TN     | p101            | compliantReporting | DECF          |
+            | US_TN     | p101            | usTnCompliantReporting2025Policy | DECF          |
 
     Scenario Outline: Mark client as eligible
         Given I am a "<stateCode>" user on the "<opportunityType>" form page for "<pseudonymizedId>"
@@ -59,4 +59,4 @@ Feature: Fill and export the Workflows form
 
         Examples:
             | stateCode | pseudonymizedId | opportunityType    | checkboxValue |
-            | US_TN     | p101            | compliantReporting | DECF          |
+            | US_TN     | p101            | usTnCompliantReporting2025Policy | DECF          |

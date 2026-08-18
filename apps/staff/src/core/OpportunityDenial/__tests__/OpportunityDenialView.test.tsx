@@ -287,7 +287,7 @@ describe("OpportunityDenialView", () => {
         maxManualSnoozeDays: () => 90,
         defaultManualSnoozeDays: () => 30,
         snoozedOnDate: new Date(2023, 9, 5),
-        type: "compliantReporting",
+        type: "earlyTermination",
       });
     });
 
@@ -342,7 +342,7 @@ describe("OpportunityDenialView", () => {
     beforeEach(() => {
       renderElement({
         ...mockOpportunity,
-        type: "compliantReporting",
+        type: "earlyTermination",
         config: {
           ...mockOpportunity.config,
           denialReasons: {
@@ -405,7 +405,7 @@ describe("OpportunityDenialView", () => {
       timekeeper.freeze("2025-01-15");
       renderElement({
         ...mockOpportunity,
-        type: "compliantReporting",
+        type: "earlyTermination",
         config: {
           ...mockOpportunity.config,
         },
@@ -432,7 +432,7 @@ describe("OpportunityDenialView", () => {
           getPersonDaysToRelease(mockOpportunity.person),
         defaultManualSnoozeDays: () =>
           getPersonDaysToRelease(mockOpportunity.person),
-        type: "compliantReporting",
+        type: "earlyTermination",
       });
 
       expect(
@@ -446,7 +446,7 @@ describe("OpportunityDenialView", () => {
       timekeeper.freeze("2025-02-01"); // our client's supervision end date
       renderElement({
         ...mockOpportunity,
-        type: "compliantReporting",
+        type: "earlyTermination",
         config: {
           ...mockOpportunity.config,
         },
@@ -473,7 +473,7 @@ describe("OpportunityDenialView", () => {
         ...mockOpportunity,
         snoozedOnDate: new Date(2023, 9, 5),
         deniedTabTitle: "Overridden",
-        type: "compliantReporting",
+        type: "earlyTermination",
         config: {
           ...mockOpportunity.config,
           isAlert: true,

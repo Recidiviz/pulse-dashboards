@@ -333,7 +333,9 @@ describe("PageWorkflows", () => {
         <div>Opportunity Caseload View</div>,
       );
 
-      renderRouter(`${WORKFLOWS_PATHS.workflows}/compliantReporting`);
+      renderRouter(
+        `${WORKFLOWS_PATHS.workflows}/usTnCompliantReporting2025Policy`,
+      );
 
       expect(screen.getByText("Opportunity Caseload View")).toBeInTheDocument();
     });
@@ -347,7 +349,9 @@ describe("PageWorkflows", () => {
         },
       });
 
-      renderRouter(`${WORKFLOWS_PATHS.workflows}/compliantReporting/101/101`);
+      renderRouter(
+        `${WORKFLOWS_PATHS.workflows}/usTnCompliantReporting2025Policy/101/101`,
+      );
 
       expect(screen.getByText("Opportunity Action Page")).toBeInTheDocument();
     });
@@ -397,12 +401,14 @@ describe("PageWorkflows", () => {
       it("updates activeSystem based on page for SUPERVISION", () => {
         mockStores(baseMockWorkflowsStore);
 
-        renderRouter(`${WORKFLOWS_PATHS.workflows}/compliantReporting`);
+        renderRouter(
+          `${WORKFLOWS_PATHS.workflows}/usTnCompliantReporting2025Policy`,
+        );
 
         expect(
           useRootStore().workflowsRootStore.opportunityConfigurationStore
             .getOpportunityTypeFromUrl,
-        ).toHaveBeenCalledWith("compliantReporting");
+        ).toHaveBeenCalledWith("usTnCompliantReporting2025Policy");
         expect(
           useRootStore().workflowsStore.updateActiveSystem,
         ).toHaveBeenCalledWith("SUPERVISION");
@@ -458,7 +464,7 @@ describe("PageWorkflows", () => {
       it("redirects to the opportunity page if there is only 1 opp", async () => {
         mockStores({
           ...baseMockWorkflowsStore,
-          opportunityTypes: ["compliantReporting"],
+          opportunityTypes: ["usTnCompliantReporting2025Policy"],
         });
 
         renderRouter(WORKFLOWS_PATHS.workflows);
@@ -470,7 +476,10 @@ describe("PageWorkflows", () => {
       it("redirects to the homepage if there is more than 1 opp", async () => {
         mockStores({
           ...baseMockWorkflowsStore,
-          opportunityTypes: ["compliantReporting", "classificationReview"],
+          opportunityTypes: [
+            "usTnCompliantReporting2025Policy",
+            "classificationReview",
+          ],
         });
         renderRouter(WORKFLOWS_PATHS.workflows);
         expect(screen.getByText("Workflows Homepage")).toBeInTheDocument();
@@ -481,7 +490,7 @@ describe("PageWorkflows", () => {
       it("updates the selected person", () => {
         mockStores({
           ...baseMockWorkflowsStore,
-          opportunityTypes: ["compliantReporting"],
+          opportunityTypes: ["usTnCompliantReporting2025Policy"],
         });
         renderRouter(`${WORKFLOWS_PATHS.workflows}/clients/p101`);
         expect(

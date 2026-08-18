@@ -24,7 +24,6 @@ import { z } from "zod";
 
 import {
   clientRecordSchema,
-  compliantReportingSchema,
   incarcerationStaffRecordSchema,
   locationRecordSchema,
   OpportunityType,
@@ -175,7 +174,6 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
     usPaSpecialCircumstancesSupervisionSchema,
 
   // US_TN
-  compliantReporting: compliantReportingSchema,
   usTnCompliantReporting2025Policy: usTnCompliantReporting2025PolicySchema,
   supervisionLevelDowngrade:
     usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(),

@@ -15,7 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { CompliantReportingForm } from "./Forms/CompliantReportingForm";
+export {
+  type CompliantReportingDraftData,
+  CompliantReportingForm,
+  type CompliantReportingTransformedETLFormInput,
+} from "./Forms/CompliantReportingForm";
 export { EarlyTerminationForm } from "./Forms/EarlyTerminationForm";
 export { LSUForm } from "./Forms/LSUForm";
 export * from "./types";

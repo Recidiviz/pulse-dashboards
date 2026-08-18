@@ -54,7 +54,6 @@ export const ETL_COLLECTION_NAMES = [
   "incarcerationStaff",
   "clients",
   "residents",
-  "compliantReportingReferrals",
   "locations",
 ];
 

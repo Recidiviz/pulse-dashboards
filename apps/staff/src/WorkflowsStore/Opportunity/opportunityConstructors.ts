@@ -22,7 +22,6 @@ import { OpportunityType } from "~datatypes";
 import { Client } from "../Client";
 import { Resident } from "../Resident";
 import {
-  CompliantReportingOpportunity,
   EarnedDischargeOpportunity,
   LSUOpportunity,
   Opportunity,
@@ -190,7 +189,6 @@ export const opportunityConstructors = {
     UsTnAnnualReclassification2026V2Opportunity,
   usTnInitialClassification: UsTnInitialClassificationOpportunity,
   usTnInitialClassification2026Policy: UsTnInitialClassification2026Opportunity,
-  compliantReporting: CompliantReportingOpportunity,
   usTnCompliantReporting2025Policy: UsTnCompliantReporting2025PolicyOpportunity,
   usTnExpiration: UsTnExpirationOpportunity,
   usTnCustodyLevelDowngrade: UsTnCustodyLevelDowngradeOpportunity,

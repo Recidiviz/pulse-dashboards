@@ -83,7 +83,6 @@ export const constructedOpportunityTypes = [
   "usPaSpecialCircumstancesSupervision",
 
   // US_TN
-  "compliantReporting",
   "usTnCompliantReporting2025Policy",
   "usTnCustodyLevelDowngrade",
   "usTnExpiration",

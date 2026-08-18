@@ -49,10 +49,7 @@ export const US_TN_CLIENTS: ClientFixture[] = [
         {"NOTE_UPDATE_DATE": "${formatISO(add(new Date(), { days: -222 }))}", "CONDITIONS_ON_DATE": "MUST COMPLETE RECOVERY COURT"}]
       `,
     ],
-    allEligibleOpportunities: [
-      "compliantReporting",
-      "usTnCompliantReporting2025Policy",
-    ],
+    allEligibleOpportunities: ["usTnCompliantReporting2025Policy"],
     currentEmployers: [
       {
         name: "Tire store",
@@ -95,7 +92,6 @@ export const US_TN_CLIENTS: ClientFixture[] = [
       },
     ],
     allEligibleOpportunities: [
-      "compliantReporting",
       "usTnExpiration",
       "usTnCompliantReporting2025Policy",
     ],
@@ -164,7 +160,6 @@ export const US_TN_CLIENTS: ClientFixture[] = [
     expirationDate: relativeFixtureDate({ days: 1000 }),
     currentBalance: 125.75,
     allEligibleOpportunities: [
-      "compliantReporting",
       "usTnCompliantReporting2025Policy",
       "usTnSuspensionOfDirectSupervision",
     ],
@@ -198,7 +193,6 @@ export const US_TN_CLIENTS: ClientFixture[] = [
     lastPaymentAmount: 125.75,
     lastPaymentDate: relativeFixtureDate({ months: -11 }),
     allEligibleOpportunities: [
-      "compliantReporting",
       "usTnCompliantReporting2025Policy",
       "usTnSuspensionOfDirectSupervision",
     ],
@@ -288,10 +282,7 @@ export const US_TN_CLIENTS: ClientFixture[] = [
         address: "496 Main Ave",
       },
     ],
-    allEligibleOpportunities: [
-      "compliantReporting",
-      "usTnCompliantReporting2025Policy",
-    ],
+    allEligibleOpportunities: ["usTnCompliantReporting2025Policy"],
   },
   {
     personExternalId: "202",
@@ -314,10 +305,7 @@ export const US_TN_CLIENTS: ClientFixture[] = [
     supervisionStartDate: relativeFixtureDate({ months: -13, days: 2 }),
     expirationDate: relativeFixtureDate({ months: 19, days: 19 }),
     emailAddress: "linda@example.com",
-    allEligibleOpportunities: [
-      "compliantReporting",
-      "usTnCompliantReporting2025Policy",
-    ],
+    allEligibleOpportunities: ["usTnCompliantReporting2025Policy"],
   },
   {
     personExternalId: "203",
@@ -342,7 +330,6 @@ export const US_TN_CLIENTS: ClientFixture[] = [
     expirationDate: relativeFixtureDate({ months: 18, days: 18 }),
     emailAddress: "reginald@example.com",
     allEligibleOpportunities: [
-      "compliantReporting",
       "usTnCompliantReporting2025Policy",
       "usTnSuspensionOfDirectSupervision",
     ],
@@ -366,10 +353,7 @@ export const US_TN_CLIENTS: ClientFixture[] = [
     supervisionStartDate: relativeFixtureDate({ years: -2, days: -555 }),
     expirationDate: relativeFixtureDate({ years: 1, days: 444 }),
     currentBalance: 0,
-    allEligibleOpportunities: [
-      "compliantReporting",
-      "usTnCompliantReporting2025Policy",
-    ],
+    allEligibleOpportunities: ["usTnCompliantReporting2025Policy"],
     emailAddress: "priya@example.com",
   },
   {
@@ -391,10 +375,7 @@ export const US_TN_CLIENTS: ClientFixture[] = [
     supervisionStartDate: relativeFixtureDate({ years: -2, days: -555 }),
     expirationDate: relativeFixtureDate({ years: 1, days: 444 }),
     currentBalance: 0,
-    allEligibleOpportunities: [
-      "compliantReporting",
-      "usTnCompliantReporting2025Policy",
-    ],
+    allEligibleOpportunities: ["usTnCompliantReporting2025Policy"],
     emailAddress: "marcus@example.com",
   },
 ];

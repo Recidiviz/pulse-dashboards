@@ -1293,6 +1293,10 @@ describe("feature variants", () => {
 
   afterEach(() => {
     vi.useRealTimers();
+    // Guards against leaking feature variant overrides into whichever test
+    // file runs next in this worker; see the similar localStorage guard in
+    // WorkflowsStore.test.ts (PR #13846).
+    sessionStorage.clear();
   });
 
   test("Does not throw error on failed logins", () => {
@@ -1376,7 +1380,6 @@ describe("feature variants", () => {
         "usPaSpecialCircumstances": {},
         "usPaUnclearEligibility": {},
         "usTn2026ClassificationPolicyPilot": {},
-        "usTnCompliantReporting2025Policy": {},
         "usTnCompliantReportingWriteback": {},
         "usTnDoNotMarkPendingOnDownload": {},
         "usTnExpiration": {},
@@ -1468,7 +1471,6 @@ describe("feature variants", () => {
         "usPaSpecialCircumstances": {},
         "usPaUnclearEligibility": {},
         "usTn2026ClassificationPolicyPilot": {},
-        "usTnCompliantReporting2025Policy": {},
         "usTnCompliantReportingWriteback": {},
         "usTnDoNotMarkPendingOnDownload": {},
         "usTnExpiration": {},
@@ -1558,7 +1560,6 @@ describe("feature variants", () => {
         "usPaSpecialCircumstances": {},
         "usPaUnclearEligibility": {},
         "usTn2026ClassificationPolicyPilot": {},
-        "usTnCompliantReporting2025Policy": {},
         "usTnCompliantReportingWriteback": {},
         "usTnDoNotMarkPendingOnDownload": {},
         "usTnExpiration": {},

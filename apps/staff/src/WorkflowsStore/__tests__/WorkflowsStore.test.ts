@@ -52,7 +52,10 @@ import {
   mockSupervisor,
 } from "../__fixtures__";
 import { Client } from "../Client";
-import { CompliantReportingOpportunity, LSUOpportunity } from "../Opportunity";
+import {
+  LSUOpportunity,
+  UsNdEarlyTerminationOpportunity,
+} from "../Opportunity";
 import {
   IApiOpportunityConfiguration,
   OpportunityConfiguration,
@@ -79,7 +82,7 @@ const { stateConfigs } = vi.hoisted(() => {
   const stateConfigs: Record<testStateCode | "RECIDIVIZ", any> = {
     US_XX: {
       opportunityTypes: [
-        "compliantReporting",
+        "earlyTermination",
         "LSU",
         "usIdCRC",
         "usIdExtendedCRC",
@@ -103,7 +106,7 @@ const { stateConfigs } = vi.hoisted(() => {
     },
     US_TN: {
       opportunityTypes: [
-        "compliantReporting",
+        "earlyTermination",
         "supervisionLevelDowngrade",
         "usTnExpiration",
       ],
@@ -743,9 +746,9 @@ test("no client selected", async () => {
     (workflowsStore.user as any).updates = { selectedSearchIds: ["OFFICER1"] };
   });
 
-  // simulate a UI displaying CR data
+  // simulate a UI displaying opportunity data
   testObserver = keepAlive(
-    computed(() => workflowsStore.eligibleOpportunities.compliantReporting),
+    computed(() => workflowsStore.eligibleOpportunities.earlyTermination),
   );
 
   expect(workflowsStore.selectedClient).toBeUndefined();
@@ -808,8 +811,8 @@ describe("opportunitiesLoaded", () => {
   });
 
   test("opportunitiesLoaded is false when not all provided opportunities are hydrated", async () => {
-    const compliantReportingHydrationStateMock = vi.spyOn(
-      CompliantReportingOpportunity.prototype,
+    const earlyTerminationHydrationStateMock = vi.spyOn(
+      UsNdEarlyTerminationOpportunity.prototype,
       "hydrationState",
       "get",
     );
@@ -822,7 +825,7 @@ describe("opportunitiesLoaded", () => {
     populateClients(mockClients);
     workflowsStore.opportunityConfigurationStore.mockHydrated();
 
-    compliantReportingHydrationStateMock.mockReturnValue({
+    earlyTerminationHydrationStateMock.mockReturnValue({
       status: "hydrated",
     });
     lsuHydrationStateMock.mockReturnValue({ status: "loading" });
@@ -848,18 +851,18 @@ describe("hasOpportunities", () => {
   test("hasOpportunities is false if there are no clients loaded", async () => {
     await waitForHydration();
     populateClients([]);
-    expect(workflowsStore.hasOpportunities(["compliantReporting"])).toBeFalse();
+    expect(workflowsStore.hasOpportunities(["earlyTermination"])).toBeFalse();
   });
 
   test("hasOpportunities is false if no client has opportunities", async () => {
     await waitForHydration();
     populateClients([mockIneligibleClient]);
-    expect(workflowsStore.hasOpportunities(["compliantReporting"])).toBeFalse();
+    expect(workflowsStore.hasOpportunities(["earlyTermination"])).toBeFalse();
   });
 
   test("hasOpportunities is false if no client has opportunities for those types", async () => {
     const hydrationStateMock = vi.spyOn(
-      CompliantReportingOpportunity.prototype,
+      UsNdEarlyTerminationOpportunity.prototype,
       "hydrationState",
       "get",
     );
@@ -884,13 +887,13 @@ describe("hasOpportunities", () => {
       earlyTermination: {
         hydrationState: { status: "hydrated" },
       },
-      compliantReporting: {
+      LSU: {
         hydrationState: { status: "hydrated" },
       },
     } as any as OpportunityMapping);
 
     setOpportunities({
-      compliantReporting: mockBaseOpportunityConfig,
+      LSU: mockBaseOpportunityConfig,
       earlyTermination: mockBaseOpportunityConfig,
     });
 
@@ -898,10 +901,7 @@ describe("hasOpportunities", () => {
     populateClients(mockClients);
 
     expect(
-      workflowsStore.hasOpportunities([
-        "earlyTermination",
-        "compliantReporting",
-      ]),
+      workflowsStore.hasOpportunities(["earlyTermination", "LSU"]),
     ).toBeTrue();
   });
 });
@@ -1127,17 +1127,17 @@ describe("test state-specific opportunity type feature variant filters", () => {
       await waitForHydration({ ...mockOfficer });
     });
 
-    test("US_XX oppTypes list does not include compliantReporting", async () => {
+    test("US_XX oppTypes list does not include earlyTermination", async () => {
       // should be in the list when the feat var isn't on
-      setOpportunities({ compliantReporting: mockBaseOpportunityConfig });
+      setOpportunities({ earlyTermination: mockBaseOpportunityConfig });
 
       expect(
-        workflowsStore.opportunityTypes.includes("compliantReporting"),
+        workflowsStore.opportunityTypes.includes("earlyTermination"),
       ).toBeTruthy();
 
       setOpportunities(
         {
-          compliantReporting: {
+          earlyTermination: {
             ...mockBaseOpportunityConfig,
             inverseFeatureVariant: "fakeFeatVar" as FeatureVariant,
           },
@@ -1151,7 +1151,7 @@ describe("test state-specific opportunity type feature variant filters", () => {
 
       // should no longer be in the list with inverse setting on now.
       expect(
-        workflowsStore.opportunityTypes.includes("compliantReporting"),
+        workflowsStore.opportunityTypes.includes("earlyTermination"),
       ).toBeFalsy();
     });
   });
@@ -1185,7 +1185,7 @@ describe("opportunityTypes for US_TN", () => {
 });
 
 describe("opportunityTypes are gated by gatedOpportunities when set", () => {
-  const NON_GATED_OPPS = ["compliantReporting"];
+  const NON_GATED_OPPS = ["earlyTermination"];
   const TEST_GATED_OPP = "LSU" as OpportunityType;
   const TEST_FEAT_VAR = "TEST" as FeatureVariant;
   const setupHydration = () =>
@@ -1206,7 +1206,7 @@ describe("opportunityTypes are gated by gatedOpportunities when set", () => {
             ...mockBaseOpportunityConfig,
             featureVariant: TEST_FEAT_VAR,
           },
-          compliantReporting: mockBaseOpportunityConfig,
+          earlyTermination: mockBaseOpportunityConfig,
         },
         { [TEST_FEAT_VAR]: {} },
       );
@@ -1221,7 +1221,7 @@ describe("opportunityTypes are gated by gatedOpportunities when set", () => {
         ...mockBaseOpportunityConfig,
         featureVariant: TEST_FEAT_VAR,
       },
-      compliantReporting: mockBaseOpportunityConfig,
+      earlyTermination: mockBaseOpportunityConfig,
     });
   });
 

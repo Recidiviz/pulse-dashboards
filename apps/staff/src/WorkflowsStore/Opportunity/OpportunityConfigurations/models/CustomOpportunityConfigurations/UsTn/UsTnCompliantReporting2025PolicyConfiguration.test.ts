@@ -17,7 +17,6 @@
 
 import UserStore from "../../../../../../RootStore/UserStore";
 import { IApiOpportunityConfiguration } from "../../../interfaces";
-import { CompliantReportingConfiguration } from "./CompliantReportingConfiguration";
 import { UsTnCompliantReporting2025PolicyConfiguration } from "./UsTnCompliantReporting2025PolicyConfiguration";
 
 const mockConfigObject = {
@@ -29,40 +28,28 @@ const mockConfigObject = {
 } as unknown as IApiOpportunityConfiguration;
 
 describe("TN compliant reporting denial reasons", () => {
-  test.each([
-    ["legacy compliant reporting", CompliantReportingConfiguration],
-    [
-      "2025 policy compliant reporting",
-      UsTnCompliantReporting2025PolicyConfiguration,
-    ],
-  ])(
-    "keeps Other when TOMIS writeback is disabled for %s",
-    (_, ConfigClass) => {
-      const config = new ConfigClass(mockConfigObject, {
+  test("keeps Other when TOMIS writeback is disabled", () => {
+    const config = new UsTnCompliantReporting2025PolicyConfiguration(
+      mockConfigObject,
+      {
         activeFeatureVariants: {},
-      } as UserStore);
+      } as UserStore,
+    );
 
-      expect(config.denialReasons).toHaveProperty("Other");
-    },
-  );
+    expect(config.denialReasons).toHaveProperty("Other");
+  });
 
-  test.each([
-    ["legacy compliant reporting", CompliantReportingConfiguration],
-    [
-      "2025 policy compliant reporting",
-      UsTnCompliantReporting2025PolicyConfiguration,
-    ],
-  ])(
-    "removes Other when TOMIS writeback is enabled for %s",
-    (_, ConfigClass) => {
-      const config = new ConfigClass(mockConfigObject, {
+  test("removes Other when TOMIS writeback is enabled", () => {
+    const config = new UsTnCompliantReporting2025PolicyConfiguration(
+      mockConfigObject,
+      {
         activeFeatureVariants: { usTnCompliantReportingWriteback: {} },
-      } as UserStore);
+      } as UserStore,
+    );
 
-      expect(config.denialReasons).toEqual({
-        DECF: "DECF: Denied, No Effort to Pay Fine and Costs",
-        DEIO: "DEIO: Denied for CR",
-      });
-    },
-  );
+    expect(config.denialReasons).toEqual({
+      DECF: "DECF: Denied, No Effort to Pay Fine and Costs",
+      DEIO: "DEIO: Denied for CR",
+    });
+  });
 });
