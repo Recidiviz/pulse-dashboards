@@ -20,7 +20,7 @@ import {
   paroleCasesFixtureByState,
   ParoleFixtureStateCode,
   ParoleHearing,
-  paroleHearingsFixture,
+  paroleHearingsFixtureByState,
 } from "~datatypes";
 
 import { ParoleStore } from "../ParoleStore";
@@ -29,8 +29,18 @@ import { ParoleAPI } from "./interface";
 export class ParoleOfflineAPIClient implements ParoleAPI {
   constructor(public readonly paroleStore: ParoleStore) {}
 
+  // Docket varies by tenant, not just conduct classification scheme --
+  // US_CO's carries real resident records that US_ID's must not (see
+  // CO_HEARINGS/CO_REAL_CASE_PROFILES in fixture.ts).
   async hearings(): Promise<Array<ParoleHearing>> {
-    return paroleHearingsFixture;
+    const { currentTenantId } = this.paroleStore.rootStore.tenantStore;
+    if (!this.isParoleFixtureStateCode(currentTenantId)) {
+      throw new Error(
+        `No Parole fixture data for tenant [${currentTenantId}]. Add one ` +
+          "in libs/datatypes/src/parole/fixture.ts.",
+      );
+    }
+    return paroleHearingsFixtureByState[currentTenantId];
   }
 
   async caseDetail(docId: string): Promise<ParoleCase> {

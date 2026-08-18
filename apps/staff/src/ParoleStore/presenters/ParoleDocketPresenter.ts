@@ -24,6 +24,7 @@ import { FilterField, FilterOption, FilterType } from "../../core/models/types";
 import { FilterPresenter } from "../../FilterStore/FilterPresenter";
 import { ParoleFilterStore } from "../ParoleFilterStore";
 import { ParoleStore } from "../ParoleStore";
+import { formatDocId } from "../utils";
 
 type ParoleHearingFilterField = "facility" | "hearingType";
 
@@ -112,7 +113,9 @@ export class ParoleDocketPresenter
       if (
         query &&
         !hearing.individualName.toLowerCase().includes(query) &&
-        !hearing.docId.toLowerCase().includes(query)
+        // Matched against the "DOC-"-prefixed display form (not the raw,
+        // unprefixed docId) so typing what's shown on screen still matches.
+        !formatDocId(hearing.docId).toLowerCase().includes(query)
       )
         return false;
 

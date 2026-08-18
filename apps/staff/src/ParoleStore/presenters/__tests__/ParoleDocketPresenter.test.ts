@@ -51,7 +51,11 @@ describe("ParoleDocketPresenter", () => {
   let presenter: ParoleDocketPresenter;
 
   beforeEach(() => {
-    paroleStore = new ParoleStore(new RootStore());
+    const rootStore = new RootStore();
+    // hearings() is mocked in every test below except "hydrate", which hits
+    // the real US_CO fixture, so a real Parole-enabled tenant is required.
+    rootStore.tenantStore.currentTenantId = "US_CO";
+    paroleStore = new ParoleStore(rootStore);
     presenter = new ParoleDocketPresenter(paroleStore);
   });
 

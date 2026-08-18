@@ -22,6 +22,7 @@ import styled from "styled-components";
 
 import { Icon, IconSVG, palette } from "~design-system";
 
+import { formatDocId } from "../../../ParoleStore/utils";
 import { NAV_BAR_HEIGHT } from "../../NavigationLayout";
 import { PaddedSectionCardBody } from "./PaddedSectionCardBody";
 import {
@@ -171,7 +172,7 @@ export function CaseProfileSidebar({
             )}
             <div>
               <NameHeading>{name}</NameHeading>
-              <DocId>{docId}</DocId>
+              <DocId>{formatDocId(docId)}</DocId>
               <FactLabel>Incarcerated | {custodyLevel}</FactLabel>
             </div>
 

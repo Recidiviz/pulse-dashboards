@@ -22,8 +22,8 @@ import {
   ParoleRiskTool,
 } from "./schema";
 
-describe("Anderson's (DOC-45821) risk assessment history", () => {
-  const { riskAssessments } = paroleCasesFixtureByState.US_CO["DOC-45821"];
+describe("Anderson's (docId 45821) risk assessment history", () => {
+  const { riskAssessments } = paroleCasesFixtureByState.US_CO["45821"];
 
   const latestByTool = (tool: ParoleRiskTool): ParoleRiskAssessment =>
     riskAssessments

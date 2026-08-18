@@ -126,56 +126,56 @@ const RAW_HEARINGS: Array<
   Omit<ParoleHearing, "hearingDate"> & { daysFromNow: number }
 > = [
   {
-    docId: "DOC-45821",
+    docId: "45821",
     individualName: "Anderson, Michael",
     hearingType: "Parole Grant Hearing",
     facility: "Central State Correctional Facility",
     daysFromNow: 5,
   },
   {
-    docId: "DOC-52903",
+    docId: "52903",
     individualName: "Brooks, Sarah",
     hearingType: "Parole Grant Hearing",
     facility: "North River Correctional Center",
     daysFromNow: 8,
   },
   {
-    docId: "DOC-61247",
+    docId: "61247",
     individualName: "Chen, David",
     hearingType: "Revocation Hearing",
     facility: "Western State Prison",
     daysFromNow: 12,
   },
   {
-    docId: "DOC-48392",
+    docId: "48392",
     individualName: "Davis, Jennifer",
     hearingType: "Parole Grant Hearing",
     facility: "Central State Correctional Facility",
     daysFromNow: 15,
   },
   {
-    docId: "DOC-71458",
+    docId: "71458",
     individualName: "Evans, Robert",
     hearingType: "Parole Grant Hearing",
     facility: "South Bay Detention Center",
     daysFromNow: 19,
   },
   {
-    docId: "DOC-55729",
+    docId: "55729",
     individualName: "Foster, Maria",
     hearingType: "Parole Grant Hearing",
     facility: "North River Correctional Center",
     daysFromNow: 23,
   },
   {
-    docId: "DOC-63184",
+    docId: "63184",
     individualName: "Garcia, Carlos",
     hearingType: "Parole Grant Hearing",
     facility: "Western State Prison",
     daysFromNow: 26,
   },
   {
-    docId: "DOC-59402",
+    docId: "59402",
     individualName: "Harris, Patricia",
     hearingType: "Modification Hearing",
     facility: "Central State Correctional Facility",
@@ -183,13 +183,49 @@ const RAW_HEARINGS: Array<
   },
 ];
 
-export const paroleHearingsFixture: Array<ParoleHearing> = RAW_HEARINGS.map(
+const SHARED_HEARINGS: Array<ParoleHearing> = RAW_HEARINGS.map(
   ({ daysFromNow, ...hearing }) =>
     paroleHearingSchema.parse({
       ...hearing,
       hearingDate: iso(addDays(new Date(), daysFromNow)),
     }),
 );
+
+// Real Colorado DOC records (CO Parole Board MVP Sample, "Real Resident
+// Mapping #1"/#2/etc.) used to validate the profile page against actual
+// resident data ahead of the US_CO Parole MVP launch. Entries here belong
+// only on US_CO's docket -- US_ID must never show a real CO resident's data.
+// Add each newly extracted real resident's hearing to this array, and their
+// case-profile detail to CO_REAL_CASE_PROFILES below (a resident may appear
+// more than once here across separate hearings, each with its own docId).
+const CO_HEARINGS: Array<ParoleHearing> = [
+  paroleHearingSchema.parse({
+    docId: "454321",
+    individualName: "BANNER, BRUCE",
+    hearingType: "Parole Grant Hearing",
+    facility: "Fremont Correctional Facility",
+    hearingDate: "2026-10-01",
+  }),
+  paroleHearingSchema.parse({
+    docId: "980332",
+    individualName: "ROGERS, STEVE",
+    hearingType: "Parole Grant Hearing",
+    facility: "Colorado State Penitentiary",
+    hearingDate: "2026-10-01",
+  }),
+];
+
+// Keyed by state so `nx offline staff` can serve each Parole-enabled tenant
+// its own docket -- unlike the case data below (which varies only by
+// severity scheme), US_CO's docket carries extra, real resident records
+// that US_ID's must not.
+export const paroleHearingsFixtureByState: Record<
+  ParoleFixtureStateCode,
+  Array<ParoleHearing>
+> = {
+  US_ID: SHARED_HEARINGS,
+  US_CO: [...SHARED_HEARINGS, ...CO_HEARINGS],
+};
 
 // US_CO has no Parole backend yet (TODO(OBT-41775): replace this fixture with
 // real data once one exists). Case-profile detail for each individual on the
@@ -203,36 +239,36 @@ export const paroleHearingsFixture: Array<ParoleHearing> = RAW_HEARINGS.map(
 // (see STALE_PAROLE_PLAN_DOC_ID / NO_PAROLE_PLAN_DOC_ID below), matching the
 // same two individuals used for this in the Parole POC.
 const HEARING_TIME_BY_DOC_ID: Record<string, string> = {
-  "DOC-52903": "10:30 AM",
-  "DOC-61247": "1:00 PM",
-  "DOC-48392": "9:30 AM",
-  "DOC-71458": "11:00 AM",
-  "DOC-55729": "2:00 PM",
-  "DOC-63184": "10:00 AM",
+  "52903": "10:30 AM",
+  "61247": "1:00 PM",
+  "48392": "9:30 AM",
+  "71458": "11:00 AM",
+  "55729": "2:00 PM",
+  "63184": "10:00 AM",
 };
 
 // Keyed by docId (rather than derived from `individualName`) so it stays
 // correct even if a fixture name is ever reworded.
 const GENDER_BY_DOC_ID: Record<string, string> = {
-  "DOC-45821": "Male", // Anderson, Michael
-  "DOC-52903": "Female", // Brooks, Sarah
-  "DOC-61247": "Male", // Chen, David
-  "DOC-48392": "Female", // Davis, Jennifer
-  "DOC-71458": "Male", // Evans, Robert
-  "DOC-55729": "Female", // Foster, Maria
-  "DOC-63184": "Male", // Garcia, Carlos
-  "DOC-59402": "Female", // Harris, Patricia
+  "45821": "Male", // Anderson, Michael
+  "52903": "Female", // Brooks, Sarah
+  "61247": "Male", // Chen, David
+  "48392": "Female", // Davis, Jennifer
+  "71458": "Male", // Evans, Robert
+  "55729": "Female", // Foster, Maria
+  "63184": "Male", // Garcia, Carlos
+  "59402": "Female", // Harris, Patricia
 };
 
-const NO_HEARING_SCHEDULED_DOC_ID = "DOC-59402";
+const NO_HEARING_SCHEDULED_DOC_ID = "59402";
 
 // Brooks: parole plan on file, but not updated in over 90 days.
-const STALE_PAROLE_PLAN_DOC_ID = "DOC-52903";
+const STALE_PAROLE_PLAN_DOC_ID = "52903";
 // Chen: no parole plan on file at all.
-const NO_PAROLE_PLAN_DOC_ID = "DOC-61247";
+const NO_PAROLE_PLAN_DOC_ID = "61247";
 // Chen is also the fixture's parole-return case, so the General Info banner
 // has coverage alongside his other flagged states above.
-const PAROLE_RETURN_DOC_ID = "DOC-61247";
+const PAROLE_RETURN_DOC_ID = "61247";
 
 const GENERIC_CASE_MANAGER_NAMES = [
   "David Thompson",
@@ -406,10 +442,10 @@ function buildAndersonCaseProfile(
   const srtAnchor = parseISO("2026-03-19");
   const carasAnchor = parseISO("2026-04-16");
   return paroleCaseSchema.parse({
-    docId: "DOC-45821",
+    docId: "45821",
     name: "Anderson, Michael",
     dob: iso(subYears(today, 40)),
-    gender: GENDER_BY_DOC_ID["DOC-45821"],
+    gender: GENDER_BY_DOC_ID["45821"],
     currentFacility: "Central State Correctional Facility",
     custodyLevel: "Minimum",
     caseManagerName: "Jennifer Martinez",
@@ -851,16 +887,634 @@ function buildGenericCaseProfile(
   });
 }
 
+// Case-profile detail for each real Colorado DOC record in CO_HEARINGS
+// above, keyed by docId. Hand-authored from the CO Parole Board MVP
+// Sample's "Real Resident Mapping #1"/#2/etc. column rather than
+// generically derived, so the fixture matches an actual intake record. Add
+// each newly extracted real resident's case profile here, not a new builder
+// function -- this record is meant to grow as more real residents are
+// added. Fields the source spreadsheet marked "#N/A" (no data on file) are
+// set to this schema's empty/no-data value for that field's type.
+// criminogenicNeed is blank for every docProgram in the source records, but
+// paroleDocProgramSchema requires a non-null string, so it is set to "" here
+// rather than widening the shared schema for one fixture's real-world gap.
+const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
+  "454321": paroleCaseSchema.parse({
+    docId: "454321",
+    name: "BANNER, BRUCE",
+    dob: "1992-04-01",
+    gender: "Male",
+    currentFacility: "Fremont Correctional Facility",
+    custodyLevel: "Medium",
+    caseManagerName: "JANE WESTON",
+    hearingDate: "2026-10-01",
+    isParoleReturn: false,
+    sentenceStartDate: "2023-06-16",
+    paroleEligibilityDate: "2027-01-03",
+    mandatoryReleaseDate: "2033-01-03",
+    parolePlan: { onFile: false, documents: [] },
+    attachments: [],
+    conductHistory: [
+      {
+        date: "2025-01-14",
+        facility: "Fremont Correctional Facility",
+        violation: "THEFT",
+        description:
+          "OFFENDER WAS WITNESSED REACHING INTO A CANTEEN CRATE REMOVING AN ITEM THAT DID NOT BELONG TO THEM AND WAS LATER FOUND IN THEIR CELL.",
+        severity: "Class 2",
+        disposition: "LOST PRIVILEGES",
+      },
+    ],
+    docPrograms: [
+      {
+        name: "Pathways - Break Through",
+        completionDate: "2025-12-10",
+        type: "Mental Health",
+        criminogenicNeed: "",
+        status: "completed",
+      },
+      {
+        name: "Financial Literacy",
+        completionDate: "2025-08-26",
+        type: "Educational/Vocational",
+        criminogenicNeed: "",
+        status: "completed",
+      },
+      {
+        name: "Dream Initiative",
+        completionDate: "2025-08-12",
+        type: "Educational/Vocational",
+        criminogenicNeed: "",
+        status: "completed",
+      },
+      {
+        name: "INTRODUCTION TO COMPUTER INFORMATION SYSTEMS 52.0101",
+        completionDate: "2025-07-10",
+        type: "Educational/Vocational",
+        criminogenicNeed: "",
+        status: "completed",
+      },
+      {
+        name: "Lifeskills - Sim Venture",
+        completionDate: "2025-06-19",
+        type: "Educational/Vocational",
+        criminogenicNeed: "",
+        status: "completed",
+      },
+      {
+        name: "MORAL RECONATION THERAPY",
+        completionDate: "2025-05-06",
+        type: "Mental Health",
+        criminogenicNeed: "",
+        status: "completed",
+      },
+      {
+        name: "Cert OSHA 30-Hr Haz-Gen Ind",
+        completionDate: "2025-02-27",
+        type: "Educational/Vocational",
+        criminogenicNeed: "",
+        status: "completed",
+      },
+      {
+        name: "Seven Habits of Highly Effective People",
+        completionDate: "2024-10-30",
+        type: "Mental Health",
+        criminogenicNeed: "",
+        status: "completed",
+      },
+      {
+        name: "Custodial Training CIP Code 190699",
+        completionDate: "2024-06-06",
+        type: "Educational/Vocational",
+        criminogenicNeed: "",
+        status: "completed",
+      },
+      {
+        name: "Mental Health (CBT)",
+        completionDate: null,
+        type: "Mental Health",
+        criminogenicNeed: "",
+        status: "recommended",
+      },
+      {
+        name: "Mental Health (IMR)",
+        completionDate: null,
+        type: "Mental Health",
+        criminogenicNeed: "",
+        status: "recommended",
+      },
+      {
+        name: "Mental Health (Program 04)",
+        completionDate: null,
+        type: "Mental Health",
+        criminogenicNeed: "",
+        status: "recommended",
+      },
+    ],
+    edovoPrograms: [],
+    offenseHistory: {
+      county: "Jefferson County",
+      docket: "31CR9989",
+      conviction: "Assault",
+      classFelony: "Felony Class 4",
+      sentence: "12 years",
+      dateOfOffense: "2021-06-24",
+      convictionDate: "2023-05-11",
+      offenseNarrative:
+        'Per PSIR, On 06/24/2021 at about 6:27 p.m., your affiant, hereby referred to as, "I" or, "Me" was dispatched to 7701 W Tower Ave for a report of a domestic. The reporting party (RP), who was later identified as Banner, Martine (DOB/09/22/1 993), reported that her husband tried to kill her by strangling her with a chord. She further reported that she had escaped and was across the street at 7700 W Tower Ave. She advised of multiple children in the residence and further stated that her husband, the suspect, is leaving in a silver Ford F150 with a temporary license plate on the back of the truck.',
+      priorConvictions: [],
+      victimInvolved: true,
+    },
+    riskAssessments: [
+      { tool: "SRT", score: 8, maxScore: 44, date: "2025-01-17" },
+      { tool: "SRT", score: 16, maxScore: 44, date: "2024-01-25" },
+      { tool: "PIT", score: 14, maxScore: 39, date: "2023-06-22" },
+    ],
+  }),
+  "980332": paroleCaseSchema.parse({
+    docId: "980332",
+    name: "ROGERS, STEVE",
+    dob: "1985-10-11",
+    gender: "Male",
+    currentFacility: "Colorado State Penitentiary",
+    custodyLevel: "Close",
+    caseManagerName: "GEORGE GEORGESON",
+    hearingDate: "2026-10-01",
+    isParoleReturn: true,
+    sentenceStartDate: "2018-01-19",
+    paroleEligibilityDate: "2027-01-07",
+    mandatoryReleaseDate: "2039-12-16",
+    parolePlan: {
+      onFile: false,
+      documents: [],
+    },
+    attachments: [],
+    conductHistory: [
+      {
+        date: "2025-05-20",
+        facility: "COLORADO STATE PENITENTIARY",
+        violation: "UNAUTHORIZED/INCIDENTAL CONTACT",
+        description: "INMATE THREW WATER ON STAFF.",
+        severity: "Class 2",
+        disposition: "LOST TIME",
+      },
+      {
+        date: "2025-05-20",
+        facility: "COLORADO STATE PENITENTIARY",
+        violation: "THREATS",
+        description: "INMATE MAKE THREATS TOWARDS STAFF.",
+        severity: "Class 2",
+        disposition: "NO SANCTION - CMNTS",
+      },
+      {
+        date: "2025-05-14",
+        facility: "COLORADO STATE PENITENTIARY",
+        violation: "HAZARDOUS LIQUID ASSAULT ON STAFF",
+        description:
+          "INMATER ATTEMTED TO CAUSE INJURY TO STAFF BY THROWING AN UNKNOWN LIQUID ON THEM.",
+        severity: "Class 1",
+        disposition: "LOST TIME",
+      },
+      {
+        date: "2025-05-08",
+        facility: "COLORADO STATE PENITENTIARY",
+        violation: "HAZARDOUS LIQUID ASSAULT ON STAFF",
+        description: "INMATE THREW HAZARDOUS LIQUID AND HIT STAFF.",
+        severity: "Class 1",
+        disposition: "LOST PRIVILEGES",
+      },
+      {
+        date: "2025-04-25",
+        facility: "COLORADO STATE PENITENTIARY",
+        violation: "THREATS",
+        description: "INMATE MADE THREATS TOWARDS STAFF.",
+        severity: "Class 2",
+        disposition: "LOST PRIVILEGES",
+      },
+      {
+        date: "2025-03-06",
+        facility: "COLORADO STATE PENITENTIARY",
+        violation: "DAMAGE TO PROPERTY (OLD:>$50)",
+        description:
+          "INMATE DAMAGED ITEMS ASSIGNED TO HIM REQUIRING REPLACEMENT OR REPAIR. RESTITUTION $3.96 TP CSP LAUNDRY",
+        severity: "Class 2",
+        disposition: "RESTITUTION",
+      },
+      {
+        date: "2025-02-08",
+        facility: "COLORADO STATE PENITENTIARY",
+        violation: "UNAUTHORIZED POSSESSION",
+        description:
+          "DO LT DOE HO LT NIGHT. INMATE WS FOIUND IN POSSESSION OF UNAUTHORIZED ITEMS.",
+        severity: "Class 2",
+        disposition: "LOST TIME",
+      },
+      {
+        date: "2024-10-29",
+        facility: "STERLING CORRECTIONAL FACILITY",
+        violation: "HAZARDOUS LIQUID ASSAULT ON STAFF",
+        description:
+          "OFFENDER ROGERS THREW A LIQUID FECES MIXTURE AT STAFF THROUGH THE TRAY SLOT. 15 DYS RH, 30 DYS LOGT.",
+        severity: "Class 1",
+        disposition: "SEGREGATION",
+      },
+      {
+        date: "2024-10-29",
+        facility: "STERLING CORRECTIONAL FACILITY",
+        violation: "HAZARDOUS LIQUID ASSAULT ON STAFF",
+        description:
+          "OFFENDER ROGERS THREW A LIQUID FECES MIXTURE AT STAFF THROUGH THE TRAY SLOT. 15 DYS RH, 30 DYS LOGT.",
+        severity: "Class 1",
+        disposition: "LOST TIME",
+      },
+      {
+        date: "2024-10-28",
+        facility: "STERLING CORRECTIONAL FACILITY",
+        violation: "THREATS",
+        description:
+          "OFFENDER ROGERS MADE STATEMENTS TO ASSAULT ANOTHER OFFENDER. 15 DYS RH, 15 DYS LOGT.",
+        severity: "Class 2",
+        disposition: "SEGREGATION",
+      },
+      {
+        date: "2024-10-28",
+        facility: "STERLING CORRECTIONAL FACILITY",
+        violation: "THREATS",
+        description:
+          "OFFENDER ROGERS MADE STATEMENTS TO HARM STAFF. 15 DYS RH, 15 DYS LOGT.",
+        severity: "Class 2",
+        disposition: "LOST TIME",
+      },
+      {
+        date: "2024-10-28",
+        facility: "STERLING CORRECTIONAL FACILITY",
+        violation: "THREATS",
+        description:
+          "OFFENDER ROGERS MADE STATEMENTS TO ASSAULT ANOTHER OFFENDER. 15 DYS RH, 15 DYS LOGT.",
+        severity: "Class 2",
+        disposition: "LOST TIME",
+      },
+      {
+        date: "2024-10-28",
+        facility: "STERLING CORRECTIONAL FACILITY",
+        violation: "THREATS",
+        description:
+          "OFFENDER ROGERS MADE STATEMENTS TO HARM STAFF. 15 DYS RH, 15 DYS LOGT.",
+        severity: "Class 2",
+        disposition: "SEGREGATION",
+      },
+      {
+        date: "2024-09-07",
+        facility: "STERLING CORRECTIONAL FACILITY",
+        violation: "THREATS",
+        description:
+          "OFFENDER MADE STATEMENTS THAT PLACED A PERSON IN FEAR OF INJURY. WAIVED RIGHT TO A FORMAL HEARING.",
+        severity: "Class 2",
+        disposition: "LOST PRIVILEGES",
+      },
+      {
+        date: "2024-04-20",
+        facility: "STERLING CORRECTIONAL FACILITY",
+        violation: "POSSESSION SYRINGE/DRUG PARAPHERNALIA",
+        description:
+          "OFFENDER ROGERS. IT WAS FOUND THE ITEM WAS NOT A HYPODERMIC NEEDLE AND NOT CAPABLE OF ADMINISTERING DANGEROUS DRUGS. NOTHING IMPOSED.",
+        severity: "Class 2",
+        disposition: "NOT GUILTY",
+      },
+      {
+        date: "2024-01-14",
+        facility: "STERLING CORRECTIONAL FACILITY",
+        violation: "POSSESION OR USE OF DANGEROUS DRUGS",
+        description:
+          "OFFENDER ROGERS IN POSSESSION OF ITEMS COMMONLY USED IN THE CORRECTION SETTTING TO MAKE HOMEMADE ALCOHOL. 20 DYS LOP PROBATED. OFFENDER WAIVED RIGHT TO A FORMAL HEARING.",
+        severity: "Class 2",
+        disposition: "LOST PRIVILEGES",
+      },
+      {
+        date: "2023-09-28",
+        facility: "STERLING CORRECTIONAL FACILITY",
+        violation: "THREATS",
+        description:
+          "OFFENDER MADE THREATENING STATEMENTS TO A STAFF MEMBER. OFFENDER WAIVED RIGHT TO A FORMAL HEARING.",
+        severity: "Class 2",
+        disposition: "SEGREGATION",
+      },
+      {
+        date: "2023-09-25",
+        facility: "STERLING CORRECTIONAL FACILITY",
+        violation: "VERBAL ABUSE",
+        description:
+          "OFFENDER ROGERS INTERFERRED WITH A DOC STAFF SEARCH, MAKING OFFENSIVE STATEMENTS AND POSSESSING UNAUTHORIZED ITEMS. 8 DYS RH. OFFENDER WAVIED RIGHT TO A FORMAL HEARING.",
+        severity: "Class 2",
+        disposition: "SEGREGATION",
+      },
+      {
+        date: "2023-09-25",
+        facility: "STERLING CORRECTIONAL FACILITY",
+        violation: "INTERFERENCE WITH SEARCH",
+        description:
+          "OFFENDER ROGERS INTERFERRED WITH A DOC STAFF SEARCH, MAKING OFFENSIVE STATEMENTS AND POSSESSING UNAUTHORIZED ITEMS. 8 DYS RH. OFFENDER WAVIED RIGHT TO A FORMAL HEARING.",
+        severity: "Class 2",
+        disposition: "SEGREGATION",
+      },
+      {
+        date: "2023-09-25",
+        facility: "STERLING CORRECTIONAL FACILITY",
+        violation: "UNAUTHORIZED POSSESSION",
+        description:
+          "OFFENDER ROGERS INTERFERRED WITH A DOC STAFF SEARCH, MAKING OFFENSIVE STATEMENTS AND POSSESSING UNAUTHORIZED ITEMS. 8 DYS RH. OFFENDER WAVIED RIGHT TO A FORMAL HEARING.",
+        severity: "Class 2",
+        disposition: "SEGREGATION",
+      },
+      {
+        date: "2023-06-07",
+        facility: "CENTENNIAL CORRECTIONAL FACILITY",
+        violation: "TAMPERING WITH LOCKS/SECURITY",
+        description:
+          "HO KLINGON DO KYPROT: OFFENDER ROGERS HAD THE WINDOW OF THEIR CELL AND REFUSED DIRECTIVES TO UNCOVER THE WINDOW. THEY THEN THREATENED TO THROW WATER ON STAFF.",
+        severity: "Class 1",
+        disposition: "NO SANCTION - CMNTS",
+      },
+      {
+        date: "2023-06-06",
+        facility: "CENTENNIAL CORRECTIONAL FACILITY",
+        violation: "DISOBEYING A LAWFUL ORDER - CHARGE A",
+        description:
+          "HO KLINGON DO KYPROT: OFFENDER COVERED THEIR WINDOW DURING COUNT AND REFUSED DIRECTIVES TO SUBMIT TO RESTRAINTS. OFFENDER MADE MULTIPLE THREATS TO STAFF.",
+        severity: "Class 2",
+        disposition: "NO SANCTION - CMNTS",
+      },
+      {
+        date: "2023-06-06",
+        facility: "CENTENNIAL CORRECTIONAL FACILITY",
+        violation: "THREATS",
+        description:
+          "HO KLINGON DO KYPROT: OFFENDER ROGERS MADE THREATS TO KILL STAFF UPON THEIR RELEASE FROM CUSTODY OF THE DEPARTMENT OF CORRECTIONS",
+        severity: "Class 2",
+        disposition: "NO SANCTION - CMNTS",
+      },
+      {
+        date: "2023-06-06",
+        facility: "CENTENNIAL CORRECTIONAL FACILITY",
+        violation: "COUNT INTERFERENCE",
+        description:
+          "HO KLINGON DO KYPROT: OFFENDER COVERED THEIR WINDOW DURING COUNT AND REFUSED DIRECTIVES TO SUBMIT TO RESTRAINTS. OFFENDER MADE MULTIPLE THREATS TO STAFF.",
+        severity: "Class 2",
+        disposition: "NO SANCTION - CMNTS",
+      },
+      {
+        date: "2023-06-06",
+        facility: "CENTENNIAL CORRECTIONAL FACILITY",
+        violation: "TAMPERING WITH LOCKS/SECURITY",
+        description:
+          "HO KLINGON DO KYPROT: OFFENDER ROGERS MADE THREATS TO KILL STAFF UPON THEIR RELEASE FROM CUSTODY OF THE DEPARTMENT OF CORRECTIONS",
+        severity: "Class 1",
+        disposition: "NO SANCTION - CMNTS",
+      },
+      {
+        date: "2023-06-06",
+        facility: "CENTENNIAL CORRECTIONAL FACILITY",
+        violation: "TAMPERING WITH LOCKS/SECURITY",
+        description:
+          "HO KLINGON DO KYPROT: OFFENDER COVERED THEIR WINDOW DURING COUNT AND REFUSED DIRECTIVES TO SUBMIT TO RESTRAINTS. OFFENDER MADE MULTIPLE THREATS TO STAFF.",
+        severity: "Class 1",
+        disposition: "SEGREGATION",
+      },
+      {
+        date: "2023-06-05",
+        facility: "CENTENNIAL CORRECTIONAL FACILITY",
+        violation: "BODY MODIFICATION",
+        description:
+          "HO KLINGON DO KYPROT: OFFENDER ROGERS WAS FOUND IN POSSESSION OF TATTOO PARAPHERNALIA",
+        severity: "Class 2",
+        disposition: "NO SANCTION - CMNTS",
+      },
+      {
+        date: "2023-06-05",
+        facility: "CENTENNIAL CORRECTIONAL FACILITY",
+        violation: "UNAUTHORIZED POSSESSION",
+        description:
+          "HO KLINGON DO KYPROT: OFFENDER ROGERS WAS FOUND IN POSSESSION OF TATTOO PARAPHERNALIA",
+        severity: "Class 2",
+        disposition: "NO SANCTION - CMNTS",
+      },
+      {
+        date: "2022-12-27",
+        facility: "CENTENNIAL CORRECTIONAL FACILITY",
+        violation: "ASSAULT ON OFFENDER",
+        description:
+          "HO KLINGON, DO KYPROT: OFFENDER WAS IN A FIGHT WITH ANOTHER OFFENDER",
+        severity: "Class 1",
+        disposition: "SEGREGATION",
+      },
+      {
+        date: "2020-01-25",
+        facility: "COLORADO STATE PENITENTIARY",
+        violation: "POSSESSION OF DANGEROUS CONTRABAND",
+        description:
+          "D.O. LT ASTRUD.  H.O. TIP ZAYOOS.  OFFENDER FOUND GUILTY OF COMPLICIT IN ATTEMPTING TO AID TWO OTHERS DURING A MURDER ATTEMPT.  WEAPON FOUND IN THIS OFFENDER'S POSSESSION.",
+        severity: "Class 1",
+        disposition: "LOST TIME",
+      },
+      {
+        date: "2020-01-25",
+        facility: "COLORADO STATE PENITENTIARY",
+        violation: "MURDER",
+        description:
+          "D.O. LT ASTRUD.  H.O. TIP ZAYOOS.  OFFENDER FOUND GUILTY OF COMPLICIT IN ATTEMPTING TO AID TWO OTHERS DURING A MURDER ATTEMPT.  WEAPON FOUND IN THIS OFFENDER'S POSSESSION.",
+        severity: "Class 1",
+        disposition: "SEGREGATION",
+      },
+      {
+        date: "2020-01-25",
+        facility: "COLORADO STATE PENITENTIARY",
+        violation: "ASSAULT ON OFFENDER",
+        description:
+          "D.O. LT ASTRUD- OFFENDER AIDED OR ASSISTED WITH OTHER OFFENDERS IN A PHYSICAL ALTERCATION, ASSAULTING ANOTHER OFFENDER WITH WEAPONS.  OFFENDER WAS FOUND IN POSSESSION OF A HOMEMADE WEAPON.",
+        severity: "Class 1",
+        disposition: "LOST TIME",
+      },
+      {
+        date: "2020-01-25",
+        facility: "COLORADO STATE PENITENTIARY",
+        violation: "POSSESSION OF DANGEROUS CONTRABAND",
+        description:
+          "D.O. LT ASTRUD.  H.O. TIP ZAYOOS.  OFFENDER FOUND GUILTY OF COMPLICIT IN ATTEMPTING TO AID TWO OTHERS DURING A MURDER ATTEMPT.  WEAPON FOUND IN THIS OFFENDER'S POSSESSION.",
+        severity: "Class 1",
+        disposition: "SEGREGATION",
+      },
+      {
+        date: "2020-01-25",
+        facility: "COLORADO STATE PENITENTIARY",
+        violation: "POSSESSION OF DANGEROUS CONTRABAND",
+        description:
+          "D.O. LT ASTRUD- OFFENDER AIDED OR ASSISTED WITH OTHER OFFENDERS IN A PHYSICAL ALTERCATION, ASSAULTING ANOTHER OFFENDER WITH WEAPONS.  OFFENDER WAS FOUND IN POSSESSION OF A HOMEMADE WEAPON.",
+        severity: "Class 1",
+        disposition: "LOST TIME",
+      },
+      {
+        date: "2019-06-11",
+        facility: "COLORADO STATE PENITENTIARY",
+        violation: "THREATS",
+        description:
+          'D.O. BILL LION. OFFENDER VERBALLY COMMUNICATED AN INTENT TO JEOPARDIZE SAFETY /SECURITY OF FACILITY WHEN HE TOLD OFFICER HE WAS NOT GOING TO FOLLOW THE RULES "SEE WHAT HAPPENS". OFFICER TOOK THIS AS A THREAT.',
+        severity: "Class 2",
+        disposition: "HOUSING RESTRICTION",
+      },
+      {
+        date: "2018-02-07",
+        facility: "COLORADO STATE PENITENTIARY",
+        violation: "THREATS",
+        description:
+          "D.O. SAREN.  OFFENDER VERBALLY AND PHYSICALLY COMMUNICATED A DETERMINATION TO HARM ANOTHER PERSON AND WAS OBSERVED TAMPERING WITH A FIRE ALARM.",
+        severity: "Class 2",
+        disposition: "LOST PRIVILEGES",
+      },
+    ],
+    docPrograms: [
+      {
+        name: "Why Try 7.1",
+        completionDate: "2021-07-08",
+        type: "Mental Health",
+        criminogenicNeed: "",
+        status: "completed",
+      },
+    ],
+    edovoPrograms: [],
+    offenseHistory: {
+      county: "El Paso County",
+      docket: "77CR9088",
+      conviction: "Assault",
+      classFelony: "Felony Class 4",
+      sentence: "24 years",
+      dateOfOffense: "2017-07-26",
+      convictionDate: "2017-12-06",
+      offenseNarrative:
+        "A PSI was not available for programming, according to a Probable Cause Affidavit, on 07/26/2017, while several El Paso County Deputies were attempting to stop offender Rogers from harming himself, offender Rogers spit saliva at the deputies, hitting one in the face, right eye and shoulder.",
+      priorConvictions: [
+        {
+          charge: "Assault",
+          date: "2012-02-14",
+        },
+        {
+          charge: "Menacing",
+          date: "2008-02-21",
+        },
+        {
+          charge: "Menacing",
+          date: "2017-09-12",
+        },
+      ],
+      victimInvolved: true,
+    },
+    riskAssessments: [
+      {
+        tool: "CARAS",
+        score: 0.61,
+        maxScore: 1,
+        date: "2026-07-14",
+      },
+      {
+        tool: "SRT",
+        score: 17,
+        maxScore: 44,
+        date: "2026-04-07",
+      },
+      {
+        tool: "CARAS",
+        score: 0.63,
+        maxScore: 1,
+        date: "2025-10-29",
+      },
+      {
+        tool: "CARAS",
+        score: 0.71,
+        maxScore: 1,
+        date: "2025-09-13",
+      },
+      {
+        tool: "RT",
+        score: 14,
+        maxScore: 27,
+        date: "2025-03-31",
+      },
+      {
+        tool: "RT",
+        score: 13,
+        maxScore: 27,
+        date: "2024-03-19",
+      },
+      {
+        tool: "SRT",
+        score: 17,
+        maxScore: 44,
+        date: "2023-03-20",
+      },
+      {
+        tool: "SRT",
+        score: 24,
+        maxScore: 44,
+        date: "2021-04-26",
+      },
+      {
+        tool: "SRT",
+        score: 23,
+        maxScore: 44,
+        date: "2020-04-22",
+      },
+      {
+        tool: "SRT",
+        score: 25,
+        maxScore: 44,
+        date: "2019-04-24",
+      },
+      {
+        tool: "SRT",
+        score: 19,
+        maxScore: 44,
+        date: "2018-04-23",
+      },
+      {
+        tool: "PIT",
+        score: 28,
+        maxScore: 39,
+        date: "2018-01-24",
+      },
+      {
+        tool: "SRT",
+        score: 19,
+        maxScore: 44,
+        date: "2015-12-06",
+      },
+      {
+        tool: "SRT",
+        score: 18,
+        maxScore: 44,
+        date: "2015-04-09",
+      },
+    ],
+  }),
+};
+
 function buildParoleCasesFixture(
   stateCode: ParoleFixtureStateCode,
 ): Record<string, ParoleCase> {
   return Object.fromEntries(
-    paroleHearingsFixture.map((hearing, index) => [
-      hearing.docId,
-      hearing.docId === "DOC-45821"
-        ? buildAndersonCaseProfile(hearing.hearingDate, stateCode)
-        : buildGenericCaseProfile(hearing, index, stateCode),
-    ]),
+    paroleHearingsFixtureByState[stateCode].map((hearing, index) => {
+      if (hearing.docId === "45821") {
+        return [
+          hearing.docId,
+          buildAndersonCaseProfile(hearing.hearingDate, stateCode),
+        ];
+      }
+      if (hearing.docId in CO_REAL_CASE_PROFILES) {
+        return [hearing.docId, CO_REAL_CASE_PROFILES[hearing.docId]];
+      }
+      return [
+        hearing.docId,
+        buildGenericCaseProfile(hearing, index, stateCode),
+      ];
+    }),
   );
 }
 

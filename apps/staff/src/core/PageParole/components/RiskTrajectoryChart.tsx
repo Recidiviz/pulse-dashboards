@@ -57,19 +57,25 @@ export function RiskTrajectoryChart({
 
   const renderOverviewTrendTooltip = useCallback(
     (d: {
-      points: Array<{ data: { date: Date; value: number } }>;
+      date: Date;
+      value: number;
       parentLine: { tool: string; color: string };
     }): JSX.Element | null => {
-      const point = d.points[0]?.data;
-      if (!point) return null;
+      // semiotic's tooltipContent is typed as a bare Function, so nothing
+      // guarantees `d` actually matches this shape at runtime.
+      if (d.date === undefined || d.value === undefined) return null;
+      const formattedValue =
+        hasCustomConfig && d.parentLine.tool === "CARAS"
+          ? d.value.toFixed(2)
+          : Math.round(d.value);
       return (
         <EdgeAwareTooltip
           containerBounds={lineChartBounds}
-          resetKey={`${d.parentLine.tool}-${point.date.getTime()}`}
+          resetKey={`${d.parentLine.tool}-${d.date.getTime()}`}
         >
-          <div>{formatDate(point.date)}</div>
+          <div>{formatDate(d.date)}</div>
           <div>
-            {d.parentLine.tool}: {Math.round(point.value)}
+            {d.parentLine.tool}: {formattedValue}
             {hasCustomConfig ? "" : "%"}
           </div>
         </EdgeAwareTooltip>

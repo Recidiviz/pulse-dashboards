@@ -24,7 +24,7 @@ import { PAROLE_SECTION_IDS } from "../shared";
 
 const REQUIRED_PROPS = {
   name: "Anderson, Michael",
-  docId: "DOC-45821",
+  docId: "45821",
   custodyLevel: "Minimum",
   gender: "Male",
   dob: "1986-07-27",

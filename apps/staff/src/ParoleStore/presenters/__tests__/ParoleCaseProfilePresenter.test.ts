@@ -23,7 +23,7 @@ import { ParoleStore } from "../../ParoleStore";
 import { ParoleCaseProfilePresenter } from "../ParoleCaseProfilePresenter";
 
 const TEST_CASE: ParoleCase = {
-  docId: "DOC-45821",
+  docId: "45821",
   name: "Anderson, Michael",
   dob: "1986-07-27",
   gender: "Male",
@@ -64,7 +64,7 @@ describe("ParoleCaseProfilePresenter", () => {
     const rootStore = new RootStore();
     rootStore.tenantStore.currentTenantId = "US_CO";
     paroleStore = new ParoleStore(rootStore);
-    presenter = new ParoleCaseProfilePresenter(paroleStore, "DOC-45821");
+    presenter = new ParoleCaseProfilePresenter(paroleStore, "45821");
   });
 
   test("hydrate", async () => {

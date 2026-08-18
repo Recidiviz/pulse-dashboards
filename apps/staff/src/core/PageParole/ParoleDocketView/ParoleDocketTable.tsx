@@ -26,6 +26,7 @@ import { palette } from "~design-system";
 
 import SearchIconComponent from "../../../assets/static/images/search.svg?react";
 import { ParoleDocketPresenter } from "../../../ParoleStore/presenters/ParoleDocketPresenter";
+import { formatDocId } from "../../../ParoleStore/utils";
 import { CaseloadTable } from "../../CaseloadTable";
 import { SectionCard } from "../../SectionCard";
 import { paroleUrl } from "../../views";
@@ -112,6 +113,10 @@ function renderHearingDateCell(dateString: unknown): JSX.Element {
   return renderCellText(formatHearingDate(dateString as string));
 }
 
+function renderDocIdCell(docId: unknown): JSX.Element {
+  return renderCellText(formatDocId(docId as string));
+}
+
 const HeaderLabel = styled.span`
   padding-left: ${rem(spacing.md)};
 `;
@@ -138,7 +143,7 @@ const COLUMNS: Array<ColumnDef<ParoleHearing>> = [
     id: "docId",
     accessorKey: "docId",
     enableSorting: false,
-    cell: (info) => renderCellText(info.getValue()),
+    cell: (info) => renderDocIdCell(info.getValue()),
   },
   {
     header: "Hearing Date",

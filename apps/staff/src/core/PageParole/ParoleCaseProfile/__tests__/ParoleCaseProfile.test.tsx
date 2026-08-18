@@ -87,7 +87,7 @@ function renderAtPath(path: string) {
 
 describe("ParoleCaseProfile", () => {
   it("renders a link back to the docket", async () => {
-    renderAtPath("/parole/case/DOC-45821");
+    renderAtPath("/parole/case/45821");
 
     const link = await screen.findByRole("link", { name: /back to docket/i });
     expect(link).toHaveAttribute("href", "/parole/docket");
@@ -104,7 +104,7 @@ describe("ParoleCaseProfile", () => {
 
   describe("the identity/hearing info section", () => {
     it("renders the individual's identity, personal, hearing, and sentence info", async () => {
-      renderAtPath("/parole/case/DOC-45821");
+      renderAtPath("/parole/case/45821");
 
       expect(await screen.findByText("Anderson, Michael")).toBeInTheDocument();
       expect(screen.getByText("DOC-45821")).toBeInTheDocument();
@@ -131,7 +131,7 @@ describe("ParoleCaseProfile", () => {
     });
 
     it("renders the upcoming hearing date when a hearing is scheduled", async () => {
-      renderAtPath("/parole/case/DOC-45821");
+      renderAtPath("/parole/case/45821");
 
       expect(await screen.findByText("Hearing Date")).toBeInTheDocument();
       // The fixture's hearing date is relative to "today", so only assert
@@ -140,7 +140,7 @@ describe("ParoleCaseProfile", () => {
     });
 
     it("renders 'Not scheduled' as the hearing date when there is no upcoming hearing", async () => {
-      renderAtPath("/parole/case/DOC-59402");
+      renderAtPath("/parole/case/59402");
 
       expect(await screen.findByText("Harris, Patricia")).toBeInTheDocument();
       expect(screen.getByText("Not scheduled")).toBeInTheDocument();
@@ -176,7 +176,7 @@ describe("ParoleCaseProfile", () => {
       "scrolls to the %s section when its quick-nav item is clicked",
       async (label, sectionId) => {
         const user = userEvent.setup();
-        renderAtPath("/parole/case/DOC-45821");
+        renderAtPath("/parole/case/45821");
 
         await findSectionHeading(label);
         await user.click(screen.getByRole("button", { name: label }));
@@ -191,7 +191,7 @@ describe("ParoleCaseProfile", () => {
 
   describe("the attachments section", () => {
     it("merges the parole plan documents and attachments into one newest-to-oldest list", async () => {
-      renderAtPath("/parole/case/DOC-45821");
+      renderAtPath("/parole/case/45821");
 
       expect(await findSectionHeading("Attachments")).toBeInTheDocument();
 
@@ -219,7 +219,7 @@ describe("ParoleCaseProfile", () => {
     });
 
     it("renders a banner when no parole plan is on file", async () => {
-      renderAtPath("/parole/case/DOC-61247");
+      renderAtPath("/parole/case/61247");
 
       expect(
         await screen.findByText("NO PAROLE PLAN ON FILE"),
@@ -227,7 +227,7 @@ describe("ParoleCaseProfile", () => {
     });
 
     it("renders a banner when the parole plan hasn't been updated in over 90 days", async () => {
-      renderAtPath("/parole/case/DOC-52903");
+      renderAtPath("/parole/case/52903");
 
       expect(
         await screen.findByText("PAROLE PLAN NOT RECENTLY UPDATED"),
@@ -235,7 +235,7 @@ describe("ParoleCaseProfile", () => {
     });
 
     it("renders neither banner when the parole plan is on file and current", async () => {
-      renderAtPath("/parole/case/DOC-45821");
+      renderAtPath("/parole/case/45821");
 
       await findSectionHeading("Attachments");
       expect(
@@ -249,7 +249,7 @@ describe("ParoleCaseProfile", () => {
 
   describe("the conduct history section", () => {
     it("renders the violation summary and the most recent record", async () => {
-      renderAtPath("/parole/case/DOC-45821");
+      renderAtPath("/parole/case/45821");
 
       expect(
         await findSectionHeading("Institutional Conduct History"),
@@ -277,7 +277,7 @@ describe("ParoleCaseProfile", () => {
     });
 
     it("re-hydrates with the new tenant's conduct data when the tenant changes without navigating away", async () => {
-      const { rerender } = renderAtPath("/parole/case/DOC-45821");
+      const { rerender } = renderAtPath("/parole/case/45821");
 
       expect(
         await findSectionHeading("Institutional Conduct History"),
@@ -286,7 +286,7 @@ describe("ParoleCaseProfile", () => {
 
       rootStore.tenantStore.currentTenantId = "US_ID";
       rerender(
-        <MemoryRouter initialEntries={["/parole/case/DOC-45821"]}>
+        <MemoryRouter initialEntries={["/parole/case/45821"]}>
           <Routes>
             <Route path="/parole/case/:docId" element={<ParoleCaseProfile />} />
             <Route path="*" element={<ParoleCaseProfile />} />
@@ -304,7 +304,7 @@ describe("ParoleCaseProfile", () => {
 
     it("hides records older than a year until 'See Older Disciplinaries' is clicked", async () => {
       const user = userEvent.setup();
-      renderAtPath("/parole/case/DOC-45821");
+      renderAtPath("/parole/case/45821");
 
       // Dated 34 months before the fixture loads, so it's always well
       // outside the past year and always hidden until expanded.
@@ -327,7 +327,7 @@ describe("ParoleCaseProfile", () => {
     });
 
     it("renders a clean-record empty state when there is no conduct history", async () => {
-      renderAtPath("/parole/case/DOC-59402");
+      renderAtPath("/parole/case/59402");
 
       expect(await screen.findByText("Harris, Patricia")).toBeInTheDocument();
       expect(
@@ -342,7 +342,7 @@ describe("ParoleCaseProfile", () => {
 
   describe("the risk score trajectory section", () => {
     it("defaults to US_CO's 'Entire CTAP Suite' aggregate view", async () => {
-      renderAtPath("/parole/case/DOC-45821");
+      renderAtPath("/parole/case/45821");
 
       expect(
         await findSectionHeading("Risk Score Trajectory"),
@@ -363,7 +363,7 @@ describe("ParoleCaseProfile", () => {
 
     it("shows the score, assessment date, and risk pill for a selected assessment tool", async () => {
       const user = userEvent.setup();
-      renderAtPath("/parole/case/DOC-45821");
+      renderAtPath("/parole/case/45821");
 
       await findSectionHeading("Risk Score Trajectory");
       await user.click(screen.getByRole("button", { name: /^LSI/ }));
@@ -376,7 +376,7 @@ describe("ParoleCaseProfile", () => {
 
     it("labels CARAS risk levels using its own probability bands", async () => {
       const user = userEvent.setup();
-      renderAtPath("/parole/case/DOC-45821");
+      renderAtPath("/parole/case/45821");
 
       await findSectionHeading("Risk Score Trajectory");
       await user.click(screen.getByRole("button", { name: /^CARAS/ }));
@@ -394,7 +394,7 @@ describe("ParoleCaseProfile", () => {
 
   describe("the program participation section", () => {
     it("renders only completed DOC and Edovo programs with their completion dates", async () => {
-      renderAtPath("/parole/case/DOC-45821");
+      renderAtPath("/parole/case/45821");
 
       expect(
         await findSectionHeading("Program Participation"),
@@ -419,7 +419,7 @@ describe("ParoleCaseProfile", () => {
     });
 
     it("renders an empty state for a case with no programs on record", async () => {
-      renderAtPath("/parole/case/DOC-59402");
+      renderAtPath("/parole/case/59402");
 
       expect(
         await findSectionHeading("Program Participation"),
@@ -437,7 +437,7 @@ describe("ParoleCaseProfile", () => {
 
   describe("the offense & criminal history section", () => {
     it("renders the current offense's facts", async () => {
-      renderAtPath("/parole/case/DOC-45821");
+      renderAtPath("/parole/case/45821");
 
       expect(
         await findSectionHeading("Offense & Criminal History"),
@@ -453,7 +453,7 @@ describe("ParoleCaseProfile", () => {
     });
 
     it("renders a banner when a victim was involved in the current offense", async () => {
-      renderAtPath("/parole/case/DOC-45821");
+      renderAtPath("/parole/case/45821");
 
       expect(
         await screen.findByText("Victim involved in current offense"),
@@ -461,7 +461,7 @@ describe("ParoleCaseProfile", () => {
     });
 
     it("renders no victim banner when no victim was involved", async () => {
-      renderAtPath("/parole/case/DOC-52903");
+      renderAtPath("/parole/case/52903");
 
       await findSectionHeading("Offense & Criminal History");
       expect(
@@ -470,7 +470,7 @@ describe("ParoleCaseProfile", () => {
     });
 
     it("renders the list of prior convictions", async () => {
-      renderAtPath("/parole/case/DOC-45821");
+      renderAtPath("/parole/case/45821");
 
       // The fixture derives these dates as N years back from whichever day
       // the fixture module happens to load, so the expected month must be
@@ -489,7 +489,7 @@ describe("ParoleCaseProfile", () => {
     });
 
     it("omits the prior convictions subsection when there are none", async () => {
-      renderAtPath("/parole/case/DOC-52903");
+      renderAtPath("/parole/case/52903");
 
       await findSectionHeading("Offense & Criminal History");
       expect(screen.queryByText("Prior Convictions")).not.toBeInTheDocument();
