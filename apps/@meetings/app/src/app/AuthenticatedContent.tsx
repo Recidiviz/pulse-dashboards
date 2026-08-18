@@ -19,6 +19,10 @@ import { useEffect, useState } from "react";
 
 import { AudioUpload } from "~@meetings/app/features/audio-upload";
 import {
+  FeedbackLauncher,
+  useIntercom,
+} from "~@meetings/app/features/intercom";
+import {
   ReconnectStatus,
   useOfflineQueueDrainer,
 } from "~@meetings/app/features/offline-sync";
@@ -32,6 +36,7 @@ export function AuthenticatedContent() {
   const { drain: forceDrain, isDraining } = useOfflineQueueDrainer({
     isOnline,
   });
+  const { openMessenger } = useIntercom();
   const [isFirstRender, setIsFirstRender] = useState(true);
 
   // On fresh login, we want to force-drain the offline event queue in the event
@@ -52,6 +57,7 @@ export function AuthenticatedContent() {
       <DrawerNavigator />
       <AudioUpload />
       <ReconnectStatus onRetry={forceDrain} isVisible={isDraining} />
+      <FeedbackLauncher onPress={openMessenger} />
     </RecordingProvider>
   );
 }

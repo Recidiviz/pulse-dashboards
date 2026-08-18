@@ -35,6 +35,9 @@ const envSchema = z.object({
   EXPO_PUBLIC_SERVER_URL: z.string().default("http://localhost:3002"),
   EXPO_PUBLIC_DEPLOY_ENV: z.string().default("development"),
   EXPO_PUBLIC_TRANSCRIPTION_ENABLED_STATES: z.string().default(""),
+  EXPO_PUBLIC_INTERCOM_APP_ID: z.string().optional(),
+  EXPO_PUBLIC_INTERCOM_IOS_API_KEY: z.string().optional(),
+  EXPO_PUBLIC_INTERCOM_ANDROID_API_KEY: z.string().optional(),
 });
 
 const envObj = {
@@ -48,6 +51,11 @@ const envObj = {
   EXPO_PUBLIC_DEPLOY_ENV: process.env["EXPO_PUBLIC_DEPLOY_ENV"],
   EXPO_PUBLIC_TRANSCRIPTION_ENABLED_STATES:
     process.env["EXPO_PUBLIC_TRANSCRIPTION_ENABLED_STATES"],
+  EXPO_PUBLIC_INTERCOM_APP_ID: process.env["EXPO_PUBLIC_INTERCOM_APP_ID"],
+  EXPO_PUBLIC_INTERCOM_IOS_API_KEY:
+    process.env["EXPO_PUBLIC_INTERCOM_IOS_API_KEY"],
+  EXPO_PUBLIC_INTERCOM_ANDROID_API_KEY:
+    process.env["EXPO_PUBLIC_INTERCOM_ANDROID_API_KEY"],
 };
 
 export const env = envSchema.parse(envObj);

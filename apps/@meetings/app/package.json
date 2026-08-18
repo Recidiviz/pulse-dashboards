@@ -21,6 +21,8 @@
   "dependencies": {
     "@expo/metro-runtime": "~55.0.12",
     "@gorhom/bottom-sheet": "^5.2.7",
+    "@intercom/intercom-react-native": "^10.6.0",
+    "@intercom/messenger-js-sdk": "^0.0.11",
     "@monaco-editor/loader": "1.7.0",
     "@monaco-editor/react": "4.7.0",
     "@nx/detox": "*",

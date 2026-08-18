@@ -18,6 +18,7 @@
 import { FlashList } from "@shopify/flash-list";
 import { View } from "react-native";
 
+import { feedbackLauncherScrollProps } from "~@meetings/app/features/intercom";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 import type { PostMeetingProcessingStatus } from "~@meetings/trpc-types";
 
@@ -66,6 +67,7 @@ const MeetingsMobileList = ({
 }: Props) => {
   return (
     <FlashList
+      {...feedbackLauncherScrollProps}
       data={meetings}
       keyExtractor={(item: Meeting) => item.id}
       renderItem={({ item }: { item: Meeting }) => (

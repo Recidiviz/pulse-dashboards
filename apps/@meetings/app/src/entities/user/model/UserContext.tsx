@@ -35,6 +35,8 @@ import {
 import { extractErrorDetails } from "~@meetings/app/shared/lib/errors";
 import type { FeatureVariantRecord } from "~@meetings/trpc-types";
 
+import { logoutIntercom } from "./intercomLogout";
+
 // react-native-auth0's getCredentials(scope, minTtl, ...) minTtl is in seconds.
 // With a ~900s (15min) access-token TTL, a 60s buffer gives the SDK lead time
 // to refresh before a request fires, without materially increasing refresh
@@ -79,6 +81,8 @@ interface UserContextType {
     forceRefresh?: boolean,
   ) => Promise<Credentials | undefined>;
   featureVariants?: FeatureVariantRecord;
+  segmentId?: string;
+  intercomId?: string;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -283,6 +287,8 @@ export const UserContextProvider: React.FC<{
           featureVariants: undefined,
           email: "staff-email-1@example.com",
           name: "Unauthenticated Staff",
+          segmentId: undefined,
+          intercomId: undefined,
         }}
       >
         {children}
@@ -327,11 +333,14 @@ export const UserContextProvider: React.FC<{
           isRecidiviz || !!routes?.["workflowsFacilities"],
         hasCasePlanningAssistantAccess: isRecidiviz || !!routes?.["cpa"],
         onLogout: async () => {
+          logoutIntercom();
           await clearSession();
         },
         getCredentials: getCredentialsWithReauth,
         isRecidivizUser: isRecidiviz,
         featureVariants,
+        segmentId: userAppMetadata?.segmentId,
+        intercomId: userAppMetadata?.intercomId,
       }}
     >
       {children}

@@ -147,6 +147,13 @@ export default ({ config }: ConfigContext): ExpoConfig => {
           ],
         },
       ],
+      [
+        "@intercom/intercom-react-native",
+        {
+          // API keys and appId are provided at runtime via env vars
+          useManualInit: true,
+        },
+      ],
     ],
     extra: {
       eas: {

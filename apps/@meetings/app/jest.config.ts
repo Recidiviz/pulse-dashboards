@@ -37,6 +37,8 @@ module.exports = {
     "@react-native-community/netinfo":
       "@react-native-community/netinfo/jest/netinfo-mock.js",
     "^@paralleldrive/cuid2$": "<rootDir>/__mocks__/@paralleldrive/cuid2.js",
+    "^@intercom/intercom-react-native$":
+      "<rootDir>/__mocks__/@intercom/intercom-react-native.js",
     "^react-native-auth0$": "<rootDir>/__mocks__/react-native-auth0.js",
     "async-require/(setup|messageSocket)$":
       "<rootDir>/__mocks__/expo-async-require-setup.js",

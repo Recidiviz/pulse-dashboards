@@ -34,6 +34,7 @@ import {
   StateCode,
   useStateSelection,
 } from "~@meetings/app/entities/state-code";
+import { feedbackLauncherScrollProps } from "~@meetings/app/features/intercom";
 import { trpc } from "~@meetings/app/shared/api";
 import { theme } from "~@meetings/app/shared/config";
 import { RootStackParamList } from "~@meetings/app/shared/config";
@@ -73,7 +74,10 @@ export const StateSelectionScreen = () => {
       edges={["top"]}
     >
       <Header />
-      <ScrollView className="flex-1 px-4 py-6 md:px-10">
+      <ScrollView
+        {...feedbackLauncherScrollProps}
+        className="flex-1 px-4 py-6 md:px-10"
+      >
         <View className="mx-auto w-full max-w-2xl">
           <Typography className="mb-2 font-libre-baskerville text-3xl font-bold text-primary">
             Select State

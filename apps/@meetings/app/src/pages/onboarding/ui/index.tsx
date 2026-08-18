@@ -19,6 +19,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { Platform, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { useSuppressFeedbackLauncher } from "~@meetings/app/features/intercom";
 import Modal from "~@meetings/app/shared/ui/Modal";
 
 import { OnboardingStep } from "../config";
@@ -37,6 +38,7 @@ export function OnboardingScreen() {
   const isFocused = useIsFocused();
   const insets = useSafeAreaInsets();
   const step = useOnboardingStore((state) => state.step);
+  useSuppressFeedbackLauncher(isFocused);
 
   const content = (
     <>

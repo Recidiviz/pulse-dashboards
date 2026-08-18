@@ -40,6 +40,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { scheduleOnRN } from "react-native-worklets";
 
 import {
   formatMeetingDuration,
@@ -49,6 +50,7 @@ import {
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
 import { useUserContext } from "~@meetings/app/entities/user";
 import { DraftCaseNoteSheet } from "~@meetings/app/features/edit-case-note";
+import { notifyFeedbackLauncherOfScroll } from "~@meetings/app/features/intercom";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 import PlaySvg from "~@meetings/app/shared/assets/icons/play.svg";
 import BgAvatarImage from "~@meetings/app/shared/assets/images/bg-avatar.png";
@@ -118,6 +120,7 @@ const MeetingMobile = ({
   const meetingNotesSheetRef = useRef<BottomSheetModal>(null);
 
   const scrollHandler = useAnimatedScrollHandler((event) => {
+    scheduleOnRN(notifyFeedbackLauncherOfScroll);
     const y = event.contentOffset.y;
     if (!isCollapsed.value && y > COLLAPSE_AT) {
       isCollapsed.value = true;

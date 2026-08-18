@@ -16,6 +16,7 @@
 // =============================================================================
 
 import React, { useEffect, useState } from "react";
+import { StyleProp, ViewStyle } from "react-native";
 import Animated, {
   Easing,
   runOnJS,
@@ -28,6 +29,7 @@ type FadeContainerProps = {
   isVisible: boolean;
   children: React.ReactNode;
   duration?: number;
+  style?: StyleProp<ViewStyle>;
 };
 
 /**
@@ -39,6 +41,7 @@ export function FadeContainer({
   isVisible,
   children,
   duration = 300,
+  style,
 }: FadeContainerProps) {
   const [isRendered, setIsRendered] = useState(isVisible);
   const opacity = useSharedValue(isVisible ? 1 : 0);
@@ -69,7 +72,7 @@ export function FadeContainer({
 
   return (
     <Animated.View
-      style={animatedStyle}
+      style={[style, animatedStyle]}
       pointerEvents={isVisible ? "auto" : "none"}
     >
       {children}

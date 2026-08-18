@@ -28,6 +28,7 @@ import {
   SortDirection,
   SortOption,
 } from "~@meetings/app/entities/person";
+import { feedbackLauncherScrollProps } from "~@meetings/app/features/intercom";
 import { Person, PersonType, trpc } from "~@meetings/app/shared/api";
 
 import { PersonCardItem } from "./PersonCardItem";
@@ -108,6 +109,7 @@ export function PersonsMobileList({
 
   return (
     <FlashList
+      {...feedbackLauncherScrollProps}
       maintainVisibleContentPosition={{ disabled: true }}
       data={persons}
       keyExtractor={(item: Person) => item.personId.toString()}
