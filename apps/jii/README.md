@@ -10,11 +10,11 @@ This app serves as the main entry point for the Opportunities development enviro
 
 `nx dev jii` lets you develop in a local frontend and backend against the staging database (via a CloudSQL proxy). This gets you fresh and real data, but can be subject to temporary outages when your local Prisma schema gets ahead of what's been deployed to staging.
 
-It also requires you to be logged into gcloud **before** starting the proxy service (run `gcloud auth login --update-adc`). If your gcloud session expires while the proxy service is running, you'll have to restart the Docker services in `@jii/prisma` after reauth using `nx docker-down @jii/prisma && nx docker @jii/prisma`. (These services keep running in the background until you explicitly shut them down, so this will likely be a regular occurrence.)
+This requires an active gcloud login because it relies on your local Application Default Credentials. To support this, the `dev` command will check this (and prompt you to reauth if necessary) before starting up, and watch your credential to prompt you for reauth when it expires (or respond to any manual reauth you may perform out-of-band). See the README in @jii/prisma for more detail on how this works.
 
 ### With local data
 
-`nx offline jii` lets you to develop features in the database itself, or to develop against fixture data, in offline mode. In offline mode the app does not require authentication (it self-identifies as a fake user; see the `OfflineAuthHandler`) and it does not communicate with any external services.
+`nx offline jii` lets you to develop features in the database itself, or to develop against fixture data, in offline mode. In offline mode the app does not require authentication (it self-identifies as a fake user; see the `OfflineAuthHandler`) and it does not communicate with any external services; data is stored locally in databases run via docker in `@jii/prisma`.
 
 **The offline database starts out empty and you will need to manually seed it with fixture data using `nx seed @jii/import`.** This is not run automatically when starting the server, but you can run it on demand for updated fixture data.
 

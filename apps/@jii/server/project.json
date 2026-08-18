@@ -23,7 +23,7 @@
     },
     "requires-sops-env:dev": {
       "continuous": true,
-      "dependsOn": ["^prisma-generate", "^docker", "jwks-sim"],
+      "dependsOn": ["^prisma-generate", "^cloudsql-proxy", "jwks-sim"],
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
@@ -71,7 +71,9 @@
     },
     "requires-sops-env:compare-resident-data": {
       "executor": "nx:run-commands",
-      "dependsOn": [{ "projects": ["@jii/prisma"], "target": "docker" }],
+      "dependsOn": [
+        { "projects": ["@jii/prisma"], "target": "cloudsql-proxy" }
+      ],
       "options": {
         "cwd": "{projectRoot}",
         "command": "tsx src/tools/compareResidentData.ts",

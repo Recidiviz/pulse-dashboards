@@ -5,14 +5,28 @@
   "projectType": "library",
   "tags": ["scope:server"],
   "targets": {
-    "docker": {
+    "cloudsql-proxy": {
+      "metadata": {
+        "description": "Runs the CloudSQL proxy used to develop against the staging DB, keeping gcloud ADC credentials fresh (refreshing and restarting the container as needed) for the whole session."
+      },
+      "continuous": true,
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "tsx scripts/cloudSqlProxy.mts"
+      }
+    },
+    "local-dbs": {
+      "metadata": {
+        "description": "Starts the local Postgres containers (dev + test) used when not developing against the staging DB."
+      },
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}"
       },
       "configurations": {
         "dev": {
-          "command": "docker compose up --wait"
+          "command": "docker compose up --wait db test-db"
         },
         "test": {
           "command": "echo 'No docker for CI'"
@@ -39,7 +53,7 @@
         "description": "Ensures that a DB exists for each state configured in the environment"
       },
       "executor": "nx:run-commands",
-      "dependsOn": ["docker"],
+      "dependsOn": ["local-dbs"],
       "options": {
         "cwd": "{projectRoot}"
       },
