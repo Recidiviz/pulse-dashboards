@@ -225,7 +225,6 @@ const US_ID_CONFIG = {
       "riskAssessment",
       "programParticipation",
       "conductHistory",
-      "attachments",
     ],
     conductClassificationColors: {
       Major: "SLATE_DARK",
