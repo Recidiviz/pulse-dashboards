@@ -34,6 +34,22 @@ function makeTranscription(
   } as LabelStudioMeeting["transcriptions"][number];
 }
 
+function makeActionItem(
+  overrides: Partial<LabelStudioMeeting["meetingActionItems"][number]> = {},
+): LabelStudioMeeting["meetingActionItems"][number] {
+  return {
+    assignee: "Staff Member",
+    generatedTask: "Follow up on housing",
+    editedTask: null,
+    context: null,
+    evidenceQuotes: [],
+    completed: false,
+    deleted: false,
+    pipelineRunId: "run-1",
+    ...overrides,
+  } as LabelStudioMeeting["meetingActionItems"][number];
+}
+
 function makeMeeting(
   overrides: Partial<LabelStudioMeeting> = {},
 ): LabelStudioMeeting {
@@ -55,6 +71,14 @@ function makeMeeting(
         deadline: "2026-04-01",
       },
       { task: "Schedule next meeting", assignee: "Client", deadline: null },
+    ],
+    notetakingPipelineRunId: "run-1",
+    meetingActionItems: [
+      makeActionItem(),
+      makeActionItem({
+        assignee: "Client",
+        generatedTask: "Schedule next meeting",
+      }),
     ],
     client: { displayPersonExternalId: "DISPLAY-001" },
     resident: null,
@@ -86,10 +110,8 @@ describe("buildLabelStudioTask", () => {
         transcript_best_provider: "assemblyai",
         transcript_best_confidence: 0.95,
         case_note: "Client discussed progress on goals.",
-        action_items: [
-          "[Staff Member] Follow up on housing (due: 2026-04-01)",
-          "[Client] Schedule next meeting",
-        ],
+        action_items:
+          "[Staff Member] Follow up on housing\n[Client] Schedule next meeting",
         needs_recidiviz_review: false,
         meta: {
           State: "US_NE",
@@ -136,6 +158,7 @@ describe("buildLabelStudioTask", () => {
         caseNote: null,
         structuredActionItems: null,
         durationMs: null,
+        meetingActionItems: [],
       }),
       "US_NE",
     );
@@ -161,5 +184,109 @@ describe("buildLabelStudioTask", () => {
   test("sets needs_recidiviz_review to true when passed", () => {
     const task = buildLabelStudioTask(makeMeeting(), "US_NE", true);
     expect(task.needs_recidiviz_review).toBe(true);
+  });
+});
+
+describe("action_items", () => {
+  function actionItemsFor(overrides: Partial<LabelStudioMeeting>) {
+    return buildLabelStudioTask(makeMeeting(overrides), "US_NE").action_items;
+  }
+
+  test("shows the generated task, not a staff member's edit of it", () => {
+    expect(
+      actionItemsFor({
+        meetingActionItems: [
+          makeActionItem({ editedTask: "Follow up on housing by Friday" }),
+        ],
+      }),
+    ).toBe("[Staff Member] Follow up on housing");
+  });
+
+  test("keeps items staff deleted or completed — all were generated output", () => {
+    expect(
+      actionItemsFor({
+        meetingActionItems: [
+          makeActionItem({ deleted: true }),
+          makeActionItem({
+            generatedTask: "Schedule next meeting",
+            completed: true,
+          }),
+        ],
+      }),
+    ).toBe(
+      "[Staff Member] Follow up on housing\n[Staff Member] Schedule next meeting",
+    );
+  });
+
+  test("keeps only the run that produced the meeting's current notes", () => {
+    expect(
+      actionItemsFor({
+        notetakingPipelineRunId: "run-2",
+        meetingActionItems: [
+          makeActionItem({ generatedTask: "From a superseded run" }),
+          makeActionItem({
+            generatedTask: "Added by staff in the app",
+            pipelineRunId: null,
+          }),
+          makeActionItem({
+            generatedTask: "From the current run",
+            pipelineRunId: "run-2",
+          }),
+        ],
+      }),
+    ).toBe("[Staff Member] From the current run");
+  });
+
+  test("keeps every row when the meeting has no pipeline run recorded", () => {
+    expect(
+      actionItemsFor({
+        notetakingPipelineRunId: null,
+        meetingActionItems: [
+          makeActionItem({ pipelineRunId: "backfill-migration" }),
+          makeActionItem({ generatedTask: "Schedule next meeting" }),
+        ],
+      }),
+    ).toBe(
+      "[Staff Member] Follow up on housing\n[Staff Member] Schedule next meeting",
+    );
+  });
+
+  test("falls back to structuredActionItems when there are no rows", () => {
+    expect(actionItemsFor({ meetingActionItems: [] })).toBe(
+      "[Staff Member] Follow up on housing (due: 2026-04-01)\n[Client] Schedule next meeting",
+    );
+  });
+
+  test("is null when every row belongs to a superseded run — the JSON column is staler still", () => {
+    expect(
+      actionItemsFor({
+        notetakingPipelineRunId: "run-2",
+        meetingActionItems: [makeActionItem({ pipelineRunId: "run-1" })],
+      }),
+    ).toBeNull();
+  });
+
+  test("drops the assignee prefix when a row has no assignee", () => {
+    // Rows the backfill migration created from JSON without an assignee.
+    expect(
+      actionItemsFor({
+        meetingActionItems: [
+          makeActionItem({ assignee: "" }),
+          makeActionItem({ assignee: "Client", generatedTask: "Call the PO" }),
+        ],
+      }),
+    ).toBe("Follow up on housing\n[Client] Call the PO");
+  });
+
+  test("is null when the meeting has no action items anywhere", () => {
+    expect(
+      actionItemsFor({ meetingActionItems: [], structuredActionItems: null }),
+    ).toBeNull();
+  });
+
+  test("is null, not an empty string, for an empty structuredActionItems array", () => {
+    expect(
+      actionItemsFor({ meetingActionItems: [], structuredActionItems: [] }),
+    ).toBeNull();
   });
 });

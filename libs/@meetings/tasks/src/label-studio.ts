@@ -39,6 +39,7 @@ export const labelStudioMeetingInclude = {
     },
     orderBy: { confidence: "desc" as const },
   },
+  meetingActionItems: { orderBy: { createdAt: "asc" as const } },
 } satisfies Prisma.MeetingInclude;
 
 export type LabelStudioMeeting = Prisma.MeetingGetPayload<{
@@ -62,6 +63,101 @@ type StructuredActionItem = {
 function formatStructuredActionItem(item: StructuredActionItem): string {
   const base = `[${item.assignee}] ${item.task}`;
   return item.deadline ? `${base} (due: ${item.deadline})` : base;
+}
+
+/**
+ * Format one action item row as "[Assignee] Task".
+ *
+ * The assignee prefix is dropped when there isn't one: rows the backfill
+ * migration created from structuredActionItems default to an empty assignee
+ * (`COALESCE(item->>'assignee', '')`) when the JSON had no assignee to carry
+ * over, and "[] Task" reads as a bug to a rater.
+ */
+function formatActionItemRow(item: {
+  assignee: string;
+  generatedTask: string;
+}): string {
+  return item.assignee.trim()
+    ? `[${item.assignee}] ${item.generatedTask}`
+    : item.generatedTask;
+}
+
+/**
+ * The subset of a meeting `formatLabelStudioActionItems` reads, as a Prisma
+ * select — for callers that need only the action items and shouldn't pay for a
+ * meeting's transcripts and utterances (see `patch-label-studio-tasks.ts`).
+ * A meeting fetched with `labelStudioMeetingInclude` also satisfies it.
+ */
+export const labelStudioActionItemsSelect = {
+  structuredActionItems: true,
+  notetakingPipelineRunId: true,
+  meetingActionItems: {
+    orderBy: { createdAt: "asc" as const },
+    select: { assignee: true, generatedTask: true, pipelineRunId: true },
+  },
+} satisfies Prisma.MeetingSelect;
+
+export type LabelStudioActionItemsSource = Prisma.MeetingGetPayload<{
+  select: typeof labelStudioActionItemsSelect;
+}>;
+
+/**
+ * A meeting's generated action items for the `action_items` task field — one
+ * "[Assignee] Task" per line — or null if it has none.
+ *
+ * One newline-separated string rather than a list because the labeling config
+ * renders this field with `<Text name="action_items_display"
+ * value="$action_items"/>`, and Text concatenates a list into a single run-on
+ * blob. A string with newlines renders one item per line, the same way the
+ * transcript and case note fields do.
+ *
+ * Action items live in MeetingActionItem rows as of migration
+ * 20260609120000_add_meeting_action_item, and the notetaking pipeline writes
+ * only rows — it leaves Meeting.structuredActionItems null — so the rows are
+ * the source of truth whenever a meeting has any.
+ *
+ * Raters grade what the pipeline generated, so this deliberately shows the
+ * generated task text rather than `editedTask`, and keeps items staff later
+ * deleted or completed: all three were part of the output being graded.
+ */
+export function formatLabelStudioActionItems(
+  meeting: LabelStudioActionItemsSource,
+): string | null {
+  const { meetingActionItems, notetakingPipelineRunId } = meeting;
+
+  if (meetingActionItems.length > 0) {
+    const generatedRows =
+      notetakingPipelineRunId === null
+        ? // A meeting processed before notetakingPipelineRunId was added
+          // (migration 20260622120000) has no run to scope to, so every row
+          // counts — which for those meetings is exactly the rows the backfill
+          // migration created from structuredActionItems.
+          meetingActionItems
+        : // Otherwise keep only the run that produced the meeting's current
+          // notes. That drops rows left behind by a superseded run, and rows
+          // staff added themselves in the app: those carry a null
+          // pipelineRunId, and aren't pipeline output to be graded.
+          meetingActionItems.filter(
+            (item) => item.pipelineRunId === notetakingPipelineRunId,
+          );
+    return generatedRows.length > 0
+      ? generatedRows.map(formatActionItemRow).join("\n")
+      : null;
+  }
+
+  // Nothing in the rows table at all: fall back to the JSON column, which the
+  // pipeline wrote before the cutover. Migration 20260701120000 backfilled rows
+  // from this column for every meeting that had it, so this is only reachable
+  // for a meeting that migration didn't cover — but reading it is free, and the
+  // alternative is silently dropping the action items of an old meeting.
+  const structuredActionItems = meeting.structuredActionItems as
+    | StructuredActionItem[]
+    | null;
+  // An empty JSON array means the same thing as no action items at all, so
+  // normalize it to null rather than handing Label Studio an empty list.
+  return structuredActionItems?.length
+    ? structuredActionItems.map(formatStructuredActionItem).join("\n")
+    : null;
 }
 
 /**
@@ -111,10 +207,7 @@ export function buildLabelStudioTask(
 
     // ── LLM outputs ─────────────────────────────────────────────────────
     case_note: meeting.caseNote ?? null,
-    action_items:
-      (meeting.structuredActionItems as StructuredActionItem[] | null)?.map(
-        formatStructuredActionItem,
-      ) ?? null,
+    action_items: formatLabelStudioActionItems(meeting),
 
     needs_recidiviz_review: needsRecidivizReview,
 

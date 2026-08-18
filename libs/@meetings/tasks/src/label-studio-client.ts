@@ -53,6 +53,15 @@ export interface LabelStudioResult {
 export interface LabelStudioTask {
   id: number;
   data: Record<string, unknown>;
+  /**
+   * How many *completed* annotations the task has: Label Studio excludes ones
+   * a rater skipped from this count, tallying those separately (a task with
+   * only a skip reports `total_annotations: 0`, and
+   * `/api/tasks/<id>/annotations/` returns nothing for it). Only present when
+   * the task was listed with `withAnnotationCounts` — the default `task_only`
+   * listing omits it.
+   */
+  total_annotations?: number;
 }
 
 function requireEnv(name: string): string {
@@ -156,7 +165,18 @@ export class LabelStudioClient {
     return Array.isArray(users) ? users : users.results;
   }
 
-  async listTasksForProject(projectId: number): Promise<LabelStudioTask[]> {
+  /**
+   * List a project's tasks.
+   *
+   * `withAnnotationCounts` swaps the `task_only` field set for the full one,
+   * which is how the list endpoint populates `total_annotations` — needed to
+   * tell an already-graded task from an untouched one without a per-task
+   * annotations request.
+   */
+  async listTasksForProject(
+    projectId: number,
+    { withAnnotationCounts = false }: { withAnnotationCounts?: boolean } = {},
+  ): Promise<LabelStudioTask[]> {
     const tasks: LabelStudioTask[] = [];
     const pageSize = 100;
     let page = 1;
@@ -164,7 +184,7 @@ export class LabelStudioClient {
     do {
       // eslint-disable-next-line no-await-in-loop
       const res = await this.request<{ tasks: LabelStudioTask[] }>(
-        `/api/tasks?project=${projectId}&page=${page}&page_size=${pageSize}&fields=task_only`,
+        `/api/tasks?project=${projectId}&page=${page}&page_size=${pageSize}&fields=${withAnnotationCounts ? "all" : "task_only"}`,
       );
       tasks.push(...res.tasks);
       fetched = res.tasks.length;

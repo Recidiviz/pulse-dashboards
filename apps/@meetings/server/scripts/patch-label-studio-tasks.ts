@@ -23,7 +23,21 @@
  * doesn't modify ones that have already been synced, so we need to use the Label Studio API to make
  * these modifications.
  *
- * To patch a future field, add an entry to DERIVATIONS below.
+ * To patch a future field, add an entry to DERIVATIONS below (or to
+ * buildDerivations, for a field whose value has to come from the database).
+ *
+ * A derivation can also decline to touch a given task, with a reason tallied in
+ * the run summary — action_items skips tasks that are already graded or already
+ * populated.
+ *
+ * ## Prerequisites
+ *
+ * Derivations that read the meetings databases need the Cloud SQL Auth Proxy
+ * running, same as export-label-studio-tasks.ts:
+ *
+ *   cloud-sql-proxy --port 5432 recidiviz-dashboard-staging:us-central1:meetings
+ *   # or for production:
+ *   cloud-sql-proxy --port 5432 recidiviz-dashboard-production:us-central1:meetings
  *
  * ## Running
  *
@@ -35,11 +49,20 @@
  *   nx patch-label-studio-tasks @meetings/server --configuration=production --args="--apply"
  *
  * Requires LABEL_STUDIO_URL / LABEL_STUDIO_API_TOKEN / LABEL_STUDIO_IAP_AUDIENCE /
- * LABEL_STUDIO_PROJECT_ID / SA_KEY_FILE, all loaded from SOPS by the nx target.
+ * LABEL_STUDIO_PROJECT_ID / SA_KEY_FILE / DATABASE_URL_TEMPLATE, all loaded from
+ * SOPS by the nx target.
  */
 
 import { Command } from "@commander-js/extra-typings";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { isEqual } from "lodash";
 
+import { MEETINGS_STATE_CODES } from "~@meetings/config";
+import { Prisma, PrismaClient, StateCode } from "~@meetings/prisma/client";
+import {
+  formatLabelStudioActionItems,
+  labelStudioActionItemsSelect,
+} from "~@meetings/tasks/label-studio";
 import {
   createLabelStudioClientFromEnv,
   type LabelStudioTask,
@@ -82,12 +105,35 @@ function parseArgs(): ScriptArgs {
 }
 
 /**
- * A top-level field to patch, and how to derive its value from a task's
- * existing `data`. Return `undefined` to skip a task (value not derivable).
+ * A derivation's decision to leave a field alone, as distinct from `undefined`
+ * (couldn't derive it — report the task for follow-up). The reason is tallied
+ * in the run summary.
+ */
+interface LeaveUnchanged {
+  readonly leaveUnchanged: true;
+  readonly reason: string;
+}
+
+function leaveUnchanged(reason: string): LeaveUnchanged {
+  return { leaveUnchanged: true, reason };
+}
+
+function isLeaveUnchanged(value: unknown): value is LeaveUnchanged {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    (value as LeaveUnchanged).leaveUnchanged === true
+  );
+}
+
+/**
+ * A top-level field to patch, and how to derive its value for a task. Return
+ * `undefined` if it isn't derivable, or `leaveUnchanged(reason)` to leave this
+ * task's field as it is. See buildDerivations for the database-backed ones.
  */
 interface Derivation {
   field: string;
-  derive: (data: Record<string, unknown>) => unknown | undefined;
+  derive: (task: LabelStudioTask) => unknown | LeaveUnchanged;
 }
 
 /** Read a string field out of a task's `meta` object, if present. */
@@ -175,69 +221,271 @@ function deriveMigratedAudioPath(
   return `gs://${parsed.bucket}/${state}/${parsed.objectPath}`;
 }
 
+/** Derivations whose value comes from the task's own `data`. */
 const DERIVATIONS: Derivation[] = [
   // meeting_id was added as a top-level field after tasks were first synced.
   // Its value is the same one already surfaced in meta as "Meeting ID".
-  { field: "meeting_id", derive: (data) => metaString(data, "Meeting ID") },
+  {
+    field: "meeting_id",
+    derive: ({ data }) => metaString(data, "Meeting ID"),
+  },
   // Patches the stale pre-state-split audio gs:// path (see #14821) onto
   // tasks synced before move-audio-to-state-folders.ts moved the objects.
-  { field: "audio", derive: deriveMigratedAudioPath },
+  { field: "audio", derive: ({ data }) => deriveMigratedAudioPath(data) },
   // Add state_code and recording_date as top-level fields, similar to meeting_id
-  { field: "state_code", derive: (data) => metaString(data, "State") },
+  { field: "state_code", derive: ({ data }) => metaString(data, "State") },
   {
     field: "recording_date",
-    derive: (data) => metaString(data, "Recording date"),
+    derive: ({ data }) => metaString(data, "Recording date"),
   },
 ];
 
 /**
- * Compute the top-level fields that are missing or stale on a task. Returns the
- * changed key/value pairs (empty if the task is already up to date) plus any
- * derivations that couldn't be resolved.
+ * A task's (state, meeting) identity, falling back to `meta` for tasks synced
+ * before those top-level fields existed. Undefined if either is missing, or if
+ * the state isn't one @meetings has a database for.
  */
-function planUpdate(task: LabelStudioTask): {
+function taskMeetingRef(
+  data: Record<string, unknown>,
+): { stateCode: StateCode; meetingId: string } | undefined {
+  const meetingId =
+    typeof data["meeting_id"] === "string"
+      ? data["meeting_id"]
+      : metaString(data, "Meeting ID");
+  const stateCode =
+    typeof data["state_code"] === "string"
+      ? data["state_code"]
+      : metaString(data, "State");
+  if (!meetingId || !stateCode || !MEETINGS_STATE_CODES.includes(stateCode)) {
+    return undefined;
+  }
+  return { stateCode: stateCode as StateCode, meetingId };
+}
+
+/** Map key for the meeting lookup below (meeting ids are unique per state). */
+function meetingRefKey(stateCode: StateCode, meetingId: string): string {
+  return `${stateCode}:${meetingId}`;
+}
+
+/** What database-backed derivations get per meeting; widen as they need more. */
+const PATCH_MEETING_SELECT = {
+  id: true,
+  ...labelStudioActionItemsSelect,
+} satisfies Prisma.MeetingSelect;
+
+type PatchMeeting = Prisma.MeetingGetPayload<{
+  select: typeof PATCH_MEETING_SELECT;
+}>;
+
+/**
+ * Load every meeting the tasks point at, one query per state database. Meetings
+ * that no longer exist are absent from the map, which leaves their task's
+ * database-backed fields unresolved rather than derived from nothing.
+ */
+async function fetchMeetingsForTasks(
+  tasks: LabelStudioTask[],
+  dbUrlTemplate: string,
+): Promise<Map<string, PatchMeeting>> {
+  const meetingIdsByState = new Map<StateCode, Set<string>>();
+  for (const task of tasks) {
+    const ref = taskMeetingRef(task.data);
+    if (!ref) continue;
+    const ids = meetingIdsByState.get(ref.stateCode) ?? new Set<string>();
+    ids.add(ref.meetingId);
+    meetingIdsByState.set(ref.stateCode, ids);
+  }
+
+  const meetingsByRef = new Map<string, PatchMeeting>();
+  for (const [stateCode, meetingIds] of meetingIdsByState) {
+    const prisma = new PrismaClient({
+      adapter: new PrismaPg({
+        connectionString: dbUrlTemplate.replace(
+          "{state}",
+          stateCode.toLowerCase(),
+        ),
+      }),
+    });
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      const meetings = await prisma.meeting.findMany({
+        where: { id: { in: [...meetingIds] } },
+        select: PATCH_MEETING_SELECT,
+      });
+      for (const meeting of meetings) {
+        meetingsByRef.set(meetingRefKey(stateCode, meeting.id), meeting);
+      }
+      console.log(
+        `  ${stateCode}: ${meetings.length} of ${meetingIds.size} meeting(s) found`,
+      );
+    } finally {
+      // eslint-disable-next-line no-await-in-loop
+      await prisma.$disconnect();
+    }
+  }
+  return meetingsByRef;
+}
+
+/**
+ * Whether a task has a *completed* annotation, or undefined if it wasn't listed with annotation
+ * counts. `total_annotations` does not count tasks with a "skipped" annotation (which for our
+ * purposes are equivalent to ones that have no annotations)
+ */
+function hasCompleteAnnotation(task: LabelStudioTask): boolean | undefined {
+  return task.total_annotations === undefined
+    ? undefined
+    : task.total_annotations > 0;
+}
+
+function isEmptyActionItems(value: unknown): boolean {
+  if (value === null || value === undefined) return true;
+  // Action Items have been both strings and lists at points in time, so check emptiness for both.
+  if (typeof value === "string") return value.trim() === "";
+  if (Array.isArray(value)) return value.length === 0;
+  return false;
+}
+
+/** The data-only derivations above, plus the ones that read `meetingsByRef`. */
+function buildDerivations(
+  meetingsByRef: Map<string, PatchMeeting>,
+): Derivation[] {
+  /** The meeting a task points at, or undefined if it isn't in the map. */
+  const meetingForTask = (task: LabelStudioTask): PatchMeeting | undefined => {
+    const ref = taskMeetingRef(task.data);
+    return ref
+      ? meetingsByRef.get(meetingRefKey(ref.stateCode, ref.meetingId))
+      : undefined;
+  };
+
+  return [
+    ...DERIVATIONS,
+    // Tasks synced while buildLabelStudioTask still read the deprecated
+    // structuredActionItems column have `action_items: null`, so raters were
+    // grading action items they couldn't see. Fill that gap and fix formatting.
+    {
+      field: "action_items",
+      derive: (task) => {
+        // Filling this in after someone graded it would change what they were
+        // looking at, so leave graded tasks alone.
+        const graded = hasCompleteAnnotation(task);
+        if (graded === undefined) return undefined;
+        if (graded) {
+          return leaveUnchanged("task already has a completed annotation");
+        }
+
+        const current = task.data["action_items"];
+
+        if (Array.isArray(current) && current.length > 0) {
+          return current.join("\n");
+        }
+
+        // Any other non-empty value is already a string of the right shape.
+        if (!isEmptyActionItems(current)) {
+          return leaveUnchanged("task already has action items");
+        }
+
+        const meeting = meetingForTask(task);
+        if (!meeting) return undefined;
+
+        const actionItems = formatLabelStudioActionItems(meeting);
+        return actionItems ?? leaveUnchanged("meeting has no action items");
+      },
+    },
+  ];
+}
+
+/**
+ * The fields that are missing or stale on a task: the changed key/value pairs
+ * (empty if it's up to date), plus the derivations that couldn't resolve and
+ * the ones that declined.
+ */
+function planUpdate(
+  task: LabelStudioTask,
+  derivations: Derivation[],
+): {
   changes: Record<string, unknown>;
   unresolved: string[];
+  leftUnchanged: { field: string; reason: string }[];
 } {
   const changes: Record<string, unknown> = {};
   const unresolved: string[] = [];
-  for (const { field, derive } of DERIVATIONS) {
-    const desired = derive(task.data);
+  const leftUnchanged: { field: string; reason: string }[] = [];
+  for (const { field, derive } of derivations) {
+    const desired = derive(task);
+    if (isLeaveUnchanged(desired)) {
+      leftUnchanged.push({ field, reason: desired.reason });
+      continue;
+    }
     if (desired === undefined) {
       unresolved.push(field);
       continue;
     }
-    if (task.data[field] !== desired) {
+    if (!isEqual(task.data[field], desired)) {
       changes[field] = desired;
     }
   }
-  return { changes, unresolved };
+  return { changes, unresolved, leftUnchanged };
+}
+
+/** Compact one value for the per-task log line, so array fields stay readable. */
+function formatValueForLog(value: unknown): string {
+  if (!Array.isArray(value)) return JSON.stringify(value);
+  if (value.length === 0) return "[]";
+  const first = JSON.stringify(value[0]);
+  const preview = first.length > 60 ? `${first.slice(0, 60)}…` : first;
+  return `[${value.length} item(s), first: ${preview}]`;
 }
 
 async function main(): Promise<void> {
   const { projectId, apply } = parseArgs();
+  const dbUrlTemplate = process.env["DATABASE_URL_TEMPLATE"];
+  if (!dbUrlTemplate) {
+    console.error(
+      "Missing DATABASE_URL_TEMPLATE environment variable — the action_items derivation reads the meetings databases.\n" +
+        "Add it to env.patch-label-studio-tasks.<env>.enc.yaml (copy the value from env.export-label-studio-tasks.<env>.enc.yaml).",
+    );
+    process.exit(1);
+  }
   const ls = createLabelStudioClientFromEnv();
 
   const url = process.env["LABEL_STUDIO_URL"];
   console.log(
     `${apply ? "APPLYING" : "DRY RUN"} — Label Studio ${url} project ${projectId}`,
   );
+
+  const tasks = await ls.listTasksForProject(projectId, {
+    // access annotation counts so derivations can skip already-graded tasks
+    withAnnotationCounts: true,
+  });
+  const gradedCount = tasks.filter((t) => hasCompleteAnnotation(t)).length;
   console.log(
-    `Patching fields: ${DERIVATIONS.map((d) => d.field).join(", ")}\n`,
+    `Found ${tasks.length} task(s) in project ${projectId}, ${gradedCount} of them with a completed annotation.\n`,
   );
 
-  const tasks = await ls.listTasksForProject(projectId);
-  console.log(`Found ${tasks.length} task(s) in project ${projectId}.\n`);
+  console.log("Looking up meetings per state:");
+  const derivations = buildDerivations(
+    await fetchMeetingsForTasks(tasks, dbUrlTemplate),
+  );
+  console.log(
+    `\nPatching fields: ${derivations.map((d) => d.field).join(", ")}\n`,
+  );
 
   let changedCount = 0;
   let alreadyCurrent = 0;
   const skipped: { taskId: number; fields: string[] }[] = [];
+  const leftUnchangedCounts = new Map<string, number>();
 
   for (const task of tasks) {
-    const { changes, unresolved } = planUpdate(task);
+    const { changes, unresolved, leftUnchanged } = planUpdate(
+      task,
+      derivations,
+    );
 
     if (unresolved.length > 0) {
       skipped.push({ taskId: task.id, fields: unresolved });
+    }
+    for (const { field, reason } of leftUnchanged) {
+      const key = `${field}: ${reason}`;
+      leftUnchangedCounts.set(key, (leftUnchangedCounts.get(key) ?? 0) + 1);
     }
 
     const changedFields = Object.keys(changes);
@@ -250,7 +498,7 @@ async function main(): Promise<void> {
     const summary = changedFields
       .map(
         (f) =>
-          `${f}: ${JSON.stringify(task.data[f])} -> ${JSON.stringify(changes[f])}`,
+          `${f}: ${formatValueForLog(task.data[f])} -> ${formatValueForLog(changes[f])}`,
       )
       .join(", ");
     console.log(
@@ -266,9 +514,14 @@ async function main(): Promise<void> {
   console.log(
     `\n${apply ? "Updated" : "Would update"} ${changedCount} task(s). ${alreadyCurrent} already current.`,
   );
+  for (const [fieldAndReason, count] of leftUnchangedCounts) {
+    console.log(
+      `${count} task(s) left unchanged on purpose — ${fieldAndReason}`,
+    );
+  }
   if (skipped.length > 0) {
     console.log(
-      `\n⚠️  ${skipped.length} task(s) had unresolvable field(s) (missing from meta):`,
+      `\n⚠️  ${skipped.length} task(s) had unresolvable field(s) (missing from meta, or meeting no longer in the database):`,
     );
     for (const s of skipped) {
       console.log(`   task ${s.taskId}: ${s.fields.join(", ")}`);
