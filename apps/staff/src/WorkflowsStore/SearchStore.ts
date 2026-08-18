@@ -16,7 +16,7 @@
 // =============================================================================
 
 import assertNever from "assert-never";
-import { intersection, uniq } from "lodash";
+import { intersection, uniq, uniqBy } from "lodash";
 import { makeAutoObservable, reaction, when } from "mobx";
 
 import { SystemId } from "~datatypes";
@@ -247,18 +247,17 @@ export class SearchStore {
     // against the manager's accumulating cache instead so pills persist.
     // The manager scopes that cache to the active system, matching the
     // system-scoping the Firestore path below gets from availableSearchables.
-    if (this.isTypesenseSearchEnabled) {
-      return this.caseloadSearchManager.resolveSelectedSearchables(
-        this.selectedSearchIds,
-      );
-    }
+    const selected = this.isTypesenseSearchEnabled
+      ? this.caseloadSearchManager.resolveSelectedSearchables(
+          this.selectedSearchIds,
+        )
+      : this.availableSearchables
+          .flatMap((searchableGroup) => searchableGroup.searchables)
+          .filter((searchable) =>
+            this.selectedSearchIds.includes(searchable.searchId),
+          );
 
-    const allSearchables = this.availableSearchables.flatMap(
-      (searchableGroup) => searchableGroup.searchables,
-    );
-    return allSearchables.filter((searchable) =>
-      this.selectedSearchIds.includes(searchable.searchId),
-    );
+    return uniqBy(selected, (searchable) => searchable.searchId);
   }
 
   // The dropdown's source of truth. When the Typesense-backed search bar FV

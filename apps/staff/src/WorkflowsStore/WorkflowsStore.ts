@@ -17,7 +17,7 @@
 
 import assertNever from "assert-never";
 import Fuse from "fuse.js";
-import { intersection, pick, sortBy } from "lodash";
+import { intersection, pick, sortBy, uniqBy } from "lodash";
 import {
   action,
   has,
@@ -777,7 +777,7 @@ export class WorkflowsStore implements Hydratable {
   get availableOfficers(): StaffRecord[] {
     const officers = (this.staffSubscription ?? []).map((s) => s.data).flat();
     officers.sort(staffNameComparator);
-    return officers;
+    return uniqBy(officers, (officer) => officer.staffExternalId);
   }
 
   get availableOfficersWithOrWithoutCaseloads(): StaffRecord[] {

@@ -568,6 +568,56 @@ describe("staffSubscription", () => {
   });
 });
 
+describe("availableOfficers", () => {
+  test("dedupes staff with a record in both staff collections", async () => {
+    workflowsStore.updateActiveSystem("ALL");
+    await waitForHydration();
+
+    const dualRoleSupervision = {
+      ...mockSupervisionOfficers[0],
+      staffExternalId: "XX_DUAL_OFFICER",
+    };
+    const dualRoleIncarceration = {
+      ...mockIncarcerationOfficers[0],
+      staffExternalId: "XX_DUAL_OFFICER",
+      givenNames: dualRoleSupervision.givenNames,
+      surname: dualRoleSupervision.surname,
+    };
+
+    runInAction(() => {
+      workflowsStore.supervisionStaffSubscription.data = [dualRoleSupervision];
+      workflowsStore.incarcerationStaffSubscription.data = [
+        dualRoleIncarceration,
+      ];
+    });
+
+    // Both records are in the subscriptions...
+    expect(
+      workflowsStore.staffSubscription?.map((s) => s.data).flat(),
+    ).toBeArrayOfSize(2);
+
+    // ...but the officer is only offered once.
+    expect(
+      workflowsStore.availableOfficers.map((o) => o.staffExternalId),
+    ).toStrictEqual(["XX_DUAL_OFFICER"]);
+  });
+
+  test("keeps distinct officers from both collections", async () => {
+    workflowsStore.updateActiveSystem("ALL");
+    await waitForHydration();
+    runInAction(() => {
+      workflowsStore.supervisionStaffSubscription.data =
+        mockSupervisionOfficers;
+      workflowsStore.incarcerationStaffSubscription.data =
+        mockIncarcerationOfficers;
+    });
+
+    expect(workflowsStore.availableOfficers).toBeArrayOfSize(
+      mockSupervisionOfficers.length + mockIncarcerationOfficers.length,
+    );
+  });
+});
+
 test("locations from subscription", async () => {
   await waitForHydration();
   runInAction(() => {

@@ -339,6 +339,67 @@ describe("availableSearchables", () => {
   });
 });
 
+describe("selectedSearchables", () => {
+  // Mirrors US_MI: INCARCERATION lists two search configs, so searchType
+  // resolves to "ALL" and availableOfficers spans both the supervisionStaff
+  // and incarcerationStaff subscriptions. Some MI staff have a record in
+  // each, so the same staffExternalId arrives twice.
+  function setUpStaffInBothCollections() {
+    workflowsStore.activeSystemConfig = {
+      search: [
+        { searchType: "FACILITY", searchTitle: "facility" },
+        { searchType: "INCARCERATION_OFFICER", searchTitle: "case manager" },
+      ],
+    };
+    workflowsStore.availableOfficers = [
+      {
+        staffExternalId: "XX_DUAL_OFFICER",
+        stateCode: "US_XX",
+        givenNames: "Dual",
+        surname: "Role",
+        pseudonymizedId: "pDualSupervision",
+        recordType: "supervisionStaff",
+      },
+      {
+        staffExternalId: "XX_DUAL_OFFICER",
+        stateCode: "US_XX",
+        givenNames: "Dual",
+        surname: "Role",
+        pseudonymizedId: "pDualIncarceration",
+        recordType: "incarcerationStaff",
+      },
+    ];
+  }
+
+  test("returns one searchable for staff with a record in both collections", () => {
+    setUpStaffInBothCollections();
+    workflowsStore.user.updates.selectedSearchIds = ["XX_DUAL_OFFICER"];
+
+    // availableSearchables still holds both records...
+    expect(
+      searchStore.availableSearchables
+        .flatMap((group) => group.searchables)
+        .filter((s) => s.searchId === "XX_DUAL_OFFICER"),
+    ).toBeArrayOfSize(2);
+
+    // ...but the selection renders a single pill.
+    expect(
+      searchStore.selectedSearchables.map((s) => s.searchId),
+    ).toStrictEqual(["XX_DUAL_OFFICER"]);
+  });
+
+  test("leaves distinct selections alone", () => {
+    workflowsStore.user.updates.selectedSearchIds = [
+      "XX_OFFICER1",
+      "XX_OFFICER2",
+    ];
+
+    expect(
+      searchStore.selectedSearchables.map((s) => s.searchId).sort(),
+    ).toStrictEqual(["XX_OFFICER1", "XX_OFFICER2"]);
+  });
+});
+
 describe("searchType", () => {
   test("searchType when there is a single search config", async () => {
     workflowsStore.activeSystemConfig = {
