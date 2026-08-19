@@ -59,3 +59,24 @@ export const getRNAQueryResolver = async ({
     lifeAreaAnswers: rnaLifeAreaAnswersSchema.parse(result.answers),
   };
 };
+
+/**
+ * Given a resident's pseudonymized ID, return the resident's current seq number and
+ * admit date (used to uniquely identify an OPUS-enabled RNA for the person, even
+ * between different incarceration spans)
+ */
+export const getRNAWritebackDataQueryResolver = async ({
+  input: { pseudonymizedId },
+  ctx: { prisma },
+}: {
+  input: z.infer<typeof getRNAInputSchema>;
+  ctx: { prisma: PrismaClient };
+}) => {
+  const result = await prisma.usNcRNAWritebackData.findFirst({
+    where: { pseudonymizedId },
+    // we don't expect multiple rows here, but return the latest one just in case
+    orderBy: { importedAt: "desc" },
+  });
+
+  return { seqNumber: result?.seqNumber, admitDate: result?.admitDate };
+};

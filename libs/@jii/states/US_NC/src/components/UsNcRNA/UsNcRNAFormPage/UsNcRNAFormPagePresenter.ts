@@ -66,8 +66,10 @@ export class UsNcRNAFormPagePresenter {
   }
 
   /**
-   * Write current state of answers to the database. Return whether the operation succeeded
-   * or not.
+   * Write current state of answers to the database. The parameter represents
+   * whether the form instance should now be treated as completed.
+   *
+   * Return whether the operation succeeded or not.
    */
   *saveAnswers(completed = false) {
     if (!this.isSaving) {

@@ -50,6 +50,7 @@ enum ResidentFlagId {
     usAzFslImprovements
     usCoV1Experience
     usArFslImprovements
+    usNcRNAAutoEnablement
 }
 
 model ResidentFlagInstance {
@@ -107,6 +108,10 @@ model UsNcRNA {
 
     // The resident's answers, parsed via Zod
     answers Json
+
+    // The resident's sequence number and admit date at the time of completing the RNA
+    seqNumber          String?
+    admitDate          DateTime?
 }
 
 // Supplemental data for RNA writeback about a resident's RNA status

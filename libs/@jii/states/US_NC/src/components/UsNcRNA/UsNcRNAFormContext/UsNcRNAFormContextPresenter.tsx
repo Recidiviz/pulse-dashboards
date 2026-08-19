@@ -30,15 +30,29 @@ export class UsNcRNAFormContextPresenter implements Hydratable {
   constructor(
     private readonly apiClient: DataAPI,
     private readonly pseudonymizedId: string,
+    private readonly usNcRNAAutoEnablement: boolean,
   ) {
     makeAutoObservable(this);
   }
 
   async hydrate() {
     try {
-      const queryResult = await this.apiClient.trpc.state.usNc.getRNA.query({
-        pseudonymizedId: this.pseudonymizedId,
-      });
+      let queryResult;
+      if (this.usNcRNAAutoEnablement) {
+        // For auto-enabled RNAs, the user's action of viewing the form page might
+        // create a new RNA object for them; otherwise determine state based on their
+        // existing RNA's status.
+        queryResult =
+          await this.apiClient.trpc.state.usNc.getOrCreateRNA.mutate({
+            pseudonymizedId: this.pseudonymizedId,
+          });
+      } else {
+        // For non-auto-enabled RNAs, the RNA is always created by staff action, so
+        // status is determined by the existing RNA in the db.
+        queryResult = await this.apiClient.trpc.state.usNc.getRNA.query({
+          pseudonymizedId: this.pseudonymizedId,
+        });
+      }
 
       runInAction(() => {
         this.hydrationSucceeded = true;

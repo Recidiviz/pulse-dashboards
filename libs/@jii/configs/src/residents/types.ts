@@ -45,7 +45,8 @@ type ResidentFlag =
   | "usAzFslImprovements"
   | "usCoV1Experience"
   //TODO OBT-34689 remove after launch
-  | "usArFslImprovements";
+  | "usArFslImprovements"
+  | "usNcRNAAutoEnablement";
 
 // this type must stay in sync with the UserFlagId enum
 // defined in the prisma schema.

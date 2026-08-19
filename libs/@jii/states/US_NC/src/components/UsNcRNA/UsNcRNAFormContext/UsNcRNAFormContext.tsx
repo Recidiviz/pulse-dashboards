@@ -48,8 +48,13 @@ const ManagedComponent: FC<{
 
 function usePresenter() {
   const { apiClient } = useRootStore();
-  const { resident } = useSingleResidentContext();
-  return new UsNcRNAFormContextPresenter(apiClient, resident.pseudonymizedId);
+  const { resident, residentFlags } = useSingleResidentContext();
+  const { usNcRNAAutoEnablement } = residentFlags;
+  return new UsNcRNAFormContextPresenter(
+    apiClient,
+    resident.pseudonymizedId,
+    !!usNcRNAAutoEnablement,
+  );
 }
 
 export const UsNcRNAFormContext = withPresenterManager({

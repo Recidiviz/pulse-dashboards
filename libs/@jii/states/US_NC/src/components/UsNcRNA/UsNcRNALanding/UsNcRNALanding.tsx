@@ -18,6 +18,7 @@
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { Card, GoButton, SlateCopy, usePageTitle } from "~@jii/common-ui";
+import { useSingleResidentContext } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsNcTranslations } from "~@jii/translation";
 
@@ -41,20 +42,19 @@ export function UsNcRNALanding() {
 
   const { form } = useRNAFormContext();
   const routeParams = useTypedParams(State.Resident);
+  const {
+    residentFlags: { usNcRNAAutoEnablement },
+  } = useSingleResidentContext();
 
   if (form.completedAt) {
     return <UsNcRNASuccessfulSubmission completedAt={form.completedAt} />;
   }
 
-  // TODO(#10883): Reorder these conditions before full-state launch
-
-  // In case people started filling out the form before it was enabled,
-  // we should allow them to resume the form.
   if (form.pageToResumeAt > 1) {
     return <UsNcRNAResumeForm />;
   }
 
-  if (!form.enabledAt) {
+  if (!usNcRNAAutoEnablement && !form.enabledAt) {
     return <UsNcRNANotEnabled />;
   }
 
