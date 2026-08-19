@@ -64,3 +64,29 @@ export function getSimilarResources(
       categories.some((c) => c.category === category),
   );
 }
+
+export function groupResourcesBySubcategory(
+  resources: ResourceSummary[],
+  category: string,
+): Map<string, ResourceSummary[]> {
+  const groups = new Map<string, ResourceSummary[]>();
+  for (const resource of resources) {
+    resource.categories
+      .filter((cat) => cat.category === category)
+      .forEach(({ subcategory }) => {
+        const group = groups.get(subcategory) ?? [];
+        group.push(resource);
+        groups.set(subcategory, group);
+      });
+  }
+  return groups;
+}
+
+export function toggleFilterSelection(
+  currentValues: string[],
+  selectedValue: string,
+): string[] {
+  return currentValues.includes(selectedValue)
+    ? currentValues.filter((currentValue) => currentValue !== selectedValue)
+    : [...currentValues, selectedValue];
+}

@@ -67,7 +67,7 @@ describe("getOrganizations", () => {
         name: "Women's Prison Association",
         description: "Support for women with incarcerated loved ones.",
         categories: [{ category: "Women", subcategory: "Organizations" }],
-        tags: ["women", "organizations"],
+        tags: ["Organizations", "Women"],
         primaryContactMethod: "PHONE",
         primaryContactValue: "212-555-0100",
       },
@@ -191,7 +191,7 @@ describe("getOrganization", () => {
       name: "Legal Aid Society",
       description: "Free civil legal services for low-income New Yorkers.",
       categories: [{ category: "Legal", subcategory: "Public Defense" }],
-      tags: ["legal", "civil"],
+      tags: ["Civil", "Legal"],
       primaryContactMethod: "ADDRESS",
       primaryContactValue: "199 Water St, New York, NY 10038",
       addresses: [

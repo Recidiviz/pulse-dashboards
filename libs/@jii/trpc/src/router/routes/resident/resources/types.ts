@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import startCase from "lodash-es/startCase";
 import { z } from "zod";
 
 import { nullishAsNull } from "~datatypes";
@@ -64,6 +65,11 @@ const organizationDetailBaseSchema = organizationBaseSchema.extend({
   ),
 });
 
+function sanitizeString(s: string): string {
+  // U+FFFC (Object Replacement Character) appears in raw API subcategory values
+  return s.replace(/￼/g, "").trim();
+}
+
 function organizationTransform<
   T extends z.infer<typeof organizationBaseSchema>,
 >({ id, attributes: { categorizations, tags }, ...rest }: T) {
@@ -71,10 +77,12 @@ function organizationTransform<
     organizationId: id,
     ...rest,
     categories: categorizations.map(({ section, subsection }) => ({
-      category: section,
-      subcategory: subsection,
+      category: sanitizeString(section),
+      subcategory: sanitizeString(subsection),
     })),
-    tags,
+    tags: tags
+      .map((tag) => (tag === tag.toUpperCase() ? tag : startCase(tag)))
+      .sort((a, b) => a.localeCompare(b)),
   };
 }
 
