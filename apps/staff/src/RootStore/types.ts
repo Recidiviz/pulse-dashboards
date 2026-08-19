@@ -187,7 +187,8 @@ export type FeatureVariant =
   | "PSRBuilder"
 
   // HOME CONTACT ROUTE PLANNER
-  | "HCRPAddMoreClients";
+  | "HCRPAddMoreClients"
+  | "HCRPPIIEmail";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -287,6 +288,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   tasksPermasnooze: {},
   tasksRoutePlanner: {},
   HCRPAddMoreClients: {},
+  HCRPPIIEmail: {},
   usPaUnclearEligibility: {},
   usIdTasksV2: {},
   crcLikeBeds: {},
@@ -369,6 +371,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         tasksOneRowPerClient: { activeTenants: ["US_MO"] },
         tasksRoutePlanner: { activeTenants: ["US_TX", "US_ID"] },
         HCRPAddMoreClients: { activeTenants: ["US_TX", "US_ID"] },
+        HCRPPIIEmail: { activeTenants: ["US_ID"] },
         hideWorkflowsResidentsPage: { activeTenants: ["US_NC"] },
         sentenceProgressV2: { activeTenants: ["US_ND"] },
       }
@@ -408,6 +411,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         tasksOneRowPerClient: { activeTenants: ["US_MO"] },
         tasksRoutePlanner: { activeTenants: ["US_TX", "US_ID"] },
         HCRPAddMoreClients: { activeTenants: ["US_TX", "US_ID"] },
+        HCRPPIIEmail: { activeTenants: ["US_ID"] },
         hideDenialRevert: { activeTenants: ["US_AZ"] },
         SARBuilder: { activeTenants: ["US_MO"] },
         SARSignature: { activeTenants: ["US_MO"] },

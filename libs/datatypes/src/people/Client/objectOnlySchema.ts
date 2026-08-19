@@ -47,6 +47,7 @@ const optionalClientInformation = z
         addressCountry: z.string(),
       })
       .partial(),
+    currentPhysicalResidenceAddressNotes: z.string().nullable(),
     phoneNumber: z.string(),
     supervisionStartDate: dateStringSchema,
     expirationDate: dateStringSchema,

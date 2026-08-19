@@ -16,8 +16,9 @@
 // =============================================================================
 
 import assertNever from "assert-never";
-import dedent from "dedent";
+import DOMPurify from "dompurify";
 import { makeAutoObservable } from "mobx";
+import { renderToString } from "react-dom/server";
 
 import { OfficeAddress } from "~datatypes";
 
@@ -32,6 +33,7 @@ import { WorkflowsStore } from "../../WorkflowsStore";
 import { Officer } from "../../WorkflowsStore/Officer";
 import RoutePlannerClientStore from "./ClientStore/ClientStoreBase";
 import { RoutePlannerClientsPresenter } from "./RoutePlannerClientsPresenter";
+import { SelectedClientsEmailTemplate } from "./RoutePlannerEmailTemplate";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 // The Google Maps Embed API is documented here: https://developers.google.com/maps/documentation/embed/embedding-map
@@ -337,24 +339,48 @@ export class RoutePlannerPresenter {
   }
 
   /**
+   * Return the title each state names their ID data columns
+   */
+  get idTitle(): string {
+    switch (this.stateCode) {
+      case "US_TX":
+        return "SID";
+      case "US_ID":
+        return "IDOC";
+      default:
+        return assertNever(this.stateCode);
+    }
+  }
+
+  /**
    * Return an HTML-formatted email containing the directions the user has selected,
    * or undefined if no valid email request body can be created.
    */
   get mapDirectionsBody(): MapDirectionsRequestProps | undefined {
     if (!this.userEmailAddress) return;
+    const { selectedClients, mapsAddressLink } = this.clientsPresenter;
 
     const today = formatWorkflowsDate(new Date());
-    const emailBody = dedent`
-      <p>Hi,</p>
-      <p>Here is the Google Maps link, generated on ${today}, that you requested from the Recidiviz Home Contact Route Planner: <a href="${this.mapDirectionsUrl}">${this.mapDirectionsUrl}</a></p>
-      <p>Best,<br/>The Recidiviz Team</p>
-      <br />
-      <i>If you believe you’ve received this email in error or this email contains incorrect information, please email feedback@recidiviz.org to let us know.</i>
-    `;
+
+    const piiEmailAccessEnabled =
+      !!this.workflowsStore.rootStore.userStore.activeFeatureVariants
+        .HCRPPIIEmail;
+
+    const renderedBody = renderToString(
+      SelectedClientsEmailTemplate({
+        today,
+        mapDirectionsUrl: this.mapDirectionsUrl,
+        idTitle: this.idTitle,
+        selectedClients,
+        piiEmailAccessEnabled,
+        mapsAddressLink,
+      }),
+    );
+
     return {
       userEmail: this.userEmailAddress,
       emailSubject: `Recidiviz Route Planner - Maps Link (${today})`,
-      emailBody: emailBody,
+      emailBody: DOMPurify.sanitize(renderedBody),
     };
   }
 

@@ -283,6 +283,10 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     });
   }
 
+  get addressNotes(): string | undefined {
+    return this.record.currentPhysicalResidenceAddressNotes ?? undefined;
+  }
+
   get assignedStaffId(): string {
     return this.record.officerId;
   }

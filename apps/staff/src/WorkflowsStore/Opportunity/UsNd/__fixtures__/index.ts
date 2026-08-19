@@ -46,6 +46,7 @@ export const usNdEarlyTerminationEligibleClientRecord: RequireKeys<ClientRecord>
       addressZip: "12345",
       addressCountry: "US",
     },
+    currentPhysicalResidenceAddressNotes: null,
     phoneNumber: "5555555678",
     expirationDate: new Date("2024-12-31"),
     allEligibleOpportunities: ["earlyTermination"],
