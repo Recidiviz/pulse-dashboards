@@ -117,6 +117,10 @@ type SortByLabelOptions<T> = {
   desc?: boolean;
   valueKey?: keyof T & string;
   sortOverride?: Record<string, number>;
+  // Field to sort non-tail data points by, when it differs from labelKey
+  // (e.g. horizontal charts rank bars by count rather than alphabetically).
+  // Defaults to labelKey.
+  sortValueKey?: keyof T & string;
 };
 
 /**
@@ -128,6 +132,7 @@ export function sortByLabel<T>({
   desc = false,
   valueKey,
   sortOverride,
+  sortValueKey = labelKey,
 }: SortByLabelOptions<T>): T[] {
   if (sortOverride && valueKey) {
     return dataPoints.sort((a, b) => {
@@ -137,6 +142,12 @@ export function sortByLabel<T>({
       );
     });
   }
+
+  const tailLabels: Record<string, number> = {
+    Other: 0,
+    Unknown: 1,
+    "Not Coded": 2,
+  };
 
   return dataPoints.sort((a, b) => {
     const aLabel = a[labelKey] as string;
@@ -151,19 +162,16 @@ export function sortByLabel<T>({
     if (aIsLessThan && !bIsLessThan) return -1;
     if (!aIsLessThan && bIsLessThan) return 1;
 
-    const tailLabels: Record<string, number> = {
-      Other: 0,
-      Unknown: 1,
-      "Not Coded": 2,
-    };
     const aInTail = aLabel in tailLabels;
     const bInTail = bLabel in tailLabels;
     if (aInTail && bInTail) return tailLabels[aLabel] - tailLabels[bLabel];
     if (aInTail && !bInTail) return 1;
     if (!aInTail && bInTail) return -1;
 
+    const aSortValue = a[sortValueKey] as string;
+    const bSortValue = b[sortValueKey] as string;
     return desc
-      ? bLabel.localeCompare(aLabel, "en", { numeric: true })
-      : aLabel.localeCompare(bLabel, "en", { numeric: true });
+      ? bSortValue.localeCompare(aSortValue, "en", { numeric: true })
+      : aSortValue.localeCompare(bSortValue, "en", { numeric: true });
   });
 }

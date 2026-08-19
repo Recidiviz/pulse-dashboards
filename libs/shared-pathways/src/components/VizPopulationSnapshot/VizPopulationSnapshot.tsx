@@ -142,7 +142,8 @@ const VizPopulationSnapshot: React.FC<VizPopulationSnapshotProps> = ({
 
   sortByLabel({
     dataPoints: data,
-    labelKey: metric.isHorizontal ? "value" : "accessorLabel",
+    labelKey: "accessorLabel",
+    sortValueKey: metric.isHorizontal ? "value" : undefined,
     desc: metric.isHorizontal,
     valueKey: "accessorValue",
     sortOverride:

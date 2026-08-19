@@ -221,4 +221,23 @@ describe("sortByLabel", () => {
       "UNKNOWN",
     ]);
   });
+
+  it("tails Not Coded by its label even when sorting by count (e.g. horizontal charts)", () => {
+    const data = [
+      { accessorLabel: "Not Coded", value: "50" },
+      { accessorLabel: "Assault", value: "30" },
+      { accessorLabel: "Burglary", value: "10" },
+    ];
+    const result = sortByLabel({
+      dataPoints: data,
+      labelKey: "accessorLabel",
+      sortValueKey: "value",
+      desc: true,
+    });
+    expect(result.map((d) => d.accessorLabel)).toEqual([
+      "Assault",
+      "Burglary",
+      "Not Coded",
+    ]);
+  });
 });
