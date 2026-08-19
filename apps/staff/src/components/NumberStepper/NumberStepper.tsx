@@ -74,11 +74,8 @@ export function NumberStepper({
   return (
     <StepperWrapper>
       <NumberField
-        type="number"
+        type="text"
         inputMode="numeric"
-        min={min}
-        max={max}
-        step={step}
         value={rawValue}
         aria-label={ariaLabel}
         onChange={handleInputChange}

@@ -37,20 +37,6 @@ export const NumberField = styled.input`
   color: ${palette.pine2};
   font-weight: 500;
   font-size: 13px;
-
-  &:focus-visible {
-    outline: none;
-
-  /* hide native stepper arrows in Firefox */
-  -moz-appearance: textfield !important;
-
-  /* hide native stepper arrows in Chrome, Safari, and Edge */
- &::-webkit-outer-spin-button,
-  &::-webkit-inner-spin-button {
-    -webkit-appearance: none !important;
-    appearance: none !important;
-    margin: 0; /* Prevents layout shifts */
-  }
 `;
 
 export const ArrowStack = styled.div`

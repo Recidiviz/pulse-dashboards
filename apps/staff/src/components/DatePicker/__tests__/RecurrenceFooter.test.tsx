@@ -156,7 +156,7 @@ describe("RecurrenceFooter custom recurrence section", () => {
         onCustomFreqChange={vi.fn()}
       />,
     );
-    expect(screen.getByLabelText("Repeat interval")).toHaveValue(3);
+    expect(screen.getByLabelText("Repeat interval")).toHaveValue("3");
     expect(screen.getByRole("button", { name: "week(s)" })).toBeVisible();
   });
 
