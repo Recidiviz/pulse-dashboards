@@ -238,6 +238,29 @@ export default class FirestoreStore {
     );
   }
 
+  async getOpportunityUpdatesByAllUniqueReviewerIds(
+    stateCode: string,
+    reviewerId: string,
+  ): Promise<ClientOpportunityUpdateRecord[]> {
+    const results = await getDocs(
+      query(
+        collectionGroup(
+          this.db,
+          collectionNameForCurrentEnv({ key: "clientOpportunityUpdates" }),
+        ),
+        where("stateCode", "==", stateCode),
+        where("allUniqueReviewerIds", "array-contains", reviewerId),
+      ),
+    );
+
+    return results.docs.map((result) =>
+      clientOpportunityUpdatesSchema.parse({
+        ...result.data(),
+        clientRecordId: result.ref.parent.parent?.id,
+      }),
+    );
+  }
+
   async getClientsForRecordIds(recordIds: string[]): Promise<ClientRecord[]> {
     if (recordIds.length === 0) return [];
     const batches = await Promise.all(

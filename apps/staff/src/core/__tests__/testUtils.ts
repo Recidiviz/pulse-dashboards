@@ -268,5 +268,6 @@ export const mockOpportunity: Opportunity<Client> = {
   isGrantApproved: false,
   latestTransitionDate: undefined,
   currentReviewerId: undefined,
+  allUniqueReviewerIds: undefined,
   isInRevisionsRequested: false,
 };

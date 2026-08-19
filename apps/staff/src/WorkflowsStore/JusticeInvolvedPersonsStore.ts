@@ -30,6 +30,8 @@ export class JusticeInvolvedPersonsStore {
   caseloadByOfficerExternalId: Map<string, JusticeInvolvedPerson[]> = new Map();
 
   caseloadByReviewerId: Map<string, JusticeInvolvedPerson[]> = new Map();
+  historicalCaseloadByReviewerId: Map<string, JusticeInvolvedPerson[]> =
+    new Map();
 
   constructor(private readonly firestoreStore: FirestoreStore) {
     makeAutoObservable(this);
@@ -105,6 +107,61 @@ export class JusticeInvolvedPersonsStore {
         .map(
           (id) =>
             existingClientsByRecordId.get(id) ?? newClientsByRecordId.get(id),
+        )
+        .filter((c) => c !== undefined),
+    );
+  }
+
+  *populateHistoricalCaseloadForReviewer(
+    reviewerId: string,
+  ): FlowMethod<
+    FirestoreStore["getOpportunityUpdatesByAllUniqueReviewerIds"],
+    void
+  > {
+    const existingClientsByRecordId = new Map(
+      (this.historicalCaseloadByReviewerId.get(reviewerId) ?? []).map((c) => [
+        c.recordId,
+        c,
+      ]),
+    );
+
+    const historicalOpportunityUpdates =
+      (yield this.firestoreStore.getOpportunityUpdatesByAllUniqueReviewerIds(
+        this.tenantId,
+        reviewerId,
+      )) as ClientOpportunityUpdateRecord[];
+
+    const historicalClientRecordIds = [
+      ...new Set(
+        historicalOpportunityUpdates
+          .map((u) => u.clientRecordId)
+          .filter((id) => id !== undefined),
+      ),
+    ];
+
+    const newhistoricalClientRecordIds = historicalClientRecordIds.filter(
+      (id) => !existingClientsByRecordId.has(id),
+    );
+
+    const newHistoricalClientDataList =
+      (yield this.firestoreStore.getClientsForRecordIds(
+        newhistoricalClientRecordIds,
+      )) as ClientRecord[];
+
+    const newHistoricalClientsByRecordId = new Map(
+      newHistoricalClientDataList.map((c) => [
+        c.recordId,
+        new Client(c, this.firestoreStore.rootStore),
+      ]),
+    );
+
+    this.historicalCaseloadByReviewerId.set(
+      reviewerId,
+      historicalClientRecordIds
+        .map(
+          (id) =>
+            existingClientsByRecordId.get(id) ??
+            newHistoricalClientsByRecordId.get(id),
         )
         .filter((c) => c !== undefined),
     );

@@ -196,6 +196,7 @@ export class OpportunityBase<
       actionHistory: computed,
       compareFunction: computed,
       currentReviewerId: computed,
+      allUniqueReviewerIds: computed,
     });
 
     this.updateOpportunityEligibility = updateOpportunityEligibility(
@@ -920,6 +921,14 @@ export class OpportunityBase<
    */
   get currentReviewerId(): string | undefined {
     return this.updates?.currentReviewerId;
+  }
+
+  /**
+   * Every reviewer who has ever reviewed this opportunity.
+   * Stored here for easier firestore querying (see `allUniqueReviewerIds` array-contains queries).
+   */
+  get allUniqueReviewerIds(): string[] | undefined {
+    return this.updates?.allUniqueReviewerIds;
   }
 
   /**

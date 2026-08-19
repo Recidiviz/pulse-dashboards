@@ -410,6 +410,24 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
   }
 
   /**
+   * Populates the historical caseload for the current supervisor as a reviewer.
+   * The historical caseload includes any caseloads the reviewer has reviewed in the past.
+   */
+  async populateHistoricalCaseloadForCurrentReviewer() {
+    if (
+      !this.includeReviewerCaseload ||
+      !this.isInsightsSupervisorReviewTableEnabled
+    ) {
+      return;
+    }
+
+    const { externalId } = this.supervisorInfo ?? {};
+    if (externalId) {
+      await this.populateHistoricalCaseloadForReviewer(externalId);
+    }
+  }
+
+  /**
    * Populates the caseload by getting all officers and populating opportunities for them.
    */
   async populateCaseload() {

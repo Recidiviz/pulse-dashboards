@@ -125,6 +125,22 @@ export function WithJusticeInvolvedPersonStore<
       );
     }
 
+    /**
+     * Finds all historical persons with opportunities ever reviewed by a given reviewer in the past.
+     * @param reviewerId - The ID of the reviewer to look up persons for.
+     * @returns An array of persons with opportunities assigned to the reviewer, or undefined if none found.
+     * @see {JusticeInvolvedPerson}
+     */
+    protected findHistoricalClientsForReviewer(
+      reviewerId: string,
+    ): JusticeInvolvedPerson[] {
+      return (
+        this.justiceInvolvedPersonsStore?.historicalCaseloadByReviewerId.get(
+          reviewerId,
+        ) ?? []
+      );
+    }
+
     // TODO (#5994): this field appears to briefly remain empty, even after hydration
     // completes.
     /**
@@ -266,6 +282,33 @@ export function WithJusticeInvolvedPersonStore<
       );
 
       const clients = this.findClientsForReviewer(reviewerId);
+      if (!clients) return;
+      const hydrations: Promise<void>[] = [];
+
+      for (const client of clients) {
+        for (const field of this.personFieldsToHydrate) {
+          if (client[field]) hydrations.push(awaitHydration(client[field]));
+        }
+      }
+
+      return await Promise.all(hydrations);
+    }
+
+    /**
+     * Populate the historical caseload map for this reviewer.
+     * The historical caseload map includes any caseloads the reviewer has reviewed in the past.
+     * @param reviewerId - External ID of the reviewer.
+     */
+    async populateHistoricalCaseloadForReviewer(reviewerId: string) {
+      if (!this.justiceInvolvedPersonsStore) return;
+
+      await flowResult(
+        this.justiceInvolvedPersonsStore.populateHistoricalCaseloadForReviewer(
+          reviewerId,
+        ),
+      );
+
+      const clients = this.findHistoricalClientsForReviewer(reviewerId);
       if (!clients) return;
       const hydrations: Promise<void>[] = [];
 

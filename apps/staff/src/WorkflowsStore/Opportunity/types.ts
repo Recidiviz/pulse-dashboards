@@ -260,6 +260,7 @@ export interface Opportunity<
   isGrantApproved: boolean;
   latestTransitionDate: Date | undefined;
   currentReviewerId: string | undefined;
+  allUniqueReviewerIds: string[] | undefined;
 }
 
 export type Component = "OpportunityModuleHeader" | "OpportunityCapsule";
