@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { FeatureVariant } from "../../../../../../RootStore/types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsTxEarlyReleaseFromSupervisionConfiguration extends ApiOpportunityConfiguration {
@@ -29,5 +30,11 @@ export class UsTxEarlyReleaseFromSupervisionConfiguration extends ApiOpportunity
 
   get markSubmittedOnFormDownload() {
     return false;
+  }
+
+  get inverseFeatureVariant() {
+    if (this.userStore.isRecidivizUser) return undefined;
+
+    return "usTxEarlyReleaseFromSupervisionV2" as FeatureVariant;
   }
 }

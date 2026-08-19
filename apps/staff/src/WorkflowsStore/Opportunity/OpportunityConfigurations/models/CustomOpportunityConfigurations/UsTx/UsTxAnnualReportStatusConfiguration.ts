@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { FeatureVariant } from "../../../../../../RootStore/types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsTxAnnualReportStatusConfiguration extends ApiOpportunityConfiguration {
@@ -29,5 +30,11 @@ export class UsTxAnnualReportStatusConfiguration extends ApiOpportunityConfigura
 
   get markSubmittedOnFormDownload() {
     return false;
+  }
+
+  get inverseFeatureVariant() {
+    if (this.userStore.isRecidivizUser) return undefined;
+
+    return "usTxAnnualReportStatusV2" as FeatureVariant;
   }
 }
