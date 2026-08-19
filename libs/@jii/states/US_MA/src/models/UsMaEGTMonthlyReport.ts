@@ -65,15 +65,15 @@ export class UsMaEGTMonthlyReport {
   }
 
   get totalEGTCreditDays(): number {
-    return this.getTotalCreditForCreditType("EARNEDGoodTime");
+    return this.getTotalCreditForCreditType("earnedGoodTime");
   }
 
   get totalBoostCreditDays(): number {
-    return this.getTotalCreditForCreditType("BOOST");
+    return this.getTotalCreditForCreditType("boost");
   }
 
   get totalCompletionCreditDays(): number {
-    return this.getTotalCreditForCreditType("COMPLETION");
+    return this.getTotalCreditForCreditType("completion");
   }
 
   get achievements(): Array<AchievementKey> {

@@ -34,9 +34,9 @@ import { ChartDatum, ChartPresenterInterface } from "./types";
 // kept private to this module pending further direction from the design team
 // regarding their broader use beyond this chart
 const CHART_COLORS = {
-  [usMaEarnedCreditTypes.enum.EARNEDGoodTime]: "#78BA43",
-  [usMaEarnedCreditTypes.enum.BOOST]: "#00A49A",
-  [usMaEarnedCreditTypes.enum.COMPLETION]: "#123C66",
+  [usMaEarnedCreditTypes.enum.earnedGoodTime]: "#78BA43",
+  [usMaEarnedCreditTypes.enum.boost]: "#00A49A",
+  [usMaEarnedCreditTypes.enum.completion]: "#123C66",
 };
 
 const Wrapper = styled.div`
@@ -150,14 +150,14 @@ const ChartComponent: FC<{ presenter: ChartPresenterInterface }> = observer(
           )}
         </ChartWrapper>
         <Legend>
-          <LegendItem swatch={CHART_COLORS.EARNEDGoodTime}>
-            {t(($) => $.home.creditHistory.legend.EARNEDGoodTime)}
+          <LegendItem swatch={CHART_COLORS.earnedGoodTime}>
+            {t(($) => $.home.creditHistory.legend.earnedGoodTime)}
           </LegendItem>
-          <LegendItem swatch={CHART_COLORS.BOOST}>
-            {t(($) => $.home.creditHistory.legend.BOOST)}
+          <LegendItem swatch={CHART_COLORS.boost}>
+            {t(($) => $.home.creditHistory.legend.boost)}
           </LegendItem>
-          <LegendItem swatch={CHART_COLORS.COMPLETION}>
-            {t(($) => $.home.creditHistory.legend.COMPLETION)}
+          <LegendItem swatch={CHART_COLORS.completion}>
+            {t(($) => $.home.creditHistory.legend.completion)}
           </LegendItem>
         </Legend>
       </Wrapper>

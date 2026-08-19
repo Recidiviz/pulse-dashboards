@@ -50,9 +50,9 @@
     "creditHistory": {
       "heading": "Tiempo que has ganado recientemente",
       "legend": {
-        "EARNEDGoodTime": "Reducción de pena por buen comportamiento (EGT, Earned Good Time)",
-        "BOOST": "Tiempo adicional",
-        "COMPLETION": "Créditos por finalización"
+        "earnedGoodTime": "Reducción de pena por buen comportamiento (EGT, Earned Good Time)",
+        "boost": "Tiempo adicional",
+        "completion": "Créditos por finalización"
       },
       "creditLabel_one": "{{count, number}} día",
       "creditLabel_other": "{{count, number}} días",

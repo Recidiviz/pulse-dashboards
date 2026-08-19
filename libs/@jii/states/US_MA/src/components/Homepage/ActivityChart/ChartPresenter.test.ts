@@ -35,62 +35,62 @@ test("chart data", () => {
     [
       {
         "creditMonth": 2021-08-31T00:00:00.000Z,
-        "creditType": "EARNEDGoodTime",
+        "creditType": "earnedGoodTime",
         "totalCredits": 15,
       },
       {
         "creditMonth": 2021-08-31T00:00:00.000Z,
-        "creditType": "BOOST",
+        "creditType": "boost",
         "totalCredits": 0,
       },
       {
         "creditMonth": 2021-08-31T00:00:00.000Z,
-        "creditType": "COMPLETION",
+        "creditType": "completion",
         "totalCredits": 0,
       },
       {
         "creditMonth": 2021-09-30T00:00:00.000Z,
-        "creditType": "EARNEDGoodTime",
+        "creditType": "earnedGoodTime",
         "totalCredits": 15,
       },
       {
         "creditMonth": 2021-09-30T00:00:00.000Z,
-        "creditType": "BOOST",
+        "creditType": "boost",
         "totalCredits": 0,
       },
       {
         "creditMonth": 2021-09-30T00:00:00.000Z,
-        "creditType": "COMPLETION",
+        "creditType": "completion",
         "totalCredits": 0,
       },
       {
         "creditMonth": 2021-10-31T00:00:00.000Z,
-        "creditType": "EARNEDGoodTime",
+        "creditType": "earnedGoodTime",
         "totalCredits": 15,
       },
       {
         "creditMonth": 2021-10-31T00:00:00.000Z,
-        "creditType": "BOOST",
+        "creditType": "boost",
         "totalCredits": 10,
       },
       {
         "creditMonth": 2021-10-31T00:00:00.000Z,
-        "creditType": "COMPLETION",
+        "creditType": "completion",
         "totalCredits": 30,
       },
       {
         "creditMonth": 2021-11-30T00:00:00.000Z,
-        "creditType": "EARNEDGoodTime",
+        "creditType": "earnedGoodTime",
         "totalCredits": 15,
       },
       {
         "creditMonth": 2021-11-30T00:00:00.000Z,
-        "creditType": "BOOST",
+        "creditType": "boost",
         "totalCredits": 0,
       },
       {
         "creditMonth": 2021-11-30T00:00:00.000Z,
-        "creditType": "COMPLETION",
+        "creditType": "completion",
         "totalCredits": 0,
       },
     ]

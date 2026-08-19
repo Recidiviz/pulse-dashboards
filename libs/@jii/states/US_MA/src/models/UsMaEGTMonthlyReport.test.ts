@@ -53,13 +53,13 @@ beforeEach(() => {
 describe("credit reducers", () => {
   test.each([
     {
-      type: "EARNEDGoodTime",
+      type: "earnedGoodTime",
       getter: () => report.totalEGTCreditDays,
       expected: 15,
     },
-    { type: "BOOST", getter: () => report.totalBoostCreditDays, expected: 10 },
+    { type: "boost", getter: () => report.totalBoostCreditDays, expected: 10 },
     {
-      type: "COMPLETION",
+      type: "completion",
       getter: () => report.totalCompletionCreditDays,
       expected: 30,
     },
@@ -93,9 +93,9 @@ test("empty report", () => {
         activity: null,
         rating: null,
         creditDate: creditDateStr,
-        BOOST: null,
-        COMPLETION: null,
-        EARNEDGoodTime: null,
+        boost: null,
+        completion: null,
+        earnedGoodTime: null,
       }),
     ],
     usMaEgtConfig,

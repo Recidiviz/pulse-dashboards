@@ -50,9 +50,9 @@
     "creditHistory": {
       "heading": "[US_MA]home.creditHistory.heading",
       "legend": {
-        "EARNEDGoodTime": "[US_MA]home.creditHistory.legend.EARNEDGoodTime",
-        "BOOST": "[US_MA]home.creditHistory.legend.BOOST",
-        "COMPLETION": "[US_MA]home.creditHistory.legend.COMPLETION"
+        "earnedGoodTime": "[US_MA]home.creditHistory.legend.earnedGoodTime",
+        "boost": "[US_MA]home.creditHistory.legend.boost",
+        "completion": "[US_MA]home.creditHistory.legend.completion"
       },
       "creditLabel_one": "[US_MA]home.creditHistory.creditLabel_one",
       "creditLabel_other": "[US_MA]home.creditHistory.creditLabel_other",

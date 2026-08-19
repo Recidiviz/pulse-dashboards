@@ -19,11 +19,18 @@ import { z } from "zod";
 
 import { dateStringSchema } from "../../../../utils/zod";
 
-export const usMaEarnedCreditTypes = z.enum([
-  // TODO(#44130): Fix ETL Error
+// TODO(OBT-29541): mangled case produced by Python ETL to Firestore.
+// remove once migration is complete
+const usMaEarnedCreditTypesMixedCase = z.enum([
   "EARNEDGoodTime",
   "BOOST",
   "COMPLETION",
+]);
+
+export const usMaEarnedCreditTypes = z.enum([
+  "earnedGoodTime",
+  "boost",
+  "completion",
 ]);
 
 export type UsMaEarnedCreditType = z.infer<typeof usMaEarnedCreditTypes>;
@@ -59,24 +66,45 @@ const nullZeroFloatSchema = numberRepresentationSchema
 
 const activityRating = z.enum(["S", "U", "I"]);
 
-export const creditActivitySchema = z.object({
-  creditDate: dateStringSchema,
-  activity: z.string().nullable(),
-  rating: z
-    .string()
-    .nullable()
-    .transform((rating) => {
-      // cast unexpected values to null to avoid parse failures
-      try {
-        return activityRating.parse(rating);
-      } catch {
-        return null;
+// TODO(OBT-29541): remove preprocess step once ETL is migrated
+const creditActivityPreprocess = z
+  .object({})
+  .passthrough()
+  .transform((obj) => {
+    const correctedCreditActivity: Record<string, unknown> = { ...obj };
+    // rename old keys to new ones
+    usMaEarnedCreditTypesMixedCase.options.forEach((oldKey, index) => {
+      if (oldKey in correctedCreditActivity) {
+        // NOTE, enum assumed to be in the same order
+        const newKey = usMaEarnedCreditTypes.options[index];
+        correctedCreditActivity[newKey] = correctedCreditActivity[oldKey];
+        delete correctedCreditActivity[oldKey];
       }
-    }),
-  [usMaEarnedCreditTypes.enum.EARNEDGoodTime]: nullZeroFloatSchema,
-  [usMaEarnedCreditTypes.enum.BOOST]: nullZeroFloatSchema,
-  [usMaEarnedCreditTypes.enum.COMPLETION]: nullZeroFloatSchema,
-});
+    });
+    return correctedCreditActivity;
+  });
+
+export const creditActivitySchema = z.preprocess(
+  creditActivityPreprocess.parse,
+  z.object({
+    creditDate: dateStringSchema,
+    activity: z.string().nullable(),
+    rating: z
+      .string()
+      .nullable()
+      .transform((rating) => {
+        // cast unexpected values to null to avoid parse failures
+        try {
+          return activityRating.parse(rating);
+        } catch {
+          return null;
+        }
+      }),
+    [usMaEarnedCreditTypes.enum.earnedGoodTime]: nullZeroFloatSchema,
+    [usMaEarnedCreditTypes.enum.boost]: nullZeroFloatSchema,
+    [usMaEarnedCreditTypes.enum.completion]: nullZeroFloatSchema,
+  }),
+);
 
 export const usMaResidentJiiDataSchema = z.object({
   stateCode: z.literal("US_MA"),

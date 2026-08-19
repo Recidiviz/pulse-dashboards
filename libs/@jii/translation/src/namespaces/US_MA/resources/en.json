@@ -50,9 +50,9 @@
     "creditHistory": {
       "heading": "Time you’ve earned recently",
       "legend": {
-        "EARNEDGoodTime": "Earned Good Time",
-        "BOOST": "Boosts",
-        "COMPLETION": "Completion Credits"
+        "earnedGoodTime": "Earned Good Time",
+        "boost": "Boosts",
+        "completion": "Completion Credits"
       },
       "creditLabel_one": "{{count, number}} day",
       "creditLabel_other": "{{count, number}} days",
