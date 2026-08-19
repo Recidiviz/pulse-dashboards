@@ -65,17 +65,27 @@ export const oppsBackend: ServiceDefinition = {
 /** Build and deploy the Opportunities frontend. */
 export const oppsFrontend: ServiceDefinition = {
   displayName: "Opportunities Frontend",
-  environments: ["staging", "demo", "production"],
+  environments: ["staging", "production"],
   pamProjects: (env) => [jiiProject(env)],
-  async build(plan) {
-    // building separately because we want to pass extra args
-    // to the deploy command but not the build command
-    await $`nx build jii --configuration ${plan.env}`.pipe(process.stdout);
-  },
   async deploy(plan) {
-    // we built the project manually first,
-    // skipping dependencies avoids passing arbitrary extra args to the build command
-    await $`nx deploy jii --configuration ${plan.env} --excludeTaskDependencies -m "${deployMessage(plan)}"`.pipe(
+    // deploy target includes a build step by default in its dependency graph
+    await $`nx deploy jii --configuration ${plan.env} -m "${deployMessage(plan)}"`.pipe(
+      process.stdout,
+    );
+  },
+};
+
+/**
+ * Build and deploy the Opportunities demo frontend (in staging only).
+ * This is NOT a separate environment in the Opportunities infra.
+ */
+export const oppsDemoFrontend: ServiceDefinition = {
+  displayName: "Opportunities Demo Frontend",
+  environments: ["staging"],
+  pamProjects: (env) => [jiiProject(env)],
+  async deploy(plan) {
+    // deploy target includes a build step by default in its dependency graph
+    await $`nx deploy jii --configuration demo -m "${deployMessage(plan)}"`.pipe(
       process.stdout,
     );
   },

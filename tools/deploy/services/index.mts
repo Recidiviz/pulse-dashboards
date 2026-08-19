@@ -22,6 +22,7 @@ import { jiiTexting } from "./jii-texting.mts";
 import { meetingsBackend, meetingsFrontend } from "./meetings.mts";
 import {
   oppsBackend,
+  oppsDemoFrontend,
   oppsFrontend,
   oppsFunctions,
   oppsStorybook,
@@ -43,6 +44,7 @@ export const services = {
   oppsFunctions,
   oppsBackend,
   oppsFrontend,
+  oppsDemoFrontend,
   oppsStorybook,
   oppsTestData,
   demoFixtures,

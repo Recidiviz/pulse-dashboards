@@ -87,10 +87,10 @@
         "production": {}
       },
       "defaultConfiguration": "staging",
-      "dependsOn": [{ "target": "build", "params": "forward" }]
+      "dependsOn": ["build"]
     },
     "deploy": {
-      "dependsOn": [{ "target": "build", "params": "forward" }],
+      "dependsOn": ["build"],
       "command": "firebase deploy --config firebase.jii.json",
       "configurations": {
         "demo": {
@@ -106,7 +106,7 @@
       "defaultConfiguration": "staging"
     },
     "deploy-preview": {
-      "dependsOn": [{ "target": "build", "params": "forward" }],
+      "dependsOn": ["build"],
       "command": "firebase --config firebase.jii.json hosting:channel:deploy",
       "configurations": {
         "demo": {
