@@ -176,7 +176,13 @@ service cloud.firestore {
       allow write: if appIsStaff() && allowPersonUpdates(clientId);
     }
 
-    // collectionGroup rule required for querying clientOpportunityUpdates across by currentReviewerId
+    // collectionGroup rule required for querying clientOpportunityUpdates across by currentReviewerId.
+    // The clientOpportunityUpdates subcollection name is never DEMO_-prefixed (only its top-level
+    // ancestor collection is), so this one rule covers both real and demo data by collection-group
+    // name alone. It can't distinguish demo from real data here (Firestore's list-query rule
+    // evaluator can't resolve path-structure checks like an ancestor DEMO_ prefix when that's the
+    // branch needed to prove a collectionGroup query is allowed), so unlike other demo collections,
+    // Recidiviz staff read demo opportunity-update data under the same restrictions as real data.
     match /{path=**}/clientOpportunityUpdates/{docId} {
       allow read: if appIsStaff() && (recidivizAllowedStatesIncludesTarget("clientOpportunityUpdates") || stateCodeMatchesTarget());
     }
@@ -186,16 +192,10 @@ service cloud.firestore {
       allow read: if appIsStaff() && usernameMatches(document);
       allow write: if appIsStaff() && allowUserUpdates(document);
     }
-    
+
     match /DEMO_clientUpdatesV2/{clientId}/{document=**} {
       allow read: if appIsStaff() && (isRecidiviz() || stateCodeMatchesPrefix(clientId));
       allow write: if appIsStaff() && allowPersonUpdates(clientId);
-    }
-
-    // demo-prefixed counterpart of the clientOpportunityUpdates collectionGroup rule above;
-    // demo mode prefixes all collection names, so this needs its own explicit match.
-    match /{path=**}/DEMO_clientOpportunityUpdates/{docId} {
-      allow read: if appIsStaff() && (recidivizAllowedStatesIncludesTarget("DEMO_clientOpportunityUpdates") || stateCodeMatchesTarget());
     }
 
     match /DEMO2_featureVariants/{record} {

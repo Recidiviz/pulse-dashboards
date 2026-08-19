@@ -241,49 +241,59 @@ describe("app = staff", () => {
     );
   });
 
-  // demo mode prefixes every collection name with "DEMO_"; this covers the
-  // same query shape against that prefixed collectionGroup.
-  describe("DEMO_clientOpportunityUpdates (collectionGroup)", () => {
+  // Demo mode prefixes the top-level clientUpdatesV2 collection with "DEMO_", but the
+  // clientOpportunityUpdates subcollection underneath it is never itself prefixed. This
+  // covers that shape against the same (single) clientOpportunityUpdates collectionGroup rule.
+  // Note: unlike other demo collections, Recidiviz staff get no special demo-data bypass here
+  // (Firestore's collectionGroup list-rule evaluator can't detect the DEMO_ ancestor prefix), so
+  // access to demo opportunity updates is gated the same way as real data.
+  describe("clientOpportunityUpdates under DEMO_clientUpdatesV2 (collectionGroup)", () => {
     beforeEach(async () => {
       await seedClientOpportunityUpdate(
         testEnv,
         "US_TN",
-        "DEMO_clientOpportunityUpdates",
+        "DEMO_clientUpdatesV2",
       );
       await seedClientOpportunityUpdate(
         testEnv,
         "US_CA",
-        "DEMO_clientOpportunityUpdates",
+        "DEMO_clientUpdatesV2",
       );
     });
 
     // eslint-disable-next-line vitest/expect-expect
-    test("TN user can query DEMO_clientOpportunityUpdates for their own state", async () => {
+    test("TN user can query demo clientOpportunityUpdates for their own state", async () => {
       await testCollectionGroupOpportunityUpdateRead(
         getTNUser(testEnv).firestore(),
         assertSucceeds,
         "US_TN",
-        "DEMO_clientOpportunityUpdates",
       );
     });
 
     // eslint-disable-next-line vitest/expect-expect
-    test("Recidiviz user can query DEMO_clientOpportunityUpdates from recidivizAllowedStates", async () => {
+    test("Recidiviz user can query demo clientOpportunityUpdates from recidivizAllowedStates", async () => {
       await testCollectionGroupOpportunityUpdateRead(
         getRecidivizUser(testEnv).firestore(),
         assertSucceeds,
         "US_TN",
-        "DEMO_clientOpportunityUpdates",
       );
     });
 
     // eslint-disable-next-line vitest/expect-expect
-    test("stateless user cannot query DEMO_clientOpportunityUpdates", async () => {
+    test("Recidiviz user cannot query demo clientOpportunityUpdates if not in recidivizAllowedStates", async () => {
+      await testCollectionGroupOpportunityUpdateRead(
+        getRecidivizUser(testEnv).firestore(),
+        assertFails,
+        "US_CA",
+      );
+    });
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("stateless user cannot query demo clientOpportunityUpdates", async () => {
       await testCollectionGroupOpportunityUpdateRead(
         getStatelessUser(testEnv).firestore(),
         assertFails,
         "US_TN",
-        "DEMO_clientOpportunityUpdates",
       );
     });
   });

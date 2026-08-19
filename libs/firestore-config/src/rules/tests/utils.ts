@@ -229,15 +229,17 @@ export async function testReadCustomTaskForState(
 export async function seedClientOpportunityUpdate(
   testEnv: RulesTestEnvironment,
   stateCode: string,
-  collectionName = "clientOpportunityUpdates",
+  parentCollectionName = "clientUpdatesV2",
 ) {
+  // The clientOpportunityUpdates subcollection name itself is never DEMO_-prefixed;
+  // only its ancestor (parentCollectionName) is, when seeding demo data.
   await testEnv.withSecurityRulesDisabled(async (context) => {
     await setDoc(
       doc(
         context.firestore(),
-        "clientUpdatesV2",
+        parentCollectionName,
         `${stateCode}_someClient`,
-        collectionName,
+        "clientOpportunityUpdates",
         "someOpportunity",
       ),
       { stateCode },
@@ -252,12 +254,11 @@ export async function testCollectionGroupOpportunityUpdateRead(
   db: FirestoreInstance,
   assertFn: AssertFn,
   stateCode: string,
-  collectionName = "clientOpportunityUpdates",
 ) {
   await assertFn(
     getDocs(
       query(
-        collectionGroup(db, collectionName),
+        collectionGroup(db, "clientOpportunityUpdates"),
         where("stateCode", "==", stateCode),
       ),
     ),
