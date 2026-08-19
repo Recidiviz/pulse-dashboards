@@ -20,7 +20,6 @@ import { rem } from "polished";
 import styled from "styled-components";
 
 import {
-  allRNAQuestions,
   isRNARadioFormat,
   rnaQuestionConfig,
   RNAQuestionFormat,
@@ -122,10 +121,16 @@ export const RNAResultsAnswerList = observer(function RNAResultsAnswerList({
         {questions.map((id) => {
           const questionText = t(($) => $.rna.questionCopy[id].question);
 
+          if (!presenter.textAnswers[id] && !presenter.checkboxAnswers[id]) {
+            return null;
+          }
+
           return (
             <tr key={id}>
               <th scope="row">
-                <QuestionNum>{allRNAQuestions.indexOf(id) + 1}</QuestionNum>
+                <QuestionNum>
+                  {presenter.answeredRNAQuestions.indexOf(id) + 1}
+                </QuestionNum>
               </th>
               <WideAnswerCell>
                 <WideQuestion>{questionText}</WideQuestion>

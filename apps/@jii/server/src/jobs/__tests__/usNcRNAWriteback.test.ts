@@ -18,7 +18,7 @@
 import * as Sentry from "@sentry/node";
 import tk from "timekeeper";
 
-import { allRNAQuestions, rnaQuestionConfig } from "~@jii/configs";
+import { currentRNAQuestions, rnaQuestionConfig } from "~@jii/configs";
 import { getPrismaClient, Prisma } from "~@jii/prisma";
 
 import {
@@ -41,7 +41,7 @@ describe("processRNARecord", () => {
     opusId: "opusId",
   };
   const defaultAnswers = Object.fromEntries(
-    allRNAQuestions.map((id) => {
+    currentRNAQuestions.map((id) => {
       const { format } = rnaQuestionConfig[id];
       switch (format) {
         case "DAYS_PER_WEEK_RADIO":
@@ -56,13 +56,15 @@ describe("processRNARecord", () => {
           return [id, "0"];
         case "SOBRIETY":
           return [id, { JUST_DRUGS: true }];
+        case "SOBRIETY_RADIO":
+          return [id, "JUST_DRUGS"];
       }
 
-      if (id === "lifeAreaCustom") {
+      if (id === "lifeAreaCustomV2") {
         return [
           id,
           {
-            customLifeArea: "Custom life area",
+            interest: true,
             improvementText: `First paragraph\nSecond paragraph\rThird paragraph`,
             interestRating: "10",
           },
@@ -127,7 +129,7 @@ describe("processRNARecord", () => {
         "MentalHealth_Interest": "1",
         "MentalHealth_Problem": "Y",
         "Opus#": "opusId",
-        "Other_Ideas": "Custom life area First paragraph Second paragraph Third paragraph",
+        "Other_Ideas": "First paragraph Second paragraph Third paragraph",
         "Other_Interest": "10",
         "Other_Problem": "Y",
         "Physical/Medical_Ideas": "First paragraph Second paragraph Third paragraph",

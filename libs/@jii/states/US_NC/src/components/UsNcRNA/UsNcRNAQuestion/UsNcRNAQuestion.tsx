@@ -50,6 +50,7 @@ const UsNcRNAQuestionContents = function (props: RNAQuestionProps) {
     case "FREQUENCY":
     case "RATIO":
     case "YES_NO":
+    case "SOBRIETY_RADIO":
       return <UsNcRNARadioQuestion format={format} {...rest} />;
     case "SOBRIETY":
       return <UsNcRNASobrietyQuestion format={format} {...rest} />;

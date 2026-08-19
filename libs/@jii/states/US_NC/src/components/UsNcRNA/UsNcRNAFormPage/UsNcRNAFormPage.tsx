@@ -21,7 +21,7 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { Card, NotFound, usePageTitle } from "~@jii/common-ui";
 import {
-  allRNAQuestions,
+  currentRNAQuestions,
   fullRNASpec,
   RNAPageCopy,
   rnaQuestionConfig,
@@ -89,7 +89,7 @@ const ManagedComponent = observer(function ManagedComponent({
           <UsNcRNAQuestion
             key={questionId}
             id={questionId}
-            questionNumber={allRNAQuestions.indexOf(questionId) + 1}
+            questionNumber={currentRNAQuestions.indexOf(questionId) + 1}
             presenter={presenter}
             {...questionCopy}
             {...rnaQuestionConfig[questionId]}

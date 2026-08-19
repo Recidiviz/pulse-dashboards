@@ -19,8 +19,12 @@ import { TRPCClient } from "@trpc/client";
 import { makeAutoObservable, runInAction } from "mobx";
 
 import {
+  allRNAQuestions,
+  fullRNASpec,
   RNACheckboxAnswers,
   RNALifeAreaAnswers,
+  RNAPageId,
+  RNAQuestionId,
   RNATextAnswers,
 } from "~@jii/configs";
 import { JiiStaffAppRouter, JiiStaffAppRouterOutputs } from "~@jii/trpc-types";
@@ -37,7 +41,11 @@ export class ResultsPagePresenter {
     >,
     private trpcClient: TRPCClient<JiiStaffAppRouter>,
   ) {
-    makeAutoObservable<this, "trpcClient">(this, { trpcClient: false });
+    makeAutoObservable<this, "trpcClient">(
+      this,
+      { trpcClient: false },
+      { autoBind: true },
+    );
   }
 
   // temporary view state to reflect clicks of the submitted/undo buttons;
@@ -61,6 +69,37 @@ export class ResultsPagePresenter {
 
   get lifeAreaAnswers(): RNALifeAreaAnswers {
     return this.answerData.lifeAreaAnswers;
+  }
+
+  hasAnswer(id: RNAQuestionId): boolean {
+    return Boolean(
+      this.textAnswers[id] ||
+        this.lifeAreaAnswers[id] ||
+        this.checkboxAnswers[id],
+    );
+  }
+
+  /**
+   * Return a list of page sections to show on the results page.
+   *
+   * We only show a section for a form page if at least one question on the page was
+   * answered. (In practice this is equivalent to all questions being answered.)
+   */
+  get pagesToDisplay(): RNAPageId[] {
+    return fullRNASpec
+      .filter(({ questions }) => {
+        return questions.some(this.hasAnswer);
+      })
+      .map(({ id }) => id);
+  }
+
+  /**
+   * The RNA questions this person has answered, in order.
+   * Used to correctly calculate the question number when taking into account
+   * deprecated questions.
+   */
+  get answeredRNAQuestions(): RNAQuestionId[] {
+    return allRNAQuestions.filter(this.hasAnswer);
   }
 
   get formattedSubmissionDate() {

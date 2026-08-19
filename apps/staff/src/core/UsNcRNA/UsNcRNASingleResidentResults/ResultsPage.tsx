@@ -19,6 +19,7 @@ import { Serif24 } from "@recidiviz/design-system";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
+import { Fragment } from "react";
 import styled from "styled-components";
 
 import { fullRNASpec } from "~@jii/configs";
@@ -69,21 +70,26 @@ export const ManagedComponent = observer(function ResultsPage({
           </>
         )}
         <PartHeading>Part 1</PartHeading>
-        {fullRNASpec.map((rnaPageSpec) => (
-          <>
-            {rnaPageSpec.id === "sectionLifeAreas" && (
-              <>
-                <Divider />
-                <PartHeading>Part 2</PartHeading>
-              </>
-            )}
-            <RNAResultsSection
-              key={rnaPageSpec.id}
-              questions={rnaPageSpec.questions}
-              presenter={presenter}
-            />
-          </>
-        ))}
+        {fullRNASpec.map((rnaPageSpec) => {
+          if (presenter.pagesToDisplay.includes(rnaPageSpec.id)) {
+            return (
+              <Fragment key={rnaPageSpec.id}>
+                {rnaPageSpec.id === "sectionLifeAreas" && (
+                  <>
+                    <Divider />
+                    <PartHeading>Part 2</PartHeading>
+                  </>
+                )}
+                <RNAResultsSection
+                  questions={rnaPageSpec.questions}
+                  presenter={presenter}
+                />
+              </Fragment>
+            );
+          }
+
+          return null;
+        })}
         {presenter.status !== "IN_PROGRESS" && (
           <RNAResultsFooter presenter={presenter} />
         )}

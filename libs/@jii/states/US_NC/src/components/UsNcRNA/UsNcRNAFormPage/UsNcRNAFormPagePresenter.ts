@@ -22,6 +22,7 @@ import { NavigateFunction } from "react-router-dom";
 import {
   fullRNASpec,
   requiredRNAQuestions,
+  rnaQuestionConfig,
   RNAQuestionId,
 } from "~@jii/configs";
 import { RouteParams, State } from "~@jii/paths";
@@ -102,7 +103,9 @@ export class UsNcRNAFormPagePresenter {
   }
 
   get questionIds(): RNAQuestionId[] {
-    return fullRNASpec[this.pageIndex].questions;
+    return fullRNASpec[this.pageIndex].questions.filter(
+      (id) => !rnaQuestionConfig[id].deprecated,
+    );
   }
 
   get percentDone(): number {

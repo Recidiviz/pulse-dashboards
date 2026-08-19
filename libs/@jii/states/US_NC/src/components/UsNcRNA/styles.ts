@@ -119,7 +119,7 @@ export const ShortTextEntry = styled.input.attrs({
 
 export const LongTextEntry = styled.textarea.attrs({
   rows: 3,
-  maxLength: 750,
+  maxLength: 900,
 })`
   ${textEntryStyles}
 

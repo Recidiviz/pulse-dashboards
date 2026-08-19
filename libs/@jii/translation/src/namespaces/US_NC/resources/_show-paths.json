@@ -81,6 +81,12 @@
         "SOME": "[US_NC]rna.radioAnswerCopy.RATIO.SOME",
         "MOST": "[US_NC]rna.radioAnswerCopy.RATIO.MOST",
         "ALL": "[US_NC]rna.radioAnswerCopy.RATIO.ALL"
+      },
+      "SOBRIETY_RADIO": {
+        "SOBER": "[US_NC]rna.radioAnswerCopy.SOBRIETY_RADIO.SOBER",
+        "JUST_ALCOHOL": "[US_NC]rna.radioAnswerCopy.SOBRIETY_RADIO.JUST_ALCOHOL",
+        "JUST_DRUGS": "[US_NC]rna.radioAnswerCopy.SOBRIETY_RADIO.JUST_DRUGS",
+        "BOTH": "[US_NC]rna.radioAnswerCopy.SOBRIETY_RADIO.BOTH"
       }
     },
     "sobrietyAnswerCopy": {
@@ -186,6 +192,9 @@
       },
       "alcoholDrugsTimeOfOffense": {
         "question": "[US_NC]rna.questionCopy.alcoholDrugsTimeOfOffense.question"
+      },
+      "alcoholDrugsTimeOfOffenseV2": {
+        "question": "[US_NC]rna.questionCopy.alcoholDrugsTimeOfOffenseV2.question"
       },
       "alcoholDrugsArguments": {
         "question": "[US_NC]rna.questionCopy.alcoholDrugsArguments.question"
@@ -361,6 +370,9 @@
       "lifeAreaCustom": {
         "question": "[US_NC]rna.questionCopy.lifeAreaCustom.question",
         "placeholderText": "[US_NC]rna.questionCopy.lifeAreaCustom.placeholderText"
+      },
+      "lifeAreaCustomV2": {
+        "question": "[US_NC]rna.questionCopy.lifeAreaCustomV2.question"
       }
     }
   }

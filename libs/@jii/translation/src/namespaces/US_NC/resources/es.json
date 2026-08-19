@@ -11,7 +11,7 @@
       },
       "notStarted": {
         "heading": "Es hora de tu autoinforme",
-        "description": "Tus respuestas ayudarán a tu administrador de casos a crear un plan de caso más personal para ti, basado en los programas que te interesan, tus metas, y las áreas en las que quieras trabajar. Completar estas preguntas te tomará unos 15 minutos.",
+        "description": "Tus respuestas ayudan a tu administrador de caso a elaborar un **plan de caso** que se adapte a tus necesidades. Un plan de caso es lo que te permite ingresar a **programas**, y los programas pueden ayudarte a **reducir tus puntos de custodia**, construir un **historial positivo** y **trabajar para alcanzar tus metas**.\n\nSin un autoinforme, tu administrador de caso no puede elaborar ese plan. Y si un programa no figura en tu plan de caso, es posible que no cuente para reducir tus puntos de custodia, incluso si lo completas.\n\nResponder estas preguntas te tomará unos 15 minutos.\n\n**Algunas cosas que debes saber:**\n\n- **No se trata solo de tu pasado.** Muchas preguntas se refieren a lo que estás haciendo **ahora en la cárcel**- trabajos, clases, no involucrarte en problemas. Tus respuestas ayudan a tu administrador de caso a actualizar su visión de quién eres **hoy**.\n- **Los programas cuentan más cuando están en tu plan de caso:** Podrías tomar el mismo programa sin un autoinforme, pero no contará para la reducción de puntos de factores del caso a menos que esté primero en tu plan de caso.\n- **Tus respuestas no se usarán en tu contra.** Esto **no es una admisión de culpa.** Solo tu administrador de caso ve tus respuestas para elaborar tu plan de caso.\n- **¿Estás cumpliendo una condena larga?** Esto sigue siendo importante. Un historial sólido de programas y trabajos te ayudará a preparar tu caso para un **MAPP** (Programa de Libertad Condicional por Acuerdo Mutuo) y puede ayudarte a pasar a niveles de custodia más bajos.",
         "button": "Empezar"
       },
       "resumeForm": {
@@ -81,6 +81,12 @@
         "SOME": "Algunos",
         "MOST": "La mayoría",
         "ALL": "Todos"
+      },
+      "SOBRIETY_RADIO": {
+        "SOBER": "sobrio/a",
+        "JUST_ALCOHOL": "bajo los efectos del alcohol únicamente",
+        "JUST_DRUGS": "bajo los efectos de drogas únicamente",
+        "BOTH": "bajo los efectos del alcohol y drogas"
       }
     },
     "sobrietyAnswerCopy": {
@@ -93,7 +99,7 @@
       "isThisAProblem": "¿Esto es un problema para usted?",
       "customLifeAreaPrompt": "¿Hay otra área en la que quieres mejorar?",
       "interestedInImproving": "¿Qué tanto le interesa mejorar? (1 = Para nada, 10 = Mucho)",
-      "improvement": "¿Qué puedes hacer para mejorar la situación? (opcional)",
+      "improvement": "¿Qué puedes hacer para mejorar la situación?",
       "improvementPlaceholder": "Maneras en que puedes mejorar la situación u obstáculos que puedes enfrentar al mejorar la situación"
     },
     "pageCopy": {
@@ -186,6 +192,9 @@
       },
       "alcoholDrugsTimeOfOffense": {
         "question": "En el momento de cometer el delito por el que estoy actualmente encarcelado, estaba (marca todo lo que aplique):"
+      },
+      "alcoholDrugsTimeOfOffenseV2": {
+        "question": "En el momento de cometer el delito por el que estoy actualmente encarcelado, estaba:"
       },
       "alcoholDrugsArguments": {
         "question": "Cuando bebía alcohol o consumía drogas, me involucraba en discusiones con otras personas."
@@ -361,6 +370,9 @@
       "lifeAreaCustom": {
         "question": "Otro",
         "placeholderText": "Otras áreas en las que quieras mejorar (opcional)"
+      },
+      "lifeAreaCustomV2": {
+        "question": "Otras áreas en las que quieras mejorar"
       }
     }
   }

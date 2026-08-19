@@ -18,7 +18,7 @@
 import { observer } from "mobx-react-lite";
 import styled from "styled-components";
 
-import { allRNAQuestions, RNARadioQuestionFormat } from "~@jii/configs";
+import { RNARadioQuestionFormat } from "~@jii/configs";
 import { useUsNcTranslations } from "~@jii/translation";
 
 import { toTitleCase } from "../../../utils";
@@ -67,10 +67,16 @@ export const RNAResultsAnswerGrid = observer(function RNAResultsAnswerGrid({
         {questions.map((id) => {
           const questionText = t(($) => $.rna.questionCopy[id].question);
 
+          if (!presenter.textAnswers[id]) {
+            return null;
+          }
+
           return (
             <tr key={id}>
               <th scope="row">
-                <QuestionNum>{allRNAQuestions.indexOf(id) + 1}</QuestionNum>
+                <QuestionNum>
+                  {presenter.answeredRNAQuestions.indexOf(id) + 1}
+                </QuestionNum>
               </th>
               <WideAnswerCell>
                 <WideQuestion>{questionText}</WideQuestion>

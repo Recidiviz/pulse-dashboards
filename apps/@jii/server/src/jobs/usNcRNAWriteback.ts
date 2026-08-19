@@ -22,7 +22,7 @@ import { format } from "date-fns";
 import { z } from "zod";
 
 import {
-  allRNAQuestions,
+  currentRNAQuestions,
   rnaCheckboxAnswersSchema,
   rnaLifeAreaAnswersSchema,
   rnaQuestionConfig,
@@ -90,7 +90,7 @@ export function processRNARecord(
     const lifeAreaAnswers = rnaLifeAreaAnswersSchema.parse(allRawAnswers);
 
     const questionIdsWithErrors: string[] = [];
-    const processedAnswers = allRNAQuestions.flatMap((id, i) => {
+    const processedAnswers = currentRNAQuestions.flatMap((id, i) => {
       const format = rnaQuestionConfig[id].format;
       if (format === "LIFE_AREA") {
         const colNamePrefix = writebackLifeAreaNames[id];
@@ -101,8 +101,7 @@ export function processRNARecord(
           return [];
         }
 
-        const isInterested =
-          id === "lifeAreaCustom" ? !!answer.customLifeArea : !!answer.interest;
+        const isInterested = !!answer.interest;
 
         if (!isInterested) {
           return [
@@ -118,10 +117,7 @@ export function processRNARecord(
         }
 
         // Remove newlines and carriage returns from the free text entry.
-        // For the custom life area, prepend the user's input for the custom life area
-        // to their ideas for improvement.
-        const ideaPreface = answer.customLifeArea ?? "";
-        const formattedIdeas = `${ideaPreface} ${answer.improvementText}`
+        const formattedIdeas = answer.improvementText
           .replaceAll("\n", " ")
           .replaceAll("\r", " ")
           .trim();

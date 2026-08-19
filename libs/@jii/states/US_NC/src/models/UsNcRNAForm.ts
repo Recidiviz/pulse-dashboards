@@ -19,12 +19,7 @@ import assertNever from "assert-never";
 import { merge } from "lodash";
 import { makeAutoObservable } from "mobx";
 
-import {
-  fullRNASpec,
-  RNAQuestionConfig,
-  rnaQuestionConfig,
-  RNAQuestionId,
-} from "~@jii/configs";
+import { fullRNASpec, rnaQuestionConfig, RNAQuestionId } from "~@jii/configs";
 import {
   LifeAreaAnswer,
   RNACheckboxAnswers,
@@ -117,9 +112,7 @@ export class UsNcRNAForm {
    * The definition of "valid" depends on the question type.
    */
   hasValidAnswer(questionId: RNAQuestionId): boolean {
-    const { optional, format } = rnaQuestionConfig[
-      questionId
-    ] as RNAQuestionConfig;
+    const { optional, format } = rnaQuestionConfig[questionId];
 
     // Optional questions with simple answer formats never have invalid answers
     if (optional && format !== "LIFE_AREA") {
@@ -138,7 +131,8 @@ export class UsNcRNAForm {
       case "FREQUENCY":
       case "RATIO":
       case "YES_NO":
-      case "DAYS_PER_WEEK_RADIO": {
+      case "DAYS_PER_WEEK_RADIO":
+      case "SOBRIETY_RADIO": {
         return Boolean(this.liveTextAnswers[questionId]);
       }
       // Checkbox questions must have at least one answer selected
@@ -157,9 +151,12 @@ export class UsNcRNAForm {
         if (lifeAreaAnswer?.interest === false) {
           return true;
         }
-        // 2) with "yes" or custom text, and the rating follow-up also answered
+        // 2) with "yes" or custom text, and BOTH the rating and free-text follow-up
+        // questions also answered
         if (lifeAreaAnswer?.interest || lifeAreaAnswer?.customLifeArea) {
-          return Boolean(lifeAreaAnswer.interestRating);
+          return Boolean(
+            lifeAreaAnswer.interestRating && lifeAreaAnswer.improvementText,
+          );
         }
         // 3) by being optional
         // (this case is last on purpose: if an optional question has been answered,

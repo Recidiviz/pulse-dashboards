@@ -92,6 +92,10 @@ export const RNAResultsLifeAreaGrid = observer(function RNAResultsLifeAreaGrid({
         {questions.map((id) => {
           const answer = presenter.lifeAreaAnswers[id];
 
+          if (!answer) {
+            return null;
+          }
+
           const customText = answer?.customLifeArea;
           const hasInterest = !!(answer?.interest || customText);
           const lifeAreaName = questionCopy[id].question;

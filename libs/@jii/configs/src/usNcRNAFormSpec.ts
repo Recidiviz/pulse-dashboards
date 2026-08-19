@@ -77,6 +77,7 @@ export const fullRNASpec: RNAPageSpec[] = [
       "alcoholDrugsDaysOfUse",
       "alcoholDrugsMoreThan5Drinks",
       "alcoholDrugsTimeOfOffense",
+      "alcoholDrugsTimeOfOffenseV2",
     ],
   },
   {
@@ -177,6 +178,7 @@ export const fullRNASpec: RNAPageSpec[] = [
       "lifeAreaTransportation",
       "lifeAreaLegalStatus",
       "lifeAreaCustom",
+      "lifeAreaCustomV2",
     ],
   },
 ];
@@ -193,6 +195,7 @@ const rnaRadioQuestionFormats = [
   "DAYS_PER_WEEK_RADIO",
   "YES_NO",
   "RATIO",
+  "SOBRIETY_RADIO",
 ] as const;
 export type RNARadioQuestionFormat = (typeof rnaRadioQuestionFormats)[number];
 export const isRNARadioFormat = (s: string): s is RNARadioQuestionFormat =>
@@ -204,14 +207,23 @@ export type RNAQuestionFormat =
   | "DAYS_PER_WEEK_ENTRY"
   | "LIFE_AREA";
 
-export type RNAQuestionId = keyof typeof rnaQuestionConfig;
+export type RNAQuestionId = keyof typeof rnaQuestionConfigRaw;
 
 export type RNAQuestionConfig = {
   format: RNAQuestionFormat;
   optional?: boolean;
+
+  // We don't show these questions to residents or count them as exported in writeback.
+  // Some questions have changed copy or formatting, but we need to keep the old configs
+  // and include the deprecated IDs in the page spec to correctly display answers
+  // from old forms in the staff view.
+  deprecated?: boolean;
+  // This isn't used anywhere except for documentation purposes; it identifies when
+  // a question is deprecated because a new question replaced it.
+  newQuestionId?: string;
 };
 
-export const rnaQuestionConfig = {
+const rnaQuestionConfigRaw = {
   // Page 1 of the paper form
 
   needsWorkSchoolSatisfied: {
@@ -258,6 +270,11 @@ export const rnaQuestionConfig = {
   },
   alcoholDrugsTimeOfOffense: {
     format: "SOBRIETY",
+    deprecated: true,
+    newQuestionId: "alcoholDrugsTimeOfOffenseV2",
+  },
+  alcoholDrugsTimeOfOffenseV2: {
+    format: "SOBRIETY_RADIO",
   },
   alcoholDrugsArguments: {
     format: "FREQUENCY",
@@ -449,11 +466,23 @@ export const rnaQuestionConfig = {
   lifeAreaCustom: {
     format: "LIFE_AREA",
     optional: true,
+    deprecated: true,
+    newQuestionId: "lifeAreaCustomV2",
+  },
+  lifeAreaCustomV2: {
+    format: "LIFE_AREA",
   },
 } satisfies Record<string, RNAQuestionConfig>;
 
-export const requiredRNAQuestions: RNAQuestionId[] = allRNAQuestions.filter(
-  (q) => !(rnaQuestionConfig[q] as RNAQuestionConfig).optional,
+// convenience export that is correctly typed
+export const rnaQuestionConfig: Record<RNAQuestionId, RNAQuestionConfig> =
+  rnaQuestionConfigRaw;
+
+export const currentRNAQuestions: RNAQuestionId[] = allRNAQuestions.filter(
+  (q) => !rnaQuestionConfig[q].deprecated,
+);
+export const requiredRNAQuestions: RNAQuestionId[] = currentRNAQuestions.filter(
+  (q) => !rnaQuestionConfig[q].optional,
 );
 
 export const rnaTextQuestionConfig = Object.fromEntries(
@@ -507,6 +536,12 @@ export const writebackAnswers: Omit<
     MOST: "2",
     ALL: "3",
   },
+  SOBRIETY_RADIO: {
+    SOBER: "0",
+    JUST_ALCOHOL: "1",
+    JUST_DRUGS: "2",
+    BOTH: "3",
+  },
   SOBRIETY: {
     SOBER: "0",
     JUST_ALCOHOL: "1",
@@ -533,5 +568,5 @@ export const writebackLifeAreaNames: Partial<Record<RNAQuestionId, string>> = {
   lifeAreaHousing: "Housing",
   lifeAreaTransportation: "Transportation",
   lifeAreaLegalStatus: "LegalStatus",
-  lifeAreaCustom: "Other",
+  lifeAreaCustomV2: "Other",
 };

@@ -81,6 +81,12 @@
         "SOME": "Some",
         "MOST": "Most",
         "ALL": "All"
+      },
+      "SOBRIETY_RADIO": {
+        "SOBER": "sober",
+        "JUST_ALCOHOL": "under the influence of just alcohol",
+        "JUST_DRUGS": "under the influence of just drugs",
+        "BOTH": "under the influence of both alcohol and drugs"
       }
     },
     "sobrietyAnswerCopy": {
@@ -93,7 +99,7 @@
       "isThisAProblem": "Is this a problem for you?",
       "customLifeAreaPrompt": "Is there another area you want to improve?",
       "interestedInImproving": "How much are you interested in improving? (1 = Not at all, 10 = Very)",
-      "improvement": "What can you do to improve the situation? (optional)",
+      "improvement": "What can you do to improve the situation?",
       "improvementPlaceholder": "Ways you can improve the situation or obstacles that you may face while improving the situation"
     },
     "pageCopy": {
@@ -186,6 +192,9 @@
       },
       "alcoholDrugsTimeOfOffense": {
         "question": "At the time of the offense for which I am currently incarcerated, I was (mark all that apply):"
+      },
+      "alcoholDrugsTimeOfOffenseV2": {
+        "question": "At the time of the offense for which I am currently incarcerated, I was:"
       },
       "alcoholDrugsArguments": {
         "question": "When I drank alcohol or used drugs I got in arguments with others."
@@ -361,6 +370,9 @@
       "lifeAreaCustom": {
         "question": "Other",
         "placeholderText": "Any other area you want to improve (optional)"
+      },
+      "lifeAreaCustomV2": {
+        "question": "Any other area you want to improve"
       }
     }
   }
