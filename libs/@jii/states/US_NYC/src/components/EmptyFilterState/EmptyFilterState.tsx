@@ -18,6 +18,7 @@
 import { FC } from "react";
 
 import {
+  BrowseLabel,
   BrowseLink,
   BrowseList,
   ClearButton,
@@ -53,9 +54,7 @@ export const EmptyFilterState: FC<EmptyFilterStateProps> = ({
       </ClearButton>
       {categoryLinks.length > 0 ? (
         <>
-          <EmptyMessage>
-            {EMPTY_FILTER_STATE_COPY.browseByCategory}
-          </EmptyMessage>
+          <BrowseLabel>{EMPTY_FILTER_STATE_COPY.browseByCategory}</BrowseLabel>
           <BrowseList>
             {categoryLinks.map(({ label, to }) => (
               <li key={label}>

@@ -48,6 +48,7 @@ const basePalette = {
   slate50Opaque: rgb(149, 169, 180),
   slate60: rgba(slate, 0.6),
   slate70: rgba(slate, 0.7),
+  // Note: slate80 is the minimum accessible contrast ratio for small text on a white background (4.5:1)
   slate80: rgba(slate, 0.8),
   slate85: rgba(slate, 0.85),
   slate90: rgba(slate, 0.9),

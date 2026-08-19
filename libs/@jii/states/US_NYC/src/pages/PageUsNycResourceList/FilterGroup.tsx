@@ -15,20 +15,37 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResourceSummary } from "../../types";
+import { Chip } from "../../components/Chip/Chip";
+import {
+  FilterChipsGroup,
+  FilterGroupLabel,
+} from "./PageUsNycResourceList.styles";
 
-export function makeResource(
-  organizationId: number,
-  categories: Array<{ category: string; subcategory: string }> = [],
-  tags: string[] = [],
-): ResourceSummary {
-  return {
-    organizationId,
-    name: `Resource ${organizationId}`,
-    description: undefined,
-    categories,
-    tags,
-    primaryContactMethod: undefined,
-    primaryContactValue: undefined,
-  };
+type Props = {
+  label: string;
+  items: string[];
+  selectedItems: string[];
+  onToggle: (item: string) => void;
+};
+
+export function FilterGroup({ label, items, selectedItems, onToggle }: Props) {
+  if (items.length === 0) return null;
+
+  return (
+    <>
+      <FilterGroupLabel>{label}</FilterGroupLabel>
+      <FilterChipsGroup>
+        {items.map((item) => (
+          <Chip
+            key={item}
+            selected={selectedItems.includes(item)}
+            onClick={() => onToggle(item)}
+            inverted={selectedItems.includes(item)}
+          >
+            {item}
+          </Chip>
+        ))}
+      </FilterChipsGroup>
+    </>
+  );
 }

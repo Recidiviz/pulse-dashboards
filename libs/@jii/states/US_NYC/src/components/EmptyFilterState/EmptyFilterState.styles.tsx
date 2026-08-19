@@ -25,7 +25,7 @@ export const EmptyWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${rem(spacing.md)};
-  padding: ${rem(spacing.xl)} 0;
+  padding: 0 0 ${rem(spacing.xl)} 0;
 `;
 
 export const EmptyMessage = styled.p`
@@ -50,6 +50,12 @@ export const ClearButton = styled.button`
   }
 `;
 
+export const BrowseLabel = styled.p`
+  ${typography.Sans14}
+  color: ${palette.slate70};
+  margin: ${rem(spacing.lg)} 0 0 0;
+`;
+
 export const BrowseList = styled.ul`
   margin: 0;
   padding: 0;
@@ -59,7 +65,7 @@ export const BrowseList = styled.ul`
 export const BrowseLink = styled(Link)`
   ${typography.Sans16}
   display: block;
-  padding: ${rem(spacing.sm)} 0;
+  padding: ${rem(spacing.md)} 0;
   border-bottom: 1px solid ${palette.slate20};
   color: ${palette.pine4};
   text-decoration: none;

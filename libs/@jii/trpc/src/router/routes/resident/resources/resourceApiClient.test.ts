@@ -126,7 +126,7 @@ describe("getOrganizations", () => {
     expect(result[1].organizationId).toBe(2);
   });
 
-  test("coalesces missing optional fields to null", async () => {
+  test("coalesces missing optional fields to undefined", async () => {
     mockFetch([
       {
         id: 3,
@@ -137,9 +137,9 @@ describe("getOrganizations", () => {
 
     const result = await resourceApiClient.getOrganizations(US_NYC_STATE_CODE);
 
-    expect(result[0].description).toBeNull();
-    expect(result[0].primaryContactMethod).toBeNull();
-    expect(result[0].primaryContactValue).toBeNull();
+    expect(result[0].description).toBeUndefined();
+    expect(result[0].primaryContactMethod).toBeUndefined();
+    expect(result[0].primaryContactValue).toBeUndefined();
   });
 
   test("sends POST to /api/v1/organizations with origin in body", async () => {
@@ -204,13 +204,20 @@ describe("getOrganization", () => {
         },
       ],
       phoneNumbers: [
-        { id: 201, phoneNumber: "212-577-3300", label: null, addressId: 101 },
+        {
+          id: 201,
+          phoneNumber: "212-577-3300",
+          label: undefined,
+          addressId: 101,
+        },
       ],
-      websites: [{ id: 301, url: "https://legalaidnyc.org", addressId: null }],
+      websites: [
+        { id: 301, url: "https://legalaidnyc.org", addressId: undefined },
+      ],
     });
   });
 
-  test("coalesces undefined optional fields to null", async () => {
+  test("coalesces undefined optional fields to undefined", async () => {
     mockFetch({
       id: 42,
       name: "Legal Aid Society",
@@ -225,15 +232,15 @@ describe("getOrganization", () => {
 
     const result = await resourceApiClient.getOrganization(42);
 
-    expect(result.description).toBeNull();
-    expect(result.primaryContactMethod).toBeNull();
-    expect(result.primaryContactValue).toBeNull();
+    expect(result.description).toBeUndefined();
+    expect(result.primaryContactMethod).toBeUndefined();
+    expect(result.primaryContactValue).toBeUndefined();
     expect(result.addresses).toEqual([]);
     expect(result.phoneNumbers).toEqual([]);
     expect(result.websites).toEqual([]);
   });
 
-  test("coalesces null fields within nested address and phone objects", async () => {
+  test("coalesces null fields within nested address and phone objects to undefined", async () => {
     mockFetch({
       id: 42,
       name: "Test Org",
@@ -255,8 +262,8 @@ describe("getOrganization", () => {
 
     const result = await resourceApiClient.getOrganization(42);
 
-    expect(result.addresses[0].label).toBeNull();
-    expect(result.phoneNumbers[0].addressId).toBeNull();
+    expect(result.addresses[0].label).toBeUndefined();
+    expect(result.phoneNumbers[0].addressId).toBeUndefined();
   });
 
   test("sends POST to /api/v1/organization with id in body", async () => {
@@ -314,7 +321,7 @@ describe("getOrganization", () => {
     expect(result.addresses[0].googlePlaceId).toBe(
       "ChIJLb1Ag4DzwokR5oujiKRpyvo",
     );
-    expect(result.addresses[1].googlePlaceId).toBeNull();
+    expect(result.addresses[1].googlePlaceId).toBeUndefined();
     expect(result.phoneNumbers).toHaveLength(2);
     expect(result.phoneNumbers[0].addressId).toBe(383);
   });

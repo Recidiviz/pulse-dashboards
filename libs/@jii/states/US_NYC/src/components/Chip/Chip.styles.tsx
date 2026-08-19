@@ -34,7 +34,7 @@ const chipBase = css<{ $selected: boolean; $inverted: boolean }>`
   justify-content: center;
   max-width: 100%;
   min-height: ${rem(32)};
-  padding: 0 ${rem(spacing.md)};
+  padding: ${rem(spacing.sm)} ${rem(spacing.md)};
   border-radius: ${rem(999)};
   border: 1px solid
     ${({ $selected, $inverted }) => borderColor($selected, $inverted)};

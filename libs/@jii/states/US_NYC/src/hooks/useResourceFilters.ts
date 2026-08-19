@@ -66,12 +66,16 @@ export function useResourceFilters(resources: ResourceSummary[]) {
     ...new Set(categoryResources.flatMap((resource) => resource.tags)),
   ].sort();
 
-  return {
-    filteredCategoryResources,
-    subcategoryGroups: groupResourcesBySubcategory(
+  const subcategoryGroupEntries = [
+    ...groupResourcesBySubcategory(
       filteredCategoryResources,
       category,
-    ),
+    ).entries(),
+  ].sort(([a], [b]) => a.localeCompare(b));
+
+  return {
+    filteredCategoryResources,
+    subcategoryGroupEntries,
 
     availableSubcategories,
     availableTags,

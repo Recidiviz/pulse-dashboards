@@ -18,13 +18,13 @@
 import startCase from "lodash-es/startCase";
 import { z } from "zod";
 
-import { nullishAsNull } from "~datatypes";
+import { nullishAsUndefined } from "~datatypes";
 import { camelCaseObject } from "~utils";
 
 const organizationBaseSchema = z.object({
   id: z.number(),
   name: z.string(),
-  description: nullishAsNull(z.string()),
+  description: nullishAsUndefined(z.string()),
   attributes: z.object({
     categorizations: z.array(
       z.object({
@@ -34,8 +34,8 @@ const organizationBaseSchema = z.object({
     ),
     tags: z.array(z.string()),
   }),
-  primaryContactMethod: nullishAsNull(z.string()),
-  primaryContactValue: nullishAsNull(z.string()),
+  primaryContactMethod: nullishAsUndefined(z.string()),
+  primaryContactValue: nullishAsUndefined(z.string()),
 });
 
 const organizationDetailBaseSchema = organizationBaseSchema.extend({
@@ -43,8 +43,8 @@ const organizationDetailBaseSchema = organizationBaseSchema.extend({
     z.object({
       id: z.number(),
       address: z.string(),
-      googlePlaceId: nullishAsNull(z.string()),
-      label: nullishAsNull(z.string()),
+      googlePlaceId: nullishAsUndefined(z.string()),
+      label: nullishAsUndefined(z.string()),
       isMailingOnly: z.boolean(),
     }),
   ),
@@ -52,15 +52,15 @@ const organizationDetailBaseSchema = organizationBaseSchema.extend({
     z.object({
       id: z.number(),
       phoneNumber: z.string(),
-      label: nullishAsNull(z.string()),
-      addressId: nullishAsNull(z.number()),
+      label: nullishAsUndefined(z.string()),
+      addressId: nullishAsUndefined(z.number()),
     }),
   ),
   websites: z.array(
     z.object({
       id: z.number(),
       url: z.string(),
-      addressId: nullishAsNull(z.number()),
+      addressId: nullishAsUndefined(z.number()),
     }),
   ),
 });

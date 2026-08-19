@@ -57,7 +57,7 @@ export const CardName = styled.span`
 
 export const CardPreview = styled.p`
   ${typography.Sans14}
-  color: ${palette.slate85};
+  color: ${palette.pine1};
   margin: 0;
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -68,6 +68,7 @@ export const CardPreview = styled.p`
 export const CardContact = styled.span`
   ${typography.Sans14}
   color: ${palette.slate85};
+  margin-top: ${rem(spacing.xs)};
 `;
 
 export const CardChips = styled.div`
