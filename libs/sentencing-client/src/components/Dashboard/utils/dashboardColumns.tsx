@@ -207,10 +207,10 @@ export const REPORT_TYPE_COLUMN: ColumnDef<CaseListTableCase> = {
         : undefined;
     if (investigationType === "SAR") {
       return "SAR";
-    } else if (investigationType === "PSR" && isVictimImpactOnly === false) {
-      return "Partial SAR";
-    } else {
+    } else if (investigationType === "PSR" && isVictimImpactOnly === true) {
       return "Partial SAR (Victim Impact)";
+    } else {
+      return "Partial SAR";
     }
   },
 };

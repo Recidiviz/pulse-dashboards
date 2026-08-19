@@ -309,7 +309,7 @@ async function addSARClientsAndReports(
           : undefined,
         address: faker.location.streetAddress(),
         investigationType: faker.helpers.arrayElement(["SAR", "PSR"]),
-        isVictimImpactOnly: faker.datatype.boolean(),
+        isVictimImpactOnly: undefined,
         // ORAS Assessment data — domain scores and overall max vary by tool type
         // Max scores derived from production data
         ...(() => {
