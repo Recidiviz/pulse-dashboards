@@ -28,13 +28,13 @@ describe("collectionNameForCurrentEnv", () => {
     });
 
     test("collection key", () => {
-      expect(collectionNameForCurrentEnv({ key: "residents" })).toBe(
+      expect(collectionNameForCurrentEnv({ key: "residents" }, {})).toBe(
         "residents",
       );
     });
 
     test("raw name", () => {
-      expect(collectionNameForCurrentEnv({ raw: "foo" })).toBe("foo");
+      expect(collectionNameForCurrentEnv({ raw: "foo" }, {})).toBe("foo");
     });
   });
 
@@ -44,13 +44,37 @@ describe("collectionNameForCurrentEnv", () => {
     });
 
     test("collection key", () => {
-      expect(collectionNameForCurrentEnv({ key: "residents" })).toBe(
+      expect(collectionNameForCurrentEnv({ key: "residents" }, {})).toBe(
         "DEMO_residents",
       );
     });
 
     test("raw name", () => {
-      expect(collectionNameForCurrentEnv({ raw: "foo" })).toBe("DEMO_foo");
+      expect(collectionNameForCurrentEnv({ raw: "foo" }, {})).toBe("DEMO_foo");
+    });
+  });
+
+  describe("pen test accounts", () => {
+    beforeEach(() => {
+      vi.mocked(isDemoMode).mockReturnValue(false);
+    });
+
+    test("collection key", () => {
+      expect(
+        collectionNameForCurrentEnv(
+          { key: "residents" },
+          { forceWorkflowsDemoData: true },
+        ),
+      ).toBe("DEMO_residents");
+    });
+
+    test("raw name", () => {
+      expect(
+        collectionNameForCurrentEnv(
+          { raw: "foo" },
+          { forceWorkflowsDemoData: true },
+        ),
+      ).toBe("DEMO_foo");
     });
   });
 });

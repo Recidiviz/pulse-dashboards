@@ -31,6 +31,7 @@ const firestoreStoreMock = new FirestoreStore({
   rootStore: {
     isImpersonating: false,
     firebaseAuthClient: { app: {}, projectId: "test" },
+    userStore: { userAppMetadata: {} },
   } as unknown as typeof RootStore,
 });
 const getDocMock = getDoc as Mock;

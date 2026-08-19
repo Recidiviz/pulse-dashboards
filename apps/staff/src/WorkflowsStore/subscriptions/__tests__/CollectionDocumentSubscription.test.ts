@@ -27,6 +27,7 @@ vi.mock("firebase/firestore");
 const firestoreStoreMock = new FirestoreStore({
   rootStore: {
     firebaseAuthClient: { app: {}, projectId: "test" },
+    userStore: { userAppMetadata: {} },
   } as unknown as RootStore,
 });
 const docMock = vi.mocked(doc);

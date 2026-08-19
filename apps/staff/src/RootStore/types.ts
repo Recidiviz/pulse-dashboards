@@ -59,6 +59,7 @@ export type UserAppMetadata = {
   externalId?: string;
   firstName?: string;
   lastName?: string;
+  forceWorkflowsDemoData?: boolean;
 };
 
 // TEST is useful for testing, as the name suggests,

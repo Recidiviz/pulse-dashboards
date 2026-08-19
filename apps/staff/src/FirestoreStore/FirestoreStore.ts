@@ -158,12 +158,19 @@ export default class FirestoreStore {
     }
   }
 
+  collectionName(collectionKey: FirestoreCollectionKey) {
+    return collectionNameForCurrentEnv(
+      collectionKey,
+      this.rootStore.userStore.userAppMetadata,
+    );
+  }
+
   collection(collectionKey: FirestoreCollectionKey) {
-    return collection(this.db, collectionNameForCurrentEnv(collectionKey));
+    return collection(this.db, this.collectionName(collectionKey));
   }
 
   doc(collectionKey: FirestoreCollectionKey, ...paths: string[]) {
-    return doc(this.db, collectionNameForCurrentEnv(collectionKey), ...paths);
+    return doc(this.db, this.collectionName(collectionKey), ...paths);
   }
 
   async getClient(
@@ -216,7 +223,7 @@ export default class FirestoreStore {
       query(
         collectionGroup(
           this.db,
-          collectionNameForCurrentEnv({ key: "clientOpportunityUpdates" }),
+          this.collectionName({ key: "clientOpportunityUpdates" }),
         ),
         where("stateCode", "==", stateCode),
         where("currentReviewerId", "==", reviewerId),
@@ -423,7 +430,7 @@ export default class FirestoreStore {
   customTasksCollection(recordId: string) {
     return collection(
       this.db,
-      collectionNameForCurrentEnv({ key: "clientUpdatesV2" }),
+      this.collectionName({ key: "clientUpdatesV2" }),
       recordId,
       FIRESTORE_GENERAL_COLLECTION_MAP.customTasks,
     );

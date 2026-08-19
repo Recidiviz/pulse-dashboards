@@ -29,10 +29,15 @@ import {
 /**
  * Given a Firestore collection specifier, returns the collection name that should
  * be used in Firestore queries. In demo environments (identified via environment variable)
- * names will be automatically prefixed to their demo data equivalents.
+ * or for accounts tagged for pen testing, names will be automatically
+ * prefixed to their demo data equivalents.
  */
 export function collectionNameForCurrentEnv(
   collectionKey: FirestoreCollectionKey,
+  userMetadata: { forceWorkflowsDemoData?: boolean } | undefined,
 ) {
-  return collectionNameFromConfig({ name: collectionKey, demo: isDemoMode() });
+  return collectionNameFromConfig({
+    name: collectionKey,
+    demo: isDemoMode() || Boolean(userMetadata?.forceWorkflowsDemoData),
+  });
 }
