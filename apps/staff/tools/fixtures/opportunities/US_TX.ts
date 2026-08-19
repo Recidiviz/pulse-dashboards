@@ -161,7 +161,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       denialText: null,
       deniedTabTitle: null,
-      displayName: "Annual Report Status (Test)",
+      displayName: "Annual Report Status",
       dynamicEligibilityText:
         "client[|s] may be eligible for Annual Report Status",
       eligibilityDateText: null,
@@ -537,7 +537,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       denialText: null,
       deniedTabTitle: null,
-      displayName: "Early Release from Supervision (Test)",
+      displayName: "Early Release from Supervision",
       dynamicEligibilityText:
         "client[|s] may be eligible for Early Release from Supervision",
       eligibilityDateText: null,
