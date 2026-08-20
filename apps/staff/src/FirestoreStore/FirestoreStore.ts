@@ -246,7 +246,7 @@ export default class FirestoreStore {
       query(
         collectionGroup(
           this.db,
-          collectionNameForCurrentEnv({ key: "clientOpportunityUpdates" }),
+          FIRESTORE_GENERAL_COLLECTION_MAP.clientOpportunityUpdates,
         ),
         where("stateCode", "==", stateCode),
         where("allUniqueReviewerIds", "array-contains", reviewerId),
