@@ -71,6 +71,13 @@ resource "google_bigquery_dataset" "regional_transfer_dataset" {
   dataset_id  = "${var.dataset_name}_${each.key}_regional"
   description = "A regional copy of the database for state code ${each.key}"
   location    = var.location
+
+  lifecycle {
+    # See destination_transfer_dataset: recidiviz-data's protection-tag reconcile job may stamp a
+    # `protection` Resource Manager tag on datasets in data-platform projects; this config doesn't
+    # set resource_tags, so Terraform must not try to remove it (that 403s on apply).
+    ignore_changes = [resource_tags]
+  }
 }
 
 resource "google_bigquery_dataset" "transfer_dataset" {
@@ -79,6 +86,13 @@ resource "google_bigquery_dataset" "transfer_dataset" {
   dataset_id  = "${var.dataset_name}_${each.key}"
   description = "A copy of the database for state code ${each.key}"
   location    = "US"
+
+  lifecycle {
+    # See destination_transfer_dataset: recidiviz-data's protection-tag reconcile job may stamp a
+    # `protection` Resource Manager tag on datasets in data-platform projects; this config doesn't
+    # set resource_tags, so Terraform must not try to remove it (that 403s on apply).
+    ignore_changes = [resource_tags]
+  }
 }
 
 # Cross-project transfer resources (only created when destination_project_id is set)
@@ -90,6 +104,15 @@ resource "google_bigquery_dataset" "destination_transfer_dataset" {
   dataset_id  = "${var.dataset_name}_${local.dataset_suffix[each.key]}"
   description = "A copy of the database for state code ${each.key} (cross-project transfer from ${var.project_id})"
   location    = "US"
+
+  lifecycle {
+    # This dataset lands in a data-platform project (recidiviz-staging / recidiviz-123), where
+    # recidiviz-data's calc-DAG job (ApplyDatasetProtectionTagsEntrypoint) stamps a `protection`
+    # Resource Manager tag on it to gate the catastrophic-delete deny policy. This config doesn't
+    # set resource_tags, so without this Terraform tries to delete that tag on every apply and 403s
+    # (bigquery.datasets.deleteTagBinding). The reconcile job is the sole owner of resource_tags.
+    ignore_changes = [resource_tags]
+  }
 }
 
 resource "random_id" "attachment" {
