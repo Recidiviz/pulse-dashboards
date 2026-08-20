@@ -67,6 +67,7 @@ const US_MI_CONFIG = {
   featureVariants: {
     outcomesModule: {},
     supervisorHomepageReviewCard: {},
+    insightsHideOfficersWithoutEligibleCaseload: {},
   },
   custodyLevelCopy: {
     MINIMUM: "Security Level I",
