@@ -26,7 +26,10 @@ import styled from "styled-components";
 
 import { palette, spacing } from "~design-system";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import { formatWorkflowsDate } from "../../utils";
 import { WorkflowsBadgePill } from "../BadgePill/BadgePill";
 import { CaseloadTable, PersonIdCell, PersonNameCell } from "../CaseloadTable";
@@ -178,7 +181,7 @@ export const EnableCell = observer(function EnableCell({
   );
 });
 
-const LastUpdatedCell = ({ row }: { row: Row<RNARowData> }) => {
+const PreWritebackLastUpdatedCell = ({ row }: { row: Row<RNARowData> }) => {
   const { status, enabledAt } = row.original;
 
   if (!["UPCOMING", "DUE"].includes(status) && !enabledAt) {
@@ -189,6 +192,22 @@ const LastUpdatedCell = ({ row }: { row: Row<RNARowData> }) => {
     return formatWorkflowsDate(row.original.updatedAt);
   } else if (status === "NOT_STARTED") {
     return `Enabled on ${formatWorkflowsDate(row.original.createdAt)}`;
+  } else if (status === "SUBMITTED_BY_STAFF") {
+    return `Submitted ${formatWorkflowsDate(row.original.submittedByStaffAt)}`;
+  } else {
+    return "–";
+  }
+};
+
+const PostWritebackLastUpdatedCell = ({ row }: { row: Row<RNARowData> }) => {
+  const { status } = row.original;
+
+  if (status === "NOT_STARTED") {
+    return `Not yet started`;
+  } else if (status === "COMPLETE") {
+    return `Completed on ${formatWorkflowsDate(row.original.completedAt)}`;
+  } else if (status === "IN_PROGRESS") {
+    return formatWorkflowsDate(row.original.updatedAt);
   } else if (status === "SUBMITTED_BY_STAFF") {
     return `Submitted ${formatWorkflowsDate(row.original.submittedByStaffAt)}`;
   } else {
@@ -224,7 +243,7 @@ const rnaStatusOrder: RNAStatus[] = [
   "SUBMITTED_BY_STAFF",
 ];
 
-const columns = [
+const preWritebackColumns = [
   {
     header: "Name",
     id: "name",
@@ -287,7 +306,66 @@ const columns = [
       r.submittedByStaffAt ?? r.completedAt ?? r.updatedAt,
     enableSorting: true,
     sortingFn: "datetime",
-    cell: LastUpdatedCell,
+    cell: PreWritebackLastUpdatedCell,
+  },
+  {
+    header: "",
+    id: "viewResults",
+    cell: ViewResultsCell,
+  },
+] satisfies ColumnDef<RNARowData>[];
+
+const postWritebackColumns = [
+  {
+    header: "Name",
+    id: "name",
+    accessorFn: (r: RNARowData) => r.person.displayName,
+    enableSorting: true,
+    sortingFn: "text",
+    cell: NameCellWrapper,
+  },
+  {
+    header: "OPUS ID",
+    id: "id",
+    accessorFn: (r: RNARowData) => r.person.displayId,
+    enableSorting: true,
+    sortingFn: "alphanumeric",
+    cell: IdCellWrapper,
+  },
+  {
+    header: "Assigned Case Manager",
+    id: "caseManager",
+    enableSorting: true,
+    sortingFn: "text",
+    accessorFn: (r: RNARowData) =>
+      r.person.assignedStaff ? r.person.assignedStaffFullName : "Unknown",
+  },
+  {
+    header: "Self-Report Status",
+    id: "status",
+    accessorFn: (r: RNARowData) => r.status,
+    enableSorting: true,
+    sortingFn: (rowA: Row<RNARowData>, rowB: Row<RNARowData>) => {
+      const statusA = rnaStatusOrder.indexOf(rowA.original.status);
+      const statusB = rnaStatusOrder.indexOf(rowB.original.status);
+      if (statusA === statusB) {
+        return 0;
+      } else if (statusB > statusA) {
+        return 1;
+      } else {
+        return -1;
+      }
+    },
+    cell: StatusBadgeCell,
+  },
+  {
+    header: "Last Updated",
+    id: "lastUpdated",
+    accessorFn: (r: RNARowData) =>
+      r.submittedByStaffAt ?? r.completedAt ?? r.updatedAt,
+    enableSorting: true,
+    sortingFn: "datetime",
+    cell: PostWritebackLastUpdatedCell,
   },
   {
     header: "",
@@ -307,6 +385,7 @@ export const RNATable = observer(function RNATable({
     workflowsStore,
     jiiTrpc: { client },
   } = useRootStore();
+  const { usNcRNAAutoEnablement } = useFeatureVariants();
   const rnaFilterStore = useRNAFilterStore();
   const presenter = new RNAFilterPresenter(
     data,
@@ -322,7 +401,9 @@ export const RNATable = observer(function RNATable({
       <CaseloadTable
         expandedLastColumn={true}
         data={presenter.filteredQueryData}
-        columns={columns}
+        columns={
+          usNcRNAAutoEnablement ? postWritebackColumns : preWritebackColumns
+        }
         initialState={{
           sorting: [
             { id: "status", desc: false },

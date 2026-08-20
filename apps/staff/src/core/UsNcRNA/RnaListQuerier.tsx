@@ -20,7 +20,10 @@ import { observer } from "mobx-react-lite";
 
 import { JiiStaffAppRouterInputs } from "~@jii/trpc-types";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import { Location } from "../../WorkflowsStore/Location";
 import { Officer } from "../../WorkflowsStore/Officer";
 import {
@@ -86,11 +89,18 @@ function RNAQuerier({ ids, lookupField }: QuerierProps) {
     jiiTrpc: { querier },
   } = useRootStore();
 
+  const { usNcRNAAutoEnablement } = useFeatureVariants();
+
   const { data, refetch } = useSuspenseQuery(
-    querier.staff.usNc.rnaStatusList.queryOptions({
-      lookupField,
-      lookupValue: ids,
-    }),
+    usNcRNAAutoEnablement
+      ? querier.staff.usNc.rnaWritebackStatusList.queryOptions({
+          lookupField,
+          lookupValue: ids,
+        })
+      : querier.staff.usNc.rnaStatusList.queryOptions({
+          lookupField,
+          lookupValue: ids,
+        }),
   );
 
   return <RNATable data={data} refetch={refetch} />;

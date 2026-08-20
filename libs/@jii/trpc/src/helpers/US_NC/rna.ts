@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { differenceInDays } from "date-fns/esm";
 import { z } from "zod";
 
 import {
@@ -79,4 +80,34 @@ export const getRNAWritebackDataQueryResolver = async ({
   });
 
   return { seqNumber: result?.seqNumber, admitDate: result?.admitDate };
+};
+
+/**
+ * Logic shared between the staff and resident routes to determine whether a resident's
+ * most recent RNA was stale.
+ *
+ * All RNAs with mismatching seq number and/or admit date to the resident's current
+ * [seq number, admit date] are stale and should not be shown to residents or staff,
+ * with one exception: we don't treat recent in-progress RNAs as stale if they were
+ * updated within the last 60 days, to guard against accidental changes to seq
+ * number or admit date.
+ */
+export const latestRNAIsStale = ({
+  latestRNA,
+  seqNumber,
+  admitDate,
+}: {
+  latestRNA: Partial<Awaited<ReturnType<typeof getRNAQueryResolver>>>;
+} & Awaited<ReturnType<typeof getRNAWritebackDataQueryResolver>>) => {
+  const rnaIsStale =
+    latestRNA?.seqNumber !== seqNumber ||
+    latestRNA?.admitDate?.getTime() !== admitDate?.getTime();
+
+  const rnaIsRecentAndInProgress =
+    latestRNA?.updatedAt &&
+    latestRNA.seqNumber &&
+    !latestRNA.completedAt &&
+    differenceInDays(new Date(), latestRNA.updatedAt) < 60;
+
+  return rnaIsStale && !rnaIsRecentAndInProgress;
 };

@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { TRPCError } from "@trpc/server";
-import { differenceInDays } from "date-fns/esm";
 
 import { Prisma } from "~@jii/prisma";
 
@@ -24,6 +23,7 @@ import {
   getRNAInputSchema,
   getRNAQueryResolver,
   getRNAWritebackDataQueryResolver,
+  latestRNAIsStale,
 } from "../../../../helpers/US_NC/rna";
 import { residentRestrictedMiddleware } from "../../../../middleware/residentRestrictedMiddleware";
 import { router } from "../../../../procedures/init";
@@ -53,16 +53,10 @@ export const usNcRouter = router({
       //     the last 60 days, even if it's stale, to handle unexpected edge cases such
       //     as someone's admit date on record changing.
       if (seqNumber) {
-        const rnaIsStale =
-          latestRNA?.seqNumber !== seqNumber ||
-          latestRNA?.admitDate?.getTime() !== admitDate?.getTime();
-        const rnaIsRecentAndInProgress =
-          latestRNA &&
-          latestRNA.seqNumber &&
-          !latestRNA.completedAt &&
-          differenceInDays(new Date(), latestRNA.updatedAt) < 60;
-
-        if (!latestRNA || (rnaIsStale && !rnaIsRecentAndInProgress)) {
+        if (
+          !latestRNA ||
+          latestRNAIsStale({ latestRNA, seqNumber, admitDate })
+        ) {
           const { pseudonymizedId } = queryArgs.input;
           const { prisma } = queryArgs.ctx;
 
