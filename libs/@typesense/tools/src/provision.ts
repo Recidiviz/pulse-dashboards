@@ -46,11 +46,11 @@ import { createTypesenseClient, schemas } from "~@typesense/client";
 
 import { parseBooleanFlag } from "./cli";
 
-interface ScriptArgs {
+type ScriptArgs = {
   collections: string[];
   recreate: boolean;
   skipPrompts: boolean;
-}
+};
 
 function parseArgs(): ScriptArgs {
   const available = schemas.map((schema) => schema.name).join(", ");

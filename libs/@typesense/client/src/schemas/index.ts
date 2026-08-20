@@ -57,13 +57,11 @@ export const schemas: CollectionCreateSchema[] = [
       {
         name: "personName.givenNames",
         type: "string",
-        optional: true,
         infix: true,
       },
       {
         name: "personName.surname",
         type: "string",
-        optional: true,
         infix: true,
       },
       { name: "district", type: "string", optional: true, facet: true },
@@ -90,13 +88,11 @@ export const schemas: CollectionCreateSchema[] = [
       {
         name: "personName.givenNames",
         type: "string",
-        optional: true,
         infix: true,
       },
       {
         name: "personName.surname",
         type: "string",
-        optional: true,
         infix: true,
       },
       { name: "facilityId", type: "string", optional: true, facet: true },

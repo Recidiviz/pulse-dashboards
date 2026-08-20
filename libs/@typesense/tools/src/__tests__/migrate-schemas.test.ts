@@ -18,9 +18,11 @@
 import type { CollectionCreateSchema } from "typesense/lib/Typesense/Collections";
 
 import {
+  checkFieldModifiesAllowed,
   checkOptionalOnAdds,
   diffSchema,
   isAutoNestedChild,
+  type SchemaDiff,
 } from "../migrate-schemas";
 
 describe("isAutoNestedChild", () => {
@@ -134,41 +136,79 @@ describe("diffSchema", () => {
     expect(result.toAdd).toEqual([]);
   });
 
-  it("flags type changes as field conflicts", () => {
+  it("flags type changes as field conflicts, never as modifies", () => {
     const result = diffSchema(local([{ name: "a", type: "string" }]), {
       fields: [{ name: "a", type: "int32" }],
     });
     expect(result.fieldConflicts).toHaveLength(1);
     expect(result.fieldConflicts[0].field).toBe("a");
     expect(result.fieldConflicts[0].reason).toContain("type");
+    expect(result.toModify).toEqual([]);
   });
 
-  it("flags optional flips as field conflicts", () => {
+  it("queues optional flips as modifies", () => {
     // optional: true (local) vs optional: false (live)
     const result = diffSchema(
       local([{ name: "a", type: "string", optional: true }]),
       { fields: [{ name: "a", type: "string", optional: false }] },
     );
-    expect(result.fieldConflicts).toHaveLength(1);
-    expect(result.fieldConflicts[0].field).toBe("a");
-    expect(result.fieldConflicts[0].reason).toContain("optional");
+    expect(result.fieldConflicts).toEqual([]);
+    expect(result.toModify).toHaveLength(1);
+    expect(result.toModify[0].field.name).toBe("a");
+    expect(result.toModify[0].changedAttrs).toEqual(["optional"]);
   });
 
-  it("flags facet changes as field conflicts", () => {
+  it("queues a REMOVED optional flag as a modify", () => {
+    const result = diffSchema(local([{ name: "a", type: "string" }]), {
+      fields: [{ name: "a", type: "string", optional: true }],
+    });
+    expect(result.toModify).toHaveLength(1);
+    expect(result.toModify[0].changedAttrs).toEqual(["optional"]);
+    expect(result.toAdd).toEqual([]);
+    expect(result.toDrop).toEqual([]);
+  });
+
+  it("queues facet changes as modifies", () => {
     const result = diffSchema(
       local([{ name: "a", type: "string", facet: true }]),
       { fields: [{ name: "a", type: "string", facet: false }] },
     );
-    expect(result.fieldConflicts).toHaveLength(1);
-    expect(result.fieldConflicts[0].reason).toContain("facet");
+    expect(result.toModify).toHaveLength(1);
+    expect(result.toModify[0].changedAttrs).toEqual(["facet"]);
   });
 
-  it("does NOT flag attrs that the local schema doesn't declare", () => {
-    // Local omits `facet`; live returns Typesense's default (`false`).
-    // We should not enforce attrs we don't care about, so no conflict.
+  it("collects every changed attr on a single field", () => {
+    const result = diffSchema(
+      local([{ name: "a", type: "string", facet: true, infix: true }]),
+      { fields: [{ name: "a", type: "string", facet: false, infix: false }] },
+    );
+    expect(result.toModify).toHaveLength(1);
+    expect(result.toModify[0].changedAttrs).toEqual(["facet", "infix"]);
+  });
+
+  it("does NOT flag an undeclared attr that already matches Typesense's default", () => {
+    // Local omits `facet`, which means false — the same value live reports.
     const result = diffSchema(local([{ name: "a", type: "string" }]), {
       fields: [{ name: "a", type: "string", facet: false }],
     });
+    expect(result.fieldConflicts).toEqual([]);
+    expect(result.toModify).toEqual([]);
+  });
+
+  it("does NOT flag `sort`, whose default is type-dependent", () => {
+    const result = diffSchema(local([{ name: "a", type: "int32" }]), {
+      fields: [{ name: "a", type: "int32", sort: true }],
+    });
+    expect(result.toModify).toEqual([]);
+    expect(result.fieldConflicts).toEqual([]);
+  });
+
+  it("does NOT flag an attr the live schema doesn't report at all", () => {
+    // Nothing to compare against — e.g. a server too old to return `stem`.
+    const result = diffSchema(local([{ name: "a", type: "string" }]), {
+      fields: [{ name: "a", type: "string" }],
+    });
+    expect(result.toModify).toEqual([]);
     expect(result.fieldConflicts).toEqual([]);
   });
 
@@ -220,6 +260,7 @@ describe("diffSchema", () => {
       ["personName.middleNames", "obsolete"].sort(),
     );
     expect(result.fieldConflicts).toEqual([]);
+    expect(result.toModify).toEqual([]);
   });
 });
 
@@ -231,6 +272,7 @@ describe("checkOptionalOnAdds", () => {
       collection: "c",
       toAdd,
       toDrop: [],
+      toModify: [],
       fieldConflicts: [],
       collectionConflicts: [],
     };
@@ -278,5 +320,51 @@ describe("checkOptionalOnAdds", () => {
     expect(errors).toHaveLength(2);
     expect(errors[0]).toContain("c.a");
     expect(errors[1]).toContain("c.c");
+  });
+});
+
+describe("checkFieldModifiesAllowed", () => {
+  function diffWith(toModify: SchemaDiff["toModify"]): SchemaDiff {
+    return {
+      collection: "c",
+      toAdd: [],
+      toDrop: [],
+      toModify,
+      fieldConflicts: [],
+      collectionConflicts: [],
+    };
+  }
+
+  it("returns no errors when there is nothing to modify", () => {
+    expect(checkFieldModifiesAllowed(diffWith([]), false)).toEqual([]);
+  });
+
+  it("errors on a modify when the flag is not set", () => {
+    const errors = checkFieldModifiesAllowed(
+      diffWith([
+        {
+          field: { name: "personName.surname", type: "string" },
+          changedAttrs: ["optional"],
+        },
+      ]),
+      false,
+    );
+    expect(errors).toHaveLength(1);
+    expect(errors[0]).toContain("c.personName.surname");
+    expect(errors[0]).toContain("--allow-field-modify");
+  });
+
+  it("returns no errors once the flag is set", () => {
+    expect(
+      checkFieldModifiesAllowed(
+        diffWith([
+          {
+            field: { name: "a", type: "string" },
+            changedAttrs: ["optional"],
+          },
+        ]),
+        true,
+      ),
+    ).toEqual([]);
   });
 });

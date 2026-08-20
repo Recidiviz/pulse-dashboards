@@ -75,23 +75,44 @@ After the initial provision, schema changes (add/drop fields) should land via `m
 ```bash
 nx migrate-schemas '@typesense/tools' -c staging                  # apply
 nx migrate-schemas '@typesense/tools' -c staging -- --dry-run     # preview only, no mutations
+
+# attribute changes on existing fields (see "Changing a field's attributes")
+nx migrate-schemas '@typesense/tools' -c staging -- --allow-field-modify
 ```
 
 What it does for each collection in [`@typesense/client`'s schemas](../client/src/schemas/index.ts):
 
-| Local vs. live                                                                     | Action                                                                |
-| ---------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| Collection missing in Typesense                                                    | CREATE with local schema                                              |
-| Field declared locally, missing in live                                            | ADD via PATCH (must be `optional: true`)                              |
-| Field in live, not declared locally                                                | DROP via PATCH                                                        |
-| Field exists in both with different attributes                                     | ABORT — Typesense can't mutate field attrs in place; resolve manually |
-| Collection-level setting changed (`enable_nested_fields`, `default_sorting_field`) | ABORT — these are immutable; recreate required                        |
+| Local vs. live                                                                     | Action                                                                 |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Collection missing in Typesense                                                    | CREATE with local schema                                               |
+| Field declared locally, missing in live                                            | ADD via PATCH (must be `optional: true`)                               |
+| Field in live, not declared locally                                                | DROP via PATCH                                                         |
+| Field in both, same `type`, different attributes (`optional`, `facet`, …)          | MODIFY as drop + re-add in one PATCH — requires `--allow-field-modify` |
+| Field in both with a different `type`                                              | ABORT — a type change reinterprets stored values; resolve manually     |
+| Collection-level setting changed (`enable_nested_fields`, `default_sorting_field`) | ABORT — these are immutable; recreate required                         |
 
 Constraints to know going in:
 
 - **New fields must be `optional: true`.** Existing docs won't have the field until backfill catches up; non-optional would break searches in the interim. The script errors out if it sees a non-optional add.
 - **Type changes aren't supported.** If you need to change a field's `type`, do it as a drop in one deploy and a re-add (under a new name, if possible) in a follow-up deploy. The script aborts rather than silently failing.
 - **`--dry-run` first** if you're unsure. It prints the plan without touching anything.
+
+### Changing a field's attributes
+
+Attribute changes — flipping `facet`, adding `infix`, or removing `optional: true` to make a field required — are applied as a **drop plus a re-add of the same field within a single PATCH**. Because both halves land in one atomic alter, Typesense re-indexes the field from the documents already on disk, so the values survive.
+
+Note that an attribute change includes _removing_ an attribute from the local declaration: an omitted attribute means Typesense's default (`optional: false`, `facet: false`, `infix: false`, `stem: false`, `index: true`), not "leave this one alone." `sort` is the exception — its default depends on the field type, so it's only enforced when declared locally.
+
+This is destructive if it goes wrong mid-flight, so it's gated:
+
+```bash
+nx migrate-schemas '@typesense/tools' -c staging -- --dry-run                 # confirm the plan
+nx migrate-schemas '@typesense/tools' -c staging -- --allow-field-modify      # apply
+```
+
+Without the flag the script lists the modifies and exits non-zero, so a routine deploy can never silently rewrite a field.
+
+**Before making a field non-optional**, confirm every live document actually has it. Typesense validates existing docs against the re-added field, and the whole alter fails if any document is missing it.
 
 ## Recreating a collection (emergency / manual recovery only)
 
