@@ -49,14 +49,6 @@ export const usTxAnnualReportStatusReferralsFixture = fixtureWithIdKey<
       regionDirector: "WASHINGTON PATRICIA A",
     },
     caseNotes: {
-      "Supervision Notes": [
-        {
-          noteTitle: "Annual compliance review",
-          noteBody:
-            "Client has maintained consistent employment and housing stability throughout the supervision period. No missed check-ins in the past 18 months.",
-          eventDate: "2026-04-15",
-        },
-      ],
       "Current Fees": [
         {
           noteTitle: "Supervision",
@@ -290,14 +282,6 @@ export const usTxAnnualReportStatusReferralsFixture = fixtureWithIdKey<
       regionDirector: "ROBINSON ANGELA J",
     },
     caseNotes: {
-      "Supervision Notes": [
-        {
-          noteTitle: "Quarterly check-in",
-          noteBody:
-            "Client continues to meet all supervision conditions. Employment verified with current employer.",
-          eventDate: "2026-03-20",
-        },
-      ],
       "Current Fees": [
         {
           noteTitle: "Supervision",

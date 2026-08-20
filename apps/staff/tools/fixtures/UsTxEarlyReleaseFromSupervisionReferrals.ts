@@ -47,14 +47,6 @@ export const usTxEarlyReleaseFromSupervisionReferralsFixture = fixtureWithIdKey<
       regionDirector: "WASHINGTON PATRICIA A",
     },
     caseNotes: {
-      "Supervision Notes": [
-        {
-          noteTitle: "Semi-annual compliance review",
-          noteBody:
-            "Client has demonstrated consistent employment, stable housing, and good faith efforts on all fee obligations. No missed check-ins in the past 24 months.",
-          eventDate: "2026-04-15",
-        },
-      ],
       "Current Fees": [
         {
           noteTitle: "Supervision",
@@ -281,14 +273,6 @@ export const usTxEarlyReleaseFromSupervisionReferralsFixture = fixtureWithIdKey<
       regionDirector: "ROBINSON ANGELA J",
     },
     caseNotes: {
-      "Supervision Notes": [
-        {
-          noteTitle: "Quarterly check-in",
-          noteBody:
-            "Client continues to meet all supervision conditions. Employment verified with current employer.",
-          eventDate: "2026-03-20",
-        },
-      ],
       "Current Fees": [
         {
           noteTitle: "Supervision",
