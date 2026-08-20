@@ -88,7 +88,7 @@ export async function getFirebaseToken(req, res) {
   stateCode = stateCode.toUpperCase();
   const app = "staff";
   const environment = process.env.AUTH_ENV;
-  const forceDemoData = Boolean(appMetadata?.forceDemoData);
+  const forceWorkflowsDemoData = Boolean(appMetadata?.forceWorkflowsDemoData);
 
   const firebaseToken = await firebaseAdmin.auth().createCustomToken(uid, {
     app,
@@ -96,7 +96,7 @@ export async function getFirebaseToken(req, res) {
     recidivizAllowedStates,
     impersonator: impersonateUser,
     environment,
-    forceDemoData,
+    forceWorkflowsDemoData,
   });
 
   res.json({ firebaseToken });

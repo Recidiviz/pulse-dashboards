@@ -79,7 +79,7 @@ export function getDemoOnlyUser(
       stateCode,
       impersonator: false,
       recidivizAllowedStates: [],
-      forceDemoData: true,
+      forceWorkflowsDemoData: true,
     },
   );
 }

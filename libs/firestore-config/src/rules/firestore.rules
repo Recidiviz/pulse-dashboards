@@ -91,7 +91,7 @@ service cloud.firestore {
   }
 
   function isDemoOnlyAccount() {
-    return request.auth.get(["token","forceDemoData"], false);
+    return request.auth.get(["token","forceWorkflowsDemoData"], false);
   }
 
   function isDemoCollectionIfDemoOnlyAccount(collection) {
