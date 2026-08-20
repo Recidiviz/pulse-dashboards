@@ -5,11 +5,11 @@ service cloud.firestore {
   }
 
   function appIsStaff() {
-    return request.auth.token.app == "staff"
+    return request.auth.token.app == "staff";
   }
 
   function appIsJii() {
-    return request.auth.token.app == "jii"
+    return request.auth.token.app == "jii";
   }
 
   function stateCodeMatchesTarget() {
@@ -25,11 +25,11 @@ service cloud.firestore {
         resource == null ||
         isDemoCollection(collection) ||
         resource.data.stateCode.upper() in request.auth.token.recidivizAllowedStates
-      )
+      );
   }
 
   function userAllowedStatesIncludesTarget() {
-    return resource.data.stateCode.upper() in request.auth.token.allowedStates
+    return resource.data.stateCode.upper() in request.auth.token.allowedStates;
   }
 
   function usernameMatches(id) {
@@ -77,28 +77,36 @@ service cloud.firestore {
   }
 
   function userDocIdRegexFromToken() {
-    return ((request.auth.token.stateCode.lower() + "_" + request.auth.token.externalId))
+    return ((request.auth.token.stateCode.lower() + "_" + request.auth.token.externalId));
   }
 
   function pseudonymizedIdMatchesTarget() {
     return resource != null && 
     request.auth.token.stateCode == resource.data.stateCode &&
-    request.auth.token.pseudonymizedId == resource.data.pseudonymizedId
+    request.auth.token.pseudonymizedId == resource.data.pseudonymizedId;
   }
 
   function notAStaffCollection(collectionName) {
     return !(collectionName.lower().matches(".*staff.*"));
   }
 
+  function isDemoOnlyAccount() {
+    return request.auth.get(["token","forceDemoData"], false);
+  }
+
+  function isDemoCollectionIfDemoOnlyAccount(collection) {
+    return isDemoCollection(collection) || !isDemoOnlyAccount();
+  }
+
   function allowStaffGeneralRead(collection) {
-    return appIsStaff() &&
+    return appIsStaff() && isDemoCollectionIfDemoOnlyAccount(collection) &&
       (
         recidivizAllowedStatesIncludesTarget(collection) || 
         // allow operations against missing docs to avoid useless errors;
         // next function will error if the resource is null
         resource == null ||
         stateCodeMatchesTarget()
-      )
+      );
   }
 
   function hasPermission(permission) {
@@ -106,7 +114,7 @@ service cloud.firestore {
   }
 
   function docIdMatchesUserId(documentId) {
-    return documentId == path(userDocIdRegexFromToken())
+    return documentId == path(userDocIdRegexFromToken());
   }
 
   function allowJiiGeneralRead(collection, documentPath) {
@@ -131,7 +139,7 @@ service cloud.firestore {
             pseudonymizedIdMatchesTarget()
           )
         )
-      )
+      );
   }
 
   function allowJiiLiveRead(collection, documentPath) {
@@ -155,13 +163,12 @@ service cloud.firestore {
           allowStaffGeneralRead(collection) || 
           (!isDemoCollection(collection) && allowJiiLiveRead(collection, document)) ||
           (isDemoCollection(collection) && allowJiiGeneralRead(collection, document))
-        )
-        ;
+        );
     }
 
     match /userUpdates/{path=**}/{document} {
-      allow read: if appIsStaff() && usernameMatches(document)
-      allow write: if appIsStaff() && allowUserUpdates(document);
+      allow read: if appIsStaff() && !isDemoOnlyAccount() && usernameMatches(document);
+      allow write: if appIsStaff() && !isDemoOnlyAccount() && allowUserUpdates(document);
     }
 
     // We may want to get more granular with JII app permissions and subcollections
@@ -171,9 +178,9 @@ service cloud.firestore {
       // check to make sure the user's state code matches the prefix on the record
       allow read: if 
         (
-          appIsStaff() && (recidivizUserHasAccess(clientId) || stateCodeMatchesPrefix(clientId))
-        )
-      allow write: if appIsStaff() && allowPersonUpdates(clientId);
+          appIsStaff() && !isDemoOnlyAccount() && (recidivizUserHasAccess(clientId) || stateCodeMatchesPrefix(clientId))
+        );
+      allow write: if appIsStaff() && !isDemoOnlyAccount() && allowPersonUpdates(clientId);
     }
 
     // collectionGroup rule required for querying clientOpportunityUpdates across by currentReviewerId.
@@ -184,7 +191,9 @@ service cloud.firestore {
     // branch needed to prove a collectionGroup query is allowed), so unlike other demo collections,
     // Recidiviz staff read demo opportunity-update data under the same restrictions as real data.
     match /{path=**}/clientOpportunityUpdates/{docId} {
-      allow read: if appIsStaff() && (recidivizAllowedStatesIncludesTarget("clientOpportunityUpdates") || stateCodeMatchesTarget());
+      allow read: if appIsStaff() && (
+        recidivizAllowedStatesIncludesTarget("clientOpportunityUpdates") || stateCodeMatchesTarget()
+        );
     }
 
 

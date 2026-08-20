@@ -31,6 +31,7 @@ import {
   testUserUpdateRead,
 } from "../utils";
 import {
+  getDemoOnlyUser,
   getNDUser,
   getRecidivizUser,
   getStatelessUser,
@@ -168,6 +169,31 @@ describe("app = staff", () => {
     },
   );
 
+  // eslint-disable-next-line vitest/expect-expect
+  test.each([["US_TN"], ["US_ND"], ["US_CA"], ["US_PA"]])(
+    "forceDemoData user cannot read non-DEMO data",
+    async (userState) => {
+      await testAllReadsForState(
+        getDemoOnlyUser(testEnv, userState).firestore(),
+        assertFails,
+        userState,
+      );
+    },
+  );
+
+  // eslint-disable-next-line vitest/expect-expect
+  test.each([["US_TN"], ["US_ND"], ["US_CA"], ["US_PA"]])(
+    "forceDemoData user can read DEMO data",
+    async (userState) => {
+      await testAllReadsForState(
+        getDemoOnlyUser(testEnv, userState).firestore(),
+        assertSucceeds,
+        userState,
+        "DEMO_",
+      );
+    },
+  );
+
   describe("clientOpportunityUpdates (collectionGroup)", () => {
     beforeEach(async () => {
       // Seed one document per state so rules are evaluated against real data.
@@ -280,6 +306,31 @@ describe("app = staff", () => {
     });
 
     // eslint-disable-next-line vitest/expect-expect
+    test.each([["US_TN"], ["US_ND"], ["US_CA"], ["US_PA"]])(
+      "%s forceDemoData user can query demo clientOpportunityUpdates for their own state",
+      async (userState: string) => {
+        await testCollectionGroupOpportunityUpdateRead(
+          getDemoOnlyUser(testEnv, userState).firestore(),
+          assertSucceeds,
+          userState,
+        );
+      },
+    );
+
+    // eslint-disable-next-line vitest/expect-expect
+    test.each([["US_TN"], ["US_ND"], ["US_CA"], ["US_PA"]])(
+      "%s forceDemoData user cannot query demo clientOpportunityUpdates for other states",
+      async (userState: string) => {
+        const targetState = userState === "US_TN" ? "US_PA" : "US_TN";
+        await testCollectionGroupOpportunityUpdateRead(
+          getDemoOnlyUser(testEnv, userState).firestore(),
+          assertFails,
+          targetState,
+        );
+      },
+    );
+
+    // eslint-disable-next-line vitest/expect-expect
     test("Recidiviz user cannot query demo clientOpportunityUpdates if not in recidivizAllowedStates", async () => {
       await testCollectionGroupOpportunityUpdateRead(
         getRecidivizUser(testEnv).firestore(),
@@ -312,6 +363,31 @@ describe("app = staff", () => {
           getUserContext(testEnv).firestore(),
           assertSucceeds,
           `US_${userType}`,
+        );
+      },
+    );
+
+    // eslint-disable-next-line vitest/expect-expect
+    test.each([["US_TN"], ["US_ND"]])(
+      "%s user cannot read a non-DEMO custom task on their own state's client",
+      async (userState) => {
+        await testReadCustomTaskForState(
+          getDemoOnlyUser(testEnv, userState).firestore(),
+          assertFails,
+          userState,
+        );
+      },
+    );
+
+    // eslint-disable-next-line vitest/expect-expect
+    test.each([["US_TN"], ["US_ND"]])(
+      "%s user can read a DEMO custom task on their own state's client",
+      async (userState) => {
+        await testReadCustomTaskForState(
+          getDemoOnlyUser(testEnv, userState).firestore(),
+          assertSucceeds,
+          userState,
+          "DEMO_",
         );
       },
     );

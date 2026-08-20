@@ -64,6 +64,9 @@ export const DEMO_ETL_COLLECTION_NAMES = ETL_COLLECTION_NAMES.map(
  * Update collections are readable and writeable by all staff users within a state
  */
 export const SHARED_UPDATE_COLLECTION_NAMES = ["clientUpdatesV2"];
+
+export const DEMO_SHARED_UPDATE_COLLECTION_NAMES =
+  SHARED_UPDATE_COLLECTION_NAMES.map((n) => `DEMO_${n}`);
 /**
  * User update collections are readable and writable only to the user
  */
@@ -174,8 +177,14 @@ export async function testWriteToPersonalUpdateCollection(
   db: FirestoreInstance,
   assertFn: AssertFn,
   email: string,
+  collectionPrefix = "",
 ) {
-  await assertFn(setDoc(doc(db, PERSONAL_UPDATE_COLLECTION_NAME, email), {}));
+  await assertFn(
+    setDoc(
+      doc(db, `${collectionPrefix}${PERSONAL_UPDATE_COLLECTION_NAME}`, email),
+      {},
+    ),
+  );
 }
 
 /**
@@ -188,12 +197,13 @@ export async function testWriteToCustomTaskForState(
   db: FirestoreInstance,
   assertFn: AssertFn,
   stateCode: string,
+  collectionPrefix = "",
 ) {
   await assertFn(
     setDoc(
       doc(
         db,
-        "clientUpdatesV2",
+        `${collectionPrefix}clientUpdatesV2`,
         `${stateCode}_someID`,
         "custom_tasks",
         "task123",

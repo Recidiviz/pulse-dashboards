@@ -67,3 +67,19 @@ export function getImpersonatedUserInStaging(testEnv: RulesTestEnvironment) {
     environment: "staging",
   });
 }
+
+export function getDemoOnlyUser(
+  testEnv: RulesTestEnvironment,
+  stateCode: string,
+) {
+  return testEnv.authenticatedContext(
+    `user@${stateCode.toLocaleLowerCase()}.gov`,
+    {
+      app: "staff",
+      stateCode,
+      impersonator: false,
+      recidivizAllowedStates: [],
+      forceDemoData: true,
+    },
+  );
+}

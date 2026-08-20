@@ -56,6 +56,7 @@ test("requests Firebase auth token", async () => {
     stateCode: stateCode.toUpperCase(),
     impersonator: false,
     recidivizAllowedStates: [],
+    forceDemoData: false,
   });
   expect(mockRes.json).toHaveBeenCalledWith({
     firebaseToken: mockFirebaseToken,
@@ -89,6 +90,41 @@ test("Firebase token with allowedStates", async () => {
     stateCode: stateCode.toUpperCase(),
     impersonator: false,
     recidivizAllowedStates: ["US_XX"],
+    forceDemoData: false,
+  });
+  expect(mockRes.json).toHaveBeenCalledWith({
+    firebaseToken: mockFirebaseToken,
+  });
+});
+
+test("Firebase token with forceDemoData: true", async () => {
+  const userId = "TEST123@somewhere.com";
+  const stateCode = "recidiviz";
+  const mockFirebaseToken = "tokenabc123";
+
+  createCustomTokenMock.mockResolvedValue(mockFirebaseToken);
+  const mockReq = {
+    user: {
+      undefinedemail_address: userId,
+      // this key includes an env variable that is not set in this test environment
+      undefinedapp_metadata: {
+        stateCode,
+        forceDemoData: true,
+      },
+    },
+  };
+  const mockRes = {
+    json: vi.fn(),
+  };
+
+  await getFirebaseToken(mockReq, mockRes);
+
+  expect(createCustomTokenMock).toHaveBeenCalledWith(userId, {
+    app: "staff",
+    stateCode: stateCode.toUpperCase(),
+    impersonator: false,
+    recidivizAllowedStates: [],
+    forceDemoData: true,
   });
   expect(mockRes.json).toHaveBeenCalledWith({
     firebaseToken: mockFirebaseToken,
@@ -123,6 +159,7 @@ test("Firebase token for offline mode allows all states", async () => {
     stateCode: stateCode.toUpperCase(),
     impersonator: false,
     recidivizAllowedStates: Object.values(stateCodes),
+    forceDemoData: false,
   });
   expect(mockRes.json).toHaveBeenCalledWith({
     firebaseToken: mockFirebaseToken,
@@ -157,6 +194,7 @@ test("requests Firebase auth token for impersonated user", async () => {
     stateCode: stateCode.toUpperCase(),
     impersonator: true,
     recidivizAllowedStates: [],
+    forceDemoData: false,
   });
   expect(mockRes.json).toHaveBeenCalledWith({
     firebaseToken: mockFirebaseToken,

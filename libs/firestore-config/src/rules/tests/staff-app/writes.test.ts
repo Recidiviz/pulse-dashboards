@@ -22,6 +22,7 @@ import {
 } from "@firebase/rules-unit-testing";
 
 import {
+  DEMO_SHARED_UPDATE_COLLECTION_NAMES,
   ETL_COLLECTION_NAMES,
   SHARED_UPDATE_COLLECTION_NAMES,
   startTestEnv,
@@ -31,6 +32,7 @@ import {
   testWriteToPersonalUpdateCollection,
 } from "../utils";
 import {
+  getDemoOnlyUser,
   getImpersonatedUserInProd,
   getImpersonatedUserInStaging,
   getNDUser,
@@ -61,6 +63,8 @@ describe("app = staff", () => {
     ["state user", getTNUser],
     ["ND user", getNDUser],
     ["TN user", getTNUser],
+    ["ND demo-only user", (testEnv) => getDemoOnlyUser(testEnv, "US_ND")],
+    ["TN demo-only user", (testEnv) => getDemoOnlyUser(testEnv, "US_TN")],
     ["Recidiviz user", getRecidivizUser],
   ])(
     "ETL and admin data is read-only for %s",
@@ -126,6 +130,32 @@ describe("app = staff", () => {
       "US_ND",
     );
   });
+
+  // eslint-disable-next-line vitest/expect-expect
+  test.each([["US_TN"], ["US_ND"]])(
+    "%s demo-only user cannot write non-DEMO state data to their own state",
+    async (userState) => {
+      await testWriteToCollectionsForStateWithStateCodePrefix(
+        SHARED_UPDATE_COLLECTION_NAMES,
+        getDemoOnlyUser(testEnv, userState).firestore(),
+        assertFails,
+        userState,
+      );
+    },
+  );
+
+  // eslint-disable-next-line vitest/expect-expect
+  test.each([["US_TN"], ["US_ND"]])(
+    "%s demo-only user can write DEMO state data to their own state",
+    async (userState) => {
+      await testWriteToCollectionsForStateWithStateCodePrefix(
+        DEMO_SHARED_UPDATE_COLLECTION_NAMES,
+        getDemoOnlyUser(testEnv, userState).firestore(),
+        assertSucceeds,
+        userState,
+      );
+    },
+  );
 
   // eslint-disable-next-line vitest/expect-expect
   test.each([
@@ -218,6 +248,31 @@ describe("app = staff", () => {
   );
 
   // eslint-disable-next-line vitest/expect-expect
+  test.each([["US_TN"], ["US_ND"]])(
+    "%s demo-only user cannot write to their own personal non-DEMO update collection",
+    async (userState) => {
+      await testWriteToPersonalUpdateCollection(
+        getDemoOnlyUser(testEnv, userState).firestore(),
+        assertFails,
+        `user@${userState}.gov`,
+      );
+    },
+  );
+
+  // eslint-disable-next-line vitest/expect-expect
+  test.each([["US_TN"], ["US_ND"]])(
+    "%s demo-only user can write to their own personal DEMO update collection",
+    async (userState) => {
+      await testWriteToPersonalUpdateCollection(
+        getDemoOnlyUser(testEnv, userState).firestore(),
+        assertSucceeds,
+        `user@${userState}.gov`,
+        "DEMO_",
+      );
+    },
+  );
+
+  // eslint-disable-next-line vitest/expect-expect
   test.each([
     ["us_tn", getTNUser],
     ["us_nd", getNDUser],
@@ -228,6 +283,19 @@ describe("app = staff", () => {
         getUserContext(testEnv).firestore(),
         assertFails,
         `otherUser@${userState}.gov`,
+      );
+    },
+  );
+
+  // eslint-disable-next-line vitest/expect-expect
+  test.each([["US_TN"], ["US_ND"]])(
+    "%s demo-only user cannot write to another user's personal DEMO update collection",
+    async (userState) => {
+      await testWriteToPersonalUpdateCollection(
+        getDemoOnlyUser(testEnv, userState).firestore(),
+        assertFails,
+        `otherUser@${userState}.gov`,
+        "DEMO_",
       );
     },
   );
@@ -286,6 +354,31 @@ describe("app = staff", () => {
           getUserContext(testEnv).firestore(),
           assertSucceeds,
           stateCode,
+        );
+      },
+    );
+
+    // eslint-disable-next-line vitest/expect-expect
+    test.each([["US_TN"], ["US_ND"]])(
+      "%s user cannot write to a non-DEMO custom task on their own state's client",
+      async (userState) => {
+        await testWriteToCustomTaskForState(
+          getDemoOnlyUser(testEnv, userState).firestore(),
+          assertFails,
+          userState,
+        );
+      },
+    );
+
+    // eslint-disable-next-line vitest/expect-expect
+    test.each([["US_TN"], ["US_ND"]])(
+      "%s user can write to a DEMO custom task on their own state's client",
+      async (userState) => {
+        await testWriteToCustomTaskForState(
+          getDemoOnlyUser(testEnv, userState).firestore(),
+          assertSucceeds,
+          userState,
+          "DEMO_",
         );
       },
     );
