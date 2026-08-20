@@ -49,12 +49,38 @@ export const usTxAnnualReportStatusV2ReferralsFixture = fixtureWithIdKey<
       regionDirector: "WASHINGTON PATRICIA A",
     },
     caseNotes: {
-      "Supervision Notes": [
+      "Current Fees": [
         {
-          noteTitle: "Annual compliance review",
-          noteBody:
-            "Client has maintained consistent employment and housing stability throughout the supervision period. No missed check-ins in the past 18 months.",
-          eventDate: "2026-04-15",
+          noteTitle: "Supervision",
+          noteBody: "Amount assessed: $1,020.00 | Balance remaining: $221.00",
+          eventDate: "2026-06-30",
+        },
+        {
+          noteTitle: "Crime Victim Fund",
+          noteBody: "Amount assessed: $846.00 | Balance remaining: $421.00",
+          eventDate: "2026-06-30",
+        },
+      ],
+      "Most Recent Payments": [
+        {
+          noteTitle: "Supervision",
+          noteBody: "$21.00",
+          eventDate: "2026-06-03",
+        },
+        {
+          noteTitle: "Crime Victim Fund",
+          noteBody: "$5.00",
+          eventDate: "2026-06-03",
+        },
+        {
+          noteTitle: "Supervision",
+          noteBody: "$20.00",
+          eventDate: "2026-05-29",
+        },
+        {
+          noteTitle: "Crime Victim Fund",
+          noteBody: "$5.00",
+          eventDate: "2026-05-27",
         },
       ],
     },
@@ -90,7 +116,37 @@ export const usTxAnnualReportStatusV2ReferralsFixture = fixtureWithIdKey<
       assistantRegionDirector: "WALKER SAMUEL E",
       regionDirector: "MARTINEZ DIANA L",
     },
-    caseNotes: {},
+    caseNotes: {
+      "Current Fees": [
+        {
+          noteTitle: "Supervision",
+          noteBody: "Amount assessed: $580.00 | Balance remaining: $490.00",
+          eventDate: "2026-06-30",
+        },
+        {
+          noteTitle: "Crime Victim Fund",
+          noteBody: "Amount assessed: $300.00 | Balance remaining: $185.00",
+          eventDate: "2026-06-30",
+        },
+      ],
+      "Most Recent Payments": [
+        {
+          noteTitle: "Supervision",
+          noteBody: "$30.00",
+          eventDate: "2026-06-10",
+        },
+        {
+          noteTitle: "Crime Victim Fund",
+          noteBody: "$15.00",
+          eventDate: "2026-06-10",
+        },
+        {
+          noteTitle: "Supervision",
+          noteBody: "$30.00",
+          eventDate: "2026-05-12",
+        },
+      ],
+    },
     isEligible: true,
     isAlmostEligible: false,
     metadata: {
@@ -123,7 +179,42 @@ export const usTxAnnualReportStatusV2ReferralsFixture = fixtureWithIdKey<
       assistantRegionDirector: "WALKER SAMUEL E",
       regionDirector: "MARTINEZ DIANA L",
     },
-    caseNotes: {},
+    caseNotes: {
+      "Current Fees": [
+        {
+          noteTitle: "Supervision",
+          noteBody: "Amount assessed: $750.00 | Balance remaining: $0.00",
+          eventDate: "2026-06-30",
+        },
+        {
+          noteTitle: "Crime Victim Fund",
+          noteBody: "Amount assessed: $500.00 | Balance remaining: $100.00",
+          eventDate: "2026-06-30",
+        },
+      ],
+      "Most Recent Payments": [
+        {
+          noteTitle: "Crime Victim Fund",
+          noteBody: "$25.00",
+          eventDate: "2026-06-15",
+        },
+        {
+          noteTitle: "Supervision",
+          noteBody: "$50.00",
+          eventDate: "2026-06-15",
+        },
+        {
+          noteTitle: "Crime Victim Fund",
+          noteBody: "$25.00",
+          eventDate: "2026-05-15",
+        },
+        {
+          noteTitle: "Supervision",
+          noteBody: "$50.00",
+          eventDate: "2026-05-15",
+        },
+      ],
+    },
     isEligible: true,
     isAlmostEligible: false,
     metadata: {
@@ -191,12 +282,33 @@ export const usTxAnnualReportStatusV2ReferralsFixture = fixtureWithIdKey<
       regionDirector: "ROBINSON ANGELA J",
     },
     caseNotes: {
-      "Supervision Notes": [
+      "Current Fees": [
         {
-          noteTitle: "Quarterly check-in",
-          noteBody:
-            "Client continues to meet all supervision conditions. Employment verified with current employer.",
-          eventDate: "2026-03-20",
+          noteTitle: "Supervision",
+          noteBody: "Amount assessed: $1,200.00 | Balance remaining: $450.00",
+          eventDate: "2026-06-30",
+        },
+        {
+          noteTitle: "Crime Victim Fund",
+          noteBody: "Amount assessed: $1,000.00 | Balance remaining: $750.00",
+          eventDate: "2026-06-30",
+        },
+      ],
+      "Most Recent Payments": [
+        {
+          noteTitle: "Supervision",
+          noteBody: "$50.00",
+          eventDate: "2026-06-20",
+        },
+        {
+          noteTitle: "Crime Victim Fund",
+          noteBody: "$25.00",
+          eventDate: "2026-06-20",
+        },
+        {
+          noteTitle: "Supervision",
+          noteBody: "$50.00",
+          eventDate: "2026-05-20",
         },
       ],
     },
@@ -232,7 +344,32 @@ export const usTxAnnualReportStatusV2ReferralsFixture = fixtureWithIdKey<
       assistantRegionDirector: "CHEN DAVID R",
       regionDirector: "WASHINGTON PATRICIA A",
     },
-    caseNotes: {},
+    caseNotes: {
+      "Current Fees": [
+        {
+          noteTitle: "Supervision",
+          noteBody: "Amount assessed: $400.00 | Balance remaining: $25.00",
+          eventDate: "2026-06-30",
+        },
+        {
+          noteTitle: "Crime Victim Fund",
+          noteBody: "Amount assessed: $250.00 | Balance remaining: $0.00",
+          eventDate: "2026-06-30",
+        },
+      ],
+      "Most Recent Payments": [
+        {
+          noteTitle: "Supervision",
+          noteBody: "$25.00",
+          eventDate: "2026-06-04",
+        },
+        {
+          noteTitle: "Crime Victim Fund",
+          noteBody: "$10.00",
+          eventDate: "2026-06-04",
+        },
+      ],
+    },
     isEligible: true,
     isAlmostEligible: false,
     metadata: {
@@ -265,7 +402,32 @@ export const usTxAnnualReportStatusV2ReferralsFixture = fixtureWithIdKey<
       assistantRegionDirector: "WALKER SAMUEL E",
       regionDirector: "MARTINEZ DIANA L",
     },
-    caseNotes: {},
+    caseNotes: {
+      "Current Fees": [
+        {
+          noteTitle: "Supervision",
+          noteBody: "Amount assessed: $900.00 | Balance remaining: $650.00",
+          eventDate: "2026-06-30",
+        },
+        {
+          noteTitle: "Crime Victim Fund",
+          noteBody: "Amount assessed: $600.00 | Balance remaining: $600.00",
+          eventDate: "2026-06-30",
+        },
+      ],
+      "Most Recent Payments": [
+        {
+          noteTitle: "Supervision",
+          noteBody: "$75.00",
+          eventDate: "2026-06-01",
+        },
+        {
+          noteTitle: "Supervision",
+          noteBody: "$75.00",
+          eventDate: "2026-05-01",
+        },
+      ],
+    },
     isEligible: true,
     isAlmostEligible: false,
     metadata: {
@@ -298,7 +460,42 @@ export const usTxAnnualReportStatusV2ReferralsFixture = fixtureWithIdKey<
       assistantRegionDirector: "PATEL ANITA K",
       regionDirector: "HENDERSON MARCUS B",
     },
-    caseNotes: {},
+    caseNotes: {
+      "Current Fees": [
+        {
+          noteTitle: "Supervision",
+          noteBody: "Amount assessed: $680.00 | Balance remaining: $320.00",
+          eventDate: "2026-06-30",
+        },
+        {
+          noteTitle: "Crime Victim Fund",
+          noteBody: "Amount assessed: $450.00 | Balance remaining: $200.00",
+          eventDate: "2026-06-30",
+        },
+      ],
+      "Most Recent Payments": [
+        {
+          noteTitle: "Supervision",
+          noteBody: "$40.00",
+          eventDate: "2026-06-18",
+        },
+        {
+          noteTitle: "Crime Victim Fund",
+          noteBody: "$20.00",
+          eventDate: "2026-06-18",
+        },
+        {
+          noteTitle: "Supervision",
+          noteBody: "$40.00",
+          eventDate: "2026-05-20",
+        },
+        {
+          noteTitle: "Crime Victim Fund",
+          noteBody: "$20.00",
+          eventDate: "2026-05-18",
+        },
+      ],
+    },
     isEligible: true,
     isAlmostEligible: false,
     metadata: {
