@@ -1,2 +1,58 @@
+# Block a commit that contains a secret. Runs first so it fails fast, before
+# the slower lint and format steps.
+#
+# WHY THIS LIVES HERE RATHER THAN IN A pre-commit CONFIG
+#   This repo sets core.hooksPath to .husky/_, so git runs Husky's hooks and
+#   ignores anything installed into .git/hooks. A ggshield git hook installed
+#   the usual way would appear to succeed and then never run. Husky owns the
+#   hook path, so the check has to be invoked from here.
+#
+# NEEDS GITGUARDIAN_API_KEY IN YOUR ENVIRONMENT
+#   Detection is server-side. Without the key ggshield prints a warning and the
+#   commit proceeds UNSCANNED - it fails open, it does not fail closed.
+#   Recidiviz Macs receive the key from the ggshield configuration profile. If
+#   you see that warning, your machine is missing it; raise it in #security
+#   rather than ignoring it.
+#
+#   GitGuardian's API is stateless for this call: scanned content is not stored,
+#   only metadata such as call time and request size.
+#
+# WHY WE CHECK FOR A TOKEN BEFORE CALLING ggshield AT ALL
+#   Without a token ggshield exits 3, which would block every commit including
+#   clean ones - the opposite of failing open. Worse, on macOS a tokenless run
+#   makes ggshield consult python-keyring, which raises a "Keychain Not Found"
+#   system dialog in front of the user. Checking first means ggshield is never
+#   invoked without credentials, so neither can happen.
+#
+# WHY PYTHON_KEYRING_BACKEND IS PINNED TO null
+#   Belt and braces for the same dialog. ggshield only uses the keyring to find
+#   a stored token; we always supply one via the environment or auth_config.yaml,
+#   so denying it the keyring costs nothing and guarantees no GUI prompt in a
+#   git hook - including in contexts where HOME is unusual, which is exactly
+#   where the prompt showed up in testing.
+#
+# TOKEN LOCATIONS, IN THE ORDER ggshield ACCEPTS THEM
+#   $GITGUARDIAN_API_KEY, or auth_config.yaml written by `ggshield auth login`.
+#   Note macOS does NOT use ~/.config for this - it is under Application Support.
+#   Recidiviz Macs get the file written by Jamf; both paths are checked so a
+#   manually authenticated Linux or CI contributor also works.
+#
+# TODO: once every contributor's machine has a token, turn the two warnings into
+# hard failures so an unscanned commit is impossible. Today they warn, so that
+# contractors and CI are not locked out.
+_gg_auth_macos="$HOME/Library/Application Support/ggshield/auth_config.yaml"
+_gg_auth_xdg="${XDG_CONFIG_HOME:-$HOME/.config}/ggshield/auth_config.yaml"
+
+if ! command -v ggshield >/dev/null 2>&1; then
+  echo "WARNING: ggshield not found - this commit was NOT scanned for secrets."
+  echo "         See #security if you expected it to be installed."
+elif [ -z "${GITGUARDIAN_API_KEY:-}" ] && [ ! -s "$_gg_auth_macos" ] && [ ! -s "$_gg_auth_xdg" ]; then
+  echo "WARNING: no GitGuardian token - this commit was NOT scanned for secrets."
+  echo "         See #security if you expected your machine to have one."
+else
+  PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring \
+    ggshield secret scan pre-commit || exit 1
+fi
+
 yarn run lint-staged --relative
 cd apps/@reentry/backend && pre-commit run # for python backend of @reentry.

@@ -144,3 +144,7 @@ apps/jii/public/videos/*.vtt
 
 storybook-static
 examples-static
+
+# ggshield's local cache, created in the repo root the first time the
+# pre-commit hook runs. Ignored here so it never shows up as untracked noise.
+.cache_ggshield
