@@ -117,5 +117,6 @@ export type ImportedResident = z.infer<typeof residentImportSchema>;
 
 export const facilityImportSchema = z.object({
   id: z.string(),
-  name: nullishAsNull(z.string()),
+  // reject null values in the export. they should be patched in the product view, not here
+  name: z.string(),
 });

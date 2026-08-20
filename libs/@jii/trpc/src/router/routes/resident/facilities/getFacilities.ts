@@ -38,11 +38,7 @@ export const getFacilities = firebaseAuthedResidentProcedure.query(
       await prisma.incarcerationFacility.findMany({
         select: { id: true, name: true },
       })
-    )
-      // name is technically nullable in the BQ export, in which case we patch it with the ID
-      // (in most cases BQ will already have done the same when we don't have names ingested)
-      .map(({ id, name }) => ({ id, name: name ?? id }))
-      .sort((a, b) => ascending(a.name, b.name));
+    ).sort((a, b) => ascending(a.name, b.name));
 
     if (!isAtLeastOne(facilities))
       throw new TRPCError({

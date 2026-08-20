@@ -71,12 +71,12 @@ describe("facilityHandler", () => {
     `);
   });
 
-  it("succeeds when name is missing", async () => {
+  it("fails when name is missing", async () => {
     dataProviderSingleton.setData(DATA_PROVIDER_FILE_NAME, [{ id: "FAC1" }]);
-    await importHandler.import(STATE_CODE, [FACILITY_FILE_NAME]);
 
-    const result = await prismaClient.incarcerationFacility.findFirstOrThrow();
-    expect(result.name).toBeNull();
+    await expect(async () =>
+      importHandler.import(STATE_CODE, [FACILITY_FILE_NAME]),
+    ).rejects.toThrow();
   });
 
   it("updates an existing facility", async () => {

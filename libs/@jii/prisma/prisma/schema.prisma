@@ -36,7 +36,7 @@ model Resident {
 model IncarcerationFacility {
     importedAt DateTime
     id         String   @id
-    name       String?
+    name       String
 }
 
 // Resident Flags tell the frontend to behave differently for specific residents

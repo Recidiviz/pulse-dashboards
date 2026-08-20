@@ -32,12 +32,6 @@ const facilityWithLaterName = {
   importedAt: new Date("2026-01-01"),
 };
 
-const facilityWithMissingName = {
-  id: "facility-3",
-  name: null,
-  importedAt: new Date("2026-01-01"),
-};
-
 describe("getFacilities", () => {
   test("throws FORBIDDEN when the user does not have the enhanced permission", async () => {
     const error: TRPCError = await caller.getFacilities().catch((e) => e);
@@ -64,18 +58,6 @@ describe("getFacilities", () => {
       expect(result).toEqual([
         { id: facilityWithEarlierName.id, name: facilityWithEarlierName.name },
         { id: facilityWithLaterName.id, name: facilityWithLaterName.name },
-      ]);
-    });
-
-    test("patches a missing name with the facility id", async () => {
-      await testPrismaClient.incarcerationFacility.create({
-        data: facilityWithMissingName,
-      });
-
-      const result = await caller.getFacilities();
-
-      expect(result).toEqual([
-        { id: facilityWithMissingName.id, name: facilityWithMissingName.id },
       ]);
     });
 
