@@ -35,6 +35,19 @@ const REQUIRED_PROPS = {
   paroleEligibilityDate: "2026-08-16",
   mandatoryReleaseDate: "2028-06-26",
   isParoleReturn: false,
+  offenses: [
+    {
+      county: "Sangamon County",
+      docket: "2021-CF-0489",
+      conviction: "Armed Robbery",
+      classFelony: "Class X Felony",
+      sentence: "8 years",
+      dateOfOffense: "2021-07-30",
+      convictionDate: "2022-07-30",
+      offenseNarrative: "Defendant entered convenience store with firearm.",
+    },
+  ],
+  showInstantOffenses: false,
 };
 
 // Renders each section's PAROLE_SECTION_IDS target alongside the sidebar, the
@@ -82,6 +95,25 @@ describe("CaseProfileSidebar", () => {
     );
 
     expect(screen.getByText("Parole Return")).toBeInTheDocument();
+  });
+
+  it("does not render Instant Offenses when showInstantOffenses is false", () => {
+    renderSidebar(["attachments"]);
+
+    expect(screen.queryByText("Instant Offenses")).not.toBeInTheDocument();
+  });
+
+  it("renders Instant Offenses when showInstantOffenses is true", () => {
+    render(
+      <CaseProfileSidebar
+        {...REQUIRED_PROPS}
+        showInstantOffenses
+        sections={["attachments"]}
+      />,
+    );
+
+    expect(screen.getByText("Instant Offenses")).toBeInTheDocument();
+    expect(screen.getByText("Armed Robbery")).toBeInTheDocument();
   });
 
   it("renders the nav from the sections prop, not a fixed list", () => {

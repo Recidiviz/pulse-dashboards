@@ -36,8 +36,11 @@ import { RiskAssessmentSection } from "./RiskAssessmentSection";
   can invoke every section the same way.
 */
 export const ParoleSectionComponents = {
-  offenseHistory: (caseDetail: ParoleCase) => (
-    <OffenseHistorySection offenseHistory={caseDetail.offenseHistory} />
+  offenseHistory: (caseDetail: ParoleCase, config: ParoleConfig) => (
+    <OffenseHistorySection
+      offenseHistory={caseDetail.offenseHistory}
+      title={config.offenseSectionTitle ?? "Current Offenses"}
+    />
   ),
   riskAssessment: (caseDetail: ParoleCase, config: ParoleConfig) => (
     <RiskAssessmentSection

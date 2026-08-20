@@ -733,15 +733,42 @@ function buildAndersonCaseProfile(
       },
     ],
     offenseHistory: {
-      county: "Sangamon County",
-      docket: "2021-CF-0489",
-      conviction: "Armed Robbery",
-      classFelony: "Class X Felony",
-      sentence: "8 years",
-      dateOfOffense: iso(subYears(today, 5)),
-      convictionDate: iso(subYears(today, 4)),
-      offenseNarrative:
-        "Defendant entered convenience store with firearm and demanded cash from register. No injuries occurred. Defendant apprehended two blocks from scene.",
+      offenses: [
+        {
+          county: "Sangamon County",
+          docket: "2021-CF-0489",
+          conviction: "Armed Robbery",
+          classFelony: "Class X Felony",
+          sentence: "8 years",
+          dateOfOffense: iso(subYears(today, 5)),
+          convictionDate: iso(subYears(today, 4)),
+          offenseNarrative:
+            "Defendant entered convenience store with firearm and demanded cash from register. No injuries occurred. Defendant apprehended two blocks from scene.",
+        },
+        {
+          county: "Sangamon County",
+          docket: "2021-CF-0490",
+          conviction:
+            "Possession of a Controlled Substance With Intent to Deliver",
+          classFelony: "Class 2 Felony",
+          sentence: "5 years",
+          dateOfOffense: iso(subYears(today, 5)),
+          convictionDate: iso(subYears(today, 4)),
+          offenseNarrative:
+            "Defendant was found in possession of a controlled substance in a quantity indicating intent to distribute.",
+        },
+        {
+          county: "Sangamon County",
+          docket: "2021-CF-0491",
+          conviction: "Escape",
+          classFelony: "Class 4 Felony",
+          sentence: "2 years",
+          dateOfOffense: iso(subYears(today, 5)),
+          convictionDate: iso(subYears(today, 4)),
+          offenseNarrative:
+            "Defendant left a work-release assignment without authorization and was apprehended the following day.",
+        },
+      ],
       priorConvictions: [
         { charge: "Theft", date: iso(subYears(today, 8)) },
         { charge: "Assault", date: iso(subYears(today, 7)) },
@@ -830,15 +857,19 @@ function buildOffenseHistory(
   today: Date,
 ): ParoleCase["offenseHistory"] {
   return {
-    county: "Sample County",
-    docket: `2022-CF-0${100 + index}`,
-    conviction: "Burglary",
-    classFelony: "Class 2 Felony",
-    sentence: "6 years",
-    dateOfOffense: iso(subYears(today, 4)),
-    convictionDate: iso(subYears(today, 3 + (index % 4))),
-    offenseNarrative:
-      "Defendant entered an unoccupied residence and removed property without consent.",
+    offenses: [
+      {
+        county: "Sample County",
+        docket: `2022-CF-0${100 + index}`,
+        conviction: "Burglary",
+        classFelony: "Class 2 Felony",
+        sentence: "6 years",
+        dateOfOffense: iso(subYears(today, 4)),
+        convictionDate: iso(subYears(today, 3 + (index % 4))),
+        offenseNarrative:
+          "Defendant entered an unoccupied residence and removed property without consent.",
+      },
+    ],
     // No prior convictions for the generic cases -- Anderson's hand-authored
     // profile above is the one that exercises the "Prior Convictions" list.
     priorConvictions: [],
@@ -1013,15 +1044,19 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
     ],
     edovoPrograms: [],
     offenseHistory: {
-      county: "Jefferson County",
-      docket: "31CR9989",
-      conviction: "Assault",
-      classFelony: "Felony Class 4",
-      sentence: "12 years",
-      dateOfOffense: "2021-06-24",
-      convictionDate: "2023-05-11",
-      offenseNarrative:
-        'Per PSIR, On 06/24/2021 at about 6:27 p.m., your affiant, hereby referred to as, "I" or, "Me" was dispatched to 7701 W Tower Ave for a report of a domestic. The reporting party (RP), who was later identified as Banner, Martine (DOB/09/22/1 993), reported that her husband tried to kill her by strangling her with a chord. She further reported that she had escaped and was across the street at 7700 W Tower Ave. She advised of multiple children in the residence and further stated that her husband, the suspect, is leaving in a silver Ford F150 with a temporary license plate on the back of the truck.',
+      offenses: [
+        {
+          county: "Jefferson County",
+          docket: "31CR9989",
+          conviction: "Assault",
+          classFelony: "Felony Class 4",
+          sentence: "12 years",
+          dateOfOffense: "2021-06-24",
+          convictionDate: "2023-05-11",
+          offenseNarrative:
+            'Per PSIR, On 06/24/2021 at about 6:27 p.m., your affiant, hereby referred to as, "I" or, "Me" was dispatched to 7701 W Tower Ave for a report of a domestic. The reporting party (RP), who was later identified as Banner, Martine (DOB/09/22/1 993), reported that her husband tried to kill her by strangling her with a chord. She further reported that she had escaped and was across the street at 7700 W Tower Ave. She advised of multiple children in the residence and further stated that her husband, the suspect, is leaving in a silver Ford F150 with a temporary license plate on the back of the truck.',
+        },
+      ],
       priorConvictions: [],
       victimInvolved: true,
     },
@@ -1382,15 +1417,19 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
     ],
     edovoPrograms: [],
     offenseHistory: {
-      county: "El Paso County",
-      docket: "77CR9088",
-      conviction: "Assault",
-      classFelony: "Felony Class 4",
-      sentence: "24 years",
-      dateOfOffense: "2017-07-26",
-      convictionDate: "2017-12-06",
-      offenseNarrative:
-        "A PSI was not available for programming, according to a Probable Cause Affidavit, on 07/26/2017, while several El Paso County Deputies were attempting to stop offender Rogers from harming himself, offender Rogers spit saliva at the deputies, hitting one in the face, right eye and shoulder.",
+      offenses: [
+        {
+          county: "El Paso County",
+          docket: "77CR9088",
+          conviction: "Assault",
+          classFelony: "Felony Class 4",
+          sentence: "24 years",
+          dateOfOffense: "2017-07-26",
+          convictionDate: "2017-12-06",
+          offenseNarrative:
+            "A PSI was not available for programming, according to a Probable Cause Affidavit, on 07/26/2017, while several El Paso County Deputies were attempting to stop offender Rogers from harming himself, offender Rogers spit saliva at the deputies, hitting one in the face, right eye and shoulder.",
+        },
+      ],
       priorConvictions: [
         {
           charge: "Assault",

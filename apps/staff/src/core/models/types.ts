@@ -139,11 +139,21 @@ export type ParoleConfig = {
   docketSearchEnabled?: boolean;
   /** A mapping from ParoleConductRecord.severity to a PaletteKey for the severity tag in the ConductHistorySection. */
   conductClassificationColors: Record<string, PaletteKey>;
-  // Absent for any tenant that hasn't opted into the redesigned Risk Score
-  // Trajectory section (raw-score axis, CARAS component list, custom
-  // aggregate-view label/tool-subset) -- RiskAssessmentSection falls back to
-  // its original LSI/PIT/CARAS/SRT, percent-of-max, CARAS-bar-chart behavior
-  // when this is unset.
+  /**
+   * Shows an "Instant Offenses" bullet list in the case profile sidebar.
+   * US_ID-specific (OBT-45409): other tenants omit this and rely on the
+   * Offense & Criminal History section in the main column instead.
+   */
+  showInstantOffenses?: boolean;
+  /** Subsection heading for the offense list in the Offense & Criminal
+   * History section. Defaults to "Current Offenses" if omitted. */
+  offenseSectionTitle?: string;
+  /**  Absent for any tenant that hasn't opted into the redesigned Risk Score
+   * Trajectory section (raw-score axis, CARAS component list, custom
+   * aggregate-view label/tool-subset) -- RiskAssessmentSection falls back to
+   * its original LSI/PIT/CARAS/SRT, percent-of-max, CARAS-bar-chart behavior
+   * when this is unset.
+   */
   riskAssessmentConfig?: ParoleRiskAssessmentConfig;
 };
 

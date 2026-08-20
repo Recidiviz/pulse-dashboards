@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Fragment } from "react";
+
 import { ParoleOffenseHistory } from "~datatypes";
 import { Icon, IconSVG } from "~design-system";
 
@@ -38,8 +40,10 @@ const VICTIM_ALERT_BACKGROUND_COLOR = "rgba(217, 119, 6, 0.08)";
 
 export function OffenseHistorySection({
   offenseHistory,
+  title,
 }: {
   offenseHistory: ParoleOffenseHistory;
+  title: string;
 }) {
   return (
     <SectionCard>
@@ -66,47 +70,52 @@ export function OffenseHistorySection({
           )}
 
           <div>
-            <SubsectionTitle>Current Offense</SubsectionTitle>
-            <FactGrid>
-              <FactStack>
-                <div>County</div>
-                <FactLabel>{offenseHistory.county}</FactLabel>
-              </FactStack>
-              <FactStack>
-                <div>Docket</div>
-                <FactLabel>{offenseHistory.docket}</FactLabel>
-              </FactStack>
-              <FactStack>
-                <div>Class Felony</div>
-                <FactLabel>{offenseHistory.classFelony}</FactLabel>
-              </FactStack>
-              <FactStack>
-                <div>Conviction</div>
-                <FactLabel>{offenseHistory.conviction}</FactLabel>
-              </FactStack>
-              <FactStack>
-                <div>Sentence</div>
-                <FactLabel>{offenseHistory.sentence}</FactLabel>
-              </FactStack>
-              <FactStack>
-                <div>Date of Offense</div>
-                <FactLabel>
-                  {formatDate(offenseHistory.dateOfOffense)}
-                </FactLabel>
-              </FactStack>
-              <FactStack>
-                <div>Conviction Date</div>
-                <FactLabel>
-                  {formatDate(offenseHistory.convictionDate)}
-                </FactLabel>
-              </FactStack>
-              <WideFactItem>
-                <FactStack>
-                  <div>Brief Description of Offense</div>
-                  <FactLabel>{offenseHistory.offenseNarrative}</FactLabel>
-                </FactStack>
-              </WideFactItem>
-            </FactGrid>
+            <SubsectionTitle>{title}</SubsectionTitle>
+            <SectionStack>
+              {offenseHistory.offenses.map((offense, index) => (
+                <Fragment key={`${offense.docket}-${offense.conviction}`}>
+                  {index > 0 && <Hr />}
+                  <FactGrid>
+                    <FactStack>
+                      <div>County</div>
+                      <FactLabel>{offense.county}</FactLabel>
+                    </FactStack>
+                    <FactStack>
+                      <div>Docket</div>
+                      <FactLabel>{offense.docket}</FactLabel>
+                    </FactStack>
+                    <FactStack>
+                      <div>Class Felony</div>
+                      <FactLabel>{offense.classFelony}</FactLabel>
+                    </FactStack>
+                    <FactStack>
+                      <div>Conviction</div>
+                      <FactLabel>{offense.conviction}</FactLabel>
+                    </FactStack>
+                    <FactStack>
+                      <div>Sentence</div>
+                      <FactLabel>{offense.sentence}</FactLabel>
+                    </FactStack>
+                    <FactStack>
+                      <div>Date of Offense</div>
+                      <FactLabel>{formatDate(offense.dateOfOffense)}</FactLabel>
+                    </FactStack>
+                    <FactStack>
+                      <div>Conviction Date</div>
+                      <FactLabel>
+                        {formatDate(offense.convictionDate)}
+                      </FactLabel>
+                    </FactStack>
+                    <WideFactItem>
+                      <FactStack>
+                        <div>Brief Description of Offense</div>
+                        <FactLabel>{offense.offenseNarrative}</FactLabel>
+                      </FactStack>
+                    </WideFactItem>
+                  </FactGrid>
+                </Fragment>
+              ))}
+            </SectionStack>
           </div>
 
           {offenseHistory.priorConvictions.length > 0 && (

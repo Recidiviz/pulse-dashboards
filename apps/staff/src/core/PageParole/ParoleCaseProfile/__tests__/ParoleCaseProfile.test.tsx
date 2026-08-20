@@ -442,7 +442,10 @@ describe("ParoleCaseProfile", () => {
       expect(
         await findSectionHeading("Offense & Criminal History"),
       ).toBeInTheDocument();
-      expect(screen.getByText("Sangamon County")).toBeInTheDocument();
+      // Every one of Anderson's fixture offenses shares this county, so more
+      // than one offense box can render it -- assert it appears, not that
+      // it's unique.
+      expect(screen.getAllByText("Sangamon County").length).toBeGreaterThan(0);
       expect(screen.getByText("2021-CF-0489")).toBeInTheDocument();
       expect(screen.getByText("Class X Felony")).toBeInTheDocument();
       expect(screen.getByText("Armed Robbery")).toBeInTheDocument();

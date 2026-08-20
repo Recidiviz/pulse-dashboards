@@ -96,6 +96,8 @@ const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
             paroleEligibilityDate={caseDetail.paroleEligibilityDate}
             mandatoryReleaseDate={caseDetail.mandatoryReleaseDate}
             isParoleReturn={caseDetail.isParoleReturn}
+            offenses={caseDetail.offenseHistory.offenses}
+            showInstantOffenses={presenter.config.showInstantOffenses}
             sections={presenter.config.sections}
           />
         </SidebarColumn>

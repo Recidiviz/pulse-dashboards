@@ -20,6 +20,7 @@ import { rem } from "polished";
 import { Fragment } from "react";
 import styled from "styled-components";
 
+import { ParoleOffense } from "~datatypes";
 import { Icon, IconSVG, palette } from "~design-system";
 
 import { formatDocId } from "../../../ParoleStore/utils";
@@ -79,6 +80,18 @@ const FullWidthAlertBanner = styled(AlertBanner)`
   margin-right: -1rem;
 `;
 
+const InstantOffenseList = styled.ul`
+  ${typography.Sans14}
+  margin: 0;
+  padding-left: 1.25rem;
+`;
+
+const InstantOffenseItem = styled.li`
+  & + & {
+    margin-top: 0.5rem;
+  }
+`;
+
 const InfoCard = styled(SectionCard)`
   border-bottom: none;
   border-bottom-left-radius: 0;
@@ -131,6 +144,8 @@ export function CaseProfileSidebar({
   paroleEligibilityDate,
   mandatoryReleaseDate,
   isParoleReturn,
+  offenses,
+  showInstantOffenses,
   sections,
 }: {
   name: string;
@@ -145,6 +160,8 @@ export function CaseProfileSidebar({
   paroleEligibilityDate: string;
   mandatoryReleaseDate: string;
   isParoleReturn: boolean | undefined;
+  offenses: ParoleOffense[];
+  showInstantOffenses: boolean | undefined;
   sections: ParoleSectionName[];
 }) {
   return (
@@ -237,6 +254,25 @@ export function CaseProfileSidebar({
                 </FactRowStack>
               </FactRow>
             </div>
+
+            {showInstantOffenses && (
+              <>
+                <Hr />
+
+                <div>
+                  <SubsectionTitle>Instant Offenses</SubsectionTitle>
+                  <InstantOffenseList>
+                    {offenses.map((offense) => (
+                      <InstantOffenseItem
+                        key={`${offense.docket}-${offense.conviction}`}
+                      >
+                        {offense.conviction}
+                      </InstantOffenseItem>
+                    ))}
+                  </InstantOffenseList>
+                </div>
+              </>
+            )}
           </SectionStack>
         </PaddedSectionCardBody>
       </InfoCard>

@@ -230,6 +230,8 @@ const US_ID_CONFIG = {
       Major: "SLATE_DARK",
       Minor: "SLATE_DARK",
     },
+    showInstantOffenses: true,
+    offenseSectionTitle: "Instant Offenses",
   },
   tableColumns: enabledTableColumns[pathways.US_ID],
   vitalsMetrics: [

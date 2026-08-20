@@ -139,7 +139,7 @@ export const paroleConvictionSchema = z.object({
 });
 export type ParoleConviction = z.infer<typeof paroleConvictionSchema>;
 
-export const paroleOffenseHistorySchema = z.object({
+export const paroleOffenseSchema = z.object({
   county: z.string(),
   docket: z.string(),
   conviction: z.string(),
@@ -148,6 +148,13 @@ export const paroleOffenseHistorySchema = z.object({
   dateOfOffense: z.string(),
   convictionDate: z.string(),
   offenseNarrative: z.string(),
+});
+export type ParoleOffense = z.infer<typeof paroleOffenseSchema>;
+
+export const paroleOffenseHistorySchema = z.object({
+  // A person can be incarcerated on more than one current offense (e.g. one
+  // docket entry per count), so this is a list rather than a single record.
+  offenses: z.array(paroleOffenseSchema).nonempty(),
   priorConvictions: z.array(paroleConvictionSchema),
   victimInvolved: z.boolean(),
 });
