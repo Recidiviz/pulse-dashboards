@@ -84,7 +84,7 @@ export const rnaStatusList = stateStaffProcedure
         await isUserFlagActive({
           prisma,
           flagId: "useNewResidentData",
-          userId,
+          userIdFromAuthProvider: userId,
           stateCode,
         })
       ) {

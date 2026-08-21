@@ -23,6 +23,7 @@ import { segment } from "../../../../analytics/segment";
 import { getFirebaseToken } from "../../../../auth/getFirebaseToken";
 import { checkDemoResidentsRoster } from "../../../../auth/roster";
 import { baseProcedure } from "../../../../procedures/init";
+import { userIdFromPayload } from "./payload";
 import {
   checkRecidivizEmployeeRoster,
   lookupResident,
@@ -54,10 +55,11 @@ export const edovoToken = baseProcedure.query(async ({ ctx: { req } }) => {
     isRecidiviz = !!userProfile;
   }
   if (!userProfile) {
-    const demoUserMatch = await checkDemoResidentsRoster(
-      payload.facility_state,
-      payload.inmate_id,
-    );
+    const demoUserMatch = await checkDemoResidentsRoster({
+      stateCode: payload.facility_state,
+      userExternalId: payload.inmate_id,
+      userIdFromAuthProvider: userIdFromPayload(payload),
+    });
     if (demoUserMatch) {
       userProfile = demoUserMatch;
     }
@@ -65,7 +67,7 @@ export const edovoToken = baseProcedure.query(async ({ ctx: { req } }) => {
 
   if (userProfile) {
     firebaseToken = await getFirebaseToken(
-      `${payload.facility_state}_${payload.inmate_id}`,
+      userIdFromPayload(payload),
       userProfile,
     );
 

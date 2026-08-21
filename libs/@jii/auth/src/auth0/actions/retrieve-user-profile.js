@@ -63,7 +63,8 @@ exports.onExecutePostLogin = async (event, api) => {
     // Auth0 -> Authentication -> Enterprise -> SAML -> connection -> Mappings
     userType = "ORIJIN";
     stateCode = event.user.state_code;
-    userId = event.user.external_id;
+    userExternalId = event.user.external_id;
+    userUniqueId = event.user.user_id;
     // Orijin users do not have access to the emails associated with their accounts
     // skip email verification
     if (!event.user.app_metadata.skipEmailVerification) {

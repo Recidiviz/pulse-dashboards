@@ -24,12 +24,16 @@ import {
   checkEdovoTestAccountRoster,
   checkResidentsRoster,
 } from "../../../../auth/roster";
-import type { EdovoIdTokenPayload } from "./payload";
+import { type EdovoIdTokenPayload, userIdFromPayload } from "./payload";
 
 export async function lookupResident(
   userData: EdovoIdTokenPayload,
 ): Promise<AuthorizedUserProfile | undefined> {
-  return checkResidentsRoster(userData.facility_state, userData.inmate_id);
+  return checkResidentsRoster({
+    stateCode: userData.facility_state,
+    userExternalId: userData.inmate_id,
+    userIdFromAuthProvider: userIdFromPayload(userData),
+  });
 }
 
 export async function checkRecidivizEmployeeRoster(

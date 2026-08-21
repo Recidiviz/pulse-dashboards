@@ -62,10 +62,16 @@ async function getResidentRecordForDisplayId(
   return userResidentRecord;
 }
 
-export async function checkResidentsRoster(
-  stateCode: StateCode,
-  userId: string,
-): Promise<AuthorizedUserProfile | undefined> {
+export type RosterLookupOpts = {
+  stateCode: StateCode;
+  userExternalId: string;
+  userIdFromAuthProvider: string;
+};
+export async function checkResidentsRoster({
+  stateCode,
+  userExternalId,
+  userIdFromAuthProvider,
+}: RosterLookupOpts): Promise<AuthorizedUserProfile | undefined> {
   const lookupByDisplayId = ["US_AR", "US_AZ", "US_CO", "US_NE"].includes(
     stateCode,
   );
@@ -77,14 +83,14 @@ export async function checkResidentsRoster(
     await isUserFlagActive({
       stateCode,
       prisma,
-      userId,
+      userIdFromAuthProvider,
       flagId: "useNewResidentData",
     })
   ) {
     const userRecord = await prisma.resident.findFirst({
       where: {
-        displayId: lookupByDisplayId ? userId : undefined,
-        personExternalId: lookupByDisplayId ? undefined : userId,
+        displayId: lookupByDisplayId ? userExternalId : undefined,
+        personExternalId: lookupByDisplayId ? undefined : userExternalId,
       },
       select: { pseudonymizedId: true, personExternalId: true },
     });
@@ -95,12 +101,14 @@ export async function checkResidentsRoster(
     if (lookupByDisplayId) {
       userResidentRecord = await getResidentRecordForDisplayId(
         stateCode,
-        userId,
+        userExternalId,
       );
     } else {
       userResidentRecord = (
         await firestore()
-          .doc(`residents/${stateCode.toLowerCase()}_${userId.toLowerCase()}`)
+          .doc(
+            `residents/${stateCode.toLowerCase()}_${userExternalId.toLowerCase()}`,
+          )
           .get()
       ).data();
     }
@@ -116,7 +124,7 @@ export async function checkResidentsRoster(
     await isUserFlagActive({
       stateCode,
       prisma,
-      userId,
+      userIdFromAuthProvider,
       flagId: "intercom",
     })
   ) {
@@ -132,23 +140,24 @@ export async function checkResidentsRoster(
   };
 }
 
-export async function checkDemoResidentsRoster(
-  stateCode: StateCode,
-  userId: string,
-): Promise<ResidentUserProfile | undefined> {
+export async function checkDemoResidentsRoster({
+  stateCode,
+  userExternalId,
+  userIdFromAuthProvider,
+}: RosterLookupOpts): Promise<ResidentUserProfile | undefined> {
   let pseudonymizedId: string;
   const prisma = getPrismaClient({ stateCode, demo: true });
   if (
     await isUserFlagActive({
       stateCode,
       prisma,
-      userId,
+      userIdFromAuthProvider,
       flagId: "useNewResidentData",
     })
   ) {
     const userRecord = await prisma.resident.findFirst({
       where: {
-        personExternalId: userId,
+        personExternalId: userExternalId,
       },
       select: { pseudonymizedId: true },
     });
@@ -159,7 +168,7 @@ export async function checkDemoResidentsRoster(
       await firestore()
         .collection(`DEMO_residents`)
         .where("stateCode", "==", stateCode)
-        .where("personExternalId", "==", userId)
+        .where("personExternalId", "==", userExternalId)
         .limit(1)
         .get()
     ).docs[0]?.data();
@@ -174,7 +183,7 @@ export async function checkDemoResidentsRoster(
     await isUserFlagActive({
       stateCode,
       prisma,
-      userId,
+      userIdFromAuthProvider,
       flagId: "intercom",
     })
   ) {
@@ -183,7 +192,7 @@ export async function checkDemoResidentsRoster(
 
   return {
     stateCode: stateCode,
-    externalId: userId,
+    externalId: userExternalId,
     pseudonymizedId,
     intercomToken,
     permissions: [],

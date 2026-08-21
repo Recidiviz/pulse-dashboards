@@ -65,3 +65,13 @@ export const edovoIdTokenPayloadSchema = z
   });
 
 export type EdovoIdTokenPayload = z.infer<typeof edovoIdTokenPayloadSchema>;
+
+/**
+ * This is for use cases where we need a unique ID that doesn't depend on successful mapping to our ingested data.
+ * Edovo does assign them unique IDs in their payload, which we could use, but we have no way of looking them up
+ * to determine which resident they refer to; this ID can be reverse-engineered from information we already have,
+ * which is important for use cases such as managing feature flags.
+ */
+export function userIdFromPayload(payload: EdovoIdTokenPayload) {
+  return `${payload.facility_state}_${payload.inmate_id}`;
+}

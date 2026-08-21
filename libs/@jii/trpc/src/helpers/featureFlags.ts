@@ -20,14 +20,20 @@ import { PrismaClient, UserFlagId } from "~@jii/prisma";
 
 type UserFlagOpts = {
   flagId: UserFlagId;
-  userId: string;
+  userIdFromAuthProvider: string;
   stateCode: StateCode;
   prisma: PrismaClient;
 };
 
+/**
+ * Checks flag status for the specified user.
+ * Note that user flags are keyed by the ID supplied by their auth provider,
+ * which is NOT THE SAME as their external ID (e.g. DOC ID); it requires the `userId`
+ * supplied by an authed prodecure's context.
+ */
 export async function isUserFlagActive({
   flagId,
-  userId,
+  userIdFromAuthProvider,
   stateCode,
   prisma,
 }: UserFlagOpts): Promise<boolean> {
@@ -42,7 +48,7 @@ export async function isUserFlagActive({
   return (
     (await prisma.userFlagInstance.count({
       where: {
-        userId,
+        userId: userIdFromAuthProvider,
         flagId,
         effectiveAt: {
           lte: now,

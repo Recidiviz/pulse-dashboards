@@ -17,6 +17,7 @@
 
 export * from "./auth/getDecryptedToken";
 export { getRecidivizUserProfile } from "./auth/recidivizUsers";
+export type { RosterLookupOpts } from "./auth/roster";
 export { checkDemoResidentsRoster, checkResidentsRoster } from "./auth/roster";
 export * from "./context";
 export * from "./errors";

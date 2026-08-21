@@ -24,6 +24,7 @@ import {
   checkDemoResidentsRoster,
   checkResidentsRoster,
   getRecidivizUserProfile,
+  RosterLookupOpts,
 } from "~@jii/trpc";
 
 import { checkAdminPanelPermissions } from "./staffUsers";
@@ -36,8 +37,13 @@ const auth0UserPayloadSchema = z.discriminatedUnion("userType", [
   // Orijin users
   z.object({
     userType: z.literal("ORIJIN"),
-    userId: z.string(),
     stateCode: z.string().toUpperCase(),
+    // for backwards compatibility we are supporting two ID schemes;
+    // this is the old (deprecated) one
+    userId: z.string().optional(),
+    // and this (two fields) is the new one
+    userExternalId: z.string().optional(),
+    userUniqueId: z.string().optional(),
   }),
   // State employee
   z.object({ userType: z.literal("STATE"), email: z.string() }),
@@ -58,6 +64,8 @@ export function registerAuthRoutes(server: FastifyInstance) {
     algorithms: ["RS256"],
   });
 
+  const PAYLOAD_SCHEMA_ERROR = "Your credentials contain invalid identity data";
+
   server.get("/api/v1/auth0-roster-check", async (request, reply) => {
     const token = getBearerToken(request);
     if (!token) {
@@ -75,9 +83,7 @@ export function registerAuthRoutes(server: FastifyInstance) {
 
     const parseResult = auth0UserPayloadSchema.safeParse(payload);
     if (!parseResult.success) {
-      reply
-        .status(401)
-        .send({ error: "Your credentials contain invalid identity data" });
+      reply.status(401).send({ error: PAYLOAD_SCHEMA_ERROR });
       return;
     }
     const userData = parseResult.data;
@@ -91,26 +97,47 @@ export function registerAuthRoutes(server: FastifyInstance) {
 
     if (userData.userType === "ORIJIN") {
       const stateCode = stateCodes.safeParse(userData.stateCode).data;
+
       if (!stateCode) {
         reply
           .status(401)
           .send({ error: `Invalid state code: ${userData.stateCode}` });
         return;
       }
-      const userProfile = await checkResidentsRoster(
-        stateCode,
-        userData.userId,
-      );
+
+      let rosterLookupArgs: RosterLookupOpts;
+
+      if (userData.userId) {
+        rosterLookupArgs = {
+          stateCode,
+          userExternalId: userData.userId,
+          // this is a magic string for compatibility; the updated lookup function
+          // requires both IDs but this one is not available under the old endpoint request schema
+          userIdFromAuthProvider: "__NO_ID_PROVIDED__",
+        };
+      } else if (userData.userExternalId && userData.userUniqueId) {
+        rosterLookupArgs = {
+          stateCode,
+          userExternalId: userData.userExternalId,
+          userIdFromAuthProvider: userData.userUniqueId,
+        };
+      } else {
+        reply
+          .status(401)
+          // this isn't literally a schema parsing error because of the backwards compatibility support;
+          // once the old field is eliminated from the schema we can make the new fields required and delete this branch
+          .send({ error: PAYLOAD_SCHEMA_ERROR });
+        return;
+      }
+
+      const userProfile = await checkResidentsRoster(rosterLookupArgs);
       if (userProfile) {
         reply.status(200).send({ userProfile });
         return;
       }
 
       // fallback: if not a real user, check if they're a demo user
-      const demoUserProfile = await checkDemoResidentsRoster(
-        stateCode,
-        userData.userId,
-      );
+      const demoUserProfile = await checkDemoResidentsRoster(rosterLookupArgs);
       if (demoUserProfile) {
         reply.status(200).send({ userProfile: demoUserProfile });
         return;

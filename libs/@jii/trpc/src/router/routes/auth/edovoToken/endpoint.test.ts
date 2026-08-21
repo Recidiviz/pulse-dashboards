@@ -218,7 +218,11 @@ describe("NY facility state disambiguation", () => {
 
     await authCaller.edovoToken();
 
-    expect(checkResidentsRoster).toHaveBeenCalledWith("US_NYC", "123456");
+    expect(checkResidentsRoster).toHaveBeenCalledWith({
+      stateCode: "US_NYC",
+      userExternalId: "123456",
+      userIdFromAuthProvider: "US_NYC_123456",
+    });
   });
 
   test("leaves state as US_NY when facility name does not match", async () => {

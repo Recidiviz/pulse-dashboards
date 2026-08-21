@@ -87,7 +87,7 @@ describe("isUserFlagActive", () => {
   test("statewide flag effective in the past, no personal flag", async () => {
     const result = await isUserFlagActive({
       flagId: activeStatewideFlag,
-      userId,
+      userIdFromAuthProvider: userId,
       stateCode,
       prisma: testPrismaClient,
     });
@@ -100,7 +100,7 @@ describe("isUserFlagActive", () => {
 
     const result = await isUserFlagActive({
       flagId: activeStatewideFlag,
-      userId,
+      userIdFromAuthProvider: userId,
       stateCode,
       prisma: testPrismaClient,
     });
@@ -111,7 +111,7 @@ describe("isUserFlagActive", () => {
   test("statewide flag effective in the future, no personal flag", async () => {
     const result = await isUserFlagActive({
       flagId: futureStatewideFlag,
-      userId,
+      userIdFromAuthProvider: userId,
       stateCode,
       prisma: testPrismaClient,
     });
@@ -124,7 +124,7 @@ describe("isUserFlagActive", () => {
 
     const result = await isUserFlagActive({
       flagId: futureStatewideFlag,
-      userId,
+      userIdFromAuthProvider: userId,
       stateCode,
       prisma: testPrismaClient,
     });
@@ -137,7 +137,7 @@ describe("isUserFlagActive", () => {
 
     const result = await isUserFlagActive({
       flagId: activeStatewideFlag,
-      userId,
+      userIdFromAuthProvider: userId,
       stateCode,
       prisma: testPrismaClient,
     });
@@ -150,7 +150,7 @@ describe("isUserFlagActive", () => {
 
     const result = await isUserFlagActive({
       flagId: personalOnlyFlag,
-      userId,
+      userIdFromAuthProvider: userId,
       stateCode,
       prisma: testPrismaClient,
     });
@@ -161,7 +161,7 @@ describe("isUserFlagActive", () => {
   test("no statewide flag, no personal flag", async () => {
     const result = await isUserFlagActive({
       flagId: personalOnlyFlag,
-      userId,
+      userIdFromAuthProvider: userId,
       stateCode,
       prisma: testPrismaClient,
     });
@@ -176,7 +176,7 @@ describe("isUserFlagActive", () => {
 
     await isUserFlagActive({
       flagId: personalOnlyFlag,
-      userId,
+      userIdFromAuthProvider: userId,
       stateCode,
       prisma: testPrismaClient,
     });
