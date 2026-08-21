@@ -42,6 +42,12 @@ export class UiStore {
    */
   hideHeaderBar = false;
 
+  /**
+   * When true, a feature has taken over the header with its own nav.
+   * AppLayout hides its default header so the feature's nav can occupy that slot.
+   */
+  headerOverrideActive = false;
+
   constructor() {
     makeAutoObservable(this);
   }

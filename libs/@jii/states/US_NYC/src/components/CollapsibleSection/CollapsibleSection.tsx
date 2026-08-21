@@ -19,7 +19,9 @@
 // a strong candidate to be factored out into ~@jii/common-ui once sticky-header offset and other
 // regression risks are tested, and validated/addressed.
 
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode, useLayoutEffect, useRef, useState } from "react";
+
+import { HIDDEN_HEADER_OFFSET } from "~@jii/common-ui";
 
 import {
   Badge,
@@ -30,11 +32,19 @@ import {
   Title,
 } from "./CollapsibleSection.styles";
 
+const PINNED_TOLERANCE_PX = 1;
+
 export type CollapsibleSectionProps = {
   title: string;
   badgeLabel?: ReactNode;
   children: ReactNode;
   defaultOpen?: boolean;
+  /**
+   * When true, the section header sticks to the bottom of the app header on scroll.
+   * Assumes a fixed header of HIDDEN_HEADER_OFFSET height from ~@jii/common-ui — if
+   * used with a custom header via useHeaderOverride, that header must match this
+   * constant or the scroll behavior will be off.
+   */
   stickyHeader?: boolean;
   headerBorder?: boolean;
 };
@@ -48,11 +58,28 @@ export const CollapsibleSection: FC<CollapsibleSectionProps> = ({
   headerBorder = false,
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
+  const headerRef = useRef<HTMLButtonElement>(null);
+
+  const handleToggle = () => setIsOpen((prev) => !prev);
+
+  // When a pinned sticky header is collapsed, scroll it back into its natural position so the user
+  // doesn't lose their place. Runs in useLayoutEffect (not useEffect) so scrollIntoView fires
+  // before paint — otherwise the browser's scroll anchoring kicks in and shifts the page unpredictably.
+  useLayoutEffect(() => {
+    if (!isOpen && stickyHeader && headerRef.current) {
+      const { top } = headerRef.current.getBoundingClientRect();
+      const isPinned = top <= HIDDEN_HEADER_OFFSET + PINNED_TOLERANCE_PX;
+      if (isPinned) {
+        headerRef.current.scrollIntoView({ block: "start" });
+      }
+    }
+  }, [isOpen, stickyHeader]);
 
   return (
     <Section>
       <Header
-        onClick={() => setIsOpen((prev) => !prev)}
+        ref={headerRef}
+        onClick={handleToggle}
         aria-expanded={isOpen}
         $sticky={stickyHeader}
         $hasBorder={headerBorder}

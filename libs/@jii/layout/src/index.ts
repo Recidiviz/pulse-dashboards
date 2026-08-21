@@ -33,4 +33,5 @@ export * from "./Onboarding/useTrackOnboardingSeen";
 export * from "./PageHydrator/PageHydratorWithErrorLogging";
 export * from "./RequiresPermission/RequiresPermission";
 export * from "./ScreenFillingWrapper/ScreenFillingWrapper";
+export * from "./useHeaderOverride";
 export * from "./Wordmark/Wordmark";

@@ -15,25 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Outlet } from "react-router-dom";
+import { useMatch } from "react-router-dom";
 
-import { ScreenFillingWrapper, useHeaderOverride } from "~@jii/layout";
+import { Wordmark } from "~@jii/layout";
+import { State } from "~@jii/paths";
 
-import { US_NYC_CONTENT } from "../content";
-import { CRENavBar } from "./CRENavBar/CRENavBar";
-import { Footer } from "./Footer/Footer";
-import { QueryBoundary } from "./QueryBoundary";
+import { BackButton } from "../BackButton/BackButton";
+import { NavBar } from "./CRENavBar.styles";
 
-export function UsNycResourcesLayout() {
-  useHeaderOverride();
-
+export function CRENavBar() {
+  const isCategoryRoute = useMatch({
+    path: State.Resident.ResourceExplorer.CategoryResults.path,
+    end: false,
+  });
   return (
-    <QueryBoundary>
-      <CRENavBar />
-      <ScreenFillingWrapper
-        top={<Outlet />}
-        bottom={<Footer content={US_NYC_CONTENT.cre.footer} />}
-      />
-    </QueryBoundary>
+    <NavBar aria-label="Community Resources Navigation Bar">
+      {isCategoryRoute ? <BackButton /> : <Wordmark />}
+    </NavBar>
   );
 }

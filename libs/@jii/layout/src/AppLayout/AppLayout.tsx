@@ -56,7 +56,7 @@ const Wrapper = styled.div<{ scrollMargin: number }>`
   }
 `;
 
-const Header = styled.header`
+const Header = styled.header<{ $hidden: boolean }>`
   background: ${palette.white};
   position: sticky;
   top: 0;
@@ -64,6 +64,7 @@ const Header = styled.header`
   right: 0;
   z-index: ${STICKY_HEADER_ZINDEX};
   transition: transform ${HEADER_ANIMATION_OPTIONS};
+  visibility: ${({ $hidden }) => ($hidden ? "hidden" : "visible")};
 
   &.hideHeaderBar {
     transform: translateY(-${rem(HIDDEN_HEADER_OFFSET)});
@@ -141,10 +142,14 @@ export const AppLayout: FC<{ header?: ReactNode; main: ReactNode }> = observer(
 
     const { measureRef, stickyHeaderHeight } = useHeaderMeasurement();
     const {
-      uiStore: { hideHeaderBar },
+      uiStore: { hideHeaderBar, headerOverrideActive },
     } = useRootStore();
 
     useScrollHide();
+
+    const headerClassName = headerOverrideActive
+      ? undefined
+      : cn({ hideHeaderBar });
 
     return (
       <SkipNavController>
@@ -152,9 +157,8 @@ export const AppLayout: FC<{ header?: ReactNode; main: ReactNode }> = observer(
         <Wrapper scrollMargin={stickyHeaderHeight + PAGE_LAYOUT_HEADER_GAP}>
           <Header
             ref={measureRef}
-            className={cn({
-              hideHeaderBar,
-            })}
+            className={headerClassName}
+            $hidden={headerOverrideActive}
           >
             <HeaderBarContainer>
               <HeaderBar>

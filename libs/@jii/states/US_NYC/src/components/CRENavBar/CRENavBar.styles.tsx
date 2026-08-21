@@ -15,25 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Outlet } from "react-router-dom";
+import { rem } from "polished";
+import styled from "styled-components";
 
-import { ScreenFillingWrapper, useHeaderOverride } from "~@jii/layout";
+import { HIDDEN_HEADER_OFFSET, STICKY_HEADER_ZINDEX } from "~@jii/common-ui";
+import { palette, spacing } from "~design-system";
 
-import { US_NYC_CONTENT } from "../content";
-import { CRENavBar } from "./CRENavBar/CRENavBar";
-import { Footer } from "./Footer/Footer";
-import { QueryBoundary } from "./QueryBoundary";
-
-export function UsNycResourcesLayout() {
-  useHeaderOverride();
-
-  return (
-    <QueryBoundary>
-      <CRENavBar />
-      <ScreenFillingWrapper
-        top={<Outlet />}
-        bottom={<Footer content={US_NYC_CONTENT.cre.footer} />}
-      />
-    </QueryBoundary>
-  );
-}
+export const NavBar = styled.nav`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: ${STICKY_HEADER_ZINDEX};
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: ${rem(HIDDEN_HEADER_OFFSET)};
+  padding: 0 ${rem(spacing.lg)};
+  background: ${palette.white};
+  border-bottom: 1px solid ${palette.slate20};
+`;

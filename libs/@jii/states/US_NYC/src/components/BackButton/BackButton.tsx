@@ -15,25 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Outlet } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
-import { ScreenFillingWrapper, useHeaderOverride } from "~@jii/layout";
+import { State } from "~@jii/paths";
 
-import { US_NYC_CONTENT } from "../content";
-import { CRENavBar } from "./CRENavBar/CRENavBar";
-import { Footer } from "./Footer/Footer";
-import { QueryBoundary } from "./QueryBoundary";
+import { BackLink, Chevron } from "./BackButton.styles";
 
-export function UsNycResourcesLayout() {
-  useHeaderOverride();
+export function BackButton() {
+  const [searchParams] = useSearchParams();
+  const { backTarget } =
+    State.Resident.ResourceExplorer.CategoryResults.Detail.getTypedSearchParams(
+      searchParams,
+    );
+  // Reject non-internal paths to prevent malformed/malicious URLs from being used
+  const safePath = backTarget?.startsWith("/") ? backTarget : null;
 
   return (
-    <QueryBoundary>
-      <CRENavBar />
-      <ScreenFillingWrapper
-        top={<Outlet />}
-        bottom={<Footer content={US_NYC_CONTENT.cre.footer} />}
-      />
-    </QueryBoundary>
+    <BackLink to={safePath ?? ".."}>
+      <Chevron size={16} rotate={180} aria-hidden />
+      Back
+    </BackLink>
   );
 }

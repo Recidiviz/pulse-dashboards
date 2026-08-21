@@ -15,25 +15,33 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Outlet } from "react-router-dom";
+import { rem } from "polished";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
 
-import { ScreenFillingWrapper, useHeaderOverride } from "~@jii/layout";
+import { Icon, palette, spacing, typography } from "~design-system";
 
-import { US_NYC_CONTENT } from "../content";
-import { CRENavBar } from "./CRENavBar/CRENavBar";
-import { Footer } from "./Footer/Footer";
-import { QueryBoundary } from "./QueryBoundary";
+export const Chevron = styled(Icon).attrs({ kind: "Next" })<{ kind?: never }>`
+  flex-shrink: 0;
+`;
 
-export function UsNycResourcesLayout() {
-  useHeaderOverride();
+export const BackLink = styled(Link)`
+  ${typography.Sans16}
 
-  return (
-    <QueryBoundary>
-      <CRENavBar />
-      <ScreenFillingWrapper
-        top={<Outlet />}
-        bottom={<Footer content={US_NYC_CONTENT.cre.footer} />}
-      />
-    </QueryBoundary>
-  );
-}
+  display: inline-flex;
+  align-items: center;
+  gap: ${rem(spacing.xs)};
+  color: ${palette.pine1};
+  text-decoration: none;
+  padding: ${rem(spacing.xs)} 0;
+
+  &:hover {
+    color: ${palette.pine2};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${palette.pine1};
+    outline-offset: 2px;
+    border-radius: ${rem(2)};
+  }
+`;

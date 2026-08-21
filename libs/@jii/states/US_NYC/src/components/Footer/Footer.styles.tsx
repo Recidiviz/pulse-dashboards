@@ -18,53 +18,53 @@
 import { rem } from "polished";
 import styled from "styled-components";
 
-import { PageContainer as BasePageContainer } from "~@jii/common-ui";
+import { FullBleedContainer } from "~@jii/common-ui";
 import { palette, spacing, typography } from "~design-system";
 
-export const PageContainer = styled(BasePageContainer)`
+export const FooterWrapper = styled(FullBleedContainer).attrs({ as: "footer" })`
+  background: ${palette.pine1};
+  padding: ${rem(spacing.xxl)} ${rem(spacing.xl)};
   display: flex;
   flex-direction: column;
-  gap: ${rem(spacing.xxl)};
+  gap: ${rem(spacing.xl)};
 `;
 
-export const PageHeader = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${rem(spacing.md)};
-`;
-
-export const PageTitle = styled.h1`
-  ${typography.Sans24}
-  color: ${palette.pine1};
-  margin: 0;
-`;
-
-export const PageSubtitle = styled.p`
-  ${typography.Sans14}
-  color: ${palette.pine1};
-  margin: 0;
-`;
-
-export const GridSection = styled.section`
+export const Section = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${rem(spacing.md)};
 `;
 
-export const SectionHeading = styled.h2`
+export const SectionHeading = styled.p`
   ${typography.Sans16}
-  color: ${palette.pine1};
+  font-weight: 600;
+  color: ${palette.white};
   margin: 0;
 `;
 
-export const TileGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+export const BodyText = styled.p`
+  ${typography.Sans14}
+  color: ${palette.white90};
+  margin: 0;
+`;
+
+export const LabelItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   gap: ${rem(spacing.sm)};
 `;
 
-export const EmptyState = styled.p`
+export const LabelDescription = styled.p`
   ${typography.Sans14}
-  color: ${palette.slate60};
+  color: ${palette.white90};
   margin: 0;
+`;
+
+export const Disclaimer = styled.p`
+  ${typography.Sans12}
+  color: ${palette.white70};
+  margin: 0;
+  padding-top: ${rem(spacing.md)};
+  border-top: 1px solid ${palette.white40};
 `;
