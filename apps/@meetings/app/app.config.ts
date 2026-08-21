@@ -73,7 +73,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     ...config,
     name,
     slug: "recidiviz",
-    version: "0.5.0",
+    version: "0.6.0",
     orientation: "portrait",
     icon: "./src/shared/assets/images/Apple_icon.png",
     scheme,
