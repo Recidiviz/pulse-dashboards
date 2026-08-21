@@ -53,6 +53,8 @@ export const rnaWritebackStatusList = stateStaffProcedure
           flagId: "useNewResidentData",
           userIdFromAuthProvider: userId,
           stateCode,
+          // permissions in this app do not apply to staff
+          userPermissions: undefined,
         })
       ) {
         residentData = await prisma.resident.findMany({

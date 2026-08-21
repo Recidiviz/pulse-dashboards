@@ -90,6 +90,7 @@ describe("isUserFlagActive", () => {
       userIdFromAuthProvider: userId,
       stateCode,
       prisma: testPrismaClient,
+      userPermissions: undefined,
     });
 
     expect(result).toBe(true);
@@ -103,6 +104,7 @@ describe("isUserFlagActive", () => {
       userIdFromAuthProvider: userId,
       stateCode,
       prisma: testPrismaClient,
+      userPermissions: undefined,
     });
 
     expect(result).toBe(true);
@@ -114,6 +116,7 @@ describe("isUserFlagActive", () => {
       userIdFromAuthProvider: userId,
       stateCode,
       prisma: testPrismaClient,
+      userPermissions: undefined,
     });
 
     expect(result).toBe(false);
@@ -127,6 +130,7 @@ describe("isUserFlagActive", () => {
       userIdFromAuthProvider: userId,
       stateCode,
       prisma: testPrismaClient,
+      userPermissions: undefined,
     });
 
     expect(result).toBe(true);
@@ -140,6 +144,7 @@ describe("isUserFlagActive", () => {
       userIdFromAuthProvider: userId,
       stateCode,
       prisma: testPrismaClient,
+      userPermissions: undefined,
     });
 
     expect(result).toBe(true);
@@ -153,6 +158,7 @@ describe("isUserFlagActive", () => {
       userIdFromAuthProvider: userId,
       stateCode,
       prisma: testPrismaClient,
+      userPermissions: undefined,
     });
 
     expect(result).toBe(true);
@@ -164,6 +170,48 @@ describe("isUserFlagActive", () => {
       userIdFromAuthProvider: userId,
       stateCode,
       prisma: testPrismaClient,
+      userPermissions: undefined,
+    });
+
+    expect(result).toBe(false);
+  });
+
+  test("no statewide flag, no personal flag, empty permissions array", async () => {
+    const result = await isUserFlagActive({
+      flagId: personalOnlyFlag,
+      userIdFromAuthProvider: userId,
+      stateCode,
+      prisma: testPrismaClient,
+      userPermissions: [],
+    });
+
+    expect(result).toBe(false);
+  });
+
+  test("all_user_flags_enabled permission short-circuits to true without hitting the DB", async () => {
+    const result = await isUserFlagActive({
+      flagId: futureStatewideFlag,
+      userIdFromAuthProvider: userId,
+      stateCode,
+      prisma: testPrismaClient,
+      userPermissions: [
+        "all_user_flags_enabled",
+        "live_data",
+        "all_resident_flags_enabled",
+      ],
+    });
+
+    expect(result).toBe(true);
+    expect(testPrismaClient.userFlagInstance.count).not.toHaveBeenCalled();
+  });
+
+  test("only all_user_flags_enabled permission triggers the short circuit", async () => {
+    const result = await isUserFlagActive({
+      flagId: personalOnlyFlag,
+      userIdFromAuthProvider: userId,
+      stateCode,
+      prisma: testPrismaClient,
+      userPermissions: ["live_data", "all_resident_flags_enabled"],
     });
 
     expect(result).toBe(false);
@@ -179,6 +227,7 @@ describe("isUserFlagActive", () => {
       userIdFromAuthProvider: userId,
       stateCode,
       prisma: testPrismaClient,
+      userPermissions: undefined,
     });
 
     expect(testPrismaClient.userFlagInstance.count).toHaveBeenCalledWith({

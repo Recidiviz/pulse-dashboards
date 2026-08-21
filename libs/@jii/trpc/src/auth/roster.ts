@@ -19,7 +19,11 @@ import { createSigner, SignerPayload } from "fast-jwt";
 import { DocumentData, getFirestore } from "firebase-admin/firestore";
 import { z } from "zod";
 
-import { AuthorizedUserProfile, ResidentUserProfile } from "~@jii/auth";
+import {
+  AuthorizedUserProfile,
+  Permission,
+  ResidentUserProfile,
+} from "~@jii/auth";
 import { StateCode } from "~@jii/configs";
 import { getPrismaClient } from "~@jii/prisma";
 
@@ -85,6 +89,8 @@ export async function checkResidentsRoster({
       prisma,
       userIdFromAuthProvider,
       flagId: "useNewResidentData",
+      // we don't know the user's permissions yet, that depends on the roster checks
+      userPermissions: undefined,
     })
   ) {
     const userRecord = await prisma.resident.findFirst({
@@ -119,6 +125,10 @@ export async function checkResidentsRoster({
       getResidentIds(userResidentRecord));
   }
 
+  // if we've gotten this far, it means we have a match and we know this user is a resident.
+  // these are the applicable permissions for residents; constructing them now so the flag check can consume them
+  const userPermissions: Array<Permission> = ["live_data"];
+
   let intercomToken: string | undefined;
   if (
     await isUserFlagActive({
@@ -126,6 +136,7 @@ export async function checkResidentsRoster({
       prisma,
       userIdFromAuthProvider,
       flagId: "intercom",
+      userPermissions,
     })
   ) {
     intercomToken = signIntercomJwt({ user_id: pseudonymizedId });
@@ -136,7 +147,7 @@ export async function checkResidentsRoster({
     externalId: personExternalId,
     pseudonymizedId,
     intercomToken,
-    permissions: ["live_data"],
+    permissions: userPermissions,
   };
 }
 
@@ -153,6 +164,8 @@ export async function checkDemoResidentsRoster({
       prisma,
       userIdFromAuthProvider,
       flagId: "useNewResidentData",
+      // we don't know the user's permissions yet, that depends on the roster checks
+      userPermissions: undefined,
     })
   ) {
     const userRecord = await prisma.resident.findFirst({
@@ -178,6 +191,10 @@ export async function checkDemoResidentsRoster({
     ({ pseudonymizedId } = getResidentIds(userDemoResidentRecord));
   }
 
+  // if we've gotten this far, it means we have a match and we know this user is a demo resident.
+  // these are the applicable permissions for demo residents; constructing them now so the flag check can consume them
+  const userPermissions: Array<Permission> = [];
+
   let intercomToken: string | undefined;
   if (
     await isUserFlagActive({
@@ -185,6 +202,7 @@ export async function checkDemoResidentsRoster({
       prisma,
       userIdFromAuthProvider,
       flagId: "intercom",
+      userPermissions,
     })
   ) {
     intercomToken = signIntercomJwt({ user_id: pseudonymizedId });
@@ -195,7 +213,7 @@ export async function checkDemoResidentsRoster({
     externalId: userExternalId,
     pseudonymizedId,
     intercomToken,
-    permissions: [],
+    permissions: userPermissions,
   };
 }
 

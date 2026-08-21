@@ -86,6 +86,8 @@ export const rnaStatusList = stateStaffProcedure
           flagId: "useNewResidentData",
           userIdFromAuthProvider: userId,
           stateCode,
+          // permissions in this app do not apply to staff
+          userPermissions: undefined,
         })
       ) {
         residentData = (

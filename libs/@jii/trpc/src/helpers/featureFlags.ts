@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Permission } from "~@jii/auth";
 import { residentsConfigByState, StateCode } from "~@jii/configs";
 import { PrismaClient, UserFlagId } from "~@jii/prisma";
 
@@ -23,6 +24,7 @@ type UserFlagOpts = {
   userIdFromAuthProvider: string;
   stateCode: StateCode;
   prisma: PrismaClient;
+  userPermissions: Array<Permission> | undefined;
 };
 
 /**
@@ -36,7 +38,13 @@ export async function isUserFlagActive({
   userIdFromAuthProvider,
   stateCode,
   prisma,
+  userPermissions,
 }: UserFlagOpts): Promise<boolean> {
+  // user permissions are optional because we may be calling this before we know what
+  // the user's permissions are. That is safe to do (the flag checks themselves are always allowed)
+  // and should only affect internal users anyway if something does get out of sync
+  if (userPermissions?.includes("all_user_flags_enabled")) return true;
+
   const now = new Date();
   // check statewide flag first since it takes precedence and doesn't hit the DB
   const statewideFlag =
