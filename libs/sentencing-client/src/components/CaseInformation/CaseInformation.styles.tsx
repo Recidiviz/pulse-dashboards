@@ -17,7 +17,7 @@
 
 import styled from "styled-components";
 
-import { palette } from "~design-system";
+import { palette, typography } from "~design-system";
 
 import { CheckboxContainer as SharedCheckboxContainer } from "../shared/styles/CheckboxStyles";
 
@@ -101,4 +101,19 @@ export const StaffInfoColumn = styled.div`
   display: flex;
   padding-left: 2.5rem;
   flex-direction: column;
+`;
+
+export const Link = styled.button`
+  background: none;
+  border: none;
+  padding: 0;
+  ${typography.Sans12}
+  color: ${palette.signal.links};
+  cursor: pointer;
+`;
+
+export const BackToListLink = styled(Link)`
+  font-style: italic;
+  text-decoration: underline;
+  font-size: 0.75rem;
 `;

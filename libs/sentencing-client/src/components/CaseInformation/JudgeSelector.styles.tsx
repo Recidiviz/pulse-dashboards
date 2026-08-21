@@ -102,18 +102,6 @@ export const HelperText = styled(FormFieldHelperText)`
   margin-top: 0.25rem;
 `;
 
-export const BackToListLink = styled.button`
-  background: none;
-  border: none;
-  padding: 0;
-  font-family: "Public Sans";
-  font-size: 0.75rem;
-  font-style: italic;
-  color: ${palette.signal.links};
-  cursor: pointer;
-  text-decoration: underline;
-`;
-
 export const InlineRow = styled.div`
   display: inline-flex;
   align-items: center;

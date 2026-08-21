@@ -19,6 +19,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
+import { InvestigationTypeNotice } from "../SARDetails/InvestigationTypeNotice";
 import * as CheckboxStyled from "../shared/styles/CheckboxStyles";
 import * as Styled from "./CaseInformation.styles";
 import { EditableChargeField } from "./constants";
@@ -49,6 +50,8 @@ export const CaseInformation: React.FC<CaseInformationProps> = observer(
 
     return (
       <Styled.Container>
+        <InvestigationTypeNotice presenter={presenter} />
+
         {/* Defendant declined checkbox */}
         <Styled.StaffInformationContainer>
           <Styled.CheckboxContainer>

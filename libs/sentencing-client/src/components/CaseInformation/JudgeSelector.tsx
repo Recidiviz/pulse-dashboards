@@ -24,7 +24,6 @@ import { SelectOption } from "../CaseDetails/Form/types";
 import { SAR_AUTOSAVE_DELAY } from "../SARDetails/constants";
 import * as Styled from "./CaseInformation.styles";
 import {
-  BackToListLink,
   HelperText,
   InlineRow,
   judgeDropdownStyles,
@@ -166,7 +165,7 @@ export const JudgeSelector: React.FC<JudgeSelectorProps> = ({
             <HelperText>
               <span>Type in the judge&apos;s name above.</span>
               {judgeOptions.length > 0 && (
-                <BackToListLink
+                <Styled.BackToListLink
                   onClick={() => {
                     setIsOther(false);
                     setOtherName("");
@@ -174,7 +173,7 @@ export const JudgeSelector: React.FC<JudgeSelectorProps> = ({
                   }}
                 >
                   Choose from list
-                </BackToListLink>
+                </Styled.BackToListLink>
               )}
             </HelperText>
           )}

@@ -395,16 +395,24 @@ export class SARDetailsPresenter implements Hydratable {
   }
 
   /**
+   * True while the officer is revisiting an already-saved report type
+   * selection (via the "Change" link), as opposed to never having chosen
+   * one. Kept separate from isVictimImpactOnly so that reopening the choice
+   * doesn't clobber the saved value, letting "Back" cancel back to it.
+   */
+  isChangingReportType = false;
+
+  /**
    * Whether the report type selection card should be shown instead of the
-   * normal SAR sections. Reactive: recomputes from live SARData, so it
-   * naturally stops showing once the selection is saved (isVictimImpactOnly
-   * is no longer null, or investigationType is no longer "PSR").
+   * normal SAR sections: either no selection has been saved yet, or the
+   * officer is actively revisiting a saved one.
    */
   get showReportTypeCard(): boolean {
     return (
-      this.investigationType === "PSR" &&
-      this.isVictimImpactOnly === null &&
-      this.isPSRBuilderActive
+      (this.investigationType === "PSR" &&
+        this.isVictimImpactOnly === null &&
+        this.isPSRBuilderActive) ||
+      this.isChangingReportType
     );
   }
 
@@ -530,6 +538,9 @@ export class SARDetailsPresenter implements Hydratable {
         investigationType: investigationType,
         isVictimImpactOnly: isVictimImpactOnly,
       });
+      runInAction(() => {
+        this.isChangingReportType = false;
+      });
     } catch (e) {
       runInAction(() => {
         this.updateLocalInvestigation(
@@ -539,6 +550,16 @@ export class SARDetailsPresenter implements Hydratable {
       });
       throw e;
     }
+  }
+
+  /** Reopen the report type card to revisit an already-saved selection. */
+  startReportTypeChange(): void {
+    this.isChangingReportType = true;
+  }
+
+  /** Cancel revisiting the report type selection, keeping the saved value. */
+  cancelReportTypeChange(): void {
+    this.isChangingReportType = false;
   }
 
   async signOfficer(signature: string, title: string): Promise<void> {
