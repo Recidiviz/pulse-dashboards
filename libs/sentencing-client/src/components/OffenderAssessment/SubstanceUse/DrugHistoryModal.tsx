@@ -28,10 +28,9 @@ import {
 import {
   ButtonRow,
   CancelButton,
-  DatePickerWrapper,
-  dropdownStyles,
   SaveButton,
-} from "../FormComponents.styles";
+} from "../../shared/styles/FormButtonStyles";
+import { DatePickerWrapper, dropdownStyles } from "../FormComponents.styles";
 import * as ModalStyled from "../ModalStyles";
 import {
   AGE_OPTIONS,

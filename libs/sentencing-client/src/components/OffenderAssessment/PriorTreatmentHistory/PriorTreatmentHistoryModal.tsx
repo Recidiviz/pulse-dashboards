@@ -19,13 +19,13 @@ import React, { useEffect, useState } from "react";
 
 import { Dropdown } from "../../CaseDetails/Form/Elements/Dropdown";
 import { Modal } from "../../Modal/Modal";
-import { SelectOption, VERIFIED_OPTIONS } from "../constants";
 import {
   ButtonRow,
   CancelButton,
-  dropdownStyles,
   SaveButton,
-} from "../FormComponents.styles";
+} from "../../shared/styles/FormButtonStyles";
+import { SelectOption, VERIFIED_OPTIONS } from "../constants";
+import { dropdownStyles } from "../FormComponents.styles";
 import * as ModalStyled from "../ModalStyles";
 import { getYearOptions } from "./constants";
 import { PriorTreatmentHistory } from "./types";

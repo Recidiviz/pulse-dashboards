@@ -131,6 +131,8 @@ const EMPTY_SECTION = { completed: 0, total: 0 };
 // All SAR sections that contribute to progress (excludes read-only Summary)
 type ProgressSection = Exclude<SARSectionName, SARSection.SUMMARY>;
 
+export type InvestigationType = SAR["investigationType"];
+
 export class SARDetailsPresenter implements Hydratable {
   private hydrator: HydratesFromSource;
 
@@ -380,6 +382,32 @@ export class SARDetailsPresenter implements Hydratable {
     return gender ? GenderToDisplayName[gender] : undefined;
   }
 
+  get isVictimImpactOnly(): boolean | null {
+    return this.SARData?.isVictimImpactOnly ?? null;
+  }
+
+  get investigationType(): InvestigationType | undefined {
+    return this.SARData?.investigationType;
+  }
+
+  get isPSRBuilderActive(): boolean {
+    return Boolean(this.sentencingStore.activeFeatureVariants.PSRBuilder);
+  }
+
+  /**
+   * Whether the report type selection card should be shown instead of the
+   * normal SAR sections. Reactive: recomputes from live SARData, so it
+   * naturally stops showing once the selection is saved (isVictimImpactOnly
+   * is no longer null, or investigationType is no longer "PSR").
+   */
+  get showReportTypeCard(): boolean {
+    return (
+      this.investigationType === "PSR" &&
+      this.isVictimImpactOnly === null &&
+      this.isPSRBuilderActive
+    );
+  }
+
   /** Formatted race/ethnicity for display */
   get formattedRaceOrEthnicity(): string {
     const raceArray = this.SARData?.client?.raceOrEthnicity;
@@ -479,6 +507,38 @@ export class SARDetailsPresenter implements Hydratable {
       title: this.SARData?.supervisorTitle ?? null,
       lastSignedAt: this.SARData?.supervisorLastSignedAt ?? null,
     };
+  }
+
+  async updateInvestigation(
+    investigationType: InvestigationType,
+    isVictimImpactOnly: boolean | null,
+  ): Promise<void> {
+    const sarData = this.SARData;
+    if (!sarData) return;
+
+    const prev = {
+      investigationType: sarData.investigationType,
+      isVictimImpactOnly: sarData.isVictimImpactOnly ?? null,
+    };
+
+    runInAction(() => {
+      this.updateLocalInvestigation(investigationType, isVictimImpactOnly);
+    });
+
+    try {
+      await this.sentencingStore.apiClient.updateSARDetails(sarData.id, {
+        investigationType: investigationType,
+        isVictimImpactOnly: isVictimImpactOnly,
+      });
+    } catch (e) {
+      runInAction(() => {
+        this.updateLocalInvestigation(
+          prev.investigationType,
+          prev.isVictimImpactOnly,
+        );
+      });
+      throw e;
+    }
   }
 
   async signOfficer(signature: string, title: string): Promise<void> {
@@ -791,6 +851,30 @@ export class SARDetailsPresenter implements Hydratable {
       const sarInList = sarList.find((sar) => sar.id === this.sarId);
       if (sarInList) {
         sarInList.status = status;
+      }
+    }
+  }
+
+  /**
+   * Updates the investigation type/scope in both the detail record and the
+   * dashboard list. Must be called inside a runInAction block.
+   */
+  private updateLocalInvestigation(
+    investigationType: InvestigationType,
+    isVictimImpactOnly: boolean | null,
+  ): void {
+    if (this.SARData) {
+      this.SARData.investigationType = investigationType;
+      this.SARData.isVictimImpactOnly = isVictimImpactOnly;
+    }
+    // Keep the dashboard list in sync so it reflects immediately without a refresh
+    const sarList =
+      this.sentencingStore.staffStore.staffInfo?.sentencingAssessmentReports;
+    if (sarList) {
+      const sarInList = sarList.find((sar) => sar.id === this.sarId);
+      if (sarInList) {
+        sarInList.investigationType = investigationType;
+        sarInList.isVictimImpactOnly = isVictimImpactOnly;
       }
     }
   }

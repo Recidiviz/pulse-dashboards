@@ -25,6 +25,7 @@ import {
   CheckboxContainer,
   CheckboxLabel,
 } from "../shared/styles/CheckboxStyles";
+import { CancelButton, SaveButton } from "../shared/styles/FormButtonStyles";
 import {
   AssessmentTypeDisplayNames,
   AssessmentTypeKey,
@@ -32,14 +33,12 @@ import {
 } from "./assessmentTypeUtils";
 import * as DomainCardStyled from "./DomainCard.styles";
 import {
-  CancelButton,
   DatePickerWrapper,
   dropdownStyles,
   FieldContainer,
   Input,
   Label,
   ORASTitle,
-  SaveButton,
   Textarea,
 } from "./FormComponents.styles";
 import * as ModalStyled from "./ModalStyles";

@@ -30,6 +30,7 @@ import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import { sarUrl } from "../../utils/routing";
 import { formatDisplayDate } from "../../utils/utils";
 import { CaseInformation } from "../CaseInformation/CaseInformation";
+import { PartialSentencingReportCard } from "../Dashboard/PartialSentencingReport/PartialSentencingReportCard";
 import { KeyConsiderations } from "../KeyConsiderations";
 import { OffenderAssessment } from "../OffenderAssessment";
 import { PriorTreatmentHistorySection } from "../OffenderAssessment/PriorTreatmentHistory/PriorTreatmentHistorySection";
@@ -125,6 +126,8 @@ const SARDetailsWithPresenter = observer(function SARDetailsWithPresenter({
     string | undefined
   >();
 
+  const { showReportTypeCard } = presenter;
+
   useLayoutEffect(() => {
     if (pageContainerRef.current) pageContainerRef.current.scrollTop = 0;
     window.scrollTo(0, 0);
@@ -159,29 +162,40 @@ const SARDetailsWithPresenter = observer(function SARDetailsWithPresenter({
       />
 
       <Styled.ReportBuilderLayout>
-        <SARSideNavigation
-          currentSection={currentSection}
-          onSectionChange={setCurrentSection}
-          currentSubsection={currentSubsection}
-          onSubsectionChange={setCurrentSubsection}
-          presenter={presenter}
-        />
-
-        <Styled.ContentLayout>
-          {presenter.SARData?.completionDate && (
-            <Banner>
-              This investigation was completed on{" "}
-              {formatDisplayDate(presenter.SARData.completionDate)} and the
-              report can no longer be edited.
-            </Banner>
-          )}
-
-          <SARSectionContent
-            key={currentSection}
+        {!showReportTypeCard && (
+          <SARSideNavigation
             currentSection={currentSection}
+            onSectionChange={setCurrentSection}
             currentSubsection={currentSubsection}
+            onSubsectionChange={setCurrentSubsection}
             presenter={presenter}
           />
+        )}
+
+        <Styled.ContentLayout>
+          {showReportTypeCard ? (
+            <PartialSentencingReportCard
+              presenter={presenter}
+              onBackToDashboard={handleBackToDashboard}
+            />
+          ) : (
+            <>
+              {presenter.SARData?.completionDate && (
+                <Banner>
+                  This investigation was completed on{" "}
+                  {formatDisplayDate(presenter.SARData.completionDate)} and the
+                  report can no longer be edited.
+                </Banner>
+              )}
+
+              <SARSectionContent
+                key={currentSection}
+                currentSection={currentSection}
+                currentSubsection={currentSubsection}
+                presenter={presenter}
+              />
+            </>
+          )}
         </Styled.ContentLayout>
       </Styled.ReportBuilderLayout>
     </Styled.PageContainer>

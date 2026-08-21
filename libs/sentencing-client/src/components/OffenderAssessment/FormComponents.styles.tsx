@@ -18,15 +18,10 @@
 import { StylesConfig } from "react-select";
 import styled from "styled-components";
 
-import {
-  Icon,
-  IconSVG,
-  iconToDataURI,
-  palette,
-  typography,
-} from "~design-system";
+import { Icon, IconSVG, iconToDataURI, palette } from "~design-system";
 
 import { SelectOption } from "../CaseDetails/Form/types";
+import { Button } from "../shared/styles/FormButtonStyles";
 import { hasErrorStyles } from "../shared/styles/ValidationStyles";
 import { BaseDatePickerWrapper } from "./ModalStyles";
 
@@ -143,57 +138,9 @@ export const inlineDropdownBase: StylesConfig<SelectOption, boolean> = {
   placeholder: (base) => ({ ...base, color: palette.pine4, margin: 0 }),
 };
 
-// Shared button styles for modals and confirmations
-const Button = styled.button`
-  padding: 0.75rem 2rem;
-  border-radius: 0.25rem;
-  font-family: "Public Sans";
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  border: none;
-  line-height: 1.5;
-  letter-spacing: -0.00875rem;
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-`;
-
-export const CancelButton = styled(Button)`
-  ${typography.Sans14}
-  font-weight: 600;
-  padding: 10px 16px;
-  border-radius: 4px;
-  border: 1px solid ${palette.slate30};
-  background: ${palette.white};
-  color: ${palette.slate85};
-
-  &:hover:not(:disabled) {
-    background: ${palette.marble4};
-  }
-`;
-
-export const SaveButton = styled(Button)`
-  padding: 10px 16px;
-  background: ${palette.signal.links};
-  color: white;
-
-  &:hover:not(:disabled) {
-    background: ${palette.pine4};
-  }
-`;
-
 export const DeleteButton = styled(Button)`
   background: ${palette.signal.error};
   color: white;
-`;
-
-export const ButtonRow = styled.div`
-  display: flex;
-  gap: 0.75rem;
-  justify-content: flex-end;
 `;
 
 export const ORASTitle = styled.span`

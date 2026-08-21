@@ -22,13 +22,13 @@ import { Dropdown } from "../../CaseDetails/Form/Elements/Dropdown";
 import { Modal } from "../../Modal/Modal";
 import { SharedDatePicker } from "../../shared/SharedDatePicker";
 import { Banner } from "../../shared/styles/Banner";
-import { useStore } from "../../StoreProvider/StoreProvider";
 import {
   ButtonRow,
   CancelButton,
-  dropdownStyles,
   SaveButton,
-} from "../FormComponents.styles";
+} from "../../shared/styles/FormButtonStyles";
+import { useStore } from "../../StoreProvider/StoreProvider";
+import { dropdownStyles } from "../FormComponents.styles";
 import {
   CreateEmploymentHistoryInput,
   EmploymentHistory,
