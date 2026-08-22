@@ -138,9 +138,9 @@ variable "archive_bucket_name" {
   default     = "jii-etl-data-archive"
 }
 
-variable "import_job_sentry_env" {
+variable "sentry_env" {
   type        = string
-  description = "The environment to be used when reporting issues to Sentry from the data import job"
+  description = "The environment to be used when reporting issues to Sentry from the data import and RNA Writeback jobs"
 }
 
 variable "seed_job_name" {
@@ -153,4 +153,21 @@ variable "seed_job_container_version" {
   type        = string
   description = "The version tag of the image that will be used for the seed job"
   default     = "latest"
+}
+
+variable "rna_writeback_job_name" {
+  type        = string
+  description = "Name for the RNA Writeback job"
+  default     = "jii-rna-writeback"
+}
+
+variable "rna_writeback_job_container_version" {
+  type        = string
+  description = "The version tag of the image that will be used for the RNA Writeback job"
+  default     = "latest"
+}
+
+variable "rna_writeback_schedule" {
+  type        = string
+  description = "Cron schedule for the RNA Writeback job (US/Eastern). Currently once per day at 10:00pm Eastern Time, as the job is expected to complete by 11pm"
 }

@@ -59,7 +59,7 @@ locals {
       local.db_urls,
       {
         SENTRY_DSN       = "https://15a3451c0249dd034129780d4f801daf@o432474.ingest.us.sentry.io/4511576564629504"
-        SENTRY_ENV       = var.import_job_sentry_env
+        SENTRY_ENV       = var.sentry_env
         IMPORT_BUCKET_ID = module.gcs_bucket.names[var.etl_bucket_name]
       }
       ) : {
@@ -77,6 +77,23 @@ locals {
       data.dotenv.prisma_env.entries,
       {
         SEED_DEMO = "true"
+      }
+      ) : {
+      # The values are sensitive so we want to omit them from the plans
+      value = sensitive(value)
+      name  = key
+    }
+  ])
+
+  # This list needs to be marked as nonsensitive so it can be used in `for_each`
+  # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
+  rna_writeback_job_env_vars = nonsensitive([
+    for key, value in merge(
+      local.db_urls,
+      yamldecode(data.sops_file.env_secrets.raw),
+      {
+        SENTRY_DSN = "https://9854b2227e71fa6bd5191e28c0e14320@o432474.ingest.us.sentry.io/4509159316979712"
+        SENTRY_ENV = var.sentry_env
       }
       ) : {
       # The values are sensitive so we want to omit them from the plans
@@ -329,4 +346,57 @@ module "archive_files_wf" {
   workflow_name         = "archive-files"
   workflow_source       = file("${path.module}/../shared-infra/workflows/archive-files.workflows.yaml")
   workflow_description  = "Archives files from GCS bucket into an archive bucket with folders for each date"
+}
+
+# Job to run the RNA writeback script
+# We don't execute it on deploy - it will be run when the scheduler triggers it
+module "rna_writeback_job" {
+  source                        = "../../vendor/cloud-run-job-exec"
+  exec                          = false
+  name                          = var.rna_writeback_job_name
+  image                         = "${var.artifact_registry_repo}/${local.migrate_db_image_name}:${var.rna_writeback_job_container_version}"
+  project_id                    = var.project_id
+  location                      = var.location
+  env_vars                      = local.rna_writeback_job_env_vars
+  cloud_run_deletion_protection = false
+  service_account_email         = google_service_account.default.email
+  timeout                       = "1800s"
+  max_retries                   = 1
+  container_command             = ["dumb-init", "node", "--import=extensionless/register", "jobs/usNcRNAWriteback.js"]
+
+  volumes = [{
+    name = "cloudsql"
+    cloud_sql_instance = {
+      instances = [module.database.connection_name]
+    }
+  }]
+
+  volume_mounts = [{
+    name       = "cloudsql"
+    mount_path = "/cloudsql"
+  }]
+}
+
+# Schedules the RNA writeback job to run daily
+resource "google_cloud_scheduler_job" "rna_writeback_scheduler" {
+  name        = "rna_writeback_scheduler"
+  description = "Triggers the RNA writeback script daily"
+  schedule    = var.rna_writeback_schedule
+  time_zone   = "US/Eastern"
+  region      = var.location
+  project     = var.project_id
+
+  http_target {
+    http_method = "POST"
+    uri         = "https://run.googleapis.com/v2/${module.rna_writeback_job.id}:run"
+    body        = base64encode("{}")
+
+    headers = {
+      "Content-Type" = "application/json"
+    }
+
+    oauth_token {
+      service_account_email = google_service_account.default.email
+    }
+  }
 }

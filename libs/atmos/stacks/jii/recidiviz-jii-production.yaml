@@ -36,4 +36,6 @@ components:
         server_env_secrets_filename: env.production.enc.yaml
         secrets_filename: "{{ .settings.context.secrets_filename }}"
         firebase_auth_project_id: recidiviz-dashboard-production
-        import_job_sentry_env: production
+        sentry_env: production
+        # placeholder value so that this won't trigger in production until we're ready to release it
+        rna_writeback_schedule: 0 22 7 7 7
