@@ -17,7 +17,7 @@
 
 import { $ } from "zx";
 
-import { dashboardProject, dashboardStack } from "../config.mts";
+import { dashboardProject, dashboardStack, owner, repo } from "../config.mts";
 import type { ServiceDefinition } from "../types.mts";
 
 /**
@@ -79,5 +79,21 @@ export const meetingsFrontend: ServiceDefinition = {
     await $`nx deploy:web @meetings/app --configuration ${plan.env}`.pipe(
       process.stdout,
     );
+  },
+};
+
+/** Dispatch the mobile OTA update GitHub Action at this deploy's commit. */
+export const meetingsMobileOta: ServiceDefinition = {
+  displayName: "Meetings Mobile (OTA)",
+  environments: ["staging", "production"],
+  async deploy(plan, octokit) {
+    const { env, currentRevision } = plan;
+    await octokit.rest.actions.createWorkflowDispatch({
+      owner,
+      repo,
+      workflow_id: "meetings-mobile-ota.yml",
+      ref: "main",
+      inputs: { env, commit: currentRevision },
+    });
   },
 };

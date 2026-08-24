@@ -19,7 +19,11 @@ import type { ServiceDefinition } from "../types.mts";
 import { caseNotes } from "./case-notes.mts";
 import { demoFixtures, oppsTestData } from "./fixtures.mts";
 import { jiiTexting } from "./jii-texting.mts";
-import { meetingsBackend, meetingsFrontend } from "./meetings.mts";
+import {
+  meetingsBackend,
+  meetingsFrontend,
+  meetingsMobileOta,
+} from "./meetings.mts";
 import {
   oppsBackend,
   oppsDemoFrontend,
@@ -50,6 +54,7 @@ export const services = {
   demoFixtures,
   meetingsBackend,
   meetingsFrontend,
+  meetingsMobileOta,
 } satisfies Record<string, ServiceDefinition>;
 
 export type ServiceKey = keyof typeof services;

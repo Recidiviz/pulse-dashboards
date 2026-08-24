@@ -119,7 +119,7 @@ for (const [key, svc] of Object.entries(services)) {
     await svc.build(plan);
   }
 
-  if (await deployWithRetry(svc.displayName, () => svc.deploy(plan))) {
+  if (await deployWithRetry(svc.displayName, () => svc.deploy(plan, octokit))) {
     successfullyDeployedServices.push(svc.displayName);
   }
 }

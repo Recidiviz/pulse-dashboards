@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import type { Octokit } from "@octokit/rest";
+
 export type DeployEnv =
   | "staging"
   | "preview (staff frontend only)"
@@ -28,7 +30,9 @@ export type DeployEnv =
  * `services` registry (see `services/index.mts`).
  *
  * Everything a phase needs about the deploy (env, revision, version) rides on the
- * {@link ReleasePlan}; services never touch Octokit/Slack.
+ * {@link ReleasePlan}; most services shell out to atmos/nx and never touch Octokit/Slack.
+ * `deploy` gets the shared Octokit client too, for services that deploy by triggering a
+ * GitHub Action instead (e.g. dispatching a workflow_dispatch).
  */
 export interface ServiceDefinition {
   /** Shown in the selection prompt and sent to slack on success. */
@@ -49,7 +53,7 @@ export interface ServiceDefinition {
   /** One-time build phase, run OUTSIDE the retry loop. Omit when there's nothing to build. */
   build?: (plan: ReleasePlan) => Promise<void>;
   /** Deploy commands, run INSIDE the retry loop. */
-  deploy: (plan: ReleasePlan) => Promise<void>;
+  deploy: (plan: ReleasePlan, octokit: Octokit) => Promise<void>;
 }
 
 /** The keys (from the `services` registry) of the services the user selected to deploy. */
