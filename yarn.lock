@@ -10799,13 +10799,13 @@ __metadata:
     expo-system-ui: "npm:~55.0.20"
     expo-updates: "npm:~55.0.26"
     monaco-editor: "npm:0.55.1"
-    nativewind: "npm:^4.2.1"
+    nativewind: "npm:^4.2.6"
     picocolors: "npm:*"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     react-native: "npm:~0.83.10"
     react-native-auth0: "npm:^5.5.1"
-    react-native-css-interop: "npm:^0.2.1"
+    react-native-css-interop: "npm:^0.2.6"
     react-native-error-boundary: "npm:^2.0.0"
     react-native-gesture-handler: "npm:~2.30.0"
     react-native-get-random-values: "npm:^1.11.0"
@@ -47318,16 +47318,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nativewind@npm:^4.2.1":
-  version: 4.2.1
-  resolution: "nativewind@npm:4.2.1"
+"nativewind@npm:^4.2.6":
+  version: 4.2.6
+  resolution: "nativewind@npm:4.2.6"
   dependencies:
     comment-json: "npm:^4.2.5"
     debug: "npm:^4.3.7"
-    react-native-css-interop: "npm:0.2.1"
+    react-native-css-interop: "npm:0.2.6"
   peerDependencies:
     tailwindcss: ">3.3.0"
-  checksum: 10c0/83b60cbe843349fd241fe8af61b1547df06dcc91039e0ad3ea5ffdf05babaccf15a47e80f7e383d4be0c0211f0b0d172e8d3e9bc6165b6b86294c706a7f16e92
+  checksum: 10c0/57e8d2e17fa285095201a2f720881ec7a23ef1c82c498c7bff6fdf23278d98f7a16c2f9d9a34cefeb0cb98e40a09950254f5e80e6aa1bb08a3cf0b1e7b0962eb
   languageName: node
   linkType: hard
 
@@ -52836,9 +52836,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-css-interop@npm:0.2.1":
-  version: 0.2.1
-  resolution: "react-native-css-interop@npm:0.2.1"
+"react-native-css-interop@npm:0.2.6":
+  version: 0.2.6
+  resolution: "react-native-css-interop@npm:0.2.6"
   dependencies:
     "@babel/helper-module-imports": "npm:^7.22.15"
     "@babel/traverse": "npm:^7.23.0"
@@ -52856,7 +52856,7 @@ __metadata:
       optional: true
     react-native-svg:
       optional: true
-  checksum: 10c0/c3be3a785216ce430d32a78f52c76387b4fc38b53b9d66d4cf5e3973f1fe35c801f8f299e6b8c129be9c979ccd3274a35dccf4f8054f46cca3288a3ca77c7a4c
+  checksum: 10c0/06b50eec3c60d1ac67b632ab8f3f2952df0b65272308eda1347137d1ba8a88d6592c3e2f1273ee5dc957912f8f5c97063d16cf3ea770d5e08b66909d2c50f4b0
   languageName: node
   linkType: hard
 
@@ -54126,7 +54126,7 @@ __metadata:
     morgan: "npm:^1.9.1"
     msw: "npm:^2.7.3"
     multer: "npm:^2.1.0"
-    nativewind: "npm:^4.2.1"
+    nativewind: "npm:^4.2.6"
     next: "npm:15.5.21"
     next-remove-imports: "npm:^1.0.12"
     node-cache: "npm:^5.1.0"
