@@ -17,9 +17,6 @@
 
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import {
-  getPathFromState as defaultGetPathFromState,
-  getStateFromPath as defaultGetStateFromPath,
-  LinkingOptions,
   NavigationContainer,
   useNavigationContainerRef,
 } from "@react-navigation/native";
@@ -50,59 +47,12 @@ import { publicTrpc } from "~@meetings/app/shared/api";
 import { AppStackParamList, env } from "~@meetings/app/shared/config";
 
 import AuthenticatedApp from "../AuthenticatedApp";
+import { linking } from "./linking";
 
 const Drawer = createDrawerNavigator();
 const publicQueryClient = new QueryClient();
 
 const trpcUrl = env.EXPO_PUBLIC_SERVER_URL;
-
-const linking: LinkingOptions<AppStackParamList> = {
-  prefixes: [],
-  config: {
-    screens: {
-      Login: "login",
-      Main: {
-        screens: {
-          Onboarding: "onboarding",
-          ClientsRoot: {
-            screens: {
-              Clients: "clients",
-              ClientProfile: "clients/:personId",
-              ClientNewMeeting: "clients/:personId/new-meeting",
-              ClientMeeting: "clients/:personId/meetings/:meetingId",
-            },
-          },
-          ResidentsRoot: {
-            screens: {
-              Residents: "residents",
-              ResidentProfile: "residents/:personId",
-              ResidentNewMeeting: "residents/:personId/new-meeting",
-              ResidentMeeting: "residents/:personId/meetings/:meetingId",
-            },
-          },
-          StateSelection: "settings",
-        },
-      },
-    },
-  },
-  // Extract stateCode before default URL parsing so it isn't stored as a
-  // screen param. The value is kept in stateCodeParam for getPathFromState.
-  getStateFromPath(path, config) {
-    const { stateCode, cleanPath } = extractAndRemoveStateCode(path);
-    if (stateCode) {
-      stateCodeParam.current = stateCode;
-    }
-    return defaultGetStateFromPath(cleanPath, config);
-  },
-  // Re-inject stateCode as a query param on every URL React Navigation generates,
-  // so it persists across all navigation events.
-  getPathFromState(state, config) {
-    const path = defaultGetPathFromState(state, config);
-    if (!stateCodeParam.current) return path;
-    const separator = path.includes("?") ? "&" : "?";
-    return `${path}${separator}stateCode=${encodeURIComponent(stateCodeParam.current)}`;
-  },
-};
 
 type AppNavigatorContentProps = {
   loggedIn: boolean;

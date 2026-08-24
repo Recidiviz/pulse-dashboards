@@ -20,6 +20,7 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, waitFor } from "@testing-library/react-native";
 import React from "react";
 
@@ -121,19 +122,23 @@ describe("Header", () => {
   describe("navigation changes", () => {
     it("navigates to Clients when logo is pressed (changed from Home)", async () => {
       const { getByTestId } = render(
-        <UserContextProvider isSkipAuthUser={false}>
-          <StateCodeProvider
-            selectedStateRef={selectedStateRef}
-            isSkipAuthUser={false}
-            recidivizAllowedStates={["US_NE"]}
-            userStateCode="US_NE"
-            agencyConfigs={{}}
-          >
-            <NavigationContainer>
-              <Header />
-            </NavigationContainer>
-          </StateCodeProvider>
-        </UserContextProvider>,
+        <QueryClientProvider client={new QueryClient()}>
+          <UserContextProvider isSkipAuthUser={false}>
+            <StateCodeProvider
+              selectedStateRef={selectedStateRef}
+              isSkipAuthUser={false}
+              recidivizAllowedStates={["US_NE"]}
+              userStateCode="US_NE"
+              agencyConfigs={{}}
+              configsPending={false}
+              configsErrored={false}
+            >
+              <NavigationContainer>
+                <Header />
+              </NavigationContainer>
+            </StateCodeProvider>
+          </UserContextProvider>
+        </QueryClientProvider>,
       );
 
       // Wait for StateCodeProvider's async initialization to complete

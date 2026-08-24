@@ -66,7 +66,11 @@ const ConnectedStateCodeProvider = ({
     recidivizAllowedStates,
     stateCode: userStateCode,
   } = useUserContext();
-  const { agencyConfigs } = useAgencyConfigs();
+  const {
+    agencyConfigs,
+    isPending: configsPending,
+    isError: configsErrored,
+  } = useAgencyConfigs();
 
   return (
     <StateCodeProvider
@@ -75,6 +79,8 @@ const ConnectedStateCodeProvider = ({
       recidivizAllowedStates={recidivizAllowedStates}
       userStateCode={userStateCode}
       agencyConfigs={agencyConfigs}
+      configsPending={configsPending}
+      configsErrored={configsErrored}
     >
       {children}
     </StateCodeProvider>

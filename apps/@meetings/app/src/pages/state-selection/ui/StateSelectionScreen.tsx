@@ -35,7 +35,6 @@ import {
   useStateSelection,
 } from "~@meetings/app/entities/state-code";
 import { feedbackLauncherScrollProps } from "~@meetings/app/features/intercom";
-import { trpc } from "~@meetings/app/shared/api";
 import { theme } from "~@meetings/app/shared/config";
 import { RootStackParamList } from "~@meetings/app/shared/config";
 import { useSetDocumentTitle } from "~@meetings/app/shared/lib/platform";
@@ -48,7 +47,6 @@ export const StateSelectionScreen = () => {
   const insets = useSafeAreaInsets();
   useSetDocumentTitle("State Selection - Recidiviz Meetings");
   const navigation = useNavigation<StateSelectionNavProp>();
-  const utils = trpc.useUtils();
   const { selectedStateCode, setSelectedStateCode } = useStateSelection();
   const [isSaving, setIsSaving] = useState(false);
   const { agencyConfigs } = useAgencyConfigs();
@@ -56,8 +54,8 @@ export const StateSelectionScreen = () => {
   const handleStateCodeSelect = async (stateCode: StateCode) => {
     try {
       setIsSaving(true);
+      // StateCodeProvider resets the query cache when the state code changes.
       await setSelectedStateCode(stateCode);
-      utils.v1.client.list.reset();
       // Navigate back to Clients screen after selecting
       navigation.navigate("ClientsRoot", { screen: "Clients" });
     } catch (error) {

@@ -25,6 +25,9 @@ import ConfigErrorScreen from "../ui/ConfigErrorScreen";
 interface AgencyConfigContextType {
   agencyConfigs: Record<string, AgencyConfig>;
   isLoading: boolean;
+  /** True until the query first settles with data (unlike isLoading, covers the paused query during cache restore). */
+  isPending: boolean;
+  isError: boolean;
 }
 
 const AgencyConfigContext = createContext<AgencyConfigContextType | undefined>(
@@ -37,6 +40,7 @@ export const AgencyConfigProvider: React.FC<{ children: React.ReactNode }> = ({
   const {
     data: agencyConfigs = {},
     isLoading,
+    isPending,
     isError,
     isFetching,
     refetch,
@@ -49,7 +53,9 @@ export const AgencyConfigProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   return (
-    <AgencyConfigContext.Provider value={{ agencyConfigs, isLoading }}>
+    <AgencyConfigContext.Provider
+      value={{ agencyConfigs, isLoading, isPending, isError }}
+    >
       {children}
     </AgencyConfigContext.Provider>
   );

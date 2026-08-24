@@ -32,7 +32,10 @@ export function extractAndRemoveStateCode(path: string): {
     .split("&")
     .filter((pair) => {
       if (pair.startsWith("stateCode=")) {
-        stateCode = decodeURIComponent(pair.slice("stateCode=".length));
+        // Uppercase so lowercase URLs (e.g. ?stateCode=us_demo) match agencyConfigs keys.
+        stateCode = decodeURIComponent(
+          pair.slice("stateCode=".length),
+        ).toUpperCase();
         return false;
       }
       return pair.length > 0;
