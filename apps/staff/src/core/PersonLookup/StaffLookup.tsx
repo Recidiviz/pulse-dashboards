@@ -253,13 +253,6 @@ export const StaffLookup = observer(function StaffLookup({
     inputRef.current?.focus();
   };
 
-  const disableLookup =
-    workflowsStore.searchStore.selectedSearchables.length === 0;
-
-  if (disableLookup) {
-    return;
-  }
-
   const placeholderText = `Search and Select the next reviewer`;
 
   return (
