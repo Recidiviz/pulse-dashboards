@@ -51,10 +51,9 @@ export const CaseInformation: React.FC<CaseInformationProps> = observer(
     return (
       <Styled.Container>
         <InvestigationTypeNotice presenter={presenter} />
-
         {/* Defendant declined checkbox */}
         <Styled.StaffInformationContainer>
-          <Styled.CheckboxContainer>
+          <CheckboxStyled.CheckboxContainer>
             <CheckboxStyled.Checkbox
               type="checkbox"
               checked={defendantDeclinedToParticipate}
@@ -64,7 +63,7 @@ export const CaseInformation: React.FC<CaseInformationProps> = observer(
             <CheckboxStyled.CheckboxLabel>
               Defendant declined to participate in the SAR process
             </CheckboxStyled.CheckboxLabel>
-          </Styled.CheckboxContainer>
+          </CheckboxStyled.CheckboxContainer>
 
           <JudgeSelector
             judgeOptions={presenter.judgeOptions}

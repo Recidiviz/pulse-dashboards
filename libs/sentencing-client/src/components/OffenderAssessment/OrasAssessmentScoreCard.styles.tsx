@@ -35,6 +35,14 @@ export const CardTitle = styled.div`
   justify-content: space-between;
 `;
 
+export const NoticeWrapper = styled.div`
+  margin-bottom: 1rem;
+
+  &:empty {
+    margin-bottom: 0;
+  }
+`;
+
 export const ORASUpdatedText = styled.span`
   color: ${palette.slate60};
   font-family: "Public Sans";

@@ -21,8 +21,20 @@ import React from "react";
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import * as Styled from "./InvestigationTypeNotice.styles";
 
+/**
+ * The subset of SARDetailsPresenter this notice needs. Sub-presenters that
+ * wrap a private SARDetailsPresenter (e.g. PriorTreatmentHistoryPresenter)
+ * can satisfy this by proxying these members through, without exposing the
+ * full presenter.
+ */
+export interface InvestigationTypeNoticeControls {
+  investigationType: SARDetailsPresenter["investigationType"];
+  isVictimImpactOnly: SARDetailsPresenter["isVictimImpactOnly"];
+  startReportTypeChange: SARDetailsPresenter["startReportTypeChange"];
+}
+
 interface InvestigationTypeNoticeProps {
-  presenter: SARDetailsPresenter;
+  presenter: InvestigationTypeNoticeControls;
 }
 
 /**

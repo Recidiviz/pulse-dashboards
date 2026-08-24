@@ -22,6 +22,7 @@ import { palette } from "~design-system";
 
 import { SelectOption } from "../CaseDetails/Form/types";
 import { inlineDropdownBase } from "../OffenderAssessment/FormComponents.styles";
+import { fullBleedDivider } from "./CaseInformation.styles";
 
 export const CardContainer = styled.div`
   display: flex;
@@ -32,9 +33,9 @@ export const CardContainer = styled.div`
 `;
 
 export const Divider = styled.div`
-  width: 100%;
   height: 0.0625rem;
   background: ${palette.slate20};
+  ${fullBleedDivider}
 `;
 
 export const Card = styled.div`
@@ -42,14 +43,12 @@ export const Card = styled.div`
   align-items: flex-start;
   gap: 1rem;
   align-self: stretch;
-  padding-left: 2.5rem;
   padding-right: 2rem;
 `;
 
 export const SubsectionTitle = styled.div`
   color: ${palette.pine1};
   font-size: 1rem;
-  padding-left: 2.5rem;
   padding-top: 1rem;
 `;
 

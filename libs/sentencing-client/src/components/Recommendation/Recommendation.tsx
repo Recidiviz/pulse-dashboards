@@ -40,6 +40,7 @@ export const Recommendation: React.FC<RecommendationProps> = observer(
     return (
       <SkippableSection
         title="Summarize Recommendation"
+        presenter={presenter}
         skipped={presenter.recommendationSkipped}
         onSkipChange={(skipped) =>
           presenter.updateFieldSkipped("recommendation", skipped)

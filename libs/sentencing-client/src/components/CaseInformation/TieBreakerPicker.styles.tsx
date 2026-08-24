@@ -25,7 +25,6 @@ export const Container = styled.div`
   flex-direction: column;
   align-self: stretch;
   gap: 0.5rem;
-  padding-left: 2.5rem;
   padding-right: 2rem;
 `;
 

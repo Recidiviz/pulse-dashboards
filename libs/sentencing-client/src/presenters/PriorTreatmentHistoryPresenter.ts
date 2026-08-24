@@ -49,6 +49,18 @@ export class PriorTreatmentHistoryPresenter {
     return this.sarDetailsPresenter.defendantDeclinedToParticipate;
   }
 
+  get investigationType(): SARDetailsPresenter["investigationType"] {
+    return this.sarDetailsPresenter.investigationType;
+  }
+
+  get isVictimImpactOnly(): SARDetailsPresenter["isVictimImpactOnly"] {
+    return this.sarDetailsPresenter.isVictimImpactOnly;
+  }
+
+  startReportTypeChange(): void {
+    this.sarDetailsPresenter.startReportTypeChange();
+  }
+
   get priorTreatmentHistories(): PriorTreatmentHistory[] {
     return this.SARData?.priorTreatmentHistories ?? [];
   }

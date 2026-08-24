@@ -17,18 +17,33 @@
 
 import styled from "styled-components";
 
-import { typography } from "~design-system";
+import {
+  InvestigationTypeNotice,
+  InvestigationTypeNoticeControls,
+} from "../SARDetails/InvestigationTypeNotice";
+import { Banner } from "../shared/styles/Banner";
 
-import { Link as BaseLink } from "../CaseInformation/CaseInformation.styles";
-
-export const Container = styled.div`
+const Wrapper = styled.div`
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 5px;
-  ${typography.Sans14}
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  height: 500px;
+  align-self: stretch;
+  position: relative;
+  padding: 0px 20px;
 `;
 
-export const Link = styled(BaseLink)`
-  ${typography.Sans14}
-`;
+export interface EmptySectionProps {
+  banner: string;
+  presenter: InvestigationTypeNoticeControls;
+}
+
+export function EmptySection({ banner, presenter }: EmptySectionProps) {
+  return (
+    <Wrapper>
+      <InvestigationTypeNotice presenter={presenter} />
+      <Banner>{banner}</Banner>
+    </Wrapper>
+  );
+}

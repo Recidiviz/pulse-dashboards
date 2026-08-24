@@ -131,6 +131,19 @@ const EMPTY_SECTION = { completed: 0, total: 0 };
 // All SAR sections that contribute to progress (excludes read-only Summary)
 type ProgressSection = Exclude<SARSectionName, SARSection.SUMMARY>;
 
+// Fixed iteration order for ProgressSection, used to filter progress/status
+// calculations down to the sections a given officer is actually responsible
+// for (see SARSections).
+const PROGRESS_SECTIONS: ProgressSection[] = [
+  SARSection.CASE_INFORMATION,
+  SARSection.KEY_CONSIDERATIONS,
+  SARSection.DEFENDANTS_VERSION,
+  SARSection.VICTIM_IMPACT,
+  SARSection.OFFENDER_ASSESSMENT,
+  SARSection.PRIOR_TREATMENT_HISTORY,
+  SARSection.RECOMMENDATION,
+];
+
 export type InvestigationType = SAR["investigationType"];
 
 export class SARDetailsPresenter implements Hydratable {
@@ -349,6 +362,9 @@ export class SARDetailsPresenter implements Hydratable {
   }
 
   get SARSections(): SARSectionName[] {
+    if (this.isPSRVictimImpactOnly) {
+      return [SARSection.VICTIM_IMPACT, SARSection.SUMMARY];
+    }
     const result =
       this.defendantDeclinedToParticipate === false
         ? (SAR_REPORT_SECTIONS as unknown as SARSectionName[])
@@ -360,6 +376,23 @@ export class SARDetailsPresenter implements Hydratable {
             SARSection.SUMMARY,
           ] as SARSectionName[]);
     return result;
+  }
+
+  /**
+   * Whether a section's data should render on the Summary page. Built on
+   * SARSections (the same list driving side nav) with one addition: Victim
+   * Impact stays in SARSections for the all-except-victim-impact split so
+   * its nav tab remains visible, but it shouldn't appear on this officer's
+   * Summary page.
+   */
+  shouldShowInSummary(section: SARSectionName): boolean {
+    if (
+      section === SARSection.VICTIM_IMPACT &&
+      this.isPSRAllExceptVictimImpact
+    ) {
+      return false;
+    }
+    return this.SARSections.includes(section);
   }
 
   get formattedClientName(): string {
@@ -701,6 +734,18 @@ export class SARDetailsPresenter implements Hydratable {
     return (counts.completed / counts.total) * 100;
   }
 
+  /** True when this officer is assigned everything other than the Victim Impact section. */
+  get isPSRAllExceptVictimImpact(): boolean {
+    return (
+      this.isVictimImpactOnly === false && this.investigationType === "PSR"
+    );
+  }
+
+  /** True when this officer is assigned only the Victim Impact section. */
+  get isPSRVictimImpactOnly(): boolean {
+    return this.isVictimImpactOnly === true && this.investigationType === "PSR";
+  }
+
   private get sectionFieldCounts(): { completed: number; total: number } {
     const counts: Record<
       ProgressSection,
@@ -717,13 +762,17 @@ export class SARDetailsPresenter implements Hydratable {
         this.priorTreatmentHistoryFieldCounts,
       [SARSection.RECOMMENDATION]: this.recommendationFieldCounts,
     };
-    return Object.values(counts).reduce(
-      (acc, c) => ({
-        completed: acc.completed + c.completed,
-        total: acc.total + c.total,
-      }),
-      EMPTY_SECTION,
-    );
+    // Only sum sections this officer is actually responsible for.
+    const sections = this.SARSections;
+    return PROGRESS_SECTIONS.filter((section) => sections.includes(section))
+      .map((section) => counts[section])
+      .reduce(
+        (acc, c) => ({
+          completed: acc.completed + c.completed,
+          total: acc.total + c.total,
+        }),
+        EMPTY_SECTION,
+      );
   }
 
   private get caseInfoFieldCounts(): { completed: number; total: number } {
@@ -791,6 +840,13 @@ export class SARDetailsPresenter implements Hydratable {
     completed: number;
     total: number;
   } {
+    // Victim Impact deliberately stays in SARSections for the
+    // all-except-victim-impact split (so its nav tab remains visible), so
+    // this exclusion can't be derived from SARSections membership the way
+    // the other sections' isPSRVictimImpactOnly exclusion is in
+    // sectionFieldCounts above.
+    if (this.isPSRAllExceptVictimImpact) return EMPTY_SECTION;
+
     const hasContent =
       !!this.SARData?.victimImpactStatement &&
       this.SARData.victimImpactStatement.trim() !== "";
@@ -1718,6 +1774,17 @@ export class SARDetailsPresenter implements Hydratable {
   }
 
   /**
+   * Whether every section this officer is responsible for is complete.
+   */
+  get isReadyForDownload(): boolean {
+    const sections = this.SARSections;
+    const statuses = this.sectionStatuses;
+    return PROGRESS_SECTIONS.filter((section) =>
+      sections.includes(section),
+    ).every((section) => statuses[section] === "complete");
+  }
+
+  /**
    * Collects the offender assessment field values based on visible ORAS domains.
    * Shared by overallProgress and getOffenderAssessmentStatus so the field
    * lists are defined in one place.
@@ -1798,6 +1865,12 @@ export class SARDetailsPresenter implements Hydratable {
   private getTextFieldStatus(
     fieldName: "victimImpactStatement" | "defendantStatement",
   ): SectionStatus {
+    if (
+      this.isPSRAllExceptVictimImpact &&
+      fieldName === "victimImpactStatement"
+    )
+      return "complete";
+
     const fieldValue = this.SARData?.[fieldName];
     const hasContent = fieldValue ? fieldValue.trim() !== "" : false;
     const isSkipped = this.isSectionSkipped(fieldName);

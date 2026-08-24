@@ -27,6 +27,7 @@ import {
 import DownloadIcon from "../assets/download-icon.svg?react";
 import { CHARGE_FIELD_LABELS } from "../constants";
 import { SARSection } from "../SARDetails/constants";
+import { Banner } from "../shared/styles/Banner";
 import { useStore } from "../StoreProvider/StoreProvider";
 import { ESignatureSection } from "./ESignatureSection";
 import { InsightsSummaryPanel } from "./InsightsSummaryPanel";
@@ -148,14 +149,32 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
     needsSkipped,
     factorsSkipped,
     sectionStatuses,
+    isReadyForDownload,
   } = presenter;
-
-  const isReadyForDownload = Object.values(sectionStatuses).every(
-    (s) => s === "complete",
-  );
 
   const sarData = presenter.SARData;
   const declined = presenter.defendantDeclinedToParticipate;
+  const showCaseInformation = presenter.shouldShowInSummary(
+    SARSection.CASE_INFORMATION,
+  );
+  const showKeyConsiderations = presenter.shouldShowInSummary(
+    SARSection.KEY_CONSIDERATIONS,
+  );
+  const showDefendantsVersion = presenter.shouldShowInSummary(
+    SARSection.DEFENDANTS_VERSION,
+  );
+  const showVictimImpact = presenter.shouldShowInSummary(
+    SARSection.VICTIM_IMPACT,
+  );
+  const showOffenderAssessment = presenter.shouldShowInSummary(
+    SARSection.OFFENDER_ASSESSMENT,
+  );
+  const showPriorTreatmentHistory = presenter.shouldShowInSummary(
+    SARSection.PRIOR_TREATMENT_HISTORY,
+  );
+  const showRecommendation = presenter.shouldShowInSummary(
+    SARSection.RECOMMENDATION,
+  );
 
   // --- Key Considerations ---
   const needsComplete =
@@ -249,26 +268,30 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
             </Styled.DownloadButton>
           </Styled.DownloadHeader>
 
-          {/* Case Information */}
-          <Styled.SectionCard>
-            <Styled.SectionTitle>Case Information</Styled.SectionTitle>
-            <Styled.SectionBody>
-              <div>Date of Birth: {formattedBirthDate || "—"}</div>
-              <div>Gender: {formattedGender || "—"}</div>
-            </Styled.SectionBody>
-          </Styled.SectionCard>
+          {showCaseInformation && (
+            <>
+              {/* Case Information */}
+              <Styled.SectionCard>
+                <Styled.SectionTitle>Case Information</Styled.SectionTitle>
+                <Styled.SectionBody>
+                  <div>Date of Birth: {formattedBirthDate || "—"}</div>
+                  <div>Gender: {formattedGender || "—"}</div>
+                </Styled.SectionBody>
+              </Styled.SectionCard>
 
-          {/* Offense cards - one per charge */}
-          {charges.map((charge) => (
-            <SummaryOffenseCard
-              key={charge.id}
-              charge={charge}
-              presenter={presenter}
-            />
-          ))}
+              {/* Offense cards - one per charge */}
+              {charges.map((charge) => (
+                <SummaryOffenseCard
+                  key={charge.id}
+                  charge={charge}
+                  presenter={presenter}
+                />
+              ))}
+            </>
+          )}
 
           {/* Key Considerations */}
-          {!declined && (
+          {showKeyConsiderations && (
             <Styled.SectionCard>
               <Styled.SectionTitle>Key Considerations</Styled.SectionTitle>
               <Styled.SectionBody>
@@ -283,7 +306,7 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
             </Styled.SectionCard>
           )}
 
-          {!declined && (
+          {showDefendantsVersion && (
             <Styled.SectionCard>
               <Styled.SectionTitle>
                 Defendant&apos;s Version
@@ -295,18 +318,34 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
           )}
 
           {/* Victim Impact */}
-          <Styled.SectionCard>
-            <Styled.SectionTitle>Victim Impact</Styled.SectionTitle>
-            <Styled.SectionBody>
-              {isVictimImpactComplete ? victimImpactDisplay : <MissingBadge />}
-            </Styled.SectionBody>
-          </Styled.SectionCard>
+          {showVictimImpact && (
+            <Styled.SectionCard>
+              {presenter.isPSRVictimImpactOnly && (
+                <Banner>
+                  The other sections of the SAR will be completed by the
+                  receiving officer.
+                </Banner>
+              )}
+              <Styled.SectionTitle>Victim Impact</Styled.SectionTitle>
+              <Styled.SectionBody>
+                {isVictimImpactComplete ? (
+                  victimImpactDisplay
+                ) : (
+                  <MissingBadge />
+                )}
+              </Styled.SectionBody>
+            </Styled.SectionCard>
+          )}
 
-          <SummaryOffenderAssessment presenter={presenter} />
+          {showOffenderAssessment && (
+            <SummaryOffenderAssessment presenter={presenter} />
+          )}
 
-          <SummaryPriorTreatmentHistory presenter={presenter} />
+          {showPriorTreatmentHistory && (
+            <SummaryPriorTreatmentHistory presenter={presenter} />
+          )}
 
-          {!declined && (
+          {showRecommendation && (
             <Styled.SectionCard>
               <Styled.SectionTitle>Recommendation</Styled.SectionTitle>
               {recommendationSkipped ? (
@@ -336,7 +375,8 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
             </Styled.SectionCard>
           )}
 
-          {!declined &&
+          {showOffenderAssessment &&
+            !declined &&
             activeFeatureVariants["SARBuilder"] &&
             !sarData?.mostSevereOffenseName && (
               <Styled.SectionCard>
@@ -349,7 +389,8 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
             )}
         </Styled.Container>
 
-        {!declined &&
+        {showOffenderAssessment &&
+          !declined &&
           activeFeatureVariants["SARBuilder"] &&
           sarData?.mostSevereOffenseName && (
             <InsightsSummaryPanel presenter={presenter} />

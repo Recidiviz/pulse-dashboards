@@ -15,15 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { palette, typography } from "~design-system";
-
-import { CheckboxContainer as SharedCheckboxContainer } from "../shared/styles/CheckboxStyles";
-
-export const CheckboxContainer = styled(SharedCheckboxContainer)`
-  padding-left: 2.5rem;
-`;
 
 export const Container = styled.div`
   display: flex;
@@ -35,6 +29,14 @@ export const Container = styled.div`
   line-height: 120%;
   letter-spacing: -0.00875rem;
   font-family: "Public Sans";
+  padding-left: 2.5rem;
+`;
+
+export const fullBleedDivider = css`
+  box-sizing: border-box;
+  width: calc(100% + 2.5rem);
+  margin-left: -2.5rem;
+  padding-left: 2.5rem;
 `;
 
 export const ClientInfoRow = styled.div`
@@ -43,6 +45,8 @@ export const ClientInfoRow = styled.div`
   display: flex;
   gap: 0.375rem;
   align-self: stretch;
+  padding-right: 2.5rem;
+  ${fullBleedDivider}
 `;
 
 export const StaffInfoRow = styled.div`
@@ -52,6 +56,7 @@ export const StaffInfoRow = styled.div`
   gap: 0.375rem;
   align-self: stretch;
   font-size: 0.75rem;
+  ${fullBleedDivider}
 `;
 
 export const StaffInformationContainer = styled.div`
@@ -93,13 +98,11 @@ export const SubsectionTitle = styled.div`
 export const ClientInfoColumn = styled.div`
   flex: 1;
   display: flex;
-  padding-left: 2.5rem;
   flex-direction: column;
 `;
 
 export const StaffInfoColumn = styled.div`
   display: flex;
-  padding-left: 2.5rem;
   flex-direction: column;
 `;
 

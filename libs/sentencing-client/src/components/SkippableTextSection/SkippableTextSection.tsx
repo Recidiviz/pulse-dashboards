@@ -57,6 +57,7 @@ export const SkippableTextSection: React.FC<SkippableTextSectionProps> =
 
     return (
       <SkippableSection
+        presenter={presenter}
         title={title}
         skipped={skipped}
         disabled={disabled}

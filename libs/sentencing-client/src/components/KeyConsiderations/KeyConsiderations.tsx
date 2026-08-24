@@ -21,6 +21,7 @@ import React from "react";
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import { splitFullName } from "../../utils/utils";
 import { NeedsToBeAddressed, ProtectiveFactors } from "../constants";
+import { InvestigationTypeNotice } from "../SARDetails/InvestigationTypeNotice";
 import { MultiSelectRadioInput } from "../shared/MultiSelectRadioInput";
 import * as Styled from "./KeyConsiderations.styles";
 import { createMultiSelectHandler, mapEnumKeysToDisplay } from "./utils";
@@ -80,6 +81,7 @@ export const KeyConsiderations: React.FC<KeyConsiderationsProps> = observer(
 
     return (
       <Styled.Container>
+        <InvestigationTypeNotice presenter={presenter} />
         <Styled.InfoContainer>
           Select key considerations to help paint a fuller picture of{" "}
           {displayName}'s situation. <br />

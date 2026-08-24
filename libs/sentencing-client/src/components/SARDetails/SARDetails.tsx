@@ -31,6 +31,7 @@ import { sarUrl } from "../../utils/routing";
 import { formatDisplayDate } from "../../utils/utils";
 import { CaseInformation } from "../CaseInformation/CaseInformation";
 import { PartialSentencingReportCard } from "../Dashboard/PartialSentencingReport/PartialSentencingReportCard";
+import { EmptySection } from "../EmptySection/EmptySection";
 import { KeyConsiderations } from "../KeyConsiderations";
 import { OffenderAssessment } from "../OffenderAssessment";
 import { PriorTreatmentHistorySection } from "../OffenderAssessment/PriorTreatmentHistory/PriorTreatmentHistorySection";
@@ -55,6 +56,20 @@ const SARSectionContent: React.FC<{
   currentSubsection,
   presenter,
 }) {
+  if (
+    presenter.isPSRAllExceptVictimImpact &&
+    currentSection === SARSection.VICTIM_IMPACT
+  ) {
+    return (
+      <Styled.MainContent>
+        <EmptySection
+          banner={"The originating officer will complete this section"}
+          presenter={presenter}
+        />
+      </Styled.MainContent>
+    );
+  }
+
   if (currentSection === SARSection.OFFENDER_ASSESSMENT) {
     return (
       <OffenderAssessment
@@ -96,15 +111,17 @@ const SARSectionContent: React.FC<{
           }
         />
       )}
-      {currentSection === SARSection.VICTIM_IMPACT && (
-        <SkippableTextSection
-          presenter={presenter}
-          title="Enter Victim Impact Statement"
-          fieldName="victimImpactStatement"
-          placeholder="Please add the Victim Impact here"
-          disabled={!!presenter.SARData?.completionDate}
-        />
-      )}
+      {currentSection === SARSection.VICTIM_IMPACT &&
+        (presenter.investigationType === "SAR" ||
+          presenter.isPSRVictimImpactOnly) && (
+          <SkippableTextSection
+            presenter={presenter}
+            title="Enter Victim Impact Statement"
+            fieldName="victimImpactStatement"
+            placeholder="Please add the Victim Impact here"
+            disabled={!!presenter.SARData?.completionDate}
+          />
+        )}
       {currentSection === SARSection.RECOMMENDATION && (
         <Recommendation presenter={presenter} />
       )}
@@ -126,7 +143,19 @@ const SARDetailsWithPresenter = observer(function SARDetailsWithPresenter({
     string | undefined
   >();
 
-  const { showReportTypeCard } = presenter;
+  const { showReportTypeCard, SARSections } = presenter;
+
+  // currentSection defaults to Case Information, but an officer's assigned
+  // sections (e.g. Victim Impact only, via the PSR builder) can exclude that
+  // section entirely. Whenever the currently-selected section falls outside
+  // the officer's actual section list — on first load or right after saving
+  // a report-type selection — snap forward to the first section they can
+  // actually see, instead of silently rendering an out-of-scope section.
+  useEffect(() => {
+    if (!SARSections.includes(currentSection) && SARSections.length > 0) {
+      setCurrentSection(SARSections[0]);
+    }
+  }, [SARSections, currentSection]);
 
   useLayoutEffect(() => {
     if (pageContainerRef.current) pageContainerRef.current.scrollTop = 0;

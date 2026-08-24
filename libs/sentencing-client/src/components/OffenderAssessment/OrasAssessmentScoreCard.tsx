@@ -19,6 +19,10 @@ import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React from "react";
 
+import {
+  InvestigationTypeNotice,
+  InvestigationTypeNoticeControls,
+} from "../SARDetails/InvestigationTypeNotice";
 import { useStore } from "../StoreProvider/StoreProvider";
 import {
   AssessmentTypeKey,
@@ -35,6 +39,7 @@ interface ORASHeaderProps {
   hasORASData: boolean;
   children: React.ReactNode;
   onOpenForm: () => void;
+  presenter: InvestigationTypeNoticeControls;
 }
 interface OrasAssessmentScoreCardProps {
   assessmentScore: number | null;
@@ -46,6 +51,7 @@ interface OrasAssessmentScoreCardProps {
   ORASEnteredManually: boolean;
   hasORASData: boolean;
   onOpenForm: () => void;
+  presenter: InvestigationTypeNoticeControls;
 }
 
 const ORASCardWrapper = observer(function ORASCardWrapper({
@@ -53,10 +59,14 @@ const ORASCardWrapper = observer(function ORASCardWrapper({
   hasORASData,
   children,
   onOpenForm,
+  presenter,
 }: ORASHeaderProps) {
   const { activeFeatureVariants } = useStore();
   return (
     <Styled.Card>
+      <Styled.NoticeWrapper>
+        <InvestigationTypeNotice presenter={presenter} />
+      </Styled.NoticeWrapper>
       <Styled.CardTitle>
         <ORASTitle>ORAS Assessment Score</ORASTitle>
         <Styled.ORASUpdatedText>{orasUpdatedText}</Styled.ORASUpdatedText>
@@ -83,6 +93,7 @@ export const OrasAssessmentScoreCard: React.FC<
   ORASEnteredManually,
   hasORASData,
   onOpenForm,
+  presenter,
 }) => {
   const maxScore =
     assessmentType !== null
@@ -96,6 +107,7 @@ export const OrasAssessmentScoreCard: React.FC<
     orasUpdatedText,
     hasORASData,
     onOpenForm,
+    presenter,
   };
 
   if (!assessmentDate) {

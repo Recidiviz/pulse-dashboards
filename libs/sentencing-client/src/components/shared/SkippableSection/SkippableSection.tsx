@@ -17,10 +17,16 @@
 
 import React from "react";
 
+import {
+  InvestigationTypeNotice,
+  InvestigationTypeNoticeControls,
+} from "~sentencing-client/components/SARDetails/InvestigationTypeNotice";
+
 import * as Styled from "./SkippableSection.styles";
 
 export interface SkippableSectionProps {
   title: string;
+  presenter: InvestigationTypeNoticeControls;
   skipped: boolean;
   onSkipChange: (skipped: boolean) => void;
   children: React.ReactNode;
@@ -30,12 +36,14 @@ export interface SkippableSectionProps {
 export function SkippableSection({
   title,
   skipped,
+  presenter,
   onSkipChange,
   children,
   disabled = false,
 }: SkippableSectionProps) {
   return (
     <Styled.Wrapper>
+      <InvestigationTypeNotice presenter={presenter} />
       <Styled.HeaderContainer>
         <Styled.Title>{title}</Styled.Title>
         <Styled.SkipContainer>
