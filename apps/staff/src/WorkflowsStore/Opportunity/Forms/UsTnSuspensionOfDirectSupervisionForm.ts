@@ -25,7 +25,9 @@ export class UsTnSuspensionOfDirectSupervisionForm extends FormBase<
   UsTnSuspensionOfDirectSupervisionDraftData,
   UsTnSuspensionOfDirectSupervisionOpportunity
 > {
-  navigateToFormText = "Generate paperwork";
+  get navigateToFormText(): string {
+    return "Generate paperwork";
+  }
   allowRevert = false;
 
   get formContents(): OpportunityFormComponentName {

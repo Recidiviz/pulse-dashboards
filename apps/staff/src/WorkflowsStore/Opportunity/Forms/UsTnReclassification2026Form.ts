@@ -50,7 +50,11 @@ export class UsTnReclassification2026Form extends FormBase<
   | UsTnTrusteeTransferOpportunity
   | UsTnSeriousMisconductUpgradeOpportunity
 > {
-  navigateToFormText = "Auto-fill paperwork";
+  get navigateToFormText(): string {
+    return this.opportunity.isSubmitted
+      ? "Review paperwork"
+      : "Auto-fill paperwork";
+  }
 
   get formContents(): OpportunityFormComponentName {
     return "FormUsTnReclassification2026";

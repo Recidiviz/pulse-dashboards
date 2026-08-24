@@ -29,7 +29,9 @@ export class UsNeSupervisionDowngradeForm extends FormBase<
   UsNeSupervisionDowngradeDraftData,
   UsNeSupervisionDowngradeOpportunity
 > {
-  navigateToFormText = "Generate Email";
+  get navigateToFormText(): string {
+    return "Generate Email";
+  }
 
   get formContents(): OpportunityFormComponentName {
     return "WorkflowsUsNeSupervisionDowngradeForm";

@@ -350,7 +350,9 @@ export class FormBase<
   // instead of "override"
   // ==========================
 
-  navigateToFormText = "Navigate to form";
+  get navigateToFormText(): string {
+    return "Navigate to form";
+  }
 
   allowRevert = true;
 

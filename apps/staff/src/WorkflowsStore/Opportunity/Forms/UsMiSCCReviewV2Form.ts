@@ -154,7 +154,9 @@ export class UsMiSCCReviewV2Form extends FormBase<
   | usMiWardenInPersonSecurityClassificationCommitteeReviewV2Opportunity
   | usMiAddInPersonSecurityClassificationCommitteeReviewV2Opportunity
 > {
-  navigateToFormText = "Automate 283 Form";
+  get navigateToFormText(): string {
+    return "Automate 283 Form";
+  }
 
   get formContents(): OpportunityFormComponentName {
     return "FormUsMiSCCReviewV2";

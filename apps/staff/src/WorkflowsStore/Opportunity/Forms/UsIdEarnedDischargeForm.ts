@@ -33,7 +33,9 @@ export class UsIdEarnedDischargeForm extends FormBase<
   EarnedDischargeDraftData,
   EarnedDischargeOpportunity
 > {
-  navigateToFormText = "Generate paperwork";
+  get navigateToFormText(): string {
+    return "Generate paperwork";
+  }
 
   get formContents(): OpportunityFormComponentName {
     return "FormEarnedDischarge";

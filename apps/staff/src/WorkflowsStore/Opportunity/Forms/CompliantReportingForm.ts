@@ -33,7 +33,9 @@ export class CompliantReportingForm extends FormBase<
   CompliantReportingDraftData,
   UsTnCompliantReporting2025PolicyOpportunity
 > {
-  navigateToFormText = "Auto-fill referral";
+  get navigateToFormText(): string {
+    return "Auto-fill referral";
+  }
 
   get formContents(): OpportunityFormComponentName {
     return "WorkflowsCompliantReportingForm";

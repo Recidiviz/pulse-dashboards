@@ -82,7 +82,9 @@ export class UsTxEarlyReleaseFromSupervisionForm extends FormBase<
   UsTxEarlyReleaseFromSupervisionDraftData,
   UsTxEarlyReleaseFromSupervisionOpportunity
 > {
-  navigateToFormText = "Download Form";
+  get navigateToFormText(): string {
+    return "Download Form";
+  }
 
   get formContents(): OpportunityFormComponentName {
     return "WorkflowsUsTxEarlyReleaseFromSupervisionForm";

@@ -74,7 +74,9 @@ export class UsTxAnnualReportStatusV2Form extends FormBase<
   UsTxAnnualReportStatusV2DraftData,
   UsTxAnnualReportStatusV2Opportunity
 > {
-  navigateToFormText = "Download Form";
+  get navigateToFormText(): string {
+    return "Download Form";
+  }
 
   get formContents(): OpportunityFormComponentName {
     return "WorkflowsUsTxAnnualReportStatusForm";

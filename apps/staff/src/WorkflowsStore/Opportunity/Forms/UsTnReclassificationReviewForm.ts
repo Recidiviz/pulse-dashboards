@@ -50,7 +50,11 @@ export class UsTnReclassificationReviewForm extends FormBase<
   | UsTnAnnualReclassificationReviewOpportunity
   | UsTnInitialClassificationOpportunity
 > {
-  navigateToFormText = "Auto-fill Paperwork";
+  get navigateToFormText(): string {
+    return this.opportunity.isSubmitted
+      ? "Review paperwork"
+      : "Auto-fill paperwork";
+  }
 
   get formContents(): OpportunityFormComponentName {
     return "WorkflowsUsTnReclassForm";

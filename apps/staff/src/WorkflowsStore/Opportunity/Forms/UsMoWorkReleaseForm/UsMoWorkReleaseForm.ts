@@ -298,7 +298,9 @@ export class UsMoWorkReleaseForm extends FormBase<
   UsMoWorkReleaseDraftData,
   UsMoWorkReleaseOpportunity
 > {
-  navigateToFormText = "Generate Paperwork";
+  get navigateToFormText(): string {
+    return "Generate Paperwork";
+  }
 
   allowRevert = false;
 

@@ -36,7 +36,9 @@ export class UsAzReleaseToTransitionProgramForm extends FormBase<
   UsAzReleaseToTransitionProgramDraftData,
   UsAzReleaseToTPROpportunity | UsAzReleaseToDTPOpportunity
 > {
-  navigateToFormText = "Download Agreement Form";
+  get navigateToFormText(): string {
+    return "Download Agreement Form";
+  }
   allowRevert = false;
 
   get formContents(): OpportunityFormComponentName {

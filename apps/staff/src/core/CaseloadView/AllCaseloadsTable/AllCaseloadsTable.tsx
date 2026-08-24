@@ -39,17 +39,23 @@ import {
   PersonDateCell,
   PersonIdCellWrapper,
   PersonNameWrapper,
+  usTnPrioritizedOpportunity,
 } from "./utils";
 
 function FacilityUnitItWrapper({ row }: CaseloadRowProps) {
   return <FacilityUnitIdCell person={row.original} />;
 }
 
-function AllFormsButton({ row }: CaseloadRowProps) {
+const AllFormsButton = observer(function AllFormsButton({
+  row,
+}: CaseloadRowProps) {
   const { setCurrentView } = useAllCaseloadsModalContext();
 
   const { workflowsStore } = useRootStore();
   const person = row.original;
+  const navigateToFormText =
+    usTnPrioritizedOpportunity(person)?.form?.navigateToFormText ??
+    "Auto-fill paperwork";
 
   return (
     <div>
@@ -61,11 +67,11 @@ function AllFormsButton({ row }: CaseloadRowProps) {
           event.stopPropagation();
         }}
       >
-        Auto-fill paperwork
+        {navigateToFormText}
       </NavigateToFormButtonStyle>
     </div>
   );
-}
+});
 
 const columns = [
   {

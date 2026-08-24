@@ -25,7 +25,9 @@ export class UsCaSupervisionLevelDowngradeForm3043 extends FormBase<
   UsCaSupervisionLevelDowngradeSharedDraftData,
   UsCaSupervisionLevelDowngradeOpportunity
 > {
-  navigateToFormText = "Reduce level";
+  get navigateToFormText(): string {
+    return "Reduce level";
+  }
 
   get formContents(): OpportunityFormComponentName {
     return "WorkflowsUsCaSupervisionLevelDowngradeForm3043";

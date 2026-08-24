@@ -30,7 +30,11 @@ export class UsTnDiagnosticClassification2026Form extends FormBase<
   UsTnInitialClassification2026DraftData,
   UsTnInitialClassification2026Opportunity
 > {
-  navigateToFormText = "Auto-fill paperwork";
+  get navigateToFormText(): string {
+    return this.opportunity.isSubmitted
+      ? "Review paperwork"
+      : "Auto-fill paperwork";
+  }
 
   get formContents(): OpportunityFormComponentName {
     return "FormUsTnDiagnosticClassification2026";

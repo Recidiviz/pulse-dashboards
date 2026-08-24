@@ -27,7 +27,9 @@ import {
 import { FormBase, PrefilledDataTransformer } from "./FormBase";
 
 export class LSUForm extends FormBase<LSUDraftData, LSUOpportunity> {
-  navigateToFormText = "Generate Chrono";
+  get navigateToFormText(): string {
+    return "Generate Chrono";
+  }
 
   get formContents(): OpportunityFormComponentName {
     return "WorkflowsLSUForm";

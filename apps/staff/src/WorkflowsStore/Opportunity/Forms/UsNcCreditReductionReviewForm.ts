@@ -74,7 +74,9 @@ export class UsNcCreditReductionReviewForm extends FormBase<
   any,
   UsNcCreditReductionReviewOpportunity
 > {
-  navigateToFormText = "Go to Form DCS-183";
+  get navigateToFormText(): string {
+    return "Go to Form DCS-183";
+  }
 
   get formContents(): OpportunityFormComponentName {
     return "FormUsNcCreditReductionReview";

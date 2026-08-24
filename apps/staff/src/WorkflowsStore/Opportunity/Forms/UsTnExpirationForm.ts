@@ -120,7 +120,9 @@ export class UsTnExpirationForm extends FormBase<
   UsTnExpirationDraftData,
   UsTnExpirationOpportunity
 > {
-  navigateToFormText = "Generate TEPE note";
+  get navigateToFormText(): string {
+    return "Generate TEPE note";
+  }
 
   get formContents(): OpportunityFormComponentName {
     return "WorkflowsUsTnExpirationForm";

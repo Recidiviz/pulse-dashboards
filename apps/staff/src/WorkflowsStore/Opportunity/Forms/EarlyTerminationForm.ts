@@ -34,7 +34,9 @@ export class EarlyTerminationForm extends FormBase<
   UsNdEarlyTerminationDraftData,
   UsNdEarlyTerminationOpportunity
 > {
-  navigateToFormText = "Auto-fill paperwork";
+  get navigateToFormText(): string {
+    return "Auto-fill paperwork";
+  }
 
   get formContents(): OpportunityFormComponentName {
     if (this.opportunity.formVariant === "deferred") {
