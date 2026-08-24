@@ -24,6 +24,7 @@ import {
   createOctokit,
   createSlackClient,
 } from "./deploy/clients.mts";
+import { SOPS_KEY_PROJECT } from "./deploy/config.mts";
 import { deployWithRetry } from "./deploy/deploy-with-retry.mts";
 import { verifyDockerImages } from "./deploy/images.mts";
 import {
@@ -80,12 +81,19 @@ const selected = await promptServices(deployEnv);
 // the setup steps below (nx reset / yarn install / atmos) give the grants ample time to
 // propagate, so the ~20s propagation delay is paid once (overlapped) rather than per grant.
 // Non-fatal (see ./deploy/pam.mjs): a failure warns and continues.
-const pamProjects = new Set(
-  [...selected]
+// SOPS_KEY_PROJECT is always included: decrypting a service's `.enc.yaml` needs a grant
+// where the KMS key lives, which is not necessarily a project that service deploys to.
+// Meetings Frontend hit this -- it deploys to recidiviz-meetings-*, but its env file is
+// encrypted with the dashboards-staging key, so on its own it had no grant to decrypt with.
+// Decryption happens inside nx targets rather than in the service definitions, so a service
+// cannot reliably declare whether it needs this.
+const pamProjects = new Set([
+  SOPS_KEY_PROJECT,
+  ...[...selected]
     .filter((key): key is ServiceKey => key in services)
     .filter((key) => services[key].environments.includes(deployEnv))
     .flatMap((key) => services[key].pamProjects?.(deployEnv) ?? []),
-);
+]);
 await Promise.all(
   [...pamProjects].map((projectId) =>
     requestPamDeployGrant(projectId, { waitForPropagation: false }),

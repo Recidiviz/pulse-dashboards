@@ -64,6 +64,18 @@ export function jiiProject(env: DeployEnv): string {
     : "recidiviz-jii-staging";
 }
 
+/**
+ * Project holding the KMS key that decrypts `.enc.yaml` files — the catch-all
+ * `creation_rule` in `.sops.yaml` (and in `libs/atmos/.sops.yaml`) points every
+ * non-JII, non-public-pathways file at `pulse-dashboards-sops` here.
+ *
+ * Note this is the STAGING project regardless of the environment being deployed:
+ * a production deploy still decrypts with the staging key. Deploys therefore need
+ * a PAM grant here on top of their own target projects, and it cannot be derived
+ * from `dashboardProject(env)`. Keep in sync with `.sops.yaml`.
+ */
+export const SOPS_KEY_PROJECT = "recidiviz-dashboard-staging";
+
 // Labels (by ID, like the Slack channel IDs above) used to record where a ticket's
 // change has been deployed. Live under the "Deploy Status" label group in Linear.
 // "Staging"/"Production" were already taken by the pre-existing "Environment" group
