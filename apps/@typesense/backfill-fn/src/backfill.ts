@@ -15,13 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// Core backfill logic.
+// Orchestration: the scan→project→import→prune loop, and the run that drives it.
 //
 // For each configured collection:
-//   1. Iterate Firestore docs in stable id-ordered pages of BATCH_SIZE,
-//      remembering every id seen (the authoritative "should exist" set).
-//   2. Project each doc down to just the configured fields (others dropped
-//      before import so Typesense never sees them).
+//   1. Iterate Firestore docs in stable id-ordered pages of batchSize,
+//      remembering every id seen (the "should exist" set for this partition).
+//   2. Project each doc down to just the configured fields (projection.ts —
+//      others dropped before import so Typesense never sees them).
 //   3. Bulk-import the batch into Typesense via `documents/import?action=upsert`.
 //   4. Parse the per-doc result lines and count successes/failures.
 //   5. Prune: after the full scan, take any Typesense doc whose id is NOT in the
@@ -36,6 +36,8 @@
 //      in the export but not in the snapshot, and looks stale while being live.
 //      Only runs when step 5 found candidates.
 //
+// Steps 5 and 6 live in prune.ts; everything else is here.
+//
 // Mirrors the upstream extension's backfill loop shape so future maintainers
 // can cross-reference (https://github.com/typesense/firestore-typesense-search).
 
@@ -44,9 +46,8 @@
  * Firestore docs MUST be fetched serially (each query uses the previous page's
  * last doc as its cursor), and the import for a page can't start until that
  * page is fetched. Collections themselves run concurrently through a bounded
- * worker pool (see runBackfill) — the pool size, not per-collection paging, is
- * what keeps total in-flight imports under the cluster's IP rate limit
- * (600/min).
+ * worker pool (see runBackfill), so the serial paging costs no wall-clock
+ * across collections — only within one.
  */
 
 import { firestore } from "firebase-admin";
@@ -54,373 +55,27 @@ import type { Client as TypesenseClient } from "typesense";
 
 import { createTypesenseClient } from "~@typesense/client";
 
-// Firestore page size = Typesense import batch size. Larger batches mean fewer
-// serial fetch→import round trips per collection (pagination is strictly serial
-// within a collection, so for big collections like `clients` the round-trip
-// count dominates wall-clock). Typesense bulk import handles thousands of docs
-// per request; 500 is a safe default well within the function's memory. Override
-// via env.
-const DEFAULT_BATCH_SIZE = 500;
-
-export function resolveBatchSize(): number {
-  const raw = Number(process.env["BACKFILL_BATCH_SIZE"]);
-  return Number.isInteger(raw) && raw > 0 ? raw : DEFAULT_BATCH_SIZE;
-}
-
-// How many collections to backfill concurrently. Each collection pages its
-// Firestore reads — and therefore its Typesense imports — serially, so this caps
-// how many import streams overlap. Concurrency is what lets a large collection's
-// slow tail overlap the others; it is NOT what keeps us under the rate limit —
-// that's the limiter below (concurrency bounds in-flight requests, not their
-// rate). Override via env.
-const DEFAULT_CONCURRENCY = 3;
-
-export function resolveConcurrency(): number {
-  const raw = Number(process.env["BACKFILL_CONCURRENCY"]);
-  return Number.isInteger(raw) && raw > 0 ? raw : DEFAULT_CONCURRENCY;
-}
-
-// Global cap on the rate of Typesense import requests across ALL concurrently
-// running collections. Originally added to stay under Cloud Armor's per-IP limit
-// (600/min); now that the function's static egress IP is allowlisted past Cloud
-// Armor, its job is to protect the SHARED Typesense cluster — the same nodes
-// answer live search, so an unbounded write flood would spike search latency and
-// pending writes. Set BACKFILL_IMPORT_RATE_PER_SEC=0 to disable limiting entirely
-// (e.g. a staging run with no live traffic); any positive value caps requests/sec.
-const DEFAULT_IMPORT_RATE_PER_SEC = 50;
-
-export function resolveImportRatePerSec(): number {
-  const raw = process.env["BACKFILL_IMPORT_RATE_PER_SEC"];
-  // Distinguish "unset" (→ default) from an explicit "0" (→ disabled). A negative
-  // or non-numeric value is treated as a mistake and falls back to the default.
-  if (raw === undefined || raw.trim() === "")
-    return DEFAULT_IMPORT_RATE_PER_SEC;
-  const n = Number(raw);
-  return Number.isFinite(n) && n >= 0 ? n : DEFAULT_IMPORT_RATE_PER_SEC;
-}
-
-// Whether the backfill deletes Typesense docs whose ids are no longer in the
-// Firestore source (see step 5 in the file header). ON by default — parity with
-// the ETL's Firestore deletes is the whole point. Set BACKFILL_PRUNE_STALE=false
-// to run an import-only pass (e.g. to isolate an import problem, or seed a fresh
-// collection before the source is fully populated) without the destructive
-// delete phase. Only the literal "false" (case-insensitive) disables it; any
-// other value — including unset — leaves pruning on.
-export function resolvePruneStale(): boolean {
-  const raw = process.env["BACKFILL_PRUNE_STALE"];
-  if (raw === undefined) return true;
-  return raw.trim().toLowerCase() !== "false";
-}
-
-export type RateLimiter = {
-  take(): Promise<void>;
-};
-
-// Minimum-interval limiter: hands out permits no closer together than
-// `1000 / ratePerSec` ms. Each caller synchronously reserves the next slot
-// (advancing `nextAllowedAt`) before awaiting, so concurrent callers queue
-// fairly FIFO and spread out rather than all firing at once. Deliberately a
-// smooth limiter, not a burst bucket — it protects a sustained write rate.
-// A non-positive (or non-finite) rate disables limiting entirely: take()
-// resolves immediately, imports run as fast as the cluster will accept them.
-// `now`/`sleep` are injectable so the spacing is deterministically testable.
-export function createRateLimiter(
-  ratePerSec: number,
-  now: () => number = Date.now,
-  sleep: (ms: number) => Promise<void> = (ms) =>
-    new Promise((resolve) => {
-      setTimeout(resolve, ms);
-    }),
-): RateLimiter {
-  // Disabled (BACKFILL_IMPORT_RATE_PER_SEC=0): hand out permits with no spacing.
-  if (!Number.isFinite(ratePerSec) || ratePerSec <= 0) {
-    return { take: () => Promise.resolve() };
-  }
-
-  const minIntervalMs = 1000 / ratePerSec;
-  let nextAllowedAt = 0;
-
-  return {
-    async take(): Promise<void> {
-      const scheduledAt = Math.max(now(), nextAllowedAt);
-      // Reserve this slot synchronously so a concurrent caller chains off it.
-      nextAllowedAt = scheduledAt + minIntervalMs;
-      const waitMs = scheduledAt - now();
-      if (waitMs > 0) await sleep(waitMs);
-    },
-  };
-}
-
-// Runs `task` over `items` with at most `concurrency` invocations in flight at
-// once, returning results in INPUT order regardless of completion order. A
-// small hand-rolled worker pool (no extra deps): each worker pulls the next
-// index until the queue drains. `concurrency` is clamped to [1, items.length]
-// so an empty list spawns no real work and an oversized limit can't exceed the
-// number of items.
-export async function mapWithConcurrency<T, R>(
-  items: readonly T[],
-  concurrency: number,
-  task: (item: T, index: number) => Promise<R>,
-): Promise<R[]> {
-  const results = new Array<R>(items.length);
-  const limit = Math.max(1, Math.min(concurrency, items.length));
-  let next = 0;
-
-  async function worker(): Promise<void> {
-    while (true) {
-      const index = next;
-      next += 1;
-      if (index >= items.length) break;
-      results[index] = await task(items[index], index);
-    }
-  }
-
-  await Promise.all(Array.from({ length: limit }, () => worker()));
-  return results;
-}
-
-export type CollectionConfig = {
-  /**
-   * Typesense target collection. Several configs may share one target (every
-   * per-state opportunity source → `opportunities`).
-   */
-  name: string;
-  /**
-   * Firestore source collection. Defaults to `name`. Set when several
-   * Firestore collections feed a single Typesense target.
-   */
-  sourceCollection?: string;
-  fields: string[];
-  /**
-   * Constants stamped onto every emitted doc from this source AFTER the
-   * source-field projection (so a constant with the same key as a source
-   * field wins). Used to inject discriminators — `system` on the caseload/
-   * person collections, `sourceCollection` on per-source opportunity feeds —
-   * that either don't exist on the source doc or should be canonicalized.
-   * `id` is protected; a `constantFields.id` entry cannot clobber the docId.
-   */
-  constantFields?: Record<string, string>;
-  /**
-   * Per-doc derivations. Two variants, both discriminated by their key set:
-   *
-   * 1. **Value-map**: read `data[from]`, look it up in `valueMapping`, stamp
-   *    the mapped value into `into`. Used for `locations.system` derived
-   *    from `idType`. Source values not in `valueMapping` leave the target
-   *    unset (under-permissive default).
-   * 2. **Conditional copy**: if `data[when.field] === when.equals`, copy the
-   *    value of `data[copyFrom]` into `into`. Used for `locations.district`
-   *    on district-idType docs, where the district name already lives in
-   *    `locationId` and just needs to be surfaced under the `district` key
-   *    the byDistricts filter references.
-   *
-   * Applied BEFORE `constantFields` so an explicit constant still wins on
-   * key collision. `id` is protected regardless — always set from `docId`
-   * last, so neither variant can clobber it.
-   */
-  derivedFields?: Array<
-    | { from: string; into: string; valueMapping: Record<string, string> }
-    | {
-        copyFrom: string;
-        into: string;
-        when: { field: string; equals: string };
-      }
-  >;
-  /**
-   * How to compose the Typesense doc id. Omit to use the Firestore doc id
-   * unchanged. A field-composed id is already unique across sources, so it
-   * takes no prefix.
-   */
-  docIdOverrides?: DocIdPrefixOverride | DocIdFieldsOverride;
-  /**
-   * Additional Firestore collections whose fields are merged onto documents
-   * this config emits, keyed by document path (see `mergeDocIdFromPath`).
-   *
-   * This is what lets user-written updates live ON the record they update
-   * instead of in a parallel Typesense collection — Typesense has no joins, so
-   * a separate collection would force every query to fan out and merge
-   * client-side. It also makes the backfill authoritative for the whole
-   * document, so a re-run repairs anything sync-fn missed.
-   */
-  mergeSources?: MergeSource[];
-};
-
-/**
- * Prepend a constant to the Firestore doc id. Required for multi-source targets
- * so docs with the same Firestore id across sources don't collide (e.g. one
- * person's `compliantReporting` and `LSU` opportunity records both key
- * `<state>_<externalId>`).
- */
-export type DocIdPrefixOverride = {
-  type: "prefix";
-  prefix: string;
-};
-
-/**
- * Compose the doc id from document FIELDS rather than the Firestore doc id,
- * joining the values with `_` and skipping absent ones.
- *
- * Needed wherever a second writer has to address the same document without
- * seeing the Firestore doc id. `opportunities` uses
- * `["stateCode", "externalId", "opportunityType", "opportunityId"]`, which
- * yields `us_tn_123_usTnExpiration` — exactly what sync-fn composes from the
- * update's Firestore path, so both writers land on one document.
- *
- * Composing from FIELDS rather than the doc id matters for multi-instance
- * opportunities: the ETL keys those `us_or_1234_<opportunityId>`, but
- * `externalId` on the document is always the person's external id, so the
- * field-composed key stays aligned with the person record id either way.
- */
-export type DocIdFieldsOverride = {
-  type: "fields";
-  fields: string[];
-  /**
-   * Fields to lowercase before joining. `stateCode` is stored uppercase
-   * (`US_TN`) but person record ids are lowercase (`us_tn_123`), and the id has
-   * to match the record-id convention for sync-fn to reach it.
-   */
-  lowercaseFields?: string[];
-};
-
-export type MergeSource = {
-  /** Firestore collection (or collection-group) holding the merge documents. */
-  sourceCollection: string;
-  /**
-   * Query as a collection group rather than a root collection. Required for
-   * subcollections — `clientOpportunityUpdates` exists once per person.
-   */
-  collectionGroup?: boolean;
-  /** Fields copied from the merge document. Anything else is dropped. */
-  fields: string[];
-};
-
-// Instantiates template configs (currently `opportunities`) that don't
-// statically enumerate their sources. The ETL calls backfill-fn once per source
-// with `{ collections: ["opportunities"], sourceCollection: "US_XX-..." }`.
-export function instantiateFromSourceCollection(
-  configs: CollectionConfig[],
-  sourceCollection: string | undefined,
-): CollectionConfig[] {
-  if (!sourceCollection) return configs;
-  return configs.map((config) =>
-    config.sourceCollection
-      ? config
-      : {
-          ...config,
-          sourceCollection,
-          docIdOverrides: config.docIdOverrides ?? {
-            type: "prefix",
-            prefix: sourceCollection,
-          },
-          constantFields: {
-            ...config.constantFields,
-            sourceCollection,
-          },
-        },
-  );
-}
-
-// Composes the Typesense doc id from document fields. Absent, empty or
-// non-string values are skipped rather than emitting a bare `_`, so an
-// opportunity without an `opportunityId` yields `us_tn_123_usTnExpiration`
-// while one with it yields `us_tn_123_usTnExpiration_span2`. Returns undefined
-// when nothing usable was found, so callers can fall back to the Firestore id.
-export function composeDocIdFromFields(
-  data: Record<string, unknown>,
-  docIdFields: string[],
-  lowercaseFields: string[] = [],
-): string | undefined {
-  const lower = new Set(lowercaseFields);
-  const parts: string[] = [];
-  for (const field of docIdFields) {
-    const value = data[field];
-    if (typeof value !== "string" || value === "") continue;
-    parts.push(lower.has(field) ? value.toLowerCase() : value);
-  }
-  return parts.length > 0 ? parts.join("_") : undefined;
-}
-
-// Composes the Typesense doc id for one source document. Three shapes:
-//   - no override      → the Firestore doc id, unchanged
-//   - type "prefix"    → `<prefix>_<firestoreId>`
-//   - type "fields"    → composed from document FIELDS, falling back to the
-//                        Firestore id for a malformed doc carrying none of them
-//                        (the ETL shouldn't emit one)
-//
-// Shared by the import pass and the prune's confirming scan (see scanSourceIds)
-// so both derive ids through exactly one definition. That sharing is load-
-// bearing, not tidiness: the confirming scan decides what the prune deletes by
-// comparing against ids the import produced, so a second definition that drifted
-// would confirm nothing and the prune would delete live documents.
-export function toTypesenseId(
-  fsId: string,
-  data: FirestoreDoc,
-  docIdOverrides: CollectionConfig["docIdOverrides"],
-): string {
-  if (docIdOverrides?.type === "fields") {
-    return (
-      composeDocIdFromFields(
-        data,
-        docIdOverrides.fields,
-        docIdOverrides.lowercaseFields,
-      ) ?? fsId
-    );
-  }
-  return docIdOverrides ? `${docIdOverrides.prefix}_${fsId}` : fsId;
-}
-
-// Derives the target doc id from a merge document's Firestore path by taking
-// the document-id segments (the odd ones) and joining them with `_`:
-//
-//   clientUpdatesV2/us_tn_123                                  → us_tn_123
-//   clientUpdatesV2/us_tn_123/clientOpportunityUpdates/usTnLSU → us_tn_123_usTnLSU
-export function mergeDocIdFromPath(path: string): string {
-  const segments = path.split("/");
-  return segments.filter((_, i) => i % 2 === 1).join("_");
-}
-
-// Build the Typesense filter_by string used by the prune pass so it only
-// touches docs belonging to THIS source's partition of the target collection.
-// Multi-source targets rely on this — without it, backfilling
-// `US_TN_compliantReporting → opportunities` would prune every LSU doc in
-// `opportunities` too. Empty when neither scope is set (whole-target prune).
-export function buildPruneFilter(
-  constantFields: Record<string, string> | undefined,
-  stateCode: string | undefined,
-): string | undefined {
-  const clauses = new Map<string, string>();
-  if (constantFields) {
-    for (const [k, v] of Object.entries(constantFields)) clauses.set(k, v);
-  }
-  if (stateCode) clauses.set("stateCode", stateCode);
-  if (clauses.size === 0) return undefined;
-  return [...clauses.entries()].map(([k, v]) => `${k}:=${v}`).join(" && ");
-}
-
-export type BackfillResult = {
-  name: string;
-  pages: number;
-  imported: number;
-  failed: number;
-  // Stale Typesense docs deleted because their id was absent from Firestore.
-  deleted: number;
-};
-
-export type BackfillSummary = {
-  collections: BackfillResult[];
-  totals: { imported: number; failed: number; deleted: number };
-};
-
-type FirestoreDoc = Record<string, unknown>;
-
-// Per-doc result line from Typesense's bulk import.
-type ImportEntry = { success: true } | { success: false; error?: string };
-
-// Shape Typesense's client throws when EVERY doc in the bulk fails. The error
-// object carries the same per-line results that a success response returns.
-type TypesenseImportError = Error & {
-  httpStatus?: number;
-  importResults?: ImportEntry[];
-};
+import {
+  resolveBatchSize,
+  resolveConcurrency,
+  resolveImportRatePerSec,
+  resolvePruneStale,
+} from "./config";
+import { mergeDocIdFromPath, toTypesenseId } from "./docIds";
+import { projectFields } from "./projection";
+import { pruneStaleDocs, scanSourceIds } from "./prune";
+import { parseImportResponse } from "./responses";
+import { instantiateFromSourceCollection, logTag } from "./scope";
+import { createRateLimiter, mapWithConcurrency } from "./throttle";
+import type {
+  BackfillResult,
+  BackfillSummary,
+  CollectionConfig,
+  FirestoreDoc,
+  MergeSource,
+  RunContext,
+  TypesenseImportError,
+} from "./types";
 
 function buildTypesenseClient(): TypesenseClient {
   // The function ships three separate env vars (TYPESENSE_HOSTS / PORT / PROTOCOL)
@@ -435,340 +90,12 @@ function buildTypesenseClient(): TypesenseClient {
   });
 }
 
-// Walks a dotted path in the source object and writes the leaf value into the
-// output, building any intermediate objects as it goes. Multiple dotted paths
-// that share a parent (e.g. metadata.crcFacilities + metadata.crcWorkRelease)
-// merge into the same nested object. Missing intermediate keys -> skip
-// silently; the field is optional from the projection's perspective.
-export function assignNested(
-  out: FirestoreDoc,
-  src: FirestoreDoc,
-  path: string,
-): void {
-  const parts = path.split(".");
-  let cursor: unknown = src;
-  for (const p of parts) {
-    if (cursor === null || cursor === undefined || typeof cursor !== "object") {
-      return;
-    }
-    const obj = cursor as FirestoreDoc;
-    if (!(p in obj)) return;
-    cursor = obj[p];
-  }
-  // `cursor` is the leaf value (may legitimately be null).
-  let dst = out;
-  for (let i = 0; i < parts.length - 1; i++) {
-    const k = parts[i];
-    const existing = dst[k];
-    if (
-      existing === null ||
-      existing === undefined ||
-      typeof existing !== "object"
-    ) {
-      dst[k] = {};
-    }
-    dst = dst[k] as FirestoreDoc;
-  }
-  dst[parts[parts.length - 1]] = cursor;
-}
-
-// Projects each declared field from the source Firestore document into the
-// import payload. Top-level field names map straight across; dotted names like
-// `personName.givenNames` walk into the source's nested structure and
-// reconstruct only the declared leaves on the way out. This lets us declare
-// specific nested children in the schema without shipping their entire parent
-// object — important for residents where `metadata` is large but we only
-// index one sub-field.
-//
-// Order matters:
-//   1. Project source fields.
-//   2. Apply `derivedFields` — read a source field, map through a lookup,
-//      stamp the result into a target field (e.g. `locations.idType` →
-//      `system`). Unmapped source values leave the target unset.
-//   3. Apply `constantFields` — merges LAST so a constant wins against a
-//      colliding source or derived value. Whole point of the mechanism is to
-//      stamp a canonical value (e.g. `system: "SUPERVISION"`) regardless of
-//      what came from the source doc.
-//   4. Set `id` from `docId` — protected against any `constantFields.id` or
-//      `derivedFields.into: "id"` attempt.
-export function projectFields(
-  data: FirestoreDoc,
-  fields: string[],
-  docId: string,
-  constantFields?: Record<string, string>,
-  derivedFields?: CollectionConfig["derivedFields"],
-): FirestoreDoc {
-  const out: FirestoreDoc = {};
-  for (const f of fields) {
-    if (f.includes(".")) {
-      assignNested(out, data, f);
-    } else if (f in data) {
-      out[f] = data[f];
-    }
-  }
-  if (derivedFields) {
-    for (const rule of derivedFields) {
-      if ("valueMapping" in rule) {
-        const raw = data[rule.from];
-        if (typeof raw === "string" && raw in rule.valueMapping) {
-          out[rule.into] = rule.valueMapping[raw];
-        }
-      } else {
-        // Conditional copy: only stamp when the guard field matches.
-        const guard = data[rule.when.field];
-        if (guard === rule.when.equals) {
-          const value = data[rule.copyFrom];
-          if (typeof value === "string") {
-            out[rule.into] = value;
-          }
-        }
-      }
-    }
-  }
-  if (constantFields) {
-    Object.assign(out, constantFields);
-  }
-  out["id"] = docId;
-  return out;
-}
-
-// Typesense v1.x's bulk-import response is either a pre-parsed array (modern)
-// or an NDJSON string (older). Normalize both shapes into `ImportEntry[]`.
-export function parseImportResponse(raw: unknown): ImportEntry[] {
-  if (Array.isArray(raw)) return raw as ImportEntry[];
-  return String(raw)
-    .split("\n")
-    .filter(Boolean)
-    .map((line): ImportEntry => {
-      try {
-        return JSON.parse(line) as ImportEntry;
-      } catch {
-        return {
-          success: false,
-          error: `unparseable response line: ${line}`,
-        };
-      }
-    });
-}
-
-// The Recidiviz state-code shape: `US_` followed by exactly two
-// uppercase ASCII letters (US_AZ, US_ID, ...). We validate the SHAPE rather than
-// membership in ~auth-utils' `stateCodes` because the ETL trigger fires per
-// state as data lands, including states not yet enrolled in a dashboard product
-// (so absent from `stateCodes`). Gating on that list would 400 those legitimate
-// backfills; the ETL is the authority on which states have data.
-const STATE_CODE_PATTERN = /^US_[A-Z]{2}$/;
-
-export function isValidStateCode(raw: unknown): raw is string {
-  return typeof raw === "string" && STATE_CODE_PATTERN.test(raw);
-}
-
-// Given a Typesense id-only export (JSONL, one `{"id":"..."}` per line) and the
-// set of ids that Firestore says should exist, returns the ids present in
-// Typesense but NOT in Firestore — the docs to delete. Lines that are blank,
-// unparseable, or missing a string `id` are skipped rather than aborting the
-// diff. Pure and deterministic so the prune decision is unit-testable without a
-// live cluster.
-export function selectStaleIds(
-  exportedJsonl: string,
-  keepIds: Set<string>,
-): string[] {
-  const stale: string[] = [];
-  for (const line of exportedJsonl.split("\n")) {
-    if (!line) continue;
-    try {
-      const { id } = JSON.parse(line) as { id?: unknown };
-      if (typeof id === "string" && !keepIds.has(id)) stale.push(id);
-    } catch {
-      // Ignore an unparseable export line rather than abort the whole prune.
-    }
-  }
-  return stale;
-}
-
-// Log tag for a collection, optionally scoped to a state: `[clients]` for a
-// whole-collection run, `[clients, US_ID]` when scoped — so every log line is
-// attributable to the exact (collection, state) partition it came from.
-function logTag(name: string, stateCode?: string): string {
-  const suffix = stateCode ? `, ${stateCode}` : "";
-  return `[${name}${suffix}]`;
-}
-
-// Pages a Firestore partition and returns the set of Typesense ids it derives.
-// No projection, no import, no merge — just the ids. Uses the same query shape
-// as the import loop in backfillCollection (id-ordered pages, startAfter cursor)
-// so the two agree on what the partition contains.
-//
-// `select()` trims the payload to what the id derivation actually reads. For a
-// field-composed id that means the id FIELDS themselves: a bare `select()` here
-// would return docs with empty data, composeDocIdFromFields would return
-// undefined for every one, and the whole set would collapse to Firestore doc ids
-// that match nothing — silently confirming nothing. Every other shape takes the
-// id from the doc ref, so it needs no fields at all.
-async function scanSourceIds(
-  base: firestore.Query,
-  docIdOverrides: CollectionConfig["docIdOverrides"],
-  batchSize: number,
-): Promise<Set<string>> {
-  const projected =
-    docIdOverrides?.type === "fields"
-      ? base.select(...docIdOverrides.fields)
-      : base.select();
-
-  const ids = new Set<string>();
-  let cursor: firestore.QueryDocumentSnapshot | null = null;
-
-  while (true) {
-    let q = projected
-      .orderBy(firestore.FieldPath.documentId())
-      .limit(batchSize);
-    if (cursor) q = q.startAfter(cursor);
-
-    const snapshot = await q.get();
-    if (snapshot.empty) break;
-
-    for (const d of snapshot.docs) {
-      ids.add(toTypesenseId(d.id, d.data() as FirestoreDoc, docIdOverrides));
-    }
-
-    cursor = snapshot.docs[snapshot.docs.length - 1];
-    if (snapshot.size < batchSize) break;
-  }
-
-  return ids;
-}
-
-type PruneOptions = {
-  client: TypesenseClient;
-  name: string;
-  firestoreIds: Set<string>;
-  limiter: RateLimiter;
-  stateCode?: string;
-  constantFields?: Record<string, string>;
-  /**
-   * Re-derives the partition's Firestore id set, to confirm delete candidates
-   * against. Called only when the diff produced candidates, and only AFTER the
-   * Typesense export — see the ordering note at the call site.
-   */
-  confirmIds: () => Promise<Set<string>>;
-};
-
-// Reconciles Typesense against Firestore: deletes every in-scope doc whose id is
-// NOT in `firestoreIds` AND is still absent on a second look (see the confirming
-// scan below). Scope is the whole collection, or a single state when `stateCode`
-// is set — in which case BOTH the Firestore scan (upstream) and the Typesense
-// export below are filtered to that state, so cross-state docs are never delete
-// candidates. Called only after backfillCollection has paged the entire in-scope
-// set without error, so `firestoreIds` is complete for the moment it was taken —
-// a mid-scan Firestore read failure throws out of backfillCollection before we
-// ever get here, so we can never prune against a partial set.
-async function pruneStaleDocs({
-  client,
-  name,
-  firestoreIds,
-  limiter,
-  stateCode,
-  constantFields,
-  confirmIds,
-}: PruneOptions): Promise<number> {
-  const scope = stateCode ? `state ${stateCode}` : "collection";
-  const tag = logTag(name, stateCode);
-  const filterBy = buildPruneFilter(constantFields, stateCode);
-
-  // Safety valve: an empty Firestore scan would mark EVERY in-scope Typesense
-  // doc stale. That almost always means a misconfiguration or an ETL that hasn't
-  // populated the scope — not a legitimate "empty it" — so refuse and warn
-  // loudly rather than silently wiping a live collection (or a live state).
-  if (firestoreIds.size === 0) {
-    console.warn(
-      `${tag} prune skipped: Firestore scan returned 0 docs (refusing to delete the entire ${scope})`,
-    );
-    return 0;
-  }
-
-  await limiter.take();
-  let exported: string;
-  try {
-    exported = await client
-      .collections(name)
-      .documents()
-      .export(
-        filterBy
-          ? { include_fields: "id", filter_by: filterBy }
-          : { include_fields: "id" },
-      );
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    console.warn(`${tag} prune skipped: could not export ids (${message})`);
-    return 0;
-  }
-
-  const staleIds = selectStaleIds(exported, firestoreIds);
-  if (staleIds.length === 0) {
-    console.info(`${tag} prune: no stale docs`);
-    return 0;
-  }
-
-  // `firestoreIds` is a SNAPSHOT, taken across a scan that runs for minutes on a
-  // large collection — and the realtime sync extension indexes Firestore writes
-  // as they land. So a doc the ETL wrote behind the scan cursor is in the export
-  // above but absent from the snapshot, and looks stale when it is in fact live.
-  // Re-derive the id set now and keep only candidates still absent from it.
-  //
-  // The ordering is the whole point: the confirming scan must run AFTER the
-  // export, because the failure mode is "the export saw a doc the scan missed".
-  // A confirming scan taken BEFORE the export would leave the same window open.
-  let confirmed: Set<string>;
-  try {
-    confirmed = await confirmIds();
-  } catch (err) {
-    // Never fall through to deleting an unconfirmed list. 0 deleted is always
-    // safe — the next run reconciles.
-    const message = err instanceof Error ? err.message : String(err);
-    console.warn(
-      `${tag} prune skipped: could not confirm ${staleIds.length} candidate(s) (${message})`,
-    );
-    return 0;
-  }
-
-  const stillStale = staleIds.filter((id) => !confirmed.has(id));
-  console.info(
-    `${tag} prune: ${staleIds.length} candidate(s), ${stillStale.length} confirmed stale, ${staleIds.length - stillStale.length} still present in Firestore`,
-  );
-  // A persistently non-zero "still present" count means the ETL writes while
-  // backfills run — which is exactly what this guard absorbs.
-  if (stillStale.length === 0) return 0;
-
-  let deleted = 0;
-  for (const id of stillStale) {
-    // Gate deletes through the same limiter as imports so the combined write
-    // rate against the shared cluster stays bounded.
-    await limiter.take();
-    try {
-      await client.collections(name).documents(id).delete();
-      deleted += 1;
-    } catch (err) {
-      // 404 = the doc is already gone (e.g. the extension's realtime delete
-      // trigger raced us). That's the desired end state, so don't count it as
-      // a failure — just move on.
-      const httpStatus = (err as { httpStatus?: number }).httpStatus;
-      if (httpStatus === 404) continue;
-      const message = err instanceof Error ? err.message : String(err);
-      console.warn(`${tag} failed to delete stale doc ${id}: ${message}`);
-    }
-  }
-
-  console.info(`${tag} prune: deleted ${deleted}/${stillStale.length}`);
-  return deleted;
-}
-
 // Held in memory for the duration of the collection's backfill: these are
 // user-written updates (tens per day), orders of magnitude smaller than the ETL
 // collections they decorate.
 async function loadMergeDocuments(
-  db: firestore.Firestore,
+  { db, stateCode }: RunContext,
   { sourceCollection, collectionGroup, fields }: MergeSource,
-  stateCode: string | undefined,
 ): Promise<Map<string, FirestoreDoc>> {
   const ref = collectionGroup
     ? db.collectionGroup(sourceCollection)
@@ -795,7 +122,7 @@ async function loadMergeDocuments(
 }
 
 async function backfillCollection(
-  client: TypesenseClient,
+  ctx: RunContext,
   {
     name,
     sourceCollection,
@@ -805,12 +132,8 @@ async function backfillCollection(
     docIdOverrides,
     mergeSources,
   }: CollectionConfig,
-  limiter: RateLimiter,
-  batchSize: number,
-  prune: boolean,
-  stateCode?: string,
 ): Promise<BackfillResult> {
-  const db = firestore();
+  const { db, client, limiter, batchSize, prune, stateCode } = ctx;
   const source = sourceCollection ?? name;
   const ref = db.collection(source);
   // When scoped to a single state, filter the scan to that state. Relies on the
@@ -826,7 +149,7 @@ async function backfillCollection(
   // document as usual.
   const mergeDocs = new Map<string, FirestoreDoc>();
   for (const mergeSource of mergeSources ?? []) {
-    const loaded = await loadMergeDocuments(db, mergeSource, stateCode);
+    const loaded = await loadMergeDocuments(ctx, mergeSource);
     for (const [id, data] of loaded) {
       mergeDocs.set(id, { ...mergeDocs.get(id), ...data });
     }
@@ -839,8 +162,8 @@ async function backfillCollection(
   let failed = 0;
   let pages = 0;
   let cursor: firestore.QueryDocumentSnapshot | null = null;
-  // Every Firestore id seen across all pages — the authoritative set of docs
-  // that SHOULD exist in Typesense (within scope). Drives the prune pass.
+  // Every Firestore id seen across all pages — the set of docs that SHOULD exist
+  // in Typesense (within scope). Drives the prune pass.
   const firestoreIds = new Set<string>();
 
   while (true) {
@@ -952,14 +275,11 @@ async function backfillCollection(
   // trusting the snapshot outright. The thunk is lazy — a run with no stale
   // candidates never pays for the second scan.
   const deleted = prune
-    ? await pruneStaleDocs({
-        client,
+    ? await pruneStaleDocs(ctx, {
         name,
         firestoreIds,
-        limiter,
-        stateCode,
         constantFields,
-        confirmIds: () => scanSourceIds(base, docIdOverrides, batchSize),
+        confirmIds: () => scanSourceIds(ctx, base, docIdOverrides),
       })
     : 0;
 
@@ -974,8 +294,6 @@ export async function runBackfill(
   stateCode?: string,
   sourceCollection?: string,
 ): Promise<BackfillSummary> {
-  const client = buildTypesenseClient();
-
   // A bare `{ collections: ["opportunities"] }` invocation (no
   // sourceCollection) falls through to backfillCollection using `name` as the
   // Firestore source — an empty scan of the non-existent top-level
@@ -994,19 +312,23 @@ export async function runBackfill(
       )
     : instantiated;
 
+  // Every knob is read here, once, so nothing shifts under a run in progress.
+  // See RunContext for why the limiter must be a single shared instance.
+  const ctx: RunContext = {
+    db: firestore(),
+    client: buildTypesenseClient(),
+    limiter: createRateLimiter(resolveImportRatePerSec()),
+    batchSize: resolveBatchSize(),
+    prune: resolvePruneStale(),
+    stateCode,
+  };
+
   // Process collections through a bounded worker pool rather than one-at-a-time,
-  // overlapping the slow tail of large collections against the rest. A single
-  // limiter shared across every collection caps the combined import request rate
-  // so the backfill doesn't overwhelm the shared cluster (disabled when the rate
-  // resolves to 0). The batch size is resolved once and applied to every page.
-  const limiter = createRateLimiter(resolveImportRatePerSec());
-  const batchSize = resolveBatchSize();
-  const prune = resolvePruneStale();
+  // overlapping the slow tail of large collections against the rest.
   const results = await mapWithConcurrency(
     inScope,
     resolveConcurrency(),
-    (config) =>
-      backfillCollection(client, config, limiter, batchSize, prune, stateCode),
+    (config) => backfillCollection(ctx, config),
   );
 
   const totals = results.reduce(

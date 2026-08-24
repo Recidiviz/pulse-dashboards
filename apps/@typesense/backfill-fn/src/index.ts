@@ -35,11 +35,9 @@
 import type { Request, Response } from "express";
 import * as admin from "firebase-admin";
 
-import {
-  type CollectionConfig,
-  isValidStateCode,
-  runBackfill,
-} from "./backfill";
+import { runBackfill } from "./backfill";
+import { isValidStateCode } from "./scope";
+import type { CollectionConfig } from "./types";
 
 // Init only once per cold start. The default app reads the configured
 // Firestore database from process.env.FIRESTORE_DATABASE when set;
