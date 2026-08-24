@@ -115,7 +115,11 @@ const fsSettings: FirebaseFirestore.Settings = FIREBASE_CREDENTIAL_JSON
       ignoreUndefinedProperties: true,
     };
 
-console.log(fsSettings);
+console.log(
+  FIREBASE_CREDENTIAL_JSON
+    ? `Connecting to Firestore project: ${FIREBASE_PROJECT}`
+    : `Connecting to local Firestore emulator at localhost:8080`,
+);
 
 const db = new Firestore(fsSettings);
 
