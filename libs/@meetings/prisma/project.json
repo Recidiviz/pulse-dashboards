@@ -120,6 +120,7 @@
       "defaultConfiguration": "dev"
     },
     "requires-sops-env:prisma-deploy": {
+      "dependsOn": ["docker"],
       "executor": "@nx-tools/nx-prisma:deploy",
       "options": {
         "schema": "{projectRoot}/prisma/schema.prisma"
@@ -176,7 +177,7 @@
     },
     "requires-sops-env:prisma-seed": {
       "executor": "nx:run-commands",
-      "dependsOn": ["docker", "prisma-deploy", "prisma-generate"],
+      "dependsOn": ["prisma-deploy", "prisma-generate"],
       "options": {
         "command": "tsx src/run-seed.ts",
         "cwd": "{projectRoot}"

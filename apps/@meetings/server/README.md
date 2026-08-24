@@ -26,7 +26,7 @@ If you haven't already, follow the setup instructions in the root README to inst
 
 3. Get the service account key JSON file for the `recidiviz-dashboard-staging` GCP project from your team lead and put it in this directory. Name the file `recidiviz-dashboard-staging-22598baea1a7.json`.
 4. [Only if this is the first time you're setting up the project/you want to re-seed the database] Run `nx prisma-seed @meetings/prisma` to seed the database with initial data (Docker starts automatically as a dependency).
-5. Start the server with `nx dev @meetings/server`.
+5. Start the server with `nx dev @meetings/server`. This starts the database in Docker and applies any pending prisma migrations automatically.
 
 ### Local Mode (No GCS)
 

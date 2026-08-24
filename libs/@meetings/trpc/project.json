@@ -29,10 +29,6 @@
         },
         {
           "projects": ["@meetings/prisma"],
-          "target": "docker"
-        },
-        {
-          "projects": ["@meetings/prisma"],
           "target": "prisma-deploy"
         }
       ],

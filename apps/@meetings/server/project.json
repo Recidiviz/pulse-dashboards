@@ -27,7 +27,11 @@
         "checkpointer-setup",
         {
           "projects": ["@meetings/prisma"],
-          "target": "docker"
+          "target": "prisma-deploy"
+        },
+        {
+          "projects": ["@meetings/prisma"],
+          "target": "prisma-generate"
         }
       ],
       "options": {
@@ -106,10 +110,6 @@
     "preview": {
       "executor": "@nx/vite:preview-server",
       "dependsOn": [
-        {
-          "projects": ["@meetings/prisma"],
-          "target": "docker"
-        },
         {
           "projects": ["@meetings/prisma"],
           "target": "prisma-seed"
