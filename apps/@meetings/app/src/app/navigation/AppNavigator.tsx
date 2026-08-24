@@ -36,6 +36,11 @@ import {
 } from "~@meetings/app/entities/state-code";
 import { UserContextProvider } from "~@meetings/app/entities/user";
 import { AppUpdateModal } from "~@meetings/app/features/app-update";
+import {
+  peekPendingLoginDeepLink,
+  savePendingLoginDeepLink,
+  useRestorePendingLoginDeepLink,
+} from "~@meetings/app/features/login-deep-link";
 import { LoginScreen } from "~@meetings/app/pages/login";
 import {
   AnalyticsProvider,
@@ -114,8 +119,15 @@ const AppNavigatorContent = ({
   const navigationRef = useNavigationContainerRef<AppStackParamList>();
   const routeNameRef = useRef<string | undefined>(undefined);
 
+  const restorePendingDeepLink = useRestorePendingLoginDeepLink({
+    loggedIn,
+    navigationRef,
+    linking,
+  });
+
   const handleNavigationReady = () => {
     routeNameRef.current = navigationRef.getCurrentRoute()?.name;
+    restorePendingDeepLink();
   };
 
   const handleStateChange = () => {
@@ -164,6 +176,8 @@ const AppNavigator = () => {
   const { user, isLoading } = useAuth0();
   // skipAuth state triggers re-render when user clicks "Skip Authentication"
   const [skipAuth, setSkipAuth] = React.useState(false);
+  // Blocks deep-link capture on logged-out renders after session expiry
+  const hasBeenLoggedInRef = useRef(false);
 
   // Public tRPC client for unauthenticated endpoints
   const [publicTrpcClient] = React.useState(() =>
@@ -193,6 +207,22 @@ const AppNavigator = () => {
   }
 
   const loggedIn = (user !== undefined && user !== null) || skipAuth;
+
+  if (loggedIn) {
+    hasBeenLoggedInRef.current = true;
+    // Seed stateCodeParam during render so StateContext sees it on mount;
+    // the restore effect can run too late
+    const pending = peekPendingLoginDeepLink();
+    if (pending) {
+      const { stateCode } = extractAndRemoveStateCode(pending);
+      if (stateCode) {
+        stateCodeParam.current = stateCode;
+      }
+    }
+  } else if (!hasBeenLoggedInRef.current) {
+    // Must run during render, before linking rewrites the URL to /login
+    savePendingLoginDeepLink();
+  }
 
   return (
     <publicTrpc.Provider
