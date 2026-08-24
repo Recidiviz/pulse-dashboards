@@ -30,14 +30,19 @@
 import { onDocumentWritten } from "firebase-functions/v2/firestore";
 import type { Client as TypesenseClient } from "typesense";
 
-import { createTypesenseClient } from "~@typesense/client";
+import {
+  createTypesenseClientFromEnv,
+  type FirestoreDoc,
+} from "~@typesense/client";
 
 import {
   CLIENT_UPDATE_PATTERN,
-  FirestoreDoc,
   OPPORTUNITY_UPDATE_PATTERN,
   syncDocument,
 } from "./sync";
+
+// A single patch should fail fast rather than hold the trigger invocation open.
+const CONNECTION_TIMEOUT_SECONDS = 10;
 
 // Lazily constructed so module load doesn't fail when env vars are absent (e.g.
 // under test), and so the client is reused across warm invocations.
@@ -45,14 +50,7 @@ let cachedClient: TypesenseClient | undefined;
 
 function typesenseClient(): TypesenseClient {
   if (!cachedClient) {
-    // Same three-var contract the backfill function uses, mirroring what the
-    // extension established and what the Terraform sets.
-    const host = `${process.env["TYPESENSE_PROTOCOL"]}://${process.env["TYPESENSE_HOSTS"]}:${process.env["TYPESENSE_PORT"]}`;
-    cachedClient = createTypesenseClient({
-      host,
-      apiKey: process.env["TYPESENSE_API_KEY"] ?? "",
-      connectionTimeoutSeconds: 10,
-    });
+    cachedClient = createTypesenseClientFromEnv(CONNECTION_TIMEOUT_SECONDS);
   }
   return cachedClient;
 }

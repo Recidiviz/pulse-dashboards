@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { createLocalTypesenseClient, createTypesenseClient } from "./client";
+import { createLocalTypesenseClient, createTypesenseClient } from "../client";
 
 describe("createTypesenseClient", () => {
   it("parses host with explicit port", () => {

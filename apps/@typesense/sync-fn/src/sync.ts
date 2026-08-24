@@ -44,6 +44,8 @@
 
 import type { Client as TypesenseClient } from "typesense";
 
+import { type FirestoreDoc, mergeDocIdFromPath } from "~@typesense/client";
+
 export const CLIENT_UPDATES_COLLECTION = "clientUpdatesV2";
 export const OPPORTUNITY_UPDATES_SUBCOLLECTION = "clientOpportunityUpdates";
 
@@ -68,8 +70,6 @@ const OPPORTUNITY_UPDATE_FIELDS = [
   "actionHistory",
 ];
 
-export type FirestoreDoc = Record<string, unknown>;
-
 export type SyncTarget = {
   // Every collection the patch should be attempted against.
   collections: string[];
@@ -80,9 +80,9 @@ export type SyncTarget = {
 // Splits a Firestore document path into the target collections, doc id and the
 // field set this path owns, or null when the path isn't one we sync.
 //
-// The id is the document-id segments of the path joined with `_`, matching
-// backfill-fn's `mergeDocIdFromPath` — that correspondence is what lets the
-// batch and realtime writers address the same Typesense document.
+// The id comes from the shared mergeDocIdFromPath, which backfill-fn also calls
+// when it merges these updates onto the ETL record. Both writers must address
+// the same Typesense document, and neither fails loudly if they disagree.
 export function resolveTarget(path: string): SyncTarget | null {
   const segments = path.split("/");
 
@@ -91,7 +91,7 @@ export function resolveTarget(path: string): SyncTarget | null {
   if (segments.length === 2) {
     return {
       collections: PERSON_COLLECTIONS,
-      id: segments[1],
+      id: mergeDocIdFromPath(path),
       fields: PERSON_UPDATE_FIELDS,
     };
   }
@@ -102,7 +102,7 @@ export function resolveTarget(path: string): SyncTarget | null {
   ) {
     return {
       collections: [OPPORTUNITIES_COLLECTION],
-      id: `${segments[1]}_${segments[3]}`,
+      id: mergeDocIdFromPath(path),
       fields: OPPORTUNITY_UPDATE_FIELDS,
     };
   }

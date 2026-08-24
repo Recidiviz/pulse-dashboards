@@ -44,6 +44,21 @@ export function createTypesenseClient(
   });
 }
 
+// Builds a client from the three-var env contract the Cloud Functions are
+// deployed with: TYPESENSE_PROTOCOL / TYPESENSE_HOSTS / TYPESENSE_PORT, plus
+// TYPESENSE_API_KEY. Three vars rather than one URL because that is what the
+// upstream firestore-typesense-search extension established, and the Terraform
+// for backfill-fn and sync-fn mirrors it.
+export function createTypesenseClientFromEnv(
+  connectionTimeoutSeconds: number,
+): TypesenseClient {
+  return createTypesenseClient({
+    host: `${process.env["TYPESENSE_PROTOCOL"]}://${process.env["TYPESENSE_HOSTS"]}:${process.env["TYPESENSE_PORT"]}`,
+    apiKey: process.env["TYPESENSE_API_KEY"] ?? "",
+    connectionTimeoutSeconds,
+  });
+}
+
 export function createLocalTypesenseClient(): TypesenseClient {
   return createTypesenseClient({
     host: process.env["TYPESENSE_HOST"] || "http://localhost:8108",

@@ -23,7 +23,9 @@
 // per collection and anything undeclared is dropped here, before import — so the
 // default is exclusion, and adding a field to the index is an explicit act.
 
-import type { CollectionConfig, FirestoreDoc } from "./types";
+import type { FirestoreDoc } from "~@typesense/client";
+
+import type { CollectionConfig } from "./types";
 
 // Walks a dotted path in the source object and writes the leaf value into the
 // output, building any intermediate objects as it goes. Multiple dotted paths

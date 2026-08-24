@@ -19,7 +19,7 @@ import {
   composeDocIdFromFields,
   mergeDocIdFromPath,
   toTypesenseId,
-} from "../src/docIds";
+} from "../docIds";
 
 describe("composeDocIdFromFields", () => {
   const OPPORTUNITY_ID_FIELDS = [

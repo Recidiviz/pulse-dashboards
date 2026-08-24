@@ -18,8 +18,18 @@
 export {
   createLocalTypesenseClient,
   createTypesenseClient,
+  createTypesenseClientFromEnv,
   type TypesenseClientConfig,
 } from "./client";
+export {
+  composeDocIdFromFields,
+  type DocIdFieldsOverride,
+  type DocIdOverrides,
+  type DocIdPrefixOverride,
+  type FirestoreDoc,
+  mergeDocIdFromPath,
+  toTypesenseId,
+} from "./docIds";
 export { collectionNames, schemas } from "./schemas";
 export {
   type BaseScope,

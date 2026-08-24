@@ -39,10 +39,11 @@
 
 import { firestore } from "firebase-admin";
 
-import { toTypesenseId } from "./docIds";
+import { type FirestoreDoc, toTypesenseId } from "~@typesense/client";
+
 import { selectStaleIds } from "./responses";
 import { buildPruneFilter, logTag } from "./scope";
-import type { CollectionConfig, FirestoreDoc, RunContext } from "./types";
+import type { CollectionConfig, RunContext } from "./types";
 
 // Pages a Firestore partition and returns the set of Typesense ids it derives.
 // No projection, no import, no merge — just the ids. Uses the same query shape

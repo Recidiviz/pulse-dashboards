@@ -17,13 +17,15 @@
 
 // Shared shapes for the backfill.
 //
-// CollectionConfig and the doc-id / merge shapes it nests come from the
-// COLLECTIONS_JSON env var, so they are also the contract the Terraform
-// component writes against — see the typesense-backfill component's
-// `collections` variable.
+// CollectionConfig is deserialized from the COLLECTIONS_JSON env var, so it is
+// also the contract the Terraform component writes against — see the
+// typesense-backfill component's `collections` variable. The doc-id shapes it
+// nests live in ~@typesense/client, because sync-fn keys the same documents.
 
 import type { firestore } from "firebase-admin";
 import type { Client as TypesenseClient } from "typesense";
+
+import type { DocIdOverrides } from "~@typesense/client";
 
 import type { RateLimiter } from "./throttle";
 
@@ -82,10 +84,11 @@ export type CollectionConfig = {
    * unchanged. A field-composed id is already unique across sources, so it
    * takes no prefix.
    */
-  docIdOverrides?: DocIdPrefixOverride | DocIdFieldsOverride;
+  docIdOverrides?: DocIdOverrides;
   /**
    * Additional Firestore collections whose fields are merged onto documents
-   * this config emits, keyed by document path (see `mergeDocIdFromPath`).
+   * this config emits, keyed by document path — see `mergeDocIdFromPath` in
+   * ~@typesense/client, which sync-fn calls to write them.
    *
    * This is what lets user-written updates live ON the record they update
    * instead of in a parallel Typesense collection — Typesense has no joins, so
@@ -94,43 +97,6 @@ export type CollectionConfig = {
    * document, so a re-run repairs anything sync-fn missed.
    */
   mergeSources?: MergeSource[];
-};
-
-/**
- * Prepend a constant to the Firestore doc id. Required for multi-source targets
- * so docs with the same Firestore id across sources don't collide (e.g. one
- * person's `compliantReporting` and `LSU` opportunity records both key
- * `<state>_<externalId>`).
- */
-export type DocIdPrefixOverride = {
-  type: "prefix";
-  prefix: string;
-};
-
-/**
- * Compose the doc id from document FIELDS rather than the Firestore doc id,
- * joining the values with `_` and skipping absent ones.
- *
- * Needed wherever a second writer has to address the same document without
- * seeing the Firestore doc id. `opportunities` uses
- * `["stateCode", "externalId", "opportunityType", "opportunityId"]`, which
- * yields `us_tn_123_usTnExpiration` — exactly what sync-fn composes from the
- * update's Firestore path, so both writers land on one document.
- *
- * Composing from FIELDS rather than the doc id matters for multi-instance
- * opportunities: the ETL keys those `us_or_1234_<opportunityId>`, but
- * `externalId` on the document is always the person's external id, so the
- * field-composed key stays aligned with the person record id either way.
- */
-export type DocIdFieldsOverride = {
-  type: "fields";
-  fields: string[];
-  /**
-   * Fields to lowercase before joining. `stateCode` is stored uppercase
-   * (`US_TN`) but person record ids are lowercase (`us_tn_123`), and the id has
-   * to match the record-id convention for sync-fn to reach it.
-   */
-  lowercaseFields?: string[];
 };
 
 export type MergeSource = {
@@ -183,8 +149,6 @@ export type BackfillSummary = {
   collections: BackfillResult[];
   totals: { imported: number; failed: number; deleted: number };
 };
-
-export type FirestoreDoc = Record<string, unknown>;
 
 // Per-doc result line from Typesense's bulk import.
 export type ImportEntry =

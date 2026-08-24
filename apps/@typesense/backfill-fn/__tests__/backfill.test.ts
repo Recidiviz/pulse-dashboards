@@ -88,8 +88,12 @@ vi.mock("firebase-admin", () => {
   return { firestore };
 });
 
-vi.mock("~@typesense/client", () => ({
-  createTypesenseClient: () => typesenseHolder.current,
+// Only the client factory is faked. The doc-id helpers in the same module pass
+// through to the real implementations on purpose: these tests assert on composed
+// ids, so stubbing them would make those assertions meaningless.
+vi.mock("~@typesense/client", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("~@typesense/client")>()),
+  createTypesenseClientFromEnv: () => typesenseHolder.current,
 }));
 
 // Serves a fixed set of docs per collection, honoring the stateCode equality

@@ -51,9 +51,13 @@
  */
 
 import { firestore } from "firebase-admin";
-import type { Client as TypesenseClient } from "typesense";
 
-import { createTypesenseClient } from "~@typesense/client";
+import {
+  createTypesenseClientFromEnv,
+  type FirestoreDoc,
+  mergeDocIdFromPath,
+  toTypesenseId,
+} from "~@typesense/client";
 
 import {
   resolveBatchSize,
@@ -61,7 +65,6 @@ import {
   resolveImportRatePerSec,
   resolvePruneStale,
 } from "./config";
-import { mergeDocIdFromPath, toTypesenseId } from "./docIds";
 import { projectFields } from "./projection";
 import { pruneStaleDocs, scanSourceIds } from "./prune";
 import { parseImportResponse } from "./responses";
@@ -71,24 +74,13 @@ import type {
   BackfillResult,
   BackfillSummary,
   CollectionConfig,
-  FirestoreDoc,
   MergeSource,
   RunContext,
   TypesenseImportError,
 } from "./types";
 
-function buildTypesenseClient(): TypesenseClient {
-  // The function ships three separate env vars (TYPESENSE_HOSTS / PORT / PROTOCOL)
-  // because that's the contract the upstream extension established and our TF
-  // mirrors it. Compose them into a URL so we can use the shared factory from
-  // ~@typesense/client — single client construction across the codebase.
-  const host = `${process.env["TYPESENSE_PROTOCOL"]}://${process.env["TYPESENSE_HOSTS"]}:${process.env["TYPESENSE_PORT"]}`;
-  return createTypesenseClient({
-    host,
-    apiKey: process.env["TYPESENSE_API_KEY"] ?? "",
-    connectionTimeoutSeconds: 60,
-  });
-}
+// A bulk import of thousands of docs can legitimately stall this long.
+const CONNECTION_TIMEOUT_SECONDS = 60;
 
 // Held in memory for the duration of the collection's backfill: these are
 // user-written updates (tens per day), orders of magnitude smaller than the ETL
@@ -316,7 +308,7 @@ export async function runBackfill(
   // See RunContext for why the limiter must be a single shared instance.
   const ctx: RunContext = {
     db: firestore(),
-    client: buildTypesenseClient(),
+    client: createTypesenseClientFromEnv(CONNECTION_TIMEOUT_SECONDS),
     limiter: createRateLimiter(resolveImportRatePerSec()),
     batchSize: resolveBatchSize(),
     prune: resolvePruneStale(),
