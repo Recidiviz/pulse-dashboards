@@ -126,8 +126,31 @@ variable "function_timeout_seconds" {
 
 variable "function_max_instances" {
   type        = number
-  default     = 1
-  description = "Cap concurrent invocations. 1 prevents overlapping backfills (a manual trigger during a scheduled run shouldn't fan out)."
+  default     = 4
+  description = <<-EOT
+    Cloud Run maxScale — the cap on concurrent instances. A CFv2 function serves one
+    request per instance, so this is also the cap on concurrent backfills.
+
+    Was 1, to prevent overlapping runs. That returned 429 ("no available instance")
+    whenever a second request arrived during a run, and the ETL fires one request per
+    (state, source) as each import lands, so overlap is the normal case, not an error.
+    4 lets those run as separate instances instead. Nothing is reserved — no
+    min_instance_count is set, so an idle function costs nothing and this is purely a
+    ceiling on how much can run at once.
+
+    Two costs scale with this number. Each instance bills function_memory separately.
+    Each instance also runs its OWN backfill_import_rate_per_sec limiter — the limiter
+    is per-process, not global — so the write rate the shared Typesense cluster sees is
+    up to this many times that rate. Large batches keep the actual request rate low, so
+    the cluster ceiling is not expected to bind here.
+
+    Overlapping runs do not corrupt each other. Imports are upserts, the prune is
+    filtered to (constantFields, stateCode), and the prune re-confirms every delete
+    candidate against Firestore after the export — so a doc one run is mid-import on is
+    not deleted by another. Two runs over the SAME partition just duplicate the scan and
+    the import work. If that waste ever matters, the fix is a partition lease, not a
+    lower cap here.
+  EOT
 }
 
 variable "backfill_concurrency" {

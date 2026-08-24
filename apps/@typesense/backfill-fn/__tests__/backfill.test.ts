@@ -32,6 +32,7 @@ import {
   resolvePruneStale,
   runBackfill,
   selectStaleIds,
+  toTypesenseId,
 } from "../src/backfill";
 
 // ---------------------------------------------------------------------------
@@ -67,6 +68,7 @@ type FakeQuery = {
   orderBy: (field?: unknown) => FakeQuery;
   limit: (n: number) => FakeQuery;
   startAfter: (cursor: { id: string }) => FakeQuery;
+  select: (...fields: string[]) => FakeQuery;
   get: () => Promise<FakeSnapshot>;
 };
 
@@ -114,13 +116,25 @@ vi.mock("~@typesense/client", () => ({
 // `groups` registers docs reachable via collectionGroup(), keyed by group name,
 // each carrying its full Firestore path so mergeDocIdFromPath has something to
 // parse.
+// `hooks.onSelect` fires on every select() call. Because the prune's confirming
+// scan is the ONLY caller of select(), it doubles as a precise probe for "did the
+// confirming scan run" — and a test can throw from it to exercise the
+// confirming-scan failure path.
 function makeFirestore(
   collections: Record<string, FakeDoc[]>,
   groups: Record<string, FakePathDoc[]> = {},
+  hooks: { onSelect?: (fields: string[]) => void } = {},
 ): FakeFirestore {
   function query(
     name: string,
-    opts: { state?: string; afterId?: string; limit?: number },
+    opts: {
+      state?: string;
+      afterId?: string;
+      limit?: number;
+      // Field mask from select(). `undefined` = no select() called (full data);
+      // `[]` = a bare select() (document refs only, empty data).
+      select?: string[];
+    },
   ): FakeQuery {
     return {
       where: (field, _op, value) =>
@@ -131,6 +145,15 @@ function makeFirestore(
       orderBy: () => query(name, opts),
       limit: (n) => query(name, { ...opts, limit: n }),
       startAfter: (cursor) => query(name, { ...opts, afterId: cursor.id }),
+      // Mirrors Firestore's field mask, including the case that matters for the
+      // prune's confirming scan: a bare select() yields docs whose data() is
+      // EMPTY. Masking faithfully is what makes the field-composed-id test real
+      // — a fake that ignored the mask would pass even if scanSourceIds forgot
+      // to select the id fields.
+      select: (...fields) => {
+        hooks.onSelect?.(fields);
+        return query(name, { ...opts, select: fields });
+      },
       get: async () => {
         let docs = [...(collections[name] ?? [])];
         if (opts.state !== undefined) {
@@ -143,12 +166,19 @@ function makeFirestore(
         }
         const page =
           opts.limit !== undefined ? docs.slice(0, opts.limit) : docs;
+        const mask = opts.select;
+        const project = (data: Record<string, unknown>) => {
+          if (mask === undefined) return data;
+          const out: Record<string, unknown> = {};
+          for (const f of mask) if (f in data) out[f] = data[f];
+          return out;
+        };
         return {
           empty: page.length === 0,
           size: page.length,
           docs: page.map((d) => ({
             id: d.id,
-            data: () => d.data,
+            data: () => project(d.data),
             ref: { path: `${name}/${d.id}` },
           })),
         };
@@ -164,6 +194,7 @@ function makeFirestore(
       orderBy: () => self,
       limit: () => self,
       startAfter: () => self,
+      select: () => self,
       get: async () => {
         const docs = groups[name] ?? [];
         return {
@@ -194,7 +225,15 @@ type TypesenseDoc = Record<string, unknown> & { id: string };
 // Records imports/exports/deletes for assertions. export() honors filter_by
 // as either a single `key:=value` clause or several joined by ` && `, matching
 // how buildPruneFilter emits them — so the fake mirrors the cluster's scoping.
-function makeTypesense(existing: Record<string, TypesenseDoc[]>) {
+// `hooks.onExport` fires at the start of export(), which is the moment BETWEEN
+// the import scan and the prune's confirming scan. That makes it the seam for
+// simulating an ETL write landing mid-backfill: the hook pushes the new doc into
+// both fakes, so the export returns it (as the realtime sync extension would)
+// and the confirming scan then finds it in Firestore.
+function makeTypesense(
+  existing: Record<string, TypesenseDoc[]>,
+  hooks: { onExport?: () => void } = {},
+) {
   const importedDocs: Record<string, Array<Record<string, unknown>>> = {};
   const deletedIds: Record<string, string[]> = {};
   const exportOptions: Array<{ name: string; filter_by?: string }> = [];
@@ -210,6 +249,7 @@ function makeTypesense(existing: Record<string, TypesenseDoc[]>) {
         },
         export: async (options) => {
           exportOptions.push({ name, filter_by: options?.filter_by });
+          hooks.onExport?.();
           let docs = existing[name] ?? [];
           if (options?.filter_by) {
             const clauses = options.filter_by
@@ -1308,6 +1348,183 @@ describe("runBackfill — state-scoped backfill + prune", () => {
   });
 });
 
+// The import scan builds `firestoreIds` over minutes on a large collection, and
+// the realtime sync extension indexes Firestore writes as they land. So a doc the
+// ETL writes behind the scan cursor is in the Typesense export but not in the
+// snapshot — it looks stale while being live. The prune re-scans Firestore after
+// the export and keeps only candidates still absent.
+describe("runBackfill — confirming prune candidates against Firestore", () => {
+  const ENV_KEYS = ["BACKFILL_IMPORT_RATE_PER_SEC", "BACKFILL_PRUNE_STALE"];
+  const savedEnv: Record<string, string | undefined> = {};
+
+  beforeEach(() => {
+    for (const key of ENV_KEYS) savedEnv[key] = process.env[key];
+    process.env["BACKFILL_IMPORT_RATE_PER_SEC"] = "0";
+    delete process.env["BACKFILL_PRUNE_STALE"];
+  });
+
+  afterEach(() => {
+    for (const key of ENV_KEYS) {
+      if (savedEnv[key] === undefined) delete process.env[key];
+      else process.env[key] = savedEnv[key];
+    }
+    firestoreHolder.current = undefined;
+    typesenseHolder.current = undefined;
+  });
+
+  it("spares a doc written mid-scan but deletes one that is genuinely gone", async () => {
+    // `a` was scanned. `gone` is in Typesense only — genuinely stale. `late`
+    // arrives during the run, after the scan has already passed its page.
+    const fsClients: FakeDoc[] = [{ id: "a", data: { stateCode: "US_ID" } }];
+    const tsClients: TypesenseDoc[] = [
+      { id: "a", stateCode: "US_ID" },
+      { id: "gone", stateCode: "US_ID" },
+    ];
+
+    firestoreHolder.current = makeFirestore({ clients: fsClients });
+    const ts = makeTypesense(
+      { clients: tsClients },
+      {
+        onExport: () => {
+          // The ETL writes `late`; the realtime extension indexes it at once. So
+          // it is visible to this export AND to the confirming scan that follows.
+          fsClients.push({ id: "late", data: { stateCode: "US_ID" } });
+          tsClients.push({ id: "late", stateCode: "US_ID" });
+        },
+      },
+    );
+    typesenseHolder.current = ts.client;
+
+    const summary = await runBackfill(
+      [{ name: "clients", fields: ["stateCode"] }],
+      "US_ID",
+    );
+
+    // Both `gone` and `late` were candidates; only `gone` survives confirmation.
+    expect(ts.deletedIds["clients"]).toEqual(["gone"]);
+    expect(summary.collections[0]).toMatchObject({ imported: 1, deleted: 1 });
+  });
+
+  it("does not confirm-scan at all when nothing looks stale", async () => {
+    const selectCalls: string[][] = [];
+    firestoreHolder.current = makeFirestore(
+      { clients: [{ id: "a", data: { stateCode: "US_ID" } }] },
+      {},
+      { onSelect: (fields) => selectCalls.push(fields) },
+    );
+    const ts = makeTypesense({ clients: [{ id: "a", stateCode: "US_ID" }] });
+    typesenseHolder.current = ts.client;
+
+    const summary = await runBackfill(
+      [{ name: "clients", fields: ["stateCode"] }],
+      "US_ID",
+    );
+
+    // The common path must pay nothing for this guard.
+    expect(selectCalls).toEqual([]);
+    expect(ts.deletedIds["clients"]).toBeUndefined();
+    expect(summary.totals.deleted).toBe(0);
+  });
+
+  it("selects the id fields when the doc id is field-composed", async () => {
+    // The `opportunities` shape: the id comes from document FIELDS, so the
+    // confirming scan must project those fields. A bare select() would blank the
+    // data, collapse every composed id to the Firestore doc id, confirm nothing,
+    // and delete the live doc below.
+    const selectCalls: string[][] = [];
+    const fsOpps: FakeDoc[] = [
+      {
+        id: "1",
+        data: {
+          stateCode: "US_TN",
+          externalId: "123",
+          opportunityType: "usTnLSU",
+        },
+      },
+    ];
+    const tsOpps: TypesenseDoc[] = [
+      { id: "us_tn_123_usTnLSU", stateCode: "US_TN" },
+    ];
+
+    firestoreHolder.current = makeFirestore(
+      { opportunities: fsOpps },
+      {},
+      {
+        onSelect: (fields) => selectCalls.push(fields),
+      },
+    );
+    const ts = makeTypesense(
+      { opportunities: tsOpps },
+      {
+        onExport: () => {
+          fsOpps.push({
+            id: "2",
+            data: {
+              stateCode: "US_TN",
+              externalId: "456",
+              opportunityType: "usTnLSU",
+            },
+          });
+          tsOpps.push({ id: "us_tn_456_usTnLSU", stateCode: "US_TN" });
+        },
+      },
+    );
+    typesenseHolder.current = ts.client;
+
+    const summary = await runBackfill(
+      [
+        {
+          name: "opportunities",
+          fields: ["stateCode", "externalId", "opportunityType"],
+          docIdOverrides: {
+            type: "fields",
+            fields: ["stateCode", "externalId", "opportunityType"],
+            lowercaseFields: ["stateCode"],
+          },
+        },
+      ],
+      "US_TN",
+    );
+
+    expect(selectCalls).toEqual([
+      ["stateCode", "externalId", "opportunityType"],
+    ]);
+    // The mid-run opportunity survives, which only works if the mask above let
+    // the confirming scan recompose its id.
+    expect(ts.deletedIds["opportunities"]).toBeUndefined();
+    expect(summary.totals.deleted).toBe(0);
+  });
+
+  it("deletes nothing when the confirming scan fails", async () => {
+    firestoreHolder.current = makeFirestore(
+      { clients: [{ id: "a", data: { stateCode: "US_ID" } }] },
+      {},
+      {
+        onSelect: () => {
+          throw new Error("firestore unavailable");
+        },
+      },
+    );
+    const ts = makeTypesense({
+      clients: [
+        { id: "a", stateCode: "US_ID" },
+        { id: "stale", stateCode: "US_ID" },
+      ],
+    });
+    typesenseHolder.current = ts.client;
+
+    const summary = await runBackfill(
+      [{ name: "clients", fields: ["stateCode"] }],
+      "US_ID",
+    );
+
+    // `stale` really is stale, but unconfirmed is unconfirmed — skip, don't
+    // guess. The next run reconciles.
+    expect(ts.deletedIds["clients"]).toBeUndefined();
+    expect(summary.collections[0]).toMatchObject({ imported: 1, deleted: 0 });
+  });
+});
+
 describe("runBackfill — multi-source targets (constantFields + docIdOverrides)", () => {
   const savedRate = process.env["BACKFILL_IMPORT_RATE_PER_SEC"];
 
@@ -1656,6 +1873,49 @@ describe("composeDocIdFromFields", () => {
     expect(
       composeDocIdFromFields({ isEligible: true }, OPPORTUNITY_ID_FIELDS),
     ).toBeUndefined();
+  });
+});
+
+// One definition, shared by the import pass and the prune's confirming scan. The
+// two compare id sets against each other, so drift between them would confirm
+// nothing and the prune would delete live docs.
+describe("toTypesenseId", () => {
+  it("uses the Firestore doc id when there is no override", () => {
+    expect(toTypesenseId("us_id_123", {}, undefined)).toBe("us_id_123");
+  });
+
+  it("prefixes so same-id docs from different sources don't collide", () => {
+    expect(
+      toTypesenseId("us_tn_123", {}, { type: "prefix", prefix: "LSU" }),
+    ).toBe("LSU_us_tn_123");
+  });
+
+  it("composes from fields, lowercasing the state code", () => {
+    expect(
+      toTypesenseId(
+        "ignored",
+        {
+          stateCode: "US_TN",
+          externalId: "123",
+          opportunityType: "usTnExpiration",
+        },
+        {
+          type: "fields",
+          fields: ["stateCode", "externalId", "opportunityType"],
+          lowercaseFields: ["stateCode"],
+        },
+      ),
+    ).toBe("us_tn_123_usTnExpiration");
+  });
+
+  it("falls back to the Firestore id when a doc carries none of the id fields", () => {
+    expect(
+      toTypesenseId(
+        "fallback_id",
+        { isEligible: true },
+        { type: "fields", fields: ["stateCode", "externalId"] },
+      ),
+    ).toBe("fallback_id");
   });
 });
 

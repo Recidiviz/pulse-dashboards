@@ -24,11 +24,17 @@
 //      before import so Typesense never sees them).
 //   3. Bulk-import the batch into Typesense via `documents/import?action=upsert`.
 //   4. Parse the per-doc result lines and count successes/failures.
-//   5. Prune: after the full scan, delete any Typesense doc whose id is NOT in
-//      the Firestore id set. The ETL deletes records from Firestore, so without
-//      this the search index keeps serving rows that no longer exist. Upsert
-//      alone never removes anything, so the delete pass is what makes a backfill
-//      a true reconcile rather than an additive sync.
+//   5. Prune: after the full scan, take any Typesense doc whose id is NOT in the
+//      Firestore id set as a delete CANDIDATE. The ETL deletes records from
+//      Firestore, so without this the search index keeps serving rows that no
+//      longer exist. Upsert alone never removes anything, so the delete pass is
+//      what makes a backfill a true reconcile rather than an additive sync.
+//   6. Confirm each candidate with a second Firestore scan, run AFTER the export,
+//      and delete only the ones still absent. The id set from step 1 is a
+//      snapshot spanning minutes, and the realtime sync extension indexes
+//      Firestore writes as they land — so a doc written behind the scan cursor is
+//      in the export but not in the snapshot, and looks stale while being live.
+//      Only runs when step 5 found candidates.
 //
 // Mirrors the upstream extension's backfill loop shape so future maintainers
 // can cross-reference (https://github.com/typesense/firestore-typesense-search).
@@ -333,6 +339,35 @@ export function composeDocIdFromFields(
   return parts.length > 0 ? parts.join("_") : undefined;
 }
 
+// Composes the Typesense doc id for one source document. Three shapes:
+//   - no override      → the Firestore doc id, unchanged
+//   - type "prefix"    → `<prefix>_<firestoreId>`
+//   - type "fields"    → composed from document FIELDS, falling back to the
+//                        Firestore id for a malformed doc carrying none of them
+//                        (the ETL shouldn't emit one)
+//
+// Shared by the import pass and the prune's confirming scan (see scanSourceIds)
+// so both derive ids through exactly one definition. That sharing is load-
+// bearing, not tidiness: the confirming scan decides what the prune deletes by
+// comparing against ids the import produced, so a second definition that drifted
+// would confirm nothing and the prune would delete live documents.
+export function toTypesenseId(
+  fsId: string,
+  data: FirestoreDoc,
+  docIdOverrides: CollectionConfig["docIdOverrides"],
+): string {
+  if (docIdOverrides?.type === "fields") {
+    return (
+      composeDocIdFromFields(
+        data,
+        docIdOverrides.fields,
+        docIdOverrides.lowercaseFields,
+      ) ?? fsId
+    );
+  }
+  return docIdOverrides ? `${docIdOverrides.prefix}_${fsId}` : fsId;
+}
+
 // Derives the target doc id from a merge document's Firestore path by taking
 // the document-id segments (the odd ones) and joining them with `_`:
 //
@@ -559,22 +594,83 @@ function logTag(name: string, stateCode?: string): string {
   return `[${name}${suffix}]`;
 }
 
+// Pages a Firestore partition and returns the set of Typesense ids it derives.
+// No projection, no import, no merge — just the ids. Uses the same query shape
+// as the import loop in backfillCollection (id-ordered pages, startAfter cursor)
+// so the two agree on what the partition contains.
+//
+// `select()` trims the payload to what the id derivation actually reads. For a
+// field-composed id that means the id FIELDS themselves: a bare `select()` here
+// would return docs with empty data, composeDocIdFromFields would return
+// undefined for every one, and the whole set would collapse to Firestore doc ids
+// that match nothing — silently confirming nothing. Every other shape takes the
+// id from the doc ref, so it needs no fields at all.
+async function scanSourceIds(
+  base: firestore.Query,
+  docIdOverrides: CollectionConfig["docIdOverrides"],
+  batchSize: number,
+): Promise<Set<string>> {
+  const projected =
+    docIdOverrides?.type === "fields"
+      ? base.select(...docIdOverrides.fields)
+      : base.select();
+
+  const ids = new Set<string>();
+  let cursor: firestore.QueryDocumentSnapshot | null = null;
+
+  while (true) {
+    let q = projected
+      .orderBy(firestore.FieldPath.documentId())
+      .limit(batchSize);
+    if (cursor) q = q.startAfter(cursor);
+
+    const snapshot = await q.get();
+    if (snapshot.empty) break;
+
+    for (const d of snapshot.docs) {
+      ids.add(toTypesenseId(d.id, d.data() as FirestoreDoc, docIdOverrides));
+    }
+
+    cursor = snapshot.docs[snapshot.docs.length - 1];
+    if (snapshot.size < batchSize) break;
+  }
+
+  return ids;
+}
+
+type PruneOptions = {
+  client: TypesenseClient;
+  name: string;
+  firestoreIds: Set<string>;
+  limiter: RateLimiter;
+  stateCode?: string;
+  constantFields?: Record<string, string>;
+  /**
+   * Re-derives the partition's Firestore id set, to confirm delete candidates
+   * against. Called only when the diff produced candidates, and only AFTER the
+   * Typesense export — see the ordering note at the call site.
+   */
+  confirmIds: () => Promise<Set<string>>;
+};
+
 // Reconciles Typesense against Firestore: deletes every in-scope doc whose id is
-// NOT in `firestoreIds`. Scope is the whole collection, or a single state when
-// `stateCode` is set — in which case BOTH the Firestore scan (upstream) and the
-// Typesense export below are filtered to that state, so cross-state docs are
-// never delete candidates. Called only after backfillCollection has paged the
-// entire in-scope set without error, so `firestoreIds` is guaranteed complete —
+// NOT in `firestoreIds` AND is still absent on a second look (see the confirming
+// scan below). Scope is the whole collection, or a single state when `stateCode`
+// is set — in which case BOTH the Firestore scan (upstream) and the Typesense
+// export below are filtered to that state, so cross-state docs are never delete
+// candidates. Called only after backfillCollection has paged the entire in-scope
+// set without error, so `firestoreIds` is complete for the moment it was taken —
 // a mid-scan Firestore read failure throws out of backfillCollection before we
 // ever get here, so we can never prune against a partial set.
-async function pruneStaleDocs(
-  client: TypesenseClient,
-  name: string,
-  firestoreIds: Set<string>,
-  limiter: RateLimiter,
-  stateCode?: string,
-  constantFields?: Record<string, string>,
-): Promise<number> {
+async function pruneStaleDocs({
+  client,
+  name,
+  firestoreIds,
+  limiter,
+  stateCode,
+  constantFields,
+  confirmIds,
+}: PruneOptions): Promise<number> {
   const scope = stateCode ? `state ${stateCode}` : "collection";
   const tag = logTag(name, stateCode);
   const filterBy = buildPruneFilter(constantFields, stateCode);
@@ -613,10 +709,38 @@ async function pruneStaleDocs(
     return 0;
   }
 
-  console.info(`${tag} prune: deleting ${staleIds.length} stale doc(s)`);
+  // `firestoreIds` is a SNAPSHOT, taken across a scan that runs for minutes on a
+  // large collection — and the realtime sync extension indexes Firestore writes
+  // as they land. So a doc the ETL wrote behind the scan cursor is in the export
+  // above but absent from the snapshot, and looks stale when it is in fact live.
+  // Re-derive the id set now and keep only candidates still absent from it.
+  //
+  // The ordering is the whole point: the confirming scan must run AFTER the
+  // export, because the failure mode is "the export saw a doc the scan missed".
+  // A confirming scan taken BEFORE the export would leave the same window open.
+  let confirmed: Set<string>;
+  try {
+    confirmed = await confirmIds();
+  } catch (err) {
+    // Never fall through to deleting an unconfirmed list. 0 deleted is always
+    // safe — the next run reconciles.
+    const message = err instanceof Error ? err.message : String(err);
+    console.warn(
+      `${tag} prune skipped: could not confirm ${staleIds.length} candidate(s) (${message})`,
+    );
+    return 0;
+  }
+
+  const stillStale = staleIds.filter((id) => !confirmed.has(id));
+  console.info(
+    `${tag} prune: ${staleIds.length} candidate(s), ${stillStale.length} confirmed stale, ${staleIds.length - stillStale.length} still present in Firestore`,
+  );
+  // A persistently non-zero "still present" count means the ETL writes while
+  // backfills run — which is exactly what this guard absorbs.
+  if (stillStale.length === 0) return 0;
 
   let deleted = 0;
-  for (const id of staleIds) {
+  for (const id of stillStale) {
     // Gate deletes through the same limiter as imports so the combined write
     // rate against the shared cluster stays bounded.
     await limiter.take();
@@ -634,7 +758,7 @@ async function pruneStaleDocs(
     }
   }
 
-  console.info(`${tag} prune: deleted ${deleted}/${staleIds.length}`);
+  console.info(`${tag} prune: deleted ${deleted}/${stillStale.length}`);
   return deleted;
 }
 
@@ -727,24 +851,9 @@ async function backfillCollection(
     if (snapshot.empty) break;
     pages += 1;
 
-    const toTypesenseId = (fsId: string, data: FirestoreDoc): string => {
-      if (docIdOverrides?.type === "fields") {
-        // Only reachable for a malformed doc carrying none of the id fields —
-        // the ETL shouldn't emit one.
-        return (
-          composeDocIdFromFields(
-            data,
-            docIdOverrides.fields,
-            docIdOverrides.lowercaseFields,
-          ) ?? fsId
-        );
-      }
-      return docIdOverrides ? `${docIdOverrides.prefix}_${fsId}` : fsId;
-    };
-
     const docs = snapshot.docs.map((d) => {
       const data = d.data() as FirestoreDoc;
-      const id = toTypesenseId(d.id, data);
+      const id = toTypesenseId(d.id, data, docIdOverrides);
       firestoreIds.add(id);
 
       const projected = projectFields(
@@ -838,16 +947,20 @@ async function backfillCollection(
   }
 
   // The full Firestore scan completed without throwing, so `firestoreIds` is
-  // authoritative — safe to delete anything in Typesense that isn't in it.
+  // complete as of the moment it was taken. It can still be STALE by now, so the
+  // prune re-confirms each delete candidate through `confirmIds` rather than
+  // trusting the snapshot outright. The thunk is lazy — a run with no stale
+  // candidates never pays for the second scan.
   const deleted = prune
-    ? await pruneStaleDocs(
+    ? await pruneStaleDocs({
         client,
         name,
         firestoreIds,
         limiter,
         stateCode,
         constantFields,
-      )
+        confirmIds: () => scanSourceIds(base, docIdOverrides, batchSize),
+      })
     : 0;
 
   console.info(
