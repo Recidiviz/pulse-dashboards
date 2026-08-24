@@ -32526,6 +32526,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dompurify@npm:^2.5.4":
+  version: 2.5.9
+  resolution: "dompurify@npm:2.5.9"
+  checksum: 10c0/91cf3fd8ad07f969a740813a2101d573547954fd87925d729e8cfc592fa93c51fc3f7b298d336bd90c1a5eae1ad65d1ca06254b938fd84af84ef081c9c4b75ee
+  languageName: node
+  linkType: hard
+
 "dompurify@npm:^3.2.4, dompurify@npm:^3.2.5":
   version: 3.2.6
   resolution: "dompurify@npm:3.2.6"
@@ -32538,15 +32545,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^3.3.2":
-  version: 3.3.3
-  resolution: "dompurify@npm:3.3.3"
+"dompurify@npm:^3.4.13":
+  version: 3.4.13
+  resolution: "dompurify@npm:3.4.13"
   dependencies:
     "@types/trusted-types": "npm:^2.0.7"
   dependenciesMeta:
     "@types/trusted-types":
       optional: true
-  checksum: 10c0/097c14a21a3f6cb95beded9ecd255f7c3512c42767b048390c747b0fe35736f6a71e02320fc50a9ac2be645834b463e4760915d595d502a56452daf339d0ea9c
+  checksum: 10c0/9c2a1a71e1a1d8b77953db7a39ffc935ef4ed4f10fe40770232128c2cbfd4c3dc677d3d7bae51eb24cc52d9ff3548612dc540ecb4343e89b26e809d2be2e0cfe
   languageName: node
   linkType: hard
 
@@ -42848,6 +42855,31 @@ __metadata:
     html2canvas:
       optional: true
   checksum: 10c0/dad15d4f53ead1d2e9d5f6fd9b6e72c7233ba5cbc30d98461eb0ef609aa908b28fd5eaaf2b763b55df945c7ecca2323097d9331f09fee1d6c23c06785520ab5f
+  languageName: node
+  linkType: hard
+
+"jspdf@npm:^2.5.2":
+  version: 2.5.2
+  resolution: "jspdf@npm:2.5.2"
+  dependencies:
+    "@babel/runtime": "npm:^7.23.2"
+    atob: "npm:^2.1.2"
+    btoa: "npm:^1.2.1"
+    canvg: "npm:^3.0.6"
+    core-js: "npm:^3.6.0"
+    dompurify: "npm:^2.5.4"
+    fflate: "npm:^0.8.1"
+    html2canvas: "npm:^1.0.0-rc.5"
+  dependenciesMeta:
+    canvg:
+      optional: true
+    core-js:
+      optional: true
+    dompurify:
+      optional: true
+    html2canvas:
+      optional: true
+  checksum: 10c0/0e715ba51fab41d7de85f76585a6a2b7d224f43e510993f17f071b608cf32f2107a66f3a04cbfb4d2e60b73dbd2a90f3092bcc70b9d30601cbc060caadc4d90a
   languageName: node
   linkType: hard
 
@@ -54015,7 +54047,7 @@ __metadata:
     dedent: "npm:^0.7.0"
     devtools: "npm:^7.27.0"
     docxtemplater: "npm:^3.31.5"
-    dompurify: "npm:^3.3.2"
+    dompurify: "npm:^3.4.13"
     dotenv: "npm:^8.2.0"
     downloadjs: "npm:^1.4.7"
     env-cmd: "npm:^9.0.3"
@@ -54096,7 +54128,7 @@ __metadata:
     jsdom: "npm:~22.1.0"
     jsonc-eslint-parser: "npm:^2.1.0"
     jsonexport: "npm:^3.0.1"
-    jspdf: "npm:^2.5.1"
+    jspdf: "npm:^2.5.2"
     jszip: "npm:^3.8.0"
     jwks-rsa: "npm:^3.1.0"
     langsmith: "npm:^0.3.69"
