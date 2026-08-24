@@ -75,8 +75,10 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
       | "initializeOpportunityDetail"
       | "populateCaseload"
       | "populateCaseloadForCurrentReviewer"
+      | "populateHistoricalCaseloadForCurrentReviewer"
       | "expectCaseloadPopulated"
       | "expectCaseloadPopulatedForReviewer"
+      | "expectHistoricalCaseloadPopulatedForReviewer"
     >(
       this,
       {
@@ -88,8 +90,10 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
         hydrator: true,
         populateCaseload: true,
         populateCaseloadForCurrentReviewer: true,
+        populateHistoricalCaseloadForCurrentReviewer: true,
         expectCaseloadPopulated: true,
         expectCaseloadPopulatedForReviewer: true,
+        expectHistoricalCaseloadPopulatedForReviewer: true,
         hydrationState: true,
         initializeOpportunityDetail: true,
         opportunitiesDetails: true,
@@ -126,6 +130,7 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
         ]);
         await this.populateCaseload();
         await this.populateCaseloadForCurrentReviewer();
+        await this.populateHistoricalCaseloadForCurrentReviewer();
       },
       expectPopulated: [
         this.expectOfficersPopulated,
@@ -141,6 +146,16 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
           ? [
               () =>
                 this.expectCaseloadPopulatedForReviewer(
+                  this.supervisorInfo?.externalId,
+                ),
+            ]
+          : []),
+        ...(this.includeReviewerCaseload &&
+        this.isInsightsSupervisorReviewTableEnabled &&
+        this.showPreviouslyReviewedOpportunities
+          ? [
+              () =>
+                this.expectHistoricalCaseloadPopulatedForReviewer(
                   this.supervisorInfo?.externalId,
                 ),
             ]
@@ -416,7 +431,8 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
   async populateHistoricalCaseloadForCurrentReviewer() {
     if (
       !this.includeReviewerCaseload ||
-      !this.isInsightsSupervisorReviewTableEnabled
+      !this.isInsightsSupervisorReviewTableEnabled ||
+      !this.showPreviouslyReviewedOpportunities
     ) {
       return;
     }

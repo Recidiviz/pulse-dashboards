@@ -84,6 +84,18 @@ export function WithJusticeInvolvedPersonStore<
       );
     }
 
+    /**
+     * Checks if previously reviewed opportunities should be surfaced for a reviewer,
+     * based on the `showPreviouslyReviewedOpportunities` feature variant.
+     * @returns `true` if previously reviewed opportunities should be included, otherwise `false`.
+     */
+    get showPreviouslyReviewedOpportunities() {
+      const { userStore } = this.supervisionStore.insightsStore.rootStore;
+
+      return !!userStore.activeFeatureVariants
+        .showPreviouslyReviewedOpportunities;
+    }
+
     get opportunityMapping(): JusticeInvolvedPersonOpportunityMapping {
       return this._opportunityMapping;
     }
@@ -199,18 +211,43 @@ export function WithJusticeInvolvedPersonStore<
     ): Record<OpportunityType, Opportunity[]> {
       const clients = this.findClientsForReviewer(reviewerId);
 
-      const opportunitiesByType = clients.reduce(
-        (oppsByType, client) => {
-          for (const opportunity of Object.values(
-            client[opportunityMappingOverride ?? this.opportunityMapping],
-          ).flat()) {
-            // A client can appear here because a *different* opportunity type's
-            // update is assigned to this reviewer, so only bucket the opportunities
-            // that are actually assigned to them for this opportunity type.
-            if (opportunity.currentReviewerId !== reviewerId) continue;
+      // A client can appear here because a *different* opportunity type's
+      // update is assigned to this reviewer (or was reviewed by this reviewer),
+      // so each group below only buckets the opportunities that are actually
+      // assigned to the reviewer (or has been reviewed by this reviewer) for this
+      // opportunity type. `clients` and `historicalClients` come from separate
+      // queries (currently assigned reviewer vs. reviewed in the past) and so
+      // need different checks to determine that assignment.
+      const clientGroups = [
+        {
+          clients,
+          includeInOpportunitiesByType: (opportunity: Opportunity) =>
+            opportunity.currentReviewerId === reviewerId,
+        },
+      ];
 
-            const { type } = opportunity;
-            (oppsByType[type] ?? (oppsByType[type] = [])).push(opportunity);
+      if (this.showPreviouslyReviewedOpportunities) {
+        clientGroups.push({
+          clients: this.findHistoricalClientsForReviewer(reviewerId),
+          includeInOpportunitiesByType: (opportunity: Opportunity) =>
+            opportunity.allUniqueReviewerIds?.includes(reviewerId) ?? false,
+        });
+      }
+
+      const opportunitiesByType = clientGroups.reduce(
+        (
+          oppsByType,
+          { clients: groupClients, includeInOpportunitiesByType },
+        ) => {
+          for (const client of groupClients) {
+            for (const opportunity of Object.values(
+              client[opportunityMappingOverride ?? this.opportunityMapping],
+            ).flat()) {
+              if (!includeInOpportunitiesByType(opportunity)) continue;
+
+              const { type } = opportunity;
+              (oppsByType[type] ?? (oppsByType[type] = [])).push(opportunity);
+            }
           }
 
           return oppsByType as Record<OpportunityType, Opportunity[]>;
@@ -370,6 +407,33 @@ export function WithJusticeInvolvedPersonStore<
           if (!client[field] || !isHydrated(client[field])) {
             throw new Error(
               `Failed to populate ${field} for client ${client.externalId} of reviewer ${reviewerId}`,
+            );
+          }
+        }
+      }
+    }
+
+    /**
+     * If workflows are enabled, this method will throw an error if the historical clients
+     * are not populated for the reviewer.
+     * A missing `reviewerId` is not an error on its own (e.g. no reviewer applies to this presenter) and is a no-op.
+     * @protected
+     * @param reviewerId
+     */
+    protected expectHistoricalCaseloadPopulatedForReviewer(
+      reviewerId: string | undefined,
+    ) {
+      if (!this.isWorkflowsEnabled) return;
+
+      if (!reviewerId) return;
+
+      const clients = this.findHistoricalClientsForReviewer(reviewerId);
+
+      for (const client of clients) {
+        for (const field of this.personFieldsToHydrate) {
+          if (!client[field] || !isHydrated(client[field])) {
+            throw new Error(
+              `Failed to populate ${field} for historical client ${client.externalId} of reviewer ${reviewerId}`,
             );
           }
         }

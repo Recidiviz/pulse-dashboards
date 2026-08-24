@@ -67,6 +67,7 @@ const ManagedComponent: React.FC<{
     labels,
     supervisorPseudoId,
     isInsightsSupervisorReviewTableEnabled,
+    showPreviouslyReviewedOpportunities,
   } = presenter;
 
   // The hydrator only populates the reviewer caseload once, on the presenter's
@@ -74,6 +75,9 @@ const ManagedComponent: React.FC<{
   useEffect(() => {
     if (isHydrated(presenter) && isInsightsSupervisorReviewTableEnabled) {
       presenter.populateCaseloadForCurrentReviewer();
+      if (showPreviouslyReviewedOpportunities) {
+        presenter.populateHistoricalCaseloadForCurrentReviewer();
+      }
     }
   });
 

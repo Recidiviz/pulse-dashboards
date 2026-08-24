@@ -92,6 +92,7 @@ export class SupervisionSupervisorOpportunityPresenter extends SupervisionSuperv
         ]);
         await this.populateCaseload();
         await this.populateCaseloadForCurrentReviewer();
+        await this.populateHistoricalCaseloadForCurrentReviewer();
       },
       expectPopulated: [
         this.expectSupervisorPopulated,

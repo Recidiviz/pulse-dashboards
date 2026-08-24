@@ -172,6 +172,7 @@ export type FeatureVariant =
   | "insightsSupervisorOpportunityNotifications"
   | "supervisorHomepageReviewTable"
   | "logInToOwnSupervisorPage"
+  | "showPreviouslyReviewedOpportunities"
 
   // SENTENCING
   | "offenseOverrideControls"
@@ -307,6 +308,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   insightsSupervisorOpportunityNotifications: {},
   supervisorHomepageReviewTable: {},
   logInToOwnSupervisorPage: {},
+  showPreviouslyReviewedOpportunities: {},
   sentenceProgressV2: {},
   hideWorkflowsOpportunities: {},
   hideWorkflowsResidentsPage: {},
@@ -324,6 +326,9 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         supervisionUnrestrictedSearch: {},
         supervisorHomepageReviewCard: {
           activeTenants: ["US_AZ", "US_IA", "US_MI", "US_TX"],
+        },
+        showPreviouslyReviewedOpportunities: {
+          activeTenants: ["US_TX"],
         },
         supervisorHomepageReviewTable: { activeTenants: ["US_TX"] },
         supervisorHomepageWorkflows: {},
@@ -429,6 +434,9 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
           activeTenants: ["US_AZ", "US_IA", "US_MI", "US_TX"],
         },
         supervisorHomepageReviewTable: { activeTenants: ["US_TX"] },
+        showPreviouslyReviewedOpportunities: {
+          activeTenants: ["US_TX"],
+        },
       };
 
 export type LanternMethodologyByTenant = {
