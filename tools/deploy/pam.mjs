@@ -65,14 +65,27 @@ export async function requestPamDeployGrant(
 ) {
   const label = `PAM deploy-app grant on ${projectId}`;
 
-  // 1. Is the entitlement reachable here? If not, skip quietly.
-  const describe =
-    await $`gcloud pam entitlements describe ${ENTITLEMENT_ID} --location=${LOCATION} --project=${projectId} --format=json`
+  // 1. Is the entitlement reachable here? Ask from the REQUESTER's view
+  // (privilegedaccessmanager.entitlements.search) rather than `entitlements
+  // describe` (privilegedaccessmanager.entitlements.get). Eligible principals
+  // implicitly hold entitlements.search, grants.create and grants.list, but NOT
+  // entitlements.get -- that comes only from an admin role or from primitive
+  // roles/editor. So a describe-based gate passes only for callers who already
+  // hold standing project power, and silently skips JIT elevation for exactly the
+  // least-privileged deployers this helper exists to serve. Same bug, same fix as
+  // recidiviz-data#98130.
+  const searched =
+    await $`gcloud pam entitlements search --caller-access-type=grant-requester --location=${LOCATION} --project=${projectId} --format=json`
       .nothrow()
       .quiet();
-  if (describe.exitCode !== 0) {
+  const isEligible =
+    searched.exitCode === 0 &&
+    (parseJson(searched.stdout) ?? []).some((entitlement) =>
+      entitlement?.name?.endsWith(`/entitlements/${ENTITLEMENT_ID}`),
+    );
+  if (!isEligible) {
     console.warn(
-      `⚠️  ${label}: entitlement not found or PAM unreachable -- proceeding without elevation.`,
+      `⚠️  ${label}: not eligible, or PAM unreachable -- proceeding without elevation.\n    (Confirm you are in s-pam-deploy-app@.)`,
     );
     return;
   }
