@@ -78,10 +78,10 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
             </Typography>
           </ImageBackground>
           <View>
-            <Typography className="text-base font-semibold text-primary">
+            <Typography variant="button-l">
               {name ?? "User name not found"}
             </Typography>
-            <Typography className="text-sm text-secondary">
+            <Typography variant="body-s-regular">
               {email ?? "User email not found"}
             </Typography>
           </View>
@@ -116,7 +116,7 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
               onPress={() => navigation.navigate("StateSelection")}
             />
             {currentStateName && (
-              <Typography className="px-4 text-xs text-secondary">
+              <Typography variant="caption-s-regular" className="px-4">
                 Current state: {currentStateName}
               </Typography>
             )}

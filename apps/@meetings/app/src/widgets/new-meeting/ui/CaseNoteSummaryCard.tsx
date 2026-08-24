@@ -42,7 +42,9 @@ export function CaseNoteSummaryCard({ summaries, person, onPress }: Props) {
           <Typography variant="body-m-medium">Client context</Typography>
           <View className="flex-row items-center gap-1">
             <SparklesIcon className="size-4 text-brand" />
-            <Typography className="text-sm text-brand">AI generated</Typography>
+            <Typography variant="body-s-regular" className="!text-brand">
+              AI generated
+            </Typography>
           </View>
         </View>
         <View className="flex-row gap-2">

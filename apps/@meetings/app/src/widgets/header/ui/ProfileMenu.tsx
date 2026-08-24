@@ -79,7 +79,7 @@ export const ProfileMenu = () => {
             className="size-8 items-center justify-center overflow-hidden rounded-full"
             imageClassName="!size-8"
           >
-            <Typography className="text-base text-on-brand">
+            <Typography variant="body-m-regular" className="!text-on-brand">
               {name ? getInitials(name) : "SS"}
             </Typography>
           </ImageBackground>
@@ -113,7 +113,10 @@ export const ProfileMenu = () => {
                   <Typography className="text-base font-semibold leading-5 text-primary">
                     {name ?? "Test User"}
                   </Typography>
-                  <Typography className="text-base font-normal text-secondary">
+                  <Typography
+                    variant="body-m-regular"
+                    className="text-secondary"
+                  >
                     {email ?? "testuser@example.com"}
                   </Typography>
                 </View>

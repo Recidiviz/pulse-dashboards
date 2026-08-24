@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import clsx from "clsx";
 import { View } from "react-native";
 
 import { Typography } from "./Typography";
@@ -79,7 +78,10 @@ export const TableHeadCell = ({
       style={{ height: TABLE_HEAD_CELL_HEIGHT }}
     >
       {typeof children === "string" ? (
-        <Typography className="flex w-full flex-row gap-1 text-left text-sm font-medium text-secondary">
+        <Typography
+          variant="body-s-medium"
+          className="flex w-full flex-row gap-1 text-left text-secondary"
+        >
           {children}
         </Typography>
       ) : (
@@ -131,9 +133,7 @@ export const TableCell = ({
       <View className="h-full justify-center border-t border-subtle p-0 group-hover:border-transparent">
         <View className="h-full justify-center px-1 group-hover:bg-secondary">
           {typeof children === "string" ? (
-            <Typography
-              className={clsx("text-base text-primary", textClassName)}
-            >
+            <Typography variant="body-m-regular" className={textClassName}>
               {children}
             </Typography>
           ) : (

@@ -103,7 +103,7 @@ export function PersonsHeaderContent({
           <Typography className="font-libre-baskerville text-3xl font-semibold text-primary">
             {startCase(personType)}s
           </Typography>
-          <Typography className="my-2 text-sm font-normal text-secondary">
+          <Typography variant="body-s-regular" className="my-2">
             {description}
           </Typography>
         </View>
@@ -124,7 +124,7 @@ export function PersonsHeaderContent({
       </View>
       <View className="z-10 mb-3 flex-row items-center justify-between px-4 md:my-0 md:px-0">
         <View className="flex-row items-center gap-x-2">
-          <Typography className="text-sm leading-4 text-secondary">
+          <Typography variant="body-s-regular" className="leading-4">
             {personsCountString}
           </Typography>
           {isFetching && <ActivityIndicator size="small" />}

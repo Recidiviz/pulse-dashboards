@@ -21,12 +21,13 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import { format } from "date-fns";
 import { ComponentProps, useCallback, useEffect, useState } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 import CalendarIcon from "react-native-heroicons/solid/CalendarIcon";
 import ClockIcon from "react-native-heroicons/solid/ClockIcon";
 
 import NotesSvg from "~@meetings/app/shared/assets/icons/notes.svg";
+import { Button } from "~@meetings/app/shared/ui/Button";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import { useAudioUploadStore } from "../model/store";
@@ -126,22 +127,20 @@ export function AudioUploadSheet({
         <BottomSheetView>
           <View className="p-6 pb-10">
             <View className="mb-1 flex-row items-center justify-between">
-              <Typography className="text-xl font-semibold text-primary">
-                Upload audio
-              </Typography>
-              <TouchableOpacity
+              <Typography variant="heading-4">Upload audio</Typography>
+              <Button
+                variant="secondary"
+                shape="circle"
+                icon={{ icon: XIcon }}
                 onPress={onCancel}
-                className="rounded-full bg-secondary p-3"
-              >
-                <XIcon className="size-5 stroke-tertiary" />
-              </TouchableOpacity>
+              />
             </View>
 
-            <Typography className="text-sm text-secondary">
+            <Typography variant="body-s-regular">
               Use an existing audio file to generate a meeting
             </Typography>
 
-            <Typography className="mt-5 text-sm text-primary">
+            <Typography variant="body-s-regular" className="mt-5 !text-primary">
               Date and time of the meeting recording
             </Typography>
             <View className="mt-4 flex-row gap-3">
@@ -183,7 +182,7 @@ export function AudioUploadSheet({
             )}
 
             {error && (
-              <Typography className="mt-3 text-sm text-secondary">
+              <Typography variant="body-s-regular" className="mt-3">
                 {error}
               </Typography>
             )}
@@ -192,33 +191,31 @@ export function AudioUploadSheet({
               <View className="mt-4 flex w-full flex-row items-center gap-2">
                 <NotesSvg className="!size-6 stroke-secondary" />
                 <View className="flex flex-col">
-                  <Typography className="text-base font-medium text-primary">
+                  <Typography variant="body-m-medium">
                     Notes from this meeting (optional)
                   </Typography>
-                  <Typography className="text-xs font-normal text-secondary">
+                  <Typography variant="caption-s-regular">
                     Add any notes you took during the meeting
                   </Typography>
                 </View>
-                <TouchableOpacity
+                <Button
+                  variant="secondary"
+                  className="ml-auto px-3 py-2"
                   onPress={() => setIsNotesSheetOpen(true)}
-                  className="ml-auto rounded-full bg-secondary px-3 py-2"
                 >
-                  <Typography className="text-sm leading-4 text-primary">
-                    Add
-                  </Typography>
-                </TouchableOpacity>
+                  Add
+                </Button>
               </View>
             )}
 
-            <TouchableOpacity
-              className="mt-6 items-center rounded-full bg-brand py-4 disabled:bg-disabled aria-disabled:bg-disabled"
+            <Button
+              variant="primary"
+              className="mt-6 py-4 disabled:bg-disabled aria-disabled:bg-disabled"
               onPress={handleConfirm}
               disabled={!canConfirm}
             >
-              <Typography className="text-base font-semibold text-on-brand">
-                Confirm
-              </Typography>
-            </TouchableOpacity>
+              Confirm
+            </Button>
           </View>
         </BottomSheetView>
       </BottomSheet>

@@ -73,18 +73,14 @@ const OutputVote = ({ meetingDetails, tab }: OutputVoteProps) => {
   return (
     <>
       <View className="flex-row items-center justify-between pt-2">
-        <Typography className="text-base text-primary">
-          Was this helpful?
-        </Typography>
+        <Typography variant="body-m-regular">Was this helpful?</Typography>
         {votedDown ? (
           <Pressable
             accessibilityLabel="Give feedback"
             onPress={() => setIsMessageModalVisible(true)}
             className="items-center justify-center rounded-full bg-secondary px-5 py-2.5"
           >
-            <Typography className="text-sm font-medium text-primary">
-              Give feedback
-            </Typography>
+            <Typography variant="body-s-medium">Give feedback</Typography>
           </Pressable>
         ) : (
           <View className="flex-row gap-2">

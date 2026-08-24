@@ -53,7 +53,7 @@ export const TablePagination = ({
           className={`size-3.5 stroke-[4px] ${page === 1 ? "stroke-disabled" : "stroke-brand"}`}
         />
       </TouchableOpacity>
-      <Typography className="text-sm font-medium text-brand">
+      <Typography variant="body-s-medium" className="!text-brand">
         Showing {(page - 1) * pageSize + 1}-
         {Math.min(page * pageSize, tableItemsLength)} of {tableItemsLength}
       </Typography>

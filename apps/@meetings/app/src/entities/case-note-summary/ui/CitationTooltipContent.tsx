@@ -37,13 +37,18 @@ export function CitationTooltipContent({ citation }: Props) {
           {quotes.map((quote, i) => (
             <Fragment key={`${i}-${quote}`}>
               {i > 0 && <View className="h-px bg-on-strong-secondary/30" />}
-              <Typography className="text-sm text-on-brand">{quote}</Typography>
+              <Typography variant="body-s-regular" className="!text-on-brand">
+                {quote}
+              </Typography>
             </Fragment>
           ))}
         </View>
       </ScrollView>
       {lastVerifiedDate && (
-        <Typography className="text-sm text-on-strong-secondary">
+        <Typography
+          variant="body-s-regular"
+          className="!text-on-strong-secondary"
+        >
           {format(lastVerifiedDate, "MMMM d, yyyy")}
         </Typography>
       )}

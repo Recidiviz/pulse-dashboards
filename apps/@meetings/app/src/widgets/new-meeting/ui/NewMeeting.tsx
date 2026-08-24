@@ -114,7 +114,7 @@ export const NewMeeting = ({
         {header({ onGoBack: handleGoBack })}
         <View className="rounded-b-3xl bg-primary">
           <View className="flex flex-col gap-1 p-4 md:px-0 md:pt-0">
-            <Typography className="text-base text-primary">
+            <Typography variant="body-m-regular">
               {person.fullName.toUpperCase()}
             </Typography>
             <View className="flex flex-row items-center justify-between">
@@ -126,7 +126,7 @@ export const NewMeeting = ({
                 typeCategory={meetingTypeCategory}
               />
             </View>
-            <Typography className="text-base text-secondary">
+            <Typography variant="body-m-regular" className="text-secondary">
               ID: {person.displayPersonExternalId} • {person.primaryMetadata}
             </Typography>
           </View>

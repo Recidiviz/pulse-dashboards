@@ -17,17 +17,12 @@
 
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useNavigation } from "@react-navigation/native";
-import {
-  Image,
-  Platform,
-  ScrollView,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, Platform, ScrollView, View } from "react-native";
 
 import { useGetUser, useUserContext } from "~@meetings/app/entities/user";
 import WordmarkSvg from "~@meetings/app/shared/assets/icons/wordmark.svg";
 import { RootStackParamList } from "~@meetings/app/shared/config";
+import { Button } from "~@meetings/app/shared/ui/Button";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import ProTip4LeftImage from "../assets/pro-tip-4-left.png";
@@ -73,10 +68,13 @@ export function ProTip4() {
           <View className="w-full flex-1 overflow-hidden p-5">
             <View className="mt-auto flex flex-row justify-between gap-4 overflow-auto">
               <View className="flex flex-col">
-                <Typography className="mb-1 text-[18px] font-semibold leading-[26px] text-attention">
+                <Typography
+                  variant="heading-5"
+                  className="mb-1 !text-attention"
+                >
                   Instead of
                 </Typography>
-                <Typography className="mb-3 text-sm font-normal text-secondary">
+                <Typography variant="body-s-regular" className="mb-3">
                   silently taking a piece of paper
                 </Typography>
                 <Image
@@ -85,10 +83,13 @@ export function ProTip4() {
                 />
               </View>
               <View className="flex flex-col">
-                <Typography className="mb-1 text-[18px] font-semibold leading-[26px] text-brand">
+                <Typography variant="heading-5" className="mb-1 !text-brand">
                   Try this
                 </Typography>
-                <Typography className="mb-3 text-sm font-normal text-transparent">
+                <Typography
+                  variant="body-s-regular"
+                  className="mb-3 text-transparent"
+                >
                   -
                 </Typography>
                 <Image
@@ -116,10 +117,10 @@ export function ProTip4() {
             }}
           >
             <View className="flex w-[261px] flex-col">
-              <Typography className="mb-1 text-[18px] font-semibold leading-[26px] text-attention">
+              <Typography variant="heading-5" className="mb-1 !text-attention">
                 Instead of
               </Typography>
-              <Typography className="mb-3 text-sm font-normal text-secondary">
+              <Typography variant="body-s-regular" className="mb-3">
                 silently taking a piece of paper
               </Typography>
               <Image
@@ -129,10 +130,13 @@ export function ProTip4() {
               />
             </View>
             <View className="flex w-[261px] flex-col">
-              <Typography className="mb-1 text-[18px] font-semibold leading-[26px] text-brand">
+              <Typography variant="heading-5" className="mb-1 !text-brand">
                 Try this
               </Typography>
-              <Typography className="mb-3 text-sm font-normal text-transparent">
+              <Typography
+                variant="body-s-regular"
+                className="mb-3 text-transparent"
+              >
                 -
               </Typography>
               <Image
@@ -145,28 +149,30 @@ export function ProTip4() {
         )}
       </View>
       <View className="flex flex-1 flex-col justify-center">
-        <Typography className="mb-3 text-base font-medium">
+        <Typography variant="body-m-medium" className="mb-3">
           PRO Tip 4
         </Typography>
-        <Typography className="mb-2 max-w-[261px] text-xl font-semibold">
+        <Typography variant="heading-4" className="mb-2 max-w-[261px]">
           Narrate the unseen.
         </Typography>
         <DescriptionContainer>
-          <Typography className="mb-3 max-w-[480px] text-base font-normal text-secondary">
+          <Typography
+            variant="body-m-regular"
+            className="mb-3 max-w-[480px] text-secondary"
+          >
             Recidiviz Meetings has great ears, but it doesn't have eyes. If a
             client hands you a document, completes a drug screen, or shows you
             something physical, simply state what is happening out loud so it
             makes it into your case notes.
           </Typography>
         </DescriptionContainer>
-        <TouchableOpacity
+        <Button
+          variant="primary"
           onPress={handleFinishSetup}
-          className="mt-auto w-full rounded-full bg-brand px-5 py-3 md:mt-0 md:w-fit"
+          className="mt-auto w-full md:mt-0 md:w-fit"
         >
-          <Typography className="text-center text-base font-semibold leading-[18px] text-on-brand">
-            Finish Setup
-          </Typography>
-        </TouchableOpacity>
+          Finish Setup
+        </Button>
       </View>
     </View>
   );

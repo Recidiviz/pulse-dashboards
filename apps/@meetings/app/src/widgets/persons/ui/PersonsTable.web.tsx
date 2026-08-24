@@ -170,7 +170,7 @@ export function PersonsTable({
   return (
     <>
       {sectionTitle && (
-        <Typography className="mt-6 text-base font-medium text-secondary">
+        <Typography variant="body-m-medium" className="mt-6 text-secondary">
           {sectionTitle}
         </Typography>
       )}
@@ -183,7 +183,10 @@ export function PersonsTable({
                   onPress={() => handleSort(SortOption.Name)}
                   className="flex size-full flex-row items-center"
                 >
-                  <Typography className="text-left text-sm font-medium text-secondary group-hover:text-brand">
+                  <Typography
+                    variant="body-s-medium"
+                    className="text-left text-secondary group-hover:text-brand"
+                  >
                     NAME{" "}
                   </Typography>
                   <View className="flex flex-col items-center justify-center gap-px p-0.5">
@@ -209,7 +212,10 @@ export function PersonsTable({
                   onPress={() => handleSort(SortOption.Id)}
                   className="flex size-full flex-row items-center"
                 >
-                  <Typography className="text-left text-sm font-medium text-secondary group-hover:text-brand">
+                  <Typography
+                    variant="body-s-medium"
+                    className="text-left text-secondary group-hover:text-brand"
+                  >
                     ID{" "}
                   </Typography>
                   <View className="flex flex-col items-center justify-center gap-px p-0.5">
@@ -241,7 +247,10 @@ export function PersonsTable({
                   }
                   className="flex size-full flex-row items-center"
                 >
-                  <Typography className="text-left text-sm font-medium text-secondary group-hover:text-brand">
+                  <Typography
+                    variant="body-s-medium"
+                    className="text-left text-secondary group-hover:text-brand"
+                  >
                     {type === "client" ? "SUPERVISION" : "FACILITY"}{" "}
                   </Typography>
                   <View className="flex flex-col items-center justify-center gap-px p-0.5">
@@ -273,7 +282,10 @@ export function PersonsTable({
                   onPress={() => handleSort(SortOption.LastMeeting)}
                   className="flex size-full flex-row items-center"
                 >
-                  <Typography className="text-left text-sm font-medium text-secondary group-hover:text-brand">
+                  <Typography
+                    variant="body-s-medium"
+                    className="text-left text-secondary group-hover:text-brand"
+                  >
                     LAST MEETING{" "}
                   </Typography>
                   <View className="flex flex-col items-center justify-center gap-px p-0.5">
@@ -321,7 +333,10 @@ export function PersonsTable({
                         className="size-11 items-center justify-center overflow-hidden rounded-full"
                         imageClassName="!size-11"
                       >
-                        <Typography className="text-base font-medium text-on-brand">
+                        <Typography
+                          variant="body-m-medium"
+                          className="!text-on-brand"
+                        >
                           {getInitials(person.fullName)}
                         </Typography>
                       </ImageBackground>
@@ -366,7 +381,10 @@ export function PersonsTable({
                         {!isPersonInActiveMeeting &&
                           !person.meetingDetails.validationErrorType && (
                             <View className="flex flex-col">
-                              <Typography className="text-base font-medium text-secondary">
+                              <Typography
+                                variant="body-m-medium"
+                                className="text-secondary"
+                              >
                                 {upperFirst(person.lastMeeting)}
                                 {person.meetingDetails.staffEmail && " by"}
                               </Typography>

@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TouchableOpacity } from "@gorhom/bottom-sheet";
 import clsx from "clsx";
 import { useWindowDimensions, View } from "react-native";
 import { PlusIcon } from "react-native-heroicons/outline";
@@ -23,6 +22,7 @@ import { PlusIcon } from "react-native-heroicons/outline";
 import { useRecording } from "~@meetings/app/features/recording";
 import { Person } from "~@meetings/app/shared/api";
 import { usePlatform } from "~@meetings/app/shared/lib/platform";
+import { Button } from "~@meetings/app/shared/ui/Button";
 import Dropdown from "~@meetings/app/shared/ui/Dropdown";
 import SearchBar from "~@meetings/app/shared/ui/SearchBar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
@@ -75,7 +75,7 @@ const MeetingsHeaderContent = ({
           <Typography className="font-libre-baskerville text-3xl font-semibold text-primary">
             {person.fullName}
           </Typography>
-          <Typography className="text-base text-secondary">
+          <Typography variant="body-m-regular" className="text-secondary">
             ID: {person.displayPersonExternalId} • {person.primaryMetadata}
           </Typography>
         </View>
@@ -88,21 +88,20 @@ const MeetingsHeaderContent = ({
       >
         {showCountAndCreate && (
           <View className="flex flex-row items-center justify-between">
-            <Typography className="text-xl font-semibold text-primary">
+            <Typography variant="heading-4">
               Meetings{" "}
-              <Typography className="text-xl font-semibold text-tertiary">
+              <Typography variant="heading-4" className="text-tertiary">
                 ({meetingsCount})
               </Typography>
             </Typography>
             {recordingState === "idle" && (
-              <TouchableOpacity onPress={onPressNewMeeting}>
-                <View className="flex flex-row items-center gap-1 rounded-full bg-brand px-4 py-2">
-                  <PlusIcon className="!size-4 stroke-on-brand stroke-[3px]" />
-                  <Typography className="text-sm font-semibold leading-4 text-on-brand">
-                    Meeting
-                  </Typography>
-                </View>
-              </TouchableOpacity>
+              <Button
+                variant="primary"
+                icon={{ icon: PlusIcon, className: "!size-4 stroke-[3px]" }}
+                onPress={onPressNewMeeting}
+              >
+                Meeting
+              </Button>
             )}
           </View>
         )}

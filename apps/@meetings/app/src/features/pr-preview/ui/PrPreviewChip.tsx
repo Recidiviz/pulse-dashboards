@@ -38,7 +38,7 @@ export const PrPreviewChip = ({
     disabled={isExiting}
     className="flex-row items-center gap-1 rounded-full bg-attention px-2.5 py-1"
   >
-    <Typography className="text-xs font-medium text-on-attention">
+    <Typography variant="caption-s-medium" className="!text-on-attention">
       {channel}
     </Typography>
     {isExiting ? (

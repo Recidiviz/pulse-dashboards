@@ -46,7 +46,10 @@ export const AppUpdateModal = () => {
           {title}
         </Typography>
 
-        <Typography className="mb-6 text-center text-base text-gray-600">
+        <Typography
+          variant="body-m-regular"
+          className="mb-6 text-center !text-gray-600"
+        >
           {message}
         </Typography>
 

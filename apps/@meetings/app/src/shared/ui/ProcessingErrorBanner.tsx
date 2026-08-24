@@ -34,10 +34,10 @@ const ProcessingErrorBanner = ({ validationErrorType, className }: Props) => {
         <ExclamationCircleIcon className="size-5 fill-attention" />
       </View>
       <View className="flex-1">
-        <Typography className="text-sm font-medium text-attention">
+        <Typography variant="body-s-medium" className="!text-attention">
           Processing Failed
         </Typography>
-        <Typography className="text-xs text-secondary">
+        <Typography variant="caption-s-regular">
           {validationErrorType === "Length"
             ? "Less than 50 words identified, too short to generate results"
             : "Contact our support team for assistance"}

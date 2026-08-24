@@ -24,6 +24,7 @@ import ClockIcon from "react-native-heroicons/solid/ClockIcon";
 
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
 import NotesSvg from "~@meetings/app/shared/assets/icons/notes.svg";
+import { Button } from "~@meetings/app/shared/ui/Button";
 import Modal from "~@meetings/app/shared/ui/Modal";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
@@ -108,7 +109,10 @@ export function AudioUploadModal({
     <Modal visible transparent onClickOutside={onCancel}>
       <View className="w-[520px] p-6">
         <View className="mb-1 flex-row items-center justify-between">
-          <Typography className="flex flex-row items-center gap-2 text-xl font-semibold text-primary">
+          <Typography
+            variant="heading-4"
+            className="flex flex-row items-center gap-2"
+          >
             Upload audio{" "}
             <MeetingTypeTag
               type={meetingType}
@@ -120,11 +124,11 @@ export function AudioUploadModal({
           </TouchableOpacity>
         </View>
 
-        <Typography className="mb-5 text-sm text-secondary">
+        <Typography variant="body-s-regular" className="mb-5">
           Use an existing audio file to generate a meeting
         </Typography>
 
-        <Typography className="mb-2 text-sm font-medium text-primary">
+        <Typography variant="body-s-medium" className="mb-2">
           Date and time of the meeting recording
         </Typography>
         <View className="mb-4 flex-row gap-3">
@@ -169,21 +173,20 @@ export function AudioUploadModal({
           <View className="mt-5 flex w-full flex-row items-center gap-3">
             <NotesSvg className="size-6 text-secondary" />
             <View className="flex flex-col">
-              <Typography className="text-base font-medium text-primary">
+              <Typography variant="body-m-medium">
                 Notes from this meeting (optional)
               </Typography>
-              <Typography className="text-sm font-normal text-secondary">
+              <Typography variant="body-s-regular">
                 Add any notes you took during the meeting
               </Typography>
             </View>
-            <TouchableOpacity
-              className="ml-auto rounded-full bg-secondary px-3 py-2"
+            <Button
+              variant="secondary"
+              className="ml-auto px-3 py-2"
               onPress={() => setIsNotesModalOpen(true)}
             >
-              <Typography className="text-sm leading-4 text-primary">
-                Add
-              </Typography>
-            </TouchableOpacity>
+              Add
+            </Button>
           </View>
         )}
 
@@ -199,7 +202,7 @@ export function AudioUploadModal({
         )}
 
         {error && (
-          <Typography className="mt-3 text-sm text-secondary">
+          <Typography variant="body-s-regular" className="mt-3">
             {error}
           </Typography>
         )}
@@ -210,22 +213,17 @@ export function AudioUploadModal({
             onPress={onCancel}
             disabled={isUploading || isConfirming}
           >
-            <Typography className="text-sm font-medium text-primary">
-              Close
-            </Typography>
+            <Typography variant="body-s-medium">Close</Typography>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            className="rounded-full bg-brand px-6 py-3 text-on-brand aria-disabled:bg-disabled"
+          <Button
+            variant="primary"
+            className="px-6 py-3 aria-disabled:bg-disabled"
             onPress={handleConfirm}
             disabled={!canConfirm}
           >
-            <Typography
-              className={`text-sm font-medium ${canConfirm ? "text-on-brand" : "text-on-disabled"}`}
-            >
-              Confirm
-            </Typography>
-          </TouchableOpacity>
+            Confirm
+          </Button>
         </View>
       </View>
       {isNotesModalOpen && (

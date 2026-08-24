@@ -15,10 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Image, TouchableOpacity, View } from "react-native";
+import { Image, View } from "react-native";
 
 import WordmarkSvg from "~@meetings/app/shared/assets/icons/wordmark.svg";
 import { useIsMobileWidth } from "~@meetings/app/shared/lib/platform";
+import { Button } from "~@meetings/app/shared/ui/Button";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import ProTip2Image from "../assets/pro-tip-2.png";
@@ -56,28 +57,30 @@ export function ProTip2() {
         </View>
       </View>
       <View className="flex flex-1 flex-col justify-center">
-        <Typography className="mb-3 text-base font-medium">
+        <Typography variant="body-m-medium" className="mb-3">
           PRO Tip 2
         </Typography>
-        <Typography className="mb-2 max-w-[261px] text-xl font-semibold">
+        <Typography variant="heading-4" className="mb-2 max-w-[261px]">
           The "Mirror Technique".
         </Typography>
         <DescriptionContainer>
-          <Typography className="mb-5 max-w-[480px] text-base font-normal text-secondary">
+          <Typography
+            variant="body-m-regular"
+            className="mb-5 max-w-[480px] text-secondary"
+          >
             Sometimes clients are quiet or vague. Instead of constantly asking
             them to speak up, simply "mirror" or repeat back their important
             answers. This is great for active listening, and it guarantees the
             AI catches the exact facts.
           </Typography>
         </DescriptionContainer>
-        <TouchableOpacity
-          className="mt-auto w-full rounded-full bg-brand  px-5 py-3 md:mt-0 md:w-fit"
+        <Button
+          variant="primary"
+          className="mt-auto w-full md:mt-0 md:w-fit"
           onPress={() => setNextStep(OnboardingStep.ProTip3)}
         >
-          <Typography className="text-center text-base font-semibold leading-[18px] text-on-brand">
-            Next Tip
-          </Typography>
-        </TouchableOpacity>
+          Next Tip
+        </Button>
       </View>
     </View>
   );

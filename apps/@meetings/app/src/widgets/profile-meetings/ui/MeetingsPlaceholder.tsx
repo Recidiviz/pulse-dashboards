@@ -15,10 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 import { PlusIcon } from "react-native-heroicons/outline";
 import SearchIcon from "react-native-heroicons/solid/SearchIcon";
 
+import { Button } from "~@meetings/app/shared/ui/Button";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 type Props = {
@@ -47,20 +48,19 @@ const MeetingsPlaceholder = ({
           ? emptySearchPlaceholderTitle
           : emptyListPlaceholderTitle}
       </Typography>
-      <Typography className="mb-6 text-center text-sm font-normal tracking-[-0.28px] text-secondary">
+      <Typography variant="body-s-regular" className="mb-6 text-center">
         {isSearchResultEmpty
           ? emptySearchPlaceholderSubtitle
           : emptyListPlaceholderSubtitle}
       </Typography>
       {!isSearchResultEmpty && (
-        <TouchableOpacity onPress={handleCreateMeeting}>
-          <View className="flex flex-row items-center justify-center gap-1 rounded-full bg-brand px-5 py-3">
-            <PlusIcon className="!size-4 stroke-on-brand" />
-            <Typography className="text-base font-semibold leading-[18px] text-on-brand">
-              Meeting
-            </Typography>
-          </View>
-        </TouchableOpacity>
+        <Button
+          variant="primary"
+          icon={{ icon: PlusIcon, className: "!size-4" }}
+          onPress={handleCreateMeeting}
+        >
+          Meeting
+        </Button>
       )}
     </View>
   );

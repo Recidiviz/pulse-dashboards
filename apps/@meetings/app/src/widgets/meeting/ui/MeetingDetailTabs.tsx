@@ -31,7 +31,7 @@ export const BulletListTab = ({ items, outputVote }: Props) => (
     {items?.map((item, index) => (
       <View key={index} className="flex-row gap-2 px-4">
         <Typography className="mt-0.5 text-primary">•</Typography>
-        <Typography className="flex-1 text-base leading-6 tracking-[-0.32px] text-primary">
+        <Typography variant="body-m-regular" className="flex-1 leading-6">
           {item}
         </Typography>
       </View>

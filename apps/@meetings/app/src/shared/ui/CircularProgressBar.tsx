@@ -93,7 +93,7 @@ export function CircularProgressBar({
       </Svg>
       {showText && (
         <View className="absolute items-center justify-center">
-          <Typography className="text-sm font-medium">
+          <Typography variant="body-s-medium">
             {current}/{total}
           </Typography>
         </View>

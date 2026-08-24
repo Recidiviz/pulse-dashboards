@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ActivityIndicator, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import MicrophoneIcon from "react-native-heroicons/solid/MicrophoneIcon";
 import UploadIcon from "react-native-heroicons/solid/UploadIcon";
 
@@ -31,6 +31,7 @@ import { Person } from "~@meetings/app/shared/api";
 import MinimizeSvg from "~@meetings/app/shared/assets/icons/arrows-pointing-in.svg";
 import PlaySvg from "~@meetings/app/shared/assets/icons/play.svg";
 import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
+import { Button } from "~@meetings/app/shared/ui/Button";
 import Dropdown from "~@meetings/app/shared/ui/Dropdown";
 import Modal from "~@meetings/app/shared/ui/Modal";
 import { OfflineIndicator } from "~@meetings/app/shared/ui/OfflineIndicator";
@@ -86,12 +87,10 @@ export function NewMeetingOptionsModal({
       <View className="h-full flex-1 grow md:h-auto">
         <View className="w-full flex-row items-center justify-between border-b border-subtle px-8 pb-3 pt-5">
           <View className="gap-1">
-            <Typography className="text-xl font-semibold text-primary">
-              New Meeting
-            </Typography>
-            <Typography className="text-base font-medium text-primary">
+            <Typography variant="heading-4">New Meeting</Typography>
+            <Typography variant="body-m-medium">
               {person.fullName}{" "}
-              <Typography className="text-xs font-normal text-secondary md:text-base">
+              <Typography variant="caption-s-regular" className="md:text-base">
                 {person.primaryMetadata} • ID: {person.displayPersonExternalId}
               </Typography>
             </Typography>
@@ -116,12 +115,18 @@ export function NewMeetingOptionsModal({
           <Typography className="text-center font-libre-baskerville text-3xl font-bold text-primary">
             {isOnline ? "New Meeting Recording" : "Offline Meeting Recording"}
           </Typography>
-          <Typography className="mb-2 max-w-[530px] text-center text-sm text-secondary">
+          <Typography
+            variant="body-s-regular"
+            className="mb-2 max-w-[530px] text-center"
+          >
             {isOnline
               ? "This meeting will be recorded and transcribed for note-taking. Be sure to confirm that everyone present is aware and has agreed to recording."
               : "Your meeting is being recorded locally and will upload automatically upon reconnection. Be sure to confirm that everyone present is aware and has agreed to recording."}
           </Typography>
-          <Typography className="mb-2 max-w-[530px] text-center text-sm italic text-secondary">
+          <Typography
+            variant="body-s-regular"
+            className="mb-2 max-w-[530px] text-center italic"
+          >
             Please note: Summaries and other notes are generated for meetings
             containing 50 words or more.
           </Typography>
@@ -149,32 +154,24 @@ export function NewMeetingOptionsModal({
               errorMessage={meetingTypeCategoryError}
             />
           )}
-          <TouchableOpacity
-            className="h-14 w-full max-w-[240px] flex-row items-center justify-center gap-2 rounded-full bg-brand aria-disabled:opacity-40"
+          <Button
+            variant="primary"
+            className="h-14 w-full max-w-[240px]"
+            icon={{ icon: PlaySvg, className: "size-4" }}
+            loading={isMeetingCreating}
             onPress={onStartMeeting}
-            disabled={isMeetingCreating}
           >
-            {isMeetingCreating ? (
-              <ActivityIndicator size="small" color="white" />
-            ) : (
-              <>
-                <PlaySvg className="size-4 fill-on-brand" />
-                <Typography className="text-base font-semibold text-on-brand">
-                  Start Meeting
-                </Typography>
-              </>
-            )}
-          </TouchableOpacity>
+            Start Meeting
+          </Button>
 
-          <TouchableOpacity
-            className="h-14 w-full max-w-[240px] flex-row items-center justify-center gap-2 rounded-full bg-secondary"
+          <Button
+            variant="secondary"
+            className="h-14 w-full max-w-[240px]"
+            icon={{ icon: UploadIcon, className: "size-5" }}
             onPress={onUploadFile}
           >
-            <UploadIcon className="size-5 fill-tertiary" />
-            <Typography className="text-base font-medium text-primary">
-              Upload audio
-            </Typography>
-          </TouchableOpacity>
+            Upload audio
+          </Button>
         </View>
       </View>
     </Modal>

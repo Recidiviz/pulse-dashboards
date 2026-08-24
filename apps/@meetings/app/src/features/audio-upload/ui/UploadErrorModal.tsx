@@ -19,6 +19,7 @@ import { TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 import ExclamationCircleIcon from "react-native-heroicons/solid/ExclamationCircleIcon";
 
+import { Button } from "~@meetings/app/shared/ui/Button";
 import Modal from "~@meetings/app/shared/ui/Modal";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
@@ -42,32 +43,36 @@ export function UploadErrorModal({ onClose, onRetry }: Props) {
         </TouchableOpacity>
       </View>
 
-      <Typography className="mb-2 w-full text-center text-xl font-semibold text-primary sm:text-left">
+      <Typography
+        variant="heading-4"
+        className="mb-2 w-full text-center sm:text-left"
+      >
         Upload failed
       </Typography>
 
-      <Typography className="text-gray/85 mb-6 w-full text-center text-sm sm:text-left">
+      <Typography
+        variant="body-s-regular"
+        className="text-gray/85 mb-6 w-full text-center sm:text-left"
+      >
         We couldn't upload your file. Check your connection and try again
       </Typography>
 
       <View className="w-full flex-row items-center justify-end gap-3">
-        <TouchableOpacity
-          className="basis-1/2 rounded-full bg-secondary px-6 py-3 sm:basis-auto"
+        <Button
+          variant="secondary"
+          className="basis-1/2 px-6 py-3 sm:basis-auto"
           onPress={onClose}
         >
-          <Typography className="text-center text-sm font-medium text-primary">
-            Close
-          </Typography>
-        </TouchableOpacity>
+          Close
+        </Button>
 
-        <TouchableOpacity
-          className="basis-1/2 rounded-full bg-brand px-6 py-3 sm:basis-auto"
+        <Button
+          variant="primary"
+          className="basis-1/2 px-6 py-3 sm:basis-auto"
           onPress={onRetry}
         >
-          <Typography className="text-center text-sm font-medium text-on-brand">
-            Retry
-          </Typography>
-        </TouchableOpacity>
+          Retry
+        </Button>
       </View>
     </Modal>
   );

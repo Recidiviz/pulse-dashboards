@@ -62,26 +62,23 @@ export function FileCard({
         </View>
 
         <View className="flex-1 gap-1">
-          <Typography
-            className="text-sm font-medium text-primary"
-            numberOfLines={1}
-          >
+          <Typography variant="body-s-medium" numberOfLines={1}>
             {file.name}
           </Typography>
 
           <View className="flex-row items-center gap-1">
             {isUploading && (
               <View className="flex-row items-center gap-3">
-                <Typography className="text-xs text-secondary">
+                <Typography variant="caption-s-regular">
                   {formatBytes(uploadedBytes)} / {formatBytes(totalBytes)}
                 </Typography>
-                <Typography className="text-xs text-secondary">•</Typography>
+                <Typography variant="caption-s-regular">•</Typography>
                 <View className="flex-row items-center gap-1">
                   <ActivityIndicator
                     size={12}
                     color={theme["colors"]["tertiary"]}
                   />
-                  <Typography className="text-xs text-secondary">
+                  <Typography variant="caption-s-regular">
                     Uploading..
                   </Typography>
                 </View>
@@ -90,13 +87,16 @@ export function FileCard({
 
             {isCompleted && (
               <View className="flex-row items-center gap-3">
-                <Typography className="text-xs text-secondary">
+                <Typography variant="caption-s-regular">
                   {formatBytes(file.size)}
                 </Typography>
-                <Typography className="text-xs text-secondary">•</Typography>
+                <Typography variant="caption-s-regular">•</Typography>
                 <View className="flex-row items-center gap-1">
                   <CheckCircleIcon className="size-4 fill-brand" />
-                  <Typography className="text-xs text-brand">
+                  <Typography
+                    variant="caption-s-regular"
+                    className="!text-brand"
+                  >
                     Uploaded
                   </Typography>
                 </View>
@@ -106,7 +106,10 @@ export function FileCard({
             {isError && (
               <>
                 <ExclamationCircleIcon className="size-4 fill-attention" />
-                <Typography className="text-xs text-attention">
+                <Typography
+                  variant="caption-s-regular"
+                  className="!text-attention"
+                >
                   Upload failed
                 </Typography>
               </>

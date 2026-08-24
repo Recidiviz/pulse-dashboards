@@ -37,7 +37,8 @@ export const DesktopMenuItem = ({
       params={{}}
     >
       <Typography
-        className={`px-1 text-sm font-medium ${isActive ? "text-brand" : "font-normal text-secondary"}`}
+        variant={isActive ? "body-s-medium" : "body-s-regular"}
+        className={`px-1 ${isActive ? "!text-brand" : ""}`}
       >
         {children}
       </Typography>

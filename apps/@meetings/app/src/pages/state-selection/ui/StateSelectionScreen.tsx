@@ -80,7 +80,7 @@ export const StateSelectionScreen = () => {
           <Typography className="mb-2 font-libre-baskerville text-3xl font-bold text-primary">
             Select State
           </Typography>
-          <Typography className="mb-6 text-base text-secondary">
+          <Typography variant="body-m-regular" className="mb-6 text-secondary">
             Choose which state's data you want to view
           </Typography>
 
@@ -98,14 +98,17 @@ export const StateSelectionScreen = () => {
                     <Typography className="text-lg text-primary">
                       {stateCodeOption.name}
                     </Typography>
-                    <Typography className="text-sm text-secondary">
+                    <Typography variant="body-s-regular">
                       {stateCodeOption.stateCode}
                     </Typography>
                   </View>
                   <View className="flex-row items-center gap-x-3">
                     {selectedStateCode === stateCodeOption.stateCode && (
                       <View className="rounded-full bg-brand px-3 py-1">
-                        <Typography className="text-xs text-on-brand">
+                        <Typography
+                          variant="caption-s-regular"
+                          className="!text-on-brand"
+                        >
                           Current
                         </Typography>
                       </View>
@@ -131,7 +134,7 @@ export const StateSelectionScreen = () => {
             ))}
           </View>
 
-          <Typography className="mt-4 text-sm text-secondary">
+          <Typography variant="body-s-regular" className="mt-4">
             Currently viewing data for {agencyConfigs[selectedStateCode]?.name}
           </Typography>
         </View>

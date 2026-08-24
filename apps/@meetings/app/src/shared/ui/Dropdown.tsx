@@ -209,7 +209,10 @@ const Dropdown = ({
                     className="group rounded p-2.5 hover:bg-hover"
                     onPress={() => handleDropdownSelect(opt)}
                   >
-                    <Typography className="whitespace-nowrap text-sm font-medium text-primary group-hover:text-brand">
+                    <Typography
+                      variant="body-s-medium"
+                      className="whitespace-nowrap group-hover:text-brand"
+                    >
                       {opt}
                     </Typography>
                   </TouchableOpacity>
@@ -226,7 +229,10 @@ const Dropdown = ({
                         onPress={handleFreeTextSelect}
                         className="w-fit rounded-full bg-brand px-3 py-2"
                       >
-                        <Typography className="text-sm font-semibold leading-[16px] text-on-brand">
+                        <Typography
+                          variant="button-m"
+                          className="!text-on-brand"
+                        >
                           Continue
                         </Typography>
                       </TouchableOpacity>
@@ -301,7 +307,10 @@ const Dropdown = ({
                           className="h-fit w-full rounded-full bg-brand px-4 py-3 disabled:opacity-40"
                           disabled={freeTextValue.trim().length === 0}
                         >
-                          <Typography className="text-center text-base font-semibold leading-[18px] text-on-brand">
+                          <Typography
+                            variant="button-l"
+                            className="text-center !text-on-brand"
+                          >
                             Continue
                           </Typography>
                         </TouchableOpacity>
@@ -315,7 +324,7 @@ const Dropdown = ({
         )}
       </View>
       {errorMessage && (
-        <Typography className="text-xs font-normal text-attention">
+        <Typography variant="caption-s-regular" className="!text-attention">
           {errorMessage}
         </Typography>
       )}
@@ -339,7 +348,7 @@ const BottomSheetOptionItem = ({
       <View
         className={`flex w-full flex-1 flex-row items-center justify-between border-subtle py-2 ${isLast ? "border-none" : "border-b"}`}
       >
-        <Typography className="text-base font-medium">{option}</Typography>
+        <Typography variant="body-m-medium">{option}</Typography>
         <View
           className={`flex size-6 items-center justify-center rounded-full border border-subtle ${isActive ? "bg-brand" : "bg-secondary"}`}
         >
@@ -388,9 +397,7 @@ function FreeTextInput({
         textAlignVertical="top"
       />
       {value?.length > 0 && (
-        <Typography className="text-xs font-normal text-secondary">
-          {value.length}/20
-        </Typography>
+        <Typography variant="caption-s-regular">{value.length}/20</Typography>
       )}
     </View>
   );

@@ -15,9 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 
 import WordmarkSvg from "~@meetings/app/shared/assets/icons/wordmark.svg";
+import { Button } from "~@meetings/app/shared/ui/Button";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import HowItWorksDesktop from "../assets/how-it-works-desktop.svg";
@@ -39,25 +40,27 @@ export function HowItWorks() {
         </View>
       </View>
       <View className="flex flex-1 flex-col justify-center">
-        <Typography className="mb-2 max-w-[261px] text-xl font-semibold">
+        <Typography variant="heading-4" className="mb-2 max-w-[261px]">
           From conversation to case note.
         </Typography>
         <DescriptionContainer>
-          <Typography className="mb-5 max-w-[480px] text-base font-normal text-secondary">
+          <Typography
+            variant="body-m-regular"
+            className="mb-5 max-w-[480px] text-secondary"
+          >
             Just hit record during your client check-in. When you're done,
             Recidiviz Meetings separates your voice from the client's and drafts
             your required documentation instantly. You always have the final
             review before saving.
           </Typography>
         </DescriptionContainer>
-        <TouchableOpacity
-          className="mt-auto w-full rounded-full bg-brand  px-5 py-3 md:mt-0 md:w-fit"
+        <Button
+          variant="primary"
+          className="mt-auto w-full md:mt-0 md:w-fit"
           onPress={() => setNextStep(OnboardingStep.ScratchpadExplainer)}
         >
-          <Typography className="text-center text-base font-semibold leading-[18px] text-on-brand">
-            Continue
-          </Typography>
-        </TouchableOpacity>
+          Continue
+        </Button>
       </View>
     </View>
   );

@@ -47,11 +47,17 @@ export const ProfileMenuItem = ({
 }: Props) => {
   const children = (
     <>
-      <Typography className="whitespace-nowrap text-base font-medium leading-5 text-secondary transition-all duration-300 group-hover:text-brand">
+      <Typography
+        variant="body-m-medium"
+        className="whitespace-nowrap leading-5 text-secondary transition-all duration-300 group-hover:text-brand"
+      >
         {label}
       </Typography>
       {helperText && (
-        <Typography className="ml-auto whitespace-nowrap text-xs text-tertiary">
+        <Typography
+          variant="caption-s-regular"
+          className="ml-auto whitespace-nowrap text-tertiary"
+        >
           {helperText}
         </Typography>
       )}

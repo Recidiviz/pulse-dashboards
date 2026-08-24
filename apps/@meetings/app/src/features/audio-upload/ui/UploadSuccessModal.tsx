@@ -19,6 +19,7 @@ import { TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 import CheckCircleIcon from "react-native-heroicons/solid/CheckCircleIcon";
 
+import { Button } from "~@meetings/app/shared/ui/Button";
 import Modal from "~@meetings/app/shared/ui/Modal";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
@@ -41,23 +42,25 @@ export function UploadSuccessModal({ onClose }: Props) {
         </TouchableOpacity>
       </View>
 
-      <Typography className="mb-2 w-full text-center text-xl font-semibold text-primary sm:text-left">
+      <Typography
+        variant="heading-4"
+        className="mb-2 w-full text-center sm:text-left"
+      >
         Upload complete
       </Typography>
 
-      <Typography className="mb-6 text-center text-sm text-secondary">
+      <Typography variant="body-s-regular" className="mb-6 text-center">
         Your audio file has been uploaded. Processing will begin shortly
       </Typography>
 
       <View className="w-full items-center sm:items-end">
-        <TouchableOpacity
-          className="w-full rounded-full bg-brand px-6 py-3 sm:w-auto"
+        <Button
+          variant="primary"
+          className="w-full px-6 py-3 sm:w-auto"
           onPress={onClose}
         >
-          <Typography className="text-center text-sm font-medium text-on-brand">
-            Close
-          </Typography>
-        </TouchableOpacity>
+          Close
+        </Button>
       </View>
     </Modal>
   );

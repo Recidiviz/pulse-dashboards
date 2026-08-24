@@ -70,16 +70,16 @@ export function PersonCardItem({
               className="mr-3 !size-11 items-center justify-center overflow-hidden rounded-full"
               imageClassName="!size-11"
             >
-              <Typography className="text-sm font-semibold text-white">
+              <Typography variant="button-m" className="text-white">
                 {getInitials(person.fullName)}
               </Typography>
             </ImageBackground>
             <View className="flex-1">
               <View className="flex flex-col gap-0.5">
-                <Typography className="text-base font-medium leading-5 text-primary">
+                <Typography variant="body-m-medium" className="leading-5">
                   {person.fullName}
                 </Typography>
-                <Typography className="text-sm text-secondary">
+                <Typography variant="body-s-regular">
                   ID: {person.displayPersonExternalId} •{" "}
                   {humanReadableTitleCase(person.primaryMetadata)}
                 </Typography>
@@ -116,10 +116,10 @@ export function PersonCardItem({
             <View className="w-full flex-1 flex-col gap-2.5 rounded-xl bg-secondary px-4 py-2.5">
               <View className="flex w-full flex-row items-center justify-between">
                 <View className="flex flex-col gap-[3px]">
-                  <Typography className="text-sm leading-4 text-secondary">
+                  <Typography variant="body-s-regular" className="leading-4">
                     Last meeting
                   </Typography>
-                  <Typography className="text-base font-medium leading-5 text-primary">
+                  <Typography variant="body-m-medium" className="leading-5">
                     {formatPersonLastMeetingDate(
                       person.meetingDetails.lastCompletedMeetingTime,
                     )}
@@ -128,7 +128,8 @@ export function PersonCardItem({
                 <ChevronRightIcon className="ml-auto !size-6 stroke-tertiary stroke-[2px]" />
               </View>
               <Typography
-                className="flex-1 text-sm font-normal text-secondary"
+                variant="body-s-regular"
+                className="flex-1"
                 numberOfLines={2}
                 ellipsizeMode="tail"
               >

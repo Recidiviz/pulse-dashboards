@@ -86,7 +86,7 @@ export function TooltipText({
             sideOffset={8}
             alignOffset={alignOffset}
           >
-            <Typography className="text-sm font-normal text-on-brand">
+            <Typography variant="body-s-regular" className="!text-on-brand">
               {children}
             </Typography>
           </TooltipPrimitive.Content>

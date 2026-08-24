@@ -29,7 +29,10 @@ export const StatusBanners = () => {
     <>
       {selectedStateCode === "US_DEMO" && (
         <View className="z-[-1] bg-warning-light px-4 py-2.5">
-          <Typography className="text-center text-sm font-medium text-warning">
+          <Typography
+            variant="body-s-medium"
+            className="text-center text-warning"
+          >
             NOTE: You are currently viewing the Demo state, which is shared
             externally to Recidiviz and our state agencies. DO NOT create
             meetings including real agency data.
@@ -38,7 +41,10 @@ export const StatusBanners = () => {
       )}
       {!!impersonatedEmail && (
         <View className="z-[-1] bg-warning-light px-4 py-2.5">
-          <Typography className="text-center text-sm font-medium text-warning">
+          <Typography
+            variant="body-s-medium"
+            className="text-center text-warning"
+          >
             Impersonating: {impersonatedEmail} in {impersonatedStateCode}
           </Typography>
         </View>

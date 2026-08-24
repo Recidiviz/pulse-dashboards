@@ -359,9 +359,7 @@ export const ProfileMeetings = ({
                         )}
                       >
                         <ChevronLeftIcon className="size-3 stroke-primary stroke-[3px]" />
-                        <Typography className="text-sm font-medium text-primary">
-                          Back
-                        </Typography>
+                        <Typography variant="body-s-medium">Back</Typography>
                       </Link>
                     </View>
                     <MeetingsHeaderContent

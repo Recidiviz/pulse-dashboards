@@ -119,12 +119,7 @@ type ModalSectionProps = {
 // DiscardMeetingModal, DiscardUploadModal, EndMeetingModal).
 function ModalTitle({ className, children }: ModalSectionProps) {
   return (
-    <Typography
-      className={clsx(
-        "text-center text-xl font-semibold text-primary",
-        className,
-      )}
-    >
+    <Typography variant="heading-4" className={clsx("text-center", className)}>
       {children}
     </Typography>
   );
@@ -134,7 +129,8 @@ function ModalTitle({ className, children }: ModalSectionProps) {
 function ModalBody({ className, children }: ModalSectionProps) {
   return (
     <Typography
-      className={clsx("text-center text-sm text-secondary", className)}
+      variant="body-s-regular"
+      className={clsx("text-center", className)}
     >
       {children}
     </Typography>

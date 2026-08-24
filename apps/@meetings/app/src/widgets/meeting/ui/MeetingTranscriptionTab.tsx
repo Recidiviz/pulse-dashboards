@@ -54,9 +54,7 @@ const TranscriptUnavailable = ({
   children: React.ReactNode;
 }) => (
   <>
-    <Typography className="text-xl font-semibold text-primary">
-      Transcript
-    </Typography>
+    <Typography variant="heading-4">Transcript</Typography>
     <View className="flex flex-col items-center gap-6 pt-[100px]">
       <View className="flex w-fit items-center justify-center rounded-2xl border-2 border-subtle bg-secondary p-[14px]">
         {icon}
@@ -65,7 +63,7 @@ const TranscriptUnavailable = ({
         <Typography className="text-center font-libre-baskerville text-[28px] font-bold leading-[32px] text-primary">
           Transcript unavailable
         </Typography>
-        <Typography className="text-center text-sm font-normal text-secondary">
+        <Typography variant="body-s-regular" className="text-center">
           {children}
         </Typography>
       </View>
@@ -123,7 +121,7 @@ const MeetingsTranscriptionTab = ({
 
   return (
     <View className="flex flex-col">
-      <Typography className="mb-3 text-xl font-semibold text-primary">
+      <Typography variant="heading-4" className="mb-3">
         Transcript
       </Typography>
       <SearchBar
@@ -140,10 +138,10 @@ const MeetingsTranscriptionTab = ({
           className="mt-3 flex flex-col gap-1"
         >
           <View className="flex flex-row gap-2">
-            <Typography className="text-sm font-normal text-secondary">
+            <Typography variant="body-s-regular">
               {formatSpeakerStartTime(u.startTimeMs)}
             </Typography>
-            <Typography className="text-sm font-semibold text-secondary">
+            <Typography variant="button-m" className="text-secondary">
               {formatSpeakerLabel({
                 baseLabel: u.speaker,
                 meetingStaffEmail,
@@ -155,7 +153,7 @@ const MeetingsTranscriptionTab = ({
               })}
             </Typography>
           </View>
-          <Typography className="text-sm font-normal text-primary">
+          <Typography variant="body-s-regular" className="!text-primary">
             {u.text}
           </Typography>
         </View>

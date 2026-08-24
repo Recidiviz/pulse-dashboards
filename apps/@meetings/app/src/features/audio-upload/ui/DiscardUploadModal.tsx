@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 
+import { Button } from "~@meetings/app/shared/ui/Button";
 import Modal from "~@meetings/app/shared/ui/Modal";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
@@ -28,33 +29,34 @@ type Props = {
 export function DiscardUploadModal({ onContinue, onDiscard }: Props) {
   return (
     <Modal visible transparent containerClassName="max-w-[520px] p-6">
-      <Typography className="mb-2 text-center text-xl font-semibold text-primary sm:text-left">
+      <Typography variant="heading-4" className="mb-2 text-center sm:text-left">
         Cancel audio upload?
       </Typography>
 
-      <Typography className="mb-6 text-center text-sm text-secondary sm:text-left">
+      <Typography
+        variant="body-s-regular"
+        className="mb-6 text-center sm:text-left"
+      >
         You're in the middle of uploading an audio file. Are you sure you want
         to stop the upload?
       </Typography>
 
       <View className="items-center justify-end gap-3 sm:flex-row">
-        <TouchableOpacity
-          className="w-full rounded-full bg-secondary px-6 py-3 sm:w-auto"
+        <Button
+          variant="secondary"
+          className="w-full sm:w-auto"
           onPress={onDiscard}
         >
-          <Typography className="text-center text-sm font-medium text-primary">
-            Discard and close
-          </Typography>
-        </TouchableOpacity>
+          Discard and close
+        </Button>
 
-        <TouchableOpacity
-          className="w-full rounded-full bg-brand px-6 py-3 sm:w-auto"
+        <Button
+          variant="primary"
+          className="w-full sm:w-auto"
           onPress={onContinue}
         >
-          <Typography className="text-center text-sm font-medium text-on-brand">
-            Continue uploading
-          </Typography>
-        </TouchableOpacity>
+          Continue uploading
+        </Button>
       </View>
     </Modal>
   );

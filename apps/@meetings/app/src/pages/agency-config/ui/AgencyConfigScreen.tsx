@@ -332,23 +332,15 @@ export const AgencyConfigScreen = () => {
                     </Button>
                   )}
                   {hasUnsavedChanges && (
-                    <TouchableOpacity onPress={handleSave} disabled={!canSave}>
-                      <View
-                        className={`flex-row items-center gap-1 rounded-full px-4 py-3 ${
-                          canSave ? "bg-brand" : "bg-disabled"
-                        }`}
-                      >
-                        <Typography
-                          className={`text-sm font-semibold leading-4 ${
-                            canSave ? "text-on-brand" : "text-on-disabled"
-                          }`}
-                        >
-                          {isCreatingNew
-                            ? "Create config"
-                            : "Save as a new version"}
-                        </Typography>
-                      </View>
-                    </TouchableOpacity>
+                    <Button
+                      variant="primary"
+                      onPress={handleSave}
+                      disabled={!canSave}
+                    >
+                      {isCreatingNew
+                        ? "Create config"
+                        : "Save as a new version"}
+                    </Button>
                   )}
                 </View>
               )}
@@ -436,7 +428,10 @@ export const AgencyConfigScreen = () => {
               <View className="flex-col-reverse items-start gap-3 pt-3 sm:flex-row sm:items-center sm:justify-between">
                 {missingStateCodes.length > 0 && (
                   <View className="flex-row items-center gap-2">
-                    <Typography className="text-sm text-secondary md:text-base">
+                    <Typography
+                      variant="body-s-regular"
+                      className="md:text-base"
+                    >
                       Create a new config for:
                     </Typography>
                     <View className="flex-row flex-wrap gap-2">

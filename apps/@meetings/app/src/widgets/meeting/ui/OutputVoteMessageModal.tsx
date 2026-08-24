@@ -26,6 +26,7 @@ import { Platform, TextInput, TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 
 import { trpc } from "~@meetings/app/shared/api";
+import { Button } from "~@meetings/app/shared/ui/Button";
 import Modal from "~@meetings/app/shared/ui/Modal";
 import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
@@ -100,10 +101,10 @@ const OutputVoteMessageModal = ({
           <Typography className="text-xl font-bold text-primary">
             Anything else you'd like to tell us?
           </Typography>
-          <Typography className="text-sm text-secondary">
+          <Typography variant="body-s-regular">
             Let us know why this insight is incorrect or incomplete.
           </Typography>
-          <Typography className="text-sm text-secondary">
+          <Typography variant="body-s-regular">
             Your feedback helps us improve AI accuracy
           </Typography>
         </View>
@@ -123,27 +124,12 @@ const OutputVoteMessageModal = ({
 
       {Platform.OS === "web" ? (
         <View className="flex-row justify-end gap-3">
-          <TouchableOpacity
-            onPress={handleClose}
-            className="items-center justify-center rounded-full bg-secondary px-6 py-3"
-          >
-            <Typography className="font-semibold text-primary">
-              Cancel
-            </Typography>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={handleSubmit}
-            disabled={!hasText}
-            className={`items-center justify-center rounded-full px-6 py-3 ${
-              hasText ? "bg-brand" : "bg-disabled"
-            }`}
-          >
-            <Typography
-              className={`font-semibold ${hasText ? "text-on-brand" : "text-on-disabled"}`}
-            >
-              Submit
-            </Typography>
-          </TouchableOpacity>
+          <Button variant="secondary" onPress={handleClose}>
+            Cancel
+          </Button>
+          <Button variant="primary" disabled={!hasText} onPress={handleSubmit}>
+            Submit
+          </Button>
         </View>
       ) : (
         <TouchableOpacity

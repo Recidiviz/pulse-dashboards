@@ -31,7 +31,7 @@ export function ImpersonationBanner() {
 
   return (
     <View className="z-[-1] bg-warning-light px-4 py-2.5">
-      <Typography className="text-center text-sm font-medium text-warning">
+      <Typography variant="body-s-medium" className="text-center text-warning">
         Impersonating: {impersonatedEmail} in {impersonatedStateCode}
       </Typography>
     </View>

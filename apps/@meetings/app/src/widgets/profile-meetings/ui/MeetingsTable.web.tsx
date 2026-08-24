@@ -112,9 +112,7 @@ const MeetingRow = ({
       }}
     >
       <TableCell textClassName="flex flex-col gap-1">
-        <Typography className="text-sm text-secondary">
-          {meeting.date}
-        </Typography>
+        <Typography variant="body-s-regular">{meeting.date}</Typography>
         <MeetingTypeTag
           type={meeting.meetingType}
           typeCategory={meeting.meetingTypeCategory}
@@ -137,10 +135,10 @@ const MeetingRow = ({
                 <View className="flex flex-row items-center gap-4 px-3 py-2">
                   <ProcessingSvg />
                   <View className="flex-1">
-                    <Typography className="text-[14px] font-semibold leading-4 text-primary">
+                    <Typography variant="button-m">
                       {processingTitle}
                     </Typography>
-                    <Typography className="text-xs font-normal text-secondary">
+                    <Typography variant="caption-s-regular">
                       {processingSubtitle}
                     </Typography>
                   </View>
@@ -149,7 +147,8 @@ const MeetingRow = ({
             )}
             {!isProcessing && (
               <Typography
-                className="text-base text-secondary"
+                variant="body-m-regular"
+                className="text-secondary"
                 style={{ fontStyle: meeting.content ? "normal" : "italic" }}
                 numberOfLines={2}
                 ellipsizeMode="tail"

@@ -33,8 +33,9 @@ export function MeetingTypeTag({
   if (typeCategory) {
     return (
       <Typography
+        variant="body-s-regular"
         style={tagStyles}
-        className="w-fit rounded-lg px-2 py-0.5 text-sm font-normal"
+        className="w-fit rounded-lg px-2 py-0.5"
       >
         {type} - {typeCategory}
       </Typography>
@@ -43,8 +44,9 @@ export function MeetingTypeTag({
 
   return (
     <Typography
+      variant="body-s-regular"
       style={tagStyles}
-      className="w-fit rounded-lg px-2 py-0.5 text-sm font-normal"
+      className="w-fit rounded-lg px-2 py-0.5"
     >
       {type}
     </Typography>

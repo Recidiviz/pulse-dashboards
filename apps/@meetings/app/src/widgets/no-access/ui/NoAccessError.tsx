@@ -38,7 +38,10 @@ export function NoAccessError({
         <Typography className="mb-4 text-center font-libre-baskerville text-3xl font-bold text-gray-900">
           Access Denied
         </Typography>
-        <Typography className="mb-6 text-center text-base text-gray-600">
+        <Typography
+          variant="body-m-regular"
+          className="mb-6 text-center !text-gray-600"
+        >
           {errorMessage ??
             "You do not have permission to access the Meetings app. Please contact your administrator to request access."}
         </Typography>

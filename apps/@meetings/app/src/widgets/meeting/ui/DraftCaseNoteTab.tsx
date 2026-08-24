@@ -18,13 +18,14 @@
 import Clipboard from "@react-native-clipboard/clipboard";
 import { debounce } from "lodash";
 import { ReactNode, useCallback, useEffect, useState } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import DocumentDuplicateIcon from "react-native-heroicons/solid/DocumentDuplicateIcon";
 
 import { useUpdateNotes } from "~@meetings/app/entities/meeting";
 import { useAnalytics } from "~@meetings/app/shared/analytics";
 import { trpc } from "~@meetings/app/shared/api";
+import { Button } from "~@meetings/app/shared/ui/Button";
 import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
@@ -85,26 +86,25 @@ const DraftCaseNoteTab = ({
     <View className="flex-1 gap-3 pb-4">
       <View className="flex-row items-center justify-between">
         <View>
-          <Typography className="text-xl font-semibold text-primary">
-            Draft case note
-          </Typography>
+          <Typography variant="heading-4">Draft case note</Typography>
           {canEdit && (
-            <Typography className="text-sm text-secondary">
+            <Typography variant="body-s-regular">
               Place your cursor where you want to start typing
             </Typography>
           )}
         </View>
         <View className="flex-row items-center gap-4">
-          <TouchableOpacity
-            onPress={onCopy}
+          <Button
+            variant="secondary"
+            icon={{
+              icon: DocumentDuplicateIcon,
+              className: "size-4 stroke-[3px]",
+            }}
             disabled={isSnackbarShowing}
-            className="flex-row items-center gap-1 rounded-full bg-secondary px-3 py-2"
+            onPress={onCopy}
           >
-            <DocumentDuplicateIcon className="size-4 fill-tertiary stroke-[3px]" />
-            <Typography className="text-sm font-medium text-primary">
-              Copy
-            </Typography>
-          </TouchableOpacity>
+            Copy
+          </Button>
         </View>
       </View>
       <View className="flex-1">

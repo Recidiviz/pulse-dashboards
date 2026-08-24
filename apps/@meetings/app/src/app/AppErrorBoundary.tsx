@@ -17,9 +17,10 @@
 
 import * as Sentry from "@sentry/react-native";
 import React, { useEffect, useState } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 import ErrorBoundary from "react-native-error-boundary";
 
+import { Button } from "~@meetings/app/shared/ui/Button";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 type FallbackProps = {
@@ -32,18 +33,20 @@ const MyErrorFallback: React.FC<FallbackProps> = ({ resetError }) => (
     <Typography className="mb-5 text-4xl font-bold text-red-600">
       Oops!
     </Typography>
-    <Typography className="mb-8 text-center text-base text-gray-600">
+    <Typography
+      variant="body-m-regular"
+      className="mb-8 text-center !text-gray-600"
+    >
       There was an unexpected error. Please try again.
     </Typography>
 
-    <TouchableOpacity
-      className="mb-3 w-80 items-center self-center rounded-full bg-brand py-4"
+    <Button
+      variant="primary"
       onPress={resetError}
+      className="mb-3 w-80 self-center py-4"
     >
-      <Typography className="text-lg font-semibold text-white">
-        Back to Home
-      </Typography>
-    </TouchableOpacity>
+      Back to Home
+    </Button>
   </View>
 );
 

@@ -182,7 +182,10 @@ const MeetingNotesSheet = ({
             <Typography className="text-lg font-semibold leading-[22px]">
               Edit draft case note
             </Typography>
-            <Typography className="text-sm leading-[16px] text-gray-500">
+            <Typography
+              variant="body-s-regular"
+              className="leading-[16px] !text-gray-500"
+            >
               {clientName} • Meeting{" "}
               {meetingDetails.startTime
                 ? formatDraftCaseNoteMeetingDate(meetingDetails.startTime)
@@ -197,7 +200,7 @@ const MeetingNotesSheet = ({
           </TouchableOpacity>
         </View>
         <View className="p-2">
-          <Typography className="text-left text-base font-semibold text-primary">
+          <Typography variant="button-l" className="text-left">
             Action Items:
           </Typography>
           <TextInput

@@ -105,17 +105,17 @@ export function DropZone({ disabled, onAddFile }: Props) {
     >
       <CloudUploadIcon className="mb-3 size-10 stroke-tertiary" />
 
-      <Typography className="mb-1 text-center text-sm font-medium text-primary">
+      <Typography variant="body-s-medium" className="mb-1 text-center">
         Choose a file or drag & drop it here.
       </Typography>
 
-      <Typography className="mb-4 text-center text-xs text-secondary">
+      <Typography variant="caption-s-regular" className="mb-4 text-center">
         {allowedFormats.join(", ")} formats, up to{" "}
         {formatBytes(MAX_FILE_SIZE_BYTES, 0)}.
       </Typography>
 
       <TouchableOpacity onPress={handleBrowseFiles} disabled={disabled}>
-        <Typography className="text-sm font-medium text-primary underline">
+        <Typography variant="body-s-medium" className="underline">
           Browse Files
         </Typography>
       </TouchableOpacity>

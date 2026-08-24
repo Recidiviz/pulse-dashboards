@@ -26,6 +26,7 @@ import ArrowLeftIcon from "react-native-heroicons/solid/ArrowLeftIcon";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import NotesSvg from "~@meetings/app/shared/assets/icons/notes.svg";
+import { Button } from "~@meetings/app/shared/ui/Button";
 import Modal from "~@meetings/app/shared/ui/Modal";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
@@ -85,14 +86,13 @@ export function NotesSheet({ onClose }: Props) {
         inputValue !== userNotepadNotes ? (
           <BottomSheetFooter {...props} bottomInset={insets.bottom}>
             <View className="w-full p-4">
-              <TouchableOpacity
+              <Button
+                variant="primary"
+                className="px-5 py-3"
                 onPress={handleSave}
-                className="rounded-full bg-brand px-5 py-3"
               >
-                <Typography className="text-center text-sm font-semibold leading-[18px] text-on-brand">
-                  Save
-                </Typography>
-              </TouchableOpacity>
+                Save
+              </Button>
             </View>
           </BottomSheetFooter>
         ) : null
@@ -110,7 +110,7 @@ export function NotesSheet({ onClose }: Props) {
         <View className="flex-1">
           <View className="mb-3 flex flex-row gap-2.5">
             <NotesSvg className="size-6 stroke-secondary" />
-            <Typography className="text-base text-primary">Notepad</Typography>
+            <Typography variant="body-m-regular">Notepad</Typography>
           </View>
           <TextInput
             style={{ flex: 1, outlineColor: "transparent" }}
@@ -146,31 +146,28 @@ function ConfirmationModal({
     <Modal visible transparent onClickOutside={onStay}>
       <View className="flex w-[320px] flex-1 flex-col p-5">
         <View className="mb-5 flex w-full flex-col gap-1">
-          <Typography className="mb-1 text-center text-xl font-semibold text-primary">
+          <Typography variant="heading-4" className="mb-1 text-center">
             Leave Notepad?
           </Typography>
-          <Typography className="mb-3 text-center text-base font-normal text-secondary">
+          <Typography
+            variant="body-m-regular"
+            className="mb-3 text-center text-secondary"
+          >
             You have unsaved notes in your scratchpad. If you leave now, your
             changes will be lost.
           </Typography>
         </View>
         <View className="flex w-full flex-col gap-3">
-          <TouchableOpacity
+          <Button
+            variant="primary"
+            className="px-5 py-3"
             onPress={onDiscardAndExit}
-            className="rounded-full bg-brand px-5 py-3"
           >
-            <Typography className="text-center text-base font-semibold leading-[18px] text-on-brand">
-              Leave without saving
-            </Typography>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={onStay}
-            className="rounded-full bg-secondary px-5 py-3"
-          >
-            <Typography className="text-center text-base font-semibold leading-[18px] text-primary">
-              Keep editing
-            </Typography>
-          </TouchableOpacity>
+            Leave without saving
+          </Button>
+          <Button variant="secondary" className="px-5 py-3" onPress={onStay}>
+            Keep editing
+          </Button>
         </View>
       </View>
     </Modal>

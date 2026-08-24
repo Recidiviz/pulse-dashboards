@@ -19,6 +19,7 @@ import { TouchableOpacity, View } from "react-native";
 import { XIcon } from "react-native-heroicons/solid";
 
 import MicrophoneMutedSvg from "~@meetings/app/shared/assets/icons/microphone-muted.svg";
+import { Button } from "~@meetings/app/shared/ui/Button";
 import Modal from "~@meetings/app/shared/ui/Modal";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
@@ -44,21 +45,16 @@ export function MicErrorModal({ onClose, errorType }: Props) {
           <XIcon className="size-4 text-tertiary" />
         </TouchableOpacity>
       </View>
-      <Typography className="mb-1 text-xl font-semibold text-primary">
+      <Typography variant="heading-4" className="mb-1">
         {title}
       </Typography>
-      <Typography className="mb-6 text-base font-normal text-secondary">
+      <Typography variant="body-m-regular" className="mb-6 text-secondary">
         {message}
       </Typography>
       <View className="flex w-full flex-row justify-end">
-        <TouchableOpacity
-          className="w-fit rounded-full bg-brand px-5 py-3"
-          onPress={onClose}
-        >
-          <Typography className="text-center text-base font-semibold leading-[18px] text-on-brand">
-            Try Again
-          </Typography>
-        </TouchableOpacity>
+        <Button variant="primary" className="w-fit" onPress={onClose}>
+          Try Again
+        </Button>
       </View>
     </Modal>
   );

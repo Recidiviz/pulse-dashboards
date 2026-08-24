@@ -52,7 +52,10 @@ export const OtaUpdateBanner = () => {
       ) : (
         <RefreshIcon className="size-4 fill-on-brand" />
       )}
-      <Typography className="text-center text-sm font-medium text-on-brand">
+      <Typography
+        variant="body-s-medium"
+        className="text-center !text-on-brand"
+      >
         {label}
       </Typography>
     </TouchableOpacity>

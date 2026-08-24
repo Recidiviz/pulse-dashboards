@@ -29,6 +29,13 @@ type Props = {
   onSelectedIndexChange: (index?: number) => void;
 };
 
+function getSegmentClassName(isCited: boolean, isSelected: boolean) {
+  if (!isCited) return "text-secondary";
+  return isSelected
+    ? "border-brand bg-brand-light !text-brand"
+    : "border-primary text-secondary";
+}
+
 /**
  * Reports the pressed phrase to the parent, which owns the selection and
  * renders the citation wherever it likes.
@@ -52,19 +59,14 @@ export function CaseNoteSummarySelectable({
       {toWords(segments).map(({ text, segmentIndex, isCited }, index) => (
         <Typography
           key={`${index}-${text}`}
+          variant={isCited ? "body-m-medium" : "body-m-regular"}
           onPress={
             isCited ? (event) => onSegmentPress(event, segmentIndex) : undefined
           }
           suppressHighlighting
           className={clsx(
-            "text-base",
-            isCited
-              ? "border-b border-dotted font-medium"
-              : "font-normal text-secondary",
-            isCited &&
-              (segmentIndex === selectedIndex
-                ? "border-brand bg-brand-light text-brand"
-                : "border-primary text-secondary"),
+            isCited && "border-b border-dotted",
+            getSegmentClassName(isCited, segmentIndex === selectedIndex),
           )}
         >
           {text}

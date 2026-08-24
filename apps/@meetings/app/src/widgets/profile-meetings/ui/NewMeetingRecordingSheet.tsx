@@ -19,13 +19,7 @@ import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
-import {
-  ActivityIndicator,
-  ImageBackground,
-  Platform,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ImageBackground, Platform, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 import MicrophoneIcon from "react-native-heroicons/solid/MicrophoneIcon";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -46,6 +40,7 @@ import {
   humanReadableTitleCase,
 } from "~@meetings/app/shared/lib/format";
 import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
+import { Button } from "~@meetings/app/shared/ui/Button";
 import Dropdown from "~@meetings/app/shared/ui/Dropdown";
 import { OfflineIndicator } from "~@meetings/app/shared/ui/OfflineIndicator";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
@@ -111,12 +106,12 @@ export function NewMeetingRecordingSheet({
       <BottomSheetView style={{ paddingBottom: insets.bottom }}>
         <View className="items-center p-6">
           <View className="absolute right-4 top-4 z-10">
-            <TouchableOpacity
+            <Button
+              variant="secondary"
+              shape="circle"
+              icon={{ icon: XIcon, className: "size-5" }}
               onPress={onClose}
-              className="rounded-full bg-secondary p-3"
-            >
-              <XIcon className="size-5 stroke-tertiary" />
-            </TouchableOpacity>
+            />
           </View>
           <View className="relative mb-4 size-11 items-center justify-center rounded-xl border border-subtle bg-secondary">
             <MicrophoneIcon className="size-6 fill-tertiary" />
@@ -129,7 +124,10 @@ export function NewMeetingRecordingSheet({
           <Typography className="mb-2 text-center text-xl font-bold text-primary">
             {isOnline ? "New Meeting Recording" : "Offline Meeting Recording"}
           </Typography>
-          <Typography className="mb-6 px-4 text-center text-sm leading-5 text-secondary">
+          <Typography
+            variant="body-s-regular"
+            className="mb-6 px-4 text-center leading-5"
+          >
             {isOnline
               ? "Record a new meeting or upload an audio file. Be sure to confirm that everyone present is aware and has agreed to recording."
               : "Your meeting is being recorded locally and will upload automatically upon reconnection. Be sure to confirm that everyone present is aware and has agreed to recording."}
@@ -145,10 +143,10 @@ export function NewMeetingRecordingSheet({
               </Typography>
             </ImageBackground>
             <View>
-              <Typography className="text-base font-semibold uppercase text-primary">
+              <Typography variant="button-l" className="uppercase">
                 {person.fullName}
               </Typography>
-              <Typography className="text-sm text-secondary">
+              <Typography variant="body-s-regular">
                 ID: {person.displayPersonExternalId} •{" "}
                 {humanReadableTitleCase(person.primaryMetadata)}
               </Typography>
@@ -178,31 +176,23 @@ export function NewMeetingRecordingSheet({
               errorMessage={meetingTypeCategoryError}
             />
           )}
-          <TouchableOpacity
-            className="mb-3 h-14 w-full flex-row items-center justify-center gap-2 rounded-full bg-brand p-4"
+          <Button
+            variant="primary"
+            className="mb-3 h-14 w-full"
+            icon={{ icon: PlaySvg, className: "size-4" }}
+            loading={isMeetingCreating}
             onPress={onStartMeeting}
-            disabled={isMeetingCreating}
           >
-            {isMeetingCreating ? (
-              <ActivityIndicator size="small" color="white" />
-            ) : (
-              <>
-                <PlaySvg className="size-4 fill-on-brand" />
-                <Typography className="text-base font-semibold text-on-brand">
-                  Start meeting
-                </Typography>
-              </>
-            )}
-          </TouchableOpacity>
+            Start meeting
+          </Button>
 
-          <TouchableOpacity
-            className="h-14 w-full items-center rounded-full bg-secondary py-3"
+          <Button
+            variant="secondary"
+            className="h-14 w-full"
             onPress={onUploadFile}
           >
-            <Typography className="text-base font-medium text-primary">
-              Upload file
-            </Typography>
-          </TouchableOpacity>
+            Upload file
+          </Button>
         </View>
       </BottomSheetView>
     </BottomSheet>

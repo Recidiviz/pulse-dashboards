@@ -58,6 +58,7 @@ import {
   getInitials,
   humanReadableTitleCase,
 } from "~@meetings/app/shared/lib/format";
+import { Button } from "~@meetings/app/shared/ui/Button";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import { ActionItemsTab } from "./ActionItemsTab";
@@ -385,7 +386,10 @@ const MeetingMobile = ({
                 line2Width.value = e.nativeEvent.layout.width;
               }}
             >
-              <Typography className="text-sm font-normal leading-[16px] text-gray-500">
+              <Typography
+                variant="body-s-regular"
+                className="leading-[16px] !text-gray-500"
+              >
                 ID: {person.displayPersonExternalId} •{" "}
                 {humanReadableTitleCase(person.primaryMetadata)}
               </Typography>
@@ -404,7 +408,7 @@ const MeetingMobile = ({
                 className="size-10 items-center justify-center overflow-hidden rounded-full"
                 imageClassName="!size-full"
               >
-                <Typography className="text-base text-on-brand">
+                <Typography variant="body-m-regular" className="!text-on-brand">
                   {getInitials(person.fullName)}
                 </Typography>
               </ImageBackground>
@@ -415,7 +419,7 @@ const MeetingMobile = ({
             className="flex flex-col gap-2"
             style={[bottomDateStyle]}
           >
-            <Typography className="text-xl font-semibold leading-[24px] text-primary">
+            <Typography variant="heading-4" className="leading-[24px]">
               Meeting: {meetingDate}
             </Typography>
             <View className="flex flex-row items-center gap-1">
@@ -424,7 +428,10 @@ const MeetingMobile = ({
                 typeCategory={meetingDetails.meetingTypeCategory}
               />
               <ClockIcon className="text-muted size-4" />
-              <Typography className="text-sm font-normal leading-[14px] text-gray-500">
+              <Typography
+                variant="body-s-regular"
+                className="leading-[14px] !text-gray-500"
+              >
                 {time}
                 {duration ? ` • ${duration}` : ""} • {meetingDetails.staffEmail}
               </Typography>
@@ -455,15 +462,13 @@ const MeetingMobile = ({
           className="absolute inset-x-0 items-center"
           style={{ bottom: insets.bottom + 16 }}
         >
-          <TouchableOpacity
+          <Button
+            variant="primary"
+            icon={{ icon: PlaySvg }}
             onPress={() => setIsPlayerVisible(true)}
-            className="flex-row items-center gap-2 rounded-full bg-brand px-4 py-3"
           >
-            <PlaySvg className="size-4 fill-on-brand" />
-            <Typography className="text-base font-semibold text-on-brand">
-              Play meeting
-            </Typography>
-          </TouchableOpacity>
+            Play meeting
+          </Button>
         </View>
       )}
       <DraftCaseNoteSheet

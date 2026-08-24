@@ -21,6 +21,7 @@ import { Image, Platform, TouchableOpacity, View } from "react-native";
 import { ChevronDownIcon } from "react-native-heroicons/solid";
 
 import { MicIndicator, MicStatus } from "~@meetings/app/features/recording";
+import { Button } from "~@meetings/app/shared/ui/Button";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import WebMicGuideImage from "../assets/web-mic-guide.png";
@@ -50,10 +51,13 @@ export function SetupMicrophone() {
         />
       </View>
       <View className="flex flex-1 flex-col md:justify-center">
-        <Typography className="mb-2 max-w-[261px] text-xl font-semibold">
+        <Typography variant="heading-4" className="mb-2 max-w-[261px]">
           Perfect.
         </Typography>
-        <Typography className="mb-5 max-w-[480px] text-base font-normal text-secondary">
+        <Typography
+          variant="body-m-regular"
+          className="mb-5 max-w-[480px] text-secondary"
+        >
           Do you see this line move when you're talking?
         </Typography>
         <View className="relative md:hidden">
@@ -63,22 +67,20 @@ export function SetupMicrophone() {
           />
         </View>
         <View className="mb-3 mt-auto flex flex-col-reverse gap-2 md:mt-0 md:flex-row">
-          <TouchableOpacity
-            className="w-full rounded-full bg-brand px-5 py-3 md:w-fit"
+          <Button
+            variant="primary"
+            className="w-full md:w-fit"
             onPress={() => setNextStep(OnboardingStep.HowItWorks)}
           >
-            <Typography className="text-center text-base font-semibold leading-[18px] text-on-brand">
-              Yes, let's continue
-            </Typography>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="w-full rounded-full bg-secondary px-5 py-3 md:w-fit"
+            Yes, let's continue
+          </Button>
+          <Button
+            variant="secondary"
+            className="w-full md:w-fit"
             onPress={() => setShowMicErrorModal(true)}
           >
-            <Typography className="text-center text-base font-semibold leading-[18px] text-primary">
-              It's not moving
-            </Typography>
-          </TouchableOpacity>
+            It's not moving
+          </Button>
         </View>
         <View className="relative hidden md:flex">
           <MicGuide
@@ -115,7 +117,7 @@ function MicGuide({
         className="mb-3 flex flex-row items-center gap-1"
         onPress={toggleGuide}
       >
-        <Typography className="text-sm font-medium text-primary">
+        <Typography variant="body-s-medium">
           I have multiple microphones
         </Typography>
         <ChevronDownIcon

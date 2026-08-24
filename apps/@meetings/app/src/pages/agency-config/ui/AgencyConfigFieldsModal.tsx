@@ -98,7 +98,7 @@ function FieldRow({ field }: { field: ConfigFieldDoc }) {
   return (
     <View className="flex flex-col gap-1 border-b border-subtle pb-3">
       <View className="flex flex-row flex-wrap items-center gap-2">
-        <Typography className="font-mono text-sm font-semibold text-primary">
+        <Typography variant="button-m" className="font-mono">
           {field.key}
         </Typography>
         <Tag>{field.typeLabel}</Tag>

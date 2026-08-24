@@ -35,7 +35,7 @@ export function PickerTrigger({ icon: Icon, onPress, children }: Props) {
       onPress={onPress}
     >
       <Icon className="size-5 fill-tertiary" />
-      <Typography className="flex-1 text-sm text-secondary">
+      <Typography variant="body-s-regular" className="flex-1">
         {children}
       </Typography>
       <ChevronDownIcon className="size-4 stroke-tertiary stroke-[3px]" />

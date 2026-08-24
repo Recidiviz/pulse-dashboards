@@ -34,7 +34,10 @@ const ConfigErrorScreen: React.FC<ConfigErrorScreenProps> = ({ onRetry }) => {
           <Typography className="mb-4 text-center font-libre-baskerville text-3xl font-bold text-gray-900">
             Something went wrong
           </Typography>
-          <Typography className="mb-6 text-center text-base text-gray-600">
+          <Typography
+            variant="body-m-regular"
+            className="mb-6 text-center !text-gray-600"
+          >
             We couldn't load your agency data. Please check your connection and
             try again.
           </Typography>

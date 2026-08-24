@@ -15,9 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 
 import WordmarkSvg from "~@meetings/app/shared/assets/icons/wordmark.svg";
+import { Button } from "~@meetings/app/shared/ui/Button";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import { OnboardingStep } from "../config";
@@ -33,28 +34,30 @@ export function Welcome() {
         <WordmarkSvg className="h-12 w-[140px]" />
       </View>
       <View className="flex flex-1 flex-col justify-center">
-        <Typography className="mb-3 text-base font-medium">
+        <Typography variant="body-m-medium" className="mb-3">
           Welcome to Recidiviz Meetings.
         </Typography>
-        <Typography className="mb-2 max-w-[261px] text-xl font-semibold">
+        <Typography variant="heading-4" className="mb-2 max-w-[261px]">
           Less time typing, more time working on what matters.
         </Typography>
         <DescriptionContainer>
-          <Typography className="mb-5 max-w-[480px] text-base font-normal text-secondary">
+          <Typography
+            variant="body-m-regular"
+            className="mb-5 max-w-[480px] text-secondary"
+          >
             We know managing a heavy caseload means hours of paperwork.
             Recidiviz Meetings acts as your secure, AI-powered assistant. Simply
             record your check-ins, and we'll automatically produce your first
             draft case notes, action items, and status updates.
           </Typography>
         </DescriptionContainer>
-        <TouchableOpacity
-          className="mt-auto w-full rounded-full bg-brand  px-5 py-3 md:mt-0 md:w-fit"
+        <Button
+          variant="primary"
+          className="mt-auto w-full md:mt-0 md:w-fit"
           onPress={() => setNextStep(OnboardingStep.EnableMicrophone)}
         >
-          <Typography className="text-center text-base font-semibold leading-[18px] text-on-brand">
-            Get Started
-          </Typography>
-        </TouchableOpacity>
+          Get Started
+        </Button>
       </View>
     </View>
   );

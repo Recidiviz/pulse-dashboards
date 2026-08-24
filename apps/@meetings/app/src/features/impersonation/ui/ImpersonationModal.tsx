@@ -102,9 +102,7 @@ export function ImpersonationModal({
     >
       <View className="gap-4">
         <View className="w-full flex-row items-center justify-between">
-          <Typography className="text-xl font-semibold text-primary">
-            Impersonate User
-          </Typography>
+          <Typography variant="heading-4">Impersonate User</Typography>
           <TouchableOpacity onPress={onClose}>
             <XIcon className="stroke-muted size-5" />
           </TouchableOpacity>
@@ -112,7 +110,7 @@ export function ImpersonationModal({
 
         {impersonatedEmail ? (
           <>
-            <Typography className="text-sm text-secondary">
+            <Typography variant="body-s-regular">
               Currently impersonating:{" "}
               <Typography className="font-semibold text-primary">
                 {impersonatedEmail}
@@ -123,7 +121,7 @@ export function ImpersonationModal({
         ) : (
           <>
             <View className="gap-1">
-              <Typography className="text-sm text-secondary">Email</Typography>
+              <Typography variant="body-s-regular">Email</Typography>
               <TextInput
                 className="rounded-lg border border-subtle bg-primary px-3 py-2 text-base text-primary"
                 value={email}

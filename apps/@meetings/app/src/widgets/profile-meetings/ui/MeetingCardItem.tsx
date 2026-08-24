@@ -20,7 +20,7 @@ import Clipboard from "@react-native-clipboard/clipboard";
 import { Link } from "@react-navigation/native";
 import clsx from "clsx";
 import React, { useRef, useState } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 import {
   ChevronDownIcon,
   ChevronRightIcon,
@@ -37,6 +37,7 @@ import { DraftCaseNoteSheet } from "~@meetings/app/features/edit-case-note";
 import { useAnalytics } from "~@meetings/app/shared/analytics";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 import ProcessingSvg from "~@meetings/app/shared/assets/icons/processing.svg";
+import { Button } from "~@meetings/app/shared/ui/Button";
 import ProcessingErrorBanner from "~@meetings/app/shared/ui/ProcessingErrorBanner";
 import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
@@ -131,7 +132,10 @@ const MeetingCardItem = ({
           <View className="w-full flex-row items-center justify-between border-b border-subtle pb-3">
             <View className="flex flex-col gap-1">
               <View className="flex flex-row items-center gap-1">
-                <Typography className="mr-1 flex flex-row items-center gap-2 text-base font-medium text-primary">
+                <Typography
+                  variant="body-m-medium"
+                  className="mr-1 flex flex-row items-center gap-2"
+                >
                   {meeting.date}
                 </Typography>
                 <MeetingTypeTag
@@ -139,7 +143,7 @@ const MeetingCardItem = ({
                   typeCategory={meeting.meetingTypeCategory}
                 />
               </View>
-              <Typography className="text-sm leading-4 text-secondary">
+              <Typography variant="body-s-regular" className="leading-4">
                 {meeting.time}
                 {meeting.duration && ` • ${meeting.duration}`}
               </Typography>
@@ -158,7 +162,10 @@ const MeetingCardItem = ({
               <View className="flex flex-col gap-1">
                 <View className="flex flex-row items-center gap-2">
                   <View className="flex flex-row items-center gap-1">
-                    <Typography className="mr-1 flex flex-row items-center gap-2 text-base font-medium text-primary">
+                    <Typography
+                      variant="body-m-medium"
+                      className="mr-1 flex flex-row items-center gap-2"
+                    >
                       {meeting.date}
                     </Typography>
                     <MeetingTypeTag
@@ -167,7 +174,7 @@ const MeetingCardItem = ({
                     />
                   </View>
                 </View>
-                <Typography className="text-sm leading-4 text-secondary">
+                <Typography variant="body-s-regular" className="leading-4">
                   {meeting.time}
                   {meeting.duration && ` • ${meeting.duration}`}
                 </Typography>
@@ -188,10 +195,10 @@ const MeetingCardItem = ({
               <ProcessingSvg />
 
               <View className="ml-3 flex-1">
-                <Typography className="text-sm font-medium text-brand">
+                <Typography variant="body-s-medium" className="!text-brand">
                   {processingTitle}
                 </Typography>
-                <Typography className="text-xs text-secondary">
+                <Typography variant="caption-s-regular">
                   {processingSubtitle}
                 </Typography>
               </View>
@@ -212,45 +219,43 @@ const MeetingCardItem = ({
         {isFinishedWithNote && (
           <View className="mt-3 flex w-full flex-1 flex-col gap-3">
             <Typography
-              className="flex-1 text-sm text-secondary"
+              variant="body-s-regular"
+              className="flex-1"
               numberOfLines={3}
               ellipsizeMode="tail"
             >
               {meeting.caseNote}
             </Typography>
             <View className="flex w-full flex-row items-center justify-end gap-2">
-              <TouchableOpacity
+              <Button
+                variant="secondary"
                 className="mr-auto"
+                icon={{
+                  icon: ChevronDownIcon,
+                  position: "after",
+                  className: "!size-3 stroke-[3px]",
+                }}
                 onPress={handleDraftCaseNoteShow}
               >
-                <View className="flex flex-row items-center justify-center gap-1 rounded-full bg-secondary px-4 py-2">
-                  <Typography className="text-sm font-semibold leading-4 text-primary">
-                    Show more
-                  </Typography>
-                  <ChevronDownIcon className="!size-3 stroke-tertiary stroke-[3px]" />
-                </View>
-              </TouchableOpacity>
+                Show more
+              </Button>
               {isMeetingCreator && (
-                <TouchableOpacity onPress={handleDraftCaseNoteEdit}>
-                  <View className="flex flex-row items-center justify-center gap-1 rounded-full bg-secondary px-4 py-2">
-                    <PencilIcon className="!size-4 fill-tertiary" />
-                    <Typography className="text-sm font-semibold leading-4 text-primary">
-                      Edit
-                    </Typography>
-                  </View>
-                </TouchableOpacity>
+                <Button
+                  variant="secondary"
+                  icon={{ icon: PencilIcon, className: "!size-4" }}
+                  onPress={handleDraftCaseNoteEdit}
+                >
+                  Edit
+                </Button>
               )}
-              <TouchableOpacity
-                onPress={handleCopyNotes}
+              <Button
+                variant="secondary"
+                icon={{ icon: DocumentDuplicateIcon, className: "!size-4" }}
                 disabled={isSnackbarShowing}
+                onPress={handleCopyNotes}
               >
-                <View className="flex flex-row items-center justify-center gap-1 rounded-full bg-secondary px-4 py-2">
-                  <DocumentDuplicateIcon className="!size-4 text-tertiary" />
-                  <Typography className="text-sm font-semibold leading-4 text-primary">
-                    Copy
-                  </Typography>
-                </View>
-              </TouchableOpacity>
+                Copy
+              </Button>
             </View>
           </View>
         )}

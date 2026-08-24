@@ -120,10 +120,10 @@ const AudioPlayer = ({ url, onClose }: Props) => {
 
       <View className="flex-1 gap-1">
         <View className="flex-row justify-between">
-          <Typography className="text-sm text-secondary">
+          <Typography variant="body-s-regular">
             {formatDurationNumeric(currentTime * 1000)}
           </Typography>
-          <Typography className="text-sm text-secondary">
+          <Typography variant="body-s-regular">
             {formatDurationNumeric(duration * 1000)}
           </Typography>
         </View>

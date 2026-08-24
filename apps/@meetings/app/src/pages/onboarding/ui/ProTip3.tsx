@@ -15,9 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 
 import WordmarkSvg from "~@meetings/app/shared/assets/icons/wordmark.svg";
+import { Button } from "~@meetings/app/shared/ui/Button";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import ProTip3Image from "../assets/pro-tip-3.svg";
@@ -35,32 +36,37 @@ export function ProTip3() {
         <ProTip3Image />
       </View>
       <View className="flex flex-1 flex-col justify-center">
-        <Typography className="mb-3 text-base font-medium">
+        <Typography variant="body-m-medium" className="mb-3">
           PRO Tip 3
         </Typography>
-        <Typography className="mb-2 max-w-[261px] text-xl font-semibold">
+        <Typography variant="heading-4" className="mb-2 max-w-[261px]">
           Client trust always comes first.
         </Typography>
         <DescriptionContainer>
-          <Typography className="mb-3 max-w-[480px] text-base font-normal text-secondary">
+          <Typography
+            variant="body-m-regular"
+            className="mb-3 max-w-[480px] text-secondary"
+          >
             Always ensure the people in the room are aware and comfortable with
             being recorded. If you sense a client is closing up or hesitant,
             turn the recording off. It is always better to maintain trust.
           </Typography>
-          <Typography className="mb-5 max-w-[480px] text-base font-normal text-secondary">
+          <Typography
+            variant="body-m-regular"
+            className="mb-5 max-w-[480px] text-secondary"
+          >
             If you turn off the live recording, just hit record after the client
             leaves and dictate a quick summary. We'll still do the heavy lifting
             to turn your dictation into a fully formatted case note.
           </Typography>
         </DescriptionContainer>
-        <TouchableOpacity
-          className="mt-auto w-full rounded-full bg-brand px-5 py-3 md:mt-0 md:w-fit"
+        <Button
+          variant="primary"
+          className="mt-auto w-full md:mt-0 md:w-fit"
           onPress={() => setNextStep(OnboardingStep.ProTip4)}
         >
-          <Typography className="text-center text-base font-semibold leading-[18px] text-on-brand">
-            Next Tip
-          </Typography>
-        </TouchableOpacity>
+          Next Tip
+        </Button>
       </View>
     </View>
   );

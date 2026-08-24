@@ -42,12 +42,13 @@ const MobileMenuItem = ({
       <View className="w-full flex-row items-center justify-between">
         <View className="flex-row items-center gap-3">
           <IconComponent className="size-6 fill-primary" />
-          <Typography className="text-base font-medium text-primary">
-            {title}
-          </Typography>
+          <Typography variant="body-m-medium">{title}</Typography>
           {badge ? (
             <View className="ml-2 h-[14] w-4 justify-center rounded-full bg-screen">
-              <Typography className="text-center text-xs font-medium text-white">
+              <Typography
+                variant="caption-s-medium"
+                className="text-center text-white"
+              >
                 {badge}
               </Typography>
             </View>

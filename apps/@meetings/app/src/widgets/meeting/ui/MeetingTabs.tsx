@@ -73,7 +73,8 @@ const MeetingTabs = ({
           }
         >
           <Typography
-            className={`text-base ${tab === activeTab ? "text-primary" : "text-secondary"}`}
+            variant="body-m-regular"
+            className={tab === activeTab ? undefined : "text-secondary"}
           >
             {tab}
           </Typography>

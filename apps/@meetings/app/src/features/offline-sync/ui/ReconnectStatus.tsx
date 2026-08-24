@@ -111,7 +111,7 @@ function StatusIndicator({
   if (uploadStatus === "error") {
     return (
       <TouchableOpacity onPress={onRetry}>
-        <Typography className="text-signal-error text-sm font-medium">
+        <Typography variant="body-s-medium" className="text-signal-error">
           Retry
         </Typography>
       </TouchableOpacity>
@@ -161,20 +161,18 @@ export function ReconnectRow({
           className="size-11 items-center justify-center overflow-hidden rounded-full"
           imageClassName="!size-11"
         >
-          <Typography className="text-base font-medium text-on-brand">
+          <Typography variant="body-m-medium" className="!text-on-brand">
             {getInitials(person.fullName)}
           </Typography>
         </ImageBackground>
       </View>
       <View className="flex-1">
-        <Typography className="text-base font-medium">
-          {person.fullName}
-        </Typography>
-        <Typography className="text-sm text-secondary">
+        <Typography variant="body-m-medium">{person.fullName}</Typography>
+        <Typography variant="body-s-regular">
           ID: {person.displayPersonExternalId}
           {"supervisionType" in person ? ` · ${person.supervisionType}` : ""}
         </Typography>
-        <Typography className="text-sm text-secondary">
+        <Typography variant="body-s-regular">
           Recorded on {recordedOnLabel}
         </Typography>
       </View>
@@ -316,10 +314,8 @@ export function ReconnectStatus({
           <CloudOffline />
         </View>
         <View className="flex-1">
-          <Typography className="text-base font-medium">
-            Upload Stopped
-          </Typography>
-          <Typography className="text-sm font-normal text-warning">
+          <Typography variant="body-m-medium">Upload Stopped</Typography>
+          <Typography variant="body-s-regular" className="text-warning">
             Will continue automatically when online
           </Typography>
         </View>
@@ -328,7 +324,7 @@ export function ReconnectStatus({
     .with({ isFinishing: true }, () => (
       <View className="flex-row items-center gap-3">
         <ActivityIndicator size="small" />
-        <Typography className="flex-1 text-base font-medium">
+        <Typography variant="body-m-medium" className="flex-1">
           Finishing sync...
         </Typography>
       </View>
@@ -341,10 +337,10 @@ export function ReconnectStatus({
           showText
         />
         <View className="flex-1">
-          <Typography className="text-base font-medium">
+          <Typography variant="body-m-medium">
             {simplur`${uploadMetaProgress.totalUploads} meeting[|s] [is|are] uploading...`}
           </Typography>
-          <Typography className="text-sm font-normal text-secondary">
+          <Typography variant="body-s-regular">
             {uploadMetaProgress.percentComplete}% Uploaded
             {timeRemaining ? ` · ${timeRemaining} left` : ""}
           </Typography>

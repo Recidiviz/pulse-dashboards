@@ -50,7 +50,7 @@ export function PersonsPlaceholder({ personType, isSearchResultEmpty }: Props) {
           ? emptySearchPlaceholderTitle
           : emptyListPlaceholderTitle}
       </Typography>
-      <Typography className="mb-6 text-center text-sm font-normal tracking-[-0.28px] text-secondary">
+      <Typography variant="body-s-regular" className="mb-6 text-center">
         {isSearchResultEmpty
           ? emptySearchPlaceholderSubtitle
           : emptyListPlaceholderSubtitle}

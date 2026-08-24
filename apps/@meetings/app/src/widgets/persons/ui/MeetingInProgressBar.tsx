@@ -64,10 +64,10 @@ const MeetingInProgressBar = ({
     >
       <View className="flex flex-row items-center gap-1">
         <RecordingIndicator isRecording={status === "recording"} />
-        <Typography className="text-sm font-medium leading-4 text-primary">
+        <Typography variant="body-s-medium" className="leading-4">
           Recording
         </Typography>
-        <Typography className="text-sm leading-4 text-secondary">
+        <Typography variant="body-s-regular" className="leading-4">
           {formatDuration(durationMs)}
         </Typography>
       </View>
@@ -88,10 +88,8 @@ const MeetingInProgressBar = ({
               <PauseSvg className="!size-4 fill-tertiary" />
             )}
             <Typography
-              className={clsx(
-                "ml-1 text-sm font-semibold",
-                isPaused ? "text-on-brand" : "text-primary",
-              )}
+              variant="button-m"
+              className={clsx("ml-1", isPaused && "!text-on-brand")}
             >
               {isPaused ? "Resume" : "Pause"}
             </Typography>

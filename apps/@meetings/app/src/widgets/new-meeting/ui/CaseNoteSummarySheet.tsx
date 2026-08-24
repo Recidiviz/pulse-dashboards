@@ -35,6 +35,7 @@ import {
 } from "~@meetings/app/entities/case-note-summary";
 import { Person } from "~@meetings/app/shared/api";
 import { BackgroundPressable } from "~@meetings/app/shared/ui/BackgroundPressable";
+import { Button } from "~@meetings/app/shared/ui/Button";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 type Props = {
@@ -93,7 +94,7 @@ export function CaseNoteSummarySheet({ summaries, person, ref }: Props) {
             </View>
             <View className="flex-row items-center gap-1">
               <SparklesIcon className="size-4 text-brand" />
-              <Typography className="text-sm font-medium text-brand">
+              <Typography variant="body-s-medium" className="!text-brand">
                 AI generated
               </Typography>
             </View>
@@ -119,14 +120,9 @@ export function CaseNoteSummarySheet({ summaries, person, ref }: Props) {
             </View>
           )}
 
-          <TouchableOpacity
-            onPress={handleClose}
-            className="items-center rounded-full bg-brand py-4"
-          >
-            <Typography className="text-base font-semibold leading-[18px] tracking-[-0.32px] text-on-brand">
-              Close
-            </Typography>
-          </TouchableOpacity>
+          <Button variant="primary" className="py-4" onPress={handleClose}>
+            Close
+          </Button>
         </BackgroundPressable>
       </BottomSheetScrollView>
     </BottomSheetModal>

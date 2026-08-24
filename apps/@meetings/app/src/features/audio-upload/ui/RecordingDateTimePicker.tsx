@@ -99,11 +99,11 @@ export function RecordingDateTimePicker({
       <BottomSheetView>
         <View className="pb-10">
           <View className="flex-row items-center justify-between px-6 pt-4">
-            <Typography className="text-base font-semibold text-primary">
+            <Typography variant="button-l">
               {mode === "date" ? "Select date" : "Pick a time"}
             </Typography>
             <TouchableOpacity onPress={onClose}>
-              <Typography className="text-base font-semibold text-brand">
+              <Typography variant="button-l" className="!text-brand">
                 Done
               </Typography>
             </TouchableOpacity>

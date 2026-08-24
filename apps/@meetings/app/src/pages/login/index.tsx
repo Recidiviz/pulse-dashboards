@@ -120,7 +120,7 @@ export function LoginScreen({ onSkipAuth }: { onSkipAuth?: () => void }) {
       >
         <View className="w-full max-w-[500px] items-center rounded-3xl bg-white py-12">
           <LogoSvg className="size-60" />
-          <Typography className="mb-8 text-center font-libre-baskerville text-[32px] font-bold text-primary">
+          <Typography variant="heading-1" className="mb-8 text-center">
             Sign In to Recidiviz
           </Typography>
 
@@ -129,7 +129,10 @@ export function LoginScreen({ onSkipAuth }: { onSkipAuth?: () => void }) {
           {/* Skip Auth Link for Local Mode */}
           {env.EXPO_PUBLIC_LOCAL_MODE && (
             <TouchableOpacity onPress={handleSkipAuth} className="mt-4">
-              <Typography className="text-center text-sm font-medium text-blue-600">
+              <Typography
+                variant="body-s-medium"
+                className="text-center !text-blue-600"
+              >
                 Skip Authentication (Local Mode)
               </Typography>
             </TouchableOpacity>
@@ -138,11 +141,11 @@ export function LoginScreen({ onSkipAuth }: { onSkipAuth?: () => void }) {
       </KeyboardAvoidingView>
       {/* Footer: restricted notice */}
       <View className="mb-6 flex-row items-center justify-center">
-        <Typography className="text-sm text-gray-400">
+        <Typography variant="body-s-regular" className="!text-gray-400">
           Restricted to authorized users
         </Typography>
         <TouchableOpacity onPress={openSheet}>
-          <Typography className="ml-1 text-sm font-medium text-[#4D5255]">
+          <Typography variant="body-s-medium" className="ml-1 text-[#4D5255]">
             Learn more
           </Typography>
         </TouchableOpacity>

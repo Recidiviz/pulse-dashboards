@@ -86,10 +86,10 @@ export function OfflineIndicator({
             sideOffset={16}
             alignOffset={alignOffset}
           >
-            <Typography className="text-base font-normal text-on-brand">
+            <Typography variant="body-m-regular" className="!text-on-brand">
               Offline mode
             </Typography>
-            <Typography className="text-sm font-normal text-on-brand">
+            <Typography variant="body-s-regular" className="!text-on-brand">
               Everything is fine. Your meeting is being recorded locally and
               will upload once you're back online. Keep going!
             </Typography>

@@ -42,6 +42,7 @@ import {
 } from "~@meetings/app/entities/meeting";
 import { useAnalytics } from "~@meetings/app/shared/analytics";
 import { theme } from "~@meetings/app/shared/config";
+import { Button } from "~@meetings/app/shared/ui/Button";
 import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
@@ -148,14 +149,13 @@ export const DraftCaseNoteSheet = ({
           <BottomSheetFooter {...props} bottomInset={bottomSafeArea}>
             <View className="flex w-full flex-row items-start gap-4 self-end bg-primary p-4 transition-all duration-300">
               {!canEdit && (
-                <TouchableOpacity
+                <Button
+                  variant="primary"
                   onPress={handleClose}
-                  className="flex flex-1 items-center justify-center rounded-[32px] border border-brand bg-brand py-3"
+                  className="flex-1 py-3"
                 >
-                  <Typography className="text-base font-semibold leading-[18px] text-on-brand">
-                    Close
-                  </Typography>
-                </TouchableOpacity>
+                  Close
+                </Button>
               )}
               {canEdit && (
                 <>
@@ -163,18 +163,17 @@ export const DraftCaseNoteSheet = ({
                     onPress={handleClose}
                     className="flex flex-1 items-center justify-center rounded-[32px] border border-brand py-3"
                   >
-                    <Typography className="text-base font-semibold leading-[18px] text-brand">
+                    <Typography variant="button-l" className="!text-brand">
                       Cancel
                     </Typography>
                   </TouchableOpacity>
-                  <TouchableOpacity
+                  <Button
+                    variant="primary"
                     onPress={handleSave}
-                    className="flex flex-1 items-center justify-center rounded-[32px] border border-brand bg-brand py-3"
+                    className="flex-1 py-3"
                   >
-                    <Typography className="text-base font-semibold leading-[18px] text-on-brand">
-                      Save changes
-                    </Typography>
-                  </TouchableOpacity>
+                    Save changes
+                  </Button>
                 </>
               )}
             </View>

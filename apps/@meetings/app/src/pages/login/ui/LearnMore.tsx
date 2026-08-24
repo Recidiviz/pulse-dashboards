@@ -51,9 +51,7 @@ export const LearnMoreModal = ({ visible, onClose }: LearnMoreModalProps) => {
       containerClassName="max-w-[620px] p-6"
     >
       <View className="mb-5 flex-row items-center justify-between">
-        <Typography className="text-xl font-semibold text-primary">
-          {title}
-        </Typography>
+        <Typography variant="heading-4">{title}</Typography>
         <TouchableOpacity onPress={onClose}>
           <XIcon className="size-5 stroke-primary" />
         </TouchableOpacity>
@@ -91,7 +89,10 @@ export const LearnMoreSheet = ({ ref }: LearnMoreSheetProps) => {
       }}
     >
       <BottomSheetScrollView className="px-5">
-        <Typography className="mb-4 text-base leading-6 text-gray-700">
+        <Typography
+          variant="body-m-regular"
+          className="mb-4 leading-6 !text-gray-700"
+        >
           {content}
         </Typography>
         <TouchableOpacity

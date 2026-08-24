@@ -17,12 +17,7 @@
 
 import { Link } from "@react-navigation/native";
 import React, { ReactNode, useState } from "react";
-import {
-  ImageBackground,
-  ScrollView,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ImageBackground, ScrollView, View } from "react-native";
 import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
 import ClockIcon from "react-native-heroicons/outline/ClockIcon";
 import PrinterIcon from "react-native-heroicons/solid/PrinterIcon";
@@ -42,6 +37,7 @@ import {
   getInitials,
   humanReadableTitleCase,
 } from "~@meetings/app/shared/lib/format";
+import { Button } from "~@meetings/app/shared/ui/Button";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import { usePrintMeetingDetails } from "../lib/usePrintMeetingDetails";
@@ -115,9 +111,7 @@ const MeetingDesktop = ({
             params={{ personId: person.personId.toString() }}
           >
             <ChevronLeftIcon className="size-3 stroke-tertiary stroke-[3px]" />
-            <Typography className="text-sm font-medium text-primary">
-              Back
-            </Typography>
+            <Typography variant="body-s-medium">Back</Typography>
           </Link>
         </View>
 
@@ -128,15 +122,13 @@ const MeetingDesktop = ({
               className="size-10 items-center justify-center overflow-hidden rounded-full font-medium"
               imageClassName="!size-full"
             >
-              <Typography className="text-base text-on-strong">
+              <Typography variant="body-m-regular" className="!text-on-strong">
                 {getInitials(person.fullName)}
               </Typography>
             </ImageBackground>
             <View>
-              <Typography className="text-lg font-semibold text-primary">
-                {person.fullName}
-              </Typography>
-              <Typography className="text-base text-secondary">
+              <Typography variant="heading-5">{person.fullName}</Typography>
+              <Typography variant="body-m-regular" className="text-secondary">
                 ID: {person.displayPersonExternalId} •{" "}
                 {humanReadableTitleCase(person.primaryMetadata)}
               </Typography>
@@ -162,15 +154,13 @@ const MeetingDesktop = ({
               </View>
             </View>
             {meetingDetails.audioUrl && !isPlayerVisible && (
-              <TouchableOpacity
+              <Button
+                variant="primary"
+                icon={{ icon: PlaySvg }}
                 onPress={() => setIsPlayerVisible(true)}
-                className="flex-row items-center gap-1.5 rounded-full bg-brand px-4 py-3"
               >
-                <PlaySvg className="size-4 fill-white" />
-                <Typography className="text-sm font-medium text-white">
-                  Play meeting
-                </Typography>
-              </TouchableOpacity>
+                Play meeting
+              </Button>
             )}
           </View>
 
@@ -197,15 +187,13 @@ const MeetingDesktop = ({
               />
             </View>
             <View className="ml-3 flex-row gap-3">
-              <TouchableOpacity
+              <Button
+                variant="tertiary"
+                icon={{ icon: PrinterIcon }}
                 onPress={handlePrint}
-                className="flex-row items-center gap-1.5 rounded-full border border-subtle px-4 py-3"
               >
-                <PrinterIcon className="size-4 fill-tertiary" />
-                <Typography className="text-sm font-medium text-primary">
-                  Print
-                </Typography>
-              </TouchableOpacity>
+                Print
+              </Button>
             </View>
           </View>
 
