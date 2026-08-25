@@ -146,6 +146,18 @@ export class SegmentClient implements IntakeAnalytics {
     this.segment.page(properties, { context: this.trackingContextOverrides });
   }
 
+  /* Program Catalog events */
+
+  trackProgramDetailOpened(metadata: {
+    justiceInvolvedPersonPseudoId: string;
+    programId: string;
+    title: string;
+  }) {
+    this.track("frontend_program_detail_opened", metadata);
+  }
+
+  /* Intake events */
+
   // the event names seen here are the same as used in CPA.
   // not necessarily required, but convenient
   trackIntakeChatClientLogin(metadata: {

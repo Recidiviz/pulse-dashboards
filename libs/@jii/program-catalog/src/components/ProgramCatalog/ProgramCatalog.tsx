@@ -155,7 +155,12 @@ const ManagedComponent: FC<{ presenter: ProgramCatalogPresenter }> = observer(
 function usePresenter(props: ProgramCatalogProps): ProgramCatalogPresenter {
   const rootStore = useRootStore();
   const { resident } = useSingleResidentContext();
-  return new ProgramCatalogPresenter(resident, rootStore.apiClient, props);
+  return new ProgramCatalogPresenter(
+    resident,
+    rootStore.apiClient,
+    props,
+    rootStore.userStore,
+  );
 }
 
 export const ProgramCatalog = withPresenterManager({

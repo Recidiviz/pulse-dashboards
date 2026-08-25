@@ -21,7 +21,7 @@ import { max } from "date-fns";
 import { isUndefined, sortBy, uniqBy } from "lodash";
 import { makeAutoObservable, runInAction } from "mobx";
 
-import { DataAPI, ResidentRecord } from "~@jii/data";
+import { DataAPI, ResidentRecord, UserStore } from "~@jii/data";
 import { WorkflowsResidentRecord } from "~datatypes";
 import {
   Hydratable,
@@ -46,6 +46,7 @@ export class ProgramCatalogPresenter implements Hydratable {
     private readonly resident: WorkflowsResidentRecord | ResidentRecord,
     private readonly apiClient: DataAPI,
     readonly config: ProgramCatalogProps,
+    private readonly userStore: UserStore,
   ) {
     makeAutoObservable(this, { config: false }, { autoBind: true });
 
@@ -229,6 +230,13 @@ export class ProgramCatalogPresenter implements Hydratable {
 
   setSelectedProgram(program?: Program): void {
     this.selectedProgram = program;
+    if (program) {
+      this.userStore.segmentClient.trackProgramDetailOpened({
+        justiceInvolvedPersonPseudoId: this.resident.pseudonymizedId,
+        programId: program.programId,
+        title: program.title,
+      });
+    }
   }
 
   clearAllFilters(): void {

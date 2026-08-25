@@ -21,7 +21,7 @@ import { max, parseISO } from "date-fns";
 import { isUndefined, sortBy, uniqBy } from "lodash";
 import { makeAutoObservable, runInAction } from "mobx";
 
-import { DataAPI, ResidentFlags, ResidentRecord } from "~@jii/data";
+import { DataAPI, ResidentFlags, ResidentRecord, UserStore } from "~@jii/data";
 import type { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
 import { WorkflowsResidentRecord } from "~datatypes";
 import {
@@ -42,10 +42,13 @@ export class UsCoProgramsPresenter implements Hydratable {
   showOnlyEarnCredits = false;
   showOnlyStarred = false;
 
+  selectedProgram?: UsCoProgram;
+
   constructor(
     private readonly resident: WorkflowsResidentRecord | ResidentRecord,
     private readonly apiClient: DataAPI,
     private readonly residentFlags: ResidentFlags,
+    private readonly userStore: UserStore,
   ) {
     makeAutoObservable(this, {}, { autoBind: true });
 
@@ -243,6 +246,17 @@ export class UsCoProgramsPresenter implements Hydratable {
         program.isStarred = isCurrentlyStarred;
       });
       captureException(error);
+    }
+  }
+
+  setSelectedProgram(program?: UsCoProgram): void {
+    this.selectedProgram = program;
+    if (program) {
+      this.userStore.segmentClient.trackProgramDetailOpened({
+        justiceInvolvedPersonPseudoId: this.resident.pseudonymizedId,
+        programId: program.programId,
+        title: program.title,
+      });
     }
   }
 

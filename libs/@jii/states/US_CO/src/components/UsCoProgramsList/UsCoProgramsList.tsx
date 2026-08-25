@@ -18,7 +18,7 @@
 import { spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { FC, useState } from "react";
+import { FC } from "react";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components";
 
@@ -95,10 +95,6 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
     const pathParams = useTypedParams(State.Resident);
     const showV1Experience = useV1Gate();
 
-    const [selectedProgram, setSelectedProgram] = useState<
-      UsCoProgram | undefined
-    >(undefined);
-
     const handleToggleStar = (program: UsCoProgram) => {
       presenter.toggleStarred(program);
     };
@@ -160,7 +156,7 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
                     key={`${program.programId}-${program.title}`}
                     program={program}
                     onToggleStar={handleToggleStar}
-                    onClick={setSelectedProgram}
+                    onClick={presenter.setSelectedProgram}
                   />
                 ))}
               </CategorySection>
@@ -169,9 +165,9 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
         </CategoriesList>
 
         <ProgramDetailModal
-          program={selectedProgram}
-          isOpen={!!selectedProgram}
-          onClose={() => setSelectedProgram(undefined)}
+          program={presenter.selectedProgram}
+          isOpen={!!presenter.selectedProgram}
+          onClose={() => presenter.setSelectedProgram(undefined)}
           onToggleStar={handleToggleStar}
         />
       </PageContainer>
@@ -186,6 +182,7 @@ function usePresenter() {
     resident,
     rootStore.apiClient,
     residentFlags,
+    rootStore.userStore,
   );
 }
 
