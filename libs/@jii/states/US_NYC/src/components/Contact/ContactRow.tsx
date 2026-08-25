@@ -15,14 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
+import { FC } from "react";
 
-export type ResourceSummary =
-  JiiResidentAppRouterOutputs["resident"]["resources"]["getResources"][number];
+import {
+  ContactRowLabel,
+  ContactRowText,
+  ContactRowWrapper,
+} from "./ContactInformation.styles";
 
-export type ResourceDetail =
-  JiiResidentAppRouterOutputs["resident"]["resources"]["getResource"];
+type ContactRowProps = {
+  label: string;
+  value: string;
+};
 
-export type OrganizationAddress = ResourceDetail["addresses"][number];
-export type OrganizationPhoneNumber = ResourceDetail["phoneNumbers"][number];
-export type OrganizationWebsite = ResourceDetail["websites"][number];
+export const ContactRow: FC<ContactRowProps> = ({ label, value }) => (
+  <ContactRowWrapper>
+    <ContactRowLabel>{label}:</ContactRowLabel>
+    <ContactRowText>{value}</ContactRowText>
+  </ContactRowWrapper>
+);

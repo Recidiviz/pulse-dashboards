@@ -15,13 +15,211 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { US_NYC_CONTACT_LABELS } from "../../constants";
 import {
   buildCategoryGrid,
+  buildContactInformation,
   getSimilarResources,
   groupResourcesBySubcategory,
   toggleFilterSelection,
 } from "../utils";
-import { makeResource } from "./testUtils";
+import { makeAddress, makePhone, makeResource, makeWebsite } from "./testUtils";
+
+describe("buildContactInformation", () => {
+  const labels = US_NYC_CONTACT_LABELS;
+
+  test("returns empty arrays for empty input", () => {
+    expect(buildContactInformation([], [], [], labels)).toEqual({
+      generalContactRows: [],
+      locationGroups: [],
+    });
+  });
+
+  test("standalone phone with no address goes into generalContactRows", () => {
+    const result = buildContactInformation(
+      [],
+      [makePhone(1, "555-1234")],
+      [],
+      labels,
+    );
+
+    expect(result.generalContactRows).toEqual([
+      { key: "phone-1", label: labels.phone, value: "555-1234" },
+    ]);
+    expect(result.locationGroups).toEqual([]);
+  });
+
+  test("standalone website with no address goes into generalContactRows", () => {
+    const result = buildContactInformation(
+      [],
+      [],
+      [makeWebsite(1, "https://example.com")],
+      labels,
+    );
+
+    expect(result.generalContactRows).toEqual([
+      { key: "website-1", label: labels.website, value: "https://example.com" },
+    ]);
+    expect(result.locationGroups).toEqual([]);
+  });
+
+  test("standalone phones appear before standalone websites in generalContactRows", () => {
+    const result = buildContactInformation(
+      [],
+      [makePhone(1, "555-1234")],
+      [makeWebsite(2, "https://example.com")],
+      labels,
+    );
+
+    expect(result.generalContactRows.map((row) => row.key)).toEqual([
+      "phone-1",
+      "website-2",
+    ]);
+  });
+
+  test("single address with no phones or websites creates one location group", () => {
+    const result = buildContactInformation(
+      [makeAddress(1, "123 Main St")],
+      [],
+      [],
+      labels,
+    );
+
+    expect(result.locationGroups).toHaveLength(1);
+    expect(result.locationGroups[0].rows).toEqual([
+      { key: "address-1", label: labels.address, value: "123 Main St" },
+    ]);
+    expect(result.generalContactRows).toEqual([]);
+  });
+
+  test("phone tied to an address goes into that location group", () => {
+    const result = buildContactInformation(
+      [makeAddress(1, "123 Main St")],
+      [makePhone(2, "555-1234", { addressId: 1 })],
+      [],
+      labels,
+    );
+
+    expect(result.locationGroups).toHaveLength(1);
+    expect(result.locationGroups[0].rows).toEqual([
+      { key: "address-1", label: labels.address, value: "123 Main St" },
+      { key: "phone-2", label: labels.phone, value: "555-1234" },
+    ]);
+    expect(result.generalContactRows).toEqual([]);
+  });
+
+  test("website tied to an address goes into that location group", () => {
+    const result = buildContactInformation(
+      [makeAddress(1, "123 Main St")],
+      [],
+      [makeWebsite(2, "https://example.com", { addressId: 1 })],
+      labels,
+    );
+
+    expect(result.locationGroups).toHaveLength(1);
+    expect(result.locationGroups[0].rows).toEqual([
+      { key: "address-1", label: labels.address, value: "123 Main St" },
+      { key: "website-2", label: labels.website, value: "https://example.com" },
+    ]);
+    expect(result.generalContactRows).toEqual([]);
+  });
+
+  test("row order within a location group is address, then phones, then websites", () => {
+    const result = buildContactInformation(
+      [makeAddress(1, "123 Main St")],
+      [makePhone(2, "555-1234", { addressId: 1 })],
+      [makeWebsite(3, "https://example.com", { addressId: 1 })],
+      labels,
+    );
+
+    expect(result.locationGroups).toHaveLength(1);
+    expect(result.locationGroups[0].rows.map((r) => r.key)).toEqual([
+      "address-1",
+      "phone-2",
+      "website-3",
+    ]);
+  });
+
+  test("multiple addresses produce multiple location groups", () => {
+    const result = buildContactInformation(
+      [makeAddress(1, "123 Main St"), makeAddress(2, "456 Oak Ave")],
+      [],
+      [],
+      labels,
+    );
+
+    expect(result.locationGroups).toHaveLength(2);
+    expect(result.locationGroups[0].rows[0].value).toBe("123 Main St");
+    expect(result.locationGroups[1].rows[0].value).toBe("456 Oak Ave");
+  });
+
+  test("phone with no addressId is treated as standalone alongside an address", () => {
+    const result = buildContactInformation(
+      [makeAddress(1, "123 Main St")],
+      [makePhone(2, "555-0000")],
+      [],
+      labels,
+    );
+
+    expect(result.generalContactRows).toEqual([
+      { key: "phone-2", label: labels.phone, value: "555-0000" },
+    ]);
+    expect(result.locationGroups).toHaveLength(1);
+    expect(result.locationGroups[0].rows).toHaveLength(1);
+  });
+
+  test("phone whose addressId references a non-existent address is treated as standalone", () => {
+    const result = buildContactInformation(
+      [],
+      [makePhone(1, "555-9999", { addressId: 999 })],
+      [],
+      labels,
+    );
+
+    expect(result.generalContactRows).toHaveLength(1);
+    expect(result.locationGroups).toHaveLength(0);
+  });
+
+  test("address label is used as the location group label", () => {
+    const result = buildContactInformation(
+      [makeAddress(1, "123 Main St", { label: "Bronx Office" })],
+      [],
+      [],
+      labels,
+    );
+
+    expect(result.locationGroups).toHaveLength(1);
+    expect(result.locationGroups[0].label).toBe("Bronx Office");
+  });
+
+  test("location group label is undefined when address has no label", () => {
+    const result = buildContactInformation(
+      [makeAddress(1, "123 Main St")],
+      [],
+      [],
+      labels,
+    );
+
+    expect(result.locationGroups).toHaveLength(1);
+    expect(result.locationGroups[0].label).toBeUndefined();
+  });
+
+  test("phone uses its own label when set, falls back to 'Phone'", () => {
+    const result = buildContactInformation(
+      [makeAddress(1, "123 Main St")],
+      [
+        makePhone(2, "555-0001", { label: "Main Line", addressId: 1 }),
+        makePhone(3, "555-0002", { addressId: 1 }),
+      ],
+      [],
+      labels,
+    );
+
+    expect(result.locationGroups).toHaveLength(1);
+    expect(result.locationGroups[0].rows[1].label).toBe("Main Line");
+    expect(result.locationGroups[0].rows[2].label).toBe(labels.phone);
+  });
+});
 
 describe("buildCategoryGrid", () => {
   test("returns empty arrays for empty input", () => {

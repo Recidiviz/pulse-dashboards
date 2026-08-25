@@ -25,7 +25,8 @@ export const CardLink = styled(Link)`
   display: flex;
   align-items: center;
   gap: ${rem(spacing.sm)};
-  padding: ${rem(spacing.lg)} ${rem(spacing.md)};
+  padding: ${rem(spacing.md)} ${rem(spacing.sm)} ${rem(spacing.md)}
+    ${rem(spacing.lg)};
   border-bottom: 1px solid ${palette.slate20};
   text-decoration: none;
   color: ${palette.pine1};
@@ -34,6 +35,10 @@ export const CardLink = styled(Link)`
 
   &:last-child {
     border-bottom: none;
+  }
+
+  &:focus {
+    outline: none;
   }
 
   &:focus-visible {
@@ -84,7 +89,7 @@ export const CardChevron = styled.span`
   justify-content: center;
   width: ${rem(24)};
   height: ${rem(24)};
-  color: ${palette.slate30};
+  color: ${palette.slate80};
 `;
 
 export const CompactCardLink = styled(CardLink)`

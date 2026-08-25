@@ -30,7 +30,13 @@ export const PageContainer = styled(BasePageContainer)`
 export const PageHeader = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${rem(spacing.md)};
+  gap: ${rem(spacing.lg)};
+`;
+
+export const SourceAttribution = styled.p`
+  ${typography.Sans12}
+  color: ${palette.slate80};
+  margin: 0;
 `;
 
 export const PageTitle = styled.h1`
@@ -39,32 +45,30 @@ export const PageTitle = styled.h1`
   margin: 0;
 `;
 
-export const PageSubtitle = styled.p`
-  ${typography.Sans14}
+export const SectionHeading = styled.h2`
+  ${typography.Sans16}
+  font-weight: 600;
   color: ${palette.pine1};
   margin: 0;
 `;
 
-export const GridSection = styled.section`
+export const Section = styled.section`
   display: flex;
   flex-direction: column;
   gap: ${rem(spacing.md)};
 `;
 
-export const SectionHeading = styled.h2`
-  ${typography.Sans16}
-  color: ${palette.pine1};
-  margin: 0;
-`;
-
-export const TileGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+export const ChipList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
   gap: ${rem(spacing.sm)};
 `;
 
-export const EmptyState = styled.p`
-  ${typography.Sans14}
-  color: ${palette.slate60};
-  margin: 0;
+export const SimilarResourceList = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const SeeAllButtonWrapper = styled.div`
+  margin: 0 auto;
 `;

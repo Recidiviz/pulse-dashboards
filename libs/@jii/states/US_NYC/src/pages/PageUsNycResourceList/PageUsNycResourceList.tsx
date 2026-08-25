@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { BottomSheet } from "~@jii/common-ui";
@@ -75,6 +76,7 @@ export function PageUsNycResourceList() {
 
   const residentParams = useTypedParams(State.Resident);
   const { category } = useTypedParams(ResourceExplorer.CategoryResults);
+  const location = useLocation();
 
   const { data, helpCategories, demographicCategories } = useResources();
 
@@ -92,12 +94,25 @@ export function PageUsNycResourceList() {
     clearFilters,
   } = useResourceFilters(data);
 
-  const detailPath = (resourceId: number) =>
-    State.Resident.ResourceExplorer.CategoryResults.Detail.buildPath({
+  const categoryResultsPath =
+    State.Resident.ResourceExplorer.CategoryResults.buildPath({
       ...residentParams,
       category,
-      resourceId,
     });
+
+  const backTarget = encodeURIComponent(
+    `${categoryResultsPath}${location.search}`,
+  );
+
+  const detailPath = (resourceId: number) => {
+    const path =
+      State.Resident.ResourceExplorer.CategoryResults.Detail.buildPath({
+        ...residentParams,
+        category,
+        resourceId,
+      });
+    return `${path}?backTarget=${backTarget}`;
+  };
 
   const categoryPath = (name: string) =>
     State.Resident.ResourceExplorer.CategoryResults.buildPath({
@@ -124,6 +139,7 @@ export function PageUsNycResourceList() {
         >
           {COPY.filtersButton(activeFilterCount)}
         </Button>
+
         {hasActiveFilters && (
           <ActiveChipsRow>
             {selectedSubcategories.map((sub) => (

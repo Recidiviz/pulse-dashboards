@@ -16,8 +16,73 @@
 // =============================================================================
 
 import { US_NYC_DEMOGRAPHIC_CATEGORIES } from "../constants";
-import { ResourceSummary } from "../types";
-import { CategoryGrid } from "./types";
+import {
+  OrganizationAddress,
+  OrganizationPhoneNumber,
+  OrganizationWebsite,
+  ResourceSummary,
+} from "../types";
+import {
+  CategoryGrid,
+  ContactDetails,
+  ContactLabels,
+  ContactRow,
+  LocationEntry,
+} from "./types";
+
+export function buildContactInformation(
+  addresses: OrganizationAddress[],
+  phoneNumbers: OrganizationPhoneNumber[],
+  websites: OrganizationWebsite[],
+  labels: ContactLabels,
+): ContactDetails {
+  const addressIds = new Set(addresses.map((address) => address.id));
+
+  const toPhoneRow = (phone: OrganizationPhoneNumber): ContactRow => ({
+    key: `phone-${phone.id}`,
+    label: phone.label ?? labels.phone,
+    value: phone.phoneNumber,
+  });
+
+  const toWebsiteRow = (website: OrganizationWebsite): ContactRow => ({
+    key: `website-${website.id}`,
+    label: labels.website,
+    value: website.url,
+  });
+
+  // Contact information that is not tied to a specific address (e.g. a general phone number or website)
+  const generalContactRows: ContactRow[] = [
+    ...phoneNumbers
+      .filter((phone) => !phone.addressId || !addressIds.has(phone.addressId))
+      .map(toPhoneRow),
+    ...websites
+      .filter(
+        (website) => !website.addressId || !addressIds.has(website.addressId),
+      )
+      .map(toWebsiteRow),
+  ];
+
+  // Contact information that is tied to a specific address (e.g. a phone number or website for a particular location)
+  const locationGroups: LocationEntry[] = addresses.map((address) => ({
+    id: address.id,
+    label: address.label,
+    rows: [
+      {
+        key: `address-${address.id}`,
+        label: labels.address,
+        value: address.address,
+      },
+      ...phoneNumbers
+        .filter((phone) => phone.addressId === address.id)
+        .map(toPhoneRow),
+      ...websites
+        .filter((website) => website.addressId === address.id)
+        .map(toWebsiteRow),
+    ],
+  }));
+
+  return { generalContactRows, locationGroups };
+}
 
 export function buildCategoryGrid(resources: ResourceSummary[]): CategoryGrid {
   const categoryCounts = resources
@@ -57,12 +122,16 @@ export function getSimilarResources(
   category: string,
   currentOrganizationId: number,
 ): ResourceSummary[] {
-  return resources.filter(
-    ({ organizationId, categories }) =>
-      // Prevents the currently viewed resource from appearing in its own similar resources list
-      organizationId !== currentOrganizationId &&
-      categories.some((c) => c.category === category),
-  );
+  return resources
+    .filter(
+      ({ organizationId, categories }) =>
+        // Prevents the currently viewed resource from appearing in its own similar resources list
+        organizationId !== currentOrganizationId &&
+        categories.some(
+          (categorization) => categorization.category === category,
+        ),
+    )
+    .slice(0, 3);
 }
 
 export function groupResourcesBySubcategory(

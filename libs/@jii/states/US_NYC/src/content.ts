@@ -21,6 +21,15 @@ const location = "NYC";
 
 export const US_NYC_CONTENT = {
   cre: {
+    resourceDetail: {
+      sourceAttribution: "Source: Connections 2026, New York Public Library.",
+      labelsHeading: "Labels",
+      similarHeading: "Other services in this category",
+      seeAllServices: "See all services",
+      lastUpdated: "Last updated: November 2025.",
+      contactHowToReachHeading: "How to reach them",
+      contactLocationsHeading: "Locations",
+    },
     footer: {
       aboutHeading: "About Opportunities",
       aboutBody: `This app helps you find community resources in ${location}. It was designed and built by Recidiviz, a technology nonprofit working towards a more fair and safe criminal justice system.`,

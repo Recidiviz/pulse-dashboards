@@ -27,14 +27,15 @@ function borderColor(selected: boolean, inverted: boolean): string {
 }
 
 const chipBase = css<{ $selected: boolean; $inverted: boolean }>`
-  ${typography.Sans14}
+  ${typography.Sans12}
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  text-align: center;
   max-width: 100%;
-  min-height: ${rem(32)};
-  padding: ${rem(spacing.sm)} ${rem(spacing.md)};
+  min-height: ${rem(28)};
+  padding: ${rem(spacing.xs)} ${rem(spacing.sm)};
   border-radius: ${rem(999)};
   border: 1px solid
     ${({ $selected, $inverted }) => borderColor($selected, $inverted)};

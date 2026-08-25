@@ -24,3 +24,26 @@ export type CategoryGrid = {
   helpCategories: CategoryTile[];
   demographicCategories: CategoryTile[];
 };
+
+export type ContactLabels = {
+  address: string;
+  phone: string;
+  website: string;
+};
+
+export type ContactRow = {
+  key: string;
+  label: string;
+  value: string;
+};
+
+export type LocationEntry = {
+  id: number;
+  label?: string;
+  rows: ContactRow[];
+};
+
+export type ContactDetails = {
+  generalContactRows: ContactRow[];
+  locationGroups: LocationEntry[];
+};

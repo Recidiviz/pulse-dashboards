@@ -15,14 +15,33 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
+import { FC } from "react";
 
-export type ResourceSummary =
-  JiiResidentAppRouterOutputs["resident"]["resources"]["getResources"][number];
+import type { LocationEntry } from "../../hooks/types";
+import {
+  ContactRowList,
+  LocationGroupWrapper,
+  LocationLabel,
+} from "./ContactInformation.styles";
+import { ContactRow } from "./ContactRow";
 
-export type ResourceDetail =
-  JiiResidentAppRouterOutputs["resident"]["resources"]["getResource"];
+type LocationGroupProps = {
+  location: LocationEntry;
+};
 
-export type OrganizationAddress = ResourceDetail["addresses"][number];
-export type OrganizationPhoneNumber = ResourceDetail["phoneNumbers"][number];
-export type OrganizationWebsite = ResourceDetail["websites"][number];
+export const LocationGroup: FC<LocationGroupProps> = ({
+  location: { id, label, rows },
+}) => {
+  const labelId = label ? `location-label-${id}` : undefined;
+
+  return (
+    <LocationGroupWrapper aria-labelledby={labelId}>
+      {label && <LocationLabel id={labelId}>{label}</LocationLabel>}
+      <ContactRowList>
+        {rows.map((row) => (
+          <ContactRow key={row.key} label={row.label} value={row.value} />
+        ))}
+      </ContactRowList>
+    </LocationGroupWrapper>
+  );
+};

@@ -175,7 +175,6 @@ describe("getOrganization", () => {
           address: "199 Water St, New York, NY 10038",
           google_place_id: "ChIJabc123",
           label: "Main Office",
-          is_mailing_only: false,
         },
       ],
       phone_numbers: [
@@ -200,7 +199,6 @@ describe("getOrganization", () => {
           address: "199 Water St, New York, NY 10038",
           googlePlaceId: "ChIJabc123",
           label: "Main Office",
-          isMailingOnly: false,
         },
       ],
       phoneNumbers: [
@@ -251,7 +249,6 @@ describe("getOrganization", () => {
           address: "123 Main St",
           google_place_id: null,
           label: null,
-          is_mailing_only: false,
         },
       ],
       phone_numbers: [
@@ -298,14 +295,12 @@ describe("getOrganization", () => {
           address: "2477 Webster Avenue, Bronx, NY 10458",
           google_place_id: "ChIJLb1Ag4DzwokR5oujiKRpyvo",
           label: "VH Bronx",
-          is_mailing_only: false,
         },
         {
           id: 384,
           address: "885 Rogers Avenue, Brooklyn, NY 11226",
           google_place_id: null,
           label: "VH Brooklyn",
-          is_mailing_only: false,
         },
       ],
       phone_numbers: [

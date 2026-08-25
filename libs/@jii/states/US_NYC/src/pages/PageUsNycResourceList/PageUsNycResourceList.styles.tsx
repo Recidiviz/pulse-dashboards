@@ -82,8 +82,6 @@ export const AccordionItem = styled.div`
 export const ResourceList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${rem(spacing.sm)};
-  margin-top: ${rem(spacing.md)};
 `;
 
 export const SheetTitle = styled.h2`

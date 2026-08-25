@@ -15,14 +15,31 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
+import { FC } from "react";
 
-export type ResourceSummary =
-  JiiResidentAppRouterOutputs["resident"]["resources"]["getResources"][number];
+import type { ContactRow } from "../../hooks/types";
+import {
+  ContactRowList,
+  ContactSectionHeading,
+  HowToReachSection,
+} from "./ContactInformation.styles";
+import { ContactRow as ContactRowItem } from "./ContactRow";
 
-export type ResourceDetail =
-  JiiResidentAppRouterOutputs["resident"]["resources"]["getResource"];
+type GeneralContactSectionProps = {
+  heading: string;
+  rows: ContactRow[];
+};
 
-export type OrganizationAddress = ResourceDetail["addresses"][number];
-export type OrganizationPhoneNumber = ResourceDetail["phoneNumbers"][number];
-export type OrganizationWebsite = ResourceDetail["websites"][number];
+export const GeneralContactSection: FC<GeneralContactSectionProps> = ({
+  heading,
+  rows,
+}) => (
+  <HowToReachSection>
+    <ContactSectionHeading>{heading}</ContactSectionHeading>
+    <ContactRowList>
+      {rows.map((row) => (
+        <ContactRowItem key={row.key} label={row.label} value={row.value} />
+      ))}
+    </ContactRowList>
+  </HowToReachSection>
+);

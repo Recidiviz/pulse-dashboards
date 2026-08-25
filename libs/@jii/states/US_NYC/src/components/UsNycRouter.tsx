@@ -22,6 +22,7 @@ import { ResourceExplorer } from "~@jii/paths";
 
 import { PageUsNycCRELanding } from "../pages/PageUsNycCRELanding/PageUsNycCRELanding";
 import { PageUsNycHome } from "../pages/PageUsNycHome/PageUsNycHome";
+import { PageUsNycResourceDetail } from "../pages/PageUsNycResourceDetail/PageUsNycResourceDetail";
 import { PageUsNycResourceList } from "../pages/PageUsNycResourceList/PageUsNycResourceList";
 import { UsNycResourcesLayout } from "./UsNycResourcesLayout";
 
@@ -34,12 +35,11 @@ export function UsNycRouter() {
         <Route
           path={ResourceExplorer.CategoryResults.path}
           element={<PageUsNycResourceList />}
-        >
-          <Route
-            path={ResourceExplorer.CategoryResults.Detail.path}
-            element={null}
-          />
-        </Route>
+        />
+        <Route
+          path={ResourceExplorer.CategoryResults.Detail.path}
+          element={<PageUsNycResourceDetail />}
+        />
         <Route path="*" element={<NotFound />} />
       </Route>
       <Route path="*" element={<NotFound />} />

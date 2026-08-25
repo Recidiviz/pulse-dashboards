@@ -41,6 +41,7 @@ export const DescriptionBody = styled.div<{ $clamped: boolean }>`
 `;
 
 export const ToggleButton = styled.button`
+  ${typography.Sans14}
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -51,9 +52,7 @@ export const ToggleButton = styled.button`
   border-radius: ${rem(4)};
   background: ${palette.white};
   color: ${palette.pine1};
-  ${typography.Sans16}
   cursor: pointer;
-
   &:hover {
     border-color: ${palette.pine4};
   }

@@ -15,7 +15,66 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResourceSummary } from "../../types";
+import type {
+  OrganizationAddress,
+  OrganizationPhoneNumber,
+  OrganizationWebsite,
+  ResourceDetail,
+  ResourceSummary,
+} from "../../types";
+
+export function makeAddress(
+  id: number,
+  address = "123 Main St",
+  options: { label?: string } = {},
+): OrganizationAddress {
+  return { id, address, label: options.label, googlePlaceId: undefined };
+}
+
+export function makePhone(
+  id: number,
+  phoneNumber = "555-0000",
+  options: { label?: string; addressId?: number } = {},
+): OrganizationPhoneNumber {
+  return {
+    id,
+    phoneNumber,
+    label: options.label,
+    addressId: options.addressId,
+  };
+}
+
+export function makeWebsite(
+  id: number,
+  url = "https://example.com",
+  options: { addressId?: number } = {},
+): OrganizationWebsite {
+  return { id, url, addressId: options.addressId };
+}
+
+export function makeResourceDetail(
+  organizationId: number,
+  options: {
+    name?: string;
+    description?: string;
+    categories?: Array<{ category: string; subcategory: string }>;
+    tags?: string[];
+    addresses?: OrganizationAddress[];
+    phoneNumbers?: OrganizationPhoneNumber[];
+    websites?: OrganizationWebsite[];
+  } = {},
+): ResourceDetail {
+  return {
+    organizationId,
+    name: options.name ?? "Test Resource",
+    description: options.description,
+    categories: options.categories ?? [],
+    tags: options.tags ?? [],
+    addresses: options.addresses ?? [],
+    phoneNumbers: options.phoneNumbers ?? [],
+    websites: options.websites ?? [],
+  };
+}
 
 export function makeResource(
   organizationId: number,

@@ -31,3 +31,9 @@ export const US_NYC_DEMOGRAPHIC_CATEGORIES: readonly string[] = [
   "Youth",
   "Parents & Caregivers",
 ];
+
+export const US_NYC_CONTACT_LABELS = {
+  address: "Address",
+  phone: "Phone",
+  website: "Website",
+};

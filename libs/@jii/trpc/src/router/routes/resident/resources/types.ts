@@ -45,7 +45,6 @@ const organizationDetailBaseSchema = organizationBaseSchema.extend({
       address: z.string(),
       googlePlaceId: nullishAsUndefined(z.string()),
       label: nullishAsUndefined(z.string()),
-      isMailingOnly: z.boolean(),
     }),
   ),
   phoneNumbers: z.array(
@@ -101,7 +100,3 @@ export const organizationDetailApiSchema = z.preprocess(
 
 export type OrganizationSummary = z.infer<typeof organizationApiSchema>;
 export type OrganizationDetail = z.infer<typeof organizationDetailApiSchema>;
-export type OrganizationAddress = OrganizationDetail["addresses"][number];
-export type OrganizationPhoneNumber =
-  OrganizationDetail["phoneNumbers"][number];
-export type OrganizationWebsite = OrganizationDetail["websites"][number];

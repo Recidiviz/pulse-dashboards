@@ -22,6 +22,7 @@ import { Suspense } from "react";
 import { useRootStore } from "~@jii/data";
 
 import { useResources } from "../useResources";
+import { makeResource } from "./testUtils";
 
 vi.mock("~@jii/data", async (importOriginal) => ({
   ...(await importOriginal()),
@@ -31,36 +32,12 @@ vi.mock("~@jii/data", async (importOriginal) => ({
 const QUERY_KEY = ["resources"];
 
 const mockResources = [
-  {
-    organizationId: 1,
-    name: "",
-    description: undefined,
-    categories: [
-      { category: "Housing", subcategory: "" },
-      { category: "Veterans", subcategory: "" },
-    ],
-    tags: [],
-    primaryContactMethod: undefined,
-    primaryContactValue: undefined,
-  },
-  {
-    organizationId: 2,
-    name: "",
-    description: undefined,
-    categories: [{ category: "Housing", subcategory: "" }],
-    tags: [],
-    primaryContactMethod: undefined,
-    primaryContactValue: undefined,
-  },
-  {
-    organizationId: 3,
-    name: "",
-    description: undefined,
-    categories: [{ category: "Education", subcategory: "" }],
-    tags: [],
-    primaryContactMethod: undefined,
-    primaryContactValue: undefined,
-  },
+  makeResource(1, [
+    { category: "Housing", subcategory: "" },
+    { category: "Veterans", subcategory: "" },
+  ]),
+  makeResource(2, [{ category: "Housing", subcategory: "" }]),
+  makeResource(3, [{ category: "Education", subcategory: "" }]),
 ];
 
 let queryClient: QueryClient;
@@ -120,17 +97,7 @@ test("hasResources is false when data is empty", () => {
 });
 
 test("hasResources is false when resources have no categories", () => {
-  queryClient.setQueryData(QUERY_KEY, [
-    {
-      organizationId: 1,
-      name: "",
-      description: undefined,
-      categories: [],
-      tags: [],
-      primaryContactMethod: null,
-      primaryContactValue: null,
-    },
-  ]);
+  queryClient.setQueryData(QUERY_KEY, [makeResource(1)]);
 
   const { result } = renderHook(() => useResources(), { wrapper });
 
