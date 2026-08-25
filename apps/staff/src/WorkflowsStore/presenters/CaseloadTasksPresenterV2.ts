@@ -32,6 +32,7 @@ import FirestoreStore from "../../FirestoreStore";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import TenantStore from "../../RootStore/TenantStore";
 import { FeatureVariantRecord } from "../../RootStore/types";
+import { sortPeopleByNextTaskDueDate } from "../Task/TasksBase";
 import {
   ClientTasksSummary,
   TasksRowEntity,
@@ -43,21 +44,6 @@ import {
   TableViewSelectInterface,
   TableViewSelectPresenter,
 } from "./TableViewSelectPresenter";
-
-function sortPeopleByNextTaskDueDate(
-  personA: JusticeInvolvedPerson,
-  personB: JusticeInvolvedPerson,
-): number {
-  if (
-    !personA.supervisionTasks?.orderedTasks[0] ||
-    !personB.supervisionTasks?.orderedTasks[0]
-  )
-    return 0;
-  return (
-    +personA.supervisionTasks.orderedTasks[0].dueDate -
-    +personB.supervisionTasks.orderedTasks[0].dueDate
-  );
-}
 
 export class CaseloadTasksPresenterV2
   implements

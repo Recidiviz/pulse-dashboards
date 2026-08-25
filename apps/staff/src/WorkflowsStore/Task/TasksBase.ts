@@ -38,6 +38,7 @@ import {
   ValidateFunction,
 } from "../subscriptions";
 import { SupervisionTaskUpdateSubscription } from "../subscriptions/SupervisionTaskUpdateSubscription";
+import type { JusticeInvolvedPerson } from "../types";
 import {
   SupervisionNeed,
   SupervisionTask,
@@ -222,3 +223,21 @@ export const taskDueDateComparator = (
   a: { dueDate: Date },
   b: { dueDate: Date },
 ) => +a.dueDate - +b.dueDate;
+
+/**
+ * Orders people by their next (soonest) task due date, most overdue first.
+ * People with no upcoming task sort last, since they have no urgency to convey.
+ */
+export function sortPeopleByNextTaskDueDate(
+  personA: JusticeInvolvedPerson,
+  personB: JusticeInvolvedPerson,
+): number {
+  const dueDateA = personA.supervisionTasks?.orderedTasks[0]?.dueDate;
+  const dueDateB = personB.supervisionTasks?.orderedTasks[0]?.dueDate;
+
+  if (!dueDateA && !dueDateB) return 0;
+  if (!dueDateA) return 1;
+  if (!dueDateB) return -1;
+
+  return +dueDateA - +dueDateB;
+}

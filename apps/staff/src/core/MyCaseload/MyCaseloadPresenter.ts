@@ -34,7 +34,10 @@ import {
   TaskTableItem,
   WorkflowsStore,
 } from "../../WorkflowsStore";
-import { taskDueDateComparator } from "../../WorkflowsStore/Task/TasksBase";
+import {
+  sortPeopleByNextTaskDueDate,
+  taskDueDateComparator,
+} from "../../WorkflowsStore/Task/TasksBase";
 import {
   FilterField,
   FilterOption,
@@ -46,21 +49,6 @@ import {
   TasksTablePresenter,
   TaskTableColumnId,
 } from "../WorkflowsTasks/TasksTable";
-
-function sortPeopleByNextTaskDueDate(
-  personA: JusticeInvolvedPerson,
-  personB: JusticeInvolvedPerson,
-): number {
-  if (
-    !personA.supervisionTasks?.orderedTasks[0] ||
-    !personB.supervisionTasks?.orderedTasks[0]
-  )
-    return 0;
-  return (
-    +personA.supervisionTasks.orderedTasks[0].dueDate -
-    +personB.supervisionTasks.orderedTasks[0].dueDate
-  );
-}
 
 /**
  * Presenter for the My Caseload view (US_MO `usMoMyCaseload` feature variant).
