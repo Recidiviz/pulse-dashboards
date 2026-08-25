@@ -218,14 +218,6 @@ describe("ParoleCaseProfile", () => {
       viewLinks.forEach((link) => expect(link).toHaveAttribute("download"));
     });
 
-    it("renders a banner when no parole plan is on file", async () => {
-      renderAtPath("/parole/case/61247");
-
-      expect(
-        await screen.findByText("NO PAROLE PLAN ON FILE"),
-      ).toBeInTheDocument();
-    });
-
     it("renders a banner when the parole plan hasn't been updated in over 90 days", async () => {
       renderAtPath("/parole/case/52903");
 
@@ -234,13 +226,10 @@ describe("ParoleCaseProfile", () => {
       ).toBeInTheDocument();
     });
 
-    it("renders neither banner when the parole plan is on file and current", async () => {
+    it("renders no stale-plan banner when the parole plan is on file and current", async () => {
       renderAtPath("/parole/case/45821");
 
       await findSectionHeading("Attachments");
-      expect(
-        screen.queryByText("NO PAROLE PLAN ON FILE"),
-      ).not.toBeInTheDocument();
       expect(
         screen.queryByText("PAROLE PLAN NOT RECENTLY UPDATED"),
       ).not.toBeInTheDocument();

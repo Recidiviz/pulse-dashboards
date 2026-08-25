@@ -92,19 +92,6 @@ export function AttachmentsSection({
     <SectionCard>
       <SectionCardHeader>Attachments</SectionCardHeader>
       <PaddedSectionCardBody>
-        {!parolePlan.onFile && (
-          <AlertBanner>
-            <Icon kind={IconSVG.Alert} width={20} aria-hidden="true" />
-            <div>
-              <AlertHeading>NO PAROLE PLAN ON FILE</AlertHeading>
-              <AlertBody>
-                This individual does not have a parole plan submitted. A
-                complete parole plan is required before parole consideration.
-              </AlertBody>
-            </div>
-          </AlertBanner>
-        )}
-
         {parolePlan.onFile &&
           parolePlan.lastUpdated &&
           isParolePlanStale(parolePlan.lastUpdated) && (

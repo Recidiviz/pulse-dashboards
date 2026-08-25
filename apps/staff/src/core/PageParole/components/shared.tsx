@@ -161,10 +161,6 @@ export const isSafeDocumentUrl = (url: string): boolean => {
   }
 };
 
-// Alert-style banner, parameterized so both parole-plan alerts (default red)
-// and the victim-involved banner (overridden orange) can share it.
-// $textColor/$fontWeight only apply when passed, so callers that color their
-// own AlertHeading/AlertBody children aren't affected.
 export const AlertBanner = styled.div<{
   $color?: string;
   $backgroundColor?: string;
