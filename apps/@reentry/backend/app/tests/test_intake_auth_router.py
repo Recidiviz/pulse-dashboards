@@ -1,13 +1,14 @@
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+from fastapi import HTTPException
+
 from app.routes.intake_auth_router import (
     VerifyDobFullnameRequest,
     VerifyStateDocIdRequest,
     verify_dob_fullname,
     verify_state_doc_id,
 )
-from fastapi import HTTPException
 
 
 @pytest.fixture
@@ -26,23 +27,16 @@ def mock_request():
 @pytest.fixture
 def valid_data():
     return {
-        "recaptchaToken": "valid_token",
         "date_of_birth": "1990-01-01",
         "first_name": "John",
         "last_name": "Doe",
     }
 
 
-@patch("httpx.AsyncClient")
 @patch("app.routes.intake_auth_router.validate_dob_fullname")
 async def test_validate_non_pseudo_id_verify_success(
-    mock_validate, mock_httpx, mock_session, mock_request, valid_data
+    mock_validate, mock_session, mock_request, valid_data
 ):
-    # Mock reCAPTCHA response
-    mock_response = MagicMock()
-    mock_response.json.return_value = {"success": True}
-    mock_httpx.return_value.__aenter__.return_value.post.return_value = mock_response
-
     # Mock validation result
     mock_result = MagicMock()
     mock_result.success = True
@@ -60,58 +54,10 @@ async def test_validate_non_pseudo_id_verify_success(
     assert result.message == "Verification successful"
 
 
-# TODO: Uncomment when reCAPTCHA is ready
-# async def test_validate_non_pseudo_id_missing_recaptcha_token(
-#     mock_session, mock_request
-# ):
-#     data = {
-#         "recaptchaToken": "",
-#         "date_of_birth": "1990-01-01",
-#         "first_name": "John",
-#         "last_name": "Doe",
-#     }
-
-#     with pytest.raises(HTTPException) as exc_info:
-#         await verify_dob_fullname(
-#             mock_request, VerifyDobFullnameRequest(**data), mock_session
-#         )
-#         pass
-
-#     assert exc_info.value.status_code == 400
-
-#     assert "Recaptcha token is required" in str(exc_info.value.detail)
-
-
-# TODO: Uncomment when reCAPTCHA is ready
-# @patch("httpx.AsyncClient")
-# async def test_validate_non_pseudo_id_invalid_recaptcha(
-#     mock_httpx, mock_session, mock_request, valid_data
-# ):
-#     # Mock invalid reCAPTCHA response
-#     mock_response = MagicMock()
-#     mock_response.json.return_value = {"success": False}
-#     mock_httpx.return_value.__aenter__.return_value.post.return_value = mock_response
-
-#     with pytest.raises(HTTPException) as exc_info:
-#         await verify_dob_fullname(
-#             mock_request, VerifyDobFullnameRequest(**valid_data), mock_session
-#         )
-#         pass
-
-#     assert exc_info.value.status_code == 400
-#     assert "Invalid reCAPTCHA token" in str(exc_info.value.detail)
-
-
-@patch("httpx.AsyncClient")
 @patch("app.routes.intake_auth_router.validate_dob_fullname")
 async def test_validate_non_pseudo_id_validation_failure(
-    mock_validate, mock_httpx, mock_session, mock_request, valid_data
+    mock_validate, mock_session, mock_request, valid_data
 ):
-    # Mock successful reCAPTCHA
-    mock_response = MagicMock()
-    mock_response.json.return_value = {"success": True}
-    mock_httpx.return_value.__aenter__.return_value.post.return_value = mock_response
-
     # Mock validation failure
     mock_result = MagicMock()
     mock_result.success = False
@@ -300,10 +246,9 @@ def valid_firebase_request_data():
     }
 
 
-@patch("httpx.AsyncClient")
 @patch("app.routes.intake_auth_router.verify_client_from_firebase_token")
 async def test_validate_firebase_token_success(
-    mock_validate, mock_httpx, mock_session, mock_request, valid_firebase_request_data
+    mock_validate, mock_session, mock_request, valid_firebase_request_data
 ):
     from app.routes.intake_auth_router import (
         VerifyFirebaseTokenRequest,
@@ -329,10 +274,9 @@ async def test_validate_firebase_token_success(
     assert result.message == "Verification successful"
 
 
-@patch("httpx.AsyncClient")
 @patch("app.routes.intake_auth_router.verify_client_from_firebase_token")
 async def test_validate_firebase_token_failure(
-    mock_validate, mock_httpx, mock_session, mock_request, valid_firebase_request_data
+    mock_validate, mock_session, mock_request, valid_firebase_request_data
 ):
     from app.routes.intake_auth_router import (
         VerifyFirebaseTokenRequest,

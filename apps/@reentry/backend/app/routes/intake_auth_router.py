@@ -75,7 +75,6 @@ class VerifyDobFullnameRequest(BaseModel):
     first_name: str
     last_name: str
     date_of_birth: date
-    recaptchaToken: Optional[str] = None
 
 
 @router.post(
@@ -91,12 +90,15 @@ async def verify_dob_fullname(
     session: AsyncSession = Depends(get_session),
 ):
     try:
+        redis_client = getattr(request.app.state, "redis_client", None)
+
         result = await validate_dob_fullname(
             request=request,
             date_of_birth=data.date_of_birth,
             session=session,
             first_name=data.first_name,
             last_name=data.last_name,
+            redis_client=redis_client,
         )
 
         if not result.success:

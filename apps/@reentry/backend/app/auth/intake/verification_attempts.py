@@ -42,6 +42,16 @@ def get_ip_key(ip_address: str) -> str:
     return f"{REDIS_PREFIX}ip:{key_hash}:failed_attempts"
 
 
+def get_dob_fullname_key(first_name: str, last_name: str, date_of_birth: str) -> str:
+    """
+    Get Redis key for a name+DOB combination's failed attempt tracking.
+    Uses a hash of the combination to create a unique key for rate limiting.
+    """
+    combined = f"{first_name.lower()}:{last_name.lower()}:{date_of_birth}"
+    key_hash = hashlib.sha256(combined.encode()).hexdigest()
+    return f"{REDIS_PREFIX}dob_fullname:{key_hash}:failed_attempts"
+
+
 async def record_failed_attempt(
     redis_client: redis.Redis, token_id: str, ip_address: Optional[str] = None
 ) -> None:

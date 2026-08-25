@@ -143,10 +143,24 @@ async def validate_dob_fullname(
     last_name: str,
     date_of_birth: date,
     session: AsyncSession,
+    redis_client: redis.Redis,
 ) -> ValidationResult:
     """
     Validate client existing in the bigquery database using first name, last name, and date of birth.
     """
+    from app.auth.intake.verification_attempts import get_dob_fullname_key
+
+    # Generate rate limit key for this name+DOB combination
+    rate_limit_key = get_dob_fullname_key(first_name, last_name, str(date_of_birth))
+
+    # Early rate limit check
+    ip_address = request.client.host if request.client else None
+    should_continue, error_message, is_attempt_error = await handle_rate_limiting(
+        redis_client, rate_limit_key, ip_address
+    )
+    if not should_continue:
+        return ValidationResult.error_result(error_message)
+
     record = Queries.get_client_by_names_and_dob(
         first_name=first_name,
         last_name=last_name,
@@ -154,8 +168,11 @@ async def validate_dob_fullname(
     )
 
     if not record:
-        return ValidationResult.error_result(
-            "No match for the provided name and date of birth. Please try again."
+        return await record_validation_failure(
+            request,
+            redis_client,
+            rate_limit_key,
+            "No match for the provided name and date of birth. Please try again.",
         )
 
     client_pseudo_id = record.pseudonymized_client_id
@@ -168,14 +185,20 @@ async def validate_dob_fullname(
         logger.error(
             f"Intake record not found for client pseudo ID: {client_pseudo_id}"
         )
-        return ValidationResult.error_result(
-            "Intake not enabled. Please contact your case worker for assistance."
+        return await record_validation_failure(
+            request,
+            redis_client,
+            rate_limit_key,
+            "Intake not enabled. Please contact your case worker for assistance.",
         )
 
     if not intake_record.internal_access:
         logger.error(f"Intake not enabled for client pseudo ID: {client_pseudo_id}")
-        return ValidationResult.error_result(
-            "Internal access is not enabled. Please contact your case worker for assistance."
+        return await record_validation_failure(
+            request,
+            redis_client,
+            rate_limit_key,
+            "Internal access is not enabled. Please contact your case worker for assistance.",
         )
 
     token_data = create_client_response(client_pseudo_id, record.full_name)

@@ -65,6 +65,7 @@ class Settings(BaseSettings):
     JWT_SECRET_KEY: str
     INTAKE_VERIFICATION_MAX_ATTEMPTS: int = 3
     INTAKE_VERIFICATION_COOLOFF_TIME: int = 10
+    INTAKE_VERIFICATION_IP_MAX_ATTEMPTS: int = 20
 
     # BigQuery settings
     BQ_PROJECT_ID: str = "recidiviz-rnd-planner"
