@@ -22,17 +22,14 @@ import ChevronDoubleLeftIcon from "react-native-heroicons/outline/ChevronDoubleL
 import ChevronDoubleRightIcon from "react-native-heroicons/outline/ChevronDoubleRightIcon";
 import SparklesIcon from "react-native-heroicons/solid/SparklesIcon";
 
-import {
-  getShowCNI,
-  useAgencyConfigs,
-} from "~@meetings/app/entities/agency-config";
+import { useAgencyConfigs } from "~@meetings/app/entities/agency-config";
 import {
   CaseNoteSummaryWithTooltips,
   useCaseNoteSummary,
 } from "~@meetings/app/entities/case-note-summary";
 import { getPersonType } from "~@meetings/app/entities/person";
 import { useStateSelection } from "~@meetings/app/entities/state-code";
-import { Person, trpc } from "~@meetings/app/shared/api";
+import { Person } from "~@meetings/app/shared/api";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 type Props = {
@@ -43,19 +40,15 @@ export function MeetingSidePanel({ person }: Props) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { selectedStateCode } = useStateSelection();
   const { agencyConfigs } = useAgencyConfigs();
-  const showCNI = getShowCNI(agencyConfigs, selectedStateCode);
+  const showCNI = agencyConfigs[selectedStateCode].showCNI;
   const isClient = getPersonType(person) === "client";
-  const { data: client } = trpc.v1.client.get.useQuery(
-    { personId: person.personId },
-    { enabled: isClient && showCNI },
-  );
-
-  const segments = useCaseNoteSummary(
-    client?.caseNoteInsightsSummaries,
+  const { segments, enabled } = useCaseNoteSummary({
     person,
-  );
+    isClient,
+    showCNI,
+  });
 
-  if (!isClient || !showCNI) return null;
+  if (!enabled) return null;
 
   return (
     <View

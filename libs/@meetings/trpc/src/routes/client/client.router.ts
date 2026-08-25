@@ -26,7 +26,8 @@ import {
   getMeetingsInputSchema,
   listInputSchema,
   listSortSchema,
-  submitCNIFeedbackInputSchema,
+  submitCNIVoteInputSchema,
+  submitCNIVoteMessageInputSchema,
 } from "~@meetings/trpc/routes/client/client.schema";
 import {
   createMeetingForPerson,
@@ -34,6 +35,7 @@ import {
   getMeetingsForPerson,
   listPersonsWithMeetingInfo,
 } from "~@meetings/trpc/routes/meeting.helpers";
+import { AuthUser } from "~@meetings/trpc/types";
 
 const querySelect = {
   givenNames: true,
@@ -56,6 +58,18 @@ const querySelect = {
   },
   caseNoteInsightsSummaries: true,
 } satisfies Prisma.ClientSelect;
+
+function assertCanSubmitCNIFeedback(user: AuthUser) {
+  if (
+    env.DEPLOY_ENV === "production" &&
+    (user.isRecidivizUser || user.impersonatedBy)
+  ) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Recidiviz users may not give CNI feedback in production",
+    });
+  }
+}
 
 type ListSort = z.infer<typeof listSortSchema> | undefined;
 function getSecondaryOrderBy(
@@ -175,31 +189,55 @@ export const clientRouter = router({
       return enrichPersonWithMeetingInfo({ prisma, user, person: client });
     }),
 
-  submitCNIFeedback: auth0Procedure
-    .input(submitCNIFeedbackInputSchema)
+  submitCNIVote: auth0Procedure
+    .input(submitCNIVoteInputSchema)
     .mutation(
       async ({
-        input: { clientId, message, vote, snapshot },
+        input: { clientId, vote, snapshot },
         ctx: { prisma, user },
       }) => {
-        if (
-          env.DEPLOY_ENV === "production" &&
-          (user.isRecidivizUser || user.impersonatedBy)
-        ) {
-          throw new TRPCError({
-            code: "FORBIDDEN",
-            message: "Recidiviz users may not give CNI feedback in production",
-          });
-        }
-        await prisma.caseNoteInsightsFeedback.create({
+        assertCanSubmitCNIFeedback(user);
+
+        // Append a new row every time. We never update or delete so the full
+        // vote history (including thumbs-flips) is preserved for analysis.
+        const { id } = await prisma.caseNoteInsightsFeedback.create({
+          select: { id: true },
           data: {
             authorEmail: user.email,
             vote,
             summariesSnapshot: snapshot,
-            message,
             clientId,
           },
         });
+
+        return { id };
+      },
+    ),
+
+  submitCNIVoteMessage: auth0Procedure
+    .input(submitCNIVoteMessageInputSchema)
+    .mutation(
+      async ({ input: { feedbackId, message }, ctx: { prisma, user } }) => {
+        assertCanSubmitCNIFeedback(user);
+
+        try {
+          await prisma.caseNoteInsightsFeedback.update({
+            where: { id: feedbackId, authorEmail: user.email },
+            data: { message },
+          });
+        } catch (e) {
+          if (
+            e instanceof Prisma.PrismaClientKnownRequestError &&
+            e.code === "P2025"
+          ) {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "No CNI feedback found for this id",
+              cause: e,
+            });
+          }
+          throw e;
+        }
       },
     ),
 });

@@ -14,7 +14,8 @@ from, which is what the tooltip UI underlines.
 ## Pipeline
 
 ```
-useCaseNoteSummary(summaries, person)
+useCaseNoteSummary({ summaries, person, isClient, showCNI })
+  └─ gate                           returns null unless the person is a client and CNI is on
   └─ getCategorizedSummaries()      picks the "employment" and "housing" summaries
   └─ getCaseNoteSummarySegments()   "{fullName} " + employment + ", " + housing + "."
        ├─ getEmploymentSegments()   spec section 1

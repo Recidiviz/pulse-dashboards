@@ -15,7 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Arrow as ArrowWeb } from "@radix-ui/react-tooltip";
+import {
+  Arrow as ArrowWeb,
+  Trigger as TriggerWeb,
+} from "@radix-ui/react-tooltip";
 import * as TooltipPrimitive from "@rn-primitives/tooltip";
 import clsx from "clsx";
 import { ReactNode, useEffect, useRef, useState } from "react";
@@ -41,7 +44,27 @@ type Props = {
    * to the document root renders underneath one. Portal into the modal instead.
    */
   isInsideModal?: boolean;
+  /**
+   * Web only. Renders the trigger as part of the surrounding text instead of as
+   * a box of its own, so a multi-word trigger wraps across lines like the text around it
+   */
+  inline?: boolean;
 };
+
+/**
+ * Points Floating UI at the trigger's first line rather than its bounding box.
+ */
+function anchorToFirstLine(node: HTMLElement | null) {
+  if (!node) return;
+
+  const measureWholeBox = node.getBoundingClientRect.bind(node);
+  node.getBoundingClientRect = () =>
+    node.getClientRects()[0] ?? measureWholeBox();
+
+  return () => {
+    Reflect.deleteProperty(node, "getBoundingClientRect");
+  };
+}
 
 /**
  * Tooltip with an arrow that points at its trigger.
@@ -56,6 +79,7 @@ export function Tooltip({
   triggerClassName,
   contentClassName,
   isInsideModal,
+  inline,
 }: Props) {
   const isWeb = Platform.OS === "web";
   const triggerRef = useRef<TooltipPrimitive.TriggerRef>(null);
@@ -125,15 +149,24 @@ export function Tooltip({
     </TooltipPrimitive.Content>
   );
 
+  const isInline = isWeb && inline;
+
   return (
     <TooltipPrimitive.Root
       delayDuration={0}
       onOpenChange={handleOpenChange}
-      className={clsx("inline-flex items-baseline", rootClassName)}
+      className={clsx(!isInline && "inline-flex items-baseline", rootClassName)}
+      style={isInline ? { display: "contents" } : undefined}
     >
-      <TooltipPrimitive.Trigger ref={triggerRef} className={triggerClassName}>
-        {children}
-      </TooltipPrimitive.Trigger>
+      {isInline ? (
+        <TriggerWeb asChild tabIndex={0} ref={anchorToFirstLine}>
+          {children}
+        </TriggerWeb>
+      ) : (
+        <TooltipPrimitive.Trigger ref={triggerRef} className={triggerClassName}>
+          {children}
+        </TooltipPrimitive.Trigger>
+      )}
       <TooltipPrimitive.Portal container={modal}>
         {/* we close tooltip by hoverOut for web and pressOut for mobile
             so we need mobile overlay */}

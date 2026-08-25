@@ -27,6 +27,8 @@ import Dropdown from "~@meetings/app/shared/ui/Dropdown";
 import SearchBar from "~@meetings/app/shared/ui/SearchBar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
+import { ClientCaseNoteSummary } from "./ClientCaseNoteSummary";
+
 type Props = {
   person: Person;
   meetingsCount: number;
@@ -80,6 +82,7 @@ const MeetingsHeaderContent = ({
           </Typography>
         </View>
       </View>
+      <ClientCaseNoteSummary person={person} />
       <View
         className={clsx(
           "flex flex-col gap-3 px-4 pb-3 pt-5",

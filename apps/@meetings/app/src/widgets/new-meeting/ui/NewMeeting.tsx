@@ -25,22 +25,15 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import {
-  getShowCNI,
-  useAgencyConfigs,
-} from "~@meetings/app/entities/agency-config";
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
-import { getPersonType } from "~@meetings/app/entities/person";
-import { useStateSelection } from "~@meetings/app/entities/state-code";
 import {
   MeetingControlsMobile,
   useRecording,
 } from "~@meetings/app/features/recording";
-import { Person, trpc } from "~@meetings/app/shared/api";
+import { Person } from "~@meetings/app/shared/api";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
-import { CaseNoteSummaryCard } from "./CaseNoteSummaryCard";
-import { CaseNoteSummarySheet } from "./CaseNoteSummarySheet";
+import { MeetingCaseNoteSummary } from "./MeetingCaseNoteSummary";
 import { NotepadCard } from "./NotepadCard";
 import { NotepadSheet } from "./NotepadSheet";
 
@@ -57,19 +50,6 @@ export const NewMeeting = ({
 }: Props) => {
   const insets = useSafeAreaInsets();
   const notepadSheetRef = useRef<BottomSheetModal>(null);
-  const caseNoteSummarySheetRef = useRef<BottomSheetModal>(null);
-
-  const { selectedStateCode } = useStateSelection();
-  const { agencyConfigs } = useAgencyConfigs();
-  const showCNI = getShowCNI(agencyConfigs, selectedStateCode);
-  const isClient = getPersonType(person) === "client";
-
-  const { data: client } = trpc.v1.client.get.useQuery(
-    { personId: person.personId },
-    { enabled: isClient && showCNI },
-  );
-
-  const summaries = client?.caseNoteInsightsSummaries;
 
   const {
     meetingType,
@@ -141,22 +121,7 @@ export const NewMeeting = ({
             onConfirm={setNote}
             ref={notepadSheetRef}
           />
-          {isClient && showCNI && (
-            <>
-              <CaseNoteSummaryCard
-                summaries={summaries}
-                onPress={() => caseNoteSummarySheetRef.current?.present()}
-                person={person}
-              />
-              {summaries && (
-                <CaseNoteSummarySheet
-                  ref={caseNoteSummarySheetRef}
-                  summaries={summaries}
-                  person={person}
-                />
-              )}
-            </>
-          )}
+          <MeetingCaseNoteSummary person={person} />
         </View>
         <MeetingControlsMobile />
       </View>

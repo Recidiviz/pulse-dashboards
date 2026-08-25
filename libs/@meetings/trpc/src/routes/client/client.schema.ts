@@ -63,7 +63,7 @@ export const listInputSchema = z
 const cniFieldSchema = z.object({
   fieldValue: z.string(),
   quotes: z.array(z.string()),
-  lastVerifiedDate: z.coerce.date(),
+  lastVerifiedDate: z.string(),
 });
 
 const cniEmploymentFieldsSchema = z.object({
@@ -93,22 +93,25 @@ const cniHousingFieldsSchema = z
   .partial()
   .extend({ primaryStatus: cniFieldSchema });
 
-export const submitCNIFeedbackInputSchema = z.object({
+const cniFeedbackSnapshotSchema = z.object({
+  displayText: z.string(),
+  summarySnapshots: z.array(
+    z.object({
+      summaryId: z.string(),
+      cniSnapshot: z.union([cniEmploymentFieldsSchema, cniHousingFieldsSchema]),
+      // purposefully loosely defined, since the runId infra is still being iterated
+      cniRunIDs: z.object({}).catchall(z.string()),
+    }),
+  ),
+});
+
+export const submitCNIVoteInputSchema = z.object({
   clientId: z.bigint(),
   vote: z.nativeEnum(OutputVoteValue),
+  snapshot: cniFeedbackSnapshotSchema,
+});
+
+export const submitCNIVoteMessageInputSchema = z.object({
+  feedbackId: z.string().cuid(),
   message: z.string().max(10000),
-  snapshot: z.object({
-    displayText: z.string(),
-    summarySnapshots: z.array(
-      z.object({
-        summaryId: z.string(),
-        cniSnapshot: z.union([
-          cniEmploymentFieldsSchema,
-          cniHousingFieldsSchema,
-        ]),
-        // purposefully loosely defined, since the runId infra is still being iterated
-        cniRunIDs: z.object({}).catchall(z.string()),
-      }),
-    ),
-  }),
 });

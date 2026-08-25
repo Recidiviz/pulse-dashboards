@@ -16,8 +16,14 @@
 // =============================================================================
 
 export { useCaseNoteSummary } from "./lib/useCaseNoteSummary";
-export type { CaseNoteInsightsSummary, CniCitation } from "./model/types";
+export type {
+  CaseNoteInsightsSummary,
+  CaseNoteSummarySegment,
+  CniCitation,
+} from "./model/types";
+export { CaseNoteSummaryCard } from "./ui/CaseNoteSummaryCard";
 export { CaseNoteSummaryPreview } from "./ui/CaseNoteSummaryPreview";
 export { CaseNoteSummarySelectable } from "./ui/CaseNoteSummarySelectable";
+export { CaseNoteSummarySheet } from "./ui/CaseNoteSummarySheet";
 export { CaseNoteSummaryWithTooltips } from "./ui/CaseNoteSummaryWithTooltips";
 export { CitationCard } from "./ui/CitationCard";

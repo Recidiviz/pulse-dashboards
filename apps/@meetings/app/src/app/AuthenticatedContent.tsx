@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { useEffect, useState } from "react";
 
 import { AudioUpload } from "~@meetings/app/features/audio-upload";
@@ -54,10 +55,12 @@ export function AuthenticatedContent() {
 
   return (
     <RecordingProvider>
-      <DrawerNavigator />
-      <AudioUpload />
-      <ReconnectStatus onRetry={forceDrain} isVisible={isDraining} />
-      <FeedbackLauncher onPress={openMessenger} />
+      <BottomSheetModalProvider>
+        <DrawerNavigator />
+        <AudioUpload />
+        <ReconnectStatus onRetry={forceDrain} isVisible={isDraining} />
+        <FeedbackLauncher onPress={openMessenger} />
+      </BottomSheetModalProvider>
     </RecordingProvider>
   );
 }

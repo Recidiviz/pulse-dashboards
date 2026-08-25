@@ -17,22 +17,37 @@
 
 import { useMemo } from "react";
 
-import { Person } from "~@meetings/app/shared/api";
+import { Person, trpc } from "~@meetings/app/shared/api";
+import { IS_PROD } from "~@meetings/app/shared/config";
 
-import { CaseNoteInsightsSummary } from "../model/types";
 import { getCaseNoteSummarySegments } from "./getCaseNoteSummarySegments";
 import { getCategorizedSummaries } from "./getCategorizedSummaries";
 
-export function useCaseNoteSummary(
-  summaries: CaseNoteInsightsSummary[] | undefined,
-  person: Person,
-) {
+type Params = {
+  person: Person;
+  isClient: boolean;
+  showCNI: boolean;
+};
+
+export function useCaseNoteSummary({ person, isClient, showCNI }: Params) {
+  const enabled = isClient && showCNI && !IS_PROD;
+
+  const { data: client } = trpc.v1.client.get.useQuery(
+    { personId: person.personId },
+    { enabled },
+  );
+  const summaries = client?.caseNoteInsightsSummaries;
+
   // Memoized so a template gap isn't re-reported to Sentry on every render —
   // the meeting modal's timer re-renders these consumers every second.
-  return useMemo(() => {
+  const segments = useMemo(() => {
+    if (!enabled) return null;
+
     const categorized = getCategorizedSummaries(summaries);
     if (!categorized) return null;
 
     return getCaseNoteSummarySegments({ ...categorized, person });
-  }, [summaries, person]);
+  }, [summaries, person, enabled]);
+
+  return { segments, summaries, enabled };
 }

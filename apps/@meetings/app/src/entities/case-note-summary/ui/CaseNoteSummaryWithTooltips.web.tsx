@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { View } from "react-native";
+import { Fragment } from "react";
 
 import { Tooltip } from "~@meetings/app/shared/ui/Tooltip";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
@@ -28,36 +28,40 @@ type Props = {
   isInsideModal?: boolean;
 };
 
-/** Each cited phrase opens its citations in a tooltip on hover. */
+/**
+ * Each cited phrase opens its citations in a tooltip
+ */
 export function CaseNoteSummaryWithTooltips({
   segments,
   isInsideModal,
 }: Props) {
   return (
-    <View className="flex-row flex-wrap items-baseline">
-      {segments.map((segment, index) =>
-        segment.citation ? (
-          <Tooltip
-            key={`${index}-${segment.content}`}
-            content={<CitationTooltipContent citation={segment.citation} />}
-            isInsideModal={isInsideModal}
-          >
-            <Typography
-              variant="body-s-regular"
-              className="border-b border-dotted border-primary text-primary"
+    <Typography variant="body-s-regular">
+      {segments.map(({ content, citation }, index) => {
+        const key = `${index}-${content}`;
+
+        if (!citation) return <Fragment key={key}>{content}</Fragment>;
+
+        // A cited fragment carries the space that separates it from the phrase
+        // before it (" at Acme Corp"). That space stays outside the trigger, so
+        // the underline and the hover target both start at the first word.
+        const lead = content.match(/^\s+/)?.[0] ?? "";
+
+        return (
+          <Fragment key={key}>
+            {lead}
+            <Tooltip
+              inline
+              content={<CitationTooltipContent citation={citation} />}
+              isInsideModal={isInsideModal}
             >
-              {segment.content}
-            </Typography>
-          </Tooltip>
-        ) : (
-          <Typography
-            key={`${index}-${segment.content}`}
-            variant="body-s-regular"
-          >
-            {segment.content}
-          </Typography>
-        ),
-      )}
-    </View>
+              <Typography className="border-b border-dotted border-primary text-primary">
+                {content.slice(lead.length)}
+              </Typography>
+            </Tooltip>
+          </Fragment>
+        );
+      })}
+    </Typography>
   );
 }

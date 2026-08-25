@@ -16,17 +16,18 @@
 // =============================================================================
 
 import { useState } from "react";
-import { Pressable, View } from "react-native";
+import { Platform, Pressable, View } from "react-native";
 import OutlineThumbDownIcon from "react-native-heroicons/outline/ThumbDownIcon";
 import OutlineThumbUpIcon from "react-native-heroicons/outline/ThumbUpIcon";
 
 import { MeetingDetails } from "~@meetings/app/entities/meeting";
 import { trpc } from "~@meetings/app/shared/api";
+import { FeedbackMessageModal } from "~@meetings/app/shared/ui/FeedbackMessageModal";
+import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 import type { OutputVoteTab, OutputVoteValue } from "~@meetings/trpc-types";
 
 import { Tab } from "./MeetingTabs";
-import OutputVoteMessageModal from "./OutputVoteMessageModal";
 
 type OutputVoteSupportedTab =
   | Tab.DraftCaseNotes
@@ -47,11 +48,30 @@ type OutputVoteProps = {
 const OutputVote = ({ meetingDetails, tab }: OutputVoteProps) => {
   const [isMessageModalVisible, setIsMessageModalVisible] = useState(false);
   const utils = trpc.useUtils();
+  const { showSnackbar } = useSnackbar();
   const submitOutputVote = trpc.v1.meeting.submitOutputVote.useMutation({
     onSettled: () => {
       utils.v1.meeting.getDetails.invalidate({ meetingId: meetingDetails.id });
     },
   });
+
+  const submitOutputVoteMessage =
+    trpc.v1.meeting.submitOutputVoteMessage.useMutation({
+      onSuccess: () => {
+        utils.v1.meeting.getDetails.invalidate({
+          meetingId: meetingDetails.id,
+        });
+        setIsMessageModalVisible(false);
+        showSnackbar(
+          "Thanks for your feedback! You’re helping us make the product better",
+        );
+      },
+      onError: () => {
+        showSnackbar(
+          "Something went wrong while submitting your feedback. Please try again.",
+        );
+      },
+    });
 
   const handleOutputVote = (vote: OutputVoteValue) => {
     if (submitOutputVote.isPending) return;
@@ -101,11 +121,19 @@ const OutputVote = ({ meetingDetails, tab }: OutputVoteProps) => {
           </View>
         )}
       </View>
-      <OutputVoteMessageModal
+      <FeedbackMessageModal
+        title="Anything else you'd like to tell us?"
+        description={`Let us know why this client context is incorrect or incomplete.${Platform.OS === "web" ? "\n" : " "} Your feedback helps us improve AI accuracy`}
         visible={isMessageModalVisible}
         onClose={() => setIsMessageModalVisible(false)}
-        meetingId={meetingDetails.id}
-        tab={outputVoteTab}
+        onSubmit={(message) =>
+          submitOutputVoteMessage.mutate({
+            meetingId: meetingDetails.id,
+            tab: outputVoteTab,
+            message,
+          })
+        }
+        isSubmitting={submitOutputVoteMessage.isPending}
       />
     </>
   );

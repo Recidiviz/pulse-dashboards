@@ -470,10 +470,11 @@ model CaseNoteInsightsFeedback {
 
   authorEmail String
   vote        OutputVoteValue
-  message     String
+  message     String?
 
-  // Snapshot of what the user actually saw for each linked summary, i.e. the FE-built display 
+  // Snapshot of what the user actually saw for each linked summary, i.e. the FE-built display
   // text. Plus a nested struct of all relevant CNI summary info (summaryId, fields, run IDs)
   //  — captured at feedback time since summaries can change daily when the calc dag reruns.
+  /// [CNIFeedbackSnapshot]
   summariesSnapshot Json
 }

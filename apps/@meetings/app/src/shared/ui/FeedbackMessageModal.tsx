@@ -22,56 +22,35 @@ import {
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { useEffect, useRef, useState } from "react";
-import { Platform, TextInput, TouchableOpacity, View } from "react-native";
+import { Platform, TextInput, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 
-import { trpc } from "~@meetings/app/shared/api";
-import { Button } from "~@meetings/app/shared/ui/Button";
-import Modal from "~@meetings/app/shared/ui/Modal";
-import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
-import { Typography } from "~@meetings/app/shared/ui/Typography";
-import type { OutputVoteTab } from "~@meetings/trpc-types";
+import { Button } from "./Button";
+import Modal from "./Modal";
+import { Typography } from "./Typography";
 
-type OutputVoteMessageModalProps = {
+type FeedbackMessageModalProps = {
+  title: string;
+  description: string;
   visible: boolean;
   onClose: () => void;
-  meetingId: string;
-  tab: OutputVoteTab;
+  onSubmit: (message: string) => void;
+  isSubmitting?: boolean;
 };
 
-const OutputVoteMessageModal = ({
+export function FeedbackMessageModal({
+  title,
+  description,
   visible,
   onClose,
-  meetingId,
-  tab,
-}: OutputVoteMessageModalProps) => {
+  onSubmit,
+  isSubmitting = false,
+}: FeedbackMessageModalProps) {
   const [message, setMessage] = useState("");
-  const utils = trpc.useUtils();
   const sheetRef = useRef<BottomSheetModal>(null);
-  const { showSnackbar } = useSnackbar();
-
-  const handleClose = () => {
-    setMessage("");
-    onClose();
-  };
-
-  const submitOutputVoteMessage =
-    trpc.v1.meeting.submitOutputVoteMessage.useMutation({
-      onSuccess: () => {
-        utils.v1.meeting.getDetails.invalidate({ meetingId });
-        handleClose();
-        showSnackbar(
-          "Thanks for your feedback! You’re helping us make the product better",
-        );
-      },
-      onError: () => {
-        showSnackbar(
-          "Something went wrong while submitting your feedback. Please try again.",
-        );
-      },
-    });
 
   useEffect(() => {
+    if (!visible) setMessage("");
     if (Platform.OS === "web") return;
     if (visible) {
       sheetRef.current?.present();
@@ -81,12 +60,8 @@ const OutputVoteMessageModal = ({
   }, [visible]);
 
   const handleSubmit = () => {
-    if (!message.trim() || submitOutputVoteMessage.isPending) return;
-    submitOutputVoteMessage.mutate({
-      meetingId,
-      tab,
-      message: message.trim(),
-    });
+    if (!message.trim() || isSubmitting) return;
+    onSubmit(message.trim());
   };
 
   const hasText = message.trim().length > 0;
@@ -99,18 +74,17 @@ const OutputVoteMessageModal = ({
       <View className="flex-row items-start justify-between">
         <View className="flex-1 gap-1 pr-4">
           <Typography className="text-xl font-bold text-primary">
-            Anything else you'd like to tell us?
+            {title}
           </Typography>
-          <Typography variant="body-s-regular">
-            Let us know why this insight is incorrect or incomplete.
-          </Typography>
-          <Typography variant="body-s-regular">
-            Your feedback helps us improve AI accuracy
-          </Typography>
+          <Typography variant="body-s-regular">{description}</Typography>
         </View>
-        <TouchableOpacity onPress={handleClose} accessibilityLabel="Close">
-          <XIcon className="size-5 stroke-tertiary" />
-        </TouchableOpacity>
+        <Button
+          onPress={onClose}
+          variant="secondary"
+          shape="circle"
+          className={`${Platform.OS === "web" ? "bg-transparent" : ""}`}
+          icon={{ icon: () => <XIcon className="size-5 stroke-tertiary" /> }}
+        />
       </View>
 
       <FeedbackTextInput
@@ -124,27 +98,29 @@ const OutputVoteMessageModal = ({
 
       {Platform.OS === "web" ? (
         <View className="flex-row justify-end gap-3">
-          <Button variant="secondary" onPress={handleClose}>
+          <Button onPress={onClose} variant="secondary" className="px-6 py-3">
             Cancel
           </Button>
-          <Button variant="primary" disabled={!hasText} onPress={handleSubmit}>
+          <Button
+            onPress={handleSubmit}
+            variant="primary"
+            disabled={!hasText}
+            className="px-6 py-3"
+            loading={isSubmitting}
+          >
             Submit
           </Button>
         </View>
       ) : (
-        <TouchableOpacity
+        <Button
           onPress={handleSubmit}
+          variant="primary"
           disabled={!hasText}
-          className={`items-center justify-center rounded-full py-4 ${
-            hasText ? "bg-brand" : "bg-disabled"
-          }`}
+          className="py-4"
+          loading={isSubmitting}
         >
-          <Typography
-            className={`font-semibold ${hasText ? "text-on-brand" : "text-on-disabled"}`}
-          >
-            Submit
-          </Typography>
-        </TouchableOpacity>
+          Submit
+        </Button>
       )}
     </View>
   );
@@ -154,7 +130,7 @@ const OutputVoteMessageModal = ({
       <Modal
         visible={visible}
         transparent
-        onClickOutside={handleClose}
+        onClickOutside={onClose}
         containerClassName="w-full max-w-[520px]"
       >
         <View className="pt-6">{innerContent}</View>
@@ -167,8 +143,9 @@ const OutputVoteMessageModal = ({
       ref={sheetRef}
       enableDynamicSizing
       enablePanDownToClose
-      onDismiss={handleClose}
-      keyboardBehavior="extend"
+      onDismiss={onClose}
+      keyboardBehavior="interactive"
+      keyboardBlurBehavior="restore"
       handleIndicatorStyle={{ opacity: 0 }}
       containerStyle={{ flex: 1 }}
       backdropComponent={(props) => (
@@ -184,6 +161,4 @@ const OutputVoteMessageModal = ({
       <BottomSheetView>{innerContent}</BottomSheetView>
     </BottomSheetModal>
   );
-};
-
-export default OutputVoteMessageModal;
+}

@@ -18,7 +18,6 @@
 import "../../global.css";
 import "./nativewind-interop";
 
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { PortalHost } from "@rn-primitives/portal";
 import * as Sentry from "@sentry/react-native";
 import React from "react";
@@ -102,27 +101,25 @@ const App = () => {
   return (
     <GestureHandlerRootView>
       <KeyboardProvider>
-        <BottomSheetModalProvider>
-          <SnackbarProvider>
-            <Auth0Provider
-              domain={env.EXPO_PUBLIC_AUTH0_DOMAIN}
-              clientId={env.EXPO_PUBLIC_AUTH0_CLIENT_ID}
-              // useRefreshTokens and cacheLocation are web-only props (WebAuth0Options),
-              // not in the shared Auth0Options type, but read by WebAuth0Client on web
-              // and safely ignored on native.
-              {...{
-                useRefreshTokens: true,
-                cacheLocation: "localstorage",
-              }}
-            >
-              <PrPreviewProvider>
-                <AppErrorBoundary>
-                  <AppNavigator />
-                </AppErrorBoundary>
-              </PrPreviewProvider>
-            </Auth0Provider>
-          </SnackbarProvider>
-        </BottomSheetModalProvider>
+        <SnackbarProvider>
+          <Auth0Provider
+            domain={env.EXPO_PUBLIC_AUTH0_DOMAIN}
+            clientId={env.EXPO_PUBLIC_AUTH0_CLIENT_ID}
+            // useRefreshTokens and cacheLocation are web-only props (WebAuth0Options),
+            // not in the shared Auth0Options type, but read by WebAuth0Client on web
+            // and safely ignored on native.
+            {...{
+              useRefreshTokens: true,
+              cacheLocation: "localstorage",
+            }}
+          >
+            <PrPreviewProvider>
+              <AppErrorBoundary>
+                <AppNavigator />
+              </AppErrorBoundary>
+            </PrPreviewProvider>
+          </Auth0Provider>
+        </SnackbarProvider>
         <PortalHost />
       </KeyboardProvider>
     </GestureHandlerRootView>

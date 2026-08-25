@@ -40,7 +40,7 @@ import {
   pseudoMeetingType,
 } from "~@meetings/trpc/test/setup/seed";
 
-const fakeCNIFeedbackSnapshot = {
+const fakeCNIFeedbackSnapshot: PrismaJson.CNIFeedbackSnapshot = {
   displayText: "Client is employed full-time.",
   summarySnapshots: [
     {
@@ -49,7 +49,12 @@ const fakeCNIFeedbackSnapshot = {
         primaryStatus: {
           fieldValue: "Employed",
           quotes: ["I have a job"],
-          lastVerifiedDate: new Date("2026-01-01"),
+          lastVerifiedDate: "2026-01-01",
+        },
+        searchStatus: {
+          fieldValue: "Not searching",
+          quotes: ["I have a job"],
+          lastVerifiedDate: "2026-01-01",
         },
         employers: [],
       },
@@ -409,18 +414,15 @@ describe("client router", () => {
       });
     });
 
-    describe("submitCNIFeedback", () => {
-      test("Creates a CNI feedback record", async () => {
-        const message = "This summary was very helpful.";
-
-        const result = await testTRPCClient.v1.client.submitCNIFeedback.mutate({
+    describe("submitCNIVote", () => {
+      test("Creates a CNI feedback record with no message", async () => {
+        const result = await testTRPCClient.v1.client.submitCNIVote.mutate({
           clientId: fakeClients[0].personId,
           vote: OutputVoteValue.UP,
-          message,
           snapshot: fakeCNIFeedbackSnapshot,
         });
 
-        expect(result).toBeUndefined();
+        expect(result).toEqual({ id: expect.any(String) });
 
         const feedback =
           await testPrismaClient.caseNoteInsightsFeedback.findMany({
@@ -429,17 +431,108 @@ describe("client router", () => {
         expect(feedback).toHaveLength(1);
         expect(feedback[0]).toEqual(
           expect.objectContaining({
+            id: result.id,
             clientId: fakeClients[0].personId,
             authorEmail: fakeStaff[0].email,
             vote: OutputVoteValue.UP,
-            message,
-            // Json columns can't store Date instances, so lastVerifiedDate comes
-            // back as the ISO string it was serialized to on write.
-            summariesSnapshot: JSON.parse(
-              JSON.stringify(fakeCNIFeedbackSnapshot),
-            ),
+            message: null,
+            summariesSnapshot: fakeCNIFeedbackSnapshot,
           }),
         );
+      });
+
+      test("Appends a new record for every vote instead of updating", async () => {
+        const first = await testTRPCClient.v1.client.submitCNIVote.mutate({
+          clientId: fakeClients[0].personId,
+          vote: OutputVoteValue.UP,
+          snapshot: fakeCNIFeedbackSnapshot,
+        });
+        const second = await testTRPCClient.v1.client.submitCNIVote.mutate({
+          clientId: fakeClients[0].personId,
+          vote: OutputVoteValue.DOWN,
+          snapshot: fakeCNIFeedbackSnapshot,
+        });
+
+        expect(second.id).not.toBe(first.id);
+
+        const feedback =
+          await testPrismaClient.caseNoteInsightsFeedback.findMany({
+            where: { clientId: fakeClients[0].personId },
+          });
+        expect(feedback).toHaveLength(2);
+        expect(feedback.map(({ id, vote }) => ({ id, vote }))).toEqual(
+          expect.arrayContaining([
+            { id: first.id, vote: OutputVoteValue.UP },
+            { id: second.id, vote: OutputVoteValue.DOWN },
+          ]),
+        );
+      });
+    });
+
+    describe("submitCNIVoteMessage", () => {
+      test("Attaches a message to an existing vote", async () => {
+        const message = "This summary was very helpful.";
+
+        const { id } = await testTRPCClient.v1.client.submitCNIVote.mutate({
+          clientId: fakeClients[0].personId,
+          vote: OutputVoteValue.UP,
+          snapshot: fakeCNIFeedbackSnapshot,
+        });
+
+        const result =
+          await testTRPCClient.v1.client.submitCNIVoteMessage.mutate({
+            feedbackId: id,
+            message,
+          });
+
+        expect(result).toBeUndefined();
+
+        const feedback =
+          await testPrismaClient.caseNoteInsightsFeedback.findUniqueOrThrow({
+            where: { id },
+          });
+        expect(feedback).toEqual(
+          expect.objectContaining({
+            message,
+            // The vote the message attaches to is left untouched
+            vote: OutputVoteValue.UP,
+            summariesSnapshot: fakeCNIFeedbackSnapshot,
+          }),
+        );
+      });
+
+      test("throws error when no feedback exists for the id", async () => {
+        await expect(
+          testTRPCClient.v1.client.submitCNIVoteMessage.mutate({
+            feedbackId: "cnonexistentfeedbackid",
+            message: "This summary was very helpful.",
+          }),
+        ).rejects.toThrow("No CNI feedback found for this id");
+      });
+
+      test("throws error when the feedback belongs to another author", async () => {
+        const { id } = await testPrismaClient.caseNoteInsightsFeedback.create({
+          select: { id: true },
+          data: {
+            clientId: fakeClients[0].personId,
+            authorEmail: fakeStaff[1].email,
+            vote: OutputVoteValue.UP,
+            summariesSnapshot: fakeCNIFeedbackSnapshot,
+          },
+        });
+
+        await expect(
+          testTRPCClient.v1.client.submitCNIVoteMessage.mutate({
+            feedbackId: id,
+            message: "Not my vote to comment on.",
+          }),
+        ).rejects.toThrow("No CNI feedback found for this id");
+
+        const feedback =
+          await testPrismaClient.caseNoteInsightsFeedback.findUniqueOrThrow({
+            where: { id },
+          });
+        expect(feedback.message).toBeNull();
       });
     });
   });
@@ -623,16 +716,15 @@ describe("client router", () => {
       });
     });
 
-    describe("submitCNIFeedback", () => {
-      test("Allows recidiviz users to submit CNI feedback outside of production", async () => {
-        const result = await testTRPCClient.v1.client.submitCNIFeedback.mutate({
+    describe("submitCNIVote", () => {
+      test("Allows recidiviz users to submit a CNI vote outside of production", async () => {
+        const result = await testTRPCClient.v1.client.submitCNIVote.mutate({
           clientId: fakeClients[0].personId,
           vote: OutputVoteValue.DOWN,
-          message: "This summary was inaccurate.",
           snapshot: fakeCNIFeedbackSnapshot,
         });
 
-        expect(result).toBeUndefined();
+        expect(result).toEqual({ id: expect.any(String) });
 
         const feedback =
           await testPrismaClient.caseNoteInsightsFeedback.findMany({
@@ -649,17 +741,68 @@ describe("client router", () => {
         );
       });
 
-      test("Blocks recidiviz users from submitting CNI feedback in production", async () => {
+      test("Blocks recidiviz users from submitting a CNI vote in production", async () => {
         const originalDeployEnv = env.DEPLOY_ENV;
         env.DEPLOY_ENV = "production";
 
         try {
           await expect(
-            testTRPCClient.v1.client.submitCNIFeedback.mutate({
+            testTRPCClient.v1.client.submitCNIVote.mutate({
               clientId: fakeClients[0].personId,
               vote: OutputVoteValue.UP,
-              message: "This summary was helpful.",
               snapshot: fakeCNIFeedbackSnapshot,
+            }),
+          ).rejects.toThrow(
+            "Recidiviz users may not give CNI feedback in production",
+          );
+        } finally {
+          env.DEPLOY_ENV = originalDeployEnv;
+        }
+      });
+    });
+
+    describe("submitCNIVoteMessage", () => {
+      test("Allows recidiviz users to submit a CNI message outside of production", async () => {
+        const message = "This summary was inaccurate.";
+
+        const { id } = await testTRPCClient.v1.client.submitCNIVote.mutate({
+          clientId: fakeClients[0].personId,
+          vote: OutputVoteValue.DOWN,
+          snapshot: fakeCNIFeedbackSnapshot,
+        });
+
+        await testTRPCClient.v1.client.submitCNIVoteMessage.mutate({
+          feedbackId: id,
+          message,
+        });
+
+        const feedback =
+          await testPrismaClient.caseNoteInsightsFeedback.findUniqueOrThrow({
+            where: { id },
+          });
+        expect(feedback).toEqual(
+          expect.objectContaining({
+            authorEmail: "test@recidiviz.org",
+            message,
+          }),
+        );
+      });
+
+      test("Blocks recidiviz users from submitting a CNI message in production", async () => {
+        const { id } = await testTRPCClient.v1.client.submitCNIVote.mutate({
+          clientId: fakeClients[0].personId,
+          vote: OutputVoteValue.DOWN,
+          snapshot: fakeCNIFeedbackSnapshot,
+        });
+
+        const originalDeployEnv = env.DEPLOY_ENV;
+        env.DEPLOY_ENV = "production";
+
+        try {
+          await expect(
+            testTRPCClient.v1.client.submitCNIVoteMessage.mutate({
+              feedbackId: id,
+              message: "This summary was helpful.",
             }),
           ).rejects.toThrow(
             "Recidiviz users may not give CNI feedback in production",

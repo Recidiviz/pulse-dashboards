@@ -58,6 +58,15 @@ declare global {
     type CNIFields = CNIEmploymentFields | CNIHousingFields;
 
     type CNIRunIDs = Record<string, string>;
+
+    type CNIFeedbackSnapshot = {
+      displayText: string;
+      summarySnapshots: Array<{
+        summaryId: string;
+        cniSnapshot: CNIFields;
+        cniRunIDs: CNIRunIDs;
+      }>;
+    };
   }
 }
 
