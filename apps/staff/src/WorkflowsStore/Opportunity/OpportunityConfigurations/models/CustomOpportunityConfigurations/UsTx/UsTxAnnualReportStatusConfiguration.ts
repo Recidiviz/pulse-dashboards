@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { isDemoMode, isOfflineMode } from "~client-env-utils";
+
 import { FeatureVariant } from "../../../../../../RootStore/types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
@@ -33,7 +35,8 @@ export class UsTxAnnualReportStatusConfiguration extends ApiOpportunityConfigura
   }
 
   get inverseFeatureVariant() {
-    if (this.userStore.isRecidivizUser) return undefined;
+    if (this.userStore.isRecidivizUser && !isDemoMode() && !isOfflineMode())
+      return undefined;
 
     return "usTxAnnualReportStatusV2" as FeatureVariant;
   }

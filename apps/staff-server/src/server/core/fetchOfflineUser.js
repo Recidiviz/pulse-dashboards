@@ -65,6 +65,10 @@ export function fetchOfflineUser({
         usTnExpirationSubmitToTomis: { activeDate: "9999" },
         // supervisorHomepageVitals: {},
         // supervisorHomepageWorkflows: {},
+        usTxAnnualReportStatusV1: { activeDate: "9999" },
+        usTxEarlyReleaseFromSupervisionV1: { activeDate: "9999" },
+        usTxAnnualReportStatusV2: {},
+        usTxEarlyReleaseFromSupervisionV2: {},
       },
     },
   };
