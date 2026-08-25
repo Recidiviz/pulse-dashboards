@@ -26,6 +26,15 @@
  * - Sets staff JWT custom claims (role: "staff") from app_metadata.
  * - Denies unsupported connections (fail closed). The provider action mirrors
  *   this deny so either action is safe to deploy on its own.
+ * - Denies any login whose roster restrictions are not for US_ID (fail
+ *   closed), re-checked on every login rather than only when there's no
+ *   cached identity yet. The staff DB connection is shared tenant-wide across
+ *   every state's app, and other actions in this tenant
+ *   (update-user-restrictions.js, pre-registration-setup.js) cache
+ *   pseudonymizedId on that same connection for non-Idaho state accounts, so
+ *   trusting a cached pseudonymizedId here would let an account created for
+ *   another state's roster reach Idaho TH staff access just because it
+ *   authenticated once elsewhere on the shared connection.
  * - For the Google connection specifically, additionally denies any login
  *   whose email is not @recidiviz.org (fail closed). Google's own `hd`
  *   parameter is only a client-side hint on the account chooser and is not
@@ -94,11 +103,29 @@ exports.onExecutePostLogin = async (event, api) => {
     return;
   }
 
-  let pseudonymizedId = event.user.app_metadata?.pseudonymizedId;
+  const userEmail = getUserEmail(event);
+  const restrictions = await fetchUserRestrictions(userEmail);
+
+  // Fail closed: the staff DB connection is shared tenant-wide, so an
+  // account whose roster restrictions belong to a different state must not
+  // be stamped as Idaho TH staff just because it can authenticate here. This
+  // is checked on every login — not only when app_metadata.pseudonymizedId
+  // is unset — because other actions in this tenant cache pseudonymizedId
+  // for non-Idaho accounts too, and trusting that cached value here would
+  // let a cross-state account bypass this check entirely.
+  if (restrictions?.stateCode !== STATE_CODE) {
+    api.access.deny(
+      "Your account is not authorized for Idaho Transitional Housing.",
+    );
+    return;
+  }
+
+  const pseudonymizedId = restrictions.pseudonymizedId;
   if (!pseudonymizedId) {
-    const userEmail = getUserEmail(event);
-    const restrictions = await fetchUserRestrictions(userEmail);
-    pseudonymizedId = restrictions.pseudonymizedId;
+    api.access.deny("Staff account is missing required identity fields.");
+    return;
+  }
+  if (pseudonymizedId !== event.user.app_metadata?.pseudonymizedId) {
     api.user.setAppMetadata("pseudonymizedId", pseudonymizedId);
   }
 
