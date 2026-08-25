@@ -17,12 +17,13 @@
 
 import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
-import { Fragment } from "react";
-import styled from "styled-components";
+import { Fragment, useState } from "react";
+import styled, { css } from "styled-components";
 
 import { ParoleOffense } from "~datatypes";
 import { Icon, IconSVG, palette } from "~design-system";
 
+import useIsStuck from "../../../hooks/useIsStuck";
 import { formatDocId } from "../../../ParoleStore/utils";
 import { NAV_BAR_HEIGHT } from "../../NavigationLayout";
 import { PaddedSectionCardBody } from "./PaddedSectionCardBody";
@@ -57,17 +58,29 @@ const DocId = styled.div`
   margin-bottom: 1rem;
 `;
 
+// Each label/value pair wraps as a whole onto the next row once three no
+// longer fit, rather than immediately wrapping its own label or value --
+// only a pair that still doesn't fit even alone on its own row falls back
+// to wrapping its text.
 const FactRow = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: auto auto;
-  grid-auto-flow: column;
+  display: flex;
+  flex-wrap: wrap;
   column-gap: 1rem;
-  row-gap: 0.25em;
+  row-gap: 0.75rem;
 `;
 
 const FactRowStack = styled(FactStack)`
-  display: contents;
+  // Basis is each pair's own single-line content width, not a fixed
+  // third, so the row fits as many pairs as their content allows -- a
+  // fixed third would make a short pair (e.g. "Age") claim more room
+  // than it needs and prematurely wrap a pair after it that would
+  // otherwise still fit. Growing fills whatever room is left so pairs
+  // stay evenly spaced when there's slack. Shrinking only ever kicks in
+  // once a pair is already alone on its own row and still doesn't fit,
+  // at which point it wraps its text (min-width stays at its default
+  // auto, so it can't shrink -- and so wrap -- any sooner than that).
+  flex: 1 1 max-content;
+  overflow-wrap: break-word;
 `;
 
 const FullWidthHr = styled(Hr)`
@@ -92,17 +105,30 @@ const InstantOffenseItem = styled.li`
   }
 `;
 
-const InfoCard = styled(SectionCard)`
-  border-bottom: none;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
+const StickyNavSentinel = styled.div`
+  height: 0;
 `;
 
-const SectionNavCard = styled(SectionCard)`
+const InfoCard = styled(SectionCard)<{ $isNavStuck: boolean }>`
+  ${({ $isNavStuck }) =>
+    !$isNavStuck &&
+    css`
+      border-bottom: none;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    `}
+`;
+
+const SectionNavCard = styled(SectionCard)<{ $isNavStuck: boolean }>`
   position: sticky;
   top: ${rem(NAV_BAR_HEIGHT + spacing.lg)};
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+
+  ${({ $isNavStuck }) =>
+    !$isNavStuck &&
+    css`
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+    `}
 `;
 
 const NavCardBody = styled.div`
@@ -112,7 +138,7 @@ const NavCardBody = styled.div`
 const SectionNav = styled.nav`
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.75rem;
 `;
 
 const SectionNavButton = styled.button`
@@ -164,9 +190,15 @@ export function CaseProfileSidebar({
   showInstantOffenses: boolean | undefined;
   sections: ParoleSectionName[];
 }) {
+  const [sentinel, setSentinel] = useState<HTMLDivElement | null>(null);
+  const isNavStuck = useIsStuck(
+    sentinel,
+    `-${NAV_BAR_HEIGHT + spacing.lg}px 0px 0px 0px`,
+  );
+
   return (
     <>
-      <InfoCard>
+      <InfoCard $isNavStuck={isNavStuck}>
         <PaddedSectionCardBody>
           <SectionStack>
             {isParoleReturn && (
@@ -277,7 +309,8 @@ export function CaseProfileSidebar({
         </PaddedSectionCardBody>
       </InfoCard>
 
-      <SectionNavCard>
+      <StickyNavSentinel ref={setSentinel} />
+      <SectionNavCard $isNavStuck={isNavStuck}>
         <NavCardBody>
           <SectionNav>
             {sections.map((sectionName, index) => (
