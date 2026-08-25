@@ -23476,13 +23476,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/uuid@npm:^10.0.0":
-  version: 10.0.0
-  resolution: "@types/uuid@npm:10.0.0"
-  checksum: 10c0/9a1404bf287164481cb9b97f6bb638f78f955be57c40c6513b7655160beb29df6f84c915aaf4089a1559c216557dc4d2f79b48d978742d3ae10b937420ddac60
-  languageName: node
-  linkType: hard
-
 "@types/warning@npm:^3.0.0":
   version: 3.0.0
   resolution: "@types/warning@npm:3.0.0"
@@ -29539,15 +29532,6 @@ __metadata:
   version: 3.4.2
   resolution: "consola@npm:3.4.2"
   checksum: 10c0/7cebe57ecf646ba74b300bcce23bff43034ed6fbec9f7e39c27cee1dc00df8a21cd336b466ad32e304ea70fba04ec9e890c200270de9a526ce021ba8a7e4c11a
-  languageName: node
-  linkType: hard
-
-"console-table-printer@npm:^2.12.1":
-  version: 2.12.1
-  resolution: "console-table-printer@npm:2.12.1"
-  dependencies:
-    simple-wcswidth: "npm:^1.0.1"
-  checksum: 10c0/8f28e9c0ae5df77f5d60da3da002ecd95ebe1812b0b9e0a6d2795c81b5121b39774f32506bccf68830a838ca4d8fbb2ab8824e729dba2c5e30cdeb9df4dd5f2b
   languageName: node
   linkType: hard
 
@@ -43292,22 +43276,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"langsmith@npm:0.3.60":
-  version: 0.3.60
-  resolution: "langsmith@npm:0.3.60"
+"langsmith@npm:>=0.8.0":
+  version: 0.9.0
+  resolution: "langsmith@npm:0.9.0"
   dependencies:
-    "@types/uuid": "npm:^10.0.0"
-    chalk: "npm:^4.1.2"
-    console-table-printer: "npm:^2.12.1"
-    p-queue: "npm:^6.6.2"
-    p-retry: "npm:4"
-    semver: "npm:^7.6.3"
-    uuid: "npm:^10.0.0"
+    p-queue: "npm:6.6.2"
   peerDependencies:
     "@opentelemetry/api": "*"
     "@opentelemetry/exporter-trace-otlp-proto": "*"
     "@opentelemetry/sdk-trace-base": "*"
     openai: "*"
+    ws: ">=7"
   peerDependenciesMeta:
     "@opentelemetry/api":
       optional: true
@@ -43317,7 +43296,9 @@ __metadata:
       optional: true
     openai:
       optional: true
-  checksum: 10c0/ace93954d5ab351b1ab78379e1c5356462e9b6c6bf381c127ece4ff14a4e6ba2088f4e76c9ae09312e593bbb26b2f81be1674a403817c987e8d1dcba2fb4d4a8
+    ws:
+      optional: true
+  checksum: 10c0/50bc86e0d55bc0fe63a4e017626e22dfe652f37efa6e4158ced848a835c4393234b912e8ae49e6dd2355bda907692e01b6dcfa6ce9c8582d125a542d4dd767ff
   languageName: node
   linkType: hard
 
@@ -49066,7 +49047,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-queue@npm:^6, p-queue@npm:^6.6.2":
+"p-queue@npm:6.6.2, p-queue@npm:^6, p-queue@npm:^6.6.2":
   version: 6.6.2
   resolution: "p-queue@npm:6.6.2"
   dependencies:
@@ -54131,7 +54112,7 @@ __metadata:
     jspdf: "npm:^2.5.2"
     jszip: "npm:^3.8.0"
     jwks-rsa: "npm:^3.1.0"
-    langsmith: "npm:^0.3.69"
+    langsmith: "npm:^0.8.0"
     language-tags: "npm:^2.1.0"
     lint-staged: "npm:^15.2.2"
     litellm: "npm:^0.12.0"
@@ -57062,13 +57043,6 @@ __metadata:
   dependencies:
     semver: "npm:^7.5.3"
   checksum: 10c0/2a00bd03bfbcbf8a737c47ab230d7920f8bfb92d1159d421bdd194479f6d01ebc995d13fbe13d45dace23066a78a3dc6642999b4e3b38b847e6664191575b20c
-  languageName: node
-  linkType: hard
-
-"simple-wcswidth@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "simple-wcswidth@npm:1.0.1"
-  checksum: 10c0/2befead4c97134424aa3fba593a81daa9934fd61b9e4c65374b57ac5eecc2f2be1984b017bbdbc919923e19b77f2fcbdb94434789b9643fa8c3fde3a2a6a4b6f
   languageName: node
   linkType: hard
 
