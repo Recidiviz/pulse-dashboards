@@ -1,3 +1,4 @@
+import os
 import uuid
 from datetime import datetime
 from io import BytesIO
@@ -680,9 +681,19 @@ async def router_upload_asset(
         cpa_client_locations=auth_user_context["cpa_client_locations"],
         is_zero_caseload_user=auth_user_context["is_zero_caseload_user"],
     )
+
+    # Sanitize filename to prevent path traversal attacks.
+    # Extract only the basename, stripping any directory components or path separators.
+    # This prevents attackers from using filenames like "../../../tmp/pwned" or "/tmp/pwned"
+    # to write files outside the intended backup directory when reprocess_outputs runs.
+    safe_filename = os.path.basename(file.filename or "unnamed")
+    if not safe_filename or safe_filename in (".", ".."):
+        # Reject empty filenames or directory references
+        raise HTTPException(status_code=400, detail="Invalid filename")
+
     asset = PlanAsset(
         plan_id=id,
-        filename=file.filename,
+        filename=safe_filename,
         mimetype=file.content_type,
         file_blob=file.file.read(),
     )

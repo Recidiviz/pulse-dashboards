@@ -52,6 +52,7 @@ STEP 2 — In your original terminal, run the script with the remote DB credenti
 """
 
 import json
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Annotated, Optional
@@ -249,7 +250,33 @@ async def reprocess_outputs(
 
                     for asset in existing_assets:
                         if asset.file_blob:
-                            asset_path = backup_dir / asset.filename
+                            # Defense-in-depth: sanitize filename to prevent path traversal.
+                            # Extract only the basename to ensure the file is written within backup_dir.
+                            # This protects against malicious filenames that may have bypassed
+                            # upload validation or were inserted directly into the database.
+                            safe_filename = os.path.basename(asset.filename)
+                            if not safe_filename or safe_filename in (".", ".."):
+                                logger.warning(
+                                    "Skipping asset with invalid filename",
+                                    asset_id=asset.id,
+                                    filename=asset.filename,
+                                )
+                                continue
+
+                            asset_path = backup_dir / safe_filename
+
+                            # Additional safety check: ensure the resolved path is within backup_dir
+                            try:
+                                asset_path.resolve().relative_to(backup_dir.resolve())
+                            except ValueError:
+                                logger.error(
+                                    "Path traversal attempt detected in asset filename",
+                                    asset_id=asset.id,
+                                    filename=asset.filename,
+                                    backup_dir=str(backup_dir),
+                                )
+                                continue
+
                             asset_path.write_bytes(asset.file_blob)
 
                     for gen in existing_gens:
