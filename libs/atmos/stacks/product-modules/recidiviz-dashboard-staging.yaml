@@ -1,0 +1,28 @@
+settings:
+  context:
+    project_id: recidiviz-dashboard-staging
+    project_number: 626425930051
+    location: us-central1
+    product: product-modules
+
+# The variables set here are automatically provided to any components used in this stack.
+vars:
+  project_id: "{{ .settings.context.project_id }}"
+  location: "{{ .settings.context.location }}"
+
+import:
+  - ../@defaults/terraform-backend
+  - ../@defaults/vendor/artifact-registry
+
+components:
+  terraform:
+    artifact_registry:
+      vars:
+        project_id: "{{ .settings.context.project_id }}"
+        location: "{{ .settings.context.location }}"
+        repository_id: "{{ .settings.context.product }}"
+
+    apps/product-modules:
+      vars:
+        artifact_registry_repo: '{{ .settings.context.location }}-docker.pkg.dev/{{ .settings.context.project_id }}/{{ (atmos.Component "artifact_registry" .stack).outputs.artifact_name }}'
+        artifact_registry_project_id: "{{ .settings.context.project_id }}"
