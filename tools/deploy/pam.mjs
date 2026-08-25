@@ -43,6 +43,23 @@ function parseJson(text) {
 }
 
 /**
+ * Returns this caller's grants on the entitlement, or undefined if they can't
+ * be read. Uses `grants search`, which is scoped to grants you created, rather
+ * than `grants list` (grants.list) or `grants describe` (grants.get) — eligible
+ * requesters hold neither of those.
+ */
+async function searchOwnGrants(projectId) {
+  const searched =
+    await $`gcloud pam grants search --caller-relationship=had-created --entitlement=${ENTITLEMENT_ID} --location=${LOCATION} --project=${projectId} --format=json`
+      .nothrow()
+      .quiet();
+  if (searched.exitCode !== 0) {
+    return undefined;
+  }
+  return parseJson(searched.stdout) ?? [];
+}
+
+/**
  * Requests a just-in-time PAM `deploy-app` grant on `projectId` so the deploying
  * engineer holds the deploy roles for the duration of the deploy, then evaporates.
  *
@@ -84,23 +101,13 @@ export async function requestPamDeployGrant(
     return;
   }
 
-  const account = (
-    await $`gcloud config get-value account`.nothrow().quiet()
-  ).stdout.trim();
-
-  // 2. Reuse an existing ACTIVE grant for this requester, if one is already open.
-  const listed =
-    await $`gcloud pam grants list --entitlement=${ENTITLEMENT_ID} --location=${LOCATION} --project=${projectId} --filter=state=ACTIVE --format=json`
-      .nothrow()
-      .quiet();
-  if (listed.exitCode === 0) {
-    const active = (parseJson(listed.stdout) ?? []).find(
-      (grant) => grant.requester === account,
-    );
-    if (active) {
-      console.log(`✅ ${label}: reusing your active grant.`);
-      return;
-    }
+  // 2. Reuse an existing ACTIVE grant, if one is already open. `grants search`
+  // only returns grants this caller created, so no requester filter is needed.
+  if (
+    (await searchOwnGrants(projectId))?.some(({ state }) => state === "ACTIVE")
+  ) {
+    console.log(`✅ ${label}: reusing your active grant.`);
+    return;
   }
 
   // 3. Create a short grant.
@@ -120,12 +127,8 @@ export async function requestPamDeployGrant(
   // 4. Wait for the grant to activate and its IAM bindings to propagate.
   for (let attempt = 0; attempt < ACTIVE_POLL_ATTEMPTS; attempt += 1) {
     const state = grantName
-      ? parseJson(
-          (
-            await $`gcloud pam grants describe ${grantName} --format=json`
-              .nothrow()
-              .quiet()
-          ).stdout,
+      ? (await searchOwnGrants(projectId))?.find(
+          ({ name }) => name === grantName,
         )?.state
       : undefined;
     if (state === "ACTIVE") {

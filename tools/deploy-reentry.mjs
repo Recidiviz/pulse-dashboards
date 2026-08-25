@@ -50,7 +50,10 @@ if ((await $`git status --porcelain`).stdout.trim() !== "") {
 // something will fail later on.
 console.log("Checking gcloud ADC credentials...");
 try {
-  await $`gcloud auth application-default print-access-token --quiet`;
+  // .quiet() so the access token is never echoed. gcloud's own --quiet only
+  // suppresses prompts, and $.verbose is true above, so without this the live
+  // token lands in the terminal and in any saved deploy log.
+  await $`gcloud auth application-default print-access-token --quiet`.quiet();
 } catch {
   await $`gcloud auth login --update-adc`;
 }

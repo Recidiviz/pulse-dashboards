@@ -35,7 +35,10 @@ export async function checkCleanRepo(): Promise<void> {
 export async function checkCredentials(): Promise<void> {
   console.log("Checking gcloud ADC and Firebase CLI credentials...");
   try {
-    await $`gcloud auth application-default print-access-token --quiet`;
+    // .quiet() so the access token is never echoed. gcloud's own --quiet only
+    // suppresses prompts, and deploy.mts sets $.verbose = true, so without this
+    // the live token lands in the terminal and in any saved deploy log.
+    await $`gcloud auth application-default print-access-token --quiet`.quiet();
   } catch {
     await $`gcloud auth login --update-adc`;
   }
