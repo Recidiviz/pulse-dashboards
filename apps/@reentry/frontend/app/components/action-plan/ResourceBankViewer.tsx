@@ -79,6 +79,7 @@ const ResourceBankViewer = ({
       <Markdown
         className={`${markdownStyles["markdown"]} ${styles["markdownWrapper"]}`}
         options={{
+          disableParsingRawHTML: true,
           overrides: {
             annotations: { component: Annotations },
             annotation: { component: Annotation },

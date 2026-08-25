@@ -220,7 +220,10 @@ const IntakeSummaryPage = () => {
                         {clientFullName}
                       </div>
                     </div>
-                    <Markdown className={`${styles["markdown"]} my-4`}>
+                    <Markdown
+                      className={`${styles["markdown"]} my-4`}
+                      options={{ disableParsingRawHTML: true }}
+                    >
                       {intakeSummary?.data || ""}
                     </Markdown>
                   </div>

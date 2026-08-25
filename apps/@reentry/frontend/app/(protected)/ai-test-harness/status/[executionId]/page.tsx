@@ -316,7 +316,12 @@ const AIIntakeStatusPage = () => {
     }
     if (summaryAsset?.data) {
       return (
-        <Markdown className={styles["markdown"]}>{summaryAsset.data}</Markdown>
+        <Markdown
+          className={styles["markdown"]}
+          options={{ disableParsingRawHTML: true }}
+        >
+          {summaryAsset.data}
+        </Markdown>
       );
     }
     return (
@@ -346,7 +351,10 @@ const AIIntakeStatusPage = () => {
     }
     if (planData?.latest_generation?.markdown_result) {
       return (
-        <Markdown className={styles["markdown"]}>
+        <Markdown
+          className={styles["markdown"]}
+          options={{ disableParsingRawHTML: true }}
+        >
           {planData.latest_generation.markdown_result}
         </Markdown>
       );
