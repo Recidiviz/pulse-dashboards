@@ -173,9 +173,20 @@ async def transcribe_audio_route(
         channels = response_dict.get("results", {}).get("channels", [])
         if channels:
             transcription = channels[0].get("alternatives", [{}])[0].get("transcript")
+    except FileNotFoundError as e:
+        # File system errors - log details but return generic message
+        logger.error("Audio file not found during transcription", error=str(e))
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to process audio file. Please try again or contact support.",
+        )
     except Exception as e:
-        logger.error(f"Transcription failed: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        # Unexpected errors - log details but return generic message
+        logger.error("Transcription failed", error=str(e))
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to transcribe audio. Please try again or contact support.",
+        )
     finally:
         # Clean up the temporary file
         if os.path.exists(temp_file_path):

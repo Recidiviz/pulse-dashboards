@@ -886,7 +886,11 @@ async def test_transcribe_audio_empty_file(
         assert response.status_code == 500
         result = response.json()
         assert "detail" in result
-        assert "Invalid audio content" in result["detail"]
+        assert "Invalid audio content" not in result["detail"]
+        assert (
+            result["detail"]
+            == "Failed to transcribe audio. Please try again or contact support."
+        )
 
 
 @pytest.mark.asyncio
@@ -927,7 +931,11 @@ async def test_transcribe_audio_deepgram_error(
         assert response.status_code == 500
         result = response.json()
         assert "detail" in result
-        assert "Deepgram API error" in result["detail"]
+        assert "Deepgram API error" not in result["detail"]
+        assert (
+            result["detail"]
+            == "Failed to transcribe audio. Please try again or contact support."
+        )
 
 
 @pytest.mark.asyncio
