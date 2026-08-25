@@ -324,7 +324,7 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           text: "The client has maintained compliance with all restitution obligations for the preceding two years of supervision",
           tooltip:
-            "Note: Restitution obligation does not have to be paid in full to qualify. Restitution will continue to be due each month until fully paid while client is on Annual Report status.\n",
+            "Note: Restitution obligation does not have to be paid in full to qualify. Restitution will continue to be due each month until fully paid while client is on Annual Report status.\nIn accordance to PD/POP-3.1.6",
         },
       ],
       nonOmsCriteriaHeader: "Requirements to check",
@@ -716,7 +716,7 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           text: "The client has maintained compliance with all restitution obligations for the preceding two years",
           tooltip:
-            "Note: Restitution obligation does not have to be paid in full to qualify. Restitution will continue to be due each month until fully paid while client is on Early Release status.\n",
+            "Note: Restitution obligation does not have to be paid in full to qualify. Restitution will continue to be due each month until fully paid while client is on Early Release status.\n\nIn accordance to PD/POP-3.1.6",
         },
       ],
       nonOmsCriteriaHeader: "Requirements to check",
