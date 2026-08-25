@@ -73,7 +73,7 @@ app.use(limiter);
 Sentry.init({
   environment: process.env.SENTRY_ENV,
   dsn: process.env.SENTRY_DNS,
-  tracesSampleRate: 0.25,
+  tracesSampleRate: 0.1,
 });
 
 app.use(cors());

@@ -86,7 +86,7 @@ export function initializeSentry(): void {
     environment,
     integrations,
     beforeSend,
-    tracesSampleRate: isOffline ? 0 : 1,
+    tracesSampleRate: isOffline ? 0 : 0.1,
     ...(reverseProxyHost
       ? {
           tunnel: `https://${reverseProxyHost}/sentry/`,

@@ -70,7 +70,7 @@ function SentryErrorBoundary({
           console.error(hint.originalException || hint.syntheticException); // log the error in the console.
         return event; // send the error to sentry
       },
-      tracesSampleRate: 1,
+      tracesSampleRate: 0.1,
       maxValueLength: 1000, // default is 250, this lets us see longer error messages
     });
   }, [navigate]);

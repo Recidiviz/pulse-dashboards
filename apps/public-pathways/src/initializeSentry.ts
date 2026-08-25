@@ -70,6 +70,6 @@ export function initializeSentry(): void {
     environment,
     integrations,
     beforeSend,
-    tracesSampleRate: 1,
+    tracesSampleRate: 0.1,
   });
 }
