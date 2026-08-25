@@ -411,6 +411,39 @@ describe("WorkflowsHomepage", () => {
     expect(screen.getByText("Marked Ineligible: 1")).toBeInTheDocument();
   });
 
+  test("renders no results for ineligible opportunities", () => {
+    const opp = {
+      ...mockOpportunity,
+      isIneligible: true,
+      tabTitle: () => "Not Currently Eligible",
+    };
+    useRootStoreMock.mockReturnValue({
+      ...baseRootStoreMock,
+      workflowsStore: {
+        ...baseWorkflowsStoreMock,
+        opportunitiesLoaded: () => true,
+        opportunityTypes: ["LSU"],
+        allOpportunitiesByType: {
+          LSU: [opp],
+        },
+        hasOpportunities: () => true,
+      },
+    });
+
+    render(
+      <BrowserRouter>
+        <WorkflowsHomepage />
+      </BrowserRouter>,
+    );
+
+    expect(
+      screen.getByText(
+        "None of the selected caseloads have eligible opportunities. Search for another caseload.",
+      ),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/outstanding items/)).not.toBeInTheDocument();
+  });
+
   test("header does not include ineligible or submitted opps in count", () => {
     const deniedOpp = {
       ...mockOpportunity,

@@ -106,6 +106,61 @@ describe("WorkflowsHomepagePresenter", () => {
     });
   });
 
+  describe("ctaAndHeaderText", () => {
+    const NO_RESULTS =
+      "None of the selected caseloads have eligible opportunities. Search for another caseload.";
+    const FOUND_ITEMS =
+      "Hi, John Doe. We’ve found some outstanding items across 2 caseloads";
+
+    function oppInTab(
+      tab: string,
+      tabGroups = { ELIGIBILITY_STATUS: ["Eligible Now", "Marked Ineligible"] },
+    ) {
+      return { tabTitle: () => tab, config: { tabGroups } };
+    }
+
+    function setOpportunities(opportunitiesByType: Record<string, unknown[]>) {
+      const ws = workflowsStore as any;
+      ws.searchStore.isTypesenseSearchEnabled = false;
+      ws.allOpportunitiesByType = opportunitiesByType;
+    }
+
+    it("shows found items for eligible opportunities", () => {
+      setOpportunities({ type1: [oppInTab("Eligible Now")], type2: [] });
+      expect(presenter.ctaAndHeaderText.headerText).toBe(FOUND_ITEMS);
+    });
+
+    it("shows found items for denied opportunities", () => {
+      setOpportunities({ type1: [oppInTab("Marked Ineligible")], type2: [] });
+      expect(presenter.ctaAndHeaderText.headerText).toBe(FOUND_ITEMS);
+    });
+
+    it("shows no results for ineligible opportunities", () => {
+      setOpportunities({
+        type1: [oppInTab("Not Currently Eligible")],
+        type2: [],
+      });
+      expect(presenter.ctaAndHeaderText).toEqual({ ctaText: NO_RESULTS });
+    });
+
+    it("shows found items for ineligible opportunities when that tab is configured", () => {
+      setOpportunities({
+        type1: [
+          oppInTab("Not Currently Eligible", {
+            ELIGIBILITY_STATUS: ["Eligible Now", "Not Currently Eligible"],
+          }),
+        ],
+        type2: [],
+      });
+      expect(presenter.ctaAndHeaderText.headerText).toBe(FOUND_ITEMS);
+    });
+
+    it("shows no results without opportunities", () => {
+      setOpportunities({ type1: [], type2: [] });
+      expect(presenter.ctaAndHeaderText).toEqual({ ctaText: NO_RESULTS });
+    });
+  });
+
   // These tests verify the presenter WIRES the searchStore's
   // `workflowsSearchFieldTitle` into the CTA copy — the phrase-generation
   // logic itself is unit-tested in SearchStore.test.ts, so here we just mock

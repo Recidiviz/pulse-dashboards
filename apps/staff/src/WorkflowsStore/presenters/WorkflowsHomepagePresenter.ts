@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { isEmpty } from "lodash";
 import pluralize from "pluralize";
 
 import { SystemId } from "~datatypes";
@@ -27,7 +26,9 @@ import {
 } from "~hydration-utils";
 
 import { Client } from "../Client";
+import { Opportunity, OpportunityTab } from "../Opportunity";
 import { OpportunityConfigurationStore } from "../Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
+import { opportunitiesByTabForType } from "../utils";
 import { WorkflowsStore } from "../WorkflowsStore";
 import { CaseloadOpportunitiesPresenter } from "./CaseloadOpportunitiesPresenter";
 
@@ -236,18 +237,24 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
     return this.workflowsStore.supervisionTasks;
   }
 
+  // Match the tabs displayed by OpportunityTypeSummary
+  private hasDisplayableOpportunities(opps: Opportunity[]): boolean {
+    if (!opps.length) return false;
+    const displayedTabs: readonly OpportunityTab[] =
+      Object.values(opps[0].config.tabGroups)[0] ?? [];
+    return Object.keys(opportunitiesByTabForType(opps)).some((tab) =>
+      displayedTabs.includes(tab as OpportunityTab),
+    );
+  }
+
   get ctaAndHeaderText(): { ctaText?: string; headerText?: string } {
     const { searchResultLabel } = this.labels;
 
     const selectedSearchIdsCount = this.selectedSearchIds?.length || 0;
 
-    // If the user has access to tasks, check whether there are any tasks
-    // in addition to checking whether there are any opportunities
-    const noOpportunities =
-      isEmpty(this.opportunitiesByType) ||
-      Object.values(this.opportunitiesByType || {}).every((opps) =>
-        isEmpty(opps),
-      );
+    const noOpportunities = Object.values(this.opportunitiesByType ?? {}).every(
+      (opps) => !this.hasDisplayableOpportunities(opps ?? []),
+    );
     const noSearchResults = !this.showTasksSummary && noOpportunities;
 
     const salutation = this.userGivenNames
