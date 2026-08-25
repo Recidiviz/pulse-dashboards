@@ -23,7 +23,7 @@ import { formatDate } from "~utils";
 import UsIdTaskBase from "./UsIdTaskBase";
 
 class UsIdHomeVisitTaskV2 extends UsIdTaskBase<"usIdHomeVisit"> {
-  taskAction = "home visit";
+  taskAction = "home/field contact";
 
   get addressChangeDueDate() {
     const { addressChangeContactDueDate } = this.details;
