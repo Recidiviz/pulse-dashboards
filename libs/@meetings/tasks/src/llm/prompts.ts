@@ -212,6 +212,7 @@ export const PROMPTS = {
 
                     **MI Techniques Reference (for grounding your analysis):** Open Questions, Affirmations, Reflective Listening (simple & complex), Summaries, Evoking Change Talk, Developing Discrepancy, Exploring Ambivalence, Responding to Sustain Talk.
 
+                    <%= additionalOutputsSection %>
                     Keep all accented and special characters (such as ç, ã, é) without HTML escaping or hexadecimal sequences.`),
     USER: template(dedent`EXTRACTED FACTS:
                           <%= extracted %>

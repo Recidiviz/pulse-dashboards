@@ -158,7 +158,9 @@ export const AgencyConfigFileSchema = z
     additionalOutputs: z
       .array(OutputSpecSchema)
       .optional()
-      .describe("Appended to base outputs"),
+      .describe(
+        "Appended to base outputs in a separate section, appended to the case note",
+      ),
     /** Patches specific fields of existing outputs by id, without replacing them */
     outputPatches: z
       .record(OutputSpecSchema.omit({ id: true }).partial())
@@ -206,6 +208,7 @@ export const AgencyConfigSchema = z.object({
   glossary: z.record(z.string()).default({}),
   rules: z.array(z.string()).default([]),
   outputs: z.array(OutputSpecSchema).default([]),
+  additionalOutputs: z.array(OutputSpecSchema).default([]),
 });
 
 export type AgencyConfigFile = z.infer<typeof AgencyConfigFileSchema>;

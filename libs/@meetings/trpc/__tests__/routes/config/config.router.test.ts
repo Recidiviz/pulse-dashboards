@@ -41,6 +41,7 @@ const FAKE_AGENCY_CONFIG = {
   glossary: {},
   rules: [],
   outputs: [],
+  additionalOutputs: [],
 };
 
 describe("config router", () => {

@@ -28,6 +28,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import dedent from "dedent";
 import { wrapOpenAI } from "langsmith/wrappers";
 import OpenAI from "openai";
+import { z } from "zod";
 
 import { generateConfigKey } from "~@meetings/config";
 import type {
@@ -66,6 +67,70 @@ function buildMeetingTypeCaseNoteGuidance(
     return "";
   }
   return `\nMeeting Type Context: ${config.caseNoteGuidance}`;
+}
+
+/**
+ * Agency-specific supplemental outputs (agency.additionalOutputs) each get
+ * their own section in the SYSTEM prompt, separate from the case-note NOTE
+ * STRUCTURE, so the writer doesn't have to blend unrelated instructions into
+ * one section. Returns "" when the agency has none configured.
+ */
+function buildAdditionalOutputsSection(agency: AgencyConfig): string {
+  if (agency.additionalOutputs.length === 0) {
+    return "";
+  }
+  const sections = agency.additionalOutputs
+    .map(
+      (output) => dedent`
+        #### ${output.label}
+        ${output.promptGuidance}`,
+    )
+    .join("\n\n");
+  return dedent`
+    ### ADDITIONAL OUTPUTS
+    The items below are agency-specific supplemental outputs, on top of the
+    three fixed outputs above. For each one: follow its instructions, write
+    plain prose (no codes, IDs, or structured data), and do not add your own
+    section header - one will be added automatically. If its instructions
+    say to omit the output under certain conditions, return an empty string
+    for it instead of forcing content.
+
+    ${sections}`;
+}
+
+/**
+ * Extends DraftingOutputSchema with one required string field per
+ * agency.additionalOutputs entry, keyed by output id, so each supplemental
+ * output gets validated as its own field rather than folded into caseNote
+ * by the model itself.
+ */
+function buildDraftingOutputSchema(
+  agency: AgencyConfig,
+): z.ZodType<DraftingOutput & Record<string, string>> {
+  const schema =
+    agency.additionalOutputs.length === 0
+      ? DraftingOutputSchema
+      : DraftingOutputSchema.extend(
+          Object.fromEntries(
+            agency.additionalOutputs.map((output) => [
+              output.id,
+              z
+                .string()
+                .describe(
+                  `Prose content for the "${output.label}" additional output. Empty string if not applicable to this meeting.`,
+                ),
+            ]),
+          ),
+        );
+  // extend()'s inferred type drops caseNote/staffFeedback here, since
+  // Object.fromEntries's index signature makes keyof Augmentation `string`,
+  // and Omit<Shape, string> clears every known key (the runtime schema is
+  // unaffected - extend() still adds the new fields). The ids are runtime
+  // data, so TS can't know them as literal keys - assert the real shape
+  // once here instead of at every call site.
+  return schema as unknown as z.ZodType<
+    DraftingOutput & Record<string, string>
+  >;
 }
 
 export class SpecialistCore {
@@ -232,6 +297,8 @@ export class SpecialistCore {
 
     structureStr = dedent(structureStr);
 
+    const additionalOutputsSection = buildAdditionalOutputsSection(agency);
+
     const userMessage = PROMPTS.WRITER.USER({
       transcript: transcript.rawText,
       extracted: factsStr,
@@ -244,21 +311,34 @@ export class SpecialistCore {
     try {
       const result = await completeChatWithZodSchema({
         client: this.openai,
-        schema: DraftingOutputSchema,
+        schema: buildDraftingOutputSchema(agency),
         messages: [
-          { role: "system", content: PROMPTS.WRITER.SYSTEM() },
+          {
+            role: "system",
+            content: PROMPTS.WRITER.SYSTEM({ additionalOutputsSection }),
+          },
           { role: "user", content: userMessage },
         ],
       });
+      // Additional outputs aren't stored separately, so fold each one onto
+      // caseNote so it shows up wherever caseNote already renders.
+      let caseNote = result.caseNote;
+      for (const output of agency.additionalOutputs) {
+        const content = result[output.id].trim();
+        if (content) {
+          caseNote += `\n\n${output.label.toUpperCase()}:\n${content}`;
+        }
+      }
 
       agentLogger.info("Drafting agent completed", {
-        case_note_length: result.caseNote.length,
+        case_note_length: caseNote.length,
+        additional_outputs_count: agency.additionalOutputs.length,
         what_you_did_well_count: result.staffFeedback.whatYouDidWell.length,
         growth_opportunities_count:
           result.staffFeedback.growthOpportunities.length,
       });
 
-      return result;
+      return { caseNote, staffFeedback: result.staffFeedback };
     } catch (e) {
       agentLogger.error("Drafting agent failed", {
         err: e instanceof Error ? e : String(e),

@@ -126,7 +126,7 @@ describe("mergeWithBase", () => {
     expect(result["keywords"]).toEqual(["ONLY_THIS"]);
   });
 
-  test("additionalOutputs appends to base outputs", () => {
+  test("additionalOutputs is kept separate from outputs, not appended to it", () => {
     const result = mergeWithBase(BASE, {
       ...AGENCY,
       additionalOutputs: [
@@ -139,8 +139,15 @@ describe("mergeWithBase", () => {
     });
     expect((result["outputs"] as { id: string }[]).map((o) => o.id)).toEqual([
       "case_note",
-      "custom",
     ]);
+    expect(
+      (result["additionalOutputs"] as { id: string }[]).map((o) => o.id),
+    ).toEqual(["custom"]);
+  });
+
+  test("additionalOutputs defaults to an empty array when agency specifies nothing", () => {
+    const result = mergeWithBase(BASE, AGENCY);
+    expect(result["additionalOutputs"]).toEqual([]);
   });
 
   test("outputs replaces base outputs entirely", () => {
@@ -152,7 +159,7 @@ describe("mergeWithBase", () => {
     expect((result["outputs"] as { id: string }[])[0].id).toBe("only");
   });
 
-  test("resolved result has no additional* fields", () => {
+  test("resolved result has no additional* fields, except additionalOutputs which is kept intentionally", () => {
     const result = mergeWithBase(BASE, {
       ...AGENCY,
       additionalGlossary: { CM: "Case Manager" },
@@ -163,7 +170,11 @@ describe("mergeWithBase", () => {
     expect(result["additionalGlossary"]).toBeUndefined();
     expect(result["additionalRules"]).toBeUndefined();
     expect(result["additionalKeywords"]).toBeUndefined();
-    expect(result["additionalOutputs"]).toBeUndefined();
+    // Unlike the other additional* fields, additionalOutputs is NOT merged
+    // away — it's a distinct resolved field (see AgencyConfigSchema).
+    expect(result["additionalOutputs"]).toEqual([
+      { id: "x", label: "X", promptGuidance: "X" },
+    ]);
   });
 
   describe("outputPatches", () => {

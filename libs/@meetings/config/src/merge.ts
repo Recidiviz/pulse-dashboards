@@ -38,10 +38,7 @@ export function mergeWithBase(
       ...(agency.additionalRules ?? []),
     ],
     outputs: (() => {
-      const resolved = agency.outputs ?? [
-        ...(base.outputs ?? []),
-        ...(agency.additionalOutputs ?? []),
-      ];
+      const resolved = agency.outputs ?? base.outputs ?? [];
       return resolved.map((output) => {
         if (
           !agency.outputPatches ||
@@ -53,12 +50,15 @@ export function mergeWithBase(
         return patch ? { ...output, ...patch } : output;
       });
     })(),
+    // `additionalOutputs` stays separate instead of being merged with `outputs` so it can hook into
+    // the prompt in the right moment. If, at some point, prompts are contained _entirely_ within
+    // AgencyConfig, this can be merged with the base outputs.
+    additionalOutputs: agency.additionalOutputs ?? [],
     labels: { ...base.labels, ...(agency.labels ?? {}) },
     // Strip additional* fields — not part of resolved AgencyConfig
     additionalKeywords: undefined,
     additionalGlossary: undefined,
     additionalRules: undefined,
-    additionalOutputs: undefined,
     outputPatches: undefined,
   };
 }

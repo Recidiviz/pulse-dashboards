@@ -494,13 +494,14 @@ export async function queueLlmajEvaluationTask(
 
 type HandleLLMProcessingParams = {
   meetingId: string;
+  stateCode: string;
   prisma: PrismaClient;
 };
 
 export async function handleNotetakingProcessing(
   params: HandleLLMProcessingParams,
 ) {
-  const { meetingId, prisma } = params;
+  const { meetingId, stateCode, prisma } = params;
 
   // Fetch meeting with client/resident data and transcriptions
   const meeting = await prisma.meeting.findUniqueOrThrow({
@@ -559,11 +560,9 @@ export async function handleNotetakingProcessing(
     );
   }
 
-  const agencyConfig = await getAgencyConfig(meetingPerson.stateCode);
+  const agencyConfig = await getAgencyConfig(stateCode);
   if (!agencyConfig) {
-    throw new Error(
-      `No agency config found for state code: ${meetingPerson.stateCode}`,
-    );
+    throw new Error(`No agency config found for state code: ${stateCode}`);
   }
 
   // Run the LLM pipeline

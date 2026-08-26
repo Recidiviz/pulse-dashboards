@@ -76,4 +76,5 @@ export const EVAL_AGENCY: AgencyConfig = {
       promptGuidance: "Brief summary",
     },
   ],
+  additionalOutputs: [],
 };

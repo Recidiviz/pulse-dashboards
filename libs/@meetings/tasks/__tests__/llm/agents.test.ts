@@ -78,6 +78,7 @@ describe("SpecialistCore", () => {
         subheaders: ["Housing", "Mental Health"],
       },
     ],
+    additionalOutputs: [],
     labels: {},
   };
 
@@ -746,6 +747,176 @@ describe("SpecialistCore", () => {
           userContent.match(/Document what the contact reported/g) ?? []
         ).length;
         expect(occurrences).toBe(1);
+      });
+    });
+
+    describe("additionalOutputs", () => {
+      const agencyWithAdditionalOutput: AgencyConfig = {
+        ...mockAgency,
+        additionalOutputs: [
+          {
+            id: "success_plan",
+            label: "Suggested Success Plan Updates",
+            promptGuidance: "Suggest a success plan if relevant.",
+          },
+        ],
+      };
+
+      test("should include the additional output's guidance in the system prompt", async () => {
+        vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
+          id: "test-completion",
+          object: "chat.completion",
+          created: 0,
+          model: "gpt-4o-mini",
+          choices: [
+            {
+              index: 0,
+              message: {
+                role: "assistant",
+                content: JSON.stringify({
+                  caseNote: "Test note",
+                  staffFeedback: {
+                    whatYouDidWell: [],
+                    growthOpportunities: [],
+                  },
+                  success_plan: "",
+                }),
+              },
+              finish_reason: "stop",
+            },
+          ],
+        } as never);
+
+        await core.runDrafting(
+          mockTranscript,
+          { actionItems: [], entities: [] },
+          agencyWithAdditionalOutput,
+          mockClient,
+        );
+
+        expect(mockOpenAI.chat.completions.create).toHaveBeenCalledWith(
+          expect.objectContaining({
+            messages: expect.arrayContaining([
+              expect.objectContaining({
+                role: "system",
+                content: expect.stringContaining(
+                  "Suggest a success plan if relevant.",
+                ),
+              }),
+            ]),
+          }),
+        );
+      });
+
+      test("should not include an additional outputs section when the agency has none configured", async () => {
+        vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
+          id: "test-completion",
+          object: "chat.completion",
+          created: 0,
+          model: "gpt-4o-mini",
+          choices: [
+            {
+              index: 0,
+              message: {
+                role: "assistant",
+                content: JSON.stringify({
+                  caseNote: "Test note",
+                  staffFeedback: {
+                    whatYouDidWell: [],
+                    growthOpportunities: [],
+                  },
+                }),
+              },
+              finish_reason: "stop",
+            },
+          ],
+        } as never);
+
+        await core.runDrafting(
+          mockTranscript,
+          { actionItems: [], entities: [] },
+          mockAgency,
+          mockClient,
+        );
+
+        const callArg = vi.mocked(mockOpenAI.chat.completions.create).mock
+          .calls[0]?.[0] as { messages: { role: string; content: string }[] };
+        const systemContent =
+          callArg.messages.find((m) => m.role === "system")?.content ?? "";
+        expect(systemContent).not.toContain("ADDITIONAL OUTPUTS");
+      });
+
+      test("should append non-empty additional output content onto caseNote with a CAPS-LABEL header", async () => {
+        vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
+          id: "test-completion",
+          object: "chat.completion",
+          created: 0,
+          model: "gpt-4o-mini",
+          choices: [
+            {
+              index: 0,
+              message: {
+                role: "assistant",
+                content: JSON.stringify({
+                  caseNote: "SUMMARY: Routine check-in.",
+                  staffFeedback: {
+                    whatYouDidWell: [],
+                    growthOpportunities: [],
+                  },
+                  success_plan:
+                    "Focus Area: HOUSING\nWhat do I want to be different: ...",
+                }),
+              },
+              finish_reason: "stop",
+            },
+          ],
+        } as never);
+
+        const result = await core.runDrafting(
+          mockTranscript,
+          { actionItems: [], entities: [] },
+          agencyWithAdditionalOutput,
+          mockClient,
+        );
+
+        expect(result.caseNote).toBe(
+          "SUMMARY: Routine check-in.\n\nSUGGESTED SUCCESS PLAN UPDATES:\nFocus Area: HOUSING\nWhat do I want to be different: ...",
+        );
+      });
+
+      test("should not append anything when the model returns an empty string for the additional output", async () => {
+        vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
+          id: "test-completion",
+          object: "chat.completion",
+          created: 0,
+          model: "gpt-4o-mini",
+          choices: [
+            {
+              index: 0,
+              message: {
+                role: "assistant",
+                content: JSON.stringify({
+                  caseNote: "SUMMARY: Routine check-in.",
+                  staffFeedback: {
+                    whatYouDidWell: [],
+                    growthOpportunities: [],
+                  },
+                  success_plan: "",
+                }),
+              },
+              finish_reason: "stop",
+            },
+          ],
+        } as never);
+
+        const result = await core.runDrafting(
+          mockTranscript,
+          { actionItems: [], entities: [] },
+          agencyWithAdditionalOutput,
+          mockClient,
+        );
+
+        expect(result.caseNote).toBe("SUMMARY: Routine check-in.");
       });
     });
   });

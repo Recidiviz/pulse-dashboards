@@ -585,6 +585,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
           // Run the LLM processing pipeline
           const result = await handleNotetakingProcessing({
             meetingId,
+            stateCode,
             prisma,
           });
 
