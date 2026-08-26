@@ -18,7 +18,7 @@
 import { Fragment } from "react";
 
 import { ParoleOffenseHistory } from "~datatypes";
-import { Icon, IconSVG } from "~design-system";
+import { Icon, IconSVG, palette } from "~design-system";
 
 import { SectionCardHeader } from "../../SectionCard";
 import { PaddedSectionCardBody } from "./PaddedSectionCardBody";
@@ -37,6 +37,7 @@ import {
 
 const VICTIM_ALERT_COLOR = "#D97706";
 const VICTIM_ALERT_BACKGROUND_COLOR = "rgba(217, 119, 6, 0.08)";
+const VICTIM_ATTENDING_HEARING_ALERT_COLOR = palette.signal.warning;
 
 export function OffenseHistorySection({
   offenseHistory,
@@ -50,6 +51,24 @@ export function OffenseHistorySection({
       <SectionCardHeader>Offense & Criminal History</SectionCardHeader>
       <PaddedSectionCardBody>
         <SectionStack>
+          {offenseHistory.victimAttendingHearing && (
+            <AlertBanner
+              $color={VICTIM_ATTENDING_HEARING_ALERT_COLOR}
+              $textColor={VICTIM_ATTENDING_HEARING_ALERT_COLOR}
+              $fontWeight="600"
+              $alignItems="center"
+              $marginBottom="0"
+            >
+              <Icon
+                kind={IconSVG.Alert}
+                width={16}
+                color={VICTIM_ATTENDING_HEARING_ALERT_COLOR}
+                aria-hidden="true"
+              />
+              Victim scheduled to attend hearing
+            </AlertBanner>
+          )}
+
           {offenseHistory.victimInvolved && (
             <AlertBanner
               $color={VICTIM_ALERT_COLOR}

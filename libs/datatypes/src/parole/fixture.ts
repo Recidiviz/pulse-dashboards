@@ -774,6 +774,7 @@ function buildAndersonCaseProfile(
         { charge: "Assault", date: iso(subYears(today, 7)) },
       ],
       victimInvolved: true,
+      victimAttendingHearing: true,
     },
   });
 }
@@ -874,6 +875,7 @@ function buildOffenseHistory(
     // profile above is the one that exercises the "Prior Convictions" list.
     priorConvictions: [],
     victimInvolved: false,
+    victimAttendingHearing: false,
   };
 }
 
@@ -1059,6 +1061,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
       ],
       priorConvictions: [],
       victimInvolved: true,
+      victimAttendingHearing: false,
     },
     riskAssessments: [
       { tool: "SRT", score: 8, maxScore: 44, date: "2025-01-17" },
@@ -1445,6 +1448,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         },
       ],
       victimInvolved: true,
+      victimAttendingHearing: false,
     },
     riskAssessments: [
       {

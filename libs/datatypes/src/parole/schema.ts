@@ -157,6 +157,7 @@ export const paroleOffenseHistorySchema = z.object({
   offenses: z.array(paroleOffenseSchema).nonempty(),
   priorConvictions: z.array(paroleConvictionSchema),
   victimInvolved: z.boolean(),
+  victimAttendingHearing: z.boolean(),
 });
 export type ParoleOffenseHistory = z.infer<typeof paroleOffenseHistorySchema>;
 

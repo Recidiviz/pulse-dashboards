@@ -56,6 +56,7 @@ const TEST_CASE: ParoleCase = {
     ],
     priorConvictions: [],
     victimInvolved: false,
+    victimAttendingHearing: false,
   },
   riskAssessments: [],
 };

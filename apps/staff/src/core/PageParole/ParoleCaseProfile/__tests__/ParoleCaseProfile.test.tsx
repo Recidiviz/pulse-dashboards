@@ -461,6 +461,39 @@ describe("ParoleCaseProfile", () => {
       ).not.toBeInTheDocument();
     });
 
+    it("renders a banner when a victim is scheduled to attend the hearing", async () => {
+      renderAtPath("/parole/case/45821");
+
+      expect(
+        await screen.findByText("Victim scheduled to attend hearing"),
+      ).toBeInTheDocument();
+    });
+
+    it("renders no victim-attending-hearing banner when none is scheduled", async () => {
+      renderAtPath("/parole/case/52903");
+
+      await findSectionHeading("Offense & Criminal History");
+      expect(
+        screen.queryByText("Victim scheduled to attend hearing"),
+      ).not.toBeInTheDocument();
+    });
+
+    it("renders the victim-attending-hearing banner above the victim-involved banner", async () => {
+      renderAtPath("/parole/case/45821");
+
+      const attendingHearingBanner = await screen.findByText(
+        "Victim scheduled to attend hearing",
+      );
+      const involvedBanner = await screen.findByText(
+        "Victim involved in current offense",
+      );
+
+      expect(
+        attendingHearingBanner.compareDocumentPosition(involvedBanner) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy();
+    });
+
     it("renders the list of prior convictions", async () => {
       renderAtPath("/parole/case/45821");
 
