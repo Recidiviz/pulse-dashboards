@@ -24,6 +24,8 @@ export function fetchOfflineUser({
   email = "notarealemail@recidiviz.org", //email = "officer3@recidiviz.org", example officer email for testing
   name = "Demo Jones",
   stateCode = "recidiviz",
+  externalId = "agonzalez123", // externalId: "so3" for an example officer
+  featureVariants,
   allowedSupervisionLocationIds,
   allowedSupervisionLocationLevel,
 }) {
@@ -36,8 +38,8 @@ export function fetchOfflineUser({
     email,
     [`${process.env.METADATA_NAMESPACE}app_metadata`]: {
       role: "supervision_officer",
-      externalId: "agonzalez123", // externalId: "so3" for an example officer
-      pseudonymizedId: "hashed-agonzalez123", // pseudonymizedId: "hashed-so3" for an example officer
+      externalId,
+      pseudonymizedId: `hashed-${externalId}`,
       stateCode,
       allowedSupervisionLocationIds,
       allowedSupervisionLocationLevel,
@@ -57,7 +59,9 @@ export function fetchOfflineUser({
         // workflowsFacilities: true,
         // workflowsSupervision: true,
       },
-      featureVariants: {
+      // A supplied bag replaces these defaults wholesale, so a caller asking for
+      // a specific set of variants gets exactly that set.
+      featureVariants: featureVariants ?? {
         // By setting the active date to the far future, we effectively disable these feature variants.
         // The feature variants commented out here are provided to make it easier to
         // toggle them on and off when testing.

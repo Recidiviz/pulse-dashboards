@@ -33,6 +33,11 @@ if (!isOfflineMode()) {
   appOptions.credential = firebaseAdmin.credential.cert(
     JSON.parse(process.env.FIREBASE_CREDENTIAL_JSON),
   );
+} else {
+  // Without this the admin SDK authenticates against real GCP and every read
+  // fails with PERMISSION_DENIED on "demo-dev". Set before initializeApp;
+  // respects an existing value so e2e can point at its own `firebase` host.
+  process.env.FIRESTORE_EMULATOR_HOST ??= "localhost:8080";
 }
 
 // Guard against duplicate initialization: under the vite-node dev runtime a

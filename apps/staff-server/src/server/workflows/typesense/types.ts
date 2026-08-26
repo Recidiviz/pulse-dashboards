@@ -42,6 +42,16 @@ export type UserScopeContext = {
   featureVariants: Record<string, unknown>;
 };
 
+// OFFLINE ONLY. The fields a caller may pick when choosing which synthetic
+// offline user the mint endpoint resolves. See offlineUserOverrides in
+// ./userScopeContext for why this exists and why it is an allowlist.
+export type OfflineUserOverrides = {
+  stateCode?: string;
+  externalId?: string;
+  email?: string;
+  featureVariants?: Record<string, unknown>;
+};
+
 // The caller's Auth0-shaped identity, reduced to the fields the mint handlers
 // read.
 export type RequestIdentity = {

@@ -618,6 +618,117 @@ describe("mintCaseloadScopedKey — impersonation", () => {
 });
 
 // --------------------------------------------------------------------------
+// Offline user override
+// --------------------------------------------------------------------------
+
+// The offline bridge that lets an e2e spec choose which synthetic user the mint
+// endpoint resolves. Without it every offline mint resolves the same fixed
+// Recidiviz identity, so no scope permutation is reachable from a test.
+describe("mintCaseloadScopedKey — offline user override", () => {
+  beforeEach(() => {
+    vi.mocked(isOfflineMode).mockReturnValue(true);
+    vi.mocked(fetchOfflineUser).mockReturnValue(
+      makeUser() as unknown as ReturnType<typeof fetchOfflineUser>,
+    );
+  });
+
+  test("passes the allowlisted fields through to the offline user", async () => {
+    await mintCaseloadScopedKey(
+      makeReq({
+        currentTenantId: "US_TN",
+        system: "SUPERVISION",
+        offlineUser: {
+          stateCode: "us_tn",
+          externalId: "OFFICER1",
+          email: "officer@example.com",
+          featureVariants: { workflowsSupervisorSearch: {} },
+        },
+      }),
+      makeRes(),
+    );
+
+    expect(vi.mocked(fetchOfflineUser)).toHaveBeenCalledWith({
+      stateCode: "us_tn",
+      externalId: "OFFICER1",
+      email: "officer@example.com",
+      featureVariants: { workflowsSupervisorSearch: {} },
+    });
+  });
+
+  test("drops fields outside the allowlist", async () => {
+    await mintCaseloadScopedKey(
+      makeReq({
+        currentTenantId: "US_TN",
+        system: "SUPERVISION",
+        offlineUser: {
+          externalId: "OFFICER1",
+          // Not overridable: these come from the Firestore staff fixture.
+          district: "Region 9",
+          hasCaseload: false,
+          isSupervisor: true,
+          allowedStates: ["US_XX"],
+        },
+      }),
+      makeRes(),
+    );
+
+    expect(vi.mocked(fetchOfflineUser)).toHaveBeenCalledWith({
+      externalId: "OFFICER1",
+    });
+  });
+
+  test("ignores values of the wrong type", async () => {
+    await mintCaseloadScopedKey(
+      makeReq({
+        currentTenantId: "US_TN",
+        system: "SUPERVISION",
+        offlineUser: { stateCode: 42, externalId: null, featureVariants: "on" },
+      }),
+      makeRes(),
+    );
+
+    expect(vi.mocked(fetchOfflineUser)).toHaveBeenCalledWith({});
+  });
+
+  test("no override in the body resolves the default offline user", async () => {
+    await mintCaseloadScopedKey(
+      makeReq({ currentTenantId: "US_TN", system: "SUPERVISION" }),
+      makeRes(),
+    );
+
+    expect(vi.mocked(fetchOfflineUser)).toHaveBeenCalledWith({});
+  });
+
+  // An override arriving on a deployed server must not choose an identity.
+  test("is inert outside offline mode", async () => {
+    vi.mocked(isOfflineMode).mockReturnValue(false);
+    fakeFirestore.supervisionStaff.set("us_tn_OFFICER123", {
+      district: "Region 1",
+      email: "officer@example.com",
+    });
+
+    const res = makeRes();
+    await mintCaseloadScopedKey(
+      makeReq(
+        {
+          currentTenantId: "US_TN",
+          system: "SUPERVISION",
+          offlineUser: { stateCode: "recidiviz", externalId: "SOMEONE_ELSE" },
+        },
+        makeUser(),
+      ),
+      res,
+    );
+
+    expect(vi.mocked(fetchOfflineUser)).not.toHaveBeenCalled();
+    // Scope still comes from the JWT identity, not the override.
+    expect(mintedFilters(res).supervisionStaff).toBe(
+      "stateCode:=`US_TN` && (district:=[`Region 1`])",
+    );
+  });
+});
+
+// --------------------------------------------------------------------------
 // system=ALL cross-system path
 // --------------------------------------------------------------------------
 
