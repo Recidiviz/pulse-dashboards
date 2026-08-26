@@ -71,7 +71,8 @@ const MeetingDesktop = ({
   const { track } = useAnalytics();
   const { email: currentUserEmail, isSkipAuthUser } = useUserContext();
   const isMeetingCreator =
-    currentUserEmail === meetingDetails.staffEmail || isSkipAuthUser;
+    currentUserEmail?.toLowerCase() ===
+      meetingDetails.staffEmail.toLowerCase() || isSkipAuthUser;
 
   const meetingDate = meetingDetails.startTime
     ? formatMeetingStartDate(meetingDetails.startTime)

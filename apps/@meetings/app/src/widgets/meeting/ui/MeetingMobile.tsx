@@ -114,7 +114,8 @@ const MeetingMobile = ({
     CARD_CONTENT_EXPANDED + TABS_GAP + TABS_HEIGHT + audioOffset + CONTENT_GAP;
   const { email: currentUserEmail, isSkipAuthUser } = useUserContext();
   const isMeetingCreator =
-    currentUserEmail === meetingDetails.staffEmail || isSkipAuthUser;
+    currentUserEmail?.toLowerCase() ===
+      meetingDetails.staffEmail.toLowerCase() || isSkipAuthUser;
   const collapse = useSharedValue(0);
   const isCollapsed = useSharedValue(false);
   const draftCaseNoteSheetRef = useRef<BottomSheetModal>(null);

@@ -149,6 +149,16 @@ describe("MeetingCardItem", () => {
     );
   });
 
+  it("shows Edit for the creator when the email casing doesn't match", () => {
+    (useUserContext as jest.Mock).mockReturnValue({
+      email: CREATOR_EMAIL.toUpperCase(),
+    });
+
+    renderCard(CREATOR_EMAIL);
+
+    expect(screen.getByText("Edit")).toBeTruthy();
+  });
+
   it("hides Edit for a non-creator and keeps the sheet read-only", () => {
     (useUserContext as jest.Mock).mockReturnValue({
       email: "someone-else@recidiviz.org",

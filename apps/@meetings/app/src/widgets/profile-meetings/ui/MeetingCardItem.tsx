@@ -77,7 +77,8 @@ const MeetingCardItem = ({
   const draftCaseNoteSheetRef = useRef<BottomSheetModal>(null);
   const [canEditNote, setCanEditNote] = useState(false);
   const { email: currentUserEmail } = useUserContext();
-  const isMeetingCreator = currentUserEmail === meeting.staffEmail;
+  const isMeetingCreator =
+    currentUserEmail?.toLowerCase() === meeting.staffEmail.toLowerCase();
   const isProcessing = isMeetingProcessing(meeting.status);
   const isError = !!meeting.validationErrorType;
   const isFinishedWithoutNote = !isProcessing && !isError && !meeting.caseNote;
