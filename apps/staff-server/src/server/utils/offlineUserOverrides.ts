@@ -33,6 +33,7 @@ export type OfflineUserOverrides = {
   externalId?: string;
   email?: string;
   featureVariants?: Record<string, unknown>;
+  routes?: Record<string, unknown>;
 };
 
 function fromBody(req: Request): unknown {
@@ -50,7 +51,7 @@ function fromQuery(req: Request): unknown {
 }
 
 // Read as an explicit allowlist rather than a spread: this is identity input,
-// and nothing outside these four fields may reach the synthetic user.
+// and nothing outside these five fields may reach the synthetic user.
 //
 // District, roleSubtype and hasCaseload are absent by design — those still come
 // from the Firestore staff fixture keyed by `externalId`, so fixtures stay the
@@ -62,10 +63,8 @@ export function readOfflineUserOverrides(req: Request): OfflineUserOverrides {
   const raw = fromBody(req) ?? fromQuery(req);
   if (!raw || typeof raw !== "object") return {};
 
-  const { stateCode, externalId, email, featureVariants } = raw as Record<
-    string,
-    unknown
-  >;
+  const { stateCode, externalId, email, featureVariants, routes } =
+    raw as Record<string, unknown>;
 
   return {
     ...(typeof stateCode === "string" && { stateCode }),
@@ -74,6 +73,12 @@ export function readOfflineUserOverrides(req: Request): OfflineUserOverrides {
     ...(featureVariants !== null &&
       typeof featureVariants === "object" && {
         featureVariants: featureVariants as Record<string, unknown>,
+      }),
+    // Route permissions decide which systems the mint endpoints will scope a key
+    // for, so a spec has to be able to set them to test that authorization.
+    ...(routes !== null &&
+      typeof routes === "object" && {
+        routes: routes as Record<string, unknown>,
       }),
   };
 }

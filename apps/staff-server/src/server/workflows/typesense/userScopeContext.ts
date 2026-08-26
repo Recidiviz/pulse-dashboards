@@ -60,6 +60,20 @@ function resolveRequestIdentity(req: Request): RequestIdentity {
   };
 }
 
+/**
+ * The app_metadata of whoever this request resolves to.
+ *
+ * Exposed so the mint handler can authorize before doing any Firestore work.
+ * Goes through resolveRequestIdentity rather than reading `req.user` directly,
+ * because offline mode has no `req.user` at all — the identity comes from
+ * fetchOfflineUser, and authorization has to see the same user the scope does.
+ */
+export function resolveRequestAppMetadata(
+  req: Request,
+): Record<string, unknown> {
+  return resolveRequestIdentity(req).appMetadata;
+}
+
 function isRecidivizUser(appMetadata: Record<string, unknown>): boolean {
   const stateCode = appMetadata["stateCode"] as string;
   return stateCode.toLowerCase() === "recidiviz";

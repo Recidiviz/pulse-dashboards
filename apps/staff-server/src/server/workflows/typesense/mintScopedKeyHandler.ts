@@ -28,8 +28,16 @@ import {
   SCOPED_KEY_TTL_SECONDS,
 } from "./init";
 import type { ScopeAndFiltersResolver, UserScopeContext } from "./types";
-import { resolveUserScopeContext } from "./userScopeContext";
-import { invalidSystemMessage, isValidSystem } from "./utils";
+import {
+  resolveRequestAppMetadata,
+  resolveUserScopeContext,
+} from "./userScopeContext";
+import {
+  authorizedSystems,
+  invalidSystemMessage,
+  isValidSystem,
+  narrowToAuthorized,
+} from "./utils";
 
 export async function mintScopedKeyHandler(
   req: Request,
@@ -43,6 +51,20 @@ export async function mintScopedKeyHandler(
   const { system: requestedSystem } = req.body ?? {};
   if (!isValidSystem(requestedSystem)) {
     return res.status(400).json({ error: invalidSystemMessage() });
+  }
+
+  // `system` is client-supplied, and the per-state rules make some systems
+  // broader than others — US_TN INCARCERATION is unrestricted, for one. Without
+  // this check a supervision-only user could POST `system: "INCARCERATION"` and
+  // mint a key for a system they have no route permission for.
+  const system = narrowToAuthorized(
+    requestedSystem,
+    authorizedSystems(resolveRequestAppMetadata(req)),
+  );
+  if (!system) {
+    return res.status(403).json({
+      error: `User is not authorized to access system: ${requestedSystem}`,
+    });
   }
 
   const ctx = await resolveUserScopeContext(req, currentTenantId);
@@ -62,10 +84,12 @@ export async function mintScopedKeyHandler(
     });
   }
 
+  // The narrowed system, not the requested one: an ALL request from a
+  // single-system user mints only for the system they may search.
   const { scope, filtersByCollection, debugSystem } = createMinter(
     currentTenantId,
     ctx,
-  ).resolve(requestedSystem);
+  ).resolve(system);
 
   const expiresAt = Math.floor(Date.now() / 1000) + SCOPED_KEY_TTL_SECONDS;
   // generateScopedSearchKey is a local HMAC over the parent key, so minting one

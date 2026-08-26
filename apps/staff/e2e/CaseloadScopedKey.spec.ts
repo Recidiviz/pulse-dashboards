@@ -48,17 +48,29 @@ test.afterAll(async () => {
 
 // Staff fixtures this spec joins against. See the "Typesense scope
 // permutations" block in libs/datatypes/.../Supervision/Workflows/fixture.ts.
+
+// The mint endpoint authorizes the requested system against the caller's route
+// permissions, so every fixture below carries both. These specs are about which
+// scope gets compiled, not about who may ask for it — the authorization block at
+// the end of the file drives `routes` deliberately.
+const BOTH_SYSTEMS = {
+  workflowsSupervision: true,
+  workflowsFacilities: true,
+};
 const TN_OFFICER: OfflineUserSpec = {
   stateCode: "us_tn",
   externalId: "E2E_TN_OFFICER",
+  routes: BOTH_SYSTEMS,
 };
 const TN_OVERRIDE: OfflineUserSpec = {
   stateCode: "us_tn",
   externalId: "E2E_TN_OVERRIDE",
+  routes: BOTH_SYSTEMS,
 };
 const TN_SUPERVISOR: OfflineUserSpec = {
   stateCode: "us_tn",
   externalId: "E2E_TN_SUPERVISOR",
+  routes: BOTH_SYSTEMS,
 };
 // Deliberately has no staff record at all; only the reports pointing at them
 // exist. That is currently the ONLY way to reach a `none` base scope, because
@@ -70,22 +82,27 @@ const TN_SUPERVISOR: OfflineUserSpec = {
 const TN_LEAD: OfflineUserSpec = {
   stateCode: "us_tn",
   externalId: "E2E_TN_LEAD",
+  routes: BOTH_SYSTEMS,
 };
 const ID_OFFICER: OfflineUserSpec = {
   stateCode: "us_id",
   externalId: "E2E_ID_OFFICER",
+  routes: BOTH_SYSTEMS,
 };
 const MI_OFFICER: OfflineUserSpec = {
   stateCode: "us_mi",
   externalId: "E2E_MI_OFFICER",
+  routes: BOTH_SYSTEMS,
 };
 const CA_OFFICER: OfflineUserSpec = {
   stateCode: "us_ca",
   externalId: "E2E_CA_OFFICER",
+  routes: BOTH_SYSTEMS,
 };
 const CA_SUPERVISOR: OfflineUserSpec = {
   stateCode: "us_ca",
   externalId: "E2E_CA_SUPERVISOR",
+  routes: BOTH_SYSTEMS,
 };
 // No externalId, so staff-server resolves its default Recidiviz identity.
 const RECIDIVIZ: OfflineUserSpec = { stateCode: "recidiviz" };
@@ -407,5 +424,104 @@ test.describe("caseload scoped key — validation", () => {
     expect(Object.keys(body.keys).length).toBe(3);
     expect(new Date(body.expiresAt).getTime()).toBeGreaterThan(Date.now());
     expect(body.typesenseHost).toBe(TYPESENSE_URL);
+  });
+});
+
+// `system` is client-supplied and some systems are far broader than others —
+// US_TN INCARCERATION resolves to unrestricted, for one. Without a server-side
+// check, any authenticated user could POST the system they wanted and mint a key
+// for it. These specs drive the same offline identity the app does, so they
+// exercise the real authorization path rather than a mock of it.
+test.describe("caseload scoped key — system authorization", () => {
+  const SUPERVISION_ONLY = { workflowsSupervision: true };
+  const INCARCERATION_ONLY = { workflowsFacilities: true };
+  const NO_ROUTES = {};
+
+  const mint = (system: string, offlineUser: OfflineUserSpec) =>
+    postScopedKey(api, "/api/US_TN/workflows/caseload-scoped-key", {
+      system,
+      offlineUser,
+    });
+
+  test("a supervision-only user cannot mint an incarceration key", async () => {
+    const response = await mint("INCARCERATION", {
+      ...TN_OFFICER,
+      routes: SUPERVISION_ONLY,
+    });
+
+    expect(response.status()).toBe(403);
+    expect((await response.json()).error).toContain("INCARCERATION");
+  });
+
+  test("an incarceration-only user cannot mint a supervision key", async () => {
+    const response = await mint("SUPERVISION", {
+      ...TN_OFFICER,
+      routes: INCARCERATION_ONLY,
+    });
+
+    expect(response.status()).toBe(403);
+    expect((await response.json()).error).toContain("SUPERVISION");
+  });
+
+  test("a user with no workflows routes at all is refused", async () => {
+    const response = await mint("SUPERVISION", {
+      ...TN_OFFICER,
+      routes: NO_ROUTES,
+    });
+
+    expect(response.status()).toBe(403);
+  });
+
+  // `tasks` implies supervision access, matching WorkflowsStore's
+  // `canUserAccessTasks` branch.
+  test("the tasks route alone authorizes supervision", async () => {
+    const response = await mint("SUPERVISION", {
+      ...TN_OFFICER,
+      routes: { tasks: true },
+    });
+
+    expect(response.status()).toBe(200);
+  });
+
+  // ALL is what the workflows home page asks for regardless of how many systems
+  // a user has, so refusing it outright would break that page for every
+  // single-system user. It is narrowed instead: the response carries keys for
+  // the supervision side only.
+  test("ALL is narrowed to the systems a user actually has", async () => {
+    const response = await mint("ALL", {
+      ...TN_OFFICER,
+      routes: SUPERVISION_ONLY,
+    });
+    expect(response.status()).toBe(200);
+
+    const { keys } = await response.json();
+    expect(Object.keys(keys).sort()).toEqual(["locations", "supervisionStaff"]);
+  });
+
+  test("ALL still covers both systems for a user who has both", async () => {
+    const response = await mint("ALL", TN_OFFICER);
+    expect(response.status()).toBe(200);
+
+    const { keys } = await response.json();
+    expect(Object.keys(keys).sort()).toEqual([
+      "incarcerationStaff",
+      "locations",
+      "supervisionStaff",
+    ]);
+  });
+
+  test("ALL is refused when the user has no workflows routes", async () => {
+    const response = await mint("ALL", { ...TN_OFFICER, routes: NO_ROUTES });
+
+    expect(response.status()).toBe(403);
+  });
+
+  // Recidiviz users hold no route permissions of their own, so the check has to
+  // let them through on state code alone. Getting this wrong would 403 every
+  // internal user.
+  test("a Recidiviz user is authorized without any routes", async () => {
+    const response = await mint("ALL", RECIDIVIZ);
+
+    expect(response.status()).toBe(200);
   });
 });

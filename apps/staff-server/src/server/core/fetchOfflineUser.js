@@ -26,6 +26,7 @@ export function fetchOfflineUser({
   stateCode = "recidiviz",
   externalId = "agonzalez123", // externalId: "so3" for an example officer
   featureVariants,
+  routes,
   allowedSupervisionLocationIds,
   allowedSupervisionLocationLevel,
 }) {
@@ -44,21 +45,26 @@ export function fetchOfflineUser({
       allowedSupervisionLocationIds,
       allowedSupervisionLocationLevel,
       allowedStates,
-      routes: {
-        // Note: routes are only checked if the offline user's state code is updated to a real
-        // state (not "recidiviz"). The routes commented out here are provided to make it easier
-        // to toggle them on and off when testing.
-        // parole: true,
-        // system_prison: true,
-        // system_supervision: true,
-        // operations: true,
-        // system_supervisionToLiberty: true,
-        // system_supervisionToPrison: true,
-        // insights: true,
-        // "insights_supervision_supervisors-list": true,
-        // workflowsFacilities: true,
-        // workflowsSupervision: true,
-      },
+      // A supplied bag replaces these defaults wholesale, the same way
+      // featureVariants does, so a caller asking for a specific set of route
+      // permissions gets exactly that set.
+      routes:
+        routes ??
+        {
+          // Note: routes are only checked if the offline user's state code is updated to a real
+          // state (not "recidiviz"). The routes commented out here are provided to make it easier
+          // to toggle them on and off when testing.
+          // parole: true,
+          // system_prison: true,
+          // system_supervision: true,
+          // operations: true,
+          // system_supervisionToLiberty: true,
+          // system_supervisionToPrison: true,
+          // insights: true,
+          // "insights_supervision_supervisors-list": true,
+          // workflowsFacilities: true,
+          // workflowsSupervision: true,
+        },
       // A supplied bag replaces these defaults wholesale, so a caller asking for
       // a specific set of variants gets exactly that set.
       featureVariants: featureVariants ?? {

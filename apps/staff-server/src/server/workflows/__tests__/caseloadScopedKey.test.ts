@@ -146,6 +146,7 @@ function makeUser(
     stateCode?: string;
     email?: string;
     featureVariants?: Record<string, boolean>;
+    routes?: Record<string, boolean>;
   } = {},
 ) {
   return {
@@ -157,6 +158,13 @@ function makeUser(
         : { externalId: overrides.externalId ?? "OFFICER123" }),
       stateCode: overrides.stateCode ?? "US_TN",
       featureVariants: overrides.featureVariants ?? {},
+      // Permissioned for both systems by default: these tests are about what
+      // scope gets compiled, not about who may ask for it. Pass `routes`
+      // explicitly to exercise the authorization check.
+      routes: overrides.routes ?? {
+        workflowsSupervision: true,
+        workflowsFacilities: true,
+      },
     },
   };
 }

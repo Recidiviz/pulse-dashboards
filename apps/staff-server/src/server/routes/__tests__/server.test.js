@@ -331,6 +331,105 @@ describe("Server tests", () => {
           expect(response.statusCode).toEqual(404);
         });
     });
+
+    it("returns 403 when user requests INCARCERATION without workflowsFacilities permission", () => {
+      vi.mocked(getAppMetadata).mockReturnValue({
+        state_code: "US_MO",
+        routes: {
+          workflowsSupervision: true,
+        },
+      });
+      return request(app)
+        .post("/api/US_MO/workflows/caseload-scoped-key")
+        .send({ system: "INCARCERATION" })
+        .then((response) => {
+          expect(response.statusCode).toEqual(403);
+          expect(response.body.error).toContain(
+            "not authorized to access system: INCARCERATION",
+          );
+        });
+    });
+
+    // ALL is not a permission — the workflows home page requests it whatever
+    // systems a user has, so refusing it would break that page for every
+    // single-system user. It is narrowed to what they may search instead.
+    it("narrows ALL rather than refusing it when only one system is permitted", () => {
+      vi.mocked(getAppMetadata).mockReturnValue({
+        state_code: "US_MO",
+        routes: {
+          workflowsSupervision: true,
+        },
+      });
+      return request(app)
+        .post("/api/US_MO/workflows/caseload-scoped-key")
+        .send({ system: "ALL" })
+        .then((response) => {
+          expect(response.statusCode).not.toEqual(403);
+        });
+    });
+
+    it("returns 403 for ALL when no system is permitted at all", () => {
+      vi.mocked(getAppMetadata).mockReturnValue({
+        state_code: "US_MO",
+        routes: {},
+      });
+      return request(app)
+        .post("/api/US_MO/workflows/caseload-scoped-key")
+        .send({ system: "ALL" })
+        .then((response) => {
+          expect(response.statusCode).toEqual(403);
+          expect(response.body.error).toContain(
+            "not authorized to access system: ALL",
+          );
+        });
+    });
+
+    // `tasks` implies supervision, mirroring WorkflowsStore.userAllowedSystems.
+    it("accepts SUPERVISION when only the tasks route is permitted", () => {
+      vi.mocked(getAppMetadata).mockReturnValue({
+        state_code: "US_MO",
+        routes: { tasks: true },
+      });
+      return request(app)
+        .post("/api/US_MO/workflows/caseload-scoped-key")
+        .send({ system: "SUPERVISION" })
+        .then((response) => {
+          expect(response.statusCode).not.toEqual(403);
+        });
+    });
+
+    it("returns 403 when user requests SUPERVISION without workflowsSupervision or tasks permission", () => {
+      vi.mocked(getAppMetadata).mockReturnValue({
+        state_code: "US_MO",
+        routes: {
+          workflowsFacilities: true,
+        },
+      });
+      return request(app)
+        .post("/api/US_MO/workflows/caseload-scoped-key")
+        .send({ system: "SUPERVISION" })
+        .then((response) => {
+          expect(response.statusCode).toEqual(403);
+          expect(response.body.error).toContain(
+            "not authorized to access system: SUPERVISION",
+          );
+        });
+    });
+
+    it("allows Recidiviz users to request any system", () => {
+      vi.mocked(getAppMetadata).mockReturnValue({
+        state_code: "recidiviz",
+        routes: {},
+      });
+      // Note: This test will fail with 422 or 500 due to missing Firestore setup,
+      // but it should NOT fail with 403, which is what we're testing
+      return request(app)
+        .post("/api/US_MO/workflows/caseload-scoped-key")
+        .send({ system: "ALL" })
+        .then((response) => {
+          expect(response.statusCode).not.toEqual(403);
+        });
+    });
   });
 
   describe("POST /api/:stateCode/workflows/person-scoped-key", () => {
@@ -357,6 +456,40 @@ describe("Server tests", () => {
         .send({ system: "SUPERVISION" })
         .then((response) => {
           expect(response.statusCode).toEqual(404);
+        });
+    });
+
+    it("returns 403 when user requests INCARCERATION without workflowsFacilities permission", () => {
+      vi.mocked(getAppMetadata).mockReturnValue({
+        state_code: "US_MO",
+        routes: {
+          workflowsSupervision: true,
+        },
+      });
+      return request(app)
+        .post("/api/US_MO/workflows/person-scoped-key")
+        .send({ system: "INCARCERATION" })
+        .then((response) => {
+          expect(response.statusCode).toEqual(403);
+          expect(response.body.error).toContain(
+            "not authorized to access system: INCARCERATION",
+          );
+        });
+    });
+
+    // Narrowed, not refused — same reasoning as the caseload endpoint above.
+    it("narrows ALL rather than refusing it when only one system is permitted", () => {
+      vi.mocked(getAppMetadata).mockReturnValue({
+        state_code: "US_MO",
+        routes: {
+          workflowsSupervision: true,
+        },
+      });
+      return request(app)
+        .post("/api/US_MO/workflows/person-scoped-key")
+        .send({ system: "ALL" })
+        .then((response) => {
+          expect(response.statusCode).not.toEqual(403);
         });
     });
   });
