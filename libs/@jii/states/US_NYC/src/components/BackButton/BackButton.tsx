@@ -15,47 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useMatch, useSearchParams } from "react-router-dom";
-import { useTypedParams } from "react-router-typesafe-routes/dom";
-
-import { State } from "~@jii/paths";
-
+import { useBackTarget } from "../BackTargetContext/useBackTarget";
 import { BackLink, Chevron } from "./BackButton.styles";
 
-// TODO(OBT-45888): BackButton uses useMatch to identify the current page because
-// the layout's RouteContext.matches doesn't include child route matches — they're
-// only visible inside <Outlet>. Find a cleaner approach that doesn't require the
-// back button to know about route structure explicitly.
-
-const { ResourceExplorer } = State.Resident;
-const { CategoryResults } = ResourceExplorer;
-const { Detail } = CategoryResults;
-
 export function BackButton() {
-  const [searchParams] = useSearchParams();
-  const residentParams = useTypedParams(State.Resident);
-  const { backTarget } = Detail.getTypedSearchParams(searchParams);
+  const to = useBackTarget();
 
-  // Reject non-internal paths to prevent malformed/malicious URLs from being used
-  const safePath = backTarget?.startsWith("/") ? backTarget : null;
-
-  const detailMatch = useMatch(Detail.path);
-  const categoryMatch = useMatch(CategoryResults.path);
-
-  let fallback = ResourceExplorer.buildPath(residentParams);
-  if (detailMatch?.params.category) {
-    // Resource detail page: back goes to the category results list
-    fallback = CategoryResults.buildPath({
-      ...residentParams,
-      category: detailMatch.params.category,
-    });
-  } else if (categoryMatch) {
-    // Category results page: back goes to the CRE landing
-    fallback = ResourceExplorer.buildPath(residentParams);
-  }
+  if (!to) return null;
 
   return (
-    <BackLink to={safePath ?? fallback}>
+    <BackLink to={to}>
       <Chevron size={16} rotate={180} aria-hidden />
       Back
     </BackLink>

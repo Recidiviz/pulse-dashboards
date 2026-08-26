@@ -15,28 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Outlet } from "react-router-dom";
+import { useLayoutEffect } from "react";
 
-import { ScreenFillingWrapper, useHeaderOverride } from "~@jii/layout";
+import { useBackTargetContext } from "./BackTargetContext";
 
-import { US_NYC_CONTENT } from "../content";
-import { BackTargetProvider } from "./BackTargetContext/BackTargetContext";
-import { CRENavBar } from "./CRENavBar/CRENavBar";
-import { Footer } from "./Footer/Footer";
-import { QueryBoundary } from "./QueryBoundary";
+/**
+ * Pass a path to declare it as the current CRE page's back target. Call with
+ * no arguments to read whatever's currently declared. `null` means no CRE page
+ * has declared a target (e.g. landing page/any page that doesn't require a back button)
+ */
+export function useBackTarget(path?: string): string | null {
+  const { backTarget, setBackTarget } = useBackTargetContext();
 
-export function UsNycResourcesLayout() {
-  useHeaderOverride();
+  // useLayoutEffect so the back button/logo swap and any target change happen before
+  // paint, instead of flashing the old state.
+  useLayoutEffect(() => {
+    if (path === undefined) return;
+    setBackTarget(path);
+    return () => setBackTarget(null);
+  }, [path, setBackTarget]);
 
-  return (
-    <QueryBoundary>
-      <BackTargetProvider>
-        <CRENavBar />
-        <ScreenFillingWrapper
-          top={<Outlet />}
-          bottom={<Footer content={US_NYC_CONTENT.cre.footer} />}
-        />
-      </BackTargetProvider>
-    </QueryBoundary>
-  );
+  return backTarget;
 }

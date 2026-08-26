@@ -15,28 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Outlet } from "react-router-dom";
-
-import { ScreenFillingWrapper, useHeaderOverride } from "~@jii/layout";
-
-import { US_NYC_CONTENT } from "../content";
-import { BackTargetProvider } from "./BackTargetContext/BackTargetContext";
-import { CRENavBar } from "./CRENavBar/CRENavBar";
-import { Footer } from "./Footer/Footer";
-import { QueryBoundary } from "./QueryBoundary";
-
-export function UsNycResourcesLayout() {
-  useHeaderOverride();
-
-  return (
-    <QueryBoundary>
-      <BackTargetProvider>
-        <CRENavBar />
-        <ScreenFillingWrapper
-          top={<Outlet />}
-          bottom={<Footer content={US_NYC_CONTENT.cre.footer} />}
-        />
-      </BackTargetProvider>
-    </QueryBoundary>
-  );
+/**
+ * Validates a `backTarget` query-param value, rejecting anything that isn't
+ * an internal path — used to prevent malformed/malicious URLs from being
+ * used, both for navigating there and for forwarding it to further pages.
+ */
+export function sanitizeBackTarget(value: string | undefined): string | null {
+  if (!value?.startsWith("/") || value.startsWith("//")) return null;
+  return value;
 }

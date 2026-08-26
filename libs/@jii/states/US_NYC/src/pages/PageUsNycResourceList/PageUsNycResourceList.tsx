@@ -24,6 +24,7 @@ import { ResourceExplorer, State } from "~@jii/paths";
 import { Button } from "~design-system";
 import { pluralize } from "~utils";
 
+import { useBackTarget } from "../../components/BackTargetContext/useBackTarget";
 import { Chip } from "../../components/Chip/Chip";
 import { CollapsibleSection } from "../../components/CollapsibleSection/CollapsibleSection";
 import { EmptyFilterState } from "../../components/EmptyFilterState/EmptyFilterState";
@@ -78,6 +79,9 @@ export function PageUsNycResourceList() {
   const { category } = useTypedParams(ResourceExplorer.CategoryResults);
   const location = useLocation();
 
+  const landingPath = State.Resident.ResourceExplorer.buildPath(residentParams);
+  useBackTarget(landingPath);
+
   const { data, helpCategories, demographicCategories } = useResources();
 
   const {
@@ -100,7 +104,7 @@ export function PageUsNycResourceList() {
       category,
     });
 
-  const backTarget = encodeURIComponent(
+  const listUrlWithFilters = encodeURIComponent(
     `${categoryResultsPath}${location.search}`,
   );
 
@@ -111,7 +115,7 @@ export function PageUsNycResourceList() {
         category,
         resourceId,
       });
-    return `${path}?backTarget=${backTarget}`;
+    return `${path}?backTarget=${listUrlWithFilters}`;
   };
 
   const categoryPath = (name: string) =>

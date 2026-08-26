@@ -15,22 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useMatch } from "react-router-dom";
-
 import { Wordmark } from "~@jii/layout";
-import { State } from "~@jii/paths";
 
 import { BackButton } from "../BackButton/BackButton";
+import { useBackTarget } from "../BackTargetContext/useBackTarget";
 import { NavBar } from "./CRENavBar.styles";
 
 export function CRENavBar() {
-  const isCategoryRoute = useMatch({
-    path: State.Resident.ResourceExplorer.CategoryResults.path,
-    end: false,
-  });
+  const hasBackTarget = useBackTarget() !== null;
+
   return (
     <NavBar aria-label="Community Resources Navigation Bar">
-      {isCategoryRoute ? <BackButton /> : <Wordmark />}
+      {hasBackTarget ? <BackButton /> : <Wordmark />}
     </NavBar>
   );
 }

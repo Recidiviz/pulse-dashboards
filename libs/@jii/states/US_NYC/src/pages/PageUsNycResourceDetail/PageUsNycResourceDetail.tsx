@@ -21,6 +21,8 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 import { ResourceExplorer, State } from "~@jii/paths";
 import { Button } from "~design-system";
 
+import { sanitizeBackTarget } from "../../components/BackTargetContext/sanitizeBackTarget";
+import { useBackTarget } from "../../components/BackTargetContext/useBackTarget";
 import { Chip } from "../../components/Chip/Chip";
 import { ContactInformation } from "../../components/Contact/ContactInformation";
 import { DescriptionBlock } from "../../components/DescriptionBlock/DescriptionBlock";
@@ -58,8 +60,6 @@ export function PageUsNycResourceDetail() {
   const { resourceId } = useTypedParams(
     ResourceExplorer.CategoryResults.Detail,
   );
-  const { backTarget } =
-    ResourceExplorer.CategoryResults.Detail.getTypedSearchParams(searchParams);
 
   const { name, description, contactInformation, labels } =
     useResource(resourceId);
@@ -73,6 +73,12 @@ export function PageUsNycResourceDetail() {
       category,
     });
 
+  const { backTarget } =
+    ResourceExplorer.CategoryResults.Detail.getTypedSearchParams(searchParams);
+  // Unlike the paths we build ourselves, this one comes from the URL search params and isn't safe as-is
+  const safeBackTarget = sanitizeBackTarget(backTarget);
+  useBackTarget(safeBackTarget ?? categoryResultsPath);
+
   const detailPath = (resourceId: number) => {
     const path =
       State.Resident.ResourceExplorer.CategoryResults.Detail.buildPath({
@@ -80,8 +86,8 @@ export function PageUsNycResourceDetail() {
         category,
         resourceId,
       });
-    return backTarget
-      ? `${path}?backTarget=${encodeURIComponent(backTarget)}`
+    return safeBackTarget
+      ? `${path}?backTarget=${encodeURIComponent(safeBackTarget)}`
       : path;
   };
 
