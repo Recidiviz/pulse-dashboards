@@ -56,6 +56,7 @@ import { usArInstitutionalWorkerStatusReferrals } from "./fixtures/usArInstituti
 import { usAzReleaseToDTPReferrals } from "./fixtures/usAzReleaseToDTPReferrals";
 import { usAzReleaseToTPRReferrals } from "./fixtures/usAzReleaseToTPRReferrals";
 import { usCaSupervisionLevelDowngradeReferrals } from "./fixtures/usCaSupervisionLevelDowngradeReferrals";
+import { userUpdatesData } from "./fixtures/userUpdates";
 import { usIaEarlyDischargeReferralsFixture } from "./fixtures/usIaEarlyDischargeReferrals";
 import { usIaSupervisionLevelDowngradeReferralsFixture } from "./fixtures/usIaSupervisionLevelDowngradeReferrals";
 import { usIdCRCResidentWorkerReferrals } from "./fixtures/UsIdCRCResidentWorkerReferrals";
@@ -151,6 +152,7 @@ const GENERAL_FIXTURES_TO_LOAD: Partial<
     data: [...residentsData.data],
   },
   locations: locationsData,
+  userUpdates: userUpdatesData,
   usIdSupervisionTasksV2: usIdSupervisionTasksV2Data,
   usTxSupervisionTasks: usTxSupervisionTasksData,
   usNeSupervisionTasks: usNeSupervisionTasksData,

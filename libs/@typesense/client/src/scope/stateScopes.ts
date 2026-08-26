@@ -79,10 +79,28 @@ function usCaRoleSubtypeBase(user: ResolveScopeUser): BaseScope {
   return districtBase(user);
 }
 
+// The baseline for a state with no per-system `staffFilterFn` of its own.
+//
+// Mirrors `defaultSupervisionStaffFilterFunction` in
+// apps/staff/src/RootStore/TenantStore/TenantStore.ts: restrict to
+// `overrideDistrictIds` when they are set, otherwise place no restriction.
+function defaultSupervisionBase(user: ResolveScopeUser): BaseScope {
+  if (user.overrideDistrictIds && user.overrideDistrictIds.length > 0) {
+    return { kind: "byDistricts", districts: user.overrideDistrictIds };
+  }
+  return { kind: "unrestricted" };
+}
+
 export function resolveStateBase(input: ResolveScopeInput): BaseScope {
   const { stateCode, system, user } = input;
 
   switch (stateCode) {
+    // INCARCERATION is knowingly wider here than Firestore search: US_TN's
+    // INCARCERATION config sets `staffFilterFn: filterByUserDistrict`, which
+    // restricts the staff query. Left unrestricted because that system searches
+    // FACILITY_UNIT rather than staff, so nothing queries the incarcerationStaff
+    // key, and `incarcerationStaff.district` is never populated anyway. The
+    // tenant config carries the same open question — TODO(#10991).
     case "US_TN":
       return system === "SUPERVISION"
         ? districtBase(user)
@@ -103,7 +121,13 @@ export function resolveStateBase(input: ResolveScopeInput): BaseScope {
         ? usCaRoleSubtypeBase(user)
         : { kind: "unrestricted" };
 
+    // Every other state: no per-system staffFilterFn, so the tenant default
+    // applies. Overrides still bind — they are used to restrict as well as to
+    // grant, so dropping them here would let a restricted user see more in
+    // Typesense than Firestore shows them.
     default:
-      return { kind: "unrestricted" };
+      return system === "SUPERVISION"
+        ? defaultSupervisionBase(user)
+        : { kind: "unrestricted" };
   }
 }

@@ -244,4 +244,56 @@ export const locationRecordFixtures: Array<LocationRecord> = [
     locationId: "FACILITY2",
     name: "Facility #2",
   },
+
+  //
+  // Typesense scope permutations (apps/staff/e2e/CaseloadScopedKey.spec.ts)
+  //
+
+  // A district-scoped key matches `locationId` on these, so each id is the
+  // district name its matching staff fixture carries. Each state has more than
+  // one so an in-scope assertion has an out-of-scope counterpart.
+  {
+    stateCode: "US_TN",
+    system: "SUPERVISION",
+    idType: "districtId",
+    locationId: "E2E DISTRICT 1",
+    name: "E2E District One",
+  },
+  {
+    stateCode: "US_TN",
+    system: "SUPERVISION",
+    idType: "districtId",
+    locationId: "E2E DISTRICT 2",
+    name: "E2E District Two",
+  },
+  {
+    stateCode: "US_TN",
+    system: "SUPERVISION",
+    idType: "districtId",
+    locationId: "E2E DISTRICT 3",
+    name: "E2E District Three",
+  },
+  // US_MI district "10" fans out to the prefixed names; "11 - SOUTH" is the
+  // control that has to stay out of scope.
+  {
+    stateCode: "US_MI",
+    system: "SUPERVISION",
+    idType: "districtId",
+    locationId: "10 - WEST",
+    name: "District 10 - West",
+  },
+  {
+    stateCode: "US_MI",
+    system: "SUPERVISION",
+    idType: "districtId",
+    locationId: "10 - CENTRAL",
+    name: "District 10 - Central",
+  },
+  {
+    stateCode: "US_MI",
+    system: "SUPERVISION",
+    idType: "districtId",
+    locationId: "11 - SOUTH",
+    name: "District 11 - South",
+  },
 ];

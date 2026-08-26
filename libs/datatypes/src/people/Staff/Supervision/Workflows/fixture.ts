@@ -365,4 +365,142 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     pseudonymizedId: "p001",
     hasCaseload: true,
   },
+
+  // Typesense scope permutations (apps/staff/e2e/CaseloadScopedKey.spec.ts)
+  //
+  // One row per branch of the scope resolver, kept apart from the demo rows
+  // above so that editing a demo record cannot silently change what the scope
+  // tests assert. `E2E_` external ids are the join key the specs use.
+
+  // US_TN — district baseline. Its two peers below share the state but sit in
+  // other districts, so a district-scoped filter has something to exclude.
+  {
+    email: "e2e-tn-officer@example.com",
+    district: "E2E DISTRICT 1",
+    staffExternalId: "E2E_TN_OFFICER",
+    stateCode: "US_TN",
+    givenNames: "Rosalind",
+    surname: "Ashwood",
+    supervisorExternalId: null,
+    pseudonymizedId: "hashed-e2e-tn-officer",
+    hasCaseload: true,
+  },
+  {
+    email: "e2e-tn-peer@example.com",
+    district: "E2E DISTRICT 2",
+    staffExternalId: "E2E_TN_PEER",
+    stateCode: "US_TN",
+    givenNames: "Booker",
+    surname: "Nyland",
+    supervisorExternalId: null,
+    pseudonymizedId: "hashed-e2e-tn-peer",
+    hasCaseload: true,
+  },
+  {
+    email: "e2e-tn-override@example.com",
+    district: "E2E DISTRICT 1",
+    staffExternalId: "E2E_TN_OVERRIDE",
+    stateCode: "US_TN",
+    givenNames: "Marisol",
+    surname: "Quist",
+    supervisorExternalId: null,
+    pseudonymizedId: "hashed-e2e-tn-override",
+    hasCaseload: true,
+  },
+
+  // US_TN — supervisor expansion. The supervisor has their own district, so an
+  // active workflowsSupervisorSearch OR's the two clauses together. The report
+  // uses the PLURAL `supervisorExternalIds`, which is what the mint endpoint's
+  // array-contains lookup queries and the only fixture covering it.
+  {
+    email: "e2e-tn-supervisor@example.com",
+    district: "E2E DISTRICT 3",
+    staffExternalId: "E2E_TN_SUPERVISOR",
+    stateCode: "US_TN",
+    givenNames: "Idris",
+    surname: "Vantol",
+    supervisorExternalId: null,
+    pseudonymizedId: "hashed-e2e-tn-supervisor",
+    hasCaseload: true,
+  },
+  {
+    email: "e2e-tn-report@example.com",
+    district: "E2E DISTRICT 2",
+    staffExternalId: "E2E_TN_REPORT",
+    stateCode: "US_TN",
+    givenNames: "Perpetua",
+    surname: "Oyelaran",
+    supervisorExternalId: null,
+    supervisorExternalIds: ["E2E_TN_SUPERVISOR"],
+    pseudonymizedId: "hashed-e2e-tn-report",
+    hasCaseload: true,
+  },
+  // Reports to E2E_TN_LEAD, who deliberately has NO staff record of their own.
+  // That is what produces a `none` base scope, leaving the supervisor
+  // expansion as the entire filter.
+  {
+    email: "e2e-tn-report-2@example.com",
+    district: "E2E DISTRICT 2",
+    staffExternalId: "E2E_TN_REPORT_2",
+    stateCode: "US_TN",
+    givenNames: "Calder",
+    surname: "Mbeki",
+    supervisorExternalId: null,
+    supervisorExternalIds: ["E2E_TN_LEAD"],
+    pseudonymizedId: "hashed-e2e-tn-report-2",
+    hasCaseload: true,
+  },
+
+  // US_ID — no district, so the state baseline falls back to own-caseload
+  // (byEmail).
+  {
+    email: "e2e-id-officer@example.com",
+    staffExternalId: "E2E_ID_OFFICER",
+    stateCode: "US_ID",
+    givenNames: "Thandeka",
+    surname: "Rourke",
+    supervisorExternalId: null,
+    pseudonymizedId: "hashed-e2e-id-officer",
+    hasCaseload: true,
+  },
+
+  // US_MI — district "10" expands to the four "10 - *" location names.
+  {
+    email: "e2e-mi-officer@example.com",
+    district: "10",
+    staffExternalId: "E2E_MI_OFFICER",
+    stateCode: "US_MI",
+    givenNames: "Ambrose",
+    surname: "Fitzsimmons",
+    supervisorExternalId: null,
+    pseudonymizedId: "hashed-e2e-mi-officer",
+    hasCaseload: true,
+  },
+
+  // US_CA — the branch is roleSubtype, not district. An officer resolves to
+  // own-caseload even though they have one; a supervisor resolves unrestricted.
+  {
+    email: "e2e-ca-officer@example.com",
+    district: "E2E DISTRICT 1",
+    staffExternalId: "E2E_CA_OFFICER",
+    stateCode: "US_CA",
+    givenNames: "Delphine",
+    surname: "Achebe",
+    supervisorExternalId: null,
+    roleSubtype: "SUPERVISION_OFFICER" as const,
+    pseudonymizedId: "hashed-e2e-ca-officer",
+    hasCaseload: true,
+  },
+  {
+    email: "e2e-ca-supervisor@example.com",
+    district: "E2E DISTRICT 1",
+    staffExternalId: "E2E_CA_SUPERVISOR",
+    stateCode: "US_CA",
+    givenNames: "Ignatius",
+    surname: "Prashad",
+    supervisorExternalId: null,
+    roleSubtype: "SUPERVISION_OFFICER_SUPERVISOR" as const,
+    pseudonymizedId: "hashed-e2e-ca-supervisor",
+    hasCaseload: true,
+  },
 ].map((r) => makeRecordFixture(supervisionStaffRecordSchema, r));

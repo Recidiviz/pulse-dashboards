@@ -196,6 +196,55 @@ describe("state baselines", () => {
       );
       expect(scope.base).toEqual({ kind: "unrestricted" });
     });
+
+    // These states have no per-system staffFilterFn, so Firestore search falls
+    // to defaultSupervisionStaffFilterFunction in TenantStore, which restricts
+    // to overrideDistrictIds when they are set. Overrides are used to restrict
+    // as well as to grant, so ignoring them here would show a restricted user
+    // more in Typesense than Firestore shows them.
+    it("SUPERVISION honors overrideDistrictIds", () => {
+      const scope = resolveCaseloadScope(
+        makeInput({
+          stateCode: "US_TX",
+          user: { district: "10", overrideDistrictIds: ["7", "8"] },
+        }),
+      );
+      expect(scope.base).toEqual({
+        kind: "byDistricts",
+        districts: ["7", "8"],
+      });
+    });
+
+    // The user's own district is NOT a restriction for these states: no filter
+    // function asked for it, so Firestore search does not apply it either.
+    it("SUPERVISION ignores the user's own district", () => {
+      const scope = resolveCaseloadScope(
+        makeInput({ stateCode: "US_TX", user: { district: "10" } }),
+      );
+      expect(scope.base).toEqual({ kind: "unrestricted" });
+    });
+
+    // No own-caseload email fallback either — districtBase has one, this
+    // default deliberately does not.
+    it("SUPERVISION stays unrestricted with no district at all", () => {
+      const scope = resolveCaseloadScope(
+        makeInput({ stateCode: "US_TX", user: { district: undefined } }),
+      );
+      expect(scope.base).toEqual({ kind: "unrestricted" });
+    });
+
+    // TenantStore returns `() => undefined` for INCARCERATION when a tenant
+    // declares no filter, so overrides do not bind on that side.
+    it("INCARCERATION is unrestricted even with overrideDistrictIds", () => {
+      const scope = resolveCaseloadScope(
+        makeInput({
+          stateCode: "US_TX",
+          system: "INCARCERATION",
+          user: { overrideDistrictIds: ["7"] },
+        }),
+      );
+      expect(scope.base).toEqual({ kind: "unrestricted" });
+    });
   });
 
   describe("US_TN", () => {

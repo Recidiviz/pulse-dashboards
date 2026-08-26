@@ -1,5 +1,37 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`supervision staff schema for 'US_CA' 'E2E_CA_OFFICER' 1`] = `
+{
+  "district": "E2E DISTRICT 1",
+  "email": "e2e-ca-officer@example.com",
+  "givenNames": "Delphine",
+  "hasCaseload": true,
+  "pseudonymizedId": "hashed-e2e-ca-officer",
+  "recordType": "supervisionStaff",
+  "roleSubtype": "SUPERVISION_OFFICER",
+  "staffExternalId": "E2E_CA_OFFICER",
+  "stateCode": "US_CA",
+  "supervisorExternalId": null,
+  "surname": "Achebe",
+}
+`;
+
+exports[`supervision staff schema for 'US_CA' 'E2E_CA_SUPERVISOR' 1`] = `
+{
+  "district": "E2E DISTRICT 1",
+  "email": "e2e-ca-supervisor@example.com",
+  "givenNames": "Ignatius",
+  "hasCaseload": true,
+  "pseudonymizedId": "hashed-e2e-ca-supervisor",
+  "recordType": "supervisionStaff",
+  "roleSubtype": "SUPERVISION_OFFICER_SUPERVISOR",
+  "staffExternalId": "E2E_CA_SUPERVISOR",
+  "stateCode": "US_CA",
+  "supervisorExternalId": null,
+  "surname": "Prashad",
+}
+`;
+
 exports[`supervision staff schema for 'US_CA' 'OFFICER1' 1`] = `
 {
   "district": "DISTRICT 1",
@@ -26,6 +58,20 @@ exports[`supervision staff schema for 'US_IA' 'OFFICER1' 1`] = `
   "stateCode": "US_IA",
   "supervisorExternalId": null,
   "surname": "Teak",
+}
+`;
+
+exports[`supervision staff schema for 'US_ID' 'E2E_ID_OFFICER' 1`] = `
+{
+  "email": "e2e-id-officer@example.com",
+  "givenNames": "Thandeka",
+  "hasCaseload": true,
+  "pseudonymizedId": "hashed-e2e-id-officer",
+  "recordType": "supervisionStaff",
+  "staffExternalId": "E2E_ID_OFFICER",
+  "stateCode": "US_ID",
+  "supervisorExternalId": null,
+  "surname": "Rourke",
 }
 `;
 
@@ -68,6 +114,21 @@ exports[`supervision staff schema for 'US_ID' 'OFFICER6' 1`] = `
   },
   "supervisorExternalId": "SUPER847",
   "surname": "Schroeder",
+}
+`;
+
+exports[`supervision staff schema for 'US_MI' 'E2E_MI_OFFICER' 1`] = `
+{
+  "district": "10",
+  "email": "e2e-mi-officer@example.com",
+  "givenNames": "Ambrose",
+  "hasCaseload": true,
+  "pseudonymizedId": "hashed-e2e-mi-officer",
+  "recordType": "supervisionStaff",
+  "staffExternalId": "E2E_MI_OFFICER",
+  "stateCode": "US_MI",
+  "supervisorExternalId": null,
+  "surname": "Fitzsimmons",
 }
 `;
 
@@ -182,6 +243,102 @@ exports[`supervision staff schema for 'US_PA' 'OFFICER2' 1`] = `
   "stateCode": "US_PA",
   "supervisorExternalId": null,
   "surname": "Frederick",
+}
+`;
+
+exports[`supervision staff schema for 'US_TN' 'E2E_TN_OFFICER' 1`] = `
+{
+  "district": "E2E DISTRICT 1",
+  "email": "e2e-tn-officer@example.com",
+  "givenNames": "Rosalind",
+  "hasCaseload": true,
+  "pseudonymizedId": "hashed-e2e-tn-officer",
+  "recordType": "supervisionStaff",
+  "staffExternalId": "E2E_TN_OFFICER",
+  "stateCode": "US_TN",
+  "supervisorExternalId": null,
+  "surname": "Ashwood",
+}
+`;
+
+exports[`supervision staff schema for 'US_TN' 'E2E_TN_OVERRIDE' 1`] = `
+{
+  "district": "E2E DISTRICT 1",
+  "email": "e2e-tn-override@example.com",
+  "givenNames": "Marisol",
+  "hasCaseload": true,
+  "pseudonymizedId": "hashed-e2e-tn-override",
+  "recordType": "supervisionStaff",
+  "staffExternalId": "E2E_TN_OVERRIDE",
+  "stateCode": "US_TN",
+  "supervisorExternalId": null,
+  "surname": "Quist",
+}
+`;
+
+exports[`supervision staff schema for 'US_TN' 'E2E_TN_PEER' 1`] = `
+{
+  "district": "E2E DISTRICT 2",
+  "email": "e2e-tn-peer@example.com",
+  "givenNames": "Booker",
+  "hasCaseload": true,
+  "pseudonymizedId": "hashed-e2e-tn-peer",
+  "recordType": "supervisionStaff",
+  "staffExternalId": "E2E_TN_PEER",
+  "stateCode": "US_TN",
+  "supervisorExternalId": null,
+  "surname": "Nyland",
+}
+`;
+
+exports[`supervision staff schema for 'US_TN' 'E2E_TN_REPORT' 1`] = `
+{
+  "district": "E2E DISTRICT 2",
+  "email": "e2e-tn-report@example.com",
+  "givenNames": "Perpetua",
+  "hasCaseload": true,
+  "pseudonymizedId": "hashed-e2e-tn-report",
+  "recordType": "supervisionStaff",
+  "staffExternalId": "E2E_TN_REPORT",
+  "stateCode": "US_TN",
+  "supervisorExternalId": null,
+  "supervisorExternalIds": [
+    "E2E_TN_SUPERVISOR",
+  ],
+  "surname": "Oyelaran",
+}
+`;
+
+exports[`supervision staff schema for 'US_TN' 'E2E_TN_REPORT_2' 1`] = `
+{
+  "district": "E2E DISTRICT 2",
+  "email": "e2e-tn-report-2@example.com",
+  "givenNames": "Calder",
+  "hasCaseload": true,
+  "pseudonymizedId": "hashed-e2e-tn-report-2",
+  "recordType": "supervisionStaff",
+  "staffExternalId": "E2E_TN_REPORT_2",
+  "stateCode": "US_TN",
+  "supervisorExternalId": null,
+  "supervisorExternalIds": [
+    "E2E_TN_LEAD",
+  ],
+  "surname": "Mbeki",
+}
+`;
+
+exports[`supervision staff schema for 'US_TN' 'E2E_TN_SUPERVISOR' 1`] = `
+{
+  "district": "E2E DISTRICT 3",
+  "email": "e2e-tn-supervisor@example.com",
+  "givenNames": "Idris",
+  "hasCaseload": true,
+  "pseudonymizedId": "hashed-e2e-tn-supervisor",
+  "recordType": "supervisionStaff",
+  "staffExternalId": "E2E_TN_SUPERVISOR",
+  "stateCode": "US_TN",
+  "supervisorExternalId": null,
+  "surname": "Vantol",
 }
 `;
 
