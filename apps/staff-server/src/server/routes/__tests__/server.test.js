@@ -41,6 +41,7 @@ beforeEach(() => {
   // Reduce noise in the test
   vi.spyOn(console, "log").mockImplementation(() => undefined);
   vi.spyOn(console, "error").mockImplementation(() => undefined);
+  vi.spyOn(console, "warn").mockImplementation(() => undefined);
 
   vi.mocked(jwt).mockImplementation(() => {
     const validator = (req, res, next) => {
@@ -252,6 +253,28 @@ describe("Server tests", () => {
         "/api/US_MO/pathways/supervision_population_time_series",
       );
       expect(supervisionResponse.statusCode).toEqual(403);
+    });
+
+    it("prevents accessing person-level metrics from unauthorized pages", async () => {
+      // User has access to system_prison but not system_prisonToSupervision
+      // They should not be able to access prisonToSupervision person-level data
+      const prisonToSupervisionPersonLevelResponse = await request(app).get(
+        "/api/US_MO/pathways/prison_to_supervision_population_person_level",
+      );
+      expect(prisonToSupervisionPersonLevelResponse.statusCode).toEqual(403);
+
+      // But they should be able to access prison person-level data
+      const prisonPersonLevelResponse = await request(app).get(
+        "/api/US_MO/pathways/prison_population_person_level",
+      );
+      expect(prisonPersonLevelResponse.statusCode).toEqual(200);
+    });
+
+    it("rejects unknown metrics", async () => {
+      const unknownMetricResponse = await request(app).get(
+        "/api/US_MO/pathways/unknown_metric_name",
+      );
+      expect(unknownMetricResponse.statusCode).toEqual(403);
     });
   });
 

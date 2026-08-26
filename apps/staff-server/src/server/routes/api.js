@@ -26,7 +26,6 @@ import { validationResult } from "express-validator";
 import fs from "fs";
 import { GoogleAuth } from "google-auth-library";
 import csvExport from "jsonexport/dist";
-import snakeCase from "lodash/snakeCase";
 import path from "path";
 import sanitizeFilename from "sanitize-filename";
 import { v4 as uuidV4 } from "uuid";
@@ -258,31 +257,116 @@ export function vitals(req, res) {
   );
 }
 
+// Mapping of metric file names to their corresponding Pathways pages
+// This ensures that users can only access metrics for pages they have permission to view
+const METRIC_TO_PAGE_MAP = {
+  // Liberty to Prison metrics
+  liberty_to_prison_population_over_time: "libertyToPrison",
+  liberty_to_prison_population_by_district: "libertyToPrison",
+  liberty_to_prison_population_by_sex: "libertyToPrison",
+  liberty_to_prison_population_by_age_group: "libertyToPrison",
+  liberty_to_prison_population_by_race: "libertyToPrison",
+  liberty_to_prison_population_by_prior_length_of_incarceration:
+    "libertyToPrison",
+
+  // Prison metrics
+  projected_prison_population_over_time: "prison",
+  prison_population_projection_time_series: "prison",
+  prison_population_over_time: "prison",
+  prison_population_time_series: "prison",
+  prison_facility_population: "prison",
+  prison_population_by_race: "prison",
+  prison_population_by_gender: "prison",
+  prison_population_by_sex: "prison",
+  prison_population_by_age_group: "prison",
+  prison_population_by_ethnicity: "prison",
+  prison_population_by_sentence_length_min: "prison",
+  prison_population_by_sentence_length_max: "prison",
+  prison_population_by_charge_county_code: "prison",
+  prison_population_by_offense_type: "prison",
+  prison_population_by_charge_description: "prison",
+  prison_population_by_admission_reason: "prison",
+  prison_population_by_religion: "prison",
+  prison_population_by_marital_status: "prison",
+  prison_population_by_time_at_facility: "prison",
+  prison_population_person_level: "prison",
+
+  // Prison to Supervision metrics
+  prison_to_supervision_population_over_time: "prisonToSupervision",
+  prison_to_supervision_count_by_month: "prisonToSupervision",
+  prison_to_supervision_population_by_age: "prisonToSupervision",
+  prison_to_supervision_population_by_age_group: "prisonToSupervision",
+  prison_to_supervision_population_by_race: "prisonToSupervision",
+  prison_to_supervision_population_by_facility: "prisonToSupervision",
+  prison_to_supervision_population_person_level: "prisonToSupervision",
+
+  // Supervision metrics
+  projected_supervision_population_over_time: "supervision",
+  supervision_population_projection_time_series: "supervision",
+  supervision_population_over_time: "supervision",
+  supervision_population_time_series: "supervision",
+  supervision_population_by_district: "supervision",
+  supervision_population_by_race: "supervision",
+  supervision_population_by_supervision_level: "supervision",
+
+  // Supervision to Prison metrics
+  supervision_to_prison_over_time: "supervisionToPrison",
+  supervision_to_prison_count_by_month: "supervisionToPrison",
+  supervision_to_prison_population_by_district: "supervisionToPrison",
+  supervision_to_prison_population_by_most_severe_violation:
+    "supervisionToPrison",
+  supervision_to_prison_population_by_number_of_violations:
+    "supervisionToPrison",
+  supervision_to_prison_population_by_length_of_stay: "supervisionToPrison",
+  supervision_to_prison_population_by_supervision_level: "supervisionToPrison",
+  supervision_to_prison_population_by_sex: "supervisionToPrison",
+  supervision_to_prison_population_by_race: "supervisionToPrison",
+  supervision_to_prison_population_by_officer: "supervisionToPrison",
+  supervision_to_prison_population_snapshot_by_dimension: "supervisionToPrison",
+  supervision_to_prison_population_snapshot_by_officer: "supervisionToPrison",
+
+  // Supervision to Liberty metrics
+  supervision_to_liberty_over_time: "supervisionToLiberty",
+  supervision_to_liberty_count_by_month: "supervisionToLiberty",
+  supervision_to_liberty_population_by_length_of_stay: "supervisionToLiberty",
+  supervision_to_liberty_population_by_location: "supervisionToLiberty",
+  supervision_to_liberty_population_by_sex: "supervisionToLiberty",
+  supervision_to_liberty_population_by_age_group: "supervisionToLiberty",
+  supervision_to_liberty_population_by_race: "supervisionToLiberty",
+};
+
 export function pathways(req, res) {
   const { stateCode, file: metricName } = req.params;
   const metricType = "pathways";
   const appMetadata = getAppMetadata(req);
 
-  const allowed =
-    appMetadata.state_code === "recidiviz" ||
-    isOfflineMode() ||
-    Object.entries(appMetadata.routes).some(([route, status]) => {
-      // routes have the format `system_prisonToSupervision: true`
-      // metric names have the format `prison_to_supervision_count_by_month`
-      if (!status) {
-        return false;
-      }
-      const routeParts = route.split("_");
-      if (routeParts.length !== 2 || routeParts[0] !== "system") {
-        return false;
-      }
+  // Allow Recidiviz internal users and offline mode
+  if (appMetadata.state_code === "recidiviz" || isOfflineMode()) {
+    const cacheKey = getCacheKey({ stateCode, metricType, metricName });
+    cacheResponse(
+      cacheKey,
+      () => fetchMetrics(stateCode, metricType, metricName, isOfflineMode()),
+      responder(res),
+    );
+    return;
+  }
 
-      return (
-        metricName.startsWith(snakeCase(routeParts[1])) &&
-        // Make sure we don't consider system_prison as eligible for prison_to_supervision_count_by_month
-        !metricName.startsWith(`${snakeCase(routeParts[1])}_to_`)
-      );
-    });
+  // Determine which page this metric belongs to
+  const metricPage = METRIC_TO_PAGE_MAP[metricName];
+
+  if (!metricPage) {
+    // Unknown metric - deny access
+    console.warn(
+      `Unknown pathways metric requested: ${metricName}. If this is a valid metric, add it to METRIC_TO_PAGE_MAP in api.js`,
+    );
+    respondWithForbidden(res);
+    return;
+  }
+
+  // Check if user has access to the page this metric belongs to
+  // Routes have the format `system_prison: true` or `system_prisonToSupervision: true`
+  const requiredRoute = `system_${metricPage}`;
+  const allowed = appMetadata.routes && appMetadata.routes[requiredRoute];
 
   if (!allowed) {
     respondWithForbidden(res);
