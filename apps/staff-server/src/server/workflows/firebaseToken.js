@@ -23,6 +23,7 @@ import { fetchOfflineUser } from "../core";
 import { respondWithBadRequest, respondWithForbidden } from "../routes/api";
 import { getAppMetadata } from "../utils/getAppMetadata";
 import { isOfflineMode } from "../utils/isOfflineMode";
+import { readOfflineUserOverrides } from "../utils/offlineUserOverrides";
 
 const { METADATA_NAMESPACE } = process.env;
 
@@ -56,7 +57,12 @@ export async function getFirebaseToken(req, res) {
   const { impersonationParams } = req.query ?? {};
   const impersonateUser = !!impersonationParams;
   if (isOfflineMode()) {
-    const user = fetchOfflineUser({});
+    // Honor the same override the Typesense mint endpoints read. The `uid` below
+    // becomes `request.auth.token.user_id`, which Firestore rules compare
+    // against the `userUpdates` doc id the frontend asks for — so a token minted
+    // for the default user while the app believes it is someone else gets a
+    // rules denial, not an empty result.
+    const user = fetchOfflineUser(readOfflineUserOverrides(req));
     stateCode = getAppMetadata({ user }).stateCode;
     uid = user.email;
     recidivizAllowedStates = Object.values(stateCodes);

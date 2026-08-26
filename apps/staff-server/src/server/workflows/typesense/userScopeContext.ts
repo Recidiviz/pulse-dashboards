@@ -34,43 +34,9 @@ import { fetchOfflineUser } from "../../core";
 import { fetchImpersonatedUserRestrictions } from "../../routes/api";
 import { getAppMetadata } from "../../utils/getAppMetadata";
 import { isOfflineMode } from "../../utils/isOfflineMode";
-import type {
-  OfflineUserOverrides,
-  RequestIdentity,
-  UserScopeContext,
-} from "./types";
+import { readOfflineUserOverrides } from "../../utils/offlineUserOverrides";
+import type { RequestIdentity, UserScopeContext } from "./types";
 import { staffDocId } from "./utils";
-
-// OFFLINE ONLY. Lets a caller pick which synthetic user the mint endpoint
-// resolves, so an e2e spec can drive the server's identity from the same object
-// it mocks `/api/offlineUser` with. Otherwise every offline mint resolves one
-// fixed Recidiviz identity and no scope permutation is testable.
-//
-// Read as an explicit allowlist rather than a spread: this is identity input,
-// and nothing outside these four fields may reach the synthetic user.
-//
-// Only district, roleSubtype and hasCaseload are absent by design — those still
-// come from the Firestore staff fixture keyed by `externalId`, so fixtures stay
-// the single source of truth for staff attributes.
-function offlineUserOverrides(req: Request): OfflineUserOverrides {
-  const raw = (req.body as { offlineUser?: unknown } | undefined)?.offlineUser;
-  if (!raw || typeof raw !== "object") return {};
-
-  const { stateCode, externalId, email, featureVariants } = raw as Record<
-    string,
-    unknown
-  >;
-
-  return {
-    ...(typeof stateCode === "string" && { stateCode }),
-    ...(typeof externalId === "string" && { externalId }),
-    ...(typeof email === "string" && { email }),
-    ...(featureVariants !== null &&
-      typeof featureVariants === "object" && {
-        featureVariants: featureVariants as Record<string, unknown>,
-      }),
-  };
-}
 
 // Returns the caller's Auth0-shaped identity: `req.user` (validated JWT
 // payload) in production; a synthetic offline user in offline mode. Extracts
@@ -82,7 +48,7 @@ function offlineUserOverrides(req: Request): OfflineUserOverrides {
 function resolveRequestIdentity(req: Request): RequestIdentity {
   const user = isOfflineMode()
     ? fetchOfflineUser(
-        offlineUserOverrides(req) as Parameters<typeof fetchOfflineUser>[0],
+        readOfflineUserOverrides(req) as Parameters<typeof fetchOfflineUser>[0],
       )
     : (req as Request & { user?: Record<string, unknown> }).user;
   const appMetadata = getAppMetadata({ user });

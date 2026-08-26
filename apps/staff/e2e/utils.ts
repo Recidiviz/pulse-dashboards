@@ -166,6 +166,10 @@ export type OfflineUserSpec = {
   email?: string;
   featureVariants?: Record<string, unknown>;
   routes?: Record<string, boolean>;
+  // Left alone unless set. The offline endpoint already returns every state a
+  // Recidiviz user may view, and narrowing that to the single `stateCode` sends
+  // a Recidiviz user to a tenant that does not exist.
+  allowedStates?: string[];
 };
 
 /**
@@ -188,7 +192,9 @@ export const mockOfflineUser = async (
     const appMetadata = json[`${METADATA_NAMESPACE}app_metadata`];
 
     appMetadata.stateCode = spec.stateCode;
-    appMetadata.allowedStates = [spec.stateCode.toUpperCase()];
+    if (spec.allowedStates !== undefined) {
+      appMetadata.allowedStates = spec.allowedStates;
+    }
     if (spec.externalId !== undefined) {
       appMetadata.externalId = spec.externalId;
       appMetadata.pseudonymizedId = `hashed-${spec.externalId}`;
@@ -203,12 +209,25 @@ export const mockOfflineUser = async (
   });
 
   // Injected here rather than sent by the app, so no production code has to
-  // know about it. Read by `offlineUserOverrides` in staff-server.
+  // know about it. Read by `readOfflineUserOverrides` in staff-server.
   await page.route("**/workflows/*-scoped-key", async (route) => {
     const body = route.request().postDataJSON() ?? {};
     await route.continue({
       postData: JSON.stringify({ ...body, offlineUser: spec }),
     });
+  });
+
+  // The Firebase token has to name the same user. Its `uid` becomes
+  // `request.auth.token.user_id`, which Firestore rules compare against the
+  // `userUpdates` doc id the frontend requests — so leaving this as the default
+  // offline user produces a rules denial and a failed page, not a narrower view.
+  await page.route("**/token*", async (route) => {
+    const url = new URL(route.request().url());
+    url.searchParams.set("offlineUser", JSON.stringify(spec));
+    // Refetched rather than continued: `continue({ url })` does not reliably
+    // rewrite the target, so the request is reissued explicitly instead.
+    const response = await route.fetch({ url: url.toString() });
+    await route.fulfill({ response });
   });
 };
 
