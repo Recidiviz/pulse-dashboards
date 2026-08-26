@@ -44,15 +44,13 @@ const SYSTEM_BY_COLLECTION: Record<string, "SUPERVISION" | "INCARCERATION"> = {
 };
 
 // Per-doc derivations for `locations`, applied by backfill-fn's derivedFields
-// hook.
-//   1. `system` from `idType`: `districtId` → SUPERVISION; every facility
-//      variant → INCARCERATION. Unmapped idTypes leave `system` unset (safe
-//      default).
-//   2. `district` copied from `locationId` on districtId-type docs only —
-//      for those docs the district name already lives in `locationId`, and
-//      the caseload-scoped key's byDistricts predicate references `district`.
-//      Facility-type docs leave `district` unset; the `system:=SUPERVISION`
-//      gate keeps them out of the byDistricts arm anyway.
+// hook. `system` is derived from `idType`: `districtId` → SUPERVISION; every
+// facility variant → INCARCERATION. Unmapped idTypes leave `system` unset (safe
+// default).
+//
+// There is deliberately no `locationId` → `district` copy. The caseload key's
+// district predicate matches `locationId` directly on this collection, so the
+// duplicate attribute would carry no information the doc does not already have.
 const LOCATIONS_DERIVED_FIELDS = [
   {
     from: "idType",
@@ -63,11 +61,6 @@ const LOCATIONS_DERIVED_FIELDS = [
       facilityUnitId: "INCARCERATION",
       crcFacilityId: "INCARCERATION",
     },
-  },
-  {
-    copyFrom: "locationId",
-    into: "district",
-    when: { field: "idType", equals: "districtId" },
   },
 ];
 

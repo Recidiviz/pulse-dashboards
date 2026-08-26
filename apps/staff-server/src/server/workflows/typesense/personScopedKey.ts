@@ -15,98 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// Mints a scoped Typesense API key for the authenticated user's person
-// (client/resident) search bar. The filter_by baked into the key is a
-// PERSON-doc scope, derived per-user from the shared UserScopeContext and
-// compiled via resolvePersonScope in ~@typesense/client/scope.
-
 import type { Request, Response } from "express";
 
-import {
-  type PersonScope,
-  resolveCrossSystemPersonScopes,
-  resolvePersonScope,
-  type SingleWorkflowsSystem,
-  toCrossSystemPersonTypesenseFilter,
-  toPersonTypesenseFilter,
-} from "~@typesense/client";
-import type { SystemId } from "~datatypes";
-
-import {
-  mintScopedKeyHandler,
-  type ScopeAndFilter,
-} from "./mintScopedKeyHandler";
-import type { UserScopeContext } from "./userScopeContext";
-
-// Compiles the person-visibility scope (person-doc field names) into a
-// Typesense filter_by clause.
-function resolvePersonScopeAndFilter(
-  currentTenantId: string,
-  system: SystemId,
-  ctx: UserScopeContext,
-): ScopeAndFilter {
-  if (ctx.isRecidivizUser) {
-    const scope: PersonScope = { grants: [{ kind: "unrestricted" }] };
-    return {
-      scope,
-      filterBy: toPersonTypesenseFilter(scope, { stateCode: currentTenantId }),
-      debugSystem: "ADMIN",
-    };
-  }
-
-  const activeFeatureVariants = {
-    supervisionUnrestrictedSearch: Boolean(
-      ctx.featureVariants["supervisionUnrestrictedSearch"],
-    ),
-    workflowsSupervisorSearch: Boolean(
-      ctx.featureVariants["workflowsSupervisorSearch"],
-    ),
-  };
-
-  const resolverInput = {
-    stateCode: currentTenantId,
-    user: {
-      id: ctx.userId,
-      email: ctx.userEmail,
-      district: ctx.district,
-      overrideDistrictIds: ctx.overrideDistrictIds,
-      roleSubtype: ctx.roleSubtype,
-      hasCaseload: ctx.hasCaseload,
-    },
-    activeFeatureVariants,
-    isSupervisor: ctx.isSupervisor,
-    staffExternalId: ctx.userId,
-    supervisedStaffExternalIds: ctx.supervisedStaffExternalIds,
-  };
-
-  if (system === "ALL") {
-    const scope = resolveCrossSystemPersonScopes(resolverInput);
-    return {
-      scope,
-      filterBy: toCrossSystemPersonTypesenseFilter(scope, currentTenantId),
-      debugSystem: system,
-    };
-  }
-
-  const singleSystem: SingleWorkflowsSystem = system;
-  const scope = resolvePersonScope({ ...resolverInput, system: singleSystem });
-  return {
-    scope,
-    filterBy: toPersonTypesenseFilter(scope, { stateCode: currentTenantId }),
-    debugSystem: system,
-  };
-}
+import { mintScopedKeyHandler } from "./mintScopedKeyHandler";
+import { PersonScopedKeyMinter } from "./PersonScopedKeyMinter";
 
 /**
  * POST /api/:stateCode/workflows/person-scoped-key
  *
- * Mints a scoped Typesense API key for the authenticated user's person
- * (client/resident) search, filtered to their person-visibility scope per
- * the shared resolver in ~@typesense/client/scope.
+ * Mints a scoped Typesense API key per collection for the authenticated user's
+ * person (client/resident) search, filtered to their person-visibility scope.
  *
  * Body: { system: "SUPERVISION" | "INCARCERATION" | "ALL" }
- * Returns: { scopedKey: string, expiresAt: ISO8601, typesenseHost: string }
+ * Returns: {
+ *   keys: Record<collectionName, string>,
+ *   expiresAt: ISO8601,
+ *   typesenseHost: string,
+ * }
  */
 export async function mintPersonScopedKey(req: Request, res: Response) {
-  return mintScopedKeyHandler(req, res, resolvePersonScopeAndFilter);
+  return mintScopedKeyHandler(
+    req,
+    res,
+    (stateCode, ctx) => new PersonScopedKeyMinter(stateCode, ctx),
+  );
 }

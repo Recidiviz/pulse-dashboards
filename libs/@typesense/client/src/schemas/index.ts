@@ -126,6 +126,12 @@ export const schemas: CollectionCreateSchema[] = [
         facet: true,
         optional: true,
       },
+      {
+        name: "supervisorExternalIds",
+        type: "string[]",
+        facet: true,
+        optional: true,
+      },
       { name: "hasCaseload", type: "bool", facet: true, optional: false },
     ],
   },
@@ -143,19 +149,18 @@ export const schemas: CollectionCreateSchema[] = [
     name: "locations",
     enable_nested_fields: true,
     fields: [
+      // A district's identity IS its `locationId` on `idType: "districtId"`
+      // docs, so the caseload key's district predicate matches this field here
+      // rather than a separate `district` attribute. Locations carry no email
+      // and no supervisor data, so no other scope clause reaches them — see
+      // CASELOAD_COLLECTION_FIELDS in ../scope/compileToTypesense.
       { name: "locationId", type: "string" },
       { name: "idType", type: "string", facet: true },
       { name: "stateCode", type: "string", facet: true },
       { name: "name", type: "string", sort: true, infix: true },
-      // Declared here so the caseload-scoped key's byDistricts predicate
-      // (`district:=[...]`) passes Typesense's upfront schema check. On
-      // district-idType location docs, `district` is populated per-doc via
-      // backfill-fn's derivedFields "copy" hook (copies `locationId` → `district`
-      // when `idType === "districtId"`), since the district name already
-      // lives in `locationId` for those docs. Facility-idType docs leave
-      // `district` unset; the `system:=SUPERVISION` gate prevents them from
-      // reaching the district clause anyway.
-      { name: "district", type: "string", optional: true },
+      // Districts and facilities share this collection, so the caseload key
+      // needs this discriminator to apply supervision rules to one and
+      // incarceration rules to the other.
       systemField,
     ],
   },

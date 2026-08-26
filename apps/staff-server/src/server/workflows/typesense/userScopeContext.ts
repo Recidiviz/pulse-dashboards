@@ -34,35 +34,8 @@ import { fetchOfflineUser } from "../../core";
 import { fetchImpersonatedUserRestrictions } from "../../routes/api";
 import { getAppMetadata } from "../../utils/getAppMetadata";
 import { isOfflineMode } from "../../utils/isOfflineMode";
-
-// The identity + context each scoped-key mint handler needs to build its
-// filter_by. Populated by resolveUserScopeContext. Consumers pull whatever
-// fields their own scope resolver cares about (caseload uses
-// district/isSupervisor/certain FVs; person will use a different subset).
-export interface UserScopeContext {
-  // Empty string when the user is Recidiviz (no external staff id); handlers
-  // that need it must check isRecidivizUser first.
-  userId: string;
-  userEmail: string;
-  isRecidivizUser: boolean;
-  district: string | undefined;
-  roleSubtype: RoleSubtype | null;
-  hasCaseload: boolean;
-  overrideDistrictIds: string[] | undefined;
-  isSupervisor: boolean;
-  // staffExternalId of every staff member this user supervises.
-  supervisedStaffExternalIds: string[];
-  // Raw FV bag from the JWT — consumers pick what they need. Kept as a bag
-  // (not pre-filtered) so new scope-affecting FVs don't require touching
-  // this file.
-  featureVariants: Record<string, unknown>;
-}
-
-interface RequestIdentity {
-  userId?: string;
-  userEmail: string;
-  appMetadata: Record<string, unknown>;
-}
+import type { RequestIdentity, UserScopeContext } from "./types";
+import { staffDocId } from "./utils";
 
 // Returns the caller's Auth0-shaped identity: `req.user` (validated JWT
 // payload) in production; a synthetic offline user in offline mode. Extracts
@@ -84,12 +57,6 @@ function resolveRequestIdentity(req: Request): RequestIdentity {
 function isRecidivizUser(appMetadata: Record<string, unknown>): boolean {
   const stateCode = appMetadata["stateCode"] as string;
   return stateCode.toLowerCase() === "recidiviz";
-}
-
-// Firestore doc IDs in supervisionStaff / incarcerationStaff / userUpdates are
-// composites of the lowercased stateCode + externalId (e.g. "us_tn_agonzalez123").
-function staffDocId(stateCode: string, externalId: string): string {
-  return `${stateCode.toLowerCase()}_${externalId}`;
 }
 
 // Looks up a user's staff record for user-attribute lookup (district, email,

@@ -17,10 +17,7 @@
 
 import { describe, expect, it } from "vitest";
 
-import {
-  resolveCaseloadScope,
-  resolveCrossSystemCaseloadScopes,
-} from "../resolveCaseloadScope";
+import { resolveCaseloadScope } from "../resolveCaseloadScope";
 import type {
   ResolveScopeFeatureVariants,
   ResolveScopeInput,
@@ -391,61 +388,5 @@ describe("state baselines", () => {
       );
       expect(scope.base).toEqual({ kind: "unrestricted" });
     });
-  });
-});
-
-describe("resolveCrossSystemCaseloadScopes (system=ALL leadership case)", () => {
-  it("returns asymmetric scopes for US_MI (SUPR district-scoped, INC unrestricted)", () => {
-    const scopes = resolveCrossSystemCaseloadScopes({
-      stateCode: "US_MI",
-      user: {
-        id: "user-7",
-        email: "lead@example.com",
-        district: "Region 3",
-      },
-      activeFeatureVariants: {},
-      isSupervisor: false,
-    });
-    expect(scopes.supervision.base).toEqual({
-      kind: "byDistricts",
-      districts: ["Region 3"],
-    });
-    expect(scopes.incarceration.base).toEqual({ kind: "unrestricted" });
-  });
-
-  // the tenant/us_tn config is wrong - incarceration shouldn't be district scoped
-  it("US_TN: SUPERVISION is district-scoped, INCARCERATION is unrestricted", () => {
-    const scopes = resolveCrossSystemCaseloadScopes({
-      stateCode: "US_TN",
-      user: {
-        id: "user-7",
-        email: "lead@example.com",
-        district: "Region 1",
-      },
-      activeFeatureVariants: {},
-      isSupervisor: false,
-    });
-    expect(scopes.supervision.base).toEqual({
-      kind: "byDistricts",
-      districts: ["Region 1"],
-    });
-    expect(scopes.incarceration.base).toEqual({ kind: "unrestricted" });
-  });
-
-  it("supervisor expansion attaches only to systems with a non-unrestricted base", () => {
-    const scopes = resolveCrossSystemCaseloadScopes({
-      stateCode: "US_MI",
-      user: { id: "user-7", email: "u@example.com", district: "Region 3" },
-      activeFeatureVariants: { workflowsSupervisorSearch: true },
-      isSupervisor: true,
-    });
-    // SUPERVISION baseline is district-scoped → expansion attaches.
-    expect(scopes.supervision.expandToSupervisedStaff).toEqual({
-      userId: "user-7",
-    });
-    // INCARCERATION baseline is unrestricted → expansion is skipped
-    // (matches production's per-system StaffSubscription behavior).
-    expect(scopes.incarceration.base).toEqual({ kind: "unrestricted" });
-    expect(scopes.incarceration.expandToSupervisedStaff).toBeUndefined();
   });
 });

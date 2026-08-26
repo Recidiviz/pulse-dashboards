@@ -611,7 +611,7 @@ describe("search", () => {
     manager.typesenseClient = {
       multiSearch: mockMultiSearch,
       reset: vi.fn(),
-      getScopedKey: vi.fn(),
+      getScopedKeys: vi.fn(),
     } as any;
     errorSpy = vi.spyOn(console, "error").mockImplementation(vi.fn());
   });
@@ -744,7 +744,7 @@ describe("searchable cache + resolveSelectedSearchables", () => {
     manager.typesenseClient = {
       multiSearch: mockMultiSearch,
       reset: vi.fn(),
-      getScopedKey: vi.fn(),
+      getScopedKeys: vi.fn(),
     } as any;
     errorSpy = vi.spyOn(console, "error").mockImplementation(vi.fn());
   });
@@ -876,7 +876,7 @@ describe("tenant change", () => {
     manager.typesenseClient = {
       multiSearch: mockMultiSearch,
       reset: vi.fn(),
-      getScopedKey: vi.fn(),
+      getScopedKeys: vi.fn(),
     } as any;
     errorSpy = vi.spyOn(console, "error").mockImplementation(vi.fn());
   });
@@ -969,7 +969,7 @@ describe("warmSelectedSearchablesCache", () => {
     manager.typesenseClient = {
       multiSearch: mockMultiSearch,
       reset: vi.fn(),
-      getScopedKey: vi.fn(),
+      getScopedKeys: vi.fn(),
     } as any;
     errorSpy = vi.spyOn(console, "error").mockImplementation(vi.fn());
   });

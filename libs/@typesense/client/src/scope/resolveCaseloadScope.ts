@@ -16,12 +16,7 @@
 // =============================================================================
 
 import { resolveStateBase } from "./stateScopes";
-import type {
-  BaseScope,
-  CaseloadScope,
-  ResolveCrossSystemScopeInput,
-  ResolveScopeInput,
-} from "./types";
+import type { BaseScope, CaseloadScope, ResolveScopeInput } from "./types";
 
 function applySupervisorExpansion(
   base: BaseScope,
@@ -58,19 +53,4 @@ export function resolveCaseloadScope(input: ResolveScopeInput): CaseloadScope {
 
   const base = resolveStateBase(input);
   return applySupervisorExpansion(base, input);
-}
-
-// Resolves staff scopes for both SUPERVISION and INCARCERATION in one pass.
-// Use for leadership users where `currentSystem` is "ALL" — the per-system
-// rules differ enough that a single CaseloadScope cannot capture the union
-// (e.g. US_MI has district-scoped SUPR and unrestricted INC). Caller feeds
-// the result into `toCrossSystemCaseloadTypesenseFilter` to produce a single
-// filter_by string covering both systems.
-export function resolveCrossSystemCaseloadScopes(
-  input: ResolveCrossSystemScopeInput,
-): { supervision: CaseloadScope; incarceration: CaseloadScope } {
-  return {
-    supervision: resolveCaseloadScope({ ...input, system: "SUPERVISION" }),
-    incarceration: resolveCaseloadScope({ ...input, system: "INCARCERATION" }),
-  };
 }

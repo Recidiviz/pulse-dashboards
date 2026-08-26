@@ -302,7 +302,7 @@ describe("search", () => {
     manager.typesenseClient = {
       multiSearch: mockMultiSearch,
       reset: vi.fn(),
-      getScopedKey: vi.fn(),
+      getScopedKeys: vi.fn(),
     } as any;
     errorSpy = vi.spyOn(console, "error").mockImplementation(vi.fn());
   });

@@ -15,33 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export {
-  compileCaseloadScopePredicate,
-  compilePersonScopePredicate,
-  toCaseloadTypesenseFilter,
-  type ToCaseloadTypesenseFilterClauses,
-  toCrossSystemCaseloadTypesenseFilter,
-  toCrossSystemPersonTypesenseFilter,
-  toPersonTypesenseFilter,
-} from "./compileToTypesense";
-export {
-  resolveCaseloadScope,
-  resolveCrossSystemCaseloadScopes,
-} from "./resolveCaseloadScope";
-export {
-  resolveCrossSystemPersonScopes,
-  resolvePersonScope,
-} from "./resolvePersonScope";
+export { CaseloadFilterCompiler } from "./CaseloadFilterCompiler";
+export { PersonFilterCompiler } from "./PersonFilterCompiler";
+export { resolveCaseloadScope } from "./resolveCaseloadScope";
+export { resolvePersonScope } from "./resolvePersonScope";
 export { resolveStateBase } from "./stateScopes";
 export type {
   BaseScope,
+  CaseloadCollectionFields,
   CaseloadScope,
+  CaseloadScopeCollection,
   PersonGrant,
+  PersonResolverInput,
   PersonScope,
+  PersonScopeCollection,
   PersonScopeField,
-  ResolveCrossSystemPersonScopeInput,
-  ResolveCrossSystemScopeInput,
+  PerSystemScopes,
   ResolvePersonScopeInput,
+  ResolverInput,
   ResolveScopeFeatureVariants,
   ResolveScopeInput,
   ResolveScopeUser,

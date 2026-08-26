@@ -18,11 +18,11 @@
 import { Client as TypesenseClient } from "typesense";
 
 const DEFAULT_CONNECTION_TIMEOUT_SECONDS = 5;
-export interface TypesenseClientConfig {
+export type TypesenseClientConfig = {
   host: string;
   apiKey: string;
   connectionTimeoutSeconds?: number;
-}
+};
 
 export function createTypesenseClient(
   config: TypesenseClientConfig,

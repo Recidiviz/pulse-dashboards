@@ -36,7 +36,6 @@ import { resolveCaseloadScope } from "./resolveCaseloadScope";
 import type {
   PersonGrant,
   PersonScope,
-  ResolveCrossSystemPersonScopeInput,
   ResolvePersonScopeInput,
 } from "./types";
 
@@ -82,16 +81,4 @@ export function resolvePersonScope(
   }
 
   return { grants };
-}
-
-// Resolves person scopes for both SUPERVISION (clients) and INCARCERATION
-// (residents) in one pass. Use for leadership users where `currentSystem` is
-// "ALL". Caller feeds the result into `toCrossSystemPersonTypesenseFilter`.
-export function resolveCrossSystemPersonScopes(
-  input: ResolveCrossSystemPersonScopeInput,
-): { supervision: PersonScope; incarceration: PersonScope } {
-  return {
-    supervision: resolvePersonScope({ ...input, system: "SUPERVISION" }),
-    incarceration: resolvePersonScope({ ...input, system: "INCARCERATION" }),
-  };
 }

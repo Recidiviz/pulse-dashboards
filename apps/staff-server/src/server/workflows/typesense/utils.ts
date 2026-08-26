@@ -15,28 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { Request, Response } from "express";
+// Shared helpers for the Typesense scoped-key endpoints.
 
-import { CaseloadScopedKeyMinter } from "./CaseloadScopedKeyMinter";
-import { mintScopedKeyHandler } from "./mintScopedKeyHandler";
+import type { SystemId } from "~datatypes";
 
-/**
- * POST /api/:stateCode/workflows/caseload-scoped-key
- *
- * Mints a scoped Typesense API key per collection for the authenticated user's
- * caseload search, filtered to their staff-visibility scope.
- *
- * Body: { system: "SUPERVISION" | "INCARCERATION" | "ALL" }
- * Returns: {
- *   keys: Record<collectionName, string>,
- *   expiresAt: ISO8601,
- *   typesenseHost: string,
- * }
- */
-export async function mintCaseloadScopedKey(req: Request, res: Response) {
-  return mintScopedKeyHandler(
-    req,
-    res,
-    (stateCode, ctx) => new CaseloadScopedKeyMinter(stateCode, ctx),
+const VALID_SYSTEMS = [
+  "SUPERVISION",
+  "INCARCERATION",
+  "ALL",
+] as const satisfies readonly SystemId[];
+
+export function isValidSystem(value: unknown): value is SystemId {
+  return (
+    typeof value === "string" &&
+    (VALID_SYSTEMS as readonly string[]).includes(value)
   );
+}
+
+export function invalidSystemMessage(): string {
+  return `system must be one of ${VALID_SYSTEMS.join(", ")}`;
+}
+
+// Firestore doc IDs in supervisionStaff / incarcerationStaff / userUpdates are
+// composites of the lowercased stateCode + externalId (e.g. "us_tn_agonzalez123").
+export function staffDocId(stateCode: string, externalId: string): string {
+  return `${stateCode.toLowerCase()}_${externalId}`;
 }

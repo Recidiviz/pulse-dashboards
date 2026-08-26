@@ -26,11 +26,11 @@
 import type { RoleSubtype, SystemId } from "~datatypes";
 
 // A single Workflows system (excluding the "ALL" leadership case). The
-// per-system resolver only handles SUPERVISION or INCARCERATION; ALL is
-// handled by the separate cross-system resolver (resolveCrossSystemCaseloadScopes).
+// resolvers only handle one system at a time; an ALL request resolves each
+// system separately and keeps both scopes (see PerSystemScopes).
 export type SingleWorkflowsSystem = Exclude<SystemId, "ALL">;
 
-export interface ResolveScopeUser {
+export type ResolveScopeUser = {
   id: string;
   email: string;
   district?: string;
@@ -41,14 +41,14 @@ export interface ResolveScopeUser {
   // district managers who supervise officers but aren't officers themselves.
   // Undefined defaults to true (preserves backwards-compatible behavior).
   hasCaseload?: boolean;
-}
+};
 
-export interface ResolveScopeFeatureVariants {
+export type ResolveScopeFeatureVariants = {
   supervisionUnrestrictedSearch?: boolean;
   workflowsSupervisorSearch?: boolean;
-}
+};
 
-export interface ResolveScopeInput {
+export type ResolveScopeInput = {
   stateCode: string;
   system: SingleWorkflowsSystem;
   user: ResolveScopeUser;
@@ -56,12 +56,11 @@ export interface ResolveScopeInput {
   // Whether this user supervises >= 1 staff member. The lib does not infer
   // this; the caller computes it from staff records and passes it in.
   isSupervisor: boolean;
-}
+};
 
-// Input shape for the cross-system resolver. Same as ResolveScopeInput but
-// without `system` — the resolver internally produces scopes for both
-// SUPERVISION and INCARCERATION.
-export type ResolveCrossSystemScopeInput = Omit<ResolveScopeInput, "system">;
+// Resolver input before a system is chosen; callers stamp the system per
+// resolve.
+export type ResolverInput = Omit<ResolveScopeInput, "system">;
 
 // The base scope captures the state-baseline visibility rule.
 // Supervisor expansion (if active) is layered on as a separate flag.
@@ -74,12 +73,19 @@ export type BaseScope =
   | { kind: "byDistricts"; districts: string[] }
   | { kind: "none" };
 
-export interface CaseloadScope {
+export type CaseloadScope = {
   base: BaseScope;
   // If present, OR the base scope with supervisorExternalId == userId
   // (and the plural supervisorExternalIds variant for Insights compatibility).
   expandToSupervisedStaff?: { userId: string };
-}
+};
+
+// The collections a caseload-scoped key covers, each with its own filter_by.
+// See CaseloadFilterCompiler.COLLECTION_FIELDS.
+export type CaseloadScopeCollection =
+  | "supervisionStaff"
+  | "incarcerationStaff"
+  | "locations";
 
 // Person-doc fields (clients/residents) that a grant can be scoped to. See
 // libs/@typesense/client/src/schemas/index.ts for the full field lists.
@@ -97,11 +103,15 @@ export type PersonGrant =
 // carry multiple independent grants that get OR'd together at compile time —
 // e.g. a district-scoped supervisor who also supervises staff outside their
 // district ends up with both a `district` grant and an `officerId` grant.
-export interface PersonScope {
+export type PersonScope = {
   grants: PersonGrant[];
-}
+};
 
-export interface ResolvePersonScopeInput extends ResolveScopeInput {
+// The collections a person-scoped key covers. Split for the same reason as
+// CaseloadScopeCollection: `residents` declares no `district`.
+export type PersonScopeCollection = "clients" | "residents";
+
+export type ResolvePersonScopeInput = ResolveScopeInput & {
   // The user's own staffExternalId, i.e. the value that appears in the
   // `officerId` field of people assigned to them. Needed to translate a
   // `byEmail` (own-caseload) base scope into a person-side officerId grant —
@@ -113,9 +123,25 @@ export interface ResolvePersonScopeInput extends ResolveScopeInput {
   // production's supervisor-expansion queries). Needed to translate the
   // staff-side supervisor expansion into a person-side officerId grant.
   supervisedStaffExternalIds?: string[];
-}
+};
 
-export type ResolveCrossSystemPersonScopeInput = Omit<
-  ResolvePersonScopeInput,
-  "system"
->;
+export type PersonResolverInput = Omit<ResolvePersonScopeInput, "system">;
+
+// The scopes a request covers. Supply only the systems the key should reach:
+// `supervision` alone for a SUPERVISION request, `incarceration` alone for
+// INCARCERATION, both for ALL. Both compilers derive which collections to emit
+// filters for from which of these are present.
+export type PerSystemScopes<Scope> = {
+  supervision?: Scope;
+  incarceration?: Scope;
+};
+
+// Which fields one caseload collection can express a scope clause against. The
+// district field differs by collection: staff rows carry a `district`
+// attribute, while a location has none — for `idType: "districtId"` docs the
+// district's identity IS its `locationId`.
+export type CaseloadCollectionFields = {
+  districtField: "district" | "locationId" | null;
+  emailField: "email" | null;
+  hasSupervisorFields: boolean;
+};

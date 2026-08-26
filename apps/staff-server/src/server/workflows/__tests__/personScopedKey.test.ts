@@ -141,10 +141,33 @@ function makeUser(
   };
 }
 
-function lastFilterBy(): string {
-  const lastCall = mockGenerateScopedSearchKey.mock.calls.at(-1);
-  if (!lastCall) throw new Error("generateScopedSearchKey was not called");
-  return (lastCall[1] as { filter_by: string }).filter_by;
+// Returns the filter_by baked into each collection's key. See the identical
+// helper in caseloadScopedKey.test.ts for why this reads the response rather
+// than the mint call order.
+// Named rather than an index signature so assertions can use dot access.
+type MintedFilters = Partial<
+  Record<
+    | "supervisionStaff"
+    | "incarcerationStaff"
+    | "locations"
+    | "clients"
+    | "residents",
+    string
+  >
+>;
+
+function mintedFilters(res: ReturnType<typeof makeRes>): MintedFilters {
+  const lastCall = res.json.mock.calls.at(-1);
+  if (!lastCall) throw new Error("res.json was not called");
+  const { keys } = lastCall[0] as { keys?: Record<string, string> };
+  if (!keys)
+    throw new Error(`response carried no keys: ${JSON.stringify(lastCall[0])}`);
+  return Object.fromEntries(
+    Object.entries(keys).map(([collection, key]) => [
+      collection,
+      key.replace(/^scoped:/, ""),
+    ]),
+  );
 }
 
 beforeEach(async () => {
@@ -155,7 +178,10 @@ beforeEach(async () => {
   fakeFirestore.supervisionSupervisors.clear();
   fakeFirestore.incarcerationSupervisors.clear();
   process.env["TYPESENSE_API_SEARCH_KEY"] = "test-parent-key";
-  mockGenerateScopedSearchKey.mockReturnValue("test-scoped-key");
+  mockGenerateScopedSearchKey.mockImplementation(
+    (_parent: unknown, opts: { filter_by: string }) =>
+      `scoped:${opts.filter_by}`,
+  );
   vi.mocked(isOfflineMode).mockReturnValue(false);
   await initTypesenseScopedKeys();
 });
@@ -202,7 +228,7 @@ describe("mintPersonScopedKey — Recidiviz user (cross-state)", () => {
       res,
     );
     expect(mockGenerateScopedSearchKey).toHaveBeenCalledTimes(1);
-    expect(lastFilterBy()).toBe("stateCode:=`US_TN`");
+    expect(mintedFilters(res).clients).toBe("stateCode:=`US_TN`");
   });
 });
 
@@ -223,7 +249,7 @@ describe("mintPersonScopedKey — single-system state user", () => {
       res,
     );
 
-    expect(lastFilterBy()).toBe(
+    expect(mintedFilters(res).clients).toBe(
       "stateCode:=`US_TN` && (district:=[`Region 1`])",
     );
   });
@@ -243,7 +269,8 @@ describe("mintPersonScopedKey — single-system state user", () => {
       res,
     );
 
-    expect(lastFilterBy()).toBe("stateCode:=`US_TN`");
+    // An INCARCERATION request mints only the residents key.
+    expect(mintedFilters(res)).toEqual({ residents: "stateCode:=`US_TN`" });
   });
 
   test("no staff record + no district → none base compiles to never-match sentinel", async () => {
@@ -254,7 +281,9 @@ describe("mintPersonScopedKey — single-system state user", () => {
       res,
     );
 
-    expect(lastFilterBy()).toBe("stateCode:=`US_TN` && (id:=`__no_match__`)");
+    expect(mintedFilters(res).clients).toBe(
+      "stateCode:=`US_TN` && (id:=`__no_match__`)",
+    );
   });
 
   test("staff record with no district (hasCaseload=true) → own-caseload officerId grant", async () => {
@@ -268,7 +297,7 @@ describe("mintPersonScopedKey — single-system state user", () => {
       res,
     );
 
-    expect(lastFilterBy()).toBe(
+    expect(mintedFilters(res).clients).toBe(
       "stateCode:=`US_TN` && (officerId:=[`OFFICER123`])",
     );
   });
@@ -291,7 +320,7 @@ describe("mintPersonScopedKey — single-system state user", () => {
       res,
     );
 
-    expect(lastFilterBy()).toBe(
+    expect(mintedFilters(res).clients).toBe(
       "stateCode:=`US_TN` && (district:=[`Region 1`] || officerId:=[`STAFF456`])",
     );
   });
@@ -317,7 +346,7 @@ describe("mintPersonScopedKey — single-system state user", () => {
       res,
     );
 
-    expect(lastFilterBy()).toBe(
+    expect(mintedFilters(res).clients).toBe(
       "stateCode:=`US_TN` && (district:=[`Region 1`] || officerId:=[`STAFF456`, `STAFF789`])",
     );
   });
@@ -343,7 +372,7 @@ describe("mintPersonScopedKey — single-system state user", () => {
       res,
     );
 
-    expect(lastFilterBy()).toBe("stateCode:=`US_TN`");
+    expect(mintedFilters(res).clients).toBe("stateCode:=`US_TN`");
   });
 
   test("user-updates overrideDistrictIds wins over staff record district", async () => {
@@ -361,7 +390,7 @@ describe("mintPersonScopedKey — single-system state user", () => {
       res,
     );
 
-    expect(lastFilterBy()).toBe(
+    expect(mintedFilters(res).clients).toBe(
       "stateCode:=`US_TN` && (district:=[`Region 2`, `Region 3`])",
     );
   });
@@ -373,12 +402,13 @@ describe("mintPersonScopedKey — single-system state user", () => {
     });
     fakeFirestore.incarcerationSupervisors.set("OFFICER123", ["STAFF456"]);
 
+    const res = makeRes();
     await mintPersonScopedKey(
       makeReq(
         { currentTenantId: "US_TN", system: "SUPERVISION" },
         makeUser({ featureVariants: { workflowsSupervisorSearch: true } }),
       ),
-      makeRes(),
+      res,
     );
 
     expect(mockSentryCaptureMessage).toHaveBeenCalledTimes(1);
@@ -389,7 +419,7 @@ describe("mintPersonScopedKey — single-system state user", () => {
         extra: expect.objectContaining({ externalId: "OFFICER123" }),
       }),
     );
-    expect(lastFilterBy()).toBe(
+    expect(mintedFilters(res).clients).toBe(
       "stateCode:=`US_TN` && (district:=[`Region 1`])",
     );
   });
@@ -415,9 +445,11 @@ describe("mintPersonScopedKey — system=ALL (cross-system)", () => {
       res,
     );
 
-    expect(lastFilterBy()).toBe(
-      "stateCode:=`US_MI` && ((system:=`SUPERVISION` && (district:=[`Region 3`])) || system:=`INCARCERATION`)",
-    );
+    // Residents take no district grant, because a resident carries no district.
+    expect(mintedFilters(res)).toEqual({
+      clients: "stateCode:=`US_MI` && (district:=[`Region 3`])",
+      residents: "stateCode:=`US_MI`",
+    });
   });
 });
 
@@ -426,7 +458,7 @@ describe("mintPersonScopedKey — system=ALL (cross-system)", () => {
 // --------------------------------------------------------------------------
 
 describe("mintPersonScopedKey — response shape", () => {
-  test("returns scopedKey, ISO expiresAt, and typesenseHost", async () => {
+  test("returns a key per collection, ISO expiresAt, and typesenseHost", async () => {
     fakeFirestore.supervisionStaff.set("us_tn_OFFICER123", {
       district: "Region 1",
       email: "officer@example.com",
@@ -441,7 +473,7 @@ describe("mintPersonScopedKey — response shape", () => {
 
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
-        scopedKey: "test-scoped-key",
+        keys: { clients: expect.any(String) },
         expiresAt: expect.stringMatching(/^\d{4}-\d{2}-\d{2}T/),
         typesenseHost: "https://typesense-test.example.com",
       }),
@@ -464,7 +496,7 @@ describe("mintPersonScopedKey — response shape", () => {
     expect(arg["_debug"]).toBeDefined();
     expect(arg["_debug"]).toEqual(
       expect.objectContaining({
-        filterBy: expect.any(String),
+        filtersByCollection: expect.any(Object),
         scope: expect.any(Object),
         system: "SUPERVISION",
       }),

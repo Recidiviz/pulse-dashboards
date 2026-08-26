@@ -16,14 +16,10 @@
 // =============================================================================
 
 // Shared request-validation + key-minting scaffold for the Typesense
-// scoped-key endpoints. Caseload and person mint handlers differ only in how
-// they compile a (tenant, system, UserScopeContext) tuple into a filter_by —
-// everything else (body validation, Firestore context resolution, parent-key
-// lookup, key generation, response shaping) is identical.
+// scoped-key endpoints. The scoping itself comes from the ScopedKeyMinter
+// subclass each endpoint supplies.
 
 import type { Request, Response } from "express";
-
-import type { SystemId } from "~datatypes";
 
 import { isOfflineMode } from "../../utils/isOfflineMode";
 import {
@@ -31,48 +27,17 @@ import {
   getTypesenseClient,
   SCOPED_KEY_TTL_SECONDS,
 } from "./init";
-import {
-  resolveUserScopeContext,
-  type UserScopeContext,
-} from "./userScopeContext";
+import type { ScopeAndFiltersResolver, UserScopeContext } from "./types";
+import { resolveUserScopeContext } from "./userScopeContext";
+import { invalidSystemMessage, isValidSystem } from "./utils";
 
-const VALID_SYSTEMS = [
-  "SUPERVISION",
-  "INCARCERATION",
-  "ALL",
-] as const satisfies readonly SystemId[];
-
-export function isValidSystem(value: unknown): value is SystemId {
-  return (
-    typeof value === "string" &&
-    (VALID_SYSTEMS as readonly string[]).includes(value)
-  );
-}
-
-export function invalidSystemMessage(): string {
-  return `system must be one of ${VALID_SYSTEMS.join(", ")}`;
-}
-
-export interface ScopeAndFilter {
-  scope: unknown;
-  filterBy: string;
-  debugSystem: SystemId | "ADMIN";
-}
-
-/**
- * Validates the request, resolves the shared user scope context, and mints a
- * scoped Typesense search key from the filter_by that `resolveScopeAndFilter`
- * compiles. `resolveScopeAndFilter` carries all the logic that differs
- * between caseload and person scoping.
- */
 export async function mintScopedKeyHandler(
   req: Request,
   res: Response,
-  resolveScopeAndFilter: (
+  createMinter: (
     currentTenantId: string,
-    system: SystemId,
     ctx: UserScopeContext,
-  ) => ScopeAndFilter,
+  ) => ScopeAndFiltersResolver,
 ) {
   const currentTenantId = req.params["stateCode"]?.toUpperCase();
   const { system: requestedSystem } = req.body ?? {};
@@ -97,26 +62,32 @@ export async function mintScopedKeyHandler(
     });
   }
 
-  const { scope, filterBy, debugSystem } = resolveScopeAndFilter(
+  const { scope, filtersByCollection, debugSystem } = createMinter(
     currentTenantId,
-    requestedSystem,
     ctx,
-  );
+  ).resolve(requestedSystem);
 
   const expiresAt = Math.floor(Date.now() / 1000) + SCOPED_KEY_TTL_SECONDS;
-  const scopedKey = getTypesenseClient()
-    .keys()
-    .generateScopedSearchKey(parentKey, {
-      filter_by: filterBy,
-      expires_at: expiresAt,
-    });
+  // generateScopedSearchKey is a local HMAC over the parent key, so minting one
+  // key per collection costs no extra round trips. They share an expiry, which
+  // keeps the client's refresh logic a single deadline.
+  const typesenseKeys = getTypesenseClient().keys();
+  const keys = Object.fromEntries(
+    Object.entries(filtersByCollection).map(([collection, filterBy]) => [
+      collection,
+      typesenseKeys.generateScopedSearchKey(parentKey, {
+        filter_by: filterBy,
+        expires_at: expiresAt,
+      }),
+    ]),
+  );
 
   return res.json({
-    scopedKey,
+    keys,
     expiresAt: new Date(expiresAt * 1000).toISOString(),
     typesenseHost: process.env["TYPESENSE_HOST"] || "http://localhost:8108",
     ...(isOfflineMode() && {
-      _debug: { filterBy, scope, system: debugSystem },
+      _debug: { filtersByCollection, scope, system: debugSystem },
     }),
   });
 }

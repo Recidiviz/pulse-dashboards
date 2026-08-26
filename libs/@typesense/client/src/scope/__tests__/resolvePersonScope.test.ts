@@ -17,10 +17,7 @@
 
 import { describe, expect, it } from "vitest";
 
-import {
-  resolveCrossSystemPersonScopes,
-  resolvePersonScope,
-} from "../resolvePersonScope";
+import { resolvePersonScope } from "../resolvePersonScope";
 import type {
   ResolvePersonScopeInput,
   ResolveScopeFeatureVariants,
@@ -207,47 +204,5 @@ describe("resolvePersonScope: supervisor expansion translation", () => {
       }),
     );
     expect(scope).toEqual({ grants: [{ kind: "unrestricted" }] });
-  });
-});
-
-describe("resolveCrossSystemPersonScopes (system=ALL leadership case)", () => {
-  it("returns asymmetric scopes for US_MI (SUPR district-scoped, INC unrestricted)", () => {
-    const scopes = resolveCrossSystemPersonScopes({
-      stateCode: "US_MI",
-      user: {
-        id: "user-7",
-        email: "lead@example.com",
-        district: "Region 3",
-      },
-      activeFeatureVariants: {},
-      isSupervisor: false,
-    });
-    expect(scopes.supervision).toEqual({
-      grants: [{ kind: "byField", field: "district", ids: ["Region 3"] }],
-    });
-    expect(scopes.incarceration).toEqual({
-      grants: [{ kind: "unrestricted" }],
-    });
-  });
-
-  it("supervisor expansion attaches only to the system with a non-unrestricted base", () => {
-    const scopes = resolveCrossSystemPersonScopes({
-      stateCode: "US_MI",
-      user: { id: "user-7", email: "u@example.com", district: "Region 3" },
-      activeFeatureVariants: { workflowsSupervisorSearch: true },
-      isSupervisor: true,
-      supervisedStaffExternalIds: ["staff-1"],
-    });
-    expect(scopes.supervision).toEqual({
-      grants: [
-        { kind: "byField", field: "district", ids: ["Region 3"] },
-        { kind: "byField", field: "officerId", ids: ["staff-1"] },
-      ],
-    });
-    // INCARCERATION baseline is unrestricted → expansion is skipped, matching
-    // resolveCrossSystemCaseloadScopes' per-system behavior.
-    expect(scopes.incarceration).toEqual({
-      grants: [{ kind: "unrestricted" }],
-    });
   });
 });
