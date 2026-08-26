@@ -78,6 +78,10 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
   const isPaused =
     status && ["paused", "stopping", "discarding"].includes(status);
 
+  useEffect(() => {
+    Sentry.setTag("meetingId", meetingId);
+  }, [meetingId]);
+
   // Proactively refresh the Auth0 token while a recording is active so it is
   // always fresh when the user clicks "End Meeting". Auth0 refresh tokens
   // (enabled via useRefreshTokens on Auth0Provider) handle expiry correctly,
@@ -187,7 +191,6 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
   });
 
   const startRecording = async () => {
-    Sentry.setTag("meetingId", meetingId);
     try {
       await recorder.start();
       timer.start();
@@ -380,7 +383,6 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         personId: person.personId.toString(),
       });
       await cleanupRecording();
-      Sentry.setTag("meetingId", null);
       closeRecordingView();
     } catch (err) {
       const errorMessage = extractError(err);
@@ -421,7 +423,6 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         meetingId,
         personId: person.personId.toString(),
       });
-      Sentry.setTag("meetingId", null);
     } catch (err) {
       const errorMessage = extractError(err);
       Sentry.logger.error("meeting.discard.error", {
