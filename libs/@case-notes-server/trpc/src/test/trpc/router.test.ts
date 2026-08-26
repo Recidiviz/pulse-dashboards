@@ -200,9 +200,20 @@ describe("search", () => {
       { autoPaginate: false },
     );
 
-    expect(mockQueryFn).toHaveBeenCalledWith(
-      'SELECT * FROM `bq-table` WHERE external_id IN ("fake-external-id") AND state_code IN ("US_IX") AND note_type NOT IN ("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential") AND (regexp_contains(lower(external_id), lower(r"housing")) OR regexp_contains(lower(note_body), lower(r"housing")) OR regexp_contains(lower(note_date), lower(r"housing")) OR regexp_contains(lower(note_id), lower(r"housing")) OR regexp_contains(lower(note_mode), lower(r"housing")) OR regexp_contains(lower(note_title), lower(r"housing")) OR regexp_contains(lower(note_type), lower(r"housing")) OR regexp_contains(lower(state_code), lower(r"housing"))) LIMIT 50',
-    );
+    expect(mockQueryFn).toHaveBeenCalledWith({
+      query:
+        "SELECT * FROM `bq-table` WHERE external_id IN UNNEST(@include_external_id) AND state_code IN UNNEST(@include_state_code) AND note_type NOT IN UNNEST(@exclude_note_type) AND (regexp_contains(lower(external_id), lower(@searchQuery)) OR regexp_contains(lower(note_body), lower(@searchQuery)) OR regexp_contains(lower(note_date), lower(@searchQuery)) OR regexp_contains(lower(note_id), lower(@searchQuery)) OR regexp_contains(lower(note_mode), lower(@searchQuery)) OR regexp_contains(lower(note_title), lower(@searchQuery)) OR regexp_contains(lower(note_type), lower(@searchQuery)) OR regexp_contains(lower(state_code), lower(@searchQuery))) LIMIT 50",
+      params: {
+        include_external_id: ["fake-external-id"],
+        include_state_code: ["US_IX"],
+        exclude_note_type: [
+          "Investigation (Confidential)",
+          "Mental Health (Confidential)",
+          "FIAT - Confidential",
+        ],
+        searchQuery: "housing",
+      },
+    });
 
     expect(nextPageToken).toEqual("next-page-token");
     // The order of results should be
@@ -244,7 +255,7 @@ describe("search", () => {
       client_external_id: "fake-external-id",
       user_external_id: "user-external-id",
       exact_match_query:
-        'SELECT * FROM `bq-table` WHERE external_id IN ("fake-external-id") AND state_code IN ("US_IX") AND note_type NOT IN ("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential") AND (regexp_contains(lower(external_id), lower(r"housing")) OR regexp_contains(lower(note_body), lower(r"housing")) OR regexp_contains(lower(note_date), lower(r"housing")) OR regexp_contains(lower(note_id), lower(r"housing")) OR regexp_contains(lower(note_mode), lower(r"housing")) OR regexp_contains(lower(note_title), lower(r"housing")) OR regexp_contains(lower(note_type), lower(r"housing")) OR regexp_contains(lower(state_code), lower(r"housing"))) LIMIT 50',
+        "SELECT * FROM `bq-table` WHERE external_id IN UNNEST(@include_external_id) AND state_code IN UNNEST(@include_state_code) AND note_type NOT IN UNNEST(@exclude_note_type) AND (regexp_contains(lower(external_id), lower(@searchQuery)) OR regexp_contains(lower(note_body), lower(@searchQuery)) OR regexp_contains(lower(note_date), lower(@searchQuery)) OR regexp_contains(lower(note_id), lower(@searchQuery)) OR regexp_contains(lower(note_mode), lower(@searchQuery)) OR regexp_contains(lower(note_title), lower(@searchQuery)) OR regexp_contains(lower(note_type), lower(@searchQuery)) OR regexp_contains(lower(state_code), lower(@searchQuery))) LIMIT 50",
       performed_exact_match_search: true,
       timestamp: expect.any(Date),
       vertex_filter:
@@ -307,9 +318,20 @@ describe("search", () => {
       { autoPaginate: false },
     );
 
-    expect(mockQueryFn).toHaveBeenCalledWith(
-      'SELECT * FROM `bq-table` WHERE external_id IN ("fake-external-id") AND state_code IN ("US_IX") AND note_type NOT IN ("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential") AND (regexp_contains(lower(external_id), lower(r"\\bua\\b")) OR regexp_contains(lower(note_body), lower(r"\\bua\\b")) OR regexp_contains(lower(note_date), lower(r"\\bua\\b")) OR regexp_contains(lower(note_id), lower(r"\\bua\\b")) OR regexp_contains(lower(note_mode), lower(r"\\bua\\b")) OR regexp_contains(lower(note_title), lower(r"\\bua\\b")) OR regexp_contains(lower(note_type), lower(r"\\bua\\b")) OR regexp_contains(lower(state_code), lower(r"\\bua\\b"))) LIMIT 50',
-    );
+    expect(mockQueryFn).toHaveBeenCalledWith({
+      query:
+        "SELECT * FROM `bq-table` WHERE external_id IN UNNEST(@include_external_id) AND state_code IN UNNEST(@include_state_code) AND note_type NOT IN UNNEST(@exclude_note_type) AND (regexp_contains(lower(external_id), lower(@searchQuery)) OR regexp_contains(lower(note_body), lower(@searchQuery)) OR regexp_contains(lower(note_date), lower(@searchQuery)) OR regexp_contains(lower(note_id), lower(@searchQuery)) OR regexp_contains(lower(note_mode), lower(@searchQuery)) OR regexp_contains(lower(note_title), lower(@searchQuery)) OR regexp_contains(lower(note_type), lower(@searchQuery)) OR regexp_contains(lower(state_code), lower(@searchQuery))) LIMIT 50",
+      params: {
+        include_external_id: ["fake-external-id"],
+        include_state_code: ["US_IX"],
+        exclude_note_type: [
+          "Investigation (Confidential)",
+          "Mental Health (Confidential)",
+          "FIAT - Confidential",
+        ],
+        searchQuery: "\\bua\\b",
+      },
+    });
 
     expect(nextPageToken).toEqual("next-page-token");
     // The order of results should be
@@ -351,7 +373,7 @@ describe("search", () => {
       client_external_id: "fake-external-id",
       user_external_id: "user-external-id",
       exact_match_query:
-        'SELECT * FROM `bq-table` WHERE external_id IN ("fake-external-id") AND state_code IN ("US_IX") AND note_type NOT IN ("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential") AND (regexp_contains(lower(external_id), lower(r"\\bua\\b")) OR regexp_contains(lower(note_body), lower(r"\\bua\\b")) OR regexp_contains(lower(note_date), lower(r"\\bua\\b")) OR regexp_contains(lower(note_id), lower(r"\\bua\\b")) OR regexp_contains(lower(note_mode), lower(r"\\bua\\b")) OR regexp_contains(lower(note_title), lower(r"\\bua\\b")) OR regexp_contains(lower(note_type), lower(r"\\bua\\b")) OR regexp_contains(lower(state_code), lower(r"\\bua\\b"))) LIMIT 50',
+        "SELECT * FROM `bq-table` WHERE external_id IN UNNEST(@include_external_id) AND state_code IN UNNEST(@include_state_code) AND note_type NOT IN UNNEST(@exclude_note_type) AND (regexp_contains(lower(external_id), lower(@searchQuery)) OR regexp_contains(lower(note_body), lower(@searchQuery)) OR regexp_contains(lower(note_date), lower(@searchQuery)) OR regexp_contains(lower(note_id), lower(@searchQuery)) OR regexp_contains(lower(note_mode), lower(@searchQuery)) OR regexp_contains(lower(note_title), lower(@searchQuery)) OR regexp_contains(lower(note_type), lower(@searchQuery)) OR regexp_contains(lower(state_code), lower(@searchQuery))) LIMIT 50",
       performed_exact_match_search: true,
       timestamp: expect.any(Date),
       vertex_filter:
@@ -413,9 +435,19 @@ describe("search", () => {
     );
 
     // Should not include external id filter
-    expect(mockQueryFn).toHaveBeenCalledWith(
-      'SELECT * FROM `bq-table` WHERE state_code IN ("US_IX") AND note_type NOT IN ("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential") AND (regexp_contains(lower(external_id), lower(r"housing")) OR regexp_contains(lower(note_body), lower(r"housing")) OR regexp_contains(lower(note_date), lower(r"housing")) OR regexp_contains(lower(note_id), lower(r"housing")) OR regexp_contains(lower(note_mode), lower(r"housing")) OR regexp_contains(lower(note_title), lower(r"housing")) OR regexp_contains(lower(note_type), lower(r"housing")) OR regexp_contains(lower(state_code), lower(r"housing"))) LIMIT 50',
-    );
+    expect(mockQueryFn).toHaveBeenCalledWith({
+      query:
+        "SELECT * FROM `bq-table` WHERE state_code IN UNNEST(@include_state_code) AND note_type NOT IN UNNEST(@exclude_note_type) AND (regexp_contains(lower(external_id), lower(@searchQuery)) OR regexp_contains(lower(note_body), lower(@searchQuery)) OR regexp_contains(lower(note_date), lower(@searchQuery)) OR regexp_contains(lower(note_id), lower(@searchQuery)) OR regexp_contains(lower(note_mode), lower(@searchQuery)) OR regexp_contains(lower(note_title), lower(@searchQuery)) OR regexp_contains(lower(note_type), lower(@searchQuery)) OR regexp_contains(lower(state_code), lower(@searchQuery))) LIMIT 50",
+      params: {
+        include_state_code: ["US_IX"],
+        exclude_note_type: [
+          "Investigation (Confidential)",
+          "Mental Health (Confidential)",
+          "FIAT - Confidential",
+        ],
+        searchQuery: "housing",
+      },
+    });
 
     expect(nextPageToken).toEqual("next-page-token");
     expect(results).toEqual([
@@ -445,7 +477,7 @@ describe("search", () => {
       client_external_id: undefined,
       user_external_id: "user-external-id",
       exact_match_query:
-        'SELECT * FROM `bq-table` WHERE state_code IN ("US_IX") AND note_type NOT IN ("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential") AND (regexp_contains(lower(external_id), lower(r"housing")) OR regexp_contains(lower(note_body), lower(r"housing")) OR regexp_contains(lower(note_date), lower(r"housing")) OR regexp_contains(lower(note_id), lower(r"housing")) OR regexp_contains(lower(note_mode), lower(r"housing")) OR regexp_contains(lower(note_title), lower(r"housing")) OR regexp_contains(lower(note_type), lower(r"housing")) OR regexp_contains(lower(state_code), lower(r"housing"))) LIMIT 50',
+        "SELECT * FROM `bq-table` WHERE state_code IN UNNEST(@include_state_code) AND note_type NOT IN UNNEST(@exclude_note_type) AND (regexp_contains(lower(external_id), lower(@searchQuery)) OR regexp_contains(lower(note_body), lower(@searchQuery)) OR regexp_contains(lower(note_date), lower(@searchQuery)) OR regexp_contains(lower(note_id), lower(@searchQuery)) OR regexp_contains(lower(note_mode), lower(@searchQuery)) OR regexp_contains(lower(note_title), lower(@searchQuery)) OR regexp_contains(lower(note_type), lower(@searchQuery)) OR regexp_contains(lower(state_code), lower(@searchQuery))) LIMIT 50",
       performed_exact_match_search: true,
       timestamp: expect.any(Date),
       vertex_filter:

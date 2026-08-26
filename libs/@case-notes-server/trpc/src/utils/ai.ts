@@ -55,32 +55,38 @@ function getContentSearchSpec(withSnippet = false) {
   } satisfies protos.google.cloud.discoveryengine.v1.SearchRequest.IContentSearchSpec;
 }
 
+/**
+ * Escapes a value for use as a double-quoted string literal in a Discovery
+ * Engine filter expression. The filter grammar has no bind-parameter
+ * mechanism, so values must be inlined into the filter string; per Google's
+ * docs, backslash and quote characters must be escaped:
+ * https://docs.cloud.google.com/generative-ai-app-builder/docs/filter-search-metadata
+ */
+export function quoteFilterLiteral(value: string): string {
+  return `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
+}
+
 function formatFilterConditions(
   includeFilterConditions: IncludeFilterConditions,
 ) {
-  const formattedConditions = [];
+  function conditionsAsStrings(
+    conditions: Record<string, string[]>,
+    sense: "include" | "exclude",
+  ) {
+    return _.flatMap(conditions, (values, field) => {
+      if (values.length === 0) return [];
+      const valuesAsString = values.map(quoteFilterLiteral).join(", ");
 
-  formattedConditions.push(
-    ..._.map(includeFilterConditions, (values, field) => {
-      if (values.length === 0) {
-        return undefined;
-      }
-      const valuesAsString = values.map((value) => `"${value}"`).join(", ");
-      return `${field}: ANY(${valuesAsString})`;
-    }),
-  );
+      return [
+        `${sense === "include" ? "" : "NOT "}${field}: ANY(${valuesAsString})`,
+      ];
+    });
+  }
 
-  formattedConditions.push(
-    ..._.map(EXCLUDE_FILTER_CONDITIONS, (values, field) => {
-      if (values.length === 0) {
-        return undefined;
-      }
-      const valuesAsString = values.map((value) => `"${value}"`).join(", ");
-      return `NOT ${field}: ANY(${valuesAsString})`;
-    }),
-  );
-
-  return formattedConditions.filter((v) => v !== undefined).join(" AND ");
+  return [
+    ...conditionsAsStrings(includeFilterConditions, "include"),
+    ...conditionsAsStrings(EXCLUDE_FILTER_CONDITIONS, "exclude"),
+  ].join(" AND ");
 }
 
 function extractCaseNotesResults(

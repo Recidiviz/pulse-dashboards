@@ -63,38 +63,39 @@ const SEARCHABLE_FIELDS = [
 
 const MAX_RESULTS = 50;
 
+type QueryParams = Record<string, string | string[]>;
+
 function formatFilterConditions(
   includeFilterConditions: IncludeFilterConditions,
 ) {
-  const formattedConditions = [];
+  const queryParams: QueryParams = {};
 
-  formattedConditions.push(
-    ..._.map(includeFilterConditions, (values, field) => {
-      if (values.length === 0) {
-        return undefined;
-      }
-      const valuesAsString = values.map((value) => `"${value}"`).join(", ");
-      return `${field} IN (${valuesAsString})`;
-    }),
-  );
+  // Be Aware: conditionsAsStrings impurely updates queryParams
+  function conditionsAsStrings(
+    conditions: Record<string, string[]>,
+    sense: "include" | "exclude",
+  ) {
+    return _.flatMap(conditions, (values, field) => {
+      if (values.length === 0) return [];
+      const paramName = `${sense}_${field}`;
+      // Passing the whole array as a single param lets BigQuery infer an
+      // ARRAY<STRING> type, so it can be matched with IN UNNEST(...) below.
+      queryParams[paramName] = values;
+      return [
+        `${field} ${sense === "include" ? "IN" : "NOT IN"} UNNEST(@${paramName})`,
+      ];
+    });
+  }
 
-  formattedConditions.push(
-    ..._.map(EXCLUDE_FILTER_CONDITIONS, (values, field) => {
-      if (values.length === 0) {
-        return undefined;
-      }
-      const valuesAsString = values.map((value) => `"${value}"`).join(", ");
-      return `${field} NOT IN (${valuesAsString})`;
-    }),
-  );
+  const formattedConditions = [
+    ...conditionsAsStrings(includeFilterConditions, "include"),
+    ...conditionsAsStrings(EXCLUDE_FILTER_CONDITIONS, "exclude"),
+  ];
 
-  const definedFormattedConditions = formattedConditions.filter(
-    (v) => v !== undefined,
-  );
-
-  return definedFormattedConditions.length
-    ? definedFormattedConditions.join(" AND ")
-    : undefined;
+  return {
+    filterSql: formattedConditions.join(" AND "),
+    queryParams,
+  };
 }
 
 function extractCaseNotesResults(searchResults: unknown[]) {
@@ -119,16 +120,24 @@ export async function exactMatchSearch(options: Options) {
     projectId,
   });
 
-  const filter = formatFilterConditions(includeFilterConditions);
-  const filterString = filter ? `${filter} AND` : "";
+  const { filterSql, queryParams } = formatFilterConditions(
+    includeFilterConditions,
+  );
+  const filterString = filterSql ? `${filterSql} AND` : "";
+
+  // Add query parameter for the search term
+  queryParams["searchQuery"] = finalQuery;
 
   const regex = SEARCHABLE_FIELDS.map((field) => {
-    return `regexp_contains(lower(${field}), lower(r"${finalQuery}"))`;
+    return `regexp_contains(lower(${field}), lower(@searchQuery))`;
   }).join(" OR ");
 
   const queryString = `SELECT * FROM \`${tableAddress}\` WHERE ${filterString} (${regex}) LIMIT ${MAX_RESULTS}`;
 
-  const [results] = await bigQueryClient.query(queryString);
+  const [results] = await bigQueryClient.query({
+    query: queryString,
+    params: queryParams,
+  });
 
   return { results: extractCaseNotesResults(results), queryString };
 }
