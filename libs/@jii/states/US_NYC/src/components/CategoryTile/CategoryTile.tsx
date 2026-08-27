@@ -32,6 +32,7 @@ export type CategoryTileProps = {
   to: string;
   icon?: ReactNode;
   disabled?: boolean;
+  onClick?: () => void;
 };
 
 const CATEGORY_TILE_COPY = {
@@ -44,6 +45,7 @@ export const CategoryTile: FC<CategoryTileProps> = ({
   to,
   icon,
   disabled = false,
+  onClick,
 }) => {
   if (disabled) {
     return (
@@ -55,7 +57,7 @@ export const CategoryTile: FC<CategoryTileProps> = ({
   }
 
   return (
-    <TileLink to={to}>
+    <TileLink to={to} onClick={onClick}>
       {icon}
       <TileLabel>{label}</TileLabel>
       <TileCount>{CATEGORY_TILE_COPY.resourceCount(count)}</TileCount>

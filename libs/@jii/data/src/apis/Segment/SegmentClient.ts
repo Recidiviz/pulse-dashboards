@@ -156,6 +156,57 @@ export class SegmentClient implements IntakeAnalytics {
     this.track("frontend_program_detail_opened", metadata);
   }
 
+  /* Community Resource Explorer (CRE) events */
+
+  trackCreCategorySelected(metadata: {
+    justiceInvolvedPersonPseudoId: string;
+    category: string;
+  }) {
+    this.track("frontend_cre_category_selected", metadata);
+  }
+
+  trackCreSubcategorySelected(metadata: {
+    justiceInvolvedPersonPseudoId: string;
+    category: string;
+    subcategory: string;
+    isOpen: boolean;
+  }) {
+    this.track("frontend_cre_subcategory_selected", metadata);
+  }
+
+  trackCreFiltersUpdated(metadata: {
+    justiceInvolvedPersonPseudoId: string;
+    category: string;
+    subcategories: string[];
+    tags: string[];
+  }) {
+    this.track("frontend_cre_filters_updated", metadata);
+  }
+
+  trackCreFilterCleared(metadata: {
+    justiceInvolvedPersonPseudoId: string;
+    category: string;
+  }) {
+    this.track("frontend_cre_filter_cleared", metadata);
+  }
+
+  trackCreResourceViewed(metadata: {
+    justiceInvolvedPersonPseudoId: string;
+    resourceId: number;
+    resourceName: string;
+  }) {
+    this.track("frontend_cre_resource_viewed", metadata);
+  }
+
+  trackCreDescriptionToggled(metadata: {
+    justiceInvolvedPersonPseudoId: string;
+    resourceId: number;
+    resourceName: string;
+    isExpanded: boolean;
+  }) {
+    this.track("frontend_cre_description_toggled", metadata);
+  }
+
   /* Intake events */
 
   // the event names seen here are the same as used in CPA.

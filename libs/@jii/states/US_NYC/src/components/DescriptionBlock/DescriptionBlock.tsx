@@ -35,9 +35,13 @@ const TOLERANCE = 2;
 
 export type DescriptionBlockProps = {
   markdown: string;
+  onToggle?: (isExpanded: boolean) => void;
 };
 
-export const DescriptionBlock: FC<DescriptionBlockProps> = ({ markdown }) => {
+export const DescriptionBlock: FC<DescriptionBlockProps> = ({
+  markdown,
+  onToggle,
+}) => {
   const [expanded, setExpanded] = useState(false);
   const [overflows, setOverflows] = useState(false);
   const bodyRef = useRef<HTMLDivElement>(null);
@@ -67,7 +71,11 @@ export const DescriptionBlock: FC<DescriptionBlockProps> = ({ markdown }) => {
       {overflows && (
         <ToggleButton
           type="button"
-          onClick={() => setExpanded((expanded) => !expanded)}
+          onClick={() => {
+            const next = !expanded;
+            setExpanded(next);
+            onToggle?.(next);
+          }}
           aria-expanded={expanded}
         >
           {expanded

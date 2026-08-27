@@ -23,9 +23,11 @@ import {
 import { ResourceExplorer } from "~@jii/paths";
 
 import { ResourceSummary } from "../types";
+import { useCreAnalytics } from "./useCreAnalytics";
 import { groupResourcesBySubcategory, toggleFilterSelection } from "./utils";
 
 export function useResourceFilters(resources: ResourceSummary[]) {
+  const { trackFiltersUpdated, trackFilterCleared } = useCreAnalytics();
   const { category } = useTypedParams(ResourceExplorer.CategoryResults);
 
   const [
@@ -86,16 +88,28 @@ export function useResourceFilters(resources: ResourceSummary[]) {
     hasActiveFilters:
       selectedSubcategories.length > 0 || selectedTags.length > 0,
 
-    toggleSubcategory: (subcategory: string) =>
-      setSearchParams(({ subcategories, tags }) => ({
-        subcategories: toggleFilterSelection(subcategories, subcategory),
+    toggleSubcategory: (subcategory: string) => {
+      const newSubcategories = toggleFilterSelection(
+        selectedSubcategories,
+        subcategory,
+      );
+      setSearchParams(({ tags }) => ({
+        subcategories: newSubcategories,
         tags,
-      })),
-    toggleTag: (tag: string) =>
-      setSearchParams(({ subcategories, tags }) => ({
+      }));
+      trackFiltersUpdated(category, newSubcategories, selectedTags);
+    },
+    toggleTag: (tag: string) => {
+      const newTags = toggleFilterSelection(selectedTags, tag);
+      setSearchParams(({ subcategories }) => ({
         subcategories,
-        tags: toggleFilterSelection(tags, tag),
-      })),
-    clearFilters: () => setSearchParams({ subcategories: [], tags: [] }),
+        tags: newTags,
+      }));
+      trackFiltersUpdated(category, selectedSubcategories, newTags);
+    },
+    clearFilters: () => {
+      setSearchParams({ subcategories: [], tags: [] });
+      trackFilterCleared(category);
+    },
   };
 }

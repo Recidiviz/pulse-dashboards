@@ -29,6 +29,7 @@ import { Chip } from "../../components/Chip/Chip";
 import { CollapsibleSection } from "../../components/CollapsibleSection/CollapsibleSection";
 import { EmptyFilterState } from "../../components/EmptyFilterState/EmptyFilterState";
 import { ResourceCard } from "../../components/ResourceCard/ResourceCard";
+import { useCreAnalytics } from "../../hooks/useCreAnalytics";
 import { useResourceFilters } from "../../hooks/useResourceFilters";
 import { useResources } from "../../hooks/useResources";
 import { FilterGroup } from "./FilterGroup";
@@ -75,6 +76,7 @@ const COPY = {
 export function PageUsNycResourceList() {
   const [isFilterSheetOpen, setFilterSheetOpen] = useState(false);
 
+  const { trackSubcategorySelected, trackResourceViewed } = useCreAnalytics();
   const residentParams = useTypedParams(State.Resident);
   const { category } = useTypedParams(ResourceExplorer.CategoryResults);
   const location = useLocation();
@@ -188,6 +190,9 @@ export function PageUsNycResourceList() {
                 badgeLabel={COPY.badgeLabel(resources.length)}
                 stickyHeader
                 headerBorder
+                onToggle={(isOpen) =>
+                  trackSubcategorySelected(category, subcategory, isOpen)
+                }
               >
                 <ResourceList>
                   {resources.map((resource) => (
@@ -198,6 +203,12 @@ export function PageUsNycResourceList() {
                       description={resource.description}
                       primaryContact={resource.primaryContactValue}
                       chips={resource.tags}
+                      onClick={() =>
+                        trackResourceViewed(
+                          resource.organizationId,
+                          resource.name,
+                        )
+                      }
                     />
                   ))}
                 </ResourceList>

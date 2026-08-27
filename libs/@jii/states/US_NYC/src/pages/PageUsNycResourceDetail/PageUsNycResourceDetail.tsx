@@ -28,6 +28,7 @@ import { ContactInformation } from "../../components/Contact/ContactInformation"
 import { DescriptionBlock } from "../../components/DescriptionBlock/DescriptionBlock";
 import { ResourceCard } from "../../components/ResourceCard/ResourceCard";
 import { US_NYC_CONTENT } from "../../content";
+import { useCreAnalytics } from "../../hooks/useCreAnalytics";
 import { useResource } from "../../hooks/useResource";
 import { useResources } from "../../hooks/useResources";
 import {
@@ -55,6 +56,7 @@ const {
 export function PageUsNycResourceDetail() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { trackResourceViewed, trackDescriptionToggled } = useCreAnalytics();
   const residentParams = useTypedParams(State.Resident);
   const { category } = useTypedParams(ResourceExplorer.CategoryResults);
   const { resourceId } = useTypedParams(
@@ -98,7 +100,14 @@ export function PageUsNycResourceDetail() {
         <PageTitle>{name}</PageTitle>
       </PageHeader>
 
-      {description && <DescriptionBlock markdown={description} />}
+      {description && (
+        <DescriptionBlock
+          markdown={description}
+          onToggle={(isExpanded) =>
+            trackDescriptionToggled(resourceId, name, isExpanded)
+          }
+        />
+      )}
 
       <ContactInformation
         data={contactInformation}
@@ -133,6 +142,9 @@ export function PageUsNycResourceDetail() {
                 to={detailPath(resource.organizationId)}
                 chips={resource.tags}
                 compact
+                onClick={() =>
+                  trackResourceViewed(resource.organizationId, resource.name)
+                }
               />
             ))}
           </SimilarResourceList>

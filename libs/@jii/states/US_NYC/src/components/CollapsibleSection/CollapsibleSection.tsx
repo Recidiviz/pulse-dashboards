@@ -47,6 +47,7 @@ export type CollapsibleSectionProps = {
    */
   stickyHeader?: boolean;
   headerBorder?: boolean;
+  onToggle?: (isOpen: boolean) => void;
 };
 
 export const CollapsibleSection: FC<CollapsibleSectionProps> = ({
@@ -56,11 +57,16 @@ export const CollapsibleSection: FC<CollapsibleSectionProps> = ({
   defaultOpen = false,
   stickyHeader = false,
   headerBorder = false,
+  onToggle,
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const headerRef = useRef<HTMLButtonElement>(null);
 
-  const handleToggle = () => setIsOpen((prev) => !prev);
+  const handleToggle = () => {
+    const next = !isOpen;
+    setIsOpen(next);
+    onToggle?.(next);
+  };
 
   // When a pinned sticky header is collapsed, scroll it back into its natural position so the user
   // doesn't lose their place. Runs in useLayoutEffect (not useEffect) so scrollIntoView fires

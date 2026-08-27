@@ -37,6 +37,7 @@ export type ResourceCardProps = {
   primaryContact?: string;
   chips?: string[];
   compact?: boolean;
+  onClick?: () => void;
 };
 
 const RESOURCE_CARD_COPY = {
@@ -51,11 +52,12 @@ export const ResourceCard: FC<ResourceCardProps> = ({
   primaryContact,
   chips,
   compact = false,
+  onClick,
 }) => {
   const Container = compact ? CompactCardLink : CardLink;
 
   return (
-    <Container to={to}>
+    <Container to={to} onClick={onClick}>
       <CardBody>
         <CardName>{name}</CardName>
         {!compact && description ? (
