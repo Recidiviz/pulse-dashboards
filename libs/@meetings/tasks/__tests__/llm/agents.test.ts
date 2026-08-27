@@ -61,6 +61,7 @@ describe("SpecialistCore", () => {
     showCNI: false,
     staffFeedbackEnabled: true,
     audioPlaybackEnabled: false,
+    mobileAppEnabled: true,
     audioTTLDays: 30,
     transcriptTTLDays: 30,
     meetingTypes: [],

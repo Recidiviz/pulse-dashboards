@@ -33,6 +33,7 @@ const FAKE_AGENCY_CONFIG = {
   showCNI: false,
   staffFeedbackEnabled: false,
   audioPlaybackEnabled: false,
+  mobileAppEnabled: true,
   audioTTLDays: 30,
   transcriptTTLDays: 30,
   keywords: [],

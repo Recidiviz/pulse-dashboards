@@ -22,12 +22,15 @@ import { useAgencyConfigs } from "~@meetings/app/entities/agency-config";
 import { useStateSelection } from "~@meetings/app/entities/state-code";
 import * as UserContext from "~@meetings/app/entities/user";
 import * as UserModule from "~@meetings/app/entities/user";
+import { usePlatform } from "~@meetings/app/shared/lib/platform";
 
 import DrawerNavigator from "./DrawerNavigator";
 
-// Mock useSetDocumentTitle hooks, since it modifies document.title, and it causes errors
-jest.mock("~@meetings/app/shared/lib/platform/useSetDocumentTitle", () => ({
+// Mock useSetDocumentTitle since it modifies document.title, and usePlatform
+// so tests can control the native/web branch
+jest.mock("~@meetings/app/shared/lib/platform", () => ({
   useSetDocumentTitle: () => null,
+  usePlatform: jest.fn(),
 }));
 // Mock AsyncStorage
 jest.mock("@react-native-async-storage/async-storage", () =>
@@ -87,6 +90,9 @@ describe("DrawerNavigator", () => {
   const mockUseStateSelection = useStateSelection as jest.Mock;
   const mockUseAgencyConfigs = useAgencyConfigs as jest.Mock;
   const mockUseGetUser = UserModule.useGetUser as jest.Mock;
+  const mockUsePlatform = usePlatform as jest.Mock;
+
+  mockUsePlatform.mockReturnValue({ isWeb: false, isMobile: true });
 
   mockUseAgencyConfigs.mockReturnValue({
     agencyConfigs: {
@@ -268,6 +274,80 @@ describe("DrawerNavigator", () => {
         setSelectedStateCode: jest.fn(),
         canSelectStateCode: false,
         currentStateName: "Nebraska",
+      });
+
+      render(<DrawerNavigator />);
+      expect(screen.queryByText("Access Denied")).toBeFalsy();
+    });
+  });
+
+  describe("mobile app disabled for state", () => {
+    beforeEach(() => {
+      mockUseUserContext.mockReturnValue({
+        hasSupervisionAccess: true,
+        hasFacilitiesAccess: false,
+        hasSupervisionAssistantAccess: false,
+        hasFacilitiesAssistantAccess: false,
+        hasCasePlanningAssistantAccess: false,
+        isLoading: false,
+        stateCode: "US_NE",
+        isSkipAuthUser: false,
+        recidivizAllowedStates: ["US_NE"],
+        onLogout: jest.fn(),
+        getCredentials: jest.fn(),
+        isRecidivizUser: false,
+      });
+      mockUseStateSelection.mockReturnValue({
+        isLoading: false,
+        selectedStateCode: "US_NE",
+        setSelectedStateCode: jest.fn(),
+        canSelectStateCode: false,
+        currentStateName: "Nebraska",
+      });
+      mockUseAgencyConfigs.mockReturnValueOnce({
+        agencyConfigs: {
+          US_NE: {
+            name: "Nebraska",
+            stateCode: "US_NE",
+            version: 1,
+            baseVersion: 1,
+            mobileAppEnabled: false,
+          },
+        } as never,
+        isLoading: false,
+      });
+    });
+
+    it("shows NoAccessScreen on mobile when mobileAppEnabled is false", () => {
+      render(<DrawerNavigator />);
+      expect(
+        screen.getByText(
+          "The Recidiviz mobile app is not available in your state. Please use the Meetings web app instead.",
+        ),
+      ).toBeTruthy();
+    });
+
+    it("does not block web access when mobileAppEnabled is false", () => {
+      mockUsePlatform.mockReturnValueOnce({ isWeb: true, isMobile: false });
+
+      render(<DrawerNavigator />);
+      expect(screen.queryByText("Access Denied")).toBeFalsy();
+    });
+
+    it("does not block Recidiviz users on mobile when mobileAppEnabled is false", () => {
+      mockUseUserContext.mockReturnValue({
+        hasSupervisionAccess: true,
+        hasFacilitiesAccess: true,
+        hasSupervisionAssistantAccess: false,
+        hasFacilitiesAssistantAccess: false,
+        hasCasePlanningAssistantAccess: false,
+        isLoading: false,
+        stateCode: "US_NE", // e.g. the skip-auth user has a state code but is internal
+        isSkipAuthUser: false,
+        recidivizAllowedStates: ["US_NE"],
+        onLogout: jest.fn(),
+        getCredentials: jest.fn(),
+        isRecidivizUser: true,
       });
 
       render(<DrawerNavigator />);

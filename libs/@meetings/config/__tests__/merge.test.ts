@@ -266,6 +266,27 @@ describe("mergeWithBase", () => {
     expect(AgencyConfigSchema.parse(merged).staffFeedbackEnabled).toBe(true);
   });
 
+  test("mobileAppEnabled defaults to true when omitted", () => {
+    const merged = mergeWithBase(
+      { version: 1 },
+      { name: "Test Agency", stateCode: "US_XX", version: 1 },
+    );
+    expect(AgencyConfigSchema.parse(merged).mobileAppEnabled).toBe(true);
+  });
+
+  test("mobileAppEnabled set on the agency overrides the base value", () => {
+    const merged = mergeWithBase(
+      { version: 1, mobileAppEnabled: true },
+      {
+        name: "Test Agency",
+        stateCode: "US_XX",
+        version: 1,
+        mobileAppEnabled: false,
+      },
+    );
+    expect(AgencyConfigSchema.parse(merged).mobileAppEnabled).toBe(false);
+  });
+
   test("staffFeedbackEnabled set on the agency overrides the base value", () => {
     const merged = mergeWithBase(
       { version: 1, staffFeedbackEnabled: true },

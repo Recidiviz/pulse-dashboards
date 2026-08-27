@@ -40,6 +40,7 @@ import {
   ResidentsStackParamList,
   RootStackParamList,
 } from "~@meetings/app/shared/config";
+import { usePlatform } from "~@meetings/app/shared/lib/platform";
 import Loading from "~@meetings/app/shared/ui/Loading";
 import { DrawerContent } from "~@meetings/app/widgets/navigation-drawer";
 
@@ -59,6 +60,7 @@ export default function DrawerNavigator() {
   } = useUserContext();
   const { isLoading: isStateLoading } = useStateSelection();
   const { agencyConfigs, isLoading: isLoadingConfigs } = useAgencyConfigs();
+  const { isMobile } = usePlatform();
   const { data: userData, isLoading: isUserLoading } = useGetUser();
 
   const hasSeenOnboarding = userData ? userData.hasSeenOnboarding : false;
@@ -75,6 +77,16 @@ export default function DrawerNavigator() {
     const isSupported = normalizedStateCode in agencyConfigs;
     if (!isSupported) {
       return <NoAccessScreen />;
+    }
+    // Some states allow web access only; Recidiviz users are exempt
+    if (
+      isMobile &&
+      !isRecidivizUser &&
+      agencyConfigs[normalizedStateCode].mobileAppEnabled === false
+    ) {
+      return (
+        <NoAccessScreen errorMessage="The Recidiviz mobile app is not available in your state. Please use the Meetings web app instead." />
+      );
     }
   }
 

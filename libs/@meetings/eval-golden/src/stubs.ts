@@ -62,6 +62,7 @@ export const EVAL_AGENCY: AgencyConfig = {
   showCNI: false,
   staffFeedbackEnabled: false,
   audioPlaybackEnabled: false,
+  mobileAppEnabled: true,
   audioTTLDays: 30,
   transcriptTTLDays: 30,
   glossary: {},

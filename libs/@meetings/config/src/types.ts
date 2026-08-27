@@ -106,6 +106,12 @@ export const AgencyConfigFileSchema = z
     showCNI: z.boolean().optional(),
     staffFeedbackEnabled: z.boolean().optional(),
     audioPlaybackEnabled: z.boolean().optional(),
+    mobileAppEnabled: z
+      .boolean()
+      .optional()
+      .describe(
+        "Whether non-Recidiviz users in this state may use the native mobile app",
+      ),
     audioTTLDays: z.number().int().min(7).nullable().optional(),
     transcriptTTLDays: z.number().int().min(7).nullable().optional(),
     /** Replaces base keywords entirely */
@@ -198,6 +204,7 @@ export const AgencyConfigSchema = z.object({
   showCNI: z.boolean().default(false),
   staffFeedbackEnabled: z.boolean().default(false),
   audioPlaybackEnabled: z.boolean().default(false),
+  mobileAppEnabled: z.boolean().default(true),
   audioTTLDays: z.number().int().min(7).default(30).nullable(),
   transcriptTTLDays: z.number().int().min(7).default(30).nullable(),
   keywords: z.array(z.string()).default([]),

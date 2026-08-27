@@ -22,13 +22,17 @@ import { useUserContext } from "~@meetings/app/entities/user";
 import { useSetDocumentTitle } from "~@meetings/app/shared/lib/platform";
 import { NoAccessError } from "~@meetings/app/widgets/no-access";
 
-export function NoAccessScreen() {
+export function NoAccessScreen({ errorMessage }: { errorMessage?: string }) {
   useSetDocumentTitle("Access Denied - Recidiviz Meetings");
   const { onLogout } = useUserContext();
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
-      <NoAccessError nextAction={onLogout} nextActionButtonLabel="Log Out" />
+      <NoAccessError
+        errorMessage={errorMessage}
+        nextAction={onLogout}
+        nextActionButtonLabel="Log Out"
+      />
     </SafeAreaView>
   );
 }
