@@ -221,6 +221,7 @@ export const mockOpportunity: Opportunity<Client> = {
     excludeIndefiniteSnoozesFromTableView: true,
     enableWorkflowsFilter: false,
     hidePreviewModal: false,
+    hideCtaButton: false,
     enableSupervisorReviewChain: false,
     hideWorkflowsTabGroupSelector: false,
   },

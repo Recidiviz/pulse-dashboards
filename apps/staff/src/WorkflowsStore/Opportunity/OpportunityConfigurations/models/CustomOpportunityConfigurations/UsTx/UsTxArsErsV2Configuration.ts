@@ -31,7 +31,9 @@ export class UsTxArsErsV2Configuration extends ApiOpportunityConfiguration {
     ].filter(
       (c) => !cols.includes(c as OpportunityTableColumnId),
     ) as OpportunityTableColumnId[];
-    const colsToRemove: OpportunityTableColumnId[] = ["CTA_BUTTON"];
+    const colsToRemove: OpportunityTableColumnId[] = this.hideCtaButton
+      ? ["CTA_BUTTON"]
+      : [];
     return [...cols, ...colsToAdd].filter((c) => !colsToRemove.includes(c));
   }
 
@@ -52,6 +54,10 @@ export class UsTxArsErsV2Configuration extends ApiOpportunityConfiguration {
   }
 
   get hidePreviewModal(): boolean {
+    return true;
+  }
+
+  get hideCtaButton(): boolean {
     return true;
   }
 

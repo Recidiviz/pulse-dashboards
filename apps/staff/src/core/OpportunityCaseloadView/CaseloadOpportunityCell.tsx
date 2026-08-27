@@ -109,6 +109,7 @@ export const CaseloadOpportunityCell = observer(
             </PersonLink>
             {showButton &&
               !isTablet &&
+              !opportunity.config.hideCtaButton &&
               opportunity.form?.navigateToFormText && (
                 <NavigateToFormButton
                   className="NavigateToFormButton"

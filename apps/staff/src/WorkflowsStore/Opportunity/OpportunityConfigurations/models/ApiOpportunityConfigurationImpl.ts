@@ -612,6 +612,10 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return false;
   }
 
+  get hideCtaButton(): boolean {
+    return false;
+  }
+
   get enableSupervisorReviewChain(): boolean {
     return false;
   }

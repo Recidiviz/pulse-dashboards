@@ -173,6 +173,7 @@ export interface OpportunityConfiguration {
 
   eligibleNotViewedDaysThreshold?: number;
   hidePreviewModal: boolean;
+  hideCtaButton: boolean;
   enableSupervisorReviewChain: boolean;
   hideWorkflowsTabGroupSelector: boolean;
 }
