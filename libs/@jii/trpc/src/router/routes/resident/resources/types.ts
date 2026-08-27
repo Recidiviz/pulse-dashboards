@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import startCase from "lodash-es/startCase";
+import upperFirst from "lodash-es/upperFirst";
 import { z } from "zod";
 
 import { nullishAsUndefined } from "~datatypes";
@@ -79,9 +79,7 @@ function organizationTransform<
       category: sanitizeString(section),
       subcategory: sanitizeString(subsection),
     })),
-    tags: tags
-      .map((tag) => (tag === tag.toUpperCase() ? tag : startCase(tag)))
-      .sort((a, b) => a.localeCompare(b)),
+    tags: tags.map((tag) => upperFirst(tag)).sort((a, b) => a.localeCompare(b)),
   };
 }
 
