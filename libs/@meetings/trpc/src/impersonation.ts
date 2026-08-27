@@ -17,7 +17,7 @@
 
 import { TRPCError } from "@trpc/server";
 import { createHash } from "crypto";
-import { GoogleAuth } from "google-auth-library";
+import { gaxios, GoogleAuth } from "google-auth-library";
 
 import { StateCode } from "~@meetings/prisma/client";
 import env from "~@meetings/trpc/env";
@@ -44,12 +44,22 @@ export async function fetchImpersonatedUser(
   const client = await auth.getIdTokenClient(
     env.GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE,
   );
-  const response = await client.request<{ stateCode: string }>({ url });
 
-  if (!response.data?.stateCode) {
+  let response;
+  try {
+    response = await client.request<{ stateCode: string }>({ url });
+  } catch (error) {
+    if (error instanceof gaxios.GaxiosError && error.status === 404) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: `No user found for email: ${email}`,
+        cause: error,
+      });
+    }
     throw new TRPCError({
-      code: "NOT_FOUND",
-      message: `No user found for email: ${email}`,
+      code: "INTERNAL_SERVER_ERROR",
+      message: `Failed to fetch impersonated user for email: ${email}`,
+      cause: error,
     });
   }
 

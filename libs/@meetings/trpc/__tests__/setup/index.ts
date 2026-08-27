@@ -85,6 +85,24 @@ vi.mock("@google-cloud/tasks", () => ({
   }),
 }));
 
+// Used by ~@meetings/trpc/impersonation to call the Data API. Mocked here
+// (rather than per-test-file) because the router - and its import of
+// google-auth-library - is loaded once via this setup file, before any
+// test file's own vi.mock would take effect.
+export const mockGoogleAuthRequest = vi.fn();
+
+vi.mock("google-auth-library", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("google-auth-library")>();
+  return {
+    ...actual,
+    GoogleAuth: vi.fn().mockImplementation(() => ({
+      getIdTokenClient: vi
+        .fn()
+        .mockResolvedValue({ request: mockGoogleAuthRequest }),
+    })),
+  };
+});
+
 export async function initFastifyAndSetUser(
   user?: Auth0User,
   options?: {
