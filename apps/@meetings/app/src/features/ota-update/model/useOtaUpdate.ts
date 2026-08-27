@@ -31,6 +31,10 @@ export function useOtaUpdate() {
   useEffect(() => {
     if (!Updates.isEnabled) return;
 
+    Updates.checkForUpdateAsync().catch(() => {
+      // Network hiccups are non-fatal; the foreground listener retries.
+    });
+
     const subscription = AppState.addEventListener(
       "change",
       (next: AppStateStatus) => {
@@ -54,10 +58,18 @@ export function useOtaUpdate() {
       setHasError(false);
       setIsApplying(true);
 
-      if (!isUpdatePending) {
-        await Updates.fetchUpdateAsync();
+      // Already staged by the background download; just restart into it.
+      if (isUpdatePending) {
+        await Updates.reloadAsync();
+        return;
       }
-      await Updates.reloadAsync();
+
+      const { isNew } = await Updates.fetchUpdateAsync();
+      if (isNew) {
+        await Updates.reloadAsync();
+      } else {
+        setIsApplying(false); // already on the latest
+      }
     } catch {
       setHasError(true);
       setIsApplying(false);

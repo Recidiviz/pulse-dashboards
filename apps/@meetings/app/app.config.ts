@@ -167,6 +167,11 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       // so expo-updates permits the pr-preview runtime override; undeclared
       // headers throw InvalidRequestHeadersOverrideException.
       requestHeaders: { "expo-channel-name": environment },
+      // Checks natively on every launch, before the JS bundle mounts.
+      checkAutomatically: "ON_LOAD",
+      // Keeps launch instant: the app renders from cache and any available
+      // update downloads in the background, leaving the banner to apply it.
+      fallbackToCacheTimeout: 0,
     },
     runtimeVersion: {
       policy: "fingerprint",
