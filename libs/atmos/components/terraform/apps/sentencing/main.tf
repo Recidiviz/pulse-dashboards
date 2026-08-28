@@ -138,8 +138,8 @@ module "import_job" {
   cloud_run_deletion_protection = false
   service_account_email         = google_service_account.default.email
   exec                          = false
-  timeout                       = "3600s"
-  max_retries                   = 1
+  timeout                       = "14400s" # 4 hours
+  max_retries                   = 0
 
   volumes = [{
     name = "cloudsql"
