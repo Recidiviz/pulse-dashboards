@@ -43,7 +43,7 @@ export const MIRRORED_PROMPT_NAME = "meetings-extraction";
 export const extractionPromptTemplate = () =>
   ChatPromptTemplate.fromMessages(
     [
-      ["system", PROMPTS.EXTRACTION.SYSTEM({})],
+      ["system", PROMPTS.EXTRACTION.SYSTEM({ aliasRules: "" })],
       [
         "human",
         PROMPTS.EXTRACTION.USER({

@@ -36,7 +36,32 @@ export const OutputSpecSchema = z
       .optional()
       .describe("Optional subheaders to include in the output"),
   })
-  .describe("A single structured output section produced by the LLM pipeline.");
+  .describe(
+    "Additional configuration options to give to the LLMs that are responsible for novel text generation. Do on a per-section basis, i.e 'case_notes', 'action_items'.",
+  );
+
+export const AliasesSchema = z
+  .object({
+    client: z
+      .string()
+      .optional()
+      .describe("What the LLM should refer to 'Clients' as"),
+    resident: z
+      .string()
+      .optional()
+      .describe("What the LLM should refer to 'Residents' as"),
+    staffMember: z
+      .string()
+      .optional()
+      .describe("What the LLM should refer to 'Staff Members' as"),
+    thirdParty: z
+      .string()
+      .optional()
+      .describe("What the LLM should refer to 'Third Parties' as"),
+  })
+  .describe(
+    'Aliases for common terms used during prompting. To change these fields in the UI, use the "Labels" schema',
+  );
 
 export const MeetingTypeSchema = z
   .object({
@@ -82,6 +107,7 @@ export const LabelsSchema = z
     facilitiesStaff: z.string().optional(),
     client: z.string().optional(),
     resident: z.string().optional(),
+    thirdParty: z.string().optional(),
   })
   .describe(
     "Labels/copy for common terms used in UI. Defaults are set in the base config.",
@@ -145,6 +171,9 @@ export const AgencyConfigFileSchema = z
       .record(z.string())
       .optional()
       .describe("Merged on top of base glossary"),
+    aliases: AliasesSchema.optional().describe(
+      "Aliases for agency terms (client, resident, etc) during PROMPTING, not in the UI.",
+    ),
     /** Replaces base rules entirely */
     rules: z
       .array(z.string())
@@ -216,6 +245,7 @@ export const AgencyConfigSchema = z.object({
   rules: z.array(z.string()).default([]),
   outputs: z.array(OutputSpecSchema).default([]),
   additionalOutputs: z.array(OutputSpecSchema).default([]),
+  aliases: AliasesSchema.optional(),
 });
 
 export type AgencyConfigFile = z.infer<typeof AgencyConfigFileSchema>;

@@ -230,6 +230,7 @@ const MeetingDesktop = ({
                     )
                   }
                   meetingId={meetingId}
+                  personType={personType}
                 />
               )}
               {activeTab === Tab.StaffFeedback &&

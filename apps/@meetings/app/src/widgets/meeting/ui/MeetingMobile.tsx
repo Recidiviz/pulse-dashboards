@@ -304,6 +304,7 @@ const MeetingMobile = ({
                 )
               }
               meetingId={meetingId}
+              personType={personType}
             />
           )}
           {activeTab === Tab.StaffFeedback && meetingDetails.staffFeedback && (

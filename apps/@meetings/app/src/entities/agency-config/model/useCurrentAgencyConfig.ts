@@ -15,9 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { assigneeToConfigLabel } from "./lib/assigneeToConfigLabel";
-export {
-  AgencyConfigProvider,
-  useAgencyConfigs,
-} from "./model/AgencyConfigContext";
-export { default as useCurrentAgencyConfig } from "./model/useCurrentAgencyConfig";
+import { useMemo } from "react";
+
+import { useStateSelection } from "../../state-code/@x/agency-config";
+import { useAgencyConfigs } from "./AgencyConfigContext";
+
+export default function useCurrentAgencyConfig() {
+  const { agencyConfigs } = useAgencyConfigs();
+  const { selectedStateCode } = useStateSelection();
+
+  const currentAgencyConfig = useMemo(() => {
+    if (!selectedStateCode) return null;
+    return agencyConfigs[selectedStateCode] ?? null;
+  }, [agencyConfigs, selectedStateCode]);
+
+  return currentAgencyConfig;
+}

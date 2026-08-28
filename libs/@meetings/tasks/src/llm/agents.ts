@@ -35,6 +35,7 @@ import type {
   AgencyConfig,
   MeetingTypeConfigEntry,
 } from "~@meetings/config/types";
+import { Resident } from "~@meetings/prisma/client";
 import type { Person } from "~@meetings/prisma/types";
 import { generateContentWithZodSchema } from "~@meetings/tasks/llm/clients/gemini";
 import { completeChatWithZodSchema } from "~@meetings/tasks/llm/clients/openai";
@@ -132,6 +133,7 @@ function buildDraftingOutputSchema(
     DraftingOutput & Record<string, string>
   >;
 }
+const isResident = (p: Person): p is Resident => "facilityId" in p;
 
 export class SpecialistCore {
   private openai: OpenAI;
@@ -212,17 +214,31 @@ export class SpecialistCore {
       agency.rules.map((r) => `- ${r}`).join("\n") +
       buildMeetingTypeExtractionContext(meetingTypeConfig);
 
+    const extractionAliasBullets = this.createAliasPromptRules(agency, person);
+    let aliasRules = "";
+    if (extractionAliasBullets !== null) {
+      aliasRules =
+        dedent`#### ALIASES\n Below are aliases that have been defined for this agency. Use them in place of their default terms when they come up in action item content. Do not alter the assignee field, just the content of the item itself.` +
+        extractionAliasBullets;
+    }
+
     const userMessage = PROMPTS.EXTRACTION.USER({
       agencySpecificRules,
       transcript: transcript.rawText,
     });
 
     try {
+      const extractionSystemPrompt = PROMPTS.EXTRACTION.SYSTEM({
+        aliasRules,
+      });
       const extracted = await completeChatWithZodSchema({
         client: this.openai,
         schema: ExtractionOutputSchema,
         messages: [
-          { role: "system", content: PROMPTS.EXTRACTION.SYSTEM() },
+          {
+            role: "system",
+            content: extractionSystemPrompt,
+          },
           { role: "user", content: userMessage },
         ],
       });
@@ -286,13 +302,22 @@ export class SpecialistCore {
       let promptGuidance = output.promptGuidance;
       if (output.id === "case_note") {
         promptGuidance += meetingTypeCaseNoteGuidance;
-      }
-      if (output.subheaders?.length) {
-        promptGuidance += dedent`\nUse these subheaders where relevant:
+
+        if (output.subheaders?.length) {
+          promptGuidance += dedent`\nUse these subheaders where relevant:
         ${output.subheaders.join(", ")}. Omit any that don't apply,
         and add others if they'd better organize the content.`;
+        }
       }
+
       structureStr += `- (${output.label}): ${promptGuidance}\n`;
+    }
+
+    const aliasPromptRules = this.createAliasPromptRules(agency, person);
+    if (aliasPromptRules !== null) {
+      structureStr +=
+        dedent`#### ALIASES\n Below are aliases that have been defined for this agency. Use them in place of their default terms.` +
+        aliasPromptRules;
     }
 
     structureStr = dedent(structureStr);
@@ -345,6 +370,59 @@ export class SpecialistCore {
       });
       throw e;
     }
+  }
+
+  /**
+   * Creates a bulleted list of rules regarding alias config to feed to our LLM
+   * @param agency The agency config for this iteration
+   * @param person The person we're running this iteration against
+   * @returns A string containing a bulleted list of alias rules
+   */
+  private createAliasPromptRules(
+    agency: AgencyConfig,
+    person: Person,
+  ): string | null {
+    const aliasRules: string[] = [];
+
+    if (isResident(person)) {
+      const residentAlias = agency.aliases?.resident ?? "Resident";
+      // A weird case, but basically if someone specifically wants residents to be referred to as "Clients",
+      // that's ACTUALLY our default prompting behavior, and we shouldn't add a bullet for this.
+      if (residentAlias !== "Client") {
+        // This says "Client", intentionally, because the prompt doesn't delineate between resident/client
+        aliasRules.push(
+          `Use "${residentAlias}" instead of "Client" when referring to the client.`,
+        );
+      }
+    } else if (agency.aliases?.client && agency.aliases.client !== "Client") {
+      aliasRules.push(
+        `Use "${agency.aliases.client}" instead of "Client" when referring to the client.`,
+      );
+    }
+
+    if (
+      agency.aliases?.staffMember &&
+      agency.aliases.staffMember !== "Staff Member"
+    ) {
+      aliasRules.push(
+        `Use "${agency.aliases.staffMember}" instead of "Staff Member" when referring to the staff member.`,
+      );
+    }
+
+    if (
+      agency.aliases?.thirdParty &&
+      agency.aliases.thirdParty !== "Third Party"
+    ) {
+      aliasRules.push(
+        `Use "${agency.aliases.thirdParty}" instead of "Third Party" when referring to a third party.`,
+      );
+    }
+
+    if (aliasRules.length === 0) {
+      return null;
+    }
+
+    return aliasRules.map((rule) => `\n- ${rule}`).join("");
   }
 
   /**

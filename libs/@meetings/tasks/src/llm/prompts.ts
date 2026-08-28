@@ -122,7 +122,7 @@ export const PROMPTS = {
                             2. **Be Specific:** Use the exact details found in the text (dates, names, locations).
                             3. Keep all accented and special characters (such as ç, ã, é) without HTML escaping or hexadecimal sequences.
                             4. **Client Identity (Critical):** The CLIENT PROFILE provided in the input contains the authoritative client name from the case management system. Do NOT override or replace this identity based on names spoken in the transcript. Transcription errors can introduce incorrect names. If a name spoken in the transcript conflicts with the CLIENT PROFILE, discard the spoken name and use the profile name.
-                            
+
                             ### TARGET 1: ACTION ITEMS
                             - List every future task assigned to the Client or Staff Member.
                             - Include: obtaining IDs, attending orientation, calling lines, applying for benefits.
@@ -130,6 +130,8 @@ export const PROMPTS = {
                             - **Standard Conditions:** If the Staff Member reads a list of rules (e.g., "Report police contact," "Do not leave the state"), extract *all critical or potentially important* ones as ongoing Client Action Items (especially Reporting and Travel restrictions).
                             - **CRITICAL:** If the Client states a specific plan for their release (e.g., "I'm going to live with my mom," "I'll apply for food stamps"), capture these as **Client Action Items**. Treat the Client's stated plan as a self-assigned mandate.
                             - **CRITICAL:** Do NOT guess deadlines, or assume them based on other timelines described. Only provide deadlines when explicitly stated for the specific action item.
+                            
+                            <%= aliasRules %>
                             
                             ### TARGET 2: ENTITIES
                             - List specific numbers: Case Numbers, ADC Numbers, Phone Numbers.
@@ -172,7 +174,6 @@ export const PROMPTS = {
                        - Do *not* list these again in the normal Plan section.
                     
                     ### OUTPUT 1: OFFICIAL CASE NOTE
-                    - Structure Config: {note_structure}
                     - Logic: You MUST incorporate all points mentioned in 'STAFF MEMBER NOTES', which are areas the Staff Member thought important enough to definitely include in final case notes.
                     - Logic: If there are any staff member notes you don't understand, just paste them at the bottom of the case note with the heading, 'ADD'L NOTES:'. If there are none, omit that section.
                     - **DO NOT include a list of action items, next steps, or a plan section at the end of the case note.** Action items are tracked separately and must not appear in this output.

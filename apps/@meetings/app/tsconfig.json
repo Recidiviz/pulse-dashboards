@@ -8,7 +8,8 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "strict": true,
-    "moduleSuffixes": ["", ".native", ".web"]
+    "moduleSuffixes": ["", ".native", ".web"],
+    "types": ["jest", "node"]
   },
   "ts-node": {
     "compilerOptions": {

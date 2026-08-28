@@ -42,6 +42,11 @@ module.exports = {
     lintCommand,
     formatCommand,
   ],
+  // Steiger (FSD architecture linter) checks the whole slice structure, not
+  // individual files, so it can't take a file list like the other commands.
+  "apps/@meetings/app/src/**/*.{ts,tsx}": [
+    () => "nx run @meetings/app:steiger",
+  ],
   "**/*.{js,jsx,mjs}": [lintCommand, formatCommand],
   "**/*.{yaml,yml}": [lintCommand, formatCommand],
   "tsconfig.base.json": [() => "nx lint-import-paths", formatCommand],

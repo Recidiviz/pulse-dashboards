@@ -18,7 +18,7 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 import { AgencyConfig } from "~@meetings/config/types";
-import { Client } from "~@meetings/prisma/client";
+import { Client, Resident } from "~@meetings/prisma/client";
 import { SpecialistCore } from "~@meetings/tasks/llm/agents";
 import {
   ExtractionOutput,
@@ -41,6 +41,22 @@ describe("SpecialistCore", () => {
     supervisionType: "PAROLE",
     isActive: true,
     staffEmails: ["fake@fake.com"],
+    lastImportedAt: new Date(0),
+  };
+
+  const mockResident: Resident = {
+    personId: BigInt(67890),
+    stablePersonExternalId: "EXT_456",
+    stablePersonExternalIdType: "STATE_ID",
+    pseudonymizedId: "PSEUDO_456",
+    stateCode: "US_NE",
+    givenNames: "Jane",
+    middleNames: null,
+    surname: "Smith",
+    suffix: null,
+    displayPersonExternalId: "ADC456",
+    facilityId: "FACILITY_1",
+    isActive: true,
     lastImportedAt: new Date(0),
   };
 
@@ -374,6 +390,152 @@ describe("SpecialistCore", () => {
         const userContent =
           callArg.messages.find((m) => m.role === "user")?.content ?? "";
         expect(userContent).not.toContain("Meeting Type Context");
+      });
+    });
+    describe("aliases", () => {
+      const emptyExtractionResponse = {
+        actionItems: [],
+        entities: [],
+      };
+
+      const mockExtractionCompletion = () => {
+        vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
+          id: "test-completion",
+          object: "chat.completion",
+          created: 0,
+          model: "gpt-4o-mini",
+          choices: [
+            {
+              index: 0,
+              message: {
+                role: "assistant",
+                content: JSON.stringify(emptyExtractionResponse),
+              },
+              finish_reason: "stop",
+            },
+          ],
+        } as never);
+      };
+
+      const getSystemContent = () => {
+        const callArg = vi.mocked(mockOpenAI.chat.completions.create).mock
+          .calls[0]?.[0] as { messages: { role: string; content: string }[] };
+        return callArg.messages.find((m) => m.role === "system")?.content ?? "";
+      };
+
+      test("should inject the client alias into the system prompt", async () => {
+        mockExtractionCompletion();
+
+        await core.runExtraction(mockTranscript, mockClient, {
+          ...mockAgency,
+          aliases: { client: "Homie" },
+        });
+
+        expect(getSystemContent()).toContain("Homie");
+      });
+
+      test("should inject the resident alias when the person is a Resident", async () => {
+        mockExtractionCompletion();
+
+        await core.runExtraction(mockTranscript, mockResident, {
+          ...mockAgency,
+          aliases: { resident: "Friend" },
+        });
+
+        expect(getSystemContent()).toContain("Friend");
+      });
+
+      test("should not inject the resident alias when the person is a Client", async () => {
+        mockExtractionCompletion();
+
+        await core.runExtraction(mockTranscript, mockClient, {
+          ...mockAgency,
+          aliases: { resident: "Friend" },
+        });
+
+        expect(getSystemContent()).not.toContain("Friend");
+      });
+
+      test("should inject the resident alias when explicitly set to its own default term", async () => {
+        mockExtractionCompletion();
+
+        await core.runExtraction(mockTranscript, mockResident, {
+          ...mockAgency,
+          aliases: { resident: "Resident" },
+        });
+
+        // The LLM's default term is always "Client", so setting the resident
+        // alias to "Resident" is not a no-op — it should still be injected.
+        expect(getSystemContent()).toContain('instead of "Client"');
+      });
+
+      test("should default to the Resident alias for a resident when the agency hasn't configured one", async () => {
+        mockExtractionCompletion();
+
+        await core.runExtraction(mockTranscript, mockResident, mockAgency);
+
+        expect(getSystemContent()).toContain(
+          'Use "Resident" instead of "Client"',
+        );
+      });
+
+      test("should inject the staffMember and thirdParty aliases regardless of person type", async () => {
+        mockExtractionCompletion();
+
+        await core.runExtraction(mockTranscript, mockClient, {
+          ...mockAgency,
+          aliases: { staffMember: "Coach", thirdParty: "Collateral" },
+        });
+
+        const systemContent = getSystemContent();
+        expect(systemContent).toContain("Coach");
+        expect(systemContent).toContain("Collateral");
+      });
+
+      test("should not inject an alias rule when its value matches its own default term", async () => {
+        mockExtractionCompletion();
+
+        await core.runExtraction(mockTranscript, mockClient, {
+          ...mockAgency,
+          aliases: { client: "Client" },
+        });
+
+        // The ALIASES header appears whenever aliases are configured at all,
+        // but no per-term bullet should be added for a no-op alias.
+        expect(getSystemContent()).not.toContain('instead of "Client"');
+      });
+
+      test("should only inject the resident alias for a resident when both client and resident aliases are set", async () => {
+        mockExtractionCompletion();
+
+        await core.runExtraction(mockTranscript, mockResident, {
+          ...mockAgency,
+          aliases: { client: "Homie", resident: "Friend" },
+        });
+
+        const systemContent = getSystemContent();
+        expect(systemContent).toContain('Use "Friend" instead of "Client"');
+        expect(systemContent).not.toContain("Homie");
+      });
+
+      test("should not inject the resident alias when it is explicitly set to the prompt's default term", async () => {
+        mockExtractionCompletion();
+
+        await core.runExtraction(mockTranscript, mockResident, {
+          ...mockAgency,
+          aliases: { resident: "Client" },
+        });
+
+        // The prompt already refers to the person as "Client", so this alias is a no-op.
+        expect(getSystemContent()).not.toContain("ALIASES");
+      });
+
+      test("should not include an ALIASES section when the agency has no aliases configured", async () => {
+        mockExtractionCompletion();
+
+        await core.runExtraction(mockTranscript, mockClient, mockAgency);
+
+        expect(getSystemContent()).not.toContain("ALIASES");
       });
     });
   });
@@ -918,6 +1080,174 @@ describe("SpecialistCore", () => {
         );
 
         expect(result.caseNote).toBe("SUMMARY: Routine check-in.");
+      });
+    });
+
+    describe("aliases", () => {
+      const emptyDraftingResponse = {
+        caseNote: "Test note",
+        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
+      };
+
+      const mockDraftingCompletion = () => {
+        vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
+          id: "test-completion",
+          object: "chat.completion",
+          created: 0,
+          model: "gpt-4o-mini",
+          choices: [
+            {
+              index: 0,
+              message: {
+                role: "assistant",
+                content: JSON.stringify(emptyDraftingResponse),
+              },
+              finish_reason: "stop",
+            },
+          ],
+        } as never);
+      };
+
+      const getUserContent = () => {
+        const callArg = vi.mocked(mockOpenAI.chat.completions.create).mock
+          .calls[0]?.[0] as { messages: { role: string; content: string }[] };
+        return callArg.messages.find((m) => m.role === "user")?.content ?? "";
+      };
+
+      test("should inject the staffMember and thirdParty aliases into the user message", async () => {
+        mockDraftingCompletion();
+
+        await core.runDrafting(
+          mockTranscript,
+          { actionItems: [], entities: [] },
+          {
+            ...mockAgency,
+            aliases: { staffMember: "Coach", thirdParty: "Collateral" },
+          },
+          mockClient,
+        );
+
+        const userContent = getUserContent();
+        expect(userContent).toContain("Coach");
+        expect(userContent).toContain("Collateral");
+      });
+
+      test("should not inject an alias rule when its value matches its own default term", async () => {
+        mockDraftingCompletion();
+
+        await core.runDrafting(
+          mockTranscript,
+          { actionItems: [], entities: [] },
+          {
+            ...mockAgency,
+            aliases: { client: "Client", resident: "Resident" },
+          },
+          mockClient,
+        );
+
+        // The ALIASES header appears whenever aliases are configured at all,
+        // but no per-term bullet should be added for a no-op alias.
+        const userContent = getUserContent();
+        expect(userContent).not.toContain('instead of "Client"');
+        expect(userContent).not.toContain('instead of "Resident"');
+      });
+
+      test("should inject the resident alias when explicitly set to its own default term", async () => {
+        mockDraftingCompletion();
+
+        await core.runDrafting(
+          mockTranscript,
+          { actionItems: [], entities: [] },
+          { ...mockAgency, aliases: { resident: "Resident" } },
+          mockResident,
+        );
+
+        // The LLM's default term is always "Client", so setting the resident
+        // alias to "Resident" is not a no-op — it should still be injected.
+        expect(getUserContent()).toContain('instead of "Client"');
+      });
+
+      test("should not inject the resident alias when the person is a Client", async () => {
+        mockDraftingCompletion();
+
+        await core.runDrafting(
+          mockTranscript,
+          { actionItems: [], entities: [] },
+          { ...mockAgency, aliases: { resident: "Friend" } },
+          mockClient,
+        );
+
+        expect(getUserContent()).not.toContain("Friend");
+      });
+
+      test("should default to the Resident alias for a resident when the agency hasn't configured one", async () => {
+        mockDraftingCompletion();
+
+        await core.runDrafting(
+          mockTranscript,
+          { actionItems: [], entities: [] },
+          mockAgency,
+          mockResident,
+        );
+
+        expect(getUserContent()).toContain(
+          'Use "Resident" instead of "Client"',
+        );
+      });
+
+      test("should inject the client alias when the person is a Client", async () => {
+        mockDraftingCompletion();
+
+        await core.runDrafting(
+          mockTranscript,
+          { actionItems: [], entities: [] },
+          { ...mockAgency, aliases: { client: "Homie" } },
+          mockClient,
+        );
+
+        expect(getUserContent()).toContain('Use "Homie" instead of "Client"');
+      });
+
+      test("should only inject the resident alias for a resident when both client and resident aliases are set", async () => {
+        mockDraftingCompletion();
+
+        await core.runDrafting(
+          mockTranscript,
+          { actionItems: [], entities: [] },
+          { ...mockAgency, aliases: { client: "Homie", resident: "Friend" } },
+          mockResident,
+        );
+
+        const userContent = getUserContent();
+        expect(userContent).toContain('Use "Friend" instead of "Client"');
+        expect(userContent).not.toContain("Homie");
+      });
+
+      test("should not inject the resident alias when it is explicitly set to the prompt's default term", async () => {
+        mockDraftingCompletion();
+
+        await core.runDrafting(
+          mockTranscript,
+          { actionItems: [], entities: [] },
+          { ...mockAgency, aliases: { resident: "Client" } },
+          mockResident,
+        );
+
+        // The prompt already refers to the person as "Client", so this alias is a no-op.
+        expect(getUserContent()).not.toContain("ALIASES");
+      });
+
+      test("should not include an ALIASES section when the agency has no aliases configured", async () => {
+        mockDraftingCompletion();
+
+        await core.runDrafting(
+          mockTranscript,
+          { actionItems: [], entities: [] },
+          mockAgency,
+          mockClient,
+        );
+
+        expect(getUserContent()).not.toContain("ALIASES");
       });
     });
   });

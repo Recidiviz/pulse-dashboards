@@ -18,6 +18,7 @@
 import { z } from "zod";
 
 import {
+  AliasesSchema,
   LabelsSchema,
   MeetingTypeConfigEntrySchema,
   MeetingTypeSchema,
@@ -48,6 +49,7 @@ const NAMED_SCHEMAS: NamedSchema[] = [
   { name: "MeetingTypeConfigEntry", schema: MeetingTypeConfigEntrySchema },
   { name: "OutputSpec", schema: OutputSpecSchema },
   { name: "Labels", schema: LabelsSchema },
+  { name: "Aliases", schema: AliasesSchema },
 ];
 
 function findSchemaName(schema: z.ZodTypeAny): string | undefined {

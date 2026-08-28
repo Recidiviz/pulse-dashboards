@@ -153,10 +153,32 @@ describe("mergeWithBase", () => {
   test("outputs replaces base outputs entirely", () => {
     const result = mergeWithBase(BASE, {
       ...AGENCY,
-      outputs: [{ id: "only", label: "Only", promptGuidance: "Only" }],
+      outputs: [
+        {
+          id: "only",
+          label: "Only",
+          promptGuidance: "Only",
+        },
+      ],
     });
     expect(result["outputs"]).toHaveLength(1);
     expect((result["outputs"] as { id: string }[])[0].id).toBe("only");
+  });
+
+  test("agency aliases override base aliases entirely", () => {
+    const result = mergeWithBase(
+      { ...BASE, aliases: { client: "Homie", resident: "Friend" } },
+      { ...AGENCY, aliases: { client: "Buddy" } },
+    );
+    expect(result["aliases"]).toEqual({ client: "Buddy" });
+  });
+
+  test("inherits base aliases when agency specifies none", () => {
+    const result = mergeWithBase(
+      { ...BASE, aliases: { client: "Homie", resident: "Friend" } },
+      AGENCY,
+    );
+    expect(result["aliases"]).toEqual({ client: "Homie", resident: "Friend" });
   });
 
   test("resolved result has no additional* fields, except additionalOutputs which is kept intentionally", () => {
@@ -165,7 +187,13 @@ describe("mergeWithBase", () => {
       additionalGlossary: { CM: "Case Manager" },
       additionalRules: ["Extra"],
       additionalKeywords: ["KW"],
-      additionalOutputs: [{ id: "x", label: "X", promptGuidance: "X" }],
+      additionalOutputs: [
+        {
+          id: "x",
+          label: "X",
+          promptGuidance: "X",
+        },
+      ],
     });
     expect(result["additionalGlossary"]).toBeUndefined();
     expect(result["additionalRules"]).toBeUndefined();

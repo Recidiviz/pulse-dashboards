@@ -30,7 +30,11 @@ import { TrashIcon } from "react-native-heroicons/outline";
 import CheckIcon from "react-native-heroicons/solid/CheckIcon";
 import PencilIcon from "react-native-heroicons/solid/PencilIcon";
 
-import { trpc } from "~@meetings/app/shared/api";
+import {
+  assigneeToConfigLabel,
+  useCurrentAgencyConfig,
+} from "~@meetings/app/entities/agency-config";
+import { PersonType, trpc } from "~@meetings/app/shared/api";
 import { extractError } from "~@meetings/app/shared/lib/errors";
 import { useIsMobileWidth } from "~@meetings/app/shared/lib/platform";
 import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
@@ -62,12 +66,14 @@ type ActionItemsTabProps = {
   items?: ActionItem[] | null;
   outputVote?: ReactNode;
   meetingId: string;
+  personType: PersonType;
 };
 
 export const ActionItemsTab = ({
   items,
   outputVote,
   meetingId,
+  personType,
 }: ActionItemsTabProps) => {
   const utils = trpc.useUtils();
   const { showSnackbar } = useSnackbar();
@@ -77,6 +83,7 @@ export const ActionItemsTab = ({
   const [newlyCreatedActionItemId, setNewlyCreatedActionItemId] = useState<
     string | null
   >(null);
+  const agencyConfig = useCurrentAgencyConfig();
   const { isOnline } = useIsOnline();
 
   const createActionItem = trpc.v1.meeting.createActionItem.useMutation({
@@ -168,7 +175,7 @@ export const ActionItemsTab = ({
           return (
             <View key={assignee} className="mb-4">
               <Typography variant="body-m-medium" className="mb-4">
-                {assignee}
+                {assigneeToConfigLabel(agencyConfig, assignee, personType)}
               </Typography>
               {ownerItems.map((item, itemIdx) => (
                 <ActionItemRow
