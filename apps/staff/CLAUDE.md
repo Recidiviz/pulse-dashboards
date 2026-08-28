@@ -42,6 +42,19 @@ State is MobX. The tree is rooted in `src/RootStore/`:
 
 **Hydration:** Prefer hydrating per-view (in the presenter) rather than per-store — views show a loading state while they hydrate, and per-view boundaries keep stores flat. Stores/presenters that load remote data implement `Hydratable` and are wrapped in a hydrator (`hydrators/`, `~hydration-utils`); don't render dependent UI before hydration succeeds.
 
+**MobX footguns:**
+
+- Derived values must be `get` accessors. A value assigned in the constructor or
+  as a class property computes once and never reacts.
+- Wrap a component in `observer` when it reads observables — lint does not
+  enforce this (`mobx/missing-observer` is off).
+
+## FullStory and PII
+
+Add `className="fs-exclude"` to any element that renders PII so FullStory never
+records it. Do not use `fs-mask` — masking still records element structure, and
+this codebase uses exclusion only.
+
 ## Tenant configs
 
 Per-state config lives in `src/tenants/US_*.ts` (one file per state). Each exports a `TenantConfig` controlling feature availability, copy overrides, search system config, methodology URLs, etc. `TenantStore` (`src/RootStore/TenantStore/`) selects the active config based on the user's tenant.
@@ -55,7 +68,7 @@ When adding a state-specific feature, the change usually spans:
 ## Feature gating: three mechanisms, don't confuse them
 
 - **`src/flags.ts`** (legacy) — environment-keyed booleans evaluated at build time. Existing usage is mostly the Pathways metric-backend swap. Don't reach for this for new feature gating; use a feature variant or tenant config instead.
-- **Feature variants** — per-user toggles managed via Firestore + Auth0. Use for staged rollouts and user-specific access. New variants must be documented; `tools/verifyFeatureVariantDocumentation.ts` enforces this in CI.
+- **Feature variants** — per-user toggles managed via the Admin Panel. Use for staged rollouts and user-specific access. New variants must be documented; `tools/verifyFeatureVariantDocumentation.ts` enforces this in CI. Variants for the staff app that are used in code are defined in `apps/staff/src/RootStore/types.ts` (`allFeatureVariants`); the go/dashboard-feature-variants sheet contains documentation on each feature variant. The post-login Auth0 action (`libs/atmos/components/terraform/auth0-staff/actions/post-login/update-user-restrictions.js`) re-syncs `featureVariants` from the Admin Panel backend on every login, so a variant set directly on the Auth0 user is silently overwritten unless `app_metadata.skip_sync_permissions` is set.
 - **Tenant configs** — per-state availability (above). Use for things that differ by jurisdiction.
 
 ## Insights vitals drilldowns: data path + gating
