@@ -149,6 +149,7 @@ export const UsCoMoreInformation = route(
   },
   {
     EarnedTime: route("earned-time"),
+    AETChanges: route("aet-changes"),
   },
 );
 

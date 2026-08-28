@@ -44,6 +44,10 @@ export function UsCoRouter() {
           path={UsCoMoreInformation.EarnedTime.path}
           element={<PageMoreInformation pageSlug="earnedTime" />}
         />
+        <Route
+          path={UsCoMoreInformation.AETChanges.path}
+          element={<PageMoreInformation pageSlug="aetChanges" />}
+        />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>

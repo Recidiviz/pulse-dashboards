@@ -12,6 +12,10 @@
       "yosEarnedTime": {
         "heading": "[US_CO]moreInformation.pages.yosEarnedTime.heading",
         "body": "[US_CO]moreInformation.pages.yosEarnedTime.body"
+      },
+      "aetChanges": {
+        "heading": "[US_CO]moreInformation.pages.aetChanges.heading",
+        "body": "[US_CO]moreInformation.pages.aetChanges.body"
       }
     }
   },
@@ -108,5 +112,9 @@
       "heading": "[US_CO]monthlyReport.allMonths.heading",
       "rowsClickable": "[US_CO]monthlyReport.allMonths.rowsClickable"
     }
+  },
+  "aetBanner": {
+    "message": "[US_CO]aetBanner.message",
+    "linkText": "[US_CO]aetBanner.linkText"
   }
 }

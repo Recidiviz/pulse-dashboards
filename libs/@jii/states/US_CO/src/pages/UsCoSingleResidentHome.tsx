@@ -27,6 +27,7 @@ import { SentenceDates } from "~@jii/sentence-dates";
 import { useUsCoTranslations } from "~@jii/translation";
 import { withPresenterManager } from "~hydration-utils";
 
+import { AETBanner } from "../components/UsCoSingleResidentHome/UsCoAETBanner";
 import { UsCoMonthlyReports } from "../components/UsCoSingleResidentHome/UsCoMonthlyReports";
 import { ResidentHomePresenter } from "../presenters/ResidentHomePresenter";
 import { useV1Gate } from "../useV1Gate";
@@ -57,6 +58,8 @@ const ManagedComponent: React.FC<{ presenter: ResidentHomePresenter }> =
             lastUpdatedDate: presenter.lastUpdatedDate,
           })}
         />
+
+        <AETBanner />
 
         <SentenceDates
           data={presenter.sentenceDatesData}
