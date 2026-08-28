@@ -39,7 +39,7 @@ import { promptDeployEnv, promptServices } from "./deploy/prompts.mts";
 import { finalizeProduction, preparePlan } from "./deploy/release.mts";
 import { type ServiceKey, services } from "./deploy/services/index.mts";
 import { postDeployNotification } from "./deploy/slack.mts";
-import type { PublishedRelease } from "./deploy/types.mts";
+import { isPreviewDeployEnv, type PublishedRelease } from "./deploy/types.mts";
 
 // The default is true, but we explicitly set it here because it needs to be set to true
 // in order for the gcloud stderr to display (used for the backend deploy). It is never
@@ -58,8 +58,8 @@ const slack = await createSlackClient();
 const linear = await createLinearClient();
 const deployEnv = await promptDeployEnv();
 
-if (deployEnv === "preview (staff frontend only)") {
-  await runPreviewDeploy();
+if (isPreviewDeployEnv(deployEnv)) {
+  await runPreviewDeploy(deployEnv);
   process.exit();
 }
 

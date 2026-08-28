@@ -27,6 +27,7 @@ export async function promptDeployEnv(): Promise<DeployEnv> {
     choices: [
       "staging",
       "preview (staff frontend only)",
+      "preview (Opportunities frontend only)",
       "demo",
       "production",
     ] satisfies DeployEnv[],

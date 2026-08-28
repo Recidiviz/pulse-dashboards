@@ -17,11 +17,16 @@
 
 import type { Octokit } from "@octokit/rest";
 
-export type DeployEnv =
-  | "staging"
-  | "preview (staff frontend only)"
-  | "demo"
-  | "production";
+const previewDeployEnvs = [
+  "preview (staff frontend only)",
+  "preview (Opportunities frontend only)",
+] as const;
+export const isPreviewDeployEnv = (env: DeployEnv): env is PreviewDeployEnv =>
+  previewDeployEnvs.includes(env as PreviewDeployEnv);
+
+export type PreviewDeployEnv = (typeof previewDeployEnvs)[number];
+
+export type DeployEnv = PreviewDeployEnv | "staging" | "demo" | "production";
 
 /**
  * A single deployable service, described declaratively. The deploy script derives the
