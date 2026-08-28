@@ -79,15 +79,15 @@ async function assertSARAccessible(
   prisma: PrismaClient,
   sarId: string,
   staffPseudonymizedId: string | undefined,
-): Promise<void> {
-  if (!staffPseudonymizedId) return;
+): Promise<{ staffId: string | null } | null> {
+  if (!staffPseudonymizedId) return null;
 
   const accessible = await prisma.sentencingAssessmentReport.findFirst({
     where: {
       id: sarId,
       ...(await sarAccessFilter(prisma, staffPseudonymizedId)),
     },
-    select: { id: true },
+    select: { staffId: true },
   });
   if (!accessible) {
     throw new TRPCError({
@@ -95,6 +95,7 @@ async function assertSARAccessible(
       message: "You do not have access to this Sentencing Assessment Report",
     });
   }
+  return accessible;
 }
 
 // Throws FORBIDDEN unless `findRecord` resolves to a record. No
@@ -118,6 +119,27 @@ async function assertAccessible(
       message: `You do not have access to this ${label}`,
     });
   }
+}
+
+// Fields only the SAR's assignee may set (an officer signing their own report).
+const OFFICER_SIGNATURE_FIELDS = [
+  "officerSignature",
+  "officerTitle",
+  "officerLastSignedAt",
+] as const satisfies readonly (keyof Prisma.SentencingAssessmentReportUpdateInput)[];
+
+// Fields only the assignee's supervisor may set.
+const SUPERVISOR_SIGNATURE_FIELDS = [
+  "supervisorSignature",
+  "supervisorTitle",
+  "supervisorLastSignedAt",
+] as const satisfies readonly (keyof Prisma.SentencingAssessmentReportUpdateInput)[];
+
+function touchesAnyField(
+  updateData: Prisma.SentencingAssessmentReportUpdateInput,
+  fields: readonly (keyof Prisma.SentencingAssessmentReportUpdateInput)[],
+): boolean {
+  return fields.some((field) => updateData[field] !== undefined);
 }
 
 export const sarRouter = router({
@@ -374,8 +396,11 @@ export const sarRouter = router({
         input: { id, attributes },
         ctx: { prisma, staffPseudonymizedId },
       }) => {
-        await assertSARAccessible(prisma, id, staffPseudonymizedId);
-
+        const accessibleSAR = await assertSARAccessible(
+          prisma,
+          id,
+          staffPseudonymizedId,
+        );
         try {
           const { motherName, fatherName, guardianName, charges } = attributes;
 
@@ -432,6 +457,42 @@ export const sarRouter = router({
                 },
               })),
             };
+          }
+
+          // Secure signatures - do not let supervisors sign for officers and
+          // vice-versa. No staffPseudonymizedId means an internal user, who
+          // is unrestricted -- same convention as assertSARAccessible above.
+          // Skipped entirely (no extra queries) unless the update actually
+          // touches a signature field.
+          const touchesOfficerFields = touchesAnyField(
+            updateData,
+            OFFICER_SIGNATURE_FIELDS,
+          );
+          const touchesSupervisorFields = touchesAnyField(
+            updateData,
+            SUPERVISOR_SIGNATURE_FIELDS,
+          );
+
+          if (
+            staffPseudonymizedId &&
+            (touchesOfficerFields || touchesSupervisorFields)
+          ) {
+            const staff = await fetchStaffById(prisma, staffPseudonymizedId);
+            const isDirectReport = staff.externalId === accessibleSAR?.staffId;
+
+            if (touchesOfficerFields && !isDirectReport) {
+              throw new TRPCError({
+                code: "FORBIDDEN",
+                message: `You do not have permission to sign for the officer assigned to this case.`,
+              });
+            }
+
+            if (touchesSupervisorFields && isDirectReport) {
+              throw new TRPCError({
+                code: "FORBIDDEN",
+                message: `You do not have permission to sign for the supervisor assigned to this case.`,
+              });
+            }
           }
 
           await prisma.sentencingAssessmentReport.update({

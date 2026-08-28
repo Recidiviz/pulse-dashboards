@@ -17,7 +17,7 @@
 
 import { TRPCError } from "@trpc/server";
 import _ from "lodash";
-import { describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test } from "vitest";
 
 import {
   CaseStatus,
@@ -939,44 +939,138 @@ describe("SAR router", () => {
       });
     });
 
-    test("a district supervisor can access an in-progress SAR assigned to another PO in their district", async () => {
-      const district = await testPrismaClient.district.findFirstOrThrow({
-        where: { name: "District 1" },
-      });
-
-      // Give fakeStaff (the SAR's assignee) a district...
-      await testPrismaClient.staff.update({
-        where: { externalId: fakeStaff.externalId },
-        data: { district: { connect: { id: district.id } } },
-      });
-
-      // ...and create a supervisor over that same district with at least one
-      // direct report, so `buildSARStaffFilter`'s district-scoping branch applies.
-      // District supervisors manage every PO in their district, not just direct
-      // reports, so the supervisor need not directly manage fakeStaff.
+    describe("supervisor/supervisee signing", () => {
       const districtSupervisorPseudoId = "district-supervisor-pid";
-      await testPrismaClient.staff.create({
-        data: {
-          externalId: "district-supervisor-ext",
-          pseudonymizedId: districtSupervisorPseudoId,
-          fullName: "District Supervisor",
-          stateCode: StateCode.US_ID,
-          hasLoggedIn: true,
-          district: { connect: { id: district.id } },
-        },
-      });
-      await testPrismaClient.staff.update({
-        where: { externalId: fakeSARStaff.externalId },
-        data: { supervisorId: "district-supervisor-ext" },
+
+      beforeEach(async () => {
+        const district = await testPrismaClient.district.findFirstOrThrow({
+          where: { name: "District 1" },
+        });
+
+        // Give fakeStaff (the SAR's assignee) a district...
+        await testPrismaClient.staff.update({
+          where: { externalId: fakeStaff.externalId },
+          data: { district: { connect: { id: district.id } } },
+        });
+
+        // ...and create a supervisor over that same district with at least one
+        // direct report, so `buildSARStaffFilter`'s district-scoping branch applies.
+        // District supervisors manage every PO in their district, not just direct
+        // reports, so the supervisor need not directly manage fakeStaff.
+        await testPrismaClient.staff.create({
+          data: {
+            externalId: "district-supervisor-ext",
+            pseudonymizedId: districtSupervisorPseudoId,
+            fullName: "District Supervisor",
+            stateCode: StateCode.US_ID,
+            hasLoggedIn: true,
+            district: { connect: { id: district.id } },
+          },
+        });
+        await testPrismaClient.staff.update({
+          where: { externalId: fakeSARStaff.externalId },
+          data: { supervisorId: "district-supervisor-ext" },
+        });
       });
 
-      const caller = makeCallerForStaff(districtSupervisorPseudoId);
-      const sars = await caller.sar.getSARsByClient({
-        clientExternalId: fakeSARClient.externalId,
+      test("a district supervisor can access an in-progress SAR assigned to another PO in their district", async () => {
+        const caller = makeCallerForStaff(districtSupervisorPseudoId);
+        const sars = await caller.sar.getSARsByClient({
+          clientExternalId: fakeSARClient.externalId,
+        });
+
+        expect(sars).toHaveLength(1);
+        expect(sars[0].currentUserHasAccess).toBe(true);
       });
 
-      expect(sars).toHaveLength(1);
-      expect(sars[0].currentUserHasAccess).toBe(true);
+      test("a district supervisor cannot sign for their direct report", async () => {
+        await expect(() =>
+          makeCallerForStaff(districtSupervisorPseudoId).sar.updateSAR({
+            id: fakeSAR.id,
+            attributes: {
+              officerTitle: "Supervisor",
+              officerSignature: "John Doe",
+            },
+          }),
+        ).rejects.toThrowError(
+          new TRPCError({
+            code: "FORBIDDEN",
+            message:
+              "You do not have permission to sign for the officer assigned to this case.",
+          }),
+        );
+      });
+
+      test("an officer cannot sign for their district supervisor", async () => {
+        await expect(() =>
+          makeCallerForStaff(fakeStaff.pseudonymizedId).sar.updateSAR({
+            id: fakeSAR.id,
+            attributes: {
+              supervisorTitle: "Supervisor",
+              supervisorSignature: "John Doe",
+            },
+          }),
+        ).rejects.toThrowError(
+          new TRPCError({
+            code: "FORBIDDEN",
+            message:
+              "You do not have permission to sign for the supervisor assigned to this case.",
+          }),
+        );
+      });
+
+      test("a district supervisor cannot forge the officer's sign-off timestamp alone", async () => {
+        // No officerSignature/officerTitle in this payload -- only the
+        // timestamp, which must be gated the same way.
+        await expect(() =>
+          makeCallerForStaff(districtSupervisorPseudoId).sar.updateSAR({
+            id: fakeSAR.id,
+            attributes: {
+              officerLastSignedAt: new Date(),
+            },
+          }),
+        ).rejects.toThrowError(
+          new TRPCError({
+            code: "FORBIDDEN",
+            message:
+              "You do not have permission to sign for the officer assigned to this case.",
+          }),
+        );
+      });
+
+      test("the officer assigned to the case can sign their own officer fields", async () => {
+        await makeCallerForStaff(fakeStaff.pseudonymizedId).sar.updateSAR({
+          id: fakeSAR.id,
+          attributes: {
+            officerTitle: "Officer",
+            officerSignature: "Jane Doe",
+          },
+        });
+
+        const updated =
+          await testPrismaClient.sentencingAssessmentReport.findUniqueOrThrow({
+            where: { id: fakeSAR.id },
+          });
+        expect(updated.officerTitle).toBe("Officer");
+        expect(updated.officerSignature).toBe("Jane Doe");
+      });
+
+      test("the assignee's district supervisor can sign their own supervisor fields", async () => {
+        await makeCallerForStaff(districtSupervisorPseudoId).sar.updateSAR({
+          id: fakeSAR.id,
+          attributes: {
+            supervisorTitle: "Supervisor",
+            supervisorSignature: "John Doe",
+          },
+        });
+
+        const updated =
+          await testPrismaClient.sentencingAssessmentReport.findUniqueOrThrow({
+            where: { id: fakeSAR.id },
+          });
+        expect(updated.supervisorTitle).toBe("Supervisor");
+        expect(updated.supervisorSignature).toBe("John Doe");
+      });
     });
 
     test("an org-wide supervisor can access any in-progress SAR regardless of district", async () => {
