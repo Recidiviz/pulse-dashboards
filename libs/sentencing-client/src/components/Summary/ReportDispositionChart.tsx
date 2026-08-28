@@ -29,6 +29,7 @@ import {
   LEGEND_LABELS,
 } from "../CaseDetails/components/charts/common/utils";
 import { GenderToDisplayName } from "../CaseDetails/constants";
+import { BUCKET_TO_RISK_CHIP } from "../SARDetails/constants";
 import {
   InsightDescriptionContext,
   InsightSubjectSpans,
@@ -44,13 +45,6 @@ import {
 import * as Styled from "./SentencingAssessmentReport.styles";
 
 const SECTION_TITLE = "Historical Outcome Reference";
-
-const BUCKET_TO_RISK_CHIP: Record<number, string> = {
-  0: "Low Risk Score",
-  1: "Moderate Risk Score",
-  2: "High Risk Score",
-  3: "Very High Risk Score",
-};
 
 const DONUT_SIZE = 260;
 const DONUT_RADIUS = DONUT_SIZE / 2;

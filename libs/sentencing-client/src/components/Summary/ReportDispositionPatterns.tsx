@@ -17,6 +17,7 @@
 
 import React from "react";
 
+import { type DispositionLegendLabel } from "../SARDetails/constants";
 import { customPalette } from "../styles/palette";
 import * as Styled from "./SentencingAssessmentReport.styles";
 
@@ -50,7 +51,7 @@ export const DISPOSITION_FILL: Record<string, DispositionFill> = {
   },
   "3-5 Years Incarceration": { type: "pattern", patternId: "pdf-dis-grid" },
   "6+ Years Incarceration": { type: "solid", color: customPalette.black },
-};
+} satisfies Record<DispositionLegendLabel, DispositionFill>;
 
 export const FALLBACK_FILL: DispositionFill = {
   type: "solid",

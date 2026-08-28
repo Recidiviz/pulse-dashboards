@@ -18,7 +18,7 @@
 import { View } from "@react-pdf/renderer";
 import React from "react";
 
-import { sectionSkipped } from "../derive";
+import { shouldShowDefendantStatement } from "../derive";
 import { Paragraph } from "../primitives/Paragraph";
 import { UnderlinedHeading } from "../primitives/UnderlinedHeading";
 import { useSAR } from "../SARContext";
@@ -28,16 +28,7 @@ export const DefendantStatement: React.FC<{ style?: PdfStyle }> = ({
   style = {},
 }) => {
   const { sar } = useSAR();
-  // Match the DOM report: hidden when the defendant declined, and omitted
-  // entirely (rather than showing a dash) when there's no statement or it was
-  // explicitly skipped.
-  if (
-    sar.defendantDeclinedToParticipate ||
-    !sar.defendantStatement ||
-    sectionSkipped(sar, "defendantStatement")
-  ) {
-    return null;
-  }
+  if (!shouldShowDefendantStatement(sar)) return null;
   return (
     // Keep heading attached to its narrative so we don't see a lone label at
     // the bottom of a page with the text on the next.

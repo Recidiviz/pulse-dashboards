@@ -24,8 +24,16 @@ import React from "react";
 
 import { formatOffenseLabel } from "../../../../utils/utils";
 import { GenderToDisplayName } from "../../../CaseDetails/constants";
+import {
+  BUCKET_TO_RISK_CHIP,
+  type DispositionLegendLabel,
+} from "../../../SARDetails/constants";
 import { buildInsightsFootnoteText } from "../../insightsUtils";
-import { keyFindingText, sentenceDistributionRows } from "../derive";
+import {
+  keyFindingText,
+  sentenceDistributionRows,
+  shouldShowHistoricalOutcome,
+} from "../derive";
 import { BoldSubheading } from "../primitives/BoldSubheading";
 import { Chip } from "../primitives/Chip";
 import { FlagIcon } from "../primitives/icons/FlagIcon";
@@ -37,13 +45,6 @@ import { color, font, space } from "../tokens";
 import { AverageTimeServed } from "./AverageTimeServed";
 import { SentenceDistribution } from "./SentenceDistribution";
 
-const BUCKET_TO_RISK_CHIP: Record<number, string> = {
-  0: "Low Risk Score",
-  1: "Moderate Risk Score",
-  2: "High Risk Score",
-  3: "Very High Risk Score",
-};
-
 // Maps each disposition label to a slice/legend glyph, matching the reference:
 // non-incarceration dispositions use the solid gray ramp; incarceration buckets
 // escalate through textures (dots -> crosshatch -> plus) to solid black at 6+.
@@ -53,19 +54,16 @@ const GLYPH_BY_LABEL: Record<string, LegendGlyph> = {
   "Court-Ordered Treatment": "mid",
   "Suspended Sentence": "dark",
   "< 1 Year Incarceration": "dots",
-  "1 Year Incarceration": "dots",
   "1-2 Years Incarceration": "crosshatch",
   "3-5 Years Incarceration": "plus",
   "6+ Years Incarceration": "black",
-};
+} satisfies Record<DispositionLegendLabel, LegendGlyph>;
 
 export const HistoricalOutcomeBlock: React.FC<{ style?: PdfStyle }> = ({
   style = {},
 }) => {
   const { sar, insight } = useSAR();
-  // Hidden when the defendant declined (the section requires a risk score) or
-  // when no matching insight exists, matching the DOM report.
-  if (sar.defendantDeclinedToParticipate || !insight) return null;
+  if (!shouldShowHistoricalOutcome(sar, insight)) return null;
 
   const tags = [
     GenderToDisplayName[insight.gender],

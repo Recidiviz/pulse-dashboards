@@ -18,6 +18,8 @@
 import { Link, Text, View } from "@react-pdf/renderer";
 import React from "react";
 
+import { SARSection } from "../../../SARDetails/constants";
+import { shouldShowInReport } from "../derive";
 import { UnderlinedHeading } from "../primitives/UnderlinedHeading";
 import { useSAR } from "../SARContext";
 import type { PdfStyle } from "../SARPdfTemplate.types";
@@ -27,14 +29,14 @@ import { RiskProfileSummary } from "./RiskProfileSummary";
 
 /**
  * Key Considerations block — Risk Profile Summary + Additional Considerations.
- * Hidden entirely when the defendant declined to participate (mirrors the DOM
- * report, which omits this section in that case).
+ * Hidden entirely when the defendant declined to participate, or when this
+ * officer isn't assigned this section (mirrors the DOM report).
  */
 export const KeyConsiderationsBlock: React.FC<{ style?: PdfStyle }> = ({
   style = {},
 }) => {
   const { sar } = useSAR();
-  if (sar.defendantDeclinedToParticipate) return null;
+  if (!shouldShowInReport(sar, SARSection.KEY_CONSIDERATIONS)) return null;
   return (
     <View style={style}>
       <UnderlinedHeading>Key Considerations</UnderlinedHeading>

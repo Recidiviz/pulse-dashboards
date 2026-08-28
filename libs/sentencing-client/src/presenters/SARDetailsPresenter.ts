@@ -61,11 +61,14 @@ import {
   ORASFormData,
 } from "../components/OffenderAssessment/utils";
 import {
+  DECLINED_SAR_REPORT_SECTIONS,
+  DISPOSITION_TYPE_ORDER,
   SAR_REPORT_SECTIONS,
   SARSection,
   type SARSectionName,
 } from "../components/SARDetails/constants";
 import { SectionStatus } from "../components/SARDetails/StatusIndicator";
+import { shouldShowSARSection } from "../components/SARDetails/utils";
 import { InsightDescriptionContext } from "../components/Summary/insightsUtils";
 import { RiskProfileCardData } from "../components/Summary/ReportRiskProfileSummaryCard";
 import { SignatureData } from "../components/Summary/ReportSignature";
@@ -81,13 +84,6 @@ import {
 import { CRIMINAL_HISTORY_DEFAULT, DOMAIN_TO_SUMMARY_FIELD } from "./constants";
 import { OffenderAssessmentPresenter } from "./OffenderAssessmentPresenter";
 import { PriorTreatmentHistoryPresenter } from "./PriorTreatmentHistoryPresenter";
-
-const DISPOSITION_TYPE_ORDER: Record<string, number> = {
-  Deferred_prosecution: 0,
-  Probation: 1,
-  Treatment_in_prison: 2,
-  Suspended: 3,
-};
 
 // Type for SAR metadata structure
 type SARMetadataSections = {
@@ -367,32 +363,21 @@ export class SARDetailsPresenter implements Hydratable {
     }
     const result =
       this.defendantDeclinedToParticipate === false
-        ? (SAR_REPORT_SECTIONS as unknown as SARSectionName[])
-        : ([
-            SARSection.CASE_INFORMATION,
-            SARSection.VICTIM_IMPACT,
-            SARSection.OFFENDER_ASSESSMENT,
-            SARSection.PRIOR_TREATMENT_HISTORY,
-            SARSection.SUMMARY,
-          ] as SARSectionName[]);
+        ? [...SAR_REPORT_SECTIONS]
+        : [...DECLINED_SAR_REPORT_SECTIONS];
     return result;
   }
 
-  /**
-   * Whether a section's data should render on the Summary page. Built on
-   * SARSections (the same list driving side nav) with one addition: Victim
-   * Impact stays in SARSections for the all-except-victim-impact split so
-   * its nav tab remains visible, but it shouldn't appear on this officer's
-   * Summary page.
-   */
+  /** Whether a section's data should render on the Summary page. Delegates
+   * to the shared `shouldShowSARSection`, which is also what the PDF
+   * template's `derive.ts`'s `shouldShowInReport` calls. */
   shouldShowInSummary(section: SARSectionName): boolean {
-    if (
-      section === SARSection.VICTIM_IMPACT &&
-      this.isPSRAllExceptVictimImpact
-    ) {
-      return false;
-    }
-    return this.SARSections.includes(section);
+    return shouldShowSARSection(
+      section,
+      this.isVictimImpactOnly,
+      this.investigationType,
+      this.defendantDeclinedToParticipate,
+    );
   }
 
   get formattedClientName(): string {

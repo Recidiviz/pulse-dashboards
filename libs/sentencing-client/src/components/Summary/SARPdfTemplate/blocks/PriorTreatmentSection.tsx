@@ -22,7 +22,8 @@
 import { Text, View } from "@react-pdf/renderer";
 import React from "react";
 
-import { docTreatmentGroups } from "../derive";
+import { SARSection } from "../../../SARDetails/constants";
+import { docTreatmentGroups, shouldShowInReport } from "../derive";
 import { BoldSubheading } from "../primitives/BoldSubheading";
 import { Paragraph } from "../primitives/Paragraph";
 import { UnderlinedHeading } from "../primitives/UnderlinedHeading";
@@ -35,6 +36,9 @@ export const PriorTreatmentSection: React.FC<{ style?: PdfStyle }> = ({
   style = {},
 }) => {
   const { sar } = useSAR();
+  if (!shouldShowInReport(sar, SARSection.PRIOR_TREATMENT_HISTORY)) {
+    return null;
+  }
   const groups = docTreatmentGroups(sar);
   const communitySummary = sar.priorTreatmentHistorySummary;
   const communityHistories = sar.priorTreatmentHistories ?? [];

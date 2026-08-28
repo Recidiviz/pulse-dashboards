@@ -18,7 +18,7 @@
 import { View } from "@react-pdf/renderer";
 import React from "react";
 
-import { sectionSkipped } from "../derive";
+import { shouldShowVictimImpact } from "../derive";
 import { Paragraph } from "../primitives/Paragraph";
 import { UnderlinedHeading } from "../primitives/UnderlinedHeading";
 import { useSAR } from "../SARContext";
@@ -28,15 +28,7 @@ export const VictimImpact: React.FC<{ style?: PdfStyle }> = ({
   style = {},
 }) => {
   const { sar } = useSAR();
-  // Match the DOM report: omit the section entirely (rather than show a dash)
-  // when there's no statement or it was explicitly skipped. Shown even when the
-  // defendant declined.
-  if (
-    !sar.victimImpactStatement ||
-    sectionSkipped(sar, "victimImpactStatement")
-  ) {
-    return null;
-  }
+  if (!shouldShowVictimImpact(sar)) return null;
   return (
     <View style={style} wrap={false}>
       <UnderlinedHeading>Victim Impact</UnderlinedHeading>

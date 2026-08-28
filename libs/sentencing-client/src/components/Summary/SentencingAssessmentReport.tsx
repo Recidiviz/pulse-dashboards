@@ -62,9 +62,6 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
     if (!sarData) return null;
 
     const { dateRequested, updatedAt, staff } = sarData;
-    const charges = presenter.charges;
-    const { needsDisplayItems, factorsDisplayItems } = presenter;
-    const declined = presenter.defendantDeclinedToParticipate;
     const insightData = presenter.insightData;
     const insightDescriptionContext = presenter.emptyStateDescriptionContext;
     const timeServedData =
@@ -98,15 +95,23 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
             {presenter.formattedClientName}
           </Styled.CaseInformationValue>
         </Styled.CaseInformationColumn>
-        <Styled.CaseInformationColumn gap={5}>
-          <Styled.CaseInformationLabel>To</Styled.CaseInformationLabel>
-          <Styled.CaseInformationValue>
-            {sarData.requestingJudgeName
-              ? `Honorable ${formatJudgeName(sarData.requestingJudgeName)}`
-              : "—"}{" "}
-            / {sarData.division}
-          </Styled.CaseInformationValue>
-        </Styled.CaseInformationColumn>
+        {/* Victim-impact-only officers don't get a Case Information section
+            in the builder tool, so there's no way for them to enter judge or
+            division info — this column would always render blank for them,
+            so per product it's hidden entirely instead. Keep in sync with
+            the equivalent check in the PDF report (TopHeaderRow.tsx's
+            `victimImpactOnly`). */}
+        {!presenter.isPSRVictimImpactOnly && (
+          <Styled.CaseInformationColumn gap={5}>
+            <Styled.CaseInformationLabel>To</Styled.CaseInformationLabel>
+            <Styled.CaseInformationValue>
+              {sarData.requestingJudgeName
+                ? `Honorable ${formatJudgeName(sarData.requestingJudgeName)}`
+                : "—"}{" "}
+              / {sarData.division ? sarData.division : "—"}
+            </Styled.CaseInformationValue>
+          </Styled.CaseInformationColumn>
+        )}
         <Styled.CaseInformationColumn gap={5}>
           <Styled.CaseInformationLabel>Case Number</Styled.CaseInformationLabel>
           <Styled.CaseInformationValue>
@@ -120,7 +125,7 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
       <Styled.Footer>
         <Styled.FooterMessage>
           Defendant: {presenter.formattedClientName} | Cause:{" "}
-          {charges
+          {presenter.charges
             .map((c) => c.causeNum)
             .filter(Boolean)
             .map((n) => `#${n}`)
@@ -189,33 +194,37 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                   updatedAt={updatedAt}
                   staff={staff}
                 />
-                <SentencingAssessmentReportSection
-                  title={OFFENDER_COURT_SECTION_TITLE}
-                  splittable
-                >
-                  <Styled.ColumnFlexContainer gap={BLOCK_GAP}>
-                    {clientChips}
-                    {charges.map((charge, i) => (
-                      <ReportBlock key={charge.id}>
-                        {i > 0 && (
-                          <SectionContinuationHeader
-                            title={`${OFFENDER_COURT_SECTION_TITLE} Continued...`}
-                          />
-                        )}
-                        <ReportCharge charge={charge} index={i} />
-                      </ReportBlock>
-                    ))}
-                  </Styled.ColumnFlexContainer>
-                </SentencingAssessmentReportSection>
-                {!declined && (
+                {presenter.shouldShowInSummary(SARSection.CASE_INFORMATION) && (
+                  <SentencingAssessmentReportSection
+                    title={OFFENDER_COURT_SECTION_TITLE}
+                    splittable
+                  >
+                    <Styled.ColumnFlexContainer gap={BLOCK_GAP}>
+                      {clientChips}
+                      {presenter.charges.map((charge, i) => (
+                        <ReportBlock key={charge.id}>
+                          {i > 0 && (
+                            <SectionContinuationHeader
+                              title={`${OFFENDER_COURT_SECTION_TITLE} Continued...`}
+                            />
+                          )}
+                          <ReportCharge charge={charge} index={i} />
+                        </ReportBlock>
+                      ))}
+                    </Styled.ColumnFlexContainer>
+                  </SentencingAssessmentReportSection>
+                )}
+                {presenter.shouldShowInSummary(
+                  SARSection.KEY_CONSIDERATIONS,
+                ) && (
                   <ReportKeyConsiderations
-                    needsDisplayItems={needsDisplayItems}
-                    factorsDisplayItems={factorsDisplayItems}
+                    needsDisplayItems={presenter.needsDisplayItems}
+                    factorsDisplayItems={presenter.factorsDisplayItems}
                     riskProfileCardData={presenter.riskProfileCardData}
                     ORASDomainsAvailable={sarData.ORASDomainsAvailable}
                   />
                 )}
-                {!declined &&
+                {presenter.shouldShowInSummary(SARSection.DEFENDANTS_VERSION) &&
                   sarData.defendantStatement &&
                   !presenter.defendantStatementSkipped && (
                     <SentencingAssessmentReportSection
@@ -226,7 +235,8 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                       </Styled.FreeTextContent>
                     </SentencingAssessmentReportSection>
                   )}
-                {sarData.victimImpactStatement &&
+                {presenter.shouldShowInSummary(SARSection.VICTIM_IMPACT) &&
+                  sarData.victimImpactStatement &&
                   !presenter.victimImpactStatementSkipped && (
                     <SentencingAssessmentReportSection
                       title={SARSection.VICTIM_IMPACT}
@@ -237,32 +247,44 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                     </SentencingAssessmentReportSection>
                   )}
                 {/* TODO(OBT-29467): remove spread once import skips manually-updated SARs */}
-                {(declined ||
-                  sarData.assessmentType ||
-                  !presenter.hasOrasAssessment) && (
-                  <ReportOffenderAssessment
-                    sarData={{
-                      ...sarData,
-                      employmentHistories: presenter.employmentHistories,
-                    }}
-                    administeredBy={presenter.assessmentAdministeredBy}
-                    ageAtAssessment={
-                      presenter.offenderAssessment.ageAtAssessment
-                    }
-                    hasOrasAssessment={presenter.hasOrasAssessment}
-                    isDeclined={declined}
+                {presenter.shouldShowInSummary(
+                  SARSection.OFFENDER_ASSESSMENT,
+                ) &&
+                  (presenter.defendantDeclinedToParticipate ||
+                    sarData.assessmentType ||
+                    !presenter.hasOrasAssessment) && (
+                    <ReportOffenderAssessment
+                      sarData={{
+                        ...sarData,
+                        employmentHistories: presenter.employmentHistories,
+                      }}
+                      administeredBy={presenter.assessmentAdministeredBy}
+                      ageAtAssessment={
+                        presenter.offenderAssessment.ageAtAssessment
+                      }
+                      hasOrasAssessment={presenter.hasOrasAssessment}
+                      isDeclined={presenter.defendantDeclinedToParticipate}
+                    />
+                  )}
+                {presenter.shouldShowInSummary(
+                  SARSection.PRIOR_TREATMENT_HISTORY,
+                ) && (
+                  <ReportPriorTreatmentHistory
+                    presenter={presenter.priorTreatmentHistory}
                   />
                 )}
-                <ReportPriorTreatmentHistory
-                  presenter={presenter.priorTreatmentHistory}
-                />
-                {(declined || !presenter.recommendationSkipped) && (
-                  <ReportRecommendation
-                    sarData={sarData}
-                    isDeclined={declined}
-                  />
-                )}
-                {!declined &&
+                {presenter.shouldShowInSummary(SARSection.RECOMMENDATION) &&
+                  (presenter.defendantDeclinedToParticipate ||
+                    !presenter.recommendationSkipped) && (
+                    <ReportRecommendation
+                      sarData={sarData}
+                      isDeclined={presenter.defendantDeclinedToParticipate}
+                    />
+                  )}
+                {presenter.shouldShowInSummary(
+                  SARSection.OFFENDER_ASSESSMENT,
+                ) &&
+                  !presenter.defendantDeclinedToParticipate &&
                   activeFeatureVariants["SARBuilder"] &&
                   (insightData?.dispositionNumRecords ? (
                     <ReportDispositionChart
@@ -274,7 +296,10 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                       descriptionContext={insightDescriptionContext}
                     />
                   ))}
-                {!declined &&
+                {presenter.shouldShowInSummary(
+                  SARSection.OFFENDER_ASSESSMENT,
+                ) &&
+                  !presenter.defendantDeclinedToParticipate &&
                   activeFeatureVariants["SARBuilder"] &&
                   insightData &&
                   insightDescriptionContext &&
@@ -289,7 +314,10 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                       dispositionNumRecords={insightData.dispositionNumRecords}
                     />
                   ))}
-                {!declined &&
+                {presenter.shouldShowInSummary(
+                  SARSection.OFFENDER_ASSESSMENT,
+                ) &&
+                  !presenter.defendantDeclinedToParticipate &&
                   activeFeatureVariants["SARBuilder"] &&
                   (insightData?.dispositionNumRecords ? (
                     <ReportKeyFinding insight={insightData} />

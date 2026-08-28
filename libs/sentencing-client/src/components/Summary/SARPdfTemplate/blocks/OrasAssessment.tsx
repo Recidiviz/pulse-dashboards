@@ -28,7 +28,11 @@ import {
   getDomainsForAssessmentType,
   shouldShowOrasContent,
 } from "../../../OffenderAssessment/utils";
-import { ageAtAssessment as getAgeAtAssessment } from "../derive";
+import { SARSection } from "../../../SARDetails/constants";
+import {
+  ageAtAssessment as getAgeAtAssessment,
+  shouldShowInReport,
+} from "../derive";
 import { Paragraph } from "../primitives/Paragraph";
 import { UnderlinedHeading } from "../primitives/UnderlinedHeading";
 import { useActiveFeatureVariants, useSAR } from "../SARContext";
@@ -52,6 +56,7 @@ export const OrasAssessment: React.FC<{ style?: PdfStyle }> = ({
 }) => {
   const { sar } = useSAR();
   const activeFeatureVariants = useActiveFeatureVariants();
+  if (!shouldShowInReport(sar, SARSection.OFFENDER_ASSESSMENT)) return null;
   const declined = sar.defendantDeclinedToParticipate;
   const domains = getDomainsForAssessmentType(
     declined ? null : sar.assessmentType,

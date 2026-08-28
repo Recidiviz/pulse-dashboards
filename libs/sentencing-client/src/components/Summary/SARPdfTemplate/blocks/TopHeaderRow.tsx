@@ -19,6 +19,7 @@ import { Text, View } from "@react-pdf/renderer";
 import React from "react";
 
 import { formatJudgeName, formatPersonName } from "../../../../utils/utils";
+import { isPSRVictimImpactOnly } from "../../../SARDetails/utils";
 import { useSAR } from "../SARContext";
 import type { PdfStyle } from "../SARPdfTemplate.types";
 import { border, color, font, space } from "../tokens";
@@ -54,6 +55,14 @@ export const TopHeaderRow: React.FC<{ style?: PdfStyle }> = ({
   const judge = sar.requestingJudgeName
     ? `Honorable ${formatJudgeName(sar.requestingJudgeName)}`
     : "—";
+  // Victim-impact-only officers don't get a Case Information section in the
+  // builder tool, so there's no way for them to enter judge or division info
+  // — this column would always render blank for them, so per product it's
+  // hidden entirely instead.
+  const victimImpactOnly = isPSRVictimImpactOnly(
+    sar.isVictimImpactOnly,
+    sar.investigationType,
+  );
   return (
     <View
       style={[
@@ -79,15 +88,17 @@ export const TopHeaderRow: React.FC<{ style?: PdfStyle }> = ({
           flex: 1,
         }}
       />
-      <HeaderCell
-        label="To"
-        value={`${judge} / ${sar.division ?? "—"}`}
-        style={{
-          borderRightWidth: border.width.thin,
-          borderRightColor: color.border.strong,
-          flex: 1,
-        }}
-      />
+      {!victimImpactOnly && (
+        <HeaderCell
+          label="To"
+          value={`${judge} / ${sar.division ? sar.division : "—"}`}
+          style={{
+            borderRightWidth: border.width.thin,
+            borderRightColor: color.border.strong,
+            flex: 1,
+          }}
+        />
+      )}
       <HeaderCell
         label="Case Number"
         value={`#${sar.externalId}`}

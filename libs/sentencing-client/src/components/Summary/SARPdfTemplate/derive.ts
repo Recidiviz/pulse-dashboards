@@ -48,6 +48,12 @@ import {
   getDomainsForAssessmentType,
   ORASDomainRiskLevelField,
 } from "../../OffenderAssessment/utils";
+import {
+  DISPOSITION_TYPE_ORDER,
+  SARSection,
+  type SARSectionName,
+} from "../../SARDetails/constants";
+import { shouldShowSARSection } from "../../SARDetails/utils";
 
 /**
  * Minimal shape of the per-section skip flags the report reads from the raw
@@ -87,6 +93,53 @@ export const needsSkipped = (sar: SAR): boolean =>
 /** Whether Mitigating Factors was skipped; mirrors `presenter.factorsSkipped`. */
 export const factorsSkipped = (sar: SAR): boolean =>
   sarSections(sar)?.keyConsiderations?.mitigatingFactors?.skipped === true;
+
+/** Whether a section's data should render in this report; delegates to the
+ * shared `shouldShowSARSection`, which is also what
+ * `SARDetailsPresenter.shouldShowInSummary` calls for the DOM report. */
+export const shouldShowInReport = (
+  sar: SAR,
+  section: SARSectionName,
+): boolean =>
+  shouldShowSARSection(
+    section,
+    sar.isVictimImpactOnly,
+    sar.investigationType,
+    sar.defendantDeclinedToParticipate,
+  );
+
+/**
+ * Whether Defendant's Version should render: this officer must be assigned
+ * the section, and there must be unskipped content to show.
+ */
+export const shouldShowDefendantStatement = (sar: SAR): boolean =>
+  shouldShowInReport(sar, SARSection.DEFENDANTS_VERSION) &&
+  !!sar.defendantStatement &&
+  !sectionSkipped(sar, "defendantStatement");
+
+/**
+ * Whether Victim Impact should render: this officer must be assigned the
+ * section, and there must be unskipped content to show. Can be true even
+ * when the defendant declined (Victim Impact doesn't depend on that).
+ */
+export const shouldShowVictimImpact = (sar: SAR): boolean =>
+  shouldShowInReport(sar, SARSection.VICTIM_IMPACT) &&
+  !!sar.victimImpactStatement &&
+  !sectionSkipped(sar, "victimImpactStatement");
+
+/**
+ * Whether the Historical Outcome (insight) block should render: hidden when
+ * the defendant declined (the section requires a risk score), when no
+ * matching insight exists, or when this officer isn't assigned the Offender
+ * Assessment section this data is derived from.
+ */
+export const shouldShowHistoricalOutcome = (
+  sar: SAR,
+  insight: SARInsight | null,
+): insight is NonNullable<SARInsight> =>
+  !sar.defendantDeclinedToParticipate &&
+  !!insight &&
+  shouldShowInReport(sar, SARSection.OFFENDER_ASSESSMENT);
 
 /** Reads a domain's risk-level field off the raw SAR, narrowed to a key. */
 const riskLevelOf = (
@@ -223,14 +276,6 @@ export const splitParagraphs = (text?: string | null): string[] =>
   text ? text.split("\n").filter((line) => line.trim()) : [];
 
 // --- Historical Outcome (insight) derivations ----------------------------
-
-/** Sentence-type sort order for the donut/legend; mirrors presenter constant. */
-const DISPOSITION_TYPE_ORDER: Record<string, number> = {
-  Deferred_prosecution: 0,
-  Probation: 1,
-  Treatment_in_prison: 2,
-  Suspended: 3,
-};
 
 export interface SentenceDistributionRow {
   label: string;
