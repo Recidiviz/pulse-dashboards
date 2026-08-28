@@ -64,6 +64,40 @@ describe("sortByLabel", () => {
     expect(result.map((d) => d.label)).toEqual(["Alpha", "Bravo", "Not Coded"]);
   });
 
+  it('sorts "Not Specified/Unknown" to the end', () => {
+    const data = [
+      { label: "Not Specified/Unknown" },
+      { label: "Bravo" },
+      { label: "Alpha" },
+    ];
+    const result = sortByLabel({ dataPoints: data, labelKey: "label" });
+    expect(result.map((d) => d.label)).toEqual([
+      "Alpha",
+      "Bravo",
+      "Not Specified/Unknown",
+    ]);
+  });
+
+  it('puts "Not Coded" and "Not Specified/Unknown" in the tail together with "Other"/"Unknown"', () => {
+    const data = [
+      { label: "Unknown" },
+      { label: "Other" },
+      { label: "Bravo" },
+      { label: "Not Coded" },
+      { label: "Not Specified/Unknown" },
+      { label: "Alpha" },
+    ];
+    const result = sortByLabel({ dataPoints: data, labelKey: "label" });
+    expect(result.map((d) => d.label)).toEqual([
+      "Alpha",
+      "Bravo",
+      "Other",
+      "Unknown",
+      "Not Coded",
+      "Not Specified/Unknown",
+    ]);
+  });
+
   it('sorts both "Unknown" and "Not Coded" to the end', () => {
     const data = [
       { label: "Unknown" },

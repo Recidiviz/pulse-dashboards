@@ -147,6 +147,7 @@ export function sortByLabel<T>({
     Other: 0,
     Unknown: 1,
     "Not Coded": 2,
+    "Not Specified/Unknown": 2,
   };
 
   return dataPoints.sort((a, b) => {
