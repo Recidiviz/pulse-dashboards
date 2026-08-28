@@ -512,7 +512,8 @@
     "websocket-driver": ">=0.7.5",
     "protobufjs@^6": ">=6.11.4 <7.0.0",
     "protobufjs@6.11.2": ">=6.11.4 <7.0.0",
-    "protobufjs@7.2.4": ">=7.5.5 <8.0.0"
+    "protobufjs@7.2.4": ">=7.5.5 <8.0.0",
+    "fast-xml-parser": ">=4.5.4 <5.0.0"
   },
   "scripts": {
     "postinstall": "husky",
