@@ -28,6 +28,12 @@ const {
 /**
  * Handler that will be called during the execution of a PostLogin flow.
  *
+ * Rewrites permission-related app_metadata (stateCode, routes, allowedStates,
+ * featureVariants, location fields) on every login from the auth bucket /
+ * Admin Panel restrictions. Manual edits to those keys in the Auth0 console
+ * are silently overwritten at the user's next login. Set
+ * app_metadata.skip_sync_permissions to exempt a user, or fix the source data.
+ *
  * @param {Event} event - Details about the user and the context in which they are logging in.
  * @param {PostLoginAPI} api - Interface whose methods can be used to change the behavior of the login.
  */
