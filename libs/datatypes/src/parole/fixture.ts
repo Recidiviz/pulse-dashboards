@@ -32,6 +32,8 @@ import {
   paroleConductRecordSchema,
   ParoleHearing,
   paroleHearingSchema,
+  ParoleRiskNeedFactor,
+  ParoleRiskNeedScale,
 } from "./schema";
 
 // US_CO has no Parole backend yet (TODO(OBT-41775): replace this fixture with real
@@ -426,6 +428,44 @@ function buildGenericConductHistory(
   ];
 }
 
+const RISK_NEED_FACTORS = [
+  "Medical",
+  "Dental",
+  "Mental Health",
+  "ID",
+  "Sex Offender",
+  "Substance Abuse Rating",
+  "SOA-R Level",
+];
+
+function scaleForRiskNeedScore(score: number): ParoleRiskNeedScale {
+  if (score <= 1) return "Low";
+  if (score <= 3) return "Moderate";
+  return "High";
+}
+
+// Mental Health's real eOMIS score is qualifier-suffixed (e.g. "3/M"), unlike
+// every other factor's plain integer display.
+function formatRiskNeedScore(factor: string, score: number): string {
+  return factor === "Mental Health" ? `${score}/M` : `${score}`;
+}
+
+// No real US_CO backend exists for this yet (TODO(OBT-41775), same as the
+// rest of this file), so scores are deterministically varied by index/factor
+// position rather than hand-authored or truly randomized -- keeps `nx
+// offline staff` and tests reproducible while still cycling through the
+// full 0-5 range across residents.
+function buildRiskAndNeedsFactors(index: number): Array<ParoleRiskNeedFactor> {
+  return RISK_NEED_FACTORS.map((factor, factorIndex) => {
+    const score = (index * 7 + factorIndex * 3) % 6;
+    return {
+      factor,
+      score: formatRiskNeedScore(factor, score),
+      scale: scaleForRiskNeedScore(score),
+    };
+  });
+}
+
 function buildAndersonCaseProfile(
   hearingDate: string,
   stateCode: ParoleFixtureStateCode,
@@ -490,6 +530,7 @@ function buildAndersonCaseProfile(
       },
     ],
     conductHistory: buildAndersonConductHistory(stateCode),
+    riskAndNeedsFactors: buildRiskAndNeedsFactors(0),
     // Full assessment history per tool -- the most recent entry per tool
     // carries the real subcategory/CARAS-factor breakdown; earlier entries
     // are bare score/date pairs, matching what a real historical record
@@ -916,6 +957,7 @@ function buildGenericCaseProfile(
     docPrograms: [],
     edovoPrograms: [],
     offenseHistory: buildOffenseHistory(index, today),
+    riskAndNeedsFactors: buildRiskAndNeedsFactors(index),
     ...buildGenericRiskAssessments(index, today),
   });
 }
@@ -1063,6 +1105,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
       victimInvolved: true,
       victimAttendingHearing: false,
     },
+    riskAndNeedsFactors: buildRiskAndNeedsFactors(1),
     riskAssessments: [
       { tool: "SRT", score: 8, maxScore: 44, date: "2025-01-17" },
       { tool: "SRT", score: 16, maxScore: 44, date: "2024-01-25" },
@@ -1450,6 +1493,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
       victimInvolved: true,
       victimAttendingHearing: false,
     },
+    riskAndNeedsFactors: buildRiskAndNeedsFactors(2),
     riskAssessments: [
       {
         tool: "CARAS",

@@ -22,6 +22,7 @@ import { AttachmentsSection } from "./AttachmentsSection";
 import { ConductHistorySection } from "./ConductHistorySection";
 import { OffenseHistorySection } from "./OffenseHistorySection";
 import { ProgramParticipationSection } from "./ProgramParticipationSection";
+import { RiskAndNeedsAssessmentSection } from "./RiskAndNeedsAssessmentSection";
 import { RiskAssessmentSection } from "./RiskAssessmentSection";
 
 /*
@@ -46,6 +47,11 @@ export const ParoleSectionComponents = {
     <RiskAssessmentSection
       riskAssessments={caseDetail.riskAssessments}
       riskAssessmentConfig={config.riskAssessmentConfig}
+    />
+  ),
+  riskAndNeedsAssessment: (caseDetail: ParoleCase) => (
+    <RiskAndNeedsAssessmentSection
+      riskAndNeedsFactors={caseDetail.riskAndNeedsFactors}
     />
   ),
   programParticipation: (caseDetail: ParoleCase) => (
@@ -73,6 +79,7 @@ export type ParoleSectionName = keyof typeof ParoleSectionComponents;
 export const PAROLE_SECTION_LABELS: Record<ParoleSectionName, string> = {
   offenseHistory: "Offense & Criminal History",
   riskAssessment: "Risk Score Trajectory",
+  riskAndNeedsAssessment: "Latest Risk and Needs Assessment",
   programParticipation: "Program Participation",
   conductHistory: "Institutional Conduct History",
   attachments: "Attachments",

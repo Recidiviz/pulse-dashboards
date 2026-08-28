@@ -59,6 +59,7 @@ const TEST_CASE: ParoleCase = {
     victimAttendingHearing: false,
   },
   riskAssessments: [],
+  riskAndNeedsFactors: [],
 };
 
 describe("ParoleCaseProfilePresenter", () => {

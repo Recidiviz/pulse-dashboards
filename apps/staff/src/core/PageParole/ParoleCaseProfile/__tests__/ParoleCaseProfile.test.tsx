@@ -167,6 +167,10 @@ describe("ParoleCaseProfile", () => {
     const NAV_ITEMS: ReadonlyArray<[label: string, sectionId: string]> = [
       ["Offense & Criminal History", PAROLE_SECTION_IDS.offenseHistory],
       ["Risk Score Trajectory", PAROLE_SECTION_IDS.riskAssessment],
+      [
+        "Latest Risk and Needs Assessment",
+        PAROLE_SECTION_IDS.riskAndNeedsAssessment,
+      ],
       ["Program Participation", PAROLE_SECTION_IDS.programParticipation],
       ["Institutional Conduct History", PAROLE_SECTION_IDS.conductHistory],
       ["Attachments", PAROLE_SECTION_IDS.attachments],
@@ -378,6 +382,37 @@ describe("ParoleCaseProfile", () => {
       // suffix, so only the band label itself renders.
       expect(screen.getByText("Very Low Risk")).toBeInTheDocument();
       expect(screen.getByText("Assessed Apr 16, 2026")).toBeInTheDocument();
+    });
+  });
+
+  describe("the risk and needs assessment section", () => {
+    it("renders all 7 factor rows with their score and scale", async () => {
+      renderAtPath("/parole/case/45821");
+
+      expect(
+        await findSectionHeading("Latest Risk and Needs Assessment"),
+      ).toBeInTheDocument();
+
+      // Scoped to the section's table, since plain "0"/"3" text could
+      // otherwise collide with unrelated counts/dates elsewhere on the page.
+      const table = within(screen.getByRole("table"));
+
+      // Anderson's fixture (index 0) cycles score = (0 + factorIndex * 3) % 6
+      // across the 7 factors, alternating Low (score 0) and Moderate (score 3).
+      // Mental Health is the one factor whose score renders qualifier-suffixed
+      // ("0/M") rather than as a plain number, matching its real eOMIS format.
+      expect(table.getByText("Medical")).toBeInTheDocument();
+      expect(table.getByText("Dental")).toBeInTheDocument();
+      expect(table.getByText("Mental Health")).toBeInTheDocument();
+      expect(table.getByText("ID")).toBeInTheDocument();
+      expect(table.getByText("Sex Offender")).toBeInTheDocument();
+      expect(table.getByText("Substance Abuse Rating")).toBeInTheDocument();
+      expect(table.getByText("SOA-R Level")).toBeInTheDocument();
+      expect(table.getAllByText("0")).toHaveLength(3);
+      expect(table.getByText("0/M")).toBeInTheDocument();
+      expect(table.getAllByText("3")).toHaveLength(3);
+      expect(table.getAllByText("Low")).toHaveLength(4);
+      expect(table.getAllByText("Moderate")).toHaveLength(3);
     });
   });
 

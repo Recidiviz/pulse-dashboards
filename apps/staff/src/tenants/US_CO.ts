@@ -32,6 +32,7 @@ const US_CO_CONFIG = {
     sections: [
       "offenseHistory",
       "riskAssessment",
+      "riskAndNeedsAssessment",
       "programParticipation",
       "conductHistory",
       "attachments",

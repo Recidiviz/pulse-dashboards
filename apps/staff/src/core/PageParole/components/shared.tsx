@@ -232,6 +232,7 @@ export const DocumentLink = styled.a`
 export const PAROLE_SECTION_IDS = {
   offenseHistory: "parole-section-offense-history",
   riskAssessment: "parole-section-risk-assessment",
+  riskAndNeedsAssessment: "parole-section-risk-and-needs-assessment",
   programParticipation: "parole-section-program-participation",
   conductHistory: "parole-section-conduct-history",
   attachments: "parole-section-attachments",

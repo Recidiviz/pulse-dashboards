@@ -60,6 +60,19 @@ export const paroleRiskAssessmentSchema = z.object({
 });
 export type ParoleRiskAssessment = z.infer<typeof paroleRiskAssessmentSchema>;
 
+export const PAROLE_RISK_NEED_SCALE = z.enum(["Low", "Moderate", "High"]);
+export type ParoleRiskNeedScale = z.infer<typeof PAROLE_RISK_NEED_SCALE>;
+
+export const paroleRiskNeedFactorSchema = z.object({
+  factor: z.string(),
+  // A display string rather than a number -- most factors show a plain
+  // integer, but Mental Health's real eOMIS value is qualifier-suffixed
+  // (e.g. "3/M"), so the field has to accommodate that format too.
+  score: z.string(),
+  scale: PAROLE_RISK_NEED_SCALE,
+});
+export type ParoleRiskNeedFactor = z.infer<typeof paroleRiskNeedFactorSchema>;
+
 export const paroleHearingSchema = z.object({
   docId: z.string(),
   individualName: z.string(),
@@ -188,5 +201,8 @@ export const paroleCaseSchema = z.object({
   // Only the most recent entry per tool is expected to carry `subcategories`/
   // `carasFactors`; earlier entries may be bare score/date pairs.
   riskAssessments: z.array(paroleRiskAssessmentSchema),
+  // The resident's latest health/risk-and-needs assessment from eOMIS -- only
+  // the most recent snapshot is tracked (no history), unlike riskAssessments.
+  riskAndNeedsFactors: z.array(paroleRiskNeedFactorSchema),
 });
 export type ParoleCase = z.infer<typeof paroleCaseSchema>;
