@@ -150,6 +150,9 @@ export class UsIdEarnedDischargeForm extends FormBase<
     return initialData;
   }
 
+  // Only fields copied into templateData below reach the generated .docx.
+  // A draft value saved to Firestore but not mapped here is silently
+  // dropped from the document.
   prepareDataForTemplate(): DocxTemplateFormContents {
     const { formData } = this;
 
