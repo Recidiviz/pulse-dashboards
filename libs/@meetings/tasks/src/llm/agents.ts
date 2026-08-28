@@ -50,6 +50,7 @@ import {
   VerificationOutput,
   VerificationPayloadSchema,
 } from "~@meetings/tasks/llm/schemas";
+import { normalizeNameCasing } from "~@meetings/tasks/llm/utils";
 import { createLogger } from "~server-setup-plugin";
 
 function buildMeetingTypeExtractionContext(
@@ -289,7 +290,9 @@ export class SpecialistCore {
     );
     const factsStr = dedent`ACTIONS: ${facts.actionItems.length} found
       ENTITIES: ${JSON.stringify(entityDict)}`;
-    const clientContextStr = `Client: ${person.givenNames} ${person.surname}`;
+    const clientContextStr = `Client: ${normalizeNameCasing(
+      `${person.givenNames} ${person.surname}`,
+    )}`;
 
     const meetingTypeConfig = agency?.meetingTypes?.find(
       (mt) => mt.type === transcript.meetingType,

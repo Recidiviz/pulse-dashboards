@@ -56,7 +56,10 @@ import {
   VerificationOutput,
   VerificationOutputSchema,
 } from "~@meetings/tasks/llm/schemas";
-import { formatTranscripts } from "~@meetings/tasks/llm/utils";
+import {
+  formatTranscripts,
+  normalizeNameCasing,
+} from "~@meetings/tasks/llm/utils";
 
 // =============================================================================
 // CLI
@@ -220,7 +223,9 @@ function buildEvaluatorInputs(
   const person = meeting.client ?? meeting.resident;
   const meetingContext: MeetingContext = {
     personName: person
-      ? [person.givenNames, person.surname].filter(Boolean).join(" ")
+      ? normalizeNameCasing(
+          [person.givenNames, person.surname].filter(Boolean).join(" "),
+        )
       : undefined,
     staffEmail: meeting.staffEmail,
     staffNotes: meeting.userNotepadNotes ?? undefined,

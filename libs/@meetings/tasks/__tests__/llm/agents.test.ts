@@ -681,6 +681,46 @@ describe("SpecialistCore", () => {
       );
     });
 
+    test("should normalize an all-caps client name in user message", async () => {
+      vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
+        id: "test-completion",
+        object: "chat.completion",
+        created: Date.now(),
+        model: "gpt-4o-mini",
+        choices: [
+          {
+            index: 0,
+            message: {
+              role: "assistant",
+              content: JSON.stringify({
+                caseNote: "Test note",
+                staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
+              }),
+            },
+            finish_reason: "stop",
+          },
+        ],
+      } as never);
+
+      await core.runDrafting(
+        mockTranscript,
+        { actionItems: [], entities: [] },
+        mockAgency,
+        { ...mockClient, givenNames: "JEWEL", surname: "HILPERT" },
+      );
+
+      expect(mockOpenAI.chat.completions.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          messages: expect.arrayContaining([
+            expect.objectContaining({
+              role: "user",
+              content: expect.stringContaining("Client: Jewel Hilpert"),
+            }),
+          ]),
+        }),
+      );
+    });
+
     test("should include subheaders in user message when configured", async () => {
       vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
         id: "test-completion",

@@ -62,7 +62,10 @@ import {
   DraftingOutputSchema,
   VerificationOutputSchema,
 } from "~@meetings/tasks/llm/schemas";
-import { formatTranscripts } from "~@meetings/tasks/llm/utils";
+import {
+  formatTranscripts,
+  normalizeNameCasing,
+} from "~@meetings/tasks/llm/utils";
 import { getAgencyConfig } from "~@meetings/trpc/routes/config/utils";
 import { getPersonNameTokens } from "~@meetings/trpc/routes/meeting.helpers";
 import { queueStitchingTask } from "~@meetings/trpc/routes/meeting/utils";
@@ -810,7 +813,9 @@ export function registerTaskRoutes(app: FastifyInstance) {
           actionItems: verificationOutput.actionItems,
           meetingContext: {
             personName: person
-              ? [person.givenNames, person.surname].filter(Boolean).join(" ")
+              ? normalizeNameCasing(
+                  [person.givenNames, person.surname].filter(Boolean).join(" "),
+                )
               : undefined,
             staffEmail: meeting.staffEmail,
             staffNotes: meeting.userNotepadNotes ?? undefined,

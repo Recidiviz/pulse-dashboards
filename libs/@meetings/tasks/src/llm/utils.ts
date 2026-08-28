@@ -15,6 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+const HAS_LOWERCASE = /\p{Ll}/u;
+const LETTER_RUN = /[\p{L}\p{M}]+/gu;
+
+/**
+ * Case management systems usually hand us names in all caps ("JEWEL
+ * HILPERT"), and the writer copies the authoritative name from the CLIENT
+ * PROFILE verbatim, so notes end up reading "...and JEWEL responded". Restore
+ * normal casing before the name reaches a prompt.
+ */
+export function normalizeNameCasing(name: string): string {
+  return name
+    .split(" ")
+    .map((word) =>
+      HAS_LOWERCASE.test(word)
+        ? word
+        : word.replace(
+            LETTER_RUN,
+            (run) => run[0].toUpperCase() + run.slice(1).toLowerCase(),
+          ),
+    )
+    .join(" ");
+}
+
 /** Format speaker-segmented utterances into the raw text fed to the LLM. */
 export function utterancesToRawText(
   utterances: { speaker: string; text: string }[],
