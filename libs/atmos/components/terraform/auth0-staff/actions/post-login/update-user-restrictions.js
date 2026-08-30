@@ -77,6 +77,10 @@ exports.onExecutePostLogin = async (event, api) => {
     (userEmail?.length ?? 0) > 1 &&
     emailSplit[emailSplit.length - 1].toLowerCase();
 
+  if (userDomain === "recidiviz-test.org" && userEmail.includes("pentest")) {
+    api.user.setAppMetadata("forceWorkflowsDemoData", true);
+  }
+
   const DENY_MESSAGE =
     "There was a problem authorizing your account. Please contact feedback@recidiviz.org.";
 
