@@ -574,6 +574,12 @@ function buildAndersonCaseProfile(
         recommended: "Pending",
       },
     ],
+    // Demo content for the US_ID-only facility notes slot (see
+    // ParoleConfig.conductHistoryChildren) -- harmless to include for
+    // US_CO too, since CO's config never renders it.
+    // TODO(OBT-46908): real data source (SQL view) not yet confirmed ready.
+    disciplinaryFacilityNotes:
+      "Resident has maintained a positive attitude and remained fully compliant with facility programming since his last disciplinary infraction. No behavioral concerns reported this quarter.",
     // Full assessment history per tool -- the most recent entry per tool
     // carries the real subcategory/CARAS-factor breakdown; earlier entries
     // are bare score/date pairs, matching what a real historical record

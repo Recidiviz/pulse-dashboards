@@ -18,6 +18,8 @@
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "~shared-pathways";
 
 import { TenantConfig } from "../core/models/types";
+import { UsIdDisciplinaryFacilityNotesSection } from "../core/PageParole/components/US_ID/UsIdDisciplinaryFacilityNotesSection";
+import { UsIdInstantOffensesSection } from "../core/PageParole/components/US_ID/UsIdInstantOffensesSection";
 import { METRIC_TYPE_LABELS, METRIC_TYPES } from "../core/PageVitals/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { INSIGHTS_PAGES } from "../core/views";
@@ -230,8 +232,10 @@ const US_ID_CONFIG = {
       Major: "SLATE_DARK",
       Minor: "SLATE_DARK",
     },
-    showInstantOffenses: true,
     offenseSectionTitle: "Instant Offenses",
+    conductHistoryVisibleYears: 3,
+    sidebarChildren: UsIdInstantOffensesSection,
+    conductHistoryChildren: UsIdDisciplinaryFacilityNotesSection,
   },
   tableColumns: enabledTableColumns[pathways.US_ID],
   vitalsMetrics: [

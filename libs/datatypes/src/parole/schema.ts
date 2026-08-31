@@ -213,6 +213,7 @@ export const paroleCaseSchema = z.object({
   attachments: z.array(paroleAttachmentSchema),
   conductHistory: z.array(paroleConductRecordSchema),
   communitySupervisionPlan: z.array(paroleCommunitySupervisionPlanEntrySchema),
+  disciplinaryFacilityNotes: z.string().optional(),
   docPrograms: z.array(paroleDocProgramSchema),
   edovoPrograms: z.array(paroleEdovoProgramSchema),
   offenseHistory: paroleOffenseHistorySchema,

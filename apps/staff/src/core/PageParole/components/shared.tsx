@@ -16,12 +16,13 @@
 // =============================================================================
 
 import { spacing, typography } from "@recidiviz/design-system";
+import { subYears } from "date-fns";
 import { rem } from "polished";
 import styled from "styled-components";
 
+import { ParoleConductRecord } from "~datatypes";
 import { palette } from "~design-system";
 
-import { NAV_BAR_HEIGHT } from "../../NavigationLayout";
 import { SectionCard as BaseSectionCard } from "../../SectionCard";
 
 // Styled primitives and formatters shared across two or more
@@ -124,6 +125,45 @@ export const SubsectionTitle = styled.div`
   color: ${palette.pine1};
   margin-bottom: ${rem(spacing.md)};
 `;
+
+/**
+ * Years of conduct history the Institutional Conduct History section shows
+ * inline when a tenant's config doesn't set its own window.
+ */
+export const DEFAULT_CONDUCT_HISTORY_YEARS = 1;
+
+/**
+ * Splits conduct records into those inside `visibleYears` and those older,
+ * both sorted newest first.
+ *
+ * `visibleYears` is a count of calendar years, not a duration -- `subYears`
+ * lands on the same calendar day N years back, so a record can't drift in or
+ * out of the window as leap days accumulate.
+ *
+ * Both the section itself and any tenant-owned older-records slot (e.g.
+ * US_CO's "See Older Disciplinaries" toggle) call this with the same
+ * `visibleYears` off the tenant's config, so the two sets stay exactly
+ * complementary -- no record shows up twice, none goes missing.
+ */
+export function partitionConductHistoryByRecency(
+  conductHistory: Array<ParoleConductRecord>,
+  visibleYears: number,
+): {
+  recentRecords: Array<ParoleConductRecord>;
+  olderRecords: Array<ParoleConductRecord>;
+} {
+  const cutoff = subYears(new Date(), visibleYears);
+  const isVisible = (record: ParoleConductRecord) =>
+    parseIsoDate(record.date) >= cutoff;
+
+  const sorted = [...conductHistory].sort(
+    (a, b) => parseIsoDate(b.date).getTime() - parseIsoDate(a.date).getTime(),
+  );
+  return {
+    recentRecords: sorted.filter(isVisible),
+    olderRecords: sorted.filter((record) => !isVisible(record)),
+  };
+}
 
 export const isParolePlanStale = (lastUpdated: string): boolean => {
   const updated = parseIsoDate(lastUpdated);
@@ -238,13 +278,6 @@ export const PAROLE_SECTION_IDS = {
   attachments: "parole-section-attachments",
   communitySupervisionPlan: "parole-section-community-supervision-plan",
 } as const;
-
-// Wraps a MainColumn section so it can be an anchor target. scroll-margin-top
-// keeps the section's heading from landing underneath the fixed top nav bar
-// when scrolled to.
-export const SectionAnchor = styled.div`
-  scroll-margin-top: ${rem(NAV_BAR_HEIGHT + spacing.lg)};
-`;
 
 export function scrollToSection(sectionId: string): void {
   document

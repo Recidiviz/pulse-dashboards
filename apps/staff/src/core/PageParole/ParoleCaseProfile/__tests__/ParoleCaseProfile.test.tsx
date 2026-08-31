@@ -323,6 +323,45 @@ describe("ParoleCaseProfile", () => {
       expect(screen.getByText("Possession of Contraband")).toBeInTheDocument();
     });
 
+    // US_CO shows 1 year behind a toggle; US_ID shows 3 with no toggle
+    // (OBT-46623). Anderson's oldest fixture record is 34 months old, so it
+    // falls outside CO's window but inside ID's.
+    it("shows US_ID three years of records inline, with no toggle", async () => {
+      rootStore.tenantStore.currentTenantId = "US_ID";
+      renderAtPath("/parole/case/45821");
+
+      expect(
+        await findSectionHeading("Institutional Conduct History"),
+      ).toBeInTheDocument();
+      expect(screen.getByText("Possession of Contraband")).toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: /see older disciplinaries/i }),
+      ).not.toBeInTheDocument();
+    });
+
+    it("renders US_ID's facility notes slot", async () => {
+      rootStore.tenantStore.currentTenantId = "US_ID";
+      renderAtPath("/parole/case/45821");
+
+      expect(
+        await findSectionHeading("Institutional Conduct History"),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText("Disciplinary Facility Notes"),
+      ).toBeInTheDocument();
+    });
+
+    it("omits the facility notes slot for US_CO", async () => {
+      renderAtPath("/parole/case/45821");
+
+      expect(
+        await findSectionHeading("Institutional Conduct History"),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByText("Disciplinary Facility Notes"),
+      ).not.toBeInTheDocument();
+    });
+
     it("renders a clean-record empty state when there is no conduct history", async () => {
       renderAtPath("/parole/case/59402");
 

@@ -15,10 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ComponentType } from "react";
+
 import {
   ClientRecord,
   LocationRecord,
   MilestoneType,
+  ParoleCase,
+  ParoleOffense,
   ParoleRiskTool,
   StaffRecord,
   SystemId,
@@ -79,7 +83,6 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
   supervisionDisplayIdCopy?: string;
 
   // Product-specific settings
-
   enableUserRestrictions: boolean; // used for Lantern
   vitalsMetrics?: VitalsMetric[];
   tableColumns?: TableColumns; // used for Pathways
@@ -140,15 +143,28 @@ export type ParoleConfig = {
   /** A mapping from ParoleConductRecord.severity to a PaletteKey for the severity tag in the ConductHistorySection. */
   conductClassificationColors: Record<string, PaletteKey>;
   /**
-   * Shows an "Instant Offenses" bullet list in the case profile sidebar.
-   * US_ID-specific (OBT-45409): other tenants omit this and rely on the
-   * Offense & Criminal History section in the main column instead.
+   * Calendar years of conduct history the Institutional Conduct History
+   * section shows inline.
    */
-  showInstantOffenses?: boolean;
+  conductHistoryVisibleYears?: number;
   /** Subsection heading for the offense list in the Offense & Criminal
    * History section. Defaults to "Current Offenses" if omitted. */
   offenseSectionTitle?: string;
-  /**  Absent for any tenant that hasn't opted into the redesigned Risk Score
+  /**
+   * A tenant-owned component rendered as `children` at the end of the case
+   * profile sidebar's info card. Omit for a tenant with nothing to slot in there.
+   */
+  sidebarChildren?: ComponentType<{ offenses: Array<ParoleOffense> }>;
+  /**
+   * A tenant-owned component rendered as `children` at the end of the
+   * Institutional Conduct History section. Omit for a tenant with nothing to slot in there.
+   */
+  conductHistoryChildren?: ComponentType<{
+    caseDetail: ParoleCase;
+    config: ParoleConfig;
+  }>;
+  /**
+   * Absent for any tenant that hasn't opted into the redesigned Risk Score
    * Trajectory section (raw-score axis, CARAS component list, custom
    * aggregate-view label/tool-subset) -- RiskAssessmentSection falls back to
    * its original LSI/PIT/CARAS/SRT, percent-of-max, CARAS-bar-chart behavior

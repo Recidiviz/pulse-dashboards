@@ -16,21 +16,20 @@
 // =============================================================================
 
 import { spacing, typography } from "@recidiviz/design-system";
-import { subYears } from "date-fns";
 import { rem } from "polished";
-import { useState } from "react";
+import { ReactNode } from "react";
 import styled from "styled-components";
 
 import { ParoleConductRecord } from "~datatypes";
 import { Icon, IconSVG, palette } from "~design-system";
 
-import { PaletteKey, WorkflowsBadgePill } from "../../BadgePill/BadgePill";
+import { PaletteKey } from "../../BadgePill/BadgePill";
 import { SectionCardHeader } from "../../SectionCard";
+import { ConductRecordCard } from "./ConductRecordCard";
 import { PaddedSectionCardBody } from "./PaddedSectionCardBody";
 import {
   FactLabel,
-  formatDate,
-  parseIsoDate,
+  partitionConductHistoryByRecency,
   SectionCard,
   SectionStack,
 } from "./shared";
@@ -53,69 +52,6 @@ const NoInfractionsHeading = styled.div`
   color: ${palette.pine1};
 `;
 
-const RecordCard = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${rem(spacing.sm)};
-  background: ${palette.marble2};
-  border: 1px solid ${palette.slate20};
-  border-radius: ${rem(6)};
-  padding: ${rem(spacing.md)};
-`;
-
-const RecordHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const RecordTitle = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${rem(spacing.sm)};
-  font-weight: 600;
-  color: ${palette.pine1};
-`;
-
-const RecordDate = styled.span`
-  color: ${palette.slate70};
-`;
-
-// WorkflowsBadgePill doesn't expose a className, so this can't restyle it
-// directly -- text-transform is inherited, so wrapping it is enough to force
-// its label uppercase without touching the shared component.
-const UppercaseBadgeWrapper = styled.span`
-  text-transform: uppercase;
-`;
-
-const ToggleButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: ${rem(spacing.xs)};
-  background: none;
-  border: none;
-  padding: 0;
-  color: ${palette.slate70};
-  font-weight: 600;
-  cursor: pointer;
-
-  svg {
-    transition: transform 150ms;
-  }
-
-  &[aria-expanded="true"] svg {
-    transform: rotate(180deg);
-  }
-`;
-
-// Referenced by the ToggleButton's aria-controls so assistive tech can
-// associate the toggle with the region it reveals.
-const OLDER_DISCIPLINARIES_ID = "conduct-history-older-disciplinaries";
-
-function isWithinPastYear(dateString: string): boolean {
-  return parseIsoDate(dateString) >= subYears(new Date(), 1);
-}
-
 function countsBySeverity(
   conductHistory: Array<ParoleConductRecord>,
 ): Array<[string, number]> {
@@ -126,94 +62,45 @@ function countsBySeverity(
   return [...counts.entries()].sort(([a], [b]) => a.localeCompare(b));
 }
 
-function ConductTag({
-  record,
-  conductClassificationColors,
-}: {
-  record: ParoleConductRecord;
-  conductClassificationColors: Record<string, PaletteKey>;
-}) {
-  const color = conductClassificationColors[record.severity] ?? "SLATE_DARK";
-
-  return (
-    <UppercaseBadgeWrapper>
-      <WorkflowsBadgePill text={record.severity} palette={color} />
-    </UppercaseBadgeWrapper>
-  );
-}
-
-function ConductRecordCard({
-  record,
-  conductClassificationColors,
-}: {
-  record: ParoleConductRecord;
-  conductClassificationColors: Record<string, PaletteKey>;
-}) {
-  return (
-    <RecordCard>
-      <RecordHeader>
-        <RecordTitle>
-          <ConductTag
-            record={record}
-            conductClassificationColors={conductClassificationColors}
-          />
-          {record.violation}
-        </RecordTitle>
-        <RecordDate>{formatDate(record.date)}</RecordDate>
-      </RecordHeader>
-      <div>
-        Facility: <FactLabel as="span">{record.facility}</FactLabel>
-      </div>
-      <div>
-        Description: <FactLabel as="span">{record.description}</FactLabel>
-      </div>
-      <div>
-        Disposition: <FactLabel as="span">{record.disposition}</FactLabel>
-      </div>
-    </RecordCard>
-  );
-}
-
 export function ConductHistorySection({
   conductHistory,
   conductClassificationColors,
+  visibleYears,
+  children,
 }: {
   conductHistory: Array<ParoleConductRecord>;
   conductClassificationColors: Record<string, PaletteKey>;
+  visibleYears: number;
+  children?: ReactNode;
 }) {
-  const [showOlder, setShowOlder] = useState(false);
-
   if (conductHistory.length === 0) {
     return (
       <SectionCard>
         <SectionCardHeader>Institutional Conduct History</SectionCardHeader>
         <PaddedSectionCardBody>
-          <NoInfractionsBanner>
-            <Icon
-              kind={IconSVG.Success}
-              width={20}
-              color={palette.signal.highlight}
-              aria-hidden="true"
-            />
-            <NoInfractionsHeading>
-              No Disciplinary Infractions
-            </NoInfractionsHeading>
-          </NoInfractionsBanner>
+          <SectionStack>
+            <NoInfractionsBanner>
+              <Icon
+                kind={IconSVG.Success}
+                width={20}
+                color={palette.signal.highlight}
+                aria-hidden="true"
+              />
+              <NoInfractionsHeading>
+                No Disciplinary Infractions
+              </NoInfractionsHeading>
+            </NoInfractionsBanner>
+            {children}
+          </SectionStack>
         </PaddedSectionCardBody>
       </SectionCard>
     );
   }
 
   const severityCounts = countsBySeverity(conductHistory);
-
-  const sortedConductHistory = [...conductHistory].sort(
-    (a, b) => parseIsoDate(b.date).getTime() - parseIsoDate(a.date).getTime(),
-  );
-  const recentRecords = sortedConductHistory.filter((record) =>
-    isWithinPastYear(record.date),
-  );
-  const olderRecords = sortedConductHistory.filter(
-    (record) => !isWithinPastYear(record.date),
+  const { recentRecords } = partitionConductHistoryByRecency(
+    conductHistory,
+    visibleYears,
   );
 
   return (
@@ -232,39 +119,14 @@ export function ConductHistorySection({
               </span>
             ))}
           </SummaryRow>
-          {recentRecords.map((record, idx) => (
+          {recentRecords.map((record, _) => (
             <ConductRecordCard
-              // eslint-disable-next-line react/no-array-index-key
-              key={`${record.date}-${record.violation}-${idx}`}
+              key={`${record.date}-${record.violation}-${record.facility}-${record.severity}`}
               record={record}
               conductClassificationColors={conductClassificationColors}
             />
           ))}
-          {olderRecords.length > 0 && (
-            <>
-              <ToggleButton
-                type="button"
-                aria-expanded={showOlder}
-                aria-controls={OLDER_DISCIPLINARIES_ID}
-                onClick={() => setShowOlder((prev) => !prev)}
-              >
-                <Icon kind={IconSVG.Caret} width={10} aria-hidden="true" />
-                See Older Disciplinaries ({olderRecords.length})
-              </ToggleButton>
-              {showOlder && (
-                <SectionStack id={OLDER_DISCIPLINARIES_ID}>
-                  {olderRecords.map((record, idx) => (
-                    <ConductRecordCard
-                      // eslint-disable-next-line react/no-array-index-key
-                      key={`${record.date}-${record.violation}-${idx}`}
-                      record={record}
-                      conductClassificationColors={conductClassificationColors}
-                    />
-                  ))}
-                </SectionStack>
-              )}
-            </>
-          )}
+          {children}
         </SectionStack>
       </PaddedSectionCardBody>
     </SectionCard>

@@ -32,7 +32,8 @@ import ModelHydrator from "../../ModelHydrator";
 import { paroleUrl } from "../../views";
 import { CaseProfileSidebar } from "../components/CaseProfileSidebar";
 import { ParoleSectionComponents } from "../components/ParoleSectionComponents";
-import { PAROLE_SECTION_IDS, SectionAnchor } from "../components/shared";
+import { SectionAnchor } from "../components/SectionAnchor";
+import { PAROLE_SECTION_IDS } from "../components/shared";
 
 // Page-level max-width/padding comes from PageParole's shared Main wrapper;
 // this only lays out the sections within it.
@@ -76,6 +77,7 @@ const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
   // so `presenter.caseDetail` is safe to access here -- but NOT at the call
   // site below, where it would be evaluated eagerly on every render pass.
   const { caseDetail } = presenter;
+  const SidebarChildren = presenter.config.sidebarChildren;
 
   return (
     <Wrapper>
@@ -96,10 +98,12 @@ const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
             paroleEligibilityDate={caseDetail.paroleEligibilityDate}
             mandatoryReleaseDate={caseDetail.mandatoryReleaseDate}
             isParoleReturn={caseDetail.isParoleReturn}
-            offenses={caseDetail.offenseHistory.offenses}
-            showInstantOffenses={presenter.config.showInstantOffenses}
             sections={presenter.config.sections}
-          />
+          >
+            {SidebarChildren && (
+              <SidebarChildren offenses={caseDetail.offenseHistory.offenses} />
+            )}
+          </CaseProfileSidebar>
         </SidebarColumn>
 
         <MainColumn>

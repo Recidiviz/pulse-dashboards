@@ -54,6 +54,7 @@ describe("ConductHistorySection", () => {
     const record = makeRecord({ date: "2025-12-31", violation: "Fighting" });
     render(
       <ConductHistorySection
+        visibleYears={1}
         conductHistory={[record]}
         conductClassificationColors={DEFAULT_CONDUCT_CLASSIFICATION_COLORS}
       />,
@@ -65,10 +66,11 @@ describe("ConductHistorySection", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("still hides a record from over a year ago", () => {
+  it("hides a record from over a year ago when no children are provided", () => {
     const record = makeRecord({ date: "2024-12-01", violation: "Fighting" });
     render(
       <ConductHistorySection
+        visibleYears={1}
         conductHistory={[record]}
         conductClassificationColors={DEFAULT_CONDUCT_CLASSIFICATION_COLORS}
       />,
@@ -76,8 +78,92 @@ describe("ConductHistorySection", () => {
 
     expect(screen.queryByText("Fighting")).not.toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /see older disciplinaries/i }),
-    ).toBeInTheDocument();
+      screen.queryByRole("button", { name: /see older disciplinaries/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows a record from within the past year but hides an older one", () => {
+    const recent = makeRecord({ date: "2025-12-31", violation: "Fighting" });
+    const older = makeRecord({
+      date: "2024-12-01",
+      violation: "Unauthorized Area",
+    });
+    render(
+      <ConductHistorySection
+        visibleYears={1}
+        conductHistory={[recent, older]}
+        conductClassificationColors={DEFAULT_CONDUCT_CLASSIFICATION_COLORS}
+      />,
+    );
+
+    expect(screen.getByText("Fighting")).toBeInTheDocument();
+    expect(screen.queryByText("Unauthorized Area")).not.toBeInTheDocument();
+  });
+
+  // US_ID shows 3 years where US_CO shows 1 (OBT-46623), so the same record
+  // must fall inside the window for one tenant and outside it for the other.
+  it("widens the visible window when visibleYears is larger", () => {
+    const twoYearsOld = makeRecord({
+      date: "2024-03-01",
+      violation: "Unauthorized Area",
+    });
+    render(
+      <ConductHistorySection
+        visibleYears={3}
+        conductHistory={[twoYearsOld]}
+        conductClassificationColors={DEFAULT_CONDUCT_CLASSIFICATION_COLORS}
+      />,
+    );
+
+    expect(screen.getByText("Unauthorized Area")).toBeInTheDocument();
+  });
+
+  it("excludes a record older than visibleYears", () => {
+    const fourYearsOld = makeRecord({
+      date: "2022-01-05",
+      violation: "Possession of Contraband",
+    });
+    render(
+      <ConductHistorySection
+        visibleYears={3}
+        conductHistory={[fourYearsOld]}
+        conductClassificationColors={DEFAULT_CONDUCT_CLASSIFICATION_COLORS}
+      />,
+    );
+
+    expect(
+      screen.queryByText("Possession of Contraband"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("renders children at the end of the section when conductHistory is populated", () => {
+    const record = makeRecord({ date: "2025-12-31", violation: "Fighting" });
+    render(
+      <ConductHistorySection
+        visibleYears={1}
+        conductHistory={[record]}
+        conductClassificationColors={DEFAULT_CONDUCT_CLASSIFICATION_COLORS}
+      >
+        <div>Facility Notes</div>
+      </ConductHistorySection>,
+    );
+
+    expect(screen.getByText("Facility Notes")).toBeInTheDocument();
+  });
+
+  it("renders children even when conductHistory is empty", () => {
+    render(
+      <ConductHistorySection
+        visibleYears={1}
+        conductHistory={[]}
+        conductClassificationColors={DEFAULT_CONDUCT_CLASSIFICATION_COLORS}
+      >
+        <div>Facility Notes</div>
+      </ConductHistorySection>,
+    );
+
+    expect(screen.getByText("No Disciplinary Infractions")).toBeInTheDocument();
+    expect(screen.getByText("Facility Notes")).toBeInTheDocument();
   });
 
   it("renders a colored badge using severity as its label when the tenant config has a matching color", () => {
@@ -88,6 +174,7 @@ describe("ConductHistorySection", () => {
     });
     render(
       <ConductHistorySection
+        visibleYears={1}
         conductHistory={[record]}
         conductClassificationColors={{ "Class 1": "BLUE" }}
       />,
@@ -107,6 +194,7 @@ describe("ConductHistorySection", () => {
     });
     render(
       <ConductHistorySection
+        visibleYears={1}
         conductHistory={[record]}
         conductClassificationColors={{ "Class 2": "GREEN" }}
       />,
@@ -138,6 +226,7 @@ describe("ConductHistorySection", () => {
     ];
     const { container } = render(
       <ConductHistorySection
+        visibleYears={1}
         conductHistory={records}
         conductClassificationColors={{ "Class 1": "BLUE", "Class 2": "GREEN" }}
       />,

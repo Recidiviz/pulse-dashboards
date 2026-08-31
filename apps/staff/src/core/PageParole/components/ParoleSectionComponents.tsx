@@ -25,6 +25,7 @@ import { OffenseHistorySection } from "./OffenseHistorySection";
 import { ProgramParticipationSection } from "./ProgramParticipationSection";
 import { RiskAndNeedsAssessmentSection } from "./RiskAndNeedsAssessmentSection";
 import { RiskAssessmentSection } from "./RiskAssessmentSection";
+import { DEFAULT_CONDUCT_HISTORY_YEARS } from "./shared";
 
 /*
   Maps a tenant's paroleConfig.sections entries to a render function for that
@@ -61,12 +62,22 @@ export const ParoleSectionComponents = {
       edovoPrograms={caseDetail.edovoPrograms}
     />
   ),
-  conductHistory: (caseDetail: ParoleCase, config: ParoleConfig) => (
-    <ConductHistorySection
-      conductHistory={caseDetail.conductHistory}
-      conductClassificationColors={config.conductClassificationColors}
-    />
-  ),
+  conductHistory: (caseDetail: ParoleCase, config: ParoleConfig) => {
+    const ConductHistoryChildren = config.conductHistoryChildren;
+    return (
+      <ConductHistorySection
+        conductHistory={caseDetail.conductHistory}
+        conductClassificationColors={config.conductClassificationColors}
+        visibleYears={
+          config.conductHistoryVisibleYears ?? DEFAULT_CONDUCT_HISTORY_YEARS
+        }
+      >
+        {ConductHistoryChildren && (
+          <ConductHistoryChildren caseDetail={caseDetail} config={config} />
+        )}
+      </ConductHistorySection>
+    );
+  },
   attachments: (caseDetail: ParoleCase) => (
     <AttachmentsSection
       parolePlan={caseDetail.parolePlan}

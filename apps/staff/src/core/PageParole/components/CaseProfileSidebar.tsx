@@ -17,10 +17,9 @@
 
 import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
-import { Fragment, useState } from "react";
+import { Fragment, ReactNode, useState } from "react";
 import styled, { css } from "styled-components";
 
-import { ParoleOffense } from "~datatypes";
 import { Icon, IconSVG, palette } from "~design-system";
 
 import useIsStuck from "../../../hooks/useIsStuck";
@@ -93,18 +92,6 @@ const FullWidthAlertBanner = styled(AlertBanner)`
   margin-right: -1rem;
 `;
 
-const InstantOffenseList = styled.ul`
-  ${typography.Sans14}
-  margin: 0;
-  padding-left: 1.25rem;
-`;
-
-const InstantOffenseItem = styled.li`
-  & + & {
-    margin-top: 0.5rem;
-  }
-`;
-
 const StickyNavSentinel = styled.div`
   height: 0;
 `;
@@ -170,9 +157,8 @@ export function CaseProfileSidebar({
   paroleEligibilityDate,
   mandatoryReleaseDate,
   isParoleReturn,
-  offenses,
-  showInstantOffenses,
   sections,
+  children,
 }: {
   name: string;
   docId: string;
@@ -186,9 +172,8 @@ export function CaseProfileSidebar({
   paroleEligibilityDate: string;
   mandatoryReleaseDate: string;
   isParoleReturn: boolean | undefined;
-  offenses: ParoleOffense[];
-  showInstantOffenses: boolean | undefined;
   sections: ParoleSectionName[];
+  children?: ReactNode;
 }) {
   const [sentinel, setSentinel] = useState<HTMLDivElement | null>(null);
   const isNavStuck = useIsStuck(
@@ -287,24 +272,7 @@ export function CaseProfileSidebar({
               </FactRow>
             </div>
 
-            {showInstantOffenses && (
-              <>
-                <Hr />
-
-                <div>
-                  <SubsectionTitle>Instant Offenses</SubsectionTitle>
-                  <InstantOffenseList>
-                    {offenses.map((offense) => (
-                      <InstantOffenseItem
-                        key={`${offense.docket}-${offense.conviction}`}
-                      >
-                        {offense.conviction}
-                      </InstantOffenseItem>
-                    ))}
-                  </InstantOffenseList>
-                </div>
-              </>
-            )}
+            {children}
           </SectionStack>
         </PaddedSectionCardBody>
       </InfoCard>

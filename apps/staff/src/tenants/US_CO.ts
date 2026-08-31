@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { TenantConfig } from "../core/models/types";
+import { UsCoOlderDisciplinariesSection } from "../core/PageParole/components/US_CO/UsCoOlderDisciplinariesSection";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 
 const US_CO_CONFIG = {
@@ -45,10 +46,8 @@ const US_CO_CONFIG = {
       "Class 2": "GREEN",
       "Class 3": "PURPLE",
     },
-    // OBT-43413: CO-specific Risk Score Trajectory redesign (raw-score axis,
-    // CARAS component list, RT/CST tools, "Entire CTAP Suite" aggregate
-    // view). Other tenants (e.g. US_ID) omit this and keep the original
-    // LSI/PIT/CARAS/SRT percent-of-max behavior.
+    conductHistoryVisibleYears: 1,
+    conductHistoryChildren: UsCoOlderDisciplinariesSection,
     riskAssessmentConfig: {
       tools: ["LSI", "PIT", "CARAS", "SRT", "RT", "CST"],
       aggregateView: {

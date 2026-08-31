@@ -35,20 +35,13 @@ const REQUIRED_PROPS = {
   paroleEligibilityDate: "2026-08-16",
   mandatoryReleaseDate: "2028-06-26",
   isParoleReturn: false,
-  offenses: [
-    {
-      county: "Sangamon County",
-      docket: "2021-CF-0489",
-      conviction: "Armed Robbery",
-      classFelony: "Class X Felony",
-      sentence: "8 years",
-      dateOfOffense: "2021-07-30",
-      convictionDate: "2022-07-30",
-      offenseNarrative: "Defendant entered convenience store with firearm.",
-    },
-  ],
-  showInstantOffenses: false,
 };
+
+// Deliberately not a real feature name. The sidebar owns no tenant-specific
+// content of its own any more, so a marker only `children` can produce is
+// what proves the slot -- asserting on a real heading like "Instant
+// Offenses" would pass whether the slot worked or not.
+const SLOT_MARKER = "tenant slot marker";
 
 // Renders each section's PAROLE_SECTION_IDS target alongside the sidebar, the
 // same way ParoleCaseProfile's real MainColumn does, so scrollIntoView calls
@@ -97,23 +90,33 @@ describe("CaseProfileSidebar", () => {
     expect(screen.getByText("Parole Return")).toBeInTheDocument();
   });
 
-  it("does not render Instant Offenses when showInstantOffenses is false", () => {
+  it("renders no slot content when no children are given", () => {
     renderSidebar(["attachments"]);
 
-    expect(screen.queryByText("Instant Offenses")).not.toBeInTheDocument();
+    expect(screen.queryByText(SLOT_MARKER)).not.toBeInTheDocument();
+    // The info card's own fixed content still renders, so this isn't
+    // passing just because the card failed to render at all.
+    expect(screen.getByText("Sentence Info")).toBeInTheDocument();
   });
 
-  it("renders Instant Offenses when showInstantOffenses is true", () => {
+  it("renders children after the info card's own sections", () => {
     render(
-      <CaseProfileSidebar
-        {...REQUIRED_PROPS}
-        showInstantOffenses
-        sections={["attachments"]}
-      />,
+      <CaseProfileSidebar {...REQUIRED_PROPS} sections={["attachments"]}>
+        <div>{SLOT_MARKER}</div>
+      </CaseProfileSidebar>,
     );
 
-    expect(screen.getByText("Instant Offenses")).toBeInTheDocument();
-    expect(screen.getByText("Armed Robbery")).toBeInTheDocument();
+    const sentenceInfo = screen.getByText("Sentence Info");
+    const slotContent = screen.getByText(SLOT_MARKER);
+
+    expect(slotContent).toBeInTheDocument();
+    // The slot's contract is "at the end of the info card", so assert order,
+    // not just presence -- otherwise moving it above Personal Details would
+    // still pass.
+    expect(
+      sentenceInfo.compareDocumentPosition(slotContent) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
   });
 
   it("renders the nav from the sections prop, not a fixed list", () => {
