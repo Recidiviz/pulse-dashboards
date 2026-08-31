@@ -42,12 +42,12 @@ const content: StateSpecificMetricCopy = {
   prisonPopulationBySentenceLengthMin: {
     title: "Prison population by minimum sentence (months)",
     methodology:
-      "The chart describes the number of people within each minimum sentence category (in months) as of the date specified in the chart title.",
+      "The chart describes the number of people within each minimum sentence category (in months) as of the date specified in the chart title. Sentence length represents aggregate sentence, taking into account the sentences for all crimes of conviction.",
   },
   prisonPopulationBySentenceLengthMax: {
     title: "Prison population by maximum sentence (months)",
     methodology:
-      "The chart describes the number of people within each maximum sentence category (in months) as of the date specified in the chart title.",
+      "The chart describes the number of people within each maximum sentence category (in months) as of the date specified in the chart title. Sentence length represents aggregate sentence, taking into account the sentences for all crimes of conviction.",
   },
   prisonPopulationByChargeCountyCode: {
     title: "Prison population by conviction county",
@@ -85,6 +85,8 @@ const content: StateSpecificMetricCopy = {
     title: "Prison population by religion",
     methodology:
       "The chart describes the number of people from each religion as of the date specified in the chart title.",
+    subpoints:
+      "* The vast majority (~95%) of individuals labeled with Not Specified/Unknown on the Religion dashboard fall into the Not Specified category, meaning they did not provide a religious affiliation when asked. The remaining individuals, who fall into the Unknown category, are nearly all newly admitted to the Department and have not yet had all of their information entered on the computer system.",
   },
   prisonPopulationByMaritalStatus: {
     title: "Prison population by marital status",
