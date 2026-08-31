@@ -22,12 +22,17 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import styled from "styled-components";
 
+import { StaffRecord, SystemId } from "~datatypes";
+
 import {
   formatWorkflowsDate,
   formatWorkflowsDateWithTime,
 } from "../../../../src/utils";
 import PersonIcon from "../../../assets/static/images/person.svg?react";
+import { useRootStore } from "../../../components/StoreProvider";
 import { OfficerRequest } from "../../../FirestoreStore";
+import { SearchType } from "../../models/types";
+import { getOfficerFullName } from "../../WorkflowsOfficerName/getOfficerFullName";
 import {
   DetailsBox,
   DetailsHeading,
@@ -87,6 +92,25 @@ function OfficerActionContents({
   );
 }
 
+function resolveDisplayName(
+  by: string,
+  updateById: string | undefined,
+  officers: StaffRecord[],
+  searchType: SearchType | undefined,
+  currentUserEmail: string | undefined,
+): string {
+  if (by.trim() !== "") {
+    return by.trim();
+  }
+  if (updateById) {
+    return (
+      getOfficerFullName(officers, updateById, undefined, searchType) ??
+      updateById
+    );
+  }
+  return currentUserEmail ?? "";
+}
+
 function PersonHeader({
   personName,
   date,
@@ -108,10 +132,12 @@ function PersonHeader({
 /**
  * For a given officer action, display the action and the supervisor response (if one exists)
  */
-function ActionEntry({
+const ActionEntry = observer(function ActionEntry({
   action,
+  systemType,
 }: {
   action: OfficerRequest;
+  systemType: SystemId;
 }): React.ReactElement<any> | null {
   const response = action.supervisorResponse;
   let actionText: string;
@@ -129,12 +155,43 @@ function ActionEntry({
     REVISION: "Requested revisions",
   };
 
+  const {
+    workflowsStore: {
+      availableOfficersWithOrWithoutCaseloads,
+      availableOfficers,
+      searchStore: { searchType },
+    },
+    userStore: { userEmail },
+  } = useRootStore();
+
+  const officers =
+    systemType === "INCARCERATION"
+      ? availableOfficers
+      : availableOfficersWithOrWithoutCaseloads;
+
   const responseText = `${response ? responseTypeVerb[response.type] : "Response"} for ${actionText}`;
+  const actionBy = resolveDisplayName(
+    action.by,
+    action.updateById,
+    officers,
+    searchType,
+    userEmail,
+  );
+
   return (
     <>
       {response && (
         <DetailsBox>
-          <PersonHeader personName={response.by} date={response.date} />
+          <PersonHeader
+            personName={resolveDisplayName(
+              response.by,
+              response.updateById,
+              officers,
+              searchType,
+              userEmail,
+            )}
+            date={response.date}
+          />
           <SecureSmallDetailsCopy>{responseText}</SecureSmallDetailsCopy>
           {response.type === "DENIAL" && response.revisionRequest && (
             <SecureSmallDetailsCopy>
@@ -149,12 +206,12 @@ function ActionEntry({
         </DetailsBox>
       )}
       <DetailsBox>
-        <PersonHeader personName={action.by} date={action.date} />
+        <PersonHeader personName={actionBy} date={action.date} />
         <OfficerActionContents action={action}></OfficerActionContents>
       </DetailsBox>
     </>
   );
-}
+});
 
 export const ActionHistory = observer(function ActionHistory({
   opportunity,
@@ -167,7 +224,11 @@ export const ActionHistory = observer(function ActionHistory({
     <DetailsSection>
       <DetailsHeading>Action History</DetailsHeading>
       {opportunity.actionHistory.toReversed().flatMap((action) => (
-        <ActionEntry action={action} key={action.date.toString()} />
+        <ActionEntry
+          action={action}
+          systemType={opportunity.config.systemType}
+          key={action.date.toString()}
+        />
       ))}
     </DetailsSection>
   );
