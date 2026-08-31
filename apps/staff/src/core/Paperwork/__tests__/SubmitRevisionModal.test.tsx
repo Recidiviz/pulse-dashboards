@@ -19,6 +19,8 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import ReactModal from "react-modal";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
+import { isDemoMode, isOfflineMode } from "~client-env-utils";
+
 import { mockOpportunity } from "../../__tests__/testUtils";
 import { SubmitRevisionModal } from "../SubmitRevisionModal";
 
@@ -31,6 +33,8 @@ vi.mock("react-router-dom", async () => ({
 }));
 
 vi.mock("react-hot-toast", () => ({ default: mockToast }));
+
+vi.mock("~client-env-utils");
 
 vi.mock("../../WorkflowsOfficerName/WorkflowsOfficerName", () => ({
   default: ({ officerId }: { officerId: string }) => <span>{officerId}</span>,
@@ -113,6 +117,8 @@ beforeEach(() => {
   vi.useFakeTimers();
   ReactModal.setAppElement(document.createElement("div"));
   vi.clearAllMocks();
+  vi.mocked(isDemoMode).mockReturnValue(false);
+  vi.mocked(isOfflineMode).mockReturnValue(false);
 });
 
 afterEach(() => {
@@ -324,6 +330,102 @@ describe("Officer dropdown", () => {
     expect(
       screen.queryByRole("menuitem", { name: otherOfficer.id }),
     ).not.toBeInTheDocument();
+  });
+
+  it("lists all available officers regardless of actionHistory in demo mode", () => {
+    vi.mocked(isDemoMode).mockReturnValue(true);
+    const otherOfficer = {
+      staffExternalId: "officer2",
+      surname: "Jones",
+      givenNames: "Jane",
+    };
+    const workflowsStoreWithBoth = {
+      availableOfficersWithOrWithoutCaseloads: [mockOfficer, otherOfficer],
+    };
+    render(
+      <MemoryRouter initialEntries={["/workflows/some-opportunity"]}>
+        <Routes>
+          <Route
+            path="/workflows/some-opportunity"
+            element={
+              <SubmitRevisionModal
+                showModal
+                onCloseFn={vi.fn()}
+                opportunity={
+                  {
+                    ...mockOpportunity,
+                    actionHistory: [
+                      {
+                        type: "APPROVAL",
+                        updateById: mockOfficer.staffExternalId,
+                      },
+                    ],
+                    setSupervisorResponse: vi.fn(),
+                  } as any
+                }
+                workflowsStore={workflowsStoreWithBoth as any}
+              />
+            }
+          />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    openDropdown();
+    expect(
+      screen.getByRole("menuitem", { name: mockOfficer.staffExternalId }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("menuitem", { name: otherOfficer.staffExternalId }),
+    ).toBeInTheDocument();
+  });
+
+  it("lists all available officers regardless of actionHistory in offline mode", () => {
+    vi.mocked(isOfflineMode).mockReturnValue(true);
+    const otherOfficer = {
+      staffExternalId: "officer2",
+      surname: "Jones",
+      givenNames: "Jane",
+    };
+    const workflowsStoreWithBoth = {
+      availableOfficersWithOrWithoutCaseloads: [mockOfficer, otherOfficer],
+    };
+    render(
+      <MemoryRouter initialEntries={["/workflows/some-opportunity"]}>
+        <Routes>
+          <Route
+            path="/workflows/some-opportunity"
+            element={
+              <SubmitRevisionModal
+                showModal
+                onCloseFn={vi.fn()}
+                opportunity={
+                  {
+                    ...mockOpportunity,
+                    actionHistory: [
+                      {
+                        type: "APPROVAL",
+                        updateById: mockOfficer.staffExternalId,
+                      },
+                    ],
+                    setSupervisorResponse: vi.fn(),
+                  } as any
+                }
+                workflowsStore={workflowsStoreWithBoth as any}
+              />
+            }
+          />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    openDropdown();
+    expect(
+      screen.getByRole("menuitem", { name: mockOfficer.staffExternalId }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("menuitem", { name: otherOfficer.staffExternalId }),
+    ).toBeInTheDocument();
   });
 });
 
