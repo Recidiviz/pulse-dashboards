@@ -17,6 +17,8 @@
 
 import { z } from "zod";
 
+import { EntityItemSchema } from "~@meetings/tasks/llm/schemas";
+
 /** A ground-truth action item: who owes what, and by when. */
 export const truthActionItemSchema = z.object({
   assignee: z.string(),
@@ -39,8 +41,9 @@ export const truthFileSchema = z.object({
   acceptableActionItems: z.array(truthActionItemSchema).optional(),
   // Unscored (no bucket's criteria reads them), but still required so a
   // truncated or half-authored truth blob fails loudly instead of quietly
-  // scoring as an empty extraction.
-  entities: z.array(z.record(z.unknown())),
+  // scoring as an empty extraction. Shaped like the pipeline's own entities so
+  // truth can feed the writer prompt (see `cli/refresh-writer-inputs.ts`).
+  entities: z.array(EntityItemSchema),
 });
 
 export type TruthFile = z.infer<typeof truthFileSchema>;

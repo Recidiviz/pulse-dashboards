@@ -35,7 +35,6 @@ import type {
   AgencyConfig,
   MeetingTypeConfigEntry,
 } from "~@meetings/config/types";
-import { Resident } from "~@meetings/prisma/client";
 import type { Person } from "~@meetings/prisma/types";
 import { generateContentWithZodSchema } from "~@meetings/tasks/llm/clients/gemini";
 import { completeChatWithZodSchema } from "~@meetings/tasks/llm/clients/openai";
@@ -50,7 +49,10 @@ import {
   VerificationOutput,
   VerificationPayloadSchema,
 } from "~@meetings/tasks/llm/schemas";
-import { normalizeNameCasing } from "~@meetings/tasks/llm/utils";
+import {
+  buildWriterUserVariables,
+  createAliasPromptRules,
+} from "~@meetings/tasks/llm/writerInputs";
 import { createLogger } from "~server-setup-plugin";
 
 function buildMeetingTypeExtractionContext(
@@ -60,15 +62,6 @@ function buildMeetingTypeExtractionContext(
     return "";
   }
   return `\n- Meeting Type Context: ${config.extractionNote}`;
-}
-
-function buildMeetingTypeCaseNoteGuidance(
-  config: MeetingTypeConfigEntry | undefined,
-): string {
-  if (!config?.caseNoteGuidance) {
-    return "";
-  }
-  return `\nMeeting Type Context: ${config.caseNoteGuidance}`;
 }
 
 /**
@@ -134,7 +127,6 @@ function buildDraftingOutputSchema(
     DraftingOutput & Record<string, string>
   >;
 }
-const isResident = (p: Person): p is Resident => "facilityId" in p;
 
 export class SpecialistCore {
   private openai: OpenAI;
@@ -215,7 +207,7 @@ export class SpecialistCore {
       agency.rules.map((r) => `- ${r}`).join("\n") +
       buildMeetingTypeExtractionContext(meetingTypeConfig);
 
-    const extractionAliasBullets = this.createAliasPromptRules(agency, person);
+    const extractionAliasBullets = createAliasPromptRules(agency, person);
     let aliasRules = "";
     if (extractionAliasBullets !== null) {
       aliasRules =
@@ -280,61 +272,11 @@ export class SpecialistCore {
       config_version: generateConfigKey(agency),
     });
 
-    const glossaryStr = Object.entries(agency.glossary)
-      .map(([k, v]) => `${k}: ${v}`)
-      .join("\n");
-
-    const entityDict = facts.entities.reduce(
-      (acc, e) => ({ ...acc, [e.value]: e.entityKind }),
-      {},
+    const userMessage = PROMPTS.WRITER.USER(
+      buildWriterUserVariables(transcript, facts, agency, person),
     );
-    const factsStr = dedent`ACTIONS: ${facts.actionItems.length} found
-      ENTITIES: ${JSON.stringify(entityDict)}`;
-    const clientContextStr = `Client: ${normalizeNameCasing(
-      `${person.givenNames} ${person.surname}`,
-    )}`;
-
-    const meetingTypeConfig = agency?.meetingTypes?.find(
-      (mt) => mt.type === transcript.meetingType,
-    )?.promptConfig;
-    const meetingTypeCaseNoteGuidance =
-      buildMeetingTypeCaseNoteGuidance(meetingTypeConfig);
-
-    let structureStr = "";
-    for (const output of agency.outputs) {
-      let promptGuidance = output.promptGuidance;
-      if (output.id === "case_note") {
-        promptGuidance += meetingTypeCaseNoteGuidance;
-
-        if (output.subheaders?.length) {
-          promptGuidance += dedent`\nUse these subheaders where relevant:
-        ${output.subheaders.join(", ")}. Omit any that don't apply,
-        and add others if they'd better organize the content.`;
-        }
-      }
-
-      structureStr += `- (${output.label}): ${promptGuidance}\n`;
-    }
-
-    const aliasPromptRules = this.createAliasPromptRules(agency, person);
-    if (aliasPromptRules !== null) {
-      structureStr +=
-        dedent`#### ALIASES\n Below are aliases that have been defined for this agency. Use them in place of their default terms.` +
-        aliasPromptRules;
-    }
-
-    structureStr = dedent(structureStr);
 
     const additionalOutputsSection = buildAdditionalOutputsSection(agency);
-
-    const userMessage = PROMPTS.WRITER.USER({
-      transcript: transcript.rawText,
-      extracted: factsStr,
-      glossary: glossaryStr,
-      client: clientContextStr,
-      structure: structureStr,
-      poNotes: transcript.poNotes,
-    });
 
     try {
       const result = await completeChatWithZodSchema({
@@ -373,59 +315,6 @@ export class SpecialistCore {
       });
       throw e;
     }
-  }
-
-  /**
-   * Creates a bulleted list of rules regarding alias config to feed to our LLM
-   * @param agency The agency config for this iteration
-   * @param person The person we're running this iteration against
-   * @returns A string containing a bulleted list of alias rules
-   */
-  private createAliasPromptRules(
-    agency: AgencyConfig,
-    person: Person,
-  ): string | null {
-    const aliasRules: string[] = [];
-
-    if (isResident(person)) {
-      const residentAlias = agency.aliases?.resident ?? "Resident";
-      // A weird case, but basically if someone specifically wants residents to be referred to as "Clients",
-      // that's ACTUALLY our default prompting behavior, and we shouldn't add a bullet for this.
-      if (residentAlias !== "Client") {
-        // This says "Client", intentionally, because the prompt doesn't delineate between resident/client
-        aliasRules.push(
-          `Use "${residentAlias}" instead of "Client" when referring to the client.`,
-        );
-      }
-    } else if (agency.aliases?.client && agency.aliases.client !== "Client") {
-      aliasRules.push(
-        `Use "${agency.aliases.client}" instead of "Client" when referring to the client.`,
-      );
-    }
-
-    if (
-      agency.aliases?.staffMember &&
-      agency.aliases.staffMember !== "Staff Member"
-    ) {
-      aliasRules.push(
-        `Use "${agency.aliases.staffMember}" instead of "Staff Member" when referring to the staff member.`,
-      );
-    }
-
-    if (
-      agency.aliases?.thirdParty &&
-      agency.aliases.thirdParty !== "Third Party"
-    ) {
-      aliasRules.push(
-        `Use "${agency.aliases.thirdParty}" instead of "Third Party" when referring to a third party.`,
-      );
-    }
-
-    if (aliasRules.length === 0) {
-      return null;
-    }
-
-    return aliasRules.map((rule) => `\n- ${rule}`).join("");
   }
 
   /**

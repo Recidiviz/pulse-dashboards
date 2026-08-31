@@ -46,6 +46,29 @@
         "dev": {}
       },
       "defaultConfiguration": "dev"
+    },
+    "requires-sops-env:refresh-writer-inputs": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@meetings/prisma"],
+          "target": "prisma-generate"
+        }
+      ],
+      "options": {
+        "command": "tsx src/cli/refresh-writer-inputs.ts",
+        "cwd": "{projectRoot}"
+      },
+      "inputs": [
+        "{projectRoot}/**/*",
+        "{workspaceRoot}/libs/@meetings/tasks/src/llm/**/*",
+        "{workspaceRoot}/libs/@meetings/config/src/**/*",
+        "{workspaceRoot}/libs/@meetings/trpc/src/routes/config/**/*"
+      ],
+      "configurations": {
+        "dev": {}
+      },
+      "defaultConfiguration": "dev"
     }
   }
 }

@@ -24,6 +24,7 @@ import {
   ExtractionOutput,
   TranscriptInput,
 } from "~@meetings/tasks/llm/schemas";
+import { buildWriterUserVariables } from "~@meetings/tasks/llm/writerInputs";
 import { mockGemini, mockOpenAI } from "~@meetings/tasks/test/setup";
 
 describe("SpecialistCore", () => {
@@ -601,7 +602,7 @@ describe("SpecialistCore", () => {
       expect(mockOpenAI.chat.completions.create).toHaveBeenCalled();
     });
 
-    test("should include glossary in user message", async () => {
+    test("should pass the writer user variables into the user message", async () => {
       vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
         id: "test-completion",
         object: "chat.completion",
@@ -629,138 +630,23 @@ describe("SpecialistCore", () => {
         mockClient,
       );
 
-      expect(mockOpenAI.chat.completions.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          messages: expect.arrayContaining([
-            expect.objectContaining({
-              role: "user",
-              content: expect.stringContaining("PO: Probation Officer"),
-            }),
-          ]),
-        }),
-      );
-    });
-
-    test("should include client context in user message", async () => {
-      vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
-        id: "test-completion",
-        object: "chat.completion",
-        created: Date.now(),
-        model: "gpt-4o-mini",
-        choices: [
-          {
-            index: 0,
-            message: {
-              role: "assistant",
-              content: JSON.stringify({
-                caseNote: "Test note",
-                staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
-              }),
-            },
-            finish_reason: "stop",
-          },
-        ],
-      } as never);
-
-      await core.runDrafting(
+      // buildWriterUserVariables has its own tests in writerInputs.test.ts;
+      // this only checks that runDrafting threads its output into the prompt.
+      const expected = buildWriterUserVariables(
         mockTranscript,
         { actionItems: [], entities: [] },
         mockAgency,
         mockClient,
       );
+      const callArg = vi.mocked(mockOpenAI.chat.completions.create).mock
+        .calls[0]?.[0] as { messages: { role: string; content: string }[] };
+      const userContent =
+        callArg.messages.find((m) => m.role === "user")?.content ?? "";
 
-      expect(mockOpenAI.chat.completions.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          messages: expect.arrayContaining([
-            expect.objectContaining({
-              role: "user",
-              content: expect.stringContaining("John Doe"),
-            }),
-          ]),
-        }),
-      );
+      for (const value of Object.values(expected)) {
+        expect(userContent).toContain(value);
+      }
     });
-
-    test("should normalize an all-caps client name in user message", async () => {
-      vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
-        id: "test-completion",
-        object: "chat.completion",
-        created: Date.now(),
-        model: "gpt-4o-mini",
-        choices: [
-          {
-            index: 0,
-            message: {
-              role: "assistant",
-              content: JSON.stringify({
-                caseNote: "Test note",
-                staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
-              }),
-            },
-            finish_reason: "stop",
-          },
-        ],
-      } as never);
-
-      await core.runDrafting(
-        mockTranscript,
-        { actionItems: [], entities: [] },
-        mockAgency,
-        { ...mockClient, givenNames: "JEWEL", surname: "HILPERT" },
-      );
-
-      expect(mockOpenAI.chat.completions.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          messages: expect.arrayContaining([
-            expect.objectContaining({
-              role: "user",
-              content: expect.stringContaining("Client: Jewel Hilpert"),
-            }),
-          ]),
-        }),
-      );
-    });
-
-    test("should include subheaders in user message when configured", async () => {
-      vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
-        id: "test-completion",
-        object: "chat.completion",
-        created: Date.now(),
-        model: "gpt-4o-mini",
-        choices: [
-          {
-            index: 0,
-            message: {
-              role: "assistant",
-              content: JSON.stringify({
-                caseNote: "Test note",
-                staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
-              }),
-            },
-            finish_reason: "stop",
-          },
-        ],
-      } as never);
-
-      await core.runDrafting(
-        mockTranscript,
-        { actionItems: [], entities: [] },
-        mockAgency, // has subheaders: ["Housing", "Mental Health"]
-        mockClient,
-      );
-
-      expect(mockOpenAI.chat.completions.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          messages: expect.arrayContaining([
-            expect.objectContaining({
-              role: "user",
-              content: expect.stringContaining("Housing"),
-            }),
-          ]),
-        }),
-      );
-    });
-
     test("should throw on error", async () => {
       vi.mocked(mockOpenAI.chat.completions.create).mockRejectedValueOnce(
         new Error("API error"),
@@ -774,183 +660,6 @@ describe("SpecialistCore", () => {
           mockClient,
         ),
       ).rejects.toThrow("API error");
-    });
-
-    describe("meeting type promptConfig", () => {
-      const agencyWithPromptConfig: AgencyConfig = {
-        ...mockAgency,
-        meetingTypes: [
-          {
-            type: "Collateral Contact",
-            promptConfig: {
-              caseNoteGuidance:
-                "Document what the contact reported about the client.",
-            },
-            visible: true,
-          },
-        ],
-      };
-
-      const emptyDraftingResponse = {
-        caseNote: "Test note",
-        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
-      };
-
-      test("should inject caseNoteGuidance when meetingType matches a configured type", async () => {
-        vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
-          id: "test-completion",
-          object: "chat.completion",
-          created: 0,
-          model: "gpt-4o-mini",
-          choices: [
-            {
-              index: 0,
-              message: {
-                role: "assistant",
-                content: JSON.stringify(emptyDraftingResponse),
-              },
-              finish_reason: "stop",
-            },
-          ],
-        } as never);
-
-        await core.runDrafting(
-          { ...mockTranscript, meetingType: "Collateral Contact" },
-          { actionItems: [], entities: [] },
-          agencyWithPromptConfig,
-          mockClient,
-        );
-
-        expect(mockOpenAI.chat.completions.create).toHaveBeenCalledWith(
-          expect.objectContaining({
-            messages: expect.arrayContaining([
-              expect.objectContaining({
-                role: "user",
-                content: expect.stringContaining(
-                  "Document what the contact reported about the client.",
-                ),
-              }),
-            ]),
-          }),
-        );
-      });
-
-      test("should not inject caseNoteGuidance when transcript has no meetingType", async () => {
-        vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
-          id: "test-completion",
-          object: "chat.completion",
-          created: 0,
-          model: "gpt-4o-mini",
-          choices: [
-            {
-              index: 0,
-              message: {
-                role: "assistant",
-                content: JSON.stringify(emptyDraftingResponse),
-              },
-              finish_reason: "stop",
-            },
-          ],
-        } as never);
-
-        await core.runDrafting(
-          mockTranscript,
-          { actionItems: [], entities: [] },
-          agencyWithPromptConfig,
-          mockClient,
-        );
-
-        const callArg = vi.mocked(mockOpenAI.chat.completions.create).mock
-          .calls[0]?.[0] as { messages: { role: string; content: string }[] };
-        const userContent =
-          callArg.messages.find((m) => m.role === "user")?.content ?? "";
-        expect(userContent).not.toContain("Meeting Type Context");
-      });
-
-      test("should not inject caseNoteGuidance when meetingType has no matching config", async () => {
-        vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
-          id: "test-completion",
-          object: "chat.completion",
-          created: 0,
-          model: "gpt-4o-mini",
-          choices: [
-            {
-              index: 0,
-              message: {
-                role: "assistant",
-                content: JSON.stringify(emptyDraftingResponse),
-              },
-              finish_reason: "stop",
-            },
-          ],
-        } as never);
-
-        await core.runDrafting(
-          { ...mockTranscript, meetingType: "Assessment" },
-          { actionItems: [], entities: [] },
-          agencyWithPromptConfig,
-          mockClient,
-        );
-
-        const callArg = vi.mocked(mockOpenAI.chat.completions.create).mock
-          .calls[0]?.[0] as { messages: { role: string; content: string }[] };
-        const userContent =
-          callArg.messages.find((m) => m.role === "user")?.content ?? "";
-        expect(userContent).not.toContain("Meeting Type Context");
-      });
-
-      test("should only inject caseNoteGuidance into case_note output, not other outputs", async () => {
-        const agencyWithMultipleOutputs: AgencyConfig = {
-          ...agencyWithPromptConfig,
-          outputs: [
-            {
-              id: "case_note",
-              label: "Case Note",
-              promptGuidance: "Write the case note here.",
-            },
-            {
-              id: "minutes",
-              label: "Meeting Minutes",
-              promptGuidance: "Summarize the meeting.",
-            },
-          ],
-        };
-
-        vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
-          id: "test-completion",
-          object: "chat.completion",
-          created: 0,
-          model: "gpt-4o-mini",
-          choices: [
-            {
-              index: 0,
-              message: {
-                role: "assistant",
-                content: JSON.stringify(emptyDraftingResponse),
-              },
-              finish_reason: "stop",
-            },
-          ],
-        } as never);
-
-        await core.runDrafting(
-          { ...mockTranscript, meetingType: "Collateral Contact" },
-          { actionItems: [], entities: [] },
-          agencyWithMultipleOutputs,
-          mockClient,
-        );
-
-        const callArg = vi.mocked(mockOpenAI.chat.completions.create).mock
-          .calls[0]?.[0] as { messages: { role: string; content: string }[] };
-        const userContent =
-          callArg.messages.find((m) => m.role === "user")?.content ?? "";
-
-        // Guidance appears once (for case_note), not duplicated into minutes
-        const occurrences = (
-          userContent.match(/Document what the contact reported/g) ?? []
-        ).length;
-        expect(occurrences).toBe(1);
-      });
     });
 
     describe("additionalOutputs", () => {
@@ -1120,174 +829,6 @@ describe("SpecialistCore", () => {
         );
 
         expect(result.caseNote).toBe("SUMMARY: Routine check-in.");
-      });
-    });
-
-    describe("aliases", () => {
-      const emptyDraftingResponse = {
-        caseNote: "Test note",
-        staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
-      };
-
-      const mockDraftingCompletion = () => {
-        vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
-          id: "test-completion",
-          object: "chat.completion",
-          created: 0,
-          model: "gpt-4o-mini",
-          choices: [
-            {
-              index: 0,
-              message: {
-                role: "assistant",
-                content: JSON.stringify(emptyDraftingResponse),
-              },
-              finish_reason: "stop",
-            },
-          ],
-        } as never);
-      };
-
-      const getUserContent = () => {
-        const callArg = vi.mocked(mockOpenAI.chat.completions.create).mock
-          .calls[0]?.[0] as { messages: { role: string; content: string }[] };
-        return callArg.messages.find((m) => m.role === "user")?.content ?? "";
-      };
-
-      test("should inject the staffMember and thirdParty aliases into the user message", async () => {
-        mockDraftingCompletion();
-
-        await core.runDrafting(
-          mockTranscript,
-          { actionItems: [], entities: [] },
-          {
-            ...mockAgency,
-            aliases: { staffMember: "Coach", thirdParty: "Collateral" },
-          },
-          mockClient,
-        );
-
-        const userContent = getUserContent();
-        expect(userContent).toContain("Coach");
-        expect(userContent).toContain("Collateral");
-      });
-
-      test("should not inject an alias rule when its value matches its own default term", async () => {
-        mockDraftingCompletion();
-
-        await core.runDrafting(
-          mockTranscript,
-          { actionItems: [], entities: [] },
-          {
-            ...mockAgency,
-            aliases: { client: "Client", resident: "Resident" },
-          },
-          mockClient,
-        );
-
-        // The ALIASES header appears whenever aliases are configured at all,
-        // but no per-term bullet should be added for a no-op alias.
-        const userContent = getUserContent();
-        expect(userContent).not.toContain('instead of "Client"');
-        expect(userContent).not.toContain('instead of "Resident"');
-      });
-
-      test("should inject the resident alias when explicitly set to its own default term", async () => {
-        mockDraftingCompletion();
-
-        await core.runDrafting(
-          mockTranscript,
-          { actionItems: [], entities: [] },
-          { ...mockAgency, aliases: { resident: "Resident" } },
-          mockResident,
-        );
-
-        // The LLM's default term is always "Client", so setting the resident
-        // alias to "Resident" is not a no-op — it should still be injected.
-        expect(getUserContent()).toContain('instead of "Client"');
-      });
-
-      test("should not inject the resident alias when the person is a Client", async () => {
-        mockDraftingCompletion();
-
-        await core.runDrafting(
-          mockTranscript,
-          { actionItems: [], entities: [] },
-          { ...mockAgency, aliases: { resident: "Friend" } },
-          mockClient,
-        );
-
-        expect(getUserContent()).not.toContain("Friend");
-      });
-
-      test("should default to the Resident alias for a resident when the agency hasn't configured one", async () => {
-        mockDraftingCompletion();
-
-        await core.runDrafting(
-          mockTranscript,
-          { actionItems: [], entities: [] },
-          mockAgency,
-          mockResident,
-        );
-
-        expect(getUserContent()).toContain(
-          'Use "Resident" instead of "Client"',
-        );
-      });
-
-      test("should inject the client alias when the person is a Client", async () => {
-        mockDraftingCompletion();
-
-        await core.runDrafting(
-          mockTranscript,
-          { actionItems: [], entities: [] },
-          { ...mockAgency, aliases: { client: "Homie" } },
-          mockClient,
-        );
-
-        expect(getUserContent()).toContain('Use "Homie" instead of "Client"');
-      });
-
-      test("should only inject the resident alias for a resident when both client and resident aliases are set", async () => {
-        mockDraftingCompletion();
-
-        await core.runDrafting(
-          mockTranscript,
-          { actionItems: [], entities: [] },
-          { ...mockAgency, aliases: { client: "Homie", resident: "Friend" } },
-          mockResident,
-        );
-
-        const userContent = getUserContent();
-        expect(userContent).toContain('Use "Friend" instead of "Client"');
-        expect(userContent).not.toContain("Homie");
-      });
-
-      test("should not inject the resident alias when it is explicitly set to the prompt's default term", async () => {
-        mockDraftingCompletion();
-
-        await core.runDrafting(
-          mockTranscript,
-          { actionItems: [], entities: [] },
-          { ...mockAgency, aliases: { resident: "Client" } },
-          mockResident,
-        );
-
-        // The prompt already refers to the person as "Client", so this alias is a no-op.
-        expect(getUserContent()).not.toContain("ALIASES");
-      });
-
-      test("should not include an ALIASES section when the agency has no aliases configured", async () => {
-        mockDraftingCompletion();
-
-        await core.runDrafting(
-          mockTranscript,
-          { actionItems: [], entities: [] },
-          mockAgency,
-          mockClient,
-        );
-
-        expect(getUserContent()).not.toContain("ALIASES");
       });
     });
   });

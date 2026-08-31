@@ -23,15 +23,16 @@ Only action items are scored: every bucket's pass criteria and the bias gate
 read action-item precision/recall/F1 alone, so the other extraction fields are
 carried in truth for reference but never judged.
 
-| Path                       | What                                                                              |
-| -------------------------- | --------------------------------------------------------------------------------- |
-| `src/experiments.ts`       | Experiment runners, evaluators, filtering, retries, majority-pass aggregation.    |
-| `src/cli/regression.ts`    | Entry point for the `regression` target; prints summaries, sets the exit code.    |
-| `src/llm-judge.ts`         | gpt-4.1 semantic matcher with Zod-typed structured outputs.                       |
-| `src/prompts.ts`           | Judge prompt.                                                                     |
-| `src/types.ts`             | `TruthFile`, `ActionItemScores`, `PASS_CRITERIA` (one entry per bucket).          |
-| `src/stubs.ts`             | Minimal person/agency/transcript stubs for driving the agent.                     |
-| `src/cli/mirror-prompt.ts` | One-way git → LangSmith mirror of the extraction prompt (`mirror-prompt` target). |
+| Path                               | What                                                                                                |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `src/experiments.ts`               | Experiment runners, evaluators, filtering, retries, majority-pass aggregation.                      |
+| `src/cli/regression.ts`            | Entry point for the `regression` target; prints summaries, sets the exit code.                      |
+| `src/llm-judge.ts`                 | gpt-4.1 semantic matcher with Zod-typed structured outputs.                                         |
+| `src/prompts.ts`                   | Judge prompt.                                                                                       |
+| `src/types.ts`                     | `TruthFile`, `ActionItemScores`, `PASS_CRITERIA` (one entry per bucket).                            |
+| `src/stubs.ts`                     | Minimal person/agency/transcript stubs for driving the agent.                                       |
+| `src/cli/mirror-prompt.ts`         | One-way git → LangSmith mirror of the extraction prompt (`mirror-prompt` target).                   |
+| `src/cli/refresh-writer-inputs.ts` | Writes writer-prompt template variables onto every golden example (`refresh-writer-inputs` target). |
 
 ## The dataset
 
@@ -107,6 +108,34 @@ from; the flow is: fork and edit in the Playground, run it against
 `meetings-eval-golden`, compare experiments, then hand the winning text to an
 engineer to commit to `libs/@meetings/tasks/src/llm/prompts.ts`. Prompts stay
 source-of-truth in git; the mirror is one-way.
+
+## Writer inputs
+
+We need to carry the extraction prompt's template variables into our golden examples.
+The **`refresh-writer-inputs`** target is what does that for us. It basically takes
+the extracted data that we got from our action items pass and combines it with agency config
+data from the (live, prod) US_DEMO data set, then places all of that data into our examples
+so that they can pick it up the same way our prompt would in production.
+
+Re-run it after any change to the golden ground truth or to the `US_DEMO` config.
+
+It writes directly to the shared dataset, so you can sanity-check first:
+
+```bash
+nx run @meetings/eval-golden:refresh-writer-inputs --args="--dry-run"
+nx run @meetings/eval-golden:refresh-writer-inputs --args="--limit 1"
+nx run @meetings/eval-golden:refresh-writer-inputs
+```
+
+| Flag              | Default | Effect                                                      |
+| ----------------- | ------- | ----------------------------------------------------------- |
+| `--dry-run`       | off     | Logs the variables each example would get; makes no writes. |
+| `--limit <count>` | _(all)_ | Stops after this many examples, dry run or not.             |
+
+It needs `LANGSMITH_API_KEY` / `LANGCHAIN_API_KEY` (loaded from SOPS by the
+target) and a database connection for the config lookup. Examples with no
+`transcript` input, or whose `outputs` do not parse as a `TruthFile`, are
+warned about and skipped rather than failing the run.
 
 ## CI
 

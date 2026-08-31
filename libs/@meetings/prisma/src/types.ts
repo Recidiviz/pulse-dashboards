@@ -74,3 +74,9 @@ declare global {
 export {};
 
 export type Person = Client | Resident;
+
+/**
+ * Narrows a Person to a Resident. Residents are the only side of the union
+ * with a facility, so its presence is what distinguishes them from Clients.
+ */
+export const isResident = (p: Person): p is Resident => "facilityId" in p;
