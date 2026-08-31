@@ -236,6 +236,7 @@ export const PAROLE_SECTION_IDS = {
   programParticipation: "parole-section-program-participation",
   conductHistory: "parole-section-conduct-history",
   attachments: "parole-section-attachments",
+  communitySupervisionPlan: "parole-section-community-supervision-plan",
 } as const;
 
 // Wraps a MainColumn section so it can be an anchor target. scroll-margin-top

@@ -118,6 +118,27 @@ export const paroleConductRecordSchema = z.object({
   disposition: z.string(),
 });
 export type ParoleConductRecord = z.infer<typeof paroleConductRecordSchema>;
+
+export const PAROLE_RECOMMENDED_STATUS = z.enum([
+  "YES (Favorable)",
+  "Pending",
+  "TBD",
+  "Withdrawn",
+  "NO (Unfavorable)",
+]);
+export type ParoleRecommendedStatus = z.infer<typeof PAROLE_RECOMMENDED_STATUS>;
+
+export const paroleCommunitySupervisionPlanEntrySchema = z.object({
+  typeOfPlan: z.string(),
+  name: z.string(),
+  relationship: z.string(),
+  address: z.string(),
+  recommended: PAROLE_RECOMMENDED_STATUS,
+});
+export type ParoleCommunitySupervisionPlanEntry = z.infer<
+  typeof paroleCommunitySupervisionPlanEntrySchema
+>;
+
 export const PAROLE_PROGRAM_STATUS = z.enum([
   "completed",
   "in-progress",
@@ -191,6 +212,7 @@ export const paroleCaseSchema = z.object({
   parolePlan: paroleParolePlanSchema,
   attachments: z.array(paroleAttachmentSchema),
   conductHistory: z.array(paroleConductRecordSchema),
+  communitySupervisionPlan: z.array(paroleCommunitySupervisionPlanEntrySchema),
   docPrograms: z.array(paroleDocProgramSchema),
   edovoPrograms: z.array(paroleEdovoProgramSchema),
   offenseHistory: paroleOffenseHistorySchema,

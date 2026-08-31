@@ -36,6 +36,7 @@ const US_CO_CONFIG = {
       "programParticipation",
       "conductHistory",
       "attachments",
+      "communitySupervisionPlan",
     ],
     docketSubheading: "Hearings in the next two weeks",
     docketSearchEnabled: true,

@@ -174,6 +174,10 @@ describe("ParoleCaseProfile", () => {
       ["Program Participation", PAROLE_SECTION_IDS.programParticipation],
       ["Institutional Conduct History", PAROLE_SECTION_IDS.conductHistory],
       ["Attachments", PAROLE_SECTION_IDS.attachments],
+      [
+        "Community Supervision Plan",
+        PAROLE_SECTION_IDS.communitySupervisionPlan,
+      ],
     ];
 
     it.each(NAV_ITEMS)(
@@ -553,6 +557,36 @@ describe("ParoleCaseProfile", () => {
 
       await findSectionHeading("Offense & Criminal History");
       expect(screen.queryByText("Prior Convictions")).not.toBeInTheDocument();
+    });
+  });
+
+  describe("the community supervision plan section", () => {
+    it("renders each plan entry's type, name (relationship), address, and recommended badge", async () => {
+      renderAtPath("/parole/case/45821");
+
+      expect(
+        await findSectionHeading("Community Supervision Plan"),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          "Regular Parole Plan - Planned Residence after Release",
+        ),
+      ).toBeInTheDocument();
+      expect(screen.getByText("Robert Anderson (Father)")).toBeInTheDocument();
+      expect(
+        screen.getByText("412 Maple Ave, Denver, CO 80204"),
+      ).toBeInTheDocument();
+      expect(screen.getByText("YES (Favorable)")).toBeInTheDocument();
+      expect(screen.getByText("Pending")).toBeInTheDocument();
+    });
+
+    it("renders the empty state when there is no community supervision plan on file", async () => {
+      renderAtPath("/parole/case/980332");
+
+      await findSectionHeading("Community Supervision Plan");
+      expect(
+        screen.getByText("No community supervision plan on file."),
+      ).toBeInTheDocument();
     });
   });
 });

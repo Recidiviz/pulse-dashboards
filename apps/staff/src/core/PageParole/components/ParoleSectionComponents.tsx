@@ -19,6 +19,7 @@ import { ParoleCase } from "~datatypes";
 
 import type { ParoleConfig } from "../../models/types";
 import { AttachmentsSection } from "./AttachmentsSection";
+import { CommunitySupervisionPlanSection } from "./CommunitySupervisionPlanSection";
 import { ConductHistorySection } from "./ConductHistorySection";
 import { OffenseHistorySection } from "./OffenseHistorySection";
 import { ProgramParticipationSection } from "./ProgramParticipationSection";
@@ -72,6 +73,11 @@ export const ParoleSectionComponents = {
       attachments={caseDetail.attachments}
     />
   ),
+  communitySupervisionPlan: (caseDetail: ParoleCase) => (
+    <CommunitySupervisionPlanSection
+      communitySupervisionPlan={caseDetail.communitySupervisionPlan}
+    />
+  ),
 };
 
 export type ParoleSectionName = keyof typeof ParoleSectionComponents;
@@ -83,4 +89,5 @@ export const PAROLE_SECTION_LABELS: Record<ParoleSectionName, string> = {
   programParticipation: "Program Participation",
   conductHistory: "Institutional Conduct History",
   attachments: "Attachments",
+  communitySupervisionPlan: "Community Supervision Plan",
 };

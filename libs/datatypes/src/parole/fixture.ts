@@ -290,6 +290,33 @@ const GENERIC_ATTACHMENT_AUTHORS = [
   "Case Worker",
 ];
 
+const GENERIC_COMMUNITY_SUPERVISION_SPONSORS: Array<
+  Omit<ParoleCase["communitySupervisionPlan"][number], "recommended">
+> = [
+  {
+    typeOfPlan: "Regular Parole Plan - Planned Residence after Release",
+    name: "Patricia Nguyen",
+    relationship: "Mother",
+    address: "118 Birchwood Dr, Aurora, CO 80010",
+  },
+  {
+    typeOfPlan: "Regular Parole Plan - Planned Residence after Release",
+    name: "Marcus Fields",
+    relationship: "Brother",
+    address: "77 Canyon Ridge Rd, Pueblo, CO 81003",
+  },
+  {
+    typeOfPlan: "Alternate Plan - Sober Living Facility",
+    name: "New Horizons Recovery House",
+    relationship: "Organization",
+    address: "540 Elm St, Grand Junction, CO 81501",
+  },
+];
+
+const GENERIC_COMMUNITY_SUPERVISION_RECOMMENDATIONS: ReadonlyArray<
+  ParoleCase["communitySupervisionPlan"][number]["recommended"]
+> = ["YES (Favorable)", "Pending", "TBD", "Withdrawn", "NO (Unfavorable)"];
+
 const CUSTODY_LEVELS = ["Minimum", "Medium", "Maximum"] as const;
 
 // Institutional conduct records, keyed by how many months before the module
@@ -531,6 +558,22 @@ function buildAndersonCaseProfile(
     ],
     conductHistory: buildAndersonConductHistory(stateCode),
     riskAndNeedsFactors: buildRiskAndNeedsFactors(0),
+    communitySupervisionPlan: [
+      {
+        typeOfPlan: "Regular Parole Plan - Planned Residence after Release",
+        name: "Robert Anderson",
+        relationship: "Father",
+        address: "412 Maple Ave, Denver, CO 80204",
+        recommended: "YES (Favorable)",
+      },
+      {
+        typeOfPlan: "Alternate Plan - Sober Living Facility",
+        name: "Hazelbrook Sober Living",
+        relationship: "Organization",
+        address: "329 S 18th Street, Suite 3, Colorado Springs, CO 80904",
+        recommended: "Pending",
+      },
+    ],
     // Full assessment history per tool -- the most recent entry per tool
     // carries the real subcategory/CARAS-factor breakdown; earlier entries
     // are bare score/date pairs, matching what a real historical record
@@ -858,6 +901,20 @@ function buildAttachments(
   ];
 }
 
+function buildCommunitySupervisionPlan(
+  index: number,
+): ParoleCase["communitySupervisionPlan"] {
+  const sponsor =
+    GENERIC_COMMUNITY_SUPERVISION_SPONSORS[
+      index % GENERIC_COMMUNITY_SUPERVISION_SPONSORS.length
+    ];
+  const recommended =
+    GENERIC_COMMUNITY_SUPERVISION_RECOMMENDATIONS[
+      index % GENERIC_COMMUNITY_SUPERVISION_RECOMMENDATIONS.length
+    ];
+  return [{ ...sponsor, recommended }];
+}
+
 function buildGenericRiskAssessments(
   index: number,
   today: Date,
@@ -952,6 +1009,7 @@ function buildGenericCaseProfile(
     mandatoryReleaseDate: iso(addDays(today, 600 + index * 30)),
     parolePlan: buildParolePlan(hearing.docId, index, today),
     attachments: buildAttachments(hearing.docId, index, today),
+    communitySupervisionPlan: buildCommunitySupervisionPlan(index),
     // Only Anderson's profile is hand-authored with program data (see comment
     // above); the rest have none until a real backend exists.
     docPrograms: [],
@@ -989,6 +1047,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
     mandatoryReleaseDate: "2033-01-03",
     parolePlan: { onFile: false, documents: [] },
     attachments: [],
+    communitySupervisionPlan: [],
     conductHistory: [
       {
         date: "2025-01-14",
@@ -1130,6 +1189,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
       documents: [],
     },
     attachments: [],
+    communitySupervisionPlan: [],
     conductHistory: [
       {
         date: "2025-05-20",
