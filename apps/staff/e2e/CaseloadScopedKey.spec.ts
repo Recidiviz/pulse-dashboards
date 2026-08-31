@@ -62,10 +62,13 @@ const TN_OFFICER: OfflineUserSpec = {
   externalId: "E2E_TN_OFFICER",
   routes: BOTH_SYSTEMS,
 };
+// Carries an email because `userUpdates` is keyed by it, not by the staff
+// composite — this is the only fixture whose overrides are read that way.
 const TN_OVERRIDE: OfflineUserSpec = {
   stateCode: "us_tn",
   externalId: "E2E_TN_OVERRIDE",
   routes: BOTH_SYSTEMS,
+  email: "e2e-tn-override@example.com",
 };
 const TN_SUPERVISOR: OfflineUserSpec = {
   stateCode: "us_tn",

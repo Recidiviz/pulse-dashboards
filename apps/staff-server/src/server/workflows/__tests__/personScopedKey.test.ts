@@ -388,7 +388,7 @@ describe("mintPersonScopedKey — single-system state user", () => {
       district: "Region 1",
       email: "officer@example.com",
     });
-    fakeFirestore.userUpdates.set("us_tn_OFFICER123", {
+    fakeFirestore.userUpdates.set("user@example.com", {
       overrideDistrictIds: ["Region 2", "Region 3"],
     });
 

@@ -507,7 +507,33 @@ describe("mintCaseloadScopedKey — single-system state user", () => {
     expect(mintedFilters(res).supervisionStaff).toBe("stateCode:=`US_TN`");
   });
 
+  // `userUpdates` is keyed by the caller's own (Auth0) email, which is what the
+  // frontend writes — note it differs from the staff record's `email` here, and
+  // from the `<stateCode>_<externalId>` the staff collections use.
   test("user-updates overrideDistrictIds wins over staff record district", async () => {
+    fakeFirestore.supervisionStaff.set("us_tn_OFFICER123", {
+      district: "Region 1",
+      email: "officer@example.com",
+    });
+    fakeFirestore.userUpdates.set("user@example.com", {
+      overrideDistrictIds: ["Region 2", "Region 3"],
+    });
+
+    const res = makeRes();
+    await mintCaseloadScopedKey(
+      makeReq({ currentTenantId: "US_TN", system: "SUPERVISION" }, makeUser()),
+      res,
+    );
+
+    expect(mintedFilters(res).supervisionStaff).toBe(
+      "stateCode:=`US_TN` && (district:=[`Region 2`, `Region 3`])",
+    );
+  });
+
+  // Guards the doc-id convention itself. Keyed the old way — by the staff
+  // composite — the override is invisible and the user silently falls back to
+  // their staff record's district.
+  test("overrides keyed by the staff composite are not read", async () => {
     fakeFirestore.supervisionStaff.set("us_tn_OFFICER123", {
       district: "Region 1",
       email: "officer@example.com",
@@ -523,7 +549,51 @@ describe("mintCaseloadScopedKey — single-system state user", () => {
     );
 
     expect(mintedFilters(res).supervisionStaff).toBe(
-      "stateCode:=`US_TN` && (district:=[`Region 2`, `Region 3`])",
+      "stateCode:=`US_TN` && (district:=[`Region 1`])",
+    );
+  });
+
+  // The staff record's address is not the key; only the caller's is.
+  test("overrides keyed by the staff record email are not read", async () => {
+    fakeFirestore.supervisionStaff.set("us_tn_OFFICER123", {
+      district: "Region 1",
+      email: "officer@example.com",
+    });
+    fakeFirestore.userUpdates.set("officer@example.com", {
+      overrideDistrictIds: ["Region 2", "Region 3"],
+    });
+
+    const res = makeRes();
+    await mintCaseloadScopedKey(
+      makeReq({ currentTenantId: "US_TN", system: "SUPERVISION" }, makeUser()),
+      res,
+    );
+
+    expect(mintedFilters(res).supervisionStaff).toBe(
+      "stateCode:=`US_TN` && (district:=[`Region 1`])",
+    );
+  });
+
+  test("a mixed-case caller email still finds the lowercased doc", async () => {
+    fakeFirestore.supervisionStaff.set("us_tn_OFFICER123", {
+      district: "Region 1",
+      email: "officer@example.com",
+    });
+    fakeFirestore.userUpdates.set("mixed.case@example.com", {
+      overrideDistrictIds: ["Region 9"],
+    });
+
+    const res = makeRes();
+    await mintCaseloadScopedKey(
+      makeReq(
+        { currentTenantId: "US_TN", system: "SUPERVISION" },
+        makeUser({ email: "Mixed.Case@Example.com" }),
+      ),
+      res,
+    );
+
+    expect(mintedFilters(res).supervisionStaff).toBe(
+      "stateCode:=`US_TN` && (district:=[`Region 9`])",
     );
   });
 

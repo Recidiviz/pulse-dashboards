@@ -134,14 +134,20 @@ async function fetchSupervisedStaffExternalIds(
   return [...staffExternalIds];
 }
 
+// `userUpdates` is keyed by the user's lowercased email, NOT by the
+// `<stateCode>_<externalId>` composite the staff collections use. Three things
+// agree on that: FirestoreStore.userUpdatesKey writes it, the Firestore rule
+// `usernameMatches(document)` compares the doc id to the token's `user_id`, and
+// override-districts-export reads the doc id back out as `person_email`.
 async function fetchUserUpdates(
   db: Firestore,
-  stateCode: string,
-  externalId: string,
+  email: string,
 ): Promise<DocumentData> {
+  // A blank email would address the collection root and throw.
+  if (!email) return {};
   const snap = await db
     .collection("userUpdates")
-    .doc(staffDocId(stateCode, externalId))
+    .doc(email.toLowerCase())
     .get();
   return snap.exists ? snap.data() ?? {} : {};
 }
@@ -162,7 +168,10 @@ async function buildFirestoreScopeContext(
   const [staff, supervisedStaffExternalIds, userUpdates] = await Promise.all([
     fetchStaffRecord(db, stateCode, userId),
     fetchSupervisedStaffExternalIds(db, userId),
-    fetchUserUpdates(db, stateCode, userId),
+    // Keyed by the caller's own email, matching what the frontend writes. This
+    // is the Auth0 address, which is not necessarily the staff record's `email`
+    // — and on the impersonation path it is the impersonated user's.
+    fetchUserUpdates(db, fallbackEmail),
   ]);
 
   return {

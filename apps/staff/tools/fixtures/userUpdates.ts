@@ -17,16 +17,19 @@
 
 import { FirestoreFixture } from "./utils";
 
-// Per-user overrides the scoped-key mint endpoint reads alongside the staff
-// record. `overrideDistrictIds` takes precedence over the staff record's own
-// `district`, which is the branch these fixtures exist to cover.
+// Per-user overrides that both the frontend and the scoped-key mint endpoint
+// read alongside the staff record. `overrideDistrictIds` takes precedence over
+// the staff record's own `district`, which is the branch these fixtures exist to
+// cover.
 //
-// Docs land at `<lowercased stateCode>_<externalId>`, matching `staffDocId` in
-// apps/staff-server/src/server/workflows/typesense/utils.ts. The loader adds the
-// state prefix itself, so `idFunc` returns the bare external id.
+// Keyed by the user's lowercased email, unlike the staff collections'
+// `<stateCode>_<externalId>` composite — hence `docIdFunc`, which bypasses the
+// prefix the loader otherwise applies. FirestoreStore.userUpdatesKey writes it
+// that way, the Firestore rules compare the doc id to the token's `user_id`, and
+// override-districts-export reads it back out as `person_email`.
 type UserUpdateFixture = {
   stateCode: string;
-  externalId: string;
+  email: string;
   overrideDistrictIds?: string[];
 };
 
@@ -36,9 +39,10 @@ export const userUpdatesData: FirestoreFixture<UserUpdateFixture> = {
     // "E2E DISTRICT 1". These two win instead.
     {
       stateCode: "US_TN",
-      externalId: "E2E_TN_OVERRIDE",
+      email: "e2e-tn-override@example.com",
       overrideDistrictIds: ["E2E DISTRICT 2", "E2E DISTRICT 3"],
     },
   ],
-  idFunc: (r) => r.externalId,
+  idFunc: (r) => r.email,
+  docIdFunc: (r) => r.email.toLowerCase(),
 };

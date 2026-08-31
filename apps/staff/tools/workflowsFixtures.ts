@@ -272,13 +272,10 @@ export async function loadFixtures(logger: Logger): Promise<void> {
     if (!fixtureData) throw new Error(`No fixture data for ${collName}`);
     // Iterate through each record
     fixtureData.data.forEach((record: any) => {
-      const externalId = fixtureData.idFunc(record);
-      bulkWriter.create(
-        db
-          .collection(collName)
-          .doc(`${record.stateCode.toLowerCase()}_${externalId}`),
-        record,
-      );
+      const docId = fixtureData.docIdFunc
+        ? fixtureData.docIdFunc(record)
+        : `${record.stateCode.toLowerCase()}_${fixtureData.idFunc(record)}`;
+      bulkWriter.create(db.collection(collName).doc(docId), record);
     });
 
     bulkWriter

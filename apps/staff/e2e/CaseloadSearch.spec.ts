@@ -356,11 +356,10 @@ test.describe("caseload search — search types per system", () => {
       "Search for a facility or case manager …",
     );
 
-    const afterSwitch = await options(page).allTextContents();
-    CRC_FACILITIES.forEach((facility) =>
-      expect(afterSwitch).toContain(facility),
-    );
-    expect(afterSwitch).not.toContain("Thandeka Rourke");
-    expect(afterSwitch).not.toContain("District 1");
+    // Retried rather than read once: the placeholder swaps synchronously from
+    // the tenant config, but the options only change after the re-minted key
+    // comes back from Typesense. Matching the full set also asserts that the
+    // supervision options are gone.
+    await expect(options(page)).toHaveText(CRC_FACILITIES);
   });
 });

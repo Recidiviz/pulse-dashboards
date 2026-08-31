@@ -27,6 +27,12 @@ import { FixtureOpportunityType } from "./opportunities";
 export type FirestoreFixture<T> = {
   data: T[];
   idFunc: (arg0: T) => string;
+  /**
+   * Returns the COMPLETE document id, bypassing the `<stateCode>_<id>` prefix
+   * the loader otherwise applies. Only for collections that are not keyed that
+   * way in production — `userUpdates` is keyed by the user's email.
+   */
+  docIdFunc?: (arg0: T) => string;
 };
 
 type StringProperties<Obj extends object> = keyof {
