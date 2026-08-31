@@ -152,7 +152,7 @@ export const ReioSubmissionModal = observer(function ReioSubmissionModal({
   }, [isOpen]);
 
   const isCommentValid =
-    comment.length >= TOMIS_COMMENT_MIN_CHARS &&
+    comment.trim().length >= TOMIS_COMMENT_MIN_CHARS &&
     comment.length <= TOMIS_COMMENT_MAX_CHARS;
 
   const handleClose = () => {

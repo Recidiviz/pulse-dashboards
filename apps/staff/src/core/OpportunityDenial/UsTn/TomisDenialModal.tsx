@@ -128,7 +128,7 @@ export const TomisDenialModal = observer(function TomisDenialModal({
   const hasTomisCodes = tomisCodes.length > 0;
 
   const isCommentValid =
-    comment.length >= TOMIS_COMMENT_MIN_CHARS &&
+    comment.trim().length >= TOMIS_COMMENT_MIN_CHARS &&
     comment.length <= TOMIS_COMMENT_MAX_CHARS;
 
   const onSubmitButtonClick = async () => {
