@@ -614,6 +614,8 @@ model SentencingAssessmentReport {
   courtDate          DateTime?
   completionDate     DateTime?
   investigationType  InvestigationType @default(SAR)
+  // Locks whether investigationType can be changed
+  isReportTypeLocked Boolean? 
 
   client   Client @relation(fields: [clientId], references: [externalId])
   clientId String

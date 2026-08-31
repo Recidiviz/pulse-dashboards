@@ -413,6 +413,23 @@ export const sarRouter = router({
             ]),
           };
 
+          if (updateData.investigationType) {
+            const { isReportTypeLocked } =
+              await prisma.sentencingAssessmentReport.findFirstOrThrow({
+                where: { id },
+                select: {
+                  isReportTypeLocked: true,
+                },
+              });
+
+            if (isReportTypeLocked) {
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "Report type is locked and cannot be updated",
+              });
+            }
+          }
+
           if (ORAS_FIELDS.some((f) => attributes[f] !== undefined)) {
             updateData.ORASEnteredManually = true;
             updateData.ORASLastUpdatedAt = new Date();

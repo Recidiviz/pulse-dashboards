@@ -408,6 +408,10 @@ export class SARDetailsPresenter implements Hydratable {
     return this.SARData?.investigationType;
   }
 
+  get isReportTypeLocked(): boolean | null | undefined {
+    return this.SARData?.isReportTypeLocked;
+  }
+
   get isPSRBuilderActive(): boolean {
     return Boolean(this.sentencingStore.activeFeatureVariants.PSRBuilder);
   }

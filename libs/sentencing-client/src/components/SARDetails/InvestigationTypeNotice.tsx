@@ -18,7 +18,10 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
+import {
+  InvestigationType,
+  SARDetailsPresenter,
+} from "../../presenters/SARDetailsPresenter";
 import * as Styled from "./InvestigationTypeNotice.styles";
 
 /**
@@ -29,6 +32,7 @@ import * as Styled from "./InvestigationTypeNotice.styles";
  */
 export interface InvestigationTypeNoticeControls {
   investigationType: SARDetailsPresenter["investigationType"];
+  isReportTypeLocked: SARDetailsPresenter["isReportTypeLocked"];
   isVictimImpactOnly: SARDetailsPresenter["isVictimImpactOnly"];
   startReportTypeChange: SARDetailsPresenter["startReportTypeChange"];
 }
@@ -37,19 +41,38 @@ interface InvestigationTypeNoticeProps {
   presenter: InvestigationTypeNoticeControls;
 }
 
+function getInvestigationTypeCopy(
+  investigationType: InvestigationType | undefined,
+  isVictimImpactOnly: boolean | null,
+) {
+  if (investigationType === "SAR")
+    return "You are filling out all sections of this report.";
+  else if (isVictimImpactOnly === true)
+    return "You are only filling out the Victim Impact section.";
+  return "You are filling out all sections except Victim Impact.";
+}
+
 /**
  * Shows which sections of the SAR the officer selected to fill out (when the
  * report was split via the PSR builder), with a link to reopen that choice.
  */
 export const InvestigationTypeNotice: React.FC<InvestigationTypeNoticeProps> =
   observer(function InvestigationTypeNotice({ presenter }) {
-    if (presenter.investigationType !== "PSR") return null;
+    if (
+      presenter.isReportTypeLocked === undefined ||
+      presenter.isReportTypeLocked === null ||
+      presenter.isReportTypeLocked === true
+    )
+      return null;
+
+    const copy = getInvestigationTypeCopy(
+      presenter.investigationType,
+      presenter.isVictimImpactOnly,
+    );
 
     return (
       <Styled.Container>
-        {presenter.isVictimImpactOnly
-          ? "You are only filling out the Victim Impact section."
-          : "You are filling out all sections except Victim Impact."}
+        {copy}
         <Styled.Link onClick={() => presenter.startReportTypeChange()}>
           Change
         </Styled.Link>

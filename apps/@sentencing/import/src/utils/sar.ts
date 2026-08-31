@@ -116,6 +116,17 @@ export async function transformAndLoadSARData(
     ).map(({ externalId }) => externalId),
   );
 
+  const existingSARMap = new Map(
+    (
+      await prismaClient.sentencingAssessmentReport.findMany({
+        select: { externalId: true, isReportTypeLocked: true },
+      })
+    ).map(({ externalId, isReportTypeLocked }) => [
+      externalId,
+      isReportTypeLocked,
+    ]),
+  );
+
   for await (const sarData of data) {
     // Check if the staff and clients exist in the db
     const staffExists = staffExternalIds.has(sarData.staff_id);
@@ -132,7 +143,6 @@ export async function transformAndLoadSARData(
     // Build the base SAR record (always written)
     const baseFields: Record<string, unknown> = {
       externalId: sarData.external_id,
-      investigationType: sarData.investigation_type ?? InvestigationType.SAR,
       dueDate: sarData.due_date ?? null,
       courtDate: sarData.court_date ?? null,
       completionDate: sarData.completion_date ?? null,
@@ -150,8 +160,8 @@ export async function transformAndLoadSARData(
         sarData.assessment_administered_by;
       orasFields["assessmentDate"] = sarData.assessment_date;
       orasFields["ORASLastUpdatedAt"] = sarData.oras_last_updated;
-      orasFields["assessmentType"] = sarData.report_type
-        ? EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE[sarData.report_type]
+      orasFields["assessmentType"] = sarData.assessment_type
+        ? EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE[sarData.assessment_type]
         : undefined;
 
       // Map ORAS domain scores and risk levels from assessment_metadata to database fields
@@ -186,6 +196,18 @@ export async function transformAndLoadSARData(
 
     // Client connection (required for SAR)
     const clientConnection = { connect: { externalId: sarData.client_id } };
+
+    const isReportTypeLocked = existingSARMap.get(sarData.external_id);
+
+    if (isReportTypeLocked === undefined || isReportTypeLocked === null) {
+      // If the SAR does not already exist, or does not yet have `isReportTypeLocked`, update it.
+      // This keeps us from overwriting investigation types that have been changed by the user.
+      const investigationType =
+        sarData.investigation_type ?? InvestigationType.SAR;
+      baseFields["investigationType"] = investigationType;
+      baseFields["isReportTypeLocked"] =
+        investigationType === InvestigationType.SAR;
+    }
 
     // Upsert base fields. On create, include ORAS fields since the record is new and
     // ORASEnteredManually defaults to false. On update, exclude ORAS fields — the

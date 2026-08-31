@@ -291,6 +291,7 @@ async function addSARClientsAndReports(
     const clientId = clients[i].externalId;
 
     // Create the SAR with imported data including ORAS assessment
+    const reportType = faker.helpers.arrayElement(["SAR", "PSR"]);
     const sar = await prisma.sentencingAssessmentReport.create({
       data: {
         externalId: faker.string.uuid(),
@@ -308,7 +309,8 @@ async function addSARClientsAndReports(
           ? faker.date.past()
           : undefined,
         address: faker.location.streetAddress(),
-        investigationType: faker.helpers.arrayElement(["SAR", "PSR"]),
+        investigationType: reportType,
+        isReportTypeLocked: reportType === "SAR",
         isVictimImpactOnly: undefined,
         // ORAS Assessment data — domain scores and overall max vary by tool type
         // Max scores derived from production data

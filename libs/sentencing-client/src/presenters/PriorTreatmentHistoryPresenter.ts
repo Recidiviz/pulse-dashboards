@@ -53,6 +53,10 @@ export class PriorTreatmentHistoryPresenter {
     return this.sarDetailsPresenter.investigationType;
   }
 
+  get isReportTypeLocked(): SARDetailsPresenter["isReportTypeLocked"] {
+    return this.sarDetailsPresenter.isReportTypeLocked;
+  }
+
   get isVictimImpactOnly(): SARDetailsPresenter["isVictimImpactOnly"] {
     return this.sarDetailsPresenter.isVictimImpactOnly;
   }
