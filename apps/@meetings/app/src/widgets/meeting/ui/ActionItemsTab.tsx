@@ -34,6 +34,7 @@ import {
   assigneeToConfigLabel,
   useCurrentAgencyConfig,
 } from "~@meetings/app/entities/agency-config";
+import { MeetingDetails } from "~@meetings/app/entities/meeting";
 import { PersonType, trpc } from "~@meetings/app/shared/api";
 import { extractError } from "~@meetings/app/shared/lib/errors";
 import { useIsMobileWidth } from "~@meetings/app/shared/lib/platform";
@@ -51,19 +52,10 @@ function actionItemErrorMessage(fallback: string, error: unknown): string {
   return message ? `${fallback}: ${message}` : fallback;
 }
 
-type ActionItem = {
-  id: string;
-  assignee: string;
-  completed: boolean;
-  editedTask: string | null;
-  generatedTask: string;
-  context: string | null;
-  evidenceQuotes: string[];
-  deleted: boolean;
-};
+type ActionItems = MeetingDetails["meetingActionItems"];
 
 type ActionItemsTabProps = {
-  items?: ActionItem[] | null;
+  items?: ActionItems | null;
   outputVote?: ReactNode;
   meetingId: string;
   personType: PersonType;
@@ -109,7 +101,7 @@ export const ActionItemsTab = ({
       acc[item.assignee].push(item);
       return acc;
     },
-    {} as Record<string, ActionItem[]>,
+    {} as Record<string, ActionItems>,
   );
 
   // The placeholder/loading row stays up until the newly created item
@@ -241,10 +233,10 @@ function SourceLabel() {
 }
 
 function SourceTooltip({
-  context,
+  quotes,
   isMobile,
 }: {
-  context: string;
+  quotes: string[];
   isMobile: boolean;
 }) {
   return (
@@ -262,7 +254,16 @@ function SourceTooltip({
           sideOffset={8}
         >
           <ScrollView className="max-h-[240px]">
-            <Typography className="text-sm text-on-brand">{context}</Typography>
+            <View className="gap-2">
+              {quotes.map((quote, i) => (
+                <Typography
+                  key={`${quote}-${i}`}
+                  className="text-sm text-on-brand"
+                >
+                  "{quote}"
+                </Typography>
+              ))}
+            </View>
           </ScrollView>
           {isMobile ? (
             <View className="absolute bottom-0 left-1/2 -z-10 size-4 rotate-45 bg-strong" />
@@ -284,7 +285,7 @@ function ActionItemRow({
   isMobile = false,
   isMobileEditMode = false,
 }: {
-  actionItem: ActionItem;
+  actionItem: ActionItems[number];
   meetingId: string;
   idx: number;
   autoEdit?: boolean;
@@ -475,9 +476,13 @@ function ActionItemRow({
               defaultEditing={autoEdit}
               disabled={!isEditableNow || !isOnline}
             />
-            {actionItem.context && !(isMobile && isMobileEditMode) && (
-              <SourceTooltip context={actionItem.context} isMobile={isMobile} />
-            )}
+            {actionItem.evidenceQuotes.length > 0 &&
+              !(isMobile && isMobileEditMode) && (
+                <SourceTooltip
+                  quotes={actionItem.evidenceQuotes}
+                  isMobile={isMobile}
+                />
+              )}
           </View>
           {!isMobileReviewMode && (
             <TouchableOpacity
