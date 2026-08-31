@@ -156,6 +156,21 @@ export function prefilledArsErsSharedDraftData(
   };
 }
 
+/**
+ * Compares a draft value against a field's prepopulated value, ignoring
+ * leading/trailing whitespace and casing for strings (e.g. "jane doe " should
+ * be treated as unchanged from a prepopulated "Jane Doe").
+ */
+export function isUnchangedFromPrefilledValue(
+  value: unknown,
+  prefilledValue: unknown,
+): boolean {
+  if (typeof value === "string" && typeof prefilledValue === "string") {
+    return value.trim().toLowerCase() === prefilledValue.trim().toLowerCase();
+  }
+  return value === prefilledValue;
+}
+
 const HEADERS_TO_HOIST = ["Current Fees", "Most Recent Payments"];
 
 export function getDynamicCaseNoteHeaders(opportunity: Opportunity): string[] {

@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { FieldValue } from "@google-cloud/firestore";
+
 import {
   fillAndSavePDF,
   PDFFillerFunc,
@@ -26,6 +28,7 @@ import {
 import { OpportunityFormComponentName } from "../../../../core/WorkflowsLayouts";
 import { UsTxAnnualReportStatusV2Opportunity } from "../../UsTx/UsTxAnnualReportStatusV2Opportunity/UsTxAnnualReportStatusV2Opportunity";
 import {
+  isUnchangedFromPrefilledValue,
   prefilledArsErsSharedDraftData,
   US_TX_ARS_ERS_BLOCKING_SUBMIT_FIELDS,
   US_TX_ARS_ERS_REMARKS_FIELDS,
@@ -104,6 +107,28 @@ export class UsTxAnnualReportStatusV2Form extends FormBase<
       fillerFunc,
       this.formData,
     );
+  }
+
+  // Prepopulated fields (e.g. names pulled from the opportunity record) shouldn't
+  // be saved as a user edit, or attributed to the user, unless the value actually
+  // changes from what was prepopulated. If the field previously had a differing
+  // draft and the user edits it back to match the prepopulated value, clear the
+  // stale draft instead of leaving it out of sync with what's on screen.
+  async updateDraftData(
+    name: string,
+    value: FieldValue | string | number | boolean,
+  ): Promise<void> {
+    const prefilledValue = (this.prefilledData as Record<string, unknown>)[
+      name
+    ];
+    if (isUnchangedFromPrefilledValue(value, prefilledValue)) {
+      if (name in this.draftData) {
+        return this.clearDraftData(name);
+      }
+      return;
+    }
+
+    return super.updateDraftData(name, value);
   }
 
   userHasFilledNecessaryFields(): boolean {
