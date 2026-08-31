@@ -101,7 +101,10 @@ const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
             sections={presenter.config.sections}
           >
             {SidebarChildren && (
-              <SidebarChildren offenses={caseDetail.offenseHistory.offenses} />
+              <SidebarChildren
+                caseDetail={caseDetail}
+                config={presenter.config}
+              />
             )}
           </CaseProfileSidebar>
         </SidebarColumn>

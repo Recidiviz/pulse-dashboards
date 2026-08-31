@@ -17,6 +17,7 @@
 
 import {
   addDays,
+  addYears,
   format,
   parseISO,
   subDays,
@@ -32,6 +33,7 @@ import {
   paroleConductRecordSchema,
   ParoleHearing,
   paroleHearingSchema,
+  ParoleRiskAssessment,
   ParoleRiskNeedFactor,
   ParoleRiskNeedScale,
 } from "./schema";
@@ -217,6 +219,20 @@ const CO_HEARINGS: Array<ParoleHearing> = [
   }),
 ];
 
+// ID-specific hand-authored records (OBT-45410), analogous to CO_HEARINGS/
+// CO_REAL_CASE_PROFILES above but entirely synthetic -- add each new ID-only
+// individual's hearing here, and their case-profile detail to
+// ID_REAL_CASE_PROFILES below.
+const ID_HEARINGS: Array<ParoleHearing> = [
+  paroleHearingSchema.parse({
+    docId: "166184",
+    individualName: "STARK, TONY",
+    hearingType: "Parole Grant Hearing",
+    facility: "Central State Correctional Facility",
+    hearingDate: iso(addDays(new Date(), 35)),
+  }),
+];
+
 // Keyed by state so `nx offline staff` can serve each Parole-enabled tenant
 // its own docket -- unlike the case data below (which varies only by
 // severity scheme), US_CO's docket carries extra, real resident records
@@ -225,7 +241,7 @@ export const paroleHearingsFixtureByState: Record<
   ParoleFixtureStateCode,
   Array<ParoleHearing>
 > = {
-  US_ID: SHARED_HEARINGS,
+  US_ID: [...SHARED_HEARINGS, ...ID_HEARINGS],
   US_CO: [...SHARED_HEARINGS, ...CO_HEARINGS],
 };
 
@@ -921,10 +937,67 @@ function buildCommunitySupervisionPlan(
   return [{ ...sponsor, recommended }];
 }
 
-function buildGenericRiskAssessments(
+// US_ID's real assessment tools (OBT-45410) -- distinct from US_CO's
+// LSI/PIT/CARAS/SRT set below. Each tool past LSI is only "on file" for a
+// subset of the generic docket (via `index`), so the sidebar Assessments
+// list's "Non Applicable/Not on File" state has real demo coverage.
+function buildIdRiskAssessments(
   index: number,
   today: Date,
 ): Pick<ParoleCase, "riskAssessments"> {
+  const riskPct = 20 + ((index * 17) % 60); // varies 20-79%
+
+  const riskAssessments: Array<ParoleRiskAssessment> = [
+    {
+      tool: "LSI",
+      score: Math.round((riskPct / 100) * 54),
+      maxScore: 54,
+      date: iso(subMonths(today, 4)),
+    },
+  ];
+  if (index % 3 !== 0) {
+    riskAssessments.push({
+      tool: "VRAG",
+      score: Math.round((riskPct / 100) * 38),
+      maxScore: 38,
+      date: iso(subMonths(today, 5)),
+    });
+  }
+  if (index % 4 !== 0) {
+    riskAssessments.push({
+      tool: "STATIC",
+      score: Math.round((riskPct / 100) * 12),
+      maxScore: 12,
+      date: iso(subMonths(today, 6)),
+    });
+  }
+  if (index % 2 === 0) {
+    riskAssessments.push({
+      tool: "STABLE",
+      score: Math.round((riskPct / 100) * 26),
+      maxScore: 26,
+      date: iso(subMonths(today, 3)),
+    });
+  }
+  if (index % 5 === 0) {
+    riskAssessments.push({
+      tool: "Guideline",
+      score: Math.round((riskPct / 100) * 10),
+      maxScore: 10,
+      date: iso(subMonths(today, 2)),
+    });
+  }
+
+  return { riskAssessments };
+}
+
+function buildGenericRiskAssessments(
+  index: number,
+  today: Date,
+  stateCode: ParoleFixtureStateCode,
+): Pick<ParoleCase, "riskAssessments"> {
+  if (stateCode === "US_ID") return buildIdRiskAssessments(index, today);
+
   const riskPct = 20 + ((index * 17) % 60); // varies 20-79%
   return {
     riskAssessments: [
@@ -1022,7 +1095,7 @@ function buildGenericCaseProfile(
     edovoPrograms: [],
     offenseHistory: buildOffenseHistory(index, today),
     riskAndNeedsFactors: buildRiskAndNeedsFactors(index),
-    ...buildGenericRiskAssessments(index, today),
+    ...buildGenericRiskAssessments(index, today, stateCode),
   });
 }
 
@@ -1649,6 +1722,162 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
   }),
 };
 
+// Case-profile detail for each ID_HEARINGS entry, keyed by docId --
+// analogous to CO_REAL_CASE_PROFILES above but hand-authored as synthetic
+// data from the start, since US_ID's docket must never carry a real
+// resident's record.
+const ID_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
+  "166184": paroleCaseSchema.parse({
+    docId: "166184",
+    name: "STARK, TONY",
+    dob: "1987-03-22",
+    gender: "Male",
+    currentFacility: "Central State Correctional Facility",
+    custodyLevel: "Close",
+    caseManagerName: "Angela Wright",
+    hearingDate: iso(addDays(new Date(), 35)),
+    isParoleReturn: true,
+    sentenceStartDate: iso(subYears(new Date(), 8)),
+    paroleEligibilityDate: iso(addDays(new Date(), 90)),
+    mandatoryReleaseDate: iso(addYears(new Date(), 13)),
+    parolePlan: {
+      onFile: false,
+      documents: [],
+    },
+    attachments: [],
+    conductHistory: [
+      buildConductRecord(1, {
+        facility: "Western State Prison",
+        violation: "Assault on Staff",
+        description:
+          "Threw an unknown liquid substance at a correctional officer during meal distribution.",
+        disposition: "45 days disciplinary segregation, loss of good time",
+        severity: "Major",
+      }),
+      buildConductRecord(3, {
+        facility: "Western State Prison",
+        violation: "Threatening Behavior",
+        description: "Made verbal threats of violence toward a staff member.",
+        disposition: "30 days disciplinary segregation",
+        severity: "Major",
+      }),
+      buildConductRecord(5, {
+        facility: "Central State Correctional Facility",
+        violation: "Possession of Contraband",
+        description:
+          "Found in possession of an unauthorized weapon during a routine cell search.",
+        disposition: "60 days disciplinary segregation, loss of good time",
+        severity: "Major",
+      }),
+      buildConductRecord(9, {
+        facility: "Central State Correctional Facility",
+        violation: "Property Damage",
+        description: "Damaged state-issued property during a cell search.",
+        disposition: "Restitution ordered",
+        severity: "Minor",
+      }),
+      buildConductRecord(14, {
+        facility: "North River Correctional Center",
+        violation: "Fighting",
+        description:
+          "Physical altercation with another incarcerated individual in the yard.",
+        disposition: "30 days disciplinary segregation",
+        severity: "Major",
+      }),
+      buildConductRecord(20, {
+        facility: "North River Correctional Center",
+        violation: "Unauthorized Possession",
+        description:
+          "Found with unauthorized tattoo paraphernalia during a cell inspection.",
+        disposition: "Loss of privileges - 14 days",
+        severity: "Minor",
+      }),
+      buildConductRecord(27, {
+        facility: "South Bay Detention Center",
+        violation: "Assault on Staff",
+        description:
+          "Struck a correctional officer during an escort to segregation.",
+        disposition: "Disciplinary segregation, referred for prosecution",
+        severity: "Major",
+      }),
+      buildConductRecord(33, {
+        facility: "South Bay Detention Center",
+        violation: "Threatening Behavior",
+        description:
+          "Made threats of harm toward staff following a disciplinary hearing.",
+        disposition: "30 days disciplinary segregation",
+        severity: "Major",
+      }),
+    ],
+    docPrograms: [
+      {
+        name: "Why Try 7.1",
+        completionDate: "2021-07-08",
+        type: "Mental Health",
+        criminogenicNeed: "",
+        status: "completed",
+      },
+    ],
+    edovoPrograms: [],
+    offenseHistory: {
+      offenses: [
+        {
+          county: "Sample County",
+          docket: "2017-CR-9088",
+          conviction: "Assault",
+          classFelony: "Felony Class 4",
+          sentence: "24 years",
+          dateOfOffense: "2017-07-26",
+          convictionDate: "2017-12-06",
+          offenseNarrative:
+            "Defendant assaulted a law enforcement officer while being taken into custody.",
+        },
+      ],
+      priorConvictions: [
+        { charge: "Assault", date: "2012-02-14" },
+        { charge: "Menacing", date: "2008-02-21" },
+        { charge: "Menacing", date: "2017-09-12" },
+      ],
+      victimInvolved: true,
+      victimAttendingHearing: true,
+    },
+    riskAssessments: [
+      {
+        tool: "LSI",
+        score: 30,
+        maxScore: 54,
+        date: "2026-08-19",
+      },
+      {
+        tool: "VRAG",
+        score: 29,
+        maxScore: 38,
+        date: "2026-08-19",
+      },
+      {
+        tool: "STATIC",
+        score: 4,
+        maxScore: 12,
+        date: "2026-08-19",
+      },
+      {
+        tool: "STABLE",
+        score: 4,
+        maxScore: 26,
+        date: "2026-08-19",
+      },
+      {
+        tool: "Guideline",
+        score: 13,
+        maxScore: 32,
+        date: "2026-08-07",
+      },
+    ],
+    communitySupervisionPlan: [],
+    riskAndNeedsFactors: buildRiskAndNeedsFactors(0),
+  }),
+};
+
 function buildParoleCasesFixture(
   stateCode: ParoleFixtureStateCode,
 ): Record<string, ParoleCase> {
@@ -1662,6 +1891,9 @@ function buildParoleCasesFixture(
       }
       if (hearing.docId in CO_REAL_CASE_PROFILES) {
         return [hearing.docId, CO_REAL_CASE_PROFILES[hearing.docId]];
+      }
+      if (hearing.docId in ID_REAL_CASE_PROFILES) {
+        return [hearing.docId, ID_REAL_CASE_PROFILES[hearing.docId]];
       }
       return [
         hearing.docId,

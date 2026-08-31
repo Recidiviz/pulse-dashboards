@@ -29,6 +29,10 @@ export const TOOL_COLORS: Record<ParoleRiskTool, string> = {
   SRT: "#8E4EC6",
   RT: "#2E7D32",
   CST: "#C2185B",
+  VRAG: "#B8860B",
+  STATIC: "#1565C0",
+  STABLE: "#6D4C41",
+  Guideline: "#546E7A",
 };
 
 // Tall enough that CARAS's 12-factor component list (the tallest of the

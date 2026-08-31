@@ -27,8 +27,7 @@ import { RiskAssessmentDetailHeader } from "./RiskAssessmentDetailHeader";
 import { RiskAssessmentLegend } from "./RiskAssessmentLegend";
 import { TOOL_COLORS } from "./RiskAssessmentSection.styles";
 import {
-  getCarasRiskLevel,
-  getRiskLevel,
+  getRiskLevelForAssessment,
   groupAssessmentsByTool,
   isAssessmentStale,
   latestAssessmentsByTool,
@@ -167,10 +166,9 @@ export function RiskAssessmentSection({
   const selectedRawPct = selectedAssessment
     ? safeScorePct(selectedAssessment.score, selectedAssessment.maxScore)
     : null;
-  const getSelectedRiskLevel =
-    selectedAssessment?.tool === "CARAS" ? getCarasRiskLevel : getRiskLevel;
-  const selectedRisk =
-    selectedRawPct !== null ? getSelectedRiskLevel(selectedRawPct) : null;
+  const selectedRisk = selectedAssessment
+    ? getRiskLevelForAssessment(selectedAssessment)
+    : null;
   const selectedStale = selectedAssessment
     ? isAssessmentStale(selectedAssessment.date)
     : false;

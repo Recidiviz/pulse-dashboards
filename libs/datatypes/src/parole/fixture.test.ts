@@ -16,11 +16,7 @@
 // =============================================================================
 
 import { paroleCasesFixtureByState } from "./fixture";
-import {
-  PAROLE_RISK_TOOL,
-  ParoleRiskAssessment,
-  ParoleRiskTool,
-} from "./schema";
+import { ParoleRiskAssessment, ParoleRiskTool } from "./schema";
 
 describe("Anderson's (docId 45821) risk assessment history", () => {
   const { riskAssessments } = paroleCasesFixtureByState.US_CO["45821"];
@@ -30,13 +26,18 @@ describe("Anderson's (docId 45821) risk assessment history", () => {
       .filter((a) => a.tool === tool)
       .reduce((latest, a) => (a.date > latest.date ? a : latest));
 
+  // Only the tools that actually appear on Anderson's (a US_CO resident)
+  // history -- PAROLE_RISK_TOOL also covers US_ID-only tools (OBT-45410)
+  // that this CO fixture never uses.
+  const toolsInHistory = [...new Set(riskAssessments.map((a) => a.tool))];
+
   // The trajectory chart and the "current" per-tool detail (subcategory/
   // CARAS-factor breakdown) are both derived from `riskAssessments` by
   // picking each tool's most recent entry (see
   // RiskAssessmentSection.utils.ts) -- so the entry carrying that detail
   // must actually be the chronologically latest one for its tool, or the
   // detail view would silently show the wrong assessment.
-  it.each(PAROLE_RISK_TOOL.options)(
+  it.each(toolsInHistory)(
     "gives %s's chronologically latest entry the detailed breakdown",
     (tool) => {
       const latest = latestByTool(tool);

@@ -20,12 +20,14 @@ import { differenceInMonths } from "date-fns";
 import { ParoleRiskAssessment, ParoleRiskTool } from "~datatypes";
 
 import { PaletteKey } from "../../BadgePill/BadgePill";
-import { parseIsoDate, toSafeDate } from "./shared";
+import { parseIsoDate, safeScorePct, toSafeDate } from "./shared";
 
-// `riskAssessments` holds every historical assessment per tool, not just the
-// current one -- this picks the one with the most recent `date` for each
-// tool, which is what the legend, detail header, and subcategory breakdown
-// treat as "the" assessment for that tool.
+/**
+ * Returns each tool's chronologically latest assessment. `riskAssessments`
+ * holds every historical assessment per tool, not just the current one --
+ * this is what the legend, detail header, and subcategory breakdown treat as
+ * "the" assessment for that tool.
+ */
 export function latestAssessmentsByTool(
   riskAssessments: Array<ParoleRiskAssessment>,
 ): Array<ParoleRiskAssessment> {
@@ -39,9 +41,11 @@ export function latestAssessmentsByTool(
   return Array.from(latestByTool.values());
 }
 
-// Groups the full assessment history by tool, each sorted oldest-to-newest,
-// so the trajectory chart can plot one line per tool directly from
-// `riskAssessments` -- no separate chart-shaped field needed.
+/**
+ * Groups the full assessment history by tool, each sorted oldest-to-newest,
+ * so the trajectory chart can plot one line per tool directly from
+ * `riskAssessments` -- no separate chart-shaped field needed.
+ */
 export function groupAssessmentsByTool(
   riskAssessments: Array<ParoleRiskAssessment>,
 ): Map<ParoleRiskTool, Array<ParoleRiskAssessment>> {
@@ -68,9 +72,11 @@ export function getRiskLevel(pct: number): RiskLevel {
   return { label: "Low", palette: "GREEN" };
 }
 
-// CARAS v7's risk level comes from its own published probability bands, not
-// the generic 3-tier scale the other tools use (`score` for CARAS is already
-// that probability * 100, so this takes the same 0-100 value as `pct`).
+/**
+ * CARAS v7's risk level comes from its own published probability bands, not
+ * the generic 3-tier scale the other tools use (`score` for CARAS is already
+ * that probability * 100, so this takes the same 0-100 value as `pct`).
+ */
 export function getCarasRiskLevel(pct: number): RiskLevel {
   const probability = pct / 100;
   if (probability > 0.6162) return { label: "Very High", palette: "RED" };
@@ -78,6 +84,21 @@ export function getCarasRiskLevel(pct: number): RiskLevel {
   if (probability > 0.3854) return { label: "Medium", palette: "YELLOW" };
   if (probability > 0.2826) return { label: "Low", palette: "BLUE" };
   return { label: "Very Low", palette: "GREEN" };
+}
+
+/**
+ * CARAS uses its own probability-band risk levels; every other tool uses the
+ * generic 3-tier scale. Shared by the main Risk Score Trajectory chart and
+ * the sidebar Assessments list so the two never disagree on a tool's risk
+ * level.
+ */
+export function getRiskLevelForAssessment(
+  assessment: ParoleRiskAssessment,
+): RiskLevel {
+  const pct = safeScorePct(assessment.score, assessment.maxScore);
+  return assessment.tool === "CARAS"
+    ? getCarasRiskLevel(pct)
+    : getRiskLevel(pct);
 }
 
 export function isAssessmentStale(dateString: string): boolean {

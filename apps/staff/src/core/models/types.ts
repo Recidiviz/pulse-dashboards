@@ -22,7 +22,6 @@ import {
   LocationRecord,
   MilestoneType,
   ParoleCase,
-  ParoleOffense,
   ParoleRiskTool,
   StaffRecord,
   SystemId,
@@ -152,9 +151,15 @@ export type ParoleConfig = {
   offenseSectionTitle?: string;
   /**
    * A tenant-owned component rendered as `children` at the end of the case
-   * profile sidebar's info card. Omit for a tenant with nothing to slot in there.
+   * profile sidebar's info card (for example, an instant-offense list or an
+   * assessments summary). It receives the full case detail and config so a
+   * tenant can slot in as many blocks as it needs. Omit for a tenant with
+   * nothing to slot in there.
    */
-  sidebarChildren?: ComponentType<{ offenses: Array<ParoleOffense> }>;
+  sidebarChildren?: ComponentType<{
+    caseDetail: ParoleCase;
+    config: ParoleConfig;
+  }>;
   /**
    * A tenant-owned component rendered as `children` at the end of the
    * Institutional Conduct History section. Omit for a tenant with nothing to slot in there.

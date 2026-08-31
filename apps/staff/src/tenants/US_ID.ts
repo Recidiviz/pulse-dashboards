@@ -19,7 +19,7 @@ import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "~shared-pathways";
 
 import { TenantConfig } from "../core/models/types";
 import { UsIdDisciplinaryFacilityNotesSection } from "../core/PageParole/components/US_ID/UsIdDisciplinaryFacilityNotesSection";
-import { UsIdInstantOffensesSection } from "../core/PageParole/components/US_ID/UsIdInstantOffensesSection";
+import { UsIdParoleSidebarSection } from "../core/PageParole/components/US_ID/UsIdParoleSidebarSection";
 import { METRIC_TYPE_LABELS, METRIC_TYPES } from "../core/PageVitals/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { INSIGHTS_PAGES } from "../core/views";
@@ -234,8 +234,15 @@ const US_ID_CONFIG = {
     },
     offenseSectionTitle: "Instant Offenses",
     conductHistoryVisibleYears: 3,
-    sidebarChildren: UsIdInstantOffensesSection,
+    sidebarChildren: UsIdParoleSidebarSection,
     conductHistoryChildren: UsIdDisciplinaryFacilityNotesSection,
+    riskAssessmentConfig: {
+      tools: ["LSI", "VRAG", "STATIC", "STABLE", "Guideline"],
+      aggregateView: {
+        label: "All",
+        tools: ["LSI", "VRAG", "STATIC", "STABLE", "Guideline"],
+      },
+    },
   },
   tableColumns: enabledTableColumns[pathways.US_ID],
   vitalsMetrics: [

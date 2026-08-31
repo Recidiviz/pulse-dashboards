@@ -18,12 +18,19 @@
 import { z } from "zod";
 
 export const PAROLE_RISK_TOOL = z.enum([
+  // Common tools
   "LSI",
+  // US_CO-only tools
   "PIT",
   "CARAS",
   "SRT",
   "RT",
   "CST",
+  // US_ID-only tools
+  "VRAG",
+  "STATIC",
+  "STABLE",
+  "Guideline",
 ]);
 export type ParoleRiskTool = z.infer<typeof PAROLE_RISK_TOOL>;
 

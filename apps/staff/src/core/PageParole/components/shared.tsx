@@ -32,18 +32,22 @@ export const SectionCard = styled(BaseSectionCard)`
   overflow: hidden;
 `;
 
-// `new Date("yyyy-MM-dd")` parses the string as UTC midnight per spec, which
-// silently rolls back to the previous calendar day once formatted in any
-// timezone behind UTC (most of the US). Appending a local-time component
-// forces the same string to parse as local midnight instead.
+/**
+ * `new Date("yyyy-MM-dd")` parses the string as UTC midnight per spec, which
+ * silently rolls back to the previous calendar day once formatted in any
+ * timezone behind UTC (most of the US). Appending a local-time component
+ * forces the same string to parse as local midnight instead.
+ */
 export const parseIsoDate = (dateString: string): Date =>
   new Date(`${dateString}T00:00:00`);
 
-// Dates arrive as "yyyy-MM-dd" fixture strings, as Date objects built from
-// chart coordinates, or -- despite what semiotic's own types (and ours,
-// matching them) claim -- sometimes as a raw timestamp number from inside a
-// semiotic tooltip callback. Handle all three explicitly rather than trusting
-// the declared type, since only the `instanceof Date` check is actually safe.
+/**
+ * Dates arrive as "yyyy-MM-dd" fixture strings, as Date objects built from
+ * chart coordinates, or -- despite what semiotic's own types (and ours,
+ * matching them) claim -- sometimes as a raw timestamp number from inside a
+ * semiotic tooltip callback. Handle all three explicitly rather than trusting
+ * the declared type, since only the `instanceof Date` check is actually safe.
+ */
 export const toSafeDate = (date: string | number | Date): Date => {
   if (date instanceof Date) return date;
   if (typeof date === "string") return parseIsoDate(date);
@@ -95,6 +99,35 @@ export const FactStack = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.25em;
+`;
+
+// A row of up to 3 label/value FactStacks -- shared by CaseProfileSidebar's
+// Personal/Hearing/Sentence Info rows and AssessmentsSidebarSection's
+// Type/Date/Administered row.
+//
+// Each label/value pair wraps as a whole onto the next row once three no
+// longer fit, rather than immediately wrapping its own label or value --
+// only a pair that still doesn't fit even alone on its own row falls back
+// to wrapping its text.
+export const FactRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 1rem;
+  row-gap: 0.75rem;
+`;
+
+export const FactRowStack = styled(FactStack)`
+  // Basis is each pair's own single-line content width, not a fixed
+  // third, so the row fits as many pairs as their content allows -- a
+  // fixed third would make a short pair (e.g. "Age") claim more room
+  // than it needs and prematurely wrap a pair after it that would
+  // otherwise still fit. Growing fills whatever room is left so pairs
+  // stay evenly spaced when there's slack. Shrinking only ever kicks in
+  // once a pair is already alone on its own row and still doesn't fit,
+  // at which point it wraps its text (min-width stays at its default
+  // auto, so it can't shrink -- and so wrap -- any sooner than that).
+  flex: 1 1 max-content;
+  overflow-wrap: break-word;
 `;
 
 // Spans two of FactGrid's three columns, for a fact whose value is too long
