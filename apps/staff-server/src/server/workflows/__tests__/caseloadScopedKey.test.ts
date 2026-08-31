@@ -378,6 +378,88 @@ describe("mintCaseloadScopedKey — single-system state user", () => {
     );
   });
 
+  // `hasCaseload` is the record's own field, not "a record exists". The US_TX
+  // supervisor approval flow puts supervision staff in Firestore with no
+  // caseload, and a district-less one of those has no own caseload to scope to.
+  test("a staff record with hasCaseload false and no district → none base", async () => {
+    fakeFirestore.supervisionStaff.set("us_tn_OFFICER123", {
+      email: "officer@example.com",
+      hasCaseload: false,
+    });
+
+    const res = makeRes();
+    await mintCaseloadScopedKey(
+      makeReq({ currentTenantId: "US_TN", system: "SUPERVISION" }, makeUser()),
+      res,
+    );
+
+    expect(mintedFilters(res).supervisionStaff).toBe(
+      "stateCode:=`US_TN` && (id:=`__no_match__`)",
+    );
+  });
+
+  // Same record, plus the variant and a report: the expansion becomes the whole
+  // scope rather than being OR'd onto an own-caseload clause that matches only
+  // the user's own row.
+  test("hasCaseload false + supervisor search → the expansion is the whole scope", async () => {
+    fakeFirestore.supervisionStaff.set("us_tn_OFFICER123", {
+      email: "officer@example.com",
+      hasCaseload: false,
+    });
+    fakeFirestore.supervisionSupervisors.set("OFFICER123", ["STAFF456"]);
+
+    const res = makeRes();
+    await mintCaseloadScopedKey(
+      makeReq(
+        { currentTenantId: "US_TN", system: "SUPERVISION" },
+        makeUser({ featureVariants: { workflowsSupervisorSearch: true } }),
+      ),
+      res,
+    );
+
+    expect(mintedFilters(res).supervisionStaff).toBe(
+      "stateCode:=`US_TN` && (supervisorExternalId:=`OFFICER123` || supervisorExternalIds:=[`OFFICER123`])",
+    );
+  });
+
+  // An absent field still means "has a caseload", so an ordinary officer record
+  // is unaffected by the change above.
+  test("a staff record with no hasCaseload field still scopes to own caseload", async () => {
+    fakeFirestore.supervisionStaff.set("us_tn_OFFICER123", {
+      email: "officer@example.com",
+    });
+
+    const res = makeRes();
+    await mintCaseloadScopedKey(
+      makeReq({ currentTenantId: "US_TN", system: "SUPERVISION" }, makeUser()),
+      res,
+    );
+
+    expect(mintedFilters(res).supervisionStaff).toBe(
+      "stateCode:=`US_TN` && (email:=`officer@example.com`)",
+    );
+  });
+
+  // A district beats the caseload question entirely, which is why the existing
+  // US_TX supervisor fixtures are unaffected.
+  test("hasCaseload false with a district still scopes by district", async () => {
+    fakeFirestore.supervisionStaff.set("us_tn_OFFICER123", {
+      district: "Region 1",
+      email: "officer@example.com",
+      hasCaseload: false,
+    });
+
+    const res = makeRes();
+    await mintCaseloadScopedKey(
+      makeReq({ currentTenantId: "US_TN", system: "SUPERVISION" }, makeUser()),
+      res,
+    );
+
+    expect(mintedFilters(res).supervisionStaff).toBe(
+      "stateCode:=`US_TN` && (district:=[`Region 1`])",
+    );
+  });
+
   test("workflowsSupervisorSearch FV + user is supervisor → district OR supervisor expansion", async () => {
     fakeFirestore.supervisionStaff.set("us_tn_OFFICER123", {
       district: "Region 1",

@@ -72,17 +72,18 @@ const TN_SUPERVISOR: OfflineUserSpec = {
   externalId: "E2E_TN_SUPERVISOR",
   routes: BOTH_SYSTEMS,
 };
-// Deliberately has no staff record at all; only the reports pointing at them
-// exist. That is currently the ONLY way to reach a `none` base scope, because
-// UserScopeContext derives `hasCaseload` as `staff !== null` — the existence of
-// a record, not the record's own `hasCaseload` field. A staff record carrying
-// `hasCaseload: false` (which the US_TX supervisor approval flow now produces)
-// resolves to byEmail instead. Tracked as a separate bug; when it is fixed this
-// fixture can become a record with `hasCaseload: false`.
+// Two ways to reach a `none` base scope, both covered below. This one has no
+// staff record at all; only the reports pointing at them exist.
 const TN_LEAD: OfflineUserSpec = {
   stateCode: "us_tn",
   externalId: "E2E_TN_LEAD",
   routes: BOTH_SYSTEMS,
+};
+// And this one HAS a record, with `hasCaseload: false` and no district — the
+// shape the US_TX supervisor approval flow produces.
+const TN_NO_CASELOAD: OfflineUserSpec = {
+  stateCode: "us_tn",
+  externalId: "E2E_TN_NO_CASELOAD",
 };
 const ID_OFFICER: OfflineUserSpec = {
   stateCode: "us_id",
@@ -284,6 +285,41 @@ test.describe("caseload scoped key — feature variants", () => {
 
     const staff = await searchIds(keys, "supervisionStaff", "staffExternalId");
     expect(staff).toEqual(["E2E_TN_REPORT_2"]);
+  });
+
+  // `hasCaseload` is the record's own field, not "a record exists". Reading it
+  // the other way gave this user a byEmail scope matching only their own staff
+  // row, instead of the reports they actually supervise.
+  test("a record with hasCaseload false sees only their reports", async () => {
+    const { filters, keys } = await mintCaseloadKeys(api, {
+      stateCode: "US_TN",
+      system: "SUPERVISION",
+      offlineUser: { ...TN_NO_CASELOAD, featureVariants: SUPERVISOR_SEARCH },
+    });
+
+    expect(filters.supervisionStaff).toBe(
+      "stateCode:=`US_TN` && (supervisorExternalId:=`E2E_TN_NO_CASELOAD` || supervisorExternalIds:=[`E2E_TN_NO_CASELOAD`])",
+    );
+
+    const staff = await searchIds(keys, "supervisionStaff", "staffExternalId");
+    expect(staff).toEqual(["E2E_TN_REPORT_3"]);
+    // Notably NOT themselves, which a byEmail scope would have matched.
+    expect(staff).not.toContain("E2E_TN_NO_CASELOAD");
+  });
+
+  test("a record with hasCaseload false and no variant matches nothing", async () => {
+    const { filters, keys } = await mintCaseloadKeys(api, {
+      stateCode: "US_TN",
+      system: "SUPERVISION",
+      offlineUser: TN_NO_CASELOAD,
+    });
+
+    expect(filters.supervisionStaff).toBe(
+      `stateCode:=\`US_TN\` && (${NEVER_MATCH})`,
+    );
+    expect(
+      await searchIds(keys, "supervisionStaff", "staffExternalId"),
+    ).toEqual([]);
   });
 
   test("no record and no variant matches nothing", async () => {

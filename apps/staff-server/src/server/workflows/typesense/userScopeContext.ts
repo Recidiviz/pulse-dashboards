@@ -172,7 +172,16 @@ async function buildFirestoreScopeContext(
     district: (staff?.["district"] as string | undefined) ?? undefined,
     roleSubtype:
       (staff?.["roleSubtype"] as RoleSubtype | null | undefined) ?? null,
-    hasCaseload: staff !== null,
+    // Mirrors UserSubscription on the frontend: a fetched record's own
+    // `hasCaseload` decides, defaulting to true when the field is absent, and no
+    // record at all means no own caseload.
+    //
+    // Reading this as "a staff record exists" is wrong now that the US_TX
+    // supervisor approval flow puts supervision staff in Firestore who have no
+    // caseload. Such a user with no district would resolve to `byEmail` —
+    // matching only their own staff row — instead of `none`, which lets the
+    // supervisor expansion become their whole scope.
+    hasCaseload: staff !== null && staff["hasCaseload"] !== false,
     overrideDistrictIds: userUpdates["overrideDistrictIds"] as
       | string[]
       | undefined,

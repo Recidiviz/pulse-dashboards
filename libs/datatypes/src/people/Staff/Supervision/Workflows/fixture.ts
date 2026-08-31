@@ -451,6 +451,33 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     hasCaseload: true,
   },
 
+  // A supervisor who DOES have a staff record but no caseload of their own —
+  // the shape the US_TX supervisor approval flow produces. With no district
+  // either, their own scope is `none`, so the supervisor expansion is all they
+  // get. Distinct from E2E_TN_LEAD above, who has no record at all.
+  {
+    email: "e2e-tn-no-caseload@example.com",
+    staffExternalId: "E2E_TN_NO_CASELOAD",
+    stateCode: "US_TN",
+    givenNames: "Odalys",
+    surname: "Fennimore",
+    supervisorExternalId: null,
+    pseudonymizedId: "hashed-e2e-tn-no-caseload",
+    hasCaseload: false,
+  },
+  {
+    email: "e2e-tn-report-3@example.com",
+    district: "E2E DISTRICT 2",
+    staffExternalId: "E2E_TN_REPORT_3",
+    stateCode: "US_TN",
+    givenNames: "Ellery",
+    surname: "Vasquez-Bright",
+    supervisorExternalId: null,
+    supervisorExternalIds: ["E2E_TN_NO_CASELOAD"],
+    pseudonymizedId: "hashed-e2e-tn-report-3",
+    hasCaseload: true,
+  },
+
   // US_ID — no district, so the state baseline falls back to own-caseload
   // (byEmail).
   {
