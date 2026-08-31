@@ -2,6 +2,16 @@
 
 Description here
 
+## How to test change
+
+Document the steps it takes to test the pr including:
+
+- What is the url or path to get to the desired feature
+- What user flow or click path will show us the change
+- What is the previous state and expected state
+- If the change is a visible change, include screenshots (without PII) where applicable of the expected changes
+- If change is not visual, adding or mentioning unit tests for that change where manual verification or screens may be insufficient
+
 ## Type of change
 
 > All pull requests must have at least one of the following labels applied (otherwise the PR will fail):
