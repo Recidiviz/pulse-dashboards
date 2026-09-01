@@ -17,6 +17,7 @@
 
 import { FC } from "react";
 
+import { CategoryLinkItem } from "../../hooks/types";
 import {
   BrowseLabel,
   BrowseLink,
@@ -25,11 +26,6 @@ import {
   EmptyMessage,
   EmptyWrapper,
 } from "./EmptyFilterState.styles";
-
-export type CategoryLinkItem = {
-  label: string;
-  to: string;
-};
 
 export type EmptyFilterStateProps = {
   onClearFilters: () => void;

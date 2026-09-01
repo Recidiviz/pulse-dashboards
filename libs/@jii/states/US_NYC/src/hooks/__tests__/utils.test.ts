@@ -15,12 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import Fuse from "fuse.js";
+
 import { US_NYC_CONTACT_LABELS } from "../../constants";
 import {
   buildCategoryGrid,
+  buildCategoryLinks,
   buildContactInformation,
   getSimilarResources,
   groupResourcesBySubcategory,
+  SEARCH_OPTIONS,
+  searchResources,
   toggleFilterSelection,
 } from "../utils";
 import { makeAddress, makePhone, makeResource, makeWebsite } from "./testUtils";
@@ -396,6 +401,33 @@ describe("buildCategoryGrid", () => {
   });
 });
 
+describe("buildCategoryLinks", () => {
+  const categoryPath = (name: string) => `/categories/${name}`;
+  const grid = {
+    helpCategories: [{ name: "Housing", resourceCount: 1 }],
+    demographicCategories: [{ name: "Veterans", resourceCount: 1 }],
+  };
+
+  test("returns an empty array for an empty grid", () => {
+    const emptyGrid = { helpCategories: [], demographicCategories: [] };
+
+    expect(buildCategoryLinks(emptyGrid, categoryPath)).toEqual([]);
+  });
+
+  test("maps help and demographic categories to labeled links", () => {
+    expect(buildCategoryLinks(grid, categoryPath)).toEqual([
+      { label: "Housing", to: "/categories/Housing" },
+      { label: "Veterans", to: "/categories/Veterans" },
+    ]);
+  });
+
+  test("excludes the given category", () => {
+    expect(buildCategoryLinks(grid, categoryPath, "Housing")).toEqual([
+      { label: "Veterans", to: "/categories/Veterans" },
+    ]);
+  });
+});
+
 describe("getSimilarResources", () => {
   const resources = [
     makeResource(1, [
@@ -542,5 +574,89 @@ describe("toggleFilterSelection", () => {
     const original = ["Housing"];
     toggleFilterSelection(original, "Legal");
     expect(original).toEqual(["Housing"]);
+  });
+});
+
+describe("searchResources", () => {
+  const resources = [
+    makeResource(1, [], [], {
+      name: "Goodwill Industries",
+      description: "Job training and secondhand clothing store",
+    }),
+    makeResource(2, [], [], {
+      name: "Housing Works",
+      description: "Transitional housing for people living with HIV/AIDS",
+    }),
+    makeResource(3, [], [], {
+      name: "Legal Aid Society",
+      description: "Free legal services including housing court help",
+    }),
+  ];
+  const fuseIndex = new Fuse(resources, SEARCH_OPTIONS);
+
+  test("returns an empty array for an empty query", () => {
+    expect(searchResources(resources, "", fuseIndex)).toEqual([]);
+  });
+
+  test("returns an empty array for a whitespace-only query", () => {
+    expect(searchResources(resources, "   ", fuseIndex)).toEqual([]);
+  });
+
+  test("matches by plain substring for a query shorter than 3 characters", () => {
+    // Fuse's fuzzy scoring is erratic for 1-2 character patterns which is not
+    // enough signal to score against - so short queries use a plain case-insensitive
+    // substring match instead of fuzzy matching.
+    const results = searchResources(resources, "Go", fuseIndex);
+
+    expect(results.map((r) => r.organizationId)).toEqual([1]);
+  });
+
+  test("short-query substring match is case-insensitive", () => {
+    const results = searchResources(resources, "go", fuseIndex);
+
+    expect(results.map((r) => r.organizationId)).toEqual([1]);
+  });
+
+  test("short-query substring match ranks a name match above a description-only match", () => {
+    // "ho" is in Housing Works' NAME and in Legal Aid Society's DESCRIPTION ("...including housing court help")
+    const results = searchResources(resources, "ho", fuseIndex);
+
+    expect(results.map((r) => r.organizationId)).toEqual([2, 3]);
+  });
+
+  test("returns an empty array for empty input", () => {
+    const emptyIndex = new Fuse([], SEARCH_OPTIONS);
+    expect(searchResources([], "Goodwill", emptyIndex)).toEqual([]);
+  });
+
+  test("matches by name", () => {
+    const results = searchResources(resources, "Goodwill", fuseIndex);
+
+    expect(results.map((r) => r.organizationId)).toEqual([1]);
+  });
+
+  test("matches by description when the name doesn't match", () => {
+    const results = searchResources(resources, "HIV", fuseIndex);
+
+    expect(results.map((r) => r.organizationId)).toEqual([2]);
+  });
+
+  test("tolerates a typo in the name", () => {
+    const results = searchResources(resources, "Godwill", fuseIndex);
+
+    expect(results.map((r) => r.organizationId)).toContain(1);
+  });
+
+  test("ranks a name match above a description-only match", () => {
+    // "Housing" is in Housing Works' NAME and in Legal Aid Society's DESCRIPTION
+    const results = searchResources(resources, "Housing", fuseIndex);
+
+    expect(results[0].organizationId).toBe(2);
+  });
+
+  test("returns an empty array when nothing matches", () => {
+    expect(
+      searchResources(resources, "xyznonexistentquery", fuseIndex),
+    ).toEqual([]);
   });
 });

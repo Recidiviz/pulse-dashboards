@@ -80,11 +80,12 @@ export function makeResource(
   organizationId: number,
   categories: Array<{ category: string; subcategory: string }> = [],
   tags: string[] = [],
+  options: { name?: string; description?: string } = {},
 ): ResourceSummary {
   return {
     organizationId,
-    name: `Resource ${organizationId}`,
-    description: undefined,
+    name: options.name ?? `Resource ${organizationId}`,
+    description: options.description,
     categories,
     tags,
     primaryContactMethod: undefined,

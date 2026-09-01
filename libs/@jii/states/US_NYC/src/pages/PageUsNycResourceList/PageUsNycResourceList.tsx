@@ -32,6 +32,7 @@ import { ResourceCard } from "../../components/ResourceCard/ResourceCard";
 import { useCreAnalytics } from "../../hooks/useCreAnalytics";
 import { useResourceFilters } from "../../hooks/useResourceFilters";
 import { useResources } from "../../hooks/useResources";
+import { buildCategoryLinks } from "../../hooks/utils";
 import { FilterGroup } from "./FilterGroup";
 import {
   AccordionItem,
@@ -126,9 +127,11 @@ export function PageUsNycResourceList() {
       category: name,
     });
 
-  const categoryLinks = [...helpCategories, ...demographicCategories]
-    .filter((c) => c.name !== category)
-    .map((c) => ({ label: c.name, to: categoryPath(c.name) }));
+  const categoryLinks = buildCategoryLinks(
+    { helpCategories, demographicCategories },
+    categoryPath,
+    category,
+  );
 
   return (
     <PageContainer>

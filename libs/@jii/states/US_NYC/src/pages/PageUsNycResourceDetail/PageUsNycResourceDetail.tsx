@@ -15,59 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { ResourceExplorer, State } from "~@jii/paths";
-import { Button } from "~design-system";
 
 import { sanitizeBackTarget } from "../../components/BackTargetContext/sanitizeBackTarget";
 import { useBackTarget } from "../../components/BackTargetContext/useBackTarget";
-import { Chip } from "../../components/Chip/Chip";
-import { ContactInformation } from "../../components/Contact/ContactInformation";
-import { DescriptionBlock } from "../../components/DescriptionBlock/DescriptionBlock";
-import { ResourceCard } from "../../components/ResourceCard/ResourceCard";
-import { US_NYC_CONTENT } from "../../content";
-import { useCreAnalytics } from "../../hooks/useCreAnalytics";
-import { useResource } from "../../hooks/useResource";
-import { useResources } from "../../hooks/useResources";
-import {
-  ChipList,
-  PageContainer,
-  PageHeader,
-  PageTitle,
-  Section,
-  SectionHeading,
-  SeeAllButtonWrapper,
-  SimilarResourceList,
-  SourceAttribution,
-} from "./PageUsNycResourceDetail.styles";
+import { QueryBoundary } from "../../components/QueryBoundary";
+import { ResourceDetailContent } from "./ResourceDetailContent";
 
-const {
-  sourceAttribution,
-  labelsHeading,
-  similarHeading,
-  seeAllServices: seeAll,
-  contactHowToReachHeading,
-  contactLocationsHeading,
-  lastUpdated,
-} = US_NYC_CONTENT.cre.resourceDetail;
-
+/**
+ * Split from ResourceDetailContent so useBackTarget() fires immediately on mount instead
+ * of waiting on the resource fetch. The content fetch keeps its own nested boundary
+ * so it can't block this shell - otherwise BackButton flashes to the logo while data loads.
+ */
 export function PageUsNycResourceDetail() {
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { trackResourceViewed, trackDescriptionToggled } = useCreAnalytics();
   const residentParams = useTypedParams(State.Resident);
   const { category } = useTypedParams(ResourceExplorer.CategoryResults);
   const { resourceId } = useTypedParams(
     ResourceExplorer.CategoryResults.Detail,
   );
-
-  const { name, description, contactInformation, labels } =
-    useResource(resourceId);
-
-  const { getSimilarResources } = useResources();
-  const similarResources = getSimilarResources(category, resourceId);
 
   const categoryResultsPath =
     State.Resident.ResourceExplorer.CategoryResults.buildPath({
@@ -94,72 +63,13 @@ export function PageUsNycResourceDetail() {
   };
 
   return (
-    <PageContainer>
-      <PageHeader>
-        <SourceAttribution>{sourceAttribution}</SourceAttribution>
-        <PageTitle>{name}</PageTitle>
-      </PageHeader>
-
-      {description && (
-        <DescriptionBlock
-          markdown={description}
-          onToggle={(isExpanded) =>
-            trackDescriptionToggled(resourceId, name, isExpanded)
-          }
-        />
-      )}
-
-      <ContactInformation
-        data={contactInformation}
-        generalContactHeading={contactHowToReachHeading}
-        locationGroupsHeading={contactLocationsHeading}
-        lastUpdated={lastUpdated}
+    <QueryBoundary>
+      <ResourceDetailContent
+        resourceId={resourceId}
+        category={category}
+        categoryResultsPath={categoryResultsPath}
+        detailPath={detailPath}
       />
-
-      {labels.length > 0 && (
-        <Section aria-labelledby="labels-section-heading">
-          <SectionHeading id="labels-section-heading">
-            {labelsHeading}
-          </SectionHeading>
-          <ChipList>
-            {labels.map((label) => (
-              <Chip key={label}>{label}</Chip>
-            ))}
-          </ChipList>
-        </Section>
-      )}
-
-      {similarResources.length > 0 && (
-        <Section aria-labelledby="similar-section-heading">
-          <SectionHeading id="similar-section-heading">
-            {similarHeading}
-          </SectionHeading>
-          <SimilarResourceList>
-            {similarResources.map((resource) => (
-              <ResourceCard
-                key={resource.organizationId}
-                name={resource.name}
-                to={detailPath(resource.organizationId)}
-                chips={resource.tags}
-                compact
-                onClick={() =>
-                  trackResourceViewed(resource.organizationId, resource.name)
-                }
-              />
-            ))}
-          </SimilarResourceList>
-        </Section>
-      )}
-
-      <SeeAllButtonWrapper>
-        <Button
-          kind="secondary"
-          shape="block"
-          onClick={() => navigate(categoryResultsPath)}
-        >
-          {seeAll}
-        </Button>
-      </SeeAllButtonWrapper>
-    </PageContainer>
+    </QueryBoundary>
   );
 }

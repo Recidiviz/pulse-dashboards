@@ -15,40 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type CategoryTile = {
-  name: string;
-  resourceCount: number;
-};
+import { useEffect, useState } from "react";
 
-export type CategoryGrid = {
-  helpCategories: CategoryTile[];
-  demographicCategories: CategoryTile[];
-};
+export function useDebouncedValue<T>(value: T, delayMs: number): T {
+  const [debouncedValue, setDebouncedValue] = useState(value);
 
-export type CategoryLinkItem = {
-  label: string;
-  to: string;
-};
+  useEffect(() => {
+    const timeoutId = setTimeout(() => setDebouncedValue(value), delayMs);
+    return () => clearTimeout(timeoutId);
+  }, [value, delayMs]);
 
-export type ContactLabels = {
-  address: string;
-  phone: string;
-  website: string;
-};
-
-export type ContactRow = {
-  key: string;
-  label: string;
-  value: string;
-};
-
-export type LocationEntry = {
-  id: number;
-  label?: string;
-  rows: ContactRow[];
-};
-
-export type ContactDetails = {
-  generalContactRows: ContactRow[];
-  locationGroups: LocationEntry[];
-};
+  return debouncedValue;
+}

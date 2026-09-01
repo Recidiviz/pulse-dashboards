@@ -29,14 +29,17 @@ export function UsNycResourcesLayout() {
   useHeaderOverride();
 
   return (
-    <QueryBoundary>
-      <BackTargetProvider>
-        <CRENavBar />
+    <BackTargetProvider>
+      {/* Kept outside of the QueryBoundary so a page-level suspend (e.g. navigating to
+       * a resource whose detail data hasn't loaded yet) can't unmount it and corrupt the
+       * search overlay's modal state mid-open or mid-close. */}
+      <CRENavBar />
+      <QueryBoundary>
         <ScreenFillingWrapper
           top={<Outlet />}
           bottom={<Footer content={US_NYC_CONTENT.cre.footer} />}
         />
-      </BackTargetProvider>
-    </QueryBoundary>
+      </QueryBoundary>
+    </BackTargetProvider>
   );
 }

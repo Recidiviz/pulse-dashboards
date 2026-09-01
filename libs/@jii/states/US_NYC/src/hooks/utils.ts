@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import Fuse, { IFuseOptions } from "fuse.js";
+
 import { US_NYC_DEMOGRAPHIC_CATEGORIES } from "../constants";
 import {
   OrganizationAddress,
@@ -24,6 +26,7 @@ import {
 } from "../types";
 import {
   CategoryGrid,
+  CategoryLinkItem,
   ContactDetails,
   ContactLabels,
   ContactRow,
@@ -117,6 +120,19 @@ export function buildCategoryGrid(resources: ResourceSummary[]): CategoryGrid {
   return { helpCategories, demographicCategories };
 }
 
+export function buildCategoryLinks(
+  { helpCategories, demographicCategories }: CategoryGrid,
+  categoryPath: (name: string) => string,
+  excludeCategory?: string,
+): CategoryLinkItem[] {
+  return [...helpCategories, ...demographicCategories]
+    .filter((category) => category.name !== excludeCategory)
+    .map((category) => ({
+      label: category.name,
+      to: categoryPath(category.name),
+    }));
+}
+
 export function getSimilarResources(
   resources: ResourceSummary[],
   category: string,
@@ -158,4 +174,52 @@ export function toggleFilterSelection(
   return currentValues.includes(selectedValue)
     ? currentValues.filter((currentValue) => currentValue !== selectedValue)
     : [...currentValues, selectedValue];
+}
+
+export const SEARCH_OPTIONS: IFuseOptions<ResourceSummary> = {
+  keys: [
+    { name: "name", weight: 0.7 },
+    { name: "description", weight: 0.3 },
+  ],
+  threshold: 0.3,
+  ignoreLocation: true,
+  minMatchCharLength: 3,
+};
+
+// Below this length, Fuse's fuzzy scoring is erratic (too little signal in
+// the pattern to score reliably) - so short queries use a plain substring
+// match instead.
+const MIN_FUZZY_QUERY_LENGTH = 3;
+
+function searchBySubstring(
+  resources: ResourceSummary[],
+  query: string,
+): ResourceSummary[] {
+  const lowerQuery = query.toLowerCase();
+  const isNameMatch = (resource: ResourceSummary) =>
+    resource.name.toLowerCase().includes(lowerQuery);
+  const isDescriptionMatch = (resource: ResourceSummary) =>
+    resource.description?.toLowerCase().includes(lowerQuery);
+
+  return [
+    ...resources.filter(isNameMatch),
+    ...resources.filter(
+      (resource) => !isNameMatch(resource) && isDescriptionMatch(resource),
+    ),
+  ];
+}
+
+export function searchResources(
+  resources: ResourceSummary[],
+  query: string,
+  fuseIndex: Fuse<ResourceSummary>,
+): ResourceSummary[] {
+  const trimmedQuery = query.trim();
+  if (!trimmedQuery) return [];
+
+  if (trimmedQuery.length < MIN_FUZZY_QUERY_LENGTH) {
+    return searchBySubstring(resources, trimmedQuery);
+  }
+
+  return fuseIndex.search(trimmedQuery).map((result) => result.item);
 }
