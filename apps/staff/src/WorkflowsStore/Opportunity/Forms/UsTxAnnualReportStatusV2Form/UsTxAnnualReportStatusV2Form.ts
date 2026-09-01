@@ -28,10 +28,9 @@ import {
 import { OpportunityFormComponentName } from "../../../../core/WorkflowsLayouts";
 import { UsTxAnnualReportStatusV2Opportunity } from "../../UsTx/UsTxAnnualReportStatusV2Opportunity/UsTxAnnualReportStatusV2Opportunity";
 import {
+  arsErsUserHasFilledNecessaryFields,
   isUnchangedFromPrefilledValue,
   prefilledArsErsSharedDraftData,
-  US_TX_ARS_ERS_BLOCKING_SUBMIT_FIELDS,
-  US_TX_ARS_ERS_REMARKS_FIELDS,
 } from "../../UsTx/UsTxArsErsSharedUtils";
 import type { UsTxAnnualReportStatusV2DraftData } from "../../UsTx/UsTxDraftData";
 import { FormBase } from "../FormBase";
@@ -132,51 +131,13 @@ export class UsTxAnnualReportStatusV2Form extends FormBase<
   }
 
   userHasFilledNecessaryFields(): boolean {
-    const formLastUpdatedId = this?.formLastUpdated?.updateById;
-    const currentUserId = this?.currentUserId;
-    const formData = this?.formData;
-    const draftData = this?.draftData;
-    const fieldAuthors = this?.fieldAuthors;
-
-    const isFieldFilled = (
-      field: string,
-      data: Record<string, any> | undefined,
-    ) => !!data?.[field];
-
-    const isFieldByCurrentUser = (field: string) =>
-      fieldAuthors?.[field] === currentUserId;
-
-    // A block is "started" if any user has written any of its fields into draftData.
-    // Every started block must be fully complete in formData before submission is allowed.
-    const allStartedBlocksComplete = Object.values(
-      US_TX_ARS_ERS_BLOCKING_SUBMIT_FIELDS,
-    ).every((formValues) => {
-      const isStarted = formValues.some((field) =>
-        isFieldFilled(field, draftData),
-      );
-      if (!isStarted) return true;
-      return formValues.every((field) => isFieldFilled(field, formData));
+    return arsErsUserHasFilledNecessaryFields({
+      formLastUpdatedId: this?.formLastUpdated?.updateById,
+      currentUserId: this?.currentUserId,
+      formData: this?.formData,
+      draftData: this?.draftData,
+      fieldAuthors: this?.fieldAuthors,
+      isInRevisionsRequested: this?.opportunity?.isInRevisionsRequested,
     });
-
-    // The current user must have personally authored at least one blocking field.
-    // This prevents a user who only filled non-blocking fields (e.g. remarks) from
-    // submitting on the strength of a different user's blocking-field edits.
-    // Exception: while the opportunity is in "revisions requested" status, a role's
-    // blocking fields are often already complete from a prior submission, so editing
-    // that role's remarks field also counts.
-    const atLeastOneBlockStarted = Object.entries(
-      US_TX_ARS_ERS_BLOCKING_SUBMIT_FIELDS,
-    ).some(
-      ([role, formValues]) =>
-        formValues.some((field) => isFieldByCurrentUser(field)) ||
-        (this?.opportunity?.isInRevisionsRequested &&
-          isFieldByCurrentUser(US_TX_ARS_ERS_REMARKS_FIELDS[role])),
-    );
-
-    return (
-      atLeastOneBlockStarted &&
-      allStartedBlocksComplete &&
-      formLastUpdatedId === currentUserId
-    );
   }
 }

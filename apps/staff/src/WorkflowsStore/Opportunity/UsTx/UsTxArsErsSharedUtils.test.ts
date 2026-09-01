@@ -160,6 +160,21 @@ describe("form.userHasFilledNecessaryFields", () => {
       expect(form.userHasFilledNecessaryFields()).toBe(false);
     });
 
+    it("when a block has some real values and one blocking field written as an empty string", () => {
+      // supervisingOfficerDate was cleared back to "" — the block has a real
+      // authored value elsewhere (officerName) so it does count as started,
+      // and the blank date should keep it incomplete.
+      const draftData = { ...paroleOfficerDraft, supervisingOfficerDate: "" };
+      const form = makeForm({
+        updateById: "user1",
+        currentUserId: "user1",
+        draftData,
+        formData: draftData,
+        fieldAuthors: paroleOfficerFieldAuthors,
+      });
+      expect(form.userHasFilledNecessaryFields()).toBe(false);
+    });
+
     it("when the current user only filled non-blocking fields and a previous user filled the blocking fields", () => {
       const previousUserBlockingFields = Object.fromEntries(
         Object.keys(paroleOfficerDraft).map((k) => [k, "user-prev"]),
@@ -257,6 +272,24 @@ describe("form.userHasFilledNecessaryFields", () => {
       expect(form.userHasFilledNecessaryFields()).toBe(true);
     });
 
+    it("when one block is genuinely complete and a second block's only touched field is an empty string", () => {
+      // unitSupervisorSignature was touched and left blank (e.g. clicked into and
+      // out of without typing) — that block should be treated as if it was never
+      // started, so it doesn't block submission on the strength of the complete
+      // paroleOfficer block.
+      const form = makeForm({
+        updateById: "user1",
+        currentUserId: "user1",
+        draftData: { ...paroleOfficerDraft, unitSupervisorSignature: "" },
+        formData: { ...paroleOfficerDraft, unitSupervisorSignature: "" },
+        fieldAuthors: {
+          ...paroleOfficerFieldAuthors,
+          unitSupervisorSignature: "user1",
+        },
+      });
+      expect(form.userHasFilledNecessaryFields()).toBe(true);
+    });
+
     it("when only a subset of blocks have draftData and those are all complete", () => {
       // unitSupervisor block has no draftData, so it is not "started" and not required.
       const form = makeForm({
@@ -265,6 +298,69 @@ describe("form.userHasFilledNecessaryFields", () => {
         draftData: paroleOfficerDraft,
         formData: { ...paroleOfficerDraft, ...unitSupervisorDraft },
         fieldAuthors: paroleOfficerFieldAuthors,
+      });
+      expect(form.userHasFilledNecessaryFields()).toBe(true);
+    });
+  });
+
+  // allStartedBlocksComplete is vacuously true for a block whenever none of its
+  // fields are truthy in draftData — undefined and "" are both falsy, so it treats
+  // them identically. Each case below pairs an untouched-in-various-ways
+  // unitSupervisor block with a genuinely complete, authored paroleOfficer block:
+  // if allStartedBlocksComplete incorrectly treated the unitSupervisor block as
+  // "started but incomplete" in any of these cases, the overall result would flip
+  // to false.
+  describe("allStartedBlocksComplete", () => {
+    it("returns true when a block's fields are all undefined (never written to draftData)", () => {
+      const form = makeForm({
+        updateById: "user1",
+        currentUserId: "user1",
+        draftData: paroleOfficerDraft,
+        formData: paroleOfficerDraft,
+        fieldAuthors: paroleOfficerFieldAuthors,
+      });
+      expect(form.userHasFilledNecessaryFields()).toBe(true);
+    });
+
+    it("returns true when a block's fields are all written as empty strings", () => {
+      const blankUnitSupervisor = {
+        unitSupervisorSignature: "",
+        unitSupervisorName: "",
+        unitSupervisorDate: "",
+        unitSupervisorConcurWithSupervisingOfficerCheckYes: "",
+      };
+      const form = makeForm({
+        updateById: "user1",
+        currentUserId: "user1",
+        draftData: { ...paroleOfficerDraft, ...blankUnitSupervisor },
+        formData: { ...paroleOfficerDraft, ...blankUnitSupervisor },
+        fieldAuthors: {
+          ...paroleOfficerFieldAuthors,
+          unitSupervisorSignature: "user1",
+          unitSupervisorName: "user1",
+          unitSupervisorDate: "user1",
+          unitSupervisorConcurWithSupervisingOfficerCheckYes: "user1",
+        },
+      });
+      expect(form.userHasFilledNecessaryFields()).toBe(true);
+    });
+
+    it("returns true when a block's fields are a mix of undefined and empty strings", () => {
+      const partiallyBlankUnitSupervisor = {
+        // unitSupervisorSignature and unitSupervisorDate are undefined (omitted)
+        unitSupervisorName: "",
+        unitSupervisorConcurWithSupervisingOfficerCheckYes: "",
+      };
+      const form = makeForm({
+        updateById: "user1",
+        currentUserId: "user1",
+        draftData: { ...paroleOfficerDraft, ...partiallyBlankUnitSupervisor },
+        formData: { ...paroleOfficerDraft, ...partiallyBlankUnitSupervisor },
+        fieldAuthors: {
+          ...paroleOfficerFieldAuthors,
+          unitSupervisorName: "user1",
+          unitSupervisorConcurWithSupervisingOfficerCheckYes: "user1",
+        },
       });
       expect(form.userHasFilledNecessaryFields()).toBe(true);
     });

@@ -171,6 +171,68 @@ export function isUnchangedFromPrefilledValue(
   return value === prefilledValue;
 }
 
+export function arsErsUserHasFilledNecessaryFields({
+  formLastUpdatedId,
+  currentUserId,
+  formData,
+  draftData,
+  fieldAuthors,
+  isInRevisionsRequested,
+}: {
+  formLastUpdatedId: string | undefined;
+  currentUserId: string | undefined;
+  formData: Record<string, unknown> | undefined;
+  draftData: Record<string, unknown> | undefined;
+  fieldAuthors: Record<string, string> | undefined;
+  isInRevisionsRequested: boolean | undefined;
+}): boolean {
+  const isFieldFilled = (
+    field: string,
+    data: Record<string, unknown> | undefined,
+  ) => !!data?.[field];
+
+  // Requires a real (non-empty) value, not just an author — a field a user
+  // touched and left blank shouldn't count as having started a block.
+  const isFieldByCurrentUser = (field: string) =>
+    fieldAuthors?.[field] === currentUserId && isFieldFilled(field, draftData);
+
+  // A block is "started" if any user has written a real (non-empty) value to
+  // any of its fields in draftData. A block whose only touched fields are
+  // blank is treated as if it were never started, rather than as incomplete.
+  // Every started block must be fully complete in formData before submission is allowed.
+  const allStartedBlocksComplete = Object.values(
+    US_TX_ARS_ERS_BLOCKING_SUBMIT_FIELDS,
+  ).every((formValues) => {
+    const isStarted = formValues.some((field) =>
+      isFieldFilled(field, draftData),
+    );
+    if (!isStarted) return true;
+    return formValues.every((field) => isFieldFilled(field, formData));
+  });
+
+  // The current user must have personally authored at least one blocking field
+  // with a real value. This prevents a user who only filled non-blocking fields
+  // (e.g. remarks) — or only blanked out a blocking field — from submitting on
+  // the strength of a different user's blocking-field edits.
+  // Exception: while the opportunity is in "revisions requested" status, a role's
+  // blocking fields are often already complete from a prior submission, so editing
+  // that role's remarks field also counts.
+  const atLeastOneBlockStarted = Object.entries(
+    US_TX_ARS_ERS_BLOCKING_SUBMIT_FIELDS,
+  ).some(
+    ([role, formValues]) =>
+      formValues.some((field) => isFieldByCurrentUser(field)) ||
+      (isInRevisionsRequested &&
+        isFieldByCurrentUser(US_TX_ARS_ERS_REMARKS_FIELDS[role])),
+  );
+
+  return (
+    atLeastOneBlockStarted &&
+    allStartedBlocksComplete &&
+    formLastUpdatedId === currentUserId
+  );
+}
+
 const HEADERS_TO_HOIST = ["Current Fees", "Most Recent Payments"];
 
 export function getDynamicCaseNoteHeaders(opportunity: Opportunity): string[] {
