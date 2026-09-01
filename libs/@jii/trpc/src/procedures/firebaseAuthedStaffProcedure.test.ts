@@ -295,9 +295,10 @@ test("Recidiviz users cannot write to prod", async () => {
     recidivizAllowedStates: [testStateCode],
   });
 
-  // because we are testing this with a TRPC client, we can't verify the server-side error class
+  // because we are testing this with a TRPC client, we can't verify the server-side error class;
+  // because we are testing with the env mocked to prod, we can't verify the exact error message
   await expect(client.testMutation.mutate()).rejects.toThrow(
-    "Data mutations are not allowed by internal users in production",
+    "An error occurred",
   );
 });
 

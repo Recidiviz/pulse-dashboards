@@ -22,10 +22,23 @@ import { procedurePlugin } from "~server-setup-plugin";
 
 import { createContext } from "../context";
 
-const t = initTRPC
-  .context<typeof createContext>()
+const t = initTRPC.context<typeof createContext>().create({
   // Required to get Date objects to serialize correctly.
-  .create({ transformer: superjson });
+  transformer: superjson,
+
+  errorFormatter({ shape }) {
+    // For tests, pass through errors unchanged so we can check the messages
+    if (process.env["DEPLOY_ENV"] === "test") {
+      return shape;
+    }
+
+    // Replace the error message with a generic one before sending it to the client
+    return {
+      ...shape,
+      message: "An error occurred",
+    };
+  },
+});
 
 export const router = t.router;
 
