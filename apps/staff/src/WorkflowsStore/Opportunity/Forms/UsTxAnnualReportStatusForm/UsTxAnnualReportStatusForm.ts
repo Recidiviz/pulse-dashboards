@@ -85,6 +85,7 @@ export class UsTxAnnualReportStatusForm extends FormBase<
       ...prefilledArsErsSharedDraftData(
         this.person,
         this.opportunity.record.formInformation,
+        true,
       ),
       threeYearsTRASCheck: true,
       complianceFeesAndEducationCheck: true,

@@ -97,6 +97,7 @@ export class UsTxEarlyReleaseFromSupervisionForm extends FormBase<
       ...prefilledArsErsSharedDraftData(
         this.person,
         this.opportunity.record.formInformation,
+        true,
       ),
       atLeastHalfTimeCheck: true,
       minimumThreeYearsSupervisionCheck: true,

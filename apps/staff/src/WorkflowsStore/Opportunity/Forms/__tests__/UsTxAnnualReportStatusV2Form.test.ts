@@ -35,7 +35,7 @@ let rootStore: RootStore;
 let opp: UsTxAnnualReportStatusV2Opportunity;
 let form: UsTxAnnualReportStatusV2Form;
 
-function createTestUnit(unitSupervisor = "JANE DOE") {
+function createTestUnit(tdcjNumber = "ARS001") {
   rootStore = new RootStore();
   rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   rootStore.userStore = {
@@ -49,7 +49,7 @@ function createTestUnit(unitSupervisor = "JANE DOE") {
     pseudonymizedId: "pseudo1",
     displayId: "d1",
     displayName: "Test Person",
-    assignedStaffFullName: "Test Officer",
+    assignedStaffFullName: "Jane Doe",
   } as Client;
 
   opp = new UsTxAnnualReportStatusV2Opportunity(person, {
@@ -59,7 +59,7 @@ function createTestUnit(unitSupervisor = "JANE DOE") {
     isAlmostEligible: false,
     eligibleCriteria: {},
     ineligibleCriteria: {},
-    formInformation: { unitSupervisor },
+    formInformation: { tdcjNumber },
     metadata: {},
   });
 
@@ -86,19 +86,15 @@ afterEach(() => {
 });
 
 describe("updateDraftData for a prepopulated field", () => {
-  test("prefilledData reflects the title-cased prepopulated value", () => {
-    expect(form.prefilledData.unitSupervisorName).toEqual("Jane Doe");
-  });
-
   test("writes to firestore when the value differs from the prepopulated value", async () => {
     vi.spyOn(rootStore.firestoreStore, "updateForm");
 
-    await form.updateDraftData("unitSupervisorName", "Someone Else");
+    await form.updateDraftData("officerName", "Someone Else");
 
     expect(rootStore.firestoreStore.updateForm).toHaveBeenCalledWith(
       opp.person.recordId,
       expect.objectContaining({
-        data: { unitSupervisorName: "Someone Else" },
+        data: { officerName: "Someone Else" },
       }),
       form.formId,
     );
@@ -107,7 +103,7 @@ describe("updateDraftData for a prepopulated field", () => {
   test("does not write to firestore when the value matches the prepopulated value and there is no prior draft", async () => {
     vi.spyOn(rootStore.firestoreStore, "updateForm");
 
-    await form.updateDraftData("unitSupervisorName", "Jane Doe");
+    await form.updateDraftData("officerName", "Jane Doe");
 
     expect(rootStore.firestoreStore.updateForm).not.toHaveBeenCalled();
   });
@@ -117,7 +113,7 @@ describe("updateDraftData for a prepopulated field", () => {
     async (value) => {
       vi.spyOn(rootStore.firestoreStore, "updateForm");
 
-      await form.updateDraftData("unitSupervisorName", value);
+      await form.updateDraftData("officerName", value);
 
       expect(rootStore.firestoreStore.updateForm).not.toHaveBeenCalled();
     },
@@ -125,17 +121,17 @@ describe("updateDraftData for a prepopulated field", () => {
 
   test("clears an existing draft when the user reverts the field back to a case/whitespace variant of the prepopulated value", async () => {
     vi.spyOn(form, "draftData", "get").mockReturnValue({
-      unitSupervisorName: "Someone Else",
+      officerName: "Someone Else",
     });
     vi.spyOn(rootStore.firestoreStore, "updateForm");
 
-    await form.updateDraftData("unitSupervisorName", "jane doe ");
+    await form.updateDraftData("officerName", "jane doe ");
 
     expect(rootStore.firestoreStore.updateForm).toHaveBeenCalledWith(
       opp.person.recordId,
       expect.objectContaining({
-        data: { unitSupervisorName: deleteField() },
-        fieldAuthors: { unitSupervisorName: deleteField() },
+        data: { officerName: deleteField() },
+        fieldAuthors: { officerName: deleteField() },
       }),
       form.formId,
     );
@@ -143,17 +139,17 @@ describe("updateDraftData for a prepopulated field", () => {
 
   test("clears an existing draft when the user reverts the field back to the prepopulated value", async () => {
     vi.spyOn(form, "draftData", "get").mockReturnValue({
-      unitSupervisorName: "Someone Else",
+      officerName: "Someone Else",
     });
     vi.spyOn(rootStore.firestoreStore, "updateForm");
 
-    await form.updateDraftData("unitSupervisorName", "Jane Doe");
+    await form.updateDraftData("officerName", "Jane Doe");
 
     expect(rootStore.firestoreStore.updateForm).toHaveBeenCalledWith(
       opp.person.recordId,
       expect.objectContaining({
-        data: { unitSupervisorName: deleteField() },
-        fieldAuthors: { unitSupervisorName: deleteField() },
+        data: { officerName: deleteField() },
+        fieldAuthors: { officerName: deleteField() },
       }),
       form.formId,
     );

@@ -118,6 +118,7 @@ export const US_TX_ARS_ERS_REMARKS_FIELDS: Record<string, string> = {
 export function prefilledArsErsSharedDraftData(
   client: Client,
   formInformation: UsTxArsErsSharedFormInformation,
+  includeAutopopulatedNames = false,
 ): Partial<UsTxArsErsSharedDraftData> {
   const {
     tdcjNumber,
@@ -147,12 +148,16 @@ export function prefilledArsErsSharedDraftData(
     warrantCheck: true,
     societyBestInterestCheck: true,
     officerName: client.assignedStaffFullName,
-    unitSupervisorName: unitSupervisor ? toTitleCase(unitSupervisor) : "",
-    paroleSupervisorName: paroleSupervisor ? toTitleCase(paroleSupervisor) : "",
-    assistantRegionDirectorName: assistantRegionDirector
-      ? toTitleCase(assistantRegionDirector)
-      : "",
-    regionDirectorName: regionDirector ? toTitleCase(regionDirector) : "",
+    ...(includeAutopopulatedNames && {
+      unitSupervisorName: unitSupervisor ? toTitleCase(unitSupervisor) : "",
+      paroleSupervisorName: paroleSupervisor
+        ? toTitleCase(paroleSupervisor)
+        : "",
+      assistantRegionDirectorName: assistantRegionDirector
+        ? toTitleCase(assistantRegionDirector)
+        : "",
+      regionDirectorName: regionDirector ? toTitleCase(regionDirector) : "",
+    }),
   };
 }
 
