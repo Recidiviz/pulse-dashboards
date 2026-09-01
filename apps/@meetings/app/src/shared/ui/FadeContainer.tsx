@@ -22,6 +22,7 @@ import Animated, {
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
+  withDelay,
   withTiming,
 } from "react-native-reanimated";
 
@@ -29,6 +30,7 @@ type FadeContainerProps = {
   isVisible: boolean;
   children: React.ReactNode;
   duration?: number;
+  delay?: number;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -41,6 +43,7 @@ export function FadeContainer({
   isVisible,
   children,
   duration = 300,
+  delay = 0,
   style,
 }: FadeContainerProps) {
   const [isRendered, setIsRendered] = useState(isVisible);
@@ -54,15 +57,18 @@ export function FadeContainer({
         easing: Easing.out(Easing.cubic),
       });
     } else {
-      opacity.value = withTiming(
-        0,
-        { duration, easing: Easing.out(Easing.cubic) },
-        (finished) => {
-          if (finished) runOnJS(setIsRendered)(false);
-        },
+      opacity.value = withDelay(
+        delay,
+        withTiming(
+          0,
+          { duration, easing: Easing.out(Easing.cubic) },
+          (finished) => {
+            if (finished) runOnJS(setIsRendered)(false);
+          },
+        ),
       );
     }
-  }, [isVisible, duration, opacity]);
+  }, [isVisible, duration, delay, opacity]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
