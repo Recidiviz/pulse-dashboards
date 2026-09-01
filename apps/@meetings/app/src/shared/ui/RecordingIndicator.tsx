@@ -27,9 +27,9 @@ export function RecordingIndicator({ isRecording, className }: Props) {
   return (
     <View
       className={clsx(
-        "flex size-2.5 items-center justify-center rounded-full",
+        "flex size-3 items-center justify-center rounded-full",
         isRecording
-          ? "animate-pulse bg-attention-light-secondary"
+          ? "animate-pulse bg-attention-light-secondary web:bg-[#FEACCA]"
           : "animate-none bg-transparent",
         className,
       )}
