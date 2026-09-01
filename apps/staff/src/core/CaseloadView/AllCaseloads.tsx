@@ -55,7 +55,7 @@ const AllCaseloadsViz = observer(function AllCaseloadsViz({
 }: {
   presenter: AllCaseloadsPresenter;
 }) {
-  if (presenter.showTnPilotTable) {
+  if (presenter.showClassificationTable) {
     return <AllCaseloadsTable />;
   }
 

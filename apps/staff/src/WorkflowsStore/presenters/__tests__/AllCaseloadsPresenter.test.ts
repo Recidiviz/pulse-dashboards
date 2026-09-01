@@ -134,7 +134,7 @@ describe("AllCaseloadsPresenter", () => {
 
     expect(presenter.showTableViewToggle).toBeTrue();
     expect(presenter.showClientsResidentsTable).toBeTrue();
-    expect(presenter.showTnPilotTable).toBeFalse();
+    expect(presenter.showClassificationTable).toBeFalse();
   });
 
   it("keeps the TN pilot table separate from the Clients and Residents toggle", () => {
@@ -148,7 +148,7 @@ describe("AllCaseloadsPresenter", () => {
       currentTenantId: "US_TN",
     });
 
-    expect(presenter.showTnPilotTable).toBeTrue();
+    expect(presenter.showClassificationTable).toBeTrue();
     expect(presenter.showTableViewToggle).toBeFalse();
     expect(presenter.showClientsResidentsTable).toBeFalse();
   });

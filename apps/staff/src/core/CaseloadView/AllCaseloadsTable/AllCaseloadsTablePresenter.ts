@@ -31,7 +31,14 @@ export class AllCaseloadsTablePresenter extends CaseloadOpportunitiesPresenter {
       tenantStore: { currentTenantId },
     } = this.rootStore;
 
-    return activeSystem === "INCARCERATION" && currentTenantId === "US_TN";
+    if (!currentTenantId) return;
+
+    const applicableStates = ["US_MI", "US_TN"];
+
+    return (
+      activeSystem === "INCARCERATION" &&
+      applicableStates.includes(currentTenantId)
+    );
   }
 
   get people(): Resident[] {

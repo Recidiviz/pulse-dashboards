@@ -50,7 +50,8 @@ export class AllCaseloadsPresenter implements TableViewSelectInterface {
 
   get showTableViewToggle(): boolean {
     return (
-      this.isClientsResidentsTableViewToggleEnabled && !this.showTnPilotTable
+      this.isClientsResidentsTableViewToggleEnabled &&
+      !this.showClassificationTable
     );
   }
 
@@ -58,18 +59,25 @@ export class AllCaseloadsPresenter implements TableViewSelectInterface {
     return this.showTableViewToggle && !this.showListView;
   }
 
-  get showTnPilotTable(): boolean {
+  get showClassificationTable(): boolean {
     const {
       currentTenantId,
       userStore: { activeFeatureVariants },
       workflowsStore: { activeSystem },
     } = this.rootStore;
 
-    return !!(
+    const TnClassification = !!(
       activeFeatureVariants.usTn2026ClassificationPolicyPilot &&
-      currentTenantId === "US_TN" &&
-      activeSystem === "INCARCERATION"
+      currentTenantId === "US_TN"
     );
+
+    const MiClassification = !!(
+      activeFeatureVariants.usMiClassification && currentTenantId === "US_MI"
+    );
+
+    const applicableClassifications = TnClassification || MiClassification;
+
+    return applicableClassifications && activeSystem === "INCARCERATION";
   }
 
   get isTypesenseSearchEnabled(): boolean {
