@@ -857,6 +857,26 @@ export default class AnalyticsStore {
     this.track("frontend.workflows_homepage_card_clicked", metadata);
   }
 
+  /**************************************************
+   * North Carolina RNA Self-Report Viewer Tracking *
+   **************************************************/
+
+  trackRnaFilterDropdownOpened(): void {
+    this.track("frontend.nc_rna_filter_dropdown_opened");
+  }
+
+  trackRnaFiltersCleared(): void {
+    this.track("frontend.nc_rna_filters_cleared");
+  }
+
+  trackRnaFilterChanged(metadata: FilterChangedMetadata): void {
+    this.track("frontend.nc_rna_filter_changed", metadata);
+  }
+
+  trackRnaFiltersAllSelected(metadata: FiltersResetMetadata): void {
+    this.track("frontend.nc_rna_filters_all_selected", metadata);
+  }
+
   /****************************
    * Case Notes Search Tracking *
    ****************************/

@@ -130,7 +130,7 @@ export const RNA_BADGE_STYLING = {
   },
   COMPLETE: {
     palette: "YELLOW",
-    text: "Complete – Review",
+    text: "Complete",
   },
   SUBMITTED_BY_STAFF: {
     palette: "GREEN",
@@ -138,12 +138,24 @@ export const RNA_BADGE_STYLING = {
   },
 } as const;
 
+// TODO(OBT-47836): remove once writeback is fully launched
+export const ORIGINAL_RNA_BADGE_STYLING = {
+  ...RNA_BADGE_STYLING,
+  COMPLETE: {
+    palette: "YELLOW",
+    text: "Complete – Review",
+  },
+} as const;
+
 const StatusBadgeCell = ({ row }: { row: Row<RNARowData> }) => {
+  const { usNcRNAAutoEnablement } = useFeatureVariants();
+
+  if (usNcRNAAutoEnablement) {
+    return <WorkflowsBadgePill {...RNA_BADGE_STYLING[row.original.status]} />;
+  }
+
   return (
-    <WorkflowsBadgePill
-      palette={RNA_BADGE_STYLING[row.original.status].palette}
-      text={RNA_BADGE_STYLING[row.original.status].text}
-    />
+    <WorkflowsBadgePill {...ORIGINAL_RNA_BADGE_STYLING[row.original.status]} />
   );
 };
 

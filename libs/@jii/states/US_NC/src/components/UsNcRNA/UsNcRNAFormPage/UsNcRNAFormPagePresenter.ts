@@ -25,6 +25,7 @@ import {
   rnaQuestionConfig,
   RNAQuestionId,
 } from "~@jii/configs";
+import { SegmentClient } from "~@jii/data";
 import { RouteParams, State } from "~@jii/paths";
 
 import { UsNcRNAForm } from "../../../models/UsNcRNAForm";
@@ -51,6 +52,7 @@ export class UsNcRNAFormPagePresenter {
     readonly routeParams: RouteParams<typeof State.Resident.UsNcRNA.FormPage>,
     public form: UsNcRNAForm,
     private navigate: NavigateFunction,
+    private readonly segmentClient: SegmentClient,
   ) {
     this.pageNum = routeParams.pageNum;
 
@@ -203,6 +205,9 @@ export class UsNcRNAFormPagePresenter {
     yield this.saveAnswers(true);
 
     if (!this.savingError) {
+      this.segmentClient.trackNcRNAFormCompletion({
+        justiceInvolvedPersonPseudoId: this.routeParams.personPseudoId,
+      });
       this.navigate(State.Resident.UsNcRNA.Landing.buildPath(this.routeParams));
     } else {
       this.closeConfirmSubmissionModal();

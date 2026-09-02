@@ -22,11 +22,12 @@ import styled from "styled-components";
 
 import { palette, spacing } from "~design-system";
 
+import { useFeatureVariants } from "../../../components/StoreProvider";
 import { WorkflowsBadgePill } from "../../BadgePill/BadgePill";
 import PersonId from "../../PersonId";
 import { WorkflowsBackButton } from "../../WorkflowsLayouts/WorkflowsBackButton";
 import { RNAMarkSubmittedButton } from "../RNAMarkSubmittedButton";
-import { RNA_BADGE_STYLING } from "../UsNcRNATable";
+import { ORIGINAL_RNA_BADGE_STYLING, RNA_BADGE_STYLING } from "../UsNcRNATable";
 import { PaddedRNAContent } from "./ResultsPage";
 import { ResultsPagePresenter } from "./ResultsPagePresenter";
 import { RNAPrintButton } from "./RNAPrintButton";
@@ -77,6 +78,7 @@ export const RNAResultsHeader = observer(function RNAResultsHeader({
 }: {
   presenter: ResultsPagePresenter;
 }) {
+  const { usNcRNAAutoEnablement } = useFeatureVariants();
   const { resident, status } = presenter;
 
   return (
@@ -103,10 +105,11 @@ export const RNAResultsHeader = observer(function RNAResultsHeader({
             <RNAMarkSubmittedButton presenter={presenter} />
           </Right>
           <Left>
-            <WorkflowsBadgePill
-              palette={RNA_BADGE_STYLING[status].palette}
-              text={RNA_BADGE_STYLING[status].text}
-            />
+            {usNcRNAAutoEnablement ? (
+              <WorkflowsBadgePill {...RNA_BADGE_STYLING[status]} />
+            ) : (
+              <WorkflowsBadgePill {...ORIGINAL_RNA_BADGE_STYLING[status]} />
+            )}
           </Left>
           <Right>
             <SubmissionDateandUndo presenter={presenter} />

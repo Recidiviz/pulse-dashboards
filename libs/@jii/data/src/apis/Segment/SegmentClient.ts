@@ -216,6 +216,14 @@ export class SegmentClient implements IntakeAnalytics {
     this.track("frontend_cre_search_query", metadata);
   }
 
+  /* NC RNA form events */
+
+  trackNcRNAFormCompletion(metadata: {
+    justiceInvolvedPersonPseudoId: string;
+  }) {
+    this.track("frontend_nc_rna_form_completed", metadata);
+  }
+
   /* Intake events */
 
   // the event names seen here are the same as used in CPA.

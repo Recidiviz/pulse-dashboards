@@ -20,11 +20,16 @@ import { FC } from "react";
 
 import { Button } from "~design-system";
 
+import { useFeatureVariants } from "../../components/StoreProvider";
 import { ResultsPagePresenter } from "./UsNcRNASingleResidentResults/ResultsPagePresenter";
 
 export const RNAMarkSubmittedButton: FC<{
   presenter: ResultsPagePresenter;
 }> = observer(function RNAMarkSubmittedButton({ presenter }) {
+  const { usNcRNAAutoEnablement } = useFeatureVariants();
+
+  if (usNcRNAAutoEnablement) return null;
+
   return (
     <Button
       shape={"block"}

@@ -103,5 +103,17 @@ function RNAQuerier({ ids, lookupField }: QuerierProps) {
         }),
   );
 
+  if (data.length === 0 && usNcRNAAutoEnablement) {
+    return (
+      <EmptyStateWrapper>
+        <EmptyStateText>
+          No residents on the selected caseloads currently have self-reporting
+          enabled in OPUS. Changes in OPUS will be reflected here in 1-2
+          business days.
+        </EmptyStateText>
+      </EmptyStateWrapper>
+    );
+  }
+
   return <RNATable data={data} refetch={refetch} />;
 }

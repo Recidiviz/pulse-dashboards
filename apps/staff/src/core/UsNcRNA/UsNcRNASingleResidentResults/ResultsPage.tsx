@@ -26,7 +26,10 @@ import { fullRNASpec } from "~@jii/configs";
 import { palette, spacing } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
-import { useRootStore } from "../../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../../components/StoreProvider";
 import { Resident } from "../../../WorkflowsStore/Resident";
 import { SubHeading } from "../../sharedComponents";
 import { Divider } from "../../WorkflowsJusticeInvolvedPersonProfile/styles";
@@ -52,12 +55,23 @@ export const ManagedComponent = observer(function ResultsPage({
 }: {
   presenter: ResultsPagePresenter;
 }) {
-  const subheadCopy: Record<string, string> = {
+  const { usNcRNAAutoEnablement } = useFeatureVariants();
+
+  const originalSubheadCopy: Record<string, string> = {
     IN_PROGRESS:
       "This person has not yet completed their self-report, but you can view their responses so far here.",
     COMPLETE:
       "This person has completed their self-report. Please make sure to copy all their responses into OPUS.",
   };
+
+  const subheadCopy = usNcRNAAutoEnablement
+    ? {
+        IN_PROGRESS:
+          "This person has not yet completed their self-report, but you can view their responses so far here. After they finish it, results will be reflected in OPUS in 1-2 business days.",
+        COMPLETE:
+          "This person has completed their self-report. Results will be reflected in OPUS in 1-2 business days.",
+      }
+    : originalSubheadCopy;
 
   return (
     <RNAI18nProvider>
@@ -90,9 +104,12 @@ export const ManagedComponent = observer(function ResultsPage({
 
           return null;
         })}
-        {presenter.status !== "IN_PROGRESS" && (
-          <RNAResultsFooter presenter={presenter} />
-        )}
+        {
+          /* TODO(OBT-47836): remove once writeback is fully launched */
+          !usNcRNAAutoEnablement && presenter.status !== "IN_PROGRESS" && (
+            <RNAResultsFooter presenter={presenter} />
+          )
+        }
       </PaddedRNAContent>
     </RNAI18nProvider>
   );

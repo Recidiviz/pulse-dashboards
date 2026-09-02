@@ -24,7 +24,7 @@ import { WorkflowsStore } from "../WorkflowsStore";
 import FilterStoreBase from "./FilterStoreBase";
 
 // Configuration for North Carolina RNA viewer filters
-const rnaFilters: FilterSection<"usNcRNA">[] = [
+const originalRnaFilters: FilterSection<"usNcRNA">[] = [
   {
     title: "Assessment Status",
     type: "usNcRNA",
@@ -111,6 +111,28 @@ const rnaFilters: FilterSection<"usNcRNA">[] = [
   },
 ] as const;
 
+const rnaFilters: FilterSection<"usNcRNA">[] = [
+  {
+    title: "Assessment Status",
+    type: "usNcRNA",
+    field: "status",
+    options: [
+      {
+        value: "NOT_STARTED",
+        label: "Not Started",
+      },
+      {
+        value: "IN_PROGRESS",
+        label: "In Progress",
+      },
+      {
+        value: "COMPLETE",
+        label: "Complete",
+      },
+    ],
+  },
+] as const;
+
 /**
  * Provides information about the state of North Carolina RNA viewer filters.
  */
@@ -121,12 +143,20 @@ export default class UsNcRNAFilterStore extends FilterStoreBase {
   ) {
     super();
 
-    // Default state: only non-submitted to OPUS assessments,
-    // and only people who are due within the next 90 days
-    this._selectedFilters = {
-      isSubmitted: [false],
-      dueIn: ["PAST", "NEXT_7_DAYS", "NEXT_30_DAYS", "NEXT_90_DAYS"],
-    };
+    if (
+      workflowsStore.rootStore.userStore.activeFeatureVariants
+        .usNcRNAAutoEnablement
+    ) {
+      // No selected filters by default
+      this._selectedFilters = {};
+    } else {
+      // Default state: only non-submitted to OPUS assessments,
+      // and only people who are due within the next 90 days
+      this._selectedFilters = {
+        isSubmitted: [false],
+        dueIn: ["PAST", "NEXT_7_DAYS", "NEXT_30_DAYS", "NEXT_90_DAYS"],
+      };
+    }
 
     makeObservable<UsNcRNAFilterStore>(this, {
       // State
@@ -153,16 +183,26 @@ export default class UsNcRNAFilterStore extends FilterStoreBase {
     });
   }
 
-  filterConfig = { filters: rnaFilters };
+  get filterConfig() {
+    const { usNcRNAAutoEnablement } =
+      this.workflowsStore.rootStore.userStore.activeFeatureVariants;
+    if (usNcRNAAutoEnablement) {
+      return { filters: rnaFilters };
+    } else {
+      return { filters: originalRnaFilters };
+    }
+  }
 
   clearFilters = () => {
     this._selectedFilters = {};
 
-    // TODO(#10892): add tracking
+    this.analyticsStore.trackRnaFiltersCleared();
   };
 
   trackFiltersReset = () => {
-    // TODO(#10892): add tracking
+    this.analyticsStore.trackRnaFiltersAllSelected({
+      selectedFiltersBeforeReset: this._selectedFilters,
+    });
   };
 
   trackFilterChanged = (
@@ -171,6 +211,16 @@ export default class UsNcRNAFilterStore extends FilterStoreBase {
     changedFilterSelected?: boolean,
     onlyClicked?: boolean,
   ) => {
-    // TODO(#10892): add tracking
+    this.analyticsStore.trackRnaFilterChanged({
+      changedFilterCategory: field,
+      changedFilterValue: option.value,
+      changedFilterSelected: !!changedFilterSelected,
+      selectedFilters: this._selectedFilters,
+      onlyClicked: !!onlyClicked,
+    });
   };
+
+  trackFilterDropdownOpened() {
+    this.analyticsStore.trackRnaFilterDropdownOpened();
+  }
 }

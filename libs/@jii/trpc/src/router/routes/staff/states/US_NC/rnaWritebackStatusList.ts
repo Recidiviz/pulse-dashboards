@@ -28,8 +28,8 @@ const residentRecordSchema = z.object({
 });
 
 /**
- * Returns RNA status details for all residents matching the input query specs,
- * based on writeback data.
+ * Returns RNA status details for residents matching the input query specs,
+ * based on writeback data, filtering out those who don't have open RNAs.
  */
 export const rnaWritebackStatusList = stateStaffProcedure
   .input(
@@ -125,61 +125,63 @@ export const rnaWritebackStatusList = stateStaffProcedure
       );
 
       // compute a status for each resident and include applicable assessment data
-      return residentData.map(
-        (
-          r,
-        ): {
-          pseudonymizedId: string;
-          status: RNAAssessmentStatus;
-          id?: string;
-          updatedAt?: Date;
-          createdAt?: Date;
-          completedAt?: Date;
-          seqNumber?: string;
-          admitDate?: Date;
-        } => {
-          const { pseudonymizedId } = r;
-          const latestRNA = latestRNAByResident.get(pseudonymizedId);
-          const { seqNumber, admitDate } =
-            writebackDataByResident.get(pseudonymizedId) ?? {};
+      return residentData
+        .map(
+          (
+            r,
+          ): {
+            pseudonymizedId: string;
+            status: RNAAssessmentStatus;
+            id?: string;
+            updatedAt?: Date;
+            createdAt?: Date;
+            completedAt?: Date;
+            seqNumber?: string;
+            admitDate?: Date;
+          } => {
+            const { pseudonymizedId } = r;
+            const latestRNA = latestRNAByResident.get(pseudonymizedId);
+            const { seqNumber, admitDate } =
+              writebackDataByResident.get(pseudonymizedId) ?? {};
 
-          let status: RNAAssessmentStatus = "UPCOMING";
+            let status: RNAAssessmentStatus = "UPCOMING";
 
-          if (seqNumber) {
-            // non-null sequence number means a currently open RNA in OPUS, which
-            // can be at any stage of progress
-            if (
-              !latestRNA ||
-              latestRNAIsStale({ latestRNA, seqNumber, admitDate })
-            ) {
-              status = "NOT_STARTED";
-            } else if (latestRNA.completedAt) {
-              status = "COMPLETE";
-            } else {
-              status = "IN_PROGRESS";
+            if (seqNumber) {
+              // non-null sequence number means a currently open RNA in OPUS, which
+              // can be at any stage of progress
+              if (
+                !latestRNA ||
+                latestRNAIsStale({ latestRNA, seqNumber, admitDate })
+              ) {
+                status = "NOT_STARTED";
+              } else if (latestRNA.completedAt) {
+                status = "COMPLETE";
+              } else {
+                status = "IN_PROGRESS";
+              }
+            } else if (latestRNA?.completedAt) {
+              // closed RNA was completed, and person hasn't had a new sequence number yet
+
+              if (!latestRNA?.seqNumber && latestRNA?.submittedByStaffAt) {
+                // edge case covering pre-writeback RNAs which can also be "submitted"
+                status = "SUBMITTED_BY_STAFF";
+              } else {
+                status = "COMPLETE";
+              }
             }
-          } else if (latestRNA?.completedAt) {
-            // closed RNA was completed, and person hasn't had a new sequence number yet
 
-            if (!latestRNA?.seqNumber && latestRNA?.submittedByStaffAt) {
-              // edge case covering pre-writeback RNAs which can also be "submitted"
-              status = "SUBMITTED_BY_STAFF";
-            } else {
-              status = "COMPLETE";
-            }
-          }
-
-          return {
-            pseudonymizedId,
-            status: status,
-            id: latestRNA?.id,
-            updatedAt: latestRNA?.updatedAt,
-            createdAt: latestRNA?.createdAt,
-            // coalescing nulls to undefined just to simplify the output type,
-            // the distinction between them is not important
-            completedAt: latestRNA?.completedAt ?? undefined,
-          };
-        },
-      );
+            return {
+              pseudonymizedId,
+              status: status,
+              id: latestRNA?.id,
+              updatedAt: latestRNA?.updatedAt,
+              createdAt: latestRNA?.createdAt,
+              // coalescing nulls to undefined just to simplify the output type,
+              // the distinction between them is not important
+              completedAt: latestRNA?.completedAt ?? undefined,
+            };
+          },
+        )
+        .filter(({ status }) => status !== "UPCOMING");
     },
   );

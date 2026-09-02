@@ -310,7 +310,7 @@ describe("getCompletedUsNcRNA", () => {
       expect(result).toHaveLength(0);
     });
 
-    it("passes through null seq number", async () => {
+    it("excludes complete RNA with a null seq number", async () => {
       await createCompletedRNAForResident({ id: "test-id" });
 
       await testPrismaClient.usNcRNAWritebackData.create({
@@ -324,8 +324,7 @@ describe("getCompletedUsNcRNA", () => {
       });
 
       const result = await getCompletedUsNcRNA(testPrismaClient);
-      expect(result).toHaveLength(1);
-      expect(result[0].seqNumber).toBe(null);
+      expect(result).toHaveLength(0);
     });
 
     it("passes through non-null seq number", async () => {

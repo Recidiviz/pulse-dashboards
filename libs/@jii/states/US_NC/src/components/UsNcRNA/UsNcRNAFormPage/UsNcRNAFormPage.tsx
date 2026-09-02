@@ -26,6 +26,7 @@ import {
   RNAPageCopy,
   rnaQuestionConfig,
 } from "~@jii/configs";
+import { useRootStore } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsNcTranslations } from "~@jii/translation";
 import { withPresenterManager } from "~hydration-utils";
@@ -130,12 +131,18 @@ const ManagedComponent = observer(function ManagedComponent({
 function usePresenter() {
   const { t } = useUsNcTranslations();
   usePageTitle(t(($) => $.pageTitle.rna));
+  const { userStore } = useRootStore();
 
   const navigate = useNavigate();
   const { form } = useRNAFormContext();
   const routeParams = useTypedParams(State.Resident.UsNcRNA.FormPage);
 
-  return new UsNcRNAFormPagePresenter(routeParams, form, navigate);
+  return new UsNcRNAFormPagePresenter(
+    routeParams,
+    form,
+    navigate,
+    userStore.segmentClient,
+  );
 }
 
 export const UsNcRNAFormPage = withPresenterManager({

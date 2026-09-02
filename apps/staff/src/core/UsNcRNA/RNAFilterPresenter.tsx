@@ -216,7 +216,7 @@ export class RNAFilterPresenter implements FilterPresenter<UsNcRNAFilterStore> {
   }
 
   trackFilterDropdownOpened() {
-    // TODO(#10892): add tracking
+    this.filterStore.trackFilterDropdownOpened();
   }
 
   numItems(type: FilterType, field: FilterField, option: FilterOption): number {

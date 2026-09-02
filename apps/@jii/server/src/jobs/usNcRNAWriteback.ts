@@ -63,7 +63,7 @@ export async function getCompletedUsNcRNA(prismaClient: PrismaClient) {
   )
   SELECT DISTINCT ON ("pseudonymizedId") *
   FROM rna_answers_with_supplemental_data
-  WHERE "completedAt" IS NOT NULL AND "admitDate" IS NOT NULL
+  WHERE "completedAt" IS NOT NULL AND "admitDate" IS NOT NULL AND "seqNumber" IS NOT NULL
   ORDER BY "pseudonymizedId", "completedAt" DESC;
   `;
 

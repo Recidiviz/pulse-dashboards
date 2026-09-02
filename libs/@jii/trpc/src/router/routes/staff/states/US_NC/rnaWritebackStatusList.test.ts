@@ -118,38 +118,22 @@ describe("rnaWritebackStatusList", () => {
     ]);
   });
 
-  test("response includes all residents even if no RNA data", async () => {
-    mockFirestoreGet.get.mockResolvedValue({
-      docs: allResidents.map((r) => ({
-        data() {
-          return r;
-        },
-      })),
-    });
-
-    await testPrismaClient.usNcRNA.createMany({
-      data: [
-        {
-          pseudonymizedId: testResidents[0].pseudonymizedId,
-          createdAt: recentDate,
-          answers: {},
-        },
-      ],
-    });
-
-    expect(await caller.rnaWritebackStatusList(testInput)).toEqual(
-      expect.arrayContaining(
-        ...[
-          allResidents.map((r) =>
-            expect.objectContaining({ pseudonymizedId: r.pseudonymizedId }),
-          ),
-        ],
-      ),
-    );
-  });
-
   test("latest records matching input query", async () => {
     // seed DB
+
+    // writeback data is needed so the results aren't filtered out
+    await testPrismaClient.usNcRNAWritebackData.createMany({
+      data: testResidents.map(({ pseudonymizedId }) => {
+        return {
+          pseudonymizedId: pseudonymizedId,
+          opusId: pseudonymizedId,
+          seqNumber: "002",
+          admitDate: recentDate,
+          importedAt: testDate,
+        };
+      }),
+    });
+
     await testPrismaClient.usNcRNA.createMany({
       data: [
         {
@@ -581,7 +565,7 @@ describe("rnaWritebackStatusList", () => {
       });
     });
 
-    describe("UPCOMING", () => {
+    describe("UPCOMING (filtered out)", () => {
       test("null seq number + in-progress latest RNA with seq number and admit date", async () => {
         await testPrismaClient.usNcRNAWritebackData.createMany({
           data: [
@@ -607,9 +591,7 @@ describe("rnaWritebackStatusList", () => {
           ],
         });
 
-        expect((await caller.rnaWritebackStatusList(testInput))[0].status).toBe(
-          "UPCOMING",
-        );
+        expect((await caller.rnaWritebackStatusList(testInput)).length).toBe(0);
       });
 
       test("null seq number + in-progress RNA without seq number or admit date (pre-writeback)", async () => {
@@ -635,9 +617,7 @@ describe("rnaWritebackStatusList", () => {
           ],
         });
 
-        expect((await caller.rnaWritebackStatusList(testInput))[0].status).toBe(
-          "UPCOMING",
-        );
+        expect((await caller.rnaWritebackStatusList(testInput)).length).toBe(0);
       });
 
       test("null seq number + no existing RNA", async () => {
@@ -653,9 +633,7 @@ describe("rnaWritebackStatusList", () => {
           ],
         });
 
-        expect((await caller.rnaWritebackStatusList(testInput))[0].status).toBe(
-          "UPCOMING",
-        );
+        expect((await caller.rnaWritebackStatusList(testInput)).length).toBe(0);
       });
     });
 
@@ -685,6 +663,18 @@ describe("rnaWritebackStatusList", () => {
     });
 
     test("looks up residents via Prisma, filtered by lookupField/lookupValue, instead of querying Firestore", async () => {
+      // writeback data is needed so the results aren't filtered out due to status
+      await testPrismaClient.usNcRNAWritebackData.createMany({
+        data: allResidents.map(({ pseudonymizedId }) => {
+          return {
+            pseudonymizedId: pseudonymizedId,
+            opusId: pseudonymizedId,
+            seqNumber: "002",
+            admitDate: recentDate,
+            importedAt: testDate,
+          };
+        }),
+      });
       await testPrismaClient.resident.createMany({
         data: [
           ...testResidents.map((r) =>
@@ -717,6 +707,15 @@ describe("rnaWritebackStatusList", () => {
     });
 
     test("supports lookup by officerId", async () => {
+      await testPrismaClient.usNcRNAWritebackData.create({
+        data: {
+          pseudonymizedId: testResidents[0].pseudonymizedId,
+          opusId: testResidents[0].pseudonymizedId,
+          seqNumber: "002",
+          admitDate: recentDate,
+          importedAt: testDate,
+        },
+      });
       await testPrismaClient.resident.create({
         data: buildResidentRecord({
           pseudonymizedId: testResidents[0].pseudonymizedId,

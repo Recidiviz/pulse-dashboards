@@ -23,6 +23,7 @@ import styled from "styled-components";
 import { palette } from "~design-system";
 
 import Loading from "../../components/Loading";
+import { useFeatureVariants } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { CaseloadSelect } from "../CaseloadSelect";
 import CaseloadTypeSelect from "../CaseloadTypeSelect/CaseloadTypeSelect";
@@ -38,14 +39,17 @@ export const Subheading = styled(Sans14)`
 
 export const UsNcRNAViewer = observer(function UsNcRNAViewer() {
   const { isMobile } = useIsMobile(true);
+  const { usNcRNAAutoEnablement } = useFeatureVariants();
+
   return (
     <WorkflowsNavLayout limitedWidth={false}>
       <CaseloadTypeSelect />
       <CaseloadSelect />
       <Heading $isMobile={isMobile}>RNA Self-Report Manager</Heading>
       <SubHeading>
-        The people listed below might have upcoming self-report due dates. You
-        can change the filters to view more people.
+        {usNcRNAAutoEnablement
+          ? `The residents listed below have self-reporting enabled in OPUS. Initiate a self-report in OPUS to see a resident’s progress here. When they finish, results save back to OPUS automatically.`
+          : `The people listed below might have upcoming self-report due dates. You can change the filters to view more people.`}
       </SubHeading>
       <ErrorBoundary>
         <RNAFilterStoreProvider>
