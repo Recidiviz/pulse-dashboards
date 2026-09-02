@@ -17,7 +17,7 @@
         "main": "{projectRoot}/src/main.ts",
         "tsConfig": "{projectRoot}/tsconfig.app.json",
         "assets": ["{projectRoot}/src/assets", "{workspaceRoot}/.yarnrc.yml"],
-        "generatePackageJson": true,
+        "generatePackageJson": false,
         "minify": true,
         "target": "node22",
         "esbuildOptions": {
