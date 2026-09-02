@@ -117,88 +117,99 @@ const MeetingDesktop = ({
         </View>
 
         <View className="flex-1 pt-8">
-          <View className="flex-row items-center gap-3 pr-10">
-            <ImageBackground
-              source={BgAvatarImage}
-              className="size-10 items-center justify-center overflow-hidden rounded-full font-medium"
-              imageClassName="!size-full"
-            >
-              <Typography variant="body-m-regular" className="!text-on-strong">
-                {getInitials(person.fullName)}
-              </Typography>
-            </ImageBackground>
-            <View>
-              <Typography variant="heading-5">{person.fullName}</Typography>
-              <Typography variant="body-m-regular" className="text-secondary">
-                ID: {person.displayPersonExternalId} •{" "}
-                {humanReadableTitleCase(person.primaryMetadata)}
-              </Typography>
-            </View>
-          </View>
-
-          <View className="flex-row items-start justify-between gap-3 py-6 pr-10">
-            <View className="flex-1 gap-3">
-              <Typography className="font-libre-baskerville text-3xl font-bold text-primary">
-                Meeting: {meetingDate}
-              </Typography>
-              <View className="flex flex-row items-center gap-1">
-                <MeetingTypeTag
-                  type={meetingDetails.meetingType}
-                  typeCategory={meetingDetails.meetingTypeCategory}
-                />
-                <ClockIcon className="size-4 stroke-tertiary" />
-                <Typography className="text-secondary">
-                  {time}
-                  {duration ? ` • ${duration}` : ""} •{" "}
-                  {meetingDetails.staffEmail}
+          {/* overflow-hidden makes this a scroll container, which is what lets
+              it reserve the same gutter as the ScrollView below and stay
+              aligned with it. */}
+          <View className="scrollbar-gutter-stable overflow-hidden pr-14">
+            <View className="flex-row items-center gap-3">
+              <ImageBackground
+                source={BgAvatarImage}
+                className="size-10 items-center justify-center overflow-hidden rounded-full font-medium"
+                imageClassName="!size-full"
+              >
+                <Typography
+                  variant="body-m-regular"
+                  className="!text-on-strong"
+                >
+                  {getInitials(person.fullName)}
+                </Typography>
+              </ImageBackground>
+              <View>
+                <Typography variant="heading-5">{person.fullName}</Typography>
+                <Typography variant="body-m-regular" className="text-secondary">
+                  ID: {person.displayPersonExternalId} •{" "}
+                  {humanReadableTitleCase(person.primaryMetadata)}
                 </Typography>
               </View>
             </View>
-            {meetingDetails.audioUrl && !isPlayerVisible && (
-              <Button
-                variant="primary"
-                icon={{ icon: PlaySvg }}
-                onPress={() => setIsPlayerVisible(true)}
-              >
-                Play meeting
-              </Button>
+
+            <View className="flex-row items-start justify-between gap-3 py-6">
+              <View className="flex-1 gap-3">
+                <Typography className="font-libre-baskerville text-3xl font-bold text-primary">
+                  Meeting: {meetingDate}
+                </Typography>
+                <View className="flex flex-row items-center gap-1">
+                  <MeetingTypeTag
+                    type={meetingDetails.meetingType}
+                    typeCategory={meetingDetails.meetingTypeCategory}
+                  />
+                  <ClockIcon className="size-4 stroke-tertiary" />
+                  <Typography className="text-secondary">
+                    {time}
+                    {duration ? ` • ${duration}` : ""} •{" "}
+                    {meetingDetails.staffEmail}
+                  </Typography>
+                </View>
+              </View>
+              {meetingDetails.audioUrl && !isPlayerVisible && (
+                <Button
+                  variant="primary"
+                  icon={{ icon: PlaySvg }}
+                  onPress={() => setIsPlayerVisible(true)}
+                >
+                  Play meeting
+                </Button>
+              )}
+            </View>
+
+            {meetingDetails.audioUrl && isPlayerVisible && (
+              <View className="pb-4">
+                <AudioPlayer
+                  url={meetingDetails.audioUrl}
+                  onClose={() => setIsPlayerVisible(false)}
+                />
+              </View>
             )}
-          </View>
 
-          {meetingDetails.audioUrl && isPlayerVisible && (
-            <View className="pb-4 pr-10">
-              <AudioPlayer
-                url={meetingDetails.audioUrl}
-                onClose={() => setIsPlayerVisible(false)}
-              />
-            </View>
-          )}
-
-          <View className="w-full flex-row items-center justify-between pb-4 pr-14">
-            <View className="flex-1">
-              <MeetingTabs
-                activeTab={activeTab}
-                setActiveTab={setActiveTab}
-                isTranscriptionUnavailable={
-                  !meetingDetails.transcription &&
-                  !meetingDetails.transcriptDeletedAt
-                }
-                showTranscription={showTranscription}
-                showStaffFeedback={meetingDetails.staffFeedback != null}
-              />
-            </View>
-            <View className="ml-3 flex-row gap-3">
-              <Button
-                variant="tertiary"
-                icon={{ icon: PrinterIcon }}
-                onPress={handlePrint}
-              >
-                Print
-              </Button>
+            <View className="w-full flex-row items-center justify-between pb-4">
+              <View className="flex-1">
+                <MeetingTabs
+                  activeTab={activeTab}
+                  setActiveTab={setActiveTab}
+                  isTranscriptionUnavailable={
+                    !meetingDetails.transcription &&
+                    !meetingDetails.transcriptDeletedAt
+                  }
+                  showTranscription={showTranscription}
+                  showStaffFeedback={meetingDetails.staffFeedback != null}
+                />
+              </View>
+              <View className="ml-3 flex-row gap-3">
+                <Button
+                  variant="tertiary"
+                  icon={{ icon: PrinterIcon }}
+                  onPress={handlePrint}
+                >
+                  Print
+                </Button>
+              </View>
             </View>
           </View>
 
-          <ScrollView className="flex-1" contentContainerClassName="grow pr-14">
+          <ScrollView
+            className="scrollbar-gutter-stable flex-1"
+            contentContainerClassName="grow pr-14"
+          >
             <View className="mx-auto w-full flex-1">
               {activeTab === Tab.DraftCaseNotes && (
                 <DraftCaseNoteTab

@@ -12,6 +12,10 @@
     scrollbar-width: none;
   }
 
+  .scrollbar-gutter-stable {
+    scrollbar-gutter: stable;
+  }
+
   @media print {
     * {
       overflow: visible !important;
