@@ -157,6 +157,7 @@ export default {
 
 **Start now**
 - Get your home plan approved. The sooner, the better! Starting to work on this ASAP is essential to receiving your full 90 days.
+  - _**One thing to know:** This app can’t yet update to show the status of your Home Plan. You will see the previous bullet point, even if your COIII already told you that yours has been approved. If you’re not sure about the status of your Home Plan, check with your COIII._
 
 **Watch out for**
 - Disciplinary incidents in the next 6 months can put your date at risk
@@ -164,6 +165,7 @@ export default {
 - Staying at Medium or Minimum custody`,
           upcomingBody: `Here's what to keep in mind between now and then.
 - Make sure that your home plan is completed and approved
+  - _**One thing to know:** This app can’t yet update to show the status of your Home Plan. You will see the previous bullet point, even if your COIII already told you that yours has been approved. If you’re not sure about the status of your Home Plan, check with your COIII._
 - Disciplinary incidents can still put your date at risk
 - Being removed from a major program can affect your eligibility
 - You must stay at Medium or Minimum custody`,
@@ -196,6 +198,7 @@ export default {
 
 **Start now**
 - Get your home plan approved. The sooner, the better! Starting to work on this ASAP is essential to receiving your full 90 days.
+  - _**One thing to know:** This app can’t yet update to show the status of your Home Plan. You will see the previous bullet point, even if your COIII already told you that yours has been approved. If you’re not sure about the status of your Home Plan, check with your COIII._
 
 
 **Watch out for**
@@ -204,6 +207,7 @@ export default {
 - Staying at Medium or Minimum custody`,
           upcomingBody: `Here's what to keep in mind between now and then.
 - Make sure that your home plan is completed and approved
+  - _**One thing to know:** This app can’t yet update to show the status of your Home Plan. You will see the previous bullet point, even if your COIII already told you that yours has been approved. If you’re not sure about the status of your Home Plan, check with your COIII._
 - Disciplinary incidents can still put your date at risk
 - Being removed from a major program can affect your eligibility
 - You must stay at Medium or Minimum custody`,
