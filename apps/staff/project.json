@@ -36,6 +36,30 @@
       "options": {
         "cwd": "{projectRoot}",
         "command": "wdio ./wdio.conf.js --retry 2"
+      },
+      "configurations": {
+        "lantern": {
+          "command": "wdio ./wdio.conf.js --retry 2 --suite lantern"
+        },
+        "login": {
+          "command": "wdio ./wdio.conf.js --retry 2 --suite login"
+        },
+        "userAccess": {
+          "command": "wdio ./wdio.conf.js --retry 2 --suite userAccess"
+        }
+      },
+      "metadata": {
+        "description": "Cucumber/WebdriverIO suites. Pick one with --configuration: `workflows` runs against `nx offline staff`; `lantern`, `login`, and `userAccess` need `nx dev staff` and real Auth0 credentials. Suites are defined in wdio.conf.js. With no configuration, wdio's `specs` glob matches only login.feature."
+      }
+    },
+    "test-e2e-workflows": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "wdio ./wdio.conf.js --retry 2 --suite workflows",
+        "env": {
+          "FIREBASE_PROJECT": "demo-dev"
+        }
       }
     },
     "requires-sops-env:test-zod": {
@@ -56,7 +80,10 @@
     },
     "requires-sops-env:dev-spa": {
       "executor": "nx:run-commands",
-      "options": { "command": "vite dev --force", "cwd": "{projectRoot}" },
+      "options": {
+        "command": "vite dev --force",
+        "cwd": "{projectRoot}"
+      },
       "configurations": {
         "development": {}
       },

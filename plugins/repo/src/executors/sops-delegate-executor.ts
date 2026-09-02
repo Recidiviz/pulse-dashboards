@@ -159,18 +159,16 @@ export default async function runSopsDelegateExecutor(
   // Skip if explicitly disabled
   if (process.env["NX_SKIP_SOPS"] === "true") {
     logger.verbose("SOPS decryption skipped (NX_SKIP_SOPS=true)");
-    // Still run the target even if SOPS is skipped
-    try {
-      delegateToTarget(
-        projectName,
-        options.prefixedTarget,
-        configurationName,
-        argsToForward,
-      );
-      return { success: true };
-    } catch {
-      return { success: false };
-    }
+    // Still run the target. delegateToTarget reports failure by returning
+    // false rather than throwing, so forward its result.
+    const success = delegateToTarget(
+      projectName,
+      options.prefixedTarget,
+      configurationName,
+      argsToForward,
+    );
+
+    return { success };
   }
 
   // Determine source project (could be current project or overridden via metadata)

@@ -52,6 +52,19 @@ const options = (page: Page) => page.locator(".CaseloadSelect__option");
 const pills = (page: Page) =>
   page.locator(".CaseloadSelect__multi-value__label");
 
+/**
+ * The menu's option labels, read once `awaitedOption` is among them.
+ */
+async function optionTexts(
+  page: Page,
+  awaitedOption: string,
+): Promise<string[]> {
+  await expect
+    .poll(() => options(page).allTextContents())
+    .toContain(awaitedOption);
+  return options(page).allTextContents();
+}
+
 /** Mocks the user, lands on a workflows page, and opens the search menu. */
 async function openSearch(
   page: Page,
@@ -206,9 +219,8 @@ test.describe("caseload search — scope reaches the dropdown", () => {
       featureVariants: TYPESENSE_SEARCH,
     });
 
-    const texts = await options(page).allTextContents();
+    const texts = await optionTexts(page, "Rosalind Ashwood");
     // E2E DISTRICT 1: the user plus one peer.
-    expect(texts).toContain("Rosalind Ashwood");
     expect(texts).toContain("Marisol Quist");
     // E2E DISTRICT 2 and 3, and the unrelated demo fixture.
     expect(texts).not.toContain("Booker Nyland");
@@ -224,8 +236,7 @@ test.describe("caseload search — scope reaches the dropdown", () => {
       featureVariants: { ...TYPESENSE_SEARCH, ...UNRESTRICTED },
     });
 
-    const texts = await options(page).allTextContents();
-    expect(texts).toContain("Rosalind Ashwood");
+    const texts = await optionTexts(page, "Rosalind Ashwood");
     expect(texts).toContain("Booker Nyland");
     expect(texts).toContain("Idris Vantol");
   });
@@ -239,8 +250,7 @@ test.describe("caseload search — scope reaches the dropdown", () => {
       featureVariants: { ...TYPESENSE_SEARCH, ...ID_DISTRICT_SEARCH },
     });
 
-    await expect(options(page).first()).toBeVisible();
-    const texts = await options(page).allTextContents();
+    const texts = await optionTexts(page, "Thandeka Rourke");
     expect(texts).toEqual(["Thandeka Rourke"]);
     await expect(page.locator(".CaseloadSelect__group-heading")).toHaveCount(0);
   });
@@ -296,9 +306,8 @@ test.describe("caseload search — search types per system", () => {
     await expect(page.locator(".CaseloadSelect__placeholder")).toHaveText(
       "Search for a facility or case manager …",
     );
-    expect((await options(page).allTextContents()).sort()).toEqual(
-      [...CRC_FACILITIES].sort(),
-    );
+    const texts = await optionTexts(page, "Phobos Reentry Center");
+    expect(texts.sort()).toEqual([...CRC_FACILITIES].sort());
   });
 
   // The CRC search filters `idType:=crcFacilityId`, so an ordinary facility in
@@ -307,7 +316,9 @@ test.describe("caseload search — search types per system", () => {
   test("CRC search excludes facilities of another idType", async ({ page }) => {
     await openSearch(page, ID_USER, "/workflows/residents");
 
-    const texts = await options(page).allTextContents();
+    // Anchor on a facility the scope must offer, so the exclusion below is
+    // read against a populated menu.
+    const texts = await optionTexts(page, "Phobos Reentry Center");
     // A US_ID `facilityId` location, not a `crcFacilityId` one.
     expect(texts).not.toContain("Lunar Penal Colony");
   });
@@ -348,7 +359,7 @@ test.describe("caseload search — search types per system", () => {
     page,
   }) => {
     await openSearch(page, ID_USER, "/workflows/clients");
-    expect(await options(page).allTextContents()).toContain("Thandeka Rourke");
+    await optionTexts(page, "Thandeka Rourke");
 
     await page.click('a[href*="/workflows/residents"]');
     await openMenu(page);

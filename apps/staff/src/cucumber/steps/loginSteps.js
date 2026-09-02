@@ -20,7 +20,7 @@ import { Given, Then } from "@cucumber/cucumber";
 import lanternPage from "../pages/lanternPage";
 import loginPage from "../pages/loginPage";
 import workflowsHomepage from "../pages/workflowsHomepage";
-import { switchToWorkflows, switchUserStateCode } from "./utils";
+import { switchUserStateCode } from "./utils";
 
 /**
  * Given
@@ -43,7 +43,7 @@ Given(
   async function (stateCode) {
     workflowsHomepage.open();
     await switchUserStateCode(stateCode);
-    await switchToWorkflows();
+    await workflowsHomepage.open();
   },
 );
 

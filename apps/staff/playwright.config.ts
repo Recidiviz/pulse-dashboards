@@ -33,6 +33,9 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   retries: 3,
+  // manually set number of workers to help ensure we do not hit
+  // the rate limit of 15 req/sec on `staff-server`
+  workers: 2,
   projects: [
     {
       name: "chromium",

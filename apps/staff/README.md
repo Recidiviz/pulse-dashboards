@@ -213,7 +213,7 @@ If there is an emergency fix that needs to go to production before the next sche
 
 ### Running E2E tests
 
-We currently use two frameworks for our e2e tests. The users, login, Workflows, and Lantern e2e tests use Cucumber. Insights e2e tests use Playwright. We may try to eventually port all tests over to Playwright, but for now they are split across the two frameworks and are run using different scripts.
+We currently use two frameworks for our e2e tests. The login, Workflows, and Lantern (including user access levels) e2e tests use Cucumber. The Insights and caseload search e2e tests use Playwright. We may try to eventually port all tests over to Playwright, but for now they are split across the two frameworks and are run using different scripts.
 
 #### Cucumber specs
 
@@ -221,38 +221,71 @@ The Cucumber E2E feature specs are found in the `src/cucumber` directory. The te
 
 Configure HEADLESS mode by setting this variable in your shell environment before running the tests: `RUN_TESTS_HEADLESS=true`.
 
-The E2E tests run on the dev server, with the "e2e" environment set, and can be used to test the auth0 login flow and require additional environment variables set:
+Each suite is an nx configuration on the `test-e2e` target. **Always pass a configuration.**
+With no configuration, wdio's `specs` glob is a single `*`, so it matches only
+`login.feature` and silently skips everything in the `lantern/` and `workflows/`
+subdirectories.
 
-TEST_AUTH_USER=<a real auth0 email to test with>
-TEST_AUTH_PASSWORD=
-TEST_AUTH_RESTRICTED_ACCESS_USER_1=<a real auth0 email with restricted access>
-TEST_AUTH_RESTRICTED_ACCESS_USER_1_PASSWORD=
-TEST_AUTH_RESTRICTED_ACCESS_USER_2=<a real auth0 email with restricted access>
-TEST_AUTH_RESTRICTED_ACCESS_USER_2_PASSWORD=
+Whether a suite logs in decides both which server it needs and which nx target
+runs it:
 
-To run E2E tests that involve logging in:
+| Suite        | Features                              | Server             | Auth0 | Command                                        |
+| ------------ | ------------------------------------- | ------------------ | ----- | ---------------------------------------------- |
+| `workflows`  | `src/cucumber/features/workflows/`    | `nx offline staff` | no    | `nx test-e2e-workflows staff`                  |
+| `login`      | `src/cucumber/features/login.feature` | `nx dev staff`     | yes   | `nx test-e2e staff --configuration=login`      |
+| `lantern`    | `src/cucumber/features/lantern/`      | `nx dev staff`     | yes   | `nx test-e2e staff --configuration=lantern`    |
+| `userAccess` | `lantern/userAccessLevels/`           | `nx dev staff`     | yes   | `nx test-e2e staff --configuration=userAccess` |
+
+The Workflows suite gets its own target rather than a configuration on
+`test-e2e`, because `test-e2e` is a `requires-sops-env:` target: the plugin
+decrypts `env.test-e2e.enc.yaml` for it whatever the configuration, which means
+gcloud authentication for a run that needs no secrets at all.
+
+To run the Workflows suite:
+
+1. Start the offline server: `nx offline staff`
+2. Run it: `nx test-e2e-workflows staff`
+
+> Before each scenario this suite deletes everything in the Firestore emulator
+> and reloads the fixtures, so anything you added by hand is lost. It does not
+> reseed Typesense; `nx offline staff` keeps that in sync as the reload lands.
+
+To run a suite that logs in, against the dev server with the "e2e" environment
+set:
 
 1. Start your dev server: `nx dev staff`
-2. Run the test suites: `nx staff:test-e2e --suite SUITE` with suite: `lantern`, `login`, `userAccess`, or `workflows`
+2. Run it: `nx test-e2e staff --configuration=lantern` (or `login`, or `userAccess`)
 
-To run E2E tests that do not involve logging in:
+Those three need real Auth0 credentials. They come from
+`apps/staff/env.test-e2e.enc.yaml` via the SOPS plugin, so run the unprefixed
+target as above and do not set `NX_SKIP_SOPS` — that flag makes the plugin skip
+every env file, including plaintext ones, and the run then fails to connect:
 
-1. Start the offline server `nx offline staff`
-2. Run the test suites: `nx staff:test-e2e --suite login`
+    TEST_AUTH_USER=<a real auth0 email to test with>
+    TEST_AUTH_PASSWORD=
+    TEST_AUTH_RESTRICTED_ACCESS_USER_1=<a real auth0 email with restricted access>
+    TEST_AUTH_RESTRICTED_ACCESS_USER_1_PASSWORD=
+    TEST_AUTH_RESTRICTED_ACCESS_USER_2=<a real auth0 email with restricted access>
+    TEST_AUTH_RESTRICTED_ACCESS_USER_2_PASSWORD=
 
 #### Playwright specs
 
 The Playwright feature specs are found in the `/e2e` directory. The tests are run using [Playwright](https://playwright.dev/), and can be run from the command line, or using a plugin installed on your IDE.
 
-These tests run on the offline server.
+These tests run on the offline server. The caseload search specs additionally
+need the local Typesense node, which `nx offline staff` starts, seeded from the
+Firestore emulator.
 
-First install the Playwright tools
-`npx install playwright`
+First install the browser Playwright drives:
+`yarn playwright install chromium`
 
 To run the Playwright E2E tests from your command line:
 
 1. Start the offline server `nx offline staff`
-1. Run the tests: (headless) `nx e2e staff` or (headed) `nx e2e staff --headed`
+1. Run the tests: (headless) `nx e2e staff` or (headed) `nx e2e staff -- --headed`
+
+Pass any other Playwright flag after `--`, for example
+`nx e2e staff -- CaseloadSearch --retries=0` to run one spec without retries.
 
 To run the Playwright E2e tests from your IDE:
 

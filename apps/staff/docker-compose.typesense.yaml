@@ -1,0 +1,49 @@
+# Overlay adding Typesense to the e2e stack, for the staff Playwright suite.
+#
+#   docker compose -f docker-compose.e2e.yaml -f docker-compose.typesense.yaml up
+#
+# The port is published AND the service is reachable as `typesense` on the
+# compose network. With the `127.0.0.1 typesense` hosts entry the workflow adds,
+# `http://typesense:8108` resolves from inside the network and from the host.
+
+services:
+  typesense:
+    # Match the version the local offline stack runs
+    # (libs/@typesense/tools/docker-compose.yaml).
+    image: typesense/typesense:30.2
+    ports:
+      - "8108:8108"
+    # Typesense will not start without its data directory, and the image ships
+    # no /data. tmpfs creates it and discards the index with the container.
+    tmpfs:
+      - /data
+    environment:
+      # Not a secret: the offline bootstrap key, same as the local stack.
+      TYPESENSE_API_KEY: xyz
+      TYPESENSE_DATA_DIR: /data
+      TYPESENSE_ENABLE_CORS: "true"
+    healthcheck:
+      # The image ships no curl, wget, or nc — only bash. Open a TCP
+      # connection to the search port, which Typesense binds once it serves.
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/8108"]
+      interval: 5s
+      timeout: 2s
+      retries: 20
+    labels:
+      app: pulse-dashboards-e2e
+
+  server:
+    # `--no-override` makes compose's env win over .env.offline, which env-cmd
+    # otherwise applies last. .env.offline points every hostname at localhost;
+    # in the container they have to be service names. Mirrors `start-e2e` in
+    # apps/staff-server/package.json — keep the two in sync.
+    command: yarn env-cmd -f .env.offline --no-override yarn start
+    environment:
+      # Set explicitly so the offline identity path cannot degrade silently
+      # if .env.offline changes.
+      - IS_OFFLINE=true
+      # The admin SDK defaults to localhost, which in the container is itself.
+      - FIRESTORE_EMULATOR_HOST=firebase:8080
+      # Used by staff-server's admin client, and returned to the browser as
+      # `typesenseHost`.
+      - TYPESENSE_HOST=http://typesense:8108

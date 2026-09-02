@@ -17,7 +17,7 @@
 
 import { expect, test } from "@playwright/test";
 
-import { switchTenant } from "./utils";
+import { fetchPastRateLimit, switchTenant } from "./utils";
 
 test.describe("Supervisors List Page", () => {
   test.describe("Recidiviz user", () => {
@@ -29,9 +29,7 @@ test.describe("Supervisors List Page", () => {
         timeout: 50000,
       });
       await switchTenant(page, "Michigan");
-      await expect(
-        page.locator(".LanternLogo"),
-      ).toBeVisible();
+      await expect(page.locator(".LanternLogo")).toBeVisible();
       await expect(page.getByRole("main")).toContainText(
         "Select a supervisor to view their overview",
       );
@@ -40,9 +38,7 @@ test.describe("Supervisors List Page", () => {
         page.getByRole("link", { name: "Alejandro D Gonzalez" }),
       ).toBeVisible();
       await switchTenant(page, "Tennessee");
-      await expect(
-        page.locator(".LanternLogo"),
-      ).toBeVisible();
+      await expect(page.locator(".LanternLogo")).toBeVisible();
     });
   });
 
@@ -53,7 +49,7 @@ test.describe("Supervisors List Page", () => {
       await page.route(
         "http://localhost:3001/api/offlineUser?*",
         async (route) => {
-          const response = await route.fetch();
+          const response = await fetchPastRateLimit(route);
           const json = await response.json();
           json["https://dashboard.recidiviz.org/app_metadata"].stateCode =
             "us_mi";
@@ -84,7 +80,7 @@ test.describe("Supervisors List Page", () => {
       await page.route(
         "http://localhost:3001/api/offlineUser?*",
         async (route) => {
-          const response = await route.fetch();
+          const response = await fetchPastRateLimit(route);
           const json = await response.json();
           json["https://dashboard.recidiviz.org/app_metadata"].stateCode =
             "us_mi";
@@ -113,7 +109,7 @@ test.describe("Supervisors List Page", () => {
       await page.route(
         "http://localhost:3001/api/offlineUser?*",
         async (route) => {
-          const response = await route.fetch();
+          const response = await fetchPastRateLimit(route);
           const json = await response.json();
           json["https://dashboard.recidiviz.org/app_metadata"].stateCode =
             "us_tn";

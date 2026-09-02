@@ -87,6 +87,7 @@ const TN_LEAD: OfflineUserSpec = {
 const TN_NO_CASELOAD: OfflineUserSpec = {
   stateCode: "us_tn",
   externalId: "E2E_TN_NO_CASELOAD",
+  routes: BOTH_SYSTEMS,
 };
 const ID_OFFICER: OfflineUserSpec = {
   stateCode: "us_id",

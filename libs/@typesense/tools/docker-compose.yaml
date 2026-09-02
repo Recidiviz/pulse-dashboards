@@ -33,7 +33,9 @@ services:
           --enable-access-logging \
           --enable-search-logging
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8108/health"]
+      # The image ships no curl, wget, or nc — only bash. Open a TCP
+      # connection to the search port, which Typesense binds once it serves.
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/8108"]
       interval: 5s
       timeout: 2s
       retries: 10

@@ -15,8 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { APIRequestContext } from "@playwright/test";
-import { Page } from "playwright";
+import { APIRequestContext, APIResponse } from "@playwright/test";
+import { Page, Route } from "playwright";
 
 const METADATA_NAMESPACE = "https://dashboard.recidiviz.org/";
 
@@ -53,6 +53,27 @@ export const postScopedKey = async (
   for (let attempt = 0; response.status() === 429 && attempt < 5; attempt++) {
     await new Promise((resolve) => setTimeout(resolve, 400 * (attempt + 1)));
     response = await api.post(path, { data });
+  }
+  /* eslint-enable no-await-in-loop */
+
+  return response;
+};
+
+/**
+ * Fulfils a route's own request, retrying past staff-server's 15-req/sec-per-IP
+ * rate limit. Over the cap the body is "Too many requests" rather than JSON, so
+ * the caller otherwise fails on a parse error that explains nothing.
+ */
+export const fetchPastRateLimit = async (
+  route: Route,
+): Promise<APIResponse> => {
+  let response = await route.fetch();
+
+  /* eslint-disable no-await-in-loop -- each retry waits out the rate-limit
+   * window before the next attempt. */
+  for (let attempt = 0; response.status() === 429 && attempt < 5; attempt++) {
+    await new Promise((resolve) => setTimeout(resolve, 400 * (attempt + 1)));
+    response = await route.fetch();
   }
   /* eslint-enable no-await-in-loop */
 
@@ -187,7 +208,7 @@ export const mockOfflineUser = async (
 ): Promise<void> => {
   // Drives the active tenant, the feature variants, and route access.
   await page.route("**/api/offlineUser*", async (route) => {
-    const response = await route.fetch();
+    const response = await fetchPastRateLimit(route);
     const json = await response.json();
     const appMetadata = json[`${METADATA_NAMESPACE}app_metadata`];
 

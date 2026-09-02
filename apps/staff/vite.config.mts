@@ -28,6 +28,8 @@ import tsconfigPaths from "vite-tsconfig-paths";
 const require = createRequire(import.meta.url);
 const clsxEntry = require.resolve("clsx");
 
+const IS_E2E_BUILD = process.env["E2E_BUILD"] === "true";
+
 export default defineConfig(() => ({
   resolve: {
     alias: {
@@ -75,8 +77,11 @@ export default defineConfig(() => ({
 
   build: {
     outDir: "../../dist/apps/staff",
-    sourcemap: true,
-    reportCompressedSize: true,
+    // On a bundle this size these are most of the build time, and the e2e
+    // build is thrown away after a headless run. Not VITE_-prefixed: a
+    // build-time switch, not something the client reads.
+    sourcemap: !IS_E2E_BUILD,
+    reportCompressedSize: !IS_E2E_BUILD,
     commonjsOptions: {
       transformMixedEsModules: true,
       include: [/node_modules/],

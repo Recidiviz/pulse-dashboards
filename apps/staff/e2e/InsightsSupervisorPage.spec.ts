@@ -17,6 +17,8 @@
 
 import { expect, Page, test } from "@playwright/test";
 
+import { fetchPastRateLimit } from "./utils";
+
 test.describe("Supervisors Page", () => {
   test.describe("US_MI user", () => {
     test("Supervisors page - disable action strategy on banner cleanup", async ({
@@ -25,7 +27,7 @@ test.describe("Supervisors Page", () => {
       await page.route(
         "http://localhost:3001/api/offlineUser?*",
         async (route) => {
-          const response = await route.fetch();
+          const response = await fetchPastRateLimit(route);
           const json = await response.json();
           json["https://dashboard.recidiviz.org/app_metadata"].stateCode =
             "us_mi";
@@ -41,9 +43,7 @@ test.describe("Supervisors Page", () => {
       );
 
       await page.goto("/");
-      await expect(
-        page.locator(".LanternLogo"),
-      ).toBeVisible();
+      await expect(page.locator(".LanternLogo")).toBeVisible();
       await expect(page.getByRole("main")).toContainText(
         "How might I work with my team to improve these metrics?",
       );
@@ -53,13 +53,9 @@ test.describe("Supervisors Page", () => {
         .locator('a[href*="insights/supervision/staff/"]')
         .first()
         .click();
-      await expect(
-        page.locator(".LanternLogo"),
-      ).toBeVisible();
+      await expect(page.locator(".LanternLogo")).toBeVisible();
       await page.goBack();
-      await expect(
-        page.locator(".LanternLogo"),
-      ).toBeVisible();
+      await expect(page.locator(".LanternLogo")).toBeVisible();
       await expect(page.getByRole("main")).not.toContainText(
         "How might I work with my team to improve these metrics?",
       );
@@ -71,7 +67,7 @@ test.describe("Supervisors Page", () => {
       await page.route(
         "http://localhost:3001/api/offlineUser?*",
         async (route) => {
-          const response = await route.fetch();
+          const response = await fetchPastRateLimit(route);
           const json = await response.json();
           json["https://dashboard.recidiviz.org/app_metadata"].stateCode =
             "us_ca";
@@ -97,7 +93,7 @@ test.describe("Supervisors Page", () => {
       await page.route(
         "http://localhost:3001/api/offlineUser?*",
         async (route) => {
-          const response = await route.fetch();
+          const response = await fetchPastRateLimit(route);
           const json = await response.json();
           json["https://dashboard.recidiviz.org/app_metadata"].stateCode =
             "us_ca";
@@ -137,7 +133,7 @@ test.describe("Supervisors Page", () => {
       await page.route(
         "http://localhost:3001/api/offlineUser?*",
         async (route) => {
-          const response = await route.fetch();
+          const response = await fetchPastRateLimit(route);
           const json = await response.json();
           json["https://dashboard.recidiviz.org/app_metadata"].stateCode =
             "us_mi";
@@ -165,7 +161,7 @@ test.describe("Supervisors Page", () => {
       await page.route(
         "http://localhost:3001/api/offlineUser?*",
         async (route) => {
-          const response = await route.fetch();
+          const response = await fetchPastRateLimit(route);
           const json = await response.json();
           json["https://dashboard.recidiviz.org/app_metadata"].stateCode =
             "us_tn";

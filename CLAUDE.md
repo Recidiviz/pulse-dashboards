@@ -42,8 +42,16 @@ nx test  @reentry/frontend -- MyComponent.test.ts
 # Run E2E tests (Playwright)
 nx e2e staff
 
-# Run Cucumber E2E tests (requires dev server running)
+# Run Cucumber E2E tests (requires a server already running).
+# The Workflows suite runs against `nx offline staff` and needs no secrets:
 nx test-e2e-workflows staff
+
+# The suites that log in run against `nx dev staff` and need real Auth0
+# credentials, decrypted from env.test-e2e.enc.yaml (so: gcloud auth):
+nx test-e2e staff --configuration=lantern   # or login, or userAccess
+
+# Always pass a suite. With no configuration, wdio's `specs` glob matches only
+# login.feature and silently skips the rest.
 ```
 
 ### Linting and Type Checking
