@@ -289,7 +289,7 @@ describe("tasks", () => {
       );
     });
 
-    test("Should return 200 and set completed if there is no audio to transcribe", async () => {
+    test("Should return 500 and set stitching error if there is no audio to stitch", async () => {
       mockStitchAudio.mockImplementationOnce(async () => {
         return null;
       });
@@ -304,9 +304,12 @@ describe("tasks", () => {
         },
       });
 
-      expect(response.statusCode).toBe(200);
-      expect(response.body).toEqual(
-        "No audio files found to stitch; marking meeting as completed.",
+      expect(response.statusCode).toBe(500);
+      expect(JSON.parse(response.body)).toEqual(
+        expect.objectContaining({
+          error: "Internal Server Error",
+          message: `No audio files found to stitch for meeting ${fakeMeeting.id}`,
+        }),
       );
 
       const meeting = await testPrismaClient.meeting.findUniqueOrThrow({
@@ -314,8 +317,9 @@ describe("tasks", () => {
       });
 
       expect(meeting.postMeetingProcessingStatus).toBe(
-        PostMeetingProcessingStatus.COMPLETED,
+        PostMeetingProcessingStatus.STITCHING_ERROR,
       );
+      expect(meeting.finalRecordingGCSPath).toBeNull();
     });
 
     test("Should return 200 and set transcribing queued if audio stitching succeeds", async () => {

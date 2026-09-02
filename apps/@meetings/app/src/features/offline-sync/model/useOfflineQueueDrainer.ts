@@ -28,7 +28,6 @@ const TIMEOUT_MS = 500;
 const RETRY_MAX = 3;
 
 export function useOfflineQueueDrainer({ isOnline }: { isOnline: boolean }) {
-  const wasOnlineRef = useRef<boolean | null>(null);
   const [isDraining, setIsDraining] = useState(false);
 
   const { head, dequeue, events } = useMeetingEventQueue();
@@ -93,13 +92,11 @@ export function useOfflineQueueDrainer({ isOnline }: { isOnline: boolean }) {
     setIsDraining(false);
   }, [dequeue, clearSession, head, showSnackbar]);
 
+  // Drains on reconnect, and also for events queued while already online (a
+  // failed audio upload queues its end event so it can be retried).
   useEffect(
-    function onConnectionRestored() {
-      const previouslyOnline = wasOnlineRef.current;
-      wasOnlineRef.current = isOnline;
-
-      const isNotReconnect = previouslyOnline !== false || !isOnline;
-      if (isNotReconnect || isDrainingRef.current || events.length === 0) {
+    function onPendingEvents() {
+      if (!isOnline || isDrainingRef.current || events.length === 0) {
         return;
       }
       drain();

@@ -35,6 +35,9 @@ type Params = inferRouterInputs<AppRouter>["v1"]["meeting"]["endMeeting"] & {
   audioUri?: string;
   audioBlob?: Blob;
   person?: Person;
+  // Queue the end event even while online, so a failed audio upload is retried
+  // before the meeting is ended server-side.
+  queueForRetry?: boolean;
 };
 
 export function useEndMeeting() {
@@ -53,10 +56,11 @@ export function useEndMeeting() {
       audioUri,
       audioBlob,
       person,
+      queueForRetry,
       ...vars
     }: Params) => {
-      if (!isOnline) {
-        const endTime = new Date();
+      if (!isOnline || queueForRetry) {
+        const endTime = vars.endTime ?? new Date();
         initUpload(vars.meetingId, { person, recordedAt: endTime });
         dispatchOfflineEvent({
           type: MeetingEventType.Ended,

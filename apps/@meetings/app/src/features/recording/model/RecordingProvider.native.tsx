@@ -571,14 +571,28 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
     setStatus("ending");
 
     try {
-      if (recorderState.isRecording) {
-        await stopRecorder();
-        await uploadRecording();
+      await stopRecorder();
+
+      // A persisted URI only exists while a segment is still unflushed —
+      // uploadRecording() clears it on success — so this both catches audio an
+      // earlier pause failed to upload and avoids re-uploading a duplicate.
+      const pendingUri = await getRecordingUri();
+      let queueForRetry = false;
+
+      if (pendingUri) {
+        try {
+          await uploadRecording();
+        } catch {
+          // Don't end the meeting server-side with audio still on the device;
+          // queue it so the offline drainer uploads before ending.
+          queueForRetry = true;
+        }
       }
 
       const userNotepadNotes = note;
       setNote("");
-      const audioUri = persistedRecordingUri ?? audioRecorder.uri ?? undefined;
+      const audioUri =
+        pendingUri ?? persistedRecordingUri ?? audioRecorder.uri ?? undefined;
       await endMeeting({
         meetingId,
         userNotepadNotes,
@@ -587,6 +601,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
         audioUri,
         endTime: new Date(),
         person,
+        queueForRetry,
       });
       Sentry.logger.info("meeting.end", { meetingId });
       track("recording_ended", {

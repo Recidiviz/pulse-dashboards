@@ -319,23 +319,13 @@ export function registerTaskRoutes(app: FastifyInstance) {
             meeting.recordingsFolderPath,
           );
 
-          // If there is no audio to stitch, mark the meeting as completed and exit early without queuing transcription
+          // No audio means the recording never made it off the device, which is
+          // silent data loss rather than a meeting with nothing to process.
+          // Fail so it alerts instead of being marked completed.
           if (!stitchResult) {
-            await prisma.meeting.update({
-              where: {
-                id: meetingId,
-              },
-              data: {
-                postMeetingProcessingStatus:
-                  PostMeetingProcessingStatus.COMPLETED,
-              },
-            });
-
-            return reply
-              .code(200)
-              .send(
-                "No audio files found to stitch; marking meeting as completed.",
-              );
+            throw new Error(
+              `No audio files found to stitch for meeting ${meetingId}`,
+            );
           }
 
           await prisma.meeting.update({

@@ -544,9 +544,52 @@ describe("RecordingProvider (native)", () => {
         audioUri: RECORDING_URI,
         endTime: expect.any(Date),
         person: mockPerson,
+        queueForRetry: false,
       });
       expect(storage.removeRecordingUri).toHaveBeenCalled();
       expect(onComplete).toHaveBeenCalled();
+    });
+
+    it("uploads a segment left on disk even though the recorder is stopped", async () => {
+      (storage.getRecordingUri as jest.Mock).mockResolvedValue(RECORDING_URI);
+      (useAudioRecorderState as jest.Mock).mockReturnValue({
+        isRecording: false,
+      });
+
+      const { result } = renderHook(() => useRecording<"native">(), {
+        wrapper: buildWrapper(),
+      });
+
+      await act(async () => {
+        await result.current.handleFinishAndSave();
+      });
+
+      expect(mockUploadSegment).toHaveBeenCalledWith(
+        expect.objectContaining({ uri: RECORDING_URI, meetingId: MEETING_ID }),
+      );
+      expect(mockEndMeeting).toHaveBeenCalledWith(
+        expect.objectContaining({ queueForRetry: false }),
+      );
+    });
+
+    it("queues the end event for retry when the pending upload fails", async () => {
+      (storage.getRecordingUri as jest.Mock).mockResolvedValue(RECORDING_URI);
+      mockUploadSegment.mockRejectedValueOnce(new Error("upload failed"));
+
+      const { result } = renderHook(() => useRecording<"native">(), {
+        wrapper: buildWrapper(),
+      });
+
+      await act(async () => {
+        await result.current.handleFinishAndSave();
+      });
+
+      expect(mockEndMeeting).toHaveBeenCalledWith(
+        expect.objectContaining({
+          audioUri: RECORDING_URI,
+          queueForRetry: true,
+        }),
+      );
     });
 
     it("throws when meetingId is missing", async () => {
