@@ -362,24 +362,24 @@ The Department typically begins reviewing cases for eligibility up to 7 months b
 - You must not have been found guilty of any Major Class A or Class B disciplinary rule violations within the last 6 months. You also cannot have any Major Violent rule violations during your current incarceration. Even if you qualified, getting a new infraction could cause you to lose your STP date.
 - You cannot have refused or been removed from a major program for poor behavior within the last 18 months, unless you have since successfully reenrolled and completed it.
 - You must have an approved home plan — starting to work on this ASAP is essential to receiving your full 90 days.
-- You can’t have any past arrests, convictions, or requirements to register for sex offenses.
+- You can’t have any past convictions or requirements to register for sex offenses.
 - You can’t have a history of Dangerous Crimes Against Children (A.R.S. §13-705).
+- You also cannot have other disqualifying convictions. To see which convictions disqualify you, read <AccordionOpener panelId="disqualifyingConvictions">What convictions would disqualify me from Transition Release?</AccordionOpener>, or DO 1002, Attachment A.
 - If you have participated in the Transition Program before, you must wait at least 24 months after your last [CSED](#csedDate) date before being eligible again.
 - You must be a US Citizen or a legal permanent resident without an ICE detainer.`,
         },
         disqualifyingConvictions: {
           header:
             "What convictions would disqualify me from Transition Release?",
-          content: `You are not eligible for Transition Release if you have ever been convicted of the following crimes, unless you committed them as a juvenile (when you were 18 or younger):
+          content: `You are not eligible for Standard Transition Release if you have ever been convicted of the following crimes, unless you committed them as a juvenile (when you were 18 or younger):
 
 - Murder (first or second degree)
 - Kidnapping
-- Aggravated assault
 - Sex offenses
-- Robbery or burglary when a person is present or using a deadly weapon
-- Arson when a person is present
+- Armed Robbery or Burglary 1st Degree
+- Arson
 
-For a more detailed list of the specific crimes that would disqualify you, please see ADCRR Department Order 1002, attachments A, B, and C. (You can find this in the FYI app, under the Department Orders section. The attachments are at the end of the document.) You can also look up ARS §31-281, the law that defines Transition Program Release, in the Law Library. It may also be available on your tablet through LexisNexis.`,
+For a more detailed list of the specific crimes that would disqualify you, please see ADCRR Department Order 1002, Attachment A. (You can find this in the FYI app, under the Department Orders section. The attachments are at the end of the document.) You can also look up ARS §31-281, the law that defines Transition Program Release, in the Law Library. It may also be available on your tablet through LexisNexis.`,
         },
         whyNoDate: {
           header: "Why don’t I see a Transition Release date on my homepage?",
@@ -484,12 +484,26 @@ The Department typically begins reviewing cases for eligibility up to 7 months b
 - You cannot have refused or been removed from a major program for poor behavior within the last 18 months, unless you later successfully reenrolled and completed it.
 - You need a home plan that gets approved ASAP (see <AccordionOpener panelId="startHomePlanEarly">next question</AccordionOpener>).
 
-- You can’t have any past arrests, convictions, or requirements to register for sex offenses.
+- You can’t have any past convictions or requirements to register for sex offenses.
 - You can’t have a history of Dangerous Crimes Against Children (A.R.S. §13-705).
+- You also cannot have other disqualifying convictions. To see which convictions disqualify you, read <AccordionOpener panelId="disqualifyingConvictions">What convictions would disqualify me from Transition Release?</AccordionOpener>, or DO 1002, Attachment B.
 - If you have participated in the Transition Program before, it must have been at least 24 months since your last CSED.
 - You must be a US Citizen or legal permanent resident without an ICE detainer.
 - You must be up to date with any restitution payments.
 `,
+        },
+        disqualifyingConvictions: {
+          header:
+            "What convictions would disqualify me from Transition Release?",
+          content: `You are not eligible for Drug Transition Release if you have ever been convicted of the following crimes, unless you committed them as a juvenile (when you were 18 or younger):
+- Murder (first or second degree)
+- Kidnapping
+- Aggravated assault
+- Sex offenses
+- Armed Robbery or Burglary 1st Degree
+- Arson
+
+For a more detailed list of the specific crimes that would disqualify you, please see ADCRR Department Order 1002, Attachment B. (You can find this in the FYI app, under the Department Orders section. The attachments are at the end of the document.) You can also look up ARS §31-281, the law that defines Transition Program Release, in the Law Library. It may also be available on your tablet through LexisNexis.`,
         },
         startHomePlanEarly: {
           header: `Why is it important to start my home plan early?`,
