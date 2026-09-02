@@ -171,6 +171,7 @@ async function downloadFilesGCS(
   bucketName: string,
   folderName: string,
   tempFilePaths: string[],
+  tempDir: string,
 ): Promise<string | null> {
   let fileListContent = "";
 
@@ -192,17 +193,14 @@ async function downloadFilesGCS(
   // Download each file to a temp location and keep a list of the paths
   const downloads = [];
   for (const segmentFile of files) {
-    const tempFilePath = path.join(
-      os.tmpdir(),
-      path.basename(segmentFile.name),
-    );
+    const tempFilePath = path.join(tempDir, path.basename(segmentFile.name));
 
     downloads.push(segmentFile.download({ destination: tempFilePath }));
     tempFilePaths.push(tempFilePath);
     fileListContent += `file '${tempFilePath}'\n`;
   }
 
-  // GCS will auto-retry up to three times with expenential backoff, so we can
+  // GCS will auto-retry up to three times with exponential backoff, so we can
   // await all downloads to complete here. If they still fail, we should just
   // throw the error
   await Promise.all(downloads);
@@ -221,92 +219,101 @@ function getAudioDurationMs(filePath: string): Promise<number> {
 
 export async function stitchAudio(bucketName: string, folderName: string) {
   const tempFilePaths: string[] = [];
-  const fileListPath = path.join(os.tmpdir(), "filelist.txt");
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "stitch-"));
+  const fileListPath = path.join(tempDir, "filelist.txt");
   let fileListContent = "";
 
-  if (isLocalMode()) {
-    const localFileListContent = downloadFilesLocal(folderName, tempFilePaths);
-    if (localFileListContent === null) return null;
-    fileListContent = localFileListContent;
-  } else {
-    const gcsFileListContent = await downloadFilesGCS(
-      bucketName,
-      folderName,
-      tempFilePaths,
+  try {
+    if (isLocalMode()) {
+      const localFileListContent = downloadFilesLocal(
+        folderName,
+        tempFilePaths,
+      );
+      if (localFileListContent === null) return null;
+      fileListContent = localFileListContent;
+    } else {
+      const gcsFileListContent = await downloadFilesGCS(
+        bucketName,
+        folderName,
+        tempFilePaths,
+        tempDir,
+      );
+      if (gcsFileListContent === null) return null;
+      fileListContent = gcsFileListContent;
+    }
+
+    fs.writeFileSync(fileListPath, fileListContent);
+
+    const extension = path.extname(tempFilePaths[0]).slice(1);
+    const contentType =
+      AUDIO_FORMATS[extension as keyof typeof AUDIO_FORMATS]?.contentType;
+
+    if (!contentType) {
+      throw new Error("Unexpected file format");
+    }
+
+    const tempOutputPath = path.join(tempDir, `final.${extension}`);
+
+    console.log(
+      `Starting ffmpeg concatenation. Output will be: ${tempOutputPath}`,
     );
-    if (gcsFileListContent === null) return null;
-    fileListContent = gcsFileListContent;
-  }
 
-  fs.writeFileSync(fileListPath, fileListContent);
-
-  const extension = path.extname(tempFilePaths[0]).slice(1);
-  const contentType =
-    AUDIO_FORMATS[extension as keyof typeof AUDIO_FORMATS]?.contentType;
-
-  if (!contentType) {
-    throw new Error("Unexpected file format");
-  }
-
-  const tempOutputPath = path.join(os.tmpdir(), `final.${extension}`);
-
-  console.log(
-    `Starting ffmpeg concatenation. Output will be: ${tempOutputPath}`,
-  );
-
-  // Use FFmpeg to concatenate the audio files into a single one
-  await new Promise((resolve, reject) => {
-    ffmpeg({ logger: console })
-      .input(fileListPath)
-      .inputOptions(["-f concat", "-safe 0"])
-      .outputOptions("-c copy") // Directly copy the stream without re-encoding
-      .save(tempOutputPath)
-      .on("start", (commandLine) => {
-        console.log(`FFmpeg command: ${commandLine}`);
-      })
-      .on("progress", (progress) => {
-        console.log(`FFmpeg progress: ${JSON.stringify(progress)}`);
-      })
-      .on("stderr", (stderrLine) => {
-        console.log(`FFmpeg stderr: ${stderrLine}`);
-      })
-      .on("end", () => {
-        console.log("FFmpeg concatenation completed successfully");
-        resolve(undefined);
-      })
-      .on("error", (err, stdout, stderr) => {
-        console.error("FFmpeg error occurred:");
-        console.error(`Error object: ${err.message}`);
-        console.error(`stdout: ${stdout}`);
-        console.error(`stderr: ${stderr}`);
-        reject(err);
-      });
-  });
-
-  const outputFileName = `${folderName}/final.${extension}`;
-
-  if (isLocalMode()) {
-    // In local mode, save final file to local storage
-    const localStorageDir =
-      process.env["LOCAL_STORAGE_DIR"] ||
-      path.join(os.tmpdir(), "meetings-local");
-    const meetingDir = path.join(localStorageDir, folderName);
-    const finalPath = path.join(meetingDir, `final.${extension}`);
-    fs.copyFileSync(tempOutputPath, finalPath);
-  } else {
-    // Upload the final stitched file back to the bucket
-    const storage = new Storage();
-    const bucket = storage.bucket(bucketName);
-    await bucket.upload(tempOutputPath, {
-      destination: outputFileName,
-      metadata: { contentType },
-      resumable: false,
+    // Use FFmpeg to concatenate the audio files into a single one
+    await new Promise((resolve, reject) => {
+      ffmpeg({ logger: console })
+        .input(fileListPath)
+        .inputOptions(["-f concat", "-safe 0"])
+        .outputOptions("-c copy") // Directly copy the stream without re-encoding
+        .save(tempOutputPath)
+        .on("start", (commandLine) => {
+          console.log(`FFmpeg command: ${commandLine}`);
+        })
+        .on("progress", (progress) => {
+          console.log(`FFmpeg progress: ${JSON.stringify(progress)}`);
+        })
+        .on("stderr", (stderrLine) => {
+          console.log(`FFmpeg stderr: ${stderrLine}`);
+        })
+        .on("end", () => {
+          console.log("FFmpeg concatenation completed successfully");
+          resolve(undefined);
+        })
+        .on("error", (err, stdout, stderr) => {
+          console.error("FFmpeg error occurred:");
+          console.error(`Error object: ${err.message}`);
+          console.error(`stdout: ${stdout}`);
+          console.error(`stderr: ${stderr}`);
+          reject(err);
+        });
     });
+
+    const outputFileName = `${folderName}/final.${extension}`;
+
+    if (isLocalMode()) {
+      // In local mode, save final file to local storage
+      const localStorageDir =
+        process.env["LOCAL_STORAGE_DIR"] ||
+        path.join(os.tmpdir(), "meetings-local");
+      const meetingDir = path.join(localStorageDir, folderName);
+      const finalPath = path.join(meetingDir, `final.${extension}`);
+      fs.copyFileSync(tempOutputPath, finalPath);
+    } else {
+      // Upload the final stitched file back to the bucket
+      const storage = new Storage();
+      const bucket = storage.bucket(bucketName);
+      await bucket.upload(tempOutputPath, {
+        destination: outputFileName,
+        metadata: { contentType },
+        resumable: false,
+      });
+    }
+
+    const durationMs = await getAudioDurationMs(tempOutputPath);
+
+    return { outputFileName, durationMs };
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
   }
-
-  const durationMs = await getAudioDurationMs(tempOutputPath);
-
-  return { outputFileName, durationMs };
 }
 
 function getLocalAudioFilePath(finalRecordingFilePath: string) {

@@ -133,6 +133,60 @@ describe("utils", () => {
       expect(result).toBeNull();
     });
 
+    // `/tmp` is tmpfs on Cloud Run, so a leaked working directory holds the
+    // container's memory until the instance recycles. Spying on mkdtempSync
+    // both proves a per-invocation directory was used and tells us which one
+    // to assert was removed.
+    const expectTempDirRemoved = (tempDir: unknown) => {
+      expect(tempDir).toMatch(/stitch-/);
+      expect(fs.existsSync(tempDir as string)).toBe(false);
+    };
+
+    test("Should remove its temp directory after stitching", async () => {
+      const mkdtempSpy = vi.spyOn(fs, "mkdtempSync");
+
+      try {
+        await stitchAudio(
+          AUDIO_RECORDINGS_BUCKET_NAME,
+          "stitch-audio-test-folder",
+        );
+
+        expect(mkdtempSpy).toHaveBeenCalled();
+        expectTempDirRemoved(mkdtempSpy.mock.results[0]?.value);
+      } finally {
+        mkdtempSpy.mockRestore();
+      }
+    });
+
+    test("Should remove its temp directory when stitching throws", async () => {
+      const folderName = "stitch-audio-cleanup-on-error";
+      const storage = new Storage({
+        apiEndpoint: GCS_API_ENDPOINT,
+        projectId: "test",
+      });
+      // An unrecognized extension makes stitchAudio throw after the temp
+      // directory exists and the segment has been downloaded into it.
+      await storage
+        .bucket(AUDIO_RECORDINGS_BUCKET_NAME)
+        .upload("__tests__/data/1.m4a", {
+          destination: `${folderName}/1.aiff`,
+          resumable: false,
+        });
+
+      const mkdtempSpy = vi.spyOn(fs, "mkdtempSync");
+
+      try {
+        await expect(
+          stitchAudio(AUDIO_RECORDINGS_BUCKET_NAME, folderName),
+        ).rejects.toThrow("Unexpected file format");
+
+        expect(mkdtempSpy).toHaveBeenCalled();
+        expectTempDirRemoved(mkdtempSpy.mock.results[0]?.value);
+      } finally {
+        mkdtempSpy.mockRestore();
+      }
+    });
+
     test("Should stitch audio if meeting exists", async () => {
       const stitchedAudioPath = await stitchAudio(
         AUDIO_RECORDINGS_BUCKET_NAME,
