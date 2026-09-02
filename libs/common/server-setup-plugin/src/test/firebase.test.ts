@@ -84,9 +84,7 @@ describe("firebase auth", () => {
   });
 
   test("should throw error if token is invalid", async () => {
-    firebaseAuthMock.verifyIdToken.mockImplementation(() => {
-      throw new Error();
-    });
+    firebaseAuthMock.verifyIdToken.mockRejectedValue(new Error());
 
     const trpcClient = createTRPCClient<FbAppRouter>({
       links: [

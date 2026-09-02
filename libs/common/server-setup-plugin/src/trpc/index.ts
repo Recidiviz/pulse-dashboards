@@ -106,7 +106,7 @@ export async function verifyFirebaseIdToken(
   }
 
   try {
-    return req.server.firebaseAuth.verifyIdToken(token);
+    return await req.server.firebaseAuth.verifyIdToken(token);
   } catch {
     throw new TRPCError({
       code: "UNAUTHORIZED",
