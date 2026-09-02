@@ -210,6 +210,7 @@ export function PageUsNycResourceList() {
                         trackResourceViewed(
                           resource.organizationId,
                           resource.name,
+                          "category_list",
                         )
                       }
                     />

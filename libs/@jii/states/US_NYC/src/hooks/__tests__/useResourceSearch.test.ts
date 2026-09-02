@@ -67,6 +67,38 @@ test("debounces results after a query change instead of updating immediately", (
   vi.useRealTimers();
 });
 
+test("calls trackSearchQuery with the settled query and result count", () => {
+  vi.useFakeTimers();
+  const trackSearchQuery = vi.fn();
+  const { rerender } = renderHook(
+    ({ query }) => useResourceSearch(resources, query, trackSearchQuery),
+    { initialProps: { query: "" } },
+  );
+
+  rerender({ query: "Goodwill" });
+  expect(trackSearchQuery).not.toHaveBeenCalled();
+
+  act(() => {
+    vi.runAllTimers();
+  });
+  expect(trackSearchQuery).toHaveBeenCalledExactlyOnceWith("Goodwill", 1);
+
+  vi.useRealTimers();
+});
+
+test("does not call trackSearchQuery for an empty query", () => {
+  vi.useFakeTimers();
+  const trackSearchQuery = vi.fn();
+  renderHook(() => useResourceSearch(resources, "", trackSearchQuery));
+
+  act(() => {
+    vi.runAllTimers();
+  });
+  expect(trackSearchQuery).not.toHaveBeenCalled();
+
+  vi.useRealTimers();
+});
+
 describe("Fuse index memoization", () => {
   async function setupMockedSearch() {
     vi.resetModules();

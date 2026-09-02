@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useMemo } from "react";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { useRootStore } from "~@jii/data";
@@ -26,60 +27,77 @@ export function useCreAnalytics() {
   } = useRootStore();
   const { personPseudoId } = useTypedParams(State.Resident);
 
-  return {
-    trackCategorySelected: (category: string) =>
-      segmentClient.trackCreCategorySelected({
-        justiceInvolvedPersonPseudoId: personPseudoId,
-        category,
-      }),
+  return useMemo(
+    () => ({
+      trackCategorySelected: (category: string) =>
+        segmentClient.trackCreCategorySelected({
+          justiceInvolvedPersonPseudoId: personPseudoId,
+          category,
+        }),
 
-    trackSubcategorySelected: (
-      category: string,
-      subcategory: string,
-      isOpen: boolean,
-    ) =>
-      segmentClient.trackCreSubcategorySelected({
-        justiceInvolvedPersonPseudoId: personPseudoId,
-        category,
-        subcategory,
-        isOpen,
-      }),
+      trackSubcategorySelected: (
+        category: string,
+        subcategory: string,
+        isOpen: boolean,
+      ) =>
+        segmentClient.trackCreSubcategorySelected({
+          justiceInvolvedPersonPseudoId: personPseudoId,
+          category,
+          subcategory,
+          isOpen,
+        }),
 
-    trackFiltersUpdated: (
-      category: string,
-      subcategories: string[],
-      tags: string[],
-    ) =>
-      segmentClient.trackCreFiltersUpdated({
-        justiceInvolvedPersonPseudoId: personPseudoId,
-        category,
-        subcategories,
-        tags,
-      }),
+      trackFiltersUpdated: (
+        category: string,
+        subcategories: string[],
+        tags: string[],
+      ) =>
+        segmentClient.trackCreFiltersUpdated({
+          justiceInvolvedPersonPseudoId: personPseudoId,
+          category,
+          subcategories,
+          tags,
+        }),
 
-    trackFilterCleared: (category: string) =>
-      segmentClient.trackCreFilterCleared({
-        justiceInvolvedPersonPseudoId: personPseudoId,
-        category,
-      }),
+      trackFilterCleared: (category: string) =>
+        segmentClient.trackCreFilterCleared({
+          justiceInvolvedPersonPseudoId: personPseudoId,
+          category,
+        }),
 
-    trackResourceViewed: (resourceId: number, resourceName: string) =>
-      segmentClient.trackCreResourceViewed({
-        justiceInvolvedPersonPseudoId: personPseudoId,
-        resourceId,
-        resourceName,
-      }),
+      trackResourceViewed: (
+        resourceId: number,
+        resourceName: string,
+        source: Parameters<
+          typeof segmentClient.trackCreResourceViewed
+        >[0]["source"],
+      ) =>
+        segmentClient.trackCreResourceViewed({
+          justiceInvolvedPersonPseudoId: personPseudoId,
+          resourceId,
+          resourceName,
+          source,
+        }),
 
-    trackDescriptionToggled: (
-      resourceId: number,
-      resourceName: string,
-      isExpanded: boolean,
-    ) =>
-      segmentClient.trackCreDescriptionToggled({
-        justiceInvolvedPersonPseudoId: personPseudoId,
-        resourceId,
-        resourceName,
-        isExpanded,
-      }),
-  };
+      trackDescriptionToggled: (
+        resourceId: number,
+        resourceName: string,
+        isExpanded: boolean,
+      ) =>
+        segmentClient.trackCreDescriptionToggled({
+          justiceInvolvedPersonPseudoId: personPseudoId,
+          resourceId,
+          resourceName,
+          isExpanded,
+        }),
+
+      trackSearchQuery: (query: string, resultCount: number) =>
+        segmentClient.trackCreSearchQuery({
+          justiceInvolvedPersonPseudoId: personPseudoId,
+          query,
+          resultCount,
+        }),
+    }),
+    [segmentClient, personPseudoId],
+  );
 }

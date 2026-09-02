@@ -120,7 +120,11 @@ export function ResourceDetailContent({
                 to={detailPath(resource.organizationId)}
                 chips={resource.tags}
                 onClick={() =>
-                  trackResourceViewed(resource.organizationId, resource.name)
+                  trackResourceViewed(
+                    resource.organizationId,
+                    resource.name,
+                    "similar_resources",
+                  )
                 }
                 compact
               />

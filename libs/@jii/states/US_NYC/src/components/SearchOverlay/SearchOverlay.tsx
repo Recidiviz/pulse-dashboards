@@ -21,6 +21,7 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 import { State } from "~@jii/paths";
 import { Button } from "~design-system";
 
+import { useCreAnalytics } from "../../hooks/useCreAnalytics";
 import { useResourceSearch } from "../../hooks/useResourceSearch";
 import { buildCategoryGrid, buildCategoryLinks } from "../../hooks/utils";
 import { ResourceSummary } from "../../types";
@@ -78,12 +79,13 @@ export const SearchOverlay: FC<SearchOverlayProps> = ({
   const shouldReturnFocusRef = useRef(true);
 
   const residentParams = useTypedParams(State.Resident);
+  const { trackSearchQuery, trackResourceViewed } = useCreAnalytics();
 
   const { helpCategories, demographicCategories } = useMemo(
     () => buildCategoryGrid(resources),
     [resources],
   );
-  const results = useResourceSearch(resources, query);
+  const results = useResourceSearch(resources, query, trackSearchQuery);
 
   const trimmedQuery = query.trim();
   const resultAnnouncement = getResultAnnouncement(
@@ -169,6 +171,13 @@ export const SearchOverlay: FC<SearchOverlayProps> = ({
                   to={detailPath(resource, category)}
                   chips={resource.tags}
                   compact
+                  onClick={() =>
+                    trackResourceViewed(
+                      resource.organizationId,
+                      resource.name,
+                      "search",
+                    )
+                  }
                 />
               );
             })}

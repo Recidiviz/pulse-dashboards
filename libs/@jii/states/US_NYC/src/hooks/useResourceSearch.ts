@@ -16,7 +16,7 @@
 // =============================================================================
 
 import Fuse from "fuse.js";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 import { ResourceSummary } from "../types";
 import { useDebouncedValue } from "./useDebouncedValue";
@@ -24,11 +24,12 @@ import { SEARCH_OPTIONS, searchResources } from "./utils";
 
 const MAX_RESULTS = 20;
 
-const SEARCH_DEBOUNCE_MS = 500;
+export const SEARCH_DEBOUNCE_MS = 500;
 
 export function useResourceSearch(
   resources: ResourceSummary[],
   query: string,
+  trackSearchQuery?: (query: string, resultCount: number) => void,
 ): ResourceSummary[] {
   const debouncedQuery = useDebouncedValue(query, SEARCH_DEBOUNCE_MS);
 
@@ -40,8 +41,15 @@ export function useResourceSearch(
     [resources],
   );
 
-  return searchResources(resources, debouncedQuery, fuseIndex).slice(
+  const results = searchResources(resources, debouncedQuery, fuseIndex).slice(
     0,
     MAX_RESULTS,
   );
+
+  useEffect(() => {
+    if (!debouncedQuery) return;
+    trackSearchQuery?.(debouncedQuery, results.length);
+  }, [debouncedQuery, results.length, trackSearchQuery]);
+
+  return results;
 }

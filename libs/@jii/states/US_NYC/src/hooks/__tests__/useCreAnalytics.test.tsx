@@ -33,6 +33,7 @@ const trackCreFiltersUpdated = vi.fn();
 const trackCreFilterCleared = vi.fn();
 const trackCreResourceViewed = vi.fn();
 const trackCreDescriptionToggled = vi.fn();
+const trackCreSearchQuery = vi.fn();
 
 beforeEach(() => {
   vi.mocked(useRootStore).mockReturnValue({
@@ -44,6 +45,7 @@ beforeEach(() => {
         trackCreFilterCleared,
         trackCreResourceViewed,
         trackCreDescriptionToggled,
+        trackCreSearchQuery,
       },
     },
   } as unknown as ReturnType<typeof useRootStore>);
@@ -114,15 +116,20 @@ test("trackFilterCleared calls segmentClient with the category", () => {
   });
 });
 
-test("trackResourceViewed calls segmentClient with the resource id and name", () => {
+test("trackResourceViewed calls segmentClient with the resource id, name, and source", () => {
   const { result } = renderHook(() => useCreAnalytics(), { wrapper });
 
-  result.current.trackResourceViewed(1, "East Harlem Employment Center");
+  result.current.trackResourceViewed(
+    1,
+    "East Harlem Employment Center",
+    "search",
+  );
 
   expect(trackCreResourceViewed).toHaveBeenCalledExactlyOnceWith({
     justiceInvolvedPersonPseudoId: "abc",
     resourceId: 1,
     resourceName: "East Harlem Employment Center",
+    source: "search",
   });
 });
 
@@ -140,5 +147,17 @@ test("trackDescriptionToggled calls segmentClient with the expanded state", () =
     resourceId: 1,
     resourceName: "East Harlem Employment Center",
     isExpanded: true,
+  });
+});
+
+test("trackSearchQuery calls segmentClient with the query and result count", () => {
+  const { result } = renderHook(() => useCreAnalytics(), { wrapper });
+
+  result.current.trackSearchQuery("housing", 3);
+
+  expect(trackCreSearchQuery).toHaveBeenCalledExactlyOnceWith({
+    justiceInvolvedPersonPseudoId: "abc",
+    query: "housing",
+    resultCount: 3,
   });
 });

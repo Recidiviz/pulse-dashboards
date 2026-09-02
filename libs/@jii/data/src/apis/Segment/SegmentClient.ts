@@ -194,6 +194,7 @@ export class SegmentClient implements IntakeAnalytics {
     justiceInvolvedPersonPseudoId: string;
     resourceId: number;
     resourceName: string;
+    source: "category_list" | "similar_resources" | "search";
   }) {
     this.track("frontend_cre_resource_viewed", metadata);
   }
@@ -205,6 +206,14 @@ export class SegmentClient implements IntakeAnalytics {
     isExpanded: boolean;
   }) {
     this.track("frontend_cre_description_toggled", metadata);
+  }
+
+  trackCreSearchQuery(metadata: {
+    justiceInvolvedPersonPseudoId: string;
+    query: string;
+    resultCount: number;
+  }) {
+    this.track("frontend_cre_search_query", metadata);
   }
 
   /* Intake events */
