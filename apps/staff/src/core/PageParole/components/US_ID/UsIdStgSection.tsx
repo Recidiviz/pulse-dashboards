@@ -20,20 +20,20 @@ import { ParoleCase } from "~datatypes";
 import type { ParoleConfig } from "../../../models/types";
 import { EmptyState, SubsectionTitle } from "../shared";
 
-export function UsIdDisciplinaryFacilityNotesSection({
+export function UsIdStgSection({
   caseDetail,
 }: {
   caseDetail: ParoleCase;
   config: ParoleConfig;
 }) {
-  const notes = caseDetail.disciplinaryFacilityNotes;
+  const stg = caseDetail.stg;
   return (
     <div>
-      <SubsectionTitle>Disciplinary Facility Notes</SubsectionTitle>
-      {notes ? (
-        <div>{notes}</div>
+      <SubsectionTitle>Gang / Security Threat Group (STG)</SubsectionTitle>
+      {stg ? (
+        <div>{stg}</div>
       ) : (
-        <EmptyState>No facility notes on record.</EmptyState>
+        <EmptyState>No STG affiliation on record.</EmptyState>
       )}
     </div>
   );

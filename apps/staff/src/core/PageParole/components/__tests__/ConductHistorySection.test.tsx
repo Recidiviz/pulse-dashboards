@@ -54,6 +54,7 @@ describe("ConductHistorySection", () => {
     const record = makeRecord({ date: "2025-12-31", violation: "Fighting" });
     render(
       <ConductHistorySection
+        title="Institutional Conduct History"
         visibleYears={1}
         conductHistory={[record]}
         conductClassificationColors={DEFAULT_CONDUCT_CLASSIFICATION_COLORS}
@@ -70,6 +71,7 @@ describe("ConductHistorySection", () => {
     const record = makeRecord({ date: "2024-12-01", violation: "Fighting" });
     render(
       <ConductHistorySection
+        title="Institutional Conduct History"
         visibleYears={1}
         conductHistory={[record]}
         conductClassificationColors={DEFAULT_CONDUCT_CLASSIFICATION_COLORS}
@@ -90,6 +92,7 @@ describe("ConductHistorySection", () => {
     });
     render(
       <ConductHistorySection
+        title="Institutional Conduct History"
         visibleYears={1}
         conductHistory={[recent, older]}
         conductClassificationColors={DEFAULT_CONDUCT_CLASSIFICATION_COLORS}
@@ -109,6 +112,7 @@ describe("ConductHistorySection", () => {
     });
     render(
       <ConductHistorySection
+        title="Institutional Conduct History"
         visibleYears={3}
         conductHistory={[twoYearsOld]}
         conductClassificationColors={DEFAULT_CONDUCT_CLASSIFICATION_COLORS}
@@ -125,6 +129,7 @@ describe("ConductHistorySection", () => {
     });
     render(
       <ConductHistorySection
+        title="Institutional Conduct History"
         visibleYears={3}
         conductHistory={[fourYearsOld]}
         conductClassificationColors={DEFAULT_CONDUCT_CLASSIFICATION_COLORS}
@@ -140,6 +145,7 @@ describe("ConductHistorySection", () => {
     const record = makeRecord({ date: "2025-12-31", violation: "Fighting" });
     render(
       <ConductHistorySection
+        title="Institutional Conduct History"
         visibleYears={1}
         conductHistory={[record]}
         conductClassificationColors={DEFAULT_CONDUCT_CLASSIFICATION_COLORS}
@@ -154,6 +160,7 @@ describe("ConductHistorySection", () => {
   it("renders children even when conductHistory is empty", () => {
     render(
       <ConductHistorySection
+        title="Institutional Conduct History"
         visibleYears={1}
         conductHistory={[]}
         conductClassificationColors={DEFAULT_CONDUCT_CLASSIFICATION_COLORS}
@@ -174,6 +181,7 @@ describe("ConductHistorySection", () => {
     });
     render(
       <ConductHistorySection
+        title="Institutional Conduct History"
         visibleYears={1}
         conductHistory={[record]}
         conductClassificationColors={{ "Class 1": "BLUE" }}
@@ -194,6 +202,7 @@ describe("ConductHistorySection", () => {
     });
     render(
       <ConductHistorySection
+        title="Institutional Conduct History"
         visibleYears={1}
         conductHistory={[record]}
         conductClassificationColors={{ "Class 2": "GREEN" }}
@@ -226,6 +235,7 @@ describe("ConductHistorySection", () => {
     ];
     const { container } = render(
       <ConductHistorySection
+        title="Institutional Conduct History"
         visibleYears={1}
         conductHistory={records}
         conductClassificationColors={{ "Class 1": "BLUE", "Class 2": "GREEN" }}

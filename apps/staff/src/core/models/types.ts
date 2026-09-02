@@ -149,6 +149,9 @@ export type ParoleConfig = {
   /** Subsection heading for the offense list in the Offense & Criminal
    * History section. Defaults to "Current Offenses" if omitted. */
   offenseSectionTitle?: string;
+  /** Title for the conduct-history section and its sidebar nav label.
+   * Defaults to "Institutional Conduct History" if omitted. */
+  conductHistoryTitle?: string;
   /**
    * A tenant-owned component rendered as `children` at the end of the case
    * profile sidebar's info card (for example, an instant-offense list or an

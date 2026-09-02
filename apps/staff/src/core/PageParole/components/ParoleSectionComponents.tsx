@@ -71,6 +71,7 @@ export const ParoleSectionComponents = {
         visibleYears={
           config.conductHistoryVisibleYears ?? DEFAULT_CONDUCT_HISTORY_YEARS
         }
+        title={config.conductHistoryTitle ?? "Institutional Conduct History"}
       >
         {ConductHistoryChildren && (
           <ConductHistoryChildren caseDetail={caseDetail} config={config} />

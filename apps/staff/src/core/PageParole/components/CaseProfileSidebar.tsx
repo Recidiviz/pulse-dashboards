@@ -26,10 +26,7 @@ import useIsStuck from "../../../hooks/useIsStuck";
 import { formatDocId } from "../../../ParoleStore/utils";
 import { NAV_BAR_HEIGHT } from "../../NavigationLayout";
 import { PaddedSectionCardBody } from "./PaddedSectionCardBody";
-import {
-  PAROLE_SECTION_LABELS,
-  ParoleSectionName,
-} from "./ParoleSectionComponents";
+import { ParoleSectionName } from "./ParoleSectionComponents";
 import {
   AlertBanner,
   calculateAge,
@@ -158,6 +155,7 @@ export function CaseProfileSidebar({
   mandatoryReleaseDate,
   isParoleReturn,
   sections,
+  sectionLabels,
   children,
 }: {
   name: string;
@@ -173,6 +171,7 @@ export function CaseProfileSidebar({
   mandatoryReleaseDate: string;
   isParoleReturn: boolean | undefined;
   sections: ParoleSectionName[];
+  sectionLabels: Record<ParoleSectionName, string>;
   children?: ReactNode;
 }) {
   const [sentinel, setSentinel] = useState<HTMLDivElement | null>(null);
@@ -290,7 +289,7 @@ export function CaseProfileSidebar({
                     scrollToSection(PAROLE_SECTION_IDS[sectionName])
                   }
                 >
-                  {PAROLE_SECTION_LABELS[sectionName]}
+                  {sectionLabels[sectionName]}
                 </SectionNavButton>
               </Fragment>
             ))}

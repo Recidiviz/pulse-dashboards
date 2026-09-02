@@ -19,7 +19,10 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { CaseProfileSidebar } from "../CaseProfileSidebar";
-import { ParoleSectionName } from "../ParoleSectionComponents";
+import {
+  PAROLE_SECTION_LABELS,
+  ParoleSectionName,
+} from "../ParoleSectionComponents";
 import { PAROLE_SECTION_IDS } from "../shared";
 
 const REQUIRED_PROPS = {
@@ -27,6 +30,7 @@ const REQUIRED_PROPS = {
   docId: "45821",
   custodyLevel: "Minimum",
   gender: "Male",
+  sectionLabels: PAROLE_SECTION_LABELS,
   dob: "1986-07-27",
   hearingDate: "2026-08-01",
   currentFacility: "Central State Correctional Facility",
@@ -149,6 +153,30 @@ describe("CaseProfileSidebar", () => {
       "Attachments",
       "Risk Score Trajectory",
     ]);
+  });
+
+  it("labels the nav from the sectionLabels prop, letting a tenant override it", () => {
+    render(
+      <CaseProfileSidebar
+        {...REQUIRED_PROPS}
+        sections={["conductHistory"]}
+        sectionLabels={{
+          ...PAROLE_SECTION_LABELS,
+          conductHistory: "Institutional & Community Behavior",
+        }}
+      />,
+    );
+
+    expect(
+      screen.getByRole("button", {
+        name: "Institutional & Community Behavior",
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", {
+        name: "Institutional Conduct History",
+      }),
+    ).not.toBeInTheDocument();
   });
 
   it("scrolls to the section matching a given tenant's configured id, not a fixed one", async () => {

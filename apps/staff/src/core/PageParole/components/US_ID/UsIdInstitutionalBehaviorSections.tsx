@@ -18,23 +18,26 @@
 import { ParoleCase } from "~datatypes";
 
 import type { ParoleConfig } from "../../../models/types";
-import { EmptyState, SubsectionTitle } from "../shared";
+import { Hr } from "../shared";
+import { UsIdDisciplinaryFacilityNotesSection } from "./UsIdDisciplinaryFacilityNotesSection";
+import { UsIdStgSection } from "./UsIdStgSection";
 
-export function UsIdDisciplinaryFacilityNotesSection({
-  caseDetail,
-}: {
+/**
+ * The Idaho-only sub-sections slotted into the "Institutional & Community
+ * Behavior" section (config.conductHistoryChildren), in display order:
+ * Disciplinary Facility Notes, then Gang / Security Threat Group (STG). This
+ * wrapper owns the separators between the sub-sections; the children render
+ * none of their own.
+ */
+export function UsIdInstitutionalBehaviorSections(props: {
   caseDetail: ParoleCase;
   config: ParoleConfig;
 }) {
-  const notes = caseDetail.disciplinaryFacilityNotes;
   return (
-    <div>
-      <SubsectionTitle>Disciplinary Facility Notes</SubsectionTitle>
-      {notes ? (
-        <div>{notes}</div>
-      ) : (
-        <EmptyState>No facility notes on record.</EmptyState>
-      )}
-    </div>
+    <>
+      <UsIdDisciplinaryFacilityNotesSection {...props} />
+      <Hr />
+      <UsIdStgSection {...props} />
+    </>
   );
 }

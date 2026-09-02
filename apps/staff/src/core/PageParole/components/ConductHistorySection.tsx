@@ -66,17 +66,19 @@ export function ConductHistorySection({
   conductHistory,
   conductClassificationColors,
   visibleYears,
+  title,
   children,
 }: {
   conductHistory: Array<ParoleConductRecord>;
   conductClassificationColors: Record<string, PaletteKey>;
   visibleYears: number;
+  title: string;
   children?: ReactNode;
 }) {
   if (conductHistory.length === 0) {
     return (
       <SectionCard>
-        <SectionCardHeader>Institutional Conduct History</SectionCardHeader>
+        <SectionCardHeader>{title}</SectionCardHeader>
         <PaddedSectionCardBody>
           <SectionStack>
             <NoInfractionsBanner>
@@ -105,7 +107,7 @@ export function ConductHistorySection({
 
   return (
     <SectionCard>
-      <SectionCardHeader>Institutional Conduct History</SectionCardHeader>
+      <SectionCardHeader>{title}</SectionCardHeader>
       <PaddedSectionCardBody>
         <SectionStack>
           <SummaryRow>

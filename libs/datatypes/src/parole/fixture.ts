@@ -596,6 +596,12 @@ function buildAndersonCaseProfile(
     // TODO(OBT-46908): real data source (SQL view) not yet confirmed ready.
     disciplinaryFacilityNotes:
       "Resident has maintained a positive attitude and remained fully compliant with facility programming since his last disciplinary infraction. No behavioral concerns reported this quarter.",
+    // Demo content for the US_ID-only STG slot (see
+    // UsIdStgSection) -- harmless to include for US_CO too, since CO's config
+    // never renders it. Only this Anderson-derived case sets it, so the
+    // hardcoded US_ID cases exercise the empty state.
+    // TODO(OBT-46908): real Atlas STG source not ingested yet.
+    stg: "Security Threat Group affiliation reported (Northsiders), status active as of 2024.",
     // Full assessment history per tool -- the most recent entry per tool
     // carries the real subcategory/CARAS-factor breakdown; earlier entries
     // are bare score/date pairs, matching what a real historical record

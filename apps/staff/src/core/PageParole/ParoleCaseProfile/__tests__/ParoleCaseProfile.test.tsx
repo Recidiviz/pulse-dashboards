@@ -292,7 +292,7 @@ describe("ParoleCaseProfile", () => {
       );
 
       expect(
-        await findSectionHeading("Institutional Conduct History"),
+        await findSectionHeading("Institutional & Community Behavior"),
       ).toBeInTheDocument();
       expect(getByTextAcrossElements("Major: 4")).toBeInTheDocument();
       expect(getByTextAcrossElements("Minor: 2")).toBeInTheDocument();
@@ -331,7 +331,7 @@ describe("ParoleCaseProfile", () => {
       renderAtPath("/parole/case/45821");
 
       expect(
-        await findSectionHeading("Institutional Conduct History"),
+        await findSectionHeading("Institutional & Community Behavior"),
       ).toBeInTheDocument();
       expect(screen.getByText("Possession of Contraband")).toBeInTheDocument();
       expect(
@@ -344,11 +344,51 @@ describe("ParoleCaseProfile", () => {
       renderAtPath("/parole/case/45821");
 
       expect(
-        await findSectionHeading("Institutional Conduct History"),
+        await findSectionHeading("Institutional & Community Behavior"),
       ).toBeInTheDocument();
       expect(
         screen.getByText("Disciplinary Facility Notes"),
       ).toBeInTheDocument();
+    });
+
+    it("renders US_ID's STG slot after the facility notes slot", async () => {
+      rootStore.tenantStore.currentTenantId = "US_ID";
+      renderAtPath("/parole/case/45821");
+
+      const facilityNotes = await screen.findByText(
+        "Disciplinary Facility Notes",
+      );
+      const stg = screen.getByText("Gang / Security Threat Group (STG)");
+      expect(stg).toBeInTheDocument();
+      // The STG subsection's contract is "after Disciplinary Facility Notes",
+      // so assert order, not just presence.
+      expect(
+        facilityNotes.compareDocumentPosition(stg) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy();
+    });
+
+    it("shows the STG empty state for a US_ID case with no STG on record", async () => {
+      rootStore.tenantStore.currentTenantId = "US_ID";
+      renderAtPath("/parole/case/166184");
+
+      expect(
+        await screen.findByText("Gang / Security Threat Group (STG)"),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText("No STG affiliation on record."),
+      ).toBeInTheDocument();
+    });
+
+    it("omits the STG slot for US_CO", async () => {
+      renderAtPath("/parole/case/45821");
+
+      expect(
+        await findSectionHeading("Institutional Conduct History"),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByText("Gang / Security Threat Group (STG)"),
+      ).not.toBeInTheDocument();
     });
 
     it("omits the facility notes slot for US_CO", async () => {

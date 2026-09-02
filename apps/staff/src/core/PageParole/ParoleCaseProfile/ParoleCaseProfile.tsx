@@ -31,7 +31,10 @@ import { BackLink } from "../../Link";
 import ModelHydrator from "../../ModelHydrator";
 import { paroleUrl } from "../../views";
 import { CaseProfileSidebar } from "../components/CaseProfileSidebar";
-import { ParoleSectionComponents } from "../components/ParoleSectionComponents";
+import {
+  PAROLE_SECTION_LABELS,
+  ParoleSectionComponents,
+} from "../components/ParoleSectionComponents";
 import { SectionAnchor } from "../components/SectionAnchor";
 import { PAROLE_SECTION_IDS } from "../components/shared";
 
@@ -79,6 +82,15 @@ const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
   const { caseDetail } = presenter;
   const SidebarChildren = presenter.config.sidebarChildren;
 
+  // Resolve the section nav labels, letting a tenant override the
+  // conduct-history label the same way it overrides the section title.
+  const sectionLabels = {
+    ...PAROLE_SECTION_LABELS,
+    conductHistory:
+      presenter.config.conductHistoryTitle ??
+      PAROLE_SECTION_LABELS.conductHistory,
+  };
+
   return (
     <Wrapper>
       <BackLink fallbackUrl={paroleUrl("docket")}>Back to Docket</BackLink>
@@ -99,6 +111,7 @@ const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
             mandatoryReleaseDate={caseDetail.mandatoryReleaseDate}
             isParoleReturn={caseDetail.isParoleReturn}
             sections={presenter.config.sections}
+            sectionLabels={sectionLabels}
           >
             {SidebarChildren && (
               <SidebarChildren

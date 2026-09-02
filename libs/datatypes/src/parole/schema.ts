@@ -221,6 +221,7 @@ export const paroleCaseSchema = z.object({
   conductHistory: z.array(paroleConductRecordSchema),
   communitySupervisionPlan: z.array(paroleCommunitySupervisionPlanEntrySchema),
   disciplinaryFacilityNotes: z.string().optional(),
+  stg: z.string().optional(),
   docPrograms: z.array(paroleDocProgramSchema),
   edovoPrograms: z.array(paroleEdovoProgramSchema),
   offenseHistory: paroleOffenseHistorySchema,
