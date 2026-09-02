@@ -144,7 +144,10 @@ export async function libGenerator(tree: Tree, options: LibGeneratorSchema) {
   }
 
   function updateViteConfig() {
-    const configPath = `${PROJECT_ROOT}/vite.config.ts`;
+    const configFileName =
+      options.libType === "vanilla" ? "vitest.config.mts" : "vite.config.mts";
+
+    const configPath = `${PROJECT_ROOT}/${configFileName}`;
     let configSource = tree.read(configPath)?.toString();
 
     if (!configSource) {
