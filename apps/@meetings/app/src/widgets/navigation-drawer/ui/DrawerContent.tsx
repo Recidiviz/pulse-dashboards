@@ -30,6 +30,7 @@ import { useUserContext } from "~@meetings/app/entities/user";
 import BgAvatarImage from "~@meetings/app/shared/assets/images/bg-avatar.png";
 import { IS_PROD } from "~@meetings/app/shared/config";
 import { getInitials } from "~@meetings/app/shared/lib/format";
+import { usePlatform } from "~@meetings/app/shared/lib/platform";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import MobileMenuItem from "./MobileMenuItem";
@@ -39,6 +40,7 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
   const insets = useSafeAreaInsets();
   const { navigation } = props;
   const { canSelectStateCode, currentStateName } = useStateSelection();
+  const { isWeb } = usePlatform();
   const {
     name,
     email,
@@ -128,7 +130,9 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
             )}
           </>
         )}
-        {isRecidivizUser && (
+        {/* Web only: the AgencyConfig screen is not registered on native, since
+            its Monaco editor is DOM-based. */}
+        {isRecidivizUser && isWeb && (
           <MobileMenuTextItem
             title="Agency Configurations"
             onPress={() => navigation.navigate("AgencyConfig")}

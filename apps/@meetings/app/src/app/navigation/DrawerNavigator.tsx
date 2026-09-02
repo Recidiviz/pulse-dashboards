@@ -60,7 +60,7 @@ export default function DrawerNavigator() {
   } = useUserContext();
   const { isLoading: isStateLoading } = useStateSelection();
   const { agencyConfigs, isLoading: isLoadingConfigs } = useAgencyConfigs();
-  const { isMobile } = usePlatform();
+  const { isMobile, isWeb } = usePlatform();
   const { data: userData, isLoading: isUserLoading } = useGetUser();
 
   const hasSeenOnboarding = userData ? userData.hasSeenOnboarding : false;
@@ -131,7 +131,9 @@ export default function DrawerNavigator() {
         <Drawer.Screen name="ResidentsRoot" component={ResidentsStack} />
       )}
       <Drawer.Screen name="StateSelection" component={StateSelectionScreen} />
-      {isRecidivizUser && (
+      {/* Web only: AgencyConfigScreen renders a Monaco editor, which is DOM-based
+          and throws an Invariant Violation on native. */}
+      {isRecidivizUser && isWeb && (
         <Drawer.Screen name="AgencyConfig" component={AgencyConfigScreen} />
       )}
     </Drawer.Navigator>
