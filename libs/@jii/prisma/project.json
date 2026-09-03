@@ -7,13 +7,24 @@
   "targets": {
     "cloudsql-proxy": {
       "metadata": {
-        "description": "Runs the CloudSQL proxy used to develop against the staging DB, keeping gcloud ADC credentials fresh (refreshing and restarting the container as needed) for the whole session."
+        "description": "Keeps gcloud ADC credentials fresh for the whole session, restarting the CloudSQL proxy as needed. Depends on cloudsql-proxy-up to get the proxy running first."
       },
       "continuous": true,
       "executor": "nx:run-commands",
+      "dependsOn": ["cloudsql-proxy-up"],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "tsx scripts/cloudSqlProxy.mts"
+        "command": "tsx scripts/watchCloudSqlProxy.mts"
+      }
+    },
+    "cloudsql-proxy-up": {
+      "metadata": {
+        "description": "Brings the CloudSQL proxy up with fresh credentials and exits. Use the continuous `cloudsql-proxy` target to also keep credentials fresh for a whole session."
+      },
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "tsx scripts/startCloudSqlProxy.mts"
       }
     },
     "local-dbs": {
@@ -34,7 +45,6 @@
       },
       "defaultConfiguration": "dev"
     },
-
     "docker-down": {
       "executor": "nx:run-commands",
       "options": { "cwd": "{projectRoot}" },

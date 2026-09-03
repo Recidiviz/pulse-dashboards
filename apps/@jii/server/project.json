@@ -89,6 +89,30 @@
         }
       }
     },
+    "requires-sops-env:query-all-states": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@jii/prisma"],
+          "target": "cloudsql-proxy-up"
+        }
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "tsx src/tools/queryAllStates.ts",
+        "env": {
+          "NODE_ENV": "development",
+          "USE_STAGING_DB": "true"
+        }
+      },
+      "metadata": {
+        "sops-env": {
+          "additional-sops-env-files": ["{projectRoot}/env.dev.enc.yaml"],
+          "additional-dotenv-files": ["{workspaceRoot}/libs/@jii/prisma/.env"]
+        },
+        "description": "Runs a read-only SQL query against each enabled state's staging database in turn (--query or --file)"
+      }
+    },
     "requires-sops-env:decode-token": {
       "executor": "nx:run-commands",
       "options": {
@@ -234,7 +258,6 @@
       },
       "defaultConfiguration": "dev"
     },
-
     "requires-sops-env:test-rna": {
       "executor": "nx:run-commands",
       "options": {
@@ -247,7 +270,6 @@
         }
       }
     },
-
     "requires-sops-env:test-resource-api": {
       "executor": "nx:run-commands",
       "options": {
@@ -260,7 +282,6 @@
         }
       }
     },
-
     "test": {
       "dependsOn": ["^prepare-test-db"]
     }

@@ -21,8 +21,10 @@ import path from "node:path";
 
 import { $ } from "zx";
 
-// This script has two phases: a startup phase (ensures the CloudSQL Proxy service starts up
-// with fresh credentials) and a watch phase (keeps the credentials fresh).
+// The proxy has two phases: a startup phase (ensures the CloudSQL Proxy service starts up with
+// fresh credentials) and a watch phase (keeps the credentials fresh). They live here, separately
+// from any entrypoint, so that each can be run on its own: the startup phase terminates and so
+// can be depended on by a short-lived task, while the watch phase runs until interrupted.
 
 // --- Utility functions and constants ---
 
@@ -83,7 +85,7 @@ async function restartProxy(): Promise<void> {
 /**
  * Startup phase: get a fresh container running with valid credentials
  */
-async function startProxy() {
+export async function startProxy() {
   // check credentials and prompt for reauth if needed
   if (!(await isAdcValid())) {
     await refreshAdc();
@@ -103,7 +105,7 @@ async function startProxy() {
 /**
  * Watch phase: keep credentials fresh and the container in sync
  */
-async function watchCredentialsAndRefresh() {
+export async function watchCredentialsAndRefresh() {
   const POLL_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
 
   let activeCredentialLastModified = getCredentialLastModified();
@@ -139,8 +141,3 @@ async function watchCredentialsAndRefresh() {
     await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
   }
 }
-
-// --- Script execution ---
-
-await startProxy();
-await watchCredentialsAndRefresh();
