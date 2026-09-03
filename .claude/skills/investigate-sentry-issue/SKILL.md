@@ -27,6 +27,19 @@ Two phases with a **hard gate** between them:
 Never edit code, create a branch, open a PR, or change anything in Sentry before
 the user has chosen an outcome. The investigation phase touches nothing.
 
+## Scope
+
+Steps 1 (fetch), 2 (reality check), 3 (stack trace), and 6–9 (propose/act) are
+project-agnostic — they apply to an issue from any Sentry project in this org. The
+**project → code map right below, Step 4 (locate the code), and Step 5 (correlate
+with a release) are Meetings/Expo-specific** and were written entirely from Meetings
+issues. For an issue from another product, skip those three and locate the code and
+correlate the release using that product's own conventions instead — e.g.
+`@sentencing/server`'s Fastify/tRPC layout instead of Feature-Sliced Design, and
+whatever that project's own release tag actually is (it may well be a plain git SHA,
+unlike Meetings' `<app name>@<version>` — don't assume the SHA-lookalike trap in
+Step 5 carries over).
+
 ## Inputs
 
 A Sentry issue URL (`https://recidiviz-inc.sentry.io/issues/MEETINGS-APP-167`)
@@ -81,6 +94,17 @@ careful root-cause analysis of something that was never broken.
   internal dogfooding, not a user-facing incident. Weight it accordingly.
 - **Check the volume against the window.** 6 events across 5 users in 5 days is
   not an outage. Say so plainly rather than implying urgency.
+- **Check that the sampled events are actually one failure.** Pull a handful of
+  events from the group, not just the latest one, and confirm they share a genuine
+  root cause rather than being distinct errors Sentry grouped together because they
+  share an outer try/catch or a generic error message. If they diverge, say so —
+  it caps the verdict at **insufficient data** regardless of how solid any single
+  event's evidence looks — and propose a concrete way to split them: either a
+  tighter fingerprint on the `Sentry.captureException` call (or an equivalent
+  `beforeSend` rule) keyed on the actual distinguishing detail, or manually
+  un-merging the issue in the Sentry UI. Name the specific distinguishing detail
+  (an error subtype, a tag, a message fragment) rather than just saying "add
+  fingerprinting."
 
 Land on one of four verdicts, because each leads to a different proposal:
 
@@ -346,7 +370,10 @@ reopening something archived by mistake.
 - **Sourcemaps missing for a release is itself a finding.** Report it even when it
   isn't the bug you were asked about.
 - **Don't batch.** This skill investigates one issue. If the user wants the whole
-  board triaged, do them one at a time with a gate on each.
+  board triaged, do them one at a time with a gate on each. That restriction is
+  about this skill's own interactive gate (Steps 6–9) — the investigation method in
+  Steps 1–5 is reused non-interactively by `/triage-sentry`'s per-issue sub-agents
+  for exactly that whole-board case, without the `AskUserQuestion` stop.
 
 ## Related
 
