@@ -1670,7 +1670,7 @@
       }
     },
     "Spacing": {
-      "inset-card": {
+      "padding-card": {
         "$type": "number",
         "$value": 24,
         "$description": "Card internal padding",
@@ -1685,7 +1685,7 @@
           }
         }
       },
-      "inset-page": {
+      "padding-page": {
         "$type": "number",
         "$value": 24,
         "$description": "Page-level padding inside container edges",
@@ -1802,7 +1802,7 @@
           }
         }
       },
-      "banner-padding": {
+      "padding-banner": {
         "$type": "number",
         "$value": 16,
         "$description": "ADDED BY: claude-code | session 2026-05-20 | Banner build iteration applying panel critique 1044:714\nPURPOSE: Banner-component horizontal/vertical padding (inside the banner box)\nSOURCE: Staging .dFWBnL padding:1rem (DPRBanner) — 16px\nCURRENT VALUE: 16\nREPLACES PLACEHOLDER: Layout/Spacing/inset-card (24) used as [WIP] placeholder for callout padding-x\nREVIEW: If banner shares the card padding role, delete banner-padding and revert to inset-card. Otherwise keep at 16.\n---\nRE-ALIASED BY Claude — 2026-06-11 token-gap fill pass: now aliases a primitive (resolved value unchanged). Was a raw value with no primitive backing. Target: Spacer/space-16.",
@@ -1817,7 +1817,7 @@
           }
         }
       },
-      "inset-card-compact": {
+      "padding-card-compact": {
         "$type": "number",
         "$value": 16,
         "$description": "ADDED BY Claude — 2026-06-11 token-gap fill pass (Full Style Guide audit, Robinson-authorized session)\nPURPOSE: 16px card inset. Components were bound to the PRIMITIVE-collection duplicate Layout/Spacing/inset-card (=16), which conflicts with the SEMANTIC inset-card (=24). This token preserves the rendered 16px while keeping the component on the semantic tier.\nSOURCE: Date Card Body (×14) and Course Catalog Card Content (×6) paddings.\nALIASES: Spacer/space-16\nREVIEW: DECIDE: should card inset be 16 or 24? If 24 wins, rebind components to inset-card and delete this. Also: deprecate the duplicate Layout/Spacing/* group inside the Primitives collection.",
@@ -1831,7 +1831,7 @@
           }
         }
       },
-      "inset-content-y": {
+      "padding-content-y": {
         "$type": "number",
         "$value": 20,
         "$description": "ADDED BY Claude — 2026-06-11 token-gap fill pass (Full Style Guide audit, Robinson-authorized session)\nPURPOSE: 20px vertical inset for card content blocks.\nSOURCE: Course Catalog Card Content paddingTop/Bottom = Spacer/space-20 bound directly (×6, e.g. 829:4028).\nALIASES: Spacer/space-20\nREVIEW: Confirm 20 as a real content inset vs snapping to inset-card-compact (16).",
@@ -1845,7 +1845,7 @@
           }
         }
       },
-      "inset-pill-x": {
+      "padding-pill-x": {
         "$type": "number",
         "$value": 6,
         "$description": "ADDED BY Claude — 2026-06-11 token-gap fill pass (Full Style Guide audit, Robinson-authorized session)\nPURPOSE: 6px horizontal padding for sm badges/pills.\nSOURCE: Badge/StatusPill size=sm variants, raw 6 (×5, e.g. 829:3809).\nALIASES: Spacer/space-6\nREVIEW: Crit on 2026-05-20 deferred inset-pill; Badge sm uses 6/2 while Card's badge uses 8/4 (gap-inline/gap-tight) — consolidate.",
@@ -1859,7 +1859,7 @@
           }
         }
       },
-      "inset-pill-y": {
+      "padding-pill-y": {
         "$type": "number",
         "$value": 2,
         "$description": "ADDED BY Claude — 2026-06-11 token-gap fill pass (Full Style Guide audit, Robinson-authorized session)\nPURPOSE: 2px vertical padding for sm badges/pills.\nSOURCE: Badge/StatusPill size=sm variants, raw 2 (×5).\nALIASES: Spacer/space-2\nREVIEW: See inset-pill-x — consolidate pill paddings.",
@@ -1887,7 +1887,7 @@
           }
         }
       },
-      "inset-row-y": {
+      "padding-row-y": {
         "$type": "number",
         "$value": 2,
         "$description": "ADDED BY Claude — 2026-06-11 token-gap fill pass (Full Style Guide audit, Robinson-authorized session)\nPURPOSE: 2px vertical padding on breakdown rows.\nSOURCE: Card (1013:136) Breakdown rows, raw 2 (×9).\nALIASES: Spacer/space-2\nREVIEW: Tiny structural value — confirm it deserves a token vs staying raw.",
@@ -2097,7 +2097,7 @@
       },
       "size-md": {
         "$type": "number",
-        "$value": 19,
+        "$value": 18,
         "$extensions": {
           "com.figma.variableId": "VariableID:349:10",
           "com.figma.scopes": [
@@ -2109,8 +2109,8 @@
             "PARAGRAPH_INDENT"
           ],
           "com.figma.aliasData": {
-            "targetVariableId": "VariableID:ff7e9190640a75181a3e076c41d1bc830e959e83/-1:-1",
-            "targetVariableName": "Typography/Size/md",
+            "targetVariableId": "VariableID:3759:96",
+            "targetVariableName": "Typography/Size/size-18",
             "targetVariableSetId": "VariableCollectionId:00bee48441d859c60043053ea7933377e90133bd/-1:-1",
             "targetVariableSetName": "Primitives"
           }

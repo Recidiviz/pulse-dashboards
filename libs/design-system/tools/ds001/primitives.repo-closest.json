@@ -1955,11 +1955,13 @@
           "com.figma.scopes": ["FONT_SIZE"]
         }
       },
-      "md": {
+      "size-18": {
         "$type": "number",
-        "$value": 19,
+        "$value": 18,
+        "$description": "18px UI/label step. Repo origin: libs/design-system/src/scss/typography/_variables.module.scss · font-sans-18 (also npm @recidiviz/design-system typography.Sans18). Fills the gap between size-body (16) and size-heading-sm (24); 26 repo files use this size. Added 2026-09-02, authorized by Robinson, replacing the 19px md step.",
         "$extensions": {
-          "com.figma.variableId": "VariableID:349:3"
+          "com.figma.variableId": "VariableID:3759:96",
+          "com.figma.scopes": ["FONT_SIZE"]
         }
       },
       "display-sm": {
