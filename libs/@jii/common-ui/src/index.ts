@@ -42,6 +42,7 @@ export * from "./HomepageSectionHeading";
 export * from "./NotFound/NotFound";
 export * from "./PageLinksFooter/PageLinksFooter";
 export * from "./Redirect/Redirect";
+export * from "./RowDivider";
 export * from "./Selector/Selector";
 export * from "./SimpleLinkProps";
 export * from "./styles";

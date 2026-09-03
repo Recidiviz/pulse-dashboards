@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,16 +18,18 @@
 import { rem } from "polished";
 import styled from "styled-components";
 
-import { spacing } from "~design-system";
+import { palette, spacing } from "~design-system";
 
-export const ActivityRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  gap: ${rem(spacing.lg)};
-  height: ${rem(24)};
-  margin: ${rem(spacing.sm)} 0;
-`;
+/**
+ * A hairline rule for separating stacked content. Hides itself when it is the
+ * last child of its container, so a list can render a divider after every item
+ * without a stray rule at the bottom.
+ */
+export const RowDivider = styled.hr`
+  border-top: 1px solid ${palette.slate10};
+  margin: ${rem(spacing.xs)} ${rem(spacing.xxs)};
 
-export const ActivityList = styled.div`
-  margin: ${rem(spacing.md)} 0;
+  &:last-child {
+    display: none;
+  }
 `;

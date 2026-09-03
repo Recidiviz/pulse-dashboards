@@ -17,42 +17,43 @@
 
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { ActivityList, ActivityRow } from "./ActivityList";
 import { RowDivider } from "./RowDivider";
 
 /**
- * Use `ActivityList`, `ActivityRow` and `RowDivider` together
- * to create a simple two-column list.
+ * A hairline rule for separating stacked content. Pair it with `ActivityList`
+ * and `ActivityRow` for a label/value list, or use it on its own between any
+ * blocks of content.
  */
 const meta = {
-  title: "Common UI/ActivityList",
-  component: ActivityList,
-} satisfies Meta<typeof ActivityList>;
+  title: "Common UI/RowDivider",
+  component: RowDivider,
+} satisfies Meta<typeof RowDivider>;
 
 export default meta;
 
 export const Default: StoryObj<typeof meta> = {
   render: () => (
-    <ActivityList>
-      <ActivityRow>
-        <span>First activity</span>
-        <span>+4</span>
-      </ActivityRow>
+    <div>
+      <p>Is this a problem for you right now?</p>
       <RowDivider />
-      <ActivityRow>
-        <span>Second activity</span>
-        <span>+2</span>
-      </ActivityRow>
+      <p>How interested are you in improving this?</p>
       <RowDivider />
-      <ActivityRow>
-        <span>Third activity</span>
-        <span>−1</span>
-      </ActivityRow>
+      <p>What would you like to work on?</p>
+    </div>
+  ),
+};
+
+/**
+ * The divider hides itself when it is the last child of its container, so a
+ * list can render one after every item without a stray rule at the bottom.
+ */
+export const HiddenAsLastChild: StoryObj<typeof meta> = {
+  render: () => (
+    <div>
+      <p>First item</p>
       <RowDivider />
-      <ActivityRow>
-        <span>Fourth activity</span>
-        <span>+7</span>
-      </ActivityRow>
-    </ActivityList>
+      <p>Second item</p>
+      <RowDivider />
+    </div>
   ),
 };
