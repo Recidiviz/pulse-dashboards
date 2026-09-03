@@ -35,7 +35,7 @@ import { BORDER_RADIUS, CardSubtitle } from "./styles";
 
 const CardWrapper = styled.div`
   color: ${palette.pine1};
-  width: ${rem(977)};
+  width: 100%;
   height: ${rem(135)};
   padding: ${rem(spacing.md)};
   border-radius: ${BORDER_RADIUS};
@@ -65,7 +65,6 @@ const HeaderText = styled(Sans16)`
 
 const SupervisorReviewCardLink = styled(Link)`
   display: flex;
-  width: ${rem(977)};
   margin-bottom: ${rem(spacing.lg)};
 
   &:hover,
