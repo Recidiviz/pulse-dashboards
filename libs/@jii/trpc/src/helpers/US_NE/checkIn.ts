@@ -15,16 +15,38 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { router } from "../../../../procedures/init";
-import { getCheckIn, updateCheckIn } from "./checkInTool";
-import {
-  getReentryChecklist,
-  updateReentryChecklist,
-} from "./reentryChecklist";
+import { z } from "zod";
 
-export const usNeRouter = router({
-  getReentryChecklist,
-  updateReentryChecklist,
-  getCheckIn,
-  updateCheckIn,
-});
+import { Prisma, PrismaClient } from "~@jii/prisma";
+
+export const getCheckInInputSchema = z.object({
+  pseudonymizedId: z.string(),
+}) satisfies z.ZodType<Prisma.UsNeCheckInWhereInput>;
+
+/**
+ * Given a resident's pseudonymized ID, return the latest 120-Day Check-In object
+ * corresponding to that resident, or null if none was found
+ */
+export const getCheckInQueryResolver = async ({
+  input: { pseudonymizedId },
+  ctx: { prisma },
+}: {
+  input: z.infer<typeof getCheckInInputSchema>;
+  ctx: { prisma: PrismaClient };
+}) => {
+  const result = await prisma.usNeCheckIn.findFirst({
+    where: {
+      pseudonymizedId,
+    },
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
+
+  if (!result) {
+    return null;
+  }
+
+  // TODO(OBT-47841): parse with zod
+  return result;
+};

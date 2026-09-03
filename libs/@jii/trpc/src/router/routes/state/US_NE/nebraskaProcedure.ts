@@ -15,16 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { router } from "../../../../procedures/init";
-import { getCheckIn, updateCheckIn } from "./checkInTool";
-import {
-  getReentryChecklist,
-  updateReentryChecklist,
-} from "./reentryChecklist";
+import { restrictedResidentProcedureForState } from "../restrictedResidentProcedureForState";
 
-export const usNeRouter = router({
-  getReentryChecklist,
-  updateReentryChecklist,
-  getCheckIn,
-  updateCheckIn,
-});
+export const nebraskaProcedure = restrictedResidentProcedureForState("US_NE");
