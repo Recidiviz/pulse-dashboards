@@ -28,6 +28,7 @@ export const US_IA = "US_IA";
 export const US_MI = "US_MI";
 export const US_NC = "US_NC";
 export const US_NE = "US_NE";
+export const US_NV = "US_NV";
 export const US_NY = "US_NY";
 export const US_OR = "US_OR";
 export const US_PA = "US_PA";
@@ -47,6 +48,7 @@ const NON_PATHWAYS_TENANTS = [
   US_MI,
   US_NC,
   US_NE,
+  US_NV,
   US_OR,
   US_PA,
   US_TX,

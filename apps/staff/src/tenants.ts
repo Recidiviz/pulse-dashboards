@@ -29,6 +29,7 @@ import {
   US_MI,
   US_NC,
   US_NE,
+  US_NV,
   US_OR,
   US_TX,
   US_UT,
@@ -49,6 +50,7 @@ import US_MO_CONFIG from "./tenants/US_MO";
 import US_NC_CONFIG from "./tenants/US_NC";
 import US_ND_CONFIG from "./tenants/US_ND";
 import US_NE_CONFIG from "./tenants/US_NE";
+import US_NV_CONFIG from "./tenants/US_NV";
 import US_NY_CONFIG from "./tenants/US_NY";
 import US_OR_CONFIG from "./tenants/US_OR";
 import US_PA_CONFIG from "./tenants/US_PA";
@@ -80,6 +82,7 @@ const SPECIFIC_TENANT_CONFIGS = {
   [US_NC]: US_NC_CONFIG,
   [pathways.US_ND]: US_ND_CONFIG,
   [US_NE]: US_NE_CONFIG,
+  [US_NV]: US_NV_CONFIG,
   [pathways.US_NY]: US_NY_CONFIG,
   [US_OR]: US_OR_CONFIG,
   [lantern.US_PA]: US_PA_CONFIG,
