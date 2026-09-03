@@ -123,7 +123,9 @@ model UsNcRNAWritebackData {
     importedAt      DateTime
 }
 
-// US_NE (Nebraska) reentry checklist questions
+// US_NE (Nebraska)
+
+// reentry checklist questions
 model usNeReentryChecklistQuestion {
     pseudonymizedId String
     questionId      String
@@ -131,4 +133,24 @@ model usNeReentryChecklistQuestion {
     updatedAt       DateTime @updatedAt
 
     @@id([pseudonymizedId, questionId])
+}
+
+// An instance of a form created with the 120-Day Check-In Tool
+model UsNeCheckIn {
+    // Internal identifier for this form
+    id String @id
+
+    // Resident filling out this form
+    pseudonymizedId    String
+
+    // Staff member who activated this form in Meetings
+    // This field currently stores an email
+    assignedBy         String
+
+    createdAt          DateTime  @default(now())
+    updatedAt          DateTime  @updatedAt
+    completedAt        DateTime?
+
+    // The resident's answers, parsed via Zod
+    answers Json
 }
