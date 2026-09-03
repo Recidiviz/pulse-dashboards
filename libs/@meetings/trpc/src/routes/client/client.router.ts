@@ -59,6 +59,10 @@ const querySelect = {
   caseNoteInsightsSummaries: true,
 } satisfies Prisma.ClientSelect;
 
+function onMyCaseload(email: string): Prisma.Sql {
+  return Prisma.sql`${email} = ANY(p."staffEmails")`;
+}
+
 function assertCanSubmitCNIFeedback(user: AuthUser) {
   if (
     env.DEPLOY_ENV === "production" &&
@@ -143,13 +147,22 @@ export const clientRouter = router({
         ...(cursor !== undefined ? { page: cursor } : {}),
       };
 
-      const caseload = filters?.caseload ?? "all";
       const email = user.email.toLowerCase();
+
+      const caseloadFilter = filters?.caseload ?? "all";
       let additionalWhere: Prisma.Sql | undefined;
-      if (caseload === "mine") {
-        additionalWhere = Prisma.sql`AND ${email} = ANY(p."staffEmails")`;
-      } else if (caseload === "others") {
-        additionalWhere = Prisma.sql`AND NOT (${email} = ANY(p."staffEmails"))`;
+      if (caseloadFilter === "mine") {
+        additionalWhere = Prisma.sql`AND ${onMyCaseload(email)}`;
+      } else if (caseloadFilter === "others") {
+        additionalWhere = Prisma.sql`AND NOT (${onMyCaseload(email)})`;
+      }
+
+      const caseloadSort = sort?.caseload ?? "all";
+      let additionalOrderBy: Prisma.Sql | undefined;
+      if (caseloadSort === "mine") {
+        additionalOrderBy = Prisma.sql`${onMyCaseload(email)} DESC`;
+      } else if (caseloadSort === "others") {
+        additionalOrderBy = Prisma.sql`${onMyCaseload(email)} ASC`;
       }
 
       const result = await listPersonsWithMeetingInfo({
@@ -159,6 +172,7 @@ export const clientRouter = router({
         input: effectiveInput,
         getSecondaryOrderBy,
         additionalWhere,
+        additionalOrderBy,
         findManyByIds: (personIds) =>
           prisma.client.findMany({
             select: querySelect,

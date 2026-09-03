@@ -283,6 +283,7 @@ export async function listPersonsWithMeetingInfo<
   getSecondaryOrderBy,
   findManyByIds,
   additionalWhere,
+  additionalOrderBy,
 }: {
   prisma: PrismaClient;
   user: AuthUser;
@@ -301,6 +302,7 @@ export async function listPersonsWithMeetingInfo<
   ) => Prisma.Sql;
   findManyByIds: (personIds: bigint[]) => Promise<T[]>;
   additionalWhere?: Prisma.Sql;
+  additionalOrderBy?: Prisma.Sql;
 }) {
   const { page = 1, size = 20, filters, sort } = input ?? {};
   const { search } = filters ?? {};
@@ -327,6 +329,12 @@ export async function listPersonsWithMeetingInfo<
 
   const extraWhere = additionalWhere ?? Prisma.empty;
 
+  const orderByLevels = [
+    Prisma.sql`BOOL_OR(am."id" IS NOT NULL) DESC`,
+    ...(additionalOrderBy ? [additionalOrderBy] : []),
+    getSecondaryOrderBy(sortBy, sortDirection),
+  ];
+
   // We use raw SQL to compute the page of person IDs (paginated, sorted, and
   // filtered) plus a windowed total in a single round-trip, then hydrate those
   // IDs through Prisma to keep the rest of the result type-safe. Doing the
@@ -349,9 +357,7 @@ export async function listPersonsWithMeetingInfo<
     ${searchFilter}
     ${extraWhere}
     GROUP BY p."personId"
-    ORDER BY
-      BOOL_OR(am."id" IS NOT NULL) DESC,
-      ${getSecondaryOrderBy(sortBy, sortDirection)}
+    ORDER BY ${Prisma.join(orderByLevels, ", ")}
     LIMIT ${size}
     OFFSET ${(page - 1) * size}
   `;

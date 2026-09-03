@@ -18,7 +18,7 @@
 import { useIsFocused } from "@react-navigation/native";
 import { FlashList } from "@shopify/flash-list";
 import { keepPreviousData } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { View } from "react-native";
 
 import {
@@ -29,7 +29,12 @@ import {
   SortOption,
 } from "~@meetings/app/entities/person";
 import { feedbackLauncherScrollProps } from "~@meetings/app/features/intercom";
-import { Person, PersonType, trpc } from "~@meetings/app/shared/api";
+import {
+  CaseloadScope,
+  Person,
+  PersonType,
+  trpc,
+} from "~@meetings/app/shared/api";
 
 import { PersonCardItem } from "./PersonCardItem";
 import { PersonsHeaderContent } from "./PersonsHeaderContent";
@@ -57,13 +62,25 @@ export function PersonsMobileList({
   const isFocused = useIsFocused();
   const serializedSortBy = serializeSort(sort.sortBy as SortOption);
 
+  const caseloadProbe = trpc.v1.client.list.useQuery(
+    { size: 1, filters: { caseload: "mine" } },
+    { enabled: isFocused && personType === "client" },
+  );
+  const hasCaseload = (caseloadProbe.data?.total ?? 0) > 0;
+
+  const [caseloadSort, setCaseloadSort] = useState<CaseloadScope>("mine");
+
   const clientQuery = trpc.v1.client.list.useInfiniteQuery(
     {
       size: PAGE_SIZE,
       filters: {
         search: searchQuery,
       },
-      sort: { sortBy: serializedSortBy, sortDirection: sort.direction },
+      sort: {
+        sortBy: serializedSortBy,
+        sortDirection: sort.direction,
+        caseload: caseloadSort,
+      },
     },
     {
       enabled: isFocused && personType === "client",
@@ -101,6 +118,10 @@ export function PersonsMobileList({
   }, [clientQuery.data, residentQuery.data, personType]);
 
   const total = activeQuery.data?.pages[0]?.total ?? 0;
+
+  const caseloadSortProps = hasCaseload
+    ? { caseloadSort, setCaseloadSort }
+    : undefined;
 
   const headerDescription =
     personType === "client"
@@ -141,6 +162,7 @@ export function PersonsMobileList({
             personsCount={total}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
+            sortBy={sort.sortBy}
             setSortBy={(value: string) =>
               setSort({
                 sortBy: value,
@@ -150,6 +172,7 @@ export function PersonsMobileList({
                     : SortDirection.Ascending,
               })
             }
+            {...caseloadSortProps}
             isFetching={activeQuery.isFetching}
           />
         </View>

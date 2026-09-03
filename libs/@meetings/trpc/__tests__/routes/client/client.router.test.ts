@@ -346,6 +346,52 @@ describe("client router", () => {
         });
       });
 
+      describe("caseload sort", () => {
+        // fakeClients[0] and [3] are on the current user's caseload,
+        // fakeClients[1] is not. fakeClients[0] has an active meeting with the
+        // current user, so it stays pinned first in every case below.
+        test("caseload=mine groups the current user's caseload first without dropping anyone", async () => {
+          const result = await testTRPCClient.v1.client.list.query({
+            sort: { caseload: "mine", sortBy: "id", sortDirection: "asc" },
+          });
+          const ids = result.data.map((c) => c.personId);
+          // Without the caseload level, id ASC would give [0], [1], [3].
+          expect(ids).toEqual([
+            fakeClients[0].personId,
+            fakeClients[3].personId,
+            fakeClients[1].personId,
+          ]);
+          expect(result.total).toBe(3);
+        });
+
+        test("caseload=others groups other caseloads first without dropping anyone", async () => {
+          const result = await testTRPCClient.v1.client.list.query({
+            sort: { caseload: "others", sortBy: "id", sortDirection: "desc" },
+          });
+          const ids = result.data.map((c) => c.personId);
+          // Without the caseload level, id DESC would give [0], [3], [1].
+          expect(ids).toEqual([
+            fakeClients[0].personId,
+            fakeClients[1].personId,
+            fakeClients[3].personId,
+          ]);
+          expect(result.total).toBe(3);
+        });
+
+        test("caseload=all applies no caseload grouping", async () => {
+          const result = await testTRPCClient.v1.client.list.query({
+            sort: { caseload: "all", sortBy: "id", sortDirection: "asc" },
+          });
+          const ids = result.data.map((c) => c.personId);
+          expect(ids).toEqual([
+            fakeClients[0].personId,
+            fakeClients[1].personId,
+            fakeClients[3].personId,
+          ]);
+          expect(result.total).toBe(3);
+        });
+      });
+
       describe("sortBy", () => {
         test("sortBy=id orders by displayPersonExternalId ascending", async () => {
           const result = await testTRPCClient.v1.client.list.query({

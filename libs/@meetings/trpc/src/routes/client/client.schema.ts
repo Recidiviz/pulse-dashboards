@@ -31,17 +31,18 @@ export const getMeetingsInputSchema = z.object({
   clientId: z.bigint(),
 });
 
-export const caseloadFilterSchema = z.enum(["mine", "others", "all"]);
+export const caseloadSchema = z.enum(["mine", "others", "all"]);
 
 export const listFiltersSchema = z
   .object({
     search: z.string().trim().optional(),
-    caseload: caseloadFilterSchema.default("all"),
+    caseload: caseloadSchema.default("all"),
   })
   .optional();
 
 export const listSortSchema = z
   .object({
+    caseload: caseloadSchema.default("all"),
     sortBy: z.enum(["name", "id", "supervisionType", "lastMeeting"]).optional(),
     sortDirection: z.enum(["asc", "desc"]).optional(),
   })

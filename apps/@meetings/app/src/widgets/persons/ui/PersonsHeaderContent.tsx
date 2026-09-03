@@ -17,14 +17,22 @@
 
 import debounce from "lodash/debounce";
 import startCase from "lodash/startCase";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 
 import { SortOption } from "~@meetings/app/entities/person";
-import { PersonType } from "~@meetings/app/shared/api";
-import Dropdown from "~@meetings/app/shared/ui/Dropdown";
+import { CaseloadScope, PersonType } from "~@meetings/app/shared/api";
+import Dropdown, {
+  DropdownContainer,
+  DropdownOptionItem,
+} from "~@meetings/app/shared/ui/Dropdown";
 import SearchBar from "~@meetings/app/shared/ui/SearchBar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
+
+const CASELOAD_OPTIONS = [
+  { id: "mine", label: "My Caseload" },
+  { id: "all", label: "All Caseloads" },
+] as const;
 
 type Props = {
   personType: PersonType;
@@ -32,8 +40,11 @@ type Props = {
   personsCount: number;
   searchQuery: string;
   setSearchQuery: (value: string) => void;
+  sortBy?: string;
   setSortBy?: (value: string) => void;
   isFetching?: boolean;
+  caseloadSort?: CaseloadScope;
+  setCaseloadSort?: (caseload: CaseloadScope) => void;
 };
 
 export function PersonsHeaderContent({
@@ -42,8 +53,11 @@ export function PersonsHeaderContent({
   personsCount,
   searchQuery,
   setSearchQuery,
+  sortBy,
   setSortBy,
   isFetching,
+  caseloadSort,
+  setCaseloadSort,
 }: Props) {
   const [inputValue, setInputValue] = useState(searchQuery);
 
@@ -122,17 +136,134 @@ export function PersonsHeaderContent({
           </View>
         </View>
       </View>
-      <View className="z-10 mb-3 flex-row items-center justify-between px-4 md:my-0 md:px-0">
-        <View className="flex-row items-center gap-x-2">
+      <View className="z-10 mb-3 flex-row items-center justify-between gap-x-3 px-4 md:my-0 md:px-0">
+        <View className="shrink-0 flex-row items-center gap-x-2">
           <Typography variant="body-s-regular" className="leading-4">
             {personsCountString}
           </Typography>
           {isFetching && <ActivityIndicator size="small" />}
         </View>
-        {setSortBy && (
-          <Dropdown label="Sort by" options={options} onSelect={setSortBy} />
-        )}
+        {setSortBy &&
+          (caseloadSort && setCaseloadSort ? (
+            <PersonsSortMenu
+              sortOptions={options}
+              sortBy={sortBy ?? options[0]}
+              caseloadSort={caseloadSort}
+              onApply={(next) => {
+                setSortBy(next.sortBy);
+                setCaseloadSort(next.caseloadSort);
+              }}
+            />
+          ) : (
+            <Dropdown label="Sort by" options={options} onSelect={setSortBy} />
+          ))}
       </View>
     </>
+  );
+}
+
+function PersonsSortMenu({
+  sortOptions,
+  sortBy,
+  caseloadSort,
+  onApply,
+}: {
+  sortOptions: string[];
+  sortBy: string;
+  caseloadSort: CaseloadScope;
+  onApply: (next: { sortBy: string; caseloadSort: CaseloadScope }) => void;
+}) {
+  const caseloadLabel = CASELOAD_OPTIONS.find(
+    (o) => o.id === caseloadSort,
+  )?.label;
+  const buttonText = [caseloadLabel, sortBy].filter(Boolean).join(" > ");
+
+  return (
+    <DropdownContainer
+      className="min-w-0 shrink"
+      label="Sort by"
+      title="Sort by"
+      buttonText={buttonText}
+    >
+      {({ close, isOpen }) => (
+        <PersonsSortMenuContent
+          sortOptions={sortOptions}
+          sortBy={sortBy}
+          caseloadSort={caseloadSort}
+          isOpen={isOpen}
+          onApply={(next) => {
+            onApply(next);
+            close();
+          }}
+        />
+      )}
+    </DropdownContainer>
+  );
+}
+
+function PersonsSortMenuContent({
+  sortOptions,
+  sortBy,
+  caseloadSort,
+  isOpen,
+  onApply,
+}: {
+  sortOptions: string[];
+  sortBy: string;
+  caseloadSort: CaseloadScope;
+  isOpen: boolean;
+  onApply: (next: { sortBy: string; caseloadSort: CaseloadScope }) => void;
+}) {
+  const [draftSortBy, setDraftSortBy] = useState(sortBy);
+  const [draftCaseloadSort, setDraftCaseloadSort] = useState(caseloadSort);
+
+  useEffect(() => {
+    if (isOpen) {
+      setDraftSortBy(sortBy);
+      setDraftCaseloadSort(caseloadSort);
+    }
+  }, [isOpen, sortBy, caseloadSort]);
+
+  return (
+    <View>
+      <FilterGroupHeading>Caseload</FilterGroupHeading>
+      {CASELOAD_OPTIONS.map((option, i) => (
+        <DropdownOptionItem
+          key={option.id}
+          option={option.label}
+          isActive={option.id === draftCaseloadSort}
+          onSelect={() => setDraftCaseloadSort(option.id)}
+          isLast={i === CASELOAD_OPTIONS.length - 1}
+        />
+      ))}
+      <FilterGroupHeading>Sort</FilterGroupHeading>
+      {sortOptions.map((option, i) => (
+        <DropdownOptionItem
+          key={option}
+          option={option}
+          isActive={option === draftSortBy}
+          onSelect={() => setDraftSortBy(option)}
+          isLast={i === sortOptions.length - 1}
+        />
+      ))}
+      <TouchableOpacity
+        className="mt-6 h-fit w-full rounded-full bg-brand px-4 py-3"
+        onPress={() =>
+          onApply({ sortBy: draftSortBy, caseloadSort: draftCaseloadSort })
+        }
+      >
+        <Typography className="text-center text-base font-semibold leading-[18px] text-on-brand">
+          Apply
+        </Typography>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+function FilterGroupHeading({ children }: { children: ReactNode }) {
+  return (
+    <Typography className="mb-1 mt-4 text-lg font-semibold text-primary">
+      {children}
+    </Typography>
   );
 }

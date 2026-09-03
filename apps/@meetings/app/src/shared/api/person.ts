@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import type { inferRouterInputs } from "@trpc/server";
+
 import type { AppRouter } from "~@meetings/trpc-types";
 
 export type RawClient = Awaited<
@@ -42,3 +44,11 @@ export type Resident = Awaited<
 export type Person = Client | Resident;
 
 export type PersonType = "client" | "resident";
+
+type ClientListInput = Exclude<
+  inferRouterInputs<AppRouter>["v1"]["client"]["list"],
+  void | undefined
+>;
+export type CaseloadScope = NonNullable<
+  NonNullable<ClientListInput["filters"]>["caseload"]
+>;
