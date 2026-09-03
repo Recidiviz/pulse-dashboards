@@ -328,7 +328,10 @@ export const PAROLE_SECTION_IDS = {
   conductHistory: "parole-section-conduct-history",
   attachments: "parole-section-attachments",
   communitySupervisionPlan: "parole-section-community-supervision-plan",
+  downloadReport: "parole-section-download-report",
 } as const;
+
+export const PAROLE_REPORT_CAPTURE_ID = "parole-report-capture";
 
 export function scrollToSection(sectionId: string): void {
   document

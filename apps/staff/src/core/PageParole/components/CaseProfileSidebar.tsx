@@ -28,7 +28,10 @@ import type { ParoleConfig } from "../../models/types";
 import { NAV_BAR_HEIGHT } from "../../NavigationLayout";
 import { PaddedSectionCardBody } from "./PaddedSectionCardBody";
 import { DefaultParoleGeneralInfo } from "./ParoleGeneralInfo";
-import { PAROLE_SECTION_LABELS } from "./ParoleSectionComponents";
+import {
+  NON_NAV_PAROLE_SECTIONS,
+  PAROLE_SECTION_LABELS,
+} from "./ParoleSectionComponents";
 import {
   AlertBanner,
   Hr,
@@ -154,19 +157,23 @@ export function CaseProfileSidebar({
       <SectionNavCard $isNavStuck={isNavStuck}>
         <NavCardBody>
           <SectionNav>
-            {config.sections.map((sectionName, index) => (
-              <Fragment key={sectionName}>
-                {index > 0 && <Hr />}
-                <SectionNavButton
-                  type="button"
-                  onClick={() =>
-                    scrollToSection(PAROLE_SECTION_IDS[sectionName])
-                  }
-                >
-                  {sectionLabels[sectionName]}
-                </SectionNavButton>
-              </Fragment>
-            ))}
+            {config.sections
+              .filter(
+                (sectionName) => !NON_NAV_PAROLE_SECTIONS.has(sectionName),
+              )
+              .map((sectionName, index) => (
+                <Fragment key={sectionName}>
+                  {index > 0 && <Hr />}
+                  <SectionNavButton
+                    type="button"
+                    onClick={() =>
+                      scrollToSection(PAROLE_SECTION_IDS[sectionName])
+                    }
+                  >
+                    {sectionLabels[sectionName]}
+                  </SectionNavButton>
+                </Fragment>
+              ))}
           </SectionNav>
         </NavCardBody>
       </SectionNavCard>

@@ -32,8 +32,12 @@ import ModelHydrator from "../../ModelHydrator";
 import { paroleUrl } from "../../views";
 import { CaseProfileSidebar } from "../components/CaseProfileSidebar";
 import { ParoleSectionComponents } from "../components/ParoleSectionComponents";
+import { ReportHeader } from "../components/ReportHeader";
 import { SectionAnchor } from "../components/SectionAnchor";
-import { PAROLE_SECTION_IDS } from "../components/shared";
+import {
+  PAROLE_REPORT_CAPTURE_ID,
+  PAROLE_SECTION_IDS,
+} from "../components/shared";
 
 // Page-level max-width/padding comes from PageParole's shared Main wrapper;
 // this only lays out the sections within it.
@@ -68,6 +72,15 @@ const MainColumn = styled.div`
   gap: ${rem(spacing.lg)};
 `;
 
+// The report header plus the case-profile sections, grouped so the download
+// action can capture exactly this content (and not the download card itself)
+// into the generated PDF.
+const ReportContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(spacing.lg)};
+`;
+
 const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
   presenter,
 }: {
@@ -77,6 +90,18 @@ const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
   // so `presenter.caseDetail` is safe to access here -- but NOT at the call
   // site below, where it would be evaluated eagerly on every render pass.
   const { caseDetail } = presenter;
+
+  // The "downloadReport" section renders an action card that downloads a
+  // zipped PDF of the case profile. Its presence also adds the report header
+  // and groups the sections into a captureable container for that PDF.
+  const hasDownloadReport =
+    presenter.config.sections.includes("downloadReport");
+
+  // The sections that make up the report body -- every section except the
+  // download card, which is rendered above the captured container.
+  const contentSections = presenter.config.sections.filter(
+    (sectionName) => sectionName !== "downloadReport",
+  );
 
   return (
     <Wrapper>
@@ -91,17 +116,24 @@ const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
         </SidebarColumn>
 
         <MainColumn>
-          {presenter.config.sections.map((sectionName) => (
-            <SectionAnchor
-              key={sectionName}
-              id={PAROLE_SECTION_IDS[sectionName]}
-            >
-              {ParoleSectionComponents[sectionName](
-                caseDetail,
-                presenter.config,
-              )}
-            </SectionAnchor>
-          ))}
+          {hasDownloadReport &&
+            ParoleSectionComponents.downloadReport(caseDetail)}
+          <ReportContent id={PAROLE_REPORT_CAPTURE_ID}>
+            {hasDownloadReport && (
+              <ReportHeader name={caseDetail.name} docId={caseDetail.docId} />
+            )}
+            {contentSections.map((sectionName) => (
+              <SectionAnchor
+                key={sectionName}
+                id={PAROLE_SECTION_IDS[sectionName]}
+              >
+                {ParoleSectionComponents[sectionName](
+                  caseDetail,
+                  presenter.config,
+                )}
+              </SectionAnchor>
+            ))}
+          </ReportContent>
         </MainColumn>
       </CaseProfileLayout>
     </Wrapper>

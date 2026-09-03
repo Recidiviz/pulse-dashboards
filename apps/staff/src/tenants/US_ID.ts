@@ -223,6 +223,7 @@ const US_ID_CONFIG = {
   },
   paroleConfig: {
     sections: [
+      "downloadReport",
       "offenseHistory",
       "riskAssessment",
       "programParticipation",

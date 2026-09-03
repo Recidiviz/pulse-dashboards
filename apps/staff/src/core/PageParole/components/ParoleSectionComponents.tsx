@@ -21,6 +21,10 @@ import type { ParoleConfig } from "../../models/types";
 import { AttachmentsSection } from "./AttachmentsSection";
 import { CommunitySupervisionPlanSection } from "./CommunitySupervisionPlanSection";
 import { ConductHistorySection } from "./ConductHistorySection";
+import {
+  DOWNLOAD_REPORT_BUTTON_LABEL,
+  DownloadReportCard,
+} from "./DownloadReportCard";
 import { OffenseHistorySection } from "./OffenseHistorySection";
 import { ProgramParticipationSection } from "./ProgramParticipationSection";
 import { RiskAndNeedsAssessmentSection } from "./RiskAndNeedsAssessmentSection";
@@ -90,6 +94,9 @@ export const ParoleSectionComponents = {
       communitySupervisionPlan={caseDetail.communitySupervisionPlan}
     />
   ),
+  downloadReport: (caseDetail: ParoleCase) => (
+    <DownloadReportCard docId={caseDetail.docId} />
+  ),
 };
 
 export type ParoleSectionName = keyof typeof ParoleSectionComponents;
@@ -102,4 +109,9 @@ export const PAROLE_SECTION_LABELS: Record<ParoleSectionName, string> = {
   conductHistory: "Institutional Conduct History",
   attachments: "Attachments",
   communitySupervisionPlan: "Community Supervision Plan",
+  downloadReport: DOWNLOAD_REPORT_BUTTON_LABEL,
 };
+
+export const NON_NAV_PAROLE_SECTIONS: ReadonlySet<ParoleSectionName> = new Set([
+  "downloadReport",
+]);
