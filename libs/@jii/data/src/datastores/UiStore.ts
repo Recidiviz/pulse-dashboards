@@ -23,12 +23,6 @@ import { makeAutoObservable } from "mobx";
  */
 export class UiStore {
   /**
-   * Used to filter results on the search page, for users with access to it.
-   * Storing it here will allow it to persist when navigating away from the page
-   */
-  selectedFacilityIdFilterOptionValue?: string;
-
-  /**
    * Some components may wish to know how tall the sticky header is,
    * e.g. to ensure they don't scroll content past it to be covered up.
    * That value should be tracked and stored here, when applicable

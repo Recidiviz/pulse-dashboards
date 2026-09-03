@@ -39,14 +39,9 @@ function useInnerPresenter({
 }: {
   facilities: FirestoreResidentsSearchPresenter["facilities"];
 }) {
-  const { uiStore, userStore } = useRootStore();
+  const { userStore } = useRootStore();
   const { residentsStore } = useResidentsContext();
-  return new ResidentsSearchPresenter(
-    facilities,
-    residentsStore,
-    uiStore,
-    userStore,
-  );
+  return new ResidentsSearchPresenter(facilities, residentsStore, userStore);
 }
 
 const InnerManagedComponent: FC<{

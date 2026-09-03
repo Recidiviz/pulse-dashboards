@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResidentsStore, UiStore, UserStore } from "~@jii/data";
+import { ResidentsStore, UserStore } from "~@jii/data";
 import { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
 
 type SelectOption = { label: string; value: string };
@@ -24,7 +24,6 @@ export class ResidentsSearchPresenter {
   constructor(
     private facilities: JiiResidentAppRouterOutputs["resident"]["getFacilities"],
     private residentsStore: ResidentsStore,
-    private uiStore: UiStore,
     private userStore: UserStore,
   ) {}
 
@@ -62,7 +61,7 @@ export class ResidentsSearchPresenter {
 
     const {
       selectedFacilityIdFilterOptionValue: selectedResidentsFilterOptionValue,
-    } = this.uiStore;
+    } = this.residentsStore;
     if (selectedResidentsFilterOptionValue) {
       return this.residentFilterOptions.find(
         (o) => o.value === selectedResidentsFilterOptionValue,
@@ -73,8 +72,8 @@ export class ResidentsSearchPresenter {
   }
 
   setResidentsFilter(value: string) {
-    if (value !== this.uiStore.selectedFacilityIdFilterOptionValue) {
-      this.uiStore.selectedFacilityIdFilterOptionValue = value;
+    if (value !== this.residentsStore.selectedFacilityIdFilterOptionValue) {
+      this.residentsStore.selectedFacilityIdFilterOptionValue = value;
     }
   }
 }

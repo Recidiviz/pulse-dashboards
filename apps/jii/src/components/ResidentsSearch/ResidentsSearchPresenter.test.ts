@@ -53,7 +53,6 @@ beforeEach(() => {
   presenter = new ResidentsSearchPresenter(
     testFacilities,
     residentsStore,
-    rootStore.uiStore,
     rootStore.userStore,
   );
 });
@@ -102,7 +101,6 @@ describe("district restriction", () => {
         ...residentsConfigByState.US_MA,
         limitDistrictSearchOptions: true,
       }),
-      rootStore.uiStore,
       rootStore.userStore,
     );
 
@@ -119,7 +117,6 @@ describe("district restriction", () => {
         ...residentsConfigByState.US_MA,
         limitDistrictSearchOptions: true,
       }),
-      rootStore.uiStore,
       rootStore.userStore,
     );
 
@@ -141,7 +138,6 @@ describe("district restriction", () => {
         ...residentsConfigByState.US_MA,
         limitDistrictSearchOptions: true,
       }),
-      rootStore.uiStore,
       rootStore.userStore,
     );
 
@@ -154,8 +150,8 @@ describe("residentFilterDefaultOption", () => {
     expect(presenter.residentFilterDefaultOption).toBeUndefined();
   });
 
-  test("returns the option matching a preexisting value in the ui store", () => {
-    rootStore.uiStore.selectedFacilityIdFilterOptionValue = "DEMO FACILITY 2";
+  test("returns the option matching a preexisting value in the residents store", () => {
+    residentsStore.selectedFacilityIdFilterOptionValue = "DEMO FACILITY 2";
 
     expect(presenter.residentFilterDefaultOption).toMatchInlineSnapshot(`
       {

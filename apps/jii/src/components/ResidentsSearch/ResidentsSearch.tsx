@@ -35,7 +35,7 @@ const TrpcResidentsSearch = () => {
     apiClient: { trpcQuerier },
   } = useRootStore();
   const newData = useQuery(trpcQuerier.resident.getFacilities.queryOptions());
-  const { uiStore, userStore } = useRootStore();
+  const { userStore } = useRootStore();
   const { residentsStore } = useResidentsContext();
 
   if (newData.error)
@@ -46,12 +46,7 @@ const TrpcResidentsSearch = () => {
   return (
     <ResidentSearchWithPresenter
       presenter={
-        new ResidentsSearchPresenter(
-          newData.data,
-          residentsStore,
-          uiStore,
-          userStore,
-        )
+        new ResidentsSearchPresenter(newData.data, residentsStore, userStore)
       }
     />
   );
