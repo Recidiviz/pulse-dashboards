@@ -671,7 +671,15 @@ export class OpportunityPersonListPresenter
         `At this time, there are no ${this.justiceInvolvedPersonTitle}s who are ${this.activeTab}. Please navigate to one of the other tabs.`
       );
     }
+    if (this.config.hideWorkflowsTabGroupSelector) {
+      // Right now, we only expect to hit this case in US_TX
+      // We hit this case when this.activeTab is undefined, and hideWorkflowsTabGroupSelector is true
+      // this.activeTab is undefined for Texas in Insights when there are no more opportunities left for a supervisor to review
+      return `At this time, there are no ${this.justiceInvolvedPersonTitle}s who are awaiting your review.`;
+    }
     // When we don't have an active tab, there are no people in our current tab group
+    // We expect this case for states other than US_TX, where hideWorkflowsTabGroupSelector if false
+    // In this case, there are no opportunities for the current grouping, but users can choose another grouping using the WorkflowsTabGroupSelector
     return `Please select a different grouping. None of the ${this.justiceInvolvedPersonTitle}s were able to be grouped by ${toTitleCase(this.activeTabGroup.toLowerCase())}.`;
   }
 
