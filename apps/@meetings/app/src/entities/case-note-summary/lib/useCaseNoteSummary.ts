@@ -18,7 +18,6 @@
 import { useMemo } from "react";
 
 import { Person, trpc } from "~@meetings/app/shared/api";
-import { IS_PROD } from "~@meetings/app/shared/config";
 
 import { getCaseNoteSummarySegments } from "./getCaseNoteSummarySegments";
 import { getCategorizedSummaries } from "./getCategorizedSummaries";
@@ -30,7 +29,7 @@ type Params = {
 };
 
 export function useCaseNoteSummary({ person, isClient, showCNI }: Params) {
-  const enabled = isClient && showCNI && !IS_PROD;
+  const enabled = isClient && showCNI;
 
   const { data: client } = trpc.v1.client.get.useQuery(
     { personId: person.personId },

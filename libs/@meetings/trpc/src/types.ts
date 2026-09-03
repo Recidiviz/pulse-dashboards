@@ -25,7 +25,7 @@ export type FeatureVariantValue = {
   activeTenants?: StateCode[];
 };
 
-export type FeatureVariant = "TEST" | "feedbackTab";
+export type FeatureVariant = "TEST" | "feedbackTab" | "showCNI";
 
 export type FeatureVariantRecord = Partial<
   Record<FeatureVariant, FeatureVariantValue>

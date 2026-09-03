@@ -15,9 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export { useFeatureVariants } from "./lib/useFeatureVariants";
 export { useGetUser } from "./model/useGetUser";
 export {
   ACCESS_TOKEN_MIN_TTL_SECONDS,
   UserContextProvider,
   useUserContext,
 } from "./model/UserContext";
+export { BehindVariant } from "./ui/BehindVariant";

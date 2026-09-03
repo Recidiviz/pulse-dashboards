@@ -27,6 +27,7 @@ import {
 } from "~@meetings/app/entities/case-note-summary";
 import { getPersonType } from "~@meetings/app/entities/person";
 import { useStateSelection } from "~@meetings/app/entities/state-code";
+import { useFeatureVariants } from "~@meetings/app/entities/user";
 import { Person } from "~@meetings/app/shared/api";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
@@ -38,8 +39,10 @@ export function MeetingCaseNoteSummary({ person }: Props) {
   const sheetRef = useRef<BottomSheetModal>(null);
   const { selectedStateCode } = useStateSelection();
   const { agencyConfigs } = useAgencyConfigs();
+  const { isVariantActive } = useFeatureVariants();
 
-  const showCNI = agencyConfigs[selectedStateCode].showCNI;
+  const showCNI =
+    agencyConfigs[selectedStateCode].showCNI || isVariantActive("showCNI");
   const isClient = getPersonType(person) === "client";
 
   const { segments, enabled } = useCaseNoteSummary({
