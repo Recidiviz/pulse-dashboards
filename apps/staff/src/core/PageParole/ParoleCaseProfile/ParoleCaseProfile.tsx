@@ -31,10 +31,7 @@ import { BackLink } from "../../Link";
 import ModelHydrator from "../../ModelHydrator";
 import { paroleUrl } from "../../views";
 import { CaseProfileSidebar } from "../components/CaseProfileSidebar";
-import {
-  PAROLE_SECTION_LABELS,
-  ParoleSectionComponents,
-} from "../components/ParoleSectionComponents";
+import { ParoleSectionComponents } from "../components/ParoleSectionComponents";
 import { SectionAnchor } from "../components/SectionAnchor";
 import { PAROLE_SECTION_IDS } from "../components/shared";
 
@@ -80,16 +77,6 @@ const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
   // so `presenter.caseDetail` is safe to access here -- but NOT at the call
   // site below, where it would be evaluated eagerly on every render pass.
   const { caseDetail } = presenter;
-  const SidebarChildren = presenter.config.sidebarChildren;
-
-  // Resolve the section nav labels, letting a tenant override the
-  // conduct-history label the same way it overrides the section title.
-  const sectionLabels = {
-    ...PAROLE_SECTION_LABELS,
-    conductHistory:
-      presenter.config.conductHistoryTitle ??
-      PAROLE_SECTION_LABELS.conductHistory,
-  };
 
   return (
     <Wrapper>
@@ -98,28 +85,9 @@ const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
       <CaseProfileLayout>
         <SidebarColumn>
           <CaseProfileSidebar
-            name={caseDetail.name}
-            docId={caseDetail.docId}
-            custodyLevel={caseDetail.custodyLevel}
-            gender={caseDetail.gender}
-            dob={caseDetail.dob}
-            hearingDate={caseDetail.hearingDate}
-            currentFacility={caseDetail.currentFacility}
-            caseManagerName={caseDetail.caseManagerName}
-            sentenceStartDate={caseDetail.sentenceStartDate}
-            paroleEligibilityDate={caseDetail.paroleEligibilityDate}
-            mandatoryReleaseDate={caseDetail.mandatoryReleaseDate}
-            isParoleReturn={caseDetail.isParoleReturn}
-            sections={presenter.config.sections}
-            sectionLabels={sectionLabels}
-          >
-            {SidebarChildren && (
-              <SidebarChildren
-                caseDetail={caseDetail}
-                config={presenter.config}
-              />
-            )}
-          </CaseProfileSidebar>
+            caseDetail={caseDetail}
+            config={presenter.config}
+          />
         </SidebarColumn>
 
         <MainColumn>

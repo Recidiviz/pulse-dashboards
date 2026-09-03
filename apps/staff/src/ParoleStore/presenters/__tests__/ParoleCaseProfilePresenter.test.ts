@@ -32,6 +32,7 @@ const TEST_CASE: ParoleCase = {
   caseManagerName: "Jennifer Martinez",
   hearingDate: "2026-08-01",
   hearingTime: "9:00 AM",
+  hearingType: "Parole Grant Hearing",
   isParoleReturn: false,
   sentenceStartDate: "2022-07-27",
   paroleEligibilityDate: "2026-08-16",

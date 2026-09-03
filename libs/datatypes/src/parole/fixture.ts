@@ -335,6 +335,8 @@ const GENERIC_COMMUNITY_SUPERVISION_RECOMMENDATIONS: ReadonlyArray<
 
 const CUSTODY_LEVELS = ["Minimum", "Medium", "Maximum"] as const;
 
+const REPORT_AUTHOR_NAMES = ["R. Nguyen", "A. Patel", "M. Johnson"] as const;
+
 // Institutional conduct records, keyed by how many months before the module
 // loads they occurred (see the `iso`/relative-date rationale above). Anderson
 // is hand-authored to match the OBT-41634 design mock 1:1 -- six records
@@ -534,6 +536,8 @@ function buildAndersonCaseProfile(
     caseManagerName: "Jennifer Martinez",
     hearingDate,
     hearingTime: "9:00 AM",
+    hearingType: "Parole Grant Hearing",
+    reportAuthor: "R. Nguyen",
     isParoleReturn: false,
     sentenceStartDate: iso(subYears(today, 4)),
     paroleEligibilityDate: iso(addDays(today, 20)),
@@ -1087,6 +1091,8 @@ function buildGenericCaseProfile(
     hearingTime: hasScheduledHearing
       ? HEARING_TIME_BY_DOC_ID[hearing.docId]
       : undefined,
+    hearingType: hearing.hearingType,
+    reportAuthor: REPORT_AUTHOR_NAMES[index % REPORT_AUTHOR_NAMES.length],
     isParoleReturn: hearing.docId === PAROLE_RETURN_DOC_ID,
     sentenceStartDate: iso(subYears(today, 3 + (index % 4))),
     paroleEligibilityDate: iso(addDays(today, 10 + index * 5)),
@@ -1126,6 +1132,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
     custodyLevel: "Medium",
     caseManagerName: "JANE WESTON",
     hearingDate: "2026-10-01",
+    hearingType: "Parole Grant Hearing",
     isParoleReturn: false,
     sentenceStartDate: "2023-06-16",
     paroleEligibilityDate: "2027-01-03",
@@ -1265,6 +1272,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
     custodyLevel: "Close",
     caseManagerName: "GEORGE GEORGESON",
     hearingDate: "2026-10-01",
+    hearingType: "Revocation Hearing",
     isParoleReturn: true,
     sentenceStartDate: "2018-01-19",
     paroleEligibilityDate: "2027-01-07",
@@ -1742,6 +1750,8 @@ const ID_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
     custodyLevel: "Close",
     caseManagerName: "Angela Wright",
     hearingDate: iso(addDays(new Date(), 35)),
+    hearingType: "Parole Grant Hearing",
+    reportAuthor: "R. Nguyen",
     isParoleReturn: true,
     sentenceStartDate: iso(subYears(new Date(), 8)),
     paroleEligibilityDate: iso(addDays(new Date(), 90)),

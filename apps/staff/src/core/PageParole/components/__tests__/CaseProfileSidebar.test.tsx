@@ -18,33 +18,34 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
+import { paroleCasesFixtureByState } from "~datatypes";
+
+import { ParoleConfig } from "../../../models/types";
 import { CaseProfileSidebar } from "../CaseProfileSidebar";
-import {
-  PAROLE_SECTION_LABELS,
-  ParoleSectionName,
-} from "../ParoleSectionComponents";
+import { ParoleSectionName } from "../ParoleSectionComponents";
 import { PAROLE_SECTION_IDS } from "../shared";
 
-const REQUIRED_PROPS = {
-  name: "Anderson, Michael",
-  docId: "45821",
-  custodyLevel: "Minimum",
-  gender: "Male",
-  sectionLabels: PAROLE_SECTION_LABELS,
-  dob: "1986-07-27",
-  hearingDate: "2026-08-01",
-  currentFacility: "Central State Correctional Facility",
-  caseManagerName: "Jennifer Martinez",
-  sentenceStartDate: "2022-07-27",
-  paroleEligibilityDate: "2026-08-16",
-  mandatoryReleaseDate: "2028-06-26",
-  isParoleReturn: false,
-};
+// A US_CO case, so the sidebar renders the DefaultParoleGeneralInfo layout
+// (no tenant sidebarComponent override). Anderson has isParoleReturn: false.
+const CASE = paroleCasesFixtureByState.US_CO["45821"];
 
-// Deliberately not a real feature name. The sidebar owns no tenant-specific
-// content of its own any more, so a marker only `children` can produce is
-// what proves the slot -- asserting on a real heading like "Instant
-// Offenses" would pass whether the slot worked or not.
+function configWith(sections: Array<ParoleSectionName>): ParoleConfig {
+  return { sections, conductClassificationColors: {} };
+}
+
+// The pieces of a piped FactLabel (e.g. "Incarcerated | Minimum") render as
+// separate text nodes, so a plain getByText against one node never sees the
+// whole string. Match on the closest ancestor's textContent instead.
+function getByTextAcrossElements(text: string) {
+  return screen.getByText((_, element) => {
+    const elementHasText = element?.textContent === text;
+    const childrenDontHaveText = Array.from(element?.children ?? []).every(
+      (child) => child.textContent !== text,
+    );
+    return Boolean(elementHasText && childrenDontHaveText);
+  });
+}
+
 const SLOT_MARKER = "tenant slot marker";
 
 // Renders each section's PAROLE_SECTION_IDS target alongside the sidebar, the
@@ -53,7 +54,7 @@ const SLOT_MARKER = "tenant slot marker";
 function renderSidebar(sections: Array<ParoleSectionName>) {
   return render(
     <>
-      <CaseProfileSidebar {...REQUIRED_PROPS} sections={sections} />
+      <CaseProfileSidebar caseDetail={CASE} config={configWith(sections)} />
       {sections.map((sectionName) => (
         <div key={sectionName} id={PAROLE_SECTION_IDS[sectionName]} />
       ))}
@@ -76,6 +77,35 @@ describe("CaseProfileSidebar", () => {
     Reflect.deleteProperty(Element.prototype, "scrollIntoView");
   });
 
+  it("renders the default sidebar body when no sidebarComponent is configured", () => {
+    renderSidebar(["attachments"]);
+
+    expect(
+      getByTextAcrossElements(`Incarcerated | ${CASE.custodyLevel}`),
+    ).toBeInTheDocument();
+    // Facility lives inside Hearing Info in the default layout.
+    expect(screen.getByText("Facility")).toBeInTheDocument();
+    expect(screen.getByText(CASE.currentFacility)).toBeInTheDocument();
+    expect(screen.getByText("Personal Details")).toBeInTheDocument();
+    expect(screen.getByText("Sentence Info")).toBeInTheDocument();
+  });
+
+  it("renders a tenant's sidebarComponent in place of the default", () => {
+    render(
+      <CaseProfileSidebar
+        caseDetail={CASE}
+        config={{
+          ...configWith(["attachments"]),
+          sidebarComponent: () => <div>{SLOT_MARKER}</div>,
+        }}
+      />,
+    );
+
+    expect(screen.getByText(SLOT_MARKER)).toBeInTheDocument();
+    // The default layout's own content must not render alongside the override.
+    expect(screen.queryByText("Personal Details")).not.toBeInTheDocument();
+  });
+
   it("does not render the parole return banner by default", () => {
     renderSidebar(["attachments"]);
 
@@ -85,42 +115,12 @@ describe("CaseProfileSidebar", () => {
   it("renders the parole return banner when isParoleReturn is true", () => {
     render(
       <CaseProfileSidebar
-        {...REQUIRED_PROPS}
-        isParoleReturn
-        sections={["attachments"]}
+        caseDetail={{ ...CASE, isParoleReturn: true }}
+        config={configWith(["attachments"])}
       />,
     );
 
     expect(screen.getByText("Parole Return")).toBeInTheDocument();
-  });
-
-  it("renders no slot content when no children are given", () => {
-    renderSidebar(["attachments"]);
-
-    expect(screen.queryByText(SLOT_MARKER)).not.toBeInTheDocument();
-    // The info card's own fixed content still renders, so this isn't
-    // passing just because the card failed to render at all.
-    expect(screen.getByText("Sentence Info")).toBeInTheDocument();
-  });
-
-  it("renders children after the info card's own sections", () => {
-    render(
-      <CaseProfileSidebar {...REQUIRED_PROPS} sections={["attachments"]}>
-        <div>{SLOT_MARKER}</div>
-      </CaseProfileSidebar>,
-    );
-
-    const sentenceInfo = screen.getByText("Sentence Info");
-    const slotContent = screen.getByText(SLOT_MARKER);
-
-    expect(slotContent).toBeInTheDocument();
-    // The slot's contract is "at the end of the info card", so assert order,
-    // not just presence -- otherwise moving it above Personal Details would
-    // still pass.
-    expect(
-      sentenceInfo.compareDocumentPosition(slotContent) &
-        Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
   });
 
   it("renders the nav from the sections prop, not a fixed list", () => {
@@ -155,14 +155,13 @@ describe("CaseProfileSidebar", () => {
     ]);
   });
 
-  it("labels the nav from the sectionLabels prop, letting a tenant override it", () => {
+  it("labels the conduct-history nav from the tenant's conductHistoryTitle override", () => {
     render(
       <CaseProfileSidebar
-        {...REQUIRED_PROPS}
-        sections={["conductHistory"]}
-        sectionLabels={{
-          ...PAROLE_SECTION_LABELS,
-          conductHistory: "Institutional & Community Behavior",
+        caseDetail={CASE}
+        config={{
+          ...configWith(["conductHistory"]),
+          conductHistoryTitle: "Institutional & Community Behavior",
         }}
       />,
     );

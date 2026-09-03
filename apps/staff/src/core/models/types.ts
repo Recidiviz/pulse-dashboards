@@ -153,13 +153,13 @@ export type ParoleConfig = {
    * Defaults to "Institutional Conduct History" if omitted. */
   conductHistoryTitle?: string;
   /**
-   * A tenant-owned component rendered as `children` at the end of the case
-   * profile sidebar's info card (for example, an instant-offense list or an
-   * assessments summary). It receives the full case detail and config so a
-   * tenant can slot in as many blocks as it needs. Omit for a tenant with
-   * nothing to slot in there.
+   * A tenant-owned component that renders the whole case profile sidebar info
+   * card body -- the identity status line, the Personal / Hearing / Sentence
+   * Info sections, and any extra blocks (for example, an instant-offense list
+   * or an assessments summary). Omit to use `DefaultParoleGeneralInfo` (the
+   * incarceration-status line, with Facility inside Hearing Info).
    */
-  sidebarChildren?: ComponentType<{
+  sidebarComponent?: ComponentType<{
     caseDetail: ParoleCase;
     config: ParoleConfig;
   }>;

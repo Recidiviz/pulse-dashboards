@@ -19,7 +19,7 @@ import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "~shared-pathways";
 
 import { TenantConfig } from "../core/models/types";
 import { UsIdInstitutionalBehaviorSections } from "../core/PageParole/components/US_ID/UsIdInstitutionalBehaviorSections";
-import { UsIdParoleSidebarSection } from "../core/PageParole/components/US_ID/UsIdParoleSidebarSection";
+import { UsIdParoleSidebar } from "../core/PageParole/components/US_ID/UsIdParoleSidebar";
 import { METRIC_TYPE_LABELS, METRIC_TYPES } from "../core/PageVitals/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { INSIGHTS_PAGES } from "../core/views";
@@ -235,7 +235,7 @@ const US_ID_CONFIG = {
     offenseSectionTitle: "Instant Offenses",
     conductHistoryTitle: "Institutional & Community Behavior",
     conductHistoryVisibleYears: 3,
-    sidebarChildren: UsIdParoleSidebarSection,
+    sidebarComponent: UsIdParoleSidebar,
     conductHistoryChildren: UsIdInstitutionalBehaviorSections,
     riskAssessmentConfig: {
       tools: ["LSI", "VRAG", "STATIC", "STABLE", "Guideline"],

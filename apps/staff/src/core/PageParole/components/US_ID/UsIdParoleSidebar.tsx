@@ -15,34 +15,45 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ParoleCase } from "~datatypes";
-
-import type { ParoleConfig } from "../../../models/types";
 import { AssessmentsSidebarSection } from "../AssessmentsSidebarSection";
-import { Hr } from "../shared";
+import {
+  FullWidthHr,
+  ParoleGeneralInfoProps,
+  ParoleNameHeading,
+  ParolePersonalDetails,
+} from "../ParoleGeneralInfo";
+import {
+  FactLabel,
+  formatDate,
+  Hr,
+  StackedFactRow,
+  StackedFacts,
+  SubsectionTitle,
+} from "../shared";
 import { UsIdInstantOffensesSection } from "./UsIdInstantOffensesSection";
 
-/**
- * US_ID's `ParoleConfig.sidebarChildren` -- the blocks slotted at the end of
- * the case profile sidebar's info card: the instant-offense list followed by
- * the assessments summary (OBT-45410). `tools` comes from
- * riskAssessmentConfig; the assessments block hides itself when a tenant
- * configures no tools.
- */
-export function UsIdParoleSidebarSection({
+export function UsIdParoleSidebar({
   caseDetail,
   config,
-}: {
-  caseDetail: ParoleCase;
-  config: ParoleConfig;
-}) {
+}: ParoleGeneralInfoProps) {
   const tools = config.riskAssessmentConfig?.tools ?? [];
 
   return (
     <>
+      <div>
+        <ParoleNameHeading name={caseDetail.name} docId={caseDetail.docId} />
+        <FactLabel>{caseDetail.custodyLevel}</FactLabel>
+        <FactLabel>{caseDetail.currentFacility}</FactLabel>
+      </div>
+
+      <FullWidthHr />
+
+      <ParolePersonalDetails caseDetail={caseDetail} />
+
       <UsIdInstantOffensesSection
         offenses={caseDetail.offenseHistory.offenses}
       />
+
       {tools.length > 0 && (
         <>
           <Hr />
@@ -52,6 +63,32 @@ export function UsIdParoleSidebarSection({
           />
         </>
       )}
+
+      <Hr />
+
+      <div>
+        <SubsectionTitle>Hearing Details</SubsectionTitle>
+        <StackedFacts>
+          <StackedFactRow>
+            <div>Hearing Type</div>
+            <FactLabel>{caseDetail.hearingType}</FactLabel>
+          </StackedFactRow>
+          <StackedFactRow>
+            <div>Parole Board Hearing</div>
+            <FactLabel>
+              {caseDetail.hearingDate
+                ? formatDate(caseDetail.hearingDate)
+                : "Not scheduled"}
+            </FactLabel>
+          </StackedFactRow>
+          {caseDetail.reportAuthor && (
+            <StackedFactRow>
+              <div>Report Author</div>
+              <FactLabel>{caseDetail.reportAuthor}</FactLabel>
+            </StackedFactRow>
+          )}
+        </StackedFacts>
+      </div>
     </>
   );
 }

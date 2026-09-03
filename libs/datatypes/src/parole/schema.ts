@@ -212,6 +212,8 @@ export const paroleCaseSchema = z.object({
   caseManagerName: z.string(),
   hearingDate: z.string().optional(),
   hearingTime: z.string().optional(),
+  hearingType: z.string(),
+  reportAuthor: z.string().optional(),
   isParoleReturn: z.boolean().optional(),
   sentenceStartDate: z.string(),
   paroleEligibilityDate: z.string(),

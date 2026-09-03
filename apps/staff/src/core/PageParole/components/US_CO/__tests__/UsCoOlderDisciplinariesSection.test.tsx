@@ -52,6 +52,7 @@ function makeCaseDetail(fields: Partial<ParoleCase>): ParoleCase {
     currentFacility: "Western State Prison",
     custodyLevel: "Minimum",
     caseManagerName: "Jennifer Martinez",
+    hearingType: "Parole Grant Hearing",
     sentenceStartDate: "2022-07-27",
     paroleEligibilityDate: "2026-08-16",
     mandatoryReleaseDate: "2028-06-26",

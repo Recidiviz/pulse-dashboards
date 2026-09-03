@@ -130,6 +130,24 @@ export const FactRowStack = styled(FactStack)`
   overflow-wrap: break-word;
 `;
 
+export const StackedFacts = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+export const StackedFactRow = styled.div`
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+
+  // FactLabel carries a bottom margin meant for label-above-value layouts;
+  // drop it here so the rows sit an even 0.5rem apart.
+  & > * {
+    margin-bottom: 0;
+  }
+`;
+
 // Spans two of FactGrid's three columns, for a fact whose value is too long
 // to sit comfortably in a single column (e.g. a free-text narrative).
 export const WideFactItem = styled.div`
