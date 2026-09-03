@@ -141,7 +141,8 @@
       "~twilio-api": ["./libs/twilio-api/src/index.ts"],
       "~ui": ["./libs/ui/src/index.ts"],
       "~utils": ["./libs/utils/src/index.ts"],
-      "~utils/*": ["./libs/utils/src/*"]
+      "~utils/*": ["./libs/utils/src/*"],
+      "~@modules-server/trpc": ["./libs/@modules-server/trpc/src/index.ts"]
     },
     "resolveJsonModule": true,
     "rootDir": ".",

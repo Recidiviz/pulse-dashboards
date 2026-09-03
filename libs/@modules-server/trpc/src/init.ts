@@ -15,34 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { buildServer } from "./server";
+import { initTRPC } from "@trpc/server";
+import superjson from "superjson";
 
-const host = process.env["HOST"] ?? "localhost";
-const port = process.env["PORT"] ? Number(process.env["PORT"]) : 3000;
+import { procedurePlugin } from "~server-setup-plugin";
 
-const server = buildServer();
+import { createContext } from "./context";
 
-// Start listening.
-server.listen({ port, host }, (err) => {
-  if (err) {
-    server.log.error(err);
-    process.exit(1);
-  } else {
-    console.log(`[ ready ] http://${host}:${port}`);
-  }
-});
+export const t = initTRPC
+  .context<typeof createContext>()
+  // Required to get Date objects to serialize correctly.
+  .create({ transformer: superjson });
 
-if (import.meta.hot && process.env["NODE_ENV"] === "development") {
-  // TODO(#10276) Refactor into a script that can be used by all BEs in pulse-dashboards
-  async function killServer() {
-    await server.close();
-  }
+export const router = t.router;
 
-  import.meta.hot.on("vite:beforeFullReload", () => {
-    killServer();
-  });
+const plugin = procedurePlugin();
 
-  import.meta.hot.dispose(() => {
-    killServer();
-  });
-}
+export const baseProcedure = t.procedure.concat(plugin);

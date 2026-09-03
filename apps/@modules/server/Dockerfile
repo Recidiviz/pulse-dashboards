@@ -1,6 +1,13 @@
 # Build stage
-FROM node:22.22-alpine as builder
+FROM node:22.22-alpine AS builder
 WORKDIR /usr/src/app
+
+# Enable corepack so newer versions of yarn can be installed
+RUN corepack enable
+
+# Copy over the package.json, yarn.lock, and .yarnrc.yml files
+COPY dist/apps/@modules/server/package.json dist/apps/@modules/server/yarn.lock dist/apps/@modules/server/.yarnrc.yml ./
+RUN yarn workspaces focus --production
 
 COPY dist/apps/@modules/server .
 
@@ -16,6 +23,9 @@ ENV PORT=8080
 RUN corepack enable
 
 RUN apk add --no-cache dumb-init
+
+# Copy node_modules from builder stage
+COPY --chown=node:node --from=builder /usr/src/app .
 
 USER node
 EXPOSE ${PORT}

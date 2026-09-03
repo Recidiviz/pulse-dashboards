@@ -15,34 +15,31 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { buildServer } from "./server";
+import { appRouter, createContext } from "~@modules-server/trpc";
+import { buildCommonServer } from "~server-setup-plugin";
 
-const host = process.env["HOST"] ?? "localhost";
-const port = process.env["PORT"] ? Number(process.env["PORT"]) : 3000;
-
-const server = buildServer();
-
-// Start listening.
-server.listen({ port, host }, (err) => {
-  if (err) {
-    server.log.error(err);
-    process.exit(1);
-  } else {
-    console.log(`[ ready ] http://${host}:${port}`);
-  }
-});
-
-if (import.meta.hot && process.env["NODE_ENV"] === "development") {
-  // TODO(#10276) Refactor into a script that can be used by all BEs in pulse-dashboards
-  async function killServer() {
-    await server.close();
+export function buildServer() {
+  const domain = process.env["AUTH0_DOMAIN"];
+  const audienceEnv = process.env["AUTH0_AUDIENCE"];
+  if (!domain || !audienceEnv) {
+    throw new Error("Missing required environment variables for Auth0");
   }
 
-  import.meta.hot.on("vite:beforeFullReload", () => {
-    killServer();
+  // AUTH0_AUDIENCE list multiple audiences separated by a semicolon
+  // Used for zero-downtime audience migration
+  const audiences = audienceEnv
+    .split(";")
+    .map((value) => value.trim())
+    .filter(Boolean);
+
+  const server = buildCommonServer({
+    appRouter,
+    createContext,
+    auth0Options: {
+      domain,
+      audience: audiences,
+    },
   });
 
-  import.meta.hot.dispose(() => {
-    killServer();
-  });
+  return server;
 }

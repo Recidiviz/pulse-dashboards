@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/@modules/server/src",
   "projectType": "application",
-  "tags": [],
+  "tags": ["scope:server"],
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",
@@ -12,12 +12,11 @@
       "options": {
         "platform": "node",
         "outputPath": "{workspaceRoot}/dist/apps/@modules/server",
-        "format": ["cjs"],
         "bundle": true,
         "main": "{projectRoot}/src/main.ts",
         "tsConfig": "{projectRoot}/tsconfig.app.json",
         "assets": ["{projectRoot}/src/assets", "{workspaceRoot}/.yarnrc.yml"],
-        "generatePackageJson": false,
+        "generatePackageJson": true,
         "minify": true,
         "target": "node22",
         "esbuildOptions": {
@@ -68,7 +67,7 @@
       "dependsOn": ["prune-lockfile", "copy-workspace-modules"],
       "executor": "nx:noop"
     },
-    "serve": {
+    "requires-sops-env:serve": {
       "continuous": true,
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",

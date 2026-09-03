@@ -15,34 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { buildServer } from "./server";
+import { baseProcedure, router } from "./init";
 
-const host = process.env["HOST"] ?? "localhost";
-const port = process.env["PORT"] ? Number(process.env["PORT"]) : 3000;
-
-const server = buildServer();
-
-// Start listening.
-server.listen({ port, host }, (err) => {
-  if (err) {
-    server.log.error(err);
-    process.exit(1);
-  } else {
-    console.log(`[ ready ] http://${host}:${port}`);
-  }
+export const appRouter = router({
+  hello: baseProcedure.query(async () => {
+    return "hi there";
+  }),
 });
 
-if (import.meta.hot && process.env["NODE_ENV"] === "development") {
-  // TODO(#10276) Refactor into a script that can be used by all BEs in pulse-dashboards
-  async function killServer() {
-    await server.close();
-  }
-
-  import.meta.hot.on("vite:beforeFullReload", () => {
-    killServer();
-  });
-
-  import.meta.hot.dispose(() => {
-    killServer();
-  });
-}
+// export type definition of API
+export type AppRouter = typeof appRouter;

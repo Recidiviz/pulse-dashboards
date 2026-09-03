@@ -15,34 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { buildServer } from "./server";
+// @ts-check
 
-const host = process.env["HOST"] ?? "localhost";
-const port = process.env["PORT"] ? Number(process.env["PORT"]) : 3000;
+import tseslint from "typescript-eslint";
 
-const server = buildServer();
+import baseConfig, {
+  designSystemRestrictedImports,
+} from "../../../eslint.config.mjs";
 
-// Start listening.
-server.listen({ port, host }, (err) => {
-  if (err) {
-    server.log.error(err);
-    process.exit(1);
-  } else {
-    console.log(`[ ready ] http://${host}:${port}`);
-  }
+export default tseslint.config(baseConfig, {
+  files: ["**/*.*js", "**/*.*jsx", "**/*.*ts", "**/*.*tsx"],
+  rules: {
+    "no-restricted-imports": [
+      "error",
+      {
+        paths: [designSystemRestrictedImports],
+      },
+    ],
+  },
 });
-
-if (import.meta.hot && process.env["NODE_ENV"] === "development") {
-  // TODO(#10276) Refactor into a script that can be used by all BEs in pulse-dashboards
-  async function killServer() {
-    await server.close();
-  }
-
-  import.meta.hot.on("vite:beforeFullReload", () => {
-    killServer();
-  });
-
-  import.meta.hot.dispose(() => {
-    killServer();
-  });
-}
