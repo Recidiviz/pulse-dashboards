@@ -59,7 +59,7 @@ export const US_AZ: InsightsConfig = {
       eventNameSingular: "absconsion",
       eventNamePastTense: "absconded",
       descriptionMarkdown:
-        "All reported absconsions from supervision in the given time period.\n\n<br />\nDenominator is the average daily caseload for the agent over the given time period, including people on both active and admin supervision levels.",
+        "All reported absconsions from supervision in the given time period are counted in this metric.\n\n<br />\nDenominator is the average daily caseload for the agent over the given time period, including people on both active and admin supervision levels.",
       topXPct: null,
       listTableText:
         "Clients will appear on this list multiple times if they have had more than one absconsion under this officer in the time period.",
@@ -73,7 +73,7 @@ export const US_AZ: InsightsConfig = {
       eventNameSingular: "technical incarceration",
       eventNamePastTense: "had a technical incarceration",
       descriptionMarkdown:
-        'Transitions to incarceration from supervision due to technical violations, regardless of whether the final decision was a revocation or sanction admission. It is considered a technical incarceration only if the most serious violation type across all violations in the prior 24 months was a technical violation. We use this logic even if someone’s return to prison is labeled a "new admission", as long as they were previously on supervision. For incarceration transitions where we don’t find any associated violations, we infer violations and their type by looking at admission reasons implying a Technical or New Crime reason for returning to prison."\n<br />\nDenominator is the average daily caseload for the officer over the given time period, including people on both active and admin supervision levels.',
+        'Transitions to incarceration from supervision due to technical violations are counted in this metric, regardless of whether the final decision was a revocation or sanction admission. It is considered a technical incarceration only if the most serious violation type across all violations in the prior 24 months was a technical violation. We use this logic even if someone’s return to prison is labeled a "new admission," as long as they were previously on supervision. For incarceration transitions where we don’t find any associated violations, we infer violations and their type by looking at admission reasons implying a Technical or New Crime reason for returning to prison.\n<br />\nDenominator is the average daily caseload for the officer over the given time period, including people on both active and admin supervision levels.',
       topXPct: null,
     },
     {
@@ -85,7 +85,7 @@ export const US_AZ: InsightsConfig = {
       eventNameSingular: "new crime incarceration",
       eventNamePastTense: "had a new crime incarceration",
       descriptionMarkdown:
-        "Transitions to incarceration from supervision due to new crime violations, regardless of whether the final decision was a revocation or sanction admission. It is considered a new crime incarceration only if the most serious violation type across all violations in the prior 24 months was a new crime (felony, misdemeanor, or law violation).\n\n<br />\nDenominator is the average daily caseload for the officer over the given time period, including people on both active and admin supervision levels.",
+        "Transitions to incarceration from supervision due to new crime violations that occurred in the prior 24 months are counted in this metric, regardless of whether the final decision was a revocation or sanction admission, and regardless of whether there was also a technical violation or absconsion within the same time period.\n\n<br />\nDenominator is the average daily caseload for the officer over the given time period, including people on both active and admin supervision levels.",
       topXPct: null,
     },
   ],
