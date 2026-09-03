@@ -15,11 +15,31 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { countBy } from "lodash";
+
 import { OpportunityTableColumnId } from "../../../../../../core/OpportunityCaseloadView/HydratedOpportunityPersonList";
-import { OpportunityTab, OpportunityTabGroups } from "../../../../types";
+import { PartialRecord } from "../../../../../../utils/typeUtils";
+import {
+  Opportunity,
+  OpportunityTab,
+  OpportunityTabGroups,
+} from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsTxArsErsV2Configuration extends ApiOpportunityConfiguration {
+  // Opportunities in the "Eligible Now", "Almost Eligible", and
+  // "Awaiting Revisions" tabs count toward the caseload badge
+  countByFunction = (opportunities: Opportunity[]) => {
+    const counts = countBy(opportunities, (opp) =>
+      opp.tabTitle(),
+    ) as PartialRecord<OpportunityTab, number>;
+    return (
+      (counts["Eligible Now"] ?? 0) +
+      (counts["Almost Eligible"] ?? 0) +
+      (counts[this.awaitingRevisionsTabTitle] ?? 0)
+    );
+  };
+
   get enabledColumns(): Array<OpportunityTableColumnId> {
     const cols = [...super.enabledColumns];
     const colsToAdd: OpportunityTableColumnId[] = [
