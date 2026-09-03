@@ -919,6 +919,8 @@ describe("FirestoreStore", () => {
         "test-doc-ref",
         {
           actionHistory: "mock-delete-fn",
+          allUniqueReviewerIds: "mock-delete-fn",
+          currentReviewerId: "mock-delete-fn",
           stateCode: "US_ID",
         },
         {

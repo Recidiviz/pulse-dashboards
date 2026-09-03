@@ -1277,6 +1277,10 @@ export class OpportunityBase<
   async deleteActionHistory(): Promise<void> {
     const originalStatus = this.reviewStatus;
 
+    const assignedReviewerId = this.getPseudoIdFromReviewerId(
+      this.currentReviewerId,
+    );
+
     await this.rootStore.firestoreStore.deleteOpportunityActionHistory(this);
     this.rootStore.analyticsStore.trackOpportunityApprovalActions({
       opportunityType: this.type,
@@ -1285,6 +1289,8 @@ export class OpportunityBase<
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       currentStatus: originalStatus,
       subsequentStatus: this.reviewStatus,
+      assignedReviewerPseudoId: assignedReviewerId,
+      nextReviewerPseudoId: undefined,
     });
   }
 

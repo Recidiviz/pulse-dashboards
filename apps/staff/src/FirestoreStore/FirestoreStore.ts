@@ -646,6 +646,8 @@ export default class FirestoreStore {
   async deleteOpportunityActionHistory(opportunity: Opportunity) {
     return this.updateOpportunity(opportunity, {
       actionHistory: deleteField(),
+      allUniqueReviewerIds: deleteField(),
+      currentReviewerId: deleteField(),
       stateCode: opportunity.person.stateCode,
     });
   }
