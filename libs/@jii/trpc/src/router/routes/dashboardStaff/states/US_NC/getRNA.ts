@@ -21,10 +21,10 @@ import {
   getRNAInputSchema,
   getRNAQueryResolver,
 } from "../../../../../helpers/US_NC/rna";
+import { usNcStaffProcedure } from "../../../../../procedures/stateRestrictedStaffProcedureFactory";
 import { getStatusOfExistingRNA } from "./rnaStatus";
-import { stateStaffProcedure } from "./stateStaffProcedure";
 
-export const getRNA = stateStaffProcedure
+export const getRNA = usNcStaffProcedure
   .input(getRNAInputSchema)
   .query(async (queryArgs) => {
     const rnaData = await getRNAQueryResolver(queryArgs);

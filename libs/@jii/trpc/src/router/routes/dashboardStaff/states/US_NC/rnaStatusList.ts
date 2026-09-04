@@ -22,8 +22,8 @@ import { z } from "zod";
 import { usNcResidentMetadataSchema } from "~datatypes";
 
 import { isUserFlagActive } from "../../../../../helpers/featureFlags";
+import { usNcStaffProcedure } from "../../../../../procedures/stateRestrictedStaffProcedureFactory";
 import { getStatusOfExistingRNA, RNAAssessmentStatus } from "./rnaStatus";
-import { stateStaffProcedure } from "./stateStaffProcedure";
 
 // minimal schema for the fields we need, since we can't directly import from datatypes
 // due to Vite dependencies
@@ -63,7 +63,7 @@ export function validateCurrentRNA<T extends { createdAt: Date }>(
 /**
  * Returns RNA status details for all residents matching the input query specs
  */
-export const rnaStatusList = stateStaffProcedure
+export const rnaStatusList = usNcStaffProcedure
   .input(
     z.object({
       lookupField: z.enum(["officerId", "facilityId"]),

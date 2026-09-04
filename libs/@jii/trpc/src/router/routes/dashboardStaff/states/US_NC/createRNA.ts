@@ -15,9 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { router } from "../../../procedures/init";
-import { usNcStaffRouter } from "./states/US_NC/router";
+import { z } from "zod";
 
-export const staffRouter = router({
-  usNc: usNcStaffRouter,
-});
+import { usNcStaffProcedure } from "../../../../../procedures/stateRestrictedStaffProcedureFactory";
+
+/**
+ * One of two procedures corresponding to the "enable" action in the staff UI.
+ * If there is no RNA, or the RNA is stale, this action creates a new RNA.
+ */
+export const createRNA = usNcStaffProcedure
+  .input(z.object({ pseudonymizedId: z.string() }))
+  .mutation(async ({ input: { pseudonymizedId }, ctx: { prisma } }) => {
+    // No RNA exists, or the RNA is stale, so make a new one
+    await prisma.usNcRNA.create({
+      data: {
+        pseudonymizedId,
+        enabledAt: new Date(),
+        answers: {},
+      },
+    });
+  });

@@ -18,8 +18,10 @@
 import { validateStateContext } from "../auth/validateStateContext";
 import { firebaseAuthedStaffProcedure } from "./firebaseAuthedStaffProcedure";
 
-/*
- * Creates and a procedure for staff-accessible endpoints that is restricted to a specific state.
+/**
+ * Creates a procedure for staff-accessible endpoints that is restricted to a specific state.
+ * This can be used as a base procedure for staff regardless of the frontend - it's used for
+ * both the meetings app and the "dashboard" staff app at dashboard.recidiviz.org.
  * We've already checked that the user is allowed to access ctx.stateCode in the base procedure.
  */
 export const stateRestrictedStaffProcedureFactory = (
@@ -29,3 +31,5 @@ export const stateRestrictedStaffProcedureFactory = (
     validateStateContext(expectedStateCode, ctx);
     return next({ ctx });
   });
+
+export const usNcStaffProcedure = stateRestrictedStaffProcedureFactory("US_NC");

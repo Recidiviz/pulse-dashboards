@@ -19,7 +19,7 @@ import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import superjson from "superjson";
 
-import { JiiStaffAppRouter } from "~@jii/trpc-types";
+import { JiiDashboardAppRouter } from "~@jii/trpc-types";
 import { isDemoMode } from "~client-env-utils";
 import type { FirebaseAuthClient } from "~firebase-auth";
 
@@ -34,7 +34,7 @@ export function createJiiTrpcClient({
   firebaseAuthClient,
   currentTenantId,
 }: Externals) {
-  const trpcClient = createTRPCClient<JiiStaffAppRouter>({
+  const trpcClient = createTRPCClient<JiiDashboardAppRouter>({
     links: [
       httpBatchLink({
         url: import.meta.env["VITE_JII_API_URL"],
@@ -51,7 +51,7 @@ export function createJiiTrpcClient({
     ],
   });
 
-  const trpcQueryOptionsProxy = createTRPCOptionsProxy<JiiStaffAppRouter>({
+  const trpcQueryOptionsProxy = createTRPCOptionsProxy<JiiDashboardAppRouter>({
     client: trpcClient,
     queryClient,
   });

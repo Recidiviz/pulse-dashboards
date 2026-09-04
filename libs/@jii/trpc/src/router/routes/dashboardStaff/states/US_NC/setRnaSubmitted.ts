@@ -18,9 +18,9 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { stateStaffProcedure } from "./stateStaffProcedure";
+import { usNcStaffProcedure } from "../../../../../procedures/stateRestrictedStaffProcedureFactory";
 
-export const setRNASubmitted = stateStaffProcedure
+export const setRNASubmitted = usNcStaffProcedure
   .input(z.object({ id: z.string(), isSubmitted: z.boolean() }))
   .mutation(async ({ input: { id, isSubmitted }, ctx: { prisma } }) => {
     try {

@@ -21,7 +21,7 @@ import { TRPCClient } from "@trpc/client";
 import { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import { computed, configure, makeObservable, onReactionError } from "mobx";
 
-import type { JiiStaffAppRouter } from "~@jii/trpc-types";
+import type { JiiDashboardAppRouter } from "~@jii/trpc-types";
 import {
   demoAuthConfig,
   devAuthConfig,
@@ -132,8 +132,8 @@ export class RootStore {
   firebaseAuthClient: FirebaseAuthClient;
 
   jiiTrpc: {
-    querier: TRPCOptionsProxy<JiiStaffAppRouter>;
-    client: TRPCClient<JiiStaffAppRouter>;
+    querier: TRPCOptionsProxy<JiiDashboardAppRouter>;
+    client: TRPCClient<JiiDashboardAppRouter>;
   };
 
   constructor() {

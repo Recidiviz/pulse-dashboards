@@ -18,12 +18,13 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { stateStaffProcedure } from "./stateStaffProcedure";
+import { usNcStaffProcedure } from "../../../../../procedures/stateRestrictedStaffProcedureFactory";
 
 /**
- * Disable / un-enable an existing RNA, preventing the resident from viewing it.
+ * One of two procedures corresponding to the "enable" action in the staff UI.
+ * If there is already a non-stale RNA, set the enabledAt date, making it enabled.
  */
-export const setRNADisabled = stateStaffProcedure
+export const setRNAEnabled = usNcStaffProcedure
   .input(
     z.object({
       id: z.string(),
@@ -34,16 +35,17 @@ export const setRNADisabled = stateStaffProcedure
       await prisma.usNcRNA.update({
         where: {
           id,
+          enabledAt: null,
         },
         data: {
-          enabledAt: null,
+          enabledAt: new Date(),
         },
       });
     } catch (e) {
       throw new TRPCError({
         code: "CONFLICT",
         cause: e,
-        message: "This assessment could not be disabled.",
+        message: "This assessment could not be marked as enabled.",
       });
     }
   });

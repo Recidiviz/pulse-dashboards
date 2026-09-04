@@ -20,8 +20,8 @@ import { z } from "zod";
 
 import { isUserFlagActive } from "../../../../../helpers/featureFlags";
 import { latestRNAIsStale } from "../../../../../helpers/US_NC/rna";
+import { usNcStaffProcedure } from "../../../../../procedures/stateRestrictedStaffProcedureFactory";
 import { RNAAssessmentStatus } from "./rnaStatus";
-import { stateStaffProcedure } from "./stateStaffProcedure";
 
 const residentRecordSchema = z.object({
   pseudonymizedId: z.string(),
@@ -31,7 +31,7 @@ const residentRecordSchema = z.object({
  * Returns RNA status details for residents matching the input query specs,
  * based on writeback data, filtering out those who don't have open RNAs.
  */
-export const rnaWritebackStatusList = stateStaffProcedure
+export const rnaWritebackStatusList = usNcStaffProcedure
   .input(
     z.object({
       lookupField: z.enum(["officerId", "facilityId"]),

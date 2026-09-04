@@ -27,7 +27,10 @@ import {
   RNAQuestionId,
   RNATextAnswers,
 } from "~@jii/configs";
-import { JiiStaffAppRouter, JiiStaffAppRouterOutputs } from "~@jii/trpc-types";
+import {
+  JiiDashboardAppRouter,
+  JiiDashboardAppRouterOutputs,
+} from "~@jii/trpc-types";
 
 import { formatWorkflowsDate } from "../../../utils";
 import { Resident } from "../../../WorkflowsStore/Resident";
@@ -37,9 +40,9 @@ export class ResultsPagePresenter {
   constructor(
     public resident: Resident,
     private answerData: NonNullable<
-      JiiStaffAppRouterOutputs["staff"]["usNc"]["getRNA"]
+      JiiDashboardAppRouterOutputs["dashboardStaff"]["usNc"]["getRNA"]
     >,
-    private trpcClient: TRPCClient<JiiStaffAppRouter>,
+    private trpcClient: TRPCClient<JiiDashboardAppRouter>,
   ) {
     makeAutoObservable<this, "trpcClient">(
       this,
@@ -111,7 +114,7 @@ export class ResultsPagePresenter {
 
   async markSubmitted() {
     const { submittedByStaffAt } =
-      await this.trpcClient.staff.usNc.setRNASubmitted.mutate({
+      await this.trpcClient.dashboardStaff.usNc.setRNASubmitted.mutate({
         id: this.answerData.id,
         isSubmitted: true,
       });
@@ -121,7 +124,7 @@ export class ResultsPagePresenter {
   }
 
   async clearSubmitted() {
-    await this.trpcClient.staff.usNc.setRNASubmitted.mutate({
+    await this.trpcClient.dashboardStaff.usNc.setRNASubmitted.mutate({
       id: this.answerData.id,
       isSubmitted: false,
     });

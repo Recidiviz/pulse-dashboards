@@ -17,7 +17,7 @@
 
 import { AuthorizedStaffUserContext } from "../../procedures/firebaseAuthedStaffProcedure";
 import { baseProcedure } from "../../procedures/init";
-import { usNcStaffRouter } from "../../router/routes/staff/states/US_NC/router";
+import { usNcDashboardStaffRouter } from "../../router/routes/dashboardStaff/states/US_NC/router";
 import { userId } from "../context";
 import { testPrismaClient } from "../prisma";
 
@@ -50,6 +50,6 @@ vi.mock("../../procedures/firebaseAuthedStaffProcedure", () => {
 
 // we are mocking the procedure's context so it doesn't really matter what we pass here
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const caller = usNcStaffRouter.createCaller({ req: {} as any });
+export const caller = usNcDashboardStaffRouter.createCaller({ req: {} as any });
 
 export const mockCollectionQuerier = mocks.mockCollectionQuerier;

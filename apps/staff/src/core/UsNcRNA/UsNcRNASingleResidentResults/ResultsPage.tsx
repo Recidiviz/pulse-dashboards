@@ -123,7 +123,7 @@ function usePresenter({ resident }: Props) {
   } = useRootStore();
 
   const { data } = useSuspenseQuery(
-    querier.staff.usNc.getRNA.queryOptions({
+    querier.dashboardStaff.usNc.getRNA.queryOptions({
       pseudonymizedId: resident.pseudonymizedId,
     }),
   );

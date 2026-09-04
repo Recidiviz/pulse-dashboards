@@ -18,7 +18,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { observer } from "mobx-react-lite";
 
-import { JiiStaffAppRouterInputs } from "~@jii/trpc-types";
+import { JiiDashboardAppRouterInputs } from "~@jii/trpc-types";
 
 import {
   useFeatureVariants,
@@ -77,7 +77,7 @@ export const RNAListQuerier = observer(function RNAListQuerier() {
 });
 
 type LookupField =
-  JiiStaffAppRouterInputs["staff"]["usNc"]["rnaStatusList"]["lookupField"];
+  JiiDashboardAppRouterInputs["dashboardStaff"]["usNc"]["rnaStatusList"]["lookupField"];
 
 type QuerierProps = {
   ids: Array<string>;
@@ -93,11 +93,11 @@ function RNAQuerier({ ids, lookupField }: QuerierProps) {
 
   const { data, refetch } = useSuspenseQuery(
     usNcRNAAutoEnablement
-      ? querier.staff.usNc.rnaWritebackStatusList.queryOptions({
+      ? querier.dashboardStaff.usNc.rnaWritebackStatusList.queryOptions({
           lookupField,
           lookupValue: ids,
         })
-      : querier.staff.usNc.rnaStatusList.queryOptions({
+      : querier.dashboardStaff.usNc.rnaStatusList.queryOptions({
           lookupField,
           lookupValue: ids,
         }),

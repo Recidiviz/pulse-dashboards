@@ -21,7 +21,10 @@ import { differenceInDays } from "date-fns/esm";
 import startOfToday from "date-fns/startOfToday";
 import { makeAutoObservable, runInAction } from "mobx";
 
-import { JiiStaffAppRouter, JiiStaffAppRouterOutputs } from "~@jii/trpc-types";
+import {
+  JiiDashboardAppRouter,
+  JiiDashboardAppRouterOutputs,
+} from "~@jii/trpc-types";
 
 import { FilterField, FilterOption, FilterType } from "../../core/models/types";
 import { FilterPresenter } from "../../FilterStore/FilterPresenter";
@@ -31,7 +34,7 @@ import { WorkflowsStore } from "../../WorkflowsStore";
 import { Resident } from "../../WorkflowsStore/Resident";
 
 export type RNAStatusList =
-  JiiStaffAppRouterOutputs["staff"]["usNc"]["rnaStatusList"];
+  JiiDashboardAppRouterOutputs["dashboardStaff"]["usNc"]["rnaStatusList"];
 
 export type RNADueTime =
   | "PAST"
@@ -97,7 +100,7 @@ export class RNAFilterPresenter implements FilterPresenter<UsNcRNAFilterStore> {
     >["refetch"],
     readonly filterStore: UsNcRNAFilterStore,
     private workflowsStore: WorkflowsStore,
-    private trpcClient: TRPCClient<JiiStaffAppRouter>,
+    private trpcClient: TRPCClient<JiiDashboardAppRouter>,
   ) {
     this.currentlyUpdatingPseudoIds = new Set();
 
@@ -159,11 +162,11 @@ export class RNAFilterPresenter implements FilterPresenter<UsNcRNAFilterStore> {
     this.currentlyUpdatingPseudoIds.add(pseudonymizedId);
 
     if (assessmentId) {
-      await this.trpcClient.staff.usNc.setRNAEnabled.mutate({
+      await this.trpcClient.dashboardStaff.usNc.setRNAEnabled.mutate({
         id: assessmentId,
       });
     } else {
-      await this.trpcClient.staff.usNc.createRNA.mutate({
+      await this.trpcClient.dashboardStaff.usNc.createRNA.mutate({
         pseudonymizedId: pseudonymizedId,
       });
     }
@@ -187,7 +190,7 @@ export class RNAFilterPresenter implements FilterPresenter<UsNcRNAFilterStore> {
 
     this.currentlyUpdatingPseudoIds.add(pseudonymizedId);
 
-    await this.trpcClient.staff.usNc.setRNADisabled.mutate({
+    await this.trpcClient.dashboardStaff.usNc.setRNADisabled.mutate({
       id: assessmentId,
     });
     await this.refetchAllTableData();

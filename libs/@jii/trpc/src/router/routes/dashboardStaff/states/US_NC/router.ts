@@ -15,7 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { stateRestrictedStaffProcedureFactory } from "../../../../../procedures/stateRestrictedStaffProcedureFactory";
+import { router } from "../../../../../procedures/init";
+import { createRNA } from "./createRNA";
+import { getRNA } from "./getRNA";
+import { rnaStatusList } from "./rnaStatusList";
+import { rnaWritebackStatusList } from "./rnaWritebackStatusList";
+import { setRNADisabled } from "./setRnaDisabled";
+import { setRNAEnabled } from "./setRnaEnabled";
+import { setRNASubmitted } from "./setRnaSubmitted";
 
-export const stateStaffProcedure =
-  stateRestrictedStaffProcedureFactory("US_NC");
+export const usNcDashboardStaffRouter = router({
+  rnaStatusList,
+  rnaWritebackStatusList,
+  getRNA,
+  setRNASubmitted,
+  setRNAEnabled,
+  setRNADisabled,
+  createRNA,
+});
