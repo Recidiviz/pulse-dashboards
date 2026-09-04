@@ -54008,6 +54008,7 @@ __metadata:
     build-url: "npm:^6.0.1"
     cache-manager: "npm:^3.6.1"
     cache-manager-ioredis: "npm:^2.1.0"
+    camelcase: "npm:^9.0.0"
     camelcase-keys: "npm:^10.0.2"
     chalk: "npm:^5.6.0"
     chart.js: "npm:^2.8.0"
@@ -59927,11 +59928,11 @@ __metadata:
   linkType: hard
 
 "type-fest@npm:^5.4.1":
-  version: 5.7.0
-  resolution: "type-fest@npm:5.7.0"
+  version: 5.9.0
+  resolution: "type-fest@npm:5.9.0"
   dependencies:
     tagged-tag: "npm:^1.0.0"
-  checksum: 10c0/f71ed17b753649421e419db8cc2e140f930333a1467b1d9cca2e0e4052900fd442f2360bae73f3a6bf9340d949ac46d9a1598c709b4c8089272e7624df9c8716
+  checksum: 10c0/9bf14a49454b9b40d9fe85e563a4cf90990bbe7c75958665b72660b4197a905f247be682a7757cac7c8fa60fc0eae32cc8cf51f80a88e15f0a3d4a8ec07eb5b6
   languageName: node
   linkType: hard
 

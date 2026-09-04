@@ -18,7 +18,6 @@
 import { z } from "zod";
 
 import { type PrismaClient } from "~@jii/prisma";
-import { camelCaseObject } from "~utils";
 
 import { facilityHandler } from "./handlers/facility/facility";
 import { residentHandler } from "./handlers/resident/resident";
@@ -28,6 +27,7 @@ import {
   residentImportSchema,
   rnaWritebackImportSchema,
 } from "./models";
+import { camelCaseImportRecord } from "./utils/camelCaseImportRecord";
 
 // Filenames based on view_id values
 // in https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/jii
@@ -64,7 +64,7 @@ function rawExport<Schema extends z.ZodTypeAny>({
     schema: z
       .object(rawFieldSchemas ?? {})
       .passthrough()
-      .transform(camelCaseObject)
+      .transform(camelCaseImportRecord)
       .pipe(schema),
     loaderFn,
   };
