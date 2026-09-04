@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Dropdown } from "~design-system";
 
@@ -36,6 +36,24 @@ export const DownloadMenu = observer(function DownloadMenu() {
   const { analyticsStore, metricsStore } = useRootStore();
   const [isIndividualLevelFlowOpen, setIsIndividualLevelFlowOpen] =
     useState(false);
+  const maxSnapshotDate =
+    metricsStore.latestAvailableSnapshotDate ?? new Date();
+
+  // The over-time metric only auto-hydrates while its own section is the
+  // one being viewed, but the download button needs to know its data
+  // regardless of the current section.
+  //
+  // Start fetching it as soon as this (always-rendered) menu mounts,
+  // so the button is disabled for as short a window as possible rather
+  // than only once it's clicked.
+  //
+  // Re-runs if isLatestSnapshotDateReady flips back to false, which happens if the
+  // over-time metric's hydration gets reset (e.g. a filter change while
+  // viewing a different section), otherwise the button could get stuck
+  // disabled with nothing left to re-trigger its fetch.
+  useEffect(() => {
+    metricsStore.ensureLatestSnapshotDateHydrated();
+  }, [metricsStore, metricsStore.isLatestSnapshotDateReady]);
 
   const handleDownloadChartData = () => {
     metricsStore.download();
@@ -61,7 +79,13 @@ export const DownloadMenu = observer(function DownloadMenu() {
   return (
     <>
       <Dropdown>
-        <DownloadToggle type="button" kind="primary" shape="pill" showCaret>
+        <DownloadToggle
+          type="button"
+          kind="primary"
+          shape="pill"
+          showCaret
+          disabled={!metricsStore.isLatestSnapshotDateReady}
+        >
           Download
         </DownloadToggle>
         <DownloadMenuPanel alignment="right" ariaLabel="Download options">
@@ -87,6 +111,7 @@ export const DownloadMenu = observer(function DownloadMenu() {
         isOpen={isIndividualLevelFlowOpen}
         onCancel={() => setIsIndividualLevelFlowOpen(false)}
         onAgree={handleAgreeAndDownload}
+        maxSnapshotDate={maxSnapshotDate}
       />
     </>
   );

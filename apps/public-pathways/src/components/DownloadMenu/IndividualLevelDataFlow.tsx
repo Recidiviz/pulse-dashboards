@@ -41,6 +41,8 @@ type IndividualLevelDataFlowProps = {
    * last-5-years option.
    */
   onAgree: (snapshotDate: Date | null) => void;
+  /** Latest month the single-snapshot picker should allow selecting. */
+  maxSnapshotDate: Date;
 };
 
 /**
@@ -54,6 +56,7 @@ export function IndividualLevelDataFlow({
   isOpen,
   onCancel,
   onAgree,
+  maxSnapshotDate,
 }: IndividualLevelDataFlowProps) {
   const [step, setStep] = useState<WizardStep>("chooseSnapshot");
   const [snapshotOption, setSnapshotOption] = useState<
@@ -111,6 +114,7 @@ export function IndividualLevelDataFlow({
           onSelectedDateChange={setSelectedDate}
           onCancel={handleCancel}
           onContinue={() => setStep("termsOfUse")}
+          maxSnapshotDate={maxSnapshotDate}
         />
       ) : (
         <TermsOfUseStep

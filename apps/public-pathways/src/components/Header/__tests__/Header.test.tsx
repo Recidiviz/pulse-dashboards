@@ -30,6 +30,7 @@ vi.mock("../../StoreProvider");
 const mockDownload = vi.fn();
 const mockTrackDownloadClicked = vi.fn();
 const mockTrackMethodologyLinkClicked = vi.fn();
+const mockEnsureLatestSnapshotDateHydrated = vi.fn();
 const mockUseRootStore = useRootStore as Mock;
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -48,6 +49,8 @@ describe("Header", () => {
       metricsStore: {
         current: { id: "prisonPopulationOverTime" },
         download: mockDownload,
+        ensureLatestSnapshotDateHydrated: mockEnsureLatestSnapshotDateHydrated,
+        isLatestSnapshotDateReady: true,
       },
     });
   });

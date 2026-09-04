@@ -196,6 +196,132 @@ describe("MetricsStore", () => {
     });
   });
 
+  describe("latestAvailableSnapshotDate", () => {
+    it("returns undefined before the over-time metric has hydrated", () => {
+      expect(metricsStore.latestAvailableSnapshotDate).toBeUndefined();
+    });
+
+    it("returns undefined when hydrated with no records", async () => {
+      const metric = metricsStore.map[
+        PATHWAYS_SECTIONS["countOverTime"]
+      ] as OverTimeMetric;
+      const dispose = autorun(() => metricsStore.latestAvailableSnapshotDate);
+      metric.hydrate();
+      await when(() => isHydrated(metric));
+
+      expect(metricsStore.latestAvailableSnapshotDate).toBeUndefined();
+      dispose();
+    });
+
+    it("returns the most recent record's month/year once hydrated", async () => {
+      fetchMock.mockResponse(
+        JSON.stringify({
+          data: [
+            { year: 2026, month: 7, count: 1000, avg90day: 1000 },
+            { year: 2026, month: 8, count: 1010, avg90day: 1005 },
+          ],
+          metadata: {},
+        }),
+      );
+
+      const metric = metricsStore.map[
+        PATHWAYS_SECTIONS["countOverTime"]
+      ] as OverTimeMetric;
+      const dispose = autorun(() => metricsStore.latestAvailableSnapshotDate);
+      metric.hydrate();
+      await when(() => isHydrated(metric));
+
+      expect(metricsStore.latestAvailableSnapshotDate).toEqual(
+        new Date(2026, 7, 1),
+      );
+      dispose();
+    });
+  });
+
+  describe("isLatestSnapshotDateReady", () => {
+    it("is false before the over-time metric has hydrated", () => {
+      expect(metricsStore.isLatestSnapshotDateReady).toBe(false);
+    });
+
+    it("is true once the over-time metric has hydrated", async () => {
+      const metric = metricsStore.map[
+        PATHWAYS_SECTIONS["countOverTime"]
+      ] as OverTimeMetric;
+      const dispose = autorun(() => metricsStore.isLatestSnapshotDateReady);
+      metric.hydrate();
+      await when(() => isHydrated(metric));
+
+      expect(metricsStore.isLatestSnapshotDateReady).toBe(true);
+      dispose();
+    });
+
+    it("is true even if the over-time metric's fetch fails, so the button doesn't stay disabled forever", async () => {
+      fetchMock.mockReject(new Error("network error"));
+
+      const metric = metricsStore.map[
+        PATHWAYS_SECTIONS["countOverTime"]
+      ] as OverTimeMetric;
+      const dispose = autorun(() => metricsStore.isLatestSnapshotDateReady);
+      metric.hydrate();
+      await when(() => metric.hydrationState.status === "failed");
+
+      expect(metricsStore.isLatestSnapshotDateReady).toBe(true);
+      dispose();
+    });
+  });
+
+  describe("ensureLatestSnapshotDateHydrated", () => {
+    it("hydrates the over-time metric regardless of which section is current", async () => {
+      // A store scoped to this test only, with a non-over-time section, so
+      // this doesn't mutate the shared mockRootStore other tests rely on.
+      const otherSectionStore = {
+        ...mockRootStore,
+        section: PATHWAYS_SECTIONS["countByLocation"],
+      } as unknown as RootStore;
+      const scopedMetricsStore = new MetricsStore({
+        rootStore: otherSectionStore,
+      });
+      fetchMock.mockResponse(
+        JSON.stringify({
+          data: [{ year: 2026, month: 8, count: 1000, avg90day: 1000 }],
+          metadata: {},
+        }),
+      );
+
+      const metric = scopedMetricsStore.map[
+        PATHWAYS_SECTIONS["countOverTime"]
+      ] as OverTimeMetric;
+      expect(metric.hydrationState.status).toBe("needs hydration");
+
+      const dispose = autorun(
+        () => scopedMetricsStore.latestAvailableSnapshotDate,
+      );
+      scopedMetricsStore.ensureLatestSnapshotDateHydrated();
+      await when(() => isHydrated(metric));
+
+      expect(scopedMetricsStore.latestAvailableSnapshotDate).toEqual(
+        new Date(2026, 7, 1),
+      );
+      dispose();
+    });
+
+    it("does not re-fetch once the over-time metric is already hydrated", async () => {
+      const metric = metricsStore.map[
+        PATHWAYS_SECTIONS["countOverTime"]
+      ] as OverTimeMetric;
+      const hydrateSpy = vi.spyOn(metric, "hydrate");
+      const dispose = autorun(() => metricsStore.latestAvailableSnapshotDate);
+      metric.hydrate();
+      await when(() => isHydrated(metric));
+      hydrateSpy.mockClear();
+
+      metricsStore.ensureLatestSnapshotDateHydrated();
+
+      expect(hydrateSpy).not.toHaveBeenCalled();
+      dispose();
+    });
+  });
+
   describe("download", () => {
     beforeEach(() => {
       mockRootStore.section = PATHWAYS_SECTIONS["countOverTime"];

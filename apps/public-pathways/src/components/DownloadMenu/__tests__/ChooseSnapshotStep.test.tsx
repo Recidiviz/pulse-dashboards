@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { fireEvent, render, screen } from "@testing-library/react";
-import { format } from "date-fns";
+import { format, subMonths } from "date-fns";
 
 import { ChooseSnapshotStep } from "../ChooseSnapshotStep";
 
@@ -34,6 +34,7 @@ describe("ChooseSnapshotStep", () => {
         onSelectedDateChange={noop}
         onCancel={noop}
         onContinue={noop}
+        maxSnapshotDate={new Date()}
       />,
     );
 
@@ -58,6 +59,7 @@ describe("ChooseSnapshotStep", () => {
         onSelectedDateChange={noop}
         onCancel={noop}
         onContinue={noop}
+        maxSnapshotDate={new Date()}
       />,
     );
 
@@ -76,6 +78,7 @@ describe("ChooseSnapshotStep", () => {
         onSelectedDateChange={noop}
         onCancel={noop}
         onContinue={noop}
+        maxSnapshotDate={new Date()}
       />,
     );
     expect(
@@ -90,6 +93,7 @@ describe("ChooseSnapshotStep", () => {
         onSelectedDateChange={noop}
         onCancel={noop}
         onContinue={noop}
+        maxSnapshotDate={new Date()}
       />,
     );
     expect(
@@ -104,6 +108,7 @@ describe("ChooseSnapshotStep", () => {
         onSelectedDateChange={noop}
         onCancel={noop}
         onContinue={noop}
+        maxSnapshotDate={new Date()}
       />,
     );
     expect(
@@ -121,6 +126,7 @@ describe("ChooseSnapshotStep", () => {
         onSelectedDateChange={onSelectedDateChange}
         onCancel={noop}
         onContinue={noop}
+        maxSnapshotDate={new Date()}
       />,
     );
 
@@ -139,6 +145,7 @@ describe("ChooseSnapshotStep", () => {
         onSelectedDateChange={noop}
         onCancel={noop}
         onContinue={noop}
+        maxSnapshotDate={new Date()}
       />,
     );
 
@@ -154,6 +161,7 @@ describe("ChooseSnapshotStep", () => {
         onSelectedDateChange={noop}
         onCancel={noop}
         onContinue={noop}
+        maxSnapshotDate={new Date()}
       />,
     );
 
@@ -169,6 +177,7 @@ describe("ChooseSnapshotStep", () => {
         onSelectedDateChange={noop}
         onCancel={noop}
         onContinue={noop}
+        maxSnapshotDate={new Date()}
       />,
     );
 
@@ -193,12 +202,47 @@ describe("ChooseSnapshotStep", () => {
         onSelectedDateChange={noop}
         onCancel={noop}
         onContinue={noop}
+        maxSnapshotDate={new Date()}
       />,
     );
 
     fireEvent.click(screen.getByTestId("snapshot-option-row-bulk"));
 
     expect(onSnapshotOptionChange).toHaveBeenCalledWith("bulk");
+  });
+
+  it("does not let the user pick a month past maxSnapshotDate", () => {
+    // Pinned so this doesn't depend on the real current month -- if it ran
+    // in a real January, "today" and "maxSnapshotDate" would fall in
+    // different years, but the calendar only shows one year of month
+    // labels at a time, making a same-label lookup ambiguous.
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 5, 15));
+
+    try {
+      const onSelectedDateChange = vi.fn();
+      const today = new Date();
+      const maxSnapshotDate = subMonths(today, 1);
+      render(
+        <ChooseSnapshotStep
+          snapshotOption="single"
+          onSnapshotOptionChange={noop}
+          selectedDate={null}
+          onSelectedDateChange={onSelectedDateChange}
+          onCancel={noop}
+          onContinue={noop}
+          maxSnapshotDate={maxSnapshotDate}
+        />,
+      );
+
+      fireEvent.click(screen.getByText(format(today, "MMM")));
+      expect(onSelectedDateChange).not.toHaveBeenCalled();
+
+      fireEvent.click(screen.getByText(format(maxSnapshotDate, "MMM")));
+      expect(onSelectedDateChange).toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("calls onCancel and onContinue", () => {
@@ -212,6 +256,7 @@ describe("ChooseSnapshotStep", () => {
         onSelectedDateChange={noop}
         onCancel={onCancel}
         onContinue={onContinue}
+        maxSnapshotDate={new Date()}
       />,
     );
 

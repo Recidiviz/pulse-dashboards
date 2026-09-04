@@ -46,6 +46,7 @@ type ChooseSnapshotStepProps = {
   onSelectedDateChange: (date: Date | null) => void;
   onCancel: () => void;
   onContinue: () => void;
+  maxSnapshotDate: Date;
 };
 
 export function ChooseSnapshotStep({
@@ -55,6 +56,7 @@ export function ChooseSnapshotStep({
   onSelectedDateChange,
   onCancel,
   onContinue,
+  maxSnapshotDate,
 }: ChooseSnapshotStepProps) {
   const today = new Date();
   const minSelectableDate = subYears(today, MAX_SNAPSHOT_HISTORY_YEARS);
@@ -109,7 +111,7 @@ export function ChooseSnapshotStep({
                   selected={selectedDate}
                   onChange={handleDateChange}
                   minDate={minSelectableDate}
-                  maxDate={today}
+                  maxDate={maxSnapshotDate}
                 />
               </SnapshotDatePickerRow>
             </>

@@ -19,6 +19,7 @@ import downloadjs from "downloadjs";
 import JSZip from "jszip";
 import { makeAutoObservable } from "mobx";
 
+import { isHydrationFinished, isHydrationUntouched } from "~hydration-utils";
 import {
   downloadChartAsData,
   FILTER_TYPES,
@@ -265,6 +266,49 @@ export default class MetricsStore implements PathwaysMetricStore {
 
   get current(): OverTimeMetric | SnapshotMetric {
     return this.map[this.section] ?? this.prisonPopulationOverTime;
+  }
+
+  /**
+   * The month of the most recent population snapshot the over-time chart
+   * has real data for, or undefined if that chart hasn't hydrated yet. Used
+   * to cap the individual-level-data download picker so it doesn't offer a
+   * month the backend has no snapshot for.
+   */
+  get latestAvailableSnapshotDate(): Date | undefined {
+    const overTimeMetric = this.map[PATHWAYS_SECTIONS["countOverTime"]];
+    if (!(overTimeMetric instanceof OverTimeMetric)) return undefined;
+
+    const { dataSeries } = overTimeMetric;
+    if (!dataSeries.length) return undefined;
+
+    const { year, month } = dataSeries[dataSeries.length - 1];
+    return new Date(year, month - 1, 1);
+  }
+
+  /**
+   * True once the over-time metric has either hydrated or failed to, i.e.
+   * once `latestAvailableSnapshotDate` reflects real data instead of just
+   * not having fetched yet. Used to keep the download button disabled
+   * until it's safe to trust that value.
+   */
+  get isLatestSnapshotDateReady(): boolean {
+    const overTimeMetric = this.map[PATHWAYS_SECTIONS["countOverTime"]];
+    return isHydrationFinished(overTimeMetric);
+  }
+
+  /**
+   * The over-time metric normally only hydrates while its section is the
+   * one currently being viewed (see PathwaysNewBackendMetric's reaction).
+   * `latestAvailableSnapshotDate` needs its data regardless of which
+   * section is current, so this triggers that fetch on demand -- call it
+   * before relying on `latestAvailableSnapshotDate` if the user may not
+   * have viewed the over-time section yet this session.
+   */
+  ensureLatestSnapshotDateHydrated(): void {
+    const overTimeMetric = this.map[PATHWAYS_SECTIONS["countOverTime"]];
+    if (isHydrationUntouched(overTimeMetric)) {
+      overTimeMetric.hydrate();
+    }
   }
 
   get prisonPopulationOverTime(): OverTimeMetric {

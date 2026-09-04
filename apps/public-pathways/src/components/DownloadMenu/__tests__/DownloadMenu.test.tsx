@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { format } from "date-fns";
+import { format, subMonths } from "date-fns";
 import { axe } from "jest-axe";
 import ReactModal from "react-modal";
 import { ThemeProvider } from "styled-components";
@@ -32,6 +32,7 @@ vi.mock("../../StoreProvider");
 const mockDownload = vi.fn();
 const mockDownloadIndividualLevelData = vi.fn();
 const mockTrackDownloadClicked = vi.fn();
+const mockEnsureLatestSnapshotDateHydrated = vi.fn();
 const mockUseRootStore = useRootStore as Mock;
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -45,12 +46,15 @@ beforeAll(() => {
 describe("DownloadMenu", () => {
   beforeEach(() => {
     mockDownloadIndividualLevelData.mockResolvedValue(undefined);
+    mockEnsureLatestSnapshotDateHydrated.mockClear();
     mockUseRootStore.mockReturnValue({
       analyticsStore: { trackDownloadClicked: mockTrackDownloadClicked },
       metricsStore: {
         current: { id: "prisonPopulationOverTime" },
         download: mockDownload,
         downloadIndividualLevelData: mockDownloadIndividualLevelData,
+        ensureLatestSnapshotDateHydrated: mockEnsureLatestSnapshotDateHydrated,
+        isLatestSnapshotDateReady: true,
       },
     });
   });
@@ -103,6 +107,28 @@ describe("DownloadMenu", () => {
     expect(mockDownload).not.toHaveBeenCalled();
   });
 
+  it("triggers hydration of the over-time metric as soon as it mounts", () => {
+    render(<DownloadMenu />, { wrapper });
+
+    expect(mockEnsureLatestSnapshotDateHydrated).toHaveBeenCalled();
+  });
+
+  it("disables the Download toggle until isLatestSnapshotDateReady is true", () => {
+    mockUseRootStore.mockReturnValue({
+      analyticsStore: { trackDownloadClicked: mockTrackDownloadClicked },
+      metricsStore: {
+        current: { id: "prisonPopulationOverTime" },
+        download: mockDownload,
+        downloadIndividualLevelData: mockDownloadIndividualLevelData,
+        ensureLatestSnapshotDateHydrated: mockEnsureLatestSnapshotDateHydrated,
+        isLatestSnapshotDateReady: false,
+      },
+    });
+    render(<DownloadMenu />, { wrapper });
+
+    expect(screen.getByRole("button", { name: /Download/i })).toBeDisabled();
+  });
+
   it("disables Continue until a snapshot option is chosen", () => {
     render(<DownloadMenu />, { wrapper });
 
@@ -134,6 +160,44 @@ describe("DownloadMenu", () => {
     fireEvent.click(screen.getByText(format(new Date(), "MMM")));
 
     expect(screen.getByRole("button", { name: "Continue" })).toBeEnabled();
+  });
+
+  it("caps the single-snapshot picker at metricsStore.latestAvailableSnapshotDate", () => {
+    // Pinned so this doesn't depend on the real current month -- if it ran
+    // in a real January, "today" and "maxSnapshotDate" would fall in
+    // different years, but the calendar only shows one year of month
+    // labels at a time, making a same-label lookup ambiguous.
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 5, 15));
+
+    try {
+      const today = new Date();
+      const maxSnapshotDate = subMonths(today, 1);
+      mockUseRootStore.mockReturnValue({
+        analyticsStore: { trackDownloadClicked: mockTrackDownloadClicked },
+        metricsStore: {
+          current: { id: "prisonPopulationOverTime" },
+          download: mockDownload,
+          downloadIndividualLevelData: mockDownloadIndividualLevelData,
+          ensureLatestSnapshotDateHydrated:
+            mockEnsureLatestSnapshotDateHydrated,
+          isLatestSnapshotDateReady: true,
+          latestAvailableSnapshotDate: maxSnapshotDate,
+        },
+      });
+      render(<DownloadMenu />, { wrapper });
+
+      openIndividualLevelDataFlow();
+      fireEvent.click(screen.getByText("A single month's snapshot"));
+
+      fireEvent.click(screen.getByText(format(today, "MMM")));
+      expect(screen.getByRole("button", { name: "Continue" })).toBeDisabled();
+
+      fireEvent.click(screen.getByText(format(maxSnapshotDate, "MMM")));
+      expect(screen.getByRole("button", { name: "Continue" })).toBeEnabled();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("advances to the terms of use step on Continue, and shows a snapshot banner when a specific month/year was chosen", () => {
