@@ -23,12 +23,19 @@ import { useResidentMetadata } from "~@jii/data";
 import { LastUpdatedBanner } from "~@jii/layout";
 import { State } from "~@jii/paths";
 import { ProgramsCtaSection } from "~@jii/program-catalog";
+import { SentenceDates } from "~@jii/sentence-dates";
 import { useUsCoTranslations } from "~@jii/translation";
 import { withPresenterManager } from "~hydration-utils";
 
 import { AETBanner } from "../components/UsCoSingleResidentHome/UsCoAETBanner";
+import { UsCoMonthlyReports } from "../components/UsCoSingleResidentHome/UsCoMonthlyReports";
 import { ResidentHomePresenter } from "../presenters/ResidentHomePresenter";
 import { useV1Gate } from "../useV1Gate";
+import {
+  SentenceDatesPedSupplementalOverride,
+  SentenceDatesPedValueOverride,
+} from "./SentenceDatesPedOverrides";
+import { SentenceDatesSectionWrapperOverride } from "./SentenceDatesSectionWrapperOverride";
 
 const ManagedComponent: React.FC<{ presenter: ResidentHomePresenter }> =
   observer(function UsCoSingleResidentHome({ presenter }) {
@@ -47,12 +54,14 @@ const ManagedComponent: React.FC<{ presenter: ResidentHomePresenter }> =
     return (
       <BottomPaddedContainer>
         <LastUpdatedBanner
-          overrideCopy={"The Opportunities app is undergoing maintenance."}
+          overrideCopy={t(($) => $.homepage.lastUpdatedDate, {
+            lastUpdatedDate: presenter.lastUpdatedDate,
+          })}
         />
 
         <AETBanner />
 
-        {/* <SentenceDates
+        <SentenceDates
           data={presenter.sentenceDatesData}
           stateCode="US_CO"
           componentOverrides={{
@@ -62,7 +71,7 @@ const ManagedComponent: React.FC<{ presenter: ResidentHomePresenter }> =
           }}
         />
 
-        <UsCoMonthlyReports /> */}
+        <UsCoMonthlyReports />
 
         <ProgramsCtaSection stateCode="US_CO" />
       </BottomPaddedContainer>
