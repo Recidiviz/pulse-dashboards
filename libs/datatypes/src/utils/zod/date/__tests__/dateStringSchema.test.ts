@@ -72,6 +72,23 @@ test("fails on non-ISO date format", () => {
   `);
 });
 
+test("fails on well-formed but nonsensical date string", () => {
+  expect(dateStringSchemaWithoutTimeShift.safeParse("2024-03-35"))
+    .toMatchInlineSnapshot(`
+    {
+      "error": [ZodError: [
+      {
+        "code": "invalid_string",
+        "message": "Invalid ISO date string",
+        "validation": "datetime",
+        "path": []
+      }
+    ]],
+      "success": false,
+    }
+  `);
+});
+
 describe("toDateList", () => {
   test("single entry", () => {
     expect(toDateList("2024-03-20")).toEqual([new Date(2024, 2, 20)]);

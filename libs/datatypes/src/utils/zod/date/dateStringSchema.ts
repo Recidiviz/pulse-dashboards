@@ -22,6 +22,38 @@ import { shouldDateshift } from "./dateshift";
 import { shiftFixtureDate } from "./fixtureDates";
 
 /**
+ * Regex for a plain YYYY-MM-DD date, which is what we expect date strings to be.
+ */
+const SIMPLE_DATE_RE = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+/**
+ * Converts valid YYYY-MM-DD strings into Date objects.
+ * Returns undefined if the input string is not a valid date.
+ */
+function parseSimpleDate(value: string): Date | undefined {
+  const match = SIMPLE_DATE_RE.exec(value);
+  if (!match) return undefined;
+
+  const year = Number(match[1]);
+  const monthIndex = Number(match[2]) - 1;
+  const day = Number(match[3]);
+  const date = new Date(year, monthIndex, day);
+
+  // the Date constructor silently rolls over out-of-range values
+  // (e.g. Feb 30 -> Mar 2) but we will consider those invalid here
+  // because they don't conform to ISO 8601
+  if (
+    date.getFullYear() !== year ||
+    date.getMonth() !== monthIndex ||
+    date.getDate() !== day
+  ) {
+    return undefined;
+  }
+
+  return date;
+}
+
+/**
  * a Zod schema that will parse any valid ISO date string (date-only or with time)
  * into a Date object. Will fail if a valid Date cannot be derived from the input string.
  * Unlike the standard `dateStringSchema`, this will not apply a time shift in Demo or Offline mode.
@@ -29,9 +61,10 @@ import { shiftFixtureDate } from "./fixtureDates";
 export const dateStringSchemaWithoutTimeShift = z
   .string()
   .transform((value, ctx) => {
-    // zod has a built-in datetime validator but it does not yet support date-only strings
-    // (see https://github.com/colinhacks/zod/issues/1676)
-    const transformedDate = parseISO(value);
+    // Run against date-only regex first for speed. This should cover the vast majority of cases.
+    // Fall back to `parseISO()` if it fails so we have full coverage.
+    // This is still faster than zod's string().date() validator.
+    const transformedDate = parseSimpleDate(value) ?? parseISO(value);
     if (isValid(transformedDate)) {
       return transformedDate;
     }
