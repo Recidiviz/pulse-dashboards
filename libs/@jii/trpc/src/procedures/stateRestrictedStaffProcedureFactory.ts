@@ -33,3 +33,5 @@ export const stateRestrictedStaffProcedureFactory = (
   });
 
 export const usNcStaffProcedure = stateRestrictedStaffProcedureFactory("US_NC");
+
+export const usNeStaffProcedure = stateRestrictedStaffProcedureFactory("US_NE");

@@ -34,7 +34,7 @@ import { validateCRUDHeaders } from "./utils/validateCRUDHeaders";
 
 // this could eventually be shared with other libraries but defined here for convenience
 const authorizedStaffAppUserProfileSchema = z.object({
-  app: z.literal("staff"),
+  app: z.union([z.literal("meetings"), z.literal("staff")]),
   stateCode: z.string(),
   recidivizAllowedStates: z.array(z.string()),
   impersonator: z.boolean(),

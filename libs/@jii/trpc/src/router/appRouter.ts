@@ -18,6 +18,7 @@
 import { mergeRouters, router } from "../procedures/init";
 import { authRouter } from "./routes/auth/router";
 import { dashboardStaffRouter } from "./routes/dashboardStaff/router";
+import { meetingsStaffRouter } from "./routes/meetingsStaff/router";
 import { residentRouter } from "./routes/resident/router";
 import { stateRouter } from "./routes/state/router";
 import { userRouter } from "./routes/user/router";
@@ -37,7 +38,9 @@ const dashboardStaffRoutes = router({
 });
 export type DashboardStaffRoutes = typeof dashboardStaffRoutes;
 
-const meetingsStaffRoutes = router({});
+const meetingsStaffRoutes = router({
+  meetingsStaff: meetingsStaffRouter,
+});
 export type MeetingsStaffRoutes = typeof meetingsStaffRoutes;
 
 export const appRouter = mergeRouters(

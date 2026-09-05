@@ -26,7 +26,7 @@ import { residentRestrictedMiddleware } from "../../../../middleware/residentRes
 import { nebraskaProcedure } from "./nebraskaProcedure";
 
 /**
- * Return the latest check-in corresponding to the provided resident, or undefined
+ * Return the latest check-in corresponding to the provided resident, or null
  * if none was found.
  */
 export const getCheckIn = nebraskaProcedure
