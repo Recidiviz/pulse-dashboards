@@ -25,6 +25,11 @@ variable "location" {
   description = "The GCP location (us-east1, us-central1, etc) that we are deploying the service to"
 }
 
+variable "deploy_environment" {
+  description = "Environment being deployed to. (staging/production)"
+  type        = string
+}
+
 variable "server_name" {
   type        = string
   description = "The name of the cloud run instance"

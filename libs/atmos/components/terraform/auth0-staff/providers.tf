@@ -30,7 +30,7 @@ terraform {
 }
 
 ephemeral "sops_file" "auth0_credentials" {
-  source_file = "${path.module}/secrets/recidiviz-${var.deploy_environment}-auth0-credentials.enc.yaml"
+  source_file = "${path.module}/../common/secrets/recidiviz-${var.deploy_environment}-auth0-credentials.enc.yaml"
 }
 
 provider "auth0" {
