@@ -139,19 +139,19 @@ export type ParoleConfig = {
   docketSubheading?: string;
   /** Enables the docket table's name/DOC ID search input. Omit to hide it. */
   docketSearchEnabled?: boolean;
-  /** A mapping from ParoleConductRecord.severity to a PaletteKey for the severity tag in the ConductHistorySection. */
-  conductClassificationColors: Record<string, PaletteKey>;
+  /** State-specific config for the Institutional Conduct History section. */
+  conductHistory: ParoleConductHistoryConfig;
   /**
-   * Calendar years of conduct history the Institutional Conduct History
-   * section shows inline.
+   * A tenant-owned component that renders the whole Offense & Criminal History
+   * main-column section, in place of the generic `OffenseHistorySection`.
    */
-  conductHistoryVisibleYears?: number;
-  /** Subsection heading for the offense list in the Offense & Criminal
-   * History section. Defaults to "Current Offenses" if omitted. */
-  offenseSectionTitle?: string;
-  /** Title for the conduct-history section and its sidebar nav label.
-   * Defaults to "Institutional Conduct History" if omitted. */
-  conductHistoryTitle?: string;
+  offenseHistoryComponent?: ComponentType<{
+    caseDetail: ParoleCase;
+    config: ParoleConfig;
+  }>;
+  /** Title for the offense section card and its sidebar nav label. Defaults to
+   * "Offense & Criminal History" if omitted. */
+  offenseHistoryTitle?: string;
   /**
    * A tenant-owned component that renders the whole case profile sidebar info
    * card body -- the identity status line, the Personal / Hearing / Sentence
@@ -164,14 +164,6 @@ export type ParoleConfig = {
     config: ParoleConfig;
   }>;
   /**
-   * A tenant-owned component rendered as `children` at the end of the
-   * Institutional Conduct History section. Omit for a tenant with nothing to slot in there.
-   */
-  conductHistoryChildren?: ComponentType<{
-    caseDetail: ParoleCase;
-    config: ParoleConfig;
-  }>;
-  /**
    * Absent for any tenant that hasn't opted into the redesigned Risk Score
    * Trajectory section (raw-score axis, CARAS component list, custom
    * aggregate-view label/tool-subset) -- RiskAssessmentSection falls back to
@@ -179,6 +171,27 @@ export type ParoleConfig = {
    * when this is unset.
    */
   riskAssessmentConfig?: ParoleRiskAssessmentConfig;
+};
+
+export type ParoleConductHistoryConfig = {
+  /** A mapping from ParoleConductRecord.severity to a PaletteKey for the severity tag. */
+  classificationColors: Record<string, PaletteKey>;
+  /**
+   * Calendar years of conduct history the section shows inline. Defaults to
+   * `DEFAULT_CONDUCT_HISTORY_YEARS` if omitted.
+   */
+  visibleYears?: number;
+  /** Title for the section and its sidebar nav label. Defaults to
+   * "Institutional Conduct History" if omitted. */
+  title?: string;
+  /**
+   * A tenant-owned component rendered as `children` at the end of the section.
+   * Omit for a tenant with nothing to slot in there.
+   */
+  children?: ComponentType<{
+    caseDetail: ParoleCase;
+    config: ParoleConfig;
+  }>;
 };
 
 export type ParoleRiskAssessmentConfig = {

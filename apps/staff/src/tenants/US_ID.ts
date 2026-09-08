@@ -19,6 +19,7 @@ import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "~shared-pathways";
 
 import { TenantConfig } from "../core/models/types";
 import { UsIdInstitutionalBehaviorSections } from "../core/PageParole/components/US_ID/UsIdInstitutionalBehaviorSections";
+import { UsIdOffenseHistorySection } from "../core/PageParole/components/US_ID/UsIdOffenseHistorySection";
 import { UsIdParoleSidebar } from "../core/PageParole/components/US_ID/UsIdParoleSidebar";
 import { METRIC_TYPE_LABELS, METRIC_TYPES } from "../core/PageVitals/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
@@ -229,15 +230,18 @@ const US_ID_CONFIG = {
       "programParticipation",
       "conductHistory",
     ],
-    conductClassificationColors: {
-      Major: "SLATE_DARK",
-      Minor: "SLATE_DARK",
+    conductHistory: {
+      classificationColors: {
+        Major: "SLATE_DARK",
+        Minor: "SLATE_DARK",
+      },
+      title: "Institutional & Community Behavior",
+      visibleYears: 3,
+      children: UsIdInstitutionalBehaviorSections,
     },
-    offenseSectionTitle: "Instant Offenses",
-    conductHistoryTitle: "Institutional & Community Behavior",
-    conductHistoryVisibleYears: 3,
+    offenseHistoryComponent: UsIdOffenseHistorySection,
+    offenseHistoryTitle: "Criminal & Parole History",
     sidebarComponent: UsIdParoleSidebar,
-    conductHistoryChildren: UsIdInstitutionalBehaviorSections,
     riskAssessmentConfig: {
       tools: ["LSI", "VRAG", "STATIC", "STABLE", "Guideline"],
       aggregateView: {

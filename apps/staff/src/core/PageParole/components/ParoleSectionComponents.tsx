@@ -43,12 +43,11 @@ import { DEFAULT_CONDUCT_HISTORY_YEARS } from "./shared";
   can invoke every section the same way.
 */
 export const ParoleSectionComponents = {
-  offenseHistory: (caseDetail: ParoleCase, config: ParoleConfig) => (
-    <OffenseHistorySection
-      offenseHistory={caseDetail.offenseHistory}
-      title={config.offenseSectionTitle ?? "Current Offenses"}
-    />
-  ),
+  offenseHistory: (caseDetail: ParoleCase, config: ParoleConfig) => {
+    const OffenseHistory =
+      config.offenseHistoryComponent ?? OffenseHistorySection;
+    return <OffenseHistory caseDetail={caseDetail} config={config} />;
+  },
   riskAssessment: (caseDetail: ParoleCase, config: ParoleConfig) => (
     <RiskAssessmentSection
       riskAssessments={caseDetail.riskAssessments}
@@ -67,15 +66,15 @@ export const ParoleSectionComponents = {
     />
   ),
   conductHistory: (caseDetail: ParoleCase, config: ParoleConfig) => {
-    const ConductHistoryChildren = config.conductHistoryChildren;
+    const ConductHistoryChildren = config.conductHistory.children;
     return (
       <ConductHistorySection
         conductHistory={caseDetail.conductHistory}
-        conductClassificationColors={config.conductClassificationColors}
+        conductClassificationColors={config.conductHistory.classificationColors}
         visibleYears={
-          config.conductHistoryVisibleYears ?? DEFAULT_CONDUCT_HISTORY_YEARS
+          config.conductHistory.visibleYears ?? DEFAULT_CONDUCT_HISTORY_YEARS
         }
-        title={config.conductHistoryTitle ?? "Institutional Conduct History"}
+        title={config.conductHistory.title ?? "Institutional Conduct History"}
       >
         {ConductHistoryChildren && (
           <ConductHistoryChildren caseDetail={caseDetail} config={config} />

@@ -67,7 +67,7 @@ export function UsCoOlderDisciplinariesSection({
   // exactly the ones this toggle reveals.
   const { olderRecords } = partitionConductHistoryByRecency(
     caseDetail.conductHistory,
-    config.conductHistoryVisibleYears ?? DEFAULT_CONDUCT_HISTORY_YEARS,
+    config.conductHistory.visibleYears ?? DEFAULT_CONDUCT_HISTORY_YEARS,
   );
 
   if (olderRecords.length === 0) return null;
@@ -90,7 +90,9 @@ export function UsCoOlderDisciplinariesSection({
               // eslint-disable-next-line react/no-array-index-key
               key={`${record.date}-${record.violation}-${idx}`}
               record={record}
-              conductClassificationColors={config.conductClassificationColors}
+              conductClassificationColors={
+                config.conductHistory.classificationColors
+              }
             />
           ))}
         </SectionStack>

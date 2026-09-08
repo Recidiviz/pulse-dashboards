@@ -27,8 +27,10 @@ import { UsCoOlderDisciplinariesSection } from "../UsCoOlderDisciplinariesSectio
 // toggle has something to reveal.
 const CONFIG: ParoleConfig = {
   sections: [],
-  conductClassificationColors: { "Class 1": "BLUE" },
-  conductHistoryVisibleYears: 1,
+  conductHistory: {
+    classificationColors: { "Class 1": "BLUE" },
+    visibleYears: 1,
+  },
 };
 
 function makeRecord(fields: Partial<ParoleConductRecord>): ParoleConductRecord {

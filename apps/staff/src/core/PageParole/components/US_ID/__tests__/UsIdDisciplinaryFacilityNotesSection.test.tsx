@@ -24,7 +24,7 @@ import { UsIdDisciplinaryFacilityNotesSection } from "../UsIdDisciplinaryFacilit
 
 const CONFIG: ParoleConfig = {
   sections: [],
-  conductClassificationColors: {},
+  conductHistory: { classificationColors: {} },
 };
 
 function makeCaseDetail(fields: Partial<ParoleCase>): ParoleCase {

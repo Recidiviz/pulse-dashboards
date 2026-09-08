@@ -189,6 +189,12 @@ export const paroleOffenseSchema = z.object({
   dateOfOffense: z.string(),
   convictionDate: z.string(),
   offenseNarrative: z.string(),
+  statute: z.string().optional(),
+  sentencingDate: z.string().optional(),
+  paroleEligibilityDate: z.string().optional(),
+  fullTermDate: z.string().optional(),
+  fixedLength: z.string().optional(),
+  indeterminateLength: z.string().optional(),
 });
 export type ParoleOffense = z.infer<typeof paroleOffenseSchema>;
 

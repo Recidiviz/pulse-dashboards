@@ -41,13 +41,15 @@ const US_CO_CONFIG = {
     ],
     docketSubheading: "Hearings in the next two weeks",
     docketSearchEnabled: true,
-    conductClassificationColors: {
-      "Class 1": "BLUE",
-      "Class 2": "GREEN",
-      "Class 3": "PURPLE",
+    conductHistory: {
+      classificationColors: {
+        "Class 1": "BLUE",
+        "Class 2": "GREEN",
+        "Class 3": "PURPLE",
+      },
+      visibleYears: 1,
+      children: UsCoOlderDisciplinariesSection,
     },
-    conductHistoryVisibleYears: 1,
-    conductHistoryChildren: UsCoOlderDisciplinariesSection,
     riskAssessmentConfig: {
       tools: ["LSI", "PIT", "CARAS", "SRT", "RT", "CST"],
       aggregateView: {

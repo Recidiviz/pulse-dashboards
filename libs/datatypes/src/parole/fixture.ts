@@ -860,6 +860,12 @@ function buildAndersonCaseProfile(
           convictionDate: iso(subYears(today, 4)),
           offenseNarrative:
             "Defendant entered convenience store with firearm and demanded cash from register. No injuries occurred. Defendant apprehended two blocks from scene.",
+          statute: "18-6501",
+          sentencingDate: iso(subYears(today, 4)),
+          paroleEligibilityDate: iso(subMonths(today, 6)),
+          fullTermDate: iso(addYears(today, 4)),
+          fixedLength: "3 years",
+          indeterminateLength: "5 years",
         },
         {
           county: "Sangamon County",
@@ -872,6 +878,12 @@ function buildAndersonCaseProfile(
           convictionDate: iso(subYears(today, 4)),
           offenseNarrative:
             "Defendant was found in possession of a controlled substance in a quantity indicating intent to distribute.",
+          statute: "37-2732(a)",
+          sentencingDate: iso(subYears(today, 4)),
+          paroleEligibilityDate: iso(subMonths(today, 6)),
+          fullTermDate: iso(addYears(today, 4)),
+          fixedLength: "2 years",
+          indeterminateLength: "3 years",
         },
         {
           county: "Sangamon County",
@@ -883,6 +895,10 @@ function buildAndersonCaseProfile(
           convictionDate: iso(subYears(today, 4)),
           offenseNarrative:
             "Defendant left a work-release assignment without authorization and was apprehended the following day.",
+          statute: "18-2505",
+          sentencingDate: iso(subYears(today, 2)),
+          paroleEligibilityDate: iso(addYears(today, 4)),
+          fullTermDate: iso(addYears(today, 5)),
         },
       ],
       priorConvictions: [
@@ -1056,6 +1072,12 @@ function buildOffenseHistory(
         convictionDate: iso(subYears(today, 3 + (index % 4))),
         offenseNarrative:
           "Defendant entered an unoccupied residence and removed property without consent.",
+        statute: "18-1401",
+        sentencingDate: iso(subYears(today, 3 + (index % 4))),
+        paroleEligibilityDate: iso(subMonths(today, 3)),
+        fullTermDate: iso(addYears(today, 3)),
+        fixedLength: "2 years",
+        indeterminateLength: "4 years",
       },
     ],
     // No prior convictions for the generic cases -- Anderson's hand-authored
@@ -1847,6 +1869,12 @@ const ID_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
           convictionDate: "2017-12-06",
           offenseNarrative:
             "Defendant assaulted a law enforcement officer while being taken into custody.",
+          statute: "18-901",
+          sentencingDate: "2017-12-06",
+          paroleEligibilityDate: iso(addDays(new Date(), 90)),
+          fullTermDate: iso(addYears(new Date(), 13)),
+          fixedLength: "10 years",
+          indeterminateLength: "14 years",
         },
       ],
       priorConvictions: [

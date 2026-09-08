@@ -30,7 +30,7 @@ import { PAROLE_SECTION_IDS } from "../shared";
 const CASE = paroleCasesFixtureByState.US_CO["45821"];
 
 function configWith(sections: Array<ParoleSectionName>): ParoleConfig {
-  return { sections, conductClassificationColors: {} };
+  return { sections, conductHistory: { classificationColors: {} } };
 }
 
 // The pieces of a piped FactLabel (e.g. "Incarcerated | Minimum") render as
@@ -155,13 +155,16 @@ describe("CaseProfileSidebar", () => {
     ]);
   });
 
-  it("labels the conduct-history nav from the tenant's conductHistoryTitle override", () => {
+  it("labels the conduct-history nav from the tenant's conductHistory.title override", () => {
     render(
       <CaseProfileSidebar
         caseDetail={CASE}
         config={{
           ...configWith(["conductHistory"]),
-          conductHistoryTitle: "Institutional & Community Behavior",
+          conductHistory: {
+            classificationColors: {},
+            title: "Institutional & Community Behavior",
+          },
         }}
       />,
     );
@@ -175,6 +178,25 @@ describe("CaseProfileSidebar", () => {
       screen.queryByRole("button", {
         name: "Institutional Conduct History",
       }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("labels the offense nav from the tenant's offenseHistoryTitle override", () => {
+    render(
+      <CaseProfileSidebar
+        caseDetail={CASE}
+        config={{
+          ...configWith(["offenseHistory"]),
+          offenseHistoryTitle: "Criminal & Parole History",
+        }}
+      />,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Criminal & Parole History" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Offense & Criminal History" }),
     ).not.toBeInTheDocument();
   });
 

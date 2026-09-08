@@ -116,12 +116,14 @@ export function CaseProfileSidebar({
 
   const SidebarBody = config.sidebarComponent ?? DefaultParoleGeneralInfo;
 
-  // Resolve the section nav labels, letting a tenant override the
-  // conduct-history label the same way it overrides the section title.
+  // Resolve the section nav labels, letting a tenant override the offense and
+  // conduct-history labels so each nav entry matches its section card title.
   const sectionLabels = {
     ...PAROLE_SECTION_LABELS,
+    offenseHistory:
+      config.offenseHistoryTitle ?? PAROLE_SECTION_LABELS.offenseHistory,
     conductHistory:
-      config.conductHistoryTitle ?? PAROLE_SECTION_LABELS.conductHistory,
+      config.conductHistory.title ?? PAROLE_SECTION_LABELS.conductHistory,
   };
 
   return (
