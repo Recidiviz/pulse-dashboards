@@ -24,7 +24,7 @@ import { Checkbox, Selector } from "~@jii/common-ui";
 import { Icon, palette } from "~design-system";
 
 import { ProgramCatalogPresenter } from "../../presenter/ProgramCatalogPresenter";
-import { LabeledValue, TFn } from "../../types";
+import { TFn } from "../../types";
 
 const ResultsCount = styled.p`
   ${typography.Sans14};
@@ -204,10 +204,7 @@ export const FilterSection: FC<FilterSectionProps> = ({
     clearAllFilters,
   } = presenter;
 
-  const toOption = ({ key, label }: LabeledValue) => ({
-    label,
-    value: key,
-  });
+  const toOption = (value: string) => ({ label: value, value });
 
   const allCategoriesOption = {
     label: t(($) => $.programs.filters.allCategories),

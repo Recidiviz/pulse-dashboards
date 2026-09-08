@@ -18,7 +18,7 @@
 import { captureException } from "@sentry/react";
 import { group, rollup } from "d3-array";
 import { max, parseISO } from "date-fns";
-import { isUndefined, sortBy, uniqBy } from "lodash";
+import { isUndefined, sortBy, uniq } from "lodash";
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { DataAPI, ResidentFlags, ResidentRecord, UserStore } from "~@jii/data";
@@ -88,14 +88,14 @@ export class UsCoProgramsPresenter implements Hydratable {
 
     if (this.isYOSResident) {
       this.programs = this.programs?.filter((p) =>
-        p.facilitiesOffered.some((f) => f.key === "Youthful Offender System"),
+        p.facilitiesOffered.includes("Youthful Offender System"),
       );
     } else {
       // Hide YOS-only programs for everyone else
       this.programs = this.programs?.filter(
         (p) =>
           p.facilitiesOffered.length > 1 ||
-          p.facilitiesOffered[0]?.key !== "Youthful Offender System",
+          p.facilitiesOffered[0] !== "Youthful Offender System",
       );
     }
   }
@@ -120,31 +120,26 @@ export class UsCoProgramsPresenter implements Hydratable {
   }
 
   get filteredProgramsByCategory(): {
-    category: UsCoProgram["category"];
+    category: string;
     programs: UsCoProgram[];
   }[] {
-    const programsByCategoryKey = group(
-      this.filteredPrograms,
-      (p) => p.category.key,
-    );
+    const programsByCategory = group(this.filteredPrograms, (p) => p.category);
     return this.categories.flatMap((category) => {
-      const programs = programsByCategoryKey.get(category.key);
+      const programs = programsByCategory.get(category);
       return programs ? [{ category, programs }] : [];
     });
   }
 
-  get categories(): UsCoProgram["category"][] {
+  get categories(): string[] {
     if (!this.programs) return [];
-    const categories = this.programs.map((p) => p.category);
-    return sortBy(uniqBy(categories, "key"), "label");
+    return sortBy(uniq(this.programs.map((p) => p.category)));
   }
 
-  get facilities(): UsCoProgram["facilitiesOffered"] {
+  get facilities(): string[] {
     if (!this.programs) return [];
     // programs available everywhere carry no facilities, so they contribute
     // nothing here — there is no magic value to filter back out
-    const facilities = this.programs.flatMap((p) => p.facilitiesOffered);
-    return sortBy(uniqBy(facilities, "key"), "label");
+    return sortBy(uniq(this.programs.flatMap((p) => p.facilitiesOffered)));
   }
 
   get filteredPrograms(): UsCoProgram[] {
@@ -160,10 +155,7 @@ export class UsCoProgramsPresenter implements Hydratable {
       }
 
       // Category filter
-      if (
-        this.selectedCategory &&
-        program.category.key !== this.selectedCategory
-      ) {
+      if (this.selectedCategory && program.category !== this.selectedCategory) {
         return false;
       }
 
@@ -172,7 +164,7 @@ export class UsCoProgramsPresenter implements Hydratable {
       if (
         this.selectedFacility &&
         !program.availableAtAllFacilities &&
-        !program.facilitiesOffered.some((f) => f.key === this.selectedFacility)
+        !program.facilitiesOffered.includes(this.selectedFacility)
       ) {
         return false;
       }
@@ -198,7 +190,7 @@ export class UsCoProgramsPresenter implements Hydratable {
     return rollup(
       this.programs ?? [],
       (v) => v.length,
-      (d) => d.category.key,
+      (d) => d.category,
     );
   }
 

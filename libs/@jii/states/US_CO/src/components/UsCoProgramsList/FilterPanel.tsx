@@ -147,10 +147,7 @@ export const FilterPanel: FC<FilterPanelProps> = ({ presenter }) => {
     value: undefined,
   };
 
-  const toOption = ({ key, label }: { key: string; label: string }) => ({
-    label,
-    value: key,
-  });
+  const toOption = (value: string) => ({ label: value, value });
 
   const categoryOptions = [allCategoriesOption, ...categories.map(toOption)];
   const facilityOptions = [allFacilitiesOption, ...facilities.map(toOption)];

@@ -29,10 +29,8 @@ export type ProgramsConfig = {
  */
 export type ProcessedProgram = Omit<
   ProgramFromSheet,
-  "category" | "facilitiesOffered" | "eligibilityRequirements"
+  "eligibilityRequirements"
 > & {
-  category: { key: string; label: string };
-  facilitiesOffered: { key: string; label: string }[];
   availableAtAllFacilities: boolean;
   eligibilityRequirements: string[];
 };

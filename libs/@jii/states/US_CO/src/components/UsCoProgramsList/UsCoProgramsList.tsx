@@ -146,10 +146,10 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
           {presenter.filteredProgramsByCategory.map(
             ({ category, programs }) => (
               <CategorySection
-                key={category.key}
-                categoryName={category.label}
+                key={category}
+                categoryName={category}
                 programCount={programs.length}
-                totalCount={presenter.totalProgramsByCategory.get(category.key)}
+                totalCount={presenter.totalProgramsByCategory.get(category)}
               >
                 {programs.map((program) => (
                   <ProgramCard

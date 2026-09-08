@@ -237,8 +237,8 @@ const ProgramDetailModalComponent: FC<ProgramDetailModalProps> = ({
                     {t(($) => $.programs.modal.allFacilities)}
                   </FacilityBadge>
                 ) : (
-                  program.facilitiesOffered.map(({ key, label }) => (
-                    <FacilityBadge key={key}>{label}</FacilityBadge>
+                  program.facilitiesOffered.map((facility) => (
+                    <FacilityBadge key={facility}>{facility}</FacilityBadge>
                   ))
                 )}
               </FacilitiesList>

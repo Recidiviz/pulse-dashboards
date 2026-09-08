@@ -47,13 +47,7 @@ export function processProgram(row: ProgramFromSheet): ProcessedProgram {
 
   return {
     ...row,
-    category: { key: row.category, label: row.category },
-    facilitiesOffered: availableAtAllFacilities
-      ? []
-      : row.facilitiesOffered.map((facility) => ({
-          key: facility,
-          label: facility,
-        })),
+    facilitiesOffered: availableAtAllFacilities ? [] : row.facilitiesOffered,
     availableAtAllFacilities,
     eligibilityRequirements: isBlank(row.eligibilityRequirements)
       ? []

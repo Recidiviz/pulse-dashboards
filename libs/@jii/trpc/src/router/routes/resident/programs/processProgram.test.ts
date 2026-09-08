@@ -30,24 +30,6 @@ function buildRow(overrides: Partial<ProgramFromSheet> = {}): ProgramFromSheet {
   };
 }
 
-describe("category", () => {
-  test("is keyed and labeled with the sheet value", () => {
-    expect(processProgram(buildRow()).category).toEqual({
-      key: "Education",
-      label: "Education",
-    });
-  });
-});
-
-describe("facilitiesOffered", () => {
-  test("each facility is keyed and labeled with the sheet value", () => {
-    expect(processProgram(buildRow()).facilitiesOffered).toEqual([
-      { key: "MCI-Concord", label: "MCI-Concord" },
-      { key: "MCI-Shirley", label: "MCI-Shirley" },
-    ]);
-  });
-});
-
 describe("availableAtAllFacilities", () => {
   test("is false when facilities are named", () => {
     expect(processProgram(buildRow()).availableAtAllFacilities).toBe(false);
