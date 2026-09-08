@@ -173,6 +173,40 @@ export function testWriteToCollectionsForStateWithStateCodePrefix(
   );
 }
 
+/**
+ * Seeds a userUpdates doc with an admin-provisioned `overrideDistrictIds`,
+ * bypassing rules the way real provisioning does.
+ */
+export async function seedOverrideDistrictIds(
+  testEnv: RulesTestEnvironment,
+  email: string,
+  overrideDistrictIds: string[],
+) {
+  await testEnv.withSecurityRulesDisabled(async (context) => {
+    await setDoc(
+      doc(context.firestore(), PERSONAL_UPDATE_COLLECTION_NAME, email),
+      { overrideDistrictIds },
+    );
+  });
+}
+
+/**
+ * Writes `data` to a user's own userUpdates doc with `merge`, the way the app
+ * does when it saves a preference.
+ */
+export async function testMergeToPersonalUpdateCollection(
+  db: FirestoreInstance,
+  assertFn: AssertFn,
+  email: string,
+  data: Record<string, unknown>,
+) {
+  await assertFn(
+    setDoc(doc(db, PERSONAL_UPDATE_COLLECTION_NAME, email), data, {
+      merge: true,
+    }),
+  );
+}
+
 export async function testWriteToPersonalUpdateCollection(
   db: FirestoreInstance,
   assertFn: AssertFn,

@@ -24,8 +24,10 @@ import {
 import {
   DEMO_SHARED_UPDATE_COLLECTION_NAMES,
   ETL_COLLECTION_NAMES,
+  seedOverrideDistrictIds,
   SHARED_UPDATE_COLLECTION_NAMES,
   startTestEnv,
+  testMergeToPersonalUpdateCollection,
   testWriteToCollectionsForStateWithStateCodePrefix,
   testWriteToCollectionsWithoutStateCodePrefix,
   testWriteToCustomTaskForState,
@@ -404,6 +406,89 @@ describe("app = staff", () => {
         getStatelessUser(testEnv).firestore(),
         assertFails,
         "US_TN",
+      );
+    });
+  });
+
+  describe("overrideDistrictIds is not user-writable", () => {
+    const EMAIL = "user@us_tn.gov";
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("a user cannot introduce it on their own doc", async () => {
+      await testMergeToPersonalUpdateCollection(
+        getTNUser(testEnv).firestore(),
+        assertFails,
+        EMAIL,
+        { overrideDistrictIds: ["District 5"] },
+      );
+    });
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("a user cannot change an admin-provisioned value", async () => {
+      await seedOverrideDistrictIds(testEnv, EMAIL, ["District 1"]);
+      await testMergeToPersonalUpdateCollection(
+        getTNUser(testEnv).firestore(),
+        assertFails,
+        EMAIL,
+        { overrideDistrictIds: ["District 1", "District 5"] },
+      );
+    });
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("a user cannot clear an admin-provisioned value", async () => {
+      await seedOverrideDistrictIds(testEnv, EMAIL, ["District 1"]);
+      await testMergeToPersonalUpdateCollection(
+        getTNUser(testEnv).firestore(),
+        assertFails,
+        EMAIL,
+        { overrideDistrictIds: [] },
+      );
+    });
+
+    // A blanket set() would drop the field, which is why the rule covers
+    // deletion of the value and not just a change to it.
+    // eslint-disable-next-line vitest/expect-expect
+    test("a user cannot drop it by overwriting the whole doc", async () => {
+      await seedOverrideDistrictIds(testEnv, EMAIL, ["District 1"]);
+      await testWriteToPersonalUpdateCollection(
+        getTNUser(testEnv).firestore(),
+        assertFails,
+        EMAIL,
+      );
+    });
+
+    // The point of the rule is to leave everything else alone.
+    // eslint-disable-next-line vitest/expect-expect
+    test("a user can still write other fields alongside it", async () => {
+      await seedOverrideDistrictIds(testEnv, EMAIL, ["District 1"]);
+      await testMergeToPersonalUpdateCollection(
+        getTNUser(testEnv).firestore(),
+        assertSucceeds,
+        EMAIL,
+        { selectedSearchIds: ["OFFICER1"] },
+      );
+    });
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("a user can still create a doc that does not carry it", async () => {
+      await testMergeToPersonalUpdateCollection(
+        getTNUser(testEnv).firestore(),
+        assertSucceeds,
+        EMAIL,
+        { selectedSearchIds: ["OFFICER1"] },
+      );
+    });
+
+    // Re-sending the same value is a no-op, so it must not be refused — the app
+    // reads the doc and writes it back in places.
+    // eslint-disable-next-line vitest/expect-expect
+    test("a user may write back the identical value", async () => {
+      await seedOverrideDistrictIds(testEnv, EMAIL, ["District 1"]);
+      await testMergeToPersonalUpdateCollection(
+        getTNUser(testEnv).firestore(),
+        assertSucceeds,
+        EMAIL,
+        { overrideDistrictIds: ["District 1"] },
       );
     });
   });

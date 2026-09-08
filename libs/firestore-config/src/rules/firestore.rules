@@ -64,8 +64,29 @@ service cloud.firestore {
       stateCodeMatchesPrefix(clientId)) && !isImpersonatorInProd());
   }
 
+  // `overrideDistrictIds` is admin-provisioned: it grants a user districts they
+  // are not assigned to (and is sometimes used to restrict them instead).
+  // Nothing in the app writes it. The Typesense mint endpoint compiles it into a
+  // signed, server-issued scoped key, so a user who could write it could grant
+  // themselves district scope. Users may still write the rest of their own doc.
+  //
+  // Split by operation because `resource` is absent on create and
+  // `request.resource` is absent on delete:
+  //   create — the field may not be introduced
+  //   update — the field may not change
+  //   delete — the field may not be destroyed
+  function overrideDistrictIdsPreserved() {
+    return request.resource == null
+      ? !('overrideDistrictIds' in resource.data)
+      : (resource == null
+          ? !('overrideDistrictIds' in request.resource.data)
+          : request.resource.data.get('overrideDistrictIds', null)
+            == resource.data.get('overrideDistrictIds', null));
+  }
+
   function allowUserUpdates(document) {
-    return (usernameMatches(document) && !isImpersonatorInProd());
+    return (usernameMatches(document) && !isImpersonatorInProd()
+      && overrideDistrictIdsPreserved());
   }
 
   function stateCodeIncludedInRecidivizAllowedStates(clientId) {
