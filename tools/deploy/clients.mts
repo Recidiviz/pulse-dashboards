@@ -58,9 +58,19 @@ export async function createSlackClient(): Promise<SlackClient> {
   );
 }
 
-/** Construct the Linear client from the deploy-script API key in Secret Manager. */
+/**
+ * Construct the Linear client from the deploy-script API key in Secret Manager.
+ *
+ * Must be an API key with NO team restriction. Linear fixes a personal API key's
+ * team scope at creation and exposes no way to read or widen it later, so a key
+ * scoped to one team fails with `Entity not found: Issue` on every ticket outside
+ * it -- and `setDeployStatusLabel` then throws for any non-OBT identifier in the
+ * deploy range. The `_v2` key replaces an OBT-only predecessor that did exactly
+ * that. Team membership is not the lever: the bot was already a member of the
+ * teams whose tickets failed.
+ */
 export async function createLinearClient(): Promise<LinearClient> {
   return new LinearClient({
-    apiKey: await readSecret("linear_deploy_script_api_key"),
+    apiKey: await readSecret("linear_deploy_script_api_key_v2"),
   });
 }
