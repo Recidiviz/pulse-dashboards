@@ -153,6 +153,10 @@ export type FeatureVariant =
   | "usTnRcafV1"
   | "clientProfileWarmHandoff"
 
+  //// Texas
+  | "usTxAnnualReportStatusV2"
+  | "usTxEarlyReleaseFromSupervisionV2"
+
   // INSIGHTS
   | "insightsLeadershipPageAllDistricts"
   | "insightsOnboarding"
@@ -309,6 +313,8 @@ export const allFeatureVariants: FeatureVariantMapping = {
   supervisorHomepageReviewTable: {},
   logInToOwnSupervisorPage: {},
   showPreviouslyReviewedOpportunities: {},
+  usTxAnnualReportStatusV2: {},
+  usTxEarlyReleaseFromSupervisionV2: {},
   sentenceProgressV2: {},
   hideWorkflowsOpportunities: {},
   hideWorkflowsResidentsPage: {},
@@ -330,6 +336,8 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         showPreviouslyReviewedOpportunities: {
           activeTenants: ["US_TX"],
         },
+        usTxAnnualReportStatusV2: { activeTenants: ["US_TX"] },
+        usTxEarlyReleaseFromSupervisionV2: { activeTenants: ["US_TX"] },
         supervisorHomepageReviewTable: { activeTenants: ["US_TX"] },
         supervisorHomepageWorkflows: {},
         supervisorHomepageVitals: {
