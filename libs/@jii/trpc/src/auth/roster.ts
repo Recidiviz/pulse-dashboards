@@ -76,9 +76,13 @@ export async function checkResidentsRoster({
   userExternalId,
   userIdFromAuthProvider,
 }: RosterLookupOpts): Promise<AuthorizedUserProfile | undefined> {
-  const lookupByDisplayId = ["US_AR", "US_AZ", "US_CO", "US_NE"].includes(
-    stateCode,
-  );
+  const lookupByDisplayId = [
+    "US_AR",
+    "US_AZ",
+    "US_CO",
+    "US_NE",
+    "US_NYC",
+  ].includes(stateCode);
   let personExternalId: string;
   let pseudonymizedId: string;
 
