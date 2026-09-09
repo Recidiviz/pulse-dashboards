@@ -28,6 +28,15 @@ steps:
           apt-get update && apt-get install -y gettext-base
         fi
 
+        # Install sops if not available (used to decrypt envs/*.enc.yaml below)
+        if ! command -v sops &> /dev/null; then
+          echo "Installing sops..."
+          curl -sL "https://github.com/getsops/sops/releases/download/v3.9.4/sops-v3.9.4.linux.amd64" -o /tmp/sops
+          echo "5488e32bc471de7982ad895dd054bbab3ab91c417a118426134551e9626e4e85  /tmp/sops" | sha256sum -c -
+          mv /tmp/sops /usr/local/bin/sops
+          chmod +x /usr/local/bin/sops
+        fi
+
         # Validate that required substitutions are provided
         if [[ -z "${_JOB_NAME}" ]]; then
           echo "ERROR: _JOB_NAME is required"
@@ -47,16 +56,35 @@ steps:
         export PROJECT_ID="${PROJECT_ID}"
 
         #  Validate that the environment and job type files exist
-        if [[ ! -f "deploy/jobs/envs/${_ENVIRONMENT}.env" ]]; then
-          echo "ERROR: Base environment configuration file deploy/jobs/envs/${_ENVIRONMENT}.env does not exist."
+        if [[ ! -f "deploy/jobs/envs/${_ENVIRONMENT}.enc.yaml" ]]; then
+          echo "ERROR: Base environment configuration file deploy/jobs/envs/${_ENVIRONMENT}.enc.yaml does not exist."
           exit 1
         fi
 
         # validations passed, proceed with job generation and deployment
         echo "Building job: ${_JOB_NAME} for environment: ${_ENVIRONMENT}"
 
-        echo "Loading base environment for ${_ENVIRONMENT}"
-        source deploy/jobs/envs/${_ENVIRONMENT}.env
+        echo "Loading decrypted environment for ${_ENVIRONMENT}"
+        # NOTE: sops's `--output-type dotenv` writer panics on non-string
+        # values (e.g. the int-typed CPU_LIMIT/MAX_RETRIES/TIMEOUT_SECONDS
+        # in this file - https://github.com/getsops/sops/blob/v3.9.4/stores/dotenv/store.go#L144),
+        # so we decrypt as plain YAML instead and parse the flat `KEY: value`
+        # pairs ourselves, stopping before the trailing `sops:` metadata block.
+        sops -d "deploy/jobs/envs/${_ENVIRONMENT}.enc.yaml" > /tmp/env.decrypted.yaml
+        while IFS= read -r line; do
+          if [[ "$line" == "sops:" ]]; then
+            break
+          fi
+          [[ -z "$line" || "$line" == \#* ]] && continue
+
+          key="${line%%:*}"
+          value="${line#*:}"
+          value="${value# }"                # strip a single leading space after ':'
+          value="${value%\"}"; value="${value#\"}"  # strip surrounding quotes, if any
+
+          export "${key}=${value}"
+        done < /tmp/env.decrypted.yaml
+        rm -f /tmp/env.decrypted.yaml
 
         echo "Generating job from template..."
         envsubst < deploy/jobs/job-template.yaml > /tmp/job.yaml
