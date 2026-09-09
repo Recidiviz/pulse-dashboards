@@ -18,8 +18,7 @@
 import Clipboard from "@react-native-clipboard/clipboard";
 import { debounce } from "lodash";
 import { ReactNode, useCallback, useEffect, useState } from "react";
-import { View } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
+import { TextInput, View } from "react-native";
 import DocumentDuplicateIcon from "react-native-heroicons/solid/DocumentDuplicateIcon";
 
 import { useUpdateNotes } from "~@meetings/app/entities/meeting";
