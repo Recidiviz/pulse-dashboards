@@ -34,8 +34,13 @@ let getPrismaClient: typeof import("./getPrismaClient").getPrismaClient;
 beforeEach(async () => {
   // need to return a unique object for each call
   // so we can verify cache behavior. but also need to mock it
-  // so that the mock envvars don't cause spurious errors
-  vi.mocked(PrismaClient).mockImplementation(() => ({}) as PrismaClient);
+  // so that the mock envvars don't cause spurious errors.
+  // getPrismaClient wraps the client in the connection-retry extension, so the mock
+  // has to offer $extends — and its return value is what actually gets cached.
+  vi.mocked(PrismaClient).mockImplementation(() => {
+    const extended = {} as PrismaClient;
+    return { $extends: () => extended } as unknown as PrismaClient;
+  });
 
   // ensures we reset the internal state of the module we are about to import,
   // specifically to reset the Prisma client cache. Mocks should be unaffected by this,

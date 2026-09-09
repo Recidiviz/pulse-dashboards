@@ -21,9 +21,11 @@ import { StateCode } from "~@jii/configs";
 
 import { PrismaClient } from "./client/client";
 import { resolveDatabaseTarget } from "./databaseTarget";
+import { retryOnConnectionClosed } from "./retryOnConnectionClosed";
+import type { ExtendedPrismaClient } from "./types";
 import { getLocalDatabaseUrl } from "./utils";
 
-const prismaClients: Record<string, PrismaClient> = {};
+const prismaClients: Record<string, ExtendedPrismaClient> = {};
 
 type PrismaClientOpts = {
   stateCode: StateCode;
@@ -61,10 +63,10 @@ export function getPrismaClient({ stateCode, demo }: PrismaClientOpts) {
   }
 
   if (!prismaClients[dbUrl]) {
-    const adapter = new PrismaPg({
-      connectionString: dbUrl,
-    });
-    prismaClients[dbUrl] = new PrismaClient({ adapter });
+    const adapter = new PrismaPg({ connectionString: dbUrl });
+    prismaClients[dbUrl] = retryOnConnectionClosed(
+      new PrismaClient({ adapter }),
+    );
   }
 
   return prismaClients[dbUrl];

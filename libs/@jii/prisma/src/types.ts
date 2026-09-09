@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,14 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// Public entry point for the @jii/prisma package.
-export * from "./client/client";
-export * from "./client/models";
-export * from "./databaseTarget";
-export * from "./getPrismaClient";
+import { retryOnConnectionClosed } from "./retryOnConnectionClosed";
 
-// Deliberately shadows the generated PrismaClient that ./client/client exports, so that
-// only the type is exported and not the constructor; no one outside this library needs
-// to access the constructor directly anyway, and this lets our extended PrismaClient type
-// transparently replace the default client type for consumers.
-export type { ExtendedPrismaClient as PrismaClient } from "./types";
+export type ExtendedPrismaClient = ReturnType<typeof retryOnConnectionClosed>;
