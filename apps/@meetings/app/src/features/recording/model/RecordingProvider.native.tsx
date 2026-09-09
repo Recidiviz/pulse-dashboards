@@ -89,10 +89,20 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
   const statusRef = useRef(status);
   statusRef.current = status;
   const [note, setNote] = useNote();
-  const audioRecorder = useAudioRecorder({
-    ...RecordingPresets["HIGH_QUALITY"],
-    isMeteringEnabled: true,
-  });
+  const audioRecorder = useAudioRecorder(
+    {
+      ...RecordingPresets["HIGH_QUALITY"],
+      isMeteringEnabled: true,
+    },
+    (status) => {
+      if (status.isFinished) {
+        Sentry.logger.info("recording.finalized", {
+          finalizedUri: status.url,
+          mediaServicesDidReset: status.mediaServicesDidReset,
+        });
+      }
+    },
+  );
   const recorderState = useAudioRecorderState(
     audioRecorder,
     AUDIO_LEVEL_INTERVAL_MS,
@@ -185,13 +195,10 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       const savedUri = await getRecordingUri();
       const uri = savedUri || audioRecorder.uri;
 
-      // Stop active recording first
-      if (recorderState.isRecording) {
-        await audioRecorder.stop();
-        // Fallback to previously saved URI in case audioRecorder.uri isn't set immediately after stopping
-        if (audioRecorder.uri || uri) {
-          await saveRecordingUri((audioRecorder.uri || uri) as string);
-        }
+      await audioRecorder.stop();
+
+      if (audioRecorder.uri || uri) {
+        await saveRecordingUri((audioRecorder.uri || uri) as string);
       }
     } catch (err) {
       Sentry.logger.error("stop.recording.error", {
@@ -201,7 +208,7 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
       await setStatus("paused");
       throw err;
     }
-  }, [audioRecorder, recorderState.isRecording, meetingId, setStatus]);
+  }, [audioRecorder, meetingId, setStatus]);
 
   /**
    * uploadRecording()
