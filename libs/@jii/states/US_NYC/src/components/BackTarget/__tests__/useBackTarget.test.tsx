@@ -17,8 +17,8 @@
 
 import { renderHook } from "@testing-library/react";
 
-import { BackTargetProvider } from "./BackTargetContext";
-import { useBackTarget } from "./useBackTarget";
+import { BackTargetProvider } from "../BackTargetContext";
+import { useBackTarget } from "../useBackTarget";
 
 describe("useBackTarget", () => {
   it("returns null when nothing has declared a target", () => {

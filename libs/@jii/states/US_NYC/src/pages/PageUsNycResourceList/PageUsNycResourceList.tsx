@@ -24,7 +24,7 @@ import { ResourceExplorer, State } from "~@jii/paths";
 import { Button } from "~design-system";
 import { pluralize } from "~utils";
 
-import { useBackTarget } from "../../components/BackTargetContext/useBackTarget";
+import { useBackTarget } from "../../components/BackTarget/useBackTarget";
 import { Chip } from "../../components/Chip/Chip";
 import { CollapsibleSection } from "../../components/CollapsibleSection/CollapsibleSection";
 import { EmptyFilterState } from "../../components/EmptyFilterState/EmptyFilterState";

@@ -20,8 +20,8 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { ResourceExplorer, State } from "~@jii/paths";
 
-import { sanitizeBackTarget } from "../../components/BackTargetContext/sanitizeBackTarget";
-import { useBackTarget } from "../../components/BackTargetContext/useBackTarget";
+import { useBackTarget } from "../../components/BackTarget/useBackTarget";
+import { resolveResourceDetailBackTarget } from "../../components/BackTarget/utils";
 import { QueryBoundary } from "../../components/QueryBoundary";
 import { ResourceDetailContent } from "./ResourceDetailContent";
 
@@ -44,23 +44,16 @@ export function PageUsNycResourceDetail() {
       category,
     });
 
-  const { backTarget } =
-    ResourceExplorer.CategoryResults.Detail.getTypedSearchParams(searchParams);
-  // Unlike the paths we build ourselves, this one comes from the URL search params and isn't safe as-is
-  const safeBackTarget = sanitizeBackTarget(backTarget);
-  useBackTarget(safeBackTarget ?? categoryResultsPath);
-
-  const detailPath = (resourceId: number) => {
-    const path =
-      State.Resident.ResourceExplorer.CategoryResults.Detail.buildPath({
-        ...residentParams,
-        category,
-        resourceId,
-      });
-    return safeBackTarget
-      ? `${path}?backTarget=${encodeURIComponent(safeBackTarget)}`
-      : path;
-  };
+  const { backPath, similarResourcePath } = resolveResourceDetailBackTarget(
+    searchParams,
+    {
+      residentParams,
+      category,
+      resourceId,
+      categoryResultsPath,
+    },
+  );
+  useBackTarget(backPath);
 
   return (
     <QueryBoundary>
@@ -68,7 +61,7 @@ export function PageUsNycResourceDetail() {
         resourceId={resourceId}
         category={category}
         categoryResultsPath={categoryResultsPath}
-        detailPath={detailPath}
+        similarResourcePath={similarResourcePath}
       />
     </QueryBoundary>
   );

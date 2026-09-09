@@ -118,8 +118,6 @@ export const UsNeReentryChecklist = route("reentry-checklist");
 
 export const ReentryAssessment = route("reentry-assessment");
 
-// TODO(OBT-45888): BackButton.tsx enumerates these routes explicitly to build
-// fallback paths. Any structural changes here need a corresponding update there.
 export const ResourceExplorer = route(
   "resources",
   {},
@@ -135,7 +133,7 @@ export const ResourceExplorer = route(
       {
         Detail: route(":resourceId", {
           params: { resourceId: number().defined() },
-          searchParams: { backTarget: string() },
+          searchParams: { backTarget: string(), visitedResourceIds: string() },
         }),
       },
     ),

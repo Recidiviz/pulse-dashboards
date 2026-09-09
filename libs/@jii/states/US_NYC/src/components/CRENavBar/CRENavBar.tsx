@@ -24,7 +24,7 @@ import { Button } from "~design-system";
 
 import { ONE_HOUR_MS } from "../../hooks/useResources";
 import { BackButton } from "../BackButton/BackButton";
-import { useBackTarget } from "../BackTargetContext/useBackTarget";
+import { useBackTarget } from "../BackTarget/useBackTarget";
 import { SearchOverlay } from "../SearchOverlay/SearchOverlay";
 import { NavBar } from "./CRENavBar.styles";
 

@@ -20,7 +20,7 @@ import { Outlet } from "react-router-dom";
 import { ScreenFillingWrapper, useHeaderOverride } from "~@jii/layout";
 
 import { US_NYC_CONTENT } from "../content";
-import { BackTargetProvider } from "./BackTargetContext/BackTargetContext";
+import { BackTargetProvider } from "./BackTarget/BackTargetContext";
 import { CRENavBar } from "./CRENavBar/CRENavBar";
 import { Footer } from "./Footer/Footer";
 import { QueryBoundary } from "./QueryBoundary";

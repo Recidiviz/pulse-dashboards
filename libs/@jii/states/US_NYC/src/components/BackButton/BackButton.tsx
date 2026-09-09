@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useBackTarget } from "../BackTargetContext/useBackTarget";
+import { useBackTarget } from "../BackTarget/useBackTarget";
 import { BackLink, Chevron } from "./BackButton.styles";
 
 export function BackButton() {

@@ -53,14 +53,14 @@ export type ResourceDetailContentProps = {
   resourceId: number;
   category: string;
   categoryResultsPath: string;
-  detailPath: (resourceId: number) => string;
+  similarResourcePath: (resourceId: number) => string;
 };
 
 export function ResourceDetailContent({
   resourceId,
   category,
   categoryResultsPath,
-  detailPath,
+  similarResourcePath,
 }: ResourceDetailContentProps) {
   const navigate = useNavigate();
   const { trackResourceViewed, trackDescriptionToggled } = useCreAnalytics();
@@ -117,7 +117,7 @@ export function ResourceDetailContent({
               <ResourceCard
                 key={resource.organizationId}
                 name={resource.name}
-                to={detailPath(resource.organizationId)}
+                to={similarResourcePath(resource.organizationId)}
                 chips={resource.tags}
                 onClick={() =>
                   trackResourceViewed(
