@@ -62,6 +62,9 @@ module.exports = {
           name: "metro",
           bundler: "metro",
           platform: "ios",
+          // Jest never goes through the Expo CLI, so it can't pick up
+          // `experiments.reactCompiler` from app.config.ts
+          supportsReactCompiler: true,
         },
       },
     ],

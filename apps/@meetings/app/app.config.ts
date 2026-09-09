@@ -179,6 +179,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     experiments: {
       // https://expo.dev/changelog/mitigating-critical-security-vulnerability-in-react-server-components#react-versions-in-a-monorepo
       autolinkingModuleResolution: true,
+      // Expo forwards this to babel-preset-expo as `supportsReactCompiler`
+      reactCompiler: true,
     },
   };
 };

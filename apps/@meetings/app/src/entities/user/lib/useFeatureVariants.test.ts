@@ -20,13 +20,19 @@ import { renderHook } from "@testing-library/react-native";
 import { useFeatureVariants } from "./useFeatureVariants";
 
 const mockUseUserContext = jest.fn();
+let mockIsProd = false;
 
 jest.mock("../model/UserContext", () => ({
   useUserContext: () => mockUseUserContext(),
 }));
 
+// A getter rather than a fixed value so the prod cases can flip it per-test.
+// Re-requiring the hook under jest.resetModules() would give it a second copy
+// of react/compiler-runtime, whose dispatcher the renderer isn't driving.
 jest.mock("~@meetings/app/shared/config", () => ({
-  IS_PROD: false,
+  get IS_PROD() {
+    return mockIsProd;
+  },
 }));
 
 const PAST_DATE = "2020-01-01T00:00:00.000Z";
@@ -35,6 +41,7 @@ const FUTURE_DATE = "2099-01-01T00:00:00.000Z";
 describe("useFeatureVariants", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockIsProd = false;
   });
 
   describe("when featureVariants is undefined", () => {
@@ -127,21 +134,8 @@ describe("useFeatureVariants", () => {
     });
 
     describe("in production", () => {
-      let useFeatureVariantsProd: typeof useFeatureVariants;
-
       beforeEach(() => {
-        jest.resetModules();
-        jest.doMock("~@meetings/app/shared/config", () => ({ IS_PROD: true }));
-        jest.doMock("../model/UserContext", () => ({
-          useUserContext: () => mockUseUserContext(),
-        }));
-
-        useFeatureVariantsProd =
-          require("./useFeatureVariants").useFeatureVariants;
-      });
-
-      afterEach(() => {
-        jest.resetModules();
+        mockIsProd = true;
       });
 
       it("returns false for a variant with no activeDate since none are in DEFAULT_FEATURE_VARIANTS", () => {
@@ -151,7 +145,7 @@ describe("useFeatureVariants", () => {
           isSkipAuthUser: false,
         });
 
-        const { result } = renderHook(() => useFeatureVariantsProd());
+        const { result } = renderHook(() => useFeatureVariants());
 
         expect(result.current.isVariantActive("feedbackTab")).toBe(false);
       });
@@ -163,7 +157,7 @@ describe("useFeatureVariants", () => {
           isSkipAuthUser: false,
         });
 
-        const { result } = renderHook(() => useFeatureVariantsProd());
+        const { result } = renderHook(() => useFeatureVariants());
 
         expect(result.current.isVariantActive("feedbackTab")).toBe(true);
       });
