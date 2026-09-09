@@ -65,6 +65,8 @@ const cniFieldSchema = z.object({
   fieldValue: z.string(),
   quotes: z.array(z.string()),
   lastVerifiedDate: z.string(),
+  documentId: z.string(),
+  extractorVersionId: z.string(),
 });
 
 const cniEmploymentFieldsSchema = z.object({
@@ -100,8 +102,6 @@ const cniFeedbackSnapshotSchema = z.object({
     z.object({
       summaryId: z.string(),
       cniSnapshot: z.union([cniEmploymentFieldsSchema, cniHousingFieldsSchema]),
-      // purposefully loosely defined, since the runId infra is still being iterated
-      cniRunIDs: z.object({}).catchall(z.string()),
     }),
   ),
 });

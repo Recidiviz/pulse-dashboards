@@ -32,6 +32,8 @@ declare global {
       fieldValue: string; // e.g. "employed"
       quotes: string[]; // Supporting quotes/citations for this field
       lastVerifiedDate: string; // The most recent date of a quote that supported this field
+      documentId: string; // For reference + evaluation purposes
+      extractorVersionId: string; // For reference + evaluation purposes
     };
     type CNIEmploymentFields = {
       primaryStatus: CNIField;
@@ -57,14 +59,11 @@ declare global {
     }> & { primaryStatus: CNIField };
     type CNIFields = CNIEmploymentFields | CNIHousingFields;
 
-    type CNIRunIDs = Record<string, string>;
-
     type CNIFeedbackSnapshot = {
       displayText: string;
       summarySnapshots: Array<{
         summaryId: string;
         cniSnapshot: CNIFields;
-        cniRunIDs: CNIRunIDs;
       }>;
     };
   }

@@ -212,9 +212,6 @@ export async function main(prisma: PrismaClient) {
               id: `cni-id-${summary.category}-${clientIndex}`,
               category: summary.category,
               cniFields: summary.fields,
-              cniRunIds: {
-                extractorId: `extractor-id-${summary.category}-${clientIndex}`,
-              },
               lastImportedAt: importedAt,
             },
             update: {

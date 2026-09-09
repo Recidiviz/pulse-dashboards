@@ -50,10 +50,9 @@ export function CaseNoteSummaryFeedbackButtons({
 
   const snapshot: CNIFeedbackSnapshot = {
     displayText: segments.map(({ content }) => content).join(""),
-    summarySnapshots: summaries.map(({ id, cniFields, cniRunIds }) => ({
+    summarySnapshots: summaries.map(({ id, cniFields }) => ({
       summaryId: id,
       cniSnapshot: cniFields,
-      cniRunIDs: cniRunIds,
     })),
   };
 

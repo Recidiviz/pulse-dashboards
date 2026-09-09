@@ -1275,6 +1275,8 @@ type CNIField = {
   fieldValue: string; // e.g. "employed"
   quotes: string[]; // Supporting quotes/citations for this field
   lastVerifiedDate: string; // The most recent date of a quote that supported this field
+  documentId: string; // For reference + evaluation purposes
+  extractorVersionId: string; // For reference + evaluation purposes
 };
 type CNIEmploymentFields = {
   primaryStatus: CNIField;
@@ -1313,6 +1315,8 @@ export const CLIENT_CNI_SUMMARIES: DemoCNISummary[][] = [
           fieldValue: "housed",
           quotes: ["She verified her address"],
           lastVerifiedDate: "2026-07-14",
+          documentId: "doc-housing-1",
+          extractorVersionId: "demo-extractor-v1",
         },
         housedType: {
           fieldValue: "dependent",
@@ -1321,11 +1325,15 @@ export const CLIENT_CNI_SUMMARIES: DemoCNISummary[][] = [
             "her mother and her split rent",
           ],
           lastVerifiedDate: "2026-07-14",
+          documentId: "doc-housing-1",
+          extractorVersionId: "demo-extractor-v1",
         },
         address: {
           fieldValue: "123 Jackson St",
           quotes: ["123 Jackson St"],
           lastVerifiedDate: "2026-07-14",
+          documentId: "doc-housing-1",
+          extractorVersionId: "demo-extractor-v1",
         },
       },
     },
@@ -1336,6 +1344,8 @@ export const CLIENT_CNI_SUMMARIES: DemoCNISummary[][] = [
           fieldValue: "employed",
           quotes: ["She is enjoying her job."],
           lastVerifiedDate: "2026-07-20",
+          documentId: "doc-employment-1",
+          extractorVersionId: "demo-extractor-v1",
         },
         employers: [
           {
@@ -1343,11 +1353,15 @@ export const CLIENT_CNI_SUMMARIES: DemoCNISummary[][] = [
               fieldValue: "Diner",
               quotes: ["I'm still at the Diner"],
               lastVerifiedDate: "2026-07-20",
+              documentId: "doc-employment-1",
+              extractorVersionId: "demo-extractor-v1",
             },
             employmentType: {
               fieldValue: "employee_pt",
               quotes: ["it's part time work"],
               lastVerifiedDate: "2026-07-20",
+              documentId: "doc-employment-1",
+              extractorVersionId: "demo-extractor-v1",
             },
           },
         ],
@@ -1363,6 +1377,8 @@ export const CLIENT_CNI_SUMMARIES: DemoCNISummary[][] = [
           fieldValue: "housed",
           quotes: ["She likes living at the Temporary Housing"],
           lastVerifiedDate: "2026-07-14",
+          documentId: "doc-housing-2",
+          extractorVersionId: "demo-extractor-v1",
         },
         housedType: {
           fieldValue: "temporary_housing",
@@ -1370,11 +1386,15 @@ export const CLIENT_CNI_SUMMARIES: DemoCNISummary[][] = [
             "would like to continue living at Temporary Housing after the funding is up in order to gain stability",
           ],
           lastVerifiedDate: "2026-07-14",
+          documentId: "doc-housing-2",
+          extractorVersionId: "demo-extractor-v1",
         },
         temporaryHousingName: {
           fieldValue: "Temporary Housing",
           quotes: ["at Temporary Housing"],
           lastVerifiedDate: "2026-07-14",
+          documentId: "doc-housing-2",
+          extractorVersionId: "demo-extractor-v1",
         },
       },
     },
@@ -1387,6 +1407,8 @@ export const CLIENT_CNI_SUMMARIES: DemoCNISummary[][] = [
             "She's trying to switch to a desk job at current employment.",
           ],
           lastVerifiedDate: "2026-07-20",
+          documentId: "doc-employment-2",
+          extractorVersionId: "demo-extractor-v1",
         },
         employers: [
           {
@@ -1394,6 +1416,8 @@ export const CLIENT_CNI_SUMMARIES: DemoCNISummary[][] = [
               fieldValue: "Tractor Supply",
               quotes: ["at Tractor Supply"],
               lastVerifiedDate: "2026-07-20",
+              documentId: "doc-employment-2",
+              extractorVersionId: "demo-extractor-v1",
             },
           },
           {
@@ -1401,6 +1425,8 @@ export const CLIENT_CNI_SUMMARIES: DemoCNISummary[][] = [
               fieldValue: "County Hospital",
               quotes: ["supervisor at the hospital"],
               lastVerifiedDate: "2026-07-20",
+              documentId: "doc-employment-2",
+              extractorVersionId: "demo-extractor-v1",
             },
             jobTitle: {
               fieldValue: "supervisor",
@@ -1409,6 +1435,8 @@ export const CLIENT_CNI_SUMMARIES: DemoCNISummary[][] = [
                 "supervisor at the hospital",
               ],
               lastVerifiedDate: "2026-07-20",
+              documentId: "doc-employment-2",
+              extractorVersionId: "demo-extractor-v1",
             },
           },
         ],

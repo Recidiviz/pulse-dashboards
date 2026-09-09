@@ -449,12 +449,6 @@ model CaseNoteInsightsSummary {
   /// [CNIFields]
   cniFields Json
 
-  // Relevant airflow, document, or LLM hashes for tracing purposes
-  // e.g. extractorVersionId, documentContentsId
-
-  /// [CNIRunIDs]
-  cniRunIds Json
-
   lastImportedAt DateTime
 
   @@unique([clientId, category])
