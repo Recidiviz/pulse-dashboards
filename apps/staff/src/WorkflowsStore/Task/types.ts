@@ -65,6 +65,11 @@ type UsMoInitialTaskDetails = {
   contactCadence: string;
 };
 
+type UsMoAssessmentTaskDetails = {
+  contactCadence: string;
+  mostRecentAssessmentDate: string | null;
+};
+
 type UsMoHomeVisitTaskDetails = UsMoTaskDetails & {
   supplementaryContacts: {
     contactTypes: string;
@@ -188,6 +193,8 @@ export const SUPERVISION_TASK_TYPES = [
   "usMoPositiveHomeVisit",
   "usMoInPersonContact",
   "usMoPositiveContactWithSignificantOther",
+  "usMoCstAssessment",
+  "usMoInitialAssessment",
   "usNdContact",
   "usNdRiskAssessment",
   "usNeOrasAssessment",
@@ -223,6 +230,7 @@ export type SupervisionDetails =
   | UsIdEmploymentDetails
   | UsMoTaskDetails
   | UsMoInitialTaskDetails
+  | UsMoAssessmentTaskDetails
   | UsMoHomeVisitTaskDetails
   | UsNdEmptyDetails
   | UsNeAssessmentDetails
@@ -248,6 +256,8 @@ export type SupervisionDetailsForTask = {
   usMoInitialPositiveHomeVisitSmi: UsMoInitialTaskDetails;
   usMoInPersonContact: UsMoTaskDetails;
   usMoPositiveContactWithSignificantOther: UsMoTaskDetails;
+  usMoCstAssessment: UsMoAssessmentTaskDetails;
+  usMoInitialAssessment: UsMoInitialTaskDetails;
   usNdContact: UsNdEmptyDetails;
   usNdRiskAssessment: UsNdEmptyDetails;
   usNeOrasAssessment: UsNeAssessmentDetails;

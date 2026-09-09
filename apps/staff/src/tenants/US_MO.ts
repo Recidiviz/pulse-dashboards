@@ -20,7 +20,9 @@ import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "~shared-pathways";
 import { TenantConfig } from "../core/models/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
+import UsMoCstAssessmentTask from "../WorkflowsStore/Task/US_MO/UsMoCstAssessmentTask";
 import UsMoEmploymentVerificationTask from "../WorkflowsStore/Task/US_MO/UsMoEmploymentVerificationTask";
+import UsMoInitialAssessmentTask from "../WorkflowsStore/Task/US_MO/UsMoInitialAssessmentTask";
 import UsMoInitialEmploymentVerificationIapTask from "../WorkflowsStore/Task/US_MO/UsMoInitialEmploymentVerificationIapTask";
 import UsMoInitialPositiveContactWithSignificantOtherIapTask from "../WorkflowsStore/Task/US_MO/UsMoInitialPositiveContactWithSignificantOtherIapTask";
 import UsMoInitialPositiveContactWithSignificantOtherSmiTask from "../WorkflowsStore/Task/US_MO/UsMoInitialPositiveContactWithSignificantOtherSmiTask";
@@ -80,6 +82,14 @@ const US_MO_CONFIG = {
       },
       usMoPositiveContactWithSignificantOther: {
         constructor: UsMoPositiveContactWithSignificantOtherTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
+      usMoCstAssessment: {
+        constructor: UsMoCstAssessmentTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
+      usMoInitialAssessment: {
+        constructor: UsMoInitialAssessmentTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
     },
@@ -142,6 +152,14 @@ const US_MO_CONFIG = {
           {
             value: "usMoInPersonContact",
             label: "In-Person Contact",
+          },
+          {
+            value: "usMoCstAssessment",
+            label: "CST Assessment",
+          },
+          {
+            value: "usMoInitialAssessment",
+            label: "Initial ORAS Assessment",
           },
           {
             // Synthetic task-type assigned to user-authored custom tasks
