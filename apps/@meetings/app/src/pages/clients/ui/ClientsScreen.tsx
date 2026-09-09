@@ -133,7 +133,7 @@ export function ClientsScreen() {
                       search={search}
                       sort={sort}
                       setSort={setSort}
-                      sectionTitle="My caseload"
+                      sectionTitle="My caseload results"
                     />
                     <PersonsTable
                       type="client"
@@ -141,7 +141,7 @@ export function ClientsScreen() {
                       search={search}
                       sort={sort}
                       setSort={setSort}
-                      sectionTitle="Results from other caseloads"
+                      sectionTitle="Other caseload results"
                     />
                     {total === 0 && (
                       <View className="flex h-[560px] w-full items-center justify-center">

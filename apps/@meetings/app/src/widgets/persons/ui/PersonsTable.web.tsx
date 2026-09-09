@@ -170,8 +170,8 @@ export function PersonsTable({
   return (
     <>
       {sectionTitle && (
-        <Typography variant="body-m-medium" className="mt-6 text-secondary">
-          {sectionTitle}
+        <Typography variant="body-m-medium" className="mt-5 text-secondary">
+          {sectionTitle} ({total} {total > 1 ? `${type}s` : type})
         </Typography>
       )}
       <View className="mt-2 w-full" style={{ height: TABLE_HEIGHT }}>

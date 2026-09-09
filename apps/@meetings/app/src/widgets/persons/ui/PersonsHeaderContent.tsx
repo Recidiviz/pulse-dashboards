@@ -117,7 +117,7 @@ export function PersonsHeaderContent({
           <Typography className="font-libre-baskerville text-3xl font-semibold text-primary">
             {startCase(personType)}s
           </Typography>
-          <Typography variant="body-s-regular" className="my-2">
+          <Typography variant="body-s-regular" className="mt-2">
             {description}
           </Typography>
         </View>
@@ -137,12 +137,14 @@ export function PersonsHeaderContent({
         </View>
       </View>
       <View className="z-10 mb-3 flex-row items-center justify-between gap-x-3 px-4 md:my-0 md:px-0">
-        <View className="shrink-0 flex-row items-center gap-x-2">
-          <Typography variant="body-s-regular" className="leading-4">
-            {personsCountString}
-          </Typography>
-          {isFetching && <ActivityIndicator size="small" />}
-        </View>
+        {personType === "resident" && (
+          <View className="mt-2 shrink-0 flex-row items-center gap-x-2">
+            <Typography variant="body-s-regular" className="leading-4">
+              {personsCountString}
+            </Typography>
+            {isFetching && <ActivityIndicator size="small" />}
+          </View>
+        )}
         {setSortBy &&
           (caseloadSort && setCaseloadSort ? (
             <PersonsSortMenu
