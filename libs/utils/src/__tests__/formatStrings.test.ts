@@ -21,6 +21,7 @@ import {
   getTicks,
   pluralize,
   pluralizeWord,
+  stripUriSchemes,
 } from "../formatStrings";
 
 describe("formatDate", () => {
@@ -108,5 +109,47 @@ describe("pluralize", () => {
   it("pluralizes when count is not 1", () => {
     expect(pluralize(2, "violation")).toBe("2 violations");
     expect(pluralize(0, "violation")).toBe("0 violations");
+  });
+});
+
+describe("stripUriSchemes", () => {
+  it("strips https:// from a URL", () => {
+    expect(stripUriSchemes("Visit https://example.com for info")).toBe(
+      "Visit example.com for info",
+    );
+  });
+
+  it("strips http:// from a URL", () => {
+    expect(stripUriSchemes("Visit http://example.com for info")).toBe(
+      "Visit example.com for info",
+    );
+  });
+
+  it("strips multiple URI schemes in the same string", () => {
+    expect(
+      stripUriSchemes("See https://example.com and http://foo.org/bar"),
+    ).toBe("See example.com and foo.org/bar");
+  });
+
+  it("strips non-http(s) schemes like ftp://", () => {
+    expect(stripUriSchemes("Download from ftp://files.example.com")).toBe(
+      "Download from files.example.com",
+    );
+  });
+
+  it("leaves text without a URI scheme unchanged", () => {
+    expect(stripUriSchemes("No links here, just text.")).toBe(
+      "No links here, just text.",
+    );
+  });
+
+  it("does not strip scheme-like text with no following non-whitespace", () => {
+    expect(stripUriSchemes("weird case:// ")).toBe("weird case:// ");
+  });
+
+  it("preserves the rest of the URL so it's still readable", () => {
+    expect(stripUriSchemes("https://example.com/path?query=1#hash")).toBe(
+      "example.com/path?query=1#hash",
+    );
   });
 });

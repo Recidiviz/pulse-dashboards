@@ -66,6 +66,15 @@ export function formatName(fullName: string): string {
   }`;
 }
 
+/**
+ * Strips URI schemes (e.g. `https://`, `http://`, `ftp://`) from `markdown` so that any URLs it
+ * contains render as plain, unclickable text instead of being auto-linkified. The rest of the URL
+ * is left intact so it's still readable/copyable.
+ */
+export function stripUriSchemes(markdown: string): string {
+  return markdown.replace(/\b([a-zA-Z][a-zA-Z0-9+.-]*):\/\/(?=\S)/g, "");
+}
+
 export const getTicks = (
   value: number,
 ): { maxTickValue: number; tickValues: number[]; ticksMargin: number } => {
