@@ -34,13 +34,15 @@
     "update-rules-staging": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "firebase --project=staging-backend deploy --only firestore:rules"
+        "cwd": "{workspaceRoot}",
+        "command": "tools/retry-on-permission-error.sh firebase --project=staging-backend deploy --only firestore:rules"
       }
     },
     "update-rules-production": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "firebase --project=production-backend deploy --only firestore:rules"
+        "cwd": "{workspaceRoot}",
+        "command": "tools/retry-on-permission-error.sh firebase --project=production-backend deploy --only firestore:rules"
       }
     }
   },
