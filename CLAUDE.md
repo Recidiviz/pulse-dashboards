@@ -210,6 +210,24 @@ uv run pytest
 - Projects are inferred from `project.json` files
 - Targets like `lint`, `test`, `build` are inferred by plugins
 
+## Shared Claude Skills
+
+Some skills come from the shared [`Recidiviz/claude-skills`](https://github.com/Recidiviz/claude-skills)
+marketplace, declared under `extraKnownMarketplaces` and `enabledPlugins` in `.claude/settings.json`.
+They are invoked with a plugin-namespaced name, so `/create-pr:create-pr` rather than `/create-pr`.
+
+**The `enabledPlugins` declaration does not install anything.** It only turns on a plugin that is
+already installed on your machine. Each developer installs each declared plugin once per machine, in a
+terminal or through the VS Code extension's **Manage plugins** dialog:
+
+```bash
+claude plugin install <name>@recidiviz --scope project
+```
+
+If a declared plugin is not installed, its skills and hooks silently do not load. A session-start hook in
+this repo checks for this and prints the install command for any plugin that is missing. To opt out of a
+declared plugin locally, set it to `false` under `enabledPlugins` in `.claude/settings.local.json`.
+
 ## Code Style
 
 ### License Headers

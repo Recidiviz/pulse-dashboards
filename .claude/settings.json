@@ -121,6 +121,20 @@
     "review-pr-comments@recidiviz": true,
     "security-rules@recidiviz": true
   },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/check-plugin-installs.mjs\"",
+            "statusMessage": "Checking that enabled Claude plugins are installed"
+          }
+        ]
+      }
+    ]
+  },
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
     "OTEL_EXPORTER_OTLP_PROTOCOL": "http/json",
