@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { toTitleCase } from "@artsy/to-title-case";
+import { nameCase } from "@foundernest/namecase";
 import { mapValues } from "lodash-es";
 import { z } from "zod";
 
@@ -106,8 +106,7 @@ export const residentImportSchema = residentCommonSchema
         // a SQL syntax error in bulkUpdate
         { ...personNameDefaults, ...personName },
         // names come through in UPPERCASE which is not what we want to display
-        // TODO(OBT-29534): switch to nameCase, but using titleCase here for comparison to old data
-        (v) => (v ? toTitleCase(v.toLowerCase()) : v),
+        (v) => (v ? nameCase(v) : v),
       );
       return { ...personNameData, ...passthroughFields };
     },

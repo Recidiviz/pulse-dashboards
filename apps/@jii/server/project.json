@@ -72,14 +72,15 @@
     "requires-sops-env:compare-resident-data": {
       "executor": "nx:run-commands",
       "dependsOn": [
-        { "projects": ["@jii/prisma"], "target": "cloudsql-proxy" }
+        { "projects": ["@jii/prisma"], "target": "cloudsql-proxy-up" }
       ],
       "options": {
         "cwd": "{projectRoot}",
         "command": "tsx src/tools/compareResidentData.ts",
         "env": {
           "NODE_ENV": "development",
-          "USE_STAGING_DB": "true"
+          "USE_STAGING_DB": "true",
+          "NODE_OPTIONS": "--max-old-space-size=8192"
         }
       },
       "metadata": {

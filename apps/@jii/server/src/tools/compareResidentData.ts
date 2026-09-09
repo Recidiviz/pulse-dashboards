@@ -16,7 +16,8 @@
 // =============================================================================
 
 import { ArgumentParser } from "argparse";
-import { writeFileSync } from "fs";
+import { mkdirSync, writeFileSync } from "fs";
+import { join } from "path";
 
 import { StateCode, stateCodes } from "~@jii/configs";
 import { getPrismaClient, Resident } from "~@jii/prisma";
@@ -43,6 +44,11 @@ import {
  * and printed at the end (grouped and ordered by state) rather than logged
  * as they're found, so concurrent output doesn't interleave. The same
  * output is also written to a file (see --output) for easier review.
+ *
+ * Whenever a resident's state-specific data mismatches or fails to parse,
+ * the full Firestore `metadata` blob and Prisma `stateSpecificData` blob are
+ * also saved to disk (see --blobs-dir) so the two can be diffed directly,
+ * beyond what the per-field diff messages surface.
  */
 
 const parser = new ArgumentParser({
@@ -67,10 +73,20 @@ parser.add_argument("--output", {
   help: "Path to write full results to (default: compare-resident-data-results.log)",
 });
 
+parser.add_argument("--blobs-dir", {
+  dest: "blobsDir",
+  default: "compare-resident-data-blobs",
+  help:
+    "Directory to save the full firestore/prisma blobs for any resident with a " +
+    "state-specific data mismatch or parse error, for deeper comparison " +
+    "(default: compare-resident-data-blobs)",
+});
+
 type Args = {
   states?: string;
   sampleSize: number;
   outputFile: string;
+  blobsDir: string;
 };
 
 const args = parser.parse_args() as Args;
@@ -120,6 +136,30 @@ type ResidentCheckResult = {
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+/**
+ * Saves the full Firestore `metadata` blob and its Prisma `stateSpecificData`
+ * counterpart to disk, so a mismatch or parse error can be dug into further
+ * than the single-field diff messages allow.
+ */
+function saveMismatchBlobs(
+  blobsDir: string,
+  stateCode: StateCode,
+  pseudonymizedId: string,
+  firestoreMetadata: unknown,
+  prismaStateSpecificData: unknown,
+): void {
+  const dir = join(blobsDir, stateCode);
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(
+    join(dir, `${pseudonymizedId}-firestore.json`),
+    `${JSON.stringify(firestoreMetadata, null, 2)}\n`,
+  );
+  writeFileSync(
+    join(dir, `${pseudonymizedId}-prisma.json`),
+    `${JSON.stringify(prismaStateSpecificData, null, 2)}\n`,
+  );
 }
 
 /**
@@ -189,6 +229,7 @@ function diffValues(
 async function compareResident(
   stateCode: StateCode,
   firestoreResident: WorkflowsResidentRecord,
+  blobsDir: string,
 ): Promise<ResidentCheckResult> {
   const { pseudonymizedId } = firestoreResident;
   const messages: Array<string> = [];
@@ -246,6 +287,13 @@ async function compareResident(
       `[compareResidentData] Failed to parse stateSpecificData for pseudonymizedId=${pseudonymizedId}: ` +
         validation.error.message,
     );
+    saveMismatchBlobs(
+      blobsDir,
+      stateCode,
+      pseudonymizedId,
+      firestoreResident.metadata,
+      resident.stateSpecificData,
+    );
     return {
       checked: true,
       missingFromPrisma: false,
@@ -272,6 +320,16 @@ async function compareResident(
   );
   messages.push(...ssdMessages);
 
+  if (ssdMessages.length > 0) {
+    saveMismatchBlobs(
+      blobsDir,
+      stateCode,
+      pseudonymizedId,
+      firestoreResident.metadata,
+      validation.data,
+    );
+  }
+
   return {
     checked: true,
     missingFromPrisma: false,
@@ -285,6 +343,7 @@ async function compareResident(
 async function checkState(
   stateCode: StateCode,
   sampleSize: number,
+  blobsDir: string,
 ): Promise<{ summary: StateSummary; messages: Array<string> }> {
   const residentsQuery = getFirestoreCollectionQuerier(
     stateCode,
@@ -328,7 +387,7 @@ async function checkState(
         };
       }
 
-      return compareResident(stateCode, firestoreResident);
+      return compareResident(stateCode, firestoreResident, blobsDir);
     }),
   );
 
@@ -357,11 +416,14 @@ async function main() {
   const stateCodes = getStateCodesToCheck();
 
   const results = await Promise.all(
-    stateCodes.map((stateCode) => checkState(stateCode, args.sampleSize)),
+    stateCodes.map((stateCode) =>
+      checkState(stateCode, args.sampleSize, args.blobsDir),
+    ),
   );
 
   const outputLines: Array<string> = [];
   let hasAnyMismatch = false;
+  let hasAnySavedBlobs = false;
 
   stateCodes.forEach((stateCode, i) => {
     const { summary, messages } = results[i];
@@ -386,12 +448,24 @@ async function main() {
     ) {
       hasAnyMismatch = true;
     }
+
+    if (summary.stateSpecificDataMismatches > 0 || summary.ssdParseErrors > 0) {
+      hasAnySavedBlobs = true;
+    }
   });
 
   writeFileSync(args.outputFile, `${outputLines.join("\n")}\n`);
   console.log(
     `[compareResidentData] Full results written to ${args.outputFile}`,
   );
+
+  if (hasAnySavedBlobs) {
+    console.log(
+      `[compareResidentData] Firestore/Prisma blobs for every state-specific ` +
+        `data mismatch or parse error were saved under ${args.blobsDir}/<stateCode>/ ` +
+        `as <pseudonymizedId>-firestore.json and <pseudonymizedId>-prisma.json`,
+    );
+  }
 
   if (hasAnyMismatch) {
     process.exitCode = 1;

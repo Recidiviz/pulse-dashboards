@@ -42,9 +42,9 @@ const personData = {
   display_id: "D001",
   state_code: "US_NC",
   person_name: JSON.stringify({
-    given_names: "Jane",
+    given_names: "JANE",
     middle_names: "Q",
-    surname: "Doe",
+    surname: "DOE",
   }),
   facility_id: "FAC1",
   unit_id: "UN1",
