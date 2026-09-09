@@ -59,14 +59,14 @@ export default function DrawerNavigator() {
     isRecidivizUser,
   } = useUserContext();
   const { isLoading: isStateLoading } = useStateSelection();
-  const { agencyConfigs, isLoading: isLoadingConfigs } = useAgencyConfigs();
+  const { agencyConfigs, isPending: isConfigsPending } = useAgencyConfigs();
   const { isMobile, isWeb } = usePlatform();
   const { data: userData, isLoading: isUserLoading } = useGetUser();
 
   const hasSeenOnboarding = userData ? userData.hasSeenOnboarding : false;
 
   // Wait for user metadata and state context to load before checking access
-  if (isLoading || isStateLoading || isLoadingConfigs || isUserLoading) {
+  if (isLoading || isStateLoading || isConfigsPending || isUserLoading) {
     return <Loading message="Loading..." />;
   }
 

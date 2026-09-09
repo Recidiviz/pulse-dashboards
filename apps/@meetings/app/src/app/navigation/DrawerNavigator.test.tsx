@@ -104,6 +104,7 @@ describe("DrawerNavigator", () => {
       },
     } as never,
     isLoading: false,
+    isPending: false,
   });
 
   mockUseGetUser.mockReturnValue({
@@ -164,6 +165,38 @@ describe("DrawerNavigator", () => {
         setSelectedStateCode: jest.fn(),
         canSelectStateCode: false,
         currentStateName: "Nebraska",
+      });
+
+      render(<DrawerNavigator />);
+      expect(screen.getByText("Loading...")).toBeTruthy();
+    });
+
+    it("shows loading when agency configs are pending, even if isLoading is false", () => {
+      mockUseUserContext.mockReturnValue({
+        hasSupervisionAccess: true,
+        hasFacilitiesAccess: false,
+        hasSupervisionAssistantAccess: false,
+        hasFacilitiesAssistantAccess: false,
+        hasCasePlanningAssistantAccess: false,
+        isLoading: false,
+        stateCode: "US_NE",
+        isSkipAuthUser: false,
+        recidivizAllowedStates: ["US_NE"],
+        onLogout: jest.fn(),
+        getCredentials: jest.fn(),
+        isRecidivizUser: false,
+      });
+      mockUseStateSelection.mockReturnValue({
+        isLoading: false,
+        selectedStateCode: "US_NE",
+        setSelectedStateCode: jest.fn(),
+        canSelectStateCode: false,
+        currentStateName: "Nebraska",
+      });
+      mockUseAgencyConfigs.mockReturnValueOnce({
+        agencyConfigs: {} as never,
+        isLoading: false,
+        isPending: true,
       });
 
       render(<DrawerNavigator />);
