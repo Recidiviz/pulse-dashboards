@@ -15,11 +15,51 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { StateCode } from "~@meetings/prisma/client/enums";
 import env from "~@meetings/trpc/env";
 
 const SLACK_WEBHOOK_URL = process.env["SLACK_WEBHOOK_URL"];
 const SLACK_NOTIFICATIONS_ENABLED =
   process.env["SLACK_NOTIFICATIONS_ENABLED"] === "true";
+
+// Fields the Slack meeting notifications need about a meeting's staff and person.
+export const MEETING_NOTIFICATION_SELECT = {
+  staffEmail: true,
+  client: { select: { pseudonymizedId: true } },
+  resident: { select: { pseudonymizedId: true } },
+  clientId: true,
+  residentId: true,
+} as const;
+
+export function buildMeetingNotificationParams(
+  meeting: {
+    staffEmail: string;
+    client: { pseudonymizedId: string } | null;
+    resident: { pseudonymizedId: string } | null;
+    clientId: bigint | null;
+    residentId: bigint | null;
+  },
+  { meetingId, stateCode }: { meetingId: string; stateCode: StateCode },
+) {
+  let personType: "client" | "resident" | undefined;
+  if (meeting.clientId != null) {
+    personType = "client";
+  } else if (meeting.residentId != null) {
+    personType = "resident";
+  }
+
+  return {
+    staffEmail: meeting.staffEmail,
+    stateCode,
+    personPseudoId:
+      meeting.client?.pseudonymizedId ??
+      meeting.resident?.pseudonymizedId ??
+      meetingId,
+    meetingId,
+    personType,
+    personId: (meeting.clientId ?? meeting.residentId)?.toString(),
+  };
+}
 
 function getValidatedWebhookUrl(): string | null {
   if (!SLACK_NOTIFICATIONS_ENABLED || !SLACK_WEBHOOK_URL) return null;
@@ -81,13 +121,15 @@ export function buildMeetingUrl({
   return `${baseUrl}/${segment}/${encodeURIComponent(personId)}/meetings/${encodeURIComponent(meetingId)}?stateCode=${encodeURIComponent(stateCode)}`;
 }
 
-type MeetingCompletedParams = {
+type MeetingSlackParams = {
   staffEmail: string;
   stateCode: string;
   personPseudoId: string;
   meetingId: string;
   personType?: "client" | "resident";
   personId?: string;
+  errorStep?: "stitching" | "transcription" | "notetaking";
+  additionalInfo?: string;
 };
 
 export function buildMeetingCompletedMessage({
@@ -97,12 +139,13 @@ export function buildMeetingCompletedMessage({
   meetingId,
   personType,
   personId,
-}: MeetingCompletedParams): string {
+}: MeetingSlackParams): string {
   const lines = [
     "Meeting completed",
     `• Staff: ${staffEmail}`,
     `• State: ${stateCode}`,
-    `• Client/Resident ID: ${personPseudoId}`,
+    `• Client/Resident Pseudonymized ID: ${personPseudoId}`,
+    `• Person Type: ${personType ?? "unknown"}`,
     `• Meeting ID: ${meetingId}`,
   ];
 
@@ -119,42 +162,49 @@ export function buildMeetingCompletedMessage({
   return lines.join("\n");
 }
 
-export async function postMeetingCompletedNotification(
-  params: MeetingCompletedParams,
-): Promise<void> {
-  await postSlackMessage(buildMeetingCompletedMessage(params));
-}
-
-type MeetingErrorParams = {
-  meetingId: string;
-  stateCode: string;
-  errorStep: "stitching" | "transcription" | "notetaking";
-  staffEmail: string;
-  additionalInfo?: string;
-};
-
-export function buildMeetingErrorMessage({
-  meetingId,
-  stateCode,
-  errorStep,
+export function buildMeetingFailureMessage({
   staffEmail,
+  stateCode,
+  personPseudoId,
+  meetingId,
+  personType,
+  personId,
+  errorStep,
   additionalInfo,
-}: MeetingErrorParams): string {
+}: MeetingSlackParams): string {
   const lines = [
-    `:warning: Meeting processing error (${errorStep})`,
-    `• Staff: ${staffEmail}`,
-    `• Meeting ID: ${meetingId}`,
-    `• State: ${stateCode}`,
+    `:warning: Meeting processing error`,
     `• Failed step: ${errorStep}`,
+    `• Staff: ${staffEmail}`,
+    `• State: ${stateCode}`,
+    `• Client/Resident Pseudonymized ID: ${personPseudoId}`,
+    `• Person Type: ${personType ?? "unknown"}`,
+    `• Meeting ID: ${meetingId}`,
   ];
 
   if (additionalInfo) lines.push(`• Additional info: ${additionalInfo}`);
 
+  if (personType && personId) {
+    const meetingUrl = buildMeetingUrl({
+      stateCode,
+      personType,
+      personId,
+      meetingId,
+    });
+    if (meetingUrl) lines.push(`• <${meetingUrl}|View meeting>`);
+  }
+
   return lines.join("\n");
 }
 
-export async function postMeetingErrorNotification(
-  params: MeetingErrorParams,
+export async function postMeetingCompletedNotification(
+  params: MeetingSlackParams,
 ): Promise<void> {
-  await postSlackMessage(buildMeetingErrorMessage(params));
+  await postSlackMessage(buildMeetingCompletedMessage(params));
+}
+
+export async function postMeetingErrorNotification(
+  params: MeetingSlackParams,
+): Promise<void> {
+  await postSlackMessage(buildMeetingFailureMessage(params));
 }

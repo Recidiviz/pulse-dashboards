@@ -71,6 +71,8 @@ import { getAgencyConfig } from "~@meetings/trpc/routes/config/utils";
 import { getPersonNameTokens } from "~@meetings/trpc/routes/meeting.helpers";
 import { queueStitchingTask } from "~@meetings/trpc/routes/meeting/utils";
 import {
+  buildMeetingNotificationParams,
+  MEETING_NOTIFICATION_SELECT,
   postMeetingCompletedNotification,
   postMeetingErrorNotification,
 } from "~@meetings/trpc/services/slack";
@@ -298,11 +300,11 @@ export function registerTaskRoutes(app: FastifyInstance) {
         const prisma = getPrismaClientForStateCode(stateCode);
 
         // Try and find the meeting and fail fast if it doesn't exist
-        const { staffEmail } = await prisma.meeting.findUniqueOrThrow({
+        const existingMeeting = await prisma.meeting.findUniqueOrThrow({
           where: {
             id: meetingId,
           },
-          select: { staffEmail: true },
+          select: MEETING_NOTIFICATION_SELECT,
         });
 
         try {
@@ -356,10 +358,11 @@ export function registerTaskRoutes(app: FastifyInstance) {
           });
 
           postMeetingErrorNotification({
-            meetingId,
-            stateCode,
+            ...buildMeetingNotificationParams(existingMeeting, {
+              meetingId,
+              stateCode,
+            }),
             errorStep: "stitching",
-            staffEmail,
           }).catch((err) => {
             captureException(err);
             console.error("Failed to post Slack error notification", err);
@@ -416,11 +419,11 @@ export function registerTaskRoutes(app: FastifyInstance) {
         const prisma = getPrismaClientForStateCode(stateCode);
 
         // Try and find the meeting and fail fast if it doesn't exist
-        const { staffEmail } = await prisma.meeting.findUniqueOrThrow({
+        const existingMeeting = await prisma.meeting.findUniqueOrThrow({
           where: {
             id: meetingId,
           },
-          select: { staffEmail: true },
+          select: MEETING_NOTIFICATION_SELECT,
         });
 
         try {
@@ -524,10 +527,11 @@ export function registerTaskRoutes(app: FastifyInstance) {
           });
 
           postMeetingErrorNotification({
-            meetingId,
-            stateCode,
+            ...buildMeetingNotificationParams(existingMeeting, {
+              meetingId,
+              stateCode,
+            }),
             errorStep: "transcription",
-            staffEmail,
           }).catch((err) => {
             captureException(err);
             console.error("Failed to post Slack error notification", err);
@@ -562,11 +566,11 @@ export function registerTaskRoutes(app: FastifyInstance) {
         const prisma = getPrismaClientForStateCode(stateCode);
 
         // Try and find the meeting and fail fast if it doesn't exist
-        const { staffEmail } = await prisma.meeting.findUniqueOrThrow({
+        const existingMeeting = await prisma.meeting.findUniqueOrThrow({
           where: {
             id: meetingId,
           },
-          select: { staffEmail: true },
+          select: MEETING_NOTIFICATION_SELECT,
         });
 
         let completedMeeting;
@@ -626,13 +630,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
                 },
               },
             },
-            select: {
-              staffEmail: true,
-              client: { select: { pseudonymizedId: true } },
-              resident: { select: { pseudonymizedId: true } },
-              clientId: true,
-              residentId: true,
-            },
+            select: MEETING_NOTIFICATION_SELECT,
           });
         } catch (e) {
           // Set error status at the current stage
@@ -647,10 +645,11 @@ export function registerTaskRoutes(app: FastifyInstance) {
           });
 
           postMeetingErrorNotification({
-            meetingId,
-            stateCode,
+            ...buildMeetingNotificationParams(existingMeeting, {
+              meetingId,
+              stateCode,
+            }),
             errorStep: "notetaking",
-            staffEmail,
             additionalInfo:
               e instanceof TranscriptValidationError ? e.message : undefined,
           }).catch((err) => {
@@ -664,29 +663,12 @@ export function registerTaskRoutes(app: FastifyInstance) {
 
         // Post-completion side effects — these run after the meeting is already
         // marked COMPLETED, so failures here must not revert the status.
-        const personPseudoId =
-          completedMeeting.client?.pseudonymizedId ??
-          completedMeeting.resident?.pseudonymizedId ??
-          meetingId;
-
-        let personType: "client" | "resident" | undefined;
-        if (completedMeeting.clientId != null) {
-          personType = "client";
-        } else if (completedMeeting.residentId != null) {
-          personType = "resident";
-        }
-        const personId = (
-          completedMeeting.clientId ?? completedMeeting.residentId
-        )?.toString();
-
-        postMeetingCompletedNotification({
-          staffEmail: completedMeeting.staffEmail,
-          stateCode,
-          personPseudoId,
-          meetingId,
-          personType,
-          personId,
-        }).catch((e) => {
+        postMeetingCompletedNotification(
+          buildMeetingNotificationParams(completedMeeting, {
+            meetingId,
+            stateCode,
+          }),
+        ).catch((e) => {
           captureException(e);
           console.error(
             "Failed to post meeting completed Slack notification",

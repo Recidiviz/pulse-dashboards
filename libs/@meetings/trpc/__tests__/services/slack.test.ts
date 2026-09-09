@@ -20,7 +20,7 @@ import { afterEach, describe, expect, test } from "vitest";
 import env from "~@meetings/trpc/env";
 import {
   buildMeetingCompletedMessage,
-  buildMeetingErrorMessage,
+  buildMeetingFailureMessage,
   buildMeetingUrl,
 } from "~@meetings/trpc/services/slack";
 
@@ -65,18 +65,22 @@ describe("buildMeetingCompletedMessage", () => {
     meetingId: "abc",
   };
 
-  const baseMessage = [
-    "Meeting completed",
-    "• Staff: staff@example.com",
-    "• State: US_ID",
-    "• Client/Resident ID: pseudo-1",
-    "• Meeting ID: abc",
-  ].join("\n");
+  const baseMessage = (personType: string) =>
+    [
+      "Meeting completed",
+      "• Staff: staff@example.com",
+      "• State: US_ID",
+      "• Client/Resident Pseudonymized ID: pseudo-1",
+      `• Person Type: ${personType}`,
+      "• Meeting ID: abc",
+    ].join("\n");
 
-  test("without person info, message is unchanged", () => {
+  test("without person info, person type is unknown", () => {
     env.DEPLOY_ENV = "production";
 
-    expect(buildMeetingCompletedMessage(baseParams)).toEqual(baseMessage);
+    expect(buildMeetingCompletedMessage(baseParams)).toEqual(
+      baseMessage("unknown"),
+    );
   });
 
   test("with person info, appends the meeting link", () => {
@@ -89,7 +93,7 @@ describe("buildMeetingCompletedMessage", () => {
         personId: "123",
       }),
     ).toEqual(
-      `${baseMessage}\n• <https://meet.recidiviz.org/clients/123/meetings/abc?stateCode=US_ID|View meeting>`,
+      `${baseMessage("client")}\n• <https://meet.recidiviz.org/clients/123/meetings/abc?stateCode=US_ID|View meeting>`,
     );
   });
 
@@ -102,44 +106,85 @@ describe("buildMeetingCompletedMessage", () => {
         personType: "client",
         personId: "123",
       }),
-    ).toEqual(baseMessage);
+    ).toEqual(baseMessage("client"));
   });
 });
 
-describe("buildMeetingErrorMessage", () => {
+describe("buildMeetingFailureMessage", () => {
   const baseParams = {
     staffEmail: "staff@example.com",
     stateCode: "US_ID",
+    personPseudoId: "pseudo-1",
     meetingId: "abc",
-    errorStep: "notetaking" as const,
+    errorStep: "stitching" as const,
   };
 
-  const baseMessage = [
-    ":warning: Meeting processing error (notetaking)",
-    "• Staff: staff@example.com",
-    "• Meeting ID: abc",
-    "• State: US_ID",
-    "• Failed step: notetaking",
-  ].join("\n");
+  test("without person info, includes the failed step", () => {
+    env.DEPLOY_ENV = "production";
 
-  test("without additional info, message is unchanged", () => {
-    expect(buildMeetingErrorMessage(baseParams)).toEqual(baseMessage);
+    expect(buildMeetingFailureMessage(baseParams)).toEqual(
+      [
+        ":warning: Meeting processing error",
+        "• Failed step: stitching",
+        "• Staff: staff@example.com",
+        "• State: US_ID",
+        "• Client/Resident Pseudonymized ID: pseudo-1",
+        "• Person Type: unknown",
+        "• Meeting ID: abc",
+      ].join("\n"),
+    );
+  });
+
+  test("with person info, appends the meeting link", () => {
+    env.DEPLOY_ENV = "production";
+
+    expect(
+      buildMeetingFailureMessage({
+        ...baseParams,
+        personType: "resident",
+        personId: "123",
+      }),
+    ).toEqual(
+      [
+        ":warning: Meeting processing error",
+        "• Failed step: stitching",
+        "• Staff: staff@example.com",
+        "• State: US_ID",
+        "• Client/Resident Pseudonymized ID: pseudo-1",
+        "• Person Type: resident",
+        "• Meeting ID: abc",
+        "• <https://meet.recidiviz.org/residents/123/meetings/abc?stateCode=US_ID|View meeting>",
+      ].join("\n"),
+    );
   });
 
   test("with additional info, appends the context line", () => {
+    env.DEPLOY_ENV = "production";
+
     expect(
-      buildMeetingErrorMessage({
+      buildMeetingFailureMessage({
         ...baseParams,
         additionalInfo: "Transcript too short: 12 words (minimum 50)",
       }),
     ).toEqual(
-      `${baseMessage}\n• Additional info: Transcript too short: 12 words (minimum 50)`,
+      [
+        ":warning: Meeting processing error",
+        "• Failed step: stitching",
+        "• Staff: staff@example.com",
+        "• State: US_ID",
+        "• Client/Resident Pseudonymized ID: pseudo-1",
+        "• Person Type: unknown",
+        "• Meeting ID: abc",
+        "• Additional info: Transcript too short: 12 words (minimum 50)",
+      ].join("\n"),
     );
   });
 
   test("with empty additional info, omits the context line", () => {
+    env.DEPLOY_ENV = "production";
+
     expect(
-      buildMeetingErrorMessage({ ...baseParams, additionalInfo: "" }),
-    ).toEqual(baseMessage);
+      buildMeetingFailureMessage({ ...baseParams, additionalInfo: "" }),
+    ).toEqual(buildMeetingFailureMessage(baseParams));
   });
 });
