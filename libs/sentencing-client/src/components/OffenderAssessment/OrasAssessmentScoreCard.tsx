@@ -20,9 +20,9 @@ import moment from "moment";
 import React from "react";
 
 import {
-  InvestigationTypeNotice,
-  InvestigationTypeNoticeControls,
-} from "../SARDetails/InvestigationTypeNotice";
+  ReportTypeNotice,
+  ReportTypeNoticeControls,
+} from "../SARDetails/ReportTypeNotice";
 import { useStore } from "../StoreProvider/StoreProvider";
 import {
   AssessmentTypeKey,
@@ -39,7 +39,7 @@ interface ORASHeaderProps {
   hasORASData: boolean;
   children: React.ReactNode;
   onOpenForm: () => void;
-  presenter: InvestigationTypeNoticeControls;
+  presenter: ReportTypeNoticeControls;
 }
 interface OrasAssessmentScoreCardProps {
   assessmentScore: number | null;
@@ -51,7 +51,7 @@ interface OrasAssessmentScoreCardProps {
   ORASEnteredManually: boolean;
   hasORASData: boolean;
   onOpenForm: () => void;
-  presenter: InvestigationTypeNoticeControls;
+  presenter: ReportTypeNoticeControls;
 }
 
 const ORASCardWrapper = observer(function ORASCardWrapper({
@@ -65,7 +65,7 @@ const ORASCardWrapper = observer(function ORASCardWrapper({
   return (
     <Styled.Card>
       <Styled.NoticeWrapper>
-        <InvestigationTypeNotice presenter={presenter} />
+        <ReportTypeNotice presenter={presenter} />
       </Styled.NoticeWrapper>
       <Styled.CardTitle>
         <ORASTitle>ORAS Assessment Score</ORASTitle>

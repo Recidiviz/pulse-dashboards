@@ -26,15 +26,15 @@ import {
 /** True when this officer is assigned only the Victim Impact section. */
 export const isPSRVictimImpactOnly = (
   isVictimImpactOnly: SAR["isVictimImpactOnly"],
-  investigationType: SAR["investigationType"] | undefined,
-): boolean => isVictimImpactOnly === true && investigationType === "PSR";
+  reportType: SAR["reportType"] | undefined,
+): boolean => isVictimImpactOnly === true && reportType === "PSR";
 
 /** True when this officer is assigned everything other than the Victim
  * Impact section. */
 export const isPSRAllExceptVictimImpact = (
   isVictimImpactOnly: SAR["isVictimImpactOnly"],
-  investigationType: SAR["investigationType"] | undefined,
-): boolean => isVictimImpactOnly === false && investigationType === "PSR";
+  reportType: SAR["reportType"] | undefined,
+): boolean => isVictimImpactOnly === false && reportType === "PSR";
 
 /**
  * Whether a section's data should render for this officer, in both the DOM
@@ -56,25 +56,25 @@ export const isPSRAllExceptVictimImpact = (
 export const shouldShowSARSection = (
   section: SARSectionName,
   isVictimImpactOnly: SAR["isVictimImpactOnly"],
-  investigationType: SAR["investigationType"] | undefined,
+  reportType: SAR["reportType"] | undefined,
   defendantDeclinedToParticipate: SAR["defendantDeclinedToParticipate"],
 ): boolean => {
   if (
     section === SARSection.VICTIM_IMPACT &&
-    isPSRAllExceptVictimImpact(isVictimImpactOnly, investigationType)
+    isPSRAllExceptVictimImpact(isVictimImpactOnly, reportType)
   ) {
     return false;
   }
   if (
     section === SARSection.RECOMMENDATION &&
     defendantDeclinedToParticipate &&
-    !isPSRVictimImpactOnly(isVictimImpactOnly, investigationType)
+    !isPSRVictimImpactOnly(isVictimImpactOnly, reportType)
   ) {
     return true;
   }
 
   let sections: SARSectionName[];
-  if (isPSRVictimImpactOnly(isVictimImpactOnly, investigationType)) {
+  if (isPSRVictimImpactOnly(isVictimImpactOnly, reportType)) {
     sections = [SARSection.VICTIM_IMPACT, SARSection.SUMMARY];
   } else if (defendantDeclinedToParticipate === false) {
     sections = [...SAR_REPORT_SECTIONS];

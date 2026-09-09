@@ -49,8 +49,8 @@ export class PriorTreatmentHistoryPresenter {
     return this.sarDetailsPresenter.defendantDeclinedToParticipate;
   }
 
-  get investigationType(): SARDetailsPresenter["investigationType"] {
-    return this.sarDetailsPresenter.investigationType;
+  get reportType(): SARDetailsPresenter["reportType"] {
+    return this.sarDetailsPresenter.reportType;
   }
 
   get isReportTypeLocked(): SARDetailsPresenter["isReportTypeLocked"] {

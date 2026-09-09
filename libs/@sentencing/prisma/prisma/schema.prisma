@@ -327,7 +327,7 @@ enum DomainRiskLevel {
   HIGH
 }
 
-enum InvestigationType {
+enum SARReportType {
   SAR
   PSR
 }
@@ -613,9 +613,9 @@ model SentencingAssessmentReport {
   dueDate            DateTime?
   courtDate          DateTime?
   completionDate     DateTime?
-  investigationType  InvestigationType @default(SAR)
-  // Locks whether investigationType can be changed
-  isReportTypeLocked Boolean? 
+  reportType         SARReportType @default(SAR)
+  // Locks whether reportType can be changed
+  isReportTypeLocked Boolean?
 
   client   Client @relation(fields: [clientId], references: [externalId])
   clientId String

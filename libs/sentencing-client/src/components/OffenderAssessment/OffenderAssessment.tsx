@@ -19,7 +19,7 @@ import { observer } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
 
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
-import { InvestigationTypeNotice } from "../SARDetails/InvestigationTypeNotice";
+import { ReportTypeNotice } from "../SARDetails/ReportTypeNotice";
 import { SectionContainer } from "../SARDetails/SARDetails.styles";
 import { useStore } from "../StoreProvider/StoreProvider";
 import { RiskLevelKey } from "./constants";
@@ -152,7 +152,7 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
     if (presenter.defendantDeclinedToParticipate) {
       return (
         <SectionContainer>
-          <InvestigationTypeNotice presenter={presenter} />
+          <ReportTypeNotice presenter={presenter} />
           <DomainCard
             title="ORAS Assessment"
             summaryValue={presenter.SARData?.defendantStatement ?? null}

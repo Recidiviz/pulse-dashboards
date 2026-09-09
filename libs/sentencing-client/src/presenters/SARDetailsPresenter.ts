@@ -140,7 +140,7 @@ const PROGRESS_SECTIONS: ProgressSection[] = [
   SARSection.RECOMMENDATION,
 ];
 
-export type InvestigationType = SAR["investigationType"];
+export type SARReportType = SAR["reportType"];
 
 export class SARDetailsPresenter implements Hydratable {
   private hydrator: HydratesFromSource;
@@ -375,7 +375,7 @@ export class SARDetailsPresenter implements Hydratable {
     return shouldShowSARSection(
       section,
       this.isVictimImpactOnly,
-      this.investigationType,
+      this.reportType,
       this.defendantDeclinedToParticipate,
     );
   }
@@ -404,8 +404,8 @@ export class SARDetailsPresenter implements Hydratable {
     return this.SARData?.isVictimImpactOnly ?? null;
   }
 
-  get investigationType(): InvestigationType | undefined {
-    return this.SARData?.investigationType;
+  get reportType(): SARReportType | undefined {
+    return this.SARData?.reportType;
   }
 
   get isReportTypeLocked(): boolean | null | undefined {
@@ -431,7 +431,7 @@ export class SARDetailsPresenter implements Hydratable {
    */
   get showReportTypeCard(): boolean {
     return (
-      (this.investigationType === "PSR" &&
+      (this.reportType === "PSR" &&
         this.isVictimImpactOnly === null &&
         this.isPSRBuilderActive) ||
       this.isChangingReportType
@@ -539,25 +539,25 @@ export class SARDetailsPresenter implements Hydratable {
     };
   }
 
-  async updateInvestigation(
-    investigationType: InvestigationType,
+  async updateReportType(
+    reportType: SARReportType,
     isVictimImpactOnly: boolean | null,
   ): Promise<void> {
     const sarData = this.SARData;
     if (!sarData) return;
 
     const prev = {
-      investigationType: sarData.investigationType,
+      reportType: sarData.reportType,
       isVictimImpactOnly: sarData.isVictimImpactOnly ?? null,
     };
 
     runInAction(() => {
-      this.updateLocalInvestigation(investigationType, isVictimImpactOnly);
+      this.updateLocalReportType(reportType, isVictimImpactOnly);
     });
 
     try {
       await this.sentencingStore.apiClient.updateSARDetails(sarData.id, {
-        investigationType: investigationType,
+        reportType: reportType,
         isVictimImpactOnly: isVictimImpactOnly,
       });
       runInAction(() => {
@@ -565,10 +565,7 @@ export class SARDetailsPresenter implements Hydratable {
       });
     } catch (e) {
       runInAction(() => {
-        this.updateLocalInvestigation(
-          prev.investigationType,
-          prev.isVictimImpactOnly,
-        );
+        this.updateLocalReportType(prev.reportType, prev.isVictimImpactOnly);
       });
       throw e;
     }
@@ -725,14 +722,12 @@ export class SARDetailsPresenter implements Hydratable {
 
   /** True when this officer is assigned everything other than the Victim Impact section. */
   get isPSRAllExceptVictimImpact(): boolean {
-    return (
-      this.isVictimImpactOnly === false && this.investigationType === "PSR"
-    );
+    return this.isVictimImpactOnly === false && this.reportType === "PSR";
   }
 
   /** True when this officer is assigned only the Victim Impact section. */
   get isPSRVictimImpactOnly(): boolean {
-    return this.isVictimImpactOnly === true && this.investigationType === "PSR";
+    return this.isVictimImpactOnly === true && this.reportType === "PSR";
   }
 
   private get sectionFieldCounts(): { completed: number; total: number } {
@@ -922,15 +917,15 @@ export class SARDetailsPresenter implements Hydratable {
   }
 
   /**
-   * Updates the investigation type/scope in both the detail record and the
+   * Updates the report type/scope in both the detail record and the
    * dashboard list. Must be called inside a runInAction block.
    */
-  private updateLocalInvestigation(
-    investigationType: InvestigationType,
+  private updateLocalReportType(
+    reportType: SARReportType,
     isVictimImpactOnly: boolean | null,
   ): void {
     if (this.SARData) {
-      this.SARData.investigationType = investigationType;
+      this.SARData.reportType = reportType;
       this.SARData.isVictimImpactOnly = isVictimImpactOnly;
     }
     // Keep the dashboard list in sync so it reflects immediately without a refresh
@@ -939,7 +934,7 @@ export class SARDetailsPresenter implements Hydratable {
     if (sarList) {
       const sarInList = sarList.find((sar) => sar.id === this.sarId);
       if (sarInList) {
-        sarInList.investigationType = investigationType;
+        sarInList.reportType = reportType;
         sarInList.isVictimImpactOnly = isVictimImpactOnly;
       }
     }

@@ -61,7 +61,7 @@ export const TopHeaderRow: React.FC<{ style?: PdfStyle }> = ({
   // hidden entirely instead.
   const victimImpactOnly = isPSRVictimImpactOnly(
     sar.isVictimImpactOnly,
-    sar.investigationType,
+    sar.reportType,
   );
   return (
     <View

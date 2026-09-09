@@ -29,8 +29,8 @@ import {
 } from "~@sentencing/prisma/client";
 import {
   CaseStatusEnum,
-  InvestigationTypeEnum,
   NeedsToBeAddressedEnum,
+  SARReportTypeEnum,
 } from "~@sentencing/trpc/routes/common/constants";
 import {
   GetSARInput,
@@ -123,7 +123,7 @@ export const updateSARSchema = z.object({
   id: z.string(),
   attributes: z.object({
     status: CaseStatusEnum.optional(),
-    investigationType: InvestigationTypeEnum.optional(),
+    reportType: SARReportTypeEnum.optional(),
     address: z.string().nullable().optional(),
     requestingJudgeName: z.string().nullish(),
     division: z.string().nullish(),

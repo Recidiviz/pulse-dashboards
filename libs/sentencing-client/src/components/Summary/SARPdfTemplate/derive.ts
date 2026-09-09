@@ -104,7 +104,7 @@ export const shouldShowInReport = (
   shouldShowSARSection(
     section,
     sar.isVictimImpactOnly,
-    sar.investigationType,
+    sar.reportType,
     sar.defendantDeclinedToParticipate,
   );
 

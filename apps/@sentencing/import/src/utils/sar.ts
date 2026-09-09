@@ -21,8 +21,8 @@ import { SARImportSchema } from "~@sentencing/import/models";
 import {
   AssessmentType,
   DomainRiskLevel,
-  InvestigationType,
   PrismaClient,
+  SARReportType,
 } from "~@sentencing/prisma/client";
 
 const EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE: Record<
@@ -201,12 +201,10 @@ export async function transformAndLoadSARData(
 
     if (isReportTypeLocked === undefined || isReportTypeLocked === null) {
       // If the SAR does not already exist, or does not yet have `isReportTypeLocked`, update it.
-      // This keeps us from overwriting investigation types that have been changed by the user.
-      const investigationType =
-        sarData.investigation_type ?? InvestigationType.SAR;
-      baseFields["investigationType"] = investigationType;
-      baseFields["isReportTypeLocked"] =
-        investigationType === InvestigationType.SAR;
+      // This keeps us from overwriting report types that have been changed by the user.
+      const reportType = sarData.report_type ?? SARReportType.SAR;
+      baseFields["reportType"] = reportType;
+      baseFields["isReportTypeLocked"] = reportType === SARReportType.SAR;
     }
 
     // Upsert base fields. On create, include ORAS fields since the record is new and

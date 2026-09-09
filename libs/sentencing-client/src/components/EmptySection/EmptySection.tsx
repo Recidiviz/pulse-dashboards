@@ -18,9 +18,9 @@
 import styled from "styled-components";
 
 import {
-  InvestigationTypeNotice,
-  InvestigationTypeNoticeControls,
-} from "../SARDetails/InvestigationTypeNotice";
+  ReportTypeNotice,
+  ReportTypeNoticeControls,
+} from "../SARDetails/ReportTypeNotice";
 import { Banner } from "../shared/styles/Banner";
 
 const Wrapper = styled.div`
@@ -36,13 +36,13 @@ const Wrapper = styled.div`
 
 export interface EmptySectionProps {
   banner: string;
-  presenter: InvestigationTypeNoticeControls;
+  presenter: ReportTypeNoticeControls;
 }
 
 export function EmptySection({ banner, presenter }: EmptySectionProps) {
   return (
     <Wrapper>
-      <InvestigationTypeNotice presenter={presenter} />
+      <ReportTypeNotice presenter={presenter} />
       <Banner>{banner}</Banner>
     </Wrapper>
   );

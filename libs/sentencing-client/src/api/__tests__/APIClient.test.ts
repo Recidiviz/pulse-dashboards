@@ -199,14 +199,14 @@ test("getStaffInfo should not fetch SARs if user lacks sarAccess permission", as
 test("getStaffInfo filters out PSR reports when PSRBuilder is off", async () => {
   sentencingStore.rootStore.userStore.routes.push(["sar", true]);
   mockTRPCClient.sar.getSARsForStaff.query.mockResolvedValueOnce([
-    { id: "sar-1", investigationType: "SAR" },
-    { id: "psr-1", investigationType: "PSR" },
+    { id: "sar-1", reportType: "SAR" },
+    { id: "psr-1", reportType: "PSR" },
   ]);
 
   const result = await apiClient.getStaffInfo();
 
   expect(result.sentencingAssessmentReports).toEqual([
-    { id: "sar-1", investigationType: "SAR" },
+    { id: "sar-1", reportType: "SAR" },
   ]);
 
   sentencingStore.rootStore.userStore.routes.pop();
@@ -218,8 +218,8 @@ test("getStaffInfo includes PSR reports when PSRBuilder is active", async () => 
     PSRBuilder: {},
   };
   const sars = [
-    { id: "sar-1", investigationType: "SAR" },
-    { id: "psr-1", investigationType: "PSR" },
+    { id: "sar-1", reportType: "SAR" },
+    { id: "psr-1", reportType: "PSR" },
   ];
   mockTRPCClient.sar.getSARsForStaff.query.mockResolvedValueOnce(sars);
 
@@ -233,14 +233,14 @@ test("getStaffInfo includes PSR reports when PSRBuilder is active", async () => 
 
 test("getSARsByClient filters out PSR reports when PSRBuilder is off", async () => {
   const sars = [
-    { id: "sar-1", investigationType: "SAR" },
-    { id: "psr-1", investigationType: "PSR" },
+    { id: "sar-1", reportType: "SAR" },
+    { id: "psr-1", reportType: "PSR" },
   ];
   mockTRPCClient.sar.getSARsByClient.query.mockResolvedValueOnce(sars);
 
   const result = await apiClient.getSARsByClient("client-ext-1");
 
-  expect(result).toEqual([{ id: "sar-1", investigationType: "SAR" }]);
+  expect(result).toEqual([{ id: "sar-1", reportType: "SAR" }]);
   expect(mockTRPCClient.sar.getSARsByClient.query).toHaveBeenCalledWith({
     clientExternalId: "client-ext-1",
   });
@@ -251,8 +251,8 @@ test("getSARsByClient includes PSR reports when PSRBuilder is active", async () 
     PSRBuilder: {},
   };
   const sars = [
-    { id: "sar-1", investigationType: "SAR" },
-    { id: "psr-1", investigationType: "PSR" },
+    { id: "sar-1", reportType: "SAR" },
+    { id: "psr-1", reportType: "PSR" },
   ];
   mockTRPCClient.sar.getSARsByClient.query.mockResolvedValueOnce(sars);
 

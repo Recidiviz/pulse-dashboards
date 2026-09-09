@@ -30,7 +30,7 @@ export type GetSARInput = Pick<
 export type UpsertSARInput = Pick<
   Prisma.SentencingAssessmentReportUpdateInput,
   | "status"
-  | "investigationType"
+  | "reportType"
   | "address"
   | "requestingJudgeName"
   | "division"

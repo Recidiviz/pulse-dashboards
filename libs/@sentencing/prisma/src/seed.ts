@@ -309,7 +309,7 @@ async function addSARClientsAndReports(
           ? faker.date.past()
           : undefined,
         address: faker.location.streetAddress(),
-        investigationType: reportType,
+        reportType,
         isReportTypeLocked: reportType === "SAR",
         isVictimImpactOnly: undefined,
         // ORAS Assessment data — domain scores and overall max vary by tool type

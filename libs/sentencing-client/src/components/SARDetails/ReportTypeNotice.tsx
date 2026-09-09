@@ -19,10 +19,10 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import {
-  InvestigationType,
   SARDetailsPresenter,
+  SARReportType,
 } from "../../presenters/SARDetailsPresenter";
-import * as Styled from "./InvestigationTypeNotice.styles";
+import * as Styled from "./ReportTypeNotice.styles";
 
 /**
  * The subset of SARDetailsPresenter this notice needs. Sub-presenters that
@@ -30,22 +30,22 @@ import * as Styled from "./InvestigationTypeNotice.styles";
  * can satisfy this by proxying these members through, without exposing the
  * full presenter.
  */
-export interface InvestigationTypeNoticeControls {
-  investigationType: SARDetailsPresenter["investigationType"];
+export interface ReportTypeNoticeControls {
+  reportType: SARDetailsPresenter["reportType"];
   isReportTypeLocked: SARDetailsPresenter["isReportTypeLocked"];
   isVictimImpactOnly: SARDetailsPresenter["isVictimImpactOnly"];
   startReportTypeChange: SARDetailsPresenter["startReportTypeChange"];
 }
 
-interface InvestigationTypeNoticeProps {
-  presenter: InvestigationTypeNoticeControls;
+interface ReportTypeNoticeProps {
+  presenter: ReportTypeNoticeControls;
 }
 
-function getInvestigationTypeCopy(
-  investigationType: InvestigationType | undefined,
+function getReportTypeCopy(
+  reportType: SARReportType | undefined,
   isVictimImpactOnly: boolean | null,
 ) {
-  if (investigationType === "SAR")
+  if (reportType === "SAR")
     return "You are filling out all sections of this report.";
   else if (isVictimImpactOnly === true)
     return "You are only filling out the Victim Impact section.";
@@ -56,8 +56,8 @@ function getInvestigationTypeCopy(
  * Shows which sections of the SAR the officer selected to fill out (when the
  * report was split via the PSR builder), with a link to reopen that choice.
  */
-export const InvestigationTypeNotice: React.FC<InvestigationTypeNoticeProps> =
-  observer(function InvestigationTypeNotice({ presenter }) {
+export const ReportTypeNotice: React.FC<ReportTypeNoticeProps> = observer(
+  function ReportTypeNotice({ presenter }) {
     if (
       presenter.isReportTypeLocked === undefined ||
       presenter.isReportTypeLocked === null ||
@@ -65,8 +65,8 @@ export const InvestigationTypeNotice: React.FC<InvestigationTypeNoticeProps> =
     )
       return null;
 
-    const copy = getInvestigationTypeCopy(
-      presenter.investigationType,
+    const copy = getReportTypeCopy(
+      presenter.reportType,
       presenter.isVictimImpactOnly,
     );
 
@@ -78,4 +78,5 @@ export const InvestigationTypeNotice: React.FC<InvestigationTypeNoticeProps> =
         </Styled.Link>
       </Styled.Container>
     );
-  });
+  },
+);

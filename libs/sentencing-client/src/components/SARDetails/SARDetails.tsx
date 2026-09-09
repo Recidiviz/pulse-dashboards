@@ -112,8 +112,7 @@ const SARSectionContent: React.FC<{
         />
       )}
       {currentSection === SARSection.VICTIM_IMPACT &&
-        (presenter.investigationType === "SAR" ||
-          presenter.isPSRVictimImpactOnly) && (
+        (presenter.reportType === "SAR" || presenter.isPSRVictimImpactOnly) && (
           <SkippableTextSection
             presenter={presenter}
             title="Enter Victim Impact Statement"

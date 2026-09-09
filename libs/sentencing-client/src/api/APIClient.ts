@@ -144,9 +144,7 @@ export class APIClient {
       sentencingAssessmentReports: this.sentencingStore.activeFeatureVariants
         .PSRBuilder
         ? sentencingAssessmentReports
-        : sentencingAssessmentReports.filter(
-            (sar) => sar.investigationType === "SAR",
-          ),
+        : sentencingAssessmentReports.filter((sar) => sar.reportType === "SAR"),
     };
   }
 
@@ -229,7 +227,7 @@ export class APIClient {
 
     return this.sentencingStore.activeFeatureVariants.PSRBuilder
       ? sars
-      : sars.filter((sar) => sar.investigationType === "SAR");
+      : sars.filter((sar) => sar.reportType === "SAR");
   }
 
   async updateCaseDetails(caseId: string, attributes: FormAttributes) {

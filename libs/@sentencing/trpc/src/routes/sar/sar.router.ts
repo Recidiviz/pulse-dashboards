@@ -292,7 +292,7 @@ export const sarRouter = router({
             dueDate: true,
             courtDate: true,
             completionDate: true,
-            investigationType: true,
+            reportType: true,
             isVictimImpactOnly: true,
             staff: {
               select: {
@@ -352,7 +352,7 @@ export const sarRouter = router({
               status: true,
               completionDate: true,
               updatedAt: true,
-              investigationType: true,
+              reportType: true,
               staff: {
                 select: {
                   pseudonymizedId: true,
@@ -413,7 +413,7 @@ export const sarRouter = router({
             ]),
           };
 
-          if (updateData.investigationType) {
+          if (updateData.reportType) {
             const { isReportTypeLocked } =
               await prisma.sentencingAssessmentReport.findFirstOrThrow({
                 where: { id },

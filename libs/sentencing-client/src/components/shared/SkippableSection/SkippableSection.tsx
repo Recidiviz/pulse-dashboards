@@ -18,15 +18,15 @@
 import React from "react";
 
 import {
-  InvestigationTypeNotice,
-  InvestigationTypeNoticeControls,
-} from "~sentencing-client/components/SARDetails/InvestigationTypeNotice";
+  ReportTypeNotice,
+  ReportTypeNoticeControls,
+} from "~sentencing-client/components/SARDetails/ReportTypeNotice";
 
 import * as Styled from "./SkippableSection.styles";
 
 export interface SkippableSectionProps {
   title: string;
-  presenter: InvestigationTypeNoticeControls;
+  presenter: ReportTypeNoticeControls;
   skipped: boolean;
   onSkipChange: (skipped: boolean) => void;
   children: React.ReactNode;
@@ -43,7 +43,7 @@ export function SkippableSection({
 }: SkippableSectionProps) {
   return (
     <Styled.Wrapper>
-      <InvestigationTypeNotice presenter={presenter} />
+      <ReportTypeNotice presenter={presenter} />
       <Styled.HeaderContainer>
         <Styled.Title>{title}</Styled.Title>
         <Styled.SkipContainer>

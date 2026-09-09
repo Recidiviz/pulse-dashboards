@@ -166,48 +166,31 @@ export const ASSIGNED_TO_COLUMN: ColumnDef<CaseListTableCase> = {
 };
 
 // SAR-only column. Add it to dashboards via buildSARColumns, not directly,
-// so the PSRBuilder feature-variant gating is respected.
+// so the PSRBuilder feature-variant gating is respected. PSI cases have
+// their own separate "Report Type" column (see PSI_DASHBOARD_COLUMNS below)
+// — this one is never wired to StaffCase data, so rows here are always
+// StaffSAR despite the shared CaseListTableCase column type.
 export const REPORT_TYPE_COLUMN: ColumnDef<CaseListTableCase> = {
   header: "Report Type",
-  accessorKey: "investigationType",
+  accessorKey: "reportType",
   sortingFn: (rowA: Row<CaseListTableCase>, rowB: Row<CaseListTableCase>) => {
-    const investigationTypeOrder: Record<
-      StaffSAR["investigationType"],
-      number
-    > = {
+    const reportTypeOrder: Record<StaffSAR["reportType"], number> = {
       SAR: 0,
       PSR: 1,
     };
 
-    // investigationType only exists on StaffSAR, not PSI Cases (StaffCase)
-    const investigationTypeA =
-      "investigationType" in rowA.original
-        ? rowA.original.investigationType
-        : undefined;
-    const investigationTypeB =
-      "investigationType" in rowB.original
-        ? rowB.original.investigationType
-        : undefined;
+    const { reportType: reportTypeA } = rowA.original as StaffSAR;
+    const { reportType: reportTypeB } = rowB.original as StaffSAR;
 
-    if (!investigationTypeA || !investigationTypeB) return 0;
+    if (!reportTypeA || !reportTypeB) return 0;
 
-    return (
-      investigationTypeOrder[investigationTypeA] -
-      investigationTypeOrder[investigationTypeB]
-    );
+    return reportTypeOrder[reportTypeA] - reportTypeOrder[reportTypeB];
   },
   cell: (info) => {
-    const investigationType = info.getValue() as
-      | StaffSAR["investigationType"]
-      | undefined;
-    // isVictimImpactOnly only exists on StaffSAR, not PSI Cases (StaffCase)
-    const isVictimImpactOnly =
-      "isVictimImpactOnly" in info.row.original
-        ? info.row.original.isVictimImpactOnly
-        : undefined;
-    if (investigationType === "SAR") {
+    const { reportType, isVictimImpactOnly } = info.row.original as StaffSAR;
+    if (reportType === "SAR") {
       return "SAR";
-    } else if (investigationType === "PSR" && isVictimImpactOnly === true) {
+    } else if (reportType === "PSR" && isVictimImpactOnly === true) {
       return "Partial SAR (Victim Impact)";
     } else {
       return "Partial SAR";

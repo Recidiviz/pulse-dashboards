@@ -19,7 +19,7 @@ import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React from "react";
 
-import { InvestigationTypeNotice } from "~sentencing-client/components/SARDetails/InvestigationTypeNotice";
+import { ReportTypeNotice } from "~sentencing-client/components/SARDetails/ReportTypeNotice";
 
 import { PriorTreatmentHistoryPresenter } from "../../../presenters/PriorTreatmentHistoryPresenter";
 import { SkippableTextArea } from "../../shared/SkippableTextArea";
@@ -139,7 +139,7 @@ export const PriorTreatmentHistorySection: React.FC<PriorTreatmentHistorySection
     return (
       <PriorTreatmentHistorySectionContainer>
         <PriorTreatmentSection>
-          <InvestigationTypeNotice presenter={presenter} />
+          <ReportTypeNotice presenter={presenter} />
           <SectionTitle>Prior Community Treatment History</SectionTitle>
           <PriorTreatmentHistoryCard
             presenter={presenter}

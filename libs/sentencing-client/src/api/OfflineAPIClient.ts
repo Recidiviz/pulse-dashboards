@@ -15,7 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FormAttributes } from "../components/CaseDetails/types";
+import {
+  FormAttributes,
+  MutableSARAttributes,
+} from "../components/CaseDetails/types";
 import {
   FrequencyOfUse,
   MethodOfUse,
@@ -118,7 +121,7 @@ export class OfflineAPIClient {
     return SARDetailsFixture?.[sarId] ?? SARDetailsFixture["default"];
   }
 
-  updateSARDetails(sarID: string, updates: FormAttributes) {
+  updateSARDetails(sarID: string, updates: Partial<MutableSARAttributes>) {
     // Get existing info or start a new object
     const info = this.editableInfo.get(sarID) ?? {};
     Object.entries(updates).forEach(([key, value]) => {

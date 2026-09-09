@@ -51,7 +51,7 @@ const trackSARClientsPageBuilderLinkClicked = vi.fn();
 
 const sar = {
   id: "sar-1",
-  investigationType: "SAR",
+  reportType: "SAR",
   staff: { pseudonymizedId: "officer-pseudo-1" },
 } as SARByClient;
 

@@ -22,11 +22,11 @@ import { beforeEach, describe, expect, test } from "vitest";
 import {
   CaseStatus,
   FrequencyOfUse,
-  InvestigationType,
   LevelOfEducation,
   MethodOfUse,
   NeedToBeAddressed,
   ProtectiveFactor,
+  SARReportType,
   StateCode,
   SubstanceType,
 } from "~@sentencing/prisma/client";
@@ -843,7 +843,7 @@ describe("SAR router", () => {
         updatedAt: expect.any(Date),
         staff: { pseudonymizedId: fakeStaff.pseudonymizedId },
         currentUserHasAccess: true,
-        investigationType: InvestigationType.SAR,
+        reportType: SARReportType.SAR,
       });
     });
 
@@ -852,7 +852,7 @@ describe("SAR router", () => {
         data: {
           externalId: "sar-ext-2",
           id: "sar-2",
-          investigationType: InvestigationType.SAR,
+          reportType: SARReportType.SAR,
           status: CaseStatus.Complete,
           client: { connect: { externalId: fakeSARClient.externalId } },
           staff: { connect: { externalId: fakeStaff.externalId } },
@@ -901,7 +901,7 @@ describe("SAR router", () => {
         data: {
           externalId: "sar-ext-other-staff",
           id: "sar-other-staff",
-          investigationType: InvestigationType.SAR,
+          reportType: SARReportType.SAR,
           status: CaseStatus.InProgress,
           client: { connect: { externalId: fakeSARClient.externalId } },
           staff: { connect: { externalId: fakeSARStaff.externalId } },
@@ -1141,7 +1141,7 @@ describe("SAR router", () => {
         data: {
           externalId: "sar-ext-other-staff",
           id: "sar-other-staff",
-          investigationType: InvestigationType.SAR,
+          reportType: SARReportType.SAR,
           status: CaseStatus.InProgress,
           client: { connect: { externalId: fakeSARClient.externalId } },
           staff: { connect: { externalId: fakeSARStaff.externalId } },
@@ -1189,7 +1189,7 @@ describe("SAR router", () => {
           "currentUserHasAccess",
           "externalId",
           "id",
-          "investigationType",
+          "reportType",
           "staff",
           "status",
           "updatedAt",

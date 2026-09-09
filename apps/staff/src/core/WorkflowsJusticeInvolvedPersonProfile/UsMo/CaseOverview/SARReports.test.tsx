@@ -48,7 +48,7 @@ function makeSAR(overrides: Partial<SARByClient> = {}): SARByClient {
     status: "InProgress",
     completionDate: null,
     courtDate: null,
-    investigationType: "SAR",
+    reportType: "SAR",
     staff: { pseudonymizedId: "staff-1" },
     currentUserHasAccess: true,
     ...overrides,

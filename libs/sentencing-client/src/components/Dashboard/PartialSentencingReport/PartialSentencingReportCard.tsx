@@ -23,15 +23,15 @@ import { palette } from "~design-system";
 
 import { ERROR_TOAST_DURATION } from "../../../datastores/constants";
 import {
-  InvestigationType,
   SARDetailsPresenter,
+  SARReportType,
 } from "../../../presenters/SARDetailsPresenter";
 import * as Styled from "./PartialSentencingReportCard.styles";
 
 interface ReportTypeOption {
   key: string;
   label: string;
-  investigationType: InvestigationType;
+  reportType: SARReportType;
   isVictimImpactOnly: boolean;
 }
 
@@ -39,19 +39,19 @@ const REPORT_TYPE_OPTIONS: ReportTypeOption[] = [
   {
     key: "victimImpactOnly",
     label: "I am responsible for Victim Impact only",
-    investigationType: "PSR",
+    reportType: "PSR",
     isVictimImpactOnly: true,
   },
   {
     key: "noVictimImpact",
     label: "I am responsible for all sections except Victim Impact",
-    investigationType: "PSR",
+    reportType: "PSR",
     isVictimImpactOnly: false,
   },
   {
     key: "SAR",
     label: "I am responsible for all sections of this SAR",
-    investigationType: "SAR",
+    reportType: "SAR",
     isVictimImpactOnly: false,
   },
 ];
@@ -70,8 +70,9 @@ export const PartialSentencingReportCard: React.FC<PartialSentencingReportCardPr
     // clicked, so that: (1) a failed save can be rolled back to the real
     // previous value, and (2) selecting an option doesn't immediately flip
     // presenter.showReportTypeCard's underlying condition and hide the card.
-    const [draftInvestigationType, setDraftInvestigationType] =
-      React.useState<InvestigationType>(presenter.investigationType ?? "PSR");
+    const [draftReportType, setDraftReportType] = React.useState<SARReportType>(
+      presenter.reportType ?? "PSR",
+    );
     const [draftIsVictimImpactOnly, setDraftIsVictimImpactOnly] =
       React.useState(presenter.isVictimImpactOnly);
 
@@ -91,11 +92,11 @@ export const PartialSentencingReportCard: React.FC<PartialSentencingReportCardPr
                 name="reportSection"
                 value={option.key}
                 checked={
-                  draftInvestigationType === option.investigationType &&
+                  draftReportType === option.reportType &&
                   draftIsVictimImpactOnly === option.isVictimImpactOnly
                 }
                 onChange={() => {
-                  setDraftInvestigationType(option.investigationType);
+                  setDraftReportType(option.reportType);
                   setDraftIsVictimImpactOnly(option.isVictimImpactOnly);
                 }}
               />
@@ -111,8 +112,8 @@ export const PartialSentencingReportCard: React.FC<PartialSentencingReportCardPr
             disabled={draftIsVictimImpactOnly === null}
             onClick={async () => {
               try {
-                await presenter.updateInvestigation(
-                  draftInvestigationType,
+                await presenter.updateReportType(
+                  draftReportType,
                   draftIsVictimImpactOnly,
                 );
               } catch {

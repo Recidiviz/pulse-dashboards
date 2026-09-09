@@ -70,7 +70,7 @@ const opportunityStatus = z.enum(["Active", "Inactive"]);
 
 const caseIdsSchema = zu.stringToJSON().pipe(z.array(z.string()));
 
-const investigationType = z.enum(["PSR", "SAR"]);
+const sarReportTypeSchema = z.enum(["PSR", "SAR"]);
 
 // Title case helper (converts "HELLO WORLD" to "Hello World")
 // Matches pattern used in libs/sentencing-client/src/utils/utils.ts
@@ -118,7 +118,7 @@ const officeAddressSchema = zu
   })
   .nullish();
 
-const reportType = z.enum([
+const psiReportTypeSchema = z.enum([
   "PSI Assigned Full",
   "PSI File Review Assigned",
   "PSI File Review w/LSI Assigned",
@@ -143,7 +143,9 @@ export const caseImportSchema = z.object({
   district: z.string().optional(),
   lsir_score: z.coerce.number().optional(),
   lsir_level: z.string().optional(),
-  report_type: reportType.optional(),
+  // PSI report type (e.g. "PSI Assigned Full") — unrelated to the SAR
+  // report_type below despite sharing the same raw column name upstream.
+  report_type: psiReportTypeSchema.optional(),
   investigation_status: z.string().optional(),
 });
 
@@ -152,7 +154,9 @@ export const SARImportSchema = z.object({
   state_code: stateCode,
   staff_id: z.string(),
   client_id: z.string(),
-  investigation_type: investigationType.optional(),
+  // SAR/PSR report type ("SAR" | "PSR") — unrelated to the PSI report_type
+  // above despite sharing the same raw column name upstream.
+  report_type: sarReportTypeSchema.optional(),
   due_date: z.coerce.date().nullish(),
   court_date: z.coerce.date().nullish(),
   completion_date: z.coerce.date().nullish(),
