@@ -20,6 +20,7 @@ import { afterEach, describe, expect, test } from "vitest";
 import env from "~@meetings/trpc/env";
 import {
   buildMeetingCompletedMessage,
+  buildMeetingErrorMessage,
   buildMeetingUrl,
 } from "~@meetings/trpc/services/slack";
 
@@ -101,6 +102,44 @@ describe("buildMeetingCompletedMessage", () => {
         personType: "client",
         personId: "123",
       }),
+    ).toEqual(baseMessage);
+  });
+});
+
+describe("buildMeetingErrorMessage", () => {
+  const baseParams = {
+    staffEmail: "staff@example.com",
+    stateCode: "US_ID",
+    meetingId: "abc",
+    errorStep: "notetaking" as const,
+  };
+
+  const baseMessage = [
+    ":warning: Meeting processing error (notetaking)",
+    "• Staff: staff@example.com",
+    "• Meeting ID: abc",
+    "• State: US_ID",
+    "• Failed step: notetaking",
+  ].join("\n");
+
+  test("without additional info, message is unchanged", () => {
+    expect(buildMeetingErrorMessage(baseParams)).toEqual(baseMessage);
+  });
+
+  test("with additional info, appends the context line", () => {
+    expect(
+      buildMeetingErrorMessage({
+        ...baseParams,
+        additionalInfo: "Transcript too short: 12 words (minimum 50)",
+      }),
+    ).toEqual(
+      `${baseMessage}\n• Additional info: Transcript too short: 12 words (minimum 50)`,
+    );
+  });
+
+  test("with empty additional info, omits the context line", () => {
+    expect(
+      buildMeetingErrorMessage({ ...baseParams, additionalInfo: "" }),
     ).toEqual(baseMessage);
   });
 });

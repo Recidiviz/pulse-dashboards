@@ -125,21 +125,36 @@ export async function postMeetingCompletedNotification(
   await postSlackMessage(buildMeetingCompletedMessage(params));
 }
 
-export async function postMeetingErrorNotification({
-  meetingId,
-  stateCode,
-  errorStep,
-}: {
+type MeetingErrorParams = {
   meetingId: string;
   stateCode: string;
   errorStep: "stitching" | "transcription" | "notetaking";
-}): Promise<void> {
-  const text = [
+  staffEmail: string;
+  additionalInfo?: string;
+};
+
+export function buildMeetingErrorMessage({
+  meetingId,
+  stateCode,
+  errorStep,
+  staffEmail,
+  additionalInfo,
+}: MeetingErrorParams): string {
+  const lines = [
     `:warning: Meeting processing error (${errorStep})`,
+    `• Staff: ${staffEmail}`,
     `• Meeting ID: ${meetingId}`,
     `• State: ${stateCode}`,
     `• Failed step: ${errorStep}`,
-  ].join("\n");
+  ];
 
-  await postSlackMessage(text);
+  if (additionalInfo) lines.push(`• Additional info: ${additionalInfo}`);
+
+  return lines.join("\n");
+}
+
+export async function postMeetingErrorNotification(
+  params: MeetingErrorParams,
+): Promise<void> {
+  await postSlackMessage(buildMeetingErrorMessage(params));
 }

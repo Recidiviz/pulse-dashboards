@@ -53,6 +53,7 @@ import {
   labelStudioMeetingInclude,
   stitchAudio,
 } from "~@meetings/tasks";
+import { TranscriptValidationError } from "~@meetings/tasks/errors";
 import {
   createEvaluatorClients,
   EVALUATOR_VERSION,
@@ -297,10 +298,11 @@ export function registerTaskRoutes(app: FastifyInstance) {
         const prisma = getPrismaClientForStateCode(stateCode);
 
         // Try and find the meeting and fail fast if it doesn't exist
-        await prisma.meeting.findUniqueOrThrow({
+        const { staffEmail } = await prisma.meeting.findUniqueOrThrow({
           where: {
             id: meetingId,
           },
+          select: { staffEmail: true },
         });
 
         try {
@@ -357,6 +359,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
             meetingId,
             stateCode,
             errorStep: "stitching",
+            staffEmail,
           }).catch((err) => {
             captureException(err);
             console.error("Failed to post Slack error notification", err);
@@ -413,10 +416,11 @@ export function registerTaskRoutes(app: FastifyInstance) {
         const prisma = getPrismaClientForStateCode(stateCode);
 
         // Try and find the meeting and fail fast if it doesn't exist
-        await prisma.meeting.findUniqueOrThrow({
+        const { staffEmail } = await prisma.meeting.findUniqueOrThrow({
           where: {
             id: meetingId,
           },
+          select: { staffEmail: true },
         });
 
         try {
@@ -523,6 +527,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
             meetingId,
             stateCode,
             errorStep: "transcription",
+            staffEmail,
           }).catch((err) => {
             captureException(err);
             console.error("Failed to post Slack error notification", err);
@@ -557,10 +562,11 @@ export function registerTaskRoutes(app: FastifyInstance) {
         const prisma = getPrismaClientForStateCode(stateCode);
 
         // Try and find the meeting and fail fast if it doesn't exist
-        await prisma.meeting.findUniqueOrThrow({
+        const { staffEmail } = await prisma.meeting.findUniqueOrThrow({
           where: {
             id: meetingId,
           },
+          select: { staffEmail: true },
         });
 
         let completedMeeting;
@@ -644,6 +650,9 @@ export function registerTaskRoutes(app: FastifyInstance) {
             meetingId,
             stateCode,
             errorStep: "notetaking",
+            staffEmail,
+            additionalInfo:
+              e instanceof TranscriptValidationError ? e.message : undefined,
           }).catch((err) => {
             captureException(err);
             console.error("Failed to post Slack error notification", err);
