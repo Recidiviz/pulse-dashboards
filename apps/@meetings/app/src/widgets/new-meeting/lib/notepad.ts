@@ -16,4 +16,4 @@
 // =============================================================================
 
 export const NOTEPAD_DESCRIPTION =
-  "Use the notepad to flag anything you want to make sure is in the final notes. It won’t be saved, just used to build the summary";
+  "Use the notepad to flag anything you want to make sure is in the final notes. It will be saved and used to build the summary.";

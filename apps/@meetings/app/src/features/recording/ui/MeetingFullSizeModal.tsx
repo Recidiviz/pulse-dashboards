@@ -162,7 +162,7 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
               onChangeText={setNote}
               multiline
               className="grow justify-start px-8 leading-[20px] text-primary outline-none"
-              placeholder="Use the notepad to flag anything you want to make sure is in the final notes. It won’t be saved, just used to build the summary."
+              placeholder="Use the notepad to flag anything you want to make sure is in the final notes. It will be saved and used to build the summary."
               editable={!isModalDisabled}
             />
           </View>
