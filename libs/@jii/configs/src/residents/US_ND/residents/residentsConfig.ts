@@ -23,4 +23,5 @@ export const usNdResidentsConfig: ResidentsConfig = {
   translation: {
     additionalLanguages: [],
   },
+  enabledUserFlags: { useNewResidentData: new Date("2026-09-04") },
 };
