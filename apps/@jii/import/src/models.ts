@@ -34,11 +34,16 @@ import {
  */
 
 export const rnaWritebackImportSchema = z.object({
-  pseudonymizedId: z.string(),
+  // empty strings are not expected here but they will break the import if we let them through
+  pseudonymizedId: z.string().min(1),
   seqNumber: nullishAsNull(z.string()),
   opusId: z.string(),
   admitDate: dateStringSchema.nullable(),
 });
+
+export const RNA_WRITEBACK_ID_FIELD = "pseudonymizedId" satisfies keyof z.infer<
+  typeof rnaWritebackImportSchema
+>;
 
 // we'll use this to make sure no fields are missing when we spread the name blobs
 const personNameDefaults: Record<keyof FullName, null> = {
@@ -114,8 +119,16 @@ export const residentImportSchema = residentCommonSchema
 
 export type ImportedResident = z.infer<typeof residentImportSchema>;
 
+export const RESIDENT_ID_FIELD =
+  "pseudonymizedId" satisfies keyof ImportedResident;
+
 export const facilityImportSchema = z.object({
-  id: z.string(),
+  // empty strings are not expected here but they will break the import if we let them through
+  id: z.string().min(1),
   // reject null values in the export. they should be patched in the product view, not here
   name: z.string(),
 });
+
+export const FACILITY_ID_FIELD = "id" satisfies keyof z.infer<
+  typeof facilityImportSchema
+>;

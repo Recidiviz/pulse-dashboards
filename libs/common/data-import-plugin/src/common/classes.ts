@@ -17,7 +17,11 @@
 
 import { z } from "zod";
 
-import type { Props } from "~data-import-plugin/common/types";
+import type {
+  GetRowId,
+  LoaderContext,
+  Props,
+} from "~data-import-plugin/common/types";
 
 /**
  * Base class for handling imports from GCS.
@@ -61,6 +65,8 @@ export abstract class ImportHandlerBase<T, M> {
     file: string,
     schema: K,
     lineErrorList: string[],
+    loaderContext: LoaderContext,
+    getRowId?: GetRowId,
   ) {
     const data = this.getDataFromGCS(bucket, file);
     let lineNumber = 0;
@@ -70,8 +76,30 @@ export abstract class ImportHandlerBase<T, M> {
         yield schema.parse(datum) as z.infer<K>;
       } catch (e) {
         // Instead of throwing an error immediately, we log the error and continue processing the next record.
+        // Where the file gives us a way to identify the row, we also record its id, so that the
+        // loader can decide what to do about the record this row would have updated.
+        let rowDescription = "";
+        if (getRowId) {
+          let rowId: string | undefined;
+
+          // don't let an error in getRowId itself blow up the entire import
+          try {
+            rowId = getRowId(datum);
+          } catch {
+            rowId = undefined;
+          }
+
+          if (rowId === undefined) {
+            loaderContext.unidentifiedSkippedRowCount++;
+            rowDescription = " (row id could not be determined)";
+          } else {
+            loaderContext.skippedRowIds.add(rowId);
+            rowDescription = ` (row id ${rowId})`;
+          }
+        }
+
         lineErrorList.push(
-          `Unable to parse data for line ${lineNumber}. Error: ${e}`,
+          `Unable to parse data for line ${lineNumber}${rowDescription}. Error: ${e}`,
         );
       }
 
@@ -110,21 +138,31 @@ export abstract class ImportHandlerBase<T, M> {
       console.log(`Loading data for file ${file}.`);
 
       const lineErrorList: string[] = [];
+
+      // initialize a fresh loader context for this file.
+      // it will be populated as the `getAndTransformDataFromGCS` generator is consumed by `loaderFn`,
+      // which is why it needs to be managed here and passed to both functions
+      const loaderContext: LoaderContext = {
+        skippedRowIds: new Set(),
+        unidentifiedSkippedRowCount: 0,
+      };
       try {
         if (!this.shouldImportFile(file, stateCode)) {
           continue;
         }
 
-        const { schema, loaderFn } = filesToSchemasAndLoaderFns[file];
+        const { schema, loaderFn, getRowId } = filesToSchemasAndLoaderFns[file];
 
         const data = this.getAndTransformDataFromGCS(
           bucket,
           `${stateCode}/${file}`,
           schema,
           lineErrorList,
+          loaderContext,
+          getRowId,
         );
 
-        await loaderFn(prismaClient, data);
+        await loaderFn(prismaClient, data, loaderContext);
       } catch (e) {
         // Handle any unexpected errors that occur during the import process.
         let message = e;

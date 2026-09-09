@@ -18,7 +18,7 @@
 import { PrismaClient } from "~@jii/prisma";
 import { LoaderFn } from "~data-import-plugin";
 
-import { rnaWritebackImportSchema } from "../../models";
+import { RNA_WRITEBACK_ID_FIELD, rnaWritebackImportSchema } from "../../models";
 import { DEFAULT_BATCH_SIZE, runBatchImport } from "../../utils/batchImport";
 
 export const BATCH_SIZE = DEFAULT_BATCH_SIZE; // usNcRNA.test.ts imports this
@@ -31,14 +31,15 @@ export const BATCH_SIZE = DEFAULT_BATCH_SIZE; // usNcRNA.test.ts imports this
 export const transformAndLoadRNAWritebackData: LoaderFn<
   PrismaClient,
   typeof rnaWritebackImportSchema
-> = async (prismaClient, data) => {
+> = async (prismaClient, data, context) => {
   await runBatchImport({
     prismaClient,
     model: prismaClient.usNcRNAWritebackData,
     tableName: "UsNcRNAWritebackData",
-    idField: "pseudonymizedId",
+    idField: RNA_WRITEBACK_ID_FIELD,
     batchSize: BATCH_SIZE,
     pruneStale: false,
     data,
+    context,
   });
 };

@@ -22,6 +22,17 @@ function importData(state_code: string) {
 }
 ```
 
+### Rows that fail to parse
+
+A row that doesn't match its file's schema is skipped rather than aborting the file; the errors are collected and thrown once the whole import has finished. That is a problem for a loader that treats the import as a snapshot and deletes records the latest import doesn't contain, because a record whose new data was merely unparsable looks identical to one that is genuinely gone.
+
+Such a loader should give its file a `getRowId` and consult the `context` it is passed as a third argument:
+
+- `context.skippedRowIds` holds the ids of rows that were present in the raw data but unparsable. If corresponding records already exist from a previous run, you may prefer to leave them stale rather than removing them.
+- `context.unidentifiedSkippedRowCount` counts unparsable rows whose id couldn't be read at all. When it is above zero, there is no way to tell those rows apart from records that are gone, so you may not want to delete anything on this run.
+
+`context` is only complete once the data generator has been drained, so read it after the loop, not while iterating.
+
 ## Testing
 
 If you would like to test an application that uses this plugin, there is a testkit available under `src/testkit`. The testkit provides a mock handler that can be swapped in for the real one using the following snippet at the top of your test file or test setup file:

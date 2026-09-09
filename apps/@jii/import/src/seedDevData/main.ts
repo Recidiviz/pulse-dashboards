@@ -21,6 +21,7 @@ import {
   isRealDatabaseEnvironment,
   PrismaClient,
 } from "~@jii/prisma";
+import { LoaderContext } from "~data-import-plugin";
 
 import { facilityHandler } from "../handlers/facility/facility";
 import { residentHandler } from "../handlers/resident/resident";
@@ -64,6 +65,7 @@ type SeedOpts<ModelRecord> = {
   importHandler: (
     prismaClient: PrismaClient,
     data: AsyncGenerator<ModelRecord>,
+    context: LoaderContext,
   ) => Promise<void>;
   // Similarly, this is a duck type for the more idiomatic z.ZodType, which takes multiple
   // arguments that overcomplicate our generic type mapping and cause spurious failures.
@@ -97,6 +99,10 @@ async function seedModel<ModelRecord>({
       await importHandler(
         prismaClient,
         toAsyncGenerator(fixtures.map((f) => importSchema.parse(f))),
+        // initialize a new loader context for this model, same as the import does.
+        // this is basically a dummy object in this context, the error data it collects
+        // is not applicable to the seeding process and it will never be updated.
+        { skippedRowIds: new Set<string>(), unidentifiedSkippedRowCount: 0 },
       );
       console.log(`Successfully seeded ${modelLabel} for ${stateCode}`);
     } catch (e) {

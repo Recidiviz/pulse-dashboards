@@ -17,19 +17,38 @@
 
 import { describe, expect, test } from "vitest";
 
+import { ImportHandler } from "~data-import-plugin/index";
 import {
   FILE_ONE,
+  FILE_THREE,
   FILE_TWO,
   TEST_BUCKET,
   TEST_STATE_CODE,
 } from "~data-import-plugin/test/common/constants";
 import { arrayToJsonLines } from "~data-import-plugin/test/common/utils";
 import {
+  contextProcessorThree,
   dataProcessorOne,
+  dataProcessorThree,
   dataProcessorTwo,
+  fileThreeLoadFn,
   importHandler,
   mockStorageSingleton,
+  rowIdImportHandler,
+  testGetPrismaClientForStateCode,
 } from "~data-import-plugin/test/setup";
+import { fileThreeSchema } from "~data-import-plugin/test/setup/constants";
+
+const VALID_ROW = { id: "1", testFieldThree: "testing-field" };
+const OTHER_VALID_ROW = { id: "3", testFieldThree: "testing-field" };
+const INVALID_ROW = { id: "2" };
+
+async function saveFileThree(rows: object[]) {
+  await mockStorageSingleton
+    .bucket(TEST_BUCKET)
+    .file(`${TEST_STATE_CODE}/${FILE_THREE}`)
+    .save(arrayToJsonLines(rows));
+}
 
 describe("import", () => {
   test("should throw error if state code is invalid", async () => {
@@ -119,5 +138,102 @@ describe("import", () => {
     expect(dataProcessorTwo).toHaveBeenCalledWith({
       testFieldTwo: "testing-field",
     });
+  });
+});
+
+describe("import with getRowId", () => {
+  test("reports the ids of rows that could not be parsed", async () => {
+    await saveFileThree([VALID_ROW, INVALID_ROW, OTHER_VALID_ROW]);
+
+    await expect(
+      rowIdImportHandler.import(TEST_STATE_CODE, [FILE_THREE]),
+    ).rejects.toThrow();
+
+    expect(dataProcessorThree).toHaveBeenCalledWith(VALID_ROW);
+    expect(dataProcessorThree).toHaveBeenCalledWith(OTHER_VALID_ROW);
+    expect(contextProcessorThree).toHaveBeenCalledWith({
+      skippedRowIds: ["2"],
+      unidentifiedSkippedRowCount: 0,
+    });
+  });
+
+  test("reports rows that could not be parsed on the last line", async () => {
+    await saveFileThree([VALID_ROW, INVALID_ROW]);
+
+    await expect(
+      rowIdImportHandler.import(TEST_STATE_CODE, [FILE_THREE]),
+    ).rejects.toThrow();
+
+    expect(contextProcessorThree).toHaveBeenCalledWith({
+      skippedRowIds: ["2"],
+      unidentifiedSkippedRowCount: 0,
+    });
+  });
+
+  test("includes the row id in the reported error", async () => {
+    await saveFileThree([VALID_ROW, INVALID_ROW]);
+
+    await expect(
+      rowIdImportHandler.import(TEST_STATE_CODE, [FILE_THREE]),
+    ).rejects.toThrow(
+      /Unable to parse data for line 2 \(row id 2\)\. Error: \[/,
+    );
+  });
+
+  test("reports rows whose id could not be read", async () => {
+    await saveFileThree([VALID_ROW, { testFieldThree: 42 }]);
+
+    await expect(
+      rowIdImportHandler.import(TEST_STATE_CODE, [FILE_THREE]),
+    ).rejects.toThrow(
+      /Unable to parse data for line 2 \(row id could not be determined\)\. Error: \[/,
+    );
+
+    expect(contextProcessorThree).toHaveBeenCalledWith({
+      skippedRowIds: [],
+      unidentifiedSkippedRowCount: 1,
+    });
+  });
+
+  test("a getRowId that throws costs one row, not the whole file", async () => {
+    const throwingHandler = new ImportHandler({
+      bucket: TEST_BUCKET,
+      getPrismaClientForStateCode: testGetPrismaClientForStateCode,
+      filesToSchemasAndLoaderFns: {
+        [FILE_THREE]: {
+          schema: fileThreeSchema,
+          loaderFn: fileThreeLoadFn,
+          getRowId: () => {
+            throw new Error("broken extractor");
+          },
+        },
+      },
+    });
+
+    await saveFileThree([INVALID_ROW, VALID_ROW]);
+
+    await expect(
+      throwingHandler.import(TEST_STATE_CODE, [FILE_THREE]),
+    ).rejects.toThrow(/row id could not be determined/);
+
+    expect(dataProcessorThree).toHaveBeenCalledWith(VALID_ROW);
+    expect(contextProcessorThree).toHaveBeenCalledWith({
+      skippedRowIds: [],
+      unidentifiedSkippedRowCount: 1,
+    });
+  });
+
+  test("a line that is not valid JSON aborts the whole file", async () => {
+    await mockStorageSingleton
+      .bucket(TEST_BUCKET)
+      .file(`${TEST_STATE_CODE}/${FILE_THREE}`)
+      .save(`${JSON.stringify(VALID_ROW)}\nnot json`);
+
+    await expect(
+      rowIdImportHandler.import(TEST_STATE_CODE, [FILE_THREE]),
+    ).rejects.toThrow(/Unexpected error importing file-three/);
+
+    // the loader never gets past its data loop, so it never consumes the context
+    expect(contextProcessorThree).not.toHaveBeenCalled();
   });
 });

@@ -17,14 +17,44 @@
 
 import { z } from "zod";
 
+/**
+ * Returns an ID string from a raw data row (or undefined if there is no usable ID)
+ */
+export type GetRowId = (rawDatum: unknown) => string | undefined;
+
+/**
+ * Used to track rows that cannot be successfully read and transformed from GCS,
+ * to pass this information on to the loader function, which doesn't otherwise know
+ * about these rows.
+ */
+export type LoaderContext = {
+  /**
+   * Ids of unparsable rows, per the file's `getRowId`. Always empty for a file that doesn't
+   * provide one.
+   */
+  skippedRowIds: Set<string>;
+  /**
+   * How many unparsable rows yielded no usable id. A loader that deletes records missing from
+   * the import can't tell those rows apart from records that are genuinely gone, so any count
+   * above zero means it should not delete anything on this run.
+   */
+  unidentifiedSkippedRowCount: number;
+};
+
 export type LoaderFn<T, U extends z.ZodTypeAny> = (
   prismaClient: T,
   data: AsyncGenerator<z.infer<U>>,
+  context: LoaderContext,
 ) => Promise<void>;
 
 interface ZodSchemaAndLoaderFn<T, U extends z.ZodTypeAny> {
   schema: U;
   loaderFn: LoaderFn<T, U>;
+  /**
+   * Provide this for any file whose loader deletes records that the latest import
+   * doesn't contain, so that it can tell a missing record apart from an unparsable one.
+   */
+  getRowId?: GetRowId;
 }
 
 // This type is a generic that is inferred from the provided ZodSchemaAndLoaderFns

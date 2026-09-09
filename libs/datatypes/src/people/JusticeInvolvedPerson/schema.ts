@@ -26,7 +26,9 @@ import { fullNameSchema } from "../utils/fullNameSchema";
 export const justiceInvolvedPersonRecordSchema = z.object({
   stateCode: z.string(),
   personExternalId: z.string(),
-  pseudonymizedId: z.string(),
+  // an empty value here is nonsensical and not expected,
+  // but it may break some ETL processes if we let it through
+  pseudonymizedId: z.string().min(1),
   displayId: z.string(),
   personName: fullNameSchema,
 });

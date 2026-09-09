@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,15 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { requireNonemptyString } from "./requireNonemptyString";
 
-export const fileOneSchema = z.object({
-  testFieldOne: z.string(),
+test("returns a nonempty string as-is", () => {
+  expect(requireNonemptyString("abc123")).toBe("abc123");
 });
-export const fileTwoSchema = z.object({
-  testFieldTwo: z.string(),
-});
-export const fileThreeSchema = z.object({
-  id: z.string(),
-  testFieldThree: z.string(),
+
+test.each([
+  ["empty string", ""],
+  ["number", 42],
+  ["boolean", true],
+  ["null", null],
+  ["undefined", undefined],
+  ["object", { id: "abc123" }],
+  ["array", ["abc123"]],
+])("throws for %s", (_label, input) => {
+  expect(() => requireNonemptyString(input)).toThrow();
 });

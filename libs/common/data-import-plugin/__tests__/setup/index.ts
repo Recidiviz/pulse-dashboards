@@ -20,14 +20,17 @@ import { beforeEach, vi } from "vitest";
 import { mock } from "vitest-mock-extended";
 import { z } from "zod";
 
+import type { LoaderContext } from "~data-import-plugin/index";
 import { ImportHandler } from "~data-import-plugin/index";
 import {
   FILE_ONE,
+  FILE_THREE,
   FILE_TWO,
   TEST_BUCKET,
 } from "~data-import-plugin/test/common/constants";
 import {
   fileOneSchema,
+  fileThreeSchema,
   fileTwoSchema,
 } from "~data-import-plugin/test/setup/constants";
 
@@ -63,6 +66,24 @@ export const fileTwoLoadFn = async (
   return Promise.resolve();
 };
 
+export const dataProcessorThree = vi.fn();
+/** Records what the loader was told about rows it never received. */
+export const contextProcessorThree = vi.fn();
+export const fileThreeLoadFn = async (
+  _: typeof mockPrismaClient,
+  data: AsyncGenerator<z.infer<typeof fileThreeSchema>>,
+  context?: LoaderContext,
+) => {
+  for await (const datum of data) {
+    dataProcessorThree(datum);
+  }
+  // the context is only complete once the data has been drained, which is why this comes after
+  contextProcessorThree({
+    skippedRowIds: [...(context?.skippedRowIds ?? [])],
+    unidentifiedSkippedRowCount: context?.unidentifiedSkippedRowCount,
+  });
+};
+
 export let mockStorageSingleton: MockStorage;
 
 export const importHandler = new ImportHandler({
@@ -80,6 +101,24 @@ export const importHandler = new ImportHandler({
   },
 });
 
+/*
+ * Kept separate from the handler above rather than adding another file to it, because importing
+ * without a file list loads every file in a handler's config, and the tests for that behavior
+ * only stub out data for the two files it already has.
+ */
+export const rowIdImportHandler = new ImportHandler({
+  bucket: TEST_BUCKET,
+  getPrismaClientForStateCode: testGetPrismaClientForStateCode,
+  filesToSchemasAndLoaderFns: {
+    [FILE_THREE]: {
+      schema: fileThreeSchema,
+      loaderFn: fileThreeLoadFn,
+      getRowId: (rawDatum: unknown) =>
+        z.object({ id: z.string() }).safeParse(rawDatum).data?.id,
+    },
+  },
+});
+
 vi.mock("@google-cloud/storage", () => ({
   Storage: vi.fn().mockImplementation(() => {
     return mockStorageSingleton;
@@ -89,5 +128,7 @@ vi.mock("@google-cloud/storage", () => ({
 beforeEach(() => {
   dataProcessorOne.mockClear();
   dataProcessorTwo.mockClear();
+  dataProcessorThree.mockClear();
+  contextProcessorThree.mockClear();
   mockStorageSingleton = new MockStorage();
 });

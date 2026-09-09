@@ -15,13 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
-
 import { type PrismaClient } from "~@jii/prisma";
+import { type LoaderContext } from "~data-import-plugin";
 
 import { bulkUpdate, type BulkUpdateEntry } from "./bulkUpdate";
+import { requireNonemptyString } from "./requireNonemptyString";
 
 export const DEFAULT_BATCH_SIZE = 500;
+/** Keeps prune deletes well below Postgres's cap on parameters. */
+export const DELETE_CHUNK_SIZE = 1000;
 
 /** Minimal structural view of the subset of a Prisma model delegate this helper needs. */
 export interface BatchImportModel<CreateInput> {
@@ -53,13 +55,16 @@ export interface BatchImportOptions<ImportRecord extends BulkUpdateEntry> {
   idField: keyof ImportRecord & string;
   data: AsyncIterable<ImportRecord>;
   batchSize: number;
-  /** Whether to delete rows whose importedAt predates this run, once the import completes. */
+  /**
+   * Whether to delete rows that this run neither imported nor skipped, once the import completes.
+   */
   pruneStale: boolean;
+  context: LoaderContext;
 }
 
 function requireStringId(input: unknown) {
   try {
-    return z.string().parse(input);
+    return requireNonemptyString(input);
   } catch {
     throw new Error("Only string ID fields are supported");
   }
@@ -83,6 +88,7 @@ export async function runBatchImport<ImportRecord extends BulkUpdateEntry>(
     data,
     batchSize,
     pruneStale,
+    context,
   } = options;
 
   const importedAt = new Date();
@@ -93,6 +99,8 @@ export async function runBatchImport<ImportRecord extends BulkUpdateEntry>(
       requireStringId(r[idField]),
     ),
   );
+
+  const importedIds = new Set<string>();
 
   let createBatch: ImportRow<ImportRecord>[] = [];
   let updateBatch: ImportRow<ImportRecord>[] = [];
@@ -111,8 +119,10 @@ export async function runBatchImport<ImportRecord extends BulkUpdateEntry>(
 
   for await (const record of data) {
     const row: ImportRow<ImportRecord> = { ...record, importedAt };
+    const id = requireStringId(row[idField]);
+    importedIds.add(id);
 
-    if (existingIds.has(requireStringId(row[idField]))) {
+    if (existingIds.has(id)) {
       updateBatch.push(row);
       if (updateBatch.length >= batchSize) await flushUpdateBatch();
     } else {
@@ -125,7 +135,39 @@ export async function runBatchImport<ImportRecord extends BulkUpdateEntry>(
   await flushUpdateBatch();
 
   if (pruneStale) {
-    // records no longer present in the current import can be dropped from the table
-    await model.deleteMany({ where: { importedAt: { lt: importedAt } } });
+    const { skippedRowIds, unidentifiedSkippedRowCount } = context;
+
+    if (unidentifiedSkippedRowCount > 0) {
+      // we cannot tell which existing rows these failures correspond to, and so cannot tell a
+      // record that has left the population from one whose data was too broken to read.
+      // Safer to leave all stale data in place than to overzealously prune it
+      console.warn(
+        `Not removing any ${tableName} records: ${unidentifiedSkippedRowCount} row(s) lacked a readable ${idField}, so stale records cannot be reliably pruned.`,
+      );
+      return;
+    }
+
+    if (skippedRowIds.size > 0) {
+      console.log(
+        `Keeping ${skippedRowIds.size} existing ${tableName} record(s) whose incoming data failed to import; their data may now be stale.`,
+      );
+    }
+
+    // records no longer present in the current import can be dropped from the table, but records
+    // whose incoming data failed to parse are kept: their data is now stale, but deleting them
+    // would take the record out of the product entirely
+    const idsToDelete = [...existingIds].filter(
+      (id) => !importedIds.has(id) && !skippedRowIds.has(id),
+    );
+
+    // chunks are deleted one at a time so that a large prune doesn't flood the DB connection
+    for (let i = 0; i < idsToDelete.length; i += DELETE_CHUNK_SIZE) {
+      // eslint-disable-next-line no-await-in-loop -- deliberately serial, see above
+      await model.deleteMany({
+        where: {
+          [idField]: { in: idsToDelete.slice(i, i + DELETE_CHUNK_SIZE) },
+        },
+      });
+    }
   }
 }

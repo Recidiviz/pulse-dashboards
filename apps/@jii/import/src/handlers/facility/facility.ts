@@ -18,7 +18,7 @@
 import { PrismaClient } from "~@jii/prisma";
 import { LoaderFn } from "~data-import-plugin";
 
-import { facilityImportSchema } from "../../models";
+import { FACILITY_ID_FIELD, facilityImportSchema } from "../../models";
 import { DEFAULT_BATCH_SIZE, runBatchImport } from "../../utils/batchImport";
 
 export const BATCH_SIZE = DEFAULT_BATCH_SIZE; // facility.test.ts imports this
@@ -26,14 +26,15 @@ export const BATCH_SIZE = DEFAULT_BATCH_SIZE; // facility.test.ts imports this
 export const facilityHandler: LoaderFn<
   PrismaClient,
   typeof facilityImportSchema
-> = async (prismaClient, data) => {
+> = async (prismaClient, data, context) => {
   await runBatchImport({
     prismaClient,
     model: prismaClient.incarcerationFacility,
     tableName: "IncarcerationFacility",
-    idField: "id",
+    idField: FACILITY_ID_FIELD,
     pruneStale: true,
     batchSize: BATCH_SIZE,
     data,
+    context,
   });
 };

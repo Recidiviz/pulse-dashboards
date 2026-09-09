@@ -161,6 +161,120 @@ describe("residentHandler", () => {
     expect(deleted).toBeNull();
   });
 
+  const otherPersonData = {
+    ...personData,
+    pseudonymized_id: "other_pseudo_id",
+    person_id: 2,
+  };
+  const thirdPersonData = {
+    ...personData,
+    pseudonymized_id: "third_pseudo_id",
+    person_id: 3,
+  };
+  // matches the malformed-SSD case tested below
+  const invalidSSD = JSON.stringify({
+    state_code: "US_NC",
+    rna_due_date: "not-a-date",
+  });
+
+  it("keeps a resident whose incoming data fails to parse, while still deleting absent residents", async () => {
+    dataProviderSingleton.setData(DATA_PROVIDER_FILE_NAME, [
+      personData,
+      otherPersonData,
+      thirdPersonData,
+    ]);
+    await importHandler.import(STATE_CODE, [RESIDENTS_FILE_NAME]);
+
+    vi.setSystemTime(new Date("2025-05-20"));
+    dataProviderSingleton.setData(DATA_PROVIDER_FILE_NAME, [
+      { ...personData, facility_id: "FAC2" },
+      { ...otherPersonData, state_specific_data: invalidSSD },
+      // third resident is absent from this import
+    ]);
+    await expect(
+      importHandler.import(STATE_CODE, [RESIDENTS_FILE_NAME]),
+    ).rejects.toThrow();
+
+    const updated = await prismaClient.resident.findUniqueOrThrow({
+      where: { pseudonymizedId: personData.pseudonymized_id },
+    });
+    expect(updated.facilityId).toBe("FAC2");
+    expect(updated.importedAt).toEqual(new Date("2025-05-20"));
+
+    // preserved, with the data (and timestamp) from the last import that succeeded
+    const preserved = await prismaClient.resident.findUniqueOrThrow({
+      where: { pseudonymizedId: otherPersonData.pseudonymized_id },
+    });
+    expect(preserved.facilityId).toBe("FAC1");
+    expect(preserved.importedAt).toEqual(new Date("2025-05-19"));
+
+    expect(
+      await prismaClient.resident.findUnique({
+        where: { pseudonymizedId: thirdPersonData.pseudonymized_id },
+      }),
+    ).toBeNull();
+  });
+
+  it("deletes no residents at all when a failed row has no usable id", async () => {
+    dataProviderSingleton.setData(DATA_PROVIDER_FILE_NAME, [
+      personData,
+      otherPersonData,
+    ]);
+    await importHandler.import(STATE_CODE, [RESIDENTS_FILE_NAME]);
+
+    vi.setSystemTime(new Date("2025-05-20"));
+    dataProviderSingleton.setData(DATA_PROVIDER_FILE_NAME, [
+      { ...personData, pseudonymized_id: undefined },
+      // second resident is absent, but we can't trust an import we can't fully identify
+    ]);
+    await expect(
+      importHandler.import(STATE_CODE, [RESIDENTS_FILE_NAME]),
+    ).rejects.toThrow();
+
+    expect(await prismaClient.resident.findMany()).toHaveLength(2);
+  });
+
+  it("skips a resident with an empty ID instead of failing the whole file", async () => {
+    dataProviderSingleton.setData(DATA_PROVIDER_FILE_NAME, [
+      personData,
+      otherPersonData,
+    ]);
+    await importHandler.import(STATE_CODE, [RESIDENTS_FILE_NAME]);
+
+    vi.setSystemTime(new Date("2025-05-20"));
+    dataProviderSingleton.setData(DATA_PROVIDER_FILE_NAME, [
+      personData,
+      // an empty ID can't be matched to an existing record, so it has to fail validation
+      // like any other bad row rather than reaching the loader, which treats it as fatal
+      { ...otherPersonData, pseudonymized_id: "" },
+    ]);
+    await expect(
+      importHandler.import(STATE_CODE, [RESIDENTS_FILE_NAME]),
+    ).rejects.toThrow();
+
+    // the valid row still imported, and nothing was pruned, because a row we can't identify
+    // means we can't tell a departed resident from an unreadable one
+    const updated = await prismaClient.resident.findUniqueOrThrow({
+      where: { pseudonymizedId: personData.pseudonymized_id },
+    });
+    expect(updated.importedAt).toEqual(new Date("2025-05-20"));
+    expect(await prismaClient.resident.findMany()).toHaveLength(2);
+  });
+
+  it("ignores an unparsable resident who is not already in the database", async () => {
+    dataProviderSingleton.setData(DATA_PROVIDER_FILE_NAME, [
+      personData,
+      { ...otherPersonData, state_specific_data: invalidSSD },
+    ]);
+    await expect(
+      importHandler.import(STATE_CODE, [RESIDENTS_FILE_NAME]),
+    ).rejects.toThrow();
+
+    const result = await prismaClient.resident.findMany();
+    expect(result).toHaveLength(1);
+    expect(result[0].pseudonymizedId).toBe(personData.pseudonymized_id);
+  });
+
   const minimalRecord = {
     pseudonymized_id: "minimal_pseudo_id",
     person_external_id: "EXT_MIN",

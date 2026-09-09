@@ -130,6 +130,39 @@ describe("facilityHandler", () => {
     expect(deleted).toBeNull();
   });
 
+  it("keeps a facility whose incoming data fails to parse, while still deleting absent facilities", async () => {
+    dataProviderSingleton.setData(DATA_PROVIDER_FILE_NAME, [
+      facilityData,
+      { id: "FAC2", name: "Facility Two" },
+      { id: "FAC3", name: "Facility Three" },
+    ]);
+    await importHandler.import(STATE_CODE, [FACILITY_FILE_NAME]);
+
+    vi.setSystemTime(new Date("2025-05-20"));
+    dataProviderSingleton.setData(DATA_PROVIDER_FILE_NAME, [
+      facilityData,
+      { id: "FAC2" },
+      // FAC3 is absent from this import
+    ]);
+    await expect(
+      importHandler.import(STATE_CODE, [FACILITY_FILE_NAME]),
+    ).rejects.toThrow();
+
+    // preserved, with the data (and timestamp) from the last import that succeeded
+    const preserved =
+      await prismaClient.incarcerationFacility.findUniqueOrThrow({
+        where: { id: "FAC2" },
+      });
+    expect(preserved.name).toBe("Facility Two");
+    expect(preserved.importedAt).toEqual(new Date("2025-05-19"));
+
+    expect(
+      await prismaClient.incarcerationFacility.findUnique({
+        where: { id: "FAC3" },
+      }),
+    ).toBeNull();
+  });
+
   it("creates and updates a facility whose ID contains a single quote", async () => {
     const facilityWithQuote = { id: "FAC'1", name: "Facility O'Brien" };
 

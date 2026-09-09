@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,13 +17,6 @@
 
 import { z } from "zod";
 
-export const fileOneSchema = z.object({
-  testFieldOne: z.string(),
-});
-export const fileTwoSchema = z.object({
-  testFieldTwo: z.string(),
-});
-export const fileThreeSchema = z.object({
-  id: z.string(),
-  testFieldThree: z.string(),
-});
+export function requireNonemptyString(input: unknown) {
+  return z.string().min(1).parse(input);
+}

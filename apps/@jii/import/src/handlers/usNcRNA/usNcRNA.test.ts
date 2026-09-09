@@ -132,6 +132,25 @@ describe("transformAndLoadRNAWritebackData", () => {
     `);
   });
 
+  it("leaves an existing person alone when their incoming data fails to parse", async () => {
+    dataProviderSingleton.setData(DATA_PROVIDER_FILE_NAME, [personData]);
+    await importHandler.import(STATE_CODE, [NC_RNA_FILE_NAME]);
+
+    vi.setSystemTime(new Date("2025-05-20"));
+    dataProviderSingleton.setData(DATA_PROVIDER_FILE_NAME, [
+      { ...personData, admit_date: "not-a-date" },
+    ]);
+    await expect(
+      importHandler.import(STATE_CODE, [NC_RNA_FILE_NAME]),
+    ).rejects.toThrow();
+
+    const preserved = await prismaClient.usNcRNAWritebackData.findUniqueOrThrow(
+      { where: { pseudonymizedId: personData.pseudonymized_id } },
+    );
+    expect(preserved.admitDate).toEqual(new Date("2022-02-22"));
+    expect(preserved.importedAt).toEqual(new Date("2025-05-19"));
+  });
+
   it("correctly imports more than BATCH_SIZE people", async () => {
     const manyPeople = Array.from({ length: BATCH_SIZE + 1 }, (_, i) => ({
       ...personData,
