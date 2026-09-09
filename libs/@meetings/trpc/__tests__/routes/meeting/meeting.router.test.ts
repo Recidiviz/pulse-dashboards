@@ -126,8 +126,16 @@ describe("meeting router", () => {
         caseNoteEditedAt: null,
         actionItemsEditedAt: null,
         approvals: {
-          caseNote: false,
-          actionItems: false,
+          caseNote: {
+            isApproved: false,
+            approverEmail: null,
+            approvedAt: null,
+          },
+          actionItems: {
+            isApproved: false,
+            approverEmail: null,
+            approvedAt: null,
+          },
         },
         validationErrorType: null,
         transcriptDeletedAt: null,
@@ -207,8 +215,16 @@ describe("meeting router", () => {
         caseNoteEditedAt: null,
         actionItemsEditedAt: null,
         approvals: {
-          caseNote: false,
-          actionItems: false,
+          caseNote: {
+            isApproved: false,
+            approverEmail: null,
+            approvedAt: null,
+          },
+          actionItems: {
+            isApproved: false,
+            approverEmail: null,
+            approvedAt: null,
+          },
         },
         validationErrorType: null,
         transcriptDeletedAt: null,
@@ -513,8 +529,16 @@ describe("meeting router", () => {
       });
 
       expect(result.approvals).toEqual({
-        caseNote: false,
-        actionItems: true,
+        caseNote: {
+          isApproved: false,
+          approverEmail: fakeStaff[0].email,
+          approvedAt: expect.any(Date),
+        },
+        actionItems: {
+          isApproved: true,
+          approverEmail: fakeStaff[0].email,
+          approvedAt: expect.any(Date),
+        },
       });
     });
 
@@ -536,8 +560,12 @@ describe("meeting router", () => {
       });
 
       expect(result.approvals).toEqual({
-        caseNote: false,
-        actionItems: false,
+        caseNote: { isApproved: false, approverEmail: null, approvedAt: null },
+        actionItems: {
+          isApproved: false,
+          approverEmail: null,
+          approvedAt: null,
+        },
       });
     });
   });

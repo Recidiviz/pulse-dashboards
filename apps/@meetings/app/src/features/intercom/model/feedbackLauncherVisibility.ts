@@ -58,3 +58,13 @@ export const feedbackLauncherScrollProps = {
   onScroll: notifyFeedbackLauncherOfScroll,
   scrollEventThrottle: 16,
 } as const;
+
+/**
+ * Lets a screen check whether the feedback launcher tab could occupy space
+ * over its own UI, so it can reserve room for it (e.g. footer padding).
+ * Reads `isSuppressed` only, not `isScrolling`, since the tab still reserves
+ * its layout space while mid-fade during a scroll.
+ */
+export function useIsFeedbackLauncherPresent() {
+  return useFeedbackLauncherVisibilityStore((state) => !state.isSuppressed);
+}

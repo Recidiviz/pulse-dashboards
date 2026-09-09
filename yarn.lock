@@ -10774,7 +10774,7 @@ __metadata:
     "@react-navigation/drawer": "npm:^7.7.10"
     "@react-navigation/native": "npm:^7.1.26"
     "@react-navigation/native-stack": "npm:^7.6.3"
-    "@rn-primitives/checkbox": "npm:^1.4.0"
+    "@rn-primitives/checkbox": "npm:^1.5.2"
     "@rn-primitives/portal": "npm:^1.4.0"
     "@rn-primitives/tooltip": "npm:^1.4.0"
     "@segment/analytics-react-native": "npm:^2.24.0"
@@ -17029,7 +17029,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rn-primitives/checkbox@npm:^1.4.0":
+"@rn-primitives/checkbox@npm:^1.5.2":
   version: 1.5.2
   resolution: "@rn-primitives/checkbox@npm:1.5.2"
   dependencies:

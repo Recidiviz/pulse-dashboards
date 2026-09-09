@@ -15,11 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export {
-  feedbackLauncherScrollProps,
-  notifyFeedbackLauncherOfScroll,
-  useIsFeedbackLauncherPresent,
-} from "./model/feedbackLauncherVisibility";
-export { useIntercom } from "./model/useIntercom";
-export { useSuppressFeedbackLauncher } from "./model/useSuppressFeedbackLauncher";
-export { FeedbackLauncher } from "./ui/FeedbackLauncher";
+import type { NoteSection } from "~@meetings/trpc-types";
+
+// Keys of MeetingDetails["approvals"] — the UI-facing names for the two
+// approvable sections of a meeting's notes.
+export type ApprovableSectionKey = "caseNote" | "actionItems";
+
+export const APPROVABLE_SECTION_TO_NOTE_SECTION = {
+  caseNote: "CASE_NOTE",
+  actionItems: "ACTION_ITEMS",
+} as const satisfies Record<ApprovableSectionKey, NoteSection>;

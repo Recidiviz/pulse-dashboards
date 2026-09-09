@@ -15,11 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export {
-  feedbackLauncherScrollProps,
-  notifyFeedbackLauncherOfScroll,
-  useIsFeedbackLauncherPresent,
-} from "./model/feedbackLauncherVisibility";
-export { useIntercom } from "./model/useIntercom";
-export { useSuppressFeedbackLauncher } from "./model/useSuppressFeedbackLauncher";
-export { FeedbackLauncher } from "./ui/FeedbackLauncher";
+import { MeetingDetails } from "~@meetings/app/entities/meeting";
+
+import { Tab } from "../ui/MeetingTabs";
+
+export type SectionApproval = MeetingDetails["approvals"]["caseNote"];
+
+export function getSectionApprovalByTab(
+  tab: Tab,
+  approvals: { caseNote: SectionApproval; actionItems: SectionApproval },
+): SectionApproval | undefined {
+  if (tab === Tab.DraftCaseNotes) return approvals.caseNote;
+  if (tab === Tab.ActionItems) return approvals.actionItems;
+  return undefined;
+}

@@ -34,6 +34,8 @@ export type { ActionItem } from "~@meetings/tasks";
 
 // eslint-disable-next-line @nx/enforce-module-boundaries
 export type {
+  ApprovalValue,
+  NoteSection,
   OutputVoteTab,
   OutputVoteValue,
   PostMeetingProcessingStatus,

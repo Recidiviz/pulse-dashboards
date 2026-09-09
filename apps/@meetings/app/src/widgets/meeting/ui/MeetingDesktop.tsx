@@ -40,8 +40,10 @@ import {
 import { Button } from "~@meetings/app/shared/ui/Button";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
+import { useApprovalFooter } from "../lib/useApprovalFooter";
 import { usePrintMeetingDetails } from "../lib/usePrintMeetingDetails";
 import { ActionItemsTab } from "./ActionItemsTab";
+import { ApprovalFooter } from "./ApprovalFooter";
 import AudioPlayer from "./AudioPlayer";
 import DraftCaseNoteTab from "./DraftCaseNoteTab";
 import MeetingTabs, { Tab } from "./MeetingTabs";
@@ -73,6 +75,16 @@ const MeetingDesktop = ({
   const isMeetingCreator =
     currentUserEmail?.toLowerCase() ===
       meetingDetails.staffEmail.toLowerCase() || isSkipAuthUser;
+
+  const {
+    activeSectionApproval,
+    isFooterChecked,
+    hasBeenEdited,
+    handleFooterCheckedChange,
+    handleConfirmApproval,
+    isConfirmPending,
+    shouldShowFooter,
+  } = useApprovalFooter(meetingId, activeTab, meetingDetails, isMeetingCreator);
 
   const meetingDate = meetingDetails.startTime
     ? formatMeetingStartDate(meetingDetails.startTime)
@@ -192,6 +204,7 @@ const MeetingDesktop = ({
                   }
                   showTranscription={showTranscription}
                   showStaffFeedback={meetingDetails.staffFeedback != null}
+                  approvals={meetingDetails.approvals}
                 />
               </View>
               <View className="ml-3 flex-row gap-3">
@@ -215,6 +228,8 @@ const MeetingDesktop = ({
                 <DraftCaseNoteTab
                   meetingId={meetingId}
                   caseNote={meetingDetails.caseNote || ""}
+                  isApproved={meetingDetails.approvals.caseNote.isApproved}
+                  isMeetingCreator={isMeetingCreator}
                   personId={person.personId.toString()}
                   canEdit={isMeetingCreator}
                   outputVote={
@@ -283,6 +298,21 @@ const MeetingDesktop = ({
           </ScrollView>
         </View>
       </View>
+      {shouldShowFooter && (
+        <View className="h-16 flex-row border-t border-subtle">
+          <View className="w-36 shrink-0" />
+          <View className="flex-1 flex-row items-center justify-between py-3 pr-10">
+            <ApprovalFooter
+              activeSectionApproval={activeSectionApproval}
+              isFooterChecked={isFooterChecked}
+              hasBeenEdited={hasBeenEdited}
+              onFooterCheckedChange={handleFooterCheckedChange}
+              onConfirm={handleConfirmApproval}
+              isConfirmPending={isConfirmPending}
+            />
+          </View>
+        </View>
+      )}
     </View>
   );
 };

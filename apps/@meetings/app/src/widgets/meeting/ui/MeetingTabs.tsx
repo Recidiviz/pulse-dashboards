@@ -18,6 +18,7 @@
 import { Pressable, ScrollView } from "react-native";
 import LockClosedIcon from "react-native-heroicons/solid/LockClosedIcon";
 
+import { ReviewIndicator } from "~@meetings/app/features/meeting-section-approval";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 export enum Tab {
@@ -27,12 +28,17 @@ export enum Tab {
   StaffFeedback = "Staff Feedback",
 }
 
+type SectionApproval = { isApproved: boolean };
+
 type Props = {
   activeTab: Tab;
   setActiveTab: (tab: Tab) => void;
   isTranscriptionUnavailable?: boolean;
   showTranscription: boolean;
   showStaffFeedback: boolean;
+  // Only Draft Case Notes and Action Items are approvable; other tabs never
+  // show a review indicator regardless of this being set.
+  approvals?: { caseNote: SectionApproval; actionItems: SectionApproval };
 };
 
 const MeetingTabs = ({
@@ -41,6 +47,7 @@ const MeetingTabs = ({
   isTranscriptionUnavailable,
   showTranscription,
   showStaffFeedback,
+  approvals,
 }: Props) => {
   const visibleTabs = Object.values(Tab).filter((tab) => {
     if (tab === Tab.Transcript) return showTranscription;
@@ -48,41 +55,53 @@ const MeetingTabs = ({
     return true;
   });
 
+  const getIsApprovedForTab = (tab: Tab): boolean | undefined => {
+    if (tab === Tab.DraftCaseNotes) return approvals?.caseNote.isApproved;
+    if (tab === Tab.ActionItems) return approvals?.actionItems.isApproved;
+    return undefined;
+  };
+
   return (
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
       contentContainerClassName="flex-row gap-1 bg-screen rounded-full p-1"
     >
-      {visibleTabs.map((tab) => (
-        <Pressable
-          key={tab}
-          className={`shrink-0 flex-row items-center justify-center gap-2 rounded-full px-4 py-1.5 ${tab === activeTab ? "bg-primary" : "bg-transparent"}`}
-          onPress={() => setActiveTab(tab)}
-          disabled={tab === Tab.Transcript && isTranscriptionUnavailable}
-          style={
-            tab === activeTab
-              ? {
-                  shadowColor: "#000000",
-                  shadowOffset: { width: 3, height: 5 },
-                  shadowRadius: 30,
-                  shadowOpacity: 0.05,
-                  elevation: 5,
-                }
-              : undefined
-          }
-        >
-          <Typography
-            variant="body-m-regular"
-            className={tab === activeTab ? undefined : "text-secondary"}
+      {visibleTabs.map((tab) => {
+        const isApproved = getIsApprovedForTab(tab);
+
+        return (
+          <Pressable
+            key={tab}
+            className={`shrink-0 flex-row items-center justify-center gap-2 rounded-full px-4 py-1.5 ${tab === activeTab ? "bg-primary" : "bg-transparent"}`}
+            onPress={() => setActiveTab(tab)}
+            disabled={tab === Tab.Transcript && isTranscriptionUnavailable}
+            style={
+              tab === activeTab
+                ? {
+                    shadowColor: "#000000",
+                    shadowOffset: { width: 3, height: 5 },
+                    shadowRadius: 30,
+                    shadowOpacity: 0.05,
+                    elevation: 5,
+                  }
+                : undefined
+            }
           >
-            {tab}
-          </Typography>
-          {tab === Tab.Transcript && isTranscriptionUnavailable && (
-            <LockClosedIcon className="size-3 fill-disabled" />
-          )}
-        </Pressable>
-      ))}
+            {isApproved !== undefined && (
+              <ReviewIndicator isApproved={isApproved} />
+            )}
+            <Typography
+              className={`text-base ${tab === activeTab ? "text-primary" : "text-secondary"}`}
+            >
+              {tab}
+            </Typography>
+            {tab === Tab.Transcript && isTranscriptionUnavailable && (
+              <LockClosedIcon className="size-3 fill-disabled" />
+            )}
+          </Pressable>
+        );
+      })}
     </ScrollView>
   );
 };

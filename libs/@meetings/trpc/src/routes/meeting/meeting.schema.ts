@@ -30,6 +30,15 @@ export const getDetailInputSchema = z.object({
   meetingId: z.string(),
 });
 
+// Reflects the most-recent NoteApproval row for a section, whatever its
+// value — approverEmail/approvedAt are null only if the section has never
+// been touched.
+const sectionApprovalSchema = z.object({
+  isApproved: z.boolean(),
+  approverEmail: z.string().nullable(),
+  approvedAt: z.date().nullable(),
+});
+
 // Output schema for parsed meeting details
 export const getDetailsOutputSchema = z.object({
   id: z.string(),
@@ -76,8 +85,8 @@ export const getDetailsOutputSchema = z.object({
   actionItemsEditedAt: z.date().nullable(),
   // Creator approval per section, tied to the active notetakingPipelineRunId.
   approvals: z.object({
-    caseNote: z.boolean(),
-    actionItems: z.boolean(),
+    caseNote: sectionApprovalSchema,
+    actionItems: sectionApprovalSchema,
   }),
   durationMs: z.number().nullable(),
   postMeetingProcessingStatus: z.nativeEnum(PostMeetingProcessingStatus),

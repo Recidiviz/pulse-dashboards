@@ -117,8 +117,16 @@ export function useOfflineEventFactory() {
             meetingActionItems: [],
             actionItemsEditedAt: null,
             approvals: {
-              caseNote: false,
-              actionItems: false,
+              caseNote: {
+                isApproved: false,
+                approverEmail: null,
+                approvedAt: null,
+              },
+              actionItems: {
+                isApproved: false,
+                approverEmail: null,
+                approvedAt: null,
+              },
             },
             postMeetingProcessingStatus: "NOT_STARTED",
             validationErrorType: null,

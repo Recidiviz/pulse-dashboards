@@ -68,7 +68,10 @@ const meetingDetails = {
   currentOutputVotes: null,
   caseNoteEditedAt: null,
   actionItemsEditedAt: null,
-  approvals: { caseNote: false, actionItems: false },
+  approvals: {
+    caseNote: { isApproved: false, approverEmail: null, approvedAt: null },
+    actionItems: { isApproved: false, approverEmail: null, approvedAt: null },
+  },
   postMeetingProcessingStatus: "NOT_STARTED",
   validationErrorType: null,
   transcriptDeletedAt: null,

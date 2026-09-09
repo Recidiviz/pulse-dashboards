@@ -16,10 +16,9 @@
 // =============================================================================
 
 export {
-  feedbackLauncherScrollProps,
-  notifyFeedbackLauncherOfScroll,
-  useIsFeedbackLauncherPresent,
-} from "./model/feedbackLauncherVisibility";
-export { useIntercom } from "./model/useIntercom";
-export { useSuppressFeedbackLauncher } from "./model/useSuppressFeedbackLauncher";
-export { FeedbackLauncher } from "./ui/FeedbackLauncher";
+  APPROVABLE_SECTION_TO_NOTE_SECTION,
+  type ApprovableSectionKey,
+} from "./model/types";
+export { useApproveSection } from "./model/useApproveSection";
+export { ReviewBeforeCopyModal } from "./ui/ReviewBeforeCopyModal";
+export { ReviewIndicator } from "./ui/ReviewIndicator";

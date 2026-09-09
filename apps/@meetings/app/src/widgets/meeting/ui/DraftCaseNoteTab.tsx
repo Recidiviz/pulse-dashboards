@@ -22,6 +22,7 @@ import { TextInput, View } from "react-native";
 import DocumentDuplicateIcon from "react-native-heroicons/solid/DocumentDuplicateIcon";
 
 import { useUpdateNotes } from "~@meetings/app/entities/meeting";
+import { ReviewBeforeCopyModal } from "~@meetings/app/features/meeting-section-approval";
 import { useAnalytics } from "~@meetings/app/shared/analytics";
 import { trpc } from "~@meetings/app/shared/api";
 import { Button } from "~@meetings/app/shared/ui/Button";
@@ -31,6 +32,8 @@ import { Typography } from "~@meetings/app/shared/ui/Typography";
 type Props = {
   meetingId: string;
   caseNote: string;
+  isApproved: boolean;
+  isMeetingCreator: boolean;
   personId: string;
   outputVote?: ReactNode;
   canEdit?: boolean;
@@ -40,6 +43,8 @@ const DraftCaseNoteTab = ({
   meetingId,
   caseNote,
   personId,
+  isApproved,
+  isMeetingCreator,
   outputVote,
   canEdit = false,
 }: Props) => {
@@ -48,6 +53,7 @@ const DraftCaseNoteTab = ({
   const { showSnackbar, isShowing: isSnackbarShowing } = useSnackbar();
   const [inputNotes, setInputNotes] = useState(caseNote);
   const [inputHeight, setInputHeight] = useState(0);
+  const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
   const updateNotesMutation = useUpdateNotes({
     onSuccess: () => {
       utils.v1.meeting.getDetails.invalidate({ meetingId });
@@ -69,10 +75,23 @@ const DraftCaseNoteTab = ({
     debouncedSave(newValue);
   };
 
-  const onCopy = () => {
+  const copyToClipboard = () => {
     Clipboard.setString(caseNote);
     showSnackbar("Case note copied to clipboard");
     track("case_notes_copied", { meetingId, personId });
+  };
+
+  const onCopy = () => {
+    if (isApproved) {
+      copyToClipboard();
+    } else {
+      setIsReviewModalVisible(true);
+    }
+  };
+
+  const handleCopyAnyway = () => {
+    setIsReviewModalVisible(false);
+    copyToClipboard();
   };
 
   useEffect(() => {
@@ -126,6 +145,14 @@ const DraftCaseNoteTab = ({
         />
         {outputVote}
       </View>
+      {isReviewModalVisible && (
+        <ReviewBeforeCopyModal
+          onClose={() => setIsReviewModalVisible(false)}
+          onConfirm={handleCopyAnyway}
+          isMeetingCreator={isMeetingCreator}
+          action="copy"
+        />
+      )}
     </View>
   );
 };

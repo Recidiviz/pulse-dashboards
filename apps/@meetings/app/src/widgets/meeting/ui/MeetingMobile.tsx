@@ -50,7 +50,11 @@ import {
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
 import { useUserContext } from "~@meetings/app/entities/user";
 import { DraftCaseNoteSheet } from "~@meetings/app/features/edit-case-note";
-import { notifyFeedbackLauncherOfScroll } from "~@meetings/app/features/intercom";
+import {
+  notifyFeedbackLauncherOfScroll,
+  useIsFeedbackLauncherPresent,
+} from "~@meetings/app/features/intercom";
+import { ReviewBeforeCopyModal } from "~@meetings/app/features/meeting-section-approval";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 import PlaySvg from "~@meetings/app/shared/assets/icons/play.svg";
 import BgAvatarImage from "~@meetings/app/shared/assets/images/bg-avatar.png";
@@ -61,7 +65,9 @@ import {
 import { Button } from "~@meetings/app/shared/ui/Button";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
+import { useApprovalFooter } from "../lib/useApprovalFooter";
 import { ActionItemsTab } from "./ActionItemsTab";
+import { ApprovalFooter } from "./ApprovalFooter";
 import AudioPlayer from "./AudioPlayer";
 import DraftCaseNoteTab from "./DraftCaseNoteTab";
 import MeetingNotesSheet from "./MeetingNotesSheet";
@@ -71,6 +77,8 @@ import OutputVote from "./OutputVote";
 import StaffFeedbackTab from "./StaffFeedbackTab";
 
 const HEADER_HEIGHT = 64;
+const FOOTER_HEIGHT = 64;
+const PLAY_BUTTON_FOOTER_MARGIN = 12;
 const AUDIO_PLAYER_HEIGHT = 72;
 const TABS_HEIGHT = 44;
 const TABS_GAP = 20;
@@ -102,12 +110,13 @@ const MeetingMobile = ({
   const { width } = useWindowDimensions();
   const [activeTab, setActiveTab] = useState<Tab>(Tab.DraftCaseNotes);
   const [isPlayerVisible, setIsPlayerVisible] = useState(false);
+  const [isShareReviewModalVisible, setIsShareReviewModalVisible] =
+    useState(false);
   const meetingAudioExtension = meetingDetails.audioUrl?.split(".").at(-1);
   const showPlayButton =
     !!meetingDetails.audioUrl &&
     !isPlayerVisible &&
     (Platform.OS === "ios" ? meetingAudioExtension !== "webm" : true); // ios doesn't support webm
-  const playButtonAreaHeight = insets.bottom + 76;
   const audioOffset =
     !!meetingDetails.audioUrl && isPlayerVisible ? AUDIO_PLAYER_HEIGHT : 0;
   const chromeHeight =
@@ -120,6 +129,26 @@ const MeetingMobile = ({
   const isCollapsed = useSharedValue(false);
   const draftCaseNoteSheetRef = useRef<BottomSheetModal>(null);
   const meetingNotesSheetRef = useRef<BottomSheetModal>(null);
+
+  const {
+    activeSectionApproval,
+    isFooterChecked,
+    hasBeenEdited,
+    handleFooterCheckedChange,
+    handleConfirmApproval,
+    isConfirmPending,
+    shouldShowFooter,
+  } = useApprovalFooter(meetingId, activeTab, meetingDetails, isMeetingCreator);
+  const isFeedbackLauncherPresent = useIsFeedbackLauncherPresent();
+
+  // When the approval footer is showing, float the play button above it
+  // (with a small gap) instead of at the screen's bottom edge, so the two
+  // don't overlap.
+  const footerClearance = shouldShowFooter
+    ? FOOTER_HEIGHT + PLAY_BUTTON_FOOTER_MARGIN
+    : 0;
+  const playButtonBottomOffset = insets.bottom + 16 + footerClearance;
+  const playButtonAreaHeight = insets.bottom + 76 + footerClearance;
 
   const scrollHandler = useAnimatedScrollHandler((event) => {
     scheduleOnRN(notifyFeedbackLauncherOfScroll);
@@ -256,6 +285,19 @@ const MeetingMobile = ({
     }
   };
 
+  const handleSharePress = () => {
+    if (meetingDetails.approvals.caseNote.isApproved) {
+      onShare();
+    } else {
+      setIsShareReviewModalVisible(true);
+    }
+  };
+
+  const handleShareAnyway = () => {
+    setIsShareReviewModalVisible(false);
+    onShare();
+  };
+
   const meetingDate = meetingDetails.startTime
     ? formatMeetingStartDate(meetingDetails.startTime)
     : "";
@@ -282,6 +324,8 @@ const MeetingMobile = ({
         <View className="mx-auto mt-4 w-full max-w-[960px] flex-1">
           {activeTab === Tab.DraftCaseNotes && (
             <DraftCaseNoteTab
+              isApproved={meetingDetails.approvals.caseNote.isApproved}
+              isMeetingCreator={isMeetingCreator}
               meetingId={meetingId}
               caseNote={meetingDetails.caseNote || ""}
               personId={person.personId.toString()}
@@ -360,7 +404,7 @@ const MeetingMobile = ({
 
           <View className="flex-1" />
 
-          <TouchableOpacity onPress={onShare}>
+          <TouchableOpacity onPress={handleSharePress}>
             <ShareIcon className="text-muted" />
           </TouchableOpacity>
         </View>
@@ -455,14 +499,32 @@ const MeetingMobile = ({
             isTranscriptionUnavailable={!meetingDetails?.transcription}
             showTranscription={showTranscription}
             showStaffFeedback={meetingDetails.staffFeedback != null}
+            approvals={meetingDetails.approvals}
           />
         </View>
       </Animated.View>
 
+      {shouldShowFooter && (
+        <View
+          className={`h-16 w-full flex-row items-center justify-between border-t border-subtle pl-4 ${
+            isFeedbackLauncherPresent ? "pr-12" : "pr-4"
+          }`}
+        >
+          <ApprovalFooter
+            activeSectionApproval={activeSectionApproval}
+            isFooterChecked={isFooterChecked}
+            hasBeenEdited={hasBeenEdited}
+            onFooterCheckedChange={handleFooterCheckedChange}
+            onConfirm={handleConfirmApproval}
+            isConfirmPending={isConfirmPending}
+          />
+        </View>
+      )}
+
       {showPlayButton && (
         <View
           className="absolute inset-x-0 items-center"
-          style={{ bottom: insets.bottom + 16 }}
+          style={{ bottom: playButtonBottomOffset }}
         >
           <Button
             variant="primary"
@@ -489,6 +551,14 @@ const MeetingMobile = ({
         personId={person.personId.toString()}
         canEdit={isMeetingCreator}
       />
+      {isShareReviewModalVisible && (
+        <ReviewBeforeCopyModal
+          onClose={() => setIsShareReviewModalVisible(false)}
+          onConfirm={handleShareAnyway}
+          isMeetingCreator={isMeetingCreator}
+          action="share"
+        />
+      )}
     </View>
   );
 };

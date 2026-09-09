@@ -234,18 +234,32 @@ export const meetingRouter = router({
                   pipelineRunId: meeting.notetakingPipelineRunId,
                 },
                 orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-                select: { section: true, value: true },
+                select: {
+                  section: true,
+                  value: true,
+                  approverEmail: true,
+                  createdAt: true,
+                },
               })
             : [];
 
-          const latestApprovalBySection = new Map<NoteSection, ApprovalValue>();
+          const latestApprovalBySection = new Map<
+            NoteSection,
+            (typeof approvalRows)[number]
+          >();
           for (const row of approvalRows) {
             if (!latestApprovalBySection.has(row.section)) {
-              latestApprovalBySection.set(row.section, row.value);
+              latestApprovalBySection.set(row.section, row);
             }
           }
-          const isApproved = (section: NoteSection) =>
-            latestApprovalBySection.get(section) === ApprovalValue.APPROVED;
+          const getSectionApproval = (section: NoteSection) => {
+            const latest = latestApprovalBySection.get(section);
+            return {
+              isApproved: latest?.value === ApprovalValue.APPROVED,
+              approverEmail: latest?.approverEmail ?? null,
+              approvedAt: latest?.createdAt ?? null,
+            };
+          };
 
           const currentActionItems = meeting.meetingActionItems.filter(
             (item) =>
@@ -282,8 +296,8 @@ export const meetingRouter = router({
               ? null
               : currentOutputVotes,
             approvals: {
-              caseNote: isApproved(NoteSection.CASE_NOTE),
-              actionItems: isApproved(NoteSection.ACTION_ITEMS),
+              caseNote: getSectionApproval(NoteSection.CASE_NOTE),
+              actionItems: getSectionApproval(NoteSection.ACTION_ITEMS),
             },
             transcription: includeTranscription
               ? meeting.transcriptions[0] || null

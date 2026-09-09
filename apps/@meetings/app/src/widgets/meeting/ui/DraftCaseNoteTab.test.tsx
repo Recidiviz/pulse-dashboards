@@ -66,13 +66,19 @@ const MEETING_ID = "meeting-1";
 const PERSON_ID = "person-1";
 const ORIGINAL_NOTE = "Original case note";
 
-function renderTab(caseNote = ORIGINAL_NOTE, canEdit = true) {
+function renderTab(
+  caseNote = ORIGINAL_NOTE,
+  canEdit = true,
+  isApproved = true,
+) {
   const utils = render(
     <DraftCaseNoteTab
       meetingId={MEETING_ID}
       caseNote={caseNote}
       personId={PERSON_ID}
       canEdit={canEdit}
+      isApproved={isApproved}
+      isMeetingCreator
     />,
   );
   const input = utils.getByDisplayValue(caseNote);
@@ -148,6 +154,67 @@ describe("DraftCaseNoteTab", () => {
     });
   });
 
+  describe("when the case note has not been approved (isApproved: false)", () => {
+    const REVIEW_PROMPT = "You haven’t reviewed this yet. Copy anyway?";
+
+    it("shows the review warning instead of copying immediately", () => {
+      const { getByText, queryByText } = renderTab(ORIGINAL_NOTE, true, false);
+
+      fireEvent.press(getByText("Copy"));
+
+      expect(mockSetString).not.toHaveBeenCalled();
+      expect(mockTrack).not.toHaveBeenCalled();
+      expect(queryByText(REVIEW_PROMPT)).toBeTruthy();
+    });
+
+    it("copies and dismisses the warning when the user confirms 'Copy anyway'", () => {
+      const { getByText, queryByText } = renderTab(ORIGINAL_NOTE, true, false);
+
+      fireEvent.press(getByText("Copy"));
+      fireEvent.press(getByText("Copy anyway"));
+
+      expect(mockSetString).toHaveBeenCalledWith(ORIGINAL_NOTE);
+      expect(mockShowSnackbar).toHaveBeenCalledWith(
+        "Case note copied to clipboard",
+      );
+      expect(mockTrack).toHaveBeenCalledWith("case_notes_copied", {
+        meetingId: MEETING_ID,
+        personId: PERSON_ID,
+      });
+      expect(queryByText(REVIEW_PROMPT)).toBeNull();
+    });
+
+    it("does not copy and dismisses the warning when the user picks 'Review first'", () => {
+      const { getByText, queryByText } = renderTab(ORIGINAL_NOTE, true, false);
+
+      fireEvent.press(getByText("Copy"));
+      fireEvent.press(getByText("Review first"));
+
+      expect(mockSetString).not.toHaveBeenCalled();
+      expect(queryByText(REVIEW_PROMPT)).toBeNull();
+    });
+
+    it("shows the non-creator phrasing when the viewer isn't the meeting creator", () => {
+      const { getByText, queryByText } = render(
+        <DraftCaseNoteTab
+          meetingId={MEETING_ID}
+          caseNote={ORIGINAL_NOTE}
+          personId={PERSON_ID}
+          canEdit={false}
+          isApproved={false}
+          isMeetingCreator={false}
+        />,
+      );
+
+      fireEvent.press(getByText("Copy"));
+
+      expect(
+        queryByText("This content has not been reviewed yet. Copy anyway?"),
+      ).toBeTruthy();
+      expect(queryByText(REVIEW_PROMPT)).toBeNull();
+    });
+  });
+
   describe("when the user cannot edit (not the meeting creator)", () => {
     it("renders the case note read-only and hides the edit hint", () => {
       const { input, queryByText } = renderTab(ORIGINAL_NOTE, false);
@@ -175,6 +242,8 @@ describe("DraftCaseNoteTab", () => {
           meetingId={MEETING_ID}
           caseNote={ORIGINAL_NOTE}
           personId={PERSON_ID}
+          isApproved={false}
+          isMeetingCreator
         />,
       );
 

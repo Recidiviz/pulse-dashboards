@@ -15,11 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export {
-  feedbackLauncherScrollProps,
-  notifyFeedbackLauncherOfScroll,
-  useIsFeedbackLauncherPresent,
-} from "./model/feedbackLauncherVisibility";
-export { useIntercom } from "./model/useIntercom";
-export { useSuppressFeedbackLauncher } from "./model/useSuppressFeedbackLauncher";
-export { FeedbackLauncher } from "./ui/FeedbackLauncher";
+import NotReviewedIcon from "../assets/not-reviewed.svg";
+import ReviewedIcon from "../assets/reviewed.svg";
+
+export function ReviewIndicator({ isApproved }: { isApproved: boolean }) {
+  return isApproved ? (
+    <ReviewedIcon className="size-3" />
+  ) : (
+    <NotReviewedIcon className="size-3" />
+  );
+}
