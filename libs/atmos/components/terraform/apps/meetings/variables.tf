@@ -142,3 +142,8 @@ variable "domain_name" {
   type        = string
   description = "The domain name for the meetings server load balancer (e.g. meet-api.recidiviz.org)"
 }
+
+variable "waf_id" {
+  type        = string
+  description = "Identifier of the WAF policy to be used for the module server"
+}

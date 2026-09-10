@@ -62,3 +62,8 @@ variable "server_url" {
   type        = string
   description = "Public url of the modules server"
 }
+
+variable "waf_id" {
+  type        = string
+  description = "Identifier of the WAF policy to be used for the module server"
+}

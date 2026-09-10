@@ -31,8 +31,7 @@ module "lb_backend" {
   load_balancing_scheme = "EXTERNAL_MANAGED"
   protocol              = "HTTPS"
 
-  # This is manually set to use the meetings waf until the waf gets generalized in tf
-  security_policy = null
+  security_policy = var.waf_id
 
   serverless_neg_backends = [{
     region       = var.location

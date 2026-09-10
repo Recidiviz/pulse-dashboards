@@ -21,13 +21,6 @@ resource "google_project_service" "certificate_manager" {
   disable_on_destroy = false
 }
 
-module "waf" {
-  source  = "../../modules/waf-policy"
-  name    = "meetings-server-waf"
-  project = var.project_id
-  region  = var.location
-}
-
 module "lb_backend" {
   source = "../../vendor/regional-lb-http-backend"
 
@@ -38,7 +31,7 @@ module "lb_backend" {
   load_balancing_scheme = "EXTERNAL_MANAGED"
   protocol              = "HTTPS"
 
-  security_policy = module.waf.id
+  security_policy = var.waf_id
 
   serverless_neg_backends = [{
     region       = var.location

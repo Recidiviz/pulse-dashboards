@@ -42,6 +42,7 @@ components:
         environment: staging
         domain_name: meet-api-staging.recidiviz.org
         private_network: projects/recidiviz-dashboard-staging/global/networks/default
+        waf_id: !terraform.state apps/shared-infra recidiviz-dashboard-staging--shared-infra shared_waf_id
         meetings_bucket_cors_origins:
           - "*"
 
