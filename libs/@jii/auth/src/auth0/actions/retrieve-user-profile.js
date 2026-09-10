@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,7 +46,8 @@ exports.onExecutePostLogin = async (event, api) => {
 
   let userType;
   let stateCode;
-  let userId;
+  let userExternalId;
+  let userUniqueId;
   let email;
 
   if (emailAddress?.endsWith("@recidiviz.org")) {
@@ -80,10 +81,17 @@ exports.onExecutePostLogin = async (event, api) => {
   if (emailAddress === event.secrets.MA_UNKNOWN_USER_TEST_EMAIL) {
     stateCode = "US_MA";
     userType = "ORIJIN";
-    userId = "invalid-id-that-does-not-exist";
+    userExternalId = "invalid-id-that-does-not-exist";
+    userUniqueId = event.user.user_id;
   }
 
-  const jwt = await new SignJWT({ userType, stateCode, userId, email })
+  const jwt = await new SignJWT({
+    userType,
+    stateCode,
+    userExternalId,
+    userUniqueId,
+    email,
+  })
     .setProtectedHeader({ alg })
     .setIssuedAt()
     .setExpirationTime("1m")

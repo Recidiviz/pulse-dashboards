@@ -38,12 +38,8 @@ const auth0UserPayloadSchema = z.discriminatedUnion("userType", [
   z.object({
     userType: z.literal("ORIJIN"),
     stateCode: z.string().toUpperCase(),
-    // for backwards compatibility we are supporting two ID schemes;
-    // this is the old (deprecated) one
-    userId: z.string().optional(),
-    // and this (two fields) is the new one
-    userExternalId: z.string().optional(),
-    userUniqueId: z.string().optional(),
+    userExternalId: z.string(),
+    userUniqueId: z.string(),
   }),
   // State employee
   z.object({ userType: z.literal("STATE"), email: z.string() }),
@@ -64,8 +60,6 @@ export function registerAuthRoutes(server: FastifyInstance) {
     algorithms: ["RS256"],
   });
 
-  const PAYLOAD_SCHEMA_ERROR = "Your credentials contain invalid identity data";
-
   server.get("/api/v1/auth0-roster-check", async (request, reply) => {
     const token = getBearerToken(request);
     if (!token) {
@@ -83,7 +77,9 @@ export function registerAuthRoutes(server: FastifyInstance) {
 
     const parseResult = auth0UserPayloadSchema.safeParse(payload);
     if (!parseResult.success) {
-      reply.status(401).send({ error: PAYLOAD_SCHEMA_ERROR });
+      reply
+        .status(401)
+        .send({ error: "Your credentials contain invalid identity data" });
       return;
     }
     const userData = parseResult.data;
@@ -105,30 +101,11 @@ export function registerAuthRoutes(server: FastifyInstance) {
         return;
       }
 
-      let rosterLookupArgs: RosterLookupOpts;
-
-      if (userData.userId) {
-        rosterLookupArgs = {
-          stateCode,
-          userExternalId: userData.userId,
-          // this is a magic string for compatibility; the updated lookup function
-          // requires both IDs but this one is not available under the old endpoint request schema
-          userIdFromAuthProvider: "__NO_ID_PROVIDED__",
-        };
-      } else if (userData.userExternalId && userData.userUniqueId) {
-        rosterLookupArgs = {
-          stateCode,
-          userExternalId: userData.userExternalId,
-          userIdFromAuthProvider: userData.userUniqueId,
-        };
-      } else {
-        reply
-          .status(401)
-          // this isn't literally a schema parsing error because of the backwards compatibility support;
-          // once the old field is eliminated from the schema we can make the new fields required and delete this branch
-          .send({ error: PAYLOAD_SCHEMA_ERROR });
-        return;
-      }
+      const rosterLookupArgs: RosterLookupOpts = {
+        stateCode,
+        userExternalId: userData.userExternalId,
+        userIdFromAuthProvider: userData.userUniqueId,
+      };
 
       const userProfile = await checkResidentsRoster(rosterLookupArgs);
       if (userProfile) {

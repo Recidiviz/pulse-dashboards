@@ -40,21 +40,27 @@ parser.add_argument("--email", {
   help: "Required for RECIDIVIZ and STATE user types",
 });
 
-parser.add_argument("--user-id", {
-  dest: "userId",
-  help: "Required for ORIJIN user type",
+parser.add_argument("--user-external-id", {
+  dest: "userExternalId",
+  help: "Required for ORIJIN user type; corresponds to a DOC ID",
+});
+
+parser.add_argument("--user-unique-id", {
+  dest: "userUniqueId",
+  help: "Required for ORIJIN user type; corresponds to an auth0 user ID",
 });
 
 parser.add_argument("--state-code", {
   dest: "stateCode",
-  help: "Required for ORIJIN user type, e.g. US_CO",
+  help: "Required for ORIJIN user type, e.g. US_MA",
 });
 
 type Args = {
   userType: "RECIDIVIZ" | "ORIJIN" | "STATE";
   email?: string;
-  userId?: string;
   stateCode?: string;
+  userExternalId?: string;
+  userUniqueId?: string;
 };
 
 const args = parser.parse_args() as Args;
@@ -68,14 +74,15 @@ function buildPayload(args: Args) {
       }
       return { userType: args.userType, email: args.email };
     case "ORIJIN":
-      if (!args.userId || !args.stateCode) {
+      if (!args.userExternalId || !args.userUniqueId || !args.stateCode) {
         throw new Error(
-          "--user-id and --state-code are required for userType ORIJIN",
+          "--user-external-id, --user-unique-id and --state-code are required for userType ORIJIN",
         );
       }
       return {
         userType: args.userType,
-        userId: args.userId,
+        userExternalId: args.userExternalId,
+        userUniqueId: args.userUniqueId,
         stateCode: args.stateCode,
       };
   }

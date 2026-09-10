@@ -154,7 +154,8 @@ describe("GET /api/v1/auth0-roster-check", () => {
       vi.mocked(checkResidentsRoster).mockResolvedValue(orijinProfile);
       const token = sign({
         userType: "ORIJIN",
-        userId: "abc123",
+        userExternalId: "abc123",
+        userUniqueId: "auth0|orijin-prod|abc123",
         stateCode: "US_AZ",
       });
 
@@ -181,7 +182,8 @@ describe("GET /api/v1/auth0-roster-check", () => {
       });
       const token = sign({
         userType: "ORIJIN",
-        userId: "abc123",
+        userExternalId: "abc123",
+        userUniqueId: "auth0|orijin-prod|abc123",
         stateCode: "US_AZ",
       });
 
@@ -207,7 +209,8 @@ describe("GET /api/v1/auth0-roster-check", () => {
       vi.mocked(checkDemoResidentsRoster).mockResolvedValue(undefined);
       const token = sign({
         userType: "ORIJIN",
-        userId: "abc123",
+        userExternalId: "abc123",
+        userUniqueId: "auth0|orijin-prod|abc123",
         stateCode: "US_AZ",
       });
 
