@@ -54,7 +54,7 @@ import {
 const COPY = {
   pageTitle: (category: string) => `${category} Resources`,
   pageSubtitle: (category: string) =>
-    `Browse ${category.toLowerCase()} programs by topic. Use Filters to narrow the list.`,
+    `Browse resources for ${category} by topic. Use Filters to narrow the list.`,
   filtersButton: (activeCount: number) =>
     activeCount > 0 ? `Filters (${activeCount})` : "Filters",
   resourceCount: (count: number, sectionCount: number) =>

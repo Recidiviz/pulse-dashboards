@@ -26,11 +26,17 @@ const MAX_RESULTS = 20;
 
 export const SEARCH_DEBOUNCE_MS = 500;
 
+export type ResourceSearchResult = {
+  results: ResourceSummary[];
+  /** True while `results` still reflects a stale, pre-debounce query. */
+  isQueryPending: boolean;
+};
+
 export function useResourceSearch(
   resources: ResourceSummary[],
   query: string,
   trackSearchQuery?: (query: string, resultCount: number) => void,
-): ResourceSummary[] {
+): ResourceSearchResult {
   const debouncedQuery = useDebouncedValue(query, SEARCH_DEBOUNCE_MS);
 
   // Building the Fuse index re-tokenizes every resource, so it's kept
@@ -51,5 +57,5 @@ export function useResourceSearch(
     trackSearchQuery?.(debouncedQuery, results.length);
   }, [debouncedQuery, results.length, trackSearchQuery]);
 
-  return results;
+  return { results, isQueryPending: query.trim() !== debouncedQuery.trim() };
 }

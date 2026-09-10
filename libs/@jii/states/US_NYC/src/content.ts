@@ -38,7 +38,7 @@ export const US_NYC_CONTENT = {
         {
           label: "Se habla Español",
           description:
-            "The symbol next to the name of an organization means they have Spanish speaking staff or interpreters for Spanish speakers.",
+            "The organization has Spanish speaking staff or interpreters for Spanish speakers.",
         },
         {
           label: "Can contact pre-release",

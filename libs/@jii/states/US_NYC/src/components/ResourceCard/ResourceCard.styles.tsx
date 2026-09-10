@@ -60,7 +60,7 @@ export const CardName = styled.span`
   color: ${palette.pine1};
 `;
 
-export const CardPreview = styled.p`
+export const CardPreview = styled.div`
   ${typography.Sans14}
   color: ${palette.pine1};
   margin: 0;
@@ -68,6 +68,10 @@ export const CardPreview = styled.p`
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   overflow: hidden;
+
+  p:last-child {
+    margin-bottom: 0;
+  }
 `;
 
 export const CardContact = styled.span`

@@ -19,6 +19,7 @@ import { ChevronRight } from "lucide-react";
 import { FC } from "react";
 
 import { Chip } from "../Chip/Chip";
+import { ResourceDescriptionCopyWrapper } from "../ResourceDescriptionCopyWrapper";
 import {
   CardBody,
   CardChevron,
@@ -61,7 +62,11 @@ export const ResourceCard: FC<ResourceCardProps> = ({
       <CardBody>
         <CardName>{name}</CardName>
         {!compact && description ? (
-          <CardPreview>{description}</CardPreview>
+          <CardPreview>
+            <ResourceDescriptionCopyWrapper>
+              {description}
+            </ResourceDescriptionCopyWrapper>
+          </CardPreview>
         ) : null}
         {!compact && primaryContact ? (
           <CardContact>

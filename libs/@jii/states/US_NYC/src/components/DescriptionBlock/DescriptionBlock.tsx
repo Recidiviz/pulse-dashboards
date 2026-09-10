@@ -17,9 +17,7 @@
 
 import { FC, useLayoutEffect, useRef, useState } from "react";
 
-import { CopyWrapper } from "~@jii/common-ui";
-import { stripUriSchemes } from "~utils";
-
+import { ResourceDescriptionCopyWrapper } from "../ResourceDescriptionCopyWrapper";
 import {
   DescriptionBody,
   DescriptionWrapper,
@@ -67,7 +65,9 @@ export const DescriptionBlock: FC<DescriptionBlockProps> = ({
   return (
     <DescriptionWrapper>
       <DescriptionBody ref={bodyRef} $clamped={!expanded && overflows}>
-        <CopyWrapper>{stripUriSchemes(markdown)}</CopyWrapper>
+        <ResourceDescriptionCopyWrapper>
+          {markdown}
+        </ResourceDescriptionCopyWrapper>
       </DescriptionBody>
       {overflows && (
         <ToggleButton

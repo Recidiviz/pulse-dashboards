@@ -28,13 +28,13 @@ const resources = [
 test("returns matching resources for a query", () => {
   const { result } = renderHook(() => useResourceSearch(resources, "Goodwill"));
 
-  expect(result.current.map((r) => r.organizationId)).toEqual([1]);
+  expect(result.current.results.map((r) => r.organizationId)).toEqual([1]);
 });
 
 test("returns an empty array when the query is empty", () => {
   const { result } = renderHook(() => useResourceSearch(resources, ""));
 
-  expect(result.current).toEqual([]);
+  expect(result.current.results).toEqual([]);
 });
 
 test("caps results at 20 for a broad query matching many resources", () => {
@@ -46,7 +46,7 @@ test("caps results at 20 for a broad query matching many resources", () => {
     useResourceSearch(manyResources, "Housing"),
   );
 
-  expect(result.current).toHaveLength(20);
+  expect(result.current.results).toHaveLength(20);
 });
 
 test("debounces results after a query change instead of updating immediately", () => {
@@ -57,12 +57,32 @@ test("debounces results after a query change instead of updating immediately", (
   );
 
   rerender({ query: "Goodwill" });
-  expect(result.current).toEqual([]);
+  expect(result.current.results).toEqual([]);
 
   act(() => {
     vi.runAllTimers();
   });
-  expect(result.current.map((r) => r.organizationId)).toEqual([1]);
+  expect(result.current.results.map((r) => r.organizationId)).toEqual([1]);
+
+  vi.useRealTimers();
+});
+
+test("reports isQueryPending until the debounce settles", () => {
+  vi.useFakeTimers();
+  const { result, rerender } = renderHook(
+    ({ query }) => useResourceSearch(resources, query),
+    { initialProps: { query: "" } },
+  );
+
+  expect(result.current.isQueryPending).toBe(false);
+
+  rerender({ query: "Goodwill" });
+  expect(result.current.isQueryPending).toBe(true);
+
+  act(() => {
+    vi.runAllTimers();
+  });
+  expect(result.current.isQueryPending).toBe(false);
 
   vi.useRealTimers();
 });

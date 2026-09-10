@@ -63,8 +63,9 @@ const SEARCH_OVERLAY_COPY = {
 function getResultAnnouncement(
   trimmedQuery: string,
   resultCount: number,
+  isQueryPending: boolean,
 ): string {
-  if (!trimmedQuery) return "";
+  if (!trimmedQuery || isQueryPending) return "";
   if (resultCount > 0) return SEARCH_OVERLAY_COPY.resultsFound(resultCount);
   return SEARCH_OVERLAY_COPY.noMatches(trimmedQuery);
 }
@@ -85,12 +86,17 @@ export const SearchOverlay: FC<SearchOverlayProps> = ({
     () => buildCategoryGrid(resources),
     [resources],
   );
-  const results = useResourceSearch(resources, query, trackSearchQuery);
+  const { results, isQueryPending } = useResourceSearch(
+    resources,
+    query,
+    trackSearchQuery,
+  );
 
   const trimmedQuery = query.trim();
   const resultAnnouncement = getResultAnnouncement(
     trimmedQuery,
     results.length,
+    isQueryPending,
   );
 
   const handleClose = () => {
@@ -183,7 +189,8 @@ export const SearchOverlay: FC<SearchOverlayProps> = ({
             })}
           </ResultList>
         ) : (
-          trimmedQuery && (
+          trimmedQuery &&
+          !isQueryPending && (
             <>
               <EmptyMessage>
                 {SEARCH_OVERLAY_COPY.noMatches(trimmedQuery)}
