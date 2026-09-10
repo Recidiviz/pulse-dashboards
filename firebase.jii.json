@@ -102,9 +102,5 @@
         }
       ]
     }
-  ],
-  "functions": {
-    "source": "dist/apps/jii-functions",
-    "runtime": "nodejs22"
-  }
+  ]
 }

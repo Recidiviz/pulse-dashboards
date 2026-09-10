@@ -18,7 +18,7 @@
 import { $ } from "zx";
 
 import { jiiProject } from "../config.mts";
-import type { DeployEnv, ReleasePlan, ServiceDefinition } from "../types.mts";
+import type { ReleasePlan, ServiceDefinition } from "../types.mts";
 
 /** Deploy a `-m` message for the Opportunities frontend/storybook: just the commit on
  * non-prod, version + commit on production. */
@@ -28,25 +28,10 @@ function deployMessage(plan: ReleasePlan): string {
     : `${plan.currentRevision}`;
 }
 
-// there are no demo Opportunities cloud functions, staging functions serve both
-const oppsBackendEnvironments: DeployEnv[] = ["staging", "production"];
-
-/** Deploy the Opportunities (JII) cloud functions. */
-export const oppsFunctions: ServiceDefinition = {
-  displayName: "Opportunities Cloud Functions",
-  environments: oppsBackendEnvironments,
-  pamProjects: (env) => [jiiProject(env)],
-  async deploy(plan) {
-    await $`nx deploy jii-functions --configuration ${plan.env}`.pipe(
-      process.stdout,
-    );
-  },
-};
-
 /** Deploy the Opportunities (JII) backend server via atmos. */
 export const oppsBackend: ServiceDefinition = {
   displayName: "Opportunities Backend Services",
-  environments: oppsBackendEnvironments,
+  environments: ["staging", "production"],
   pamProjects: (env) => [jiiProject(env)],
   requiredImages: () => ["@jii/server", "@jii/import"],
   async deploy(plan) {

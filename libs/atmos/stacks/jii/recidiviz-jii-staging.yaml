@@ -25,9 +25,6 @@ components:
       vars:
         sops_file: "sops/{{ .settings.context.secrets_filename }}"
         deletion_policy: DELETE
-        # this is the firebase functions service account, other backends don't need this
-        accessors:
-          - "serviceAccount:{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
 
     artifact_registry:
       vars:

@@ -28,7 +28,6 @@ import {
   oppsBackend,
   oppsDemoFrontend,
   oppsFrontend,
-  oppsFunctions,
   oppsStorybook,
 } from "./opportunities.mts";
 import { sentencing } from "./sentencing.mts";
@@ -45,7 +44,6 @@ export const services = {
   sentencing,
   jiiTexting,
   caseNotes,
-  oppsFunctions,
   oppsBackend,
   oppsFrontend,
   oppsDemoFrontend,

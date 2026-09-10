@@ -21,7 +21,6 @@ import { nodeProfilingIntegration } from "@sentry/profiling-node";
 import { ReadOnlyStaffPermissionError } from "~@jii/trpc";
 
 init({
-  // same project as jii-functions, we expect this will eventually replace that
   dsn: "https://9854b2227e71fa6bd5191e28c0e14320@o432474.ingest.us.sentry.io/4509159316979712",
   environment: process.env["DEPLOY_ENV"],
   tracesSampleRate: 0,
