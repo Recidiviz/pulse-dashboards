@@ -18,7 +18,15 @@
 import { type PrismaClient } from "~@meetings/prisma/client";
 
 export type BulkUpdateEntry = {
-  [key: string]: number | string | boolean | Date | null | bigint | string[];
+  [key: string]:
+    | number
+    | string
+    | boolean
+    | Date
+    | null
+    | bigint
+    | string[]
+    | Record<string, unknown>;
 };
 export type BulkUpdateEntries = BulkUpdateEntry[];
 
@@ -78,12 +86,15 @@ export async function bulkUpdate(
         } else if (value instanceof Date) {
           // Convert Date to ISO 8601 string format
           return `'${value.toISOString()}'::timestamp`;
+        } else if (value !== null && typeof value === "object") {
+          // Handle Json columns (e.g. Prisma Json fields)
+          return `'${JSON.stringify(value).replace(/'/g, "''")}'::jsonb`;
         }
         // Numbers and booleans are used as-is
         return value;
       });
 
-      return `(${idColumnNames.map((idCol) => `'${entry[idCol]}'`).join(", ")}, ${values.join(", ")})`;
+      return `(${idColumnNames.map((idCol) => `'${String(entry[idCol]).replace(/'/g, "''")}'`).join(", ")}, ${values.join(", ")})`;
     })
     .join(", ");
 

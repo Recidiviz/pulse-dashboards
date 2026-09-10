@@ -19,6 +19,7 @@ import z from "zod";
 import { zu } from "zod_utilz";
 
 import { StateCode } from "~@meetings/prisma/client";
+import { camelCaseObject } from "~utils";
 
 export const nameSchema = zu.stringToJSON().pipe(
   z.object({
@@ -74,3 +75,66 @@ export const staffImportSchema = z.object({
   full_name: nameSchema,
   email: z.string().optional(),
 });
+
+// TODO(OBT-49134): Reuse shared schema definitions
+const cniFieldSchema = z.object({
+  fieldValue: z.string(),
+  quotes: z.array(z.string()),
+  lastVerifiedDate: z.string(),
+  extractorVersionId: z.string(),
+  documentId: z.string(),
+});
+
+const cniEmploymentFieldsSchema = z.object({
+  primaryStatus: cniFieldSchema,
+  searchStatus: cniFieldSchema.optional(),
+  employers: z.array(
+    z
+      .object({
+        jobTitle: cniFieldSchema,
+        employerName: cniFieldSchema,
+        employerLocation: cniFieldSchema,
+        payRateAmount: cniFieldSchema,
+        employmentType: cniFieldSchema,
+      })
+      .partial(),
+  ),
+});
+
+const cniEmploymentSchema = z.object({
+  category: z.literal("employment"),
+  cni_fields: z
+    .record(z.string(), z.unknown())
+    .transform(camelCaseObject)
+    .pipe(cniEmploymentFieldsSchema),
+});
+
+const cniHousingFieldsSchema = z
+  .object({
+    housedType: cniFieldSchema,
+    dependentHousingType: cniFieldSchema,
+    temporaryHousingName: cniFieldSchema,
+    temporaryHousingType: cniFieldSchema,
+    unhousedLocation: cniFieldSchema,
+    address: cniFieldSchema,
+  })
+  .partial()
+  .extend({ primaryStatus: cniFieldSchema });
+
+const cniHousingSchema = z.object({
+  category: z.literal("housing"),
+  // The raw export has snake_case keys; camelCase them before validating.
+  cni_fields: z
+    .record(z.string(), z.unknown())
+    .transform(camelCaseObject)
+    .pipe(cniHousingFieldsSchema),
+});
+
+const cniFieldsSchema = z.discriminatedUnion("category", [
+  cniEmploymentSchema,
+  cniHousingSchema,
+]);
+
+export const caseNoteInsightsImportSchema = cniFieldsSchema.and(
+  z.object({ state_code: stateCode, person_id: z.coerce.bigint() }),
+);
