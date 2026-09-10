@@ -15,53 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { typography } from "@recidiviz/design-system";
-import Markdown from "markdown-to-jsx";
-import { rem, rgba } from "polished";
 import { FC } from "react";
-import styled from "styled-components";
 
-import { ButtonLink } from "~@jii/common-ui";
+import { AnnouncementBanner } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 import { useUsCoTranslations } from "~@jii/translation";
-import { palette, spacing } from "~design-system";
-
-// TODO(#6719): refactor to design system and combine with other similar components
-// This is exactly the same as the DPRBanner from the US_AZ library
-const Wrapper = styled.div`
-  ${typography.Sans14}
-  border-left: ${rem(4)} solid ${palette.signal.notification};
-  background: ${rgba(palette.signal.notification, 0.1)};
-  margin: ${rem(spacing.xl)} 0;
-  padding: ${rem(spacing.md)};
-  display: flex;
-  gap: ${rem(spacing.xl)};
-  justify-items: space-between;
-  align-items: center;
-
-  span {
-    flex: 1 1 auto;
-  }
-
-  a {
-    flex: 0 0 auto;
-  }
-`;
 
 export const AETBanner: FC = () => {
   const { t } = useUsCoTranslations();
 
   return (
-    <Wrapper>
-      <Markdown>{t(($) => $.aetBanner.message)}</Markdown>
-      <ButtonLink
-        kind="primary"
-        to={State.Resident.$.UsCoMoreInformation.AETChanges.buildRelativePath(
-          {},
-        )}
-      >
-        {t(($) => $.aetBanner.linkText)}
-      </ButtonLink>
-    </Wrapper>
+    <AnnouncementBanner
+      message={t(($) => $.aetBanner.message)}
+      linkText={t(($) => $.aetBanner.linkText)}
+      to={State.Resident.$.UsCoMoreInformation.AETChanges.buildRelativePath({})}
+    />
   );
 };

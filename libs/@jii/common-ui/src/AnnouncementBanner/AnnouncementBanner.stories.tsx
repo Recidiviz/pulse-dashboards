@@ -15,22 +15,33 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FC } from "react";
+import type { Meta, StoryObj } from "@storybook/react";
+import { MemoryRouter } from "react-router-dom";
 
-import { AnnouncementBanner } from "~@jii/common-ui";
-import { State } from "~@jii/paths";
-import { useUsNdTranslations } from "~@jii/translation";
+import { AnnouncementBanner } from "./AnnouncementBanner";
 
-export const OSUBanner: FC = () => {
-  const { t } = useUsNdTranslations();
+const meta = {
+  title: "Common UI/AnnouncementBanner",
+  component: AnnouncementBanner,
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
+  args: {
+    message:
+      "**Starting January 1**, the way earned time is awarded is changing. " +
+      "Completing an approved program can now reduce your sentence, and the " +
+      "credits you have already earned will not be affected.",
+    linkText: "Learn more",
+    to: "/",
+  },
+} satisfies Meta<typeof AnnouncementBanner>;
 
-  return (
-    <AnnouncementBanner
-      message={t(($) => $.osuBanner.message)}
-      linkText={t(($) => $.osuBanner.linkText)}
-      to={State.Resident.$.UsNdMoreInformation.buildRelativePath({
-        pageSlug: "important-dates",
-      })}
-    />
-  );
-};
+export default meta;
+
+type AnnouncementBannerStory = StoryObj<typeof meta>;
+
+export const Default: AnnouncementBannerStory = {};

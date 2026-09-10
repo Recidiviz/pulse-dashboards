@@ -17,6 +17,7 @@
 
 export * from "./Accordion/Accordion";
 export * from "./ActivityList";
+export * from "./AnnouncementBanner/AnnouncementBanner";
 export * from "./BackLink/BackLink";
 export * from "./BaseLayout/BaseLayout";
 export * from "./BottomSheet/BottomSheet";
