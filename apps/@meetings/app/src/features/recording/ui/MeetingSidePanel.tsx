@@ -43,7 +43,7 @@ export function MeetingSidePanel({ person }: Props) {
   const { agencyConfigs } = useAgencyConfigs();
   const { isVariantActive } = useFeatureVariants();
   const showCNI =
-    agencyConfigs[selectedStateCode].showCNI || isVariantActive("showCNI");
+    agencyConfigs[selectedStateCode]?.showCNI || isVariantActive("showCNI");
   const isClient = getPersonType(person) === "client";
   const { segments, enabled } = useCaseNoteSummary({
     person,
