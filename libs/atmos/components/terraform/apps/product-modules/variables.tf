@@ -57,3 +57,8 @@ variable "service_account_id" {
   description = "The name of the service account"
   default     = "product-modules"
 }
+
+variable "server_url" {
+  type        = string
+  description = "Public url of the modules server"
+}
