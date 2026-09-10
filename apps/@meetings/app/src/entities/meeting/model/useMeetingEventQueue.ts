@@ -111,7 +111,7 @@ type MeetingEventQueueStoreState = {
 
 const STORE_NAME = "meeting_events";
 
-const _meetingEventQueueStore = create<MeetingEventQueueStoreState>()(
+const useMeetingEventQueueStore = create<MeetingEventQueueStoreState>()(
   persist(
     (set, get) => ({
       eventsByUser: {},
@@ -203,7 +203,7 @@ export function useMeetingEventQueue(): MeetingEventQueueState {
   const { user } = useAuth0();
   const email = user?.email;
   const userId = email ?? "";
-  const store = _meetingEventQueueStore();
+  const store = useMeetingEventQueueStore();
 
   const enqueue = useCallback(
     (metadata: OfflineEvent) => store.enqueue(userId, metadata),
