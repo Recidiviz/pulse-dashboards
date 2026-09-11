@@ -72,7 +72,7 @@ export const SelectedClientsEmailTemplate = ({
               <p>
                 <u>
                   {`${index + 1}: `}
-                  <span>{person.displayName}</span>
+                  <span>{`${person.displayName} `}</span>
                 </u>
                 <a
                   href={mapsAddressLink(person.formattedAddress)}
