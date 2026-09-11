@@ -18,7 +18,11 @@
 import { when } from "mobx";
 
 import { isHydrated } from "~hydration-utils";
-import { OverTimeMetric, PATHWAYS_SECTIONS } from "~shared-pathways";
+import {
+  OverTimeMetric,
+  PATHWAYS_PAGES,
+  PATHWAYS_SECTIONS,
+} from "~shared-pathways";
 
 import FiltersStore from "../FiltersStore";
 import MetricsStore from "../MetricsStore";
@@ -28,6 +32,7 @@ const BASE_URL = "http://localhost:5000";
 
 const mockRootStore = {
   currentTenantId: "US_NY",
+  page: PATHWAYS_PAGES.prison,
   section: PATHWAYS_SECTIONS["countOverTime"],
   userStore: {
     getTokenSilently: vi.fn().mockResolvedValue("test-token"),

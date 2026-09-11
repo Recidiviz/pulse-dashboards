@@ -21,6 +21,7 @@ import { runInAction, when } from "mobx";
 import { isHydrated } from "~hydration-utils";
 import {
   isAbortException,
+  PATHWAYS_PAGES,
   PATHWAYS_SECTIONS,
   SnapshotMetric,
 } from "~shared-pathways";
@@ -34,6 +35,7 @@ const DIMENSION_COUNT_URL = `${BASE_URL}/public_pathways/US_NY/PrisonPopulationB
 
 const mockRootStore = {
   currentTenantId: "US_NY",
+  page: PATHWAYS_PAGES.prison,
   section: PATHWAYS_SECTIONS["countByLocation"],
   userStore: {
     getTokenSilently: vi.fn().mockResolvedValue("test-token"),

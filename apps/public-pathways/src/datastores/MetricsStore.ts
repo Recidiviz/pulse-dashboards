@@ -26,6 +26,7 @@ import {
   MetricRecord,
   NewBackendRecord,
   OverTimeMetric,
+  PATHWAYS_PAGES,
   PATHWAYS_SECTIONS,
   PathwaysMetricStore,
   PopulationFilterValues,
@@ -48,14 +49,19 @@ const DEFAULT_INDIVIDUAL_LEVEL_SNAPSHOT_FILENAME = "individual_level_data.csv";
 const DEFAULT_INDIVIDUAL_LEVEL_BULK_EXPORT_FILENAME =
   "individual_level_data_last_5_years.zip";
 
+/** The metrics one page can show, keyed by the section that shows each one. */
+type SectionMetricMap = Record<string, OverTimeMetric | SnapshotMetric>;
+
 export default class MetricsStore implements PathwaysMetricStore {
   private readonly rootStore: RootStore;
 
-  page = "prison";
-
   constructor({ rootStore }: { rootStore: RootStore }) {
-    makeAutoObservable(this, { section: false });
+    makeAutoObservable(this, { page: false, section: false });
     this.rootStore = rootStore;
+  }
+
+  get page(): string {
+    return this.rootStore.page;
   }
 
   get section(): string {
@@ -229,43 +235,69 @@ export default class MetricsStore implements PathwaysMetricStore {
     );
   };
 
-  private _map?: Record<string, OverTimeMetric | SnapshotMetric>;
+  private _mapsByPage?: Record<string, SectionMetricMap>;
 
-  get map(): Record<string, OverTimeMetric | SnapshotMetric> {
-    if (!this._map) {
-      this._map = {
-        [PATHWAYS_SECTIONS["countOverTime"]]: this.prisonPopulationOverTime,
-        [PATHWAYS_SECTIONS["countByLocation"]]: this.prisonFacilityPopulation,
-        [PATHWAYS_SECTIONS["countByRace"]]: this.prisonPopulationByRace,
-        [PATHWAYS_SECTIONS["countByAgeGroup"]]: this.prisonPopulationByAgeGroup,
-        [PATHWAYS_SECTIONS["countByGender"]]: this.prisonPopulationByGender,
-        [PATHWAYS_SECTIONS["countBySex"]]: this.prisonPopulationBySex,
-        [PATHWAYS_SECTIONS["countByEthnicity"]]:
-          this.prisonPopulationByEthnicity,
-        [PATHWAYS_SECTIONS["countBySentenceLengthMin"]]:
-          this.prisonPopulationBySentenceLengthMin,
-        [PATHWAYS_SECTIONS["countBySentenceLengthMax"]]:
-          this.prisonPopulationBySentenceLengthMax,
-        [PATHWAYS_SECTIONS["countByChargeCountyCode"]]:
-          this.prisonPopulationByChargeCountyCode,
-        [PATHWAYS_SECTIONS["countByOffenseType"]]:
-          this.prisonPopulationByOffenseType,
-        [PATHWAYS_SECTIONS["countByChargeDescription"]]:
-          this.prisonPopulationByChargeDescription,
-        [PATHWAYS_SECTIONS["countByAdmissionReason"]]:
-          this.prisonPopulationByAdmissionReason,
-        [PATHWAYS_SECTIONS["countByReligion"]]: this.prisonPopulationByReligion,
-        [PATHWAYS_SECTIONS["countByMaritalStatus"]]:
-          this.prisonPopulationByMaritalStatus,
-        [PATHWAYS_SECTIONS["countByTimeAtFacility"]]:
-          this.prisonPopulationByTimeAtFacility,
+  /**
+   * The section-to-metric map for every page this dashboard serves. Built once
+   * so that a section keeps the same metric instance across renders.
+   */
+  private get mapsByPage(): Record<string, SectionMetricMap> {
+    if (!this._mapsByPage) {
+      this._mapsByPage = {
+        [PATHWAYS_PAGES.prison]: {
+          [PATHWAYS_SECTIONS["countOverTime"]]: this.prisonPopulationOverTime,
+          [PATHWAYS_SECTIONS["countByLocation"]]: this.prisonFacilityPopulation,
+          [PATHWAYS_SECTIONS["countByRace"]]: this.prisonPopulationByRace,
+          [PATHWAYS_SECTIONS["countByAgeGroup"]]:
+            this.prisonPopulationByAgeGroup,
+          [PATHWAYS_SECTIONS["countByGender"]]: this.prisonPopulationByGender,
+          [PATHWAYS_SECTIONS["countBySex"]]: this.prisonPopulationBySex,
+          [PATHWAYS_SECTIONS["countByEthnicity"]]:
+            this.prisonPopulationByEthnicity,
+          [PATHWAYS_SECTIONS["countBySentenceLengthMin"]]:
+            this.prisonPopulationBySentenceLengthMin,
+          [PATHWAYS_SECTIONS["countBySentenceLengthMax"]]:
+            this.prisonPopulationBySentenceLengthMax,
+          [PATHWAYS_SECTIONS["countByChargeCountyCode"]]:
+            this.prisonPopulationByChargeCountyCode,
+          [PATHWAYS_SECTIONS["countByOffenseType"]]:
+            this.prisonPopulationByOffenseType,
+          [PATHWAYS_SECTIONS["countByChargeDescription"]]:
+            this.prisonPopulationByChargeDescription,
+          [PATHWAYS_SECTIONS["countByAdmissionReason"]]:
+            this.prisonPopulationByAdmissionReason,
+          [PATHWAYS_SECTIONS["countByReligion"]]:
+            this.prisonPopulationByReligion,
+          [PATHWAYS_SECTIONS["countByMaritalStatus"]]:
+            this.prisonPopulationByMaritalStatus,
+          [PATHWAYS_SECTIONS["countByTimeAtFacility"]]:
+            this.prisonPopulationByTimeAtFacility,
+        },
       };
     }
-    return this._map;
+    return this._mapsByPage;
+  }
+
+  /** Returns the section-to-metric map for the page currently in view. */
+  get map(): SectionMetricMap {
+    return this.mapsByPage[this.page] ?? {};
   }
 
   get current(): OverTimeMetric | SnapshotMetric {
     return this.map[this.section] ?? this.prisonPopulationOverTime;
+  }
+
+  /**
+   * Returns the over-time metric for the Population Under Custody page. The
+   * individual-level download reads its snapshot range from this metric, so it
+   * must stay on that page's metric rather than follow the page in view.
+   */
+  private get populationUnderCustodyOverTime():
+    | OverTimeMetric
+    | SnapshotMetric {
+    return this.mapsByPage[PATHWAYS_PAGES.prison][
+      PATHWAYS_SECTIONS["countOverTime"]
+    ];
   }
 
   /**
@@ -275,7 +307,7 @@ export default class MetricsStore implements PathwaysMetricStore {
    * month the backend has no snapshot for.
    */
   get latestAvailableSnapshotDate(): Date | undefined {
-    const overTimeMetric = this.map[PATHWAYS_SECTIONS["countOverTime"]];
+    const overTimeMetric = this.populationUnderCustodyOverTime;
     if (!(overTimeMetric instanceof OverTimeMetric)) return undefined;
 
     const { dataSeries } = overTimeMetric;
@@ -292,7 +324,7 @@ export default class MetricsStore implements PathwaysMetricStore {
    * until it's safe to trust that value.
    */
   get isLatestSnapshotDateReady(): boolean {
-    const overTimeMetric = this.map[PATHWAYS_SECTIONS["countOverTime"]];
+    const overTimeMetric = this.populationUnderCustodyOverTime;
     return isHydrationFinished(overTimeMetric);
   }
 
@@ -305,7 +337,7 @@ export default class MetricsStore implements PathwaysMetricStore {
    * have viewed the over-time section yet this session.
    */
   ensureLatestSnapshotDateHydrated(): void {
-    const overTimeMetric = this.map[PATHWAYS_SECTIONS["countOverTime"]];
+    const overTimeMetric = this.populationUnderCustodyOverTime;
     if (isHydrationUntouched(overTimeMetric)) {
       overTimeMetric.hydrate();
     }

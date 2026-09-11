@@ -23,6 +23,7 @@ import { isHydrated } from "~hydration-utils";
 import {
   downloadChartAsData,
   OverTimeMetric,
+  PATHWAYS_PAGES,
   PATHWAYS_SECTIONS,
   type PathwaysSection,
   SnapshotMetric,
@@ -78,6 +79,7 @@ vi.mock("jszip", () => {
 
 const mockRootStore = {
   currentTenantId: "US_NY",
+  page: PATHWAYS_PAGES.prison,
   section: PATHWAYS_SECTIONS["countOverTime"],
   userStore: {
     getTokenSilently: vi.fn().mockResolvedValue("test-token"),
@@ -96,8 +98,8 @@ describe("MetricsStore", () => {
     mockRootStore.metricsStore = metricsStore;
   });
 
-  it("has page set to prison", () => {
-    expect(metricsStore.page).toBe("prison");
+  it("reads its page from the root store", () => {
+    expect(metricsStore.page).toBe(PATHWAYS_PAGES.prison);
   });
 
   it("has section defaulting to countOverTime", () => {

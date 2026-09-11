@@ -19,6 +19,7 @@ import { MetricId } from "./types";
 
 export type PathwaysPage = keyof typeof PATHWAYS_PAGES;
 export const PATHWAYS_PAGES = {
+  admissionsAndReleases: "admissionsAndReleases",
   libertyToPrison: "libertyToPrison",
   prison: "prison",
   prisonToSupervision: "prisonToSupervision",
@@ -55,10 +56,15 @@ export const PATHWAYS_SECTIONS: Record<string, string> = {
   countByReligion: "countByReligion",
   countByMaritalStatus: "countByMaritalStatus",
   countByTimeAtFacility: "countByTimeAtFacility",
+  countByCustodyStatus: "countByCustodyStatus",
+  countByAdmissionType: "countByAdmissionType",
+  countByReleaseType: "countByReleaseType",
+  countByCommunitySupervision: "countByCommunitySupervision",
 };
 
 export const DEFAULT_PATHWAYS_PAGE = PATHWAYS_PAGES.prison;
 export const DEFAULT_PATHWAYS_SECTION_BY_PAGE: Record<string, string> = {
+  [PATHWAYS_PAGES.admissionsAndReleases]: PATHWAYS_SECTIONS["countOverTime"],
   [PATHWAYS_PAGES.libertyToPrison]: PATHWAYS_SECTIONS["countOverTime"],
   [PATHWAYS_PAGES.prison]: PATHWAYS_SECTIONS["countOverTime"],
   [PATHWAYS_PAGES.prisonToSupervision]: PATHWAYS_SECTIONS["countOverTime"],
@@ -72,6 +78,7 @@ export function getDefaultPathwaysSectionByPage(pageId: string): string {
 }
 
 const PATHWAYS_METRIC_IDS_BY_PAGE: Record<PathwaysPage, MetricId[]> = {
+  [PATHWAYS_PAGES.admissionsAndReleases]: [],
   [PATHWAYS_PAGES.libertyToPrison]: [
     "libertyToPrisonPopulationOverTime",
     "libertyToPrisonPopulationByDistrict",
