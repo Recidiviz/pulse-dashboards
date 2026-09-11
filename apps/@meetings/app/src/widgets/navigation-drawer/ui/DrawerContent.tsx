@@ -19,7 +19,7 @@ import {
   DrawerContentComponentProps,
   DrawerContentScrollView,
 } from "@react-navigation/drawer";
-import React from "react";
+import React, { useState } from "react";
 import { ImageBackground, TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 import UsersIcon from "react-native-heroicons/solid/UsersIcon";
@@ -27,6 +27,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useStateSelection } from "~@meetings/app/entities/state-code";
 import { useUserContext } from "~@meetings/app/entities/user";
+import { ImpersonationModal } from "~@meetings/app/features/impersonation";
 import BgAvatarImage from "~@meetings/app/shared/assets/images/bg-avatar.png";
 import { IS_PROD } from "~@meetings/app/shared/config";
 import { getInitials } from "~@meetings/app/shared/lib/format";
@@ -40,6 +41,7 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
   const insets = useSafeAreaInsets();
   const { navigation } = props;
   const { canSelectStateCode, currentStateName } = useStateSelection();
+  const [showImpersonationModal, setShowImpersonationModal] = useState(false);
   const { isWeb } = usePlatform();
   const {
     name,
@@ -138,7 +140,17 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
             onPress={() => navigation.navigate("AgencyConfig")}
           />
         )}
+        {isRecidivizUser && (
+          <MobileMenuTextItem
+            title="Impersonate User"
+            onPress={() => setShowImpersonationModal(true)}
+          />
+        )}
         <MobileMenuTextItem title="Log Out" onPress={onLogout} color="danger" />
+        <ImpersonationModal
+          visible={showImpersonationModal}
+          onClose={() => setShowImpersonationModal(false)}
+        />
       </View>
     </DrawerContentScrollView>
   );

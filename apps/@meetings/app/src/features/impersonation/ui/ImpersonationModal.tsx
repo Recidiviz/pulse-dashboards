@@ -25,8 +25,8 @@ import XIcon from "react-native-heroicons/outline/XIcon";
 import { trpc } from "~@meetings/app/shared/api";
 import { RootStackParamList } from "~@meetings/app/shared/config";
 import { queryCachePersister } from "~@meetings/app/shared/lib/queryCachePersister";
+import { Button } from "~@meetings/app/shared/ui/Button";
 import Modal from "~@meetings/app/shared/ui/Modal";
-import PrimaryButton from "~@meetings/app/shared/ui/PrimaryButton";
 import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
@@ -98,7 +98,7 @@ export function ImpersonationModal({
     <Modal
       visible={visible}
       transparent
-      containerClassName="max-w-[520px] items-center p-6"
+      containerClassName="w-full max-w-[520px] p-6"
     >
       <View className="gap-4">
         <View className="w-full flex-row items-center justify-between">
@@ -116,7 +116,9 @@ export function ImpersonationModal({
                 {impersonatedEmail}
               </Typography>
             </Typography>
-            <PrimaryButton label="Stop Impersonating" onPress={handleStop} />
+            <Button onPress={handleStop} variant="primary" className="py-4">
+              Stop Impersonating
+            </Button>
           </>
         ) : (
           <>
@@ -133,11 +135,15 @@ export function ImpersonationModal({
                 returnKeyType="go"
               />
             </View>
-            <PrimaryButton
-              label={isLoading ? "Please wait..." : "Impersonate"}
+            <Button
               onPress={handleStart}
-              disabled={!email.trim() || isLoading}
-            />
+              variant="primary"
+              loading={isLoading}
+              disabled={!email.trim()}
+              className="py-4"
+            >
+              Impersonate
+            </Button>
           </>
         )}
       </View>

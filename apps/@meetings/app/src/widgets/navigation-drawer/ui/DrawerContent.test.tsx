@@ -37,6 +37,10 @@ jest.mock("@react-navigation/drawer", () => {
   };
 });
 
+jest.mock("~@meetings/app/features/impersonation", () => ({
+  ImpersonationModal: () => null,
+}));
+
 jest.mock("react-native-safe-area-context", () => ({
   useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
 }));
