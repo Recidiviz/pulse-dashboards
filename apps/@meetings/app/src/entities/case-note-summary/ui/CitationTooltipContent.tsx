@@ -38,7 +38,7 @@ export function CitationTooltipContent({ citation }: Props) {
             <Fragment key={`${i}-${quote}`}>
               {i > 0 && <View className="h-px bg-on-strong-secondary/30" />}
               <Typography variant="body-s-regular" className="!text-on-brand">
-                {quote}
+                {`"${quote}"`}
               </Typography>
             </Fragment>
           ))}
@@ -49,7 +49,7 @@ export function CitationTooltipContent({ citation }: Props) {
           variant="body-s-regular"
           className="!text-on-strong-secondary"
         >
-          {format(lastVerifiedDate, "MMMM d, yyyy")}
+          {`Case note from ${format(lastVerifiedDate, "MMMM d, yyyy")}`}
         </Typography>
       )}
     </View>

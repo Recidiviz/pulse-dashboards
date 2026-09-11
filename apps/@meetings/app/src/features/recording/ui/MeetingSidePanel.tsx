@@ -76,7 +76,7 @@ export function MeetingSidePanel({ person }: Props) {
       {isCollapsed ? (
         <View className="flex-1 items-center justify-center px-1">
           <Typography variant="caption-s-regular" className="text-center">
-            Case Note Summary
+            Client Context
           </Typography>
         </View>
       ) : (
@@ -84,9 +84,7 @@ export function MeetingSidePanel({ person }: Props) {
           {segments ? (
             <View className="gap-3 rounded-2xl border border-subtle bg-primary p-3">
               <View className="flex-row items-center justify-between">
-                <Typography variant="body-s-medium">
-                  Case Note Summary
-                </Typography>
+                <Typography variant="body-s-medium">Client Context</Typography>
                 <View className="flex-row items-center gap-1">
                   <SparklesIcon className="size-3.5 text-brand" />
                   <Typography

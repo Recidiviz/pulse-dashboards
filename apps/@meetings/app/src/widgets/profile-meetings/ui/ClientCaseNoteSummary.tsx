@@ -90,11 +90,16 @@ export function ClientCaseNoteSummary({ person }: Props) {
     <View className={clsx("gap-3 px-4 pt-4", isWeb && "md:px-0")}>
       <View className="gap-3 rounded-2xl border border-subtle bg-primary p-4">
         <View className="flex-row items-center justify-between">
-          <Typography variant="body-m-medium">Case Note Summary</Typography>
+          <Typography variant="body-m-medium">Client Context</Typography>
           <View className="flex-row items-center gap-1">
             <SparklesIcon className="size-4 text-brand" />
             <Typography className="text-sm text-brand">AI generated</Typography>
           </View>
+        </View>
+        <View className="flex-row justify-start gap-3">
+          <Typography variant="body-s-regular">
+            Generated from recent case notes
+          </Typography>
         </View>
         <View className="flex-row gap-3">
           <View className="flex-1">
