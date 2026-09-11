@@ -22,6 +22,7 @@ terraform {
       source  = "auth0/auth0"
       version = "1.53.0"
     }
+    # tflint-ignore: terraform_unused_required_providers
     sops = {
       source  = "carlpett/sops"
       version = "~> 1.4"

@@ -18,6 +18,13 @@ locals {
   server_image_name = "product-modules-server"
 }
 
+module "envs" {
+  source      = "../../modules/sops-env"
+  secrets_dir = "${path.module}/environments"
+  environment = var.deploy_environment
+  components  = ["server"]
+}
+
 module "server" {
   source = "../../vendor/cloud-run"
 
@@ -31,6 +38,8 @@ module "server" {
   containers = [
     {
       container_image = "${var.artifact_registry_repo}/${local.server_image_name}:${var.server_container_version}"
+
+      env_vars = module.envs.env_vars_by_component["server"]
 
       resources = {
         limits = {
