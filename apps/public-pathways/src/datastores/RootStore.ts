@@ -28,6 +28,7 @@ import {
 
 import AnalyticsStore from "./AnalyticsStore";
 import { PublicPathwaysDashboardPage } from "./dashboards";
+import { DEFAULT_EVENT_TYPE, EventType } from "./eventTypes";
 import FiltersStore from "./FiltersStore";
 import MetricsStore from "./MetricsStore";
 import UserStore from "./UserStore";
@@ -77,6 +78,8 @@ export class RootStore {
   section: PathwaysSection =
     DEFAULT_PATHWAYS_SECTION_BY_PAGE[DEFAULT_PATHWAYS_PAGE];
 
+  eventType: EventType = DEFAULT_EVENT_TYPE;
+
   currentTenantId = "US_NY" as PathwaysTenantId;
 
   setSection(section: PathwaysSection): void {
@@ -97,5 +100,9 @@ export class RootStore {
 
   setPage(page: PublicPathwaysDashboardPage): void {
     this.page = page;
+  }
+
+  setEventType(eventType: EventType): void {
+    this.eventType = eventType;
   }
 }

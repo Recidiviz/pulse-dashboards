@@ -131,6 +131,10 @@ export default class AnalyticsStore {
     this.track("frontend.public_pathways_dashboard_selected", { pageId });
   }
 
+  trackEventTypeSelected({ eventType }: { eventType: string }): void {
+    this.track("frontend.public_pathways_event_type_selected", { eventType });
+  }
+
   trackMethodologyLinkClicked(): void {
     this.track("frontend.public_pathways_methodology_link_clicked");
   }

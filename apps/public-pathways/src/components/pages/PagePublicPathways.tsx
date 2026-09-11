@@ -31,8 +31,10 @@ import {
 import useIsMobile from "~utils/react/useIsMobile";
 
 import { COMING_SOON_SECTIONS_BY_TENANT } from "../../datastores/comingSoonSections";
+import { DASHBOARDS_WITH_EVENT_TYPE_SELECTOR } from "../../datastores/dashboards";
 import { publicPathwaysPalette } from "../../styles/publicPathwaysPalette";
 import { useRouteSync } from "../../useRouteSync";
+import { EventTypeSelector } from "../EventTypeSelector/EventTypeSelector";
 import { Footer } from "../Footer/Footer";
 import { Header } from "../Header/Header";
 import MetricVizMapper from "../MetricVizMapper/MetricVizMapper";
@@ -98,6 +100,9 @@ export const PagePublicPathways = observer(function PagePublicPathways() {
           description={pageContent.summary}
           methodologyTo="/methodology"
         />
+        {DASHBOARDS_WITH_EVENT_TYPE_SELECTOR.includes(page) && (
+          <EventTypeSelector />
+        )}
         <NavigationRow>
           <SectionNav aria-label="Section navigation">
             <SectionNavigation

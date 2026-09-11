@@ -30,14 +30,21 @@ import {
 } from "~shared-pathways";
 
 import { useRootStore } from "./components/StoreProvider";
-import { isPublicPathwaysDashboardPage } from "./datastores/dashboards";
+import {
+  DASHBOARDS_WITH_EVENT_TYPE_SELECTOR,
+  isPublicPathwaysDashboardPage,
+} from "./datastores/dashboards";
+import { DEFAULT_EVENT_TYPE, isEventType } from "./datastores/eventTypes";
 
 const filterQueryParams = Object.values(FILTER_TYPES).reduce(
   (acc, filter) => ({ ...acc, [filter]: StringParam }),
   {} as Record<string, typeof StringParam>,
 );
 
-const sectionQueryParam = { sectionId: StringParam };
+const sectionQueryParam = {
+  sectionId: StringParam,
+  eventType: StringParam,
+};
 
 const allQueryParams = { ...sectionQueryParam, ...filterQueryParams };
 
@@ -84,6 +91,20 @@ export function useRouteSync(): void {
       );
     }
 
+    // Sync eventType from query param. It only applies to the dashboards that
+    // count more than one kind of event, so the rest always reset to default.
+    const eventType = query.eventType;
+    if (
+      eventType &&
+      isEventType(eventType) &&
+      pageId &&
+      DASHBOARDS_WITH_EVENT_TYPE_SELECTOR.includes(pageId)
+    ) {
+      rootStore.setEventType(eventType);
+    } else if (pageId) {
+      rootStore.setEventType(DEFAULT_EVENT_TYPE);
+    }
+
     // Sync filters from query params
     const queryRecord = query as Record<string, string | null | undefined>;
     const filterLabels = Object.values(FILTER_TYPES).reduce(
@@ -110,10 +131,12 @@ export function useRouteSync(): void {
   useEffect(() => {
     const dispose = reaction(
       () => ({
+        page: rootStore.page,
         section: metricsStore.section,
+        eventType: rootStore.eventType,
         filtersLabels: filtersStore.filtersLabels,
       }),
-      ({ section, filtersLabels }) => {
+      ({ page, section, eventType, filtersLabels }) => {
         const metric = metricsStore.current;
         if (!metric) return;
 
@@ -124,6 +147,9 @@ export function useRouteSync(): void {
 
         const updatedQuery: Record<string, string | undefined> = {
           sectionId: section,
+          eventType: DASHBOARDS_WITH_EVENT_TYPE_SELECTOR.includes(page)
+            ? eventType
+            : undefined,
         };
 
         for (const filter of enabledFilters) {

@@ -73,8 +73,11 @@ describe("useRouteSync", () => {
   let mockNavigate: Mock;
   let mockSetQuery: Mock;
   let mockRootStore: {
+    page: string;
+    eventType: string;
     setPage: Mock;
     setSection: Mock;
+    setEventType: Mock;
     filtersStore: {
       setFilters: Mock;
       filterOptions: Record<string, unknown>;
@@ -98,8 +101,11 @@ describe("useRouteSync", () => {
     mockSetQuery = vi.fn();
 
     mockRootStore = {
+      page: "prison",
+      eventType: "ALL",
       setPage: vi.fn(),
       setSection: vi.fn(),
+      setEventType: vi.fn(),
       filtersStore: {
         setFilters: vi.fn(),
         filterOptions: {},
@@ -162,6 +168,27 @@ describe("useRouteSync", () => {
       setupHook({ pageId: "supervision" });
       expect(mockNavigate).toHaveBeenCalledWith("/prison", { replace: true });
       expect(mockRootStore.setPage).not.toHaveBeenCalled();
+    });
+
+    it("sets eventType from query param on a dashboard that uses it", () => {
+      setupHook({
+        pageId: "admissionsAndReleases",
+        query: { eventType: "ADMISSIONS" },
+      });
+      expect(mockRootStore.setEventType).toHaveBeenCalledWith("ADMISSIONS");
+    });
+
+    it("resets eventType to default for an unrecognized value", () => {
+      setupHook({
+        pageId: "admissionsAndReleases",
+        query: { eventType: "NOT_AN_EVENT_TYPE" },
+      });
+      expect(mockRootStore.setEventType).toHaveBeenCalledWith("ALL");
+    });
+
+    it("resets eventType to default on a dashboard that does not use it", () => {
+      setupHook({ pageId: "prison", query: { eventType: "ADMISSIONS" } });
+      expect(mockRootStore.setEventType).toHaveBeenCalledWith("ALL");
     });
 
     it("syncs filter labels from query params to store", () => {
@@ -244,7 +271,7 @@ describe("useRouteSync", () => {
       expect(mockSetQuery).not.toHaveBeenCalled();
     });
 
-    it("reaction data function reads section and filtersLabels", () => {
+    it("reaction data function reads page, section, eventType and filtersLabels", () => {
       setupHook();
 
       // Extract the reaction data function (first argument) and call it
@@ -252,7 +279,9 @@ describe("useRouteSync", () => {
       const result = reactionData();
 
       expect(result).toEqual({
+        page: mockRootStore.page,
         section: PATHWAYS_SECTIONS["countOverTime"],
+        eventType: mockRootStore.eventType,
         filtersLabels: mockRootStore.filtersStore.filtersLabels,
       });
     });

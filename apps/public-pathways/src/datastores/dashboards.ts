@@ -42,6 +42,14 @@ export const DASHBOARD_CADENCE_LABELS: Record<
   [PATHWAYS_PAGES.admissionsAndReleases]: "Annual",
 };
 
+/**
+ * These dashboards count more than one kind of event, so the reader must
+ * choose which event type the charts show. Population Under Custody counts
+ * one population at a single point in time, so it offers no such choice.
+ */
+export const DASHBOARDS_WITH_EVENT_TYPE_SELECTOR: readonly PublicPathwaysDashboardPage[] =
+  [PATHWAYS_PAGES.admissionsAndReleases];
+
 /** Returns true if this app serves a dashboard for the given page id. */
 export function isPublicPathwaysDashboardPage(
   pageId: string,
