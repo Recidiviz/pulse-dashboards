@@ -36,7 +36,6 @@ const US_CO_CONFIG = {
       "riskAndNeedsAssessment",
       "programParticipation",
       "conductHistory",
-      "attachments",
       "communitySupervisionPlan",
     ],
     docketSubheading: "Hearings in the next two weeks",

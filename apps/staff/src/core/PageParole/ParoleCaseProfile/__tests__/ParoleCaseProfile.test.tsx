@@ -183,7 +183,6 @@ describe("ParoleCaseProfile", () => {
       ],
       ["Program Participation", PAROLE_SECTION_IDS.programParticipation],
       ["Institutional Conduct History", PAROLE_SECTION_IDS.conductHistory],
-      ["Attachments", PAROLE_SECTION_IDS.attachments],
       [
         "Community Supervision Plan",
         PAROLE_SECTION_IDS.communitySupervisionPlan,
@@ -205,53 +204,6 @@ describe("ParoleCaseProfile", () => {
         );
       },
     );
-  });
-
-  describe("the attachments section", () => {
-    it("merges the parole plan documents and attachments into one newest-to-oldest list", async () => {
-      renderAtPath("/parole/case/45821");
-
-      expect(await findSectionHeading("Attachments")).toBeInTheDocument();
-
-      // Matches only each row's name (e.g. "Letter of Support - Rev. Thomas
-      // Mills"), not its detail label (e.g. "Uploaded: Jul 8, 2026").
-      const rowNames = screen
-        .getAllByText(
-          (content) =>
-            content === "Parole Plan" ||
-            content.startsWith("Letter of Support - ") ||
-            content === "Victim Impact Statement",
-        )
-        .map((el) => el.textContent);
-      expect(rowNames).toEqual([
-        "Parole Plan",
-        "Letter of Support - Rev. Thomas Mills",
-        "Letter of Support - Mary Anderson (Sister)",
-        "Parole Plan",
-        "Victim Impact Statement",
-      ]);
-
-      const viewLinks = screen.getAllByRole("link", { name: /view/i });
-      expect(viewLinks).toHaveLength(5);
-      viewLinks.forEach((link) => expect(link).toHaveAttribute("download"));
-    });
-
-    it("renders a banner when the parole plan hasn't been updated in over 90 days", async () => {
-      renderAtPath("/parole/case/52903");
-
-      expect(
-        await screen.findByText("PAROLE PLAN NOT RECENTLY UPDATED"),
-      ).toBeInTheDocument();
-    });
-
-    it("renders no stale-plan banner when the parole plan is on file and current", async () => {
-      renderAtPath("/parole/case/45821");
-
-      await findSectionHeading("Attachments");
-      expect(
-        screen.queryByText("PAROLE PLAN NOT RECENTLY UPDATED"),
-      ).not.toBeInTheDocument();
-    });
   });
 
   describe("the conduct history section", () => {
