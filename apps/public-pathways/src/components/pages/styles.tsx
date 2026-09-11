@@ -19,7 +19,7 @@ import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components";
 
-export const PAGE_WIDTH = 991;
+export const PAGE_WIDTH = 1088; // 68rem
 /**
  * Constrained to a desired max width, with left and right padding
  */

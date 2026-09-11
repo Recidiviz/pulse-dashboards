@@ -26,6 +26,7 @@ import { publicPathwaysPalette } from "../../styles/publicPathwaysPalette";
 import { publicPathwaysTypography } from "../../styles/publicPathwaysTypography";
 import { DownloadMenu } from "../DownloadMenu/DownloadMenu";
 import { useRootStore } from "../StoreProvider";
+import { DashboardSwitcher } from "./DashboardSwitcher";
 
 const HeaderWrapper = styled.header`
   height: ${rem(100)};
@@ -127,6 +128,7 @@ export const Header = observer(function Header({
               How it works
             </NavLink>
           </SiteNav>
+          <DashboardSwitcher />
           <DownloadMenu />
         </HeaderActions>
       )}

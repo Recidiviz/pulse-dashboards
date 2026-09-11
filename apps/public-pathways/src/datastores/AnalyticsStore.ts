@@ -127,6 +127,10 @@ export default class AnalyticsStore {
     });
   }
 
+  trackDashboardSelected({ pageId }: { pageId: string }): void {
+    this.track("frontend.public_pathways_dashboard_selected", { pageId });
+  }
+
   trackMethodologyLinkClicked(): void {
     this.track("frontend.public_pathways_methodology_link_clicked");
   }

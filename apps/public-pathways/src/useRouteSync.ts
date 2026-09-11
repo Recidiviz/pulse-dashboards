@@ -22,15 +22,15 @@ import { StringParam, useQueryParams } from "use-query-params";
 
 import {
   convertLabelsToValues,
+  DEFAULT_PATHWAYS_PAGE,
   DEFAULT_PATHWAYS_SECTION_BY_PAGE,
   FILTER_TYPES,
-  PathwaysPage,
-  PathwaysPageIdList,
   PathwaysSection,
   PopulationFilterLabels,
 } from "~shared-pathways";
 
 import { useRootStore } from "./components/StoreProvider";
+import { isPublicPathwaysDashboardPage } from "./datastores/dashboards";
 
 const filterQueryParams = Object.values(FILTER_TYPES).reduce(
   (acc, filter) => ({ ...acc, [filter]: StringParam }),
@@ -61,15 +61,16 @@ export function useRouteSync(): void {
   useEffect(() => {
     // Sync pageId from path
     const pageId =
-      rawPageId && PathwaysPageIdList.includes(rawPageId)
-        ? (rawPageId as PathwaysPage)
+      rawPageId && isPublicPathwaysDashboardPage(rawPageId)
+        ? rawPageId
         : undefined;
 
     if (pageId) {
       rootStore.setPage(pageId);
     } else if (rawPageId) {
-      // Invalid pageId in URL — redirect to default
-      navigate("/prison", { replace: true });
+      // Either not a Pathways page at all, or one only the staff app serves —
+      // redirect to default
+      navigate(`/${DEFAULT_PATHWAYS_PAGE}`, { replace: true });
       return;
     }
 

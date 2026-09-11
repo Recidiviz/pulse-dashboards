@@ -22,13 +22,12 @@ import { makeAutoObservable, onReactionError } from "mobx";
 import {
   DEFAULT_PATHWAYS_PAGE,
   DEFAULT_PATHWAYS_SECTION_BY_PAGE,
-  PATHWAYS_PAGES,
-  PathwaysPage,
   PathwaysSection,
   PathwaysTenantId,
 } from "~shared-pathways";
 
 import AnalyticsStore from "./AnalyticsStore";
+import { PublicPathwaysDashboardPage } from "./dashboards";
 import FiltersStore from "./FiltersStore";
 import MetricsStore from "./MetricsStore";
 import UserStore from "./UserStore";
@@ -73,7 +72,7 @@ export class RootStore {
 
   analyticsStore: AnalyticsStore;
 
-  page: PathwaysPage = PATHWAYS_PAGES.prison;
+  page: PublicPathwaysDashboardPage = DEFAULT_PATHWAYS_PAGE;
 
   section: PathwaysSection =
     DEFAULT_PATHWAYS_SECTION_BY_PAGE[DEFAULT_PATHWAYS_PAGE];
@@ -96,7 +95,7 @@ export class RootStore {
     this.analyticsStore = new AnalyticsStore({ rootStore: this });
   }
 
-  setPage(page: PathwaysPage): void {
+  setPage(page: PublicPathwaysDashboardPage): void {
     this.page = page;
   }
 }

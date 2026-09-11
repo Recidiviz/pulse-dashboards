@@ -158,6 +158,12 @@ describe("useRouteSync", () => {
       expect(mockRootStore.setPage).not.toHaveBeenCalled();
     });
 
+    it("redirects to /prison for a Pathways page this app does not serve", () => {
+      setupHook({ pageId: "supervision" });
+      expect(mockNavigate).toHaveBeenCalledWith("/prison", { replace: true });
+      expect(mockRootStore.setPage).not.toHaveBeenCalled();
+    });
+
     it("syncs filter labels from query params to store", () => {
       const convertedFilters = { timePeriod: ["6"], sex: ["ALL"] };
       mockConvertLabelsToValues.mockReturnValue(convertedFilters);

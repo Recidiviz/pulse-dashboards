@@ -20,7 +20,7 @@ import { MemoryRouter } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import { Mock } from "vitest";
 
-import { defaultPathwaysTheme } from "~shared-pathways";
+import { defaultPathwaysTheme, PATHWAYS_PAGES } from "~shared-pathways";
 
 import { useRootStore } from "../../StoreProvider";
 import { Header } from "../Header";
@@ -42,7 +42,10 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
 describe("Header", () => {
   beforeEach(() => {
     mockUseRootStore.mockReturnValue({
+      currentTenantId: "US_NY",
+      page: PATHWAYS_PAGES.prison,
       analyticsStore: {
+        trackDashboardSelected: vi.fn(),
         trackDownloadClicked: mockTrackDownloadClicked,
         trackMethodologyLinkClicked: mockTrackMethodologyLinkClicked,
       },
@@ -53,6 +56,14 @@ describe("Header", () => {
         isLatestSnapshotDateReady: true,
       },
     });
+  });
+
+  it("renders the dashboard switcher", () => {
+    render(<Header />, { wrapper });
+
+    expect(
+      screen.getByRole("button", { name: /Population Under Custody/ }),
+    ).toBeInTheDocument();
   });
 
   it("renders a Download menu button", () => {
