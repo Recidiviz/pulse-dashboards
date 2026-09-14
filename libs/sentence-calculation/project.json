@@ -1,0 +1,19 @@
+{
+  "name": "sentence-calculation",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/sentence-calculation/src",
+  "projectType": "library",
+  "tags": ["scope:client", "type:feature"],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.lib.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}
