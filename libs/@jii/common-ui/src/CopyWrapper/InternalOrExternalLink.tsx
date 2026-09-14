@@ -21,6 +21,24 @@ import styled from "styled-components";
 
 import { Icon } from "~design-system";
 
+const SAFE_PROTOCOLS = ["http:", "https:", "mailto:", "tel:"];
+
+/**
+ * Guards against schemes such as `javascript:`, which execute script when the link is
+ * clicked. In practice markdown-to-jsx strips these before they ever reach this
+ * component, but this guards against changes to that, or future usage outside of that library.
+ */
+function isSafeProtocol(href: string | undefined) {
+  // protocol-relative URLs inherit the current page's protocol, which is always safe
+  if (href?.startsWith("//")) return true;
+
+  try {
+    return SAFE_PROTOCOLS.includes(new URL(href ?? "").protocol);
+  } catch {
+    return false;
+  }
+}
+
 const InlineIcon = styled(Icon).attrs({ size: 13, kind: "Arrow" })`
   display: inline-block;
   margin-left: 0.4em;
@@ -50,6 +68,9 @@ export function InternalOrExternalLink({
   }
 
   if (isExternalUrl) {
+    // render the link's text, unlinked, rather than emitting an unsafe href
+    if (!isSafeProtocol(props.href)) return <>{children}</>;
+
     return (
       <a {...props}>
         {children}
