@@ -22,6 +22,12 @@ import { ParoleOfflineAPIClient } from "../../api/ParoleOfflineAPIClient";
 import { ParoleStore } from "../../ParoleStore";
 import { ParoleCaseProfilePresenter } from "../ParoleCaseProfilePresenter";
 
+// This presenter is tested against ParoleOfflineAPIClient's fixture data
+// regardless of which tenants ParoleAPIClient supports for real data --
+// force offline mode directly so that holds as SUPPORTED_TENANT_IDS grows
+// (see ParoleAPIClient.ts).
+import.meta.env["VITE_IS_OFFLINE"] = "true";
+
 const TEST_CASE: ParoleCase = {
   docId: "45821",
   name: "Anderson, Michael",

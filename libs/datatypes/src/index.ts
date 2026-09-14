@@ -192,6 +192,7 @@ export * from "./people/Client/utils";
 // Resident Exports: Includes fixtures and schema related to Residents
 // -----------------------------------------------------------------------------
 export * from "./people/Resident/fixtures";
+export * from "./people/Resident/paroleBoardClientProfileSchema";
 export * from "./people/Resident/residentCommonSchema";
 export * from "./people/Resident/residentCommonSchemaFixtures";
 export * from "./people/Resident/US_AR/fixtures";

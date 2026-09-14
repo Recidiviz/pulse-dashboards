@@ -46,7 +46,7 @@ import { SubcategoryBreakdownChart } from "./SubcategoryBreakdownChart";
 // its own `riskAssessmentConfig` (see ParoleConfig) -- this is this
 // section's original behavior, preserved exactly for any tenant that hasn't
 // opted into a custom configuration.
-const DEFAULT_TOOLS: Array<ParoleRiskTool> = ["LSI", "PIT", "CARAS", "SRT"];
+const DEFAULT_TOOLS: Array<ParoleRiskTool> = ["LSIR", "PIT", "CARAS", "SRT"];
 const DEFAULT_AGGREGATE_LABEL = "All";
 const DEFAULT_AGGREGATE_HEADER_LABEL = "All assessments";
 

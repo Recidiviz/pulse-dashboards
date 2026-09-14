@@ -41,8 +41,8 @@ function makeConfig(overrides: Partial<ParoleConfig> = {}): ParoleConfig {
 
 const CONFIG_WITH_TOOLS = makeConfig({
   riskAssessmentConfig: {
-    tools: ["LSI"],
-    aggregateView: { label: "All", tools: ["LSI"] },
+    tools: ["LSIR"],
+    aggregateView: { label: "All", tools: ["LSIR"] },
   },
 });
 

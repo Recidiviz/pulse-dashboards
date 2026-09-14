@@ -322,11 +322,41 @@ export default class FirestoreStore {
     // matching Resident doc at all (most clients are not currently incarcerated),
     // so the no-match case must resolve to undefined rather than throw.
     const result = results.docs[0];
-    if (result?.exists())
+    if (result?.exists()) {
       return workflowsResidentRecordSchema.parse({
         ...result.data(),
         recordId: result.id,
       });
+    }
+  }
+
+  /** Returns every resident for a state, so a single malformed doc shouldn't
+   * take down the whole result set -- skip and log it instead of letting
+   * parse() throw.
+   **/
+  async getResidentsForState(
+    stateCode: string,
+  ): Promise<WorkflowsResidentRecord[]> {
+    const results = await getDocs(
+      query(
+        this.collection({ key: "residents" }),
+        where("stateCode", "==", stateCode),
+      ),
+    );
+
+    return results.docs.flatMap((result) => {
+      const parsed = workflowsResidentRecordSchema.safeParse({
+        ...result.data(),
+        recordId: result.id,
+      });
+      if (!parsed.success) {
+        console.error(
+          `Failed to parse resident record [${result.id}]: ${parsed.error}`,
+        );
+        return [];
+      }
+      return [parsed.data];
+    });
   }
 
   private get userUpdatesKey() {

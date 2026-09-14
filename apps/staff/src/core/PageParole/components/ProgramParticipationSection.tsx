@@ -26,7 +26,11 @@ import {
 } from "react-accessible-accordion";
 import styled from "styled-components";
 
-import { ParoleDocProgram, ParoleEdovoProgram } from "~datatypes";
+import {
+  PAROLE_COMPLETED_PROGRAM_STATUSES,
+  ParoleDocProgram,
+  ParoleEdovoProgram,
+} from "~datatypes";
 import { Icon, IconSVG, palette } from "~design-system";
 
 import { SectionCardHeader } from "../../SectionCard";
@@ -103,9 +107,11 @@ export function ProgramParticipationSection({
   docPrograms: Array<ParoleDocProgram>;
   edovoPrograms: Array<ParoleEdovoProgram>;
 }) {
-  const completedDocPrograms = docPrograms.filter(
-    (program) => program.status === "completed",
+  const completedDocPrograms = docPrograms.filter((program) =>
+    PAROLE_COMPLETED_PROGRAM_STATUSES.has(program.status),
   );
+  // Edovo's status is a separate two-value enum, not the DOC program statuses
+  // above (see PAROLE_EDOVO_STATUS).
   const completedEdovoPrograms = edovoPrograms.filter(
     (program) => program.status === "completed",
   );

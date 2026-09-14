@@ -15,7 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ParoleAttachment, ParolePlan } from "~datatypes";
+import {
+  isParoleUnknownDate,
+  PAROLE_UNKNOWN_TEXT,
+  ParoleAttachment,
+  ParolePlan,
+} from "~datatypes";
 import { Icon, IconSVG } from "~design-system";
 
 import { SectionCardHeader } from "../../SectionCard";
@@ -45,6 +50,12 @@ type AttachmentListItem = {
   uploadDate: string;
 };
 
+function formatUploadDateLabel(uploadDate: string): string {
+  return isParoleUnknownDate(uploadDate)
+    ? PAROLE_UNKNOWN_TEXT
+    : formatDate(uploadDate);
+}
+
 // Merges the parole plan's documents in with the standalone attachments into
 // a single reverse-chronological list -- the design treats a parole plan
 // upload as just another attachment row, distinguished only by its name.
@@ -56,7 +67,7 @@ function buildAttachmentList(
     (doc) => ({
       key: doc.url,
       name: "Parole Plan",
-      detailLabel: `Uploaded: ${formatDate(doc.uploadDate)}`,
+      detailLabel: `Uploaded: ${formatUploadDateLabel(doc.uploadDate)}`,
       url: doc.url,
       uploadDate: doc.uploadDate,
     }),
@@ -66,7 +77,7 @@ function buildAttachmentList(
     (attachment) => ({
       key: attachment.url,
       name: attachment.name,
-      detailLabel: `Uploaded: ${formatDate(attachment.uploadDate)}`,
+      detailLabel: `Uploaded: ${formatUploadDateLabel(attachment.uploadDate)}`,
       url: attachment.url,
       uploadDate: attachment.uploadDate,
     }),

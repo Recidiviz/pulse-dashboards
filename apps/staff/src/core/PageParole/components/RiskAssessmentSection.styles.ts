@@ -23,14 +23,14 @@ import { ParoleRiskTool } from "~datatypes";
 import { palette } from "~design-system";
 
 export const TOOL_COLORS: Record<ParoleRiskTool, string> = {
-  LSI: "#0B5394",
+  LSIR: "#0B5394",
   PIT: "#00A396",
   CARAS: "#FF6B47",
   SRT: "#8E4EC6",
   RT: "#2E7D32",
   CST: "#C2185B",
   VRAG: "#B8860B",
-  STATIC: "#1565C0",
+  STATIC_99: "#1565C0",
   STABLE: "#6D4C41",
   Guideline: "#546E7A",
 };

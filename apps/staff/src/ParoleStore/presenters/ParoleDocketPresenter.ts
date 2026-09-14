@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { addDays, startOfToday, subDays } from "date-fns";
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { ParoleHearing } from "~datatypes";
@@ -22,6 +23,7 @@ import { Hydratable, HydratesFromSource } from "~hydration-utils";
 
 import { FilterField, FilterOption, FilterType } from "../../core/models/types";
 import { FilterPresenter } from "../../FilterStore/FilterPresenter";
+import { formatDateToISO } from "../../utils";
 import { ParoleFilterStore } from "../ParoleFilterStore";
 import { ParoleStore } from "../ParoleStore";
 import { formatDocId } from "../utils";
@@ -78,8 +80,34 @@ export class ParoleDocketPresenter
     return this.hydrator.hydrate();
   }
 
+  /**
+   * The hearings this docket shows: the hydrated set, narrowed to the
+   * tenant's `docketWindowDaysBefore`/`docketWindowDaysAfter`. Everything
+   * else on this presenter derives from here, so the filter options,
+   * counts, and rows describe the same hearings.
+   */
+  private get hearingsInWindow(): Array<ParoleHearing> {
+    const hearings = this.hearings ?? [];
+    const { docketWindowDaysAfter, docketWindowDaysBefore } =
+      this.paroleStore.config;
+    if (docketWindowDaysAfter === undefined) return hearings;
+
+    // hearingDate is an ISO YYYY-MM-DD string, which orders correctly as a
+    // plain string compare -- no Date parsing, no timezone questions.
+    const firstDay = formatDateToISO(
+      subDays(startOfToday(), docketWindowDaysBefore ?? 0),
+    );
+    const lastDay = formatDateToISO(
+      addDays(startOfToday(), docketWindowDaysAfter),
+    );
+    return hearings.filter(
+      (hearing) =>
+        hearing.hearingDate >= firstDay && hearing.hearingDate <= lastDay,
+    );
+  }
+
   private uniqueValues(field: ParoleHearingFilterField): Array<string> {
-    return Array.from(new Set((this.hearings ?? []).map((h) => h[field])));
+    return Array.from(new Set(this.hearingsInWindow.map((h) => h[field])));
   }
 
   setSearchQuery(query: string): void {
@@ -101,7 +129,7 @@ export class ParoleDocketPresenter
   numItems(type: FilterType, field: FilterField, option: FilterOption): number {
     if (type !== "parole") return 0;
 
-    return (this.hearings ?? []).filter(
+    return this.hearingsInWindow.filter(
       (h) => h[field as ParoleHearingFilterField] === option.value,
     ).length;
   }
@@ -109,7 +137,7 @@ export class ParoleDocketPresenter
   get filteredHearings(): Array<ParoleHearing> {
     const selected = this.filterStore.selectedFilters;
     const query = this.searchQuery.trim().toLowerCase();
-    return (this.hearings ?? []).filter((hearing) => {
+    return this.hearingsInWindow.filter((hearing) => {
       if (
         query &&
         !hearing.individualName.toLowerCase().includes(query) &&
@@ -127,6 +155,6 @@ export class ParoleDocketPresenter
   }
 
   get totalHearingsCount(): number {
-    return this.hearings?.length ?? 0;
+    return this.hearingsInWindow.length;
   }
 }

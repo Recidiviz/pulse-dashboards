@@ -230,6 +230,8 @@ const US_ID_CONFIG = {
       "programParticipation",
       "conductHistory",
     ],
+    docketWindowDaysBefore: 7,
+    docketWindowDaysAfter: 30,
     conductHistory: {
       classificationColors: {
         Major: "SLATE_DARK",
@@ -243,10 +245,10 @@ const US_ID_CONFIG = {
     offenseHistoryTitle: "Criminal & Parole History",
     sidebarComponent: UsIdParoleSidebar,
     riskAssessmentConfig: {
-      tools: ["LSI", "VRAG", "STATIC", "STABLE", "Guideline"],
+      tools: ["LSIR", "VRAG", "STATIC_99", "STABLE", "Guideline"],
       aggregateView: {
         label: "All",
-        tools: ["LSI", "VRAG", "STATIC", "STABLE", "Guideline"],
+        tools: ["LSIR", "VRAG", "STATIC_99", "STABLE", "Guideline"],
       },
     },
   },

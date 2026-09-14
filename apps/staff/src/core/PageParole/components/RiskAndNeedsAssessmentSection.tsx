@@ -19,7 +19,7 @@ import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components";
 
-import { ParoleRiskNeedFactor, ParoleRiskNeedScale } from "~datatypes";
+import { ParoleRiskNeedFactor } from "~datatypes";
 import { palette } from "~design-system";
 
 import { PaletteKey, WorkflowsBadgePill } from "../../BadgePill/BadgePill";
@@ -27,11 +27,23 @@ import { SectionCardHeader } from "../../SectionCard";
 import { PaddedSectionCardBody } from "./PaddedSectionCardBody";
 import { EmptyState, SectionCard } from "./shared";
 
-const SCALE_COLORS: Record<ParoleRiskNeedScale, PaletteKey> = {
-  Low: "GREEN",
-  Moderate: "ORANGE",
-  High: "RED",
-};
+// Scale is free text, not a fixed enum, so this colors by substring
+// (checked most-severe-first) rather than exact match.
+// TODO(XXXX): revisit once product has weighed in on how a compound scale
+// label should display.
+const SCALE_COLOR_BY_SUBSTRING: ReadonlyArray<[string, PaletteKey]> = [
+  ["high", "RED"],
+  ["moderate", "ORANGE"],
+  ["low", "GREEN"],
+];
+
+function paletteForScale(scale: string): PaletteKey {
+  const lowerScale = scale.toLowerCase();
+  const match = SCALE_COLOR_BY_SUBSTRING.find(([substring]) =>
+    lowerScale.includes(substring),
+  );
+  return match ? match[1] : "SLATE";
+}
 
 const RiskNeedTable = styled.table`
   width: 100%;
@@ -95,7 +107,7 @@ export function RiskAndNeedsAssessmentSection({
                 <td>
                   <WorkflowsBadgePill
                     text={row.scale}
-                    palette={SCALE_COLORS[row.scale]}
+                    palette={paletteForScale(row.scale)}
                   />
                 </td>
               </tr>

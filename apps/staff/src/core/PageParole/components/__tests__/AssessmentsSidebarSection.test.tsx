@@ -23,14 +23,14 @@ import { AssessmentsSidebarSection } from "../AssessmentsSidebarSection";
 
 const RISK_ASSESSMENTS: Array<ParoleRiskAssessment> = [
   {
-    tool: "LSI",
+    tool: "LSIR",
     score: 14,
     maxScore: 54,
     date: "2026-05-12",
   },
   // Superseded entry -- the section should show only the latest per tool.
   {
-    tool: "LSI",
+    tool: "LSIR",
     score: 38,
     maxScore: 54,
     date: "2025-01-15",
@@ -53,12 +53,12 @@ describe("AssessmentsSidebarSection", () => {
     render(
       <AssessmentsSidebarSection
         riskAssessments={RISK_ASSESSMENTS}
-        tools={["LSI"]}
+        tools={["LSIR"]}
       />,
     );
 
     expect(screen.getByText("Assessments")).toBeInTheDocument();
-    expect(screen.getByText("LSI")).toBeInTheDocument();
+    expect(screen.getByText("LSIR")).toBeInTheDocument();
     expect(screen.getByText("May 12, 2026")).toBeInTheDocument();
     expect(screen.getByText("14")).toBeInTheDocument();
     expect(screen.getByText("out of 54")).toBeInTheDocument();
@@ -69,7 +69,7 @@ describe("AssessmentsSidebarSection", () => {
     render(
       <AssessmentsSidebarSection
         riskAssessments={RISK_ASSESSMENTS}
-        tools={["LSI"]}
+        tools={["LSIR"]}
       />,
     );
 
@@ -81,23 +81,23 @@ describe("AssessmentsSidebarSection", () => {
     render(
       <AssessmentsSidebarSection
         riskAssessments={RISK_ASSESSMENTS}
-        tools={["LSI", "VRAG", "STATIC"]}
+        tools={["LSIR", "VRAG", "STATIC_99"]}
       />,
     );
 
     expect(screen.getByText("Non Applicable/ Not on File")).toBeInTheDocument();
     expect(screen.getByText("VRAG")).toBeInTheDocument();
-    expect(screen.getByText("STATIC")).toBeInTheDocument();
+    expect(screen.getByText("STATIC_99")).toBeInTheDocument();
     // On-file tools appear once, in the assessment row -- not duplicated
     // into the not-on-file list.
-    expect(screen.getAllByText("LSI")).toHaveLength(1);
+    expect(screen.getAllByText("LSIR")).toHaveLength(1);
   });
 
   it("omits the not-on-file list entirely when every tracked tool has an assessment", () => {
     render(
       <AssessmentsSidebarSection
         riskAssessments={RISK_ASSESSMENTS}
-        tools={["LSI"]}
+        tools={["LSIR"]}
       />,
     );
 

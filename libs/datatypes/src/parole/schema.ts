@@ -17,9 +17,28 @@
 
 import { z } from "zod";
 
+// Sentinel values ParoleAPIClient fills a required ParoleCase/ParoleOffense
+// field with when it has no real value to source (see UNKNOWN_DATE there --
+// same sentinel used for "no real value" elsewhere, see MISSING_DATE_SENTINEL
+// in workflowsResidentRecordSchema.ts). Exported so a component doing date
+// arithmetic or formatting on a case-profile date (e.g. calculating age from
+// dob) can check for this first, rather than rendering whatever a future
+// date produces -- a negative age, in that case.
+export const PAROLE_UNKNOWN_DATE = "9999-12-01";
+export const PAROLE_UNKNOWN_TEXT = "Not yet available";
+
+export function isParoleUnknownDate(date: string): boolean {
+  return date === PAROLE_UNKNOWN_DATE;
+}
+
+// Tools recidiviz-data's StateAssessmentType also defines use its exact
+// value, so `parole_board_client_profile.risk_assessments[].assessment_type`
+// needs no renaming. The rest have no StateAssessmentType member, so there
+// is nothing to match yet -- note Colorado's SRT/RT/CST are not Texas's
+// TX_SRT/TX_RT/TX_CST.
 export const PAROLE_RISK_TOOL = z.enum([
   // Common tools
-  "LSI",
+  "LSIR",
   // US_CO-only tools
   "PIT",
   "CARAS",
@@ -28,7 +47,7 @@ export const PAROLE_RISK_TOOL = z.enum([
   "CST",
   // US_ID-only tools
   "VRAG",
-  "STATIC",
+  "STATIC_99",
   "STABLE",
   "Guideline",
 ]);
@@ -76,7 +95,10 @@ export const paroleRiskNeedFactorSchema = z.object({
   // integer, but Mental Health's real eOMIS value is qualifier-suffixed
   // (e.g. "3/M"), so the field has to accommodate that format too.
   score: z.string(),
-  scale: PAROLE_RISK_NEED_SCALE,
+  // The backend's raw scale label, displayed as-is (not mapped onto
+  // PAROLE_RISK_NEED_SCALE) since real labels aren't always one of its
+  // three clean values (e.g. "Low to moderate").
+  scale: z.string(),
 });
 export type ParoleRiskNeedFactor = z.infer<typeof paroleRiskNeedFactorSchema>;
 
@@ -146,11 +168,33 @@ export type ParoleCommunitySupervisionPlanEntry = z.infer<
   typeof paroleCommunitySupervisionPlanEntrySchema
 >;
 
+// Mirrors StateProgramAssignmentParticipationStatus in recidiviz-data, which
+// `parole_board_client_profile.programs[].program_status` carries. The
+// backend has states this UI has no display for yet (a refusal, a denial,
+// an unsuccessful discharge); keeping the values identical avoids a lossy
+// mapping.
 export const PAROLE_PROGRAM_STATUS = z.enum([
-  "completed",
-  "in-progress",
-  "recommended",
+  "DECEASED",
+  "DENIED",
+  "DISCHARGED_SUCCESSFUL",
+  "DISCHARGED_SUCCESSFUL_WITH_DISCRETION",
+  "DISCHARGED_UNSUCCESSFUL",
+  "DISCHARGED_OTHER",
+  "DISCHARGED_UNKNOWN",
+  "IN_PROGRESS",
+  "PENDING",
+  "REFUSED",
+  "PRESENT_WITHOUT_INFO",
+  "INTERNAL_UNKNOWN",
+  "EXTERNAL_UNKNOWN",
 ]);
+export type ParoleProgramStatus = z.infer<typeof PAROLE_PROGRAM_STATUS>;
+
+// Statuses meaning the person finished the program successfully. A
+// discharge with an unknown outcome (DISCHARGED_OTHER, DISCHARGED_UNKNOWN)
+// is deliberately excluded: it would overstate the record.
+export const PAROLE_COMPLETED_PROGRAM_STATUSES: ReadonlySet<ParoleProgramStatus> =
+  new Set(["DISCHARGED_SUCCESSFUL", "DISCHARGED_SUCCESSFUL_WITH_DISCRETION"]);
 
 export const paroleDocProgramSchema = z.object({
   name: z.string(),
@@ -161,6 +205,8 @@ export const paroleDocProgramSchema = z.object({
 });
 export type ParoleDocProgram = z.infer<typeof paroleDocProgramSchema>;
 
+// Edovo's backend field (`edovo_programs[].edovo_program_status`) is a free
+// string with no enum behind it, so there is nothing to match here yet.
 export const PAROLE_EDOVO_STATUS = z.enum(["completed", "in-progress"]);
 export const PAROLE_EDOVO_RESULT = z.enum(["passed", "needs-improvement"]);
 

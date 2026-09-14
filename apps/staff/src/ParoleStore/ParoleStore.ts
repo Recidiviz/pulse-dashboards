@@ -17,25 +17,31 @@
 
 import { makeAutoObservable } from "mobx";
 
+import { isDemoMode, isOfflineMode } from "~client-env-utils";
+
 import { ParoleConfig } from "../core/models/types";
 import { RootStore } from "../RootStore";
 import { ParoleAPI } from "./api/interface";
+import { isSupportedTenantId, ParoleAPIClient } from "./api/ParoleAPIClient";
 import { ParoleOfflineAPIClient } from "./api/ParoleOfflineAPIClient";
 
-// TODO(OBT-41775): Point this at a real ParoleAPIClient once a Parole backend
-// exists. Until then, the offline/fixture client backs every environment,
-// not just isOfflineMode()/isTestEnv()/isDemoMode().
+/* TODO(OBT-41775): Point the remaining fields/methods at a real
+ * ParoleAPIClient once a full Parole backend exists. See
+ * ParoleAPIClient.SUPPORTED_TENANT_IDS for what's real today (currently
+ * US_ID and US_CO, partially).
+ */
 export class ParoleStore {
-  apiClient: ParoleAPI;
-
   constructor(public rootStore: RootStore) {
-    this.apiClient = this.getApiClient();
-
     makeAutoObservable(this);
   }
 
-  getApiClient(): ParoleAPI {
-    return new ParoleOfflineAPIClient(this);
+  get apiClient(): ParoleAPI {
+    const { currentTenantId } = this.rootStore.tenantStore;
+    const hasRealData =
+      isSupportedTenantId(currentTenantId) && !isOfflineMode() && !isDemoMode();
+    return hasRealData
+      ? new ParoleAPIClient(this)
+      : new ParoleOfflineAPIClient(this);
   }
 
   get config(): ParoleConfig {

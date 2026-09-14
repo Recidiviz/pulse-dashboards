@@ -1398,6 +1398,84 @@ describe("FirestoreStore", () => {
     });
   });
 
+  describe("getResidentsForState", () => {
+    const rawResident1: RawWorkflowsResidentRecord = {
+      recordId: "us_id_res001",
+      personName: { givenNames: "Andre", surname: "Hall" },
+      personExternalId: "RES001",
+      displayId: "dRES001",
+      pseudonymizedId: "anonres001",
+      stateCode: "US_ID",
+      allEligibleOpportunities: [],
+      metadata: { stateCode: "US_ID", crcFacilities: [] },
+    };
+    const rawResident2: RawWorkflowsResidentRecord = {
+      recordId: "us_id_res002",
+      personName: { givenNames: "Antonio", surname: "Martin" },
+      personExternalId: "RES002",
+      displayId: "dRES002",
+      pseudonymizedId: "anonres002",
+      stateCode: "US_ID",
+      allEligibleOpportunities: [],
+      metadata: { stateCode: "US_ID", crcFacilities: [] },
+    };
+
+    beforeEach(() => {
+      mockWhere.mockImplementation(
+        (field: string, op: string, value: unknown) => ({ field, op, value }),
+      );
+      mockQuery.mockImplementation((...args: unknown[]) => args);
+    });
+
+    test("queries residents by stateCode and parses every result", async () => {
+      mockGetDocs.mockResolvedValue({
+        docs: [
+          {
+            id: rawResident1.recordId,
+            data: () => omit(rawResident1, "recordId"),
+          },
+          {
+            id: rawResident2.recordId,
+            data: () => omit(rawResident2, "recordId"),
+          },
+        ],
+      });
+
+      const result = await store.getResidentsForState("US_ID");
+
+      expect(mockWhere).toHaveBeenCalledWith("stateCode", "==", "US_ID");
+      expect(result).toEqual([
+        workflowsResidentRecordSchema.parse(rawResident1),
+        workflowsResidentRecordSchema.parse(rawResident2),
+      ]);
+    });
+
+    test("skips a doc that fails to parse instead of throwing", async () => {
+      const consoleErrorSpy = vi
+        .spyOn(console, "error")
+        .mockImplementation(() => undefined);
+      mockGetDocs.mockResolvedValue({
+        docs: [
+          {
+            id: rawResident1.recordId,
+            data: () => omit(rawResident1, "recordId"),
+          },
+          // Missing required fields -- fails schema validation.
+          { id: "malformed", data: () => ({ stateCode: "US_ID" }) },
+        ],
+      });
+
+      const result = await store.getResidentsForState("US_ID");
+
+      expect(result).toEqual([
+        workflowsResidentRecordSchema.parse(rawResident1),
+      ]);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining("malformed"),
+      );
+    });
+  });
+
   describe("updateSnoozeCompanions", () => {
     test("Should verify if a snooze triggers companion snoozes and update snooze companions with provided changes", async () => {
       const mockCompanionOpportunities = [

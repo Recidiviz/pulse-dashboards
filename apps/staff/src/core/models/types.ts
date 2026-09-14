@@ -139,6 +139,20 @@ export type ParoleConfig = {
   docketSubheading?: string;
   /** Enables the docket table's name/DOC ID search input. Omit to hide it. */
   docketSearchEnabled?: boolean;
+  /**
+   * How many days ahead the docket looks. A hearing outside the window --
+   * before `docketWindowDaysBefore` days ago, or past this many days out --
+   * is left off the docket, so the filter dropdowns and total count match
+   * what the table shows. Omit to show every hearing. Keep
+   * `docketSubheading` in agreement with this if the tenant sets one.
+   */
+  docketWindowDaysAfter?: number;
+  /**
+   * How many days before today the docket window starts. Only takes effect
+   * alongside `docketWindowDaysAfter` -- omit (or leave at the default of 0)
+   * to start the window at today.
+   */
+  docketWindowDaysBefore?: number;
   /** State-specific config for the Institutional Conduct History section. */
   conductHistory: ParoleConductHistoryConfig;
   /**

@@ -22,7 +22,7 @@ import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 const US_CO_CONFIG = {
   name: "Colorado",
   stateCode: "CO",
-  // TODO(OBT-40957): Set the real SSO domain for CO users once known.
+  domain: "state.co.us",
   availableStateCodes: [dashboard.US_CO],
   enableUserRestrictions: false,
   navigation: {
@@ -40,6 +40,13 @@ const US_CO_CONFIG = {
     ],
     docketSubheading: "Hearings in the next two weeks",
     docketSearchEnabled: true,
+    // CO's scheduled hearing dates are truncated to the 1st of the month in
+    // the source table (see us_co/parole_board_client_profile.py), so a
+    // hearing set for this month can already be "in the past" by the 2nd.
+    // The look-back covers a full month so that date stays on the docket for
+    // as long as it's genuinely still this month's hearing.
+    docketWindowDaysBefore: 31,
+    docketWindowDaysAfter: 14,
     conductHistory: {
       classificationColors: {
         "Class 1": "BLUE",
@@ -50,7 +57,7 @@ const US_CO_CONFIG = {
       children: UsCoOlderDisciplinariesSection,
     },
     riskAssessmentConfig: {
-      tools: ["LSI", "PIT", "CARAS", "SRT", "RT", "CST"],
+      tools: ["LSIR", "PIT", "CARAS", "SRT", "RT", "CST"],
       aggregateView: {
         label: "Entire CTAP Suite",
         tools: ["RT", "SRT", "PIT"],

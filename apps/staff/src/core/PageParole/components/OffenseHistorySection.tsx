@@ -17,7 +17,11 @@
 
 import { Fragment } from "react";
 
-import { ParoleCase } from "~datatypes";
+import {
+  isParoleUnknownDate,
+  PAROLE_UNKNOWN_TEXT,
+  ParoleCase,
+} from "~datatypes";
 import { Icon, IconSVG, palette } from "~design-system";
 
 import type { ParoleConfig } from "../../models/types";
@@ -125,12 +129,18 @@ export function OffenseHistorySection({
                     </FactStack>
                     <FactStack>
                       <div>Date of Offense</div>
-                      <FactLabel>{formatDate(offense.dateOfOffense)}</FactLabel>
+                      <FactLabel>
+                        {isParoleUnknownDate(offense.dateOfOffense)
+                          ? PAROLE_UNKNOWN_TEXT
+                          : formatDate(offense.dateOfOffense)}
+                      </FactLabel>
                     </FactStack>
                     <FactStack>
                       <div>Conviction Date</div>
                       <FactLabel>
-                        {formatDate(offense.convictionDate)}
+                        {isParoleUnknownDate(offense.convictionDate)
+                          ? PAROLE_UNKNOWN_TEXT
+                          : formatDate(offense.convictionDate)}
                       </FactLabel>
                     </FactStack>
                     <WideFactItem>

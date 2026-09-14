@@ -18,7 +18,11 @@
 import { typography } from "@recidiviz/design-system";
 import styled from "styled-components";
 
-import { ParoleCase } from "~datatypes";
+import {
+  isParoleUnknownDate,
+  PAROLE_UNKNOWN_TEXT,
+  ParoleCase,
+} from "~datatypes";
 import { palette } from "~design-system";
 
 import { formatDocId } from "../../../ParoleStore/utils";
@@ -85,11 +89,19 @@ export function ParolePersonalDetails({
         </FactRowStack>
         <FactRowStack>
           <div>Age</div>
-          <FactLabel>{calculateAge(caseDetail.dob)}</FactLabel>
+          <FactLabel>
+            {isParoleUnknownDate(caseDetail.dob)
+              ? PAROLE_UNKNOWN_TEXT
+              : calculateAge(caseDetail.dob)}
+          </FactLabel>
         </FactRowStack>
         <FactRowStack>
           <div>DOB</div>
-          <FactLabel>{formatDate(caseDetail.dob)}</FactLabel>
+          <FactLabel>
+            {isParoleUnknownDate(caseDetail.dob)
+              ? PAROLE_UNKNOWN_TEXT
+              : formatDate(caseDetail.dob)}
+          </FactLabel>
         </FactRowStack>
       </FactRow>
     </div>
@@ -103,15 +115,27 @@ export function ParoleSentenceInfo({ caseDetail }: { caseDetail: ParoleCase }) {
       <StackedFacts>
         <StackedFactRow>
           <div>Sentence Start Date</div>
-          <FactLabel>{formatDate(caseDetail.sentenceStartDate)}</FactLabel>
+          <FactLabel>
+            {isParoleUnknownDate(caseDetail.sentenceStartDate)
+              ? PAROLE_UNKNOWN_TEXT
+              : formatDate(caseDetail.sentenceStartDate)}
+          </FactLabel>
         </StackedFactRow>
         <StackedFactRow>
           <div>Parole Eligibility Date (PED)</div>
-          <FactLabel>{formatDate(caseDetail.paroleEligibilityDate)}</FactLabel>
+          <FactLabel>
+            {isParoleUnknownDate(caseDetail.paroleEligibilityDate)
+              ? PAROLE_UNKNOWN_TEXT
+              : formatDate(caseDetail.paroleEligibilityDate)}
+          </FactLabel>
         </StackedFactRow>
         <StackedFactRow>
           <div>Mandatory Release Date (MRD)</div>
-          <FactLabel>{formatDate(caseDetail.mandatoryReleaseDate)}</FactLabel>
+          <FactLabel>
+            {isParoleUnknownDate(caseDetail.mandatoryReleaseDate)
+              ? PAROLE_UNKNOWN_TEXT
+              : formatDate(caseDetail.mandatoryReleaseDate)}
+          </FactLabel>
         </StackedFactRow>
       </StackedFacts>
     </div>

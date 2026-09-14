@@ -58,4 +58,21 @@ describe("RiskAndNeedsAssessmentSection", () => {
       statusStyles.RED.backgroundColor,
     );
   });
+
+  it("colors a compound scale label by its more severe substring, and an unrecognized label neutral", () => {
+    const factors: Array<ParoleRiskNeedFactor> = [
+      { factor: "Medical", score: "2", scale: "Low to moderate" },
+      { factor: "Dental", score: "4", scale: "Needs Review" },
+    ];
+    render(<RiskAndNeedsAssessmentSection riskAndNeedsFactors={factors} />);
+
+    expect(screen.getByText("Low to moderate")).toHaveStyleRule(
+      "background-color",
+      statusStyles.ORANGE.backgroundColor,
+    );
+    expect(screen.getByText("Needs Review")).toHaveStyleRule(
+      "background-color",
+      statusStyles.SLATE.backgroundColor,
+    );
+  });
 });

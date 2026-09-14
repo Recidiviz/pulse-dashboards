@@ -18,6 +18,7 @@
 import { z } from "zod";
 
 import { dateStringSchema, nullishAsUndefined } from "../../../../utils/zod";
+import { paroleBoardClientProfileSchema } from "../../paroleBoardClientProfileSchema";
 
 const creditTypeSchema = z.enum([
   "EARNED_TIME",
@@ -50,6 +51,7 @@ export const usCoResidentJiiDataSchema = z.object({
     "LIFE_WITHOUT_PAROLE",
     "INTERSTATE_COMPACT",
   ]),
+  paroleBoardClientProfile: paroleBoardClientProfileSchema.optional(),
 });
 
 export type RawUsCoResidentJiiData = z.input<typeof usCoResidentJiiDataSchema>;

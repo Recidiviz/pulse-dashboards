@@ -25,7 +25,7 @@ import { RiskAssessmentSection } from "../RiskAssessmentSection";
 
 const RISK_ASSESSMENTS: Array<ParoleRiskAssessment> = [
   {
-    tool: "LSI",
+    tool: "LSIR",
     score: 10,
     maxScore: 100,
     date: "2026-06-01",
@@ -160,7 +160,7 @@ describe("RiskAssessmentSection", () => {
     // value -- pins that rounding must not flip the risk tier.
     const borderlineAssessments: Array<ParoleRiskAssessment> = [
       {
-        tool: "LSI",
+        tool: "LSIR",
         score: 596,
         maxScore: 1000,
         date: "2026-06-01",
@@ -184,7 +184,7 @@ describe("RiskAssessmentSection", () => {
 // behavior change from any of this.
 describe("RiskAssessmentSection with a custom riskAssessmentConfig", () => {
   const CUSTOM_CONFIG: ParoleRiskAssessmentConfig = {
-    tools: ["LSI", "PIT", "CARAS", "SRT"],
+    tools: ["LSIR", "PIT", "CARAS", "SRT"],
     aggregateView: { label: "Entire CTAP Suite", tools: ["PIT", "SRT"] },
   };
 
@@ -261,8 +261,8 @@ describe("RiskAssessmentSection with a custom riskAssessmentConfig", () => {
 
   it("only renders tools included in the config, hiding any others present in the data", () => {
     const narrowConfig: ParoleRiskAssessmentConfig = {
-      tools: ["LSI", "PIT"],
-      aggregateView: { label: "Entire CTAP Suite", tools: ["LSI", "PIT"] },
+      tools: ["LSIR", "PIT"],
+      aggregateView: { label: "Entire CTAP Suite", tools: ["LSIR", "PIT"] },
     };
 
     render(

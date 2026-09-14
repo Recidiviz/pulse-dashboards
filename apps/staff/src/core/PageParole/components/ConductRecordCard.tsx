@@ -19,7 +19,11 @@ import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components";
 
-import { ParoleConductRecord } from "~datatypes";
+import {
+  isParoleUnknownDate,
+  PAROLE_UNKNOWN_TEXT,
+  ParoleConductRecord,
+} from "~datatypes";
 import { palette } from "~design-system";
 
 import { PaletteKey, WorkflowsBadgePill } from "../../BadgePill/BadgePill";
@@ -103,7 +107,11 @@ export function ConductRecordCard({
           />
           {record.violation}
         </RecordTitle>
-        <RecordDate>{formatDate(record.date)}</RecordDate>
+        <RecordDate>
+          {isParoleUnknownDate(record.date)
+            ? PAROLE_UNKNOWN_TEXT
+            : formatDate(record.date)}
+        </RecordDate>
       </RecordHeader>
       <div>
         Facility: <FactLabel as="span">{record.facility}</FactLabel>

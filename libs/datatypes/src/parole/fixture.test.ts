@@ -49,7 +49,7 @@ describe("Anderson's (docId 45821) risk assessment history", () => {
     },
   );
 
-  it.each(["LSI", "PIT"] as const)(
+  it.each(["LSIR", "PIT"] as const)(
     "keeps %s's most recent assessment over 12 months old, to demonstrate a stale assessment",
     (tool) => {
       const daysAgo = (dateString: string) =>

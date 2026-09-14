@@ -15,8 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { isDemoMode, isOfflineMode } from "~client-env-utils";
+
 import { RootStore } from "../../RootStore";
+import { ParoleAPIClient } from "../api/ParoleAPIClient";
+import { ParoleOfflineAPIClient } from "../api/ParoleOfflineAPIClient";
 import { ParoleStore } from "../ParoleStore";
+
+vi.mock("~client-env-utils");
 
 describe("ParoleStore", () => {
   describe("config", () => {
@@ -55,6 +61,64 @@ describe("ParoleStore", () => {
       expect(() => paroleStore.config).toThrow(
         /Tenant \[US_CO\] has no paroleConfig set/,
       );
+    });
+  });
+
+  describe("apiClient", () => {
+    beforeEach(() => {
+      vi.mocked(isOfflineMode).mockReturnValue(false);
+      vi.mocked(isDemoMode).mockReturnValue(false);
+    });
+
+    it.each(["US_ID", "US_CO"] as const)(
+      "returns a real ParoleAPIClient for %s outside offline/demo mode",
+      (tenantId) => {
+        const rootStore = new RootStore();
+        rootStore.tenantStore.currentTenantId = tenantId;
+
+        expect(new ParoleStore(rootStore).apiClient).toBeInstanceOf(
+          ParoleAPIClient,
+        );
+      },
+    );
+
+    it("returns the offline client for an unsupported tenant", () => {
+      const rootStore = new RootStore();
+      rootStore.tenantStore.currentTenantId = "US_TN";
+
+      expect(new ParoleStore(rootStore).apiClient).toBeInstanceOf(
+        ParoleOfflineAPIClient,
+      );
+    });
+
+    it.each([
+      ["offline mode", isOfflineMode],
+      ["demo mode", isDemoMode],
+    ])(
+      "returns the offline client for US_ID when in %s",
+      (_description, mockedFn) => {
+        vi.mocked(mockedFn).mockReturnValue(true);
+        const rootStore = new RootStore();
+        rootStore.tenantStore.currentTenantId = "US_ID";
+
+        expect(new ParoleStore(rootStore).apiClient).toBeInstanceOf(
+          ParoleOfflineAPIClient,
+        );
+      },
+    );
+
+    // currentTenantId is unset when ParoleStore is constructed in the real
+    // app; it resolves later via auth/URL. apiClient must be a computed
+    // getter, not a value frozen at construction, or every real user gets
+    // stuck on the fixture client.
+    it("reflects a currentTenantId that resolves after construction", () => {
+      const rootStore = new RootStore();
+      const paroleStore = new ParoleStore(rootStore);
+      expect(paroleStore.apiClient).toBeInstanceOf(ParoleOfflineAPIClient);
+
+      rootStore.tenantStore.currentTenantId = "US_ID";
+
+      expect(paroleStore.apiClient).toBeInstanceOf(ParoleAPIClient);
     });
   });
 });

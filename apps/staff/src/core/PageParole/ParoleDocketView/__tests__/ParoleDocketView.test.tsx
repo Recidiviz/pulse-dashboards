@@ -27,6 +27,12 @@ import { ParoleDocketView } from "../ParoleDocketView";
 vi.mock("../../../../components/StoreProvider");
 vi.mock("../../../../hooks/useIsMobile");
 
+// This view is tested against ParoleOfflineAPIClient's fixture data, and
+// the tenants it mocks below are real-data tenants now. Force offline mode
+// so ParoleStore keeps handing out the fixture client (see
+// ParoleAPIClient.ts).
+import.meta.env["VITE_IS_OFFLINE"] = "true";
+
 const useRootStoreMock = vi.mocked(StoreProvider.useRootStore);
 
 function mockCurrentTenant(tenantId: "US_CO" | "US_ID") {

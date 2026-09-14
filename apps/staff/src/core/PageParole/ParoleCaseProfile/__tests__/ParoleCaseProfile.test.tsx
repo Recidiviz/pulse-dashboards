@@ -37,6 +37,12 @@ vi.mock("../../downloadParoleReport", () => ({
   downloadParoleReportZip: vi.fn(),
 }));
 
+// This page is tested against ParoleOfflineAPIClient's fixture data, and
+// the tenants it mocks below are real-data tenants now. Force offline mode
+// so ParoleStore keeps handing out the fixture client (see
+// ParoleAPIClient.ts).
+import.meta.env["VITE_IS_OFFLINE"] = "true";
+
 const useRootStoreMock = vi.mocked(StoreProvider.useRootStore);
 const downloadParoleReportZipMock = vi.mocked(downloadParoleReportZip);
 

@@ -15,32 +15,47 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { addDays, startOfToday } from "date-fns";
+
 import { ParoleHearing } from "~datatypes";
 
 import { RootStore } from "../../../RootStore";
+import { formatDateToISO } from "../../../utils";
 import { ParoleOfflineAPIClient } from "../../api/ParoleOfflineAPIClient";
 import { ParoleStore } from "../../ParoleStore";
 import { ParoleDocketPresenter } from "../ParoleDocketPresenter";
+
+// This presenter is tested against ParoleOfflineAPIClient's fixture data
+// regardless of which tenants ParoleAPIClient supports for real data --
+// force offline mode directly so that holds as SUPPORTED_TENANT_IDS grows
+// (see ParoleAPIClient.ts).
+import.meta.env["VITE_IS_OFFLINE"] = "true";
+
+// Dated relative to today so they sit inside US_CO's docket window -- these
+// exercise search and filter behavior, not the window (which has its own
+// tests below).
+const daysOut = (days: number) =>
+  formatDateToISO(addDays(startOfToday(), days));
 
 const TEST_HEARINGS: Array<ParoleHearing> = [
   {
     docId: "1",
     individualName: "Anderson, Michael",
-    hearingDate: "2026-01-01",
+    hearingDate: daysOut(1),
     hearingType: "Parole Grant Hearing",
     facility: "Facility A",
   },
   {
     docId: "2",
     individualName: "Brooks, Sarah",
-    hearingDate: "2026-01-02",
+    hearingDate: daysOut(2),
     hearingType: "Revocation Hearing",
     facility: "Facility B",
   },
   {
     docId: "3",
     individualName: "Chen, David",
-    hearingDate: "2026-01-03",
+    hearingDate: daysOut(3),
     hearingType: "Parole Grant Hearing",
     facility: "Facility B",
   },
@@ -184,5 +199,92 @@ describe("ParoleDocketPresenter docket display config", () => {
 
     expect(presenter.docketSubheading).toBeUndefined();
     expect(presenter.docketSearchEnabled).toBe(false);
+  });
+});
+
+describe("ParoleDocketPresenter docket window", () => {
+  async function hydratedPresenterFor(
+    tenantId: "US_CO" | "US_ID",
+    hearings: Array<ParoleHearing>,
+  ) {
+    const rootStore = new RootStore();
+    rootStore.tenantStore.currentTenantId = tenantId;
+    const presenter = new ParoleDocketPresenter(new ParoleStore(rootStore));
+    vi.spyOn(ParoleOfflineAPIClient.prototype, "hearings").mockResolvedValue(
+      hearings,
+    );
+    await presenter.hydrate();
+    return presenter;
+  }
+
+  function hearingOn(docId: string, days: number): ParoleHearing {
+    return {
+      docId,
+      individualName: `Resident ${docId}`,
+      hearingDate: daysOut(days),
+      hearingType: "Parole Grant Hearing",
+      facility: "Facility A",
+    };
+  }
+
+  // US_CO looks 14 days ahead, US_ID 30 -- see each tenant's paroleConfig.
+  it.each([
+    ["US_CO", 14],
+    ["US_ID", 30],
+  ] as const)(
+    "keeps a %s hearing on the last day of the window and drops the day after",
+    async (tenantId, windowDaysAfter) => {
+      const presenter = await hydratedPresenterFor(tenantId, [
+        hearingOn("in", windowDaysAfter),
+        hearingOn("out", windowDaysAfter + 1),
+      ]);
+
+      expect(presenter.filteredHearings.map((h) => h.docId)).toEqual(["in"]);
+    },
+  );
+
+  // US_ID looks back 7 days; US_CO looks back 31 -- a full month, since its
+  // scheduled hearing dates are truncated to the 1st of the month (see
+  // us_co/parole_board_client_profile.py), so a hearing set for "this month"
+  // must stay on the docket through the month's last day.
+  it.each([
+    ["US_CO", 31],
+    ["US_ID", 7],
+  ] as const)(
+    "keeps a %s hearing on the first day of its look-back and drops the day before",
+    async (tenantId, windowDaysBefore) => {
+      const presenter = await hydratedPresenterFor(tenantId, [
+        hearingOn("in", -windowDaysBefore),
+        hearingOn("out", -(windowDaysBefore + 1)),
+      ]);
+
+      expect(presenter.filteredHearings.map((h) => h.docId)).toEqual(["in"]);
+    },
+  );
+
+  it("counts and filter options describe the windowed set, not the whole one", async () => {
+    const presenter = await hydratedPresenterFor("US_CO", [
+      hearingOn("in", 3),
+      { ...hearingOn("out", 40), facility: "Facility Z" },
+    ]);
+
+    expect(presenter.totalHearingsCount).toBe(1);
+    expect(
+      presenter.numItems("parole", "facility", { value: "Facility Z" }),
+    ).toBe(0);
+    expect(presenter.filterStore.filterConfig.filters).toEqual([
+      {
+        title: "Facility",
+        type: "parole",
+        field: "facility",
+        options: [{ value: "Facility A" }],
+      },
+      {
+        title: "Hearing Type",
+        type: "parole",
+        field: "hearingType",
+        options: [{ value: "Parole Grant Hearing" }],
+      },
+    ]);
   });
 });
