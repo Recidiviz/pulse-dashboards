@@ -41,11 +41,12 @@ export type CollapsibleSectionProps = {
   defaultOpen?: boolean;
   /**
    * When true, the section header sticks to the bottom of the app header on scroll.
-   * Assumes a fixed header of HIDDEN_HEADER_OFFSET height from ~@jii/common-ui — if
-   * used with a custom header via useHeaderOverride, that header must match this
+   * Assumes a fixed header of `HIDDEN_HEADER_OFFSET` height from `~@jii/common-ui` — if
+   * used with a custom header via `useHeaderOverride`, that header must match this
    * constant or the scroll behavior will be off.
    */
   stickyHeader?: boolean;
+  /** Adds a border under the header while open. */
   headerBorder?: boolean;
   onToggle?: (isOpen: boolean) => void;
 };

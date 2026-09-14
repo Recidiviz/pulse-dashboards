@@ -30,6 +30,11 @@ type GeneralContactSectionProps = {
   rows: ContactRow[];
 };
 
+/**
+ * Renders once for an organization's standalone contact rows (phone, website, etc.) that
+ * aren't tied to any one address - as opposed to LocationGroup, which renders once per
+ * address inside a list.
+ */
 export const GeneralContactSection: FC<GeneralContactSectionProps> = ({
   heading,
   rows,

@@ -29,6 +29,12 @@ type LocationGroupProps = {
   location: LocationEntry;
 };
 
+/**
+ * Renders once per address inside a list (see LocationGroupsSection) - as opposed to
+ * GeneralContactSection, which renders once for standalone rows not tied to any address.
+ * `label` is optional since a single, unlabeled location doesn't need one to be
+ * distinguishable from its siblings.
+ */
 export const LocationGroup: FC<LocationGroupProps> = ({
   location: { id, label, rows },
 }) => {

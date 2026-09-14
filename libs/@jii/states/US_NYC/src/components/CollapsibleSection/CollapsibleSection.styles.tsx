@@ -34,7 +34,7 @@ export const Header = styled.button<{
   width: 100%;
   background: none;
   border: none;
-  padding: 0;
+  padding: ${rem(spacing.md)} 0;
   text-align: left;
   cursor: pointer;
 
@@ -50,12 +50,6 @@ export const Header = styled.button<{
   border-bottom: 1px solid
     ${({ $hasBorder, $isOpen }) =>
       $hasBorder && $isOpen ? palette.slate20 : "transparent"};
-
-  ${({ $hasBorder }) =>
-    $hasBorder &&
-    css`
-      padding: ${rem(spacing.md)} 0;
-    `}
 
   ${({ $sticky }) =>
     $sticky &&
