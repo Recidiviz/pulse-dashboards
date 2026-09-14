@@ -25,4 +25,5 @@ export const usMaResidentsConfig: ResidentsConfig = {
   translation: {
     additionalLanguages: ["es"],
   },
+  enabledUserFlags: { useNewResidentData: new Date(2026, 8, 17) },
 };

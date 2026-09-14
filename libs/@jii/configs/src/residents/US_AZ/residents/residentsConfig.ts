@@ -28,4 +28,5 @@ export const usAzResidentsConfig: ResidentsConfig = {
   enabledResidentFlags: {
     usAzFslImprovements: parseISO("2026-06-15T05:00:00-07:00"),
   },
+  enabledUserFlags: { useNewResidentData: new Date(2026, 8, 17) },
 };

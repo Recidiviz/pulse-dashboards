@@ -28,4 +28,5 @@ export const usArResidentsConfig: ResidentsConfig = {
   enabledResidentFlags: {
     usArFslImprovements: parseISO("2026-06-29T09:00:00-05:00"),
   },
+  enabledUserFlags: { useNewResidentData: new Date(2026, 8, 17) },
 };
