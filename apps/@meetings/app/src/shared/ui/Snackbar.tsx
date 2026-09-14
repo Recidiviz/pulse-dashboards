@@ -19,6 +19,7 @@ import React, {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useRef,
   useState,
 } from "react";
@@ -33,6 +34,7 @@ import { Typography } from "./Typography";
 interface SnackbarContextType {
   showSnackbar: (text: string, duration?: number) => void;
   isShowing: boolean;
+  setBottomOffset: (offset: number) => void;
 }
 
 const SnackbarContext = createContext<SnackbarContextType | null>(null);
@@ -45,6 +47,20 @@ export const useSnackbar = () => {
   return context;
 };
 
+/**
+ * Lifts the snackbar by `offset` pixels for as long as the calling screen is
+ * mounted, so it clears whatever that screen pins to the bottom.
+ * Web only: on native the snackbar hangs from the top.
+ */
+export const useSnackbarBottomOffset = (offset: number) => {
+  const { setBottomOffset } = useSnackbar();
+
+  useEffect(() => {
+    setBottomOffset(offset);
+    return () => setBottomOffset(0);
+  }, [offset, setBottomOffset]);
+};
+
 type Props = {
   children: React.ReactNode;
 };
@@ -53,6 +69,7 @@ export const SnackbarProvider = ({ children }: Props) => {
   const [message, setMessage] = useState("");
   const [isVisible, setIsVisible] = useState(false);
   const [isShowing, setIsShowing] = useState(false);
+  const [bottomOffset, setBottomOffset] = useState(0);
   const opacity = useSharedValue(0);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -98,12 +115,14 @@ export const SnackbarProvider = ({ children }: Props) => {
     position: "absolute",
     zIndex: 50,
     ...(Platform.OS === "web"
-      ? { left: 20, bottom: 20 }
+      ? { left: 20, bottom: 20 + bottomOffset }
       : { left: 64, right: 64, top: 128 }),
   }));
 
   return (
-    <SnackbarContext.Provider value={{ showSnackbar, isShowing }}>
+    <SnackbarContext.Provider
+      value={{ showSnackbar, isShowing, setBottomOffset }}
+    >
       {children}
       {isVisible && (
         <Animated.View style={animatedStyle}>

@@ -38,6 +38,7 @@ import {
   humanReadableTitleCase,
 } from "~@meetings/app/shared/lib/format";
 import { Button } from "~@meetings/app/shared/ui/Button";
+import { useSnackbarBottomOffset } from "~@meetings/app/shared/ui/Snackbar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import { useApprovalFooter } from "../lib/useApprovalFooter";
@@ -50,6 +51,8 @@ import MeetingTabs, { Tab } from "./MeetingTabs";
 import MeetingTranscriptionTab from "./MeetingTranscriptionTab";
 import OutputVote from "./OutputVote";
 import StaffFeedbackTab from "./StaffFeedbackTab";
+
+const FOOTER_HEIGHT = 64;
 
 type Props = {
   meetingId: string;
@@ -85,6 +88,9 @@ const MeetingDesktop = ({
     isConfirmPending,
     shouldShowFooter,
   } = useApprovalFooter(meetingId, activeTab, meetingDetails, isMeetingCreator);
+
+  // Float snackbars above the approval footer instead of on top of it.
+  useSnackbarBottomOffset(shouldShowFooter ? FOOTER_HEIGHT : 0);
 
   const meetingDate = meetingDetails.startTime
     ? formatMeetingStartDate(meetingDetails.startTime)
@@ -299,7 +305,10 @@ const MeetingDesktop = ({
         </View>
       </View>
       {shouldShowFooter && (
-        <View className="h-16 flex-row border-t border-subtle">
+        <View
+          className="flex-row border-t border-subtle"
+          style={{ height: FOOTER_HEIGHT }}
+        >
           <View className="w-36 shrink-0" />
           <View className="flex-1 flex-row items-center justify-between py-3 pr-10">
             <ApprovalFooter
