@@ -15,25 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
-import React from "react";
+import { z } from "zod";
 
-import { SentenceCalculationPage } from "~sentence-calculation";
+export const calculatorResponseSchema = z.object({
+  echo: z.string(),
+  stateCode: z.string(),
+});
 
-import { useRootStore } from "../../components/StoreProvider";
-import { NavigationLayout } from "../NavigationLayout";
-
-const PageSentenceCalculation: React.FC = observer(
-  function PageSentenceCalculation() {
-    const rootStore = useRootStore();
-
-    return (
-      <>
-        <NavigationLayout />
-        <SentenceCalculationPage host={rootStore} />
-      </>
-    );
-  },
-);
-
-export default PageSentenceCalculation;
+export type CalculatorResponse = z.infer<typeof calculatorResponseSchema>;
+export type RawCalculatorResponse = z.input<typeof calculatorResponseSchema>;
