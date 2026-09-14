@@ -313,7 +313,7 @@ export async function handleTranscriptions(params: HandleTranscriptionParams) {
       transcriptObject:
         assemblyAiTransriptionResult as PrismaJson.TranscriptType,
       confidence: assemblyAiTransriptionResult.confidence,
-      summary: assemblyAiTransriptionResult.summary,
+      summary: null,
       utterances: {
         createMany: {
           data: cleanedAssemblyAIUtterances,

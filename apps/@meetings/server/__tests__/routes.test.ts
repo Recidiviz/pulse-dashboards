@@ -38,7 +38,6 @@ import * as slackService from "~@meetings/trpc/services/slack";
 
 const FAKE_ASSEMBLYAI_TRANSCRIPT_OBJECT = {
   confidence: 0.95,
-  summary: "This is a mock summary of the transcription.",
   utterances: [
     {
       confidence: 0.98,
@@ -631,6 +630,7 @@ describe("tasks", () => {
         where: { id: fakeMeeting.id },
         include: {
           transcriptions: {
+            orderBy: { provider: "asc" },
             include: { utterances: true },
           },
         },
@@ -643,7 +643,7 @@ describe("tasks", () => {
               provider: TranscriptionProvider.ASSEMBLYAI,
               transcriptObject: lowConfidenceAssemblyAIResult,
               confidence: 0.5,
-              summary: "This is a mock summary of the transcription.",
+              summary: null,
               utterances: expect.arrayContaining([
                 expect.objectContaining({
                   text: "This is the second mock transcription sentence.",
@@ -820,7 +820,6 @@ describe("tasks", () => {
       // Simulate a retry where the providers return different results
       const updatedAssemblyAIResult = {
         confidence: 0.88,
-        summary: "Updated summary from retry.",
         utterances: [
           {
             confidence: 0.9,
@@ -875,7 +874,7 @@ describe("tasks", () => {
       expect(assemblyAI).toEqual(
         expect.objectContaining({
           confidence: 0.88,
-          summary: "Updated summary from retry.",
+          summary: null,
           transcriptObject: updatedAssemblyAIResult,
           utterances: [
             expect.objectContaining({

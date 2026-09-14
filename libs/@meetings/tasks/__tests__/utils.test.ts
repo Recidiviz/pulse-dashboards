@@ -240,12 +240,17 @@ describe("utils", () => {
         "test-api-key",
       );
 
+      const request = vi.mocked(mockAssemblyAI.transcripts.transcribe).mock
+        .calls[0]?.[0];
+      expect(request).not.toHaveProperty("summarization");
+      expect(request).not.toHaveProperty("summary_model");
+      expect(request).not.toHaveProperty("summary_type");
+
       expect(transcript).toEqual({
         audio_duration: 1.8,
         id: "mock-transcript-id",
         language_code: "en",
         status: "completed",
-        summary: "This is a mock summary of the transcription.",
         text: "This is a mock transcription.",
         utterances: [
           {

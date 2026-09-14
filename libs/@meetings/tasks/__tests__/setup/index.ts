@@ -100,7 +100,6 @@ export const mockAssemblyAI = mock<AssemblyAI>({
       id: "mock-transcript-id",
       status: "completed",
       text: "This is a mock transcription.",
-      summary: "This is a mock summary of the transcription.",
       words: [
         {
           text: "This",

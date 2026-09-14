@@ -382,9 +382,6 @@ export async function transcribeAudioWithAssemblyAI(
     punctuate: true,
     speech_model: "universal",
     language_detection: true,
-    summarization: true,
-    summary_model: "conversational",
-    summary_type: "bullets_verbose",
     ...(keywords.length > 0 && { keyterms_prompt: keywords }),
   });
 
