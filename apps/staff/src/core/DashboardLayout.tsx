@@ -49,6 +49,7 @@ import PageMethodology from "./PageMethodology";
 import PageParole from "./PageParole";
 import PagePSI from "./PagePSI";
 import PageSAR from "./PageSAR";
+import PageSentenceCalculation from "./PageSentenceCalculation";
 import PageSystem from "./PageSystem";
 import PageVitals from "./PageVitals";
 import PageWorkflows from "./PageWorkflows";
@@ -154,6 +155,10 @@ const DashboardLayout: React.FC = () => {
               <Route
                 path={DASHBOARD_PATHS.comingSoon}
                 element={<PageComingSoon />}
+              />
+              <Route
+                path={DASHBOARD_PATHS.sentenceCalculation}
+                element={<PageSentenceCalculation />}
               />
               <Route
                 path={`${DASHBOARD_PATHS.parole}/*`}

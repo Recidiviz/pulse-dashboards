@@ -20,6 +20,7 @@
 import { groupBy } from "lodash";
 
 import { SystemId } from "~datatypes";
+import { sentenceCalculationRootPath } from "~sentence-calculation";
 import { psiRootPath, sarRootPath } from "~sentencing-client";
 
 export const UNRESTRICTED_PAGES = ["profile", "methodology", ""];
@@ -37,6 +38,7 @@ export const DASHBOARD_VIEWS = {
   insights: "insights",
   directorDashboard: "directorDashboard",
   comingSoon: "comingSoon",
+  sentenceCalculation: sentenceCalculationRootPath,
   parole: "parole",
   psi: psiRootPath,
   sar: sarRootPath,
@@ -68,6 +70,7 @@ export const DASHBOARD_PATHS: Record<string, string> = {
   insights: `/${DASHBOARD_VIEWS.insights}`,
   workflows: `/${DASHBOARD_VIEWS.workflows}`,
   comingSoon: `/${DASHBOARD_VIEWS.comingSoon}`,
+  sentenceCalculation: `/${DASHBOARD_VIEWS.sentenceCalculation}`,
   parole: `/${DASHBOARD_VIEWS.parole}`,
   psi: `/${DASHBOARD_VIEWS.psi}`,
 };

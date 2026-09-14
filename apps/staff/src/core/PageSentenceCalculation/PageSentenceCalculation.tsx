@@ -15,18 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TenantConfig } from "../core/models/types";
-import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
+import { observer } from "mobx-react-lite";
+import React from "react";
 
-const US_NV_CONFIG = {
-  name: "Nevada",
-  stateCode: "NV",
-  // TODO(NV-3): Add domain field when ready to serve traffic to NV users
-  availableStateCodes: [dashboard.US_NV],
-  enableUserRestrictions: false,
-  navigation: {
-    sentenceCalculation: [],
+import { SentenceCalculationPage } from "~sentence-calculation";
+
+import { NavigationLayout } from "../NavigationLayout";
+
+const PageSentenceCalculation: React.FC = observer(
+  function PageSentenceCalculation() {
+    return (
+      <>
+        <NavigationLayout />
+        <SentenceCalculationPage />
+      </>
+    );
   },
-} satisfies TenantConfig<"US_NV">;
+);
 
-export default US_NV_CONFIG;
+export default PageSentenceCalculation;

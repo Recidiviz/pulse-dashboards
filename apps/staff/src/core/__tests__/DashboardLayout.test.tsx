@@ -29,6 +29,7 @@ import PageComingSoon from "../PageComingSoon";
 import PageInsights from "../PageInsights";
 import PageMethodology from "../PageMethodology";
 import PageParole from "../PageParole";
+import PageSentenceCalculation from "../PageSentenceCalculation";
 import PageSystem from "../PageSystem";
 import PageVitals from "../PageVitals";
 import PageWorkflows from "../PageWorkflows";
@@ -61,6 +62,7 @@ vi.mock("../PageParole", () => {
   };
 });
 vi.mock("../PageComingSoon");
+vi.mock("../PageSentenceCalculation");
 vi.mock("../../components/NotFound");
 
 const mockUseRootStore = useRootStore as Mock;
@@ -81,6 +83,9 @@ describe("DashboardLayout", () => {
     (PageParole as Mock).mockReturnValue(mockWithTestId("page-parole-id"));
     (PageComingSoon as Mock).mockReturnValue(
       mockWithTestId("page-coming-soon-id"),
+    );
+    (PageSentenceCalculation as Mock).mockReturnValue(
+      mockWithTestId("page-sentence-calculation-id"),
     );
     (NotFound as Mock).mockReturnValue(mockWithTestId("not-found-id"));
   });
@@ -339,6 +344,32 @@ describe("DashboardLayout", () => {
       });
 
       renderLayout(DASHBOARD_PATHS.comingSoon);
+
+      expect(screen.getByTestId("not-found-id")).toBeInTheDocument();
+    });
+  });
+
+  describe("PageSentenceCalculation", () => {
+    it("renders if the tenant and user allow it", () => {
+      mockUseRootStore.mockReturnValue({
+        userStore: { userAllowedNavigation: { sentenceCalculation: [] } },
+        currentTenantId: "US_NV",
+      });
+
+      renderLayout(DASHBOARD_PATHS.sentenceCalculation);
+
+      expect(
+        screen.getByTestId("page-sentence-calculation-id"),
+      ).toBeInTheDocument();
+    });
+
+    it("doesn't render if the user doesn't allow it", () => {
+      mockUseRootStore.mockReturnValue({
+        userStore: { userAllowedNavigation: { workflows: [] } },
+        currentTenantId: "US_NV",
+      });
+
+      renderLayout(DASHBOARD_PATHS.sentenceCalculation);
 
       expect(screen.getByTestId("not-found-id")).toBeInTheDocument();
     });
