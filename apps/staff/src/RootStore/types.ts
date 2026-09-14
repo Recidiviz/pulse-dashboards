@@ -154,6 +154,8 @@ export type FeatureVariant =
   | "clientProfileWarmHandoff"
 
   //// Texas
+  | "usTxAnnualReportStatusV1"
+  | "usTxEarlyReleaseFromSupervisionV1"
   | "usTxAnnualReportStatusV2"
   | "usTxEarlyReleaseFromSupervisionV2"
 
@@ -313,6 +315,8 @@ export const allFeatureVariants: FeatureVariantMapping = {
   supervisorHomepageReviewTable: {},
   logInToOwnSupervisorPage: {},
   showPreviouslyReviewedOpportunities: {},
+  usTxAnnualReportStatusV1: {},
+  usTxEarlyReleaseFromSupervisionV1: {},
   usTxAnnualReportStatusV2: {},
   usTxEarlyReleaseFromSupervisionV2: {},
   sentenceProgressV2: {},
