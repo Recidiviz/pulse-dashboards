@@ -70,7 +70,7 @@ const COPY = {
     typeGroup: "Type",
     closeLabel: "Done",
     ariaLabel: "Filter resources",
-    comingSoon: "Sort by distance coming soon",
+    comingSoon: "Filter by borough coming soon",
   },
 };
 
