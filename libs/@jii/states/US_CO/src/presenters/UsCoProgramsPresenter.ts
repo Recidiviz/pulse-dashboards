@@ -21,7 +21,7 @@ import { max, parseISO } from "date-fns";
 import { isUndefined, sortBy, uniq } from "lodash";
 import { makeAutoObservable, runInAction } from "mobx";
 
-import { DataAPI, ResidentFlags, ResidentRecord, UserStore } from "~@jii/data";
+import { DataAPI, ResidentRecord, UserStore } from "~@jii/data";
 import type { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
 import { WorkflowsResidentRecord } from "~datatypes";
 import {
@@ -29,6 +29,8 @@ import {
   HydratesFromSource,
   HydrationState,
 } from "~hydration-utils";
+
+import { isYOSResident } from "../isYOSResident";
 
 export type UsCoProgram =
   JiiResidentAppRouterOutputs["resident"]["getPrograms"][number];
@@ -47,7 +49,6 @@ export class UsCoProgramsPresenter implements Hydratable {
   constructor(
     private readonly resident: WorkflowsResidentRecord | ResidentRecord,
     private readonly apiClient: DataAPI,
-    private readonly residentFlags: ResidentFlags,
     private readonly userStore: UserStore,
   ) {
     makeAutoObservable(this, {}, { autoBind: true });
@@ -65,10 +66,7 @@ export class UsCoProgramsPresenter implements Hydratable {
   }
 
   get isYOSResident() {
-    return (
-      this.resident.facilityId === "YOS" &&
-      !!this.residentFlags.usCoV1Experience
-    );
+    return isYOSResident(this.resident);
   }
 
   private hydrator: HydratesFromSource;

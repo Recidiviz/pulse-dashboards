@@ -15,20 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useSingleResidentContext } from "~@jii/data";
+import { ResidentRecord } from "~@jii/data";
+import { WorkflowsResidentRecord } from "~datatypes";
 
-export function useV1Gate(): boolean {
-  const { resident, residentFlags } = useSingleResidentContext();
-
-  // YOS residents should only see the program catalog, even after launch
-  if (resident.facilityId === "YOS") return false;
-
-  // TODO: Remove the rest of this post-launch
-
-  // All residents with the flag should see V1
-  if (residentFlags.usCoV1Experience) return true;
-
-  // Residents at pilot facilities should also see V1
-  const pilotFacilities = ["LVCF", "CSP", "LCF"];
-  return !!resident.facilityId && pilotFacilities.includes(resident.facilityId);
+/**
+ * Residents at the Youthful Offender System facility see only the program
+ * catalog, scoped to YOS programs, rather than the full resident experience.
+ */
+export function isYOSResident(
+  resident: WorkflowsResidentRecord | ResidentRecord,
+) {
+  return resident.facilityId === "YOS";
 }

@@ -43,7 +43,6 @@ import {
   UsCoProgram,
   UsCoProgramsPresenter,
 } from "../../presenters/UsCoProgramsPresenter";
-import { useV1Gate } from "../../useV1Gate";
 import { CategorySection } from "./CategorySection";
 import { FilterPanel } from "./FilterPanel";
 import { ProgramCard } from "./ProgramCard";
@@ -93,7 +92,7 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
   function UsCoProgramsList({ presenter }) {
     const { t } = useUsCoTranslations();
     const pathParams = useTypedParams(State.Resident);
-    const showV1Experience = useV1Gate();
+    const showBackLink = !presenter.isYOSResident;
 
     const handleToggleStar = (program: UsCoProgram) => {
       presenter.toggleStarred(program);
@@ -108,7 +107,7 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
         />
 
         <Header>
-          {showV1Experience && (
+          {showBackLink && (
             <BackLink to={State.Resident.buildPath(pathParams)}>
               {t(($) => $.programs.backLink)}
             </BackLink>
@@ -177,11 +176,10 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
 
 function usePresenter() {
   const rootStore = useRootStore();
-  const { resident, residentFlags } = useSingleResidentContext();
+  const { resident } = useSingleResidentContext();
   return new UsCoProgramsPresenter(
     resident,
     rootStore.apiClient,
-    residentFlags,
     rootStore.userStore,
   );
 }

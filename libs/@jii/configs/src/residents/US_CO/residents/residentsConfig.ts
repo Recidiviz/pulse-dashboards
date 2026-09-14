@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { parseISO } from "date-fns";
-
 import { home } from "../../defaults";
 import { ResidentsConfig } from "../../types";
 
@@ -24,8 +22,5 @@ export const usCoResidentsConfig: ResidentsConfig = {
   home,
   translation: {
     additionalLanguages: [],
-  },
-  enabledResidentFlags: {
-    usCoV1Experience: parseISO("2026-07-13T09:00:00-06:00"),
   },
 };

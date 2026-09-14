@@ -25,6 +25,8 @@ import { DefinitionPage } from "~@jii/layout";
 import { State } from "~@jii/paths";
 import { UsCoTranslationsObject, useUsCoTranslations } from "~@jii/translation";
 
+import { isYOSResident } from "../isYOSResident";
+
 type Props = {
   pageSlug: keyof UsCoTranslationsObject["moreInformation"]["pages"];
 };
@@ -49,7 +51,7 @@ export function PageMoreInformation({ pageSlug }: Props) {
         };
 
   pageSlug =
-    pageSlug === "earnedTime" && resident.facilityId === "YOS"
+    pageSlug === "earnedTime" && isYOSResident(resident)
       ? "yosEarnedTime"
       : pageSlug;
 
