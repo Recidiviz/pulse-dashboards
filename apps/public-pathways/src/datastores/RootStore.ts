@@ -28,7 +28,11 @@ import {
 
 import AnalyticsStore from "./AnalyticsStore";
 import { PublicPathwaysDashboardPage } from "./dashboards";
-import { DEFAULT_EVENT_TYPE, EventType } from "./eventTypes";
+import {
+  DEFAULT_EVENT_TYPE,
+  EventType,
+  isSectionAvailableForEventType,
+} from "./eventTypes";
 import FiltersStore from "./FiltersStore";
 import MetricsStore from "./MetricsStore";
 import UserStore from "./UserStore";
@@ -104,5 +108,10 @@ export class RootStore {
 
   setEventType(eventType: EventType): void {
     this.eventType = eventType;
+    // The section in view may not apply to the new event type, so send the
+    // reader back to a section that every event type covers.
+    if (!isSectionAvailableForEventType(this.section, eventType)) {
+      this.section = DEFAULT_PATHWAYS_SECTION_BY_PAGE[this.page];
+    }
   }
 }

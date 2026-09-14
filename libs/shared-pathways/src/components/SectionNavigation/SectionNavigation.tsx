@@ -69,34 +69,90 @@ const pillBase = css`
     color 0.15s;
 `;
 
-const SectionPill = styled.button<{ $active: boolean; $accent: string }>`
+const disabledPillStyle = css`
+  border: 1px solid ${palette.slate15};
+  background: white;
+  color: ${palette.slate60};
+  font-weight: 400;
+  opacity: 0.7;
+  cursor: not-allowed;
+`;
+
+const activePillStyle = ($accent: string) => css`
+  border: 1px solid ${$accent};
+  background: color-mix(in srgb, ${$accent} 5%, white);
+  color: ${$accent};
+  font-weight: 700;
+`;
+
+const selectablePillStyle = css`
+  border: 1px solid ${palette.slate15};
+  background: white;
+  color: black;
+  font-weight: 400;
+
+  &:hover {
+    background: ${palette.slate05};
+  }
+`;
+
+const StyledSectionPill = styled.button<{
+  $active: boolean;
+  $accent: string;
+  $disabled?: boolean;
+}>`
   ${pillBase}
 
   outline: none;
 
-  ${({ $active, $accent }) =>
-    $active
-      ? css`
-          border: 1px solid ${$accent};
-          background: color-mix(in srgb, ${$accent} 5%, white);
-          color: ${$accent};
-          font-weight: 700;
-        `
-      : css`
-          border: 1px solid rgba(0, 0, 0, 0.15);
-          background: white;
-          color: black;
-          font-weight: 400;
-
-          &:hover {
-            background: rgba(0, 0, 0, 0.03);
-          }
-        `}
+  ${({ $active, $accent, $disabled }) => {
+    if ($disabled) return disabledPillStyle;
+    if ($active) return activePillStyle($accent);
+    return selectablePillStyle;
+  }}
 `;
+
+type SectionPillProps = {
+  label: string;
+  active: boolean;
+  accent: string;
+  disabledReason?: string;
+  onSelect: () => void;
+};
+
+/**
+ * One pill in the section nav. Shows `label`; when `disabledReason` is set,
+ * disables the pill, shows the reason as its tooltip and accessible name, and
+ * ignores clicks.
+ */
+function SectionPill({
+  label,
+  active,
+  accent,
+  disabledReason,
+  onSelect,
+}: SectionPillProps) {
+  const disabled = Boolean(disabledReason);
+  return (
+    <StyledSectionPill
+      role="menuitem"
+      $active={active}
+      $accent={accent}
+      $disabled={disabled}
+      aria-current={active ? "true" : undefined}
+      aria-disabled={disabled ? "true" : undefined}
+      aria-label={disabledReason ? `${label}, ${disabledReason}` : undefined}
+      title={disabledReason}
+      onClick={disabled ? undefined : onSelect}
+    >
+      {label}
+    </StyledSectionPill>
+  );
+}
 
 const MoreToggle = styled(DropdownToggle)<{ $accent: string }>`
   ${pillBase}
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  border: 1px solid ${palette.slate15};
   background: white;
   color: black;
   font-weight: 400;
@@ -105,7 +161,7 @@ const MoreToggle = styled(DropdownToggle)<{ $accent: string }>`
 
   &:hover,
   &:focus-visible {
-    background: rgba(0, 0, 0, 0.03);
+    background: ${palette.slate05};
     color: black;
   }
 
@@ -143,7 +199,7 @@ const StyledDropdownMenu = styled(DropdownMenu)<{ $accent: string }>`
   }
 `;
 
-const ComingSoonItemContent = styled.span`
+const DisabledItemContent = styled.span`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -157,7 +213,7 @@ export interface SectionNavigationProps {
   onSectionSelect: (sectionId: PathwaysSection) => void;
   accentColor?: string;
   maxVisible?: number;
-  comingSoonSections?: string[];
+  disabledSections?: Partial<Record<PathwaysSection, string>>;
 }
 
 export function SectionNavigation({
@@ -166,7 +222,7 @@ export function SectionNavigation({
   onSectionSelect,
   accentColor = palette.signal.links,
   maxVisible = MAX_VISIBLE,
-  comingSoonSections,
+  disabledSections = {},
 }: SectionNavigationProps) {
   const entries = Object.entries(sections) as [PathwaysSection, string][];
   const needsOverflow = entries.length > maxVisible;
@@ -184,18 +240,15 @@ export function SectionNavigation({
   const items: React.JSX.Element[] = visibleEntries.map(([id, label]) => (
     <SectionPill
       key={id}
-      role="menuitem"
-      $active={id === activeSection}
-      $accent={accentColor}
-      aria-current={id === activeSection ? "true" : undefined}
-      onClick={() => onSectionSelect(id)}
-    >
-      {label}
-    </SectionPill>
+      label={label}
+      active={id === activeSection}
+      accent={accentColor}
+      disabledReason={disabledSections[id]}
+      onSelect={() => onSectionSelect(id)}
+    />
   ));
 
-  const hasDropdown =
-    overflowEntries.length > 0 || (comingSoonSections?.length ?? 0) > 0;
+  const hasDropdown = overflowEntries.length > 0;
 
   if (hasDropdown) {
     items.push(
@@ -214,25 +267,30 @@ export function SectionNavigation({
           ariaLabel="More sections"
           $accent={accentColor}
         >
-          {overflowEntries.map(([id, label]) => (
-            <DropdownMenuItem
-              key={id}
-              className={
-                id === activeSection ? "section-nav-active-item" : undefined
-              }
-              onClick={() => onSectionSelect(id)}
-            >
-              {label}
-            </DropdownMenuItem>
-          ))}
-          {comingSoonSections?.map((label) => (
-            <DropdownMenuItem key={label} disabled preventCloseOnClickEvent>
-              <ComingSoonItemContent>
+          {overflowEntries.map(([id, label]) => {
+            const disabledReason = disabledSections[id];
+            if (disabledReason) {
+              return (
+                <DropdownMenuItem key={id} disabled preventCloseOnClickEvent>
+                  <DisabledItemContent>
+                    {label}
+                    <Badge>{disabledReason}</Badge>
+                  </DisabledItemContent>
+                </DropdownMenuItem>
+              );
+            }
+            return (
+              <DropdownMenuItem
+                key={id}
+                className={
+                  id === activeSection ? "section-nav-active-item" : undefined
+                }
+                onClick={() => onSectionSelect(id)}
+              >
                 {label}
-                <Badge>Coming Soon</Badge>
-              </ComingSoonItemContent>
-            </DropdownMenuItem>
-          ))}
+              </DropdownMenuItem>
+            );
+          })}
         </StyledDropdownMenu>
       </Dropdown>,
     );

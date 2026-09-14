@@ -15,6 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import {
+  DEFAULT_PATHWAYS_SECTION_BY_PAGE,
+  PATHWAYS_PAGES,
+  PATHWAYS_SECTIONS,
+  PathwaysSection,
+} from "~shared-pathways";
+
+import { EVENT_TYPES } from "../eventTypes";
+import { RootStore } from "../RootStore";
+
 vi.mock("@sentry/react");
 
 // AUTH_ENABLED is evaluated from the build mode at module load, so each case
@@ -42,5 +52,44 @@ describe("AUTH_ENABLED", () => {
 
   it("keeps auth on in local development", async () => {
     expect(await loadAuthEnabled("development")).toBe(true);
+  });
+});
+
+describe("setEventType", () => {
+  function newRootStore() {
+    return new RootStore();
+  }
+
+  it("stores the chosen event type", () => {
+    const rootStore = newRootStore();
+
+    rootStore.setEventType(EVENT_TYPES.RELEASES);
+
+    expect(rootStore.eventType).toBe(EVENT_TYPES.RELEASES);
+  });
+
+  it("leaves a section alone when the new event type still covers it", () => {
+    const rootStore = newRootStore();
+    rootStore.setSection(
+      PATHWAYS_SECTIONS["countByReleaseType"] as PathwaysSection,
+    );
+
+    rootStore.setEventType(EVENT_TYPES.RELEASES);
+
+    expect(rootStore.section).toBe(PATHWAYS_SECTIONS["countByReleaseType"]);
+  });
+
+  it("falls back to the default section when the new event type drops it", () => {
+    const rootStore = newRootStore();
+    rootStore.setPage(PATHWAYS_PAGES.admissionsAndReleases);
+    rootStore.setSection(
+      PATHWAYS_SECTIONS["countByReleaseType"] as PathwaysSection,
+    );
+
+    rootStore.setEventType(EVENT_TYPES.ADMISSIONS);
+
+    expect(rootStore.section).toBe(
+      DEFAULT_PATHWAYS_SECTION_BY_PAGE[PATHWAYS_PAGES.admissionsAndReleases],
+    );
   });
 });

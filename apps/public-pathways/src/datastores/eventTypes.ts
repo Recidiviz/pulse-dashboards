@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { PATHWAYS_SECTIONS } from "~shared-pathways";
+
 /**
  * Which events a dashboard's charts count. `ALL` shows admissions and releases
  * together, which is what the Admissions & Releases dashboard opens on.
@@ -42,4 +44,42 @@ export const EVENT_TYPE_OPTIONS: { value: EventType; label: string }[] = [
 /** Returns true if the given value names an event type, e.g. from a URL. */
 export function isEventType(value: string): value is EventType {
   return (Object.values(EVENT_TYPES) as string[]).includes(value);
+}
+
+/**
+ * The event types each section applies to, and why it does not apply to the
+ * rest. A breakdown of release reasons means nothing while the charts count
+ * admissions only, so that section is disabled until the reader picks an event
+ * type it covers.
+ *
+ * A section absent from this map — every Population Under Custody section —
+ * does not vary by event type and is always available.
+ */
+export const EVENT_TYPE_SECTION_RULES: Readonly<
+  Record<string, { eventTypes: readonly EventType[]; reason: string }>
+> = {
+  [PATHWAYS_SECTIONS["countByAdmissionType"]]: {
+    eventTypes: [EVENT_TYPES.ADMISSIONS, EVENT_TYPES.ALL],
+    reason: "Admissions only",
+  },
+  [PATHWAYS_SECTIONS["countByReleaseType"]]: {
+    eventTypes: [EVENT_TYPES.RELEASES, EVENT_TYPES.ALL],
+    reason: "Releases only",
+  },
+  [PATHWAYS_SECTIONS["countByCommunitySupervision"]]: {
+    eventTypes: [EVENT_TYPES.RELEASES, EVENT_TYPES.ALL],
+    reason: "Releases only",
+  },
+};
+
+/**
+ * Returns true if the section can be shown for the given event type. A section
+ * with no rule does not vary by event type, so it is always available.
+ */
+export function isSectionAvailableForEventType(
+  sectionId: string,
+  eventType: EventType,
+): boolean {
+  const rule = EVENT_TYPE_SECTION_RULES[sectionId];
+  return !rule || rule.eventTypes.includes(eventType);
 }

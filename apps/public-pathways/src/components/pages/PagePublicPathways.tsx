@@ -30,8 +30,9 @@ import {
 } from "~shared-pathways";
 import useIsMobile from "~utils/react/useIsMobile";
 
-import { COMING_SOON_SECTIONS_BY_TENANT } from "../../datastores/comingSoonSections";
 import { DASHBOARDS_WITH_EVENT_TYPE_SELECTOR } from "../../datastores/dashboards";
+import { EVENT_TYPE_SECTION_RULES } from "../../datastores/eventTypes";
+import { PLACEHOLDER_SECTIONS_BY_PAGE } from "../../datastores/placeholderSections";
 import { publicPathwaysPalette } from "../../styles/publicPathwaysPalette";
 import { useRouteSync } from "../../useRouteSync";
 import { EventTypeSelector } from "../EventTypeSelector/EventTypeSelector";
@@ -58,8 +59,14 @@ export const PagePublicPathways = observer(function PagePublicPathways() {
   usePageViews();
   useRouteSync();
   const rootStore = useRootStore();
-  const { currentTenantId, page, section, metricsStore, analyticsStore } =
-    rootStore;
+  const {
+    currentTenantId,
+    page,
+    section,
+    eventType,
+    metricsStore,
+    analyticsStore,
+  } = rootStore;
   const pageContent = usePageContent(currentTenantId, page);
 
   const { isMobile, isTablet } = useIsMobile(true);
@@ -68,28 +75,38 @@ export const PagePublicPathways = observer(function PagePublicPathways() {
   if (isMobile) maxVisible = MOBILE_MAX_VISIBLE;
   else if (isTablet) maxVisible = TABLET_MAX_VISIBLE;
 
-  const { sections, comingSoonSections } = useMemo(() => {
+  const { sections, disabledSections } = useMemo(() => {
     const all = pageContent.sections;
     if (!all)
-      return { sections: {} as Partial<Sections>, comingSoonSections: [] };
+      return { sections: {} as Partial<Sections>, disabledSections: {} };
 
     const metricMap = metricsStore.map;
+    const placeholders = PLACEHOLDER_SECTIONS_BY_PAGE[page];
     const allIds = Object.keys(all) as PathwaysSection[];
+
+    // A section earns a pill once it can be charted, or once the dashboard
+    // lists it ahead of its metric. The rest stay hidden.
+    const visibleIds = allIds.filter(
+      (id) => id in metricMap || placeholders.has(id),
+    );
+
+    // Only the event type disables a pill: some breakdowns do not exist for
+    // the events currently counted.
+    const disabled: Partial<Record<PathwaysSection, string>> = {};
+    for (const id of visibleIds) {
+      const rule = EVENT_TYPE_SECTION_RULES[id];
+      if (rule && !rule.eventTypes.includes(eventType)) {
+        disabled[id] = rule.reason;
+      }
+    }
 
     return {
       sections: Object.fromEntries(
-        allIds.filter((id) => id in metricMap).map((id) => [id, all[id]]),
+        visibleIds.map((id) => [id, all[id]]),
       ) as Partial<Sections>,
-      comingSoonSections: allIds
-        .filter(
-          (id) =>
-            (COMING_SOON_SECTIONS_BY_TENANT[currentTenantId] ?? new Set()).has(
-              id,
-            ) && !(id in metricMap),
-        )
-        .map((id) => all[id] as string),
+      disabledSections: disabled,
     };
-  }, [currentTenantId, metricsStore.map, pageContent.sections]);
+  }, [eventType, page, metricsStore.map, pageContent.sections]);
 
   return (
     <PageContainer $isMobile={isMobile}>
@@ -117,7 +134,7 @@ export const PagePublicPathways = observer(function PagePublicPathways() {
               }}
               accentColor={publicPathwaysPalette.signal.links}
               maxVisible={maxVisible}
-              comingSoonSections={comingSoonSections}
+              disabledSections={disabledSections}
             />
           </SectionNav>
           <FiltersButton
