@@ -96,8 +96,11 @@ export type ResidentUserProfile = z.infer<typeof residentUserProfileSchema>;
 
 /**
  * Based on and broader than {@link residentUserProfileSchema} since it may represent
- * different types of authorized users.
- * Should match any valid combination of fields added to app_metadata in the Auth0 actions in `../auth0/actions`
+ * different types of authorized users. Should NOT exceed 1000 bytes due to limits
+ * imposed by Firestore (which will receive these claims downstream), so beware of unbounded fields
+ * and limit its contents to permission-related fields only, not arbitrary profile data.
+ *
+ * Should match any valid combination of fields added to app_metadata in the Auth0 actions in `../auth0/actions`.
  */
 export const authorizedUserProfileSchema = z
   .object({
@@ -107,6 +110,8 @@ export const authorizedUserProfileSchema = z
     intercomToken: residentUserProfileSchema.shape.intercomToken,
     permissions: residentUserProfileSchema.shape.permissions.optional(),
     allowedStates: z.array(z.string()).optional(),
+    // only staff accounts are expected to have this; some states limit staff access by district,
+    // which we need to enforce on the resident lookup page
     district: z.string().nullable().optional(),
   })
   .refine(

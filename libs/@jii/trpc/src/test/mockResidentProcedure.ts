@@ -33,6 +33,7 @@ export const mockCtx = {
   stateCode: testStateCode,
   pseudonymizedId: testPseudonymizedId,
   permissions: undefined as Permission[] | undefined,
+  district: undefined as string | null | undefined,
 };
 
 vi.mock("../procedures/firebaseAuthedResidentProcedure", () => ({
@@ -46,6 +47,7 @@ vi.mock("../procedures/firebaseAuthedResidentProcedure", () => ({
           stateCode: mockCtx.stateCode,
           pseudonymizedId: mockCtx.pseudonymizedId,
           permissions: mockCtx.permissions,
+          district: mockCtx.district,
         },
       } satisfies AuthorizedResidentUserContext,
     }),
@@ -56,6 +58,7 @@ beforeEach(() => {
   mockCtx.stateCode = testStateCode;
   mockCtx.pseudonymizedId = testPseudonymizedId;
   mockCtx.permissions = undefined;
+  mockCtx.district = undefined;
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

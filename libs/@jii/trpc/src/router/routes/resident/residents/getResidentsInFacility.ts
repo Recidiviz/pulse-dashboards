@@ -18,27 +18,49 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
+import { residentsConfigByState } from "~@jii/configs";
+
 import { firebaseAuthedResidentProcedure } from "../../../../procedures/firebaseAuthedResidentProcedure";
 
 export const getResidentsInFacility = firebaseAuthedResidentProcedure
   .input(z.object({ facilityId: z.string() }))
-  .query(async ({ ctx: { userProfile, prisma }, input: { facilityId } }) => {
-    const hasPermission = userProfile.permissions?.includes("enhanced");
-    if (!hasPermission) throw new TRPCError({ code: "FORBIDDEN" });
+  .query(
+    async ({
+      ctx: { userProfile, prisma, stateCode },
+      input: { facilityId },
+    }) => {
+      const hasPermission = userProfile.permissions?.includes("enhanced");
+      if (!hasPermission) throw new TRPCError({ code: "FORBIDDEN" });
 
-    return prisma.resident.findMany({
-      where: { facilityId },
-      select: {
-        givenNames: true,
-        surname: true,
-        displayId: true,
-        pseudonymizedId: true,
-      },
-      orderBy: [
-        {
-          surname: "asc",
+      // Some states limit a user to searching within their own district. The search UI
+      // already reflects this by only offering facilities that match, but that is a
+      // convenience rather than a boundary, so enforce it here too.
+      const { district } = userProfile;
+      if (
+        residentsConfigByState[stateCode].limitDistrictSearchOptions &&
+        district &&
+        facilityId !== district
+      ) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have permission to search this facility",
+        });
+      }
+
+      return prisma.resident.findMany({
+        where: { facilityId },
+        select: {
+          givenNames: true,
+          surname: true,
+          displayId: true,
+          pseudonymizedId: true,
         },
-        { givenNames: "asc" },
-      ],
-    });
-  });
+        orderBy: [
+          {
+            surname: "asc",
+          },
+          { givenNames: "asc" },
+        ],
+      });
+    },
+  );

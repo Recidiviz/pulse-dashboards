@@ -76,6 +76,12 @@ const residentInOtherFacility = {
 };
 
 describe("getResidentsInFacility", () => {
+  beforeEach(() => {
+    // the default test state code has no residents config; this one does, and it
+    // does not limit search by district
+    mockCtx.stateCode = "US_AZ";
+  });
+
   test("throws FORBIDDEN when the user does not have the enhanced permission", async () => {
     const error: TRPCError = await caller
       .getResidentsInFacility({ facilityId: "facility-1" })
@@ -146,6 +152,67 @@ describe("getResidentsInFacility", () => {
       });
 
       expect(result).toEqual([]);
+    });
+  });
+
+  describe("in a state that limits search to the user's own district", () => {
+    beforeEach(() => {
+      mockCtx.stateCode = "US_TN";
+      mockCtx.permissions = ["enhanced"];
+      mockCtx.district = "facility-1";
+    });
+
+    test("returns residents in the user's own district", async () => {
+      await testPrismaClient.resident.createMany({
+        data: [residentInFacility, residentInOtherFacility],
+      });
+
+      const result = await caller.getResidentsInFacility({
+        facilityId: "facility-1",
+      });
+
+      expect(result).toEqual([
+        {
+          pseudonymizedId: residentInFacility.pseudonymizedId,
+          givenNames: residentInFacility.givenNames,
+          surname: residentInFacility.surname,
+          displayId: residentInFacility.displayId,
+        },
+      ]);
+    });
+
+    test("throws FORBIDDEN for a facility outside the user's district", async () => {
+      await testPrismaClient.resident.createMany({
+        data: [residentInFacility, residentInOtherFacility],
+      });
+
+      const error: TRPCError = await caller
+        .getResidentsInFacility({ facilityId: "facility-2" })
+        .catch((e) => e);
+
+      expect(error).toBeInstanceOf(TRPCError);
+      expect(error.code).toBe("FORBIDDEN");
+    });
+
+    test("does not restrict a user who has no district", async () => {
+      mockCtx.district = undefined;
+
+      await testPrismaClient.resident.createMany({
+        data: [residentInFacility, residentInOtherFacility],
+      });
+
+      const result = await caller.getResidentsInFacility({
+        facilityId: "facility-2",
+      });
+
+      expect(result).toEqual([
+        {
+          pseudonymizedId: residentInOtherFacility.pseudonymizedId,
+          givenNames: residentInOtherFacility.givenNames,
+          surname: residentInOtherFacility.surname,
+          displayId: residentInOtherFacility.displayId,
+        },
+      ]);
     });
   });
 });

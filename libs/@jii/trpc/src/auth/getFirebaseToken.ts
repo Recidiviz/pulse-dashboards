@@ -30,27 +30,20 @@ import { firebaseApp } from "../helpers/firebaseAdmin";
  */
 export async function getFirebaseToken(
   uid: string,
-  {
-    stateCode,
-    externalId,
-    allowedStates,
-    permissions,
-    pseudonymizedId,
-  }: AuthorizedUserProfile,
+  { allowedStates, ...passthroughClaims }: AuthorizedUserProfile,
 ) {
   const allowedStatesNormalized = (allowedStates ?? []).map(toUpper);
 
   return firebaseAdmin.auth(firebaseApp()).createCustomToken(uid, {
     app: "jii",
-    stateCode,
-    externalId,
-    pseudonymizedId,
     // "allowedStates" and "recidivizAllowedStates" are functionally identical in this app;
     // we mostly use allowedStates, as it is more generic, but there is some shared functionality
     // with the staff app in our Firestore Rules that expects recidivizAllowedStates to exist,
     // so for safety we always include it in the token
     allowedStates: allowedStatesNormalized,
+    // TODO(OBT-29541): not needed once Firestore access is removed
     recidivizAllowedStates: allowedStatesNormalized,
-    permissions,
+    // FYI Firebase caps claims at 1000 bytes, beware of anything large or unbounded being passed through
+    ...passthroughClaims,
   });
 }
