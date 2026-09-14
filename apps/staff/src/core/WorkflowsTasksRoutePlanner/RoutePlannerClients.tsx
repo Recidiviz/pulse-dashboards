@@ -78,7 +78,7 @@ export const RoutePlannerClients = observer(function RoutePlannerClients({
   const noContacts = Object.values(contacts).flat().length === 0;
   const noOfficers = selectedOfficers.length === 0;
   const numberOfAdded = getAddMorePeople.length;
-  if (noContacts || noOfficers) {
+  if ((noContacts || noOfficers) && numberOfAdded === 0) {
     const emptyStateText = noOfficers
       ? "Select one or more caseloads to see a list of suggested clients with home contacts due."
       : "None of the selected officers have contacts due.";
