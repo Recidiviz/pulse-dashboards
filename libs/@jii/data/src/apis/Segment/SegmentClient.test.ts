@@ -47,6 +47,15 @@ function getAnalyticsStoreWithEnv(
   return new SegmentClient({ ...defaultExternals, ...externalsOverrides });
 }
 
+/**
+ * Puts the client somewhere other than the default test URL. Stubbing rather than
+ * navigating means `unstubGlobals` restores the real location after each test.
+ */
+function stubLocation(url: string) {
+  const { pathname, search, href } = new URL(url, "http://localhost:3000");
+  vi.stubGlobal("location", { pathname, search, href });
+}
+
 const identifyMock = vi.fn();
 const pageMock = vi.fn();
 const trackMock = vi.fn();
@@ -58,18 +67,6 @@ beforeEach(() => {
   vi.mocked(AnalyticsBrowser).prototype.track = trackMock;
   vi.mocked(AnalyticsBrowser).prototype.load = loadMock;
   vi.mocked(stateCodeFromCurrentUrl).mockReturnValue("US_AZ");
-
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-  loadMock.mockImplementation((opts: any) => {
-    if (opts.writeKey) {
-      const instance = vi.mocked(AnalyticsBrowser).mock.instances.at(-1);
-      // we are not going to interact with this directly, but it's expected to exist after load is called
-      if (instance) {
-        instance.instance = vi.fn() as any;
-      }
-    }
-  });
-  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   consoleSpy = vi.spyOn(console, "log");
 
@@ -94,7 +91,7 @@ describe("When no write key is configured", () => {
     expect(identifyMock).not.toHaveBeenCalled();
     expect(consoleSpy.mock.lastCall).toMatchInlineSnapshot(`
       [
-        "[Analytics] Identifying user: test-id, with traits {"sessionId":"mock-uuid","stateCode":"US_AZ","isRecidivizUser":false} and context overrides {"locale":"en-US"}",
+        "[Analytics Disabled (For Environment)] Identifying user: test-id, with traits {"sessionId":"mock-uuid","stateCode":"US_AZ","isRecidivizUser":false} and context overrides {"locale":"en-US"}",
       ]
     `);
   });
@@ -106,7 +103,7 @@ describe("When no write key is configured", () => {
     expect(trackMock).not.toHaveBeenCalled();
     expect(consoleSpy.mock.lastCall).toMatchInlineSnapshot(`
       [
-        "[Analytics] Tracking event name: frontend_event_type, with properties {"sessionId":"mock-uuid","stateCode":"US_AZ","isRecidivizUser":false,"foo":"bar"} and context overrides {"locale":"en-US"}",
+        "[Analytics Disabled (For Environment)] Tracking event name: frontend_event_type, with properties {"sessionId":"mock-uuid","stateCode":"US_AZ","isRecidivizUser":false,"foo":"bar"} and context overrides {"locale":"en-US"}",
       ]
     `);
   });
@@ -116,7 +113,7 @@ describe("When no write key is configured", () => {
     expect(pageMock).not.toHaveBeenCalled();
     expect(consoleSpy.mock.lastCall).toMatchInlineSnapshot(`
       [
-        "[Analytics] Tracking pageview: http://localhost:3000/, with properties {"sessionId":"mock-uuid","stateCode":"US_AZ","isRecidivizUser":false} and context overrides {"locale":"en-US"}",
+        "[Analytics Disabled (For Environment)] Tracking pageview: http://localhost:3000/, with properties {"sessionId":"mock-uuid","stateCode":"US_AZ","isRecidivizUser":false} and context overrides {"locale":"en-US"}",
       ]
     `);
   });
@@ -405,7 +402,7 @@ describe("Recidiviz user in production", () => {
     expect(identifyMock).not.toHaveBeenCalled();
     expect(consoleSpy.mock.lastCall).toMatchInlineSnapshot(`
       [
-        "[Analytics] Identifying user: test-id, with traits {"sessionId":"mock-uuid","stateCode":"US_AZ","isRecidivizUser":true} and context overrides {"locale":"en-US"}",
+        "[Analytics Disabled (Internal User)] Identifying user: test-id, with traits {"sessionId":"mock-uuid","stateCode":"US_AZ","isRecidivizUser":true} and context overrides {"locale":"en-US"}",
       ]
     `);
   });
@@ -417,7 +414,7 @@ describe("Recidiviz user in production", () => {
     expect(trackMock).not.toHaveBeenCalled();
     expect(consoleSpy.mock.lastCall).toMatchInlineSnapshot(`
       [
-        "[Analytics] Tracking event name: frontend_prod_event, with properties {"sessionId":"mock-uuid","stateCode":"US_AZ","isRecidivizUser":true,"foo":"bar"} and context overrides {"locale":"en-US"}",
+        "[Analytics Disabled (Internal User)] Tracking event name: frontend_prod_event, with properties {"sessionId":"mock-uuid","stateCode":"US_AZ","isRecidivizUser":true,"foo":"bar"} and context overrides {"locale":"en-US"}",
       ]
     `);
   });
@@ -459,5 +456,39 @@ describe("test mode without write key", () => {
     client.page();
     expect(pageMock).not.toHaveBeenCalled();
     expect(consoleSpy).not.toHaveBeenCalled();
+  });
+});
+
+describe("on an excluded route", () => {
+  beforeEach(() => {
+    client = getAnalyticsStoreWithEnv("production", "test-key");
+  });
+
+  test.each([
+    ["Auth0 callback", "/after-login?code=test-code&state=test-state"],
+    ["Edovo landing", "/edovo/test-token"],
+    ["Orijin SSO", "/orijin/sso"],
+  ])("sends nothing to Segment from the %s route", (label, url) => {
+    stubLocation(url);
+
+    expect(client.isDisabled).toBeTrue();
+
+    client.page();
+    client.track("frontend_test_event");
+    client.identify("test-id");
+
+    expect(pageMock).not.toHaveBeenCalled();
+    expect(trackMock).not.toHaveBeenCalled();
+    expect(identifyMock).not.toHaveBeenCalled();
+  });
+
+  it("says why nothing was sent", () => {
+    stubLocation("/edovo/test-token");
+
+    client.track("frontend_test_event");
+
+    expect(consoleSpy.mock.lastCall?.[0]).toContain(
+      "[Analytics Disabled (Untracked Route)]",
+    );
   });
 });

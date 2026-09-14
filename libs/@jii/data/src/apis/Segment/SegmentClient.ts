@@ -18,13 +18,23 @@
 /* eslint-disable no-console */
 
 import { AnalyticsBrowser } from "@segment/analytics-next";
+import { matchPath } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 
+import { AfterLogin, EdovoLandingPage, OrijinSSOPage } from "~@jii/paths";
 import type { IntakeAnalytics } from "~@reentry/frontend-shared";
 import { isTestEnv } from "~client-env-utils";
 
 import { proxyHost } from "../../utils/proxy";
 import { stateCodeFromCurrentUrl } from "../../utils/stateCodeFromCurrentUrl";
+
+/**
+ * Routes that exist only to move users through a login flow. Their URLs can contain
+ * credentials (an Auth0 authorization code, an Edovo login token), and Segment copies the
+ * current URL onto every event it sends, so nothing should be sent while a user is on one of
+ * them. They have no real value for analytics anyway.
+ */
+const UNTRACKED_ROUTES = [AfterLogin, EdovoLandingPage, OrijinSSOPage];
 
 export type SegmentClientExternals = {
   isRecidivizUser: boolean;
@@ -39,6 +49,13 @@ export type SegmentClientExternals = {
 export class SegmentClient implements IntakeAnalytics {
   private segment: AnalyticsBrowser;
 
+  /**
+   * Whether a Segment connection was configured for this environment. Note that this is
+   * not the same as Segment being ready to send: `load()` resolves asynchronously, and
+   * events created before it does are buffered by Segment to be sent when the SDK is ready.
+   */
+  private readonly isConfigured: boolean;
+
   readonly sessionId = uuidv4();
 
   constructor(private externals: SegmentClientExternals) {
@@ -46,6 +63,8 @@ export class SegmentClient implements IntakeAnalytics {
 
     const writeKey = import.meta.env["VITE_SEGMENT_WRITE_KEY"];
     const reverseProxyHost = proxyHost();
+    this.isConfigured = !!writeKey;
+
     if (writeKey) {
       if (reverseProxyHost) {
         this.segment.load(
@@ -67,10 +86,21 @@ export class SegmentClient implements IntakeAnalytics {
     }
   }
 
+  /**
+   * Whether the user is currently somewhere whose URL must not be sent to Segment.
+   * See {@link UNTRACKED_ROUTES}.
+   */
+  private get isOnUntrackedRoute(): boolean {
+    return UNTRACKED_ROUTES.some(({ path }) =>
+      matchPath(path, window.location.pathname),
+    );
+  }
+
   get isDisabled(): boolean {
     return (
-      // will be undefined if `this.segment.load()` has not been called
-      !this.segment.instance ||
+      !this.isConfigured ||
+      // note that the value of this one changes as the user navigates
+      this.isOnUntrackedRoute ||
       // only log events from internal users in staging
       (this.externals.isRecidivizUser && import.meta.env.MODE !== "staging")
     );
@@ -78,6 +108,25 @@ export class SegmentClient implements IntakeAnalytics {
 
   get isSilent(): boolean {
     return isTestEnv();
+  }
+
+  private get disabledNote(): string {
+    const prefix = "Analytics Disabled";
+    if (!this.isConfigured) {
+      return `${prefix} (For Environment)`;
+    }
+    // per-route suppression is silent other than this
+    if (this.isOnUntrackedRoute) {
+      return `${prefix} (Untracked Route)`;
+    }
+    // it's not necessary to check the environment here like we do
+    // for the actual isDisabled logic, this message is applicable regardless
+    // if we've gotten this far
+    if (this.externals.isRecidivizUser) {
+      return `${prefix} (Internal User)`;
+    }
+    // not reachable as of this writing; a fallback for future or unexpected cases
+    return prefix;
   }
 
   private get defaultTrackingProperties() {
@@ -102,7 +151,7 @@ export class SegmentClient implements IntakeAnalytics {
     if (this.isDisabled) {
       if (this.isSilent) return;
       return console.log(
-        `[Analytics] Identifying user: ${userId}, with traits ${JSON.stringify(
+        `[${this.disabledNote}] Identifying user: ${userId}, with traits ${JSON.stringify(
           traits,
         )} and context overrides ${JSON.stringify(this.trackingContextOverrides)}`,
       );
@@ -122,7 +171,7 @@ export class SegmentClient implements IntakeAnalytics {
     if (this.isDisabled) {
       if (this.isSilent) return;
       return console.log(
-        `[Analytics] Tracking event name: ${eventName}, with properties ${JSON.stringify(
+        `[${this.disabledNote}] Tracking event name: ${eventName}, with properties ${JSON.stringify(
           fullProperties,
         )} and context overrides ${JSON.stringify(this.trackingContextOverrides)}`,
       );
@@ -138,7 +187,7 @@ export class SegmentClient implements IntakeAnalytics {
     if (this.isDisabled) {
       if (this.isSilent) return;
       return console.log(
-        `[Analytics] Tracking pageview: ${window.location.href}, with properties ${JSON.stringify(
+        `[${this.disabledNote}] Tracking pageview: ${window.location.href}, with properties ${JSON.stringify(
           properties,
         )} and context overrides ${JSON.stringify(this.trackingContextOverrides)}`,
       );
