@@ -1474,6 +1474,37 @@ describe("FirestoreStore", () => {
         expect.stringContaining("malformed"),
       );
     });
+
+    test("adds a range constraint on the given field when dateRange is passed", async () => {
+      mockGetDocs.mockResolvedValue({ docs: [] });
+
+      await store.getResidentsForState("US_ID", {
+        field: "nextParoleHearingDate",
+        startDateInclusive: "2026-05-01",
+        endDateInclusive: "2026-05-15",
+      });
+
+      expect(mockWhere).toHaveBeenCalledWith("stateCode", "==", "US_ID");
+      expect(mockWhere).toHaveBeenCalledWith(
+        "nextParoleHearingDate",
+        ">=",
+        "2026-05-01",
+      );
+      expect(mockWhere).toHaveBeenCalledWith(
+        "nextParoleHearingDate",
+        "<=",
+        "2026-05-15",
+      );
+    });
+
+    test("adds no range constraint when dateRange is omitted", async () => {
+      mockGetDocs.mockResolvedValue({ docs: [] });
+
+      await store.getResidentsForState("US_ID");
+
+      expect(mockWhere).toHaveBeenCalledTimes(1);
+      expect(mockWhere).toHaveBeenCalledWith("stateCode", "==", "US_ID");
+    });
   });
 
   describe("updateSnoozeCompanions", () => {

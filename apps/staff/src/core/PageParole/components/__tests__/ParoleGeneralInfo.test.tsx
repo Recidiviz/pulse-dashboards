@@ -19,30 +19,24 @@ import { render, screen } from "@testing-library/react";
 
 import { PAROLE_UNKNOWN_DATE, ParoleCase } from "~datatypes";
 
+import { buildParoleCase } from "../../__tests__/paroleCaseFixtures";
 import {
   ParolePersonalDetails,
   ParoleSentenceInfo,
 } from "../ParoleGeneralInfo";
 
-function makeCaseDetail(fields: Partial<ParoleCase>): ParoleCase {
-  return {
-    docId: "45821",
-    name: "Anderson, Michael",
+// This suite's own defaults, layered on the shared baseline -- distinct from
+// it everywhere that matters here: an unhydrated-looking case (most fields
+// "Not yet available") rather than a filled-in one.
+function makeCaseDetail(fields: Partial<ParoleCase> = {}): ParoleCase {
+  return buildParoleCase({
     dob: "1985-03-14",
     gender: "MALE",
     currentFacility: "Facility A",
-    custodyLevel: "Minimum",
     caseManagerName: "Not yet available",
-    hearingType: "Parole Grant Hearing",
     sentenceStartDate: "2020-01-01",
     paroleEligibilityDate: "2026-01-01",
     mandatoryReleaseDate: "2030-01-01",
-    parolePlan: { onFile: false, documents: [] },
-    attachments: [],
-    conductHistory: [],
-    communitySupervisionPlan: [],
-    docPrograms: [],
-    edovoPrograms: [],
     offenseHistory: {
       offenses: [
         {
@@ -60,10 +54,8 @@ function makeCaseDetail(fields: Partial<ParoleCase>): ParoleCase {
       victimInvolved: false,
       victimAttendingHearing: false,
     },
-    riskAssessments: [],
-    riskAndNeedsFactors: [],
     ...fields,
-  };
+  });
 }
 
 describe("ParolePersonalDetails", () => {

@@ -56,7 +56,7 @@ const ParoleDocketList = observer(function ParoleDocketList({
   return (
     <Wrapper>
       <HeaderBlock>
-        <Title>Upcoming Hearings</Title>
+        <Title>Hearing Schedule</Title>
         {presenter.docketSubheading && (
           <Subheading>{presenter.docketSubheading}</Subheading>
         )}

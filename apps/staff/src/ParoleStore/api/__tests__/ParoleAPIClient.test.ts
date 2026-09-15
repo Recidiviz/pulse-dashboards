@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { addDays, startOfToday, subDays } from "date-fns";
+
 import {
   RawWorkflowsResidentRecord,
   WorkflowsResidentRecord,
@@ -22,6 +24,7 @@ import {
 } from "~datatypes";
 
 import { RootStore } from "../../../RootStore";
+import { formatDateToISO } from "../../../utils";
 import { ParoleStore } from "../../ParoleStore";
 import { ParoleAPIClient } from "../ParoleAPIClient";
 
@@ -83,6 +86,33 @@ describe("ParoleAPIClient", () => {
       );
     });
 
+    it("scopes the US_CO query server-side to its docket window", async () => {
+      rootStore.tenantStore.currentTenantId = "US_CO";
+      const spy = vi
+        .spyOn(rootStore.firestoreStore, "getResidentsForState")
+        .mockResolvedValue([]);
+
+      await client.hearings();
+
+      // US_CO's tenant config: docketWindowDaysBefore 31, docketWindowDaysAfter 14.
+      expect(spy).toHaveBeenCalledWith("US_CO", {
+        field: "metadata.nextParoleHearingDate",
+        startDateInclusive: formatDateToISO(subDays(startOfToday(), 31)),
+        endDateInclusive: formatDateToISO(addDays(startOfToday(), 14)),
+      });
+    });
+
+    it("does not scope the US_ID query server-side, since its records don't have metadata.nextParoleHearingDate yet", async () => {
+      rootStore.tenantStore.currentTenantId = "US_ID";
+      const spy = vi
+        .spyOn(rootStore.firestoreStore, "getResidentsForState")
+        .mockResolvedValue([]);
+
+      await client.hearings();
+
+      expect(spy).toHaveBeenCalledWith("US_ID", undefined);
+    });
+
     it("excludes a resident whose parole_hearings category is unhydrated", async () => {
       rootStore.tenantStore.currentTenantId = "US_CO";
       vi.spyOn(
@@ -122,6 +152,7 @@ describe("ParoleAPIClient", () => {
       await expect(client.hearings()).resolves.toEqual([
         {
           docId: "RES999",
+          displayId: "dRES999",
           individualName: "Test Resident",
           hearingDate: "2026-11-02",
           // Read from the record, not the hardcoded US_ID assumption.
@@ -217,6 +248,7 @@ describe("ParoleAPIClient", () => {
       await expect(client.hearings()).resolves.toEqual([
         {
           docId: "RES999",
+          displayId: "dRES999",
           individualName: "Test Resident",
           hearingDate: "2026-05-01",
           hearingType: "Not yet available",
@@ -340,6 +372,7 @@ describe("ParoleAPIClient", () => {
 
       expect(result).toMatchObject({
         docId: "RES999",
+        displayId: "dRES999",
         name: "Test Resident",
         gender: "MALE",
         currentFacility: "FACILITY1",
@@ -431,6 +464,7 @@ describe("ParoleAPIClient", () => {
 
       expect(result).toEqual({
         docId: "RES999",
+        displayId: "dRES999",
         name: "Test Resident",
         dob: "9999-12-01",
         gender: "Not yet available",
@@ -962,6 +996,126 @@ describe("ParoleAPIClient", () => {
       expect(result.riskAssessments).toEqual([
         { tool: "LSIR", score: 30, maxScore: 54, date: "2026-05-01" },
         { tool: "RT", score: 7, maxScore: 27, date: "2026-05-08" },
+      ]);
+    });
+
+    it("groups an assessment's category rows into subcategories", async () => {
+      vi.spyOn(
+        rootStore.firestoreStore,
+        "getResidentByPersonExternalId",
+      ).mockResolvedValue(
+        buildUsIdResident({
+          metadata: {
+            stateCode: "US_ID",
+            crcFacilities: [],
+            paroleBoardClientProfile: {
+              demographics: {},
+              riskAssessments: [
+                {
+                  assessmentType: "LSIR",
+                  assessmentDate: "2026-05-01",
+                  assessmentScore: 30,
+                  assessmentMaxScore: 54,
+                  assessmentCategoryName: "Criminal History",
+                  assessmentCategoryScore: 8,
+                  assessmentCategoryMaxScore: 10,
+                },
+                {
+                  // Every row for the same assessment repeats its top-line
+                  // score/date -- only assessmentCategory* varies per row.
+                  assessmentType: "LSIR",
+                  assessmentDate: "2026-05-01",
+                  assessmentScore: 30,
+                  assessmentMaxScore: 54,
+                  assessmentCategoryName: "Employment",
+                  assessmentCategoryScore: 3,
+                  assessmentCategoryMaxScore: 5,
+                },
+              ],
+            },
+          },
+        }),
+      );
+
+      const result = await client.caseDetail("RES999");
+
+      expect(result.riskAssessments).toEqual([
+        {
+          tool: "LSIR",
+          score: 30,
+          maxScore: 54,
+          date: "2026-05-01",
+          subcategories: [
+            { name: "Criminal History", score: 8, maxScore: 10 },
+            { name: "Employment", score: 3, maxScore: 5 },
+          ],
+        },
+      ]);
+    });
+
+    it("omits subcategories (rather than an empty array) when no row has a category", async () => {
+      vi.spyOn(
+        rootStore.firestoreStore,
+        "getResidentByPersonExternalId",
+      ).mockResolvedValue(
+        buildUsIdResident({
+          metadata: {
+            stateCode: "US_ID",
+            crcFacilities: [],
+            paroleBoardClientProfile: {
+              demographics: {},
+              riskAssessments: [
+                {
+                  assessmentType: "LSIR",
+                  assessmentDate: "2026-05-01",
+                  assessmentScore: 30,
+                  assessmentMaxScore: 54,
+                },
+              ],
+            },
+          },
+        }),
+      );
+
+      const result = await client.caseDetail("RES999");
+
+      expect(result.riskAssessments).toEqual([
+        { tool: "LSIR", score: 30, maxScore: 54, date: "2026-05-01" },
+      ]);
+      expect(result.riskAssessments[0]).not.toHaveProperty("subcategories");
+    });
+
+    it("never builds subcategories for CARAS, since its wire shape has no place for value/coefficient", async () => {
+      vi.spyOn(
+        rootStore.firestoreStore,
+        "getResidentByPersonExternalId",
+      ).mockResolvedValue(
+        buildUsIdResident({
+          metadata: {
+            stateCode: "US_ID",
+            crcFacilities: [],
+            paroleBoardClientProfile: {
+              demographics: {},
+              riskAssessments: [
+                {
+                  assessmentType: "CARAS",
+                  assessmentDate: "2026-05-01",
+                  assessmentScore: 40,
+                  assessmentMaxScore: 100,
+                  assessmentCategoryName: "Criminal History",
+                  assessmentCategoryScore: 8,
+                  assessmentCategoryMaxScore: 10,
+                },
+              ],
+            },
+          },
+        }),
+      );
+
+      const result = await client.caseDetail("RES999");
+
+      expect(result.riskAssessments).toEqual([
+        { tool: "CARAS", score: 40, maxScore: 100, date: "2026-05-01" },
       ]);
     });
 

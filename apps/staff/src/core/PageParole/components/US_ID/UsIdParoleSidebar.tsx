@@ -41,7 +41,10 @@ export function UsIdParoleSidebar({
   return (
     <>
       <div>
-        <ParoleNameHeading name={caseDetail.name} docId={caseDetail.docId} />
+        <ParoleNameHeading
+          name={caseDetail.name}
+          displayId={caseDetail.displayId}
+        />
         <FactLabel>{caseDetail.custodyLevel}</FactLabel>
         <FactLabel>{caseDetail.currentFacility}</FactLabel>
       </div>

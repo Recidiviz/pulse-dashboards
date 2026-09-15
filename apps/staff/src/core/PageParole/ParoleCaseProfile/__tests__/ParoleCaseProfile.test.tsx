@@ -123,7 +123,7 @@ describe("ParoleCaseProfile", () => {
       renderAtPath("/parole/case/45821");
 
       expect(await screen.findByText("Anderson, Michael")).toBeInTheDocument();
-      expect(screen.getByText("DOC-45821")).toBeInTheDocument();
+      expect(screen.getByText("DOC-945821")).toBeInTheDocument();
       expect(
         getByTextAcrossElements("Incarcerated | Minimum"),
       ).toBeInTheDocument();
@@ -475,7 +475,7 @@ describe("ParoleCaseProfile", () => {
         await findSectionHeading("Program Participation"),
       ).toBeInTheDocument();
 
-      expect(screen.getByText("DOC Programs (2)")).toBeInTheDocument();
+      expect(screen.getByText("Completed Programs (2)")).toBeInTheDocument();
       expect(
         screen.getByText("Cognitive Behavioral Therapy"),
       ).toBeInTheDocument();
@@ -485,7 +485,7 @@ describe("ParoleCaseProfile", () => {
       ).not.toBeInTheDocument();
       expect(screen.queryByText("Anger Management")).not.toBeInTheDocument();
 
-      expect(screen.getByText("Edovo Programs (2)")).toBeInTheDocument();
+      expect(screen.getByText("Edovo Credit Programs (2)")).toBeInTheDocument();
       expect(screen.getByText("Financial Literacy Basics")).toBeInTheDocument();
       expect(screen.getByText("Resume Building Workshop")).toBeInTheDocument();
       expect(
@@ -499,11 +499,11 @@ describe("ParoleCaseProfile", () => {
       expect(
         await findSectionHeading("Program Participation"),
       ).toBeInTheDocument();
-      expect(screen.getByText("DOC Programs (0)")).toBeInTheDocument();
+      expect(screen.getByText("Completed Programs (0)")).toBeInTheDocument();
       expect(
         screen.getByText("No completed DOC programs on record."),
       ).toBeInTheDocument();
-      expect(screen.getByText("Edovo Programs (0)")).toBeInTheDocument();
+      expect(screen.getByText("Edovo Credit Programs (0)")).toBeInTheDocument();
       expect(
         screen.getByText("No completed Edovo programs on record."),
       ).toBeInTheDocument();
@@ -533,25 +533,21 @@ describe("ParoleCaseProfile", () => {
     it("renders a banner when a victim was involved in the current offense", async () => {
       renderAtPath("/parole/case/45821");
 
-      expect(
-        await screen.findByText("Victim involved in current offense"),
-      ).toBeInTheDocument();
+      expect(await screen.findByText("Victim Enrolled")).toBeInTheDocument();
     });
 
     it("renders no victim banner when no victim was involved", async () => {
       renderAtPath("/parole/case/52903");
 
       await findSectionHeading("Offense & Criminal History");
-      expect(
-        screen.queryByText("Victim involved in current offense"),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText("Victim Enrolled")).not.toBeInTheDocument();
     });
 
     it("renders a banner when a victim is scheduled to attend the hearing", async () => {
       renderAtPath("/parole/case/45821");
 
       expect(
-        await screen.findByText("Victim scheduled to attend hearing"),
+        await screen.findByText("Scheduled Victim Attendance"),
       ).toBeInTheDocument();
     });
 
@@ -560,7 +556,7 @@ describe("ParoleCaseProfile", () => {
 
       await findSectionHeading("Offense & Criminal History");
       expect(
-        screen.queryByText("Victim scheduled to attend hearing"),
+        screen.queryByText("Scheduled Victim Attendance"),
       ).not.toBeInTheDocument();
     });
 
@@ -568,11 +564,9 @@ describe("ParoleCaseProfile", () => {
       renderAtPath("/parole/case/45821");
 
       const attendingHearingBanner = await screen.findByText(
-        "Victim scheduled to attend hearing",
+        "Scheduled Victim Attendance",
       );
-      const involvedBanner = await screen.findByText(
-        "Victim involved in current offense",
-      );
+      const involvedBanner = await screen.findByText("Victim Enrolled");
 
       expect(
         attendingHearingBanner.compareDocumentPosition(involvedBanner) &

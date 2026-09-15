@@ -131,6 +131,7 @@ const RAW_HEARINGS: Array<
 > = [
   {
     docId: "45821",
+    displayId: "945821",
     individualName: "Anderson, Michael",
     hearingType: "Parole Grant Hearing",
     facility: "Central State Correctional Facility",
@@ -138,6 +139,7 @@ const RAW_HEARINGS: Array<
   },
   {
     docId: "52903",
+    displayId: "952903",
     individualName: "Brooks, Sarah",
     hearingType: "Parole Grant Hearing",
     facility: "North River Correctional Center",
@@ -145,6 +147,7 @@ const RAW_HEARINGS: Array<
   },
   {
     docId: "61247",
+    displayId: "961247",
     individualName: "Chen, David",
     hearingType: "Revocation Hearing",
     facility: "Western State Prison",
@@ -152,6 +155,7 @@ const RAW_HEARINGS: Array<
   },
   {
     docId: "48392",
+    displayId: "948392",
     individualName: "Davis, Jennifer",
     hearingType: "Parole Grant Hearing",
     facility: "Central State Correctional Facility",
@@ -159,6 +163,7 @@ const RAW_HEARINGS: Array<
   },
   {
     docId: "71458",
+    displayId: "971458",
     individualName: "Evans, Robert",
     hearingType: "Parole Grant Hearing",
     facility: "South Bay Detention Center",
@@ -166,6 +171,7 @@ const RAW_HEARINGS: Array<
   },
   {
     docId: "55729",
+    displayId: "955729",
     individualName: "Foster, Maria",
     hearingType: "Parole Grant Hearing",
     facility: "North River Correctional Center",
@@ -173,6 +179,7 @@ const RAW_HEARINGS: Array<
   },
   {
     docId: "63184",
+    displayId: "963184",
     individualName: "Garcia, Carlos",
     hearingType: "Parole Grant Hearing",
     facility: "Western State Prison",
@@ -180,6 +187,7 @@ const RAW_HEARINGS: Array<
   },
   {
     docId: "59402",
+    displayId: "959402",
     individualName: "Harris, Patricia",
     hearingType: "Modification Hearing",
     facility: "Central State Correctional Facility",
@@ -202,9 +210,12 @@ const SHARED_HEARINGS: Array<ParoleHearing> = RAW_HEARINGS.map(
 // Add each newly extracted real resident's hearing to this array, and their
 // case-profile detail to CO_REAL_CASE_PROFILES below (a resident may appear
 // more than once here across separate hearings, each with its own docId).
+// No separate ADCNUMBER was extracted for these records, so displayId mirrors
+// docId here rather than carrying a fabricated number.
 const CO_HEARINGS: Array<ParoleHearing> = [
   paroleHearingSchema.parse({
     docId: "454321",
+    displayId: "454321",
     individualName: "BANNER, BRUCE",
     hearingType: "Parole Grant Hearing",
     facility: "Fremont Correctional Facility",
@@ -212,6 +223,7 @@ const CO_HEARINGS: Array<ParoleHearing> = [
   }),
   paroleHearingSchema.parse({
     docId: "980332",
+    displayId: "980332",
     individualName: "ROGERS, STEVE",
     hearingType: "Parole Grant Hearing",
     facility: "Colorado State Penitentiary",
@@ -226,6 +238,7 @@ const CO_HEARINGS: Array<ParoleHearing> = [
 const ID_HEARINGS: Array<ParoleHearing> = [
   paroleHearingSchema.parse({
     docId: "166184",
+    displayId: "166184",
     individualName: "STARK, TONY",
     hearingType: "Parole Grant Hearing",
     facility: "Central State Correctional Facility",
@@ -528,6 +541,7 @@ function buildAndersonCaseProfile(
   const carasAnchor = parseISO("2026-04-16");
   return paroleCaseSchema.parse({
     docId: "45821",
+    displayId: "945821",
     name: "Anderson, Michael",
     dob: iso(subYears(today, 40)),
     gender: GENDER_BY_DOC_ID["45821"],
@@ -1102,6 +1116,7 @@ function buildGenericCaseProfile(
     : [];
   return paroleCaseSchema.parse({
     docId: hearing.docId,
+    displayId: hearing.displayId,
     name: hearing.individualName,
     dob: iso(subYears(today, 30 + index)),
     gender: GENDER_BY_DOC_ID[hearing.docId],
@@ -1144,9 +1159,17 @@ function buildGenericCaseProfile(
 // criminogenicNeed is blank for every docProgram in the source records, but
 // paroleDocProgramSchema requires a non-null string, so it is set to "" here
 // rather than widening the shared schema for one fixture's real-world gap.
+// conductHistory severities were originally transcribed as "Class 1"/
+// "Class 2", which don't match any real US_CO violationCategory value
+// ("Class I"/"Class IIa"/"Class IIb"/"Class III", confirmed against the
+// staging sandbox). Corrected here to "Class I"/"Class IIa" as the closest
+// real equivalents; this is an approximation, not re-verified against the
+// original "Real Resident Mapping" spreadsheet -- update it if that source
+// is checked and says otherwise.
 const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
   "454321": paroleCaseSchema.parse({
     docId: "454321",
+    displayId: "454321",
     name: "BANNER, BRUCE",
     dob: "1992-04-01",
     gender: "Male",
@@ -1169,7 +1192,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "THEFT",
         description:
           "OFFENDER WAS WITNESSED REACHING INTO A CANTEEN CRATE REMOVING AN ITEM THAT DID NOT BELONG TO THEM AND WAS LATER FOUND IN THEIR CELL.",
-        severity: "Class 2",
+        severity: "Class IIa",
         disposition: "LOST PRIVILEGES",
       },
     ],
@@ -1287,6 +1310,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
   }),
   "980332": paroleCaseSchema.parse({
     docId: "980332",
+    displayId: "980332",
     name: "ROGERS, STEVE",
     dob: "1985-10-11",
     gender: "Male",
@@ -1311,7 +1335,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         facility: "COLORADO STATE PENITENTIARY",
         violation: "UNAUTHORIZED/INCIDENTAL CONTACT",
         description: "INMATE THREW WATER ON STAFF.",
-        severity: "Class 2",
+        severity: "Class IIa",
         disposition: "LOST TIME",
       },
       {
@@ -1319,7 +1343,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         facility: "COLORADO STATE PENITENTIARY",
         violation: "THREATS",
         description: "INMATE MAKE THREATS TOWARDS STAFF.",
-        severity: "Class 2",
+        severity: "Class IIa",
         disposition: "NO SANCTION - CMNTS",
       },
       {
@@ -1328,7 +1352,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "HAZARDOUS LIQUID ASSAULT ON STAFF",
         description:
           "INMATER ATTEMTED TO CAUSE INJURY TO STAFF BY THROWING AN UNKNOWN LIQUID ON THEM.",
-        severity: "Class 1",
+        severity: "Class I",
         disposition: "LOST TIME",
       },
       {
@@ -1336,7 +1360,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         facility: "COLORADO STATE PENITENTIARY",
         violation: "HAZARDOUS LIQUID ASSAULT ON STAFF",
         description: "INMATE THREW HAZARDOUS LIQUID AND HIT STAFF.",
-        severity: "Class 1",
+        severity: "Class I",
         disposition: "LOST PRIVILEGES",
       },
       {
@@ -1344,7 +1368,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         facility: "COLORADO STATE PENITENTIARY",
         violation: "THREATS",
         description: "INMATE MADE THREATS TOWARDS STAFF.",
-        severity: "Class 2",
+        severity: "Class IIa",
         disposition: "LOST PRIVILEGES",
       },
       {
@@ -1353,7 +1377,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "DAMAGE TO PROPERTY (OLD:>$50)",
         description:
           "INMATE DAMAGED ITEMS ASSIGNED TO HIM REQUIRING REPLACEMENT OR REPAIR. RESTITUTION $3.96 TP CSP LAUNDRY",
-        severity: "Class 2",
+        severity: "Class IIa",
         disposition: "RESTITUTION",
       },
       {
@@ -1362,7 +1386,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "UNAUTHORIZED POSSESSION",
         description:
           "DO LT DOE HO LT NIGHT. INMATE WS FOIUND IN POSSESSION OF UNAUTHORIZED ITEMS.",
-        severity: "Class 2",
+        severity: "Class IIa",
         disposition: "LOST TIME",
       },
       {
@@ -1371,7 +1395,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "HAZARDOUS LIQUID ASSAULT ON STAFF",
         description:
           "OFFENDER ROGERS THREW A LIQUID FECES MIXTURE AT STAFF THROUGH THE TRAY SLOT. 15 DYS RH, 30 DYS LOGT.",
-        severity: "Class 1",
+        severity: "Class I",
         disposition: "SEGREGATION",
       },
       {
@@ -1380,7 +1404,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "HAZARDOUS LIQUID ASSAULT ON STAFF",
         description:
           "OFFENDER ROGERS THREW A LIQUID FECES MIXTURE AT STAFF THROUGH THE TRAY SLOT. 15 DYS RH, 30 DYS LOGT.",
-        severity: "Class 1",
+        severity: "Class I",
         disposition: "LOST TIME",
       },
       {
@@ -1389,7 +1413,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "THREATS",
         description:
           "OFFENDER ROGERS MADE STATEMENTS TO ASSAULT ANOTHER OFFENDER. 15 DYS RH, 15 DYS LOGT.",
-        severity: "Class 2",
+        severity: "Class IIa",
         disposition: "SEGREGATION",
       },
       {
@@ -1398,7 +1422,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "THREATS",
         description:
           "OFFENDER ROGERS MADE STATEMENTS TO HARM STAFF. 15 DYS RH, 15 DYS LOGT.",
-        severity: "Class 2",
+        severity: "Class IIa",
         disposition: "LOST TIME",
       },
       {
@@ -1407,7 +1431,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "THREATS",
         description:
           "OFFENDER ROGERS MADE STATEMENTS TO ASSAULT ANOTHER OFFENDER. 15 DYS RH, 15 DYS LOGT.",
-        severity: "Class 2",
+        severity: "Class IIa",
         disposition: "LOST TIME",
       },
       {
@@ -1416,7 +1440,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "THREATS",
         description:
           "OFFENDER ROGERS MADE STATEMENTS TO HARM STAFF. 15 DYS RH, 15 DYS LOGT.",
-        severity: "Class 2",
+        severity: "Class IIa",
         disposition: "SEGREGATION",
       },
       {
@@ -1425,7 +1449,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "THREATS",
         description:
           "OFFENDER MADE STATEMENTS THAT PLACED A PERSON IN FEAR OF INJURY. WAIVED RIGHT TO A FORMAL HEARING.",
-        severity: "Class 2",
+        severity: "Class IIa",
         disposition: "LOST PRIVILEGES",
       },
       {
@@ -1434,7 +1458,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "POSSESSION SYRINGE/DRUG PARAPHERNALIA",
         description:
           "OFFENDER ROGERS. IT WAS FOUND THE ITEM WAS NOT A HYPODERMIC NEEDLE AND NOT CAPABLE OF ADMINISTERING DANGEROUS DRUGS. NOTHING IMPOSED.",
-        severity: "Class 2",
+        severity: "Class IIa",
         disposition: "NOT GUILTY",
       },
       {
@@ -1443,7 +1467,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "POSSESION OR USE OF DANGEROUS DRUGS",
         description:
           "OFFENDER ROGERS IN POSSESSION OF ITEMS COMMONLY USED IN THE CORRECTION SETTTING TO MAKE HOMEMADE ALCOHOL. 20 DYS LOP PROBATED. OFFENDER WAIVED RIGHT TO A FORMAL HEARING.",
-        severity: "Class 2",
+        severity: "Class IIa",
         disposition: "LOST PRIVILEGES",
       },
       {
@@ -1452,7 +1476,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "THREATS",
         description:
           "OFFENDER MADE THREATENING STATEMENTS TO A STAFF MEMBER. OFFENDER WAIVED RIGHT TO A FORMAL HEARING.",
-        severity: "Class 2",
+        severity: "Class IIa",
         disposition: "SEGREGATION",
       },
       {
@@ -1461,7 +1485,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "VERBAL ABUSE",
         description:
           "OFFENDER ROGERS INTERFERRED WITH A DOC STAFF SEARCH, MAKING OFFENSIVE STATEMENTS AND POSSESSING UNAUTHORIZED ITEMS. 8 DYS RH. OFFENDER WAVIED RIGHT TO A FORMAL HEARING.",
-        severity: "Class 2",
+        severity: "Class IIa",
         disposition: "SEGREGATION",
       },
       {
@@ -1470,7 +1494,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "INTERFERENCE WITH SEARCH",
         description:
           "OFFENDER ROGERS INTERFERRED WITH A DOC STAFF SEARCH, MAKING OFFENSIVE STATEMENTS AND POSSESSING UNAUTHORIZED ITEMS. 8 DYS RH. OFFENDER WAVIED RIGHT TO A FORMAL HEARING.",
-        severity: "Class 2",
+        severity: "Class IIa",
         disposition: "SEGREGATION",
       },
       {
@@ -1479,7 +1503,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "UNAUTHORIZED POSSESSION",
         description:
           "OFFENDER ROGERS INTERFERRED WITH A DOC STAFF SEARCH, MAKING OFFENSIVE STATEMENTS AND POSSESSING UNAUTHORIZED ITEMS. 8 DYS RH. OFFENDER WAVIED RIGHT TO A FORMAL HEARING.",
-        severity: "Class 2",
+        severity: "Class IIa",
         disposition: "SEGREGATION",
       },
       {
@@ -1488,7 +1512,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "TAMPERING WITH LOCKS/SECURITY",
         description:
           "HO KLINGON DO KYPROT: OFFENDER ROGERS HAD THE WINDOW OF THEIR CELL AND REFUSED DIRECTIVES TO UNCOVER THE WINDOW. THEY THEN THREATENED TO THROW WATER ON STAFF.",
-        severity: "Class 1",
+        severity: "Class I",
         disposition: "NO SANCTION - CMNTS",
       },
       {
@@ -1497,7 +1521,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "DISOBEYING A LAWFUL ORDER - CHARGE A",
         description:
           "HO KLINGON DO KYPROT: OFFENDER COVERED THEIR WINDOW DURING COUNT AND REFUSED DIRECTIVES TO SUBMIT TO RESTRAINTS. OFFENDER MADE MULTIPLE THREATS TO STAFF.",
-        severity: "Class 2",
+        severity: "Class IIa",
         disposition: "NO SANCTION - CMNTS",
       },
       {
@@ -1506,7 +1530,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "THREATS",
         description:
           "HO KLINGON DO KYPROT: OFFENDER ROGERS MADE THREATS TO KILL STAFF UPON THEIR RELEASE FROM CUSTODY OF THE DEPARTMENT OF CORRECTIONS",
-        severity: "Class 2",
+        severity: "Class IIa",
         disposition: "NO SANCTION - CMNTS",
       },
       {
@@ -1515,7 +1539,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "COUNT INTERFERENCE",
         description:
           "HO KLINGON DO KYPROT: OFFENDER COVERED THEIR WINDOW DURING COUNT AND REFUSED DIRECTIVES TO SUBMIT TO RESTRAINTS. OFFENDER MADE MULTIPLE THREATS TO STAFF.",
-        severity: "Class 2",
+        severity: "Class IIa",
         disposition: "NO SANCTION - CMNTS",
       },
       {
@@ -1524,7 +1548,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "TAMPERING WITH LOCKS/SECURITY",
         description:
           "HO KLINGON DO KYPROT: OFFENDER ROGERS MADE THREATS TO KILL STAFF UPON THEIR RELEASE FROM CUSTODY OF THE DEPARTMENT OF CORRECTIONS",
-        severity: "Class 1",
+        severity: "Class I",
         disposition: "NO SANCTION - CMNTS",
       },
       {
@@ -1533,7 +1557,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "TAMPERING WITH LOCKS/SECURITY",
         description:
           "HO KLINGON DO KYPROT: OFFENDER COVERED THEIR WINDOW DURING COUNT AND REFUSED DIRECTIVES TO SUBMIT TO RESTRAINTS. OFFENDER MADE MULTIPLE THREATS TO STAFF.",
-        severity: "Class 1",
+        severity: "Class I",
         disposition: "SEGREGATION",
       },
       {
@@ -1542,7 +1566,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "BODY MODIFICATION",
         description:
           "HO KLINGON DO KYPROT: OFFENDER ROGERS WAS FOUND IN POSSESSION OF TATTOO PARAPHERNALIA",
-        severity: "Class 2",
+        severity: "Class IIa",
         disposition: "NO SANCTION - CMNTS",
       },
       {
@@ -1551,7 +1575,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "UNAUTHORIZED POSSESSION",
         description:
           "HO KLINGON DO KYPROT: OFFENDER ROGERS WAS FOUND IN POSSESSION OF TATTOO PARAPHERNALIA",
-        severity: "Class 2",
+        severity: "Class IIa",
         disposition: "NO SANCTION - CMNTS",
       },
       {
@@ -1560,7 +1584,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "ASSAULT ON OFFENDER",
         description:
           "HO KLINGON, DO KYPROT: OFFENDER WAS IN A FIGHT WITH ANOTHER OFFENDER",
-        severity: "Class 1",
+        severity: "Class I",
         disposition: "SEGREGATION",
       },
       {
@@ -1569,7 +1593,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "POSSESSION OF DANGEROUS CONTRABAND",
         description:
           "D.O. LT ASTRUD.  H.O. TIP ZAYOOS.  OFFENDER FOUND GUILTY OF COMPLICIT IN ATTEMPTING TO AID TWO OTHERS DURING A MURDER ATTEMPT.  WEAPON FOUND IN THIS OFFENDER'S POSSESSION.",
-        severity: "Class 1",
+        severity: "Class I",
         disposition: "LOST TIME",
       },
       {
@@ -1578,7 +1602,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "MURDER",
         description:
           "D.O. LT ASTRUD.  H.O. TIP ZAYOOS.  OFFENDER FOUND GUILTY OF COMPLICIT IN ATTEMPTING TO AID TWO OTHERS DURING A MURDER ATTEMPT.  WEAPON FOUND IN THIS OFFENDER'S POSSESSION.",
-        severity: "Class 1",
+        severity: "Class I",
         disposition: "SEGREGATION",
       },
       {
@@ -1587,7 +1611,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "ASSAULT ON OFFENDER",
         description:
           "D.O. LT ASTRUD- OFFENDER AIDED OR ASSISTED WITH OTHER OFFENDERS IN A PHYSICAL ALTERCATION, ASSAULTING ANOTHER OFFENDER WITH WEAPONS.  OFFENDER WAS FOUND IN POSSESSION OF A HOMEMADE WEAPON.",
-        severity: "Class 1",
+        severity: "Class I",
         disposition: "LOST TIME",
       },
       {
@@ -1596,7 +1620,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "POSSESSION OF DANGEROUS CONTRABAND",
         description:
           "D.O. LT ASTRUD.  H.O. TIP ZAYOOS.  OFFENDER FOUND GUILTY OF COMPLICIT IN ATTEMPTING TO AID TWO OTHERS DURING A MURDER ATTEMPT.  WEAPON FOUND IN THIS OFFENDER'S POSSESSION.",
-        severity: "Class 1",
+        severity: "Class I",
         disposition: "SEGREGATION",
       },
       {
@@ -1605,7 +1629,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "POSSESSION OF DANGEROUS CONTRABAND",
         description:
           "D.O. LT ASTRUD- OFFENDER AIDED OR ASSISTED WITH OTHER OFFENDERS IN A PHYSICAL ALTERCATION, ASSAULTING ANOTHER OFFENDER WITH WEAPONS.  OFFENDER WAS FOUND IN POSSESSION OF A HOMEMADE WEAPON.",
-        severity: "Class 1",
+        severity: "Class I",
         disposition: "LOST TIME",
       },
       {
@@ -1614,7 +1638,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "THREATS",
         description:
           'D.O. BILL LION. OFFENDER VERBALLY COMMUNICATED AN INTENT TO JEOPARDIZE SAFETY /SECURITY OF FACILITY WHEN HE TOLD OFFICER HE WAS NOT GOING TO FOLLOW THE RULES "SEE WHAT HAPPENS". OFFICER TOOK THIS AS A THREAT.',
-        severity: "Class 2",
+        severity: "Class IIa",
         disposition: "HOUSING RESTRICTION",
       },
       {
@@ -1623,7 +1647,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "THREATS",
         description:
           "D.O. SAREN.  OFFENDER VERBALLY AND PHYSICALLY COMMUNICATED A DETERMINATION TO HARM ANOTHER PERSON AND WAS OBSERVED TAMPERING WITH A FIRE ALARM.",
-        severity: "Class 2",
+        severity: "Class IIa",
         disposition: "LOST PRIVILEGES",
       },
     ],
@@ -1765,6 +1789,7 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
 const ID_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
   "166184": paroleCaseSchema.parse({
     docId: "166184",
+    displayId: "166184",
     name: "STARK, TONY",
     dob: "1987-03-22",
     gender: "Male",

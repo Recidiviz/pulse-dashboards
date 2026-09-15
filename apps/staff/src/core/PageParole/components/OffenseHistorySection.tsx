@@ -77,7 +77,7 @@ export function OffenseHistorySection({
                 color={VICTIM_ATTENDING_HEARING_ALERT_COLOR}
                 aria-hidden="true"
               />
-              Victim scheduled to attend hearing
+              Scheduled Victim Attendance
             </AlertBanner>
           )}
 
@@ -96,7 +96,7 @@ export function OffenseHistorySection({
                 color={VICTIM_ALERT_COLOR}
                 aria-hidden="true"
               />
-              Victim involved in current offense
+              Victim Enrolled
             </AlertBanner>
           )}
 

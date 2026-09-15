@@ -50,11 +50,17 @@ const DocId = styled.div`
  * Rendered at the top of the captured report content so a downloaded copy
  * stands on its own.
  */
-export function ReportHeader({ name, docId }: { name: string; docId: string }) {
+export function ReportHeader({
+  name,
+  displayId,
+}: {
+  name: string;
+  displayId: string;
+}) {
   return (
     <Header {...{ [REPORT_HEADER_ATTRIBUTE]: "" }}>
       <Name>{name}</Name>
-      <DocId>{formatDocId(docId)}</DocId>
+      <DocId>{formatDocId(displayId)}</DocId>
     </Header>
   );
 }

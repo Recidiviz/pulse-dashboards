@@ -128,7 +128,7 @@ export function ProgramParticipationSection({
           <StyledAccordionItem uuid="doc">
             <AccordionItemHeading>
               <AccordionButton>
-                DOC Programs ({completedDocPrograms.length})
+                Completed Programs ({completedDocPrograms.length})
                 <Icon kind={IconSVG.DownChevron} size={10} aria-hidden="true" />
               </AccordionButton>
             </AccordionItemHeading>
@@ -155,7 +155,7 @@ export function ProgramParticipationSection({
           <StyledAccordionItem uuid="edovo">
             <AccordionItemHeading>
               <AccordionButton>
-                Edovo Programs ({completedEdovoPrograms.length})
+                Edovo Credit Programs ({completedEdovoPrograms.length})
                 <Icon kind={IconSVG.DownChevron} size={10} aria-hidden="true" />
               </AccordionButton>
             </AccordionItemHeading>

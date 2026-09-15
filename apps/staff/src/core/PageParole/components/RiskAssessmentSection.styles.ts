@@ -113,6 +113,12 @@ export const StyledTooltip = styled(Tooltip).attrs({
   ${typography.Sans14}
   position: relative;
   transform: translate(calc(-50% + ${({ $offsetX = 0 }) => $offsetX}px), -115%);
+  // Subcategory titles are long enough to make an unconstrained tooltip wider
+  // than its chart column, which no horizontal nudge can then bring back
+  // inside. Cap the width and wrap instead.
+  max-width: min(16rem, calc(100vw - 2rem));
+  white-space: normal;
+  overflow-wrap: break-word;
   display: flex;
   flex-direction: column;
   align-items: center;

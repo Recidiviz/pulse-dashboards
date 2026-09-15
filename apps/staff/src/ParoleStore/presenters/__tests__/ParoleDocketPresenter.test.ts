@@ -40,6 +40,7 @@ const daysOut = (days: number) =>
 const TEST_HEARINGS: Array<ParoleHearing> = [
   {
     docId: "1",
+    displayId: "91",
     individualName: "Anderson, Michael",
     hearingDate: daysOut(1),
     hearingType: "Parole Grant Hearing",
@@ -47,6 +48,7 @@ const TEST_HEARINGS: Array<ParoleHearing> = [
   },
   {
     docId: "2",
+    displayId: "92",
     individualName: "Brooks, Sarah",
     hearingDate: daysOut(2),
     hearingType: "Revocation Hearing",
@@ -54,6 +56,7 @@ const TEST_HEARINGS: Array<ParoleHearing> = [
   },
   {
     docId: "3",
+    displayId: "93",
     individualName: "Chen, David",
     hearingDate: daysOut(3),
     hearingType: "Parole Grant Hearing",
@@ -188,7 +191,7 @@ describe("ParoleDocketPresenter docket display config", () => {
     rootStore.tenantStore.currentTenantId = "US_CO";
     const presenter = new ParoleDocketPresenter(new ParoleStore(rootStore));
 
-    expect(presenter.docketSubheading).toBe("Hearings in the next two weeks");
+    expect(presenter.docketSubheading).toBe("Two Week Outlook");
     expect(presenter.docketSearchEnabled).toBe(true);
   });
 
@@ -220,6 +223,10 @@ describe("ParoleDocketPresenter docket window", () => {
   function hearingOn(docId: string, days: number): ParoleHearing {
     return {
       docId,
+      // These tests only exercise date-window filtering; displayId's value
+      // is never asserted on, so it's a fixed placeholder rather than
+      // derived from docId.
+      displayId: "unused-display-id",
       individualName: `Resident ${docId}`,
       hearingDate: daysOut(days),
       hearingType: "Parole Grant Hearing",

@@ -141,9 +141,10 @@ export class ParoleDocketPresenter
       if (
         query &&
         !hearing.individualName.toLowerCase().includes(query) &&
-        // Matched against the "DOC-"-prefixed display form (not the raw,
-        // unprefixed docId) so typing what's shown on screen still matches.
-        !formatDocId(hearing.docId).toLowerCase().includes(query)
+        // Matched against the "DOC-"-prefixed display form of the id that's
+        // actually on screen (displayId, not the routing docId) so typing what
+        // the user sees still matches.
+        !formatDocId(hearing.displayId).toLowerCase().includes(query)
       )
         return false;
 

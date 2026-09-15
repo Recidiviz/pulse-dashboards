@@ -120,7 +120,10 @@ const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
             ParoleSectionComponents.downloadReport(caseDetail)}
           <ReportContent id={PAROLE_REPORT_CAPTURE_ID}>
             {hasDownloadReport && (
-              <ReportHeader name={caseDetail.name} docId={caseDetail.docId} />
+              <ReportHeader
+                name={caseDetail.name}
+                displayId={caseDetail.displayId}
+              />
             )}
             {contentSections.map((sectionName) => (
               <SectionAnchor

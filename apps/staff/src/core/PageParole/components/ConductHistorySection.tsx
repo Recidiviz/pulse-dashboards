@@ -25,7 +25,11 @@ import { Icon, IconSVG, palette } from "~design-system";
 
 import { PaletteKey } from "../../BadgePill/BadgePill";
 import { SectionCardHeader } from "../../SectionCard";
-import { ConductRecordCard } from "./ConductRecordCard";
+import {
+  conductClassificationPalette,
+  conductClassificationTextColor,
+  ConductRecordCard,
+} from "./ConductRecordCard";
 import { PaddedSectionCardBody } from "./PaddedSectionCardBody";
 import {
   FactLabel,
@@ -38,6 +42,12 @@ const SummaryRow = styled.div`
   display: flex;
   gap: ${rem(spacing.lg)};
   color: ${palette.slate70};
+`;
+
+// The per-record pills are already colored by classification; without this the
+// summary counts are the only place the three classes look identical.
+const SeverityCount = styled.span<{ $color: string }>`
+  color: ${({ $color }) => $color};
 `;
 
 const NoInfractionsBanner = styled.div`
@@ -116,9 +126,17 @@ export function ConductHistorySection({
               <FactLabel as="span">{conductHistory.length}</FactLabel>
             </span>
             {severityCounts.map(([severity, count]) => (
-              <span key={severity}>
+              <SeverityCount
+                key={severity}
+                $color={conductClassificationTextColor(
+                  conductClassificationPalette(
+                    conductClassificationColors,
+                    severity,
+                  ),
+                )}
+              >
                 {severity}: <FactLabel as="span">{count}</FactLabel>
-              </span>
+              </SeverityCount>
             ))}
           </SummaryRow>
           {recentRecords.map((record, _) => (

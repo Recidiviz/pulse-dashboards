@@ -21,6 +21,39 @@ import type { RectReadOnly } from "react-use-measure";
 import { StyledTooltip } from "./RiskAssessmentSection.styles";
 
 /**
+ * Returns the horizontal nudge (px) that brings a centered tooltip back inside
+ * its chart column. The column is clipped to the viewport first, since on a
+ * narrow window the column can extend past the screen edge. A tooltip wider
+ * than the space available cannot fit at all, so its overhang is split evenly
+ * rather than piled onto one side.
+ */
+export function horizontalOffsetToFit({
+  tooltipLeft,
+  tooltipRight,
+  containerLeft,
+  containerRight,
+  viewportWidth,
+}: {
+  tooltipLeft: number;
+  tooltipRight: number;
+  containerLeft: number;
+  containerRight: number;
+  viewportWidth: number;
+}): number {
+  const left = Math.max(containerLeft, 0);
+  const right = Math.min(containerRight, viewportWidth);
+
+  const overhangLeft = left - tooltipLeft;
+  const overhangRight = tooltipRight - right;
+
+  if (overhangLeft > 0 && overhangRight > 0)
+    return (overhangLeft - overhangRight) / 2;
+  if (overhangRight > 0) return -overhangRight;
+  if (overhangLeft > 0) return overhangLeft;
+  return 0;
+}
+
+/**
  * StyledTooltip centers on its anchor, which can push it past the chart's
  * edge (e.g. two charts sharing a row). This measures the tooltip against
  * the chart's own bounds and nudges it back inside horizontally.
@@ -49,12 +82,13 @@ export function EdgeAwareTooltip({
     if (!tooltip) return;
 
     const tooltipRect = tooltip.getBoundingClientRect();
-    let offsetX = 0;
-    if (tooltipRect.right > containerBounds.right) {
-      offsetX = containerBounds.right - tooltipRect.right;
-    } else if (tooltipRect.left < containerBounds.left) {
-      offsetX = containerBounds.left - tooltipRect.left;
-    }
+    const offsetX = horizontalOffsetToFit({
+      tooltipLeft: tooltipRect.left,
+      tooltipRight: tooltipRect.right,
+      containerLeft: containerBounds.left,
+      containerRight: containerBounds.right,
+      viewportWidth: window.innerWidth,
+    });
     setMeasured({ key: resetKey, offsetX });
     // isCurrent depends on measured, which this effect sets -- deps are the
     // real inputs, not isCurrent itself.

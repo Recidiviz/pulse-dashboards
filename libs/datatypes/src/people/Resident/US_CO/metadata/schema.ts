@@ -51,6 +51,19 @@ export const usCoResidentJiiDataSchema = z.object({
     "LIFE_WITHOUT_PAROLE",
     "INTERSTATE_COMPACT",
   ]),
+  // The resident's soonest upcoming Parole Board hearing (backend field
+  // next_parole_hearing_date), read by FirestoreStore.getResidentsForState
+  // to filter the docket query server-side instead of fetching every US_CO
+  // resident and windowing client-side. A plain ISO string, not
+  // dateStringSchema (which parses to a Date) -- Firestore's inequality
+  // operators compare the raw stored value, and the rest of the parole
+  // hearing code (ParoleHearing.hearingDate) already relies on plain
+  // string ordering rather than Date parsing for exactly this reason.
+  // TEMPORARY: lives under metadata for now because that's where the
+  // current sandbox upload puts it. TODO(OBT-47979): move this to
+  // WorkflowsResidentRecord's top level (and update the query's field path
+  // to match) once the real backend export does the same.
+  nextParoleHearingDate: nullishAsUndefined(z.string()),
   paroleBoardClientProfile: paroleBoardClientProfileSchema.optional(),
 });
 

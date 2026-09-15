@@ -18,9 +18,10 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { ParoleCase, ParoleConductRecord } from "~datatypes";
+import { ParoleConductRecord } from "~datatypes";
 
 import type { ParoleConfig } from "../../../../models/types";
+import { buildParoleCase } from "../../../__tests__/paroleCaseFixtures";
 import { UsCoOlderDisciplinariesSection } from "../UsCoOlderDisciplinariesSection";
 
 // Mirrors US_CO's real window, so makeRecord's date lands outside it and the
@@ -45,53 +46,11 @@ function makeRecord(fields: Partial<ParoleConductRecord>): ParoleConductRecord {
   };
 }
 
-function makeCaseDetail(fields: Partial<ParoleCase>): ParoleCase {
-  return {
-    docId: "45821",
-    name: "Anderson, Michael",
-    dob: "1986-07-27",
-    gender: "Male",
-    currentFacility: "Western State Prison",
-    custodyLevel: "Minimum",
-    caseManagerName: "Jennifer Martinez",
-    hearingType: "Parole Grant Hearing",
-    sentenceStartDate: "2022-07-27",
-    paroleEligibilityDate: "2026-08-16",
-    mandatoryReleaseDate: "2028-06-26",
-    parolePlan: { onFile: false, documents: [] },
-    attachments: [],
-    conductHistory: [],
-    docPrograms: [],
-    edovoPrograms: [],
-    offenseHistory: {
-      offenses: [
-        {
-          county: "Sangamon County",
-          docket: "2021-CF-0489",
-          conviction: "Armed Robbery",
-          classFelony: "Class X Felony",
-          sentence: "8 years",
-          dateOfOffense: "2021-07-30",
-          convictionDate: "2022-07-30",
-          offenseNarrative: "Defendant entered convenience store with firearm.",
-        },
-      ],
-      priorConvictions: [],
-      victimInvolved: false,
-      victimAttendingHearing: false,
-    },
-    riskAssessments: [],
-    riskAndNeedsFactors: [],
-    communitySupervisionPlan: [],
-    ...fields,
-  };
-}
-
 describe("UsCoOlderDisciplinariesSection", () => {
   it("renders nothing when there are no older records", () => {
     const { container } = render(
       <UsCoOlderDisciplinariesSection
-        caseDetail={makeCaseDetail({ conductHistory: [] })}
+        caseDetail={buildParoleCase({ conductHistory: [] })}
         config={CONFIG}
       />,
     );
@@ -103,7 +62,7 @@ describe("UsCoOlderDisciplinariesSection", () => {
     const record = makeRecord({ violation: "Unauthorized Area" });
     render(
       <UsCoOlderDisciplinariesSection
-        caseDetail={makeCaseDetail({ conductHistory: [record] })}
+        caseDetail={buildParoleCase({ conductHistory: [record] })}
         config={CONFIG}
       />,
     );

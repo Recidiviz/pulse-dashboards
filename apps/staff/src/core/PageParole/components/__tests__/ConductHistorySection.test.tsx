@@ -215,6 +215,85 @@ describe("ConductHistorySection", () => {
     );
   });
 
+  it("matches the tenant config's classification color regardless of severity casing", () => {
+    const record = makeRecord({
+      date: "2025-12-31",
+      violation: "Fighting",
+      severity: "CLASS 1",
+    });
+    render(
+      <ConductHistorySection
+        title="Institutional Conduct History"
+        visibleYears={1}
+        conductHistory={[record]}
+        conductClassificationColors={{ "Class 1": "BLUE" }}
+      />,
+    );
+
+    expect(screen.getByText("CLASS 1")).toHaveStyleRule(
+      "background-color",
+      statusStyles.BLUE.backgroundColor,
+    );
+  });
+
+  it("colors each severity count in the summary row by its classification", () => {
+    const records = [
+      makeRecord({
+        date: "2025-12-31",
+        violation: "Fighting",
+        severity: "Class 1",
+      }),
+      makeRecord({
+        date: "2025-12-30",
+        violation: "Unauthorized Area",
+        severity: "Class 2",
+      }),
+    ];
+    render(
+      <ConductHistorySection
+        title="Institutional Conduct History"
+        visibleYears={1}
+        conductHistory={records}
+        conductClassificationColors={{ "Class 1": "BLUE", "Class 2": "GREEN" }}
+      />,
+    );
+
+    expect(screen.getByText(/Class 1:/)).toHaveStyleRule(
+      "color",
+      statusStyles.BLUE.color,
+    );
+    expect(screen.getByText(/Class 2:/)).toHaveStyleRule(
+      "color",
+      statusStyles.GREEN.color,
+    );
+  });
+
+  it("uses a legible color for an unmapped severity's count, not SLATE_DARK's white foreground", () => {
+    const record = makeRecord({
+      date: "2025-12-31",
+      violation: "Fighting",
+      severity: "Class IIc",
+    });
+    render(
+      <ConductHistorySection
+        title="Institutional Conduct History"
+        visibleYears={1}
+        conductHistory={[record]}
+        conductClassificationColors={{ "Class I": "BLUE" }}
+      />,
+    );
+
+    // SLATE_DARK is a solid dark-grey pill (white text on a dark
+    // background). The summary row has no background behind this text, so
+    // using SLATE_DARK.color (white) here renders invisible white-on-white
+    // text -- it must fall back to backgroundColor (a plain dark grey)
+    // instead.
+    expect(screen.getByText(/Class IIc:/)).toHaveStyleRule(
+      "color",
+      statusStyles.SLATE_DARK.backgroundColor,
+    );
+  });
+
   it("summarizes violation counts by whichever severity labels appear in the case's history", () => {
     const records = [
       makeRecord({

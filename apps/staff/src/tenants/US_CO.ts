@@ -38,7 +38,7 @@ const US_CO_CONFIG = {
       "conductHistory",
       "communitySupervisionPlan",
     ],
-    docketSubheading: "Hearings in the next two weeks",
+    docketSubheading: "Two Week Outlook",
     docketSearchEnabled: true,
     // CO's scheduled hearing dates are truncated to the 1st of the month in
     // the source table (see us_co/parole_board_client_profile.py), so a
@@ -48,10 +48,13 @@ const US_CO_CONFIG = {
     docketWindowDaysBefore: 31,
     docketWindowDaysAfter: 14,
     conductHistory: {
+      // Real US_CO violationCategory values, confirmed against the staging
+      // sandbox.
       classificationColors: {
-        "Class 1": "BLUE",
-        "Class 2": "GREEN",
-        "Class 3": "PURPLE",
+        "Class I": "BLUE",
+        "Class IIa": "GREEN",
+        "Class IIb": "YELLOW",
+        "Class III": "PURPLE",
       },
       visibleYears: 1,
       children: UsCoOlderDisciplinariesSection,

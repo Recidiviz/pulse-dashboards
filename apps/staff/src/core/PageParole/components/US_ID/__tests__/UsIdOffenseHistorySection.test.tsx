@@ -146,9 +146,7 @@ describe("UsIdOffenseHistorySection", () => {
       },
     });
 
-    expect(
-      screen.queryByText("Victim involved in current offense"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Victim Enrolled")).not.toBeInTheDocument();
     expect(screen.queryByText("Prior Convictions")).not.toBeInTheDocument();
   });
 });

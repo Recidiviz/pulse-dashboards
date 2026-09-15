@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { addDays, startOfToday, subDays } from "date-fns";
+
 import {
   addDisplayName,
   PAROLE_PROGRAM_STATUS,
@@ -25,6 +27,7 @@ import {
   ParoleAttachment,
   ParoleBoardClientProfileHearing,
   ParoleBoardClientProfileLatestRiskNeedSummary,
+  ParoleBoardClientProfileRiskAssessment,
   ParoleBoardClientProfileSentence,
   ParoleCase,
   ParoleCommunitySupervisionPlanEntry,
@@ -41,9 +44,11 @@ import {
   ParoleRiskAssessment,
   ParoleRiskNeedFactor,
   ParoleRiskTool,
+  ParoleSubcategoryScore,
   WorkflowsResidentRecord,
 } from "~datatypes";
 
+import { FirestoreDateRangeFilter } from "../../FirestoreStore/FirestoreStore";
 import { formatDateToISO } from "../../utils";
 import { ParoleStore } from "../ParoleStore";
 import { ParoleAPI } from "./interface";
@@ -134,6 +139,31 @@ function riskToolForRawLabel(raw: string): ParoleRiskTool | undefined {
   return RISK_TOOL_BY_RAW_LABEL[raw];
 }
 
+// Builds the subcategory breakdown for one assessment from its raw category
+// rows. A row with no assessmentCategoryName is a bare score/date entry (an
+// earlier, pre-breakdown assessment) and contributes nothing. Returns {}
+// (not { subcategories: [] }) when no row has one, so
+// SubcategoryBreakdownChart's `!assessment.subcategories` check still
+// renders nothing rather than an empty chart.
+function subcategoriesFromRows(
+  rows: Array<ParoleBoardClientProfileRiskAssessment>,
+): Pick<ParoleRiskAssessment, "subcategories"> {
+  const subcategories: Array<ParoleSubcategoryScore> = rows.flatMap((row) =>
+    row.assessmentCategoryName &&
+    row.assessmentCategoryScore !== undefined &&
+    row.assessmentCategoryMaxScore !== undefined
+      ? [
+          {
+            name: row.assessmentCategoryName,
+            score: row.assessmentCategoryScore,
+            maxScore: row.assessmentCategoryMaxScore,
+          },
+        ]
+      : [],
+  );
+  return subcategories.length > 0 ? { subcategories } : {};
+}
+
 // One entry per LATEST_RISK_NEED_SUMMARY domain, in display order.
 const RISK_NEED_FACTOR_FIELDS: ReadonlyArray<{
   field: keyof ParoleBoardClientProfileLatestRiskNeedSummary;
@@ -217,7 +247,10 @@ export class ParoleAPIClient implements ParoleAPI {
   constructor(public readonly paroleStore: ParoleStore) {}
 
   async hearings(): Promise<Array<ParoleHearing>> {
-    const residents = await this.getResidentsForState("hearings");
+    const residents = await this.getResidentsForState(
+      "hearings",
+      this.hearingDateRangeFilter(),
+    );
 
     return residents.flatMap(
       (resident) => this.hearingForResident(resident) ?? [],
@@ -254,11 +287,44 @@ export class ParoleAPIClient implements ParoleAPI {
 
   private async getResidentsForState(
     methodName: string,
+    dateRange?: FirestoreDateRangeFilter,
   ): Promise<Array<WorkflowsResidentRecord>> {
     const currentTenantId = this.requireSupportedTenant(methodName);
     return this.paroleStore.rootStore.firestoreStore.getResidentsForState(
       currentTenantId,
+      dateRange,
     );
+  }
+
+  // Scopes the hearings() query itself to the tenant's docket window,
+  // instead of fetching every resident in the state and windowing
+  // client-side in ParoleDocketPresenter.hearingsInWindow. Only built for
+  // US_CO for now: the metadata.nextParoleHearingDate field this filters on
+  // (see US_CO's resident metadata schema) is populated by US_CO's pipeline
+  // only. Other tenants fall back to undefined -- an unfiltered query,
+  // exactly like before this existed -- until their pipelines populate the
+  // same field.
+  // TEMPORARY: the field path is metadata.nextParoleHearingDate because
+  // that's where the current sandbox upload puts it.
+  // TODO(OBT-47979): move this to the top-level field path (and extend to
+  // other tenants) once the real backend export lands.
+  private hearingDateRangeFilter(): FirestoreDateRangeFilter | undefined {
+    const { currentTenantId } = this.paroleStore.rootStore.tenantStore;
+    if (currentTenantId !== "US_CO") return undefined;
+
+    const { docketWindowDaysBefore, docketWindowDaysAfter } =
+      this.paroleStore.config;
+    if (docketWindowDaysAfter === undefined) return undefined;
+
+    return {
+      field: "metadata.nextParoleHearingDate",
+      startDateInclusive: formatDateToISO(
+        subDays(startOfToday(), docketWindowDaysBefore ?? 0),
+      ),
+      endDateInclusive: formatDateToISO(
+        addDays(startOfToday(), docketWindowDaysAfter),
+      ),
+    };
   }
 
   private hearingForResident(
@@ -271,6 +337,7 @@ export class ParoleAPIClient implements ParoleAPI {
 
     return {
       docId: resident.personExternalId,
+      displayId: resident.displayId,
       individualName: addDisplayName({ fullName: resident.personName })
         .displayName,
       hearingDate: hearing.hearingDate,
@@ -316,6 +383,7 @@ export class ParoleAPIClient implements ParoleAPI {
 
     return {
       docId: resident.personExternalId,
+      displayId: resident.displayId,
       name: addDisplayName({ fullName: resident.personName }).displayName,
       dob: dates.dob ?? UNKNOWN_DATE,
       gender: resident.gender ?? UNKNOWN_TEXT,
@@ -482,19 +550,37 @@ export class ParoleAPIClient implements ParoleAPI {
   private riskAssessmentsForResident(
     resident: WorkflowsResidentRecord,
   ): Array<ParoleRiskAssessment> {
-    const assessments = this.profileFor(resident)?.riskAssessments ?? [];
-    // No live assessment row has assessmentCategory* populated for any
-    // state yet, so subcategories/carasFactors are left unset here rather
-    // than built from data nothing currently exercises.
-    return assessments.flatMap((assessment) => {
-      const tool = assessment.assessmentType
-        ? riskToolForRawLabel(assessment.assessmentType)
+    const rows = this.profileFor(resident)?.riskAssessments ?? [];
+
+    // Every row for the same assessment repeats that assessment's own
+    // assessmentDate/assessmentType/assessmentScore/assessmentMaxScore, and
+    // carries one subcategory of it (assessmentCategory*) -- so grouping by
+    // date+type recovers one assessment per group, with one subcategory
+    // entry per row in that group.
+    const rowsByAssessment = new Map<
+      string,
+      Array<ParoleBoardClientProfileRiskAssessment>
+    >();
+    for (const row of rows) {
+      const key = `${row.assessmentDate}@@${row.assessmentType}`;
+      const group = rowsByAssessment.get(key);
+      if (group) {
+        group.push(row);
+      } else {
+        rowsByAssessment.set(key, [row]);
+      }
+    }
+
+    return [...rowsByAssessment.values()].flatMap((group) => {
+      const [firstRow] = group;
+      const tool = firstRow.assessmentType
+        ? riskToolForRawLabel(firstRow.assessmentType)
         : undefined;
       if (
         !tool ||
-        !assessment.assessmentDate ||
-        assessment.assessmentScore === undefined ||
-        assessment.assessmentMaxScore === undefined
+        !firstRow.assessmentDate ||
+        firstRow.assessmentScore === undefined ||
+        firstRow.assessmentMaxScore === undefined
       ) {
         return [];
       }
@@ -502,9 +588,14 @@ export class ParoleAPIClient implements ParoleAPI {
       return [
         {
           tool,
-          score: assessment.assessmentScore,
-          maxScore: assessment.assessmentMaxScore,
-          date: assessment.assessmentDate,
+          score: firstRow.assessmentScore,
+          maxScore: firstRow.assessmentMaxScore,
+          date: firstRow.assessmentDate,
+          // CARAS scores its items as regression coefficients rather than a
+          // score-over-max-score pair (see paroleCarasFactorSchema), which
+          // this wire shape has no fields for -- carasFactors stays unset
+          // here until the backend has a place to carry value/coefficient.
+          ...(tool !== "CARAS" ? subcategoriesFromRows(group) : {}),
         },
       ];
     });

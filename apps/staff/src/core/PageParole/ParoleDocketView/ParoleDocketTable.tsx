@@ -113,8 +113,8 @@ function renderHearingDateCell(dateString: unknown): JSX.Element {
   return renderCellText(formatHearingDate(dateString as string));
 }
 
-function renderDocIdCell(docId: unknown): JSX.Element {
-  return renderCellText(formatDocId(docId as string));
+function renderDocIdCell(displayId: unknown): JSX.Element {
+  return renderCellText(formatDocId(displayId as string));
 }
 
 const HeaderLabel = styled.span`
@@ -140,8 +140,8 @@ const COLUMNS: Array<ColumnDef<ParoleHearing>> = [
   },
   {
     header: "DOC ID",
-    id: "docId",
-    accessorKey: "docId",
+    id: "displayId",
+    accessorKey: "displayId",
     enableSorting: false,
     cell: (info) => renderDocIdCell(info.getValue()),
   },

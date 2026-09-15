@@ -17,9 +17,8 @@
 
 import { render, screen } from "@testing-library/react";
 
-import { ParoleCase } from "~datatypes";
-
 import type { ParoleConfig } from "../../../../models/types";
+import { buildParoleCase } from "../../../__tests__/paroleCaseFixtures";
 import { UsIdDisciplinaryFacilityNotesSection } from "../UsIdDisciplinaryFacilityNotesSection";
 
 const CONFIG: ParoleConfig = {
@@ -27,53 +26,11 @@ const CONFIG: ParoleConfig = {
   conductHistory: { classificationColors: {} },
 };
 
-function makeCaseDetail(fields: Partial<ParoleCase>): ParoleCase {
-  return {
-    docId: "45821",
-    name: "Anderson, Michael",
-    dob: "1986-07-27",
-    gender: "Male",
-    currentFacility: "Western State Prison",
-    custodyLevel: "Minimum",
-    caseManagerName: "Jennifer Martinez",
-    hearingType: "Parole Grant Hearing",
-    sentenceStartDate: "2022-07-27",
-    paroleEligibilityDate: "2026-08-16",
-    mandatoryReleaseDate: "2028-06-26",
-    parolePlan: { onFile: false, documents: [] },
-    attachments: [],
-    conductHistory: [],
-    docPrograms: [],
-    edovoPrograms: [],
-    offenseHistory: {
-      offenses: [
-        {
-          county: "Sangamon County",
-          docket: "2021-CF-0489",
-          conviction: "Armed Robbery",
-          classFelony: "Class X Felony",
-          sentence: "8 years",
-          dateOfOffense: "2021-07-30",
-          convictionDate: "2022-07-30",
-          offenseNarrative: "Defendant entered convenience store with firearm.",
-        },
-      ],
-      priorConvictions: [],
-      victimInvolved: false,
-      victimAttendingHearing: false,
-    },
-    riskAssessments: [],
-    riskAndNeedsFactors: [],
-    communitySupervisionPlan: [],
-    ...fields,
-  };
-}
-
 describe("UsIdDisciplinaryFacilityNotesSection", () => {
   it("renders the note text when notes are present", () => {
     render(
       <UsIdDisciplinaryFacilityNotesSection
-        caseDetail={makeCaseDetail({
+        caseDetail={buildParoleCase({
           disciplinaryFacilityNotes:
             "Resident has been compliant this quarter.",
         })}
@@ -89,7 +46,7 @@ describe("UsIdDisciplinaryFacilityNotesSection", () => {
   it("renders an empty state when there are no notes", () => {
     render(
       <UsIdDisciplinaryFacilityNotesSection
-        caseDetail={makeCaseDetail({ disciplinaryFacilityNotes: undefined })}
+        caseDetail={buildParoleCase({ disciplinaryFacilityNotes: undefined })}
         config={CONFIG}
       />,
     );

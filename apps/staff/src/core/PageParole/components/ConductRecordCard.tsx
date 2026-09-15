@@ -26,7 +26,11 @@ import {
 } from "~datatypes";
 import { palette } from "~design-system";
 
-import { PaletteKey, WorkflowsBadgePill } from "../../BadgePill/BadgePill";
+import {
+  PaletteKey,
+  statusStyles,
+  WorkflowsBadgePill,
+} from "../../BadgePill/BadgePill";
 import { FactLabel, formatDate } from "./shared";
 
 const RecordCard = styled.div`
@@ -64,6 +68,32 @@ const UppercaseBadgeWrapper = styled.span`
   text-transform: uppercase;
 `;
 
+// Tenant configs key these colors by the severity string as the backend
+// spells it today ("Class 1"). Matching case-insensitively keeps a casing
+// change upstream from silently collapsing every class onto the same
+// fallback grey.
+export function conductClassificationPalette(
+  conductClassificationColors: Record<string, PaletteKey>,
+  severity: string,
+): PaletteKey {
+  const match = Object.entries(conductClassificationColors).find(
+    ([configuredSeverity]) =>
+      configuredSeverity.toLowerCase() === severity.toLowerCase(),
+  );
+  return match?.[1] ?? "SLATE_DARK";
+}
+
+// statusStyles[key].color is only legible as plain text for palettes meant to
+// sit on a light background -- SLATE_DARK is the one solid-fill exception
+// (white text on its own dark backgroundColor), so using its `color` alone
+// renders invisible white-on-white text wherever there's no pill behind it
+// (e.g. ConductHistorySection's summary counts). Use backgroundColor instead
+// for that one case; it's a plain dark grey, legible on its own.
+export function conductClassificationTextColor(paletteKey: PaletteKey): string {
+  const style = statusStyles[paletteKey];
+  return paletteKey === "SLATE_DARK" ? style.backgroundColor : style.color;
+}
+
 function ConductTag({
   record,
   conductClassificationColors,
@@ -71,7 +101,10 @@ function ConductTag({
   record: ParoleConductRecord;
   conductClassificationColors: Record<string, PaletteKey>;
 }) {
-  const color = conductClassificationColors[record.severity] ?? "SLATE_DARK";
+  const color = conductClassificationPalette(
+    conductClassificationColors,
+    record.severity,
+  );
 
   return (
     <UppercaseBadgeWrapper>

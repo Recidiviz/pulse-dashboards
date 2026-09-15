@@ -61,15 +61,15 @@ export const FullWidthHr = styled(Hr)`
 
 export function ParoleNameHeading({
   name,
-  docId,
+  displayId,
 }: {
   name: string;
-  docId: string;
+  displayId: string;
 }) {
   return (
     <>
       <NameHeading>{name}</NameHeading>
-      <DocId>{formatDocId(docId)}</DocId>
+      <DocId>{formatDocId(displayId)}</DocId>
     </>
   );
 }
@@ -148,7 +148,10 @@ export function DefaultParoleGeneralInfo({
   return (
     <>
       <div>
-        <ParoleNameHeading name={caseDetail.name} docId={caseDetail.docId} />
+        <ParoleNameHeading
+          name={caseDetail.name}
+          displayId={caseDetail.displayId}
+        />
         <FactLabel>Incarcerated | {caseDetail.custodyLevel}</FactLabel>
       </div>
 

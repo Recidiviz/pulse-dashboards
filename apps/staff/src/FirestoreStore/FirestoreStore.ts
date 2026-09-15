@@ -96,6 +96,15 @@ import {
 // Firestore's "in" operator supports at most 30 comparison values per query
 const FIRESTORE_IN_QUERY_BATCH_SIZE = 30;
 
+/** Server-side inequality range for a `getResidentsForState` query: matches
+ * documents whose `field` falls between `startDateInclusive` and
+ * `endDateInclusive`, compared as plain strings. */
+export type FirestoreDateRangeFilter = {
+  field: string;
+  startDateInclusive: string;
+  endDateInclusive: string;
+};
+
 export default class FirestoreStore {
   rootStore;
 
@@ -332,16 +341,25 @@ export default class FirestoreStore {
 
   /** Returns every resident for a state, so a single malformed doc shouldn't
    * take down the whole result set -- skip and log it instead of letting
-   * parse() throw.
+   * parse() throw. When `dateRange` is given, the query itself is scoped to
+   * residents whose `dateRange.field` falls within `startDateInclusive`/
+   * `endDateInclusive` (both compared as plain strings, per that field's own
+   * schema); omit it to return every resident in the state, unfiltered.
    **/
   async getResidentsForState(
     stateCode: string,
+    dateRange?: FirestoreDateRangeFilter,
   ): Promise<WorkflowsResidentRecord[]> {
+    const constraints = [where("stateCode", "==", stateCode)];
+    if (dateRange) {
+      constraints.push(
+        where(dateRange.field, ">=", dateRange.startDateInclusive),
+        where(dateRange.field, "<=", dateRange.endDateInclusive),
+      );
+    }
+
     const results = await getDocs(
-      query(
-        this.collection({ key: "residents" }),
-        where("stateCode", "==", stateCode),
-      ),
+      query(this.collection({ key: "residents" }), and(...constraints)),
     );
 
     return results.docs.flatMap((result) => {

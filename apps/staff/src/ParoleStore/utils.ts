@@ -15,8 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// docId is stored unprefixed (it's also the route param and fixture/API
-// lookup key) -- "DOC-" is display-only text added by this formatter.
-// Shared between ParoleDocketPresenter's search matching and the docId UI
-// display so the two can't drift out of sync.
-export const formatDocId = (docId: string) => `DOC-${docId}`;
+// The displayed id is stored unprefixed -- "DOC-" is display-only text added
+// by this formatter. Shared between ParoleDocketPresenter's search matching
+// and the id UI display so the two can't drift out of sync.
+export const formatDocId = (displayId: string) => `DOC-${displayId}`;

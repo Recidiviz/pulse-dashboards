@@ -73,9 +73,7 @@ describe("ParoleDocketView docket subheading and search", () => {
       </MemoryRouter>,
     );
 
-    expect(
-      await screen.findByText("Hearings in the next two weeks"),
-    ).toBeInTheDocument();
+    expect(await screen.findByText("Two Week Outlook")).toBeInTheDocument();
     expect(
       screen.getByPlaceholderText("Search by name or DOC ID"),
     ).toBeInTheDocument();
@@ -90,9 +88,7 @@ describe("ParoleDocketView docket subheading and search", () => {
     );
 
     await screen.findAllByRole("link");
-    expect(
-      screen.queryByText("Hearings in the next two weeks"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Two Week Outlook")).not.toBeInTheDocument();
     expect(
       screen.queryByPlaceholderText("Search by name or DOC ID"),
     ).not.toBeInTheDocument();
