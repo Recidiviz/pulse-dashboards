@@ -113,6 +113,11 @@ const content: StateSpecificMetricCopy = {
     methodology:
       "The chart describes the number of people by release type specified in the chart title.",
   },
+  admissionsByType: {
+    title: "Admissions by type",
+    methodology:
+      "The chart describes the number of people by admission type specified in the chart title.",
+  },
 };
 
 export default content;

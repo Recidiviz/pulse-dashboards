@@ -35,6 +35,9 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   releasesByType: {
     enabledFilters: [],
   },
+  admissionsByType: {
+    enabledFilters: [],
+  },
   // PRISON
   prisonPopulationOverTime: {
     enabledFilters: [
