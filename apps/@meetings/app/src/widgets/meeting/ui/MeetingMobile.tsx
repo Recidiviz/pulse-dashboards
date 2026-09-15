@@ -16,7 +16,8 @@
 // =============================================================================
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { Link } from "@react-navigation/native";
+import { Link, useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useRef, useState } from "react";
 import {
   Alert,
@@ -59,9 +60,14 @@ import { Person, PersonType } from "~@meetings/app/shared/api";
 import PlaySvg from "~@meetings/app/shared/assets/icons/play.svg";
 import BgAvatarImage from "~@meetings/app/shared/assets/images/bg-avatar.png";
 import {
+  ClientsStackParamList,
+  ResidentsStackParamList,
+} from "~@meetings/app/shared/config";
+import {
   getInitials,
   humanReadableTitleCase,
 } from "~@meetings/app/shared/lib/format";
+import { usePlatform } from "~@meetings/app/shared/lib/platform";
 import { Button } from "~@meetings/app/shared/ui/Button";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
@@ -108,6 +114,11 @@ const MeetingMobile = ({
 }: Props) => {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
+  const { isMobile } = usePlatform();
+  const navigation =
+    useNavigation<
+      NativeStackNavigationProp<ClientsStackParamList & ResidentsStackParamList>
+    >();
   const [activeTab, setActiveTab] = useState<Tab>(Tab.DraftCaseNotes);
   const [isPlayerVisible, setIsPlayerVisible] = useState(false);
   const [isShareReviewModalVisible, setIsShareReviewModalVisible] =
@@ -298,6 +309,17 @@ const MeetingMobile = ({
     onShare();
   };
 
+  const handleEditCaseNote = () => {
+    const params = { personId: person.personId.toString(), meetingId };
+    if (personType === "client") {
+      navigation.navigate("ClientEditCaseNote", params);
+    } else {
+      navigation.navigate("ResidentEditCaseNote", params);
+    }
+  };
+
+  const canOpenEditScreen = isMobile && isMeetingCreator;
+
   const meetingDate = meetingDetails.startTime
     ? formatMeetingStartDate(meetingDetails.startTime)
     : "";
@@ -329,7 +351,8 @@ const MeetingMobile = ({
               meetingId={meetingId}
               caseNote={meetingDetails.caseNote || ""}
               personId={person.personId.toString()}
-              canEdit={isMeetingCreator}
+              canEdit={isMeetingCreator && !isMobile}
+              onEdit={canOpenEditScreen ? handleEditCaseNote : undefined}
               outputVote={
                 isMeetingCreator &&
                 meetingDetails.caseNote && (

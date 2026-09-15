@@ -20,6 +20,7 @@ import { debounce } from "lodash";
 import { ReactNode, useCallback, useEffect, useState } from "react";
 import { TextInput, View } from "react-native";
 import DocumentDuplicateIcon from "react-native-heroicons/solid/DocumentDuplicateIcon";
+import PencilIcon from "react-native-heroicons/solid/PencilIcon";
 
 import { useUpdateNotes } from "~@meetings/app/entities/meeting";
 import { ReviewBeforeCopyModal } from "~@meetings/app/features/meeting-section-approval";
@@ -37,6 +38,7 @@ type Props = {
   personId: string;
   outputVote?: ReactNode;
   canEdit?: boolean;
+  onEdit?: () => void;
 };
 
 const DraftCaseNoteTab = ({
@@ -47,6 +49,7 @@ const DraftCaseNoteTab = ({
   isMeetingCreator,
   outputVote,
   canEdit = false,
+  onEdit,
 }: Props) => {
   const { track } = useAnalytics();
   const utils = trpc.useUtils();
@@ -112,6 +115,15 @@ const DraftCaseNoteTab = ({
           )}
         </View>
         <View className="flex-row items-center gap-4">
+          {onEdit && (
+            <Button
+              variant="secondary"
+              icon={{ icon: PencilIcon, className: "size-4" }}
+              onPress={onEdit}
+            >
+              Edit
+            </Button>
+          )}
           <Button
             variant="secondary"
             icon={{

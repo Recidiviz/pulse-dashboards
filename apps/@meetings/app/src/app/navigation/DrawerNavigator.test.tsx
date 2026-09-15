@@ -60,6 +60,7 @@ jest.mock("~@meetings/app/pages/client-profile", () => null);
 jest.mock("~@meetings/app/pages/resident-profile", () => null);
 jest.mock("~@meetings/app/pages/client-meeting", () => null);
 jest.mock("~@meetings/app/pages/resident-meeting", () => null);
+jest.mock("~@meetings/app/pages/meeting-case-note-edit", () => null);
 jest.mock("~@meetings/app/pages/client-new-meeting", () => null);
 jest.mock("~@meetings/app/pages/resident-new-meeting", () => null);
 jest.mock("~@meetings/app/widgets/navigation-drawer", () => ({

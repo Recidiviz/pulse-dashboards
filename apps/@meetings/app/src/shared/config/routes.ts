@@ -33,6 +33,10 @@ export type ClientsStackParamList = {
     personId: string;
     meetingId: string;
   };
+  ClientEditCaseNote: {
+    personId: string;
+    meetingId: string;
+  };
 };
 
 export type ResidentsStackParamList = {
@@ -48,6 +52,10 @@ export type ResidentsStackParamList = {
     meetingId: string;
   };
   ResidentMeeting: {
+    personId: string;
+    meetingId: string;
+  };
+  ResidentEditCaseNote: {
     personId: string;
     meetingId: string;
   };

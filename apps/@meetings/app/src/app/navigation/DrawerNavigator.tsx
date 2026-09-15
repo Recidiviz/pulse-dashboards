@@ -27,6 +27,7 @@ import { ClientMeetingScreen } from "~@meetings/app/pages/client-meeting";
 import { ClientNewMeetingScreen } from "~@meetings/app/pages/client-new-meeting";
 import { ClientProfileScreen } from "~@meetings/app/pages/client-profile";
 import { ClientsScreen } from "~@meetings/app/pages/clients";
+import { EditCaseNoteScreen } from "~@meetings/app/pages/meeting-case-note-edit";
 import { NoAccessScreen } from "~@meetings/app/pages/no-access";
 import { OnboardingScreen } from "~@meetings/app/pages/onboarding";
 import { ResidentMeetingScreen } from "~@meetings/app/pages/resident-meeting";
@@ -140,57 +141,79 @@ export default function DrawerNavigator() {
   );
 }
 
-const ClientsStack = () => (
-  <ClientsStackNavigator.Navigator
-    initialRouteName="Clients"
-    screenOptions={{
-      gestureEnabled: true,
-      gestureDirection: "horizontal",
-      headerShown: false,
-      fullScreenGestureEnabled: true,
-    }}
-  >
-    <ClientsStackNavigator.Screen name="Clients" component={ClientsScreen} />
-    <ClientsStackNavigator.Screen
-      name="ClientProfile"
-      component={ClientProfileScreen}
-    />
-    <ClientsStackNavigator.Screen
-      name="ClientNewMeeting"
-      component={ClientNewMeetingScreen}
-    />
-    <ClientsStackNavigator.Screen
-      name="ClientMeeting"
-      component={ClientMeetingScreen}
-    />
-  </ClientsStackNavigator.Navigator>
-);
+const ClientsStack = () => {
+  const { isMobile } = usePlatform();
 
-const ResidentsStack = () => (
-  <ResidentsStackNavigator.Navigator
-    initialRouteName="Residents"
-    screenOptions={{
-      gestureEnabled: true,
-      gestureDirection: "horizontal",
-      headerShown: false,
-      fullScreenGestureEnabled: true,
-    }}
-  >
-    <ResidentsStackNavigator.Screen
-      name="Residents"
-      component={ResidentsScreen}
-    />
-    <ResidentsStackNavigator.Screen
-      name="ResidentProfile"
-      component={ResidentProfileScreen}
-    />
-    <ResidentsStackNavigator.Screen
-      name="ResidentNewMeeting"
-      component={ResidentNewMeetingScreen}
-    />
-    <ResidentsStackNavigator.Screen
-      name="ResidentMeeting"
-      component={ResidentMeetingScreen}
-    />
-  </ResidentsStackNavigator.Navigator>
-);
+  return (
+    <ClientsStackNavigator.Navigator
+      initialRouteName="Clients"
+      screenOptions={{
+        gestureEnabled: true,
+        gestureDirection: "horizontal",
+        headerShown: false,
+        fullScreenGestureEnabled: true,
+      }}
+    >
+      <ClientsStackNavigator.Screen name="Clients" component={ClientsScreen} />
+      <ClientsStackNavigator.Screen
+        name="ClientProfile"
+        component={ClientProfileScreen}
+      />
+      <ClientsStackNavigator.Screen
+        name="ClientNewMeeting"
+        component={ClientNewMeetingScreen}
+      />
+      <ClientsStackNavigator.Screen
+        name="ClientMeeting"
+        component={ClientMeetingScreen}
+      />
+      {/* Native only: web keeps inline editing on the meeting screen */}
+      {isMobile && (
+        <ClientsStackNavigator.Screen
+          name="ClientEditCaseNote"
+          component={EditCaseNoteScreen}
+        />
+      )}
+    </ClientsStackNavigator.Navigator>
+  );
+};
+
+const ResidentsStack = () => {
+  const { isMobile } = usePlatform();
+
+  return (
+    <ResidentsStackNavigator.Navigator
+      initialRouteName="Residents"
+      screenOptions={{
+        gestureEnabled: true,
+        gestureDirection: "horizontal",
+        headerShown: false,
+        fullScreenGestureEnabled: true,
+      }}
+    >
+      <ResidentsStackNavigator.Screen
+        name="Residents"
+        component={ResidentsScreen}
+      />
+      <ResidentsStackNavigator.Screen
+        name="ResidentProfile"
+        component={ResidentProfileScreen}
+      />
+      <ResidentsStackNavigator.Screen
+        name="ResidentNewMeeting"
+        component={ResidentNewMeetingScreen}
+      />
+      <ResidentsStackNavigator.Screen
+        name="ResidentMeeting"
+        component={ResidentMeetingScreen}
+      />
+      {/* Native only: web keeps inline editing on the meeting screen */}
+      {isMobile && (
+        <ResidentsStackNavigator.Screen
+          name="ResidentEditCaseNote"
+          component={EditCaseNoteScreen}
+        />
+      )}
+    </ResidentsStackNavigator.Navigator>
+  );
+};

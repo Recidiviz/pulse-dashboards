@@ -261,6 +261,32 @@ describe("DraftCaseNoteTab", () => {
     });
   });
 
+  describe("Edit button", () => {
+    it("is hidden when onEdit is not passed", () => {
+      const { queryByText } = renderTab();
+
+      expect(queryByText("Edit")).toBeNull();
+    });
+
+    it("calls onEdit when pressed", () => {
+      const onEdit = jest.fn();
+      const { getByText } = render(
+        <DraftCaseNoteTab
+          meetingId={MEETING_ID}
+          caseNote={ORIGINAL_NOTE}
+          personId={PERSON_ID}
+          isApproved
+          isMeetingCreator
+          onEdit={onEdit}
+        />,
+      );
+
+      fireEvent.press(getByText("Edit"));
+
+      expect(onEdit).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe("snackbar feedback", () => {
     it("shows a snackbar and invalidates the meeting on a successful save", () => {
       renderTab();
