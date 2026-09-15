@@ -17,13 +17,11 @@
 
 import type { CollectionConfig } from "./types";
 
-// The Recidiviz state-code shape: `US_` followed by exactly two
-// uppercase ASCII letters (US_AZ, US_ID, ...). We validate the SHAPE rather than
-// membership in ~auth-utils' `stateCodes` because the ETL trigger fires per
-// state as data lands, including states not yet enrolled in a dashboard product
-// (so absent from `stateCodes`). Gating on that list would 400 those legitimate
-// backfills; the ETL is the authority on which states have data.
-const STATE_CODE_PATTERN = /^US_[A-Z]{2}$/;
+// The Recidiviz state-code shape: `US_` followed by two or three uppercase
+// ASCII letters (US_AZ, US_ID, US_NYC, ...). Not every tenant is a state — a
+// city tenant carries a three-letter code, so a two-letter-only pattern
+// rejects it and the ETL's backfill trigger 400s for the whole tenant.
+const STATE_CODE_PATTERN = /^US_[A-Z]{2,3}$/;
 
 export function isValidStateCode(raw: unknown): raw is string {
   return typeof raw === "string" && STATE_CODE_PATTERN.test(raw);

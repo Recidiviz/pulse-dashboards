@@ -29,13 +29,14 @@ describe("isValidStateCode", () => {
     "US_CA",
     "US_ZZ", // well-formed but not (yet) in ~auth-utils — the ETL fires for
     "US_XX", // states before they're enrolled, so shape is the gate, not membership
+    "US_NYC", // a city tenant: three letters, and the ETL exports it like any other
   ])("accepts a well-formed state code %j", (value) => {
     expect(isValidStateCode(value)).toBe(true);
   });
 
   it.each([
     "us_id", // wrong case — codes are uppercase
-    "US_TEX", // too many letters
+    "US_TEXAS", // too many letters
     "US_I", // too few letters
     "US_1D", // digits not allowed
     "USTX",
