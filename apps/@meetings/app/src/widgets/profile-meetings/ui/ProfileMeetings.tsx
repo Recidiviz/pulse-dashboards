@@ -113,6 +113,7 @@ export const ProfileMeetings = ({
   } = useMeetingTypeStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState(MeetingsSort.NEWEST_FIRST as string);
+  const [page, setPage] = useState(1);
   const [isNewMeetingSheetOpen, setIsNewMeetingSheetOpen] = useState(false);
   const [isNewMeetingModalOpen, setIsNewMeetingModalOpen] = useState(false);
 
@@ -188,6 +189,10 @@ export const ProfileMeetings = ({
       refetch();
     }
   }, [recordingState, refetch]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchQuery, sortBy]);
 
   useEffect(() => {
     if (meetingTypes.length > 0) {
@@ -386,6 +391,8 @@ export const ProfileMeetings = ({
                         meetings={filteredMeetings}
                         person={person}
                         personType={personType}
+                        page={page}
+                        setPage={setPage}
                       />
                     )}
                   </View>

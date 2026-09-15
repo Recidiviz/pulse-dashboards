@@ -53,6 +53,11 @@ export function ResidentsScreen() {
     sortBy: SortOption.Name as string,
     direction: SortDirection.Ascending,
   });
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, sort]);
 
   // Drives screen-level loading / empty states. PersonsTable / PersonsMobileList
   // run their own paginated queries for the actual rows.
@@ -140,6 +145,8 @@ export function ResidentsScreen() {
                         search={search}
                         sort={sort}
                         setSort={setSort}
+                        page={page}
+                        setPage={setPage}
                       />
                     )}
                   </View>

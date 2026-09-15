@@ -23,7 +23,7 @@ import {
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { keepPreviousData } from "@tanstack/react-query";
 import upperFirst from "lodash/upperFirst";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { Dispatch, SetStateAction, useMemo } from "react";
 import { ImageBackground, TouchableOpacity, View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
@@ -76,6 +76,8 @@ type Props = {
   search: string;
   sort: { sortBy: string; direction: SortDirection };
   setSort: (sort: { sortBy: string; direction: SortDirection }) => void;
+  page: number;
+  setPage: Dispatch<SetStateAction<number>>;
   sectionTitle?: string;
 };
 
@@ -85,9 +87,10 @@ export function PersonsTable({
   search,
   sort,
   setSort,
+  page,
+  setPage,
   sectionTitle,
 }: Props) {
-  const [page, setPage] = useState(1);
   const isFocused = useIsFocused();
   const navigation = useNavigation<ProfileNavProp>();
   const {
@@ -95,10 +98,6 @@ export function PersonsTable({
     meetingId: activeMeetingId,
     person: recordingPerson,
   } = useRecording<"web">();
-
-  useEffect(() => {
-    setPage(1);
-  }, [search, sort, caseload]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const serializedSortBy = serializeSort(sort.sortBy as SortOption) as any;

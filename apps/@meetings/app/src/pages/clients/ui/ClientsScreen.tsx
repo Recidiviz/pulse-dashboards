@@ -53,6 +53,13 @@ export function ClientsScreen() {
     sortBy: SortOption.Name as string,
     direction: SortDirection.Ascending,
   });
+  const [myCaseloadPage, setMyCaseloadPage] = useState(1);
+  const [otherCaseloadPage, setOtherCaseloadPage] = useState(1);
+
+  useEffect(() => {
+    setMyCaseloadPage(1);
+    setOtherCaseloadPage(1);
+  }, [search, sort]);
 
   // Drives screen-level loading / empty states. PersonsTable / PersonsMobileList
   // run their own paginated queries for the actual rows.
@@ -133,6 +140,8 @@ export function ClientsScreen() {
                       search={search}
                       sort={sort}
                       setSort={setSort}
+                      page={myCaseloadPage}
+                      setPage={setMyCaseloadPage}
                       sectionTitle="My caseload results"
                     />
                     <PersonsTable
@@ -141,6 +150,8 @@ export function ClientsScreen() {
                       search={search}
                       sort={sort}
                       setSort={setSort}
+                      page={otherCaseloadPage}
+                      setPage={setOtherCaseloadPage}
                       sectionTitle="Other caseload results"
                     />
                     {total === 0 && (

@@ -20,7 +20,7 @@ import {
   useNavigation,
 } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import React, { useEffect } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
@@ -172,19 +172,17 @@ type MeetingsTableProps = {
   meetings: Meeting[];
   person: Person;
   personType: PersonType;
+  page: number;
+  setPage: Dispatch<SetStateAction<number>>;
 };
 
 const MeetingsTable = ({
   meetings,
   person,
   personType,
+  page,
+  setPage,
 }: MeetingsTableProps) => {
-  const [page, setPage] = React.useState(1);
-
-  useEffect(() => {
-    setPage(1);
-  }, [meetings]);
-
   return (
     <>
       <View className="w-full" style={{ height: TABLE_HEIGHT }}>
