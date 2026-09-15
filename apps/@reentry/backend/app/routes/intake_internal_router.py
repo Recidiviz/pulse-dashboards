@@ -36,19 +36,24 @@ from app.routes.intake_admin_router import (
     IntakeWithSectionsResponse,
     prepare_intake_response,
 )
-from app.routes.shared_models import IntakeMessageResponse
+from app.routes.shared_models import ClientRecordResponse, IntakeMessageResponse
+from app.services.client_data.queries import Queries
 
 logger = structlog.get_logger(__name__)
 
 router = APIRouter()
 
 
+class IntakeWithClientResponse(IntakeWithSectionsResponse):
+    client: ClientRecordResponse | None = None
+
+
 @router.get(
     "/{intake_id}",
     summary="Fetch intake (internal)",
-    description="Returns intake details for Recidiviz staff. Does not require caseload membership.",
+    description="Returns intake details, including the client record, for Recidiviz staff. Does not require caseload membership.",
     tags=["Intake - Internal"],
-    response_model=IntakeWithSectionsResponse,
+    response_model=IntakeWithClientResponse,
 )
 async def get_intake_internal(
     intake_id: UUID,
@@ -63,9 +68,18 @@ async def get_intake_internal(
     logger.info(
         "internal intake access", intake_id=str(intake_id), email=internal_user["email"]
     )
-    return await prepare_intake_response(
+    intake_response = await prepare_intake_response(
         intake=intake, session=session, pseudonymized_staff_id=None
     )
+    client_record = Queries.get_client_by_pseudonymized_id_unsafe(
+        intake.client_pseudo_id
+    )
+    client = (
+        ClientRecordResponse.model_validate(client_record, from_attributes=True)
+        if client_record
+        else None
+    )
+    return IntakeWithClientResponse(**intake_response.model_dump(), client=client)
 
 
 @router.get(

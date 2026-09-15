@@ -41,19 +41,9 @@ const InternalIntakeChatHistoryPage = () => {
     { params: { path: { intake_id: intakeId } }, headers },
   );
 
-  const { data: clientData, isLoading: clientLoading } = $api.useQuery(
-    "get",
-    "/clients/{client_pseudo_id}",
-    {
-      params: {
-        path: { client_pseudo_id: intakeData?.client_pseudo_id as string },
-      },
-      headers,
-    },
-    { enabled: !!intakeData },
-  );
+  const clientData = intakeData?.client;
 
-  if (intakeLoading || (clientLoading && !clientData) || !intakeData) {
+  if (intakeLoading || !intakeData) {
     return (
       <div className="w-full max-w-6xl mx-auto p-6 flex justify-center items-center h-64">
         <div className="w-8 h-8 border-4 border-t-[#006B66] border-[#e0f2f1] rounded-full animate-spin" />

@@ -54,11 +54,28 @@ async def internal_client():
 async def test_get_intake_internal_success(
     async_session, internal_client, mock_clientdata_service, mock_intake
 ):
-    """Returns intake data for an authorized internal user."""
+    """Returns intake data, including the client record, for an authorized internal user."""
     response = await internal_client.get(f"/intake/internal/{mock_intake.id}")
 
     assert response.status_code == 200
-    assert response.json()["client_pseudo_id"] == mock_intake.client_pseudo_id
+    data = response.json()
+    assert data["client_pseudo_id"] == mock_intake.client_pseudo_id
+    assert data["client"]["pseudonymized_client_id"] == mock_intake.client_pseudo_id
+
+
+@pytest.mark.asyncio
+async def test_get_intake_internal_client_not_found(
+    async_session, internal_client, mock_clientdata_service, mock_intake
+):
+    """Returns client=None when the intake's client record can't be found, rather than failing the whole response."""
+    mock_intake.client_pseudo_id = "no-such-client"
+    async_session.add(mock_intake)
+    await async_session.commit()
+
+    response = await internal_client.get(f"/intake/internal/{mock_intake.id}")
+
+    assert response.status_code == 200
+    assert response.json()["client"] is None
 
 
 @pytest.mark.asyncio

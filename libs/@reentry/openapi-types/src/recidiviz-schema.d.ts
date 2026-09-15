@@ -1305,65 +1305,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/intake/internal/{intake_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Fetch intake (internal)
-         * @description Returns intake details for Recidiviz staff. Does not require caseload membership.
-         */
-        get: operations["get_intake_internal_intake_internal__intake_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/intake/internal/{intake_id}/{section_title}/messages": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Fetch intake section messages (internal)
-         * @description Returns messages for a section for Recidiviz staff. Does not require caseload membership.
-         */
-        get: operations["get_intake_section_messages_internal_intake_internal__intake_id___section_title__messages_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/intake/admin/messages/{message_id}/false-positive": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                message_id: string;
-            };
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Mark Message False Positive */
-        patch: operations["mark_message_false_positive_intake_admin_messages__message_id__false_positive_patch"];
-        trace?: never;
-    };
     "/intake/admin/{intake_id}/internal-access": {
         parameters: {
             query?: never;
@@ -1464,13 +1405,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/intake/admin/{intake_id}/chat-history-pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Generate Chat History Pdf */
+        get: operations["generate_chat_history_pdf_intake_admin__intake_id__chat_history_pdf_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/intake/admin/messages/{message_id}/false-positive": {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                message_id: string;
-            };
+            path?: never;
             cookie?: never;
         };
         get?: never;
@@ -1487,9 +1443,7 @@ export interface paths {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                message_id: string;
-            };
+            path?: never;
             cookie?: never;
         };
         get?: never;
@@ -1500,6 +1454,46 @@ export interface paths {
         head?: never;
         /** Undo Message False Positive */
         patch: operations["undo_message_false_positive_intake_admin_messages__message_id__undo_false_positive_patch"];
+        trace?: never;
+    };
+    "/intake/internal/{intake_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Fetch intake (internal)
+         * @description Returns intake details, including the client record, for Recidiviz staff. Does not require caseload membership.
+         */
+        get: operations["get_intake_internal_intake_internal__intake_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/intake/internal/{intake_id}/{section_title}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Fetch intake section messages (internal)
+         * @description Returns messages for a section for Recidiviz staff. Does not require caseload membership.
+         */
+        get: operations["get_intake_section_messages_internal_intake_internal__intake_id___section_title__messages_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/recordings/by_intake/{intake_id}": {
@@ -2418,7 +2412,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/generate-pdf": {
+    "/plans/{id}/intake-summary-pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Generate Intake Summary Pdf */
+        get: operations["generate_intake_summary_pdf_plans__id__intake_summary_pdf_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/plans/{id}/action-plan-pdf": {
         parameters: {
             query?: never;
             header?: never;
@@ -2427,11 +2438,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /**
-         * Generate Pdf
-         * @description Generate PDF from HTML using WeasyPrint
-         */
-        post: operations["generate_pdf_generate_pdf_post"];
+        /** Generate Action Plan Pdf */
+        post: operations["generate_action_plan_pdf_plans__id__action_plan_pdf_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2771,6 +2779,14 @@ export interface components {
             /** Communication Style */
             communication_style?: string | null;
         };
+        /** ActionPlanPDFRequest */
+        ActionPlanPDFRequest: {
+            /**
+             * Resource Sections
+             * @default []
+             */
+            resource_sections: components["schemas"]["ResourceSectionForPDF"][];
+        };
         /**
          * ActivateRequest
          * @description Request schema for activating a config.
@@ -3103,58 +3119,37 @@ export interface components {
         };
         /** Body_import_assessment_config_config_management_assessments_import_post */
         Body_import_assessment_config_config_management_assessments_import_post: {
-            /**
-             * File
-             * Format: binary
-             */
+            /** File */
             file: string;
         };
         /** Body_import_output_config_config_management_outputs_import_post */
         Body_import_output_config_config_management_outputs_import_post: {
-            /**
-             * File
-             * Format: binary
-             */
+            /** File */
             file: string;
         };
         /** Body_router_upload_asset_plans__id__assets_upload_post */
         Body_router_upload_asset_plans__id__assets_upload_post: {
-            /**
-             * File
-             * Format: binary
-             */
+            /** File */
             file: string;
         };
         /** Body_transcribe_audio_route_external_client_transcribe_post */
         Body_transcribe_audio_route_external_client_transcribe_post: {
-            /**
-             * File
-             * Format: binary
-             */
+            /** File */
             file: string;
         };
         /** Body_transcribe_audio_route_intake_services_transcribe_post */
         Body_transcribe_audio_route_intake_services_transcribe_post: {
-            /**
-             * File
-             * Format: binary
-             */
+            /** File */
             file: string;
         };
         /** Body_validate_assessment_import_config_management_assessments_import_validate_post */
         Body_validate_assessment_import_config_management_assessments_import_validate_post: {
-            /**
-             * File
-             * Format: binary
-             */
+            /** File */
             file: string;
         };
         /** Body_validate_output_import_config_management_outputs_import_validate_post */
         Body_validate_output_import_config_management_outputs_import_validate_post: {
-            /**
-             * File
-             * Format: binary
-             */
+            /** File */
             file: string;
         };
         /** ChatTemplateMessage */
@@ -3556,6 +3551,12 @@ export interface components {
             name: string;
             /** Intake Ids */
             intake_ids: string[];
+            /** Attrs By Id */
+            attrs_by_id?: {
+                [key: string]: {
+                    [key: string]: string;
+                };
+            } | null;
         };
         /** EvalIntakeOptions */
         EvalIntakeOptions: {
@@ -3598,6 +3599,12 @@ export interface components {
             /** Ran At */
             ran_at?: string | null;
             execution?: components["schemas"]["EvalExecutionSummary"] | null;
+            /** Attrs By Id */
+            attrs_by_id?: {
+                [key: string]: {
+                    [key: string]: string;
+                };
+            } | null;
         };
         /** EvalTemplateIntake */
         EvalTemplateIntake: {
@@ -4041,6 +4048,56 @@ export interface components {
          * @enum {string}
          */
         IntakeType: "transcription" | "conversation";
+        /** IntakeWithClientResponse */
+        IntakeWithClientResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Client Pseudo Id */
+            client_pseudo_id: string;
+            /** Status */
+            status: string;
+            /** Token */
+            token?: string | null;
+            /** Internal Access */
+            internal_access?: boolean | null;
+            /** Completed At */
+            completed_at?: string | null;
+            address?: components["schemas"]["ClientAddressResponse"] | null;
+            intake_type: components["schemas"]["IntakeType"];
+            /** Has Address */
+            has_address?: boolean | null;
+            /** Has Survey */
+            has_survey?: boolean | null;
+            /**
+             * Locked
+             * @default false
+             */
+            locked: boolean;
+            /** Locked At */
+            locked_at?: string | null;
+            /** Locked Reason */
+            locked_reason?: string | null;
+            /** Current Section */
+            current_section?: string | null;
+            /** Intake Sections */
+            intake_sections?:
+                | components["schemas"]["IntakeSectionResponse"][]
+                | null;
+            client?: components["schemas"]["ClientRecordResponse"] | null;
+        };
         /** IntakeWithSectionsAndMessagesResponse */
         IntakeWithSectionsAndMessagesResponse: {
             /**
@@ -4331,25 +4388,8 @@ export interface components {
             /** Outputs Enabled */
             outputs_enabled: boolean;
         };
-        /** PDFRequest */
-        PDFRequest: {
-            /** Html */
-            html: string;
-            /**
-             * Css
-             * @default []
-             */
-            css: string[] | null;
-            /**
-             * Options
-             * @default {}
-             */
-            options: {
-                [key: string]: unknown;
-            } | null;
-        };
-        /** Page[AIPersonaResponse] */
-        Page_AIPersonaResponse_: {
+        /** PageCustomized[AIPersonaResponse] */
+        PageCustomized_AIPersonaResponse_: {
             /** Items */
             items: components["schemas"]["AIPersonaResponse"][];
             /** Total */
@@ -4839,9 +4879,9 @@ export interface components {
             /** Frontend Status */
             frontend_status: string;
             /** @default {
-             *       "id": "fd545985-f2dc-4663-890f-bcc8b895eb6f",
-             *       "created_at": "2026-05-08T14:44:20.055444",
-             *       "updated_at": "2026-05-08T14:44:20.055447",
+             *       "id": "d6c3cab4-2bf1-4467-b209-17ade384bd19",
+             *       "created_at": "2026-09-14T18:07:46.227636",
+             *       "updated_at": "2026-09-14T18:07:46.227640",
              *       "intake_conversation": false,
              *       "intake_summary": false,
              *       "action_plan": false
@@ -5124,6 +5164,42 @@ export interface components {
             | "no_results_found"
             | "partial_failure"
             | "success";
+        /** ResourceForPDF */
+        ResourceForPDF: {
+            /** Name */
+            name: string;
+            /** Address */
+            address?: string | null;
+            /** Phone */
+            phone?: string | null;
+            /** Website */
+            website?: string | null;
+            /** Description */
+            description?: string | null;
+            /** Subcategory */
+            subcategory?: string | null;
+            /** Travel Distance Miles */
+            travel_distance_miles?: number | null;
+            /**
+             * Is Digital
+             * @default false
+             */
+            is_digital: boolean;
+            /** Chip Bg */
+            chip_bg?: string | null;
+            /** Chip Text */
+            chip_text?: string | null;
+        };
+        /** ResourceSectionForPDF */
+        ResourceSectionForPDF: {
+            /** Title */
+            title: string;
+            /**
+             * Resources
+             * @default []
+             */
+            resources: components["schemas"]["ResourceForPDF"][];
+        };
         /** ResourceSectionResponse */
         ResourceSectionResponse: {
             /** Title */
@@ -5141,7 +5217,6 @@ export interface components {
             | "Sober living and recovery program"
             | "Rental assistance"
             | "Subsidized housing or vouchers"
-            | "Youth housing"
             | "Second-chance employer"
             | "Temporary staffing agency"
             | "Job readiness training"
@@ -5157,45 +5232,32 @@ export interface components {
             | "Crisis intervention services"
             | "Anger management"
             | "Domestic violence treatment"
-            | "Youth mental health services"
             | "Detoxification centers"
             | "Inpatient drug treatment programs"
             | "Intensive outpatient programs"
             | "Medication-assisted treatment"
             | "Substance use support"
-            | "Youth substance use support"
             | "HIV/AIDS and Hepatitis C services"
-            | "Medicaid enrollment assistance"
             | "Community clinic"
             | "Urgent care"
             | "Prescription assistance"
             | "Emergency dental care"
-            | "Youth health care"
             | "Primary care"
             | "Veterans health care"
             | "Criminal record expungement"
             | "Child support assistance"
             | "Voting rights restoration"
-            | "Legal aid"
-            | "Youth legal aid"
             | "GED preparation and testing"
-            | "Vocational trade school programs"
             | "College re-entry programs"
             | "Literacy programs"
             | "Digital literacy programs"
             | "Financial literacy programs"
-            | "Family therapy or counseling"
-            | "Parenting skills classes"
-            | "Family services"
-            | "Family reunification services"
-            | "Child protective services"
             | "Mentorship programs"
             | "Faith-based support"
             | "Reentry support groups"
             | "Community center"
             | "Volunteer opportunities"
-            | "Civic engagement"
-            | "Youth community programs";
+            | "Civic engagement";
         /**
          * ResourceSubcategoryLegacy
          * @description Resource subcategories
@@ -5563,6 +5625,10 @@ export interface components {
             msg: string;
             /** Error Type */
             type: string;
+            /** Input */
+            input?: unknown;
+            /** Context */
+            ctx?: Record<string, never>;
         };
         /**
          * ValidationResult
@@ -5612,8 +5678,6 @@ export interface components {
              * Format: date
              */
             date_of_birth: string;
-            /** Recaptchatoken */
-            recaptchaToken?: string | null;
         };
         /** VerifyDobUrlTokenRequest */
         VerifyDobUrlTokenRequest: {
@@ -5768,7 +5832,6 @@ export interface operations {
                 skip_impersonation?: boolean;
                 /** @description Page number */
                 page?: number;
-                /** @description Page size */
                 size?: number;
             };
             header?: never;
@@ -5783,7 +5846,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Page_AIPersonaResponse_"];
+                    "application/json": components["schemas"]["PageCustomized_AIPersonaResponse_"];
                 };
             };
             /** @description Validation Error */
@@ -8460,100 +8523,6 @@ export interface operations {
             };
         };
     };
-    get_intake_internal_intake_internal__intake_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                intake_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["IntakeWithSectionsResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_intake_section_messages_internal_intake_internal__intake_id___section_title__messages_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                intake_id: string;
-                section_title: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["IntakeMessageResponse"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    mark_message_false_positive_intake_admin_messages__message_id__false_positive_patch: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                message_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["IntakeMessageResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
     set_internal_access_intake_admin__intake_id__internal_access_patch: {
         parameters: {
             query?: {
@@ -8727,9 +8696,44 @@ export interface operations {
             };
         };
     };
+    generate_chat_history_pdf_intake_admin__intake_id__chat_history_pdf_get: {
+        parameters: {
+            query?: {
+                skip_impersonation?: boolean;
+            };
+            header?: never;
+            path: {
+                intake_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     mark_message_false_positive_intake_admin_messages__message_id__false_positive_patch: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 message_id: string;
@@ -8760,7 +8764,9 @@ export interface operations {
     };
     undo_message_false_positive_intake_admin_messages__message_id__undo_false_positive_patch: {
         parameters: {
-            query?: never;
+            query?: {
+                skip_impersonation?: boolean;
+            };
             header?: never;
             path: {
                 message_id: string;
@@ -8776,6 +8782,69 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["IntakeMessageResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_intake_internal_intake_internal__intake_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                intake_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IntakeWithClientResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_intake_section_messages_internal_intake_internal__intake_id___section_title__messages_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                intake_id: string;
+                section_title: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IntakeMessageResponse"][];
                 };
             };
             /** @description Validation Error */
@@ -10445,18 +10514,53 @@ export interface operations {
             };
         };
     };
-    generate_pdf_generate_pdf_post: {
+    generate_intake_summary_pdf_plans__id__intake_summary_pdf_get: {
         parameters: {
             query?: {
                 skip_impersonation?: boolean;
             };
             header?: never;
-            path?: never;
+            path: {
+                id: string;
+            };
             cookie?: never;
         };
-        requestBody: {
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    generate_action_plan_pdf_plans__id__action_plan_pdf_post: {
+        parameters: {
+            query?: {
+                skip_impersonation?: boolean;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
             content: {
-                "application/json": components["schemas"]["PDFRequest"];
+                "application/json": components["schemas"]["ActionPlanPDFRequest"];
             };
         };
         responses: {
