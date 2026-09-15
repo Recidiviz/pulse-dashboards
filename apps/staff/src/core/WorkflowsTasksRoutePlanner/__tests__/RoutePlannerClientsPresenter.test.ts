@@ -15,12 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import AxiosMockAdapter from "axios-mock-adapter";
 import { runInAction } from "mobx";
 import { Mock } from "vitest";
 
 import { GeocodingStatus } from "../../../FirestoreStore";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
+import { APIStore } from "../../../RootStore/APIStore";
 import TenantStore from "../../../RootStore/TenantStore";
+import type UserStore from "../../../RootStore/UserStore";
 import { Client, WorkflowsStore } from "../../../WorkflowsStore";
 import RoutePlannerClientStore from "../ClientStore/ClientStoreBase";
 import { RoutePlannerClientsPresenter } from "../RoutePlannerClientsPresenter";
@@ -368,5 +371,73 @@ describe("sendGeocodingRequest response parsing", () => {
 
   afterEach(() => {
     vi.resetAllMocks();
+  });
+});
+
+describe("optimizeRoute", () => {
+  let mockAxios: AxiosMockAdapter;
+
+  beforeEach(() => {
+    vi.stubEnv("VITE_NEW_BACKEND_API_URL", "http://localhost:5000");
+    const mockUserStore = {
+      getToken: () => Promise.resolve("fake-token"),
+      isRecidivizUser: false,
+      stateCode: "US_TX",
+    } as UserStore;
+    const apiStore = new APIStore(mockUserStore);
+    mockAxios = new AxiosMockAdapter(apiStore.client);
+    mockWorkflowsStore.rootStore.apiStore = apiStore;
+
+    rpClientStore = new RoutePlannerClientStore(mockWorkflowsStore);
+    presenter = new RoutePlannerClientsPresenter(
+      mockWorkflowsStore,
+      rpClientStore,
+    );
+
+    for (const client of clients.slice(0, 2)) {
+      // @ts-expect-error accessing private property for test
+      rpClientStore.placeIds[client.pseudonymizedId] = fakePlaceId;
+    }
+  });
+
+  afterEach(() => {
+    mockAxios.reset();
+    mockAxios.restore();
+    vi.unstubAllEnvs();
+  });
+
+  it("strips \\r\\n and \\n from waypoint formatted addresses before posting", async () => {
+    const clientsWithNewlines = [
+      {
+        ...clients[0],
+        formattedAddress: "123 Main Head Ave\r\nDallas, TX",
+      },
+      { ...clients[1], formattedAddress: "456 Elm St\nHouston, TX" },
+      {
+        ...clients[0],
+        formattedAddress: "2389 Patch Dr.\napt 7\r\nDallas, TX",
+      },
+      { ...clients[1], formattedAddress: "2389 Test St., Houston, TX" },
+    ] as Client[];
+
+    await Promise.all(
+      clientsWithNewlines.map((client) => presenter.addPerson(client)),
+    );
+
+    mockAxios.onPost().replyOnce(200, { optimizedOrder: [], isChanged: false });
+
+    await presenter.optimizeRoute("start address");
+
+    const requestBody = JSON.parse(mockAxios.history.post[0].data);
+    expect(
+      requestBody.waypoints.map(
+        (waypoint: { formattedAddress: string }) => waypoint.formattedAddress,
+      ),
+    ).toEqual([
+      "123 Main Head Ave Dallas, TX",
+      "456 Elm St Houston, TX",
+      "2389 Patch Dr. apt 7 Dallas, TX",
+      "2389 Test St., Houston, TX",
+    ]);
   });
 });

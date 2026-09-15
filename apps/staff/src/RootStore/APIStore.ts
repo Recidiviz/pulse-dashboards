@@ -81,6 +81,11 @@ export class APIStore {
     optimizedOrder: string[];
     isChanged: boolean;
   }> {
+    body.waypoints.forEach((point) => {
+      if (!point) return;
+      point.formattedAddress = point.formattedAddress?.replace(/\r\n|\n/g, " ");
+      return point;
+    });
     const stateCode = this.userStore.isRecidivizUser
       ? this.userStore.rootStore?.currentTenantId
       : this.userStore.stateCode;
