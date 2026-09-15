@@ -45,3 +45,12 @@ export default meta;
 type AnnouncementBannerStory = StoryObj<typeof meta>;
 
 export const Default: AnnouncementBannerStory = {};
+
+export const WithoutCta: AnnouncementBannerStory = {
+  args: {
+    message:
+      "**Now in Spanish**\n\nThe Program List is now available in Spanish.",
+    linkText: undefined,
+    to: undefined,
+  },
+};

@@ -45,15 +45,14 @@ const ActionLink = styled(ButtonLink)`
 `;
 
 type AnnouncementBannerProps = {
-  /** Markdown-formatted announcement copy */
   message: string;
-  linkText: string;
-  to: string;
+  linkText?: string;
+  to?: string;
 };
 
 /**
  * A highlighted, non-dismissible callout for announcing a policy change,
- * with a link out to more information about it.
+ * optionally with a link out to more information about it.
  */
 export const AnnouncementBanner: FC<AnnouncementBannerProps> = ({
   message,
@@ -64,8 +63,10 @@ export const AnnouncementBanner: FC<AnnouncementBannerProps> = ({
     <Message>
       <Markdown>{message}</Markdown>
     </Message>
-    <ActionLink kind="primary" to={to}>
-      {linkText}
-    </ActionLink>
+    {linkText && to && (
+      <ActionLink kind="primary" to={to}>
+        {linkText}
+      </ActionLink>
+    )}
   </Wrapper>
 );
