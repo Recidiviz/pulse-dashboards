@@ -19,6 +19,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import {
+  AdmissionsAndReleasesOverTimeMetric,
   OverTimeMetric,
   SnapshotMetric,
   VizPopulationOverTime,
@@ -27,6 +28,7 @@ import {
 
 import withPublicPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPublicPathwaysMetricHelpers";
 import { useRootStore } from "../StoreProvider";
+import VizAdmissionsAndReleasesOverTime from "./VizAdmissionsAndReleasesOverTime";
 
 const HydratedOverTimeViz = withPublicPathwaysMetricHelpers(
   VizPopulationOverTime,
@@ -35,13 +37,26 @@ const HydratedSnapshotViz = withPublicPathwaysMetricHelpers(
   VizPopulationSnapshot,
 );
 
+const HydratedAdmissionsAndReleasesViz = withPublicPathwaysMetricHelpers(
+  VizAdmissionsAndReleasesOverTime,
+);
+
 type MetricVizMapperProps = {
-  metric: OverTimeMetric | SnapshotMetric;
+  metric: AdmissionsAndReleasesOverTimeMetric | OverTimeMetric | SnapshotMetric;
 };
 
 const MetricVizMapper: React.FC<MetricVizMapperProps> = observer(
   function MetricVizMapper({ metric }) {
     const { filtersStore } = useRootStore();
+
+    if (metric instanceof AdmissionsAndReleasesOverTimeMetric) {
+      return (
+        <HydratedAdmissionsAndReleasesViz
+          metric={metric}
+          filtersStore={filtersStore}
+        />
+      );
+    }
 
     if (metric instanceof OverTimeMetric) {
       return (

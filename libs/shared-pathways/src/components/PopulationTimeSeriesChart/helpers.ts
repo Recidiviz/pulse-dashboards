@@ -24,6 +24,12 @@ export type ChartPoint = {
   value: number;
   lowerBound?: number;
   upperBound?: number;
+  /**
+   * Fill for this point's dot. A point carries its own color because the chart
+   * frame styles dots one at a time, with no reference back to the line they
+   * belong to. Left unset, the dot takes its fill from CSS.
+   */
+  color?: string;
 };
 
 export type PreparedData = {
@@ -109,4 +115,80 @@ export const getTickValues = (
   return population
     .filter((_, index) => index % dateSpacing === 0)
     .map((r) => r.date);
+};
+
+/** One named line on an over-time chart, and how to draw it. */
+export type TimeSeriesLine = {
+  /** Label for this line in the chart legend. */
+  name: string;
+  data: ChartPoint[];
+  /**
+   * Stroke color. Omit to leave the line to the chart's own CSS, which is what
+   * the single-population charts rely on.
+   */
+  color?: string;
+};
+
+/** A line as the underlying chart frame wants it. */
+export type PlotLine = {
+  data: ChartPoint[];
+  class: string;
+  name?: string;
+  color?: string;
+};
+
+export const HISTORICAL_LINE_CLASS = "VizPathways__historicalLine";
+export const PROJECTED_LINE_CLASS = "PopulationTimeSeriesChart__projectedLine";
+
+/**
+ * Returns the lines to draw, plus every point across them for axis and tick
+ * math.
+ *
+ * A chart either names its own lines through `series` — which is how a chart
+ * that compares two populations does it — or supplies one historical
+ * population and an optional projection, which every single-population chart
+ * does.
+ */
+export const resolveTimeSeriesLines = ({
+  series,
+  historicalPopulation,
+  projectedPopulation,
+}: {
+  series?: TimeSeriesLine[];
+  historicalPopulation: ChartPoint[];
+  projectedPopulation?: ChartPoint[];
+}): { lines: PlotLine[]; allPoints: ChartPoint[] } => {
+  if (series?.length) {
+    // Stamp each point with its line's color so the dots match the line.
+    const coloredSeries = series.map(({ name, data, color }) => ({
+      class: HISTORICAL_LINE_CLASS,
+      name,
+      color,
+      data: color ? data.map((point) => ({ ...point, color })) : data,
+    }));
+
+    return {
+      lines: coloredSeries,
+      allPoints: coloredSeries.flatMap(({ data }) => data),
+    };
+  }
+
+  const historicalLine = {
+    class: HISTORICAL_LINE_CLASS,
+    data: historicalPopulation,
+  };
+
+  if (!projectedPopulation) {
+    return { lines: [historicalLine], allPoints: historicalPopulation };
+  }
+
+  return {
+    lines: [
+      historicalLine,
+      { class: PROJECTED_LINE_CLASS, data: projectedPopulation },
+    ],
+    // The projection repeats the last historical point so the lines meet, so
+    // drop it here to avoid counting that point twice.
+    allPoints: historicalPopulation.concat(projectedPopulation.slice(1)),
+  };
 };

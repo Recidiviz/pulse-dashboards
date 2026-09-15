@@ -271,6 +271,9 @@ const content: MetricCopy = {
     methodology:
       "The chart describes the number of people from each time at facility as of the date specified in the chart title.",
   },
+  admissionsAndReleasesOverTime: {
+    title: "Admissions and releases over time",
+  },
 };
 
 export default content;

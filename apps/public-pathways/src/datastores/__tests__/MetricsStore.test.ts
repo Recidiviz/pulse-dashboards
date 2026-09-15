@@ -102,6 +102,29 @@ describe("MetricsStore", () => {
     expect(metricsStore.page).toBe(PATHWAYS_PAGES.prison);
   });
 
+  // A metric reads its filter configuration and its copy by id while it is
+  // being built, and throws if either is missing. Building every metric on
+  // every dashboard catches an id that was registered in only some of those
+  // places.
+  it.each([PATHWAYS_PAGES.prison, PATHWAYS_PAGES.admissionsAndReleases])(
+    "builds every metric the %s dashboard shows",
+    (page) => {
+      mockRootStore.page = page;
+
+      const metrics = Object.values(
+        new MetricsStore({ rootStore: mockRootStore }).map,
+      );
+
+      expect(metrics.length).toBeGreaterThan(0);
+      metrics.forEach((metric) => {
+        expect(metric.filters.enabledFilters).toBeDefined();
+        expect(metric.chartTitle).toBeTruthy();
+      });
+
+      mockRootStore.page = PATHWAYS_PAGES.prison;
+    },
+  );
+
   it("has section defaulting to countOverTime", () => {
     expect(metricsStore.section).toBe(PATHWAYS_SECTIONS["countOverTime"]);
   });

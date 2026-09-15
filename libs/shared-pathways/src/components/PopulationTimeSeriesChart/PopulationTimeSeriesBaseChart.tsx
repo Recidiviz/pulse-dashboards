@@ -30,8 +30,16 @@ import {
 } from "../chartScrollUtils";
 import { PathwaysTheme } from "../PathwaysTheme";
 import VizPathways from "../VizPathways";
-import { ChartPoint, formatMonthAndYear, getTickValues } from "./helpers";
+import {
+  ChartPoint,
+  formatMonthAndYear,
+  getTickValues,
+  PlotLine,
+  resolveTimeSeriesLines,
+  TimeSeriesLine,
+} from "./helpers";
 import PopulationTimeSeriesTooltip from "./PopulationTimeSeriesTooltip";
+import TimeSeriesLegend from "./TimeSeriesLegend";
 
 const ChartWrapper = styled(VizPathways)<{
   $tooltipSuppressed: boolean;
@@ -60,16 +68,12 @@ const ChartWrapper = styled(VizPathways)<{
     `}
 `;
 
-type PlotLine = {
-  data: ChartPoint[];
-  class: string;
-};
-
 type Props = {
   title: string;
   subtitle?: string;
   historicalPopulation: ChartPoint[];
   projectedPopulation?: ChartPoint[];
+  series?: TimeSeriesLine[];
   chartTop: number;
   chartBottom: number;
   dateSpacing: number;
@@ -101,6 +105,7 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
   subtitle,
   historicalPopulation,
   projectedPopulation,
+  series,
   chartTop,
   chartBottom,
   dateSpacing,
@@ -126,19 +131,16 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
   const charWidth = theme.chart.axisLabel.charWidth;
   const leftMargin = (chartTop.toString().length + 1.5) * charWidth;
 
-  const historicalLine = {
-    class: "VizPathways__historicalLine",
-    data: historicalPopulation,
-  };
+  const { lines, allPoints } = resolveTimeSeriesLines({
+    series,
+    historicalPopulation,
+    projectedPopulation,
+  });
 
-  const projectedLine = {
-    class: "PopulationTimeSeriesChart__projectedLine",
-    data: projectedPopulation,
-  };
-
-  const allPoints = projectedPopulation
-    ? historicalPopulation.concat(projectedPopulation.slice(1))
-    : historicalPopulation;
+  // Only a chart whose lines are both named and colored can label them.
+  const legendItems = lines.flatMap(({ name, color }) =>
+    name && color ? [{ name, color }] : [],
+  );
 
   const tickValues = getTickValues(allPoints, dateSpacing);
 
@@ -167,11 +169,23 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
     hoverAnnotation: true,
     // eslint-disable-next-line react/no-unstable-nested-components
     tooltipContent: (d: ChartPoint) => <PopulationTimeSeriesTooltip d={d} />,
-    lines: projectedPopulation
-      ? [historicalLine, projectedLine]
-      : [historicalLine],
+    lines,
     lineDataAccessor: "data",
     lineClass: (l: PlotLine) => l.class,
+    // Left off entirely unless a line carries its own color, so that the
+    // single-population charts keep drawing from their CSS as before.
+    ...(legendItems.length
+      ? {
+          lineStyle: (l: PlotLine) => ({
+            stroke: l.color,
+            strokeWidth: 2.5,
+            fill: "none",
+          }),
+          // Overrides the dot fill that `pointClass` sets in CSS, so a point
+          // matches its own line rather than the single-population color.
+          pointStyle: (point: ChartPoint) => ({ fill: point.color }),
+        }
+      : {}),
     xScaleType: scaleTime(),
     xAccessor: "date",
     yAccessor: "value",
@@ -225,6 +239,11 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
     <ChartWrapper
       title={title}
       subtitle={subtitle}
+      legend={
+        legendItems.length > 1 ? (
+          <TimeSeriesLegend items={legendItems} />
+        ) : undefined
+      }
       $tooltipSuppressed={tooltipSuppressed}
     >
       <div

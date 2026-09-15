@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export { default as AdmissionsAndReleasesOverTimeMetric } from "./AdmissionsAndReleasesOverTimeMetric";
 export { default as OverTimeMetric } from "./OverTimeMetric";
 export { default as PathwaysNewBackendMetric } from "./PathwaysNewBackendMetric";
 export { default as PersonLevelMetric } from "./PersonLevelMetric";

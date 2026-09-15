@@ -18,6 +18,11 @@
 import { MetricCopy } from "../../types";
 
 const content: MetricCopy = {
+  admissionsAndReleasesOverTime: {
+    title: "Admissions and releases over time",
+    note: "Admissions and releases over time note",
+    methodology: "Admissions and releases over time methodology",
+  },
   libertyToPrisonPopulationOverTime: {
     title: "Admissions from liberty to prison over time",
     note: "Admissions from liberty to prison over time note",

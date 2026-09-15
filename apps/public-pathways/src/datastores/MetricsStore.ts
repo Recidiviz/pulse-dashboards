@@ -21,6 +21,7 @@ import { makeAutoObservable } from "mobx";
 
 import { isHydrationFinished, isHydrationUntouched } from "~hydration-utils";
 import {
+  AdmissionsAndReleasesOverTimeMetric,
   downloadChartAsData,
   FILTER_TYPES,
   MetricRecord,
@@ -49,8 +50,14 @@ const DEFAULT_INDIVIDUAL_LEVEL_SNAPSHOT_FILENAME = "individual_level_data.csv";
 const DEFAULT_INDIVIDUAL_LEVEL_BULK_EXPORT_FILENAME =
   "individual_level_data_last_5_years.zip";
 
+/** Any metric this dashboard can put on a section. */
+type PublicPathwaysMetric =
+  | AdmissionsAndReleasesOverTimeMetric
+  | OverTimeMetric
+  | SnapshotMetric;
+
 /** The metrics one page can show, keyed by the section that shows each one. */
-type SectionMetricMap = Record<string, OverTimeMetric | SnapshotMetric>;
+type SectionMetricMap = Record<string, PublicPathwaysMetric>;
 
 export default class MetricsStore implements PathwaysMetricStore {
   private readonly rootStore: RootStore;
@@ -244,6 +251,10 @@ export default class MetricsStore implements PathwaysMetricStore {
   private get mapsByPage(): Record<string, SectionMetricMap> {
     if (!this._mapsByPage) {
       this._mapsByPage = {
+        [PATHWAYS_PAGES.admissionsAndReleases]: {
+          [PATHWAYS_SECTIONS["countOverTime"]]:
+            this.admissionsAndReleasesOverTime,
+        },
         [PATHWAYS_PAGES.prison]: {
           [PATHWAYS_SECTIONS["countOverTime"]]: this.prisonPopulationOverTime,
           [PATHWAYS_SECTIONS["countByLocation"]]: this.prisonFacilityPopulation,
@@ -283,7 +294,7 @@ export default class MetricsStore implements PathwaysMetricStore {
     return this.mapsByPage[this.page] ?? {};
   }
 
-  get current(): OverTimeMetric | SnapshotMetric {
+  get current(): PublicPathwaysMetric {
     return this.map[this.section] ?? this.prisonPopulationOverTime;
   }
 
@@ -292,9 +303,7 @@ export default class MetricsStore implements PathwaysMetricStore {
    * individual-level download reads its snapshot range from this metric, so it
    * must stay on that page's metric rather than follow the page in view.
    */
-  private get populationUnderCustodyOverTime():
-    | OverTimeMetric
-    | SnapshotMetric {
+  private get populationUnderCustodyOverTime(): PublicPathwaysMetric {
     return this.mapsByPage[PATHWAYS_PAGES.prison][
       PATHWAYS_SECTIONS["countOverTime"]
     ];
@@ -341,6 +350,15 @@ export default class MetricsStore implements PathwaysMetricStore {
     if (isHydrationUntouched(overTimeMetric)) {
       overTimeMetric.hydrate();
     }
+  }
+
+  get admissionsAndReleasesOverTime(): AdmissionsAndReleasesOverTimeMetric {
+    return new AdmissionsAndReleasesOverTimeMetric({
+      id: "admissionsAndReleasesOverTime",
+      endpoint: "AdmissionsAndReleasesOverTime",
+      store: this,
+      fetchMetrics: this.fetchMetrics,
+    });
   }
 
   get prisonPopulationOverTime(): OverTimeMetric {

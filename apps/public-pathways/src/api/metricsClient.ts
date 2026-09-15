@@ -17,6 +17,8 @@
 
 import { MetricRecord, NewBackendRecord } from "~shared-pathways";
 
+import { resolveStubbedMetric } from "./stubs";
+
 const CONTENT_DISPOSITION_FILENAME_PATTERN = /filename=(?:"([^"]+)"|([^;]+))/;
 
 async function validateResponse(response: Response) {
@@ -45,6 +47,15 @@ export async function callPublicPathwaysApi<RecordFormat extends MetricRecord>(
   getTokenSilently: () => Promise<string | undefined>,
   signal: AbortSignal,
 ): Promise<NewBackendRecord<RecordFormat>> {
+  // The Admissions & Releases endpoints do not exist yet, so in development
+  // they resolve to the design's sample figures. `import.meta.env.DEV` is
+  // replaced with `false` at build time, so this and the stub it imports are
+  // dropped from a production bundle.
+  if (import.meta.env.DEV) {
+    const stubbed = resolveStubbedMetric<RecordFormat>(endpoint);
+    if (stubbed) return stubbed;
+  }
+
   const url = `${import.meta.env.VITE_PUBLIC_PATHWAYS_API_URL_BASE}/${endpoint}`;
   const token = await getTokenSilently();
   const response = await fetch(url, {

@@ -164,6 +164,17 @@ export type TimeSeriesDataRecord = {
   avg90day: number;
 };
 
+/**
+ * One calendar period with both event counts on it, so a chart can draw
+ * admissions and releases as two lines without pairing rows up itself.
+ */
+export type AdmissionsAndReleasesTimeSeriesRecord = {
+  year: number;
+  month: number;
+  admissionsCount: number;
+  releasesCount: number;
+};
+
 /* Superset of all the SnapshotRecords, but with all fields except "count" optional */
 export type SnapshotDataRecord = Partial<
   PrisonPopulationSnapshotRecord &
@@ -182,6 +193,7 @@ export type MetricRecord =
   | PrisonPopulationPersonLevelRecord
   | LibertyPopulationSnapshotRecord
   | TimeSeriesDataRecord
+  | AdmissionsAndReleasesTimeSeriesRecord
   | SnapshotDataRecord
   | PersonLevelDataRecord;
 
@@ -212,6 +224,7 @@ export type PathwaysMetricRecords =
   | LibertyPopulationSnapshotRecord[]
   | PrisonPopulationPersonLevelRecord[]
   | TimeSeriesDataRecord[]
+  | AdmissionsAndReleasesTimeSeriesRecord[]
   | SnapshotDataRecord[]
   | PersonLevelDataRecord[];
 
@@ -238,6 +251,7 @@ export type MetricId =
   | "prisonPopulationByReligion"
   | "prisonPopulationByMaritalStatus"
   | "prisonPopulationByTimeAtFacility"
+  | "admissionsAndReleasesOverTime"
   | "projectedPrisonPopulationOverTime"
   | "prisonPopulationPersonLevel"
   | "prisonToSupervisionPopulationOverTime"

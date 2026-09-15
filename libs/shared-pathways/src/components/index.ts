@@ -26,6 +26,7 @@ export * from "./PathwaysTheme";
 export * from "./PopulationSnapshotChart";
 export * from "./PopulationSnapshotTooltip";
 export * from "./PopulationTimeSeriesChart";
+export * from "./PopulationTimeSeriesChart/helpers";
 export * from "./RadioGroup";
 export * from "./TogglePill";
 export { default as VizPathways } from "./VizPathways";

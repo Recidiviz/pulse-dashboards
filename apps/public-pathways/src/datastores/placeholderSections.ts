@@ -35,7 +35,6 @@ export const PLACEHOLDER_SECTIONS_BY_PAGE: Record<
 > = {
   [PATHWAYS_PAGES.prison]: new Set(),
   [PATHWAYS_PAGES.admissionsAndReleases]: new Set([
-    PATHWAYS_SECTIONS["countOverTime"],
     PATHWAYS_SECTIONS["countByCustodyStatus"],
     PATHWAYS_SECTIONS["countByAdmissionType"],
     PATHWAYS_SECTIONS["countByReleaseType"],
