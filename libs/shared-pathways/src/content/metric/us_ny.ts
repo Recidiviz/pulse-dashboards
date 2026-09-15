@@ -103,6 +103,11 @@ const content: StateSpecificMetricCopy = {
     methodology:
       'The chart describes the historical admissions and releases from prison over the selected "Time Period". Each data point represents the total admissions and total releases for the selected group on the first day of that month. For example, hovering over the "November 2023" data point on the chart will show the total number of people described in the section above on November 1, 2023.',
   },
+  releasesByCommunitySupervision: {
+    title: "Releases by community supervision over time",
+    methodology:
+      "The chart describes the number of people by community supervision status specified in the chart title.",
+  },
 };
 
 export default content;

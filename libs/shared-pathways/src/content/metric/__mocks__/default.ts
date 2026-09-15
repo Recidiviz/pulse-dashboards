@@ -23,6 +23,11 @@ const content: MetricCopy = {
     note: "Admissions and releases over time note",
     methodology: "Admissions and releases over time methodology",
   },
+  releasesByCommunitySupervision: {
+    title: "Releases by community supervision status",
+    note: "Releases by community supervision status note",
+    methodology: "Releases by community supervision status methodology",
+  },
   libertyToPrisonPopulationOverTime: {
     title: "Admissions from liberty to prison over time",
     note: "Admissions from liberty to prison over time note",

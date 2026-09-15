@@ -78,7 +78,10 @@ export function getDefaultPathwaysSectionByPage(pageId: string): string {
 }
 
 const PATHWAYS_METRIC_IDS_BY_PAGE: Record<PathwaysPage, MetricId[]> = {
-  [PATHWAYS_PAGES.admissionsAndReleases]: ["admissionsAndReleasesOverTime"],
+  [PATHWAYS_PAGES.admissionsAndReleases]: [
+    "admissionsAndReleasesOverTime",
+    "releasesByCommunitySupervision",
+  ],
   [PATHWAYS_PAGES.libertyToPrison]: [
     "libertyToPrisonPopulationOverTime",
     "libertyToPrisonPopulationByDistrict",
@@ -178,6 +181,8 @@ export const PATHWAYS_SECTION_BY_METRIC_ID: Record<MetricId, PathwaysSection> =
       PATHWAYS_SECTIONS["countByTimeAtFacility"],
     prisonPopulationOverTime: PATHWAYS_SECTIONS["countOverTime"],
     admissionsAndReleasesOverTime: PATHWAYS_SECTIONS["countOverTime"],
+    releasesByCommunitySupervision:
+      PATHWAYS_SECTIONS["countByCommunitySupervision"],
     projectedPrisonPopulationOverTime:
       PATHWAYS_SECTIONS["projectedCountOverTime"],
     projectedSupervisionPopulationOverTime:

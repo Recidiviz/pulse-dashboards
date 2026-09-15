@@ -274,6 +274,9 @@ const content: MetricCopy = {
   admissionsAndReleasesOverTime: {
     title: "Admissions and releases over time",
   },
+  releasesByCommunitySupervision: {
+    title: "Releases by community supervision over time",
+  },
 };
 
 export default content;

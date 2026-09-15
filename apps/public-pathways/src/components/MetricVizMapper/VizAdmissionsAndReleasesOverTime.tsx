@@ -27,12 +27,13 @@ import {
   TimeSeriesLine,
 } from "~shared-pathways";
 
-import { EVENT_TYPES, EventType } from "../../datastores/eventTypes";
+import {
+  ADMISSIONS_COLOR,
+  EVENT_TYPES,
+  EventType,
+  RELEASES_COLOR,
+} from "../../datastores/eventTypes";
 import { useRootStore } from "../StoreProvider";
-
-/** Line colors for each event type, from the v2 design. */
-const ADMISSIONS_COLOR = "#1F4E6D";
-const RELEASES_COLOR = "#D4A017";
 
 /**
  * Returns the lines to draw for the event type in view: one line per event

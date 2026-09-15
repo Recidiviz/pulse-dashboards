@@ -254,6 +254,8 @@ export default class MetricsStore implements PathwaysMetricStore {
         [PATHWAYS_PAGES.admissionsAndReleases]: {
           [PATHWAYS_SECTIONS["countOverTime"]]:
             this.admissionsAndReleasesOverTime,
+          [PATHWAYS_SECTIONS["countByCommunitySupervision"]]:
+            this.releasesByCommunitySupervision,
         },
         [PATHWAYS_PAGES.prison]: {
           [PATHWAYS_SECTIONS["countOverTime"]]: this.prisonPopulationOverTime,
@@ -358,6 +360,18 @@ export default class MetricsStore implements PathwaysMetricStore {
       endpoint: "AdmissionsAndReleasesOverTime",
       store: this,
       fetchMetrics: this.fetchMetrics,
+    });
+  }
+
+  get releasesByCommunitySupervision(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "releasesByCommunitySupervision",
+      endpoint: "AdmissionsAndReleasesByDimensionCount",
+      store: this,
+      fetchMetrics: this.fetchMetrics,
+      accessor: "communitySupervision" as keyof SnapshotDataRecord,
+      accessorIsNotFilterType: true,
+      isHorizontal: true,
     });
   }
 

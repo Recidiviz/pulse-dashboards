@@ -86,7 +86,7 @@ function rowsForDimension(
   group: string,
   year: StubYear,
 ): StubRow[] | undefined {
-  if (group === "custodyStatus") {
+  if (group === "custody_status") {
     return EVENT_TYPES.flatMap((eventType) =>
       shareRows({
         eventType,
@@ -97,7 +97,7 @@ function rowsForDimension(
     );
   }
 
-  if (group === "admissionType") {
+  if (group === "admission_type") {
     return Object.entries(ADMISSION_TYPE_SHARES).flatMap(
       ([custodyStatus, shares]) =>
         shareRows({
@@ -110,7 +110,7 @@ function rowsForDimension(
     );
   }
 
-  if (group === "releaseType") {
+  if (group === "release_type") {
     return Object.entries(RELEASE_TYPE_SHARES).flatMap(
       ([custodyStatus, shares]) =>
         shareRows({
@@ -123,7 +123,7 @@ function rowsForDimension(
     );
   }
 
-  if (group === "communitySupervision") {
+  if (group === "community_supervision") {
     return shareRows({
       eventType: "RELEASES",
       year,

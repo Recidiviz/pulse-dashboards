@@ -26,10 +26,10 @@ import {
 export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   ...EnabledFilterOptions,
   // ADMISSIONS & RELEASES
-  // Every metric needs an entry here, because a metric reads its filter
-  // configuration by id and cannot be built without one. This dashboard's
-  // filters arrive one per PR, so the list is empty until then.
   admissionsAndReleasesOverTime: {
+    enabledFilters: [],
+  },
+  releasesByCommunitySupervision: {
     enabledFilters: [],
   },
   // PRISON

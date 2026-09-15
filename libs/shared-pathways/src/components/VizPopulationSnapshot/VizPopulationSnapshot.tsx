@@ -36,12 +36,14 @@ type VizPopulationSnapshotProps = {
   metric: SnapshotMetric;
   filtersStore: FiltersStoreBase;
   horizontalLabelFormatter?: (label: string) => string;
+  barColor?: string;
 };
 
 const VizPopulationSnapshot: React.FC<VizPopulationSnapshotProps> = ({
   metric,
   filtersStore,
   horizontalLabelFormatter,
+  barColor,
 }) => {
   const {
     filters,
@@ -178,6 +180,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationSnapshotProps> = ({
       isGeographic={metric.isGeographic}
       dataSeries={dataSeries as SupervisionPopulationSnapshotRecord[]}
       horizontalLabelFormatter={horizontalLabelFormatter}
+      barColor={barColor}
     />
   );
 };

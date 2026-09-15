@@ -95,7 +95,7 @@ describe("resolveStubbedMetric", () => {
 
     it("splits custody status across both event types", () => {
       const data = rows(
-        `${BASE}/AdmissionsAndReleasesByDimensionCount?group=custodyStatus`,
+        `${BASE}/AdmissionsAndReleasesByDimensionCount?group=custody_status`,
       );
 
       expect(new Set(data.map((r) => r.custodyStatus))).toEqual(
@@ -108,7 +108,7 @@ describe("resolveStubbedMetric", () => {
 
     it("reports admission types as admissions, split by custody status", () => {
       const data = rows(
-        `${BASE}/AdmissionsAndReleasesByDimensionCount?group=admissionType`,
+        `${BASE}/AdmissionsAndReleasesByDimensionCount?group=admission_type`,
       );
 
       expect(data.every((r) => r.eventType === "ADMISSIONS")).toBe(true);
@@ -118,12 +118,25 @@ describe("resolveStubbedMetric", () => {
       expect(data.map((r) => r.admissionType)).toContain("Court Commitment");
     });
 
+    it("labels community supervision rows readably, since it has no filter", () => {
+      const data = rows(
+        `${BASE}/AdmissionsAndReleasesByDimensionCount?group=community_supervision`,
+      );
+
+      // The chart shows these values verbatim, because this dimension has no
+      // filter to map ids to labels.
+      expect(data.map((r) => r.communitySupervision)).toEqual([
+        "Released to Community Supervision",
+        "Not Released to Community Supervision",
+      ]);
+    });
+
     it("reports release types and community supervision as releases", () => {
       const releaseTypes = rows(
-        `${BASE}/AdmissionsAndReleasesByDimensionCount?group=releaseType`,
+        `${BASE}/AdmissionsAndReleasesByDimensionCount?group=release_type`,
       );
       const community = rows(
-        `${BASE}/AdmissionsAndReleasesByDimensionCount?group=communitySupervision`,
+        `${BASE}/AdmissionsAndReleasesByDimensionCount?group=community_supervision`,
       );
 
       expect(releaseTypes.every((r) => r.eventType === "RELEASES")).toBe(true);
@@ -132,10 +145,10 @@ describe("resolveStubbedMetric", () => {
 
     it("scales counts to the calendar year that was asked for", () => {
       const [earlier] = rows(
-        `${BASE}/AdmissionsAndReleasesByDimensionCount?group=custodyStatus&filters[calendar_year]=2023`,
+        `${BASE}/AdmissionsAndReleasesByDimensionCount?group=custody_status&filters[calendar_year]=2023`,
       );
       const [later] = rows(
-        `${BASE}/AdmissionsAndReleasesByDimensionCount?group=custodyStatus&filters[calendar_year]=2025`,
+        `${BASE}/AdmissionsAndReleasesByDimensionCount?group=custody_status&filters[calendar_year]=2025`,
       );
 
       expect(earlier.calendarYear).toBe(2023);
@@ -145,7 +158,7 @@ describe("resolveStubbedMetric", () => {
 
     it("falls back to the latest year when none is asked for", () => {
       const [row] = rows(
-        `${BASE}/AdmissionsAndReleasesByDimensionCount?group=custodyStatus`,
+        `${BASE}/AdmissionsAndReleasesByDimensionCount?group=custody_status`,
       );
 
       expect(row.calendarYear).toBe(2025);
@@ -153,7 +166,7 @@ describe("resolveStubbedMetric", () => {
 
     it("falls back to the latest year when the year is not covered", () => {
       const [row] = rows(
-        `${BASE}/AdmissionsAndReleasesByDimensionCount?group=custodyStatus&filters[calendar_year]=1999`,
+        `${BASE}/AdmissionsAndReleasesByDimensionCount?group=custody_status&filters[calendar_year]=1999`,
       );
 
       expect(row.calendarYear).toBe(2025);

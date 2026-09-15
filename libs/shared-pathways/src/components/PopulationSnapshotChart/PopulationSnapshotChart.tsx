@@ -70,6 +70,7 @@ type PopulationSnapshotChartProps = {
   isGeographic: boolean;
   dataSeries: SupervisionPopulationSnapshotRecord[];
   horizontalLabelFormatter?: (label: string) => string;
+  barColor?: string;
 };
 
 const ChartWrapper = styled.div<{
@@ -295,6 +296,7 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
   isGeographic,
   dataSeries,
   horizontalLabelFormatter,
+  barColor: barColorOverride,
 }) => {
   const theme = useTheme() as PathwaysTheme;
   const [hoveredId, setHoveredId] = useState<number | null>(null);
@@ -348,9 +350,10 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
       rightMargin: MARGIN_RIGHT,
     });
 
-  const barColor = isGeographic
+  const defaultBarColor = isGeographic
     ? theme.palette.data.gold2
     : theme.palette.data.forest2;
+  const barColor = barColorOverride ?? defaultBarColor;
 
   const chartProps = {
     key: metricId,

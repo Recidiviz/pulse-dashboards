@@ -41,6 +41,10 @@ export const EVENT_TYPE_OPTIONS: { value: EventType; label: string }[] = [
   { value: EVENT_TYPES.RELEASES, label: "Releases" },
 ];
 
+/** Colors for each event type's data, from the v2 design. */
+export const ADMISSIONS_COLOR = "#1F4E6D";
+export const RELEASES_COLOR = "#D4A017";
+
 /** Returns true if the given value names an event type, e.g. from a URL. */
 export function isEventType(value: string): value is EventType {
   return (Object.values(EVENT_TYPES) as string[]).includes(value);
@@ -71,6 +75,21 @@ export const EVENT_TYPE_SECTION_RULES: Readonly<
     reason: "Releases only",
   },
 };
+
+/**
+ * Returns the color a section's charts should draw in, or undefined where the
+ * section counts more than one kind of event and no single color fits.
+ *
+ * This reads the same rules that disable a section, so a section that only
+ * ever counts releases draws in the releases color without naming it twice.
+ */
+export function chartColorForSection(sectionId: string): string | undefined {
+  const rule = EVENT_TYPE_SECTION_RULES[sectionId];
+  if (!rule) return undefined;
+  if (!rule.eventTypes.includes(EVENT_TYPES.RELEASES)) return ADMISSIONS_COLOR;
+  if (!rule.eventTypes.includes(EVENT_TYPES.ADMISSIONS)) return RELEASES_COLOR;
+  return undefined;
+}
 
 /**
  * Returns true if the section can be shown for the given event type. A section

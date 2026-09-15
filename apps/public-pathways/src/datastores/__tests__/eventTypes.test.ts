@@ -18,9 +18,12 @@
 import { PATHWAYS_SECTIONS } from "~shared-pathways";
 
 import {
+  ADMISSIONS_COLOR,
+  chartColorForSection,
   EVENT_TYPES,
   isEventType,
   isSectionAvailableForEventType,
+  RELEASES_COLOR,
 } from "../eventTypes";
 
 describe("isEventType", () => {
@@ -76,5 +79,39 @@ describe("isSectionAvailableForEventType", () => {
         EVENT_TYPES.ADMISSIONS,
       ),
     ).toBe(true);
+  });
+});
+
+describe("chartColorForSection", () => {
+  it("colors an admissions-only section with the admissions color", () => {
+    expect(
+      chartColorForSection(PATHWAYS_SECTIONS["countByAdmissionType"]),
+    ).toBe(ADMISSIONS_COLOR);
+  });
+
+  it.each([
+    PATHWAYS_SECTIONS["countByReleaseType"],
+    PATHWAYS_SECTIONS["countByCommunitySupervision"],
+  ])(
+    "colors the releases-only section %s with the releases color",
+    (section) => {
+      expect(chartColorForSection(section)).toBe(RELEASES_COLOR);
+    },
+  );
+
+  it("gives no single color to a section that counts both event types", () => {
+    expect(
+      chartColorForSection(PATHWAYS_SECTIONS["countByCustodyStatus"]),
+    ).toBeUndefined();
+  });
+
+  it("gives no color to a section with no event type rule", () => {
+    expect(
+      chartColorForSection(PATHWAYS_SECTIONS["countOverTime"]),
+    ).toBeUndefined();
+  });
+
+  it("uses the same two colors the over-time chart draws its lines in", () => {
+    expect(ADMISSIONS_COLOR).not.toBe(RELEASES_COLOR);
   });
 });

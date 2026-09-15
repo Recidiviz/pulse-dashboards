@@ -175,11 +175,34 @@ export type AdmissionsAndReleasesTimeSeriesRecord = {
   releasesCount: number;
 };
 
+/**
+ * One row from `AdmissionsAndReleasesByDimensionCount`: the count of one
+ * event type, for one calendar year, broken down by one value of whichever
+ * dimension the `group` query param asked for.
+ *
+ * Only the field named by `group` is guaranteed to be set — e.g. a row for
+ * `group=community_supervision` sets `communitySupervision` and leaves the
+ * other three dimension fields absent. `admissionType` and `releaseType`
+ * rows are the exception: they also carry `custodyStatus`, so a chart can
+ * further break admissions or releases down by the custody status of the
+ * people counted.
+ */
+export type AdmissionsAndReleasesSnapshotRecord = {
+  count: number;
+  eventType: string;
+  calendarYear: number;
+  custodyStatus: string;
+  admissionType: string;
+  releaseType: string;
+  communitySupervision: string;
+};
+
 /* Superset of all the SnapshotRecords, but with all fields except "count" optional */
 export type SnapshotDataRecord = Partial<
   PrisonPopulationSnapshotRecord &
     SupervisionPopulationSnapshotRecord &
-    LibertyPopulationSnapshotRecord
+    LibertyPopulationSnapshotRecord &
+    AdmissionsAndReleasesSnapshotRecord
 > & { count: number };
 
 export type PersonLevelDataRecord = PrisonPopulationPersonLevelRecord & {
@@ -252,6 +275,7 @@ export type MetricId =
   | "prisonPopulationByMaritalStatus"
   | "prisonPopulationByTimeAtFacility"
   | "admissionsAndReleasesOverTime"
+  | "releasesByCommunitySupervision"
   | "projectedPrisonPopulationOverTime"
   | "prisonPopulationPersonLevel"
   | "prisonToSupervisionPopulationOverTime"

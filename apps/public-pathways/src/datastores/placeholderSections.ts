@@ -38,6 +38,5 @@ export const PLACEHOLDER_SECTIONS_BY_PAGE: Record<
     PATHWAYS_SECTIONS["countByCustodyStatus"],
     PATHWAYS_SECTIONS["countByAdmissionType"],
     PATHWAYS_SECTIONS["countByReleaseType"],
-    PATHWAYS_SECTIONS["countByCommunitySupervision"],
   ]),
 };

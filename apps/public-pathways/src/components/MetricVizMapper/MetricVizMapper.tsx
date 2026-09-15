@@ -26,6 +26,7 @@ import {
   VizPopulationSnapshot,
 } from "~shared-pathways";
 
+import { chartColorForSection } from "../../datastores/eventTypes";
 import withPublicPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPublicPathwaysMetricHelpers";
 import { useRootStore } from "../StoreProvider";
 import VizAdmissionsAndReleasesOverTime from "./VizAdmissionsAndReleasesOverTime";
@@ -47,7 +48,7 @@ type MetricVizMapperProps = {
 
 const MetricVizMapper: React.FC<MetricVizMapperProps> = observer(
   function MetricVizMapper({ metric }) {
-    const { filtersStore } = useRootStore();
+    const { filtersStore, section } = useRootStore();
 
     if (metric instanceof AdmissionsAndReleasesOverTimeMetric) {
       return (
@@ -64,7 +65,13 @@ const MetricVizMapper: React.FC<MetricVizMapperProps> = observer(
       );
     }
 
-    return <HydratedSnapshotViz metric={metric} filtersStore={filtersStore} />;
+    return (
+      <HydratedSnapshotViz
+        metric={metric}
+        filtersStore={filtersStore}
+        barColor={chartColorForSection(section)}
+      />
+    );
   },
 );
 
