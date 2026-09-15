@@ -47,6 +47,7 @@ export class ProgramCatalogPresenter implements Hydratable {
     private readonly apiClient: DataAPI,
     readonly config: ProgramCatalogProps,
     private readonly userStore: UserStore,
+    private readonly language: string,
   ) {
     makeAutoObservable(this, { config: false }, { autoBind: true });
 
@@ -75,6 +76,7 @@ export class ProgramCatalogPresenter implements Hydratable {
   private async populatePrograms() {
     this.programs = await this.apiClient.trpc.resident.getPrograms.query({
       pseudonymizedId: this.residentId,
+      language: this.language,
     });
   }
 

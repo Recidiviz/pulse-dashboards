@@ -30,6 +30,13 @@ const isBlank = (value: string | undefined) =>
   value === undefined || BLANK_CELL.includes(value);
 
 /**
+ * Facility names that are actually names. Used below to fall back to English if there
+ * are no translated facility names.
+ */
+const namedFacilities = (row: ProgramFromSheet) =>
+  row.facilitiesOffered.filter(Boolean);
+
+/**
  * Requirements are separated by semicolons. Some Arkansas rows also spell out
  * "and" before the last one, which is the only English word this parser still
  * depends on; that can go away once AR's sheet standardizes on ";".
@@ -41,20 +48,38 @@ const REQUIREMENT_SEPARATOR = /\s*;\s*(?:and\s*)?/;
  * the strings that were doing double duty as both display copy and as values the
  * client compares against English literals.
  */
-export function processProgram(row: ProgramFromSheet): ProcessedProgram {
+export function processProgram(
+  enRow: ProgramFromSheet,
+  /** Defaults to `enRow`: with no translation, a row is its own translation. */
+  locRow: ProgramFromSheet = enRow,
+): ProcessedProgram {
   const availableAtAllFacilities =
-    row.facilitiesOffered.includes(ALL_FACILITIES);
+    enRow.facilitiesOffered.includes(ALL_FACILITIES);
 
+  const localizedFacilities = namedFacilities(locRow);
+  const facilitiesOffered = localizedFacilities.length
+    ? localizedFacilities
+    : namedFacilities(enRow);
+
+  // A blank cell arrives as "" rather than undefined, so `||` is deliberate
+  // below; `??` would treat an empty translated cell as real copy.
   return {
-    ...row,
-    facilitiesOffered: availableAtAllFacilities ? [] : row.facilitiesOffered,
+    ...enRow,
+    title: locRow.title || enRow.title,
+    description: locRow.description || enRow.description,
+    abbreviatedDescription:
+      locRow.abbreviatedDescription || enRow.abbreviatedDescription,
+    category: locRow.category || enRow.category,
+    facilitiesOffered: availableAtAllFacilities ? [] : facilitiesOffered,
     availableAtAllFacilities,
-    eligibilityRequirements: isBlank(row.eligibilityRequirements)
+    eligibilityRequirements: isBlank(enRow.eligibilityRequirements)
       ? []
-      : row.eligibilityRequirements
+      : (locRow.eligibilityRequirements || enRow.eligibilityRequirements)
           .split(REQUIREMENT_SEPARATOR)
           .filter(Boolean)
           .map(upperFirst),
-    prerequisites: isBlank(row.prerequisites) ? undefined : row.prerequisites,
+    prerequisites: isBlank(enRow.prerequisites)
+      ? undefined
+      : enRow.prerequisites,
   };
 }

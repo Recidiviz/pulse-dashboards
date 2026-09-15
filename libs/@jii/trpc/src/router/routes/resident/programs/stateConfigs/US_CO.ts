@@ -19,64 +19,68 @@ import { ProgramsConfig } from "../types";
 
 export const US_CO_CONFIG: ProgramsConfig = {
   spreadsheetEnvVar: "US_CO_PROGRAMS_SPREADSHEET_ID",
-  sheetRange: "Prototype data!A:J",
-  fixtures: [
-    {
-      dateAddedOrUpdated: new Date("2026-01-16"),
-      programId: "99.0001",
-      category: "Education",
-      title: "Introduction to Plumbing",
-      description:
-        "Introduces students to the basics of plumbing including pipe fitting, soldering, and installation of fixtures.",
-      facilitiesOffered: [
-        "Sterling Correctional Facility",
-        "Limon Correctional Facility",
+  sources: {
+    en: {
+      range: "Prototype data!A:J",
+      fixtures: [
+        {
+          dateAddedOrUpdated: new Date("2026-01-16"),
+          programId: "99.0001",
+          category: "Education",
+          title: "Introduction to Plumbing",
+          description:
+            "Introduces students to the basics of plumbing including pipe fitting, soldering, and installation of fixtures.",
+          facilitiesOffered: [
+            "Sterling Correctional Facility",
+            "Limon Correctional Facility",
+          ],
+          numberOfDaysThatCanBeEarned: 24,
+          eligibilityRequirements: "Must have GED/HSD",
+          prerequisites: "Foundation of Career Tech Ed",
+        },
+        {
+          dateAddedOrUpdated: new Date("2026-01-16"),
+          programId: "99.0002",
+          category: "Education",
+          title: "Basic Literacy",
+          description:
+            "Literacy instruction is provided for learners who are assessed below the 9th grade education level.",
+          facilitiesOffered: ["All facilities"],
+          numberOfDaysThatCanBeEarned: 30,
+          eligibilityRequirements: "None",
+          prerequisites: "None",
+        },
+        {
+          dateAddedOrUpdated: new Date("2026-01-16"),
+          programId: "99.0003",
+          category: "Education",
+          title: "Small Engine Repair",
+          description:
+            "Introduces students to the repair and maintenance of small engines including lawn mowers, generators, and similar equipment.",
+          facilitiesOffered: [
+            "Fremont Correctional Facility",
+            "Buena Vista Correctional Complex",
+          ],
+          numberOfDaysThatCanBeEarned: 18,
+          eligibilityRequirements: "Must have GED/HSD",
+          prerequisites: "None",
+        },
+        {
+          dateAddedOrUpdated: new Date("2026-01-16"),
+          programId: "99.0004",
+          category: "Education",
+          title: "Conflict Resolution",
+          description: "",
+          facilitiesOffered: [
+            "Colorado Territorial Correctional Facility",
+            "Denver Women's Correctional Facility",
+            "La Vista Correctional Facility",
+          ],
+          numberOfDaysThatCanBeEarned: 10,
+          eligibilityRequirements: "None",
+          prerequisites: "None",
+        },
       ],
-      numberOfDaysThatCanBeEarned: 24,
-      eligibilityRequirements: "Must have GED/HSD",
-      prerequisites: "Foundation of Career Tech Ed",
     },
-    {
-      dateAddedOrUpdated: new Date("2026-01-16"),
-      programId: "99.0002",
-      category: "Education",
-      title: "Basic Literacy",
-      description:
-        "Literacy instruction is provided for learners who are assessed below the 9th grade education level.",
-      facilitiesOffered: ["All facilities"],
-      numberOfDaysThatCanBeEarned: 30,
-      eligibilityRequirements: "None",
-      prerequisites: "None",
-    },
-    {
-      dateAddedOrUpdated: new Date("2026-01-16"),
-      programId: "99.0003",
-      category: "Education",
-      title: "Small Engine Repair",
-      description:
-        "Introduces students to the repair and maintenance of small engines including lawn mowers, generators, and similar equipment.",
-      facilitiesOffered: [
-        "Fremont Correctional Facility",
-        "Buena Vista Correctional Complex",
-      ],
-      numberOfDaysThatCanBeEarned: 18,
-      eligibilityRequirements: "Must have GED/HSD",
-      prerequisites: "None",
-    },
-    {
-      dateAddedOrUpdated: new Date("2026-01-16"),
-      programId: "99.0004",
-      category: "Education",
-      title: "Conflict Resolution",
-      description: "",
-      facilitiesOffered: [
-        "Colorado Territorial Correctional Facility",
-        "Denver Women's Correctional Facility",
-        "La Vista Correctional Facility",
-      ],
-      numberOfDaysThatCanBeEarned: 10,
-      eligibilityRequirements: "None",
-      prerequisites: "None",
-    },
-  ],
+  },
 };

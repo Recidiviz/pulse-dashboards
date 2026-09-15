@@ -25,22 +25,24 @@ import { ProgramFromSheet, programFromSheetSchema } from "./schema";
 import { US_AR_CONFIG } from "./stateConfigs/US_AR";
 import { US_CO_CONFIG } from "./stateConfigs/US_CO";
 import { US_MA_CONFIG } from "./stateConfigs/US_MA";
-import type { ProcessedProgram, ProgramsConfig } from "./types";
+import type { ProcessedProgram, ProgramsSource } from "./types";
 
-async function fetchProgramsForConfig(
-  config: ProgramsConfig,
+/** Reads one language's rows, dropping any that fail validation. */
+async function fetchRows(
+  spreadsheetEnvVar: string,
+  { range, fixtures }: ProgramsSource,
 ): Promise<ProgramFromSheet[]> {
   if (process.env["IS_OFFLINE"]) {
-    return config.fixtures;
+    return fixtures;
   }
 
-  const spreadsheetId = process.env[config.spreadsheetEnvVar];
+  const spreadsheetId = process.env[spreadsheetEnvVar];
 
   if (!spreadsheetId) {
-    throw new Error(`${config.spreadsheetEnvVar} is not set`);
+    throw new Error(`${spreadsheetEnvVar} is not set`);
   }
 
-  const rows = await getSheetData(spreadsheetId, config.sheetRange);
+  const rows = await getSheetData(spreadsheetId, range);
   return rows.flatMap((row) => {
     const result = programFromSheetSchema.safeParse(row);
     if (result.error) {
@@ -50,6 +52,7 @@ async function fetchProgramsForConfig(
     return [result.data];
   });
 }
+
 const PROGRAMS_CONFIG = {
   US_AR: US_AR_CONFIG,
   US_CO: US_CO_CONFIG,
@@ -58,23 +61,52 @@ const PROGRAMS_CONFIG = {
 
 // Google Sheets rate limits are per-minute, so we use a TTL of 1 minute
 // to avoid throttling while still ensuring reasonably fresh data.
-// Each state gets its own cached fetcher so their caches are independent.
-const cachedFetchersByState = Object.fromEntries(
-  Object.entries(PROGRAMS_CONFIG).map(([stateCode, config]) => [
-    stateCode,
-    createCachedCall(() => fetchProgramsForConfig(config), 60),
-  ]),
+// Each state and language gets its own cached fetcher so their caches are independent.
+const cachedFetchers = Object.fromEntries(
+  Object.entries(PROGRAMS_CONFIG).flatMap(([stateCode, config]) =>
+    Object.entries(config.sources).map(([language, source]) => [
+      `${stateCode}:${language}`,
+      createCachedCall(() => fetchRows(config.spreadsheetEnvVar, source), 60),
+    ]),
+  ),
 );
 
+/**
+ * Programs for a state, in `language` where we have it. Keys always come from the
+ * English tab, so a translation only ever supplies display copy
+ */
 export async function fetchProgramsForState(
   stateCode: string,
+  language = "en",
 ): Promise<ProcessedProgram[]> {
-  const fetcher = cachedFetchersByState[stateCode];
-  if (!fetcher) {
+  const fetchEnglish = cachedFetchers[`${stateCode}:en`];
+  if (!fetchEnglish) {
     throw new TRPCError({
       code: "NOT_FOUND",
       message: `No programs configured for ${stateCode}`,
     });
   }
-  return (await fetcher()).map(processProgram);
+  const englishRows = await fetchEnglish();
+
+  // browsers report region codes, so "es-US" and "es-MX" both read the ES tab
+  const [baseLanguage] = language.split("-");
+
+  const fetchTranslated = cachedFetchers[`${stateCode}:${baseLanguage}`];
+
+  // English or an unsupported language won't have translation
+  if (baseLanguage === "en" || !fetchTranslated) {
+    return englishRows.map((row) => processProgram(row));
+  }
+
+  const translatedRows = await fetchTranslated().catch((error) => {
+    captureException(error);
+    return [];
+  });
+  const translatedByProgramId = new Map(
+    translatedRows.map((row) => [row.programId, row]),
+  );
+
+  return englishRows.map((row) =>
+    processProgram(row, translatedByProgramId.get(row.programId)),
+  );
 }

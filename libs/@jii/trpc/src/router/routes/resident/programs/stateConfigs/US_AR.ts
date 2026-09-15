@@ -19,43 +19,47 @@ import { ProgramsConfig } from "../types";
 
 export const US_AR_CONFIG: ProgramsConfig = {
   spreadsheetEnvVar: "US_AR_PROGRAMS_SPREADSHEET_ID",
-  sheetRange: "Program list with descriptions for review!A:M",
-  fixtures: [
-    {
-      dateAddedOrUpdated: new Date("2026-01-01"),
-      programId: "AR.0001",
-      category: "Education",
-      title: "Adult Basic Education",
-      description:
-        "Provides foundational literacy and numeracy instruction for individuals below the 9th grade level.",
-      facilitiesOffered: ["Cummins Unit", "Varner Unit"],
-      numberOfDaysThatCanBeEarned: 30,
-      prerequisites: "None",
-      eligibilityRequirements: "All inmates",
+  sources: {
+    en: {
+      range: "Program list with descriptions for review!A:M",
+      fixtures: [
+        {
+          dateAddedOrUpdated: new Date("2026-01-01"),
+          programId: "AR.0001",
+          category: "Education",
+          title: "Adult Basic Education",
+          description:
+            "Provides foundational literacy and numeracy instruction for individuals below the 9th grade level.",
+          facilitiesOffered: ["Cummins Unit", "Varner Unit"],
+          numberOfDaysThatCanBeEarned: 30,
+          prerequisites: "None",
+          eligibilityRequirements: "All inmates",
+        },
+        {
+          dateAddedOrUpdated: new Date("2026-01-01"),
+          programId: "AR.0002",
+          category: "Vocational",
+          title: "Construction Technology",
+          description:
+            "Introduces students to basic construction techniques including framing, roofing, and finishing work.",
+          facilitiesOffered: ["Tucker Unit", "East Arkansas Regional Unit"],
+          numberOfDaysThatCanBeEarned: 45,
+          prerequisites: "Must have GED/HSD",
+          eligibilityRequirements: "All inmates",
+        },
+        {
+          dateAddedOrUpdated: new Date("2026-01-01"),
+          programId: "AR.0003",
+          category: "Cognitive",
+          title: "Thinking for a Change",
+          description:
+            "Cognitive-behavioral program that addresses antisocial thinking and behavior patterns.",
+          facilitiesOffered: ["All facilities"],
+          numberOfDaysThatCanBeEarned: 15,
+          prerequisites: "None",
+          eligibilityRequirements: "All inmates",
+        },
+      ],
     },
-    {
-      dateAddedOrUpdated: new Date("2026-01-01"),
-      programId: "AR.0002",
-      category: "Vocational",
-      title: "Construction Technology",
-      description:
-        "Introduces students to basic construction techniques including framing, roofing, and finishing work.",
-      facilitiesOffered: ["Tucker Unit", "East Arkansas Regional Unit"],
-      numberOfDaysThatCanBeEarned: 45,
-      prerequisites: "Must have GED/HSD",
-      eligibilityRequirements: "All inmates",
-    },
-    {
-      dateAddedOrUpdated: new Date("2026-01-01"),
-      programId: "AR.0003",
-      category: "Cognitive",
-      title: "Thinking for a Change",
-      description:
-        "Cognitive-behavioral program that addresses antisocial thinking and behavior patterns.",
-      facilitiesOffered: ["All facilities"],
-      numberOfDaysThatCanBeEarned: 15,
-      prerequisites: "None",
-      eligibilityRequirements: "All inmates",
-    },
-  ],
+  },
 };

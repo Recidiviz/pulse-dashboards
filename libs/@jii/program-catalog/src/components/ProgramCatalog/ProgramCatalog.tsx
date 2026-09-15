@@ -160,12 +160,13 @@ function usePresenter(props: ProgramCatalogProps): ProgramCatalogPresenter {
     rootStore.apiClient,
     props,
     rootStore.userStore,
+    rootStore.translationStore.currentLanguage,
   );
 }
 
 export const ProgramCatalog = withPresenterManager({
   usePresenter,
-  managerIsObserver: false,
+  managerIsObserver: true,
   ManagedComponent,
   HydratorComponent: MainContentHydratorWithErrorLogging,
 });

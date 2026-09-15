@@ -17,10 +17,17 @@
 
 import { ProgramFromSheet } from "./schema";
 
+/** Where one language's rows come from: the sheet in production, fixtures offline. */
+export type ProgramsSource = {
+  range: string;
+  fixtures: ProgramFromSheet[];
+};
+
 export type ProgramsConfig = {
   spreadsheetEnvVar: string;
-  sheetRange: string;
-  fixtures: ProgramFromSheet[];
+  // TODO(OBT-47966): hard coding en and es since we will not support other languages
+  // or states until program content moves off Google Sheets
+  sources: { en: ProgramsSource; es?: ProgramsSource };
 };
 
 /**

@@ -20,6 +20,7 @@ import { z } from "zod";
 
 export const getProgramsInputSchema = z.object({
   pseudonymizedId: z.string(),
+  language: z.string().optional(),
 });
 
 export const setStarredProgramInputSchema = z.object({

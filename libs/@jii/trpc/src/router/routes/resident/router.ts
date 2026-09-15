@@ -77,7 +77,7 @@ export const residentRouter = router({
     .use(residentRestrictedMiddleware)
     .query(async ({ ctx, input }) => {
       const [programs, starredPrograms] = await Promise.all([
-        fetchProgramsForState(ctx.stateCode),
+        fetchProgramsForState(ctx.stateCode, input.language),
         ctx.prisma.starredProgram.findMany({
           where: {
             pseudonymizedId: input.pseudonymizedId,
