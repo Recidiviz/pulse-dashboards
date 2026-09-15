@@ -108,6 +108,11 @@ const content: StateSpecificMetricCopy = {
     methodology:
       "The chart describes the number of people by community supervision status specified in the chart title.",
   },
+  releasesByType: {
+    title: "Releases by type",
+    methodology:
+      "The chart describes the number of people by release type specified in the chart title.",
+  },
 };
 
 export default content;

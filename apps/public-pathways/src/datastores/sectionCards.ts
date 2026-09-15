@@ -15,37 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Loading } from "@recidiviz/design-system";
-import React from "react";
-import styled from "styled-components";
+import { PATHWAYS_SECTIONS } from "~shared-pathways";
 
-import { publicPathwaysPalette } from "../styles/publicPathwaysPalette";
-
-const indigo1 = publicPathwaysPalette.data.indigo1;
-
-const Wrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  /*
-   * Holds a chart's box open while its data loads. The box itself sets no
-   * minimum height, so that a short chart is not left with empty space under
-   * it once the data arrives.
-   */
-  min-height: 40rem;
-
-  /* Override Loading component colors */
-  div div {
-    border-top-color: ${indigo1} !important;
-  }
-`;
-
-const PublicPathwaysLoading: React.FC = () => (
-  <Wrapper>
-    <Loading />
-  </Wrapper>
-);
-
-export default PublicPathwaysLoading;
+/**
+ * Sections that draw one card per value of a second dimension, and the
+ * dimension they split on. The design breaks admission and release types out
+ * by custody status, giving one chart for incarcerated individuals and another
+ * for incarcerated parolees.
+ *
+ * A section absent from this map draws a single chart.
+ */
+export const CARD_SPLIT_DIMENSION_BY_SECTION: Readonly<Record<string, string>> =
+  {
+    [PATHWAYS_SECTIONS["countByAdmissionType"]]: "custodyStatus",
+    [PATHWAYS_SECTIONS["countByReleaseType"]]: "custodyStatus",
+  };

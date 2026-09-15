@@ -18,7 +18,7 @@
 import { typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import React from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { Hydrator } from "~hydration-utils";
 import {
@@ -38,16 +38,35 @@ type WithMetricHelperProps = {
   filtersStore: FiltersStoreBase;
 };
 
-const MetricVizHydrator = styled(Hydrator)<{ $isMobile?: boolean }>`
+/** The border and type that every chart's box shares. */
+const cardStyle = css`
   ${typography.Sans14}
   width: 100%;
-  min-height: 40rem;
   border-radius: 8px;
   border: 1px solid rgba(0, 0, 0, 0.15);
+`;
 
-  & > div {
-    min-height: inherit;
-  }
+/** The box one chart draws around itself, for a section whose viz renders more than one chart. */
+export const MetricVizCard = styled.div`
+  ${cardStyle}
+`;
+
+/**
+ * No box sets a minimum height. A chart sizes itself — a horizontal one to its
+ * bar count — so a floor would leave empty space under a short chart. The
+ * loading spinner reserves the space instead, while data is on its way.
+ *
+ * `$noCardStyle` skips the box below: a section with several charts draws its
+ * own `MetricVizCard` around each one, so the hydrator wrapping all of them
+ * must not draw a second box around the set.
+ */
+const MetricVizHydrator = styled(Hydrator)<{
+  $isMobile?: boolean;
+  $noCardStyle: boolean;
+}>`
+  width: 100%;
+
+  ${({ $noCardStyle }) => !$noCardStyle && cardStyle}
 `;
 
 const NoDataHelper: React.FC<
@@ -67,12 +86,20 @@ const NoDataHelper: React.FC<
 
 const withPublicPathwaysMetricHelpers = <Props extends WithMetricHelperProps>(
   OriginalComponent: React.ComponentType<Props>,
+  {
+    /**
+     * Set when the wrapped component draws its own `MetricVizCard` per chart,
+     * so the hydrator does not draw a box around the whole set.
+     */
+    rendersOwnCards = false,
+  }: { rendersOwnCards?: boolean } = {},
 ): React.ComponentType<Props> => {
   const ComponentWithHydrator: React.ComponentType<Props> = (props) => {
     const { metric, filtersStore } = props;
     const isMobile = useIsMobile();
     return (
       <MetricVizHydrator
+        $noCardStyle={rendersOwnCards}
         $isMobile={isMobile}
         hydratable={metric}
         loading={<PublicPathwaysLoading />}

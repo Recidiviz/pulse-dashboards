@@ -27,9 +27,11 @@ import {
 } from "~shared-pathways";
 
 import { chartColorForSection } from "../../datastores/eventTypes";
+import { CARD_SPLIT_DIMENSION_BY_SECTION } from "../../datastores/sectionCards";
 import withPublicPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPublicPathwaysMetricHelpers";
 import { useRootStore } from "../StoreProvider";
 import VizAdmissionsAndReleasesOverTime from "./VizAdmissionsAndReleasesOverTime";
+import VizSnapshotCards from "./VizSnapshotCards";
 
 const HydratedOverTimeViz = withPublicPathwaysMetricHelpers(
   VizPopulationOverTime,
@@ -40,6 +42,11 @@ const HydratedSnapshotViz = withPublicPathwaysMetricHelpers(
 
 const HydratedAdmissionsAndReleasesViz = withPublicPathwaysMetricHelpers(
   VizAdmissionsAndReleasesOverTime,
+);
+
+const HydratedSnapshotCards = withPublicPathwaysMetricHelpers(
+  VizSnapshotCards,
+  { rendersOwnCards: true },
 );
 
 type MetricVizMapperProps = {
@@ -62,6 +69,18 @@ const MetricVizMapper: React.FC<MetricVizMapperProps> = observer(
     if (metric instanceof OverTimeMetric) {
       return (
         <HydratedOverTimeViz metric={metric} filtersStore={filtersStore} />
+      );
+    }
+
+    const splitDimension = CARD_SPLIT_DIMENSION_BY_SECTION[section];
+    if (splitDimension) {
+      return (
+        <HydratedSnapshotCards
+          metric={metric}
+          filtersStore={filtersStore}
+          splitDimension={splitDimension}
+          barColor={chartColorForSection(section)}
+        />
       );
     }
 

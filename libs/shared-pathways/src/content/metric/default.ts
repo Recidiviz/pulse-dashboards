@@ -277,6 +277,9 @@ const content: MetricCopy = {
   releasesByCommunitySupervision: {
     title: "Releases by community supervision over time",
   },
+  releasesByType: {
+    title: "Releases by type",
+  },
 };
 
 export default content;

@@ -22,15 +22,24 @@ import { vi } from "vitest";
 import { METRIC_MODES } from "../../../constants";
 import { FiltersStoreBase } from "../../../FiltersStoreBase";
 import SnapshotMetric from "../../../metrics/SnapshotMetric";
+import { SnapshotDataRecord } from "../../../types";
 import { defaultPathwaysTheme } from "../../PathwaysTheme";
 import { SnapshotDataPoint } from "../../PopulationSnapshotChart/PopulationSnapshotChart";
 import VizPopulationSnapshot from "../VizPopulationSnapshot";
 
 const capturedData: { current: SnapshotDataPoint[] | null } = { current: null };
 
+type CapturedChartProps = {
+  data: SnapshotDataPoint[];
+  title: string;
+  dataSeries: Record<string, unknown>[];
+};
+const capturedProps: { current: CapturedChartProps | null } = { current: null };
+
 vi.mock("../../PopulationSnapshotChart", () => ({
-  PopulationSnapshotChart: (props: { data: SnapshotDataPoint[] }) => {
+  PopulationSnapshotChart: (props: CapturedChartProps) => {
     capturedData.current = props.data;
+    capturedProps.current = props;
     return null;
   },
 }));
@@ -83,9 +92,17 @@ function buildFiltersStore(
 function renderViz(
   metric: SnapshotMetric,
   filtersStore: FiltersStoreBase,
+  overrides: { records?: SnapshotDataRecord[]; title?: string } = {},
 ): SnapshotDataPoint[] {
   capturedData.current = null;
-  render(<VizPopulationSnapshot metric={metric} filtersStore={filtersStore} />);
+  capturedProps.current = null;
+  render(
+    <VizPopulationSnapshot
+      metric={metric}
+      filtersStore={filtersStore}
+      {...overrides}
+    />,
+  );
   if (!capturedData.current) {
     throw new Error("PopulationSnapshotChart was not rendered");
   }
@@ -251,5 +268,35 @@ describe("VizPopulationSnapshot data composition", () => {
     expect(
       getByText("No data available for the current selection."),
     ).toBeInTheDocument();
+  });
+
+  it("draws the records override instead of the metric's own dataSeries", () => {
+    const metric = buildMetric({
+      accessor: "facility",
+      accessorIsNotFilterType: true,
+      dataSeries: [{ facility: "FROM_METRIC", count: 1 }],
+    });
+    const filtersStore = buildFiltersStore();
+    const override: SnapshotDataRecord[] = [
+      { facility: "FROM_OVERRIDE", count: 9 } as unknown as SnapshotDataRecord,
+    ];
+
+    const data = renderViz(metric, filtersStore, { records: override });
+
+    expect(data.map((d) => d.accessorValue)).toEqual(["FROM_OVERRIDE"]);
+    expect(capturedProps.current?.dataSeries).toBe(override);
+  });
+
+  it("shows the title override instead of the metric's own chartTitle", () => {
+    const metric = buildMetric({
+      accessor: "facility",
+      accessorIsNotFilterType: true,
+      dataSeries: [{ facility: "A", count: 1 }],
+    });
+    const filtersStore = buildFiltersStore();
+
+    renderViz(metric, filtersStore, { title: "Overridden Title" });
+
+    expect(capturedProps.current?.title).toBe("Overridden Title");
   });
 });

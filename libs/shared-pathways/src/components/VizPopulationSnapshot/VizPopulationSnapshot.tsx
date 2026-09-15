@@ -37,6 +37,8 @@ type VizPopulationSnapshotProps = {
   filtersStore: FiltersStoreBase;
   horizontalLabelFormatter?: (label: string) => string;
   barColor?: string;
+  records?: SnapshotDataRecord[];
+  title?: string;
 };
 
 const VizPopulationSnapshot: React.FC<VizPopulationSnapshotProps> = ({
@@ -44,6 +46,8 @@ const VizPopulationSnapshot: React.FC<VizPopulationSnapshotProps> = ({
   filtersStore,
   horizontalLabelFormatter,
   barColor,
+  records,
+  title,
 }) => {
   const {
     filters,
@@ -53,8 +57,8 @@ const VizPopulationSnapshot: React.FC<VizPopulationSnapshotProps> = ({
     filtersDescription,
   } = filtersStore;
   const {
-    dataSeries,
-    chartTitle,
+    dataSeries: allRecords,
+    chartTitle: metricTitle,
     accessor,
     chartXAxisTitle,
     enableMetricModeToggle,
@@ -62,6 +66,8 @@ const VizPopulationSnapshot: React.FC<VizPopulationSnapshotProps> = ({
     offenseTypeOrder,
     accessorIsNotFilterType: isNotFilter,
   } = metric;
+  const dataSeries = records ?? allRecords;
+  const chartTitle = title ?? metricTitle;
   const isRate =
     currentMetricMode === METRIC_MODES.RATES && enableMetricModeToggle;
   const isSupervisionLevel = accessor === "supervisionLevel";

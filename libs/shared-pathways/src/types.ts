@@ -276,6 +276,7 @@ export type MetricId =
   | "prisonPopulationByTimeAtFacility"
   | "admissionsAndReleasesOverTime"
   | "releasesByCommunitySupervision"
+  | "releasesByType"
   | "projectedPrisonPopulationOverTime"
   | "prisonPopulationPersonLevel"
   | "prisonToSupervisionPopulationOverTime"
