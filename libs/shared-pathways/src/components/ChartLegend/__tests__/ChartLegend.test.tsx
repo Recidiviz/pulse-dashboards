@@ -19,13 +19,13 @@ import { render, screen } from "@testing-library/react";
 import { ThemeProvider } from "styled-components";
 
 import { defaultPathwaysTheme } from "../../PathwaysTheme";
-import TimeSeriesLegend from "../TimeSeriesLegend";
+import ChartLegend from "../ChartLegend";
 
-describe("TimeSeriesLegend", () => {
+describe("ChartLegend", () => {
   it("names every line it is given", () => {
     render(
       <ThemeProvider theme={defaultPathwaysTheme}>
-        <TimeSeriesLegend
+        <ChartLegend
           items={[
             { name: "Admissions", color: "#1F4E6D" },
             { name: "Releases", color: "#D4A017" },
@@ -41,7 +41,7 @@ describe("TimeSeriesLegend", () => {
   it("hides the color swatches from assistive technology", () => {
     const { container } = render(
       <ThemeProvider theme={defaultPathwaysTheme}>
-        <TimeSeriesLegend items={[{ name: "Admissions", color: "#1F4E6D" }]} />
+        <ChartLegend items={[{ name: "Admissions", color: "#1F4E6D" }]} />
       </ThemeProvider>,
     );
 

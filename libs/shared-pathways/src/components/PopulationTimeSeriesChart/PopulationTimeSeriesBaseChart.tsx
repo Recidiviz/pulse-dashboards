@@ -22,6 +22,7 @@ import styled, { css, useTheme } from "styled-components";
 
 import useIsMobile from "~utils/react/useIsMobile";
 
+import { ChartLegend } from "../ChartLegend";
 import {
   ScrollLayout,
   ScrollWrapper,
@@ -39,7 +40,6 @@ import {
   TimeSeriesLine,
 } from "./helpers";
 import PopulationTimeSeriesTooltip from "./PopulationTimeSeriesTooltip";
-import TimeSeriesLegend from "./TimeSeriesLegend";
 
 const ChartWrapper = styled(VizPathways)<{
   $tooltipSuppressed: boolean;
@@ -240,9 +240,7 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
       title={title}
       subtitle={subtitle}
       legend={
-        legendItems.length > 1 ? (
-          <TimeSeriesLegend items={legendItems} />
-        ) : undefined
+        legendItems.length > 1 ? <ChartLegend items={legendItems} /> : undefined
       }
       $tooltipSuppressed={tooltipSuppressed}
     >

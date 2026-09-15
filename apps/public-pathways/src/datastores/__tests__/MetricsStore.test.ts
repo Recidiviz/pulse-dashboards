@@ -94,6 +94,7 @@ describe("MetricsStore", () => {
 
   beforeEach(() => {
     fetchMock.mockResponse(JSON.stringify({ data: [], metadata: {} }));
+    mockRootStore.page = PATHWAYS_PAGES.prison;
     metricsStore = new MetricsStore({ rootStore: mockRootStore });
     mockRootStore.metricsStore = metricsStore;
   });
@@ -120,8 +121,6 @@ describe("MetricsStore", () => {
         expect(metric.filters.enabledFilters).toBeDefined();
         expect(metric.chartTitle).toBeTruthy();
       });
-
-      mockRootStore.page = PATHWAYS_PAGES.prison;
     },
   );
 

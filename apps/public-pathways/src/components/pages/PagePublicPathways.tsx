@@ -32,7 +32,6 @@ import useIsMobile from "~utils/react/useIsMobile";
 
 import { DASHBOARDS_WITH_EVENT_TYPE_SELECTOR } from "../../datastores/dashboards";
 import { EVENT_TYPE_SECTION_RULES } from "../../datastores/eventTypes";
-import { PLACEHOLDER_SECTIONS_BY_PAGE } from "../../datastores/placeholderSections";
 import { publicPathwaysPalette } from "../../styles/publicPathwaysPalette";
 import { useRouteSync } from "../../useRouteSync";
 import { EventTypeSelector } from "../EventTypeSelector/EventTypeSelector";
@@ -81,14 +80,10 @@ export const PagePublicPathways = observer(function PagePublicPathways() {
       return { sections: {} as Partial<Sections>, disabledSections: {} };
 
     const metricMap = metricsStore.map;
-    const placeholders = PLACEHOLDER_SECTIONS_BY_PAGE[page];
     const allIds = Object.keys(all) as PathwaysSection[];
 
-    // A section earns a pill once it can be charted, or once the dashboard
-    // lists it ahead of its metric. The rest stay hidden.
-    const visibleIds = allIds.filter(
-      (id) => id in metricMap || placeholders.has(id),
-    );
+    // A section earns a pill once it can be charted. The rest stay hidden.
+    const visibleIds = allIds.filter((id) => id in metricMap);
 
     // Only the event type disables a pill: some breakdowns do not exist for
     // the events currently counted.
@@ -106,7 +101,7 @@ export const PagePublicPathways = observer(function PagePublicPathways() {
       ) as Partial<Sections>,
       disabledSections: disabled,
     };
-  }, [eventType, page, metricsStore.map, pageContent.sections]);
+  }, [eventType, metricsStore.map, pageContent.sections]);
 
   return (
     <PageContainer $isMobile={isMobile}>

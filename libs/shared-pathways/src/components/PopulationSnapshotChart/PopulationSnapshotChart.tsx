@@ -24,6 +24,7 @@ import styled, { css, useTheme } from "styled-components";
 import { getTicks, pluralize, pluralizeWord } from "~utils";
 
 import { SupervisionPopulationSnapshotRecord } from "../../types";
+import { ChartLegend, ChartLegendItem } from "../ChartLegend";
 import {
   ScrollLayout,
   ScrollWrapper,
@@ -40,6 +41,12 @@ type SnapshotDataPoint = {
   accessorLabel: string;
   tooltipLabel: string;
   value: string;
+  /**
+   * Color for this bar alone, which overrides the chart's own color. A chart
+   * whose bars count more than one kind of event sets it, so each bar takes
+   * the color of the thing it counts.
+   */
+  barColor?: string;
 };
 
 type OrdinalPiece = SnapshotDataPoint & Record<string, unknown>;
@@ -71,6 +78,12 @@ type PopulationSnapshotChartProps = {
   dataSeries: SupervisionPopulationSnapshotRecord[];
   horizontalLabelFormatter?: (label: string) => string;
   barColor?: string;
+  /**
+   * Names the colors a chart whose bars count more than one kind of thing
+   * draws in. The legend appears only where there is more than one to tell
+   * apart.
+   */
+  legendItems?: ChartLegendItem[];
 };
 
 const ChartWrapper = styled.div<{
@@ -297,6 +310,7 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
   dataSeries,
   horizontalLabelFormatter,
   barColor: barColorOverride,
+  legendItems,
 }) => {
   const theme = useTheme() as PathwaysTheme;
   const [hoveredId, setHoveredId] = useState<number | null>(null);
@@ -386,7 +400,7 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
     style: (d: OrdinalPiece) => {
       const isHovered = d.index === hoveredId;
       const opacity = hoveredId === null || isHovered ? 1 : 0.75;
-      return { fill: barColor, fillOpacity: opacity };
+      return { fill: d.barColor ?? barColor, fillOpacity: opacity };
     },
     rAccessor: "value",
     rExtent: yRange,
@@ -468,7 +482,16 @@ const PopulationSnapshotChart: React.FC<PopulationSnapshotChartProps> = ({
   const plotHeight = CHART_HEIGHT - MARGIN_TOP - effectiveMarginBottom;
 
   return (
-    <VizPathways title={title} latestUpdate={latestUpdate} subtitle={subtitle}>
+    <VizPathways
+      title={title}
+      latestUpdate={latestUpdate}
+      subtitle={subtitle}
+      legend={
+        legendItems && legendItems.length > 1 ? (
+          <ChartLegend items={legendItems} />
+        ) : undefined
+      }
+    >
       <ChartWrapper
         ref={wrapperRef}
         $rotateLabels={rotateLabels}

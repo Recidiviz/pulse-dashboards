@@ -44,6 +44,12 @@ const createMetricCopyFile = async (
         row.get("Metric ID"),
         {
           ...(row.get("Title") ? { title: row.get("Title") } : {}),
+          ...(row.get("Title (Admissions)")
+            ? { titleForAdmissions: row.get("Title (Admissions)") }
+            : {}),
+          ...(row.get("Title (Releases)")
+            ? { titleForReleases: row.get("Title (Releases)") }
+            : {}),
           ...(row.get("Note")
             ? { note: convertCurlyQuotesToStraight(row.get("Note")) }
             : {}),

@@ -43,18 +43,17 @@ const Swatch = styled.span<{ $color: string }>`
   flex-shrink: 0;
 `;
 
-export type TimeSeriesLegendItem = {
+export type ChartLegendItem = {
   name: string;
   color: string;
 };
 
 /**
- * Names the lines on a chart that draws more than one, so a reader can tell
- * which line is which population.
+ * Names the colors a chart uses when it draws more than one, so a reader can
+ * tell which line or bar counts what. The over-time and snapshot charts share
+ * it, so one color means the same thing on every chart of a dashboard.
  */
-const TimeSeriesLegend: React.FC<{ items: TimeSeriesLegendItem[] }> = ({
-  items,
-}) => (
+const ChartLegend: React.FC<{ items: ChartLegendItem[] }> = ({ items }) => (
   <Wrapper>
     {items.map(({ name, color }) => (
       <Item key={name}>
@@ -65,4 +64,4 @@ const TimeSeriesLegend: React.FC<{ items: TimeSeriesLegendItem[] }> = ({
   </Wrapper>
 );
 
-export default TimeSeriesLegend;
+export default ChartLegend;

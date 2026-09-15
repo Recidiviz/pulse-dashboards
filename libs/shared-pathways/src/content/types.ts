@@ -15,8 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { MethodologyContent } from "../types";
-import { MetricId } from "../types";
+import { MethodologyContent, MetricId } from "../types";
 import { PathwaysPage, PathwaysSection } from "../views";
 
 export type PageContent = {
@@ -40,6 +39,8 @@ export type StateSpecificPageCopy = {
 
 export type MetricContent = {
   title: string;
+  titleForAdmissions?: string;
+  titleForReleases?: string;
   note?: string;
   chartXAxisTitle?: string;
   chartYAxisTitle?: string;

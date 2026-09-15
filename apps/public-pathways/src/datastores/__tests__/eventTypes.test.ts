@@ -15,11 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PATHWAYS_SECTIONS } from "~shared-pathways";
+import { MetricContent, PATHWAYS_SECTIONS } from "~shared-pathways";
 
 import {
   ADMISSIONS_COLOR,
   chartColorForSection,
+  chartTitleForEventType,
   EVENT_TYPES,
   isEventType,
   isSectionAvailableForEventType,
@@ -113,5 +114,38 @@ describe("chartColorForSection", () => {
 
   it("uses the same two colors the over-time chart draws its lines in", () => {
     expect(ADMISSIONS_COLOR).not.toBe(RELEASES_COLOR);
+  });
+});
+
+describe("chartTitleForEventType", () => {
+  const bothEventTypes: MetricContent = {
+    title: "Admissions and releases by custody status",
+    titleForAdmissions: "Admissions by custody status",
+    titleForReleases: "Releases by custody status",
+  };
+
+  const oneEventType: MetricContent = { title: "Releases by type" };
+
+  it("names only the event type in view", () => {
+    expect(chartTitleForEventType(bothEventTypes, EVENT_TYPES.ADMISSIONS)).toBe(
+      "Admissions by custody status",
+    );
+    expect(chartTitleForEventType(bothEventTypes, EVENT_TYPES.RELEASES)).toBe(
+      "Releases by custody status",
+    );
+  });
+
+  it("names both event types for the combined view", () => {
+    expect(chartTitleForEventType(bothEventTypes, EVENT_TYPES.ALL)).toBe(
+      "Admissions and releases by custody status",
+    );
+  });
+
+  it("keeps the canonical title where the copy has no override", () => {
+    expect(
+      Object.values(EVENT_TYPES).map((eventType) =>
+        chartTitleForEventType(oneEventType, eventType),
+      ),
+    ).toEqual(["Releases by type", "Releases by type", "Releases by type"]);
   });
 });

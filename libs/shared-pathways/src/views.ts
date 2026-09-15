@@ -83,6 +83,7 @@ const PATHWAYS_METRIC_IDS_BY_PAGE: Record<PathwaysPage, MetricId[]> = {
     "releasesByCommunitySupervision",
     "releasesByType",
     "admissionsByType",
+    "admissionsAndReleasesByCustodyStatus",
   ],
   [PATHWAYS_PAGES.libertyToPrison]: [
     "libertyToPrisonPopulationOverTime",
@@ -187,6 +188,8 @@ export const PATHWAYS_SECTION_BY_METRIC_ID: Record<MetricId, PathwaysSection> =
       PATHWAYS_SECTIONS["countByCommunitySupervision"],
     releasesByType: PATHWAYS_SECTIONS["countByReleaseType"],
     admissionsByType: PATHWAYS_SECTIONS["countByAdmissionType"],
+    admissionsAndReleasesByCustodyStatus:
+      PATHWAYS_SECTIONS["countByCustodyStatus"],
     projectedPrisonPopulationOverTime:
       PATHWAYS_SECTIONS["projectedCountOverTime"],
     projectedSupervisionPopulationOverTime:

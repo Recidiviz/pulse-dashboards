@@ -283,6 +283,9 @@ const content: MetricCopy = {
   admissionsByType: {
     title: "Admissions by type",
   },
+  admissionsAndReleasesByCustodyStatus: {
+    title: "Admissions and releases by custody status",
+  },
 };
 
 export default content;

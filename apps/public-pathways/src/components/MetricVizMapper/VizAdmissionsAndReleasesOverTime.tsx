@@ -29,6 +29,7 @@ import {
 
 import {
   ADMISSIONS_COLOR,
+  chartTitleForEventType,
   EVENT_TYPES,
   EventType,
   RELEASES_COLOR,
@@ -77,7 +78,7 @@ const VizAdmissionsAndReleasesOverTime: React.FC<Props> = observer(
 
     return (
       <PopulationTimeSeriesChart
-        title={metric.chartTitle}
+        title={chartTitleForEventType(metric.content, eventType)}
         subtitle={filtersStore.filtersDescription}
         series={buildEventTypeSeries(metric.dataSeries, eventType)}
       />

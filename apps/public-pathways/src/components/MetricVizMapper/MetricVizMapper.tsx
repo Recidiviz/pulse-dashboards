@@ -21,6 +21,7 @@ import React from "react";
 import {
   AdmissionsAndReleasesOverTimeMetric,
   OverTimeMetric,
+  PATHWAYS_SECTIONS,
   SnapshotMetric,
   VizPopulationOverTime,
   VizPopulationSnapshot,
@@ -31,6 +32,7 @@ import { CARD_SPLIT_DIMENSION_BY_SECTION } from "../../datastores/sectionCards";
 import withPublicPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPublicPathwaysMetricHelpers";
 import { useRootStore } from "../StoreProvider";
 import VizAdmissionsAndReleasesOverTime from "./VizAdmissionsAndReleasesOverTime";
+import VizCustodyStatusSnapshot from "./VizCustodyStatusSnapshot";
 import VizSnapshotCards from "./VizSnapshotCards";
 
 const HydratedOverTimeViz = withPublicPathwaysMetricHelpers(
@@ -47,6 +49,10 @@ const HydratedAdmissionsAndReleasesViz = withPublicPathwaysMetricHelpers(
 const HydratedSnapshotCards = withPublicPathwaysMetricHelpers(
   VizSnapshotCards,
   { rendersOwnCards: true },
+);
+
+const HydratedCustodyStatusViz = withPublicPathwaysMetricHelpers(
+  VizCustodyStatusSnapshot,
 );
 
 type MetricVizMapperProps = {
@@ -69,6 +75,12 @@ const MetricVizMapper: React.FC<MetricVizMapperProps> = observer(
     if (metric instanceof OverTimeMetric) {
       return (
         <HydratedOverTimeViz metric={metric} filtersStore={filtersStore} />
+      );
+    }
+
+    if (section === PATHWAYS_SECTIONS["countByCustodyStatus"]) {
+      return (
+        <HydratedCustodyStatusViz metric={metric} filtersStore={filtersStore} />
       );
     }
 

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PATHWAYS_SECTIONS } from "~shared-pathways";
+import { MetricContent, PATHWAYS_SECTIONS } from "~shared-pathways";
 
 /**
  * Which events a dashboard's charts count. `ALL` shows admissions and releases
@@ -89,6 +89,27 @@ export function chartColorForSection(sectionId: string): string | undefined {
   if (!rule.eventTypes.includes(EVENT_TYPES.RELEASES)) return ADMISSIONS_COLOR;
   if (!rule.eventTypes.includes(EVENT_TYPES.ADMISSIONS)) return RELEASES_COLOR;
   return undefined;
+}
+
+/**
+ * Returns the chart heading for the event type in view.
+ *
+ * A chart that counts both admissions and releases has to say which of them it
+ * currently shows, so its copy carries a title per event type. Every other
+ * chart already names its event type in `title`, and has no override to fall
+ * back from.
+ */
+export function chartTitleForEventType(
+  content: MetricContent,
+  eventType: EventType,
+): string {
+  if (eventType === EVENT_TYPES.ADMISSIONS) {
+    return content.titleForAdmissions ?? content.title;
+  }
+  if (eventType === EVENT_TYPES.RELEASES) {
+    return content.titleForReleases ?? content.title;
+  }
+  return content.title;
 }
 
 /**
