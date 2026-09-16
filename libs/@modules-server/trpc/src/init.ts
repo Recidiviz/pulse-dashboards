@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { initTRPC } from "@trpc/server";
+import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 
 import { procedurePlugin } from "~server-setup-plugin";
@@ -32,3 +32,13 @@ export const router = t.router;
 const plugin = procedurePlugin();
 
 export const baseProcedure = t.procedure.concat(plugin);
+
+export const auth0Procedure = baseProcedure.use(async (opts) => {
+  const { isAuth0Authorized, user } = opts.ctx;
+
+  if (!isAuth0Authorized || !user) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+
+  return opts.next();
+});

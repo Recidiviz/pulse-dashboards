@@ -1,0 +1,54 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2024 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+/// <reference types='vitest' />
+import { workspaceRoot } from "@nx/devkit";
+import { join } from "path";
+import { defineConfig, loadEnv } from "vite";
+import tsconfigPaths from "vite-tsconfig-paths";
+
+export default defineConfig(({ mode }) => ({
+  root: __dirname,
+  cacheDir: "../../../node_modules/.vite/apps/@modules/server",
+
+  plugins: [tsconfigPaths()],
+  test: {
+    passWithNoTests: true,
+    name: "@modules/server",
+    setupFiles: ["__tests__/setup/index.ts"],
+    globals: true,
+    cache: { dir: "../../node_modules/.vitest" },
+    environment: "node",
+    include: ["__tests__/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    reporters: ["default"],
+    poolOptions: {
+      forks: {
+        singleFork: true,
+      },
+    },
+    coverage: {
+      reportsDirectory: "../../../coverage/apps/@modules/server",
+      provider: "v8",
+    },
+    clearMocks: true,
+    // Load .env.test from @modules/server (adds basic env-compatibility for direct invocations of vitest)
+    env:
+      mode === "test"
+        ? loadEnv(mode, join(workspaceRoot, "apps/@modules/server"), "")
+        : undefined,
+  },
+}));

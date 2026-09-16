@@ -84,6 +84,8 @@
       "~@meetings/trpc-types": ["./libs/@meetings/trpc-types/src/index.ts"],
       "~@meetings/trpc/*": ["./libs/@meetings/trpc/src/*"],
       "~@meetings/trpc/test/*": ["./libs/@meetings/trpc/__tests__/*"],
+      "~@modules-server/trpc": ["./libs/@modules-server/trpc/src/index.ts"],
+      "~@modules-server/trpc/*": ["./libs/@modules-server/trpc/src/*"],
       "~@reentry/frontend-shared": [
         "./libs/@reentry/frontend-shared/src/index.ts"
       ],
@@ -142,8 +144,7 @@
       "~twilio-api": ["./libs/twilio-api/src/index.ts"],
       "~ui": ["./libs/ui/src/index.ts"],
       "~utils": ["./libs/utils/src/index.ts"],
-      "~utils/*": ["./libs/utils/src/*"],
-      "~@modules-server/trpc": ["./libs/@modules-server/trpc/src/index.ts"]
+      "~utils/*": ["./libs/utils/src/*"]
     },
     "resolveJsonModule": true,
     "rootDir": ".",

@@ -17,11 +17,48 @@
 
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
 
-import type { Context } from "./types";
+import { verifyAuth0Token } from "~server-setup-plugin";
+
+import type { Auth0User, AuthUser, Context } from "./types";
+
+function formatAndVerifyUser(user: Auth0User): AuthUser | undefined {
+  const { stateCode: userStateLower } =
+    user["https://dashboard.recidiviz.org/app_metadata"];
+  const email = user["https://dashboard.recidiviz.org/email_address"];
+  const userState = userStateLower.toUpperCase();
+  const isRecidivizUser = userState === "RECIDIVIZ";
+
+  if (!email) return;
+
+  return {
+    email,
+    isRecidivizUser,
+    featureVariants: {},
+  };
+}
 
 export async function createContext(
   opts: CreateFastifyContextOptions,
 ): Promise<Context> {
   const { req, res } = opts;
-  return { req, res };
+
+  const auth0User = (await verifyAuth0Token(opts)) as Auth0User | undefined;
+
+  if (!auth0User)
+    return {
+      req,
+      res,
+      isAuth0Authorized: false,
+    };
+
+  const authUser = formatAndVerifyUser(auth0User);
+
+  if (!authUser)
+    return {
+      req,
+      res,
+      isAuth0Authorized: false,
+    };
+
+  return { req, res, isAuth0Authorized: true, user: authUser };
 }

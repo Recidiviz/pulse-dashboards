@@ -40,6 +40,18 @@
         }
       }
     },
+    "require-sops-env:test": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "command": "cd apps/@modules/server && vitest run",
+        "cwd": "{workspaceRoot}"
+      },
+      "configurations": {
+        "test": {}
+      },
+      "defaultConfiguration": "test"
+    },
     "prune-lockfile": {
       "dependsOn": ["build"],
       "cache": true,

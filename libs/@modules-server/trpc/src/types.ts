@@ -17,7 +17,29 @@
 
 import { FastifyReply, FastifyRequest } from "fastify";
 
+export type StateCode = "US_TN";
+
+export type Auth0User = {
+  [`https://dashboard.recidiviz.org/app_metadata`]: {
+    stateCode: "recidiviz" | StateCode;
+    allowedStates?: string[];
+    featureVariants?: Record<string, unknown>;
+  };
+  "https://dashboard.recidiviz.org/email_address": string | undefined;
+};
+
+export type FeatureVariant = "TEST";
+export type FeatureVariantRecord = Partial<Record<FeatureVariant, boolean>>;
+
+export type AuthUser = {
+  email: string;
+  isRecidivizUser: boolean;
+  featureVariants: FeatureVariantRecord;
+};
+
 export type Context = {
   req: FastifyRequest;
   res: FastifyReply;
+  isAuth0Authorized: boolean;
+  user?: AuthUser;
 };

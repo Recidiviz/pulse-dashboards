@@ -15,11 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { baseProcedure, router } from "./init";
+import { auth0Procedure, baseProcedure, router } from "./init";
 
 export const appRouter = router({
   hello: baseProcedure.query(async () => {
     return "hi there";
+  }),
+  howdy: auth0Procedure.query(async () => {
+    return "hey, y'all";
   }),
 });
 

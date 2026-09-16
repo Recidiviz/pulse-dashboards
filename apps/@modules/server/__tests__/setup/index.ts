@@ -15,31 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { appRouter, createContext } from "~@modules-server/trpc";
-import { buildCommonServer } from "~server-setup-plugin";
+import { FastifyInstance } from "fastify";
 
-export function buildServer() {
-  const domain = process.env["AUTH0_DOMAIN"];
-  const audienceEnv = process.env["AUTH0_AUDIENCE"];
-  if (!domain || !audienceEnv) {
-    throw new Error("Missing required environment variables for Auth0");
-  }
+import { buildServer } from "../../src/server";
 
-  // AUTH0_AUDIENCE lists multiple audiences separated by a semicolon
-  // Used for zero-downtime audience migration
-  const audiences = audienceEnv
-    .split(";")
-    .map((value) => value.trim())
-    .filter(Boolean);
+export let testServer: FastifyInstance;
 
-  const server = buildCommonServer({
-    appRouter,
-    createContext,
-    auth0Options: {
-      domain,
-      audience: audiences,
-    },
-  });
-
-  return server;
-}
+beforeAll(async () => {
+  testServer = buildServer();
+});
