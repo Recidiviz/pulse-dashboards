@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { NavigationContainer } from "@react-navigation/native";
+import * as Sentry from "@sentry/react-native";
 import { act, renderHook, waitFor } from "@testing-library/react-native";
 import {
   AudioModule,
@@ -45,6 +46,11 @@ import { useDurationTimer } from "../useDurationTimer";
 import { useNote } from "../useNote";
 import { usePersistedFileDuration } from "../usePersistedFileDuration.native";
 import { useRecordingStatus } from "../useRecordingStatus";
+
+jest.mock("@sentry/react-native", () => ({
+  ...jest.requireActual("@sentry/react-native"),
+  setTag: jest.fn(),
+}));
 
 jest.mock("expo-audio", () => ({
   AudioModule: { requestRecordingPermissionsAsync: jest.fn() },
@@ -165,6 +171,12 @@ describe("RecordingProvider (native)", () => {
       meetingTypeCategory: null,
       setMeetingTypeCategory: jest.fn(),
     });
+    // startRecording() reads the live store via getState() rather than the
+    // meetingId snapshot above, to avoid a stale-closure race — see the
+    // "startRecording" describe block below.
+    (useRecordingStore as unknown as { getState: jest.Mock }).getState = jest
+      .fn()
+      .mockReturnValue({ meetingId: MEETING_ID });
     (useRecordingStoreHydrated as unknown as jest.Mock).mockReturnValue(true);
     (useUpdateNotes as jest.Mock).mockReturnValue({
       mutate: mockUpdateNotes,
@@ -225,6 +237,29 @@ describe("RecordingProvider (native)", () => {
       expect(storage.saveRecordingUri).toHaveBeenCalledWith(RECORDING_URI);
       expect(mockTimerStart).toHaveBeenCalled();
       expect(mockSetStatus).toHaveBeenCalledWith("recording");
+    });
+
+    it("tags with the store's live meetingId (via getState) rather than this render's snapshot, so a caller that just created a new meeting isn't stuck with the previous one", async () => {
+      const NEW_MEETING_ID = "meeting-2";
+
+      const { result } = renderHook(() => useRecording<"native">(), {
+        wrapper: buildWrapper(),
+      });
+
+      // Simulate ProfileMeetings calling setMeetingId(NEW_MEETING_ID) and then
+      // startRecording() in the same tick, before this provider re-renders:
+      // the hook's rendered `meetingId` (mocked to MEETING_ID in beforeEach)
+      // is now stale, but the store itself already holds the new ID.
+      (
+        useRecordingStore as unknown as { getState: jest.Mock }
+      ).getState.mockReturnValue({ meetingId: NEW_MEETING_ID });
+
+      await act(async () => {
+        await result.current.startRecording();
+      });
+
+      expect(Sentry.setTag).toHaveBeenCalledWith("meetingId", NEW_MEETING_ID);
+      expect(Sentry.setTag).not.toHaveBeenCalledWith("meetingId", MEETING_ID);
     });
 
     it("shows alert with Open Settings when permission is permanently denied", async () => {

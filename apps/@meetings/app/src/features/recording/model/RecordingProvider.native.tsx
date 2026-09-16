@@ -420,7 +420,14 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
    * Starts fresh recording and persists the URI immediately.
    */
   const startRecording = async () => {
-    Sentry.setTag("meetingId", meetingId);
+    // ProfileMeetings calls setMeetingId(newId) then startRecording() in the
+    // same tick for a brand-new meeting. `meetingId` above is this render's
+    // snapshot from the useRecordingStore() hook, which hasn't caught up to
+    // that setMeetingId call yet — it would still read the previous
+    // meeting's ID. useRecordingStore.getState() reads the store directly,
+    // bypassing React's render cycle, so it's always current.
+    const activeMeetingId = useRecordingStore.getState().meetingId;
+    Sentry.setTag("meetingId", activeMeetingId);
     try {
       const permissionStatus =
         await AudioModule.requestRecordingPermissionsAsync();
@@ -465,18 +472,21 @@ export const RecordingProvider = ({ children }: RecordingProviderProps) => {
 
       timer.start();
       await setStatus("recording");
-      Sentry.logger.info("recording.start", { meetingId, status: "recording" });
+      Sentry.logger.info("recording.start", {
+        meetingId: activeMeetingId,
+        status: "recording",
+      });
       track("recording_started", {
-        meetingId,
+        meetingId: activeMeetingId,
         personId: person?.personId?.toString(),
       });
     } catch (err) {
       const errorMessage = extractError(err);
       Sentry.logger.error("recording.start.error", {
-        meetingId,
+        meetingId: activeMeetingId,
         error: errorMessage,
       });
-      Sentry.captureException(err, { tags: { meetingId } });
+      Sentry.captureException(err, { tags: { meetingId: activeMeetingId } });
       Alert.alert("Recording Start Failed", errorMessage);
       throw err;
     }
