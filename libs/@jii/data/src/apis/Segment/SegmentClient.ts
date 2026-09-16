@@ -205,6 +205,12 @@ export class SegmentClient implements IntakeAnalytics {
     this.track("frontend_program_detail_opened", metadata);
   }
 
+  /* US_MA Spanish Program List launch announcement */
+
+  trackUsMaSpanishLaunchBannerViewed() {
+    this.track("frontend_us_ma_spanish_launch_banner_viewed");
+  }
+
   /* Community Resource Explorer (CRE) events */
 
   trackCreCategorySelected(metadata: {

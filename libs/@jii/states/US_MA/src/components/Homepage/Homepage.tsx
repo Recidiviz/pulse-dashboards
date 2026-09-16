@@ -30,6 +30,7 @@ import { DatesSection, DatesSectionSkeleton } from "./DatesSection";
 import { EmptyState } from "./EmptyState";
 import { MonthlyReportHomepageCard } from "./MonthlyReport/MonthlyReportHomepageCard";
 import { MonthlyReportHomepageCardSkeleton } from "./MonthlyReport/MonthlyReportHomepageCardSkeleton";
+import { SpanishLaunchBanner } from "./SpanishLaunchBanner";
 import { TotalTimeEarnedSection } from "./TotalTimeEarnedSection/TotalTimeEarnedSection";
 import { TotalTimeEarnedSectionSkeleton } from "./TotalTimeEarnedSection/TotalTimeEarnedSectionSkeleton";
 
@@ -41,6 +42,7 @@ export const Homepage = observer(function Homepage() {
   return (
     <div>
       <LastUpdatedBanner overrideCopy={t(($) => $.lastUpdated, data)} />
+      <SpanishLaunchBanner />
       <ProgramsCtaSection stateCode="US_MA" />
       {data.isEgtDisabled ? (
         <>

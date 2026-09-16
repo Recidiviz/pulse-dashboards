@@ -142,5 +142,8 @@
       "description": "Explore available programs, filter by facility, and find ones that are interesting to you.",
       "link": "View full Program List"
     }
+  },
+  "spanishLaunchBanner": {
+    "message": "**Program list now available in Spanish** \n\n**Ahora en español **\n\nLa Lista de Programas ahora está disponible en español.\nPara cambiar, toque “English” en la parte superior de su tableta Orijin y elija “Español”."
   }
 }

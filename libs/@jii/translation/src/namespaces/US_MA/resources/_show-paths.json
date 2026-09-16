@@ -142,5 +142,8 @@
       "description": "[US_MA]programs.homepageCta.description",
       "link": "[US_MA]programs.homepageCta.link"
     }
+  },
+  "spanishLaunchBanner": {
+    "message": "[US_MA]spanishLaunchBanner.message"
   }
 }
