@@ -44,6 +44,7 @@ type ResidentFlag =
   // libs/@jii/configs, libs/@jii/prisma, and libs/@jii/states/US_AZ
   | "usAzFslImprovements"
   | "usCoV1Experience"
+  | "usCoEdovoCredits"
   //TODO OBT-34689 remove after launch
   | "usArFslImprovements"
   | "usNcRNAAutoEnablement";

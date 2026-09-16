@@ -49,6 +49,7 @@ enum ResidentFlagId {
     usNeChecklistDocuments
     usAzFslImprovements
     usCoV1Experience
+    usCoEdovoCredits
     usArFslImprovements
     usNcRNAAutoEnablement
 }
