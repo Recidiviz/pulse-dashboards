@@ -84,6 +84,7 @@ export const mockSAR: SAR = {
   noORASDomainReason: null,
   involvesSexCrime: false,
   static99RCompleted: false,
+  static99RScore: undefined,
   homePlan: null,
   housingSummary: null,
   drugHistorySummary: null,

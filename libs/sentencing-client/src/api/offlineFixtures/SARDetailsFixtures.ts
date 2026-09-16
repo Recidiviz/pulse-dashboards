@@ -96,6 +96,7 @@ export const SARDetailsFixture: { [sarId: string]: SAR } = {
     address: null,
 
     static99RCompleted: false,
+    static99RScore: 0,
     involvesSexCrime: false,
 
     // Education / Assessment

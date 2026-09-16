@@ -174,6 +174,7 @@ export const updateSARSchema = z.object({
     supervisorLastSignedAt: z.date().nullish(),
     involvesSexCrime: z.boolean().optional(),
     static99RCompleted: z.boolean().optional(),
+    static99RScore: z.number().int().nullish(),
     isVictimImpactOnly: z.boolean().nullable().optional(),
     // Assessment metadata
     assessmentScore: z.number().int().nullish(),

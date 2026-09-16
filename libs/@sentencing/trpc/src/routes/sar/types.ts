@@ -64,6 +64,7 @@ export type UpsertSARInput = Pick<
   | "noORASDomainReason"
   | "involvesSexCrime"
   | "static99RCompleted"
+  | "static99RScore"
   | "isVictimImpactOnly"
   | "ORASDomainsAvailable"
   | "criminalHistoryLevel"
