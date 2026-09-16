@@ -22,6 +22,7 @@ ENV PORT=8080
 
 RUN corepack enable
 
+RUN apk update && apk upgrade --no-cache
 RUN apk add --no-cache dumb-init
 
 # Copy over the scripts since they should rarely be changed

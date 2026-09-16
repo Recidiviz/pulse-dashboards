@@ -7,7 +7,7 @@ ENV NODE_ENV production
 ENV HOST 0.0.0.0
 ENV PORT 8080
 
-RUN apt-get update -y && apt-get install -y openssl
+RUN apt-get update -y && apt-get upgrade -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 RUN apt-get install dumb-init
 
 # Enable corepack so newer versions of yarn can be installed
