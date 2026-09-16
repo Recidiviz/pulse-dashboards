@@ -42,21 +42,24 @@ const ORAS: UsMoClientMetadata["orasAssessment"] = {
   assessmentDate: parseISO("2026-04-10"),
 };
 
-// Goals with a mix of objective end dates: an overdue date (2026-04-10), a
-// due-soon date (2026-06-26, within 7 days of NOW), and a null date.
+// Goals with a mix of objective statuses: an overdue planned date
+// (2026-04-10), a due-soon planned date (2026-06-26, within 7 days of NOW),
+// a completed objective, and a null date.
 const CASE_PLAN: UsMoClientMetadata["casePlan"] = [
   {
     goal: "RS02A-Maintain Pro-Social Housing",
     objectivesAndTechniques: [
       {
         objective: "RS01.001-Research viable/ stable home plan options",
-        objectiveEndDate: parseISO("2026-04-10"),
+        objectiveEndDate: null,
+        objectivePlannedEndDate: parseISO("2026-04-10"),
         techniques: ["IC01-Verbal Affirmation/admonishment as needed"],
       },
       {
         objective:
           "RS01.002-Submit selected home plan to Probation and Parole Officer",
         objectiveEndDate: null,
+        objectivePlannedEndDate: null,
         techniques: [
           "IC01-Verbal Affirmation",
           "IC01-Verbal Affirmation/admonishment as needed",
@@ -69,12 +72,14 @@ const CASE_PLAN: UsMoClientMetadata["casePlan"] = [
     objectivesAndTechniques: [
       {
         objective: "SU01.001-No violations for drug use",
-        objectiveEndDate: parseISO("2026-06-26"),
+        objectiveEndDate: null,
+        objectivePlannedEndDate: parseISO("2026-06-26"),
         techniques: ["IC01-Verbal Affirmation"],
       },
       {
         objective: "SU01.005-Attend the support group of my choosing",
-        objectiveEndDate: null,
+        objectiveEndDate: parseISO("2026-05-01"),
+        objectivePlannedEndDate: parseISO("2026-04-20"),
         techniques: ["SV04-Service Referral: Other"],
       },
     ],
@@ -88,6 +93,9 @@ export const FullData = () => (
       casePlan={CASE_PLAN}
       lastUpdated={parseISO("2026-06-01")}
       now={NOW}
+      currentPage={0}
+      totalPages={1}
+      onPageChange={() => undefined}
     />
   </Frame>
 );
@@ -98,6 +106,9 @@ export const NoOras = () => (
       orasAssessment={null}
       casePlan={CASE_PLAN}
       now={NOW}
+      currentPage={0}
+      totalPages={1}
+      onPageChange={() => undefined}
     />
   </Frame>
 );
@@ -109,12 +120,22 @@ export const NoCasePlan = () => (
       casePlan={[]}
       lastUpdated={parseISO("2026-06-01")}
       now={NOW}
+      currentPage={0}
+      totalPages={1}
+      onPageChange={() => undefined}
     />
   </Frame>
 );
 
 export const Empty = () => (
   <Frame>
-    <UsMoCasePlanningView orasAssessment={null} casePlan={[]} now={NOW} />
+    <UsMoCasePlanningView
+      orasAssessment={null}
+      casePlan={[]}
+      now={NOW}
+      currentPage={0}
+      totalPages={1}
+      onPageChange={() => undefined}
+    />
   </Frame>
 );

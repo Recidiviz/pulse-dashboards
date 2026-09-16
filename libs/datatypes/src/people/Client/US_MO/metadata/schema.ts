@@ -65,6 +65,7 @@ export const usMoClientMetadataSchema = z.object({
           z.object({
             objective: quoteStrippedString.nullish(),
             objectiveEndDate: dateStringSchemaWithoutTimeShift.nullish(),
+            objectivePlannedEndDate: dateStringSchemaWithoutTimeShift.nullish(),
             techniques: z.array(quoteStrippedString),
           }),
         ),

@@ -39,7 +39,8 @@ const CASE_PLAN: UsMoClientMetadata["casePlan"] = [
     objectivesAndTechniques: [
       {
         objective: "RS01.001-Research viable/ stable home plan options",
-        objectiveEndDate: new Date(2026, 3, 10),
+        objectiveEndDate: null,
+        objectivePlannedEndDate: new Date(2026, 3, 10),
         techniques: ["IC01-Verbal Affirmation/admonishment as needed"],
       },
     ],
@@ -53,6 +54,9 @@ describe("UsMoCasePlanningView", () => {
         orasAssessment={ORAS}
         casePlan={CASE_PLAN}
         now={NOW}
+        currentPage={0}
+        totalPages={1}
+        onPageChange={() => undefined}
       />,
     );
     expect(screen.getByText("Case Planning")).toBeInTheDocument();
@@ -65,6 +69,9 @@ describe("UsMoCasePlanningView", () => {
         casePlan={CASE_PLAN}
         lastUpdated={new Date(2026, 5, 1)}
         now={NOW}
+        currentPage={0}
+        totalPages={1}
+        onPageChange={() => undefined}
       />,
     );
 
@@ -84,7 +91,14 @@ describe("UsMoCasePlanningView", () => {
 
   test("renders both empty states when ORAS and case plan are empty", () => {
     render(
-      <UsMoCasePlanningView orasAssessment={null} casePlan={[]} now={NOW} />,
+      <UsMoCasePlanningView
+        orasAssessment={null}
+        casePlan={[]}
+        now={NOW}
+        currentPage={0}
+        totalPages={1}
+        onPageChange={() => undefined}
+      />,
     );
     expect(screen.getByText("Case Planning")).toBeInTheDocument();
     expect(screen.getByText("No ORAS assessment on file.")).toBeInTheDocument();
@@ -101,6 +115,8 @@ describe("UsMoCasePlanning (observer wrapper)", () => {
         orasAssessment: ORAS,
         casePlan: CASE_PLAN,
       } as unknown as UsMoClientMetadata,
+      casePlanPage: 0,
+      setCasePlanPage: () => undefined,
     } as unknown as Client;
 
     render(<UsMoCasePlanning client={client} />);
@@ -122,6 +138,8 @@ describe("UsMoCasePlanning (observer wrapper)", () => {
         orasAssessment: undefined,
         casePlan: undefined,
       } as unknown as UsMoClientMetadata,
+      casePlanPage: 0,
+      setCasePlanPage: () => undefined,
     } as unknown as Client;
 
     render(<UsMoCasePlanning client={client} />);
@@ -130,5 +148,48 @@ describe("UsMoCasePlanning (observer wrapper)", () => {
     expect(screen.getByText("No case plan on file")).toBeInTheDocument();
     // No assessment date → no "Last Updated" subtitle.
     expect(screen.queryByText(/Last Updated/)).not.toBeInTheDocument();
+  });
+
+  test("shows only the first 3 goals on page 0 of a case plan with more than 3 goals", () => {
+    const manyGoals: UsMoClientMetadata["casePlan"] = [1, 2, 3, 4].map((n) => ({
+      goal: `Goal ${n}`,
+      objectivesAndTechniques: [],
+    }));
+    const client = {
+      metadata: {
+        stateCode: "US_MO",
+        sex: "MALE",
+        orasAssessment: ORAS,
+        casePlan: manyGoals,
+      } as unknown as UsMoClientMetadata,
+      casePlanPage: 0,
+      setCasePlanPage: () => undefined,
+    } as unknown as Client;
+
+    render(<UsMoCasePlanning client={client} />);
+
+    expect(screen.getByText("Goal 1")).toBeInTheDocument();
+    expect(screen.getByText("Goal 2")).toBeInTheDocument();
+    expect(screen.getByText("Goal 3")).toBeInTheDocument();
+    expect(screen.queryByText("Goal 4")).not.toBeInTheDocument();
+  });
+
+  test("clamps an out-of-range casePlanPage back into range", () => {
+    const client = {
+      metadata: {
+        stateCode: "US_MO",
+        sex: "MALE",
+        orasAssessment: ORAS,
+        casePlan: CASE_PLAN,
+      } as unknown as UsMoClientMetadata,
+      casePlanPage: 5,
+      setCasePlanPage: () => undefined,
+    } as unknown as Client;
+
+    render(<UsMoCasePlanning client={client} />);
+
+    expect(
+      screen.getByText("RS02A-Maintain Pro-Social Housing"),
+    ).toBeInTheDocument();
   });
 });

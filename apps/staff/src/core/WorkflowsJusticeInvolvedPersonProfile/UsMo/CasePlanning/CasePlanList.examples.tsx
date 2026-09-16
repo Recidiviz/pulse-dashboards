@@ -35,15 +35,23 @@ const Frame: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 // Pinned "now" so the due-status is deterministic (matches currentDate).
 const NOW = parseISO("2026-06-23");
 
-// Goals demonstrating overdue (2026-04-10), due-soon (2026-06-26), and no date.
+// Goals demonstrating overdue (2026-04-10), due-soon (2026-06-26), completed,
+// and no-date objectives, and how they sort within a goal.
 const CASE_PLAN: UsMoClientMetadata["casePlan"] = [
   {
     goal: "RS02A-Maintain Pro-Social Housing",
     objectivesAndTechniques: [
       {
         objective: "RS01.001-Research viable/ stable home plan options",
-        objectiveEndDate: parseISO("2026-04-10"),
+        objectiveEndDate: null,
+        objectivePlannedEndDate: parseISO("2026-04-10"),
         techniques: ["IC01-Verbal Affirmation/admonishment as needed"],
+      },
+      {
+        objective: "RS01.003-Meet with housing case manager",
+        objectiveEndDate: parseISO("2026-05-01"),
+        objectivePlannedEndDate: parseISO("2026-04-15"),
+        techniques: ["IC01-Verbal Affirmation"],
       },
     ],
   },
@@ -52,12 +60,14 @@ const CASE_PLAN: UsMoClientMetadata["casePlan"] = [
     objectivesAndTechniques: [
       {
         objective: "SU01.001-No violations for drug use",
-        objectiveEndDate: parseISO("2026-06-26"),
+        objectiveEndDate: null,
+        objectivePlannedEndDate: parseISO("2026-06-26"),
         techniques: ["IC01-Verbal Affirmation"],
       },
       {
         objective: "SU01.005-Attend the support group of my choosing",
         objectiveEndDate: null,
+        objectivePlannedEndDate: null,
         techniques: ["SV04-Service Referral: Other"],
       },
     ],

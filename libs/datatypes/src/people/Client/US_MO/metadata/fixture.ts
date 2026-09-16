@@ -56,12 +56,14 @@ export const usMoClientMetadataFixture: z.input<
         {
           objective: "RS01.001-Research viable/ stable home plan options",
           objectiveEndDate: null,
+          objectivePlannedEndDate: null,
           techniques: ["IC01-Verbal Affirmation/admonishment  as needed"],
         },
         {
           objective:
             "RS01.002-Submit selected home plan to Probation and Parole Officer",
           objectiveEndDate: null,
+          objectivePlannedEndDate: null,
           techniques: [
             "IC01-Verbal Affirmation",
             "IC01-Verbal Affirmation/admonishment  as needed",
@@ -71,6 +73,7 @@ export const usMoClientMetadataFixture: z.input<
           objective:
             "RS02.001-Identify support needs in home plan area (clothing, transportation, child care, etc.)",
           objectiveEndDate: null,
+          objectivePlannedEndDate: null,
           techniques: [
             "SV02-Service Referral:  Basic Needs",
             "SV02-Service Referral:  Basic Needs",
@@ -85,11 +88,13 @@ export const usMoClientMetadataFixture: z.input<
         {
           objective: "SU01.001-No violations for drug use",
           objectiveEndDate: null,
+          objectivePlannedEndDate: null,
           techniques: ["IC01-Verbal Affirmation"],
         },
         {
           objective: "SU01.005-Attend the support group of my choosing",
           objectiveEndDate: null,
+          objectivePlannedEndDate: null,
           techniques: ["SV04-Service Referral:  Other"],
         },
       ],

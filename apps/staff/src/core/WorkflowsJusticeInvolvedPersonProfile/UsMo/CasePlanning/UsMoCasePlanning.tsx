@@ -16,13 +16,15 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { useEffect } from "react";
 
 import { UsMoClientMetadata } from "~datatypes";
 
 import { Client } from "../../../../WorkflowsStore";
-import { CardFrame, ModuleHeader, ModuleHeading } from "../shared/styles";
+import { ModuleHeader, ModuleHeading } from "../shared/styles";
 import { CasePlanList } from "./CasePlanList";
+import { CasePlanPagination } from "./CasePlanPagination";
+import { paginateCasePlanGoals } from "./caseplanUtils";
 import { OrasAssessmentCard } from "./OrasAssessmentCard";
 
 type UsMoCasePlanningViewProps = {
@@ -30,11 +32,17 @@ type UsMoCasePlanningViewProps = {
   casePlan: UsMoClientMetadata["casePlan"];
   lastUpdated?: Date | null;
   now?: Date;
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
 };
 
 /**
  * Presentational "Case Planning" module for the US_MO supervision profile:
- * a section heading, the ORAS assessment card, and the case-plan goal list.
+ * a section heading, the ORAS assessment card, the case-plan goal list, and
+ * a pagination control. `casePlan` here is already the current page's slice;
+ * `currentPage`/`totalPages`/`onPageChange` drive the `CasePlanPagination`
+ * control below it.
  *
  * Pure / data-in; the `observer` wrapper below reads off the `Client` instance.
  */
@@ -43,19 +51,25 @@ export const UsMoCasePlanningView: React.FC<UsMoCasePlanningViewProps> = ({
   casePlan,
   lastUpdated,
   now,
+  currentPage,
+  totalPages,
+  onPageChange,
 }) => {
   return (
     <div>
       <ModuleHeader>
         <ModuleHeading>Case Planning</ModuleHeading>
       </ModuleHeader>
-      <CardFrame>
-        <OrasAssessmentCard
-          orasAssessment={orasAssessment}
-          lastUpdated={lastUpdated}
-        />
-        <CasePlanList casePlan={casePlan} now={now} />
-      </CardFrame>
+      <OrasAssessmentCard
+        orasAssessment={orasAssessment}
+        lastUpdated={lastUpdated}
+      />
+      <CasePlanList casePlan={casePlan} now={now} />
+      <CasePlanPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+      />
     </div>
   );
 };
@@ -66,7 +80,9 @@ type UsMoCasePlanningProps = {
 
 /**
  * "Case Planning" section for the US_MO supervision profile. Reads ORAS +
- * case-plan data directly off the hydrated `Client` MobX instance. The parent
+ * case-plan data directly off the hydrated `Client` MobX instance, and reads/
+ * writes the current case-plan page via `client.casePlanPage`, which persists
+ * for the session because `Client` instances are cached per-person. The parent
  * `FullProfile` gates rendering on `instanceof Client && stateCode === "US_MO"`,
  * so the metadata is known to be the US_MO variant by the time this mounts —
  * hence the cast.
@@ -79,12 +95,29 @@ export const UsMoCasePlanning = observer(function UsMoCasePlanning({
   client,
 }: UsMoCasePlanningProps): React.ReactElement {
   const { orasAssessment, casePlan } = client.metadata as UsMoClientMetadata;
+  const { goals, currentPage, totalPages } = paginateCasePlanGoals(
+    casePlan ?? [],
+    client.casePlanPage,
+  );
+
+  // If the stored page was out of range (e.g. the case plan shrank since it
+  // was set) and got clamped for display, persist the clamped value back so
+  // a later increase in goal count doesn't snap the view back to the stale,
+  // now-out-of-range page.
+  useEffect(() => {
+    if (currentPage !== client.casePlanPage) {
+      client.setCasePlanPage(currentPage);
+    }
+  }, [client, currentPage]);
 
   return (
     <UsMoCasePlanningView
       orasAssessment={orasAssessment}
-      casePlan={casePlan}
+      casePlan={goals}
       lastUpdated={orasAssessment?.lastUpdated ?? undefined}
+      currentPage={currentPage}
+      totalPages={totalPages}
+      onPageChange={(page) => client.setCasePlanPage(page)}
     />
   );
 });

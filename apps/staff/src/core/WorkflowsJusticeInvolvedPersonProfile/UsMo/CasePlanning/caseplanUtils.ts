@@ -17,28 +17,113 @@
 
 import { differenceInCalendarDays, isBefore, startOfDay } from "date-fns";
 
-export type ObjectiveDueStatus = "overdue" | "dueSoon";
+import { UsMoClientMetadata } from "~datatypes";
+
+export type ObjectiveDueStatus = "overdue" | "dueSoon" | "due" | "completed";
+
+export const CASE_PLAN_PAGE_SIZE = 3;
 
 /**
- * Classifies an objective's end date relative to `now`:
- * - `"overdue"` when the date falls before the start of `now`'s day,
- * - `"dueSoon"` when the date is today or within the next 7 calendar days,
- * - `null` otherwise (further out, or no date).
+ * Classifies an objective's status:
+ * - `"completed"` when `completionDate` is set (takes precedence over any
+ *   planned-end-date comparison — a completed objective is never overdue),
+ * - `"overdue"` when `plannedEndDate` falls before the start of `now`'s day,
+ * - `"dueSoon"` when `plannedEndDate` is today or within the next 7 calendar
+ *   days,
+ * - `"due"` when `plannedEndDate` is set but further out than 7 days,
+ * - `null` when there's no date at all (and not completed).
  *
  * `now` defaults to the current time; callers (e.g. examples / tests) can pin
  * it for deterministic output.
  */
 export function getObjectiveDueStatus(
-  endDate: Date | null | undefined,
+  completionDate: Date | null | undefined,
+  plannedEndDate: Date | null | undefined,
   now: Date = new Date(),
 ): ObjectiveDueStatus | null {
-  if (!endDate) return null;
+  if (completionDate) return "completed";
+  if (!plannedEndDate) return null;
 
   const startOfToday = startOfDay(now);
-  if (isBefore(endDate, startOfToday)) return "overdue";
+  if (isBefore(plannedEndDate, startOfToday)) return "overdue";
 
-  const daysUntilDue = differenceInCalendarDays(endDate, startOfToday);
+  const daysUntilDue = differenceInCalendarDays(plannedEndDate, startOfToday);
   if (daysUntilDue <= 7) return "dueSoon";
 
-  return null;
+  return "due";
+}
+
+const OBJECTIVE_STATUS_SORT_ORDER: Record<ObjectiveDueStatus | "none", number> =
+  {
+    overdue: 0,
+    dueSoon: 1,
+    due: 2,
+    none: 3,
+    completed: 4,
+  };
+
+type CasePlanObjective = NonNullable<
+  UsMoClientMetadata["casePlan"]
+>[number]["objectivesAndTechniques"][number];
+
+type ComparableObjective = Pick<
+  CasePlanObjective,
+  "objectiveEndDate" | "objectivePlannedEndDate"
+>;
+
+/**
+ * Orders case plan objectives within a goal: Overdue, then Due Soon, then
+ * Due, then objectives with no date at all, then Completed last. Within a
+ * shared status, objectives are further sorted newest-first by the date that
+ * drove that status (`objectiveEndDate` for Completed, `objectivePlannedEndDate`
+ * otherwise).
+ */
+export function compareObjectivesByStatus(
+  a: ComparableObjective,
+  b: ComparableObjective,
+  now: Date = new Date(),
+): number {
+  const statusA =
+    getObjectiveDueStatus(a.objectiveEndDate, a.objectivePlannedEndDate, now) ??
+    "none";
+  const statusB =
+    getObjectiveDueStatus(b.objectiveEndDate, b.objectivePlannedEndDate, now) ??
+    "none";
+
+  if (statusA !== statusB) {
+    return (
+      OBJECTIVE_STATUS_SORT_ORDER[statusA] -
+      OBJECTIVE_STATUS_SORT_ORDER[statusB]
+    );
+  }
+
+  const dateField =
+    statusA === "completed" ? "objectiveEndDate" : "objectivePlannedEndDate";
+  const dateA = a[dateField];
+  const dateB = b[dateField];
+
+  if (!dateA && !dateB) return 0;
+  if (!dateA) return 1;
+  if (!dateB) return -1;
+
+  return dateB.getTime() - dateA.getTime();
+}
+
+export function paginateCasePlanGoals(
+  casePlan: NonNullable<UsMoClientMetadata["casePlan"]>,
+  requestedPage: number,
+  pageSize: number = CASE_PLAN_PAGE_SIZE,
+): {
+  goals: NonNullable<UsMoClientMetadata["casePlan"]>;
+  currentPage: number;
+  totalPages: number;
+} {
+  const totalPages = Math.max(1, Math.ceil(casePlan.length / pageSize));
+  const currentPage = Math.min(Math.max(requestedPage, 0), totalPages - 1);
+  const start = currentPage * pageSize;
+  return {
+    goals: casePlan.slice(start, start + pageSize),
+    currentPage,
+    totalPages,
+  };
 }

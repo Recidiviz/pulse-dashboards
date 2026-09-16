@@ -248,6 +248,36 @@ describe("usMoClientMetadataSchema ORAS assessment and case plan", () => {
       parsed.casePlan?.[0].objectivesAndTechniques[0].objectiveEndDate,
     ).toEqual(parseISO("2026-05-15"));
   });
+
+  test("transforms a non-null objectivePlannedEndDate to a Date", () => {
+    const fixture: z.input<typeof usMoClientMetadataSchema> = {
+      ...usMoClientMetadataFixture,
+      casePlan: [
+        {
+          goal: "RS02A-Maintain Pro-Social Housing",
+          objectivesAndTechniques: [
+            {
+              objective: "Some objective",
+              objectiveEndDate: null,
+              objectivePlannedEndDate: "2026-04-20",
+              techniques: [],
+            },
+          ],
+        },
+      ],
+    };
+    const parsed = usMoClientMetadataSchema.parse(fixture);
+    expect(
+      parsed.casePlan?.[0].objectivesAndTechniques[0].objectivePlannedEndDate,
+    ).toEqual(parseISO("2026-04-20"));
+  });
+
+  test("accepts a null objectivePlannedEndDate", () => {
+    const parsed = usMoClientMetadataSchema.parse(usMoClientMetadataFixture);
+    expect(
+      parsed.casePlan?.[0].objectivesAndTechniques[0].objectivePlannedEndDate,
+    ).toBeNull();
+  });
 });
 
 describe("usMoClientMetadataSchema supervision contacts", () => {

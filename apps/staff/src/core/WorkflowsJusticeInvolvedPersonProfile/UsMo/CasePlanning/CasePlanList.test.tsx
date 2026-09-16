@@ -34,12 +34,14 @@ const CASE_PLAN: CasePlan = [
     objectivesAndTechniques: [
       {
         objective: "RS01.001-Research viable/ stable home plan options",
-        objectiveEndDate: new Date(2026, 3, 10), // overdue
+        objectiveEndDate: null,
+        objectivePlannedEndDate: new Date(2026, 3, 10), // overdue
         techniques: ["IC01-Verbal Affirmation/admonishment as needed"],
       },
       {
         objective: "RS01.002-Submit selected home plan",
-        objectiveEndDate: null, // no status, no due date
+        objectiveEndDate: null,
+        objectivePlannedEndDate: null, // no date at all
         techniques: ["IC01-Verbal Affirmation"],
       },
     ],
@@ -49,7 +51,8 @@ const CASE_PLAN: CasePlan = [
     objectivesAndTechniques: [
       {
         objective: "SU01.001-No violations for drug use",
-        objectiveEndDate: new Date(2026, 5, 26), // due soon
+        objectiveEndDate: null,
+        objectivePlannedEndDate: new Date(2026, 5, 26), // due soon
         techniques: ["IC01-Verbal Affirmation"],
       },
     ],
@@ -97,16 +100,145 @@ describe("CasePlanList", () => {
   test("shows the 'Overdue' status and due date for an overdue objective", () => {
     render(<CasePlanList casePlan={CASE_PLAN} now={NOW} />);
     expect(screen.getByText("Overdue")).toBeInTheDocument();
-    expect(screen.getByText("Due Apr 10, 2026")).toBeInTheDocument();
+    expect(screen.getByText("Apr 10, 2026")).toBeInTheDocument();
   });
 
   test("shows the 'Due Soon' status and due date for a due-soon objective", () => {
     render(<CasePlanList casePlan={CASE_PLAN} now={NOW} />);
     expect(screen.getByText("Due Soon")).toBeInTheDocument();
-    expect(screen.getByText("Due Jun 26, 2026")).toBeInTheDocument();
+    expect(screen.getByText("Jun 26, 2026")).toBeInTheDocument();
   });
 
-  test("renders no status label or due date when objectiveEndDate is null", () => {
+  test("shows the 'Due' status and due date for an objective due further than 7 days out", () => {
+    render(
+      <CasePlanList
+        casePlan={[
+          {
+            goal: "Goal with a far-future objective",
+            objectivesAndTechniques: [
+              {
+                objective: "Far-future objective",
+                objectiveEndDate: null,
+                objectivePlannedEndDate: new Date(2027, 0, 1),
+                techniques: [],
+              },
+            ],
+          },
+        ]}
+        now={NOW}
+      />,
+    );
+
+    expect(screen.getByText("Due")).toBeInTheDocument();
+    expect(screen.getByText("Jan 1, 2027")).toBeInTheDocument();
+  });
+
+  test("shows the 'Completed' status, completion date, and was-due date for a completed objective", () => {
+    render(
+      <CasePlanList
+        casePlan={[
+          {
+            goal: "Goal with a completed objective",
+            objectivesAndTechniques: [
+              {
+                objective: "Completed objective",
+                objectiveEndDate: new Date(2026, 4, 1),
+                objectivePlannedEndDate: new Date(2026, 3, 15),
+                techniques: [],
+              },
+            ],
+          },
+        ]}
+        now={NOW}
+      />,
+    );
+
+    expect(screen.getByText("Completed")).toBeInTheDocument();
+    expect(screen.getByText("May 1, 2026")).toBeInTheDocument();
+    expect(screen.getByText("Was due Apr 15, 2026")).toBeInTheDocument();
+  });
+
+  test("omits the was-due line for a completed objective with no planned end date", () => {
+    render(
+      <CasePlanList
+        casePlan={[
+          {
+            goal: "Goal with a completed objective",
+            objectivesAndTechniques: [
+              {
+                objective: "Completed objective",
+                objectiveEndDate: new Date(2026, 4, 1),
+                objectivePlannedEndDate: null,
+                techniques: [],
+              },
+            ],
+          },
+        ]}
+        now={NOW}
+      />,
+    );
+
+    expect(screen.getByText("May 1, 2026")).toBeInTheDocument();
+    expect(screen.queryByText(/^Was due /)).not.toBeInTheDocument();
+  });
+
+  test("sorts objectives within a goal Overdue → Due Soon → Due → no-date → Completed", () => {
+    render(
+      <CasePlanList
+        casePlan={[
+          {
+            goal: "Mixed-status goal",
+            objectivesAndTechniques: [
+              {
+                objective: "Completed item",
+                objectiveEndDate: new Date(2026, 4, 1),
+                objectivePlannedEndDate: new Date(2026, 3, 1),
+                techniques: [],
+              },
+              {
+                objective: "No-date item",
+                objectiveEndDate: null,
+                objectivePlannedEndDate: null,
+                techniques: [],
+              },
+              {
+                objective: "Due item",
+                objectiveEndDate: null,
+                objectivePlannedEndDate: new Date(2027, 0, 1),
+                techniques: [],
+              },
+              {
+                objective: "Due soon item",
+                objectiveEndDate: null,
+                objectivePlannedEndDate: new Date(2026, 5, 24),
+                techniques: [],
+              },
+              {
+                objective: "Overdue item",
+                objectiveEndDate: null,
+                objectivePlannedEndDate: new Date(2026, 3, 10),
+                techniques: [],
+              },
+            ],
+          },
+        ]}
+        now={NOW}
+      />,
+    );
+
+    const objectiveTexts = screen
+      .getAllByText(/item$/)
+      .map((el) => el.textContent);
+    expect(objectiveTexts).toEqual([
+      "Overdue item",
+      "Due soon item",
+      "Due item",
+      "No-date item",
+      "Completed item",
+    ]);
+  });
+
+  test("renders no status label and an em dash in place of a due date when neither date is set", () => {
     render(
       <CasePlanList
         casePlan={[
@@ -116,6 +248,7 @@ describe("CasePlanList", () => {
               {
                 objective: "Undated objective",
                 objectiveEndDate: null,
+                objectivePlannedEndDate: null,
                 techniques: ["A technique"],
               },
             ],
@@ -128,7 +261,11 @@ describe("CasePlanList", () => {
     expect(screen.getByText("Undated objective")).toBeInTheDocument();
     expect(screen.queryByText("Overdue")).not.toBeInTheDocument();
     expect(screen.queryByText("Due Soon")).not.toBeInTheDocument();
-    expect(screen.queryByText(/^Due /)).not.toBeInTheDocument();
+    expect(screen.queryByText("Due")).not.toBeInTheDocument();
+    expect(screen.queryByText("Completed")).not.toBeInTheDocument();
+    expect(screen.queryByText(/^Was due /)).not.toBeInTheDocument();
+    expect(screen.queryByText(/\d{4}/)).not.toBeInTheDocument();
+    expect(screen.getByText("—")).toBeInTheDocument();
   });
 
   test("renders no body section when a goal has no objectives", () => {
@@ -156,6 +293,7 @@ describe("CasePlanList", () => {
               {
                 objective: null,
                 objectiveEndDate: null,
+                objectivePlannedEndDate: null,
                 techniques: [],
               },
             ],
@@ -164,7 +302,8 @@ describe("CasePlanList", () => {
         now={NOW}
       />,
     );
-    // Both the goal title and the objective text fall back to "—".
-    expect(screen.getAllByText("—")).toHaveLength(2);
+    // The goal title, the objective text, and the missing due date all fall
+    // back to "—".
+    expect(screen.getAllByText("—")).toHaveLength(3);
   });
 });

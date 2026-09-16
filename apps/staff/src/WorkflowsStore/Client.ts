@@ -173,6 +173,8 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   _warmHandoffResidentRecord?: WorkflowsResidentRecord;
 
+  casePlanPage = 0;
+
   private warmHandoffResidentPromise?: Promise<
     WorkflowsResidentRecord | undefined
   >;
@@ -202,6 +204,8 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
       milestonesPhoneNumber: true,
       milestonesPendingMessage: true,
       milestonesMessageStatus: true,
+      casePlanPage: observable,
+      setCasePlanPage: action,
       updateMilestonesPhoneNumber: action,
       updateMilestonesTextMessage: action,
       _warmHandoffResidentRecord: observable,
@@ -727,5 +731,9 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
     ${congratulationsMilestones.map((m) => `- ${m.text}`).join("\n")}
   `;
+  }
+
+  setCasePlanPage(page: number): void {
+    this.casePlanPage = page;
   }
 }
