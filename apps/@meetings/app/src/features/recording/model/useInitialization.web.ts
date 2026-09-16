@@ -55,41 +55,54 @@ export function useInitialization({
     setStatus("uploading");
 
     try {
-      // STEP 1: save duration from persisted chunks
       const chunks = await getAllChunks();
       const blob = chunks.length
         ? new Blob(chunks, { type: contentType })
         : null;
 
-      const blobDurationMs = blob ? await getBlobDurationMs(blob) : 0;
-      const result = blobDurationMs + persistedDurationMs;
-      setInitialDuration(result);
-      setPersistedDurationMs(result);
+      if (!blob) {
+        // No pending chunks: still seed the timer, or it resets to 0 instead
+        // of reflecting the duration already persisted from prior segments.
+        setInitialDuration(persistedDurationMs);
+        setPersistedDurationMs(persistedDurationMs);
+        return;
+      }
 
-      // STEP 2: upload and clear persisted chunks
-      if (blob && meetingId) {
-        const uriToUpload = URL.createObjectURL(blob);
+      // STEP 1: save audio blob (even if it's corrupted we can try to recover)
+      const uriToUpload = URL.createObjectURL(blob);
+      if (meetingId) {
         await uploadSegment({
           uri: uriToUpload,
           meetingId,
           contentType,
           fileExtension: extension,
         });
-        await clearRecordedChunks();
-        URL.revokeObjectURL(uriToUpload);
+      } else {
+        throw new Error("Missing meetingId during recording initialization");
+      }
 
-        const isValidWebM = await hasEBMLHeader(blob);
+      // STEP 2: clear persisted chunks after uploading
+      await clearRecordedChunks();
+      URL.revokeObjectURL(uriToUpload);
 
-        if (!isValidWebM) {
-          throw new Error(
-            "Persisted recording chunks are missing or have an invalid WebM header",
-          );
-        }
+      // STEP 3: Save duration from persisted chunks
+      const blobDurationMs = await getBlobDurationMs(blob);
+      const result = blobDurationMs + persistedDurationMs;
+      setInitialDuration(result);
+      setPersistedDurationMs(result);
+
+      // STEP 4: Check for corruption
+      const isValidWebM = await hasEBMLHeader(blob);
+
+      if (!isValidWebM) {
+        throw new Error(
+          "Persisted recording chunks are missing or have an invalid WebM header",
+        );
       }
     } catch (error) {
       onError(error);
     } finally {
-      // STEP 3: set initial status
+      // STEP 5: set initial status
       switch (restoredStatus) {
         case "idle":
         case "paused":
