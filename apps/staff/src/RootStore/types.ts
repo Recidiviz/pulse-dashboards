@@ -151,6 +151,7 @@ export type FeatureVariant =
   | "usTn2026ClassificationPolicyPilot"
   | "usTnRcafV2"
   | "usTnRcafV1"
+  | "usTnCafSubmissionButton"
   | "clientProfileWarmHandoff"
 
   //// Texas
@@ -267,6 +268,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usTn2026ClassificationPolicyPilot: {},
   usTnRcafV2: {},
   usTnRcafV1: {},
+  usTnCafSubmissionButton: {},
   clientProfileWarmHandoff: {},
   insightsStaffUsage: {},
   insightsConsistentLoginPill: {},
@@ -412,6 +414,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usTn2026ClassificationPolicyPilot: isDemoMode() ? undefined : {},
         usTnRcafV1: undefined,
         usTnRcafV2: isDemoMode() ? undefined : {},
+        usTnCafSubmissionButton: undefined,
 
         operationsDrilldown: { activeTenants: ["US_ID", "US_ND", "US_TX"] },
         operationsContactsDrilldown: { activeTenants: ["US_TX"] },

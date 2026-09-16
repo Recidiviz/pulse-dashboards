@@ -123,7 +123,7 @@ const StyledSubmitButton = styled(Button)`
   }
 `;
 
-const StyledButton = styled(Button).attrs({
+export const StyledFormButton = styled(Button).attrs({
   kind: "primary",
   shape: "block",
 })`
@@ -208,8 +208,8 @@ export type FormHeaderProps = {
   onDenialButtonClick?: () => void;
 };
 
-export const DownloadButton = StyledButton;
-export const RevertButton = StyledButton;
+export const DownloadButton = StyledFormButton;
+export const RevertButton = StyledFormButton;
 export const SubmitButton = StyledSubmitButton;
 
 export const FormContainer = observer(function FormContainer({

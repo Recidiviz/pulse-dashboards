@@ -15,34 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { buildServer } from "./server";
+import { useFeatureVariants } from "../../../../components/StoreProvider";
+import { StyledFormButton } from "../../FormContainer";
+import { trpc } from "../common/Classification2026/UsTnReclassTrpcProvider";
 
-const host = process.env["HOST"] ?? "localhost";
-const port = process.env["PORT"] ? Number(process.env["PORT"]) : 3022;
+export function UsTnReclassSubmitButton() {
+  const trpcUtils = trpc.useUtils();
+  const trpcClient = trpcUtils.client;
+  const { usTnCafSubmissionButton } = useFeatureVariants();
 
-const server = buildServer();
+  if (!usTnCafSubmissionButton) return;
 
-// Start listening.
-server.listen({ port, host }, (err) => {
-  if (err) {
-    server.log.error(err);
-    process.exit(1);
-  } else {
-    console.log(`[ ready ] http://${host}:${port}`);
-  }
-});
+  const onClick = async () => {
+    const res = await trpcClient.howdy.query();
 
-if (import.meta.hot && process.env["NODE_ENV"] === "development") {
-  // TODO(#10276) Refactor into a script that can be used by all BEs in pulse-dashboards
-  async function killServer() {
-    await server.close();
-  }
+    // eslint-disable-next-line no-console
+    console.info(res);
+  };
 
-  import.meta.hot.on("vite:beforeFullReload", () => {
-    killServer();
-  });
-
-  import.meta.hot.dispose(() => {
-    killServer();
-  });
+  return <StyledFormButton onClick={onClick}>Submit</StyledFormButton>;
 }
