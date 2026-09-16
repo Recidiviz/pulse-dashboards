@@ -221,11 +221,21 @@ already installed on your machine. Each developer installs each declared plugin 
 terminal or through the VS Code extension's **Manage plugins** dialog:
 
 ```bash
-claude plugin install <name>@recidiviz --scope project
+claude plugin marketplace add Recidiviz/claude-skills
+claude plugin install <name>@recidiviz
 ```
 
+The `marketplace add` step is separate on purpose. The `extraKnownMarketplaces` declaration points a
+_session_ at the marketplace, but the `claude plugin` CLI does not resolve it until you add it, so
+`install` on its own fails with `Plugin "<name>" not found in marketplace "recidiviz"`. Add it once per
+machine, not once per plugin. If the add step reports `Unrecognized key`, your Claude Code is too old for
+the catalog's schema — run `claude update` (v2.1.193 or later).
+
+Install at the default user scope. Do not pass `--scope project`: it rewrites the checked-in
+`.claude/settings.json` with no change in meaning, leaving noise on whatever branch you are on.
+
 If a declared plugin is not installed, its skills and hooks silently do not load. A session-start hook in
-this repo checks for this and prints the install command for any plugin that is missing. To opt out of a
+this repo checks for this and prints the commands for any plugin that is missing. To opt out of a
 declared plugin locally, set it to `false` under `enabledPlugins` in `.claude/settings.local.json`.
 
 ## Code Style
