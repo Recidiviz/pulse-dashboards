@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TRPCError } from "@trpc/server";
-
 import { resourceApiClient } from "./resourceApiClient";
 
 vi.mock("../../../../helpers/createCachedCall", () => ({
@@ -27,8 +25,20 @@ const BASE_URL = "https://test-api.example.com";
 const API_KEY = "test-key";
 const US_NYC_STATE_CODE = "US_NYC";
 
-function mockFetch(body: unknown, ok = true) {
-  const fn = vi.fn().mockResolvedValue({ ok, json: async () => body });
+function mockFetch(
+  body: unknown,
+  ok = true,
+  {
+    status = ok ? 200 : 500,
+    text = "",
+  }: { status?: number; text?: string } = {},
+) {
+  const fn = vi.fn().mockResolvedValue({
+    ok,
+    status,
+    json: async () => body,
+    text: async () => text,
+  });
   vi.stubGlobal("fetch", fn);
   return fn;
 }
@@ -347,11 +357,19 @@ describe("request error handling", () => {
     ).rejects.toMatchObject({ code: "INTERNAL_SERVER_ERROR" });
   });
 
-  test("throws TRPCError on non-ok HTTP response", async () => {
-    mockFetch(null, false);
+  test("throws TRPCError with the upstream status and body on its cause", async () => {
+    const responseBody = '{"detail":"Service temporarily unavailable"}';
+    const statusCode = 503;
+    mockFetch(null, false, { status: statusCode, text: responseBody });
 
     await expect(
       resourceApiClient.getOrganizations(US_NYC_STATE_CODE),
-    ).rejects.toBeInstanceOf(TRPCError);
+    ).rejects.toMatchObject({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Resource API request failed",
+      cause: expect.objectContaining({
+        message: `${statusCode} — ${responseBody}`,
+      }),
+    });
   });
 });

@@ -49,7 +49,12 @@ async function request(path: string, body: unknown): Promise<unknown> {
   });
 
   if (!res.ok) {
-    throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+    const responseBody = await res.text();
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Resource API request failed",
+      cause: new Error(`${res.status} — ${responseBody.slice(0, 5000)}`),
+    });
   }
 
   return res.json();
