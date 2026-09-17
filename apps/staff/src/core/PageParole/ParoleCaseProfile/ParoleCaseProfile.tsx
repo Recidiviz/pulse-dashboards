@@ -15,11 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
 import { useParams } from "react-router-dom";
-import styled from "styled-components";
 
 import { withPresenterManager } from "~hydration-utils";
 
@@ -27,59 +24,18 @@ import NotFound from "../../../components/NotFound";
 import { useRootStore } from "../../../components/StoreProvider";
 import { ParoleCaseProfilePresenter } from "../../../ParoleStore/presenters/ParoleCaseProfilePresenter";
 import { TenantId } from "../../../RootStore/types";
-import { BackLink } from "../../Link";
 import ModelHydrator from "../../ModelHydrator";
-import { paroleUrl } from "../../views";
 import { CaseProfileSidebar } from "../components/CaseProfileSidebar";
-import { ParoleSectionComponents } from "../components/ParoleSectionComponents";
+import { DefaultParoleGeneralInfo } from "../components/ParoleGeneralInfo";
+import {
+  NON_NAV_PAROLE_SECTIONS,
+  PAROLE_SECTION_LABELS,
+  ParoleSectionComponents,
+} from "../components/ParoleSectionComponents";
 import { ReportHeader } from "../components/ReportHeader";
 import { SectionAnchor } from "../components/SectionAnchor";
-import {
-  PAROLE_REPORT_CAPTURE_ID,
-  PAROLE_SECTION_IDS,
-} from "../components/shared";
-
-// Page-level max-width/padding comes from PageParole's shared Main wrapper;
-// this only lays out the sections within it.
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${rem(spacing.lg)};
-  padding-bottom: 1.5rem;
-`;
-
-// Left sidebar takes up 30% of the available width; the existing sections
-// share the rest. No align-items override here (default is stretch) so the
-// sidebar's height matches the taller MainColumn, giving its sticky section
-// nav room to travel as the page scrolls.
-const CaseProfileLayout = styled.div`
-  display: flex;
-  gap: ${rem(spacing.lg)};
-`;
-
-const SidebarColumn = styled.div`
-  flex: 0 0 30%;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-`;
-
-const MainColumn = styled.div`
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: ${rem(spacing.lg)};
-`;
-
-// The report header plus the case-profile sections, grouped so the download
-// action can capture exactly this content (and not the download card itself)
-// into the generated PDF.
-const ReportContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${rem(spacing.lg)};
-`;
+import { PAROLE_SECTION_IDS } from "../components/shared";
+import { ParoleCaseProfileLayout } from "./ParoleCaseProfileLayout";
 
 const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
   presenter,
@@ -89,57 +45,46 @@ const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
   // ModelHydrator only renders this component once hydration has succeeded,
   // so `presenter.caseDetail` is safe to access here -- but NOT at the call
   // site below, where it would be evaluated eagerly on every render pass.
-  const { caseDetail } = presenter;
-
-  // The "downloadReport" section renders an action card that downloads a
-  // zipped PDF of the case profile. Its presence also adds the report header
-  // and groups the sections into a captureable container for that PDF.
-  const hasDownloadReport =
-    presenter.config.sections.includes("downloadReport");
-
-  // The sections that make up the report body -- every section except the
-  // download card, which is rendered above the captured container.
-  const contentSections = presenter.config.sections.filter(
+  const { caseDetail, config } = presenter;
+  const hasDownloadReport = config.sections.includes("downloadReport");
+  const contentSections = config.sections.filter(
     (sectionName) => sectionName !== "downloadReport",
   );
+  const sectionLabels = {
+    ...PAROLE_SECTION_LABELS,
+    offenseHistory:
+      config.offenseHistoryTitle ?? PAROLE_SECTION_LABELS.offenseHistory,
+    conductHistory:
+      config.conductHistory.title ?? PAROLE_SECTION_LABELS.conductHistory,
+  };
+  const navSections = config.sections
+    .filter((sectionName) => !NON_NAV_PAROLE_SECTIONS.has(sectionName))
+    .map((sectionName) => ({
+      id: PAROLE_SECTION_IDS[sectionName],
+      label: sectionLabels[sectionName],
+    }));
+  const SidebarBody = config.sidebarComponent ?? DefaultParoleGeneralInfo;
 
   return (
-    <Wrapper>
-      <BackLink fallbackUrl={paroleUrl("docket")}>Back to Docket</BackLink>
-
-      <CaseProfileLayout>
-        <SidebarColumn>
-          <CaseProfileSidebar
-            caseDetail={caseDetail}
-            config={presenter.config}
-          />
-        </SidebarColumn>
-
-        <MainColumn>
-          {hasDownloadReport &&
-            ParoleSectionComponents.downloadReport(caseDetail)}
-          <ReportContent id={PAROLE_REPORT_CAPTURE_ID}>
-            {hasDownloadReport && (
-              <ReportHeader
-                name={caseDetail.name}
-                displayId={caseDetail.displayId}
-              />
-            )}
-            {contentSections.map((sectionName) => (
-              <SectionAnchor
-                key={sectionName}
-                id={PAROLE_SECTION_IDS[sectionName]}
-              >
-                {ParoleSectionComponents[sectionName](
-                  caseDetail,
-                  presenter.config,
-                )}
-              </SectionAnchor>
-            ))}
-          </ReportContent>
-        </MainColumn>
-      </CaseProfileLayout>
-    </Wrapper>
+    <ParoleCaseProfileLayout
+      sidebar={
+        <CaseProfileSidebar caseDetail={caseDetail} sections={navSections}>
+          <SidebarBody caseDetail={caseDetail} config={config} />
+        </CaseProfileSidebar>
+      }
+      beforeReport={
+        hasDownloadReport && ParoleSectionComponents.downloadReport(caseDetail)
+      }
+    >
+      {hasDownloadReport && (
+        <ReportHeader name={caseDetail.name} displayId={caseDetail.displayId} />
+      )}
+      {contentSections.map((sectionName) => (
+        <SectionAnchor key={sectionName} id={PAROLE_SECTION_IDS[sectionName]}>
+          {ParoleSectionComponents[sectionName](caseDetail, config)}
+        </SectionAnchor>
+      ))}
+    </ParoleCaseProfileLayout>
   );
 });
 

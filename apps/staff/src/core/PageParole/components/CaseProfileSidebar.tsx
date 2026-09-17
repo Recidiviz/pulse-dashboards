@@ -17,25 +17,18 @@
 
 import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
-import { Fragment, useState } from "react";
+import { Fragment, ReactNode, useState } from "react";
 import styled, { css } from "styled-components";
 
 import { ParoleCase } from "~datatypes";
 import { Icon, IconSVG, palette } from "~design-system";
 
 import useIsStuck from "../../../hooks/useIsStuck";
-import type { ParoleConfig } from "../../models/types";
 import { NAV_BAR_HEIGHT } from "../../NavigationLayout";
 import { PaddedSectionCardBody } from "./PaddedSectionCardBody";
-import { DefaultParoleGeneralInfo } from "./ParoleGeneralInfo";
-import {
-  NON_NAV_PAROLE_SECTIONS,
-  PAROLE_SECTION_LABELS,
-} from "./ParoleSectionComponents";
 import {
   AlertBanner,
   Hr,
-  PAROLE_SECTION_IDS,
   scrollToSection,
   SectionCard,
   SectionStack,
@@ -101,30 +94,33 @@ const SectionNavButton = styled.button`
   }
 `;
 
+/** One "jump to section" nav entry. `id` is the DOM id it scrolls to. */
+export type ParoleSectionNavItem = {
+  id: string;
+  label: string;
+};
+
+/**
+ * Case info card, with a sticky "jump to section" nav below it.
+ *
+ * @param caseDetail - The case the card describes.
+ * @param sections - Nav entries, in the order the sections render in.
+ * @param children - Body of the info card.
+ */
 export function CaseProfileSidebar({
   caseDetail,
-  config,
+  sections,
+  children,
 }: {
   caseDetail: ParoleCase;
-  config: ParoleConfig;
+  sections: ReadonlyArray<ParoleSectionNavItem>;
+  children: ReactNode;
 }) {
   const [sentinel, setSentinel] = useState<HTMLDivElement | null>(null);
   const isNavStuck = useIsStuck(
     sentinel,
     `-${NAV_BAR_HEIGHT + spacing.lg}px 0px 0px 0px`,
   );
-
-  const SidebarBody = config.sidebarComponent ?? DefaultParoleGeneralInfo;
-
-  // Resolve the section nav labels, letting a tenant override the offense and
-  // conduct-history labels so each nav entry matches its section card title.
-  const sectionLabels = {
-    ...PAROLE_SECTION_LABELS,
-    offenseHistory:
-      config.offenseHistoryTitle ?? PAROLE_SECTION_LABELS.offenseHistory,
-    conductHistory:
-      config.conductHistory.title ?? PAROLE_SECTION_LABELS.conductHistory,
-  };
 
   return (
     <>
@@ -150,7 +146,7 @@ export function CaseProfileSidebar({
               </FullWidthAlertBanner>
             )}
 
-            <SidebarBody caseDetail={caseDetail} config={config} />
+            {children}
           </SectionStack>
         </PaddedSectionCardBody>
       </InfoCard>
@@ -159,23 +155,17 @@ export function CaseProfileSidebar({
       <SectionNavCard $isNavStuck={isNavStuck}>
         <NavCardBody>
           <SectionNav>
-            {config.sections
-              .filter(
-                (sectionName) => !NON_NAV_PAROLE_SECTIONS.has(sectionName),
-              )
-              .map((sectionName, index) => (
-                <Fragment key={sectionName}>
-                  {index > 0 && <Hr />}
-                  <SectionNavButton
-                    type="button"
-                    onClick={() =>
-                      scrollToSection(PAROLE_SECTION_IDS[sectionName])
-                    }
-                  >
-                    {sectionLabels[sectionName]}
-                  </SectionNavButton>
-                </Fragment>
-              ))}
+            {sections.map((section, index) => (
+              <Fragment key={section.id}>
+                {index > 0 && <Hr />}
+                <SectionNavButton
+                  type="button"
+                  onClick={() => scrollToSection(section.id)}
+                >
+                  {section.label}
+                </SectionNavButton>
+              </Fragment>
+            ))}
           </SectionNav>
         </NavCardBody>
       </SectionNavCard>

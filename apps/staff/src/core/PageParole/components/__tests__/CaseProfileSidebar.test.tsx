@@ -20,43 +20,37 @@ import userEvent from "@testing-library/user-event";
 
 import { paroleCasesFixtureByState } from "~datatypes";
 
-import { ParoleConfig } from "../../../models/types";
-import { CaseProfileSidebar } from "../CaseProfileSidebar";
-import { ParoleSectionName } from "../ParoleSectionComponents";
-import { PAROLE_SECTION_IDS } from "../shared";
+import {
+  CaseProfileSidebar,
+  ParoleSectionNavItem,
+} from "../CaseProfileSidebar";
 
-// A US_CO case, so the sidebar renders the DefaultParoleGeneralInfo layout
-// (no tenant sidebarComponent override). Anderson has isParoleReturn: false.
+// A US_CO case. Anderson has isParoleReturn: false.
 const CASE = paroleCasesFixtureByState.US_CO["45821"];
 
-function configWith(sections: Array<ParoleSectionName>): ParoleConfig {
-  return { sections, conductHistory: { classificationColors: {} } };
-}
+const BODY_MARKER = "sidebar body marker";
 
-// The pieces of a piped FactLabel (e.g. "Incarcerated | Minimum") render as
-// separate text nodes, so a plain getByText against one node never sees the
-// whole string. Match on the closest ancestor's textContent instead.
-function getByTextAcrossElements(text: string) {
-  return screen.getByText((_, element) => {
-    const elementHasText = element?.textContent === text;
-    const childrenDontHaveText = Array.from(element?.children ?? []).every(
-      (child) => child.textContent !== text,
-    );
-    return Boolean(elementHasText && childrenDontHaveText);
-  });
-}
+// Deliberately not real PAROLE_SECTION_IDS entries: the sidebar renders
+// whatever nav items it is handed, so a test that passes real ids could not
+// tell a generic nav apart from a hardcoded one.
+const NAV_ITEMS: ReadonlyArray<ParoleSectionNavItem> = [
+  { id: "section-alpha", label: "Alpha Section" },
+  { id: "section-beta", label: "Beta Section" },
+];
 
-const SLOT_MARKER = "tenant slot marker";
-
-// Renders each section's PAROLE_SECTION_IDS target alongside the sidebar, the
-// same way ParoleCaseProfile's real MainColumn does, so scrollIntoView calls
-// can be matched back to a specific section by element identity.
-function renderSidebar(sections: Array<ParoleSectionName>) {
+// Renders each nav entry's target element alongside the sidebar, the same way
+// a tenant's case profile does, so scrollIntoView calls can be matched back to
+// a specific section by element identity.
+function renderSidebar(
+  sections: ReadonlyArray<ParoleSectionNavItem> = NAV_ITEMS,
+) {
   return render(
     <>
-      <CaseProfileSidebar caseDetail={CASE} config={configWith(sections)} />
-      {sections.map((sectionName) => (
-        <div key={sectionName} id={PAROLE_SECTION_IDS[sectionName]} />
+      <CaseProfileSidebar caseDetail={CASE} sections={sections}>
+        <div>{BODY_MARKER}</div>
+      </CaseProfileSidebar>
+      {sections.map((section) => (
+        <div key={section.id} id={section.id} />
       ))}
     </>,
   );
@@ -77,37 +71,14 @@ describe("CaseProfileSidebar", () => {
     Reflect.deleteProperty(Element.prototype, "scrollIntoView");
   });
 
-  it("renders the default sidebar body when no sidebarComponent is configured", () => {
-    renderSidebar(["attachments"]);
+  it("renders its children as the info card body", () => {
+    renderSidebar();
 
-    expect(
-      getByTextAcrossElements(`Incarcerated | ${CASE.custodyLevel}`),
-    ).toBeInTheDocument();
-    // Facility lives inside Hearing Info in the default layout.
-    expect(screen.getByText("Facility")).toBeInTheDocument();
-    expect(screen.getByText(CASE.currentFacility)).toBeInTheDocument();
-    expect(screen.getByText("Personal Details")).toBeInTheDocument();
-    expect(screen.getByText("Sentence Info")).toBeInTheDocument();
-  });
-
-  it("renders a tenant's sidebarComponent in place of the default", () => {
-    render(
-      <CaseProfileSidebar
-        caseDetail={CASE}
-        config={{
-          ...configWith(["attachments"]),
-          sidebarComponent: () => <div>{SLOT_MARKER}</div>,
-        }}
-      />,
-    );
-
-    expect(screen.getByText(SLOT_MARKER)).toBeInTheDocument();
-    // The default layout's own content must not render alongside the override.
-    expect(screen.queryByText("Personal Details")).not.toBeInTheDocument();
+    expect(screen.getByText(BODY_MARKER)).toBeInTheDocument();
   });
 
   it("does not render the parole return banner by default", () => {
-    renderSidebar(["attachments"]);
+    renderSidebar();
 
     expect(screen.queryByText("Parole Return")).not.toBeInTheDocument();
   });
@@ -116,99 +87,32 @@ describe("CaseProfileSidebar", () => {
     render(
       <CaseProfileSidebar
         caseDetail={{ ...CASE, isParoleReturn: true }}
-        config={configWith(["attachments"])}
-      />,
+        sections={NAV_ITEMS}
+      >
+        <div>{BODY_MARKER}</div>
+      </CaseProfileSidebar>,
     );
 
     expect(screen.getByText("Parole Return")).toBeInTheDocument();
   });
 
-  it("renders the nav from the sections prop, not a fixed list", () => {
-    renderSidebar(["attachments", "riskAssessment"]);
+  it("renders one nav button per section, in the order given", () => {
+    renderSidebar();
 
     expect(
-      screen.getByRole("button", { name: "Attachments" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "Risk Score Trajectory" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: "Offense & Criminal History" }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: "Program Participation" }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", {
-        name: "Institutional Conduct History",
-      }),
-    ).not.toBeInTheDocument();
+      screen.getAllByRole("button").map((button) => button.textContent),
+    ).toEqual(["Alpha Section", "Beta Section"]);
   });
 
-  it("orders the nav to match the sections prop, not a fixed list", () => {
-    renderSidebar(["attachments", "riskAssessment"]);
-
-    const buttons = screen.getAllByRole("button");
-    expect(buttons.map((button) => button.textContent)).toEqual([
-      "Attachments",
-      "Risk Score Trajectory",
-    ]);
-  });
-
-  it("labels the conduct-history nav from the tenant's conductHistory.title override", () => {
-    render(
-      <CaseProfileSidebar
-        caseDetail={CASE}
-        config={{
-          ...configWith(["conductHistory"]),
-          conductHistory: {
-            classificationColors: {},
-            title: "Institutional & Community Behavior",
-          },
-        }}
-      />,
-    );
-
-    expect(
-      screen.getByRole("button", {
-        name: "Institutional & Community Behavior",
-      }),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", {
-        name: "Institutional Conduct History",
-      }),
-    ).not.toBeInTheDocument();
-  });
-
-  it("labels the offense nav from the tenant's offenseHistoryTitle override", () => {
-    render(
-      <CaseProfileSidebar
-        caseDetail={CASE}
-        config={{
-          ...configWith(["offenseHistory"]),
-          offenseHistoryTitle: "Criminal & Parole History",
-        }}
-      />,
-    );
-
-    expect(
-      screen.getByRole("button", { name: "Criminal & Parole History" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: "Offense & Criminal History" }),
-    ).not.toBeInTheDocument();
-  });
-
-  it("scrolls to the section matching a given tenant's configured id, not a fixed one", async () => {
+  it("scrolls to the element whose id matches the clicked nav entry", async () => {
     const user = userEvent.setup();
-    renderSidebar(["attachments"]);
+    renderSidebar();
 
-    await user.click(screen.getByRole("button", { name: "Attachments" }));
+    await user.click(screen.getByRole("button", { name: "Beta Section" }));
 
     expect(scrollIntoViewMock).toHaveBeenCalledTimes(1);
     expect(scrollIntoViewMock.mock.instances[0]).toBe(
-      document.getElementById(PAROLE_SECTION_IDS.attachments),
+      document.getElementById("section-beta"),
     );
   });
 });

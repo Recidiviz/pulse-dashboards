@@ -178,8 +178,8 @@ describe("ParoleCaseProfile", () => {
       Reflect.deleteProperty(Element.prototype, "scrollIntoView");
     });
 
-    // Order matches CaseProfileSidebar's SECTION_NAV_ITEMS, which is meant to
-    // match the MainColumn section render order (see OBT-42664).
+    // Order matches US_CO's configured section order, which the nav is meant
+    // to mirror (see OBT-42664).
     const NAV_ITEMS: ReadonlyArray<[label: string, sectionId: string]> = [
       ["Offense & Criminal History", PAROLE_SECTION_IDS.offenseHistory],
       ["Risk Score Trajectory", PAROLE_SECTION_IDS.riskAssessment],
@@ -208,6 +208,27 @@ describe("ParoleCaseProfile", () => {
         expect(scrollIntoViewMock.mock.instances[0]).toBe(
           document.getElementById(sectionId),
         );
+      },
+    );
+
+    // US_ID renames two sections in its paroleConfig. Each nav label has to
+    // follow its section card title, or the nav points at a heading that
+    // reads differently.
+    it.each([
+      ["Criminal & Parole History", "Offense & Criminal History"],
+      ["Institutional & Community Behavior", "Institutional Conduct History"],
+    ])(
+      "labels the US_ID quick-nav entry %s rather than the default %s",
+      async (tenantLabel, defaultLabel) => {
+        rootStore.tenantStore.currentTenantId = "US_ID";
+        renderAtPath("/parole/case/45821");
+
+        expect(
+          await screen.findByRole("button", { name: tenantLabel }),
+        ).toBeInTheDocument();
+        expect(
+          screen.queryByRole("button", { name: defaultLabel }),
+        ).not.toBeInTheDocument();
       },
     );
   });
