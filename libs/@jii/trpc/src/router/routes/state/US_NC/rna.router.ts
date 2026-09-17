@@ -33,7 +33,10 @@ import { updateRNASchema } from "./rna.schema";
 const ncProcedure = restrictedResidentProcedureForState("US_NC");
 
 export const usNcRouter = router({
-  getRNA: ncProcedure.input(getRNAInputSchema).query(getRNAQueryResolver),
+  getRNA: ncProcedure
+    .input(getRNAInputSchema)
+    .use(residentRestrictedMiddleware)
+    .query(getRNAQueryResolver),
 
   getOrCreateRNA: ncProcedure
     .input(getRNAInputSchema)
@@ -113,8 +116,10 @@ export const usNcRouter = router({
               ctx: { prisma },
             });
 
-          return prisma.usNcRNA.update({
-            where: { id: id },
+          return await prisma.usNcRNA.update({
+            // pseudo ID passed a permission check in middleware, so it's included here
+            // to prevent a request from editing someone else's record
+            where: { id, pseudonymizedId },
             data: {
               answers,
               completedAt: completed ? new Date() : undefined,
