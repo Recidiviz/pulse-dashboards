@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ import { getAnonUser, getRecidivizUser, getTNUser } from "./utils";
 let testEnv: RulesTestEnvironment;
 
 beforeAll(async () => {
-  testEnv = await startTestEnv();
+  testEnv = await startTestEnv("no-app-reads");
 });
 
 afterAll(async () => {

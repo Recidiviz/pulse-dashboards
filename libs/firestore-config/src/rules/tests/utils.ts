@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,9 +34,16 @@ import path from "path";
 
 import { AssertFn, FirestoreInstance } from "./types";
 
-export function startTestEnv() {
+/**
+ * Starts an emulator test environment on a project of its own, named after the
+ * calling test file. `clearFirestore` wipes a whole project's test environment
+ * between tests, so test files that shared one would clear each other's
+ * seeded data once Vitest ran them in parallel; `name` must be unique per file.
+ * The `demo-` prefix is what tells the emulator to skip credentials.
+ */
+export function startTestEnv(name: string) {
   return initializeTestEnvironment({
-    projectId: "demo-test",
+    projectId: `demo-${name}`,
     firestore: {
       rules: fs.readFileSync(
         path.join(__dirname, "../firestore.rules"),
