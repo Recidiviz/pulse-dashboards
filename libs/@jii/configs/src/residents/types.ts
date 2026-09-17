@@ -72,6 +72,10 @@ export type ResidentsConfig = {
   translation: TranslationConfig;
   limitDistrictSearchOptions?: boolean;
   enabledResidentFlags?: Partial<Record<ResidentFlag, Date>>;
+  enabledResidentFacilityFlags?: Record<
+    string,
+    Partial<Record<ResidentFlag, Date>>
+  >;
   enabledUserFlags?: Partial<Record<UserFlag, Date>>;
 };
 

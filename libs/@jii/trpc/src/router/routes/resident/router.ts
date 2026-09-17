@@ -15,16 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
-
-import { residentsConfigByState, StateCode } from "~@jii/configs";
-import { ResidentFlagId } from "~@jii/prisma";
-import { typedFromEntries } from "~utils";
-
 import { residentRestrictedMiddleware } from "../../../middleware/residentRestrictedMiddleware";
 import { firebaseAuthedResidentProcedure } from "../../../procedures/firebaseAuthedResidentProcedure";
 import { router } from "../../../procedures/init";
 import { getFacilities } from "./facilities/getFacilities";
+import { getFlags } from "./getFlags";
 import { fetchProgramsForState } from "./programs/fetchPrograms";
 import {
   getProgramsInputSchema,
@@ -38,39 +33,7 @@ export const residentRouter = router({
   getResident,
   getFacilities,
   getResidentsInFacility,
-  getFlags: firebaseAuthedResidentProcedure
-    .input(z.object({ pseudonymizedId: z.string() }))
-    .use(residentRestrictedMiddleware)
-    .query(async ({ ctx, input }) => {
-      if (ctx.userProfile.permissions?.includes("all_resident_flags_enabled")) {
-        return typedFromEntries(
-          Object.values(ResidentFlagId).map((id) => [id, true]),
-        );
-      }
-
-      const rows = await ctx.prisma.residentFlagInstance.findMany({
-        where: {
-          pseudonymizedId: input.pseudonymizedId,
-          effectiveAt: { lte: new Date() },
-        },
-        select: { flagId: true },
-      });
-      const personalFlags = typedFromEntries(rows.map((r) => [r.flagId, true]));
-
-      const now = new Date();
-      const flagsConfig =
-        residentsConfigByState[ctx.stateCode as StateCode]
-          ?.enabledResidentFlags ?? {};
-      const statewideFlags = typedFromEntries(
-        Object.entries(flagsConfig)
-          .filter(([, date]) => date <= now)
-          .map(([id]) => [id as ResidentFlagId, true]),
-      );
-      return {
-        ...personalFlags,
-        ...statewideFlags,
-      };
-    }),
+  getFlags,
 
   getPrograms: firebaseAuthedResidentProcedure
     .input(getProgramsInputSchema)

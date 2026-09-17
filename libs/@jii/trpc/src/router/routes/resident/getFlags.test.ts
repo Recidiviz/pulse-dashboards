@@ -46,13 +46,17 @@ vi.mock("~@jii/prisma", async (importOriginal) => {
       testStatewideDisabledFlag: "testStatewideDisabledFlag",
       testPersonalFlag: "testPersonalFlag",
       testNeverEnabledFlag: "testNeverEnabledFlag",
+      testFacilityEnabledFlag: "testFacilityEnabledFlag",
+      testFacilityDisabledFlag: "testFacilityDisabledFlag",
     },
   };
 });
 
-// Configure statewide flags for the US_NE test state using the test flag IDs.
-// testStatewideEnabledFlag uses a past date so it's always statewide-active;
-// testStatewideDisabledFlag uses a far-future date so it's always inactive.
+const testFacilityId = "test-facility";
+
+// Configure statewide and facility flags for the US_NE test state using the test
+// flag IDs. The "enabled" flags use a past date so they're always active; the
+// "disabled" flags use a far-future date so they're always inactive.
 vi.mock("~@jii/configs", async (importOriginal) => {
   const actual = await importOriginal<typeof import("~@jii/configs")>();
   return {
@@ -65,10 +69,29 @@ vi.mock("~@jii/configs", async (importOriginal) => {
           testStatewideEnabledFlag: new Date("2020-01-01"),
           testStatewideDisabledFlag: new Date("2099-01-01"),
         },
+        enabledResidentFacilityFlags: {
+          "test-facility": {
+            testFacilityEnabledFlag: new Date("2020-01-01"),
+            testFacilityDisabledFlag: new Date("2099-01-01"),
+          },
+        },
       },
     },
   };
 });
+
+async function createResident(facilityId: string | null) {
+  await testPrismaClient.resident.create({
+    data: {
+      pseudonymizedId: testPseudonymizedId,
+      personExternalId: "ext-1",
+      displayId: "display-1",
+      importedAt: new Date("2026-01-01"),
+      stateSpecificData: {},
+      facilityId,
+    },
+  });
+}
 
 // Intercept DB reads so tests don't depend on real DB state or enum values.
 beforeEach(() => {
@@ -94,6 +117,8 @@ describe("getFlags", () => {
       testStatewideDisabledFlag: true,
       testPersonalFlag: true,
       testNeverEnabledFlag: true,
+      testFacilityEnabledFlag: true,
+      testFacilityDisabledFlag: true,
     });
   });
 
@@ -161,12 +186,71 @@ describe("getFlags", () => {
     });
   });
 
-  describe("merging personal and statewide flags", () => {
+  describe("facility flags", () => {
     beforeEach(() => {
       mockCtx.stateCode = "US_NE";
     });
 
-    test("returns the union of personal DB flags and statewide config flags", async () => {
+    test("returns flags whose config date is in the past for the resident's facility", async () => {
+      await createResident(testFacilityId);
+
+      const result = await caller.getFlags({
+        pseudonymizedId: testPseudonymizedId,
+      });
+
+      expect(result).toEqual({
+        testFacilityEnabledFlag: true,
+        // US_NE also has a statewide flag enabled; it's asserted separately above
+        testStatewideEnabledFlag: true,
+      });
+    });
+
+    test("does not return flags whose config date is in the future", async () => {
+      await createResident(testFacilityId);
+
+      const result = await caller.getFlags({
+        pseudonymizedId: testPseudonymizedId,
+      });
+
+      expect(result).not.toHaveProperty("testFacilityDisabledFlag");
+    });
+
+    test("does not return facility flags configured for a different facility", async () => {
+      await createResident("some-other-facility");
+
+      const result = await caller.getFlags({
+        pseudonymizedId: testPseudonymizedId,
+      });
+
+      expect(result).toEqual({ testStatewideEnabledFlag: true });
+    });
+
+    test("does not throw when the resident has no facilityId", async () => {
+      await createResident(null);
+
+      const result = await caller.getFlags({
+        pseudonymizedId: testPseudonymizedId,
+      });
+
+      expect(result).toEqual({ testStatewideEnabledFlag: true });
+    });
+
+    test("does not throw when the resident record does not exist", async () => {
+      const result = await caller.getFlags({
+        pseudonymizedId: testPseudonymizedId,
+      });
+
+      expect(result).toEqual({ testStatewideEnabledFlag: true });
+    });
+  });
+
+  describe("merging personal, statewide, and facility flags", () => {
+    beforeEach(() => {
+      mockCtx.stateCode = "US_NE";
+    });
+
+    test("returns the union of personal DB flags, statewide config flags, and facility config flags", async () => {
+      await createResident(testFacilityId);
       vi.mocked(
         testPrismaClient.residentFlagInstance.findMany,
       ).mockResolvedValue([
@@ -184,6 +268,7 @@ describe("getFlags", () => {
       expect(result).toEqual({
         testPersonalFlag: true,
         testStatewideEnabledFlag: true,
+        testFacilityEnabledFlag: true,
       });
     });
   });
