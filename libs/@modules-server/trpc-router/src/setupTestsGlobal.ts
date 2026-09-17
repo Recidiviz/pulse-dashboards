@@ -15,23 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useFeatureVariants } from "../../../../components/StoreProvider";
-import { StyledFormButton } from "../../FormContainer";
-import { trpc } from "../common/Classification2026/UsTnReclassTrpcProvider";
-
-export function UsTnReclassSubmitButton() {
-  const trpcUtils = trpc.useUtils();
-  const trpcClient = trpcUtils.client;
-  const { usTnCafSubmissionButton } = useFeatureVariants();
-
-  if (!usTnCafSubmissionButton) return;
-
-  const onClick = async () => {
-    const res = await trpcClient.usTnReclass.reclass.query();
-
-    // eslint-disable-next-line no-console
-    console.info(res);
-  };
-
-  return <StyledFormButton onClick={onClick}>Submit</StyledFormButton>;
-}
+export const setup = () => {
+  // prevents silly timezone issues when testing dates
+  process.env.TZ = "UTC";
+};

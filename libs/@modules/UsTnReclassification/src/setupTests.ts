@@ -15,16 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { auth0Procedure, baseProcedure, router } from "./init";
+import jestExtendedMatchers from "jest-extended";
 
-export const appRouter = router({
-  hello: baseProcedure.query(async () => {
-    return "hi there";
-  }),
-  howdy: auth0Procedure.query(async () => {
-    return "hey, y'all";
-  }),
-});
-
-// export type definition of API
-export type AppRouter = typeof appRouter;
+expect.extend(jestExtendedMatchers);

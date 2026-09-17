@@ -15,23 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useFeatureVariants } from "../../../../components/StoreProvider";
-import { StyledFormButton } from "../../FormContainer";
-import { trpc } from "../common/Classification2026/UsTnReclassTrpcProvider";
+import { auth0Procedure, router } from "~@modules-server/trpc-base";
 
-export function UsTnReclassSubmitButton() {
-  const trpcUtils = trpc.useUtils();
-  const trpcClient = trpcUtils.client;
-  const { usTnCafSubmissionButton } = useFeatureVariants();
-
-  if (!usTnCafSubmissionButton) return;
-
-  const onClick = async () => {
-    const res = await trpcClient.usTnReclass.reclass.query();
-
-    // eslint-disable-next-line no-console
-    console.info(res);
-  };
-
-  return <StyledFormButton onClick={onClick}>Submit</StyledFormButton>;
-}
+export const moduleRouter = router({
+  reclass: auth0Procedure.query(() => {
+    return "Hi from TN";
+  }),
+});

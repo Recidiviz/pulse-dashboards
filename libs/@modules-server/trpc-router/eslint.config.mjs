@@ -15,23 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useFeatureVariants } from "../../../../components/StoreProvider";
-import { StyledFormButton } from "../../FormContainer";
-import { trpc } from "../common/Classification2026/UsTnReclassTrpcProvider";
+// @ts-check
 
-export function UsTnReclassSubmitButton() {
-  const trpcUtils = trpc.useUtils();
-  const trpcClient = trpcUtils.client;
-  const { usTnCafSubmissionButton } = useFeatureVariants();
+import tseslint from "typescript-eslint";
 
-  if (!usTnCafSubmissionButton) return;
+import baseConfig, {
+  designSystemRestrictedImports,
+} from "../../../eslint.config.mjs";
 
-  const onClick = async () => {
-    const res = await trpcClient.usTnReclass.reclass.query();
-
-    // eslint-disable-next-line no-console
-    console.info(res);
-  };
-
-  return <StyledFormButton onClick={onClick}>Submit</StyledFormButton>;
-}
+export default tseslint.config(baseConfig, {
+  files: ["**/*.*js", "**/*.*jsx", "**/*.*ts", "**/*.*tsx"],
+  rules: {
+    "no-restricted-imports": [
+      "error",
+      {
+        paths: [designSystemRestrictedImports],
+      },
+    ],
+  },
+});

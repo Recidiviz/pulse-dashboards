@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // Pure typecheck: consumers import this lib's src source, not emitted output, so we
+    // don't emit.
+    "noEmit": true
+  },
+  "include": ["src/**/*.ts"]
+}

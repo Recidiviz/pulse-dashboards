@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { appRouter, createContext } from "~@modules-server/trpc";
+import { createContext } from "~@modules-server/trpc-base";
+import { appRouter } from "~@modules-server/trpc-router";
 import { buildCommonServer } from "~server-setup-plugin";
 
 export function buildServer() {

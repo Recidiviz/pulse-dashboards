@@ -1,7 +1,7 @@
 {
-  "name": "@modules-server/trpc",
+  "name": "@modules/UsTnReclassification",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/@modules-server/trpc/src",
+  "sourceRoot": "libs/@modules/UsTnReclassification/src",
   "projectType": "library",
   "tags": ["scope:server"],
   "targets": {

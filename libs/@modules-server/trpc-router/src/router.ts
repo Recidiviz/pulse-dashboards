@@ -15,23 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useFeatureVariants } from "../../../../components/StoreProvider";
-import { StyledFormButton } from "../../FormContainer";
-import { trpc } from "../common/Classification2026/UsTnReclassTrpcProvider";
+import { moduleRouter } from "~@modules/UsTnReclassification";
+import {
+  auth0Procedure,
+  baseProcedure,
+  router,
+} from "~@modules-server/trpc-base";
 
-export function UsTnReclassSubmitButton() {
-  const trpcUtils = trpc.useUtils();
-  const trpcClient = trpcUtils.client;
-  const { usTnCafSubmissionButton } = useFeatureVariants();
+export const appRouter = router({
+  hello: baseProcedure.query(async () => {
+    return "hi there";
+  }),
+  howdy: auth0Procedure.query(async () => {
+    return "hey, y'all";
+  }),
+  usTnReclass: moduleRouter,
+});
 
-  if (!usTnCafSubmissionButton) return;
-
-  const onClick = async () => {
-    const res = await trpcClient.usTnReclass.reclass.query();
-
-    // eslint-disable-next-line no-console
-    console.info(res);
-  };
-
-  return <StyledFormButton onClick={onClick}>Submit</StyledFormButton>;
-}
+// export type definition of API
+export type AppRouter = typeof appRouter;

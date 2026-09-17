@@ -21,9 +21,7 @@ import { createTRPCReact } from "@trpc/react-query";
 import { useState } from "react";
 import superjson from "superjson";
 
-// Just grabbing types as TRPC intended. May extract into a library
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import type { AppRouter } from "~@modules-server/trpc";
+import type { AppRouter } from "~@modules-server/trpc-types";
 
 import { useRootStore } from "../../../../../components/StoreProvider";
 

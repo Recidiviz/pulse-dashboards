@@ -15,5 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { createContext } from "./context";
-export { type AppRouter, appRouter } from "./router";
+import jestExtendedMatchers from "jest-extended";
+
+expect.extend(jestExtendedMatchers);

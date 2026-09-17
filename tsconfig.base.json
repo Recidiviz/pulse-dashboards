@@ -84,8 +84,21 @@
       "~@meetings/trpc-types": ["./libs/@meetings/trpc-types/src/index.ts"],
       "~@meetings/trpc/*": ["./libs/@meetings/trpc/src/*"],
       "~@meetings/trpc/test/*": ["./libs/@meetings/trpc/__tests__/*"],
-      "~@modules-server/trpc": ["./libs/@modules-server/trpc/src/index.ts"],
-      "~@modules-server/trpc/*": ["./libs/@modules-server/trpc/src/*"],
+      "~@modules/UsTnReclassification": [
+        "./libs/@modules/UsTnReclassification/src/index.ts"
+      ],
+      "~@modules-server/trpc-base": [
+        "./libs/@modules-server/trpc-base/src/index.ts"
+      ],
+      "~@modules-server/trpc-base/*": [
+        "./libs/@modules-server/trpc-base/src/*"
+      ],
+      "~@modules-server/trpc-router": [
+        "./libs/@modules-server/trpc-router/src/index.ts"
+      ],
+      "~@modules-server/trpc-types": [
+        "./libs/@modules-server/trpc-types/src/index.ts"
+      ],
       "~@reentry/frontend-shared": [
         "./libs/@reentry/frontend-shared/src/index.ts"
       ],
