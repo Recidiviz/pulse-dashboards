@@ -368,7 +368,9 @@ export function registerTaskRoutes(app: FastifyInstance) {
             console.error("Failed to post Slack error notification", err);
           });
 
-          // Rethrow the error so the task fails and can be retried, if we want it to, as well as for sentry logging.
+          captureException(e);
+
+          // Rethrow the error so the task fails and can be retried, if we want it to.
           throw e;
         }
 
@@ -537,7 +539,9 @@ export function registerTaskRoutes(app: FastifyInstance) {
             console.error("Failed to post Slack error notification", err);
           });
 
-          // Rethrow the error so the task fails and can be retried, if we want it to, as well as for sentry logging.
+          captureException(e);
+
+          // Rethrow the error so the task fails and can be retried, if we want it to.
           throw e;
         }
 
@@ -656,6 +660,8 @@ export function registerTaskRoutes(app: FastifyInstance) {
             captureException(err);
             console.error("Failed to post Slack error notification", err);
           });
+
+          captureException(e);
 
           // Rethrow the error so the task fails and can be retried
           throw e;
