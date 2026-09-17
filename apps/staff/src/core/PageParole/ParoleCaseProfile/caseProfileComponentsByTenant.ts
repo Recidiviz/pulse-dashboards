@@ -22,6 +22,7 @@ import { ParoleCase } from "~datatypes";
 import { TenantId } from "../../../RootStore/types";
 import type { ParoleConfig } from "../../models/types";
 import { UsCoParoleCaseProfile } from "../UsCo/UsCoParoleCaseProfile";
+import { UsIdParoleCaseProfile } from "../UsId/UsIdParoleCaseProfile";
 
 export type ParoleCaseProfileComponent = ComponentType<{
   caseDetail: ParoleCase;
@@ -40,4 +41,5 @@ export const CASE_PROFILE_COMPONENTS_BY_TENANT: Partial<
   Record<TenantId, ParoleCaseProfileComponent>
 > = {
   US_CO: UsCoParoleCaseProfile,
+  US_ID: UsIdParoleCaseProfile,
 };

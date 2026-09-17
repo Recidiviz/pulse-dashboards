@@ -19,12 +19,11 @@ import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components";
 
+import { ParoleCase } from "~datatypes";
 import { palette } from "~design-system";
 
 import { SectionCardHeader } from "../../../SectionCard";
-import type { OffenseHistorySectionProps } from "../OffenseHistorySection";
 import { PaddedSectionCardBody } from "../PaddedSectionCardBody";
-import { PAROLE_SECTION_LABELS } from "../ParoleSectionComponents";
 import {
   FactLabel,
   FactRow,
@@ -84,18 +83,18 @@ const formatDateOrPlaceholder = (date: string | undefined): string =>
  * US_ID-specific Offense & Criminal History section. Idaho's design diverges
  * from the generic `OffenseHistorySection`: each offense is a bordered card
  * with a numbered statute header, a case number, and a row of sentencing facts
- * (including the fixed and indeterminate halves of a unified sentence). Wired
- * in through `paroleConfig.offenseHistoryComponent`.
+ * (including the fixed and indeterminate halves of a unified sentence).
+ *
+ * @param caseDetail - The case whose offenses to show.
  */
 export function UsIdOffenseHistorySection({
   caseDetail,
-  config,
-}: OffenseHistorySectionProps) {
+}: {
+  caseDetail: ParoleCase;
+}) {
   return (
     <SectionCard>
-      <SectionCardHeader>
-        {config.offenseHistoryTitle ?? PAROLE_SECTION_LABELS.offenseHistory}
-      </SectionCardHeader>
+      <SectionCardHeader>Criminal & Parole History</SectionCardHeader>
       <PaddedSectionCardBody>
         <div>
           <SubsectionTitle>Instant Offenses</SubsectionTitle>

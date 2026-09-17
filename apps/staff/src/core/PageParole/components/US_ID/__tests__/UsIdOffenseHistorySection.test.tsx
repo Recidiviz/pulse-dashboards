@@ -23,18 +23,11 @@ import {
   ParoleOffense,
 } from "~datatypes";
 
-import type { ParoleConfig } from "../../../../models/types";
 import { UsIdOffenseHistorySection } from "../UsIdOffenseHistorySection";
 
 // A fully-valid US_ID ParoleCase to base test cases on, so we only have to
 // override the offenses under test rather than reconstruct the whole case.
 const baseCase = Object.values(paroleCasesFixtureByState.US_ID)[0];
-
-const CONFIG: ParoleConfig = {
-  sections: [],
-  conductHistoryConfig: { classificationColors: {} },
-  offenseHistoryTitle: "Criminal & Parole History",
-};
 
 function makeOffense(fields: Partial<ParoleOffense>): ParoleOffense {
   return {
@@ -70,9 +63,7 @@ function caseWithOffenses(
 }
 
 function renderSection(caseDetail: ParoleCase) {
-  return render(
-    <UsIdOffenseHistorySection caseDetail={caseDetail} config={CONFIG} />,
-  );
+  return render(<UsIdOffenseHistorySection caseDetail={caseDetail} />);
 }
 
 describe("UsIdOffenseHistorySection", () => {

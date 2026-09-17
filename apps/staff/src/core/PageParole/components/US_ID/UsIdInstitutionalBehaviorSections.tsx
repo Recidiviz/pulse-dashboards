@@ -24,7 +24,7 @@ import { UsIdStgSection } from "./UsIdStgSection";
 
 /**
  * The Idaho-only sub-sections slotted into the "Institutional & Community
- * Behavior" section (config.conductHistoryConfig.children), in display order:
+ * Behavior" section, in display order:
  * Disciplinary Facility Notes, then Gang / Security Threat Group (STG). This
  * wrapper owns the separators between the sub-sections; the children render
  * none of their own.
