@@ -131,6 +131,16 @@ afterEach(() => {
 });
 
 describe("checkResidentsRoster", () => {
+  beforeEach(() => {
+    // freezing slightly in the past to avoid interference from statewide configs
+    // on the useNewResidentData flag. this flag will be removed very soon anyway
+    // so this is just a temporary workaround
+    tk.freeze("2026-08-01");
+  });
+  afterEach(() => {
+    tk.reset();
+  });
+
   test("looks up the live (non-demo) Prisma client for the given state", async () => {
     await checkResidentsRoster({
       stateCode: externalIdState,
@@ -319,6 +329,16 @@ describe("checkResidentsRoster", () => {
 });
 
 describe("checkDemoResidentsRoster", () => {
+  beforeEach(() => {
+    // freezing slightly in the past to avoid interference from statewide configs
+    // on the useNewResidentData flag. this flag will be removed very soon anyway
+    // so this is just a temporary workaround
+    tk.freeze("2026-08-01");
+  });
+  afterEach(() => {
+    tk.reset();
+  });
+
   test("looks up the demo Prisma client for the given state", async () => {
     await checkDemoResidentsRoster({
       stateCode: externalIdState,
