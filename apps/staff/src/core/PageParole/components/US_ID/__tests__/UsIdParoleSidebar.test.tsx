@@ -34,7 +34,7 @@ if (!reportAuthor) {
 function makeConfig(overrides: Partial<ParoleConfig> = {}): ParoleConfig {
   return {
     sections: [],
-    conductHistory: { classificationColors: {} },
+    conductHistoryConfig: { classificationColors: {} },
     ...overrides,
   };
 }

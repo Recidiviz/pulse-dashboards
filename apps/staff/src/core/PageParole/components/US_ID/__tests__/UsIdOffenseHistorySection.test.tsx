@@ -32,7 +32,7 @@ const baseCase = Object.values(paroleCasesFixtureByState.US_ID)[0];
 
 const CONFIG: ParoleConfig = {
   sections: [],
-  conductHistory: { classificationColors: {} },
+  conductHistoryConfig: { classificationColors: {} },
   offenseHistoryTitle: "Criminal & Parole History",
 };
 

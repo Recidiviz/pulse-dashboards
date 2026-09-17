@@ -232,7 +232,7 @@ const US_ID_CONFIG = {
     ],
     docketWindowDaysBefore: 7,
     docketWindowDaysAfter: 30,
-    conductHistory: {
+    conductHistoryConfig: {
       classificationColors: {
         Major: "SLATE_DARK",
         Minor: "SLATE_DARK",

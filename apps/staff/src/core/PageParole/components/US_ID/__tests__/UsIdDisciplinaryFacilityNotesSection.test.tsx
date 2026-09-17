@@ -23,7 +23,7 @@ import { UsIdDisciplinaryFacilityNotesSection } from "../UsIdDisciplinaryFacilit
 
 const CONFIG: ParoleConfig = {
   sections: [],
-  conductHistory: { classificationColors: {} },
+  conductHistoryConfig: { classificationColors: {} },
 };
 
 describe("UsIdDisciplinaryFacilityNotesSection", () => {

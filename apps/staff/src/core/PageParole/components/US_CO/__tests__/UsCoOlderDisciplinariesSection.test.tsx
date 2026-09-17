@@ -28,7 +28,7 @@ import { UsCoOlderDisciplinariesSection } from "../UsCoOlderDisciplinariesSectio
 // toggle has something to reveal.
 const CONFIG: ParoleConfig = {
   sections: [],
-  conductHistory: {
+  conductHistoryConfig: {
     classificationColors: { "Class 1": "BLUE" },
     visibleYears: 1,
   },

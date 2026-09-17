@@ -133,8 +133,11 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
  * tenant with Parole nav enabled
  */
 export type ParoleConfig = {
-  /** Ordered list of sections to show on the Parole case profile page. */
-  sections: ParoleSectionName[];
+  /**
+   * Ordered list of sections to show on the Parole case profile page. Unset
+   * for a state that owns a case profile component instead.
+   */
+  sections?: ParoleSectionName[];
   /** Subheading shown under the docket table's title. Omit to hide it. */
   docketSubheading?: string;
   /** Enables the docket table's name/DOC ID search input. Omit to hide it. */
@@ -154,7 +157,7 @@ export type ParoleConfig = {
    */
   docketWindowDaysBefore?: number;
   /** State-specific config for the Institutional Conduct History section. */
-  conductHistory: ParoleConductHistoryConfig;
+  conductHistoryConfig: ParoleConductHistoryConfig;
   /**
    * A tenant-owned component that renders the whole Offense & Criminal History
    * main-column section, in place of the generic `OffenseHistorySection`.

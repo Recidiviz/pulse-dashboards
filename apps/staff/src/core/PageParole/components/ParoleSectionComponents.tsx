@@ -66,15 +66,20 @@ export const ParoleSectionComponents = {
     />
   ),
   conductHistory: (caseDetail: ParoleCase, config: ParoleConfig) => {
-    const ConductHistoryChildren = config.conductHistory.children;
+    const ConductHistoryChildren = config.conductHistoryConfig.children;
     return (
       <ConductHistorySection
         conductHistory={caseDetail.conductHistory}
-        conductClassificationColors={config.conductHistory.classificationColors}
-        visibleYears={
-          config.conductHistory.visibleYears ?? DEFAULT_CONDUCT_HISTORY_YEARS
+        conductClassificationColors={
+          config.conductHistoryConfig.classificationColors
         }
-        title={config.conductHistory.title ?? "Institutional Conduct History"}
+        visibleYears={
+          config.conductHistoryConfig.visibleYears ??
+          DEFAULT_CONDUCT_HISTORY_YEARS
+        }
+        title={
+          config.conductHistoryConfig.title ?? "Institutional Conduct History"
+        }
       >
         {ConductHistoryChildren && (
           <ConductHistoryChildren caseDetail={caseDetail} config={config} />

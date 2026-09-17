@@ -35,6 +35,7 @@ import {
 import { ReportHeader } from "../components/ReportHeader";
 import { SectionAnchor } from "../components/SectionAnchor";
 import { PAROLE_SECTION_IDS } from "../components/shared";
+import { CASE_PROFILE_COMPONENTS_BY_TENANT } from "./caseProfileComponentsByTenant";
 import { ParoleCaseProfileLayout } from "./ParoleCaseProfileLayout";
 
 const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
@@ -45,9 +46,28 @@ const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
   // ModelHydrator only renders this component once hydration has succeeded,
   // so `presenter.caseDetail` is safe to access here -- but NOT at the call
   // site below, where it would be evaluated eagerly on every render pass.
+  const { currentTenantId } = useRootStore();
   const { caseDetail, config } = presenter;
-  const hasDownloadReport = config.sections.includes("downloadReport");
-  const contentSections = config.sections.filter(
+
+  const StateCaseProfile = currentTenantId
+    ? CASE_PROFILE_COMPONENTS_BY_TENANT[currentTenantId]
+    : undefined;
+
+  if (StateCaseProfile) {
+    return <StateCaseProfile caseDetail={caseDetail} config={config} />;
+  }
+
+  // Fallback for a state that does not own a case profile component yet.
+  const { sections } = config;
+  if (!sections) {
+    throw new Error(
+      `Tenant [${currentTenantId}] has neither a Parole case profile ` +
+        `component nor configured sections.`,
+    );
+  }
+
+  const hasDownloadReport = sections.includes("downloadReport");
+  const contentSections = sections.filter(
     (sectionName) => sectionName !== "downloadReport",
   );
   const sectionLabels = {
@@ -55,9 +75,9 @@ const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
     offenseHistory:
       config.offenseHistoryTitle ?? PAROLE_SECTION_LABELS.offenseHistory,
     conductHistory:
-      config.conductHistory.title ?? PAROLE_SECTION_LABELS.conductHistory,
+      config.conductHistoryConfig.title ?? PAROLE_SECTION_LABELS.conductHistory,
   };
-  const navSections = config.sections
+  const navSections = sections
     .filter((sectionName) => !NON_NAV_PAROLE_SECTIONS.has(sectionName))
     .map((sectionName) => ({
       id: PAROLE_SECTION_IDS[sectionName],

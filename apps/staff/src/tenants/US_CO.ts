@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { TenantConfig } from "../core/models/types";
-import { UsCoOlderDisciplinariesSection } from "../core/PageParole/components/US_CO/UsCoOlderDisciplinariesSection";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 
 const US_CO_CONFIG = {
@@ -28,16 +27,7 @@ const US_CO_CONFIG = {
   navigation: {
     parole: ["docket"],
   },
-  // TODO(OBT-43104): Add "alerts" once the CO-only Alerts section is built.
   paroleConfig: {
-    sections: [
-      "offenseHistory",
-      "riskAssessment",
-      "riskAndNeedsAssessment",
-      "programParticipation",
-      "conductHistory",
-      "communitySupervisionPlan",
-    ],
     docketSubheading: "Two Week Outlook",
     docketSearchEnabled: true,
     // CO's scheduled hearing dates are truncated to the 1st of the month in
@@ -47,9 +37,7 @@ const US_CO_CONFIG = {
     // as long as it's genuinely still this month's hearing.
     docketWindowDaysBefore: 31,
     docketWindowDaysAfter: 14,
-    conductHistory: {
-      // Real US_CO violationCategory values, confirmed against the staging
-      // sandbox.
+    conductHistoryConfig: {
       classificationColors: {
         "Class I": "BLUE",
         "Class IIa": "GREEN",
@@ -57,7 +45,6 @@ const US_CO_CONFIG = {
         "Class III": "PURPLE",
       },
       visibleYears: 1,
-      children: UsCoOlderDisciplinariesSection,
     },
     riskAssessmentConfig: {
       tools: ["LSIR", "PIT", "CARAS", "SRT", "RT", "CST"],

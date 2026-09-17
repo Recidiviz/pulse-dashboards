@@ -15,29 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ComponentType } from "react";
+
 import { ParoleCase } from "~datatypes";
 
-import type { ParoleConfig } from "../../../models/types";
-import { Hr } from "../shared";
-import { UsIdDisciplinaryFacilityNotesSection } from "./UsIdDisciplinaryFacilityNotesSection";
-import { UsIdStgSection } from "./UsIdStgSection";
+import { TenantId } from "../../../RootStore/types";
+import type { ParoleConfig } from "../../models/types";
+import { UsCoParoleCaseProfile } from "../UsCo/UsCoParoleCaseProfile";
 
-/**
- * The Idaho-only sub-sections slotted into the "Institutional & Community
- * Behavior" section (config.conductHistoryConfig.children), in display order:
- * Disciplinary Facility Notes, then Gang / Security Threat Group (STG). This
- * wrapper owns the separators between the sub-sections; the children render
- * none of their own.
- */
-export function UsIdInstitutionalBehaviorSections(props: {
+export type ParoleCaseProfileComponent = ComponentType<{
   caseDetail: ParoleCase;
   config: ParoleConfig;
-}) {
-  return (
-    <>
-      <UsIdDisciplinaryFacilityNotesSection {...props} />
-      <Hr />
-      <UsIdStgSection {...props} />
-    </>
-  );
-}
+}>;
+
+/**
+ * Each state's own Parole case profile page. A state with no entry here still
+ * composes its page from `paroleConfig.sections`.
+ *
+ * This mapping lives beside the page rather than in the tenant config on
+ * purpose: a tenant config that imported a page component would pull in
+ * NavigationLayout and close a module-load cycle (see SectionAnchor).
+ */
+export const CASE_PROFILE_COMPONENTS_BY_TENANT: Partial<
+  Record<TenantId, ParoleCaseProfileComponent>
+> = {
+  US_CO: UsCoParoleCaseProfile,
+};
