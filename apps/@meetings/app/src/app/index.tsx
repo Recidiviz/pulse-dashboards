@@ -51,6 +51,8 @@ function sanitizeUrl(url: string): string {
 Sentry.init({
   dsn: env.EXPO_PUBLIC_SENTRY_DSN,
   environment: env.EXPO_PUBLIC_SENTRY_ENV,
+  // Web-only: set by build:web. Unset on native, where the SDK derives the release.
+  release: env.EXPO_PUBLIC_SENTRY_RELEASE,
   // Web-only: cache events that fail while offline and replay on reconnect.
   // Undefined on native, which keeps the SDK's built-in offline caching.
   transport: offlineTransport,

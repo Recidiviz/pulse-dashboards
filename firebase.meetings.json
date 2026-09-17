@@ -1,7 +1,7 @@
 {
   "hosting": {
     "public": "apps/@meetings/app/dist",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**", "**/*.map"],
     "rewrites": [
       {
         "source": "**",

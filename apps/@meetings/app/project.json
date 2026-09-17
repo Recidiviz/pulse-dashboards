@@ -142,13 +142,31 @@
       "defaultConfiguration": "dev"
     },
     "requires-sops-env:build:web": {
-      "command": "nx export @meetings/app -p web --skip-nx-cache",
+      "command": "EXPO_PUBLIC_SENTRY_RELEASE=${EXPO_PUBLIC_SENTRY_RELEASE:-$(git rev-parse --short=12 HEAD)} nx export @meetings/app -p web --source-maps --skip-nx-cache",
       "cache": false,
       "configurations": {
         "dev": {},
+        "staging": { "env": { "APP_ENV": "staging" } },
+        "production": { "env": { "APP_ENV": "production" } }
+      }
+    },
+    "requires-sops-env:upload-sourcemaps:web": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "target": "build:web",
+          "params": "forward"
+        }
+      ],
+      "options": {
+        "command": "find dist -name \"*.map\" | grep -q . && yarn sentry-expo-upload-sourcemaps dist",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
         "staging": {},
         "production": {}
-      }
+      },
+      "defaultConfiguration": "staging"
     },
     "steiger": {
       "executor": "nx:run-commands",
@@ -158,7 +176,7 @@
       }
     },
     "requires-sops-env:deploy:web": {
-      "dependsOn": [{ "target": "build:web", "params": "forward" }],
+      "dependsOn": [{ "target": "upload-sourcemaps:web", "params": "forward" }],
       "command": "firebase deploy --config firebase.meetings.json",
       "configurations": {
         "staging": {

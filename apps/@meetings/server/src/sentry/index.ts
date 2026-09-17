@@ -42,6 +42,7 @@ function requestMatchesRoute(ctx: SamplingContext, routes: string[]) {
 init({
   dsn: process.env["SENTRY_DSN"],
   environment: process.env["SENTRY_ENV"],
+  release: process.env["SENTRY_RELEASE"],
   tracesSampler: (ctx) => {
     if (requestMatchesRoute(ctx, PIPELINE_ROUTES)) return 1;
     return ctx.parentSampled ?? 0;

@@ -76,7 +76,9 @@ export const meetingsFrontend: ServiceDefinition = {
     // Remove .env.local if it exists, as it interferes with the deploy target
     await $`rm -f apps/@meetings/app/.env.local`.pipe(process.stdout);
 
-    await $`nx deploy:web @meetings/app --configuration ${plan.env}`.pipe(
+    // Same identifier as the server's SENTRY_RELEASE (the image tag), so one deploy
+    // maps to one release name across Sentry projects.
+    await $`EXPO_PUBLIC_SENTRY_RELEASE=${plan.currentRevision} nx deploy:web @meetings/app --configuration ${plan.env}`.pipe(
       process.stdout,
     );
   },

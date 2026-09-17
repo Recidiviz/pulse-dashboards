@@ -68,6 +68,7 @@ module "server" {
       container_image = "${var.artifact_registry_repo}/${local.server_image_name}:${var.server_container_version}"
 
       env_vars = concat([
+        { name = "SENTRY_RELEASE", value = var.server_container_version },
         { name = "AUDIO_RECORDINGS_BUCKET_NAME", value = module.audio_gcs_bucket.names[local.audio_bucket_name] },
         { name = "STITCHING_TASK_REQUEST_URL", value = "https://${var.server_name}-${var.project_number}.${var.location}.run.app/stitch-audio" },
         { name = "NOTETAKING_TASK_REQUEST_URL", value = "https://${var.server_name}-${var.project_number}.${var.location}.run.app/process-notetaking" },
@@ -148,6 +149,7 @@ module "import_job" {
   project_id = var.project_id
   location   = var.location
   env_vars = concat([
+    { name = "SENTRY_RELEASE", value = var.import_container_version },
     { name = "IMPORT_BUCKET_ID", value = module.gcs_bucket[0].names[local.etl_bucket_name] }
   ], module.envs.env_vars_by_component["job.import"])
   cloud_run_deletion_protection = false
@@ -275,12 +277,15 @@ module "artifact_cleanup_job" {
   image                         = "${var.artifact_registry_repo}/${local.server_image_name}:${var.artifact_cleanup_container_version}"
   project_id                    = var.project_id
   location                      = var.location
-  env_vars                      = module.envs.env_vars_by_component["job.artifact_cleanup"]
   cloud_run_deletion_protection = false
   service_account_email         = google_service_account.default.email
   container_command             = ["./scripts/run-artifact-cleanup.sh"]
   max_retries                   = 0
   timeout                       = "3600s"
+
+  env_vars = concat([
+    { name = "SENTRY_RELEASE", value = var.artifact_cleanup_container_version },
+  ], module.envs.env_vars_by_component["job.artifact_cleanup"])
 
   volumes = [{
     name = "cloudsql"
@@ -329,10 +334,13 @@ module "seed_demo_job" {
   image                         = "${var.artifact_registry_repo}/${local.seed_demo_image_name}:${var.seed_demo_container_version}"
   project_id                    = var.project_id
   location                      = var.location
-  env_vars                      = module.envs.env_vars_by_component["job.seed_demo"]
   cloud_run_deletion_protection = false
   service_account_email         = google_service_account.default.email
   max_retries                   = 1
+
+  env_vars = concat([
+    { name = "SENTRY_RELEASE", value = var.seed_demo_container_version },
+  ], module.envs.env_vars_by_component["job.seed_demo"])
 
   volumes = [{
     name = "cloudsql"
