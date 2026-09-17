@@ -246,9 +246,13 @@ const ClearAll = (props: ClearIndicatorProps<SelectOption, true>) => {
   );
 };
 
+export type MenuDisabledState =
+  | { isDisabled: true; disabledMessage: string }
+  | { isDisabled: false; disabledMessage?: never };
+
 export const MenuListWithShadow = (
   entriesNumber: number,
-  isDisabled: boolean,
+  disabledState: MenuDisabledState,
 ) => {
   const BaseMenuList = createMenuListWithScrollShadow<SelectOption, true>(
     entriesNumber,
@@ -257,10 +261,8 @@ export const MenuListWithShadow = (
   return function MenuList(props: MenuListProps<SelectOption, true>) {
     return (
       <BaseMenuList {...props}>
-        {isDisabled && (
-          <DisabledMessage>
-            Cannot select more than {SELECTED_SEARCH_LIMIT} items.
-          </DisabledMessage>
+        {disabledState.isDisabled && (
+          <DisabledMessage>{disabledState.disabledMessage}</DisabledMessage>
         )}
         {props.children}
       </BaseMenuList>
@@ -325,7 +327,6 @@ type CaseloadSelectProps = {
 export const caseloadSelectStyles = (
   isMobile: any,
   hideIndicators: boolean,
-  disableAdditionalSelections: boolean,
 ): Partial<StylesConfig<SelectOption, true, GroupBase<SelectOption>>> => ({
   placeholder: (base) => searchBarPlaceholderStyles(base),
   clearIndicator: (base) => ({
@@ -421,13 +422,11 @@ export const caseloadSelectStyles = (
         }
       : {}),
   }),
-  option: (base) => ({
+  option: (base, state) => ({
     ...base,
     backgroundColor: "none",
-    color: disableAdditionalSelections
-      ? palette.slate20
-      : searchBarOptionTextColor,
-    pointerEvents: disableAdditionalSelections ? "none" : "initial",
+    color: state.isDisabled ? palette.slate20 : searchBarOptionTextColor,
+    pointerEvents: state.isDisabled ? "none" : "initial",
     padding: isMobile
       ? `${rem(10)} ${rem(spacing.xl)}`
       : `${rem(spacing.sm)} ${rem(spacing.md)}`,
@@ -455,6 +454,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
       isTypesenseSearchEnabled,
       caseloadSearchManager,
       workflowsSearchFieldTitle,
+      facilityUnitSearchIds,
     },
   } = workflowsStore;
 
@@ -476,6 +476,40 @@ export const CaseloadSelect = observer(function CaseloadSelect({
   const disableAdditionalSelections =
     selectedSearchables.length >= SELECTED_SEARCH_LIMIT;
 
+  // TODO(OBT-49983): Temporary. A handful of large facility units is enough
+  // to exhaust Firestore's request quota, so tenants with a FACILITY_UNIT
+  // search config can set `maxFacilityUnitSearchIds` (see
+  // `WorkflowsSystemConfig`) to cap how many can be selected at once. States
+  // that don't set it are unaffected. Checked per selected id, not via
+  // `searchType`, so this also applies on pages like the homepage where
+  // searchType is "ALL" but some of the selected ids are still facility
+  // units. Remove once the Typesense-backed search refactor ships.
+  const maxFacilityUnitSearchIds =
+    workflowsStore.systemConfigFor("INCARCERATION").maxFacilityUnitSearchIds;
+  const selectedFacilityUnitIds = selectedSearchIds.filter((id) =>
+    facilityUnitSearchIds.has(id),
+  );
+  const isFacilityUnitSelectionCapped =
+    maxFacilityUnitSearchIds !== undefined &&
+    selectedFacilityUnitIds.length >= maxFacilityUnitSearchIds;
+
+  const getMenuDisabledState = (): MenuDisabledState => {
+    if (disableAdditionalSelections) {
+      return {
+        isDisabled: true,
+        disabledMessage: `Cannot select more than ${SELECTED_SEARCH_LIMIT} items.`,
+      };
+    }
+    if (isFacilityUnitSelectionCapped) {
+      return {
+        isDisabled: true,
+        disabledMessage: "Cannot select any more units right now.",
+      };
+    }
+    return { isDisabled: false };
+  };
+  const menuDisabledState = getMenuDisabledState();
+
   const numAvailableSearchables = searchableGroups.reduce(
     (acc, group) => acc + group.searchables.length,
     0,
@@ -483,7 +517,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
 
   customComponents.MenuList = MenuListWithShadow(
     numAvailableSearchables,
-    disableAdditionalSelections,
+    menuDisabledState,
   );
 
   const defaultOptions = {
@@ -491,7 +525,14 @@ export const CaseloadSelect = observer(function CaseloadSelect({
     className: "CaseloadSelect",
     components: customComponents,
     isMulti: true,
-    isOptionDisabled: () => disableAdditionalSelections,
+    isOptionDisabled: (option: SelectOption) => {
+      if (disableAdditionalSelections) return true;
+      if (!isFacilityUnitSelectionCapped) return false;
+      return (
+        facilityUnitSearchIds.has(option.value) &&
+        !selectedFacilityUnitIds.includes(option.value)
+      );
+    },
     onChange: (newValue: any) => {
       updateSelectedSearch(newValue.map((item: SelectOption) => item.value));
       analyticsStore.trackCaseloadSearch({
@@ -517,11 +558,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
     placeholder: isTypesenseSearchEnabled
       ? `Search for ${workflowsSearchFieldTitle} …`
       : "Search for one or more caseloads …",
-    styles: caseloadSelectStyles(
-      isMobile,
-      hideIndicators,
-      disableAdditionalSelections,
-    ),
+    styles: caseloadSelectStyles(isMobile, hideIndicators),
     value: buildSelectOptionsFromSearchables(selectedSearchables),
     // use of satisfies narrows isMulti from boolean to true,
     // which the custom components defined here will require

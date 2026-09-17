@@ -595,6 +595,63 @@ describe("selectedSearchIds", () => {
         "ID2",
       ]);
     });
+
+    describe("facility-unit cap", () => {
+      const facilityUnitLocations = [
+        {
+          locationId: "UNIT1",
+          stateCode: "US_XX",
+          idType: "facilityUnitId",
+          name: "Unit 1",
+          system: "INCARCERATION",
+        },
+        {
+          locationId: "UNIT2",
+          stateCode: "US_XX",
+          idType: "facilityUnitId",
+          name: "Unit 2",
+          system: "INCARCERATION",
+        },
+        {
+          locationId: "UNIT3",
+          stateCode: "US_XX",
+          idType: "facilityUnitId",
+          name: "Unit 3",
+          system: "INCARCERATION",
+        },
+      ];
+
+      beforeEach(() => {
+        workflowsStore.availableLocations = facilityUnitLocations;
+      });
+
+      test("keeps at most the INCARCERATION system's maxFacilityUnitSearchIds facility units, leaving non-facility-unit ids untouched", () => {
+        workflowsStore.systemConfigFor = vi.fn((system: string) =>
+          system === "INCARCERATION"
+            ? { search: [], maxFacilityUnitSearchIds: 1 }
+            : { search: [] },
+        );
+
+        searchStore.updateSelectedSearch(["UNIT1", "UNIT2", "OFFICER_ID"]);
+
+        expect(mockUpdatedSelectedSearchIds).toHaveBeenCalledWith([
+          "UNIT1",
+          "OFFICER_ID",
+        ]);
+      });
+
+      test("passes every id through unchanged when the system has no maxFacilityUnitSearchIds", () => {
+        workflowsStore.systemConfigFor = vi.fn(() => ({ search: [] }));
+
+        searchStore.updateSelectedSearch(["UNIT1", "UNIT2", "UNIT3"]);
+
+        expect(mockUpdatedSelectedSearchIds).toHaveBeenCalledWith([
+          "UNIT1",
+          "UNIT2",
+          "UNIT3",
+        ]);
+      });
+    });
   });
 
   describe("switching tenants", () => {
@@ -652,7 +709,7 @@ describe("default selected caseload", () => {
           selectedSearchIds: undefined,
         },
       };
-      workflowsStore.systemConfigFor = {
+      workflowsStore.systemConfigFor = vi.fn(() => ({
         search: [
           {
             searchType: "OFFICER",
@@ -660,7 +717,7 @@ describe("default selected caseload", () => {
             searchTitle: "officer",
           },
         ],
-      };
+      }));
 
       new SearchStore(workflowsStore as unknown as WorkflowsStore);
       expect(mockUpdatedSelectedSearchIds).toHaveBeenCalledWith([
@@ -792,6 +849,7 @@ describe("trackCaseloadSearch - default caseload", () => {
       };
 
       vi.resetAllMocks();
+      workflowsStore.systemConfigFor = vi.fn(() => ({ search: [] }));
       new SearchStore(workflowsStore as unknown as WorkflowsStore);
       expect(mockTrackCaseloadSearch).toHaveBeenCalledWith({
         searchCount: 1,
@@ -818,6 +876,7 @@ describe("trackCaseloadSearch - default caseload", () => {
         },
       };
       vi.resetAllMocks();
+      workflowsStore.systemConfigFor = vi.fn(() => ({ search: [] }));
       new SearchStore(workflowsStore as unknown as WorkflowsStore);
       expect(mockTrackCaseloadSearch).toHaveBeenCalledWith({
         searchCount: 1,
@@ -875,6 +934,7 @@ describe("handleSearchPillClick", () => {
     workflowsStore.updateActiveSystem = updateActiveSystemConfigMock;
     searchStore.setSearchTypeOverride("FACILITY");
     vi.resetAllMocks();
+    workflowsStore.systemConfigFor = vi.fn(() => ({ search: [] }));
   });
 
   test("when currently selected pill was clicked", () => {

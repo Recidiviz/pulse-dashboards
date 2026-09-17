@@ -21,7 +21,10 @@ import { TenantConfig } from "../core/models/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { DASHBOARD_VIEWS, INSIGHTS_PAGES } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
-import { filterByUserDistrict } from "../WorkflowsStore/utils";
+import {
+  DEFAULT_MAX_FACILITY_UNIT_SEARCH_IDS,
+  filterByUserDistrict,
+} from "../WorkflowsStore/utils";
 
 const US_TN_CONFIG = {
   name: "Tennessee",
@@ -46,6 +49,7 @@ const US_TN_CONFIG = {
       ],
       //TODO(#10991) Confirm this filter should be used for facilities
       staffFilterFn: filterByUserDistrict,
+      maxFacilityUnitSearchIds: DEFAULT_MAX_FACILITY_UNIT_SEARCH_IDS,
     },
     SUPERVISION: {
       search: [

@@ -307,6 +307,10 @@ export type SearchConfig<R, T extends TenantConfigId> = {
 export type WorkflowsSystemConfig<R, T extends TenantConfigId> = {
   search: SearchConfig<R, T>[];
   staffFilterFn?: StaffFilterFunction;
+  // TODO(OBT-49983): Temporary cap on FACILITY_UNIT search selections, added
+  // as a mitigation for OBT-48882. Remove once the Typesense-backed search
+  // refactor ships. See `SearchStore.capFacilityUnitSelections`.
+  maxFacilityUnitSearchIds?: number;
 };
 
 export type AnyWorkflowsSystemConfig =

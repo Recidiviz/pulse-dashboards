@@ -31,6 +31,7 @@ import UsMoInitialPositiveHomeVisitSmiTask from "../WorkflowsStore/Task/US_MO/Us
 import UsMoInPersonContactTask from "../WorkflowsStore/Task/US_MO/UsMoInPersonContactTask";
 import UsMoPositiveContactWithSignificantOtherTask from "../WorkflowsStore/Task/US_MO/UsMoPositiveContactWithSignificantOtherTask";
 import UsMoPositiveHomeVisitTask from "../WorkflowsStore/Task/US_MO/UsMoPositiveHomeVisitTask";
+import { DEFAULT_MAX_FACILITY_UNIT_SEARCH_IDS } from "../WorkflowsStore/utils";
 
 const US_MO_CONFIG = {
   name: "Missouri",
@@ -253,6 +254,7 @@ const US_MO_CONFIG = {
           restrictedToFeatureVariant: "usMoSearchByUnit",
         },
       ],
+      maxFacilityUnitSearchIds: DEFAULT_MAX_FACILITY_UNIT_SEARCH_IDS,
     },
   },
   navigation: {

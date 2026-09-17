@@ -81,7 +81,7 @@ export const SupervisionOfficerSelect = ({
   const { isMobile } = useIsMobile(true);
 
   // Generate base styles for the select component.
-  const styles = caseloadSelectStyles(isMobile, false, false);
+  const styles = caseloadSelectStyles(isMobile, false);
 
   // Customize the control (input container) styles.
   styles.control = (base, state) => ({
@@ -130,7 +130,7 @@ export const SupervisionOfficerSelect = ({
         Option,
         ClearIndicator,
         MultiValue: MultiValueOverride,
-        MenuList: MenuListWithShadow(options.length, false),
+        MenuList: MenuListWithShadow(options.length, { isDisabled: false }),
       }}
     />
   );

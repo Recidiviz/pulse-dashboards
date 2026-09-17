@@ -256,6 +256,15 @@ export const filterByUserDistrict: StaffFilterFunction = (
   };
 };
 
+// TODO(OBT-49983): Remove once the Typesense-backed search refactor ships.
+//
+// Shared value for `WorkflowsSystemConfig.maxFacilityUnitSearchIds`, added
+// as a temporary mitigation for OBT-48882: a handful of large facility
+// units is enough to pull hundreds of residents into a single unbounded,
+// unpaginated Firestore listener, exhausting Firestore's request quota and
+// crashing the app for that user.
+export const DEFAULT_MAX_FACILITY_UNIT_SEARCH_IDS = 4;
+
 export const usCaFilterByRoleSubtype: StaffFilterFunction = (
   user: CombinedUserRecord,
   featureVariants: ActiveFeatureVariantRecord,

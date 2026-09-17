@@ -18,6 +18,7 @@
 import { TenantConfig } from "../core/models/types";
 import { INSIGHTS_PAGES } from "../core/views";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
+import { DEFAULT_MAX_FACILITY_UNIT_SEARCH_IDS } from "../WorkflowsStore/utils";
 
 const US_UT_CONFIG = {
   name: "Utah",
@@ -56,6 +57,7 @@ const US_UT_CONFIG = {
           searchTitle: "unit",
         },
       ],
+      maxFacilityUnitSearchIds: DEFAULT_MAX_FACILITY_UNIT_SEARCH_IDS,
     },
   },
   navigation: {

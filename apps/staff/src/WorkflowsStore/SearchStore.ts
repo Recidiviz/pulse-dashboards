@@ -223,20 +223,63 @@ export class SearchStore {
     this.selectedSearchIdsForImpersonation = undefined;
   }
 
+  // TODO(OBT-49983): Remove once the Typesense-backed search refactor ships.
+  // The ids of every facility unit available to search in the current
+  // tenant — used to cap unit selections specifically, regardless of what
+  // else (officers, districts) is selected alongside them. Keying off the
+  // individual ids rather than `searchType` matters because `searchType` is
+  // "ALL" (not "FACILITY_UNIT") on pages like the Workflows homepage that
+  // let a user search across systems at once.
+  get facilityUnitSearchIds(): Set<string> {
+    return new Set(
+      this.workflowsStore.availableLocations
+        .filter(
+          (location) =>
+            location.idType === locationIdsBySearchType.FACILITY_UNIT,
+        )
+        .map((location) => location.locationId),
+    );
+  }
+
   updateSelectedSearch(searchIds: string[]): void {
     const user = this.workflowsStore.user;
     if (!user || !this.workflowsStore.rootStore.currentTenantId) return;
 
+    // Enforced here too (not just in the UI) so the cap holds regardless of
+    // caller — impersonation, defaults, or any future write path.
+    const cappedSearchIds = this.capFacilityUnitSelections(searchIds);
+
     this.workflowsStore.rootStore.firestoreStore.updateSelectedSearchIds(
-      searchIds,
+      cappedSearchIds,
     );
 
     // update the `selectedSearchIdsForSupervisorsWithStaff` for users with staff they supervise
     if (this.hasSupervisedStaffAndRequiredFeatureVariant) {
-      this.selectedSearchIdsForSupervisorsWithStaff = searchIds;
+      this.selectedSearchIdsForSupervisorsWithStaff = cappedSearchIds;
     }
 
-    this.selectedSearchIdsForImpersonation = searchIds;
+    this.selectedSearchIdsForImpersonation = cappedSearchIds;
+  }
+
+  // Keeps at most the INCARCERATION system's `maxFacilityUnitSearchIds` (see
+  // `WorkflowsSystemConfig`) facility-unit ids in `searchIds`, leaving any
+  // non-facility-unit entries (officers, districts) untouched. States that
+  // don't set `maxFacilityUnitSearchIds` are unaffected, this is a no-op
+  // for them.
+  private capFacilityUnitSelections(searchIds: string[]): string[] {
+    const maxFacilityUnitSearchIds =
+      this.workflowsStore.systemConfigFor(
+        "INCARCERATION",
+      ).maxFacilityUnitSearchIds;
+    if (maxFacilityUnitSearchIds === undefined) return searchIds;
+
+    const facilityUnitSearchIds = this.facilityUnitSearchIds;
+    let facilityUnitCount = 0;
+    return searchIds.filter((id) => {
+      if (!facilityUnitSearchIds.has(id)) return true;
+      facilityUnitCount += 1;
+      return facilityUnitCount <= maxFacilityUnitSearchIds;
+    });
   }
 
   get selectedSearchables(): Searchable[] {
