@@ -154,6 +154,7 @@
       "~shared-pathways": ["./libs/shared-pathways/src/index.ts"],
       "~shared-pathways/*": ["./libs/shared-pathways/src/*"],
       "~staff-shared-filters": ["./libs/staff-shared-filters/src/index.ts"],
+      "~trpc-client-utils": ["./libs/trpc-client-utils/src/index.ts"],
       "~twilio-api": ["./libs/twilio-api/src/index.ts"],
       "~ui": ["./libs/ui/src/index.ts"],
       "~utils": ["./libs/utils/src/index.ts"],

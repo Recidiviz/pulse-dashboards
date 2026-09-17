@@ -21,11 +21,12 @@ import { createTRPCReact } from "@trpc/react-query";
 import { useState } from "react";
 import superjson from "superjson";
 
-import type { AppRouter } from "~@modules-server/trpc-types";
+import type { UsTnReclassModuleRouter } from "~@modules-server/trpc-types";
+import { subrouteScopedLink } from "~trpc-client-utils";
 
 import { useRootStore } from "../../../../../components/StoreProvider";
 
-export const trpc = createTRPCReact<AppRouter>();
+export const trpc = createTRPCReact<UsTnReclassModuleRouter>();
 
 const ONE_WEEK_MS = 1000 * 60 * 60 * 24 * 7;
 
@@ -44,6 +45,7 @@ const UsTnReclassTrpcProvider: React.FC<{
   const [trpcClient] = useState(() =>
     trpc.createClient({
       links: [
+        subrouteScopedLink("usTnReclass"),
         httpBatchLink({
           // url: "https://modules-staging.recidiviz.org",
           url: "http://localhost:3022",

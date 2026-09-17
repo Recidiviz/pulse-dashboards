@@ -15,8 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export {
-  type AppRouter,
-  appRouter,
-  type UsTnReclassModuleRouter,
-} from "./router";
+export const setup = () => {
+  // prevents silly timezone issues when testing dates
+  process.env.TZ = "UTC";
+};

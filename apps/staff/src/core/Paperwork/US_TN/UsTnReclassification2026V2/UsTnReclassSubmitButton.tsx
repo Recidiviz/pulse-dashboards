@@ -27,7 +27,7 @@ export function UsTnReclassSubmitButton() {
   if (!usTnCafSubmissionButton) return;
 
   const onClick = async () => {
-    const res = await trpcClient.usTnReclass.reclass.query();
+    const res = await trpcClient.reclass.query();
 
     // eslint-disable-next-line no-console
     console.info(res);

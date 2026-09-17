@@ -15,8 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export {
-  type AppRouter,
-  appRouter,
-  type UsTnReclassModuleRouter,
-} from "./router";
+// @ts-check
+
+import tseslint from "typescript-eslint";
+
+import baseConfig, {
+  designSystemRestrictedImports,
+} from "../../eslint.config.mjs";
+
+export default tseslint.config(baseConfig, {
+  files: ["**/*.*js", "**/*.*jsx", "**/*.*ts", "**/*.*tsx"],
+  rules: {
+    "no-restricted-imports": [
+      "error",
+      {
+        paths: [designSystemRestrictedImports],
+      },
+    ],
+  },
+});

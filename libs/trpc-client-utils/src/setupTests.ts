@@ -15,8 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export {
-  type AppRouter,
-  appRouter,
-  type UsTnReclassModuleRouter,
-} from "./router";
+import jestExtendedMatchers from "jest-extended";
+
+// TODO: COS-71: [Mods] Add tests around subrouteScopedLink()
+expect.extend(jestExtendedMatchers);

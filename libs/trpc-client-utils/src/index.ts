@@ -15,8 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export {
-  type AppRouter,
-  appRouter,
-  type UsTnReclassModuleRouter,
-} from "./router";
+import type { TRPCLink } from "@trpc/client";
+import type { AnyTRPCClientTypes } from "@trpc/server";
+import { observable } from "@trpc/server/observable";
+
+// Prefixes all request paths with the given module name
+// Useful for initializing trpc clients scoped to subroutes
+export const subrouteScopedLink: (
+  subroute: string,
+) => TRPCLink<AnyTRPCClientTypes> = (subroute: string) => () => {
+  return ({ next, op }) => {
+    return observable((observer) => {
+      const newOp = { ...op, path: `${subroute}.${op.path}` };
+
+      return next(newOp).subscribe(observer);
+    });
+  };
+};
