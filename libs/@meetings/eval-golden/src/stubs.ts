@@ -78,4 +78,6 @@ export const EVAL_AGENCY: AgencyConfig = {
     },
   ],
   additionalOutputs: [],
+  labelStudioReviewPercent: 100,
+  labelStudioAlwaysReviewPartial: true,
 };

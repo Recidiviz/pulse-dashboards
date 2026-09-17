@@ -94,6 +94,8 @@ describe("buildWriterUserVariables", () => {
     ],
     labels: {},
     additionalOutputs: [],
+    labelStudioReviewPercent: 100,
+    labelStudioAlwaysReviewPartial: true,
   };
 
   const mockFacts: WriterFacts = {

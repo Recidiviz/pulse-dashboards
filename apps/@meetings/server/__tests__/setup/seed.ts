@@ -48,6 +48,16 @@ const testAgencyConfigsByStateCode: Record<string, object> = {
     version: 1,
     audioTTLDays: null,
     transcriptTTLDays: null,
+    labelStudioReviewPercent: 10,
+  },
+  US_CO: {
+    name: "Colorado",
+    stateCode: "US_CO",
+    version: 1,
+    audioTTLDays: 30,
+    transcriptTTLDays: 30,
+    labelStudioReviewPercent: 10,
+    labelStudioAlwaysReviewPartial: false,
   },
 };
 

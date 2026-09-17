@@ -43,6 +43,8 @@ const FAKE_AGENCY_CONFIG = {
   rules: [],
   outputs: [],
   additionalOutputs: [],
+  labelStudioReviewPercent: 100,
+  labelStudioAlwaysReviewPartial: true,
 };
 
 describe("config router", () => {

@@ -140,6 +140,20 @@ export const AgencyConfigFileSchema = z
       ),
     audioTTLDays: z.number().int().min(7).nullable().optional(),
     transcriptTTLDays: z.number().int().min(7).nullable().optional(),
+    labelStudioReviewPercent: z
+      .number()
+      .min(0)
+      .max(100)
+      .optional()
+      .describe(
+        "Percent of completed meetings randomly sampled for a Label Studio review task",
+      ),
+    labelStudioAlwaysReviewPartial: z
+      .boolean()
+      .optional()
+      .describe(
+        "Whether a grade of PARTIAL from the LLMAJ requires a Label Studio review task for the meeting; BAD scores always require a review task",
+      ),
     /** Replaces base keywords entirely */
     keywords: z
       .array(z.string())
@@ -236,6 +250,8 @@ export const AgencyConfigSchema = z.object({
   mobileAppEnabled: z.boolean().default(true),
   audioTTLDays: z.number().int().min(7).default(30).nullable(),
   transcriptTTLDays: z.number().int().min(7).default(30).nullable(),
+  labelStudioReviewPercent: z.number().min(0).max(100).default(100),
+  labelStudioAlwaysReviewPartial: z.boolean().default(true),
   keywords: z.array(z.string()).default([]),
   meetingTypes: z.array(MeetingTypeSchema).default([]),
   labels: LabelsSchema,

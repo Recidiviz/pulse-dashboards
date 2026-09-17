@@ -84,6 +84,8 @@ describe("ProductionPipeline", () => {
     ],
     additionalOutputs: [],
     labels: {},
+    labelStudioReviewPercent: 100,
+    labelStudioAlwaysReviewPartial: true,
   };
 
   const mockTranscript: TranscriptInput = {

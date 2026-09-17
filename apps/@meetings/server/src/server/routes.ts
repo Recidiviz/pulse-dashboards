@@ -818,23 +818,52 @@ export function registerTaskRoutes(app: FastifyInstance) {
           },
         });
 
-        // Export Label Studio task JSON to GCS. Skip US_DEMO in production only —
-        // staging US_DEMO meetings should still flow to Label Studio.
-        if (
-          stateCode !== StateCode.US_DEMO ||
-          env.DEPLOY_ENV !== "production"
-        ) {
-          const needsRecidivizReview =
-            scores.caseNote?.grade === "BAD" ||
-            scores.actionItems?.grade === "BAD" ||
-            scores.overall?.grade === "BAD";
+        // Export Label Studio task JSON to GCS, with the following conditions:
+        // 1. We only export tasks corresponding to the state's configured sample
+        //    percentage (by default, sample size is 100% of meetings).
+        // 2. All BAD-graded meetings get a task.
+        // 3. PARTIAL-graded meetings get a task when labelStudioAlwaysReviewPartial
+        //    is set to true in the agency config.
+        // 4. Skip US_DEMO in production only —
+        //    staging US_DEMO meetings should still flow to Label Studio.
 
-          exportLabelStudioTask(meeting, stateCode, needsRecidivizReview).catch(
-            (e) => {
-              captureException(e);
-              console.error("Failed to export Label Studio task to GCS", e);
-            },
-          );
+        const agencyConfig = await getAgencyConfig(stateCode).catch((e) => {
+          // Catch any errors from fetching/parsing the agency config and
+          // assume default behavior (100% sample, and mark PARTIAL for review)
+          // to avoid losing the label studio task.
+          captureException(e);
+          console.error("Failed to fetch agency config", e);
+          return undefined;
+        });
+
+        const reviewPercent = agencyConfig?.labelStudioReviewPercent ?? 100;
+        const sampledForReview = Math.random() * 100 < reviewPercent;
+
+        const gradedBad =
+          scores.caseNote?.grade === "BAD" ||
+          scores.actionItems?.grade === "BAD" ||
+          scores.overall?.grade === "BAD";
+
+        const gradedPartial = [
+          scores.caseNote,
+          scores.actionItems,
+          scores.overall,
+        ].some((s) => s?.grade === "PARTIAL");
+        const alwaysReviewPartial =
+          agencyConfig?.labelStudioAlwaysReviewPartial ?? true;
+
+        const forcedReview =
+          gradedBad || (alwaysReviewPartial && gradedPartial);
+
+        if (
+          (stateCode !== StateCode.US_DEMO ||
+            env.DEPLOY_ENV !== "production") &&
+          (sampledForReview || forcedReview)
+        ) {
+          exportLabelStudioTask(meeting, stateCode, gradedBad).catch((e) => {
+            captureException(e);
+            console.error("Failed to export Label Studio task to GCS", e);
+          });
         }
 
         reply.code(200).send("LLMAJ evaluation completed successfully");

@@ -98,6 +98,8 @@ describe("SpecialistCore", () => {
     ],
     additionalOutputs: [],
     labels: {},
+    labelStudioReviewPercent: 100,
+    labelStudioAlwaysReviewPartial: true,
   };
 
   beforeEach(() => {
