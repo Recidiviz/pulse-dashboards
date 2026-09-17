@@ -52,6 +52,7 @@ enum ResidentFlagId {
     usCoEdovoCredits
     usArFslImprovements
     usNcRNAAutoEnablement
+    usMaReentry
 }
 
 model ResidentFlagInstance {

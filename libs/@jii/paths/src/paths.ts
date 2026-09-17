@@ -140,6 +140,22 @@ export const ResourceExplorer = route(
   },
 );
 
+export const UsMaReentry = route(
+  "reentry",
+  {},
+  {
+    Overview: route(""),
+    Questionnaire: route("questionnaire"),
+    Checklist: route("checklist"),
+    Guide: route("guide/:topicSlug", {
+      params: {
+        topicSlug: union(["id-documents", "housing-basics"] as const),
+      },
+    }),
+    Resources: ResourceExplorer,
+  },
+);
+
 export const UsCoMoreInformation = route(
   "more-information",
   {
@@ -164,6 +180,7 @@ export const State = route(":stateSlug", types(ReturnToPathFragment), {
       UsCoMoreInformation,
       UsNcRNA,
       UsNdMoreInformation,
+      UsMaReentry,
       UsNeMoreInformation,
       UsNeReentryChecklist,
       ResourceExplorer,

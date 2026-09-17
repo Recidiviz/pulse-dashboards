@@ -18,7 +18,8 @@
 import { Route, Routes } from "react-router-dom";
 
 import { NotFound } from "~@jii/common-ui";
-import { EGT, ProgramCatalog } from "~@jii/paths";
+import { useSingleResidentContext } from "~@jii/data";
+import { EGT, ProgramCatalog, UsMaReentry } from "~@jii/paths";
 
 import { EGTDataRouteContext } from "../EGTDataContext/RouteContext";
 import { PageDefinition } from "../pages/PageDefinition";
@@ -26,9 +27,17 @@ import { PageEGT } from "../pages/PageEGT";
 import { PageIntro } from "../pages/PageIntro";
 import { PageMonthlyReport } from "../pages/PageMonthlyReport";
 import { PageUsMaProgramCatalog } from "../pages/PageUsMaProgramCatalog";
+import { PageUsMaReentryChecklist } from "../pages/PageUsMaReentryChecklist";
+import { PageUsMaReentryGuide } from "../pages/PageUsMaReentryGuide";
+import { PageUsMaReentryOverview } from "../pages/PageUsMaReentryOverview";
+import { PageUsMaReentryQuestionnaire } from "../pages/PageUsMaReentryQuestionnaire";
 import { PageUsMaResidentHome } from "../pages/PageUsMaResidentHome";
+import { PageUsMaResourceDetail } from "../pages/PageUsMaResourceDetail";
+import { PageUsMaResourceList } from "../pages/PageUsMaResourceList";
 
 export const UsMaRouter = () => {
+  const { residentFlags } = useSingleResidentContext();
+
   return (
     <Routes>
       <Route index element={<PageUsMaResidentHome />} />
@@ -39,6 +48,31 @@ export const UsMaRouter = () => {
         <Route path={EGT.MonthlyReport.path} element={<PageMonthlyReport />} />
       </Route>
       <Route path={ProgramCatalog.path} element={<PageUsMaProgramCatalog />} />
+      {residentFlags.usMaReentry && (
+        <Route path={UsMaReentry.path}>
+          <Route index element={<PageUsMaReentryOverview />} />
+          <Route
+            path={UsMaReentry.Questionnaire.path}
+            element={<PageUsMaReentryQuestionnaire />}
+          />
+          <Route
+            path={UsMaReentry.Checklist.path}
+            element={<PageUsMaReentryChecklist />}
+          />
+          <Route
+            path={UsMaReentry.Guide.path}
+            element={<PageUsMaReentryGuide />}
+          />
+          <Route
+            path={UsMaReentry.Resources.CategoryResults.path}
+            element={<PageUsMaResourceList />}
+          />
+          <Route
+            path={UsMaReentry.Resources.CategoryResults.Detail.path}
+            element={<PageUsMaResourceDetail />}
+          />
+        </Route>
+      )}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

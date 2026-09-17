@@ -47,7 +47,8 @@ type ResidentFlag =
   | "usCoEdovoCredits"
   //TODO OBT-34689 remove after launch
   | "usArFslImprovements"
-  | "usNcRNAAutoEnablement";
+  | "usNcRNAAutoEnablement"
+  | "usMaReentry";
 
 // this type must stay in sync with the UserFlagId enum
 // defined in the prisma schema.

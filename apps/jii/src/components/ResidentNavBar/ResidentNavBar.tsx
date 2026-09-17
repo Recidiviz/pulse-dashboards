@@ -24,7 +24,10 @@ import { FC } from "react";
 import { NavLink, useParams } from "react-router-dom";
 import styled from "styled-components";
 
-import { useResidentsContext } from "~@jii/data";
+import {
+  useResidentsContext,
+  useSingleResidentContextOptional,
+} from "~@jii/data";
 import { NavMenu } from "~@jii/layout";
 import { RouteParams, State } from "~@jii/paths";
 import { useCommonTranslations } from "~@jii/translation";
@@ -105,15 +108,12 @@ function usePresenter() {
 
   const routeParams = useParamsResidentOptional();
 
-  const residentFlags =
-    "personPseudoId" in routeParams
-      ? residentsStore.residentFlagsByPseudoId.get(routeParams.personPseudoId)
-      : undefined;
+  const singleResidentContext = useSingleResidentContextOptional();
 
   return new ResidentNavBarPresenter(
     residentsStore.userStore,
     routeParams,
-    residentFlags,
+    singleResidentContext?.residentFlags,
   );
 }
 

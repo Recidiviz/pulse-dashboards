@@ -67,16 +67,31 @@ export class ResidentNavBarPresenter {
       ];
     }
 
-    if (
-      this.routeParams.stateSlug === "arkansas" ||
-      this.routeParams.stateSlug === "mass"
-    ) {
+    if (this.routeParams.stateSlug === "arkansas") {
       return [
         {
           label: "Programs",
           to: State.Resident.ProgramCatalog.buildPath(this.routeParams),
         },
       ];
+    }
+
+    if (this.routeParams.stateSlug === "mass") {
+      const links: { label: string; to: string }[] = [
+        {
+          label: "Programs",
+          to: State.Resident.ProgramCatalog.buildPath(this.routeParams),
+        },
+      ];
+
+      if (this.residentFlags?.usMaReentry) {
+        links.push({
+          label: "Reentry",
+          to: State.Resident.UsMaReentry.buildPath(this.routeParams),
+        });
+      }
+
+      return links;
     }
 
     return [];
