@@ -22,7 +22,6 @@ import { buildParoleCase } from "../../../__tests__/paroleCaseFixtures";
 import { UsIdDisciplinaryFacilityNotesSection } from "../UsIdDisciplinaryFacilityNotesSection";
 
 const CONFIG: ParoleConfig = {
-  sections: [],
   conductHistoryConfig: { classificationColors: {} },
 };
 

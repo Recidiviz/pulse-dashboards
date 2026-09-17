@@ -30,8 +30,8 @@ export type ParoleCaseProfileComponent = ComponentType<{
 }>;
 
 /**
- * Each state's own Parole case profile page. A state with no entry here still
- * composes its page from `paroleConfig.sections`.
+ * Each state's own Parole case profile page. Every state with Parole enabled
+ * needs an entry.
  *
  * This mapping lives beside the page rather than in the tenant config on
  * purpose: a tenant config that imported a page component would pull in

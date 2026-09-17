@@ -27,7 +27,6 @@ import { UsCoOlderDisciplinariesSection } from "../UsCoOlderDisciplinariesSectio
 // Mirrors US_CO's real window, so makeRecord's date lands outside it and the
 // toggle has something to reveal.
 const CONFIG: ParoleConfig = {
-  sections: [],
   conductHistoryConfig: {
     classificationColors: { "Class 1": "BLUE" },
     visibleYears: 1,

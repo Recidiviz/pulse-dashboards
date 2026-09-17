@@ -15,13 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ComponentType } from "react";
-
 import {
   ClientRecord,
   LocationRecord,
   MilestoneType,
-  ParoleCase,
   ParoleRiskTool,
   StaffRecord,
   SystemId,
@@ -60,7 +57,6 @@ import type {
   SupervisionTaskType,
 } from "../../WorkflowsStore/Task/types";
 import { PaletteKey } from "../BadgePill/BadgePill";
-import { ParoleSectionName } from "../PageParole/components/ParoleSectionComponents";
 import { VitalsMetric } from "../PageVitals/types";
 import { TableColumns } from "../types/charts";
 import { Navigation } from "../types/navigation";
@@ -133,11 +129,6 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
  * tenant with Parole nav enabled
  */
 export type ParoleConfig = {
-  /**
-   * Ordered list of sections to show on the Parole case profile page. Unset
-   * for a state that owns a case profile component instead.
-   */
-  sections?: ParoleSectionName[];
   /** Subheading shown under the docket table's title. Omit to hide it. */
   docketSubheading?: string;
   /** Enables the docket table's name/DOC ID search input. Omit to hide it. */
@@ -159,28 +150,6 @@ export type ParoleConfig = {
   /** State-specific config for the Institutional Conduct History section. */
   conductHistoryConfig: ParoleConductHistoryConfig;
   /**
-   * A tenant-owned component that renders the whole Offense & Criminal History
-   * main-column section, in place of the generic `OffenseHistorySection`.
-   */
-  offenseHistoryComponent?: ComponentType<{
-    caseDetail: ParoleCase;
-    config: ParoleConfig;
-  }>;
-  /** Title for the offense section card and its sidebar nav label. Defaults to
-   * "Offense & Criminal History" if omitted. */
-  offenseHistoryTitle?: string;
-  /**
-   * A tenant-owned component that renders the whole case profile sidebar info
-   * card body -- the identity status line, the Personal / Hearing / Sentence
-   * Info sections, and any extra blocks (for example, an instant-offense list
-   * or an assessments summary). Omit to use `DefaultParoleGeneralInfo` (the
-   * incarceration-status line, with Facility inside Hearing Info).
-   */
-  sidebarComponent?: ComponentType<{
-    caseDetail: ParoleCase;
-    config: ParoleConfig;
-  }>;
-  /**
    * Absent for any tenant that hasn't opted into the redesigned Risk Score
    * Trajectory section (raw-score axis, CARAS component list, custom
    * aggregate-view label/tool-subset) -- RiskAssessmentSection falls back to
@@ -198,17 +167,6 @@ export type ParoleConductHistoryConfig = {
    * `DEFAULT_CONDUCT_HISTORY_YEARS` if omitted.
    */
   visibleYears?: number;
-  /** Title for the section and its sidebar nav label. Defaults to
-   * "Institutional Conduct History" if omitted. */
-  title?: string;
-  /**
-   * A tenant-owned component rendered as `children` at the end of the section.
-   * Omit for a tenant with nothing to slot in there.
-   */
-  children?: ComponentType<{
-    caseDetail: ParoleCase;
-    config: ParoleConfig;
-  }>;
 };
 
 export type ParoleRiskAssessmentConfig = {

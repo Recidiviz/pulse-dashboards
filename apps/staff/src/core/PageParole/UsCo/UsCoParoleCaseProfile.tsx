@@ -88,7 +88,7 @@ export function UsCoParoleCaseProfile({
       }
     >
       <SectionAnchor id={PAROLE_SECTION_IDS.offenseHistory}>
-        <OffenseHistorySection caseDetail={caseDetail} config={config} />
+        <OffenseHistorySection caseDetail={caseDetail} />
       </SectionAnchor>
 
       <SectionAnchor id={PAROLE_SECTION_IDS.riskAssessment}>

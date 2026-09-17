@@ -24,7 +24,6 @@ import {
 } from "~datatypes";
 import { Icon, IconSVG, palette } from "~design-system";
 
-import type { ParoleConfig } from "../../models/types";
 import { SectionCardHeader } from "../../SectionCard";
 import { PaddedSectionCardBody } from "./PaddedSectionCardBody";
 import {
@@ -45,18 +44,15 @@ const VICTIM_ALERT_BACKGROUND_COLOR = "rgba(217, 119, 6, 0.08)";
 const VICTIM_ATTENDING_HEARING_ALERT_COLOR = palette.signal.warning;
 
 /**
- * Props for a Parole Offense & Criminal History section. Both the generic
- * section and each tenant's override take this same shape, so the section
- * registry resolves one component and renders it with `caseDetail` + `config`.
+ * The generic Parole Offense & Criminal History section.
+ *
+ * @param caseDetail - The case whose offenses to show.
  */
-export type OffenseHistorySectionProps = {
-  caseDetail: ParoleCase;
-  config: ParoleConfig;
-};
-
 export function OffenseHistorySection({
   caseDetail,
-}: OffenseHistorySectionProps) {
+}: {
+  caseDetail: ParoleCase;
+}) {
   const { offenseHistory } = caseDetail;
   return (
     <SectionCard>

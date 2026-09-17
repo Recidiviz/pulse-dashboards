@@ -25,87 +25,29 @@ import { useRootStore } from "../../../components/StoreProvider";
 import { ParoleCaseProfilePresenter } from "../../../ParoleStore/presenters/ParoleCaseProfilePresenter";
 import { TenantId } from "../../../RootStore/types";
 import ModelHydrator from "../../ModelHydrator";
-import { CaseProfileSidebar } from "../components/CaseProfileSidebar";
-import { DefaultParoleGeneralInfo } from "../components/ParoleGeneralInfo";
-import {
-  NON_NAV_PAROLE_SECTIONS,
-  PAROLE_SECTION_LABELS,
-  ParoleSectionComponents,
-} from "../components/ParoleSectionComponents";
-import { ReportHeader } from "../components/ReportHeader";
-import { SectionAnchor } from "../components/SectionAnchor";
-import { PAROLE_SECTION_IDS } from "../components/shared";
 import { CASE_PROFILE_COMPONENTS_BY_TENANT } from "./caseProfileComponentsByTenant";
-import { ParoleCaseProfileLayout } from "./ParoleCaseProfileLayout";
 
 const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
   presenter,
 }: {
   presenter: ParoleCaseProfilePresenter;
 }) {
-  // ModelHydrator only renders this component once hydration has succeeded,
-  // so `presenter.caseDetail` is safe to access here -- but NOT at the call
-  // site below, where it would be evaluated eagerly on every render pass.
   const { currentTenantId } = useRootStore();
+  // ModelHydrator only renders this component once hydration has succeeded,
+  // so `presenter.caseDetail` is safe to access here.
   const { caseDetail, config } = presenter;
 
   const StateCaseProfile = currentTenantId
     ? CASE_PROFILE_COMPONENTS_BY_TENANT[currentTenantId]
     : undefined;
 
-  if (StateCaseProfile) {
-    return <StateCaseProfile caseDetail={caseDetail} config={config} />;
-  }
-
-  // Fallback for a state that does not own a case profile component yet.
-  const { sections } = config;
-  if (!sections) {
+  if (!StateCaseProfile) {
     throw new Error(
-      `Tenant [${currentTenantId}] has neither a Parole case profile ` +
-        `component nor configured sections.`,
+      `Tenant [${currentTenantId}] has no Parole case profile component.`,
     );
   }
 
-  const hasDownloadReport = sections.includes("downloadReport");
-  const contentSections = sections.filter(
-    (sectionName) => sectionName !== "downloadReport",
-  );
-  const sectionLabels = {
-    ...PAROLE_SECTION_LABELS,
-    offenseHistory:
-      config.offenseHistoryTitle ?? PAROLE_SECTION_LABELS.offenseHistory,
-    conductHistory:
-      config.conductHistoryConfig.title ?? PAROLE_SECTION_LABELS.conductHistory,
-  };
-  const navSections = sections
-    .filter((sectionName) => !NON_NAV_PAROLE_SECTIONS.has(sectionName))
-    .map((sectionName) => ({
-      id: PAROLE_SECTION_IDS[sectionName],
-      label: sectionLabels[sectionName],
-    }));
-  const SidebarBody = config.sidebarComponent ?? DefaultParoleGeneralInfo;
-
-  return (
-    <ParoleCaseProfileLayout
-      sidebar={
-        <CaseProfileSidebar caseDetail={caseDetail} sections={navSections}>
-          <SidebarBody caseDetail={caseDetail} config={config} />
-        </CaseProfileSidebar>
-      }
-      beforeReport={
-        hasDownloadReport && ParoleSectionComponents.downloadReport(caseDetail)
-      }
-    >
-      {hasDownloadReport && (
-        <ReportHeader name={caseDetail.name} displayId={caseDetail.displayId} />
-      )}
-      {contentSections.map((sectionName) => (
-        <SectionAnchor key={sectionName} id={PAROLE_SECTION_IDS[sectionName]}>
-          {ParoleSectionComponents[sectionName](caseDetail, config)}
-        </SectionAnchor>
-      ))}
-    </ParoleCaseProfileLayout>
-  );
+  return <StateCaseProfile caseDetail={caseDetail} config={config} />;
 });
 
 function usePresenter({

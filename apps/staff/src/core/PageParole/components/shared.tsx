@@ -317,9 +317,8 @@ export const DocumentLink = styled.a`
   font-weight: 600;
 `;
 
-// Anchor targets for CaseProfileSidebar's "jump to section" nav, keyed the
-// same way on both ends so a rename can't silently desync the nav from the
-// sections it scrolls to.
+// Anchor targets for the case profile's "jump to section" nav. Each state's
+// case profile puts these ids on both its SectionAnchors and its nav entries.
 export const PAROLE_SECTION_IDS = {
   offenseHistory: "parole-section-offense-history",
   riskAssessment: "parole-section-risk-assessment",
@@ -328,7 +327,6 @@ export const PAROLE_SECTION_IDS = {
   conductHistory: "parole-section-conduct-history",
   attachments: "parole-section-attachments",
   communitySupervisionPlan: "parole-section-community-supervision-plan",
-  downloadReport: "parole-section-download-report",
 } as const;
 
 export const PAROLE_REPORT_CAPTURE_ID = "parole-report-capture";
