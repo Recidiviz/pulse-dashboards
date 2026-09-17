@@ -56,10 +56,7 @@ export abstract class FiltersStoreBase {
         this.filters,
         filterKey,
         // TODO(#10250) Remove this default value once Pathways hydration has been refactored
-        // Set ["ALL"] as the default value if defaultFilterOptions are still loading
-        updatedFilterValue && updatedFilterValue.length > 0
-          ? updatedFilterValue
-          : ["ALL"],
+        updatedFilterValue ?? ["ALL"],
       );
     });
   }
@@ -252,6 +249,7 @@ export abstract class FiltersStoreBase {
     dynamicFilterOptions: Partial<DynamicFilterOptions>;
     lastUpdated?: Date;
     isOverTime?: boolean;
+    multiSelectFilters?: readonly string[];
   };
 
   abstract get pathwaysTenantId(): PathwaysTenantId | undefined;

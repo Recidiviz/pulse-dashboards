@@ -22,10 +22,27 @@ export type FilterType = (typeof FILTER_TYPES)[keyof typeof FILTER_TYPES];
 export type EnabledFilter = FilterType;
 export type EnabledFilters = EnabledFilter[];
 
+/**
+ * Separates the parts of a compound filter value.
+ *
+ * Most filter values name one thing. A few name a value that only means
+ * something alongside another dimension: an admission type of "Other" exists
+ * under both custody statuses and means something different in each, so its
+ * value carries the custody status too — `Incarcerated Individual|Other`.
+ * The backend splits on this delimiter and matches both parts.
+ */
+export const COMPOUND_FILTER_VALUE_DELIMITER = "|";
+
+/** Splits a compound filter value into its parts, in the order they appear. */
+export function splitCompoundFilterValue(value: string): string[] {
+  return value.split(COMPOUND_FILTER_VALUE_DELIMITER);
+}
+
 export type FilterOption = {
   label: string;
   value: string;
   longLabel?: string;
+  group?: string;
 };
 
 export type Filters = {
@@ -62,7 +79,12 @@ export type DynamicFilterOptionMetadataKey =
   | "admission_reason_id_name_map"
   | "religion_id_name_map"
   | "marital_status_id_name_map"
-  | "months_at_facility_id_name_map";
+  | "months_at_facility_id_name_map"
+  | "custody_status_id_name_map"
+  | "calendar_year_id_name_map"
+  | "admission_type_id_name_map"
+  | "release_type_id_name_map"
+  | "community_supervision_id_name_map";
 export type DynamicFilterOptionKeyToFilterTypeMap = {
   [key in DynamicFilterOptionMetadataKey]: FilterType;
 };
@@ -82,6 +104,11 @@ export const dynamicFilterOptionMapToFilterType: DynamicFilterOptionKeyToFilterT
     religion_id_name_map: "religion",
     marital_status_id_name_map: "maritalStatus",
     months_at_facility_id_name_map: "monthsAtFacility",
+    custody_status_id_name_map: "custodyStatus",
+    calendar_year_id_name_map: "calendarYear",
+    admission_type_id_name_map: "admissionType",
+    release_type_id_name_map: "releaseType",
+    community_supervision_id_name_map: "communitySupervision",
   };
 
 export type DynamicFilterOptions = Record<FilterType, FilterOption[]>;
@@ -93,6 +120,7 @@ export type SetPopulationFilters = (filtersStore: {
 export type PopulationFilter = {
   type: FilterType;
   title: string;
+  description?: string;
   isSingleSelect?: boolean;
   setFilters: SetPopulationFilters;
   options: FilterOption[];

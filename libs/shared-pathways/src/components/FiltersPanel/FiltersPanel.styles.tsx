@@ -160,3 +160,15 @@ export const ApplyButton = styled(Button)`
     outline-offset: 2px;
   }
 `;
+
+export const DisableableFieldset = styled.fieldset`
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+`;

@@ -65,12 +65,30 @@ const singleSelectFilter: PopulationFilter = {
   defaultValue: "6",
 };
 
+const calendarYearFilter = {
+  type: "calendarYear",
+  title: "Calendar year",
+  description:
+    "Bar charts show a single calendar year at a time. The Overview chart shows all years.",
+  isSingleSelect: true,
+  options: [
+    { label: "All", value: "ALL" },
+    { label: "2024", value: "2024" },
+    { label: "2025", value: "2025" },
+  ],
+  setFilters: mockSetFilters,
+  defaultOption: { label: "All", value: "ALL" },
+  defaultValue: "ALL",
+};
+
 function createMockFiltersStore({
   enabledFilters = ["race", "gender"],
   filterValues = {},
+  multiSelectFilters = [],
 }: {
   enabledFilters?: string[];
   filterValues?: Record<string, string[]>;
+  multiSelectFilters?: readonly string[];
 } = {}) {
   const filters = observable({
     race: ["ALL"],
@@ -83,6 +101,7 @@ function createMockFiltersStore({
     race: raceFilter,
     gender: genderFilter,
     timePeriod: singleSelectFilter,
+    calendarYear: calendarYearFilter,
   } as unknown as PopulationFilters;
 
   return {
@@ -92,6 +111,7 @@ function createMockFiltersStore({
       filters: { enabledFilters },
       hydrationState: { status: "hydrated" },
       dynamicFilterOptions: {},
+      multiSelectFilters,
     },
     setFilters: vi.fn(),
     resetFilters: vi.fn(),
@@ -300,5 +320,223 @@ describe("FiltersPanel", () => {
 
     expect(screen.getByText("Race")).toBeInTheDocument();
     expect(screen.queryByText("Gender")).not.toBeInTheDocument();
+  });
+});
+
+describe("FiltersPanel per-metric multi-select", () => {
+  const onClose = vi.fn();
+
+  it("renders a single-select filter as radios by default", () => {
+    const store = createMockFiltersStore({
+      enabledFilters: ["calendarYear"],
+      filterValues: { calendarYear: ["ALL"] },
+    });
+    render(<FiltersPanel isOpen onClose={onClose} filtersStore={store} />, {
+      wrapper,
+    });
+
+    expect(screen.getByText("Calendar year")).toBeInTheDocument();
+    expect(screen.getAllByRole("radio").length).toBeGreaterThan(0);
+    expect(screen.queryAllByRole("checkbox")).toHaveLength(0);
+  });
+
+  it("renders the same filter as checkboxes when the metric lists it as multi-select", () => {
+    const store = createMockFiltersStore({
+      enabledFilters: ["calendarYear"],
+      filterValues: { calendarYear: ["ALL"] },
+      multiSelectFilters: ["calendarYear"],
+    });
+    render(<FiltersPanel isOpen onClose={onClose} filtersStore={store} />, {
+      wrapper,
+    });
+
+    expect(screen.getAllByRole("checkbox").length).toBeGreaterThan(0);
+    expect(screen.queryAllByRole("radio")).toHaveLength(0);
+  });
+
+  it("shows the filter's description only where it renders as radios", () => {
+    const single = createMockFiltersStore({
+      enabledFilters: ["calendarYear"],
+      filterValues: { calendarYear: ["ALL"] },
+    });
+    const { unmount } = render(
+      <FiltersPanel isOpen onClose={onClose} filtersStore={single} />,
+      { wrapper },
+    );
+    expect(
+      screen.getByText(/Bar charts show a single calendar year/),
+    ).toBeInTheDocument();
+    unmount();
+
+    const multi = createMockFiltersStore({
+      enabledFilters: ["calendarYear"],
+      filterValues: { calendarYear: ["ALL"] },
+      multiSelectFilters: ["calendarYear"],
+    });
+    render(<FiltersPanel isOpen onClose={onClose} filtersStore={multi} />, {
+      wrapper,
+    });
+    expect(
+      screen.queryByText(/Bar charts show a single calendar year/),
+    ).not.toBeInTheDocument();
+  });
+});
+
+describe("FiltersPanel grouped options", () => {
+  const onClose = vi.fn();
+
+  const admissionTypeFilter = {
+    type: "admissionType",
+    title: "Latest Admission Type",
+    options: [
+      { label: "All", value: "ALL" },
+      {
+        label: "Court Commitment",
+        value: "Incarcerated Individual|Court Commitment",
+        group: "Incarcerated Individuals",
+      },
+      {
+        label: "Other",
+        value: "Incarcerated Individual|Other",
+        group: "Incarcerated Individuals",
+      },
+      {
+        label: "Other",
+        value: "Incarcerated Parolee|Other",
+        group: "Incarcerated Parolees",
+      },
+    ],
+    setFilters: mockSetFilters,
+    defaultOption: { label: "All", value: "ALL" },
+    defaultValue: "ALL",
+  };
+
+  function groupedStore(disabledFilters?: Record<string, string>) {
+    const store = createMockFiltersStore({
+      enabledFilters: ["admissionType"],
+      filterValues: { admissionType: ["ALL"] },
+    });
+    store.filterOptions.admissionType = admissionTypeFilter;
+    return { store, disabledFilters };
+  }
+
+  it("renders one titled section per group", () => {
+    const { store } = groupedStore();
+    render(<FiltersPanel isOpen onClose={onClose} filtersStore={store} />, {
+      wrapper,
+    });
+
+    expect(
+      screen.getByText("Latest Admission Type — Incarcerated Individuals"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Latest Admission Type — Incarcerated Parolees"),
+    ).toBeInTheDocument();
+  });
+
+  it("keeps one group's Other selected when the other group's is cleared", async () => {
+    const { store } = groupedStore();
+    render(<FiltersPanel isOpen onClose={onClose} filtersStore={store} />, {
+      wrapper,
+    });
+
+    // Clear the Individuals group wholesale via its select-all control.
+    fireEvent.click(
+      screen.getByLabelText(
+        "Select all Latest Admission Type — Incarcerated Individuals",
+      ),
+    );
+    fireEvent.click(screen.getByText("Apply"));
+
+    const applied = store.setFilters.mock.calls[0][0].admissionType as string[];
+
+    expect(applied).toContain("Incarcerated Parolee|Other");
+    expect(applied).not.toContain("Incarcerated Individual|Other");
+  });
+
+  it("disables a filter the caller marked unavailable", () => {
+    const { store } = groupedStore();
+    render(
+      <FiltersPanel
+        isOpen
+        onClose={onClose}
+        filtersStore={store}
+        disabledFilters={{ admissionType: "Releases only" }}
+      />,
+      { wrapper },
+    );
+
+    screen.getAllByRole("checkbox").forEach((box) => {
+      expect(box).toBeDisabled();
+    });
+  });
+});
+
+describe("FiltersPanel ordering", () => {
+  const onClose = vi.fn();
+
+  // calendarYear is a radio and race is checkboxes, so the radios-first
+  // default and the declared order disagree — which makes the choice visible.
+  const setup = (renderInDeclaredOrder: boolean) => {
+    const store = createMockFiltersStore({
+      enabledFilters: ["race", "calendarYear"],
+      filterValues: { calendarYear: ["ALL"] },
+    });
+    const { unmount } = render(
+      <FiltersPanel
+        isOpen
+        onClose={onClose}
+        filtersStore={store}
+        renderInDeclaredOrder={renderInDeclaredOrder}
+      />,
+      { wrapper },
+    );
+    const titles = screen
+      .getAllByText(/^(Race|Calendar year)$/)
+      .map((n) => n.textContent);
+    unmount();
+    return titles;
+  };
+
+  it("puts every radio ahead of every checkbox by default", () => {
+    expect(setup(false)).toEqual(["Calendar year", "Race"]);
+  });
+
+  it("keeps the metric's own order when asked", () => {
+    expect(setup(true)).toEqual(["Race", "Calendar year"]);
+  });
+});
+
+describe("FiltersPanel select-all round trip", () => {
+  const onClose = vi.fn();
+
+  const applyAfter = (
+    store: ReturnType<typeof createMockFiltersStore>,
+    clicks: string[],
+  ) => {
+    render(<FiltersPanel isOpen onClose={onClose} filtersStore={store} />, {
+      wrapper,
+    });
+    clicks.forEach((label) => fireEvent.click(screen.getByLabelText(label)));
+    fireEvent.click(screen.getByText("Apply"));
+    return store.setFilters.mock.calls[0][0];
+  };
+
+  it("reports ALL again once every option is reselected", () => {
+    const store = createMockFiltersStore({ enabledFilters: ["race"] });
+    const selectAll = "Select all Race";
+
+    // Clear the group, then restore it. Ending where it started must read as
+    // ALL, not as every value spelled out.
+    const applied = applyAfter(store, [selectAll, selectAll]);
+
+    expect(applied.race).toEqual(["ALL"]);
+  });
+
+  it("keeps an explicit list while the selection is partial", () => {
+    const store = createMockFiltersStore({ enabledFilters: ["race"] });
+    const applied = applyAfter(store, ["Select all Race"]);
+
+    expect(applied.race).toEqual([]);
   });
 });

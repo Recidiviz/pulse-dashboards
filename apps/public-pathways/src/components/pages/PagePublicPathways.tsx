@@ -31,7 +31,10 @@ import {
 import useIsMobile from "~utils/react/useIsMobile";
 
 import { DASHBOARDS_WITH_EVENT_TYPE_SELECTOR } from "../../datastores/dashboards";
-import { EVENT_TYPE_SECTION_RULES } from "../../datastores/eventTypes";
+import {
+  disabledFiltersForEventType,
+  EVENT_TYPE_SECTION_RULES,
+} from "../../datastores/eventTypes";
 import { publicPathwaysPalette } from "../../styles/publicPathwaysPalette";
 import { useRouteSync } from "../../useRouteSync";
 import { EventTypeSelector } from "../EventTypeSelector/EventTypeSelector";
@@ -142,6 +145,8 @@ export const PagePublicPathways = observer(function PagePublicPathways() {
             }
             enableMetricModeToggle={metricsStore.current.enableMetricModeToggle}
             metricModeOptions={metricModeOptions}
+            disabledFilters={disabledFiltersForEventType(eventType)}
+            renderInDeclaredOrder
           />
         </NavigationRow>
         <div aria-live="polite">

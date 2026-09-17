@@ -68,6 +68,10 @@ type FiltersButtonProps = {
   trackApplyFilters?: (filters: PopulationFilterValues) => void;
   enableMetricModeToggle?: boolean;
   metricModeOptions?: { label: string; value: string }[];
+  /** Filter types the reader cannot use right now, each with the reason. */
+  disabledFilters?: Record<string, string>;
+  /** Lay the filters out in the order the metric lists them. */
+  renderInDeclaredOrder?: boolean;
 };
 
 const FiltersButton: React.FC<FiltersButtonProps> = ({
@@ -75,6 +79,8 @@ const FiltersButton: React.FC<FiltersButtonProps> = ({
   trackApplyFilters,
   enableMetricModeToggle,
   metricModeOptions,
+  disabledFilters,
+  renderInDeclaredOrder,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -107,6 +113,8 @@ const FiltersButton: React.FC<FiltersButtonProps> = ({
         trackApplyFilters={trackApplyFilters}
         enableMetricModeToggle={enableMetricModeToggle}
         metricModeOptions={metricModeOptions}
+        disabledFilters={disabledFilters}
+        renderInDeclaredOrder={renderInDeclaredOrder}
       />
     </>
   );

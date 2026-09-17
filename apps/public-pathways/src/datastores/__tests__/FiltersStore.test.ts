@@ -74,6 +74,17 @@ describe("FiltersStore", () => {
         ...defaultPopulationFilterValues,
         facility: ["ALL"],
       };
+      rootStore.filtersStore.setFilters({ facility: undefined });
+      expect(rootStore.filtersStore.filters).toEqual(expected);
+    });
+
+    it("keeps an empty selection, which is not the same as no value yet", () => {
+      const expected = {
+        ...defaultPopulationFilterValues,
+        facility: [],
+      };
+      // The reader cleared every option. That matches nothing, so it must not
+      // be turned back into ALL, which would show everything instead.
       rootStore.filtersStore.setFilters({ facility: [] });
       expect(rootStore.filtersStore.filters).toEqual(expected);
     });

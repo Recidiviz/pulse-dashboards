@@ -35,6 +35,7 @@ import { TogglePill } from "../TogglePill";
 import { PillOption } from "../TogglePill/TogglePill";
 import {
   ApplyButton,
+  DisableableFieldset,
   FilterSection,
   FilterSectionContent,
   FilterSectionRow,
@@ -49,6 +50,8 @@ type FiltersPanelProps = {
   trackApplyFilters?: (filters: PopulationFilterValues) => void;
   enableMetricModeToggle?: boolean;
   metricModeOptions?: PillOption[];
+  disabledFilters?: Record<string, string>;
+  renderInDeclaredOrder?: boolean;
 };
 
 const FiltersPanel: React.FC<FiltersPanelProps> = observer(
@@ -59,6 +62,8 @@ const FiltersPanel: React.FC<FiltersPanelProps> = observer(
     trackApplyFilters,
     enableMetricModeToggle,
     metricModeOptions,
+    disabledFilters = {},
+    renderInDeclaredOrder = false,
   }) {
     const { filters, filterOptions } = filtersStore;
     const enabledFilters = filtersStore.metric.filters.enabledFilters;
@@ -95,15 +100,32 @@ const FiltersPanel: React.FC<FiltersPanelProps> = observer(
       FILTER_TYPES.DATE_IN_POPULATION,
     ];
 
+    // A metric can need several values of a filter that is single-select for
+    // every other chart, so its own list wins over the filter's default.
+    const isSingleSelect = (filterType: string) =>
+      filterOptions[filterType as keyof PopulationFilters]?.isSingleSelect &&
+      !filtersStore.metric.multiSelectFilters?.includes(filterType);
+
     const singleSelectRadioFilters = enabledFilters.filter(
       (filterType) =>
-        filterOptions[filterType]?.isSingleSelect &&
-        !dropdownFilterTypes.includes(filterType),
+        isSingleSelect(filterType) && !dropdownFilterTypes.includes(filterType),
     );
 
     const multiSelectFilters = enabledFilters.filter(
-      (filterType) => !filterOptions[filterType]?.isSingleSelect,
+      (filterType) => !isSingleSelect(filterType),
     );
+
+    /**
+     * Grouping every radio ahead of every checkbox is how this panel has
+     * always laid out, so it stays the default. A caller whose design fixes
+     * the order — a filter that has to sit last, say — asks for the order it
+     * declared instead.
+     */
+    const orderedFilters = renderInDeclaredOrder
+      ? enabledFilters.filter(
+          (filterType) => !dropdownFilterTypes.includes(filterType),
+        )
+      : [...singleSelectRadioFilters, ...multiSelectFilters];
 
     const getSelectedOptions = (
       filterType: keyof PopulationFilters,
@@ -124,13 +146,81 @@ const FiltersPanel: React.FC<FiltersPanelProps> = observer(
       return currentValues[0] ?? "";
     };
 
+    /**
+     * Returns the labelled groups a filter's options divide into, or undefined
+     * where they are one flat list. The leading "All" option belongs to the
+     * filter as a whole, so it is not part of any group.
+     */
+    const optionGroups = (
+      filter: PopulationFilters[keyof PopulationFilters],
+    ) => {
+      const selectable = filter.options.slice(1);
+      const names = [
+        ...new Set(selectable.map((o) => o.group).filter(Boolean)),
+      ] as string[];
+      if (names.length === 0) return undefined;
+
+      return names.map((group) => ({
+        group,
+        options: selectable.filter((o) => o.group === group),
+      }));
+    };
+
+    /**
+     * Replaces one group's selection while leaving every other group's alone,
+     * so unchecking a type under one custody status does not touch the
+     * same-named type under the other.
+     */
+    const onUpdateGroup = (
+      filterType: keyof PopulationFilters,
+      groupOptions: FilterOption[],
+      selected: FilterOption[],
+    ) => {
+      const groupValues = new Set(groupOptions.map((o) => o.value));
+      const fromOtherGroups = getSelectedOptions(filterType)
+        .map((o) => o.value)
+        .filter((value) => !groupValues.has(value));
+
+      setPendingFilters({
+        ...pendingFilters,
+        [filterType]: collapseIfEverything(filterType, [
+          ...fromOtherGroups,
+          ...selected.map((o) => o.value),
+        ]),
+      });
+    };
+
+    /**
+     * Returns "ALL" where the selection covers every option the filter offers.
+     * Selecting everything back is the same state the filter started in, so it
+     * has to read as "All" again rather than spelling out every value, and it
+     * drops out of the query the same way.
+     */
+    const collapseIfEverything = (
+      filterType: keyof PopulationFilters,
+      values: string[],
+    ): string[] => {
+      const selectable = filterOptions[filterType].options
+        .slice(1)
+        .map((o) => o.value);
+
+      const coversEverything =
+        selectable.length > 0 &&
+        selectable.every((value) => values.includes(value));
+
+      return coversEverything ? ["ALL"] : values;
+    };
+
     const onUpdateFilters = (
       newOptions: FilterOption[],
       filterType: string,
     ) => {
       setPendingFilters({
         ...pendingFilters,
-        [filterType]: newOptions.map((o) => o.value),
+        [filterType]: collapseIfEverything(
+          filterType as keyof PopulationFilters,
+          newOptions.map((o) => o.value),
+        ),
       });
     };
 
@@ -160,6 +250,89 @@ const FiltersPanel: React.FC<FiltersPanelProps> = observer(
     const onReset = () => {
       filtersStore.resetFilters();
       onClose();
+    };
+
+    const renderRadioFilter = (filterType: keyof PopulationFilters) => {
+      const filter = filterOptions[filterType];
+      if (!filter) return null;
+
+      const disabledReason = disabledFilters[filterType];
+
+      return (
+        <FilterSection key={filterType}>
+          <FilterSectionContent>
+            <DisableableFieldset
+              disabled={Boolean(disabledReason)}
+              title={disabledReason}
+            >
+              <FilterSectionLayout
+                title={filter.title}
+                description={filter.description}
+              >
+                <RadioGroup
+                  filter={filter}
+                  defaultValue={getSelectedValue(filterType)}
+                  onChange={onUpdateFilters}
+                />
+              </FilterSectionLayout>
+            </DisableableFieldset>
+          </FilterSectionContent>
+        </FilterSection>
+      );
+    };
+
+    const renderCheckboxFilter = (filterType: keyof PopulationFilters) => {
+      const filter = filterOptions[filterType];
+      if (!filter) return null;
+
+      const disabledReason = disabledFilters[filterType];
+      const groups = optionGroups(filter);
+
+      if (!groups) {
+        return (
+          <FilterSection key={filterType}>
+            <FilterSectionContent>
+              <DisableableFieldset
+                disabled={Boolean(disabledReason)}
+                title={disabledReason}
+              >
+                <CheckboxGroupWithSelectAllTitle
+                  filter={filter}
+                  selectedOptions={getSelectedOptions(filterType)}
+                  onChange={onUpdateFilters}
+                />
+              </DisableableFieldset>
+            </FilterSectionContent>
+          </FilterSection>
+        );
+      }
+
+      // One filter, several labelled groups. Each group reports only its own
+      // options, so the merge keeps the other groups' selections.
+      return groups.map(({ group, options }) => (
+        <FilterSection key={`${filterType}-${group}`}>
+          <FilterSectionContent>
+            <DisableableFieldset
+              disabled={Boolean(disabledReason)}
+              title={disabledReason}
+            >
+              <CheckboxGroupWithSelectAllTitle
+                filter={{
+                  ...filter,
+                  title: `${filter.title} — ${group}`,
+                  options: [filter.options[0], ...options],
+                }}
+                selectedOptions={getSelectedOptions(filterType).filter((o) =>
+                  options.some((opt) => opt.value === o.value),
+                )}
+                onChange={(selected) =>
+                  onUpdateGroup(filterType, options, selected)
+                }
+              />
+            </DisableableFieldset>
+          </FilterSectionContent>
+        </FilterSection>
+      ));
     };
 
     return (
@@ -225,40 +398,11 @@ const FiltersPanel: React.FC<FiltersPanelProps> = observer(
             </FilterSectionContent>
           </FilterSection>
         )}
-        {singleSelectRadioFilters.map((filterType) => {
-          const filter = filterOptions[filterType];
-          if (!filter) return null;
-
-          return (
-            <FilterSection key={filterType}>
-              <FilterSectionContent>
-                <FilterSectionLayout title={filter.title}>
-                  <RadioGroup
-                    filter={filter}
-                    defaultValue={getSelectedValue(filterType)}
-                    onChange={onUpdateFilters}
-                  />
-                </FilterSectionLayout>
-              </FilterSectionContent>
-            </FilterSection>
-          );
-        })}
-        {multiSelectFilters.map((filterType) => {
-          const filter = filterOptions[filterType];
-          if (!filter) return null;
-
-          return (
-            <FilterSection key={filterType}>
-              <FilterSectionContent>
-                <CheckboxGroupWithSelectAllTitle
-                  filter={filter}
-                  selectedOptions={getSelectedOptions(filterType)}
-                  onChange={onUpdateFilters}
-                />
-              </FilterSectionContent>
-            </FilterSection>
-          );
-        })}
+        {orderedFilters.map((filterType) =>
+          isSingleSelect(filterType)
+            ? renderRadioFilter(filterType)
+            : renderCheckboxFilter(filterType),
+        )}
       </PathwaysModal>
     );
   },

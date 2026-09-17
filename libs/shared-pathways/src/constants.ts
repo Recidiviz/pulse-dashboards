@@ -53,6 +53,11 @@ export const FILTER_TYPES = {
   // "months_at_facility" — see Dimension.MONTHS_AT_FACILITY in recidiviz-data.
   TIME_AT_FACILITY: "monthsAtFacility",
   DATE_IN_POPULATION: "dateInPopulation",
+  CUSTODY_STATUS: "custodyStatus",
+  CALENDAR_YEAR: "calendarYear",
+  ADMISSION_TYPE: "admissionType",
+  RELEASE_TYPE: "releaseType",
+  COMMUNITY_SUPERVISION: "communitySupervision",
 } as const;
 
 export const DIMENSION_TYPES = {
@@ -87,4 +92,9 @@ export const filtersOrder = [
   FILTER_TYPES.MARITAL_STATUS,
   FILTER_TYPES.TIME_AT_FACILITY,
   FILTER_TYPES.DATE_IN_POPULATION,
+  FILTER_TYPES.CUSTODY_STATUS,
+  FILTER_TYPES.CALENDAR_YEAR,
+  FILTER_TYPES.ADMISSION_TYPE,
+  FILTER_TYPES.RELEASE_TYPE,
+  FILTER_TYPES.COMMUNITY_SUPERVISION,
 ];

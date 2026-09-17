@@ -98,8 +98,15 @@ const Header = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  align-items: flex-start;
   padding: 2.5rem 3rem 0;
   gap: 0.5rem;
+`;
+
+const LegendSlot = styled.div`
+  margin-left: auto;
+  padding-top: 0.5rem;
+  flex-shrink: 0;
 `;
 
 const Title = styled.h2`
@@ -179,7 +186,7 @@ const VizPathways: React.FC<Props> = ({
             <Subtitle aria-label="Chart subtitle">{subtitle}</Subtitle>
           )}
         </Title>
-        {legend}
+        {legend && <LegendSlot>{legend}</LegendSlot>}
       </Header>
       <Content $withPadding={withPadding} role="figure">
         {children}

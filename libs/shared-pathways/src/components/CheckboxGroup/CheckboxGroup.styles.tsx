@@ -84,6 +84,7 @@ export const HeaderRow = styled.div`
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 1rem;
+  flex-wrap: wrap;
 `;
 
 export const ShowMoreButton = styled.button`

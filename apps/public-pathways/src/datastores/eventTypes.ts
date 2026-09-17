@@ -15,7 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { MetricContent, PATHWAYS_SECTIONS } from "~shared-pathways";
+import {
+  FILTER_TYPES,
+  MetricContent,
+  PATHWAYS_SECTIONS,
+} from "~shared-pathways";
 
 /**
  * Which events a dashboard's charts count. `ALL` shows admissions and releases
@@ -110,6 +114,44 @@ export function chartTitleForEventType(
     return content.titleForReleases ?? content.title;
   }
   return content.title;
+}
+
+/**
+ * The event types each filter applies to. The panel offers the same filters on
+ * every chart, so a filter that breaks down releases has nothing to say while
+ * the charts count admissions only.
+ *
+ * A filter absent from this map applies to every event type.
+ */
+const EVENT_TYPE_FILTER_RULES: Readonly<
+  Record<string, { eventTypes: readonly EventType[]; reason: string }>
+> = {
+  [FILTER_TYPES.ADMISSION_TYPE]: {
+    eventTypes: [EVENT_TYPES.ADMISSIONS, EVENT_TYPES.ALL],
+    reason: "Admissions only",
+  },
+  [FILTER_TYPES.RELEASE_TYPE]: {
+    eventTypes: [EVENT_TYPES.RELEASES, EVENT_TYPES.ALL],
+    reason: "Releases only",
+  },
+  [FILTER_TYPES.COMMUNITY_SUPERVISION]: {
+    eventTypes: [EVENT_TYPES.RELEASES, EVENT_TYPES.ALL],
+    reason: "Releases only",
+  },
+};
+
+/**
+ * Returns the filters the given event type leaves nothing to filter, each with
+ * the reason the panel shows.
+ */
+export function disabledFiltersForEventType(
+  eventType: EventType,
+): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(EVENT_TYPE_FILTER_RULES)
+      .filter(([, rule]) => !rule.eventTypes.includes(eventType))
+      .map(([filterType, rule]) => [filterType, rule.reason]),
+  );
 }
 
 /**

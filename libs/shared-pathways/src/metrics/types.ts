@@ -78,4 +78,5 @@ export type SharedMetricConstructorOptions<RecordFormat extends MetricRecord> =
     isGeographic?: boolean;
     rotateLabels?: boolean;
     accessorIsNotFilterType?: boolean;
+    multiSelectFilters?: readonly string[];
   };

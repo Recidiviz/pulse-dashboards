@@ -22,6 +22,8 @@ export const Badge = styled.span<{ $visible?: boolean }>`
   align-items: center;
   height: 20px;
   padding: 0 6px;
+  flex-shrink: 0;
+  white-space: nowrap;
   border: 1px solid
     ${({ theme }) => theme.badge?.borderColor ?? "rgba(0, 0, 0, 0.15)"};
   border-radius: 4px;

@@ -15,7 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { MetricRecord, NewBackendRecord } from "~shared-pathways";
+import {
+  COMPOUND_FILTER_VALUE_DELIMITER,
+  MetricRecord,
+  NewBackendRecord,
+  splitCompoundFilterValue,
+} from "~shared-pathways";
 
 import {
   ADMISSION_TYPE_SHARES,
@@ -135,15 +140,44 @@ function rowsForDimension(
   return undefined;
 }
 
-function overTimeRows(): StubRow[] {
-  return STUB_YEARS.map((year) => ({
+/**
+ * The share of each year's total the chosen custody status accounts for. The
+ * over-time chart counts every event rather than breaking them down, so a
+ * custody status narrows it by scaling the totals rather than dropping rows.
+ */
+function custodyStatusShare(params: URLSearchParams): number {
+  const selected = params.getAll("filters[custody_status]");
+  if (selected.length === 0) return 1;
+
+  const share = CUSTODY_STATUS_SHARES.filter(({ label }) =>
+    selected.includes(label),
+  ).reduce((total, { share: each }) => total + each, 0);
+
+  return share > 0 ? share : 1;
+}
+
+function overTimeRows(years: readonly StubYear[], share: number): StubRow[] {
+  return years.map((year) => ({
     year,
     // The record carries a month so it can share the date helpers with the
     // monthly charts. Annual figures sit on January of their year.
     month: 1,
-    admissionsCount: countFor("ADMISSIONS", year),
-    releasesCount: countFor("RELEASES", year),
+    admissionsCount: Math.round(countFor("ADMISSIONS", year) * share),
+    releasesCount: Math.round(countFor("RELEASES", year) * share),
   }));
+}
+
+/**
+ * The years the over-time chart draws. This chart takes more than one year, so
+ * it reads every value; an empty selection means the reader narrowed nothing
+ * and gets the whole span.
+ */
+function selectedYears(params: URLSearchParams): readonly StubYear[] {
+  const requested = params.getAll("filters[calendar_year]");
+  if (requested.length === 0) return STUB_YEARS;
+
+  const covered = STUB_YEARS.filter((year) => requested.includes(String(year)));
+  return covered.length > 0 ? covered : STUB_YEARS;
 }
 
 function parseYear(params: URLSearchParams): StubYear {
@@ -152,11 +186,105 @@ function parseYear(params: URLSearchParams): StubYear {
 }
 
 /**
+ * Encodes options the way the backend does: each `<dimension>_id_name_map`
+ * key holds its own JSON string, and the whole map is JSON-encoded again by
+ * the caller. `PathwaysNewBackendMetric.parseDynamicFilterOptions` parses both
+ * levels and maps the key back to a filter type.
+ */
+function encodeOptions(labels: string[]): string {
+  return JSON.stringify(labels.map((label) => ({ label, value: label })));
+}
+
+/**
+ * The filter options the real endpoints will derive from the data. The values
+ * come from the same sample figures the charts draw, so a filter never offers
+ * a value no chart can show.
+ *
+ * `FiltersStoreBase` merges these over the static definitions wherever the
+ * filter sets `useDynamicOptions`, and prepends its own "All" option.
+ *
+ * Options for a dimension whose values only mean something alongside a custody
+ * status. Each option keeps its plain label for the checkbox, carries the
+ * custody status in its value, and names the group it renders under — so the
+ * two "Other" types stay separately selectable.
+ */
+function encodeGroupedOptions(shares: Record<string, StubShare[]>): string {
+  return JSON.stringify(
+    Object.entries(shares).flatMap(([custodyStatus, group]) =>
+      group.map(({ label }) => ({
+        label,
+        value: [custodyStatus, label].join(COMPOUND_FILTER_VALUE_DELIMITER),
+        group: `${custodyStatus}s`,
+      })),
+    ),
+  );
+}
+
+function dynamicFilterOptions(): Record<string, string> {
+  return {
+    custody_status_id_name_map: encodeOptions(
+      CUSTODY_STATUS_SHARES.map(({ label }) => label),
+    ),
+    calendar_year_id_name_map: encodeOptions(STUB_YEARS.map(String)),
+    admission_type_id_name_map: encodeGroupedOptions(ADMISSION_TYPE_SHARES),
+    release_type_id_name_map: encodeGroupedOptions(RELEASE_TYPE_SHARES),
+    community_supervision_id_name_map: encodeOptions(
+      COMMUNITY_SUPERVISION_SHARES.map(({ label }) => label),
+    ),
+  };
+}
+
+/**
+ * The row field each filter narrows. Calendar year is absent because it picks
+ * which year to build rows from, rather than dropping rows after the fact.
+ */
+const FILTERED_FIELDS: Record<string, string> = {
+  "filters[custody_status]": "custodyStatus",
+  "filters[admission_type]": "admissionType",
+  "filters[release_type]": "releaseType",
+  "filters[community_supervision]": "communitySupervision",
+};
+
+/**
+ * True if the row satisfies one selected value. A compound value names the
+ * custody status alongside the dimension, so both parts have to match — this
+ * is what keeps the two "Other" types apart.
+ */
+function rowMatches(row: StubRow, field: string, selected: string): boolean {
+  const parts = splitCompoundFilterValue(selected);
+  if (parts.length === 1) return String(row[field]) === selected;
+
+  const [custodyStatus, value] = parts;
+  return (
+    String(row["custodyStatus"]) === custodyStatus &&
+    String(row[field]) === value
+  );
+}
+
+/**
+ * Drops rows the reader filtered out. A filter left on "All" sends no value at
+ * all, so an absent param narrows nothing. A row missing the field is kept,
+ * because that dimension does not apply to it.
+ */
+function applyRowFilters(rows: StubRow[], params: URLSearchParams): StubRow[] {
+  return Object.entries(FILTERED_FIELDS).reduce((kept, [param, field]) => {
+    const selected = params.getAll(param);
+    if (selected.length === 0) return kept;
+    return kept.filter(
+      (row) =>
+        row[field] === undefined ||
+        selected.some((value) => rowMatches(row, field, value)),
+    );
+  }, rows);
+}
+
+/**
  * Returns stubbed data for an Admissions & Releases endpoint, or undefined
  * when the request belongs to an endpoint the backend really serves.
  *
- * Filters other than `filters[calendarYear]` are ignored: the sample figures
- * are fixed shares, so there is nothing further to narrow.
+ * Calendar year picks which year to build from; every other filter narrows the
+ * rows that year produced, so the charts move the way they will against the
+ * real endpoints.
  */
 export function resolveStubbedMetric<RecordFormat extends MetricRecord>(
   endpoint: string,
@@ -167,9 +295,10 @@ export function resolveStubbedMetric<RecordFormat extends MetricRecord>(
 
   let data: StubRow[] | undefined;
   if (metricName === STUBBED_ENDPOINTS.overTime) {
-    data = overTimeRows();
+    data = overTimeRows(selectedYears(params), custodyStatusShare(params));
   } else if (metricName === STUBBED_ENDPOINTS.byDimension) {
-    data = rowsForDimension(params.get("group") ?? "", parseYear(params));
+    const rows = rowsForDimension(params.get("group") ?? "", parseYear(params));
+    data = rows && applyRowFilters(rows, params);
   }
 
   if (!data) return undefined;
@@ -178,8 +307,7 @@ export function resolveStubbedMetric<RecordFormat extends MetricRecord>(
     data,
     metadata: {
       lastUpdated: STUB_LAST_UPDATED,
-      // Each filter gains its options as its own PR wires that dimension up.
-      dynamicFilterOptions: "{}",
+      dynamicFilterOptions: JSON.stringify(dynamicFilterOptions()),
     },
   } as unknown as NewBackendRecord<RecordFormat>;
 }

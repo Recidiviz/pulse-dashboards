@@ -17,13 +17,17 @@
 
 import React, { ReactNode } from "react";
 
-import { FilterTitleRow } from "./FilterSectionLayout.styles";
+import {
+  FilterDescription,
+  FilterTitleRow,
+} from "./FilterSectionLayout.styles";
 import { FilterTitle } from "./FilterTitle.styles";
 
 type FilterSectionLayoutProps = {
   title: string;
   titlePrefix?: ReactNode;
   titleSuffix?: ReactNode;
+  description?: ReactNode;
   children: ReactNode;
 };
 
@@ -31,6 +35,7 @@ const FilterSectionLayout: React.FC<FilterSectionLayoutProps> = ({
   title,
   titlePrefix,
   titleSuffix,
+  description,
   children,
 }) => (
   <div>
@@ -40,6 +45,7 @@ const FilterSectionLayout: React.FC<FilterSectionLayoutProps> = ({
       {titleSuffix}
     </FilterTitleRow>
     {children}
+    {description && <FilterDescription>{description}</FilterDescription>}
   </div>
 );
 

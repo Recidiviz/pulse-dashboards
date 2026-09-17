@@ -27,19 +27,49 @@ export const NyEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   ...EnabledFilterOptions,
   // ADMISSIONS & RELEASES
   admissionsAndReleasesOverTime: {
-    enabledFilters: [],
-  },
-  releasesByCommunitySupervision: {
-    enabledFilters: [],
-  },
-  releasesByType: {
-    enabledFilters: [],
-  },
-  admissionsByType: {
-    enabledFilters: [],
+    enabledFilters: [
+      FILTER_TYPES.CUSTODY_STATUS,
+      FILTER_TYPES.CALENDAR_YEAR,
+      FILTER_TYPES.ADMISSION_TYPE,
+      FILTER_TYPES.RELEASE_TYPE,
+      FILTER_TYPES.COMMUNITY_SUPERVISION,
+    ],
   },
   admissionsAndReleasesByCustodyStatus: {
-    enabledFilters: [],
+    enabledFilters: [
+      FILTER_TYPES.CUSTODY_STATUS,
+      FILTER_TYPES.CALENDAR_YEAR,
+      FILTER_TYPES.ADMISSION_TYPE,
+      FILTER_TYPES.RELEASE_TYPE,
+      FILTER_TYPES.COMMUNITY_SUPERVISION,
+    ],
+  },
+  admissionsByType: {
+    enabledFilters: [
+      FILTER_TYPES.CUSTODY_STATUS,
+      FILTER_TYPES.CALENDAR_YEAR,
+      FILTER_TYPES.ADMISSION_TYPE,
+      FILTER_TYPES.RELEASE_TYPE,
+      FILTER_TYPES.COMMUNITY_SUPERVISION,
+    ],
+  },
+  releasesByType: {
+    enabledFilters: [
+      FILTER_TYPES.CUSTODY_STATUS,
+      FILTER_TYPES.CALENDAR_YEAR,
+      FILTER_TYPES.ADMISSION_TYPE,
+      FILTER_TYPES.RELEASE_TYPE,
+      FILTER_TYPES.COMMUNITY_SUPERVISION,
+    ],
+  },
+  releasesByCommunitySupervision: {
+    enabledFilters: [
+      FILTER_TYPES.CUSTODY_STATUS,
+      FILTER_TYPES.CALENDAR_YEAR,
+      FILTER_TYPES.ADMISSION_TYPE,
+      FILTER_TYPES.RELEASE_TYPE,
+      FILTER_TYPES.COMMUNITY_SUPERVISION,
+    ],
   },
   // PRISON
   prisonPopulationOverTime: {

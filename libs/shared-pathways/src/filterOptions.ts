@@ -67,9 +67,11 @@ export const convertLabelsToValues = (
   if (!filterOptions) return {};
   return Object.keys(filtersLabels).reduce(
     (acc, filterType) => {
-      const options = filterOptions[
-        filterType as keyof PopulationFilterLabels
-      ].options.filter((o) =>
+      const filter = filterOptions[filterType as keyof PopulationFilterLabels];
+
+      if (filter.useDynamicOptions && filter.options.length <= 1) return acc;
+
+      const options = filter.options.filter((o) =>
         filtersLabels[filterType as keyof PopulationFilterLabels]
           .split(",")
           .includes(o.label),
@@ -510,6 +512,71 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     type: FILTER_TYPES.RELIGION,
     title: "Religion",
     setFilters: setFilters(FILTER_TYPES.RELIGION),
+    options: [{ label: "All", value: "ALL" }],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+  },
+  [FILTER_TYPES.CUSTODY_STATUS]: {
+    type: FILTER_TYPES.CUSTODY_STATUS,
+    title: "Custody status",
+    isSingleSelect: true,
+    setFilters: setFilters(FILTER_TYPES.CUSTODY_STATUS),
+    options: [{ label: "All", value: "ALL" }],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+  },
+  [FILTER_TYPES.CALENDAR_YEAR]: {
+    type: FILTER_TYPES.CALENDAR_YEAR,
+    title: "Calendar year",
+    description:
+      "Bar charts show a single calendar year at a time. The Overview chart shows all years.",
+    isSingleSelect: true,
+    setFilters: setFilters(FILTER_TYPES.CALENDAR_YEAR),
+    options: [{ label: "All", value: "ALL" }],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+  },
+  [FILTER_TYPES.ADMISSION_TYPE]: {
+    type: FILTER_TYPES.ADMISSION_TYPE,
+    title: "Latest Admission Type",
+    setFilters: setFilters(FILTER_TYPES.ADMISSION_TYPE),
+    options: [{ label: "All", value: "ALL" }],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+  },
+  [FILTER_TYPES.RELEASE_TYPE]: {
+    type: FILTER_TYPES.RELEASE_TYPE,
+    title: "Latest Release Type",
+    setFilters: setFilters(FILTER_TYPES.RELEASE_TYPE),
+    options: [{ label: "All", value: "ALL" }],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+  },
+  [FILTER_TYPES.COMMUNITY_SUPERVISION]: {
+    type: FILTER_TYPES.COMMUNITY_SUPERVISION,
+    title: "Releases to Community Supervision",
+    isSingleSelect: true,
+    setFilters: setFilters(FILTER_TYPES.COMMUNITY_SUPERVISION),
     options: [{ label: "All", value: "ALL" }],
     get defaultOption(): FilterOption {
       return this.options[0];
@@ -1524,6 +1591,26 @@ export const NyPopulationFilterOptions: PopulationFilters = {
     ...DefaultPopulationFilterOptions[FILTER_TYPES.DATE_IN_POPULATION],
     useDynamicOptions: true,
   },
+  [FILTER_TYPES.CUSTODY_STATUS]: {
+    ...DefaultPopulationFilterOptions[FILTER_TYPES.CUSTODY_STATUS],
+    useDynamicOptions: true,
+  },
+  [FILTER_TYPES.CALENDAR_YEAR]: {
+    ...DefaultPopulationFilterOptions[FILTER_TYPES.CALENDAR_YEAR],
+    useDynamicOptions: true,
+  },
+  [FILTER_TYPES.ADMISSION_TYPE]: {
+    ...DefaultPopulationFilterOptions[FILTER_TYPES.ADMISSION_TYPE],
+    useDynamicOptions: true,
+  },
+  [FILTER_TYPES.RELEASE_TYPE]: {
+    ...DefaultPopulationFilterOptions[FILTER_TYPES.RELEASE_TYPE],
+    useDynamicOptions: true,
+  },
+  [FILTER_TYPES.COMMUNITY_SUPERVISION]: {
+    ...DefaultPopulationFilterOptions[FILTER_TYPES.COMMUNITY_SUPERVISION],
+    useDynamicOptions: true,
+  },
 };
 
 export const DemoPopulationFilterOptions: PopulationFilters = {
@@ -1730,6 +1817,22 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
   ],
   [FILTER_TYPES.DATE_IN_POPULATION]: [
     DefaultPopulationFilterOptions[FILTER_TYPES.DATE_IN_POPULATION]
+      .defaultValue,
+  ],
+  [FILTER_TYPES.CUSTODY_STATUS]: [
+    DefaultPopulationFilterOptions[FILTER_TYPES.CUSTODY_STATUS].defaultValue,
+  ],
+  [FILTER_TYPES.CALENDAR_YEAR]: [
+    DefaultPopulationFilterOptions[FILTER_TYPES.CALENDAR_YEAR].defaultValue,
+  ],
+  [FILTER_TYPES.ADMISSION_TYPE]: [
+    DefaultPopulationFilterOptions[FILTER_TYPES.ADMISSION_TYPE].defaultValue,
+  ],
+  [FILTER_TYPES.RELEASE_TYPE]: [
+    DefaultPopulationFilterOptions[FILTER_TYPES.RELEASE_TYPE].defaultValue,
+  ],
+  [FILTER_TYPES.COMMUNITY_SUPERVISION]: [
+    DefaultPopulationFilterOptions[FILTER_TYPES.COMMUNITY_SUPERVISION]
       .defaultValue,
   ],
 };

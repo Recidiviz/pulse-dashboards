@@ -15,6 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import {
+  dynamicFilterOptionMapToFilterType,
+  DynamicFilterOptionMetadataKey,
+  FilterOption,
+  validateDynamicFilterOptions,
+} from "~shared-pathways";
+
 import { TOTALS_BY_YEAR } from "../admissionsAndReleasesFigures";
 import { resolveStubbedMetric } from "../index";
 
@@ -60,6 +67,110 @@ describe("resolveStubbedMetric", () => {
     expect(() =>
       JSON.parse(result?.metadata.dynamicFilterOptions ?? ""),
     ).not.toThrow();
+  });
+
+  describe("dynamic filter options", () => {
+    // Decodes exactly the way PathwaysNewBackendMetric does: parse the
+    // metadata string, map each `<dimension>_id_name_map` key to its filter
+    // type, then parse that key's own JSON string.
+    const decodeAsMetricDoes = () => {
+      const raw = JSON.parse(
+        resolveStubbedMetric(`${BASE}/AdmissionsAndReleasesOverTime`)?.metadata
+          .dynamicFilterOptions ?? "{}",
+      ) as Record<string, string>;
+
+      return Object.fromEntries(
+        Object.entries(raw).map(([key, encoded]) => [
+          dynamicFilterOptionMapToFilterType[
+            key as DynamicFilterOptionMetadataKey
+          ],
+          JSON.parse(encoded) as FilterOption[],
+        ]),
+      );
+    };
+
+    it("uses keys the metric can map back to a filter type", () => {
+      const raw = JSON.parse(
+        resolveStubbedMetric(`${BASE}/AdmissionsAndReleasesOverTime`)?.metadata
+          .dynamicFilterOptions ?? "{}",
+      ) as Record<string, string>;
+
+      Object.keys(raw).forEach((key) => {
+        expect(
+          dynamicFilterOptionMapToFilterType[
+            key as DynamicFilterOptionMetadataKey
+          ],
+        ).toBeDefined();
+      });
+    });
+
+    it("nests each key's options as their own JSON string", () => {
+      const raw = JSON.parse(
+        resolveStubbedMetric(`${BASE}/AdmissionsAndReleasesOverTime`)?.metadata
+          .dynamicFilterOptions ?? "{}",
+      ) as Record<string, string>;
+
+      Object.values(raw).forEach((encoded) => {
+        expect(typeof encoded).toBe("string");
+        expect(validateDynamicFilterOptions(JSON.parse(encoded))).toBe(true);
+      });
+    });
+
+    it("covers every filter the dashboard enables", () => {
+      expect(Object.keys(decodeAsMetricDoes()).sort()).toEqual([
+        "admissionType",
+        "calendarYear",
+        "communitySupervision",
+        "custodyStatus",
+        "releaseType",
+      ]);
+    });
+
+    it("offers only values the charts can actually show", () => {
+      const options = decodeAsMetricDoes();
+
+      expect(options["custodyStatus"].map((o) => o.value)).toEqual([
+        "Incarcerated Individual",
+        "Incarcerated Parolee",
+      ]);
+      expect(options["calendarYear"].map((o) => o.value)).toEqual([
+        "2023",
+        "2024",
+        "2025",
+      ]);
+    });
+
+    it("keeps a type shared by both custody statuses separately selectable", () => {
+      const options = decodeAsMetricDoes()["admissionType"];
+      const others = options.filter((o) => o.label === "Other");
+
+      // Same label under each custody status, but distinct values, so one can
+      // be unchecked without touching the other.
+      expect(others).toHaveLength(2);
+      expect(new Set(others.map((o) => o.value)).size).toBe(2);
+      expect(others.map((o) => o.value)).toEqual([
+        "Incarcerated Individual|Other",
+        "Incarcerated Parolee|Other",
+      ]);
+    });
+
+    it("names the group each type renders under", () => {
+      const groups = new Set(
+        decodeAsMetricDoes()["releaseType"].map((o) => o.group),
+      );
+
+      expect(groups).toEqual(
+        new Set(["Incarcerated Individuals", "Incarcerated Parolees"]),
+      );
+    });
+
+    it("omits its own All option, which the filters store prepends", () => {
+      const values = Object.values(decodeAsMetricDoes()).flatMap((opts) =>
+        opts.map((o) => o.value),
+      );
+
+      expect(values).not.toContain("ALL");
+    });
   });
 
   describe("over time", () => {
@@ -171,5 +282,126 @@ describe("resolveStubbedMetric", () => {
 
       expect(row.calendarYear).toBe(2025);
     });
+  });
+});
+
+describe("resolveStubbedMetric filtering", () => {
+  const rowsFor = (query: string) =>
+    (resolveStubbedMetric(
+      `${BASE}/AdmissionsAndReleasesByDimensionCount?${query}`,
+    )?.data ?? []) as unknown as Record<string, string | number>[];
+
+  it("narrows to the custody status the reader picked", () => {
+    const rows = rowsFor(
+      "group=custody_status&filters[custody_status]=Incarcerated Parolee",
+    );
+
+    expect(rows.length).toBeGreaterThan(0);
+    rows.forEach((row) => {
+      expect(row["custodyStatus"]).toBe("Incarcerated Parolee");
+    });
+  });
+
+  it("keeps every custody status when none is asked for", () => {
+    const statuses = new Set(
+      rowsFor("group=custody_status").map((row) => row["custodyStatus"]),
+    );
+
+    expect(statuses.size).toBe(2);
+  });
+
+  it("narrows a breakdown to the types the reader picked", () => {
+    const rows = rowsFor(
+      "group=release_type&filters[release_type]=Incarcerated Individual|Parole",
+    );
+
+    expect(rows.length).toBeGreaterThan(0);
+    rows.forEach((row) => expect(row["releaseType"]).toBe("Parole"));
+  });
+
+  it("keeps one custody status's Other while dropping the other's", () => {
+    const rows = rowsFor(
+      "group=admission_type&filters[admission_type]=Incarcerated Parolee|Other",
+    );
+
+    expect(rows).toHaveLength(1);
+    expect(rows[0]["custodyStatus"]).toBe("Incarcerated Parolee");
+    expect(rows[0]["admissionType"]).toBe("Other");
+  });
+
+  it("returns no rows when the selection matches nothing", () => {
+    expect(
+      rowsFor("group=release_type&filters[release_type]=Nobody|Nonexistent"),
+    ).toEqual([]);
+  });
+});
+
+describe("resolveStubbedMetric over-time calendar year", () => {
+  const years = (query = "") =>
+    (
+      (resolveStubbedMetric(`${BASE}/AdmissionsAndReleasesOverTime?${query}`)
+        ?.data ?? []) as unknown as Record<string, number>[]
+    ).map((row) => row["year"]);
+
+  it("draws every year when none is picked", () => {
+    expect(years()).toEqual([2023, 2024, 2025]);
+  });
+
+  it("draws only the year the reader picked", () => {
+    expect(years("filters[calendar_year]=2023")).toEqual([2023]);
+  });
+
+  it("draws each of several picked years, oldest first", () => {
+    expect(
+      years("filters[calendar_year]=2025&filters[calendar_year]=2023"),
+    ).toEqual([2023, 2025]);
+  });
+
+  it("falls back to the whole span when no picked year is covered", () => {
+    expect(years("filters[calendar_year]=1999")).toEqual([2023, 2024, 2025]);
+  });
+});
+
+describe("resolveStubbedMetric over-time custody status", () => {
+  const rows = (query = "") =>
+    (resolveStubbedMetric(`${BASE}/AdmissionsAndReleasesOverTime?${query}`)
+      ?.data ?? []) as unknown as Record<string, number>[];
+
+  const admissionsIn = (query = "") =>
+    rows(query).map((row) => row["admissionsCount"]);
+
+  it("counts every event when no custody status is picked", () => {
+    expect(admissionsIn("filters[calendar_year]=2023")).toEqual([
+      TOTALS_BY_YEAR.ADMISSIONS[2023],
+    ]);
+  });
+
+  it("scales the totals down to the picked custody status", () => {
+    const [scaled] = admissionsIn(
+      "filters[calendar_year]=2023&filters[custody_status]=Incarcerated Parolee",
+    );
+
+    expect(scaled).toBe(Math.round(TOTALS_BY_YEAR.ADMISSIONS[2023] * 0.15));
+  });
+
+  it("scales releases by the same share as admissions", () => {
+    const [row] = rows(
+      "filters[calendar_year]=2024&filters[custody_status]=Incarcerated Individual",
+    );
+
+    expect(row["admissionsCount"]).toBe(
+      Math.round(TOTALS_BY_YEAR.ADMISSIONS[2024] * 0.85),
+    );
+    expect(row["releasesCount"]).toBe(
+      Math.round(TOTALS_BY_YEAR.RELEASES[2024] * 0.85),
+    );
+  });
+
+  it("leaves the totals alone when the custody status is unknown", () => {
+    expect(
+      admissionsIn(
+        "filters[calendar_year]=2023&filters[custody_status]=Nobody",
+      ),
+    ).toEqual([TOTALS_BY_YEAR.ADMISSIONS[2023]]);
   });
 });

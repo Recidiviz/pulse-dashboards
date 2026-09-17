@@ -17,9 +17,17 @@
 
 import styled from "styled-components";
 
+import { palette, typography } from "~design-system";
+
 export const FilterTitleRow = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 1rem;
+`;
+
+export const FilterDescription = styled.p`
+  ${typography.Sans12}
+  margin: 0.75rem 0 0;
+  color: ${palette.slate60};
 `;

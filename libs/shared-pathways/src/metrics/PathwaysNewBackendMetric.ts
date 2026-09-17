@@ -82,6 +82,15 @@ export default abstract class PathwaysNewBackendMetric<
 
   readonly accessorIsNotFilterType: boolean;
 
+  /**
+   * Filters this metric takes more than one value for, even though the filter
+   * itself is single-select by default. A filter's own `isSingleSelect` is
+   * fixed per tenant, but one chart can need several values of it where the
+   * rest need exactly one — the over-time chart draws every calendar year the
+   * reader picks, while each bar chart counts a single year.
+   */
+  readonly multiSelectFilters: readonly string[];
+
   protected allRecords?: RecordFormat[];
 
   // this is just a noop stub method to be overridden when needed
@@ -115,6 +124,7 @@ export default abstract class PathwaysNewBackendMetric<
     isGeographic = false,
     rotateLabels = false,
     accessorIsNotFilterType = false,
+    multiSelectFilters = [],
   }: SharedMetricConstructorOptions<RecordFormat>) {
     this.id = id;
     this.endpoint = endpoint;
@@ -127,6 +137,7 @@ export default abstract class PathwaysNewBackendMetric<
     this.isGeographic = isGeographic;
     this.rotateLabels = rotateLabels;
     this.accessorIsNotFilterType = accessorIsNotFilterType;
+    this.multiSelectFilters = multiSelectFilters;
     this.dynamicFilterOptions = {};
 
     makeObservable<PathwaysNewBackendMetric<RecordFormat>, "allRecords">(this, {
@@ -292,12 +303,33 @@ export default abstract class PathwaysNewBackendMetric<
 
   /**
    * Fetches metric data and stores the result reactively on this Metric instance.
+   *
+   * True if the reader cleared every option of a filter this metric uses. No
+   * record can match, so there is nothing to ask the backend for.
    */
+  get hasEmptyFilterSelection(): boolean {
+    if (!this.store) return false;
+    const filterValues = this.store.filters;
+
+    return this.filters.enabledFilters.some((filter) => {
+      const values = filterValues[filter as keyof PopulationFilterValues];
+      return Array.isArray(values) && values.length === 0;
+    });
+  }
+
   async hydrate(): Promise<void> {
     if (!this.shouldHydrate(this.id)) {
       return Promise.resolve();
     }
     this.hydrationState = { status: "loading" };
+
+    if (this.hasEmptyFilterSelection) {
+      runInAction(() => {
+        this.allRecords = [];
+        this.hydrationState = { status: "hydrated" };
+      });
+      return Promise.resolve();
+    }
 
     this.fetchNewMetrics(this.getQueryParams())
       .then((fetchedData) => {

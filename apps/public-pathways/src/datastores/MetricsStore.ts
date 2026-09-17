@@ -364,6 +364,7 @@ export default class MetricsStore implements PathwaysMetricStore {
       endpoint: "AdmissionsAndReleasesOverTime",
       store: this,
       fetchMetrics: this.fetchMetrics,
+      multiSelectFilters: [FILTER_TYPES.CALENDAR_YEAR],
     });
   }
 
@@ -374,7 +375,6 @@ export default class MetricsStore implements PathwaysMetricStore {
       store: this,
       fetchMetrics: this.fetchMetrics,
       accessor: "communitySupervision" as keyof SnapshotDataRecord,
-      accessorIsNotFilterType: true,
       isHorizontal: true,
     });
   }
@@ -410,7 +410,6 @@ export default class MetricsStore implements PathwaysMetricStore {
       store: this,
       fetchMetrics: this.fetchMetrics,
       accessor: "custodyStatus" as keyof SnapshotDataRecord,
-      accessorIsNotFilterType: true,
       isHorizontal: true,
     });
   }
