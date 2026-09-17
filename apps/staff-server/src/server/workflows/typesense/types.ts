@@ -47,6 +47,8 @@ export type UserScopeContext = {
 export type RequestIdentity = {
   userId?: string;
   userEmail: string;
+  district?: string;
+  featureVariants: Record<string, unknown>;
   appMetadata: Record<string, unknown>;
 };
 

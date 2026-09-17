@@ -38,6 +38,21 @@ import { readOfflineUserOverrides } from "../../utils/offlineUserOverrides";
 import type { RequestIdentity, UserScopeContext } from "./types";
 import { staffDocId } from "./utils";
 
+function requestIdentityFromMetadata(
+  email: unknown,
+  appMetadata: Record<string, unknown>,
+): RequestIdentity {
+  return {
+    userEmail: (email as string) || "",
+    userId: appMetadata["externalId"] as string | undefined,
+    district: appMetadata["district"] as string | undefined,
+    featureVariants:
+      (appMetadata["featureVariants"] as Record<string, unknown> | undefined) ??
+      {},
+    appMetadata,
+  };
+}
+
 // Returns the caller's Auth0-shaped identity: `req.user` (validated JWT
 // payload) in production; a synthetic offline user in offline mode. Extracts
 // the fields the mint handlers actually read so the type-cast noise stays
@@ -51,13 +66,8 @@ function resolveRequestIdentity(req: Request): RequestIdentity {
         readOfflineUserOverrides(req) as Parameters<typeof fetchOfflineUser>[0],
       )
     : (req as Request & { user?: Record<string, unknown> }).user;
-  const appMetadata = getAppMetadata({ user });
-  const userEmail = (user?.["email"] as string) || "";
-  return {
-    userId: appMetadata["externalId"] as string | undefined,
-    userEmail,
-    appMetadata,
-  };
+
+  return requestIdentityFromMetadata(user?.["email"], getAppMetadata({ user }));
 }
 
 /**
@@ -94,6 +104,28 @@ async function fetchStaffRecord(
   if (supr.exists) return supr.data() ?? null;
   const inc = await db.collection("incarcerationStaff").doc(docId).get();
   if (inc.exists) return inc.data() ?? null;
+  return null;
+}
+
+async function fetchStaffRecordByEmail(
+  db: Firestore,
+  stateCode: string,
+  email: string,
+): Promise<DocumentData | null> {
+  if (!email) return null;
+  const lowerEmail = email.toLowerCase();
+  const byCollection = (collection: string) =>
+    db
+      .collection(collection)
+      .where("email", "==", lowerEmail)
+      .where("stateCode", "==", stateCode)
+      .limit(1)
+      .get();
+
+  const supr = await byCollection("supervisionStaff");
+  if (!supr.empty) return supr.docs[0]?.data() ?? null;
+  const inc = await byCollection("incarcerationStaff");
+  if (!inc.empty) return inc.docs[0]?.data() ?? null;
   return null;
 }
 
@@ -152,33 +184,47 @@ async function fetchUserUpdates(
   return snap.exists ? snap.data() ?? {} : {};
 }
 
-// Derives the non-Recidiviz scope context for a given (externalId, stateCode)
-// from Firestore: staff record (district, roleSubtype, email, hasCaseload),
+// Derives the non-Recidiviz scope context for a given (identity, tenant) from
+// Firestore: staff record (district, roleSubtype, email, hasCaseload),
 // supervisor status, and userUpdates (overrideDistrictIds). Shared by the
 // normal path (caller resolves themselves) and the impersonation path (a
 // Recidiviz user resolves the impersonated user) — both compute the same
-// staff-side scope, differing only in whose externalId + FVs feed in.
+// staff-side scope from a RequestIdentity, differing only in how that identity
+// got built (resolveRequestIdentity vs. the impersonation metadata below).
 async function buildFirestoreScopeContext(
-  userId: string,
+  identity: RequestIdentity,
   stateCode: string,
-  featureVariants: Record<string, unknown>,
-  fallbackEmail: string,
 ): Promise<UserScopeContext> {
+  const {
+    userId,
+    userEmail: fallbackEmail,
+    district: fallbackDistrict,
+    featureVariants,
+  } = identity;
+
   const db = getFirestore();
-  const [staff, supervisedStaffExternalIds, userUpdates] = await Promise.all([
-    fetchStaffRecord(db, stateCode, userId),
-    fetchSupervisedStaffExternalIds(db, userId),
+  const [staff, userUpdates] = await Promise.all([
+    userId
+      ? fetchStaffRecord(db, stateCode, userId)
+      : fetchStaffRecordByEmail(db, stateCode, fallbackEmail),
     // Keyed by the caller's own email, matching what the frontend writes. This
     // is the Auth0 address, which is not necessarily the staff record's `email`
     // — and on the impersonation path it is the impersonated user's.
     fetchUserUpdates(db, fallbackEmail),
   ]);
 
+  const resolvedUserId =
+    userId || (staff?.["staffExternalId"] as string | undefined);
+
+  const supervisedStaffExternalIds = resolvedUserId
+    ? await fetchSupervisedStaffExternalIds(db, resolvedUserId)
+    : [];
+
   return {
-    userId,
+    userId: resolvedUserId ?? "",
     userEmail: (staff?.["email"] as string | undefined) ?? fallbackEmail,
     isRecidivizUser: false,
-    district: (staff?.["district"] as string | undefined) ?? undefined,
+    district: (staff?.["district"] as string | undefined) ?? fallbackDistrict,
     roleSubtype:
       (staff?.["roleSubtype"] as RoleSubtype | null | undefined) ?? null,
     // Mirrors UserSubscription on the frontend: a fetched record's own
@@ -203,26 +249,17 @@ async function buildFirestoreScopeContext(
 async function resolveImpersonatedScopeContext(
   impersonatedEmail: string,
   currentTenantId: string,
-): Promise<UserScopeContext | null> {
-  const metadata = (await fetchImpersonatedUserRestrictions(
-    impersonatedEmail,
-  )) as { externalId?: string; featureVariants?: Record<string, unknown> };
-
-  const externalId = metadata?.externalId;
-  if (!externalId) return null;
-
-  return buildFirestoreScopeContext(
-    externalId,
-    currentTenantId,
-    metadata.featureVariants ?? {},
-    impersonatedEmail,
-  );
+): Promise<UserScopeContext> {
+  const metadata = await fetchImpersonatedUserRestrictions(impersonatedEmail);
+  const identity = requestIdentityFromMetadata(impersonatedEmail, metadata);
+  return buildFirestoreScopeContext(identity, currentTenantId);
 }
 
 /**
  * Resolves the caller's identity + all shared context needed to compile a
- * scoped-key filter_by. Returns null when the request has neither a
- * Recidiviz identity nor a user externalId — the calling handler should 422.
+ * scoped-key filter_by. Returns null only when the request has neither a
+ * Recidiviz identity nor any identity to build a scope from at all (no
+ * externalId AND no email) — the calling handler should 422 in that case.
  *
  * For Recidiviz users, returns a bare context with no Firestore lookups:
  * caseload/person scope resolvers short-circuit to unrestricted before
@@ -242,13 +279,6 @@ export async function resolveUserScopeContext(
     return resolveImpersonatedScopeContext(impersonatedEmail, currentTenantId);
   }
 
-  if (!isRecidiviz && !identity.userId) return null;
-
-  const featureVariants =
-    (identity.appMetadata["featureVariants"] as
-      | Record<string, unknown>
-      | undefined) ?? {};
-
   if (isRecidiviz) {
     return {
       userId: identity.userId ?? "",
@@ -260,14 +290,11 @@ export async function resolveUserScopeContext(
       overrideDistrictIds: undefined,
       isSupervisor: false,
       supervisedStaffExternalIds: [],
-      featureVariants,
+      featureVariants: identity.featureVariants,
     };
   }
 
-  return buildFirestoreScopeContext(
-    identity.userId as string,
-    currentTenantId,
-    featureVariants,
-    identity.userEmail,
-  );
+  if (!identity.userId && !identity.userEmail) return null;
+
+  return buildFirestoreScopeContext(identity, currentTenantId);
 }

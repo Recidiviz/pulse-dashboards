@@ -56,44 +56,74 @@ const fakeFirestore = {
   incarcerationSupervisors: new Map<string, string[]>(),
 };
 
+// Supervisor lookups only match supervisionStaff in healthy states — the
+// parallel incarcerationStaff query is a Sentry canary in
+// fetchSupervisedStaffExternalIds. `incarcerationSupervisors` lets a test
+// force the violation to exercise the alert path. Single-field-only, so this
+// stays separate from the generic multi-where matcher below (which scans doc
+// bodies rather than a side-table of supervised ids).
+const mapsByCollectionAndField: Record<
+  string,
+  Map<string, string[]> | undefined
+> = {
+  "supervisionStaff:supervisorExternalIds":
+    fakeFirestore.supervisionSupervisors,
+  "incarcerationStaff:supervisorExternalId":
+    fakeFirestore.incarcerationSupervisors,
+};
+
 vi.mock("firebase-admin/firestore", () => ({
   getFirestore: () => ({
-    collection: (name: keyof typeof fakeFirestore) => ({
-      doc: (id: string) => ({
-        get: () =>
-          Promise.resolve({
-            exists: (fakeFirestore[name] as Map<string, Doc>).has(id),
-            data: () => (fakeFirestore[name] as Map<string, Doc>).get(id),
-          }),
-      }),
-      where: (field: string, _op: string, value: string) => ({
+    collection: (name: keyof typeof fakeFirestore) => {
+      // Chainable query builder: fetchStaffRecordByEmail chains
+      // `.where("email", ...).where("stateCode", ...).limit(1).get()`, while
+      // fetchSupervisedStaffExternalIds does a single `.where(...).get()`
+      // against the supervisor side-tables above.
+      const makeQuery = (filters: [string, string][]) => ({
+        where: (field: string, _op: string, value: string) =>
+          makeQuery([...filters, [field, value]]),
+        limit: () => makeQuery(filters),
         get: () => {
-          // Supervisor lookups only match supervisionStaff in healthy states —
-          // the parallel incarcerationStaff query is a Sentry canary in
-          // fetchSupervisedStaffExternalIds. `incarcerationSupervisors` lets a
-          // test force the violation to exercise the alert path.
-          const mapsByCollectionAndField: Record<
-            string,
-            Map<string, string[]> | undefined
-          > = {
-            "supervisionStaff:supervisorExternalIds":
-              fakeFirestore.supervisionSupervisors,
-            "incarcerationStaff:supervisorExternalId":
-              fakeFirestore.incarcerationSupervisors,
-          };
-          const supervisedIds =
-            mapsByCollectionAndField[`${name}:${field}`]?.get(value) ?? [];
-          const empty = supervisedIds.length === 0;
+          if (filters.length === 1) {
+            const [field, value] = filters[0] as [string, string];
+            const key = `${name}:${field}`;
+            if (key in mapsByCollectionAndField) {
+              const supervisedIds =
+                mapsByCollectionAndField[key]?.get(value) ?? [];
+              return Promise.resolve({
+                empty: supervisedIds.length === 0,
+                docs: supervisedIds.map((staffExternalId, i) => ({
+                  id: `${name}_${field}_${value}_${i}`,
+                  data: () => ({ staffExternalId }),
+                })),
+              });
+            }
+          }
+          // Generic path: scan doc bodies for equality on every filter —
+          // used by the email + stateCode staff-record lookup.
+          const matches = [
+            ...(fakeFirestore[name] as Map<string, Doc>).entries(),
+          ].filter(([, doc]) =>
+            filters.every(([field, value]) => doc[field] === value),
+          );
           return Promise.resolve({
-            empty,
-            docs: supervisedIds.map((staffExternalId, i) => ({
-              id: `${name}_${field}_${value}_${i}`,
-              data: () => ({ staffExternalId }),
-            })),
+            empty: matches.length === 0,
+            docs: matches.map(([id, doc]) => ({ id, data: () => doc })),
           });
         },
-      }),
-    }),
+      });
+      return {
+        doc: (id: string) => ({
+          get: () =>
+            Promise.resolve({
+              exists: (fakeFirestore[name] as Map<string, Doc>).has(id),
+              data: () => (fakeFirestore[name] as Map<string, Doc>).get(id),
+            }),
+        }),
+        where: (field: string, op: string, value: string) =>
+          makeQuery([[field, value]]),
+      };
+    },
   }),
 }));
 
@@ -145,6 +175,7 @@ function makeUser(
     externalId?: string | null;
     stateCode?: string;
     email?: string;
+    district?: string;
     featureVariants?: Record<string, boolean>;
     routes?: Record<string, boolean>;
   } = {},
@@ -156,6 +187,7 @@ function makeUser(
       ...(overrides.externalId === null
         ? {}
         : { externalId: overrides.externalId ?? "OFFICER123" }),
+      ...(overrides.district !== undefined && { district: overrides.district }),
       stateCode: overrides.stateCode ?? "US_TN",
       featureVariants: overrides.featureVariants ?? {},
       // Permissioned for both systems by default: these tests are about what
@@ -247,7 +279,41 @@ describe("mintCaseloadScopedKey — validation", () => {
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
-  test("returns 422 when user has no externalId", async () => {
+  // A missing externalId alone no longer 422s — see the "no externalId
+  // fallback" describe block below. 422 is reserved for a caller the mint
+  // handler has no identity to build any scope from at all.
+  test("returns 422 when user has neither externalId nor email", async () => {
+    const res = makeRes();
+    await mintCaseloadScopedKey(
+      makeReq(
+        { currentTenantId: "US_TN", system: "SUPERVISION" },
+        makeUser({ externalId: null, email: "" }),
+      ),
+      res,
+    );
+    expect(res.status).toHaveBeenCalledWith(422);
+  });
+});
+
+// --------------------------------------------------------------------------
+// No externalId fallback
+// --------------------------------------------------------------------------
+
+// A user can lack an externalId in Auth0 app_metadata while still having a
+// real Firestore staff record (the two are independently synced) or a real
+// `district` straight in app_metadata. These mirror the frontend's
+// Firestore-direct flow (UserSubscription.ts / WorkflowsStore/utils.ts),
+// which resolves staff records by email rather than externalId and falls
+// back further to app_metadata's own `district` before giving up.
+describe("mintCaseloadScopedKey — no externalId fallback", () => {
+  test("no externalId, but email matches a real staff record → scopes by that record's district", async () => {
+    fakeFirestore.supervisionStaff.set("us_tn_officer_by_email", {
+      email: "user@example.com",
+      stateCode: "US_TN",
+      district: "Region 9",
+      staffExternalId: "OFFICER-BY-EMAIL",
+    });
+
     const res = makeRes();
     await mintCaseloadScopedKey(
       makeReq(
@@ -256,7 +322,92 @@ describe("mintCaseloadScopedKey — validation", () => {
       ),
       res,
     );
-    expect(res.status).toHaveBeenCalledWith(422);
+
+    expect(mintedFilters(res).supervisionStaff).toBe(
+      "stateCode:=`US_TN` && (district:=[`Region 9`])",
+    );
+  });
+
+  test("no externalId, email match has its own staffExternalId → that id (not a synthesized one) drives supervisor expansion", async () => {
+    fakeFirestore.supervisionStaff.set("us_tn_officer_by_email", {
+      email: "user@example.com",
+      stateCode: "US_TN",
+      hasCaseload: false,
+      staffExternalId: "OFFICER-BY-EMAIL",
+    });
+    fakeFirestore.supervisionSupervisors.set("OFFICER-BY-EMAIL", ["STAFF456"]);
+
+    const res = makeRes();
+    await mintCaseloadScopedKey(
+      makeReq(
+        { currentTenantId: "US_TN", system: "SUPERVISION" },
+        makeUser({
+          externalId: null,
+          featureVariants: { workflowsSupervisorSearch: true },
+        }),
+      ),
+      res,
+    );
+
+    expect(mintedFilters(res).supervisionStaff).toBe(
+      "stateCode:=`US_TN` && (supervisorExternalId:=`OFFICER-BY-EMAIL` || supervisorExternalIds:=[`OFFICER-BY-EMAIL`])",
+    );
+  });
+
+  // A found record's missing `district` still falls back to app_metadata's
+  // own `district` — the fallback isn't gated on whether a record was found,
+  // only on whether it carried a district of its own.
+  test("no externalId, email match found but that record has no district → falls back to app_metadata's district", async () => {
+    fakeFirestore.supervisionStaff.set("us_tn_officer_by_email", {
+      email: "user@example.com",
+      stateCode: "US_TN",
+      staffExternalId: "OFFICER-BY-EMAIL",
+    });
+
+    const res = makeRes();
+    await mintCaseloadScopedKey(
+      makeReq(
+        { currentTenantId: "US_TN", system: "SUPERVISION" },
+        // app_metadata carries a district the real record doesn't have.
+        makeUser({ externalId: null, district: "Region 3" }),
+      ),
+      res,
+    );
+
+    expect(mintedFilters(res).supervisionStaff).toBe(
+      "stateCode:=`US_TN` && (district:=[`Region 3`])",
+    );
+  });
+
+  test("no externalId, no matching staff record, but app_metadata carries a district → district scope", async () => {
+    const res = makeRes();
+    await mintCaseloadScopedKey(
+      makeReq(
+        { currentTenantId: "US_TN", system: "SUPERVISION" },
+        makeUser({ externalId: null, district: "Region 3" }),
+      ),
+      res,
+    );
+
+    expect(mintedFilters(res).supervisionStaff).toBe(
+      "stateCode:=`US_TN` && (district:=[`Region 3`])",
+    );
+  });
+
+  test("no externalId, no matching staff record, no district → none base (never-match), not a 422", async () => {
+    const res = makeRes();
+    await mintCaseloadScopedKey(
+      makeReq(
+        { currentTenantId: "US_TN", system: "SUPERVISION" },
+        makeUser({ externalId: null }),
+      ),
+      res,
+    );
+
+    expect(res.status).not.toHaveBeenCalled();
+    expect(mintedFilters(res).supervisionStaff).toBe(
+      "stateCode:=`US_TN` && (id:=`__no_match__`)",
+    );
   });
 });
 
@@ -702,7 +853,10 @@ describe("mintCaseloadScopedKey — impersonation", () => {
     expect(mintedFilters(res).supervisionStaff).toBe("stateCode:=`US_TN`");
   });
 
-  test("returns 422 when the impersonated user has no externalId", async () => {
+  // No 422 here either: buildFirestoreScopeContext falls back to an
+  // email-keyed lookup, then to metadata.district, same as the
+  // non-impersonated path.
+  test("impersonated user has no externalId, no matching record, no district → none base, not a 422", async () => {
     mockFetchImpersonatedUserRestrictions.mockResolvedValue({
       featureVariants: {},
     });
@@ -720,7 +874,62 @@ describe("mintCaseloadScopedKey — impersonation", () => {
       res,
     );
 
-    expect(res.status).toHaveBeenCalledWith(422);
+    expect(res.status).not.toHaveBeenCalled();
+    expect(mintedFilters(res).supervisionStaff).toBe(
+      "stateCode:=`US_TN` && (id:=`__no_match__`)",
+    );
+  });
+
+  test("impersonated user has no externalId but metadata carries a district → district scope", async () => {
+    mockFetchImpersonatedUserRestrictions.mockResolvedValue({
+      featureVariants: {},
+      district: "Region 7",
+    });
+
+    const res = makeRes();
+    await mintCaseloadScopedKey(
+      makeReq(
+        {
+          currentTenantId: "US_TN",
+          system: "SUPERVISION",
+          impersonatedEmail: "impersonated@example.com",
+        },
+        makeUser({ stateCode: "recidiviz", externalId: null }),
+      ),
+      res,
+    );
+
+    expect(mintedFilters(res).supervisionStaff).toBe(
+      "stateCode:=`US_TN` && (district:=[`Region 7`])",
+    );
+  });
+
+  test("impersonated user has no externalId, but email matches a real staff record → scopes by that record", async () => {
+    mockFetchImpersonatedUserRestrictions.mockResolvedValue({
+      featureVariants: {},
+    });
+    fakeFirestore.supervisionStaff.set("us_tn_imp_by_email", {
+      email: "impersonated@example.com",
+      stateCode: "US_TN",
+      district: "Region 8",
+    });
+
+    const res = makeRes();
+    await mintCaseloadScopedKey(
+      makeReq(
+        {
+          currentTenantId: "US_TN",
+          system: "SUPERVISION",
+          impersonatedEmail: "impersonated@example.com",
+        },
+        makeUser({ stateCode: "recidiviz", externalId: null }),
+      ),
+      res,
+    );
+
+    expect(mintedFilters(res).supervisionStaff).toBe(
+      "stateCode:=`US_TN` && (district:=[`Region 8`])",
+    );
   });
 
   test("ignores impersonatedEmail from a non-Recidiviz caller (no escalation)", async () => {
