@@ -23,9 +23,12 @@
  * the fix is a new native build, not an OTA. In that case we skip the publish rather than
  * fail the run; the caller (the mobile-ota GitHub Action) is responsible for alerting.
  *
- * EAS computes and stores a fingerprint for every build regardless of the app's
- * `runtimeVersion.policy` (see eas-cli's computeAndMaybeUploadFingerprintWithoutExpoUpdatesAsync),
- * so this guard works today even though app.config.ts is still on `policy: "appVersion"`.
+ * EAS stores a fingerprint alongside every build (see eas-cli's
+ * computeAndMaybeUploadFingerprintWithoutExpoUpdatesAsync), which is what
+ * `eas fingerprint:compare --build-id` reads to answer this question.
+ *
+ * The marketing version is excluded from that fingerprint (see fingerprint.config.js) —
+ * a version bump is not a native change and must not make an OTA look incompatible.
  *
  * Usage:
  *   tsx scripts/mobile-ota-with-fingerprint-guard.mts <deployEnv>
