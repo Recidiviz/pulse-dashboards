@@ -23,5 +23,4 @@ export const usNycResidentsConfig: ResidentsConfig = {
   translation: {
     additionalLanguages: [],
   },
-  enabledUserFlags: { useNewResidentData: new Date(2026, 8, 10) },
 };

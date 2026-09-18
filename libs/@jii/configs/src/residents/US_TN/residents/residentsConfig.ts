@@ -24,5 +24,4 @@ export const usTnResidentsConfig: ResidentsConfig = {
     additionalLanguages: [],
   },
   limitDistrictSearchOptions: true,
-  enabledUserFlags: { useNewResidentData: new Date(2026, 8, 17) },
 };
