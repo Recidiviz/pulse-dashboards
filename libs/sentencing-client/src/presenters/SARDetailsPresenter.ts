@@ -48,6 +48,7 @@ import { KEY_CONSIDERATIONS_REQUIRED_FIELDS } from "../components/KeyConsiderati
 import { mapEnumKeysToDisplay } from "../components/KeyConsiderations/utils";
 import {
   AssessmentTypeKey,
+  Boundaries,
   getAssessmentScoreBucket,
 } from "../components/OffenderAssessment/assessmentTypeUtils";
 import { RiskLevelKey } from "../components/OffenderAssessment/constants";
@@ -1301,19 +1302,19 @@ export class SARDetailsPresenter implements Hydratable {
     type ScoredDomain = DomainConfig & {
       scoreField: keyof ORASFormData;
       riskLevelField: ORASDomainRiskLevelField;
-      maxScore: number;
+      riskLevelCutoffs: Boundaries;
     };
     const derivedRiskLevels = Object.fromEntries(
       getDomainsForAssessmentType(data.assessmentType)
         .filter(
           (d): d is ScoredDomain =>
-            !!(d.scoreField && d.riskLevelField && d.maxScore),
+            !!(d.scoreField && d.riskLevelField && d.riskLevelCutoffs),
         )
         .map((d) => [
           d.riskLevelField,
           deriveDomainRiskLevel(
             data[d.scoreField] as number | null,
-            d.maxScore,
+            d.riskLevelCutoffs,
           ),
         ]),
     );

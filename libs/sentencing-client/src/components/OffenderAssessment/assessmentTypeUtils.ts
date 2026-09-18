@@ -64,7 +64,7 @@ export const OVERALL_MAX_SCORE_BY_ASSESSMENT_TYPE: Record<
 // Score thresholds per assessment type and gender.
 // Bucket values: 0 = Low, 1 = Moderate, 2 = High (High absorbs Very High).
 // Female norms differ from male norms on all tools.
-type Boundaries = { moderate: number; high: number };
+export type Boundaries = { moderate: number; high: number };
 const SCORE_BUCKET_BOUNDARIES: Partial<
   Record<AssessmentTypeKey, { MALE: Boundaries; FEMALE: Boundaries }>
 > = {

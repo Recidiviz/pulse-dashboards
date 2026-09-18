@@ -88,8 +88,8 @@ describe("saveORASData", () => {
       assessmentType: "ORAS_CST",
       assessmentDate: new Date("2025-01-01"),
       assessmentAdministeredBy: "Officer Smith",
-      criminalHistoryLevel: 6, // 6/8 = 75% → HIGH
-      educationLevelScore: 2, // 2/6 = 33.3% → MODERATE
+      criminalHistoryLevel: 7, // official CST cutoffs: HIGH is 7-8
+      substanceAbuseLevel: 2, // official CST cutoffs: LOW is 0-2 (MO-11748)
     });
 
     expect(presenter.SARData).toBeDefined();
@@ -97,7 +97,7 @@ describe("saveORASData", () => {
       presenter.SARData?.id,
       expect.objectContaining({
         criminalHistoryRiskLevel: "HIGH",
-        educationRiskLevel: "MODERATE",
+        substanceAbuseRiskLevel: "LOW",
         familySocialSupportRiskLevel: null,
         ORASLastUpdatedAt: expect.any(Date),
       }),

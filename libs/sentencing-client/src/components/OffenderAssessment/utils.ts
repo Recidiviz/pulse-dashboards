@@ -19,6 +19,7 @@ import moment from "moment";
 
 import { ActiveFeatureVariants } from "../../datastores/types";
 import { MutableSARAttributes } from "../CaseDetails/types";
+import { Boundaries } from "./assessmentTypeUtils";
 
 export type ORASFormData = Pick<
   MutableSARAttributes,
@@ -69,16 +70,23 @@ export const ORAS_EMPTY_FORM: ORASFormData = {
   ORASDomainsAvailable: true,
 };
 
-// Derives a domain risk level from a raw score as a fraction of maxScore.
-// LOW: < 33%, MODERATE: 33–66%, HIGH: >= 67%
+/**
+ * Derives a domain risk level from a raw score, given the score thresholds
+ * (from the official ORAS scoring guide, see MO-11748) at which the domain
+ * enters MODERATE and HIGH. Below `moderate` is LOW; there's no upper bound
+ * on HIGH since scores are already capped at the domain's maxScore.
+ *
+ * Mirrors assessmentTypeUtils.ts's `getAssessmentScoreBucket`, which applies
+ * the same threshold shape to the overall (gendered) assessment score.
+ */
 export function deriveDomainRiskLevel(
   score: number | null | undefined,
-  maxScore: number | undefined,
+  cutoffs: Boundaries,
 ): "LOW" | "MODERATE" | "HIGH" | null {
-  if (score == null || !maxScore) return null;
-  const ratio = score / maxScore;
-  if (ratio >= 0.67) return "HIGH";
-  if (ratio >= 0.33) return "MODERATE";
+  if (score == null) return null;
+
+  if (score >= cutoffs.high) return "HIGH";
+  if (score >= cutoffs.moderate) return "MODERATE";
   return "LOW";
 }
 
@@ -152,6 +160,7 @@ export interface DomainConfig {
   riskLevelField?: ORASDomainRiskLevelField;
   summaryField: ORASDomainSummaryField;
   maxScore?: number;
+  riskLevelCutoffs?: Boundaries;
 }
 
 // Base domain configurations (reusable across ORAS types)
@@ -230,36 +239,115 @@ export const DOMAIN = {
 // ORAS domain configuration by assessment type
 // Each ORAS tool assesses different domains with potentially different names
 // maxScore values are observed maximums from production data
+//
+// riskLevelCutoffs come from the official University of Cincinnati ORAS
+// scoring guides (see MO-11748)
 export const ORAS_DOMAIN_CONFIG: Record<string, DomainConfig[]> = {
   ORAS_CST: [
-    { ...DOMAIN.CRIMINAL_HISTORY, maxScore: 8 },
-    { ...DOMAIN.EDUCATION_FINANCIAL, maxScore: 6 },
-    { ...DOMAIN.FAMILY_SOCIAL_SUPPORT, maxScore: 5 },
-    { ...DOMAIN.NEIGHBORHOOD_PROBLEMS, maxScore: 3 },
-    { ...DOMAIN.SUBSTANCE_USE, maxScore: 6 },
-    { ...DOMAIN.PEER_ASSOCIATES, maxScore: 8 },
-    { ...DOMAIN.CRIMINAL_ATTITUDES, maxScore: 13 },
+    {
+      ...DOMAIN.CRIMINAL_HISTORY,
+      maxScore: 8,
+      riskLevelCutoffs: { moderate: 4, high: 7 },
+    },
+    {
+      ...DOMAIN.EDUCATION_FINANCIAL,
+      maxScore: 6,
+      riskLevelCutoffs: { moderate: 2, high: 5 },
+    },
+    {
+      ...DOMAIN.FAMILY_SOCIAL_SUPPORT,
+      maxScore: 5,
+      riskLevelCutoffs: { moderate: 2, high: 4 },
+    },
+    {
+      ...DOMAIN.NEIGHBORHOOD_PROBLEMS,
+      maxScore: 3,
+      riskLevelCutoffs: { moderate: 1, high: 2 },
+    },
+    {
+      ...DOMAIN.SUBSTANCE_USE,
+      maxScore: 6,
+      riskLevelCutoffs: { moderate: 3, high: 5 },
+    },
+    {
+      ...DOMAIN.PEER_ASSOCIATES,
+      maxScore: 8,
+      riskLevelCutoffs: { moderate: 2, high: 5 },
+    },
+    {
+      ...DOMAIN.CRIMINAL_ATTITUDES,
+      maxScore: 13,
+      riskLevelCutoffs: { moderate: 4, high: 9 },
+    },
     DOMAIN.RESPONSIVITY, // No numeric score in source data
   ],
   ORAS_SRT: [
-    { ...DOMAIN.CRIMINAL_HISTORY, maxScore: 12 },
-    { ...DOMAIN.EDUCATION_SOCIAL, maxScore: 9 },
-    { ...DOMAIN.SUBSTANCE_USE_MENTAL_HEALTH, maxScore: 4 },
-    { ...DOMAIN.CRIMINAL_ATTITUDES, maxScore: 19 },
+    {
+      ...DOMAIN.CRIMINAL_HISTORY,
+      maxScore: 12,
+      riskLevelCutoffs: { moderate: 4, high: 7 },
+    },
+    {
+      ...DOMAIN.EDUCATION_SOCIAL,
+      maxScore: 9,
+      riskLevelCutoffs: { moderate: 5, high: 7 },
+    },
+    {
+      ...DOMAIN.SUBSTANCE_USE_MENTAL_HEALTH,
+      maxScore: 4,
+      riskLevelCutoffs: { moderate: 2, high: 3 },
+    },
+    {
+      ...DOMAIN.CRIMINAL_ATTITUDES,
+      maxScore: 19,
+      riskLevelCutoffs: { moderate: 6, high: 9 },
+    },
     DOMAIN.RESPONSIVITY, // No numeric score in source data
   ],
   ORAS_PIT: [
-    { ...DOMAIN.CRIMINAL_HISTORY, maxScore: 10 },
-    { ...DOMAIN.EDUCATION_FINANCIAL, maxScore: 7 },
-    { ...DOMAIN.FAMILY_SOCIAL_SUPPORT, maxScore: 6 },
-    { ...DOMAIN.SUBSTANCE_USE_MENTAL_HEALTH, maxScore: 5 },
-    { ...DOMAIN.CRIMINAL_ATTITUDES, maxScore: 11 },
+    {
+      ...DOMAIN.CRIMINAL_HISTORY,
+      maxScore: 10,
+      riskLevelCutoffs: { moderate: 4, high: 7 },
+    },
+    {
+      ...DOMAIN.EDUCATION_FINANCIAL,
+      maxScore: 7,
+      riskLevelCutoffs: { moderate: 4, high: 6 },
+    },
+    {
+      ...DOMAIN.FAMILY_SOCIAL_SUPPORT,
+      maxScore: 6,
+      riskLevelCutoffs: { moderate: 3, high: 5 },
+    },
+    {
+      ...DOMAIN.SUBSTANCE_USE_MENTAL_HEALTH,
+      maxScore: 5,
+      riskLevelCutoffs: { moderate: 2, high: 4 },
+    },
+    {
+      ...DOMAIN.CRIMINAL_ATTITUDES,
+      maxScore: 11,
+      riskLevelCutoffs: { moderate: 3, high: 6 },
+    },
     DOMAIN.RESPONSIVITY, // No numeric score in source data
   ],
   ORAS_RT: [
-    { ...DOMAIN.CRIMINAL_HISTORY, maxScore: 12 },
-    { ...DOMAIN.EDUCATION_FINANCIAL, maxScore: 4 },
-    { ...DOMAIN.CRIMINAL_ATTITUDES, maxScore: 11 },
+    {
+      ...DOMAIN.CRIMINAL_HISTORY,
+      maxScore: 12,
+      riskLevelCutoffs: { moderate: 4, high: 8 },
+    },
+    {
+      ...DOMAIN.EDUCATION_FINANCIAL,
+      maxScore: 4,
+      riskLevelCutoffs: { moderate: 3, high: 4 },
+    },
+    {
+      ...DOMAIN.CRIMINAL_ATTITUDES,
+      maxScore: 11,
+      riskLevelCutoffs: { moderate: 4, high: 7 },
+    },
     DOMAIN.RESPONSIVITY, // No numeric score in source data
   ],
   // Screening tools and other non-full assessments have no domain breakdown

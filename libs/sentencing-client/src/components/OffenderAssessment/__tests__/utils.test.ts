@@ -20,27 +20,32 @@ import { describe, expect, test } from "vitest";
 import { deriveDomainRiskLevel } from "../utils";
 
 describe("deriveDomainRiskLevel", () => {
-  test("returns HIGH when score is >= 67% of maxScore", () => {
-    expect(deriveDomainRiskLevel(6, 8)).toBe("HIGH"); // 75%
-    expect(deriveDomainRiskLevel(8, 8)).toBe("HIGH"); // 100%
+  // ORAS_CST Substance Use: moderate starts at 3, high starts at 5.
+  // Regression case for MO-11748: 2/6 is 33.3%, which the old percentage-based
+  // bucketing misclassified as MODERATE instead of LOW.
+  const substanceUseCutoffs = { moderate: 3, high: 5 };
+
+  test("returns LOW below the moderate threshold, even when percentage math would round up", () => {
+    expect(deriveDomainRiskLevel(2, substanceUseCutoffs)).toBe("LOW");
   });
 
-  test("returns MODERATE when score is >= 33% and < 67% of maxScore", () => {
-    expect(deriveDomainRiskLevel(3, 8)).toBe("MODERATE"); // 37.5%
-    expect(deriveDomainRiskLevel(5, 8)).toBe("MODERATE"); // 62.5%
+  test("returns MODERATE and HIGH at their respective thresholds", () => {
+    expect(deriveDomainRiskLevel(3, substanceUseCutoffs)).toBe("MODERATE");
+    expect(deriveDomainRiskLevel(4, substanceUseCutoffs)).toBe("MODERATE");
+    expect(deriveDomainRiskLevel(5, substanceUseCutoffs)).toBe("HIGH");
   });
 
-  test("returns LOW when score is < 33% of maxScore", () => {
-    expect(deriveDomainRiskLevel(0, 8)).toBe("LOW"); // 0%
-    expect(deriveDomainRiskLevel(2, 8)).toBe("LOW"); // 25%
+  test("has no upper bound on HIGH (e.g. ORAS_SRT's 7+)", () => {
+    const criminalHistoryCutoffs = { moderate: 4, high: 7 };
+    expect(deriveDomainRiskLevel(7, criminalHistoryCutoffs)).toBe("HIGH");
+    expect(deriveDomainRiskLevel(100, criminalHistoryCutoffs)).toBe("HIGH");
+  });
+
+  test("treats a negative score as LOW rather than unclassified", () => {
+    expect(deriveDomainRiskLevel(-1, substanceUseCutoffs)).toBe("LOW");
   });
 
   test("returns null for a null score", () => {
-    expect(deriveDomainRiskLevel(null, 8)).toBeNull();
-  });
-
-  test("returns null when maxScore is undefined or zero", () => {
-    expect(deriveDomainRiskLevel(5, undefined)).toBeNull();
-    expect(deriveDomainRiskLevel(5, 0)).toBeNull();
+    expect(deriveDomainRiskLevel(null, substanceUseCutoffs)).toBeNull();
   });
 });
