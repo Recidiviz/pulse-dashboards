@@ -101,8 +101,8 @@ describe("getAgencyConfigs", () => {
         id: "us_ne",
         parentId: "test_base",
         version: 1,
-        // Declares US_ME even though this row's id is us_ne.
-        config: "name: Nebraska \nversion: 1 \nstateCode: US_ME",
+        // Declares US_CO even though this row's id is us_ne.
+        config: "name: Nebraska \nversion: 1 \nstateCode: US_CO",
       },
     });
 
@@ -164,8 +164,8 @@ describe("getAgencyConfig", () => {
         id: "us_ne",
         parentId: "base",
         version: 1,
-        // Declares US_ME even though this row's id is us_ne.
-        config: "name: Nebraska \nversion: 1 \nstateCode: US_ME",
+        // Declares US_CO even though this row's id is us_ne.
+        config: "name: Nebraska \nversion: 1 \nstateCode: US_CO",
       },
     });
 

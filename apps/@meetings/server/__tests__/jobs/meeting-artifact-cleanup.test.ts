@@ -576,7 +576,7 @@ describe("cleanupStateData", () => {
 
 describe("cleanupMeetingData", () => {
   test("resolves without throwing even when a state has no configured database", async () => {
-    // US_ME throws (see global beforeEach), US_NE succeeds — the function
+    // US_CO throws (see global beforeEach), US_NE succeeds — the function
     // must resolve rather than propagating the unhandled rejection.
     await expect(cleanupMeetingData(true)).resolves.toBeUndefined();
   });
@@ -601,7 +601,7 @@ describe("cleanupMeetingData", () => {
   test("continues processing remaining states when one state fails", async () => {
     await createExpiredMeeting("orchestration-test-meeting", 60);
 
-    // US_ME fails (no DB), but US_NE should still find and process its meeting.
+    // US_CO fails (no DB), but US_NE should still find and process its meeting.
     await expect(cleanupMeetingData(true)).resolves.toBeUndefined();
     expect(mockGetFiles).toHaveBeenCalled();
   });

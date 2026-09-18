@@ -125,7 +125,7 @@ describe("StateCodeProvider", () => {
       renderHook(() => useStateSelection(), {
         wrapper: makeWrapper(ref, {
           userStateCode: "recidiviz",
-          recidivizAllowedStates: ["US_NE", "US_DEMO", "US_ME"],
+          recidivizAllowedStates: ["US_NE", "US_DEMO", "US_CO"],
         }),
       });
 
@@ -169,7 +169,7 @@ describe("StateCodeProvider", () => {
       const { result } = renderHook(() => useStateSelection(), {
         wrapper: makeWrapper(ref, {
           userStateCode: "recidiviz",
-          recidivizAllowedStates: ["US_NE", "US_DEMO", "US_ME"],
+          recidivizAllowedStates: ["US_NE", "US_DEMO", "US_CO"],
         }),
       });
 
@@ -189,7 +189,7 @@ describe("StateCodeProvider", () => {
           agencyConfigs: {},
           configsPending: true,
           userStateCode: "recidiviz",
-          recidivizAllowedStates: ["US_NE", "US_DEMO", "US_ME"],
+          recidivizAllowedStates: ["US_NE", "US_DEMO", "US_CO"],
         }),
       });
 
@@ -206,7 +206,7 @@ describe("StateCodeProvider", () => {
           agencyConfigs: {},
           configsErrored: true,
           userStateCode: "recidiviz",
-          recidivizAllowedStates: ["US_NE", "US_DEMO", "US_ME"],
+          recidivizAllowedStates: ["US_NE", "US_DEMO", "US_CO"],
         }),
       });
 
@@ -221,7 +221,7 @@ describe("StateCodeProvider", () => {
         wrapper: makeWrapper(ref, {
           agencyConfigs: {},
           userStateCode: "recidiviz",
-          recidivizAllowedStates: ["US_NE", "US_DEMO", "US_ME"],
+          recidivizAllowedStates: ["US_NE", "US_DEMO", "US_CO"],
         }),
       });
 

@@ -35,13 +35,6 @@ const testAgencyConfigsByStateCode: Record<string, object> = {
     audioTTLDays: 30,
     transcriptTTLDays: 30,
   },
-  US_ME: {
-    name: "Maine",
-    stateCode: "US_ME",
-    version: 1,
-    audioTTLDays: 30,
-    transcriptTTLDays: null,
-  },
   US_TN: {
     name: "Tennessee",
     stateCode: "US_TN",
@@ -55,7 +48,7 @@ const testAgencyConfigsByStateCode: Record<string, object> = {
     stateCode: "US_CO",
     version: 1,
     audioTTLDays: 30,
-    transcriptTTLDays: 30,
+    transcriptTTLDays: null,
     labelStudioReviewPercent: 10,
     labelStudioAlwaysReviewPartial: false,
   },

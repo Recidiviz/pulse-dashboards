@@ -243,7 +243,7 @@ describe("DrawerNavigator", () => {
         isLoading: false,
         stateCode: "recidiviz",
         isSkipAuthUser: false,
-        recidivizAllowedStates: ["US_NE", "US_ME", "US_NC"],
+        recidivizAllowedStates: ["US_NE", "US_CO", "US_NC"],
         onLogout: jest.fn(),
         getCredentials: jest.fn(),
         isRecidivizUser: false,

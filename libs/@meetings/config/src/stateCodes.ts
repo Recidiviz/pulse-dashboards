@@ -25,7 +25,6 @@ export const MEETINGS_STATE_CODES: readonly string[] = [
   "US_CO",
   "US_DEMO",
   "US_ID",
-  "US_ME",
   "US_NC",
   "US_ND",
   "US_NE",

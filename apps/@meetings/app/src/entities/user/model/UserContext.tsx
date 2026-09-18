@@ -53,7 +53,7 @@ const PROACTIVE_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
 interface UserContextType {
   isLoading: boolean;
   /**
-   * The user's state code (e.g., "US_ND", "US_ME", or "recidiviz").
+   * The user's state code (e.g., "US_ND", "US_CO", or "recidiviz").
    * For state users, this is their single assigned state and determines their data access.
    * For Recidiviz staff, this is always "recidiviz" and they can select which state's data to view.
    */
