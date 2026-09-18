@@ -15,16 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { AnnouncementBanner } from "~@jii/common-ui";
 import { AboutVideoCta } from "~@jii/onboarding-video";
+import { useCommonTranslations } from "~@jii/translation";
 
 import { UsAzLastUpdatedBanner } from "../UsAzLastUpdatedBanner";
 import { UsAzImportantDates } from "./UsAzImportantDates";
 import { UsAzImportantDatesLink } from "./UsAzImportantDatesLink";
 
 export function UsAzSingleResidentHome() {
+  const { t } = useCommonTranslations();
+
   return (
     <>
       <UsAzLastUpdatedBanner />
+      <AnnouncementBanner message={t(($) => $.homepageAnnouncement)} />
       <AboutVideoCta onHomepage={true} />
       <UsAzImportantDates />
       <UsAzImportantDatesLink />

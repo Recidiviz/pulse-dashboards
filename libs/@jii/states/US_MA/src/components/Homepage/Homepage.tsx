@@ -17,10 +17,10 @@
 
 import { observer } from "mobx-react-lite";
 
-import { usePageTitle } from "~@jii/common-ui";
+import { AnnouncementBanner, usePageTitle } from "~@jii/common-ui";
 import { LastUpdatedBanner } from "~@jii/layout";
 import { ProgramsCtaSection } from "~@jii/program-catalog";
-import { useUsMaTranslations } from "~@jii/translation";
+import { useCommonTranslations, useUsMaTranslations } from "~@jii/translation";
 
 import { Disclaimer } from "../Disclaimer/Disclaimer";
 import { useEGTDataContext } from "../EGTDataContext/context";
@@ -30,19 +30,20 @@ import { DatesSection, DatesSectionSkeleton } from "./DatesSection";
 import { EmptyState } from "./EmptyState";
 import { MonthlyReportHomepageCard } from "./MonthlyReport/MonthlyReportHomepageCard";
 import { MonthlyReportHomepageCardSkeleton } from "./MonthlyReport/MonthlyReportHomepageCardSkeleton";
-import { SpanishLaunchBanner } from "./SpanishLaunchBanner";
 import { TotalTimeEarnedSection } from "./TotalTimeEarnedSection/TotalTimeEarnedSection";
 import { TotalTimeEarnedSectionSkeleton } from "./TotalTimeEarnedSection/TotalTimeEarnedSectionSkeleton";
 
 export const Homepage = observer(function Homepage() {
   const { data } = useEGTDataContext();
   const { t } = useUsMaTranslations();
+  const commonT = useCommonTranslations().t;
   usePageTitle(t(($) => $.home.pageTitle));
 
   return (
     <div>
       <LastUpdatedBanner overrideCopy={t(($) => $.lastUpdated, data)} />
-      <SpanishLaunchBanner />
+      <AnnouncementBanner message={commonT(($) => $.homepageAnnouncement)} />
+      {/* TODO: remove the announcement banner and put <SpanishLaunchBanner /> back*/}
       <ProgramsCtaSection stateCode="US_MA" />
       {data.isEgtDisabled ? (
         <>

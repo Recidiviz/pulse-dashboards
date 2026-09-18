@@ -18,13 +18,18 @@
 import { observer } from "mobx-react-lite";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { BottomPaddedContainer, Redirect, usePageTitle } from "~@jii/common-ui";
+import {
+  AnnouncementBanner,
+  BottomPaddedContainer,
+  Redirect,
+  usePageTitle,
+} from "~@jii/common-ui";
 import { useResidentMetadata, useSingleResidentContext } from "~@jii/data";
 import { LastUpdatedBanner } from "~@jii/layout";
 import { State } from "~@jii/paths";
 import { ProgramsCtaSection } from "~@jii/program-catalog";
 import { SentenceDates } from "~@jii/sentence-dates";
-import { useUsCoTranslations } from "~@jii/translation";
+import { useCommonTranslations, useUsCoTranslations } from "~@jii/translation";
 import { withPresenterManager } from "~hydration-utils";
 
 import { AETBanner } from "../components/UsCoSingleResidentHome/UsCoAETBanner";
@@ -41,6 +46,7 @@ const ManagedComponent: React.FC<{ presenter: ResidentHomePresenter }> =
   observer(function UsCoSingleResidentHome({ presenter }) {
     const residentUrlParams = useTypedParams(State.Resident);
     const { t } = useUsCoTranslations();
+    const commonT = useCommonTranslations().t;
     const { resident } = useSingleResidentContext();
 
     usePageTitle(t(($) => $.homepage.pageTitle));
@@ -59,6 +65,8 @@ const ManagedComponent: React.FC<{ presenter: ResidentHomePresenter }> =
             lastUpdatedDate: presenter.lastUpdatedDate,
           })}
         />
+
+        <AnnouncementBanner message={commonT(($) => $.homepageAnnouncement)} />
 
         <AETBanner />
 

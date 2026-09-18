@@ -15,10 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PageContainer, usePageTitle } from "~@jii/common-ui";
+import {
+  AnnouncementBanner,
+  PageContainer,
+  usePageTitle,
+} from "~@jii/common-ui";
 import { useResidentMetadata } from "~@jii/data";
 import { LastUpdatedBanner } from "~@jii/layout";
-import { useUsNeTranslations } from "~@jii/translation";
+import { useCommonTranslations, useUsNeTranslations } from "~@jii/translation";
 
 import { UsNeTodos } from "../Todos/UsNeTodos";
 import UsNeDateCardGroup from "./UsNeDateCardGroup";
@@ -30,7 +34,7 @@ const UsNeSingleResidentHome = () => {
   const metadata = useResidentMetadata("US_NE");
   const { t } = useUsNeTranslations();
   usePageTitle(t(($) => $.home.pageTitle));
-
+  const commonT = useCommonTranslations().t;
   if (!metadata.sentenceLastModifiedDate) {
     return <p>{t(($) => $.home.noSentenceFallback)}</p>;
   }
@@ -43,6 +47,7 @@ const UsNeSingleResidentHome = () => {
         })}
       />
       <UsNeHomeHeader />
+      <AnnouncementBanner message={commonT(($) => $.homepageAnnouncement)} />
       <UsNeTodos />
       <UsNeDateCardGroup />
       <UsNeGoodTimeCardGroup />
