@@ -36,6 +36,5 @@
   },
   "onboardingVideo": {
     "confirmClose": "Move to “Learn More” page"
-  },
-  "homepageAnnouncement": "If you checked your release date between Thursday, Sep 10 and Friday, Sep 18, an issue with the app caused it to show one day earlier than it should have. This has been fixed and the dates you now see are correct. Apologies for the confusion."
+  }
 }

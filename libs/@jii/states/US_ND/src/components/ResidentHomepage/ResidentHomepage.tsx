@@ -18,11 +18,7 @@
 import { observer } from "mobx-react-lite";
 import { FC } from "react";
 
-import {
-  AnnouncementBanner,
-  BottomPaddedContainer,
-  usePageTitle,
-} from "~@jii/common-ui";
+import { BottomPaddedContainer, usePageTitle } from "~@jii/common-ui";
 import { useResidentMetadata, useSingleResidentContext } from "~@jii/data";
 import { LastUpdatedBanner } from "~@jii/layout";
 import { AboutVideoCta } from "~@jii/onboarding-video";
@@ -42,7 +38,6 @@ const ManagedComponent: FC<{ presenter: ResidentHomepagePresenter }> = observer(
     return (
       <BottomPaddedContainer>
         <LastUpdatedBanner lastUpdatedDate={presenter.lastUpdatedDate} />
-        <AnnouncementBanner message={t(($) => $.homepageAnnouncement)} />
         <AboutVideoCta onHomepage={true} />
         {presenter.isOSUResident && <OSUBanner />}
         <SentenceDates

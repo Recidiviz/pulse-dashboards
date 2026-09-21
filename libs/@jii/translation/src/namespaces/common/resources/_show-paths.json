@@ -90,6 +90,5 @@
     "cancelClose": "[common]onboardingVideo.cancelClose",
     "videoButtonAltText": "[common]onboardingVideo.videoButtonAltText",
     "closeButtonAltText": "[common]onboardingVideo.closeButtonAltText"
-  },
-  "homepageAnnouncement": "[common]homepageAnnouncement"
+  }
 }

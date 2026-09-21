@@ -90,6 +90,5 @@
     "cancelClose": "Never mind, keep video here",
     "videoButtonAltText": "Open video",
     "closeButtonAltText": "Dismiss video"
-  },
-  "homepageAnnouncement": "If you checked your release date between Thursday, Sep 17 and Friday, Sep 18, an issue with the app caused it to show one day earlier than it should have. This has been fixed and the dates you now see are correct. Apologies for the confusion."
+  }
 }

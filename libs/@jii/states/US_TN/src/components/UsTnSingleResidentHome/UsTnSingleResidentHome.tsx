@@ -15,20 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { AnnouncementBanner } from "~@jii/common-ui";
-import { useCommonTranslations } from "~@jii/translation";
-
 import { UsTnLastUpdatedBanner } from "../UsTnLastUpdatedBanner";
 import { UsTnImportantDates } from "./UsTnImportantDates";
 import { UsTnMonthlyReports } from "./UsTnMonthlyReports";
 
 export function UsTnSingleResidentHome() {
-  const { t } = useCommonTranslations();
-
   return (
     <div>
       <UsTnLastUpdatedBanner />
-      <AnnouncementBanner message={t(($) => $.homepageAnnouncement)} />
       <UsTnImportantDates />
       <UsTnMonthlyReports />
     </div>

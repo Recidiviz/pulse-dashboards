@@ -18,11 +18,10 @@
 import { rem } from "polished";
 import styled from "styled-components";
 
-import { AnnouncementBanner, usePageTitle } from "~@jii/common-ui";
+import { usePageTitle } from "~@jii/common-ui";
 import { useResidentMetadata } from "~@jii/data";
 import { LastUpdatedBanner } from "~@jii/layout";
 import { ProgramsCtaSection } from "~@jii/program-catalog";
-import { useCommonTranslations } from "~@jii/translation";
 import { spacing } from "~design-system";
 
 import { UsArImportantDates } from "./UsArImportantDates";
@@ -33,14 +32,11 @@ const Wrapper = styled.div`
 
 export function UsArSingleResidentHome() {
   usePageTitle("Home");
-
   const metadata = useResidentMetadata("US_AR");
-  const { t } = useCommonTranslations();
 
   return (
     <Wrapper>
       <LastUpdatedBanner lastUpdatedDate={metadata.lastUpdatedDate} />
-      <AnnouncementBanner message={t(($) => $.homepageAnnouncement)} />
       <UsArImportantDates metadata={metadata} />
       <ProgramsCtaSection stateCode="US_AR" />
     </Wrapper>

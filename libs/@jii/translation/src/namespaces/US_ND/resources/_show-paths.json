@@ -36,6 +36,5 @@
   },
   "onboardingVideo": {
     "confirmClose": "[US_ND]onboardingVideo.confirmClose"
-  },
-  "homepageAnnouncement": "[US_ND]homepageAnnouncement"
+  }
 }

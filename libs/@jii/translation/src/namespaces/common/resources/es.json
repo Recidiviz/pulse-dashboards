@@ -90,6 +90,5 @@
     "cancelClose": "No importa, deja el video aquí",
     "videoButtonAltText": "Abrir video",
     "closeButtonAltText": "Cerrar video"
-  },
-  "homepageAnnouncement": "Si revisaste la fecha de salida entre el jueves 17 de septiembre y el viernes 18 de septiembre, viste una fecha incorrecta. Un problema en la aplicación hizo que se mostrara un día antes de lo correcto. Esto ya se ha solucionado y las fechas que ves ahora son correctas. Lamentamos la confusión."
+  }
 }
