@@ -80,6 +80,7 @@ export const UsAzMoreInformation = route(
     About: route("about"),
     ImportantDates: route("important-dates", { hash: [] }),
     DPR: route("drug-program-release"),
+    ION: route("inside-out-network"),
   },
 );
 

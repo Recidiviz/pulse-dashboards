@@ -4,7 +4,7 @@
   "sourceRoot": "apps/@jii/storybook/src",
   "projectType": "application",
   "tags": [],
-  "implicitDependencies": ["@jii/sentence-dates", "@jii/US_NYC"],
+  "implicitDependencies": ["@jii/sentence-dates", "@jii/US_NYC", "@jii/US_AZ"],
   "targets": {
     "typecheck": {
       "executor": "nx:run-commands",

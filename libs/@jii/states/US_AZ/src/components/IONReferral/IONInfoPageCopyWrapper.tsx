@@ -15,24 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
+import { rem } from "polished";
+import styled from "styled-components";
 
-import { AnnouncementBanner } from "~@jii/common-ui";
-import { State } from "~@jii/paths";
-import { useUsAzTranslations } from "~@jii/translation";
+import { CopyWrapper } from "~@jii/common-ui";
+import { palette, spacing } from "~design-system";
 
-import { useShowIONBanner } from "./useShowIONBanner";
-
-export const IONBanner = observer(function IONBanner() {
-  const { t } = useUsAzTranslations();
-  if (!useShowIONBanner()) return null;
-
-  return (
-    <AnnouncementBanner
-      heading={t(($) => $.ion.banner.heading)}
-      message={t(($) => $.ion.banner.message)}
-      linkText={t(($) => $.ion.banner.linkText)}
-      to={State.Resident.$.UsAzMoreInformation.ION.buildRelativePath({})}
-    />
-  );
-});
+/**
+ * Extends the common-ui CopyWrapper component to add support
+ * for displaying images interspersed with blocks of text.
+ */
+export const IONInfoPageCopyWrapper = styled(CopyWrapper)`
+  // this is the first use case for displaying images in a page like this,
+  // so the styles are not yet shared across the app
+  img {
+    max-width: 100%;
+    display: block;
+    margin: ${rem(spacing.xl)} 0;
+    border: ${rem(1)} solid ${palette.slate40};
+  }
+`;

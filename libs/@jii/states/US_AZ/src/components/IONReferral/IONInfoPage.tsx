@@ -15,24 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
-
-import { AnnouncementBanner } from "~@jii/common-ui";
-import { State } from "~@jii/paths";
+import { usePageTitle } from "~@jii/common-ui";
 import { useUsAzTranslations } from "~@jii/translation";
 
-import { useShowIONBanner } from "./useShowIONBanner";
+import { useInfoPageFooterLinks } from "../../hooks/useInfoPageFooterLinks";
+import { DefinitionView } from "../DefinitionView";
+import image1Url from "./image1.png";
+import image2Url from "./image2.png";
+import { IONInfoPageCopyWrapper } from "./IONInfoPageCopyWrapper";
 
-export const IONBanner = observer(function IONBanner() {
+export function IONInfoPage() {
   const { t } = useUsAzTranslations();
-  if (!useShowIONBanner()) return null;
+  const { heading, body } = t(($) => $.ion.infoPage, { returnObjects: true });
+  usePageTitle(heading);
+
+  // these images are checked in because we don't have infra for storing and displaying content assets
+  const bodyWithImages = body
+    // magic placeholder strings are hardcoded into the copy, see en.ts resource file
+    .replace(/image-placeholder-1/, image1Url)
+    .replace(/image-placeholder-2/, image2Url);
 
   return (
-    <AnnouncementBanner
-      heading={t(($) => $.ion.banner.heading)}
-      message={t(($) => $.ion.banner.message)}
-      linkText={t(($) => $.ion.banner.linkText)}
-      to={State.Resident.$.UsAzMoreInformation.ION.buildRelativePath({})}
+    <DefinitionView
+      heading={heading}
+      body={bodyWithImages}
+      CopyWrapperOverride={IONInfoPageCopyWrapper}
+      moreInfoPageLinks={useInfoPageFooterLinks()}
     />
   );
-});
+}

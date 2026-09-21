@@ -15,24 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
+import { IONInfoPage } from "../components/IONReferral";
 
-import { AnnouncementBanner } from "~@jii/common-ui";
-import { State } from "~@jii/paths";
-import { useUsAzTranslations } from "~@jii/translation";
-
-import { useShowIONBanner } from "./useShowIONBanner";
-
-export const IONBanner = observer(function IONBanner() {
-  const { t } = useUsAzTranslations();
-  if (!useShowIONBanner()) return null;
-
-  return (
-    <AnnouncementBanner
-      heading={t(($) => $.ion.banner.heading)}
-      message={t(($) => $.ion.banner.message)}
-      linkText={t(($) => $.ion.banner.linkText)}
-      to={State.Resident.$.UsAzMoreInformation.ION.buildRelativePath({})}
-    />
-  );
-});
+export function PageMoreInfoION() {
+  return <IONInfoPage />;
+}

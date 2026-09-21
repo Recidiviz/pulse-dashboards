@@ -17,6 +17,7 @@
 
 import aboutInfoPage from "./aboutInfoPage.md?raw";
 import dprInfoPage from "./dprInfoPage.md?raw";
+import ionInfoPage from "./ionInfoPage.md?raw";
 
 export default {
   about: {
@@ -751,7 +752,12 @@ If you refuse to sign your Conditions of Supervision at your SED, you stay in pr
     banner: {
       heading:
         "You can now sign up for the Inside Out Network (ION) to connect with organizations that help with reentry",
-      message: `ION is a website you can use on the computers in your Unit Library to find organizations on the outside that help with employment, housing, healthcare, support groups and more. **See your Unit’s Peer Support Specialist, Librarian, or your COIII to get started.**`,
+      message: `ION is a website you can use on the computers in your Unit Library to find organizations on the outside that help with employment, housing, healthcare, support groups and more. **See your Unit’s Peer Support Specialist, Librarian, or your COIII to get started.** Tap the button to learn more.`,
+      linkText: "Learn more about ION",
+    },
+    infoPage: {
+      heading: "Learn more about the Inside Out Network (ION)",
+      body: ionInfoPage,
     },
   },
 };

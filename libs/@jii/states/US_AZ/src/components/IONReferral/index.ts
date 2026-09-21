@@ -16,3 +16,4 @@
 // =============================================================================
 
 export { IONBanner } from "./IONBanner";
+export { IONInfoPage } from "./IONInfoPage";

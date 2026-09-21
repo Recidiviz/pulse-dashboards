@@ -24,6 +24,7 @@ import { UsAzSingleResidentContextRoute } from "../components/UsAzSingleResident
 import { PageMoreInfoAbout } from "../pages/PageMoreInfoAbout";
 import { PageMoreInfoDPR } from "../pages/PageMoreInfoDPR";
 import { PageMoreInfoImportantDatesV2 } from "../pages/PageMoreInfoImportantDatesV2";
+import { PageMoreInfoION } from "../pages/PageMoreInfoION";
 import { PageUsAzResidentHome } from "../pages/PageUsAzSingleResidentHome";
 
 export function UsAzRouter() {
@@ -42,6 +43,10 @@ export function UsAzRouter() {
         <Route
           path={UsAzMoreInformation.DPR.path}
           element={<PageMoreInfoDPR />}
+        />
+        <Route
+          path={UsAzMoreInformation.ION.path}
+          element={<PageMoreInfoION />}
         />
         <Route path="*" element={<NotFound />} />
       </Route>

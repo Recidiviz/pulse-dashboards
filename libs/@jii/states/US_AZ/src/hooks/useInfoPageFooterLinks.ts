@@ -22,6 +22,7 @@ import { SimpleLinkProps } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 import { useUsAzTranslations } from "~@jii/translation";
 
+import { useShowIONBanner } from "../components/IONReferral/useShowIONBanner";
 import { useUsAzSingleResidentContext } from "../components/UsAzSingleResidentContext/UsAzSingleResidentContext";
 
 export function useInfoPageFooterLinks(): Array<SimpleLinkProps> {
@@ -29,6 +30,7 @@ export function useInfoPageFooterLinks(): Array<SimpleLinkProps> {
   const { t } = useUsAzTranslations();
   const { pathname } = useLocation();
   const pathParams = useTypedParams(State.Resident.UsAzMoreInformation);
+  const showION = useShowIONBanner();
 
   const links: Array<SimpleLinkProps> = [
     {
@@ -40,6 +42,15 @@ export function useInfoPageFooterLinks(): Array<SimpleLinkProps> {
     links.push({
       to: `../${State.Resident.$.UsAzMoreInformation.About.buildRelativePath({})}`,
       children: t(($) => $.about.heading),
+    });
+  }
+  if (
+    showION &&
+    !matchPath(State.Resident.UsAzMoreInformation.ION.path, pathname)
+  ) {
+    links.push({
+      to: `../${State.Resident.$.UsAzMoreInformation.ION.buildRelativePath({})}`,
+      children: t(($) => $.ion.infoPage.heading),
     });
   }
   if (
