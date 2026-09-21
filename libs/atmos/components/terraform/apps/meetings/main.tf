@@ -191,6 +191,14 @@ module "audio_gcs_bucket" {
   bucket_admins = {
     (local.audio_bucket_name) = "serviceAccount:${google_service_account.default.email}"
   }
+
+  # BigQuery in recidiviz-data reads the per-meeting label-studio-task.json files in
+  # this bucket through an external table, as part of task monitoring.
+  set_viewer_roles = true
+  bucket_viewers = {
+    (local.audio_bucket_name) = "serviceAccount:${var.data_platform_project_number}-compute@developer.gserviceaccount.com"
+  }
+
   cors = [{
     origin          = var.meetings_bucket_cors_origins
     method          = ["GET", "HEAD", "PUT"]
