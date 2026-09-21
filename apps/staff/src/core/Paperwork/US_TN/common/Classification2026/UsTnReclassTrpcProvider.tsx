@@ -47,8 +47,7 @@ const UsTnReclassTrpcProvider: React.FC<{
       links: [
         subrouteScopedLink("usTnReclass"),
         httpBatchLink({
-          // url: "https://modules-staging.recidiviz.org",
-          url: "http://localhost:3022",
+          url: import.meta.env.VITE_MODULE_BACKEND_URL,
           transformer: superjson,
           async headers() {
             return {
