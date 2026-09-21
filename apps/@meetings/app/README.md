@@ -136,17 +136,40 @@ Then select the build you want to submit when prompted.
 ## Over-the-air (OTA) updates
 
 JS-only changes can be shipped to existing native builds via [EAS Update](https://docs.expo.dev/eas-update/introduction/),
-without a new app store submission. Updates are delivered per channel and only
-apply to builds whose `runtimeVersion` matches (set by the `appVersion` policy in
-`app.config.ts`, i.e. the app `version`); native code changes still require a fresh build.
+without a new app store submission. Updates are delivered per channel and only apply to
+builds whose `runtimeVersion` matches. That runtime version is a **fingerprint** hash of the
+native project (`runtimeVersion.policy: "fingerprint"` in `app.config.ts`), so it changes the
+moment native code changes and not before — native changes require a fresh build, everything
+else can ride an OTA.
 
-A scheduled workflow (`.github/workflows/meetings-ota-staging.yml`) publishes the
-latest `main` bundle to the `staging` channel every weekday morning, so staging
-builds stay current without a rebuild. It can also be triggered on demand from the
-Actions tab (`workflow_dispatch`).
+The marketing `version` in `app.config.ts` is deliberately excluded from that fingerprint (see
+`fingerprint.config.js`). It tracks native builds only: it moves once per native build, is never
+bumped by an OTA, and never itself forces a build. OTA content is identified by its EAS update ID
+and runtime version, both of which Sentry records.
 
-To publish an OTA update manually, from this directory (`--environment preview`
-inlines the staging `EXPO_PUBLIC_*` vars into the bundle):
+### How updates get published
+
+`.github/workflows/meetings-mobile-ota.yml` publishes an OTA to a given channel at a given
+commit, guarded by `scripts/mobile-ota-with-fingerprint-guard.mts`: if the commit's fingerprint
+doesn't match the latest finished build on that channel, it skips the publish and posts to
+`#meetings-eng` saying a native build is needed first.
+
+`tools/deploy/services/meetings.mts` dispatches that workflow at the end of every successful
+staging and production deploy, pinned to the deployed commit — so OTAs ride the normal deploy
+cadence and need no separate action. It can also be dispatched by hand from the Actions tab for
+an ad hoc republish or a cherry-pick.
+
+### Native builds
+
+When the guard reports a mismatch, cut a native build with the two release workflows:
+`meetings-native-release-plan.yml` computes the version bump and release notes and prints a
+ready-to-copy command; `meetings-native-release-execute.yml` runs the build, tags it, and opens
+the version-bump PR. Reviewing the plan's summary before dispatching execute is the approval step.
+
+### Publishing by hand
+
+From this directory (`--environment preview` inlines the staging `EXPO_PUBLIC_*` vars into the
+bundle). Prefer the workflow above — this bypasses the fingerprint guard:
 
 ```bash
 eas update --channel staging --environment preview --message "..."
