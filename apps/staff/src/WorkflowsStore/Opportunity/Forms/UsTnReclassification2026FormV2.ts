@@ -18,6 +18,7 @@
 import {
   deriveRcafFormDataV2,
   prefillRcafFormDataV2,
+  stripTrusteeReworkPrefills,
   UsTnReclassification2026DraftData,
 } from "~datatypes";
 
@@ -76,11 +77,11 @@ export class UsTnReclassification2026FormV2 extends FormBase<
       formInformation,
     );
 
-    return {
-      ...formInformation,
-      ...coverData,
-      ...rcafData,
-    };
+    const merged = { ...formInformation, ...coverData, ...rcafData };
+
+    return this.rootStore.userStore.activeFeatureVariants.trusteeChecklistRework
+      ? merged
+      : stripTrusteeReworkPrefills(merged);
   }
 
   get derivedData() {

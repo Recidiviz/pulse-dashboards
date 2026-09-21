@@ -153,7 +153,7 @@ export const TRUSTEE_CRITERIA = [
     affectsAnnex: false,
   },
   {
-    key: "trusteeNoFelonyDetainers",
+    key: "trusteeNoDetainersOrWarrants",
     text: "Inmate has **no** felony or misdemeanor detainers and/or active warrants.",
     group: "D",
     isHardBar: true,

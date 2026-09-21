@@ -307,19 +307,50 @@ export const trusteeFormSchema = z.object({
   trusteeNotConvictedOfFirstDegreeMurder: booleanToString,
   trusteeNotScoredHighForViolence: booleanToString,
   trusteeNotServingForSexualOffense: booleanToString,
+
+  trusteeNotConvictedOfViolentOffenseOr12MonthsInCustody:
+    booleanToString.nullish(),
+  trusteeNoViolentFelonyConvictionPast5YearsIncarceration:
+    booleanToString.nullish(),
+  trusteeNotOnClinicalAlertStatus: booleanToString.nullish(),
+  trusteeNotOnLevelOfCare3Or4Or5: booleanToString.nullish(),
+  trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years:
+    booleanToString.nullish(),
+  trusteeNoAssaultiveDisciplinaryWithSeriousInjuryMoreThan5YearsAgo:
+    booleanToString.nullish(),
+  trusteeHas7YearsOrLessRemaining: booleanToString.nullish(),
+  trusteeNoDetainersOrWarrants: booleanToString.nullish(),
+  trusteeNoPendingFelonyCharges: booleanToString.nullish(),
+  trusteeNoPendingImmigrationActions: booleanToString.nullish(),
 });
 
+/** Criteria the rework autofills; stripped while `trusteeChecklistRework` is off. */
+export const TRUSTEE_REWORK_PREFILL_KEYS = [
+  "trusteeNotConvictedOfViolentOffenseOr12MonthsInCustody",
+  "trusteeNoViolentFelonyConvictionPast5YearsIncarceration",
+  "trusteeNotOnClinicalAlertStatus",
+  "trusteeNotOnLevelOfCare3Or4Or5",
+  "trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years",
+  "trusteeNoAssaultiveDisciplinaryWithSeriousInjuryMoreThan5YearsAgo",
+  "trusteeHas7YearsOrLessRemaining",
+  "trusteeNoDetainersOrWarrants",
+  "trusteeNoPendingFelonyCharges",
+  "trusteeNoPendingImmigrationActions",
+] as const satisfies (keyof z.output<typeof trusteeFormSchema>)[];
+
+export function stripTrusteeReworkPrefills<T extends object>(
+  formInformation: T,
+): T {
+  const stripped = { ...formInformation };
+  for (const key of TRUSTEE_REWORK_PREFILL_KEYS) {
+    delete (stripped as Record<string, unknown>)[key];
+  }
+  return stripped;
+}
+
+/** Fields the counselor fills in by hand. Everything computable lives in `trusteeFormSchema`. */
 export type TrusteeFormAdditionalFields = {
-  trusteeNotConvictedOfViolentOffenseOr12MonthsInCustody: string;
-  trusteeNotOnClinicalAlertStatus: string;
-  trusteeNotOnLevelOfCare3Or4Or5: string;
-  trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years: string;
-  trusteeNoAssaultiveDisciplinaryWithSeriousInjuryMoreThan5YearsAgo: string;
-  trusteeHas7YearsOrLessRemaining: string;
   trusteeNoFelonyDetainers: string;
-  trusteeNoPendingFelonyCharges: string;
-  trusteeNoPendingImmigrationActions: string;
-  trusteeNoViolentFelonyConvictionPast5YearsIncarceration: string;
   trusteeNotesForWarden: string;
   trusteeWardenHasApproved: string;
   trusteeDenialReasons: string;

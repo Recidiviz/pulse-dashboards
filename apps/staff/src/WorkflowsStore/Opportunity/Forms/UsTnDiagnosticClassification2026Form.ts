@@ -18,6 +18,7 @@
 import {
   deriveDcafFormData,
   prefillDcafFormData,
+  stripTrusteeReworkPrefills,
   UsTnInitialClassification2026DraftData,
 } from "~datatypes";
 
@@ -57,11 +58,11 @@ export class UsTnDiagnosticClassification2026Form extends FormBase<
       formInformation,
     );
 
-    return {
-      ...formInformation,
-      ...coverData,
-      ...dcafData,
-    };
+    const merged = { ...formInformation, ...coverData, ...dcafData };
+
+    return this.rootStore.userStore.activeFeatureVariants.trusteeChecklistRework
+      ? merged
+      : stripTrusteeReworkPrefills(merged);
   }
 
   get derivedData() {
