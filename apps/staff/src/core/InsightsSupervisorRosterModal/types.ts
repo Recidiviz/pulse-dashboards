@@ -18,7 +18,7 @@
 import {
   RosterChangeRequest,
   RosterChangeRequestResponse,
-  SupervisionOfficer,
+  SupervisionOfficerName,
 } from "~datatypes";
 
 import { InsightsSupervisionStore } from "../../InsightsStore/stores/InsightsSupervisionStore";
@@ -55,5 +55,5 @@ export type InsightsRosterChangeRequestFormOptions = Omit<
   RosterChangeRequest,
   "affectedOfficersExternalIds" | "requesterName"
 > & {
-  affectedOfficers: SupervisionOfficer[];
+  affectedOfficers: SupervisionOfficerName[];
 };

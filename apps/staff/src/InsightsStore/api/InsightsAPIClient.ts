@@ -34,6 +34,8 @@ import {
   SupervisionOfficer,
   SupervisionOfficerMetricEvent,
   supervisionOfficerMetricEventSchema,
+  SupervisionOfficerName,
+  supervisionOfficerNameSchema,
   SupervisionOfficerOutcomes,
   supervisionOfficerOutcomesSchema,
   supervisionOfficerSchema,
@@ -161,11 +163,11 @@ export class InsightsAPIClient implements InsightsAPI {
     );
   }
 
-  async allSupervisionOfficers(): Promise<Array<SupervisionOfficer>> {
+  async allSupervisionOfficers(): Promise<Array<SupervisionOfficerName>> {
     const endpoint = `${this.baseUrl}/officers`;
     const { data } = await this.apiStore.client.get(endpoint);
     const officerData = data.officers as Array<unknown>;
-    return officerData.map((b) => supervisionOfficerSchema.parse(b));
+    return officerData.map((b) => supervisionOfficerNameSchema.parse(b));
   }
 
   async supervisionOfficer(

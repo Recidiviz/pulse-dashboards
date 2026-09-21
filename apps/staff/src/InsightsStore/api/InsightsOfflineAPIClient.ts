@@ -41,6 +41,7 @@ import {
   supervisionOfficerFixture,
   SupervisionOfficerMetricEvent,
   supervisionOfficerMetricEventFixture,
+  SupervisionOfficerName,
   SupervisionOfficerOutcomes,
   supervisionOfficerOutcomesFixture,
   SupervisionOfficerSupervisor,
@@ -220,7 +221,7 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
     });
   }
 
-  async allSupervisionOfficers(): Promise<Array<SupervisionOfficer>> {
+  async allSupervisionOfficers(): Promise<Array<SupervisionOfficerName>> {
     return supervisionOfficerFixture;
   }
 

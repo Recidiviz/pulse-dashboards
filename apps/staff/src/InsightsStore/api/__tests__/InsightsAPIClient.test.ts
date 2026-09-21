@@ -39,6 +39,7 @@ import {
   rosterChangeRequestResponseFixture,
   supervisionOfficerFixture,
   supervisionOfficerMetricEventFixture,
+  supervisionOfficerNameFixture,
   supervisionOfficerOutcomesFixture,
   supervisionOfficerSupervisorsFixture,
   supervisionOfficerUserInfoFixture,
@@ -122,7 +123,6 @@ describe("InsightsAPIClient", () => {
     const response = await client.userInfo("fake-pseudo-id");
     expect(response).toEqual(supervisionOfficerUserInfoFixture);
   });
-
 
   it("patchUserInfo parses the data for supervisor", async () => {
     // We can't test that the API actually modified anything here, but since it returns the updated
@@ -226,7 +226,7 @@ describe("InsightsAPIClient", () => {
       .onGet()
       .replyOnce(200, { officers: rawSupervisionOfficerFixture });
     const response = await client.allSupervisionOfficers();
-    expect(response).toEqual(supervisionOfficerFixture);
+    expect(response).toEqual(supervisionOfficerNameFixture);
   });
 
   it("allSupervisionOfficers calls the correct endpoint", async () => {

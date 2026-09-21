@@ -36,6 +36,7 @@ import {
   SHPModule,
   SupervisionOfficer,
   SupervisionOfficerMetricEvent,
+  SupervisionOfficerName,
   SupervisionOfficerOutcomes,
   SupervisionOfficerSupervisor,
   SupervisionVitalsMetric,
@@ -88,7 +89,7 @@ export class InsightsSupervisionStore {
 
   private allSupervisionOfficerSupervisors?: SupervisionOfficerSupervisor[];
 
-  private allSupervisionOfficers?: SupervisionOfficer[];
+  private allSupervisionOfficers?: SupervisionOfficerName[];
 
   metricEventsByOfficerPseudoIdAndMetricId: StringMap2D<
     Array<SupervisionOfficerMetricEvent>
@@ -271,7 +272,7 @@ export class InsightsSupervisionStore {
     }
   }
 
-  get supervisionOfficers(): SupervisionOfficer[] | undefined {
+  get supervisionOfficers(): SupervisionOfficerName[] | undefined {
     if (this.userCanSubmitRosterChangeRequest)
       return this.allSupervisionOfficers;
     else throw new Error("User cannot access all officers.");

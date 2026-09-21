@@ -25,7 +25,6 @@ import {
   rosterChangeRequestFixtures,
   SupervisionOfficer,
   supervisionOfficerFixture,
-  SupervisionOfficerSupervisor,
   supervisionOfficerSupervisorsFixture,
 } from "~datatypes";
 
@@ -252,9 +251,9 @@ it("navigate when officer selected", () => {
 });
 
 const isOfficerOnSupervisorTeam = (
-  o: SupervisionOfficer | undefined,
-  s: SupervisionOfficerSupervisor,
-) => o?.supervisorExternalIds.includes(s.externalId);
+  officerExternalId: string,
+  team: SupervisionOfficer[] | undefined,
+) => team?.some((o) => o.externalId === officerExternalId) ?? false;
 
 it("gets the correct officers for toggled states", () => {
   vi.spyOn(presenter, "allOfficers", "get").mockImplementation(
@@ -271,8 +270,8 @@ it("gets the correct officers for toggled states", () => {
   expect(
     formData.selectableOfficersAsSelectOptions.every((select) =>
       isOfficerOnSupervisorTeam(
-        formData.allOfficers?.find((o) => o.externalId === select.value),
-        testSupervisor,
+        select.value,
+        formData.officersOnSupervisorTeam,
       ),
     ),
   ).toBeTrue();
@@ -285,8 +284,8 @@ it("gets the correct officers for toggled states", () => {
     formData.selectableOfficersAsSelectOptions.every(
       (select) =>
         !isOfficerOnSupervisorTeam(
-          formData.allOfficers?.find((o) => o.externalId === select.value),
-          testSupervisor,
+          select.value,
+          formData.officersOnSupervisorTeam,
         ),
     ),
   ).toBeTrue();

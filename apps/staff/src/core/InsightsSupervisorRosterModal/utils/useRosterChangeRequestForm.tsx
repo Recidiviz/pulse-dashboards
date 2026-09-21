@@ -26,7 +26,7 @@ import { isDemoMode, isOfflineMode, isTestEnv } from "~client-env-utils";
 import {
   rosterChangeRequestResponseFixture,
   rosterChangeRequestSchema,
-  SupervisionOfficer,
+  SupervisionOfficerName,
 } from "~datatypes";
 
 import { SupervisionSupervisorRosterModalPresenter } from "../../../InsightsStore/presenters/SupervisionSupervisorRosterModalPresenter";
@@ -235,7 +235,7 @@ export const useRosterChangeRequestForm = (
    */
 
   const transformOfficerIntoOption = (
-    o: SupervisionOfficer,
+    o: SupervisionOfficerName,
   ): SelectOptionWithLocation => ({
     label: o.displayName,
     value: o.externalId,
@@ -245,7 +245,7 @@ export const useRosterChangeRequestForm = (
   const transformOptionsIntoOfficers = (
     options: SelectOptionWithLocation[],
   ) => {
-    return options.reduce<SupervisionOfficer[]>((acc, option) => {
+    return options.reduce<SupervisionOfficerName[]>((acc, option) => {
       const officer = allOfficers?.find((o) => o.externalId === option.value);
       return officer ? (acc.push(officer), acc) : acc;
     }, []);
