@@ -105,7 +105,7 @@ resource "kubernetes_deployment" "cloud_sql_proxy" {
       spec {
         container {
           name  = "cloud-sql-proxy"
-          image = "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.15.3"
+          image = "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.25.4"
 
           args = concat([
             "--address=0.0.0.0",

@@ -22,10 +22,10 @@ private connectivity between your Kubernetes-based workloads and one or more Clo
 
 The module accepts the following inputs:
 
-| Name                       | Type          | Description                                                                                                       | Required | Default |
-|----------------------------|---------------|-------------------------------------------------------------------------------------------------------------------|----------|---------|
-| `project_id`               | `string`      | The GCP project ID where the resources will be deployed                                                           | Yes      | -       |
-| `region`                   | `string`      | The GCP region for the GKE cluster and Cloud SQL connections                                                      | Yes      | -       |
+| Name                       | Type          | Description                                                                                                      | Required | Default |
+| -------------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------- | -------- | ------- |
+| `project_id`               | `string`      | The GCP project ID where the resources will be deployed                                                          | Yes      | -       |
+| `region`                   | `string`      | The GCP region for the GKE cluster and Cloud SQL connections                                                     | Yes      | -       |
 | `sql_instance_connections` | `map(number)` | A map of SQL instance connection names (formatted as `project:region:instance`) mapped to their respective ports | Yes      | -       |
 
 Refer to `variables.tf` for exact type definitions and descriptions.
@@ -35,9 +35,9 @@ Refer to `variables.tf` for exact type definitions and descriptions.
 The module provides the following outputs:
 
 | Name                 | Description                                                      |
-|----------------------|------------------------------------------------------------------|
+| -------------------- | ---------------------------------------------------------------- |
 | `cluster_name`       | The name of the GKE cluster created by the module                |
-| `cloud_sql_proxy_ip` | The internal IP address of the Cloud SQL Proxy LoadBalancer     |
+| `cloud_sql_proxy_ip` | The internal IP address of the Cloud SQL Proxy LoadBalancer      |
 | `ports`              | A map of the configured SQL instance connections and their ports |
 
 These outputs can be referenced and used in your Terraform configuration or by other modules.
@@ -47,9 +47,9 @@ These outputs can be referenced and used in your Terraform configuration or by o
 1. **Create GKE Cluster**: A GKE cluster named `cloud-sql-proxy` is created in the specified region
 2. **IAM and Service Account**: A service account is created with the `roles/cloudsql.client` IAM role to authenticate with Cloud SQL
 3. **Cloud SQL Proxy Deployment**: A Kubernetes Deployment is created on the GKE cluster to run the Cloud SQL Proxy container
-    - The proxy is configured to connect to specified Cloud SQL instances using private IPs (`--private-ip` flag)
-    - Ports for each SQL instance are dynamically exposed
-    - Service account credentials are mounted via Kubernetes secrets (encrypted with SOPS)
+   - The proxy is configured to connect to specified Cloud SQL instances using private IPs (`--private-ip` flag)
+   - Ports for each SQL instance are dynamically exposed
+   - Service account credentials are mounted via Kubernetes secrets (encrypted with SOPS)
 4. **Internal Load Balancer**: A Kubernetes Service is created with an internal load balancer to facilitate secure communication with the proxy
 5. **Dynamic Port Configuration**: Ports are automatically assigned and exposed based on the SQL instance connection map provided in the `sql_instance_connections` variable
 
@@ -66,6 +66,7 @@ cloud-sql-proxy:
 ```
 
 This will create:
+
 - GKE cluster in `us-central1`
 - Cloud SQL Proxy deployment connecting to both instances
 - Internal load balancer exposing ports 5432 and 3306
@@ -91,22 +92,27 @@ This will create:
 This module creates the following resources:
 
 ### GKE Cluster
+
 - `google_container_cluster.primary`: GKE cluster with L4 ILB subsetting enabled
 - `google_container_node_pool.primary_nodes`: Node pool with private nodes (`e2-medium` machines)
 
 ### Cloud SQL Proxy
-- `kubernetes_deployment.cloud_sql_proxy`: Deployment running the Cloud SQL Proxy container (version 2.15.3)
+
+- `kubernetes_deployment.cloud_sql_proxy`: Deployment running the Cloud SQL Proxy container (version 2.25.4)
 - `kubernetes_service.cloud_sql_proxy_service`: LoadBalancer service with internal IP
 - `kubernetes_secret.service_account_token`: Kubernetes secret containing service account credentials
 
 ### IAM and Service Account
+
 - `google_service_account.proxy_agent`: Service account for Cloud SQL Proxy authentication
 - `google_project_iam_member.proxy_client`: IAM binding granting `roles/cloudsql.client` to the service account
 
 ### Networking
+
 - `google_compute_address.internal_sql_proxy_ip`: Reserved internal IP address for the load balancer
 
 ### Data Sources
+
 - `data.google_client_config.default`: Used for Kubernetes provider authentication
 - `data.sops_file.agent_private_key`: Reads encrypted service account credentials
 
@@ -117,6 +123,7 @@ The module requires a service account private key to be encrypted with SOPS and 
 ### Creating and Encrypting the Service Account Key
 
 1. **Provision the agent service account**
+
    ```bash
    atmos terraform plan  cloud-sql-proxy -s STACK -- -target=google_service_account.proxy_agent -out agent.planfile
    atmos terraform apply cloud-sql-proxy -s STACK -- agent.planfile
@@ -130,28 +137,30 @@ The module requires a service account private key to be encrypted with SOPS and 
    ```
 
 2**Create the secrets file**:
-   ```bash
-   PROJECT_ID="YOUR_PROJECT_ID"
-   cd libs/atmos/components/terraform/cloud-sql-proxy
-   mkdir -p secrets
 
-   # Create the unencrypted YAML with the service account key
-   cat > secrets/${PROJECT_ID}.yaml <<EOF
-   agent_private_key: |
-   $(cat key.json | sed 's/^/  /')
-   EOF
+```bash
+PROJECT_ID="YOUR_PROJECT_ID"
+cd libs/atmos/components/terraform/cloud-sql-proxy
+mkdir -p secrets
 
-   # Encrypt it with SOPS
-   sops --filename-override secrets/${PROJECT_ID.enc.yaml -e secrets/${PROJECT_ID.yaml > secrets/${PROJECT_ID.enc.yaml
-  
-   # Remove unencrypted files
-   rm secrets/${PROJECT_ID}.yaml key.json
-   ```
+# Create the unencrypted YAML with the service account key
+cat > secrets/${PROJECT_ID}.yaml <<EOF
+agent_private_key: |
+$(cat key.json | sed 's/^/  /')
+EOF
+
+# Encrypt it with SOPS
+sops --filename-override secrets/${PROJECT_ID.enc.yaml -e secrets/${PROJECT_ID.yaml > secrets/${PROJECT_ID.enc.yaml
+
+# Remove unencrypted files
+rm secrets/${PROJECT_ID}.yaml key.json
+```
 
 3**Verify the encrypted file**:
-   ```bash
-   sops secrets/${PROJECT_ID}.enc.yaml
-   ```
+
+```bash
+sops secrets/${PROJECT_ID}.enc.yaml
+```
 
 ### Service Account Permissions
 
