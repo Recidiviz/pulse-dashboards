@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { resolveTrusteeOutcome } from "../reclassificationScoreUtils";
 import {
   getTrusteeCriterionNumber,
   TRUSTEE_ANNEX_SUB_QUESTION,
@@ -170,5 +171,138 @@ describe("stripTrusteeReworkPrefills", () => {
       trusteeHas10YearsOrLessRemaining: "true",
       trusteeNotServingForSexualOffense: "false",
     });
+  });
+});
+
+describe("resolveTrusteeOutcome", () => {
+  const allTrue = Object.fromEntries(
+    TRUSTEE_CRITERIA.map((c) => [c.key, "true"]),
+  );
+
+  it("is incomplete when no criterion is answered", () => {
+    expect(resolveTrusteeOutcome({}).status).toBe("INCOMPLETE");
+  });
+
+  it("is incomplete while a single criterion is left unanswered", () => {
+    const allButLast = Object.fromEntries(
+      TRUSTEE_CRITERIA.slice(0, -1).map((c) => [c.key, "true"]),
+    );
+
+    expect(resolveTrusteeOutcome(allButLast).status).toBe("INCOMPLETE");
+  });
+
+  it("treats an empty string as unanswered rather than False", () => {
+    expect(
+      resolveTrusteeOutcome({ ...allTrue, trusteeNoPendingFelonyCharges: "" })
+        .status,
+    ).toBe("INCOMPLETE");
+  });
+
+  it("treats a null criterion as unanswered rather than False", () => {
+    const outcome = resolveTrusteeOutcome({
+      ...allTrue,
+      trusteeNotConvictedOfViolentOffenseOr12MonthsInCustody: null,
+    });
+
+    expect(outcome.status).toBe("INCOMPLETE");
+    expect(outcome.failedHardBars).toEqual([]);
+  });
+
+  it("is eligible when all fifteen are True", () => {
+    const outcome = resolveTrusteeOutcome(allTrue);
+
+    expect(outcome.status).toBe("ELIGIBLE");
+    expect(outcome.failedHardBars).toEqual([]);
+    expect(outcome.failedConditionalCriteria).toEqual([]);
+  });
+
+  it("resolves to not eligible on a single hard bar without the rest answered", () => {
+    const outcome = resolveTrusteeOutcome({
+      trusteeNotServingForSexualOffense: "false",
+    });
+
+    expect(outcome.status).toBe("NOT_ELIGIBLE");
+    expect(outcome.failedHardBars.map(getTrusteeCriterionNumber)).toEqual([3]);
+  });
+
+  it("reports every failed hard bar in criterion order", () => {
+    const outcome = resolveTrusteeOutcome({
+      ...allTrue,
+      trusteeNoPendingFelonyCharges: "false",
+      trusteeHas10YearsOrLessRemaining: "false",
+    });
+
+    expect(outcome.status).toBe("NOT_ELIGIBLE");
+    expect(outcome.failedHardBars.map(getTrusteeCriterionNumber)).toEqual([
+      1, 12,
+    ]);
+  });
+
+  it("still reports a Group E failure alongside a failed hard bar", () => {
+    const blocked = resolveTrusteeOutcome({
+      ...allTrue,
+      trusteeNotServingForSexualOffense: "false",
+      trusteeNotScoredHighForViolence: "false",
+    });
+
+    expect(blocked.status).toBe("NOT_ELIGIBLE");
+    expect(
+      blocked.failedConditionalCriteria.map(getTrusteeCriterionNumber),
+    ).toEqual([15]);
+  });
+
+  it("still reports a Group E failure while criteria are unanswered", () => {
+    const unanswered = resolveTrusteeOutcome({
+      trusteeNotScoredHighForViolence: "false",
+    });
+
+    expect(unanswered.status).toBe("INCOMPLETE");
+    expect(
+      unanswered.failedConditionalCriteria.map(getTrusteeCriterionNumber),
+    ).toEqual([15]);
+  });
+
+  it("does not let a Group E False disqualify", () => {
+    const outcome = resolveTrusteeOutcome({
+      ...allTrue,
+      trusteeNotScoredHighForViolence: "false",
+    });
+
+    expect(outcome.status).toBe("ELIGIBLE_REQUIRES_AC_APPROVAL");
+    expect(outcome.failedHardBars).toEqual([]);
+    expect(
+      outcome.failedConditionalCriteria.map(getTrusteeCriterionNumber),
+    ).toEqual([15]);
+  });
+
+  it("requires the Assistant Commissioner when both Group E criteria are False", () => {
+    const outcome = resolveTrusteeOutcome({
+      ...allTrue,
+      trusteeNoAssaultiveDisciplinaryWithSeriousInjuryMoreThan5YearsAgo:
+        "false",
+      trusteeNotScoredHighForViolence: "false",
+    });
+
+    expect(outcome.status).toBe("ELIGIBLE_REQUIRES_AC_APPROVAL");
+    expect(
+      outcome.failedConditionalCriteria.map(getTrusteeCriterionNumber),
+    ).toEqual([14, 15]);
+  });
+
+  it("stays incomplete when a Group E criterion is False but hard bars are unanswered", () => {
+    expect(
+      resolveTrusteeOutcome({ trusteeNotScoredHighForViolence: "false" })
+        .status,
+    ).toBe("INCOMPLETE");
+  });
+
+  it("lets a hard bar failure win over a Group E failure", () => {
+    const outcome = resolveTrusteeOutcome({
+      ...allTrue,
+      trusteeNoDetainersOrWarrants: "false",
+      trusteeNotScoredHighForViolence: "false",
+    });
+
+    expect(outcome.status).toBe("NOT_ELIGIBLE");
   });
 });

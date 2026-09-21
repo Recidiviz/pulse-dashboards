@@ -17,6 +17,7 @@
 
 import { z } from "zod";
 
+import { TRUSTEE_CRITERIA, TrusteeCriterionKey } from "./trusteeCriteria";
 import { UsTnReclassification2026DraftData } from "./UsTnReclassification2026Policy";
 import { multiIncidentPeriodReportSchema, TrusteeFormSchema } from "./utils";
 
@@ -145,6 +146,49 @@ export function isEligibleForTrusteeStatus(
     formData.trusteeNoPendingImmigrationActions,
     formData.trusteeWardenHasApproved,
   ].every((criterion) => criterion === "true");
+}
+
+export type TrusteeOutcomeStatus =
+  | "INCOMPLETE"
+  | "NOT_ELIGIBLE"
+  | "ELIGIBLE"
+  | "ELIGIBLE_REQUIRES_AC_APPROVAL";
+
+export type TrusteeOutcome = {
+  status: TrusteeOutcomeStatus;
+  failedHardBars: TrusteeCriterionKey[];
+  failedConditionalCriteria: TrusteeCriterionKey[];
+};
+
+export function resolveTrusteeOutcome(
+  formData: Partial<TrusteeFormSchema>,
+): TrusteeOutcome {
+  const failedHardBars: TrusteeCriterionKey[] = [];
+  const failedConditionalCriteria: TrusteeCriterionKey[] = [];
+  let anyUnanswered = false;
+
+  for (const { key, isHardBar } of TRUSTEE_CRITERIA) {
+    const answer = formData[key];
+
+    if (answer === "false") {
+      (isHardBar ? failedHardBars : failedConditionalCriteria).push(key);
+    } else if (answer !== "true") {
+      anyUnanswered = true;
+    }
+  }
+
+  // Both lists report what was actually answered False. Whether a failure is
+  // worth acting on is the caller's decision, made against the status.
+  const failures = { failedHardBars, failedConditionalCriteria };
+
+  if (failedHardBars.length > 0) return { status: "NOT_ELIGIBLE", ...failures };
+
+  if (anyUnanswered) return { status: "INCOMPLETE", ...failures };
+
+  if (failedConditionalCriteria.length > 0)
+    return { status: "ELIGIBLE_REQUIRES_AC_APPROVAL", ...failures };
+
+  return { status: "ELIGIBLE", ...failures };
 }
 
 export function showTrusteeChecklist(
