@@ -28,6 +28,14 @@
             "value": "csp-endpoint=\"https://o432474.ingest.us.sentry.io/api/5385222/security/?sentry_key=4349c85a99054a4799fb4117d6adea32\""
           },
           {
+            "key": "Strict-Transport-Security",
+            "value": "max-age=31536000; includeSubDomains"
+          },
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
+          },
+          {
             "key": "Cache-Control",
             "value": "public, max-age=0, s-maxage=3600"
           }

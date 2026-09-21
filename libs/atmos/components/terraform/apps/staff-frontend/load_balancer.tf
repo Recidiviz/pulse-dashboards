@@ -9,6 +9,8 @@ locals {
     "X-Frame-Options: DENY",
     "Content-Security-Policy: script-src 'self' cdn.segment.com widget.intercom.io js.intercomcdn.com www.google-analytics.com edge.fullstory.com www.googletagmanager.com maps.googleapis.com 'unsafe-eval'; frame-ancestors 'self'; form-action 'self'; report-uri https://o432474.ingest.us.sentry.io/api/5385222/security/?sentry_key=4349c85a99054a4799fb4117d6adea32; report-to csp-endpoint",
     "Reporting-Endpoints: csp-endpoint=\"https://o432474.ingest.us.sentry.io/api/5385222/security/?sentry_key=4349c85a99054a4799fb4117d6adea32\"",
+    "Strict-Transport-Security: max-age=31536000; includeSubDomains",
+    "X-Content-Type-Options: nosniff",
   ]
 }
 
