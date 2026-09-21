@@ -16,6 +16,7 @@
 // =============================================================================
 
 export * from "./reclassificationScoreUtils";
+export * from "./trusteeCriteria";
 export * from "./UsTnAnnualReclassificationReview/fixtures";
 export * from "./UsTnAnnualReclassificationReview/schema";
 export * from "./UsTnCompliantReporting2025Policy/fixtures";

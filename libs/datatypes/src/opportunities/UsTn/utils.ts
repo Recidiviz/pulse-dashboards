@@ -311,6 +311,11 @@ export const trusteeFormSchema = z.object({
 
 export type TrusteeFormAdditionalFields = {
   trusteeNotConvictedOfViolentOffenseOr12MonthsInCustody: string;
+  trusteeNotOnClinicalAlertStatus: string;
+  trusteeNotOnLevelOfCare3Or4Or5: string;
+  trusteeNoAssaultiveDisciplinaryWithSeriousInjuryLast5Years: string;
+  trusteeNoAssaultiveDisciplinaryWithSeriousInjuryMoreThan5YearsAgo: string;
+  trusteeHas7YearsOrLessRemaining: string;
   trusteeNoFelonyDetainers: string;
   trusteeNoPendingFelonyCharges: string;
   trusteeNoPendingImmigrationActions: string;

@@ -152,6 +152,7 @@ export type FeatureVariant =
   | "usTnRcafV2"
   | "usTnRcafV1"
   | "usTnCafSubmissionButton"
+  | "trusteeChecklistRework"
   | "clientProfileWarmHandoff"
 
   //// Texas
@@ -269,6 +270,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usTnRcafV2: {},
   usTnRcafV1: {},
   usTnCafSubmissionButton: {},
+  trusteeChecklistRework: {},
   clientProfileWarmHandoff: {},
   insightsStaffUsage: {},
   insightsConsistentLoginPill: {},
@@ -415,6 +417,9 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usTnRcafV1: undefined,
         usTnRcafV2: isDemoMode() ? undefined : {},
         usTnCafSubmissionButton: undefined,
+        // Off for Recidiviz users during build-out — opt in per-user
+        // via the admin panel to see the reworked Trustee checklist.
+        trusteeChecklistRework: undefined,
 
         operationsDrilldown: { activeTenants: ["US_ID", "US_ND", "US_TX"] },
         operationsContactsDrilldown: { activeTenants: ["US_TX"] },
