@@ -68,9 +68,10 @@ resource "google_bigquery_dataset_iam_member" "transfer_dts_agent_access" {
 resource "google_bigquery_dataset" "regional_transfer_dataset" {
   for_each = var.postgresql.databases
 
-  dataset_id  = "${var.dataset_name}_${each.key}_regional"
-  description = "A regional copy of the database for state code ${each.key}"
-  location    = var.location
+  dataset_id                 = "${var.dataset_name}_${each.key}_regional"
+  description                = "A regional copy of the database for state code ${each.key}"
+  location                   = var.location
+  delete_contents_on_destroy = true
 
   lifecycle {
     # See destination_transfer_dataset: recidiviz-data's protection-tag reconcile job may stamp a
@@ -83,9 +84,10 @@ resource "google_bigquery_dataset" "regional_transfer_dataset" {
 resource "google_bigquery_dataset" "transfer_dataset" {
   for_each = var.postgresql.databases
 
-  dataset_id  = "${var.dataset_name}_${each.key}"
-  description = "A copy of the database for state code ${each.key}"
-  location    = "US"
+  dataset_id                 = "${var.dataset_name}_${each.key}"
+  description                = "A copy of the database for state code ${each.key}"
+  location                   = "US"
+  delete_contents_on_destroy = true
 
   lifecycle {
     # See destination_transfer_dataset: recidiviz-data's protection-tag reconcile job may stamp a
@@ -101,9 +103,10 @@ resource "google_bigquery_dataset" "destination_transfer_dataset" {
 
   provider = google.destination
 
-  dataset_id  = "${var.dataset_name}_${local.dataset_suffix[each.key]}"
-  description = "A copy of the database for state code ${each.key} (cross-project transfer from ${var.project_id})"
-  location    = "US"
+  dataset_id                 = "${var.dataset_name}_${local.dataset_suffix[each.key]}"
+  description                = "A copy of the database for state code ${each.key} (cross-project transfer from ${var.project_id})"
+  location                   = "US"
+  delete_contents_on_destroy = true
 
   lifecycle {
     # This dataset lands in a data-platform project (recidiviz-staging / recidiviz-123), where
