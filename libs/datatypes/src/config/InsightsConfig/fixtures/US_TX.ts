@@ -75,17 +75,17 @@ export const US_TX: InsightsConfig = {
   supervisionSupervisorLabel: "supervisor",
   supervisionUnitLabel: "unit",
   supervisorHasNoOfficersWithEligibleClientsLabel:
-    "Nice! Your team has no new clients that are eligible for an opportunity.",
+    "Nice! Your team has no clients currently in need of review.",
   supervisorHasNoOutlierOfficersLabel: "tbd",
   vitalsMetrics: [
     {
       metricId: "timely_risk_assessment",
-      titleDisplayName: "Assessment Completion Rate",
+      titleDisplayName: "Timely Risk Assessment",
       bodyDisplayName: "Assessment",
     },
     {
       metricId: "timely_contact_due_date_based",
-      titleDisplayName: "Contact Completion Rate",
+      titleDisplayName: "Timely Contact",
       bodyDisplayName: "Contact",
     },
   ],
