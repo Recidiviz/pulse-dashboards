@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,22 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { parseISO } from "date-fns";
-
-import { home } from "../../defaults";
-import { ResidentsConfig } from "../../types";
-
-export const usAzResidentsConfig: ResidentsConfig = {
-  home,
-  translation: {
-    additionalLanguages: [],
-  },
-  enabledResidentFlags: {
-    usAzFslImprovements: parseISO("2026-06-15T05:00:00-07:00"),
-  },
-  enabledResidentFacilityFlags: {
-    PERRYVILLE: {
-      usAzIonReferral: parseISO("2026-09-25T05:00:00-07:00"),
-    },
-  },
-};
+export { IONBanner } from "./IONBanner";

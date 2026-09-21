@@ -242,4 +242,73 @@ describe("displayedDates", () => {
     expect(presenter.displayedDates).toHaveLength(1);
     expect(presenter.displayedDates[0].dateKey).toEqual("dtpDate");
   });
+
+  describe("isTentative", () => {
+    it("is true for an unapproved TPR date", () => {
+      presenter = new SingleResidentContextPresenter({
+        stateCode: "US_AZ",
+        isDprEligible: false,
+        hasAnyDprProgramCompleted: false,
+        acisTprDate: new Date(2026, 2, 2),
+      });
+      expect(presenter.displayedDates[0]).toMatchObject({
+        dateKey: "tprDate",
+        isTentative: true,
+      });
+    });
+
+    it("is false for an approved TPR date", () => {
+      presenter = new SingleResidentContextPresenter({
+        stateCode: "US_AZ",
+        isDprEligible: false,
+        hasAnyDprProgramCompleted: false,
+        acisTprDate: new Date(2026, 2, 2),
+        tprApprovalStatus: "APPROVED",
+      });
+      expect(presenter.displayedDates[0]).toMatchObject({
+        dateKey: "tprDate",
+        isTentative: false,
+      });
+    });
+
+    it("is true for an unapproved DTP date", () => {
+      presenter = new SingleResidentContextPresenter({
+        stateCode: "US_AZ",
+        isDprEligible: false,
+        hasAnyDprProgramCompleted: false,
+        acisDtpDate: new Date(2026, 2, 3),
+      });
+      expect(presenter.displayedDates[0]).toMatchObject({
+        dateKey: "dtpDate",
+        isTentative: true,
+      });
+    });
+
+    it("is false for an approved DTP date", () => {
+      presenter = new SingleResidentContextPresenter({
+        stateCode: "US_AZ",
+        isDprEligible: false,
+        hasAnyDprProgramCompleted: false,
+        acisDtpDate: new Date(2026, 2, 3),
+        dtpApprovalStatus: "APPROVED",
+      });
+      expect(presenter.displayedDates[0]).toMatchObject({
+        dateKey: "dtpDate",
+        isTentative: false,
+      });
+    });
+
+    it("is false for non-approvable dates regardless of approval status", () => {
+      presenter = new SingleResidentContextPresenter({
+        stateCode: "US_AZ",
+        isDprEligible: false,
+        hasAnyDprProgramCompleted: false,
+        ercdDateV2: new Date(2026, 2, 5),
+      });
+      expect(presenter.displayedDates[0]).toMatchObject({
+        dateKey: "ercdDate",
+        isTentative: false,
+      });
+    });
+  });
 });

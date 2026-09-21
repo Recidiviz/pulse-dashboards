@@ -30,10 +30,10 @@ const allDateHashes = [
   "csedDate",
 ];
 const mockSomeDates: UsAzDisplayedDates = [
-  { dateKey: "tprDate", date: new Date("2024-03-15") },
-  { dateKey: "csbdDate", date: new Date("2024-01-10") },
-  { dateKey: "ercdDate", date: new Date("2024-06-01") },
-  { dateKey: "sedDate", date: new Date("2024-12-01") },
+  { dateKey: "tprDate", date: new Date("2024-03-15"), isTentative: false },
+  { dateKey: "csbdDate", date: new Date("2024-01-10"), isTentative: false },
+  { dateKey: "ercdDate", date: new Date("2024-06-01"), isTentative: false },
+  { dateKey: "sedDate", date: new Date("2024-12-01"), isTentative: false },
 ];
 const someDateHashes = [
   "tprDate",

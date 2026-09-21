@@ -39,12 +39,13 @@ export type UsAzDateField = (typeof US_AZ_DATE_KEYS)[number];
 
 /**
  * The minimal date shape the context layer produces: just the normalized date
- * id and its value. The home-page view enriches each of these into a full
- * `DateEntry` (see UsAzImportantDatesPresenter).
+ * id, its value and its approval status. The home-page view enriches each of
+ * these into a full `DateEntry` (see UsAzImportantDatesPresenter).
  */
 export interface UsAzDisplayedDate {
   dateKey: UsAzDateField;
   date: Date;
+  isTentative: boolean;
 }
 export type UsAzDisplayedDates = UsAzDisplayedDate[];
 
@@ -169,7 +170,16 @@ export class SingleResidentContextPresenter {
       const [field, date] = entry as [UsAzDateField, Date | undefined];
       if (!date) return [];
       if (field === "tprDate" && hasDtpDate) return [];
-      return [{ dateKey: field, date }];
+
+      // mark approval status for applicable dates
+      let isTentative = false;
+      if (field === "tprDate") {
+        isTentative = !this.isTprApproved;
+      } else if (field === "dtpDate") {
+        isTentative = !this.isDtpApproved;
+      }
+
+      return [{ dateKey: field, date, isTentative }];
     });
   }
 }

@@ -43,6 +43,7 @@ type ResidentFlag =
   // TODO OBT-31989 after usAzFslImprovements launch: remove this flag and all references in
   // libs/@jii/configs, libs/@jii/prisma, and libs/@jii/states/US_AZ
   | "usAzFslImprovements"
+  | "usAzIonReferral"
   | "usCoV1Experience"
   | "usCoEdovoCredits"
   //TODO OBT-34689 remove after launch

@@ -31,7 +31,6 @@ export interface DateEntry extends UsAzDisplayedDate {
   //flags that determine copy and formatting
   isUpcoming: boolean;
   isPast: boolean;
-  isTentative: boolean;
   //variables that hold different copy based on the above flags
   title: string;
   info: string;
@@ -56,13 +55,6 @@ export class UsAzImportantDatesPresenter {
   constructor(
     private displayedDates: UsAzDisplayedDates,
     private t: UsAzTFunction,
-    private approval: {
-      isTprApproved: boolean;
-      isDtpApproved: boolean;
-    } = {
-      isTprApproved: false,
-      isDtpApproved: false,
-    },
   ) {
     makeAutoObservable(this, undefined, { autoBind: true });
   }
@@ -223,12 +215,7 @@ export class UsAzImportantDatesPresenter {
           ? entry.dateKey
           : undefined;
 
-      let isTentative = false;
-      if (approvalDateKey === "tprDate") {
-        isTentative = !this.approval.isTprApproved;
-      } else if (approvalDateKey === "dtpDate") {
-        isTentative = !this.approval.isDtpApproved;
-      }
+      const { isTentative } = entry;
 
       let highlightType: CardHighlightStyle | undefined;
       if (isPast || entry.dateKey === "csbdDate" || isTentative) {
@@ -270,7 +257,6 @@ export class UsAzImportantDatesPresenter {
         isPast,
         ...cardCopy,
         linkUrl,
-        isTentative,
         highlightType,
         showInfoTag,
         overlay,

@@ -23,24 +23,24 @@ import { UsAzDisplayedDates } from "../UsAzSingleResidentContext/SingleResidentC
 import { UsAzImportantDatesPresenter } from "./UsAzImportantDatesPresenter";
 
 const mockSomeDates: UsAzDisplayedDates = [
-  { dateKey: "tprDate", date: new Date("2024-03-15") },
-  { dateKey: "csbdDate", date: new Date("2024-01-10") }, // earliest date
-  { dateKey: "ercdDate", date: new Date("2024-06-01") },
-  { dateKey: "sedDate", date: new Date("2024-12-01") }, // latest date
+  { dateKey: "tprDate", date: new Date("2024-03-15"), isTentative: false },
+  { dateKey: "csbdDate", date: new Date("2024-01-10"), isTentative: false }, // earliest date
+  { dateKey: "ercdDate", date: new Date("2024-06-01"), isTentative: false },
+  { dateKey: "sedDate", date: new Date("2024-12-01"), isTentative: false }, // latest date
 ];
 
 const mockNoDates: UsAzDisplayedDates = [];
 
 // not exactly realistic but lets us test some behavior against all possible dates
 const mockAllDates: UsAzDisplayedDates = [
-  { dateKey: "tprDate", date: new Date("2024-03-15") },
-  { dateKey: "dtpDate", date: new Date("2024-03-15") },
-  { dateKey: "csbdDate", date: new Date("2024-01-10") },
-  { dateKey: "trToAddDate", date: new Date("2024-01-10") },
-  { dateKey: "ercdDate", date: new Date("2024-06-01") },
-  { dateKey: "addDate", date: new Date("2024-06-01") },
-  { dateKey: "sedDate", date: new Date("2024-12-01") },
-  { dateKey: "csedDate", date: new Date("2024-12-01") },
+  { dateKey: "tprDate", date: new Date("2024-03-15"), isTentative: false },
+  { dateKey: "dtpDate", date: new Date("2024-03-15"), isTentative: false },
+  { dateKey: "csbdDate", date: new Date("2024-01-10"), isTentative: false },
+  { dateKey: "trToAddDate", date: new Date("2024-01-10"), isTentative: false },
+  { dateKey: "ercdDate", date: new Date("2024-06-01"), isTentative: false },
+  { dateKey: "addDate", date: new Date("2024-06-01"), isTentative: false },
+  { dateKey: "sedDate", date: new Date("2024-12-01"), isTentative: false },
+  { dateKey: "csedDate", date: new Date("2024-12-01"), isTentative: false },
 ];
 
 const t = vi.fn() as unknown as UsAzTFunction;
@@ -134,101 +134,60 @@ describe("UsAzImportantDatesPresenter", () => {
       beforeEach(() => tk.freeze(new Date("2024-01-01")));
       afterEach(() => tk.reset());
 
-      const futureTpr: UsAzDisplayedDates = [
-        { dateKey: "tprDate", date: new Date("2024-06-01") },
+      const futureTpr = (isTentative: boolean): UsAzDisplayedDates => [
+        { dateKey: "tprDate", date: new Date("2024-06-01"), isTentative },
       ];
-      const futureDtp: UsAzDisplayedDates = [
-        { dateKey: "dtpDate", date: new Date("2024-06-01") },
+      const futureDtp = (isTentative: boolean): UsAzDisplayedDates => [
+        { dateKey: "dtpDate", date: new Date("2024-06-01"), isTentative },
       ];
 
       it("is green for an approved future TPR date", () => {
-        const entry = new UsAzImportantDatesPresenter(futureTpr, t, {
-          isTprApproved: true,
-          isDtpApproved: false,
-        }).dateEntries[0];
+        const entry = new UsAzImportantDatesPresenter(futureTpr(false), t)
+          .dateEntries[0];
         expect(entry.highlightType).toBe("green");
       });
 
       it("is dashed for a tentative future TPR date", () => {
-        const entry = new UsAzImportantDatesPresenter(futureTpr, t, {
-          isTprApproved: false,
-          isDtpApproved: false,
-        }).dateEntries[0];
+        const entry = new UsAzImportantDatesPresenter(futureTpr(true), t)
+          .dateEntries[0];
         expect(entry.highlightType).toBe("dashed");
       });
 
       it("is dashed for a past TPR date even when approved", () => {
         const pastTpr: UsAzDisplayedDates = [
-          { dateKey: "tprDate", date: new Date("2023-06-01") },
+          {
+            dateKey: "tprDate",
+            date: new Date("2023-06-01"),
+            isTentative: false,
+          },
         ];
-        const entry = new UsAzImportantDatesPresenter(pastTpr, t, {
-          isTprApproved: true,
-          isDtpApproved: false,
-        }).dateEntries[0];
+        const entry = new UsAzImportantDatesPresenter(pastTpr, t)
+          .dateEntries[0];
         expect(entry.highlightType).toBe("dashed");
       });
 
       it("is purple for an approved future DTP date", () => {
-        const entry = new UsAzImportantDatesPresenter(futureDtp, t, {
-          isTprApproved: false,
-          isDtpApproved: true,
-        }).dateEntries[0];
+        const entry = new UsAzImportantDatesPresenter(futureDtp(false), t)
+          .dateEntries[0];
         expect(entry.highlightType).toBe("purple");
       });
 
       it("is dashed for a tentative future DTP date", () => {
-        const entry = new UsAzImportantDatesPresenter(futureDtp, t, {
-          isTprApproved: false,
-          isDtpApproved: false,
-        }).dateEntries[0];
+        const entry = new UsAzImportantDatesPresenter(futureDtp(true), t)
+          .dateEntries[0];
         expect(entry.highlightType).toBe("dashed");
       });
 
       it("is undefined for non-approvable dates", () => {
         const ercd: UsAzDisplayedDates = [
-          { dateKey: "ercdDate", date: new Date("2024-06-01") },
+          {
+            dateKey: "ercdDate",
+            date: new Date("2024-06-01"),
+            isTentative: false,
+          },
         ];
-        const entry = new UsAzImportantDatesPresenter(ercd, t, {
-          isTprApproved: true,
-          isDtpApproved: true,
-        }).dateEntries[0];
+        const entry = new UsAzImportantDatesPresenter(ercd, t).dateEntries[0];
         expect(entry.highlightType).toBeUndefined();
-      });
-    });
-
-    describe("isTentative", () => {
-      beforeEach(() => tk.freeze(new Date("2024-01-01")));
-      afterEach(() => tk.reset());
-
-      const futureTpr: UsAzDisplayedDates = [
-        { dateKey: "tprDate", date: new Date("2024-06-01") },
-      ];
-
-      it("is true for an unapproved future TPR date", () => {
-        const entry = new UsAzImportantDatesPresenter(futureTpr, t, {
-          isTprApproved: false,
-          isDtpApproved: false,
-        }).dateEntries[0];
-        expect(entry.isTentative).toBeTrue();
-      });
-
-      it("is false for an approved future TPR date", () => {
-        const entry = new UsAzImportantDatesPresenter(futureTpr, t, {
-          isTprApproved: true,
-          isDtpApproved: false,
-        }).dateEntries[0];
-        expect(entry.isTentative).toBeFalse();
-      });
-
-      it("is false for non-approvable dates", () => {
-        const ercd: UsAzDisplayedDates = [
-          { dateKey: "ercdDate", date: new Date("2024-06-01") },
-        ];
-        const entry = new UsAzImportantDatesPresenter(ercd, t, {
-          isTprApproved: true,
-          isDtpApproved: true,
-        }).dateEntries[0];
-        expect(entry.isTentative).toBeFalse();
       });
     });
 
@@ -236,9 +195,14 @@ describe("UsAzImportantDatesPresenter", () => {
       it("is defined for a TPR date", () => {
         tk.freeze(new Date("2024-01-01"));
         const entry = new UsAzImportantDatesPresenter(
-          [{ dateKey: "tprDate", date: new Date("2024-06-01") }],
+          [
+            {
+              dateKey: "tprDate",
+              date: new Date("2024-06-01"),
+              isTentative: true,
+            },
+          ],
           t,
-          { isTprApproved: false, isDtpApproved: false },
         ).dateEntries[0];
         tk.reset();
         expect(entry.overlay).toBeDefined();

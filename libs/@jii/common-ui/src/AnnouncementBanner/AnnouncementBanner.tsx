@@ -15,22 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { typography } from "@recidiviz/design-system";
 import Markdown from "markdown-to-jsx";
 import { rem, rgba } from "polished";
 import { FC } from "react";
 import styled from "styled-components";
 
-import { palette, spacing } from "~design-system";
+import { palette, spacing, typography } from "~design-system";
 
 import { ButtonLink } from "../Buttons/ButtonLink";
 
 const Wrapper = styled.div`
-  ${typography.Sans14}
   border-left: ${rem(4)} solid ${palette.signal.notification};
   background: ${rgba(palette.signal.notification, 0.1)};
   margin: ${rem(spacing.xl)} 0;
   padding: ${rem(spacing.md)};
+`;
+
+const Heading = styled.h3`
+  ${typography.Sans16}
+
+  margin-top: 0;
+  margin-bottom: ${rem(spacing.md)};
+`;
+
+const MessageWrapper = styled.div`
+  ${typography.Sans14}
+
   display: flex;
   gap: ${rem(spacing.xl)};
   align-items: center;
@@ -46,6 +56,7 @@ const ActionLink = styled(ButtonLink)`
 
 type AnnouncementBannerProps = {
   message: string;
+  heading?: string;
   linkText?: string;
   to?: string;
 };
@@ -56,17 +67,21 @@ type AnnouncementBannerProps = {
  */
 export const AnnouncementBanner: FC<AnnouncementBannerProps> = ({
   message,
+  heading,
   linkText,
   to,
 }) => (
   <Wrapper>
-    <Message>
-      <Markdown>{message}</Markdown>
-    </Message>
-    {linkText && to && (
-      <ActionLink kind="primary" to={to}>
-        {linkText}
-      </ActionLink>
-    )}
+    {heading && <Heading>{heading}</Heading>}
+    <MessageWrapper>
+      <Message>
+        <Markdown>{message}</Markdown>
+      </Message>
+      {linkText && to && (
+        <ActionLink kind="primary" to={to}>
+          {linkText}
+        </ActionLink>
+      )}
+    </MessageWrapper>
   </Wrapper>
 );

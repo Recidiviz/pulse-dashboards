@@ -21,6 +21,7 @@ import { HomepageSectionHeading } from "~@jii/common-ui";
 import { useUsAzTranslations } from "~@jii/translation";
 import { withPresenterManager } from "~hydration-utils";
 
+import { IONBanner } from "../IONReferral";
 import { useUsAzSingleResidentContext } from "../UsAzSingleResidentContext/UsAzSingleResidentContext";
 import { DateInfoCard } from "./DateInfoCard";
 import { DPRBanner } from "./DPRBanner";
@@ -37,6 +38,8 @@ const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
       <div>
         <section>
           {isDprQualified && <DPRBanner />}
+
+          <IONBanner />
 
           <HomepageSectionHeading>
             {t(($) => $.importantDates.sectionHeader)}
@@ -57,14 +60,10 @@ const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
   });
 
 function usePresenter() {
-  const { displayedDates, isTprApproved, isDtpApproved } =
-    useUsAzSingleResidentContext();
+  const { displayedDates } = useUsAzSingleResidentContext();
   const { t } = useUsAzTranslations();
 
-  return new UsAzImportantDatesPresenter(displayedDates, t, {
-    isTprApproved,
-    isDtpApproved,
-  });
+  return new UsAzImportantDatesPresenter(displayedDates, t);
 }
 
 export const UsAzImportantDates = withPresenterManager({

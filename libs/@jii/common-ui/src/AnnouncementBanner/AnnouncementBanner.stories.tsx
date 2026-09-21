@@ -46,11 +46,21 @@ type AnnouncementBannerStory = StoryObj<typeof meta>;
 
 export const Default: AnnouncementBannerStory = {};
 
-export const WithoutCta: AnnouncementBannerStory = {
+export const WithoutCTA: AnnouncementBannerStory = {
   args: {
     message:
       "**Now in Spanish**\n\nThe Program List is now available in Spanish.",
     linkText: undefined,
     to: undefined,
+  },
+};
+
+export const WithHeading: AnnouncementBannerStory = {
+  args: {
+    heading: "Upcoming change to earned time policy",
+    message:
+      "**Starting January 1**, the way earned time is awarded is changing. " +
+      "Completing an approved program can now reduce your sentence, and the " +
+      "credits you have already earned will not be affected.",
   },
 };
