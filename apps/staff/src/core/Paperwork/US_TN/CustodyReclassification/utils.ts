@@ -155,11 +155,17 @@ export function prefilledCoverSheetData(
   return out;
 }
 
+export const COVER_SHEET_CHECKED = "_X_";
+export const COVER_SHEET_BLANK = "___";
+
 export function getCoverSheetTemplateArgs(
   resident: Resident,
   formData: Partial<UsTnCoverSheetSharedDraftData>,
+  trusteeChecklistReworkEnabled = false,
 ): DocxTemplateFormContents {
-  const formContents: Record<string, string> = {};
+  // Values are placeholder text except showTrusteeGatingQuestions, which drives
+  // a docxtemplater conditional section and so has to stay a real boolean.
+  const formContents: Record<string, string | boolean> = {};
 
   const now = new Date();
 
@@ -214,26 +220,50 @@ export function getCoverSheetTemplateArgs(
   formContents.counselorOverride = counselorRecommendedOverride ?? "     ";
   formContents.counselorLevel = counselorRecommendedCustody ?? "     ";
 
-  formContents.ccY = checklistCompletedOnOverride === "Y" ? "_X_" : "___";
-  formContents.ccN = checklistCompletedOnOverride === "N" ? "_X_" : "___";
-  formContents.ccNA = checklistCompletedOnOverride === "NA" ? "_X_" : "___";
+  // Drives a conditional section in both cover sheet templates, which are
+  // shared with the live pilot path, so the block is hidden rather than removed.
+  formContents.showTrusteeGatingQuestions = !trusteeChecklistReworkEnabled;
 
-  [formContents.pq1Y, formContents.pq1N] = coverSheetTFFields(
-    trusteeNotConvictedOfFirstDegreeMurder,
-  );
+  if (trusteeChecklistReworkEnabled) {
+    formContents.ccY = COVER_SHEET_BLANK;
+    formContents.ccN = COVER_SHEET_BLANK;
+    formContents.ccNA = COVER_SHEET_BLANK;
 
-  [formContents.pq2Y, formContents.pq2N] = coverSheetTFFields(
-    isServingLife,
-    false,
-  );
+    [1, 2, 3, 4].forEach((n) => {
+      [formContents[`pq${n}Y`], formContents[`pq${n}N`]] =
+        coverSheetTFFields(undefined);
+    });
+  } else {
+    formContents.ccY =
+      checklistCompletedOnOverride === "Y"
+        ? COVER_SHEET_CHECKED
+        : COVER_SHEET_BLANK;
+    formContents.ccN =
+      checklistCompletedOnOverride === "N"
+        ? COVER_SHEET_CHECKED
+        : COVER_SHEET_BLANK;
+    formContents.ccNA =
+      checklistCompletedOnOverride === "NA"
+        ? COVER_SHEET_CHECKED
+        : COVER_SHEET_BLANK;
 
-  [formContents.pq3Y, formContents.pq3N] = coverSheetTFFields(
-    trusteeHas10YearsOrLessRemaining,
-  );
+    [formContents.pq1Y, formContents.pq1N] = coverSheetTFFields(
+      trusteeNotConvictedOfFirstDegreeMurder,
+    );
 
-  [formContents.pq4Y, formContents.pq4N] = coverSheetTFFields(
-    trusteeNotServingForSexualOffense,
-  );
+    [formContents.pq2Y, formContents.pq2N] = coverSheetTFFields(
+      isServingLife,
+      false,
+    );
+
+    [formContents.pq3Y, formContents.pq3N] = coverSheetTFFields(
+      trusteeHas10YearsOrLessRemaining,
+    );
+
+    [formContents.pq4Y, formContents.pq4N] = coverSheetTFFields(
+      trusteeNotServingForSexualOffense,
+    );
+  }
 
   // Add tabs before newlines so the underlining looks right in these big blocks
   (
@@ -265,13 +295,13 @@ function coverSheetTFFields(
 ): [string, string] {
   if (invert) {
     return [
-      fieldValue === "false" ? "_X_" : "___",
-      fieldValue === "true" ? "_X_" : "___",
+      fieldValue === "false" ? COVER_SHEET_CHECKED : COVER_SHEET_BLANK,
+      fieldValue === "true" ? COVER_SHEET_CHECKED : COVER_SHEET_BLANK,
     ];
   }
 
   return [
-    fieldValue === "true" ? "_X_" : "___",
-    fieldValue === "false" ? "_X_" : "___",
+    fieldValue === "true" ? COVER_SHEET_CHECKED : COVER_SHEET_BLANK,
+    fieldValue === "false" ? COVER_SHEET_CHECKED : COVER_SHEET_BLANK,
   ];
 }

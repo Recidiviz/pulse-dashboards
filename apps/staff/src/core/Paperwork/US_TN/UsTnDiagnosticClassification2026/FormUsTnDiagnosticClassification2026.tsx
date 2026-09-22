@@ -24,6 +24,7 @@ import {
   dcafAssessmentQuestions,
 } from "~datatypes";
 
+import { useFeatureVariants } from "../../../../components/StoreProvider";
 import { Opportunity } from "../../../../WorkflowsStore";
 import { UsTnDiagnosticClassification2026Form } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnDiagnosticClassification2026Form";
 import { Resident } from "../../../../WorkflowsStore/Resident";
@@ -69,6 +70,8 @@ export const FormUsTnDiagnosticClassification2026 = observer(
     const { derivedData, formTemplateData, formData } = form;
     const resident = opportunity.person as Resident;
 
+    const { trusteeChecklistRework } = useFeatureVariants();
+
     const onClickDownload = async () => {
       const fileInputs: FileGeneratorArgs[] = [
         [
@@ -80,7 +83,13 @@ export const FormUsTnDiagnosticClassification2026 = observer(
           `${resident.displayName} - Diagnostic Classification Form.docx`,
           dcafTemplate,
           {
-            ...getCoverSheetTemplateArgs(resident, formData),
+            ...getCoverSheetTemplateArgs(
+              resident,
+              formData,
+              // Hides the gating questions on the other forms; dcaf_template.docx
+              // has no gating block, so it has no effect here.
+              !!trusteeChecklistRework,
+            ),
             ...formTemplateData,
           },
         ],

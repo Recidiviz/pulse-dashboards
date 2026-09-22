@@ -20,6 +20,7 @@ import styled from "styled-components";
 
 import { OpportunityType, UsTnCoverSheetSharedDraftData } from "~datatypes";
 
+import { useFeatureVariants } from "../../../../components/StoreProvider";
 import { UsTnReclassificationReviewForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassificationReviewForm";
 import { US_TN_CLASSIFICATION_OPPORTUNITIES } from "../../../CaseloadView/AllCaseloadsTable/utils";
 import DOCXFormTextArea from "../../DOCXFormTextArea";
@@ -406,9 +407,14 @@ const CoverSheet: React.FC = () => {
 };
 
 function HeaderSection({ oppType }: { oppType: OpportunityType }) {
+  const { trusteeChecklistRework } = useFeatureVariants();
+
   if (!getIsPilotVersion(oppType)) return null;
 
-  const showTrusteeSection = oppType !== "usTnInitialClassification2026Policy";
+  // All four gating questions become criteria 1-3 under the rework.
+  const showTrusteeSection =
+    oppType !== "usTnInitialClassification2026Policy" &&
+    !trusteeChecklistRework;
   return (
     <>
       <hr />
