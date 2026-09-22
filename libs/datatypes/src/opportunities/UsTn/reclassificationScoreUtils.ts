@@ -252,7 +252,17 @@ export function resolveAnnexOutcome(
 export function showTrusteeChecklist(
   totalText: string,
   formData: Partial<UsTnReclassification2026DraftData>,
+  trusteeChecklistReworkEnabled = false,
 ): boolean {
+  const scoredOrOverriddenToLow =
+    totalText === "LOW" ||
+    formData.counselorRecommendedCustody === "LOW" ||
+    formData.recommendationCustodyLevel === "LOW";
+
+  // Under the rework criteria 1-3 live inside the checklist, so a False shows
+  // as Not eligible rather than hiding the form.
+  if (trusteeChecklistReworkEnabled) return scoredOrOverriddenToLow;
+
   // Only show the trustee checklist if all three questions at top are true
   // (no 1st degree, 10 years or less, and not serving life) and the person
   // has been scored or overridden to "LOW"
@@ -261,9 +271,7 @@ export function showTrusteeChecklist(
     formData.trusteeHas10YearsOrLessRemaining === "true" &&
     formData.isServingLife === "false" &&
     formData.trusteeNotServingForSexualOffense === "true" &&
-    (totalText === "LOW" ||
-      formData.counselorRecommendedCustody === "LOW" ||
-      formData.recommendationCustodyLevel === "LOW")
+    scoredOrOverriddenToLow
   );
 }
 

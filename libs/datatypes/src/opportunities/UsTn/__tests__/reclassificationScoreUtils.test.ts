@@ -74,6 +74,47 @@ describe("showTrusteeChecklist", () => {
   it("returns false if no classification level set to LOW", () => {
     expect(showTrusteeChecklist("NOT LOW", formDataBase)).toBeFalse();
   });
+
+  describe("with trusteeChecklistRework enabled", () => {
+    it("gates on custody level alone", () => {
+      expect(showTrusteeChecklist("LOW", {}, true)).toBeTrue();
+      expect(
+        showTrusteeChecklist(
+          "NOT LOW",
+          { counselorRecommendedCustody: "LOW" },
+          true,
+        ),
+      ).toBeTrue();
+      expect(
+        showTrusteeChecklist(
+          "NOT LOW",
+          { recommendationCustodyLevel: "LOW" },
+          true,
+        ),
+      ).toBeTrue();
+    });
+
+    it("still renders the checklist when a criterion is False", () => {
+      expect(
+        showTrusteeChecklist(
+          "LOW",
+          { ...formDataBase, trusteeNotServingForSexualOffense: "false" },
+          true,
+        ),
+      ).toBeTrue();
+      expect(
+        showTrusteeChecklist(
+          "LOW",
+          { ...formDataBase, trusteeNotConvictedOfFirstDegreeMurder: "false" },
+          true,
+        ),
+      ).toBeTrue();
+    });
+
+    it("still requires a custody level of LOW", () => {
+      expect(showTrusteeChecklist("NOT LOW", formDataBase, true)).toBeFalse();
+    });
+  });
 });
 
 describe("getBreakdownSectionScoreV2", () => {

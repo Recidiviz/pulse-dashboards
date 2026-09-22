@@ -25,6 +25,7 @@ import {
   showTrusteeChecklist,
 } from "~datatypes";
 
+import { useFeatureVariants } from "../../../../components/StoreProvider";
 import { Opportunity } from "../../../../WorkflowsStore";
 import { UsTnReclassification2026Form } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassification2026Form";
 import { Resident } from "../../../../WorkflowsStore/Resident";
@@ -77,9 +78,12 @@ export const FormUsTnReclassification2026 = observer(
     const { derivedData, formTemplateData, formData } = form;
     const resident = opportunity.person as Resident;
 
+    const { trusteeChecklistRework } = useFeatureVariants();
+
     const includeTrusteeChecklist = showTrusteeChecklist(
       derivedData.totalText,
       formData,
+      !!trusteeChecklistRework,
     );
 
     const onClickDownload = async () => {
