@@ -34,6 +34,7 @@ import { PageUsMaReentryQuestionnaire } from "../pages/PageUsMaReentryQuestionna
 import { PageUsMaResidentHome } from "../pages/PageUsMaResidentHome";
 import { PageUsMaResourceDetail } from "../pages/PageUsMaResourceDetail";
 import { PageUsMaResourceList } from "../pages/PageUsMaResourceList";
+import { UsMaReentryLayout } from "../Reentry/UsMaReentryLayout";
 
 export const UsMaRouter = () => {
   const { residentFlags } = useSingleResidentContext();
@@ -49,29 +50,32 @@ export const UsMaRouter = () => {
       </Route>
       <Route path={ProgramCatalog.path} element={<PageUsMaProgramCatalog />} />
       {residentFlags.usMaReentry && (
-        <Route path={UsMaReentry.path}>
-          <Route index element={<PageUsMaReentryOverview />} />
+        <>
+          <Route path={UsMaReentry.path} element={<UsMaReentryLayout />}>
+            <Route index element={<PageUsMaReentryOverview />} />
+            <Route
+              path={UsMaReentry.Checklist.path}
+              element={<PageUsMaReentryChecklist />}
+            />
+            <Route
+              path={UsMaReentry.Guide.path}
+              element={<PageUsMaReentryGuide />}
+            />
+            <Route
+              path={UsMaReentry.Resources.CategoryResults.path}
+              element={<PageUsMaResourceList />}
+            />
+            <Route
+              path={UsMaReentry.Resources.CategoryResults.Detail.path}
+              element={<PageUsMaResourceDetail />}
+            />
+          </Route>
+          {/* Sibling route, since it has its own separate full-screen layout */}
           <Route
             path={UsMaReentry.Questionnaire.path}
             element={<PageUsMaReentryQuestionnaire />}
           />
-          <Route
-            path={UsMaReentry.Checklist.path}
-            element={<PageUsMaReentryChecklist />}
-          />
-          <Route
-            path={UsMaReentry.Guide.path}
-            element={<PageUsMaReentryGuide />}
-          />
-          <Route
-            path={UsMaReentry.Resources.CategoryResults.path}
-            element={<PageUsMaResourceList />}
-          />
-          <Route
-            path={UsMaReentry.Resources.CategoryResults.Detail.path}
-            element={<PageUsMaResourceDetail />}
-          />
-        </Route>
+        </>
       )}
       <Route path="*" element={<NotFound />} />
     </Routes>

@@ -15,8 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Home } from "../Reentry/Home/Home";
+import { Outlet } from "react-router-dom";
 
-export const PageUsMaReentryOverview = () => {
-  return <Home />;
-};
+import { ReentryFooter } from "./ReentryFooter/ReentryFooter";
+import { ReentryNavBar } from "./ReentryNavBar/ReentryNavBar";
+import { Wrapper } from "./UsMaReentryLayout.styles";
+
+export const UsMaReentryLayout = () => (
+  <Wrapper>
+    <ReentryNavBar />
+    <Outlet />
+    <ReentryFooter />
+  </Wrapper>
+);

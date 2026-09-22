@@ -141,6 +141,11 @@ export const ResourceExplorer = route(
   },
 );
 
+export const usMaReentryGuideTopicSlugs = [
+  "id-documents",
+  "housing-basics",
+] as const;
+
 export const UsMaReentry = route(
   "reentry",
   {},
@@ -150,7 +155,7 @@ export const UsMaReentry = route(
     Checklist: route("checklist"),
     Guide: route("guide/:topicSlug", {
       params: {
-        topicSlug: union(["id-documents", "housing-basics"] as const),
+        topicSlug: union(usMaReentryGuideTopicSlugs),
       },
     }),
     Resources: ResourceExplorer,

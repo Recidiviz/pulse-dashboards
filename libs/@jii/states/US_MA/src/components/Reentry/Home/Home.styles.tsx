@@ -15,8 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Home } from "../Reentry/Home/Home";
+import { rem } from "polished";
+import styled from "styled-components";
 
-export const PageUsMaReentryOverview = () => {
-  return <Home />;
-};
+import { PageContainer } from "~@jii/common-ui";
+import { palette, spacing, typography } from "~design-system";
+
+export const Wrapper = styled(PageContainer)`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: ${rem(spacing.lg)};
+  padding-bottom: ${rem(spacing.xl)};
+  padding-top: ${rem(spacing.lg)};
+`;
+
+export const Greeting = styled.h1`
+  ${typography.Serif24}
+
+  color: ${palette.pine1};
+  margin: 0;
+`;

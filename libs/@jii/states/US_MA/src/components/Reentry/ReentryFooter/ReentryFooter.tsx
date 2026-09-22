@@ -15,8 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Home } from "../Reentry/Home/Home";
+import { Body, Content, Heading, Wrapper } from "./ReentryFooter.styles";
 
-export const PageUsMaReentryOverview = () => {
-  return <Home />;
-};
+// TODO OBT-50419: content and design TBD
+export const ReentryFooter = () => (
+  <Wrapper>
+    <Content>
+      <Heading>About</Heading>
+      <Body>
+        Made by Recidiviz, a non-profit that partners with state criminal
+        justice agencies to advance their use of data and reduce incarceration.
+      </Body>
+    </Content>
+  </Wrapper>
+);

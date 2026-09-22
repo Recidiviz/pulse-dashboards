@@ -15,8 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Home } from "../Reentry/Home/Home";
+import styled from "styled-components";
 
-export const PageUsMaReentryOverview = () => {
-  return <Home />;
-};
+export const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+`;

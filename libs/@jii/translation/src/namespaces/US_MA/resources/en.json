@@ -145,5 +145,57 @@
   },
   "spanishLaunchBanner": {
     "message": "**Program list now available in Spanish** \n\n**Ahora en español **\n\nLa Lista de Programas ahora está disponible en español.\nPara cambiar, toque “English” en la parte superior de su tableta Orijin y elija “Español”."
+  },
+  "reentry": {
+    "navBar": {
+      "sectionLabel": "Reentry",
+      "overview": "Overview",
+      "checklist": "Checklist",
+      "resourceExplorer": "Resource Explorer"
+    },
+    "overview": {
+      "pageTitle": "Reentry Overview",
+      "greeting": "Hello, {{name}}",
+      "questionnaireCta": {
+        "duration": "About 10 minutes",
+        "sectionCount_one": "{{count}} section",
+        "sectionCount_other": "{{count}} sections",
+        "saveAndReturn": "Save and come back anytime",
+        "notStarted": {
+          "heading": "Build your Reentry profile",
+          "description": "Answer a few questions to build your profile. Your answers will create a customized reentry checklist to show you what tasks to focus on now.",
+          "cta": "Start answering"
+        },
+        "inProgress": {
+          "heading": "Continue your Reentry profile",
+          "description": "Continue answering from where you left off.",
+          "cta": "Continue answering"
+        },
+        "completed": {
+          "heading": "Your personalized reentry checklist is ready.",
+          "recommendedTaskCount_one": "{{count}} new task recommended based on your reentry profile.",
+          "recommendedTaskCount_other": "{{count}} new tasks recommended based on your reentry profile.",
+          "cta": "View checklist"
+        },
+        "reviewProfile": {
+          "heading": "Keep your reentry profile current",
+          "description": "Update it any time your plans change. Your checklist will update too.",
+          "cta": "Review"
+        }
+      },
+      "resourceCategories": {
+        "sectionLabel": "Plan your next steps",
+        "housing": {
+          "heading": "Find a place to live",
+          "description": "Transitional housing, sober homes, and reentry-friendly programs across Massachusetts.",
+          "cta": "Browse housing options"
+        }
+      },
+      "guideCta": {
+        "sectionLabel": "Learn more about",
+        "idDocuments": "ID Documents",
+        "housingBasics": "Housing basics"
+      }
+    }
   }
 }

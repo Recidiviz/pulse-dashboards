@@ -15,8 +15,33 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Home } from "../Reentry/Home/Home";
+import { rem } from "polished";
+import styled from "styled-components";
 
-export const PageUsMaReentryOverview = () => {
-  return <Home />;
-};
+import { FullBleedContainer, PageContainer } from "~@jii/common-ui";
+import { palette, spacing, typography } from "~design-system";
+
+export const Wrapper = styled(FullBleedContainer).attrs({ as: "footer" })`
+  background: ${palette.marble3};
+  margin-top: auto;
+`;
+
+export const Content = styled(PageContainer)`
+  padding-bottom: ${rem(spacing.lg)};
+  padding-top: ${rem(spacing.lg)};
+`;
+
+export const Heading = styled.h2`
+  ${typography.Sans14}
+
+  color: ${palette.pine4};
+  font-weight: 600;
+  margin: 0 0 ${rem(spacing.xs)};
+`;
+
+export const Body = styled.p`
+  ${typography.Sans14}
+
+  color: ${palette.slate85};
+  margin: 0;
+`;
