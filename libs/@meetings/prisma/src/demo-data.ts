@@ -1375,7 +1375,7 @@ export const CLIENT_CNI_SUMMARIES: DemoCNISummary[][] = [
       fields: {
         primaryStatus: {
           fieldValue: "housed",
-          quotes: ["She likes living at the Temporary Housing"],
+          quotes: ["She likes living at Hope Homes"],
           lastVerifiedDate: "2026-07-14",
           documentId: "doc-housing-2",
           extractorVersionId: "demo-extractor-v1",
@@ -1383,15 +1383,15 @@ export const CLIENT_CNI_SUMMARIES: DemoCNISummary[][] = [
         housedType: {
           fieldValue: "temporary_housing",
           quotes: [
-            "would like to continue living at Temporary Housing after the funding is up in order to gain stability",
+            "would like to continue living at Hope Homes after the funding is up in order to gain stability",
           ],
           lastVerifiedDate: "2026-07-14",
           documentId: "doc-housing-2",
           extractorVersionId: "demo-extractor-v1",
         },
         temporaryHousingName: {
-          fieldValue: "Temporary Housing",
-          quotes: ["at Temporary Housing"],
+          fieldValue: "Hope Homes",
+          quotes: ["at Hope Homes"],
           lastVerifiedDate: "2026-07-14",
           documentId: "doc-housing-2",
           extractorVersionId: "demo-extractor-v1",
