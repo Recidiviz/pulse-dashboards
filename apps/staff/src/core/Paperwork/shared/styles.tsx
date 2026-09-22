@@ -55,6 +55,12 @@ export const Input = styled.input`
   background-position: left 3px center;
   background-size: 0.75em;
   padding-left: 1.5em;
+
+  &&:disabled {
+    background-image: none;
+    background-color: ${palette.slate06};
+    cursor: not-allowed;
+  }
 `;
 
 export const FormContainer = styled.form<FormViewerContextData>`
@@ -80,7 +86,7 @@ export const FormContainer = styled.form<FormViewerContextData>`
             background-color: aliceblue;
             transition-duration: ${animation.defaultDurationMs}ms;
             transition-property: background-color;
-            &:hover {
+            &:hover:not(:disabled) {
               background-color: ${darken(0.1, "aliceblue")};
             }
         `}

@@ -160,6 +160,8 @@ export type FeatureVariant =
   | "usTxEarlyReleaseFromSupervisionV1"
   | "usTxAnnualReportStatusV2"
   | "usTxEarlyReleaseFromSupervisionV2"
+  | "usTxEnablePoFormSection"
+  | "usTxEnableSupervisorFormSection"
 
   // INSIGHTS
   | "insightsLeadershipPageAllDistricts"
@@ -323,6 +325,8 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usTxEarlyReleaseFromSupervisionV1: {},
   usTxAnnualReportStatusV2: {},
   usTxEarlyReleaseFromSupervisionV2: {},
+  usTxEnablePoFormSection: {},
+  usTxEnableSupervisorFormSection: {},
   sentenceProgressV2: {},
   hideWorkflowsOpportunities: {},
   hideWorkflowsResidentsPage: {},
@@ -375,6 +379,8 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usTnExpiration: {},
         usTnExpirationSubmitToTomis: {},
         usTnSuspensionOfDirectSupervision: {},
+        usTxEnablePoFormSection: { activeTenants: ["US_TX"] },
+        usTxEnableSupervisorFormSection: { activeTenants: ["US_TX"] },
         zeroGrantsFlag: { activeTenants: ["US_ID", "US_MI", "US_TN", "US_PA"] },
         usTnInitialClassification: {},
         usTnTEPENotesForAll: {},
@@ -457,6 +463,8 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         showPreviouslyReviewedOpportunities: {
           activeTenants: ["US_TX"],
         },
+        usTxEnablePoFormSection: { activeTenants: ["US_TX"] },
+        usTxEnableSupervisorFormSection: { activeTenants: ["US_TX"] },
       };
 
 export type LanternMethodologyByTenant = {

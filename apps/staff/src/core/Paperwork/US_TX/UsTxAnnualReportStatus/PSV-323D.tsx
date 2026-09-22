@@ -17,6 +17,7 @@
 
 import React, { useContext } from "react";
 
+import { useFeatureVariants } from "../../../../components/StoreProvider";
 import { FormViewerContext } from "../../FormViewer";
 import FormCheckbox from "../../shared/FormCheckbox";
 import FormHeader from "../../shared/FormHeader";
@@ -26,6 +27,8 @@ import { PrintablePage } from "../../styles";
 
 const FormPSV323D: React.FC = () => {
   const formViewerContext = useContext(FormViewerContext);
+  const { usTxEnablePoFormSection, usTxEnableSupervisorFormSection } =
+    useFeatureVariants();
 
   return (
     <PrintablePage>
@@ -253,6 +256,7 @@ const FormPSV323D: React.FC = () => {
                 fontSize: "8px",
                 marginLeft: "5px",
               }}
+              disabled={!usTxEnablePoFormSection}
             />
           </Item>
           <Item>
@@ -260,6 +264,7 @@ const FormPSV323D: React.FC = () => {
             <FormInput
               name="supervisingOfficerDate"
               style={{ borderRight: "unset" }}
+              disabled={!usTxEnablePoFormSection}
             />
           </Item>
           <Item textAlignCenter>
@@ -279,12 +284,16 @@ const FormPSV323D: React.FC = () => {
               id="supervisingOfficerRecommendCheckYes"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="supervisingOfficerRecommendCheckNo"
+              disabled={!usTxEnablePoFormSection}
             ></FormCheckbox>
           </Item>
         </Grid>
         <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
           <Item>Signature:</Item>
-          <FormInput name="supervisingOfficerSignature" />
+          <FormInput
+            name="supervisingOfficerSignature"
+            disabled={!usTxEnablePoFormSection}
+          />
           <Item textAlignCenter>No</Item>
           <Item textAlignCenter>
             <FormCheckbox
@@ -293,12 +302,16 @@ const FormPSV323D: React.FC = () => {
               id="supervisingOfficerRecommendCheckNo"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="supervisingOfficerRecommendCheckYes"
+              disabled={!usTxEnablePoFormSection}
             ></FormCheckbox>
           </Item>
         </Grid>
         <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
           <Item>Remarks:</Item>
-          <FormInput name="supervisingOfficerRemarks" />
+          <FormInput
+            name="supervisingOfficerRemarks"
+            disabled={!usTxEnablePoFormSection}
+          />
         </Grid>
         <Item
           style={{ lineHeight: "unset", height: "3px", display: "flex" }}
@@ -309,6 +322,7 @@ const FormPSV323D: React.FC = () => {
             <FormInput
               name="unitSupervisorName"
               style={{ borderRight: "unset" }}
+              disabled={!usTxEnableSupervisorFormSection}
             />
           </Item>
           <Item>
@@ -316,6 +330,7 @@ const FormPSV323D: React.FC = () => {
             <FormInput
               name="unitSupervisorDate"
               style={{ borderRight: "unset" }}
+              disabled={!usTxEnableSupervisorFormSection}
             />
           </Item>
           <Item textAlignCenter>
@@ -335,12 +350,16 @@ const FormPSV323D: React.FC = () => {
               id="unitSupervisorConcurWithSupervisingOfficerCheckYes"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="unitSupervisorConcurWithSupervisingOfficerCheckNo"
+              disabled={!usTxEnableSupervisorFormSection}
             ></FormCheckbox>
           </Item>
         </Grid>
         <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
           <Item>Signature:</Item>
-          <FormInput name="unitSupervisorSignature" />
+          <FormInput
+            name="unitSupervisorSignature"
+            disabled={!usTxEnableSupervisorFormSection}
+          />
           <Item textAlignCenter>No</Item>
           <Item textAlignCenter>
             <FormCheckbox
@@ -349,12 +368,16 @@ const FormPSV323D: React.FC = () => {
               id="unitSupervisorConcurWithSupervisingOfficerCheckNo"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="unitSupervisorConcurWithSupervisingOfficerCheckYes"
+              disabled={!usTxEnableSupervisorFormSection}
             ></FormCheckbox>
           </Item>
         </Grid>
         <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
           <Item>Remarks:</Item>
-          <FormInput name="unitSupervisorRemarks" />
+          <FormInput
+            name="unitSupervisorRemarks"
+            disabled={!usTxEnableSupervisorFormSection}
+          />
         </Grid>
         <Item
           style={{ lineHeight: "unset", height: "3px", display: "flex" }}
@@ -365,6 +388,7 @@ const FormPSV323D: React.FC = () => {
             <FormInput
               name="paroleSupervisorName"
               style={{ borderRight: "unset" }}
+              disabled={!usTxEnableSupervisorFormSection}
             />
           </Item>
           <Item>
@@ -372,6 +396,7 @@ const FormPSV323D: React.FC = () => {
             <FormInput
               name="paroleSupervisorDate"
               style={{ borderRight: "unset" }}
+              disabled={!usTxEnableSupervisorFormSection}
             />
           </Item>
           <Item textAlignCenter>
@@ -391,12 +416,16 @@ const FormPSV323D: React.FC = () => {
               id="paroleSupervisorConcurWithSupervisingOfficerCheckYes"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="paroleSupervisorConcurWithSupervisingOfficerCheckNo"
+              disabled={!usTxEnableSupervisorFormSection}
             ></FormCheckbox>
           </Item>
         </Grid>
         <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
           <Item>Signature:</Item>
-          <FormInput name="paroleSupervisorSignature" />
+          <FormInput
+            name="paroleSupervisorSignature"
+            disabled={!usTxEnableSupervisorFormSection}
+          />
           <Item textAlignCenter>No</Item>
           <Item textAlignCenter>
             <FormCheckbox
@@ -405,12 +434,16 @@ const FormPSV323D: React.FC = () => {
               id="paroleSupervisorConcurWithSupervisingOfficerCheckNo"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="paroleSupervisorConcurWithSupervisingOfficerCheckYes"
+              disabled={!usTxEnableSupervisorFormSection}
             ></FormCheckbox>
           </Item>
         </Grid>
         <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
           <Item>Remarks:</Item>
-          <FormInput name="paroleSupervisorRemarks" />
+          <FormInput
+            name="paroleSupervisorRemarks"
+            disabled={!usTxEnableSupervisorFormSection}
+          />
         </Grid>
         <Item
           style={{ lineHeight: "unset", height: "3px", display: "flex" }}
@@ -421,6 +454,7 @@ const FormPSV323D: React.FC = () => {
             <FormInput
               name="assistantRegionDirectorName"
               style={{ borderRight: "unset" }}
+              disabled={!usTxEnableSupervisorFormSection}
             />
           </Item>
           <Item>
@@ -428,6 +462,7 @@ const FormPSV323D: React.FC = () => {
             <FormInput
               name="assistantRegionDirectorDate"
               style={{ borderRight: "unset" }}
+              disabled={!usTxEnableSupervisorFormSection}
             />
           </Item>
           <Item textAlignCenter>
@@ -447,12 +482,16 @@ const FormPSV323D: React.FC = () => {
               id="assistantRegionDirectorConcurWithSupervisingOfficerCheckYes"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="assistantRegionDirectorConcurWithSupervisingOfficerCheckNo"
+              disabled={!usTxEnableSupervisorFormSection}
             ></FormCheckbox>
           </Item>
         </Grid>
         <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
           <Item>Signature:</Item>
-          <FormInput name="assistantRegionDirectorSignature" />
+          <FormInput
+            name="assistantRegionDirectorSignature"
+            disabled={!usTxEnableSupervisorFormSection}
+          />
           <Item textAlignCenter>No</Item>
           <Item textAlignCenter>
             <FormCheckbox
@@ -461,12 +500,16 @@ const FormPSV323D: React.FC = () => {
               id="assistantRegionDirectorConcurWithSupervisingOfficerCheckNo"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="assistantRegionDirectorConcurWithSupervisingOfficerCheckYes"
+              disabled={!usTxEnableSupervisorFormSection}
             ></FormCheckbox>
           </Item>
         </Grid>
         <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
           <Item>Remarks:</Item>
-          <FormInput name="assistantRegionDirectorRemarks" />
+          <FormInput
+            name="assistantRegionDirectorRemarks"
+            disabled={!usTxEnableSupervisorFormSection}
+          />
         </Grid>
         <Item
           style={{ lineHeight: "unset", height: "3px", display: "flex" }}
@@ -477,6 +520,7 @@ const FormPSV323D: React.FC = () => {
             <FormInput
               name="regionDirectorName"
               style={{ borderRight: "unset" }}
+              disabled={!usTxEnableSupervisorFormSection}
             />
           </Item>
           <Item>
@@ -484,6 +528,7 @@ const FormPSV323D: React.FC = () => {
             <FormInput
               name="regionDirectorDate"
               style={{ borderRight: "unset" }}
+              disabled={!usTxEnableSupervisorFormSection}
             />
           </Item>
           <Item textAlignCenter>Final Authority</Item>
@@ -501,12 +546,16 @@ const FormPSV323D: React.FC = () => {
               id="regionDirectorConcurWithSupervisingOfficerCheckYes"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="regionDirectorConcurWithSupervisingOfficerCheckNo"
+              disabled={!usTxEnableSupervisorFormSection}
             ></FormCheckbox>
           </Item>
         </Grid>
         <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
           <Item>Signature:</Item>
-          <FormInput name="regionDirectorSignature" />
+          <FormInput
+            name="regionDirectorSignature"
+            disabled={!usTxEnableSupervisorFormSection}
+          />
           <Item textAlignCenter>No</Item>
           <Item textAlignCenter>
             <FormCheckbox
@@ -515,12 +564,16 @@ const FormPSV323D: React.FC = () => {
               id="regionDirectorConcurWithSupervisingOfficerCheckNo"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="regionDirectorConcurWithSupervisingOfficerCheckYes"
+              disabled={!usTxEnableSupervisorFormSection}
             ></FormCheckbox>
           </Item>
         </Grid>
         <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
           <Item>Remarks:</Item>
-          <FormInput name="regionDirectorRemarks" />
+          <FormInput
+            name="regionDirectorRemarks"
+            disabled={!usTxEnableSupervisorFormSection}
+          />
         </Grid>
 
         <Footer>PSV-323D (Rev. 02/10/2026)</Footer>
