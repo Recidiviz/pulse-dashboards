@@ -93,8 +93,8 @@ import {
   UsTnExpirationOpportunityUpdate,
 } from "./types";
 
-// Firestore's "in" operator supports at most 30 comparison values per query
-const FIRESTORE_IN_QUERY_BATCH_SIZE = 30;
+// Firestore's "in" operator supports at most 10 comparison values per query
+const FIRESTORE_IN_QUERY_BATCH_SIZE = 10;
 
 /** Server-side inequality range for a `getResidentsForState` query: matches
  * documents whose `field` falls between `startDateInclusive` and
@@ -270,13 +270,17 @@ export default class FirestoreStore {
     );
   }
 
-  async getClientsForRecordIds(recordIds: string[]): Promise<ClientRecord[]> {
+  async getClientsForRecordIds(
+    recordIds: string[],
+    stateCode: string,
+  ): Promise<ClientRecord[]> {
     if (recordIds.length === 0) return [];
     const batches = await Promise.all(
       chunk(recordIds, FIRESTORE_IN_QUERY_BATCH_SIZE).map((batch) =>
         getDocs(
           query(
             this.collection({ key: "clients" }),
+            where("stateCode", "==", stateCode),
             where(documentId(), "in", batch),
           ),
         ),

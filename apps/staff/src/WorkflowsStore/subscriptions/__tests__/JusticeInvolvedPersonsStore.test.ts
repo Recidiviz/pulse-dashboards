@@ -151,10 +151,10 @@ describe("JusticeInvolvedPersonsStore", () => {
       expect(
         firestoreStoreMock.getOpportunityUpdatesForReviewerId,
       ).toHaveBeenCalledWith("US_XX", "reviewer-1");
-      expect(firestoreStoreMock.getClientsForRecordIds).toHaveBeenCalledWith([
-        CLIENT_RECORD_A.recordId,
-        CLIENT_RECORD_B.recordId,
-      ]);
+      expect(firestoreStoreMock.getClientsForRecordIds).toHaveBeenCalledWith(
+        [CLIENT_RECORD_A.recordId, CLIENT_RECORD_B.recordId],
+        "US_XX",
+      );
 
       const caseload = store.caseloadByReviewerId.get("reviewer-1");
       expect(caseload?.[0]).toBeInstanceOf(Client);
@@ -178,9 +178,10 @@ describe("JusticeInvolvedPersonsStore", () => {
 
       await store.populateCaseloadForReviewer("reviewer-1");
 
-      expect(firestoreStoreMock.getClientsForRecordIds).toHaveBeenCalledWith([
-        CLIENT_RECORD_A.recordId,
-      ]);
+      expect(firestoreStoreMock.getClientsForRecordIds).toHaveBeenCalledWith(
+        [CLIENT_RECORD_A.recordId],
+        "US_XX",
+      );
     });
 
     it("reuses an existing Client instance for the reviewer when its record ID is still present", async () => {

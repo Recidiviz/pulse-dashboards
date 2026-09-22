@@ -92,6 +92,7 @@ export class JusticeInvolvedPersonsStore {
 
     const newClientDataList = (yield this.firestoreStore.getClientsForRecordIds(
       newClientRecordIds,
+      this.tenantId,
     )) as ClientRecord[];
 
     const newClientsByRecordId = new Map(
@@ -146,6 +147,7 @@ export class JusticeInvolvedPersonsStore {
     const newHistoricalClientDataList =
       (yield this.firestoreStore.getClientsForRecordIds(
         newhistoricalClientRecordIds,
+        this.tenantId,
       )) as ClientRecord[];
 
     const newHistoricalClientsByRecordId = new Map(

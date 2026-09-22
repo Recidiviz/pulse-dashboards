@@ -1284,7 +1284,7 @@ describe("FirestoreStore", () => {
     };
 
     test("returns an empty array without querying Firestore when given no record IDs", async () => {
-      const result = await store.getClientsForRecordIds([]);
+      const result = await store.getClientsForRecordIds([], "US_TX");
 
       expect(result).toEqual([]);
       expect(mockGetDocs).not.toHaveBeenCalled();
@@ -1309,7 +1309,10 @@ describe("FirestoreStore", () => {
         ],
       });
 
-      const result = await store.getClientsForRecordIds([rawClient.recordId]);
+      const result = await store.getClientsForRecordIds(
+        [rawClient.recordId],
+        rawClient.stateCode,
+      );
 
       expect(mockWhere).toHaveBeenCalledWith("mock-document-id-field", "in", [
         rawClient.recordId,
@@ -1317,21 +1320,21 @@ describe("FirestoreStore", () => {
       expect(result).toEqual([clientRecordSchema.parse(rawClient)]);
     });
 
-    test("never calls getDocs with more than 30 recordIds in a batch", async () => {
+    test("never calls getDocs with more than 10 recordIds in a batch", async () => {
       const recordIds = Array.from({ length: 75 }, (_, i) => `record_${i}`);
 
-      await store.getClientsForRecordIds(recordIds);
+      await store.getClientsForRecordIds(recordIds, rawClient.stateCode);
 
       const inQueryBatches = mockWhere.mock.calls
         .filter(([, operator]) => operator === "in")
         .map(([, , batch]) => batch);
 
-      expect(inQueryBatches.length).toBe(3);
+      expect(inQueryBatches.length).toBe(8);
       inQueryBatches.forEach((batch) => {
-        expect(batch.length).toBeLessThanOrEqual(30);
+        expect(batch.length).toBeLessThanOrEqual(10);
       });
       expect(inQueryBatches.flat()).toEqual(recordIds);
-      expect(mockGetDocs).toHaveBeenCalledTimes(3);
+      expect(mockGetDocs).toHaveBeenCalledTimes(8);
     });
   });
 
