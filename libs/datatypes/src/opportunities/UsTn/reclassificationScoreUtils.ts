@@ -17,7 +17,11 @@
 
 import { z } from "zod";
 
-import { TRUSTEE_CRITERIA, TrusteeCriterionKey } from "./trusteeCriteria";
+import {
+  TRUSTEE_ANNEX_SUB_QUESTION,
+  TRUSTEE_CRITERIA,
+  TrusteeCriterionKey,
+} from "./trusteeCriteria";
 import { UsTnReclassification2026DraftData } from "./UsTnReclassification2026Policy";
 import { multiIncidentPeriodReportSchema, TrusteeFormSchema } from "./utils";
 
@@ -189,6 +193,60 @@ export function resolveTrusteeOutcome(
     return { status: "ELIGIBLE_REQUIRES_AC_APPROVAL", ...failures };
 
   return { status: "ELIGIBLE", ...failures };
+}
+
+export type AnnexOutcomeStatus = "INCOMPLETE" | "NOT_ELIGIBLE" | "ELIGIBLE";
+
+export type AnnexOutcome = {
+  status: AnnexOutcomeStatus;
+  failedCriteria: TrusteeCriterionKey[];
+  subQuestionRequired: boolean;
+};
+
+/**
+ * Resolves Annex housing eligibility, a second outcome independent of Trustee
+ * custody: not eligible for Trustee and eligible for Annex is valid.
+ */
+export function resolveAnnexOutcome(
+  formData: Partial<TrusteeFormSchema>,
+): AnnexOutcome {
+  const { key: subQuestionKey, parentKey } = TRUSTEE_ANNEX_SUB_QUESTION;
+
+  const subQuestionRequired = formData[parentKey] === "false";
+  const subQuestionAnswer = subQuestionRequired
+    ? formData[subQuestionKey]
+    : undefined;
+
+  const failedCriteria: TrusteeCriterionKey[] = [];
+  let anyUnanswered = false;
+
+  for (const { key, affectsAnnex } of TRUSTEE_CRITERIA) {
+    if (!affectsAnnex) continue;
+
+    const answer = formData[key];
+
+    if (key === parentKey && answer === "false") {
+      if (subQuestionAnswer === "false") {
+        failedCriteria.push(key);
+      } else if (subQuestionAnswer !== "true") {
+        anyUnanswered = true;
+      }
+    } else if (answer === "false") {
+      failedCriteria.push(key);
+    } else if (answer !== "true") {
+      anyUnanswered = true;
+    }
+  }
+
+  if (failedCriteria.length > 0) {
+    return { status: "NOT_ELIGIBLE", failedCriteria, subQuestionRequired };
+  }
+
+  return {
+    status: anyUnanswered ? "INCOMPLETE" : "ELIGIBLE",
+    failedCriteria,
+    subQuestionRequired,
+  };
 }
 
 export function showTrusteeChecklist(

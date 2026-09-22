@@ -15,7 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { resolveTrusteeOutcome } from "../reclassificationScoreUtils";
+import {
+  resolveAnnexOutcome,
+  resolveTrusteeOutcome,
+} from "../reclassificationScoreUtils";
 import {
   getTrusteeCriterionNumber,
   TRUSTEE_ANNEX_SUB_QUESTION,
@@ -304,5 +307,100 @@ describe("resolveTrusteeOutcome", () => {
     });
 
     expect(outcome.status).toBe("NOT_ELIGIBLE");
+  });
+});
+
+describe("resolveAnnexOutcome", () => {
+  const annexCriteria = TRUSTEE_CRITERIA.filter((c) => c.affectsAnnex);
+  const annexAllTrue = Object.fromEntries(
+    annexCriteria.map((c) => [c.key, "true"]),
+  );
+  const sexOffenderKey = TRUSTEE_ANNEX_SUB_QUESTION.parentKey;
+  const subKey = TRUSTEE_ANNEX_SUB_QUESTION.key;
+
+  it("resolves without waiting on criteria 7 through 15", () => {
+    const outcome = resolveAnnexOutcome(annexAllTrue);
+
+    expect(outcome.status).toBe("ELIGIBLE");
+    expect(outcome.subQuestionRequired).toBeFalse();
+  });
+
+  it("is incomplete until criteria 1 through 6 are answered", () => {
+    expect(resolveAnnexOutcome({}).status).toBe("INCOMPLETE");
+  });
+
+  it("disqualifies on a single False among the non-exception criteria", () => {
+    const outcome = resolveAnnexOutcome({
+      ...annexAllTrue,
+      trusteeNotOnLevelOfCare3Or4Or5: "false",
+    });
+
+    expect(outcome.status).toBe("NOT_ELIGIBLE");
+    expect(outcome.failedCriteria.map(getTrusteeCriterionNumber)).toEqual([6]);
+  });
+
+  it("does not disqualify on the sex offender criterion alone", () => {
+    const outcome = resolveAnnexOutcome({
+      ...annexAllTrue,
+      [sexOffenderKey]: "false",
+    });
+
+    expect(outcome.status).toBe("INCOMPLETE");
+    expect(outcome.subQuestionRequired).toBeTrue();
+    expect(outcome.failedCriteria).toEqual([]);
+  });
+
+  it("keeps a sex offender eligible when the sub-question is True", () => {
+    const outcome = resolveAnnexOutcome({
+      ...annexAllTrue,
+      [sexOffenderKey]: "false",
+      [subKey]: "true",
+    });
+
+    expect(outcome.status).toBe("ELIGIBLE");
+  });
+
+  it("disqualifies when the sub-question is False", () => {
+    const outcome = resolveAnnexOutcome({
+      ...annexAllTrue,
+      [sexOffenderKey]: "false",
+      [subKey]: "false",
+    });
+
+    expect(outcome.status).toBe("NOT_ELIGIBLE");
+    expect(outcome.failedCriteria.map(getTrusteeCriterionNumber)).toEqual([3]);
+  });
+
+  it("ignores a stored sub-question answer when the criterion is True", () => {
+    const outcome = resolveAnnexOutcome({
+      ...annexAllTrue,
+      [sexOffenderKey]: "true",
+      [subKey]: "false",
+    });
+
+    expect(outcome.status).toBe("ELIGIBLE");
+    expect(outcome.subQuestionRequired).toBeFalse();
+  });
+
+  it("lets a disqualifying criterion resolve even while the sub-question is open", () => {
+    const outcome = resolveAnnexOutcome({
+      ...annexAllTrue,
+      trusteeHas10YearsOrLessRemaining: "false",
+      [sexOffenderKey]: "false",
+    });
+
+    expect(outcome.status).toBe("NOT_ELIGIBLE");
+    expect(outcome.failedCriteria.map(getTrusteeCriterionNumber)).toEqual([1]);
+  });
+
+  it("is eligible for Annex while not eligible for Trustee", () => {
+    const formData = {
+      ...Object.fromEntries(TRUSTEE_CRITERIA.map((c) => [c.key, "true"])),
+      [sexOffenderKey]: "false",
+      [subKey]: "true",
+    };
+
+    expect(resolveTrusteeOutcome(formData).status).toBe("NOT_ELIGIBLE");
+    expect(resolveAnnexOutcome(formData).status).toBe("ELIGIBLE");
   });
 });
