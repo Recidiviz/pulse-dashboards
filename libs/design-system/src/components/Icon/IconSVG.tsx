@@ -534,6 +534,13 @@ IconSVG["Next"] = () => (
   </StrokeSVG>
 );
 
+IconSVG["Tablet"] = () => (
+  <StrokeSVG viewBox="0 0 24 24" strokeWidth={1.6}>
+    <path d="M6.2 2.5h11.6a2.2 2.2 0 0 1 2.2 2.2v14.6a2.2 2.2 0 0 1-2.2 2.2H6.2a2.2 2.2 0 0 1-2.2-2.2V4.7a2.2 2.2 0 0 1 2.2-2.2Z" />
+    <path d="M10.4 18.5h3.2" />
+  </StrokeSVG>
+);
+
 const iconKinds = Object.keys(IconSVG).sort((a, b) =>
   ascending(a.toLowerCase(), b.toLowerCase()),
 );

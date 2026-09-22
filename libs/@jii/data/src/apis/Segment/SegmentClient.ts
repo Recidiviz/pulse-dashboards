@@ -41,6 +41,9 @@ export type SegmentClientExternals = {
   currentLanguage: string;
 };
 
+/** Where an AET credit-earning callout was rendered */
+export type AetCalloutPlacement = "homepage" | "programCatalog";
+
 /**
  * Provides a wrapper around the Segment analytics client to support per-environment configuration.
  * Depends on the VITE_SEGMENT_WRITE_KEY environment variable to configure a Segment connection;
@@ -209,6 +212,14 @@ export class SegmentClient implements IntakeAnalytics {
 
   trackUsMaSpanishLaunchBannerViewed() {
     this.track("frontend_us_ma_spanish_launch_banner_viewed");
+  }
+
+  trackAetCalloutImpression(metadata: { placement: AetCalloutPlacement }) {
+    this.track("frontend_aet_callout_impression", metadata);
+  }
+
+  trackAetCalloutClicked(metadata: { placement: AetCalloutPlacement }) {
+    this.track("frontend_aet_callout_clicked", metadata);
   }
 
   /* Community Resource Explorer (CRE) events */

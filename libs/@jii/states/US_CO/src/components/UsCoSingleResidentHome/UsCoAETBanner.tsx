@@ -15,20 +15,51 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FC } from "react";
+import { FC, useEffect } from "react";
 
 import { AnnouncementBanner } from "~@jii/common-ui";
+import { useRootStore, useSingleResidentContext } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsCoTranslations } from "~@jii/translation";
 
 export const AETBanner: FC = () => {
   const { t } = useUsCoTranslations();
+  const { residentFlags } = useSingleResidentContext();
+  const {
+    userStore: { segmentClient },
+  } = useRootStore();
+
+  const showEdovoCredits = residentFlags.usCoEdovoCredits;
+
+  useEffect(() => {
+    if (!showEdovoCredits) return;
+    segmentClient.trackAetCalloutImpression({
+      placement: "homepage",
+    });
+  }, [showEdovoCredits, segmentClient]);
+
+  const handleLinkClick = () => {
+    if (!showEdovoCredits) return;
+    segmentClient.trackAetCalloutClicked({ placement: "homepage" });
+  };
+  // TODO(OBT-49104) remove policyPage copy
+  const { message, linkText } = showEdovoCredits
+    ? t(($) => $.aetBanner.edovoCredits, { returnObjects: true })
+    : t(($) => $.aetBanner.policyPage, { returnObjects: true });
 
   return (
     <AnnouncementBanner
-      message={t(($) => $.aetBanner.message)}
-      linkText={t(($) => $.aetBanner.linkText)}
-      to={State.Resident.$.UsCoMoreInformation.AETChanges.buildRelativePath({})}
+      message={message}
+      linkText={linkText}
+      // TODO(OBT-49104) remove AETChanges route and page
+      to={
+        showEdovoCredits
+          ? State.Resident.$.ProgramCatalog.buildRelativePath({})
+          : State.Resident.$.UsCoMoreInformation.AETChanges.buildRelativePath(
+              {},
+            )
+      }
+      onLinkClick={handleLinkClick}
     />
   );
 };

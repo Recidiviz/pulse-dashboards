@@ -44,6 +44,7 @@ export function UsCoRouter() {
           path={UsCoMoreInformation.EarnedTime.path}
           element={<PageMoreInformation pageSlug="earnedTime" />}
         />
+        {/* TODO(OBT-49104) delete this route after launch*/}
         <Route
           path={UsCoMoreInformation.AETChanges.path}
           element={<PageMoreInformation pageSlug="aetChanges" />}

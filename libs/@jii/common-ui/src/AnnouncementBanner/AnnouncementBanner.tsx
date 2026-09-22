@@ -59,6 +59,7 @@ type AnnouncementBannerProps = {
   heading?: string;
   linkText?: string;
   to?: string;
+  onLinkClick?: () => void;
 };
 
 /**
@@ -70,6 +71,7 @@ export const AnnouncementBanner: FC<AnnouncementBannerProps> = ({
   heading,
   linkText,
   to,
+  onLinkClick,
 }) => (
   <Wrapper>
     {heading && <Heading>{heading}</Heading>}
@@ -78,7 +80,7 @@ export const AnnouncementBanner: FC<AnnouncementBannerProps> = ({
         <Markdown>{message}</Markdown>
       </Message>
       {linkText && to && (
-        <ActionLink kind="primary" to={to}>
+        <ActionLink kind="primary" to={to} onClick={onLinkClick}>
           {linkText}
         </ActionLink>
       )}

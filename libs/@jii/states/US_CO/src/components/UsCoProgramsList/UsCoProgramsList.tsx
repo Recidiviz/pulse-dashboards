@@ -44,6 +44,7 @@ import {
   UsCoProgramsPresenter,
 } from "../../presenters/UsCoProgramsPresenter";
 import { CategorySection } from "./CategorySection";
+import { EdovoCoursesCard } from "./EdovoCoursesCard";
 import { FilterPanel } from "./FilterPanel";
 import { ProgramCard } from "./ProgramCard";
 import { ProgramDetailModal } from "./ProgramDetailModal";
@@ -92,7 +93,15 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
   function UsCoProgramsList({ presenter }) {
     const { t } = useUsCoTranslations();
     const pathParams = useTypedParams(State.Resident);
+    const { residentFlags } = useSingleResidentContext();
     const showBackLink = !presenter.isYOSResident;
+    //AET does not apply to YOS residents
+    const showEdovoCard =
+      !presenter.isYOSResident && !!residentFlags.usCoEdovoCredits;
+
+    const handleGoToCourses = () => {
+      // TODO(OBT-48952) post the referral out to the Edovo parent frame
+    };
 
     const handleToggleStar = (program: UsCoProgram) => {
       presenter.toggleStarred(program);
@@ -128,6 +137,10 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
             <Icon kind="Arrow" size={12} />
           </ButtonLink>
         </Header>
+
+        {showEdovoCard && (
+          <EdovoCoursesCard onGoToCourses={handleGoToCourses} />
+        )}
 
         <FilterSection>
           <ResultsText>

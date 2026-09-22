@@ -67,7 +67,13 @@ export class ResidentNavBarPresenter {
       ];
     }
 
-    if (this.routeParams.stateSlug === "arkansas") {
+    const showsProgramCatalog =
+      this.routeParams.stateSlug === "arkansas" ||
+      (this.routeParams.stateSlug === "colorado" &&
+        // TODO OBT-49104 remove after the Edovo credits launch
+        !!this.residentFlags?.usCoEdovoCredits);
+
+    if (showsProgramCatalog) {
       return [
         {
           label: "Programs",

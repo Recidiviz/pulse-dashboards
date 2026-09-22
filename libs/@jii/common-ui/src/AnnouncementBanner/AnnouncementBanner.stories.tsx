@@ -17,6 +17,7 @@
 
 import type { Meta, StoryObj } from "@storybook/react";
 import { MemoryRouter } from "react-router-dom";
+import { fn } from "storybook/test";
 
 import { AnnouncementBanner } from "./AnnouncementBanner";
 
@@ -37,6 +38,7 @@ const meta = {
       "credits you have already earned will not be affected.",
     linkText: "Learn more",
     to: "/",
+    onLinkClick: fn(),
   },
 } satisfies Meta<typeof AnnouncementBanner>;
 

@@ -63,7 +63,12 @@
       "closeWindow": "[US_CO]programs.modal.closeWindow"
     },
     "modalCallToAction": "[US_CO]programs.modalCallToAction",
-    "modalCallToActionMulti": "[US_CO]programs.modalCallToActionMulti"
+    "modalCallToActionMulti": "[US_CO]programs.modalCallToActionMulti",
+    "edovoCard": {
+      "heading": "[US_CO]programs.edovoCard.heading",
+      "body": "[US_CO]programs.edovoCard.body",
+      "coursesButton": "[US_CO]programs.edovoCard.coursesButton"
+    }
   },
   "homepage": {
     "pageTitle": "[US_CO]homepage.pageTitle",
@@ -114,7 +119,13 @@
     }
   },
   "aetBanner": {
-    "message": "[US_CO]aetBanner.message",
-    "linkText": "[US_CO]aetBanner.linkText"
+    "policyPage": {
+      "message": "[US_CO]aetBanner.policyPage.message",
+      "linkText": "[US_CO]aetBanner.policyPage.linkText"
+    },
+    "edovoCredits": {
+      "message": "[US_CO]aetBanner.edovoCredits.message",
+      "linkText": "[US_CO]aetBanner.edovoCredits.linkText"
+    }
   }
 }
