@@ -55,7 +55,7 @@ variable "database_secondary_zone" {
 
 variable "private_network" {
   type        = string
-  description = "(Optional_ The private network to use for the SQL instance"
+  description = "(Optional) The private network to use for the SQL instance"
   default     = null
 }
 

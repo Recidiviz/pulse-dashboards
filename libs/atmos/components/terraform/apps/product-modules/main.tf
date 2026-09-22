@@ -41,6 +41,11 @@ module "server" {
 
       env_vars = module.envs.env_vars_by_component["server"]
 
+      volume_mounts = [{
+        name       = "cloudsql"
+        mount_path = "/cloudsql"
+      }]
+
       resources = {
         limits = {
           cpu    = "1000m"
@@ -49,4 +54,11 @@ module "server" {
       }
     }
   ]
+
+  volumes = [{
+    name = "cloudsql"
+    cloud_sql_instance = {
+      instances = [module.database.connection_name]
+    }
+  }]
 }

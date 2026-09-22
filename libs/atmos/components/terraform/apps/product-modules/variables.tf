@@ -67,3 +67,33 @@ variable "waf_id" {
   type        = string
   description = "Identifier of the WAF policy to be used for the module server"
 }
+
+variable "sql_instance_name" {
+  type        = string
+  description = "The name of the SQL instance"
+  default     = "product-modules"
+}
+
+variable "sql_base_secret_name" {
+  type        = string
+  description = "The name of the SQL secret prefixes"
+  default     = "product_modules"
+}
+
+variable "database_availability_type" {
+  type        = string
+  description = "The availability type for the service"
+  default     = null
+}
+
+variable "database_secondary_zone" {
+  type        = string
+  description = "The secondary zone for the service"
+  default     = null
+}
+
+variable "private_network" {
+  type        = string
+  description = "(Optional) The private network to use for the SQL instance"
+  default     = null
+}

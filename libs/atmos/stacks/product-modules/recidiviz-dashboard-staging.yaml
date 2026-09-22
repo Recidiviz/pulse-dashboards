@@ -36,3 +36,4 @@ components:
         deploy_environment: staging
         server_url: modules-staging.recidiviz.org
         waf_id: !terraform.state apps/shared-infra recidiviz-dashboard-staging--shared-infra shared_waf_id
+        private_network: projects/recidiviz-dashboard-staging/global/networks/default
