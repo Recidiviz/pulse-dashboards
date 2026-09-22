@@ -1,10 +1,10 @@
-ION is a website that helps you get ready for release. You can use it on the computers in your Unit's Library. It works a little like a dating site, but for reentry — you make a profile, search for Service Provider organizations on the outside that can help you, and send them messages. You can start using ION up to 11 months before your release date, and you keep the same account after you go home.
+ION is a website that helps you get ready for release. You can use it on the computers in your Unit's Library. It works a little like a dating site, but for reentry — you make a profile, search for Service Provider organizations on the outside that can help you, and exchange messages with them. You can start using ION up to 11 months before your release date, and you keep the same account after you go home.
 
 See your Unit Librarian or Peer Support Specialist to get started. If you can't get to the Unit Library, ask your COIII to help you sign up.
 
 ## How can ION help me?
 
-ION helps you connect with Service Provider organizations. A service provider is an organization on the outside that works with people coming home from prison. ION has nine kinds:
+ION helps you connect with registered Service Provider organizations. ION service providers are organizations on the outside that intentionally sign up to work with people coming home from prison. ION has nine kinds:
 
 - Shelters & Housing
 - Support Networks (peer, family, and more)
@@ -26,7 +26,9 @@ You can open any provider to learn more about them, and save the ones you like s
 
 ![A screenshot of the ION Multiservice Agencies search results page, showing a list of providers and a map of their locations.](image-placeholder-2)
 
-Providers can find you, too. Once you make your profile, providers near your release address can see it, and they may message you first.
+Relevant providers can find you, too. Once you make your profile, nearby providers who are a potential match for the type of help you’re looking for can read your profile, and they may message you first. Message exchanges look like this:
+
+![A screenshot of message history with a sample reentry provider in ION.](image-placeholder-3)
 
 ## Questions
 
@@ -46,7 +48,7 @@ Ask your COIII to help you sign up. You can also choose to share your username a
 
 ### How does messaging work?
 
-You can message any provider you find. Messages are meant for two things: figuring out whether a provider is a good fit for you, and planning your reentry with them. ADCRR staff can read the messages you send and receive while you are in prison, and once you send a message you cannot change it or take it back. After you are released, your messages are not visible to the Department of Corrections.
+You can exchange text-only messages with any provider you find. Messages are meant for two things: figuring out whether a provider is a good fit for you, and planning your reentry with them. ADCRR staff can read the messages you send and receive while you are in prison, and once you send a message you cannot change it or take it back. After you are released, your messages are not visible to the Department of Corrections.
 
 ### What if I forget my username or password?
 
@@ -58,4 +60,4 @@ Your account stays yours. You can log in from any computer or smartphone. The pr
 
 ### Do I have to sign up?
 
-No. ION is your choice and is not required by ADCRR. It is a tool to help you work on your own reentry, and it is free for you, for returning citizens, and for your loved ones.
+No. ION is your choice and is not required by ADCRR. It is a tool to help empower you to work on your own reentry, and it is free for you, returning citizens, and for your loved ones.

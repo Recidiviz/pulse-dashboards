@@ -750,10 +750,8 @@ If you refuse to sign your Conditions of Supervision at your SED, you stay in pr
   },
   ion: {
     banner: {
-      heading:
-        "You can now sign up for the Inside Out Network (ION) to connect with organizations that help with reentry",
-      message: `ION is a website you can use on the computers in your Unit Library to find organizations on the outside that help with employment, housing, healthcare, support groups and more. **See your Unit’s Peer Support Specialist, Librarian, or your COIII to get started.** Tap the button to learn more.`,
-      linkText: "Learn more about ION",
+      message: `**You can now sign up for the Inside Out Network (ION).** Find and message organizations on the outside that help with housing, jobs, healthcare, and more. See your Peer Support Specialist, Unit Librarian, or COIII to sign up at your Unit Library.`,
+      linkText: "Learn more",
     },
     infoPage: {
       heading: "Learn more about the Inside Out Network (ION)",

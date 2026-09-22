@@ -22,6 +22,7 @@ import { useInfoPageFooterLinks } from "../../hooks/useInfoPageFooterLinks";
 import { DefinitionView } from "../DefinitionView";
 import image1Url from "./image1.png";
 import image2Url from "./image2.png";
+import image3Url from "./image3.png";
 import { IONInfoPageCopyWrapper } from "./IONInfoPageCopyWrapper";
 
 export function IONInfoPage() {
@@ -33,7 +34,8 @@ export function IONInfoPage() {
   const bodyWithImages = body
     // magic placeholder strings are hardcoded into the copy, see en.ts resource file
     .replace(/image-placeholder-1/, image1Url)
-    .replace(/image-placeholder-2/, image2Url);
+    .replace(/image-placeholder-2/, image2Url)
+    .replace(/image-placeholder-3/, image3Url);
 
   return (
     <DefinitionView

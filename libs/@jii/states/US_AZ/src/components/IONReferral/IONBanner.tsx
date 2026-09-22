@@ -29,7 +29,6 @@ export const IONBanner = observer(function IONBanner() {
 
   return (
     <AnnouncementBanner
-      heading={t(($) => $.ion.banner.heading)}
       message={t(($) => $.ion.banner.message)}
       linkText={t(($) => $.ion.banner.linkText)}
       to={State.Resident.$.UsAzMoreInformation.ION.buildRelativePath({})}
