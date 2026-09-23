@@ -15,9 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { comparer, makeAutoObservable, reaction, runInAction } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 
 import { RootStore } from "../RootStore";
+import { resetOnTenantOrUserChange } from "../RootStore/resetOnTenantOrUserChange";
 import { JusticeInvolvedPersonsStore } from "./JusticeInvolvedPersonsStore";
 import { OpportunityConfigurationStore } from "./Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 
@@ -36,18 +37,8 @@ export class WorkflowsRootStore {
 
     makeAutoObservable(this);
 
-    // reset the store for each new tenant and if the current user changes (such as via impersonation)
-    reaction(
-      () => {
-        return {
-          tenant: this.rootStore.currentTenantId,
-          user: this.rootStore.userStore.user,
-        };
-      },
-      () => {
-        runInAction(() => this.reset());
-      },
-      { equals: comparer.structural },
+    resetOnTenantOrUserChange(this.rootStore, () =>
+      runInAction(() => this.reset()),
     );
   }
 

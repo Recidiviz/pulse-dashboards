@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeAutoObservable, runInAction } from "mobx";
+import { makeAutoObservable } from "mobx";
 
 import { ParoleCase } from "~datatypes";
 import { Hydratable, HydratesFromSource } from "~hydration-utils";
@@ -25,11 +25,9 @@ import { ParoleStore } from "../ParoleStore";
 
 /**
  * Drives the Parole case profile (detail) page: hydrates a single case's
- * data by DOC ID from the Parole API/fixture layer.
+ * data by DOC ID through ParoleStore, which caches it for the session.
  */
 export class ParoleCaseProfilePresenter implements Hydratable {
-  private caseDetailValue?: ParoleCase;
-
   constructor(
     private paroleStore: ParoleStore,
     private docId: string,
@@ -39,18 +37,11 @@ export class ParoleCaseProfilePresenter implements Hydratable {
     this.hydrator = new HydratesFromSource({
       expectPopulated: [
         () => {
-          if (this.caseDetailValue === undefined)
+          if (!this.paroleStore.caseDetailsByDocId.has(this.docId))
             throw new Error(`Failed to populate Parole case [${this.docId}]`);
         },
       ],
-      populate: async () => {
-        const caseDetail = await this.paroleStore.apiClient.caseDetail(
-          this.docId,
-        );
-        runInAction(() => {
-          this.caseDetailValue = caseDetail;
-        });
-      },
+      populate: () => this.paroleStore.populateCaseDetail(this.docId),
     });
   }
 
@@ -65,12 +56,13 @@ export class ParoleCaseProfilePresenter implements Hydratable {
   }
 
   get caseDetail(): ParoleCase {
-    if (!this.caseDetailValue) {
+    const caseDetail = this.paroleStore.caseDetailsByDocId.get(this.docId);
+    if (!caseDetail) {
       throw new Error(
         "caseDetail accessed before hydration completed successfully",
       );
     }
-    return this.caseDetailValue;
+    return caseDetail;
   }
 
   get config(): ParoleConfig {

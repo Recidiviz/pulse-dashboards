@@ -15,24 +15,78 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
+import { ParoleCase, ParoleHearing } from "~datatypes";
 
 import { ParoleConfig } from "../core/models/types";
 import { RootStore } from "../RootStore";
+import { resetOnTenantOrUserChange } from "../RootStore/resetOnTenantOrUserChange";
 import { ParoleAPI } from "./api/interface";
 import { isSupportedTenantId, ParoleAPIClient } from "./api/ParoleAPIClient";
 import { ParoleOfflineAPIClient } from "./api/ParoleOfflineAPIClient";
 
-/* TODO(OBT-41775): Point the remaining fields/methods at a real
- * ParoleAPIClient once a full Parole backend exists. See
- * ParoleAPIClient.SUPPORTED_TENANT_IDS for what's real today (currently
- * US_ID and US_CO, partially).
- */
 export class ParoleStore {
+  hearings?: Array<ParoleHearing>;
+  caseDetailsByDocId = new Map<string, ParoleCase>();
+
   constructor(public rootStore: RootStore) {
     makeAutoObservable(this);
+    resetOnTenantOrUserChange(this.rootStore, () => this.clearCaches());
+  }
+
+  /**
+   * Bumped every time the caches are cleared. A fetch captures this before it
+   * awaits and re-checks it after, so a response for the previous tenant or
+   * user is never written into the caches the current one reads from.
+   */
+  private cacheGeneration = 0;
+
+  private clearCaches(): void {
+    this.hearings = undefined;
+    this.caseDetailsByDocId.clear();
+    this.cacheGeneration += 1;
+  }
+
+  /**
+   * Fetches the docket hearings for the current tenant, unless an earlier
+   * fetch already cached them. A cached empty docket still counts as cached.
+   */
+  async populateHearings(): Promise<void> {
+    if (this.hearings !== undefined) return;
+
+    const generation = this.cacheGeneration;
+    const hearings = await this.apiClient.hearings();
+    if (generation !== this.cacheGeneration) {
+      return this.populateHearings();
+    }
+
+    runInAction(() => {
+      this.hearings = hearings;
+    });
+  }
+
+  /**
+   * Fetches one case profile by DOC id, unless an earlier fetch already
+   * cached it.
+   *
+   * @param docId - The DOC id of the case to fetch.
+   */
+  async populateCaseDetail(docId: string): Promise<void> {
+    if (this.caseDetailsByDocId.has(docId)) return;
+
+    const generation = this.cacheGeneration;
+    const caseDetail = await this.apiClient.caseDetail(docId);
+    if (generation !== this.cacheGeneration) {
+      // See populateHearings. A DOC id identifies a different person in
+      // another state, so a stale write here would mask a real case profile.
+      return this.populateCaseDetail(docId);
+    }
+
+    runInAction(() => {
+      this.caseDetailsByDocId.set(docId, caseDetail);
+    });
   }
 
   get apiClient(): ParoleAPI {

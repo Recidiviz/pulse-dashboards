@@ -16,13 +16,7 @@
 // =============================================================================
 
 import { mapValues } from "lodash";
-import {
-  comparer,
-  flowResult,
-  makeAutoObservable,
-  reaction,
-  runInAction,
-} from "mobx";
+import { flowResult, makeAutoObservable, runInAction } from "mobx";
 
 import { isDemoMode, isOfflineMode, isTestEnv } from "~client-env-utils";
 import { OpportunityType } from "~datatypes";
@@ -31,6 +25,7 @@ import { FlowMethod, Hydratable, HydratesFromSource } from "~hydration-utils";
 import { mockOpportunityConfigs } from "../../../core/__tests__/testUtils";
 import { downloadZipFile } from "../../../core/Paperwork/utils";
 import { RootStore } from "../../../RootStore";
+import { resetOnTenantOrUserChange } from "../../../RootStore/resetOnTenantOrUserChange";
 import { TENANT_CONFIGS } from "../../../tenants";
 import { sortObject } from "../../utils";
 import { OpportunityConfigurationAPI } from "./api/interface";
@@ -70,18 +65,8 @@ export class OpportunityConfigurationStore implements Hydratable {
 
     makeAutoObservable(this);
 
-    // reset the store for each new tenant and if the current user changes (such as via impersonation)
-    reaction(
-      () => {
-        return {
-          tenant: this.rootStore.currentTenantId,
-          user: this.rootStore.userStore.user,
-        };
-      },
-      () => {
-        runInAction(() => this.reset());
-      },
-      { equals: comparer.structural },
+    resetOnTenantOrUserChange(this.rootStore, () =>
+      runInAction(() => this.reset()),
     );
   }
 

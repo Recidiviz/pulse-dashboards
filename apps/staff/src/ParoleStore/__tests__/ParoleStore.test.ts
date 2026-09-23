@@ -16,6 +16,12 @@
 // =============================================================================
 
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
+import {
+  ParoleCase,
+  paroleCasesFixtureByState,
+  ParoleHearing,
+  paroleHearingsFixtureByState,
+} from "~datatypes";
 
 import { RootStore } from "../../RootStore";
 import { ParoleAPIClient } from "../api/ParoleAPIClient";
@@ -119,6 +125,174 @@ describe("ParoleStore", () => {
       rootStore.tenantStore.currentTenantId = "US_ID";
 
       expect(paroleStore.apiClient).toBeInstanceOf(ParoleAPIClient);
+    });
+  });
+
+  describe("hydration caches", () => {
+    beforeEach(() => {
+      vi.mocked(isOfflineMode).mockReturnValue(true);
+      vi.mocked(isDemoMode).mockReturnValue(false);
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    function storeForTenant(tenantId: "US_CO" | "US_ID"): ParoleStore {
+      const rootStore = new RootStore();
+      rootStore.tenantStore.currentTenantId = tenantId;
+      return new ParoleStore(rootStore);
+    }
+
+    it("fetches the docket once and serves later calls from the cache", async () => {
+      const hearingsSpy = vi.spyOn(
+        ParoleOfflineAPIClient.prototype,
+        "hearings",
+      );
+      const paroleStore = storeForTenant("US_CO");
+
+      await paroleStore.populateHearings();
+      await paroleStore.populateHearings();
+
+      expect(hearingsSpy).toHaveBeenCalledTimes(1);
+      expect(paroleStore.hearings).toEqual(paroleHearingsFixtureByState.US_CO);
+    });
+
+    // An empty docket is a real result, not a cache miss. A truthiness check
+    // in populateHearings would refetch it on every return trip.
+    it("caches an empty docket", async () => {
+      const hearingsSpy = vi
+        .spyOn(ParoleOfflineAPIClient.prototype, "hearings")
+        .mockResolvedValue([]);
+      const paroleStore = storeForTenant("US_CO");
+
+      await paroleStore.populateHearings();
+      await paroleStore.populateHearings();
+
+      expect(hearingsSpy).toHaveBeenCalledTimes(1);
+      expect(paroleStore.hearings).toEqual([]);
+    });
+
+    it("fetches each case profile once, keyed by DOC id", async () => {
+      const caseDetailSpy = vi.spyOn(
+        ParoleOfflineAPIClient.prototype,
+        "caseDetail",
+      );
+      const paroleStore = storeForTenant("US_CO");
+      const [firstDocId, secondDocId] = Object.keys(
+        paroleCasesFixtureByState.US_CO,
+      );
+
+      await paroleStore.populateCaseDetail(firstDocId);
+      await paroleStore.populateCaseDetail(firstDocId);
+      await paroleStore.populateCaseDetail(secondDocId);
+
+      expect(caseDetailSpy).toHaveBeenCalledTimes(2);
+      expect([...paroleStore.caseDetailsByDocId.keys()]).toEqual([
+        firstDocId,
+        secondDocId,
+      ]);
+    });
+
+    it("drops both caches when the user's identity changes", async () => {
+      const paroleStore = storeForTenant("US_CO");
+      paroleStore.rootStore.userStore.user = { email: "user@example.com" };
+      const [docId] = Object.keys(paroleCasesFixtureByState.US_CO);
+
+      await paroleStore.populateHearings();
+      await paroleStore.populateCaseDetail(docId);
+
+      // e.g. switching to an impersonated user
+      paroleStore.rootStore.userStore.user = {
+        email: "impersonated@example.com",
+      };
+
+      expect(paroleStore.hearings).toBeUndefined();
+      expect(paroleStore.caseDetailsByDocId.size).toBe(0);
+    });
+
+    // Auth0 rehydrates the app_metadata claim shortly after login: a new user
+    // object with new nested references but identical content. A reference
+    // comparison would drop a filled cache on every login.
+    it("keeps both caches when the user object is replaced with identical content", async () => {
+      const paroleStore = storeForTenant("US_CO");
+      const identicalUser = () => ({
+        email: "user@example.com",
+        "https://dashboard.recidiviz.org/app_metadata": { stateCode: "US_CO" },
+      });
+      paroleStore.rootStore.userStore.user = identicalUser();
+
+      await paroleStore.populateHearings();
+
+      paroleStore.rootStore.userStore.user = identicalUser();
+
+      expect(paroleStore.hearings).toBeDefined();
+    });
+
+    // A tenant switch mid-flight must not let the previous state's response
+    // land in the cache the new tenant reads from. The docket fetch takes
+    // seconds, so this window is wide in practice.
+    it("discards a docket fetch that resolves after a tenant change", async () => {
+      let resolveUsCo: (hearings: Array<ParoleHearing>) => void = () => {
+        throw new Error("hearings() was never called");
+      };
+      const hearingsSpy = vi
+        .spyOn(ParoleOfflineAPIClient.prototype, "hearings")
+        .mockImplementationOnce(
+          () =>
+            new Promise((resolve) => {
+              resolveUsCo = resolve;
+            }),
+        );
+      const paroleStore = storeForTenant("US_CO");
+
+      const populated = paroleStore.populateHearings();
+      paroleStore.rootStore.tenantStore.currentTenantId = "US_ID";
+      resolveUsCo(paroleHearingsFixtureByState.US_CO);
+      await populated;
+
+      expect(hearingsSpy).toHaveBeenCalledTimes(2);
+      expect(paroleStore.hearings).toEqual(paroleHearingsFixtureByState.US_ID);
+    });
+
+    it("discards a case profile fetch that resolves after a tenant change", async () => {
+      const [usCoDocId] = Object.keys(paroleCasesFixtureByState.US_CO);
+      let resolveUsCo: (caseDetail: ParoleCase) => void = () => {
+        throw new Error("caseDetail() was never called");
+      };
+      vi.spyOn(ParoleOfflineAPIClient.prototype, "caseDetail")
+        .mockImplementationOnce(
+          () =>
+            new Promise((resolve) => {
+              resolveUsCo = resolve;
+            }),
+        )
+        .mockResolvedValueOnce(paroleCasesFixtureByState.US_ID[usCoDocId]);
+      const paroleStore = storeForTenant("US_CO");
+
+      const populated = paroleStore.populateCaseDetail(usCoDocId);
+      paroleStore.rootStore.tenantStore.currentTenantId = "US_ID";
+      resolveUsCo(paroleCasesFixtureByState.US_CO[usCoDocId]);
+      await populated;
+
+      expect(paroleStore.caseDetailsByDocId.get(usCoDocId)).toEqual(
+        paroleCasesFixtureByState.US_ID[usCoDocId],
+      );
+    });
+
+    // DOC ids are unique within a state, not across states, so a cache that
+    // outlived a tenant switch would serve one state's case profile to another.
+    it("drops both caches when the tenant changes", async () => {
+      const paroleStore = storeForTenant("US_CO");
+      const [docId] = Object.keys(paroleCasesFixtureByState.US_CO);
+
+      await paroleStore.populateHearings();
+      await paroleStore.populateCaseDetail(docId);
+
+      paroleStore.rootStore.tenantStore.currentTenantId = "US_ID";
+
+      expect(paroleStore.hearings).toBeUndefined();
+      expect(paroleStore.caseDetailsByDocId.size).toBe(0);
     });
   });
 });

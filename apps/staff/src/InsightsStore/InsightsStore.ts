@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { comparer, makeAutoObservable, reaction, runInAction } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 
 import { isDemoMode, isOfflineMode, isTestEnv } from "~client-env-utils";
 import { normalizeMetricNamesForFixtureData } from "~datatypes";
@@ -23,6 +23,7 @@ import { FlowMethod } from "~hydration-utils";
 
 import { downloadZipFile } from "../core/Paperwork/utils";
 import { RootStore } from "../RootStore";
+import { resetOnTenantOrUserChange } from "../RootStore/resetOnTenantOrUserChange";
 import { TENANT_CONFIGS } from "../tenants";
 import { sortObject } from "../WorkflowsStore/utils";
 import { InsightsAPIClient } from "./api/InsightsAPIClient";
@@ -40,17 +41,8 @@ export class InsightsStore {
 
     makeAutoObservable(this);
 
-    // Reset the store for each new tenant and if the current user changes
-    // (such as via impersonation).
-    reaction(
-      () => ({
-        tenant: this.rootStore.currentTenantId,
-        ...this.rootStore.userStore.user,
-      }),
-      () => {
-        runInAction(() => this.reset());
-      },
-      { equals: comparer.structural },
+    resetOnTenantOrUserChange(this.rootStore, () =>
+      runInAction(() => this.reset()),
     );
   }
 

@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { addDays, startOfToday, subDays } from "date-fns";
-import { makeAutoObservable, runInAction } from "mobx";
+import { makeAutoObservable } from "mobx";
 
 import { ParoleHearing } from "~datatypes";
 import { Hydratable, HydratesFromSource } from "~hydration-utils";
@@ -40,8 +40,6 @@ type ParoleHearingFilterField = "facility" | "hearingType";
 export class ParoleDocketPresenter
   implements Hydratable, FilterPresenter<ParoleFilterStore>
 {
-  private hearings?: Array<ParoleHearing>;
-
   searchQuery = "";
 
   readonly filterStore: ParoleFilterStore;
@@ -57,16 +55,11 @@ export class ParoleDocketPresenter
     this.hydrator = new HydratesFromSource({
       expectPopulated: [
         () => {
-          if (this.hearings === undefined)
+          if (this.paroleStore.hearings === undefined)
             throw new Error("Failed to populate Parole hearings");
         },
       ],
-      populate: async () => {
-        const hearings = await this.paroleStore.apiClient.hearings();
-        runInAction(() => {
-          this.hearings = hearings;
-        });
-      },
+      populate: () => this.paroleStore.populateHearings(),
     });
   }
 
@@ -81,13 +74,13 @@ export class ParoleDocketPresenter
   }
 
   /**
-   * The hearings this docket shows: the hydrated set, narrowed to the
+   * The hearings this docket shows: the store's cached set, narrowed to the
    * tenant's `docketWindowDaysBefore`/`docketWindowDaysAfter`. Everything
    * else on this presenter derives from here, so the filter options,
    * counts, and rows describe the same hearings.
    */
   private get hearingsInWindow(): Array<ParoleHearing> {
-    const hearings = this.hearings ?? [];
+    const hearings = this.paroleStore.hearings ?? [];
     const { docketWindowDaysAfter, docketWindowDaysBefore } =
       this.paroleStore.config;
     if (docketWindowDaysAfter === undefined) return hearings;
