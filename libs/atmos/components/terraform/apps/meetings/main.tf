@@ -18,6 +18,8 @@ locals {
   audio_bucket_name   = "meetings-audio-data"
 
   additional_databases = ["us_az", "us_co", "us_id", "us_nc", "us_nd", "us_ne", "us_tn", "us_demo", "global"]
+
+  label_studio_cloudrun_service_account = var.environment == "production" ? "label-studio-cloudrun@recidiviz-label-studio-prod.iam.gserviceaccount.com" : "label-studio-cloudrun@recidiviz-label-studio-staging.iam.gserviceaccount.com"
 }
 
 module "database" {
@@ -196,7 +198,7 @@ module "audio_gcs_bucket" {
   # this bucket through an external table, as part of task monitoring.
   set_viewer_roles = true
   bucket_viewers = {
-    (local.audio_bucket_name) = "serviceAccount:${var.data_platform_project_number}-compute@developer.gserviceaccount.com"
+    (local.audio_bucket_name) = "serviceAccount:${var.data_platform_project_number}-compute@developer.gserviceaccount.com,serviceAccount:${local.label_studio_cloudrun_service_account}"
   }
 
   cors = [{
