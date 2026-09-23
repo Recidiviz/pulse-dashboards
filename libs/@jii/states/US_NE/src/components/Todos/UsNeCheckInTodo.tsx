@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,36 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
-import { rem } from "polished";
-import styled from "styled-components";
+import React from "react";
 
-import { Card, GoLink, SlateCopy } from "~@jii/common-ui";
-import { CardValue } from "~@jii/common-ui";
-import { spacing } from "~design-system";
+import { State } from "~@jii/paths";
+import { useUsNeTranslations } from "~@jii/translation";
 
-export const Headline = styled(CardValue)`
-  margin-bottom: ${rem(spacing.lg)};
-`;
+import { TodoCard } from "./TodoCard";
 
-export type TodoCardProps = {
-  title: string;
-  body: string;
-  linkText: string;
-  linkTarget: string;
-};
-
-export const TodoCard = observer(function TodoCard({
-  title,
-  body,
-  linkText,
-  linkTarget,
-}: TodoCardProps) {
+export const UsNeCheckInTodo: React.FC<{ assignedAt: Date }> = ({
+  assignedAt,
+}) => {
+  const { t } = useUsNeTranslations();
   return (
-    <Card>
-      <Headline>{title}</Headline>
-      <SlateCopy options={{ forceBlock: true }}>{body}</SlateCopy>
-      <GoLink to={linkTarget}>{linkText}</GoLink>
-    </Card>
+    <TodoCard
+      title={t(($) => $.home.todos.checkInTool.title)}
+      body={t(($) => $.home.todos.checkInTool.body, {
+        date: assignedAt,
+      })}
+      linkText={t(($) => $.home.todos.checkInTool.linkText)}
+      linkTarget={State.Resident.$.UsNeCheckInTool.buildRelativePath({})}
+    />
   );
-});
+};

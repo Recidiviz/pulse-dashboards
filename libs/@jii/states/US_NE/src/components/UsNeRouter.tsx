@@ -18,18 +18,24 @@
 import { Route, Routes } from "react-router-dom";
 
 import { NotFound } from "~@jii/common-ui";
+import { useSingleResidentContext } from "~@jii/data";
 import {
   ReentryAssessment,
+  UsNeCheckInTool,
   UsNeMoreInformation,
   UsNeReentryChecklist,
 } from "~@jii/paths";
 
+import { UsNeCheckInPage } from "./CheckInTool/UsNeCheckInPage";
 import { Definition } from "./Definition/Definition";
 import UsNeSingleResidentHome from "./Home/UsNeSingleResidentHome";
 import { UsNeReentryAssessmentPage } from "./ReentryAssessment/UsNeReentryAssessmentPage";
 import UsNeReentryChecklistPage from "./ReentryChecklist/UsNeReentryChecklistPage";
 import { UsNeLayout } from "./UsNeLayout/UsNeLayout";
+
 export const UsNeRouter = () => {
+  const { residentFlags } = useSingleResidentContext();
+
   return (
     <Routes>
       <Route element={<UsNeLayout />}>
@@ -43,6 +49,9 @@ export const UsNeRouter = () => {
           path={ReentryAssessment.path}
           element={<UsNeReentryAssessmentPage />}
         />
+        {residentFlags.usNeCheckInTool && (
+          <Route path={UsNeCheckInTool.path} element={<UsNeCheckInPage />} />
+        )}
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

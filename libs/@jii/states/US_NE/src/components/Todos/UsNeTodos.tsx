@@ -15,10 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ErrorBoundary } from "@sentry/react";
+import {
+  QueryErrorResetBoundary,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import { observer } from "mobx-react-lite";
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 
-import { HomepageSectionHeading } from "~@jii/common-ui";
+import { Card, HomepageSectionHeading, SlateCopy } from "~@jii/common-ui";
 import {
   useNewResidentData,
   useResidentMetadata,
@@ -34,6 +39,9 @@ import {
 } from "~hydration-utils";
 
 import { TodoCard } from "./TodoCard";
+import { UsNeCheckInTodo } from "./UsNeCheckInTodo";
+import { UsNeTodosError } from "./UsNeTodosError";
+import { UsNeTodosLoading } from "./UsNeTodosLoading";
 import { UsNeTodosPresenter } from "./UsNeTodosPresenter";
 
 const ManagedComponent = observer(function ManagedComponent({
@@ -49,17 +57,23 @@ const ManagedComponent = observer(function ManagedComponent({
     shouldShowReentryChecklist,
     shouldShowTodos,
     shouldShowReentryAssessment,
+    checkInFormData,
+    shouldShowCheckInTodo,
   } = presenter;
 
   if (!shouldShowTodos) {
-    return null;
+    return (
+      <Card>
+        <SlateCopy>{t(($) => $.home.todos.noTodos)}</SlateCopy>
+      </Card>
+    );
   }
 
   return (
-    <section>
-      <HomepageSectionHeading>
-        {t(($) => $.home.todos.sectionTitle)}
-      </HomepageSectionHeading>
+    <>
+      {shouldShowCheckInTodo && checkInFormData && (
+        <UsNeCheckInTodo assignedAt={checkInFormData.createdAt} />
+      )}
       {goodTimeRestorationStatus && (
         <TodoCard
           title={t(
@@ -102,15 +116,26 @@ const ManagedComponent = observer(function ManagedComponent({
           linkTarget={State.Resident.$.ReentryAssessment.buildRelativePath({})}
         />
       )}
-    </section>
+    </>
   );
 });
 
 function usePresenter() {
-  const { firebaseAuthClient, userStore } = useRootStore();
-  const { resident, opportunities } = useSingleResidentContext();
+  const { firebaseAuthClient, userStore, apiClient } = useRootStore();
+  const {
+    resident,
+    opportunities,
+    residentFlags: { usNeCheckInTool },
+  } = useSingleResidentContext();
   const stateData = useResidentMetadata("US_NE");
   const newDataFlag = useNewResidentData();
+
+  const checkInFormQuery = useSuspenseQuery(
+    apiClient.trpcQuerier.state.usNe.getCheckIn.queryOptions({
+      pseudonymizedId: resident.pseudonymizedId,
+    }),
+  );
+
   return new UsNeTodosPresenter(
     resident,
     stateData,
@@ -118,11 +143,14 @@ function usePresenter() {
     newDataFlag,
     firebaseAuthClient,
     userStore,
+    checkInFormQuery,
+    !!usNeCheckInTool,
   );
 }
 
-// We don't want to block rendering while hydrating, because in most cases (people without an assessment) hydration
-// won't change anything. Right now hydration literally can't fail, so `failed` is just a passthrough too.
+// We don't block rendering while hydrating the Reentry Assessment, because in most
+// cases (people without an assessment) hydration won't change anything. Right now
+// hydration literally can't fail, so `failed` is just a passthrough too.
 const TodosHydrator: React.FC<{
   children: ReactNode;
   hydratable: Hydratable;
@@ -132,9 +160,31 @@ const TodosHydrator: React.FC<{
   </HydratorWithDirectHydration>
 );
 
-export const UsNeTodos = withPresenterManager({
+const UsNeTodosInner = withPresenterManager({
   ManagedComponent,
   usePresenter,
   managerIsObserver: true,
   HydratorComponent: TodosHydrator,
 });
+
+// This final wrapper component handles hydration of the person's Check-In Form data
+// and displays a component allowing for a retry if there is an error
+export const UsNeTodos = function UsNeTodos() {
+  const { t } = useUsNeTranslations();
+  return (
+    <section>
+      <HomepageSectionHeading>
+        {t(($) => $.home.todos.sectionTitle)}
+      </HomepageSectionHeading>
+      <QueryErrorResetBoundary>
+        {({ reset }) => (
+          <ErrorBoundary onReset={reset} fallback={UsNeTodosError}>
+            <Suspense fallback={<UsNeTodosLoading />}>
+              <UsNeTodosInner />
+            </Suspense>
+          </ErrorBoundary>
+        )}
+      </QueryErrorResetBoundary>
+    </section>
+  );
+};

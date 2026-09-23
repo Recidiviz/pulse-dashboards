@@ -15,7 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { FallbackRender } from "@sentry/react";
 import dedent from "dedent";
+import React from "react";
 
 import { CopyWrapper, PageContainer } from "~@jii/common-ui";
 import { useCommonTranslations } from "~@jii/translation";
@@ -41,9 +43,21 @@ const ErrorPageMainContentWrapped = ({ error }: ErrorPageProps) => {
   );
 };
 
-// When used as a Sentry fallback function this will be called within the body of a class component,
-// which means it can't contain any React hook calls. This extra wrapper prevents the component
-//  from breaking in that context and should have no effect otherwise
-export const ErrorPageMainContent = (props: ErrorPageProps) => (
-  <ErrorPageMainContentWrapped {...props} />
+type FallbackProps = Partial<Parameters<FallbackRender>[0]>;
+
+/**
+ * A Sentry ErrorBoundary fallback function will be called within the body of a class
+ * component, which means it can't contain any React hook calls. This extra wrapper
+ * prevents the provided component from breaking in that context and should have no
+ * effect otherwise.
+ */
+export function asErrorBoundaryFallback<ComponentProps extends FallbackProps>(
+  Component: React.FC<ComponentProps>,
+) {
+  const Fallback = (props: ComponentProps) => <Component {...props} />;
+  return Fallback;
+}
+
+export const ErrorPageMainContent = asErrorBoundaryFallback(
+  ErrorPageMainContentWrapped,
 );

@@ -15,12 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { UseSuspenseQueryResult } from "@tanstack/react-query";
+import { TRPCClientErrorLike } from "@trpc/client";
 import { differenceInMonths } from "date-fns";
 import { makeAutoObservable } from "mobx";
 
 import { IntakeAssessmentPresenter } from "~@jii/case-planning";
 import { OpportunityData, ResidentRecord, UserStore } from "~@jii/data";
 import { UsNeTranslationsObject } from "~@jii/translation";
+import {
+  JiiResidentAppRouter,
+  JiiResidentAppRouterOutputs,
+} from "~@jii/trpc-types";
 import {
   UsNeGoodTimeRestorationRecord,
   usNeGoodTimeRestorationTodosCriterionEnum,
@@ -34,6 +40,9 @@ type GoodTimeOpportunity = OpportunityData & {
   opportunityRecord: UsNeGoodTimeRestorationRecord["output"];
 };
 
+type CheckInFormResults =
+  JiiResidentAppRouterOutputs["state"]["usNe"]["getCheckIn"];
+
 export class UsNeTodosPresenter implements Hydratable {
   readonly intakeAssessmentPresenter: IntakeAssessmentPresenter;
 
@@ -44,6 +53,11 @@ export class UsNeTodosPresenter implements Hydratable {
     private readonly useNewResidentData: boolean,
     firebaseAuthClient: FirebaseAuthClient,
     userStore: UserStore,
+    public checkInFormQuery: UseSuspenseQueryResult<
+      CheckInFormResults,
+      TRPCClientErrorLike<JiiResidentAppRouter>
+    >,
+    private readonly usNeCheckInTool: boolean,
   ) {
     makeAutoObservable(this, undefined, { autoBind: true });
 
@@ -66,8 +80,21 @@ export class UsNeTodosPresenter implements Hydratable {
     return (
       this.shouldShowReentryChecklist ||
       !!this.goodTimeRestorationStatus ||
-      this.shouldShowReentryAssessment
+      this.shouldShowReentryAssessment ||
+      this.shouldShowCheckInTodo
     );
+  }
+
+  get shouldShowCheckInTodo(): boolean {
+    return Boolean(
+      this.usNeCheckInTool &&
+        this.checkInFormData &&
+        !this.checkInFormData.completedAt,
+    );
+  }
+
+  get checkInFormData() {
+    return this.checkInFormQuery.data;
   }
 
   /**

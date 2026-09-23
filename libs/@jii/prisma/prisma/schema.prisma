@@ -47,6 +47,7 @@ model IncarcerationFacility {
 enum ResidentFlagId {
     usNeGoodTimeAlerts
     usNeChecklistDocuments
+    usNeCheckInTool
     usAzFslImprovements
     usAzIonReferral
     usCoV1Experience

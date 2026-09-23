@@ -70,6 +70,12 @@
     },
     "todos": {
       "sectionTitle": "To-dos",
+      "loading": "Checking for new tasks...",
+      "error": {
+        "message": "Your To-dos couldn't be loaded right now.",
+        "retryCta": "Try again"
+      },
+      "noTodos": "You don't have any To-dos right now.",
       "goodTimeRestoration": {
         "almostEligible": {
           "title": "Become Eligible For Good Time Restoration",
@@ -97,6 +103,11 @@
         "title": "Complete 120 Day Reentry Assessment",
         "body": "Your Reentry Specialist has assigned this assessment to you so they can better understand your needs before your 120 day meeting with them. This will enable them to bring more customized resources and clear answers to your meeting.",
         "linkText": "Begin Assessment"
+      },
+      "checkInTool": {
+        "title": "Prepare for Your 120-Day Check-In with Your Reentry Specialist",
+        "body": "Answer a few questions to help your Reentry Specialist prepare for your 120-Day Check-In.\nYour Reentry Specialist assigned this on {{date, formatFullDate}} — we recommend completing it in the next week.",
+        "linkText": "Get Started"
       }
     },
     "dates": {

@@ -70,6 +70,12 @@
     },
     "todos": {
       "sectionTitle": "Tareas pendientes",
+      "loading": "Checking for new tasks...",
+      "error": {
+        "message": "Your To-dos couldn't be loaded right now.",
+        "retryCta": "Try again"
+      },
+      "noTodos": "You don't have any To-dos right now.",
       "goodTimeRestoration": {
         "almostEligible": {
           "title": "Manténgase libre de mala conducta para su tiempo de buena conducta",
@@ -97,6 +103,11 @@
         "title": "Complete la Evaluación de Reinserción de 120 Días",
         "body": "Su Especialista de Reinserción le ha asignado esta evaluación para poder comprender mejor sus necesidades antes de su reunión de 120 días con ellos. Esto les permitirá llevar recursos más personalizados y respuestas claras a su reunión.",
         "linkText": "Comenzar Evaluación"
+      },
+      "checkInTool": {
+        "title": "Prepare for Your 120-Day Check-In with Your Reentry Specialist",
+        "body": "Answer a few questions to help your Reentry Specialist prepare for your 120-Day Check-In.\nYour Reentry Specialist assigned this on {{date, formatFullDate}} — we recommend completing it in the next week.",
+        "linkText": "Get Started"
       }
     },
     "dates": {

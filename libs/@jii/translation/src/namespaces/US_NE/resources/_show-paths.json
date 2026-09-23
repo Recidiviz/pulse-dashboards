@@ -70,6 +70,12 @@
     },
     "todos": {
       "sectionTitle": "[US_NE]home.todos.sectionTitle",
+      "loading": "[US_NE]home.todos.loading",
+      "error": {
+        "message": "[US_NE]home.todos.error.message",
+        "retryCta": "[US_NE]home.todos.error.retryCta"
+      },
+      "noTodos": "[US_NE]home.todos.noTodos",
       "goodTimeRestoration": {
         "almostEligible": {
           "title": "[US_NE]home.todos.goodTimeRestoration.almostEligible.title",
@@ -97,6 +103,11 @@
         "title": "[US_NE]home.todos.reentryAssessment.title",
         "body": "[US_NE]home.todos.reentryAssessment.body",
         "linkText": "[US_NE]home.todos.reentryAssessment.linkText"
+      },
+      "checkInTool": {
+        "title": "[US_NE]home.todos.checkInTool.title",
+        "body": "[US_NE]home.todos.checkInTool.body",
+        "linkText": "[US_NE]home.todos.checkInTool.linkText"
       }
     },
     "dates": {
