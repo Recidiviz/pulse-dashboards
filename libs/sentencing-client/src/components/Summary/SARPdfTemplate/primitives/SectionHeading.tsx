@@ -21,45 +21,63 @@ import React from "react";
 import { RiskLevelKey } from "../../../OffenderAssessment/constants";
 import type { PdfStyle } from "../SARPdfTemplate.types";
 import { color, font, space } from "../tokens";
+import { Badge } from "./Badge";
 import { RiskPipBadge } from "./RiskPipBadge";
 
 /** Gray banner heading with optional right-aligned meta text / risk badge. */
 export const SectionHeading: React.FC<{
   title: string;
+  /** Optional right-aligned secondary text in the heading banner, e.g. an
+   * attribution ("As determined by report author"), assessment context
+   * ("Administered By: X | Assessment Date: Y"), or a raw score ("7/12"). */
   meta?: string;
   /** When provided, renders the pip + risk badge at the right edge of the banner. */
   risk?: RiskLevelKey | null;
+  /** When provided (and `risk` isn't), renders just the colored risk Badge
+   * with no pip meter — for scores that don't have a 3-tier squares scale. */
+  badge?: RiskLevelKey | null;
   style?: PdfStyle;
-}> = ({ title, meta, risk, style = {} }) => (
-  <View
-    style={[
-      {
-        backgroundColor: color.surface.section,
-        fontWeight: font.weight.semibold,
-        paddingVertical: space[4],
-        paddingHorizontal: space[10],
-        marginTop: space.sectionGap,
-        marginBottom: space[4],
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-      },
-      style,
-    ]}
-  >
-    <Text style={{ fontSize: font.size.xs }}>{title}</Text>
-    <View style={{ flexDirection: "row", alignItems: "center", gap: space[8] }}>
-      {meta ? (
-        <Text
-          style={{
-            fontWeight: font.weight.regular,
-            fontSize: font.size.xs,
-          }}
-        >
-          {meta}
-        </Text>
-      ) : null}
-      {risk ? <RiskPipBadge level={risk} /> : null}
+}> = ({ title, meta, risk, badge, style = {} }) => {
+  let riskIndicator: React.ReactNode = null;
+  if (risk) {
+    riskIndicator = <RiskPipBadge level={risk} />;
+  } else if (badge) {
+    riskIndicator = <Badge level={badge} />;
+  }
+
+  return (
+    <View
+      style={[
+        {
+          backgroundColor: color.surface.section,
+          fontWeight: font.weight.semibold,
+          paddingVertical: space[4],
+          paddingHorizontal: space[10],
+          marginTop: space.sectionGap,
+          marginBottom: space[4],
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+        },
+        style,
+      ]}
+    >
+      <Text style={{ fontSize: font.size.xs }}>{title}</Text>
+      <View
+        style={{ flexDirection: "row", alignItems: "center", gap: space[8] }}
+      >
+        {meta ? (
+          <Text
+            style={{
+              fontWeight: font.weight.regular,
+              fontSize: font.size.xs,
+            }}
+          >
+            {meta}
+          </Text>
+        ) : null}
+        {riskIndicator}
+      </View>
     </View>
-  </View>
-);
+  );
+};

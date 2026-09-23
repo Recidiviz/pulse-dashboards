@@ -76,6 +76,7 @@ import { SignatureData } from "../components/Summary/ReportSignature";
 import { SentencingStore } from "../datastores/SentencingStore";
 import { FormCharge } from "../datastores/types";
 import {
+  formatClientFullName,
   formatDisplayDate,
   formatJudgeName,
   formatLongDate,
@@ -387,7 +388,7 @@ export class SARDetailsPresenter implements Hydratable {
   }
 
   get formattedClientName(): string {
-    return this.SARAttributes.client?.fullName || "Unknown";
+    return formatClientFullName(this.SARData?.client?.fullName);
   }
 
   /** Formatted birth date for display */

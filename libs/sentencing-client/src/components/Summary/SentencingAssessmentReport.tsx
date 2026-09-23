@@ -62,6 +62,12 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
     if (!sarData) return null;
 
     const { dateRequested, updatedAt, staff } = sarData;
+    const {
+      charges,
+      needsDisplayItems,
+      factorsDisplayItems,
+      defendantDeclinedToParticipate: declined,
+    } = presenter;
     const insightData = presenter.insightData;
     const insightDescriptionContext = presenter.emptyStateDescriptionContext;
     const timeServedData =
@@ -125,7 +131,7 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
       <Styled.Footer>
         <Styled.FooterMessage>
           Defendant: {presenter.formattedClientName} | Cause:{" "}
-          {presenter.charges
+          {charges
             .map((c) => c.causeNum)
             .filter(Boolean)
             .map((n) => `#${n}`)
@@ -201,7 +207,7 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                   >
                     <Styled.ColumnFlexContainer gap={BLOCK_GAP}>
                       {clientChips}
-                      {presenter.charges.map((charge, i) => (
+                      {charges.map((charge, i) => (
                         <ReportBlock key={charge.id}>
                           {i > 0 && (
                             <SectionContinuationHeader
@@ -218,8 +224,8 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                   SARSection.KEY_CONSIDERATIONS,
                 ) && (
                   <ReportKeyConsiderations
-                    needsDisplayItems={presenter.needsDisplayItems}
-                    factorsDisplayItems={presenter.factorsDisplayItems}
+                    needsDisplayItems={needsDisplayItems}
+                    factorsDisplayItems={factorsDisplayItems}
                     riskProfileCardData={presenter.riskProfileCardData}
                     ORASDomainsAvailable={sarData.ORASDomainsAvailable}
                   />
@@ -250,7 +256,7 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                 {presenter.shouldShowInSummary(
                   SARSection.OFFENDER_ASSESSMENT,
                 ) &&
-                  (presenter.defendantDeclinedToParticipate ||
+                  (declined ||
                     sarData.assessmentType ||
                     !presenter.hasOrasAssessment) && (
                     <ReportOffenderAssessment
@@ -262,8 +268,9 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                       ageAtAssessment={
                         presenter.offenderAssessment.ageAtAssessment
                       }
+                      offenderName={presenter.formattedClientName}
                       hasOrasAssessment={presenter.hasOrasAssessment}
-                      isDeclined={presenter.defendantDeclinedToParticipate}
+                      isDeclined={declined}
                     />
                   )}
                 {presenter.shouldShowInSummary(
@@ -274,17 +281,16 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                   />
                 )}
                 {presenter.shouldShowInSummary(SARSection.RECOMMENDATION) &&
-                  (presenter.defendantDeclinedToParticipate ||
-                    !presenter.recommendationSkipped) && (
+                  (declined || !presenter.recommendationSkipped) && (
                     <ReportRecommendation
                       sarData={sarData}
-                      isDeclined={presenter.defendantDeclinedToParticipate}
+                      isDeclined={declined}
                     />
                   )}
                 {presenter.shouldShowInSummary(
                   SARSection.OFFENDER_ASSESSMENT,
                 ) &&
-                  !presenter.defendantDeclinedToParticipate &&
+                  !declined &&
                   activeFeatureVariants["SARBuilder"] &&
                   (insightData?.dispositionNumRecords ? (
                     <ReportDispositionChart
@@ -299,7 +305,7 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                 {presenter.shouldShowInSummary(
                   SARSection.OFFENDER_ASSESSMENT,
                 ) &&
-                  !presenter.defendantDeclinedToParticipate &&
+                  !declined &&
                   activeFeatureVariants["SARBuilder"] &&
                   insightData &&
                   insightDescriptionContext &&
@@ -317,7 +323,7 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
                 {presenter.shouldShowInSummary(
                   SARSection.OFFENDER_ASSESSMENT,
                 ) &&
-                  !presenter.defendantDeclinedToParticipate &&
+                  !declined &&
                   activeFeatureVariants["SARBuilder"] &&
                   (insightData?.dispositionNumRecords ? (
                     <ReportKeyFinding insight={insightData} />

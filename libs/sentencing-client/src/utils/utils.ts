@@ -219,6 +219,15 @@ export const formatPersonName = (name?: string | null): string =>
   nameCase(name ?? "");
 
 /**
+ * Formats a client's full name for display, or "Unknown" if unset. Shared by
+ * SARDetailsPresenter (on-screen) and the PDF template's derive.ts, which has
+ * no presenter instance to read from — see derive.ts's file header.
+ * e.g. "JOHN DOE" → "John Doe"
+ */
+export const formatClientFullName = (fullName?: string | null): string =>
+  fullName ? formatPersonName(fullName) : "Unknown";
+
+/**
  * Splits a full name into firstName and lastName.
  * Takes the first word as firstName and the last word as lastName,
  * capitalizing both.

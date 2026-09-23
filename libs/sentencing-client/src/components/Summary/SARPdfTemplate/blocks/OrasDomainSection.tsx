@@ -20,7 +20,14 @@ import React from "react";
 
 import { LevelOfEducationLabels } from "../../../constants";
 import type { RiskLevelKey } from "../../../OffenderAssessment/constants";
-import { DomainConfig } from "../../../OffenderAssessment/utils";
+import {
+  buildStatic99RReportText,
+  deriveStatic99RRiskCategory,
+  DomainConfig,
+  shouldShowSexualHistoryContent,
+  STATIC_99R_RISK_CATEGORY_TO_RISK_LEVEL,
+} from "../../../OffenderAssessment/utils";
+import { formattedClientName } from "../derive";
 import { KVRow } from "../primitives/KVRow";
 import { Paragraph } from "../primitives/Paragraph";
 import { SectionHeading } from "../primitives/SectionHeading";
@@ -41,7 +48,7 @@ export const OrasDomainSection: React.FC<{
   domain: DomainConfig;
   style?: PdfStyle;
 }> = ({ domain, style = {} }) => {
-  const { sar } = useSAR();
+  const { sar, activeFeatureVariants } = useSAR();
   const hasOras = !!sar.assessmentDate && !sar.defendantDeclinedToParticipate;
 
   const rawLevel = domain.riskLevelField ? sar[domain.riskLevelField] : null;
@@ -52,6 +59,12 @@ export const OrasDomainSection: React.FC<{
       : null;
 
   const narrative = sar[domain.summaryField] as string | null | undefined;
+  const static99RRiskLevel =
+    sar.static99RScore != null
+      ? STATIC_99R_RISK_CATEGORY_TO_RISK_LEVEL[
+          deriveStatic99RRiskCategory(sar.static99RScore)
+        ]
+      : null;
 
   return (
     // Keep each domain banner + body together so the badge doesn't orphan at
@@ -104,6 +117,42 @@ export const OrasDomainSection: React.FC<{
         <View style={{ paddingHorizontal: space[2] }}>
           <SubstanceUseTable rows={sar.drugHistories} />
         </View>
+      ) : null}
+      {domain.key === "responsivity" &&
+      shouldShowSexualHistoryContent(
+        sar.involvesSexCrime,
+        activeFeatureVariants,
+      ) ? (
+        <>
+          <SectionHeading title="SEXUAL HISTORY" />
+          {sar.sexualHistorySummary ? (
+            <View style={{ paddingHorizontal: space[4] }}>
+              <Paragraph>{sar.sexualHistorySummary}</Paragraph>
+            </View>
+          ) : null}
+          {sar.static99RCompleted ? (
+            <>
+              <SectionHeading
+                title="STATIC-99R TOTAL SCORE"
+                meta={
+                  sar.static99RScore != null
+                    ? `${sar.static99RScore}/12`
+                    : undefined
+                }
+                badge={static99RRiskLevel}
+              />
+              <View style={{ paddingHorizontal: space[4] }}>
+                <Paragraph>
+                  {buildStatic99RReportText(
+                    formattedClientName(sar),
+                    sar.client?.gender,
+                    sar.static99RScore ?? null,
+                  )}
+                </Paragraph>
+              </View>
+            </>
+          ) : null}
+        </>
       ) : null}
     </View>
   );

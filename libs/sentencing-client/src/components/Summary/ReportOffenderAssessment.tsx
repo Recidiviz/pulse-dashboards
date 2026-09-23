@@ -25,10 +25,15 @@ import {
 } from "../../utils/utils";
 import { LevelOfEducationLabels } from "../constants";
 import { getAssessmentTypeShortName } from "../OffenderAssessment/assessmentTypeUtils";
+import { RISK_LEVELS } from "../OffenderAssessment/constants";
 import {
+  buildStatic99RReportText,
+  deriveStatic99RRiskCategory,
   getDomainsForAssessmentType,
   ORASDomainKey,
   shouldShowOrasContent,
+  shouldShowSexualHistoryContent,
+  STATIC_99R_RISK_CATEGORY_TO_RISK_LEVEL,
 } from "../OffenderAssessment/utils";
 import { useStore } from "../StoreProvider/StoreProvider";
 import { ReportBlock } from "./ReportBlock";
@@ -37,6 +42,7 @@ import {
   ReportDrugHistoryTable,
   ReportEmploymentHistoryTable,
 } from "./ReportHistoryTable";
+import { RISK_COLUMN_CONFIG } from "./ReportRiskProfileSummaryCard";
 import { BLOCK_GAP } from "./SentencingAssessmentReport.constants";
 import * as Styled from "./SentencingAssessmentReport.styles";
 
@@ -44,6 +50,7 @@ interface ReportOffenderAssessmentProps {
   sarData: SAR;
   administeredBy: string | null;
   ageAtAssessment: number | null;
+  offenderName: string;
   hasOrasAssessment?: boolean;
   isDeclined?: boolean;
 }
@@ -114,6 +121,29 @@ function getDomainExtraContent(
   }
 }
 
+/** Static-99R's risk category collapsed onto the shared LOW/MODERATE/HIGH
+ * color scale, rendered as a plain colored badge (no pip meter — Static-99R
+ * doesn't have the 3-tier squares scale ORAS domains do), alongside the raw
+ * score out of its 12-point max. */
+function getStatic99RRiskBadge(score: number | null): React.ReactNode {
+  if (score == null) return null;
+  const riskLevel =
+    STATIC_99R_RISK_CATEGORY_TO_RISK_LEVEL[deriveStatic99RRiskCategory(score)];
+  const config = RISK_COLUMN_CONFIG.find((c) => c.level === riskLevel);
+  if (!config) return null;
+  return (
+    <Styled.RiskLevelIndicator>
+      <span>{score}/12</span>
+      <Styled.RiskLevelColumnHeader
+        $bgColor={config.bgColor}
+        $textColor={config.textColor}
+      >
+        {RISK_LEVELS[riskLevel]}
+      </Styled.RiskLevelColumnHeader>
+    </Styled.RiskLevelIndicator>
+  );
+}
+
 function getDomainTableContent(
   key: ORASDomainKey,
   sarData: SAR,
@@ -138,6 +168,7 @@ export const ReportOffenderAssessment: React.FC<
   sarData,
   administeredBy,
   ageAtAssessment,
+  offenderName,
   hasOrasAssessment = true,
   isDeclined = false,
 }) => {
@@ -160,6 +191,12 @@ export const ReportOffenderAssessment: React.FC<
   const sectionTitle = isDeclined
     ? "Offender Risk Assessment"
     : `Offender Risk Assessment (${getAssessmentTypeShortName(assessmentType)})`;
+  const showSexualHistorySection =
+    domains.some((d) => d.key === "responsivity") &&
+    shouldShowSexualHistoryContent(
+      sarData.involvesSexCrime,
+      activeFeatureVariants,
+    );
 
   return (
     <Styled.ColumnFlexContainer gap={15}>
@@ -205,6 +242,39 @@ export const ReportOffenderAssessment: React.FC<
             }
           />
         ))}
+        {showSexualHistorySection && (
+          <>
+            <ReportBlock>
+              <Styled.ReportCardHeader>
+                <span>Sexual History</span>
+              </Styled.ReportCardHeader>
+              {sarData.sexualHistorySummary && (
+                <Styled.ReportDomainSectionBody>
+                  <Styled.FreeTextContent>
+                    {sarData.sexualHistorySummary}
+                  </Styled.FreeTextContent>
+                </Styled.ReportDomainSectionBody>
+              )}
+            </ReportBlock>
+            {sarData.static99RCompleted && (
+              <ReportBlock>
+                <Styled.ReportCardHeader>
+                  <span>Static-99R Total Score</span>
+                  {getStatic99RRiskBadge(sarData.static99RScore ?? null)}
+                </Styled.ReportCardHeader>
+                <Styled.ReportDomainSectionBody>
+                  <Styled.FreeTextContent>
+                    {buildStatic99RReportText(
+                      offenderName,
+                      sarData.client?.gender,
+                      sarData.static99RScore ?? null,
+                    )}
+                  </Styled.FreeTextContent>
+                </Styled.ReportDomainSectionBody>
+              </ReportBlock>
+            )}
+          </>
+        )}
       </Styled.ColumnFlexContainer>
     </Styled.ColumnFlexContainer>
   );

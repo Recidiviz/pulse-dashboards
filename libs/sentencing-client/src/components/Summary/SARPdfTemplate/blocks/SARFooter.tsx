@@ -18,7 +18,7 @@
 import { Text, View } from "@react-pdf/renderer";
 import React from "react";
 
-import { formatPersonName } from "../../../../utils/utils";
+import { formattedClientName } from "../derive";
 import { useSAR } from "../SARContext";
 import type { PdfStyle } from "../SARPdfTemplate.types";
 import { border, color, font, space } from "../tokens";
@@ -36,7 +36,7 @@ export const SARFooter: React.FC<{ style?: PdfStyle }> = ({ style = {} }) => {
     .map((n) => `#${n}`)
     .join(", ");
 
-  const footerText = `Defendant: ${sar.client?.fullName ? formatPersonName(sar.client?.fullName) : "Unknown"} | Cause: ${causes}`;
+  const footerText = `Defendant: ${formattedClientName(sar)} | Cause: ${causes}`;
   return (
     <View
       style={[

@@ -17,7 +17,9 @@
 
 import moment from "moment";
 
+import { Client } from "../../api";
 import { ActiveFeatureVariants } from "../../datastores/types";
+import { GenderToDisplayName } from "../CaseDetails/constants";
 import { MutableSARAttributes } from "../CaseDetails/types";
 import { Boundaries } from "./assessmentTypeUtils";
 import { RiskLevelKey } from "./constants";
@@ -104,6 +106,15 @@ export function shouldShowOrasContent(
   return (
     !activeFeatureVariants["SARManualORAS"] || (ORASDomainsAvailable ?? true)
   );
+}
+
+/** Whether the Responsivity domain's Sexual History content (summary +
+ * Static-99R note) should render, behind the `SARSexualHistory` variant. */
+export function shouldShowSexualHistoryContent(
+  involvesSexCrime: boolean | null | undefined,
+  activeFeatureVariants: ActiveFeatureVariants,
+): boolean {
+  return !!involvesSexCrime && !!activeFeatureVariants["SARSexualHistory"];
 }
 
 /**
@@ -394,6 +405,28 @@ export function deriveStatic99RRiskCategory(
   if (score <= 3) return "MODERATE_LOW";
   if (score <= 5) return "MODERATE_HIGH";
   return "HIGH";
+}
+
+/**
+ * Static-99R report note as plain text. Used by renderers that can't render
+ * the on-screen `Static99RReportText` component's colored chip (the react-pdf
+ * template can only render its own primitives, not arbitrary styled-components
+ * DOM elements) — see `Static99RReportText` for the chip'd on-screen version.
+ */
+export function buildStatic99RReportText(
+  offenderName: string,
+  gender: Client["gender"] | null | undefined,
+  score: number | null,
+): string {
+  if (score == null) return STATIC_99R_INTRO;
+
+  const riskCategory = deriveStatic99RRiskCategory(score);
+  const label = STATIC_99R_RISK_CATEGORY_LABELS[riskCategory];
+  const genderAdjective = gender
+    ? GenderToDisplayName[gender].toLowerCase()
+    : "adult";
+
+  return `${STATIC_99R_INTRO} ${offenderName} scored ${score} on this risk assessment instrument. Based upon the Static 99R score, this places ${offenderName} in the ${label} risk category relative to other ${genderAdjective} sex offenders.`;
 }
 
 // Helper function to get domains for an assessment type

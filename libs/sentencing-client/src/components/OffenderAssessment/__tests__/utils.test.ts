@@ -17,7 +17,12 @@
 
 import { describe, expect, test } from "vitest";
 
-import { deriveDomainRiskLevel, deriveStatic99RRiskCategory } from "../utils";
+import {
+  buildStatic99RReportText,
+  deriveDomainRiskLevel,
+  deriveStatic99RRiskCategory,
+  STATIC_99R_INTRO,
+} from "../utils";
 
 describe("deriveDomainRiskLevel", () => {
   // ORAS_CST Substance Use: moderate starts at 3, high starts at 5.
@@ -69,5 +74,40 @@ describe("deriveStatic99RRiskCategory", () => {
   test("returns HIGH for scores above 5", () => {
     expect(deriveStatic99RRiskCategory(6)).toBe("HIGH");
     expect(deriveStatic99RRiskCategory(12)).toBe("HIGH");
+  });
+});
+
+describe("buildStatic99RReportText", () => {
+  test("returns just the intro when there's no score", () => {
+    expect(buildStatic99RReportText("John Doe", "MALE", null)).toBe(
+      STATIC_99R_INTRO,
+    );
+  });
+
+  test("includes the offender name, score, and risk category label", () => {
+    const text = buildStatic99RReportText("John Doe", "MALE", 6);
+    expect(text).toContain(STATIC_99R_INTRO);
+    expect(text).toContain(
+      "John Doe scored 6 on this risk assessment instrument.",
+    );
+    expect(text).toContain("places John Doe in the High risk category");
+  });
+
+  test("uses the gendered adjective when gender is known", () => {
+    expect(buildStatic99RReportText("Jane Doe", "FEMALE", 0)).toContain(
+      "relative to other female sex offenders.",
+    );
+    expect(buildStatic99RReportText("John Doe", "MALE", 0)).toContain(
+      "relative to other male sex offenders.",
+    );
+  });
+
+  test('falls back to "adult" when gender is null or undefined', () => {
+    expect(buildStatic99RReportText("J. Doe", null, 0)).toContain(
+      "relative to other adult sex offenders.",
+    );
+    expect(buildStatic99RReportText("J. Doe", undefined, 0)).toContain(
+      "relative to other adult sex offenders.",
+    );
   });
 });

@@ -30,6 +30,7 @@ import {
   MethodOfUseLabels,
   SUBSTANCE_USE_CURRENT_USE_COPY,
 } from "../OffenderAssessment/SubstanceUse/constants";
+import { shouldShowSexualHistoryContent } from "../OffenderAssessment/utils";
 import { useStore } from "../StoreProvider/StoreProvider";
 import * as Styled from "./Summary.styles";
 import { SummaryEducationEmploymentDetails } from "./SummaryEducationEmploymentDetails";
@@ -188,8 +189,10 @@ export const SummaryOffenderAssessment: React.FC<SummaryOffenderAssessmentProps>
               presenter.offenderAssessment.getDomainSummary(domain);
             const showSexualHistory =
               domain.key === "responsivity" &&
-              !!sarData?.involvesSexCrime &&
-              !!activeFeatureVariants["SARSexualHistory"];
+              shouldShowSexualHistoryContent(
+                sarData?.involvesSexCrime,
+                activeFeatureVariants,
+              );
 
             // Content shown below this domain's own summary, if any. Whether
             // the summary itself gets a "Summary:" label is derived from

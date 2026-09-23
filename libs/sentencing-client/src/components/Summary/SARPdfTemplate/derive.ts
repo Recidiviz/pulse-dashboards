@@ -25,6 +25,7 @@ import type { SAR, SARInsight } from "../../../api";
 import {
   calculateAgeAtDate,
   convertDecimalToPercentage,
+  formatClientFullName,
   formatDisplayDate,
   titleCase,
 } from "../../../utils/utils";
@@ -220,6 +221,12 @@ export const formattedRace = (sar: SAR): string => {
     )
     .join(", ");
 };
+
+/** Formatted client name — delegates to the shared formatClientFullName,
+ * also used by presenter.formattedClientName, so there's only one place to
+ * update this logic. */
+export const formattedClientName = (sar: SAR): string =>
+  formatClientFullName(sar.client?.fullName);
 
 export interface DocTreatmentGroup {
   /** Count + label, e.g. "3 Cognitive Programs". */
