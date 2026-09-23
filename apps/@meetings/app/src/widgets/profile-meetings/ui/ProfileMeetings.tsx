@@ -407,6 +407,7 @@ export const ProfileMeetings = ({
                         meetings={filteredMeetings}
                         person={person}
                         personType={personType}
+                        hasMeetingTypes={meetingTypes.length > 0}
                         page={page}
                         setPage={setPage}
                       />

@@ -28,7 +28,6 @@ import {
   type ClientMeetings,
   isMeetingProcessing,
 } from "~@meetings/app/entities/meeting";
-import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
 import { ReviewIndicator } from "~@meetings/app/features/meeting-section-approval";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 import ProcessingSvg from "~@meetings/app/shared/assets/icons/processing.svg";
@@ -36,7 +35,6 @@ import {
   ClientsStackParamList,
   ResidentsStackParamList,
 } from "~@meetings/app/shared/config";
-import { formatDurationCompact } from "~@meetings/app/shared/lib/format";
 import ProcessingErrorBanner from "~@meetings/app/shared/ui/ProcessingErrorBanner";
 import {
   Table,
@@ -73,6 +71,7 @@ type Meeting = {
   approvals: ClientMeetings[number]["approvals"];
   start: Date;
   end: Date | null;
+  staffEmail: string;
 };
 
 const PAGE_SIZE = 7;
@@ -82,14 +81,14 @@ type MeetingRowProps = {
   meeting: Meeting;
   person: Person;
   personType: PersonType;
-  duration: string;
+  hasMeetingTypes: boolean;
 };
 
 const MeetingRow = ({
   meeting,
   person,
   personType,
-  duration,
+  hasMeetingTypes,
 }: MeetingRowProps) => {
   const navigation = useNavigation<ProfileMeetingNavProp>();
   const isProcessing = isMeetingProcessing(meeting.status);
@@ -116,15 +115,29 @@ const MeetingRow = ({
         pointerEvents: isError ? "none" : "auto",
       }}
     >
-      <TableCell textClassName="flex flex-col gap-1">
-        <Typography variant="body-s-regular">{meeting.date}</Typography>
-        <MeetingTypeTag
-          type={meeting.meetingType}
-          typeCategory={meeting.meetingTypeCategory}
-        />
+      <TableCell textClassName="text-secondary">
+        {`${meeting.date} ${meeting.time}`}
       </TableCell>
-      <TableCell textClassName="text-secondary">{meeting.time}</TableCell>
-      <TableCell textClassName="text-secondary">{duration}</TableCell>
+      <TableCell>
+        <View className="flex flex-col">
+          {hasMeetingTypes && meeting.meetingType && (
+            <Typography variant="body-m-medium" className="text-secondary">
+              {meeting.meetingTypeCategory
+                ? `${meeting.meetingType} - ${meeting.meetingTypeCategory}`
+                : meeting.meetingType}{" "}
+              by
+            </Typography>
+          )}
+          <Typography
+            variant="body-m-medium"
+            className="text-secondary"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {meeting.staffEmail}
+          </Typography>
+        </View>
+      </TableCell>
       {isError ? (
         <TableCell colSpan={2}>
           <ProcessingErrorBanner
@@ -182,6 +195,7 @@ type MeetingsTableProps = {
   meetings: Meeting[];
   person: Person;
   personType: PersonType;
+  hasMeetingTypes: boolean;
   page: number;
   setPage: Dispatch<SetStateAction<number>>;
 };
@@ -190,6 +204,7 @@ const MeetingsTable = ({
   meetings,
   person,
   personType,
+  hasMeetingTypes,
   page,
   setPage,
 }: MeetingsTableProps) => {
@@ -199,10 +214,11 @@ const MeetingsTable = ({
         <Table className="table-fixed">
           <TableHead>
             <TableHeadRow>
-              <TableHeadCell className="w-1/5">DATE</TableHeadCell>
-              <TableHeadCell className="w-1/5">TIME</TableHeadCell>
-              <TableHeadCell className="w-[15%]">DURATION</TableHeadCell>
-              <TableHeadCell className="w-2/5">DRAFT CASE NOTE</TableHeadCell>
+              <TableHeadCell className="w-1/4">DATE / TIME</TableHeadCell>
+              <TableHeadCell className="w-1/4">
+                {hasMeetingTypes ? "MEETING" : "STAFF"}
+              </TableHeadCell>
+              <TableHeadCell className="w-[45%]">DRAFT CASE NOTE</TableHeadCell>
               <TableHeadCell className="w-[5%]"></TableHeadCell>
             </TableHeadRow>
           </TableHead>
@@ -215,11 +231,7 @@ const MeetingsTable = ({
                   meeting={meeting}
                   person={person}
                   personType={personType}
-                  duration={
-                    meeting.duration
-                      ? formatDurationCompact(meeting.duration)
-                      : ""
-                  }
+                  hasMeetingTypes={hasMeetingTypes}
                 />
               ))}
           </TableBody>
