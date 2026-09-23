@@ -24,3 +24,19 @@ export function setDateshift(input: boolean) {
 export function shouldDateshift(): boolean {
   return dateshift;
 }
+
+/**
+ * Scopes the dateshift flag to a single function call,
+ * restoring its previous value on the way out.
+ */
+export function withDateshift<T>(
+  fn: () => T extends PromiseLike<unknown> ? never : T,
+): T {
+  const previous = dateshift;
+  dateshift = true;
+  try {
+    return fn();
+  } finally {
+    dateshift = previous;
+  }
+}

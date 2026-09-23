@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,9 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./date";
-export * from "./dateshift";
-export * from "./dateShiftRecorder";
-export * from "./dateStringSchema";
-export * from "./fixtureDates";
-export * from "./shiftAllDates";
+import { withDateshift } from "../dateshift";
+
+test("rejects async functions", () => {
+  // the flag is restored as soon as fn returns, so work resumed after an await would
+  // no longer see it enabled
+
+  // @ts-expect-error - withDateshift requires a synchronous function
+  withDateshift(async () => undefined);
+
+  // @ts-expect-error - a function that returns a promise is rejected the same way
+  withDateshift(() => Promise.resolve(1));
+});

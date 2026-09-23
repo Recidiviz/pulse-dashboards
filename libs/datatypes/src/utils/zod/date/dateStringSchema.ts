@@ -19,6 +19,7 @@ import { isValid, parseISO } from "date-fns";
 import { z } from "zod";
 
 import { shouldDateshift } from "./dateshift";
+import { recordShiftedDate } from "./dateShiftRecorder";
 import { shiftFixtureDate } from "./fixtureDates";
 
 /**
@@ -81,13 +82,17 @@ export const dateStringSchemaWithoutTimeShift = z
 /**
  * a Zod schema that will parse any valid ISO date string (date-only or with time)
  * into a Date object. Will fail if a valid Date cannot be derived from the input string.
- * In Demo and Offline modes, will also apply a time shift so that the date (presumed to be
- * from fixture data) will be relevant to the current date.
+ * If the ambient dateshift flag is active, will also apply a time shift so that the date
+ * (presumed to be from fixture data) will be relevant to the current date.
  */
 export const dateStringSchema = dateStringSchemaWithoutTimeShift.transform(
-  (value) => {
+  (value, ctx) => {
     if (shouldDateshift()) {
-      return shiftFixtureDate(value);
+      const shiftedDate = shiftFixtureDate(value);
+      // if a date shift recorder has been started via collectShiftedDates, this call will hook into that.
+      // if not, it's a no-op
+      recordShiftedDate(ctx.path, shiftedDate);
+      return shiftedDate;
     }
     return value;
   },
