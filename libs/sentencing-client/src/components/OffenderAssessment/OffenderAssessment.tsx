@@ -35,6 +35,7 @@ import * as Styled from "./OffenderAssessment.styles";
 import { OrasAssessmentScoreCard } from "./OrasAssessmentScoreCard";
 import { ORASForm } from "./ORASForm";
 import { RiskCategorySummary } from "./RiskCategorySummary";
+import { SexualHistorySection } from "./SexualHistorySection";
 import { DrugHistoryCard } from "./SubstanceUse";
 import { DOMAIN, getDomainsForAssessmentType, ORASDomainKey } from "./utils";
 
@@ -44,7 +45,7 @@ interface OffenderAssessmentProps {
 }
 
 export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
-  ({ presenter, currentSubsection }) => {
+  function OffenderAssessment({ presenter, currentSubsection }) {
     const { activeFeatureVariants } = useStore();
     // Create refs for scroll-to behavior
     const criminalHistoryRef = useRef<HTMLDivElement>(null);
@@ -216,6 +217,8 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
               <Styled.DomainsTitle>Domains</Styled.DomainsTitle>
             )}
 
+            {/* TODO(OBT-51374): extract each domain block below into its own
+                sub-component instead of stacking near-duplicate DomainCard blocks. */}
             {shouldRenderDomain("criminalHistory") && (
               <DomainCard
                 title={getDomainTitle("criminalHistory")}
@@ -387,6 +390,12 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
                 }
                 cardRef={responsivityRef}
                 disabled={isDisabled}
+                afterSummary={
+                  <SexualHistorySection
+                    presenter={presenter}
+                    disabled={isDisabled}
+                  />
+                }
               />
             )}
           </>
@@ -406,5 +415,3 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
     );
   },
 );
-
-OffenderAssessment.displayName = "OffenderAssessment";

@@ -178,7 +178,7 @@ export const SubsectionTitle = styled.h4`
   margin: 0;
 `;
 
-export const RecommendationLabel = styled.div`
+export const InlineLabel = styled.div`
   ${subsectionTitleStyle}
 `;
 

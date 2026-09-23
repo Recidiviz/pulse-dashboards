@@ -17,6 +17,8 @@
 
 import styled from "styled-components";
 
+import { palette, typography } from "~design-system";
+
 export const DomainsTitle = styled.h2`
   color: #012322;
   font-family: "Public Sans";
@@ -27,4 +29,22 @@ export const DomainsTitle = styled.h2`
   letter-spacing: -0.0225rem;
   flex: 1 0 0;
   margin: 0;
+`;
+
+export const ContentColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+`;
+
+export const StaticNoteLabel = styled.p`
+  ${typography.Sans14}
+  margin: 0;
+  color: ${palette.slate80};
+`;
+
+export const StaticNoteBody = styled.p`
+  ${typography.Body14}
+  margin: 0;
+  color: ${palette.slate85};
 `;

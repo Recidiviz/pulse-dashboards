@@ -36,6 +36,7 @@ interface DomainCardProps {
   summaryPlaceholderColor?: string;
   hideSummaryLabel?: boolean;
   disabled?: boolean;
+  afterSummary?: React.ReactNode;
 }
 
 export const DomainCard: React.FC<DomainCardProps> = ({
@@ -50,6 +51,7 @@ export const DomainCard: React.FC<DomainCardProps> = ({
   cardRef,
   summaryPlaceholder,
   summaryPlaceholderColor,
+  afterSummary,
   hideSummaryLabel = false,
   disabled = false,
 }) => {
@@ -91,6 +93,9 @@ export const DomainCard: React.FC<DomainCardProps> = ({
             disabled={disabled}
           />
         </Styled.SummarySection>
+        {afterSummary && (
+          <Styled.ContentArea>{afterSummary}</Styled.ContentArea>
+        )}
       </Styled.CardContainer>
     </Styled.ScrollWrapper>
   );

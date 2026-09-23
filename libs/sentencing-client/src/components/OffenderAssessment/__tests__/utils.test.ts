@@ -17,7 +17,7 @@
 
 import { describe, expect, test } from "vitest";
 
-import { deriveDomainRiskLevel } from "../utils";
+import { deriveDomainRiskLevel, deriveStatic99RRiskCategory } from "../utils";
 
 describe("deriveDomainRiskLevel", () => {
   // ORAS_CST Substance Use: moderate starts at 3, high starts at 5.
@@ -47,5 +47,27 @@ describe("deriveDomainRiskLevel", () => {
 
   test("returns null for a null score", () => {
     expect(deriveDomainRiskLevel(null, substanceUseCutoffs)).toBeNull();
+  });
+});
+
+describe("deriveStatic99RRiskCategory", () => {
+  test("returns LOW for scores at or below 1", () => {
+    expect(deriveStatic99RRiskCategory(-3)).toBe("LOW");
+    expect(deriveStatic99RRiskCategory(1)).toBe("LOW");
+  });
+
+  test("returns MODERATE_LOW for scores between 2 and 3", () => {
+    expect(deriveStatic99RRiskCategory(2)).toBe("MODERATE_LOW");
+    expect(deriveStatic99RRiskCategory(3)).toBe("MODERATE_LOW");
+  });
+
+  test("returns MODERATE_HIGH for scores between 4 and 5", () => {
+    expect(deriveStatic99RRiskCategory(4)).toBe("MODERATE_HIGH");
+    expect(deriveStatic99RRiskCategory(5)).toBe("MODERATE_HIGH");
+  });
+
+  test("returns HIGH for scores above 5", () => {
+    expect(deriveStatic99RRiskCategory(6)).toBe("HIGH");
+    expect(deriveStatic99RRiskCategory(12)).toBe("HIGH");
   });
 });

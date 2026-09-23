@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,21 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import styled from "styled-components";
+import { observer } from "mobx-react-lite";
+import React from "react";
 
-import { palette } from "~design-system";
+import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
+import * as Styled from "./Summary.styles";
+import { SummaryOrMissing } from "./SummaryOrMissing";
 
-export const Chip = styled.span<{ color: string }>`
-  display: inline-flex;
-  align-items: center;
-  padding: 0.125em 0.5em;
-  border-radius: 6.25rem;
-  background: ${({ color }) => color};
-  color: ${palette.pine1};
-  font-family: "Public Sans";
-  font-size: inherit;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 120%;
-  letter-spacing: -0.01rem;
-`;
+interface SummarySexualHistoryDetailsProps {
+  presenter: SARDetailsPresenter;
+}
+
+export const SummarySexualHistoryDetails: React.FC<SummarySexualHistoryDetailsProps> =
+  observer(function SummarySexualHistoryDetails({ presenter }) {
+    return (
+      <>
+        <Styled.InlineLabel>Sexual History</Styled.InlineLabel>
+        <SummaryOrMissing
+          summary={presenter.SARData?.sexualHistorySummary}
+          labeled
+        />
+      </>
+    );
+  });

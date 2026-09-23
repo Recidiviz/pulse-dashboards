@@ -142,6 +142,11 @@ const PROGRESS_SECTIONS: ProgressSection[] = [
 ];
 
 export type SARReportType = SAR["reportType"];
+type EditableScalarField =
+  | "defendantDeclinedToParticipate"
+  | "involvesSexCrime"
+  | "static99RCompleted"
+  | "static99RScore";
 
 export class SARDetailsPresenter implements Hydratable {
   private hydrator: HydratesFromSource;
@@ -949,20 +954,26 @@ export class SARDetailsPresenter implements Hydratable {
     });
   }
 
-  /** Update defendant declined to participate */
-  async updateDefendantDeclined(value: boolean): Promise<void> {
+  /**
+   * Generic helper to update a scalar (boolean/number) field in SAR data.
+   * Handles local state update, API call, and status recalculation.
+   */
+  async updateScalarField<K extends EditableScalarField>(
+    fieldName: K,
+    value: MutableSARAttributes[K],
+  ): Promise<void> {
     if (!this.SARData || this.isLocked) return;
 
     // Update local state immediately
     runInAction(() => {
       if (this.SARData) {
-        this.SARData.defendantDeclinedToParticipate = value;
+        Object.assign(this.SARData, { [fieldName]: value });
       }
     });
 
     // Persist to backend with updated status
     const updates: Partial<MutableSARAttributes> = {
-      defendantDeclinedToParticipate: value,
+      [fieldName]: value,
       status: this.statusForUpdate,
     };
     await this.sentencingStore.apiClient.updateSARDetails(
@@ -974,6 +985,26 @@ export class SARDetailsPresenter implements Hydratable {
     runInAction(() => {
       this.updateLocalStatus(this.statusForUpdate);
     });
+  }
+
+  /** Update defendant declined to participate */
+  async updateDefendantDeclined(value: boolean): Promise<void> {
+    return this.updateScalarField("defendantDeclinedToParticipate", value);
+  }
+
+  /** Update whether this case involves a sex crime */
+  async updateInvolvesSexCrime(value: boolean): Promise<void> {
+    return this.updateScalarField("involvesSexCrime", value);
+  }
+
+  /** Update whether a Static-99R was completed for this case */
+  async updateStatic99RCompleted(value: boolean): Promise<void> {
+    return this.updateScalarField("static99RCompleted", value);
+  }
+
+  /** Update static99RScore */
+  async updateStatic99RScore(value: number | null): Promise<void> {
+    return this.updateScalarField("static99RScore", value);
   }
 
   /** Update requesting judge name and optionally division */
@@ -1182,7 +1213,8 @@ export class SARDetailsPresenter implements Hydratable {
       | "peerAssociatesSummary"
       | "criminalAttitudesSummary"
       | "responsivityAndBarriersSummary"
-      | "priorTreatmentHistorySummary",
+      | "priorTreatmentHistorySummary"
+      | "sexualHistorySummary",
     value: string,
   ): Promise<void> {
     if (!this.SARData || this.isLocked) return;
@@ -1273,6 +1305,11 @@ export class SARDetailsPresenter implements Hydratable {
   /** Update responsivity and barriers summary */
   async updateResponsivityAndBarriersSummary(value: string): Promise<void> {
     return this.updateStringField("responsivityAndBarriersSummary", value);
+  }
+
+  /** Update sexual history summary */
+  async updateSexualHistorySummary(value: string): Promise<void> {
+    return this.updateStringField("sexualHistorySummary", value);
   }
 
   /** Update drug history summary */
@@ -1776,7 +1813,7 @@ export class SARDetailsPresenter implements Hydratable {
    */
   private get offenderAssessmentFields(): {
     summaries: (string | null | undefined)[];
-    formFields: (string | null | undefined)[];
+    formFields: (string | number | null | undefined)[];
   } {
     if (this.defendantDeclinedToParticipate) {
       return {
@@ -1795,7 +1832,11 @@ export class SARDetailsPresenter implements Hydratable {
       .filter(Boolean)
       .map((field) => this.SARData?.[field]);
 
-    const formFields: (string | null | undefined)[] = [];
+    if (this.SARData?.involvesSexCrime) {
+      summaries.push(this.SARData?.sexualHistorySummary);
+    }
+
+    const formFields: (string | number | null | undefined)[] = [];
     if (domains.some((d) => d.key === "educationEmployment")) {
       formFields.push(this.SARData?.levelOfEducation);
     }
@@ -1805,6 +1846,9 @@ export class SARDetailsPresenter implements Hydratable {
         this.SARData?.client?.motherName,
         this.SARData?.client?.guardianName,
       );
+    }
+    if (this.SARData?.static99RCompleted) {
+      formFields.push(this.SARData?.static99RScore);
     }
 
     return { summaries, formFields };

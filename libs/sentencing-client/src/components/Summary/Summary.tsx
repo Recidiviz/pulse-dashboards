@@ -352,21 +352,17 @@ export const Summary: React.FC<SummaryProps> = observer(function Summary({
                 <Styled.SectionBody>{NONE_LISTED}</Styled.SectionBody>
               ) : (
                 <Styled.RecommendationSection>
-                  <Styled.RecommendationLabel>
-                    Community Strategy
-                  </Styled.RecommendationLabel>
+                  <Styled.InlineLabel>Community Strategy</Styled.InlineLabel>
                   <Styled.SectionBody>
                     {communityValue || <MissingBadge />}
                   </Styled.SectionBody>
-                  <Styled.RecommendationLabel>
-                    Home Plan
-                  </Styled.RecommendationLabel>
+                  <Styled.InlineLabel>Home Plan</Styled.InlineLabel>
                   <Styled.SectionBody>
                     {homePlanValue || <MissingBadge />}
                   </Styled.SectionBody>
-                  <Styled.RecommendationLabel>
+                  <Styled.InlineLabel>
                     Institutional Strategy
-                  </Styled.RecommendationLabel>
+                  </Styled.InlineLabel>
                   <Styled.SectionBody>
                     {institutionalValue || <MissingBadge />}
                   </Styled.SectionBody>

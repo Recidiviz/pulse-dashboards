@@ -19,7 +19,7 @@ import styled from "styled-components";
 
 import { palette } from "~design-system";
 
-export const CheckboxContainer = styled.div`
+export const CheckboxContainer = styled.label`
   display: flex;
   align-items: center;
   gap: 0.5rem;

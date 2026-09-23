@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,19 +17,8 @@
 
 import styled from "styled-components";
 
-import { palette } from "~design-system";
-
-export const Chip = styled.span<{ color: string }>`
-  display: inline-flex;
-  align-items: center;
-  padding: 0.125em 0.5em;
-  border-radius: 6.25rem;
-  background: ${({ color }) => color};
-  color: ${palette.pine1};
-  font-family: "Public Sans";
-  font-size: inherit;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 120%;
-  letter-spacing: -0.01rem;
+export const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;

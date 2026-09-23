@@ -98,3 +98,6 @@ export const LevelOfEducationLabels: Record<
   MastersDegree: "Master's Degree",
   DoctorateDegree: "Doctorate Degree",
 };
+
+export const STATIC_99R_NOTE_LABEL =
+  "The following text will be appended to your summary in the report.";

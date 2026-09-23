@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { clamp } from "lodash";
 import React, { useState } from "react";
 
 import { Dropdown } from "../CaseDetails/Form/Elements/Dropdown";
@@ -257,7 +258,7 @@ export const ORASForm: React.FC<ORASFormProps> = ({
                           : null;
                         const clamped =
                           raw !== null
-                            ? Math.min(Math.max(raw, 0), domain.maxScore ?? raw)
+                            ? clamp(raw, 0, domain.maxScore ?? raw)
                             : null;
                         setFormData({
                           ...formData,

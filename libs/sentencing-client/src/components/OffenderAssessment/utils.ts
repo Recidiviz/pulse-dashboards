@@ -20,6 +20,7 @@ import moment from "moment";
 import { ActiveFeatureVariants } from "../../datastores/types";
 import { MutableSARAttributes } from "../CaseDetails/types";
 import { Boundaries } from "./assessmentTypeUtils";
+import { RiskLevelKey } from "./constants";
 
 export type ORASFormData = Pick<
   MutableSARAttributes,
@@ -353,6 +354,47 @@ export const ORAS_DOMAIN_CONFIG: Record<string, DomainConfig[]> = {
   // Screening tools and other non-full assessments have no domain breakdown
   Other: [],
 };
+
+export const STATIC_99R_INTRO =
+  "The Static 99R is an instrument designed to assist in the prediction of sexual and violent recidivism for sexual offenders. It consists of 10 items and produces estimates of future risk based upon the number of risk factors present in any one individual.";
+
+export type Static99RRiskCategory =
+  | "LOW"
+  | "MODERATE_LOW"
+  | "MODERATE_HIGH"
+  | "HIGH";
+
+export const STATIC_99R_RISK_CATEGORY_LABELS: Record<
+  Static99RRiskCategory,
+  string
+> = {
+  LOW: "Low",
+  MODERATE_LOW: "Moderate-Low",
+  MODERATE_HIGH: "Moderate-High",
+  HIGH: "High",
+};
+
+// The two moderate tiers share the existing MODERATE chip color — there's no
+// separate color for them in the shared LOW/MODERATE/HIGH palette.
+export const STATIC_99R_RISK_CATEGORY_TO_RISK_LEVEL: Record<
+  Static99RRiskCategory,
+  RiskLevelKey
+> = {
+  LOW: "LOW",
+  MODERATE_LOW: "MODERATE",
+  MODERATE_HIGH: "MODERATE",
+  HIGH: "HIGH",
+};
+
+// Static-99R risk category cutoffs, applied to the raw score (range -3 to 12).
+export function deriveStatic99RRiskCategory(
+  score: number,
+): Static99RRiskCategory {
+  if (score <= 1) return "LOW";
+  if (score <= 3) return "MODERATE_LOW";
+  if (score <= 5) return "MODERATE_HIGH";
+  return "HIGH";
+}
 
 // Helper function to get domains for an assessment type
 export function getDomainsForAssessmentType(

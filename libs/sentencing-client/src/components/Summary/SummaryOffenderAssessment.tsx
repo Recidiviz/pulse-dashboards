@@ -19,7 +19,6 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
-import { formatBooleanDisplay, formatDateRange } from "../../utils/utils";
 import { RISK_LEVEL_KEYS, RISK_LEVELS } from "../OffenderAssessment/constants";
 import { CurrentUseFootnote } from "../OffenderAssessment/HistoryCardStyles";
 import {
@@ -32,22 +31,11 @@ import {
   SUBSTANCE_USE_CURRENT_USE_COPY,
 } from "../OffenderAssessment/SubstanceUse/constants";
 import { useStore } from "../StoreProvider/StoreProvider";
-import { MissingBadge } from "./MissingBadge";
 import * as Styled from "./Summary.styles";
-
-const SummaryOrMissing: React.FC<{
-  summary: string | null | undefined;
-  labeled?: boolean;
-}> = ({ summary, labeled = false }) => {
-  if (summary) return <div>{summary}</div>;
-  if (labeled)
-    return (
-      <Styled.InlineRow>
-        Summary: <MissingBadge />
-      </Styled.InlineRow>
-    );
-  return <MissingBadge />;
-};
+import { SummaryEducationEmploymentDetails } from "./SummaryEducationEmploymentDetails";
+import { SummaryFamilySocialSupportDetails } from "./SummaryFamilySocialSupportDetails";
+import { SummaryOrMissing } from "./SummaryOrMissing";
+import { SummarySexualHistoryDetails } from "./SummarySexualHistoryDetails";
 
 interface SummaryOffenderAssessmentProps {
   presenter: SARDetailsPresenter;
@@ -62,7 +50,6 @@ export const SummaryOffenderAssessment: React.FC<SummaryOffenderAssessmentProps>
       groupedByRisk,
       offenderAssessmentDisplay,
     } = presenter.offenderAssessment;
-    const { fatherName, motherName, guardianName } = sarData?.client ?? {};
     const showRiskProfileSummary =
       presenter.offenderAssessment.shouldShowRiskProfileSummary(
         activeFeatureVariants,
@@ -199,89 +186,38 @@ export const SummaryOffenderAssessment: React.FC<SummaryOffenderAssessmentProps>
           {domainsWithoutSubstanceUse.map((domain) => {
             const summary =
               presenter.offenderAssessment.getDomainSummary(domain);
+            const showSexualHistory =
+              domain.key === "responsivity" &&
+              !!sarData?.involvesSexCrime &&
+              !!activeFeatureVariants["SARSexualHistory"];
+
+            // Content shown below this domain's own summary, if any. Whether
+            // the summary itself gets a "Summary:" label is derived from
+            // whether this exists, rather than tracked separately.
+            let extraContent: React.ReactNode = null;
+            if (domain.key === "educationEmployment") {
+              extraContent = (
+                <SummaryEducationEmploymentDetails presenter={presenter} />
+              );
+            } else if (domain.key === "familySocialSupport") {
+              extraContent = (
+                <SummaryFamilySocialSupportDetails presenter={presenter} />
+              );
+            } else if (showSexualHistory) {
+              extraContent = (
+                <SummarySexualHistoryDetails presenter={presenter} />
+              );
+            }
+
             return (
               <Styled.DetailSubsection key={domain.key}>
                 <Styled.SubsectionTitle>{domain.title}</Styled.SubsectionTitle>
                 <Styled.SectionBody>
                   <SummaryOrMissing
                     summary={summary}
-                    labeled={
-                      domain.key === "educationEmployment" ||
-                      domain.key === "familySocialSupport"
-                    }
+                    labeled={extraContent !== null}
                   />
-                  {domain.key === "educationEmployment" && (
-                    <>
-                      <div>
-                        Highest Level of Education:{" "}
-                        {sarData?.levelOfEducation || <MissingBadge />}
-                      </div>
-                      <div>
-                        Employed at Time of Offense:{" "}
-                        {sarData?.employedAtOffense !== undefined ? (
-                          formatBooleanDisplay(sarData.employedAtOffense)
-                        ) : (
-                          <MissingBadge />
-                        )}
-                      </div>
-                      {/* TODO(OBT-29467): remove filter once import skips manually-updated SARs */}
-                      {presenter.employmentHistories.length > 0 && (
-                        <Styled.AssessmentTable>
-                          <Styled.TableHeaderRow>
-                            <Styled.TableHeaderCell>
-                              Name of Employer
-                            </Styled.TableHeaderCell>
-                            <Styled.TableHeaderCell>
-                              Start/End Date
-                            </Styled.TableHeaderCell>
-                            <Styled.TableHeaderCell>
-                              Verified by Report Author
-                            </Styled.TableHeaderCell>
-                          </Styled.TableHeaderRow>
-                          {presenter.employmentHistories.map((history) => (
-                            <Styled.TableDataRow key={history.id}>
-                              <Styled.TableDataCell>
-                                {history.employerName || "—"}
-                              </Styled.TableDataCell>
-                              <Styled.TableDataCell>
-                                {formatDateRange(
-                                  history.startDate,
-                                  history.endDate,
-                                )}
-                              </Styled.TableDataCell>
-                              <Styled.TableDataCell>
-                                {formatBooleanDisplay(
-                                  history.verifiedByReportAuthor,
-                                )}
-                              </Styled.TableDataCell>
-                            </Styled.TableDataRow>
-                          ))}
-                        </Styled.AssessmentTable>
-                      )}
-                    </>
-                  )}
-                  {domain.key === "familySocialSupport" && (
-                    <Styled.AssessmentTable>
-                      <Styled.FamilyFieldRow>
-                        <Styled.FamilyFieldLabel>
-                          Father:
-                        </Styled.FamilyFieldLabel>
-                        {fatherName || <MissingBadge />}
-                      </Styled.FamilyFieldRow>
-                      <Styled.FamilyFieldRow>
-                        <Styled.FamilyFieldLabel>
-                          Mother:
-                        </Styled.FamilyFieldLabel>
-                        {motherName || <MissingBadge />}
-                      </Styled.FamilyFieldRow>
-                      <Styled.FamilyFieldRow>
-                        <Styled.FamilyFieldLabel>
-                          Who Raised Offender:
-                        </Styled.FamilyFieldLabel>
-                        {guardianName || <MissingBadge />}
-                      </Styled.FamilyFieldRow>
-                    </Styled.AssessmentTable>
-                  )}
+                  {extraContent}
                 </Styled.SectionBody>
               </Styled.DetailSubsection>
             );
