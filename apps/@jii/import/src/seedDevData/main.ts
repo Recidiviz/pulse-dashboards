@@ -22,6 +22,7 @@ import {
   PrismaClient,
 } from "~@jii/prisma";
 import { LoaderContext } from "~data-import-plugin";
+import { withDateshift } from "~datatypes";
 
 import { facilityHandler } from "../handlers/facility/facility";
 import { residentHandler } from "../handlers/resident/resident";
@@ -44,6 +45,11 @@ async function* toAsyncGenerator<T>(items: T[]) {
 
 // this should be false locally (there are no demo DBs in the dev environment) and true in GCP
 const demo = process.env["SEED_DEMO"] === "true";
+
+// Fixture dates are normally shifted to stay relevant to the current date. The e2e suite is the
+// exception, as the tests rely on data being stable over time. This flag defaults to true,
+// so only the e2e config has to opt out.
+const shouldShiftFixtureDates = process.env["SHIFT_FIXTURE_DATES"] !== "false";
 
 // this guards against accidentally destroying real data in staging or prod, since the same environment
 // serves both real and demo data there. This relies on logic shared with Prisma to decide which DB to connect to,
@@ -96,9 +102,19 @@ async function seedModel<ModelRecord>({
   const fixtures = fixtureMap.get(stateCode);
   if (fixtures && fixtures.length > 0) {
     try {
+      // NOTE that these fixtures must be parsed eagerly, as they are here: withDateshift turns the
+      // flag off again as soon as it returns, so a generator that parsed lazily would do its parsing
+      // after the flag was already restored, silently storing unshifted dates with no error.
+      // The type signature does not catch this, since a lazy map still returns an array.
+      const parseFixtures = () => fixtures.map((f) => importSchema.parse(f));
+
+      // scoping the dateshift flag to this call guards against it leaking to other parts of the app
+      const parsedFixtures = shouldShiftFixtureDates
+        ? withDateshift(parseFixtures)
+        : parseFixtures();
       await importHandler(
         prismaClient,
-        toAsyncGenerator(fixtures.map((f) => importSchema.parse(f))),
+        toAsyncGenerator(parsedFixtures),
         // initialize a new loader context for this model, same as the import does.
         // this is basically a dummy object in this context, the error data it collects
         // is not applicable to the seeding process and it will never be updated.

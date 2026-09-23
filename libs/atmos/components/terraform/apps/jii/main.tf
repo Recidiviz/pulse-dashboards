@@ -77,6 +77,11 @@ locals {
       data.dotenv.prisma_env.entries,
       {
         SEED_DEMO = "true"
+        # Fixture date-shifting uses the local calendar day of whatever process runs it,
+        # so the day flips at this zone's midnight — 07:00 UTC. That lands safely after the
+        # end of US business hours (when manual runs triggered by deployments are expected) 
+        # and before the scheduled early-morning run configured below.
+        TZ = "America/Phoenix"
       }
       ) : {
       # The values are sensitive so we want to omit them from the plans
@@ -305,6 +310,37 @@ module "seed_job" {
     name       = "cloudsql"
     mount_path = "/cloudsql"
   }]
+}
+
+# Reseeds the demo databases on a schedule, in addition to the run on each deploy above.
+# Fixture dates are shifted relative to the date they are seeded, so without this they would
+# drift further out of date the longer it has been since the last deploy.
+resource "google_cloud_scheduler_job" "seed_job_scheduler" {
+  name        = "seed_job_scheduler"
+  description = "Triggers a reseed of the demo databases daily, to keep fixture dates current"
+  # Reseed every morning so the data is fresh at the start of the workday.
+  # This time is calibrated against the job's time zone (see env vars above) 
+  # to ensure it lands on the correct calendar day and before business hours.
+  # Be careful when changing it (especially to an earlier time) to avoid introducing
+  # off-by-one errors to the shifted dates.
+  schedule  = "0 7 * * *"
+  time_zone = "US/Eastern"
+  region    = var.location
+  project   = var.project_id
+
+  http_target {
+    http_method = "POST"
+    uri         = "https://run.googleapis.com/v2/${module.seed_job.id}:run"
+    body        = base64encode("{}")
+
+    headers = {
+      "Content-Type" = "application/json"
+    }
+
+    oauth_token {
+      service_account_email = google_service_account.default.email
+    }
+  }
 }
 
 # Configure a Google Workflow that is executed when a pubsub notification to the GCS

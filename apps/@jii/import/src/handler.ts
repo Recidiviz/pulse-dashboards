@@ -18,11 +18,19 @@
 import { stateCodes } from "~@jii/configs";
 import { getPrismaClient } from "~@jii/prisma";
 import { ImportHandler } from "~data-import-plugin";
+import { shouldDateshift } from "~datatypes";
 
 import { FILE_NAME_TO_SCHEMA_AND_LOADER_FN } from "./constants";
 
 class JiiImportHandler<T, M> extends ImportHandler<T, M> {
   override shouldImportFile(file: string, stateCode: string): boolean {
+    // date-shifting should never be applied to real data. if we have somehow turned it on by accident,
+    // bail out immediately to avoid any destructive transformations.
+    if (shouldDateshift())
+      throw new Error(
+        "Fixture date shifting cannot be enabled for real data imports",
+      );
+
     const shouldImport = super.shouldImportFile(file, stateCode);
 
     // defer to rejections by the default method

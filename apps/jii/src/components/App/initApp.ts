@@ -22,6 +22,7 @@ import { isDemoMode } from "~client-env-utils";
 import { setDateshift } from "~datatypes";
 
 export function initApp() {
+  // TODO(OBT-29541): disable all client-side dateshifting once Firestore is gone
   // note that this approach doesn't work in offline mode
   // because the fixtures are imported before this side effect can run;
   // see solution in FirestoreOfflineAPIClient

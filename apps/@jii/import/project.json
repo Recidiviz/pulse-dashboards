@@ -101,7 +101,11 @@
       },
       "configurations": {
         "dev": {},
-        "e2e": {}
+        "e2e": {
+          "env": {
+            "SHIFT_FIXTURE_DATES": "false"
+          }
+        }
       },
       "defaultConfiguration": "dev"
     }

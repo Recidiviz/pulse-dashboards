@@ -21,11 +21,14 @@ import { z } from "zod";
 
 import { findStateSchema } from "~@jii/schemas";
 import {
-  dateStringSchema,
+  collectShiftedDates,
+  dateStringSchemaWithoutTimeShift,
   FullName,
   nullishAsNull,
   residentCommonSchema,
 } from "~datatypes";
+
+import { applyShiftedDates } from "./utils/applyShiftedDates";
 
 /*
  * Schemas in this file describe records that have already had the raw-export transformations
@@ -38,7 +41,9 @@ export const rnaWritebackImportSchema = z.object({
   pseudonymizedId: z.string().min(1),
   seqNumber: nullishAsNull(z.string()),
   opusId: z.string(),
-  admitDate: dateStringSchema.nullable(),
+  // this date is used as an identifier, so it's important that we not shift it in fixture data
+  // or it will not function as a stable ID.
+  admitDate: dateStringSchemaWithoutTimeShift.nullable(),
 });
 
 export const RNA_WRITEBACK_ID_FIELD = "pseudonymizedId" satisfies keyof z.infer<
@@ -64,20 +69,35 @@ export const residentImportSchema = residentCommonSchema
     stateSpecificData: z
       .object({})
       .passthrough()
-      .superRefine((rawSSD, ctx) => {
+      .transform((rawSSD, ctx) => {
         // should be a safe assertion because of how these inputs are created in BQ
         const stateCode = rawSSD["stateCode"] as string;
 
         // because we are indexing with an unknown string, it could be undefined
         const ssdSchema = findStateSchema(stateCode);
 
-        if (ssdSchema) {
-          // for states where we do have a schema, validate the input against that
-          const validation = ssdSchema.safeParse(rawSSD);
-          if (validation.error) {
-            validation.error.issues.forEach((i) => ctx.addIssue(i));
-          }
+        // nothing to do for states with no schemas
+        if (!ssdSchema) return rawSSD;
+
+        // for states where we do have a schema, validate the input against that
+
+        // because we will be storing the unparsed data,
+        // fixture date shifts applied by the SSD schema need to be backported
+        // to the raw data and emitted from this transform for storage.
+        // nothing will be recorded if date-shifting is not enabled,
+        // so we don't have to gate this explicitly on that flag
+        const { result: validation, shiftedDates } = collectShiftedDates(() =>
+          ssdSchema.safeParse(rawSSD),
+        );
+
+        if (validation.error) {
+          validation.error.issues.forEach((i) => ctx.addIssue(i));
         }
+
+        // if no date fields (or shifting is disabled), nothing to do here
+        if (!shiftedDates.length) return rawSSD;
+
+        return applyShiftedDates(rawSSD, shiftedDates);
       })
       // not every state necessarily needs to have SSD.
       // store an empty object to satisfy DB requirements

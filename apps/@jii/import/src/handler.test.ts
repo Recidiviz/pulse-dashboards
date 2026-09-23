@@ -18,6 +18,8 @@
 import { MockStorage } from "mock-gcs";
 import { beforeEach } from "vitest";
 
+import { setDateshift } from "~datatypes";
+
 import { NC_RNA_FILE_NAME, RESIDENTS_FILE_NAME } from "./constants";
 import { getImportHandler } from "./handler";
 import { residentHandler } from "./handlers/resident/resident";
@@ -84,6 +86,54 @@ describe("import handler state code prefix filtering", () => {
   });
 
   it("imports a non-prefixed file regardless of state", async () => {
+    await mockStorage
+      .bucket("test-bucket")
+      .file(`US_ID/${RESIDENTS_FILE_NAME}`)
+      .save("");
+
+    await importHandler.import("US_ID", [RESIDENTS_FILE_NAME]);
+
+    expect(residentHandler).toHaveBeenCalled();
+  });
+});
+
+describe("fixture dateshift guard", () => {
+  let importHandler: ReturnType<typeof getImportHandler>;
+
+  beforeEach(() => {
+    // silence console noise
+    vi.spyOn(console, "log").mockImplementation(vi.fn());
+    vi.spyOn(console, "warn").mockImplementation(vi.fn());
+
+    mockStorage = new MockStorage();
+    process.env["IMPORT_BUCKET_ID"] = "test-bucket";
+    importHandler = getImportHandler();
+    vi.mocked(residentHandler).mockClear();
+  });
+
+  afterEach(() => {
+    setDateshift(false);
+  });
+
+  it("refuses to import real data while dateshift is enabled", async () => {
+    await mockStorage
+      .bucket("test-bucket")
+      .file(`US_ID/${RESIDENTS_FILE_NAME}`)
+      .save("");
+
+    setDateshift(true);
+
+    await expect(
+      importHandler.import("US_ID", [RESIDENTS_FILE_NAME]),
+    ).rejects.toThrow(
+      "Fixture date shifting cannot be enabled for real data imports",
+    );
+
+    // the guard has to run before any data is loaded, not just report afterwards
+    expect(residentHandler).not.toHaveBeenCalled();
+  });
+
+  it("imports normally when dateshift is disabled", async () => {
     await mockStorage
       .bucket("test-bucket")
       .file(`US_ID/${RESIDENTS_FILE_NAME}`)

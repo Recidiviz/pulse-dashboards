@@ -27,7 +27,11 @@ import type {
   JiiResidentAppRouterInputs,
   JiiResidentAppRouterOutputs,
 } from "~@jii/trpc-types";
-import { LocationRecord, WorkflowsResidentRecord } from "~datatypes";
+import {
+  LocationRecord,
+  setDateshift,
+  WorkflowsResidentRecord,
+} from "~datatypes";
 import { FilterParams } from "~firestore-api";
 import { FlowMethod } from "~hydration-utils";
 
@@ -242,6 +246,11 @@ export class ResidentsStore {
     if (this.userFlags) return;
 
     this.userFlags = yield this.apiClient.trpc.user.getFlags.query();
+    // TODO(OBT-29541): disable all client-side dateshifting once Firestore is gone
+    // new data fixtures have their dates pre-shifted at seeding time
+    if (this.userFlags.useNewResidentData) {
+      setDateshift(false);
+    }
   }
 
   // incrementally migrating old data from local storage as we encounter it
