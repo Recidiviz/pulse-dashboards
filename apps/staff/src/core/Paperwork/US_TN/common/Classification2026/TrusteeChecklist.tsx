@@ -25,6 +25,7 @@ import {
   UsTnReclassification2026DraftData,
 } from "~datatypes";
 
+import { useFeatureVariants } from "../../../../../components/StoreProvider";
 import { KeysMatching } from "../../../../../utils/typeUtils";
 import { JusticeInvolvedPerson } from "../../../../../WorkflowsStore";
 import { UsTnReclassification2026Form } from "../../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassification2026Form";
@@ -35,6 +36,11 @@ import { PrintablePage } from "../../../styles";
 import FormInput from "../../CustodyReclassification/FormInput";
 import { Bold, Header, TrusteeFormPage } from "./styles";
 import trusteeAssessmentTemplate from "./trustee_assessment_template.docx";
+import {
+  CriteriaSection,
+  TRUSTEE_SECTIONS,
+  TrusteeAssessmentHeader,
+} from "./TrusteeCriteriaSection";
 
 type TrusteeForm = UsTnReclassification2026Form;
 
@@ -289,7 +295,8 @@ function SignaturesReceived() {
   );
 }
 
-export const TrusteeChecklist = observer(function TrusteeChecklist({
+/** The twelve-criterion form the 2026 pilot runs today; selected when the variant is off. */
+const LegacyTrusteeChecklist = observer(function LegacyTrusteeChecklist({
   display,
 }: {
   display: boolean;
@@ -463,5 +470,53 @@ export const TrusteeChecklist = observer(function TrusteeChecklist({
         </TrusteeFormPage>
       </PrintablePage>
     </>
+  );
+});
+
+const ReworkTrusteeChecklist = observer(function ReworkTrusteeChecklist({
+  display,
+}: {
+  display: boolean;
+}) {
+  return (
+    <>
+      {TRUSTEE_SECTIONS.map(({ section, groups }, index) => (
+        <PrintablePage stretchable hidden={!display} key={section}>
+          <TrusteeFormPage>
+            {index === 0 && <TrusteeAssessmentHeader />}
+            <CriteriaSection section={section} groups={groups} />
+            {index === TRUSTEE_SECTIONS.length - 1 && (
+              // Placeholders until TN-2650 and TN-2651 land the outcome blocks
+              // and the approvals chain.
+              <>
+                <div>
+                  <Bold>Reasons for Denial:</Bold>
+                  <DOCXFormTextArea<UsTnReclassification2026DraftData> name="trusteeDenialReasons" />
+                </div>
+                <div>
+                  <Bold>Notes for Warden Review:</Bold>
+                  <DOCXFormTextArea<UsTnReclassification2026DraftData> name="trusteeNotesForWarden" />
+                </div>
+                <SignaturesReceived />
+              </>
+            )}
+          </TrusteeFormPage>
+        </PrintablePage>
+      ))}
+    </>
+  );
+});
+
+export const TrusteeChecklist = observer(function TrusteeChecklist({
+  display,
+}: {
+  display: boolean;
+}) {
+  const { trusteeChecklistRework } = useFeatureVariants();
+
+  return trusteeChecklistRework ? (
+    <ReworkTrusteeChecklist display={display} />
+  ) : (
+    <LegacyTrusteeChecklist display={display} />
   );
 });

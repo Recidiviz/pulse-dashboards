@@ -61,7 +61,8 @@ export const TRUSTEE_CRITERIA_GROUPS: Record<
 
 export type TrusteeCriterionGroup = keyof typeof TRUSTEE_CRITERIA_GROUPS;
 
-export type TrusteeCriterion = {
+/** The shape each TRUSTEE_CRITERIA entry must have; consumers want `TrusteeCriterion`. */
+type TrusteeCriterionShape = {
   key: keyof TrusteeFormSchema;
   text: string;
   helper?: string;
@@ -187,9 +188,14 @@ export const TRUSTEE_CRITERIA = [
     isHardBar: false,
     affectsAnnex: false,
   },
-] as const satisfies readonly TrusteeCriterion[];
+] as const satisfies readonly TrusteeCriterionShape[];
 
 export type TrusteeCriterionKey = (typeof TRUSTEE_CRITERIA)[number]["key"];
+
+/** A criterion with `key` narrowed to the keys that exist, so reads need no cast. */
+export type TrusteeCriterion = TrusteeCriterionShape & {
+  key: TrusteeCriterionKey;
+};
 
 /** The Annex-only sub-question revealed when the sex offender criterion is False. */
 export const TRUSTEE_ANNEX_SUB_QUESTION = {
