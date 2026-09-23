@@ -15,7 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  within,
+} from "@testing-library/react";
 import { makeAutoObservable } from "mobx";
 
 import { getTrusteeCriterionNumber, TRUSTEE_CRITERIA } from "~datatypes";
@@ -223,6 +229,117 @@ describe("CriteriaSection", () => {
         /does not disqualify the inmate\. It adds a required approver/,
       ),
     ).toBeInTheDocument();
+  });
+
+  describe("the criterion 3 sub-question", () => {
+    const SUB_QUESTION = /7 years or less/;
+
+    it("stays hidden while criterion 3 is unanswered or True", () => {
+      renderSection(0);
+      expect(screen.queryByText(SUB_QUESTION)).toBeNull();
+
+      cleanup();
+      renderSection(0, { trusteeNotServingForSexualOffense: "true" });
+      expect(screen.queryByText(SUB_QUESTION)).toBeNull();
+    });
+
+    it("appears once criterion 3 is marked False", () => {
+      renderSection(0, { trusteeNotServingForSexualOffense: "false" });
+      expect(screen.getByText(SUB_QUESTION)).toBeInTheDocument();
+    });
+
+    it("writes its answer to its own field, not the criterion's", () => {
+      const { updateDraftData } = renderSection(0, {
+        trusteeNotServingForSexualOffense: "false",
+      });
+
+      fireEvent.click(
+        screen.getByRole("radio", {
+          name: "Criterion 3 follow-up question: True",
+        }),
+      );
+
+      expect(updateDraftData).toHaveBeenCalledWith(
+        "trusteeHas7YearsOrLessRemaining",
+        "true",
+      );
+    });
+
+    it("labels its radios distinctly from the criterion's own", () => {
+      renderSection(0, { trusteeNotServingForSexualOffense: "false" });
+
+      expect(screen.getByRole("radio", { name: "Criterion 3: True" })).not.toBe(
+        screen.getByRole("radio", {
+          name: "Criterion 3 follow-up question: True",
+        }),
+      );
+    });
+  });
+
+  describe("failure notes", () => {
+    it("shows no note until a criterion is marked False", () => {
+      renderSection(0);
+      expect(screen.queryByText(/requirement not met/)).toBeNull();
+    });
+
+    it("reports both requirements when an Annex criterion fails", () => {
+      renderSection(0, { trusteeHas10YearsOrLessRemaining: "false" });
+
+      const lead = screen.getByText("Trustee requirement not met.");
+
+      expect(lead.tagName).toBe("SPAN");
+      expect(lead).toHaveStyleRule("font-weight", "600");
+      expect(
+        screen.getByText(/Annex requirement not met\./),
+      ).toBeInTheDocument();
+    });
+
+    it("puts the note below the sub-question, not above it", () => {
+      renderSection(0, { trusteeNotServingForSexualOffense: "false" });
+
+      const subQuestion = screen.getByText(/7 years or less/);
+      const note = screen.getByText("Trustee requirement not met.");
+
+      expect(
+        subQuestion.compareDocumentPosition(note) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy();
+    });
+
+    it("boxes the sub-question so it does not read as criterion 3's own text", () => {
+      renderSection(0, { trusteeNotServingForSexualOffense: "false" });
+
+      const box = screen
+        .getByRole("radio", { name: "Criterion 3 follow-up question: True" })
+        .closest("div")?.parentElement;
+
+      expect(box).toHaveStyleRule("border", "1px solid black");
+    });
+
+    it("does not report a Group E False as a failed requirement", () => {
+      renderSection(1, { trusteeNotScoredHighForViolence: "false" });
+
+      expect(screen.queryByText(/requirement not met/)).toBeNull();
+    });
+
+    it("names the Assistant Commissioner in bold when a Group E criterion fails", () => {
+      renderSection(1, { trusteeNotScoredHighForViolence: "false" });
+
+      const note = screen.getByText(
+        /must approve Trustee custody placement\. That approval is recorded below\./,
+      );
+
+      expect(note.tagName).toBe("SPAN");
+      expect(note).toHaveStyleRule("font-weight", "600");
+    });
+
+    it("shows the Assistant Commissioner note only on the criterion that failed", () => {
+      renderSection(1, { trusteeNotScoredHighForViolence: "false" });
+
+      expect(
+        screen.getAllByText(/must approve Trustee custody placement/),
+      ).toHaveLength(1);
+    });
   });
 });
 

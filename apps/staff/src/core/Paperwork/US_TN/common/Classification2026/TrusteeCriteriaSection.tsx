@@ -87,6 +87,66 @@ const HelperText = styled.div`
   margin-top: ${rem(3)};
 `;
 
+/** Page font is rem(11) and CriterionCell sets line-height: 1.35. */
+const NOTE_LINE_HEIGHT = 11 * 1.35;
+
+/** The radio row under the sub-question, which is control height, not text. */
+const SUB_QUESTION_CONTROL_HEIGHT = 18;
+
+/** Shared by the note slot's top margin and the sub-question's. */
+const SLOT_GAP = 3;
+
+/** The sub-question's box: a rule top and bottom, plus its vertical padding. */
+const SUB_QUESTION_BOX_CHROME = 2 + 2 * SLOT_GAP;
+
+/** Between the question and its controls when the box wraps them. */
+const SUB_QUESTION_ROW_GAP = 12;
+
+/** The box wraps: the controls sit on their own line under the question. */
+const SUB_QUESTION_BOX =
+  SUB_QUESTION_BOX_CHROME +
+  NOTE_LINE_HEIGHT +
+  SUB_QUESTION_ROW_GAP +
+  SUB_QUESTION_CONTROL_HEIGHT;
+
+/** Criterion 3 holds the boxed sub-question plus a two-line note, the only one that needs two. */
+const SUB_QUESTION_RESERVE =
+  SLOT_GAP + SUB_QUESTION_BOX + SLOT_GAP + 2 * NOTE_LINE_HEIGHT;
+
+/**
+ * The slot holds its height whether or not a note shows, so the page does not
+ * reflow as answers are entered. Reserving less than the content clips it.
+ */
+const NoteSlot = styled.div<{ $reserveSubQuestion: boolean }>`
+  margin-top: ${rem(SLOT_GAP)};
+  min-height: ${({ $reserveSubQuestion }) =>
+    $reserveSubQuestion ? rem(SUB_QUESTION_RESERVE) : rem(NOTE_LINE_HEIGHT)};
+`;
+
+/** Boxed, and above the note, so it does not read as part of criterion 3's own text. */
+const SubQuestion = styled.div`
+  margin-top: ${rem(SLOT_GAP)};
+  border: 1px solid black;
+  padding: ${rem(SLOT_GAP)} ${rem(7)};
+  display: flex;
+  align-items: center;
+  gap: ${rem(SUB_QUESTION_ROW_GAP)};
+  flex-wrap: wrap;
+
+  & label {
+    margin: 0 ${rem(8)} 0 ${rem(4)};
+    font-weight: 400;
+  }
+`;
+
+/** Separated from the box above it by the same gap the box has from the text. */
+const FailureNote = styled.div`
+  margin-top: ${rem(SLOT_GAP)};
+`;
+
+/** A heavy rule down the left edge of a failed hard bar, so failures read as a set. */
+const FAILED_HARD_BAR_EDGE = "3px solid black";
+
 const GroupHeaderRow = styled.tr`
   & th {
     text-align: left;
@@ -231,6 +291,46 @@ export function TrusteeAssessmentHeader() {
   );
 }
 
+export const ROW_NOTE_COPY = {
+  /** Bold, via the same `**` convention the criterion text uses. */
+  trusteeNotMet: "**Trustee requirement not met.**",
+  annexNotMet: "Annex requirement not met.",
+  acApproval:
+    "**The Assistant Commissioner for Prison Operations or their designee must approve Trustee custody placement. That approval is recorded below.**",
+  annexSexOffenderEligible:
+    "Sex offenders with 7 years or less remaining to serve on their sentence are eligible for Annex housing.",
+} as const;
+
+/**
+ * The note under a criterion marked False. Derived from the criterion's flags
+ * rather than its number, so reordering the form cannot misattach a note.
+ */
+export function criterionFailureNote(
+  criterion: TrusteeCriterion,
+  answer: string | undefined,
+  subQuestionAnswer?: string,
+): string | undefined {
+  if (answer !== "false") return undefined;
+
+  // Criteria 14 and 15 do not disqualify; a False adds an approver.
+  if (!criterion.isHardBar) return ROW_NOTE_COPY.acApproval;
+
+  if (criterion.key === TRUSTEE_ANNEX_SUB_QUESTION.parentKey) {
+    // The sub-question decides Annex here, so that half of the note waits for it.
+    if (subQuestionAnswer === "true") {
+      return `${ROW_NOTE_COPY.trusteeNotMet} ${ROW_NOTE_COPY.annexSexOffenderEligible}`;
+    }
+    if (subQuestionAnswer === "false") {
+      return `${ROW_NOTE_COPY.trusteeNotMet} ${ROW_NOTE_COPY.annexNotMet}`;
+    }
+    return ROW_NOTE_COPY.trusteeNotMet;
+  }
+
+  return criterion.affectsAnnex
+    ? `${ROW_NOTE_COPY.trusteeNotMet} ${ROW_NOTE_COPY.annexNotMet}`
+    : ROW_NOTE_COPY.trusteeNotMet;
+}
+
 /** Splits a criterion into its plain and `**`-delimited bold segments. */
 export function criterionSegments(
   text: string,
@@ -293,12 +393,79 @@ const CriterionRow = observer(function CriterionRow({
   // Labelled per criterion so fifteen identical controls stay distinguishable.
   const criterionNumber = getTrusteeCriterionNumber(dataKey);
 
+  const isSubQuestionParent =
+    criterion.key === TRUSTEE_ANNEX_SUB_QUESTION.parentKey;
+  const subQuestionAnswer = opportunityForm.formData[
+    TRUSTEE_ANNEX_SUB_QUESTION.key
+  ] as string | undefined;
+
+  const note = criterionFailureNote(criterion, selected, subQuestionAnswer);
+  const showSubQuestion = isSubQuestionParent && selected === "false";
+  const failedHardBar = criterion.isHardBar && selected === "false";
+
+  const onSubQuestionChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+    opportunityForm.updateDraftData(
+      TRUSTEE_ANNEX_SUB_QUESTION.key,
+      event.target.value,
+    );
+  };
+
   return (
     <tr>
-      <NumberCell scope="row">{criterionNumber}</NumberCell>
+      <NumberCell
+        scope="row"
+        style={failedHardBar ? { borderLeft: FAILED_HARD_BAR_EDGE } : undefined}
+      >
+        {criterionNumber}
+      </NumberCell>
       <CriterionCell>
         <CriterionText text={criterion.text} />
         {criterion.helper && <HelperText>NOTE: {criterion.helper}</HelperText>}
+        <NoteSlot $reserveSubQuestion={isSubQuestionParent}>
+          {showSubQuestion && (
+            <SubQuestion>
+              {/* One flex item, not one per bold run. CriterionText emits a
+                  node per `**` segment, and as direct children of the box the
+                  row gap fell between them: "Inmate has   7 years or less
+                  remaining on their sentence." */}
+              <span>
+                <CriterionText text={TRUSTEE_ANNEX_SUB_QUESTION.text} />
+              </span>
+              {/* Labelled the same way the criterion rows are, so the two
+                  extra controls are not announced as a bare "True"/"False"
+                  detached from the question they belong to. */}
+              <div>
+                <label>
+                  <input
+                    type="radio"
+                    checked={subQuestionAnswer === "true"}
+                    value="true"
+                    onChange={onSubQuestionChange}
+                    aria-label={`Criterion ${criterionNumber} follow-up question: True`}
+                  />{" "}
+                  True
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    checked={subQuestionAnswer === "false"}
+                    value="false"
+                    onChange={onSubQuestionChange}
+                    aria-label={`Criterion ${criterionNumber} follow-up question: False`}
+                  />{" "}
+                  False
+                </label>
+              </div>
+            </SubQuestion>
+          )}
+          {note && (
+            <FailureNote>
+              {/* Rendered through CriterionText so the lead sentence's `**`
+                  bolds, the same way it does in the criterion text above. */}
+              <CriterionText text={note} />
+            </FailureNote>
+          )}
+        </NoteSlot>
       </CriterionCell>
       <AnswerCell>
         <input
