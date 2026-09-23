@@ -20,6 +20,8 @@ import { createId } from "@paralleldrive/cuid2";
 import { TRPCError } from "@trpc/server";
 
 import {
+  ApprovalValue,
+  NoteSection,
   OutputVoteValue,
   PostMeetingProcessingStatus,
 } from "~@meetings/prisma/client";
@@ -199,6 +201,106 @@ describe("client router", () => {
         expect(resultIds).not.toContain(fakeActiveMeeting.id);
         expect(resultIds).not.toContain(otherStaffInProgressMeeting.id);
         expect(result.length).toBe(1);
+      });
+
+      test("Returns each meeting's case note approval from the latest approval of its current pipeline run", async () => {
+        const createCompletedMeeting = (
+          notetakingPipelineRunId: string | null,
+        ) =>
+          testPrismaClient.meeting.create({
+            data: {
+              clientId: fakeClients[0].personId,
+              staffEmail: fakeStaff[1].email,
+              startTime: faker.date.past(),
+              endTime: faker.date.recent(),
+              recordingsGCSBucket: "test-audio-bucket",
+              recordingsFolderPath: createId(),
+              postMeetingProcessingStatus:
+                PostMeetingProcessingStatus.COMPLETED,
+              notetakingPipelineRunId,
+            },
+          });
+        const createApproval = (
+          meetingId: string,
+          pipelineRunId: string,
+          section: NoteSection,
+          value: ApprovalValue,
+          createdAt = new Date(),
+        ) =>
+          testPrismaClient.noteApproval.create({
+            data: {
+              meetingId,
+              pipelineRunId,
+              section,
+              value,
+              createdAt,
+              approverEmail: fakeStaff[1].email,
+            },
+          });
+
+        const approved = await createCompletedMeeting("run-approved");
+        await createApproval(
+          approved.id,
+          "run-approved",
+          NoteSection.CASE_NOTE,
+          ApprovalValue.APPROVED,
+        );
+
+        const reverted = await createCompletedMeeting("run-reverted");
+        await createApproval(
+          reverted.id,
+          "run-reverted",
+          NoteSection.CASE_NOTE,
+          ApprovalValue.APPROVED,
+          new Date("2026-01-01T00:00:00Z"),
+        );
+        await createApproval(
+          reverted.id,
+          "run-reverted",
+          NoteSection.CASE_NOTE,
+          ApprovalValue.UNAPPROVED,
+          new Date("2026-01-02T00:00:00Z"),
+        );
+
+        const regenerated = await createCompletedMeeting("run-new");
+        await createApproval(
+          regenerated.id,
+          "run-old",
+          NoteSection.CASE_NOTE,
+          ApprovalValue.APPROVED,
+        );
+
+        const actionItemsOnly = await createCompletedMeeting("run-actions");
+        await createApproval(
+          actionItemsOnly.id,
+          "run-actions",
+          NoteSection.ACTION_ITEMS,
+          ApprovalValue.APPROVED,
+        );
+
+        const noRun = await createCompletedMeeting(null);
+        await createApproval(
+          noRun.id,
+          "run-stray",
+          NoteSection.CASE_NOTE,
+          ApprovalValue.APPROVED,
+        );
+
+        const result = await testTRPCClient.v1.client.getMeetings.query({
+          clientId: fakeClients[0].personId,
+        });
+
+        const approvalById = Object.fromEntries(
+          result.map((m) => [m.id, m.approvals.caseNote.isApproved]),
+        );
+        expect(approvalById).toEqual({
+          [approved.id]: true,
+          [reverted.id]: false,
+          [regenerated.id]: false,
+          [actionItemsOnly.id]: false,
+          [noRun.id]: false,
+        });
+        expect(result[0]).not.toHaveProperty("notetakingPipelineRunId");
       });
     });
 

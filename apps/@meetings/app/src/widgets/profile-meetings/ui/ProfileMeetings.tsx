@@ -253,6 +253,7 @@ export const ProfileMeetings = ({
           content: m.caseNote?.replace(/\n/g, " ") || "",
           status: m.postMeetingProcessingStatus,
           validationErrorType: m.validationErrorType,
+          approvals: m.approvals,
           isActive: !end,
           caseNote: m.caseNote,
           staffEmail: m.staffEmail,

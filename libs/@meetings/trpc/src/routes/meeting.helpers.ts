@@ -16,10 +16,16 @@
 // =============================================================================
 
 import { TRPCError } from "@trpc/server";
+import compact from "lodash/compact";
+import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
+import omit from "lodash/omit";
 import uniqBy from "lodash/uniqBy";
 
 import {
+  ApprovalValue,
+  NoteApproval,
+  NoteSection,
   PostMeetingProcessingStatus,
   Prisma,
   PrismaClient,
@@ -126,6 +132,29 @@ export async function createMeetingForPerson({
   });
 }
 
+type ApprovalRow = Pick<
+  NoteApproval,
+  "section" | "value" | "approverEmail" | "createdAt"
+>;
+
+export function createGetSectionApproval(approvalRows: ApprovalRow[]) {
+  const latestApprovalBySection = new Map<NoteSection, ApprovalRow>();
+  for (const row of approvalRows) {
+    if (!latestApprovalBySection.has(row.section)) {
+      latestApprovalBySection.set(row.section, row);
+    }
+  }
+
+  return (section: NoteSection) => {
+    const latest = latestApprovalBySection.get(section);
+    return {
+      isApproved: latest?.value === ApprovalValue.APPROVED,
+      approverEmail: latest?.approverEmail ?? null,
+      approvedAt: latest?.createdAt ?? null,
+    };
+  };
+}
+
 export async function getMeetingsForPerson({
   prisma,
   user,
@@ -162,6 +191,7 @@ export async function getMeetingsForPerson({
       caseNote: true,
       durationMs: true,
       staffEmail: true,
+      notetakingPipelineRunId: true,
     },
   });
 
@@ -176,12 +206,44 @@ export async function getMeetingsForPerson({
     "meetingId",
   );
 
-  return meetings.map((meeting) => ({
-    ...meeting,
-    validationErrorType: deriveValidationErrorType(
-      latestRunByMeetingId[meeting.id]?.errorDetails,
-    ),
-  }));
+  const approvalRows = await prisma.noteApproval.findMany({
+    where: {
+      meetingId: { in: meetings.map((m) => m.id) },
+      pipelineRunId: {
+        in: compact(meetings.map((m) => m.notetakingPipelineRunId)),
+      },
+    },
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    select: {
+      meetingId: true,
+      pipelineRunId: true,
+      section: true,
+      value: true,
+      approverEmail: true,
+      createdAt: true,
+    },
+  });
+
+  const approvalRowsByMeetingId = groupBy(approvalRows, "meetingId");
+
+  return meetings.map((meeting) => {
+    const getSectionApproval = createGetSectionApproval(
+      (approvalRowsByMeetingId[meeting.id] ?? []).filter(
+        (row) => row.pipelineRunId === meeting.notetakingPipelineRunId,
+      ),
+    );
+
+    return {
+      ...omit(meeting, "notetakingPipelineRunId"),
+      validationErrorType: deriveValidationErrorType(
+        latestRunByMeetingId[meeting.id]?.errorDetails,
+      ),
+      approvals: {
+        caseNote: getSectionApproval(NoteSection.CASE_NOTE),
+        actionItems: getSectionApproval(NoteSection.ACTION_ITEMS),
+      },
+    };
+  });
 }
 
 type PersonMeeting = {

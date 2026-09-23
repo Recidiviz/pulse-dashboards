@@ -24,8 +24,12 @@ import React, { Dispatch, SetStateAction } from "react";
 import { View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
-import { isMeetingProcessing } from "~@meetings/app/entities/meeting";
+import {
+  type ClientMeetings,
+  isMeetingProcessing,
+} from "~@meetings/app/entities/meeting";
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
+import { ReviewIndicator } from "~@meetings/app/features/meeting-section-approval";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 import ProcessingSvg from "~@meetings/app/shared/assets/icons/processing.svg";
 import {
@@ -66,6 +70,7 @@ type Meeting = {
   content: string;
   status: PostMeetingProcessingStatus;
   validationErrorType: string | null;
+  approvals: ClientMeetings[number]["approvals"];
   start: Date;
   end: Date | null;
 };
@@ -146,15 +151,20 @@ const MeetingRow = ({
               </View>
             )}
             {!isProcessing && (
-              <Typography
-                variant="body-m-regular"
-                className="text-secondary"
-                style={{ fontStyle: meeting.content ? "normal" : "italic" }}
-                numberOfLines={2}
-                ellipsizeMode="tail"
-              >
-                {meeting.content || "Note is empty"}
-              </Typography>
+              <View className="flex flex-row items-center gap-3">
+                <ReviewIndicator
+                  isApproved={meeting.approvals.caseNote.isApproved}
+                />
+                <Typography
+                  variant="body-m-regular"
+                  className="flex-1 text-secondary"
+                  style={{ fontStyle: meeting.content ? "normal" : "italic" }}
+                  numberOfLines={2}
+                  ellipsizeMode="tail"
+                >
+                  {meeting.content || "Note is empty"}
+                </Typography>
+              </View>
             )}
           </TableCell>
           <TableCell>

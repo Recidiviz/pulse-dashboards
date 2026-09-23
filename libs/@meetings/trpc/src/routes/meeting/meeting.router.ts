@@ -23,7 +23,6 @@ import _ from "lodash";
 import { z } from "zod";
 
 import {
-  ApprovalValue,
   NoteSection,
   OutputVoteTab,
   OutputVoteValue,
@@ -38,7 +37,10 @@ import {
 } from "~@meetings/tasks";
 import { auth0Procedure, router } from "~@meetings/trpc/init";
 import { getAgencyConfig } from "~@meetings/trpc/routes/config/utils";
-import { deriveValidationErrorType } from "~@meetings/trpc/routes/meeting.helpers";
+import {
+  createGetSectionApproval,
+  deriveValidationErrorType,
+} from "~@meetings/trpc/routes/meeting.helpers";
 import {
   approveSectionInputSchema,
   completeActionItemInputSchema,
@@ -242,24 +244,7 @@ export const meetingRouter = router({
                 },
               })
             : [];
-
-          const latestApprovalBySection = new Map<
-            NoteSection,
-            (typeof approvalRows)[number]
-          >();
-          for (const row of approvalRows) {
-            if (!latestApprovalBySection.has(row.section)) {
-              latestApprovalBySection.set(row.section, row);
-            }
-          }
-          const getSectionApproval = (section: NoteSection) => {
-            const latest = latestApprovalBySection.get(section);
-            return {
-              isApproved: latest?.value === ApprovalValue.APPROVED,
-              approverEmail: latest?.approverEmail ?? null,
-              approvedAt: latest?.createdAt ?? null,
-            };
-          };
+          const getSectionApproval = createGetSectionApproval(approvalRows);
 
           const currentActionItems = meeting.meetingActionItems.filter(
             (item) =>

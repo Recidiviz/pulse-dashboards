@@ -29,6 +29,8 @@ export function useApproveSection(meetingId: string) {
   const mutation = trpc.v1.meeting.approveSection.useMutation({
     onSuccess: () => {
       utils.v1.meeting.getDetails.invalidate({ meetingId });
+      utils.v1.client.getMeetings.invalidate();
+      utils.v1.resident.getMeetings.invalidate();
     },
     onError: () => {
       showSnackbar("Something went wrong. Please try again.");

@@ -83,6 +83,18 @@ export function useOfflineEventFactory() {
           postMeetingProcessingStatus: "NOT_STARTED" as const,
           caseNote: null,
           validationErrorType: null,
+          approvals: {
+            caseNote: {
+              isApproved: false,
+              approverEmail: null,
+              approvedAt: null,
+            },
+            actionItems: {
+              isApproved: false,
+              approverEmail: null,
+              approvedAt: null,
+            },
+          },
           staffEmail: currentUserEmail ?? "",
         };
 
