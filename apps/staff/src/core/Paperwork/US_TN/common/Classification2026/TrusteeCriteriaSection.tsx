@@ -22,13 +22,16 @@ import styled from "styled-components";
 
 import {
   getTrusteeCriterionNumber,
+  resolveTrusteeSkipState,
   TRUSTEE_ANNEX_SUB_QUESTION,
   TRUSTEE_CRITERIA,
   TRUSTEE_CRITERIA_GROUPS,
   TRUSTEE_CRITERIA_SECTIONS,
   TrusteeCriterion,
   TrusteeCriterionGroup,
+  TrusteeCriterionKey,
 } from "~datatypes";
+import { palette } from "~design-system";
 
 import { UsTnReclassification2026Form } from "../../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassification2026Form";
 import { useOpportunityFormContext } from "../../../OpportunityFormContext";
@@ -121,6 +124,17 @@ const NoteSlot = styled.div<{ $reserveSubQuestion: boolean }>`
   margin-top: ${rem(SLOT_GAP)};
   min-height: ${({ $reserveSubQuestion }) =>
     $reserveSubQuestion ? rem(SUB_QUESTION_RESERVE) : rem(NOTE_LINE_HEIGHT)};
+`;
+
+/** Greyed rather than hidden, so the printed page is the same either way. */
+const NotRequiredCell = styled.td`
+  text-align: center;
+  font-style: italic;
+`;
+
+/** slate80 is the lightest palette grey that clears 4.5:1 on white, and this is small print. */
+const NotRequired = styled.span`
+  color: ${palette.slate80};
 `;
 
 /** Boxed, and above the note, so it does not read as part of criterion 3's own text. */
@@ -363,8 +377,12 @@ export function CriterionText({ text }: { text: string }) {
 /** True, False and unanswered are three distinct states, so radios rather than a checkbox. */
 const CriterionRow = observer(function CriterionRow({
   criterion,
+  notRequired,
+  subQuestionNotRequired,
 }: {
   criterion: TrusteeCriterion;
+  notRequired: boolean;
+  subQuestionNotRequired: boolean;
 }) {
   const opportunityForm =
     useOpportunityFormContext() as UsTnReclassification2026Form;
@@ -400,7 +418,8 @@ const CriterionRow = observer(function CriterionRow({
   ] as string | undefined;
 
   const note = criterionFailureNote(criterion, selected, subQuestionAnswer);
-  const showSubQuestion = isSubQuestionParent && selected === "false";
+  const showSubQuestion =
+    isSubQuestionParent && selected === "false" && !subQuestionNotRequired;
   const failedHardBar = criterion.isHardBar && selected === "false";
 
   const onSubQuestionChange: ChangeEventHandler<HTMLInputElement> = (event) => {
@@ -419,7 +438,13 @@ const CriterionRow = observer(function CriterionRow({
         {criterionNumber}
       </NumberCell>
       <CriterionCell>
-        <CriterionText text={criterion.text} />
+        {notRequired ? (
+          <NotRequired>
+            <CriterionText text={criterion.text} />
+          </NotRequired>
+        ) : (
+          <CriterionText text={criterion.text} />
+        )}
         {criterion.helper && <HelperText>NOTE: {criterion.helper}</HelperText>}
         <NoteSlot $reserveSubQuestion={isSubQuestionParent}>
           {showSubQuestion && (
@@ -467,28 +492,36 @@ const CriterionRow = observer(function CriterionRow({
           )}
         </NoteSlot>
       </CriterionCell>
-      <AnswerCell>
-        <input
-          type="radio"
-          name={dataKey}
-          aria-label={`Criterion ${criterionNumber}: True`}
-          checked={selected === "true"}
-          value="true"
-          onChange={onChange}
-          onClick={onClick}
-        />
-      </AnswerCell>
-      <AnswerCell>
-        <input
-          type="radio"
-          name={dataKey}
-          aria-label={`Criterion ${criterionNumber}: False`}
-          checked={selected === "false"}
-          value="false"
-          onChange={onChange}
-          onClick={onClick}
-        />
-      </AnswerCell>
+      {notRequired ? (
+        <NotRequiredCell colSpan={2}>
+          <NotRequired>Not required</NotRequired>
+        </NotRequiredCell>
+      ) : (
+        <>
+          <AnswerCell>
+            <input
+              type="radio"
+              name={dataKey}
+              aria-label={`Criterion ${criterionNumber}: True`}
+              checked={selected === "true"}
+              value="true"
+              onChange={onChange}
+              onClick={onClick}
+            />
+          </AnswerCell>
+          <AnswerCell>
+            <input
+              type="radio"
+              name={dataKey}
+              aria-label={`Criterion ${criterionNumber}: False`}
+              checked={selected === "false"}
+              value="false"
+              onChange={onChange}
+              onClick={onClick}
+            />
+          </AnswerCell>
+        </>
+      )}
     </tr>
   );
 });
@@ -500,6 +533,14 @@ export const CriteriaSection = observer(function CriteriaSection({
   section: string;
   groups: (typeof TRUSTEE_SECTIONS)[number]["groups"];
 }) {
+  const opportunityForm =
+    useOpportunityFormContext() as UsTnReclassification2026Form;
+
+  const { notRequired, subQuestionNotRequired } = resolveTrusteeSkipState(
+    opportunityForm.formData,
+  );
+  const notRequiredKeys = new Set<TrusteeCriterionKey>(notRequired);
+
   return (
     <>
       <SectionHeading>{section}</SectionHeading>
@@ -536,7 +577,12 @@ export const CriteriaSection = observer(function CriteriaSection({
               </AnswerCell>
             </GroupHeaderRow>
             {criteria.map((criterion) => (
-              <CriterionRow key={criterion.key} criterion={criterion} />
+              <CriterionRow
+                key={criterion.key}
+                criterion={criterion}
+                notRequired={notRequiredKeys.has(criterion.key)}
+                subQuestionNotRequired={subQuestionNotRequired}
+              />
             ))}
           </tbody>
         ))}

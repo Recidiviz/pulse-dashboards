@@ -249,6 +249,46 @@ export function resolveAnnexOutcome(
   };
 }
 
+export type TrusteeSkipState = {
+  notRequired: TrusteeCriterionKey[];
+  subQuestionNotRequired: boolean;
+};
+
+/**
+ * Marks unanswered criteria whose answer could no longer change either outcome.
+ * The Trustee and Annex ranges resolve independently.
+ */
+export function resolveTrusteeSkipState(
+  formData: Partial<TrusteeFormSchema>,
+): TrusteeSkipState {
+  const { failedHardBars } = resolveTrusteeOutcome(formData);
+  const annexOutcome = resolveAnnexOutcome(formData);
+
+  const trusteeResolved = failedHardBars.length > 0;
+  const annexResolved = annexOutcome.status !== "INCOMPLETE";
+
+  const notRequired = TRUSTEE_CRITERIA.filter(({ key, affectsAnnex }) => {
+    const answer = formData[key];
+    if (answer === "true" || answer === "false") return false;
+
+    // Annex criteria stay required until that outcome is settled too.
+    return affectsAnnex ? trusteeResolved && annexResolved : trusteeResolved;
+  }).map(({ key }) => key);
+
+  const subQuestionAnswer = formData[TRUSTEE_ANNEX_SUB_QUESTION.key];
+  const subQuestionAnswered =
+    subQuestionAnswer === "true" || subQuestionAnswer === "false";
+
+  return {
+    notRequired,
+    // Only matters while it can still decide Annex.
+    subQuestionNotRequired:
+      !subQuestionAnswered &&
+      (!annexOutcome.subQuestionRequired ||
+        annexOutcome.failedCriteria.length > 0),
+  };
+}
+
 export function showTrusteeChecklist(
   totalText: string,
   formData: Partial<UsTnReclassification2026DraftData>,

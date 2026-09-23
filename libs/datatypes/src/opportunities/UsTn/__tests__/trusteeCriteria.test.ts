@@ -18,6 +18,7 @@
 import {
   resolveAnnexOutcome,
   resolveTrusteeOutcome,
+  resolveTrusteeSkipState,
 } from "../reclassificationScoreUtils";
 import {
   getTrusteeCriterionNumber,
@@ -402,5 +403,115 @@ describe("resolveAnnexOutcome", () => {
 
     expect(resolveTrusteeOutcome(formData).status).toBe("NOT_ELIGIBLE");
     expect(resolveAnnexOutcome(formData).status).toBe("ELIGIBLE");
+  });
+});
+
+describe("resolveTrusteeSkipState", () => {
+  const numbers = (keys: string[]) =>
+    keys
+      .map((k) => getTrusteeCriterionNumber(k as never))
+      .sort((a, b) => a - b);
+  const keyFor = (n: number) => TRUSTEE_CRITERIA[n - 1].key;
+  const sexOffenderKey = TRUSTEE_ANNEX_SUB_QUESTION.parentKey;
+  const subKey = TRUSTEE_ANNEX_SUB_QUESTION.key;
+
+  it("marks nothing on an untouched form", () => {
+    expect(resolveTrusteeSkipState({}).notRequired).toEqual([]);
+  });
+
+  it("marks nothing when every criterion is answered", () => {
+    const allFalse = Object.fromEntries(
+      TRUSTEE_CRITERIA.map((c) => [c.key, "false"]),
+    );
+
+    expect(resolveTrusteeSkipState(allFalse).notRequired).toEqual([]);
+  });
+
+  it("retires the rest of 7 through 15 but keeps 1 through 6 live", () => {
+    const state = resolveTrusteeSkipState({ [keyFor(9)]: "false" });
+
+    expect(numbers(state.notRequired)).toEqual([7, 8, 10, 11, 12, 13, 14, 15]);
+  });
+
+  it("retires both ranges when an Annex criterion fails", () => {
+    const state = resolveTrusteeSkipState({ [keyFor(1)]: "false" });
+
+    expect(numbers(state.notRequired)).toEqual([
+      2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+    ]);
+  });
+
+  it("keeps 1 through 6 live when only the sex offender criterion is False", () => {
+    const state = resolveTrusteeSkipState({ [sexOffenderKey]: "false" });
+
+    expect(numbers(state.notRequired)).toEqual([
+      7, 8, 9, 10, 11, 12, 13, 14, 15,
+    ]);
+    expect(state.subQuestionNotRequired).toBeFalse();
+  });
+
+  it("retires 1 through 6 once the sub-question settles Annex", () => {
+    const state = resolveTrusteeSkipState({
+      [sexOffenderKey]: "false",
+      [subKey]: "false",
+    });
+
+    expect(numbers(state.notRequired)).toContain(1);
+    expect(numbers(state.notRequired)).toContain(6);
+  });
+
+  it("keeps 1 through 6 live when the sub-question keeps Annex open", () => {
+    const state = resolveTrusteeSkipState({
+      [sexOffenderKey]: "false",
+      [subKey]: "true",
+    });
+
+    expect(numbers(state.notRequired)).toEqual([
+      7, 8, 9, 10, 11, 12, 13, 14, 15,
+    ]);
+  });
+
+  it("never marks an answered criterion", () => {
+    const state = resolveTrusteeSkipState({
+      [keyFor(1)]: "false",
+      [keyFor(5)]: "true",
+      [keyFor(12)]: "true",
+    });
+
+    expect(numbers(state.notRequired)).not.toContain(5);
+    expect(numbers(state.notRequired)).not.toContain(12);
+  });
+
+  it("does not let a Group E False retire anything", () => {
+    expect(
+      resolveTrusteeSkipState({ [keyFor(15)]: "false" }).notRequired,
+    ).toEqual([]);
+  });
+
+  it("is fully reversible", () => {
+    const disqualified = resolveTrusteeSkipState({ [keyFor(1)]: "false" });
+    expect(disqualified.notRequired.length).toBeGreaterThan(0);
+
+    const reopened = resolveTrusteeSkipState({ [keyFor(1)]: "true" });
+    expect(reopened.notRequired).toEqual([]);
+  });
+
+  it("retires the sub-question when another criterion already settled Annex", () => {
+    const state = resolveTrusteeSkipState({
+      [keyFor(1)]: "false",
+      [sexOffenderKey]: "false",
+    });
+
+    expect(state.subQuestionNotRequired).toBeTrue();
+  });
+
+  it("never retires an answered sub-question", () => {
+    const state = resolveTrusteeSkipState({
+      [keyFor(1)]: "false",
+      [sexOffenderKey]: "false",
+      [subKey]: "true",
+    });
+
+    expect(state.subQuestionNotRequired).toBeFalse();
   });
 });

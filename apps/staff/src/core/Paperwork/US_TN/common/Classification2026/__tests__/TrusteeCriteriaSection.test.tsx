@@ -341,6 +341,55 @@ describe("CriteriaSection", () => {
       ).toHaveLength(1);
     });
   });
+
+  describe("not-required criteria", () => {
+    const NOT_REQUIRED = "Not required";
+
+    it("shows every control while nothing is resolved", () => {
+      renderSection(1);
+
+      expect(screen.queryByText(NOT_REQUIRED)).toBeNull();
+      expect(screen.getAllByRole("radio")).toHaveLength(18);
+    });
+
+    it("retires the rest of a range once a hard bar fails", () => {
+      renderSection(1, {
+        trusteeNoViolentFelonyConvictionPast5YearsIncarceration: "false",
+      });
+
+      expect(screen.getAllByText(NOT_REQUIRED)).toHaveLength(8);
+      expect(screen.getAllByRole("radio")).toHaveLength(2);
+    });
+
+    it("leaves criteria 1 through 6 alone when only Trustee is resolved", () => {
+      renderSection(0, {
+        trusteeNoViolentFelonyConvictionPast5YearsIncarceration: "false",
+      });
+
+      expect(screen.queryByText(NOT_REQUIRED)).toBeNull();
+      expect(screen.getAllByRole("radio")).toHaveLength(12);
+    });
+
+    it("keeps an answered criterion answerable", () => {
+      renderSection(1, {
+        trusteeNoViolentFelonyConvictionPast5YearsIncarceration: "false",
+        trusteeNotScoredHighForViolence: "true",
+      });
+
+      expect(
+        screen.getByRole("radio", { name: "Criterion 15: True" }),
+      ).toBeChecked();
+    });
+
+    it("hides the sub-question once another criterion has settled Annex", () => {
+      renderSection(0, {
+        trusteeHas10YearsOrLessRemaining: "false",
+        trusteeNotServingForSexualOffense: "false",
+      });
+
+      expect(screen.queryByText(/7 years or less/)).toBeNull();
+    });
+  });
 });
 
 describe("TrusteeAssessmentHeader", () => {
