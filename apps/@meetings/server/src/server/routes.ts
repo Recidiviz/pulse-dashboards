@@ -370,7 +370,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
 
           captureException(e);
 
-          // Rethrow the error so the task fails and can be retried, if we want it to.
+          // Rethrow the error so the task fails and can be retried, if we want it to, as well as for sentry logging.
           throw e;
         }
 
@@ -541,7 +541,7 @@ export function registerTaskRoutes(app: FastifyInstance) {
 
           captureException(e);
 
-          // Rethrow the error so the task fails and can be retried, if we want it to.
+          // Rethrow the error so the task fails and can be retried, if we want it to, as well as for sentry logging.
           throw e;
         }
 

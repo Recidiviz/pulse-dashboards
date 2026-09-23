@@ -312,6 +312,25 @@
         "staging": {},
         "production": {}
       }
+    },
+    "requires-sops-env:meetings-oncall": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@meetings/prisma"],
+          "target": "prisma-generate"
+        }
+      ],
+      "continuous": true,
+      "options": {
+        "command": "tsx scripts/meetings-oncall-dashboard.ts",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "staging": {},
+        "production": {}
+      },
+      "defaultConfiguration": "production"
     }
   }
 }

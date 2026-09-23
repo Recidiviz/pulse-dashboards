@@ -76,6 +76,7 @@
       ],
       "~@meetings/server/*": ["./apps/@meetings/server/src/*"],
       "~@meetings/server/jobs/*": ["./apps/@meetings/server/src/jobs/*"],
+      "~@meetings/server/scripts/*": ["./apps/@meetings/server/scripts/*"],
       "~@meetings/server/test/*": ["./apps/@meetings/server/__tests__/*"],
       "~@meetings/tasks": ["./libs/@meetings/tasks/src/index.ts"],
       "~@meetings/tasks/*": ["./libs/@meetings/tasks/src/*"],
