@@ -41,6 +41,7 @@ import {
   TRUSTEE_SECTIONS,
   TrusteeAssessmentHeader,
 } from "./TrusteeCriteriaSection";
+import { TrusteeEligibility } from "./TrusteeOutcomes";
 
 type TrusteeForm = UsTnReclassification2026Form;
 
@@ -486,9 +487,9 @@ const ReworkTrusteeChecklist = observer(function ReworkTrusteeChecklist({
             {index === 0 && <TrusteeAssessmentHeader />}
             <CriteriaSection section={section} groups={groups} />
             {index === TRUSTEE_SECTIONS.length - 1 && (
-              // Placeholders until TN-2650 and TN-2651 land the outcome blocks
-              // and the approvals chain.
+              // Placeholder until TN-2651 lands the approvals chain.
               <>
+                <TrusteeEligibility />
                 <div>
                   <Bold>Reasons for Denial:</Bold>
                   <DOCXFormTextArea<UsTnReclassification2026DraftData> name="trusteeDenialReasons" />
