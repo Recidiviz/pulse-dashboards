@@ -109,6 +109,12 @@ export type MergeSource = {
   collectionGroup?: boolean;
   /** Fields copied from the merge document. Anything else is dropped. */
   fields: string[];
+  /**
+   * Whether merge documents carry `stateCode`, so a state-scoped run can push
+   * the filter into Firestore instead of discarding after the read.
+   * See loadMergeDocuments.
+   */
+  hasStateCode?: boolean;
 };
 
 // ---------------------------------------------------------------------------

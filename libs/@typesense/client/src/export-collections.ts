@@ -72,6 +72,7 @@ const BACKFILL_FN_EXCLUDED = new Set(["opportunities"]);
 const PERSON_MERGE_SOURCES = [
   {
     sourceCollection: "clientUpdatesV2",
+    hasStateCode: true,
     fields: ["preferredName"],
   },
 ];
@@ -80,6 +81,7 @@ const OPPORTUNITY_MERGE_SOURCES = [
   {
     sourceCollection: "clientOpportunityUpdates",
     collectionGroup: true,
+    hasStateCode: true,
     fields: [
       "denial",
       "manualSnooze",

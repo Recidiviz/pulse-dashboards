@@ -82,22 +82,27 @@ import type {
 // A bulk import of thousands of docs can legitimately stall this long.
 const CONNECTION_TIMEOUT_SECONDS = 60;
 
-// Held in memory for the duration of the collection's backfill: these are
-// user-written updates (tens per day), orders of magnitude smaller than the ETL
-// collections they decorate.
+// Two things bound this scan:
+//
+//   - `select()` fetches ONLY the picked fields. Also a privacy boundary: what
+//     is read here is what can reach the index.
+//   - `hasStateCode` pushes a state-scoped run's filter into Firestore.
 async function loadMergeDocuments(
   { db, stateCode }: RunContext,
-  { sourceCollection, collectionGroup, fields }: MergeSource,
+  { sourceCollection, collectionGroup, fields, hasStateCode }: MergeSource,
 ): Promise<Map<string, FirestoreDoc>> {
   const ref = collectionGroup
     ? db.collectionGroup(sourceCollection)
     : db.collection(sourceCollection);
 
-  // Subcollection update docs don't carry stateCode (only the parent person doc
-  // does), so a where() would zero the scan. The composed key is already
-  // state-qualified via the record id, so an unfiltered scan stays correct —
-  // out-of-state entries simply never match a target doc.
-  const snapshot = await ref.get();
+  // Both cases, because the two sources disagree. The ETL writes `US_TN` on an
+  // opportunity update; `clientUpdatesV2` carries `recordId.slice(0, 5)`, which
+  // is lowercase. Asking for one would silently drop the other's documents.
+  const scoped =
+    hasStateCode && stateCode
+      ? ref.where("stateCode", "in", [stateCode, stateCode.toLowerCase()])
+      : ref;
+  const snapshot = await scoped.select(...fields).get();
 
   const byId = new Map<string, FirestoreDoc>();
   for (const doc of snapshot.docs) {

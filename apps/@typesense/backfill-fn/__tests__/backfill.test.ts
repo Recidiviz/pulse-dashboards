@@ -102,10 +102,10 @@ vi.mock("~@typesense/client", async (importOriginal) => ({
 // `groups` registers docs reachable via collectionGroup(), keyed by group name,
 // each carrying its full Firestore path so mergeDocIdFromPath has something to
 // parse.
-// `hooks.onSelect` fires on every select() call. Because the prune's confirming
-// scan is the ONLY caller of select(), it doubles as a precise probe for "did the
-// confirming scan run" — and a test can throw from it to exercise the
-// confirming-scan failure path.
+// `hooks.onSelect` fires on every select() call, and a test can throw from it
+// to exercise the confirming-scan failure path. A merge source selects too, so
+// a test using it to probe "did the confirming scan run" declares no merge
+// sources.
 function makeFirestore(
   collections: Record<string, FakeDoc[]>,
   groups: Record<string, FakePathDoc[]> = {},
@@ -114,7 +114,7 @@ function makeFirestore(
   function query(
     name: string,
     opts: {
-      state?: string;
+      state?: string[];
       afterId?: string;
       limit?: number;
       // Field mask from select(). `undefined` = no select() called (full data);
@@ -126,7 +126,10 @@ function makeFirestore(
       where: (field, _op, value) =>
         query(name, {
           ...opts,
-          state: field === "stateCode" ? String(value) : opts.state,
+          state:
+            field === "stateCode"
+              ? (Array.isArray(value) ? value : [value]).map(String)
+              : opts.state,
         }),
       orderBy: () => query(name, opts),
       limit: (n) => query(name, { ...opts, limit: n }),
@@ -143,7 +146,9 @@ function makeFirestore(
       get: async () => {
         let docs = [...(collections[name] ?? [])];
         if (opts.state !== undefined) {
-          docs = docs.filter((d) => d.data["stateCode"] === opts.state);
+          docs = docs.filter((d) =>
+            opts.state?.includes(String(d.data["stateCode"])),
+          );
         }
         docs.sort((a, b) => a.id.localeCompare(b.id));
         if (opts.afterId !== undefined) {
@@ -172,29 +177,58 @@ function makeFirestore(
     };
   }
 
-  // Collection groups are read whole (no paging or state filter), matching how
-  // loadMergeDocuments queries them.
-  function groupQuery(name: string): FakeQuery {
-    const self: FakeQuery = {
-      where: () => self,
-      orderBy: () => self,
-      limit: () => self,
-      startAfter: () => self,
-      select: () => self,
+  // Collection groups take no paging, but they DO take the stateCode equality
+  // filter and the field mask. Honoring the filter is what makes the read-scope
+  // assertions real: a fake that ignored it would pass even with `hasStateCode`
+  // dropped, because the post-read filter removes the same documents either
+  // way.
+  function groupQuery(
+    name: string,
+    opts: { state?: string[]; select?: string[] } = {},
+  ): FakeQuery {
+    return {
+      where: (field, _op, value) =>
+        groupQuery(name, {
+          ...opts,
+          state:
+            field === "stateCode"
+              ? (Array.isArray(value) ? value : [value]).map(String)
+              : opts.state,
+        }),
+      orderBy: () => groupQuery(name, opts),
+      limit: () => groupQuery(name, opts),
+      startAfter: () => groupQuery(name, opts),
+      select: (...fields) => {
+        hooks.onSelect?.(fields);
+        return groupQuery(name, { ...opts, select: fields });
+      },
       get: async () => {
-        const docs = groups[name] ?? [];
+        let docs = groups[name] ?? [];
+        // No stateCode matches no equality filter — the case this flag trades
+        // away.
+        if (opts.state !== undefined) {
+          docs = docs.filter((d) =>
+            opts.state?.includes(String(d.data["stateCode"])),
+          );
+        }
+        const mask = opts.select;
+        const project = (data: Record<string, unknown>) => {
+          if (mask === undefined) return data;
+          const out: Record<string, unknown> = {};
+          for (const f of mask) if (f in data) out[f] = data[f];
+          return out;
+        };
         return {
           empty: docs.length === 0,
           size: docs.length,
           docs: docs.map((d) => ({
             id: d.path.split("/").pop() ?? "",
-            data: () => d.data,
+            data: () => project(d.data),
             ref: { path: d.path },
           })),
         };
       },
     };
-    return self;
   }
 
   return {
@@ -1211,5 +1245,281 @@ describe("runBackfill — merging user updates onto the record", () => {
 
     const [doc] = ts.importedDocs["clients"];
     expect(doc["id"]).toBe("us_tn_123");
+  });
+});
+
+// The merge map is no use as a probe here: the post-read filter drops
+// out-of-state entries either way. So these tests count what the query
+// returned.
+describe("runBackfill — how much of a merge source a run reads", () => {
+  beforeEach(() => {
+    firestoreHolder.current = undefined;
+    typesenseHolder.current = undefined;
+  });
+
+  const OPPORTUNITY_CONFIG = {
+    name: "opportunities",
+    fields: ["stateCode", "externalId", "opportunityType"],
+    docIdOverrides: {
+      type: "fields" as const,
+      fields: ["stateCode", "externalId", "opportunityType", "opportunityId"],
+      lowercaseFields: ["stateCode"],
+    },
+  };
+
+  const SOURCE = "US_TN-someOpportunityReferrals";
+
+  const TN_OPPORTUNITY = {
+    id: "us_tn_123",
+    data: {
+      stateCode: "US_TN",
+      externalId: "123",
+      opportunityType: "usXxSomeOpportunity",
+    },
+  };
+
+  // `stateCode` is omitted unless given, which is the shape of an update
+  // document not written since the writers began to stamp it.
+  function updateDoc(
+    recordId: string,
+    denialReason: string,
+    stateCode?: string,
+  ) {
+    return {
+      path: `clientUpdatesV2/${recordId}/clientOpportunityUpdates/usXxSomeOpportunity`,
+      data: {
+        denial: { reasons: [denialReason] },
+        ...(stateCode && { stateCode }),
+      },
+    };
+  }
+
+  function mergeSources(hasStateCode: boolean) {
+    return [
+      {
+        sourceCollection: "clientOpportunityUpdates",
+        collectionGroup: true,
+        ...(hasStateCode && { hasStateCode: true }),
+        fields: ["denial"],
+      },
+    ];
+  }
+
+  // Counts every document a collection-group query RETURNS, which is the number
+  // Firestore bills for.
+  function countingReads(base: FakeFirestore) {
+    const counts = { group: 0, byCollection: {} as Record<string, number> };
+    return {
+      counts,
+      db: {
+        collection: (name: string) => {
+          const wrap = (inner: FakeQuery): FakeQuery => ({
+            ...inner,
+            where: (...args) => wrap(inner.where(...args)),
+            orderBy: (...args) => wrap(inner.orderBy(...args)),
+            limit: (...args) => wrap(inner.limit(...args)),
+            startAfter: (...args) => wrap(inner.startAfter(...args)),
+            select: (...args) => wrap(inner.select(...args)),
+            get: async () => {
+              const snapshot = await inner.get();
+              counts.byCollection[name] =
+                (counts.byCollection[name] ?? 0) + snapshot.docs.length;
+              return snapshot;
+            },
+          });
+          return wrap(base.collection(name));
+        },
+        collectionGroup: (name: string) => {
+          const q = base.collectionGroup(name);
+          const wrap = (inner: FakeQuery): FakeQuery => ({
+            ...inner,
+            where: (...args) => wrap(inner.where(...args)),
+            orderBy: (...args) => wrap(inner.orderBy(...args)),
+            limit: (...args) => wrap(inner.limit(...args)),
+            startAfter: (...args) => wrap(inner.startAfter(...args)),
+            select: (...args) => wrap(inner.select(...args)),
+            get: async () => {
+              const snapshot = await inner.get();
+              counts.group += snapshot.docs.length;
+              return snapshot;
+            },
+          });
+          return wrap(q);
+        },
+      } satisfies FakeFirestore,
+    };
+  }
+
+  it("reads only the scoped state's updates when the source carries stateCode", async () => {
+    const { counts, db } = countingReads(
+      makeFirestore(
+        { [SOURCE]: [TN_OPPORTUNITY] },
+        {
+          clientOpportunityUpdates: [
+            updateDoc("us_tn_123", "IN SCOPE", "US_TN"),
+            updateDoc("us_id_123", "OTHER STATE", "US_ID"),
+            updateDoc("us_ix_999", "OTHER STATE", "US_IX"),
+          ],
+        },
+      ),
+    );
+    firestoreHolder.current = db;
+    const ts = makeTypesense({ opportunities: [] });
+    typesenseHolder.current = ts.client;
+
+    await runBackfill(
+      [{ ...OPPORTUNITY_CONFIG, mergeSources: mergeSources(true) }],
+      "US_TN",
+      SOURCE,
+    );
+
+    // One of three, not three read and two thrown away.
+    expect(counts.group).toBe(1);
+    const [doc] = ts.importedDocs["opportunities"];
+    expect(doc).toMatchObject({ denial: { reasons: ["IN SCOPE"] } });
+  });
+
+  it("does not merge an update written before stateCode was stamped on it", async () => {
+    // The accepted cost of the server-side filter, pinned so that the day it
+    // starts to matter, this test says it was a decision. Applies to these
+    // subcollection documents only: `clientUpdatesV2` sets no `hasStateCode`,
+    // so its scan stays unfiltered and drops nothing.
+    const { counts, db } = countingReads(
+      makeFirestore(
+        { [SOURCE]: [TN_OPPORTUNITY] },
+        {
+          clientOpportunityUpdates: [updateDoc("us_tn_123", "OLD DENIAL")],
+        },
+      ),
+    );
+    firestoreHolder.current = db;
+    const ts = makeTypesense({ opportunities: [] });
+    typesenseHolder.current = ts.client;
+
+    await runBackfill(
+      [{ ...OPPORTUNITY_CONFIG, mergeSources: mergeSources(true) }],
+      "US_TN",
+      SOURCE,
+    );
+
+    expect(counts.group).toBe(0);
+    const [doc] = ts.importedDocs["opportunities"];
+    expect(doc).not.toHaveProperty("denial");
+  });
+
+  it("reads the whole group and filters after when the source carries no stateCode", async () => {
+    // Without the flag the post-read filter is the only scope check: correct,
+    // expensive, and it DOES merge the un-stamped document.
+    const { counts, db } = countingReads(
+      makeFirestore(
+        { [SOURCE]: [TN_OPPORTUNITY] },
+        {
+          clientOpportunityUpdates: [
+            updateDoc("us_tn_123", "OLD DENIAL"),
+            updateDoc("us_id_123", "OTHER STATE", "US_ID"),
+          ],
+        },
+      ),
+    );
+    firestoreHolder.current = db;
+    const ts = makeTypesense({ opportunities: [] });
+    typesenseHolder.current = ts.client;
+
+    await runBackfill(
+      [{ ...OPPORTUNITY_CONFIG, mergeSources: mergeSources(false) }],
+      "US_TN",
+      SOURCE,
+    );
+
+    expect(counts.group).toBe(2);
+    const [doc] = ts.importedDocs["opportunities"];
+    expect(doc).toMatchObject({ denial: { reasons: ["OLD DENIAL"] } });
+  });
+
+  it("bounds a lowercase-stateCode merge source to the scoped state", async () => {
+    // `clientUpdatesV2` stores `recordId.slice(0, 5)` — lowercase — so a
+    // filter asking only for `US_TN` would match nothing and silently drop
+    // every preferredName. ~238k documents, scanned once per person
+    // collection, so the difference is not marginal.
+    const { counts, db } = countingReads(
+      makeFirestore({
+        clients: [
+          {
+            id: "us_tn_123",
+            data: { stateCode: "US_TN", personExternalId: "123" },
+          },
+        ],
+        clientUpdatesV2: [
+          {
+            id: "us_tn_123",
+            data: { stateCode: "us_tn", preferredName: "Bo" },
+          },
+          {
+            id: "us_id_999",
+            data: { stateCode: "us_id", preferredName: "Al" },
+          },
+        ],
+      }),
+    );
+    firestoreHolder.current = db;
+    const ts = makeTypesense({ clients: [] });
+    typesenseHolder.current = ts.client;
+
+    await runBackfill(
+      [
+        {
+          name: "clients",
+          fields: ["stateCode", "personExternalId"],
+          mergeSources: [
+            {
+              sourceCollection: "clientUpdatesV2",
+              hasStateCode: true,
+              fields: ["preferredName"],
+            },
+          ],
+        },
+      ],
+      "US_TN",
+    );
+
+    // One of two read, not two read and one discarded.
+    expect(counts.byCollection["clientUpdatesV2"]).toBe(1);
+    // ...and the merge still lands, which asking for the wrong case would break.
+    expect(ts.importedDocs["clients"]).toEqual([
+      expect.objectContaining({ id: "us_tn_123", preferredName: "Bo" }),
+    ]);
+  });
+
+  it("fetches only the picked fields from a merge document", async () => {
+    const selectCalls: string[][] = [];
+    firestoreHolder.current = makeFirestore(
+      { [SOURCE]: [TN_OPPORTUNITY] },
+      {
+        clientOpportunityUpdates: [
+          {
+            path: "clientUpdatesV2/us_tn_123/clientOpportunityUpdates/usXxSomeOpportunity",
+            data: {
+              stateCode: "US_TN",
+              denial: { reasons: ["X"] },
+              lastViewed: { by: "officer@example.com" },
+            },
+          },
+        ],
+      },
+      { onSelect: (fields) => selectCalls.push(fields) },
+    );
+    const ts = makeTypesense({ opportunities: [] });
+    typesenseHolder.current = ts.client;
+
+    await runBackfill(
+      [{ ...OPPORTUNITY_CONFIG, mergeSources: mergeSources(true) }],
+      "US_TN",
+      SOURCE,
+    );
+
+    expect(selectCalls).toContainEqual(["denial"]);
+    const [doc] = ts.importedDocs["opportunities"];
+    expect(doc).toMatchObject({ denial: { reasons: ["X"] } });
+    expect(doc).not.toHaveProperty("lastViewed");
   });
 });
