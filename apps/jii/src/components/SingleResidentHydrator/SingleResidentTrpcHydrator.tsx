@@ -26,18 +26,16 @@ import { State } from "~@jii/paths";
 import { Loading } from "~design-system";
 import { castToError } from "~hydration-utils";
 
+import { useResidentDataQuery } from "./useResidentDataQuery";
+
 export const SingleResidentTrpcHydrator = memo(
   function SingleResidentTrpcHydrator() {
     const { personPseudoId: pseudonymizedId } = useTypedParams(State.Resident);
-
     const {
       apiClient: { trpcQuerier },
     } = useRootStore();
-    const residentQuery = useQuery(
-      trpcQuerier.resident.getResident.queryOptions({
-        pseudonymizedId,
-      }),
-    );
+
+    const residentQuery = useResidentDataQuery(pseudonymizedId, trpcQuerier);
     const residentFlagsQuery = useQuery(
       trpcQuerier.resident.getFlags.queryOptions({
         pseudonymizedId,

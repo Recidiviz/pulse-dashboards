@@ -18,22 +18,20 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { findStateSchema } from "~@jii/schemas";
-
 import { residentRestrictedMiddleware } from "../../../../middleware/residentRestrictedMiddleware";
 import { firebaseAuthedResidentProcedure } from "../../../../procedures/firebaseAuthedResidentProcedure";
 
 const residentInputSchema = z.object({ pseudonymizedId: z.string() });
 
 /**
- * Returns a full resident record, including fully typed state-specific data as a discriminated union
- * (clients will still need to narrow it by the expected state code)
- * TODO(OBT-29534): can we avoid this by having the user include state code in the args?
+ * Returns a full resident record, with untyped state-specific-data. Clients are responsible
+ * for parsing this locally to avoid off-by-one errors in calendar dates (because the server
+ * casts them to midnight UTC when creating Date objects).
  */
 export const getResident = firebaseAuthedResidentProcedure
   .input(residentInputSchema)
   .use(residentRestrictedMiddleware)
-  .query(async ({ ctx: { prisma, stateCode }, input: { pseudonymizedId } }) => {
+  .query(async ({ ctx: { prisma }, input: { pseudonymizedId } }) => {
     const resident = await prisma.resident.findUnique({
       where: { pseudonymizedId },
     });
@@ -45,14 +43,5 @@ export const getResident = firebaseAuthedResidentProcedure
       });
     }
 
-    const ssdSchema = findStateSchema(stateCode);
-
-    let validatedSSD;
-
-    // SSD may exist in the DB but we don't return it until a schema has been defined
-    if (ssdSchema) {
-      validatedSSD = ssdSchema.parse(resident.stateSpecificData);
-    }
-
-    return { ...resident, stateSpecificData: validatedSSD };
+    return resident;
   });

@@ -19,20 +19,9 @@ import { TRPCError } from "@trpc/server";
 
 import {
   caller,
-  mockCtx,
   testPseudonymizedId,
 } from "../../../../test/mockResidentProcedure";
 import { testPrismaClient } from "../../../../test/prisma";
-
-// findStateSchema is mocked so these tests don't depend on any real state's schema
-const { mockFindStateSchema } = vi.hoisted(() => ({
-  mockFindStateSchema: vi.fn(),
-}));
-
-vi.mock("~@jii/schemas", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("~@jii/schemas")>();
-  return { ...actual, findStateSchema: mockFindStateSchema };
-});
 
 const testResident = {
   pseudonymizedId: testPseudonymizedId,
@@ -45,13 +34,8 @@ const testResident = {
   unitId: null,
   officerId: null,
   importedAt: new Date("2026-01-01"),
-  stateSpecificData: { rawField: "rawValue" },
+  stateSpecificData: { rawField: "rawValue", releaseDate: "2026-03-20" },
 };
-
-beforeEach(() => {
-  mockFindStateSchema.mockReset();
-  mockFindStateSchema.mockReturnValue(undefined);
-});
 
 describe("getResident", () => {
   test("throws NOT_FOUND when the resident does not exist", async () => {
@@ -73,36 +57,14 @@ describe("getResident", () => {
       await testPrismaClient.resident.create({ data: testResident });
     });
 
-    test("returns the resident record with stateSpecificData undefined when no schema is registered", async () => {
+    // note this is returned for every state, including those with no registered
+    // schema; parsing and narrowing are entirely the client's responsibility
+    test("returns the resident record with stateSpecificData unparsed", async () => {
       const result = await caller.getResident({
         pseudonymizedId: testPseudonymizedId,
       });
 
-      expect(mockFindStateSchema).toHaveBeenCalledWith(mockCtx.stateCode);
-      expect(result).toEqual({ ...testResident, stateSpecificData: undefined });
-    });
-
-    test("returns schema-validated stateSpecificData when a schema is registered", async () => {
-      const parsedData = { knownField: "parsed" };
-      mockFindStateSchema.mockReturnValue({ parse: vi.fn(() => parsedData) });
-
-      const result = await caller.getResident({
-        pseudonymizedId: testPseudonymizedId,
-      });
-
-      expect(result.stateSpecificData).toEqual(parsedData);
-    });
-
-    test("propagates the error when stateSpecificData fails schema validation", async () => {
-      mockFindStateSchema.mockReturnValue({
-        parse: vi.fn(() => {
-          throw new Error("invalid shape");
-        }),
-      });
-
-      await expect(
-        caller.getResident({ pseudonymizedId: testPseudonymizedId }),
-      ).rejects.toThrow("invalid shape");
+      expect(result).toEqual(testResident);
     });
   });
 });

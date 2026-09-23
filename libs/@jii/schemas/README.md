@@ -1,3 +1,3 @@
 # schemas
 
-Server-side schemas for parsing freeform JII data (e.g. JSON fields)
+Zod schemas for parsing freeform JII data (e.g. JSON fields)

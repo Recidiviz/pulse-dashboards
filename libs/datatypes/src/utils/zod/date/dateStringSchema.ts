@@ -56,7 +56,8 @@ function parseSimpleDate(value: string): Date | undefined {
 
 /**
  * a Zod schema that will parse any valid ISO date string (date-only or with time)
- * into a Date object. Will fail if a valid Date cannot be derived from the input string.
+ * into a Date object. Date-only strings will be cast to local midnight per the running environment.
+ * Will fail if a valid Date cannot be derived from the input string.
  * Unlike the standard `dateStringSchema`, this will not apply a time shift in Demo or Offline mode.
  */
 export const dateStringSchemaWithoutTimeShift = z
@@ -81,7 +82,8 @@ export const dateStringSchemaWithoutTimeShift = z
 
 /**
  * a Zod schema that will parse any valid ISO date string (date-only or with time)
- * into a Date object. Will fail if a valid Date cannot be derived from the input string.
+ * into a Date object. Date-only strings will be cast to local midnight per the running environment.
+ * Will fail if a valid Date cannot be derived from the input string.
  * If the ambient dateshift flag is active, will also apply a time shift so that the date
  * (presumed to be from fixture data) will be relevant to the current date.
  */

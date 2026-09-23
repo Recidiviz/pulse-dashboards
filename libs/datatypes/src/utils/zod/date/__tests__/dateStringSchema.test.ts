@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { parseISO } from "date-fns";
 import tk from "timekeeper";
 
 import { setDateshift } from "../dateshift";
@@ -28,10 +29,35 @@ beforeEach(() => {
   setDateshift(false);
 });
 
-test("parses valid ISO date", () => {
-  expect(dateStringSchemaWithoutTimeShift.parse("2024-03-20")).toEqual(
-    new Date(2024, 2, 20),
-  );
+describe("calendar date semantics", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  test.each([
+    // For consistency, these dates should be clear of DST boundaries,
+    // and they should be in the past to guarantee those boundaries won't change
+    ["America/New_York", "2024-03-20T04:00:00.000Z"],
+    ["America/Denver", "2024-03-20T06:00:00.000Z"],
+    ["Pacific/Honolulu", "2024-03-20T10:00:00.000Z"],
+    // a positive offset, where local midnight lands on the PREVIOUS day in UTC
+    ["Asia/Tokyo", "2024-03-19T15:00:00.000Z"],
+  ])("resolves to local midnight in %s", (timeZone, expectedInstant) => {
+    // the test setup configures UTC by default, which would mask the local-midnight behavior
+    vi.stubEnv("TZ", timeZone);
+
+    expect(
+      dateStringSchemaWithoutTimeShift.parse("2024-03-20").toISOString(),
+    ).toBe(expectedInstant);
+  });
+
+  test("the regex fast path agrees with the parseISO fallback", () => {
+    vi.stubEnv("TZ", "America/Denver");
+
+    expect(dateStringSchemaWithoutTimeShift.parse("2024-03-20")).toEqual(
+      parseISO("2024-03-20"),
+    );
+  });
 });
 
 test("fails on invalid string", () => {
@@ -52,7 +78,9 @@ test("fails on invalid string", () => {
 });
 
 test("no time shift", () => {
-  expect(dateStringSchema.parse("2024-03-20")).toEqual(new Date(2024, 2, 20));
+  expect(dateStringSchema.parse("2024-03-20")).toEqual(
+    dateStringSchemaWithoutTimeShift.parse("2024-03-20"),
+  );
 });
 
 test("fails on non-ISO date format", () => {

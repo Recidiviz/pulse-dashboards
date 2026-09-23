@@ -31,8 +31,9 @@ export default defineConfig({
     baseURL,
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
-    // set browser to UTC to avoid timezone issues when manipulating time for tests
-    timezoneId: "UTC",
+    // set browser timezone to a consistent and realistic US location.
+    // See related server config below
+    timezoneId: "America/Denver",
   },
   retries: 3,
   projects: [
@@ -72,6 +73,10 @@ export default defineConfig({
     // wait for the server to be available on this port, it takes longer to start up than the frontend
     port: 4210,
     cwd: join(__dirname, "../../"),
+    // Pin the server timezone to UTC, matching our Cloud Run deployments and dev configuration.
+    // The mismatch with the browser is consequential and some tests explicitly address it.
+    // See related browser config above.
+    env: { TZ: "UTC" },
     reuseExistingServer: false,
     // seeing the server output may help with debugging
     stdout: "pipe",

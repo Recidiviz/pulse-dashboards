@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { ValuesType } from "utility-types";
+import { z } from "zod";
 
 import { usArStateDataSchema } from "./US_AR";
 import { usAzStateDataSchema } from "./US_AZ";
@@ -36,6 +37,8 @@ export const stateDataSchemas = {
   US_NE: usNeStateDataSchema,
   US_TN: usTnStateDataSchema,
 };
+
+export type AnyStateSpecificData = z.infer<ValuesType<typeof stateDataSchemas>>;
 
 /**
  * Convenience method for looking up state schemas that may not exist.

@@ -266,7 +266,7 @@ async function compareResident(
     }
   }
 
-  // this is the same logic around SSD schema as is employed in trpc getResidents;
+  // this is the same logic around SSD schema as is employed in the real tRPC code path;
   // if a schema doesn't exist for this state, SSD is excluded from the response.
   // If it does exist, each resident's SSD must pass validation.
   const ssdSchema = findStateSchema(stateCode);

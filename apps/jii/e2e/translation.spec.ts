@@ -60,8 +60,9 @@ import { clearAllLoaders } from "./utils";
     const residentUrl = `${opts.slug}/${testPseudoId}`;
 
     test.beforeEach(async ({ page }) => {
-      // the contents of this page are affected by the current date
-      await page.clock.setFixedTime("2021-12-16");
+      // the contents of this page are affected by the current date;
+      // noon UTC converts to the same calendar date across all US time zones
+      await page.clock.setFixedTime("2021-12-16T12:00:00Z");
     });
 
     test("with translator permission", async ({ page }) => {
