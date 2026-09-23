@@ -15,11 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./config";
-export { dbToAudioLevel, rmsToAudioLevel } from "./lib/audioLevel";
-export { RecordingProvider, useRecording } from "./model";
-export * from "./model/types";
-export { MeetingControlsMobile } from "./ui/MeetingControlsMobile";
-export { MeetingModalLayout } from "./ui/MeetingModalLayout";
-export { MeetingModalMobile } from "./ui/MeetingModalMobile";
-export { MicIndicator } from "./ui/MicIndicator";
+type MeetingSummary = {
+  id: string;
+  startTime: Date | string;
+  postMeetingProcessingStatus: string;
+};
+
+export function getLatestCompletedMeeting<T extends MeetingSummary>(
+  meetings: T[] | undefined = [],
+): T | undefined {
+  let latest: T | undefined;
+  for (const meeting of meetings) {
+    if (meeting.postMeetingProcessingStatus !== "COMPLETED") continue;
+    if (!latest || new Date(meeting.startTime) > new Date(latest.startTime)) {
+      latest = meeting;
+    }
+  }
+  return latest;
+}

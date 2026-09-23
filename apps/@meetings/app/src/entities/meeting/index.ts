@@ -28,6 +28,7 @@ export {
 } from "./lib/formatMeetingDate";
 export { formatSpeakerLabel } from "./lib/formatMeetingSpeakers";
 export { isMeetingProcessing } from "./lib/isMeetingProcessing";
+export { useCompleteActionItem } from "./model/useCompleteActionItem";
 export { useCreateMeeting } from "./model/useCreateMeeting";
 export { useDiscardMeeting } from "./model/useDiscardMeeting";
 export { useEndMeeting } from "./model/useEndMeeting";

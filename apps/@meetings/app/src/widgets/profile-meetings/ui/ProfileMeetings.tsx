@@ -98,9 +98,15 @@ export const ProfileMeetings = ({
     setPersonType,
     startRecording,
   } = useRecording<"native">();
-  const { openRecordingView, startRecording: startRecordingWeb } =
-    useRecording<"web">();
+  const {
+    openRecordingView,
+    startRecording: startRecordingWeb,
+    setNote: setRecordingNote,
+  } = useRecording<"web">();
   const openAudioUpload = useAudioUploadStore((s) => s.open);
+  const setUploadNotepadNotes = useAudioUploadStore(
+    (s) => s.setUserNotepadNotes,
+  );
   const audioUploadStatus = useAudioUploadStore((s) => s.status);
   const {
     meetingType: meetingTypeValue,
@@ -116,6 +122,7 @@ export const ProfileMeetings = ({
   const [page, setPage] = useState(1);
   const [isNewMeetingSheetOpen, setIsNewMeetingSheetOpen] = useState(false);
   const [isNewMeetingModalOpen, setIsNewMeetingModalOpen] = useState(false);
+  const [preMeetingNote, setPreMeetingNote] = useState("");
 
   const handleAudioUpload = useCallback(() => {
     const startUpload = () => {
@@ -127,6 +134,8 @@ export const ProfileMeetings = ({
         meetingType: meetingTypeValue,
         meetingTypeCategory: meetingTypeCategoryValue,
       });
+      if (preMeetingNote) setUploadNotepadNotes(preMeetingNote);
+      setPreMeetingNote("");
       resetMeetingTypeStore(meetingTypes[0]?.type ?? undefined);
     };
     validateAndStart({
@@ -143,8 +152,10 @@ export const ProfileMeetings = ({
     person,
     personType,
     meetingTypeCategoryValue,
+    preMeetingNote,
     resetMeetingTypeStore,
     setMeetingTypeCategoryError,
+    setUploadNotepadNotes,
   ]);
 
   const { track } = useAnalytics();
@@ -168,6 +179,10 @@ export const ProfileMeetings = ({
             meetingTypeCategory: meetingTypeCategoryValue,
             person,
           });
+          // user can add notes on the pre-meeting screen.
+          // web only, we don't have such screen on ios and android
+          setRecordingNote(preMeetingNote);
+          setPreMeetingNote("");
           startRecordingWeb();
           resetMeetingTypeStore(meetingTypes[0]?.type ?? undefined);
           break;
@@ -434,7 +449,10 @@ export const ProfileMeetings = ({
       {isNewMeetingModalOpen && (
         <NewMeetingOptionsModal
           person={person}
-          onClose={() => setIsNewMeetingModalOpen(false)}
+          onClose={() => {
+            setIsNewMeetingModalOpen(false);
+            setPreMeetingNote("");
+          }}
           onStartMeeting={() => {
             const startMeeting = () => {
               setIsNewMeetingModalOpen(false);
@@ -457,6 +475,8 @@ export const ProfileMeetings = ({
           meetingTypeCategory={meetingTypeCategoryValue}
           setMeetingTypeCategory={setMeetingTypeCategoryValue}
           meetingTypeCategoryError={meetingTypeCategoryError}
+          note={preMeetingNote}
+          setNote={setPreMeetingNote}
         />
       )}
     </SafeAreaView>

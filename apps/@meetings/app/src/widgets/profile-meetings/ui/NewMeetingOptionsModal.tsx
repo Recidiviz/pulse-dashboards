@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TouchableOpacity, View } from "react-native";
+import { TextInput, View } from "react-native";
 import MicrophoneIcon from "react-native-heroicons/solid/MicrophoneIcon";
 import UploadIcon from "react-native-heroicons/solid/UploadIcon";
 
@@ -27,13 +27,12 @@ import {
   HIDDEN_MEETING_TYPE_SUFFIX,
 } from "~@meetings/app/entities/meeting-type";
 import { useUserContext } from "~@meetings/app/entities/user";
+import { MeetingModalLayout } from "~@meetings/app/features/recording";
 import { Person } from "~@meetings/app/shared/api";
-import MinimizeSvg from "~@meetings/app/shared/assets/icons/arrows-pointing-in.svg";
 import PlaySvg from "~@meetings/app/shared/assets/icons/play.svg";
 import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 import { Button } from "~@meetings/app/shared/ui/Button";
 import Dropdown from "~@meetings/app/shared/ui/Dropdown";
-import Modal from "~@meetings/app/shared/ui/Modal";
 import { OfflineIndicator } from "~@meetings/app/shared/ui/OfflineIndicator";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 import { AgencyConfig } from "~@meetings/config";
@@ -50,6 +49,8 @@ type NewMeetingOptionsModalProps = {
   meetingTypeCategory: string | null;
   setMeetingTypeCategory: (meetingTypeCategory: string) => void;
   meetingTypeCategoryError: string | null;
+  note: string;
+  setNote: (note: string) => void;
 };
 
 export function NewMeetingOptionsModal({
@@ -64,6 +65,8 @@ export function NewMeetingOptionsModal({
   meetingTypeCategory,
   setMeetingTypeCategory,
   meetingTypeCategoryError,
+  note,
+  setNote,
 }: NewMeetingOptionsModalProps) {
   const { isOnline } = useIsOnline();
   const { isRecidivizUser } = useUserContext();
@@ -78,102 +81,98 @@ export function NewMeetingOptionsModal({
   );
   const categoryType = getCategoryType(meetingTypes, meetingTypeValue);
   return (
-    <Modal
-      visible
-      transparent
-      onClickOutside={onClose}
-      containerClassName="max-w-[960px] md:h-[658px] size-full"
+    <MeetingModalLayout
+      onClose={onClose}
+      sidebarProps={{ person, onNavigateAway: onClose }}
     >
-      <View className="h-full flex-1 grow md:h-auto">
-        <View className="w-full flex-row items-center justify-between border-b border-subtle px-8 pb-3 pt-5">
-          <View className="gap-1">
-            <Typography variant="heading-4">New Meeting</Typography>
-            <Typography variant="body-m-medium">
-              {person.fullName}{" "}
-              <Typography variant="caption-s-regular" className="md:text-base">
-                {person.primaryMetadata} • ID: {person.displayPersonExternalId}
-              </Typography>
-            </Typography>
-          </View>
-          <TouchableOpacity
-            onPress={onClose}
-            className="rounded-full bg-screen p-1.5"
-          >
-            <MinimizeSvg className="size-5 text-secondary" />
-          </TouchableOpacity>
+      <View className="z-10 flex-1 grow items-center justify-center gap-4 px-8 py-10">
+        <View className="relative mb-2 size-20 items-center justify-center rounded-full bg-screen">
+          <MicrophoneIcon className="size-8 fill-tertiary" />
+          <OfflineIndicator
+            rootClassName="absolute -right-3 -top-3"
+            triggerClassName="size-9 rounded-full border-2 border-on-brand bg-warning-light"
+            iconClassName="!size-5"
+          />
         </View>
-
-        <View className="flex-1 grow items-center justify-center gap-4 px-8 py-10">
-          <View className="relative mb-2 size-16 items-center justify-center rounded-xl border border-subtle bg-secondary">
-            <MicrophoneIcon className="size-8 fill-tertiary" />
-            <OfflineIndicator
-              rootClassName="absolute -right-4 -top-4"
-              triggerClassName="size-9 rounded-full border-2 border-on-brand bg-warning-light"
-              iconClassName="!size-5"
-            />
-          </View>
-          <Typography className="text-center font-libre-baskerville text-3xl font-bold text-primary">
-            {isOnline ? "New Meeting Recording" : "Offline Meeting Recording"}
-          </Typography>
-          <Typography
-            variant="body-s-regular"
-            className="mb-2 max-w-[530px] text-center"
+        <Typography variant="heading-2" className="text-center">
+          {isOnline ? "New Meeting Recording" : "Offline Meeting Recording"}
+        </Typography>
+        <Typography
+          variant="body-m-regular"
+          className="max-w-[560px] text-center !text-secondary"
+        >
+          {isOnline
+            ? "Choose how to add a meeting: record new or upload audio. Be sure to confirm that everyone present is aware and has agreed to recording."
+            : "Your meeting is being recorded locally and will upload automatically upon reconnection. Be sure to confirm that everyone present is aware and has agreed to recording."}
+        </Typography>
+        <Typography
+          variant="body-s-regular"
+          className="mb-2 max-w-[560px] text-center italic"
+        >
+          Please note: Summaries and other notes are generated for meetings
+          containing 50 words or more.
+        </Typography>
+        {meetingTypesOptions?.length > 0 && (
+          <Dropdown
+            className="z-20"
+            variant="outline"
+            value={meetingTypeValue}
+            options={meetingTypesOptions}
+            onSelect={(v) =>
+              setMeetingType(v.replace(HIDDEN_MEETING_TYPE_SUFFIX, ""))
+            }
+          />
+        )}
+        {meetingTypeCategoriesOptions && (
+          <Dropdown
+            className="z-10"
+            variant="outline"
+            value={meetingTypeCategory}
+            options={meetingTypeCategoriesOptions}
+            onSelect={setMeetingTypeCategory}
+            defaultEmptyValue
+            placeholder={getCategoryTypePlaceholder(categoryType)}
+            hasFreeTextOption
+            errorMessage={meetingTypeCategoryError}
+          />
+        )}
+        <View className="flex-row gap-6">
+          <Button
+            variant="secondary"
+            className="h-14 min-w-[200px]"
+            icon={{ icon: UploadIcon, className: "size-5" }}
+            onPress={onUploadFile}
           >
-            {isOnline
-              ? "This meeting will be recorded and transcribed for note-taking. Be sure to confirm that everyone present is aware and has agreed to recording."
-              : "Your meeting is being recorded locally and will upload automatically upon reconnection. Be sure to confirm that everyone present is aware and has agreed to recording."}
-          </Typography>
-          <Typography
-            variant="body-s-regular"
-            className="mb-2 max-w-[530px] text-center italic"
-          >
-            Please note: Summaries and other notes are generated for meetings
-            containing 50 words or more.
-          </Typography>
-          {meetingTypesOptions?.length > 0 && (
-            <Dropdown
-              className="z-20"
-              variant="outline"
-              value={meetingTypeValue}
-              options={meetingTypesOptions}
-              onSelect={(v) =>
-                setMeetingType(v.replace(HIDDEN_MEETING_TYPE_SUFFIX, ""))
-              }
-            />
-          )}
-          {meetingTypeCategoriesOptions && (
-            <Dropdown
-              className="z-10"
-              variant="outline"
-              value={meetingTypeCategory}
-              options={meetingTypeCategoriesOptions}
-              onSelect={setMeetingTypeCategory}
-              defaultEmptyValue
-              placeholder={getCategoryTypePlaceholder(categoryType)}
-              hasFreeTextOption
-              errorMessage={meetingTypeCategoryError}
-            />
-          )}
+            Upload audio
+          </Button>
           <Button
             variant="primary"
-            className="h-14 w-full max-w-[240px]"
+            className="h-14 min-w-[200px]"
             icon={{ icon: PlaySvg, className: "size-4" }}
             loading={isMeetingCreating}
             onPress={onStartMeeting}
           >
             Start Meeting
           </Button>
-
-          <Button
-            variant="secondary"
-            className="h-14 w-full max-w-[240px]"
-            icon={{ icon: UploadIcon, className: "size-5" }}
-            onPress={onUploadFile}
-          >
-            Upload audio
-          </Button>
         </View>
       </View>
-    </Modal>
+
+      <View className="gap-2 border-t border-subtle px-12 pb-8 pt-6">
+        <Typography variant="body-m-medium">
+          Notepad{" "}
+          <Typography variant="body-m-regular" className="!text-secondary">
+            (notes will transfer to the next page)
+          </Typography>
+        </Typography>
+        <TextInput
+          value={note}
+          onChangeText={setNote}
+          multiline
+          numberOfLines={3}
+          placeholder="Start typing here... Try adding discussion topics."
+          className="min-h-[88px] rounded-lg border border-subtle bg-secondary px-4 py-3 text-base leading-[22px] text-primary outline-none"
+        />
+      </View>
+    </MeetingModalLayout>
   );
 }
