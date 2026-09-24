@@ -110,7 +110,9 @@ export const FormUsTnReclassification2026V2 = observer(
       ];
 
       if (includeTrusteeChecklist) {
-        fileInputs.push(getTrusteeTemplateArgs(resident, form));
+        fileInputs.push(
+          getTrusteeTemplateArgs(resident, form, !!trusteeChecklistRework),
+        );
       }
 
       const documents = await renderMultipleDocx(fileInputs);

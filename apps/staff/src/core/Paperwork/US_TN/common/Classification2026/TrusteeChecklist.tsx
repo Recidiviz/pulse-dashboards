@@ -37,6 +37,9 @@ import { PrintablePage } from "../../../styles";
 import FormInput from "../../CustodyReclassification/FormInput";
 import { Bold, Header, TrusteeFormPage, TrusteeReworkFormPage } from "./styles";
 import trusteeAssessmentTemplate from "./trustee_assessment_template.docx";
+// Separate file so the pilot's template is untouched. Still a byte-for-byte
+// copy awaiting authoring; see docx-template-spec.md.
+import trusteeAssessmentReworkTemplate from "./trustee_assessment_template_rework.docx";
 import { TrusteeApprovals } from "./TrusteeApprovals";
 import {
   CriteriaSection,
@@ -45,6 +48,7 @@ import {
 } from "./TrusteeCriteriaSection";
 import { TrusteeDenialReasons, TrusteeNotesForWarden } from "./TrusteeNotes";
 import { TrusteeEligibility } from "./TrusteeOutcomes";
+import { getTrusteeReworkTemplateContents } from "./trusteeTemplateArgs";
 
 type TrusteeForm = UsTnReclassification2026Form;
 
@@ -72,8 +76,17 @@ const CriteriaTable = styled.table`
 export function getTrusteeTemplateArgs(
   resident: JusticeInvolvedPerson,
   form: TrusteeForm,
+  trusteeChecklistReworkEnabled = false,
 ): FileGeneratorArgs {
   const { derivedData, formData, formTemplateData } = form;
+
+  if (trusteeChecklistReworkEnabled) {
+    return [
+      `${resident.displayName} - Trustee Checklist.docx`,
+      trusteeAssessmentReworkTemplate,
+      { ...formTemplateData, ...getTrusteeReworkTemplateContents(formData) },
+    ];
+  }
 
   const formContents: Record<string, string> = {};
 
