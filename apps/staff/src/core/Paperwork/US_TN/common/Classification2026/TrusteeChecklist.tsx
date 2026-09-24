@@ -21,6 +21,7 @@ import styled from "styled-components";
 
 import {
   TRUSTEE_FORM_QUESTION_ORDER,
+  TrusteeCriterionGroup,
   TrusteeFormSchema,
   UsTnReclassification2026DraftData,
 } from "~datatypes";
@@ -34,7 +35,7 @@ import DOCXFormTextArea from "../../../DOCXFormTextArea";
 import { useOpportunityFormContext } from "../../../OpportunityFormContext";
 import { PrintablePage } from "../../../styles";
 import FormInput from "../../CustodyReclassification/FormInput";
-import { Bold, Header, TrusteeFormPage } from "./styles";
+import { Bold, Header, TrusteeFormPage, TrusteeReworkFormPage } from "./styles";
 import trusteeAssessmentTemplate from "./trustee_assessment_template.docx";
 import { TrusteeApprovals } from "./TrusteeApprovals";
 import {
@@ -476,29 +477,89 @@ const LegacyTrusteeChecklist = observer(function LegacyTrusteeChecklist({
   );
 });
 
+/**
+ * Where the page breaks fall; a group never splits across a page. Sized against
+ * a measured render, so re-check a print preview after changing TRUSTEE_CRITERIA.
+ */
+export const TRUSTEE_PRINT_BLOCKS = [
+  "eligibility",
+  "approvals",
+  "notes",
+] as const;
+
+export type TrusteePrintBlock = (typeof TRUSTEE_PRINT_BLOCKS)[number];
+
+export const TRUSTEE_PRINT_PAGES = [
+  { groups: ["A"], blocks: [] },
+  { groups: ["B", "C", "D"], blocks: [] },
+  { groups: ["E"], blocks: [] },
+  // Eligibility has a sheet to itself: it prints the full requirement text of
+  // every hard bar that failed, and all thirteen can fail at once.
+  { groups: [], blocks: ["eligibility"] },
+  // Approvals starts a sheet, so the table and what follows it stay together.
+  { groups: [], blocks: ["approvals", "notes"] },
+] as const satisfies readonly {
+  groups: readonly TrusteeCriterionGroup[];
+  blocks: readonly TrusteePrintBlock[];
+}[];
+
 const ReworkTrusteeChecklist = observer(function ReworkTrusteeChecklist({
   display,
 }: {
   display: boolean;
 }) {
+  const announced = new Set<string>();
+
   return (
     <>
-      {TRUSTEE_SECTIONS.map(({ section, groups }, index) => (
-        <PrintablePage stretchable hidden={!display} key={section}>
-          <TrusteeFormPage>
-            {index === 0 && <TrusteeAssessmentHeader />}
-            <CriteriaSection section={section} groups={groups} />
-            {index === TRUSTEE_SECTIONS.length - 1 && (
-              <>
-                <TrusteeEligibility />
-                <TrusteeApprovals />
-                <TrusteeDenialReasons />
-                <TrusteeNotesForWarden />
-              </>
-            )}
-          </TrusteeFormPage>
-        </PrintablePage>
-      ))}
+      {TRUSTEE_PRINT_PAGES.map(({ groups, blocks }, pageIndex) => {
+        // A page may carry two sections; each gets its own table, and its
+        // heading only where the section actually begins.
+        const pageSections = TRUSTEE_SECTIONS.map(
+          ({ section, groups: all }) => ({
+            section,
+            groups: all.filter((g) =>
+              (groups as readonly string[]).includes(g.key),
+            ),
+          }),
+        ).filter(({ groups: g }) => g.length > 0);
+
+        const carries = (block: TrusteePrintBlock) =>
+          (blocks as readonly string[]).includes(block);
+
+        return (
+          // Fixed height: the page count must not change as answers are entered.
+          <PrintablePage
+            hidden={!display}
+            key={groups.join("") || blocks.join("")}
+          >
+            <TrusteeReworkFormPage>
+              {pageIndex === 0 && <TrusteeAssessmentHeader />}
+              {pageSections.map(({ section, groups: sectionGroups }) => {
+                const startsSection = !announced.has(section);
+                announced.add(section);
+
+                return (
+                  <CriteriaSection
+                    key={section}
+                    section={section}
+                    groups={sectionGroups}
+                    showHeading={startsSection}
+                  />
+                );
+              })}
+              {carries("eligibility") && <TrusteeEligibility />}
+              {carries("approvals") && <TrusteeApprovals />}
+              {carries("notes") && (
+                <>
+                  <TrusteeDenialReasons />
+                  <TrusteeNotesForWarden />
+                </>
+              )}
+            </TrusteeReworkFormPage>
+          </PrintablePage>
+        );
+      })}
     </>
   );
 });

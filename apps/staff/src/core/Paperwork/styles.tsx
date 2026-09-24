@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { rem } from "polished";
-import { ReactNode } from "react";
+import { ReactNode, RefObject, useLayoutEffect, useRef } from "react";
 import styled, { css } from "styled-components";
 
 import { DIMENSIONS_PX } from "./PDFFormGenerator";
@@ -98,12 +98,38 @@ export const PrintablePageMargin = styled.div<
     `}
 `;
 
+/**
+ * A fixed-height page drops content past its bottom edge with no visual cue, so
+ * report it here. No dependency array: any answer can be the one that overflows.
+ */
+function useOverflowWarning(
+  ref: RefObject<HTMLElement | null>,
+  { stretchable, hidden }: PrintablePageProps,
+) {
+  useLayoutEffect(() => {
+    if (import.meta.env.VITE_DEPLOY_ENV === "production") return;
+    const page = ref.current;
+    if (!page || stretchable || hidden) return;
+
+    const overflow = page.scrollHeight - page.clientHeight;
+    if (overflow > 1) {
+      console.warn(
+        `PrintablePage overflows its fixed height by ${overflow}px. That content is clipped, not paginated, and will be missing from the printed form.`,
+        page,
+      );
+    }
+  });
+}
+
 export const PrintablePage = (
   props: PrintablePageProps & { children: ReactNode },
 ) => {
+  const pageRef = useRef<HTMLDivElement>(null);
+  useOverflowWarning(pageRef, props);
+
   return (
     <PrintablePageMargin {...props}>
-      <PrintablePageContainer {...props}>
+      <PrintablePageContainer {...props} ref={pageRef}>
         {props.children}
       </PrintablePageContainer>
     </PrintablePageMargin>

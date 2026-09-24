@@ -73,6 +73,15 @@ export const TrusteeFormPage = styled(BaseFormPage)`
   }
 `;
 
+/**
+ * The reworked checklist's page, separate so the pilot's form is untouched. The
+ * padding is tight because the sheet already carries two other margins.
+ */
+export const TrusteeReworkFormPage = styled(TrusteeFormPage)`
+  padding: ${rem(20)} 1.5rem ${rem(20)} 3rem;
+  gap: ${rem(8)};
+`;
+
 export const ClassificationFormPage = styled(BaseFormPage)`
   ${LeftColumn} {
     width: 100%;

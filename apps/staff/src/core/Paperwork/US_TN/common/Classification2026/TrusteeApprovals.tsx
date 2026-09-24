@@ -73,6 +73,12 @@ const ApprovalsTable = styled.table`
   width: 100%;
   table-layout: fixed;
 
+  /* A split row leaves the approver's name and their date rule on different sheets. */
+  & tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
   & th,
   td {
     border: 1px solid black;

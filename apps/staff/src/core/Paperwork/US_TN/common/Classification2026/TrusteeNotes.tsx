@@ -39,6 +39,16 @@ const HelperText = styled.div`
   margin-bottom: ${rem(2)};
 `;
 
+/**
+ * DOCXFormTextArea grows to fit whatever is typed into it, but the page around
+ * it is a fixed height and clips anything past the bottom edge, so an unbounded
+ * box would push the rest of the form off the printed page. Capping the visible
+ * rows makes it scroll instead of grow. Nothing is lost from the filed DOCX:
+ * that is generated from formData, which holds the full text no matter how many
+ * rows are on screen.
+ */
+const TEXTAREA_MAX_ROWS = 6;
+
 const NotesLabel = styled.div`
   margin: ${rem(6)} 0 ${rem(2)};
 `;
@@ -79,7 +89,10 @@ export const TrusteeDenialReasons = observer(function TrusteeDenialReasons() {
         </div>
       )}
       <NotesLabel>Additional notes</NotesLabel>
-      <DOCXFormTextArea<UsTnReclassification2026DraftData> name="trusteeDenialNotes" />
+      <DOCXFormTextArea<UsTnReclassification2026DraftData>
+        name="trusteeDenialNotes"
+        maxRows={TEXTAREA_MAX_ROWS}
+      />
     </Block>
   );
 });
@@ -89,7 +102,10 @@ export const TrusteeNotesForWarden = observer(function TrusteeNotesForWarden() {
     <Block>
       <Bold>Notes for Warden Review</Bold>
       <HelperText>Context the Warden should see with this packet.</HelperText>
-      <DOCXFormTextArea<UsTnReclassification2026DraftData> name="trusteeNotesForWarden" />
+      <DOCXFormTextArea<UsTnReclassification2026DraftData>
+        name="trusteeNotesForWarden"
+        maxRows={TEXTAREA_MAX_ROWS}
+      />
     </Block>
   );
 });

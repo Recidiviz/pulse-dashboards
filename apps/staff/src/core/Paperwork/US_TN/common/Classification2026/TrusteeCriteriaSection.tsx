@@ -161,6 +161,12 @@ const FailureNote = styled.div`
 /** A heavy rule down the left edge of a failed hard bar, so failures read as a set. */
 const FAILED_HARD_BAR_EDGE = "3px solid black";
 
+/** A group is the unit of pagination; it never splits across a page. */
+const GroupBody = styled.tbody`
+  break-inside: avoid;
+  page-break-inside: avoid;
+`;
+
 const GroupHeaderRow = styled.tr`
   & th {
     text-align: left;
@@ -542,9 +548,12 @@ const CriterionRow = observer(function CriterionRow({
 export const CriteriaSection = observer(function CriteriaSection({
   section,
   groups,
+  showHeading = true,
 }: {
   section: string;
   groups: (typeof TRUSTEE_SECTIONS)[number]["groups"];
+  /** False on a continuation page, so a section is not re-announced. */
+  showHeading?: boolean;
 }) {
   const opportunityForm =
     useOpportunityFormContext() as UsTnReclassification2026Form;
@@ -556,7 +565,7 @@ export const CriteriaSection = observer(function CriteriaSection({
 
   return (
     <>
-      <SectionHeading>{section}</SectionHeading>
+      {showHeading && <SectionHeading>{section}</SectionHeading>}
       <CriteriaTable>
         <thead>
           <tr>
@@ -571,7 +580,7 @@ export const CriteriaSection = observer(function CriteriaSection({
           </tr>
         </thead>
         {groups.map(({ key, label, note, criteria }) => (
-          <tbody key={key}>
+          <GroupBody key={key}>
             <GroupHeaderRow>
               <th scope="rowgroup" colSpan={2}>
                 Group {key}. {label}
@@ -597,7 +606,7 @@ export const CriteriaSection = observer(function CriteriaSection({
                 subQuestionNotRequired={subQuestionNotRequired}
               />
             ))}
-          </tbody>
+          </GroupBody>
         ))}
       </CriteriaTable>
     </>
