@@ -77,17 +77,20 @@ export const SubmitApprovalModal = observer(function SubmitApprovalModal({
         </CancelButton>
         <SendButton
           disabled={!selectedStaff}
-          onClick={() => {
+          onClick={async () => {
             if (!selectedStaff) {
               return;
             }
             // If the opportunity is currently in review, it means the current user is responding
             // to an existing review request, and we should set a response before
-            // forwarding the approval on down the chain.
+            // forwarding the approval on down the chain. This must be awaited before
+            // setOfficerAction runs: both read/replace the full actionHistory array, and
+            // navigating away before either write lands leaves the next page's caseload
+            // queries reading stale data.
             if (opportunity.isInGrantReview) {
-              opportunity.setSupervisorResponse({ type: "APPROVAL" });
+              await opportunity.setSupervisorResponse({ type: "APPROVAL" });
             }
-            opportunity.setOfficerAction({
+            await opportunity.setOfficerAction({
               type: "APPROVAL",
               reviewerId: selectedStaff.staffExternalId,
             });

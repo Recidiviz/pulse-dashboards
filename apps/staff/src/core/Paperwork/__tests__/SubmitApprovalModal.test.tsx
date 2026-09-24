@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { useState } from "react";
 import ReactModal from "react-modal";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
@@ -136,6 +136,15 @@ const selectOfficerViaLookup = () => {
   );
 };
 
+// The Forward button's onClick awaits setSupervisorResponse/setOfficerAction
+// before closing the modal, toasting, and navigating, so the click must be
+// flushed with act() before asserting on any of that post-await behavior.
+async function clickForward() {
+  await act(async () => {
+    fireEvent.click(screen.getByRole("button", { name: "Forward" }));
+  });
+}
+
 beforeEach(() => {
   ReactModal.setAppElement(document.createElement("div"));
   vi.clearAllMocks();
@@ -211,21 +220,21 @@ describe("ForwardButton", () => {
     expect(opportunity.setSupervisorResponse).not.toHaveBeenCalled();
   });
 
-  it("calls onCloseFn after forwarding", () => {
+  it("calls onCloseFn after forwarding", async () => {
     const { onCloseFn } = setup();
     selectOfficerViaLookup();
-    fireEvent.click(screen.getByRole("button", { name: "Forward" }));
+    await clickForward();
     expect(onCloseFn).toHaveBeenCalledOnce();
   });
 
-  it("navigates to the opportunity clients page after forwarding", () => {
+  it("navigates to the opportunity clients page after forwarding", async () => {
     setup();
     selectOfficerViaLookup();
-    fireEvent.click(screen.getByRole("button", { name: "Forward" }));
+    await clickForward();
     expect(mockNavigate).toHaveBeenCalledWith("/test-url");
   });
 
-  it("navigates to the insights officer opportunity page when opened from an Insights officer route", () => {
+  it("navigates to the insights officer opportunity page when opened from an Insights officer route", async () => {
     setup(
       {},
       {
@@ -235,13 +244,13 @@ describe("ForwardButton", () => {
       },
     );
     selectOfficerViaLookup();
-    fireEvent.click(screen.getByRole("button", { name: "Forward" }));
+    await clickForward();
     expect(mockNavigate).toHaveBeenCalledWith(
       "/test-insights-url-supervisionOpportunity",
     );
   });
 
-  it("navigates to the insights supervisor opportunity page when opened from an Insights supervisor route", () => {
+  it("navigates to the insights supervisor opportunity page when opened from an Insights supervisor route", async () => {
     setup(
       {},
       {
@@ -251,16 +260,16 @@ describe("ForwardButton", () => {
       },
     );
     selectOfficerViaLookup();
-    fireEvent.click(screen.getByRole("button", { name: "Forward" }));
+    await clickForward();
     expect(mockNavigate).toHaveBeenCalledWith(
       "/test-insights-url-supervisionSupervisorOpportunity",
     );
   });
 
-  it("shows a toast notification after forwarding", () => {
+  it("shows a toast notification after forwarding", async () => {
     setup();
     selectOfficerViaLookup();
-    fireEvent.click(screen.getByRole("button", { name: "Forward" }));
+    await clickForward();
     expect(mockToast).toHaveBeenCalledOnce();
   });
 });

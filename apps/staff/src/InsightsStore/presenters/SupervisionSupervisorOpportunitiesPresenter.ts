@@ -576,6 +576,7 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
           supportsSupervisorReview,
           supervisorReviewTabTitle,
           insightsSupervisorReviewTabTitle,
+          historicalReviewTabTitle,
           awaitingRevisionsTabTitle,
         } = this.opportunityConfigurationStore.opportunities[opportunityType];
 
@@ -585,6 +586,7 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
           insightsSupervisorReviewTabTitle
             ? "REVIEW STATUS"
             : "ELIGIBILITY STATUS",
+          reviewerId,
         );
 
         const clientCount = countRelevantOpportunities(
@@ -601,8 +603,13 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
           addSupervisorReviewCounts(
             oppDetail,
             oppsByTab,
-            [insightsSupervisorReviewTabTitle, awaitingRevisionsTabTitle],
+            [
+              insightsSupervisorReviewTabTitle,
+              awaitingRevisionsTabTitle,
+              historicalReviewTabTitle,
+            ],
             "REVIEW STATUS",
+            reviewerId,
           );
         } else if (this.isReviewCardEnabled && supportsSupervisorReview) {
           addSupervisorReviewCounts(oppDetail, oppsByTab, [

@@ -184,11 +184,13 @@ export const SubmitRevisionModal = observer(function SubmitRevisionModal({
           kind="primary"
           shape="block"
           disabled={!selectedStaff || !reason}
-          onClick={() => {
+          onClick={async () => {
             if (!selectedStaff || !reason) {
               return;
             }
-            opportunity.setSupervisorResponse({
+            // Must be awaited before navigating away: the next page's caseload
+            // queries would otherwise run before this write lands.
+            await opportunity.setSupervisorResponse({
               type: "REVISION",
               notes: reason,
               reviewerId: selectedStaff.staffExternalId,

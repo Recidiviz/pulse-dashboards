@@ -189,7 +189,10 @@ export interface Opportunity<
   readonly subcategory?: string;
   subcategoryHeadingFor: (subcategory: string) => string | undefined;
   readonly subcategoryText?: string;
-  tabTitle: (category?: OpportunityTabGroup) => OpportunityTab;
+  tabTitle: (
+    category?: OpportunityTabGroup,
+    reviewerId?: string,
+  ) => OpportunityTab;
   compare: (other: Opportunity) => number;
   showEligibilityStatus: (component: Component) => boolean;
   readonly denialConfirmationModalName?: DenialConfirmationModalName;
@@ -237,6 +240,7 @@ export interface Opportunity<
   eligibilityStatusLabel: (
     includeReasons?: boolean,
     category?: OpportunityTabGroup,
+    reviewerId?: string,
   ) => string | null;
   maxManualSnoozeDays(denialReasons: string[]): number | undefined;
   defaultManualSnoozeDays(denialReasons: string[]): number | undefined;
@@ -355,7 +359,8 @@ export type OpportunityTab =
   | "Awaiting Revisions"
   | "Submitted for Review"
   | "Awaiting Review"
-  | "Approved in OIMS";
+  | "Approved in OIMS"
+  | "Past Reviews";
 
 // TODO (OBT-39704) Refactor OpportunityTabGroup to enums
 export type OpportunityTabGroup =

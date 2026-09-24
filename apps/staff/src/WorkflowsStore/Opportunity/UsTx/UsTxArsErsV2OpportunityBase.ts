@@ -133,10 +133,24 @@ export abstract class UsTxArsErsV2OpportunityBase<
   eligibilityStatusLabel(
     includeReasons?: boolean,
     category?: OpportunityTabGroup,
+    reviewerId?: string,
   ): string | null {
+    // TODO (OBT-39704) Refactor OpportunityTabGroup to enums
+    // Use historical label if opportunity is under review
+    // but selected supervisor is not the current reviewer
+    if (
+      category === "REVIEW STATUS" &&
+      reviewerId &&
+      this.currentReviewerId !== reviewerId
+    ) {
+      return this.config.historicalReviewTabTitle;
+    }
+
     if (this.isGrantApproved) return this.grantApprovedStatusMessage;
+
     if (this.isInRevisionsRequested)
       return this.config.awaitingRevisionsTabTitle;
+
     if (this.isInGrantReview) {
       // TODO (OBT-39704) Refactor OpportunityTabGroup to enums
       return category === "REVIEW STATUS" &&
@@ -144,10 +158,23 @@ export abstract class UsTxArsErsV2OpportunityBase<
         ? this.config.insightsSupervisorReviewTabTitle
         : this.supervisorReviewTabTitle;
     }
+
     return super.eligibilityStatusLabel(includeReasons, category);
   }
 
-  tabTitle(category?: OpportunityTabGroup): OpportunityTab {
+  tabTitle(
+    category?: OpportunityTabGroup,
+    reviewerId?: string,
+  ): OpportunityTab {
+    // Past Reviews tab
+    if (
+      category === "REVIEW STATUS" &&
+      reviewerId &&
+      this.currentReviewerId !== reviewerId
+    ) {
+      return this.config.historicalReviewTabTitle;
+    }
+
     // Snoozed tab
     if (this.denied) return this.deniedTabTitle;
 

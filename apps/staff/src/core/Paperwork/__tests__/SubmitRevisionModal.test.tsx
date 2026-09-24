@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import ReactModal from "react-modal";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
@@ -113,6 +113,15 @@ function enterReason(text = "Needs revision") {
   });
 }
 
+// The Send button's onClick awaits setSupervisorResponse before closing the
+// modal, toasting, and navigating, so the click must be flushed with act()
+// before asserting on any of that post-await behavior.
+async function clickSend() {
+  await act(async () => {
+    fireEvent.click(screen.getByRole("button", { name: "Send" }));
+  });
+}
+
 beforeEach(() => {
   vi.useFakeTimers();
   ReactModal.setAppElement(document.createElement("div"));
@@ -192,23 +201,23 @@ describe("SendButton", () => {
     });
   });
 
-  it("calls onCloseFn after sending", () => {
+  it("calls onCloseFn after sending", async () => {
     const { onCloseFn } = setup();
     selectOfficer();
     enterReason();
-    fireEvent.click(screen.getByRole("button", { name: "Send" }));
+    await clickSend();
     expect(onCloseFn).toHaveBeenCalledOnce();
   });
 
-  it("navigates to the opportunity clients page after sending", () => {
+  it("navigates to the opportunity clients page after sending", async () => {
     setup();
     selectOfficer();
     enterReason();
-    fireEvent.click(screen.getByRole("button", { name: "Send" }));
+    await clickSend();
     expect(mockNavigate).toHaveBeenCalledWith("/test-url");
   });
 
-  it("navigates to the insights officer opportunity page when opened from an Insights officer route", () => {
+  it("navigates to the insights officer opportunity page when opened from an Insights officer route", async () => {
     setup(
       {},
       {
@@ -219,13 +228,13 @@ describe("SendButton", () => {
     );
     selectOfficer();
     enterReason();
-    fireEvent.click(screen.getByRole("button", { name: "Send" }));
+    await clickSend();
     expect(mockNavigate).toHaveBeenCalledWith(
       "/test-insights-url-supervisionOpportunity",
     );
   });
 
-  it("navigates to the insights supervisor opportunity page when opened from an Insights supervisor route", () => {
+  it("navigates to the insights supervisor opportunity page when opened from an Insights supervisor route", async () => {
     setup(
       {},
       {
@@ -236,17 +245,17 @@ describe("SendButton", () => {
     );
     selectOfficer();
     enterReason();
-    fireEvent.click(screen.getByRole("button", { name: "Send" }));
+    await clickSend();
     expect(mockNavigate).toHaveBeenCalledWith(
       "/test-insights-url-supervisionSupervisorOpportunity",
     );
   });
 
-  it("shows a toast notification after sending", () => {
+  it("shows a toast notification after sending", async () => {
     setup();
     selectOfficer();
     enterReason();
-    fireEvent.click(screen.getByRole("button", { name: "Send" }));
+    await clickSend();
     expect(mockToast).toHaveBeenCalledOnce();
   });
 

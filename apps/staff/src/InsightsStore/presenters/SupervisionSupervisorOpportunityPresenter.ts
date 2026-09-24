@@ -55,6 +55,7 @@ export class SupervisionSupervisorOpportunityPresenter extends SupervisionSuperv
       supervisorPseudoId,
       justiceInvolvedPersonsStore,
       opportunityConfigurationStore,
+      /* includeReviewerCaseload */ true,
     );
 
     makeObservable<
@@ -204,11 +205,11 @@ export class SupervisionSupervisorOpportunityPresenter extends SupervisionSuperv
 
     if (this.isInsightsSupervisorReviewTableEnabled) {
       const { externalId } = this.supervisorInfo ?? {};
-      const clientsForReviewer = externalId
-        ? this.findClientsForReviewer(externalId)
-        : undefined;
-      if (clientsForReviewer) {
-        clients.push(...clientsForReviewer);
+      if (externalId) {
+        clients.push(...this.findClientsForReviewer(externalId));
+        if (this.showPreviouslyReviewedOpportunities) {
+          clients.push(...this.findHistoricalClientsForReviewer(externalId));
+        }
       }
     } else {
       const clientsForOfficer = this.allOfficers.reduce((acc, officer) => {

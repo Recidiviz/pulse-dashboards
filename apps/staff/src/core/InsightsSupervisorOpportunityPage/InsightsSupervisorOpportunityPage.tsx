@@ -54,7 +54,29 @@ export const SupervisorOpportunityPageWithPresenter = observer(
       opportunityType,
       opportunityLabel,
       opportunitiesByType,
+      isInsightsSupervisorReviewTableEnabled,
+      showPreviouslyReviewedOpportunities,
     } = presenter;
+
+    // The hydrator only populates the reviewer caseload once, on the presenter's
+    // first hydration; explicitly reinvoke it on each mount so the Past Reviews
+    // tab and review counts stay fresh after a supervisor takes an action,
+    // without refiring on every unrelated re-render.
+    const isPresenterHydrated = isHydrated(presenter);
+
+    useEffect(() => {
+      if (isPresenterHydrated && isInsightsSupervisorReviewTableEnabled) {
+        presenter.populateCaseloadForCurrentReviewer();
+        if (showPreviouslyReviewedOpportunities) {
+          presenter.populateHistoricalCaseloadForCurrentReviewer();
+        }
+      }
+    }, [
+      presenter,
+      isPresenterHydrated,
+      isInsightsSupervisorReviewTableEnabled,
+      showPreviouslyReviewedOpportunities,
+    ]);
 
     // If the presenter is hydrated and we're on an opportunity page, this stuff should
     // never be missing in practice. Note `opportunities` is deliberately excluded here --

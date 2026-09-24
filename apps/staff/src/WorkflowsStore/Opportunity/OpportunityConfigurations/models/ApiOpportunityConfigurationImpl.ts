@@ -458,6 +458,12 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
       "Awaiting Revisions") as OpportunityTab;
   }
 
+  /** The tab title for opportunities a reviewer previously reviewed but is no longer the current reviewer for. */
+  get historicalReviewTabTitle(): OpportunityTab {
+    return (this.configurationObject.historicalReviewTabTitle ??
+      "Past Reviews") as OpportunityTab;
+  }
+
   /** The tab title for opportunity grant requests that have been approved. */
   get grantApprovedTabTitle() {
     return (this.configurationObject.grantApprovedTabTitle ??

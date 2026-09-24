@@ -463,6 +463,7 @@ export class OpportunityPersonListPresenter
     const allOppsForTypeByTab = opportunitiesByTab(
       oppsByType,
       this.activeTabGroup,
+      this.supervisorInfo?.externalId,
     )[this.opportunityType];
 
     const { deniedTabTitle, excludeIndefiniteSnoozesFromTableView } =

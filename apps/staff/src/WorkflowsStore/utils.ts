@@ -327,18 +327,23 @@ export function isEligible(opp: Opportunity) {
 export function opportunitiesByTab(
   allOpportunitiesByType: Partial<Record<OpportunityType, Opportunity[]>>,
   tabGroup?: OpportunityTabGroup,
+  reviewerId?: string,
 ): Partial<Record<OpportunityType, Record<OpportunityTab, Opportunity[]>>> {
   return mapValues(allOpportunitiesByType, (opps) => {
-    return opportunitiesByTabForType(opps, tabGroup);
+    return opportunitiesByTabForType(opps, tabGroup, reviewerId);
   });
 }
 
 export function opportunitiesByTabForType(
   opportunities?: Opportunity<JusticeInvolvedPerson>[] | undefined,
   tabGroup?: OpportunityTabGroup,
+  reviewerId?: string,
 ): Record<OpportunityTab, Opportunity[]> {
   return groupBy(opportunities, (opp) =>
-    opp.tabTitle((tabGroup || Object.keys(opp.config.tabGroups)[0]) as any),
+    opp.tabTitle(
+      (tabGroup || Object.keys(opp.config.tabGroups)[0]) as any,
+      reviewerId,
+    ),
   ) as Record<OpportunityTab, Opportunity[]>;
 }
 

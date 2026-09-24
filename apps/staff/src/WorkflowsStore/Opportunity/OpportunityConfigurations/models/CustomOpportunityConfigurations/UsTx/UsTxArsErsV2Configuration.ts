@@ -105,6 +105,10 @@ export class UsTxArsErsV2Configuration extends ApiOpportunityConfiguration {
     return "Approved in OIMS";
   }
 
+  get historicalReviewTabTitle(): OpportunityTab {
+    return "Past Reviews";
+  }
+
   // Adding this here as opposed to the admin panel since this gives us
   // 1 source of truth for the two (ARS and ERS) opportunities
   get tabGroups(): OpportunityTabGroups {
@@ -120,6 +124,7 @@ export class UsTxArsErsV2Configuration extends ApiOpportunityConfiguration {
       "REVIEW STATUS": [
         this.insightsSupervisorReviewTabTitle,
         this.awaitingRevisionsTabTitle,
+        this.historicalReviewTabTitle,
       ],
     };
   }

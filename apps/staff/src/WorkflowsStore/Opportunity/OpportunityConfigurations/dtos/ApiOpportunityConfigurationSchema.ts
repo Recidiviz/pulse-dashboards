@@ -154,6 +154,7 @@ export const apiOpportunityConfigurationSchema = z.object({
   supervisorReviewTabTitle: nullishAsUndefined(z.string()),
   awaitingRevisionsTabTitle: nullishAsUndefined(z.string()),
   grantApprovedTabTitle: nullishAsUndefined(z.string()),
+  historicalReviewTabTitle: nullishAsUndefined(z.string()),
   grantApprovedStatusMessage: nullishAsUndefined(z.string()),
   snoozeReviewStatusMessage: nullishAsUndefined(z.string()),
   grantReviewStatusMessage: nullishAsUndefined(z.string()),

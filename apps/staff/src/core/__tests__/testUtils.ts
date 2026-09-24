@@ -211,6 +211,7 @@ export const mockOpportunity: Opportunity<Client> = {
     supervisorReviewTabTitle: "Supervisor Review",
     awaitingRevisionsTabTitle: "Awaiting Revisions",
     grantApprovedTabTitle: "Approved by Supervisor",
+    historicalReviewTabTitle: "Past Reviews",
     supportsSupervisorReview: true,
     supportsSupervisorReviewOnGrants: true,
     supportsSupervisorReviewOnSnooze: true,

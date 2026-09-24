@@ -153,6 +153,7 @@ export function addSupervisorReviewCounts(
   oppsByTab: Record<OpportunityTab, Opportunity[]>,
   reviewTabTitles: OpportunityTab[],
   eligibilityCategory?: OpportunityTabGroup,
+  reviewerId?: string,
 ): void {
   const reviewOpps = reviewTabTitles.flatMap(
     (tabTitle) => oppsByTab[tabTitle] ?? [],
@@ -162,6 +163,7 @@ export function addSupervisorReviewCounts(
     const statusLabel = opp.eligibilityStatusLabel(
       undefined,
       eligibilityCategory,
+      reviewerId,
     );
     if (statusLabel && oppDetail.supervisorReviewCounts) {
       oppDetail.supervisorReviewCounts[statusLabel] =
