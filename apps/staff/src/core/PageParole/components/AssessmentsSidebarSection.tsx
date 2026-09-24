@@ -144,12 +144,18 @@ export function AssessmentsSidebarSection({
               <ScoreRow>
                 <ScoreValueGroup>
                   <ScoreValue>{assessment.score}</ScoreValue>
-                  <ScoreOutOf>out of {assessment.maxScore}</ScoreOutOf>
+                  {/* US_ID records no max score, so this shows the score
+                      alone there and "out of N" for tenants that do. */}
+                  {assessment.maxScore !== undefined && (
+                    <ScoreOutOf>out of {assessment.maxScore}</ScoreOutOf>
+                  )}
                 </ScoreValueGroup>
-                <WorkflowsBadgePill
-                  text={`${risk.label} Risk`}
-                  palette={risk.palette}
-                />
+                {risk && (
+                  <WorkflowsBadgePill
+                    text={`${risk.label} Risk`}
+                    palette={risk.palette}
+                  />
+                )}
               </ScoreRow>
             </AssessmentRow>
           </Fragment>

@@ -80,8 +80,10 @@ export const formatDateNumeric = (date: string | number | Date) =>
  * positive (guards against a malformed assessment rendering
  * `NaN%`/`Infinity%` instead of failing safely).
  */
-export const safeScorePct = (score: number, maxScore: number): number =>
-  maxScore > 0 ? (score / maxScore) * 100 : 0;
+export const safeScorePct = (
+  score: number,
+  maxScore: number | undefined,
+): number => (maxScore && maxScore > 0 ? (score / maxScore) * 100 : 0);
 
 export const calculateAge = (dob: string): number => {
   const birthDate = parseIsoDate(dob);

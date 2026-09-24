@@ -64,9 +64,6 @@ const ComponentListItem = styled.li`
   }
 `;
 
-// SVG text doesn't wrap on its own, and some subcategory names are too long
-// for the chart's left margin as one line -- greedily wrap on word
-// boundaries by character count instead of measuring actual glyph widths.
 const SUBCATEGORY_LABEL_MAX_CHARS_PER_LINE = 18;
 const SUBCATEGORY_LABEL_LINE_HEIGHT = 12;
 
@@ -91,17 +88,17 @@ function wrapLabelText(text: string): Array<string> {
 }
 
 /**
- * Hoisted to module scope (unlike the tooltipContent callbacks below, which
- * need each render's own barChartBounds) so React doesn't treat this as an
- * unstable component definition recreated every render.
+ * Renders one bar's category label as wrapped SVG text, centered on its row.
  *
- * semiotic's own type for `oLabel` (see OrdinalFrameProps in
- * semiotic/lib/types/ordinalTypes.d.ts) declares its render-function
- * overload as returning the DOM's `Element`, not a React element -- even
- * though semiotic renders whatever this returns as JSX. The cast below is a
- * real interop gap (a React element isn't structurally a DOM Element), but
- * it's contained to this one return statement instead of being repeated as
- * an `as unknown as string` cast at every `oLabel=` call site.
+ * Hoisted to module scope so React doesn't see an unstable component
+ * recreated every render. The tooltip callbacks below can't be, since they
+ * need each render's own barChartBounds.
+ *
+ * semiotic types `oLabel`'s render overload as returning a DOM `Element`
+ * rather than a React element, so the cast below is a real interop gap. It
+ * lives here rather than at every `oLabel=` call site.
+ *
+ * @param name - The subcategory name, which semiotic types as `unknown`.
  */
 function renderSubcategoryBarLabel(name?: unknown): string | Element {
   const lines = wrapLabelText(name as string);
@@ -124,19 +121,29 @@ function renderSubcategoryBarLabel(name?: unknown): string | Element {
   ) as unknown as Element;
 }
 
-// The right-hand panel next to the trajectory chart: a plain numbered list
-// of CARAS's fixed components (custom-configured tenants), a signed-
-// contribution bar chart for CARAS (everyone else), or a score-out-of-max
-// bar chart for every other tool.
+/**
+ * One assessment's breakdown: a numbered component list for CARAS, a
+ * signed-contribution bar chart for CARAS elsewhere, or a score-out-of-max
+ * bar chart for every other tool.
+ *
+ * @param assessment - The assessment to break down.
+ * @param showCarasComponentList - Render CARAS as the component list rather
+ *   than the bar chart. Comes from the tenant's riskAssessmentConfig.
+ * @param title - Heading above the chart. Empty renders none, for a caller
+ *   that captions the chart itself.
+ * @param height - Overrides DEFAULT_CHART_HEIGHT, which is sized for the
+ *   trajectory panel rather than a card.
+ */
 export function SubcategoryBreakdownChart({
   assessment,
   showCarasComponentList,
+  title = "Subcategory Breakdown (Most recent assessment)",
+  height,
 }: {
   assessment: ParoleRiskAssessment;
-  // When true, CARAS renders as a plain list of component names instead of
-  // the signed-contribution bar chart -- driven by whether the current
-  // tenant's riskAssessmentConfig requests it (see RiskAssessmentSection).
   showCarasComponentList: boolean;
+  title?: string;
+  height?: number;
 }) {
   const [barChartRef, barChartBounds] = useMeasure();
 
@@ -240,8 +247,9 @@ export function SubcategoryBreakdownChart({
       .join(", ");
     return (
       <ChartColumn>
-        <ChartTitle>Subcategory Breakdown (Most recent assessment)</ChartTitle>
+        {title && <ChartTitle>{title}</ChartTitle>}
         <ChartWrapper
+          $height={height}
           ref={barChartRef}
           role="img"
           aria-label={`Subcategory breakdown for CARAS: ${carasFactorSummary}`}
@@ -254,7 +262,7 @@ export function SubcategoryBreakdownChart({
               responsiveWidth={false}
               size={[
                 barChartBounds.width,
-                barChartBounds.height || DEFAULT_CHART_HEIGHT,
+                barChartBounds.height || height || DEFAULT_CHART_HEIGHT,
               ]}
               data={carasFactorData}
               type="bar"
@@ -299,8 +307,9 @@ export function SubcategoryBreakdownChart({
 
   return (
     <ChartColumn>
-      <ChartTitle>Subcategory Breakdown (Most recent assessment)</ChartTitle>
+      {title && <ChartTitle>{title}</ChartTitle>}
       <ChartWrapper
+        $height={height}
         ref={barChartRef}
         role="img"
         aria-label={`Subcategory breakdown for ${assessment.tool}: ${subcategoryBarSummary}`}
@@ -312,7 +321,7 @@ export function SubcategoryBreakdownChart({
             responsiveWidth={false}
             size={[
               barChartBounds.width,
-              barChartBounds.height || DEFAULT_CHART_HEIGHT,
+              barChartBounds.height || height || DEFAULT_CHART_HEIGHT,
             ]}
             data={subcategoryBarData}
             type="bar"

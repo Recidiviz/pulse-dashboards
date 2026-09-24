@@ -96,26 +96,30 @@ export function RiskAssessmentDetailHeader({
 }) {
   return (
     <ChartDetailHeader>
-      {selectedAssessment && selectedRisk && selectedRawPct !== null ? (
+      {selectedAssessment && selectedRawPct !== null ? (
         <>
           <SelectedMetric>
             <span>{selectedAssessment.tool}</span>
             <ScoreDisplay>
-              {selectedAssessment.score} / {selectedAssessment.maxScore}
+              {selectedAssessment.maxScore === undefined
+                ? selectedAssessment.score
+                : `${selectedAssessment.score} / ${selectedAssessment.maxScore}`}
             </ScoreDisplay>
             <AssessedDate>
               Assessed {formatDate(selectedAssessment.date)}
             </AssessedDate>
           </SelectedMetric>
           <ChartDetailBadgeRow>
-            <WorkflowsBadgePill
-              text={
-                hasCustomConfig
-                  ? `${selectedRisk.label} Risk`
-                  : `${selectedRisk.label} Risk — ${Math.round(selectedRawPct)}%`
-              }
-              palette={selectedRisk.palette}
-            />
+            {selectedRisk && (
+              <WorkflowsBadgePill
+                text={
+                  hasCustomConfig
+                    ? `${selectedRisk.label} Risk`
+                    : `${selectedRisk.label} Risk — ${Math.round(selectedRawPct)}%`
+                }
+                palette={selectedRisk.palette}
+              />
+            )}
             {selectedStale && (
               <StaleWarning>Last assessment over 12 months ago</StaleWarning>
             )}

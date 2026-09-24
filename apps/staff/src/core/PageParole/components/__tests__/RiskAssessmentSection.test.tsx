@@ -26,6 +26,7 @@ import { RiskAssessmentSection } from "../RiskAssessmentSection";
 const RISK_ASSESSMENTS: Array<ParoleRiskAssessment> = [
   {
     tool: "LSIR",
+    level: "Low",
     score: 10,
     maxScore: 100,
     date: "2026-06-01",
@@ -33,6 +34,7 @@ const RISK_ASSESSMENTS: Array<ParoleRiskAssessment> = [
   },
   {
     tool: "PIT",
+    level: "Moderate",
     score: 45,
     maxScore: 100,
     date: "2026-06-01",
@@ -40,6 +42,7 @@ const RISK_ASSESSMENTS: Array<ParoleRiskAssessment> = [
   },
   {
     tool: "CARAS",
+    level: "Medium",
     score: 40,
     maxScore: 100,
     date: "2026-06-01",
@@ -51,6 +54,7 @@ const RISK_ASSESSMENTS: Array<ParoleRiskAssessment> = [
   {
     // Stale: dated well over 12 months before "now" (2026-07-15, set below).
     tool: "SRT",
+    level: "High",
     score: 70,
     maxScore: 100,
     date: "2024-01-01",
@@ -107,25 +111,19 @@ describe("RiskAssessmentSection", () => {
     ).toBeInTheDocument();
   });
 
-  it("labels risk levels using the generic tool thresholds", async () => {
+  it("labels the risk level as the source recorded it, for every tool", async () => {
     const user = userEvent.setup();
     render(<RiskAssessmentSection riskAssessments={RISK_ASSESSMENTS} />);
 
     await user.click(screen.getByRole("button", { name: /^PIT/ }));
-    expect(screen.getByText("Medium Risk — 45%")).toBeInTheDocument();
+    expect(screen.getByText("Moderate Risk — 45%")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: /^SRT/ }));
     expect(screen.getByText("High Risk — 70%")).toBeInTheDocument();
-  });
 
-  it("labels CARAS risk levels using its own probability bands instead of the generic thresholds", async () => {
-    const user = userEvent.setup();
-    render(<RiskAssessmentSection riskAssessments={RISK_ASSESSMENTS} />);
-
+    // CARAS is no longer special-cased: its level comes from the same field
+    // as every other tool's, rather than from its own probability bands.
     await user.click(screen.getByRole("button", { name: /^CARAS/ }));
-    // A CARAS score of 40 (probability 0.40) falls in the Medium band
-    // (0.3854, 0.5139], not the generic tool's 30-59% Medium band by
-    // coincidence -- this assertion pins the CARAS-specific thresholds.
     expect(screen.getByText("Medium Risk — 40%")).toBeInTheDocument();
   });
 
@@ -153,14 +151,15 @@ describe("RiskAssessmentSection", () => {
     ).toBeInTheDocument();
   });
 
-  it("determines risk level from the unrounded percentage, not the rounded display value", async () => {
+  it("takes the level from the source even when the score disagrees with it", async () => {
     const user = userEvent.setup();
-    // 596 / 1000 = 59.6%, which rounds to 60% for display but stays under
-    // the 60% "High" threshold when the risk level is computed from the raw
-    // value -- pins that rounding must not flip the risk tier.
-    const borderlineAssessments: Array<ParoleRiskAssessment> = [
+    // 596 / 1000 is 59.6%, which the old code would have tiered as Medium.
+    // The level is the assessing tool's, so a disagreeing score changes
+    // nothing.
+    const mismatchedAssessments: Array<ParoleRiskAssessment> = [
       {
         tool: "LSIR",
+        level: "High",
         score: 596,
         maxScore: 1000,
         date: "2026-06-01",
@@ -170,10 +169,28 @@ describe("RiskAssessmentSection", () => {
       },
     ];
 
-    render(<RiskAssessmentSection riskAssessments={borderlineAssessments} />);
+    render(<RiskAssessmentSection riskAssessments={mismatchedAssessments} />);
 
     await user.click(screen.getByRole("button", { name: /^LSI/ }));
-    expect(screen.getByText("Medium Risk — 60%")).toBeInTheDocument();
+    expect(screen.getByText("High Risk — 60%")).toBeInTheDocument();
+  });
+
+  it("still shows the selected tool's detail when it records no risk level", async () => {
+    const user = userEvent.setup();
+    render(
+      <RiskAssessmentSection
+        riskAssessments={[
+          { tool: "LSIR", score: 10, maxScore: 100, date: "2026-06-01" },
+        ]}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /^LSI/ }));
+
+    // The score and date stand on their own; only the risk pill drops out.
+    expect(screen.getByText("10 / 100")).toBeInTheDocument();
+    expect(screen.getByText(/Assessed/)).toBeInTheDocument();
+    expect(screen.queryByText(/\sRisk/)).not.toBeInTheDocument();
   });
 });
 

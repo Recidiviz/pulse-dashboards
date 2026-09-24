@@ -1995,27 +1995,51 @@ const ID_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
   }),
 };
 
+/**
+ * Fills in each assessment's level, so the literals above do not all have to
+ * spell one out. A real level is recorded by the assessing tool rather than
+ * derived from the score; this stands in for that, and mimics how the two
+ * states spell it -- US_ID upper-case, US_CO title-case.
+ */
+function withAssessmentLevels(
+  caseDetail: ParoleCase,
+  stateCode: ParoleFixtureStateCode,
+): ParoleCase {
+  return {
+    ...caseDetail,
+    riskAssessments: caseDetail.riskAssessments.map((assessment) => {
+      if (assessment.level || !assessment.maxScore) return assessment;
+      const pct = (assessment.score / assessment.maxScore) * 100;
+      let level = "Low";
+      if (pct >= 60) level = "High";
+      else if (pct >= 30) level = "Medium";
+      return {
+        ...assessment,
+        level: stateCode === "US_ID" ? level.toUpperCase() : level,
+      };
+    }),
+  };
+}
+
 function buildParoleCasesFixture(
   stateCode: ParoleFixtureStateCode,
 ): Record<string, ParoleCase> {
   return Object.fromEntries(
     paroleHearingsFixtureByState[stateCode].map((hearing, index) => {
-      if (hearing.docId === "45821") {
-        return [
-          hearing.docId,
-          buildAndersonCaseProfile(hearing.hearingDate, stateCode),
-        ];
-      }
-      if (hearing.docId in CO_REAL_CASE_PROFILES) {
-        return [hearing.docId, CO_REAL_CASE_PROFILES[hearing.docId]];
-      }
-      if (hearing.docId in ID_REAL_CASE_PROFILES) {
-        return [hearing.docId, ID_REAL_CASE_PROFILES[hearing.docId]];
-      }
-      return [
-        hearing.docId,
-        buildGenericCaseProfile(hearing, index, stateCode),
-      ];
+      const caseDetail = (() => {
+        if (hearing.docId === "45821") {
+          return buildAndersonCaseProfile(hearing.hearingDate, stateCode);
+        }
+        if (hearing.docId in CO_REAL_CASE_PROFILES) {
+          return CO_REAL_CASE_PROFILES[hearing.docId];
+        }
+        if (hearing.docId in ID_REAL_CASE_PROFILES) {
+          return ID_REAL_CASE_PROFILES[hearing.docId];
+        }
+        return buildGenericCaseProfile(hearing, index, stateCode);
+      })();
+
+      return [hearing.docId, withAssessmentLevels(caseDetail, stateCode)];
     }),
   );
 }

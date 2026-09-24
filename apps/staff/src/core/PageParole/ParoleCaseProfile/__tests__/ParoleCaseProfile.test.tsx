@@ -412,7 +412,7 @@ describe("ParoleCaseProfile", () => {
       ).toBeInTheDocument();
     });
 
-    it("labels CARAS risk levels using its own probability bands", async () => {
+    it("labels CARAS with the level the source recorded", async () => {
       const user = userEvent.setup();
       renderAtPath("/parole/case/45821");
 
@@ -420,12 +420,12 @@ describe("ParoleCaseProfile", () => {
       await user.click(screen.getByRole("button", { name: /^CARAS/ }));
 
       // Anderson's fixture CARAS factors are fixed inputs to the logistic
-      // model, so this score (and its "Very Low" band) is deterministic
-      // regardless of when the test runs.
+      // model, so this score is deterministic regardless of when the test
+      // runs. The level beside it is the fixture's own, not derived from it.
       expect(screen.getByText("16 / 100")).toBeInTheDocument();
       // US_CO's custom riskAssessmentConfig suppresses the "-- {pct}%" badge
-      // suffix, so only the band label itself renders.
-      expect(screen.getByText("Very Low Risk")).toBeInTheDocument();
+      // suffix, so only the level itself renders.
+      expect(screen.getByText("Low Risk")).toBeInTheDocument();
       expect(screen.getByText("Assessed Apr 16, 2026")).toBeInTheDocument();
     });
   });

@@ -626,8 +626,7 @@ export class ParoleAPIClient implements ParoleAPI {
       if (
         !tool ||
         !firstRow.assessmentDate ||
-        firstRow.assessmentScore === undefined ||
-        firstRow.assessmentMaxScore === undefined
+        firstRow.assessmentScore === undefined
       ) {
         return [];
       }
@@ -635,6 +634,7 @@ export class ParoleAPIClient implements ParoleAPI {
       return [
         {
           tool,
+          level: firstRow.assessmentLevel,
           score: firstRow.assessmentScore,
           maxScore: firstRow.assessmentMaxScore,
           date: firstRow.assessmentDate,

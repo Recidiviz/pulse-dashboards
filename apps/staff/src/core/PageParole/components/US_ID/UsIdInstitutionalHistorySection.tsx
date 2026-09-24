@@ -22,17 +22,18 @@ import { SectionCardHeader } from "../../../SectionCard";
 import { PaddedSectionCardBody } from "../PaddedSectionCardBody";
 import { SectionCard, SectionStack } from "../shared";
 import { UsIdDisciplinaryReportsSection } from "./UsIdDisciplinaryReportsSection";
+import { UsIdHealthAndAssessmentsSection } from "./UsIdHealthAndAssessmentsSection";
 import { UsIdProgrammingSection } from "./UsIdProgrammingSection";
 
 /**
  * US_ID's Institutional History card. The V1 design folds what were four
  * separate cards into this one, as subsections.
  *
- * Case Notes and Health and Assessments join the subsections below in their
- * own tickets (OBT-50423).
+ * Case Notes joins the subsections below in its own ticket (OBT-50423).
  *
  * @param caseDetail - The case whose institutional record to show.
- * @param config - Idaho's paroleConfig, for its conduct classification colors.
+ * @param config - Idaho's paroleConfig, for its conduct classification colors
+ *   and risk assessment tool set.
  */
 export function UsIdInstitutionalHistorySection({
   caseDetail,
@@ -55,6 +56,11 @@ export function UsIdInstitutionalHistorySection({
             conductClassificationColors={
               config.conductHistoryConfig.classificationColors
             }
+          />
+          <UsIdHealthAndAssessmentsSection
+            riskAssessments={caseDetail.riskAssessments}
+            riskAndNeedsFactors={caseDetail.riskAndNeedsFactors}
+            tools={config.riskAssessmentConfig?.tools ?? []}
           />
         </SectionStack>
       </PaddedSectionCardBody>

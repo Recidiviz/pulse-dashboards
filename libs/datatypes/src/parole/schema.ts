@@ -76,8 +76,9 @@ export type ParoleCarasFactor = z.infer<typeof paroleCarasFactorSchema>;
 
 export const paroleRiskAssessmentSchema = z.object({
   tool: PAROLE_RISK_TOOL,
+  level: z.string().optional(),
   score: z.number(),
-  maxScore: z.number(),
+  maxScore: z.number().optional(),
   date: z.string(),
   // Present for LSI/PIT/SRT; absent for CARAS (see paroleCarasFactorSchema).
   subcategories: z.array(paroleSubcategoryScoreSchema).optional(),

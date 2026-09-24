@@ -24,6 +24,7 @@ import { AssessmentsSidebarSection } from "../AssessmentsSidebarSection";
 const RISK_ASSESSMENTS: Array<ParoleRiskAssessment> = [
   {
     tool: "LSIR",
+    level: "Low",
     score: 14,
     maxScore: 54,
     date: "2026-05-12",
@@ -31,6 +32,7 @@ const RISK_ASSESSMENTS: Array<ParoleRiskAssessment> = [
   // Superseded entry -- the section should show only the latest per tool.
   {
     tool: "LSIR",
+    level: "High",
     score: 38,
     maxScore: 54,
     date: "2025-01-15",
@@ -63,6 +65,20 @@ describe("AssessmentsSidebarSection", () => {
     expect(screen.getByText("14")).toBeInTheDocument();
     expect(screen.getByText("out of 54")).toBeInTheDocument();
     expect(screen.getByText("Low Risk")).toBeInTheDocument();
+  });
+
+  it("shows the score alone when the tool records no max score", () => {
+    render(
+      <AssessmentsSidebarSection
+        riskAssessments={[
+          { tool: "LSIR", level: "Low", score: 14, date: "2026-05-12" },
+        ]}
+        tools={["LSIR"]}
+      />,
+    );
+
+    expect(screen.getByText("14")).toBeInTheDocument();
+    expect(screen.queryByText(/out of/)).not.toBeInTheDocument();
   });
 
   it("uses each tool's chronologically latest entry, not the first one", () => {

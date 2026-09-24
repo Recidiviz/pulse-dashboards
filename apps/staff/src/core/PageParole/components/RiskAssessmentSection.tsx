@@ -166,9 +166,9 @@ export function RiskAssessmentSection({
   const selectedRawPct = selectedAssessment
     ? safeScorePct(selectedAssessment.score, selectedAssessment.maxScore)
     : null;
-  const selectedRisk = selectedAssessment
-    ? getRiskLevelForAssessment(selectedAssessment)
-    : null;
+  const selectedRisk =
+    (selectedAssessment && getRiskLevelForAssessment(selectedAssessment)) ??
+    null;
   const selectedStale = selectedAssessment
     ? isAssessmentStale(selectedAssessment.date)
     : false;
@@ -180,7 +180,7 @@ export function RiskAssessmentSection({
   const yMax = Math.max(
     ...visibleAssessments
       .filter((a) => relevantTools.includes(a.tool))
-      .map((a) => a.maxScore),
+      .flatMap((a) => a.maxScore ?? []),
     1,
   );
 

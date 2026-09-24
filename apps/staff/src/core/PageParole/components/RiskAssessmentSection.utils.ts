@@ -20,7 +20,7 @@ import { differenceInMonths } from "date-fns";
 import { ParoleRiskAssessment, ParoleRiskTool } from "~datatypes";
 
 import { PaletteKey } from "../../BadgePill/BadgePill";
-import { parseIsoDate, safeScorePct, toSafeDate } from "./shared";
+import { parseIsoDate, toSafeDate } from "./shared";
 
 /**
  * Returns each tool's chronologically latest assessment. `riskAssessments`
@@ -66,39 +66,45 @@ export type RiskLevel = {
   palette: PaletteKey;
 };
 
-export function getRiskLevel(pct: number): RiskLevel {
-  if (pct >= 60) return { label: "High", palette: "RED" };
-  if (pct >= 30) return { label: "Medium", palette: "ORANGE" };
-  return { label: "Low", palette: "GREEN" };
-}
+// For a level with no entry below, such as US_CO's "Unassigned" -- a color
+// implying a severity would be worse than none.
+const NEUTRAL_RISK_PALETTE: PaletteKey = "SLATE_DARK";
 
 /**
- * CARAS v7's risk level comes from its own published probability bands, not
- * the generic 3-tier scale the other tools use (`score` for CARAS is already
- * that probability * 100, so this takes the same 0-100 value as `pct`).
+ * Badge color per risk level. Keyed on the level with spaces, underscores and
+ * casing stripped, since each source spells the same level its own way --
+ * US_ID sends VERY_HIGH, US_CO's CARAS sends "VERY HIGH", its other tools
+ * send "Very High".
  */
-export function getCarasRiskLevel(pct: number): RiskLevel {
-  const probability = pct / 100;
-  if (probability > 0.6162) return { label: "Very High", palette: "RED" };
-  if (probability > 0.5139) return { label: "High", palette: "ORANGE" };
-  if (probability > 0.3854) return { label: "Medium", palette: "YELLOW" };
-  if (probability > 0.2826) return { label: "Low", palette: "BLUE" };
-  return { label: "Very Low", palette: "GREEN" };
-}
+const RISK_LEVEL_PALETTES: Record<string, PaletteKey> = {
+  VERYLOW: "GREEN",
+  MINIMUM: "GREEN",
+  LOW: "GREEN",
+  MEDIUM: "ORANGE",
+  MODERATE: "ORANGE",
+  HIGH: "RED",
+  VERYHIGH: "RED",
+  MAXIMUM: "RED",
+};
 
 /**
- * CARAS uses its own probability-band risk levels; every other tool uses the
- * generic 3-tier scale. Shared by the main Risk Score Trajectory chart and
- * the sidebar Assessments list so the two never disagree on a tool's risk
- * level.
+ * The assessed risk level as the source system recorded it, or undefined
+ * where it recorded none. The label is the source's own wording, only tidied
+ * of underscores; we derive nothing but the color.
+ *
+ * @param assessment - The assessment to read the level from.
  */
 export function getRiskLevelForAssessment(
   assessment: ParoleRiskAssessment,
-): RiskLevel {
-  const pct = safeScorePct(assessment.score, assessment.maxScore);
-  return assessment.tool === "CARAS"
-    ? getCarasRiskLevel(pct)
-    : getRiskLevel(pct);
+): RiskLevel | undefined {
+  const { level } = assessment;
+  if (!level) return undefined;
+
+  const key = level.replaceAll(/[\s_]/g, "").toUpperCase();
+  return {
+    label: level.replaceAll("_", " "),
+    palette: RISK_LEVEL_PALETTES[key] ?? NEUTRAL_RISK_PALETTE,
+  };
 }
 
 export function isAssessmentStale(dateString: string): boolean {

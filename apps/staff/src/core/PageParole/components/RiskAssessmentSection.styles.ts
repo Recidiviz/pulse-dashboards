@@ -35,8 +35,6 @@ export const TOOL_COLORS: Record<ParoleRiskTool, string> = {
   Guideline: "#546E7A",
 };
 
-// Tall enough that CARAS's 12-factor component list (the tallest of the
-// three chart types this height is shared across) never needs to scroll.
 export const DEFAULT_CHART_HEIGHT = 432;
 
 export const ChartColumn = styled.div`
@@ -50,15 +48,9 @@ export const ChartTitle = styled.span`
   font-weight: 600;
 `;
 
-// Neutralizes semiotic's harsh default styling (solid black gridlines/axis
-// baselines, default hover crosshair) in favor of the same soft, subtle look
-// used by InsightsLinePlot and the shared Pathways charts. Fixed (not min-)
-// height so swapping between chart types in ChartsRow -- e.g. a bar chart vs.
-// CARAS's component list, which has no chart-driven height of its own --
-// never resizes the container; content taller than that scrolls instead.
-export const ChartWrapper = styled.div`
+export const ChartWrapper = styled.div<{ $height?: number }>`
   margin: 1rem 0;
-  height: ${DEFAULT_CHART_HEIGHT}px;
+  height: ${({ $height }) => $height ?? DEFAULT_CHART_HEIGHT}px;
   overflow-y: auto;
   // Anchors semiotic's tooltip (position: absolute, top/left in px) to this
   // chart, not some unrelated positioned ancestor up the page.
@@ -101,21 +93,14 @@ export const ChartWrapper = styled.div`
   }
 `;
 
-// Centers the tooltip above its anchor point instead of growing down-right
-// from it (matching InsightsLinePlot's StyledTooltip).
 export const StyledTooltip = styled(Tooltip).attrs({
   backgroundColor: palette.signal.tooltip,
 })<{
-  // Extra horizontal nudge (px) from EdgeAwareTooltip, on top of the -50%
-  // centering below, to keep the tooltip inside its chart near an edge.
   $offsetX?: number;
 }>`
   ${typography.Sans14}
   position: relative;
   transform: translate(calc(-50% + ${({ $offsetX = 0 }) => $offsetX}px), -115%);
-  // Subcategory titles are long enough to make an unconstrained tooltip wider
-  // than its chart column, which no horizontal nudge can then bring back
-  // inside. Cap the width and wrap instead.
   max-width: min(16rem, calc(100vw - 2rem));
   white-space: normal;
   overflow-wrap: break-word;

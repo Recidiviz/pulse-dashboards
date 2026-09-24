@@ -994,8 +994,94 @@ describe("ParoleAPIClient", () => {
       const result = await client.caseDetail("RES999");
 
       expect(result.riskAssessments).toEqual([
-        { tool: "LSIR", score: 30, maxScore: 54, date: "2026-05-01" },
-        { tool: "RT", score: 7, maxScore: 27, date: "2026-05-08" },
+        {
+          tool: "LSIR",
+          level: undefined,
+          score: 30,
+          maxScore: 54,
+          date: "2026-05-01",
+        },
+        {
+          tool: "RT",
+          level: undefined,
+          score: 7,
+          maxScore: 27,
+          date: "2026-05-08",
+        },
+      ]);
+    });
+
+    it("keeps an assessment scored 0, which is a real result", async () => {
+      vi.spyOn(
+        rootStore.firestoreStore,
+        "getResidentByPersonExternalId",
+      ).mockResolvedValue(
+        buildUsIdResident({
+          metadata: {
+            stateCode: "US_ID",
+            crcFacilities: [],
+            paroleBoardClientProfile: {
+              demographics: {},
+              riskAssessments: [
+                {
+                  assessmentType: "LSIR",
+                  assessmentDate: "2026-05-01",
+                  assessmentScore: 0,
+                  assessmentMaxScore: 54,
+                },
+              ],
+            },
+          },
+        }),
+      );
+
+      const result = await client.caseDetail("RES999");
+
+      expect(result.riskAssessments).toEqual([
+        {
+          tool: "LSIR",
+          level: undefined,
+          score: 0,
+          maxScore: 54,
+          date: "2026-05-01",
+        },
+      ]);
+    });
+
+    it("keeps an assessment with no max score, which is every US_IX one", async () => {
+      vi.spyOn(
+        rootStore.firestoreStore,
+        "getResidentByPersonExternalId",
+      ).mockResolvedValue(
+        buildUsIdResident({
+          metadata: {
+            stateCode: "US_ID",
+            crcFacilities: [],
+            paroleBoardClientProfile: {
+              demographics: {},
+              riskAssessments: [
+                {
+                  assessmentType: "LSIR",
+                  assessmentDate: "2026-05-01",
+                  assessmentLevel: "HIGH",
+                  assessmentScore: 30,
+                },
+              ],
+            },
+          },
+        }),
+      );
+
+      const result = await client.caseDetail("RES999");
+
+      expect(result.riskAssessments).toEqual([
+        {
+          tool: "LSIR",
+          level: "HIGH",
+          score: 30,
+          maxScore: undefined,
+          date: "2026-05-01",
+        },
       ]);
     });
 

@@ -83,6 +83,7 @@ export type ParoleBoardClientProfileCriminalHistory = z.infer<
 export const paroleBoardClientProfileRiskAssessmentSchema = z.object({
   assessmentDate: nullishAsUndefined(z.string()),
   assessmentType: nullishAsUndefined(z.string()),
+  assessmentLevel: nullishAsUndefined(z.string()),
   assessmentScore: nullishAsUndefined(z.number()),
   assessmentMaxScore: nullishAsUndefined(z.number()),
   assessmentCategoryName: nullishAsUndefined(z.string()),
