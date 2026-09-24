@@ -17,7 +17,10 @@
 
 import { getTrusteeCriterionNumber, TRUSTEE_CRITERIA } from "~datatypes";
 
-import { TRUSTEE_SECTIONS } from "../TrusteeCriteriaSection";
+import {
+  criteriaMarkedFalse,
+  TRUSTEE_SECTIONS,
+} from "../TrusteeCriteriaSection";
 
 describe("TRUSTEE_SECTIONS", () => {
   it("splits into the two named sections", () => {
@@ -83,5 +86,27 @@ describe("TRUSTEE_SECTIONS", () => {
       .forEach((criterion) => {
         expect(criterion.text.split("**").length).toBeGreaterThan(1);
       });
+  });
+});
+
+describe("criteriaMarkedFalse", () => {
+  it("stays singular for one criterion", () => {
+    expect(criteriaMarkedFalse([15])).toBe("criterion 15 was marked False");
+  });
+
+  it("turns plural for two", () => {
+    expect(criteriaMarkedFalse([14, 15])).toBe(
+      "criteria 14 and 15 were marked False",
+    );
+  });
+
+  it("falls back to a comma list beyond two", () => {
+    expect(criteriaMarkedFalse([13, 14, 15])).toBe(
+      "criteria 13, 14 and 15 were marked False",
+    );
+  });
+
+  it("carries no trailing punctuation, so callers can embed it", () => {
+    expect(criteriaMarkedFalse([15])).not.toMatch(/[.,]$/);
   });
 });

@@ -352,6 +352,17 @@ export function stripTrusteeReworkPrefills<T extends object>(
 export type TrusteeFormAdditionalFields = {
   trusteeNoFelonyDetainers: string;
   trusteeNotesForWarden: string;
+
+  // Separate from the legacy trustee*Signature fields, so toggling the variant
+  // cannot leave a form showing half-migrated approval state.
+  trusteeWardenTrusteeApproved: string;
+  trusteeWardenTrusteeApprovalDate: string;
+  trusteeWardenAnnexApproved: string;
+  trusteeWardenAnnexApprovalDate: string;
+  trusteeContractMonitorApproved: string;
+  trusteeContractMonitorApprovalDate: string;
+  trusteeACApproved: string;
+  trusteeACApprovalDate: string;
   trusteeWardenHasApproved: string;
   trusteeDenialReasons: string;
   trusteeCustodyApproved: string;

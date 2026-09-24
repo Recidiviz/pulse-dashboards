@@ -36,6 +36,7 @@ import { PrintablePage } from "../../../styles";
 import FormInput from "../../CustodyReclassification/FormInput";
 import { Bold, Header, TrusteeFormPage } from "./styles";
 import trusteeAssessmentTemplate from "./trustee_assessment_template.docx";
+import { TrusteeApprovals } from "./TrusteeApprovals";
 import {
   CriteriaSection,
   TRUSTEE_SECTIONS,
@@ -487,9 +488,9 @@ const ReworkTrusteeChecklist = observer(function ReworkTrusteeChecklist({
             {index === 0 && <TrusteeAssessmentHeader />}
             <CriteriaSection section={section} groups={groups} />
             {index === TRUSTEE_SECTIONS.length - 1 && (
-              // Placeholder until TN-2651 lands the approvals chain.
               <>
                 <TrusteeEligibility />
+                <TrusteeApprovals />
                 <div>
                   <Bold>Reasons for Denial:</Bold>
                   <DOCXFormTextArea<UsTnReclassification2026DraftData> name="trusteeDenialReasons" />
@@ -498,7 +499,6 @@ const ReworkTrusteeChecklist = observer(function ReworkTrusteeChecklist({
                   <Bold>Notes for Warden Review:</Bold>
                   <DOCXFormTextArea<UsTnReclassification2026DraftData> name="trusteeNotesForWarden" />
                 </div>
-                <SignaturesReceived />
               </>
             )}
           </TrusteeFormPage>

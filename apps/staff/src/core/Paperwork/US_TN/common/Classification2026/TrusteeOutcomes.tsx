@@ -33,6 +33,7 @@ import { UsTnReclassification2026Form } from "../../../../../WorkflowsStore/Oppo
 import { useOpportunityFormContext } from "../../../OpportunityFormContext";
 import { Bold } from "./styles";
 import {
+  criteriaMarkedFalse,
   CriterionText,
   listCriterionNumbers,
   ROW_NOTE_COPY,
@@ -128,13 +129,10 @@ export const TrusteeOutcome = observer(function TrusteeOutcome() {
         return (
           <div>
             Inmate is eligible for Trustee custody. All other criteria are met,{" "}
-            {failedConditionalCriteria.length > 1 ? "criteria" : "criterion"}{" "}
-            {listCriterionNumbers(
+            {criteriaMarkedFalse(
               failedConditionalCriteria.map(getTrusteeCriterionNumber),
-            )}{" "}
-            {failedConditionalCriteria.length > 1 ? "were" : "was"} marked
-            False, and the Assistant Commissioner must approve alongside the
-            Warden.
+            )}
+            , and the Assistant Commissioner must approve alongside the Warden.
           </div>
         );
       default:

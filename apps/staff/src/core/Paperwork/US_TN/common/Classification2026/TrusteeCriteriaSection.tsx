@@ -219,6 +219,19 @@ export function listCriterionNumbers(numbers: readonly number[]): string {
   return `${numbers.slice(0, -1).join(", ")} and ${numbers[numbers.length - 1]}`;
 }
 
+/**
+ * "criterion 15 was marked False" or "criteria 13, 14 and 15 were marked False".
+ * Shared so the outcome block and the approvals row cannot word it differently.
+ * Carries no trailing punctuation; the caller supplies it.
+ */
+export function criteriaMarkedFalse(numbers: readonly number[]): string {
+  const plural = numbers.length > 1;
+
+  return `${plural ? "criteria" : "criterion"} ${listCriterionNumbers(
+    numbers,
+  )} ${plural ? "were" : "was"} marked False`;
+}
+
 /** "1 to 13" while the numbers are contiguous, and the plain list when not. */
 function criterionRange(numbers: readonly number[]): string {
   const contiguous = numbers.every(
