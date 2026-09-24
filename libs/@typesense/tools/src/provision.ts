@@ -24,12 +24,21 @@
 //   nx provision '@typesense/tools' -c staging -- --recreate    (DESTRUCTIVE: drop + recreate)
 //   nx provision '@typesense/tools' -c staging -- --help        (full flag reference)
 //
+//   Retire a collection the schema no longer declares (DESTRUCTIVE, drop only):
+//   nx provision '@typesense/tools' -c staging -- --delete --collection=oldThing
+//
 //   Limit to specific collections (repeatable and/or comma-separated):
 //   nx provision '@typesense/tools' -c staging -- --collection=opportunities
 //   nx provision '@typesense/tools' -c staging -- --collection=opportunities,clients
 //
 // Default behavior is create-if-not-exists across every schema — safe to
 // re-run, won't touch existing collections or their data.
+//
+// ⚠️  --delete is DESTRUCTIVE and does NOT recreate.
+// It drops each named collection and stops. Unlike every other mode it does
+// not consult `schemas` — retiring a collection means the schema entry is
+// already gone — so it names the collections on the CLUSTER instead, and
+// requires --collection explicitly. There is no "delete everything".
 //
 // ⚠️  --recreate is DESTRUCTIVE.
 // It drops each matching collection (deleting ALL DOCUMENTS in it) and
@@ -49,6 +58,7 @@ import { parseBooleanFlag } from "./cli";
 type ScriptArgs = {
   collections: string[];
   recreate: boolean;
+  delete: boolean;
   skipPrompts: boolean;
 };
 
@@ -79,6 +89,12 @@ function parseArgs(): ScriptArgs {
       false,
     )
     .option(
+      "--delete [bool]",
+      "DESTRUCTIVE: drop each targeted collection and do not recreate it. Requires --collection",
+      parseBooleanFlag,
+      false,
+    )
+    .option(
       "--skip-prompts [bool]",
       "Skip the destructive-action confirmation prompt (CI / automation only)",
       parseBooleanFlag,
@@ -88,21 +104,40 @@ function parseArgs(): ScriptArgs {
 
   const options = program.opts();
 
-  // Unknown names are a hard error rather than a silent no-op — a typo here
-  // would otherwise look like a successful run that provisioned nothing.
-  const unknown = options.collection.filter(
-    (name) => !schemas.some((schema) => schema.name === name),
-  );
-  if (unknown.length > 0) {
+  if (options.delete && options.recreate) {
     console.error(
-      `Unknown collection(s): ${unknown.join(", ")}\nAvailable: ${available}`,
+      "--delete and --recreate are mutually exclusive: one drops and stops, the other drops and recreates.",
     );
     process.exit(1);
+  }
+
+  // A bare --delete would drop the whole cluster. Naming is mandatory.
+  if (options.delete && options.collection.length === 0) {
+    console.error("--delete requires --collection. There is no delete-all.");
+    process.exit(1);
+  }
+
+  // Unknown names are a hard error rather than a silent no-op — a typo here
+  // would otherwise look like a successful run that provisioned nothing.
+  //
+  // Skipped for --delete, which exists to retire a collection the schema has
+  // already dropped. Its names are checked against the cluster instead.
+  if (!options.delete) {
+    const unknown = options.collection.filter(
+      (name) => !schemas.some((schema) => schema.name === name),
+    );
+    if (unknown.length > 0) {
+      console.error(
+        `Unknown collection(s): ${unknown.join(", ")}\nAvailable: ${available}`,
+      );
+      process.exit(1);
+    }
   }
 
   return {
     collections: options.collection,
     recreate: options.recreate,
+    delete: options.delete,
     skipPrompts: options.skipPrompts,
   };
 }
@@ -161,9 +196,80 @@ async function provisionCollection(
   return "skipped";
 }
 
+/**
+ * Drops each named collection and stops.
+ *
+ * Names come from the operator rather than from `schemas`, because the reason
+ * to run this is that the schema entry is already gone. A name that is not on
+ * the cluster is reported and skipped — re-running after a partial failure
+ * should not be an error.
+ */
+async function deleteCollections(
+  client: TypesenseClient,
+  names: string[],
+  host: string,
+  skipPrompts: boolean,
+): Promise<void> {
+  const present: string[] = [];
+  for (const name of names) {
+    // eslint-disable-next-line no-await-in-loop -- short, ordered listing
+    if (await collectionExists(client, name)) present.push(name);
+    else console.info(`[${name}] not on this cluster — nothing to delete`);
+  }
+
+  if (present.length === 0) {
+    console.info("Nothing to delete.");
+    process.exit(0);
+  }
+
+  if (!skipPrompts) {
+    console.warn("\n⚠️  --delete will DROP the following collections:");
+    for (const name of present) console.warn(`    - ${name}`);
+    console.warn(`  on host: ${host}`);
+    console.warn(
+      "  They will NOT be recreated. ALL DOCUMENTS in them are permanently deleted.\n",
+    );
+
+    const answer = await promptForConfirmation(
+      "Type 'yes' to continue, anything else to abort: ",
+    );
+    if (answer === null) {
+      console.error(
+        "stdin is not a TTY — refusing to prompt. Re-run with --skip-prompts if you intend to delete (CI / automation only).",
+      );
+      process.exit(1);
+    }
+    if (answer.toLowerCase() !== "yes") {
+      console.info("Aborted. No collections were modified.");
+      process.exit(0);
+    }
+  }
+
+  /* eslint-disable no-await-in-loop -- intentional: sequential output is easier to read */
+  for (const name of present) {
+    try {
+      await client.collections(name).delete();
+      console.info(`[${name}] deleted`);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.error(`[${name}] failed: ${message}`);
+      process.exit(1);
+    }
+  }
+  /* eslint-enable no-await-in-loop */
+
+  console.info("Delete complete.");
+  process.exit(0);
+}
+
 async function main(): Promise<void> {
   // Parse before the env checks so `--help` works without a configured cluster.
-  const { collections: requested, recreate, skipPrompts } = parseArgs();
+  const {
+    collections: requested,
+    recreate,
+    delete: deleteMode,
+    skipPrompts,
+  } = parseArgs();
 
   // Require explicit env vars — no offline-style defaults. Pointing this at
   // localhost or running it against the wrong cluster would be very bad.
@@ -197,6 +303,11 @@ async function main(): Promise<void> {
     console.error(`Typesense health check failed: ${JSON.stringify(health)}`);
     process.exit(1);
   }
+  if (deleteMode) {
+    await deleteCollections(client, requested, host, skipPrompts);
+    return;
+  }
+
   console.info(
     `Connected to ${host} — provisioning ${targetSchemas.length} collection(s)${requested.length > 0 ? `: ${targetSchemas.map((s) => s.name).join(", ")}` : ""}${recreate ? " (recreate mode)" : ""}`,
   );

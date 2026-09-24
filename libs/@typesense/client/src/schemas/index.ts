@@ -164,17 +164,6 @@ export const schemas: CollectionCreateSchema[] = [
       systemField,
     ],
   },
-  // Transitional. Both copies of `preferredName` stay in sync: the extension
-  // and the base-collection backfill write here, the merge pass writes
-  // `clients`/`residents`. Delete once nothing reads this collection.
-  {
-    name: "clientUpdatesV2",
-    enable_nested_fields: true,
-    fields: [
-      { name: "stateCode", type: "string", facet: true },
-      { name: "preferredName", type: "string", optional: true, infix: true },
-    ],
-  },
   {
     name: "opportunities",
     // Update fields below are objects, so nested fields must be enabled even
