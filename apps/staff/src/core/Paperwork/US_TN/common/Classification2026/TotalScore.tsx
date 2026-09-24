@@ -26,20 +26,35 @@ const Container = styled.div`
   gap: 1rem;
 `;
 
+const RequirementLead = styled.span`
+  text-decoration: underline;
+`;
+
 export function TotalScore({
   score,
   lowUpper,
   mediumUpper,
+  trusteeAssessmentRequired = false,
 }: {
   score: number | undefined;
   lowUpper: number;
   mediumUpper: number;
+  /** The DCAF has no Trustee Assessment, so this is passed in rather than derived. */
+  trusteeAssessmentRequired?: boolean;
 }) {
   return (
     <Container>
       <div>
         <Bold>TOTAL SCORE (CAPPED AT 45):</Bold> {score}
       </div>
+      {trusteeAssessmentRequired && (
+        <div>
+          <Bold>
+            <RequirementLead>Trustee Assessment is required</RequirementLead>{" "}
+            because the final custody level is Low.
+          </Bold>
+        </div>
+      )}
       <div>
         <div>
           <Bold>CUSTODY LEVEL SCALE FOR TOTAL:</Bold>

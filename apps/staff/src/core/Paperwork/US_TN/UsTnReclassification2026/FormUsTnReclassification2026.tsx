@@ -22,10 +22,8 @@ import {
   RCAF_LOW_UPPER_THRESHOLD_V1,
   RCAF_MEDIUM_UPPER_THRESHOLD_V1,
   rcafAssessmentQuestions,
-  showTrusteeChecklist,
 } from "~datatypes";
 
-import { useFeatureVariants } from "../../../../components/StoreProvider";
 import { Opportunity } from "../../../../WorkflowsStore";
 import { UsTnReclassification2026Form } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassification2026Form";
 import { Resident } from "../../../../WorkflowsStore/Resident";
@@ -54,6 +52,7 @@ import {
   getTrusteeTemplateArgs,
   TrusteeChecklist,
 } from "../common/Classification2026/TrusteeChecklist";
+import { useTrusteeChecklistState } from "../common/Classification2026/useTrusteeChecklistState";
 import {
   RCAF_V2_CUTOFF_DATE,
   reclassificationBlockedDownloadTooltip,
@@ -78,13 +77,11 @@ export const FormUsTnReclassification2026 = observer(
     const { derivedData, formTemplateData, formData } = form;
     const resident = opportunity.person as Resident;
 
-    const { trusteeChecklistRework } = useFeatureVariants();
-
-    const includeTrusteeChecklist = showTrusteeChecklist(
-      derivedData.totalText,
-      formData,
-      !!trusteeChecklistRework,
-    );
+    const {
+      reworkEnabled,
+      includeTrusteeChecklist,
+      trusteeAssessmentRequired,
+    } = useTrusteeChecklistState(derivedData.totalText, formData);
 
     const onClickDownload = async () => {
       const fileInputs: FileGeneratorArgs[] = [
@@ -97,20 +94,14 @@ export const FormUsTnReclassification2026 = observer(
           `${resident.displayName} - Reclassification Form.docx`,
           rcafTemplate,
           {
-            ...getCoverSheetTemplateArgs(
-              resident,
-              formData,
-              !!trusteeChecklistRework,
-            ),
+            ...getCoverSheetTemplateArgs(resident, formData, reworkEnabled),
             ...formTemplateData,
           },
         ],
       ];
 
       if (includeTrusteeChecklist) {
-        fileInputs.push(
-          getTrusteeTemplateArgs(resident, form, !!trusteeChecklistRework),
-        );
+        fileInputs.push(getTrusteeTemplateArgs(resident, form, reworkEnabled));
       }
 
       const documents = await renderMultipleDocx(fileInputs);
@@ -131,8 +122,7 @@ export const FormUsTnReclassification2026 = observer(
       totalScore: derivedData.totalScore,
       hearingDate: formData.hearingDate,
       formData,
-      trusteeAssessmentRequired:
-        !!trusteeChecklistRework && includeTrusteeChecklist,
+      trusteeAssessmentRequired,
       wrongVersionTooltip: wrongFormVersion
         ? BLOCKED_DOWNLOAD_WRONG_VERSION_OLD
         : undefined,
@@ -239,6 +229,7 @@ export const FormUsTnReclassification2026 = observer(
                 score={derivedData.totalScore}
                 lowUpper={RCAF_LOW_UPPER_THRESHOLD_V1}
                 mediumUpper={RCAF_MEDIUM_UPPER_THRESHOLD_V1}
+                trusteeAssessmentRequired={trusteeAssessmentRequired}
               />
             </ClassificationFormPage>
           </PrintablePage>
