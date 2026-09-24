@@ -23,7 +23,7 @@ import styled from "styled-components";
 import { ParoleRiskAssessment, ParoleRiskTool } from "~datatypes";
 import { palette } from "~design-system";
 
-import { WorkflowsBadgePill } from "../../BadgePill/BadgePill";
+import { PaletteKey, statusStyles } from "../../BadgePill/BadgePill";
 import {
   getRiskLevelForAssessment,
   latestAssessmentsByTool,
@@ -55,6 +55,12 @@ const AssessmentRow = styled.div`
   gap: ${rem(spacing.sm)};
 `;
 
+const AssessmentFactRow = styled(FactRow)`
+  > * {
+    flex: 0 0 auto;
+  }
+`;
+
 const ScoreRow = styled.div`
   display: flex;
   align-items: center;
@@ -64,7 +70,7 @@ const ScoreRow = styled.div`
 
 const ScoreValueGroup = styled.div`
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: ${rem(spacing.xs)};
 `;
 
@@ -76,6 +82,24 @@ const ScoreValue = styled.span`
 const ScoreOutOf = styled.span`
   ${typography.Sans14}
   color: ${palette.slate70};
+`;
+
+/**
+ * The risk level's colour as plain text. Each badge palette's foreground is
+ * meant to sit on its own tinted background; only SLATE_DARK inverts, white
+ * on dark slate, so unbacked it takes the dark slate instead.
+ *
+ * @param key - The palette the risk level maps to.
+ */
+function riskTextColor(key: PaletteKey): string {
+  const { color, backgroundColor } = statusStyles[key];
+  return key === "SLATE_DARK" ? backgroundColor : color;
+}
+
+const RiskLevel = styled.span<{ $color: string }>`
+  ${typography.Sans14}
+  color: ${({ $color }) => $color};
+  font-weight: 500;
 `;
 
 const NotOnFileList = styled.ul`
@@ -131,7 +155,7 @@ export function AssessmentsSidebarSection({
           <Fragment key={assessment.tool}>
             {index > 0 && <Hr />}
             <AssessmentRow>
-              <FactRow>
+              <AssessmentFactRow>
                 <FactRowStack>
                   <div>Type</div>
                   <FactLabel>{assessment.tool}</FactLabel>
@@ -140,7 +164,7 @@ export function AssessmentsSidebarSection({
                   <div>Date</div>
                   <FactLabel>{formatDate(assessment.date)}</FactLabel>
                 </FactRowStack>
-              </FactRow>
+              </AssessmentFactRow>
               <ScoreRow>
                 <ScoreValueGroup>
                   <ScoreValue>{assessment.score}</ScoreValue>
@@ -151,10 +175,9 @@ export function AssessmentsSidebarSection({
                   )}
                 </ScoreValueGroup>
                 {risk && (
-                  <WorkflowsBadgePill
-                    text={`${risk.label} Risk`}
-                    palette={risk.palette}
-                  />
+                  <RiskLevel $color={riskTextColor(risk.palette)}>
+                    {risk.label} Risk
+                  </RiskLevel>
                 )}
               </ScoreRow>
             </AssessmentRow>

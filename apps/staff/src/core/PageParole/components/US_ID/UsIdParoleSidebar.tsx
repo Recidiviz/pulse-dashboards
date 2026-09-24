@@ -70,12 +70,18 @@ export function UsIdParoleSidebar({
       <Hr />
 
       <div>
-        <SubsectionTitle>Hearing Details</SubsectionTitle>
+        <SubsectionTitle>Report Status</SubsectionTitle>
         <StackedFacts>
           <StackedFactRow>
             <div>Hearing Type</div>
             <FactLabel>{caseDetail.hearingType}</FactLabel>
           </StackedFactRow>
+          {caseDetail.reportAuthor && (
+            <StackedFactRow>
+              <div>Report Author</div>
+              <FactLabel>{caseDetail.reportAuthor}</FactLabel>
+            </StackedFactRow>
+          )}
           <StackedFactRow>
             <div>Parole Board Hearing</div>
             <FactLabel>
@@ -84,12 +90,6 @@ export function UsIdParoleSidebar({
                 : "Not scheduled"}
             </FactLabel>
           </StackedFactRow>
-          {caseDetail.reportAuthor && (
-            <StackedFactRow>
-              <div>Report Author</div>
-              <FactLabel>{caseDetail.reportAuthor}</FactLabel>
-            </StackedFactRow>
-          )}
         </StackedFacts>
       </div>
     </>

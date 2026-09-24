@@ -61,15 +61,22 @@ describe("UsIdParoleSidebar", () => {
     expect(screen.queryByText(/Level 3/)).not.toBeInTheDocument();
   });
 
-  it("shows a Hearing Details block with hearing type, hearing date, and report author", () => {
+  it("shows a Report Status block with hearing type, report author, and hearing date", () => {
     render(<UsIdParoleSidebar caseDetail={CASE} config={CONFIG_WITH_TOOLS} />);
 
-    expect(screen.getByText("Hearing Details")).toBeInTheDocument();
+    expect(screen.getByText("Report Status")).toBeInTheDocument();
     expect(screen.getByText("Hearing Type")).toBeInTheDocument();
     expect(screen.getByText(CASE.hearingType)).toBeInTheDocument();
-    expect(screen.getByText("Parole Board Hearing")).toBeInTheDocument();
-    expect(screen.getByText("Report Author")).toBeInTheDocument();
     expect(screen.getByText(reportAuthor)).toBeInTheDocument();
+
+    // Report Author sits above the hearing date, per the V1 design.
+    const author = screen.getByText("Report Author");
+    const hearing = screen.getByText("Parole Board Hearing");
+    expect(
+      author.compareDocumentPosition(hearing) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+
     // Facility moved to the identity block; Case Manager is not shown for US_ID.
     expect(screen.queryByText("Facility")).not.toBeInTheDocument();
     expect(screen.queryByText("Case Manager")).not.toBeInTheDocument();
@@ -83,22 +90,22 @@ describe("UsIdParoleSidebar", () => {
     expect(screen.queryByText("Sentence Info")).not.toBeInTheDocument();
   });
 
-  it("renders instant offenses and assessments before the Hearing Details block", () => {
+  it("renders instant offenses and assessments before the Report Status block", () => {
     render(<UsIdParoleSidebar caseDetail={CASE} config={CONFIG_WITH_TOOLS} />);
 
     const instantOffenses = screen.getByText("Instant Offenses");
     const assessments = screen.getByText("Assessments");
-    const hearingDetails = screen.getByText("Hearing Details");
+    const reportStatus = screen.getByText("Report Status");
 
     expect(instantOffenses).toBeInTheDocument();
     expect(assessments).toBeInTheDocument();
-    // Both blocks precede Hearing Details in the document, matching the design.
+    // Both blocks precede Report Status in the document, matching the design.
     expect(
-      instantOffenses.compareDocumentPosition(hearingDetails) &
+      instantOffenses.compareDocumentPosition(reportStatus) &
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
     expect(
-      assessments.compareDocumentPosition(hearingDetails) &
+      assessments.compareDocumentPosition(reportStatus) &
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
   });

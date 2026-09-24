@@ -37,6 +37,7 @@ import {
   ParoleRiskAssessment,
   ParoleRiskNeedFactor,
   ParoleRiskNeedScale,
+  ParoleSubcategoryScore,
 } from "./schema";
 
 // US_CO has no Parole backend yet (TODO(OBT-41775): replace this fixture with real
@@ -1004,42 +1005,166 @@ function buildCommunitySupervisionPlan(
 // LSI/PIT/CARAS/SRT set below. Each tool past LSI is only "on file" for a
 // subset of the generic docket (via `index`), so the sidebar Assessments
 // list's "Non Applicable/Not on File" state has real demo coverage.
+/**
+ * The LSI-R's ten published domains and their item counts, which add up to
+ * the tool's 54-point total. Same names and maxima US_CO's fixtures use, so
+ * the two states spell the domains one way.
+ */
+const LSIR_DOMAINS = [
+  { name: "Criminal History", maxScore: 10 },
+  { name: "Education/Employment", maxScore: 10 },
+  { name: "Financial", maxScore: 2 },
+  { name: "Family/Marital", maxScore: 4 },
+  { name: "Accommodation", maxScore: 3 },
+  { name: "Leisure/Recreation", maxScore: 2 },
+  { name: "Companions", maxScore: 5 },
+  { name: "Alcohol/Drug", maxScore: 9 },
+  { name: "Emotional/Personal", maxScore: 5 },
+  { name: "Attitude/Orientation", maxScore: 4 },
+] as const;
+
+/**
+ * STATIC-99's ten items, each scored 0-1 except prior sex offences, adding
+ * up to the tool's 12-point total.
+ */
+const STATIC_99_DOMAINS = [
+  { name: "Young Age at Release", maxScore: 1 },
+  { name: "Ever Lived With Partner", maxScore: 1 },
+  { name: "Index Non-Sexual Violence", maxScore: 1 },
+  { name: "Prior Non-Sexual Violence", maxScore: 1 },
+  { name: "Prior Sex Offences", maxScore: 3 },
+  { name: "Prior Sentencing Dates", maxScore: 1 },
+  { name: "Non-Contact Sex Offences", maxScore: 1 },
+  { name: "Unrelated Victims", maxScore: 1 },
+  { name: "Stranger Victims", maxScore: 1 },
+  { name: "Male Victims", maxScore: 1 },
+] as const;
+
+/**
+ * STABLE-2007's five domains. Its thirteen items each score 0-2, so a
+ * domain's max is twice its item count, and the five add up to 26.
+ */
+const STABLE_DOMAINS = [
+  { name: "Significant Social Influences", maxScore: 2 },
+  { name: "Intimacy Deficits", maxScore: 10 },
+  { name: "Sexual Self-Regulation", maxScore: 6 },
+  { name: "Cooperation With Supervision", maxScore: 2 },
+  { name: "General Self-Regulation", maxScore: 6 },
+] as const;
+
+/**
+ * VRAG's twelve published items. The real tool weights each item by a
+ * regression coefficient that can be negative, rather than adding them up,
+ * so these maxima are a fixture-only approximation chosen to total 38 -- a
+ * part-of-whole bar is the wrong shape for how VRAG really scores.
+ * TODO(OBT-50421): drop these once the backend sends real per-item data, and
+ * render VRAG through carasFactors instead.
+ */
+const VRAG_DOMAINS = [
+  { name: "Lived With Both Parents to Age 16", maxScore: 3 },
+  { name: "Elementary School Maladjustment", maxScore: 5 },
+  { name: "History of Alcohol Problems", maxScore: 2 },
+  { name: "Marital Status", maxScore: 2 },
+  { name: "Nonviolent Offence History", maxScore: 3 },
+  { name: "Failure on Prior Conditional Release", maxScore: 3 },
+  { name: "Age at Index Offence", maxScore: 5 },
+  { name: "Victim Injury", maxScore: 2 },
+  { name: "Female Victim", maxScore: 1 },
+  { name: "Personality Disorder", maxScore: 3 },
+  { name: "Schizophrenia", maxScore: 3 },
+  { name: "Psychopathy Checklist Score", maxScore: 6 },
+] as const;
+
+type ScoredDomain = { name: string; maxScore: number };
+
+/**
+ * Splits a total across a tool's domains, so the parts add back up to the
+ * score shown beside them. Each domain takes its proportional share, varied
+ * by the case's index so two residents don't show the same shape, and any
+ * rounding drift is absorbed by the domains that have room for it.
+ *
+ * @param domains - The tool's domains and their maxima.
+ * @param score - The assessment's total score.
+ * @param index - The case's position in the fixture list.
+ */
+function buildSubcategories(
+  domains: ReadonlyArray<ScoredDomain>,
+  score: number,
+  index: number,
+): Array<ParoleSubcategoryScore> {
+  const total = domains.reduce((sum, d) => sum + d.maxScore, 0);
+  const subcategories = domains.map((domain, domainIndex) => ({
+    name: domain.name,
+    score: Math.max(
+      0,
+      Math.min(
+        domain.maxScore,
+        Math.round((score / total) * domain.maxScore) +
+          (((index + domainIndex) % 3) - 1),
+      ),
+    ),
+    maxScore: domain.maxScore,
+  }));
+
+  let drift = score - subcategories.reduce((sum, s) => sum + s.score, 0);
+  for (const subcategory of subcategories) {
+    if (drift === 0) break;
+    const room =
+      drift > 0 ? subcategory.maxScore - subcategory.score : -subcategory.score;
+    const step = drift > 0 ? Math.min(drift, room) : Math.max(drift, room);
+    subcategory.score += step;
+    drift -= step;
+  }
+  return subcategories;
+}
+
 function buildIdRiskAssessments(
   index: number,
   today: Date,
 ): Pick<ParoleCase, "riskAssessments"> {
   const riskPct = 20 + ((index * 17) % 60); // varies 20-79%
+  const lsirScore = Math.round((riskPct / 100) * 54);
 
+  // Every tool with published items gets a breakdown. The LSI-R, STATIC-99
+  // and STABLE-2007 score theirs additively out of a max, which is exactly
+  // what the chart draws; VRAG's are approximated (see VRAG_DOMAINS).
   const riskAssessments: Array<ParoleRiskAssessment> = [
     {
       tool: "LSIR",
-      score: Math.round((riskPct / 100) * 54),
+      score: lsirScore,
       maxScore: 54,
       date: iso(subMonths(today, 4)),
+      subcategories: buildSubcategories(LSIR_DOMAINS, lsirScore, index),
     },
   ];
   if (index % 3 !== 0) {
+    const vragScore = Math.round((riskPct / 100) * 38);
     riskAssessments.push({
       tool: "VRAG",
-      score: Math.round((riskPct / 100) * 38),
+      score: vragScore,
       maxScore: 38,
       date: iso(subMonths(today, 5)),
+      subcategories: buildSubcategories(VRAG_DOMAINS, vragScore, index),
     });
   }
   if (index % 4 !== 0) {
+    const staticScore = Math.round((riskPct / 100) * 12);
     riskAssessments.push({
       tool: "STATIC_99",
-      score: Math.round((riskPct / 100) * 12),
+      score: staticScore,
       maxScore: 12,
       date: iso(subMonths(today, 6)),
+      subcategories: buildSubcategories(STATIC_99_DOMAINS, staticScore, index),
     });
   }
   if (index % 2 === 0) {
+    const stableScore = Math.round((riskPct / 100) * 26);
     riskAssessments.push({
       tool: "STABLE",
-      score: Math.round((riskPct / 100) * 26),
+      score: stableScore,
       maxScore: 26,
       date: iso(subMonths(today, 3)),
+      subcategories: buildSubcategories(STABLE_DOMAINS, stableScore, index),
     });
   }
   if (index % 5 === 0) {

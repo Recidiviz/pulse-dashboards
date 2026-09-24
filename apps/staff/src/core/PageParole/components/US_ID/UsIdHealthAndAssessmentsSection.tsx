@@ -44,7 +44,24 @@ import { SubcategoryBreakdownChart } from "../SubcategoryBreakdownChart";
 
 const MENTAL_HEALTH_FACTOR = "Mental Health";
 const NOT_REPORTED = "None reported";
-const CARD_CHART_HEIGHT = 240;
+
+const CHART_HEIGHT_PER_BAR = 30;
+const CHART_HEIGHT_PADDING = 32;
+const MIN_CARD_CHART_HEIGHT = 240;
+/**
+ * The breakdown chart draws one bar per subcategory, so a fixed height
+ * squeezes them as the count grows -- VRAG's twelve, with labels as long as
+ * "Failure on Prior Conditional Release", need far more room than STABLE's
+ * five. The floor stops a short breakdown looking stunted beside a tall one.
+ *
+ * @param subcategoryCount - How many bars the chart draws.
+ */
+function cardChartHeight(subcategoryCount: number): number {
+  return Math.max(
+    MIN_CARD_CHART_HEIGHT,
+    subcategoryCount * CHART_HEIGHT_PER_BAR + CHART_HEIGHT_PADDING,
+  );
+}
 
 const CardRow = styled.div`
   display: flex;
@@ -135,7 +152,7 @@ function AssessmentSummaryCard({
             assessment={assessment}
             showCarasComponentList={false}
             title=""
-            height={CARD_CHART_HEIGHT}
+            height={cardChartHeight(assessment.subcategories.length)}
           />
         </>
       )}
