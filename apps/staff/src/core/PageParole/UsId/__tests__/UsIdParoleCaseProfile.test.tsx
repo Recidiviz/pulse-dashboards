@@ -29,7 +29,7 @@ const CASE = Object.values(paroleCasesFixtureByState.US_ID)[0];
 // The nav list and the SectionAnchors are two separate lists in the same
 // file, so an entry can drift to an id that nothing renders.
 const NAV_LABELS = [
-  "Criminal & Parole History",
+  "Offense Information",
   "Risk Score Trajectory",
   "Program Participation",
   "Institutional & Community Behavior",

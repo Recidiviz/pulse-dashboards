@@ -42,21 +42,23 @@ export type ParoleBoardClientProfileHearing = z.infer<
 // One entry per sentence the resident is currently serving (see
 // recidiviz-data's `active_sentences` category, made REPEATED in
 // recidiviz-data#102573 and #102582). `sentenceLength` is already a
-// human-readable string from the backend; `sentence*LengthDays` are raw day
-// counts with no display string of their own, so the frontend formats those.
+// human-readable string from the backend.
 export const paroleBoardClientProfileSentenceSchema = z.object({
   sentenceConvictionCounty: nullishAsUndefined(z.string()),
   sentenceDocket: nullishAsUndefined(z.string()),
   sentenceFelonyClass: nullishAsUndefined(z.string()),
   sentenceChargeName: nullishAsUndefined(z.string()),
+  sentenceStatute: nullishAsUndefined(z.string()),
   sentenceOffenseDate: nullishAsUndefined(z.string()),
   sentenceConvictionDate: nullishAsUndefined(z.string()),
+  sentenceStartDate: nullishAsUndefined(z.string()),
   sentenceLength: nullishAsUndefined(z.string()),
-  sentenceMinLengthDays: nullishAsUndefined(z.number()),
-  sentenceMaxLengthDays: nullishAsUndefined(z.number()),
   sentenceParoleEligibilityDate: nullishAsUndefined(z.string()),
   sentenceMandatoryReleaseDate: nullishAsUndefined(z.string()),
   sentenceFullTermReleaseDate: nullishAsUndefined(z.string()),
+  sentenceIsLife: nullishAsUndefined(z.boolean()),
+  sentenceIndeterminateStartDate: nullishAsUndefined(z.string()),
+  sentenceIndeterminateEndDateInclusive: nullishAsUndefined(z.string()),
 });
 export type ParoleBoardClientProfileSentence = z.infer<
   typeof paroleBoardClientProfileSentenceSchema

@@ -41,7 +41,7 @@ const CONDUCT_HISTORY_TITLE = "Institutional & Community Behavior";
  * must also appear on a SectionAnchor, or the entry scrolls nowhere.
  */
 const SECTION_NAV = [
-  { id: PAROLE_SECTION_IDS.offenseHistory, label: "Criminal & Parole History" },
+  { id: PAROLE_SECTION_IDS.offenseHistory, label: "Offense Information" },
   { id: PAROLE_SECTION_IDS.riskAssessment, label: "Risk Score Trajectory" },
   {
     id: PAROLE_SECTION_IDS.programParticipation,

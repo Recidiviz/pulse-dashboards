@@ -215,7 +215,7 @@ describe("ParoleCaseProfile", () => {
     // follow its section card title, or the nav points at a heading that
     // reads differently.
     it.each([
-      ["Criminal & Parole History", "Offense & Criminal History"],
+      ["Offense Information", "Offense & Criminal History"],
       ["Institutional & Community Behavior", "Institutional Conduct History"],
     ])(
       "labels the US_ID quick-nav entry %s rather than the default %s",

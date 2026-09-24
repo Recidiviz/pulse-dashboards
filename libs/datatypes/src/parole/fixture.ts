@@ -876,10 +876,11 @@ function buildAndersonCaseProfile(
             "Defendant entered convenience store with firearm and demanded cash from register. No injuries occurred. Defendant apprehended two blocks from scene.",
           statute: "18-6501",
           sentencingDate: iso(subYears(today, 4)),
+          sentenceStartDate: iso(subYears(today, 4)),
           paroleEligibilityDate: iso(subMonths(today, 6)),
           fullTermDate: iso(addYears(today, 4)),
-          fixedLength: "3 years",
-          indeterminateLength: "5 years",
+          indeterminateStartDate: iso(subMonths(today, 6)),
+          indeterminateEndDateInclusive: iso(addYears(today, 4)),
         },
         {
           county: "Sangamon County",
@@ -894,10 +895,11 @@ function buildAndersonCaseProfile(
             "Defendant was found in possession of a controlled substance in a quantity indicating intent to distribute.",
           statute: "37-2732(a)",
           sentencingDate: iso(subYears(today, 4)),
+          sentenceStartDate: iso(subYears(today, 4)),
           paroleEligibilityDate: iso(subMonths(today, 6)),
           fullTermDate: iso(addYears(today, 4)),
-          fixedLength: "2 years",
-          indeterminateLength: "3 years",
+          // A determinate sentence: no indeterminate portion to serve, so
+          // Atlas sends neither bound and the card shows the placeholder.
         },
         {
           county: "Sangamon County",
@@ -911,8 +913,11 @@ function buildAndersonCaseProfile(
             "Defendant left a work-release assignment without authorization and was apprehended the following day.",
           statute: "18-2505",
           sentencingDate: iso(subYears(today, 2)),
+          sentenceStartDate: iso(subYears(today, 2)),
           paroleEligibilityDate: iso(addYears(today, 4)),
           fullTermDate: iso(addYears(today, 5)),
+          indeterminateStartDate: iso(addYears(today, 4)),
+          indeterminateEndDateInclusive: iso(addYears(today, 5)),
         },
       ],
       priorConvictions: [
@@ -1088,11 +1093,36 @@ function buildOffenseHistory(
           "Defendant entered an unoccupied residence and removed property without consent.",
         statute: "18-1401",
         sentencingDate: iso(subYears(today, 3 + (index % 4))),
+        sentenceStartDate: iso(subYears(today, 3 + (index % 4))),
         paroleEligibilityDate: iso(subMonths(today, 3)),
         fullTermDate: iso(addYears(today, 3)),
-        fixedLength: "2 years",
-        indeterminateLength: "4 years",
+        indeterminateStartDate: iso(subMonths(today, 3)),
+        indeterminateEndDateInclusive: iso(addYears(today, 3)),
       },
+      // Every fifth resident also carries a life sentence, so the card's
+      // "Life" rows have offline coverage. A life sentence has no full term
+      // or indeterminate end -- that is what `isLife` explains.
+      ...(index % 5 === 0
+        ? [
+            {
+              county: "Sample County",
+              docket: `2019-CF-0${200 + index}`,
+              conviction: "Murder in the First Degree",
+              classFelony: "Class A Felony",
+              sentence: "Life",
+              dateOfOffense: iso(subYears(today, 9)),
+              convictionDate: iso(subYears(today, 8)),
+              offenseNarrative:
+                "Defendant was convicted following a jury trial.",
+              statute: "18-4003",
+              isLife: true,
+              sentencingDate: iso(subYears(today, 8)),
+              sentenceStartDate: iso(subYears(today, 8)),
+              paroleEligibilityDate: iso(addYears(today, 2)),
+              indeterminateStartDate: iso(addYears(today, 2)),
+            },
+          ]
+        : []),
     ],
     // No prior convictions for the generic cases -- Anderson's hand-authored
     // profile above is the one that exercises the "Prior Convictions" list.
@@ -1896,10 +1926,11 @@ const ID_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
             "Defendant assaulted a law enforcement officer while being taken into custody.",
           statute: "18-901",
           sentencingDate: "2017-12-06",
+          sentenceStartDate: "2017-12-06",
           paroleEligibilityDate: iso(addDays(new Date(), 90)),
           fullTermDate: iso(addYears(new Date(), 13)),
-          fixedLength: "10 years",
-          indeterminateLength: "14 years",
+          indeterminateStartDate: iso(addDays(new Date(), 90)),
+          indeterminateEndDateInclusive: iso(addYears(new Date(), 13)),
         },
       ],
       priorConvictions: [

@@ -56,6 +56,10 @@ import { ParoleAPI } from "./interface";
 export const SUPPORTED_TENANT_IDS = ["US_ID", "US_CO"] as const;
 export type SupportedTenantId = (typeof SUPPORTED_TENANT_IDS)[number];
 
+/**
+ * Whether this tenant has a real data source behind the parole board. Any
+ * other tenant falls back to ParoleOfflineAPIClient.
+ */
 export function isSupportedTenantId(
   tenantId: string | undefined,
 ): tenantId is SupportedTenantId {
@@ -78,16 +82,9 @@ function isSupportedTenantMetadata(
   return isSupportedTenantId(metadata.stateCode);
 }
 
-// Both re-exported under this file's existing local names -- see
-// PAROLE_UNKNOWN_DATE/PAROLE_UNKNOWN_TEXT in ~datatypes for what a component
-// rendering one of these fields should check for before formatting it.
 const UNKNOWN_TEXT = PAROLE_UNKNOWN_TEXT;
 const UNKNOWN_DATE = PAROLE_UNKNOWN_DATE;
 
-// ParoleCase.offenseHistory.offenses is non-empty, but a resident whose
-// activeSentences is empty (not yet hydrated for their state, or they
-// genuinely have none) has no per-sentence data to build a real one from --
-// this stands in instead.
 const UNKNOWN_OFFENSE: ParoleOffense = {
   county: UNKNOWN_TEXT,
   docket: UNKNOWN_TEXT,
@@ -99,22 +96,14 @@ const UNKNOWN_OFFENSE: ParoleOffense = {
   offenseNarrative: UNKNOWN_TEXT,
 };
 
-// sentence*LengthDays are raw day counts (see paroleBoardClientProfileSchema.ts);
-// this is deliberately the plainest possible rendering -- converting to
-// years/months would need a rounding convention nothing has specified yet.
-function formatSentenceLengthDays(
-  days: number | undefined,
-): string | undefined {
-  return days === undefined ? undefined : `${days} days`;
-}
-
-// US_CO's own source system uses a year-9999 date as its "no defined date"
-// placeholder on sentence dates (e.g. sentence_mandatory_release_date of
-// "9999-01-20") -- the same idea as this client's own UNKNOWN_DATE sentinel,
-// but a different exact value, and specific to the year: a genuinely
-// far-future projected date (e.g. a life sentence's mandatory release
-// decades out) is real and kept. Applied to every sentence-level date this
-// client reads, since all of them come from the same source.
+/**
+ * Returns the date, or undefined when a source system wrote a year-9999
+ * placeholder (e.g. "9999-01-20") to mean "no defined date". Only the year
+ * marks the placeholder, so a real far-future date such as a life sentence's
+ * mandatory release is kept.
+ *
+ * @param date - A sentence-level date, as the source system wrote it.
+ */
 function realSentenceDate(date: string | undefined): string | undefined {
   return date && !date.startsWith("9999-") ? date : undefined;
 }
@@ -134,17 +123,23 @@ const RISK_TOOL_BY_RAW_LABEL: Record<string, ParoleRiskTool> = {
   "SRT Scoring Tool": "SRT",
 };
 
+/**
+ * Returns the matching risk tool, or undefined when the raw label is one this
+ * client has no mapping for.
+ */
 function riskToolForRawLabel(raw: string): ParoleRiskTool | undefined {
   if (RISK_TOOL_OPTIONS.has(raw)) return raw as ParoleRiskTool;
   return RISK_TOOL_BY_RAW_LABEL[raw];
 }
 
-// Builds the subcategory breakdown for one assessment from its raw category
-// rows. A row with no assessmentCategoryName is a bare score/date entry (an
-// earlier, pre-breakdown assessment) and contributes nothing. Returns {}
-// (not { subcategories: [] }) when no row has one, so
-// SubcategoryBreakdownChart's `!assessment.subcategories` check still
-// renders nothing rather than an empty chart.
+/**
+ * Builds one assessment's subcategory breakdown from its raw category rows. A
+ * row with no assessmentCategoryName is a bare score/date entry from an
+ * earlier, pre-breakdown assessment, and contributes nothing.
+ *
+ * Returns `{}` rather than `{ subcategories: [] }` when no row has one, so
+ * SubcategoryBreakdownChart renders nothing instead of an empty chart.
+ */
 function subcategoriesFromRows(
   rows: Array<ParoleBoardClientProfileRiskAssessment>,
 ): Pick<ParoleRiskAssessment, "subcategories"> {
@@ -201,6 +196,10 @@ const PROGRAM_STATUS_BY_RAW_LABEL: Record<string, ParoleProgramStatus> = {
   Released: "DISCHARGED_OTHER",
 };
 
+/**
+ * Returns the matching program status, or undefined when the raw status is
+ * one this client has no mapping for.
+ */
 function programStatusForRawLabel(
   raw: string,
 ): ParoleProgramStatus | undefined {
@@ -233,6 +232,10 @@ const ATTACHMENT_TYPE_BY_RAW_LABEL: Record<string, ParoleAttachment["type"]> = {
   VICTIM_STATEMENT: "Victim Impact Letter",
 };
 
+/**
+ * Returns the matching attachment type, falling back to "Other" so an
+ * unrecognized attachment is still linked under a generic label.
+ */
 function attachmentTypeForRawLabel(
   raw: string | undefined,
 ): ParoleAttachment["type"] {
@@ -246,6 +249,10 @@ const RECOMMENDED_STATUS_OPTIONS: ReadonlySet<string> = new Set(
 export class ParoleAPIClient implements ParoleAPI {
   constructor(public readonly paroleStore: ParoleStore) {}
 
+  /**
+   * One docket row per resident with an upcoming scheduled hearing. A
+   * resident with no scheduled hearing is left out.
+   */
   async hearings(): Promise<Array<ParoleHearing>> {
     const residents = await this.getResidentsForState(
       "hearings",
@@ -257,6 +264,12 @@ export class ParoleAPIClient implements ParoleAPI {
     );
   }
 
+  /**
+   * The full case profile for one resident. Throws when the current tenant
+   * has no resident under that id.
+   *
+   * @param docId - The resident's DOC id, as the docket links to it.
+   */
   async caseDetail(docId: string): Promise<ParoleCase> {
     const currentTenantId = this.requireSupportedTenant("caseDetail");
 
@@ -274,6 +287,12 @@ export class ParoleAPIClient implements ParoleAPI {
     return this.caseDetailForResident(resident);
   }
 
+  /**
+   * The current tenant. Throws when that tenant has no real data source, so
+   * a caller never silently reads an empty profile.
+   *
+   * @param methodName - The calling method, named in the error.
+   */
   private requireSupportedTenant(methodName: string): SupportedTenantId {
     const { currentTenantId } = this.paroleStore.rootStore.tenantStore;
     if (!isSupportedTenantId(currentTenantId)) {
@@ -285,6 +304,12 @@ export class ParoleAPIClient implements ParoleAPI {
     return currentTenantId;
   }
 
+  /**
+   * Every resident record in the current tenant.
+   *
+   * @param methodName - The calling method, named in the error.
+   * @param dateRange - Narrows the query server-side; omit to fetch them all.
+   */
   private async getResidentsForState(
     methodName: string,
     dateRange?: FirestoreDateRangeFilter,
@@ -296,18 +321,11 @@ export class ParoleAPIClient implements ParoleAPI {
     );
   }
 
-  // Scopes the hearings() query itself to the tenant's docket window,
-  // instead of fetching every resident in the state and windowing
-  // client-side in ParoleDocketPresenter.hearingsInWindow. Only built for
-  // US_CO for now: the metadata.nextParoleHearingDate field this filters on
-  // (see US_CO's resident metadata schema) is populated by US_CO's pipeline
-  // only. Other tenants fall back to undefined -- an unfiltered query,
-  // exactly like before this existed -- until their pipelines populate the
-  // same field.
-  // TEMPORARY: the field path is metadata.nextParoleHearingDate because
-  // that's where the current sandbox upload puts it.
-  // TODO(OBT-47979): move this to the top-level field path (and extend to
-  // other tenants) once the real backend export lands.
+  /**
+   * Narrows the hearings() query to the tenant's docket window, so the docket
+   * does not fetch every resident in the state and window them client-side in
+   * ParoleDocketPresenter.hearingsInWindow.
+   */
   private hearingDateRangeFilter(): FirestoreDateRangeFilter | undefined {
     const { currentTenantId } = this.paroleStore.rootStore.tenantStore;
     if (currentTenantId !== "US_CO") return undefined;
@@ -327,6 +345,10 @@ export class ParoleAPIClient implements ParoleAPI {
     };
   }
 
+  /**
+   * This resident's docket row, or undefined when they have no scheduled
+   * hearing to show.
+   */
   private hearingForResident(
     resident: WorkflowsResidentRecord,
   ): ParoleHearing | undefined {
@@ -378,6 +400,10 @@ export class ParoleAPIClient implements ParoleAPI {
     return undefined;
   }
 
+  /**
+   * Assembles the whole case profile from one resident record, filling each
+   * field the tenant does not source with its UNKNOWN placeholder.
+   */
   private caseDetailForResident(resident: WorkflowsResidentRecord): ParoleCase {
     const dates = this.sourceableDatesForResident(resident);
 
@@ -434,33 +460,39 @@ export class ParoleAPIClient implements ParoleAPI {
     ];
   }
 
+  /** Maps one backend sentence onto the offense the profile renders. */
   private offenseForSentence(
     sentence: ParoleBoardClientProfileSentence,
   ): ParoleOffense {
-    const { sentenceMinLengthDays, sentenceMaxLengthDays } = sentence;
-    const indeterminateLengthDays =
-      sentenceMinLengthDays !== undefined && sentenceMaxLengthDays !== undefined
-        ? sentenceMaxLengthDays - sentenceMinLengthDays
-        : undefined;
-
     return {
       county: sentence.sentenceConvictionCounty ?? UNKNOWN_TEXT,
       docket: sentence.sentenceDocket ?? UNKNOWN_TEXT,
       conviction: sentence.sentenceChargeName ?? UNKNOWN_TEXT,
+      statute: sentence.sentenceStatute,
       classFelony: sentence.sentenceFelonyClass ?? UNKNOWN_TEXT,
       sentence: sentence.sentenceLength ?? UNKNOWN_TEXT,
       dateOfOffense: sentence.sentenceOffenseDate ?? UNKNOWN_DATE,
       convictionDate: sentence.sentenceConvictionDate ?? UNKNOWN_DATE,
       offenseNarrative: UNKNOWN_TEXT,
+      sentenceStartDate: realSentenceDate(sentence.sentenceStartDate),
       paroleEligibilityDate: realSentenceDate(
         sentence.sentenceParoleEligibilityDate,
       ),
       fullTermDate: realSentenceDate(sentence.sentenceFullTermReleaseDate),
-      fixedLength: formatSentenceLengthDays(sentenceMinLengthDays),
-      indeterminateLength: formatSentenceLengthDays(indeterminateLengthDays),
+      isLife: sentence.sentenceIsLife,
+      indeterminateStartDate: realSentenceDate(
+        sentence.sentenceIndeterminateStartDate,
+      ),
+      indeterminateEndDateInclusive: realSentenceDate(
+        sentence.sentenceIndeterminateEndDateInclusive,
+      ),
     };
   }
 
+  /**
+   * The resident's paroleBoardClientProfile, which every mapper below reads
+   * from. Undefined when the resident belongs to a tenant that carries none.
+   */
   private profileFor(resident: WorkflowsResidentRecord) {
     const { metadata } = resident;
     return isSupportedTenantMetadata(metadata)
@@ -468,13 +500,15 @@ export class ParoleAPIClient implements ParoleAPI {
       : undefined;
   }
 
+  /**
+   * Prior charges from the profile's criminal history. An entry missing
+   * either the charge or the date is dropped, since ParoleConviction requires
+   * both and any placeholder would misrepresent a real charge.
+   */
   private priorConvictionsForResident(
     resident: WorkflowsResidentRecord,
   ): Array<ParoleConviction> {
     const history = this.profileFor(resident)?.criminalHistory ?? [];
-    // Both fields are required on ParoleConviction with no placeholder that
-    // wouldn't misrepresent a real charge/date, so an entry missing either
-    // is dropped rather than shown with one invented.
     return history.flatMap((entry) =>
       entry.historyCharge && entry.historyDate
         ? [{ charge: entry.historyCharge, date: entry.historyDate }]
@@ -482,6 +516,7 @@ export class ParoleAPIClient implements ParoleAPI {
     );
   }
 
+  /** Disciplinary records from the profile's violations. */
   private conductHistoryForResident(
     resident: WorkflowsResidentRecord,
   ): Array<ParoleConductRecord> {
@@ -496,6 +531,11 @@ export class ParoleAPIClient implements ParoleAPI {
     }));
   }
 
+  /**
+   * DOC programs from the profile. A program whose raw status this client
+   * does not recognize is dropped rather than shown under a guessed one,
+   * because status has no safe placeholder.
+   */
   private docProgramsForResident(
     resident: WorkflowsResidentRecord,
   ): Array<ParoleDocProgram> {
@@ -504,9 +544,6 @@ export class ParoleAPIClient implements ParoleAPI {
       const status = program.programStatus
         ? programStatusForRawLabel(program.programStatus)
         : undefined;
-      // status is required with no safe placeholder -- a program whose raw
-      // status this client doesn't recognize is dropped rather than shown
-      // under a guessed one.
       if (!status) return [];
 
       return [
@@ -521,6 +558,10 @@ export class ParoleAPIClient implements ParoleAPI {
     });
   }
 
+  /**
+   * Edovo programs from the profile, dropping any whose raw status this
+   * client does not recognize, for the same reason as docProgramsForResident.
+   */
   private edovoProgramsForResident(
     resident: WorkflowsResidentRecord,
   ): Array<ParoleEdovoProgram> {
@@ -529,7 +570,6 @@ export class ParoleAPIClient implements ParoleAPI {
       const status = program.edovoProgramStatus
         ? EDOVO_STATUS_BY_RAW_LABEL[program.edovoProgramStatus]
         : undefined;
-      // Same reasoning as docProgramsForResident() -- drop rather than guess.
       if (!status) return [];
 
       return [
@@ -547,6 +587,11 @@ export class ParoleAPIClient implements ParoleAPI {
     });
   }
 
+  /**
+   * Risk assessments from the profile, one per date and tool. An assessment
+   * missing its tool, date, score, or maximum is dropped, since every one of
+   * those is required downstream.
+   */
   private riskAssessmentsForResident(
     resident: WorkflowsResidentRecord,
   ): Array<ParoleRiskAssessment> {
@@ -621,6 +666,10 @@ export class ParoleAPIClient implements ParoleAPI {
     });
   }
 
+  /**
+   * The resident's parole plan, or the schema's own "no plan on file" value
+   * when the profile carries none.
+   */
   private parolePlanForResident(resident: WorkflowsResidentRecord): ParolePlan {
     const plan = this.profileFor(resident)?.parolePlan;
     if (!plan?.parolePlanIsOnFile) {
@@ -674,13 +723,15 @@ export class ParoleAPIClient implements ParoleAPI {
     ];
   }
 
+  /**
+   * Attachments from the profile. One with no URL has nothing to link to and
+   * is dropped; a missing name or upload date falls back to a placeholder,
+   * because the link is still useful without them.
+   */
   private attachmentsForResident(
     resident: WorkflowsResidentRecord,
   ): Array<ParoleAttachment> {
     const attachments = this.profileFor(resident)?.attachments ?? [];
-    // A URL-less attachment has nothing to link to, so it's dropped; name
-    // and upload date fall back to placeholders since the link is still
-    // useful without them.
     return attachments.flatMap((attachment) =>
       attachment.attachmentUrl
         ? [
@@ -695,12 +746,15 @@ export class ParoleAPIClient implements ParoleAPI {
     );
   }
 
-  // Each state's metadata carries a different set of these date fields, so
-  // they're sourced per state here; caseDetailForResident() falls back to
-  // UNKNOWN_DATE for whichever come back undefined. hearingDate and dob are
-  // the exceptions -- demographics.residentDob is the same shared category
-  // both states select into (see profileFor()), same as parole_hearings, so
-  // both are computed once below rather than duplicated into each branch.
+  /**
+   * Sources the profile dates that each state's metadata carries under
+   * different fields. caseDetailForResident falls back to UNKNOWN_DATE for
+   * whichever come back undefined.
+   *
+   * The hearing date and date of birth are the exceptions: both states read
+   * them from the same shared categories, so both are computed once here
+   * rather than duplicated into every branch.
+   */
   private sourceableDatesForResident(resident: WorkflowsResidentRecord): {
     hearingDate: string | undefined;
     sentenceStartDate: string | undefined;

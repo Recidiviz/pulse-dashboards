@@ -19,43 +19,41 @@ import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components";
 
-import { ParoleCase } from "~datatypes";
+import { ParoleCase, ParoleOffense } from "~datatypes";
 import { palette } from "~design-system";
 
 import { SectionCardHeader } from "../../../SectionCard";
 import { PaddedSectionCardBody } from "../PaddedSectionCardBody";
 import {
-  FactLabel,
   FactRow,
   FactRowStack,
-  formatDate,
+  formatDateLong,
+  formatDateNumeric,
   SectionCard,
   SectionStack,
   SubsectionTitle,
 } from "../shared";
 
-// Shown for a date or length that Idaho has not recorded on the offense yet.
+// Shown for a date or date range that Idaho has not recorded on the offense yet.
 const EMPTY_PLACEHOLDER = "----";
 
-// Each offense sits in its own bordered card. A column flex lays out the
-// header group and the fact row, so the spacing between them is one `gap`
-// rather than per-child margins.
 const OffenseCard = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${rem(spacing.md)};
+  gap: ${rem(spacing.lg)};
   background-color: ${palette.marble2};
   border: 1px solid ${palette.slate10};
   border-radius: ${rem(4)};
   padding: ${rem(spacing.lg)};
 `;
 
-// Groups the heading and case number tightly, set apart from the fact row by
-// the card's own gap.
 const OffenseHeader = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: ${rem(spacing.xs)};
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  column-gap: ${rem(spacing.md)};
+  row-gap: ${rem(spacing.xs)};
 `;
 
 const OffenseHeading = styled.div`
@@ -71,19 +69,62 @@ const OffenseStatute = styled.span`
   margin-left: 0.5rem;
 `;
 
-const CaseNumber = styled.div`
+const MutedText = styled.div`
   ${typography.Sans14}
   color: ${palette.slate70};
 `;
 
+const FactValue = styled.div`
+  ${typography.Sans14}
+  color: ${palette.pine1};
+`;
+
+const OffenseFact = styled(FactRowStack)`
+  flex: 0 1 ${rem(164)};
+`;
+
+const LIFE = "Life";
+
 const formatDateOrPlaceholder = (date: string | undefined): string =>
-  date ? formatDate(date) : EMPTY_PLACEHOLDER;
+  date ? formatDateLong(date) : EMPTY_PLACEHOLDER;
+
+const formatFullTerm = (offense: ParoleOffense): string =>
+  offense.isLife ? LIFE : formatDateOrPlaceholder(offense.fullTermDate);
 
 /**
- * US_ID-specific Offense & Criminal History section. Idaho's design diverges
- * from the generic `OffenseHistorySection`: each offense is a bordered card
- * with a numbered statute header, a case number, and a row of sentencing facts
- * (including the fixed and indeterminate halves of a unified sentence).
+ * A span running to a date, or to "Life" where the sentence has no end. A
+ * life sentence still shows when it began, so the row reads as a real span
+ * rather than a placeholder.
+ *
+ * @param start - First day of the span.
+ * @param end - Last day, absent on a life sentence.
+ * @param isLife - Whether the sentence runs for life.
+ */
+const formatSpan = (
+  start: string | undefined,
+  end: string | undefined,
+  isLife: boolean | undefined,
+): string => {
+  if (!start) return EMPTY_PLACEHOLDER;
+  if (isLife) return `${formatDateNumeric(start)} - ${LIFE}`;
+  return formatDateRangeOrPlaceholder(start, end);
+};
+
+// Both spans on the card are open-ended until their end date is known, so a
+// range renders only when both of its bounds are present.
+const formatDateRangeOrPlaceholder = (
+  start: string | undefined,
+  end: string | undefined,
+): string =>
+  start && end
+    ? `${formatDateNumeric(start)} - ${formatDateNumeric(end)}`
+    : EMPTY_PLACEHOLDER;
+
+/**
+ * US_ID-specific Offense Information section. Contains a card for each offense,
+ * showing the conviction, its statute, and its case number, over a row of four sentencing facts.
+ *
+ * Each fact is either a date or a date range, or a placeholder if the date(s) are unknown.
  *
  * @param caseDetail - The case whose offenses to show.
  */
@@ -94,36 +135,36 @@ export function UsIdOffenseHistorySection({
 }) {
   return (
     <SectionCard>
-      <SectionCardHeader>Criminal & Parole History</SectionCardHeader>
+      <SectionCardHeader>Offense Information</SectionCardHeader>
       <PaddedSectionCardBody>
         <div>
           <SubsectionTitle>Instant Offenses</SubsectionTitle>
           <SectionStack>
-            {caseDetail.offenseHistory.offenses.map((offense, index) => {
+            {caseDetail.offenseHistory.offenses.map((offense) => {
               const facts: Array<{ label: string; value: string }> = [
                 {
-                  label: "Sentencing",
-                  value: formatDateOrPlaceholder(offense.sentencingDate),
-                },
-                {
-                  label: "Sentence",
-                  value: offense.sentence || EMPTY_PLACEHOLDER,
-                },
-                {
-                  label: "Parole elig.",
+                  label: "Parole Elig.",
                   value: formatDateOrPlaceholder(offense.paroleEligibilityDate),
                 },
                 {
-                  label: "Full term",
-                  value: formatDateOrPlaceholder(offense.fullTermDate),
+                  label: "Full Term",
+                  value: formatFullTerm(offense),
                 },
                 {
-                  label: "Fixed Length",
-                  value: offense.fixedLength || EMPTY_PLACEHOLDER,
+                  label: "Sent. Length",
+                  value: formatSpan(
+                    offense.sentenceStartDate,
+                    offense.fullTermDate,
+                    offense.isLife,
+                  ),
                 },
                 {
                   label: "Indeterm. Length",
-                  value: offense.indeterminateLength || EMPTY_PLACEHOLDER,
+                  value: formatSpan(
+                    offense.indeterminateStartDate,
+                    offense.indeterminateEndDateInclusive,
+                    offense.isLife,
+                  ),
                 },
               ];
 
@@ -131,19 +172,19 @@ export function UsIdOffenseHistorySection({
                 <OffenseCard key={`${offense.docket}-${offense.conviction}`}>
                   <OffenseHeader>
                     <OffenseHeading>
-                      {index + 1}. {offense.conviction}
+                      {offense.conviction}
                       {offense.statute && (
                         <OffenseStatute>§{offense.statute}</OffenseStatute>
                       )}
                     </OffenseHeading>
-                    <CaseNumber>Case # {offense.docket}</CaseNumber>
+                    <MutedText>Case # {offense.docket}</MutedText>
                   </OffenseHeader>
                   <FactRow>
                     {facts.map((fact) => (
-                      <FactRowStack key={fact.label}>
-                        <div>{fact.label}</div>
-                        <FactLabel>{fact.value}</FactLabel>
-                      </FactRowStack>
+                      <OffenseFact key={fact.label}>
+                        <MutedText>{fact.label}</MutedText>
+                        <FactValue>{fact.value}</FactValue>
+                      </OffenseFact>
                     ))}
                   </FactRow>
                 </OffenseCard>

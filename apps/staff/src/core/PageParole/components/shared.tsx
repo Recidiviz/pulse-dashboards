@@ -61,6 +61,20 @@ export const formatDate = (date: string | number | Date) =>
     year: "numeric",
   });
 
+export const formatDateLong = (date: string | number | Date) =>
+  toSafeDate(date).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+
+export const formatDateNumeric = (date: string | number | Date) =>
+  toSafeDate(date).toLocaleDateString("en-US", {
+    month: "numeric",
+    day: "numeric",
+    year: "numeric",
+  });
+
 /**
  * Returns `score` as a percentage of `maxScore`, or `0` if `maxScore` isn't
  * positive (guards against a malformed assessment rendering
@@ -101,14 +115,6 @@ export const FactStack = styled.div`
   gap: 0.25em;
 `;
 
-// A row of up to 3 label/value FactStacks -- shared by CaseProfileSidebar's
-// Personal/Hearing/Sentence Info rows and AssessmentsSidebarSection's
-// Type/Date/Administered row.
-//
-// Each label/value pair wraps as a whole onto the next row once three no
-// longer fit, rather than immediately wrapping its own label or value --
-// only a pair that still doesn't fit even alone on its own row falls back
-// to wrapping its text.
 export const FactRow = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -117,15 +123,6 @@ export const FactRow = styled.div`
 `;
 
 export const FactRowStack = styled(FactStack)`
-  // Basis is each pair's own single-line content width, not a fixed
-  // third, so the row fits as many pairs as their content allows -- a
-  // fixed third would make a short pair (e.g. "Age") claim more room
-  // than it needs and prematurely wrap a pair after it that would
-  // otherwise still fit. Growing fills whatever room is left so pairs
-  // stay evenly spaced when there's slack. Shrinking only ever kicks in
-  // once a pair is already alone on its own row and still doesn't fit,
-  // at which point it wraps its text (min-width stays at its default
-  // auto, so it can't shrink -- and so wrap -- any sooner than that).
   flex: 1 1 max-content;
   overflow-wrap: break-word;
 `;
@@ -141,22 +138,15 @@ export const StackedFactRow = styled.div`
   align-items: flex-end;
   gap: 0.5rem;
 
-  // FactLabel carries a bottom margin meant for label-above-value layouts;
-  // drop it here so the rows sit an even 0.5rem apart.
   & > * {
     margin-bottom: 0;
   }
 `;
 
-// Spans two of FactGrid's three columns, for a fact whose value is too long
-// to sit comfortably in a single column (e.g. a free-text narrative).
 export const WideFactItem = styled.div`
   grid-column: span 2;
 `;
 
-// Vertically stacks a SectionCardBody's groups (a fact grid, a divider, a
-// labeled subsection, ...) with consistent spacing via `gap`, rather than
-// each group managing its own margin/padding against its neighbors.
 export const SectionStack = styled.div`
   display: flex;
   flex-direction: column;
