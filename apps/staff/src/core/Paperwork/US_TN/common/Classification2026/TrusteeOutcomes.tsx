@@ -26,7 +26,9 @@ import {
   resolveTrusteeOutcome,
   TRUSTEE_ANNEX_SUB_QUESTION,
   TRUSTEE_CRITERIA,
+  TRUSTEE_REQUIREMENT_LABEL,
   TrusteeCriterionKey,
+  trusteeCriterionNotMetHeading,
 } from "~datatypes";
 
 import { UsTnReclassification2026Form } from "../../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassification2026Form";
@@ -86,8 +88,8 @@ export const RequirementNotMet = observer(function RequirementNotMet({
 
   return (
     <FailedCriterion>
-      <Bold>Criterion {getTrusteeCriterionNumber(criterionKey)} not met.</Bold>{" "}
-      Requirement: <CriterionText text={criterion.text} />
+      <Bold>{trusteeCriterionNotMetHeading(criterionKey)}</Bold>{" "}
+      {TRUSTEE_REQUIREMENT_LABEL} <CriterionText text={criterion.text} />
     </FailedCriterion>
   );
 });

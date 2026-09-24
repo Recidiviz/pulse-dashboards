@@ -42,6 +42,7 @@ import {
   TRUSTEE_SECTIONS,
   TrusteeAssessmentHeader,
 } from "./TrusteeCriteriaSection";
+import { TrusteeDenialReasons, TrusteeNotesForWarden } from "./TrusteeNotes";
 import { TrusteeEligibility } from "./TrusteeOutcomes";
 
 type TrusteeForm = UsTnReclassification2026Form;
@@ -491,14 +492,8 @@ const ReworkTrusteeChecklist = observer(function ReworkTrusteeChecklist({
               <>
                 <TrusteeEligibility />
                 <TrusteeApprovals />
-                <div>
-                  <Bold>Reasons for Denial:</Bold>
-                  <DOCXFormTextArea<UsTnReclassification2026DraftData> name="trusteeDenialReasons" />
-                </div>
-                <div>
-                  <Bold>Notes for Warden Review:</Bold>
-                  <DOCXFormTextArea<UsTnReclassification2026DraftData> name="trusteeNotesForWarden" />
-                </div>
+                <TrusteeDenialReasons />
+                <TrusteeNotesForWarden />
               </>
             )}
           </TrusteeFormPage>

@@ -221,3 +221,18 @@ export function getTrusteeCriterionNumber(key: TrusteeCriterionKey): number {
 
   return index + 1;
 }
+
+/**
+ * The fixed wording a failed criterion is reported with. The eligibility block
+ * renders it as JSX with the heading bold, and the DOCX builds it as plain
+ * text, so the two cannot share a rendering; sharing the words keeps a copy
+ * change from having to be made in both places.
+ */
+export function trusteeCriterionNotMetHeading(
+  key: TrusteeCriterionKey,
+): string {
+  return `Criterion ${getTrusteeCriterionNumber(key)} not met.`;
+}
+
+/** Introduces the criterion's own text, after the heading. */
+export const TRUSTEE_REQUIREMENT_LABEL = "Requirement:";

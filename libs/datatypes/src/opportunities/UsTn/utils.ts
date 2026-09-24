@@ -365,6 +365,8 @@ export type TrusteeFormAdditionalFields = {
   trusteeACApprovalDate: string;
   trusteeWardenHasApproved: string;
   trusteeDenialReasons: string;
+  /** Free text under the derived denial paragraph, which is not editable. */
+  trusteeDenialNotes: string;
   trusteeCustodyApproved: string;
   trusteeWardenSignature: boolean;
   trusteeWardenSignatureDate: string;

@@ -20,7 +20,9 @@ import { z } from "zod";
 import {
   TRUSTEE_ANNEX_SUB_QUESTION,
   TRUSTEE_CRITERIA,
+  TRUSTEE_REQUIREMENT_LABEL,
   TrusteeCriterionKey,
+  trusteeCriterionNotMetHeading,
 } from "./trusteeCriteria";
 import { UsTnReclassification2026DraftData } from "./UsTnReclassification2026Policy";
 import { multiIncidentPeriodReportSchema, TrusteeFormSchema } from "./utils";
@@ -287,6 +289,27 @@ export function resolveTrusteeSkipState(
       (!annexOutcome.subQuestionRequired ||
         annexOutcome.failedCriteria.length > 0),
   };
+}
+
+/** Plain text of a criterion, with the bold-segment markers removed. */
+export function trusteeCriterionPlainText(key: TrusteeCriterionKey): string {
+  return (
+    TRUSTEE_CRITERIA.find((c) => c.key === key)
+      ?.text.split("**")
+      .join("") ?? ""
+  );
+}
+
+/** One paragraph per failed hard bar, phrased as the requirement that was not met. */
+export function buildTrusteeDenialReasons(
+  formData: Partial<TrusteeFormSchema>,
+): string {
+  return resolveTrusteeOutcome(formData)
+    .failedHardBars.map(
+      (key) =>
+        `${trusteeCriterionNotMetHeading(key)} ${TRUSTEE_REQUIREMENT_LABEL} ${trusteeCriterionPlainText(key)}`,
+    )
+    .join("\n\n");
 }
 
 export function showTrusteeChecklist(

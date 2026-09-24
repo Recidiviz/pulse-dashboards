@@ -16,6 +16,7 @@
 // =============================================================================
 
 import {
+  buildTrusteeDenialReasons,
   resolveAnnexOutcome,
   resolveTrusteeOutcome,
   resolveTrusteeSkipState,
@@ -513,5 +514,42 @@ describe("resolveTrusteeSkipState", () => {
     });
 
     expect(state.subQuestionNotRequired).toBeFalse();
+  });
+});
+
+describe("buildTrusteeDenialReasons", () => {
+  const keyFor = (n: number) => TRUSTEE_CRITERIA[n - 1].key;
+
+  it("is empty when nothing has failed", () => {
+    expect(buildTrusteeDenialReasons({})).toBe("");
+  });
+
+  it("writes one paragraph per failed criterion", () => {
+    const text = buildTrusteeDenialReasons({
+      [keyFor(3)]: "false",
+      [keyFor(11)]: "false",
+    });
+
+    expect(text.split("\n\n")).toHaveLength(2);
+    expect(text).toContain("Criterion 3 not met. Requirement:");
+    expect(text).toContain("Criterion 11 not met. Requirement:");
+  });
+
+  it("states the requirement, never the disqualifying fact", () => {
+    const text = buildTrusteeDenialReasons({ [keyFor(3)]: "false" });
+
+    expect(text).toBe(
+      "Criterion 3 not met. Requirement: Inmate is not a sex offender.",
+    );
+  });
+
+  it("strips the bold markers from the criterion text", () => {
+    const text = buildTrusteeDenialReasons({ [keyFor(1)]: "false" });
+
+    expect(text).not.toContain("**");
+  });
+
+  it("ignores Group E criteria, which do not disqualify", () => {
+    expect(buildTrusteeDenialReasons({ [keyFor(15)]: "false" })).toBe("");
   });
 });
