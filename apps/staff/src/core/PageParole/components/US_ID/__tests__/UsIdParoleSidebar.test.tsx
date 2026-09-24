@@ -24,12 +24,9 @@ import { UsIdParoleSidebar } from "../UsIdParoleSidebar";
 
 const CASE = paroleCasesFixtureByState.US_ID["166184"];
 
-// reportAuthor is optional on the schema; narrow it once here so the tests
-// below can assert against CASE's own value instead of a duplicated literal.
-const { reportAuthor } = CASE;
-if (!reportAuthor) {
-  throw new Error("Expected the US_ID sample case to set a report author.");
-}
+// The Report Author row shows the case manager until the backend sources an
+// author of its own, so the tests assert against CASE's own value.
+const { caseManagerName } = CASE;
 
 function makeConfig(overrides: Partial<ParoleConfig> = {}): ParoleConfig {
   return {
@@ -67,7 +64,7 @@ describe("UsIdParoleSidebar", () => {
     expect(screen.getByText("Report Status")).toBeInTheDocument();
     expect(screen.getByText("Hearing Type")).toBeInTheDocument();
     expect(screen.getByText(CASE.hearingType)).toBeInTheDocument();
-    expect(screen.getByText(reportAuthor)).toBeInTheDocument();
+    expect(screen.getByText(caseManagerName)).toBeInTheDocument();
 
     // Report Author sits above the hearing date, per the V1 design.
     const author = screen.getByText("Report Author");

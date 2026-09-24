@@ -19,8 +19,6 @@ import { ParoleCase } from "~datatypes";
 
 import type { ParoleConfig } from "../../models/types";
 import { CaseProfileSidebar } from "../components/CaseProfileSidebar";
-import { DownloadReportCard } from "../components/DownloadReportCard";
-import { ReportHeader } from "../components/ReportHeader";
 import { SectionAnchor } from "../components/SectionAnchor";
 import { PAROLE_SECTION_IDS } from "../components/shared";
 import { UsIdInstitutionalHistorySection } from "../components/US_ID/UsIdInstitutionalHistorySection";
@@ -41,8 +39,7 @@ const SECTION_NAV = [
 ];
 
 /**
- * Idaho's Parole case profile. Unlike Colorado's, it offers a PDF download,
- * so it renders the download card and the report header.
+ * Idaho's Parole case profile.
  *
  * @param caseDetail - The case to show.
  * @param config - Idaho's paroleConfig, for its conduct classification colors
@@ -62,10 +59,7 @@ export function UsIdParoleCaseProfile({
           <UsIdParoleSidebar caseDetail={caseDetail} config={config} />
         </CaseProfileSidebar>
       }
-      beforeReport={<DownloadReportCard docId={caseDetail.docId} />}
     >
-      <ReportHeader name={caseDetail.name} displayId={caseDetail.displayId} />
-
       <SectionAnchor id={PAROLE_SECTION_IDS.offenseHistory}>
         <UsIdOffenseHistorySection caseDetail={caseDetail} />
       </SectionAnchor>

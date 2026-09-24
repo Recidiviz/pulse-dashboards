@@ -85,6 +85,12 @@ function isSupportedTenantMetadata(
 const UNKNOWN_TEXT = PAROLE_UNKNOWN_TEXT;
 const UNKNOWN_DATE = PAROLE_UNKNOWN_DATE;
 
+/** The fields the mappers below read off a resident's scheduled hearing. */
+type ScheduledHearing = Pick<
+  ParoleBoardClientProfileHearing,
+  "hearingDate" | "hearingType"
+>;
+
 const UNKNOWN_OFFENSE: ParoleOffense = {
   county: UNKNOWN_TEXT,
   docket: UNKNOWN_TEXT,
@@ -354,50 +360,62 @@ export class ParoleAPIClient implements ParoleAPI {
   ): ParoleHearing | undefined {
     if (!isSupportedTenantId(resident.metadata.stateCode)) return undefined;
 
-    const hearing = this.nextScheduledHearing(resident);
-    if (!hearing?.hearingDate) return undefined;
+    const hearing = this.scheduledHearing(resident);
+    const hearingDate = hearing?.hearingDate ?? this.flatHearingDate(resident);
+    if (!hearingDate) return undefined;
 
     return {
       docId: resident.personExternalId,
       displayId: resident.displayId,
       individualName: addDisplayName({ fullName: resident.personName })
         .displayName,
-      hearingDate: hearing.hearingDate,
-      hearingType: hearing.hearingType ?? UNKNOWN_TEXT,
-      facility: resident.facilityId ?? UNKNOWN_TEXT,
+      hearingDate,
+      hearingType: hearing?.hearingType ?? UNKNOWN_TEXT,
+      facility: this.facilityForResident(resident),
     };
   }
 
   /**
-   * The soonest upcoming hearing, read from
-   * `parole_board_client_profile.parole_hearings`. Returns at most one row
-   * per resident: ParoleHearing.docId is the person's DOC id, so two rows
-   * per person would open the same case profile twice.
+   * The resident's soonest scheduled hearing, read from
+   * `parole_board_client_profile.parole_hearings`. At most one per resident,
+   * since ParoleHearing.docId is the person's id and two rows would open the
+   * same case profile twice.
+   *
+   * @param resident - The resident whose hearing to find.
    */
-  private nextScheduledHearing(
+  private scheduledHearing(
     resident: WorkflowsResidentRecord,
-  ): ParoleBoardClientProfileHearing | undefined {
+  ): ScheduledHearing | undefined {
+    return (this.profileFor(resident)?.paroleHearings ?? [])
+      .flatMap((hearing) =>
+        hearing.hearingStatus === "SCHEDULED" && hearing.hearingDate
+          ? [
+              {
+                hearingDate: hearing.hearingDate,
+                hearingType: hearing.hearingType,
+              },
+            ]
+          : [],
+      )
+      .sort((a, b) => a.hearingDate.localeCompare(b.hearingDate))[0];
+  }
+
+  /**
+   * The flat hearing date us_ix_resident_metadata carries beside the parole
+   * hearings struct. Most US_ID residents have no SCHEDULED entry in that
+   * struct, so this is where their hearing date comes from. It carries no
+   * hearing type, so callers supply their own placeholder for that.
+   *
+   * Drop this once the struct covers them, not merely once it exists.
+   *
+   * @param resident - The resident whose flat hearing date to read.
+   */
+  private flatHearingDate(
+    resident: WorkflowsResidentRecord,
+  ): string | undefined {
     const { metadata } = resident;
-    const profile = this.profileFor(resident);
-
-    const scheduled = (profile?.paroleHearings ?? [])
-      .filter((hearing) => hearing.hearingStatus === "SCHEDULED")
-      .filter((hearing) => hearing.hearingDate)
-      .sort((a, b) => (a.hearingDate ?? "").localeCompare(b.hearingDate ?? ""));
-
-    if (scheduled.length > 0) return scheduled[0];
-
-    // TODO(XXXX): transitional -- us_ix_resident_metadata still emits the
-    // flat next/initial hearing dates alongside the struct, so US_ID works
-    // before parole_hearings is materialized. Drop this branch once it is.
-    if (metadata.stateCode === "US_ID") {
-      const hearingDate =
-        metadata.nextParoleHearingDate ?? metadata.initialParoleHearingDate;
-      if (!hearingDate) return undefined;
-      return { hearingDate, hearingType: UNKNOWN_TEXT };
-    }
-
-    return undefined;
+    if (metadata.stateCode !== "US_ID") return undefined;
+    return metadata.nextParoleHearingDate ?? metadata.initialParoleHearingDate;
   }
 
   /**
@@ -405,6 +423,7 @@ export class ParoleAPIClient implements ParoleAPI {
    * field the tenant does not source with its UNKNOWN placeholder.
    */
   private caseDetailForResident(resident: WorkflowsResidentRecord): ParoleCase {
+    const hearing = this.scheduledHearing(resident);
     const dates = this.sourceableDatesForResident(resident);
 
     return {
@@ -413,12 +432,12 @@ export class ParoleAPIClient implements ParoleAPI {
       name: addDisplayName({ fullName: resident.personName }).displayName,
       dob: dates.dob ?? UNKNOWN_DATE,
       gender: resident.gender ?? UNKNOWN_TEXT,
-      currentFacility: resident.facilityId ?? UNKNOWN_TEXT,
+      currentFacility: this.facilityForResident(resident),
       custodyLevel: resident.custodyLevel ?? UNKNOWN_TEXT,
       caseManagerName:
         this.profileFor(resident)?.demographics.caseManager ?? UNKNOWN_TEXT,
-      hearingDate: dates.hearingDate,
-      hearingType: UNKNOWN_TEXT,
+      hearingDate: hearing?.hearingDate ?? this.flatHearingDate(resident),
+      hearingType: hearing?.hearingType ?? UNKNOWN_TEXT,
       sentenceStartDate: dates.sentenceStartDate ?? UNKNOWN_DATE,
       paroleEligibilityDate: dates.paroleEligibilityDate ?? UNKNOWN_DATE,
       mandatoryReleaseDate: dates.mandatoryReleaseDate ?? UNKNOWN_DATE,
@@ -487,6 +506,20 @@ export class ParoleAPIClient implements ParoleAPI {
         sentence.sentenceIndeterminateEndDateInclusive,
       ),
     };
+  }
+
+  /**
+   * The resident's facility, preferring the profile struct's own value over the
+   * resident record's `facilityId`. US_CO resolves the struct field to a
+   * facility name where `facilityId` is a raw code; US_IX selects `facilityId`
+   * straight through today, so the two agree there for now.
+   */
+  private facilityForResident(resident: WorkflowsResidentRecord): string {
+    return (
+      this.profileFor(resident)?.demographics.facility ??
+      resident.facilityId ??
+      UNKNOWN_TEXT
+    );
   }
 
   /**
@@ -752,19 +785,13 @@ export class ParoleAPIClient implements ParoleAPI {
    * Sources the profile dates that each state's metadata carries under
    * different fields. caseDetailForResident falls back to UNKNOWN_DATE for
    * whichever come back undefined.
-   *
-   * The hearing date and date of birth are the exceptions: both states read
-   * them from the same shared categories, so both are computed once here
-   * rather than duplicated into every branch.
    */
   private sourceableDatesForResident(resident: WorkflowsResidentRecord): {
-    hearingDate: string | undefined;
     sentenceStartDate: string | undefined;
     paroleEligibilityDate: string | undefined;
     mandatoryReleaseDate: string | undefined;
     dob: string | undefined;
   } {
-    const hearingDate = this.nextScheduledHearing(resident)?.hearingDate;
     const dob = this.profileFor(resident)?.demographics.residentDob;
     // The soonest-eligibility sentence, first per the backend's own
     // ordering (see recidiviz-data#102399's ORDER BY) -- the same one
@@ -773,7 +800,6 @@ export class ParoleAPIClient implements ParoleAPI {
 
     if (resident.metadata.stateCode === "US_ID") {
       return {
-        hearingDate,
         dob,
         sentenceStartDate: resident.admissionDate
           ? formatDateToISO(resident.admissionDate)
@@ -788,7 +814,6 @@ export class ParoleAPIClient implements ParoleAPI {
     }
     if (resident.metadata.stateCode === "US_CO") {
       return {
-        hearingDate,
         dob,
         sentenceStartDate: resident.metadata.incarcerationStartDate
           ? formatDateToISO(resident.metadata.incarcerationStartDate)
@@ -806,7 +831,6 @@ export class ParoleAPIClient implements ParoleAPI {
       };
     }
     return {
-      hearingDate,
       dob,
       sentenceStartDate: undefined,
       paroleEligibilityDate: undefined,

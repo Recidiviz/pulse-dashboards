@@ -199,6 +199,7 @@ export const paroleBoardClientProfileSchema = z.object({
   demographics: z.object({
     residentDob: nullishAsUndefined(z.string()),
     caseManager: nullishAsUndefined(z.string()),
+    facility: nullishAsUndefined(z.string()),
   }),
   // Optional: an unhydrated state emits an empty array, and the whole
   // struct is absent until the backend view is materialized.

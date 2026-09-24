@@ -60,9 +60,11 @@ describe("UsIdParoleCaseProfile", () => {
     expect(scrollIntoViewMock).toHaveBeenCalledTimes(1);
   });
 
-  it("offers the report download, which Colorado does not", () => {
+  // The V1 design drops the PDF download; DownloadReportCard still exists,
+  // unused, for the V2 designs.
+  it("offers no report download", () => {
     expect(
-      screen.getByRole("button", { name: /download/i }),
-    ).toBeInTheDocument();
+      screen.queryByRole("button", { name: /download/i }),
+    ).not.toBeInTheDocument();
   });
 });

@@ -76,12 +76,10 @@ export function UsIdParoleSidebar({
             <div>Hearing Type</div>
             <FactLabel>{caseDetail.hearingType}</FactLabel>
           </StackedFactRow>
-          {caseDetail.reportAuthor && (
-            <StackedFactRow>
-              <div>Report Author</div>
-              <FactLabel>{caseDetail.reportAuthor}</FactLabel>
-            </StackedFactRow>
-          )}
+          <StackedFactRow>
+            <div>Report Author</div>
+            <FactLabel>{caseDetail.caseManagerName}</FactLabel>
+          </StackedFactRow>
           <StackedFactRow>
             <div>Parole Board Hearing</div>
             <FactLabel>

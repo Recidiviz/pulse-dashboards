@@ -23,11 +23,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import * as StoreProvider from "../../../../components/StoreProvider";
 import { ParoleStore } from "../../../../ParoleStore/ParoleStore";
 import { RootStore } from "../../../../RootStore";
-import {
-  PAROLE_REPORT_CAPTURE_ID,
-  PAROLE_SECTION_IDS,
-} from "../../components/shared";
-import { downloadParoleReportZip } from "../../downloadParoleReport";
+import { PAROLE_SECTION_IDS } from "../../components/shared";
 import { ParoleCaseProfile } from "../ParoleCaseProfile";
 
 vi.mock("../../../../components/StoreProvider");
@@ -44,7 +40,6 @@ vi.mock("../../downloadParoleReport", () => ({
 import.meta.env["VITE_IS_OFFLINE"] = "true";
 
 const useRootStoreMock = vi.mocked(StoreProvider.useRootStore);
-const downloadParoleReportZipMock = vi.mocked(downloadParoleReportZip);
 
 let rootStore: RootStore;
 
@@ -625,35 +620,12 @@ describe("ParoleCaseProfile", () => {
     });
   });
 
-  describe("the download report section", () => {
-    it("shows the download report card for US_ID and generates the zip on click", async () => {
-      downloadParoleReportZipMock.mockClear();
-      const user = userEvent.setup();
-
-      rootStore.tenantStore.currentTenantId = "US_ID";
-      renderAtPath("/parole/case/45821");
-
-      expect(
-        await screen.findByText("Download PHI Report and SDMF worksheet"),
-      ).toBeInTheDocument();
-
-      // The card's action button is the only "Download Report" control: the
-      // section is left out of the quick-nav, so there is no nav button too.
-      const buttons = screen.getAllByRole("button", {
-        name: /^download report$/i,
-      });
-      expect(buttons).toHaveLength(1);
-
-      await user.click(buttons[0]);
-
-      expect(downloadParoleReportZipMock).toHaveBeenCalledTimes(1);
-      expect(downloadParoleReportZipMock).toHaveBeenCalledWith({
-        reportElement: document.getElementById(PAROLE_REPORT_CAPTURE_ID),
-        folderName: "Parole_Report_45821",
-      });
-    });
-
-    it("does not show the download report card for US_CO", async () => {
+  // The V1 design drops the PDF download for both tenants. DownloadReportCard
+  // and downloadParoleReport still exist, unused, for the V2 designs.
+  it.each(["US_ID", "US_CO"] as const)(
+    "shows no download report card for %s",
+    async (tenantId) => {
+      rootStore.tenantStore.currentTenantId = tenantId;
       renderAtPath("/parole/case/45821");
 
       await screen.findByText("Anderson, Michael");
@@ -663,6 +635,6 @@ describe("ParoleCaseProfile", () => {
       expect(
         screen.queryByRole("button", { name: /^download report$/i }),
       ).not.toBeInTheDocument();
-    });
-  });
+    },
+  );
 });

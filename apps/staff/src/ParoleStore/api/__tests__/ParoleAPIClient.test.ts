@@ -715,6 +715,106 @@ describe("ParoleAPIClient", () => {
       expect(coResult.hearingDate).toBe("2026-11-02");
     });
 
+    it("sources hearingType from the same scheduled hearing as hearingDate", async () => {
+      vi.spyOn(
+        rootStore.firestoreStore,
+        "getResidentByPersonExternalId",
+      ).mockResolvedValue(
+        buildUsIdResident({
+          metadata: {
+            stateCode: "US_ID",
+            crcFacilities: [],
+            paroleBoardClientProfile: {
+              demographics: {},
+              paroleHearings: [
+                {
+                  hearingStatus: "PREVIOUS",
+                  hearingDate: "2024-01-01",
+                  hearingType: "Past",
+                },
+                {
+                  hearingStatus: "SCHEDULED",
+                  hearingDate: "2026-11-02",
+                  hearingType: "Parole Consideration",
+                },
+              ],
+            },
+          },
+        }),
+      );
+
+      const result = await client.caseDetail("RES999");
+
+      expect(result.hearingType).toBe("Parole Consideration");
+      expect(result.hearingDate).toBe("2026-11-02");
+    });
+
+    it("falls back to a placeholder hearingType when the scheduled hearing has none", async () => {
+      vi.spyOn(
+        rootStore.firestoreStore,
+        "getResidentByPersonExternalId",
+      ).mockResolvedValue(
+        buildUsIdResident({
+          metadata: {
+            stateCode: "US_ID",
+            crcFacilities: [],
+            paroleBoardClientProfile: {
+              demographics: {},
+              paroleHearings: [
+                { hearingStatus: "SCHEDULED", hearingDate: "2026-11-02" },
+              ],
+            },
+          },
+        }),
+      );
+
+      const result = await client.caseDetail("RES999");
+
+      expect(result.hearingType).toBe("Not yet available");
+    });
+
+    it("prefers demographics.facility over the resident record's facilityId", async () => {
+      vi.spyOn(
+        rootStore.firestoreStore,
+        "getResidentByPersonExternalId",
+      ).mockResolvedValue(
+        buildUsIdResident({
+          facilityId: "RAW_CODE_1",
+          metadata: {
+            stateCode: "US_ID",
+            crcFacilities: [],
+            paroleBoardClientProfile: {
+              demographics: { facility: "Idaho State Correctional Center" },
+            },
+          },
+        }),
+      );
+
+      const result = await client.caseDetail("RES999");
+
+      expect(result.currentFacility).toBe("Idaho State Correctional Center");
+    });
+
+    it("falls back to facilityId when demographics carries no facility", async () => {
+      vi.spyOn(
+        rootStore.firestoreStore,
+        "getResidentByPersonExternalId",
+      ).mockResolvedValue(
+        buildUsIdResident({
+          facilityId: "RAW_CODE_1",
+          metadata: {
+            stateCode: "US_ID",
+            crcFacilities: [],
+            paroleBoardClientProfile: { demographics: {} },
+          },
+        }),
+      );
+
+      const result = await client.caseDetail("RES999");
+
+      expect(result.currentFacility).toBe("RAW_CODE_1");
+    });
+
     it("sources caseManagerName from demographics.caseManager", async () => {
       vi.spyOn(
         rootStore.firestoreStore,
