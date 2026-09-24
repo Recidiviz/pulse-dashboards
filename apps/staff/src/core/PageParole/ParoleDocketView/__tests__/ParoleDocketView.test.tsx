@@ -94,3 +94,40 @@ describe("ParoleDocketView docket subheading and search", () => {
     ).not.toBeInTheDocument();
   });
 });
+
+describe("ParoleDocketView columns", () => {
+  it("heads the docket with Idaho's own id label and a month-only hearing column", async () => {
+    mockCurrentTenant("US_ID");
+    render(
+      <MemoryRouter>
+        <ParoleDocketView />
+      </MemoryRouter>,
+    );
+
+    // The docket hydrates asynchronously, so wait for its rows once here
+    // rather than in whichever assertion happens to come first.
+    await screen.findAllByRole("link");
+
+    expect(screen.getByText("IDOC ID")).toBeInTheDocument();
+    expect(screen.getByText("Hearing Month")).toBeInTheDocument();
+    expect(screen.queryByText("Hearing Date")).not.toBeInTheDocument();
+    // A month-precision cell names the month alone -- no "June 2026", and
+    // no "June 1, 2026".
+    expect(screen.queryByText(/^\w+ \d{4}$/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/^\w+ \d{1,2}, \d{4}$/)).not.toBeInTheDocument();
+  });
+
+  it("keeps the generic id label and a dated hearing column elsewhere", async () => {
+    render(
+      <MemoryRouter>
+        <ParoleDocketView />
+      </MemoryRouter>,
+    );
+
+    await screen.findAllByRole("link");
+
+    expect(screen.getByText("DOC ID")).toBeInTheDocument();
+    expect(screen.getByText("Hearing Date")).toBeInTheDocument();
+    expect(screen.queryByText("Hearing Month")).not.toBeInTheDocument();
+  });
+});

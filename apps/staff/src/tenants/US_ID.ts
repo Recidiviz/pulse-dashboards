@@ -220,8 +220,22 @@ const US_ID_CONFIG = {
     methodology: ["system", "operations"],
   },
   paroleConfig: {
-    docketWindowDaysBefore: 7,
-    docketWindowDaysAfter: 30,
+    docketConfig: {
+      columns: [
+        { header: "Name", field: "individualName", sortable: true },
+        { header: "IDOC ID", field: "displayId", format: "docId" },
+        {
+          header: "Hearing Month",
+          field: "hearingDate",
+          format: "month",
+          sortable: true,
+        },
+        { header: "Hearing Type", field: "hearingType" },
+        { header: "Facility", field: "facility" },
+      ],
+      windowDaysBefore: 7,
+      windowDaysAfter: 30,
+    },
     conductHistoryConfig: {
       classificationColors: {
         "Class A": "BROWN",

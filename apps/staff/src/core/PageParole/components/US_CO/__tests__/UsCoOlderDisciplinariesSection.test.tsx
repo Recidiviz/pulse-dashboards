@@ -27,6 +27,9 @@ import { UsCoOlderDisciplinariesSection } from "../UsCoOlderDisciplinariesSectio
 // Mirrors US_CO's real window, so makeRecord's date lands outside it and the
 // toggle has something to reveal.
 const CONFIG: ParoleConfig = {
+  // This test renders a case-profile section, which never reads the docket
+  // config; an empty column list keeps it valid without inventing one.
+  docketConfig: { columns: [] },
   conductHistoryConfig: {
     classificationColors: { "Class 1": "BLUE" },
     visibleYears: 1,

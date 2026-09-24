@@ -28,15 +28,29 @@ const US_CO_CONFIG = {
     parole: ["docket"],
   },
   paroleConfig: {
-    docketSubheading: "Two Week Outlook",
-    docketSearchEnabled: true,
-    // CO's scheduled hearing dates are truncated to the 1st of the month in
-    // the source table (see us_co/parole_board_client_profile.py), so a
-    // hearing set for this month can already be "in the past" by the 2nd.
-    // The look-back covers a full month so that date stays on the docket for
-    // as long as it's genuinely still this month's hearing.
-    docketWindowDaysBefore: 31,
-    docketWindowDaysAfter: 14,
+    docketConfig: {
+      columns: [
+        { header: "Name", field: "individualName", sortable: true },
+        { header: "DOC ID", field: "displayId", format: "docId" },
+        {
+          header: "Hearing Date",
+          field: "hearingDate",
+          format: "date",
+          sortable: true,
+        },
+        { header: "Hearing Type", field: "hearingType" },
+        { header: "Facility", field: "facility" },
+      ],
+      subheading: "Two Week Outlook",
+      searchEnabled: true,
+      // CO's scheduled hearing dates are truncated to the 1st of the month in
+      // the source table (see us_co/parole_board_client_profile.py), so a
+      // hearing set for this month can already be "in the past" by the 2nd.
+      // The look-back covers a full month so that date stays on the docket for
+      // as long as it's genuinely still this month's hearing.
+      windowDaysBefore: 31,
+      windowDaysAfter: 14,
+    },
     conductHistoryConfig: {
       classificationColors: {
         "Class I": "BLUE",

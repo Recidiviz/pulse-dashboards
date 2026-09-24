@@ -94,7 +94,7 @@ describe("ParoleAPIClient", () => {
 
       await client.hearings();
 
-      // US_CO's tenant config: docketWindowDaysBefore 31, docketWindowDaysAfter 14.
+      // US_CO's docketConfig: windowDaysBefore 31, windowDaysAfter 14.
       expect(spy).toHaveBeenCalledWith("US_CO", {
         field: "metadata.nextParoleHearingDate",
         startDateInclusive: formatDateToISO(subDays(startOfToday(), 31)),

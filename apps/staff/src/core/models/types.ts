@@ -19,6 +19,7 @@ import {
   ClientRecord,
   LocationRecord,
   MilestoneType,
+  ParoleHearing,
   ParoleRiskTool,
   StaffRecord,
   SystemId,
@@ -125,28 +126,51 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
 };
 
 /**
+ * One column of the Parole docket table: its header, the ParoleHearing field
+ * it reads, and how that value is drawn.
+ */
+export type ParoleDocketColumn = {
+  header: string;
+  field: keyof ParoleHearing;
+  format?: "docId" | "month" | "date";
+  sortable?: boolean;
+};
+
+/** The Parole docket page's per-tenant settings. */
+export type ParoleDocketConfig = {
+  /**
+   * The table's columns, in display order. Every tenant states its own --
+   * each heads and orders them differently, and a shared default would
+   * quietly give a new tenant another state's wording.
+   */
+  columns: ReadonlyArray<ParoleDocketColumn>;
+  /** Subheading shown under the table's title. Omit to hide it. */
+  subheading?: string;
+  /** Enables the table's name/DOC ID search input. Omit to hide it. */
+  searchEnabled?: boolean;
+  /**
+   * How many days ahead the docket looks. A hearing outside the window --
+   * before `windowDaysBefore` days ago, or past this many days out -- is left
+   * off the docket, so the filter dropdowns and total count match what the
+   * table shows. Omit to show every hearing. Keep `subheading` in agreement
+   * with this if the tenant sets one.
+   */
+  windowDaysAfter?: number;
+  /**
+   * How many days before today the window starts. Only takes effect alongside
+   * `windowDaysAfter` -- omit (or leave at the default of 0) to start the
+   * window at today.
+   */
+  windowDaysBefore?: number;
+};
+
+/**
  * State-specific behavior for the Parole case profile page. Required for any
  * tenant with Parole nav enabled
  */
 export type ParoleConfig = {
-  /** Subheading shown under the docket table's title. Omit to hide it. */
-  docketSubheading?: string;
-  /** Enables the docket table's name/DOC ID search input. Omit to hide it. */
-  docketSearchEnabled?: boolean;
-  /**
-   * How many days ahead the docket looks. A hearing outside the window --
-   * before `docketWindowDaysBefore` days ago, or past this many days out --
-   * is left off the docket, so the filter dropdowns and total count match
-   * what the table shows. Omit to show every hearing. Keep
-   * `docketSubheading` in agreement with this if the tenant sets one.
-   */
-  docketWindowDaysAfter?: number;
-  /**
-   * How many days before today the docket window starts. Only takes effect
-   * alongside `docketWindowDaysAfter` -- omit (or leave at the default of 0)
-   * to start the window at today.
-   */
-  docketWindowDaysBefore?: number;
+  /** How this tenant's Parole docket page reads. */
+  docketConfig: ParoleDocketConfig;
   /** State-specific config for the Institutional Conduct History section. */
   conductHistoryConfig: ParoleConductHistoryConfig;
   /**

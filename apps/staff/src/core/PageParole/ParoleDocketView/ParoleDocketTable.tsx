@@ -19,6 +19,7 @@ import { spacing } from "@recidiviz/design-system";
 import { ColumnDef } from "@tanstack/react-table";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
+import { useMemo } from "react";
 import styled from "styled-components";
 
 import { ParoleHearing } from "~datatypes";
@@ -28,10 +29,13 @@ import SearchIconComponent from "../../../assets/static/images/search.svg?react"
 import { ParoleDocketPresenter } from "../../../ParoleStore/presenters/ParoleDocketPresenter";
 import { formatDocId } from "../../../ParoleStore/utils";
 import { CaseloadTable } from "../../CaseloadTable";
+import { ParoleDocketColumn } from "../../models/types";
 import { SectionCard } from "../../SectionCard";
 import { paroleUrl } from "../../views";
 import { WorkflowsFilterDropdown } from "../../WorkflowsFilters/WorkflowsFilterDropdown";
 import { parseIsoDate } from "../components/shared";
+
+type HearingDatePrecision = "month" | "date";
 
 const FilterBar = styled.div`
   display: flex;
@@ -102,74 +106,75 @@ function renderCellText(value: unknown, leadingInset = false): JSX.Element {
   );
 }
 
-const formatHearingDate = (dateString: string) =>
-  parseIsoDate(dateString).toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-    day: "numeric",
-  });
-
-function renderHearingDateCell(dateString: unknown): JSX.Element {
-  return renderCellText(formatHearingDate(dateString as string));
-}
-
-function renderDocIdCell(displayId: unknown): JSX.Element {
-  return renderCellText(formatDocId(displayId as string));
-}
+const formatHearingDate = (
+  dateString: string,
+  precision: HearingDatePrecision,
+) =>
+  parseIsoDate(dateString).toLocaleDateString(
+    "en-US",
+    precision === "month"
+      ? { month: "long" }
+      : { month: "long", day: "numeric", year: "numeric" },
+  );
 
 const HeaderLabel = styled.span`
   padding-left: ${rem(spacing.md)};
 `;
 
-function renderNameHeader(): JSX.Element {
-  return <HeaderLabel>Name</HeaderLabel>;
+/** Header for the first column, which carries the row's leading inset. */
+function renderLeadingHeader(header: string) {
+  return function LeadingHeader(): JSX.Element {
+    return <HeaderLabel>{header}</HeaderLabel>;
+  };
 }
 
-// None of these entries depend on props/state, so this is built once at
-// module load instead of on every render -- a fresh array identity each
-// render would defeat CaseloadTable's (@tanstack/react-table) memoization of
-// column/sort state.
-const COLUMNS: Array<ColumnDef<ParoleHearing>> = [
-  {
-    header: renderNameHeader,
-    id: "individualName",
-    accessorKey: "individualName",
-    enableSorting: true,
-    sortingFn: "alphanumeric",
-    cell: (info) => renderCellText(info.getValue(), true),
-  },
-  {
-    header: "DOC ID",
-    id: "displayId",
-    accessorKey: "displayId",
-    enableSorting: false,
-    cell: (info) => renderDocIdCell(info.getValue()),
-  },
-  {
-    header: "Hearing Date",
-    id: "hearingDate",
-    // hearingDate is a "yyyy-MM-dd" ISO string, so lexicographic (alphanumeric)
-    // sorting is equivalent to chronological sorting.
-    accessorKey: "hearingDate",
-    enableSorting: true,
-    sortingFn: "alphanumeric",
-    cell: (info) => renderHearingDateCell(info.getValue()),
-  },
-  {
-    header: "Hearing Type",
-    id: "hearingType",
-    accessorKey: "hearingType",
-    enableSorting: false,
-    cell: (info) => renderCellText(info.getValue()),
-  },
-  {
-    header: "Facility",
-    id: "facility",
-    accessorKey: "facility",
-    enableSorting: false,
-    cell: (info) => renderCellText(info.getValue()),
-  },
-];
+/**
+ * Draws one cell's value according to its column's format.
+ *
+ * @param value - The raw hearing field.
+ * @param column - The column being drawn.
+ * @param isLeading - Whether this is the first column, which is inset.
+ */
+function renderCell(
+  value: unknown,
+  column: ParoleDocketColumn,
+  isLeading: boolean,
+): JSX.Element {
+  if (column.format === "docId") {
+    return renderCellText(formatDocId(value as string), isLeading);
+  }
+  if (column.format === "month" || column.format === "date") {
+    return renderCellText(
+      formatHearingDate(value as string, column.format),
+      isLeading,
+    );
+  }
+  return renderCellText(value, isLeading);
+}
+
+/**
+ * Turns a tenant's column list into the table's own column definitions.
+ * Callers must memoize on that list: a fresh array identity each render would
+ * defeat CaseloadTable's (@tanstack/react-table) memoization of column/sort
+ * state.
+ *
+ * @param columns - The tenant's columns, in display order.
+ */
+function buildColumns(
+  columns: ReadonlyArray<ParoleDocketColumn>,
+): Array<ColumnDef<ParoleHearing>> {
+  return columns.map((column, index) => {
+    const isLeading = index === 0;
+    return {
+      header: isLeading ? renderLeadingHeader(column.header) : column.header,
+      id: column.field,
+      accessorKey: column.field,
+      enableSorting: Boolean(column.sortable),
+      sortingFn: "alphanumeric",
+      cell: (info) => renderCell(info.getValue(), column, isLeading),
+    };
+  });
+}
 
 /**
  * Renders the docket's filter bar (search + facility/hearing-type dropdown)
@@ -181,6 +186,11 @@ export const ParoleDocketTable = observer(function ParoleDocketTable({
 }: {
   presenter: ParoleDocketPresenter;
 }) {
+  const columns = useMemo(
+    () => buildColumns(presenter.docketColumns),
+    [presenter.docketColumns],
+  );
+
   return (
     <>
       <FilterBar>
@@ -202,7 +212,7 @@ export const ParoleDocketTable = observer(function ParoleDocketTable({
       <SectionCard>
         <CaseloadTable
           data={presenter.filteredHearings}
-          columns={COLUMNS}
+          columns={columns}
           initialState={{ sorting: [{ id: "hearingDate", desc: false }] }}
           rowLinkUrl={(hearing) =>
             paroleUrl("caseProfile", { docId: hearing.docId })

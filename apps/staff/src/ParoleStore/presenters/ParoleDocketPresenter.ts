@@ -21,7 +21,12 @@ import { makeAutoObservable } from "mobx";
 import { ParoleHearing } from "~datatypes";
 import { Hydratable, HydratesFromSource } from "~hydration-utils";
 
-import { FilterField, FilterOption, FilterType } from "../../core/models/types";
+import {
+  FilterField,
+  FilterOption,
+  FilterType,
+  ParoleDocketColumn,
+} from "../../core/models/types";
 import { FilterPresenter } from "../../FilterStore/FilterPresenter";
 import { formatDateToISO } from "../../utils";
 import { ParoleFilterStore } from "../ParoleFilterStore";
@@ -75,24 +80,22 @@ export class ParoleDocketPresenter
 
   /**
    * The hearings this docket shows: the store's cached set, narrowed to the
-   * tenant's `docketWindowDaysBefore`/`docketWindowDaysAfter`. Everything
-   * else on this presenter derives from here, so the filter options,
-   * counts, and rows describe the same hearings.
+   * tenant's `windowDaysBefore`/`windowDaysAfter`. Everything else on this
+   * presenter derives from here, so the filter options, counts, and rows
+   * describe the same hearings.
    */
   private get hearingsInWindow(): Array<ParoleHearing> {
     const hearings = this.paroleStore.hearings ?? [];
-    const { docketWindowDaysAfter, docketWindowDaysBefore } =
-      this.paroleStore.config;
-    if (docketWindowDaysAfter === undefined) return hearings;
+    const { windowDaysAfter, windowDaysBefore } =
+      this.paroleStore.config.docketConfig;
+    if (windowDaysAfter === undefined) return hearings;
 
     // hearingDate is an ISO YYYY-MM-DD string, which orders correctly as a
     // plain string compare -- no Date parsing, no timezone questions.
     const firstDay = formatDateToISO(
-      subDays(startOfToday(), docketWindowDaysBefore ?? 0),
+      subDays(startOfToday(), windowDaysBefore ?? 0),
     );
-    const lastDay = formatDateToISO(
-      addDays(startOfToday(), docketWindowDaysAfter),
-    );
+    const lastDay = formatDateToISO(addDays(startOfToday(), windowDaysAfter));
     return hearings.filter(
       (hearing) =>
         hearing.hearingDate >= firstDay && hearing.hearingDate <= lastDay,
@@ -108,11 +111,15 @@ export class ParoleDocketPresenter
   }
 
   get docketSubheading(): string | undefined {
-    return this.paroleStore.config.docketSubheading;
+    return this.paroleStore.config.docketConfig.subheading;
   }
 
   get docketSearchEnabled(): boolean {
-    return Boolean(this.paroleStore.config.docketSearchEnabled);
+    return Boolean(this.paroleStore.config.docketConfig.searchEnabled);
+  }
+
+  get docketColumns(): ReadonlyArray<ParoleDocketColumn> {
+    return this.paroleStore.config.docketConfig.columns;
   }
 
   trackFilterDropdownOpened(): void {

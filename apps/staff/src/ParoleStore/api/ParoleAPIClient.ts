@@ -336,17 +336,17 @@ export class ParoleAPIClient implements ParoleAPI {
     const { currentTenantId } = this.paroleStore.rootStore.tenantStore;
     if (currentTenantId !== "US_CO") return undefined;
 
-    const { docketWindowDaysBefore, docketWindowDaysAfter } =
-      this.paroleStore.config;
-    if (docketWindowDaysAfter === undefined) return undefined;
+    const { windowDaysBefore, windowDaysAfter } =
+      this.paroleStore.config.docketConfig;
+    if (windowDaysAfter === undefined) return undefined;
 
     return {
       field: "metadata.nextParoleHearingDate",
       startDateInclusive: formatDateToISO(
-        subDays(startOfToday(), docketWindowDaysBefore ?? 0),
+        subDays(startOfToday(), windowDaysBefore ?? 0),
       ),
       endDateInclusive: formatDateToISO(
-        addDays(startOfToday(), docketWindowDaysAfter),
+        addDays(startOfToday(), windowDaysAfter),
       ),
     };
   }

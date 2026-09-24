@@ -22,6 +22,9 @@ import { buildParoleCase } from "../../../__tests__/paroleCaseFixtures";
 import { UsIdDisciplinaryFacilityNotesSection } from "../UsIdDisciplinaryFacilityNotesSection";
 
 const CONFIG: ParoleConfig = {
+  // This test renders a case-profile section, which never reads the docket
+  // config; an empty column list keeps it valid without inventing one.
+  docketConfig: { columns: [] },
   conductHistoryConfig: { classificationColors: {} },
 };
 

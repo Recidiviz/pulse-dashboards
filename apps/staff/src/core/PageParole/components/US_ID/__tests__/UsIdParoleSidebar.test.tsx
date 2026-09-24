@@ -30,6 +30,9 @@ const { caseManagerName } = CASE;
 
 function makeConfig(overrides: Partial<ParoleConfig> = {}): ParoleConfig {
   return {
+    // These tests render case-profile sections, which never read the docket
+    // config; an empty column list keeps it valid without inventing one.
+    docketConfig: { columns: [] },
     conductHistoryConfig: { classificationColors: {} },
     ...overrides,
   };
