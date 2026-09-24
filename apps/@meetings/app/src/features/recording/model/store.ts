@@ -40,7 +40,6 @@ type RecordingStore = {
   meetingType: string | null;
   meetingTypeCategory: string | null;
   isRecordingViewMinimized: boolean;
-  isSidebarCollapsed: boolean;
   durationMs: number;
 
   setStatus: (status: Status) => void;
@@ -51,7 +50,6 @@ type RecordingStore = {
   setMeetingType: (meetingType: string | null) => void;
   setMeetingTypeCategory: (meetingTypeCategory: string | null) => void;
   setIsRecordingViewMinimized: (isMinimized: boolean) => void;
-  setIsSidebarCollapsed: (isCollapsed: boolean) => void;
   setDurationMs: (durationMs: number) => void;
 };
 
@@ -72,7 +70,6 @@ export const useRecordingStore = create<RecordingStore>()(
         meetingType: null,
         meetingTypeCategory: null,
         isRecordingViewMinimized: false,
-        isSidebarCollapsed: false,
         durationMs: 0,
 
         setStatus: (status: Status) => set({ status }),
@@ -88,8 +85,6 @@ export const useRecordingStore = create<RecordingStore>()(
         setPersonType: (personType: PersonType | null) => set({ personType }),
         setIsRecordingViewMinimized: (isMinimized: boolean) =>
           set({ isRecordingViewMinimized: isMinimized }),
-        setIsSidebarCollapsed: (isCollapsed: boolean) =>
-          set({ isSidebarCollapsed: isCollapsed }),
         setDurationMs: (durationMs: number) => set({ durationMs }),
       };
     },

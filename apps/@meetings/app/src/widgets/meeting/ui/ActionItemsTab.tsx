@@ -34,10 +34,7 @@ import {
   assigneeToConfigLabel,
   useCurrentAgencyConfig,
 } from "~@meetings/app/entities/agency-config";
-import {
-  MeetingDetails,
-  useCompleteActionItem,
-} from "~@meetings/app/entities/meeting";
+import { MeetingDetails } from "~@meetings/app/entities/meeting";
 import { PersonType, trpc } from "~@meetings/app/shared/api";
 import { extractError } from "~@meetings/app/shared/lib/errors";
 import { useIsMobileWidth } from "~@meetings/app/shared/lib/platform";
@@ -304,7 +301,45 @@ function ActionItemRow({
   const isMobileReviewMode = isMobile && !isMobileEditMode;
   const { isOnline } = useIsOnline();
 
-  const toggleCompletion = useCompleteActionItem(meetingId);
+  const toggleCompletion = trpc.v1.meeting.completeActionItem.useMutation({
+    onMutate: async ({ actionItemId }) => {
+      await utils.v1.meeting.getDetails.cancel({ meetingId });
+      const previousData = utils.v1.meeting.getDetails.getData({ meetingId });
+      // Do an optimistic update here so the checkbox toggles before the server
+      // confirms it. Aids on slow connections
+      utils.v1.meeting.getDetails.setData({ meetingId }, (old) =>
+        old
+          ? {
+              ...old,
+              meetingActionItems: old.meetingActionItems.map((item) =>
+                item.id === actionItemId
+                  ? { ...item, completed: !item.completed }
+                  : item,
+              ),
+            }
+          : old,
+      );
+      return { previousData };
+    },
+    onError: (error, _vars, context) => {
+      // If there was an error, roll back the optimistic update
+      if (context?.previousData) {
+        utils.v1.meeting.getDetails.setData(
+          { meetingId },
+          context.previousData,
+        );
+      }
+      showSnackbar(
+        actionItemErrorMessage(
+          "Failed to update action item completion",
+          error,
+        ),
+      );
+    },
+    onSettled: () => {
+      utils.v1.meeting.getDetails.invalidate({ meetingId });
+    },
+  });
 
   const updateActionItem = trpc.v1.meeting.updateActionItem.useMutation({
     onMutate: async ({ actionItemId, task }) => {

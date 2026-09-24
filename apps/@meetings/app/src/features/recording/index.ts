@@ -20,6 +20,5 @@ export { dbToAudioLevel, rmsToAudioLevel } from "./lib/audioLevel";
 export { RecordingProvider, useRecording } from "./model";
 export * from "./model/types";
 export { MeetingControlsMobile } from "./ui/MeetingControlsMobile";
-export { MeetingModalLayout } from "./ui/MeetingModalLayout";
 export { MeetingModalMobile } from "./ui/MeetingModalMobile";
 export { MicIndicator } from "./ui/MicIndicator";
