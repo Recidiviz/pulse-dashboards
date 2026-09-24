@@ -203,6 +203,8 @@ export const PAROLE_COMPLETED_PROGRAM_STATUSES: ReadonlySet<ParoleProgramStatus>
 
 export const paroleDocProgramSchema = z.object({
   name: z.string(),
+  referralDate: z.string().optional(),
+  startDate: z.string().optional(),
   completionDate: z.string().nullable(),
   type: z.string(),
   criminogenicNeed: z.string(),

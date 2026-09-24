@@ -353,7 +353,7 @@ const REPORT_AUTHOR_NAMES = ["R. Nguyen", "A. Patel", "M. Johnson"] as const;
 // Institutional conduct records, keyed by how many months before the module
 // loads they occurred (see the `iso`/relative-date rationale above). Anderson
 // is hand-authored to match the OBT-41634 design mock 1:1 -- six records
-// split 4 Major / 2 Minor, with the two most recent falling within the past
+// split 4 Class A / 2 Class C, with the two most recent falling within the past
 // year and the rest older, so the mock's "2 shown, 4 under 'See Older
 // Disciplinaries'" split always renders as designed.
 function buildConductRecord(
@@ -367,10 +367,9 @@ function buildConductRecord(
 }
 
 // Each record's severity varies by state -- CO uses its Class 1/2/3 scheme,
-// ID uses Major/Minor -- but the underlying incident (facility, violation,
-// description, disposition) is the same fixture "story" either way. The 4
-// Major / 2 Minor split under US_ID matches the OBT-41634 design mock this
-// was originally hand-authored against.
+// ID uses Class A/B/C, as Atlas spells them -- but the underlying incident
+// (facility, violation, description, disposition) is the same fixture "story"
+// either way.
 const ANDERSON_CONDUCT_RECORDS: Array<{
   monthsAgo: number;
   facility: string;
@@ -386,7 +385,7 @@ const ANDERSON_CONDUCT_RECORDS: Array<{
     description:
       "Refused random urinalysis screening without valid medical exemption.",
     disposition: "30 days disciplinary segregation, loss of good time",
-    severityByState: { US_CO: "Class 1", US_ID: "Major" },
+    severityByState: { US_CO: "Class 1", US_ID: "Class A" },
   },
   {
     monthsAgo: 2,
@@ -395,7 +394,7 @@ const ANDERSON_CONDUCT_RECORDS: Array<{
     description:
       "Found in restricted maintenance corridor without authorization.",
     disposition: "Loss of privileges - 7 days",
-    severityByState: { US_CO: "Class 3", US_ID: "Minor" },
+    severityByState: { US_CO: "Class 3", US_ID: "Class C" },
   },
   {
     monthsAgo: 14,
@@ -403,7 +402,7 @@ const ANDERSON_CONDUCT_RECORDS: Array<{
     violation: "Threatening Behavior",
     description: "Verbal threats toward staff member.",
     disposition: "30 days disciplinary segregation, anger management referral",
-    severityByState: { US_CO: "Class 2", US_ID: "Major" },
+    severityByState: { US_CO: "Class 2", US_ID: "Class A" },
   },
   {
     monthsAgo: 21,
@@ -411,7 +410,7 @@ const ANDERSON_CONDUCT_RECORDS: Array<{
     violation: "Fighting",
     description: "Physical altercation in dining hall.",
     disposition: "45 days disciplinary segregation",
-    severityByState: { US_CO: "Class 1", US_ID: "Major" },
+    severityByState: { US_CO: "Class 1", US_ID: "Class A" },
   },
   {
     monthsAgo: 29,
@@ -419,7 +418,7 @@ const ANDERSON_CONDUCT_RECORDS: Array<{
     violation: "Disobeying Orders",
     description: "Refused work assignment.",
     disposition: "Loss of privileges - 14 days",
-    severityByState: { US_CO: "Class 3", US_ID: "Minor" },
+    severityByState: { US_CO: "Class 3", US_ID: "Class C" },
   },
   {
     monthsAgo: 34,
@@ -427,7 +426,7 @@ const ANDERSON_CONDUCT_RECORDS: Array<{
     violation: "Possession of Contraband",
     description: "Found with an unauthorized cell phone during a cell search.",
     disposition: "60 days disciplinary segregation, loss of good time",
-    severityByState: { US_CO: "Class 2", US_ID: "Major" },
+    severityByState: { US_CO: "Class 2", US_ID: "Class A" },
   },
 ];
 
@@ -452,8 +451,8 @@ function buildGenericConductHistory(
   facility: string,
   stateCode: ParoleFixtureStateCode,
 ): Array<ParoleConductRecord> {
-  const classOne = stateCode === "US_CO" ? "Class 1" : "Major";
-  const classThree = stateCode === "US_CO" ? "Class 3" : "Minor";
+  const classOne = stateCode === "US_CO" ? "Class 1" : "Class A";
+  const classThree = stateCode === "US_CO" ? "Class 3" : "Class C";
 
   const pattern = index % 3;
   if (pattern === 0) return [];
@@ -811,6 +810,8 @@ function buildAndersonCaseProfile(
     docPrograms: [
       {
         name: "Cognitive Behavioral Therapy",
+        referralDate: iso(subMonths(today, 11)),
+        startDate: iso(subMonths(today, 10)),
         completionDate: iso(subMonths(today, 4)),
         type: "Treatment",
         criminogenicNeed: "Antisocial Thinking",
@@ -818,6 +819,8 @@ function buildAndersonCaseProfile(
       },
       {
         name: "Substance Abuse Treatment",
+        referralDate: iso(subMonths(today, 14)),
+        startDate: iso(subMonths(today, 13)),
         completionDate: iso(subMonths(today, 7)),
         type: "Treatment",
         criminogenicNeed: "Substance Abuse",
@@ -825,17 +828,31 @@ function buildAndersonCaseProfile(
       },
       {
         name: "Vocational Training - Welding",
+        referralDate: iso(subMonths(today, 3)),
+        startDate: iso(subMonths(today, 2)),
         completionDate: null,
         type: "Education/Vocational",
         criminogenicNeed: "Employment",
         status: "IN_PROGRESS",
       },
       {
+        // Waitlisted, so it has a referral but never started -- the case the
+        // Programming table's referral-date fallback exists for.
         name: "Anger Management",
+        referralDate: iso(subMonths(today, 1)),
         completionDate: null,
         type: "Treatment",
         criminogenicNeed: "Antisocial Thinking",
         status: "PENDING",
+      },
+      {
+        name: "GED Preparation",
+        referralDate: iso(subMonths(today, 20)),
+        startDate: iso(subMonths(today, 19)),
+        completionDate: iso(subMonths(today, 16)),
+        type: "Education/Vocational",
+        criminogenicNeed: "Education",
+        status: "DISCHARGED_UNSUCCESSFUL",
       },
     ],
     edovoPrograms: [
@@ -1845,14 +1862,14 @@ const ID_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         description:
           "Threw an unknown liquid substance at a correctional officer during meal distribution.",
         disposition: "45 days disciplinary segregation, loss of good time",
-        severity: "Major",
+        severity: "Class A",
       }),
       buildConductRecord(3, {
         facility: "Western State Prison",
         violation: "Threatening Behavior",
         description: "Made verbal threats of violence toward a staff member.",
         disposition: "30 days disciplinary segregation",
-        severity: "Major",
+        severity: "Class A",
       }),
       buildConductRecord(5, {
         facility: "Central State Correctional Facility",
@@ -1860,14 +1877,14 @@ const ID_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         description:
           "Found in possession of an unauthorized weapon during a routine cell search.",
         disposition: "60 days disciplinary segregation, loss of good time",
-        severity: "Major",
+        severity: "Class A",
       }),
       buildConductRecord(9, {
         facility: "Central State Correctional Facility",
         violation: "Property Damage",
         description: "Damaged state-issued property during a cell search.",
         disposition: "Restitution ordered",
-        severity: "Minor",
+        severity: "Class C",
       }),
       buildConductRecord(14, {
         facility: "North River Correctional Center",
@@ -1875,7 +1892,7 @@ const ID_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         description:
           "Physical altercation with another incarcerated individual in the yard.",
         disposition: "30 days disciplinary segregation",
-        severity: "Major",
+        severity: "Class A",
       }),
       buildConductRecord(20, {
         facility: "North River Correctional Center",
@@ -1883,7 +1900,7 @@ const ID_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         description:
           "Found with unauthorized tattoo paraphernalia during a cell inspection.",
         disposition: "Loss of privileges - 14 days",
-        severity: "Minor",
+        severity: "Class C",
       }),
       buildConductRecord(27, {
         facility: "South Bay Detention Center",
@@ -1891,7 +1908,7 @@ const ID_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         description:
           "Struck a correctional officer during an escort to segregation.",
         disposition: "Disciplinary segregation, referred for prosecution",
-        severity: "Major",
+        severity: "Class A",
       }),
       buildConductRecord(33, {
         facility: "South Bay Detention Center",
@@ -1899,7 +1916,7 @@ const ID_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
         description:
           "Made threats of harm toward staff following a disciplinary hearing.",
         disposition: "30 days disciplinary segregation",
-        severity: "Major",
+        severity: "Class A",
       }),
     ],
     docPrograms: [

@@ -28,12 +28,7 @@ const CASE = Object.values(paroleCasesFixtureByState.US_ID)[0];
 
 // The nav list and the SectionAnchors are two separate lists in the same
 // file, so an entry can drift to an id that nothing renders.
-const NAV_LABELS = [
-  "Offense Information",
-  "Risk Score Trajectory",
-  "Program Participation",
-  "Institutional & Community Behavior",
-];
+const NAV_LABELS = ["Offense Information", "Institutional History"];
 
 describe("UsIdParoleCaseProfile", () => {
   // jsdom doesn't implement scrollIntoView. scrollToSection is a no-op when

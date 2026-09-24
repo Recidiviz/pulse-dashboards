@@ -211,12 +211,12 @@ describe("ParoleCaseProfile", () => {
       },
     );
 
-    // US_ID renames two sections in its paroleConfig. Each nav label has to
-    // follow its section card title, or the nav points at a heading that
-    // reads differently.
+    // US_ID's two sections are titled differently from the defaults. Each nav
+    // label has to follow its section card title, or the nav points at a
+    // heading that reads differently.
     it.each([
       ["Offense Information", "Offense & Criminal History"],
-      ["Institutional & Community Behavior", "Institutional Conduct History"],
+      ["Institutional History", "Institutional Conduct History"],
     ])(
       "labels the US_ID quick-nav entry %s rather than the default %s",
       async (tenantLabel, defaultLabel) => {
@@ -281,10 +281,9 @@ describe("ParoleCaseProfile", () => {
       );
 
       expect(
-        await findSectionHeading("Institutional & Community Behavior"),
+        await findSectionHeading("Institutional History"),
       ).toBeInTheDocument();
-      expect(getByTextAcrossElements("Major: 4")).toBeInTheDocument();
-      expect(getByTextAcrossElements("Minor: 2")).toBeInTheDocument();
+      expect(screen.getByText("Fighting")).toBeInTheDocument();
       expect(screen.queryByText("Class 1: 2")).not.toBeInTheDocument();
     });
 
@@ -320,7 +319,7 @@ describe("ParoleCaseProfile", () => {
       renderAtPath("/parole/case/45821");
 
       expect(
-        await findSectionHeading("Institutional & Community Behavior"),
+        await findSectionHeading("Institutional History"),
       ).toBeInTheDocument();
       expect(screen.getByText("Possession of Contraband")).toBeInTheDocument();
       expect(
@@ -328,45 +327,19 @@ describe("ParoleCaseProfile", () => {
       ).not.toBeInTheDocument();
     });
 
-    it("renders US_ID's facility notes slot", async () => {
+    // The V1 design drops both slots from Idaho's profile. The components
+    // stay in the tree for a later version, but nothing renders them.
+    it.each([
+      "Disciplinary Facility Notes",
+      "Gang / Security Threat Group (STG)",
+    ])("omits US_ID's %s slot", async (heading) => {
       rootStore.tenantStore.currentTenantId = "US_ID";
       renderAtPath("/parole/case/45821");
 
       expect(
-        await findSectionHeading("Institutional & Community Behavior"),
+        await findSectionHeading("Institutional History"),
       ).toBeInTheDocument();
-      expect(
-        screen.getByText("Disciplinary Facility Notes"),
-      ).toBeInTheDocument();
-    });
-
-    it("renders US_ID's STG slot after the facility notes slot", async () => {
-      rootStore.tenantStore.currentTenantId = "US_ID";
-      renderAtPath("/parole/case/45821");
-
-      const facilityNotes = await screen.findByText(
-        "Disciplinary Facility Notes",
-      );
-      const stg = screen.getByText("Gang / Security Threat Group (STG)");
-      expect(stg).toBeInTheDocument();
-      // The STG subsection's contract is "after Disciplinary Facility Notes",
-      // so assert order, not just presence.
-      expect(
-        facilityNotes.compareDocumentPosition(stg) &
-          Node.DOCUMENT_POSITION_FOLLOWING,
-      ).toBeTruthy();
-    });
-
-    it("shows the STG empty state for a US_ID case with no STG on record", async () => {
-      rootStore.tenantStore.currentTenantId = "US_ID";
-      renderAtPath("/parole/case/166184");
-
-      expect(
-        await screen.findByText("Gang / Security Threat Group (STG)"),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText("No STG affiliation on record."),
-      ).toBeInTheDocument();
+      expect(screen.queryByText(heading)).not.toBeInTheDocument();
     });
 
     it("omits the STG slot for US_CO", async () => {

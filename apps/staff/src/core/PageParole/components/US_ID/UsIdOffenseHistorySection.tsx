@@ -27,8 +27,10 @@ import { PaddedSectionCardBody } from "../PaddedSectionCardBody";
 import {
   FactRow,
   FactRowStack,
+  FactValue,
   formatDateLong,
   formatDateNumeric,
+  MutedText,
   SectionCard,
   SectionStack,
   SubsectionTitle,
@@ -67,16 +69,6 @@ const OffenseStatute = styled.span`
   font-weight: 400;
   color: ${palette.slate70};
   margin-left: 0.5rem;
-`;
-
-const MutedText = styled.div`
-  ${typography.Sans14}
-  color: ${palette.slate70};
-`;
-
-const FactValue = styled.div`
-  ${typography.Sans14}
-  color: ${palette.pine1};
 `;
 
 const OffenseFact = styled(FactRowStack)`

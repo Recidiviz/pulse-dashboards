@@ -549,6 +549,8 @@ export class ParoleAPIClient implements ParoleAPI {
       return [
         {
           name: program.programName ?? UNKNOWN_TEXT,
+          referralDate: program.programReferralDate,
+          startDate: program.programStartDate,
           completionDate: program.programCompletionDate ?? null,
           type: program.programCategory ?? UNKNOWN_TEXT,
           criminogenicNeed: program.programNeed ?? UNKNOWN_TEXT,

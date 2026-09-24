@@ -140,6 +140,8 @@ export const paroleBoardClientProfileProgramSchema = z.object({
   programStatus: nullishAsUndefined(z.string()),
   programCategory: nullishAsUndefined(z.string()),
   programNeed: nullishAsUndefined(z.string()),
+  programReferralDate: nullishAsUndefined(z.string()),
+  programStartDate: nullishAsUndefined(z.string()),
   programCompletionDate: nullishAsUndefined(z.string()),
 });
 export type ParoleBoardClientProfileProgram = z.infer<

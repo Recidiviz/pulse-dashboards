@@ -19,22 +19,14 @@ import { ParoleCase } from "~datatypes";
 
 import type { ParoleConfig } from "../../models/types";
 import { CaseProfileSidebar } from "../components/CaseProfileSidebar";
-import { ConductHistorySection } from "../components/ConductHistorySection";
 import { DownloadReportCard } from "../components/DownloadReportCard";
-import { ProgramParticipationSection } from "../components/ProgramParticipationSection";
 import { ReportHeader } from "../components/ReportHeader";
-import { RiskAssessmentSection } from "../components/RiskAssessmentSection";
 import { SectionAnchor } from "../components/SectionAnchor";
-import {
-  DEFAULT_CONDUCT_HISTORY_YEARS,
-  PAROLE_SECTION_IDS,
-} from "../components/shared";
-import { UsIdInstitutionalBehaviorSections } from "../components/US_ID/UsIdInstitutionalBehaviorSections";
+import { PAROLE_SECTION_IDS } from "../components/shared";
+import { UsIdInstitutionalHistorySection } from "../components/US_ID/UsIdInstitutionalHistorySection";
 import { UsIdOffenseHistorySection } from "../components/US_ID/UsIdOffenseHistorySection";
 import { UsIdParoleSidebar } from "../components/US_ID/UsIdParoleSidebar";
 import { ParoleCaseProfileLayout } from "../ParoleCaseProfile/ParoleCaseProfileLayout";
-
-const CONDUCT_HISTORY_TITLE = "Institutional & Community Behavior";
 
 /**
  * Quick-nav entries, in the order the sections render below. Every id here
@@ -42,12 +34,10 @@ const CONDUCT_HISTORY_TITLE = "Institutional & Community Behavior";
  */
 const SECTION_NAV = [
   { id: PAROLE_SECTION_IDS.offenseHistory, label: "Offense Information" },
-  { id: PAROLE_SECTION_IDS.riskAssessment, label: "Risk Score Trajectory" },
   {
-    id: PAROLE_SECTION_IDS.programParticipation,
-    label: "Program Participation",
+    id: PAROLE_SECTION_IDS.institutionalHistory,
+    label: "Institutional History",
   },
-  { id: PAROLE_SECTION_IDS.conductHistory, label: CONDUCT_HISTORY_TITLE },
 ];
 
 /**
@@ -80,37 +70,11 @@ export function UsIdParoleCaseProfile({
         <UsIdOffenseHistorySection caseDetail={caseDetail} />
       </SectionAnchor>
 
-      <SectionAnchor id={PAROLE_SECTION_IDS.riskAssessment}>
-        <RiskAssessmentSection
-          riskAssessments={caseDetail.riskAssessments}
-          riskAssessmentConfig={config.riskAssessmentConfig}
+      <SectionAnchor id={PAROLE_SECTION_IDS.institutionalHistory}>
+        <UsIdInstitutionalHistorySection
+          caseDetail={caseDetail}
+          config={config}
         />
-      </SectionAnchor>
-
-      <SectionAnchor id={PAROLE_SECTION_IDS.programParticipation}>
-        <ProgramParticipationSection
-          docPrograms={caseDetail.docPrograms}
-          edovoPrograms={caseDetail.edovoPrograms}
-        />
-      </SectionAnchor>
-
-      <SectionAnchor id={PAROLE_SECTION_IDS.conductHistory}>
-        <ConductHistorySection
-          conductHistory={caseDetail.conductHistory}
-          conductClassificationColors={
-            config.conductHistoryConfig.classificationColors
-          }
-          visibleYears={
-            config.conductHistoryConfig.visibleYears ??
-            DEFAULT_CONDUCT_HISTORY_YEARS
-          }
-          title={CONDUCT_HISTORY_TITLE}
-        >
-          <UsIdInstitutionalBehaviorSections
-            caseDetail={caseDetail}
-            config={config}
-          />
-        </ConductHistorySection>
       </SectionAnchor>
     </ParoleCaseProfileLayout>
   );

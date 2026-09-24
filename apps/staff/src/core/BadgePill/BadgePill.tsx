@@ -76,6 +76,21 @@ export const statusStyles = {
     borderColor: "rgb(250, 187, 135)",
     color: "rgb(152, 61, 1)",
   },
+  TEAL: {
+    backgroundColor: "rgb(238, 247, 248)",
+    borderColor: "transparent",
+    color: "rgb(0, 108, 103)",
+  },
+  GOLD: {
+    backgroundColor: "rgb(255, 249, 215)",
+    borderColor: "transparent",
+    color: "rgb(159, 115, 45)",
+  },
+  BROWN: {
+    backgroundColor: "rgba(161, 129, 0, 0.6)",
+    borderColor: "transparent",
+    color: "rgb(64, 54, 40)",
+  },
 } as const;
 
 export type PaletteKey = keyof typeof statusStyles;

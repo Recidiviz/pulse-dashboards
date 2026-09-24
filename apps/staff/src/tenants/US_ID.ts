@@ -224,8 +224,9 @@ const US_ID_CONFIG = {
     docketWindowDaysAfter: 30,
     conductHistoryConfig: {
       classificationColors: {
-        Major: "SLATE_DARK",
-        Minor: "SLATE_DARK",
+        "Class A": "BROWN",
+        "Class B": "GOLD",
+        "Class C": "TEAL",
       },
       visibleYears: 3,
     },

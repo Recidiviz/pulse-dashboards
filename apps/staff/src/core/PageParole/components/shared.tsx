@@ -109,6 +109,16 @@ export const FactLabel = styled.div`
   margin-bottom: 0.25rem;
 `;
 
+export const MutedText = styled.div`
+  ${typography.Sans14}
+  color: ${palette.slate70};
+`;
+
+export const FactValue = styled.div`
+  ${typography.Sans14}
+  color: ${palette.pine1};
+`;
+
 export const FactStack = styled.div`
   display: flex;
   flex-direction: column;
@@ -315,6 +325,7 @@ export const PAROLE_SECTION_IDS = {
   riskAndNeedsAssessment: "parole-section-risk-and-needs-assessment",
   programParticipation: "parole-section-program-participation",
   conductHistory: "parole-section-conduct-history",
+  institutionalHistory: "parole-section-institutional-history",
   attachments: "parole-section-attachments",
   communitySupervisionPlan: "parole-section-community-supervision-plan",
 } as const;
