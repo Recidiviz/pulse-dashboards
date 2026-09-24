@@ -80,7 +80,8 @@ export const SearchOverlay: FC<SearchOverlayProps> = ({
   const shouldReturnFocusRef = useRef(true);
 
   const residentParams = useTypedParams(State.Resident);
-  const { trackSearchQuery, trackResourceViewed } = useCreAnalytics();
+  const { trackSearchQueryAnonymously, trackResourceViewed } =
+    useCreAnalytics();
 
   const { helpCategories, demographicCategories } = useMemo(
     () => buildCategoryGrid(resources),
@@ -89,7 +90,7 @@ export const SearchOverlay: FC<SearchOverlayProps> = ({
   const { results, isQueryPending } = useResourceSearch(
     resources,
     query,
-    trackSearchQuery,
+    trackSearchQueryAnonymously,
   );
 
   const trimmedQuery = query.trim();

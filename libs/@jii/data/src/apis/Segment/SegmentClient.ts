@@ -274,13 +274,9 @@ export class SegmentClient implements IntakeAnalytics {
     this.track("frontend_cre_description_toggled", metadata);
   }
 
-  trackCreSearchQuery(metadata: {
-    justiceInvolvedPersonPseudoId: string;
-    query: string;
-    resultCount: number;
-  }) {
-    this.track("frontend_cre_search_query", metadata);
-  }
+  // Search queries are logged server-side instead (via trackSearchQueryAnonymously), so this
+  // event never carries the resident's identity via Segment's identify()-driven userId. See
+  // useCreAnalytics.ts and the resident.resources.logSearchQueryAnonymously tRPC mutation.
 
   /* NC RNA form events */
 

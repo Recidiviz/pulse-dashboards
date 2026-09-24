@@ -17,6 +17,7 @@
 
 import { z } from "zod";
 
+import { segment } from "../../../../analytics/segment";
 import { firebaseAuthedResidentProcedure } from "../../../../procedures/firebaseAuthedResidentProcedure";
 import { router } from "../../../../procedures/init";
 import { resourceApiClient } from "./resourceApiClient";
@@ -31,4 +32,28 @@ export const resourcesRouter = router({
     .query(({ input }) =>
       resourceApiClient.getOrganization(input.organizationId),
     ),
+
+  logSearchQueryAnonymously: firebaseAuthedResidentProcedure
+    .input(
+      z.object({
+        query: z.string().transform((q) => q.slice(0, 500)),
+        resultCount: z.number().int().nonnegative(),
+        searchSessionId: z.string().uuid(),
+      }),
+    )
+    .mutation(({ ctx, input }) => {
+      const isRecidivizUser = ctx.userProfile.stateCode === "RECIDIVIZ";
+
+      segment.trackAnonymousEvent(
+        "backend_cre_search_query",
+        input.searchSessionId,
+        {
+          query: input.query,
+          resultCount: input.resultCount,
+          stateCode: ctx.stateCode,
+        },
+        { isRecidivizUser },
+      );
+      return { success: true };
+    }),
 });

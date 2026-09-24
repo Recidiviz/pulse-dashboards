@@ -15,17 +15,44 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useMemo } from "react";
+import { captureException } from "@sentry/react";
+import { useMemo, useState } from "react";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
+import { v4 as uuidv4 } from "uuid";
 
 import { useRootStore } from "~@jii/data";
 import { State } from "~@jii/paths";
 
+const SEARCH_SESSION_STORAGE_KEY = "cre_search_session_id";
+
+/**
+ * A random id scoped to one browsing session. Used only to group this resident's
+ * search-query events together. Deliberately independent of SegmentClient.sessionId,
+ * which is also attached to every other CRE event that still carries the resident's
+ * real pseudoId.
+ */
+function getOrCreateSearchSessionId(): string {
+  try {
+    const existing = sessionStorage.getItem(SEARCH_SESSION_STORAGE_KEY);
+    if (existing) return existing;
+
+    const fresh = uuidv4();
+    sessionStorage.setItem(SEARCH_SESSION_STORAGE_KEY, fresh);
+    return fresh;
+  } catch {
+    // sessionStorage can throw - fall back to an id that's still safe to use
+    // (just won't survive a reload), rather than taking down search entirely.
+    return uuidv4();
+  }
+}
+
 export function useCreAnalytics() {
   const {
+    apiClient,
     userStore: { segmentClient },
   } = useRootStore();
   const { personPseudoId } = useTypedParams(State.Resident);
+  const [searchSessionId] = useState(getOrCreateSearchSessionId);
 
   return useMemo(
     () => ({
@@ -91,13 +118,14 @@ export function useCreAnalytics() {
           isExpanded,
         }),
 
-      trackSearchQuery: (query: string, resultCount: number) =>
-        segmentClient.trackCreSearchQuery({
-          justiceInvolvedPersonPseudoId: personPseudoId,
-          query,
-          resultCount,
-        }),
+      // Logged server-side instead of via Segment directly, so this event never
+      // carries the resident's identity
+      trackSearchQueryAnonymously: (query: string, resultCount: number) => {
+        apiClient.trpc.resident.resources.logSearchQueryAnonymously
+          .mutate({ query, resultCount, searchSessionId })
+          .catch((e) => captureException(e));
+      },
     }),
-    [segmentClient, personPseudoId],
+    [segmentClient, personPseudoId, apiClient, searchSessionId],
   );
 }

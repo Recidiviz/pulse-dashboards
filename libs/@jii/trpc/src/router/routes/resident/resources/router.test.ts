@@ -15,6 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { StateCode } from "~@jii/configs";
+
+import { segment } from "../../../../analytics/segment";
 import { caller, mockCtx } from "../../../../test/mockResidentProcedure";
 import { resourceApiClient } from "./resourceApiClient";
 
@@ -22,6 +25,12 @@ vi.mock("./resourceApiClient", () => ({
   resourceApiClient: {
     getOrganizations: vi.fn(),
     getOrganization: vi.fn(),
+  },
+}));
+
+vi.mock("../../../../analytics/segment", () => ({
+  segment: {
+    trackAnonymousEvent: vi.fn(),
   },
 }));
 
@@ -44,5 +53,69 @@ describe("getResource", () => {
     await caller.resources.getResource({ organizationId: 42 });
 
     expect(resourceApiClient.getOrganization).toHaveBeenCalledWith(42);
+  });
+});
+
+describe("logSearchQueryAnonymously", () => {
+  test("tracks exactly the query, resultCount, and searchSessionId - never the caller's identity", async () => {
+    await caller.resources.logSearchQueryAnonymously({
+      query: "housing",
+      resultCount: 3,
+      searchSessionId: "11111111-1111-1111-1111-111111111111",
+    });
+
+    expect(segment.trackAnonymousEvent).toHaveBeenCalledExactlyOnceWith(
+      "backend_cre_search_query",
+      "11111111-1111-1111-1111-111111111111",
+      { query: "housing", resultCount: 3, stateCode: "US_XX" },
+      { isRecidivizUser: false },
+    );
+
+    // mockCtx.pseudonymizedId is populated on every test's ctx (see
+    // mockResidentProcedure.ts) precisely so this assertion is meaningful: it
+    // fails if this procedure ever starts reading identity off ctx and leaking
+    // it into the tracked event.
+    const call = vi.mocked(segment.trackAnonymousEvent).mock.calls[0];
+    expect(JSON.stringify(call)).not.toContain(mockCtx.pseudonymizedId);
+  });
+
+  test("flags the event as Recidiviz-internal when the caller's stateCode is RECIDIVIZ", async () => {
+    mockCtx.stateCode = "RECIDIVIZ" as StateCode;
+
+    await caller.resources.logSearchQueryAnonymously({
+      query: "housing",
+      resultCount: 3,
+      searchSessionId: "11111111-1111-1111-1111-111111111111",
+    });
+
+    expect(segment.trackAnonymousEvent).toHaveBeenCalledExactlyOnceWith(
+      "backend_cre_search_query",
+      "11111111-1111-1111-1111-111111111111",
+      { query: "housing", resultCount: 3, stateCode: "RECIDIVIZ" },
+      { isRecidivizUser: true },
+    );
+  });
+
+  test("truncates a query longer than 500 characters", async () => {
+    await caller.resources.logSearchQueryAnonymously({
+      query: "a".repeat(600),
+      resultCount: 0,
+      searchSessionId: "11111111-1111-1111-1111-111111111111",
+    });
+
+    const properties = vi.mocked(segment.trackAnonymousEvent).mock
+      .calls[0][2] as { query: string };
+    expect(properties.query).toHaveLength(500);
+    expect(properties.query).toBe("a".repeat(500));
+  });
+
+  test("rejects a searchSessionId that isn't a UUID", async () => {
+    await expect(
+      caller.resources.logSearchQueryAnonymously({
+        query: "housing",
+        resultCount: 0,
+        searchSessionId: "not-a-uuid",
+      }),
+    ).rejects.toThrow();
   });
 });

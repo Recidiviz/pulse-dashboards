@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { renderHook } from "@testing-library/react";
+import { captureException } from "@sentry/react";
+import { renderHook, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
 import { useRootStore } from "~@jii/data";
@@ -27,16 +28,33 @@ vi.mock("~@jii/data", async (importOriginal) => ({
   useRootStore: vi.fn(),
 }));
 
+vi.mock("@sentry/react", () => ({
+  captureException: vi.fn(),
+}));
+
 const trackCreCategorySelected = vi.fn();
 const trackCreSubcategorySelected = vi.fn();
 const trackCreFiltersUpdated = vi.fn();
 const trackCreFilterCleared = vi.fn();
 const trackCreResourceViewed = vi.fn();
 const trackCreDescriptionToggled = vi.fn();
-const trackCreSearchQuery = vi.fn();
+const logSearchQueryMutate = vi.fn();
 
 beforeEach(() => {
+  sessionStorage.clear();
+  logSearchQueryMutate.mockReset().mockResolvedValue({ success: true });
+  vi.mocked(captureException).mockClear();
+
   vi.mocked(useRootStore).mockReturnValue({
+    apiClient: {
+      trpc: {
+        resident: {
+          resources: {
+            logSearchQueryAnonymously: { mutate: logSearchQueryMutate },
+          },
+        },
+      },
+    },
     userStore: {
       segmentClient: {
         trackCreCategorySelected,
@@ -45,7 +63,6 @@ beforeEach(() => {
         trackCreFilterCleared,
         trackCreResourceViewed,
         trackCreDescriptionToggled,
-        trackCreSearchQuery,
       },
     },
   } as unknown as ReturnType<typeof useRootStore>);
@@ -150,14 +167,86 @@ test("trackDescriptionToggled calls segmentClient with the expanded state", () =
   });
 });
 
-test("trackSearchQuery calls segmentClient with the query and result count", () => {
+test("trackSearchQueryAnonymously logs via the server-side mutation with a searchSessionId and never the pseudoId", () => {
   const { result } = renderHook(() => useCreAnalytics(), { wrapper });
 
-  result.current.trackSearchQuery("housing", 3);
+  result.current.trackSearchQueryAnonymously("housing", 3);
 
-  expect(trackCreSearchQuery).toHaveBeenCalledExactlyOnceWith({
-    justiceInvolvedPersonPseudoId: "abc",
+  expect(logSearchQueryMutate).toHaveBeenCalledExactlyOnceWith({
     query: "housing",
     resultCount: 3,
+    searchSessionId: expect.any(String),
   });
+
+  const call = logSearchQueryMutate.mock.calls[0][0];
+  expect(call).not.toHaveProperty("justiceInvolvedPersonPseudoId");
+  // "abc" is this test's personPseudoId, from the wrapper's route - confirms it
+  // never ends up anywhere in the mutation's input, not just that the named field
+  // is absent.
+  expect(JSON.stringify(call)).not.toContain("abc");
+});
+
+test("trackSearchQueryAnonymously reuses the same searchSessionId across multiple calls in one session", () => {
+  const { result } = renderHook(() => useCreAnalytics(), { wrapper });
+
+  result.current.trackSearchQueryAnonymously("housing", 3);
+  result.current.trackSearchQueryAnonymously("shelter", 1);
+
+  const [firstCall, secondCall] = logSearchQueryMutate.mock.calls;
+  expect(firstCall[0].searchSessionId).toBe(secondCall[0].searchSessionId);
+});
+
+test("trackSearchQueryAnonymously gets a fresh searchSessionId once sessionStorage is cleared", () => {
+  const { result: first } = renderHook(() => useCreAnalytics(), { wrapper });
+  first.current.trackSearchQueryAnonymously("housing", 3);
+  const firstId = logSearchQueryMutate.mock.calls[0][0].searchSessionId;
+
+  sessionStorage.clear();
+  logSearchQueryMutate.mockClear();
+
+  const { result: second } = renderHook(() => useCreAnalytics(), { wrapper });
+  second.current.trackSearchQueryAnonymously("shelter", 1);
+  const secondId = logSearchQueryMutate.mock.calls[0][0].searchSessionId;
+
+  expect(secondId).not.toBe(firstId);
+});
+
+test("trackSearchQueryAnonymously reports a rejected mutation to Sentry instead of throwing", async () => {
+  const error = new Error("network blip");
+  logSearchQueryMutate.mockRejectedValue(error);
+  const { result } = renderHook(() => useCreAnalytics(), { wrapper });
+
+  expect(() =>
+    result.current.trackSearchQueryAnonymously("housing", 3),
+  ).not.toThrow();
+
+  await waitFor(() => {
+    expect(captureException).toHaveBeenCalledExactlyOnceWith(error);
+  });
+});
+
+test("only reads sessionStorage once per hook mount, even across re-renders", () => {
+  const getItemSpy = vi.spyOn(Storage.prototype, "getItem");
+  const { rerender } = renderHook(() => useCreAnalytics(), { wrapper });
+
+  const callsAfterMount = getItemSpy.mock.calls.length;
+  rerender();
+  rerender();
+
+  expect(getItemSpy.mock.calls.length).toBe(callsAfterMount);
+});
+
+test("falls back to a working (if unpersisted) searchSessionId when sessionStorage throws", () => {
+  vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
+    throw new Error("SecurityError: storage disabled");
+  });
+
+  const { result } = renderHook(() => useCreAnalytics(), { wrapper });
+
+  expect(() =>
+    result.current.trackSearchQueryAnonymously("housing", 3),
+  ).not.toThrow();
+  expect(logSearchQueryMutate.mock.calls[0][0].searchSessionId).toEqual(
+    expect.any(String),
+  );
 });

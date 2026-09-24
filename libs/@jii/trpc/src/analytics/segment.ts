@@ -22,7 +22,7 @@ import { randomUUID } from "crypto";
 type EventName =
   `backend_${"edovo_login_succeeded" | "edovo_login_denied" | "edovo_login_internal_error"}`;
 
-class SegmentClient {
+export class SegmentClient {
   private analytics?: Analytics;
 
   constructor() {
@@ -36,6 +36,33 @@ class SegmentClient {
     }
   }
 
+  /**
+   * Shared by track() and trackAnonymousEvent(): sends if configured and not
+   * suppressed, otherwise logs what would have been sent. Recidiviz-internal users
+   * are suppressed everywhere except staging (mirroring the frontend SegmentClient's
+   * policy) - harmless for track(), since Recidiviz users can't reach the Edovo login
+   * flow it's used for, but now load-bearing for trackAnonymousEvent().
+   */
+  private send(
+    payload: {
+      event: string;
+      anonymousId: string;
+      userId?: string;
+      properties: Record<string, unknown>;
+    },
+    isRecidivizUser: boolean,
+  ): void {
+    const suppress = isRecidivizUser && process.env["DEPLOY_ENV"] !== "staging";
+
+    if (this.analytics && !suppress) {
+      this.analytics.track(payload);
+    } else {
+      console.log(
+        `[Analytics] Tracking ${payload.event} (anonymousId: ${payload.anonymousId}) with data ${JSON.stringify(payload.properties)}`,
+      );
+    }
+  }
+
   track(
     event: EventName,
     properties: {
@@ -46,20 +73,34 @@ class SegmentClient {
       isDemoUser?: boolean;
     },
   ): void {
-    if (this.analytics) {
-      const anonymousId = properties.encryptedEdovoToken ?? randomUUID();
+    const anonymousId = properties.encryptedEdovoToken ?? randomUUID();
 
-      this.analytics.track({
+    this.send(
+      { event, anonymousId, userId: properties.pseudonymizedId, properties },
+      properties.isRecidiviz,
+    );
+  }
+
+  /**
+   * For events that must never carry a userId or a derived anonymousId - only the
+   * explicit anonymousId passed in. isRecidivizUser is stamped onto the tracked
+   * properties here, not left to the caller, so it's a failsafe against a future
+   * caller forgetting it, not just a suppression-check input.
+   */
+  trackAnonymousEvent(
+    event: string,
+    anonymousId: string,
+    properties: Record<string, unknown>,
+    options: { isRecidivizUser: boolean },
+  ): void {
+    this.send(
+      {
         event,
         anonymousId,
-        userId: properties.pseudonymizedId,
-        properties,
-      });
-    } else {
-      console.log(
-        `[Analytics] Tracking ${event} with data ${JSON.stringify(properties)}`,
-      );
-    }
+        properties: { ...properties, isRecidivizUser: options.isRecidivizUser },
+      },
+      options.isRecidivizUser,
+    );
   }
 
   async flush(): Promise<void> {
