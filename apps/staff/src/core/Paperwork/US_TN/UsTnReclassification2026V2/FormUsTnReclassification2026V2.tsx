@@ -56,8 +56,8 @@ import {
 } from "../common/Classification2026/TrusteeChecklist";
 import UsTnReclassTrpcProvider from "../common/Classification2026/UsTnReclassTrpcProvider";
 import {
-  cafBlockedDownloadTooltip,
   RCAF_V2_CUTOFF_DATE,
+  reclassificationBlockedDownloadTooltip,
 } from "../common/Classification2026/utils";
 import { PreworkModal } from "../common/preworkModal";
 import { ScoredAssessmentQuestion } from "../common/ScoredAssessmentQuestion";
@@ -129,12 +129,16 @@ export const FormUsTnReclassification2026V2 = observer(
       formData.date === undefined ||
       new Date(formData.date) < RCAF_V2_CUTOFF_DATE;
 
-    let downloadTooltip = cafBlockedDownloadTooltip(
-      derivedData.totalScore,
-      formData.hearingDate,
-    );
-
-    if (wrongFormVersion) downloadTooltip = BLOCKED_DOWNLOAD_WRONG_VERSION_NEW;
+    const downloadTooltip = reclassificationBlockedDownloadTooltip({
+      totalScore: derivedData.totalScore,
+      hearingDate: formData.hearingDate,
+      formData,
+      trusteeAssessmentRequired:
+        !!trusteeChecklistRework && includeTrusteeChecklist,
+      wrongVersionTooltip: wrongFormVersion
+        ? BLOCKED_DOWNLOAD_WRONG_VERSION_NEW
+        : undefined,
+    });
 
     return (
       <UsTnReclassTrpcProvider>

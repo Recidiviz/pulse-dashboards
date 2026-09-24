@@ -42,6 +42,9 @@ export const BLOCKED_DOWNLOAD_MISSING_FIELDS_TOOLTIP =
 export const BLOCKED_DOWNLOAD_MISSING_HEARING_DATE =
   "Please specify a hearing date in the Classification Hearing Notice";
 
+export const BLOCKED_DOWNLOAD_TRUSTEE_INCOMPLETE =
+  "Please complete the Trustee Assessment before downloading";
+
 export const BLOCKED_DOWNLOAD_WRONG_VERSION_OLD =
   "Use RCAF V2 for June reclassifications (dated May 26 or later)";
 

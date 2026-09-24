@@ -15,9 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { BreakdownAssessmentQuestionPeriod } from "~datatypes";
+import {
+  BreakdownAssessmentQuestionPeriod,
+  TRUSTEE_CRITERIA,
+} from "~datatypes";
 
-import { dateWindowString } from "../utils";
+import {
+  BLOCKED_DOWNLOAD_MISSING_FIELDS_TOOLTIP,
+  BLOCKED_DOWNLOAD_MISSING_HEARING_DATE,
+  BLOCKED_DOWNLOAD_TRUSTEE_INCOMPLETE,
+} from "../copy";
+import {
+  dateWindowString,
+  reclassificationBlockedDownloadTooltip,
+} from "../utils";
 
 const TODAY = new Date("2026-06-17");
 const mockRecord = {
@@ -47,4 +58,70 @@ describe("dateWindowString", () => {
     (period, formatted) =>
       expect(dateWindowString(period, mockRecord)).toBe(formatted),
   );
+});
+
+describe("reclassificationBlockedDownloadTooltip", () => {
+  const allTrue = Object.fromEntries(
+    TRUSTEE_CRITERIA.map((c) => [c.key, "true"]),
+  );
+
+  const args = {
+    totalScore: 12,
+    hearingDate: "2026-06-17",
+    formData: allTrue,
+    trusteeAssessmentRequired: false,
+    wrongVersionTooltip: undefined,
+  };
+
+  it("allows the download when nothing is outstanding", () => {
+    expect(reclassificationBlockedDownloadTooltip(args)).toBeUndefined();
+  });
+
+  it("blocks on an incomplete Trustee Assessment", () => {
+    expect(
+      reclassificationBlockedDownloadTooltip({
+        ...args,
+        formData: {},
+        trusteeAssessmentRequired: true,
+      }),
+    ).toBe(BLOCKED_DOWNLOAD_TRUSTEE_INCOMPLETE);
+  });
+
+  it("ignores the Trustee Assessment when the form does not carry one", () => {
+    expect(
+      reclassificationBlockedDownloadTooltip({ ...args, formData: {} }),
+    ).toBeUndefined();
+  });
+
+  it("reports a CAF problem ahead of an incomplete Trustee Assessment", () => {
+    expect(
+      reclassificationBlockedDownloadTooltip({
+        ...args,
+        totalScore: undefined,
+        formData: {},
+        trusteeAssessmentRequired: true,
+      }),
+    ).toBe(BLOCKED_DOWNLOAD_MISSING_FIELDS_TOOLTIP);
+
+    expect(
+      reclassificationBlockedDownloadTooltip({
+        ...args,
+        hearingDate: "",
+        formData: {},
+        trusteeAssessmentRequired: true,
+      }),
+    ).toBe(BLOCKED_DOWNLOAD_MISSING_HEARING_DATE);
+  });
+
+  it("reports the wrong form version ahead of everything else", () => {
+    expect(
+      reclassificationBlockedDownloadTooltip({
+        ...args,
+        totalScore: undefined,
+        formData: {},
+        trusteeAssessmentRequired: true,
+        wrongVersionTooltip: "wrong version",
+      }),
+    ).toBe("wrong version");
+  });
 });

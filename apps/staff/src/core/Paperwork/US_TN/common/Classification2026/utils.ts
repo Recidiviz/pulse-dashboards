@@ -19,6 +19,8 @@ import { subMonths } from "date-fns";
 
 import {
   BreakdownAssessmentQuestionPeriod,
+  isTrusteeAssessmentComplete,
+  TrusteeFormSchema,
   UsTnReclassification2026FormInformation,
 } from "~datatypes";
 
@@ -26,6 +28,7 @@ import { formatWorkflowsDateMonthYear } from "../../../../../utils";
 import {
   BLOCKED_DOWNLOAD_MISSING_FIELDS_TOOLTIP,
   BLOCKED_DOWNLOAD_MISSING_HEARING_DATE,
+  BLOCKED_DOWNLOAD_TRUSTEE_INCOMPLETE,
 } from "./copy";
 
 export const RCAF_V2_CUTOFF_DATE = new Date("2026-05-26");
@@ -38,6 +41,36 @@ export function cafBlockedDownloadTooltip(
   if (!hearingDate || hearingDate.length === 0)
     return BLOCKED_DOWNLOAD_MISSING_HEARING_DATE;
   return undefined;
+}
+
+/**
+ * Why the packet cannot be downloaded yet, or undefined when it can. Shared by
+ * both RCAF versions, which differ only in which form version is the wrong one.
+ */
+export function reclassificationBlockedDownloadTooltip({
+  totalScore,
+  hearingDate,
+  formData,
+  trusteeAssessmentRequired,
+  wrongVersionTooltip,
+}: {
+  totalScore: number | undefined;
+  hearingDate: string | undefined;
+  formData: Partial<TrusteeFormSchema>;
+  trusteeAssessmentRequired: boolean;
+  /** Set when this form is the wrong version for its date; it outranks the rest. */
+  wrongVersionTooltip: string | undefined;
+}): string | undefined {
+  if (wrongVersionTooltip) return wrongVersionTooltip;
+
+  const cafTooltip = cafBlockedDownloadTooltip(totalScore, hearingDate);
+  if (cafTooltip) return cafTooltip;
+
+  // Approvals are recorded on paper, so only the parts answerable in the app
+  // count toward completeness.
+  return trusteeAssessmentRequired && !isTrusteeAssessmentComplete(formData)
+    ? BLOCKED_DOWNLOAD_TRUSTEE_INCOMPLETE
+    : undefined;
 }
 
 type Endpoint<T extends string> = T extends `${infer A}-${infer B}`

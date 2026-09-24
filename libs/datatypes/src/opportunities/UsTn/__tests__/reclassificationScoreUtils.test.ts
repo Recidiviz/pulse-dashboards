@@ -17,8 +17,13 @@
 
 import {
   getBreakdownSectionScoreV2,
+  isTrusteeAssessmentComplete,
   showTrusteeChecklist,
 } from "../reclassificationScoreUtils";
+import {
+  TRUSTEE_ANNEX_SUB_QUESTION,
+  TRUSTEE_CRITERIA,
+} from "../trusteeCriteria";
 
 describe("showTrusteeChecklist", () => {
   const formDataBase = {
@@ -142,5 +147,59 @@ describe("getBreakdownSectionScoreV2", () => {
 
   it("does not clamp the row score (per-question max is applied elsewhere)", () => {
     expect(getBreakdownSectionScoreV2(section_36_60, 100)).toBe(200);
+  });
+});
+
+describe("isTrusteeAssessmentComplete", () => {
+  const keyFor = (n: number) => TRUSTEE_CRITERIA[n - 1].key;
+  const allTrue = Object.fromEntries(
+    TRUSTEE_CRITERIA.map((c) => [c.key, "true"]),
+  );
+
+  it("is false while the form is untouched", () => {
+    expect(isTrusteeAssessmentComplete({})).toBeFalse();
+  });
+
+  it("is true once every criterion is answered", () => {
+    expect(isTrusteeAssessmentComplete(allTrue)).toBeTrue();
+  });
+
+  it("is false while one criterion is still unanswered", () => {
+    expect(
+      isTrusteeAssessmentComplete({ ...allTrue, [keyFor(15)]: "" }),
+    ).toBeFalse();
+  });
+
+  it("is true once a hard bar retires the criteria that follow it", () => {
+    expect(isTrusteeAssessmentComplete({ [keyFor(1)]: "false" })).toBeTrue();
+  });
+
+  it("is false while the Annex sub-question is still open", () => {
+    expect(
+      isTrusteeAssessmentComplete({
+        ...allTrue,
+        [TRUSTEE_ANNEX_SUB_QUESTION.parentKey]: "false",
+      }),
+    ).toBeFalse();
+  });
+
+  it("is true once the Annex sub-question is answered", () => {
+    expect(
+      isTrusteeAssessmentComplete({
+        ...allTrue,
+        [TRUSTEE_ANNEX_SUB_QUESTION.parentKey]: "false",
+        [TRUSTEE_ANNEX_SUB_QUESTION.key]: "true",
+      }),
+    ).toBeTrue();
+  });
+
+  it("does not wait on approvals, which are recorded on paper", () => {
+    expect(isTrusteeAssessmentComplete(allTrue)).toBeTrue();
+    expect(
+      isTrusteeAssessmentComplete({
+        ...allTrue,
+        trusteeWardenTrusteeApproved: "",
+      }),
+    ).toBeTrue();
   });
 });

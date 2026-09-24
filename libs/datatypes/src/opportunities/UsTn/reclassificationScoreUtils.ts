@@ -312,6 +312,19 @@ export function buildTrusteeDenialReasons(
     .join("\n\n");
 }
 
+/**
+ * Whether every part of the Trustee Assessment answerable in the app has been
+ * answered. Approvals are obtained on paper, so they do not count.
+ */
+export function isTrusteeAssessmentComplete(
+  formData: Partial<TrusteeFormSchema>,
+): boolean {
+  return (
+    resolveTrusteeOutcome(formData).status !== "INCOMPLETE" &&
+    resolveAnnexOutcome(formData).status !== "INCOMPLETE"
+  );
+}
+
 export function showTrusteeChecklist(
   totalText: string,
   formData: Partial<UsTnReclassification2026DraftData>,
