@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { formatISO } from "date-fns";
 import { freeze, reset } from "timekeeper";
 
 import { Prisma } from "~@jii/prisma";
@@ -27,40 +26,45 @@ import {
   mockCollectionQuerier,
 } from "../../../../../test/US_NC/mockStaffProcedure";
 
-const testDate = new Date(2026, 0, 10);
-const futureDueDate = new Date(2026, 10, 10);
-const currentDueDate = new Date(2026, 1, 1);
-const pastDueDate = new Date(2025, 11, 1);
-const recentRNADate = new Date(2026, 0, 5);
-const olderRNADate = new Date(2025, 5, 1);
+const testDate = "2026-01-10";
+// noon in North Carolina
+const testDateInstant = new Date(`${testDate}T12:00:00-05:00`);
+
+const currentDueDate = "2026-02-01";
+const pastDueDate = "2025-12-01";
+
+// the exact time is not important for these, they are multiple days way from the boundary
+const recentRNACreationDate = new Date(2026, 0, 5);
+const olderRNACreationDate = new Date(2025, 5, 1);
 
 const testResidents = [
   {
     pseudonymizedId: "abc",
     metadata: {
       stateCode: "US_NC",
-      rnaDueDate: formatISO(currentDueDate, { representation: "date" }),
+      rnaDueDate: currentDueDate,
     },
   },
   {
     pseudonymizedId: "def",
     metadata: {
       stateCode: "US_NC",
-      rnaDueDate: formatISO(pastDueDate, { representation: "date" }),
+      rnaDueDate: pastDueDate,
     },
   },
   {
     pseudonymizedId: "ghi",
     metadata: {
       stateCode: "US_NC",
-      rnaDueDate: formatISO(futureDueDate, { representation: "date" }),
+      // future date
+      rnaDueDate: "2026-11-10",
     },
   },
   {
     pseudonymizedId: "jkl",
     metadata: {
       stateCode: "US_NC",
-      rnaDueDate: formatISO(testDate, { representation: "date" }),
+      rnaDueDate: testDate,
     },
   },
 ];
@@ -69,7 +73,7 @@ const additionalResidents = [
     pseudonymizedId: "some-other-id",
     metadata: {
       stateCode: "US_NC",
-      rnaDueDate: formatISO(currentDueDate, { representation: "date" }),
+      rnaDueDate: currentDueDate,
     },
   },
 ];
@@ -88,7 +92,7 @@ function buildResidentRecord(
   },
 ): Prisma.ResidentCreateInput {
   return {
-    importedAt: testDate,
+    importedAt: testDateInstant,
     personExternalId: overrides.pseudonymizedId,
     displayId: overrides.pseudonymizedId,
     facilityId: null,
@@ -117,7 +121,7 @@ const mockFirestoreGet = {
 describe("rnaStatusList", () => {
   // stubbing the specific query as a chain of firestore methods :(
   beforeEach(() => {
-    freeze(testDate);
+    freeze(testDateInstant);
 
     mockFirestoreGet.get.mockResolvedValue({
       docs: [],
@@ -153,7 +157,7 @@ describe("rnaStatusList", () => {
       data: [
         {
           pseudonymizedId: testResidents[0].pseudonymizedId,
-          createdAt: recentRNADate,
+          createdAt: recentRNACreationDate,
           answers: {},
         },
       ],
@@ -179,35 +183,35 @@ describe("rnaStatusList", () => {
           // this wouldn't normally be specified but we are controlling it for the test
           // they are queried by createdAt but the results include updatedAt.
           // values don't matter except to distinguish between records
-          createdAt: recentRNADate,
-          updatedAt: recentRNADate,
+          createdAt: recentRNACreationDate,
+          updatedAt: recentRNACreationDate,
           answers: {},
         },
         // this one is old and should be omitted from the results
         {
           pseudonymizedId: testResidents[1].pseudonymizedId,
-          createdAt: olderRNADate,
-          updatedAt: olderRNADate,
+          createdAt: olderRNACreationDate,
+          updatedAt: olderRNACreationDate,
           answers: {},
         },
         {
           pseudonymizedId: testResidents[1].pseudonymizedId,
-          createdAt: recentRNADate,
-          updatedAt: recentRNADate,
+          createdAt: recentRNACreationDate,
+          updatedAt: recentRNACreationDate,
           answers: {},
         },
         // even though this one is old, it should be included
         // because the resident is not within their next due date window
         {
           pseudonymizedId: testResidents[2].pseudonymizedId,
-          createdAt: olderRNADate,
-          updatedAt: olderRNADate,
+          createdAt: olderRNACreationDate,
+          updatedAt: olderRNACreationDate,
           answers: {},
         },
         // this should be filtered out by the query
         {
           pseudonymizedId: additionalResidents[0].pseudonymizedId,
-          createdAt: recentRNADate,
+          createdAt: recentRNACreationDate,
           answers: {},
         },
       ],
@@ -225,15 +229,15 @@ describe("rnaStatusList", () => {
       expect.arrayContaining([
         expect.objectContaining({
           pseudonymizedId: testResidents[0].pseudonymizedId,
-          updatedAt: recentRNADate,
+          updatedAt: recentRNACreationDate,
         }),
         expect.objectContaining({
           pseudonymizedId: testResidents[1].pseudonymizedId,
-          updatedAt: recentRNADate,
+          updatedAt: recentRNACreationDate,
         }),
         expect.objectContaining({
           pseudonymizedId: testResidents[2].pseudonymizedId,
-          updatedAt: olderRNADate,
+          updatedAt: olderRNACreationDate,
         }),
       ]),
     );
@@ -252,9 +256,9 @@ describe("rnaStatusList", () => {
         // this record is too old and should be discarded
         {
           pseudonymizedId: testResidents[0].pseudonymizedId,
-          createdAt: olderRNADate,
+          createdAt: olderRNACreationDate,
           // creation date matters, not completion
-          completedAt: recentRNADate,
+          completedAt: recentRNACreationDate,
           answers: { foo: ["bar"] },
         },
         // resident 1 is in the window but does not have a record
@@ -297,7 +301,7 @@ describe("rnaStatusList", () => {
       data: [
         {
           pseudonymizedId: testResidents[0].pseudonymizedId,
-          createdAt: recentRNADate,
+          createdAt: recentRNACreationDate,
           answers: {},
         },
       ],
@@ -319,7 +323,7 @@ describe("rnaStatusList", () => {
       data: [
         {
           pseudonymizedId: testResidents[0].pseudonymizedId,
-          createdAt: recentRNADate,
+          createdAt: recentRNACreationDate,
           answers: { foo: ["bar"] },
         },
       ],
@@ -341,8 +345,8 @@ describe("rnaStatusList", () => {
       data: [
         {
           pseudonymizedId: testResidents[0].pseudonymizedId,
-          createdAt: recentRNADate,
-          completedAt: recentRNADate,
+          createdAt: recentRNACreationDate,
+          completedAt: recentRNACreationDate,
           answers: { foo: ["bar"] },
         },
       ],
@@ -362,8 +366,8 @@ describe("rnaStatusList", () => {
       data: [
         {
           pseudonymizedId: testResidents[0].pseudonymizedId,
-          createdAt: recentRNADate,
-          completedAt: recentRNADate,
+          createdAt: recentRNACreationDate,
+          completedAt: recentRNACreationDate,
           answers: { foo: ["bar"] },
           submittedByStaffAt: new Date(),
         },
@@ -473,8 +477,8 @@ describe("rnaStatusList", () => {
         data: [
           {
             pseudonymizedId: testResidents[0].pseudonymizedId,
-            createdAt: recentRNADate,
-            completedAt: recentRNADate,
+            createdAt: recentRNACreationDate,
+            completedAt: recentRNACreationDate,
             answers: { foo: ["bar"] },
           },
         ],
@@ -487,6 +491,69 @@ describe("rnaStatusList", () => {
           pseudonymizedId: testResidents[0].pseudonymizedId,
           status: "COMPLETE",
         }),
+      ]);
+    });
+  });
+  // NC is entirely Eastern, but the server runs in UTC. Every comparison between
+  // a calendar date and an instant therefore has to be resolved in NC local time,
+  // or it is wrong in the evening when the two zones disagree on what day it is.
+  describe("timezone boundaries", () => {
+    const dueDate = "2026-01-15";
+
+    function mockResidentWithDueDate(rnaDueDate: string) {
+      mockFirestoreGet.get.mockResolvedValue({
+        docs: [
+          {
+            data: () => ({
+              pseudonymizedId: "abc",
+              metadata: { stateCode: "US_NC", rnaDueDate },
+            }),
+          },
+        ],
+      });
+    }
+
+    test("is still UPCOMING the evening before the due date in NC", async () => {
+      // 9pm ET on Jan 14: already Jan 15 in UTC, but not yet in North Carolina
+      freeze(new Date("2026-01-15T02:00:00Z"));
+      mockResidentWithDueDate(dueDate);
+
+      expect(await caller.rnaStatusList(testInput)).toEqual([
+        { pseudonymizedId: "abc", status: "UPCOMING" },
+      ]);
+    });
+
+    test("becomes DUE once the due date arrives in NC", async () => {
+      // 7am ET on Jan 15
+      freeze(new Date("2026-01-15T12:00:00Z"));
+      mockResidentWithDueDate(dueDate);
+
+      expect(await caller.rnaStatusList(testInput)).toEqual([
+        { pseudonymizedId: "abc", status: "DUE" },
+      ]);
+    });
+
+    test("an assessment created before the NC window opens is stale", async () => {
+      // this puts us in the 90-day window preceding the due date,
+      // so we are looking for a fresh RNA
+      freeze(new Date("2026-01-10T12:00:00Z"));
+      mockResidentWithDueDate(dueDate);
+      await testPrismaClient.usNcRNA.create({
+        data: {
+          pseudonymizedId: "abc",
+          // the 90-day window for a 2026-01-15 due date opens on 2025-10-17. NC is
+          // still on EDT then, so that is 04:00Z; a record created at 02:00Z was made
+          // the previous evening in NC and should be rejected as stale
+          createdAt: new Date("2025-10-17T02:00:00Z"),
+          updatedAt: new Date("2025-10-17T02:00:00Z"),
+          answers: {},
+        },
+      });
+
+      // a stale assessment falls back to the due-date status rather than
+      // reporting the existing record
+      expect(await caller.rnaStatusList(testInput)).toEqual([
+        { pseudonymizedId: "abc", status: "UPCOMING" },
       ]);
     });
   });

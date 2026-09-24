@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { rollup } from "d3-array";
-import { isAfter, subDays } from "date-fns";
+import { Temporal } from "temporal-polyfill";
 import { z } from "zod";
 
 import { usNcResidentMetadataSchema } from "~datatypes";
@@ -25,31 +25,48 @@ import { isUserFlagActive } from "../../../../../helpers/featureFlags";
 import { usNcStaffProcedure } from "../../../../../procedures/stateRestrictedStaffProcedureFactory";
 import { getStatusOfExistingRNA, RNAAssessmentStatus } from "./rnaStatus";
 
-// minimal schema for the fields we need, since we can't directly import from datatypes
-// due to Vite dependencies
+const NC_TZ = "America/New_York";
+
+// converts a Date to a PlainDate
+function plainDueDate(datetime: Date | null | undefined) {
+  if (!datetime) return;
+  return Temporal.PlainDate.from({
+    // because the due date has already been parsed to a date by our Zod schema,
+    // we have to translate it to the PlainDate API. This is safe regardless of
+    // what time zone we are running in, parsing alone would not change the date
+    year: datetime.getFullYear(),
+    month: datetime.getMonth() + 1,
+    day: datetime.getDate(),
+  });
+}
+
 const residentRecordFields = z.object({
   pseudonymizedId: z.string(),
   // note this is assuming only NC records will be fetched
   metadata: usNcResidentMetadataSchema,
 });
 
-export function validateCurrentRNA<T extends { createdAt: Date }>(
-  rnaDueDate: Date | null | undefined,
+function validateCurrentRNA<T extends { createdAt: Date }>(
+  rnaDueDate: Temporal.PlainDate | undefined,
   latestRNA: T,
 ) {
   const now = new Date();
 
   // within this window, older assessments are considered stale
-  const rnaWindowStart = rnaDueDate ? subDays(rnaDueDate, 90) : undefined;
+  const rnaWindowStart = rnaDueDate
+    ? rnaDueDate.subtract({ days: 90 }).toZonedDateTime(NC_TZ)
+    : undefined;
+
   const isWithinRNAWindow = rnaWindowStart
-    ? isAfter(now, rnaWindowStart)
+    ? now.getTime() >= rnaWindowStart.epochMilliseconds
     : false;
+
   if (
     isWithinRNAWindow &&
     // this will always be true if isWithinRNAWindow is, but typescript can't infer that
     rnaWindowStart
   ) {
-    if (isAfter(latestRNA.createdAt, rnaWindowStart)) {
+    if (latestRNA.createdAt.getTime() >= rnaWindowStart.epochMilliseconds) {
       // the latest RNA is fresh
       return latestRNA;
     }
@@ -77,7 +94,7 @@ export const rnaStatusList = usNcStaffProcedure
     }) => {
       let residentData: Array<{
         pseudonymizedId: string;
-        rnaDueDate: Date | undefined;
+        rnaDueDate: Temporal.PlainDate | undefined;
       }>;
 
       if (
@@ -98,7 +115,7 @@ export const rnaStatusList = usNcStaffProcedure
         ).map(({ pseudonymizedId, stateSpecificData }) => {
           const { rnaDueDate } =
             usNcResidentMetadataSchema.parse(stateSpecificData);
-          return { pseudonymizedId, rnaDueDate };
+          return { pseudonymizedId, rnaDueDate: plainDueDate(rnaDueDate) };
         });
       } else {
         // resident data is in Firestore, which we need to map this request to resident IDs
@@ -111,7 +128,7 @@ export const rnaStatusList = usNcStaffProcedure
             pseudonymizedId,
             metadata: { rnaDueDate },
           } = residentRecordFields.parse(d.data());
-          return { pseudonymizedId, rnaDueDate };
+          return { pseudonymizedId, rnaDueDate: plainDueDate(rnaDueDate) };
         });
       }
 
@@ -159,6 +176,7 @@ export const rnaStatusList = usNcStaffProcedure
           enabledAt?: Date;
         } => {
           const { pseudonymizedId, rnaDueDate } = r;
+
           const latestRNA = latestRNAByResident.get(pseudonymizedId);
 
           let currentRNA;
@@ -169,9 +187,19 @@ export const rnaStatusList = usNcStaffProcedure
           // if a resident has never filled out an assessment,
           // or if their latest assessment is not fresh, staff needs to enable a new one
           if (!latestRNA || !currentRNA) {
-            // the person's status becomes "DUE" when the due date is in the past or today
-            const status =
-              rnaDueDate && rnaDueDate <= new Date() ? "DUE" : "UPCOMING";
+            let status: RNAAssessmentStatus;
+
+            if (!rnaDueDate) {
+              status = "UPCOMING";
+            } else {
+              // comparing due date to today as calendar dates, not timestamps
+              const today = Temporal.Now.plainDateISO(NC_TZ);
+              // the person's status becomes "DUE" when the due date is in the past or today
+              status =
+                Temporal.PlainDate.compare(rnaDueDate, today) < 1
+                  ? "DUE"
+                  : "UPCOMING";
+            }
 
             return {
               pseudonymizedId,

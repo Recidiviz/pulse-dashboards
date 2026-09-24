@@ -19,6 +19,7 @@ import { Storage } from "@google-cloud/storage";
 import { captureException } from "@sentry/node";
 import { dsvFormat } from "d3-dsv";
 import { format } from "date-fns";
+import { Temporal } from "temporal-polyfill";
 import { z } from "zod";
 
 import {
@@ -158,9 +159,22 @@ export function processRNARecord(
 
     return {
       "Opus#": queryResult.opusId,
-      "Admit Date": format(queryResult.admitDate, "yyyy-MM-dd"),
+      // admitDate is really a calendar date. It's stored by Prisma as a UTC DateTime
+      // so we must be sure to read it as UTC when reducing it to a plain date
+      "Admit Date": Temporal.PlainDate.from({
+        year: queryResult.admitDate.getUTCFullYear(),
+        month: queryResult.admitDate.getUTCMonth() + 1,
+        day: queryResult.admitDate.getUTCDate(),
+      }).toString(),
       "Seq#": queryResult.seqNumber,
-      dateAssessmentCompleted: format(queryResult.completedAt, "yyyy-MM-dd"),
+      // completion time represents a true instant,
+      // so the calendar date must be computed relative to North Carolina time
+      dateAssessmentCompleted: Temporal.Instant.fromEpochMilliseconds(
+        queryResult.completedAt.getTime(),
+      )
+        .toZonedDateTimeISO("America/New_York") // North Carolina time zone
+        .toPlainDate()
+        .toString(),
       ...Object.fromEntries(processedAnswers),
     };
   } catch (e) {

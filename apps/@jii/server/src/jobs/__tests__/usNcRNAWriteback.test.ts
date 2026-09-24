@@ -35,8 +35,10 @@ describe("processRNARecord", () => {
   const mockRecord: CompletedUsNcRNA = {
     pseudonymizedId: "pseudonymizedId",
     answers: {},
-    completedAt: new Date(2025, 1, 2),
-    admitDate: new Date(2025, 0, 1),
+    // mid-morning in North Carolina
+    completedAt: new Date("2025-02-02T09:00:00-05:00"),
+    // a UTC date, which is what we expect to receive from import
+    admitDate: new Date("2025-01-01T00:00:00Z"),
     seqNumber: "003",
     opusId: "opusId",
   };
@@ -205,6 +207,17 @@ describe("processRNARecord", () => {
   it("sends error to Sentry on missing answers", () => {
     expect(() => processRNARecord(mockRecord)).not.toThrow();
     expect(Sentry.captureException).toHaveBeenCalled();
+  });
+
+  it("reports the completion date in North Carolina time", () => {
+    const result = processRNARecord({
+      ...mockRecordWithAnswers,
+      // 8pm in North Carolina, by which point it is already the next day in UTC,
+      // where this job runs. The result should still reflect NC time
+      completedAt: new Date("2025-02-01T20:00:00-05:00"),
+    });
+
+    expect(result).toHaveProperty("dateAssessmentCompleted", "2025-02-01");
   });
 });
 
