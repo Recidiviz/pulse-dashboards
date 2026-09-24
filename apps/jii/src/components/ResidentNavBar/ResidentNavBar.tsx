@@ -74,7 +74,7 @@ const ManagedComponent: FC<{ presenter: ResidentNavBarPresenter }> = observer(
           <NavLink {...presenter.homeLink}>{t(($) => $.nav.homeLink)}</NavLink>
         )}
         {presenter.additionalTopBarLinks.map((link) => (
-          <NavLink key={link.to} to={link.to} end>
+          <NavLink key={link.to} to={link.to} end={!link.activeOnSubroutes}>
             {link.label}
           </NavLink>
         ))}

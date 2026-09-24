@@ -21,6 +21,14 @@ import { SimpleNavLinkProps } from "~@jii/common-ui";
 import { ResidentFlags, UserStore } from "~@jii/data";
 import { RouteParams, State } from "~@jii/paths";
 
+type AdditionalTopBarLink = {
+  label: string;
+  to: string;
+  // Whether this link should stay highlighted while on any of its sub-routes,
+  // rather than only when its own path is matched exactly. Defaults to false.
+  activeOnSubroutes?: boolean;
+};
+
 export class ResidentNavBarPresenter {
   constructor(
     private userStore: UserStore,
@@ -42,7 +50,7 @@ export class ResidentNavBarPresenter {
   }
 
   // TODO(#10032): [JII][P2] Parameterize additional top-level links in ResidentNavBar
-  get additionalTopBarLinks(): { label: string; to: string }[] {
+  get additionalTopBarLinks(): AdditionalTopBarLink[] {
     if (!("personPseudoId" in this.routeParams)) return [];
 
     if (this.routeParams.stateSlug === "tennessee") {
@@ -83,7 +91,7 @@ export class ResidentNavBarPresenter {
     }
 
     if (this.routeParams.stateSlug === "mass") {
-      const links: { label: string; to: string }[] = [
+      const links: AdditionalTopBarLink[] = [
         {
           label: "Programs",
           to: State.Resident.ProgramCatalog.buildPath(this.routeParams),
@@ -94,6 +102,7 @@ export class ResidentNavBarPresenter {
         links.push({
           label: "Reentry",
           to: State.Resident.UsMaReentry.buildPath(this.routeParams),
+          activeOnSubroutes: true,
         });
       }
 
