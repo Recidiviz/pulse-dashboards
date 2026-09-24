@@ -18,24 +18,24 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import ReactModal from "react-modal";
 
-import { RecentCaseNoteModal } from "../RecentCaseNoteModal";
-import { RecentCaseNote } from "../useRecentCaseNotes";
+import { CaseNoteModal } from "./CaseNoteModal";
+import { CaseNote } from "./types";
 
 beforeAll(() => {
   ReactModal.setAppElement(document.createElement("div"));
 });
 
-const sampleNote: RecentCaseNote = {
+const sampleNote: CaseNote = {
   id: "n-1",
   source: "MOSAGI - OFFICE VISIT",
   date: new Date("2026-04-15"),
   body: "Full body of the case note, including\nmultiple paragraphs of content.",
 };
 
-describe("RecentCaseNoteModal", () => {
+describe("CaseNoteModal", () => {
   it("renders the title and the note body when open with a note", () => {
     render(
-      <RecentCaseNoteModal
+      <CaseNoteModal
         isOpen
         note={sampleNote}
         onRequestClose={() => undefined}
@@ -49,7 +49,7 @@ describe("RecentCaseNoteModal", () => {
 
   it("renders only the header when note is undefined", () => {
     render(
-      <RecentCaseNoteModal
+      <CaseNoteModal
         isOpen
         note={undefined}
         onRequestClose={() => undefined}
@@ -63,11 +63,7 @@ describe("RecentCaseNoteModal", () => {
   it("calls onRequestClose when the Close button is clicked", () => {
     const handleClose = vi.fn();
     render(
-      <RecentCaseNoteModal
-        isOpen
-        note={sampleNote}
-        onRequestClose={handleClose}
-      />,
+      <CaseNoteModal isOpen note={sampleNote} onRequestClose={handleClose} />,
     );
 
     fireEvent.click(screen.getByLabelText("Close"));
@@ -78,11 +74,7 @@ describe("RecentCaseNoteModal", () => {
   it("calls onRequestClose when ESC is pressed inside the modal", () => {
     const handleClose = vi.fn();
     render(
-      <RecentCaseNoteModal
-        isOpen
-        note={sampleNote}
-        onRequestClose={handleClose}
-      />,
+      <CaseNoteModal isOpen note={sampleNote} onRequestClose={handleClose} />,
     );
 
     // react-modal listens for Escape on its content element via keyDown.

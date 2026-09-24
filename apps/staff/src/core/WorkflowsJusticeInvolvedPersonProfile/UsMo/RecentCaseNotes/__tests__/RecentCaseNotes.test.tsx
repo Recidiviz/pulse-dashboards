@@ -20,8 +20,9 @@ import ReactModal from "react-modal";
 import { Mock } from "vitest";
 
 import { Client } from "../../../../../WorkflowsStore";
+import { CaseNote } from "../../../../CaseNotes";
 import { RecentCaseNotes, truncateNoteBody } from "..";
-import { RecentCaseNote, useRecentCaseNotes } from "../useRecentCaseNotes";
+import { useRecentCaseNotes } from "../useRecentCaseNotes";
 
 vi.mock("../useRecentCaseNotes", () => ({
   useRecentCaseNotes: vi.fn(),
@@ -31,7 +32,7 @@ const useRecentCaseNotesMock = useRecentCaseNotes as Mock;
 
 const mockClient = {} as Client;
 
-const sampleNotes: RecentCaseNote[] = [
+const sampleNotes: CaseNote[] = [
   {
     id: "n-1",
     source: "MOSAGI - OFFICE VISIT",

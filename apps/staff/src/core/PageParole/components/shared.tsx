@@ -180,6 +180,18 @@ export const SubsectionTitle = styled.div`
 `;
 
 /**
+ * Line below a SubsectionTitle saying what the subsection holds, or that it
+ * holds nothing. The negative top margin pulls it up under the title, which
+ * carries its own bottom margin for the case where no caption follows.
+ */
+export const SubsectionCaption = styled.div`
+  ${typography.Sans14}
+  color: ${palette.slate70};
+  margin-top: -${rem(spacing.sm)};
+  margin-bottom: ${rem(spacing.md)};
+`;
+
+/**
  * Years of conduct history the Institutional Conduct History section shows
  * inline when a tenant's config doesn't set its own window.
  */

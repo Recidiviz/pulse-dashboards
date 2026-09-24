@@ -17,6 +17,7 @@
 
 import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
+import { useMemo, useState } from "react";
 import styled from "styled-components";
 
 import {
@@ -26,7 +27,12 @@ import {
 } from "~datatypes";
 import { palette } from "~design-system";
 
-import { EmptyState, formatDateNumeric, SubsectionTitle } from "../shared";
+import { Pagination } from "../../../Pagination/Pagination";
+import {
+  formatDateNumeric,
+  SubsectionCaption,
+  SubsectionTitle,
+} from "../shared";
 
 type ProgramDateType = "completion" | "start" | "referral";
 
@@ -75,6 +81,8 @@ const EDOVO_STATUS_DISPLAY: Record<
 };
 
 const EMPTY_PLACEHOLDER = "----";
+
+export const US_ID_PROGRAMS_PER_PAGE = 10;
 
 const Table = styled.table`
   ${typography.Sans14}
@@ -200,13 +208,22 @@ export function UsIdProgrammingSection({
   docPrograms: Array<ParoleDocProgram>;
   edovoPrograms: Array<ParoleEdovoProgram>;
 }) {
-  const rows = programRows(docPrograms, edovoPrograms);
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const rows = useMemo(
+    () => programRows(docPrograms, edovoPrograms),
+    [docPrograms, edovoPrograms],
+  );
+
+  const totalPages = Math.ceil(rows.length / US_ID_PROGRAMS_PER_PAGE);
+  const pageStart = currentPage * US_ID_PROGRAMS_PER_PAGE;
+  const pageRows = rows.slice(pageStart, pageStart + US_ID_PROGRAMS_PER_PAGE);
 
   return (
     <div>
       <SubsectionTitle>Programming</SubsectionTitle>
       {rows.length === 0 ? (
-        <EmptyState>No programs on record.</EmptyState>
+        <SubsectionCaption>No programs on record</SubsectionCaption>
       ) : (
         <Table>
           <colgroup>
@@ -221,7 +238,7 @@ export function UsIdProgrammingSection({
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => (
+            {pageRows.map((row) => (
               <tr key={row.key}>
                 <Cell>
                   {row.date ? formatDateNumeric(row.date) : EMPTY_PLACEHOLDER}
@@ -232,6 +249,16 @@ export function UsIdProgrammingSection({
             ))}
           </tbody>
         </Table>
+      )}
+      {rows.length > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          summary={`${pageStart + 1}-${pageStart + pageRows.length} of ${
+            rows.length
+          }`}
+        />
       )}
     </div>
   );

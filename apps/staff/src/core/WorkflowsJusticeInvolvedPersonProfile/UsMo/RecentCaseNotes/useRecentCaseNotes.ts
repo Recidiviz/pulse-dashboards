@@ -18,6 +18,7 @@
 import { UsMoClientMetadata } from "~datatypes";
 
 import { Client } from "../../../../WorkflowsStore";
+import { CaseNote } from "../../../CaseNotes";
 
 /**
  * Maximum number of notes returned by `useRecentCaseNotes`. The card and its
@@ -26,35 +27,20 @@ import { Client } from "../../../../WorkflowsStore";
  */
 export const MAX_RECENT_NOTES = 3;
 
-/**
- * A single recent case note, as rendered in the US_MO "Recent Case Notes" card
- * and its detail modal. Shape is intentionally distinct from the
- * search-snippet-oriented `CaseNoteSearchResults` in `CaseNoteSearch.tsx`.
- */
-export type RecentCaseNote = {
-  /** Stable React key + dialog selector. */
-  id: string;
-  /** SOURCE label — the contact type(s), e.g. "POV, UA". */
-  source: string;
-  date: Date;
-  /** Full note text; `\n` paragraphs are preserved when rendered in the modal. */
-  body: string;
-};
-
 type SupervisionContact = NonNullable<
   UsMoClientMetadata["supervisionContacts"]
 >[number];
 
 /**
- * Maps a single raw `supervisionContacts` entry to a `RecentCaseNote`. Returns
+ * Maps a single raw `supervisionContacts` entry to a `CaseNote`. Returns
  * `undefined` for contacts missing the date or note we need to render a usable
  * row — the metadata feed is intentionally sparse (every field is nullish), so
  * we drop unrenderable entries rather than show blanks.
  */
-function toRecentCaseNote(
+function toCaseNote(
   contact: SupervisionContact,
   index: number,
-): RecentCaseNote | undefined {
+): CaseNote | undefined {
   const { contactDate, contactNote, contactTypes } = contact;
   if (!contactDate || !contactNote) return undefined;
 
@@ -77,14 +63,14 @@ function toRecentCaseNote(
  * and `isLoading` is always `false`.
  */
 export function useRecentCaseNotes(client: Client): {
-  notes: RecentCaseNote[];
+  notes: CaseNote[];
   isLoading: boolean;
 } {
   const { supervisionContacts } = client.metadata as UsMoClientMetadata;
 
   const notes = (supervisionContacts ?? [])
-    .map(toRecentCaseNote)
-    .filter((note): note is RecentCaseNote => note !== undefined)
+    .map(toCaseNote)
+    .filter((note): note is CaseNote => note !== undefined)
     .sort((a, b) => b.date.getTime() - a.date.getTime())
     .slice(0, MAX_RECENT_NOTES);
 

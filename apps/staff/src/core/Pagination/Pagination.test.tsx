@@ -19,49 +19,33 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, test, vi } from "vitest";
 
-import { CasePlanPagination } from "./CasePlanPagination";
+import { Pagination } from "./Pagination";
 
-describe("CasePlanPagination", () => {
+describe("Pagination", () => {
   test("renders nothing when there is only one page", () => {
     const { container } = render(
-      <CasePlanPagination
-        currentPage={0}
-        totalPages={1}
-        onPageChange={vi.fn()}
-      />,
+      <Pagination currentPage={0} totalPages={1} onPageChange={vi.fn()} />,
     );
     expect(container).toBeEmptyDOMElement();
   });
 
   test("renders nothing when there are no pages", () => {
     const { container } = render(
-      <CasePlanPagination
-        currentPage={0}
-        totalPages={0}
-        onPageChange={vi.fn()}
-      />,
+      <Pagination currentPage={0} totalPages={0} onPageChange={vi.fn()} />,
     );
     expect(container).toBeEmptyDOMElement();
   });
 
   test("shows the current page and total pages, 1-indexed", () => {
     render(
-      <CasePlanPagination
-        currentPage={1}
-        totalPages={3}
-        onPageChange={vi.fn()}
-      />,
+      <Pagination currentPage={1} totalPages={3} onPageChange={vi.fn()} />,
     );
     expect(screen.getByText("2 of 3")).toBeInTheDocument();
   });
 
   test("disables the first and previous buttons on the first page", () => {
     render(
-      <CasePlanPagination
-        currentPage={0}
-        totalPages={3}
-        onPageChange={vi.fn()}
-      />,
+      <Pagination currentPage={0} totalPages={3} onPageChange={vi.fn()} />,
     );
     expect(screen.getByLabelText("First page")).toBeDisabled();
     expect(screen.getByLabelText("Previous page")).toBeDisabled();
@@ -71,11 +55,7 @@ describe("CasePlanPagination", () => {
 
   test("disables the next and last buttons on the last page", () => {
     render(
-      <CasePlanPagination
-        currentPage={2}
-        totalPages={3}
-        onPageChange={vi.fn()}
-      />,
+      <Pagination currentPage={2} totalPages={3} onPageChange={vi.fn()} />,
     );
     expect(screen.getByLabelText("First page")).toBeEnabled();
     expect(screen.getByLabelText("Previous page")).toBeEnabled();
@@ -85,11 +65,7 @@ describe("CasePlanPagination", () => {
 
   test("enables all buttons on a middle page", () => {
     render(
-      <CasePlanPagination
-        currentPage={1}
-        totalPages={3}
-        onPageChange={vi.fn()}
-      />,
+      <Pagination currentPage={1} totalPages={3} onPageChange={vi.fn()} />,
     );
     expect(screen.getByLabelText("First page")).toBeEnabled();
     expect(screen.getByLabelText("Previous page")).toBeEnabled();
@@ -101,11 +77,7 @@ describe("CasePlanPagination", () => {
     const user = userEvent.setup();
     const onPageChange = vi.fn();
     render(
-      <CasePlanPagination
-        currentPage={2}
-        totalPages={5}
-        onPageChange={onPageChange}
-      />,
+      <Pagination currentPage={2} totalPages={5} onPageChange={onPageChange} />,
     );
     await user.click(screen.getByLabelText("First page"));
     expect(onPageChange).toHaveBeenCalledWith(0);
@@ -115,11 +87,7 @@ describe("CasePlanPagination", () => {
     const user = userEvent.setup();
     const onPageChange = vi.fn();
     render(
-      <CasePlanPagination
-        currentPage={2}
-        totalPages={5}
-        onPageChange={onPageChange}
-      />,
+      <Pagination currentPage={2} totalPages={5} onPageChange={onPageChange} />,
     );
     await user.click(screen.getByLabelText("Previous page"));
     expect(onPageChange).toHaveBeenCalledWith(1);
@@ -129,11 +97,7 @@ describe("CasePlanPagination", () => {
     const user = userEvent.setup();
     const onPageChange = vi.fn();
     render(
-      <CasePlanPagination
-        currentPage={2}
-        totalPages={5}
-        onPageChange={onPageChange}
-      />,
+      <Pagination currentPage={2} totalPages={5} onPageChange={onPageChange} />,
     );
     await user.click(screen.getByLabelText("Next page"));
     expect(onPageChange).toHaveBeenCalledWith(3);
@@ -143,11 +107,7 @@ describe("CasePlanPagination", () => {
     const user = userEvent.setup();
     const onPageChange = vi.fn();
     render(
-      <CasePlanPagination
-        currentPage={2}
-        totalPages={5}
-        onPageChange={onPageChange}
-      />,
+      <Pagination currentPage={2} totalPages={5} onPageChange={onPageChange} />,
     );
     await user.click(screen.getByLabelText("Last page"));
     expect(onPageChange).toHaveBeenCalledWith(4);
@@ -157,11 +117,7 @@ describe("CasePlanPagination", () => {
     const user = userEvent.setup();
     const onPageChange = vi.fn();
     render(
-      <CasePlanPagination
-        currentPage={0}
-        totalPages={3}
-        onPageChange={onPageChange}
-      />,
+      <Pagination currentPage={0} totalPages={3} onPageChange={onPageChange} />,
     );
     await user.click(screen.getByLabelText("First page"));
     await user.click(screen.getByLabelText("Previous page"));

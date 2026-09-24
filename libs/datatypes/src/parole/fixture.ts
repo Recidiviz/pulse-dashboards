@@ -28,6 +28,7 @@ import {
 import {
   ParoleCarasFactor,
   ParoleCase,
+  ParoleCaseNote,
   paroleCaseSchema,
   ParoleConductRecord,
   paroleConductRecordSchema,
@@ -2021,6 +2022,85 @@ function withAssessmentLevels(
   };
 }
 
+/**
+ * Idaho's real note types, from Atlas ref_NoteType. Listed by how often each
+ * one occurs, so the fixture's mix resembles a real record: the first two
+ * carry the bulk of the volume.
+ */
+const ID_CASE_NOTE_TYPES = [
+  "Supervision Notes",
+  "Facility Notes",
+  "Case Update",
+  "Parole Board Note",
+  "PSI",
+] as const;
+
+// Sentences the fixture strings together into note bodies. Idaho's real
+// notes average around 340 characters and the longest run into the
+// thousands, so a note here is built long enough to truncate in the list.
+const ID_CASE_NOTE_SENTENCES = [
+  "Met with resident in the unit to review progress toward the current case plan goals.",
+  "Resident reports steady attendance in programming and no conflicts with unit staff.",
+  "Discussed release planning, including residence verification and transportation.",
+  "Resident asked about the timeline for the next board review and was given the schedule.",
+  "No new concerns raised by unit staff since the previous contact.",
+  "Employment coordinator was contacted regarding placement options after release.",
+  "Resident completed the assigned workbook section and returned it for review.",
+  "Family contact remains consistent; resident reports weekly phone calls.",
+];
+
+/**
+ * The number of notes each Idaho fixture case carries. Chosen to fill more
+ * than one page, so the list's pagination is demoable in offline mode.
+ */
+const ID_CASE_NOTE_COUNT = 32;
+
+/**
+ * Builds a case's notes, newest first, roughly one every three weeks going
+ * back. Everything varies off the case's index, so a given DOC id gets the
+ * same notes on every load.
+ *
+ * @param index - The case's position in the fixture list.
+ * @param today - The date the fixture is generated relative to.
+ */
+function buildIdCaseNotes(index: number, today: Date): Array<ParoleCaseNote> {
+  return Array.from({ length: ID_CASE_NOTE_COUNT }, (_, noteIndex) => {
+    const seed = index * 7 + noteIndex;
+    const sentenceCount = 2 + (seed % 7);
+    const body = Array.from(
+      { length: sentenceCount },
+      (__, sentenceIndex) =>
+        ID_CASE_NOTE_SENTENCES[
+          (seed + sentenceIndex * 3) % ID_CASE_NOTE_SENTENCES.length
+        ],
+    ).join(" ");
+
+    return {
+      id: `note-${index}-${noteIndex}`,
+      type: ID_CASE_NOTE_TYPES[seed % ID_CASE_NOTE_TYPES.length],
+      date: iso(subDays(today, noteIndex * 21 + (seed % 5))),
+      body,
+    };
+  });
+}
+
+/**
+ * Attaches case notes to Idaho's cases. No state's backend sends them yet,
+ * so Colorado's cases keep none and its section stays hidden.
+ *
+ * @param caseDetail - The case to attach notes to.
+ * @param index - The case's position in the fixture list.
+ * @param stateCode - The tenant the case is built for.
+ */
+function withCaseNotes(
+  caseDetail: ParoleCase,
+  index: number,
+  stateCode: ParoleFixtureStateCode,
+): ParoleCase {
+  if (stateCode !== "US_ID" || caseDetail.caseNotes) return caseDetail;
+  return { ...caseDetail, caseNotes: buildIdCaseNotes(index, new Date()) };
+}
+
 function buildParoleCasesFixture(
   stateCode: ParoleFixtureStateCode,
 ): Record<string, ParoleCase> {
@@ -2039,7 +2119,14 @@ function buildParoleCasesFixture(
         return buildGenericCaseProfile(hearing, index, stateCode);
       })();
 
-      return [hearing.docId, withAssessmentLevels(caseDetail, stateCode)];
+      return [
+        hearing.docId,
+        withCaseNotes(
+          withAssessmentLevels(caseDetail, stateCode),
+          index,
+          stateCode,
+        ),
+      ];
     }),
   );
 }

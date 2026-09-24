@@ -20,12 +20,12 @@ import styled from "styled-components";
 
 import { Icon, palette, typography } from "~design-system";
 
-import { formatWorkflowsDate } from "../../../../utils";
-import { DialogModal } from "../../../DialogModal";
-import { RecentCaseNote } from "./useRecentCaseNotes";
+import { formatWorkflowsDate } from "../../utils";
+import { DialogModal } from "../DialogModal";
+import { CaseNote } from "./types";
 
 /**
- * Detail modal for a single recent case note. Wraps the repo's `DialogModal`
+ * Detail modal for a single case note. Wraps the repo's `DialogModal`
  * primitive — adjusting width + padding to match Figma node 7615-2763 — and
  * renders the source label, date, and full body text. Closing the modal is
  * handled by `onRequestClose` (backdrop click, ESC, and the explicit X button
@@ -98,19 +98,19 @@ const NoteBody = styled.div`
 
 type Props = {
   isOpen: boolean;
-  note: RecentCaseNote | undefined;
+  note: CaseNote | undefined;
   onRequestClose: () => void;
 };
 
-export function RecentCaseNoteModal({ isOpen, note, onRequestClose }: Props) {
+export function CaseNoteModal({ isOpen, note, onRequestClose }: Props) {
   return (
     <StyledDialogModal
       isOpen={isOpen}
       onRequestClose={onRequestClose}
-      aria={{ labelledby: "recent-case-note-modal-title" }}
+      aria={{ labelledby: "case-note-modal-title" }}
     >
       <ModalHeader>
-        <ModalTitle id="recent-case-note-modal-title">Case Note</ModalTitle>
+        <ModalTitle id="case-note-modal-title">Case Note</ModalTitle>
         <CloseButton onClick={onRequestClose} aria-label="Close">
           <Icon kind="Close" size={20} />
         </CloseButton>

@@ -20,10 +20,18 @@ import styled from "styled-components";
 
 import { palette, typography } from "~design-system";
 
-type CasePlanPaginationProps = {
+type PaginationProps = {
+  /** Zero-indexed. */
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  /**
+   * Replaces the default "<page> of <total pages>" counter. Pass it where the
+   * page number is not what the reader counts
+   *
+   * Example: The US_ID parole board counts notes, and shows "1-10 of 32".
+   */
+  summary?: string;
 };
 
 const PaginationRow = styled.div`
@@ -68,10 +76,16 @@ const PaginationButton = styled.button`
   }
 `;
 
-export const CasePlanPagination: React.FC<CasePlanPaginationProps> = ({
+/**
+ * First/previous/next/last controls with a counter, rendered only when there
+ * is more than one page. The caller owns the paging state and slices its own
+ * data; this renders the controls alone.
+ */
+export const Pagination: React.FC<PaginationProps> = ({
   currentPage,
   totalPages,
   onPageChange,
+  summary,
 }) => {
   if (totalPages <= 1) {
     return null;
@@ -83,7 +97,7 @@ export const CasePlanPagination: React.FC<CasePlanPaginationProps> = ({
   return (
     <PaginationRow>
       <PaginationText>
-        {currentPage + 1} of {totalPages}
+        {summary ?? `${currentPage + 1} of ${totalPages}`}
       </PaginationText>
       <PaginationButtons>
         <PaginationButton

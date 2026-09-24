@@ -119,17 +119,13 @@ describe("UsIdDisciplinaryReportsSection", () => {
       record({ violation: "Ancient", date: iso(subYears(new Date(), 5)) }),
     ]);
 
-    expect(
-      screen.getByText("No DORs in the last 3 years."),
-    ).toBeInTheDocument();
+    expect(screen.getByText("No DORs in the last 3 years")).toBeInTheDocument();
   });
 
   it("shows the same empty state when there are no reports at all", () => {
     renderSection([]);
 
-    expect(
-      screen.getByText("No DORs in the last 3 years."),
-    ).toBeInTheDocument();
+    expect(screen.getByText("No DORs in the last 3 years")).toBeInTheDocument();
   });
 
   it("renders both reports when two share a date and a violation", () => {

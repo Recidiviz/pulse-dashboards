@@ -21,6 +21,7 @@ import type { ParoleConfig } from "../../../models/types";
 import { SectionCardHeader } from "../../../SectionCard";
 import { PaddedSectionCardBody } from "../PaddedSectionCardBody";
 import { SectionCard, SectionStack } from "../shared";
+import { UsIdCaseNotesSection } from "./UsIdCaseNotesSection";
 import { UsIdDisciplinaryReportsSection } from "./UsIdDisciplinaryReportsSection";
 import { UsIdHealthAndAssessmentsSection } from "./UsIdHealthAndAssessmentsSection";
 import { UsIdProgrammingSection } from "./UsIdProgrammingSection";
@@ -28,8 +29,6 @@ import { UsIdProgrammingSection } from "./UsIdProgrammingSection";
 /**
  * US_ID's Institutional History card. The V1 design folds what were four
  * separate cards into this one, as subsections.
- *
- * Case Notes joins the subsections below in its own ticket (OBT-50423).
  *
  * @param caseDetail - The case whose institutional record to show.
  * @param config - Idaho's paroleConfig, for its conduct classification colors
@@ -57,6 +56,7 @@ export function UsIdInstitutionalHistorySection({
               config.conductHistoryConfig.classificationColors
             }
           />
+          <UsIdCaseNotesSection caseNotes={caseDetail.caseNotes} />
           <UsIdHealthAndAssessmentsSection
             riskAssessments={caseDetail.riskAssessments}
             riskAndNeedsFactors={caseDetail.riskAndNeedsFactors}

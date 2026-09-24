@@ -36,6 +36,7 @@ import {
   MutedText,
   partitionConductHistoryByRecency,
   SectionStack,
+  SubsectionCaption,
   SubsectionTitle,
   toSafeDate,
 } from "../shared";
@@ -44,13 +45,6 @@ import { UsIdDisciplinaryReportModal } from "./UsIdDisciplinaryReportModal";
 // Reports older than this are left out entirely; Idaho's design has no "see
 // older" affordance, unlike Colorado's conduct history.
 export const US_ID_DOR_VISIBLE_YEARS = 3;
-
-const SubsectionCaption = styled.div`
-  ${typography.Sans14}
-  color: ${palette.slate70};
-  margin-top: -${rem(spacing.sm)};
-  margin-bottom: ${rem(spacing.md)};
-`;
 
 const ReportCard = styled.button.attrs({ type: "button" })`
   cursor: pointer;
@@ -137,7 +131,7 @@ export function UsIdDisciplinaryReportsSection({
       <SubsectionTitle>Disciplinary Offense Reports (DOR)</SubsectionTitle>
       <SubsectionCaption>
         {recentRecords.length === 0
-          ? `No DORs in the last ${US_ID_DOR_VISIBLE_YEARS} years.`
+          ? `No DORs in the last ${US_ID_DOR_VISIBLE_YEARS} years`
           : `Showing all DORs from the last ${US_ID_DOR_VISIBLE_YEARS} years`}
       </SubsectionCaption>
       {recentRecords.length > 0 && (

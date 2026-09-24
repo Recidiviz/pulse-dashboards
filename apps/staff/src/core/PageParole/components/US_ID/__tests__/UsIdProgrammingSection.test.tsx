@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 
 import { ParoleDocProgram, ParoleEdovoProgram } from "~datatypes";
 
@@ -221,7 +221,22 @@ describe("UsIdProgrammingSection", () => {
   it("shows an empty state when the resident has no programs", () => {
     renderSection([], []);
 
-    expect(screen.getByText("No programs on record.")).toBeInTheDocument();
+    expect(screen.getByText("No programs on record")).toBeInTheDocument();
     expect(screen.queryByRole("table")).not.toBeInTheDocument();
+  });
+
+  it("pages ten programs at a time", () => {
+    renderSection(
+      Array.from({ length: 23 }, (_, i) =>
+        docProgram({ name: `Program ${i}`, startDate: `2020-01-${i + 1}` }),
+      ),
+    );
+
+    expect(renderedRows()).toHaveLength(10);
+    expect(screen.getByText("1-10 of 23")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByLabelText("Last page"));
+    expect(renderedRows()).toHaveLength(3);
+    expect(screen.getByText("21-23 of 23")).toBeInTheDocument();
   });
 });

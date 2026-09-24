@@ -21,9 +21,9 @@ import React, { useEffect } from "react";
 import { UsMoClientMetadata } from "~datatypes";
 
 import { Client } from "../../../../WorkflowsStore";
+import { Pagination } from "../../../Pagination/Pagination";
 import { ModuleHeader, ModuleHeading } from "../shared/styles";
 import { CasePlanList } from "./CasePlanList";
-import { CasePlanPagination } from "./CasePlanPagination";
 import { paginateCasePlanGoals } from "./caseplanUtils";
 import { OrasAssessmentCard } from "./OrasAssessmentCard";
 
@@ -41,7 +41,7 @@ type UsMoCasePlanningViewProps = {
  * Presentational "Case Planning" module for the US_MO supervision profile:
  * a section heading, the ORAS assessment card, the case-plan goal list, and
  * a pagination control. `casePlan` here is already the current page's slice;
- * `currentPage`/`totalPages`/`onPageChange` drive the `CasePlanPagination`
+ * `currentPage`/`totalPages`/`onPageChange` drive the `Pagination`
  * control below it.
  *
  * Pure / data-in; the `observer` wrapper below reads off the `Client` instance.
@@ -65,7 +65,7 @@ export const UsMoCasePlanningView: React.FC<UsMoCasePlanningViewProps> = ({
         lastUpdated={lastUpdated}
       />
       <CasePlanList casePlan={casePlan} now={now} />
-      <CasePlanPagination
+      <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={onPageChange}

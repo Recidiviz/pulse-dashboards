@@ -264,6 +264,14 @@ export const paroleOffenseHistorySchema = z.object({
 });
 export type ParoleOffenseHistory = z.infer<typeof paroleOffenseHistorySchema>;
 
+export const paroleCaseNoteSchema = z.object({
+  id: z.string(),
+  type: z.string(),
+  date: z.string(),
+  body: z.string(),
+});
+export type ParoleCaseNote = z.infer<typeof paroleCaseNoteSchema>;
+
 export const paroleCaseSchema = z.object({
   // See paroleHearingSchema above for the docId/displayId split.
   docId: z.string(),
@@ -301,5 +309,8 @@ export const paroleCaseSchema = z.object({
   // The resident's latest health/risk-and-needs assessment from eOMIS -- only
   // the most recent snapshot is tracked (no history), unlike riskAssessments.
   riskAndNeedsFactors: z.array(paroleRiskNeedFactorSchema),
+  // Absent until the backend carries case notes -- no state sends them yet,
+  // so the section renders only where there is something to show.
+  caseNotes: z.array(paroleCaseNoteSchema).optional(),
 });
 export type ParoleCase = z.infer<typeof paroleCaseSchema>;

@@ -22,22 +22,23 @@ import { useState } from "react";
 import { formatWorkflowsDate } from "../../../../utils";
 import { Client } from "../../../../WorkflowsStore";
 import {
-  CardFrame,
-  ModuleEmptyState,
-  ModuleHeader,
-  ModuleHeading,
-} from "../shared/styles";
-import { RecentCaseNoteModal } from "./RecentCaseNoteModal";
-import {
-  CardSubtitle,
+  CaseNote,
+  CaseNoteModal,
   NoteBody,
   NoteDate,
   NoteMeta,
   NoteRow,
   NotesList,
   Source,
-} from "./RecentCaseNotes.styled";
-import { RecentCaseNote, useRecentCaseNotes } from "./useRecentCaseNotes";
+} from "../../../CaseNotes";
+import {
+  CardFrame,
+  ModuleEmptyState,
+  ModuleHeader,
+  ModuleHeading,
+} from "../shared/styles";
+import { CardSubtitle } from "./RecentCaseNotes.styled";
+import { useRecentCaseNotes } from "./useRecentCaseNotes";
 
 /**
  * Word-count thresholds for the card-row body preview. Notes longer than
@@ -60,7 +61,7 @@ export function truncateNoteBody(body: string): string {
 
 type Props = { client: Client };
 
-type ViewProps = { notes: RecentCaseNote[] };
+type ViewProps = { notes: CaseNote[] };
 
 /**
  * Presentation-only card. Takes notes directly so it can be exercised with
@@ -70,7 +71,7 @@ type ViewProps = { notes: RecentCaseNote[] };
 export const RecentCaseNotesView = function RecentCaseNotesView({
   notes,
 }: ViewProps) {
-  const [selectedNote, setSelectedNote] = useState<RecentCaseNote | undefined>(
+  const [selectedNote, setSelectedNote] = useState<CaseNote | undefined>(
     undefined,
   );
 
@@ -102,7 +103,7 @@ export const RecentCaseNotesView = function RecentCaseNotesView({
           </>
         )}
       </CardFrame>
-      <RecentCaseNoteModal
+      <CaseNoteModal
         isOpen={selectedNote !== undefined}
         note={selectedNote}
         onRequestClose={() => setSelectedNote(undefined)}
@@ -113,7 +114,7 @@ export const RecentCaseNotesView = function RecentCaseNotesView({
 
 /**
  * US_MO "Recent Case Notes" card. Lists up to 3 most recent case notes; each
- * row click-opens a `RecentCaseNoteModal` with the full body. The card lives
+ * row click-opens a `CaseNoteModal` with the full body. The card lives
  * in the right column of the US_MO Workflows client profile, gated by the
  * `recentCaseNotes` feature variant (wired in the parent `FullProfile`).
  */
