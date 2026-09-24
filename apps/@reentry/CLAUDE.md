@@ -24,7 +24,7 @@ brew install cairo pango glib gobject-introspection gdk-pixbuf uv
 nx docker-up @reentry/backend
 
 # Run migrations
-nx migrate @reentry/backend
+nx migrate-db @reentry/backend
 
 # Seed database
 nx seed-db @reentry/backend
@@ -72,7 +72,7 @@ Some manage commands have dedicated nx targets (run from the repo root): `nx see
 
 ```bash
 # Apply migrations
-nx migrate @reentry/backend
+nx migrate-db @reentry/backend
 ```
 
 The following have no nx target — run them from `apps/@reentry/backend`:

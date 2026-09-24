@@ -34,10 +34,8 @@ nx dev-be staff
 nx test staff
 nx test @sentencing/server
 
-# Run a specific test file
-nx test staff --testPathPattern="MyComponent.test"
-nx test  @reentry/frontend -- MyComponent.test.ts
-
+# Run a specific test file (args after -- go to the test runner)
+nx test @reentry/frontend -- MyComponent.test.ts
 
 # Run E2E tests (Playwright)
 nx e2e staff
@@ -56,11 +54,7 @@ nx test-e2e staff --configuration=lantern   # or login, or userAccess
 
 ### Linting and Type Checking
 
-```bash
-nx lint staff
-nx lint staff --fix
-nx typecheck staff
-```
+`lint` and `typecheck` are inferred targets (`nx lint staff --fix`, `nx typecheck staff`). The `pass-ci` skill runs the CI-equivalent checks across affected projects.
 
 ### SOPS Environment Variable Loading
 
@@ -99,10 +93,7 @@ nx run @sentencing/prisma:prisma-seed
 
 ### Creating New Libraries
 
-```bash
-# Use the repo plugin for new libraries
-nx generate ~repo:lib [my-library]
-```
+Use `nx generate ~repo:lib [my-library]`; README.md has the details.
 
 ## Architecture
 
@@ -112,7 +103,7 @@ nx generate ~repo:lib [my-library]
   - `staff/` - Main Recidiviz Staff Dashboard (React SPA with Node backend)
   - `jii/` - Justice Impacted Individuals webapp (React, Firebase Functions backend)
   - `@reentry/` - Reentry app (Next.js frontend, Python FastAPI backend)
-  - `@sentencing/` - PSI/Sentencing tools (React frontend in staff, Fastify/tRPC server)
+  - `@sentencing/` - PSI/Sentencing tools (React frontend in `libs/sentencing-client/`, Fastify/tRPC server)
   - `@meetings/` - Meeting Assistant (React Native/Expo mobile app)
   - `@jii-texting/` - JII Texting service (Fastify server)
   - `staff-server/` - Legacy Node/Express backend for the staff dashboard (Pathways/Lantern metrics)
@@ -128,20 +119,14 @@ nx generate ~repo:lib [my-library]
 
 ### Path Aliases
 
-Import paths use `~` prefix for workspace libraries (configured in tsconfig.base.json):
-
-```typescript
-import { something } from "~datatypes";
-import { Component } from "~@jii/common-ui";
-import { prisma } from "~@sentencing/prisma";
-```
+Import paths use a `~` prefix for workspace libraries (e.g. `~datatypes`, `~@sentencing/prisma`); tsconfig.base.json defines them.
 
 ### Key Technology Patterns
 
 - **State management**: MobX for staff app, React Query for newer apps
 - **API layers**: tRPC for type-safe APIs (sentencing, meetings, reentry), REST for legacy
-- **Styling**: styled-components (React), Tailwind CSS (Next.js)
-- **Testing**: Vitest for unit tests, Playwright for E2E
+- **Styling**: styled-components (React), Tailwind CSS (Next.js and `apps/jii`)
+- **Testing**: Vitest for unit tests, Playwright for E2E. `@nx/jest` is still registered in nx.json for `@meetings/app` only, so Jest flags such as `--testPathPattern` do not work elsewhere
 - **Database**: Prisma ORM with PostgreSQL (Cloud SQL)
 - **Auth**: Auth0 with separate staging/production tenants
 
@@ -172,27 +157,7 @@ Prefer using ~design-system when components are available in both locations.
 
 ## @reentry Backend (Python)
 
-The reentry backend uses Python with FastAPI. Commands run from `apps/@reentry/backend`:
-
-```bash
-# Install system deps (macOS)
-brew install cairo pango glib gobject-introspection gdk-pixbuf uv
-
-# Start services
-cd apps/@reentry && docker compose up
-
-# Run migrations
-cd backend && uv run alembic upgrade head
-
-# Seed database
-uv run python -m app.manage seed-db
-
-# Run backend
-uv run fastapi dev
-
-# Run tests
-uv run pytest
-```
+Backend tasks are nx targets (`nx <target> @reentry/backend`, e.g. `dev`, `migrate-db`, `seed-db`, `test`). See `apps/@reentry/CLAUDE.md` for setup and details.
 
 ## Testing Patterns
 
@@ -242,23 +207,4 @@ declared plugin locally, set it to `false` under `enabledPlugins` in `.claude/se
 
 ### License Headers
 
-When creating new files, use the current year as $CURRENT_YEAR in the license header:
-
-```typescript
-// Recidiviz - a data platform for criminal justice reform
-// Copyright (C) $CURRENT_YEAR Recidiviz, Inc.
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
-// =============================================================================
-```
+Every source file needs the GPL license header. The `notice/notice` lint rule in `eslint.config.mjs` enforces it and fills in the current year, so run `nx lint <project> --fix` on new files instead of writing the header by hand.
