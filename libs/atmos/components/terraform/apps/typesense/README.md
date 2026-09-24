@@ -99,6 +99,108 @@ sops --encrypt --in-place secrets/recidiviz-dashboard-staging.enc.yaml
 
 Commit the encrypted files; never commit plaintext.
 
+### The write-scoped key used by sync-fn and backfill-fn
+
+`apps/typesense-sync` and `apps/typesense-backfill` write to the cluster with a
+second, narrower key: `typesense-write-api-key`. That secret is **not** owned
+here. It lives in the [`secrets`](../../secrets/) component's SOPS file, keyed by
+the same name. This section covers minting and rotating it, because you need the
+admin key above in order to do either.
+
+The two keys are not interchangeable. The admin key is the operator's root
+credential and goes straight into the cluster pod through the TypesenseCluster
+CR. The write key carries only the document actions the two functions need.
+Neither is the search-only parent key behind the staff app's search bar, which
+lives in [libs/@typesense/client](../../../../../@typesense/client/).
+
+#### 1. Mint
+
+Put the admin key in an env var. Never echo it:
+
+```bash
+export TS_ADMIN_KEY="$(sops -d libs/atmos/components/terraform/apps/typesense/secrets/recidiviz-dashboard-staging.enc.yaml | yq '.typesense_admin_api_key')"
+```
+
+`documents:*` covers `import`, `upsert` and `delete`. `collections:*` covers
+`create`, because backfill-fn creates a collection it cannot find. Scope the key
+to the exact collection set, which keeps the blast radius narrow if it leaks:
+
+```bash
+curl -fsS "https://typesense-staging.recidiviz.org/keys" \
+  -H "X-TYPESENSE-API-KEY: $TS_ADMIN_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "description": "typesense write key (staging)",
+    "actions": ["documents:*", "collections:*"],
+    "collections": ["clients", "residents", "supervisionStaff", "incarcerationStaff", "locations"]
+  }' | jq
+```
+
+The response holds the **only** copy of the key in `value`. Capture it before it
+disappears — later reads of `/keys` return `value_prefix` only.
+
+> ⚠️ A `documents:search`-only key looks healthy and does nothing. backfill-fn
+> logs `Done backfilling` at once, and the cluster pod logs show
+> `Scoped API keys can only be used for searches.` Check the action scope before
+> you encrypt.
+
+#### 2. Test the scope before you encrypt
+
+Call the exact endpoint backfill-fn calls. `{"success":true}` means the scope is
+right for the bulk-import path:
+
+```bash
+curl -i -X POST "https://typesense-staging.recidiviz.org/collections/clients/documents/import?action=upsert" \
+  -H "X-TYPESENSE-API-KEY: <new-key-value>" \
+  -H "Content-Type: text/plain" \
+  --data $'{"id":"key_check_doc","stateCode":"US_TEST","personExternalId":"x","personName":{"givenNames":"x","surname":"x"}}'
+```
+
+A 403 means the actions are too narrow — re-mint wider. A 401 means the value is
+wrong. Then remove the test document:
+
+```bash
+curl -fsS -X DELETE "https://typesense-staging.recidiviz.org/collections/clients/documents/key_check_doc" \
+  -H "X-TYPESENSE-API-KEY: $TS_ADMIN_KEY"
+```
+
+#### 3. Encrypt and apply
+
+```bash
+sops libs/atmos/components/terraform/secrets/sops/recidiviz-dashboard-staging.enc.yaml
+# Set:
+#   typesense-write-api-key: <value>
+```
+
+The secret's name in Secret Manager **is** that YAML key, so do not rename it
+without also changing `typesense_api_key_secret_id` on both consumers.
+
+```bash
+cd libs/atmos
+atmos terraform apply apps/typesense-api-key -s recidiviz-dashboard-staging--typesense
+```
+
+`apps/typesense-api-key` is this stack's alias for the shared
+[`secrets`](../../secrets/) component, set through `metadata.component`.
+
+Both functions mount the secret at `version = "latest"`, so their next revision
+picks up the new value.
+
+#### 4. Revoke the old key
+
+Only once you have confirmed sync and backfill are healthy on the new one:
+
+```bash
+# Find its id by matching value_prefix:
+curl -fsS "https://typesense-staging.recidiviz.org/keys" \
+  -H "X-TYPESENSE-API-KEY: $TS_ADMIN_KEY" \
+  | jq '.keys[] | {id, description, value_prefix}'
+
+# Delete:
+curl -fsS -X DELETE "https://typesense-staging.recidiviz.org/keys/<id>" \
+  -H "X-TYPESENSE-API-KEY: $TS_ADMIN_KEY"
+```
+
 ## Deploy
 
 This component is applied in **two phases**. The `kubernetes`/`helm`/`kubectl` providers are configured

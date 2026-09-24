@@ -9,6 +9,7 @@ settings:
     product: typesense
     location: us-central1
     fallback_location: us-east1
+    secrets_filename: recidiviz-dashboard-staging.enc.yaml
 
 vars:
   project_id: "{{ .settings.context.project_id }}"
@@ -110,39 +111,34 @@ components:
           search_latency_alert_ms: 750
           pending_writes_alert: 200
 
-    # Firebase extension that mirrors Firestore document changes into the Typesense
-    # cluster above. Lives in the same stack file so a typesense rollout (cluster
-    # + sync pipeline) is a single atmos apply.
-    apps/firestore-typesense-search:
+    # The shared secrets component, which maps every key in the SOPS file to a
+    # Secret Manager secret of the same name. Here that is one key,
+    # typesense-write-api-key, which apps/typesense-backfill and apps/typesense-sync
+    # below bind an accessor role against and mount as TYPESENSE_API_KEY. Apply this
+    # before either of them: their bindings fail if the secret does not exist.
+    #
+    # Not the cluster bootstrap admin key. That one is the operator's root
+    # credential, and apps/typesense wires it into the cluster pod from its own SOPS
+    # file. Minting and rotating this key are documented there too, because you need
+    # the admin key to do either.
+    apps/typesense-api-key:
+      metadata:
+        component: secrets
       vars:
-        # Unpinned — the REST API's CREATE endpoint only accepts versions in
-        # PUBLISHED state. The publisher uses `-rc.X` suffixes for RCs which
-        # 404 on CREATE (even though they install via the firebase CLI). With
-        # no pin, the API picks the latest PUBLISHED version, which currently
-        # lands us on the v2.x line. Revisit when 3.x stabilizes.
-        extension_ref: typesense/firestore-typesense-search
+        sops_file: "sops/{{ .settings.context.secrets_filename }}"
 
-        # Cloud Functions v2 region for the extension's triggers. Should sit close
-        # to the Firestore database location.
+        # Replication region for every secret in that file. Org policy forbids
+        # "global" replication, so this must be a single US region rather than
+        # "auto". One replica is enough: a lost replica is recoverable from the
+        # SOPS value.
         location: us-east1
 
-        # Project Firestore location for recidiviz-dashboard-staging. Single
-        # region here; in production this is a multi-region (nam5).
-        firestore_database_location: us-east1
-
-        # Matches the typesense component's hostname above.
-        typesense_host: typesense-staging.recidiviz.org
-
-        collections:
-          - name: clientUpdatesV2
-            fields:
-              - preferredName
-              - stateCode
+        deletion_policy: DELETE
 
     # Custom Cloud Function that bulk-imports the once-daily ETL'd collections
-    # into Typesense. Sits alongside the extension above — the extension handles
-    # realtime indexOnWrite for collections in its FIRESTORE_COLLECTION_PATH,
-    # this function handles batch sync for collections that aren't in that list.
+    # into Typesense. Pairs with apps/typesense-sync below: this one handles batch
+    # sync for the collections the ETL rewrites wholesale, that one handles the
+    # realtime patches a user writes.
     # See the component README for the why/how:
     # libs/atmos/components/terraform/apps/typesense-backfill/README.md
     apps/typesense-backfill:
@@ -186,9 +182,8 @@ components:
     # Firestore-triggered Cloud Functions that patch user-written updates onto
     # the Typesense record they update — preferredName onto clients/residents,
     # officer-action fields onto opportunities. Partial updates, so they don't
-    # clobber the ETL fields the backfill below owns. Handles what the extension
-    # above cannot: composing a doc id from the ancestor path, and writing part
-    # of a document rather than all of it.
+    # clobber the ETL fields the backfill above owns. Composes a doc id from the
+    # ancestor path, and writes part of a document rather than all of it.
     # See the component README for the full why:
     # libs/atmos/components/terraform/apps/typesense-sync/README.md
     apps/typesense-sync:

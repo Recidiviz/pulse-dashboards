@@ -1,12 +1,10 @@
 # =============================================================================
 # typesense-backfill Cloud Function (v2, HTTP-triggered).
 #
-# Bulk-imports a configured set of Firestore collections into Typesense. The
-# upstream firestore-typesense-search extension's `backfill` function (v2.x line)
-# can't selectively skip collections — it backfills every path in its config.
-# This standalone function lives outside the extension so we can control which
-# collections backfill on cadence (daily / post-ETL) vs which sync in realtime
-# via the extension's indexOnWrite trigger.
+# Bulk-imports a configured set of Firestore collections into Typesense. Which
+# collections it covers is config, not convention: a collection the ETL rewrites
+# wholesale belongs here, and one a user writes a field at a time belongs in
+# apps/typesense-sync.
 #
 # Source lives in the nx workspace at apps/@typesense/backfill-fn/ (TypeScript,
 # tests, shared types from ~@typesense/client). It's bundled to a single
@@ -83,16 +81,17 @@ resource "google_service_account" "backfill" {
   description  = "Runs scheduled Firestore→Typesense bulk imports for batch-sync collections."
 }
 
-# Read Firestore documents. `datastore.user` is what the extension also requires;
-# matching the role here keeps the two functions interchangeable in audits.
+# Read Firestore documents. datastore.user is the same role apps/typesense-sync
+# takes, which keeps the two functions interchangeable in audits.
 resource "google_project_iam_member" "backfill_datastore_user" {
   project = var.project_id
   role    = "roles/datastore.user"
   member  = "serviceAccount:${google_service_account.backfill.email}"
 }
 
-# Access the Typesense API key secret (owned by the firestore-typesense-search
-# component — reused here so both jobs rotate together).
+# Access the Typesense API key secret. The secrets component owns it, under the
+# stack entry apps/typesense-api-key, and must be applied first. Both writers
+# share one key so a rotation is one key, not two.
 resource "google_secret_manager_secret_iam_member" "backfill_secret_accessor" {
   project   = var.project_id
   secret_id = var.typesense_api_key_secret_id

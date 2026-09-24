@@ -28,7 +28,7 @@ variable "workspace_root" {
 variable "region" {
   type        = string
   default     = "us-east1"
-  description = "Cloud Functions v2 region. Match the firestore-typesense-search extension's region so traffic stays local."
+  description = "Cloud Functions v2 region. Match the Firestore database's region so traffic stays local. Mirrors apps/typesense-sync."
 }
 
 variable "function_name" {
@@ -74,12 +74,14 @@ variable "typesense_protocol" {
 
 variable "typesense_api_key_secret_id" {
   type        = string
-  default     = "ext-firestore-typesense-search-TYPESENSE_API_KEY"
+  default     = "typesense-write-api-key"
   description = <<-EOT
-    Secret Manager secret ID of the Typesense write-scoped API key. Defaults to the same secret
-    managed by apps/firestore-typesense-search — both jobs need identical scope, so we reuse one
-    rather than rotating two in parallel. Only grants the backfill SA accessor on it; the secret
-    itself is still owned by the sibling component.
+    Secret Manager secret ID of the Typesense write-scoped API key. The secrets component owns the
+    secret and its version, under the stack entry apps/typesense-api-key, and must be applied
+    first; this component only grants the backfill SA accessor on it. That component names each
+    secret after its key in the SOPS file, so this default is also the YAML key. This function and
+    the sync functions need identical scope, so they share one key rather than rotating two in
+    parallel.
   EOT
 }
 

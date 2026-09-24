@@ -20,11 +20,11 @@
 // onSnapshot and mirrors them to Typesense in real time. Brought up alongside
 // `nx offline staff`.
 //
-// Stand-in for the production Firestore→Typesense extension (which is
-// HTTPS-only and can't talk to local HTTP Typesense). The watcher's behavior
-// will eventually match the extension's for the non-opportunity collections;
-// for opportunities, it doubles as a prototype for the custom Cloud Function
-// that handles discriminator stamping in production.
+// Stand-in for apps/@typesense/sync-fn, the production Firestore→Typesense
+// path (which is HTTPS-only and can't talk to local HTTP Typesense). The
+// watcher's behavior tracks sync-fn's for the non-opportunity collections; for
+// opportunities it also does the discriminator stamping that sync-fn does in
+// production.
 
 import type { Firestore } from "@google-cloud/firestore";
 import type { Client as TypesenseClient } from "typesense";

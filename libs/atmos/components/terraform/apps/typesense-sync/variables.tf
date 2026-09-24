@@ -72,13 +72,14 @@ variable "typesense_protocol" {
 
 variable "typesense_api_key_secret_id" {
   type        = string
-  default     = "ext-firestore-typesense-search-TYPESENSE_API_KEY"
+  default     = "typesense-write-api-key"
   description = <<-EOT
-    Secret Manager secret ID of the Typesense write-scoped API key. Defaults to the same secret
-    managed by apps/firestore-typesense-search — the extension, the backfill function and these
-    sync functions all need the same document write/delete scope, so they share one key rather
-    than rotating three in parallel. Only grants the sync SA accessor on it; the secret itself is
-    still owned by the firestore-typesense-search component.
+    Secret Manager secret ID of the Typesense write-scoped API key. The secrets component owns the
+    secret and its version, under the stack entry apps/typesense-api-key, and must be applied
+    first; this component only grants the sync SA accessor on it. That component names each secret
+    after its key in the SOPS file, so this default is also the YAML key. The backfill function and
+    these sync functions need the same document write and delete scope, so they share one key
+    rather than rotating two in parallel.
   EOT
 }
 

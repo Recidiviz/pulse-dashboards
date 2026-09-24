@@ -12,15 +12,15 @@ Source lives at [`apps/@typesense/sync-fn`](../../../../../../apps/@typesense/sy
 
 ## Why this exists instead of the extension
 
-The sibling [`apps/firestore-typesense-search`](../firestore-typesense-search/)
-component installs the upstream Firebase extension, which still handles the
-standalone `clientUpdatesV2` collection. It **cannot** do what this component
-does, for two reasons:
+Realtime sync used to run through the upstream `firestore-typesense-search`
+Firebase extension, installed by an `apps/firestore-typesense-search` component.
+That component is retired (OBT-51845). The extension **could not** do what this
+component does, for two reasons:
 
-- It sets the Typesense document id to `snapshot.id` verbatim. A subcollection
+- It set the Typesense document id to `snapshot.id` verbatim. A subcollection
   doc's id is just the opportunity type, so every client's `usTnExpiration`
   update would map to one Typesense document.
-- It writes whole documents. These fields live alongside ETL-owned fields on
+- It wrote whole documents. These fields live alongside ETL-owned fields on
   `opportunities` and `clients`/`residents`, so the write has to be a partial
   update or the ETL data is destroyed on every officer action.
 
@@ -64,8 +64,8 @@ with the elapsed time. Field names only — never values.
 **`firestore_database_location` is the Eventarc trigger region, not the function
 region.** It must match where the Firestore database lives: `us-east1` in
 staging, `nam5` in production. A mismatch creates the trigger successfully and
-then silently never fires — the same failure mode documented on the extension
-component's `firestore_database_location`.
+then silently never fires. `apps/typesense-backfill` takes the same variable for
+the same reason.
 
 **The path patterns are duplicated in code.** `local.client_update_pattern` and
 `local.opportunity_update_pattern` in `main.tf` must stay identical to
@@ -73,10 +73,12 @@ component's `firestore_database_location`.
 `apps/@typesense/sync-fn/src/sync.ts`. Terraform binds the trigger;
 firebase-functions resolves the delivered event against its own copy.
 
-**The API key is shared with the extension and the backfill.** All three read
-`ext-firestore-typesense-search-TYPESENSE_API_KEY`, owned by the
-`firestore-typesense-search` component and sourced from its SOPS file. Rotating
-it means re-applying that component and restarting consumers — see its README.
+**The API key is shared with the backfill.** Both read `typesense-write-api-key`,
+owned by the [`secrets`](../../secrets/) component, which both stacks alias as the
+`apps/typesense-api-key` entry.
+Minting and rotating it are documented in
+[apps/typesense](../typesense/#the-write-scoped-key-used-by-sync-fn-and-backfill-fn),
+alongside the cluster admin key you need in order to mint it.
 
 **Retries are on.** `RETRY_POLICY_RETRY` means a failed invocation is redelivered.
 The handlers are idempotent (partial updates of a fixed field set, 404-tolerant),

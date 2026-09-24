@@ -1,22 +1,24 @@
 # apps/typesense-backfill
 
 Cloud Function v2 (HTTP-triggered) that bulk-imports a configured set of Firestore
-collections into Typesense. Lives alongside the firestore-typesense-search
-extension; the two are complementary:
+collections into Typesense. Pairs with [`apps/typesense-sync`](../typesense-sync/);
+the two are complementary:
 
-|                  | extension (`apps/firestore-typesense-search`)               | this component                                  |
-| ---------------- | ----------------------------------------------------------- | ----------------------------------------------- |
-| Trigger          | Firestore doc writes (Eventarc)                             | HTTP (manual / Cloud Scheduler / Pub/Sub later) |
-| Sync mode        | Realtime, per-doc                                           | Batch, per-collection                           |
-| Function name(s) | `ext-firestore-typesense-search-indexOnWrite` + `-backfill` | `typesense-backfill`                            |
-| Auth             | Per-instance SA, GSM secret-bound                           | Standalone SA, same GSM secret (reused)         |
+|                  | [`apps/typesense-sync`](../typesense-sync/)                   | this component                                  |
+| ---------------- | ------------------------------------------------------------- | ----------------------------------------------- |
+| Trigger          | Firestore doc writes (Eventarc)                               | HTTP (manual / Cloud Scheduler / Pub/Sub later) |
+| Sync mode        | Realtime, per-doc                                             | Batch, per-collection                           |
+| Write shape      | Partial update of a fixed field set                           | Whole-document import of a collection           |
+| Function name(s) | `typesense-sync-client-update` + `-client-opportunity-update` | `typesense-backfill`                            |
+| Auth             | Standalone SA, shared GSM secret                              | Standalone SA, shared GSM secret                |
 
 We use this for collections that are ETL'd once per day (rewriting the entire collection)
 where per-doc realtime sync would be noisy and pointless — the same docs would be
-written hundreds of thousands of times in a short window. The extension's own
-backfill function can't be selectively run per collection on a schedule, so we
-keep these collections out of `apps/firestore-typesense-search`'s
-`FIRESTORE_COLLECTION_PATHS` entirely.
+written hundreds of thousands of times in a short window.
+
+Both components replaced the upstream `firestore-typesense-search` Firebase
+extension, retired in OBT-51845. Its own backfill function could not be run
+selectively per collection on a schedule, which is the gap this component fills.
 
 ## Source code
 
@@ -90,11 +92,12 @@ and an OIDC binding so the trigger can authenticate to the function.
 The function runs as a dedicated SA, `typesense-backfill@<project>.iam.gserviceaccount.com`, with:
 
 - `roles/datastore.user` — read access to all Firestore collections in the project
-- `roles/secretmanager.secretAccessor` on the Typesense API key secret (the same secret managed by [apps/firestore-typesense-search](../firestore-typesense-search/))
+- `roles/secretmanager.secretAccessor` on the Typesense API key secret, `typesense-write-api-key`, owned by the [`secrets`](../../secrets/) component (aliased in both stacks as `apps/typesense-api-key`)
 
-We reuse the extension's API key rather than minting a separate one — both functions
-need identical Typesense write scope, and rotating two parallel keys is more error-prone
-than rotating one.
+This function and the sync functions share one API key rather than minting two —
+both need identical Typesense write scope, and rotating two parallel keys is more
+error-prone than rotating one. Apply that component before this one; the accessor
+binding above fails if the secret is absent.
 
 ## Stack files
 

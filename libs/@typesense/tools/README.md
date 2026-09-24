@@ -53,11 +53,11 @@ Two modes:
 
 Both modes are idempotent: they drop the target collections before importing, so re-running gives a clean state.
 
-The watcher stands in for the production Firestore→Typesense extension, which is HTTPS-only and can't talk to local HTTP Typesense. The watcher also doubles as a prototype for the custom Cloud Function that production will need for opportunities (the extension doesn't support constant-field discriminator stamping).
+The watcher stands in for `apps/@typesense/sync-fn`, the production Firestore→Typesense path, which is HTTPS-only and can't talk to local HTTP Typesense. It also handles the constant-field discriminator stamping that opportunities need.
 
 ## Provisioning collections (initial bootstrap)
 
-Pre-create the Typesense collections from [`@typesense/client`'s schemas](../client/src/schemas/index.ts). The Firebase → Typesense extension requires collections to exist before sync starts, so this is the first step when standing up a new cluster:
+Pre-create the Typesense collections from [`@typesense/client`'s schemas](../client/src/schemas/index.ts). `sync-fn` patches existing documents and cannot create a collection, so this is the first step when standing up a new cluster:
 
 ```bash
 nx provision '@typesense/tools' -c staging

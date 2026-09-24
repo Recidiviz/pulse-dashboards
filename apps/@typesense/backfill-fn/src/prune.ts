@@ -194,8 +194,8 @@ export async function pruneStaleDocs(
       await client.collections(name).documents(id).delete();
       deleted += 1;
     } catch (err) {
-      // 404 = the doc is already gone (e.g. the extension's realtime delete
-      // trigger raced us). That's the desired end state, so don't count it as
+      // 404 = the doc is already gone (e.g. a concurrent prune or backfill run
+      // removed it first). That's the desired end state, so don't count it as
       // a failure — just move on.
       const httpStatus = (err as { httpStatus?: number }).httpStatus;
       if (httpStatus === 404) continue;

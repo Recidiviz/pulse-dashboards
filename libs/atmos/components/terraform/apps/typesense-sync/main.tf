@@ -14,11 +14,6 @@
 # partial updates (PATCH): an upsert would replace the whole document and wipe
 # the ETL-sourced fields that apps/typesense-backfill owns.
 #
-# The Firebase extension (sibling component apps/firestore-typesense-search)
-# can't do this. It sets the Typesense doc id to the Firestore doc id verbatim,
-# so every client's `usTnExpiration` update would collide on one document, and
-# it can only write whole documents.
-#
 # backfill-fn remains the authoritative writer: it reconciles the same fields
 # from Firestore on every run, so anything these functions miss is self-healing.
 #
@@ -110,8 +105,9 @@ resource "google_project_iam_member" "sync_run_invoker" {
   member  = "serviceAccount:${google_service_account.sync.email}"
 }
 
-# Access the Typesense API key secret (owned by the firestore-typesense-search
-# component — reused so all three writers rotate together).
+# Access the Typesense API key secret. The secrets component owns it, under the
+# stack entry apps/typesense-api-key, and must be applied first. Both writers
+# share one key so a rotation is one key, not two.
 resource "google_secret_manager_secret_iam_member" "sync_secret_accessor" {
   project   = var.project_id
   secret_id = var.typesense_api_key_secret_id
