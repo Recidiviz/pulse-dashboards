@@ -181,7 +181,10 @@
           "heading": "[US_MA]reentry.overview.questionnaireCta.reviewProfile.heading",
           "description": "[US_MA]reentry.overview.questionnaireCta.reviewProfile.description",
           "cta": "[US_MA]reentry.overview.questionnaireCta.reviewProfile.cta"
-        }
+        },
+        "loading": "[US_MA]reentry.overview.questionnaireCta.loading",
+        "loadError": "[US_MA]reentry.overview.questionnaireCta.loadError",
+        "retryCta": "[US_MA]reentry.overview.questionnaireCta.retryCta"
       },
       "resourceCategories": {
         "sectionLabel": "[US_MA]reentry.overview.resourceCategories.sectionLabel",

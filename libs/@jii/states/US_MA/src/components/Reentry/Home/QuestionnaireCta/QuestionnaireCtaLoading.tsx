@@ -15,33 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { User } from "lucide-react";
-import { useTypedParams } from "react-router-typesafe-routes/dom";
-
-import { GoLink } from "~@jii/common-ui";
-import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
+import { Loading } from "~design-system";
 
-import { QUESTIONNAIRE_STATUS_COPY } from "../../../ctaConfigs";
-import { Content, Description, Heading, Wrapper } from "./ReviewCard.styles";
+import { Wrapper } from "./QuestionnaireCta.styles";
 
-export const ReviewCard = () => {
+export const QuestionnaireCtaLoading = () => {
   const { t } = useUsMaTranslations();
-  const routeParams = useTypedParams(State.Resident);
-  const { reviewProfile } = QUESTIONNAIRE_STATUS_COPY.COMPLETED(t);
 
   return (
     <Wrapper>
-      <User size={20} />
-      <Content>
-        <Heading>{reviewProfile.heading}</Heading>
-        <Description>{reviewProfile.description}</Description>
-      </Content>
-      <GoLink
-        to={State.Resident.UsMaReentry.Questionnaire.buildPath(routeParams)}
-      >
-        {reviewProfile.cta}
-      </GoLink>
+      <Loading
+        message={t(($) => $.reentry.overview.questionnaireCta.loading)}
+      />
     </Wrapper>
   );
 };

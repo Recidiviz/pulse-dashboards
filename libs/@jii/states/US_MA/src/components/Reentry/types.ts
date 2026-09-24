@@ -41,9 +41,9 @@ export type ResourceCategoryConfig = {
 };
 
 export type ReentryQuestionnaireStatus =
-  | "notStarted"
-  | "inProgress"
-  | "completed";
+  | "NOT_STARTED"
+  | "IN_PROGRESS"
+  | "COMPLETED";
 
 export type QuestionnaireCardCopy = {
   heading: string;

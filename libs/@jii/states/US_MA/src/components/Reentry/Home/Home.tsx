@@ -19,9 +19,12 @@ import { usePageTitle } from "~@jii/common-ui";
 import { firstNameLastName, useSingleResidentContext } from "~@jii/data";
 import { useUsMaTranslations } from "~@jii/translation";
 
+import { SuspenseQueryBoundary } from "../SuspenseQueryBoundary";
 import { GuideCta } from "./GuideCta/GuideCta";
 import { Greeting, Wrapper } from "./Home.styles";
 import { QuestionnaireCta } from "./QuestionnaireCta/QuestionnaireCta";
+import { QuestionnaireCtaError } from "./QuestionnaireCta/QuestionnaireCtaError";
+import { QuestionnaireCtaLoading } from "./QuestionnaireCta/QuestionnaireCtaLoading";
 import { ResourceCategoryCta } from "./ResourceCategoryCta/ResourceCategoryCta";
 
 export const Home = () => {
@@ -37,7 +40,12 @@ export const Home = () => {
           name: firstNameLastName(resident),
         })}
       </Greeting>
-      <QuestionnaireCta />
+      <SuspenseQueryBoundary
+        loadingFallback={<QuestionnaireCtaLoading />}
+        errorFallback={QuestionnaireCtaError}
+      >
+        <QuestionnaireCta />
+      </SuspenseQueryBoundary>
       <ResourceCategoryCta />
       <GuideCta />
     </Wrapper>

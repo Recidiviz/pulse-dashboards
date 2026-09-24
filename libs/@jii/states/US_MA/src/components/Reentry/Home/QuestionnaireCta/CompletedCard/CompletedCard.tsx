@@ -40,7 +40,7 @@ export const CompletedCard = () => {
   const { t } = useUsMaTranslations();
   const routeParams = useTypedParams(State.Resident);
   const { heading, recommendedTaskCount, cta } =
-    QUESTIONNAIRE_STATUS_COPY.completed(t);
+    QUESTIONNAIRE_STATUS_COPY.COMPLETED(t);
 
   return (
     <SummaryCard>

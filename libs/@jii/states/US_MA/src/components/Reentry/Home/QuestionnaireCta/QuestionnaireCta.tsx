@@ -22,8 +22,8 @@ import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 import { Icon } from "~design-system";
 
+import { useReentryQuestionnaire } from "../../../../hooks/useReentryQuestionnaire";
 import { QUESTIONNAIRE_STATUS_COPY } from "../../ctaConfigs";
-import { ReentryQuestionnaireStatus } from "../../types";
 import { CompletedCard } from "./CompletedCard/CompletedCard";
 import {
   CompletedWrapper,
@@ -36,17 +36,14 @@ import {
 } from "./QuestionnaireCta.styles";
 import { ReviewCard } from "./ReviewCard/ReviewCard";
 
-// TODO OBT-50584: derive from the real questionnaire hydration hook once it
-// exists. Placeholder for now to unblock component development.
-const status: ReentryQuestionnaireStatus = "completed";
-
 const PLACEHOLDER_SECTION_COUNT = 8;
 
 export const QuestionnaireCta = () => {
   const { t } = useUsMaTranslations();
   const routeParams = useTypedParams(State.Resident);
+  const { status } = useReentryQuestionnaire();
 
-  if (status === "completed") {
+  if (status === "COMPLETED") {
     return (
       <CompletedWrapper>
         <CompletedCard />
@@ -56,9 +53,9 @@ export const QuestionnaireCta = () => {
   }
 
   const getCopy =
-    status === "inProgress"
-      ? QUESTIONNAIRE_STATUS_COPY.inProgress
-      : QUESTIONNAIRE_STATUS_COPY.notStarted;
+    status === "IN_PROGRESS"
+      ? QUESTIONNAIRE_STATUS_COPY.IN_PROGRESS
+      : QUESTIONNAIRE_STATUS_COPY.NOT_STARTED;
   const { heading, description, cta } = getCopy(t);
 
   return (

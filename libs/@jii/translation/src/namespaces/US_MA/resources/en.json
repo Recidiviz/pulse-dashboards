@@ -181,7 +181,10 @@
           "heading": "Keep your Reentry profile current",
           "description": "Update it any time your plans change. Your checklist will update too.",
           "cta": "Review"
-        }
+        },
+        "loading": "Loading your Reentry profile...",
+        "loadError": "We couldn't load your Reentry profile.",
+        "retryCta": "Click here to try again"
       },
       "resourceCategories": {
         "sectionLabel": "Plan your next steps",

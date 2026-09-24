@@ -15,33 +15,37 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { User } from "lucide-react";
-import { useTypedParams } from "react-router-typesafe-routes/dom";
+import styled from "styled-components";
 
-import { GoLink } from "~@jii/common-ui";
-import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
+import { Button } from "~design-system";
 
-import { QUESTIONNAIRE_STATUS_COPY } from "../../../ctaConfigs";
-import { Content, Description, Heading, Wrapper } from "./ReviewCard.styles";
+import { Description, Wrapper } from "./QuestionnaireCta.styles";
 
-export const ReviewCard = () => {
+const CenteredWrapper = styled(Wrapper)`
+  align-items: center;
+  text-align: center;
+`;
+
+const QuestionnaireCtaErrorContent = ({
+  resetError,
+}: {
+  resetError: () => void;
+}) => {
   const { t } = useUsMaTranslations();
-  const routeParams = useTypedParams(State.Resident);
-  const { reviewProfile } = QUESTIONNAIRE_STATUS_COPY.COMPLETED(t);
 
   return (
-    <Wrapper>
-      <User size={20} />
-      <Content>
-        <Heading>{reviewProfile.heading}</Heading>
-        <Description>{reviewProfile.description}</Description>
-      </Content>
-      <GoLink
-        to={State.Resident.UsMaReentry.Questionnaire.buildPath(routeParams)}
-      >
-        {reviewProfile.cta}
-      </GoLink>
-    </Wrapper>
+    <CenteredWrapper>
+      <Description>
+        {t(($) => $.reentry.overview.questionnaireCta.loadError)}
+      </Description>
+      <Button kind="link" onClick={() => resetError()}>
+        {t(($) => $.reentry.overview.questionnaireCta.retryCta)}
+      </Button>
+    </CenteredWrapper>
   );
 };
+
+export const QuestionnaireCtaError = (props: { resetError: () => void }) => (
+  <QuestionnaireCtaErrorContent {...props} />
+);

@@ -58,21 +58,21 @@ export const RESOURCE_CATEGORIES: ResourceCategoryConfig[] = [
 ];
 
 export const QUESTIONNAIRE_STATUS_COPY = {
-  notStarted: (t: UsMaTFunction): QuestionnaireCardCopy => ({
+  NOT_STARTED: (t: UsMaTFunction): QuestionnaireCardCopy => ({
     heading: t(($) => $.reentry.overview.questionnaireCta.notStarted.heading),
     description: t(
       ($) => $.reentry.overview.questionnaireCta.notStarted.description,
     ),
     cta: t(($) => $.reentry.overview.questionnaireCta.notStarted.cta),
   }),
-  inProgress: (t: UsMaTFunction): QuestionnaireCardCopy => ({
+  IN_PROGRESS: (t: UsMaTFunction): QuestionnaireCardCopy => ({
     heading: t(($) => $.reentry.overview.questionnaireCta.inProgress.heading),
     description: t(
       ($) => $.reentry.overview.questionnaireCta.inProgress.description,
     ),
     cta: t(($) => $.reentry.overview.questionnaireCta.inProgress.cta),
   }),
-  completed: (t: UsMaTFunction): CompletedQuestionnaireCardCopy => ({
+  COMPLETED: (t: UsMaTFunction): CompletedQuestionnaireCardCopy => ({
     heading: t(($) => $.reentry.overview.questionnaireCta.completed.heading),
     recommendedTaskCount: (count) =>
       t(

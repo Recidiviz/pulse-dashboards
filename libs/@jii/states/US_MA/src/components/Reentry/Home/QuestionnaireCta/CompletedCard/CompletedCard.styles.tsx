@@ -55,7 +55,7 @@ export const SummaryContent = styled.div`
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  gap: ${rem(spacing.sm)};
+  gap: ${rem(spacing.md)};
   padding: ${rem(spacing.lg)} ${rem(spacing.lg)} ${rem(spacing.lg)} 0;
 `;
 
