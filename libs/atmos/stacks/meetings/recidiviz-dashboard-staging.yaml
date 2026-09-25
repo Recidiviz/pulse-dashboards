@@ -54,12 +54,14 @@ components:
         destination_service_account_email: "{{ .settings.context.data_platform_project_number }}-compute@developer.gserviceaccount.com"
         tables:
           - Meeting
+          - MeetingActionItem
           - Staff
           - Client
           - Resident
           - Transcription
           - Utterance
           - OutputVote
+          - NoteApproval
           - NotetakingPipelineRun
           - NotetakingAgentExecution
           - NotetakingEvaluationRun
