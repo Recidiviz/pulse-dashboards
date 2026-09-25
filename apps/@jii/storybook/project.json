@@ -45,6 +45,11 @@
         }
       },
       "defaultConfiguration": "staging"
+    },
+    "storybook": {
+      "options": {
+        "args": ["--port=6006"]
+      }
     }
   }
 }

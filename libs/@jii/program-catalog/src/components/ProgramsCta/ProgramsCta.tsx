@@ -15,49 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing, typography } from "@recidiviz/design-system";
-import { rem } from "polished";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
-import styled from "styled-components";
 
-import { Card, GoLink, HomepageSectionHeading } from "~@jii/common-ui";
+import { CallToActionCard, HomepageSectionHeading } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
+import { palette } from "~design-system";
 
 import { StateCodeWithProgramCatalog } from "../../types";
-import ProgramsCtaIllustration from "./ProgramsCtaIllustration";
-
-const CtaCard = styled(Card)`
-  padding: 0;
-  display: flex;
-  overflow: hidden;
-`;
-
-const Illustration = styled(ProgramsCtaIllustration)`
-  flex-shrink: 0;
-  display: block;
-`;
-
-const CardContent = styled.div`
-  padding: ${rem(spacing.lg)};
-`;
-
-const CardHeading = styled.h3`
-  ${typography.Sans24}
-
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
-`;
-
-const CardDescription = styled.p`
-  ${typography.Sans16}
-  color: black;
-
-  margin-bottom: ${rem(spacing.lg)};
-`;
+import illustrationSrc from "./illustration.svg";
 
 export function ProgramsCtaCard({
   stateCode,
@@ -70,20 +36,15 @@ export function ProgramsCtaCard({
   const linkTo = State.Resident.ProgramCatalog.buildPath(pathParams);
 
   return (
-    <CtaCard>
-      <Link to={linkTo} aria-hidden="true" tabIndex={-1}>
-        <Illustration />
-      </Link>
-      <CardContent>
-        <CardHeading>
-          <Link to={linkTo}>{t(($) => $.programs.homepageCta.heading)}</Link>
-        </CardHeading>
-        <CardDescription>
-          {t(($) => $.programs.homepageCta.description)}
-        </CardDescription>
-        <GoLink to={linkTo}>{t(($) => $.programs.homepageCta.link)}</GoLink>
-      </CardContent>
-    </CtaCard>
+    <CallToActionCard
+      linkTo={linkTo}
+      linkText={t(($) => $.programs.homepageCta.link)}
+      heading={t(($) => $.programs.homepageCta.heading)}
+      description={t(($) => $.programs.homepageCta.description)}
+      illustrationSrc={illustrationSrc}
+      illustrationBackground={palette.pine1}
+      illustrationPlacement="bottom"
+    />
   );
 }
 

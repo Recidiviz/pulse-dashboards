@@ -22,7 +22,7 @@ import { useTranslation } from "react-i18next";
 import styled, { css, keyframes } from "styled-components";
 
 import {
-  Card,
+  IllustratedCard,
   JIIDropdownMenuItem,
   JIIDropdownToggle,
   SlateCopy,
@@ -50,40 +50,21 @@ const fadeOutAnimation = (props: FadeOutAnimationProps) =>
     animation: ${fadeOutKeyframes} ${animation.defaultDurationMs}ms forwards;
   `;
 
-const CtaCard = styled(Card)<FadeOutAnimationProps>`
+const FadeOutWrapper = styled.div<FadeOutAnimationProps>`
   margin-top: ${rem(spacing.md)};
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  overflow: hidden;
 
   ${fadeOutAnimation}
 `;
 
-const IllustrationWrapper = styled.button`
-  background-color: #121c3f;
-  border: none;
-
-  flex: 1;
-  min-width: ${rem(200)};
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: ${rem(spacing.md)} 0;
-`;
+// matches the background of the illustration artwork
+const ILLUSTRATION_BACKGROUND = "#121c3f";
 
 const CLICK_TARGET_SIZE = 30;
 const CLOSE_ICON_SIZE = 14;
 
 const CardContent = styled.div`
-  position: relative;
-
-  flex: 2;
-  min-width: ${rem(300)};
-  padding: ${rem(spacing.lg)};
-  padding-right: ${rem(spacing.lg + CLICK_TARGET_SIZE)};
+  // leaves room for the close button in the corner
+  padding-right: ${rem(CLICK_TARGET_SIZE)};
 
   > h3 {
     ${typography.Sans24}
@@ -132,55 +113,57 @@ export const AboutVideoCtaCard = observer(function AboutVideoCtaCard({
   const { t } = useTranslation([presenter.stateCode, "common"]);
 
   return (
-    <CtaCard
+    <FadeOutWrapper
       $fadeOut={presenter.userRequestedCtaHide}
-      onAnimationEnd={async () => {
+      onAnimationEnd={async (e) => {
+        // ignore events that bubbled up from deeper in the DOM,
+        // we are targeting animations of this element specifically
+        if (e.target !== e.currentTarget) return;
+
         await presenter.hideCta();
       }}
     >
-      <IllustrationWrapper
-        onClick={() => {
+      <IllustratedCard
+        illustrationSrc={ctaIllustration}
+        illustrationAlt={t(($) => $.onboardingVideo.videoButtonAltText)}
+        illustrationBackground={ILLUSTRATION_BACKGROUND}
+        illustrationOnClick={() => {
           presenter.openVideo();
         }}
       >
-        <img
-          src={ctaIllustration}
-          alt={t(($) => $.onboardingVideo.videoButtonAltText)}
-        />
-      </IllustrationWrapper>
+        <CardContent>
+          {presenter.onHomepage && (
+            <StyledDropdown>
+              <StyledDropdownToggle>
+                {/* @ts-expect-error https://github.com/styled-components/styled-components/issues/4314 */}
+                <CloseIcon
+                  aria-label={t(($) => $.onboardingVideo.closeButtonAltText)}
+                />
+              </StyledDropdownToggle>
+              <StyledDropdownMenu alignment="right">
+                <JIIDropdownMenuItem
+                  onClick={() => {
+                    presenter.userRequestedCtaHide = true;
+                  }}
+                >
+                  {t(($) => $.onboardingVideo.confirmClose)}
+                </JIIDropdownMenuItem>
+                <JIIDropdownMenuItem
+                  onClick={() => {
+                    // do nothing, clicking automatically closes the menu
+                  }}
+                >
+                  {t(($) => $.onboardingVideo.cancelClose)}
+                </JIIDropdownMenuItem>
+              </StyledDropdownMenu>
+            </StyledDropdown>
+          )}
 
-      <CardContent>
-        {presenter.onHomepage && (
-          <StyledDropdown>
-            <StyledDropdownToggle>
-              {/* @ts-expect-error https://github.com/styled-components/styled-components/issues/4314 */}
-              <CloseIcon
-                aria-label={t(($) => $.onboardingVideo.closeButtonAltText)}
-              />
-            </StyledDropdownToggle>
-            <StyledDropdownMenu alignment="right">
-              <JIIDropdownMenuItem
-                onClick={() => {
-                  presenter.userRequestedCtaHide = true;
-                }}
-              >
-                {t(($) => $.onboardingVideo.confirmClose)}
-              </JIIDropdownMenuItem>
-              <JIIDropdownMenuItem
-                onClick={() => {
-                  // do nothing, clicking automatically closes the menu
-                }}
-              >
-                {t(($) => $.onboardingVideo.cancelClose)}
-              </JIIDropdownMenuItem>
-            </StyledDropdownMenu>
-          </StyledDropdown>
-        )}
+          <h3>{t(($) => $.onboardingVideo.heading)}</h3>
 
-        <h3>{t(($) => $.onboardingVideo.heading)}</h3>
-
-        <SlateCopy>{t(($) => $.onboardingVideo.description)}</SlateCopy>
-      </CardContent>
-    </CtaCard>
+          <SlateCopy>{t(($) => $.onboardingVideo.description)}</SlateCopy>
+        </CardContent>
+      </IllustratedCard>
+    </FadeOutWrapper>
   );
 });
