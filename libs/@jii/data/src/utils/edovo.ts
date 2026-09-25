@@ -48,3 +48,51 @@ export function isEdovoEnv(): boolean {
 
   return false;
 }
+
+// the Edovo entries from frame-ancestors in firebase.jii.json
+const EDOVO_PARENT_DOMAINS = [".edovo.com", ".tedovo.com", ".learnedovo.com"];
+
+/** The origin of the Edovo page framing us, or undefined if it isn't one */
+function parentEdovoOrigin() {
+  if (!document.referrer) return undefined;
+  const { origin, hostname } = new URL(document.referrer);
+  if (!EDOVO_PARENT_DOMAINS.some((domain) => hostname.endsWith(domain)))
+    return undefined;
+  return origin;
+}
+
+/**
+ * Asks Edovo's page to take the resident to its courses. A random id is sent.
+ * The page to return to stays in localStorage until Edovo echoes the id back.
+ * Returns true only if the message was actually sent.
+ */
+export function sendEdovoReferral(): boolean {
+  const edovoOrigin = parentEdovoOrigin();
+  if (!edovoOrigin || !isEdovoEnv() || !windowIsIframe()) return false;
+
+  const sessionResumeId = crypto.randomUUID();
+  const returnState = {
+    sessionResumeId,
+    returnPath: window.location.pathname,
+  };
+  localStorage.setItem("edovoReturnState", JSON.stringify(returnState));
+  window.parent.postMessage(
+    { type: "program-navigation", sessionResumeId },
+    edovoOrigin,
+  );
+  return true;
+}
+
+/** Compares the sessionResumeId Edovo echoed back to what we saved, then clears it.*/
+export function consumeEdovoReferralReturnPath(sessionResumeId?: string) {
+  try {
+    const saved = localStorage.getItem("edovoReturnState");
+    localStorage.removeItem("edovoReturnState");
+    if (!sessionResumeId || !saved) return undefined;
+    const returnState = JSON.parse(saved);
+    if (returnState.sessionResumeId !== sessionResumeId) return undefined;
+    return returnState.returnPath;
+  } catch {
+    return undefined;
+  }
+}

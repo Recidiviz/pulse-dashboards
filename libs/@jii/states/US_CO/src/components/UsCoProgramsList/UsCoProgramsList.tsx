@@ -29,7 +29,11 @@ import {
   HomepageSectionHeading,
   PageContainer,
 } from "~@jii/common-ui";
-import { useRootStore, useSingleResidentContext } from "~@jii/data";
+import {
+  sendEdovoReferral,
+  useRootStore,
+  useSingleResidentContext,
+} from "~@jii/data";
 import {
   LastUpdatedBanner,
   MainContentHydratorWithErrorLogging,
@@ -99,8 +103,12 @@ const ManagedComponent: FC<{ presenter: UsCoProgramsPresenter }> = observer(
     const showEdovoCard =
       !presenter.isYOSResident && !!residentFlags.usCoEdovoCredits;
 
+    const {
+      userStore: { segmentClient },
+    } = useRootStore();
     const handleGoToCourses = () => {
-      // TODO(OBT-48952) post the referral out to the Edovo parent frame
+      if (sendEdovoReferral())
+        segmentClient.trackEdovoReferralSent({ type: "program-navigation" });
     };
 
     const handleToggleStar = (program: UsCoProgram) => {

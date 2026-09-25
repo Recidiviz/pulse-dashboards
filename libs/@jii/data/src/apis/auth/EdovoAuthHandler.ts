@@ -31,6 +31,7 @@ import {
 } from "~hydration-utils";
 
 import { TranslationStore } from "../../datastores/TranslationStore";
+import { consumeEdovoReferralReturnPath } from "../../utils/edovo";
 import { JII_TRPC_BACKEND_PATH } from "../constants";
 import { AuthHandler } from "./types";
 
@@ -40,6 +41,8 @@ import { AuthHandler } from "./types";
  */
 export class EdovoAuthHandler implements AuthHandler {
   userProfile?: AuthorizedUserProfile;
+  returnPath?: string;
+  returnFailed = false;
 
   private firebaseToken?: string;
 
@@ -92,11 +95,17 @@ export class EdovoAuthHandler implements AuthHandler {
     try {
       const { firebaseToken, user, language } =
         await client.auth.edovoToken.query();
+      const { sessionResumeId } = EdovoLandingPage.getTypedSearchParams(
+        new URLSearchParams(window.location.search),
+      );
+      const returnPath = consumeEdovoReferralReturnPath(sessionResumeId);
 
       runInAction(() => {
         this.firebaseToken = firebaseToken;
         this.userProfile = user;
         this.hydrationStateOverride = undefined;
+        this.returnPath = returnPath;
+        this.returnFailed = !!sessionResumeId && !returnPath;
       });
 
       if (language) {

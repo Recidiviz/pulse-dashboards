@@ -15,7 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { isEdovoEnv } from "./edovo";
+import {
+  consumeEdovoReferralReturnPath,
+  isEdovoEnv,
+  sendEdovoReferral,
+} from "./edovo";
 
 function edovoSubdomain() {
   vi.stubGlobal("location", {
@@ -69,4 +73,102 @@ test("no if url conditions are not met", () => {
   });
 
   expect(isEdovoEnv()).toBeFalse();
+});
+
+describe("sendEdovoReferral", () => {
+  let postMessage: ReturnType<typeof vi.fn>;
+
+  function framedBy(referrer: string) {
+    vi.spyOn(document, "referrer", "get").mockReturnValue(referrer);
+    postMessage = vi.fn();
+    vi.stubGlobal("parent", { postMessage });
+  }
+
+  beforeEach(() => {
+    localStorage.clear();
+    vi.stubGlobal("location", {
+      hostname: "opportunities.edovo.com",
+      pathname: "/co/abc123/programs",
+    });
+  });
+
+  test("sends the id to the Edovo parent and saves the return state", () => {
+    framedBy("https://go.edovo.com/courses");
+
+    expect(sendEdovoReferral()).toBe(true);
+    expect(postMessage).toHaveBeenCalledWith(
+      { type: "program-navigation", sessionResumeId: expect.any(String) },
+      "https://go.edovo.com",
+    );
+    const saved = JSON.parse(localStorage.getItem("edovoReturnState") ?? "");
+    expect(saved.returnPath).toBe("/co/abc123/programs");
+  });
+
+  test.each([
+    ["there is no referrer", ""],
+    ["the parent is not an Edovo domain", "https://notedovo.com/x"],
+  ])("does nothing when %s", (_, referrer) => {
+    framedBy(referrer);
+
+    expect(sendEdovoReferral()).toBe(false);
+    expect(postMessage).not.toHaveBeenCalled();
+    expect(localStorage.getItem("edovoReturnState")).toBeNull();
+  });
+
+  test("does nothing outside an iframe", () => {
+    vi.spyOn(document, "referrer", "get").mockReturnValue(
+      "https://go.edovo.com/courses",
+    );
+    // outside an iframe, window.parent is window itself
+    const windowPostMessage = vi.spyOn(window, "postMessage");
+
+    expect(sendEdovoReferral()).toBe(false);
+    expect(windowPostMessage).not.toHaveBeenCalled();
+    expect(localStorage.getItem("edovoReturnState")).toBeNull();
+  });
+});
+
+describe("consumeEdovoReferralReturnPath", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    // what sendEdovoReferral would have saved
+    localStorage.setItem(
+      "edovoReturnState",
+      JSON.stringify({ sessionResumeId: "abc", returnPath: "/co/x/programs" }),
+    );
+  });
+
+  test("returns the saved path when the id matches", () => {
+    expect(consumeEdovoReferralReturnPath("abc")).toBe("/co/x/programs");
+    expect(localStorage.getItem("edovoReturnState")).toBeNull();
+  });
+
+  test("returns nothing without an id", () => {
+    expect(consumeEdovoReferralReturnPath()).toBeUndefined();
+    expect(localStorage.getItem("edovoReturnState")).toBeNull();
+  });
+
+  test("returns nothing when the id doesn't match", () => {
+    expect(consumeEdovoReferralReturnPath("edf")).toBeUndefined();
+    expect(localStorage.getItem("edovoReturnState")).toBeNull();
+  });
+
+  test("returns nothing when nothing was saved", () => {
+    localStorage.clear();
+    expect(consumeEdovoReferralReturnPath("abc")).toBeUndefined();
+  });
+
+  test("returns nothing when the saved state is corrupted", () => {
+    localStorage.setItem("edovoReturnState", "not json");
+    expect(consumeEdovoReferralReturnPath("abc")).toBeUndefined();
+  });
+
+  test("returns nothing when localStorage is unavailable", () => {
+    vi.stubGlobal("localStorage", {
+      getItem: () => {
+        throw new Error("storage blocked");
+      },
+    });
+    expect(consumeEdovoReferralReturnPath("abc")).toBeUndefined();
+  });
 });

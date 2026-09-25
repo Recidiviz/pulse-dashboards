@@ -37,7 +37,10 @@ export const ReturnToPathFragment = route("", {
 
 export const OrijinSSOPage = route("orijin/sso");
 
-export const EdovoLandingPage = route("edovo/:token");
+export const EdovoLandingPage = route("edovo/:token", {
+  // Edovo echoes this back when a resident returns from a referral
+  searchParams: { sessionResumeId: string() },
+});
 
 export const EGT = route(
   "earned-good-time",

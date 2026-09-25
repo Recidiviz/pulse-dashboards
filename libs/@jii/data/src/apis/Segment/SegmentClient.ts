@@ -44,6 +44,9 @@ export type SegmentClientExternals = {
 /** Where an AET credit-earning callout was rendered */
 export type AetCalloutPlacement = "homepage" | "programCatalog";
 
+/** Matches the `type` of the message sendEdovoReferral posts to Edovo */
+export type EdovoReferralType = "program-navigation";
+
 /**
  * Provides a wrapper around the Segment analytics client to support per-environment configuration.
  * Depends on the VITE_SEGMENT_WRITE_KEY environment variable to configure a Segment connection;
@@ -206,6 +209,14 @@ export class SegmentClient implements IntakeAnalytics {
     title: string;
   }) {
     this.track("frontend_program_detail_opened", metadata);
+  }
+
+  /* Edovo events */
+  trackEdovoReferralSent(metadata: { type: EdovoReferralType }) {
+    this.track("frontend_edovo_referral_sent", metadata);
+  }
+  trackEdovoReturnFailed() {
+    this.track("frontend_edovo_return_failed");
   }
 
   /* US_MA Spanish Program List launch announcement */

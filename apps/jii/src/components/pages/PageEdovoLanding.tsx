@@ -15,8 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useEffect } from "react";
+
 import { Redirect } from "~@jii/common-ui";
+import { EdovoAuthHandler, useRootStore } from "~@jii/data";
 
 export const PageEdovoLanding = () => {
-  return <Redirect to="/" />;
+  const {
+    userStore: { authManager, segmentClient },
+  } = useRootStore();
+  const { handler } = authManager;
+
+  const edovoHandler =
+    handler instanceof EdovoAuthHandler ? handler : undefined;
+  const returnPath = edovoHandler?.returnPath;
+  const returnFailed = !!edovoHandler?.returnFailed;
+
+  useEffect(() => {
+    if (returnFailed) segmentClient.trackEdovoReturnFailed();
+  }, [returnFailed, segmentClient]);
+
+  return <Redirect to={returnPath ?? "/"} />;
 };

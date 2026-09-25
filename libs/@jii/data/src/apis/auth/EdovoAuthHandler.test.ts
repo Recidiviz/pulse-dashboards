@@ -117,6 +117,67 @@ describe("with url token", () => {
     expect(handler.userProfile).toEqual(mockResponse.user);
   });
 
+  describe("returning from an Edovo referral", () => {
+    function returningWith(sessionResumeId: string) {
+      vi.stubGlobal("location", {
+        pathname: `/edovo/${testToken}`,
+        search: `?sessionResumeId=${sessionResumeId}`,
+      });
+    }
+
+    beforeEach(() => {
+      localStorage.clear();
+    });
+
+    test("restores the saved path when Edovo echoes the id", async () => {
+      localStorage.setItem(
+        "edovoReturnState",
+        JSON.stringify({
+          sessionResumeId: "abc",
+          returnPath: "/co/x/programs",
+        }),
+      );
+      returningWith("abc");
+
+      await handler.hydrate();
+
+      expect(handler.returnPath).toBe("/co/x/programs");
+      expect(handler.returnFailed).toBeFalse();
+    });
+
+    test("flags a failed return when the id has no saved state", async () => {
+      returningWith("abc");
+
+      await handler.hydrate();
+
+      expect(handler.returnPath).toBeUndefined();
+      expect(handler.returnFailed).toBeTrue();
+    });
+
+    test("flags a failed return for a malformed id", async () => {
+      localStorage.setItem(
+        "edovoReturnState",
+        JSON.stringify({
+          sessionResumeId: "abc",
+          returnPath: "/co/x/programs",
+        }),
+      );
+      returningWith("not-a-uuid");
+
+      await handler.hydrate();
+
+      expect(handler.returnPath).toBeUndefined();
+      expect(handler.returnFailed).toBeTrue();
+    });
+
+    test("a normal login is not a failed return", async () => {
+      await handler.hydrate();
+
+      expect(handler.returnPath).toBeUndefined();
+      expect(handler.returnFailed).toBeFalse();
+    });
+  });
+
   describe("language handling", () => {
     test("calls i18next.changeLanguage when language is provided", async () => {
       const mockResponseWithLanguageAndTranslatorPermission = {
