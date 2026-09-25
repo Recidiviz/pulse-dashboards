@@ -161,10 +161,38 @@ an ad hoc republish or a cherry-pick.
 
 ### Native builds
 
-When the guard reports a mismatch, cut a native build with the two release workflows:
-`meetings-native-release-plan.yml` computes the version bump and release notes and prints a
-ready-to-copy command; `meetings-native-release-execute.yml` runs the build, tags it, and opens
-the version-bump PR. Reviewing the plan's summary before dispatching execute is the approval step.
+When the guard reports a mismatch, cut a native build with the two release workflows.
+`meetings-native-release-plan.yml` resolves a concrete version and drafts release notes, then
+prints a ready-to-copy command; `meetings-native-release-execute.yml` builds, submits, and tags.
+Reviewing the plan's summary before dispatching execute is the approval step.
+
+### Where the version lives
+
+The marketing version is a property of a release, not of the source. `app.config.ts` commits a
+`0.0.0` placeholder; the execute workflow writes the real version in at build time and never
+commits it. The record of which commit shipped as which version is the tag
+`meetings-app-<env>-v<version>`, pointing at the released commit. It is annotated with the
+release notes, so `git show meetings-app-<env>-v<version>` is the whole record of a release.
+
+This is why the version never needs a bump PR, and why nothing downstream has to wait for one to
+merge. It also means the two environments share one version line: a promotion reuses the number
+the other environment's build was given, rather than inventing a new one.
+
+Execute rejects a version that environment has already shipped, or one below it — stores require
+the number to keep increasing within an app.
+
+To simulate a version in a local or preview build — for anything that branches on it, like the
+forced-upgrade check in `src/features/app-update` — set `MEETINGS_APP_VERSION`:
+
+```bash
+MEETINGS_APP_VERSION=0.8.0 npx expo start
+```
+
+For a preview build on EAS, put it in the **`preview` profile's `env` block** in `eas.json`. Don't
+set it as an EAS environment variable on `preview`: the `staging` profile shares that EAS
+environment, and staging builds are real releases. (It would be ignored there anyway — the
+override only applies while the placeholder is untouched — but the naming collision is worth
+knowing about.)
 
 ### Publishing by hand
 

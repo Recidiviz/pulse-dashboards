@@ -22,6 +22,27 @@ const PACKAGE = "org.recidiviz.app";
 const SCHEME = "recidiviz";
 const EAS_PROJECT_ID = "fce0159d-1a8d-493b-a891-e7413b1a8ea5";
 
+// The marketing version is a property of a release, not of the source: it is
+// written here by meetings-native-release-execute.yml at build time and never
+// committed with a real value. The release tags record which commit shipped as
+// which version, per environment.
+const PLACEHOLDER_VERSION = "0.0.0";
+// Annotated as `string`, not left to infer the literal type: once the release
+// workflow writes a real version here, comparing two different string literals
+// would otherwise be a type error.
+const RELEASE_VERSION: string = PLACEHOLDER_VERSION;
+
+// Simulates a version in a local or preview build, for exercising anything that
+// branches on it (the forced-upgrade check in src/features/app-update, say).
+// Honored only while RELEASE_VERSION is still the placeholder, so it can never
+// change what a release ships as: the `staging` and `preview` build profiles
+// share the EAS environment `preview`, so a variable set there for testing
+// would otherwise reach staging's real builds.
+const version =
+  RELEASE_VERSION === PLACEHOLDER_VERSION
+    ? process.env["MEETINGS_APP_VERSION"] ?? PLACEHOLDER_VERSION
+    : RELEASE_VERSION;
+
 type Environment = "development" | "preview" | "staging" | "production";
 
 const getDynamicAppConfig = (environment: Environment) => {
@@ -73,7 +94,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     ...config,
     name,
     slug: "recidiviz",
-    version: "0.10.0",
+    version,
     orientation: "portrait",
     icon: "./src/shared/assets/images/Apple_icon.png",
     scheme,
