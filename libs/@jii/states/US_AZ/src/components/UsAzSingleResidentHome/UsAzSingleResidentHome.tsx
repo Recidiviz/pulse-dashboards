@@ -17,15 +17,23 @@
 
 import { AboutVideoCta } from "~@jii/onboarding-video";
 
+import { ClassificationPointsCTA } from "../ClassificationPoints/CTA";
+import { IONBanner } from "../IONReferral";
 import { UsAzLastUpdatedBanner } from "../UsAzLastUpdatedBanner";
+import { useUsAzSingleResidentContext } from "../UsAzSingleResidentContext/UsAzSingleResidentContext";
+import { DPRBanner } from "./DPRBanner";
 import { UsAzImportantDates } from "./UsAzImportantDates";
 import { UsAzImportantDatesLink } from "./UsAzImportantDatesLink";
 
 export function UsAzSingleResidentHome() {
+  const { isDprQualified } = useUsAzSingleResidentContext();
   return (
     <>
       <UsAzLastUpdatedBanner />
       <AboutVideoCta onHomepage={true} />
+      {isDprQualified && <DPRBanner />}
+      <IONBanner />
+      <ClassificationPointsCTA />
       <UsAzImportantDates />
       <UsAzImportantDatesLink />
     </>

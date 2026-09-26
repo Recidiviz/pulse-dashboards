@@ -40,6 +40,7 @@ export type TranslationConfig = {
 type ResidentFlag =
   | "usNeGoodTimeAlerts"
   | "usNeChecklistDocuments"
+  | "usAzClassification"
   // TODO OBT-31989 after usAzFslImprovements launch: remove this flag and all references in
   // libs/@jii/configs, libs/@jii/prisma, and libs/@jii/states/US_AZ
   | "usAzFslImprovements"

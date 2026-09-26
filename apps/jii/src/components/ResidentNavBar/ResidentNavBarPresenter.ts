@@ -65,7 +65,7 @@ export class ResidentNavBarPresenter {
     }
 
     if (this.routeParams.stateSlug === "arizona") {
-      return [
+      const links = [
         {
           label: "About",
           to: State.Resident.UsAzMoreInformation.About.buildPath(
@@ -73,6 +73,15 @@ export class ResidentNavBarPresenter {
           ),
         },
       ];
+      if (this.residentFlags?.usAzClassification) {
+        links.push({
+          label: "My Classification",
+          to: State.Resident.UsAzClassificationPoints.buildPath(
+            this.routeParams,
+          ),
+        });
+      }
+      return links;
     }
 
     const showsProgramCatalog =

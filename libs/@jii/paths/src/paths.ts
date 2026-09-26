@@ -87,6 +87,8 @@ export const UsAzMoreInformation = route(
   },
 );
 
+export const UsAzClassificationPoints = route("classification");
+
 export const UsNcRNA = route(
   "rna",
   {},
@@ -187,6 +189,7 @@ export const State = route(":stateSlug", types(ReturnToPathFragment), {
       ProgramCatalog,
       ReentryAssessment,
       UsArMoreInformation,
+      UsAzClassificationPoints,
       UsAzMoreInformation,
       UsCoMoreInformation,
       UsNcRNA,

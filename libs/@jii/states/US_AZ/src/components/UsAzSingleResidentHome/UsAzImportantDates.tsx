@@ -21,10 +21,8 @@ import { HomepageSectionHeading } from "~@jii/common-ui";
 import { useUsAzTranslations } from "~@jii/translation";
 import { withPresenterManager } from "~hydration-utils";
 
-import { IONBanner } from "../IONReferral";
 import { useUsAzSingleResidentContext } from "../UsAzSingleResidentContext/UsAzSingleResidentContext";
 import { DateInfoCard } from "./DateInfoCard";
-import { DPRBanner } from "./DPRBanner";
 import { MissingDateCard } from "./MissingDateCard";
 import { SectionSubHeader } from "./styles";
 import { UsAzImportantDatesPresenter } from "./UsAzImportantDatesPresenter";
@@ -32,15 +30,10 @@ import { UsAzImportantDatesPresenter } from "./UsAzImportantDatesPresenter";
 const ManagedComponent: React.FC<{ presenter: UsAzImportantDatesPresenter }> =
   observer(function UsAzImportantDates({ presenter }) {
     const { t } = useUsAzTranslations();
-    const { isDprQualified } = useUsAzSingleResidentContext();
 
     return (
       <div>
         <section>
-          {isDprQualified && <DPRBanner />}
-
-          <IONBanner />
-
           <HomepageSectionHeading>
             {t(($) => $.importantDates.sectionHeader)}
           </HomepageSectionHeading>

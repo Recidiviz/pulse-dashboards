@@ -758,4 +758,15 @@ If you refuse to sign your Conditions of Supervision at your SED, you stay in pr
       body: ionInfoPage,
     },
   },
+  classificationPoints: {
+    cta: {
+      heading: "Classification",
+      card: {
+        heading: "See your Points and Levels",
+        description:
+          "See your current Custody and Internal Risk points and levels. Learn what affects them and what they mean for you",
+        linkText: "View Classification",
+      },
+    },
+  },
 };

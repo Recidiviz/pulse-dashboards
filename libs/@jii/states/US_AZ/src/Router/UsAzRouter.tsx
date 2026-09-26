@@ -18,7 +18,8 @@
 import { Route, Routes } from "react-router-dom";
 
 import { NotFound } from "~@jii/common-ui";
-import { UsAzMoreInformation } from "~@jii/paths";
+import { useSingleResidentContext } from "~@jii/data";
+import { UsAzClassificationPoints, UsAzMoreInformation } from "~@jii/paths";
 
 import { UsAzSingleResidentContextRoute } from "../components/UsAzSingleResidentContext/UsAzSingleResidentContext";
 import { PageMoreInfoAbout } from "../pages/PageMoreInfoAbout";
@@ -28,6 +29,7 @@ import { PageMoreInfoION } from "../pages/PageMoreInfoION";
 import { PageUsAzResidentHome } from "../pages/PageUsAzSingleResidentHome";
 
 export function UsAzRouter() {
+  const { residentFlags } = useSingleResidentContext();
   return (
     <Routes>
       <Route element={<UsAzSingleResidentContextRoute />}>
@@ -48,6 +50,12 @@ export function UsAzRouter() {
           path={UsAzMoreInformation.ION.path}
           element={<PageMoreInfoION />}
         />
+        {residentFlags.usAzClassification && (
+          <Route
+            path={UsAzClassificationPoints.path}
+            element={<div>hello</div>}
+          />
+        )}
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

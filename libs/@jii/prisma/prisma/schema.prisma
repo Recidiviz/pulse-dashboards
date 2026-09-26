@@ -48,6 +48,7 @@ enum ResidentFlagId {
     usNeGoodTimeAlerts
     usNeChecklistDocuments
     usNeCheckInTool
+    usAzClassification
     usAzFslImprovements
     usAzIonReferral
     usCoV1Experience
