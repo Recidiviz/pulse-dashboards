@@ -94,6 +94,7 @@ import {
 import { NavigateToFormButton } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
 import { UsAzReleaseToTransitionProgramOpportunityBase } from "../../WorkflowsStore/Opportunity/UsAz";
 import { UsAzTransferToAdministrativeSupervisionOpportunity } from "../../WorkflowsStore/Opportunity/UsAz/UsAzTransferToAdministrativeSupervisionOpportunity/UsAzTransferToAdministrativeSupervisionOpportunity";
+import { UsAzTransferToAdministrativeSupervisionV2Opportunity } from "../../WorkflowsStore/Opportunity/UsAz/UsAzTransferToAdministrativeSupervisionV2Opportunity/UsAzTransferToAdministrativeSupervisionV2Opportunity";
 import { UsIdOverdueFaceToFaceContactOpportunity } from "../../WorkflowsStore/Opportunity/UsId/usIdOverdueFaceToFaceContact";
 import { UsNeGoodTimeRestorationOpportunity } from "../../WorkflowsStore/Opportunity/UsNe";
 import { UsTxArsErsV2OpportunityBase } from "../../WorkflowsStore/Opportunity/UsTx/UsTxArsErsV2OpportunityBase";
@@ -295,6 +296,7 @@ export type OpportunityTableColumnId =
   | "AGREEMENT_STATUS"
   | "HOME_PLAN_STATUS"
   | "MAN_LIT_STATUS"
+  | "US_AZ_DAYS_SINCE_LAST_ORAS"
   | "DENIAL_REASONS"
   | "US_ID_LAST_CONTACT_DATE"
   | "US_ID_SUPERVISION_LEVEL"
@@ -1192,6 +1194,25 @@ const TableView = observer(function TableView({
         opp instanceof UsAzReleaseToTransitionProgramOpportunityBase &&
         opp.mandatoryLiteracyStatus,
       sortingFn: "text",
+    },
+    {
+      header: "Days Since Last ORAS",
+      id: "US_AZ_DAYS_SINCE_LAST_ORAS",
+      enableSorting: true,
+      accessorFn: (opp: Opportunity) =>
+        opp instanceof UsAzTransferToAdministrativeSupervisionV2Opportunity &&
+        opp.daysSinceLastOras,
+      sortingFn: "basic",
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        const opp = row.original;
+        if (
+          opp instanceof UsAzTransferToAdministrativeSupervisionV2Opportunity
+        ) {
+          return opp.daysSinceLastOras === undefined
+            ? "No ORAS on file."
+            : `${opp.daysSinceLastOras} day(s)`;
+        }
+      },
     },
     {
       header: "Missing Criteria",

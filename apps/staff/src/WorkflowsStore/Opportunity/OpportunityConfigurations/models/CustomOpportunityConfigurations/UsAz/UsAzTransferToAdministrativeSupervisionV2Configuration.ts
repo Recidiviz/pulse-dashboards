@@ -39,8 +39,14 @@ export class UsAzTransferToAdministrativeSupervisionV2Configuration extends ApiO
   }
 
   get enabledColumns(): Array<OpportunityTableColumnId> {
+    const cols = [...super.enabledColumns];
+    const colsToAdd: OpportunityTableColumnId[] = [
+      "US_AZ_DAYS_SINCE_LAST_ORAS",
+    ].filter(
+      (c) => !cols.includes(c as OpportunityTableColumnId),
+    ) as OpportunityTableColumnId[];
     const colsToRemove: OpportunityTableColumnId[] = ["STATUS"];
-    return super.enabledColumns.filter((c) => !colsToRemove.includes(c));
+    return [...cols, ...colsToAdd].filter((c) => !colsToRemove.includes(c));
   }
 
   get supportsSupervisorReviewOnGrants(): boolean {

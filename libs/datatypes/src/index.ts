@@ -39,6 +39,7 @@ export * from "./opportunities/UsAz/UsAzReleaseToDTP/fixtures";
 export * from "./opportunities/UsAz/UsAzReleaseToDTP/schema";
 export * from "./opportunities/UsAz/UsAzReleaseToTPR/fixtures";
 export * from "./opportunities/UsAz/UsAzReleaseToTPR/schema";
+export * from "./opportunities/UsAz/UsAzTransferToAdministrativeSupervisionV2/schema";
 
 // UsId Exports: Includes fixtures and schema related to US-ID opportunities
 // -----------------------------------------------------------------------------

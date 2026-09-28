@@ -17,7 +17,10 @@
 
 import { DocumentData } from "firebase/firestore";
 
-import { OpportunityRecordBase, opportunitySchemaBase } from "~datatypes";
+import {
+  UsAzTransferToAdministrativeSupervisionV2Record,
+  usAzTransferToAdministrativeSupervisionV2Schema,
+} from "~datatypes";
 
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
@@ -25,14 +28,14 @@ import { OpportunityTab } from "../../types";
 
 export class UsAzTransferToAdministrativeSupervisionV2Opportunity extends OpportunityBase<
   Client,
-  OpportunityRecordBase
+  UsAzTransferToAdministrativeSupervisionV2Record["output"]
 > {
   constructor(client: Client, record: DocumentData) {
     super(
       client,
       "usAzTransferToAdministrativeSupervisionV2",
       client.rootStore,
-      opportunitySchemaBase.parse(record),
+      usAzTransferToAdministrativeSupervisionV2Schema.parse(record),
     );
   }
 
@@ -60,5 +63,9 @@ export class UsAzTransferToAdministrativeSupervisionV2Opportunity extends Opport
 
   get customStatusPalette() {
     return super.customStatusPalette;
+  }
+
+  get daysSinceLastOras(): number | undefined {
+    return this.record.metadata.daysSinceLastOras;
   }
 }
