@@ -216,7 +216,7 @@ const MeetingDesktop = ({
               <View className="ml-3 flex-row gap-3">
                 <Button
                   variant="tertiary"
-                  icon={{ icon: PrinterIcon }}
+                  icon={{ icon: PrinterIcon, className: "stroke-none size-4" }}
                   onPress={handlePrint}
                 >
                   Print

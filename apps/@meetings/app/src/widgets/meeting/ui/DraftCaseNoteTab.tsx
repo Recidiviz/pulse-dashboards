@@ -128,7 +128,7 @@ const DraftCaseNoteTab = ({
             variant="secondary"
             icon={{
               icon: DocumentDuplicateIcon,
-              className: "size-4 stroke-[3px]",
+              className: "size-4 stroke-none",
             }}
             disabled={isSnackbarShowing}
             onPress={onCopy}
