@@ -15,11 +15,11 @@ The prerequisites depend on which environment you're running against:
 
    Before running the script against development, ensure the audio file you want to process exists in your test bucket.
 
-2. You can copy test data from the staging bucket using gsutil:
+2. You can copy test data from the staging bucket using `gcloud storage`:
 
    ```bash
    # Copy test-data directory from staging to local test bucket
-   gsutil -m cp -r gs://recidiviz-dashboard-staging-meetings-audio-data/test-data gs://recidiviz-dashboard-staging-NAME-meetings-test-bucket/test-data
+   gcloud storage cp --recursive gs://recidiviz-dashboard-staging-meetings-audio-data/test-data gs://recidiviz-dashboard-staging-NAME-meetings-test-bucket/test-data
    ```
 
 #### For Staging/Production (Cloud)

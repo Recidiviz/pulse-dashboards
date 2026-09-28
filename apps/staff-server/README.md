@@ -120,7 +120,7 @@ If you are running in offline mode, you may need to run through the following st
 
 1. Make sure you can run the Firebase emulator; this requires Firebase Tools as described above as well as a recent version of Java.
 
-To download data/fixture files to be used offline, run the `download_fixture_with_metadata.sh` script. The only argument to the script is the path to the file in GCS. You must have credentials to access GCS, and `gsutil` installed.
+To download data/fixture files to be used offline, run the `download_fixture_with_metadata.sh` script. The only argument to the script is the path to the file in GCS. You must have credentials to access GCS, and the `gcloud` CLI installed.
 
 The script may be used to download both ".json" and ".txt" files. If downloading a ".txt" file, it can take some time to download and process the metadata json, so please be patient.
 
@@ -147,7 +147,7 @@ The `python-backend-shutdown` target will tear down the Docker Compose environme
 
 To generate new fixture data, while the backend is running run `./apps/staff-server/tools/generate_pathways_fixtures.sh`.
 
-To load fixture data from a GCS bucket, run `gsutil -m cp "gs://$BUCKET_NAME/US_OZ/*.csv" ./apps/staff-server/src/server/core/demo_data/`.
+To load fixture data from a GCS bucket, run `gcloud storage cp "gs://$BUCKET_NAME/US_OZ/*.csv" ./apps/staff-server/src/server/core/demo_data/`.
 
 ## Deploys
 

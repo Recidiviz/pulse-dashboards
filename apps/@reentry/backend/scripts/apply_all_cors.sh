@@ -49,13 +49,13 @@ for BUCKET in "${!BUCKET_CONFIGS[@]}"; do
     echo ""
 
     # Apply CORS configuration
-    if gsutil cors set "$CONFIG_PATH" "gs://$BUCKET" 2>&1; then
+    if gcloud storage buckets update "gs://$BUCKET" --cors-file="$CONFIG_PATH" 2>&1; then
         echo "✅ Successfully applied CORS to $BUCKET"
         ((SUCCESS++))
 
         # Verify the configuration
         echo "Verifying CORS configuration..."
-        gsutil cors get "gs://$BUCKET"
+        gcloud storage buckets describe "gs://$BUCKET" --format="default(cors_config)"
         echo ""
     else
         echo "❌ Failed to apply CORS to $BUCKET"
