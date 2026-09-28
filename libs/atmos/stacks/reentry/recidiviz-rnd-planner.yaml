@@ -53,3 +53,74 @@ components:
             - recidiviz
       metadata:
         component: postgres-bq-data-transfer
+
+    # Memorystore with AUTH + TLS, replacing the unauthenticated instances (AUR-216).
+    # Each environment is its own component instance, so it has its own state and can't be
+    # replaced by a plan against another environment.
+    # Sizing and version match the instance each one replaces (redis-dev, redis-staging, ...).
+    reentry-redis/defaults:
+      metadata:
+        type: abstract
+        component: apps/reentry-redis
+      vars:
+        tier: BASIC
+        memory_size_gb: 1
+
+    reentry-redis-dev:
+      metadata:
+        component: apps/reentry-redis
+        inherits: [reentry-redis/defaults]
+      vars:
+        environment: DEV
+        redis_version: REDIS_7_2
+        instance_name: reentry-redis-dev
+        secret_accessors:
+          - "{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
+
+    reentry-redis-staging:
+      metadata:
+        component: apps/reentry-redis
+        inherits: [reentry-redis/defaults]
+      vars:
+        environment: STAGING
+        redis_version: REDIS_7_0
+        instance_name: reentry-redis-staging
+        secret_accessors:
+          - reentry-server-staging@recidiviz-rnd-planner.iam.gserviceaccount.com
+          # Cloud Run jobs run as the default compute account in every environment
+          - "{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
+
+    reentry-redis-demo:
+      metadata:
+        component: apps/reentry-redis
+        inherits: [reentry-redis/defaults]
+      vars:
+        environment: DEMO
+        redis_version: REDIS_7_0
+        instance_name: reentry-redis-demo
+        secret_accessors:
+          - "{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
+
+    reentry-redis-pilot:
+      metadata:
+        component: apps/reentry-redis
+        inherits: [reentry-redis/defaults]
+      vars:
+        environment: PILOT
+        redis_version: REDIS_7_2
+        instance_name: reentry-redis-pilot
+        secret_accessors:
+          - "{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
+
+    reentry-redis-prod:
+      metadata:
+        component: apps/reentry-redis
+        inherits: [reentry-redis/defaults]
+      vars:
+        environment: PROD
+        tier: STANDARD_HA
+        redis_version: REDIS_7_0
+        instance_name: reentry-redis-prod
+        secret_accessors:
+          - reentry-server@recidiviz-rnd-planner.iam.gserviceaccount.com
+          - "{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"

@@ -29,8 +29,6 @@ spec:
                   value: "${RECIDIVIZ_ENV_NAME}"
                 - name: RECIDIVIZ_GCP_DB_INSTANCE_NAME
                   value: "${RECIDIVIZ_GCP_DB_INSTANCE_NAME}"
-                - name: RECIDIVIZ_REDIS_URL
-                  value: "${RECIDIVIZ_REDIS_URL}"
                 - name: RECIDIVIZ_POSTGRES_USER
                   value: "${RECIDIVIZ_POSTGRES_USER}"
                 - name: RECIDIVIZ_POSTGRES_SERVER
@@ -83,6 +81,11 @@ spec:
                     secretKeyRef:
                       name: RECIDIVIZ_POSTGRES_PASSWORD_${ENVIRONMENT_UPPER}
                       key: "latest"
+                - name: RECIDIVIZ_REDIS_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: RECIDIVIZ_REDIS_URL_${ENVIRONMENT_UPPER}
+                      key: "latest"
                 - name: RECIDIVIZ_RESOURCES_API_KEY
                   valueFrom:
                     secretKeyRef:
@@ -114,7 +117,20 @@ spec:
                       name: RECIDIVIZ_DEEPGRAM_API_KEY
                       key: "latest"
 
+              # RECIDIVIZ_REDIS_URL points ssl_ca_certs at this file
+              volumeMounts:
+                - name: redis-server-ca
+                  mountPath: /secrets/redis
+                  readOnly: true
+
               resources:
                 limits:
                   cpu: "${CPU_LIMIT}"
                   memory: "${MEMORY_LIMIT}"
+          volumes:
+            - name: redis-server-ca
+              secret:
+                secretName: RECIDIVIZ_REDIS_SERVER_CA_${ENVIRONMENT_UPPER}
+                items:
+                  - key: latest
+                    path: server-ca.pem

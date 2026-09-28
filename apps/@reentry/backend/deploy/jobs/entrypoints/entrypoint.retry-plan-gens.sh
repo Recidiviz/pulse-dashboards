@@ -15,12 +15,8 @@ done
 echo "Cloud SQL Proxy is ready!"
 
 # Check Redis connection
-REDIS_URL=${RECIDIVIZ_REDIS_URL:-"redis://localhost:6379"}
-REDIS_HOST=$(echo $REDIS_URL | sed -E 's/^redis:\/\/([^:]+):([0-9]+)$/\1/')
-REDIS_PORT=$(echo $REDIS_URL | sed -E 's/^redis:\/\/([^:]+):([0-9]+)$/\2/')
-echo "Checking Redis connection at $REDIS_HOST:$REDIS_PORT..."
-
-if python3 -c "import redis; r = redis.Redis(host='$REDIS_HOST', port=$REDIS_PORT); print(r.ping())" | grep -q True; then
+echo "Checking Redis connection..."
+if python3 -c "import os, redis; print(redis.from_url(os.environ.get('RECIDIVIZ_REDIS_URL', 'redis://localhost:6379')).ping())" | grep -q True; then
   echo "✅ Redis is reachable!"
 else
   echo "❌ Redis connection failed!"
