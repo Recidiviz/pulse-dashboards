@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export { getCredentialsFailedCause } from "./getCredentialsFailedCause";
 export { segmentClient } from "./segment";
 export { offlineTransport } from "./sentryOfflineTransport";
 export { useSentryAppLifecycle } from "./useSentryAppLifecycle";

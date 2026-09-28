@@ -27,6 +27,7 @@ import { KeyboardProvider } from "react-native-keyboard-controller";
 
 import { PrPreviewProvider } from "~@meetings/app/features/pr-preview";
 import {
+  getCredentialsFailedCause,
   offlineTransport,
   useSentryAppLifecycle,
 } from "~@meetings/app/shared/lib/monitoring";
@@ -65,7 +66,16 @@ Sentry.init({
   // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
   sendDefaultPii: true,
   enableLogs: true,
-  beforeSend(event) {
+  beforeSend(event, hint) {
+    // Split web GetCredentialsFailed events by their underlying cause
+    const credentialsFailedCause = getCredentialsFailedCause(
+      hint.originalException,
+    );
+    if (credentialsFailedCause) {
+      event.fingerprint = ["{{ default }}", credentialsFailedCause];
+      event.tags = { ...event.tags, auth0_cause: credentialsFailedCause };
+    }
+
     if (event.request?.url) {
       event.request.url = sanitizeUrl(event.request.url);
     }
