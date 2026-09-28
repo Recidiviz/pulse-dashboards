@@ -34,9 +34,11 @@ export const impersonationRouter = router({
       const { stateCode } = await fetchImpersonatedUser(input.email);
 
       if (!shouldSkipAuth && !ctx.user?.allowedStates?.includes(stateCode)) {
+        // Don't echo the target's stateCode; callers may lack access to it.
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: `You do not have access to state: ${stateCode}. File a go/access request for access.`,
+          message:
+            "You do not have access to this user's state. File a go/access request for access.",
         });
       }
 

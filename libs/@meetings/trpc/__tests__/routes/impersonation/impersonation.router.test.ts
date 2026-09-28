@@ -74,5 +74,25 @@ describe("impersonation router", () => {
         data: { code: "INTERNAL_SERVER_ERROR" },
       });
     });
+
+    test("does not leak the target user's stateCode when the caller lacks access to it", async () => {
+      // The target user being looked up belongs to a different state than
+      // the caller (who only has access to US_NE) is allowed to access.
+      mockGoogleAuthRequest.mockResolvedValueOnce({
+        data: { stateCode: "US_AZ" },
+      });
+
+      const rejection = testTRPCClient.v1.impersonation.lookupUser.query({
+        email: "target@example.com",
+      });
+
+      await expect(rejection).rejects.toMatchObject({
+        data: { code: "FORBIDDEN" },
+      });
+
+      await rejection.catch((error) => {
+        expect(String(error?.message)).not.toContain("US_AZ");
+      });
+    });
   });
 });
