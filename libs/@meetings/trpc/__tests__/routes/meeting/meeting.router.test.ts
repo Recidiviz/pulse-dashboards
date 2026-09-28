@@ -596,6 +596,30 @@ describe("meeting router", () => {
         "storage.googleapis.com/test-audio-bucket/meeting-1/1.m4a",
       );
     });
+
+    test("Should throw FORBIDDEN when the caller does not own the meeting", async () => {
+      // fakeMeetingStaff1 is owned by fakeStaff[1]; the test client
+      // authenticates as fakeStaff[0].
+      await expect(
+        testTRPCClient.v1.meeting.createSignedUrlForRecording.mutate({
+          meetingId: fakeMeetingStaff1.id,
+          contentType: AUDIO_FORMATS.m4a.contentType,
+          fileExtension: AUDIO_FORMATS.m4a.extension,
+        }),
+      ).rejects.toMatchObject({
+        data: { code: "FORBIDDEN" },
+      });
+    });
+
+    test("Should reject a file extension that isn't a known audio format", async () => {
+      await expect(
+        testTRPCClient.v1.meeting.createSignedUrlForRecording.mutate({
+          meetingId: fakeActiveMeeting.id,
+          contentType: AUDIO_FORMATS.m4a.contentType,
+          fileExtension: "../other-meeting/x",
+        }),
+      ).rejects.toMatchObject({ data: { code: "BAD_REQUEST" } });
+    });
   });
 
   describe("discardMeeting", () => {

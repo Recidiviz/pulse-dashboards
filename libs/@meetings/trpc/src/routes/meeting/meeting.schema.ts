@@ -17,6 +17,7 @@
 
 import { z } from "zod";
 
+import { AUDIO_FORMATS } from "~@meetings/config";
 import {
   ApprovalValue,
   NoteSection,
@@ -118,7 +119,11 @@ export type GetDetailsOutput = z.infer<typeof getDetailsOutputSchema>;
 
 export const createSignedUrlForRecordingInputSchema = z.object({
   meetingId: z.string(),
-  fileExtension: z.string(),
+  fileExtension: z
+    .string()
+    .refine((ext) =>
+      Object.values(AUDIO_FORMATS).some((f) => f.extension === ext),
+    ),
   contentType: z.string(),
 });
 

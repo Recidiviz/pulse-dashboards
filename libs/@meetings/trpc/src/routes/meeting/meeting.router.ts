@@ -311,7 +311,7 @@ export const meetingRouter = router({
     .mutation(
       async ({
         input: { meetingId, contentType, fileExtension },
-        ctx: { prisma, req },
+        ctx: { prisma, user, isSkipAuth, req },
       }) => {
         const meeting = await prisma.meeting.findUnique({
           where: { id: meetingId },
@@ -321,6 +321,14 @@ export const meetingRouter = router({
           throw new TRPCError({
             code: "NOT_FOUND",
             message: "Meeting with that id was not found",
+          });
+        }
+
+        // Only the meeting creator can upload recordings into its folder.
+        if (!isSkipAuth && meeting.staffEmail !== user.email) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Only the meeting creator can upload recordings",
           });
         }
 
