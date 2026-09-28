@@ -17,7 +17,13 @@
 
 import { $ } from "zx";
 
-import { dashboardProject, dashboardStack, owner, repo } from "../config.mts";
+import {
+  dashboardProject,
+  dashboardStack,
+  dataPlatformProject,
+  owner,
+  repo,
+} from "../config.mts";
 import type { ServiceDefinition } from "../types.mts";
 
 /**
@@ -28,7 +34,10 @@ import type { ServiceDefinition } from "../types.mts";
 export const meetingsBackend: ServiceDefinition = {
   displayName: "Meetings Backend Services",
   environments: ["staging", "production"],
-  pamProjects: (env) => [dashboardProject(env)],
+  // Two projects: the dashboard project for the app, and the data-platform project because
+  // the meetings `postgres-bq-data-transfer` stack sets `destination_project_id` there
+  // (recidiviz-staging / recidiviz-123) and so creates a DTS config in it.
+  pamProjects: (env) => [dashboardProject(env), dataPlatformProject(env)],
   requiredImages: () => [
     "@meetings/server",
     "@meetings/import",

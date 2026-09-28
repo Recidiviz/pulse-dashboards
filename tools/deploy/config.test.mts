@@ -17,7 +17,9 @@
 
 import { describe, expect, it } from "vitest";
 
-import { dashboardStack } from "./config.mts";
+import { dashboardStack, dataPlatformProject } from "./config.mts";
+import { jiiTexting } from "./services/jii-texting.mts";
+import { meetingsBackend } from "./services/meetings.mts";
 
 describe("dashboardStack", () => {
   it("uses recidiviz-dashboard-<env>--<name> for staging", () => {
@@ -36,5 +38,45 @@ describe("dashboardStack", () => {
     expect(dashboardStack("demo", "jii-texting")).toBe(
       "recidiviz-dashboard-staging--jii-texting-demo",
     );
+  });
+});
+
+describe("dataPlatformProject", () => {
+  it("is recidiviz-123 in production", () => {
+    expect(dataPlatformProject("production")).toBe("recidiviz-123");
+  });
+
+  it("is recidiviz-staging for staging and demo", () => {
+    expect(dataPlatformProject("staging")).toBe("recidiviz-staging");
+    expect(dataPlatformProject("demo")).toBe("recidiviz-staging");
+  });
+});
+
+// The services whose `postgres-bq-data-transfer` stack sets a `destination_project_id`
+// write a DTS config into the data-platform project, so they must request a PAM grant
+// there too. These pin that declaration so it cannot silently regress to the dashboard
+// project alone.
+describe("cross-project pamProjects", () => {
+  it.each([
+    ["meetingsBackend", meetingsBackend],
+    ["jiiTexting", jiiTexting],
+  ] as const)(
+    "%s requests both projects in staging and production",
+    (_, svc) => {
+      expect(svc.pamProjects?.("staging")).toEqual([
+        "recidiviz-dashboard-staging",
+        "recidiviz-staging",
+      ]);
+      expect(svc.pamProjects?.("production")).toEqual([
+        "recidiviz-dashboard-production",
+        "recidiviz-123",
+      ]);
+    },
+  );
+
+  it("jiiTexting requests only the dashboard project for demo (no cross-project transfer)", () => {
+    expect(jiiTexting.pamProjects?.("demo")).toEqual([
+      "recidiviz-dashboard-staging",
+    ]);
   });
 });

@@ -49,10 +49,16 @@ export interface ServiceDefinition {
   /** Backend Docker images that must exist before deploying (built in GitHub Actions). */
   requiredImages?: (env: DeployEnv) => string[];
   /**
-   * GCP project(s) this service deploys to in the given env, so `deploy.mts` can request a
-   * just-in-time PAM deploy-app grant on each before deploying. Omit for services that need no
-   * elevation (e.g. data-only fixture loads). Mirrors the atmos stack `project_id` /
-   * `.firebaserc` alias the service actually deploys to.
+   * EVERY GCP project this service's deploy writes to in the given env, so `deploy.mts` can
+   * request a just-in-time PAM deploy-app grant on each before deploying. Omit for services that
+   * need no elevation (e.g. data-only fixture loads).
+   *
+   * Start from the atmos stack `project_id` / `.firebaserc` alias, then add any project a stack
+   * reaches into from there. The common case: a `postgres-bq-data-transfer` stack with a
+   * `destination_project_id` creates a DTS config in the data-platform project
+   * ({@link dataPlatformProject}), which needs its own grant. A project missing from this list
+   * shows up as `Permission '...' denied on resource 'projects/<other-project-number>/...'`
+   * partway through an apply, after the dashboard-project half has already succeeded.
    */
   pamProjects?: (env: DeployEnv) => string[];
   /** One-time build phase, run OUTSIDE the retry loop. Omit when there's nothing to build. */

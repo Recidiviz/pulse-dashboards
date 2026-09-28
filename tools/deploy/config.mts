@@ -54,6 +54,22 @@ export function dashboardProject(env: DeployEnv): string {
 }
 
 /**
+ * The recidiviz-data platform project for a deploy env: `recidiviz-123` in production,
+ * `recidiviz-staging` everywhere else.
+ *
+ * Some backend stacks write here as well as to the dashboard project. The
+ * `postgres-bq-data-transfer` component, when given a `destination_project_id`, creates a
+ * BigQuery Data Transfer config *in this project* to copy the service's datasets across. Any
+ * service whose stack does that must list this project in `pamProjects`, or the deploy holds a
+ * grant on the dashboard project only and the DTS step fails with
+ * `bigquery.transfers.update denied` on `projects/<data-platform-number>/...` -- which is
+ * exactly what happened on the 2026-09-18 meetings staging deploy.
+ */
+export function dataPlatformProject(env: DeployEnv): string {
+  return env === "production" ? "recidiviz-123" : "recidiviz-staging";
+}
+
+/**
  * Real GCP project the Opportunities (JII) atmos backend and JII Firebase frontends deploy
  * into — `libs/atmos/stacks/jii/recidiviz-jii-<env>.yaml` and the `.firebaserc` `jii-<env>`
  * aliases.

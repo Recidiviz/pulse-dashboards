@@ -17,7 +17,11 @@
 
 import { $ } from "zx";
 
-import { dashboardProject, dashboardStack } from "../config.mts";
+import {
+  dashboardProject,
+  dashboardStack,
+  dataPlatformProject,
+} from "../config.mts";
 import type { ServiceDefinition } from "../types.mts";
 
 /**
@@ -27,7 +31,13 @@ import type { ServiceDefinition } from "../types.mts";
 export const jiiTexting: ServiceDefinition = {
   displayName: "JII Texting Backend Services",
   environments: ["staging", "demo", "production"],
-  pamProjects: (env) => [dashboardProject(env)],
+  // Staging and production stacks set `destination_project_id` on `postgres-bq-data-transfer`,
+  // which creates a DTS config in the data-platform project, so those envs need a grant there
+  // too. The demo stack has no cross-project transfer, so demo stays dashboard-only.
+  pamProjects: (env) =>
+    env === "demo"
+      ? [dashboardProject(env)]
+      : [dashboardProject(env), dataPlatformProject(env)],
   defaultChecked: ["staging", "production"],
   requiredImages: (env) => [
     "@jii-texting/server",
