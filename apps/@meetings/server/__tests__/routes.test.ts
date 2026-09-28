@@ -953,7 +953,7 @@ describe("tasks", () => {
     });
   });
 
-  describe("/upload-audio (local mode)", () => {
+  describe("/upload-audio and /stream-audio (local mode)", () => {
     const originalLocalMode = env.IS_LOCAL_MODE;
     const originalLocalStorageDir = env.LOCAL_STORAGE_DIR;
     const testStorageDir = "/tmp/test-local-upload-storage";
@@ -996,6 +996,62 @@ describe("tasks", () => {
       expect(response.body).toContain(
         "Uploading to server is only valid when running in local mode",
       );
+    });
+
+    // Each traversal below targets a path inside testStorageDir, so a
+    // regression would write or read a real file that afterEach removes.
+    test("Should reject a filename containing a path traversal sequence", async () => {
+      const response = await testServer.inject({
+        method: "PUT",
+        url: "/upload-audio/US_DEMO/test-meeting/..%2F..%2Ftraversal-poc.m4a",
+        payload: Buffer.from("malicious content"),
+        headers: {
+          "content-type": "audio/m4a",
+        },
+      });
+
+      expect(response.statusCode).toBe(400);
+
+      const fs = require("fs");
+      const path = require("path");
+      expect(
+        fs.existsSync(path.join(testStorageDir, "traversal-poc.m4a")),
+      ).toBe(false);
+    });
+
+    test("Should reject a meetingId containing a parent-directory reference", async () => {
+      const response = await testServer.inject({
+        method: "PUT",
+        url: "/upload-audio/US_DEMO/..%2Fother-dir/traversal-poc.m4a",
+        payload: Buffer.from("malicious content"),
+        headers: {
+          "content-type": "audio/m4a",
+        },
+      });
+
+      expect(response.statusCode).toBe(400);
+
+      const fs = require("fs");
+      const path = require("path");
+      expect(
+        fs.existsSync(
+          path.join(testStorageDir, "other-dir", "traversal-poc.m4a"),
+        ),
+      ).toBe(false);
+    });
+
+    test("Should reject a stream-audio filename containing a path traversal sequence", async () => {
+      const fs = require("fs");
+      const path = require("path");
+      fs.writeFileSync(path.join(testStorageDir, "secret.m4a"), "secret");
+
+      const response = await testServer.inject({
+        method: "GET",
+        url: "/stream-audio/US_DEMO/test-meeting/..%2F..%2Fsecret.m4a",
+      });
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body).not.toContain("secret");
     });
 
     test("Should successfully upload audio file", async () => {

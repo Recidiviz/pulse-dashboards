@@ -156,6 +156,12 @@ async function authenticateInternalRequestPreHandlerFn<
   }
 }
 
+// Path params below are joined directly into a filesystem path. Allowing only
+// these characters, with no leading dot, keeps them inside local storage.
+const safePathSegmentSchema = z
+  .string()
+  .regex(/^[A-Za-z0-9_-][A-Za-z0-9._-]{0,127}$/);
+
 export function registerTaskRoutes(app: FastifyInstance) {
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
@@ -181,8 +187,8 @@ export function registerTaskRoutes(app: FastifyInstance) {
     schema: {
       params: z.object({
         stateCode: z.nativeEnum(StateCode),
-        meetingId: z.string(),
-        filename: z.string(),
+        meetingId: safePathSegmentSchema,
+        filename: safePathSegmentSchema,
       }),
     },
     handler: async (req, reply) => {
@@ -227,8 +233,8 @@ export function registerTaskRoutes(app: FastifyInstance) {
     schema: {
       params: z.object({
         stateCode: z.nativeEnum(StateCode),
-        meetingId: z.string(),
-        filename: z.string(),
+        meetingId: safePathSegmentSchema,
+        filename: safePathSegmentSchema,
       }),
     },
     handler: async (req, reply) => {
