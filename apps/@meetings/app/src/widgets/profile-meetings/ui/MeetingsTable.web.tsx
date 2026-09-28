@@ -165,9 +165,11 @@ const MeetingRow = ({
             )}
             {!isProcessing && (
               <View className="flex flex-row items-center gap-3">
-                <ReviewIndicator
-                  isApproved={meeting.approvals.caseNote.isApproved}
-                />
+                {meeting?.approvals?.caseNote && (
+                  <ReviewIndicator
+                    isApproved={meeting.approvals.caseNote.isApproved}
+                  />
+                )}
                 <Typography
                   variant="body-m-regular"
                   className="flex-1 text-secondary"
