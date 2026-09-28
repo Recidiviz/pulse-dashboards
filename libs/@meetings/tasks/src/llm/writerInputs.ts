@@ -23,7 +23,10 @@ import type {
 } from "~@meetings/config/types";
 import { isResident, type Person } from "~@meetings/prisma/types";
 import type { TranscriptInput } from "~@meetings/tasks/llm/schemas";
-import { normalizeNameCasing } from "~@meetings/tasks/llm/utils";
+import {
+  formatMeetingStartForPrompt,
+  normalizeNameCasing,
+} from "~@meetings/tasks/llm/utils";
 
 export interface WriterUserVariables {
   transcript: string;
@@ -31,6 +34,7 @@ export interface WriterUserVariables {
   glossary: string;
   structure: string;
   client: string;
+  meetingStart: string;
   poNotes: string;
 }
 
@@ -158,6 +162,10 @@ export function buildWriterUserVariables(
     glossary,
     structure,
     client,
+    meetingStart: formatMeetingStartForPrompt(
+      new Date(transcript.startTime),
+      person.stateCode,
+    ),
     poNotes: transcript.poNotes,
   };
 }

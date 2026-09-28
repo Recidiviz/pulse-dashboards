@@ -25,6 +25,10 @@ function formatMeetingContext(ctx: MeetingContext | undefined): string {
   if (ctx.personName)
     lines.push(`- Person (client/resident) name: ${ctx.personName}`);
   if (ctx.staffEmail) lines.push(`- Staff email: ${ctx.staffEmail}`);
+  if (ctx.meetingStart)
+    lines.push(
+      `- Meeting date and time: ${ctx.meetingStart}. Treat that day as "today" when judging relative dates and deadlines.`,
+    );
   if (lines.length === 0 && !ctx.staffNotes) return "";
   let block = `\nKNOWN CONTEXT (facts about this meeting that may not appear in the transcript):\n`;
   if (lines.length > 0) block += `${lines.join("\n")}\n`;

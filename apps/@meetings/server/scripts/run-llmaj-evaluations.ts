@@ -57,6 +57,7 @@ import {
   VerificationOutputSchema,
 } from "~@meetings/tasks/llm/schemas";
 import {
+  formatMeetingStartForPrompt,
   formatTranscripts,
   normalizeNameCasing,
 } from "~@meetings/tasks/llm/utils";
@@ -211,6 +212,7 @@ function extractVerificationOutput(
  */
 function buildEvaluatorInputs(
   meeting: MeetingWithTranscriptions,
+  stateCode: StateCode,
   draftingOutput: DraftingOutput,
   verificationOutput: VerificationOutput,
 ): EvaluatorInputs | null {
@@ -229,6 +231,7 @@ function buildEvaluatorInputs(
       : undefined,
     staffEmail: meeting.staffEmail,
     staffNotes: meeting.userNotepadNotes ?? undefined,
+    meetingStart: formatMeetingStartForPrompt(meeting.startTime, stateCode),
   };
 
   return {
@@ -434,6 +437,7 @@ async function evaluateForStateCode(
 
         const inputs = buildEvaluatorInputs(
           meeting,
+          stateCode,
           draftingOutput,
           verificationOutput,
         );

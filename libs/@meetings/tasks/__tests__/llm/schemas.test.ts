@@ -35,7 +35,7 @@ describe("LLM Pipeline Schemas", () => {
       const validInput = {
         rawText:
           "[Officer]: How are you doing today?\n[Client]: I'm doing well.",
-        recordingDate: "2025-01-15",
+        startTime: "2025-01-15T15:00:00.000Z",
         durationSeconds: 300,
         eventType: "Office Visit",
         poNotes: "Client was on time and engaged.",
@@ -47,7 +47,7 @@ describe("LLM Pipeline Schemas", () => {
     test("should apply default for missing poNotes", () => {
       const input = {
         rawText: "Transcript text",
-        recordingDate: "2025-01-15",
+        startTime: "2025-01-15T15:00:00.000Z",
         durationSeconds: 300,
       };
 
@@ -58,21 +58,20 @@ describe("LLM Pipeline Schemas", () => {
       }
     });
 
-    test("should fail for invalid date format", () => {
+    test("should fail for a start time that isn't an ISO 8601 timestamp", () => {
       const invalidInput = {
         rawText: "Transcript",
-        recordingDate: "01/15/2025", // wrong format
+        startTime: "01/15/2025",
         durationSeconds: 300,
       };
 
-      // Zod doesn't validate date format by default, just that it's a string
       const result = TranscriptInputSchema.safeParse(invalidInput);
-      expect(result.success).toBe(true); // This passes as it's just a string
+      expect(result.success).toBe(false);
     });
 
     test("should fail for missing required fields", () => {
       const invalidInput = {
-        recordingDate: "2025-01-15",
+        startTime: "2025-01-15T15:00:00.000Z",
         durationSeconds: 300,
       };
 
@@ -308,7 +307,7 @@ describe("LLM Pipeline Schemas", () => {
     test("should be equivalent to TranscriptInputSchema", () => {
       const input = {
         rawText: "Transcript",
-        recordingDate: "2025-01-15",
+        startTime: "2025-01-15T15:00:00.000Z",
         durationSeconds: 300,
       };
 

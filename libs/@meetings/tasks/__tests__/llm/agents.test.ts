@@ -64,7 +64,7 @@ describe("SpecialistCore", () => {
   const mockTranscript: TranscriptInput = {
     rawText:
       "[Officer]: How are you doing?\n[Client]: Good, I'm staying at my mom's place now.",
-    recordingDate: "2025-01-15",
+    startTime: "2025-01-15T15:00:00.000Z",
     durationSeconds: 300,
     poNotes: "Client seemed engaged",
   };

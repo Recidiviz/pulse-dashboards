@@ -262,6 +262,23 @@ describe("Evaluator Agents", () => {
       expect(String(callArgs?.parts)).toContain("John Doe");
     });
 
+    test("should pass the meeting start to the prompt", async () => {
+      const generateSpy = spyOnGenerate().mockResolvedValue(GOOD_TEXT_RESULT);
+
+      await runCaseNote(mockGemini, {
+        bestTranscript: baseInputs.bestTranscript,
+        caseNote: baseInputs.caseNote,
+        meetingContext: {
+          meetingStart: "Thursday, September 24, 2026 at 7:30 PM CDT",
+        },
+      });
+
+      const callArgs = generateSpy.mock.calls[0]?.[0];
+      expect(String(callArgs?.parts)).toContain(
+        "Meeting date and time: Thursday, September 24, 2026 at 7:30 PM CDT",
+      );
+    });
+
     test("should forward timeout", async () => {
       const generateSpy = spyOnGenerate().mockResolvedValue(GOOD_TEXT_RESULT);
 

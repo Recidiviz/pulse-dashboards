@@ -30,7 +30,7 @@ import type { TranscriptInput } from "~@meetings/tasks/llm/schemas";
 export function transcriptFromScript(rawText: string): TranscriptInput {
   return {
     rawText,
-    recordingDate: "2026-01-01",
+    startTime: "2026-01-01T15:00:00.000Z",
     durationSeconds: 900,
     poNotes: "",
   };

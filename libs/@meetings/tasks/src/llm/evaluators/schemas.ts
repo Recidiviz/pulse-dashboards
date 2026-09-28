@@ -24,7 +24,7 @@ import type { ActionItem } from "~@meetings/tasks/llm/schemas";
 // Bump this string whenever any evaluator prompt changes.
 // The script uses this to find pipeline runs that have not yet been evaluated
 // at the current version.
-export const EVALUATOR_VERSION = "2";
+export const EVALUATOR_VERSION = "3";
 
 export const TranscriptComparisonOutputSchema = z.object({
   rationale: z.string(),
@@ -67,6 +67,8 @@ export interface MeetingContext {
   staffEmail?: string;
   /** Notes typed by the staff member during the meeting. */
   staffNotes?: string;
+  /** When the meeting started, in the state's local time, e.g. "Thursday, September 24, 2026 at 7:30 PM CDT". */
+  meetingStart?: string;
 }
 
 export interface EvaluatorInputs {

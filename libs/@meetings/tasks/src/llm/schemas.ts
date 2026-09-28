@@ -29,7 +29,10 @@ import { z } from "zod";
 
 export const TranscriptInputSchema = z.object({
   rawText: z.string(),
-  recordingDate: z.string().describe("YYYY-MM-DD"),
+  startTime: z
+    .string()
+    .datetime()
+    .describe("Meeting start as an ISO 8601 UTC timestamp"),
   durationSeconds: z.number(),
   poNotes: z.string().default("").describe("Officer's raw notes"),
   meetingType: z.string().optional(),

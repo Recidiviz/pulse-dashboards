@@ -91,7 +91,7 @@ describe("ProductionPipeline", () => {
   const mockTranscript: TranscriptInput = {
     rawText:
       "[Officer]: Good morning, how are you?\n[Client]: I'm doing well. I started a new job last week.\n[Officer]: That's great! Tell me more about it.\n[Client]: It's at a local restaurant, working as a line cook. The hours are good and it pays $15 per hour.\n[Officer]: Excellent. How about your housing situation?\n[Client]: Still living with my sister. It's stable.\n[Officer]: Good. Make sure to bring proof of employment to our next meeting.\n[Client]: I will, I'll get a letter from my manager.",
-    recordingDate: "2025-01-15",
+    startTime: "2025-01-15T15:00:00.000Z",
     durationSeconds: 420,
     poNotes: "Client seemed positive about new employment",
   };
@@ -201,7 +201,7 @@ describe("ProductionPipeline", () => {
     test("should fail gatekeeper check for insufficient word count", async () => {
       const shortTranscript: TranscriptInput = {
         rawText: "Too short",
-        recordingDate: "2025-01-15",
+        startTime: "2025-01-15T15:00:00.000Z",
         durationSeconds: 10,
         poNotes: "",
       };
@@ -720,7 +720,7 @@ describe("ProductionPipeline", () => {
     test("should update pipeline status to FAILURE on gatekeeper error", async () => {
       const shortTranscript: TranscriptInput = {
         rawText: "Too short",
-        recordingDate: "2025-01-15",
+        startTime: "2025-01-15T15:00:00.000Z",
         durationSeconds: 10,
         poNotes: "",
       };

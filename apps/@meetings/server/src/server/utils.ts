@@ -536,7 +536,7 @@ export async function handleNotetakingProcessing(
 
   const transcriptInput: TranscriptInput = {
     rawText: rawText,
-    recordingDate: meeting.startTime.toISOString().split("T")[0],
+    startTime: meeting.startTime.toISOString(),
     durationSeconds: meeting.endTime
       ? Math.floor(
           (meeting.endTime.getTime() - meeting.startTime.getTime()) / 1000,

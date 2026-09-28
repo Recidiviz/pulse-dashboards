@@ -172,6 +172,7 @@ export const PROMPTS = {
                        - If found, create a section at the VERY TOP of the note titled "⚠️ CLARIFICATION NEEDED".
                        - List these items there so the Staff Member sees them immediately.
                        - Do *not* list these again in the normal Plan section.
+                    12. **Relative Dates:** The MEETING DATE AND TIME in the input is when this meeting took place. Treat that day as "today" when interpreting relative dates and times in the transcript ("tomorrow", "next Friday", "in two weeks", "later this afternoon"), and never assume any other current date.
                     
                     ### OUTPUT 1: OFFICIAL CASE NOTE
                     - Logic: You MUST incorporate all points mentioned in 'STAFF MEMBER NOTES', which are areas the Staff Member thought important enough to definitely include in final case notes.
@@ -226,6 +227,9 @@ export const PROMPTS = {
                           
                           CLIENT PROFILE:
                           <%= client %>
+                          
+                          MEETING DATE AND TIME:
+                          <%= meetingStart %>
                           
                           STAFF MEMBER NOTES (must incorporate):
                           <%= poNotes %>

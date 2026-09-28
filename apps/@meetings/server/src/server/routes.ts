@@ -64,6 +64,7 @@ import {
   VerificationOutputSchema,
 } from "~@meetings/tasks/llm/schemas";
 import {
+  formatMeetingStartForPrompt,
   formatTranscripts,
   normalizeNameCasing,
 } from "~@meetings/tasks/llm/utils";
@@ -806,6 +807,10 @@ export function registerTaskRoutes(app: FastifyInstance) {
               : undefined,
             staffEmail: meeting.staffEmail,
             staffNotes: meeting.userNotepadNotes ?? undefined,
+            meetingStart: formatMeetingStartForPrompt(
+              meeting.startTime,
+              stateCode,
+            ),
           },
         };
 

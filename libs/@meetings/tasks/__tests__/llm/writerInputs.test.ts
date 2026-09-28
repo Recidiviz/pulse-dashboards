@@ -61,7 +61,7 @@ describe("buildWriterUserVariables", () => {
 
   const mockTranscript: TranscriptInput = {
     rawText: "[Officer]: Hi\n[Client]: Hello",
-    recordingDate: "2025-01-15",
+    startTime: "2025-01-15T15:00:00.000Z",
     durationSeconds: 300,
     poNotes: "Client seemed engaged",
   };
@@ -113,6 +113,19 @@ describe("buildWriterUserVariables", () => {
 
     expect(result.transcript).toBe(mockTranscript.rawText);
     expect(result.poNotes).toBe(mockTranscript.poNotes);
+  });
+
+  test("spells out the meeting start in the person's state time zone", () => {
+    const result = buildWriterUserVariables(
+      mockTranscript,
+      mockFacts,
+      mockAgency,
+      mockPerson,
+    );
+
+    expect(result.meetingStart).toBe(
+      "Wednesday, January 15, 2025 at 9:00 AM CST",
+    );
   });
 
   test("formats client as 'Client: givenNames surname'", () => {

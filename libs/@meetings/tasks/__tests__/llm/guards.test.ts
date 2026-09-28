@@ -41,7 +41,7 @@ describe("Guards - Validators", () => {
     test("should pass for transcript with sufficient words", () => {
       const transcript = {
         rawText: "This is a test transcript with many words. ".repeat(10), // 80 words
-        recordingDate: "2025-01-15",
+        startTime: "2025-01-15T15:00:00.000Z",
         durationSeconds: 300,
         poNotes: "",
       };
@@ -53,7 +53,7 @@ describe("Guards - Validators", () => {
     test("should fail for transcript with insufficient words", () => {
       const transcript = {
         rawText: "Too short",
-        recordingDate: "2025-01-15",
+        startTime: "2025-01-15T15:00:00.000Z",
         durationSeconds: 300,
         poNotes: "",
       };
@@ -260,7 +260,7 @@ describe("Guards - Guard Factory", () => {
       const guard = createGuard([]);
       const data = {
         rawText: "Valid transcript text with many words. ".repeat(10),
-        recordingDate: "2025-01-15",
+        startTime: "2025-01-15T15:00:00.000Z",
         durationSeconds: 300,
         poNotes: "",
       };
@@ -286,7 +286,7 @@ describe("Guards - Guard Factory", () => {
       const guard = createGuard([validateWordCount]);
       const data = {
         rawText: "Too short",
-        recordingDate: "2025-01-15",
+        startTime: "2025-01-15T15:00:00.000Z",
         durationSeconds: 300,
         poNotes: "",
       };
@@ -300,7 +300,7 @@ describe("Guards - Guard Factory", () => {
       const guard = createGuard([validateWordCount, validateNoRoboticTone]);
       const data = {
         rawText: "As an AI, I cannot help. ".repeat(10), // enough words but robotic
-        recordingDate: "2025-01-15",
+        startTime: "2025-01-15T15:00:00.000Z",
         durationSeconds: 300,
         poNotes: "",
       };
@@ -319,7 +319,7 @@ describe("Guards - Predefined Guards", () => {
         rawText: "This is a valid transcript with sufficient content. ".repeat(
           10,
         ),
-        recordingDate: "2025-01-15",
+        startTime: "2025-01-15T15:00:00.000Z",
         durationSeconds: 300,
         poNotes: "",
       };
@@ -331,7 +331,7 @@ describe("Guards - Predefined Guards", () => {
     test("should fail for insufficient word count", () => {
       const data = {
         rawText: "Too short",
-        recordingDate: "2025-01-15",
+        startTime: "2025-01-15T15:00:00.000Z",
         durationSeconds: 300,
         poNotes: "",
       };
