@@ -81,8 +81,8 @@ describe("paroleUrl", () => {
     expect(paroleUrl("docket")).toEqual("/parole/docket");
   });
 
-  it("substitutes docId into the case profile path", () => {
-    expect(paroleUrl("caseProfile", { docId: "DOC-45821" })).toEqual(
+  it("substitutes pseudonymizedId into the case profile path", () => {
+    expect(paroleUrl("caseProfile", { pseudonymizedId: "DOC-45821" })).toEqual(
       "/parole/case/DOC-45821",
     );
   });

@@ -197,7 +197,7 @@ export default class FirestoreStore {
     );
 
     const result = results.docs[0];
-    if (result.exists())
+    if (result?.exists())
       return clientRecordSchema.parse({
         ...result.data(),
         recordId: result.id,
@@ -311,7 +311,7 @@ export default class FirestoreStore {
     );
 
     const result = results.docs[0];
-    if (result.exists())
+    if (result?.exists())
       return workflowsResidentRecordSchema.parse({
         ...result.data(),
         recordId: result.id,

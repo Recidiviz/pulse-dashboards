@@ -39,7 +39,7 @@ const daysOut = (days: number) =>
 
 const TEST_HEARINGS: Array<ParoleHearing> = [
   {
-    docId: "1",
+    pseudonymizedId: "1",
     displayId: "91",
     individualName: "Anderson, Michael",
     hearingDate: daysOut(1),
@@ -47,7 +47,7 @@ const TEST_HEARINGS: Array<ParoleHearing> = [
     facility: "Facility A",
   },
   {
-    docId: "2",
+    pseudonymizedId: "2",
     displayId: "92",
     individualName: "Brooks, Sarah",
     hearingDate: daysOut(2),
@@ -55,7 +55,7 @@ const TEST_HEARINGS: Array<ParoleHearing> = [
     facility: "Facility B",
   },
   {
-    docId: "3",
+    pseudonymizedId: "3",
     displayId: "93",
     individualName: "Chen, David",
     hearingDate: daysOut(3),
@@ -220,14 +220,14 @@ describe("ParoleDocketPresenter docket window", () => {
     return presenter;
   }
 
-  function hearingOn(docId: string, days: number): ParoleHearing {
+  function hearingOn(pseudonymizedId: string, days: number): ParoleHearing {
     return {
-      docId,
+      pseudonymizedId,
       // These tests only exercise date-window filtering; displayId's value
       // is never asserted on, so it's a fixed placeholder rather than
-      // derived from docId.
+      // derived from pseudonymizedId.
       displayId: "unused-display-id",
-      individualName: `Resident ${docId}`,
+      individualName: `Resident ${pseudonymizedId}`,
       hearingDate: daysOut(days),
       hearingType: "Parole Grant Hearing",
       facility: "Facility A",
@@ -246,7 +246,9 @@ describe("ParoleDocketPresenter docket window", () => {
         hearingOn("out", windowDaysAfter + 1),
       ]);
 
-      expect(presenter.filteredHearings.map((h) => h.docId)).toEqual(["in"]);
+      expect(presenter.filteredHearings.map((h) => h.pseudonymizedId)).toEqual([
+        "in",
+      ]);
     },
   );
 
@@ -265,7 +267,9 @@ describe("ParoleDocketPresenter docket window", () => {
         hearingOn("out", -(windowDaysBefore + 1)),
       ]);
 
-      expect(presenter.filteredHearings.map((h) => h.docId)).toEqual(["in"]);
+      expect(presenter.filteredHearings.map((h) => h.pseudonymizedId)).toEqual([
+        "in",
+      ]);
     },
   );
 

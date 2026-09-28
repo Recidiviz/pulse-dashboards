@@ -274,19 +274,20 @@ export class ParoleAPIClient implements ParoleAPI {
    * The full case profile for one resident. Throws when the current tenant
    * has no resident under that id.
    *
-   * @param docId - The resident's DOC id, as the docket links to it.
+   * @param pseudonymizedId - The resident's pseudonymized id, as the docket
+   *   links to it.
    */
-  async caseDetail(docId: string): Promise<ParoleCase> {
+  async caseDetail(pseudonymizedId: string): Promise<ParoleCase> {
     const currentTenantId = this.requireSupportedTenant("caseDetail");
 
     const resident =
-      await this.paroleStore.rootStore.firestoreStore.getResidentByPersonExternalId(
+      await this.paroleStore.rootStore.firestoreStore.getResident(
+        pseudonymizedId,
         currentTenantId,
-        docId,
       );
     if (!resident) {
       throw new Error(
-        `No ${currentTenantId} resident found for docId [${docId}].`,
+        `No ${currentTenantId} resident found for pseudonymizedId [${pseudonymizedId}].`,
       );
     }
 
@@ -365,7 +366,7 @@ export class ParoleAPIClient implements ParoleAPI {
     if (!hearingDate) return undefined;
 
     return {
-      docId: resident.personExternalId,
+      pseudonymizedId: resident.pseudonymizedId,
       displayId: resident.displayId,
       individualName: addDisplayName({ fullName: resident.personName })
         .displayName,
@@ -378,8 +379,8 @@ export class ParoleAPIClient implements ParoleAPI {
   /**
    * The resident's soonest scheduled hearing, read from
    * `parole_board_client_profile.parole_hearings`. At most one per resident,
-   * since ParoleHearing.docId is the person's id and two rows would open the
-   * same case profile twice.
+   * since ParoleHearing.pseudonymizedId is the person's id and two rows would
+   * open the same case profile twice.
    *
    * @param resident - The resident whose hearing to find.
    */
@@ -427,7 +428,7 @@ export class ParoleAPIClient implements ParoleAPI {
     const dates = this.sourceableDatesForResident(resident);
 
     return {
-      docId: resident.personExternalId,
+      pseudonymizedId: resident.pseudonymizedId,
       displayId: resident.displayId,
       name: addDisplayName({ fullName: resident.personName }).displayName,
       dob: dates.dob ?? UNKNOWN_DATE,
@@ -708,9 +709,6 @@ export class ParoleAPIClient implements ParoleAPI {
   private parolePlanForResident(resident: WorkflowsResidentRecord): ParolePlan {
     const plan = this.profileFor(resident)?.parolePlan;
     if (!plan?.parolePlanIsOnFile) {
-      // { onFile: false, documents: [] } is the schema's own "no plan on
-      // file" representation (see CO_REAL_CASE_PROFILES in fixture.ts), not
-      // a fabricated value.
       return { onFile: false, documents: [] };
     }
 

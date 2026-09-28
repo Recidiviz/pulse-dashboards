@@ -51,13 +51,13 @@ const ParoleCaseProfileContents = observer(function ParoleCaseProfileContents({
 });
 
 function usePresenter({
-  docId,
+  pseudonymizedId,
 }: {
-  docId: string;
+  pseudonymizedId: string;
   currentTenantId: TenantId | undefined;
 }) {
   const { paroleStore } = useRootStore();
-  return new ParoleCaseProfilePresenter(paroleStore, docId);
+  return new ParoleCaseProfilePresenter(paroleStore, pseudonymizedId);
 }
 
 const ParoleCaseProfileHydrator = withPresenterManager({
@@ -68,14 +68,14 @@ const ParoleCaseProfileHydrator = withPresenterManager({
 });
 
 export function ParoleCaseProfile() {
-  const { docId } = useParams<{ docId: string }>();
+  const { pseudonymizedId } = useParams<{ pseudonymizedId: string }>();
   const { currentTenantId } = useRootStore();
 
-  if (!docId) return <NotFound />;
+  if (!pseudonymizedId) return <NotFound />;
 
   return (
     <ParoleCaseProfileHydrator
-      docId={docId}
+      pseudonymizedId={pseudonymizedId}
       currentTenantId={currentTenantId}
     />
   );

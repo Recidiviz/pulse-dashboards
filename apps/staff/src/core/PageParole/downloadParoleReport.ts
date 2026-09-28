@@ -228,7 +228,7 @@ export async function downloadParoleReportZip({
     const zip = new JSZip();
     const folder = zip.folder(folderName);
     if (!folder) {
-      throw new Error(`Could not create zip folder [${folderName}]`);
+      throw new Error("Could not create the Parole report zip folder");
     }
     folder.file(`${folderName}.pdf`, reportPdf);
     for (const file of additionalFiles) {

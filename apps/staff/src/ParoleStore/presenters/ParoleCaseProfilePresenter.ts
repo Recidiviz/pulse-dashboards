@@ -25,23 +25,29 @@ import { ParoleStore } from "../ParoleStore";
 
 /**
  * Drives the Parole case profile (detail) page: hydrates a single case's
- * data by DOC ID through ParoleStore, which caches it for the session.
+ * data by pseudonymized id through ParoleStore, which caches it for the session.
  */
 export class ParoleCaseProfilePresenter implements Hydratable {
   constructor(
     private paroleStore: ParoleStore,
-    private docId: string,
+    private pseudonymizedId: string,
   ) {
     makeAutoObservable(this);
 
     this.hydrator = new HydratesFromSource({
       expectPopulated: [
         () => {
-          if (!this.paroleStore.caseDetailsByDocId.has(this.docId))
-            throw new Error(`Failed to populate Parole case [${this.docId}]`);
+          if (
+            !this.paroleStore.caseDetailsByPseudonymizedId.has(
+              this.pseudonymizedId,
+            )
+          )
+            throw new Error(
+              `Failed to populate Parole case [${this.pseudonymizedId}]`,
+            );
         },
       ],
-      populate: () => this.paroleStore.populateCaseDetail(this.docId),
+      populate: () => this.paroleStore.populateCaseDetail(this.pseudonymizedId),
     });
   }
 
@@ -56,7 +62,9 @@ export class ParoleCaseProfilePresenter implements Hydratable {
   }
 
   get caseDetail(): ParoleCase {
-    const caseDetail = this.paroleStore.caseDetailsByDocId.get(this.docId);
+    const caseDetail = this.paroleStore.caseDetailsByPseudonymizedId.get(
+      this.pseudonymizedId,
+    );
     if (!caseDetail) {
       throw new Error(
         "caseDetail accessed before hydration completed successfully",

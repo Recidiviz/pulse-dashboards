@@ -151,7 +151,7 @@ describe("ParoleAPIClient", () => {
 
       await expect(client.hearings()).resolves.toEqual([
         {
-          docId: "RES999",
+          pseudonymizedId: "anonres999",
           displayId: "dRES999",
           individualName: "Test Resident",
           hearingDate: "2026-11-02",
@@ -247,7 +247,7 @@ describe("ParoleAPIClient", () => {
 
       await expect(client.hearings()).resolves.toEqual([
         {
-          docId: "RES999",
+          pseudonymizedId: "anonres999",
           displayId: "dRES999",
           individualName: "Test Resident",
           hearingDate: "2026-05-01",
@@ -339,22 +339,18 @@ describe("ParoleAPIClient", () => {
       );
     });
 
-    it("throws when no resident is found for the docId", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(undefined);
+    it("throws when no resident is found for the pseudonymizedId", async () => {
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
+        undefined,
+      );
 
       await expect(client.caseDetail("UNKNOWN_ID")).rejects.toThrow(
-        /No US_ID resident found for docId \[UNKNOWN_ID\]/,
+        /No US_ID resident found for pseudonymizedId \[UNKNOWN_ID\]/,
       );
     });
 
     it("maps every field the resident record has real data for", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           gender: "MALE",
           custodyLevel: "MINIMUM",
@@ -371,7 +367,7 @@ describe("ParoleAPIClient", () => {
       const result = await client.caseDetail("RES999");
 
       expect(result).toMatchObject({
-        docId: "RES999",
+        pseudonymizedId: "anonres999",
         displayId: "dRES999",
         name: "Test Resident",
         gender: "MALE",
@@ -384,10 +380,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("sources dob from the parole_board_client_profile struct", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
             stateCode: "US_ID",
@@ -406,10 +399,7 @@ describe("ParoleAPIClient", () => {
 
     it("sources dob from the same struct for US_CO", async () => {
       rootStore.tenantStore.currentTenantId = "US_CO";
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsCoResident({
           metadata: {
             stateCode: "US_CO",
@@ -429,10 +419,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("falls back to UNKNOWN_DATE for dob when the struct has no residentDob", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
             stateCode: "US_ID",
@@ -448,10 +435,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("falls back to explicit placeholders for fields with no real data source", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           gender: undefined,
           custodyLevel: undefined,
@@ -463,7 +447,7 @@ describe("ParoleAPIClient", () => {
       const result = await client.caseDetail("RES999");
 
       expect(result).toEqual({
-        docId: "RES999",
+        pseudonymizedId: "anonres999",
         displayId: "dRES999",
         name: "Test Resident",
         dob: "9999-12-01",
@@ -505,10 +489,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("falls back to [UNKNOWN_OFFENSE] when activeSentences is empty", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
             stateCode: "US_ID",
@@ -538,10 +519,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("maps activeSentences into offenseHistory.offenses", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
             stateCode: "US_ID",
@@ -607,10 +585,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("treats a sentence's year-9999 fullTermDate/paroleEligibilityDate as absent", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
             stateCode: "US_ID",
@@ -638,10 +613,7 @@ describe("ParoleAPIClient", () => {
 
     it("maps US_CO's mrdTent/pedTent/incarcerationStartDate", async () => {
       rootStore.tenantStore.currentTenantId = "US_CO";
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsCoResident({
           metadata: {
             stateCode: "US_CO",
@@ -673,10 +645,7 @@ describe("ParoleAPIClient", () => {
         hearingDate: "2026-11-02",
       };
 
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
             stateCode: "US_ID",
@@ -693,10 +662,7 @@ describe("ParoleAPIClient", () => {
       expect(idResult.hearingDate).toBe("2026-11-02");
 
       rootStore.tenantStore.currentTenantId = "US_CO";
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsCoResident({
           metadata: {
             stateCode: "US_CO",
@@ -716,10 +682,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("sources hearingType from the same scheduled hearing as hearingDate", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
             stateCode: "US_ID",
@@ -750,10 +713,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("falls back to a placeholder hearingType when the scheduled hearing has none", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
             stateCode: "US_ID",
@@ -774,10 +734,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("prefers demographics.facility over the resident record's facilityId", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           facilityId: "RAW_CODE_1",
           metadata: {
@@ -796,10 +753,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("falls back to facilityId when demographics carries no facility", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           facilityId: "RAW_CODE_1",
           metadata: {
@@ -816,10 +770,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("sources caseManagerName from demographics.caseManager", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
             stateCode: "US_ID",
@@ -838,10 +789,7 @@ describe("ParoleAPIClient", () => {
 
     it("prefers a sentence's parole eligibility/mandatory release dates over the flat fields, treating a year-9999 sentence date as absent", async () => {
       rootStore.tenantStore.currentTenantId = "US_CO";
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsCoResident({
           metadata: {
             stateCode: "US_CO",
@@ -873,10 +821,9 @@ describe("ParoleAPIClient", () => {
 
     it("falls back to placeholders for a US_CO resident missing those dates", async () => {
       rootStore.tenantStore.currentTenantId = "US_CO";
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(buildUsCoResident());
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
+        buildUsCoResident(),
+      );
 
       const result = await client.caseDetail("RES999");
 
@@ -889,10 +836,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("maps criminalHistory into priorConvictions, dropping an entry missing either field", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
             stateCode: "US_ID",
@@ -916,10 +860,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("maps violations into conductHistory", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
             stateCode: "US_ID",
@@ -956,10 +897,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("maps programs into docPrograms, translating US_ID and US_CO's different status values", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
             stateCode: "US_ID",
@@ -1011,10 +949,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("maps edovoPrograms, dropping a WITHDRAWN entry since PAROLE_EDOVO_STATUS has no bucket for it", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
             stateCode: "US_ID",
@@ -1055,10 +990,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("maps riskAssessments, translating US_CO's raw tool labels and dropping an unscored entry", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
             stateCode: "US_ID",
@@ -1112,10 +1044,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("keeps an assessment scored 0, which is a real result", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
             stateCode: "US_ID",
@@ -1149,10 +1078,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("keeps an assessment with no max score, which is every US_IX one", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
             stateCode: "US_ID",
@@ -1186,10 +1112,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("groups an assessment's category rows into subcategories", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
             stateCode: "US_ID",
@@ -1240,10 +1163,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("omits subcategories (rather than an empty array) when no row has a category", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
             stateCode: "US_ID",
@@ -1272,10 +1192,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("never builds subcategories for CARAS, since its wire shape has no place for value/coefficient", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
             stateCode: "US_ID",
@@ -1306,10 +1223,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("maps latestRiskNeedSummary into riskAndNeedsFactors, showing each raw scale label as-is", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
             stateCode: "US_ID",
@@ -1335,10 +1249,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("drops a latestRiskNeedSummary domain that hasn't migrated to [score, scale] pairs yet, without failing to parse the rest of the resident", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
             stateCode: "US_ID",
@@ -1365,10 +1276,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("maps parolePlan.onFile and its document when a plan is on file", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
             stateCode: "US_ID",
@@ -1398,10 +1306,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("drops the communitySupervisionPlan entry when parolePlanRecommended isn't a recognized status", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
             stateCode: "US_ID",
@@ -1423,10 +1328,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("maps the communitySupervisionPlan sponsor when parolePlanRecommended is recognized", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
             stateCode: "US_ID",
@@ -1459,10 +1361,7 @@ describe("ParoleAPIClient", () => {
     });
 
     it("maps attachments, falling back to Other for an unrecognized type and dropping one with no url", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentByPersonExternalId",
-      ).mockResolvedValue(
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
             stateCode: "US_ID",

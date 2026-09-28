@@ -30,8 +30,8 @@ export class ParoleOfflineAPIClient implements ParoleAPI {
   constructor(public readonly paroleStore: ParoleStore) {}
 
   // Docket varies by tenant, not just conduct classification scheme --
-  // US_CO's carries real resident records that US_ID's must not (see
-  // CO_HEARINGS/CO_REAL_CASE_PROFILES in fixture.ts).
+  // US_CO's carries anonymized records that US_ID's does not (see
+  // CO_HEARINGS/CO_ANONYMIZED_CASE_PROFILES in fixture.ts).
   async hearings(): Promise<Array<ParoleHearing>> {
     const { currentTenantId } = this.paroleStore.rootStore.tenantStore;
     if (!this.isParoleFixtureStateCode(currentTenantId)) {
@@ -43,10 +43,12 @@ export class ParoleOfflineAPIClient implements ParoleAPI {
     return paroleHearingsFixtureByState[currentTenantId];
   }
 
-  async caseDetail(docId: string): Promise<ParoleCase> {
-    const caseDetail = this.casesFixture[docId];
+  async caseDetail(pseudonymizedId: string): Promise<ParoleCase> {
+    const caseDetail = this.casesFixture[pseudonymizedId];
     if (!caseDetail) {
-      throw new Error(`Parole case ${docId} not present in fixture data`);
+      throw new Error(
+        `Parole case ${pseudonymizedId} not present in fixture data`,
+      );
     }
     return caseDetail;
   }

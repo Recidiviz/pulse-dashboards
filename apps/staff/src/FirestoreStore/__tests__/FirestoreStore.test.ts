@@ -1401,6 +1401,26 @@ describe("FirestoreStore", () => {
     });
   });
 
+  describe("getResident", () => {
+    test("resolves undefined without throwing when there is no matching Resident doc", async () => {
+      mockGetDocs.mockResolvedValue({ docs: [] });
+
+      const result = await store.getResident("anonunknown", "US_XX");
+
+      expect(result).toBeUndefined();
+    });
+  });
+
+  describe("getClient", () => {
+    test("resolves undefined without throwing when there is no matching Client doc", async () => {
+      mockGetDocs.mockResolvedValue({ docs: [] });
+
+      const result = await store.getClient("anonunknown", "US_XX");
+
+      expect(result).toBeUndefined();
+    });
+  });
+
   describe("getResidentsForState", () => {
     const rawResident1: RawWorkflowsResidentRecord = {
       recordId: "us_id_res001",

@@ -89,7 +89,10 @@ function renderAtPath(path: string) {
   return render(
     <MemoryRouter initialEntries={[path]}>
       <Routes>
-        <Route path="/parole/case/:docId" element={<ParoleCaseProfile />} />
+        <Route
+          path="/parole/case/:pseudonymizedId"
+          element={<ParoleCaseProfile />}
+        />
         <Route path="*" element={<ParoleCaseProfile />} />
       </Routes>
     </MemoryRouter>,
@@ -104,7 +107,7 @@ describe("ParoleCaseProfile", () => {
     expect(link).toHaveAttribute("href", "/parole/docket");
   });
 
-  it("renders NotFound when there is no docId in the route", () => {
+  it("renders NotFound when there is no pseudonymizedId in the route", () => {
     renderAtPath("/parole/case-missing-param");
 
     expect(screen.getByText("Oops Page Not Found")).toBeInTheDocument();
@@ -269,7 +272,10 @@ describe("ParoleCaseProfile", () => {
       rerender(
         <MemoryRouter initialEntries={["/parole/case/45821"]}>
           <Routes>
-            <Route path="/parole/case/:docId" element={<ParoleCaseProfile />} />
+            <Route
+              path="/parole/case/:pseudonymizedId"
+              element={<ParoleCaseProfile />}
+            />
             <Route path="*" element={<ParoleCaseProfile />} />
           </Routes>
         </MemoryRouter>,
@@ -611,7 +617,7 @@ describe("ParoleCaseProfile", () => {
     });
 
     it("renders the empty state when there is no community supervision plan on file", async () => {
-      renderAtPath("/parole/case/980332");
+      renderAtPath("/parole/case/551712");
 
       await findSectionHeading("Community Supervision Plan");
       expect(

@@ -104,10 +104,9 @@ export const paroleRiskNeedFactorSchema = z.object({
 export type ParoleRiskNeedFactor = z.infer<typeof paroleRiskNeedFactorSchema>;
 
 export const paroleHearingSchema = z.object({
-  // Stable person id, used for the case-profile route and the Firestore
-  // lookup. For US_CO this is the OFFENDERID, which is not the number the
-  // parole board works with -- show `displayId` instead.
-  docId: z.string(),
+  // The resident's pseudonymized id, used for the case-profile route and the
+  // Firestore lookup.
+  pseudonymizedId: z.string(),
   // The id shown to the user. For US_CO this is the ADCNUMBER.
   displayId: z.string(),
   individualName: z.string(),
@@ -273,8 +272,8 @@ export const paroleCaseNoteSchema = z.object({
 export type ParoleCaseNote = z.infer<typeof paroleCaseNoteSchema>;
 
 export const paroleCaseSchema = z.object({
-  // See paroleHearingSchema above for the docId/displayId split.
-  docId: z.string(),
+  // See paroleHearingSchema above for the pseudonymizedId/displayId split.
+  pseudonymizedId: z.string(),
   displayId: z.string(),
   name: z.string(),
   dob: z.string(),

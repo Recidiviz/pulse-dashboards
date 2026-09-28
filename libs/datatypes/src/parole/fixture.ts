@@ -132,7 +132,7 @@ const RAW_HEARINGS: Array<
   Omit<ParoleHearing, "hearingDate"> & { daysFromNow: number }
 > = [
   {
-    docId: "45821",
+    pseudonymizedId: "45821",
     displayId: "945821",
     individualName: "Anderson, Michael",
     hearingType: "Parole Grant Hearing",
@@ -140,7 +140,7 @@ const RAW_HEARINGS: Array<
     daysFromNow: 5,
   },
   {
-    docId: "52903",
+    pseudonymizedId: "52903",
     displayId: "952903",
     individualName: "Brooks, Sarah",
     hearingType: "Parole Grant Hearing",
@@ -148,7 +148,7 @@ const RAW_HEARINGS: Array<
     daysFromNow: 8,
   },
   {
-    docId: "61247",
+    pseudonymizedId: "61247",
     displayId: "961247",
     individualName: "Chen, David",
     hearingType: "Revocation Hearing",
@@ -156,7 +156,7 @@ const RAW_HEARINGS: Array<
     daysFromNow: 12,
   },
   {
-    docId: "48392",
+    pseudonymizedId: "48392",
     displayId: "948392",
     individualName: "Davis, Jennifer",
     hearingType: "Parole Grant Hearing",
@@ -164,7 +164,7 @@ const RAW_HEARINGS: Array<
     daysFromNow: 15,
   },
   {
-    docId: "71458",
+    pseudonymizedId: "71458",
     displayId: "971458",
     individualName: "Evans, Robert",
     hearingType: "Parole Grant Hearing",
@@ -172,7 +172,7 @@ const RAW_HEARINGS: Array<
     daysFromNow: 19,
   },
   {
-    docId: "55729",
+    pseudonymizedId: "55729",
     displayId: "955729",
     individualName: "Foster, Maria",
     hearingType: "Parole Grant Hearing",
@@ -180,7 +180,7 @@ const RAW_HEARINGS: Array<
     daysFromNow: 23,
   },
   {
-    docId: "63184",
+    pseudonymizedId: "63184",
     displayId: "963184",
     individualName: "Garcia, Carlos",
     hearingType: "Parole Grant Hearing",
@@ -188,7 +188,7 @@ const RAW_HEARINGS: Array<
     daysFromNow: 26,
   },
   {
-    docId: "59402",
+    pseudonymizedId: "59402",
     displayId: "959402",
     individualName: "Harris, Patricia",
     hearingType: "Modification Hearing",
@@ -205,27 +205,26 @@ const SHARED_HEARINGS: Array<ParoleHearing> = RAW_HEARINGS.map(
     }),
 );
 
-// Real Colorado DOC records (CO Parole Board MVP Sample, "Real Resident
-// Mapping #1"/#2/etc.) used to validate the profile page against actual
-// resident data ahead of the US_CO Parole MVP launch. Entries here belong
-// only on US_CO's docket -- US_ID must never show a real CO resident's data.
-// Add each newly extracted real resident's hearing to this array, and their
-// case-profile detail to CO_REAL_CASE_PROFILES below (a resident may appear
-// more than once here across separate hearings, each with its own docId).
-// No separate ADCNUMBER was extracted for these records, so displayId mirrors
-// docId here rather than carrying a fabricated number.
+// Anonymized Colorado records from the CO Parole Board MVP Sample, used to
+// check the profile page against realistic resident data. Names, ids, and
+// other identifying fields are random, so no entry identifies a real person.
+// Entries here belong only on US_CO's docket. Add each new record's hearing
+// to this array, and its case-profile detail to CO_ANONYMIZED_CASE_PROFILES
+// below (a resident may appear more than once here across separate
+// hearings, each with its own pseudonymizedId). displayId reuses the
+// pseudonymizedId value, since the sample has no separate ADCNUMBER.
 const CO_HEARINGS: Array<ParoleHearing> = [
   paroleHearingSchema.parse({
-    docId: "454321",
-    displayId: "454321",
+    pseudonymizedId: "924893",
+    displayId: "924893",
     individualName: "BANNER, BRUCE",
     hearingType: "Parole Grant Hearing",
     facility: "Fremont Correctional Facility",
     hearingDate: "2026-10-01",
   }),
   paroleHearingSchema.parse({
-    docId: "980332",
-    displayId: "980332",
+    pseudonymizedId: "551712",
+    displayId: "551712",
     individualName: "ROGERS, STEVE",
     hearingType: "Parole Grant Hearing",
     facility: "Colorado State Penitentiary",
@@ -234,13 +233,13 @@ const CO_HEARINGS: Array<ParoleHearing> = [
 ];
 
 // ID-specific hand-authored records (OBT-45410), analogous to CO_HEARINGS/
-// CO_REAL_CASE_PROFILES above but entirely synthetic -- add each new ID-only
-// individual's hearing here, and their case-profile detail to
-// ID_REAL_CASE_PROFILES below.
+// CO_ANONYMIZED_CASE_PROFILES above but entirely synthetic. Add each new
+// ID-only individual's hearing here, and their case-profile detail to
+// ID_SYNTHETIC_CASE_PROFILES below.
 const ID_HEARINGS: Array<ParoleHearing> = [
   paroleHearingSchema.parse({
-    docId: "166184",
-    displayId: "166184",
+    pseudonymizedId: "350463",
+    displayId: "350463",
     individualName: "STARK, TONY",
     hearingType: "Parole Grant Hearing",
     facility: "Central State Correctional Facility",
@@ -250,8 +249,8 @@ const ID_HEARINGS: Array<ParoleHearing> = [
 
 // Keyed by state so `nx offline staff` can serve each Parole-enabled tenant
 // its own docket -- unlike the case data below (which varies only by
-// severity scheme), US_CO's docket carries extra, real resident records
-// that US_ID's must not.
+// severity scheme), US_CO's docket carries extra anonymized records that
+// US_ID's does not.
 export const paroleHearingsFixtureByState: Record<
   ParoleFixtureStateCode,
   Array<ParoleHearing>
@@ -262,16 +261,16 @@ export const paroleHearingsFixtureByState: Record<
 
 // US_CO has no Parole backend yet (TODO(OBT-41775): replace this fixture with
 // real data once one exists). Case-profile detail for each individual on the
-// docket above, keyed by docId. Anderson's case is hand-authored to match the
+// docket above, keyed by pseudonymizedId. Anderson's case is hand-authored to match the
 // OBT-41624 design mock 1:1; the rest are generically derived from their
 // docket row so every docket link resolves to a valid profile. Harris (below)
 // has no hearing scheduled on her case profile -- despite appearing on the
 // docket -- so the profile page's "not scheduled" / no-badge states have
 // fixture coverage. Brooks and Chen are similarly steered to cover the
 // Attachments section's stale-parole-plan and no-parole-plan-on-file banners
-// (see STALE_PAROLE_PLAN_DOC_ID / NO_PAROLE_PLAN_DOC_ID below), matching the
+// (see STALE_PAROLE_PLAN_PSEUDONYMIZED_ID / NO_PAROLE_PLAN_PSEUDONYMIZED_ID below), matching the
 // same two individuals used for this in the Parole POC.
-const HEARING_TIME_BY_DOC_ID: Record<string, string> = {
+const HEARING_TIME_BY_PSEUDONYMIZED_ID: Record<string, string> = {
   "52903": "10:30 AM",
   "61247": "1:00 PM",
   "48392": "9:30 AM",
@@ -280,9 +279,9 @@ const HEARING_TIME_BY_DOC_ID: Record<string, string> = {
   "63184": "10:00 AM",
 };
 
-// Keyed by docId (rather than derived from `individualName`) so it stays
+// Keyed by pseudonymizedId (rather than derived from `individualName`) so it stays
 // correct even if a fixture name is ever reworded.
-const GENDER_BY_DOC_ID: Record<string, string> = {
+const GENDER_BY_PSEUDONYMIZED_ID: Record<string, string> = {
   "45821": "Male", // Anderson, Michael
   "52903": "Female", // Brooks, Sarah
   "61247": "Male", // Chen, David
@@ -293,15 +292,15 @@ const GENDER_BY_DOC_ID: Record<string, string> = {
   "59402": "Female", // Harris, Patricia
 };
 
-const NO_HEARING_SCHEDULED_DOC_ID = "59402";
+const NO_HEARING_SCHEDULED_PSEUDONYMIZED_ID = "59402";
 
 // Brooks: parole plan on file, but not updated in over 90 days.
-const STALE_PAROLE_PLAN_DOC_ID = "52903";
+const STALE_PAROLE_PLAN_PSEUDONYMIZED_ID = "52903";
 // Chen: no parole plan on file at all.
-const NO_PAROLE_PLAN_DOC_ID = "61247";
+const NO_PAROLE_PLAN_PSEUDONYMIZED_ID = "61247";
 // Chen is also the fixture's parole-return case, so the General Info banner
 // has coverage alongside his other flagged states above.
-const PAROLE_RETURN_DOC_ID = "61247";
+const PAROLE_RETURN_PSEUDONYMIZED_ID = "61247";
 
 const GENERIC_CASE_MANAGER_NAMES = [
   "David Thompson",
@@ -541,11 +540,11 @@ function buildAndersonCaseProfile(
   const srtAnchor = parseISO("2026-03-19");
   const carasAnchor = parseISO("2026-04-16");
   return paroleCaseSchema.parse({
-    docId: "45821",
+    pseudonymizedId: "45821",
     displayId: "945821",
     name: "Anderson, Michael",
     dob: iso(subYears(today, 40)),
-    gender: GENDER_BY_DOC_ID["45821"],
+    gender: GENDER_BY_PSEUDONYMIZED_ID["45821"],
     currentFacility: "Central State Correctional Facility",
     custodyLevel: "Minimum",
     caseManagerName: "Jennifer Martinez",
@@ -950,28 +949,36 @@ function buildAndersonCaseProfile(
 }
 
 function buildParolePlan(
-  docId: string,
+  pseudonymizedId: string,
   index: number,
   today: Date,
 ): ParoleCase["parolePlan"] {
-  if (docId === NO_PAROLE_PLAN_DOC_ID) {
+  if (pseudonymizedId === NO_PAROLE_PLAN_PSEUDONYMIZED_ID) {
     return { onFile: false, documents: [] };
   }
 
   const lastUpdated = iso(
-    subDays(today, docId === STALE_PAROLE_PLAN_DOC_ID ? 130 : 10 + index * 4),
+    subDays(
+      today,
+      pseudonymizedId === STALE_PAROLE_PLAN_PSEUDONYMIZED_ID
+        ? 130
+        : 10 + index * 4,
+    ),
   );
   return {
     onFile: true,
     lastUpdated,
     documents: [
-      { url: `/documents/parole-plan-${docId}.pdf`, uploadDate: lastUpdated },
+      {
+        url: `/documents/parole-plan-${pseudonymizedId}.pdf`,
+        uploadDate: lastUpdated,
+      },
     ],
   };
 }
 
 function buildAttachments(
-  docId: string,
+  pseudonymizedId: string,
   index: number,
   today: Date,
 ): ParoleCase["attachments"] {
@@ -981,7 +988,7 @@ function buildAttachments(
     {
       name: `Letter of Support - ${author}`,
       type: "Letter of Support",
-      url: `/documents/support-letter-${docId}.pdf`,
+      url: `/documents/support-letter-${pseudonymizedId}.pdf`,
       uploadDate: iso(subDays(today, 5 + index * 3)),
     },
   ];
@@ -1281,35 +1288,36 @@ function buildGenericCaseProfile(
   stateCode: ParoleFixtureStateCode,
 ): ParoleCase {
   const today = new Date();
-  const hasScheduledHearing = hearing.docId !== NO_HEARING_SCHEDULED_DOC_ID;
+  const hasScheduledHearing =
+    hearing.pseudonymizedId !== NO_HEARING_SCHEDULED_PSEUDONYMIZED_ID;
   // Harris also anchors the "no disciplinary infractions" empty state, so her
   // conduct history is deliberately empty rather than pattern-derived.
   const conductHistory = hasScheduledHearing
     ? buildGenericConductHistory(index, hearing.facility, stateCode)
     : [];
   return paroleCaseSchema.parse({
-    docId: hearing.docId,
+    pseudonymizedId: hearing.pseudonymizedId,
     displayId: hearing.displayId,
     name: hearing.individualName,
     dob: iso(subYears(today, 30 + index)),
-    gender: GENDER_BY_DOC_ID[hearing.docId],
+    gender: GENDER_BY_PSEUDONYMIZED_ID[hearing.pseudonymizedId],
     currentFacility: hearing.facility,
     custodyLevel: CUSTODY_LEVELS[index % CUSTODY_LEVELS.length],
     caseManagerName:
       GENERIC_CASE_MANAGER_NAMES[index % GENERIC_CASE_MANAGER_NAMES.length],
     hearingDate: hasScheduledHearing ? hearing.hearingDate : undefined,
     hearingTime: hasScheduledHearing
-      ? HEARING_TIME_BY_DOC_ID[hearing.docId]
+      ? HEARING_TIME_BY_PSEUDONYMIZED_ID[hearing.pseudonymizedId]
       : undefined,
     hearingType: hearing.hearingType,
     reportAuthor: REPORT_AUTHOR_NAMES[index % REPORT_AUTHOR_NAMES.length],
-    isParoleReturn: hearing.docId === PAROLE_RETURN_DOC_ID,
+    isParoleReturn: hearing.pseudonymizedId === PAROLE_RETURN_PSEUDONYMIZED_ID,
     sentenceStartDate: iso(subYears(today, 3 + (index % 4))),
     paroleEligibilityDate: iso(addDays(today, 10 + index * 5)),
     conductHistory,
     mandatoryReleaseDate: iso(addDays(today, 600 + index * 30)),
-    parolePlan: buildParolePlan(hearing.docId, index, today),
-    attachments: buildAttachments(hearing.docId, index, today),
+    parolePlan: buildParolePlan(hearing.pseudonymizedId, index, today),
+    attachments: buildAttachments(hearing.pseudonymizedId, index, today),
     communitySupervisionPlan: buildCommunitySupervisionPlan(index),
     // Only Anderson's profile is hand-authored with program data (see comment
     // above); the rest have none until a real backend exists.
@@ -1321,14 +1329,13 @@ function buildGenericCaseProfile(
   });
 }
 
-// Case-profile detail for each real Colorado DOC record in CO_HEARINGS
-// above, keyed by docId. Hand-authored from the CO Parole Board MVP
-// Sample's "Real Resident Mapping #1"/#2/etc. column rather than
-// generically derived, so the fixture matches an actual intake record. Add
-// each newly extracted real resident's case profile here, not a new builder
-// function -- this record is meant to grow as more real residents are
-// added. Fields the source spreadsheet marked "#N/A" (no data on file) are
-// set to this schema's empty/no-data value for that field's type.
+// Case-profile detail for each anonymized Colorado record in CO_HEARINGS
+// above, keyed by pseudonymizedId. Hand-authored from the CO Parole Board MVP
+// Sample rather than generically derived, so each profile keeps the shape
+// of a real intake record while its names, ids, and other identifying
+// fields are random. Add each new record's case profile here, not a new
+// builder function. Fields the source spreadsheet marked "#N/A" (no data on
+// file) are set to this schema's empty/no-data value for that field's type.
 // criminogenicNeed is blank for every docProgram in the source records, but
 // paroleDocProgramSchema requires a non-null string, so it is set to "" here
 // rather than widening the shared schema for one fixture's real-world gap.
@@ -1337,12 +1344,12 @@ function buildGenericCaseProfile(
 // ("Class I"/"Class IIa"/"Class IIb"/"Class III", confirmed against the
 // staging sandbox). Corrected here to "Class I"/"Class IIa" as the closest
 // real equivalents; this is an approximation, not re-verified against the
-// original "Real Resident Mapping" spreadsheet -- update it if that source
+// original MVP Sample spreadsheet -- update it if that source
 // is checked and says otherwise.
-const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
-  "454321": paroleCaseSchema.parse({
-    docId: "454321",
-    displayId: "454321",
+const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
+  "924893": paroleCaseSchema.parse({
+    pseudonymizedId: "924893",
+    displayId: "924893",
     name: "BANNER, BRUCE",
     dob: "1992-04-01",
     gender: "Male",
@@ -1481,9 +1488,9 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
       { tool: "PIT", score: 14, maxScore: 39, date: "2023-06-22" },
     ],
   }),
-  "980332": paroleCaseSchema.parse({
-    docId: "980332",
-    displayId: "980332",
+  "551712": paroleCaseSchema.parse({
+    pseudonymizedId: "551712",
+    displayId: "551712",
     name: "ROGERS, STEVE",
     dob: "1985-10-11",
     gender: "Male",
@@ -1955,14 +1962,13 @@ const CO_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
   }),
 };
 
-// Case-profile detail for each ID_HEARINGS entry, keyed by docId --
-// analogous to CO_REAL_CASE_PROFILES above but hand-authored as synthetic
-// data from the start, since US_ID's docket must never carry a real
-// resident's record.
-const ID_REAL_CASE_PROFILES: Record<string, ParoleCase> = {
-  "166184": paroleCaseSchema.parse({
-    docId: "166184",
-    displayId: "166184",
+// Case-profile detail for each ID_HEARINGS entry, keyed by pseudonymizedId.
+// Analogous to CO_ANONYMIZED_CASE_PROFILES above, but hand-authored as
+// synthetic data from the start rather than anonymized from a sample.
+const ID_SYNTHETIC_CASE_PROFILES: Record<string, ParoleCase> = {
+  "350463": paroleCaseSchema.parse({
+    pseudonymizedId: "350463",
+    displayId: "350463",
     name: "STARK, TONY",
     dob: "1987-03-22",
     gender: "Male",
@@ -2182,7 +2188,7 @@ const ID_CASE_NOTE_COUNT = 32;
 
 /**
  * Builds a case's notes, newest first, roughly one every three weeks going
- * back. Everything varies off the case's index, so a given DOC id gets the
+ * back. Everything varies off the case's index, so a given pseudonymizedId gets the
  * same notes on every load.
  *
  * @param index - The case's position in the fixture list.
@@ -2232,20 +2238,20 @@ function buildParoleCasesFixture(
   return Object.fromEntries(
     paroleHearingsFixtureByState[stateCode].map((hearing, index) => {
       const caseDetail = (() => {
-        if (hearing.docId === "45821") {
+        if (hearing.pseudonymizedId === "45821") {
           return buildAndersonCaseProfile(hearing.hearingDate, stateCode);
         }
-        if (hearing.docId in CO_REAL_CASE_PROFILES) {
-          return CO_REAL_CASE_PROFILES[hearing.docId];
+        if (hearing.pseudonymizedId in CO_ANONYMIZED_CASE_PROFILES) {
+          return CO_ANONYMIZED_CASE_PROFILES[hearing.pseudonymizedId];
         }
-        if (hearing.docId in ID_REAL_CASE_PROFILES) {
-          return ID_REAL_CASE_PROFILES[hearing.docId];
+        if (hearing.pseudonymizedId in ID_SYNTHETIC_CASE_PROFILES) {
+          return ID_SYNTHETIC_CASE_PROFILES[hearing.pseudonymizedId];
         }
         return buildGenericCaseProfile(hearing, index, stateCode);
       })();
 
       return [
-        hearing.docId,
+        hearing.pseudonymizedId,
         withCaseNotes(
           withAssessmentLevels(caseDetail, stateCode),
           index,

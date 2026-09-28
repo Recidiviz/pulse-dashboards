@@ -22,7 +22,7 @@ import { paroleCasesFixtureByState } from "~datatypes";
 import { ParoleConfig } from "../../../../models/types";
 import { UsIdParoleSidebar } from "../UsIdParoleSidebar";
 
-const CASE = paroleCasesFixtureByState.US_ID["166184"];
+const CASE = paroleCasesFixtureByState.US_ID["350463"];
 
 // The Report Author row shows the case manager until the backend sources an
 // author of its own, so the tests assert against CASE's own value.

@@ -29,7 +29,7 @@ import { ParoleOfflineAPIClient } from "./api/ParoleOfflineAPIClient";
 
 export class ParoleStore {
   hearings?: Array<ParoleHearing>;
-  caseDetailsByDocId = new Map<string, ParoleCase>();
+  caseDetailsByPseudonymizedId = new Map<string, ParoleCase>();
 
   constructor(public rootStore: RootStore) {
     makeAutoObservable(this);
@@ -45,7 +45,7 @@ export class ParoleStore {
 
   private clearCaches(): void {
     this.hearings = undefined;
-    this.caseDetailsByDocId.clear();
+    this.caseDetailsByPseudonymizedId.clear();
     this.cacheGeneration += 1;
   }
 
@@ -68,24 +68,24 @@ export class ParoleStore {
   }
 
   /**
-   * Fetches one case profile by DOC id, unless an earlier fetch already
-   * cached it.
+   * Fetches one case profile by pseudonymized id, unless an earlier fetch
+   * already cached it.
    *
-   * @param docId - The DOC id of the case to fetch.
+   * @param pseudonymizedId - The pseudonymized id of the case to fetch.
    */
-  async populateCaseDetail(docId: string): Promise<void> {
-    if (this.caseDetailsByDocId.has(docId)) return;
+  async populateCaseDetail(pseudonymizedId: string): Promise<void> {
+    if (this.caseDetailsByPseudonymizedId.has(pseudonymizedId)) return;
 
     const generation = this.cacheGeneration;
-    const caseDetail = await this.apiClient.caseDetail(docId);
+    const caseDetail = await this.apiClient.caseDetail(pseudonymizedId);
     if (generation !== this.cacheGeneration) {
-      // See populateHearings. A DOC id identifies a different person in
-      // another state, so a stale write here would mask a real case profile.
-      return this.populateCaseDetail(docId);
+      // See populateHearings. A stale write here would put the previous
+      // tenant's case profile in the current tenant's cache.
+      return this.populateCaseDetail(pseudonymizedId);
     }
 
     runInAction(() => {
-      this.caseDetailsByDocId.set(docId, caseDetail);
+      this.caseDetailsByPseudonymizedId.set(pseudonymizedId, caseDetail);
     });
   }
 

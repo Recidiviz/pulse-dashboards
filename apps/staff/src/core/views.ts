@@ -325,7 +325,7 @@ export const PAROLE_PAGES = {
 
 export const PAROLE_PATHS: Record<ParolePage, string> = {
   docket: `/${DASHBOARD_VIEWS.parole}/${PAROLE_PAGES.docket}`,
-  caseProfile: `/${DASHBOARD_VIEWS.parole}/case/:docId`,
+  caseProfile: `/${DASHBOARD_VIEWS.parole}/case/:pseudonymizedId`,
 };
 
 /**
@@ -338,7 +338,7 @@ export function paroleRoute({ routeName }: { routeName: ParolePage }): string {
 export function paroleUrl(routeName: "docket"): string;
 export function paroleUrl(
   routeName: "caseProfile",
-  params: { docId: string },
+  params: { pseudonymizedId: string },
 ): string;
 /**
  * @returns an absolute path for the specified Parole route

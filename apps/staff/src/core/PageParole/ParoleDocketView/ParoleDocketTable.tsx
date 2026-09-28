@@ -215,7 +215,9 @@ export const ParoleDocketTable = observer(function ParoleDocketTable({
           columns={columns}
           initialState={{ sorting: [{ id: "hearingDate", desc: false }] }}
           rowLinkUrl={(hearing) =>
-            paroleUrl("caseProfile", { docId: hearing.docId })
+            paroleUrl("caseProfile", {
+              pseudonymizedId: hearing.pseudonymizedId,
+            })
           }
         />
       </SectionCard>

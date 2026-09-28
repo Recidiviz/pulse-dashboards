@@ -29,7 +29,7 @@ import { ParoleCaseProfilePresenter } from "../ParoleCaseProfilePresenter";
 import.meta.env["VITE_IS_OFFLINE"] = "true";
 
 const TEST_CASE: ParoleCase = {
-  docId: "45821",
+  pseudonymizedId: "45821",
   displayId: "945821",
   name: "Anderson, Michael",
   dob: "1986-07-27",

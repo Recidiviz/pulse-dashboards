@@ -19,5 +19,5 @@ import { ParoleCase, ParoleHearing } from "~datatypes";
 
 export interface ParoleAPI {
   hearings(): Promise<Array<ParoleHearing>>;
-  caseDetail(docId: string): Promise<ParoleCase>;
+  caseDetail(pseudonymizedId: string): Promise<ParoleCase>;
 }

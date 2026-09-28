@@ -188,7 +188,7 @@ describe("ParoleStore", () => {
       await paroleStore.populateCaseDetail(secondDocId);
 
       expect(caseDetailSpy).toHaveBeenCalledTimes(2);
-      expect([...paroleStore.caseDetailsByDocId.keys()]).toEqual([
+      expect([...paroleStore.caseDetailsByPseudonymizedId.keys()]).toEqual([
         firstDocId,
         secondDocId,
       ]);
@@ -197,10 +197,10 @@ describe("ParoleStore", () => {
     it("drops both caches when the user's identity changes", async () => {
       const paroleStore = storeForTenant("US_CO");
       paroleStore.rootStore.userStore.user = { email: "user@example.com" };
-      const [docId] = Object.keys(paroleCasesFixtureByState.US_CO);
+      const [pseudonymizedId] = Object.keys(paroleCasesFixtureByState.US_CO);
 
       await paroleStore.populateHearings();
-      await paroleStore.populateCaseDetail(docId);
+      await paroleStore.populateCaseDetail(pseudonymizedId);
 
       // e.g. switching to an impersonated user
       paroleStore.rootStore.userStore.user = {
@@ -208,7 +208,7 @@ describe("ParoleStore", () => {
       };
 
       expect(paroleStore.hearings).toBeUndefined();
-      expect(paroleStore.caseDetailsByDocId.size).toBe(0);
+      expect(paroleStore.caseDetailsByPseudonymizedId.size).toBe(0);
     });
 
     // Auth0 rehydrates the app_metadata claim shortly after login: a new user
@@ -275,7 +275,7 @@ describe("ParoleStore", () => {
       resolveUsCo(paroleCasesFixtureByState.US_CO[usCoDocId]);
       await populated;
 
-      expect(paroleStore.caseDetailsByDocId.get(usCoDocId)).toEqual(
+      expect(paroleStore.caseDetailsByPseudonymizedId.get(usCoDocId)).toEqual(
         paroleCasesFixtureByState.US_ID[usCoDocId],
       );
     });
@@ -284,15 +284,15 @@ describe("ParoleStore", () => {
     // outlived a tenant switch would serve one state's case profile to another.
     it("drops both caches when the tenant changes", async () => {
       const paroleStore = storeForTenant("US_CO");
-      const [docId] = Object.keys(paroleCasesFixtureByState.US_CO);
+      const [pseudonymizedId] = Object.keys(paroleCasesFixtureByState.US_CO);
 
       await paroleStore.populateHearings();
-      await paroleStore.populateCaseDetail(docId);
+      await paroleStore.populateCaseDetail(pseudonymizedId);
 
       paroleStore.rootStore.tenantStore.currentTenantId = "US_ID";
 
       expect(paroleStore.hearings).toBeUndefined();
-      expect(paroleStore.caseDetailsByDocId.size).toBe(0);
+      expect(paroleStore.caseDetailsByPseudonymizedId.size).toBe(0);
     });
   });
 });
