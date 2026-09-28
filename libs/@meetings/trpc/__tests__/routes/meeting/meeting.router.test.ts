@@ -599,15 +599,12 @@ describe("meeting router", () => {
   });
 
   describe("discardMeeting", () => {
-    test("Should throw error if meeting does not exist", async () => {
+    test("Should succeed if meeting does not exist", async () => {
       await expect(
         testTRPCClient.v1.meeting.discardMeeting.mutate({
           meetingId: "non-existent-meeting-id",
         }),
-      ).rejects.toMatchObject({
-        message: "Meeting with that id was not found",
-        data: { code: "NOT_FOUND" },
-      });
+      ).resolves.not.toThrow();
     });
 
     test("Should delete meeting if it exists", async () => {

@@ -359,24 +359,9 @@ export const meetingRouter = router({
   discardMeeting: auth0Procedure
     .input(discardMeetingInputSchema)
     .mutation(async ({ input: { meetingId }, ctx: { prisma } }) => {
-      try {
-        await prisma.meeting.delete({
-          where: { id: meetingId },
-        });
-      } catch (e) {
-        if (
-          e instanceof Prisma.PrismaClientKnownRequestError &&
-          e.code === "P2025"
-        ) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Meeting with that id was not found",
-            cause: e,
-          });
-        }
-
-        throw e;
-      }
+      await prisma.meeting.deleteMany({
+        where: { id: meetingId },
+      });
     }),
   endMeeting: auth0Procedure
     .input(endMeetingInputSchema)
