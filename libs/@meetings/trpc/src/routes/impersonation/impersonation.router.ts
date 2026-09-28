@@ -18,7 +18,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { SKIP_AUTH_HEADER_KEY } from "~@meetings/trpc/context";
 import { fetchImpersonatedUser } from "~@meetings/trpc/impersonation";
 import { baseProcedure, router } from "~@meetings/trpc/init";
 
@@ -26,8 +25,8 @@ export const impersonationRouter = router({
   lookupUser: baseProcedure // Base Procedure because we won't have a state code
     .input(z.object({ email: z.string().email() }))
     .query(async ({ ctx, input }) => {
-      const skipAuthHeader = ctx.req.headers[SKIP_AUTH_HEADER_KEY];
-      const shouldSkipAuth = skipAuthHeader === "true";
+      // Trust only the context's dev-mode-verified flag, never the raw header.
+      const shouldSkipAuth = ctx.isSkipAuth;
       if (!ctx.user?.isRecidivizUser && !shouldSkipAuth) {
         throw new TRPCError({ code: "FORBIDDEN" });
       }

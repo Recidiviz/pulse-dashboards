@@ -18,6 +18,7 @@
 import { gaxios } from "google-auth-library";
 import { beforeEach, describe, expect, test } from "vitest";
 
+import env from "~@meetings/trpc/env";
 import {
   initFastifyAndSetUser,
   mockGoogleAuthRequest,
@@ -73,6 +74,42 @@ describe("impersonation router", () => {
           "Failed to fetch impersonated user for email: someone@example.com",
         data: { code: "INTERNAL_SERVER_ERROR" },
       });
+    });
+
+    test("unauthenticated caller cannot bypass authorization by omitting statecode and setting x-skip-auth", async () => {
+      await initFastifyAndSetUser(undefined, {
+        omitStateCode: true,
+        omitAuth: true,
+        extraHeaders: { "X-Skip-Auth": "true" },
+      });
+
+      await expect(
+        testTRPCClient.v1.impersonation.lookupUser.query({
+          email: fakeStaff[0].email,
+        }),
+      ).rejects.toThrowErrorMatchingInlineSnapshot(
+        `[TRPCClientError: FORBIDDEN]`,
+      );
+    });
+
+    test("skip auth still works for the legitimate offline/dev escape hatch (stateCode + x-skip-auth present, dev mode)", async () => {
+      mockGoogleAuthRequest.mockResolvedValueOnce({
+        data: { stateCode: "US_NE" },
+      });
+
+      const originalNodeEnv = env.NODE_ENV;
+      env.NODE_ENV = "development";
+
+      try {
+        await initFastifyAndSetUser(undefined, { skipAuth: true });
+
+        const result = await testTRPCClient.v1.impersonation.lookupUser.query({
+          email: fakeStaff[0].email,
+        });
+        expect(result).toEqual({ stateCode: "US_NE" });
+      } finally {
+        env.NODE_ENV = originalNodeEnv;
+      }
     });
 
     test("does not leak the target user's stateCode when the caller lacks access to it", async () => {
