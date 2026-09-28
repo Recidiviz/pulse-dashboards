@@ -129,5 +129,6 @@ export function buildCommonServer<TRouter extends AnyRouter>(
   return server;
 }
 
+export * from "~server-setup-plugin/startServer";
 export * from "~server-setup-plugin/trpc";
 export * from "~server-setup-plugin/types";

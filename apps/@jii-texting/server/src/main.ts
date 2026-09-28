@@ -16,19 +16,14 @@
 // =============================================================================
 
 import { buildServer } from "~@jii-texting/server/server";
-const host = process.env["HOST"] ?? "localhost";
-const port = process.env["PORT"] ? Number(process.env["PORT"]) : 3000;
+import { startServer } from "~server-setup-plugin";
 
 const server = buildServer();
 
-// Start listening.
-server.listen({ port, host }, (err) => {
-  if (err) {
-    server.log.error(err);
-    process.exit(1);
-  } else {
-    console.log(`[ ready ] http://${host}:${port}`);
-  }
+startServer(server, {
+  defaultPort: 3000,
+  // opts out of hot-reloading in the dev server
+  hot: undefined,
 });
 
 export default server;

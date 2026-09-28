@@ -16,35 +16,8 @@
 // =============================================================================
 
 import { buildServer } from "~@sentencing/server/server";
-
-const host = process.env["HOST"] ?? "localhost";
-const port = process.env["PORT"] ? Number(process.env["PORT"]) : 3002;
+import { startServer } from "~server-setup-plugin";
 
 const server = buildServer();
 
-// Start listening.
-server.listen({ port, host }, (err) => {
-  if (err) {
-    server.log.error(err);
-    process.exit(1);
-  } else {
-    console.log(`[ ready ] http://${host}:${port}`);
-  }
-});
-
-if (import.meta.hot && process.env["NODE_ENV"] === "development") {
-  // TODO(#10276) Refactor into a script that can be used by all BEs in pulse-dashboards
-  console.log("[hot reload]");
-  async function killServer() {
-    await server.close();
-  }
-
-  import.meta.hot.on("vite:beforeFullReload", () => {
-    killServer();
-  });
-
-  import.meta.hot.dispose(() => {
-    console.log("[dispose]");
-    killServer();
-  });
-}
+startServer(server, { defaultPort: 3002, hot: import.meta.hot });
