@@ -123,7 +123,7 @@ export const ActionItemsTab = ({
 
   if (!items || items.filter((item) => !item.deleted).length === 0) {
     return (
-      <View className="flex-1 px-4 pb-4">
+      <View className="flex-1 pb-4">
         <View className="mb-3 flex flex-col">
           <Typography variant="heading-4">Action items</Typography>
           <Typography variant="body-s-regular" className="mt-1">
@@ -137,7 +137,7 @@ export const ActionItemsTab = ({
   const isMobileReviewMode = isMobile && !isMobileEditMode;
 
   return (
-    <View className="flex-1 px-4 pb-4">
+    <View className="flex-1 pb-4">
       <View className="mb-3 flex-row items-center justify-between">
         <View className="flex flex-col">
           <Typography variant="heading-4">
