@@ -120,7 +120,7 @@ const MeetingsTranscriptionTab = ({
     ) || [];
 
   return (
-    <View className="flex flex-col">
+    <View className="flex flex-col pb-9">
       <Typography variant="heading-4" className="mb-3">
         Transcript
       </Typography>
