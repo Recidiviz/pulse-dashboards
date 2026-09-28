@@ -17,7 +17,11 @@
 
 import { z } from "zod";
 
-import { dateStringSchema, nullishAsUndefined } from "../../../../utils/zod";
+import {
+  dateStringSchema,
+  nullishAsUndefined,
+  toTitleCase,
+} from "../../../../utils/zod";
 
 // Fields used by both JII and workflows.
 export const usAzResidentCommonSchema = z.object({
@@ -55,6 +59,17 @@ export const usAzResidentJiiDataSchema = usAzResidentCommonSchema.extend({
   dprDtpDate: nullishAsUndefined(dateStringSchema),
   dprTrToAddDate: nullishAsUndefined(dateStringSchema),
   dprAddDate: nullishAsUndefined(dateStringSchema),
+  // classification points fields
+  cuAssignedCustodyLevel: nullishAsUndefined(z.string().transform(toTitleCase)),
+  // expected to be a number 1-5; not worth coercing if all we're doing is displaying it anyway
+  cuAssignedCustodyLevelNumeric: nullishAsUndefined(z.string()),
+  cuAssessmentScore: nullishAsUndefined(z.number()),
+  irAssessmentScore: nullishAsUndefined(z.number()),
+  // similar to custody level, should be a numeric string 1-5 but not coerced here
+  irAssignedRiskLevelNumeric: nullishAsUndefined(z.string()),
+  mostRecentClassificationType: nullishAsUndefined(
+    z.enum(["INITIAL", "RECLASSIFICATION"]),
+  ),
 });
 export type UsAzResidentJiiData = z.output<typeof usAzResidentJiiDataSchema>;
 export type RawUsAzResidentJiiData = z.input<typeof usAzResidentJiiDataSchema>;

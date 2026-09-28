@@ -768,5 +768,14 @@ If you refuse to sign your Conditions of Supervision at your SED, you stay in pr
         linkText: "View Classification",
       },
     },
+    page: {
+      heading: "My Classification",
+      values: {
+        cuLevel: "Custody Level",
+        cuPoints: "Custody Points",
+        irLevel: "Internal Risk Level",
+        irPoints: "Internal Risk Points",
+      },
+    },
   },
 };

@@ -44,10 +44,6 @@ export const SkeletonThemeProvider: React.FC<{
               ${palette.slate20} 11px
             ) !important;
           }
-
-          .skeleton-mode {
-            filter: opacity(0.6);
-          }
         `}</style>
         {children}
       </SkeletonTheme>

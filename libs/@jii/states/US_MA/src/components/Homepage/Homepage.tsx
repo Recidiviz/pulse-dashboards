@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
+import styled from "styled-components";
 
 import { usePageTitle } from "~@jii/common-ui";
 import { LastUpdatedBanner } from "~@jii/layout";
@@ -24,7 +25,6 @@ import { useUsMaTranslations } from "~@jii/translation";
 
 import { Disclaimer } from "../Disclaimer/Disclaimer";
 import { useEGTDataContext } from "../EGTDataContext/context";
-import { SkeletonThemeProvider } from "../SkeletonThemeProvider";
 import { ActivityChart, ActivityChartSkeleton } from "./ActivityChart";
 import { DatesSection, DatesSectionSkeleton } from "./DatesSection";
 import { EmptyState } from "./EmptyState";
@@ -33,6 +33,11 @@ import { MonthlyReportHomepageCardSkeleton } from "./MonthlyReport/MonthlyReport
 import { SpanishLaunchBanner } from "./SpanishLaunchBanner";
 import { TotalTimeEarnedSection } from "./TotalTimeEarnedSection/TotalTimeEarnedSection";
 import { TotalTimeEarnedSectionSkeleton } from "./TotalTimeEarnedSection/TotalTimeEarnedSectionSkeleton";
+
+// additional styles that aren't part of the default SkeletonTheme
+const SkeletonMode = styled.div`
+  filter: opacity(0.6);
+`;
 
 export const Homepage = observer(function Homepage() {
   const { data } = useEGTDataContext();
@@ -47,12 +52,12 @@ export const Homepage = observer(function Homepage() {
       {data.isEgtDisabled ? (
         <>
           <EmptyState />
-          <SkeletonThemeProvider className="skeleton-mode">
+          <SkeletonMode>
             <DatesSectionSkeleton />
             <ActivityChartSkeleton />
             <MonthlyReportHomepageCardSkeleton />
             <TotalTimeEarnedSectionSkeleton />
-          </SkeletonThemeProvider>
+          </SkeletonMode>
         </>
       ) : (
         <>

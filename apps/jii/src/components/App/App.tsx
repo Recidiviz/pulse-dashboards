@@ -60,6 +60,7 @@ import { PageSingleResidentRoot } from "../pages/PageSingleResidentRoot";
 import { PageState } from "../pages/PageState";
 import { PageVerifyEmail } from "../pages/PageVerifyEmail";
 import { ResidentsLayoutRoute } from "../ResidentsLayoutRoute/ResidentsLayoutRoute";
+import { SkeletonThemeProvider } from "../SkeletonThemeProvider/SkeletonThemeProvider";
 import { StateSpecificRouter } from "../StateSpecificRouter/StateSpecificRouter";
 import { TranslationProvider } from "../TranslationProvider/TranslationProvider";
 import { initApp } from "./initApp";
@@ -92,61 +93,63 @@ export function App() {
           <TranslationProvider>
             <GlobalStyleBase />
             <GlobalStyle />
-            <StyledApp>
-              <SentryRoutes>
-                <Route path={SiteRoot.path} element={<PageRoot />}>
-                  <Route index element={<PageHome />} />
-                  <Route path={State.path}>
-                    <Route index element={<PageState />} />
-                    <Route element={<PageResidentsRoot />}>
-                      <Route
-                        path={State.Resident.path}
-                        element={<PageSingleResidentRoot />}
-                      >
+            <SkeletonThemeProvider>
+              <StyledApp>
+                <SentryRoutes>
+                  <Route path={SiteRoot.path} element={<PageRoot />}>
+                    <Route index element={<PageHome />} />
+                    <Route path={State.path}>
+                      <Route index element={<PageState />} />
+                      <Route element={<PageResidentsRoot />}>
+                        <Route
+                          path={State.Resident.path}
+                          element={<PageSingleResidentRoot />}
+                        >
+                          <Route element={<ResidentsLayoutRoute />}>
+                            <Route
+                              index
+                              path="*"
+                              element={<StateSpecificRouter />}
+                            />
+                          </Route>
+                        </Route>
                         <Route element={<ResidentsLayoutRoute />}>
                           <Route
-                            index
-                            path="*"
-                            element={<StateSpecificRouter />}
+                            path={State.Search.path}
+                            element={<PageSearch />}
                           />
                         </Route>
                       </Route>
-                      <Route element={<ResidentsLayoutRoute />}>
-                        <Route
-                          path={State.Search.path}
-                          element={<PageSearch />}
-                        />
-                      </Route>
                     </Route>
-                  </Route>
-                  <Route element={<GenericLayoutRoute />}>
-                    <Route
-                      path={EmailVerification.path}
-                      element={<PageVerifyEmail />}
-                    />
-                    <Route
-                      path={AfterLogin.path}
-                      element={<PageAfterLogin />}
-                    />
-                    <Route
-                      path={EdovoLandingPage.path}
-                      element={<PageEdovoLanding />}
-                    />
-                    <Route
-                      path={StateSelect.path}
-                      element={<PageSelectState />}
-                    />
+                    <Route element={<GenericLayoutRoute />}>
+                      <Route
+                        path={EmailVerification.path}
+                        element={<PageVerifyEmail />}
+                      />
+                      <Route
+                        path={AfterLogin.path}
+                        element={<PageAfterLogin />}
+                      />
+                      <Route
+                        path={EdovoLandingPage.path}
+                        element={<PageEdovoLanding />}
+                      />
+                      <Route
+                        path={StateSelect.path}
+                        element={<PageSelectState />}
+                      />
 
-                    <Route path="*" element={<NotFound />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Route>
+                    <Route
+                      path={OrijinSSOPage.path}
+                      element={<PageOrijinSSO />}
+                    />
                   </Route>
-                  <Route
-                    path={OrijinSSOPage.path}
-                    element={<PageOrijinSSO />}
-                  />
-                </Route>
-              </SentryRoutes>
-            </StyledApp>
-            <ToastContainer />
+                </SentryRoutes>
+              </StyledApp>
+              <ToastContainer />
+            </SkeletonThemeProvider>
           </TranslationProvider>
         </QueryClientProvider>
       </StoreProvider>
