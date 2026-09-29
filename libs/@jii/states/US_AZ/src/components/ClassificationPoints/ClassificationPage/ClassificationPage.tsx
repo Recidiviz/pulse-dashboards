@@ -23,8 +23,16 @@ import { palette, spacing, typography } from "~design-system";
 
 import { UsAzLastUpdatedBanner } from "../../UsAzLastUpdatedBanner";
 import { useUsAzSingleResidentContext } from "../../UsAzSingleResidentContext/UsAzSingleResidentContext";
+import { ExplainerCard } from "./ExplainerCard";
 import { Intro } from "./Intro";
+import { PointsAccordion } from "./PointsAccordion";
 import { ValuesCard } from "./ValuesCard";
+
+const SectionsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(spacing.md)};
+`;
 
 const Heading = styled.h1`
   ${typography.Sans24}
@@ -38,11 +46,17 @@ export const ClassificationPage = () => {
   const { metadata } = useUsAzSingleResidentContext();
 
   return (
-    <>
+    <SectionsWrapper>
       <UsAzLastUpdatedBanner />
-      <Heading as="h1">{t(($) => $.classificationPoints.page.heading)}</Heading>
-      <Intro classType={metadata.mostRecentClassificationType} />
+      <div>
+        <Heading as="h1">
+          {t(($) => $.classificationPoints.page.heading)}
+        </Heading>
+        <Intro classType={metadata.mostRecentClassificationType} />
+      </div>
       <ValuesCard />
-    </>
+      <ExplainerCard />
+      <PointsAccordion />
+    </SectionsWrapper>
   );
 };

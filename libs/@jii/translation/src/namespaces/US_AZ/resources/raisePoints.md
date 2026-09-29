@@ -1,0 +1,4 @@
+- **Getting major disciplinary infractions:** This is the biggest one. More serious tickets add more points. A ticket you just got counts for more than one from years ago. Getting several tickets in a short time raises your points quickly, and it can take years to work them back down. Minor disciplinaries do not count.
+- **A new offense or a new sentence:** A new charge can raise your points if it is more serious than what you are already here for.
+- **Having a gang affiliation:** These points do not come off. They stay on your record even if you renounce, debrief, or finish the Step-Down Program. Renouncing and completing the required programming can change the lowest custody level you can be held at, but it does not lower your points.
+- **Your current and past charges:** More serious charges start you at more points.

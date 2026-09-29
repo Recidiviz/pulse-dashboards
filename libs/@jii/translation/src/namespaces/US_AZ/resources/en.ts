@@ -19,7 +19,9 @@ import aboutInfoPage from "./aboutInfoPage.md?raw";
 import dprInfoPage from "./dprInfoPage.md?raw";
 import initialClassIntro from "./initialClassIntro.md?raw";
 import ionInfoPage from "./ionInfoPage.md?raw";
+import lowerPoints from "./lowerPoints.md?raw";
 import noClassIntro from "./noClassIntro.md?raw";
+import raisePoints from "./raisePoints.md?raw";
 import reclassIntro from "./reclassIntro.md?raw";
 
 export default {
@@ -783,6 +785,24 @@ If you refuse to sign your Conditions of Supervision at your SED, you stay in pr
       initialClassIntro,
       reclassIntro,
       noClassIntro,
+      updateWarning: `**Your points may not update unless they would result in a change to your level.** 
+Tap the “Learn more” button below.`,
+      explainerCard: {
+        heading: "What do these numbers mean?",
+        body: `- Your Custody Level affects which yards you are eligible to be housed at. 
+- Your Internal Risk level affects what job you are eligible for, and where you can work. 
+- Your points guide your level, but staff may “override” you to a higher or lower level.`,
+      },
+      pointsAccordion: {
+        lower: {
+          header: "What lowers my points?",
+          content: lowerPoints,
+        },
+        raise: {
+          header: "What raises my points?",
+          content: raisePoints,
+        },
+      },
     },
   },
 };

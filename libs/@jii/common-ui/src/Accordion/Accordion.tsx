@@ -146,7 +146,7 @@ export const Accordion = observer(function Accordion({
   toggledPanels,
   onToggle,
 }: AccordionProps) {
-  return Object.keys(copy).map((panelId) => {
+  const panels = Object.keys(copy).map((panelId) => {
     const isOpen = !!toggledPanels[panelId];
     return (
       <AccordionDetails
@@ -177,4 +177,9 @@ export const Accordion = observer(function Accordion({
       </AccordionDetails>
     );
   });
+
+  // This outer wrapper is not styled but it's safer to return a single element,
+  // in case the parent is a flexbox or grid or otherwise expecting a single block
+  // to be rendered here
+  return <div>{panels}</div>;
 });

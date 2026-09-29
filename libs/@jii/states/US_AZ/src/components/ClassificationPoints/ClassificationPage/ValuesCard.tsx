@@ -19,17 +19,32 @@ import { rem } from "polished";
 import Skeleton from "react-loading-skeleton";
 import styled from "styled-components";
 
-import { Card, CardHeading, CardValue, Chip } from "~@jii/common-ui";
+import {
+  Card,
+  CardHeading,
+  CardValue,
+  Chip,
+  CopyWrapper,
+} from "~@jii/common-ui";
 import { useUsAzTranslations } from "~@jii/translation";
 import { palette, spacing } from "~design-system";
 
 import { useUsAzSingleResidentContext } from "../../UsAzSingleResidentContext/UsAzSingleResidentContext";
 
 const CardWrapper = styled(Card)`
-  margin-top: ${rem(spacing.xl)};
   display: flex;
   flex-direction: column;
   gap: ${rem(spacing.md)};
+`;
+
+const Warning = styled(CopyWrapper)`
+  border-left: ${rem(4)} solid ${palette.signal.important};
+  padding: ${rem(spacing.md)};
+  margin: 0;
+
+  p:last-child {
+    margin-bottom: 0;
+  }
 `;
 
 const ValuesGrid = styled.div`
@@ -41,6 +56,9 @@ const ValuesGrid = styled.div`
   column-gap: ${rem(spacing.xxl)};
   row-gap: ${rem(spacing.lg)};
   column-rule: 1px solid ${palette.slate10};
+
+  padding-bottom: ${rem(spacing.md)};
+  border-bottom: 1px solid ${palette.slate20};
 `;
 
 const Cell = ({
@@ -79,6 +97,7 @@ export const ValuesCard = () => {
   const {
     values: { cuLevel, cuPoints, irLevel, irPoints },
     initialClassBadge,
+    updateWarning,
   } = t(($) => $.classificationPoints.page, { returnObjects: true });
 
   return (
@@ -94,6 +113,7 @@ export const ValuesCard = () => {
         <Cell label={irLevel} value={irAssignedRiskLevelNumeric} />
         <Cell label={irPoints} value={irAssessmentScore} />
       </ValuesGrid>
+      <Warning>{updateWarning}</Warning>
     </CardWrapper>
   );
 };
