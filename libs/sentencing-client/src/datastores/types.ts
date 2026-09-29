@@ -89,6 +89,7 @@ export type OpportunityWithOriginTrackingMetadata = {
 export type SARSignatureMetadata = {
   viewedBy?: string; // staffPseudoId (who performed the action)
   caseId: string; // sarId
+  investigationExternalId: string; // SAR externalId (MO DOC investigation ID)
   signatureRole: "Officer" | "Supervisor";
 };
 

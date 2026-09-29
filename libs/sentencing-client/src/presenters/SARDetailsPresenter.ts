@@ -617,6 +617,7 @@ export class SARDetailsPresenter implements Hydratable {
         this.sentencingStore.analyticsStore.trackSARSignatureAdded({
           viewedBy: this.sentencingStore.staffStore.staffInfo?.pseudonymizedId,
           caseId: sarData.id,
+          investigationExternalId: sarData.externalId,
           signatureRole: "Officer",
         });
       });
@@ -659,6 +660,7 @@ export class SARDetailsPresenter implements Hydratable {
         this.sentencingStore.analyticsStore.trackSARSignatureAdded({
           viewedBy: this.sentencingStore.staffStore.staffInfo?.pseudonymizedId,
           caseId: sarData.id,
+          investigationExternalId: sarData.externalId,
           signatureRole: "Supervisor",
         });
       });
