@@ -94,9 +94,30 @@ function formatOffenseClass(
   return subtype ? `${formattedType} ${subtype}` : formattedType;
 }
 
+// A charge has no offense level when its subtype is missing or "U"
+// (unclassified). An unclassified felony can be more severe than a Felony A,
+// so it can't be ranked automatically against other charges.
+// e.g. { classificationSubtype: "U" } → true
+// e.g. { classificationSubtype: "A" } → false
+function hasNoOffenseLevel(charge: {
+  classificationSubtype: string | null | undefined;
+}): boolean {
+  return (
+    charge.classificationSubtype == null || charge.classificationSubtype === "U"
+  );
+}
+
 // Returns the most severe charge(s) from a list. If there is a clear winner,
 // returns a single-element array. If multiple charges share the top severity
 // rank (a tie), returns all of them. Returns [] if the input is empty.
+//
+// Only the most severe classification type present (the "top tier") is
+// considered. If any charge in the top tier has no offense level, severity
+// can't be determined, so every charge in that tier is returned as a tie for
+// the user to pick from. A misdemeanor without a subtype only causes a tie
+// when there are no felonies, and likewise for infractions.
+// e.g. [Felony C, Felony U, Misdemeanor] → [Felony C, Felony U]
+// e.g. [Felony B, Misdemeanor] → [Felony B]
 export function getMostSevereCharges(
   charges: {
     offense: string;
@@ -106,19 +127,26 @@ export function getMostSevereCharges(
 ): MostSevereCharge[] {
   if (charges.length === 0) return [];
 
+  const toMostSevereCharge = (c: (typeof charges)[number]) => ({
+    offenseName: c.offense,
+    offenseClass: formatOffenseClass(
+      c.classificationType,
+      c.classificationSubtype,
+    ),
+  });
+
   const ranks = charges.map(getChargeSeverityRank);
   let topRank = ranks[0];
   for (let i = 1; i < ranks.length; i++) {
     if (compareSeverityRanks(ranks[i], topRank) < 0) topRank = ranks[i];
   }
 
+  const topTier = charges.filter((_, i) => ranks[i][0] === topRank[0]);
+  if (topTier.some(hasNoOffenseLevel)) {
+    return topTier.map(toMostSevereCharge);
+  }
+
   return charges
     .filter((_, i) => compareSeverityRanks(ranks[i], topRank) === 0)
-    .map((c) => ({
-      offenseName: c.offense,
-      offenseClass: formatOffenseClass(
-        c.classificationType,
-        c.classificationSubtype,
-      ),
-    }));
+    .map(toMostSevereCharge);
 }

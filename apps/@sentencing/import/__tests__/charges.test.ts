@@ -75,6 +75,54 @@ describe("getMostSevereCharges", () => {
     );
   });
 
+  test("returns top-tier charges as a tie when a felony is unclassified (U)", () => {
+    // An unclassified felony can be more severe than a Felony C, so the user
+    // must pick instead of auto-selecting. The misdemeanor is excluded.
+    const result = getMostSevereCharges([
+      charge("Burglary", "FELONY", "C"),
+      charge("Unclassified Felony", "FELONY", "U"),
+      charge("Theft", "MISDEMEANOR", "A"),
+    ]);
+    expect(result).toEqual([
+      { offenseName: "Burglary", offenseClass: "Felony C" },
+      { offenseName: "Unclassified Felony", offenseClass: "Felony U" },
+    ]);
+  });
+
+  test("returns both charges as a tie when there are two unclassified felonies (U)", () => {
+    const result = getMostSevereCharges([
+      charge("Unclassified Felony 1", "FELONY", "U"),
+      charge("Unclassified Felony 2", "FELONY", "U"),
+      charge("Theft", "MISDEMEANOR", "A"),
+    ]);
+    expect(result).toEqual([
+      { offenseName: "Unclassified Felony 1", offenseClass: "Felony U" },
+      { offenseName: "Unclassified Felony 2", offenseClass: "Felony U" },
+    ]);
+  });
+
+  test("ignores a misdemeanor without a subtype when there is a felony", () => {
+    const result = getMostSevereCharges([
+      charge("Drug Trafficking", "FELONY", "B"),
+      charge("Trespassing", "MISDEMEANOR", null),
+    ]);
+    expect(result).toEqual([
+      { offenseName: "Drug Trafficking", offenseClass: "Felony B" },
+    ]);
+  });
+
+  test("returns misdemeanors as a tie when one has no subtype and there are no felonies", () => {
+    const result = getMostSevereCharges([
+      charge("Theft", "MISDEMEANOR", "A"),
+      charge("Trespassing", "MISDEMEANOR", null),
+      charge("Speeding", "INFRACTION", null),
+    ]);
+    expect(result).toEqual([
+      { offenseName: "Theft", offenseClass: "Misdemeanor A" },
+      { offenseName: "Trespassing", offenseClass: "Misdemeanor" },
+    ]);
+  });
+
   test("treats null classification as least severe", () => {
     const result = getMostSevereCharges([
       charge("Unknown", null, null),
