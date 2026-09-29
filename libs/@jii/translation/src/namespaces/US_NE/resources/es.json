@@ -296,5 +296,39 @@
       "body": "Los créditos carcelarios son los días que el tribunal determinó que usted pasó en prisión por el delito que condujo a su sentencia. Estos días se restan de su sentencia total combinada.\n\n<PolicyCallout text=\"Para más información, investigue\n**Nebraska Revised Statute 83-1,106**\nen la Biblioteca Legal. \n\nAlternativamente, envíe sus preguntas al personal de la oficina de registros de su instalación a través de una Solicitud de Entrevista de Recluso (IIR).\"/>\n"
     }
   },
-  "disclaimer": "Esta información es proporcionada por un proveedor externo únicamente con fines informativos generales. No constituye asesoramiento legal ni sustituye el asesoramiento individualizado de su abogado.\n\nProporcionar esta información no crea una relación abogado-cliente entre el Departamento de Servicios Correccionales de Nebraska y el usuario.\nProporcionar esta información no crea una relación abogado-cliente entre el proveedor externo y el usuario.\n\nEl Departamento de Servicios Correccionales de Nebraska y el proveedor externo no serán responsables de ningún error, omisión, retraso o interrupción relacionada con la información proporcionada.\n\n"
+  "disclaimer": "Esta información es proporcionada por un proveedor externo únicamente con fines informativos generales. No constituye asesoramiento legal ni sustituye el asesoramiento individualizado de su abogado.\n\nProporcionar esta información no crea una relación abogado-cliente entre el Departamento de Servicios Correccionales de Nebraska y el usuario.\nProporcionar esta información no crea una relación abogado-cliente entre el proveedor externo y el usuario.\n\nEl Departamento de Servicios Correccionales de Nebraska y el proveedor externo no serán responsables de ningún error, omisión, retraso o interrupción relacionada con la información proporcionada.\n\n",
+  "checkIn": {
+    "standardRadioAnswers": {
+      "YES": "Sí",
+      "NO": "No"
+    },
+    "questions": {
+      "WHERE_WILL_YOU_LIVE": {
+        "question": "¿Dónde vas a vivir después de tu liberación?",
+        "answers": {
+          "FAMILY_OR_FRIENDS": "Me quedaré con familiares o amigos",
+          "OWN_PLACE": "En mi propia casa (alquilada o en propiedad)",
+          "TRANSITIONAL": "Vivienda de transición",
+          "FIGURING_IT_OUT": "Todavía no lo tengo claro"
+        }
+      },
+      "HOUSING_BACKUP_PLAN": {
+        "question": "¿Tienes un plan de respaldo por si esto no funcione?"
+      },
+      "HOUSING_SUCCESS": {
+        "question": "Si tu plan de vivienda tuviera éxito, ¿cómo se vería eso en tu día a día?"
+      },
+      "HELPFUL_SUPPORT": {
+        "question": "¿Cuál de las siguientes opciones podría serte útil?",
+        "answers": {
+          "SUPPORT_GROUP": "Grupos de apoyo para el uso de alcohol o drogas, como Alcohólicos Anónimos (AA) o Narcóticos Anónimos (NA)",
+          "COUNSELOR": "Hablar de manera individual con un consejero",
+          "MEDICATION": "Tratamiento asistido con medicamentos",
+          "RESIDENTIAL_TREATMENT": "Vivir en un centro de tratamiento residencial",
+          "PEER_SUPPORT": "Apoyo intencional entre pares",
+          "OTHER": "Otros"
+        }
+      }
+    }
+  }
 }

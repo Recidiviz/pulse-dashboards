@@ -296,5 +296,39 @@
       "body": "[US_NE]infoPages.jailCredits.body"
     }
   },
-  "disclaimer": "[US_NE]disclaimer"
+  "disclaimer": "[US_NE]disclaimer",
+  "checkIn": {
+    "standardRadioAnswers": {
+      "YES": "[US_NE]checkIn.standardRadioAnswers.YES",
+      "NO": "[US_NE]checkIn.standardRadioAnswers.NO"
+    },
+    "questions": {
+      "WHERE_WILL_YOU_LIVE": {
+        "question": "[US_NE]checkIn.questions.WHERE_WILL_YOU_LIVE.question",
+        "answers": {
+          "FAMILY_OR_FRIENDS": "[US_NE]checkIn.questions.WHERE_WILL_YOU_LIVE.answers.FAMILY_OR_FRIENDS",
+          "OWN_PLACE": "[US_NE]checkIn.questions.WHERE_WILL_YOU_LIVE.answers.OWN_PLACE",
+          "TRANSITIONAL": "[US_NE]checkIn.questions.WHERE_WILL_YOU_LIVE.answers.TRANSITIONAL",
+          "FIGURING_IT_OUT": "[US_NE]checkIn.questions.WHERE_WILL_YOU_LIVE.answers.FIGURING_IT_OUT"
+        }
+      },
+      "HOUSING_BACKUP_PLAN": {
+        "question": "[US_NE]checkIn.questions.HOUSING_BACKUP_PLAN.question"
+      },
+      "HOUSING_SUCCESS": {
+        "question": "[US_NE]checkIn.questions.HOUSING_SUCCESS.question"
+      },
+      "HELPFUL_SUPPORT": {
+        "question": "[US_NE]checkIn.questions.HELPFUL_SUPPORT.question",
+        "answers": {
+          "SUPPORT_GROUP": "[US_NE]checkIn.questions.HELPFUL_SUPPORT.answers.SUPPORT_GROUP",
+          "COUNSELOR": "[US_NE]checkIn.questions.HELPFUL_SUPPORT.answers.COUNSELOR",
+          "MEDICATION": "[US_NE]checkIn.questions.HELPFUL_SUPPORT.answers.MEDICATION",
+          "RESIDENTIAL_TREATMENT": "[US_NE]checkIn.questions.HELPFUL_SUPPORT.answers.RESIDENTIAL_TREATMENT",
+          "PEER_SUPPORT": "[US_NE]checkIn.questions.HELPFUL_SUPPORT.answers.PEER_SUPPORT",
+          "OTHER": "[US_NE]checkIn.questions.HELPFUL_SUPPORT.answers.OTHER"
+        }
+      }
+    }
+  }
 }

@@ -1,0 +1,54 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2026 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+import { CheckInQuestionId } from "~@jii/configs";
+import { useUsNeTranslations } from "~@jii/translation";
+
+export const UsNeCheckInRadioQuestion = ({
+  id,
+  answers,
+}: {
+  id: CheckInQuestionId;
+  answers: readonly string[];
+}) => {
+  const { t } = useUsNeTranslations();
+
+  const questionCopy = t(($) => $.checkIn.questions[id], {
+    returnObjects: true,
+  });
+  const defaultRadioAnswers: Record<string, string> = t(
+    ($) => $.checkIn.standardRadioAnswers,
+    { returnObjects: true },
+  );
+
+  const answerCopy: Record<string, string> =
+    "answers" in questionCopy ? questionCopy.answers : {};
+
+  // TODO(OBT-47849) styles for custom inputs
+  return (
+    <>
+      <p>{questionCopy.question}</p>
+      <ul>
+        {answers.map((answerOpt) => (
+          <li key={answerOpt}>
+            {answerCopy[answerOpt] ?? defaultRadioAnswers[answerOpt]}
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+};

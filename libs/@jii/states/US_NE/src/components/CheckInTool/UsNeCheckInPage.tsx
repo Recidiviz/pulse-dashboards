@@ -15,6 +15,42 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import assertNever from "assert-never";
+
+import { checkInQuestionConfig, checkInToolSpec } from "~@jii/configs";
+
+import { UsNeCheckInCheckboxQuestion } from "./UsNeCheckInCheckboxQuestion";
+import { UsNeCheckInFreeTextQuestion } from "./UsNeCheckInFreeTextQuestion";
+import { UsNeCheckInRadioQuestion } from "./UsNeCheckInRadioQuestion";
+
 export const UsNeCheckInPage = () => {
-  return <div>Hello world!</div>;
+  // TODO(OBT-47841): Show just one question per page
+  return checkInToolSpec.map(({ questions }) =>
+    questions.map((id) => {
+      const config = checkInQuestionConfig[id];
+
+      switch (config.format) {
+        case "RADIO":
+          return (
+            <UsNeCheckInRadioQuestion
+              key={id}
+              id={id}
+              answers={config.answers}
+            />
+          );
+        case "CHECKBOX":
+          return (
+            <UsNeCheckInCheckboxQuestion
+              key={id}
+              id={id}
+              answers={config.answers}
+            />
+          );
+        case "FREE_TEXT":
+          return <UsNeCheckInFreeTextQuestion key={id} id={id} />;
+        default:
+          return assertNever(config);
+      }
+    }),
+  );
 };

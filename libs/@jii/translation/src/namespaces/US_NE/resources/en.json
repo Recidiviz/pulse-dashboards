@@ -296,5 +296,39 @@
       "body": "Jail credits are the days the court determined you spent in jail for the criminal charge which led to your prison sentence. These days are subtracted from your total combined sentence.\n\n<PolicyCallout text=\"For even more information, research\n**Nebraska Revised Statute 83-1,106**\nin the Law Library.\n\nAlternatively, submit your questions to the records office personnel in your facility on an Inmate Interview Request (IIR).\"\n/>\n"
     }
   },
-  "disclaimer": "This information is provided by a third-party vendor for general informational purposes only. This information is not intended as legal advice or as a substitute for the individualized advice of your counsel. Providing this information does not create an attorney-client relationship between the Nebraska Department of Correctional Services and the user. Providing this information does not create an attorney-client relationship between the third-party vendor and the user. The Nebraska Department of Correctional Services and the third-party vendor shall not be liable for any errors, omissions, delays, or interruptions related to the provided information."
+  "disclaimer": "This information is provided by a third-party vendor for general informational purposes only. This information is not intended as legal advice or as a substitute for the individualized advice of your counsel. Providing this information does not create an attorney-client relationship between the Nebraska Department of Correctional Services and the user. Providing this information does not create an attorney-client relationship between the third-party vendor and the user. The Nebraska Department of Correctional Services and the third-party vendor shall not be liable for any errors, omissions, delays, or interruptions related to the provided information.",
+  "checkIn": {
+    "standardRadioAnswers": {
+      "YES": "Yes",
+      "NO": "No"
+    },
+    "questions": {
+      "WHERE_WILL_YOU_LIVE": {
+        "question": "Where will you live when you go home?",
+        "answers": {
+          "FAMILY_OR_FRIENDS": "Staying with family or friends",
+          "OWN_PLACE": "My own place (rented or owned)",
+          "TRANSITIONAL": "Transitional housing",
+          "FIGURING_IT_OUT": "Still figuring it out"
+        }
+      },
+      "HOUSING_BACKUP_PLAN": {
+        "question": "Do you have a backup plan if this falls through?"
+      },
+      "HOUSING_SUCCESS": {
+        "question": "If your housing was successful, what would that look like day to day?"
+      },
+      "HELPFUL_SUPPORT": {
+        "question": "Which of the following options could help you?",
+        "answers": {
+          "SUPPORT_GROUP": "Support groups for alcohol or drug use, like AA or NA",
+          "COUNSELOR": "Talking one-on-one with a counselor",
+          "MEDICATION": "Medication-assisted treatment",
+          "RESIDENTIAL_TREATMENT": "Living at a residential treatment center",
+          "PEER_SUPPORT": "Intentional peer support",
+          "OTHER": "Other"
+        }
+      }
+    }
+  }
 }
