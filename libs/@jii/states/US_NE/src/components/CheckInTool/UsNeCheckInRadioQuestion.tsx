@@ -35,6 +35,8 @@ export const UsNeCheckInRadioQuestion = ({
     { returnObjects: true },
   );
 
+  // Not all questions have answer copy, but the existence of answer
+  // copy for radio questions is checked by a test in the @jii/translation library
   const answerCopy: Record<string, string> =
     "answers" in questionCopy ? questionCopy.answers : {};
 

@@ -74,7 +74,7 @@ type QuestionConfigWithoutAnswerOptions = SharedQuestionConfigFields & {
   format: TextEntryAnswerFormat;
 };
 
-type CheckInQuestionConfig =
+export type CheckInQuestionConfig =
   | QuestionConfigWithAnswerOptions
   | QuestionConfigWithoutAnswerOptions;
 
