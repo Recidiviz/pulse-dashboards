@@ -20,7 +20,6 @@ import { useUsAzTranslations } from "~@jii/translation";
 
 import { DefinitionView } from "../components";
 import { DprCopyWrapper } from "../components/DprInfoPage/DprCopyWrapper";
-import { useInfoPageFooterLinks } from "../hooks/useInfoPageFooterLinks";
 
 export function PageMoreInfoDPR() {
   const { t } = useUsAzTranslations();
@@ -33,7 +32,6 @@ export function PageMoreInfoDPR() {
       heading={heading}
       body={body}
       CopyWrapperOverride={DprCopyWrapper}
-      moreInfoPageLinks={useInfoPageFooterLinks()}
     />
   );
 }

@@ -29,12 +29,11 @@ import { State } from "~@jii/paths";
 import { useCommonTranslations, useUsAzTranslations } from "~@jii/translation";
 
 import { UsAzImportantDatesFAQ } from "../components/ImportantDatesInfoPageV2/ImportantDatesFAQ";
-import { useInfoPageFooterLinks } from "../hooks/useInfoPageFooterLinks";
+import { useUsAzInfoPageFooterContents } from "../hooks/useUsAzInfoPageFooterContents";
 
 export function PageMoreInfoImportantDatesV2() {
   const { t } = useUsAzTranslations();
   const common = useCommonTranslations().t;
-  const footerLinks = useInfoPageFooterLinks();
   const params = useTypedParams(State.Resident.UsAzMoreInformation);
 
   const heading = t(($) => $.importantDates.moreInfo.heading);
@@ -53,15 +52,7 @@ export function PageMoreInfoImportantDatesV2() {
           <UsAzImportantDatesFAQ />
         </article>
       }
-      bottom={
-        <PageLinksFooter
-          contents={{
-            pageLinksHeading: t(($) => $.moreInfoPageLinksHeading),
-            pageLinks: footerLinks,
-            topLinkText: t(($) => $.backToTopLinkText),
-          }}
-        />
-      }
+      bottom={<PageLinksFooter contents={useUsAzInfoPageFooterContents()} />}
     />
   );
 }

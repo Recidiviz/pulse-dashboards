@@ -18,7 +18,6 @@
 import { usePageTitle } from "~@jii/common-ui";
 import { useUsAzTranslations } from "~@jii/translation";
 
-import { useInfoPageFooterLinks } from "../../hooks/useInfoPageFooterLinks";
 import { DefinitionView } from "../DefinitionView";
 import image1Url from "./image1.png";
 import image2Url from "./image2.png";
@@ -42,7 +41,6 @@ export function IONInfoPage() {
       heading={heading}
       body={bodyWithImages}
       CopyWrapperOverride={IONInfoPageCopyWrapper}
-      moreInfoPageLinks={useInfoPageFooterLinks()}
     />
   );
 }

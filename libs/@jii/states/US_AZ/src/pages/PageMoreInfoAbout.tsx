@@ -20,7 +20,6 @@ import { AboutVideoCta } from "~@jii/onboarding-video";
 import { useUsAzTranslations } from "~@jii/translation";
 
 import { DefinitionView } from "../components/DefinitionView";
-import { useInfoPageFooterLinks } from "../hooks/useInfoPageFooterLinks";
 
 const CopyWrapperWithCustomComponents = withCopyWrapperOverrides({
   AboutVideoCta: { component: AboutVideoCta, props: { onHomepage: false } },
@@ -35,7 +34,6 @@ export function PageMoreInfoAbout() {
     <DefinitionView
       heading={t(($) => $.about.heading)}
       body={t(($) => $.about.body)}
-      moreInfoPageLinks={useInfoPageFooterLinks()}
       CopyWrapperOverride={CopyWrapperWithCustomComponents}
     />
   );

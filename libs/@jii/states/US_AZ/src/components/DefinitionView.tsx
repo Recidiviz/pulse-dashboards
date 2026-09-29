@@ -17,28 +17,19 @@
 
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { SimpleLinkProps } from "~@jii/common-ui";
 import { DefinitionPage, InfoPageProps } from "~@jii/layout";
 import { State } from "~@jii/paths";
-import { useUsAzTranslations } from "~@jii/translation";
 
-interface DefinitionViewProps extends InfoPageProps {
-  moreInfoPageLinks: Array<SimpleLinkProps>;
-}
+import { useUsAzInfoPageFooterContents } from "../hooks/useUsAzInfoPageFooterContents";
 
-export const DefinitionView = (props: DefinitionViewProps) => {
+export const DefinitionView = (props: InfoPageProps) => {
   const params = useTypedParams(State.Resident.UsAzMoreInformation);
-  const { t } = useUsAzTranslations();
   return (
     <DefinitionPage
       backLinkProps={{
         to: State.Resident.buildPath(params),
       }}
-      pageLinksFooterProps={{
-        pageLinksHeading: t(($) => $.moreInfoPageLinksHeading),
-        pageLinks: props.moreInfoPageLinks,
-        topLinkText: t(($) => $.backToTopLinkText),
-      }}
+      pageLinksFooterProps={useUsAzInfoPageFooterContents()}
       {...props}
     />
   );

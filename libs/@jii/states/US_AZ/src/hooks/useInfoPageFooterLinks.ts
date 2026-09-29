@@ -19,6 +19,7 @@ import { matchPath, useLocation } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { SimpleLinkProps } from "~@jii/common-ui";
+import { useSingleResidentContext } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsAzTranslations } from "~@jii/translation";
 
@@ -31,6 +32,9 @@ export function useInfoPageFooterLinks(): Array<SimpleLinkProps> {
   const { pathname } = useLocation();
   const pathParams = useTypedParams(State.Resident.UsAzMoreInformation);
   const showION = useShowIONBanner();
+  const {
+    residentFlags: { usAzClassification },
+  } = useSingleResidentContext();
 
   const links: Array<SimpleLinkProps> = [
     {
@@ -59,6 +63,15 @@ export function useInfoPageFooterLinks(): Array<SimpleLinkProps> {
     links.push({
       to: `../${State.Resident.$.UsAzMoreInformation.ImportantDates.buildRelativePath({})}`,
       children: t(($) => $.importantDates.moreInfo.heading),
+    });
+  }
+  if (
+    usAzClassification &&
+    !matchPath(State.Resident.UsAzClassificationPoints.path, pathname)
+  ) {
+    links.push({
+      to: `../${State.Resident.$.UsAzClassificationPoints.buildRelativePath({})}`,
+      children: t(($) => $.classificationPoints.page.heading),
     });
   }
   if (

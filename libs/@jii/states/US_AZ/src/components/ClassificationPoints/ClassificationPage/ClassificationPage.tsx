@@ -18,9 +18,11 @@
 import { rem } from "polished";
 import styled from "styled-components";
 
+import { PageLinksFooter } from "~@jii/common-ui";
 import { useUsAzTranslations } from "~@jii/translation";
 import { palette, spacing, typography } from "~design-system";
 
+import { useUsAzInfoPageFooterContents } from "../../../hooks/useUsAzInfoPageFooterContents";
 import { UsAzLastUpdatedBanner } from "../../UsAzLastUpdatedBanner";
 import { useUsAzSingleResidentContext } from "../../UsAzSingleResidentContext/UsAzSingleResidentContext";
 import { ExplainerCard } from "./ExplainerCard";
@@ -46,17 +48,20 @@ export const ClassificationPage = () => {
   const { metadata } = useUsAzSingleResidentContext();
 
   return (
-    <SectionsWrapper>
-      <UsAzLastUpdatedBanner />
-      <div>
-        <Heading as="h1">
-          {t(($) => $.classificationPoints.page.heading)}
-        </Heading>
-        <Intro classType={metadata.mostRecentClassificationType} />
-      </div>
-      <ValuesCard />
-      <ExplainerCard />
-      <PointsAccordion />
-    </SectionsWrapper>
+    <>
+      <SectionsWrapper>
+        <UsAzLastUpdatedBanner />
+        <div>
+          <Heading as="h1">
+            {t(($) => $.classificationPoints.page.heading)}
+          </Heading>
+          <Intro classType={metadata.mostRecentClassificationType} />
+        </div>
+        <ValuesCard />
+        <ExplainerCard />
+        <PointsAccordion />
+      </SectionsWrapper>
+      <PageLinksFooter contents={useUsAzInfoPageFooterContents()} />
+    </>
   );
 };
