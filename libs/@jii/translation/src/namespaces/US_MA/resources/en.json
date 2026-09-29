@@ -199,6 +199,128 @@
         "idDocuments": "ID Documents",
         "housingBasics": "Housing basics"
       }
+    },
+    "questionnaire": {
+      "header": {
+        "title": "Reentry Profile Questionnaire",
+        "close": "Close",
+        "saveAndExit": "Save and exit"
+      },
+      "intro": {
+        "heading": "Build your Reentry profile",
+        "instructionsHeading": "How to complete this questionnaire",
+        "answerEachQuestion": "Answer each question to the best of your ability",
+        "saveProgress": "You can save your progress at any time using the \"Save and exit\" button. Your answers are also saved as you progress through the form.",
+        "resumeWhereLeftOff": "Pick up where you left off when you return",
+        "questionCount_one": "There is {{count}} question total and it takes about 10 minutes",
+        "questionCount_other": "There are {{count}} questions total and it takes about 10 minutes",
+        "afterHeading": "What happens after I finish answering?",
+        "afterDescription": "Your answers set up your checklist. Your reentry specialist will not get a message when you finish. If you want to talk about your answers, tell them.",
+        "cta": "Start answering"
+      },
+      "sectionProgress": {
+        "sectionNumber": "Section {{number}}",
+        "sectionTotal": "of {{total}}",
+        "listItem": "{{number}}. {{label}}",
+        "toggleSections": "Show all sections",
+        "completed": "Completed",
+        "current": "Current"
+      },
+      "form": {
+        "singleSelectHint": "You can only pick one",
+        "multiSelectHint": "You can pick more than one",
+        "next": "Next",
+        "saveAndUpdate": "Save and update profile",
+        "saveHint": "Your answer will be saved when you tap"
+      },
+      "review": {
+        "heading": "Review and submit your Reentry profile",
+        "description": "Please check your answers before submitting. You can change any answer by clicking the link next to it.",
+        "change": "Change",
+        "submit": "Submit answers",
+        "editHeading": "Review your Reentry profile",
+        "editDescription": "These are the answers we used to build your checklist. Change any answer to update your profile and checklist."
+      },
+      "footer": {
+        "back": "Back",
+        "cancel": "Cancel"
+      },
+      "cancelModal": {
+        "heading": "Are you sure you want to leave?",
+        "description": "Your changes will not be saved.",
+        "keepAnswering": "Keep answering",
+        "confirm": "Cancel and exit"
+      },
+      "completion": {
+        "heading": "You’re all set!",
+        "subheading": "Thank you for completing your reentry profile questionnaire.",
+        "checklistReady": "Your personalized Reentry checklist is ready. It has things you can do to get ready for release.",
+        "changeAnytime": "You can come back and change your answers any time. Your checklist will change too. Your Reentry specialist will not get a message when you make changes.",
+        "checklistCta": "Go to your checklist",
+        "closeCta": "Close and return home"
+      },
+      "optionCopy": {
+        "HOUSING": {
+          "FAMILY": "With family",
+          "FRIENDS_OR_ROOMMATES": "With friends or roommates",
+          "LONG_TERM_RESIDENTIAL_PROGRAM": "A long term residential program (LTRP)",
+          "SOBER_OR_ROOMING_HOUSE": "A sober house or rooming house",
+          "OWN_PLACE": "My own place",
+          "UNSURE": "I don't know yet / depends on parole",
+          "DECLINED_TO_ANSWER": "I'd rather not say"
+        },
+        "HEALTHCARE_DETAILS": {
+          "PRESCRIPTION_MEDICINE": "Prescription medicine",
+          "ONGOING_CONDITION": "Healthcare for an ongoing medical condition",
+          "MENTAL_HEALTH": "Mental health support",
+          "SUBSTANCE_USE": "Substance use support",
+          "MEDICATION_ASSISTED_TREATMENT": "Medication-assisted treatment (MAT)"
+        },
+        "TRANSPORTATION": {
+          "FAMILY_OR_FRIENDS": "Family or friends will drive me",
+          "PUBLIC_TRANSIT": "Public transit",
+          "BIKE": "I'll ride a bike",
+          "OWN_CAR": "My own car",
+          "UNSURE": "I'm not sure",
+          "DECLINED_TO_ANSWER": "I'd rather not say"
+        }
+      },
+      "questionCopy": {
+        "HOUSING": {
+          "question": "Where are you planning to live when you get out?"
+        },
+        "HEALTHCARE_NEEDED": {
+          "question": "Will you need healthcare when you get out?"
+        },
+        "HEALTHCARE_DETAILS": {
+          "question": "What health care or medicine will you need when you get out?"
+        },
+        "TRANSPORATION": {
+          "question": "How do you plan to get to work and appointments once you're out?"
+        }
+      },
+      "standardOptionCopy": {
+        "YES": "Yes",
+        "NO": "No",
+        "UNSURE": "I'm not sure",
+        "DECLINE_TO_ANSWER": "I'd rather not say"
+      }
+    }
+  },
+  "sentenceDates": {
+    "dates": {
+      "rts": {
+        "label": "Release-to-supervision date",
+        "description": "The RTS Date is a release to parole supervision without the need for a parole hearing, based upon completion credits earned through programming and education pursuant to M.G.L.c.127, §129D."
+      },
+      "maxRelease": {
+        "label": "Maximum release / wrap date",
+        "adjusted": {
+          "originalDateLabel": "Original MAX date",
+          "adjustedDateLabel": "Adjusted MAX date",
+          "summary": "You’ve earned {{count, numberOfDays}} off your maximum release / wrap date."
+        }
+      }
     }
   }
 }

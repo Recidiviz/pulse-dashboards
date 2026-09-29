@@ -199,6 +199,128 @@
         "idDocuments": "[US_MA]reentry.overview.guideCta.idDocuments",
         "housingBasics": "[US_MA]reentry.overview.guideCta.housingBasics"
       }
+    },
+    "questionnaire": {
+      "header": {
+        "title": "[US_MA]reentry.questionnaire.header.title",
+        "close": "[US_MA]reentry.questionnaire.header.close",
+        "saveAndExit": "[US_MA]reentry.questionnaire.header.saveAndExit"
+      },
+      "intro": {
+        "heading": "[US_MA]reentry.questionnaire.intro.heading",
+        "instructionsHeading": "[US_MA]reentry.questionnaire.intro.instructionsHeading",
+        "answerEachQuestion": "[US_MA]reentry.questionnaire.intro.answerEachQuestion",
+        "saveProgress": "[US_MA]reentry.questionnaire.intro.saveProgress",
+        "resumeWhereLeftOff": "[US_MA]reentry.questionnaire.intro.resumeWhereLeftOff",
+        "questionCount_one": "[US_MA]reentry.questionnaire.intro.questionCount_one",
+        "questionCount_other": "[US_MA]reentry.questionnaire.intro.questionCount_other",
+        "afterHeading": "[US_MA]reentry.questionnaire.intro.afterHeading",
+        "afterDescription": "[US_MA]reentry.questionnaire.intro.afterDescription",
+        "cta": "[US_MA]reentry.questionnaire.intro.cta"
+      },
+      "sectionProgress": {
+        "sectionNumber": "[US_MA]reentry.questionnaire.sectionProgress.sectionNumber",
+        "sectionTotal": "[US_MA]reentry.questionnaire.sectionProgress.sectionTotal",
+        "listItem": "[US_MA]reentry.questionnaire.sectionProgress.listItem",
+        "toggleSections": "[US_MA]reentry.questionnaire.sectionProgress.toggleSections",
+        "completed": "[US_MA]reentry.questionnaire.sectionProgress.completed",
+        "current": "[US_MA]reentry.questionnaire.sectionProgress.current"
+      },
+      "form": {
+        "singleSelectHint": "[US_MA]reentry.questionnaire.form.singleSelectHint",
+        "multiSelectHint": "[US_MA]reentry.questionnaire.form.multiSelectHint",
+        "next": "[US_MA]reentry.questionnaire.form.next",
+        "saveAndUpdate": "[US_MA]reentry.questionnaire.form.saveAndUpdate",
+        "saveHint": "[US_MA]reentry.questionnaire.form.saveHint"
+      },
+      "review": {
+        "heading": "[US_MA]reentry.questionnaire.review.heading",
+        "description": "[US_MA]reentry.questionnaire.review.description",
+        "change": "[US_MA]reentry.questionnaire.review.change",
+        "submit": "[US_MA]reentry.questionnaire.review.submit",
+        "editHeading": "[US_MA]reentry.questionnaire.review.editHeading",
+        "editDescription": "[US_MA]reentry.questionnaire.review.editDescription"
+      },
+      "footer": {
+        "back": "[US_MA]reentry.questionnaire.footer.back",
+        "cancel": "[US_MA]reentry.questionnaire.footer.cancel"
+      },
+      "cancelModal": {
+        "heading": "[US_MA]reentry.questionnaire.cancelModal.heading",
+        "description": "[US_MA]reentry.questionnaire.cancelModal.description",
+        "keepAnswering": "[US_MA]reentry.questionnaire.cancelModal.keepAnswering",
+        "confirm": "[US_MA]reentry.questionnaire.cancelModal.confirm"
+      },
+      "completion": {
+        "heading": "[US_MA]reentry.questionnaire.completion.heading",
+        "subheading": "[US_MA]reentry.questionnaire.completion.subheading",
+        "checklistReady": "[US_MA]reentry.questionnaire.completion.checklistReady",
+        "changeAnytime": "[US_MA]reentry.questionnaire.completion.changeAnytime",
+        "checklistCta": "[US_MA]reentry.questionnaire.completion.checklistCta",
+        "closeCta": "[US_MA]reentry.questionnaire.completion.closeCta"
+      },
+      "optionCopy": {
+        "HOUSING": {
+          "FAMILY": "[US_MA]reentry.questionnaire.optionCopy.HOUSING.FAMILY",
+          "FRIENDS_OR_ROOMMATES": "[US_MA]reentry.questionnaire.optionCopy.HOUSING.FRIENDS_OR_ROOMMATES",
+          "LONG_TERM_RESIDENTIAL_PROGRAM": "[US_MA]reentry.questionnaire.optionCopy.HOUSING.LONG_TERM_RESIDENTIAL_PROGRAM",
+          "SOBER_OR_ROOMING_HOUSE": "[US_MA]reentry.questionnaire.optionCopy.HOUSING.SOBER_OR_ROOMING_HOUSE",
+          "OWN_PLACE": "[US_MA]reentry.questionnaire.optionCopy.HOUSING.OWN_PLACE",
+          "UNSURE": "[US_MA]reentry.questionnaire.optionCopy.HOUSING.UNSURE",
+          "DECLINED_TO_ANSWER": "[US_MA]reentry.questionnaire.optionCopy.HOUSING.DECLINED_TO_ANSWER"
+        },
+        "HEALTHCARE_DETAILS": {
+          "PRESCRIPTION_MEDICINE": "[US_MA]reentry.questionnaire.optionCopy.HEALTHCARE_DETAILS.PRESCRIPTION_MEDICINE",
+          "ONGOING_CONDITION": "[US_MA]reentry.questionnaire.optionCopy.HEALTHCARE_DETAILS.ONGOING_CONDITION",
+          "MENTAL_HEALTH": "[US_MA]reentry.questionnaire.optionCopy.HEALTHCARE_DETAILS.MENTAL_HEALTH",
+          "SUBSTANCE_USE": "[US_MA]reentry.questionnaire.optionCopy.HEALTHCARE_DETAILS.SUBSTANCE_USE",
+          "MEDICATION_ASSISTED_TREATMENT": "[US_MA]reentry.questionnaire.optionCopy.HEALTHCARE_DETAILS.MEDICATION_ASSISTED_TREATMENT"
+        },
+        "TRANSPORTATION": {
+          "FAMILY_OR_FRIENDS": "[US_MA]reentry.questionnaire.optionCopy.TRANSPORTATION.FAMILY_OR_FRIENDS",
+          "PUBLIC_TRANSIT": "[US_MA]reentry.questionnaire.optionCopy.TRANSPORTATION.PUBLIC_TRANSIT",
+          "BIKE": "[US_MA]reentry.questionnaire.optionCopy.TRANSPORTATION.BIKE",
+          "OWN_CAR": "[US_MA]reentry.questionnaire.optionCopy.TRANSPORTATION.OWN_CAR",
+          "UNSURE": "[US_MA]reentry.questionnaire.optionCopy.TRANSPORTATION.UNSURE",
+          "DECLINED_TO_ANSWER": "[US_MA]reentry.questionnaire.optionCopy.TRANSPORTATION.DECLINED_TO_ANSWER"
+        }
+      },
+      "questionCopy": {
+        "HOUSING": {
+          "question": "[US_MA]reentry.questionnaire.questionCopy.HOUSING.question"
+        },
+        "HEALTHCARE_NEEDED": {
+          "question": "[US_MA]reentry.questionnaire.questionCopy.HEALTHCARE_NEEDED.question"
+        },
+        "HEALTHCARE_DETAILS": {
+          "question": "[US_MA]reentry.questionnaire.questionCopy.HEALTHCARE_DETAILS.question"
+        },
+        "TRANSPORATION": {
+          "question": "[US_MA]reentry.questionnaire.questionCopy.TRANSPORATION.question"
+        }
+      },
+      "standardOptionCopy": {
+        "YES": "[US_MA]reentry.questionnaire.standardOptionCopy.YES",
+        "NO": "[US_MA]reentry.questionnaire.standardOptionCopy.NO",
+        "UNSURE": "[US_MA]reentry.questionnaire.standardOptionCopy.UNSURE",
+        "DECLINE_TO_ANSWER": "[US_MA]reentry.questionnaire.standardOptionCopy.DECLINE_TO_ANSWER"
+      }
+    }
+  },
+  "sentenceDates": {
+    "dates": {
+      "rts": {
+        "label": "[US_MA]sentenceDates.dates.rts.label",
+        "description": "[US_MA]sentenceDates.dates.rts.description"
+      },
+      "maxRelease": {
+        "label": "[US_MA]sentenceDates.dates.maxRelease.label",
+        "adjusted": {
+          "originalDateLabel": "[US_MA]sentenceDates.dates.maxRelease.adjusted.originalDateLabel",
+          "adjustedDateLabel": "[US_MA]sentenceDates.dates.maxRelease.adjusted.adjustedDateLabel",
+          "summary": "[US_MA]sentenceDates.dates.maxRelease.adjusted.summary"
+        }
+      }
     }
   }
 }

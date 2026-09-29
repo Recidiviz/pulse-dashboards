@@ -142,5 +142,21 @@
       "description": "Explora los programas disponibles, filtra por instalación y encuentra los que te interesen.",
       "link": "Ver la lista completa de programas"
     }
+  },
+  "sentenceDates": {
+    "dates": {
+      "rts": {
+        "label": "Fecha de liberación bajo supervisión (fecha RTS, Release to Supervision)",
+        "description": "La fecha RTS es una liberación a supervisión sin necesidad de una audiencia de libertad condicional, basada en los créditos por finalización obtenidos a través de la programación y la educación, conforme a M.G.L. c. 127, §129D."
+      },
+      "maxRelease": {
+        "label": "Fecha máxima de liberación (MÁX)",
+        "adjusted": {
+          "originalDateLabel": "Fecha original MÁX",
+          "adjustedDateLabel": "Fecha de MÁX ajustada",
+          "summary": "Has ganado {{count, numberOfDays}} menos en su fecha máxima de liberación."
+        }
+      }
+    }
   }
 }
