@@ -19,11 +19,18 @@ import { rem } from "polished";
 import Skeleton from "react-loading-skeleton";
 import styled from "styled-components";
 
-import { Card, CardHeading, CardValue } from "~@jii/common-ui";
+import { Card, CardHeading, CardValue, Chip } from "~@jii/common-ui";
 import { useUsAzTranslations } from "~@jii/translation";
 import { palette, spacing } from "~design-system";
 
 import { useUsAzSingleResidentContext } from "../../UsAzSingleResidentContext/UsAzSingleResidentContext";
+
+const CardWrapper = styled(Card)`
+  margin-top: ${rem(spacing.xl)};
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(spacing.md)};
+`;
 
 const ValuesGrid = styled.div`
   display: grid;
@@ -59,6 +66,7 @@ export const ValuesCard = () => {
       cuAssignedCustodyLevelNumeric,
       irAssessmentScore,
       irAssignedRiskLevelNumeric,
+      mostRecentClassificationType,
     },
   } = useUsAzSingleResidentContext();
   const { t } = useUsAzTranslations();
@@ -68,19 +76,24 @@ export const ValuesCard = () => {
   if (cuAssignedCustodyLevel && cuAssignedCustodyLevelNumeric) {
     custodyLevelValue = `${cuAssignedCustodyLevel}-${cuAssignedCustodyLevelNumeric}`;
   }
-  const { cuLevel, cuPoints, irLevel, irPoints } = t(
-    ($) => $.classificationPoints.page.values,
-    { returnObjects: true },
-  );
+  const {
+    values: { cuLevel, cuPoints, irLevel, irPoints },
+    initialClassBadge,
+  } = t(($) => $.classificationPoints.page, { returnObjects: true });
 
   return (
-    <Card>
+    <CardWrapper>
+      {mostRecentClassificationType === "INITIAL" && (
+        <div>
+          <Chip color="gray">{initialClassBadge}</Chip>
+        </div>
+      )}
       <ValuesGrid>
         <Cell label={cuLevel} value={custodyLevelValue} />
         <Cell label={cuPoints} value={cuAssessmentScore} />
         <Cell label={irLevel} value={irAssignedRiskLevelNumeric} />
         <Cell label={irPoints} value={irAssessmentScore} />
       </ValuesGrid>
-    </Card>
+    </CardWrapper>
   );
 };

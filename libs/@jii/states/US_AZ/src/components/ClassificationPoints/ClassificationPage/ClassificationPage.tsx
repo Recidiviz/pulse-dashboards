@@ -22,6 +22,8 @@ import { useUsAzTranslations } from "~@jii/translation";
 import { palette, spacing, typography } from "~design-system";
 
 import { UsAzLastUpdatedBanner } from "../../UsAzLastUpdatedBanner";
+import { useUsAzSingleResidentContext } from "../../UsAzSingleResidentContext/UsAzSingleResidentContext";
+import { Intro } from "./Intro";
 import { ValuesCard } from "./ValuesCard";
 
 const Heading = styled.h1`
@@ -33,11 +35,13 @@ const Heading = styled.h1`
 
 export const ClassificationPage = () => {
   const { t } = useUsAzTranslations();
+  const { metadata } = useUsAzSingleResidentContext();
 
   return (
     <>
       <UsAzLastUpdatedBanner />
       <Heading as="h1">{t(($) => $.classificationPoints.page.heading)}</Heading>
+      <Intro classType={metadata.mostRecentClassificationType} />
       <ValuesCard />
     </>
   );

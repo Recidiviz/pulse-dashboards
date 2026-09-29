@@ -17,7 +17,10 @@
 
 import aboutInfoPage from "./aboutInfoPage.md?raw";
 import dprInfoPage from "./dprInfoPage.md?raw";
+import initialClassIntro from "./initialClassIntro.md?raw";
 import ionInfoPage from "./ionInfoPage.md?raw";
+import noClassIntro from "./noClassIntro.md?raw";
+import reclassIntro from "./reclassIntro.md?raw";
 
 export default {
   about: {
@@ -776,6 +779,10 @@ If you refuse to sign your Conditions of Supervision at your SED, you stay in pr
         irLevel: "Internal Risk Level",
         irPoints: "Internal Risk Points",
       },
+      initialClassBadge: "Initial Classification (from Intake)",
+      initialClassIntro,
+      reclassIntro,
+      noClassIntro,
     },
   },
 };
