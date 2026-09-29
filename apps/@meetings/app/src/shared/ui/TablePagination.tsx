@@ -62,7 +62,7 @@ export const TablePagination = ({
         disabled={page * pageSize >= tableItemsLength}
       >
         <ChevronRightIcon
-          className={`size-3.5 stroke-[4px] ${page * PAGE_SIZE >= tableItemsLength ? "stroke-disabled" : "stroke-brand"}`}
+          className={`size-3.5 stroke-[4px] ${page * pageSize >= tableItemsLength ? "stroke-disabled" : "stroke-brand"}`}
         />
       </TouchableOpacity>
     </View>

@@ -47,8 +47,6 @@ import { RecordingIndicator } from "~@meetings/app/shared/ui/RecordingIndicator"
 import { SortArrow } from "~@meetings/app/shared/ui/SortArrow";
 import {
   Table,
-  TABLE_CELL_HEIGHT,
-  TABLE_HEAD_CELL_HEIGHT,
   TableBody,
   TableCell,
   TableHead,
@@ -60,8 +58,7 @@ import { TablePagination } from "~@meetings/app/shared/ui/TablePagination";
 import { TooltipText } from "~@meetings/app/shared/ui/TooltipText";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
-const PAGE_SIZE = 7;
-const TABLE_HEIGHT = TABLE_HEAD_CELL_HEIGHT + PAGE_SIZE * TABLE_CELL_HEIGHT;
+const PAGE_SIZE = 50;
 
 type ProfileNavProp = CompositeNavigationProp<
   NativeStackNavigationProp<ClientsStackParamList, "ClientProfile">,
@@ -173,7 +170,7 @@ export function PersonsTable({
           {sectionTitle} ({total} {total > 1 ? `${type}s` : type})
         </Typography>
       )}
-      <View className="mt-2 w-full" style={{ height: TABLE_HEIGHT }}>
+      <View className="mt-2 w-full">
         <Table className="table-fixed">
           <TableHead>
             <TableHeadRow>
@@ -414,6 +411,7 @@ export function PersonsTable({
             setPrevPage={() => setPage((p) => Math.max(1, p - 1))}
             setNextPage={() => setPage((p) => Math.min(totalPages, p + 1))}
             tableItemsLength={total}
+            pageSize={PAGE_SIZE}
           />
         </View>
       )}
