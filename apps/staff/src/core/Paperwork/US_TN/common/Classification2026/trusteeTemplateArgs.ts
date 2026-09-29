@@ -16,17 +16,24 @@
 // =============================================================================
 
 import {
-  buildTrusteeDenialReasons,
   getTrusteeCriterionNumber,
   resolveAnnexOutcome,
-  resolveTrusteeOutcome,
   resolveTrusteeSkipState,
   TRUSTEE_ANNEX_SUB_QUESTION,
   TRUSTEE_CRITERIA,
   TrusteeFormSchema,
 } from "~datatypes";
 
-const BLANK = "_________________________";
+import { trusteeDenialSummary } from "./TrusteeNotes";
+import { annexOutcomeLines, trusteeOutcomeLines } from "./TrusteeOutcomes";
+
+/**
+ * The squares the approvals table prints. Word falls back to a symbol font when
+ * the body font has no glyph for these, which is why they are not drawn as an
+ * "X" in an empty cell the way the criteria columns are.
+ */
+const TICKED = "☒";
+const UNTICKED = "☐";
 
 const APPROVAL_FIELDS = [
   {
@@ -65,7 +72,6 @@ export function getTrusteeReworkTemplateContents(
 ): Record<string, string> {
   const contents: Record<string, string> = {};
 
-  const trustee = resolveTrusteeOutcome(formData);
   const annex = resolveAnnexOutcome(formData);
   const { notRequired } = resolveTrusteeSkipState(formData);
   const notRequiredKeys = new Set<string>(notRequired);
@@ -91,31 +97,28 @@ export function getTrusteeReworkTemplateContents(
   contents.subQ3t = subQuestion === "true" ? "X" : "";
   contents.subQ3f = subQuestion === "false" ? "X" : "";
 
-  contents.trusteeEligibleYes = trustee.status === "ELIGIBLE" ? "X" : "";
-  contents.trusteeEligibleAc =
-    trustee.status === "ELIGIBLE_REQUIRES_AC_APPROVAL" ? "X" : "";
-  contents.trusteeEligibleNo = trustee.status === "NOT_ELIGIBLE" ? "X" : "";
-  contents.trusteeEligiblePending = trustee.status === "INCOMPLETE" ? "X" : "";
-
-  contents.annexEligibleYes = annex.status === "ELIGIBLE" ? "X" : "";
-  contents.annexEligibleNo = annex.status === "NOT_ELIGIBLE" ? "X" : "";
-  contents.annexEligiblePending = annex.status === "INCOMPLETE" ? "X" : "";
+  // The resolved outcome, not a box per possible outcome, so the filed form
+  // says what the screen says. `linebreaks` is on, so "\n" is a real break.
+  contents.trusteeOutcome = trusteeOutcomeLines(formData).join("\n");
+  contents.annexOutcome = annexOutcomeLines(formData).join("\n");
 
   APPROVAL_FIELDS.forEach(({ prefix, decision, date }) => {
     const value = formData[decision];
-    contents[`${prefix}Approved`] = value === "true" ? "X" : "";
-    contents[`${prefix}Denied`] = value === "false" ? "X" : "";
-    contents[`${prefix}Date`] = formData[date] || BLANK;
+    contents[`${prefix}Approved`] = value === "true" ? TICKED : UNTICKED;
+    contents[`${prefix}Denied`] = value === "false" ? TICKED : UNTICKED;
+    // The template rules the line, so an unset date leaves it empty to write on.
+    contents[`${prefix}Date`] = formData[date] || "";
   });
 
   // denialReasons has no backing form field. It is rebuilt from the failed
-  // criteria every time, so the paragraph on the filed form always lists the
+  // criteria every time, so the paragraph on the filed form always names the
   // same failures as the criteria table printed above it and cannot drift from
   // them. The two notes fields below are free text the counselor owns, so those
   // are read straight from formData.
-  contents.denialReasons = buildTrusteeDenialReasons(formData) || BLANK;
-  contents.denialNotes = formData.trusteeDenialNotes || BLANK;
-  contents.notesForWarden = formData.trusteeNotesForWarden || BLANK;
+  contents.denialReasons = trusteeDenialSummary(formData);
+  // Both notes fields sit on ruled lines, so an empty one leaves them to write on.
+  contents.denialNotes = formData.trusteeDenialNotes || "";
+  contents.notesForWarden = formData.trusteeNotesForWarden || "";
 
   return contents;
 }

@@ -22,6 +22,7 @@ import styled from "styled-components";
 import {
   getTrusteeCriterionNumber,
   resolveTrusteeOutcome,
+  TrusteeFormSchema,
   UsTnReclassification2026DraftData,
 } from "~datatypes";
 
@@ -53,14 +54,37 @@ const NotesLabel = styled.div`
   margin: ${rem(6)} 0 ${rem(2)};
 `;
 
+export const DENIAL_COPY = {
+  empty:
+    "Fills in automatically if a criterion in Groups A through D is marked False.",
+  notMet: (numbers: readonly number[]) =>
+    `${numbers.length > 1 ? "Criteria" : "Criterion"} ${listCriterionNumbers(
+      numbers,
+    )} not met. The ${
+      numbers.length > 1 ? "requirements are" : "requirement is"
+    } stated in full under Trustee custody above.`,
+} as const;
+
+/** The denial paragraph as plain text, which is what the DOCX prints. */
+export function trusteeDenialSummary(
+  formData: Partial<TrusteeFormSchema>,
+): string {
+  const numbers = resolveTrusteeOutcome(formData).failedHardBars.map(
+    getTrusteeCriterionNumber,
+  );
+
+  return numbers.length === 0 ? DENIAL_COPY.empty : DENIAL_COPY.notMet(numbers);
+}
+
 /**
  * The failed criteria are derived and not editable, so the filed form always
  * agrees with the criteria table above it. Anything the case manager wants to
  * add goes in the notes below, where nothing recomputes over it.
  *
- * It names the criteria rather than restating them: the eligibility block on
- * the same page already prints each failed requirement verbatim, and repeating
- * thirteen of them costs two extra sheets. The DOCX still carries the full text.
+ * It names the criteria rather than restating them: the eligibility block above
+ * already prints each failed requirement verbatim, and repeating thirteen of
+ * them costs two extra sheets. The DOCX prints the same sentence for the same
+ * reason.
  */
 export const TrusteeDenialReasons = observer(function TrusteeDenialReasons() {
   const opportunityForm =
@@ -74,11 +98,10 @@ export const TrusteeDenialReasons = observer(function TrusteeDenialReasons() {
     <Block>
       <Bold>Reasons for Denial</Bold>
       {numbers.length === 0 ? (
-        <HelperText>
-          Fills in automatically if a criterion in Groups A through D is marked
-          False.
-        </HelperText>
+        <HelperText>{DENIAL_COPY.empty}</HelperText>
       ) : (
+        // Split at the sentence break so the criteria numbers read bold, which
+        // the DOCX cannot do with a single text placeholder.
         <div>
           <Bold>
             {plural ? "Criteria" : "Criterion"} {listCriterionNumbers(numbers)}{" "}
@@ -88,7 +111,7 @@ export const TrusteeDenialReasons = observer(function TrusteeDenialReasons() {
           under Trustee custody above.
         </div>
       )}
-      <NotesLabel>Additional notes</NotesLabel>
+      <NotesLabel>Additional notes:</NotesLabel>
       <DOCXFormTextArea<UsTnReclassification2026DraftData>
         name="trusteeDenialNotes"
         maxRows={TEXTAREA_MAX_ROWS}

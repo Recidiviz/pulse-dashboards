@@ -505,11 +505,32 @@ export type TrusteePrintBlock = (typeof TRUSTEE_PRINT_BLOCKS)[number];
 export const TRUSTEE_PRINT_PAGES = [
   { groups: ["A"], blocks: [] },
   { groups: ["B", "C", "D"], blocks: [] },
-  { groups: ["E"], blocks: [] },
-  // Eligibility has a sheet to itself: it prints the full requirement text of
-  // every hard bar that failed, and all thirteen can fail at once.
-  { groups: [], blocks: ["eligibility"] },
+  // Eligibility sits under the last group rather than on a sheet of its own.
+  // Measured at 671 against 698 with every hard bar failed.
+  { groups: ["E"], blocks: ["eligibility"] },
   // Approvals starts a sheet, so the table and what follows it stay together.
+  { groups: [], blocks: ["approvals", "notes"] },
+] as const satisfies readonly {
+  groups: readonly TrusteeCriterionGroup[];
+  blocks: readonly TrusteePrintBlock[];
+}[];
+
+/**
+ * The same form on three sheets, which is what the downloaded DOCX uses.
+ *
+ * A Word page carries about 9in of content against the 698px this app's fixed
+ * page gives, so the DOCX has room the screen does not. It can also paginate:
+ * a `PrintablePage` clips whatever runs past its bottom edge, while Word pushes
+ * the overflow onto another sheet. Only the eligibility block can reach that
+ * size, and only when most of the hard bars failed.
+ *
+ * Nothing in the app reads this. It is dumped for the template generator, and
+ * `TrusteePrintPages.test.ts` holds it to the same completeness rules as the
+ * plan above.
+ */
+export const TRUSTEE_DOCX_PRINT_PAGES = [
+  { groups: ["A", "B"], blocks: [] },
+  { groups: ["C", "D", "E"], blocks: ["eligibility"] },
   { groups: [], blocks: ["approvals", "notes"] },
 ] as const satisfies readonly {
   groups: readonly TrusteeCriterionGroup[];

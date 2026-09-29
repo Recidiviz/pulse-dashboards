@@ -209,14 +209,15 @@ describe("CriteriaSection", () => {
     );
   });
 
-  it("repeats the True and False headings on every group", () => {
+  it("heads every group with True and False, and the table itself with neither", () => {
     renderSection(0);
 
     const groupHeaders = screen
       .getAllByRole("columnheader")
       .filter((cell) => cell.textContent === "True");
 
-    expect(groupHeaders).toHaveLength(TRUSTEE_SECTIONS[0].groups.length + 1);
+    expect(groupHeaders).toHaveLength(TRUSTEE_SECTIONS[0].groups.length);
+    expect(screen.queryByRole("columnheader", { name: "Criteria" })).toBeNull();
   });
 
   it("explains that a Group E False adds an approver rather than disqualifying", () => {

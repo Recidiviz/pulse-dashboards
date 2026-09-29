@@ -300,15 +300,20 @@ export function trusteeCriterionPlainText(key: TrusteeCriterionKey): string {
   );
 }
 
+/**
+ * A failed criterion as the form states it, phrased as the requirement that was
+ * not met rather than as the criterion's own inverse.
+ */
+export function trusteeRequirementNotMetText(key: TrusteeCriterionKey): string {
+  return `${trusteeCriterionNotMetHeading(key)} ${TRUSTEE_REQUIREMENT_LABEL} ${trusteeCriterionPlainText(key)}`;
+}
+
 /** One paragraph per failed hard bar, phrased as the requirement that was not met. */
 export function buildTrusteeDenialReasons(
   formData: Partial<TrusteeFormSchema>,
 ): string {
   return resolveTrusteeOutcome(formData)
-    .failedHardBars.map(
-      (key) =>
-        `${trusteeCriterionNotMetHeading(key)} ${TRUSTEE_REQUIREMENT_LABEL} ${trusteeCriterionPlainText(key)}`,
-    )
+    .failedHardBars.map(trusteeRequirementNotMetText)
     .join("\n\n");
 }
 

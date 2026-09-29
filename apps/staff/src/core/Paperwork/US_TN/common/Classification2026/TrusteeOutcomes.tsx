@@ -29,6 +29,8 @@ import {
   TRUSTEE_REQUIREMENT_LABEL,
   TrusteeCriterionKey,
   trusteeCriterionNotMetHeading,
+  TrusteeFormSchema,
+  trusteeRequirementNotMetText,
 } from "~datatypes";
 
 import { UsTnReclassification2026Form } from "../../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassification2026Form";
@@ -53,6 +55,78 @@ const ANNEX_RANGE = ANNEX_CRITERION_NUMBERS.every(
       ANNEX_CRITERION_NUMBERS[ANNEX_CRITERION_NUMBERS.length - 1]
     }`
   : listCriterionNumbers(ANNEX_CRITERION_NUMBERS);
+
+/**
+ * Every sentence the outcome box can print. The DOCX prints the same resolved
+ * sentences through `trusteeOutcomeLines`, so both read from here.
+ */
+export const TRUSTEE_OUTCOME_COPY = {
+  incomplete: "Complete remaining criteria to determine Trustee eligibility.",
+  notEligible: "Inmate is not eligible for Trustee custody.",
+  eligible: `Inmate is eligible for Trustee custody. All ${TRUSTEE_CRITERIA.length} criteria are met. Placement still requires the Warden approval recorded below.`,
+  eligibleRequiresAcApproval: (numbers: readonly number[]) =>
+    `Inmate is eligible for Trustee custody. All other criteria are met, ${criteriaMarkedFalse(
+      numbers,
+    )}, and the Assistant Commissioner must approve alongside the Warden.`,
+} as const;
+
+export const ANNEX_OUTCOME_COPY = {
+  incomplete: `Complete criteria ${ANNEX_RANGE} to determine Annex eligibility.`,
+  eligible: "Inmate is eligible for Annex housing placement.",
+  wardenApproval: "Warden approval is required for Annex housing placement.",
+  notEligible: "Inmate is not eligible for Annex housing placement.",
+} as const;
+
+/** The Trustee outcome as plain text, one entry per printed line. */
+export function trusteeOutcomeLines(
+  formData: Partial<TrusteeFormSchema>,
+): string[] {
+  const { status, failedHardBars, failedConditionalCriteria } =
+    resolveTrusteeOutcome(formData);
+
+  switch (status) {
+    case "INCOMPLETE":
+      return [TRUSTEE_OUTCOME_COPY.incomplete];
+    case "NOT_ELIGIBLE":
+      return [
+        TRUSTEE_OUTCOME_COPY.notEligible,
+        ...failedHardBars.map(trusteeRequirementNotMetText),
+      ];
+    case "ELIGIBLE":
+      return [TRUSTEE_OUTCOME_COPY.eligible];
+    case "ELIGIBLE_REQUIRES_AC_APPROVAL":
+      return [
+        TRUSTEE_OUTCOME_COPY.eligibleRequiresAcApproval(
+          failedConditionalCriteria.map(getTrusteeCriterionNumber),
+        ),
+      ];
+    default:
+      return assertNever(status);
+  }
+}
+
+/** The Annex outcome as plain text, one entry per printed line. */
+export function annexOutcomeLines(
+  formData: Partial<TrusteeFormSchema>,
+): string[] {
+  const { status } = resolveAnnexOutcome(formData);
+
+  switch (status) {
+    case "INCOMPLETE":
+      return [ANNEX_OUTCOME_COPY.incomplete];
+    case "ELIGIBLE":
+      return [
+        ANNEX_OUTCOME_COPY.eligible,
+        formData[TRUSTEE_ANNEX_SUB_QUESTION.parentKey] === "false"
+          ? ROW_NOTE_COPY.annexSexOffenderEligible
+          : ANNEX_OUTCOME_COPY.wardenApproval,
+      ];
+    case "NOT_ELIGIBLE":
+      return [ANNEX_OUTCOME_COPY.notEligible];
+    default:
+      return assertNever(status);
+  }
+}
 
 /** Both outcomes are derived, and share one box: they are one reading of one set of answers. */
 const OutcomeBlock = styled.div`
@@ -105,36 +179,26 @@ export const TrusteeOutcome = observer(function TrusteeOutcome() {
   function body() {
     switch (status) {
       case "INCOMPLETE":
-        return (
-          <div>
-            Complete remaining criteria to determine Trustee eligibility.
-          </div>
-        );
+        return <div>{TRUSTEE_OUTCOME_COPY.incomplete}</div>;
       case "NOT_ELIGIBLE":
+        // The failures render as components rather than lines, so the criterion
+        // text keeps the bold segments the table above it uses.
         return (
           <>
-            <div>Inmate is not eligible for Trustee custody.</div>
+            <div>{TRUSTEE_OUTCOME_COPY.notEligible}</div>
             {failedHardBars.map((key) => (
               <RequirementNotMet key={key} criterionKey={key} />
             ))}
           </>
         );
       case "ELIGIBLE":
-        return (
-          <div>
-            Inmate is eligible for Trustee custody. All{" "}
-            {TRUSTEE_CRITERIA.length} criteria are met. Placement still requires
-            the Warden approval recorded below.
-          </div>
-        );
+        return <div>{TRUSTEE_OUTCOME_COPY.eligible}</div>;
       case "ELIGIBLE_REQUIRES_AC_APPROVAL":
         return (
           <div>
-            Inmate is eligible for Trustee custody. All other criteria are met,{" "}
-            {criteriaMarkedFalse(
+            {TRUSTEE_OUTCOME_COPY.eligibleRequiresAcApproval(
               failedConditionalCriteria.map(getTrusteeCriterionNumber),
             )}
-            , and the Assistant Commissioner must approve alongside the Warden.
           </div>
         );
       default:
@@ -163,24 +227,20 @@ export const AnnexOutcome = observer(function AnnexOutcome() {
   function body() {
     switch (status) {
       case "INCOMPLETE":
-        return (
-          <div>
-            Complete criteria {ANNEX_RANGE} to determine Annex eligibility.
-          </div>
-        );
+        return <div>{ANNEX_OUTCOME_COPY.incomplete}</div>;
       case "ELIGIBLE":
         return (
           <>
-            <div>Inmate is eligible for Annex housing placement.</div>
+            <div>{ANNEX_OUTCOME_COPY.eligible}</div>
             <FailedCriterion>
               {viaSexOffenderSentence
                 ? ROW_NOTE_COPY.annexSexOffenderEligible
-                : "Warden approval is required for Annex housing placement."}
+                : ANNEX_OUTCOME_COPY.wardenApproval}
             </FailedCriterion>
           </>
         );
       case "NOT_ELIGIBLE":
-        return <div>Inmate is not eligible for Annex housing placement.</div>;
+        return <div>{ANNEX_OUTCOME_COPY.notEligible}</div>;
       default:
         return assertNever(status);
     }

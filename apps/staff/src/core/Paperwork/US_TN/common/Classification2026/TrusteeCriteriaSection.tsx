@@ -71,14 +71,30 @@ const CriteriaTable = styled.table`
   }
 `;
 
+/**
+ * The table is `table-layout: fixed`, so the colgroup has to carry the column
+ * widths. Without it they come from whichever row is first, which reflows
+ * every group taller.
+ */
+const NUMBER_COLUMN_WIDTH = 28;
+const ANSWER_COLUMN_WIDTH = 40;
+
+const NumberCol = styled.col`
+  width: ${rem(NUMBER_COLUMN_WIDTH)};
+`;
+
+const AnswerCol = styled.col`
+  width: ${rem(ANSWER_COLUMN_WIDTH)};
+`;
+
 const NumberCell = styled.th`
-  width: ${rem(28)};
+  width: ${rem(NUMBER_COLUMN_WIDTH)};
   text-align: center;
   font-weight: 600;
 `;
 
 const AnswerCell = styled.td`
-  width: ${rem(40)};
+  width: ${rem(ANSWER_COLUMN_WIDTH)};
   text-align: center;
 `;
 
@@ -181,6 +197,7 @@ const GroupNote = styled.div`
 `;
 
 const SectionHeading = styled.h2`
+  ${FormFont}
   font-size: ${rem(10)};
   font-weight: 600;
   margin: ${rem(8)} 0 ${rem(4)};
@@ -203,6 +220,7 @@ const GuideReference = styled.div`
 `;
 
 const PartHeading = styled.h2`
+  ${FormFont}
   font-size: inherit;
   font-weight: 600;
   margin: 0 0 ${rem(3)};
@@ -290,8 +308,7 @@ export function TrusteeAssessmentHeader() {
         Guide
       </GuideReference>
 
-      <PartHeading>Part 1. Eligibility criteria</PartHeading>
-      <div>Completed by the Case Manager.</div>
+      <PartHeading>Eligibility criteria</PartHeading>
       <InstructionList>
         <li>
           Criteria {HARD_BAR_RANGE} must be marked True for placement on Trustee
@@ -311,10 +328,8 @@ export function TrusteeAssessmentHeader() {
           {SUB_QUESTION_PARENT_NUMBER} may be False if the inmate has 7 years or
           less remaining to serve.
         </li>
-        {/* "Part 2" has nothing to point at: the approvals section is headed
-            "Approvals recorded". Kept verbatim anyway, because the copy is
-            TDOC's and the design does label that section Part 2, so this is a
-            question for policy staff rather than one to settle here. */}
+        {/* "Part 2" has nothing to point at, but the copy is TDOC's, so it is
+            a question for policy staff rather than one to settle here. */}
         <li>
           Warden approval is required for every Trustee custody placement. Any
           additional approvers are listed in Part 2.
@@ -327,7 +342,7 @@ export function TrusteeAssessmentHeader() {
 export const ROW_NOTE_COPY = {
   /** Bold, via the same `**` convention the criterion text uses. */
   trusteeNotMet: "**Trustee requirement not met.**",
-  annexNotMet: "Annex requirement not met.",
+  annexNotMet: "**Annex requirement not met.**",
   acApproval:
     "**The Assistant Commissioner for Prison Operations or their designee must approve Trustee custody placement. That approval is recorded below.**",
   annexSexOffenderEligible:
@@ -567,18 +582,12 @@ export const CriteriaSection = observer(function CriteriaSection({
     <>
       {showHeading && <SectionHeading>{section}</SectionHeading>}
       <CriteriaTable>
-        <thead>
-          <tr>
-            <NumberCell scope="col">#</NumberCell>
-            <th scope="col">Criteria</th>
-            <AnswerCell as="th" scope="col">
-              True
-            </AnswerCell>
-            <AnswerCell as="th" scope="col">
-              False
-            </AnswerCell>
-          </tr>
-        </thead>
+        <colgroup>
+          <NumberCol />
+          <col />
+          <AnswerCol />
+          <AnswerCol />
+        </colgroup>
         {groups.map(({ key, label, note, criteria }) => (
           <GroupBody key={key}>
             <GroupHeaderRow>

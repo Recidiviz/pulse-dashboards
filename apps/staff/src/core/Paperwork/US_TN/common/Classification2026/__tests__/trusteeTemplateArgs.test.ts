@@ -21,6 +21,7 @@ import {
   TRUSTEE_SAMPLE_CASES,
 } from "~datatypes";
 
+import { annexOutcomeLines, trusteeOutcomeLines } from "../TrusteeOutcomes";
 import {
   getTrusteeReworkTemplateContents,
   trusteeReworkTemplateKeys,
@@ -93,8 +94,12 @@ describe("getTrusteeReworkTemplateContents", () => {
       TRUSTEE_SAMPLE_CASES.annexOnly.formData,
     );
 
-    expect(annexOnly.trusteeEligibleNo).toBe("X");
-    expect(annexOnly.annexEligibleYes).toBe("X");
+    expect(annexOnly.trusteeOutcome).toMatch(
+      /not eligible for Trustee custody/,
+    );
+    expect(annexOnly.annexOutcome).toMatch(
+      /is eligible for Annex housing placement/,
+    );
   });
 
   it("distinguishes eligible-with-AC-approval from plain eligible", () => {
@@ -102,22 +107,32 @@ describe("getTrusteeReworkTemplateContents", () => {
       TRUSTEE_SAMPLE_CASES.conditionalFailure.formData,
     );
 
-    expect(rowan.trusteeEligibleAc).toBe("X");
-    expect(rowan.trusteeEligibleYes).toBe("");
+    expect(rowan.trusteeOutcome).toMatch(
+      /Assistant Commissioner must approve alongside the Warden/,
+    );
+    expect(rowan.trusteeOutcome).not.toMatch(/All 15 criteria are met/);
   });
 
-  it("marks exactly one Trustee outcome at a time", () => {
+  it("prints the outcome the screen resolved to, not a box per outcome", () => {
     Object.values(TRUSTEE_SAMPLE_CASES).forEach(({ formData }) => {
       const c = getTrusteeReworkTemplateContents(formData);
-      const marked = [
-        c.trusteeEligibleYes,
-        c.trusteeEligibleAc,
-        c.trusteeEligibleNo,
-        c.trusteeEligiblePending,
-      ].filter((v) => v === "X");
 
-      expect(marked).toHaveLength(1);
+      expect(c.trusteeOutcome.split("\n")[0]).toBe(
+        trusteeOutcomeLines(formData)[0],
+      );
+      expect(c.annexOutcome.split("\n")[0]).toBe(
+        annexOutcomeLines(formData)[0],
+      );
     });
+  });
+
+  it("lists every failed hard bar under the Trustee outcome", () => {
+    const contents = getTrusteeReworkTemplateContents(
+      TRUSTEE_SAMPLE_CASES.annexOnly.formData,
+    );
+
+    expect(contents.trusteeOutcome.split("\n").length).toBeGreaterThan(1);
+    expect(contents.trusteeOutcome).toMatch(/Requirement:/);
   });
 
   it("records each approval decision and date", () => {
@@ -127,9 +142,23 @@ describe("getTrusteeReworkTemplateContents", () => {
       trusteeWardenTrusteeApprovalDate: "09/16/2026",
     });
 
-    expect(contents.wardenTrusteeApproved).toBe("X");
-    expect(contents.wardenTrusteeDenied).toBe("");
+    expect(contents.wardenTrusteeApproved).toBe("\u2612");
+    expect(contents.wardenTrusteeDenied).toBe("\u2610");
     expect(contents.wardenTrusteeDate).toBe("09/16/2026");
+  });
+
+  it("prints an empty square on every row nobody has decided", () => {
+    const contents = getTrusteeReworkTemplateContents(
+      TRUSTEE_SAMPLE_CASES.allTrue.formData,
+    );
+
+    ["wardenTrustee", "wardenAnnex", "contractMonitor", "ac"].forEach(
+      (prefix) => {
+        expect(contents[`${prefix}Approved`]).toBe("\u2610");
+        expect(contents[`${prefix}Denied`]).toBe("\u2610");
+        expect(contents[`${prefix}Date`]).toBe("");
+      },
+    );
   });
 
   it("leaves no placeholder undefined, whatever the form state", () => {
@@ -150,9 +179,7 @@ describe("trusteeReworkTemplateKeys", () => {
         "acApproved",
         "acDate",
         "acDenied",
-        "annexEligibleNo",
-        "annexEligiblePending",
-        "annexEligibleYes",
+        "annexOutcome",
         "contractMonitorApproved",
         "contractMonitorDate",
         "contractMonitorDenied",
@@ -206,10 +233,7 @@ describe("trusteeReworkTemplateKeys", () => {
         "q9t",
         "subQ3f",
         "subQ3t",
-        "trusteeEligibleAc",
-        "trusteeEligibleNo",
-        "trusteeEligiblePending",
-        "trusteeEligibleYes",
+        "trusteeOutcome",
         "wardenAnnexApproved",
         "wardenAnnexDate",
         "wardenAnnexDenied",

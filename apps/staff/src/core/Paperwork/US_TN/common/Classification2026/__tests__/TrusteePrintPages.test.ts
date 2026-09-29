@@ -17,7 +17,11 @@
 
 import { TRUSTEE_CRITERIA_GROUPS } from "~datatypes";
 
-import { TRUSTEE_PRINT_BLOCKS, TRUSTEE_PRINT_PAGES } from "../TrusteeChecklist";
+import {
+  TRUSTEE_DOCX_PRINT_PAGES,
+  TRUSTEE_PRINT_BLOCKS,
+  TRUSTEE_PRINT_PAGES,
+} from "../TrusteeChecklist";
 import { TRUSTEE_SECTIONS } from "../TrusteeCriteriaSection";
 
 const plannedGroups = TRUSTEE_PRINT_PAGES.flatMap((p) => [...p.groups]);
@@ -95,9 +99,72 @@ describe("TRUSTEE_PRINT_PAGES", () => {
     expect(planned).toEqual([...TRUSTEE_PRINT_BLOCKS]);
   });
 
+  it("is four sheets", () => {
+    expect(TRUSTEE_PRINT_PAGES).toHaveLength(4);
+  });
+
+  it("puts the eligibility block under the last criteria group, not alone", () => {
+    const eligibility = TRUSTEE_PRINT_PAGES.find((p) =>
+      (p.blocks as readonly string[]).includes("eligibility"),
+    );
+
+    expect(eligibility?.groups).toEqual([
+      plannedGroups[plannedGroups.length - 1],
+    ]);
+  });
+
   it("carries the last block on the last page", () => {
     expect(
       TRUSTEE_PRINT_PAGES[TRUSTEE_PRINT_PAGES.length - 1].blocks.length,
     ).toBeGreaterThan(0);
+  });
+});
+
+describe("TRUSTEE_DOCX_PRINT_PAGES", () => {
+  const groups = TRUSTEE_DOCX_PRINT_PAGES.flatMap((p) => [...p.groups]);
+
+  it("places every group exactly once", () => {
+    expect([...groups].sort()).toEqual(
+      Object.keys(TRUSTEE_CRITERIA_GROUPS).sort(),
+    );
+  });
+
+  it("keeps groups in their display order", () => {
+    const displayOrder = TRUSTEE_SECTIONS.flatMap((s) =>
+      s.groups.map((g) => g.key),
+    );
+
+    expect(groups).toEqual(displayOrder);
+  });
+
+  it("places every trailing block exactly once, in reading order", () => {
+    const planned = TRUSTEE_DOCX_PRINT_PAGES.flatMap((p) => [...p.blocks]);
+
+    expect(planned).toEqual([...TRUSTEE_PRINT_BLOCKS]);
+  });
+
+  it("leaves no sheet empty", () => {
+    TRUSTEE_DOCX_PRINT_PAGES.forEach(({ groups: g, blocks }) => {
+      expect(g.length + blocks.length).toBeGreaterThan(0);
+    });
+  });
+
+  it("starts a sheet with the approvals table, and keeps the notes with it", () => {
+    const approvals = TRUSTEE_DOCX_PRINT_PAGES.findIndex((p) =>
+      (p.blocks as readonly string[]).includes("approvals"),
+    );
+    const notes = TRUSTEE_DOCX_PRINT_PAGES.findIndex((p) =>
+      (p.blocks as readonly string[]).includes("notes"),
+    );
+
+    expect(TRUSTEE_DOCX_PRINT_PAGES[approvals].groups).toHaveLength(0);
+    expect(notes).toBe(approvals);
+  });
+
+  it("is three sheets, one fewer than the screen", () => {
+    expect(TRUSTEE_DOCX_PRINT_PAGES).toHaveLength(3);
+    expect(TRUSTEE_DOCX_PRINT_PAGES.length).toBeLessThan(
+      TRUSTEE_PRINT_PAGES.length,
+    );
   });
 });

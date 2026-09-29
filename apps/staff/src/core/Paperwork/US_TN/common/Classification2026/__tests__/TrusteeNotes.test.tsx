@@ -94,7 +94,7 @@ describe("TrusteeDenialReasons", () => {
   it("offers one box for notes the derived paragraph does not cover", () => {
     renderNotes(allTrue);
 
-    expect(screen.getByText("Additional notes")).toBeInTheDocument();
+    expect(screen.getByText("Additional notes:")).toBeInTheDocument();
     expect(screen.getAllByRole("textbox")).toHaveLength(1);
     expect(screen.getByRole("textbox")).toHaveAttribute(
       "name",

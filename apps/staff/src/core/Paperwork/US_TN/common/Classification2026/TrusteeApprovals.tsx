@@ -28,7 +28,7 @@ import { palette } from "~design-system";
 
 import { UsTnReclassification2026Form } from "../../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassification2026Form";
 import { useOpportunityFormContext } from "../../../OpportunityFormContext";
-import { Bold } from "./styles";
+import { Bold, FormFont } from "./styles";
 import { criteriaMarkedFalse } from "./TrusteeCriteriaSection";
 
 type ApprovalRowState =
@@ -56,6 +56,7 @@ const Section = styled.div`
 `;
 
 const SectionHeading = styled.h2`
+  ${FormFont}
   font-size: ${rem(10)};
   font-weight: 600;
   margin: 0 0 ${rem(2)};
