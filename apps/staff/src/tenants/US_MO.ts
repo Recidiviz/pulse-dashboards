@@ -41,7 +41,7 @@ const US_MO_CONFIG = {
   enableUserRestrictions: true,
   workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
   workflowsMethodologyUrl:
-    "https://docs.google.com/document/d/e/2PACX-1vToMOcOU3qmUUF9J86R4MaqjcZIogwq5FwuqWqWLFiY2cPCsgq98E_HgbQ5PPJWexRT-n7pWqcqY5Xz/pub",
+    "https://docs.google.com/document/d/e/2PACX-1vSYcnx6r8nFo5Odw5okV69Mq1it6bO0an3mO7_skTYTysewu3gW3xfvcFI01uNihBuwkDDF-r5DAKv9/pub",
   workflowsTasksConfig: {
     collection: "usMoSupervisionTasks",
     // Snoozes longer than 7 days require a reason (paired with the
