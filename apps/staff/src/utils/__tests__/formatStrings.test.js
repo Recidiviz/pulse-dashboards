@@ -323,6 +323,33 @@ describe("formatStrings", () => {
     });
   });
 
+  describe("formatNameLastFirstMiddle", () => {
+    it("keeps the full middle name after the given name", () => {
+      expect(
+        utils.formatNameLastFirstMiddle({
+          givenNames: "Barney",
+          middleNames: "Xavier",
+          surname: "Rubble",
+        }),
+      ).toBe("Rubble, Barney Xavier");
+    });
+
+    it("drops the comma when there is no surname", () => {
+      expect(
+        utils.formatNameLastFirstMiddle({
+          givenNames: "Barney",
+          middleNames: "Xavier",
+        }),
+      ).toBe("Barney Xavier");
+    });
+
+    it("drops the comma when there is only a surname", () => {
+      expect(utils.formatNameLastFirstMiddle({ surname: "Rubble" })).toBe(
+        "Rubble",
+      );
+    });
+  });
+
   describe("splitAuth0UserName", () => {
     it("Handles 'First Last'", () => {
       expect(utils.splitAuth0UserName("First Last")).toStrictEqual({

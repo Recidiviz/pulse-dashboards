@@ -49,7 +49,7 @@ import {
 } from "~datatypes";
 
 import { FirestoreDateRangeFilter } from "../../FirestoreStore/FirestoreStore";
-import { formatDateToISO } from "../../utils";
+import { formatDateToISO, formatNameLastFirstMiddle } from "../../utils";
 import { ParoleStore } from "../ParoleStore";
 import { ParoleAPI } from "./interface";
 
@@ -368,8 +368,7 @@ export class ParoleAPIClient implements ParoleAPI {
     return {
       pseudonymizedId: resident.pseudonymizedId,
       displayId: resident.displayId,
-      individualName: addDisplayName({ fullName: resident.personName })
-        .displayName,
+      individualName: this.nameForResident(resident),
       hearingDate,
       hearingType: hearing?.hearingType ?? UNKNOWN_TEXT,
       facility: this.facilityForResident(resident),
@@ -420,6 +419,20 @@ export class ParoleAPIClient implements ParoleAPI {
   }
 
   /**
+   * The resident's name as the docket and case profile show it. US_ID puts the
+   * surname first ("Last, First Middle"); other tenants read "First Middle
+   * Last". A missing part is dropped along with its separator.
+   *
+   * @param resident - The resident whose name to format.
+   */
+  private nameForResident(resident: WorkflowsResidentRecord): string {
+    if (resident.metadata.stateCode === "US_ID") {
+      return formatNameLastFirstMiddle(resident.personName);
+    }
+    return addDisplayName({ fullName: resident.personName }).displayName;
+  }
+
+  /**
    * Assembles the whole case profile from one resident record, filling each
    * field the tenant does not source with its UNKNOWN placeholder.
    */
@@ -430,7 +443,7 @@ export class ParoleAPIClient implements ParoleAPI {
     return {
       pseudonymizedId: resident.pseudonymizedId,
       displayId: resident.displayId,
-      name: addDisplayName({ fullName: resident.personName }).displayName,
+      name: this.nameForResident(resident),
       dob: dates.dob ?? UNKNOWN_DATE,
       gender: resident.gender ?? UNKNOWN_TEXT,
       currentFacility: this.facilityForResident(resident),

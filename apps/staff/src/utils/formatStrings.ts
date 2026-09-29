@@ -372,6 +372,20 @@ function formatNameLastFirst(fullName: FullName): string {
   return formattedName;
 }
 
+/**
+ * Formats a name as "Last, First Middle", keeping the full middle name. A
+ * missing part is dropped along with its separator, with no placeholder.
+ *
+ * @param fullName - The name to format.
+ */
+function formatNameLastFirstMiddle(fullName: FullName): string {
+  const { givenNames, middleNames, surname } = fullName;
+  const givenAndMiddleNames = [givenNames, middleNames]
+    .filter(Boolean)
+    .join(" ");
+  return [surname, givenAndMiddleNames].filter(Boolean).join(", ");
+}
+
 function getWelcomeText(
   userName: string | undefined,
   welcomeText: string | undefined = "Welcome",
@@ -548,6 +562,7 @@ export {
   formatLargeNumber,
   formatNameFirstLast,
   formatNameLastFirst,
+  formatNameLastFirstMiddle,
   formatOfficerLabel,
   formatPercent,
   formatStateAddress,

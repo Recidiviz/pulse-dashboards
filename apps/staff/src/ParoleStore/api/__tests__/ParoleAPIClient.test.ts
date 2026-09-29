@@ -249,7 +249,7 @@ describe("ParoleAPIClient", () => {
         {
           pseudonymizedId: "anonres999",
           displayId: "dRES999",
-          individualName: "Test Resident",
+          individualName: "Resident, Test",
           hearingDate: "2026-05-01",
           hearingType: "Not yet available",
           facility: "FACILITY1",
@@ -328,6 +328,34 @@ describe("ParoleAPIClient", () => {
 
       expect(hearing.facility).toBe("Not yet available");
     });
+
+    it("shows a US_ID name as Last, First Middle on both the docket and the case profile", async () => {
+      const resident = buildUsIdResident({
+        personName: {
+          givenNames: "Test",
+          middleNames: "Quinn",
+          surname: "Resident",
+        },
+        metadata: {
+          stateCode: "US_ID",
+          crcFacilities: [],
+          nextParoleHearingDate: "2026-05-01",
+        },
+      });
+      vi.spyOn(
+        rootStore.firestoreStore,
+        "getResidentsForState",
+      ).mockResolvedValue([resident]);
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
+        resident,
+      );
+
+      const [hearing] = await client.hearings();
+      const caseDetail = await client.caseDetail("anonres999");
+
+      expect(hearing.individualName).toBe("Resident, Test Quinn");
+      expect(caseDetail.name).toBe("Resident, Test Quinn");
+    });
   });
 
   describe("caseDetail", () => {
@@ -369,7 +397,7 @@ describe("ParoleAPIClient", () => {
       expect(result).toMatchObject({
         pseudonymizedId: "anonres999",
         displayId: "dRES999",
-        name: "Test Resident",
+        name: "Resident, Test",
         gender: "MALE",
         currentFacility: "FACILITY1",
         custodyLevel: "MINIMUM",
@@ -449,7 +477,7 @@ describe("ParoleAPIClient", () => {
       expect(result).toEqual({
         pseudonymizedId: "anonres999",
         displayId: "dRES999",
-        name: "Test Resident",
+        name: "Resident, Test",
         dob: "9999-12-01",
         gender: "Not yet available",
         currentFacility: "FACILITY1",
