@@ -159,3 +159,21 @@ model UsNeCheckIn {
     // The resident's answers, parsed via Zod
     answers Json
 }
+
+// US_MA (Massachussets)
+
+// An instance of a questionnaire completed by a given resident
+model UsMaReentryQuestionnaire {
+    // Internal identifier for this form
+    id String @id @default(cuid())
+
+    // Resident filling out this form
+    pseudonymizedId    String
+
+    createdAt          DateTime  @default(now())
+    updatedAt          DateTime  @updatedAt
+    completedAt        DateTime?
+
+    // The resident's answers, parsed via Zod
+    answers Json
+}

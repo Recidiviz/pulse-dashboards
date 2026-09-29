@@ -16,10 +16,12 @@
 // =============================================================================
 
 import { router } from "../../../procedures/init";
+import { usMaRouter } from "./US_MA/reentryQuestionnaire.router";
 import { usNcRouter } from "./US_NC/rna.router";
 import { usNeRouter } from "./US_NE/router";
 
 export const stateRouter = router({
   usNe: usNeRouter,
   usNc: usNcRouter,
+  usMa: usMaRouter,
 });
