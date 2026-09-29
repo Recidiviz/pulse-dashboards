@@ -103,6 +103,7 @@ const MeetingDesktop = ({
 
   const printMeetingDetails = usePrintMeetingDetails({
     person,
+    personType,
     meetingDetails,
     meetingDate,
     time,

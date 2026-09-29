@@ -315,6 +315,27 @@ describe("mergeWithBase", () => {
     expect(AgencyConfigSchema.parse(merged).mobileAppEnabled).toBe(false);
   });
 
+  test("successPlannerEnabled defaults to false when omitted", () => {
+    const merged = mergeWithBase(
+      { version: 1 },
+      { name: "Test Agency", stateCode: "US_XX", version: 1 },
+    );
+    expect(AgencyConfigSchema.parse(merged).successPlannerEnabled).toBe(false);
+  });
+
+  test("successPlannerEnabled set on the agency overrides the base value", () => {
+    const merged = mergeWithBase(
+      { version: 1, successPlannerEnabled: false },
+      {
+        name: "Test Agency",
+        stateCode: "US_XX",
+        version: 1,
+        successPlannerEnabled: true,
+      },
+    );
+    expect(AgencyConfigSchema.parse(merged).successPlannerEnabled).toBe(true);
+  });
+
   test("staffFeedbackEnabled set on the agency overrides the base value", () => {
     const merged = mergeWithBase(
       { version: 1, staffFeedbackEnabled: true },

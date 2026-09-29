@@ -34,6 +34,7 @@ const FAKE_AGENCY_CONFIG = {
   staffFeedbackEnabled: false,
   audioPlaybackEnabled: false,
   mobileAppEnabled: true,
+  successPlannerEnabled: false,
   audioTTLDays: 30,
   transcriptTTLDays: 30,
   keywords: [],

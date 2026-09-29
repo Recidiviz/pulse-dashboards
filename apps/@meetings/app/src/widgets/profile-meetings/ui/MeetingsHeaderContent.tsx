@@ -19,6 +19,7 @@ import clsx from "clsx";
 import { useWindowDimensions, View } from "react-native";
 import { PlusIcon } from "react-native-heroicons/outline";
 
+import { useIsSuccessPlannerVisible } from "~@meetings/app/entities/success-planner";
 import { useRecording } from "~@meetings/app/features/recording";
 import { Person } from "~@meetings/app/shared/api";
 import { usePlatform } from "~@meetings/app/shared/lib/platform";
@@ -28,6 +29,8 @@ import SearchBar from "~@meetings/app/shared/ui/SearchBar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import { ClientCaseNoteSummary } from "./ClientCaseNoteSummary";
+import { ProfileSuccessPlanner } from "./ProfileSuccessPlanner";
+import { SendSuccessPlannerButton } from "./SendSuccessPlannerButton";
 
 type Props = {
   person: Person;
@@ -59,6 +62,8 @@ const MeetingsHeaderContent = ({
   const onPressNewMeeting =
     isWeb && width >= 768 ? handleOpenModal : handleOpenBottomSheet;
 
+  const isPlannerVisible = useIsSuccessPlannerVisible();
+
   return (
     <>
       <View
@@ -82,6 +87,7 @@ const MeetingsHeaderContent = ({
           </Typography>
         </View>
       </View>
+      {isPlannerVisible && <ProfileSuccessPlanner person={person} />}
       <ClientCaseNoteSummary person={person} />
       <View
         className={clsx(
@@ -97,15 +103,18 @@ const MeetingsHeaderContent = ({
                 ({meetingsCount})
               </Typography>
             </Typography>
-            {recordingState === "idle" && (
-              <Button
-                variant="primary"
-                icon={{ icon: PlusIcon, className: "!size-4 stroke-[3px]" }}
-                onPress={onPressNewMeeting}
-              >
-                Meeting
-              </Button>
-            )}
+            <View className="flex-row items-center gap-2">
+              {isPlannerVisible && <SendSuccessPlannerButton />}
+              {recordingState === "idle" && (
+                <Button
+                  variant="primary"
+                  icon={{ icon: PlusIcon, className: "!size-4 stroke-[3px]" }}
+                  onPress={onPressNewMeeting}
+                >
+                  Meeting
+                </Button>
+              )}
+            </View>
           </View>
         )}
         {showSearchAndSort && (

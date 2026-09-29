@@ -29,6 +29,11 @@ import {
 } from "~@meetings/app/entities/case-note-summary";
 import { getPersonType } from "~@meetings/app/entities/person";
 import { useStateSelection } from "~@meetings/app/entities/state-code";
+import {
+  SuccessPlannerDrawer,
+  SuccessPlannerPanelCard,
+  useSuccessPlanner,
+} from "~@meetings/app/entities/success-planner";
 import { useFeatureVariants } from "~@meetings/app/entities/user";
 import { Person } from "~@meetings/app/shared/api";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
@@ -39,19 +44,22 @@ type Props = {
 
 export function MeetingSidePanel({ person }: Props) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isPlannerOpen, setIsPlannerOpen] = useState(false);
   const { selectedStateCode } = useStateSelection();
   const { agencyConfigs } = useAgencyConfigs();
   const { isVariantActive } = useFeatureVariants();
   const showCNI =
     agencyConfigs[selectedStateCode]?.showCNI || isVariantActive("showCNI");
   const isClient = getPersonType(person) === "client";
-  const { segments, enabled } = useCaseNoteSummary({
+  const { segments, enabled: isContextVisible } = useCaseNoteSummary({
     person,
     isClient,
     showCNI,
   });
+  const planner = useSuccessPlanner();
+  const isPlannerVisible = !!planner;
 
-  if (!enabled) return null;
+  if (!isContextVisible && !planner) return null;
 
   return (
     <View
@@ -75,13 +83,26 @@ export function MeetingSidePanel({ person }: Props) {
 
       {isCollapsed ? (
         <View className="flex-1 items-center justify-center px-1">
-          <Typography variant="caption-s-regular" className="text-center">
-            Client Context
-          </Typography>
+          {isPlannerVisible && (
+            <Typography variant="caption-s-regular" className="text-center">
+              Success Planner
+            </Typography>
+          )}
+          {isContextVisible && (
+            <Typography variant="caption-s-regular" className="text-center">
+              Client Context
+            </Typography>
+          )}
         </View>
       ) : (
         <ScrollView contentContainerClassName="gap-3 p-3">
-          {segments ? (
+          {isPlannerVisible && (
+            <SuccessPlannerPanelCard
+              planner={planner}
+              onOpen={() => setIsPlannerOpen(true)}
+            />
+          )}
+          {isContextVisible && segments ? (
             <View className="gap-3 rounded-2xl border border-subtle bg-primary p-3">
               <View className="flex-row items-center justify-between">
                 <Typography variant="body-s-medium">Client Context</Typography>
@@ -108,6 +129,14 @@ export function MeetingSidePanel({ person }: Props) {
             </View>
           )}
         </ScrollView>
+      )}
+
+      {isPlannerOpen && isPlannerVisible && (
+        <SuccessPlannerDrawer
+          person={person}
+          planner={planner}
+          onClose={() => setIsPlannerOpen(false)}
+        />
       )}
     </View>
   );

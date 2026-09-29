@@ -67,6 +67,7 @@ describe("ProductionPipeline", () => {
     staffFeedbackEnabled: true,
     audioPlaybackEnabled: false,
     mobileAppEnabled: true,
+    successPlannerEnabled: false,
     audioTTLDays: 30,
     transcriptTTLDays: 30,
     meetingTypes: [],

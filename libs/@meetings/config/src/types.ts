@@ -132,6 +132,10 @@ export const AgencyConfigFileSchema = z
     showCNI: z.boolean().optional(),
     staffFeedbackEnabled: z.boolean().optional(),
     audioPlaybackEnabled: z.boolean().optional(),
+    successPlannerEnabled: z
+      .boolean()
+      .optional()
+      .describe("Whether the Success Planner is available in this state"),
     mobileAppEnabled: z
       .boolean()
       .optional()
@@ -247,6 +251,7 @@ export const AgencyConfigSchema = z.object({
   showCNI: z.boolean().default(false),
   staffFeedbackEnabled: z.boolean().default(false),
   audioPlaybackEnabled: z.boolean().default(false),
+  successPlannerEnabled: z.boolean().default(false),
   mobileAppEnabled: z.boolean().default(true),
   audioTTLDays: z.number().int().min(7).default(30).nullable(),
   transcriptTTLDays: z.number().int().min(7).default(30).nullable(),
