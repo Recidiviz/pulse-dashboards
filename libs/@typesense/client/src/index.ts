@@ -30,7 +30,19 @@ export {
   mergeDocIdFromPath,
   toTypesenseId,
 } from "./docIds";
-export { collectionNames, schemas } from "./schemas";
+export {
+  type DerivedUpdateFields,
+  deriveOpportunityFields,
+  deriveUpdateFields,
+  OPPORTUNITY_UPDATE_FIELDS,
+  type OpportunityUpdateStatus,
+  toEpochSeconds,
+} from "./opportunityUpdates";
+export {
+  BROWSER_SEARCHABLE_COLLECTIONS,
+  collectionNames,
+  schemas,
+} from "./schemas";
 export {
   type BaseScope,
   type CaseloadCollectionFields,
@@ -44,6 +56,8 @@ export {
   type PersonScopeCollection,
   type PersonScopeField,
   type PerSystemScopes,
+  quote,
+  quoteList,
   resolveCaseloadScope,
   resolvePersonScope,
   type ResolvePersonScopeInput,

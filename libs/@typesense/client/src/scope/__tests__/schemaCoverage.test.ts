@@ -26,7 +26,11 @@
 
 import { describe, expect, test } from "vitest";
 
-import { schemas } from "../../schemas";
+import {
+  BROWSER_SEARCHABLE_COLLECTIONS,
+  collectionNames,
+  schemas,
+} from "../../schemas";
 import { CaseloadFilterCompiler } from "../CaseloadFilterCompiler";
 import { PersonFilterCompiler } from "../PersonFilterCompiler";
 import { resolveCaseloadScope } from "../resolveCaseloadScope";
@@ -245,13 +249,27 @@ describe("the compiler's field map matches the schemas", () => {
     },
   );
 
+  // The map's VALUES are the physical columns a compiled filter_by names, and
+  // they differ from the grant name. A typo compiles fine, then fails the whole
+  // query at runtime: Typesense rejects a filter naming an undeclared field.
   test.each(Object.entries(person))(
-    "%s declares every person grant field the compiler may use",
+    "%s declares every column the compiler may name",
     (collection, allowedFields) => {
       const declared = declaredFields(collection);
-      expect([...allowedFields].filter((f) => !declared.has(f))).toEqual([]);
+      const columns = [...allowedFields.values()];
+      expect(columns.filter((f) => !declared.has(f))).toEqual([]);
     },
   );
+
+  test("the rename map is total — every allowed grant maps to a column", () => {
+    const unmapped = Object.entries(person).flatMap(([collection, fields]) =>
+      [...fields.entries()]
+        .filter(([, column]) => !column)
+        .map(([grant]) => `${collection}.${grant}`),
+    );
+
+    expect(unmapped).toEqual([]);
+  });
 
   // These pin down that no collection declares a column purely to satisfy the
   // filter parser.
@@ -312,5 +330,153 @@ describe("schema hygiene", () => {
     );
 
     expect(required).toEqual([]);
+  });
+});
+
+// Two reference attributes whose defaults are wrong for us, both failing
+// silently: `cascade_delete` defaults to TRUE, and setting it false is invalid
+// without `async_reference: true` — so removing the latter re-enables it.
+describe("reference fields", () => {
+  const referenceFields = schemas.flatMap((schema) =>
+    (schema.fields ?? [])
+      .filter((f) => f["reference"] !== undefined)
+      .map((f) => ({ collection: schema.name, field: f })),
+  );
+
+  test("every reference field is covered by this suite", () => {
+    expect(
+      referenceFields.map((r) => `${r.collection}.${r.field.name}`),
+    ).toEqual([
+      "opportunities.clientDocId",
+      "opportunities.residentDocId",
+      "opportunityUpdates.opportunityDocId",
+    ]);
+  });
+
+  test.each(referenceFields.map((r) => [`${r.collection}.${r.field.name}`, r]))(
+    "%s opts out of cascade_delete and keeps async_reference",
+    (_label, { field }) => {
+      expect(field["cascade_delete"]).toBe(false);
+      expect(field["async_reference"]).toBe(true);
+    },
+  );
+
+  // Provisioning walks `schemas` in order, and Typesense rejects a collection
+  // whose referenced collection does not exist yet.
+  test.each(referenceFields.map((r) => [`${r.collection}.${r.field.name}`, r]))(
+    "%s is declared after the collection it references",
+    (_label, { collection, field }) => {
+      const [target] = String(field["reference"]).split(".");
+      const order = schemas.map((s) => s.name);
+
+      expect(order.indexOf(target)).toBeGreaterThanOrEqual(0);
+      expect(order.indexOf(target)).toBeLessThan(order.indexOf(collection));
+    },
+  );
+});
+
+// The scoped key is the security boundary, and it ships to the BROWSER — so
+// these hold against a hostile query, not just the ones the frontend builds.
+// Each failure below is silent: a wrong result set with no error.
+describe("the opportunities key is safe by construction", () => {
+  const compiled = SCOPES.flatMap(({ label, person }) =>
+    REQUEST_SYSTEMS.map(({ systems }) => ({
+      label,
+      filters: new PersonFilterCompiler("US_XX").compile({
+        supervision: systems.includes("SUPERVISION")
+          ? person.SUPERVISION
+          : undefined,
+        incarceration: systems.includes("INCARCERATION")
+          ? person.INCARCERATION
+          : undefined,
+      }),
+    })),
+  );
+
+  // THE invariant. Typesense discards a key's JOIN clause when the query's
+  // filter_by puts any join into a top-level OR — measured at 2,520 documents
+  // returned where 420 was correct. A key with no join never enters that path.
+  test("no minted key contains a join clause", () => {
+    const withJoins = compiled.flatMap(({ label, filters }) =>
+      Object.entries(filters)
+        .filter(([, filterBy]) => filterBy.includes("$"))
+        .map(([collection]) => `${collection} — ${label}`),
+    );
+
+    expect([...new Set(withJoins)]).toEqual([]);
+  });
+
+  // `locationId` holds a supervision district OR an incarceration facility, so
+  // a clause without the discriminator would be a cross-system leak.
+  test("every locationId clause is paired with a system clause", () => {
+    const unpaired = compiled.flatMap(({ label, filters }) => {
+      const filterBy = filters.opportunities;
+      if (filterBy === undefined || !filterBy.includes("locationId:=")) {
+        return [];
+      }
+      // Each system's predicate is wrapped as `(system:=X && (...))`, so every
+      // locationId must sit inside such a group.
+      const groups = [
+        ...filterBy.matchAll(/\(system:=[^()]*&&\s*\(([^()]*)\)\)/g),
+      ]
+        .map((m) => m[1])
+        .join(" ");
+      const locationClauses = (filterBy.match(/locationId:=/g) ?? []).length;
+      const pairedClauses = (groups.match(/locationId:=/g) ?? []).length;
+      return locationClauses === pairedClauses
+        ? []
+        : [`${label} — ${filterBy}`];
+    });
+
+    expect([...new Set(unpaired)]).toEqual([]);
+  });
+
+  // A supervision-only user must not reach an incarceration document. The key
+  // expresses that by OMITTING the system, not by leaving it unbounded.
+  test("a single-system scope names only that system", () => {
+    const supervisionOnly = new PersonFilterCompiler("US_XX").compile({
+      supervision: { grants: [{ kind: "unrestricted" }] },
+    }).opportunities;
+
+    expect(supervisionOnly).toContain("system:=`SUPERVISION`");
+    expect(supervisionOnly).not.toContain("INCARCERATION");
+  });
+
+  // Dropping a grant a collection cannot express must NARROW, never widen: an
+  // empty clause list collapses to a never-match sentinel, not "no restriction".
+  test("a scope with no expressible grant never compiles to unrestricted", () => {
+    const unexpressible = new PersonFilterCompiler("US_XX").compile({
+      incarceration: {
+        grants: [{ kind: "byField", field: "district", ids: [] }],
+      },
+    });
+
+    expect(unexpressible.residents).toContain("__no_match__");
+    expect(unexpressible.opportunities).toContain("__no_match__");
+  });
+});
+
+describe("the browser's collection boundary", () => {
+  test("excludes opportunityUpdates, which only declares stateCode", () => {
+    expect(BROWSER_SEARCHABLE_COLLECTIONS).not.toContain("opportunityUpdates");
+  });
+
+  test("names only real collections", () => {
+    // An allowlist can go stale the other way too: a renamed or misspelled
+    // entry would silently narrow the browser's reach and break a search.
+    expect(
+      BROWSER_SEARCHABLE_COLLECTIONS.filter(
+        (name) => !collectionNames.includes(name),
+      ),
+    ).toEqual([]);
+  });
+
+  test("omits every collection the browser never queries", () => {
+    expect(
+      collectionNames.filter(
+        (name) =>
+          !(BROWSER_SEARCHABLE_COLLECTIONS as readonly string[]).includes(name),
+      ),
+    ).toEqual(["opportunityUpdates"]);
   });
 });

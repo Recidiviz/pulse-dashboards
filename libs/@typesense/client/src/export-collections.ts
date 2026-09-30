@@ -28,6 +28,7 @@
 // per-source opportunity ETL trigger) POSTs `{ sourceCollection: "US_XX-..." }`
 // for backfill-fn to instantiate it at runtime.
 
+import { OPPORTUNITY_UPDATE_FIELDS } from "./opportunityUpdates";
 import { schemas } from "./schemas";
 
 // Static `system` discriminator for each collection whose docs are inherently
@@ -64,8 +65,10 @@ const LOCATIONS_DERIVED_FIELDS = [
   },
 ];
 
-// Not a direct 1:1 Firestore↔Typesense pair — emitted as a template below.
-const BACKFILL_FN_EXCLUDED = new Set(["opportunities"]);
+// Not 1:1 Firestore↔Typesense pairs, so each gets a hand-written config below:
+// `opportunities` is a template with no source, and `opportunityUpdates` reads
+// a subcollection group and keys itself from the document path.
+const BACKFILL_FN_EXCLUDED = new Set(["opportunities", "opportunityUpdates"]);
 
 // User-written updates merged onto the record they update. See
 // CollectionConfig.mergeSources in backfill-fn for the mechanism.
@@ -77,17 +80,66 @@ const PERSON_MERGE_SOURCES = [
   },
 ];
 
-const OPPORTUNITY_MERGE_SOURCES = [
+// The path-derived id is also the opportunity's own id, so `opportunityDocId`
+// resolves without a lookup.
+const opportunityUpdatesConfig = {
+  name: "opportunityUpdates",
+  sourceCollection: "clientOpportunityUpdates",
+  collectionGroup: true,
+  // `stateCode` is on the update document itself, which is what lets a
+  // state-scoped run filter this group server-side.
+  fields: [...OPPORTUNITY_UPDATE_FIELDS, "stateCode"],
+  docIdOverrides: { type: "path" as const },
+  // Named rather than inlined because this config is JSON.
+  transform: "opportunityUpdate" as const,
+};
+
+// The person document's own id
+const PERSON_LOOKUP_KEY = {
+  type: "fields" as const,
+  fields: ["stateCode", "externalId"],
+  lowercaseFields: ["stateCode"],
+};
+
+// How an opportunity names the person it belongs to. Exactly one of the two
+// resolves and the other dangles, which join filters exclude.
+const OPPORTUNITY_REFERENCE_FIELDS = [
   {
-    sourceCollection: "clientOpportunityUpdates",
-    collectionGroup: true,
+    into: "clientDocId",
+    fields: PERSON_LOOKUP_KEY.fields,
+    lowercaseFields: PERSON_LOOKUP_KEY.lowercaseFields,
+  },
+  {
+    into: "residentDocId",
+    fields: PERSON_LOOKUP_KEY.fields,
+    lowercaseFields: PERSON_LOOKUP_KEY.lowercaseFields,
+  },
+];
+
+// Person SCOPE merged onto the opportunities it governs — the three fields the
+// minted scoped key reads, and nothing else.
+const OPPORTUNITY_SCOPE_MERGE_SOURCES = [
+  {
+    sourceCollection: "clients",
+    lookupKey: PERSON_LOOKUP_KEY,
     hasStateCode: true,
     fields: [
-      "denial",
-      "manualSnooze",
-      "autoSnooze",
-      "submitted",
-      "actionHistory",
+      "officerId",
+      { from: "district", into: "locationId" },
+      { value: "SUPERVISION", into: "system" },
+    ],
+  },
+  {
+    sourceCollection: "residents",
+    lookupKey: PERSON_LOOKUP_KEY,
+    hasStateCode: true,
+    // Nothing filters on the resident side yet. Populated now anyway: the
+    // alternative is a collection recreate plus a full re-backfill the day a
+    // state turns facility scoping on.
+    fields: [
+      "officerId",
+      { from: "facilityId", into: "locationId" },
+      { value: "INCARCERATION", into: "system" },
     ],
   },
 ];
@@ -123,6 +175,9 @@ const opportunityTemplate = {
     "opportunityId",
     "isEligible",
     "isAlmostEligible",
+    "opportunityPseudonymizedId",
+    "eligibleDate",
+    "almostEligibleDate",
   ],
   // Changing this rewrites every opportunity id: the next backfill writes the
   // new ones and the prune sweeps the old.
@@ -131,9 +186,16 @@ const opportunityTemplate = {
     fields: ["stateCode", "externalId", "opportunityType", "opportunityId"],
     lowercaseFields: ["stateCode"],
   },
-  mergeSources: OPPORTUNITY_MERGE_SOURCES,
+  // Flattens `eligibleDate` to an epoch and lifts `metadata.tabName` out.
+  transform: "opportunityFields" as const,
+  referenceFields: OPPORTUNITY_REFERENCE_FIELDS,
+  mergeSources: OPPORTUNITY_SCOPE_MERGE_SOURCES,
 };
 
-const collections = [...baseCollections, opportunityTemplate];
+const collections = [
+  ...baseCollections,
+  opportunityTemplate,
+  opportunityUpdatesConfig,
+];
 
 process.stdout.write(JSON.stringify(collections));

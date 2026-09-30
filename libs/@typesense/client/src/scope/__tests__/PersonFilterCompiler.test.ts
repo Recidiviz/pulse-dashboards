@@ -36,6 +36,8 @@ describe("PersonFilterCompiler", () => {
   };
 
   it("selects collections from the systems supplied", () => {
+    // `opportunities` appears whenever either system does: it spans both, and
+    // carries a `system:=` discriminator instead of being split in two.
     expect(
       Object.keys(
         personFilters({
@@ -43,7 +45,13 @@ describe("PersonFilterCompiler", () => {
           incarceration: officerGrant,
         }),
       ).sort(),
-    ).toEqual(["clients", "residents"]);
+    ).toEqual(["clients", "opportunities", "residents"]);
+  });
+
+  it("omits the person collection for a system with no scope", () => {
+    expect(
+      Object.keys(personFilters({ supervision: unrestrictedPerson })).sort(),
+    ).toEqual(["clients", "opportunities"]);
   });
 
   it("clients accept both district and officerId grants", () => {

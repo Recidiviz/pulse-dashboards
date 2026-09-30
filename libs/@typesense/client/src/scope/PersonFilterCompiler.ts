@@ -16,32 +16,44 @@
 // =============================================================================
 
 // Compiles a person-doc scope into one Typesense filter_by per collection:
-// clients and residents. Separate filters because `residents` declares no
-// `district`. See ./CaseloadFilterCompiler for why, and for why these two
-// compilers stay independent instead of sharing a base class.
+// clients, residents and opportunities. Separate filters because the three
+// express the same grants under different field names, and only opportunities
+// spans both systems.
 
 import type {
   PersonScope,
   PersonScopeCollection,
   PersonScopeField,
   PerSystemScopes,
+  SingleWorkflowsSystem,
 } from "./types";
-import { NEVER_MATCH_CLAUSE, quoteList, withStateClause } from "./utils";
+import { NEVER_MATCH_CLAUSE, quote, quoteList, withStateClause } from "./utils";
 
 export class PersonFilterCompiler {
   /**
-   * Which grant fields each person collection can express. See the note on
-   * CaseloadFilterCompiler.COLLECTION_FIELDS for the drop-never-widen rule.
+   * Which grant fields each collection can express, and under what NAME: a
+   * district grant is `district` on `clients`, `locationId` on `opportunities`.
+   * An absent entry DROPS the grant, and dropping narrows — never widens.
    */
   static readonly COLLECTION_FIELDS: Record<
     PersonScopeCollection,
-    ReadonlySet<PersonScopeField>
+    ReadonlyMap<PersonScopeField, string>
   > = {
-    clients: new Set<PersonScopeField>(["district", "officerId"]),
+    clients: new Map<PersonScopeField, string>([
+      ["district", "district"],
+      ["officerId", "officerId"],
+    ]),
     // Residents carry no `district`; incarceration scoping is facility-shaped.
     // No state's INCARCERATION baseline is district-scoped today, so a district
     // grant never reaches this collection.
-    residents: new Set<PersonScopeField>(["officerId"]),
+    residents: new Map<PersonScopeField, string>([["officerId", "officerId"]]),
+    // `locationId` holds a district OR a facility, so the `system:=`
+    // discriminator is load-bearing for CORRECTNESS: the two could collide as
+    // strings. Denormalized rather than joined — see ../schemas.
+    opportunities: new Map<PersonScopeField, string>([
+      ["district", "locationId"],
+      ["officerId", "officerId"],
+    ]),
   };
 
   constructor(private readonly stateCode: string) {}
@@ -67,7 +79,46 @@ export class PersonFilterCompiler {
       );
     }
 
+    if (supervision || incarceration) {
+      filters.opportunities = this.mixedSystemFilter(scopes, "opportunities");
+    }
+
     return filters;
+  }
+
+  /**
+   * For a collection whose docs span both systems: each system's predicate,
+   * discriminated by `system:=` and OR'd under the shared state clause.
+   *
+   * A system with no scope is OMITTED rather than left unbounded, so a
+   * supervision-only user's key cannot reach an incarceration document.
+   */
+  private mixedSystemFilter(
+    scopes: PerSystemScopes<PersonScope>,
+    collection: PersonScopeCollection,
+  ): string {
+    const perSystem = (
+      [
+        ["SUPERVISION", scopes.supervision],
+        ["INCARCERATION", scopes.incarceration],
+      ] as const
+    )
+      .filter(
+        (entry): entry is [SingleWorkflowsSystem, PersonScope] =>
+          entry[1] !== undefined,
+      )
+      .map(([system, scope]) => {
+        const predicate = this.predicateFor(scope, collection);
+        // Every locationId clause sits inside its system's parentheses.
+        return predicate === null
+          ? `system:=${quote(system)}`
+          : `(system:=${quote(system)} && (${predicate}))`;
+      });
+
+    const stateClause = `stateCode:=${quote(this.stateCode)}`;
+    if (perSystem.length === 0) return stateClause;
+    if (perSystem.length === 1) return `${stateClause} && ${perSystem[0]}`;
+    return `${stateClause} && (${perSystem.join(" || ")})`;
   }
 
   private predicateFor(
@@ -78,13 +129,13 @@ export class PersonFilterCompiler {
       return null;
 
     const allowedFields = PersonFilterCompiler.COLLECTION_FIELDS[collection];
-    const clauses = scope.grants.flatMap((grant) =>
-      grant.kind === "byField" &&
-      allowedFields.has(grant.field) &&
-      grant.ids.length > 0
-        ? [`${grant.field}:=${quoteList(grant.ids)}`]
-        : [],
-    );
+    const clauses = scope.grants.flatMap((grant) => {
+      if (grant.kind !== "byField" || grant.ids.length === 0) return [];
+      // Undefined means this collection cannot express the grant — see
+      // COLLECTION_FIELDS.
+      const column = allowedFields.get(grant.field);
+      return column ? [`${column}:=${quoteList(grant.ids)}`] : [];
+    });
 
     if (clauses.length === 0) return NEVER_MATCH_CLAUSE;
     return clauses.join(" || ");

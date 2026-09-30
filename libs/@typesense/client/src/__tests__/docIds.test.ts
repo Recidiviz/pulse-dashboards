@@ -154,3 +154,31 @@ describe("mergeDocIdFromPath", () => {
     );
   });
 });
+
+describe("toTypesenseId — path override", () => {
+  // A subcollection's Firestore doc id is not unique: every person has a
+  // `clientOpportunityUpdates/usTnExpiration`. Only the path carries the person.
+  it("keys a subcollection doc by its path", () => {
+    expect(
+      toTypesenseId(
+        "usTnExpiration",
+        {},
+        { type: "path" },
+        "clientUpdatesV2/us_tn_123/clientOpportunityUpdates/usTnExpiration",
+      ),
+    ).toBe("us_tn_123_usTnExpiration");
+  });
+
+  it("throws when the caller supplies no path", () => {
+    // Falling back to the Firestore id would key every person's update the same.
+    expect(() => toTypesenseId("usTnExpiration", {}, { type: "path" })).toThrow(
+      /requires the document path/,
+    );
+  });
+
+  it("ignores a supplied path for the other override types", () => {
+    expect(
+      toTypesenseId("abc", {}, { type: "prefix", prefix: "p" }, "some/path"),
+    ).toBe("p_abc");
+  });
+});

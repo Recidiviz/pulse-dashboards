@@ -21,7 +21,10 @@
 
 import { type Client as TypesenseClient, Errors } from "typesense";
 
-import { createLocalTypesenseClient } from "~@typesense/client";
+import {
+  BROWSER_SEARCHABLE_COLLECTIONS,
+  createLocalTypesenseClient,
+} from "~@typesense/client";
 
 import { isOfflineMode } from "../../utils/isOfflineMode";
 
@@ -58,13 +61,47 @@ export function getTypesenseClient(): TypesenseClient {
  *     admin bootstrap key ("xyz") to talk to local Typesense, and we provision
  *     `OFFLINE_PARENT_KEY` as a search-only sub-key of it.
  */
+
+/**
+ * Typesense keys are immutable, so a stale one is deleted and remade. Offline
+ * only: a dev cluster holds no real data.
+ */
+async function rescopeOfflineParentKeyIfStale(
+  admin: TypesenseClient,
+): Promise<void> {
+  const want = [...BROWSER_SEARCHABLE_COLLECTIONS].sort();
+  const prefix = OFFLINE_PARENT_KEY.slice(0, 4);
+
+  const { keys } = await admin.keys().retrieve();
+  const existing = keys.find((key) => key.value_prefix === prefix);
+  if (!existing) return;
+
+  const scope = [...(existing.collections ?? [])].sort();
+  if (scope.length === want.length && scope.every((c, i) => c === want[i])) {
+    return;
+  }
+
+  console.warn(
+    `[typesense] offline parent key ${existing.id} is scoped to [${scope.join(", ")}] — rebuilding as [${want.join(", ")}]`,
+  );
+  await admin.keys(existing.id).delete();
+  await admin.keys().create({
+    actions: ["documents:search"],
+    collections: [...BROWSER_SEARCHABLE_COLLECTIONS],
+    description: "scoped-key-parent (auto-provisioned for offline dev)",
+    value: OFFLINE_PARENT_KEY,
+  });
+}
+
 async function resolveSearchOnlyParentKey(): Promise<string> {
   if (isOfflineMode()) {
     const admin = getTypesenseClient();
     try {
       await admin.keys().create({
         actions: ["documents:search"],
-        collections: ["*"],
+        // NOT ["*"] — a scoped key reaches anything its parent covers, so the
+        // parent is the collection boundary.
+        collections: [...BROWSER_SEARCHABLE_COLLECTIONS],
         description: "scoped-key-parent (auto-provisioned for offline dev)",
         value: OFFLINE_PARENT_KEY,
       });
@@ -72,6 +109,7 @@ async function resolveSearchOnlyParentKey(): Promise<string> {
       // 409 — already provisioned, the steady state after the first boot.
       // Anything else (Typesense not up yet) propagates so callers can retry.
       if (!(err instanceof Errors.ObjectAlreadyExists)) throw err;
+      await rescopeOfflineParentKeyIfStale(admin);
     }
     return OFFLINE_PARENT_KEY;
   }

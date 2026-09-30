@@ -131,7 +131,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  vi.runAllTimers();
+  vi.runOnlyPendingTimers();
   vi.useRealTimers();
 });
 

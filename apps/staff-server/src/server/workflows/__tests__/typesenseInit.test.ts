@@ -18,6 +18,8 @@
 import { Errors } from "typesense";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
+import { BROWSER_SEARCHABLE_COLLECTIONS } from "~@typesense/client";
+
 import { isOfflineMode } from "../../utils/isOfflineMode";
 import {
   ensureSearchOnlyParentKey,
@@ -28,13 +30,20 @@ import {
 vi.mock("../../utils/isOfflineMode");
 
 const mockCreateKey = vi.fn();
+// Only reached on a 409, when the offline key already exists and its scope has
+// to be checked against the current list.
+const mockRetrieveKeys = vi.fn();
+const mockDeleteKey = vi.fn();
 
 vi.mock("~@typesense/client", async (importOriginal) => {
   const actual = await importOriginal<typeof import("~@typesense/client")>();
   return {
     ...actual,
     createLocalTypesenseClient: () => ({
-      keys: () => ({ create: mockCreateKey }),
+      keys: (id?: number) =>
+        id === undefined
+          ? { create: mockCreateKey, retrieve: mockRetrieveKeys }
+          : { delete: () => mockDeleteKey(id) },
     }),
   };
 });
@@ -47,6 +56,10 @@ beforeEach(async () => {
   mockCreateKey.mockRejectedValue(new Error("reset"));
   await expect(initTypesenseScopedKeys()).rejects.toThrow();
   mockCreateKey.mockReset();
+  mockRetrieveKeys.mockReset();
+  mockDeleteKey.mockReset();
+  // No key on the cluster unless a test says so, which is the first-boot case.
+  mockRetrieveKeys.mockResolvedValue({ keys: [] });
 });
 
 describe("ensureSearchOnlyParentKey", () => {
@@ -57,10 +70,18 @@ describe("ensureSearchOnlyParentKey", () => {
     expect(mockCreateKey).toHaveBeenCalledWith(
       expect.objectContaining({
         actions: ["documents:search"],
-        collections: ["*"],
+        collections: [...BROWSER_SEARCHABLE_COLLECTIONS],
         value: OFFLINE_PARENT_KEY,
       }),
     );
+  });
+
+  test("does not cover opportunityUpdates", async () => {
+    mockCreateKey.mockResolvedValue({ value: OFFLINE_PARENT_KEY });
+    await ensureSearchOnlyParentKey();
+
+    const [[created]] = mockCreateKey.mock.calls;
+    expect(created.collections).not.toContain("opportunityUpdates");
   });
 
   test("reuses the existing key when Typesense reports a conflict", async () => {
@@ -69,6 +90,51 @@ describe("ensureSearchOnlyParentKey", () => {
     );
 
     await expect(ensureSearchOnlyParentKey()).resolves.toBe(OFFLINE_PARENT_KEY);
+  });
+
+  test("rebuilds an existing key whose scope has drifted", async () => {
+    // The key is pinned to one value and created once, so a 409 is the steady
+    // state — which means a key made before this list changed would otherwise
+    // keep its OLD scope forever, and offline would stop matching production.
+    mockCreateKey.mockRejectedValueOnce(
+      new Errors.ObjectAlreadyExists("API key generation conflict."),
+    );
+    mockRetrieveKeys.mockResolvedValue({
+      keys: [
+        {
+          id: 7,
+          value_prefix: OFFLINE_PARENT_KEY.slice(0, 4),
+          collections: ["*"],
+        },
+      ],
+    });
+    mockCreateKey.mockResolvedValue({ value: OFFLINE_PARENT_KEY });
+
+    await expect(ensureSearchOnlyParentKey()).resolves.toBe(OFFLINE_PARENT_KEY);
+
+    expect(mockDeleteKey).toHaveBeenCalledWith(7);
+    const [, [remade]] = mockCreateKey.mock.calls;
+    expect(remade.collections).not.toContain("opportunityUpdates");
+  });
+
+  test("leaves an existing key alone when its scope already matches", async () => {
+    mockCreateKey.mockRejectedValue(
+      new Errors.ObjectAlreadyExists("API key generation conflict."),
+    );
+    mockRetrieveKeys.mockResolvedValue({
+      keys: [
+        {
+          id: 7,
+          value_prefix: OFFLINE_PARENT_KEY.slice(0, 4),
+          collections: [...BROWSER_SEARCHABLE_COLLECTIONS],
+        },
+      ],
+    });
+
+    await expect(ensureSearchOnlyParentKey()).resolves.toBe(OFFLINE_PARENT_KEY);
+
+    // Deleting and remaking the key on every boot would churn a live cluster.
+    expect(mockDeleteKey).not.toHaveBeenCalled();
   });
 
   test("memoizes, so a second caller doesn't re-provision", async () => {

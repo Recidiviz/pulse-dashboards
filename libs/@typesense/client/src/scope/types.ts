@@ -109,7 +109,10 @@ export type PersonScope = {
 
 // The collections a person-scoped key covers. Split for the same reason as
 // CaseloadScopeCollection: `residents` declares no `district`.
-export type PersonScopeCollection = "clients" | "residents";
+//
+// `opportunities` is here even though it holds no people, because it is scoped
+// by the SAME grants: an opportunity is visible exactly when its person is.
+export type PersonScopeCollection = "clients" | "residents" | "opportunities";
 
 export type ResolvePersonScopeInput = ResolveScopeInput & {
   // The user's own staffExternalId, i.e. the value that appears in the

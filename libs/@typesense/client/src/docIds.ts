@@ -68,7 +68,19 @@ export type DocIdFieldsOverride = {
   lowercaseFields?: string[];
 };
 
-export type DocIdOverrides = DocIdPrefixOverride | DocIdFieldsOverride;
+/**
+ * Compose the doc id from the document's Firestore PATH — `mergeDocIdFromPath`.
+ * Required for a subcollection source, where the Firestore doc id alone is not
+ * unique: every person's `clientOpportunityUpdates/usTnExpiration` shares one.
+ */
+export type DocIdPathOverride = {
+  type: "path";
+};
+
+export type DocIdOverrides =
+  | DocIdPrefixOverride
+  | DocIdFieldsOverride
+  | DocIdPathOverride;
 
 // Composes the Typesense doc id from document fields. Absent, empty or
 // non-string values are skipped rather than emitting a bare `_`, so an
@@ -90,12 +102,25 @@ export function composeDocIdFromFields(
   return parts.length > 0 ? parts.join("_") : undefined;
 }
 
-// Composes the Typesense doc id for one source document. Three shapes:
+// Joins an update path's document-id segments (the odd ones) with `_`:
+//
+//   clientUpdatesV2/us_tn_123                                  → us_tn_123
+//   clientUpdatesV2/us_tn_123/clientOpportunityUpdates/usTnLSU → us_tn_123_usTnLSU
+//
+// Both writers call this, so the two agree by construction.
+export function mergeDocIdFromPath(path: string): string {
+  const segments = path.split("/");
+  return segments.filter((_, i) => i % 2 === 1).join("_");
+}
+
+// Composes the Typesense doc id for one source document. Four shapes:
 //   - no override      → the Firestore doc id, unchanged
 //   - type "prefix"    → `<prefix>_<firestoreId>`
 //   - type "fields"    → composed from document FIELDS, falling back to the
 //                        Firestore id for a malformed doc carrying none of them
 //                        (the ETL shouldn't emit one)
+//   - type "path"      → composed from the document PATH, for a subcollection
+//                        source whose Firestore id is not unique
 //
 // backfill-fn calls this from both its import pass and its prune's confirming
 // scan. The confirming scan decides what the prune deletes by comparing against
@@ -105,7 +130,19 @@ export function toTypesenseId(
   fsId: string,
   data: FirestoreDoc,
   docIdOverrides: DocIdOverrides | undefined,
+  /** The document's Firestore path. Required by the `path` override only. */
+  fsPath?: string,
 ): string {
+  if (docIdOverrides?.type === "path") {
+    if (fsPath === undefined) {
+      // A wiring bug, not a data condition: falling back to `fsId` would key
+      // every person's update under the same id.
+      throw new Error(
+        'docIdOverrides.type "path" requires the document path, which the caller did not supply',
+      );
+    }
+    return mergeDocIdFromPath(fsPath);
+  }
   if (docIdOverrides?.type === "fields") {
     return (
       composeDocIdFromFields(
@@ -116,17 +153,4 @@ export function toTypesenseId(
     );
   }
   return docIdOverrides ? `${docIdOverrides.prefix}_${fsId}` : fsId;
-}
-
-// Derives the target doc id from an update document's Firestore path by taking
-// the document-id segments (the odd ones) and joining them with `_`:
-//
-//   clientUpdatesV2/us_tn_123                                  → us_tn_123
-//   clientUpdatesV2/us_tn_123/clientOpportunityUpdates/usTnLSU → us_tn_123_usTnLSU
-//
-// Both writers call this — sync-fn when an officer writes, backfill-fn when it
-// merges those writes onto the ETL record — so the two agree by construction.
-export function mergeDocIdFromPath(path: string): string {
-  const segments = path.split("/");
-  return segments.filter((_, i) => i % 2 === 1).join("_");
 }

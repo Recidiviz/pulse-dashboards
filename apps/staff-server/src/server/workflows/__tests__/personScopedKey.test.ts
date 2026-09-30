@@ -195,7 +195,8 @@ type MintedFilters = Partial<
     | "incarcerationStaff"
     | "locations"
     | "clients"
-    | "residents",
+    | "residents"
+    | "opportunities",
     string
   >
 >;
@@ -381,8 +382,11 @@ describe("mintPersonScopedKey — Recidiviz user (cross-state)", () => {
       ),
       res,
     );
-    expect(mockGenerateScopedSearchKey).toHaveBeenCalledTimes(1);
+    expect(mockGenerateScopedSearchKey).toHaveBeenCalledTimes(2);
     expect(mintedFilters(res).clients).toBe("stateCode:=`US_TN`");
+    expect(mintedFilters(res).opportunities).toBe(
+      "stateCode:=`US_TN` && system:=`SUPERVISION`",
+    );
   });
 });
 
@@ -423,8 +427,12 @@ describe("mintPersonScopedKey — single-system state user", () => {
       res,
     );
 
-    // An INCARCERATION request mints only the residents key.
-    expect(mintedFilters(res)).toEqual({ residents: "stateCode:=`US_TN`" });
+    // `opportunities` spans both systems, so it carries the discriminator that
+    // keeps an INCARCERATION request off supervision documents.
+    expect(mintedFilters(res)).toEqual({
+      residents: "stateCode:=`US_TN`",
+      opportunities: "stateCode:=`US_TN` && system:=`INCARCERATION`",
+    });
   });
 
   test("no staff record + no district → none base compiles to never-match sentinel", async () => {
@@ -600,9 +608,13 @@ describe("mintPersonScopedKey — system=ALL (cross-system)", () => {
     );
 
     // Residents take no district grant, because a resident carries no district.
+    // On `opportunities` the same grant lands on `locationId`, and every
+    // locationId clause sits inside its system's parentheses.
     expect(mintedFilters(res)).toEqual({
       clients: "stateCode:=`US_MI` && (district:=[`Region 3`])",
       residents: "stateCode:=`US_MI`",
+      opportunities:
+        "stateCode:=`US_MI` && ((system:=`SUPERVISION` && (locationId:=[`Region 3`])) || system:=`INCARCERATION`)",
     });
   });
 });
@@ -627,7 +639,10 @@ describe("mintPersonScopedKey — response shape", () => {
 
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
-        keys: { clients: expect.any(String) },
+        keys: {
+          clients: expect.any(String),
+          opportunities: expect.any(String),
+        },
         expiresAt: expect.stringMatching(/^\d{4}-\d{2}-\d{2}T/),
         typesenseHost: "https://typesense-test.example.com",
       }),
