@@ -355,4 +355,57 @@ describe("projectFields", () => {
       district: "DISTRICT 2",
     });
   });
+  it("referenceFields compose a parent id from the document's own fields", () => {
+    const result = projectFields(
+      { stateCode: "US_TN", externalId: "123" },
+      ["stateCode", "externalId"],
+      "us_tn_123_usTnExpiration",
+      undefined,
+      undefined,
+      [
+        {
+          into: "clientDocId",
+          fields: ["stateCode", "externalId"],
+          lowercaseFields: ["stateCode"],
+        },
+      ],
+    );
+    expect(result["clientDocId"]).toBe("us_tn_123");
+  });
+
+  it("referenceFields leave the target unset when the source fields are missing", () => {
+    const result = projectFields(
+      { stateCode: "US_TN" },
+      ["stateCode"],
+      "doc-1",
+      undefined,
+      undefined,
+      [{ into: "clientDocId", fields: ["missingA", "missingB"] }],
+    );
+    expect(result).not.toHaveProperty("clientDocId");
+  });
+
+  it("constantFields win over referenceFields on key collision", () => {
+    const result = projectFields(
+      { stateCode: "US_TN", externalId: "123" },
+      ["stateCode"],
+      "doc-1",
+      { clientDocId: "pinned" },
+      undefined,
+      [{ into: "clientDocId", fields: ["stateCode", "externalId"] }],
+    );
+    expect(result["clientDocId"]).toBe("pinned");
+  });
+
+  it("referenceFields cannot clobber the doc id", () => {
+    const result = projectFields(
+      { stateCode: "US_TN", externalId: "123" },
+      ["stateCode"],
+      "doc-1",
+      undefined,
+      undefined,
+      [{ into: "id", fields: ["stateCode", "externalId"] }],
+    );
+    expect(result["id"]).toBe("doc-1");
+  });
 });

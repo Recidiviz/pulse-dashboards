@@ -79,7 +79,14 @@ export async function scanSourceIds(
     if (snapshot.empty) break;
 
     for (const d of snapshot.docs) {
-      ids.add(toTypesenseId(d.id, d.data() as FirestoreDoc, docIdOverrides));
+      ids.add(
+        toTypesenseId(
+          d.id,
+          d.data() as FirestoreDoc,
+          docIdOverrides,
+          d.ref.path,
+        ),
+      );
     }
 
     cursor = snapshot.docs[snapshot.docs.length - 1];

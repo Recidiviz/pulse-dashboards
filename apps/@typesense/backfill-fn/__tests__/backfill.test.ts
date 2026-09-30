@@ -177,14 +177,23 @@ function makeFirestore(
     };
   }
 
-  // Collection groups take no paging, but they DO take the stateCode equality
-  // filter and the field mask. Honoring the filter is what makes the read-scope
-  // assertions real: a fake that ignored it would pass even with `hasStateCode`
-  // dropped, because the post-read filter removes the same documents either
-  // way.
+  // Collection groups honour the same where/paging/select contract as a root
+  // collection, because backfillCollection now scans them the same way — it
+  // pages with orderBy(documentId()) + startAfter, which for a group orders by
+  // full PATH. A fake that returned everything regardless would never exercise
+  // that, and would loop forever on a group larger than one page.
+  //
+  // Honouring the stateCode filter is what makes the read-scope assertions
+  // real: a fake that ignored it would pass even with `hasStateCode` dropped.
   function groupQuery(
     name: string,
-    opts: { state?: string[]; select?: string[] } = {},
+    opts: {
+      // Every value an `in` query accepts, not just one.
+      state?: string[];
+      afterPath?: string;
+      limit?: number;
+      select?: string[];
+    } = {},
   ): FakeQuery {
     return {
       where: (field, _op, value) =>
@@ -196,21 +205,30 @@ function makeFirestore(
               : opts.state,
         }),
       orderBy: () => groupQuery(name, opts),
-      limit: () => groupQuery(name, opts),
-      startAfter: () => groupQuery(name, opts),
+      limit: (n) => groupQuery(name, { ...opts, limit: n }),
+      startAfter: (cursor) =>
+        groupQuery(name, {
+          ...opts,
+          afterPath: (cursor as unknown as { ref: { path: string } }).ref.path,
+        }),
       select: (...fields) => {
         hooks.onSelect?.(fields);
         return groupQuery(name, { ...opts, select: fields });
       },
       get: async () => {
-        let docs = groups[name] ?? [];
-        // No stateCode matches no equality filter — the case this flag trades
-        // away.
+        let docs = [...(groups[name] ?? [])];
         if (opts.state !== undefined) {
           docs = docs.filter((d) =>
             opts.state?.includes(String(d.data["stateCode"])),
           );
         }
+        docs.sort((a, b) => a.path.localeCompare(b.path));
+        if (opts.afterPath !== undefined) {
+          const idx = docs.findIndex((d) => d.path === opts.afterPath);
+          if (idx >= 0) docs = docs.slice(idx + 1);
+        }
+        const page =
+          opts.limit !== undefined ? docs.slice(0, opts.limit) : docs;
         const mask = opts.select;
         const project = (data: Record<string, unknown>) => {
           if (mask === undefined) return data;
@@ -219,9 +237,9 @@ function makeFirestore(
           return out;
         };
         return {
-          empty: docs.length === 0,
-          size: docs.length,
-          docs: docs.map((d) => ({
+          empty: page.length === 0,
+          size: page.length,
+          docs: page.map((d) => ({
             id: d.path.split("/").pop() ?? "",
             data: () => project(d.data),
             ref: { path: d.path },
@@ -1521,5 +1539,496 @@ describe("runBackfill — how much of a merge source a run reads", () => {
     const [doc] = ts.importedDocs["opportunities"];
     expect(doc).toMatchObject({ denial: { reasons: ["X"] } });
     expect(doc).not.toHaveProperty("lastViewed");
+  });
+});
+
+describe("runBackfill — person references and scope", () => {
+  beforeEach(() => {
+    firestoreHolder.current = undefined;
+    typesenseHolder.current = undefined;
+  });
+
+  const PERSON_LOOKUP_KEY = {
+    type: "fields" as const,
+    fields: ["stateCode", "externalId"],
+    lowercaseFields: ["stateCode"],
+  };
+
+  const OPPORTUNITY_CONFIG = {
+    name: "opportunities",
+    fields: ["stateCode", "externalId", "opportunityType"],
+    docIdOverrides: {
+      type: "fields" as const,
+      fields: ["stateCode", "externalId", "opportunityType"],
+      lowercaseFields: ["stateCode"],
+    },
+    referenceFields: [
+      { into: "clientDocId", ...PERSON_LOOKUP_KEY },
+      { into: "residentDocId", ...PERSON_LOOKUP_KEY },
+    ].map(({ into, fields, lowercaseFields }) => ({
+      into,
+      fields,
+      lowercaseFields,
+    })),
+    mergeSources: [
+      {
+        sourceCollection: "clients",
+        lookupKey: PERSON_LOOKUP_KEY,
+        hasStateCode: true,
+        fields: [
+          "officerId",
+          { from: "district", into: "locationId" },
+          { value: "SUPERVISION", into: "system" },
+        ],
+      },
+      {
+        sourceCollection: "residents",
+        lookupKey: PERSON_LOOKUP_KEY,
+        hasStateCode: true,
+        fields: [
+          "officerId",
+          { from: "facilityId", into: "locationId" },
+          { value: "INCARCERATION", into: "system" },
+        ],
+      },
+    ],
+  };
+
+  const opportunityDoc = (externalId: string) => ({
+    id: `us_tn_${externalId}`,
+    data: {
+      stateCode: "US_TN",
+      externalId,
+      opportunityType: "usTnExpiration",
+    },
+  });
+
+  async function run(
+    collections: Parameters<typeof makeFirestore>[0],
+  ): Promise<Record<string, unknown>[]> {
+    firestoreHolder.current = makeFirestore(collections);
+    const ts = makeTypesense({ opportunities: [] });
+    typesenseHolder.current = ts.client;
+    await runBackfill([OPPORTUNITY_CONFIG], "US_TN", "US_TN-expirations");
+    return ts.importedDocs["opportunities"];
+  }
+
+  // Both references take the SAME composed value, so one always dangles — and a
+  // dangling reference is excluded from join filters.
+  it("composes both reference fields from the opportunity's own fields", async () => {
+    const [doc] = await run({
+      "US_TN-expirations": [opportunityDoc("123")],
+    });
+
+    expect(doc["clientDocId"]).toBe("us_tn_123");
+    expect(doc["residentDocId"]).toBe("us_tn_123");
+  });
+
+  it("composes references even when no person record exists", async () => {
+    const [doc] = await run({
+      "US_TN-expirations": [opportunityDoc("404")],
+    });
+
+    expect(doc["clientDocId"]).toBe("us_tn_404");
+    expect(doc["system"]).toBeUndefined();
+  });
+
+  it("merges a client's scope, renaming district onto locationId", async () => {
+    const [doc] = await run({
+      "US_TN-expirations": [opportunityDoc("123")],
+      clients: [
+        {
+          id: "us_tn_123",
+          data: {
+            stateCode: "US_TN",
+            officerId: "OFFICER_07",
+            district: "DISTRICT_3",
+          },
+        },
+      ],
+    });
+
+    expect(doc["officerId"]).toBe("OFFICER_07");
+    expect(doc["locationId"]).toBe("DISTRICT_3");
+    expect(doc["system"]).toBe("SUPERVISION");
+    expect(doc["district"]).toBeUndefined();
+  });
+
+  it("merges a resident's scope, renaming facilityId onto the same field", async () => {
+    const [doc] = await run({
+      "US_TN-expirations": [opportunityDoc("456")],
+      residents: [
+        {
+          id: "us_tn_456",
+          data: {
+            stateCode: "US_TN",
+            officerId: "OFFICER_R2",
+            facilityId: "FACILITY_9",
+          },
+        },
+      ],
+    });
+
+    expect(doc["locationId"]).toBe("FACILITY_9");
+    expect(doc["system"]).toBe("INCARCERATION");
+  });
+
+  it("stamps system from the person collection that matched, not from the source", async () => {
+    const docs = await run({
+      "US_TN-expirations": [opportunityDoc("123"), opportunityDoc("456")],
+      clients: [
+        { id: "us_tn_123", data: { stateCode: "US_TN", district: "D1" } },
+      ],
+      residents: [
+        { id: "us_tn_456", data: { stateCode: "US_TN", facilityId: "F1" } },
+      ],
+    });
+
+    const bySystem = Object.fromEntries(
+      docs.map((d) => [d["id"], d["system"]]),
+    );
+    expect(bySystem["us_tn_123_usTnExpiration"]).toBe("SUPERVISION");
+    expect(bySystem["us_tn_456_usTnExpiration"]).toBe("INCARCERATION");
+  });
+
+  it("lets one person record decorate several of that person's opportunities", async () => {
+    firestoreHolder.current = makeFirestore({
+      "US_TN-expirations": [
+        {
+          id: "us_tn_123_a",
+          data: {
+            stateCode: "US_TN",
+            externalId: "123",
+            opportunityType: "typeA",
+          },
+        },
+        {
+          id: "us_tn_123_b",
+          data: {
+            stateCode: "US_TN",
+            externalId: "123",
+            opportunityType: "typeB",
+          },
+        },
+      ],
+      clients: [
+        {
+          id: "us_tn_123",
+          data: { stateCode: "US_TN", district: "DISTRICT_3" },
+        },
+      ],
+    });
+    const ts = makeTypesense({ opportunities: [] });
+    typesenseHolder.current = ts.client;
+
+    await runBackfill([OPPORTUNITY_CONFIG], "US_TN", "US_TN-expirations");
+
+    const docs = ts.importedDocs["opportunities"];
+    expect(docs).toHaveLength(2);
+    expect(docs.every((d) => d["locationId"] === "DISTRICT_3")).toBe(true);
+  });
+
+  it("does not create a document for a person with no opportunity", async () => {
+    const docs = await run({
+      "US_TN-expirations": [],
+      clients: [
+        { id: "us_tn_999", data: { stateCode: "US_TN", district: "D9" } },
+      ],
+    });
+
+    expect(docs ?? []).toHaveLength(0);
+  });
+
+  // The opportunity backfill is ALWAYS state-scoped: the ETL trigger fires per
+  // state and posts { stateCode, sourceCollection }. The person merge sources
+  // now filter Firestore by stateCode too, so the risk is that the two filters
+  // interact and the scope silently arrives empty — which would leave the
+  // minted key's OR matching neither side, and the rows invisible.
+  it("still merges scope under a state-scoped run, and ignores other states", async () => {
+    firestoreHolder.current = makeFirestore({
+      "US_TN-expirations": [
+        opportunityDoc("123"),
+        // Same source, different state. Must not be imported at all.
+        {
+          id: "us_nd_999",
+          data: {
+            stateCode: "US_ND",
+            externalId: "999",
+            opportunityType: "usTnExpiration",
+          },
+        },
+      ],
+      clients: [
+        {
+          id: "us_tn_123",
+          data: {
+            stateCode: "US_TN",
+            officerId: "OFFICER_07",
+            district: "DISTRICT_3",
+          },
+        },
+        {
+          id: "us_nd_999",
+          data: {
+            stateCode: "US_ND",
+            officerId: "OFFICER_ND",
+            district: "DISTRICT_9",
+          },
+        },
+      ],
+    });
+    const ts = makeTypesense({ opportunities: [] });
+    typesenseHolder.current = ts.client;
+
+    await runBackfill([OPPORTUNITY_CONFIG], "US_TN", "US_TN-expirations");
+
+    const docs = ts.importedDocs["opportunities"];
+    expect(docs).toHaveLength(1);
+    expect(docs[0]).toMatchObject({
+      id: "us_tn_123_usTnExpiration",
+      clientDocId: "us_tn_123",
+      officerId: "OFFICER_07",
+      locationId: "DISTRICT_3",
+      system: "SUPERVISION",
+    });
+  });
+
+  it("never lets a merged scope field clobber the composed id", async () => {
+    const [doc] = await run({
+      "US_TN-expirations": [opportunityDoc("123")],
+      clients: [
+        {
+          id: "us_tn_123",
+          data: { stateCode: "US_TN", district: "D1", id: "hijacked" },
+        },
+      ],
+    });
+
+    expect(doc["id"]).toBe("us_tn_123_usTnExpiration");
+  });
+});
+
+describe("runBackfill — a subcollection group source", () => {
+  beforeEach(() => {
+    firestoreHolder.current = undefined;
+    typesenseHolder.current = undefined;
+  });
+
+  const UPDATES_CONFIG = {
+    name: "opportunityUpdates",
+    sourceCollection: "clientOpportunityUpdates",
+    collectionGroup: true,
+    fields: ["denial", "lastViewed", "stateCode"],
+    docIdOverrides: { type: "path" as const },
+    transform: "opportunityUpdate" as const,
+  };
+
+  // Every person has a `clientOpportunityUpdates/usTnExpiration`, so the
+  // Firestore doc id alone is not unique — only the path carries the person.
+  it("keys documents by path, not by Firestore doc id", async () => {
+    firestoreHolder.current = makeFirestore(
+      {},
+      {
+        clientOpportunityUpdates: [
+          {
+            path: "clientUpdatesV2/us_tn_111/clientOpportunityUpdates/usTnExpiration",
+            data: { stateCode: "US_TN", denial: { reasons: ["X"] } },
+          },
+          {
+            path: "clientUpdatesV2/us_tn_222/clientOpportunityUpdates/usTnExpiration",
+            data: { stateCode: "US_TN", denial: { reasons: ["Y"] } },
+          },
+        ],
+      },
+    );
+    const ts = makeTypesense({ opportunityUpdates: [] });
+    typesenseHolder.current = ts.client;
+
+    await runBackfill([UPDATES_CONFIG]);
+
+    expect(ts.importedDocs["opportunityUpdates"].map((d) => d["id"])).toEqual([
+      "us_tn_111_usTnExpiration",
+      "us_tn_222_usTnExpiration",
+    ]);
+  });
+
+  it("derives the queryable fields and the self-referential parent id", async () => {
+    firestoreHolder.current = makeFirestore(
+      {},
+      {
+        clientOpportunityUpdates: [
+          {
+            path: "clientUpdatesV2/us_tn_111/clientOpportunityUpdates/usTnExpiration",
+            data: { stateCode: "US_TN", denial: { reasons: ["X"] } },
+          },
+        ],
+      },
+    );
+    const ts = makeTypesense({ opportunityUpdates: [] });
+    typesenseHolder.current = ts.client;
+
+    await runBackfill([UPDATES_CONFIG]);
+
+    const [doc] = ts.importedDocs["opportunityUpdates"];
+    expect(doc).toMatchObject({
+      id: "us_tn_111_usTnExpiration",
+      // Equal to the id by construction, which is what lets the reference
+      // resolve without a lookup.
+      opportunityDocId: "us_tn_111_usTnExpiration",
+      updateStatus: "DENIED",
+      hasOfficerAction: true,
+    });
+  });
+
+  it("marks a view-only update as no action, which is what keeps the fetch small", async () => {
+    firestoreHolder.current = makeFirestore(
+      {},
+      {
+        clientOpportunityUpdates: [
+          {
+            path: "clientUpdatesV2/us_tn_111/clientOpportunityUpdates/usTnExpiration",
+            data: {
+              stateCode: "US_TN",
+              lastViewed: { date: { seconds: 1_700_000_000 }, by: "o@e.gov" },
+            },
+          },
+        ],
+      },
+    );
+    const ts = makeTypesense({ opportunityUpdates: [] });
+    typesenseHolder.current = ts.client;
+
+    await runBackfill([UPDATES_CONFIG]);
+
+    const [doc] = ts.importedDocs["opportunityUpdates"];
+    expect(doc["hasOfficerAction"]).toBe(false);
+    expect(doc["updateStatus"]).toBe("NONE");
+    expect(doc["lastViewedTimestamp"]).toBe(1_700_000_000);
+  });
+
+  it("pages a group by PATH and advances its cursor", async () => {
+    // A group's id-ordered pagination orders by full path, not by the trailing
+    // doc id — which is identical across people here. If the cursor did not
+    // advance, this would loop or drop documents.
+    process.env["BACKFILL_BATCH_SIZE"] = "2";
+    const people = [
+      "us_tn_111",
+      "us_tn_222",
+      "us_tn_333",
+      "us_tn_444",
+      "us_tn_555",
+    ];
+    firestoreHolder.current = makeFirestore(
+      {},
+      {
+        clientOpportunityUpdates: people.map((recordId) => ({
+          path: `clientUpdatesV2/${recordId}/clientOpportunityUpdates/usTnExpiration`,
+          data: { stateCode: "US_TN", denial: { reasons: ["X"] } },
+        })),
+      },
+    );
+    const ts = makeTypesense({ opportunityUpdates: [] });
+    typesenseHolder.current = ts.client;
+
+    const summary = await runBackfill([UPDATES_CONFIG]);
+
+    expect(ts.importedDocs["opportunityUpdates"].map((d) => d["id"])).toEqual(
+      people.map((recordId) => `${recordId}_usTnExpiration`),
+    );
+    expect(summary.totals.imported).toBe(5);
+  });
+
+  it("scopes a group run to one state server-side", async () => {
+    firestoreHolder.current = makeFirestore(
+      {},
+      {
+        clientOpportunityUpdates: [
+          {
+            path: "clientUpdatesV2/us_tn_111/clientOpportunityUpdates/usTnExpiration",
+            data: { stateCode: "US_TN", denial: { reasons: ["X"] } },
+          },
+          {
+            path: "clientUpdatesV2/us_nd_999/clientOpportunityUpdates/usNdEarlyDischarge",
+            data: { stateCode: "US_ND", denial: { reasons: ["Y"] } },
+          },
+        ],
+      },
+    );
+    const ts = makeTypesense({ opportunityUpdates: [] });
+    typesenseHolder.current = ts.client;
+
+    await runBackfill([UPDATES_CONFIG], "US_TN");
+
+    expect(ts.importedDocs["opportunityUpdates"].map((d) => d["id"])).toEqual([
+      "us_tn_111_usTnExpiration",
+    ]);
+  });
+
+  it("sends no stateCode for a document that carries none, so the import rejects it", async () => {
+    // The schema declares `stateCode` required, so a document without one fails
+    // that single line of the import rather than being filed under no state.
+    // Every update document carries it; this is the loud failure if one stops.
+    firestoreHolder.current = makeFirestore(
+      {},
+      {
+        clientOpportunityUpdates: [
+          {
+            path: "clientUpdatesV2/us_ar_1234/clientOpportunityUpdates/usArWorkerStatus",
+            data: { denial: { reasons: ["X"] } },
+          },
+        ],
+      },
+    );
+    const ts = makeTypesense({ opportunityUpdates: [] });
+    typesenseHolder.current = ts.client;
+
+    await runBackfill([UPDATES_CONFIG]);
+
+    const [doc] = ts.importedDocs["opportunityUpdates"];
+    expect(doc["stateCode"]).toBeUndefined();
+    // The rest of the document is still derived, so the failure is the missing
+    // field alone and not a collapsed projection.
+    expect(doc["updateStatus"]).toBe("DENIED");
+  });
+
+  it("keeps the document's own stateCode when it has one", async () => {
+    firestoreHolder.current = makeFirestore(
+      {},
+      {
+        clientOpportunityUpdates: [
+          {
+            path: "clientUpdatesV2/us_ar_1234/clientOpportunityUpdates/usArWorkerStatus",
+            data: { stateCode: "US_ND", denial: { reasons: ["X"] } },
+          },
+        ],
+      },
+    );
+    const ts = makeTypesense({ opportunityUpdates: [] });
+    typesenseHolder.current = ts.client;
+
+    await runBackfill([UPDATES_CONFIG]);
+
+    // The source of truth wins over the id, so this cannot quietly disagree
+    // with the ETL.
+    expect(ts.importedDocs["opportunityUpdates"][0]["stateCode"]).toBe("US_ND");
+  });
+
+  it("refuses to run on an unknown transform name", async () => {
+    firestoreHolder.current = makeFirestore(
+      {},
+      { clientOpportunityUpdates: [] },
+    );
+    typesenseHolder.current = makeTypesense({ opportunityUpdates: [] }).client;
+
+    // A typo in COLLECTIONS_JSON must stop the run, not import every document
+    // without its derived fields.
+    await expect(
+      runBackfill([
+        {
+          ...UPDATES_CONFIG,
+          transform: "nope" as unknown as typeof UPDATES_CONFIG.transform,
+        },
+      ]),
+    ).rejects.toThrow(/Unknown transform/);
   });
 });

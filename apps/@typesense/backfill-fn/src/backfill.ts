@@ -65,19 +65,19 @@ import {
   resolveImportRatePerSec,
   resolvePruneStale,
 } from "./config";
-import { projectFields } from "./projection";
 import { pruneStaleDocs, scanSourceIds } from "./prune";
-import { parseImportResponse } from "./responses";
 import { instantiateFromSourceCollection, logTag } from "./scope";
 import { createRateLimiter, mapWithConcurrency } from "./throttle";
+import { resolveTransform } from "./transforms";
 import type {
   BackfillResult,
   BackfillSummary,
   CollectionConfig,
+  MergeSet,
   MergeSource,
   RunContext,
-  TypesenseImportError,
 } from "./types";
+import { importBatch, projectWithMerges } from "./utils";
 
 // A bulk import of thousands of docs can legitimately stall this long.
 const CONNECTION_TIMEOUT_SECONDS = 60;
@@ -95,6 +95,12 @@ async function loadMergeDocuments(
     ? db.collectionGroup(sourceCollection)
     : db.collection(sourceCollection);
 
+  // Only the source-reading forms name a field to fetch; a literal needs none.
+  const sourceFields = fields.flatMap((field) => {
+    if (typeof field === "string") return [field];
+    return "from" in field ? [field.from] : [];
+  });
+
   // Both cases, because the two sources disagree. The ETL writes `US_TN` on an
   // opportunity update; `clientUpdatesV2` carries `recordId.slice(0, 5)`, which
   // is lowercase. Asking for one would silently drop the other's documents.
@@ -102,7 +108,9 @@ async function loadMergeDocuments(
     hasStateCode && stateCode
       ? ref.where("stateCode", "in", [stateCode, stateCode.toLowerCase()])
       : ref;
-  const snapshot = await scoped.select(...fields).get();
+  // An empty select() fetches id-only documents, which is right when every
+  // field is a literal.
+  const snapshot = await scoped.select(...sourceFields).get();
 
   const byId = new Map<string, FirestoreDoc>();
   for (const doc of snapshot.docs) {
@@ -111,7 +119,13 @@ async function loadMergeDocuments(
     const data = doc.data() as FirestoreDoc;
     const picked: FirestoreDoc = {};
     for (const field of fields) {
-      if (field in data) picked[field] = data[field];
+      if (typeof field === "string") {
+        if (field in data) picked[field] = data[field];
+      } else if ("value" in field) {
+        picked[field.into] = field.value;
+      } else if (field.from in data) {
+        picked[field.into] = data[field.from];
+      }
     }
     byId.set(id, picked);
   }
@@ -127,12 +141,22 @@ async function backfillCollection(
     constantFields,
     derivedFields,
     docIdOverrides,
+    referenceFields,
+    transform,
+    collectionGroup,
     mergeSources,
   }: CollectionConfig,
 ): Promise<BackfillResult> {
-  const { db, client, limiter, batchSize, prune, stateCode } = ctx;
+  const { db, batchSize, prune, stateCode } = ctx;
+  // Resolved once, and eagerly: an unknown name must stop the run here rather
+  // than import every document without its derived fields.
+  const resolvedTransform = transform ? resolveTransform(transform) : undefined;
   const source = sourceCollection ?? name;
-  const ref = db.collection(source);
+  // A subcollection has no single root collection to page through, so it is
+  // scanned as a group. No index required; see CollectionConfig.
+  const ref: firestore.Query = collectionGroup
+    ? db.collectionGroup(source)
+    : db.collection(source);
   // When scoped to a single state, filter the scan to that state. Relies on the
   // ETL validating `stateCode` on every document it writes — a document without
   // it is silently excluded here and never indexed. The prune reads the same
@@ -144,15 +168,20 @@ async function backfillCollection(
   // decorate ETL-sourced ones — so an update whose opportunity has dropped out
   // of the ETL is simply not applied, and the prune below removes the stale
   // document as usual.
-  const mergeDocs = new Map<string, FirestoreDoc>();
+  //
+  // Kept PER SOURCE rather than flattened into one map: sources disagree on how
+  // a target finds its merge doc, and the two key shapes would be
+  // indistinguishable once mixed.
+  const mergeSets: MergeSet[] = [];
   for (const mergeSource of mergeSources ?? []) {
-    const loaded = await loadMergeDocuments(ctx, mergeSource);
-    for (const [id, data] of loaded) {
-      mergeDocs.set(id, { ...mergeDocs.get(id), ...data });
-    }
-  }
-  if (mergeSources?.length) {
-    console.info(`${tag} merge: loaded ${mergeDocs.size} update doc(s)`);
+    // Serial on purpose, per the file-level no-await-in-loop note: each source
+    // is a full collection scan held in memory, so running them concurrently
+    // would multiply peak memory rather than save wall-clock.
+    const docs = await loadMergeDocuments(ctx, mergeSource);
+    mergeSets.push({ source: mergeSource, docs });
+    console.info(
+      `${tag} merge: loaded ${docs.size} doc(s) from ${mergeSource.sourceCollection}`,
+    );
   }
 
   let imported = 0;
@@ -173,94 +202,25 @@ async function backfillCollection(
 
     const docs = snapshot.docs.map((d) => {
       const data = d.data() as FirestoreDoc;
-      const id = toTypesenseId(d.id, data, docIdOverrides);
+      const id = toTypesenseId(d.id, data, docIdOverrides, d.ref.path);
       firestoreIds.add(id);
-
-      const projected = projectFields(
+      return projectWithMerges(
         data,
-        fields,
         id,
-        constantFields,
-        derivedFields,
+        {
+          fields,
+          constantFields,
+          derivedFields,
+          referenceFields,
+          transform: resolvedTransform,
+        },
+        mergeSets,
       );
-
-      // Merged fields win over the ETL projection: the officer's action is the
-      // newer truth for the fields it owns.
-      const merged = mergeDocs.get(id);
-      // `id` re-applied last so a stray merge field can't clobber it, matching
-      // projectFields' own protection.
-      return merged ? { ...projected, ...merged, id } : projected;
     });
 
-    try {
-      // Gate every import through the shared limiter so the combined request
-      // rate across all concurrent collections doesn't overwhelm the shared
-      // Typesense cluster (which also serves live search). No-op when disabled.
-      await limiter.take();
-
-      // Typesense bulk import returns per-doc results — a 200 on the request as
-      // a whole still has individual `success` booleans per doc.
-      const raw = await client
-        .collections(name)
-        .documents()
-        .import(docs, { action: "upsert" });
-
-      const entries = parseImportResponse(raw);
-
-      for (const entry of entries) {
-        if (entry.success) {
-          imported += 1;
-        } else {
-          failed += 1;
-          console.warn(
-            `${tag} doc import failed: ${entry.error ?? JSON.stringify(entry)}`,
-          );
-        }
-      }
-    } catch (err) {
-      // Whole-batch failure. The Typesense client throws when EVERY doc in
-      // the bulk fails (vs returning per-line successes when some succeed)
-      // and tucks the per-doc reasons onto `err.importResults`. Surface a
-      // summary of those reasons so Cloud Logging shows why, not just that.
-      const importErr = err as TypesenseImportError;
-      failed += docs.length;
-      console.error(
-        `${tag} batch import threw (size=${docs.length}): ${importErr.message}`,
-      );
-      if (importErr.httpStatus) {
-        console.error(`${tag} httpStatus=${importErr.httpStatus}`);
-      }
-      const results = Array.isArray(importErr.importResults)
-        ? importErr.importResults
-        : null;
-      if (results) {
-        // Counts by distinct error message — usually one or two unique reasons
-        // dominate (a schema-constraint violation hitting every doc the same
-        // way), and we get the answer without dumping 100 per-doc lines.
-        const errorCounts = new Map<string, number>();
-        for (const r of results) {
-          if (r && r.success === false) {
-            const key = r.error ?? "(no error message)";
-            errorCounts.set(key, (errorCounts.get(key) ?? 0) + 1);
-          }
-        }
-        console.error(
-          `${tag} distinct error messages: ${[...errorCounts.entries()]
-            .map(([msg, count]) => `${count}× "${msg}"`)
-            .join("; ")}`,
-        );
-        // First 3 failed entries with their projected docs — for when the
-        // counts alone don't pin it down (multiple distinct errors).
-        const samples = results
-          .filter(
-            (r): r is { success: false; error?: string } => r.success === false,
-          )
-          .slice(0, 3);
-        for (const r of samples) {
-          console.error(`${tag} sample failure: ${JSON.stringify(r)}`);
-        }
-      }
-    }
+    const batch = await importBatch(ctx, name, docs, tag);
+    imported += batch.imported;
+    failed += batch.failed;
 
     cursor = snapshot.docs[snapshot.docs.length - 1];
     if (snapshot.size < batchSize) break;

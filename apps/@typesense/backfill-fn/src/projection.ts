@@ -23,8 +23,9 @@
 // per collection and anything undeclared is dropped here, before import — so the
 // default is exclusion, and adding a field to the index is an explicit act.
 
-import type { FirestoreDoc } from "~@typesense/client";
+import { composeDocIdFromFields, type FirestoreDoc } from "~@typesense/client";
 
+import type { Transform } from "./transforms";
 import type { CollectionConfig } from "./types";
 
 // Walks a dotted path in the source object and writes the leaf value into the
@@ -77,18 +78,21 @@ export function assignNested(
 //   2. Apply `derivedFields` — read a source field, map through a lookup,
 //      stamp the result into a target field (e.g. `locations.idType` →
 //      `system`). Unmapped source values leave the target unset.
-//   3. Apply `constantFields` — merges LAST so a constant wins against a
-//      colliding source or derived value. Whole point of the mechanism is to
-//      stamp a canonical value (e.g. `system: "SUPERVISION"`) regardless of
-//      what came from the source doc.
-//   4. Set `id` from `docId` — protected against any `constantFields.id` or
-//      `derivedFields.into: "id"` attempt.
+//   3. Apply `referenceFields` — compose a parent's document id from fields
+//      this document already carries. No lookup.
+//   4. Apply `transform` — real logic, not a declarative rule. Reads the
+//      SOURCE document, so it sees fields the projection drops.
+//   5. Apply `constantFields` — merges LAST, so a constant wins against a
+//      colliding source, derived, composed or transformed value.
+//   6. Set `id` from `docId` — protected against anything else setting it.
 export function projectFields(
   data: FirestoreDoc,
   fields: string[],
   docId: string,
   constantFields?: Record<string, string>,
   derivedFields?: CollectionConfig["derivedFields"],
+  referenceFields?: CollectionConfig["referenceFields"],
+  transform?: Transform,
 ): FirestoreDoc {
   const out: FirestoreDoc = {};
   for (const f of fields) {
@@ -116,6 +120,22 @@ export function projectFields(
         }
       }
     }
+  }
+  if (referenceFields) {
+    for (const rule of referenceFields) {
+      const value = composeDocIdFromFields(
+        data,
+        rule.fields,
+        rule.lowercaseFields,
+      );
+      // Undefined means the source could not name a parent. Left unset, which
+      // for an optional reference dangles — join filters exclude it, so this
+      // fails closed.
+      if (value !== undefined) out[rule.into] = value;
+    }
+  }
+  if (transform) {
+    Object.assign(out, transform(data, docId));
   }
   if (constantFields) {
     Object.assign(out, constantFields);
