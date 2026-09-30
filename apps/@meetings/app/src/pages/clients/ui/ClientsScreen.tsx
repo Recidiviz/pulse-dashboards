@@ -41,6 +41,11 @@ import {
   PersonsTable,
 } from "~@meetings/app/widgets/persons";
 
+const DEFAULT_SORT = {
+  sortBy: SortOption.Name as string,
+  direction: SortDirection.Ascending,
+};
+
 export function ClientsScreen() {
   useSetDocumentTitle("Clients - Recidiviz Meetings");
   const insets = useSafeAreaInsets();
@@ -49,17 +54,18 @@ export function ClientsScreen() {
   const isFocused = useIsFocused();
 
   const [search, setSearch] = useState("");
-  const [sort, setSort] = useState({
-    sortBy: SortOption.Name as string,
-    direction: SortDirection.Ascending,
-  });
+  const [myCaseloadSort, setMyCaseloadSort] = useState(DEFAULT_SORT);
+  const [otherCaseloadSort, setOtherCaseloadSort] = useState(DEFAULT_SORT);
   const [myCaseloadPage, setMyCaseloadPage] = useState(1);
   const [otherCaseloadPage, setOtherCaseloadPage] = useState(1);
 
   useEffect(() => {
     setMyCaseloadPage(1);
+  }, [search, myCaseloadSort]);
+
+  useEffect(() => {
     setOtherCaseloadPage(1);
-  }, [search, sort]);
+  }, [search, otherCaseloadSort]);
 
   // Drives screen-level loading / empty states. PersonsTable / PersonsMobileList
   // run their own paginated queries for the actual rows.
@@ -102,11 +108,11 @@ export function ClientsScreen() {
           native: (
             <PersonsMobileList
               personType="client"
-              sort={sort}
+              sort={myCaseloadSort}
               recordingState={recordingState}
               searchQuery={search}
               setSearchQuery={setSearch}
-              setSort={setSort}
+              setSort={setMyCaseloadSort}
             />
           ),
           web: (
@@ -115,11 +121,11 @@ export function ClientsScreen() {
                 <View className="flex-1">
                   <PersonsMobileList
                     personType="client"
-                    sort={sort}
+                    sort={myCaseloadSort}
                     recordingState={recordingState}
                     searchQuery={search}
                     setSearchQuery={setSearch}
-                    setSort={setSort}
+                    setSort={setMyCaseloadSort}
                   />
                 </View>
               )}
@@ -138,8 +144,8 @@ export function ClientsScreen() {
                       type="client"
                       caseload="mine"
                       search={search}
-                      sort={sort}
-                      setSort={setSort}
+                      sort={myCaseloadSort}
+                      setSort={setMyCaseloadSort}
                       page={myCaseloadPage}
                       setPage={setMyCaseloadPage}
                       sectionTitle="My caseload results"
@@ -148,8 +154,8 @@ export function ClientsScreen() {
                       type="client"
                       caseload="others"
                       search={search}
-                      sort={sort}
-                      setSort={setSort}
+                      sort={otherCaseloadSort}
+                      setSort={setOtherCaseloadSort}
                       page={otherCaseloadPage}
                       setPage={setOtherCaseloadPage}
                       sectionTitle="Other caseload results"
