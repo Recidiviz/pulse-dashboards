@@ -97,7 +97,6 @@ const mockTranscribeAudioWithDeepgram = vi.spyOn(
   tasks,
   "transcribeAudioWithDeepgram",
 );
-const mockCleanupLocalFiles = vi.spyOn(tasks, "cleanupLocalFiles");
 const mockExportLabelStudioTask = vi.spyOn(tasks, "exportLabelStudioTask");
 const mockRunAllEvaluators = vi.spyOn(evaluators, "runAllEvaluators");
 const mockGetAgencyConfig = vi.spyOn(configUtils, "getAgencyConfig");
@@ -109,7 +108,6 @@ vi.spyOn(evaluators, "createEvaluatorClients").mockReturnValue(
 mockStitchAudio.mockImplementation(async () => {
   return { outputFileName: "final-path.m4a", durationMs: 1000 };
 });
-mockCleanupLocalFiles.mockImplementation(vi.fn().mockResolvedValue(undefined));
 mockExportLabelStudioTask.mockImplementation(
   vi.fn().mockResolvedValue(undefined),
 );
@@ -910,46 +908,6 @@ describe("tasks", () => {
           ],
         }),
       );
-    });
-
-    test("Should call cleanupLocalFiles after successful transcription", async () => {
-      const response = await testServer.inject({
-        method: "POST",
-        url: "/transcribe-audio",
-        headers: { authorization: `Bearer token` },
-        body: {
-          stateCode: "US_NE",
-          meetingId: fakeMeeting.id,
-        },
-      });
-
-      expect(response.statusCode).toBe(200);
-      expect(mockCleanupLocalFiles).toHaveBeenCalledWith(
-        "US_NE",
-        fakeMeeting.id,
-      );
-    });
-
-    test("Should not call cleanupLocalFiles if transcription fails", async () => {
-      mockTranscribeAudioWithAssemblyAI.mockImplementationOnce(async () => {
-        throw new Error("Transcription failed");
-      });
-      mockTranscribeAudioWithDeepgram.mockImplementationOnce(async () => {
-        throw new Error("Transcription failed");
-      });
-
-      const response = await testServer.inject({
-        method: "POST",
-        url: "/transcribe-audio",
-        headers: { authorization: `Bearer token` },
-        body: {
-          stateCode: "US_NE",
-          meetingId: fakeMeeting.id,
-        },
-      });
-
-      expect(response.statusCode).toBe(500);
-      expect(mockCleanupLocalFiles).not.toHaveBeenCalled();
     });
   });
 

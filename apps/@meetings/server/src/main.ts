@@ -16,7 +16,13 @@
 // =============================================================================
 
 import { buildServer } from "~@meetings/server/server";
+import { cleanupStaleLocalFiles } from "~@meetings/tasks";
 import { startServer } from "~server-setup-plugin";
+
+// No-op outside local mode. Runs on every restart (including `--watch`
+// reloads), so it only removes recordings that are old enough to have
+// passed a realistic TTL rather than wiping everything.
+cleanupStaleLocalFiles(7);
 
 const server = buildServer();
 

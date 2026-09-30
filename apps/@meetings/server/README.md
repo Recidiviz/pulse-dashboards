@@ -35,7 +35,7 @@ When running locally via `nx dev @meetings/server`, local mode is enabled automa
 - Audio recordings are stored locally on your file system instead of GCS
 - The signed URL endpoint returns a local HTTP endpoint (`/upload-audio/:meetingId/:filename`)
 - Stitching and transcription read from local files
-- Files are automatically cleaned up after transcription completes
+- Files are kept after transcription so audio playback works; on startup the server deletes meeting folders untouched for 7 days, and playback is hidden for recordings whose files are gone
 - No GCS bucket or service account credentials needed
 
 The `LOCAL_STORAGE_DIR` environment variable can optionally be set to control where local audio files are stored (default: `{system-temp}/meetings-local`). To disable local mode and connect to GCS instead, set `IS_LOCAL_MODE=false` in your `.env.dev` file.

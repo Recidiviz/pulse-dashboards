@@ -48,7 +48,6 @@ import {
   queueTranscriptionTask,
 } from "~@meetings/server/server/utils";
 import {
-  cleanupLocalFiles,
   exportLabelStudioTask,
   labelStudioMeetingInclude,
   stitchAudio,
@@ -521,9 +520,6 @@ export function registerTaskRoutes(app: FastifyInstance) {
                 "Transcription completed successfully; queuing LLM processing failed.",
               );
           }
-
-          // Clean up local files after successful transcription
-          await cleanupLocalFiles(stateCode, meetingId);
         } catch (e) {
           await prisma.meeting.update({
             where: {

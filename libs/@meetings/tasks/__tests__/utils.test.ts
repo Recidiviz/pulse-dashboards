@@ -40,8 +40,9 @@ import {
   mockDeepgram,
 } from "~@meetings/tasks/test/setup";
 import {
-  cleanupLocalFiles,
+  cleanupStaleLocalFiles,
   getSignedUrlForNewRecording,
+  getSignedUrlForRecording,
   stitchAudio,
   transcribeAudioWithAssemblyAI,
   transcribeAudioWithDeepgram,
@@ -563,51 +564,76 @@ describe("utils", () => {
       });
     });
 
-    describe("cleanupLocalFiles", () => {
-      test("Should delete meeting directory and all files", async () => {
-        const stateCode = "US_TN";
-        const meetingId = "cleanup-test-meeting";
-        const meetingDir = path.join(testStorageDir, stateCode, meetingId);
+    describe("getSignedUrlForRecording (local mode)", () => {
+      const folderName = "US_TN/playback-test-meeting";
 
-        // Create meeting directory with files
+      test("Should return local stream URL when the file exists", async () => {
+        const meetingDir = path.join(testStorageDir, folderName);
         fs.mkdirSync(meetingDir, { recursive: true });
-        fs.writeFileSync(path.join(meetingDir, "1.m4a"), "test data 1");
-        fs.writeFileSync(path.join(meetingDir, "2.m4a"), "test data 2");
         fs.writeFileSync(path.join(meetingDir, "final.m4a"), "final audio");
 
-        // Verify files exist
-        expect(fs.existsSync(meetingDir)).toBe(true);
-        expect(fs.readdirSync(meetingDir).length).toBe(3);
+        const url = await getSignedUrlForRecording(
+          folderName,
+          AUDIO_RECORDINGS_BUCKET_NAME,
+          "final.m4a",
+          "192.168.1.10:3002",
+        );
 
-        // Cleanup
-        await cleanupLocalFiles(stateCode, meetingId);
-
-        // Verify directory was deleted
-        expect(fs.existsSync(meetingDir)).toBe(false);
+        expect(url).toEqual(
+          `http://192.168.1.10:3002/stream-audio/${folderName}/final.m4a`,
+        );
       });
 
-      test("Should not throw error if meeting directory doesn't exist", async () => {
-        await expect(
-          cleanupLocalFiles("US_TN", "non-existent-meeting"),
-        ).resolves.not.toThrow();
+      test("Should return null when the file is missing", async () => {
+        const url = await getSignedUrlForRecording(
+          folderName,
+          AUDIO_RECORDINGS_BUCKET_NAME,
+          "final.m4a",
+        );
+
+        expect(url).toBeNull();
+      });
+    });
+
+    describe("cleanupStaleLocalFiles", () => {
+      const createMeetingDir = (
+        stateCode: string,
+        meetingId: string,
+        ageDays: number,
+      ) => {
+        const meetingDir = path.join(testStorageDir, stateCode, meetingId);
+        fs.mkdirSync(meetingDir, { recursive: true });
+        fs.writeFileSync(path.join(meetingDir, "final.m4a"), "final audio");
+        const mtime = new Date(Date.now() - ageDays * 24 * 60 * 60 * 1000);
+        fs.utimesSync(meetingDir, mtime, mtime);
+        return meetingDir;
+      };
+
+      test("Should delete meeting directories older than the max age", () => {
+        const staleDir = createMeetingDir("US_TN", "stale-meeting", 8);
+        const otherStateStaleDir = createMeetingDir("US_NE", "stale", 30);
+        const recentDir = createMeetingDir("US_TN", "recent-meeting", 1);
+
+        cleanupStaleLocalFiles(7);
+
+        expect(fs.existsSync(staleDir)).toBe(false);
+        expect(fs.existsSync(otherStateStaleDir)).toBe(false);
+        expect(fs.existsSync(recentDir)).toBe(true);
       });
 
-      test("Should not cleanup in GCS mode", async () => {
+      test("Should not throw if the storage directory doesn't exist", () => {
+        fs.rmSync(testStorageDir, { recursive: true, force: true });
+
+        expect(() => cleanupStaleLocalFiles(7)).not.toThrow();
+      });
+
+      test("Should not cleanup in GCS mode", () => {
         process.env["IS_LOCAL_MODE"] = "false";
+        const staleDir = createMeetingDir("US_TN", "gcs-mode-meeting", 30);
 
-        const stateCode = "US_TN";
-        const meetingId = "gcs-mode-meeting";
-        const meetingDir = path.join(testStorageDir, stateCode, meetingId);
+        cleanupStaleLocalFiles(7);
 
-        // Create meeting directory with files
-        fs.mkdirSync(meetingDir, { recursive: true });
-        fs.writeFileSync(path.join(meetingDir, "final.m4a"), "final audio");
-
-        // Cleanup should not delete in GCS mode
-        await cleanupLocalFiles(stateCode, meetingId);
-
-        // Verify directory still exists
-        expect(fs.existsSync(meetingDir)).toBe(true);
+        expect(fs.existsSync(staleDir)).toBe(true);
       });
     });
   });

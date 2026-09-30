@@ -82,8 +82,15 @@ export async function getSignedUrlForRecording(
   bucketName: string,
   fileName: string,
   requestHost?: string,
-): Promise<string> {
+): Promise<string | null> {
   if (isLocalMode()) {
+    const localStorageDir =
+      process.env["LOCAL_STORAGE_DIR"] ||
+      path.join(os.tmpdir(), "meetings-local");
+    if (!fs.existsSync(path.join(localStorageDir, folderName, fileName))) {
+      return null;
+    }
+
     // Prefer the Host header the client actually connected with: `HOST` is the
     // server's bind address (e.g. 0.0.0.0 to accept LAN connections), which is
     // never itself a valid address for a client to connect back to.
@@ -394,7 +401,12 @@ export async function transcribeAudioWithAssemblyAI(
   return transcriptionResult;
 }
 
-export async function cleanupLocalFiles(stateCode: string, meetingId: string) {
+/**
+ * Deletes local meeting folders ({stateCode}/{meetingId}) that haven't been
+ * modified in `maxAgeDays`. Recordings are kept after transcription so they can
+ * be played back
+ */
+export function cleanupStaleLocalFiles(maxAgeDays: number) {
   if (!isLocalMode()) {
     // Only cleanup in local mode
     return;
@@ -403,12 +415,36 @@ export async function cleanupLocalFiles(stateCode: string, meetingId: string) {
   const localStorageDir =
     process.env["LOCAL_STORAGE_DIR"] ||
     path.join(os.tmpdir(), "meetings-local");
-  const meetingDir = path.join(localStorageDir, stateCode, meetingId);
+  if (!fs.existsSync(localStorageDir)) {
+    return;
+  }
 
-  if (fs.existsSync(meetingDir)) {
-    // Remove all files in the meeting directory
-    fs.rmSync(meetingDir, { recursive: true, force: true });
-    console.log(`Cleaned up local files for meeting ${meetingId}`);
+  const cutoffMs = Date.now() - maxAgeDays * 24 * 60 * 60 * 1000;
+  let deletedCount = 0;
+
+  for (const stateDir of fs.readdirSync(localStorageDir, {
+    withFileTypes: true,
+  })) {
+    if (!stateDir.isDirectory()) continue;
+    const statePath = path.join(localStorageDir, stateDir.name);
+
+    for (const meetingDir of fs.readdirSync(statePath, {
+      withFileTypes: true,
+    })) {
+      if (!meetingDir.isDirectory()) continue;
+      const meetingPath = path.join(statePath, meetingDir.name);
+
+      if (fs.statSync(meetingPath).mtimeMs < cutoffMs) {
+        fs.rmSync(meetingPath, { recursive: true, force: true });
+        deletedCount += 1;
+      }
+    }
+  }
+
+  if (deletedCount > 0) {
+    console.log(
+      `Cleaned up local files for ${deletedCount} meeting(s) older than ${maxAgeDays} days`,
+    );
   }
 }
 
