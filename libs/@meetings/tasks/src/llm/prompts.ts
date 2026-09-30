@@ -122,6 +122,7 @@ export const PROMPTS = {
                             2. **Be Specific:** Use the exact details found in the text (dates, names, locations).
                             3. Keep all accented and special characters (such as ç, ã, é) without HTML escaping or hexadecimal sequences.
                             4. **Client Identity (Critical):** The CLIENT PROFILE provided in the input contains the authoritative client name from the case management system. Do NOT override or replace this identity based on names spoken in the transcript. Transcription errors can introduce incorrect names. If a name spoken in the transcript conflicts with the CLIENT PROFILE, discard the spoken name and use the profile name.
+                            5. **Relative Dates:** The MEETING DATE AND TIME in the input is when this meeting took place. Treat that day as "today" when interpreting relative dates and times in the transcript ("tomorrow", "next Friday", "in two weeks"), and never assume any other current date. When a deadline needs a year, take it from the meeting date.
 
                             ### TARGET 1: ACTION ITEMS
                             - List every future task assigned to the Client or Staff Member.
@@ -140,6 +141,7 @@ export const PROMPTS = {
                             
                             (Output strictly according to the provided JSON schema.)`),
     USER: template(dedent`INPUTS:
+                            - Meeting Date and Time: <%= meetingStart %>
                             - Transcript: <%= transcript %>
                             - Agency Rules: <%= agencySpecificRules %>`),
   },

@@ -232,6 +232,40 @@ describe("SpecialistCore", () => {
       );
     });
 
+    test("should include the meeting date in state local time in user message", async () => {
+      vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
+        id: "test-completion",
+        object: "chat.completion",
+        created: Date.now(),
+        model: "gpt-4o-mini",
+        choices: [
+          {
+            index: 0,
+            message: {
+              role: "assistant",
+              content: JSON.stringify({ actionItems: [], entities: [] }),
+            },
+            finish_reason: "stop",
+          },
+        ],
+      } as never);
+
+      await core.runExtraction(mockTranscript, mockClient, mockAgency);
+
+      expect(mockOpenAI.chat.completions.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          messages: expect.arrayContaining([
+            expect.objectContaining({
+              role: "user",
+              content: expect.stringContaining(
+                "Meeting Date and Time: Wednesday, January 15, 2025 at 9:00 AM CST",
+              ),
+            }),
+          ]),
+        }),
+      );
+    });
+
     test("should include agency rules in user message", async () => {
       vi.mocked(mockOpenAI.chat.completions.create).mockResolvedValueOnce({
         id: "test-completion",

@@ -18,9 +18,12 @@
 /**
  * Minimal Person + AgencyConfig + TranscriptInput stubs for driving
  * `SpecialistCore.runExtraction()` from the eval. Extraction reads only
- * `transcript.rawText` and `agency.rules` (joined into the prompt) plus
- * `person.{pseudonymizedId, stateCode}` for logging — none of these need
- * to reflect real data.
+ * `transcript.rawText` and `agency.rules` (joined into the prompt),
+ * `transcript.startTime` (the meeting date in the prompt, shown in the time
+ * zone of `person.stateCode`), and `person.{pseudonymizedId, stateCode}` for
+ * logging. None of these need to reflect real data, but the fixed startTime is
+ * the "today" that Extraction resolves relative dates and deadline years
+ * against.
  */
 
 import type { AgencyConfig } from "~@meetings/config";

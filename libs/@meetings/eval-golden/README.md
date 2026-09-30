@@ -43,7 +43,9 @@ auditable and revertable.
 
 - **`meetings-eval-golden`** (53 examples), one per transcript. `inputs` are
   `{ transcript, agencySpecificRules }` (the extraction prompt's template
-  variables, so Playground runs render the real user message); `outputs` is the
+  variables, so Playground runs render the real user message; the prompt's
+  `meetingStart` variable is filled in by `refresh-writer-inputs`, and renders
+  empty on an example that hasn't been refreshed); `outputs` is the
   truth extraction (camelCase, matching `ExtractionOutput`, plus optional
   `acceptableActionItems`); `metadata` is `{ character, episode, bucket, long }`,
   and the example's **split** is its bucket so the UI can filter by bucket.

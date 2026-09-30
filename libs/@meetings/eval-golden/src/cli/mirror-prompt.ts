@@ -36,7 +36,7 @@ export const MIRRORED_PROMPT_NAME = "meetings-extraction";
 
 /**
  * The extraction prompt as a chat prompt. The system message is static; the
- * user message keeps `transcript` / `agencySpecificRules` as mustache
+ * user message keeps `meetingStart` / `transcript` / `agencySpecificRules` as mustache
  * variables matching the dataset example inputs, by passing the literal
  * placeholders through the committed lodash template.
  */
@@ -47,6 +47,7 @@ export const extractionPromptTemplate = () =>
       [
         "human",
         PROMPTS.EXTRACTION.USER({
+          meetingStart: "{{meetingStart}}",
           transcript: "{{transcript}}",
           agencySpecificRules: "{{agencySpecificRules}}",
         }),

@@ -49,6 +49,7 @@ import {
   VerificationOutput,
   VerificationPayloadSchema,
 } from "~@meetings/tasks/llm/schemas";
+import { formatMeetingStartForPrompt } from "~@meetings/tasks/llm/utils";
 import {
   buildWriterUserVariables,
   createAliasPromptRules,
@@ -217,6 +218,10 @@ export class SpecialistCore {
 
     const userMessage = PROMPTS.EXTRACTION.USER({
       agencySpecificRules,
+      meetingStart: formatMeetingStartForPrompt(
+        new Date(transcript.startTime),
+        person.stateCode,
+      ),
       transcript: transcript.rawText,
     });
 
