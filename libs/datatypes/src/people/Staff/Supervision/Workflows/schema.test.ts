@@ -39,3 +39,37 @@ test.each([{ type: "supervision", schema: supervisionStaffRecordSchema }])(
     ).toHaveProperty("recordType", `${type}Staff`);
   },
 );
+
+describe("stableStaffExternalId", () => {
+  const baseInput = {
+    staffExternalId: "test123",
+    stateCode: "US_XX",
+    givenNames: "Test",
+    surname: "Person",
+    pseudonymizedId: "anon123",
+  };
+
+  test("is kept when present", () => {
+    expect(
+      supervisionStaffRecordSchema.parse({
+        ...baseInput,
+        stableStaffExternalId: "STABLE123",
+      }),
+    ).toHaveProperty("stableStaffExternalId", "STABLE123");
+  });
+
+  test("accepts null for staff without a stable supervision id", () => {
+    expect(
+      supervisionStaffRecordSchema.parse({
+        ...baseInput,
+        stableStaffExternalId: null,
+      }).stableStaffExternalId,
+    ).toBeNull();
+  });
+
+  test("accepts a record without the field", () => {
+    expect(
+      supervisionStaffRecordSchema.parse(baseInput).stableStaffExternalId,
+    ).toBeUndefined();
+  });
+});
