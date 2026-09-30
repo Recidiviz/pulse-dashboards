@@ -21,6 +21,10 @@
  * Run this after a change to the golden dataset's ground truth or to the
  * US_DEMO config.
  *
+ * By default it reads the US_DEMO config from the production global database,
+ * so start a Cloud SQL Auth Proxy on the port in DATABASE_URL first (see the
+ * README).
+ *
  * This writes directly to the shared `meetings-eval-golden` dataset, so
  * before a first real run, sanity-check with:
  *

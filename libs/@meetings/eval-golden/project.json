@@ -66,9 +66,10 @@
         "{workspaceRoot}/libs/@meetings/trpc/src/routes/config/**/*"
       ],
       "configurations": {
-        "dev": {}
+        "dev": {},
+        "production": {}
       },
-      "defaultConfiguration": "dev"
+      "defaultConfiguration": "production"
     }
   }
 }

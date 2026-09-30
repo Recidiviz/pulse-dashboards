@@ -121,7 +121,29 @@ so that they can pick it up the same way our prompt would in production.
 
 Re-run it after any change to the golden ground truth or to the `US_DEMO` config.
 
-It writes directly to the shared dataset, so you can sanity-check first:
+The target reads the `US_DEMO` config from the production `global` database, so
+start a Cloud SQL Auth Proxy to it on port 5433 first:
+
+```bash
+cloud-sql-proxy --port 5433 recidiviz-dashboard-production:us-central1:meetings
+```
+
+Its `production` configuration (the default) loads
+`apps/@meetings/server/env.refresh-writer-inputs.production.enc.yaml`, which
+holds `DATABASE_URL` (the `global` database through that proxy), the LangSmith
+key, and `LANGSMITH_ENDPOINT`.
+
+`--configuration=dev` instead reads the config from the database in
+`@meetings/server`'s dev env, usually a local one whose config can differ from
+prod. Use it for dry runs, such as when changing the script, and don't write to
+the dataset with it.
+
+It writes directly to the shared dataset, so sanity-check first. The dry run
+prints the config it resolved (e.g. `US_DEMO@v7-base@v5`). If that differs from
+the `writerInputsConfigKey` in an example's metadata, which records the config
+the last refresh used, check the dry-run variables for changes you don't expect
+before writing. Each database numbers its config versions separately, so a
+higher version is not necessarily newer.
 
 ```bash
 nx run @meetings/eval-golden:refresh-writer-inputs --args="--dry-run"
@@ -134,8 +156,7 @@ nx run @meetings/eval-golden:refresh-writer-inputs
 | `--dry-run`       | off     | Logs the variables each example would get; makes no writes. |
 | `--limit <count>` | _(all)_ | Stops after this many examples, dry run or not.             |
 
-It needs `LANGSMITH_API_KEY` / `LANGCHAIN_API_KEY` (loaded from SOPS by the
-target) and a database connection for the config lookup. Examples with no
+Examples with no
 `transcript` input, or whose `outputs` do not parse as a `TruthFile`, are
 warned about and skipped rather than failing the run.
 
