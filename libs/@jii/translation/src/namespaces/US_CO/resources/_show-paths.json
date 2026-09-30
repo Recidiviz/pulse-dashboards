@@ -126,6 +126,10 @@
     "edovoCredits": {
       "message": "[US_CO]aetBanner.edovoCredits.message",
       "linkText": "[US_CO]aetBanner.edovoCredits.linkText"
+    },
+    "edovoV1": {
+      "message": "[US_CO]aetBanner.edovoV1.message",
+      "linkText": "[US_CO]aetBanner.edovoV1.linkText"
     }
   }
 }

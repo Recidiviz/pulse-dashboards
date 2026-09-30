@@ -42,23 +42,25 @@ export const AETBanner: FC = () => {
     if (!showEdovoCredits) return;
     segmentClient.trackAetCalloutClicked({ placement: "homepage" });
   };
-  // TODO(OBT-49104) remove policyPage copy
-  const { message, linkText } = showEdovoCredits
-    ? t(($) => $.aetBanner.edovoCredits, { returnObjects: true })
-    : t(($) => $.aetBanner.policyPage, { returnObjects: true });
+  let copy;
+  let to;
+  if (showEdovoCredits) {
+    copy = t(($) => $.aetBanner.edovoCredits, { returnObjects: true });
+    to = State.Resident.$.ProgramCatalog.buildRelativePath({});
+  } else if (residentFlags.usCoEdovoV1) {
+    copy = t(($) => $.aetBanner.edovoV1, { returnObjects: true });
+    to = State.Resident.$.UsCoMoreInformation.EarnedTime.buildRelativePath({});
+  } else {
+    // TODO(OBT-49104) remove policyPage copy and AETChanges route and page
+    copy = t(($) => $.aetBanner.policyPage, { returnObjects: true });
+    to = State.Resident.$.UsCoMoreInformation.AETChanges.buildRelativePath({});
+  }
 
   return (
     <AnnouncementBanner
-      message={message}
-      linkText={linkText}
-      // TODO(OBT-49104) remove AETChanges route and page
-      to={
-        showEdovoCredits
-          ? State.Resident.$.ProgramCatalog.buildRelativePath({})
-          : State.Resident.$.UsCoMoreInformation.AETChanges.buildRelativePath(
-              {},
-            )
-      }
+      message={copy.message}
+      linkText={copy.linkText}
+      to={to}
       onLinkClick={handleLinkClick}
     />
   );

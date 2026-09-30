@@ -46,6 +46,7 @@ type ResidentFlag =
   | "usAzFslImprovements"
   | "usAzIonReferral"
   | "usCoV1Experience"
+  | "usCoEdovoV1"
   | "usCoEdovoCredits"
   //TODO OBT-34689 remove after launch
   | "usArFslImprovements"
