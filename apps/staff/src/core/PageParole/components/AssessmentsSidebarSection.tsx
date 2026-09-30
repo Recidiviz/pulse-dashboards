@@ -29,15 +29,17 @@ import {
   latestAssessmentsByTool,
 } from "./RiskAssessmentSection.utils";
 import {
-  FactLabel,
   FactRow,
-  FactRowStack,
-  FactStack,
   formatDate,
   Hr,
   SectionStack,
   SubsectionTitle,
 } from "./shared";
+import {
+  UsIdFactLabel,
+  UsIdFactStack,
+  UsIdFactValue,
+} from "./US_ID/UsIdCaseProfileStyles";
 
 // SectionStack's gap already spaces this from the first AssessmentRow, so
 // SubsectionTitle's own margin-bottom would double that spacing here.
@@ -105,16 +107,10 @@ const RiskLevel = styled.span<{ $color: string }>`
 const NotOnFileList = styled.ul`
   display: flex;
   flex-direction: column;
+  gap: ${rem(spacing.xs)};
   margin: 0;
   padding: 0;
   list-style: none;
-`;
-
-// FactStack's default gap (0.25em) is sized for a label sitting directly
-// above its value; the label here sits above a whole list, so it gets more
-// breathing room.
-const NotOnFileGroup = styled(FactStack)`
-  gap: 0.5rem;
 `;
 
 /**
@@ -156,14 +152,14 @@ export function AssessmentsSidebarSection({
             {index > 0 && <Hr />}
             <AssessmentRow>
               <AssessmentFactRow>
-                <FactRowStack>
-                  <div>Type</div>
-                  <FactLabel>{assessment.tool}</FactLabel>
-                </FactRowStack>
-                <FactRowStack>
-                  <div>Date</div>
-                  <FactLabel>{formatDate(assessment.date)}</FactLabel>
-                </FactRowStack>
+                <UsIdFactStack>
+                  <UsIdFactLabel>Type</UsIdFactLabel>
+                  <UsIdFactValue>{assessment.tool}</UsIdFactValue>
+                </UsIdFactStack>
+                <UsIdFactStack>
+                  <UsIdFactLabel>Date</UsIdFactLabel>
+                  <UsIdFactValue>{formatDate(assessment.date)}</UsIdFactValue>
+                </UsIdFactStack>
               </AssessmentFactRow>
               <ScoreRow>
                 <ScoreValueGroup>
@@ -186,19 +182,16 @@ export function AssessmentsSidebarSection({
       })}
 
       {notOnFileTools.length > 0 && (
-        <>
-          {onFileAssessments.length > 0 && <Hr />}
-          <NotOnFileGroup>
-            <div>Non Applicable/ Not on File</div>
-            <NotOnFileList>
-              {notOnFileTools.map((tool) => (
-                <FactLabel as="li" key={tool}>
-                  {tool}
-                </FactLabel>
-              ))}
-            </NotOnFileList>
-          </NotOnFileGroup>
-        </>
+        <UsIdFactStack>
+          <UsIdFactLabel>Non Applicable/ Not on File</UsIdFactLabel>
+          <NotOnFileList>
+            {notOnFileTools.map((tool) => (
+              <UsIdFactValue as="li" key={tool}>
+                {tool}
+              </UsIdFactValue>
+            ))}
+          </NotOnFileList>
+        </UsIdFactStack>
       )}
     </SectionStack>
   );

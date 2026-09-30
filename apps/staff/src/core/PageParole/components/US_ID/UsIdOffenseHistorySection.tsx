@@ -22,57 +22,64 @@ import styled from "styled-components";
 import { ParoleCase, ParoleOffense } from "~datatypes";
 import { palette } from "~design-system";
 
-import { SectionCardHeader } from "../../../SectionCard";
-import { PaddedSectionCardBody } from "../PaddedSectionCardBody";
 import {
   FactRow,
-  FactRowStack,
-  FactValue,
   formatDateLong,
   formatDateNumeric,
-  MutedText,
-  SectionCard,
   SectionStack,
-  SubsectionTitle,
 } from "../shared";
+import {
+  UsIdFactLabel,
+  UsIdFactStack,
+  UsIdFactValue,
+  usIdRecordCardStyles,
+  UsIdSectionCard,
+  UsIdSectionTitle,
+  UsIdSubsection,
+  UsIdSubsectionTitle,
+} from "./UsIdCaseProfileStyles";
 
 // Shown for a date or date range that Idaho has not recorded on the offense yet.
 const EMPTY_PLACEHOLDER = "----";
 
 const OffenseCard = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${rem(spacing.lg)};
-  background-color: ${palette.marble2};
-  border: 1px solid ${palette.slate10};
-  border-radius: ${rem(4)};
-  padding: ${rem(spacing.lg)};
+  ${usIdRecordCardStyles}
 `;
 
 const OffenseHeader = styled.div`
   display: flex;
-  flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  column-gap: ${rem(spacing.md)};
-  row-gap: ${rem(spacing.xs)};
+  gap: ${rem(spacing.md)};
 `;
 
 const OffenseHeading = styled.div`
   ${typography.Sans16}
-  font-weight: 600;
-  color: ${palette.pine1};
+  display: flex;
+  align-items: baseline;
+  gap: ${rem(spacing.sm)};
+  min-width: 0;
+  line-height: 1.5;
+  color: ${palette.pine2};
 `;
 
 const OffenseStatute = styled.span`
-  ${typography.Sans14}
-  font-weight: 400;
-  color: ${palette.slate70};
-  margin-left: 0.5rem;
+  ${typography.Sans12}
+  flex-shrink: 0;
+  white-space: nowrap;
+  color: ${palette.slate85};
 `;
 
-const OffenseFact = styled(FactRowStack)`
-  flex: 0 1 ${rem(164)};
+const OffenseCaseNumber = styled.div`
+  ${typography.Sans12}
+  flex-shrink: 0;
+  white-space: nowrap;
+  color: ${palette.slate85};
+`;
+
+const OffenseFact = styled(UsIdFactStack)`
+  flex: 0 0 auto;
+  min-width: ${rem(164)};
 `;
 
 const LIFE = "Life";
@@ -126,65 +133,63 @@ export function UsIdOffenseHistorySection({
   caseDetail: ParoleCase;
 }) {
   return (
-    <SectionCard>
-      <SectionCardHeader>Offense Information</SectionCardHeader>
-      <PaddedSectionCardBody>
-        <div>
-          <SubsectionTitle>Instant Offenses</SubsectionTitle>
-          <SectionStack>
-            {caseDetail.offenseHistory.offenses.map((offense) => {
-              const facts: Array<{ label: string; value: string }> = [
-                {
-                  label: "Parole Elig.",
-                  value: formatDateOrPlaceholder(offense.paroleEligibilityDate),
-                },
-                {
-                  label: "Full Term",
-                  value: formatFullTerm(offense),
-                },
-                {
-                  label: "Sent. Length",
-                  value: formatSpan(
-                    offense.sentenceStartDate,
-                    offense.fullTermDate,
-                    offense.isLife,
-                  ),
-                },
-                {
-                  label: "Indeterm. Length",
-                  value: formatSpan(
-                    offense.indeterminateStartDate,
-                    offense.indeterminateEndDateInclusive,
-                    offense.isLife,
-                  ),
-                },
-              ];
+    <UsIdSectionCard>
+      <UsIdSectionTitle>Offense Information</UsIdSectionTitle>
+      <UsIdSubsection>
+        <UsIdSubsectionTitle>Instant Offenses</UsIdSubsectionTitle>
+        <SectionStack>
+          {caseDetail.offenseHistory.offenses.map((offense) => {
+            const facts: Array<{ label: string; value: string }> = [
+              {
+                label: "Parole Elig.",
+                value: formatDateOrPlaceholder(offense.paroleEligibilityDate),
+              },
+              {
+                label: "Full Term",
+                value: formatFullTerm(offense),
+              },
+              {
+                label: "Sent. Length",
+                value: formatSpan(
+                  offense.sentenceStartDate,
+                  offense.fullTermDate,
+                  offense.isLife,
+                ),
+              },
+              {
+                label: "Indeterm. Length",
+                value: formatSpan(
+                  offense.indeterminateStartDate,
+                  offense.indeterminateEndDateInclusive,
+                  offense.isLife,
+                ),
+              },
+            ];
 
-              return (
-                <OffenseCard key={`${offense.docket}-${offense.conviction}`}>
-                  <OffenseHeader>
-                    <OffenseHeading>
-                      {offense.conviction}
-                      {offense.statute && (
-                        <OffenseStatute>§{offense.statute}</OffenseStatute>
-                      )}
-                    </OffenseHeading>
-                    <MutedText>Case # {offense.docket}</MutedText>
-                  </OffenseHeader>
-                  <FactRow>
-                    {facts.map((fact) => (
-                      <OffenseFact key={fact.label}>
-                        <MutedText>{fact.label}</MutedText>
-                        <FactValue>{fact.value}</FactValue>
-                      </OffenseFact>
-                    ))}
-                  </FactRow>
-                </OffenseCard>
-              );
-            })}
-          </SectionStack>
-        </div>
-      </PaddedSectionCardBody>
-    </SectionCard>
+            return (
+              <OffenseCard key={`${offense.docket}-${offense.conviction}`}>
+                <OffenseHeader>
+                  <OffenseHeading>
+                    {offense.conviction}
+                    {offense.statute && (
+                      <OffenseStatute>§{offense.statute}</OffenseStatute>
+                    )}
+                  </OffenseHeading>
+                  <OffenseCaseNumber>Case # {offense.docket}</OffenseCaseNumber>
+                </OffenseHeader>
+                <FactRow>
+                  {facts.map((fact) => (
+                    <OffenseFact key={fact.label}>
+                      <UsIdFactLabel>{fact.label}</UsIdFactLabel>
+                      <UsIdFactValue>{fact.value}</UsIdFactValue>
+                    </OffenseFact>
+                  ))}
+                </FactRow>
+              </OffenseCard>
+            );
+          })}
+        </SectionStack>
+      </UsIdSubsection>
+    </UsIdSectionCard>
   );
 }

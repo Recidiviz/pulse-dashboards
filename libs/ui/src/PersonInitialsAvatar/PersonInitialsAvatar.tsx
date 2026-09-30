@@ -60,7 +60,11 @@ const AvatarInitials = styled(Sans14)<{ size: number }>`
   text-align: center;
 `;
 
-const formatAvatarText = (text: string, splitName: boolean): string => {
+/**
+ * Returns the text an avatar shows and seeds its marble pattern with: the
+ * first and last initials when splitName is set, otherwise the text as given.
+ */
+export const formatAvatarText = (text: string, splitName: boolean): string => {
   if (!text) return "";
   return splitName
     ? text

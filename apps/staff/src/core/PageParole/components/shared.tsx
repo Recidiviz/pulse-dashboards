@@ -32,6 +32,15 @@ export const SectionCard = styled(BaseSectionCard)`
   overflow: hidden;
 `;
 
+/** Top and bottom inner padding of the case profile sidebar info card. */
+export const PAROLE_SIDEBAR_PADDING_VERTICAL = rem(spacing.lg);
+
+/**
+ * Left and right inner padding of the case profile sidebar info card. Rules
+ * and banners that run edge to edge pull out by this same amount.
+ */
+export const PAROLE_SIDEBAR_PADDING_HORIZONTAL = rem(spacing.md);
+
 /**
  * `new Date("yyyy-MM-dd")` parses the string as UTC midnight per spec, which
  * silently rolls back to the previous calendar day once formatted in any

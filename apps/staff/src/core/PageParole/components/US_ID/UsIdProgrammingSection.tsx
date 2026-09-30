@@ -28,11 +28,13 @@ import {
 import { palette } from "~design-system";
 
 import { Pagination } from "../../../Pagination/Pagination";
+import { formatDateNumeric } from "../shared";
 import {
-  formatDateNumeric,
-  SubsectionCaption,
-  SubsectionTitle,
-} from "../shared";
+  UsIdSubsection,
+  UsIdSubsectionCaption,
+  UsIdSubsectionHeading,
+  UsIdSubsectionTitle,
+} from "./UsIdCaseProfileStyles";
 
 type ProgramDateType = "completion" | "start" | "referral";
 
@@ -220,11 +222,14 @@ export function UsIdProgrammingSection({
   const pageRows = rows.slice(pageStart, pageStart + US_ID_PROGRAMS_PER_PAGE);
 
   return (
-    <div>
-      <SubsectionTitle>Programming</SubsectionTitle>
-      {rows.length === 0 ? (
-        <SubsectionCaption>No programs on record</SubsectionCaption>
-      ) : (
+    <UsIdSubsection>
+      <UsIdSubsectionHeading>
+        <UsIdSubsectionTitle>Programming</UsIdSubsectionTitle>
+        {rows.length === 0 && (
+          <UsIdSubsectionCaption>No programs on record</UsIdSubsectionCaption>
+        )}
+      </UsIdSubsectionHeading>
+      {rows.length > 0 && (
         <Table>
           <colgroup>
             <DateColumn />
@@ -260,6 +265,6 @@ export function UsIdProgrammingSection({
           }`}
         />
       )}
-    </div>
+    </UsIdSubsection>
   );
 }

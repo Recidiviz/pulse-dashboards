@@ -16,4 +16,5 @@
 // =============================================================================
 
 export * from "./Methodology";
+export * from "./PersonInitialsAvatar/PersonGradientBanner";
 export * from "./PersonInitialsAvatar/PersonInitialsAvatar";

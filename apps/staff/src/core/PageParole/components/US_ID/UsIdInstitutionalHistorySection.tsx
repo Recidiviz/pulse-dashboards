@@ -18,10 +18,8 @@
 import { ParoleCase } from "~datatypes";
 
 import type { ParoleConfig } from "../../../models/types";
-import { SectionCardHeader } from "../../../SectionCard";
-import { PaddedSectionCardBody } from "../PaddedSectionCardBody";
-import { SectionCard, SectionStack } from "../shared";
 import { UsIdCaseNotesSection } from "./UsIdCaseNotesSection";
+import { UsIdSectionCard, UsIdSectionTitle } from "./UsIdCaseProfileStyles";
 import { UsIdDisciplinaryReportsSection } from "./UsIdDisciplinaryReportsSection";
 import { UsIdHealthAndAssessmentsSection } from "./UsIdHealthAndAssessmentsSection";
 import { UsIdProgrammingSection } from "./UsIdProgrammingSection";
@@ -42,28 +40,24 @@ export function UsIdInstitutionalHistorySection({
   config: ParoleConfig;
 }) {
   return (
-    <SectionCard>
-      <SectionCardHeader>Institutional History</SectionCardHeader>
-      <PaddedSectionCardBody>
-        <SectionStack>
-          <UsIdProgrammingSection
-            docPrograms={caseDetail.docPrograms}
-            edovoPrograms={caseDetail.edovoPrograms}
-          />
-          <UsIdDisciplinaryReportsSection
-            conductHistory={caseDetail.conductHistory}
-            conductClassificationColors={
-              config.conductHistoryConfig.classificationColors
-            }
-          />
-          <UsIdCaseNotesSection caseNotes={caseDetail.caseNotes} />
-          <UsIdHealthAndAssessmentsSection
-            riskAssessments={caseDetail.riskAssessments}
-            riskAndNeedsFactors={caseDetail.riskAndNeedsFactors}
-            tools={config.riskAssessmentConfig?.tools ?? []}
-          />
-        </SectionStack>
-      </PaddedSectionCardBody>
-    </SectionCard>
+    <UsIdSectionCard>
+      <UsIdSectionTitle>Institutional History</UsIdSectionTitle>
+      <UsIdProgrammingSection
+        docPrograms={caseDetail.docPrograms}
+        edovoPrograms={caseDetail.edovoPrograms}
+      />
+      <UsIdDisciplinaryReportsSection
+        conductHistory={caseDetail.conductHistory}
+        conductClassificationColors={
+          config.conductHistoryConfig.classificationColors
+        }
+      />
+      <UsIdCaseNotesSection caseNotes={caseDetail.caseNotes} />
+      <UsIdHealthAndAssessmentsSection
+        riskAssessments={caseDetail.riskAssessments}
+        riskAndNeedsFactors={caseDetail.riskAndNeedsFactors}
+        tools={config.riskAssessmentConfig?.tools ?? []}
+      />
+    </UsIdSectionCard>
   );
 }

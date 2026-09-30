@@ -34,6 +34,7 @@ import {
   FactRowStack,
   formatDate,
   Hr,
+  PAROLE_SIDEBAR_PADDING_HORIZONTAL,
   StackedFactRow,
   StackedFacts,
   SubsectionTitle,
@@ -56,7 +57,7 @@ const DocId = styled.div`
 
 export const FullWidthHr = styled(Hr)`
   width: auto;
-  margin: 0 -1rem;
+  margin: 0 -${PAROLE_SIDEBAR_PADDING_HORIZONTAL};
 `;
 
 export function ParoleNameHeading({

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing } from "@recidiviz/design-system";
+import { spacing, typography } from "@recidiviz/design-system";
 import { subYears } from "date-fns";
 import { rem } from "polished";
 import { useMemo, useState } from "react";
@@ -35,13 +35,15 @@ import {
   Source,
 } from "../../../CaseNotes";
 import { Pagination } from "../../../Pagination/Pagination";
-import {
-  formatDateLong,
-  parseIsoDate,
-  SubsectionCaption,
-  SubsectionTitle,
-} from "../shared";
+import { formatDateLong, parseIsoDate } from "../shared";
 import { UsIdCaseNotesFilter } from "./UsIdCaseNotesFilter";
+import {
+  usIdRecordCardStyles,
+  UsIdSubsection,
+  UsIdSubsectionCaption,
+  UsIdSubsectionHeading,
+  UsIdSubsectionTitle,
+} from "./UsIdCaseProfileStyles";
 
 /** How many notes one page of the list holds. */
 export const US_ID_NOTES_PER_PAGE = 10;
@@ -53,26 +55,37 @@ export const US_ID_NOTES_PER_PAGE = 10;
  */
 export const US_ID_CASE_NOTE_YEARS = 3;
 
-const Subsection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${rem(spacing.lg)};
-`;
-
 const SubsectionHeader = styled.div`
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: ${rem(spacing.md)};
-
-  ${SubsectionCaption} {
-    margin-bottom: 0;
-  }
 `;
 
 const NotesFrame = styled.div`
-  border: 1px solid ${palette.slate20};
-  border-radius: ${rem(4)};
+  ${usIdRecordCardStyles}
+  padding: 0;
+`;
+
+const UsIdNoteRow = styled(NoteRow)`
+  position: relative;
+  gap: ${rem(spacing.md)};
+  padding: ${rem(spacing.md)};
+  border-bottom: 0;
+
+  &:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: ${rem(spacing.md)};
+    right: ${rem(spacing.md)};
+    border-bottom: 1px solid ${palette.slate20};
+  }
+`;
+
+const UsIdNoteSource = styled(Source)`
+  ${typography.Sans14}
+  color: ${palette.slate50};
 `;
 
 /** How many lines of a note the row preview shows before it clips. */
@@ -179,16 +192,16 @@ export function UsIdCaseNotesSection({
   }
 
   return (
-    <Subsection>
+    <UsIdSubsection>
       <SubsectionHeader>
-        <div>
-          <SubsectionTitle>Case Notes</SubsectionTitle>
-          <SubsectionCaption>
+        <UsIdSubsectionHeading>
+          <UsIdSubsectionTitle>Case Notes</UsIdSubsectionTitle>
+          <UsIdSubsectionCaption>
             {notes.length === 0
               ? `No case notes in the last ${US_ID_CASE_NOTE_YEARS} years`
               : `Showing case notes from the last ${US_ID_CASE_NOTE_YEARS} years`}
-          </SubsectionCaption>
-        </div>
+          </UsIdSubsectionCaption>
+        </UsIdSubsectionHeading>
         {noteTypes.length > 1 && (
           <UsIdCaseNotesFilter
             types={noteTypes}
@@ -202,22 +215,25 @@ export function UsIdCaseNotesSection({
         )}
       </SubsectionHeader>
       {notes.length > 0 && visibleNotes.length === 0 && (
-        <SubsectionCaption>
+        <UsIdSubsectionCaption>
           No case notes match the selected filters
-        </SubsectionCaption>
+        </UsIdSubsectionCaption>
       )}
       {visibleNotes.length > 0 && (
         <>
           <NotesFrame data-testid="us-id-case-notes-list">
             <NotesList>
               {pageNotes.map((note) => (
-                <NoteRow key={note.id} onClick={() => setSelectedNote(note)}>
+                <UsIdNoteRow
+                  key={note.id}
+                  onClick={() => setSelectedNote(note)}
+                >
                   <NoteMeta>
-                    <Source>{note.source}</Source>
+                    <UsIdNoteSource>{note.source}</UsIdNoteSource>
                     <NoteDate>{formatDateLong(note.date)}</NoteDate>
                   </NoteMeta>
                   <ClampedNoteBody>{note.body}</ClampedNoteBody>
-                </NoteRow>
+                </UsIdNoteRow>
               ))}
             </NotesList>
           </NotesFrame>
@@ -237,6 +253,6 @@ export function UsIdCaseNotesSection({
         note={selectedNote}
         onRequestClose={() => setSelectedNote(undefined)}
       />
-    </Subsection>
+    </UsIdSubsection>
   );
 }

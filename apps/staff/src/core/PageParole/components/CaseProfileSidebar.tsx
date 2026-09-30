@@ -17,7 +17,7 @@
 
 import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
-import { Fragment, ReactNode, useState } from "react";
+import { ReactNode, useState } from "react";
 import styled, { css } from "styled-components";
 
 import { ParoleCase } from "~datatypes";
@@ -25,10 +25,10 @@ import { Icon, IconSVG, palette } from "~design-system";
 
 import useIsStuck from "../../../hooks/useIsStuck";
 import { NAV_BAR_HEIGHT } from "../../NavigationLayout";
-import { PaddedSectionCardBody } from "./PaddedSectionCardBody";
 import {
   AlertBanner,
-  Hr,
+  PAROLE_SIDEBAR_PADDING_HORIZONTAL,
+  PAROLE_SIDEBAR_PADDING_VERTICAL,
   scrollToSection,
   SectionCard,
   SectionStack,
@@ -38,15 +38,39 @@ const PAROLE_RETURN_COLOR = palette.signal.notification;
 const PAROLE_RETURN_BACKGROUND_COLOR = "rgba(35, 124, 175, 0.08)";
 
 const FullWidthAlertBanner = styled(AlertBanner)`
-  margin-left: -1rem;
-  margin-right: -1rem;
+  margin-left: -${PAROLE_SIDEBAR_PADDING_HORIZONTAL};
+  margin-right: -${PAROLE_SIDEBAR_PADDING_HORIZONTAL};
+`;
+
+const InfoCardBody = styled.div`
+  padding: ${PAROLE_SIDEBAR_PADDING_VERTICAL}
+    ${PAROLE_SIDEBAR_PADDING_HORIZONTAL};
 `;
 
 const StickyNavSentinel = styled.div`
   height: 0;
 `;
 
-const InfoCard = styled(SectionCard)<{ $isNavStuck: boolean }>`
+const cornerRadiusStyles = ({ $cornerRadius }: { $cornerRadius?: string }) =>
+  $cornerRadius &&
+  css`
+    border-radius: ${$cornerRadius};
+  `;
+
+// With a banner, the card stops clipping so the banner can cover its border.
+const InfoCard = styled(SectionCard)<{
+  $isNavStuck: boolean;
+  $hasBanner: boolean;
+  $cornerRadius?: string;
+}>`
+  ${cornerRadiusStyles}
+
+  ${({ $hasBanner }) =>
+    $hasBanner &&
+    css`
+      overflow: visible;
+    `}
+
   ${({ $isNavStuck }) =>
     !$isNavStuck &&
     css`
@@ -56,9 +80,21 @@ const InfoCard = styled(SectionCard)<{ $isNavStuck: boolean }>`
     `}
 `;
 
-const SectionNavCard = styled(SectionCard)<{ $isNavStuck: boolean }>`
+const BannerSlot = styled.div`
+  margin: -1px -1px 0;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+  overflow: hidden;
+`;
+
+const SectionNavCard = styled(SectionCard)<{
+  $isNavStuck: boolean;
+  $cornerRadius?: string;
+}>`
   position: sticky;
   top: ${rem(NAV_BAR_HEIGHT + spacing.lg)};
+
+  ${cornerRadiusStyles}
 
   ${({ $isNavStuck }) =>
     !$isNavStuck &&
@@ -69,28 +105,28 @@ const SectionNavCard = styled(SectionCard)<{ $isNavStuck: boolean }>`
 `;
 
 const NavCardBody = styled.div`
-  padding: 1rem 0;
+  padding: ${rem(14)} ${rem(spacing.md)};
 `;
 
 const SectionNav = styled.nav`
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: ${rem(spacing.md)};
 `;
 
 const SectionNavButton = styled.button`
   ${typography.Sans14}
   display: block;
   width: 100%;
-  padding: 0 1rem;
+  padding: 0;
   border: none;
   background: none;
-  color: ${palette.pine1};
+  color: ${palette.pine4};
   text-align: left;
   cursor: pointer;
 
   &:hover {
-    color: ${palette.signal.links};
+    color: ${palette.pine3};
   }
 `;
 
@@ -105,15 +141,24 @@ export type ParoleSectionNavItem = {
  *
  * @param caseDetail - The case the card describes.
  * @param sections - Nav entries, in the order the sections render in.
+ * @param banner - Drawn across the top of the info card, above its padded
+ *   body, covering the card's top border. The slot sets the corners; the
+ *   banner sets its own height.
+ * @param cornerRadius - Corner radius of both sidebar cards, in place of the
+ *   SectionCard default.
  * @param children - Body of the info card.
  */
 export function CaseProfileSidebar({
   caseDetail,
   sections,
+  banner,
+  cornerRadius,
   children,
 }: {
   caseDetail: ParoleCase;
   sections: ReadonlyArray<ParoleSectionNavItem>;
+  banner?: ReactNode;
+  cornerRadius?: string;
   children: ReactNode;
 }) {
   const [sentinel, setSentinel] = useState<HTMLDivElement | null>(null);
@@ -124,8 +169,13 @@ export function CaseProfileSidebar({
 
   return (
     <>
-      <InfoCard $isNavStuck={isNavStuck}>
-        <PaddedSectionCardBody>
+      <InfoCard
+        $isNavStuck={isNavStuck}
+        $hasBanner={banner !== undefined}
+        $cornerRadius={cornerRadius}
+      >
+        {banner && <BannerSlot>{banner}</BannerSlot>}
+        <InfoCardBody>
           <SectionStack>
             {caseDetail.isParoleReturn && (
               <FullWidthAlertBanner
@@ -148,23 +198,21 @@ export function CaseProfileSidebar({
 
             {children}
           </SectionStack>
-        </PaddedSectionCardBody>
+        </InfoCardBody>
       </InfoCard>
 
       <StickyNavSentinel ref={setSentinel} />
-      <SectionNavCard $isNavStuck={isNavStuck}>
+      <SectionNavCard $isNavStuck={isNavStuck} $cornerRadius={cornerRadius}>
         <NavCardBody>
           <SectionNav>
-            {sections.map((section, index) => (
-              <Fragment key={section.id}>
-                {index > 0 && <Hr />}
-                <SectionNavButton
-                  type="button"
-                  onClick={() => scrollToSection(section.id)}
-                >
-                  {section.label}
-                </SectionNavButton>
-              </Fragment>
+            {sections.map((section) => (
+              <SectionNavButton
+                key={section.id}
+                type="button"
+                onClick={() => scrollToSection(section.id)}
+              >
+                {section.label}
+              </SectionNavButton>
             ))}
           </SectionNav>
         </NavCardBody>

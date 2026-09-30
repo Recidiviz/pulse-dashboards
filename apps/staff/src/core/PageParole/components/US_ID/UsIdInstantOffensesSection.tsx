@@ -15,43 +15,51 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { typography } from "@recidiviz/design-system";
+import { spacing, typography } from "@recidiviz/design-system";
+import { rem } from "polished";
 import styled from "styled-components";
 
 import { ParoleOffense } from "~datatypes";
+import { palette } from "~design-system";
 
-import { Hr, SubsectionTitle } from "../shared";
+import { UsIdFactLabel } from "./UsIdCaseProfileStyles";
+
+const InstantOffensesField = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(spacing.md)};
+`;
 
 const InstantOffenseList = styled.ul`
-  ${typography.Sans14}
+  ${typography.Sans16}
+  color: ${palette.pine1};
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(spacing.sm)};
   margin: 0;
   padding-left: 1.25rem;
 `;
 
-const InstantOffenseItem = styled.li`
-  & + & {
-    margin-top: 0.5rem;
-  }
-`;
-
+/**
+ * The sidebar's Instant Offenses field
+ *
+ * @param offenses - The resident's instant offenses.
+ */
 export function UsIdInstantOffensesSection({
   offenses,
 }: {
   offenses: Array<ParoleOffense>;
 }) {
   return (
-    <>
-      <Hr />
-      <div>
-        <SubsectionTitle>Instant Offenses</SubsectionTitle>
-        <InstantOffenseList>
-          {offenses.map((offense) => (
-            <InstantOffenseItem key={`${offense.docket}-${offense.conviction}`}>
-              {offense.conviction}
-            </InstantOffenseItem>
-          ))}
-        </InstantOffenseList>
-      </div>
-    </>
+    <InstantOffensesField>
+      <UsIdFactLabel>Instant Offenses</UsIdFactLabel>
+      <InstantOffenseList>
+        {offenses.map((offense) => (
+          <li key={`${offense.docket}-${offense.conviction}`}>
+            {offense.conviction}
+          </li>
+        ))}
+      </InstantOffenseList>
+    </InstantOffensesField>
   );
 }

@@ -50,7 +50,7 @@ describe("UsIdInstantOffensesSection", () => {
     expect(screen.getByText("Burglary")).toBeInTheDocument();
   });
 
-  it("renders the section heading even with a single offense", () => {
+  it("renders the Instant Offenses label even with a single offense", () => {
     render(<UsIdInstantOffensesSection offenses={[makeOffense({})]} />);
 
     expect(screen.getByText("Instant Offenses")).toBeInTheDocument();

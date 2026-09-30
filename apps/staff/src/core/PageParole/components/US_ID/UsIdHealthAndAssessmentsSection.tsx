@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { spacing, typography } from "@recidiviz/design-system";
-import { rem } from "polished";
+import { rem, rgba } from "polished";
 import styled from "styled-components";
 
 import {
@@ -27,20 +27,18 @@ import {
 import { palette } from "~design-system";
 
 import { statusStyles } from "../../../BadgePill/BadgePill";
+import { ChartWrapper } from "../RiskAssessmentSection.styles";
 import {
   getRiskLevelForAssessment,
   latestAssessmentsByTool,
 } from "../RiskAssessmentSection.utils";
-import {
-  FactRow,
-  FactRowStack,
-  FactValue,
-  formatDate,
-  MutedText,
-  SectionStack,
-  SubsectionTitle,
-} from "../shared";
+import { FactRow, FactValue, formatDate, MutedText } from "../shared";
 import { SubcategoryBreakdownChart } from "../SubcategoryBreakdownChart";
+import {
+  UsIdFactStack,
+  UsIdSubsection,
+  UsIdSubsectionTitle,
+} from "./UsIdCaseProfileStyles";
 
 const MENTAL_HEALTH_FACTOR = "Mental Health";
 const NOT_REPORTED = "None reported";
@@ -73,21 +71,22 @@ const AssessmentCard = styled.div`
   flex: 0 1 ${rem(320)};
   display: flex;
   flex-direction: column;
+  gap: ${rem(spacing.md)};
   background: ${palette.marble1};
   border: 1px solid ${palette.slate20};
   border-radius: ${rem(4)};
-  padding: ${rem(spacing.lg)};
+  padding: ${rem(spacing.lg)} ${rem(spacing.md)};
 `;
 
 const CardHeader = styled.div`
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   justify-content: space-between;
   gap: ${rem(spacing.sm)};
 `;
 
 const ToolName = styled.div`
-  ${typography.Sans18}
+  ${typography.Sans16}
   color: ${palette.pine1};
 `;
 
@@ -102,13 +101,21 @@ const RiskLevelName = styled.span`
 
 const AssessedOn = styled.div`
   ${typography.Sans14}
-  color: ${palette.slate70};
-  margin-bottom: ${rem(spacing.md)};
+  color: ${palette.slate80};
 `;
 
+const NORMAL_TEXT_COLOR = "#00413E";
+
 const ChartCaption = styled.div`
-  ${typography.Sans14}
-  color: ${palette.slate60};
+  ${typography.Sans12}
+  font-size: ${rem(11)};
+  color: ${rgba(NORMAL_TEXT_COLOR, 0.5)};
+`;
+
+const ChartBlock = styled.div`
+  ${ChartWrapper} {
+    margin: 0;
+  }
 `;
 
 /** Returns the resident's mental health level of care, or undefined. */
@@ -146,7 +153,7 @@ function AssessmentSummaryCard({
       </CardHeader>
       <AssessedOn>Assessed {formatDate(assessment.date)}</AssessedOn>
       {assessment.subcategories && (
-        <>
+        <ChartBlock>
           <ChartCaption>Subcategory breakdown</ChartCaption>
           <SubcategoryBreakdownChart
             assessment={assessment}
@@ -154,7 +161,7 @@ function AssessmentSummaryCard({
             title=""
             height={cardChartHeight(assessment.subcategories.length)}
           />
-        </>
+        </ChartBlock>
       )}
     </AssessmentCard>
   );
@@ -185,19 +192,19 @@ export function UsIdHealthAndAssessmentsSection({
     .filter((a): a is ParoleRiskAssessment => a !== undefined);
 
   return (
-    <div>
-      <SubsectionTitle>Health and Assessments</SubsectionTitle>
+    <UsIdSubsection>
+      <UsIdSubsectionTitle>Health and Assessments</UsIdSubsectionTitle>
 
-      <SectionStack>
-        <FactRow>
-          <FactRowStack>
-            <MutedText>Mental health level of care</MutedText>
-            <FactValue>
-              {mentalHealthLevelOfCare(riskAndNeedsFactors) ?? NOT_REPORTED}
-            </FactValue>
-          </FactRowStack>
-        </FactRow>
+      <FactRow>
+        <UsIdFactStack>
+          <MutedText>Mental health level of care</MutedText>
+          <FactValue>
+            {mentalHealthLevelOfCare(riskAndNeedsFactors) ?? NOT_REPORTED}
+          </FactValue>
+        </UsIdFactStack>
+      </FactRow>
 
+      {onFileAssessments.length > 0 && (
         <CardRow>
           {onFileAssessments.map((assessment) => (
             <AssessmentSummaryCard
@@ -206,7 +213,7 @@ export function UsIdHealthAndAssessmentsSection({
             />
           ))}
         </CardRow>
-      </SectionStack>
-    </div>
+      )}
+    </UsIdSubsection>
   );
 }

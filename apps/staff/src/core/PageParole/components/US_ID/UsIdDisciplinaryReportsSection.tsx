@@ -31,15 +31,20 @@ import { PaletteKey, WorkflowsBadgePill } from "../../../BadgePill/BadgePill";
 import { conductClassificationPalette } from "../ConductRecordCard";
 import {
   FactRow,
-  FactRowStack,
-  FactValue,
-  MutedText,
   partitionConductHistoryByRecency,
   SectionStack,
-  SubsectionCaption,
-  SubsectionTitle,
   toSafeDate,
 } from "../shared";
+import {
+  UsIdFactLabel,
+  UsIdFactStack,
+  UsIdFactValue,
+  usIdRecordCardStyles,
+  UsIdSubsection,
+  UsIdSubsectionCaption,
+  UsIdSubsectionHeading,
+  UsIdSubsectionTitle,
+} from "./UsIdCaseProfileStyles";
 import { UsIdDisciplinaryReportModal } from "./UsIdDisciplinaryReportModal";
 
 // Reports older than this are left out entirely; Idaho's design has no "see
@@ -47,16 +52,10 @@ import { UsIdDisciplinaryReportModal } from "./UsIdDisciplinaryReportModal";
 export const US_ID_DOR_VISIBLE_YEARS = 3;
 
 const ReportCard = styled.button.attrs({ type: "button" })`
+  ${usIdRecordCardStyles}
   cursor: pointer;
   text-align: left;
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: ${rem(spacing.md)};
-  background: ${palette.marble2};
-  border: 1px solid ${palette.slate20};
-  border-radius: ${rem(4)};
-  padding: ${rem(spacing.lg)};
   transition:
     background 0.1s ease,
     border-color 0.1s ease;
@@ -79,7 +78,7 @@ const ReportHeader = styled.div`
 const NARRATIVE_PREVIEW_LINES = 3;
 
 const Narrative = styled.div`
-  ${typography.Sans14}
+  ${typography.Sans16}
   color: ${palette.pine1};
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -91,7 +90,7 @@ const ReportFacts = styled(FactRow)`
   flex: 1;
 `;
 
-const ReportFact = styled(FactRowStack)`
+const ReportFact = styled(UsIdFactStack)`
   flex: 0 1 ${rem(220)};
 `;
 
@@ -127,13 +126,17 @@ export function UsIdDisciplinaryReportsSection({
   );
 
   return (
-    <div>
-      <SubsectionTitle>Disciplinary Offense Reports (DOR)</SubsectionTitle>
-      <SubsectionCaption>
-        {recentRecords.length === 0
-          ? `No DORs in the last ${US_ID_DOR_VISIBLE_YEARS} years`
-          : `Showing all DORs from the last ${US_ID_DOR_VISIBLE_YEARS} years`}
-      </SubsectionCaption>
+    <UsIdSubsection>
+      <UsIdSubsectionHeading>
+        <UsIdSubsectionTitle>
+          Disciplinary Offense Reports (DOR)
+        </UsIdSubsectionTitle>
+        <UsIdSubsectionCaption>
+          {recentRecords.length === 0
+            ? `No DORs in the last ${US_ID_DOR_VISIBLE_YEARS} years`
+            : `Showing all DORs from the last ${US_ID_DOR_VISIBLE_YEARS} years`}
+        </UsIdSubsectionCaption>
+      </UsIdSubsectionHeading>
       {recentRecords.length > 0 && (
         <SectionStack>
           {recentRecords.map((record, idx) => (
@@ -145,20 +148,20 @@ export function UsIdDisciplinaryReportsSection({
               <ReportHeader>
                 <ReportFacts>
                   <ReportFact>
-                    <MutedText>Date</MutedText>
-                    <FactValue>
+                    <UsIdFactLabel>Date</UsIdFactLabel>
+                    <UsIdFactValue>
                       {isParoleUnknownDate(record.date)
                         ? PAROLE_UNKNOWN_TEXT
                         : formatMonthAndYear(record.date)}
-                    </FactValue>
+                    </UsIdFactValue>
                   </ReportFact>
                   <ReportFact>
-                    <MutedText>Offense</MutedText>
-                    <FactValue>{record.violation}</FactValue>
+                    <UsIdFactLabel>Offense</UsIdFactLabel>
+                    <UsIdFactValue>{record.violation}</UsIdFactValue>
                   </ReportFact>
                   <ReportFact>
-                    <MutedText>Institution</MutedText>
-                    <FactValue>{record.facility}</FactValue>
+                    <UsIdFactLabel>Institution</UsIdFactLabel>
+                    <UsIdFactValue>{record.facility}</UsIdFactValue>
                   </ReportFact>
                 </ReportFacts>
                 <WorkflowsBadgePill
@@ -180,6 +183,6 @@ export function UsIdDisciplinaryReportsSection({
         conductClassificationColors={conductClassificationColors}
         onRequestClose={() => setSelectedReport(undefined)}
       />
-    </div>
+    </UsIdSubsection>
   );
 }
