@@ -356,7 +356,7 @@ describe("DrawerNavigator", () => {
       render(<DrawerNavigator />);
       expect(
         screen.getByText(
-          "The Recidiviz mobile app is not available in your state. Please use the Meetings web app instead.",
+          "Recidiviz for Android / iOS isn't available yet in your state. For more details, contact your account manager.",
         ),
       ).toBeTruthy();
     });
@@ -390,7 +390,7 @@ describe("DrawerNavigator", () => {
   });
 
   describe("route access control", () => {
-    it("shows NoAccessScreen when user has no route access", () => {
+    it("shows the mobile message on mobile when user has no route access", () => {
       mockUseUserContext.mockReturnValue({
         hasSupervisionAccess: false,
         hasFacilitiesAccess: false,
@@ -414,7 +414,11 @@ describe("DrawerNavigator", () => {
       });
 
       render(<DrawerNavigator />);
-      expect(screen.getByText("Access Denied")).toBeTruthy();
+      expect(
+        screen.getByText(
+          "Recidiviz for Android / iOS isn't available yet in your state. For more details, contact your account manager.",
+        ),
+      ).toBeTruthy();
     });
   });
 });

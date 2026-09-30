@@ -71,29 +71,25 @@ export default function DrawerNavigator() {
     return <Loading message="Loading..." />;
   }
 
-  // If user's state code is not supported by the Meetings app, show NoAccessScreen
-  // Only check for state users (non-Recidiviz) since Recidiviz users can select any state
+  // On native, every block shows the mobile copy; web keeps the generic message
+  const noAccessMessage = isMobile
+    ? "Recidiviz for Android / iOS isn't available yet in your state. For more details, contact your account manager."
+    : undefined;
+
+  // Recidiviz users can select any state, so only check state users
   if (stateCode && stateCode !== "recidiviz") {
-    const normalizedStateCode = stateCode.toUpperCase();
-    const isSupported = normalizedStateCode in agencyConfigs;
-    if (!isSupported) {
-      return <NoAccessScreen />;
-    }
+    const agencyConfig = agencyConfigs[stateCode.toUpperCase()];
     // Some states allow web access only; Recidiviz users are exempt
     if (
-      isMobile &&
-      !isRecidivizUser &&
-      agencyConfigs[normalizedStateCode].mobileAppEnabled === false
+      !agencyConfig ||
+      (isMobile && !isRecidivizUser && agencyConfig.mobileAppEnabled === false)
     ) {
-      return (
-        <NoAccessScreen errorMessage="The Recidiviz mobile app is not available in your state. Please use the Meetings web app instead." />
-      );
+      return <NoAccessScreen errorMessage={noAccessMessage} />;
     }
   }
 
-  // If user has no access to any route, show NoAccessScreen
   if (!hasSupervisionAccess && !hasFacilitiesAccess) {
-    return <NoAccessScreen />;
+    return <NoAccessScreen errorMessage={noAccessMessage} />;
   }
 
   const getInitialRouteName = () => {
