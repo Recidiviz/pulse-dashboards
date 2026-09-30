@@ -357,6 +357,12 @@ async function main(): Promise<void> {
     }
   }
 
+  // Order is load-bearing, not just cosmetic: `opportunities` declares
+  // reference fields to `clients` and `residents`, and Typesense rejects a
+  // collection whose referenced collection does not exist yet. `schemas` lists
+  // the person collections first and the filter above preserves that order, so
+  // a full run is safe — but `--collection=opportunities` against a cluster
+  // with no person collections will fail. Create the parents first.
   /* eslint-disable no-await-in-loop -- intentional: sequential output is easier to read */
   for (const schema of targetSchemas) {
     try {

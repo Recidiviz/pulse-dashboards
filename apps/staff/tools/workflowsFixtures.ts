@@ -234,7 +234,11 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
 const FIXTURES_TO_LOAD = [
   ...Object.entries(GENERAL_FIXTURES_TO_LOAD).map(
     ([k, v]) =>
-      [{ key: k }, v] as [FirestoreCollectionKey, FirestoreFixture<any>],
+      [{ key: k }, v, undefined] as [
+        FirestoreCollectionKey,
+        FirestoreFixture<any>,
+        string | undefined,
+      ],
   ),
   ...Object.entries(OPPORTUNITY_FIXTURES_TO_LOAD).map(
     ([k, v]) =>
@@ -245,7 +249,13 @@ const FIXTURES_TO_LOAD = [
           ],
         },
         v,
-      ] as [FirestoreCollectionKey, FirestoreFixture<any>],
+        // In production the BQ ETL stamps `opportunity_type` onto every
+        // opportunity record, which is what lets many source collections feed
+        // one Typesense collection and what makes a document id unique across
+        // types. The fixtures predate that, so stamp it here — without it a
+        // person's two opportunities compose the SAME id and silently collide.
+        k.replace(/Referrals$/, ""),
+      ] as [FirestoreCollectionKey, FirestoreFixture<any>, string],
   ),
 ];
 
@@ -262,7 +272,7 @@ function generateCollectionName(c: FirestoreCollectionKey) {
 }
 
 export async function loadFixtures(logger: Logger): Promise<void> {
-  for await (const [coll, fixtureData] of FIXTURES_TO_LOAD) {
+  for await (const [coll, fixtureData, opportunityType] of FIXTURES_TO_LOAD) {
     const collName = generateCollectionName(coll);
     logger(`wiping existing ${collName} data ...`);
     await deleteCollection(db, collName);
@@ -275,7 +285,10 @@ export async function loadFixtures(logger: Logger): Promise<void> {
       const docId = fixtureData.docIdFunc
         ? fixtureData.docIdFunc(record)
         : `${record.stateCode.toLowerCase()}_${fixtureData.idFunc(record)}`;
-      bulkWriter.create(db.collection(collName).doc(docId), record);
+      bulkWriter.create(
+        db.collection(collName).doc(docId),
+        opportunityType ? { ...record, opportunityType } : record,
+      );
     });
 
     bulkWriter

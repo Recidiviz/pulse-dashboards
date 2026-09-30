@@ -29,6 +29,7 @@ export const usNeGoodTimeRestorationFixtures = {
     externalId: "RES001",
     isEligible: true,
     isAlmostEligible: false,
+    eligibleDate: relativeFixtureDate({ months: -18 }),
     eligibleCriteria: {
       usNeHasLostRestorableGoodTime: {
         goodTimeLostDaysRestorable: 45,
@@ -60,6 +61,7 @@ export const usNeGoodTimeRestorationFixtures = {
     externalId: "RES002",
     isEligible: true,
     isAlmostEligible: false,
+    eligibleDate: relativeFixtureDate({ months: -10 }),
     eligibleCriteria: {
       usNeHasLostRestorableGoodTime: {
         goodTimeLostDaysRestorable: 25,
@@ -91,6 +93,7 @@ export const usNeGoodTimeRestorationFixtures = {
     externalId: "RES003",
     isEligible: true,
     isAlmostEligible: false,
+    eligibleDate: relativeFixtureDate({ years: 5, months: 6 }),
     eligibleCriteria: {
       usNeHasLostRestorableGoodTime: {
         goodTimeLostDaysRestorable: 245,
@@ -122,6 +125,7 @@ export const usNeGoodTimeRestorationFixtures = {
     externalId: "RES004",
     isEligible: true,
     isAlmostEligible: false,
+    eligibleDate: relativeFixtureDate({ months: -6 }),
     eligibleCriteria: {
       usNeHasLostRestorableGoodTime: {
         goodTimeLostDaysRestorable: 120,
@@ -153,6 +157,7 @@ export const usNeGoodTimeRestorationFixtures = {
     externalId: "RES005",
     isEligible: false,
     isAlmostEligible: true,
+    eligibleDate: relativeFixtureDate({ months: -3 }),
     eligibleCriteria: {
       usNeHasLostRestorableGoodTime: {
         goodTimeLostDaysRestorable: 85,
@@ -193,6 +198,7 @@ export const usNeGoodTimeRestorationFixtures = {
       externalId: "RES006",
       isEligible: false,
       isAlmostEligible: true,
+      eligibleDate: relativeFixtureDate({ months: -2 }),
       eligibleCriteria: {
         usNeHasLostRestorableGoodTime: {
           goodTimeLostDaysRestorable: 160,

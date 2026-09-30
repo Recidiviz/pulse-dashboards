@@ -25,7 +25,7 @@ export const usAzReleaseToDTPReferrals = fixtureWithIdKey<
   // Eligible - Fast Tracker
   {
     stateCode: "US_AZ",
-    externalId: "AZ_RES014",
+    externalId: "RES014",
     eligibleCriteria: {
       usAzNoSexualArsonOrDangerousCrimesAgainstChildren: null,
       custodyLevelIsMinimumOrMedium: null,
@@ -63,7 +63,7 @@ export const usAzReleaseToDTPReferrals = fixtureWithIdKey<
   // Eligible - Approved by Time Comp
   {
     stateCode: "US_AZ",
-    externalId: "AZ_RES015",
+    externalId: "RES015",
     eligibleCriteria: {
       usAzNoSexualArsonOrDangerousCrimesAgainstChildren: null,
       custodyLevelIsMinimumOrMedium: null,
@@ -101,7 +101,7 @@ export const usAzReleaseToDTPReferrals = fixtureWithIdKey<
   // Almost Eligible - Between 7-180 days
   {
     stateCode: "US_AZ",
-    externalId: "AZ_RES016",
+    externalId: "RES016",
     eligibleCriteria: {
       usAzNoSexualArsonOrDangerousCrimesAgainstChildren: null,
       custodyLevelIsMinimumOrMedium: null,
@@ -141,7 +141,7 @@ export const usAzReleaseToDTPReferrals = fixtureWithIdKey<
   // Almost Eligible - Between 7-180 days
   {
     stateCode: "US_AZ",
-    externalId: "AZ_RES017",
+    externalId: "RES017",
     eligibleCriteria: {
       usAzNoSexualArsonOrDangerousCrimesAgainstChildren: null,
       custodyLevelIsMinimumOrMedium: null,
@@ -181,7 +181,7 @@ export const usAzReleaseToDTPReferrals = fixtureWithIdKey<
   // Almost Eligible - No missing criteria, 6+ months away
   {
     stateCode: "US_AZ",
-    externalId: "AZ_RES018",
+    externalId: "RES018",
     eligibleCriteria: {
       usAzNoSexualArsonOrDangerousCrimesAgainstChildren: null,
       custodyLevelIsMinimumOrMedium: null,
@@ -220,7 +220,7 @@ export const usAzReleaseToDTPReferrals = fixtureWithIdKey<
   // Ineligible - Both ACIS and Recidiviz date criteria
   {
     stateCode: "US_AZ",
-    externalId: "AZ_RES024",
+    externalId: "RES024",
     eligibleCriteria: {
       usAzNoSexualArsonOrDangerousCrimesAgainstChildren: null,
       custodyLevelIsMinimumOrMedium: null,
@@ -261,7 +261,7 @@ export const usAzReleaseToDTPReferrals = fixtureWithIdKey<
   // Ineligible - Only ACIS date criteria
   {
     stateCode: "US_AZ",
-    externalId: "AZ_RES025",
+    externalId: "RES025",
     eligibleCriteria: {
       usAzNoSexualArsonOrDangerousCrimesAgainstChildren: null,
       custodyLevelIsMinimumOrMedium: null,
@@ -302,7 +302,7 @@ export const usAzReleaseToDTPReferrals = fixtureWithIdKey<
   // Ineligible - Only Recidiviz date criteria
   {
     stateCode: "US_AZ",
-    externalId: "AZ_RES026",
+    externalId: "RES026",
     eligibleCriteria: {
       usAzNoSexualArsonOrDangerousCrimesAgainstChildren: null,
       custodyLevelIsMinimumOrMedium: null,

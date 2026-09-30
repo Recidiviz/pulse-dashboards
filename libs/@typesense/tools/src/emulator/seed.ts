@@ -25,7 +25,7 @@ import { createLocalTypesenseClient, schemas } from "~@typesense/client";
 import {
   createLocalFirestoreClient,
   dropAndCreateCollection,
-  importCollection,
+  importForSchema,
   waitForFirestoreEmulator,
   waitForTypesense,
 } from "./helpers";
@@ -43,7 +43,12 @@ async function main() {
   /* eslint-disable no-await-in-loop -- collections are seeded sequentially to keep log output ordered */
   for (const schema of schemas) {
     await dropAndCreateCollection(typesense, schema);
-    const count = await importCollection(typesense, db, schema.name);
+    // Two collections are not 1:1 with a Firestore collection, so the
+    // name-matching import finds nothing for them. See the derived-collections
+    // block in helpers.ts. `opportunities` must be seeded AFTER the person
+    // collections, which the schema order guarantees, because it merges their
+    // scope — and `opportunityUpdates` references `opportunities`.
+    const count = await importForSchema(typesense, db, schema.name);
     console.info(
       count === 0
         ? `[${schema.name}] no docs in Firestore emulator, skipping import`

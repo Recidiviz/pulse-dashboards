@@ -29,12 +29,19 @@
 import type { Firestore } from "@google-cloud/firestore";
 import type { Client as TypesenseClient } from "typesense";
 
-import { createLocalTypesenseClient, schemas } from "~@typesense/client";
+import {
+  createLocalTypesenseClient,
+  type FirestoreDoc,
+  mergeDocIdFromPath,
+  schemas,
+} from "~@typesense/client";
 
 import {
   createLocalFirestoreClient,
+  DERIVED_IMPORTERS,
+  DERIVED_WATCH_SOURCES,
   dropAndCreateCollection,
-  importCollection,
+  importForSchema,
   waitForFirestoreEmulator,
   waitForTypesense,
 } from "./helpers";
@@ -93,6 +100,67 @@ function subscribeToCollection(
   );
 }
 
+/**
+ * Mirrors live edits to a DERIVED collection whose rows are per-document.
+ *
+ * Officer actions land in `clientOpportunityUpdates` under the person, not in a
+ * collection named for the Typesense one. Without this, acting on an
+ * opportunity locally leaves Typesense untouched until the next reseed.
+ *
+ * A collection GROUP query, and the Typesense id comes from the document PATH,
+ * so `change.doc.id` is not usable here.
+ */
+function subscribeToDerivedCollection(
+  typesense: TypesenseClient,
+  db: Firestore,
+  collectionName: string,
+  { collectionGroup, project }: (typeof DERIVED_WATCH_SOURCES)[string],
+): () => void {
+  const subscribedAtMs = Date.now();
+
+  return db.collectionGroup(collectionGroup).onSnapshot(
+    (snapshot) => {
+      for (const change of snapshot.docChanges()) {
+        const id = mergeDocIdFromPath(change.doc.ref.path);
+
+        if (change.type === "removed") {
+          typesense
+            .collections(collectionName)
+            .documents(id)
+            .delete()
+            .catch((err: Error) =>
+              console.error(
+                `[${collectionName}] delete ${id} failed:`,
+                err.message,
+              ),
+            );
+          continue;
+        }
+
+        if (change.doc.updateTime.toMillis() <= subscribedAtMs) continue;
+
+        typesense
+          .collections(collectionName)
+          .documents()
+          .upsert(
+            project(change.doc.data() as FirestoreDoc, change.doc.ref.path),
+          )
+          .catch((err: Error) =>
+            console.error(
+              `[${collectionName}] upsert ${id} failed:`,
+              err.message,
+            ),
+          );
+      }
+    },
+    (err: Error) =>
+      console.error(
+        `[${collectionName}] ${collectionGroup} subscription error:`,
+        err.message,
+      ),
+  );
+}
+
 async function main() {
   const db = createLocalFirestoreClient();
   const typesense = createLocalTypesenseClient();
@@ -106,13 +174,22 @@ async function main() {
   /* eslint-disable no-await-in-loop -- collections are seeded sequentially */
   for (const schema of schemas) {
     await dropAndCreateCollection(typesense, schema);
-    await importCollection(typesense, db, schema.name);
+    await importForSchema(typesense, db, schema.name);
   }
   /* eslint-enable no-await-in-loop */
 
-  const unsubscribers = schemas.map((s) =>
-    subscribeToCollection(typesense, db, s.name),
-  );
+  // A derived collection has no Firestore collection of its own to subscribe
+  // to, so a per-document one is watched through its SOURCE. `opportunities` is
+  // merged from many sources, so editing one of its fixtures still needs
+  // `nx offline-seed '@typesense/tools'`.
+  const unsubscribers = [
+    ...schemas
+      .filter((s) => !DERIVED_IMPORTERS[s.name])
+      .map((s) => subscribeToCollection(typesense, db, s.name)),
+    ...Object.entries(DERIVED_WATCH_SOURCES).map(([name, source]) =>
+      subscribeToDerivedCollection(typesense, db, name, source),
+    ),
+  ];
 
   console.info("Watching Firestore emulator for changes. Ctrl+C to stop.");
 
