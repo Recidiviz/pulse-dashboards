@@ -17,34 +17,38 @@
 
 // Realtime Firestore→Typesense sync for the two user-written collections.
 //
-// Updates are merged ONTO the record they update rather than indexed as their
-// own collection — Typesense has no joins, so a parallel updates collection
-// would force every Workflows query to fan out and merge client-side. That
-// makes this a PARTIAL-update writer:
+// The two triggers write in DIFFERENT MODES. The difference is who owns the
+// target document:
 //
-//   clientUpdatesV2/{recordId}
-//     → patch `preferredName` on `clients`/`residents` doc `{recordId}`
-//   clientUpdatesV2/{recordId}/clientOpportunityUpdates/{docId}
-//     → patch officer-action fields on `opportunities` doc `{recordId}_{docId}`
+//   clientUpdatesV2/{recordId}                              → PATCH
+//     `preferredName` onto a `clients`/`residents` document backfill-fn owns.
+//     Never upsert here: upsert replaces the whole document and would wipe the
+//     ETL-sourced fields. `update` 404s when the target does not exist, which
+//     means the batch side has not indexed it yet.
 //
-// Never upsert here: `upsert` replaces the whole document and would wipe the
-// ETL-sourced fields that backfill-fn owns. `update` is a PATCH and 404s when
-// the target doesn't exist, which is the behavior we want — an update can only
-// originate from a user acting on a rendered record, so a 404 means the batch
-// side hasn't indexed it yet, and the next backfill reconciles it.
+//   clientUpdatesV2/{recordId}/{opportunityUpdates}/{docId}  → UPSERT
+//     the whole `opportunityUpdates` document. backfill-fn writes it too, from
+//     the same field list and the same derivation, so a full replace from
+//     either is safe. A deleted Firestore document deletes its mirror.
+//
+// This function does NO READ: everything it stores derives from the write
+// payload, via the shared function backfill-fn also imports. backfill-fn stays
+// authoritative and reconciles on every run, so a miss here is self-healing.
 //
 // Each trigger owns a disjoint field set. A write that changed none of its
 // owned fields is dropped before any Typesense call — see ownedFieldsChanged.
-//
-// backfill-fn is the authoritative writer: it reconciles these same fields from
-// Firestore on every run, so anything this function misses is self-healing.
 //
 // Everything here is pure and takes the Typesense client as an argument; the
 // firebase-functions trigger wiring lives in index.ts.
 
 import type { Client as TypesenseClient } from "typesense";
 
-import { type FirestoreDoc, mergeDocIdFromPath } from "~@typesense/client";
+import {
+  deriveUpdateFields,
+  type FirestoreDoc,
+  mergeDocIdFromPath,
+  OPPORTUNITY_UPDATE_FIELDS,
+} from "~@typesense/client";
 
 export const CLIENT_UPDATES_COLLECTION = "clientUpdatesV2";
 export const OPPORTUNITY_UPDATES_SUBCOLLECTION = "clientOpportunityUpdates";
@@ -58,20 +62,21 @@ export const OPPORTUNITY_UPDATE_PATTERN = `${CLIENT_UPDATES_COLLECTION}/{recordI
 // which. Trying each until one accepts self-routes — `update` never creates, so
 // the collection the record isn't in just 404s.
 const PERSON_COLLECTIONS = ["clients", "residents"];
-const OPPORTUNITIES_COLLECTION = "opportunities";
+const OPPORTUNITY_UPDATES_COLLECTION = "opportunityUpdates";
 
 const PERSON_UPDATE_FIELDS = ["preferredName"];
 
-const OPPORTUNITY_UPDATE_FIELDS = [
-  "denial",
-  "manualSnooze",
-  "autoSnooze",
-  "submitted",
-  "actionHistory",
-];
+// `stateCode` is owned too: it lets a state-scoped backfill filter this group.
+const OWNED_OPPORTUNITY_FIELDS = [...OPPORTUNITY_UPDATE_FIELDS, "stateCode"];
 
 export type SyncTarget = {
-  // Every collection the patch should be attempted against.
+  /**
+   * `patch` writes only the owned fields onto a document another writer owns.
+   * `own` writes the whole document, which backfill-fn builds identically —
+   * same field list, same derivation — so replacing it loses nothing.
+   */
+  mode: "patch" | "own";
+  // Every collection to attempt, in order. Only `patch` uses more than one.
   collections: string[];
   id: string;
   fields: string[];
@@ -90,6 +95,7 @@ export function resolveTarget(path: string): SyncTarget | null {
 
   if (segments.length === 2) {
     return {
+      mode: "patch",
       collections: PERSON_COLLECTIONS,
       id: mergeDocIdFromPath(path),
       fields: PERSON_UPDATE_FIELDS,
@@ -101,9 +107,10 @@ export function resolveTarget(path: string): SyncTarget | null {
     segments[2] === OPPORTUNITY_UPDATES_SUBCOLLECTION
   ) {
     return {
-      collections: [OPPORTUNITIES_COLLECTION],
+      mode: "own",
+      collections: [OPPORTUNITY_UPDATES_COLLECTION],
       id: mergeDocIdFromPath(path),
-      fields: OPPORTUNITY_UPDATE_FIELDS,
+      fields: OWNED_OPPORTUNITY_FIELDS,
     };
   }
 
@@ -173,6 +180,31 @@ export function buildPatch(
   return patch;
 }
 
+// Builds the whole document for an `own`-mode target.
+//
+// Absent fields are OMITTED rather than nulled — the opposite of buildPatch,
+// and correct for the opposite reason: an upsert replaces the document, so
+// leaving a field out already clears it. For `lastViewedTimestamp` that is
+// load-bearing: the stale-alert partition queries for documents LACKING it.
+export function buildDocument(
+  fields: string[],
+  data: FirestoreDoc | null,
+  id: string,
+): FirestoreDoc {
+  const doc: FirestoreDoc = {};
+  for (const field of fields) {
+    const value = data?.[field];
+    if (value !== undefined && value !== null) doc[field] = value;
+  }
+  return {
+    ...doc,
+    // Derived LAST so it wins over the raw projection: a derived value is
+    // normalized, and the raw one is whatever the writer happened to store.
+    ...deriveUpdateFields(data ?? {}, id),
+    id,
+  };
+}
+
 // Splits a patch into the fields carrying a value and the fields being cleared.
 // Only names are returned — the values are officer-entered denial reasons and
 // reviewer emails, which don't belong in logs.
@@ -189,8 +221,14 @@ export function summarizePatch(patch: FirestoreDoc): {
 }
 
 export type SyncOutcome = {
-  status: "patched" | "absent" | "skipped" | "unchanged";
-  /** Collection the patch actually landed in; undefined unless status is "patched". */
+  status:
+    | "patched"
+    | "upserted"
+    | "deleted"
+    | "absent"
+    | "skipped"
+    | "unchanged";
+  /** Collection the write landed in; undefined unless it landed. */
   collection?: string;
   /** Composed Typesense doc id; undefined when the path wasn't recognized. */
   id?: string;
@@ -200,9 +238,68 @@ export type SyncOutcome = {
   cleared: string[];
 };
 
+// The `own` mode: the whole document, because backfill-fn reconstructs the same
+// one from the same source. They share `OPPORTUNITY_UPDATE_FIELDS` and
+// `deriveUpdateFields`, so the two cannot drift apart into a partial replace.
+//
+// A deleted Firestore document DELETES its mirror rather than clearing fields —
+// an update document IS the officer action, so with the action gone there is
+// nothing left to describe.
+async function syncOwnedDocument(
+  client: TypesenseClient,
+  target: SyncTarget,
+  data: FirestoreDoc | null,
+): Promise<SyncOutcome> {
+  const [collection] = target.collections;
+
+  if (data === null) {
+    try {
+      await client.collections(collection).documents(target.id).delete();
+      console.info(`[sync] DELETE ${collection}/${target.id}`);
+      return {
+        status: "deleted",
+        collection,
+        id: target.id,
+        set: [],
+        cleared: [],
+      };
+    } catch (err) {
+      // Already gone, which a re-delivered trigger produces. The backfill's
+      // prune would remove it anyway, so there is nothing to retry.
+      if ((err as { httpStatus?: number }).httpStatus !== 404) throw err;
+      console.debug(
+        `[sync]   miss  ${collection}/${target.id} (404 on delete)`,
+      );
+      return {
+        status: "absent",
+        collection,
+        id: target.id,
+        set: [],
+        cleared: [],
+      };
+    }
+  }
+
+  const doc = buildDocument(target.fields, data, target.id);
+  // Reported as a patch reports an explicit null, so the log shape is stable.
+  const set = target.fields.filter((field) => field in doc);
+  const cleared = target.fields.filter((field) => !(field in doc));
+
+  // Upsert, not update: nothing else writes this document, and an upsert
+  // creates — which makes an officer's action visible before the batch side
+  // has ever seen it.
+  await client.collections(collection).documents().upsert(doc);
+
+  console.info(
+    `[sync] UPSERT ${collection}/${target.id} status=${String(doc["updateStatus"])} action=${String(doc["hasOfficerAction"])} set=[${set.join(",")}]`,
+  );
+  return { status: "upserted", collection, id: target.id, set, cleared };
+}
+
 // Applies one Firestore document change to Typesense. `data` is null when the
-// document was deleted; `previousData` is null when it was created. The patch
-// is decided by what changed — see ownedFieldsChanged.
+// document was deleted; `previousData` is null when it was created. The write
+// is decided by what changed — see ownedFieldsChanged — and how it is written
+// by the target's mode.
 export async function syncDocument(
   client: TypesenseClient,
   path: string,
@@ -218,6 +315,10 @@ export async function syncDocument(
   if (!ownedFieldsChanged(target.fields, previousData, data)) {
     console.debug(`[sync] NOOP  ${path} — no owned field changed`);
     return { status: "unchanged", id: target.id, set: [], cleared: [] };
+  }
+
+  if (target.mode === "own") {
+    return syncOwnedDocument(client, target, data);
   }
 
   const patch = buildPatch(target.fields, data);

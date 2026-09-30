@@ -69,7 +69,8 @@ type Snapshot = {
 //
 // Logging is deliberately verbose: this is the only way to confirm a deployed
 // sync actually fired, and which document it touched. One FIRE line per
-// invocation, then one PATCH / ABSENT / SKIP / NOOP line from syncDocument.
+// invocation, then one PATCH / UPSERT / DELETE / ABSENT / SKIP / NOOP line from
+// syncDocument — the verb says which write mode the path took.
 async function handleWrite(
   before: Snapshot | undefined,
   after: Snapshot | undefined,

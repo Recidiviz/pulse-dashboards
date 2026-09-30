@@ -25,28 +25,44 @@ import {
   syncDocument,
 } from "../src/sync";
 
-// Records PATCHes per collection. `missing` marks collections that should 404,
-// standing in for a record that lives in the other person collection or hasn't
-// been indexed by the batch side yet.
+// Records every write, by kind, because the two triggers now write differently:
+// the person path PATCHes a document backfill-fn owns, the opportunity path
+// UPSERTs one nothing else writes.
+//
+// `missing` marks collections that should 404, standing in for a record that
+// lives in the other person collection, or one the batch side has not indexed.
 function makeTypesense({
   missing = [] as string[],
   failWith,
 }: { missing?: string[]; failWith?: unknown } = {}) {
   const patches: Array<{ collection: string; id: string; patch: unknown }> = [];
+  const upserts: Array<{ collection: string; doc: Record<string, unknown> }> =
+    [];
+  const deletes: Array<{ collection: string; id: string }> = [];
 
   const client = {
     collections: (collection: string) => ({
-      documents: (id: string) => ({
+      documents: (id?: string) => ({
         update: async (patch: unknown) => {
           if (failWith) throw failWith;
           if (missing.includes(collection)) throw { httpStatus: 404 };
-          patches.push({ collection, id, patch });
+          patches.push({ collection, id: id as string, patch });
+        },
+        // Upsert CREATES, which is why the opportunity path needs no 404 branch.
+        upsert: async (doc: Record<string, unknown>) => {
+          if (failWith) throw failWith;
+          upserts.push({ collection, doc });
+        },
+        delete: async () => {
+          if (failWith) throw failWith;
+          if (missing.includes(collection)) throw { httpStatus: 404 };
+          deletes.push({ collection, id: id as string });
         },
       }),
     }),
   } as unknown as TypesenseClient;
 
-  return { client, patches };
+  return { client, patches, upserts, deletes };
 }
 
 describe("resolveTarget", () => {
@@ -54,6 +70,7 @@ describe("resolveTarget", () => {
     // The path can't say whether the record is a client or a resident, so both
     // are attempted and the wrong one 404s harmlessly.
     expect(resolveTarget("clientUpdatesV2/us_tn_123")).toEqual({
+      mode: "patch",
       collections: ["clients", "residents"],
       id: "us_tn_123",
       fields: ["preferredName"],
@@ -66,7 +83,9 @@ describe("resolveTarget", () => {
         "clientUpdatesV2/us_tn_123/clientOpportunityUpdates/usTnExpiration",
       ),
     ).toMatchObject({
-      collections: ["opportunities"],
+      // Its own collection, and this function is its only writer.
+      mode: "own",
+      collections: ["opportunityUpdates"],
       id: "us_tn_123_usTnExpiration",
     });
   });
@@ -183,22 +202,33 @@ describe("ownedFieldsChanged", () => {
 });
 
 describe("syncDocument", () => {
-  it("reports which collection the patch landed in and what changed", async () => {
+  it("reports which collection the write landed in and what changed", async () => {
     // This is what makes a deployed sync verifiable from the logs.
     const ts = makeTypesense();
     const result = await syncDocument(
       ts.client,
       "clientUpdatesV2/us_tn_123/clientOpportunityUpdates/usTnExpiration",
-      { denial: { reasons: ["X"] } },
+      { denial: { reasons: ["X"] }, stateCode: "US_TN" },
       null,
     );
 
     expect(result).toEqual({
-      status: "patched",
-      collection: "opportunities",
+      status: "upserted",
+      collection: "opportunityUpdates",
       id: "us_tn_123_usTnExpiration",
-      set: ["denial"],
-      cleared: ["manualSnooze", "autoSnooze", "submitted", "actionHistory"],
+      set: ["denial", "stateCode"],
+      // Under upsert an omitted field is a cleared field, so these are
+      // reported the same way a patch would report an explicit null.
+      cleared: [
+        "manualSnooze",
+        "autoSnooze",
+        "omsSnooze",
+        "submitted",
+        "actionHistory",
+        "lastViewed",
+        "completed",
+        "adjudicationStatus",
+      ],
     });
   });
 
@@ -228,32 +258,58 @@ describe("syncDocument", () => {
     expect(ts.patches[0].collection).toBe("clients");
   });
 
-  it("patches only the fields it owns onto the opportunity", async () => {
+  it("upserts a whole document, omitting rather than nulling absent fields", async () => {
     const ts = makeTypesense();
     const result = await syncDocument(
       ts.client,
       "clientUpdatesV2/us_tn_123/clientOpportunityUpdates/usTnExpiration",
-      { denial: { reasons: ["X"] }, actionHistory: [{ type: "SUBMITTED" }] },
+      { denial: { reasons: ["X"] }, stateCode: "US_TN" },
       null,
     );
 
-    expect(result.status).toBe("patched");
-    expect(ts.patches).toEqual([
-      {
-        collection: "opportunities",
-        id: "us_tn_123_usTnExpiration",
-        patch: {
-          denial: { reasons: ["X"] },
-          manualSnooze: null,
-          autoSnooze: null,
-          submitted: null,
-          actionHistory: [{ type: "SUBMITTED" }],
-        },
-      },
-    ]);
+    expect(result.status).toBe("upserted");
+    expect(ts.patches).toHaveLength(0);
+    expect(ts.upserts).toHaveLength(1);
+
+    const { collection, doc } = ts.upserts[0];
+    expect(collection).toBe("opportunityUpdates");
+    expect(doc).toEqual({
+      id: "us_tn_123_usTnExpiration",
+      // Equal to the id, so the reference resolves without a lookup.
+      opportunityDocId: "us_tn_123_usTnExpiration",
+      denial: { reasons: ["X"] },
+      stateCode: "US_TN",
+      updateStatus: "DENIED",
+      hasOfficerAction: true,
+    });
+    // Absent fields are OMITTED, not nulled — an upsert replaces the document,
+    // so leaving them out already clears them.
+    expect(doc).not.toHaveProperty("submitted");
+    expect(doc).not.toHaveProperty("lastViewedTimestamp");
   });
 
-  it("never upserts, so ETL-owned fields survive", async () => {
+  it("derives status without reading anything", async () => {
+    // The property that keeps this function cheap: everything stored comes from
+    // the write payload, so an officer action costs no document read.
+    const ts = makeTypesense();
+    await syncDocument(
+      ts.client,
+      "clientUpdatesV2/us_tn_123/clientOpportunityUpdates/usTnExpiration",
+      {
+        stateCode: "US_TN",
+        lastViewed: { date: { seconds: 1_700_000_000 }, by: "o@e.gov" },
+      },
+      null,
+    );
+
+    const { doc } = ts.upserts[0];
+    // Viewing is not acting — this is what keeps the homepage's fetch small.
+    expect(doc["hasOfficerAction"]).toBe(false);
+    expect(doc["updateStatus"]).toBe("NONE");
+    expect(doc["lastViewedTimestamp"]).toBe(1_700_000_000);
+  });
+
+  it("never upserts on the PERSON path, so ETL-owned fields survive", async () => {
     const ts = makeTypesense();
     await syncDocument(
       ts.client,
@@ -296,7 +352,9 @@ describe("syncDocument", () => {
     expect(ts.patches).toHaveLength(0);
   });
 
-  it("clears the fields rather than deleting the record on a Firestore delete", async () => {
+  it("DELETES the mirror when the Firestore update is deleted", async () => {
+    // The opposite of the person path, and for a reason: an opportunity record
+    // outlives any officer action on it, but an update document IS the action.
     const ts = makeTypesense();
     const result = await syncDocument(
       ts.client,
@@ -305,14 +363,24 @@ describe("syncDocument", () => {
       { denial: { reasons: ["X"] } },
     );
 
-    expect(result.status).toBe("patched");
-    expect(ts.patches[0].patch).toEqual({
-      denial: null,
-      manualSnooze: null,
-      autoSnooze: null,
-      submitted: null,
-      actionHistory: null,
-    });
+    expect(result.status).toBe("deleted");
+    expect(ts.upserts).toHaveLength(0);
+    expect(ts.deletes).toEqual([
+      { collection: "opportunityUpdates", id: "us_tn_123_usTnExpiration" },
+    ]);
+  });
+
+  it("tolerates deleting a mirror that is already gone", async () => {
+    // A re-delivered trigger. Nothing to retry — the prune would remove it too.
+    const ts = makeTypesense({ missing: ["opportunityUpdates"] });
+    const result = await syncDocument(
+      ts.client,
+      "clientUpdatesV2/us_tn_123/clientOpportunityUpdates/usTnExpiration",
+      null,
+      { denial: { reasons: ["X"] } },
+    );
+
+    expect(result.status).toBe("absent");
   });
 
   it("rethrows a non-404 failure so the trigger retries", async () => {
