@@ -32,6 +32,8 @@ const QUERY_BY: Record<string, string> = {
   locations: "name",
   clients: "personName.surname",
   residents: "personName.surname",
+  // No name on an opportunity — person identity arrives through a join.
+  opportunities: "opportunityType",
 };
 
 /**
@@ -96,17 +98,20 @@ export type MintedScopedKeys = {
  * filter is a scoping bug, whereas a correct filter that Typesense rejects is a
  * schema bug, and only querying with the key distinguishes them.
  */
-export const mintCaseloadKeys = async (
+export type MintOptions = {
+  stateCode: string;
+  system: "SUPERVISION" | "INCARCERATION" | "ALL";
+  offlineUser: OfflineUserSpec;
+};
+
+const mintKeys = async (
   api: APIRequestContext,
-  options: {
-    stateCode: string;
-    system: "SUPERVISION" | "INCARCERATION" | "ALL";
-    offlineUser: OfflineUserSpec;
-  },
+  endpoint: "caseload-scoped-key" | "person-scoped-key",
+  options: MintOptions,
 ): Promise<MintedScopedKeys> => {
   const response = await postScopedKey(
     api,
-    `/api/${options.stateCode}/workflows/caseload-scoped-key`,
+    `/api/${options.stateCode}/workflows/${endpoint}`,
     { system: options.system, offlineUser: options.offlineUser },
   );
 
@@ -125,6 +130,22 @@ export const mintCaseloadKeys = async (
 
   return { keys: body.keys, filters: body._debug.filtersByCollection };
 };
+
+export const mintCaseloadKeys = (
+  api: APIRequestContext,
+  options: MintOptions,
+): Promise<MintedScopedKeys> => mintKeys(api, "caseload-scoped-key", options);
+
+/**
+ * Mints a PERSON scoped key set — clients, residents, and `opportunities`.
+ *
+ * `opportunities` rides this endpoint rather than getting one of its own: an
+ * opportunity is visible exactly when its person is.
+ */
+export const mintPersonKeys = (
+  api: APIRequestContext,
+  options: MintOptions,
+): Promise<MintedScopedKeys> => mintKeys(api, "person-scoped-key", options);
 
 /**
  * Runs a match-everything search against one collection using its own scoped
@@ -174,6 +195,62 @@ export const searchIds = async (
 
   return (result.hits ?? []).map(
     (hit: { document: Record<string, string> }) => hit.document[idField],
+  );
+};
+
+/**
+ * Searches one collection with its own scoped key, sending a CLIENT-SUPPLIED
+ * filter, and returns the matching document ids.
+ *
+ * A key that fails to bind returns a wrong RESULT SET rather than an error, so
+ * callers must assert on the documents, never on "did it throw".
+ */
+export const searchWithFilter = async (
+  keys: Record<string, string>,
+  collection: string,
+  filterBy?: string,
+): Promise<string[]> => {
+  const scopedKey = keys[collection];
+  if (!scopedKey) {
+    throw new Error(
+      `No key for "${collection}". Minted: ${Object.keys(keys).join(", ") || "(none)"}.`,
+    );
+  }
+
+  const response = await fetch(`${TYPESENSE_URL}/multi_search`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-TYPESENSE-API-KEY": scopedKey,
+    },
+    body: JSON.stringify({
+      searches: [
+        {
+          collection,
+          q: "*",
+          query_by: QUERY_BY[collection],
+          per_page: 250,
+          ...(filterBy ? { filter_by: filterBy } : {}),
+        },
+      ],
+    }),
+  });
+
+  const body = await response.json();
+  const result = body.results?.[0];
+  if (!result || result.error) {
+    throw new Error(
+      `Typesense rejected the search on "${collection}": ${result?.error ?? JSON.stringify(body)}`,
+    );
+  }
+  if ((result.found ?? 0) > 250) {
+    throw new Error(
+      `"${collection}" returned ${result.found} docs, past this helper's single page — the comparison below would be wrong.`,
+    );
+  }
+
+  return (result.hits ?? []).map(
+    (hit: { document: { id: string } }) => hit.document.id,
   );
 };
 

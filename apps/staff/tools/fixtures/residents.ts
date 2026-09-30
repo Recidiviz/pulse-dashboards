@@ -30,6 +30,7 @@ import {
 
 import { usMiResidents } from "./residents/usMiResidents";
 import { usMoResidents } from "./residents/usMoResidents";
+import { usTnResidents } from "./residents/usTnResidents";
 import { usUtResidents } from "./residents/usUtResidents";
 import { FirestoreFixture, PersonFixture } from "./utils";
 
@@ -48,6 +49,7 @@ const data: Array<ResidentFixture | RawWorkflowsResidentRecord> = [
   ...rawUsNcResidents,
   ...rawUsNeResidents,
   ...rawUsTnResidents,
+  ...usTnResidents,
   ...usUtResidents,
 ];
 

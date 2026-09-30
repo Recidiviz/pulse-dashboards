@@ -72,5 +72,21 @@ export const usTnSupervisionLevelDowngradeReferrals =
         isEligible: true,
         isAlmostEligible: false,
       },
+      // A supervision opportunity for a person who is also a TN resident.
+      {
+        stateCode: "US_TN",
+        externalId: "E2E_TN_BOTH",
+        eligibleCriteria: {
+          supervisionLevelHigherThanAssessmentLevel: {
+            assessmentLevel: "MODERATE",
+            latestAssessmentDate: relativeFixtureDate({ days: -9 }),
+            supervisionLevel: "MAXIMUM",
+          },
+        },
+        ineligibleCriteria: {},
+        caseNotes: {},
+        isEligible: true,
+        isAlmostEligible: false,
+      },
     ],
   );
