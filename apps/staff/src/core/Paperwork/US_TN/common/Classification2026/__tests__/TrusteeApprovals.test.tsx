@@ -15,7 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { cleanup, render, screen, within } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  within,
+} from "@testing-library/react";
 
 import { TRUSTEE_ANNEX_SUB_QUESTION, TRUSTEE_CRITERIA } from "~datatypes";
 
@@ -29,9 +35,12 @@ const allTrue = Object.fromEntries(
 );
 
 function renderApprovals(formData: Record<string, string> = {}) {
+  const updateDraftData = vi.fn();
+  const clearDraftData = vi.fn();
   const form = {
     formData,
-    updateDraftData: vi.fn(),
+    updateDraftData,
+    clearDraftData,
   } as unknown as FormBase<any>;
 
   render(
@@ -39,6 +48,8 @@ function renderApprovals(formData: Record<string, string> = {}) {
       <TrusteeApprovals />
     </OpportunityFormProvider>,
   );
+
+  return { updateDraftData, clearDraftData };
 }
 
 const row = (label: RegExp) =>
@@ -82,7 +93,7 @@ describe("TrusteeApprovals", () => {
 
     expect(
       within(row(/Assistant Commissioner/)).getByText(
-        /Approval only required if criteria 14 or 15 is False/,
+        /Approval only required if questions 14 or 15 is False/,
       ),
     ).toBeInTheDocument();
   });
@@ -112,12 +123,12 @@ describe("TrusteeApprovals", () => {
     ).toBeInTheDocument();
   });
 
-  it("asks only for criteria 1 through 6 on the Annex row", () => {
+  it("asks only for questions 1 through 6 on the Annex row", () => {
     renderApprovals();
 
     expect(
       within(row(/Warden, Annex housing/)).getByText(
-        /Pending\. Complete criteria 1 through 6\./,
+        /Pending\. Complete questions 1 through 6\./,
       ),
     ).toBeInTheDocument();
   });
@@ -141,20 +152,20 @@ describe("TrusteeApprovals", () => {
     ).toBeInTheDocument();
   });
 
-  it("names the criterion that triggered the Assistant Commissioner", () => {
+  it("names the question that triggered the Assistant Commissioner", () => {
     renderApprovals({ ...allTrue, [keyFor(15)]: "false" });
 
     const acRow = row(/Assistant Commissioner/);
 
     expect(
-      within(acRow).getByText(/Required because criterion 15 was marked False/),
+      within(acRow).getByText(/Required because question 15 was marked False/),
     ).toBeInTheDocument();
     expect(
       within(acRow).getByRole("checkbox", { name: /approved/ }),
     ).toBeInTheDocument();
   });
 
-  it("names both criteria when both triggered it", () => {
+  it("names both questions when both triggered it", () => {
     renderApprovals({
       ...allTrue,
       [keyFor(14)]: "false",
@@ -163,7 +174,7 @@ describe("TrusteeApprovals", () => {
 
     expect(
       within(row(/Assistant Commissioner/)).getByText(
-        /Required because criteria 14 and 15 were marked False/,
+        /Required because questions 14 and 15 were marked False/,
       ),
     ).toBeInTheDocument();
   });
@@ -181,7 +192,29 @@ describe("TrusteeApprovals", () => {
       within(acRow).queryByText(/Required because/),
     ).not.toBeInTheDocument();
     expect(
-      within(acRow).getByText(/Approval only required if criteria 14 or 15/),
+      within(acRow).getByText(/not eligible for Trustee custody/),
+    ).toBeInTheDocument();
+  });
+
+  it("closes the Assistant Commissioner row on ineligibility rather than naming its trigger", () => {
+    renderApprovals({
+      ...allTrue,
+      [keyFor(7)]: "false",
+      [keyFor(14)]: "false",
+    });
+
+    const acRow = row(/Assistant Commissioner/);
+
+    expect(
+      within(acRow).getByText(/not eligible for Trustee custody/),
+    ).toBeInTheDocument();
+    expect(
+      within(acRow).queryByText(/Approval only required if/),
+    ).not.toBeInTheDocument();
+    expect(
+      within(row(/Warden, Annex housing/)).getByRole("checkbox", {
+        name: /approved/,
+      }),
     ).toBeInTheDocument();
   });
 
@@ -210,26 +243,71 @@ describe("TrusteeApprovals", () => {
     });
   });
 
-  it("records nothing in the app, because the decision is made on paper", () => {
-    const updateDraftData = vi.fn();
-    const form = {
-      formData: allTrue,
-      updateDraftData,
-    } as unknown as FormBase<any>;
+  it("records an approval against the field the DOCX reads", () => {
+    const { updateDraftData } = renderApprovals(allTrue);
 
-    render(
-      <OpportunityFormProvider value={form}>
-        <TrusteeApprovals />
-      </OpportunityFormProvider>,
+    fireEvent.click(
+      within(row(/Warden, Trustee custody/)).getByLabelText(/: approved$/),
     );
 
-    screen.getAllByRole("checkbox").forEach((box) => {
-      expect(box).toBeDisabled();
+    expect(updateDraftData).toHaveBeenCalledWith(
+      "trusteeWardenTrusteeApproved",
+      "true",
+    );
+  });
+
+  it("returns a ticked square to empty when it is clicked again", () => {
+    const { clearDraftData, updateDraftData } = renderApprovals({
+      ...allTrue,
+      trusteeWardenTrusteeApproved: "true",
     });
+
+    const approved = within(row(/Warden, Trustee custody/)).getByLabelText(
+      /: approved$/,
+    );
+
+    expect(approved).toBeChecked();
+
+    fireEvent.click(approved);
+
+    expect(clearDraftData).toHaveBeenCalledWith("trusteeWardenTrusteeApproved");
+    expect(updateDraftData).not.toHaveBeenCalled();
+  });
+
+  it("replaces the decision rather than ticking both squares", () => {
+    const { updateDraftData } = renderApprovals({
+      ...allTrue,
+      trusteeWardenTrusteeApproved: "true",
+    });
+
+    fireEvent.click(
+      within(row(/Warden, Trustee custody/)).getByLabelText(/: denied$/),
+    );
+
+    expect(updateDraftData).toHaveBeenCalledWith(
+      "trusteeWardenTrusteeApproved",
+      "false",
+    );
+  });
+
+  it("gives each approver its own field", () => {
+    const { updateDraftData } = renderApprovals(allTrue);
+
+    fireEvent.click(
+      within(row(/Contract Monitor/)).getByLabelText(/: denied$/),
+    );
+
+    expect(updateDraftData).toHaveBeenCalledWith(
+      "trusteeContractMonitorApproved",
+      "false",
+    );
+  });
+
+  it("asks for no signature or date in the app", () => {
+    renderApprovals(allTrue);
 
     expect(screen.queryByRole("textbox")).toBeNull();
     expect(screen.queryByRole("button", { name: /sign/i })).toBeNull();
-    expect(updateDraftData).not.toHaveBeenCalled();
   });
 
   it("stacks the two decisions so the column costs one word of width", () => {

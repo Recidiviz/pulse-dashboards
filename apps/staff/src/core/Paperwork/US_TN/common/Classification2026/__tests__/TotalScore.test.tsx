@@ -62,3 +62,55 @@ describe("TotalScore", () => {
     );
   });
 });
+
+describe("the reworked score box", () => {
+  function renderRework(score: number | undefined, custodyLevel: string) {
+    return render(
+      <TotalScore
+        score={score}
+        lowUpper={12}
+        mediumUpper={24}
+        custodyLevel={custodyLevel}
+        reworkEnabled
+      />,
+    );
+  }
+
+  it.each([
+    [7, "LOW"],
+    [18, "MEDIUM"],
+    [30, "CLOSE"],
+    [46, "MAXIMUM"],
+  ])(
+    "prints the level the score landed on, not a fixed one",
+    (score, level) => {
+      const { container } = renderRework(score, level);
+
+      expect(container.textContent).toContain(
+        `RECOMMENDED CUSTODY LEVEL: ${level}`,
+      );
+      expect(container.textContent).toContain(
+        `TOTAL SCORE (CAPPED AT 45): ${score}`,
+      );
+    },
+  );
+
+  it("leaves the level out until the CAF has a total", () => {
+    const { container } = renderRework(undefined, "");
+
+    expect(container.textContent).not.toContain("RECOMMENDED CUSTODY LEVEL");
+  });
+
+  it("keeps the pilot's box unboxed, so only the variant sees the rework", () => {
+    const { container } = render(
+      <TotalScore
+        score={7}
+        lowUpper={12}
+        mediumUpper={24}
+        custodyLevel="LOW"
+      />,
+    );
+
+    expect(container.textContent).not.toContain("RECOMMENDED CUSTODY LEVEL");
+  });
+});

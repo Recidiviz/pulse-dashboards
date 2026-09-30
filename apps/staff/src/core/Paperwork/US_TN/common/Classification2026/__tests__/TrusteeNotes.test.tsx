@@ -47,35 +47,30 @@ function renderNotes(formData: Record<string, string> = {}) {
 }
 
 describe("TrusteeDenialReasons", () => {
-  it("names the criterion that was not met", () => {
+  it("names and quotes the question that was not met", () => {
     renderNotes({ [keyFor(3)]: "false" });
 
-    expect(screen.getByText("Criterion 3 not met.")).toBeInTheDocument();
     expect(
-      screen.getByText(/The requirement is stated in full under Trustee/),
+      screen.getByText(
+        "Question 3 is False: \u201CInmate is not a sex offender.\u201D",
+      ),
     ).toBeInTheDocument();
   });
 
-  it("lists every failed criterion in one sentence", () => {
+  it("gives every failed question its own line", () => {
     renderNotes({ [keyFor(3)]: "false", [keyFor(11)]: "false" });
 
-    expect(screen.getByText("Criteria 3 and 11 not met.")).toBeInTheDocument();
-    expect(
-      screen.getByText(/The requirements are stated in full under Trustee/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/^Question 3 is False:/)).toBeInTheDocument();
+    expect(screen.getByText(/^Question 11 is False:/)).toBeInTheDocument();
   });
 
-  it("does not restate what the eligibility block already prints", () => {
-    renderNotes({ [keyFor(3)]: "false" });
-
-    expect(screen.queryByText(/Inmate is not a sex offender/)).toBeNull();
-  });
-
-  it("explains that the paragraph fills itself in while nothing has failed", () => {
+  it("says where the lines come from while nothing has failed", () => {
     renderNotes();
 
-    expect(screen.getByText(/Fills in automatically/)).toBeInTheDocument();
-    expect(screen.queryByText(/not met/)).toBeNull();
+    expect(
+      screen.getByText("Prefilled from responses above."),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/is False/)).toBeNull();
   });
 
   it("writes nothing to the draft, so mounting cannot edit a record", () => {
@@ -84,10 +79,10 @@ describe("TrusteeDenialReasons", () => {
     expect(updateDraftData).not.toHaveBeenCalled();
   });
 
-  it("renders the derived sentence as text rather than a field", () => {
+  it("renders the derived lines as text rather than fields", () => {
     renderNotes({ [keyFor(3)]: "false" });
 
-    expect(screen.getByText("Criterion 3 not met.").tagName).toBe("SPAN");
+    expect(screen.getByText(/^Question 3 is False:/).tagName).toBe("LI");
     expect(screen.getAllByRole("textbox")).toHaveLength(1);
   });
 

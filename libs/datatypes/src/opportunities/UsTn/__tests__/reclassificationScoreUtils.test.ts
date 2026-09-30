@@ -80,6 +80,15 @@ describe("showTrusteeChecklist", () => {
     expect(showTrusteeChecklist("NOT LOW", formDataBase)).toBeFalse();
   });
 
+  it("still shows the checklist when an override takes the final level off LOW", () => {
+    expect(
+      showTrusteeChecklist("LOW", {
+        ...formDataBase,
+        recommendationCustodyLevel: "CLOSE",
+      }),
+    ).toBeTrue();
+  });
+
   describe("with trusteeChecklistRework enabled", () => {
     it("gates on custody level alone", () => {
       expect(showTrusteeChecklist("LOW", {}, true)).toBeTrue();
@@ -118,6 +127,46 @@ describe("showTrusteeChecklist", () => {
 
     it("still requires a custody level of LOW", () => {
       expect(showTrusteeChecklist("NOT LOW", formDataBase, true)).toBeFalse();
+    });
+
+    it("drops the checklist when an override takes the final level off LOW", () => {
+      expect(
+        showTrusteeChecklist(
+          "LOW",
+          { counselorRecommendedCustody: "CLOSE" },
+          true,
+        ),
+      ).toBeFalse();
+      expect(
+        showTrusteeChecklist(
+          "LOW",
+          { recommendationCustodyLevel: "MEDIUM" },
+          true,
+        ),
+      ).toBeFalse();
+      expect(
+        showTrusteeChecklist(
+          "LOW",
+          {
+            counselorRecommendedCustody: "LOW",
+            recommendationCustodyLevel: "MEDIUM",
+          },
+          true,
+        ),
+      ).toBeFalse();
+    });
+
+    it("lets the Panel recommendation override the counselor's", () => {
+      expect(
+        showTrusteeChecklist(
+          "NOT LOW",
+          {
+            counselorRecommendedCustody: "MEDIUM",
+            recommendationCustodyLevel: "LOW",
+          },
+          true,
+        ),
+      ).toBeTrue();
     });
   });
 });

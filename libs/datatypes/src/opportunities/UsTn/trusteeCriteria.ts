@@ -24,8 +24,8 @@ import { TrusteeFormSchema } from "./utils";
 
 /** The two headings the criteria are printed under, in display order. */
 export const TRUSTEE_CRITERIA_SECTIONS = [
-  "Trustee Custody and Annex Housing Criteria",
-  "Additional Trustee Custody Criteria",
+  "Trustee Custody and Annex Housing Questions",
+  "Additional Trustee Custody Questions",
 ] as const;
 
 export type TrusteeCriterionSection =
@@ -118,9 +118,7 @@ export const TRUSTEE_CRITERIA = [
   },
   {
     key: "trusteeNotOnLevelOfCare3Or4Or5",
-    // Names level 6, which the policy text does not: only LVL1 and LVL2 clear
-    // the criterion upstream.
-    text: "Inmate is **not** on a level of care (LOC) of 3, 4, 5, or 6.",
+    text: "Inmate is **not** on a level of care (LOC) of 3, 4, or 5.",
     group: "B",
     isHardBar: true,
     affectsAnnex: true,

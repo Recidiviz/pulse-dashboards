@@ -20,8 +20,8 @@ import { rem } from "polished";
 import styled from "styled-components";
 
 import {
-  getTrusteeCriterionNumber,
   resolveTrusteeOutcome,
+  trusteeFalseQuestionText,
   TrusteeFormSchema,
   UsTnReclassification2026DraftData,
 } from "~datatypes";
@@ -30,7 +30,6 @@ import { UsTnReclassification2026Form } from "../../../../../WorkflowsStore/Oppo
 import DOCXFormTextArea from "../../../DOCXFormTextArea";
 import { useOpportunityFormContext } from "../../../OpportunityFormContext";
 import { Bold } from "./styles";
-import { listCriterionNumbers } from "./TrusteeCriteriaSection";
 
 const Block = styled.div`
   margin-top: ${rem(8)};
@@ -55,61 +54,48 @@ const NotesLabel = styled.div`
 `;
 
 export const DENIAL_COPY = {
-  empty:
-    "Fills in automatically if a criterion in Groups A through D is marked False.",
-  notMet: (numbers: readonly number[]) =>
-    `${numbers.length > 1 ? "Criteria" : "Criterion"} ${listCriterionNumbers(
-      numbers,
-    )} not met. The ${
-      numbers.length > 1 ? "requirements are" : "requirement is"
-    } stated in full under Trustee custody above.`,
+  empty: "Prefilled from responses above.",
 } as const;
 
-/** The denial paragraph as plain text, which is what the DOCX prints. */
+/** The denial reasons as plain text, one line per failed question, for the DOCX. */
 export function trusteeDenialSummary(
   formData: Partial<TrusteeFormSchema>,
 ): string {
-  const numbers = resolveTrusteeOutcome(formData).failedHardBars.map(
-    getTrusteeCriterionNumber,
-  );
+  const { failedHardBars } = resolveTrusteeOutcome(formData);
 
-  return numbers.length === 0 ? DENIAL_COPY.empty : DENIAL_COPY.notMet(numbers);
+  return failedHardBars.length === 0
+    ? DENIAL_COPY.empty
+    : failedHardBars.map(trusteeFalseQuestionText).join("\n");
 }
 
-/**
- * The failed criteria are derived and not editable, so the filed form always
- * agrees with the criteria table above it. Anything the case manager wants to
- * add goes in the notes below, where nothing recomputes over it.
- *
- * It names the criteria rather than restating them: the eligibility block above
- * already prints each failed requirement verbatim, and repeating thirteen of
- * them costs two extra sheets. The DOCX prints the same sentence for the same
- * reason.
- */
+/** Margins zeroed: the printed page is measured to the pixel, and a list carries its own. */
+const DenialList = styled.ul`
+  margin: 0;
+  padding-left: ${rem(14)};
+
+  & li {
+    margin-bottom: ${rem(2)};
+  }
+`;
+
+/** Derived and not editable, so the filed form always agrees with the table above it. */
 export const TrusteeDenialReasons = observer(function TrusteeDenialReasons() {
   const opportunityForm =
     useOpportunityFormContext() as UsTnReclassification2026Form;
 
   const { failedHardBars } = resolveTrusteeOutcome(opportunityForm.formData);
-  const numbers = failedHardBars.map(getTrusteeCriterionNumber);
-  const plural = numbers.length > 1;
 
   return (
     <Block>
       <Bold>Reasons for Denial</Bold>
-      {numbers.length === 0 ? (
+      {failedHardBars.length === 0 ? (
         <HelperText>{DENIAL_COPY.empty}</HelperText>
       ) : (
-        // Split at the sentence break so the criteria numbers read bold, which
-        // the DOCX cannot do with a single text placeholder.
-        <div>
-          <Bold>
-            {plural ? "Criteria" : "Criterion"} {listCriterionNumbers(numbers)}{" "}
-            not met.
-          </Bold>{" "}
-          The {plural ? "requirements are" : "requirement is"} stated in full
-          under Trustee custody above.
-        </div>
+        <DenialList>
+          {failedHardBars.map((key) => (
+            <li key={key}>{trusteeFalseQuestionText(key)}</li>
+          ))}
+        </DenialList>
       )}
       <NotesLabel>Additional notes:</NotesLabel>
       <DOCXFormTextArea<UsTnReclassification2026DraftData>

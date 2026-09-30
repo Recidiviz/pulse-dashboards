@@ -26,22 +26,15 @@ import {
   resolveTrusteeOutcome,
   TRUSTEE_ANNEX_SUB_QUESTION,
   TRUSTEE_CRITERIA,
-  TRUSTEE_REQUIREMENT_LABEL,
   TrusteeCriterionKey,
-  trusteeCriterionNotMetHeading,
+  trusteeFalseQuestionText,
   TrusteeFormSchema,
-  trusteeRequirementNotMetText,
 } from "~datatypes";
 
 import { UsTnReclassification2026Form } from "../../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassification2026Form";
 import { useOpportunityFormContext } from "../../../OpportunityFormContext";
 import { Bold } from "./styles";
-import {
-  criteriaMarkedFalse,
-  CriterionText,
-  listCriterionNumbers,
-  ROW_NOTE_COPY,
-} from "./TrusteeCriteriaSection";
+import { listCriterionNumbers, ROW_NOTE_COPY } from "./TrusteeCriteriaSection";
 
 const ANNEX_CRITERION_NUMBERS = TRUSTEE_CRITERIA.filter(
   (c) => c.affectsAnnex,
@@ -56,26 +49,54 @@ const ANNEX_RANGE = ANNEX_CRITERION_NUMBERS.every(
     }`
   : listCriterionNumbers(ANNEX_CRITERION_NUMBERS);
 
-/**
- * Every sentence the outcome box can print. The DOCX prints the same resolved
- * sentences through `trusteeOutcomeLines`, so both read from here.
- */
+/** A verdict heading: underlined on screen, plain text in the DOCX. */
+type OutcomeHeadingCopy = {
+  lead: string;
+  /** The underlined segment, always the verdict itself. */
+  emphasis: string;
+  tail: string;
+};
+
 export const TRUSTEE_OUTCOME_COPY = {
-  incomplete: "Complete remaining criteria to determine Trustee eligibility.",
-  notEligible: "Inmate is not eligible for Trustee custody.",
-  eligible: `Inmate is eligible for Trustee custody. All ${TRUSTEE_CRITERIA.length} criteria are met. Placement still requires the Warden approval recorded below.`,
-  eligibleRequiresAcApproval: (numbers: readonly number[]) =>
-    `Inmate is eligible for Trustee custody. All other criteria are met, ${criteriaMarkedFalse(
-      numbers,
-    )}, and the Assistant Commissioner must approve alongside the Warden.`,
-} as const;
+  incomplete: "Complete remaining questions to determine Trustee eligibility.",
+  notEligible: {
+    lead: "Inmate is ",
+    emphasis: "not eligible",
+    tail: " for Trustee custody",
+  },
+  eligible: {
+    lead: "Inmate ",
+    emphasis: "is eligible",
+    tail: " for Trustee custody",
+  },
+  allQuestionsMet: `All ${TRUSTEE_CRITERIA.length} questions are met. Warden approval required.`,
+  acApproval:
+    "Assistant Commissioner approval required alongside the Warden approval.",
+} as const satisfies Record<string, string | OutcomeHeadingCopy>;
 
 export const ANNEX_OUTCOME_COPY = {
-  incomplete: `Complete criteria ${ANNEX_RANGE} to determine Annex eligibility.`,
-  eligible: "Inmate is eligible for Annex housing placement.",
-  wardenApproval: "Warden approval is required for Annex housing placement.",
-  notEligible: "Inmate is not eligible for Annex housing placement.",
-} as const;
+  incomplete: `Complete questions ${ANNEX_RANGE} to determine Annex eligibility.`,
+  eligible: {
+    lead: "Inmate ",
+    emphasis: "is eligible",
+    tail: " for Annex housing placement",
+  },
+  notEligible: {
+    lead: "Inmate is ",
+    emphasis: "not eligible",
+    tail: " for Annex housing placement",
+  },
+  wardenApproval: "Warden approval required for Annex housing.",
+  sexOffenderWardenApproval: `${ROW_NOTE_COPY.annexSexOffenderEligible} Warden approval required.`,
+} as const satisfies Record<string, string | OutcomeHeadingCopy>;
+
+export const CONTINUE_TO_APPROVALS_COPY =
+  "Continue to the next page for approvals and signatures";
+
+/** Flattened for the DOCX, which takes one text placeholder. */
+function outcomeHeadingText(copy: OutcomeHeadingCopy): string {
+  return `${copy.lead}${copy.emphasis}${copy.tail}`;
+}
 
 /** The Trustee outcome as plain text, one entry per printed line. */
 export function trusteeOutcomeLines(
@@ -89,16 +110,19 @@ export function trusteeOutcomeLines(
       return [TRUSTEE_OUTCOME_COPY.incomplete];
     case "NOT_ELIGIBLE":
       return [
-        TRUSTEE_OUTCOME_COPY.notEligible,
-        ...failedHardBars.map(trusteeRequirementNotMetText),
+        outcomeHeadingText(TRUSTEE_OUTCOME_COPY.notEligible),
+        ...failedHardBars.map(trusteeFalseQuestionText),
       ];
     case "ELIGIBLE":
-      return [TRUSTEE_OUTCOME_COPY.eligible];
+      return [
+        outcomeHeadingText(TRUSTEE_OUTCOME_COPY.eligible),
+        TRUSTEE_OUTCOME_COPY.allQuestionsMet,
+      ];
     case "ELIGIBLE_REQUIRES_AC_APPROVAL":
       return [
-        TRUSTEE_OUTCOME_COPY.eligibleRequiresAcApproval(
-          failedConditionalCriteria.map(getTrusteeCriterionNumber),
-        ),
+        outcomeHeadingText(TRUSTEE_OUTCOME_COPY.eligible),
+        ...failedConditionalCriteria.map(trusteeFalseQuestionText),
+        TRUSTEE_OUTCOME_COPY.acApproval,
       ];
     default:
       return assertNever(status);
@@ -116,13 +140,13 @@ export function annexOutcomeLines(
       return [ANNEX_OUTCOME_COPY.incomplete];
     case "ELIGIBLE":
       return [
-        ANNEX_OUTCOME_COPY.eligible,
+        outcomeHeadingText(ANNEX_OUTCOME_COPY.eligible),
         formData[TRUSTEE_ANNEX_SUB_QUESTION.parentKey] === "false"
-          ? ROW_NOTE_COPY.annexSexOffenderEligible
+          ? ANNEX_OUTCOME_COPY.sexOffenderWardenApproval
           : ANNEX_OUTCOME_COPY.wardenApproval,
       ];
     case "NOT_ELIGIBLE":
-      return [ANNEX_OUTCOME_COPY.notEligible];
+      return [outcomeHeadingText(ANNEX_OUTCOME_COPY.notEligible)];
     default:
       return assertNever(status);
   }
@@ -137,9 +161,13 @@ const OutcomeBlock = styled.div`
   min-height: ${rem(104)};
 `;
 
-const OutcomeHeading = styled.div`
+const OutcomeHeadingText = styled.div`
   font-weight: 600;
   margin-bottom: ${rem(3)};
+`;
+
+const Underlined = styled.span`
+  text-decoration: underline;
 `;
 
 /** The paragraph break that separates the two outcomes inside the one box. */
@@ -147,26 +175,45 @@ const SecondOutcome = styled.div`
   margin-top: ${rem(10)};
 `;
 
-const FailedCriterion = styled.div`
-  margin-top: ${rem(3)};
+/** Margins zeroed: the printed page is measured to the pixel, and a list carries its own. */
+const FalseQuestionList = styled.ul`
+  margin: 0;
+  padding-left: ${rem(14)};
+
+  & li {
+    margin-bottom: ${rem(2)};
+  }
 `;
 
-/** A failed criterion renders as the requirement not met, never as its own inverse. */
-export const RequirementNotMet = observer(function RequirementNotMet({
-  criterionKey,
-}: {
-  criterionKey: TrusteeCriterionKey;
-}) {
-  const criterion = TRUSTEE_CRITERIA.find((c) => c.key === criterionKey);
-  if (!criterion) return null;
+const ContinueNote = styled.div`
+  margin-top: ${rem(6)};
+  text-align: right;
+  font-style: italic;
+`;
+
+function OutcomeHeading({ copy }: { copy: OutcomeHeadingCopy }) {
+  return (
+    <OutcomeHeadingText>
+      <Bold>
+        {copy.lead}
+        <Underlined>{copy.emphasis}</Underlined>
+        {copy.tail}
+      </Bold>
+    </OutcomeHeadingText>
+  );
+}
+
+function FalseQuestions({ keys }: { keys: readonly TrusteeCriterionKey[] }) {
+  if (keys.length === 0) return null;
 
   return (
-    <FailedCriterion>
-      <Bold>{trusteeCriterionNotMetHeading(criterionKey)}</Bold>{" "}
-      {TRUSTEE_REQUIREMENT_LABEL} <CriterionText text={criterion.text} />
-    </FailedCriterion>
+    <FalseQuestionList>
+      {keys.map((key) => (
+        <li key={key}>{trusteeFalseQuestionText(key)}</li>
+      ))}
+    </FalseQuestionList>
   );
-});
+}
 
 export const TrusteeOutcome = observer(function TrusteeOutcome() {
   const opportunityForm =
@@ -176,42 +223,38 @@ export const TrusteeOutcome = observer(function TrusteeOutcome() {
     resolveTrusteeOutcome(opportunityForm.formData);
 
   // A switch, so a new status fails the build rather than rendering an empty box.
-  function body() {
-    switch (status) {
-      case "INCOMPLETE":
-        return <div>{TRUSTEE_OUTCOME_COPY.incomplete}</div>;
-      case "NOT_ELIGIBLE":
-        // The failures render as components rather than lines, so the criterion
-        // text keeps the bold segments the table above it uses.
-        return (
-          <>
-            <div>{TRUSTEE_OUTCOME_COPY.notEligible}</div>
-            {failedHardBars.map((key) => (
-              <RequirementNotMet key={key} criterionKey={key} />
-            ))}
-          </>
-        );
-      case "ELIGIBLE":
-        return <div>{TRUSTEE_OUTCOME_COPY.eligible}</div>;
-      case "ELIGIBLE_REQUIRES_AC_APPROVAL":
-        return (
-          <div>
-            {TRUSTEE_OUTCOME_COPY.eligibleRequiresAcApproval(
-              failedConditionalCriteria.map(getTrusteeCriterionNumber),
-            )}
-          </div>
-        );
-      default:
-        return assertNever(status);
-    }
+  switch (status) {
+    case "INCOMPLETE":
+      return (
+        <OutcomeHeadingText>
+          <Bold>{TRUSTEE_OUTCOME_COPY.incomplete}</Bold>
+        </OutcomeHeadingText>
+      );
+    case "NOT_ELIGIBLE":
+      return (
+        <>
+          <OutcomeHeading copy={TRUSTEE_OUTCOME_COPY.notEligible} />
+          <FalseQuestions keys={failedHardBars} />
+        </>
+      );
+    case "ELIGIBLE":
+      return (
+        <>
+          <OutcomeHeading copy={TRUSTEE_OUTCOME_COPY.eligible} />
+          <div>{TRUSTEE_OUTCOME_COPY.allQuestionsMet}</div>
+        </>
+      );
+    case "ELIGIBLE_REQUIRES_AC_APPROVAL":
+      return (
+        <>
+          <OutcomeHeading copy={TRUSTEE_OUTCOME_COPY.eligible} />
+          <FalseQuestions keys={failedConditionalCriteria} />
+          <div>{TRUSTEE_OUTCOME_COPY.acApproval}</div>
+        </>
+      );
+    default:
+      return assertNever(status);
   }
-
-  return (
-    <div>
-      <OutcomeHeading>Trustee custody</OutcomeHeading>
-      {body()}
-    </div>
-  );
 });
 
 export const AnnexOutcome = observer(function AnnexOutcome() {
@@ -227,39 +270,41 @@ export const AnnexOutcome = observer(function AnnexOutcome() {
   function body() {
     switch (status) {
       case "INCOMPLETE":
-        return <div>{ANNEX_OUTCOME_COPY.incomplete}</div>;
+        return (
+          <OutcomeHeadingText>
+            <Bold>{ANNEX_OUTCOME_COPY.incomplete}</Bold>
+          </OutcomeHeadingText>
+        );
       case "ELIGIBLE":
         return (
           <>
-            <div>{ANNEX_OUTCOME_COPY.eligible}</div>
-            <FailedCriterion>
+            <OutcomeHeading copy={ANNEX_OUTCOME_COPY.eligible} />
+            <div>
               {viaSexOffenderSentence
-                ? ROW_NOTE_COPY.annexSexOffenderEligible
+                ? ANNEX_OUTCOME_COPY.sexOffenderWardenApproval
                 : ANNEX_OUTCOME_COPY.wardenApproval}
-            </FailedCriterion>
+            </div>
           </>
         );
       case "NOT_ELIGIBLE":
-        return <div>{ANNEX_OUTCOME_COPY.notEligible}</div>;
+        return <OutcomeHeading copy={ANNEX_OUTCOME_COPY.notEligible} />;
       default:
         return assertNever(status);
     }
   }
 
-  return (
-    <SecondOutcome>
-      <OutcomeHeading>Annex housing</OutcomeHeading>
-      {body()}
-    </SecondOutcome>
-  );
+  return <SecondOutcome>{body()}</SecondOutcome>;
 });
 
 /** Both outcomes as one block: not eligible for Trustee but eligible for Annex is valid. */
 export const TrusteeEligibility = observer(function TrusteeEligibility() {
   return (
-    <OutcomeBlock>
-      <TrusteeOutcome />
-      <AnnexOutcome />
-    </OutcomeBlock>
+    <>
+      <OutcomeBlock>
+        <TrusteeOutcome />
+        <AnnexOutcome />
+      </OutcomeBlock>
+      <ContinueNote>{CONTINUE_TO_APPROVALS_COPY} &darr;</ContinueNote>
+    </>
   );
 });

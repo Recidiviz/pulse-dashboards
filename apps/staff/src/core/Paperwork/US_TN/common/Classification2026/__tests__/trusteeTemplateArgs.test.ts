@@ -108,9 +108,9 @@ describe("getTrusteeReworkTemplateContents", () => {
     );
 
     expect(rowan.trusteeOutcome).toMatch(
-      /Assistant Commissioner must approve alongside the Warden/,
+      /Assistant Commissioner approval required alongside the Warden/,
     );
-    expect(rowan.trusteeOutcome).not.toMatch(/All 15 criteria are met/);
+    expect(rowan.trusteeOutcome).not.toMatch(/All 15 questions are met/);
   });
 
   it("prints the outcome the screen resolved to, not a box per outcome", () => {
@@ -132,7 +132,25 @@ describe("getTrusteeReworkTemplateContents", () => {
     );
 
     expect(contents.trusteeOutcome.split("\n").length).toBeGreaterThan(1);
-    expect(contents.trusteeOutcome).toMatch(/Requirement:/);
+    expect(contents.trusteeOutcome).toMatch(/^Question \d+ is False: /m);
+  });
+
+  it("prints the denial reasons the screen lists, one question per line", () => {
+    const contents = getTrusteeReworkTemplateContents(
+      TRUSTEE_SAMPLE_CASES.annexOnly.formData,
+    );
+
+    contents.denialReasons
+      .split("\n")
+      .forEach((line) => expect(line).toMatch(/^Question \d+ is False: /));
+  });
+
+  it("says where the denial reasons come from while nothing has failed", () => {
+    const contents = getTrusteeReworkTemplateContents(
+      TRUSTEE_SAMPLE_CASES.allTrue.formData,
+    );
+
+    expect(contents.denialReasons).toBe("Prefilled from responses above.");
   });
 
   it("records each approval decision and date", () => {

@@ -18,6 +18,7 @@
 import { z } from "zod";
 
 import {
+  getTrusteeCriterionNumber,
   TRUSTEE_ANNEX_SUB_QUESTION,
   TRUSTEE_CRITERIA,
   TRUSTEE_REQUIREMENT_LABEL,
@@ -301,6 +302,14 @@ export function trusteeCriterionPlainText(key: TrusteeCriterionKey): string {
 }
 
 /**
+ * Names a question that was answered False and quotes it, for example:
+ * Question 3 is False: “Inmate is not a sex offender.”
+ */
+export function trusteeFalseQuestionText(key: TrusteeCriterionKey): string {
+  return `Question ${getTrusteeCriterionNumber(key)} is False: \u201C${trusteeCriterionPlainText(key)}\u201D`;
+}
+
+/**
  * A failed criterion as the form states it, phrased as the requirement that was
  * not met rather than as the criterion's own inverse.
  */
@@ -330,6 +339,22 @@ export function isTrusteeAssessmentComplete(
   );
 }
 
+/**
+ * The custody level the packet lands on, which is the furthest override anyone
+ * has filled in. The Panel's Majority Recommendation overrides the Counselor
+ * Recommended Custody Level, which overrides the scored CAF range.
+ */
+function resolveFinalCustodyLevel(
+  totalText: string,
+  formData: Partial<UsTnReclassification2026DraftData>,
+): string {
+  return (
+    formData.recommendationCustodyLevel ||
+    formData.counselorRecommendedCustody ||
+    totalText
+  );
+}
+
 export function showTrusteeChecklist(
   totalText: string,
   formData: Partial<UsTnReclassification2026DraftData>,
@@ -342,7 +367,9 @@ export function showTrusteeChecklist(
 
   // Under the rework criteria 1-3 live inside the checklist, so a False shows
   // as Not eligible rather than hiding the form.
-  if (trusteeChecklistReworkEnabled) return scoredOrOverriddenToLow;
+  if (trusteeChecklistReworkEnabled) {
+    return resolveFinalCustodyLevel(totalText, formData) === "LOW";
+  }
 
   // Only show the trustee checklist if all three questions at top are true
   // (no 1st degree, 10 years or less, and not serving life) and the person

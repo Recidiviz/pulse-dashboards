@@ -174,9 +174,6 @@ const FailureNote = styled.div`
   margin-top: ${rem(SLOT_GAP)};
 `;
 
-/** A heavy rule down the left edge of a failed hard bar, so failures read as a set. */
-const FAILED_HARD_BAR_EDGE = "3px solid black";
-
 /** A group is the unit of pagination; it never splits across a page. */
 const GroupBody = styled.tbody`
   break-inside: avoid;
@@ -244,14 +241,14 @@ export function listCriterionNumbers(numbers: readonly number[]): string {
 }
 
 /**
- * "criterion 15 was marked False" or "criteria 13, 14 and 15 were marked False".
+ * "question 15 was marked False" or "questions 13, 14 and 15 were marked False".
  * Shared so the outcome block and the approvals row cannot word it differently.
  * Carries no trailing punctuation; the caller supplies it.
  */
-export function criteriaMarkedFalse(numbers: readonly number[]): string {
+export function questionsMarkedFalse(numbers: readonly number[]): string {
   const plural = numbers.length > 1;
 
-  return `${plural ? "criteria" : "criterion"} ${listCriterionNumbers(
+  return `${plural ? "questions" : "question"} ${listCriterionNumbers(
     numbers,
   )} ${plural ? "were" : "was"} marked False`;
 }
@@ -281,6 +278,11 @@ const HARD_BAR_RANGE = criterionRange(
 
 const CONDITIONAL_NUMBERS = criterionNumbersWhere((c) => !c.isHardBar);
 
+/** "questions 14 or 15", the group whose False adds the Assistant Commissioner. */
+export const CONDITIONAL_QUESTIONS_PHRASE = `${
+  CONDITIONAL_NUMBERS.length > 1 ? "questions" : "question"
+} ${listCriterionNumbers(CONDITIONAL_NUMBERS).replace(" and ", " or ")}`;
+
 const SUB_QUESTION_PARENT_NUMBER = getTrusteeCriterionNumber(
   TRUSTEE_ANNEX_SUB_QUESTION.parentKey,
 );
@@ -308,23 +310,22 @@ export function TrusteeAssessmentHeader() {
         Guide
       </GuideReference>
 
-      <PartHeading>Eligibility criteria</PartHeading>
+      <PartHeading>Eligibility questions</PartHeading>
       <InstructionList>
         <li>
-          Criteria {HARD_BAR_RANGE} must be marked True for placement on Trustee
-          custody. True always means the inmate clears the requirement.
+          Questions {HARD_BAR_RANGE} must be marked True for placement on
+          Trustee custody. True always means the inmate clears the requirement.
         </li>
         <li>
-          If {CONDITIONAL_NUMBERS.length > 1 ? "criteria" : "criterion"}{" "}
-          {listCriterionNumbers(CONDITIONAL_NUMBERS).replace(" and ", " or ")}{" "}
-          is False, the Assistant Commissioner for Prison Operations or their
-          designee must approve Trustee custody placement.
+          If {CONDITIONAL_QUESTIONS_PHRASE} is False, the Assistant Commissioner
+          for Prison Operations or their designee must approve Trustee custody
+          placement.
         </li>
         <li>Trustee custody inmates should be placed in Annex housing.</li>
         <li>
           An inmate who is not eligible for Trustee custody may still be
-          eligible for Annex housing. Criteria{" "}
-          {listCriterionNumbers(ANNEX_REQUIRED_NUMBERS)} must be True. Criterion{" "}
+          eligible for Annex housing. Questions{" "}
+          {listCriterionNumbers(ANNEX_REQUIRED_NUMBERS)} must be True. Question{" "}
           {SUB_QUESTION_PARENT_NUMBER} may be False if the inmate has 7 years or
           less remaining to serve.
         </li>
@@ -454,7 +455,6 @@ const CriterionRow = observer(function CriterionRow({
   const note = criterionFailureNote(criterion, selected, subQuestionAnswer);
   const showSubQuestion =
     isSubQuestionParent && selected === "false" && !subQuestionNotRequired;
-  const failedHardBar = criterion.isHardBar && selected === "false";
 
   const onSubQuestionChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     opportunityForm.updateDraftData(
@@ -465,12 +465,7 @@ const CriterionRow = observer(function CriterionRow({
 
   return (
     <tr>
-      <NumberCell
-        scope="row"
-        style={failedHardBar ? { borderLeft: FAILED_HARD_BAR_EDGE } : undefined}
-      >
-        {criterionNumber}
-      </NumberCell>
+      <NumberCell scope="row">{criterionNumber}</NumberCell>
       <CriterionCell>
         {notRequired ? (
           <NotRequired>

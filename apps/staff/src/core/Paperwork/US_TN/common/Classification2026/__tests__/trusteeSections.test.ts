@@ -18,15 +18,15 @@
 import { getTrusteeCriterionNumber, TRUSTEE_CRITERIA } from "~datatypes";
 
 import {
-  criteriaMarkedFalse,
+  questionsMarkedFalse,
   TRUSTEE_SECTIONS,
 } from "../TrusteeCriteriaSection";
 
 describe("TRUSTEE_SECTIONS", () => {
   it("splits into the two named sections", () => {
     expect(TRUSTEE_SECTIONS.map((s) => s.section)).toEqual([
-      "Trustee Custody and Annex Housing Criteria",
-      "Additional Trustee Custody Criteria",
+      "Trustee Custody and Annex Housing Questions",
+      "Additional Trustee Custody Questions",
     ]);
   });
 
@@ -89,24 +89,24 @@ describe("TRUSTEE_SECTIONS", () => {
   });
 });
 
-describe("criteriaMarkedFalse", () => {
-  it("stays singular for one criterion", () => {
-    expect(criteriaMarkedFalse([15])).toBe("criterion 15 was marked False");
+describe("questionsMarkedFalse", () => {
+  it("stays singular for one question", () => {
+    expect(questionsMarkedFalse([15])).toBe("question 15 was marked False");
   });
 
   it("turns plural for two", () => {
-    expect(criteriaMarkedFalse([14, 15])).toBe(
-      "criteria 14 and 15 were marked False",
+    expect(questionsMarkedFalse([14, 15])).toBe(
+      "questions 14 and 15 were marked False",
     );
   });
 
   it("falls back to a comma list beyond two", () => {
-    expect(criteriaMarkedFalse([13, 14, 15])).toBe(
-      "criteria 13, 14 and 15 were marked False",
+    expect(questionsMarkedFalse([13, 14, 15])).toBe(
+      "questions 13, 14 and 15 were marked False",
     );
   });
 
   it("carries no trailing punctuation, so callers can embed it", () => {
-    expect(criteriaMarkedFalse([15])).not.toMatch(/[.,]$/);
+    expect(questionsMarkedFalse([15])).not.toMatch(/[.,]$/);
   });
 });

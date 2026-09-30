@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { render, screen, within } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 
 import { TRUSTEE_ANNEX_SUB_QUESTION, TRUSTEE_CRITERIA } from "~datatypes";
 
@@ -42,47 +42,56 @@ function renderOutcomes(formData: Record<string, string> = {}) {
   );
 }
 
+/** Headings split over several elements, so read them off the rendered text. */
+function text(container: HTMLElement): string {
+  return container.textContent ?? "";
+}
+
 describe("TrusteeOutcome", () => {
   it("says the outcome is pending while unresolved", () => {
-    renderOutcomes();
+    const { container } = renderOutcomes();
 
-    expect(
-      screen.getByText(/Complete remaining criteria to determine Trustee/),
-    ).toBeInTheDocument();
+    expect(text(container)).toContain(
+      "Complete remaining questions to determine Trustee eligibility.",
+    );
   });
 
   it("reports eligibility when all fifteen are met", () => {
-    renderOutcomes(allTrue);
+    const { container } = renderOutcomes(allTrue);
 
-    expect(
-      screen.getByText(
-        /Inmate is eligible for Trustee custody\. All 15 criteria/,
-      ),
-    ).toBeInTheDocument();
+    expect(text(container)).toContain("Inmate is eligible for Trustee custody");
+    expect(text(container)).toContain("All 15 questions are met.");
   });
 
-  it("names the Assistant Commissioner when a Group E criterion is False", () => {
-    renderOutcomes({ ...allTrue, [keyFor(15)]: "false" });
+  it("underlines the verdict so it can be found without reading the sentence", () => {
+    const { container } = renderOutcomes({ ...allTrue, [keyFor(3)]: "false" });
 
     expect(
-      screen.getByText(
-        /criterion 15 was marked False, and the Assistant Commissioner must approve/,
-      ),
-    ).toBeInTheDocument();
+      Array.from(container.querySelectorAll("span")).map((s) => s.textContent),
+    ).toContain("not eligible");
   });
 
-  it("lists both Group E criteria when both are False", () => {
+  it("names the Assistant Commissioner when a Group E question is False", () => {
+    const { container } = renderOutcomes({
+      ...allTrue,
+      [keyFor(15)]: "false",
+    });
+
+    expect(
+      screen.getByText(/^Question 15 is False: .*risk assessment/),
+    ).toBeInTheDocument();
+    expect(text(container)).toContain("Assistant Commissioner approval");
+  });
+
+  it("lists both Group E questions when both are False", () => {
     renderOutcomes({
       ...allTrue,
       [keyFor(14)]: "false",
       [keyFor(15)]: "false",
     });
 
-    const block = screen.getByText("Trustee custody").parentElement;
-
-    expect(block?.textContent).toContain(
-      "criteria 14 and 15 were marked False",
-    );
+    expect(screen.getByText(/^Question 14 is False:/)).toBeInTheDocument();
+    expect(screen.getByText(/^Question 15 is False:/)).toBeInTheDocument();
   });
 
   it("lists every failed hard bar, not just the first", () => {
@@ -93,17 +102,17 @@ describe("TrusteeOutcome", () => {
       [keyFor(12)]: "false",
     });
 
-    expect(screen.getByText("Criterion 1 not met.")).toBeInTheDocument();
-    expect(screen.getByText("Criterion 9 not met.")).toBeInTheDocument();
-    expect(screen.getByText("Criterion 12 not met.")).toBeInTheDocument();
+    expect(screen.getByText(/^Question 1 is False:/)).toBeInTheDocument();
+    expect(screen.getByText(/^Question 9 is False:/)).toBeInTheDocument();
+    expect(screen.getByText(/^Question 12 is False:/)).toBeInTheDocument();
   });
 
-  it("states a failure as the requirement that was not met", () => {
+  it("quotes the question it names, without the bold markers", () => {
     renderOutcomes({ [keyFor(3)]: "false" });
 
-    expect(screen.getByText("Criterion 3 not met.")).toBeInTheDocument();
-    expect(screen.getByText(/Requirement:/)).toBeInTheDocument();
-    expect(screen.getByText(/a sex offender/)).toBeInTheDocument();
+    expect(
+      screen.getByText("Question 3 is False: “Inmate is not a sex offender.”"),
+    ).toBeInTheDocument();
   });
 
   it("offers no way to hand-edit the outcome", () => {
@@ -115,37 +124,37 @@ describe("TrusteeOutcome", () => {
 });
 
 describe("AnnexOutcome", () => {
-  it("asks only for criteria 1 through 6 while unresolved", () => {
-    renderOutcomes();
+  it("asks only for questions 1 through 6 while unresolved", () => {
+    const { container } = renderOutcomes();
 
-    expect(
-      screen.getByText(/Complete criteria 1 through 6 to determine Annex/),
-    ).toBeInTheDocument();
+    expect(text(container)).toContain(
+      "Complete questions 1 through 6 to determine Annex eligibility.",
+    );
   });
 
-  it("resolves without waiting on criteria 7 through 15", () => {
+  it("resolves without waiting on questions 7 through 15", () => {
     const annexOnly = Object.fromEntries(
       TRUSTEE_CRITERIA.filter((c) => c.affectsAnnex).map((c) => [
         c.key,
         "true",
       ]),
     );
-    renderOutcomes(annexOnly);
+    const { container } = renderOutcomes(annexOnly);
 
+    expect(text(container)).toContain(
+      "Inmate is eligible for Annex housing placement",
+    );
     expect(
-      screen.getByText("Inmate is eligible for Annex housing placement."),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/Warden approval is required for Annex housing/),
+      screen.getByText("Warden approval required for Annex housing."),
     ).toBeInTheDocument();
   });
 
   it("says so when Annex is not available", () => {
-    renderOutcomes({ ...allTrue, [keyFor(1)]: "false" });
+    const { container } = renderOutcomes({ ...allTrue, [keyFor(1)]: "false" });
 
-    expect(
-      screen.getByText("Inmate is not eligible for Annex housing placement."),
-    ).toBeInTheDocument();
+    expect(text(container)).toContain(
+      "Inmate is not eligible for Annex housing placement",
+    );
   });
 
   it("explains the sex offender route when that is why Annex is open", () => {
@@ -156,23 +165,23 @@ describe("AnnexOutcome", () => {
     });
 
     expect(
-      screen.getByText(/Sex offenders with 7 years or less remaining/),
+      screen.getByText(/^Sex offenders with 7 years or less remaining/),
     ).toBeInTheDocument();
   });
 
   it("can be eligible while Trustee is not", () => {
-    renderOutcomes({
+    const { container } = renderOutcomes({
       ...allTrue,
       [TRUSTEE_ANNEX_SUB_QUESTION.parentKey]: "false",
       [TRUSTEE_ANNEX_SUB_QUESTION.key]: "true",
     });
 
-    expect(
-      screen.getByText("Inmate is not eligible for Trustee custody."),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText("Inmate is eligible for Annex housing placement."),
-    ).toBeInTheDocument();
+    expect(text(container)).toContain(
+      "Inmate is not eligible for Trustee custody",
+    );
+    expect(text(container)).toContain(
+      "Inmate is eligible for Annex housing placement",
+    );
   });
 });
 
@@ -186,8 +195,17 @@ describe("TrusteeEligibility", () => {
 
     const box = container.firstElementChild as HTMLElement;
 
-    expect(container.children).toHaveLength(1);
-    expect(within(box).getByText("Trustee custody")).toBeInTheDocument();
-    expect(within(box).getByText("Annex housing")).toBeInTheDocument();
+    expect(text(box)).toContain("Inmate is not eligible for Trustee custody");
+    expect(text(box)).toContain(
+      "Inmate is eligible for Annex housing placement",
+    );
+  });
+
+  it("sends the reader on to the approvals page", () => {
+    const { container } = renderOutcomes(allTrue);
+
+    expect(text(container)).toContain(
+      "Continue to the next page for approvals and signatures",
+    );
   });
 });

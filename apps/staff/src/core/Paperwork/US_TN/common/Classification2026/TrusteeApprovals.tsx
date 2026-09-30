@@ -29,12 +29,26 @@ import { palette } from "~design-system";
 import { UsTnReclassification2026Form } from "../../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassification2026Form";
 import { useOpportunityFormContext } from "../../../OpportunityFormContext";
 import { Bold, FormFont } from "./styles";
-import { criteriaMarkedFalse } from "./TrusteeCriteriaSection";
+import {
+  CONDITIONAL_QUESTIONS_PHRASE,
+  questionsMarkedFalse,
+} from "./TrusteeCriteriaSection";
+
+/** The four decision fields, which are the same ones the DOCX args read. */
+type TrusteeApprovalKey =
+  | "trusteeWardenTrusteeApproved"
+  | "trusteeWardenAnnexApproved"
+  | "trusteeContractMonitorApproved"
+  | "trusteeACApproved";
 
 type ApprovalRowState =
   | { kind: "recordable" }
   | { kind: "pending"; text: string }
   | { kind: "notApplicable"; text: string };
+
+/** The three rows a failed hard bar closes all say this, so they say it once. */
+const NOT_ELIGIBLE_FOR_TRUSTEE =
+  "Not applicable. Inmate is not eligible for Trustee custody.";
 
 /**
  * Every row is three-way: "not applicable" is only honest once the outcome it
@@ -126,23 +140,38 @@ const DecisionLabel = styled.label`
   font-weight: 400;
 `;
 
-/**
- * A square to tick on paper. Disabled because the decision is made and recorded
- * offline: nothing here writes it back, so an enabled control would lie.
- */
+/** A square to tick, recording a decision that was made offline. */
 const DecisionBox = styled.input`
   margin-right: ${rem(4)};
 `;
 
 const ApprovalRow = observer(function ApprovalRow({
   label,
+  dataKey,
   trigger,
   state,
 }: {
   label: string;
+  /** The field this row's decision is written to, and read back from. */
+  dataKey: TrusteeApprovalKey;
   trigger?: string;
   state: ApprovalRowState;
 }) {
+  const opportunityForm =
+    useOpportunityFormContext() as UsTnReclassification2026Form;
+
+  const decision = opportunityForm.formData[dataKey] ?? "";
+
+  // The two squares are one decision, so ticking either clears the other, and
+  // ticking the one already set returns the row to blank.
+  const toggle = (value: string) => () => {
+    if (decision === value) {
+      opportunityForm.clearDraftData(dataKey);
+    } else {
+      opportunityForm.updateDraftData(dataKey, value);
+    }
+  };
+
   return (
     <tr>
       <th scope="row">
@@ -156,7 +185,8 @@ const ApprovalRow = observer(function ApprovalRow({
               <DecisionBox
                 type="checkbox"
                 aria-label={`${label}: approved`}
-                disabled
+                checked={decision === "true"}
+                onChange={toggle("true")}
               />
               Approved
             </DecisionLabel>
@@ -164,7 +194,8 @@ const ApprovalRow = observer(function ApprovalRow({
               <DecisionBox
                 type="checkbox"
                 aria-label={`${label}: denied`}
-                disabled
+                checked={decision === "false"}
+                onChange={toggle("false")}
               />
               Denied
             </DecisionLabel>
@@ -208,14 +239,14 @@ export const TrusteeApprovals = observer(function TrusteeApprovals() {
   const wardenTrustee = rowState(
     trusteeEligible,
     trustee.status === "INCOMPLETE",
-    "Pending. Complete the remaining criteria.",
-    "Not applicable. Inmate is not eligible for Trustee custody.",
+    "Pending. Complete the remaining questions.",
+    NOT_ELIGIBLE_FOR_TRUSTEE,
   );
 
   const wardenAnnex = rowState(
     annex.status === "ELIGIBLE",
     annex.status === "INCOMPLETE",
-    "Pending. Complete criteria 1 through 6.",
+    "Pending. Complete questions 1 through 6.",
     "Not applicable. Inmate is not eligible for Annex housing.",
   );
 
@@ -229,15 +260,20 @@ export const TrusteeApprovals = observer(function TrusteeApprovals() {
   const contractMonitor = rowState(
     trusteeEligible,
     trustee.status === "INCOMPLETE",
-    "Pending. Complete the remaining criteria.",
-    "Not applicable. Inmate is not eligible for Trustee custody.",
+    "Pending. Complete the remaining questions.",
+    NOT_ELIGIBLE_FOR_TRUSTEE,
   );
 
+  // A failed hard bar closes this row for the same reason it closes the Warden
+  // row, so it gives the same reason. Naming the trigger instead would sit
+  // beside a conditional question the reader can see was marked False.
   const acState = rowState(
     trustee.status === "ELIGIBLE_REQUIRES_AC_APPROVAL",
     trustee.status === "INCOMPLETE",
-    "Pending. Complete the remaining criteria.",
-    "Not applicable. Approval only required if criteria 14 or 15 is False.",
+    "Pending. Complete the remaining questions.",
+    trustee.status === "NOT_ELIGIBLE"
+      ? NOT_ELIGIBLE_FOR_TRUSTEE
+      : `Not applicable. Approval only required if ${CONDITIONAL_QUESTIONS_PHRASE} is False.`,
   );
 
   // Said explicitly rather than left empty, but only once Annex is settled too.
@@ -270,10 +306,12 @@ export const TrusteeApprovals = observer(function TrusteeApprovals() {
         <tbody>
           <ApprovalRow
             label="Warden, Trustee custody placement"
+            dataKey="trusteeWardenTrusteeApproved"
             state={wardenTrustee}
           />
           <ApprovalRow
             label="Warden, Annex housing placement"
+            dataKey="trusteeWardenAnnexApproved"
             state={wardenAnnex}
           />
           {/* The visibility rule for this row is parked with Nat and has no
@@ -282,6 +320,7 @@ export const TrusteeApprovals = observer(function TrusteeApprovals() {
               always showing and letting the counselor decide. */}
           <ApprovalRow
             label="Contract Monitor"
+            dataKey="trusteeContractMonitorApproved"
             trigger="Required for private facilities only."
             state={contractMonitor}
           />
@@ -291,9 +330,10 @@ export const TrusteeApprovals = observer(function TrusteeApprovals() {
               otherwise, acState needs the Annex outcome too. */}
           <ApprovalRow
             label="Assistant Commissioner for Prison Operations or designee"
+            dataKey="trusteeACApproved"
             trigger={
               acCriteria.length > 0
-                ? `Required because ${criteriaMarkedFalse(acCriteria)}.`
+                ? `Required because ${questionsMarkedFalse(acCriteria)}.`
                 : undefined
             }
             state={acState}

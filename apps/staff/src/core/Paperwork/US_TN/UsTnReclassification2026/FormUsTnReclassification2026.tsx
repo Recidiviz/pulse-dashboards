@@ -230,6 +230,8 @@ export const FormUsTnReclassification2026 = observer(
                 lowUpper={RCAF_LOW_UPPER_THRESHOLD_V1}
                 mediumUpper={RCAF_MEDIUM_UPPER_THRESHOLD_V1}
                 trusteeAssessmentRequired={trusteeAssessmentRequired}
+                reworkEnabled={reworkEnabled}
+                custodyLevel={derivedData.totalText}
               />
             </ClassificationFormPage>
           </PrintablePage>

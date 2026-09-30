@@ -198,6 +198,14 @@ describe("CriteriaSection", () => {
     expect(checked[0]).toHaveAccessibleName("Criterion 3: False");
   });
 
+  it("leaves a criterion marked False styled like every other row", () => {
+    renderSection(0, { trusteeNotServingForSexualOffense: "false" });
+
+    screen.getAllByRole("rowheader").forEach((cell) => {
+      expect(cell).not.toHaveAttribute("style");
+    });
+  });
+
   it("writes the answer to the draft when a control is picked", () => {
     const { updateDraftData } = renderSection(0);
 
@@ -411,7 +419,7 @@ describe("TrusteeAssessmentHeader", () => {
     ).toBeInTheDocument();
   });
 
-  it("reads its criterion numbers off the criteria list", () => {
+  it("reads its question numbers off the criteria list", () => {
     render(<TrusteeAssessmentHeader />);
 
     const hardBars = TRUSTEE_CRITERIA.filter((c) => c.isHardBar);
@@ -420,7 +428,7 @@ describe("TrusteeAssessmentHeader", () => {
     expect(
       screen.getByText(
         new RegExp(
-          `Criteria 1 to ${hardBars.length} must be marked True for placement on Trustee custody`,
+          `Questions 1 to ${hardBars.length} must be marked True for placement on Trustee custody`,
         ),
       ),
     ).toBeInTheDocument();
@@ -428,7 +436,7 @@ describe("TrusteeAssessmentHeader", () => {
     expect(
       screen.getByText(
         new RegExp(
-          `criteria ${getTrusteeCriterionNumber(conditional[0].key)} or ` +
+          `questions ${getTrusteeCriterionNumber(conditional[0].key)} or ` +
             `${getTrusteeCriterionNumber(conditional[1].key)} is False`,
         ),
       ),
@@ -440,7 +448,7 @@ describe("TrusteeAssessmentHeader", () => {
 
     expect(
       screen.getByText(
-        /Criterion 3 may be False if the inmate has 7 years or less remaining/,
+        /Question 3 may be False if the inmate has 7 years or less remaining/,
       ),
     ).toBeInTheDocument();
   });
