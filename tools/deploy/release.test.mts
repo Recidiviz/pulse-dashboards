@@ -17,7 +17,7 @@
 
 import { describe, expect, it } from "vitest";
 
-import { computeNextVersion } from "./release.mts";
+import { computeNextVersion, shouldMakeLatest } from "./release.mts";
 
 describe("computeNextVersion", () => {
   it("bumps the minor of the latest release for a normal deploy", () => {
@@ -49,5 +49,19 @@ describe("computeNextVersion", () => {
       versionToIncrement: "",
       releaseType: "patch",
     });
+  });
+});
+
+describe("shouldMakeLatest", () => {
+  it("is true for a normal deploy, which always bumps past the latest release", () => {
+    expect(shouldMakeLatest("v5.296.0", "v5.295.0")).toBe(true);
+  });
+
+  it("is true for a cherry-pick that patches the latest release's own line", () => {
+    expect(shouldMakeLatest("v5.295.1", "v5.295.0")).toBe(true);
+  });
+
+  it("is false for a cherry-pick that patches an older line than the latest release", () => {
+    expect(shouldMakeLatest("v5.290.4", "v5.295.0")).toBe(false);
   });
 });

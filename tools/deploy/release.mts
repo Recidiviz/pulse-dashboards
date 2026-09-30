@@ -17,7 +17,7 @@
 
 import type { Octokit } from "@octokit/rest";
 import inquirer from "inquirer";
-import { inc } from "semver";
+import { gte, inc } from "semver";
 import { $, chalk } from "zx";
 
 import { owner, releaseTagPattern, repo } from "./config.mts";
@@ -73,6 +73,20 @@ export function computeNextVersion(
     return { ok: false, versionToIncrement, releaseType };
   }
   return { ok: true, version: `v${bumpedVersion}` };
+}
+
+/**
+ * Whether `nextVersion` should become GitHub's "latest release".
+ *
+ * A cherry-pick deploy only qualifies as "latest" when it patches the current release
+ * (e.g. patching v5.235 while v5.235 is latest); a CP onto an older line (e.g. patching
+ * v5.234 while v5.235 is latest) should  not take over "latest" from the newer release.
+ */
+export function shouldMakeLatest(
+  nextVersion: string,
+  latestReleaseVersion: string,
+): boolean {
+  return gte(nextVersion, latestReleaseVersion);
 }
 
 async function prepareStagingPlan(
@@ -150,6 +164,18 @@ async function prepareProductionPlan(
     default: false,
   })) as { isCpDeploy: boolean };
 
+  // Get the nearest annotated tag matching the release version pattern, so that if the
+  // minor version is updated and a CP is needed for a version with a lower minor, then the
+  // patch version is incremented for the correct minor. The --match filter skips unrelated
+  // annotated tags (e.g. reentry/v*) that would otherwise produce invalid semver input to
+  // inc(). Only needed for cherry-pick deploys.
+  //
+  // We'll also use this "nearest" tag when generating release notes for a CP deploy
+  let nearestVersionTag = "";
+  if (isCpDeploy) {
+    nearestVersionTag = await nearestReleaseTag(currentRevision);
+  }
+
   console.log("Generating release notes...");
   const latestRelease = await octokit.rest.repos.getLatestRelease({
     owner,
@@ -163,7 +189,7 @@ async function prepareProductionPlan(
     repo,
     tag_name: `rc/${currentRevision}`, // This tag is just a placeholder and won't actually be created
     target_commitish: currentRevision,
-    previous_tag_name: latestReleaseVersion,
+    previous_tag_name: isCpDeploy ? nearestVersionTag : latestReleaseVersion,
   });
   let releaseNotes = generatedReleaseNotes.data.body;
   console.log(releaseNotes);
@@ -188,20 +214,10 @@ async function prepareProductionPlan(
     console.log(`${chalk.bold("New release notes:")}\n${releaseNotes}`);
   }
 
-  // Get the nearest annotated tag matching the release version pattern, so that if the
-  // minor version is updated and a CP is needed for a version with a lower minor, then the
-  // patch version is incremented for the correct minor. The --match filter skips unrelated
-  // annotated tags (e.g. reentry/v*) that would otherwise produce invalid semver input to
-  // inc(). Only needed for cherry-pick deploys.
-  let describeTag = "";
-  if (isCpDeploy) {
-    describeTag = await nearestReleaseTag(currentRevision);
-  }
-
   const result = computeNextVersion(
     isCpDeploy,
     latestReleaseVersion,
-    describeTag,
+    nearestVersionTag,
   );
   if (!result.ok) {
     console.error(
@@ -289,7 +305,9 @@ export async function finalizeProduction(
     repo,
     tag_name: plan.nextVersion,
     body: releaseNotes,
-    make_latest: "true", // yes, this is a string
+    make_latest: shouldMakeLatest(plan.nextVersion, plan.latestReleaseVersion)
+      ? "true"
+      : "false", // yes, this is a string
   });
 
   console.log(`Release published at ${release.data.html_url}`);
