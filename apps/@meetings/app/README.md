@@ -169,24 +169,35 @@ Reviewing the plan's summary before dispatching execute is the approval step.
 ### Where the version lives
 
 The marketing version is a property of a release, not of the source. `app.config.ts` commits a
-`0.0.0` placeholder; the execute workflow writes the real version in at build time and never
-commits it. The record of which commit shipped as which version is the tag
+`0.0.0` placeholder; the release workflows write the real version in at publish time and never
+commit it. The record of which commit shipped as which version is the tag
 `meetings-app-<env>-v<version>`, pointing at the released commit. It is annotated with the
 release notes, so `git show meetings-app-<env>-v<version>` is the whole record of a release.
 
-This is why the version never needs a bump PR, and why nothing downstream has to wait for one to
-merge. It also means the two environments share one version line: a promotion reuses the number
-the other environment's build was given, rather than inventing a new one.
+OTAs are versioned the same way, via the same `scripts/write-release-version.mts` — once an update
+is running, `expo-constants` reads the version out of the update's config rather than the build's,
+so without it an OTA'd client would report the placeholder. A staging OTA takes the next patch off
+the version line and tags it like any other release; a production OTA reuses whatever staging
+tagged on that same commit, which is how a promotion keeps its number. A cherry-pick into
+production has no staging tag, so it takes a number of its own.
+
+Both environments draw from one version line, so the same number always points at the same commit.
 
 Execute rejects a version that environment has already shipped, or one below it — stores require
 the number to keep increasing within an app.
 
 To simulate a version in a local or preview build — for anything that branches on it, like the
-forced-upgrade check in `src/features/app-update` — set `MEETINGS_APP_VERSION`:
+forced-upgrade check in `src/features/app-update` — set `MEETINGS_APP_VERSION` on any of the dev
+targets:
 
 ```bash
-MEETINGS_APP_VERSION=0.8.0 npx expo start
+MEETINGS_APP_VERSION=0.8.0 nx web @meetings/app
+MEETINGS_APP_VERSION=0.8.0 nx dev:ios @meetings/app
+MEETINGS_APP_VERSION=0.8.0 nx dev:android @meetings/app
 ```
+
+The SOPS wrapper only fills in variables that aren't already set, so a value from your shell wins
+over the decrypted env.
 
 For a preview build on EAS, put it in the **`preview` profile's `env` block** in `eas.json`. Don't
 set it as an EAS environment variable on `preview`: the `staging` profile shares that EAS
