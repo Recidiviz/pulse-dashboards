@@ -59,39 +59,44 @@ export abstract class UsTxArsErsV2OpportunityBase<
       searchStore: { searchType },
     } = this.rootStore.workflowsStore;
 
-    return this.actionHistory
-      .flatMap((action) => {
-        const staffResponseId = action.supervisorResponse?.updateById;
-        const staffRequestId = action.updateById;
+    return [
+      ...new Set(
+        this.actionHistory
+          .flatMap((action) => {
+            const staffResponseId = action.supervisorResponse?.updateById;
+            const staffRequestId = action.updateById;
 
-        if (staffResponseId && staffRequestId) {
-          return [
-            getOfficerFullName(
-              availableOfficersWithOrWithoutCaseloads,
-              staffRequestId,
-              undefined,
-              searchType,
-            ) ?? staffRequestId,
-            getOfficerFullName(
-              availableOfficersWithOrWithoutCaseloads,
-              staffResponseId,
-              undefined,
-              searchType,
-            ) ?? staffResponseId,
-          ];
-        }
+            if (staffResponseId && staffRequestId) {
+              return [
+                getOfficerFullName(
+                  availableOfficersWithOrWithoutCaseloads,
+                  staffRequestId,
+                  undefined,
+                  searchType,
+                ) ?? staffRequestId,
+                getOfficerFullName(
+                  availableOfficersWithOrWithoutCaseloads,
+                  staffResponseId,
+                  undefined,
+                  searchType,
+                ) ?? staffResponseId,
+              ];
+            }
 
-        if (!staffRequestId || staffRequestId === "RECIDIVIZ") return action.by;
-        return (
-          getOfficerFullName(
-            availableOfficersWithOrWithoutCaseloads,
-            staffRequestId,
-            undefined,
-            searchType,
-          ) ?? staffRequestId
-        );
-      })
-      .filter((name) => name !== undefined);
+            if (!staffRequestId || staffRequestId === "RECIDIVIZ")
+              return action.by;
+            return (
+              getOfficerFullName(
+                availableOfficersWithOrWithoutCaseloads,
+                staffRequestId,
+                undefined,
+                searchType,
+              ) ?? staffRequestId
+            );
+          })
+          .filter((name) => name !== undefined),
+      ),
+    ];
   }
 
   get isGrantApproved(): boolean {
