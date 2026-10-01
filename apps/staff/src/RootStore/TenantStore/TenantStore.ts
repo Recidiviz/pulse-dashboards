@@ -47,7 +47,8 @@ import methodology from "./methodology";
 type TenantConfigLabelType =
   | "supervisionEndDateCopy"
   | "incarcerationStaffTitle"
-  | "releaseDateCopy";
+  | "releaseDateCopy"
+  | "assignedToCopy";
 
 export const CURRENT_TENANT_IN_SESSION = "adminUserCurrentTenantInSession";
 const TENANT_ID_QUERY_PARAM = "tenantId";
@@ -373,6 +374,7 @@ export default class TenantStore {
       supervisionEndDateCopy: config?.supervisionEndCopyOverride ?? "End",
       incarcerationStaffTitle:
         config?.incarcerationStaffTitleOverride ?? "Case Manager",
+      assignedToCopy: config?.assignedToCopy ?? "Assigned to",
     };
   }
 

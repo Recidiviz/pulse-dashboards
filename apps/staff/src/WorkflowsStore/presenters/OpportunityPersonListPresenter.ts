@@ -556,6 +556,11 @@ export class OpportunityPersonListPresenter
     return this.tenantStore.labels.releaseDateCopy;
   }
 
+  get assignedToHeader() {
+    // Header text for the "assigned to" column in table view
+    return this.tenantStore.labels.assignedToCopy;
+  }
+
   get supervisionEndHeader() {
     // Header text for the "supervision end date" column in table view
     return formatSupervisionEndDatePhrase(

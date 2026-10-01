@@ -1367,7 +1367,7 @@ const TableView = observer(function TableView({
       },
     },
     {
-      header: "Assigned to",
+      header: presenter.assignedToHeader,
       id: "ASSIGNED_STAFF_NAME",
       // Sort by surname if available, full displayed name if not
       accessorFn: (opp: Opportunity) =>

@@ -298,6 +298,7 @@ const US_TX_CONFIG = {
     navTitle: "Regional Dashboard",
     lookerDashboard: "texas_region_metrics",
   },
+  assignedToCopy: "Supervising Officer",
 } satisfies TenantConfig<"US_TX">;
 
 export default US_TX_CONFIG;

@@ -99,6 +99,7 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
   releaseDateCopyOverride?: string;
   supervisionEndCopyOverride?: string;
   incarcerationStaffTitleOverride?: string;
+  assignedToCopy?: string;
   custodyLevelCopy?: Record<string, string>;
 
   // Client Profile
