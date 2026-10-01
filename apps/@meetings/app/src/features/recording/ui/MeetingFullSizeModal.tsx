@@ -16,6 +16,7 @@
 // =============================================================================
 
 import * as TooltipPrimitive from "@rn-primitives/tooltip";
+import clsx from "clsx";
 import { useEffect, useRef } from "react";
 import { TextInput, TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
@@ -23,20 +24,18 @@ import XIcon from "react-native-heroicons/outline/XIcon";
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
 import { Person } from "~@meetings/app/shared/api";
 
-import MinimizeSvg from "../../../shared/assets/icons/arrows-pointing-in.svg";
-import NotesSvg from "../../../shared/assets/icons/notes.svg";
 import PauseSvg from "../../../shared/assets/icons/pause.svg";
 import PlaySvg from "../../../shared/assets/icons/play.svg";
 import StopSvg from "../../../shared/assets/icons/stop.svg";
 import { formatDurationNumeric } from "../../../shared/lib/format";
 import LinearProgressBar from "../../../shared/ui/LinearProgressBar";
-import Modal from "../../../shared/ui/Modal";
 import { OfflineIndicator } from "../../../shared/ui/OfflineIndicator";
 import { RecordingIndicator } from "../../../shared/ui/RecordingIndicator";
 import { Typography } from "../../../shared/ui/Typography";
 import { useRecording } from "..";
+import { useRecordingStore } from "../model/store";
 import { useAudioErrorDetection } from "../model/useAudioErrorDetection";
-import { MeetingSidePanel } from "./MeetingSidePanel";
+import { MeetingModalLayout } from "./MeetingModalLayout";
 import { MicIndicator } from "./MicIndicator";
 
 type Props = {
@@ -57,6 +56,7 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
     discardRecording,
     togglePauseResume,
   } = useRecording<"web">();
+  const isSidebarCollapsed = useRecordingStore((s) => s.isSidebarCollapsed);
   const { micStatus, hasAudioError } = useAudioErrorDetection({
     isRecording: status === "recording",
     audioLevel,
@@ -101,72 +101,33 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
   if (!status) return null;
 
   const isModalDisabled = status === "uploading" || status === "ending";
+  const minimize = () => setIsRecordingViewMinimized(true);
 
   return (
-    <Modal
-      visible
-      transparent
-      onClickOutside={() => setIsRecordingViewMinimized(true)}
-      containerClassName="max-w-[960px] md:h-[658px] size-full"
+    <MeetingModalLayout
+      titleAccessory={
+        <MeetingTypeTag type={meetingType} typeCategory={meetingTypeCategory} />
+      }
+      onClose={minimize}
+      sidebarProps={{ person, onNavigateAway: minimize }}
     >
-      <View className="h-full flex-1 grow md:h-auto">
-        <View className="w-full flex-row items-center justify-between border-b border-subtle px-8 pb-3 pt-5">
-          <View className="gap-1">
-            <Typography className="flex flex-row items-center gap-2 text-xl font-semibold text-primary">
-              New Meeting{" "}
-              <MeetingTypeTag
-                type={meetingType}
-                typeCategory={meetingTypeCategory}
-              />
-            </Typography>
-            <Typography className="text-base font-medium text-primary">
-              {person.fullName}{" "}
-              <Typography className="text-xs font-normal text-secondary md:text-base">
-                {person.primaryMetadata} • ID: {person.displayPersonExternalId}
-              </Typography>
-            </Typography>
-          </View>
-          <View className="flex-row items-center gap-4">
-            {/* <View className="flex-row items-center gap-2">
-              <Text className="text-sm font-medium text-[#355362D9]">
-                Show live AI transcript
-              </Text>
-              <TouchableWithoutFeedback
-                onPress={() => setShowLiveTranscript(!showLiveTranscript)}
-              >
-                <View
-                  className={`h-5 w-[38px] cursor-pointer rounded-full p-0.5 ${showLiveTranscript ? "items-end bg-[#004D48]" : "items-start bg-[#35536280]"}`}
-                >
-                  <View className="size-4 rounded-full bg-white" />
-                </View>
-              </TouchableWithoutFeedback>
-            </View> */}
-            <TouchableOpacity
-              onPress={() => setIsRecordingViewMinimized(true)}
-              className="rounded-full bg-screen p-1.5"
-            >
-              <MinimizeSvg className="size-5 text-secondary" />
-            </TouchableOpacity>
-          </View>
-        </View>
+      <View className="flex-1 grow">
         <View className="flex-1 grow flex-row">
-          <View className="grow gap-5 py-5">
-            <View className="flex-row items-center gap-1.5 px-8">
-              <NotesSvg className="stroke-tertiary" />
-              <Typography className="font-semibold text-primary">
-                Notepad
-              </Typography>
-            </View>
+          <View className="flex-1 gap-2 px-12 pb-6 pt-8">
+            <Typography variant="heading-5">Notepad</Typography>
+            <Typography variant="body-m-regular" className="!text-secondary">
+              Use the notepad to flag anything you want to make sure is in the
+              final notes. It will be saved and used to build the summary.
+            </Typography>
             <TextInput
               value={note}
               onChangeText={setNote}
               multiline
-              className="grow justify-start px-8 leading-[20px] text-primary outline-none"
-              placeholder="Use the notepad to flag anything you want to make sure is in the final notes. It will be saved and used to build the summary."
+              className="mt-4 grow justify-start rounded-lg border border-subtle px-4 py-3 text-base leading-[22px] text-primary outline-none"
+              placeholder="Start typing here... Try adding details you want saved, discussion topics, or other notes."
               editable={!isModalDisabled}
             />
           </View>
-          <MeetingSidePanel person={person} />
           {/* {showLiveTranscript && (
             <View className="min-w-[300px] flex-1 gap-5 border-l border-[#EDF1F1] py-5">
               <View className="flex-row items-center gap-1.5 px-8">
@@ -224,10 +185,18 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
         <View className="h-1">
           {status === "ending" && <LinearProgressBar />}
         </View>
-        <View className="flex-col items-center justify-between gap-2 border-t border-subtle bg-screen px-8 py-5 lg:columns-3 lg:flex-row">
+        <View
+          className={clsx(
+            "flex-col items-center justify-between gap-2 border-t border-subtle bg-screen px-8 py-5",
+            isSidebarCollapsed && "lg:columns-3 lg:flex-row",
+          )}
+        >
           <View className="flex flex-row items-center gap-3">
             <OfflineIndicator
-              triggerClassName="hidden rounded-full border-2 border-on-brand bg-warning-light size-11 lg:flex"
+              triggerClassName={clsx(
+                "hidden rounded-full border-2 border-on-brand bg-warning-light size-11",
+                isSidebarCollapsed && "lg:flex",
+              )}
               iconClassName="!size-5"
               enableTooltip
               side="top"
@@ -235,7 +204,13 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
               alignOffset={-9}
               isInsideModal
             />
-            <View className="flex w-[250px] flex-row-reverse justify-between lg:w-[180px] lg:flex-col lg:justify-start">
+            <View
+              className={clsx(
+                "flex w-[250px] flex-row-reverse justify-between",
+                isSidebarCollapsed &&
+                  "lg:w-[180px] lg:flex-col lg:justify-start",
+              )}
+            >
               <Typography className="text-lg font-semibold text-primary">
                 {formatDurationNumeric(durationMs)}
               </Typography>
@@ -251,7 +226,10 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
           </View>
           <View className="flex-row items-center gap-2">
             <OfflineIndicator
-              triggerClassName="rounded-full border-2 border-on-brand bg-warning-light size-11 lg:hidden"
+              triggerClassName={clsx(
+                "rounded-full border-2 border-on-brand bg-warning-light size-11",
+                isSidebarCollapsed && "lg:hidden",
+              )}
               iconClassName="!size-5"
               enableTooltip
               side="top"
@@ -343,14 +321,22 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
               </Typography>
             </TouchableOpacity>
             <TouchableOpacity
-              className="size-[52px] items-center justify-center rounded-full aria-disabled:opacity-40 lg:hidden"
+              className={clsx(
+                "size-[52px] items-center justify-center rounded-full aria-disabled:opacity-40",
+                isSidebarCollapsed && "lg:hidden",
+              )}
               onPress={discardRecording}
               disabled={isModalDisabled}
             >
               <XIcon className="size-6 stroke-secondary" />
             </TouchableOpacity>
           </View>
-          <View className="hidden w-[180px] lg:flex lg:items-end">
+          <View
+            className={clsx(
+              "hidden w-[180px]",
+              isSidebarCollapsed && "lg:flex lg:items-end",
+            )}
+          >
             <TouchableOpacity
               className="flex-row items-center aria-disabled:opacity-40"
               disabled={isModalDisabled}
@@ -364,6 +350,6 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
           </View>
         </View>
       </View>
-    </Modal>
+    </MeetingModalLayout>
   );
 };

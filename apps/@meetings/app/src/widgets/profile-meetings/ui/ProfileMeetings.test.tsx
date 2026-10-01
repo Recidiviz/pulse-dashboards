@@ -48,6 +48,7 @@ const mockSetPerson = jest.fn();
 const mockSetPersonType = jest.fn();
 const mockStartRecording = jest.fn();
 const mockOpenRecordingView = jest.fn();
+const mockSetNote = jest.fn();
 const mockTrack = jest.fn();
 const mockResetMeetingTypeStore = jest.fn();
 
@@ -78,6 +79,7 @@ jest.mock("~@meetings/app/features/recording", () => ({
     setPersonType: mockSetPersonType,
     startRecording: mockStartRecording,
     openRecordingView: mockOpenRecordingView,
+    setNote: mockSetNote,
   })),
 }));
 
@@ -197,6 +199,7 @@ describe("ProfileMeetings", () => {
           meetingTypeCategory: null,
           person: mockPerson,
         });
+        expect(mockSetNote).toHaveBeenCalledWith("");
         expect(mockStartRecording).toHaveBeenCalled();
         expect(mockSetMeetingId).not.toHaveBeenCalled();
       });
