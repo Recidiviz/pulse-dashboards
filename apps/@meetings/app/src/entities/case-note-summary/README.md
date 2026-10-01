@@ -115,7 +115,8 @@ catches a present-but-blank value, which the `WHERE` clause may not.
 
 ### 2a. `primaryStatus = 'in_custody'`
 
-`"is currently in custody"`
+Returns `null` - we do not render a summary when primary status is in custody (typically
+this status signals a stale case note).
 
 ### 2b. `primaryStatus = 'unhoused'`
 

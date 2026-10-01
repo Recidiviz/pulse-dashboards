@@ -113,10 +113,10 @@ export function getHousingSegments(
   }
 
   switch (primaryStatus.fieldValue) {
+    // We've decided not to render a summary for this status since it typically signals
+    // a stale case note and isn't actionable to the user.
     case "in_custody":
-      return compact([
-        citedValue(primaryStatus, () => "is currently in custody"),
-      ]);
+      return null;
 
     case "unhoused":
       return compact([

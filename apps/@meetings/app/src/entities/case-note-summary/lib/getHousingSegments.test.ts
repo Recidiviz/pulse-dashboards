@@ -35,12 +35,13 @@ const render = (segments: CaseNoteSummarySegment[] | null) =>
   segments?.map(({ content }) => content).join("");
 
 describe("getHousingSegments", () => {
-  it("renders in custody (2a)", () => {
+  it("skips rendering when primary status is 'in custody' (2a)", () => {
     const result = getHousingSegments(
       build({ primaryStatus: field("in_custody") }),
       warn,
     );
-    expect(render(result)).toBe("is currently in custody");
+    expect(result).toBeNull();
+    expect(render(result)).toBeUndefined();
   });
 
   describe("unhoused (2b)", () => {
