@@ -52,6 +52,7 @@ import {
   FetchFilters,
   fetchRows,
 } from "~@meetings/server/scripts/meetings-oncall/data";
+import { buildDeleteMeetingSql } from "~@meetings/server/scripts/meetings-oncall/delete-sql";
 import { diagnoseMeeting } from "~@meetings/server/scripts/meetings-oncall/diagnose";
 import { renderHtml } from "~@meetings/server/scripts/meetings-oncall/render";
 
@@ -240,6 +241,37 @@ async function main() {
       );
 
       return reply.send(diagnosis);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`   ❌ ${message}`);
+      return reply.code(400).type("text/plain; charset=utf-8").send(message);
+    }
+  });
+
+  // Only builds SQL for the operator to run by hand; nothing is deleted here.
+  app.get("/api/delete-sql", async (request, reply) => {
+    const query = request.query as Record<string, unknown>;
+    try {
+      const meetingId = validateMeetingId(query["meetingId"]);
+      const staffEmail =
+        typeof query["staffEmail"] === "string" ? query["staffEmail"] : "";
+
+      const dryRun = buildDeleteMeetingSql({
+        meetingIds: [meetingId],
+        staffEmail,
+        commit: false,
+      });
+      const committed = buildDeleteMeetingSql({
+        meetingIds: [meetingId],
+        staffEmail,
+        commit: true,
+      });
+
+      return reply.send({
+        inspect: dryRun.inspect,
+        dryRun: dryRun.transaction,
+        commit: committed.transaction,
+      });
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       console.error(`   ❌ ${message}`);

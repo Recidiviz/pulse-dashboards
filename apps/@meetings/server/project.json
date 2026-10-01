@@ -258,6 +258,13 @@
         "production": {}
       }
     },
+    "delete-meeting-sql": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx scripts/delete-meeting-sql.ts",
+        "cwd": "{projectRoot}"
+      }
+    },
     "requires-sops-env:export-label-studio-tasks": {
       "executor": "nx:run-commands",
       "options": {

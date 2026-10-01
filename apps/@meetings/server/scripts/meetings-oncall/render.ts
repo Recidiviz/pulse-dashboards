@@ -153,6 +153,9 @@ function renderActionsCell({ stateCode, meeting }: DashboardRow): string {
     <input type="file" accept="audio/*" ${attrs} onchange="stageUpload(this)" />
     <button class="btn primary" ${attrs} onclick="uploadAndReprocess(this)">upload + reprocess</button>
   </div>
+  <div class="btn-row">
+    <button class="btn danger" ${attrs} data-staff="${escapeHtml(meeting.staffEmail)}" onclick="openDeleteDialog(this)">delete…</button>
+  </div>
   <pre class="log" id="log-${escapeHtml(meeting.id)}" hidden></pre>
 </div>`;
 }
@@ -195,6 +198,47 @@ function renderDiagnosticsRow(
     </div>
   </td>
 </tr>`;
+}
+
+/**
+ * The dashboard never deletes anything itself: this dialog only shows the SQL
+ * from `delete-sql.ts` for the operator to run by hand in psql.
+ */
+function renderDeleteDialog(configuration: string): string {
+  return `<dialog id="delete-dialog">
+  <form method="dialog" class="dialog-close"><button class="btn" aria-label="Close">✕</button></form>
+  <h2>Delete meeting <code id="delete-meeting-id"></code></h2>
+  <p class="meta">
+    State <strong id="delete-state"></strong> &middot; owner <strong id="delete-staff"></strong>
+    &middot; ${escapeHtml(configuration)}
+  </p>
+  <div class="notice danger">
+    <strong>This dashboard does not delete anything.</strong> Run the SQL below yourself in psql,
+    connected through the Cloud SQL proxy to the <strong>${escapeHtml(configuration)}</strong>
+    <strong id="delete-state-db"></strong> database. Deleted rows cannot be recovered.
+    <ol>
+      <li>Run the <strong>inspect</strong> queries. Check there is exactly one row, owned by the right user.</li>
+      <li>Run the <strong>dry run</strong> transaction. It ends in <code>ROLLBACK</code>, so nothing is kept.
+        Check each <code>DELETE</code> count against the inspect counts and that <code>remaining</code> is 0.</li>
+      <li>Only if every count matches, run the <strong>COMMIT</strong> version.</li>
+    </ol>
+    GCS recordings are not deleted by this SQL. The inspect output includes a <code>gcloud storage rm</code>
+    command; consider using <em>inspect GCS</em> first if the failure isn't understood yet.
+  </div>
+  <div id="delete-error" class="log" hidden></div>
+  <div class="sql-block">
+    <div class="diag-title">1. Inspect (read-only) <button class="btn" onclick="copySql('delete-sql-inspect', this)">copy</button></div>
+    <pre class="log sql" id="delete-sql-inspect"></pre>
+  </div>
+  <div class="sql-block">
+    <div class="diag-title">2. Dry run (ROLLBACK) <button class="btn" onclick="copySql('delete-sql-dry-run', this)">copy</button></div>
+    <pre class="log sql" id="delete-sql-dry-run"></pre>
+  </div>
+  <div class="sql-block">
+    <div class="diag-title">3. COMMIT (permanent) — only after the dry run checks out <button class="btn danger" onclick="copySql('delete-sql-commit', this)">copy</button></div>
+    <pre class="log sql" id="delete-sql-commit"></pre>
+  </div>
+</dialog>`;
 }
 
 function renderRow(row: DashboardRow, configuration: string): string {
@@ -259,6 +303,14 @@ const STYLES = `
   .btn:hover:not(:disabled) { background: #eee; }
   .btn:disabled { opacity: .5; cursor: progress; }
   .btn.primary { border-color: #2a6ebb; color: #2a6ebb; }
+  .btn.danger { border-color: #c62828; color: #c62828; }
+  dialog#delete-dialog { width: min(900px, calc(100vw - 32px)); max-height: calc(100vh - 48px); border: 1px solid #bbb; border-radius: 8px; padding: 16px 20px; }
+  dialog#delete-dialog::backdrop { background: rgba(0, 0, 0, .45); }
+  dialog#delete-dialog h2 { font-size: 16px; margin: 0 0 4px; }
+  dialog#delete-dialog ol { margin: 6px 0; padding-left: 20px; }
+  .dialog-close { float: right; }
+  .sql-block { margin-top: 12px; }
+  .log.sql { max-height: 240px; }
   input[type="file"] { font-size: 11px; max-width: 150px; }
   .btn.expand { padding: 0 5px; font-family: monospace; line-height: 1.4; }
   .diag-row > td { background: #fafafa; }
@@ -281,6 +333,8 @@ const STYLES = `
     .notice { background: #33270f; }
     .notice.danger { background: #3a1f1f; }
     .btn { background: #2a2a2a; border-color: #555; color: #e6e6e6; }
+    .btn.danger { border-color: #ef5350; color: #ef9a9a; }
+    dialog#delete-dialog { background: #1f1f1f; color: #e6e6e6; border-color: #444; }
     .btn:hover:not(:disabled) { background: #333; }
     .log { background: #232323; }
     .diag-row > td { background: #202020; }
@@ -429,6 +483,46 @@ function objectUrl(bucket, name) {
   return "https://console.cloud.google.com/storage/browser/_details/" + encodeURIComponent(bucket) + "/" + path;
 }
 
+async function openDeleteDialog(button) {
+  const { state, meeting, staff } = button.dataset;
+  const dialog = document.getElementById("delete-dialog");
+  const error = document.getElementById("delete-error");
+  document.getElementById("delete-meeting-id").textContent = meeting;
+  document.getElementById("delete-state").textContent = state;
+  document.getElementById("delete-state-db").textContent = state;
+  document.getElementById("delete-staff").textContent = staff;
+  ["inspect", "dry-run", "commit"].forEach((key) => {
+    document.getElementById("delete-sql-" + key).textContent = "Loading\u2026";
+  });
+  error.hidden = true;
+  dialog.showModal();
+
+  try {
+    const query = new URLSearchParams({ meetingId: meeting, staffEmail: staff });
+    const res = await fetch("/api/delete-sql?" + query, { headers: { "x-oncall-token": TOKEN } });
+    const text = await res.text();
+    if (!res.ok) throw new Error(text || res.statusText);
+    const sql = JSON.parse(text);
+    document.getElementById("delete-sql-inspect").textContent = sql.inspect;
+    document.getElementById("delete-sql-dry-run").textContent = sql.dryRun;
+    document.getElementById("delete-sql-commit").textContent = sql.commit;
+  } catch (e) {
+    error.hidden = false;
+    error.textContent = "\u274c " + e.message;
+  }
+}
+
+async function copySql(id, button) {
+  const original = button.textContent;
+  try {
+    await navigator.clipboard.writeText(document.getElementById(id).textContent);
+    button.textContent = "copied";
+  } catch (e) {
+    button.textContent = "copy failed";
+  }
+  setTimeout(() => { button.textContent = original; }, 1500);
+}
+
 function applyFilters(event) {
   event.preventDefault();
   const form = new FormData(event.target);
@@ -488,7 +582,7 @@ ${skippedNotice}
 <tr>
   <th>Meeting ID</th><th>State</th><th>Start (UTC)</th><th>Creator</th>
   <th>Person</th><th>Pseudonymized ID</th><th>Meeting type</th><th>Status</th>
-  <th>Audio</th><th>Transcription</th><th>Notetaking</th><th>Reprocess</th>
+  <th>Audio</th><th>Transcription</th><th>Notetaking</th><th>Actions</th>
 </tr>
 </thead>
 <tbody>
@@ -496,6 +590,7 @@ ${rows.length ? rows.map((row) => renderRow(row, configuration)).join("\n") : `<
 </tbody>
 </table>
 </div>
+${renderDeleteDialog(configuration)}
 <script>${clientScript(token)}</script>
 </body>
 </html>

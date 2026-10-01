@@ -207,6 +207,46 @@ Follow the logs: <https://console.cloud.google.com/logs/query;duration=PT10M;que
 
 ---
 
+## Delete Meeting SQL
+
+Prints the SQL for deleting meetings, e.g. when a user wants a failed meeting removed so they can
+re-upload a local copy. **It never connects to a database**: it prints SQL for you to run yourself
+in a psql session on the state's database (via the Cloud SQL Auth Proxy).
+
+### Usage
+
+```bash
+nx delete-meeting-sql @meetings/server \
+  --args="--meeting-id <id> [<id> ...] --staff-email <email> [--commit]"
+```
+
+- `--meeting-id` - One or more meeting ids
+- `--staff-email` - Owner of the meetings. Every `DELETE` also filters on this, so a mistyped id
+  belonging to someone else matches nothing.
+- `--commit` - End the transaction with `COMMIT`. Without it, the transaction ends in `ROLLBACK`.
+
+### What it prints
+
+1. **Inspect (read-only)**: the meetings with their transcription/utterance/action item counts,
+   every foreign key pointing at `Meeting`, and a `gcloud storage rm` command for each meeting's
+   recordings folder.
+2. **Delete**: one transaction deleting `Utterance` → `Transcription` → `MeetingActionItem` →
+   `Meeting` (the foreign keys do not cascade), then a check that no meetings remain.
+
+`NotetakingPipelineRun`, `OutputVote`, and `NoteApproval` are left alone; they are kept as history
+after a meeting is deleted. GCS recordings are not deleted unless you run the printed `gcloud`
+commands; consider inspecting the chunks first (`inspect GCS` in the oncall dashboard) if the
+failure isn't understood yet.
+
+### Workflow
+
+1. Run the script without `--commit` and run the inspect queries. Confirm one row per id, all owned
+   by the right user.
+2. Run the dry-run transaction and check each `DELETE` count against the inspect counts.
+3. Re-run the script with `--commit` and run the transaction again.
+
+---
+
 ## Meetings Oncall Dashboard
 
 Serves a local dashboard of recent meetings for oncall debugging, with reprocessing and audio
@@ -269,6 +309,13 @@ nx reprocess-meeting @meetings/server --configuration=<same> \
 `transcription` against that path. It writes to a new object rather than overwriting `final.*`, so
 the original stitched audio stays recoverable — but note that the reprocess endpoint does update
 the meeting's `finalRecordingGCSPath` to the new object.
+
+### Delete action
+
+Each row's `delete…` button opens a dialog with the SQL from `nx delete-meeting-sql` for that
+meeting and its owner: the inspect queries, a dry-run transaction ending in `ROLLBACK`, and the
+`COMMIT` version. **The dashboard never deletes anything itself**: copy the SQL into psql
+against that state's database and follow the steps in the dialog.
 
 ### Diagnosing a failure
 
