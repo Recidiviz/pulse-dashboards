@@ -60,18 +60,18 @@ export function ReviewBeforeCopyModal({
       <View className="flex-row items-center justify-end gap-3">
         <TouchableOpacity
           className="rounded-full bg-secondary px-6 py-3"
-          onPress={onClose}
+          onPress={onConfirm}
         >
           <Typography className="text-center text-sm font-medium text-primary">
-            Review first
+            {actionLabel}
           </Typography>
         </TouchableOpacity>
         <TouchableOpacity
           className="rounded-full bg-brand px-6 py-3"
-          onPress={onConfirm}
+          onPress={onClose}
         >
           <Typography className="text-center text-sm font-medium text-on-brand">
-            {actionLabel}
+            Review first
           </Typography>
         </TouchableOpacity>
       </View>
