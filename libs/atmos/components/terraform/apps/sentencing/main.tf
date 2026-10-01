@@ -61,6 +61,10 @@ module "database" {
 module "server" {
   source = "../../vendor/cloud-run"
 
+  # Ensure migrations are applied before the new server revision (which may
+  # expect the post-migration schema) starts serving traffic.
+  depends_on = [module.migrate_db_job]
+
   project_id      = var.project_id
   location        = var.location
   service_name    = var.server_name
@@ -225,6 +229,7 @@ module "handle_sentencing_gcs_upload" {
   env_vars = {
     PROJECT_ID        = var.project_id
     JOB_NAME          = module.import_job[0].id
+    MIGRATE_JOB_NAME  = module.migrate_db_job.id
     ARCHIVE_BUCKET_ID = module.gcs_bucket[0].names[local.archive_bucket_name]
     ETL_BUCKET_ID     = module.gcs_bucket[0].names[local.etl_bucket_name]
   }

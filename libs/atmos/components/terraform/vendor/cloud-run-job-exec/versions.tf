@@ -15,13 +15,9 @@
  */
 
 terraform {
-  required_version = ">= 0.13"
+  required_version = ">= 1.4"
 
   required_providers {
-    terracurl = {
-      source  = "devops-rob/terracurl"
-      version = "~> 1.0"
-    }
     google = {
       source  = "hashicorp/google"
       version = ">= 6, < 7"
