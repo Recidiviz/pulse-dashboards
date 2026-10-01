@@ -1148,6 +1148,29 @@ describe("meeting router", () => {
       });
     });
 
+    test("Should throw FORBIDDEN when the user did not create the meeting", async () => {
+      // fakeMeetingStaff1 is owned by fakeStaff[1]; client authenticates as fakeStaff[0].
+      await expect(
+        testTRPCClient.v1.meeting.endMeeting.mutate({
+          meetingId: fakeMeetingStaff1.id,
+          startTime: new Date("2020-01-01T00:00:00.000Z"),
+          endTime: new Date("2020-01-01T01:00:00.000Z"),
+          userNotepadNotes: "Should not be written",
+        }),
+      ).rejects.toMatchObject({
+        data: { code: "FORBIDDEN" },
+      });
+
+      const after = await testPrismaClient.meeting.findUnique({
+        where: { id: fakeMeetingStaff1.id },
+      });
+      expect(after?.startTime).toEqual(fakeMeetingStaff1.startTime);
+      expect(after?.endTime).toBeNull();
+      expect(after?.userNotepadNotes).toEqual(
+        fakeMeetingStaff1.userNotepadNotes,
+      );
+    });
+
     test("Should set meeting end time but queue stitching error if there is a cloud task error", async () => {
       mockCloudTasksClient.createTask.mockRejectedValueOnce(new Error());
 

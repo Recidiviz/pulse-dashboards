@@ -376,8 +376,28 @@ export const meetingRouter = router({
     .mutation(
       async ({
         input: { meetingId, startTime, endTime, userNotepadNotes },
-        ctx: { prisma, stateCode },
+        ctx: { prisma, stateCode, user, isSkipAuth },
       }) => {
+        const meeting = await prisma.meeting.findUnique({
+          where: { id: meetingId },
+          select: { staffEmail: true },
+        });
+
+        if (!meeting) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Meeting with that id was not found",
+          });
+        }
+
+        // Skip-auth (offline/dev) uses a mock user, so bypass the check.
+        if (!isSkipAuth && meeting.staffEmail !== user.email) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Only the meeting creator can end the meeting",
+          });
+        }
+
         try {
           await prisma.meeting.update({
             where: { id: meetingId },
