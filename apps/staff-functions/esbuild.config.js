@@ -15,13 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-const { build } = require("esbuild");
 const fs = require("fs");
 const path = require("path");
 
 // we need to translate dotenv files into the build output
 const dotenvPlugin = {
-  name: "example",
+  name: "dotenv",
   setup(build) {
     build.onEnd(() => {
       // expect a dotenv corresponding to the active Nx configuration
@@ -48,7 +47,8 @@ const dotenvPlugin = {
   },
 };
 
-build({
+// Nx merges these options into its own esbuild call
+module.exports = {
   sourcemap: true,
   plugins: [dotenvPlugin],
-});
+};

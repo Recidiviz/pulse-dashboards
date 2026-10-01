@@ -1,0 +1,17 @@
+{
+  "name": "staff-functions",
+  "version": "0.0.1",
+  "private": true,
+  "main": "index.cjs",
+  "engines": {
+    "node": "22"
+  },
+  "comment": "Everything else is bundled into index.cjs; these are the build's `external` list and must stay in sync with it. They're installed by the Cloud Functions builder (npm) at deploy time, independent of the workspace's versions. firebase-admin must satisfy firebase-functions@7's peer range (^11.10 || ^12 || ^13); the repo root pins ^10.0.2, which yarn tolerates locally but npm rejects with ERESOLVE.",
+  "dependencies": {
+    "@google-cloud/cloud-sql-connector": "1.9.2",
+    "@google-cloud/firestore": "6.8.0",
+    "firebase-admin": "13.9.0",
+    "firebase-functions": "7.2.3",
+    "pg": "8.16.2"
+  }
+}

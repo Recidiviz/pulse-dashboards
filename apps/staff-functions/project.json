@@ -22,7 +22,22 @@
         "bundle": true,
         "main": "apps/staff-functions/src/index.ts",
         "tsConfig": "apps/staff-functions/tsconfig.app.json",
-        "generatePackageJson": true,
+        "generatePackageJson": false,
+        "thirdParty": true,
+        "external": [
+          "@google-cloud/cloud-sql-connector",
+          "@google-cloud/firestore",
+          "firebase-admin",
+          "firebase-functions",
+          "pg"
+        ],
+        "assets": [
+          {
+            "glob": "package.json",
+            "input": "{projectRoot}/runtime",
+            "output": "."
+          }
+        ],
         "target": "node22",
         "esbuildConfig": "{projectRoot}/esbuild.config.js"
       },

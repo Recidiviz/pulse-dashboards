@@ -39,18 +39,25 @@ To create a new firebase function for a new environment (1️⃣) or in an alrea
 
 #### Testing and Deploying
 
-> [!WARNING]  
-> Added May 9, 2025 by @danielsmc: the deploy process for functions is currently broken. I added
-> I added https://github.com/Recidiviz/pulse-dashboards/issues/8403 to fix this, but for now here are the steps that worked for me:
->
-> - `nx build staff-functions -c production`
-> - In `dist/apps/staff-functions`:
->   - `cp ../../../.yarnrc.yml .`
->   - `yarn`
->   - `rm -r node_modules .yarn`
-> - Back at root: `firebase deploy --only functions --config firebase.json --project production-backend`
+##### Prerequisites
 
-1. Use Nx commands to deploy these functions to Firebase. There are separate configurations with corresponding dotenv viles that will build and deploy the functions source for staging or production; run `nx deploy staff-functions -c staging` or `nx deploy staff-functions -c production` accordingly.
+1. A current Firebase CLI login: `firebase login --reauth` if `firebase login:list` shows an expired session.
+1. Deploy permissions, which nobody holds by default. Request a time-limited grant through PAM (no approval
+   needed if you're eligible). Use `recidiviz-dashboard-production` for production:
+
+   ```bash
+   gcloud pam grants create --entitlement=pam-deploy-app --requested-duration=3600s \
+     --justification="Deploy staff-functions" --location=global --project=recidiviz-dashboard-staging
+   ```
+
+##### Deploying
+
+1. Run `nx deploy staff-functions -c staging` or `nx deploy staff-functions -c production`. This builds the
+   functions with the matching `.env.<configuration>` and deploys them to `staging-backend` or
+   `production-backend`.
+1. If a function was renamed or removed from `src/`, the CLI lists the deployed functions it no longer finds
+   and asks whether to delete them. Only functions previously deployed by the Firebase CLI are considered, so
+   the Terraform-managed functions in these projects (synthetic monitors, Typesense sync) are never at risk.
 1. Click the link returned in the terminal after a successful upload of the function.
 1. Click on "Functions" to see the list of functions. The new function should be in the list.
 1. Click on the three dots in the row of the function.
@@ -59,6 +66,14 @@ To create a new firebase function for a new environment (1️⃣) or in an alrea
    2. There MAY OR MAY NOT be an option to view the function in a different GCP application. If so, attempt a force run of the new function.
 
 1. To officially deploy the function with enabled logs, remove the _test_ prefix.
+
+##### Runtime dependencies
+
+The build bundles everything into `index.cjs` except the packages listed under `external` in `project.json`.
+Those are installed by the Cloud Functions builder from [`runtime/package.json`](runtime/package.json), so if
+you add a new runtime-only SDK (anything that loads files from disk or has native bindings), add it to both
+places. We don't ship Nx's generated `package.json`/`yarn.lock`: Nx's lockfile pruning drops entries for the
+root `resolutions` overrides, and the builder's `yarn install --immutable` then fails.
 
 #### Documentation
 
@@ -86,7 +101,7 @@ This function is scheduled to run every Friday at 11:59 PM PDT. It exports speci
 - Environment Variables:
   - `PROJECT_ID`: The project ID.
   - `OUTPUT_BUCKET`: The GCS bucket to write to.
-- To Deploy: Execute `nvm use 18` then `yarn deploy:staging` or `yarn deploy:production`
+- To Deploy: See [Deploying](#deploying).
 - To Run: Can force run in the Google Cloud Scheduler.
 
 ### `exportWorkflowsSnoozeStates`
@@ -96,7 +111,7 @@ This function is scheduled to run every day at 8:00 AM UTC (Midnight PST.) It ex
 - Trigger: Cloud Scheduler (`0 8 * * *`).
 - Environment Variables:
   - `WORKFLOWS_SNOOZE_OUTPUT_BUCKET`: The GCS bucket to write to.
-- To Deploy: Execute `nvm use 18` then `yarn deploy:staging` or `yarn deploy:production`
+- To Deploy: See [Deploying](#deploying).
 - To Run: `curl -X POST "https://us-central1-<PROJECT_ID>.cloudfunctions.net/exportWorkflowsSnoozeStates?=" -H "Authorization: bearer $(gcloud auth print-identity-token)"`
 
 ### `exportTasksSnoozeStates`
@@ -106,5 +121,5 @@ This function is scheduled to run every day at 8:00 AM UTC (Midnight PST.) It ex
 - Trigger: Cloud Scheduler (`0 8 * * *`).
 - Environment Variables:
   - `TASKS_SNOOZE_OUTPUT_BUCKET`: The GCS bucket to write to.
-- To Deploy: Execute `nvm use 18` then `yarn deploy:staging` or `yarn deploy:production`
+- To Deploy: See [Deploying](#deploying).
 - To Run: `curl -X POST "https://us-central1-<PROJECT_ID>.cloudfunctions.net/exportTasksSnoozeStates?=" -H "Authorization: bearer $(gcloud auth print-identity-token)"`
