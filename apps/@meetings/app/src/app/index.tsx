@@ -29,6 +29,7 @@ import { PrPreviewProvider } from "~@meetings/app/features/pr-preview";
 import {
   getCredentialsFailedCause,
   offlineTransport,
+  sentryDsn,
   useSentryAppLifecycle,
 } from "~@meetings/app/shared/lib/monitoring";
 
@@ -50,7 +51,12 @@ function sanitizeUrl(url: string): string {
 }
 
 Sentry.init({
-  dsn: env.EXPO_PUBLIC_SENTRY_DSN,
+  dsn: sentryDsn,
+  // Local development stays out of Sentry, where it would otherwise create a
+  // release that looks like the project's latest. If you turn this back on
+  // locally, also set EXPO_PUBLIC_SENTRY_RELEASE to a fixed name such as
+  // "development"; otherwise the SDK invents one from the app name and version.
+  enabled: env.EXPO_PUBLIC_SENTRY_ENV !== "development",
   environment: env.EXPO_PUBLIC_SENTRY_ENV,
   // Web-only: set by build:web. Unset on native, where the SDK derives the release.
   release: env.EXPO_PUBLIC_SENTRY_RELEASE,

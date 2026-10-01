@@ -87,7 +87,22 @@ export const meetingsFrontend: ServiceDefinition = {
 
     // Same identifier as the server's SENTRY_RELEASE (the image tag), so one deploy
     // maps to one release name across Sentry projects.
-    await $`EXPO_PUBLIC_SENTRY_RELEASE=${plan.currentRevision} nx deploy:web @meetings/app --configuration ${plan.env}`.pipe(
+    const sentryRelease = plan.currentRevision;
+
+    // Create the release up front so it exists on Sentry's timeline from this deploy,
+    // not from whenever its first event happens to arrive. Both calls are idempotent,
+    // so promoting a revision that staging already released reuses its release.
+    await $`EXPO_PUBLIC_SENTRY_RELEASE=${sentryRelease} nx sentry-release:web @meetings/app --configuration ${plan.env}`.pipe(
+      process.stdout,
+    );
+
+    await $`EXPO_PUBLIC_SENTRY_RELEASE=${sentryRelease} nx deploy:web @meetings/app --configuration ${plan.env}`.pipe(
+      process.stdout,
+    );
+
+    // Tells Sentry this release is now running in this environment. A release alone is
+    // just a name on the project's timeline; the deploy record is what marks it as live.
+    await $`EXPO_PUBLIC_SENTRY_RELEASE=${sentryRelease} nx sentry-deploy:web @meetings/app --configuration ${plan.env}`.pipe(
       process.stdout,
     );
   },

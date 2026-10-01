@@ -159,12 +159,38 @@
         }
       ],
       "options": {
-        "command": "find dist -name \"*.map\" | grep -q . && yarn sentry-expo-upload-sourcemaps dist",
+        "command": "find dist -name \"*.map\" | grep -q . && SENTRY_PROJECT=meetings-web yarn sentry-expo-upload-sourcemaps dist",
         "cwd": "{projectRoot}"
       },
       "configurations": {
         "staging": {},
         "production": {}
+      },
+      "defaultConfiguration": "staging"
+    },
+    "requires-sops-env:sentry-release:web": {
+      "command": "sentry-cli releases new \"$EXPO_PUBLIC_SENTRY_RELEASE\" -p meetings-web && sentry-cli releases set-commits \"$EXPO_PUBLIC_SENTRY_RELEASE\" --auto",
+      "cache": false,
+      "options": {
+        "cwd": "{projectRoot}",
+        "env": { "SENTRY_ORG": "recidiviz-inc" }
+      },
+      "configurations": {
+        "staging": {},
+        "production": {}
+      },
+      "defaultConfiguration": "staging"
+    },
+    "requires-sops-env:sentry-deploy:web": {
+      "command": "sentry-cli deploys new --release \"$EXPO_PUBLIC_SENTRY_RELEASE\" -e \"$APP_ENV\"",
+      "cache": false,
+      "options": {
+        "cwd": "{projectRoot}",
+        "env": { "SENTRY_ORG": "recidiviz-inc" }
+      },
+      "configurations": {
+        "staging": { "env": { "APP_ENV": "staging" } },
+        "production": { "env": { "APP_ENV": "production" } }
       },
       "defaultConfiguration": "staging"
     },

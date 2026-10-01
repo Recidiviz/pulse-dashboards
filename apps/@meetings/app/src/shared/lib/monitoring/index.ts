@@ -17,5 +17,6 @@
 
 export { getCredentialsFailedCause } from "./getCredentialsFailedCause";
 export { segmentClient } from "./segment";
+export { sentryDsn } from "./sentryDsn";
 export { offlineTransport } from "./sentryOfflineTransport";
 export { useSentryAppLifecycle } from "./useSentryAppLifecycle";
