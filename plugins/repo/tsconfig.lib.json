@@ -1,13 +1,10 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../dist/out-tsc",
-    "declaration": true,
     "types": ["node"],
     "allowImportingTsExtensions": true,
     "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "noEmit": true
+    "moduleResolution": "NodeNext"
   },
   "include": ["src/**/*.ts", "src/**/*.mts"],
   "exclude": [

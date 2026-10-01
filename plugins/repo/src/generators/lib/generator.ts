@@ -139,6 +139,12 @@ export async function libGenerator(tree: Tree, options: LibGeneratorSchema) {
     updateJson(tree, `${PROJECT_ROOT}/tsconfig.lib.json`, (config) => {
       config.compilerOptions.types.push("vite/client");
 
+      // we run with noEmit and import with path aliases rather than project
+      // references, so all `declaration` does is fail because the generated
+      // Prisma client type can't be cleanly declared.
+      delete config.compilerOptions.outDir;
+      delete config.compilerOptions.declaration;
+
       return config;
     });
   }
