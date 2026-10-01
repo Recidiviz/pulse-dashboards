@@ -17,12 +17,7 @@
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 
-import {
-  getAnswer,
-  getQuestionnaireStatus,
-  getQuestionOptions,
-  getVisibleQuestions,
-} from "./utils";
+import { getQuestionnaireStatus } from "./utils";
 
 // TODO OBT-51840: swap for the real fetch (trpcQuerier.state.usMa.getReentryQuestionnaire)
 // once that router merges. Stubbed as always-blank so this hook's shape and
@@ -40,19 +35,16 @@ function useStubbedQuestionnaire() {
 
 /**
  * Returns the resident's latest Reentry Questionnaire record, or null if they
- * haven't opened the questionnaire yet, along with the status and form data
- * derived from it. Must be rendered inside a Suspense boundary (see
+ * haven't opened the questionnaire yet, along with its status and saved
+ * answers. Must be rendered inside a Suspense boundary (see
  * `SuspenseQueryBoundary`).
  */
 export function useReentryQuestionnaire() {
   const { data: questionnaire } = useStubbedQuestionnaire();
-  const answers = questionnaire?.answers ?? {};
 
   return {
     questionnaire,
+    answers: questionnaire?.answers ?? {},
     status: getQuestionnaireStatus(questionnaire),
-    visibleQuestions: getVisibleQuestions(answers),
-    getAnswer: (questionId: string) => getAnswer(answers, questionId),
-    getOptions: getQuestionOptions,
   };
 }

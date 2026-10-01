@@ -15,6 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+// TEMPORARY - FOR REVIEW AND TESTING ONLY.
+// Renders the flow against dummy data so the route can be clicked through;
+// switched to the real config and copy in OBT-51840.
+import {
+  reentryQuestionnaireConfig,
+  reentryQuestionnaireQuestionIds,
+} from "~@jii/configs";
+
+import {
+  domainLabels,
+  domainOrder,
+  optionCopy,
+  questionCopy,
+} from "../Reentry/Questionnaire/dummyQuestionnaireData";
+import { ReentryQuestionnaire } from "../Reentry/Questionnaire/ReentryQuestionnaire";
+import { buildQuestionnaireDisplay } from "../Reentry/Questionnaire/utils";
+
 export const PageUsMaReentryQuestionnaire = () => {
-  return <div>PageUsMaReentryQuestionnaire</div>;
+  const questionnaire = buildQuestionnaireDisplay({
+    questionIds: reentryQuestionnaireQuestionIds,
+    config: reentryQuestionnaireConfig,
+    sectionDomains: domainOrder,
+    getSectionLabel: (domain) => domainLabels[domain],
+    getQuestionCopy: (questionId) => questionCopy[questionId],
+    getOptionCopy: (questionId, optionId) => optionCopy[questionId][optionId],
+  });
+
+  return <ReentryQuestionnaire {...questionnaire} />;
 };

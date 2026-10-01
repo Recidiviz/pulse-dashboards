@@ -68,7 +68,7 @@ test("status is COMPLETED when completedAt is set", () => {
   expect(result.current.status).toBe("COMPLETED");
 });
 
-test("getAnswer reads from the current record's answers", () => {
+test("returns the current record's saved answers", () => {
   queryClient.setQueryData(QUERY_KEY, {
     completedAt: null,
     answers: { housing: "OWN_PLACE" },
@@ -76,14 +76,13 @@ test("getAnswer reads from the current record's answers", () => {
 
   const { result } = renderHook(() => useReentryQuestionnaire(), { wrapper });
 
-  expect(result.current.getAnswer("housing")).toBe("OWN_PLACE");
-  expect(result.current.getAnswer("transportation")).toBeUndefined();
+  expect(result.current.answers).toEqual({ housing: "OWN_PLACE" });
 });
 
-test("getAnswer returns undefined for every question when there is no record", () => {
+test("returns no answers when there is no record", () => {
   queryClient.setQueryData(QUERY_KEY, null);
 
   const { result } = renderHook(() => useReentryQuestionnaire(), { wrapper });
 
-  expect(result.current.getAnswer("housing")).toBeUndefined();
+  expect(result.current.answers).toEqual({});
 });

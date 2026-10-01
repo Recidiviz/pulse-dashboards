@@ -21,6 +21,7 @@ import styled from "styled-components";
 
 import wordmarkUrl from "./wordmark.svg";
 import wordmarkHighContrastUrl from "./wordmark-hc-wob.svg";
+import wordmarkIconUrl from "./wordmark-icon.svg";
 
 const Img = styled.img`
   display: block;
@@ -37,6 +38,11 @@ const ImgHighContrastWhite = styled(Img)`
   @media (forced-colors: active) and (prefers-color-scheme: dark) {
     display: block;
   
+`;
+
+const IconImg = styled.img`
+  display: block;
+  height: auto;
 `;
 
 type WordmarkProps = {
@@ -58,4 +64,11 @@ export const Wordmark: FC<WordmarkProps> = memo(function Wordmark({ width }) {
       />
     </>
   );
+});
+
+// Logo mark icon without text
+export const WordmarkIcon: FC<WordmarkProps> = memo(function WordmarkIcon({
+  width = 24,
+}) {
+  return <IconImg src={wordmarkIconUrl} alt="" style={{ width: rem(width) }} />;
 });

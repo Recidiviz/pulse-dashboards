@@ -33,26 +33,3 @@ export function getQuestionnaireStatus(
     return "NOT_STARTED";
   return questionnaire.completedAt ? "COMPLETED" : "IN_PROGRESS";
 }
-
-// TODO OBT-51840: derive from the real questionnaire config (#15660)
-// and the showIf evaluator once both exist. Placeholder empty list for now -
-// unblocks building the form shell against this hook.
-export function getVisibleQuestions(
-  _answers: Record<string, unknown>,
-): string[] {
-  return [];
-}
-
-export function getAnswer(
-  // TODO OBT-51840: type this per question format once the real questionnaire config exists.
-  answers: Record<string, unknown>,
-  questionId: string,
-): unknown {
-  return answers[questionId];
-}
-
-// TODO OBT-51840: resolve from the real questionnaire config, including
-// the "STANDARD" options sentinel, once it exists.
-export function getQuestionOptions(_questionId: string): string[] {
-  return [];
-}

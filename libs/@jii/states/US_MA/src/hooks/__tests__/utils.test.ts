@@ -15,12 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  getAnswer,
-  getQuestionnaireStatus,
-  getQuestionOptions,
-  getVisibleQuestions,
-} from "../utils";
+import { getQuestionnaireStatus } from "../utils";
 
 describe("getQuestionnaireStatus", () => {
   test("returns NOT_STARTED when there is no record", () => {
@@ -49,29 +44,5 @@ describe("getQuestionnaireStatus", () => {
         answers: { housing: "OWN_PLACE" },
       }),
     ).toBe("COMPLETED");
-  });
-});
-
-// TODO OBT-51840: these document the current placeholder behavior - update
-// once the real questionnaire config and showIf evaluator exist.
-describe("getVisibleQuestions (placeholder)", () => {
-  test("returns an empty list regardless of answers", () => {
-    expect(getVisibleQuestions({ housing: "OWN_PLACE" })).toEqual([]);
-  });
-});
-
-describe("getAnswer (placeholder)", () => {
-  test("reads the raw answer for a question id", () => {
-    expect(getAnswer({ housing: "OWN_PLACE" }, "housing")).toBe("OWN_PLACE");
-  });
-
-  test("returns undefined for an unanswered question", () => {
-    expect(getAnswer({}, "housing")).toBeUndefined();
-  });
-});
-
-describe("getQuestionOptions (placeholder)", () => {
-  test("returns an empty list regardless of question id", () => {
-    expect(getQuestionOptions("housing")).toEqual([]);
   });
 });
