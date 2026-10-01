@@ -20,10 +20,8 @@ import { ComponentType, ReactNode } from "react";
 import {
   Modal as RNModal,
   ModalBaseProps,
-  Platform,
   StyleSheet,
   TouchableWithoutFeedback,
-  useWindowDimensions,
   View,
 } from "react-native";
 
@@ -80,22 +78,27 @@ const Modal = ({
   containerClassName = "",
   ...modalProps
 }: ModalProps) => {
-  const { width, height } = useWindowDimensions();
+  // AVild - Modals weren't rendering correct on Android, and we've had
 
-  if (Platform.OS === "android") {
-    if (!modalProps.visible) return null;
-    return (
-      <View className="absolute left-0 top-0 z-50" style={{ width, height }}>
-        <ModalContent
-          onClickOutside={onClickOutside}
-          backdrop={customBackdrop}
-          containerClassName={containerClassName}
-        >
-          {children}
-        </ModalContent>
-      </View>
-    );
-  }
+  // const { width, height } = useWindowDimensions();
+
+  // Expo/RN updates since this patch was in. I wanna try moving forward
+  // and remove this in the future if you come across this comment
+  // and there hasn't been any major regressions
+  // if (Platform.OS === "android") {
+  //   if (!modalProps.visible) return null;
+  //   return (
+  //     <View className="absolute left-0 top-0 z-50 size-full">
+  //       <ModalContent
+  //         onClickOutside={onClickOutside}
+  //         backdrop={customBackdrop}
+  //         containerClassName={containerClassName}
+  //       >
+  //         {children}
+  //       </ModalContent>
+  //     </View>
+  //   );
+  // }
 
   return (
     <RNModal {...modalProps} id="rnmodal">

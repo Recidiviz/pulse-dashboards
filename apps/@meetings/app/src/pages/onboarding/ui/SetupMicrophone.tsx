@@ -66,7 +66,7 @@ export function SetupMicrophone() {
             toggleGuide={() => setShowGuide(!showGuide)}
           />
         </View>
-        <View className="mb-3 mt-auto flex flex-col-reverse gap-2 md:mt-0 md:flex-row">
+        <View className="mb-4 mt-auto flex flex-col-reverse gap-2 md:mt-0 md:flex-row">
           <Button
             variant="primary"
             className="w-full md:w-fit"
@@ -89,15 +89,14 @@ export function SetupMicrophone() {
           />
         </View>
       </View>
-      {showMicErrorModal && (
-        <MicErrorModal
-          onClose={() => {
-            retry();
-            setShowMicErrorModal(false);
-          }}
-          errorType={errorType || "not-found"}
-        />
-      )}
+      <MicErrorModal
+        onClose={() => {
+          retry();
+          setShowMicErrorModal(false);
+        }}
+        visible={showMicErrorModal}
+        errorType={errorType || "not-found"}
+      />
     </View>
   );
 }

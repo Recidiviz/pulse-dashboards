@@ -29,15 +29,17 @@ import { MicErrorType } from "../model/types";
 type Props = {
   onClose: () => void;
   errorType: MicErrorType;
+  visible: boolean;
 };
 
-export function MicErrorModal({ onClose, errorType }: Props) {
+export function MicErrorModal({ onClose, errorType, visible }: Props) {
   const { title, message } = MIC_ERROR_MESSAGES[errorType];
 
   return (
     <Modal
       containerClassName="flex max-w-[520px] flex-col px-6 py-4"
       transparent
+      visible={visible}
     >
       <View className="mb-3 flex w-full flex-row justify-between">
         <MicrophoneMutedSvg className="size-8 fill-attention" />

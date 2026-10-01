@@ -17,6 +17,7 @@
 
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { useEffect, useState } from "react";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { AudioUpload } from "~@meetings/app/features/audio-upload";
 import {
@@ -55,12 +56,14 @@ export function AuthenticatedContent() {
 
   return (
     <RecordingProvider>
-      <BottomSheetModalProvider>
-        <DrawerNavigator />
-        <AudioUpload />
-        <ReconnectStatus onRetry={forceDrain} isVisible={isDraining} />
-        <FeedbackLauncher onPress={openMessenger} />
-      </BottomSheetModalProvider>
+      <SafeAreaProvider>
+        <BottomSheetModalProvider>
+          <DrawerNavigator />
+          <AudioUpload />
+          <ReconnectStatus onRetry={forceDrain} isVisible={isDraining} />
+          <FeedbackLauncher onPress={openMessenger} />
+        </BottomSheetModalProvider>
+      </SafeAreaProvider>
     </RecordingProvider>
   );
 }

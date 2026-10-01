@@ -125,7 +125,7 @@ export function AudioUploadSheet({
         )}
       >
         <BottomSheetView>
-          <View className="p-6 pb-10">
+          <View className="pb-safe-offset-4 p-6">
             <View className="mb-1 flex-row items-center justify-between">
               <Typography variant="heading-4">Upload audio</Typography>
               <Button

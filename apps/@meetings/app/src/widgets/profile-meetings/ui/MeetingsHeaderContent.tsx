@@ -108,6 +108,7 @@ const MeetingsHeaderContent = ({
               {recordingState === "idle" && (
                 <Button
                   variant="primary"
+                  className="!py-2"
                   icon={{ icon: PlusIcon, className: "!size-4 stroke-[3px]" }}
                   onPress={onPressNewMeeting}
                 >

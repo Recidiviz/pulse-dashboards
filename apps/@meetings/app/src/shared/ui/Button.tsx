@@ -92,7 +92,7 @@ export function Button({
       disabled={disabled || loading}
       className={clsx(
         "cursor-pointer flex-row items-center justify-center rounded-full aria-disabled:cursor-not-allowed aria-disabled:opacity-40",
-        isCircle ? "size-10" : "gap-1.5 px-4 py-2",
+        isCircle ? "size-10" : "gap-1.5 p-4",
         VARIANT_CONTAINER_CLASSES[variant],
         className,
       )}
