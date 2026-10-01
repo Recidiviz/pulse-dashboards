@@ -40,6 +40,7 @@ describe("get properties for user in auth token", () => {
         "hasSeenOnboarding": 2025-12-10T11:14:00.000Z,
         "hasSeenResourcesOnboarding": null,
         "hideAboutVideoFromHomePage": null,
+        "hideSentenceDates": false,
       }
     `);
   });
@@ -54,6 +55,7 @@ test("set properties for user in auth token", async () => {
       "hasSeenOnboarding": 2025-12-10T11:43:00.000Z,
       "hasSeenResourcesOnboarding": null,
       "hideAboutVideoFromHomePage": null,
+      "hideSentenceDates": false,
       "id": "abc123",
     }
   `);
@@ -70,6 +72,7 @@ test("set multiple properties at once", async () => {
       "hasSeenOnboarding": 2025-12-10T11:43:00.000Z,
       "hasSeenResourcesOnboarding": null,
       "hideAboutVideoFromHomePage": 2025-12-10T12:44:00.000Z,
+      "hideSentenceDates": false,
       "id": "abc123",
     }
   `);
@@ -88,8 +91,17 @@ test("setting one property doesn't affect another", async () => {
       "hasSeenOnboarding": 2025-12-10T11:43:00.000Z,
       "hasSeenResourcesOnboarding": null,
       "hideAboutVideoFromHomePage": 2025-12-10T12:44:00.000Z,
+      "hideSentenceDates": false,
       "id": "abc123",
     }
   `);
   expect(await testPrismaClient.userProperties.findMany()).toEqual([result]);
+});
+
+test("hideSentenceDates can be turned on and back off", async () => {
+  await c.setProperties({ hideSentenceDates: true });
+  expect(await c.getProperties()).toMatchObject({ hideSentenceDates: true });
+
+  await c.setProperties({ hideSentenceDates: false });
+  expect(await c.getProperties()).toMatchObject({ hideSentenceDates: false });
 });

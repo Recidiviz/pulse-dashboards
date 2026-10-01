@@ -21,8 +21,11 @@ import keyBy from "lodash/keyBy";
 import omit from "lodash/omit";
 import { makeAutoObservable, runInAction, set } from "mobx";
 
-import { StateCode } from "~@jii/configs";
-import { IncarcerationOpportunityId, ResidentsConfig } from "~@jii/configs";
+import {
+  IncarcerationOpportunityId,
+  ResidentsConfig,
+  StateCode,
+} from "~@jii/configs";
 import type {
   JiiResidentAppRouterInputs,
   JiiResidentAppRouterOutputs,
@@ -332,5 +335,11 @@ export class ResidentsStore {
 
   async setUserResourcesOnboardingSeen() {
     await this.setUserProperties({ hasSeenResourcesOnboarding: new Date() });
+  }
+
+  async setHideSentenceDates(hidden: boolean) {
+    // it's OK for this to fail silently, it should be logged elsewhere.
+    // only effect to user is that their dates will be visible again
+    await this.setUserProperties({ hideSentenceDates: hidden });
   }
 }

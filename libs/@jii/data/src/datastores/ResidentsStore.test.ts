@@ -229,4 +229,21 @@ describe("user-generated properties", () => {
     });
     expect.hasAssertions();
   });
+
+  test("hide sentence dates", async () => {
+    mutateUserPropertiesMock.mockResolvedValue({
+      id: "abc123",
+      hideSentenceDates: true,
+    });
+    const updatePromise = store.setHideSentenceDates(true);
+    // optimistic update
+    expect(store.userProperties).toEqual({ hideSentenceDates: true });
+
+    await updatePromise;
+
+    expect(mutateUserPropertiesMock).toHaveBeenCalledWith({
+      hideSentenceDates: true,
+    });
+    expect(store.userProperties).toEqual({ hideSentenceDates: true });
+  });
 });
