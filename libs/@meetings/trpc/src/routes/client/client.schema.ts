@@ -98,12 +98,18 @@ const cniHousingFieldsSchema = z
 
 const cniFeedbackSnapshotSchema = z.object({
   displayText: z.string(),
-  summarySnapshots: z.array(
-    z.object({
-      summaryId: z.string(),
-      cniSnapshot: z.union([cniEmploymentFieldsSchema, cniHousingFieldsSchema]),
-    }),
-  ),
+  summarySnapshots: z
+    .array(
+      z.object({
+        summaryId: z.string(),
+        cniSnapshot: z.union([
+          cniEmploymentFieldsSchema,
+          cniHousingFieldsSchema,
+        ]),
+      }),
+    )
+    // An empty list would pass the summary ownership check vacuously.
+    .min(1),
 });
 
 export const submitCNIVoteInputSchema = z.object({

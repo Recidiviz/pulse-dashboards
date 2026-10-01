@@ -212,6 +212,23 @@ export const clientRouter = router({
       }) => {
         assertCanSubmitCNIFeedback(user);
 
+        // Reject snapshots that reference summaries not belonging to this client.
+        const summaryIds = [
+          ...new Set(
+            snapshot.summarySnapshots.map(({ summaryId }) => summaryId),
+          ),
+        ];
+        const matchingSummaries = await prisma.caseNoteInsightsSummary.count({
+          where: { clientId, id: { in: summaryIds } },
+        });
+        if (matchingSummaries !== summaryIds.length) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message:
+              "Snapshot references summaries that do not exist for this client",
+          });
+        }
+
         // Append a new row every time. We never update or delete so the full
         // vote history (including thumbs-flips) is preserved for analysis.
         const { id } = await prisma.caseNoteInsightsFeedback.create({

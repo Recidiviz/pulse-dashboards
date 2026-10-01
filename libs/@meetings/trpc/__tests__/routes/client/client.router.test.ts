@@ -24,6 +24,7 @@ import {
   NoteSection,
   OutputVoteValue,
   PostMeetingProcessingStatus,
+  StateCode,
 } from "~@meetings/prisma/client";
 import { IMPERSONATED_EMAIL_HEADER_KEY } from "~@meetings/trpc/context";
 import env from "~@meetings/trpc/env";
@@ -66,6 +67,20 @@ const fakeCNIFeedbackSnapshot: PrismaJson.CNIFeedbackSnapshot = {
       },
     },
   ],
+};
+
+// Matches the summaryId in fakeCNIFeedbackSnapshot; submitCNIVote requires it to exist.
+const seedFakeCNISummary = async () => {
+  await testPrismaClient.caseNoteInsightsSummary.create({
+    data: {
+      id: fakeCNIFeedbackSnapshot.summarySnapshots[0].summaryId,
+      stateCode: StateCode.US_NE,
+      clientId: fakeClients[0].personId,
+      category: "employment",
+      cniFields: fakeCNIFeedbackSnapshot.summarySnapshots[0].cniSnapshot,
+      lastImportedAt: new Date(0),
+    },
+  });
 };
 
 // createMeeting exercises createMeetingForPerson, which does an unguarded
@@ -566,6 +581,8 @@ describe("client router", () => {
     });
 
     describe("submitCNIVote", () => {
+      beforeEach(seedFakeCNISummary);
+
       test("Creates a CNI feedback record with no message", async () => {
         const result = await testTRPCClient.v1.client.submitCNIVote.mutate({
           clientId: fakeClients[0].personId,
@@ -590,6 +607,29 @@ describe("client router", () => {
             summariesSnapshot: fakeCNIFeedbackSnapshot,
           }),
         );
+      });
+
+      test("Rejects a snapshot referencing a summary that is not the client's", async () => {
+        await expect(
+          testTRPCClient.v1.client.submitCNIVote.mutate({
+            // summary-1 belongs to client 1, not client 2
+            clientId: fakeClients[1].personId,
+            vote: OutputVoteValue.UP,
+            snapshot: fakeCNIFeedbackSnapshot,
+          }),
+        ).rejects.toMatchObject({ data: { code: "BAD_REQUEST" } });
+
+        expect(await testPrismaClient.caseNoteInsightsFeedback.count()).toBe(0);
+      });
+
+      test("Rejects a snapshot with no summaries", async () => {
+        await expect(
+          testTRPCClient.v1.client.submitCNIVote.mutate({
+            clientId: fakeClients[0].personId,
+            vote: OutputVoteValue.UP,
+            snapshot: { ...fakeCNIFeedbackSnapshot, summarySnapshots: [] },
+          }),
+        ).rejects.toMatchObject({ data: { code: "BAD_REQUEST" } });
       });
 
       test("Appends a new record for every vote instead of updating", async () => {
@@ -621,6 +661,8 @@ describe("client router", () => {
     });
 
     describe("submitCNIVoteMessage", () => {
+      beforeEach(seedFakeCNISummary);
+
       test("Attaches a message to an existing vote", async () => {
         const message = "This summary was very helpful.";
 
@@ -868,6 +910,8 @@ describe("client router", () => {
     });
 
     describe("submitCNIVote", () => {
+      beforeEach(seedFakeCNISummary);
+
       test("Allows recidiviz users to submit a CNI vote outside of production", async () => {
         const result = await testTRPCClient.v1.client.submitCNIVote.mutate({
           clientId: fakeClients[0].personId,
@@ -913,6 +957,8 @@ describe("client router", () => {
     });
 
     describe("submitCNIVoteMessage", () => {
+      beforeEach(seedFakeCNISummary);
+
       test("Allows recidiviz users to submit a CNI message outside of production", async () => {
         const message = "This summary was inaccurate.";
 
