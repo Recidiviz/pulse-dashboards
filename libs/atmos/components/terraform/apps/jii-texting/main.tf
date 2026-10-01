@@ -59,10 +59,6 @@ module "database" {
 module "cloud_run" {
   source = "../../vendor/cloud-run"
 
-  # Ensure migrations are applied before the new server revision (which may
-  # expect the post-migration schema) starts serving traffic.
-  depends_on = [module.migrate_db_job]
-
   service_name           = var.server_name
   location               = var.location
   project_id             = var.project_id

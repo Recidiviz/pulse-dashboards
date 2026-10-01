@@ -96,18 +96,17 @@ resource "google_cloud_run_v2_job" "job" {
   }
 }
 
-resource "terraform_data" "exec" {
-  count = var.exec ? 1 : 0
+data "google_client_config" "default" {}
 
-  # Re-run whenever a new image is deployed
-  triggers_replace = var.image
-
-  # --wait blocks until the execution finishes (not just starts), so a
-  # failed job (e.g. a migration failure) fails this resource and, via
-  # depends_on elsewhere, blocks anything that depends on this job.
-  provisioner "local-exec" {
-    command = "gcloud run jobs execute ${var.name} --project=${var.project_id} --region=${var.location} --wait"
+resource "terracurl_request" "exec" {
+  count  = var.exec ? 1 : 0
+  name   = "exec-job"
+  url    = "https://run.googleapis.com/v2/${google_cloud_run_v2_job.job.id}:run"
+  method = "POST"
+  headers = {
+    Authorization = "Bearer ${data.google_client_config.default.access_token}"
+    Content-Type  = "application/json",
   }
-
-  depends_on = [google_cloud_run_v2_job.job]
+  response_codes = [200]
+  destroy_skip   = true
 }

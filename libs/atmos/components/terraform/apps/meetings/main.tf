@@ -60,10 +60,6 @@ module "envs" {
 module "server" {
   source = "../../vendor/cloud-run"
 
-  # Ensure migrations are applied before the new server revision (which may
-  # expect the post-migration schema) starts serving traffic.
-  depends_on = [module.migrate_db_job]
-
   project_id      = var.project_id
   location        = var.location
   service_name    = var.server_name
