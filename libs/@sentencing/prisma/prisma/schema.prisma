@@ -647,6 +647,9 @@ model SentencingAssessmentReport {
   ORASLastUpdatedAt         DateTime?
   ORASEnteredManually       Boolean @default(false)
   criminalHistoryLevel      Int?
+  // ORAS-SRT scores age at assessment (1 point for ages 18-23) as its own section,
+  // which counts toward the Criminal History total
+  ageLevel                  Int?
   educationLevelScore       Int? // Renamed to avoid confusion with levelOfEducation
   neighborhoodLevel         Int?
   substanceAbuseLevel       Int?

@@ -31,6 +31,7 @@ export type ORASFormData = Pick<
   | "assessmentDate"
   | "assessmentAdministeredBy"
   | "criminalHistoryLevel"
+  | "ageLevel"
   | "educationLevelScore"
   | "neighborhoodLevel"
   | "substanceAbuseLevel"
@@ -55,6 +56,7 @@ export const ORAS_EMPTY_FORM: ORASFormData = {
   assessmentDate: null,
   assessmentAdministeredBy: null,
   criminalHistoryLevel: null,
+  ageLevel: null,
   educationLevelScore: null,
   neighborhoodLevel: null,
   substanceAbuseLevel: null,
@@ -72,6 +74,38 @@ export const ORAS_EMPTY_FORM: ORASFormData = {
   noORASDomainReason: null,
   ORASDomainsAvailable: true,
 };
+
+// ORAS age at assessment scoring: 1 point for ages 18-23, 0 for 24 and older
+export const AGE_POINT_MIN_AGE = 18;
+export const AGE_POINT_MAX_AGE = 23;
+export const AGE_POINT_MAX = 1;
+
+/**
+ * Returns the ORAS-SRT age-at-assessment point, or null when the age is unknown.
+ * e.g. getAgeAtAssessmentPoint(21) -> 1, getAgeAtAssessmentPoint(26) -> 0
+ */
+export function getAgeAtAssessmentPoint(age: number | null): number | null {
+  if (age == null) return null;
+  return age >= AGE_POINT_MIN_AGE && age <= AGE_POINT_MAX_AGE
+    ? AGE_POINT_MAX
+    : 0;
+}
+
+/**
+ * Returns a domain score with the age point added when the domain's official
+ * total includes it, so the card score and the derived risk level agree.
+ * e.g. getScoreWithAgePoint(srtCriminalHistory, 4, 1) -> 5
+ * e.g. getScoreWithAgePoint(cstCriminalHistory, 4, 1) -> 4
+ * e.g. getScoreWithAgePoint(srtCriminalHistory, null, 1) -> null
+ */
+export function getScoreWithAgePoint(
+  domain: Pick<DomainConfig, "includesAgePoint">,
+  score: number | null | undefined,
+  ageLevel: number | null | undefined,
+): number | null {
+  if (score == null) return null;
+  return domain.includesAgePoint ? score + (ageLevel ?? 0) : score;
+}
 
 /**
  * Derives a domain risk level from a raw score, given the score thresholds
@@ -173,6 +207,7 @@ export interface DomainConfig {
   summaryField: ORASDomainSummaryField;
   maxScore?: number;
   riskLevelCutoffs?: Boundaries;
+  includesAgePoint?: boolean;
 }
 
 // Base domain configurations (reusable across ORAS types)
@@ -296,8 +331,9 @@ export const ORAS_DOMAIN_CONFIG: Record<string, DomainConfig[]> = {
   ORAS_SRT: [
     {
       ...DOMAIN.CRIMINAL_HISTORY,
-      maxScore: 12,
+      maxScore: 13,
       riskLevelCutoffs: { moderate: 4, high: 7 },
+      includesAgePoint: true,
     },
     {
       ...DOMAIN.EDUCATION_SOCIAL,

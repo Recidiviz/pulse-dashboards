@@ -22,6 +22,7 @@ import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import { ReportTypeNotice } from "../SARDetails/ReportTypeNotice";
 import { SectionContainer } from "../SARDetails/SARDetails.styles";
 import { useStore } from "../StoreProvider/StoreProvider";
+import { AgeAtAssessmentRow } from "./AgeAtAssessmentRow";
 import { RiskLevelKey } from "./constants";
 import { DomainCard } from "./DomainCard";
 import * as DomainCardStyled from "./DomainCard.styles";
@@ -62,7 +63,6 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
       assessmentScore,
       assessmentType,
       assessmentDate,
-      criminalHistoryLevel,
       criminalHistorySummary,
       educationLevelScore,
       employmentSummary,
@@ -87,6 +87,8 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
       peerAssociatesRiskLevel,
       criminalBehaviorRiskLevel,
     } = presenter.SARData ?? {};
+    const { criminalHistoryDisplayScore, criminalHistoryAgePoint } =
+      presenter.offenderAssessment;
 
     const [showORASForm, setShowORASForm] = React.useState(false);
     const assessmentAdministeredBy = presenter.assessmentAdministeredBy;
@@ -222,7 +224,7 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
             {shouldRenderDomain("criminalHistory") && (
               <DomainCard
                 title={getDomainTitle("criminalHistory")}
-                riskScore={criminalHistoryLevel ?? 0}
+                riskScore={criminalHistoryDisplayScore ?? 0}
                 maxDomainScore={getDomainMaxScore("criminalHistory")}
                 riskLevel={getDomainRiskLevel("criminalHistory")}
                 summaryValue={criminalHistorySummary ?? null}
@@ -232,6 +234,9 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
                 cardRef={criminalHistoryRef}
                 disabled={isDisabled}
               >
+                {criminalHistoryAgePoint && (
+                  <AgeAtAssessmentRow {...criminalHistoryAgePoint} />
+                )}
                 <DomainCardStyled.InfoBox>
                   Default text provided below. You can customize this language
                   as needed.
@@ -409,6 +414,7 @@ export const OffenderAssessment: React.FC<OffenderAssessmentProps> = observer(
               setShowORASForm(false);
             }}
             initialData={presenter.orasData}
+            birthDate={presenter.SARData?.client?.birthDate ?? null}
           />
         )}
       </SectionContainer>

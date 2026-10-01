@@ -384,6 +384,21 @@ export const formatAssessmentNote = (
   return note || undefined;
 };
 
+// Subtitle for the ORAS-SRT age point, which counts toward Criminal History.
+// The age is left out when the client has no birthdate on file.
+// e.g. "Age 26. Included in the Criminal History risk score."
+// e.g. "Included in the Criminal History risk score."
+export const formatAgeAtAssessmentPointNote = (
+  ageAtAssessment: number | null,
+): string =>
+  joinNonEmptyParts(
+    [
+      ageAtAssessment != null ? `Age ${ageAtAssessment}.` : null,
+      "Included in the Criminal History risk score.",
+    ],
+    " ",
+  );
+
 // e.g. "04/2023"
 export const formatMonthYear = (date: Date | string): string =>
   new Date(date).toLocaleDateString("en-US", {

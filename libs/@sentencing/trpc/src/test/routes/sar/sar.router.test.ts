@@ -92,6 +92,7 @@ describe("SAR router", () => {
           static99RCompleted: false,
           isVictimImpactOnly: null,
           criminalHistoryLevel: fakeSAR.criminalHistoryLevel,
+          ageLevel: fakeSAR.ageLevel,
           educationLevelScore: fakeSAR.educationLevelScore,
           neighborhoodLevel: fakeSAR.neighborhoodLevel,
           substanceAbuseLevel: fakeSAR.substanceAbuseLevel,

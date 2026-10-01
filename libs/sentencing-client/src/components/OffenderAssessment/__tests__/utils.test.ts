@@ -21,8 +21,43 @@ import {
   buildStatic99RReportText,
   deriveDomainRiskLevel,
   deriveStatic99RRiskCategory,
+  getAgeAtAssessmentPoint,
+  getScoreWithAgePoint,
   STATIC_99R_INTRO,
 } from "../utils";
+
+describe("getScoreWithAgePoint", () => {
+  test("adds the age point when the domain includes it", () => {
+    expect(getScoreWithAgePoint({ includesAgePoint: true }, 4, 1)).toBe(5);
+    expect(getScoreWithAgePoint({ includesAgePoint: true }, 4, null)).toBe(4);
+  });
+
+  test("ignores the age point when the domain doesn't include it", () => {
+    expect(getScoreWithAgePoint({}, 4, 1)).toBe(4);
+  });
+
+  test("returns null when there is no score", () => {
+    expect(
+      getScoreWithAgePoint({ includesAgePoint: true }, null, 1),
+    ).toBeNull();
+  });
+});
+
+describe("getAgeAtAssessmentPoint", () => {
+  test("returns 1 for ages 18 through 23", () => {
+    expect(getAgeAtAssessmentPoint(18)).toBe(1);
+    expect(getAgeAtAssessmentPoint(23)).toBe(1);
+  });
+
+  test("returns 0 outside 18 through 23", () => {
+    expect(getAgeAtAssessmentPoint(17)).toBe(0);
+    expect(getAgeAtAssessmentPoint(24)).toBe(0);
+  });
+
+  test("returns null when the age is unknown", () => {
+    expect(getAgeAtAssessmentPoint(null)).toBeNull();
+  });
+});
 
 describe("deriveDomainRiskLevel", () => {
   // ORAS_CST Substance Use: moderate starts at 3, high starts at 5.

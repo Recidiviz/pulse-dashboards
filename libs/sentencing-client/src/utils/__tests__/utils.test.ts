@@ -20,6 +20,7 @@ import {
   capitalizeName,
   convertDecimalToPercentage,
   displayReportType,
+  formatAgeAtAssessmentPointNote,
   formatListWithAnd,
   formatOffenseLabel,
   formatPercentage,
@@ -228,4 +229,16 @@ test("calculateAgeAtDate handles leap-day birth dates correctly", () => {
   expect(
     calculateAgeAtDate(new Date("2000-02-29"), new Date("2024-03-01")),
   ).toBe(24);
+});
+
+test("formatAgeAtAssessmentPointNote includes the age at assessment", () => {
+  expect(formatAgeAtAssessmentPointNote(26)).toBe(
+    "Age 26. Included in the Criminal History risk score.",
+  );
+});
+
+test("formatAgeAtAssessmentPointNote omits the age when it is unknown", () => {
+  expect(formatAgeAtAssessmentPointNote(null)).toBe(
+    "Included in the Criminal History risk score.",
+  );
 });

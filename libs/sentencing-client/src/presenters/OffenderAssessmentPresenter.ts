@@ -36,10 +36,15 @@ import {
 import {
   DomainConfig,
   getDomainsForAssessmentType,
+  getScoreWithAgePoint,
   shouldShowOrasContent,
 } from "../components/OffenderAssessment/utils";
 import { ActiveFeatureVariants } from "../datastores/types";
-import { calculateAgeAtDate, splitFullName } from "../utils/utils";
+import {
+  calculateAgeAtDate,
+  formatAgeAtAssessmentPointNote,
+  splitFullName,
+} from "../utils/utils";
 import { SARDetailsPresenter } from "./SARDetailsPresenter";
 
 /**
@@ -82,6 +87,32 @@ export class OffenderAssessmentPresenter {
     const assessmentDate = this.SARData?.assessmentDate;
     if (!birthDate || !assessmentDate) return null;
     return calculateAgeAtDate(birthDate, assessmentDate);
+  }
+
+  /** True when this assessment type counts the age point toward Criminal History (ORAS-SRT). */
+  get criminalHistoryIncludesAgePoint(): boolean {
+    return this.domains.some(
+      (d) => d.key === "criminalHistory" && d.includesAgePoint,
+    );
+  }
+
+  /** Criminal History score as shown on its domain card, including the age point when the tool scores one. */
+  get criminalHistoryDisplayScore(): number | null {
+    return getScoreWithAgePoint(
+      { includesAgePoint: this.criminalHistoryIncludesAgePoint },
+      this.SARData?.criminalHistoryLevel,
+      this.SARData?.ageLevel,
+    );
+  }
+
+  /** The age point and its subtitle for the Criminal History card, or null when this assessment doesn't score one. */
+  get criminalHistoryAgePoint(): { ageLevel: number; note: string } | null {
+    const ageLevel = this.SARData?.ageLevel;
+    if (!this.criminalHistoryIncludesAgePoint || ageLevel == null) return null;
+    return {
+      ageLevel,
+      note: formatAgeAtAssessmentPointNote(this.ageAtAssessment),
+    };
   }
 
   get groupedByRisk(): Record<RiskLevelKey, string[]> {

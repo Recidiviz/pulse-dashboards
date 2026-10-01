@@ -298,6 +298,7 @@ export const fakeSAR = {
   assessmentDate: faker.date.recent(),
   assessmentAdministeredBy: faker.person.fullName(),
   criminalHistoryLevel: 3,
+  ageLevel: 1,
   educationLevelScore: 2,
   neighborhoodLevel: 4,
   substanceAbuseLevel: 5,

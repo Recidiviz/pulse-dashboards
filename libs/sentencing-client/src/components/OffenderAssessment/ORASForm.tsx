@@ -18,6 +18,7 @@
 import { clamp } from "lodash";
 import React, { useState } from "react";
 
+import { calculateAgeAtDate } from "../../utils/utils";
 import { Dropdown } from "../CaseDetails/Form/Elements/Dropdown";
 import { SharedDatePicker } from "../shared/SharedDatePicker";
 import { Banner } from "../shared/styles/Banner";
@@ -44,7 +45,9 @@ import {
 } from "./FormComponents.styles";
 import * as ModalStyled from "./ModalStyles";
 import {
+  AGE_POINT_MAX,
   DomainConfig,
+  getAgeAtAssessmentPoint,
   getDomainsForAssessmentType,
   ORAS_EMPTY_FORM,
   ORASFormData,
@@ -61,12 +64,14 @@ interface ORASFormProps {
   onCancel: () => void;
   onSave: (data: ORASFormData) => Promise<void>;
   initialData?: ORASFormData | null;
+  birthDate: Date | null;
 }
 
 export const ORASForm: React.FC<ORASFormProps> = ({
   onCancel,
   onSave,
   initialData,
+  birthDate,
 }) => {
   const [formData, setFormData] = useState<ORASFormData>(
     initialData ?? ORAS_EMPTY_FORM,
@@ -77,10 +82,18 @@ export const ORASForm: React.FC<ORASFormProps> = ({
   const [saveError, setSaveError] = useState<string | null>(null);
   const domains = getDomainsForAssessmentType(formData.assessmentType);
   const scoredDomains = domains.filter((d) => d.scoreField);
-  const totalScore = scoredDomains.reduce(
+  const includesAgePoint = domains.some((d) => d.includesAgePoint);
+  const ageAtAssessment =
+    birthDate && formData.assessmentDate
+      ? calculateAgeAtDate(birthDate, formData.assessmentDate)
+      : null;
+  const ageLevel = includesAgePoint
+    ? getAgeAtAssessmentPoint(ageAtAssessment)
+    : null;
+  const totalScore = scoredDomains.reduce<number>(
     (sum, d) =>
       sum + ((formData[d.scoreField as keyof ORASFormData] as number) ?? 0),
-    0,
+    ageLevel ?? 0,
   );
   const maxTotalScore = scoredDomains.reduce(
     (sum, d) => sum + (d.maxScore ?? 0),
@@ -108,6 +121,7 @@ export const ORASForm: React.FC<ORASFormProps> = ({
       await onSave({
         ...formData,
         assessmentScore: isSkipped ? null : totalScore,
+        ageLevel: isSkipped ? null : ageLevel,
       });
       handleCancel();
     } catch {
@@ -232,6 +246,28 @@ export const ORASForm: React.FC<ORASFormProps> = ({
                 : "Waiting for assessment type"}
             </DomainCardStyled.HelperText>
           )}
+          {includesAgePoint && !isSkipped && (
+            <DomainCardStyled.SpacedRow>
+              <DomainCardStyled.DomainEntryLabel>
+                <DomainCardStyled.DomainEntryTitle>
+                  Age at Assessment
+                </DomainCardStyled.DomainEntryTitle>
+                {ageAtAssessment != null && (
+                  <DomainCardStyled.HelperText>
+                    Age {ageAtAssessment}, calculated from birthdate on file
+                  </DomainCardStyled.HelperText>
+                )}
+              </DomainCardStyled.DomainEntryLabel>
+              <DomainCardStyled.DomainRow>
+                <DomainCardStyled.ReadOnlyScore>
+                  {ageLevel ?? "--"}
+                </DomainCardStyled.ReadOnlyScore>
+                <DomainCardStyled.ORASDomainText>
+                  / {AGE_POINT_MAX}
+                </DomainCardStyled.ORASDomainText>
+              </DomainCardStyled.DomainRow>
+            </DomainCardStyled.SpacedRow>
+          )}
           {domains
             .filter(
               (
@@ -239,46 +275,61 @@ export const ORASForm: React.FC<ORASFormProps> = ({
               ): domain is DomainConfig & { scoreField: keyof ORASFormData } =>
                 domain.scoreField !== undefined,
             )
-            .map((domain) => (
-              <DomainCardStyled.SpacedRow key={domain.key}>
-                <DomainCardStyled.DomainEntryTitle>
-                  {domain.title}
-                </DomainCardStyled.DomainEntryTitle>
-                {!isSkipped && (
-                  <DomainCardStyled.DomainRow>
-                    <Input
-                      $shrink
-                      type="number"
-                      value={
-                        (formData[domain.scoreField] as number | null) ?? ""
-                      }
-                      onChange={(e) => {
-                        const raw = e.target.value
-                          ? Number(e.target.value)
-                          : null;
-                        const clamped =
-                          raw !== null
-                            ? clamp(raw, 0, domain.maxScore ?? raw)
+            .map((domain) => {
+              // The age point has its own row above, so the input covers only
+              // the domain's remaining items
+              const inputMaxScore =
+                domain.maxScore !== undefined && domain.includesAgePoint
+                  ? domain.maxScore - AGE_POINT_MAX
+                  : domain.maxScore;
+              return (
+                <DomainCardStyled.SpacedRow key={domain.key}>
+                  <DomainCardStyled.DomainEntryTitle>
+                    {domain.title}
+                  </DomainCardStyled.DomainEntryTitle>
+                  {!isSkipped && (
+                    <DomainCardStyled.DomainRow>
+                      <Input
+                        $shrink
+                        type="number"
+                        value={
+                          (formData[domain.scoreField] as number | null) ?? ""
+                        }
+                        onChange={(e) => {
+                          const raw = e.target.value
+                            ? Number(e.target.value)
                             : null;
-                        setFormData({
-                          ...formData,
-                          [domain.scoreField]: clamped,
-                        });
-                      }}
-                    />
-                    <DomainCardStyled.ORASDomainText>
-                      / {domain.maxScore}
-                    </DomainCardStyled.ORASDomainText>
-                  </DomainCardStyled.DomainRow>
-                )}
-              </DomainCardStyled.SpacedRow>
-            ))}
+                          const clamped =
+                            raw !== null
+                              ? clamp(raw, 0, inputMaxScore ?? raw)
+                              : null;
+                          setFormData({
+                            ...formData,
+                            [domain.scoreField]: clamped,
+                          });
+                        }}
+                      />
+                      <DomainCardStyled.ORASDomainText>
+                        / {inputMaxScore}
+                      </DomainCardStyled.ORASDomainText>
+                    </DomainCardStyled.DomainRow>
+                  )}
+                </DomainCardStyled.SpacedRow>
+              );
+            })}
 
           {!isSkipped && (
             <DomainCardStyled.SpacedRow>
-              <DomainCardStyled.DomainEntryTitle>
-                Total Score
-              </DomainCardStyled.DomainEntryTitle>
+              <DomainCardStyled.DomainEntryLabel>
+                <DomainCardStyled.DomainEntryTitle>
+                  Total Score
+                </DomainCardStyled.DomainEntryTitle>
+                {includesAgePoint && (
+                  <DomainCardStyled.HelperText>
+                    Includes age at assessment
+                  </DomainCardStyled.HelperText>
+                )}
+              </DomainCardStyled.DomainEntryLabel>
               <DomainCardStyled.DomainRow $center>
                 <DomainCardStyled.ORASDomainText>
                   {hasAnyScore ? `${totalScore} / ${maxTotalScore}` : "--"}

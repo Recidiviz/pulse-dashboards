@@ -104,6 +104,54 @@ describe("saveORASData", () => {
     );
   });
 
+  it("derives SRT Criminal History risk from items plus the age point", async () => {
+    vi.spyOn(sentencingStore.apiClient, "updateSARDetails").mockResolvedValue(
+      undefined as never,
+    );
+    await presenter.hydrate();
+
+    // Official SRT cutoffs: MODERATE starts at 4, so 3 items + 1 age point
+    // crosses into MODERATE while 3 items alone would be LOW
+    await presenter.saveORASData({
+      ...ORAS_EMPTY_FORM,
+      assessmentType: "ORAS_SRT",
+      assessmentDate: new Date("2025-01-01"),
+      assessmentAdministeredBy: "Officer Smith",
+      criminalHistoryLevel: 3,
+      ageLevel: 1,
+    });
+
+    expect(sentencingStore.apiClient.updateSARDetails).toHaveBeenCalledWith(
+      presenter.SARData?.id,
+      expect.objectContaining({
+        criminalHistoryLevel: 3,
+        ageLevel: 1,
+        criminalHistoryRiskLevel: "MODERATE",
+      }),
+    );
+  });
+
+  it("derives SRT Criminal History risk from items alone when the age point is 0", async () => {
+    vi.spyOn(sentencingStore.apiClient, "updateSARDetails").mockResolvedValue(
+      undefined as never,
+    );
+    await presenter.hydrate();
+
+    await presenter.saveORASData({
+      ...ORAS_EMPTY_FORM,
+      assessmentType: "ORAS_SRT",
+      assessmentDate: new Date("2025-01-01"),
+      assessmentAdministeredBy: "Officer Smith",
+      criminalHistoryLevel: 3,
+      ageLevel: 0,
+    });
+
+    expect(sentencingStore.apiClient.updateSARDetails).toHaveBeenCalledWith(
+      presenter.SARData?.id,
+      expect.objectContaining({ criminalHistoryRiskLevel: "LOW" }),
+    );
+  });
+
   it("updates SARData locally after saving", async () => {
     vi.spyOn(sentencingStore.apiClient, "updateSARDetails").mockResolvedValue(
       undefined as never,

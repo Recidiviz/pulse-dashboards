@@ -59,6 +59,7 @@ export const mockSAR: SAR = {
   assessmentAdministeredBy: "Casey Officer",
   ORASDomainsAvailable: true,
   criminalHistoryLevel: 3,
+  ageLevel: null,
   educationLevelScore: 3,
   neighborhoodLevel: 3,
   substanceAbuseLevel: 4,

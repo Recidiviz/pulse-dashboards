@@ -57,6 +57,7 @@ import {
   deriveDomainRiskLevel,
   DomainConfig,
   getDomainsForAssessmentType,
+  getScoreWithAgePoint,
   ORAS_EMPTY_FORM,
   ORASDomainRiskLevelField,
   ORASFormData,
@@ -1353,7 +1354,11 @@ export class SARDetailsPresenter implements Hydratable {
         .map((d) => [
           d.riskLevelField,
           deriveDomainRiskLevel(
-            data[d.scoreField] as number | null,
+            getScoreWithAgePoint(
+              d,
+              data[d.scoreField] as number | null,
+              data.ageLevel,
+            ),
             d.riskLevelCutoffs,
           ),
         ]),

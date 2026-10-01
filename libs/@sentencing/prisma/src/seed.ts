@@ -334,6 +334,7 @@ async function addSARClientsAndReports(
           const domainScores = {
             ORAS_CST: {
               criminalHistoryLevel: rand(8),
+              ageLevel: null,
               educationLevelScore: rand(6),
               familySocialSupportLevel: rand(5),
               neighborhoodLevel: rand(3),
@@ -351,6 +352,7 @@ async function addSARClientsAndReports(
             },
             ORAS_SRT: {
               criminalHistoryLevel: rand(12),
+              ageLevel: rand(1),
               educationLevelScore: rand(9),
               familySocialSupportLevel: null,
               neighborhoodLevel: null,
@@ -368,6 +370,7 @@ async function addSARClientsAndReports(
             },
             ORAS_PIT: {
               criminalHistoryLevel: rand(10),
+              ageLevel: null,
               educationLevelScore: rand(7),
               familySocialSupportLevel: rand(6),
               neighborhoodLevel: null,
@@ -385,6 +388,7 @@ async function addSARClientsAndReports(
             },
             ORAS_RT: {
               criminalHistoryLevel: rand(12),
+              ageLevel: null,
               educationLevelScore: rand(4),
               familySocialSupportLevel: null,
               neighborhoodLevel: null,

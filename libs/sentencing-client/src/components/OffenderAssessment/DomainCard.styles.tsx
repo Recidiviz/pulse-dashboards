@@ -147,3 +147,16 @@ export const ORASDomainText = styled.span`
   line-height: 120%;
   letter-spacing: -0.16px;
 `;
+
+export const DomainEntryLabel = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.25rem;
+`;
+
+export const ReadOnlyScore = styled(ORASDomainText)`
+  box-sizing: border-box;
+  width: 50px;
+  padding: 0 0.5rem;
+`;

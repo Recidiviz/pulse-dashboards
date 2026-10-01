@@ -68,6 +68,7 @@ export type UpsertSARInput = Pick<
   | "isVictimImpactOnly"
   | "ORASDomainsAvailable"
   | "criminalHistoryLevel"
+  | "ageLevel"
   | "educationLevelScore"
   | "neighborhoodLevel"
   | "substanceAbuseLevel"

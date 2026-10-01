@@ -43,6 +43,10 @@ const ORAS_SECTION_TO_DB_FIELD: Record<string, string> = {
   // Criminal History (same across all types)
   "Criminal History": "criminalHistoryLevel",
 
+  // ORAS-SRT only: age at assessment is its own section in MO's data, but it
+  // counts toward the Criminal History total on the official score sheet
+  Age: "ageLevel",
+
   // Criminal Attitudes (varies: "and" vs "&")
   "Criminal Attitudes and Behavioral Patterns": "criminalBehaviorLevel",
   "Criminal Attitudes & Behavioral Patterns": "criminalBehaviorLevel",

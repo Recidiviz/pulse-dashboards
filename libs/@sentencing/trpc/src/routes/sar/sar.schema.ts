@@ -50,6 +50,7 @@ export const ORAS_FIELDS: ReadonlyArray<
   "assessmentDate",
   "assessmentAdministeredBy",
   "criminalHistoryLevel",
+  "ageLevel",
   "educationLevelScore",
   "neighborhoodLevel",
   "substanceAbuseLevel",
@@ -185,6 +186,7 @@ export const updateSARSchema = z.object({
     ORASDomainsAvailable: z.boolean().optional(),
     // Domain scores
     criminalHistoryLevel: domainScore,
+    ageLevel: domainScore,
     educationLevelScore: domainScore,
     neighborhoodLevel: domainScore,
     substanceAbuseLevel: domainScore,

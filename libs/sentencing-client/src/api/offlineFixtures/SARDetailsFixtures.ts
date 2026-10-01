@@ -112,6 +112,7 @@ export const SARDetailsFixture: { [sarId: string]: SAR } = {
 
     // Criminal History Levels
     criminalHistoryLevel: 0,
+    ageLevel: 0,
     educationLevelScore: 0,
     neighborhoodLevel: 0,
     substanceAbuseLevel: 0,
