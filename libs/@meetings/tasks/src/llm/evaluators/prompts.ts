@@ -85,7 +85,12 @@ GRADING SCALE:
   below.
   CLARIFY items should never be the reason for a PARTIAL/BAD grade, even if the issue is
   already clear and the clarification is unnecessary. In this case simply note this but
-  don't use it to penalize the grade.`.trim();
+  don't use it to penalize the grade.
+  A SUCCESS PLAN section, if present, is chosen by staff from a dropdown of standard
+  options, so its wording is generic by design and isn't expected to be individualized
+  to the client. As long as it's broadly appropriate to the meeting, treat it as fine.
+  Issues in a SUCCESS PLAN section should still be noted, but should never be the reason
+  for a BAD grade.`.trim();
 
 export const EVALUATOR_PROMPTS = {
   TRANSCRIPT_COMPARISON: {
