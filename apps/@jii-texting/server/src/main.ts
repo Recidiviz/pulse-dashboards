@@ -20,10 +20,8 @@ import { startServer } from "~server-setup-plugin";
 
 const server = buildServer();
 
-startServer(server, {
+await startServer(server, {
   defaultPort: 3000,
-  // opts out of hot-reloading in the dev server
-  hot: undefined,
 });
 
 export default server;

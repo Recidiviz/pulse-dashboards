@@ -20,4 +20,4 @@ import { startServer } from "~server-setup-plugin";
 
 const server = buildServer();
 
-startServer(server, { defaultPort: 3002, hot: import.meta.hot });
+await startServer(server, { defaultPort: 3002 });

@@ -21,4 +21,4 @@ import { buildServer } from "./server";
 
 const server = buildServer();
 
-startServer(server, { defaultPort: 4210, hot: import.meta.hot });
+await startServer(server, { defaultPort: 4210 });

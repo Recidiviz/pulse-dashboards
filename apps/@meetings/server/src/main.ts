@@ -26,4 +26,4 @@ cleanupStaleLocalFiles(7);
 
 const server = buildServer();
 
-startServer(server, { defaultPort: 3002, hot: import.meta.hot });
+await startServer(server, { defaultPort: 3002 });
