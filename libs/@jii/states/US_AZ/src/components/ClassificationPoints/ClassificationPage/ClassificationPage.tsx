@@ -18,7 +18,8 @@
 import { rem } from "polished";
 import styled from "styled-components";
 
-import { PageLinksFooter } from "~@jii/common-ui";
+import { GoButton, PageLinksFooter } from "~@jii/common-ui";
+import { State } from "~@jii/paths";
 import { useUsAzTranslations } from "~@jii/translation";
 import { palette, spacing, typography } from "~design-system";
 
@@ -59,6 +60,15 @@ export const ClassificationPage = () => {
         </div>
         <ValuesCard />
         <ExplainerCard />
+        <div>
+          <GoButton
+            to={State.Resident.UsAzClassificationPoints.$.FAQ.buildRelativePath(
+              {},
+            )}
+          >
+            {t(($) => $.classificationPoints.page.faqLink)}
+          </GoButton>
+        </div>
         <PointsAccordion />
       </SectionsWrapper>
       <PageLinksFooter contents={useUsAzInfoPageFooterContents()} />

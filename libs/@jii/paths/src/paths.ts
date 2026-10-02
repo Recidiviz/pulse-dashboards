@@ -87,7 +87,11 @@ export const UsAzMoreInformation = route(
   },
 );
 
-export const UsAzClassificationPoints = route("classification");
+export const UsAzClassificationPoints = route(
+  "classification",
+  {},
+  { FAQ: route("faq") },
+);
 
 export const UsNcRNA = route(
   "rna",

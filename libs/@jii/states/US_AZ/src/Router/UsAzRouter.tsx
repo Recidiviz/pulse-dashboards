@@ -23,6 +23,7 @@ import { UsAzClassificationPoints, UsAzMoreInformation } from "~@jii/paths";
 
 import { UsAzSingleResidentContextRoute } from "../components/UsAzSingleResidentContext/UsAzSingleResidentContext";
 import { PageClassification } from "../pages/PageClassification";
+import { PageClassificationFAQ } from "../pages/PageClassificationFAQ";
 import { PageMoreInfoAbout } from "../pages/PageMoreInfoAbout";
 import { PageMoreInfoDPR } from "../pages/PageMoreInfoDPR";
 import { PageMoreInfoImportantDatesV2 } from "../pages/PageMoreInfoImportantDatesV2";
@@ -52,10 +53,13 @@ export function UsAzRouter() {
           element={<PageMoreInfoION />}
         />
         {residentFlags.usAzClassification && (
-          <Route
-            path={UsAzClassificationPoints.path}
-            element={<PageClassification />}
-          />
+          <Route path={UsAzClassificationPoints.path}>
+            <Route index element={<PageClassification />} />
+            <Route
+              path={UsAzClassificationPoints.FAQ.path}
+              element={<PageClassificationFAQ />}
+            />
+          </Route>
         )}
         <Route path="*" element={<NotFound />} />
       </Route>

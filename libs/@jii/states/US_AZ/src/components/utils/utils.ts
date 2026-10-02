@@ -23,6 +23,9 @@ import { UsAzDateField } from "../UsAzSingleResidentContext/SingleResidentContex
 
 export type UsAzDateHash = ReturnType<typeof getInfoPageHashForDateKey>;
 
+/**
+ * Provides a link path that is relative to the resident's homepage
+ */
 export function linkToDateSection(dateKey: UsAzDateField): string {
   return `${State.Resident.$.UsAzMoreInformation.ImportantDates.buildRelativePath({})}#${getInfoPageHashForDateKey(dateKey)}`;
 }

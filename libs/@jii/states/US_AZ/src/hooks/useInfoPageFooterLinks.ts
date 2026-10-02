@@ -44,7 +44,7 @@ export function useInfoPageFooterLinks(): Array<SimpleLinkProps> {
   ];
   if (!matchPath(State.Resident.UsAzMoreInformation.About.path, pathname)) {
     links.push({
-      to: `../${State.Resident.$.UsAzMoreInformation.About.buildRelativePath({})}`,
+      to: State.Resident.UsAzMoreInformation.About.buildPath(pathParams),
       children: t(($) => $.about.heading),
     });
   }
@@ -53,7 +53,7 @@ export function useInfoPageFooterLinks(): Array<SimpleLinkProps> {
     !matchPath(State.Resident.UsAzMoreInformation.ION.path, pathname)
   ) {
     links.push({
-      to: `../${State.Resident.$.UsAzMoreInformation.ION.buildRelativePath({})}`,
+      to: State.Resident.UsAzMoreInformation.ION.buildPath(pathParams),
       children: t(($) => $.ion.infoPage.heading),
     });
   }
@@ -61,25 +61,34 @@ export function useInfoPageFooterLinks(): Array<SimpleLinkProps> {
     !matchPath(State.Resident.UsAzMoreInformation.ImportantDates.path, pathname)
   ) {
     links.push({
-      to: `../${State.Resident.$.UsAzMoreInformation.ImportantDates.buildRelativePath({})}`,
+      to: State.Resident.UsAzMoreInformation.ImportantDates.buildPath(
+        pathParams,
+      ),
       children: t(($) => $.importantDates.moreInfo.heading),
     });
   }
-  if (
-    usAzClassification &&
-    !matchPath(State.Resident.UsAzClassificationPoints.path, pathname)
-  ) {
-    links.push({
-      to: `../${State.Resident.$.UsAzClassificationPoints.buildRelativePath({})}`,
-      children: t(($) => $.classificationPoints.page.heading),
-    });
+  if (usAzClassification) {
+    if (!matchPath(State.Resident.UsAzClassificationPoints.path, pathname)) {
+      links.push({
+        to: State.Resident.UsAzClassificationPoints.buildPath(pathParams),
+        children: t(($) => $.classificationPoints.page.heading),
+      });
+    }
+    if (
+      !matchPath(State.Resident.UsAzClassificationPoints.FAQ.path, pathname)
+    ) {
+      links.push({
+        to: State.Resident.UsAzClassificationPoints.FAQ.buildPath(pathParams),
+        children: t(($) => $.classificationPoints.faq.heading),
+      });
+    }
   }
   if (
     isDprQualified &&
     !matchPath(State.Resident.UsAzMoreInformation.DPR.path, pathname)
   ) {
     links.push({
-      to: `../${State.Resident.$.UsAzMoreInformation.DPR.buildRelativePath({})}`,
+      to: State.Resident.UsAzMoreInformation.DPR.buildPath(pathParams),
       children: t(($) => $.dprInfoPage.heading),
     });
   }

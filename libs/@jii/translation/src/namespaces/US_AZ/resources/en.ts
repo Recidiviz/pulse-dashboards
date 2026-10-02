@@ -793,6 +793,7 @@ Tap the “Learn more” button below.`,
 - Your Internal Risk level affects what job you are eligible for, and where you can work. 
 - Your points guide your level, but staff may “override” you to a higher or lower level.`,
       },
+      faqLink: "Learn more about how Classification works",
       pointsAccordion: {
         lower: {
           header: "What lowers my points?",
@@ -801,6 +802,161 @@ Tap the “Learn more” button below.`,
         raise: {
           header: "What raises my points?",
           content: raisePoints,
+        },
+      },
+    },
+    faq: {
+      heading: "Common Questions about Classification",
+      backLink: "Back to My Classification",
+      questions: {
+        howCalculated: {
+          header: "How are my points calculated?",
+          content: `Your points come from a scoresheet. Points are added up based on:
+
+- The offense you are here for now
+- Your past record
+- Your escape history
+- Your disciplinary history
+- Gang affiliation
+- Your age
+- Major Programs you have finished (Reclassification only)
+
+Each part is worth a set number of points, and they are added together to give you your total.
+
+These are listed in ADCRR Department Order 801, Inmate Classification, section 3.1. You can find DO 801 in the FYI app, under the Department Orders section.`,
+        },
+        custodyLevelMeaning: {
+          header: "What does my Custody Level mean for me?",
+          content: `Your Custody Level is the main thing that decides which yards you can be housed at. There are four levels:
+
+- **Minimum — 2:** Lowest risk. You may be able to work outside the secure perimeter, including on community work crews.
+- **Medium — 3:** Moderate risk. You cannot work outside the secure perimeter.
+- **Close — 4:** High risk. You cannot work outside the secure perimeter, and you have controlled movement inside.
+- **Maximum — 5:** Highest risk. Single or double cell, controlled movement, and frequent monitoring.
+
+Your Custody Level can also affect which release dates you are eligible for. See "Can my custody level affect my release dates?" below.
+
+These descriptions come from ADCRR Department Order 801, section 2.3.`,
+        },
+        internalRiskLevelMeaning: {
+          header: "What does my Internal Risk Level mean for me?",
+          content: `Your Internal Risk Level decides where you are allowed to be and what work you can do.
+
+The levels run from 1 to 5. A lower number means fewer restrictions on where you can go:
+
+- A higher Internal Risk Level can keep you inside the building or inside the secure perimeter, even at a yard where other people work outside the gate.
+- To work outside the gate, you generally need an Internal Risk Level of 2.
+- In some cases staff can approve an override that allows outside-the-gate work at a 3, with limits on how far you can go. This is not possible for every offense.
+
+Ask your COIII what your Internal Risk Level allows in your case.`,
+        },
+        twoNumbersDifference: {
+          header: "What's the difference between my two numbers?",
+          content: `They are two separate scores. Your **custody score** (sometimes called the “front number”) decides which yards you can live on. Your **internal risk score** (“back number”) decides what jobs you can get and where you are allowed to work. They use different scoresheets.`,
+        },
+        pointsChangedSinceIntake: {
+          header: "Why are my points different from when I first came in?",
+          content: `When you first arrived and went through Intake, your points were scored one way. This is called your Initial Classification.
+
+Your first Reclassification can happen after 3 months. Reclassification uses a different scoresheet, and every review after that uses the Reclassification scoresheet.
+
+Your points can change between Initial and Reclassification even if you did nothing wrong, because the two are scored differently. Many people see their points go up. This is normal, and it is not a punishment.
+
+If it has been more than 3 months since Intake and you have not been reclassified, ask your COIII to look.`,
+        },
+        finishedProgramNoChange: {
+          header: "I finished a Major Program. Why didn't my points go down?",
+          content: `Your points may have already gone down. The points you see here, and what your COIII would tell you your points are if you asked, only updates when a new classification review is done. A review does not happen every time your points change — it happens when your points change enough to move you to a lower or higher custody level. Until then, the number here can stay the same.
+
+If you think your points have dropped, ask your COIII to check. They can look up where your points are now and may be able to start a review.
+
+If your points went down but not far enough to change your level, your COIII can still recommend an override to a lower level. Ask them whether that is an option for you.
+
+If you have already finished two Major Programs, you have reached the −8 cap and more programs will not lower your points.`,
+        },
+        whatCanLowerPoints: {
+          header: "What can lower my points?",
+          content: lowerPoints,
+        },
+        whatCanRaisePoints: {
+          header: "What can raise my points?",
+          content: raisePoints,
+        },
+        disciplinaryPointsExpire: {
+          header: "Do points from my disciplinary infractions ever go away?",
+          content: `The disciplinary stays on your record, but it counts for fewer points as time passes. The disciplinaries you got in the last 3 years count the most. After 3 years, they count for much less.
+
+Your most serious ticket keeps counting for longer than the rest, and some points do not drop off completely no matter how much time passes.`,
+        },
+        nextReview: {
+          header: "When is my next review?",
+          content: `There is no set date. Classification is event driven — a review happens when something changes, like a ticket, a new sentence, or finishing a program that drops your points far enough to change your level.
+
+There are some exceptions. Your first Reclassification after Intake happens on a set timeline. If you are in Maximum custody, or if you are on an override, your reviews are also on a schedule. Ask your COIII if one of these applies to you.`,
+        },
+        pointsDownSameYard: {
+          header: "My points went down. Why am I still on the same yard?",
+          content: `Points are only part of the decision. A few things can hold up a move:
+
+- Your points may not have dropped far enough to change your level.
+- A rule may set the lowest level you can be at right now (see the next question, “Why can’t I go any lower than this level?”).
+- There may not be an opening yet at the yard you would move to.
+- An override may be in place.
+
+Moving also takes time after a review is finished. A review goes from your COIII to the Deputy Warden, and then to Central Office. After that, Central Office has to find you a bed and put you on movement.
+
+You can find more information about this in ADCRR Department Order 801, Inmate Classification, section 4.2. You can find DO 801 in the FYI app, under the Department Orders section.`,
+        },
+        cannotGoLower: {
+          header: "Why can't I go any lower than this level?",
+          content: `Some rules set the lowest level you can be at, no matter how low your points get. These are called non-discretionary overrides. For example:
+
+- If you have five or more years left to serve, you cannot go below Medium.
+- If you have a life sentence, you cannot go below Close custody during the first 5 years of your incarceration. After that, you cannot go below Medium.
+- If you have a felony hold or detainer, you cannot go below Medium.
+
+Some offenses also set a lowest Internal Risk Level. In some cases staff can approve an override that still allows outside-the-gate work, but this is not possible for every offense.
+
+These rules are not about your behavior, and time without a ticket will not change them.
+
+You can read the full list in ADCRR Department Order 801, sections 3.2 and 7.2. You can find DO 801 in the FYI app, under the Department Orders section.
+
+Ask your COIII whether one of these applies to you.`,
+        },
+        whatIsOverride: {
+          header: "What is an override?",
+          content: `An override is when staff place you at a different level than your points alone would give you. It can go either way — to a higher or lower level.
+
+- An override can hold you at a higher level — for example, because of something in your record or your recent behavior.
+- An override can also place you at a lower level. If your points dropped but not far enough to change your level, your COIII can recommend an override. Central Office makes the final decision.
+
+If you want to read how overrides work, see ADCRR Department Order 801, sections 5.0 and 8.0. You can find DO 801 in the FYI app, under the Department Orders section.`,
+        },
+        custodyLevelAffectsDates: {
+          header: "Can my custody level affect my release dates?",
+          content: `Yes. Some release types have a custody level requirement.
+
+If you are at Close or Maximum custody, you are not eligible for a Community Supervision Begin Date (CSBD) or Temporary Release (TR). You also have to be in Minimum or Medium custody to qualify for [Standard Transition Release]({{stpLinkUrl}}) or [Drug Transition Release]({{dtpLinkUrl}}).
+
+If your custody level changes, the release types you are eligible for can change too.
+
+You can see which release types you currently qualify for on the Opportunities home screen. You can also read more about the rules to qualify for different release types [here]({{datesFAQUrl}}).`,
+        },
+        lessThanFiveYears: {
+          header:
+            "Does having less than five years left until release mean I automatically go to Minimum?",
+          content: `No. Having less than five years left removes one rule that was holding you at Medium or above. It does not by itself move you to Minimum — whether you can move to Minimum depends mainly on your points.`,
+        },
+        peerSupportOrTeaching: {
+          header:
+            "Does being a Peer Support Specialist or teaching a class lower my points?",
+          content: `No, only the first two Major Programs you take count towards lowering your Classification points.
+
+Other work and volunteering can help you in other ways, but it does not change your Classification scores.`,
+        },
+        doesntLookRight: {
+          header: "This doesn't look right. What should I do?",
+          content: `Talk to your COIII first. They can pull up your file and go over it with you.`,
         },
       },
     },
