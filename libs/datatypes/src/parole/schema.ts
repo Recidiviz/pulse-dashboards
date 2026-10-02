@@ -49,7 +49,6 @@ export const PAROLE_RISK_TOOL = z.enum([
   "VRAG",
   "STATIC_99",
   "STABLE",
-  "Guideline",
 ]);
 export type ParoleRiskTool = z.infer<typeof PAROLE_RISK_TOOL>;
 

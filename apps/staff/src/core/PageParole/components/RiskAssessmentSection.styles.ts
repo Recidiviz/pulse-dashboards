@@ -32,7 +32,6 @@ export const TOOL_COLORS: Record<ParoleRiskTool, string> = {
   VRAG: "#B8860B",
   STATIC_99: "#1565C0",
   STABLE: "#6D4C41",
-  Guideline: "#546E7A",
 };
 
 export const DEFAULT_CHART_HEIGHT = 432;

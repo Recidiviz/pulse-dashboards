@@ -245,10 +245,10 @@ const US_ID_CONFIG = {
       visibleYears: 3,
     },
     riskAssessmentConfig: {
-      tools: ["LSIR", "VRAG", "STATIC_99", "STABLE", "Guideline"],
+      tools: ["LSIR", "VRAG", "STATIC_99", "STABLE"],
       aggregateView: {
         label: "All",
-        tools: ["LSIR", "VRAG", "STATIC_99", "STABLE", "Guideline"],
+        tools: ["LSIR", "VRAG", "STATIC_99", "STABLE"],
       },
     },
   },

@@ -1174,14 +1174,6 @@ function buildIdRiskAssessments(
       subcategories: buildSubcategories(STABLE_DOMAINS, stableScore, index),
     });
   }
-  if (index % 5 === 0) {
-    riskAssessments.push({
-      tool: "Guideline",
-      score: Math.round((riskPct / 100) * 10),
-      maxScore: 10,
-      date: iso(subMonths(today, 2)),
-    });
-  }
 
   return { riskAssessments };
 }
@@ -2114,12 +2106,6 @@ const ID_SYNTHETIC_CASE_PROFILES: Record<string, ParoleCase> = {
         score: 4,
         maxScore: 26,
         date: "2026-08-19",
-      },
-      {
-        tool: "Guideline",
-        score: 13,
-        maxScore: 32,
-        date: "2026-08-07",
       },
     ],
     communitySupervisionPlan: [],
