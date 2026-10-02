@@ -130,7 +130,7 @@ export abstract class UsTxArsErsV2OpportunityBase<
 
   get customStatusPalette(): StatusPalette | undefined {
     if (this.isGrantApproved) return OPPORTUNITY_STATUS_COLORS.eligible;
-    if (this.isInGrantReview || this.isInRevisionsRequested)
+    if (this.isInSupervisorReview || this.isInRevisionsRequested)
       return OPPORTUNITY_STATUS_COLORS.almostEligible;
     return undefined;
   }
@@ -140,6 +140,8 @@ export abstract class UsTxArsErsV2OpportunityBase<
     category?: OpportunityTabGroup,
     reviewerId?: string,
   ): string | null {
+    if (this.isGrantApproved) return this.grantApprovedStatusMessage;
+
     // TODO (OBT-39704) Refactor OpportunityTabGroup to enums
     // Use historical label if opportunity is under review
     // but selected supervisor is not the current reviewer
@@ -151,12 +153,13 @@ export abstract class UsTxArsErsV2OpportunityBase<
       return this.config.historicalReviewTabTitle;
     }
 
-    if (this.isGrantApproved) return this.grantApprovedStatusMessage;
+    // Snoozed tab
+    if (this.denied) return "Currently ineligible";
 
     if (this.isInRevisionsRequested)
       return this.config.awaitingRevisionsTabTitle;
 
-    if (this.isInGrantReview) {
+    if (this.isInSupervisorReview) {
       // TODO (OBT-39704) Refactor OpportunityTabGroup to enums
       return category === "REVIEW STATUS" &&
         this.config.insightsSupervisorReviewTabTitle
@@ -171,6 +174,9 @@ export abstract class UsTxArsErsV2OpportunityBase<
     category?: OpportunityTabGroup,
     reviewerId?: string,
   ): OpportunityTab {
+    // Approved tab
+    if (this.isGrantApproved) return this.grantApprovedTabTitle;
+
     // Past Reviews tab
     if (
       category === "REVIEW STATUS" &&
@@ -183,6 +189,10 @@ export abstract class UsTxArsErsV2OpportunityBase<
     // Snoozed tab
     if (this.denied) return this.deniedTabTitle;
 
+    // Awaiting Revisions tab
+    if (this.isInRevisionsRequested)
+      return this.config.awaitingRevisionsTabTitle;
+
     // Submitted for Review tab (Awaiting Review on the Insights homepage)
     if (this.isInSupervisorReview) {
       // TODO (OBT-39704) Refactor OpportunityTabGroup to enums
@@ -191,13 +201,6 @@ export abstract class UsTxArsErsV2OpportunityBase<
         ? this.config.insightsSupervisorReviewTabTitle
         : this.supervisorReviewTabTitle;
     }
-
-    // Awaiting Revisions tab
-    if (this.isInRevisionsRequested)
-      return this.config.awaitingRevisionsTabTitle;
-
-    // Approved tab
-    if (this.isGrantApproved) return this.grantApprovedTabTitle;
 
     // Almost Eligible tab
     if (this.almostEligible) return "Almost Eligible";
