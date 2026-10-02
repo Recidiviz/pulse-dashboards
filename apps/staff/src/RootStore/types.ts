@@ -162,6 +162,7 @@ export type FeatureVariant =
   | "usTxEarlyReleaseFromSupervisionV2"
   | "usTxEnablePoFormSection"
   | "usTxEnableSupervisorFormSection"
+  | "usTxAllowSingleFormSectionEdit"
 
   // INSIGHTS
   | "insightsLeadershipPageAllDistricts"
@@ -327,6 +328,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usTxEarlyReleaseFromSupervisionV2: {},
   usTxEnablePoFormSection: {},
   usTxEnableSupervisorFormSection: {},
+  usTxAllowSingleFormSectionEdit: {},
   sentenceProgressV2: {},
   hideWorkflowsOpportunities: {},
   hideWorkflowsResidentsPage: {},

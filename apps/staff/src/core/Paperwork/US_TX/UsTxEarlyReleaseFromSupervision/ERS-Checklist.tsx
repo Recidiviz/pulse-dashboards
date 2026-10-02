@@ -18,17 +18,28 @@
 import React, { useContext } from "react";
 
 import { useFeatureVariants } from "../../../../components/StoreProvider";
+import type { UsTxArsErsBlockingSubmitFieldKey } from "../../../../WorkflowsStore/Opportunity/UsTx/UsTxArsErsSharedUtils";
 import { FormViewerContext } from "../../FormViewer";
 import FormCheckbox from "../../shared/FormCheckbox";
 import FormHeader from "../../shared/FormHeader";
 import FormInput from "../../shared/FormInput";
 import { ErsItem, Footer, FormContainer, Grid, Row } from "../../shared/styles";
 import { PrintablePage } from "../../styles";
+import { useArsErsSectionsDisabled } from "../utils";
 
-const ERSChecklist: React.FC = () => {
+const ERSChecklist: React.FC<{
+  sectionEditedByCurrentUser?: UsTxArsErsBlockingSubmitFieldKey;
+}> = ({ sectionEditedByCurrentUser }) => {
   const formViewerContext = useContext(FormViewerContext);
-  const { usTxEnablePoFormSection, usTxEnableSupervisorFormSection } =
-    useFeatureVariants();
+  const featureVariants = useFeatureVariants();
+  const {
+    paroleOfficerSectionDisabled,
+    unitSupervisorSectionDisabled,
+    paroleSupervisorSectionDisabled,
+    assistantRegionDirectorSectionDisabled,
+    regionDirectorSectionDisabled,
+    markSectionEditedLocally,
+  } = useArsErsSectionsDisabled(sectionEditedByCurrentUser, featureVariants);
 
   return (
     <PrintablePage lineHeight={1.25}>
@@ -327,7 +338,10 @@ const ERSChecklist: React.FC = () => {
                 fontSize: "8px",
                 marginLeft: "5px",
               }}
-              disabled={!usTxEnablePoFormSection}
+              disabled={paroleOfficerSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally("paroleOfficer", "officerName", value)
+              }
             />
           </ErsItem>
           <ErsItem>
@@ -335,7 +349,14 @@ const ERSChecklist: React.FC = () => {
             <FormInput
               name="supervisingOfficerDate"
               style={{ borderRight: "unset" }}
-              disabled={!usTxEnablePoFormSection}
+              disabled={paroleOfficerSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "paroleOfficer",
+                  "supervisingOfficerDate",
+                  value,
+                )
+              }
             />
           </ErsItem>
           <ErsItem textAlignCenter>
@@ -355,7 +376,14 @@ const ERSChecklist: React.FC = () => {
               id="supervisingOfficerRecommendCheckYes"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="supervisingOfficerRecommendCheckNo"
-              disabled={!usTxEnablePoFormSection}
+              disabled={paroleOfficerSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "paroleOfficer",
+                  "supervisingOfficerRecommendCheckYes",
+                  value,
+                )
+              }
             ></FormCheckbox>
           </ErsItem>
         </Grid>
@@ -363,7 +391,14 @@ const ERSChecklist: React.FC = () => {
           <ErsItem>Signature:</ErsItem>
           <FormInput
             name="supervisingOfficerSignature"
-            disabled={!usTxEnablePoFormSection}
+            disabled={paroleOfficerSectionDisabled}
+            onValueChange={(value) =>
+              markSectionEditedLocally(
+                "paroleOfficer",
+                "supervisingOfficerSignature",
+                value,
+              )
+            }
           />
           <ErsItem textAlignCenter>No</ErsItem>
           <ErsItem textAlignCenter>
@@ -373,7 +408,14 @@ const ERSChecklist: React.FC = () => {
               id="supervisingOfficerRecommendCheckNo"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="supervisingOfficerRecommendCheckYes"
-              disabled={!usTxEnablePoFormSection}
+              disabled={paroleOfficerSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "paroleOfficer",
+                  "supervisingOfficerRecommendCheckNo",
+                  value,
+                )
+              }
             ></FormCheckbox>
           </ErsItem>
         </Grid>
@@ -381,7 +423,14 @@ const ERSChecklist: React.FC = () => {
           <ErsItem>Remarks:</ErsItem>
           <FormInput
             name="supervisingOfficerRemarks"
-            disabled={!usTxEnablePoFormSection}
+            disabled={paroleOfficerSectionDisabled}
+            onValueChange={(value) =>
+              markSectionEditedLocally(
+                "paroleOfficer",
+                "supervisingOfficerRemarks",
+                value,
+              )
+            }
           />
         </Grid>
         <ErsItem
@@ -393,7 +442,14 @@ const ERSChecklist: React.FC = () => {
             <FormInput
               name="unitSupervisorName"
               style={{ borderRight: "unset" }}
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={unitSupervisorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "unitSupervisor",
+                  "unitSupervisorName",
+                  value,
+                )
+              }
             />
           </ErsItem>
           <ErsItem>
@@ -401,7 +457,14 @@ const ERSChecklist: React.FC = () => {
             <FormInput
               name="unitSupervisorDate"
               style={{ borderRight: "unset" }}
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={unitSupervisorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "unitSupervisor",
+                  "unitSupervisorDate",
+                  value,
+                )
+              }
             />
           </ErsItem>
           <ErsItem textAlignCenter>
@@ -421,7 +484,14 @@ const ERSChecklist: React.FC = () => {
               id="unitSupervisorConcurWithSupervisingOfficerCheckYes"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="unitSupervisorConcurWithSupervisingOfficerCheckNo"
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={unitSupervisorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "unitSupervisor",
+                  "unitSupervisorConcurWithSupervisingOfficerCheckYes",
+                  value,
+                )
+              }
             ></FormCheckbox>
           </ErsItem>
         </Grid>
@@ -429,7 +499,14 @@ const ERSChecklist: React.FC = () => {
           <ErsItem>Signature:</ErsItem>
           <FormInput
             name="unitSupervisorSignature"
-            disabled={!usTxEnableSupervisorFormSection}
+            disabled={unitSupervisorSectionDisabled}
+            onValueChange={(value) =>
+              markSectionEditedLocally(
+                "unitSupervisor",
+                "unitSupervisorSignature",
+                value,
+              )
+            }
           />
           <ErsItem textAlignCenter>No</ErsItem>
           <ErsItem textAlignCenter>
@@ -439,7 +516,14 @@ const ERSChecklist: React.FC = () => {
               id="unitSupervisorConcurWithSupervisingOfficerCheckNo"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="unitSupervisorConcurWithSupervisingOfficerCheckYes"
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={unitSupervisorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "unitSupervisor",
+                  "unitSupervisorConcurWithSupervisingOfficerCheckNo",
+                  value,
+                )
+              }
             ></FormCheckbox>
           </ErsItem>
         </Grid>
@@ -447,7 +531,14 @@ const ERSChecklist: React.FC = () => {
           <ErsItem>Remarks:</ErsItem>
           <FormInput
             name="unitSupervisorRemarks"
-            disabled={!usTxEnableSupervisorFormSection}
+            disabled={unitSupervisorSectionDisabled}
+            onValueChange={(value) =>
+              markSectionEditedLocally(
+                "unitSupervisor",
+                "unitSupervisorRemarks",
+                value,
+              )
+            }
           />
         </Grid>
         <ErsItem
@@ -459,7 +550,14 @@ const ERSChecklist: React.FC = () => {
             <FormInput
               name="paroleSupervisorName"
               style={{ borderRight: "unset" }}
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={paroleSupervisorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "paroleSupervisor",
+                  "paroleSupervisorName",
+                  value,
+                )
+              }
             />
           </ErsItem>
           <ErsItem>
@@ -467,7 +565,14 @@ const ERSChecklist: React.FC = () => {
             <FormInput
               name="paroleSupervisorDate"
               style={{ borderRight: "unset" }}
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={paroleSupervisorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "paroleSupervisor",
+                  "paroleSupervisorDate",
+                  value,
+                )
+              }
             />
           </ErsItem>
           <ErsItem textAlignCenter>
@@ -487,7 +592,14 @@ const ERSChecklist: React.FC = () => {
               id="paroleSupervisorConcurWithSupervisingOfficerCheckYes"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="paroleSupervisorConcurWithSupervisingOfficerCheckNo"
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={paroleSupervisorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "paroleSupervisor",
+                  "paroleSupervisorConcurWithSupervisingOfficerCheckYes",
+                  value,
+                )
+              }
             ></FormCheckbox>
           </ErsItem>
         </Grid>
@@ -495,7 +607,14 @@ const ERSChecklist: React.FC = () => {
           <ErsItem>Signature:</ErsItem>
           <FormInput
             name="paroleSupervisorSignature"
-            disabled={!usTxEnableSupervisorFormSection}
+            disabled={paroleSupervisorSectionDisabled}
+            onValueChange={(value) =>
+              markSectionEditedLocally(
+                "paroleSupervisor",
+                "paroleSupervisorSignature",
+                value,
+              )
+            }
           />
           <ErsItem textAlignCenter>No</ErsItem>
           <ErsItem textAlignCenter>
@@ -505,7 +624,14 @@ const ERSChecklist: React.FC = () => {
               id="paroleSupervisorConcurWithSupervisingOfficerCheckNo"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="paroleSupervisorConcurWithSupervisingOfficerCheckYes"
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={paroleSupervisorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "paroleSupervisor",
+                  "paroleSupervisorConcurWithSupervisingOfficerCheckNo",
+                  value,
+                )
+              }
             ></FormCheckbox>
           </ErsItem>
         </Grid>
@@ -513,7 +639,14 @@ const ERSChecklist: React.FC = () => {
           <ErsItem>Remarks:</ErsItem>
           <FormInput
             name="paroleSupervisorRemarks"
-            disabled={!usTxEnableSupervisorFormSection}
+            disabled={paroleSupervisorSectionDisabled}
+            onValueChange={(value) =>
+              markSectionEditedLocally(
+                "paroleSupervisor",
+                "paroleSupervisorRemarks",
+                value,
+              )
+            }
           />
         </Grid>
         <ErsItem
@@ -525,7 +658,14 @@ const ERSChecklist: React.FC = () => {
             <FormInput
               name="assistantRegionDirectorName"
               style={{ borderRight: "unset" }}
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={assistantRegionDirectorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "assistantRegionDirector",
+                  "assistantRegionDirectorName",
+                  value,
+                )
+              }
             />
           </ErsItem>
           <ErsItem>
@@ -533,7 +673,14 @@ const ERSChecklist: React.FC = () => {
             <FormInput
               name="assistantRegionDirectorDate"
               style={{ borderRight: "unset" }}
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={assistantRegionDirectorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "assistantRegionDirector",
+                  "assistantRegionDirectorDate",
+                  value,
+                )
+              }
             />
           </ErsItem>
           <ErsItem textAlignCenter>
@@ -553,7 +700,14 @@ const ERSChecklist: React.FC = () => {
               id="assistantRegionDirectorConcurWithSupervisingOfficerCheckYes"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="assistantRegionDirectorConcurWithSupervisingOfficerCheckNo"
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={assistantRegionDirectorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "assistantRegionDirector",
+                  "assistantRegionDirectorConcurWithSupervisingOfficerCheckYes",
+                  value,
+                )
+              }
             ></FormCheckbox>
           </ErsItem>
         </Grid>
@@ -561,7 +715,14 @@ const ERSChecklist: React.FC = () => {
           <ErsItem>Signature:</ErsItem>
           <FormInput
             name="assistantRegionDirectorSignature"
-            disabled={!usTxEnableSupervisorFormSection}
+            disabled={assistantRegionDirectorSectionDisabled}
+            onValueChange={(value) =>
+              markSectionEditedLocally(
+                "assistantRegionDirector",
+                "assistantRegionDirectorSignature",
+                value,
+              )
+            }
           />
           <ErsItem textAlignCenter>No</ErsItem>
           <ErsItem textAlignCenter>
@@ -571,7 +732,14 @@ const ERSChecklist: React.FC = () => {
               id="assistantRegionDirectorConcurWithSupervisingOfficerCheckNo"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="assistantRegionDirectorConcurWithSupervisingOfficerCheckYes"
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={assistantRegionDirectorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "assistantRegionDirector",
+                  "assistantRegionDirectorConcurWithSupervisingOfficerCheckNo",
+                  value,
+                )
+              }
             ></FormCheckbox>
           </ErsItem>
         </Grid>
@@ -579,7 +747,14 @@ const ERSChecklist: React.FC = () => {
           <ErsItem>Remarks:</ErsItem>
           <FormInput
             name="assistantRegionDirectorRemarks"
-            disabled={!usTxEnableSupervisorFormSection}
+            disabled={assistantRegionDirectorSectionDisabled}
+            onValueChange={(value) =>
+              markSectionEditedLocally(
+                "assistantRegionDirector",
+                "assistantRegionDirectorRemarks",
+                value,
+              )
+            }
           />
         </Grid>
         <ErsItem
@@ -591,7 +766,14 @@ const ERSChecklist: React.FC = () => {
             <FormInput
               name="regionDirectorName"
               style={{ borderRight: "unset" }}
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={regionDirectorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "regionDirector",
+                  "regionDirectorName",
+                  value,
+                )
+              }
             />
           </ErsItem>
           <ErsItem>
@@ -599,7 +781,14 @@ const ERSChecklist: React.FC = () => {
             <FormInput
               name="regionDirectorDate"
               style={{ borderRight: "unset" }}
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={regionDirectorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "regionDirector",
+                  "regionDirectorDate",
+                  value,
+                )
+              }
             />
           </ErsItem>
           <ErsItem textAlignCenter>Final Authority</ErsItem>
@@ -617,7 +806,14 @@ const ERSChecklist: React.FC = () => {
               id="regionDirectorConcurWithSupervisingOfficerCheckYes"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="regionDirectorConcurWithSupervisingOfficerCheckNo"
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={regionDirectorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "regionDirector",
+                  "regionDirectorConcurWithSupervisingOfficerCheckYes",
+                  value,
+                )
+              }
             ></FormCheckbox>
           </ErsItem>
         </Grid>
@@ -625,7 +821,14 @@ const ERSChecklist: React.FC = () => {
           <ErsItem>Signature:</ErsItem>
           <FormInput
             name="regionDirectorSignature"
-            disabled={!usTxEnableSupervisorFormSection}
+            disabled={regionDirectorSectionDisabled}
+            onValueChange={(value) =>
+              markSectionEditedLocally(
+                "regionDirector",
+                "regionDirectorSignature",
+                value,
+              )
+            }
           />
           <ErsItem textAlignCenter style={{ fontSize: "7px" }}>
             Does Not Recommend for ERS
@@ -637,7 +840,14 @@ const ERSChecklist: React.FC = () => {
               id="regionDirectorConcurWithSupervisingOfficerCheckNo"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="regionDirectorConcurWithSupervisingOfficerCheckYes"
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={regionDirectorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "regionDirector",
+                  "regionDirectorConcurWithSupervisingOfficerCheckNo",
+                  value,
+                )
+              }
             ></FormCheckbox>
           </ErsItem>
         </Grid>
@@ -645,7 +855,14 @@ const ERSChecklist: React.FC = () => {
           <ErsItem>Remarks:</ErsItem>
           <FormInput
             name="regionDirectorRemarks"
-            disabled={!usTxEnableSupervisorFormSection}
+            disabled={regionDirectorSectionDisabled}
+            onValueChange={(value) =>
+              markSectionEditedLocally(
+                "regionDirector",
+                "regionDirectorRemarks",
+                value,
+              )
+            }
           />
         </Grid>
 

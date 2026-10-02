@@ -30,14 +30,24 @@ export type FormInputValueBuilder = (data: any, value: string) => string;
 
 type FormInputProps = InputHTMLAttributes<HTMLInputElement> & {
   name: FormDataFieldName;
+  onValueChange?: (value: string) => void;
 };
 
-const FormInput: React.FC<FormInputProps> = ({ name, ...props }) => {
+const FormInput: React.FC<FormInputProps> = ({
+  name,
+  onValueChange,
+  ...props
+}) => {
   const form = useOpportunityFormContext();
   const [value, onChange] = useReactiveInput<HTMLInputElement>(name, form);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const hasAnimated = useAnimatedValue(inputRef, value);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    onValueChange?.(event.target.value);
+    onChange(event);
+  };
 
   return (
     <Input
@@ -47,7 +57,7 @@ const FormInput: React.FC<FormInputProps> = ({ name, ...props }) => {
       id={name}
       name={name}
       type="text"
-      onChange={onChange}
+      onChange={handleChange}
       className="fs-exclude"
       autoComplete="off"
     />

@@ -18,17 +18,28 @@
 import React, { useContext } from "react";
 
 import { useFeatureVariants } from "../../../../components/StoreProvider";
+import type { UsTxArsErsBlockingSubmitFieldKey } from "../../../../WorkflowsStore/Opportunity/UsTx/UsTxArsErsSharedUtils";
 import { FormViewerContext } from "../../FormViewer";
 import FormCheckbox from "../../shared/FormCheckbox";
 import FormHeader from "../../shared/FormHeader";
 import FormInput from "../../shared/FormInput";
 import { Footer, FormContainer, Grid, Item, Row } from "../../shared/styles";
 import { PrintablePage } from "../../styles";
+import { useArsErsSectionsDisabled } from "../utils";
 
-const FormPSV323D: React.FC = () => {
+const FormPSV323D: React.FC<{
+  sectionEditedByCurrentUser?: UsTxArsErsBlockingSubmitFieldKey;
+}> = ({ sectionEditedByCurrentUser }) => {
   const formViewerContext = useContext(FormViewerContext);
-  const { usTxEnablePoFormSection, usTxEnableSupervisorFormSection } =
-    useFeatureVariants();
+  const featureVariants = useFeatureVariants();
+  const {
+    paroleOfficerSectionDisabled,
+    unitSupervisorSectionDisabled,
+    paroleSupervisorSectionDisabled,
+    assistantRegionDirectorSectionDisabled,
+    regionDirectorSectionDisabled,
+    markSectionEditedLocally,
+  } = useArsErsSectionsDisabled(sectionEditedByCurrentUser, featureVariants);
 
   return (
     <PrintablePage>
@@ -256,7 +267,10 @@ const FormPSV323D: React.FC = () => {
                 fontSize: "8px",
                 marginLeft: "5px",
               }}
-              disabled={!usTxEnablePoFormSection}
+              disabled={paroleOfficerSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally("paroleOfficer", "officerName", value)
+              }
             />
           </Item>
           <Item>
@@ -264,7 +278,14 @@ const FormPSV323D: React.FC = () => {
             <FormInput
               name="supervisingOfficerDate"
               style={{ borderRight: "unset" }}
-              disabled={!usTxEnablePoFormSection}
+              disabled={paroleOfficerSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "paroleOfficer",
+                  "supervisingOfficerDate",
+                  value,
+                )
+              }
             />
           </Item>
           <Item textAlignCenter>
@@ -284,7 +305,14 @@ const FormPSV323D: React.FC = () => {
               id="supervisingOfficerRecommendCheckYes"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="supervisingOfficerRecommendCheckNo"
-              disabled={!usTxEnablePoFormSection}
+              disabled={paroleOfficerSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "paroleOfficer",
+                  "supervisingOfficerRecommendCheckYes",
+                  value,
+                )
+              }
             ></FormCheckbox>
           </Item>
         </Grid>
@@ -292,7 +320,14 @@ const FormPSV323D: React.FC = () => {
           <Item>Signature:</Item>
           <FormInput
             name="supervisingOfficerSignature"
-            disabled={!usTxEnablePoFormSection}
+            disabled={paroleOfficerSectionDisabled}
+            onValueChange={(value) =>
+              markSectionEditedLocally(
+                "paroleOfficer",
+                "supervisingOfficerSignature",
+                value,
+              )
+            }
           />
           <Item textAlignCenter>No</Item>
           <Item textAlignCenter>
@@ -302,7 +337,14 @@ const FormPSV323D: React.FC = () => {
               id="supervisingOfficerRecommendCheckNo"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="supervisingOfficerRecommendCheckYes"
-              disabled={!usTxEnablePoFormSection}
+              disabled={paroleOfficerSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "paroleOfficer",
+                  "supervisingOfficerRecommendCheckNo",
+                  value,
+                )
+              }
             ></FormCheckbox>
           </Item>
         </Grid>
@@ -310,7 +352,14 @@ const FormPSV323D: React.FC = () => {
           <Item>Remarks:</Item>
           <FormInput
             name="supervisingOfficerRemarks"
-            disabled={!usTxEnablePoFormSection}
+            disabled={paroleOfficerSectionDisabled}
+            onValueChange={(value) =>
+              markSectionEditedLocally(
+                "paroleOfficer",
+                "supervisingOfficerRemarks",
+                value,
+              )
+            }
           />
         </Grid>
         <Item
@@ -322,7 +371,14 @@ const FormPSV323D: React.FC = () => {
             <FormInput
               name="unitSupervisorName"
               style={{ borderRight: "unset" }}
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={unitSupervisorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "unitSupervisor",
+                  "unitSupervisorName",
+                  value,
+                )
+              }
             />
           </Item>
           <Item>
@@ -330,7 +386,14 @@ const FormPSV323D: React.FC = () => {
             <FormInput
               name="unitSupervisorDate"
               style={{ borderRight: "unset" }}
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={unitSupervisorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "unitSupervisor",
+                  "unitSupervisorDate",
+                  value,
+                )
+              }
             />
           </Item>
           <Item textAlignCenter>
@@ -350,7 +413,14 @@ const FormPSV323D: React.FC = () => {
               id="unitSupervisorConcurWithSupervisingOfficerCheckYes"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="unitSupervisorConcurWithSupervisingOfficerCheckNo"
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={unitSupervisorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "unitSupervisor",
+                  "unitSupervisorConcurWithSupervisingOfficerCheckYes",
+                  value,
+                )
+              }
             ></FormCheckbox>
           </Item>
         </Grid>
@@ -358,7 +428,14 @@ const FormPSV323D: React.FC = () => {
           <Item>Signature:</Item>
           <FormInput
             name="unitSupervisorSignature"
-            disabled={!usTxEnableSupervisorFormSection}
+            disabled={unitSupervisorSectionDisabled}
+            onValueChange={(value) =>
+              markSectionEditedLocally(
+                "unitSupervisor",
+                "unitSupervisorSignature",
+                value,
+              )
+            }
           />
           <Item textAlignCenter>No</Item>
           <Item textAlignCenter>
@@ -368,7 +445,14 @@ const FormPSV323D: React.FC = () => {
               id="unitSupervisorConcurWithSupervisingOfficerCheckNo"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="unitSupervisorConcurWithSupervisingOfficerCheckYes"
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={unitSupervisorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "unitSupervisor",
+                  "unitSupervisorConcurWithSupervisingOfficerCheckNo",
+                  value,
+                )
+              }
             ></FormCheckbox>
           </Item>
         </Grid>
@@ -376,7 +460,14 @@ const FormPSV323D: React.FC = () => {
           <Item>Remarks:</Item>
           <FormInput
             name="unitSupervisorRemarks"
-            disabled={!usTxEnableSupervisorFormSection}
+            disabled={unitSupervisorSectionDisabled}
+            onValueChange={(value) =>
+              markSectionEditedLocally(
+                "unitSupervisor",
+                "unitSupervisorRemarks",
+                value,
+              )
+            }
           />
         </Grid>
         <Item
@@ -388,7 +479,14 @@ const FormPSV323D: React.FC = () => {
             <FormInput
               name="paroleSupervisorName"
               style={{ borderRight: "unset" }}
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={paroleSupervisorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "paroleSupervisor",
+                  "paroleSupervisorName",
+                  value,
+                )
+              }
             />
           </Item>
           <Item>
@@ -396,7 +494,14 @@ const FormPSV323D: React.FC = () => {
             <FormInput
               name="paroleSupervisorDate"
               style={{ borderRight: "unset" }}
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={paroleSupervisorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "paroleSupervisor",
+                  "paroleSupervisorDate",
+                  value,
+                )
+              }
             />
           </Item>
           <Item textAlignCenter>
@@ -416,7 +521,14 @@ const FormPSV323D: React.FC = () => {
               id="paroleSupervisorConcurWithSupervisingOfficerCheckYes"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="paroleSupervisorConcurWithSupervisingOfficerCheckNo"
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={paroleSupervisorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "paroleSupervisor",
+                  "paroleSupervisorConcurWithSupervisingOfficerCheckYes",
+                  value,
+                )
+              }
             ></FormCheckbox>
           </Item>
         </Grid>
@@ -424,7 +536,14 @@ const FormPSV323D: React.FC = () => {
           <Item>Signature:</Item>
           <FormInput
             name="paroleSupervisorSignature"
-            disabled={!usTxEnableSupervisorFormSection}
+            disabled={paroleSupervisorSectionDisabled}
+            onValueChange={(value) =>
+              markSectionEditedLocally(
+                "paroleSupervisor",
+                "paroleSupervisorSignature",
+                value,
+              )
+            }
           />
           <Item textAlignCenter>No</Item>
           <Item textAlignCenter>
@@ -434,7 +553,14 @@ const FormPSV323D: React.FC = () => {
               id="paroleSupervisorConcurWithSupervisingOfficerCheckNo"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="paroleSupervisorConcurWithSupervisingOfficerCheckYes"
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={paroleSupervisorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "paroleSupervisor",
+                  "paroleSupervisorConcurWithSupervisingOfficerCheckNo",
+                  value,
+                )
+              }
             ></FormCheckbox>
           </Item>
         </Grid>
@@ -442,7 +568,14 @@ const FormPSV323D: React.FC = () => {
           <Item>Remarks:</Item>
           <FormInput
             name="paroleSupervisorRemarks"
-            disabled={!usTxEnableSupervisorFormSection}
+            disabled={paroleSupervisorSectionDisabled}
+            onValueChange={(value) =>
+              markSectionEditedLocally(
+                "paroleSupervisor",
+                "paroleSupervisorRemarks",
+                value,
+              )
+            }
           />
         </Grid>
         <Item
@@ -454,7 +587,14 @@ const FormPSV323D: React.FC = () => {
             <FormInput
               name="assistantRegionDirectorName"
               style={{ borderRight: "unset" }}
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={assistantRegionDirectorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "assistantRegionDirector",
+                  "assistantRegionDirectorName",
+                  value,
+                )
+              }
             />
           </Item>
           <Item>
@@ -462,7 +602,14 @@ const FormPSV323D: React.FC = () => {
             <FormInput
               name="assistantRegionDirectorDate"
               style={{ borderRight: "unset" }}
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={assistantRegionDirectorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "assistantRegionDirector",
+                  "assistantRegionDirectorDate",
+                  value,
+                )
+              }
             />
           </Item>
           <Item textAlignCenter>
@@ -482,7 +629,14 @@ const FormPSV323D: React.FC = () => {
               id="assistantRegionDirectorConcurWithSupervisingOfficerCheckYes"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="assistantRegionDirectorConcurWithSupervisingOfficerCheckNo"
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={assistantRegionDirectorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "assistantRegionDirector",
+                  "assistantRegionDirectorConcurWithSupervisingOfficerCheckYes",
+                  value,
+                )
+              }
             ></FormCheckbox>
           </Item>
         </Grid>
@@ -490,7 +644,14 @@ const FormPSV323D: React.FC = () => {
           <Item>Signature:</Item>
           <FormInput
             name="assistantRegionDirectorSignature"
-            disabled={!usTxEnableSupervisorFormSection}
+            disabled={assistantRegionDirectorSectionDisabled}
+            onValueChange={(value) =>
+              markSectionEditedLocally(
+                "assistantRegionDirector",
+                "assistantRegionDirectorSignature",
+                value,
+              )
+            }
           />
           <Item textAlignCenter>No</Item>
           <Item textAlignCenter>
@@ -500,7 +661,14 @@ const FormPSV323D: React.FC = () => {
               id="assistantRegionDirectorConcurWithSupervisingOfficerCheckNo"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="assistantRegionDirectorConcurWithSupervisingOfficerCheckYes"
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={assistantRegionDirectorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "assistantRegionDirector",
+                  "assistantRegionDirectorConcurWithSupervisingOfficerCheckNo",
+                  value,
+                )
+              }
             ></FormCheckbox>
           </Item>
         </Grid>
@@ -508,7 +676,14 @@ const FormPSV323D: React.FC = () => {
           <Item>Remarks:</Item>
           <FormInput
             name="assistantRegionDirectorRemarks"
-            disabled={!usTxEnableSupervisorFormSection}
+            disabled={assistantRegionDirectorSectionDisabled}
+            onValueChange={(value) =>
+              markSectionEditedLocally(
+                "assistantRegionDirector",
+                "assistantRegionDirectorRemarks",
+                value,
+              )
+            }
           />
         </Grid>
         <Item
@@ -520,7 +695,14 @@ const FormPSV323D: React.FC = () => {
             <FormInput
               name="regionDirectorName"
               style={{ borderRight: "unset" }}
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={regionDirectorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "regionDirector",
+                  "regionDirectorName",
+                  value,
+                )
+              }
             />
           </Item>
           <Item>
@@ -528,7 +710,14 @@ const FormPSV323D: React.FC = () => {
             <FormInput
               name="regionDirectorDate"
               style={{ borderRight: "unset" }}
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={regionDirectorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "regionDirector",
+                  "regionDirectorDate",
+                  value,
+                )
+              }
             />
           </Item>
           <Item textAlignCenter>Final Authority</Item>
@@ -546,7 +735,14 @@ const FormPSV323D: React.FC = () => {
               id="regionDirectorConcurWithSupervisingOfficerCheckYes"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="regionDirectorConcurWithSupervisingOfficerCheckNo"
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={regionDirectorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "regionDirector",
+                  "regionDirectorConcurWithSupervisingOfficerCheckYes",
+                  value,
+                )
+              }
             ></FormCheckbox>
           </Item>
         </Grid>
@@ -554,7 +750,14 @@ const FormPSV323D: React.FC = () => {
           <Item>Signature:</Item>
           <FormInput
             name="regionDirectorSignature"
-            disabled={!usTxEnableSupervisorFormSection}
+            disabled={regionDirectorSectionDisabled}
+            onValueChange={(value) =>
+              markSectionEditedLocally(
+                "regionDirector",
+                "regionDirectorSignature",
+                value,
+              )
+            }
           />
           <Item textAlignCenter>No</Item>
           <Item textAlignCenter>
@@ -564,7 +767,14 @@ const FormPSV323D: React.FC = () => {
               id="regionDirectorConcurWithSupervisingOfficerCheckNo"
               style={{ height: "10px", verticalAlign: "middle" }}
               manualInvert="regionDirectorConcurWithSupervisingOfficerCheckYes"
-              disabled={!usTxEnableSupervisorFormSection}
+              disabled={regionDirectorSectionDisabled}
+              onValueChange={(value) =>
+                markSectionEditedLocally(
+                  "regionDirector",
+                  "regionDirectorConcurWithSupervisingOfficerCheckNo",
+                  value,
+                )
+              }
             ></FormCheckbox>
           </Item>
         </Grid>
@@ -572,7 +782,14 @@ const FormPSV323D: React.FC = () => {
           <Item>Remarks:</Item>
           <FormInput
             name="regionDirectorRemarks"
-            disabled={!usTxEnableSupervisorFormSection}
+            disabled={regionDirectorSectionDisabled}
+            onValueChange={(value) =>
+              markSectionEditedLocally(
+                "regionDirector",
+                "regionDirectorRemarks",
+                value,
+              )
+            }
           />
         </Grid>
 

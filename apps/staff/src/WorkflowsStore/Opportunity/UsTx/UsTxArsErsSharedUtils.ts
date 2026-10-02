@@ -69,7 +69,7 @@ export type UsTxArsErsSharedDraftData = {
 
 // A map of what fields are required to be able to submit the opportunity to the next reviewer for each role.
 // A string entry must be present in draftData
-export const US_TX_ARS_ERS_BLOCKING_SUBMIT_FIELDS: Record<string, string[]> = {
+export const US_TX_ARS_ERS_BLOCKING_SUBMIT_FIELDS = {
   paroleOfficer: [
     "officerName",
     "supervisingOfficerSignature",
@@ -100,7 +100,10 @@ export const US_TX_ARS_ERS_BLOCKING_SUBMIT_FIELDS: Record<string, string[]> = {
     "regionDirectorDate",
     "regionDirectorConcurWithSupervisingOfficerCheckYes",
   ],
-};
+} satisfies Record<string, string[]>;
+
+export type UsTxArsErsBlockingSubmitFieldKey =
+  keyof typeof US_TX_ARS_ERS_BLOCKING_SUBMIT_FIELDS;
 
 // The remarks field for each role in the review chain, keyed the same as
 // US_TX_ARS_ERS_BLOCKING_SUBMIT_FIELDS. Remarks are never required to submit, but
@@ -191,6 +194,10 @@ export function arsErsUserHasFilledNecessaryFields({
   fieldAuthors: Record<string, string> | undefined;
   isInRevisionsRequested: boolean | undefined;
 }): boolean {
+  if (currentUserId === undefined) {
+    return false;
+  }
+
   const isFieldFilled = (
     field: string,
     data: Record<string, unknown> | undefined,
@@ -235,6 +242,37 @@ export function arsErsUserHasFilledNecessaryFields({
     atLeastOneBlockStarted &&
     allStartedBlocksComplete &&
     formLastUpdatedId === currentUserId
+  );
+}
+
+/**
+ * Returns the key (from US_TX_ARS_ERS_BLOCKING_SUBMIT_FIELDS) of the first
+ * block the current user has started editing — i.e. authored a real
+ * (non-empty) value for at least one of that block's blocking fields — or
+ * undefined if the current user hasn't started any block.
+ */
+export function arsErsSectionEditedByCurrentUser({
+  currentUserId,
+  draftData,
+  fieldAuthors,
+}: {
+  currentUserId: string | undefined;
+  draftData: Record<string, unknown> | undefined;
+  fieldAuthors: Record<string, string> | undefined;
+}): UsTxArsErsBlockingSubmitFieldKey | undefined {
+  if (currentUserId === undefined) {
+    return undefined;
+  }
+
+  const isFieldByCurrentUser = (field: string) =>
+    fieldAuthors?.[field] === currentUserId && !!draftData?.[field];
+
+  const keys = Object.keys(
+    US_TX_ARS_ERS_BLOCKING_SUBMIT_FIELDS,
+  ) as UsTxArsErsBlockingSubmitFieldKey[];
+
+  return keys.find((key) =>
+    US_TX_ARS_ERS_BLOCKING_SUBMIT_FIELDS[key].some(isFieldByCurrentUser),
   );
 }
 

@@ -17,7 +17,10 @@
 
 import { UsTxAnnualReportStatusV2Form } from "../Forms/UsTxAnnualReportStatusV2Form/UsTxAnnualReportStatusV2Form";
 import type { Opportunity } from "../types";
-import { getDynamicCaseNoteHeaders } from "./UsTxArsErsSharedUtils";
+import {
+  arsErsSectionEditedByCurrentUser,
+  getDynamicCaseNoteHeaders,
+} from "./UsTxArsErsSharedUtils";
 
 // Minimal fake form shape — userHasFilledNecessaryFields only reads these properties.
 function makeForm({
@@ -364,6 +367,87 @@ describe("form.userHasFilledNecessaryFields", () => {
       });
       expect(form.userHasFilledNecessaryFields()).toBe(true);
     });
+  });
+});
+
+describe("arsErsSectionEditedByCurrentUser", () => {
+  it("returns undefined when fieldAuthors is empty", () => {
+    expect(
+      arsErsSectionEditedByCurrentUser({
+        currentUserId: "user1",
+        draftData: paroleOfficerDraft,
+        fieldAuthors: {},
+      }),
+    ).toBeUndefined();
+  });
+
+  it("returns undefined when the current user only authored a non-blocking field", () => {
+    expect(
+      arsErsSectionEditedByCurrentUser({
+        currentUserId: "user1",
+        draftData: { regionDirectorRemarks: "looks good" },
+        fieldAuthors: { regionDirectorRemarks: "user1" },
+      }),
+    ).toBeUndefined();
+  });
+
+  it("returns undefined when the current user's authored field is blank", () => {
+    expect(
+      arsErsSectionEditedByCurrentUser({
+        currentUserId: "user1",
+        draftData: { officerName: "" },
+        fieldAuthors: { officerName: "user1" },
+      }),
+    ).toBeUndefined();
+  });
+
+  it("returns undefined when a blocking field was authored by a different user", () => {
+    expect(
+      arsErsSectionEditedByCurrentUser({
+        currentUserId: "user1",
+        draftData: paroleOfficerDraft,
+        fieldAuthors: {
+          ...paroleOfficerFieldAuthors,
+          officerName: "other-user",
+          supervisingOfficerSignature: "other-user",
+          supervisingOfficerDate: "other-user",
+          supervisingOfficerRecommendCheckYes: "other-user",
+        },
+      }),
+    ).toBeUndefined();
+  });
+
+  it("returns the block key when the current user authored one of its blocking fields", () => {
+    expect(
+      arsErsSectionEditedByCurrentUser({
+        currentUserId: "user1",
+        draftData: paroleOfficerDraft,
+        fieldAuthors: paroleOfficerFieldAuthors,
+      }),
+    ).toEqual("paroleOfficer");
+  });
+
+  it("returns the block key for a non-paroleOfficer block", () => {
+    expect(
+      arsErsSectionEditedByCurrentUser({
+        currentUserId: "user1",
+        draftData: unitSupervisorDraft,
+        fieldAuthors: unitSupervisorFieldAuthors,
+      }),
+    ).toEqual("unitSupervisor");
+  });
+
+  it("returns the first matching block key when multiple blocks are edited", () => {
+    expect(
+      arsErsSectionEditedByCurrentUser({
+        currentUserId: "user1",
+        draftData: { ...paroleOfficerDraft, ...unitSupervisorDraft },
+        fieldAuthors: {
+          ...paroleOfficerFieldAuthors,
+          ...unitSupervisorFieldAuthors,
+        },
+      }),
+    ).toEqual("paroleOfficer");
   });
 });
 

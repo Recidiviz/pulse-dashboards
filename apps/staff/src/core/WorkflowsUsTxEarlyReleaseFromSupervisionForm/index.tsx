@@ -19,6 +19,7 @@ import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 
 import { Opportunity } from "../../WorkflowsStore";
+import { arsErsSectionEditedByCurrentUser } from "../../WorkflowsStore/Opportunity/UsTx/UsTxArsErsSharedUtils";
 import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
 import { PrintablePageContainer } from "../Paperwork/styles";
@@ -41,6 +42,12 @@ const WorkflowsUsTxEarlyReleaseFromSupervisionForm = observer(
       setIsMissingContent(!(pages && pages.length > 0));
     }, [formRef]);
 
+    const sectionEditedByCurrentUser = arsErsSectionEditedByCurrentUser({
+      currentUserId: opportunity.form?.currentUserId,
+      draftData: opportunity.form?.draftData,
+      fieldAuthors: opportunity.form?.fieldAuthors,
+    });
+
     return (
       <FormContainer
         agencyName="TDCJ"
@@ -54,7 +61,9 @@ const WorkflowsUsTxEarlyReleaseFromSupervisionForm = observer(
         }}
       >
         <FormViewer formRef={formRef}>
-          <ERSChecklist />
+          <ERSChecklist
+            sectionEditedByCurrentUser={sectionEditedByCurrentUser}
+          />
         </FormViewer>
       </FormContainer>
     );

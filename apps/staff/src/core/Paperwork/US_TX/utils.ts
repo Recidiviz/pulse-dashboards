@@ -15,7 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { UsTxArsErsSharedDraftData } from "../../../WorkflowsStore/Opportunity/UsTx/UsTxArsErsSharedUtils";
+import { useRef, useState } from "react";
+
+import type { FeatureVariantRecord } from "../../../RootStore/types";
+import {
+  US_TX_ARS_ERS_BLOCKING_SUBMIT_FIELDS,
+  type UsTxArsErsBlockingSubmitFieldKey,
+  type UsTxArsErsSharedDraftData,
+} from "../../../WorkflowsStore/Opportunity/UsTx/UsTxArsErsSharedUtils";
 import { SetFunc } from "../PDFFormFiller";
 
 /**
@@ -114,4 +121,90 @@ export function flattenPDFFormSafely(form: { flatten: () => void }): void {
   } catch (error) {
     console.error("Error flattening form:", error);
   }
+}
+
+export interface ArsErsSectionsDisabled {
+  paroleOfficerSectionDisabled: boolean;
+  unitSupervisorSectionDisabled: boolean;
+  paroleSupervisorSectionDisabled: boolean;
+  assistantRegionDirectorSectionDisabled: boolean;
+  regionDirectorSectionDisabled: boolean;
+  markSectionEditedLocally: (
+    key: UsTxArsErsBlockingSubmitFieldKey,
+    fieldName: string,
+    value: unknown,
+  ) => void;
+}
+
+/**
+ * Computes the disabled state for each of the ARS/ERS forms' 5 blocks,
+ * shared between PSV-323D.tsx (ARS) and ERS-Checklist.tsx (ERS).
+ *
+ * The 5 blocks are gated by usTxEnablePoFormSection
+ * and usTxEnableSupervisorFormSection, and — once
+ * usTxAllowSingleFormSectionEdit is on and a user has
+ * started editing 1 block — every other block is disabled too,
+ * regardless of its own feature variant.
+ */
+export function useArsErsSectionsDisabled(
+  sectionEditedByCurrentUser: UsTxArsErsBlockingSubmitFieldKey | undefined,
+  featureVariants: FeatureVariantRecord,
+): ArsErsSectionsDisabled {
+  const {
+    usTxEnablePoFormSection,
+    usTxEnableSupervisorFormSection,
+    usTxAllowSingleFormSectionEdit,
+  } = featureVariants;
+
+  const [locallyEditedSection, setLocallyEditedSection] = useState<
+    UsTxArsErsBlockingSubmitFieldKey | undefined
+  >(undefined);
+  const nonEmptyFieldsRef = useRef<Set<string>>(new Set());
+
+  const markSectionEditedLocally = (
+    key: UsTxArsErsBlockingSubmitFieldKey,
+    fieldName: string,
+    value: unknown,
+  ) => {
+    if (!US_TX_ARS_ERS_BLOCKING_SUBMIT_FIELDS[key].includes(fieldName)) return;
+
+    if (value) {
+      nonEmptyFieldsRef.current.add(fieldName);
+      setLocallyEditedSection((current) => current ?? key);
+    } else {
+      nonEmptyFieldsRef.current.delete(fieldName);
+      if (nonEmptyFieldsRef.current.size === 0) {
+        setLocallyEditedSection(undefined);
+      }
+    }
+  };
+
+  const effectiveEditedSection =
+    locallyEditedSection ?? sectionEditedByCurrentUser;
+
+  const isSectionDisabledByEditedSection = (
+    key: UsTxArsErsBlockingSubmitFieldKey,
+  ) =>
+    !!usTxAllowSingleFormSectionEdit &&
+    effectiveEditedSection !== undefined &&
+    effectiveEditedSection !== key;
+
+  return {
+    paroleOfficerSectionDisabled:
+      !usTxEnablePoFormSection ||
+      isSectionDisabledByEditedSection("paroleOfficer"),
+    unitSupervisorSectionDisabled:
+      !usTxEnableSupervisorFormSection ||
+      isSectionDisabledByEditedSection("unitSupervisor"),
+    paroleSupervisorSectionDisabled:
+      !usTxEnableSupervisorFormSection ||
+      isSectionDisabledByEditedSection("paroleSupervisor"),
+    assistantRegionDirectorSectionDisabled:
+      !usTxEnableSupervisorFormSection ||
+      isSectionDisabledByEditedSection("assistantRegionDirector"),
+    regionDirectorSectionDisabled:
+      !usTxEnableSupervisorFormSection ||
+      isSectionDisabledByEditedSection("regionDirector"),
+    markSectionEditedLocally,
+  };
 }
