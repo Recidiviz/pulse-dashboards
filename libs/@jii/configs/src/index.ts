@@ -19,6 +19,8 @@ export * from "./residents/residentsConfig";
 export * from "./residents/types";
 export * from "./showIf";
 export * from "./stateCodes";
+export * from "./usMaReentryChecklistSpec";
+export * from "./usMaReentryChecklistValidation";
 export * from "./usMaReentryQuestionnaireResponseSchema";
 export * from "./usMaReentryQuestionnaireSpec";
 export * from "./usNcRNAFormSpec";

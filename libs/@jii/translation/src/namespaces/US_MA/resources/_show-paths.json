@@ -147,6 +147,37 @@
     "message": "[US_MA]spanishLaunchBanner.message"
   },
   "reentry": {
+    "checklist": {
+      "itemCopy": {
+        "BACKUP_HOUSING": {
+          "label": "[US_MA]reentry.checklist.itemCopy.BACKUP_HOUSING.label"
+        },
+        "FINALIZED_HOUSING": {
+          "label": "[US_MA]reentry.checklist.itemCopy.FINALIZED_HOUSING.label"
+        },
+        "HOUSING_PLAN_AGREEMENT": {
+          "label": "[US_MA]reentry.checklist.itemCopy.HOUSING_PLAN_AGREEMENT.label"
+        },
+        "HAS_RENT_PAYMENT_PLAN": {
+          "label": "[US_MA]reentry.checklist.itemCopy.HAS_RENT_PAYMENT_PLAN.label"
+        },
+        "HAS_HOUSING_LOCATION_PREFERENCE": {
+          "label": "[US_MA]reentry.checklist.itemCopy.HAS_HOUSING_LOCATION_PREFERENCE.label"
+        },
+        "RESEARCHED_HOUSING_RESOURCES": {
+          "label": "[US_MA]reentry.checklist.itemCopy.RESEARCHED_HOUSING_RESOURCES.label"
+        },
+        "DISCUSSED_HOUSING_WITH_SPECIALIST": {
+          "label": "[US_MA]reentry.checklist.itemCopy.DISCUSSED_HOUSING_WITH_SPECIALIST.label"
+        },
+        "HAS_HOUSING_PROGRAM_RENT_PLAN": {
+          "label": "[US_MA]reentry.checklist.itemCopy.HAS_HOUSING_PROGRAM_RENT_PLAN.label"
+        },
+        "HAS_PAID_HOUSING_PROGRAM_DEPOSIT": {
+          "label": "[US_MA]reentry.checklist.itemCopy.HAS_PAID_HOUSING_PROGRAM_DEPOSIT.label"
+        }
+      }
+    },
     "navBar": {
       "sectionLabel": "[US_MA]reentry.navBar.sectionLabel",
       "overview": "[US_MA]reentry.navBar.overview",
@@ -317,8 +348,7 @@
         "label": "[US_MA]sentenceDates.dates.maxRelease.label",
         "adjusted": {
           "originalDateLabel": "[US_MA]sentenceDates.dates.maxRelease.adjusted.originalDateLabel",
-          "adjustedDateLabel": "[US_MA]sentenceDates.dates.maxRelease.adjusted.adjustedDateLabel",
-          "summary": "[US_MA]sentenceDates.dates.maxRelease.adjusted.summary"
+          "adjustedDateLabel": "[US_MA]sentenceDates.dates.maxRelease.adjusted.adjustedDateLabel"
         }
       }
     }

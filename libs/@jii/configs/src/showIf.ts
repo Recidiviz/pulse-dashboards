@@ -37,3 +37,15 @@ export type ShowIfCondition<QuestionId extends string = string> = {
 export type ShowIf<QuestionId extends string = string> =
   | ShowIfCondition<QuestionId>
   | { any: ShowIfCondition<QuestionId>[] };
+
+/**
+ * Normalizes a ShowIf value to a flat list of its conditions: a single
+ * condition becomes a one-element list, and an `any` list is returned as-is.
+ * An absent showIf (nothing to check, i.e. always shown) returns [].
+ */
+export function conditionsOf<QuestionId extends string = string>(
+  showIf: ShowIf<QuestionId> | undefined,
+): ShowIfCondition<QuestionId>[] {
+  if (!showIf) return [];
+  return "any" in showIf ? showIf.any : [showIf];
+}

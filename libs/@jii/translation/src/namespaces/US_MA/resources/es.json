@@ -153,8 +153,7 @@
         "label": "Fecha máxima de liberación (MÁX)",
         "adjusted": {
           "originalDateLabel": "Fecha original MÁX",
-          "adjustedDateLabel": "Fecha de MÁX ajustada",
-          "summary": "Has ganado {{count, numberOfDays}} menos en su fecha máxima de liberación."
+          "adjustedDateLabel": "Fecha de MÁX ajustada"
         }
       }
     }

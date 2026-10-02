@@ -147,6 +147,37 @@
     "message": "**Program list now available in Spanish** \n\n**Ahora en español **\n\nLa Lista de Programas ahora está disponible en español.\nPara cambiar, toque “English” en la parte superior de su tableta Orijin y elija “Español”."
   },
   "reentry": {
+    "checklist": {
+      "itemCopy": {
+        "BACKUP_HOUSING": {
+          "label": "I have a backup housing plan in case my main plan doesn't work out."
+        },
+        "FINALIZED_HOUSING": {
+          "label": "I have a finalized place to live after release, and I know any house rules and expectations."
+        },
+        "HOUSING_PLAN_AGREEMENT": {
+          "label": "I have talked with the people I plan to live with and they agreed that I can live there."
+        },
+        "HAS_RENT_PAYMENT_PLAN": {
+          "label": "I have a plan for how I will pay my rent for the first three months (including any deposit)."
+        },
+        "HAS_HOUSING_LOCATION_PREFERENCE": {
+          "label": "I know which city or county I want to live in when I get out."
+        },
+        "RESEARCHED_HOUSING_RESOURCES": {
+          "label": "I have reviewed housing programs in the Housing Resource Explorer (in this app) and found at least 3 options I'm interested in."
+        },
+        "DISCUSSED_HOUSING_WITH_SPECIALIST": {
+          "label": "I have talked to my Reentry Specialist about the housing programs I'm interested in."
+        },
+        "HAS_HOUSING_PROGRAM_RENT_PLAN": {
+          "label": "I have a plan for how I will pay my transitional program fees for the first three months (including any deposit)."
+        },
+        "HAS_PAID_HOUSING_PROGRAM_DEPOSIT": {
+          "label": "I have paid my housing deposit, if there is one."
+        }
+      }
+    },
     "navBar": {
       "sectionLabel": "Reentry",
       "overview": "Overview",
@@ -317,8 +348,7 @@
         "label": "Maximum release / wrap date",
         "adjusted": {
           "originalDateLabel": "Original MAX date",
-          "adjustedDateLabel": "Adjusted MAX date",
-          "summary": "You’ve earned {{count, numberOfDays}} off your maximum release / wrap date."
+          "adjustedDateLabel": "Adjusted MAX date"
         }
       }
     }
