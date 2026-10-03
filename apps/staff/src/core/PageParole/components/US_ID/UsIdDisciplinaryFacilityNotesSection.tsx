@@ -15,10 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import styled from "styled-components";
+
 import { ParoleCase } from "~datatypes";
 
 import type { ParoleConfig } from "../../../models/types";
 import { EmptyState, SubsectionTitle } from "../shared";
+
+// The backend puts each dated note on its own line.
+const Notes = styled.div`
+  white-space: pre-wrap;
+`;
 
 export function UsIdDisciplinaryFacilityNotesSection({
   caseDetail,
@@ -31,7 +38,7 @@ export function UsIdDisciplinaryFacilityNotesSection({
     <div>
       <SubsectionTitle>Disciplinary Facility Notes</SubsectionTitle>
       {notes ? (
-        <div>{notes}</div>
+        <Notes>{notes}</Notes>
       ) : (
         <EmptyState>No facility notes on record.</EmptyState>
       )}

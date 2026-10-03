@@ -30,12 +30,14 @@ import {
   ParoleBoardClientProfileRiskAssessment,
   ParoleBoardClientProfileSentence,
   ParoleCase,
+  ParoleCaseNote,
   ParoleCommunitySupervisionPlanEntry,
   ParoleConductRecord,
   ParoleConviction,
   ParoleDocProgram,
   ParoleEdovoProgram,
   ParoleHearing,
+  ParoleLifeSentence,
   ParoleOffense,
   ParoleOffenseHistory,
   ParolePlan,
@@ -88,7 +90,7 @@ const UNKNOWN_DATE = PAROLE_UNKNOWN_DATE;
 /** The fields the mappers below read off a resident's scheduled hearing. */
 type ScheduledHearing = Pick<
   ParoleBoardClientProfileHearing,
-  "hearingDate" | "hearingType"
+  "hearingDate" | "hearingType" | "hearingDateIsPlaceholder"
 >;
 
 const UNKNOWN_OFFENSE: ParoleOffense = {
@@ -102,17 +104,37 @@ const UNKNOWN_OFFENSE: ParoleOffense = {
   offenseNarrative: UNKNOWN_TEXT,
 };
 
+// Source systems write years such as 2999 and 9999 to mean "no defined date".
+const FIRST_PLACEHOLDER_YEAR = 2999;
+
 /**
- * Returns the date, or undefined when a source system wrote a year-9999
- * placeholder (e.g. "9999-01-20") to mean "no defined date". Only the year
- * marks the placeholder, so a real far-future date such as a life sentence's
- * mandatory release is kept.
+ * Returns the date, or undefined when a source system wrote a placeholder
+ * year (e.g. "2999-01-20" or "9999-01-20") to mean "no defined date".
  *
- * @param date - A sentence-level date, as the source system wrote it.
+ * @param date - A sentence-level ISO date, as the source system wrote it.
  */
 function realSentenceDate(date: string | undefined): string | undefined {
-  return date && !date.startsWith("9999-") ? date : undefined;
+  return date && Number(date.slice(0, 4)) < FIRST_PLACEHOLDER_YEAR
+    ? date
+    : undefined;
 }
+
+type UsCoCohortLabel = Extract<
+  WorkflowsResidentRecord["metadata"],
+  { stateCode: "US_CO" }
+>["cohortLabel"];
+
+// The life cohorts show a life-sentence status in place of the PED, whether or
+// not a hearing is scheduled. This is a product decision to match the JII
+// tablet's PED card, so the board sees the same status as the resident; a
+// life-with-parole resident's real PED is hidden on purpose.
+const LIFE_SENTENCE_BY_US_CO_COHORT = {
+  STANDARD: undefined,
+  INTERSTATE_COMPACT: undefined,
+  LIFE_WITHOUT_PAROLE: "WITHOUT_PAROLE",
+  LIFE_WITH_PAROLE: "WITH_PAROLE",
+  INDETERMINATE_LIFE_WITH_PAROLE: "WITH_PAROLE",
+} as const satisfies Record<UsCoCohortLabel, ParoleLifeSentence | undefined>;
 
 const RISK_TOOL_OPTIONS: ReadonlySet<string> = new Set(
   PAROLE_RISK_TOOL.options,
@@ -139,29 +161,29 @@ function riskToolForRawLabel(raw: string): ParoleRiskTool | undefined {
 }
 
 /**
- * Builds one assessment's subcategory breakdown from its raw category rows. A
- * row with no assessmentCategoryName is a bare score/date entry from an
- * earlier, pre-breakdown assessment, and contributes nothing.
+ * Builds one assessment's subcategory breakdown. A category missing its name,
+ * score, or maximum is dropped.
  *
- * Returns `{}` rather than `{ subcategories: [] }` when no row has one, so
+ * Returns `{}` rather than `{ subcategories: [] }` when no category remains, so
  * SubcategoryBreakdownChart renders nothing instead of an empty chart.
  */
-function subcategoriesFromRows(
-  rows: Array<ParoleBoardClientProfileRiskAssessment>,
+function subcategoriesForAssessment(
+  assessment: ParoleBoardClientProfileRiskAssessment,
 ): Pick<ParoleRiskAssessment, "subcategories"> {
-  const subcategories: Array<ParoleSubcategoryScore> = rows.flatMap((row) =>
-    row.assessmentCategoryName &&
-    row.assessmentCategoryScore !== undefined &&
-    row.assessmentCategoryMaxScore !== undefined
-      ? [
-          {
-            name: row.assessmentCategoryName,
-            score: row.assessmentCategoryScore,
-            maxScore: row.assessmentCategoryMaxScore,
-          },
-        ]
-      : [],
-  );
+  const subcategories: Array<ParoleSubcategoryScore> =
+    assessment.assessmentCategories.flatMap((category) =>
+      category.assessmentCategoryName &&
+      category.assessmentCategoryScore !== undefined &&
+      category.assessmentCategoryMaxScore !== undefined
+        ? [
+            {
+              name: category.assessmentCategoryName,
+              score: category.assessmentCategoryScore,
+              maxScore: category.assessmentCategoryMaxScore,
+            },
+          ]
+        : [],
+    );
   return subcategories.length > 0 ? { subcategories } : {};
 }
 
@@ -370,6 +392,7 @@ export class ParoleAPIClient implements ParoleAPI {
       displayId: resident.displayId,
       individualName: this.nameForResident(resident),
       hearingDate,
+      hearingDateIsPlaceholder: hearing?.hearingDateIsPlaceholder,
       hearingType: hearing?.hearingType ?? UNKNOWN_TEXT,
       facility: this.facilityForResident(resident),
     };
@@ -393,6 +416,7 @@ export class ParoleAPIClient implements ParoleAPI {
               {
                 hearingDate: hearing.hearingDate,
                 hearingType: hearing.hearingType,
+                hearingDateIsPlaceholder: hearing.hearingDateIsPlaceholder,
               },
             ]
           : [],
@@ -451,17 +475,24 @@ export class ParoleAPIClient implements ParoleAPI {
       caseManagerName:
         this.profileFor(resident)?.demographics.caseManager ?? UNKNOWN_TEXT,
       hearingDate: hearing?.hearingDate ?? this.flatHearingDate(resident),
+      hearingDateIsPlaceholder: hearing?.hearingDateIsPlaceholder,
       hearingType: hearing?.hearingType ?? UNKNOWN_TEXT,
       sentenceStartDate: dates.sentenceStartDate ?? UNKNOWN_DATE,
       paroleEligibilityDate: dates.paroleEligibilityDate ?? UNKNOWN_DATE,
       mandatoryReleaseDate: dates.mandatoryReleaseDate ?? UNKNOWN_DATE,
+      lifeSentence: dates.lifeSentence,
       parolePlan: this.parolePlanForResident(resident),
       attachments: this.attachmentsForResident(resident),
       conductHistory: this.conductHistoryForResident(resident),
+      disciplinaryFacilityNotes:
+        this.profileFor(resident)?.disciplinarySummary
+          ?.disciplinaryFacilityNotes,
+      stg: this.profileFor(resident)?.securityThreatGroup?.stg,
       communitySupervisionPlan:
         this.communitySupervisionPlanForResident(resident),
       docPrograms: this.docProgramsForResident(resident),
       edovoPrograms: this.edovoProgramsForResident(resident),
+      caseNotes: this.caseNotesForResident(resident),
       offenseHistory: {
         offenses: this.offensesForResident(resident),
         priorConvictions: this.priorConvictionsForResident(resident),
@@ -506,7 +537,7 @@ export class ParoleAPIClient implements ParoleAPI {
       sentence: sentence.sentenceLength ?? UNKNOWN_TEXT,
       dateOfOffense: sentence.sentenceOffenseDate ?? UNKNOWN_DATE,
       convictionDate: sentence.sentenceConvictionDate ?? UNKNOWN_DATE,
-      offenseNarrative: UNKNOWN_TEXT,
+      offenseNarrative: sentence.sentenceSummary ?? UNKNOWN_TEXT,
       sentenceStartDate: realSentenceDate(sentence.sentenceStartDate),
       paroleEligibilityDate: realSentenceDate(
         sentence.sentenceParoleEligibilityDate,
@@ -637,43 +668,45 @@ export class ParoleAPIClient implements ParoleAPI {
   }
 
   /**
-   * Risk assessments from the profile, one per date and tool. An assessment
-   * missing its tool, date, score, or maximum is dropped, since every one of
-   * those is required downstream.
+   * Case notes from the profile. A note missing its date or body is dropped,
+   * since the list can neither place nor show it. The backend sends no note
+   * id, so each note's position in the list serves as one.
+   */
+  private caseNotesForResident(
+    resident: WorkflowsResidentRecord,
+  ): Array<ParoleCaseNote> {
+    const notes = this.profileFor(resident)?.caseNotes ?? [];
+    return notes.flatMap((note, index) =>
+      note.noteDate && note.noteBody
+        ? [
+            {
+              id: String(index),
+              type: note.noteType ?? UNKNOWN_TEXT,
+              date: note.noteDate,
+              body: note.noteBody,
+            },
+          ]
+        : [],
+    );
+  }
+
+  /**
+   * Risk assessments from the profile. An assessment missing its tool, date,
+   * or score is dropped, since each is required downstream.
    */
   private riskAssessmentsForResident(
     resident: WorkflowsResidentRecord,
   ): Array<ParoleRiskAssessment> {
-    const rows = this.profileFor(resident)?.riskAssessments ?? [];
+    const assessments = this.profileFor(resident)?.riskAssessments ?? [];
 
-    // Every row for the same assessment repeats that assessment's own
-    // assessmentDate/assessmentType/assessmentScore/assessmentMaxScore, and
-    // carries one subcategory of it (assessmentCategory*) -- so grouping by
-    // date+type recovers one assessment per group, with one subcategory
-    // entry per row in that group.
-    const rowsByAssessment = new Map<
-      string,
-      Array<ParoleBoardClientProfileRiskAssessment>
-    >();
-    for (const row of rows) {
-      const key = `${row.assessmentDate}@@${row.assessmentType}`;
-      const group = rowsByAssessment.get(key);
-      if (group) {
-        group.push(row);
-      } else {
-        rowsByAssessment.set(key, [row]);
-      }
-    }
-
-    return [...rowsByAssessment.values()].flatMap((group) => {
-      const [firstRow] = group;
-      const tool = firstRow.assessmentType
-        ? riskToolForRawLabel(firstRow.assessmentType)
+    return assessments.flatMap((assessment) => {
+      const tool = assessment.assessmentType
+        ? riskToolForRawLabel(assessment.assessmentType)
         : undefined;
       if (
         !tool ||
-        !firstRow.assessmentDate ||
-        firstRow.assessmentScore === undefined
+        !assessment.assessmentDate ||
+        assessment.assessmentScore === undefined
       ) {
         return [];
       }
@@ -681,15 +714,15 @@ export class ParoleAPIClient implements ParoleAPI {
       return [
         {
           tool,
-          level: firstRow.assessmentLevel,
-          score: firstRow.assessmentScore,
-          maxScore: firstRow.assessmentMaxScore,
-          date: firstRow.assessmentDate,
+          level: assessment.assessmentLevel,
+          score: assessment.assessmentScore,
+          maxScore: assessment.assessmentMaxScore,
+          date: assessment.assessmentDate,
           // CARAS scores its items as regression coefficients rather than a
           // score-over-max-score pair (see paroleCarasFactorSchema), which
           // this wire shape has no fields for -- carasFactors stays unset
           // here until the backend has a place to carry value/coefficient.
-          ...(tool !== "CARAS" ? subcategoriesFromRows(group) : {}),
+          ...(tool !== "CARAS" ? subcategoriesForAssessment(assessment) : {}),
         },
       ];
     });
@@ -697,8 +730,8 @@ export class ParoleAPIClient implements ParoleAPI {
 
   /**
    * The resident's latest health/risk-and-needs classification, one entry
-   * per domain with a [score, scale] pair. The scale is shown as-is; a
-   * domain missing from the summary is dropped rather than fabricated.
+   * per domain. The scale is shown as-is; a domain with no code is dropped
+   * rather than fabricated.
    */
   private riskAndNeedsFactorsForResident(
     resident: WorkflowsResidentRecord,
@@ -707,11 +740,12 @@ export class ParoleAPIClient implements ParoleAPI {
     if (!summary) return [];
 
     return RISK_NEED_FACTOR_FIELDS.flatMap(({ field, factor }) => {
-      const pair = summary[field];
-      if (!pair) return [];
+      const entry = summary[field];
+      if (!entry?.code) return [];
 
-      const [score, scale] = pair;
-      return [{ factor, score, scale }];
+      return [
+        { factor, score: entry.code, scale: entry.scale ?? UNKNOWN_TEXT },
+      ];
     });
   }
 
@@ -801,6 +835,7 @@ export class ParoleAPIClient implements ParoleAPI {
     sentenceStartDate: string | undefined;
     paroleEligibilityDate: string | undefined;
     mandatoryReleaseDate: string | undefined;
+    lifeSentence?: ParoleLifeSentence;
     dob: string | undefined;
   } {
     const dob = this.profileFor(resident)?.demographics.residentDob;
@@ -824,21 +859,33 @@ export class ParoleAPIClient implements ParoleAPI {
       };
     }
     if (resident.metadata.stateCode === "US_CO") {
+      const { cohortLabel, incarcerationStartDate, pedTent, mrdTent } =
+        resident.metadata;
+      const sentenceStartDate = incarcerationStartDate
+        ? formatDateToISO(incarcerationStartDate)
+        : undefined;
+
+      // Colorado fills life and interstate compact sentence dates with
+      // placeholders, so only a standard sentence's dates are shown.
+      if (cohortLabel !== "STANDARD") {
+        return {
+          dob,
+          sentenceStartDate,
+          paroleEligibilityDate: undefined,
+          mandatoryReleaseDate: undefined,
+          lifeSentence: LIFE_SENTENCE_BY_US_CO_COHORT[cohortLabel],
+        };
+      }
+
       return {
         dob,
-        sentenceStartDate: resident.metadata.incarcerationStartDate
-          ? formatDateToISO(resident.metadata.incarcerationStartDate)
-          : undefined,
+        sentenceStartDate,
         paroleEligibilityDate:
           realSentenceDate(firstSentence?.sentenceParoleEligibilityDate) ??
-          (resident.metadata.pedTent
-            ? formatDateToISO(resident.metadata.pedTent)
-            : undefined),
+          (pedTent ? formatDateToISO(pedTent) : undefined),
         mandatoryReleaseDate:
           realSentenceDate(firstSentence?.sentenceMandatoryReleaseDate) ??
-          (resident.metadata.mrdTent
-            ? formatDateToISO(resident.metadata.mrdTent)
-            : undefined),
+          (mrdTent ? formatDateToISO(mrdTent) : undefined),
       };
     }
     return {

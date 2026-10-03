@@ -120,11 +120,7 @@ export function ProgramParticipationSection({
     <SectionCard>
       <SectionCardHeader>Program Participation</SectionCardHeader>
       <PaddedSectionCardBody>
-        <StyledAccordion
-          allowMultipleExpanded
-          allowZeroExpanded
-          preExpanded={["doc", "edovo"]}
-        >
+        <StyledAccordion allowMultipleExpanded allowZeroExpanded>
           <StyledAccordionItem uuid="doc">
             <AccordionItemHeading>
               <AccordionButton>

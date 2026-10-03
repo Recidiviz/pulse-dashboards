@@ -22,6 +22,7 @@ import {
   isParoleUnknownDate,
   PAROLE_UNKNOWN_TEXT,
   ParoleCase,
+  ParoleLifeSentence,
 } from "~datatypes";
 import { palette } from "~design-system";
 
@@ -33,6 +34,7 @@ import {
   FactRow,
   FactRowStack,
   formatDate,
+  formatMonth,
   Hr,
   PAROLE_SIDEBAR_PADDING_HORIZONTAL,
   StackedFactRow,
@@ -109,6 +111,40 @@ export function ParolePersonalDetails({
   );
 }
 
+// Same copy as the JII tablet's PED card.
+const LIFE_SENTENCE_LABELS: Record<ParoleLifeSentence, string> = {
+  WITH_PAROLE: "Life Sentence With Parole",
+  WITHOUT_PAROLE: "Life Sentence Without Parole",
+};
+
+/**
+ * Returns the PED to show: the life sentence status when there is one,
+ * otherwise the date.
+ *
+ * @param caseDetail - The resident's case.
+ */
+function paroleEligibilityLabel(caseDetail: ParoleCase): string {
+  if (caseDetail.lifeSentence) {
+    return LIFE_SENTENCE_LABELS[caseDetail.lifeSentence];
+  }
+  return isParoleUnknownDate(caseDetail.paroleEligibilityDate)
+    ? PAROLE_UNKNOWN_TEXT
+    : formatDate(caseDetail.paroleEligibilityDate);
+}
+
+/**
+ * Returns the hearing date to show: the month alone when only the month is
+ * known, otherwise the full date.
+ *
+ * @param caseDetail - The resident's case.
+ */
+function hearingDateLabel(caseDetail: ParoleCase): string {
+  if (!caseDetail.hearingDate) return "Not scheduled";
+  return caseDetail.hearingDateIsPlaceholder
+    ? formatMonth(caseDetail.hearingDate)
+    : formatDate(caseDetail.hearingDate);
+}
+
 export function ParoleSentenceInfo({ caseDetail }: { caseDetail: ParoleCase }) {
   return (
     <div>
@@ -124,11 +160,7 @@ export function ParoleSentenceInfo({ caseDetail }: { caseDetail: ParoleCase }) {
         </StackedFactRow>
         <StackedFactRow>
           <div>Parole Eligibility Date (PED)</div>
-          <FactLabel>
-            {isParoleUnknownDate(caseDetail.paroleEligibilityDate)
-              ? PAROLE_UNKNOWN_TEXT
-              : formatDate(caseDetail.paroleEligibilityDate)}
-          </FactLabel>
+          <FactLabel>{paroleEligibilityLabel(caseDetail)}</FactLabel>
         </StackedFactRow>
         <StackedFactRow>
           <div>Mandatory Release Date (MRD)</div>
@@ -167,11 +199,7 @@ export function DefaultParoleGeneralInfo({
         <StackedFacts>
           <StackedFactRow>
             <div>Hearing Date</div>
-            <FactLabel>
-              {caseDetail.hearingDate
-                ? formatDate(caseDetail.hearingDate)
-                : "Not scheduled"}
-            </FactLabel>
+            <FactLabel>{hearingDateLabel(caseDetail)}</FactLabel>
           </StackedFactRow>
           <StackedFactRow>
             <div>Facility</div>

@@ -18,6 +18,8 @@
 import { addDays, startOfToday, subDays } from "date-fns";
 
 import {
+  PAROLE_UNKNOWN_DATE,
+  PAROLE_UNKNOWN_TEXT,
   RawWorkflowsResidentRecord,
   WorkflowsResidentRecord,
   workflowsResidentRecordSchema,
@@ -494,6 +496,7 @@ describe("ParoleAPIClient", () => {
         communitySupervisionPlan: [],
         docPrograms: [],
         edovoPrograms: [],
+        caseNotes: [],
         offenseHistory: {
           offenses: [
             {
@@ -564,6 +567,7 @@ describe("ParoleAPIClient", () => {
                   sentenceOffenseDate: "2019-05-01",
                   sentenceConvictionDate: "2019-11-01",
                   sentenceLength: "5y 0m 0d",
+                  sentenceSummary: "Entered a closed business at night.",
                   sentenceStartDate: "2019-11-01",
                   sentenceParoleEligibilityDate: "2026-01-01",
                   sentenceFullTermReleaseDate: "2029-01-01",
@@ -590,7 +594,7 @@ describe("ParoleAPIClient", () => {
           sentence: "5y 0m 0d",
           dateOfOffense: "2019-05-01",
           convictionDate: "2019-11-01",
-          offenseNarrative: "Not yet available",
+          offenseNarrative: "Entered a closed business at night.",
           sentenceStartDate: "2019-11-01",
           paroleEligibilityDate: "2026-01-01",
           fullTermDate: "2029-01-01",
@@ -709,6 +713,41 @@ describe("ParoleAPIClient", () => {
       expect(coResult.hearingDate).toBe("2026-11-02");
     });
 
+    it("carries a US_CO placeholder hearing date's flag to the docket row and the case", async () => {
+      rootStore.tenantStore.currentTenantId = "US_CO";
+      const resident = buildUsCoResident({
+        metadata: {
+          stateCode: "US_CO",
+          incarcerationStartDate: null,
+          creditActivity: [],
+          cohortLabel: "STANDARD",
+          paroleBoardClientProfile: {
+            demographics: {},
+            paroleHearings: [
+              {
+                hearingStatus: "SCHEDULED",
+                hearingDate: "2026-11-01",
+                hearingDateIsPlaceholder: true,
+              },
+            ],
+          },
+        },
+      });
+      vi.spyOn(
+        rootStore.firestoreStore,
+        "getResidentsForState",
+      ).mockResolvedValue([resident]);
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
+        resident,
+      );
+
+      const [hearing] = await client.hearings();
+      const caseDetail = await client.caseDetail("RES999");
+
+      expect(hearing.hearingDateIsPlaceholder).toBe(true);
+      expect(caseDetail.hearingDateIsPlaceholder).toBe(true);
+    });
+
     it("sources hearingType from the same scheduled hearing as hearingDate", async () => {
       vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
@@ -815,7 +854,7 @@ describe("ParoleAPIClient", () => {
       expect(result.caseManagerName).toBe("ANGELA PORTELA");
     });
 
-    it("prefers a sentence's parole eligibility/mandatory release dates over the flat fields, treating a year-9999 sentence date as absent", async () => {
+    it("prefers a sentence's parole eligibility/mandatory release dates over the flat fields, treating a placeholder-year sentence date as absent", async () => {
       rootStore.tenantStore.currentTenantId = "US_CO";
       vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsCoResident({
@@ -831,9 +870,8 @@ describe("ParoleAPIClient", () => {
               activeSentences: [
                 {
                   sentenceParoleEligibilityDate: "2026-06-01",
-                  // US_CO's own "no date" placeholder -- treated as absent,
-                  // falling back to mrdTent rather than showing year 9999.
-                  sentenceMandatoryReleaseDate: "9999-01-20",
+                  // A placeholder year, so it falls back to mrdTent.
+                  sentenceMandatoryReleaseDate: "2999-01-20",
                 },
               ],
             },
@@ -846,6 +884,44 @@ describe("ParoleAPIClient", () => {
       expect(result.paroleEligibilityDate).toBe("2026-06-01");
       expect(result.mandatoryReleaseDate).toBe("2033-01-03");
     });
+
+    it.each([
+      ["LIFE_WITHOUT_PAROLE", "WITHOUT_PAROLE"],
+      ["LIFE_WITH_PAROLE", "WITH_PAROLE"],
+      ["INDETERMINATE_LIFE_WITH_PAROLE", "WITH_PAROLE"],
+      ["INTERSTATE_COMPACT", undefined],
+    ] as const)(
+      "shows no PED/MRD for a US_CO %s resident, even when the profile has dates",
+      async (cohortLabel, lifeSentence) => {
+        rootStore.tenantStore.currentTenantId = "US_CO";
+        vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
+          buildUsCoResident({
+            metadata: {
+              stateCode: "US_CO",
+              incarcerationStartDate: null,
+              pedTent: "2027-01-03",
+              creditActivity: [],
+              cohortLabel,
+              paroleBoardClientProfile: {
+                demographics: {},
+                activeSentences: [
+                  {
+                    sentenceParoleEligibilityDate: "2026-06-01",
+                    sentenceMandatoryReleaseDate: "2999-01-20",
+                  },
+                ],
+              },
+            },
+          }),
+        );
+
+        const result = await client.caseDetail("RES999");
+
+        expect(result.paroleEligibilityDate).toBe(PAROLE_UNKNOWN_DATE);
+        expect(result.mandatoryReleaseDate).toBe(PAROLE_UNKNOWN_DATE);
+        expect(result.lifeSentence).toBe(lifeSentence);
+      },
+    );
 
     it("falls back to placeholders for a US_CO resident missing those dates", async () => {
       rootStore.tenantStore.currentTenantId = "US_CO";
@@ -1105,7 +1181,7 @@ describe("ParoleAPIClient", () => {
       ]);
     });
 
-    it("keeps an assessment with no max score, which is every US_IX one", async () => {
+    it("keeps an assessment with no max score", async () => {
       vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
@@ -1139,7 +1215,7 @@ describe("ParoleAPIClient", () => {
       ]);
     });
 
-    it("groups an assessment's category rows into subcategories", async () => {
+    it("maps an assessment's categories into subcategories, in order", async () => {
       vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
@@ -1153,20 +1229,24 @@ describe("ParoleAPIClient", () => {
                   assessmentDate: "2026-05-01",
                   assessmentScore: 30,
                   assessmentMaxScore: 54,
-                  assessmentCategoryName: "Criminal History",
-                  assessmentCategoryScore: 8,
-                  assessmentCategoryMaxScore: 10,
-                },
-                {
-                  // Every row for the same assessment repeats its top-line
-                  // score/date -- only assessmentCategory* varies per row.
-                  assessmentType: "LSIR",
-                  assessmentDate: "2026-05-01",
-                  assessmentScore: 30,
-                  assessmentMaxScore: 54,
-                  assessmentCategoryName: "Employment",
-                  assessmentCategoryScore: 3,
-                  assessmentCategoryMaxScore: 5,
+                  assessmentCategories: [
+                    {
+                      assessmentCategoryName: "Criminal History",
+                      assessmentCategoryScore: 8,
+                      assessmentCategoryMaxScore: 10,
+                    },
+                    {
+                      assessmentCategoryName: "Education/Employment",
+                      assessmentCategoryScore: 3,
+                      assessmentCategoryMaxScore: 10,
+                    },
+                    // Missing its score, so it is dropped.
+                    {
+                      assessmentCategoryName: "Financial",
+                      assessmentCategoryScore: null,
+                      assessmentCategoryMaxScore: 2,
+                    },
+                  ],
                 },
               ],
             },
@@ -1184,13 +1264,13 @@ describe("ParoleAPIClient", () => {
           date: "2026-05-01",
           subcategories: [
             { name: "Criminal History", score: 8, maxScore: 10 },
-            { name: "Employment", score: 3, maxScore: 5 },
+            { name: "Education/Employment", score: 3, maxScore: 10 },
           ],
         },
       ]);
     });
 
-    it("omits subcategories (rather than an empty array) when no row has a category", async () => {
+    it("omits subcategories (rather than an empty array) when the assessment has no categories", async () => {
       vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
@@ -1233,9 +1313,13 @@ describe("ParoleAPIClient", () => {
                   assessmentDate: "2026-05-01",
                   assessmentScore: 40,
                   assessmentMaxScore: 100,
-                  assessmentCategoryName: "Criminal History",
-                  assessmentCategoryScore: 8,
-                  assessmentCategoryMaxScore: 10,
+                  assessmentCategories: [
+                    {
+                      assessmentCategoryName: "Criminal History",
+                      assessmentCategoryScore: 8,
+                      assessmentCategoryMaxScore: 10,
+                    },
+                  ],
                 },
               ],
             },
@@ -1259,9 +1343,10 @@ describe("ParoleAPIClient", () => {
             paroleBoardClientProfile: {
               demographics: {},
               latestRiskNeedSummary: {
-                assessmentLatestMedical: ["0", "Low"],
+                assessmentLatestMedical: '{"code":"0","scale":"Low"}',
                 // A compound label, shown as-is rather than translated.
-                assessmentLatestMentalHealth: ["3", "Low to moderate"],
+                assessmentLatestMentalHealth:
+                  '{"code":"3","scale":"Low to moderate"}',
               },
             },
           },
@@ -1276,7 +1361,7 @@ describe("ParoleAPIClient", () => {
       ]);
     });
 
-    it("drops a latestRiskNeedSummary domain that hasn't migrated to [score, scale] pairs yet, without failing to parse the rest of the resident", async () => {
+    it("drops a latestRiskNeedSummary domain with no code or a JSON null, and shows a placeholder for a missing scale", async () => {
       vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
@@ -1285,11 +1370,9 @@ describe("ParoleAPIClient", () => {
             paroleBoardClientProfile: {
               demographics: {},
               latestRiskNeedSummary: {
-                // Migrated to the new pair format.
-                assessmentLatestMedical: ["0", "Low"],
-                // Legacy single-string format -- must not fail the parse.
-                assessmentLatestDental:
-                  "3 - Low to moderate need for dental care",
+                assessmentLatestMedical: '{"code":"M1","scale":null}',
+                assessmentLatestDental: '{"code":null,"scale":null}',
+                assessmentLatestId: "null",
               },
             },
           },
@@ -1299,7 +1382,71 @@ describe("ParoleAPIClient", () => {
       const result = await client.caseDetail("RES999");
 
       expect(result.riskAndNeedsFactors).toEqual([
-        { factor: "Medical", score: "0", scale: "Low" },
+        { factor: "Medical", score: "M1", scale: PAROLE_UNKNOWN_TEXT },
+      ]);
+    });
+
+    it("maps the disciplinary summary's facility notes and the STG affiliations", async () => {
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
+        buildUsIdResident({
+          metadata: {
+            stateCode: "US_ID",
+            crcFacilities: [],
+            paroleBoardClientProfile: {
+              demographics: {},
+              disciplinarySummary: {
+                disciplinaryFacilityNotes: "03/14/2025: First note",
+              },
+              securityThreatGroup: { stg: "Group A; Group B" },
+            },
+          },
+        }),
+      );
+
+      const result = await client.caseDetail("RES999");
+
+      expect(result.disciplinaryFacilityNotes).toBe("03/14/2025: First note");
+      expect(result.stg).toBe("Group A; Group B");
+    });
+
+    it("maps case notes, dropping one with no date or body and filling a missing type", async () => {
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
+        buildUsIdResident({
+          metadata: {
+            stateCode: "US_ID",
+            crcFacilities: [],
+            paroleBoardClientProfile: {
+              demographics: {},
+              caseNotes: [
+                {
+                  noteDate: "2026-05-01",
+                  noteType: "Facility Notes",
+                  noteBody: "First note",
+                },
+                { noteDate: null, noteType: "Facility Notes", noteBody: "x" },
+                { noteDate: "2026-04-01", noteType: null, noteBody: "Third" },
+                { noteDate: "2026-03-01", noteType: "Other", noteBody: null },
+              ],
+            },
+          },
+        }),
+      );
+
+      const result = await client.caseDetail("RES999");
+
+      expect(result.caseNotes).toEqual([
+        {
+          id: "0",
+          type: "Facility Notes",
+          date: "2026-05-01",
+          body: "First note",
+        },
+        {
+          id: "2",
+          type: PAROLE_UNKNOWN_TEXT,
+          date: "2026-04-01",
+          body: "Third",
+        },
       ]);
     });
 

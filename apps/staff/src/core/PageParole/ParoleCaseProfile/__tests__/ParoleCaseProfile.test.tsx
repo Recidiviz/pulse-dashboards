@@ -463,26 +463,47 @@ describe("ParoleCaseProfile", () => {
   });
 
   describe("the program participation section", () => {
-    it("renders only completed DOC and Edovo programs with their completion dates", async () => {
+    it("starts with the DOC and Edovo panels closed", async () => {
       renderAtPath("/parole/case/45821");
 
       expect(
         await findSectionHeading("Program Participation"),
       ).toBeInTheDocument();
 
-      expect(screen.getByText("Completed Programs (2)")).toBeInTheDocument();
+      for (const name of [
+        "Completed Programs (2)",
+        "Edovo Credit Programs (2)",
+      ]) {
+        expect(screen.getByRole("button", { name })).toHaveAttribute(
+          "aria-expanded",
+          "false",
+        );
+      }
+    });
+
+    it("renders only completed DOC and Edovo programs with their completion dates", async () => {
+      const user = userEvent.setup();
+      renderAtPath("/parole/case/45821");
+
       expect(
-        screen.getByText("Cognitive Behavioral Therapy"),
+        await findSectionHeading("Program Participation"),
       ).toBeInTheDocument();
-      expect(screen.getByText("Substance Abuse Treatment")).toBeInTheDocument();
+      await user.click(
+        screen.getByRole("button", { name: "Completed Programs (2)" }),
+      );
+      await user.click(
+        screen.getByRole("button", { name: "Edovo Credit Programs (2)" }),
+      );
+
+      expect(screen.getByText("Cognitive Behavioral Therapy")).toBeVisible();
+      expect(screen.getByText("Substance Abuse Treatment")).toBeVisible();
       expect(
         screen.queryByText("Vocational Training - Welding"),
       ).not.toBeInTheDocument();
       expect(screen.queryByText("Anger Management")).not.toBeInTheDocument();
 
-      expect(screen.getByText("Edovo Credit Programs (2)")).toBeInTheDocument();
-      expect(screen.getByText("Financial Literacy Basics")).toBeInTheDocument();
-      expect(screen.getByText("Resume Building Workshop")).toBeInTheDocument();
+      expect(screen.getByText("Financial Literacy Basics")).toBeVisible();
+      expect(screen.getByText("Resume Building Workshop")).toBeVisible();
       expect(
         screen.queryByText("Mindfulness and Stress Management"),
       ).not.toBeInTheDocument();

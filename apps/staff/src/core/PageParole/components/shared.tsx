@@ -84,6 +84,10 @@ export const formatDateNumeric = (date: string | number | Date) =>
     year: "numeric",
   });
 
+/** Returns the month name alone (e.g. "October"), for a date known only to the month. */
+export const formatMonth = (date: string | number | Date) =>
+  toSafeDate(date).toLocaleDateString("en-US", { month: "long" });
+
 /**
  * Returns `score` as a percentage of `maxScore`, or `0` if `maxScore` isn't
  * positive (guards against a malformed assessment rendering

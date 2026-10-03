@@ -55,6 +55,15 @@ export function RiskTrajectoryChart({
 }) {
   const [lineChartRef, lineChartBounds] = useMeasure();
 
+  // Some tools (e.g. VRAG-R) score below zero, so the axis extends down to
+  // the lowest plotted value rather than clipping it.
+  const yMin = Math.min(
+    0,
+    ...trajectoryLines.flatMap((line) =>
+      line.coordinates.map((coordinate) => coordinate.value),
+    ),
+  );
+
   const renderOverviewTrendTooltip = useCallback(
     (d: {
       date: Date;
@@ -134,7 +143,7 @@ export function RiskTrajectoryChart({
               })}
               xAccessor="date"
               yAccessor="value"
-              yExtent={hasCustomConfig ? [0, yMax] : [0, 100]}
+              yExtent={hasCustomConfig ? [yMin, yMax] : [yMin, 100]}
               margin={{ left: 48, right: 20, top: 10, bottom: 30 }}
               showLinePoints
               pointStyle={(p: {

@@ -124,7 +124,7 @@ function toCaseNote(note: ParoleCaseNote): CaseNote {
  * page; each row opens the full text in a modal, since Idaho's notes average
  * a few hundred characters and run into the thousands.
  *
- * @param caseNotes - The case's notes, absent until the backend sends them.
+ * @param caseNotes - The case's notes.
  */
 export function UsIdCaseNotesSection({
   caseNotes,

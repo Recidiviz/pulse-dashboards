@@ -22,7 +22,7 @@ import useMeasure from "react-use-measure";
 import { ResponsiveOrdinalFrame } from "semiotic";
 import styled from "styled-components";
 
-import { ParoleRiskAssessment } from "~datatypes";
+import { CARAS_COMPONENT_NAMES, ParoleRiskAssessment } from "~datatypes";
 import { palette } from "~design-system";
 
 import { EdgeAwareTooltip } from "./EdgeAwareTooltip";
@@ -127,8 +127,9 @@ function renderSubcategoryBarLabel(name?: unknown): string | Element {
  * bar chart for every other tool.
  *
  * @param assessment - The assessment to break down.
- * @param showCarasComponentList - Render CARAS as the component list rather
- *   than the bar chart. Comes from the tenant's riskAssessmentConfig.
+ * @param showCarasComponentList - Render CARAS as the fixed list of its
+ *   components, whatever the assessment carries, rather than the bar chart.
+ *   Comes from the tenant's riskAssessmentConfig.
  * @param title - Heading above the chart. Empty renders none, for a caller
  *   that captions the chart itself.
  * @param height - Overrides DEFAULT_CHART_HEIGHT, which is sized for the
@@ -220,16 +221,14 @@ export function SubcategoryBreakdownChart({
   );
 
   if (assessment.tool === "CARAS") {
-    if (!assessment.carasFactors) return null;
-
     if (showCarasComponentList) {
       return (
         <ChartColumn>
           <ChartTitle>Individual Components of the CARAS</ChartTitle>
           <ChartWrapper>
             <ComponentList>
-              {assessment.carasFactors.map((f) => (
-                <ComponentListItem key={f.name}>{f.name}</ComponentListItem>
+              {CARAS_COMPONENT_NAMES.map((name) => (
+                <ComponentListItem key={name}>{name}</ComponentListItem>
               ))}
             </ComponentList>
           </ChartWrapper>

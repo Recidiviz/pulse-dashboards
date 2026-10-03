@@ -21,6 +21,7 @@ import { PAROLE_UNKNOWN_DATE, ParoleCase } from "~datatypes";
 
 import { buildParoleCase } from "../../__tests__/paroleCaseFixtures";
 import {
+  DefaultParoleGeneralInfo,
   ParolePersonalDetails,
   ParoleSentenceInfo,
 } from "../ParoleGeneralInfo";
@@ -113,5 +114,53 @@ describe("ParoleSentenceInfo", () => {
     );
 
     expect(screen.getAllByText("Not yet available")).toHaveLength(3);
+  });
+
+  it("shows the life sentence status in place of the PED", () => {
+    render(
+      <ParoleSentenceInfo
+        caseDetail={makeCaseDetail({
+          paroleEligibilityDate: PAROLE_UNKNOWN_DATE,
+          lifeSentence: "WITHOUT_PAROLE",
+        })}
+      />,
+    );
+
+    expect(
+      screen.getByText("Life Sentence Without Parole"),
+    ).toBeInTheDocument();
+  });
+});
+
+describe("DefaultParoleGeneralInfo", () => {
+  const config = {
+    docketConfig: { columns: [] },
+    conductHistoryConfig: { classificationColors: {} },
+  };
+
+  it("shows the full hearing date when it is booked", () => {
+    render(
+      <DefaultParoleGeneralInfo
+        caseDetail={makeCaseDetail({ hearingDate: "2026-11-01" })}
+        config={config}
+      />,
+    );
+
+    expect(screen.getByText("Nov 1, 2026")).toBeInTheDocument();
+  });
+
+  it("shows only the month when the hearing date is a placeholder", () => {
+    render(
+      <DefaultParoleGeneralInfo
+        caseDetail={makeCaseDetail({
+          hearingDate: "2026-11-01",
+          hearingDateIsPlaceholder: true,
+        })}
+        config={config}
+      />,
+    );
+
+    expect(screen.getByText("November")).toBeInTheDocument();
+    expect(screen.queryByText("Nov 1, 2026")).not.toBeInTheDocument();
   });
 });

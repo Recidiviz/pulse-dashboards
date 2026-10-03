@@ -34,6 +34,9 @@ export const paroleBoardClientProfileHearingSchema = z.object({
   hearingType: nullishAsUndefined(z.string()),
   hearingSubtype: nullishAsUndefined(z.string()),
   hearingDecision: nullishAsUndefined(z.string()),
+  // True when `hearingDate` is only the first of the month the hearing is
+  // expected in, not a booked date. US_CO only.
+  hearingDateIsPlaceholder: nullishAsUndefined(z.boolean()),
 });
 export type ParoleBoardClientProfileHearing = z.infer<
   typeof paroleBoardClientProfileHearingSchema
@@ -53,6 +56,9 @@ export const paroleBoardClientProfileSentenceSchema = z.object({
   sentenceConvictionDate: nullishAsUndefined(z.string()),
   sentenceStartDate: nullishAsUndefined(z.string()),
   sentenceLength: nullishAsUndefined(z.string()),
+  // The offense account. US_CO repeats one account on every sentence of a
+  // commitment.
+  sentenceSummary: nullishAsUndefined(z.string()),
   sentenceParoleEligibilityDate: nullishAsUndefined(z.string()),
   sentenceMandatoryReleaseDate: nullishAsUndefined(z.string()),
   sentenceFullTermReleaseDate: nullishAsUndefined(z.string()),
@@ -77,41 +83,64 @@ export type ParoleBoardClientProfileCriminalHistory = z.infer<
 // backend label (e.g. US_CO's "RT Scoring Tool") that doesn't necessarily
 // match PAROLE_RISK_TOOL's values -- the frontend translates it, dropping
 // an assessment it can't confidently map to a known tool rather than
-// mislabeling it. `assessmentCategory*` describe one subcategory of the
-// assessment named by `assessmentDate`+`assessmentType`; every category row
-// for the same assessment shares those two fields.
+// mislabeling it. An assessment's own subcategory scores are nested in
+// `assessmentCategories`; a tool that scores no subcategories sends none.
+export const paroleBoardClientProfileRiskAssessmentCategorySchema = z.object({
+  assessmentCategoryName: nullishAsUndefined(z.string()),
+  assessmentCategoryScore: nullishAsUndefined(z.number()),
+  assessmentCategoryMaxScore: nullishAsUndefined(z.number()),
+});
+
 export const paroleBoardClientProfileRiskAssessmentSchema = z.object({
   assessmentDate: nullishAsUndefined(z.string()),
   assessmentType: nullishAsUndefined(z.string()),
   assessmentLevel: nullishAsUndefined(z.string()),
   assessmentScore: nullishAsUndefined(z.number()),
   assessmentMaxScore: nullishAsUndefined(z.number()),
-  assessmentCategoryName: nullishAsUndefined(z.string()),
-  assessmentCategoryScore: nullishAsUndefined(z.number()),
-  assessmentCategoryMaxScore: nullishAsUndefined(z.number()),
+  assessmentCategories: z
+    .array(paroleBoardClientProfileRiskAssessmentCategorySchema)
+    .optional()
+    .default([]),
 });
 export type ParoleBoardClientProfileRiskAssessment = z.infer<
   typeof paroleBoardClientProfileRiskAssessmentSchema
 >;
 
+const riskNeedSummaryEntrySchema = z.object({
+  code: nullishAsUndefined(z.string()),
+  scale: nullishAsUndefined(z.string()),
+});
+
 // The resident's latest health/risk-and-needs classification per domain (see
-// recidiviz-data's LATEST_RISK_NEED_SUMMARY category), as a [score, scale]
-// pair. A domain still on the old single-string format (migration is
-// rolling out per domain/state) is treated as absent rather than failing
-// the whole resident record's parse.
-const riskNeedSummaryPair = z
-  .union([z.tuple([z.string(), z.string()]), z.string()])
+// recidiviz-data's LATEST_RISK_NEED_SUMMARY category). The backend sends each
+// domain as a JSON string of `{code, scale}`, which is parsed here. The string
+// "null" (TO_JSON_STRING of a NULL) means the domain is absent. Unparseable
+// JSON still fails the record.
+const riskNeedSummaryEntry = z
+  .string()
+  .transform((value, ctx) => {
+    try {
+      return JSON.parse(value) as unknown;
+    } catch {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Expected a JSON {code, scale} string",
+      });
+      return z.NEVER;
+    }
+  })
+  .pipe(riskNeedSummaryEntrySchema.nullable())
   .nullish()
-  .transform((value) => (Array.isArray(value) ? value : undefined));
+  .transform((entry) => entry ?? undefined);
 
 export const paroleBoardClientProfileLatestRiskNeedSummarySchema = z.object({
-  assessmentLatestMedical: riskNeedSummaryPair,
-  assessmentLatestDental: riskNeedSummaryPair,
-  assessmentLatestMentalHealth: riskNeedSummaryPair,
-  assessmentLatestId: riskNeedSummaryPair,
-  assessmentLatestSexOffender: riskNeedSummaryPair,
-  assessmentLatestSar: riskNeedSummaryPair,
-  assessmentLatestSoar: riskNeedSummaryPair,
+  assessmentLatestMedical: riskNeedSummaryEntry,
+  assessmentLatestDental: riskNeedSummaryEntry,
+  assessmentLatestMentalHealth: riskNeedSummaryEntry,
+  assessmentLatestId: riskNeedSummaryEntry,
+  assessmentLatestSexOffender: riskNeedSummaryEntry,
+  assessmentLatestSar: riskNeedSummaryEntry,
+  assessmentLatestSoar: riskNeedSummaryEntry,
 });
 export type ParoleBoardClientProfileLatestRiskNeedSummary = z.infer<
   typeof paroleBoardClientProfileLatestRiskNeedSummarySchema
@@ -129,6 +158,17 @@ export const paroleBoardClientProfileViolationSchema = z.object({
 export type ParoleBoardClientProfileViolation = z.infer<
   typeof paroleBoardClientProfileViolationSchema
 >;
+
+// Staff notes on the resident's disciplinary record as a whole. US_ID only.
+export const paroleBoardClientProfileDisciplinarySummarySchema = z.object({
+  disciplinaryFacilityNotes: nullishAsUndefined(z.string()),
+});
+
+// The resident's current security threat group affiliations as one string.
+// US_ID only.
+export const paroleBoardClientProfileSecurityThreatGroupSchema = z.object({
+  stg: nullishAsUndefined(z.string()),
+});
 
 // One entry per DOC program the resident has participated in. `programStatus`
 // is a raw backend label, not necessarily one of PAROLE_PROGRAM_STATUS's
@@ -163,6 +203,13 @@ export const paroleBoardClientProfileEdovoProgramSchema = z.object({
 export type ParoleBoardClientProfileEdovoProgram = z.infer<
   typeof paroleBoardClientProfileEdovoProgramSchema
 >;
+
+// One entry per case note staff posted about the resident, newest first.
+export const paroleBoardClientProfileCaseNoteSchema = z.object({
+  noteDate: nullishAsUndefined(z.string()),
+  noteType: nullishAsUndefined(z.string()),
+  noteBody: nullishAsUndefined(z.string()),
+});
 
 // The resident's single proposed release plan (not a list -- one plan per
 // resident, see ParoleAPIClient for how it becomes both `ParolePlan` and an
@@ -228,12 +275,20 @@ export const paroleBoardClientProfileSchema = z.object({
     .array(paroleBoardClientProfileViolationSchema)
     .optional()
     .default([]),
+  disciplinarySummary:
+    paroleBoardClientProfileDisciplinarySummarySchema.optional(),
+  securityThreatGroup:
+    paroleBoardClientProfileSecurityThreatGroupSchema.optional(),
   programs: z
     .array(paroleBoardClientProfileProgramSchema)
     .optional()
     .default([]),
   edovoPrograms: z
     .array(paroleBoardClientProfileEdovoProgramSchema)
+    .optional()
+    .default([]),
+  caseNotes: z
+    .array(paroleBoardClientProfileCaseNoteSchema)
     .optional()
     .default([]),
   attachments: z

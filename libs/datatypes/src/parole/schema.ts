@@ -73,6 +73,23 @@ export const paroleCarasFactorSchema = z.object({
 });
 export type ParoleCarasFactor = z.infer<typeof paroleCarasFactorSchema>;
 
+// CARAS v7's 12 items in the tool's published order. They are fixed by the
+// tool, so the profile lists them for every CARAS assessment.
+export const CARAS_COMPONENT_NAMES = [
+  "Age Group at First Arrest/Charge",
+  "Offense Degree",
+  "Offender Age",
+  "Escape Count",
+  "Substance Abuse Needs Level",
+  "Gang Membership",
+  "Prior Case Count",
+  "Offense Category",
+  "Criminal Attitude",
+  "COPD Count",
+  "Technical Violation Count",
+  "Custody Level",
+] as const;
+
 export const paroleRiskAssessmentSchema = z.object({
   tool: PAROLE_RISK_TOOL,
   level: z.string().optional(),
@@ -110,6 +127,8 @@ export const paroleHearingSchema = z.object({
   displayId: z.string(),
   individualName: z.string(),
   hearingDate: z.string(),
+  // True when only the month of `hearingDate` is known.
+  hearingDateIsPlaceholder: z.boolean().optional(),
   hearingType: z.string(),
   facility: z.string(),
 });
@@ -262,6 +281,9 @@ export const paroleOffenseHistorySchema = z.object({
 });
 export type ParoleOffenseHistory = z.infer<typeof paroleOffenseHistorySchema>;
 
+export const PAROLE_LIFE_SENTENCE = z.enum(["WITH_PAROLE", "WITHOUT_PAROLE"]);
+export type ParoleLifeSentence = z.infer<typeof PAROLE_LIFE_SENTENCE>;
+
 export const paroleCaseNoteSchema = z.object({
   id: z.string(),
   type: z.string(),
@@ -281,6 +303,8 @@ export const paroleCaseSchema = z.object({
   custodyLevel: z.string(),
   caseManagerName: z.string(),
   hearingDate: z.string().optional(),
+  // True when only the month of `hearingDate` is known.
+  hearingDateIsPlaceholder: z.boolean().optional(),
   hearingTime: z.string().optional(),
   hearingType: z.string(),
   reportAuthor: z.string().optional(),
@@ -288,6 +312,9 @@ export const paroleCaseSchema = z.object({
   sentenceStartDate: z.string(),
   paroleEligibilityDate: z.string(),
   mandatoryReleaseDate: z.string(),
+  // Set for a resident serving a life sentence, with or without parole. The
+  // PED shows this status instead of a date in both cases.
+  lifeSentence: PAROLE_LIFE_SENTENCE.optional(),
   parolePlan: paroleParolePlanSchema,
   attachments: z.array(paroleAttachmentSchema),
   conductHistory: z.array(paroleConductRecordSchema),
@@ -307,8 +334,6 @@ export const paroleCaseSchema = z.object({
   // The resident's latest health/risk-and-needs assessment from eOMIS -- only
   // the most recent snapshot is tracked (no history), unlike riskAssessments.
   riskAndNeedsFactors: z.array(paroleRiskNeedFactorSchema),
-  // Absent until the backend carries case notes -- no state sends them yet,
-  // so the section renders only where there is something to show.
   caseNotes: z.array(paroleCaseNoteSchema).optional(),
 });
 export type ParoleCase = z.infer<typeof paroleCaseSchema>;

@@ -26,6 +26,7 @@ import {
 } from "date-fns";
 
 import {
+  CARAS_COMPONENT_NAMES,
   ParoleCarasFactor,
   ParoleCase,
   ParoleCaseNote,
@@ -54,28 +55,17 @@ const iso = (date: Date): string => format(date, "yyyy-MM-dd");
 // demoable via `nx offline staff`.
 export type ParoleFixtureStateCode = "US_CO" | "US_ID";
 
-// CARAS v7's 12 items and their logistic-regression coefficients are fixed
-// properties of the tool itself, not per-person, so this pairs them with each
-// case's own raw item values rather than repeating the name/coefficient list
-// at every call site. Order matches the tool's published item order.
-const CARAS_FACTOR_COEFFICIENTS: Array<Omit<ParoleCarasFactor, "value">> = [
-  { name: "Age Group at First Arrest/Charge", coefficient: 0.32 },
-  { name: "Offense Degree", coefficient: 0.16 },
-  { name: "Offender Age", coefficient: -0.03 },
-  { name: "Escape Count", coefficient: 0.25 },
-  { name: "Substance Abuse Needs Level", coefficient: 0.18 },
-  { name: "Gang Membership", coefficient: 0.11 },
-  { name: "Prior Case Count", coefficient: 0.08 },
-  { name: "Offense Category", coefficient: 0.26 },
-  { name: "Criminal Attitude", coefficient: 0.18 },
-  { name: "COPD Count", coefficient: 0.09 },
-  { name: "Technical Violation Count", coefficient: 0.09 },
-  { name: "Custody Level", coefficient: 0.16 },
-];
+// CARAS v7's logistic-regression coefficients, one per item in
+// CARAS_COMPONENT_NAMES order. They are fixed properties of the tool, so
+// buildCarasFactors pairs them with each case's own raw item values.
+const CARAS_COEFFICIENTS = [
+  0.32, 0.16, -0.03, 0.25, 0.18, 0.11, 0.08, 0.26, 0.18, 0.09, 0.09, 0.16,
+] as const satisfies { length: (typeof CARAS_COMPONENT_NAMES)["length"] };
 
 function buildCarasFactors(values: Array<number>): Array<ParoleCarasFactor> {
-  return CARAS_FACTOR_COEFFICIENTS.map((factor, i) => ({
-    ...factor,
+  return CARAS_COMPONENT_NAMES.map((name, i) => ({
+    name,
+    coefficient: CARAS_COEFFICIENTS[i],
     value: values[i],
   }));
 }
@@ -608,18 +598,14 @@ function buildAndersonCaseProfile(
         recommended: "Pending",
       },
     ],
-    // Demo content for the US_ID-only facility notes slot (see
-    // ParoleConfig.conductHistoryChildren) -- harmless to include for
-    // US_CO too, since CO's config never renders it.
-    // TODO(OBT-46908): real data source (SQL view) not yet confirmed ready.
+    // US_ID-only; CO's profile never renders it. Formatted like the backend:
+    // one dated note per line, newest first.
     disciplinaryFacilityNotes:
-      "Resident has maintained a positive attitude and remained fully compliant with facility programming since his last disciplinary infraction. No behavioral concerns reported this quarter.",
-    // Demo content for the US_ID-only STG slot (see
-    // UsIdStgSection) -- harmless to include for US_CO too, since CO's config
-    // never renders it. Only this Anderson-derived case sets it, so the
-    // hardcoded US_ID cases exercise the empty state.
-    // TODO(OBT-46908): real Atlas STG source not ingested yet.
-    stg: "Security Threat Group affiliation reported (Northsiders), status active as of 2024.",
+      "03/14/2025: Resident accepted responsibility and completed the assigned sanction without incident.\n08/02/2023: Resident has remained compliant with facility programming since the hearing.",
+    // US_ID-only, formatted like the backend: group names joined by "; ".
+    // Only this Anderson-derived case sets it, so the hardcoded US_ID cases
+    // exercise the empty state.
+    stg: "Northsiders; Westside Crew",
     // Full assessment history per tool -- the most recent entry per tool
     // carries the real subcategory/CARAS-factor breakdown; earlier entries
     // are bare score/date pairs, matching what a real historical record

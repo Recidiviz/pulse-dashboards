@@ -33,7 +33,7 @@ import { ParoleDocketColumn } from "../../models/types";
 import { SectionCard } from "../../SectionCard";
 import { paroleUrl } from "../../views";
 import { WorkflowsFilterDropdown } from "../../WorkflowsFilters/WorkflowsFilterDropdown";
-import { parseIsoDate } from "../components/shared";
+import { formatMonth, parseIsoDate } from "../components/shared";
 
 type HearingDatePrecision = "month" | "date";
 
@@ -110,12 +110,13 @@ const formatHearingDate = (
   dateString: string,
   precision: HearingDatePrecision,
 ) =>
-  parseIsoDate(dateString).toLocaleDateString(
-    "en-US",
-    precision === "month"
-      ? { month: "long" }
-      : { month: "long", day: "numeric", year: "numeric" },
-  );
+  precision === "month"
+    ? formatMonth(parseIsoDate(dateString))
+    : parseIsoDate(dateString).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      });
 
 const HeaderLabel = styled.span`
   padding-left: ${rem(spacing.md)};
@@ -134,18 +135,24 @@ function renderLeadingHeader(header: string) {
  * @param value - The raw hearing field.
  * @param column - The column being drawn.
  * @param isLeading - Whether this is the first column, which is inset.
+ * @param hearing - The row's hearing.
  */
 function renderCell(
   value: unknown,
   column: ParoleDocketColumn,
   isLeading: boolean,
+  hearing: ParoleHearing,
 ): JSX.Element {
   if (column.format === "docId") {
     return renderCellText(formatDocId(value as string), isLeading);
   }
   if (column.format === "month" || column.format === "date") {
+    const precision =
+      column.field === "hearingDate" && hearing.hearingDateIsPlaceholder
+        ? "month"
+        : column.format;
     return renderCellText(
-      formatHearingDate(value as string, column.format),
+      formatHearingDate(value as string, precision),
       isLeading,
     );
   }
@@ -171,7 +178,8 @@ function buildColumns(
       accessorKey: column.field,
       enableSorting: Boolean(column.sortable),
       sortingFn: "alphanumeric",
-      cell: (info) => renderCell(info.getValue(), column, isLeading),
+      cell: (info) =>
+        renderCell(info.getValue(), column, isLeading, info.row.original),
     };
   });
 }
