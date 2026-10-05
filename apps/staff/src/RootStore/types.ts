@@ -85,6 +85,7 @@ export type FeatureVariant =
   | "tasksRoutePlanner"
   | "workflowsSupervisorSearch"
   | "typesenseCaseloadSearch"
+  | "typesenseHomepage"
   | "typesensePersonSearch"
   | "sentenceProgressV2"
   | "useRecordForIneligibleOpps"
@@ -239,6 +240,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   hideDenialRevert: {},
   workflowsSupervisorSearch: {},
   typesenseCaseloadSearch: {},
+  typesenseHomepage: {},
   typesensePersonSearch: {},
   supervisorHomepageWorkflows: {},
   supervisorHomepageVitals: {},
@@ -412,6 +414,12 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         // Off for Recidiviz users during phase 1 build-out — opt in per-user
         // via the admin panel to actually see the new Typesense search bar.
         typesenseCaseloadSearch: undefined,
+        // Off during phase 2 build-out. NOTE: while this is on, the homepage
+        // tasks card renders WITHOUT its count — tasks move to Typesense in
+        // phase 4. Do not enable it for a supervision tenant that relies on
+        // reading that number here.
+        // TODO(#OBT-52494)
+        typesenseHomepage: undefined,
         // Off for Recidiviz users during phase 1 build-out — opt in per-user
         // via the admin panel to actually see the new Typesense person search.
         typesensePersonSearch: undefined,

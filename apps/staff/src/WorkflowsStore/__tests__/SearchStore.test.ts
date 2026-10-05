@@ -102,12 +102,26 @@ beforeEach(() => {
     workflowsSupportedSystems: ["SUPERVISION"],
     availableOfficers: [...mockSupervisionOfficers].sort(staffNameComparator),
     availableLocations: mockLocations,
+    staffSupervisedByCurrentUser: [],
   });
   searchStore = new SearchStore(workflowsStore as unknown as WorkflowsStore);
 });
 
 afterEach(() => {
   vi.resetAllMocks();
+});
+
+describe("isTypesenseHomepageEnabled", () => {
+  test.each([
+    [true, { typesenseHomepage: true, typesenseCaseloadSearch: true }],
+    [false, { typesenseHomepage: true }],
+    [false, { typesenseCaseloadSearch: true }],
+    [false, {}],
+  ])("is %s with %o", (expected, featureVariants) => {
+    workflowsStore.featureVariants = featureVariants;
+
+    expect(searchStore.isTypesenseHomepageEnabled).toBe(expected);
+  });
 });
 
 describe("workflowsSearchFieldTitle (phrase form)", () => {
@@ -928,7 +942,7 @@ describe("handleSearchPillClick", () => {
       ...mockOfficer,
       updates: {
         ...(mockOfficer.updates as UserUpdateRecord),
-        selectedSearchIds: "ID1",
+        selectedSearchIds: ["ID1"],
       },
     };
     workflowsStore.updateActiveSystem = updateActiveSystemConfigMock;

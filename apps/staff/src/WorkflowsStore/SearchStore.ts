@@ -31,6 +31,7 @@ import { CaseloadSearchable } from "./CaseloadSearchable";
 import { CaseloadSearchManager } from "./CaseloadSearchManager";
 import { Location } from "./Location";
 import { Officer } from "./Officer";
+import { OpportunitySearchManager } from "./OpportunitySearch/OpportunitySearchManager";
 import { PersonSearchManager } from "./PersonSearchManager";
 import { SearchManager } from "./SearchManager";
 import { JusticeInvolvedPerson } from "./types";
@@ -67,6 +68,11 @@ export class SearchStore {
   // constructor.
   personSearchManager: PersonSearchManager;
 
+  // Delegate for the Typesense-backed homepage opportunity summaries. Owns its
+  // own scoped-key client and multi_search plan. Inert until
+  // isTypesenseHomepageEnabled is true.
+  opportunitySearchManager: OpportunitySearchManager;
+
   constructor(workflowsStore: WorkflowsStore) {
     this.workflowsStore = workflowsStore;
 
@@ -76,6 +82,7 @@ export class SearchStore {
     this.residentSearchManager = new SearchManager(this, "RESIDENT");
     this.caseloadSearchManager = new CaseloadSearchManager(this);
     this.personSearchManager = new PersonSearchManager(this);
+    this.opportunitySearchManager = new OpportunitySearchManager(this);
 
     // update the searchTypeOverride on tenant change
     reaction(
@@ -536,5 +543,19 @@ export class SearchStore {
   // its own reactions.
   get isTypesenseSearchEnabled(): boolean {
     return Boolean(this.workflowsStore.featureVariants.typesenseCaseloadSearch);
+  }
+
+  // Truthy when the homepage reads its opportunities from Typesense (phase 2).
+  //
+  // Requires BOTH FVs. typesenseCaseloadSearch is what populates
+  // selectedSearchIds from the Typesense search bar, so without it the two
+  // paths disagree about who is selected. Read by both
+  // WorkflowsHomepagePresenter and OpportunitySearchManager, which gates its
+  // own reaction on it — defined once here so the two cannot drift apart.
+  get isTypesenseHomepageEnabled(): boolean {
+    return Boolean(
+      this.workflowsStore.featureVariants.typesenseHomepage &&
+        this.isTypesenseSearchEnabled,
+    );
   }
 }

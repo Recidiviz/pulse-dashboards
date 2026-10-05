@@ -77,7 +77,14 @@ vi.mock("firebase/firestore", async (importOriginal) => {
   };
 });
 
-type testStateCode = "US_ND" | "US_BB" | "US_MO" | "US_TN" | "US_XX" | "US_YY";
+type testStateCode =
+  | "US_ND"
+  | "US_BB"
+  | "US_MO"
+  | "US_TN"
+  | "US_TX"
+  | "US_XX"
+  | "US_YY";
 const { stateConfigs } = vi.hoisted(() => {
   const stateConfigs: Record<testStateCode | "RECIDIVIZ", any> = {
     US_XX: {
@@ -141,6 +148,11 @@ const { stateConfigs } = vi.hoisted(() => {
       workflowsSupportedSystems: ["INCARCERATION", "SUPERVISION"],
       availableStateCodes: ["US_ND"],
       workflowsTasksConfig: {},
+    },
+    US_TX: {
+      opportunityTypes: [],
+      workflowsSupportedSystems: ["SUPERVISION"],
+      availableStateCodes: ["US_TX"],
     },
     US_MO: {
       opportunityTypes: ["usMoOverdueRestrictiveHousingRelease"],
