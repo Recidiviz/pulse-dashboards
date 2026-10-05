@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { router } from "../../../procedures/init";
-import { usMaRouter } from "./US_MA/reentryQuestionnaire.router";
+import { usMaRouter } from "./US_MA/router";
 import { usNcRouter } from "./US_NC/rna.router";
 import { usNeRouter } from "./US_NE/router";
 

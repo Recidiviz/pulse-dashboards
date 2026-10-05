@@ -179,3 +179,13 @@ model UsMaReentryQuestionnaire {
     // The resident's answers, parsed via Zod
     answers Json
 }
+
+// Tracks whether a resident has checked off a given reentry checklist item
+model UsMaReentryChecklistItemState {
+    pseudonymizedId String
+    itemId          String
+    checked         Boolean  @default(false)
+    updatedAt       DateTime @updatedAt
+
+    @@id([pseudonymizedId, itemId])
+}

@@ -40,6 +40,7 @@ export const reentryChecklistItemIds = [
   "DISCUSSED_HOUSING_WITH_SPECIALIST",
   "HAS_HOUSING_PROGRAM_RENT_PLAN",
   "HAS_PAID_HOUSING_PROGRAM_DEPOSIT",
+  "CONFIRMED_FAMILY_AND_FRIENDS_TRANSPORTATION",
 ] as const;
 export type ReentryChecklistItemId = (typeof reentryChecklistItemIds)[number];
 
@@ -184,6 +185,13 @@ export const reentryChecklistConfig: Record<
           value: "SOBER_OR_ROOMING_HOUSE",
         },
       ],
+    },
+  },
+  CONFIRMED_FAMILY_AND_FRIENDS_TRANSPORTATION: {
+    showIf: {
+      questionId: "TRANSPORTATION",
+      operator: "equals",
+      value: "FAMILY_OR_FRIENDS",
     },
   },
 };

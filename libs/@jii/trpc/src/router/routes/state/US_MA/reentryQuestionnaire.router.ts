@@ -25,88 +25,83 @@ import {
   getReentryQuestionnaireQueryResolver,
 } from "../../../../helpers/US_MA/reentryQuestionnaire";
 import { residentRestrictedMiddleware } from "../../../../middleware/residentRestrictedMiddleware";
-import { router } from "../../../../procedures/init";
-import { restrictedResidentProcedureForState } from "../restrictedResidentProcedureForState";
+import { usMaProcedure } from "./usMaProcedure";
 
-const usMaProcedure = restrictedResidentProcedureForState("US_MA");
+/**
+ * Return the latest Reentry Questionnaire corresponding to the provided
+ * resident, or null if none was found.
+ */
+export const getReentryQuestionnaire = usMaProcedure
+  .input(getReentryQuestionnaireInputSchema)
+  .use(residentRestrictedMiddleware)
+  .query(getReentryQuestionnaireQueryResolver);
 
-export const usMaRouter = router({
-  /**
-   * Return the latest Reentry Questionnaire corresponding to the provided
-   * resident, or null if none was found.
-   */
-  getReentryQuestionnaire: usMaProcedure
-    .input(getReentryQuestionnaireInputSchema)
-    .use(residentRestrictedMiddleware)
-    .query(getReentryQuestionnaireQueryResolver),
+/**
+ * Return the resident's latest Reentry Questionnaire, creating a new blank
+ * one if none exists yet.
+ */
+export const getOrCreateReentryQuestionnaire = usMaProcedure
+  .input(getReentryQuestionnaireInputSchema)
+  .use(residentRestrictedMiddleware)
+  .mutation(async (queryArgs) => {
+    const existing = await getReentryQuestionnaireQueryResolver(queryArgs);
+    if (existing) {
+      return existing;
+    }
 
-  /**
-   * Return the resident's latest Reentry Questionnaire, creating a new blank
-   * one if none exists yet.
-   */
-  getOrCreateReentryQuestionnaire: usMaProcedure
-    .input(getReentryQuestionnaireInputSchema)
-    .use(residentRestrictedMiddleware)
-    .mutation(async (queryArgs) => {
-      const existing = await getReentryQuestionnaireQueryResolver(queryArgs);
-      if (existing) {
-        return existing;
-      }
+    const { pseudonymizedId } = queryArgs.input;
+    return queryArgs.ctx.prisma.usMaReentryQuestionnaire.create({
+      data: {
+        pseudonymizedId,
+        answers: {},
+      },
+    });
+  });
 
-      const { pseudonymizedId } = queryArgs.input;
-      return queryArgs.ctx.prisma.usMaReentryQuestionnaire.create({
-        data: {
-          pseudonymizedId,
-          answers: {},
-        },
-      });
+/**
+ * Update the Reentry Questionnaire identified by the given ID with the
+ * provided answers.
+ *
+ * Raises an error if there is a mismatch between the resident's pseudonymized
+ * ID and the pseudonymized ID associated with this Reentry Questionnaire.
+ *
+ * This will fully overwrite the user's answers stored in the db with whatever
+ * is provided; it's the requester's responsibility to correctly join the
+ * user's new answer with their existing answers.
+ */
+export const overwriteReentryQuestionnaireAnswers = usMaProcedure
+  .input(
+    z.object({
+      id: z.string(),
+      pseudonymizedId: z.string(),
+      answers: reentryQuestionnaireAnswersSchema,
+      isCompleted: z.boolean(),
     }),
-
-  /**
-   * Update the Reentry Questionnaire identified by the given ID with the
-   * provided answers.
-   *
-   * Raises an error if there is a mismatch between the resident's pseudonymized
-   * ID and the pseudonymized ID associated with this Reentry Questionnaire.
-   *
-   * This will fully overwrite the user's answers stored in the db with whatever
-   * is provided; it's the requester's responsibility to correctly join the
-   * user's new answer with their existing answers.
-   */
-  overwriteReentryQuestionnaireAnswers: usMaProcedure
-    .input(
-      z.object({
-        id: z.string(),
-        pseudonymizedId: z.string(),
-        answers: reentryQuestionnaireAnswersSchema,
-        isCompleted: z.boolean(),
-      }),
-    )
-    .use(residentRestrictedMiddleware)
-    .mutation(async ({ ctx, input }) => {
-      const reentryQuestionnaire =
-        await ctx.prisma.usMaReentryQuestionnaire.findFirst({
-          where: {
-            id: input.id,
-            pseudonymizedId: input.pseudonymizedId,
-          },
-        });
-      if (!reentryQuestionnaire) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: `Reentry Questionnaire with ID ${input.id} not found`,
-        });
-      }
-
-      return ctx.prisma.usMaReentryQuestionnaire.update({
+  )
+  .use(residentRestrictedMiddleware)
+  .mutation(async ({ ctx, input }) => {
+    const reentryQuestionnaire =
+      await ctx.prisma.usMaReentryQuestionnaire.findFirst({
         where: {
           id: input.id,
           pseudonymizedId: input.pseudonymizedId,
         },
-        data: {
-          answers: input.answers,
-          completedAt: input.isCompleted ? new Date().toISOString() : undefined,
-        },
       });
-    }),
-});
+    if (!reentryQuestionnaire) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: `Reentry Questionnaire with ID ${input.id} not found`,
+      });
+    }
+
+    return ctx.prisma.usMaReentryQuestionnaire.update({
+      where: {
+        id: input.id,
+        pseudonymizedId: input.pseudonymizedId,
+      },
+      data: {
+        answers: input.answers,
+        completedAt: input.isCompleted ? new Date().toISOString() : undefined,
+      },
+    });
+  });
