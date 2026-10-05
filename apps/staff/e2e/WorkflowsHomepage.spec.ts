@@ -86,10 +86,6 @@ const CASES: HomepageCase[] = [
     tenant: "us_ca",
     externalId: "OFFICER1",
     shape: "DEFAULT",
-    // TODO(OBT-52521): renders NO card at all under the gate, where Firestore
-    // shows `Eligible Now: 2`. The documents ARE indexed, so this is not the
-    // count-shape problem the other rows hit.
-    knownFailure: "OBT-52521",
   },
   {
     tenant: "us_ia",
