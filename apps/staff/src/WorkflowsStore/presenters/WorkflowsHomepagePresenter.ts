@@ -100,8 +100,8 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
 
   /**
    * Whether the page has anything to show. Gates the whole summaries block.
-   * The inherited version reads `caseloadPersons`, which the gate empties, so
-   * the block would never render however many the census counted.
+   * The Firestore version reads hydrated opportunities, which Typesense not
+   * fetch, so the block would never render however many the census counted.
    */
   get hasOpportunities(): boolean {
     if (!this.useTypesenseHomepage) return super.hasOpportunities;
@@ -123,17 +123,35 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
     );
   }
 
-  get shouldHydrateTasks() {
-    // TODO(OBT-52494): decide how tasks hydrate once the homepage stops
-    // fetching the caseload. Nothing to hydrate under the gate — the
-    // `caseloadPersons` tasks come from is empty by design — so the card
-    // renders without its count until that is settled.
-    if (this.useTypesenseHomepage) return false;
-    // Only hydrate tasks when we are in supervision and the user has access to supervision tasks
+  /**
+   * Whether every ENABLED supervision search config selects officers, which is
+   * what bounds the task fan-out. Disables the Tasks card if District search is enabled
+   */
+  private get isOfficerOnlySupervisionSearch(): boolean {
+    const searchConfigs =
+      this.workflowsStore.systemConfigFor("SUPERVISION").search ?? [];
     return (
-      this.workflowsStore.activeSystem !== "INCARCERATION" &&
-      this.workflowsStore.rootStore.userStore.canUserAccessTasks
+      searchConfigs.length > 0 &&
+      searchConfigs.every(
+        (c) => c.searchField.length === 1 && c.searchField[0] === "officerId",
+      )
     );
+  }
+
+  get shouldHydrateTasks() {
+    if (
+      this.workflowsStore.activeSystem === "INCARCERATION" ||
+      !this.workflowsStore.rootStore.userStore.canUserAccessTasks
+    ) {
+      return false;
+    }
+
+    // The caseload is still fetched from Firestore under typesenseHomepage, so these are
+    // the same subscriptions Firestore hydrated homepage opens. Tasks move to Typesense in
+    // phase 4.
+    if (this.useTypesenseHomepage) return this.isOfficerOnlySupervisionSearch;
+
+    return true;
   }
 
   /**
@@ -306,29 +324,11 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
     return (
       // tasks exists for this tenant, and
       !!currentTenantConfig?.navigation?.workflows?.includes("tasks") &&
-      // the current caseload has tasks available.
-      //
-      // TODO(OBT-52494): this condition is BYPASSED under the gate. The
-      // caseload is empty by design there, so the normal check would hide the
-      // card entirely — instead it renders with its count suppressed. Revisit
-      // when tasks have a source that does not need the caseload. And
-      (this.useTypesenseHomepage || this.workflowsStore.hasSupervisionTasks) &&
+      // the current caseload has tasks available, and
+      this.workflowsStore.hasSupervisionTasks &&
       // the current user has access to tasks
       this.workflowsStore.rootStore.userStore.canUserAccessTasks
     );
-  }
-
-  /**
-   * True when the tasks card must render without a count. The counts come from
-   * `caseloadPersons`, which the gate empties, so rendering them would put
-   * "0 clients have tasks" on the page — wrong, and reassuring.
-   *
-   * TODO(OBT-52494): temporary. This exists only because the homepage no
-   * longer fetches the caseload the counts are derived from; it goes away
-   * once tasks have their own source.
-   */
-  get taskCountsUnavailable(): boolean {
-    return this.useTypesenseHomepage;
   }
 
   /**

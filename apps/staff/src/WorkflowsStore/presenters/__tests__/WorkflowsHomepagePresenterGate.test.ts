@@ -277,15 +277,18 @@ describe("hasOpportunities under the gate", () => {
   });
 });
 
-// TODO(OBT-52494): the task expectations here pin temporary behavior. They
-// change once tasks have a source that does not need the caseload.
-describe("what the gate switches off", () => {
+describe("tasks under the typesenseHomepage gate", () => {
+  const OFFICER_SEARCH = { search: [{ searchField: ["officerId"] }] };
+  const DISTRICT_SEARCH = {
+    search: [{ searchField: ["officerId"] }, { searchField: ["district"] }],
+  };
+  const supervisionSearch = (config: unknown) => () => config;
+
   const gated = {
     searchStore: { ...managerWith(), isTypesenseHomepageEnabled: true },
     activeSystem: "SUPERVISION",
-    // Empty by design under the gate, which is why `hasSupervisionTasks` is
-    // false and the card would otherwise disappear.
-    hasSupervisionTasks: false,
+    systemConfigFor: supervisionSearch(OFFICER_SEARCH),
+    hasSupervisionTasks: true,
     rootStore: {
       userStore: { canUserAccessTasks: true },
       tenantStore: {
@@ -294,23 +297,50 @@ describe("what the gate switches off", () => {
     },
   };
 
-  test("task hydration, because the caseload is empty by design", () => {
-    expect(makePresenter(gated).shouldHydrateTasks).toBe(false);
+  test("hydrate, because the caseload is still fetched from Firestore", () => {
+    expect(makePresenter(gated).shouldHydrateTasks).toBe(true);
   });
 
-  test("but NOT the tasks card itself", () => {
-    // THE decision. `showTasksSummary` normally requires `hasSupervisionTasks`,
-    // which is false here because the gate empties the caseload — so without
-    // the exception the card would vanish rather than lose its count.
-    const presenter = makePresenter(gated);
+  test("and the card renders with its real counts", () => {
+    expect(makePresenter(gated).showTasksSummary).toBe(true);
+  });
 
+  test("but NOT for a search that selects anything other than officers", () => {
+    // THE boundary. A task record is keyed by `officerId`, so a district
+    // selection cannot produce a task caseload.
+    const presenter = makePresenter({
+      ...gated,
+      systemConfigFor: supervisionSearch(DISTRICT_SEARCH),
+    });
+
+    expect(presenter.shouldHydrateTasks).toBe(false);
+  });
+
+  test('and YES while the active system is "ALL"', () => {
+    // A multi-system tenant lands here whenever the officer has not narrowed
+    // to one system, and `activeSystemConfig` is undefined in that state.
+    const presenter = makePresenter({ ...gated, activeSystem: "ALL" });
+
+    expect(presenter.shouldHydrateTasks).toBe(true);
     expect(presenter.showTasksSummary).toBe(true);
-    expect(presenter.taskCountsUnavailable).toBe(true);
   });
 
-  test("and the card still hides when the tenant has no tasks at all", () => {
-    // The gate excuses only the empty-caseload condition. A tenant without
-    // tasks in its navigation must still get no card.
+  test('but still NO while the active system is "INCARCERATION"', () => {
+    const presenter = makePresenter({
+      ...gated,
+      activeSystem: "INCARCERATION",
+    });
+
+    expect(presenter.shouldHydrateTasks).toBe(false);
+  });
+
+  test("and not when the caseload reports no tasks", () => {
+    const presenter = makePresenter({ ...gated, hasSupervisionTasks: false });
+
+    expect(presenter.showTasksSummary).toBe(false);
+  });
+
+  test("and not when the tenant has no tasks at all", () => {
     const presenter = makePresenter({
       ...gated,
       rootStore: {
@@ -322,16 +352,13 @@ describe("what the gate switches off", () => {
     expect(presenter.showTasksSummary).toBe(false);
   });
 
-  test("neither, with the gate off", () => {
+  test("with the gate off, the search type does not matter", () => {
     const presenter = makePresenter({
       ...gated,
+      systemConfigFor: supervisionSearch(DISTRICT_SEARCH),
       searchStore: { ...managerWith(), isTypesenseHomepageEnabled: false },
     });
 
     expect(presenter.shouldHydrateTasks).toBe(true);
-    expect(presenter.taskCountsUnavailable).toBe(false);
-    // With the gate off the old condition applies again, and this caseload
-    // reports no tasks.
-    expect(presenter.showTasksSummary).toBe(false);
   });
 });

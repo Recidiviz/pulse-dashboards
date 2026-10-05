@@ -27,27 +27,15 @@ import { WorkflowsHomepageSummary } from "./WorkflowsHomepageSummary";
 
 export const TasksSummary = observer(function TasksSummary({
   tasks,
-  countsUnavailable = false,
 }: {
   tasks: SupervisionTask[];
-  /**
-   * Render the card with no numbers on it. Set under the Typesense homepage
-   * gate, where the caseload this counts from is empty by design. The link
-   * still has to work, so only the count goes.
-   *
-   * TODO(OBT-52494): the whole prop is temporary — it exists only while tasks
-   * still derive from a caseload the homepage no longer fetches.
-   */
-  countsUnavailable?: boolean;
 }) {
   const {
     tenantStore: { currentTenantId },
   } = useRootStore();
   const numTasks = tasks.length;
   const people = uniq(tasks.map((task) => task.person));
-  const headerText = countsUnavailable
-    ? "Clients with tasks due"
-    : simplur`${people.length} [client has|clients have] tasks with overdue or upcoming due dates`;
+  const headerText = simplur`${people.length} [client has|clients have] tasks with overdue or upcoming due dates`;
 
   const numOverdue = tasks.filter((task) => task.isOverdue).length;
   const numDueThisMonth = tasks.filter(
@@ -57,8 +45,6 @@ export const TasksSummary = observer(function TasksSummary({
   // Each entry renders only above zero, so an empty map removes the row with no
   // change to WorkflowsHomepageSummary.
   function buildReviewStatusCounts(): Record<string, number> {
-    // TODO(OBT-52494): drops every per-status row under the gate.
-    if (countsUnavailable) return {};
     if (currentTenantId === "US_NE") {
       return {
         "Overdue Tasks": numOverdue,
@@ -77,10 +63,8 @@ export const TasksSummary = observer(function TasksSummary({
       key={"supervision-tasks"}
       url={workflowsUrl("tasks")}
       headerText={headerText}
-      // TODO(OBT-52494): zero and empty suppress the count and the avatars.
-      // They are not real values — the caseload behind them was never fetched.
-      totalCount={countsUnavailable ? 0 : people.length}
-      people={countsUnavailable ? [] : people}
+      totalCount={people.length}
+      people={people}
       reviewStatusCounts={reviewStatusCounts}
       showZeroGrantsPill={false}
     />
