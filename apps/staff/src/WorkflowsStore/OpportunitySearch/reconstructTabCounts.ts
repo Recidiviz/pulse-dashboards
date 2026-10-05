@@ -60,7 +60,9 @@ export type ReconstructTabCountsResult = {
   /**
    * Types whose arithmetic did not hold, excluded from `countsByType`.
    *
-   * The page must show these as unavailable rather than render the numbers.
+   * Nothing reads this, so the homepage renders no card for them. That is a
+   * launch blocker, not a steady state: this has to come back empty for every
+   * tenant before the gate opens. See OBT-53660.
    */
   unreconstructable: string[];
 };

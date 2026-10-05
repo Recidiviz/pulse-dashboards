@@ -38,6 +38,7 @@ const ManagedComponent = observer(function OpportunitySummary({
     officerPseudoId,
     officerOutcomesData,
     opportunityTypes,
+    summaryByType,
     isUserEnriched,
     isWorkflowsEnabled,
   } = presenter;
@@ -50,6 +51,7 @@ const ManagedComponent = observer(function OpportunitySummary({
         <OpportunitySummaries
           opportunitiesByType={opportunitiesByType}
           opportunityTypes={opportunityTypes}
+          summaryByType={summaryByType}
           officerPseudoId={officerPseudoId}
           zeroGrantOpportunities={officerOutcomesData?.zeroGrantOpportunities}
         />

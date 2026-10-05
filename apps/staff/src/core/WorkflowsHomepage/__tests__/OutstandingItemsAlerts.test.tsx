@@ -17,13 +17,31 @@
 
 import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
+import { vi } from "vitest";
 
 import { OpportunityType } from "~datatypes";
 
 import { Opportunity } from "../../../WorkflowsStore";
 import { OutstandingItemsAlerts } from "../OutstandingItemsAlerts";
+import { summaryFromCounts, summaryFromOpportunities } from "../summaryData";
 
 const OPPORTUNITY_TYPE = "usNeGoodTimeRestoration" as OpportunityType;
+
+const CONFIG = {
+  label: "Good Time Restoration",
+  urlSection: "goodTimeRestoration",
+  submittedTabTitle: "Pending",
+  pendingOverdueDaysThreshold: 14,
+  eligibleNotViewedDaysThreshold: 14,
+  tabGroups: {
+    "ELIGIBILITY STATUS": ["Eligible Now"],
+  },
+};
+
+// The component reads config from the store; see OutstandingItemsAlerts.
+vi.mock("../../../components/StoreProvider", () => ({
+  useOpportunityConfigurations: () => ({ [OPPORTUNITY_TYPE]: CONFIG }),
+}));
 
 type MockOppOverrides = Partial<
   Pick<Opportunity, "isPendingOverdue" | "isEligibleStaleViewed">
@@ -34,17 +52,9 @@ function mockOpp(overrides: MockOppOverrides = {}): Opportunity {
     type: OPPORTUNITY_TYPE,
     isPendingOverdue: false,
     isEligibleStaleViewed: false,
+    tabTitle: () => "Eligible Now",
     ...overrides,
-    config: {
-      label: "Good Time Restoration",
-      urlSection: "goodTimeRestoration",
-      submittedTabTitle: "Pending",
-      pendingOverdueDaysThreshold: 14,
-      eligibleNotViewedDaysThreshold: 14,
-      tabGroups: {
-        "ELIGIBILITY STATUS": ["Eligible Now"],
-      },
-    },
+    config: CONFIG,
   } as unknown as Opportunity;
 }
 
@@ -53,7 +63,9 @@ function renderAlerts(opportunities: Opportunity[]) {
     <BrowserRouter>
       <OutstandingItemsAlerts
         opportunityTypes={[OPPORTUNITY_TYPE]}
-        opportunitiesByType={{ [OPPORTUNITY_TYPE]: opportunities }}
+        summaryByType={{
+          [OPPORTUNITY_TYPE]: summaryFromOpportunities(opportunities),
+        }}
       />
     </BrowserRouter>,
   );
@@ -65,12 +77,12 @@ describe("OutstandingItemsAlerts", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it("renders nothing when no opportunities are provided for the type", () => {
+  it("renders nothing when the type has no summary at all", () => {
     const { container } = render(
       <BrowserRouter>
         <OutstandingItemsAlerts
           opportunityTypes={[OPPORTUNITY_TYPE]}
-          opportunitiesByType={{}}
+          summaryByType={{}}
         />
       </BrowserRouter>,
     );
@@ -137,5 +149,55 @@ describe("OutstandingItemsAlerts", () => {
 
     const link = screen.getByRole("link", { name: /been Eligible/i });
     expect(link).toHaveAttribute("href", "/workflows/goodTimeRestoration");
+  });
+});
+
+describe("with an alerts prop — the Typesense homepage", () => {
+  function renderWithCounts(
+    alertsByType: Record<
+      string,
+      { eligibleStale: number; pendingOverdue: number }
+    >,
+  ) {
+    return render(
+      <BrowserRouter>
+        <OutstandingItemsAlerts
+          opportunityTypes={[OPPORTUNITY_TYPE]}
+          summaryByType={{
+            [OPPORTUNITY_TYPE]: summaryFromCounts(
+              {},
+              [],
+              alertsByType[OPPORTUNITY_TYPE],
+            ),
+          }}
+        />
+      </BrowserRouter>,
+    );
+  }
+
+  it("renders both rows from counts alone, with no opportunities", () => {
+    renderWithCounts({
+      [OPPORTUNITY_TYPE]: { eligibleStale: 5, pendingOverdue: 3 },
+    });
+
+    expect(screen.getByText(/5 clients have been/)).toBeInTheDocument();
+    expect(screen.getByText(/3 clients have been/)).toBeInTheDocument();
+  });
+
+  it("renders nothing when both counts are zero", () => {
+    const { container } = renderWithCounts({
+      [OPPORTUNITY_TYPE]: { eligibleStale: 0, pendingOverdue: 0 },
+    });
+
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it("renders only the row that has a count", () => {
+    renderWithCounts({
+      [OPPORTUNITY_TYPE]: { eligibleStale: 0, pendingOverdue: 2 },
+    });
+
+    expect(screen.getByText(/2 clients have been/)).toBeInTheDocument();
+    expect(screen.queryByText(/not viewed for over/)).not.toBeInTheDocument();
   });
 });

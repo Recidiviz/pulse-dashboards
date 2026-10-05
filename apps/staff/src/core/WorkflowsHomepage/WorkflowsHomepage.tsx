@@ -38,9 +38,11 @@ const ManagedComponent = observer(function WorkflowsHomepage({
   const {
     activeOpportunityTypes,
     opportunitiesByType,
+    summaryByType,
     hasOpportunities,
     showTasksSummaryBottom,
     showTasksSummaryCard,
+    taskCountsUnavailable,
     tasks,
     aboveHeaderCopy,
     workflowsResultCopy,
@@ -60,16 +62,27 @@ const ManagedComponent = observer(function WorkflowsHomepage({
           headerText={workflowsResultCopy.headerText}
           callToActionText={workflowsResultCopy.callToActionText}
         >
-          {showTasksSummaryCard && <TasksCards tasks={tasks} />}
+          {showTasksSummaryCard && (
+            <TasksCards
+              tasks={tasks}
+              countsUnavailable={taskCountsUnavailable}
+            />
+          )}
           {hasOpportunities &&
             activeOpportunityTypes &&
             opportunitiesByType && (
               <OpportunitySummaries
                 opportunityTypes={activeOpportunityTypes}
                 opportunitiesByType={opportunitiesByType}
+                summaryByType={summaryByType}
               />
             )}
-          {showTasksSummaryBottom && <TasksSummary tasks={tasks} />}
+          {showTasksSummaryBottom && (
+            <TasksSummary
+              tasks={tasks}
+              countsUnavailable={taskCountsUnavailable}
+            />
+          )}
         </WorkflowsResults>
       </ModelHydrator>
     </WorkflowsNavLayout>

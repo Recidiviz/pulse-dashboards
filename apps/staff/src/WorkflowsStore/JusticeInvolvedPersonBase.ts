@@ -80,6 +80,9 @@ export abstract class JusticeInvolvedPersonBase<
      * identity and overlay both arrive projected inside the opportunity hit,
      * and the per-person subscription is a large part of the fan-out the
      * Typesense path removes.
+     *
+     * TODO(OBT-52494): running no task factory is why the homepage has no task
+     * counts under the gate.
      */
     options: { slim?: boolean } = {},
   ) {

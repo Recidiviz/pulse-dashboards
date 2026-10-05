@@ -17,7 +17,7 @@
 
 import pluralize from "pluralize";
 
-import { SystemId } from "~datatypes";
+import { OpportunityType, SystemId } from "~datatypes";
 import {
   compositeHydrationState,
   Hydratable,
@@ -25,6 +25,13 @@ import {
   isHydrated,
 } from "~hydration-utils";
 
+import {
+  EMPTY_SUMMARY,
+  hasDisplayableTabs,
+  type OpportunitySummaryData,
+  summaryFromCounts,
+  summaryFromOpportunities,
+} from "../../core/WorkflowsHomepage/summaryData";
 import { Client } from "../Client";
 import { Opportunity, OpportunityTab } from "../Opportunity";
 import { OpportunityConfigurationStore } from "../Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
@@ -45,7 +52,83 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
     super(workflowsStore);
   }
 
+  /**
+   * Whether the homepage reads its opportunities from Typesense. The condition
+   * lives on `SearchStore`, which `OpportunitySearchManager` also reads.
+   */
+  get useTypesenseHomepage(): boolean {
+    // Optional: a store that cannot answer means the Firestore path.
+    // Defaulting on would move a tenant across by accident.
+    return Boolean(this.workflowsStore.searchStore?.isTypesenseHomepageEnabled);
+  }
+
+  /**
+   * What each type's card renders, from whichever source the gate selects.
+   *
+   * Both paths resolve here rather than in the components, because the two
+   * headline counts are legitimately different: a hydrated list applies the
+   * type's `countByFunction`, while the search path can only sum its buckets.
+   */
+  get summaryByType(): Partial<
+    Record<OpportunityType, OpportunitySummaryData>
+  > {
+    if (!this.useTypesenseHomepage) {
+      return Object.fromEntries(
+        Object.entries(this.opportunitiesByType ?? {}).map(
+          ([type, opportunities]) => [
+            type,
+            summaryFromOpportunities(opportunities ?? []),
+          ],
+        ),
+      );
+    }
+
+    const { countsByType, peopleByType, alertsByType } =
+      this.workflowsStore.searchStore.opportunitySearchManager;
+
+    return Object.fromEntries(
+      Object.entries(countsByType).map(([type, tabCounts]) => [
+        type,
+        summaryFromCounts(
+          tabCounts,
+          peopleByType?.[type],
+          alertsByType?.[type],
+        ),
+      ]),
+    );
+  }
+
+  /**
+   * Whether the page has anything to show. Gates the whole summaries block.
+   * The inherited version reads `caseloadPersons`, which the gate empties, so
+   * the block would never render however many the census counted.
+   */
+  get hasOpportunities(): boolean {
+    if (!this.useTypesenseHomepage) return super.hasOpportunities;
+    return Object.entries(this.summaryByType).some(([type, summary]) =>
+      this.hasDisplayableSummary(type, summary ?? EMPTY_SUMMARY),
+    );
+  }
+
+  /** Whether a type's card would render any tab the first tab group displays. */
+  private hasDisplayableSummary(
+    opportunityType: string,
+    summary: OpportunitySummaryData,
+  ): boolean {
+    return hasDisplayableTabs(
+      summary,
+      this.opportunityConfigurationStore.opportunities[
+        opportunityType as OpportunityType
+      ]?.tabGroups ?? {},
+    );
+  }
+
   get shouldHydrateTasks() {
+    // TODO(OBT-52494): decide how tasks hydrate once the homepage stops
+    // fetching the caseload. Nothing to hydrate under the gate — the
+    // `caseloadPersons` tasks come from is empty by design — so the card
+    // renders without its count until that is settled.
+    if (this.useTypesenseHomepage) return false;
     // Only hydrate tasks when we are in supervision and the user has access to supervision tasks
     return (
       this.workflowsStore.activeSystem !== "INCARCERATION" &&
@@ -53,9 +136,26 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
     );
   }
 
+  /**
+   * Re-runs the count search, on every mount of the homepage.
+   *
+   * The manager's reaction watches the tenant, system and selection — none of
+   * which an officer changes by acting on an opportunity, so without this a
+   * snooze taken elsewhere leaves these counts stale.
+   *
+   * Cheap to repeat: `search()` guards races, and the plan is one
+   * `multi_search`.
+   */
+  refreshCounts(): void {
+    if (!this.useTypesenseHomepage) return;
+    void this.workflowsStore.searchStore.opportunitySearchManager.search();
+  }
+
   hydrate() {
     // Hydrate opportunities
     super.hydrate();
+
+    this.refreshCounts();
 
     // Possibly hydrate tasks
     if (this.shouldHydrateTasks) {
@@ -78,11 +178,16 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
       return { status: "hydrated" };
     }
 
-    const opportunityHydrators = [this.workflowsStore as Hydratable].concat(
-      this.workflowsStore.caseloadPersons
-        .map((person) => person.opportunityManager)
-        .concat(),
-    );
+    const opportunityHydrators = this.useTypesenseHomepage
+      ? [
+          this.workflowsStore as Hydratable,
+          this.workflowsStore.searchStore.opportunitySearchManager,
+        ]
+      : [this.workflowsStore as Hydratable].concat(
+          this.workflowsStore.caseloadPersons
+            .map((person) => person.opportunityManager)
+            .concat(),
+        );
 
     if (this.shouldHydrateTasks) {
       // If tasks are available, take into account tasks in the hydration state,
@@ -201,11 +306,29 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
     return (
       // tasks exists for this tenant, and
       !!currentTenantConfig?.navigation?.workflows?.includes("tasks") &&
-      // the current caseload has tasks available, and
-      this.workflowsStore.hasSupervisionTasks &&
+      // the current caseload has tasks available.
+      //
+      // TODO(OBT-52494): this condition is BYPASSED under the gate. The
+      // caseload is empty by design there, so the normal check would hide the
+      // card entirely — instead it renders with its count suppressed. Revisit
+      // when tasks have a source that does not need the caseload. And
+      (this.useTypesenseHomepage || this.workflowsStore.hasSupervisionTasks) &&
       // the current user has access to tasks
       this.workflowsStore.rootStore.userStore.canUserAccessTasks
     );
+  }
+
+  /**
+   * True when the tasks card must render without a count. The counts come from
+   * `caseloadPersons`, which the gate empties, so rendering them would put
+   * "0 clients have tasks" on the page — wrong, and reassuring.
+   *
+   * TODO(OBT-52494): temporary. This exists only because the homepage no
+   * longer fetches the caseload the counts are derived from; it goes away
+   * once tasks have their own source.
+   */
+  get taskCountsUnavailable(): boolean {
+    return this.useTypesenseHomepage;
   }
 
   /**
@@ -252,9 +375,15 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
 
     const selectedSearchIdsCount = this.selectedSearchIds?.length || 0;
 
-    const noOpportunities = Object.values(this.opportunitiesByType ?? {}).every(
-      (opps) => !this.hasDisplayableOpportunities(opps ?? []),
-    );
+    // `opportunitiesByType` is empty under the gate, so reading it here would
+    // assert "no eligible opportunities" over a page full of them.
+    const noOpportunities = this.useTypesenseHomepage
+      ? !Object.entries(this.summaryByType).some(([type, summary]) =>
+          this.hasDisplayableSummary(type, summary ?? EMPTY_SUMMARY),
+        )
+      : Object.values(this.opportunitiesByType ?? {}).every(
+          (opps) => !this.hasDisplayableOpportunities(opps ?? []),
+        );
     const noSearchResults = !this.showTasksSummary && noOpportunities;
 
     const salutation = this.userGivenNames

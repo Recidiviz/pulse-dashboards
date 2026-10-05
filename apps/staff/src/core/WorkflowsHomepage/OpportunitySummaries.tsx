@@ -17,11 +17,16 @@
 
 import { OpportunityType } from "~datatypes";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useOpportunityConfigurations,
+} from "../../components/StoreProvider";
+import { PartialRecord } from "../../utils/typeUtils";
 import { Opportunity } from "../../WorkflowsStore";
 import { OpportunityCaseHighlights } from "./OpportunityCaseHighlights";
 import OpportunityTypeSummary from "./OpportunityTypeSummary";
 import { OutstandingItemsAlerts } from "./OutstandingItemsAlerts";
+import { EMPTY_SUMMARY, type OpportunitySummaryData } from "./summaryData";
 
 /**
  * A shared component between workflows and the supervisor homepage officer view.
@@ -32,13 +37,18 @@ export const OpportunitySummaries = function OpportunitySummaries({
   opportunityTypes,
   officerPseudoId,
   zeroGrantOpportunities,
+  summaryByType,
 }: {
-  opportunitiesByType: Partial<Record<OpportunityType, Opportunity[]>>;
+  /** Only the case highlights read the records themselves. */
+  opportunitiesByType: PartialRecord<OpportunityType, Opportunity[]>;
   opportunityTypes: OpportunityType[];
   officerPseudoId?: string;
   zeroGrantOpportunities?: string[];
+  /** What each type's card renders, derived by the caller's presenter. */
+  summaryByType: PartialRecord<OpportunityType, OpportunitySummaryData>;
 }) {
   const { zeroGrantsFlag } = useFeatureVariants();
+  const configs = useOpportunityConfigurations();
 
   return (
     <div>
@@ -48,28 +58,34 @@ export const OpportunitySummaries = function OpportunitySummaries({
       />
       <OutstandingItemsAlerts
         opportunityTypes={opportunityTypes}
-        opportunitiesByType={opportunitiesByType}
+        summaryByType={summaryByType}
       />
-      {opportunityTypes.map((opportunityType, index) => {
-        const opportunities = opportunitiesByType[opportunityType] || [];
-        if (
-          opportunities.length &&
-          !opportunities[0].config.highlightCasesOnHomepage
-        ) {
-          return (
-            <OpportunityTypeSummary
-              key={opportunityType}
-              opportunities={opportunities}
-              opportunityType={opportunityType}
-              officerPseudoId={officerPseudoId}
-              showZeroGrantsPill={
-                zeroGrantsFlag &&
-                zeroGrantOpportunities?.includes(opportunityType)
-              }
-            />
-          );
-        }
-        return null;
+      {opportunityTypes.map((opportunityType) => {
+        const summary = summaryByType[opportunityType] ?? EMPTY_SUMMARY;
+        // Read from the CONFIG, not from a record: the flag is a property of
+        // the type, and the counts path has no instance to ask.
+        const highlighted =
+          configs[opportunityType]?.highlightCasesOnHomepage ?? false;
+
+        // Any populated tab, not the headline count: a type whose records are
+        // all submitted has a zero headline and still has something to show.
+        const hasSomethingToShow = Object.values(summary.tabCounts).some(
+          (count) => count > 0,
+        );
+        if (highlighted || !hasSomethingToShow) return null;
+
+        return (
+          <OpportunityTypeSummary
+            key={opportunityType}
+            opportunityType={opportunityType}
+            officerPseudoId={officerPseudoId}
+            summary={summary}
+            showZeroGrantsPill={
+              zeroGrantsFlag &&
+              zeroGrantOpportunities?.includes(opportunityType)
+            }
+          />
+        );
       })}
     </div>
   );

@@ -28,10 +28,6 @@
 // that reads the OVERLAY is false by construction. What survives reads only the
 // RECORD fields the bucket key already carries.
 //
-// That holds only while those predicates read the overlay.
-// `UsTxArsErsV2OpportunityBase` redefines `isGrantApproved` to read
-// `record.metadata.grantedAt`, so an UNTOUCHED record there is still grant
-// approved — which is why those two types are excluded below.
 //
 // The index stores those fields and nothing else of the record, so a document
 // from it cannot be parsed by its Zod schema. That is why the class is not
@@ -53,8 +49,11 @@ import { JusticeInvolvedPerson } from "../types";
  * Types whose untouched tab reads data the bucket key does not carry, so one
  * exemplar cannot speak for its bucket.
  *
- * Returning undefined puts them in `unreconstructable`, which the page renders
- * as "unavailable". A guess would render a wrong number that looks right.
+ * Returning undefined withholds the count, which is right — a guess would
+ * render a wrong number that looks right. Dropping the card is NOT right, and
+ * is why this set must be empty before launch rather than merely accurate.
+ *
+ * TODO(OBT-53660) Do not maintain this list and derive every tab title directly
  */
 export const BUCKET_KEY_INSUFFICIENT: ReadonlySet<string> = new Set([
   // Compare `eligibilityDate` against the current week. A date is continuous,

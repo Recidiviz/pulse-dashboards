@@ -35,6 +35,7 @@ import {
   type ScopedTypesenseClient,
 } from "~@typesense/client";
 import type { OpportunityType } from "~datatypes";
+import type { Hydratable, HydrationState } from "~hydration-utils";
 
 import type { SearchStore } from "../SearchStore";
 import type { WorkflowsStore } from "../WorkflowsStore";
@@ -110,7 +111,7 @@ function staleBucketCount(result: TypesenseResult): number {
   return 0;
 }
 
-export class OpportunitySearchManager {
+export class OpportunitySearchManager implements Hydratable {
   /** Per opportunity type, the count for each tab that has one. */
   countsByType: Record<string, TabCounts> = {};
 
@@ -129,6 +130,11 @@ export class OpportunitySearchManager {
 
   /** Set when a search failed, so the caller can fall back rather than render zeros. */
   lastError: string | undefined = undefined;
+
+  /**
+   * Whether a search has been asked for yet.
+   */
+  private hydrationStarted = false;
 
   typesenseClient: ScopedTypesenseClient;
 
@@ -182,6 +188,22 @@ export class OpportunitySearchManager {
 
   private get workflowsStore(): WorkflowsStore {
     return this.searchStore.workflowsStore;
+  }
+
+  /**
+   * Derived from the fields the search already maintains, so there is one
+   * source of truth rather than a status field to keep in step.
+   */
+  get hydrationState(): HydrationState {
+    if (this.lastError)
+      return { status: "failed", error: new Error(this.lastError) };
+    if (this.searchPending) return { status: "loading" };
+    if (!this.hydrationStarted) return { status: "needs hydration" };
+    return { status: "hydrated" };
+  }
+
+  hydrate(): void {
+    void this.search();
   }
 
   /**
@@ -257,6 +279,11 @@ export class OpportunitySearchManager {
 
   /** Issues the whole plan as one `multi_search` and stores what it returned. */
   async search(): Promise<void> {
+    runInAction(() => {
+      this.hydrationStarted = true;
+      this.lastError = undefined;
+    });
+
     // Gated HERE, not at the reaction: this manager is constructed for every
     // tenant, and only the flagged ones may reach Typesense.
     if (!this.searchStore.isTypesenseHomepageEnabled) return;
@@ -285,7 +312,6 @@ export class OpportunitySearchManager {
 
     runInAction(() => {
       this.searchPending = true;
-      this.lastError = undefined;
     });
 
     try {

@@ -20,6 +20,11 @@ import { makeObservable, override } from "mobx";
 import { OpportunityType } from "~datatypes";
 import { HydratesFromSource } from "~hydration-utils";
 
+import {
+  type OpportunitySummaryData,
+  summaryFromOpportunities,
+} from "../../core/WorkflowsHomepage/summaryData";
+import { PartialRecord } from "../../utils/typeUtils";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { OpportunityConfigurationStore } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
@@ -93,6 +98,18 @@ export class SupervisionOfficerOpportunitiesPresenter extends WithJusticeInvolve
 
   get numClientsOnCaseload(): number | undefined {
     return this.clients?.length;
+  }
+
+  /** What each type's card renders, derived from the hydrated records. */
+  get summaryByType(): PartialRecord<OpportunityType, OpportunitySummaryData> {
+    return Object.fromEntries(
+      Object.entries(this.opportunitiesByType ?? {}).map(
+        ([type, opportunities]) => [
+          type,
+          summaryFromOpportunities(opportunities ?? []),
+        ],
+      ),
+    );
   }
 
   get opportunitiesByType() {

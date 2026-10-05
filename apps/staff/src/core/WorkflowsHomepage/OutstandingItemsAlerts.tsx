@@ -26,10 +26,11 @@ import styled from "styled-components";
 import { OpportunityType } from "~datatypes";
 import { Icon, IconSVG, palette } from "~design-system";
 
+import { useOpportunityConfigurations } from "../../components/StoreProvider";
 import { PartialRecord } from "../../utils/typeUtils";
-import { Opportunity } from "../../WorkflowsStore";
 import { OpportunityConfiguration } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations";
 import { workflowsUrl } from "../views";
+import type { AlertCounts, OpportunitySummaryData } from "./summaryData";
 
 const Container = styled.section`
   background-color: rgba(255, 245, 245, 1);
@@ -116,7 +117,10 @@ function formatThresholdDuration(days: number): string {
 }
 
 function buildEntries(
-  opportunities: Opportunity[],
+  {
+    eligibleStale: eligibleStaleCount,
+    pendingOverdue: pendingOverdueCount,
+  }: AlertCounts,
   config: OpportunityConfiguration,
 ): AlertEntry[] {
   const { label, submittedTabTitle } = config;
@@ -125,9 +129,6 @@ function buildEntries(
   );
   const entries: AlertEntry[] = [];
 
-  const pendingOverdueCount = opportunities.filter(
-    (o) => o.isPendingOverdue,
-  ).length;
   if (pendingOverdueCount > 0 && config.pendingOverdueDaysThreshold != null) {
     const duration = formatThresholdDuration(
       config.pendingOverdueDaysThreshold,
@@ -145,9 +146,6 @@ function buildEntries(
     });
   }
 
-  const eligibleStaleCount = opportunities.filter(
-    (o) => o.isEligibleStaleViewed,
-  ).length;
   if (
     eligibleStaleCount > 0 &&
     config.eligibleNotViewedDaysThreshold != null &&
@@ -175,12 +173,13 @@ function buildEntries(
 
 const OutstandingItemsAlertForOpportunity = observer(
   function OutstandingItemsAlertForOpportunity({
-    opportunities,
+    counts,
+    config,
   }: {
-    opportunities: Opportunity[];
+    counts: AlertCounts;
+    config: OpportunityConfiguration;
   }) {
-    const { config } = opportunities[0];
-    const entries = buildEntries(opportunities, config);
+    const entries = buildEntries(counts, config);
 
     if (entries.length === 0) return null;
 
@@ -224,20 +223,27 @@ const OutstandingItemsAlertForOpportunity = observer(
 
 export const OutstandingItemsAlerts = observer(function OutstandingItemsAlerts({
   opportunityTypes,
-  opportunitiesByType,
+  summaryByType,
 }: {
   opportunityTypes: OpportunityType[];
-  opportunitiesByType: PartialRecord<OpportunityType, Opportunity[]>;
+  summaryByType: PartialRecord<OpportunityType, OpportunitySummaryData>;
 }) {
+  const configs = useOpportunityConfigurations();
+
   return (
     <>
       {opportunityTypes.map((opportunityType) => {
-        const opportunities = opportunitiesByType[opportunityType];
-        if (!opportunities?.length) return null;
+        const counts = summaryByType[opportunityType]?.alerts;
+        // From the config store, not from a record: the counts path has no
+        // instance to ask.
+        const config = configs[opportunityType];
+        if (!counts || !config) return null;
+
         return (
           <OutstandingItemsAlertForOpportunity
             key={opportunityType}
-            opportunities={opportunities}
+            counts={counts}
+            config={config}
           />
         );
       })}

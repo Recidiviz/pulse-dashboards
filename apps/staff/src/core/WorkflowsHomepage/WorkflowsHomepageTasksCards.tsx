@@ -101,13 +101,21 @@ const CardSubheading = styled(Sans12)`
 
 export const TasksCards = function TasksCards({
   tasks,
+  countsUnavailable = false,
 }: {
   tasks: SupervisionTask[];
+  /** See the same prop on TasksSummary. */
+  countsUnavailable?: boolean;
 }) {
   const { isMobile } = useIsMobile(true);
   return (
     <HomepageCards $isMobile={isMobile}>
-      {<TasksHomepageCard tasks={tasks} />}
+      {
+        <TasksHomepageCard
+          tasks={tasks}
+          countsUnavailable={countsUnavailable}
+        />
+      }
       <RoutePlannerHomepageCard />
     </HomepageCards>
   );
@@ -168,15 +176,25 @@ const RoutePlannerHomepageCard = function RoutePlannerHomepageCard() {
 
 const TasksHomepageCard = function TasksHomepageCard({
   tasks,
+  countsUnavailable = false,
 }: {
   tasks: SupervisionTask[];
+  /** See the same prop on TasksSummary. */
+  countsUnavailable?: boolean;
 }) {
   const tasksDueThisMonth = tasks.filter((t) => isThisMonth(t.dueDate)).length;
 
-  const subheading =
-    tasksDueThisMonth > 0
-      ? `${tasksDueThisMonth} tasks are due this month`
-      : `${tasks.length} total tasks`;
+  function buildSubheading(): string {
+    // "0 total tasks" is the lie this avoids: the caseload it counts is empty
+    // by design under the gate, not because the officer has nothing to do.
+    //
+    // TODO(OBT-52494): the subheading loses its number entirely here.
+    if (countsUnavailable) return "Review your tasks";
+    if (tasksDueThisMonth > 0)
+      return `${tasksDueThisMonth} tasks are due this month`;
+    return `${tasks.length} total tasks`;
+  }
+  const subheading = buildSubheading();
 
   return (
     <WorkflowsHomepageCard

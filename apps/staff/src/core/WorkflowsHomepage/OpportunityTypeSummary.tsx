@@ -15,54 +15,41 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { countBy } from "lodash";
 import { observer } from "mobx-react-lite";
 
 import { OpportunityType } from "~datatypes";
 
 import { useOpportunityConfigurations } from "../../components/StoreProvider";
-import {
-  countOpportunities,
-  Opportunity,
-  OpportunityTabGroup,
-} from "../../WorkflowsStore";
 import { insightsUrl, workflowsUrl } from "../views";
+import type { OpportunitySummaryData } from "./summaryData";
 import { WorkflowsHomepageSummary } from "./WorkflowsHomepageSummary";
 
 const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
-  opportunities,
   opportunityType,
   officerPseudoId,
   showZeroGrantsPill,
+  summary,
 }: {
-  opportunities: Opportunity[];
   opportunityType: OpportunityType;
   officerPseudoId?: string;
   showZeroGrantsPill?: boolean;
+  summary: OpportunitySummaryData;
 }): React.ReactElement<any> | null {
   const { eligibilityTextForCount, urlSection, zeroGrantsTooltip, tabGroups } =
     useOpportunityConfigurations()[opportunityType];
 
-  const totalOpportunityCount = countOpportunities(opportunities);
-  const people = opportunities.map((opp) => opp.person);
-
   // there should always be at least one tab group to display the tab names from
-  const tabGroup = Object.keys(tabGroups)[0] as OpportunityTabGroup;
   const tabTitles = Object.values(tabGroups)[0];
 
-  const numOpportunitiesByTab = countBy(opportunities, (opp) =>
-    opp.tabTitle(tabGroup),
-  );
-
-  const numOpportunitiesByTabSorted = Object.fromEntries(
+  const displayedTabCounts = Object.fromEntries(
     tabTitles
-      .filter((tabTitle) => numOpportunitiesByTab[tabTitle] > 0)
-      .map((tabTitle) => [tabTitle, numOpportunitiesByTab[tabTitle]]),
+      .filter((tabTitle) => summary.tabCounts[tabTitle] > 0)
+      .map((tabTitle) => [tabTitle, summary.tabCounts[tabTitle]]),
   );
 
   // Some opportunities have opportunities for non-enabled tabs,
   // but we don't show a summary if those are the only opps
-  if (Object.keys(numOpportunitiesByTabSorted).length === 0) return null;
+  if (Object.keys(displayedTabCounts).length === 0) return null;
 
   const navigationURL = officerPseudoId
     ? insightsUrl("supervisionOpportunity", {
@@ -74,10 +61,10 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
   return (
     <WorkflowsHomepageSummary
       url={navigationURL}
-      headerText={eligibilityTextForCount(totalOpportunityCount)}
-      reviewStatusCounts={numOpportunitiesByTabSorted}
-      totalCount={totalOpportunityCount}
-      people={people}
+      headerText={eligibilityTextForCount(summary.totalCount)}
+      reviewStatusCounts={displayedTabCounts}
+      totalCount={summary.totalCount}
+      people={summary.people}
       showZeroGrantsPill={!!showZeroGrantsPill}
       zeroGrantsTooltip={zeroGrantsTooltip}
     />
