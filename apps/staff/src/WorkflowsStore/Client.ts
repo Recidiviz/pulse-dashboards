@@ -179,12 +179,17 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     WorkflowsResidentRecord | undefined
   >;
 
-  constructor(record: ClientRecord, rootStore: RootStore) {
-    super(record, rootStore, createClientSupervisionTasks);
+  constructor(
+    record: ClientRecord,
+    rootStore: RootStore,
+    options: { slim?: boolean } = {},
+  ) {
+    super(record, rootStore, createClientSupervisionTasks, options);
 
     this.customTasks = createClientCustomTasks(this);
 
     if (
+      !options.slim &&
       rootStore.currentTenantId &&
       TENANT_CONFIGS[
         rootStore.currentTenantId

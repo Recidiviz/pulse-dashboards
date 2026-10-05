@@ -69,16 +69,25 @@ export abstract class JusticeInvolvedPersonBase<
 
   abstract personType: PersonType;
 
+  private injectedUpdates?: PersonUpdateRecord;
+
   constructor(
     record: RecordType,
     rootStore: RootStore,
     taskFactory?: TaskFactory<PersonClassForRecord<RecordType>>,
+    /**
+     * A SLIM shell subscribes to nothing and runs no task factory. Its
+     * identity and overlay both arrive projected inside the opportunity hit,
+     * and the per-person subscription is a large part of the fan-out the
+     * Typesense path removes.
+     */
+    options: { slim?: boolean } = {},
   ) {
     this.rootStore = rootStore;
 
     this.record = record;
 
-    makeObservable(this, {
+    makeObservable<this, "injectedUpdates">(this, {
       record: observable,
       supervisionTasks: observable,
       opportunityManager: observable,
@@ -87,6 +96,8 @@ export abstract class JusticeInvolvedPersonBase<
       opportunitiesEligible: computed,
       updateRecord: action,
       updates: computed,
+      injectedUpdates: observable,
+      injectUpdates: action,
       displayPreferredName: computed,
       preferredContactMethod: computed,
       assignedStaff: computed,
@@ -95,16 +106,18 @@ export abstract class JusticeInvolvedPersonBase<
       district: computed,
     });
 
-    this.personUpdatesSubscription =
-      new CollectionDocumentSubscription<PersonUpdateRecord>(
-        this.rootStore.firestoreStore,
-        { key: "clientUpdatesV2" },
-        record.recordId,
-      );
+    if (!options.slim) {
+      this.personUpdatesSubscription =
+        new CollectionDocumentSubscription<PersonUpdateRecord>(
+          this.rootStore.firestoreStore,
+          { key: "clientUpdatesV2" },
+          record.recordId,
+        );
 
-    this.supervisionTasks = taskFactory
-      ? taskFactory(this as unknown as PersonClassForRecord<RecordType>)
-      : undefined;
+      this.supervisionTasks = taskFactory
+        ? taskFactory(this as unknown as PersonClassForRecord<RecordType>)
+        : undefined;
+    }
 
     this.opportunityManager = new OpportunityManager(
       rootStore,
@@ -199,7 +212,16 @@ export abstract class JusticeInvolvedPersonBase<
   }
 
   get updates(): PersonUpdateRecord | undefined {
-    return this.personUpdatesSubscription?.data;
+    return this.injectedUpdates ?? this.personUpdatesSubscription?.data;
+  }
+
+  /**
+   * Supplies the person's overlay in place of the subscription.
+   * `preferredName` is what matters: it lets `displayPreferredName` resolve on
+   * a slim shell.
+   */
+  injectUpdates(updates: PersonUpdateRecord | undefined): void {
+    this.injectedUpdates = updates;
   }
 
   get preferredName(): string | undefined {
