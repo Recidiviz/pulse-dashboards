@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing, TooltipTrigger, typography } from "@recidiviz/design-system";
+import { spacing, typography } from "@recidiviz/design-system";
 import {
   ColumnDef,
   flexRender,
@@ -29,7 +29,7 @@ import { rem } from "polished";
 import { useMemo } from "react";
 import styled from "styled-components";
 
-import { Icon, palette } from "~design-system";
+import { palette } from "~design-system";
 
 import SortIcon from "../../assets/static/images/sortIcon.svg?react";
 import { ConfigLabels } from "../../InsightsStore/presenters/types";
@@ -40,6 +40,7 @@ import {
 } from "../../utils";
 import { SupervisionTask } from "../../WorkflowsStore";
 import PersonId, { PersonIdWithCopyIcon } from "../PersonId/PersonId";
+import { StatusIcon, VitalsDueDateCell } from "./VitalsDueDateCell";
 
 const Table = styled.table`
   width: 100%;
@@ -107,26 +108,6 @@ const SortIconWrapper = styled.div<{
   }};
 `;
 
-const StatusIcon = ({
-  kind,
-  tooltip,
-}: {
-  kind: React.ComponentProps<typeof Icon>["kind"];
-  tooltip: React.ComponentProps<typeof TooltipTrigger>["contents"];
-}) => (
-  <TooltipTrigger contents={tooltip}>
-    <Icon
-      kind={kind}
-      color={palette.slate60}
-      size="16"
-      style={{
-        marginLeft: rem(spacing.sm),
-        verticalAlign: "top",
-      }}
-    />
-  </TooltipTrigger>
-);
-
 type VitalsTaskDrilldownTableProps = {
   tasks: SupervisionTask[];
   bodyDisplayName: string;
@@ -173,17 +154,12 @@ export const VitalsTaskDrilldownTable = observer(
           cell: (info) => {
             const task = info.row.original; // Get the full task object;
 
-            const formattedDate = formatWorkflowsDate(task.dueDate);
-
             return (
-              <span>
-                {formattedDate}
-                {task.isOverdue && (
-                  <StatusIcon
-                    kind="Error"
-                    tooltip={`${bodyDisplayName} is overdue`}
-                  />
-                )}
+              <VitalsDueDateCell
+                date={task.dueDate}
+                isOverdue={task.isOverdue}
+                overdueTooltip={`${bodyDisplayName} is overdue`}
+              >
                 {task.isSnoozed && (
                   <StatusIcon
                     kind="Clock"
@@ -196,7 +172,7 @@ export const VitalsTaskDrilldownTable = observer(
                     }
                   />
                 )}
-              </span>
+              </VitalsDueDateCell>
             );
           },
         },

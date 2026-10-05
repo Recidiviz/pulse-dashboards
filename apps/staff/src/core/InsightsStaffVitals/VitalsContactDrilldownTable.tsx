@@ -31,13 +31,14 @@ import styled from "styled-components";
 
 import { VitalsSupervisionContacts } from "~datatypes";
 import { spacing, typography } from "~design-system";
-import { Icon, palette } from "~design-system";
+import { palette } from "~design-system";
 
 import SortIcon from "../../assets/static/images/sortIcon.svg?react";
 import { ConfigLabels } from "../../InsightsStore/presenters/types";
 import { formatWorkflowsDate } from "../../utils";
 import { toTitleCase } from "../../utils";
 import PersonId, { PersonIdWithCopyIcon } from "../PersonId/PersonId";
+import { VitalsDueDateCell } from "./VitalsDueDateCell";
 
 const Table = styled.table`
   width: 100%;
@@ -105,26 +106,6 @@ const SortIconWrapper = styled.div<{
   }};
 `;
 
-const StatusIcon = ({
-  kind,
-  tooltip,
-}: {
-  kind: React.ComponentProps<typeof Icon>["kind"];
-  tooltip: React.ComponentProps<typeof TooltipTrigger>["contents"];
-}) => (
-  <TooltipTrigger contents={tooltip}>
-    <Icon
-      kind={kind}
-      color={palette.slate60}
-      size="16"
-      style={{
-        marginLeft: rem(spacing.sm),
-        verticalAlign: "top",
-      }}
-    />
-  </TooltipTrigger>
-);
-
 type VitalsContactDrilldownTableProps = {
   contacts: VitalsSupervisionContacts[];
   bodyDisplayName: string;
@@ -172,23 +153,13 @@ export const VitalsContactrilldownTable = observer(
           header: "Due",
           sortingFn: "datetime",
           // eslint-disable-next-line react/no-unstable-nested-components
-          cell: (info) => {
-            const contactDueDate = formatWorkflowsDate(
-              info.row.getValue("contactDueDate"),
-            );
-
-            return (
-              <span style={{ whiteSpace: "nowrap" }}>
-                {contactDueDate}
-                {!info.row.original.contactCompleted && (
-                  <StatusIcon
-                    kind="Error"
-                    tooltip={`${bodyDisplayName} not completed by due date`}
-                  />
-                )}
-              </span>
-            );
-          },
+          cell: (info) => (
+            <VitalsDueDateCell
+              date={info.row.original.contactDueDate}
+              isOverdue={!info.row.original.contactCompleted}
+              overdueTooltip={`${bodyDisplayName} not completed by due date`}
+            />
+          ),
         },
         {
           accessorKey: "contactType",
