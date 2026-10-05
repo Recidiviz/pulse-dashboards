@@ -22,8 +22,10 @@ import { Checkbox } from "~@meetings/app/shared/ui/Checkbox";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import { SectionApproval } from "../lib/getSectionApprovalByTab";
+import { Tab } from "./MeetingTabs";
 
 type Props = {
+  activeTab: Tab;
   activeSectionApproval?: SectionApproval;
   isFooterChecked: boolean;
   hasBeenEdited: boolean;
@@ -35,6 +37,7 @@ type Props = {
 // Content-only: no outer max-width/border/height wrapper, so desktop and
 // mobile can each lay out the footer container the way they need to.
 export function ApprovalFooter({
+  activeTab,
   activeSectionApproval,
   isFooterChecked,
   hasBeenEdited,
@@ -45,7 +48,13 @@ export function ApprovalFooter({
   if (activeSectionApproval?.isApproved && activeSectionApproval.approvedAt) {
     return (
       <Typography className="flex-1 shrink text-sm font-normal leading-[20px] text-primary">
-        ✓ Reviewed by {activeSectionApproval.approverEmail} on{" "}
+        ✓{" "}
+        {activeTab === Tab.ActionItems ? (
+          <Typography className="font-semibold">Action Items</Typography>
+        ) : (
+          <Typography className="font-semibold">Draft Case Note</Typography>
+        )}{" "}
+        reviewed by {activeSectionApproval.approverEmail} on{" "}
         {formatMeetingStartDate(activeSectionApproval.approvedAt)}.
       </Typography>
     );
@@ -60,8 +69,22 @@ export function ApprovalFooter({
           disabled={!hasBeenEdited}
         />
         <View className="flex-1 shrink">
-          <Typography className="text-sm font-normal leading-[20px] text-primary">
-            I've reviewed this for accuracy and it's ready to use.
+          <Typography className="text-sm font-normal leading-[16px] text-primary">
+            {activeTab === Tab.ActionItems ? (
+              <>
+                I've reviewed the{" "}
+                <Typography className="font-semibold">Action Items</Typography>{" "}
+                for accuracy and they're ready to use.
+              </>
+            ) : (
+              <>
+                I've reviewed the{" "}
+                <Typography className="font-semibold">
+                  Draft Case Note
+                </Typography>{" "}
+                for accuracy and it's ready to use.
+              </>
+            )}
           </Typography>
           {!hasBeenEdited && (
             <Typography className="text-xs font-normal leading-[16px] text-secondary">

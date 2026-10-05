@@ -142,6 +142,7 @@ const MeetingMobile = ({
   const meetingNotesSheetRef = useRef<BottomSheetModal>(null);
 
   const {
+    footerTab,
     activeSectionApproval,
     isFooterChecked,
     hasBeenEdited,
@@ -534,6 +535,7 @@ const MeetingMobile = ({
           }`}
         >
           <ApprovalFooter
+            activeTab={footerTab}
             activeSectionApproval={activeSectionApproval}
             isFooterChecked={isFooterChecked}
             hasBeenEdited={hasBeenEdited}

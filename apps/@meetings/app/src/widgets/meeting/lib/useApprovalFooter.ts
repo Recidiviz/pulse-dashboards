@@ -38,23 +38,31 @@ export function useApprovalFooter(
 ) {
   const [isApprovalChecked, setIsApprovalChecked] = useState(false);
 
-  // Reset when switching tabs so one section's "reviewed" state doesn't
+  const isApprovableTab =
+    getSectionApprovalByTab(activeTab, meetingDetails.approvals) !== undefined;
+
+  // The footer renders from this rather than activeTab so it keeps its content
+  // while fading out on Transcript/Staff Feedback
+  const [footerTab, setFooterTab] = useState(activeTab);
+  if (isApprovableTab && footerTab !== activeTab) setFooterTab(activeTab);
+
+  // Reset when switching sections so one section's "reviewed" state doesn't
   // leak into another's.
   useEffect(() => {
     setIsApprovalChecked(false);
-  }, [activeTab]);
+  }, [footerTab]);
 
   const approveSection = useApproveSection(meetingId);
 
   const activeSectionApproval = getSectionApprovalByTab(
-    activeTab,
+    footerTab,
     meetingDetails.approvals,
   );
 
   // The reviewer must have actually changed something before they can mark
   // it reviewed — untouched LLM output can't be "confirmed accurate".
   const hasBeenEdited =
-    activeTab === Tab.DraftCaseNotes
+    footerTab === Tab.DraftCaseNotes
       ? meetingDetails.caseNoteEditedAt !== null
       : meetingDetails.meetingActionItems.some(
           (item) => item.editedTask !== null,
@@ -71,20 +79,21 @@ export function useApprovalFooter(
     if (approveSection.isPending) return;
 
     let section: ApprovableSectionKey | null = null;
-    if (activeTab === Tab.DraftCaseNotes) section = "caseNote";
-    if (activeTab === Tab.ActionItems) section = "actionItems";
+    if (footerTab === Tab.DraftCaseNotes) section = "caseNote";
+    if (footerTab === Tab.ActionItems) section = "actionItems";
     if (!section) return;
 
     approveSection.setApproval(section, "APPROVED");
   };
 
-  // Only Draft Case Notes and Action Items have an approvable section
-  // (activeSectionApproval is undefined for Transcript/Staff Feedback).
+  // Only Draft Case Notes and Action Items have an approvable section.
   const shouldShowFooter =
+    isApprovableTab &&
     activeSectionApproval !== undefined &&
     (activeSectionApproval.isApproved || isMeetingCreator);
 
   return {
+    footerTab,
     activeSectionApproval,
     isFooterChecked,
     hasBeenEdited,

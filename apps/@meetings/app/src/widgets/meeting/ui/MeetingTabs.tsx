@@ -36,6 +36,7 @@ type Props = {
   isTranscriptionUnavailable?: boolean;
   showTranscription: boolean;
   showStaffFeedback: boolean;
+  tabOrder?: Tab[];
   // Only Draft Case Notes and Action Items are approvable; other tabs never
   // show a review indicator regardless of this being set.
   approvals?: { caseNote: SectionApproval; actionItems: SectionApproval };
@@ -47,9 +48,10 @@ const MeetingTabs = ({
   isTranscriptionUnavailable,
   showTranscription,
   showStaffFeedback,
+  tabOrder = Object.values(Tab),
   approvals,
 }: Props) => {
-  const visibleTabs = Object.values(Tab).filter((tab) => {
+  const visibleTabs = tabOrder.filter((tab) => {
     if (tab === Tab.Transcript) return showTranscription;
     if (tab === Tab.StaffFeedback) return showStaffFeedback;
     return true;

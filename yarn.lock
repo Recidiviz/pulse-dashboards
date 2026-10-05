@@ -10803,6 +10803,7 @@ __metadata:
     picocolors: "npm:*"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
+    react-intersection-observer: "npm:^9.4.3"
     react-native: "npm:~0.83.10"
     react-native-auth0: "npm:^5.5.1"
     react-native-css-interop: "npm:^0.2.6"

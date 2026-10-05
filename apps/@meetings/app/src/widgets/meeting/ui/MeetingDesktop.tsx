@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { Link } from "@react-navigation/native";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useRef, useState } from "react";
 import { ImageBackground, ScrollView, View } from "react-native";
 import ChevronLeftIcon from "react-native-heroicons/outline/ChevronLeftIcon";
 import ClockIcon from "react-native-heroicons/outline/ClockIcon";
@@ -38,6 +38,7 @@ import {
   humanReadableTitleCase,
 } from "~@meetings/app/shared/lib/format";
 import { Button } from "~@meetings/app/shared/ui/Button";
+import { FadeContainer } from "~@meetings/app/shared/ui/FadeContainer";
 import { useSnackbarBottomOffset } from "~@meetings/app/shared/ui/Snackbar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
@@ -50,9 +51,19 @@ import DraftCaseNoteTab from "./DraftCaseNoteTab";
 import MeetingTabs, { Tab } from "./MeetingTabs";
 import MeetingTranscriptionTab from "./MeetingTranscriptionTab";
 import OutputVote from "./OutputVote";
+import { ScrollSection, scrollToSection } from "./ScrollSection";
 import StaffFeedbackTab from "./StaffFeedbackTab";
 
 const FOOTER_HEIGHT = 64;
+
+const TAB_ORDER = [
+  Tab.DraftCaseNotes,
+  Tab.ActionItems,
+  Tab.StaffFeedback,
+  Tab.Transcript,
+];
+
+const TAB_SCROLL_MS = 800;
 
 type Props = {
   meetingId: string;
@@ -72,6 +83,12 @@ const MeetingDesktop = ({
   header,
 }: Props) => {
   const [activeTab, setActiveTab] = useState<Tab>(Tab.DraftCaseNotes);
+  // Ignore scroll-spy updates until a tab press finishes scrolling. Otherwise
+  // every section scrolled past would briefly become active, making the tabs
+  // and the approval footer flicker
+  const ignoreVisibleUntilRef = useRef(0);
+  // State rather than a ref so the sections start observing once it mounts
+  const [scrollView, setScrollView] = useState<ScrollView | null>(null);
   const [isPlayerVisible, setIsPlayerVisible] = useState(false);
   const { track } = useAnalytics();
   const { email: currentUserEmail, isSkipAuthUser } = useUserContext();
@@ -80,6 +97,7 @@ const MeetingDesktop = ({
       meetingDetails.staffEmail.toLowerCase() || isSkipAuthUser;
 
   const {
+    footerTab,
     activeSectionApproval,
     isFooterChecked,
     hasBeenEdited,
@@ -109,6 +127,17 @@ const MeetingDesktop = ({
     time,
     duration,
   });
+
+  const handleTabPress = (tab: Tab) => {
+    setActiveTab(tab);
+    ignoreVisibleUntilRef.current = Date.now() + TAB_SCROLL_MS;
+    scrollToSection(tab);
+  };
+
+  const handleSectionVisible = (tab: Tab) => {
+    if (Date.now() < ignoreVisibleUntilRef.current) return;
+    setActiveTab(tab);
+  };
 
   const handlePrint = () => {
     track("print_button_clicked", {
@@ -204,13 +233,14 @@ const MeetingDesktop = ({
               <View className="flex-1">
                 <MeetingTabs
                   activeTab={activeTab}
-                  setActiveTab={setActiveTab}
+                  setActiveTab={handleTabPress}
                   isTranscriptionUnavailable={
                     !meetingDetails.transcription &&
                     !meetingDetails.transcriptDeletedAt
                   }
                   showTranscription={showTranscription}
                   showStaffFeedback={meetingDetails.staffFeedback != null}
+                  tabOrder={TAB_ORDER}
                   approvals={meetingDetails.approvals}
                 />
               </View>
@@ -227,11 +257,19 @@ const MeetingDesktop = ({
           </View>
 
           <ScrollView
+            ref={setScrollView}
             className="scrollbar-gutter-stable flex-1"
-            contentContainerClassName="grow pr-14"
+            contentContainerClassName="grow pr-14 pb-10"
+            contentContainerStyle={
+              shouldShowFooter && { paddingBottom: 40 + FOOTER_HEIGHT }
+            }
           >
-            <View className="mx-auto w-full flex-1">
-              {activeTab === Tab.DraftCaseNotes && (
+            <View className="mx-auto w-full gap-10">
+              <ScrollSection
+                tab={Tab.DraftCaseNotes}
+                scrollView={scrollView}
+                onVisible={handleSectionVisible}
+              >
                 <DraftCaseNoteTab
                   meetingId={meetingId}
                   caseNote={meetingDetails.caseNote || ""}
@@ -244,13 +282,17 @@ const MeetingDesktop = ({
                     meetingDetails.caseNote && (
                       <OutputVote
                         meetingDetails={meetingDetails}
-                        tab={activeTab}
+                        tab={Tab.DraftCaseNotes}
                       />
                     )
                   }
                 />
-              )}
-              {activeTab === Tab.ActionItems && (
+              </ScrollSection>
+              <ScrollSection
+                tab={Tab.ActionItems}
+                scrollView={scrollView}
+                onVisible={handleSectionVisible}
+              >
                 <ActionItemsTab
                   items={meetingDetails.meetingActionItems}
                   outputVote={
@@ -258,32 +300,39 @@ const MeetingDesktop = ({
                     meetingDetails.meetingActionItems.length > 0 && (
                       <OutputVote
                         meetingDetails={meetingDetails}
-                        tab={activeTab}
+                        tab={Tab.ActionItems}
                       />
                     )
                   }
                   meetingId={meetingId}
                   personType={personType}
                 />
-              )}
-              {activeTab === Tab.StaffFeedback &&
-                meetingDetails.staffFeedback && (
+              </ScrollSection>
+              {meetingDetails.staffFeedback && (
+                <ScrollSection
+                  tab={Tab.StaffFeedback}
+                  scrollView={scrollView}
+                  onVisible={handleSectionVisible}
+                >
                   <StaffFeedbackTab
                     staffFeedback={meetingDetails.staffFeedback}
                     outputVote={
-                      isMeetingCreator &&
-                      meetingDetails.staffFeedback && (
+                      isMeetingCreator && (
                         <OutputVote
                           meetingDetails={meetingDetails}
-                          tab={activeTab}
+                          tab={Tab.StaffFeedback}
                         />
                       )
                     }
                   />
-                )}
-              {activeTab === Tab.Transcript &&
-                showTranscription &&
-                meetingDetails?.transcription && (
+                </ScrollSection>
+              )}
+              {showTranscription && meetingDetails?.transcription && (
+                <ScrollSection
+                  tab={Tab.Transcript}
+                  scrollView={scrollView}
+                  onVisible={handleSectionVisible}
+                >
                   <MeetingTranscriptionTab
                     transcription={{
                       ...meetingDetails.transcription,
@@ -300,19 +349,24 @@ const MeetingDesktop = ({
                     jiiName={person.fullName}
                     personType={personType}
                   />
-                )}
+                </ScrollSection>
+              )}
             </View>
           </ScrollView>
         </View>
       </View>
-      {shouldShowFooter && (
+      <FadeContainer
+        isVisible={shouldShowFooter}
+        style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}
+      >
         <View
-          className="flex-row border-t border-subtle"
+          className="flex-row border-t border-subtle bg-primary"
           style={{ height: FOOTER_HEIGHT }}
         >
           <View className="w-36 shrink-0" />
           <View className="flex-1 flex-row items-center justify-between py-3 pr-10">
             <ApprovalFooter
+              activeTab={footerTab}
               activeSectionApproval={activeSectionApproval}
               isFooterChecked={isFooterChecked}
               hasBeenEdited={hasBeenEdited}
@@ -322,7 +376,7 @@ const MeetingDesktop = ({
             />
           </View>
         </View>
-      )}
+      </FadeContainer>
     </View>
   );
 };
