@@ -18,24 +18,41 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
+import { usNeCheckInSchema } from "~@jii/configs";
+
 import {
   getCheckInInputSchema,
   getCheckInQueryResolver,
 } from "../../../../helpers/US_NE/checkIn";
+import { checkInStatus } from "../../../../helpers/US_NE/checkInUtils";
 import { residentRestrictedMiddleware } from "../../../../middleware/residentRestrictedMiddleware";
 import { nebraskaProcedure } from "./nebraskaProcedure";
 
 /**
- * Return the latest check-in corresponding to the provided resident, or null
- * if none was found.
+ * Return the latest check-in corresponding to the provided resident,
+ * along with status information derived from the check-in, or null if none was found.
  */
 export const getCheckIn = nebraskaProcedure
   .input(getCheckInInputSchema)
   .use(residentRestrictedMiddleware)
-  .query(getCheckInQueryResolver);
+  .query(async (opts) => {
+    const result = await getCheckInQueryResolver(opts);
+
+    if (!result) {
+      return null;
+    }
+
+    if (result.completedAt) {
+      return { ...result, status: { kind: "COMPLETED" } as const };
+    }
+
+    return { ...result, status: checkInStatus(result.answers) };
+  });
 
 /**
  * Update the check-in identified by the given ID with the provided answers.
+ * Return the check-in data from the database, along with status information derived from
+ * the check-in AFTER the update.
  *
  * Raises an error if there is a mismatch between the resident's pseudonymized ID
  * and the pseudonymized ID associated with this check-in.
@@ -73,12 +90,21 @@ export const updateCheckIn = nebraskaProcedure
       });
     }
 
-    return await ctx.prisma.usNeCheckIn.update({
+    const nextStatus = checkInStatus(input.answers);
+
+    const result = await ctx.prisma.usNeCheckIn.update({
       where: {
         id: input.id,
       },
       data: {
         answers: input.answers,
+        completedAt: nextStatus.kind === "COMPLETED" ? new Date() : undefined,
       },
     });
+
+    return {
+      ...result,
+      answers: usNeCheckInSchema.parse(result.answers),
+      status: nextStatus,
+    };
   });

@@ -23,10 +23,7 @@ import { makeAutoObservable } from "mobx";
 import { IntakeAssessmentPresenter } from "~@jii/case-planning";
 import { OpportunityData, ResidentRecord, UserStore } from "~@jii/data";
 import { UsNeTranslationsObject } from "~@jii/translation";
-import {
-  JiiResidentAppRouter,
-  JiiResidentAppRouterOutputs,
-} from "~@jii/trpc-types";
+import { JiiResidentAppRouter } from "~@jii/trpc-types";
 import {
   UsNeGoodTimeRestorationRecord,
   usNeGoodTimeRestorationTodosCriterionEnum,
@@ -36,12 +33,11 @@ import {
 import { FirebaseAuthClient } from "~firebase-auth";
 import { Hydratable, HydrationState } from "~hydration-utils";
 
+import { CheckInFormResult } from "../CheckInTool/types";
+
 type GoodTimeOpportunity = OpportunityData & {
   opportunityRecord: UsNeGoodTimeRestorationRecord["output"];
 };
-
-type CheckInFormResults =
-  JiiResidentAppRouterOutputs["state"]["usNe"]["getCheckIn"];
 
 export class UsNeTodosPresenter implements Hydratable {
   readonly intakeAssessmentPresenter: IntakeAssessmentPresenter;
@@ -54,7 +50,7 @@ export class UsNeTodosPresenter implements Hydratable {
     firebaseAuthClient: FirebaseAuthClient,
     userStore: UserStore,
     public checkInFormQuery: UseSuspenseQueryResult<
-      CheckInFormResults,
+      CheckInFormResult,
       TRPCClientErrorLike<JiiResidentAppRouter>
     >,
     private readonly usNeCheckInTool: boolean,

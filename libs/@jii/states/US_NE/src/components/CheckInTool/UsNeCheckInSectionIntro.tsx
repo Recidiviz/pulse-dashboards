@@ -1,0 +1,42 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2026 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+import { CheckInSectionId } from "~@jii/configs";
+
+import { useUsNeCheckInContext } from "./UsNeCheckInContext";
+
+export const UsNeCheckInSectionIntro = ({
+  sectionId,
+}: {
+  sectionId: CheckInSectionId;
+}) => {
+  const { markSeen } = useUsNeCheckInContext();
+
+  // TODO(OBT-47844): Add appropriate styles/copy to this page
+  return (
+    <>
+      <div>Section intro: {sectionId}</div>
+      <button
+        onClick={() => {
+          markSeen({ screenKind: "sectionIntro", sectionId });
+        }}
+      >
+        Next
+      </button>
+    </>
+  );
+};

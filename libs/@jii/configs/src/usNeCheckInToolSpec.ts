@@ -25,7 +25,7 @@
 
 // The Check-In Tool form is a sequence of questions, each shown on its own page.
 // Questions are grouped into sections and must be answered consecutively.
-type CheckInSectionId =
+export type CheckInSectionId =
   | "sectionHousing"
   | "sectionEducationWork"
   | "sectionTransportation"
@@ -37,7 +37,7 @@ type CheckInSectionId =
   | "sectionStrengthsSkills"
   | "sectionEnd";
 
-type CheckInSectionSpec = {
+export type CheckInSectionSpec = {
   id: CheckInSectionId;
   questions: CheckInQuestionId[];
 };

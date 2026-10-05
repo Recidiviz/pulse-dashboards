@@ -17,40 +17,44 @@
 
 import assertNever from "assert-never";
 
-import { checkInQuestionConfig, checkInToolSpec } from "~@jii/configs";
-
-import { UsNeCheckInCheckboxQuestion } from "./UsNeCheckInCheckboxQuestion";
-import { UsNeCheckInFreeTextQuestion } from "./UsNeCheckInFreeTextQuestion";
-import { UsNeCheckInRadioQuestion } from "./UsNeCheckInRadioQuestion";
+import { useCheckInData } from "./hooks/useCheckInData";
+import { useCheckInFlow } from "./hooks/useCheckInFlow";
+import { UsNeCheckInCompletion } from "./UsNeCheckInCompletion";
+import { UsNeCheckInContextProvider } from "./UsNeCheckInContext";
+import { UsNeCheckInQuestion } from "./UsNeCheckInQuestion";
+import { UsNeCheckInSectionIntro } from "./UsNeCheckInSectionIntro";
+import { UsNeCheckInWelcome } from "./UsNeCheckInWelcome";
 
 export const UsNeCheckInPage = () => {
-  // TODO(OBT-47841): Show just one question per page
-  return checkInToolSpec.map(({ questions }) =>
-    questions.map((id) => {
-      const config = checkInQuestionConfig[id];
-
-      switch (config.format) {
-        case "RADIO":
-          return (
-            <UsNeCheckInRadioQuestion
-              key={id}
-              id={id}
-              answers={config.answers}
-            />
-          );
-        case "CHECKBOX":
-          return (
-            <UsNeCheckInCheckboxQuestion
-              key={id}
-              id={id}
-              answers={config.answers}
-            />
-          );
-        case "FREE_TEXT":
-          return <UsNeCheckInFreeTextQuestion key={id} id={id} />;
-        default:
-          return assertNever(config);
-      }
-    }),
+  return (
+    <UsNeCheckInContextProvider>
+      {/* TODO(OBT-47843) add header and full-page layout override */}
+      <UsNeCheckInPageContent />
+    </UsNeCheckInContextProvider>
   );
+};
+
+const UsNeCheckInPageContent = () => {
+  const { data, updateMutation } = useCheckInData();
+  const screen = useCheckInFlow(data);
+
+  switch (screen.screenKind) {
+    case "completion":
+      return <UsNeCheckInCompletion />;
+    case "welcome":
+      return <UsNeCheckInWelcome />;
+    case "sectionIntro":
+      return <UsNeCheckInSectionIntro sectionId={screen.sectionId} />;
+    case "question":
+      return (
+        <UsNeCheckInQuestion
+          questionId={screen.questionId}
+          sectionId={screen.sectionId}
+          data={data}
+          updateMutation={updateMutation}
+        />
+      );
+    default:
+      return assertNever(screen);
+  }
 };

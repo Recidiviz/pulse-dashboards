@@ -17,6 +17,7 @@
 
 import { z } from "zod";
 
+import { usNeCheckInSchema } from "~@jii/configs";
 import { Prisma, PrismaClient } from "~@jii/prisma";
 
 export const getCheckInInputSchema = z.object({
@@ -48,5 +49,5 @@ export const getCheckInQueryResolver = async ({
   }
 
   // TODO(OBT-47841): parse with zod
-  return result;
+  return { ...result, answers: usNeCheckInSchema.parse(result.answers) };
 };

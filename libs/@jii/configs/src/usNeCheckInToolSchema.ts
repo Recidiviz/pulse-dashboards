@@ -15,45 +15,31 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { mapValues } from "lodash-es";
 import { z } from "zod";
 
-import {
-  rnaCheckboxQuestionConfig,
-  rnaLifeAreaQuestionConfig,
-  RNAQuestionId,
-  rnaTextQuestionConfig,
-} from "~@jii/configs";
+import { CheckInQuestionId, CheckInSectionId } from "./usNeCheckInToolSpec";
 
-// rtodo: redo all of this
+// TODO(OBT-47841): this is a dummy schema, replace with a more useful one
+// derived from CheckInQuestionId
+export const usNeCheckInSchema = z.object({}).passthrough();
 
-const textSchema = z.string().optional();
-export const rnaTextAnswersSchema = z.object(
-  mapValues(rnaTextQuestionConfig, () => textSchema),
-);
+export type UsNeCheckInAnswers = z.output<typeof usNeCheckInSchema>;
 
-const checkboxSchema = z.record(z.string(), z.boolean().optional()).optional();
-export const rnaCheckboxAnswersSchema = z.object(
-  mapValues(rnaCheckboxQuestionConfig, () => checkboxSchema),
-);
+export type CheckInQuestionInfo = {
+  questionId: CheckInQuestionId;
+  sectionId: CheckInSectionId;
+};
 
-const lifeAreaAnswerSchema = z.object({
-  interest: z.boolean().optional(),
-  customLifeArea: z.string().optional(),
-  interestRating: z.string().optional(),
-  improvementText: z.string().optional(),
-});
-export type LifeAreaAnswer = z.infer<typeof lifeAreaAnswerSchema>;
-export const rnaLifeAreaAnswersSchema = z.object(
-  mapValues(rnaLifeAreaQuestionConfig, () => lifeAreaAnswerSchema.optional()),
-);
-
-export type RNATextAnswers = Partial<
-  Record<RNAQuestionId, z.infer<typeof textSchema>>
->;
-export type RNACheckboxAnswers = Partial<
-  Record<RNAQuestionId, z.infer<typeof checkboxSchema>>
->;
-export type RNALifeAreaAnswers = Partial<
-  Record<RNAQuestionId, z.infer<typeof lifeAreaAnswerSchema>>
->;
+export type CheckInStatus =
+  | {
+      kind: "NOT_STARTED";
+      firstQuestion: CheckInQuestionInfo;
+    }
+  | {
+      kind: "QUESTION";
+      question: CheckInQuestionInfo;
+      isFirstQuestionOfSection: boolean;
+    }
+  | {
+      kind: "COMPLETED";
+    };
