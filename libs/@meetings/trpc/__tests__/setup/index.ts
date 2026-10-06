@@ -103,6 +103,21 @@ vi.mock("google-auth-library", async (importOriginal) => {
   };
 });
 
+// Used by ~@meetings/trpc/routes/firebaseAuth to mint a Firebase custom
+// token.
+export const mockCreateCustomToken = vi
+  .fn()
+  .mockResolvedValue("fake-firebase-token");
+
+vi.mock("firebase-admin", () => ({
+  default: {
+    apps: [],
+    initializeApp: vi.fn(),
+    credential: { applicationDefault: vi.fn(), cert: vi.fn() },
+    auth: vi.fn(() => ({ createCustomToken: mockCreateCustomToken })),
+  },
+}));
+
 export async function initFastifyAndSetUser(
   user?: Auth0User,
   options?: {

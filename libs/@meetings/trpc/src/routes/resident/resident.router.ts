@@ -37,6 +37,7 @@ const querySelect = {
   surname: true,
   displayPersonExternalId: true,
   personId: true,
+  pseudonymizedId: true,
   facilityId: true,
   meetings: {
     orderBy: {

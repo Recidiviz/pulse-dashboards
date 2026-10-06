@@ -43,6 +43,8 @@ const envSchema = z.object({
     .min(1, "GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE is required")
     .default(""),
   TRANSCRIPTION_DISABLED_STATES: z.string().default(""),
+  FIREBASE_BACKEND_PROJECT: z.string().optional(),
+  FIREBASE_ADMIN_SERVICE_ACCOUNT_EMAIL: z.string().optional(),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

@@ -99,6 +99,7 @@ const person: Person = {
   surname: "Person",
   fullName: "Test Person",
   displayPersonExternalId: "EXT-1",
+  pseudonymizedId: "test-person-pid-1",
   supervisionType: "PROBATION",
   staffEmails: [],
   activeMeetingId: null,

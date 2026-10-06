@@ -68,6 +68,7 @@ describe("server", () => {
     expect(returnedClients.data).toEqual([
       {
         personId: fakeClient.personId,
+        pseudonymizedId: fakeClient.pseudonymizedId,
         givenNames: fakeClient.givenNames,
         surname: fakeClient.surname,
         displayPersonExternalId: fakeClient.displayPersonExternalId,

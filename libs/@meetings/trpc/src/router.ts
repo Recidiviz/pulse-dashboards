@@ -18,6 +18,7 @@
 import { router } from "~@meetings/trpc/init";
 import { clientRouter } from "~@meetings/trpc/routes/client/client.router";
 import { configRouter } from "~@meetings/trpc/routes/config/config.router";
+import { firebaseAuthRouter } from "~@meetings/trpc/routes/firebaseAuth/firebaseAuth.router";
 import { impersonationRouter } from "~@meetings/trpc/routes/impersonation/impersonation.router";
 import { meetingRouter } from "~@meetings/trpc/routes/meeting/meeting.router";
 import { metadataRouter } from "~@meetings/trpc/routes/metadata/metadata.router";
@@ -32,6 +33,7 @@ const v1Router = router({
   resident: residentRouter,
   impersonation: impersonationRouter,
   user: userRouter,
+  firebaseAuth: firebaseAuthRouter,
 });
 
 export const appRouter = router({

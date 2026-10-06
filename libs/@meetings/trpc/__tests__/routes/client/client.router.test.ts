@@ -345,6 +345,7 @@ describe("client router", () => {
             },
             staffEmails: [fakeStaff[0].email],
             caseNoteInsightsSummaries: [],
+            pseudonymizedId: fakeClients[0].pseudonymizedId,
           },
           {
             personId: fakeClients[1].personId,
@@ -362,6 +363,7 @@ describe("client router", () => {
             },
             staffEmails: [fakeStaff[1].email],
             caseNoteInsightsSummaries: [],
+            pseudonymizedId: fakeClients[1].pseudonymizedId,
           },
           {
             personId: fakeClients[3].personId,
@@ -379,6 +381,7 @@ describe("client router", () => {
             },
             staffEmails: [fakeStaff[0].email],
             caseNoteInsightsSummaries: [],
+            pseudonymizedId: fakeClients[3].pseudonymizedId,
           },
         ]);
       });
@@ -554,6 +557,7 @@ describe("client router", () => {
 
         expect(result).toEqual({
           personId: fakeClients[0].personId,
+          pseudonymizedId: fakeClients[0].pseudonymizedId,
           givenNames: fakeClients[0].givenNames,
           surname: fakeClients[0].surname,
           displayPersonExternalId: fakeClients[0].displayPersonExternalId,

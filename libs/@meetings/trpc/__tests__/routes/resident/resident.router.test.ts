@@ -178,6 +178,7 @@ describe("resident router", () => {
         expect(result.data).toIncludeSameMembers([
           {
             personId: fakeResidents[0].personId,
+            pseudonymizedId: fakeResidents[0].pseudonymizedId,
             givenNames: fakeResidents[0].givenNames,
             surname: fakeResidents[0].surname,
             displayPersonExternalId: fakeResidents[0].displayPersonExternalId,
@@ -193,6 +194,7 @@ describe("resident router", () => {
           },
           {
             personId: fakeResidents[1].personId,
+            pseudonymizedId: fakeResidents[1].pseudonymizedId,
             givenNames: fakeResidents[1].givenNames,
             surname: fakeResidents[1].surname,
             displayPersonExternalId: fakeResidents[1].displayPersonExternalId,

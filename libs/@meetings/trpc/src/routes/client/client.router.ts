@@ -42,6 +42,7 @@ const querySelect = {
   surname: true,
   displayPersonExternalId: true,
   personId: true,
+  pseudonymizedId: true,
   supervisionType: true,
   staffEmails: true,
   meetings: {
