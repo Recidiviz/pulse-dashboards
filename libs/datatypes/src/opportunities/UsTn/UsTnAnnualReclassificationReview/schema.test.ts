@@ -27,7 +27,7 @@ const baseRawRecord: UsTnAnnualReclassificationReviewRecord["input"] = {
   eligibleCriteria: {
     usTnAtLeast12MonthsSinceLatestAssessment: null,
     custodyLevelIsNotMax: null,
-    custodyLevelComparedToRecommended: {
+    usTnCustodyLevelComparedToRecommended: {
       custodyLevel: "MINIMUM",
       recommendedCustodyLevel: "MINIMUM",
     },

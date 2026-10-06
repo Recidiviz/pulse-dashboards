@@ -26,7 +26,7 @@ export const usTnCustodyLevelDowngradeFixture =
       stateCode: "US_TN",
       externalId: "RES001",
       eligibleCriteria: {
-        custodyLevelHigherThanRecommended: {
+        usTnCustodyLevelHigherThanRecommended: {
           custodyLevel: "CLOSE",
           recommendedCustodyLevel: "MEDIUM",
         },
@@ -88,7 +88,7 @@ export const usTnCustodyLevelDowngradeFixture =
         ],
       },
       eligibleCriteria: {
-        custodyLevelHigherThanRecommended: {
+        usTnCustodyLevelHigherThanRecommended: {
           custodyLevel: "MEDIUM",
           recommendedCustodyLevel: "MINIMUM",
         },

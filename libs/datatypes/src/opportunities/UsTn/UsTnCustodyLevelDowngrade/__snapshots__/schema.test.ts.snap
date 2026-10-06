@@ -16,11 +16,11 @@ exports[`schema for eligibleWithCaseNotes 1`] = `
     ],
   },
   "eligibleCriteria": {
-    "custodyLevelHigherThanRecommended": {
+    "custodyLevelIsNotMax": null,
+    "usTnCustodyLevelHigherThanRecommended": {
       "custodyLevel": "MEDIUM",
       "recommendedCustodyLevel": "MINIMUM",
     },
-    "custodyLevelIsNotMax": null,
     "usTnIneligibleForAnnualReclassification": {
       "ineligibleCriteria": [],
     },
@@ -68,11 +68,11 @@ exports[`schema for fullyEligible 1`] = `
     "ASSAULTIVE DISCIPLINARIES": [],
   },
   "eligibleCriteria": {
-    "custodyLevelHigherThanRecommended": {
+    "custodyLevelIsNotMax": null,
+    "usTnCustodyLevelHigherThanRecommended": {
       "custodyLevel": "CLOSE",
       "recommendedCustodyLevel": "MEDIUM",
     },
-    "custodyLevelIsNotMax": null,
     "usTnIneligibleForAnnualReclassification": {
       "ineligibleCriteria": [
         "q1",

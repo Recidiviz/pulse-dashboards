@@ -28,7 +28,7 @@ const data: UsTnAnnualReclassificationReviewReferralRecordRaw[] = [
     eligibleCriteria: {
       usTnAtLeast12MonthsSinceLatestAssessment: null,
       custodyLevelIsNotMax: null,
-      custodyLevelComparedToRecommended: {
+      usTnCustodyLevelComparedToRecommended: {
         custodyLevel: "MINIMUM",
         recommendedCustodyLevel: "MINIMUM",
       },
@@ -89,7 +89,7 @@ const data: UsTnAnnualReclassificationReviewReferralRecordRaw[] = [
     eligibleCriteria: {
       usTnAtLeast12MonthsSinceLatestAssessment: null,
       custodyLevelIsNotMax: null,
-      custodyLevelComparedToRecommended: {
+      usTnCustodyLevelComparedToRecommended: {
         custodyLevel: "CLOSE",
         recommendedCustodyLevel: "MEDIUM",
       },

@@ -30,7 +30,7 @@ export const usTnAnnualReclassificationReviewFixtures = {
     eligibleCriteria: {
       usTnAtLeast12MonthsSinceLatestAssessment: null,
       custodyLevelIsNotMax: null,
-      custodyLevelComparedToRecommended: {
+      usTnCustodyLevelComparedToRecommended: {
         custodyLevel: "MINIMUM",
         recommendedCustodyLevel: "MINIMUM",
       },
@@ -83,7 +83,7 @@ export const usTnAnnualReclassificationReviewFixtures = {
       eligibleCriteria: {
         usTnAtLeast12MonthsSinceLatestAssessment: null,
         custodyLevelIsNotMax: null,
-        custodyLevelComparedToRecommended: {
+        usTnCustodyLevelComparedToRecommended: {
           custodyLevel: null,
           recommendedCustodyLevel: "MINIMUM",
         },

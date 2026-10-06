@@ -3,7 +3,7 @@
 exports[`fully eligible resident > requirements met 1`] = `
 [
   {
-    "key": "custodyLevelHigherThanRecommended",
+    "key": "usTnCustodyLevelHigherThanRecommended",
     "text": "Custody level is higher than latest CAF score suggests",
   },
   {

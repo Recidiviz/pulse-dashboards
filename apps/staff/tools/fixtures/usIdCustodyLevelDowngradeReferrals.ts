@@ -26,7 +26,7 @@ export const usIdCustodyLevelDowngradeReferrals = fixtureWithIdKey<
     stateCode: "US_ID",
     externalId: "ID_RES001",
     eligibleCriteria: {
-      custodyLevelHigherThanRecommended: {
+      usIxCustodyLevelHigherThanRecommended: {
         custodyLevel: "MEDIUM",
         recommendedCustodyLevel: "MINIMUM",
         upcomingEligibilityDate: "2020-09-04",
@@ -43,7 +43,7 @@ export const usIdCustodyLevelDowngradeReferrals = fixtureWithIdKey<
     stateCode: "US_ID",
     externalId: "ID_RES002",
     eligibleCriteria: {
-      custodyLevelHigherThanRecommended: {
+      usIxCustodyLevelHigherThanRecommended: {
         custodyLevel: "MAXIMUM",
         recommendedCustodyLevel: "MEDIUM",
         upcomingEligibilityDate: "2021-01-04",

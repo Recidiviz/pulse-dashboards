@@ -27,7 +27,7 @@ export const usIdCustodyLevelDowngradeFixtures = {
     stateCode: "US_ID",
     externalId: "ID_RES001",
     eligibleCriteria: {
-      custodyLevelHigherThanRecommended: {
+      usIxCustodyLevelHigherThanRecommended: {
         custodyLevel: "MEDIUM",
         recommendedCustodyLevel: "MINIMUM",
         upcomingEligibilityDate: relativeFixtureDate({ months: -1 }),

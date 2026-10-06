@@ -169,7 +169,7 @@ export const UsTnCustodyLevelDowngradeReferralRecordFixture: UsTnCustodyLevelDow
     externalId: UsTnCustodyLevelDowngradeEligibleResidentRecord.recordId,
     eligibleCriteria: {
       custodyLevelIsNotMax: null,
-      custodyLevelHigherThanRecommended: {
+      usTnCustodyLevelHigherThanRecommended: {
         custodyLevel: "MEDIUM",
         recommendedCustodyLevel: "LOW",
       },
@@ -228,7 +228,7 @@ export const UsTnAnnualReclassificationReferralRecordFixture01: UsTnAnnualReclas
     eligibleCriteria: {
       usTnAtLeast12MonthsSinceLatestAssessment: null,
       custodyLevelIsNotMax: null,
-      custodyLevelComparedToRecommended: {
+      usTnCustodyLevelComparedToRecommended: {
         custodyLevel: "MINIMUM",
         recommendedCustodyLevel: "MINIMUM",
       },

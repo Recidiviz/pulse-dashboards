@@ -26,7 +26,7 @@ export const usTnAnnualReclassificationReviewSchema =
   opportunitySchemaBase.extend({
     eligibleCriteria: z
       .object({
-        custodyLevelComparedToRecommended: z.object({
+        usTnCustodyLevelComparedToRecommended: z.object({
           custodyLevel: z
             .string()
             .nullable()

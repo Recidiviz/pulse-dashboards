@@ -103,7 +103,7 @@ function createTestUnit(
     eligibleCriteria: {
       usTnAtLeast12MonthsSinceLatestAssessment: null,
       custodyLevelIsNotMax: null,
-      custodyLevelComparedToRecommended: {
+      usTnCustodyLevelComparedToRecommended: {
         custodyLevel: "MINIMUM",
         recommendedCustodyLevel: "MINIMUM",
       },

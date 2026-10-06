@@ -596,7 +596,7 @@ export const mockApiOpportunityConfigurationResponse = {
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
-          key: "custodyLevelHigherThanRecommended",
+          key: "usTnCustodyLevelHigherThanRecommended",
           text: "Custody level is higher than latest CAF score suggests",
         },
         { key: "custodyLevelIsNotMax", text: "Custody level is not maximum" },

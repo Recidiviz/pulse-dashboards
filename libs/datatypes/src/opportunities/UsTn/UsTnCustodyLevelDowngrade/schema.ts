@@ -29,7 +29,7 @@ export const usTnCustodyLevelDowngradeSchema = opportunitySchemaBase
   .extend({
     eligibleCriteria: z
       .object({
-        custodyLevelHigherThanRecommended: z.object({
+        usTnCustodyLevelHigherThanRecommended: z.object({
           custodyLevel: z.string(),
           recommendedCustodyLevel: z.string(),
         }),

@@ -750,7 +750,7 @@ export const mockApiOpportunityConfigurationResponse = {
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
-          key: "custodyLevelHigherThanRecommended",
+          key: "usIxCustodyLevelHigherThanRecommended",
           text: "Eligible for reclassification since {{date upcomingEligibilityDate}}.",
           tooltip: "",
         },
@@ -768,7 +768,7 @@ export const mockApiOpportunityConfigurationResponse = {
       homepagePosition: 1,
       ineligibleCriteriaCopy: [
         {
-          key: "custodyLevelHigherThanRecommended",
+          key: "usIxCustodyLevelHigherThanRecommended",
           text: "Eligible for reclassification on  {{date upcomingEligibilityDate}}.",
         },
       ],

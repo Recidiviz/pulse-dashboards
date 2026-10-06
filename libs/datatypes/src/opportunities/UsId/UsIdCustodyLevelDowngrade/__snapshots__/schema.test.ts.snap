@@ -4,7 +4,7 @@ exports[`schema for eligible 1`] = `
 {
   "caseNotes": {},
   "eligibleCriteria": {
-    "custodyLevelHigherThanRecommended": {
+    "usIxCustodyLevelHigherThanRecommended": {
       "custodyLevel": "MEDIUM",
       "recommendedCustodyLevel": "MINIMUM",
       "upcomingEligibilityDate": "2021-11-16",

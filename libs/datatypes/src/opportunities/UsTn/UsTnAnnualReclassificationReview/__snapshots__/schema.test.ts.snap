@@ -22,12 +22,12 @@ exports[`UsTnAnnualReclassificationReviewReferralRecordRaw > matches the snapsho
     ],
   },
   "eligibleCriteria": {
-    "custodyLevelComparedToRecommended": {
+    "custodyLevelIsNotMax": null,
+    "usTnAtLeast12MonthsSinceLatestAssessment": null,
+    "usTnCustodyLevelComparedToRecommended": {
       "custodyLevel": "MINIMUM",
       "recommendedCustodyLevel": "MINIMUM",
     },
-    "custodyLevelIsNotMax": null,
-    "usTnAtLeast12MonthsSinceLatestAssessment": null,
   },
   "externalId": "reclass-01",
   "formInformation": {
@@ -78,12 +78,12 @@ exports[`UsTnAnnualReclassificationReviewReferralRecordRaw > matches the snapsho
 {
   "caseNotes": {},
   "eligibleCriteria": {
-    "custodyLevelComparedToRecommended": {
+    "custodyLevelIsNotMax": null,
+    "usTnAtLeast12MonthsSinceLatestAssessment": null,
+    "usTnCustodyLevelComparedToRecommended": {
       "custodyLevel": "MINIMUM",
       "recommendedCustodyLevel": "MINIMUM",
     },
-    "custodyLevelIsNotMax": null,
-    "usTnAtLeast12MonthsSinceLatestAssessment": null,
   },
   "externalId": "reclass-01",
   "formInformation": {
