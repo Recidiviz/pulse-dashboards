@@ -27,6 +27,7 @@ export const TEMPORAL_TASK_CATEGORIES = [
   "DUE_THIS_WEEK",
   "DUE_THIS_MONTH",
   "DUE_NEXT_MONTH",
+  "DUE_LATER",
   "HIDDEN",
 ] as const;
 
@@ -46,6 +47,7 @@ export const TASK_SELECTOR_LABELS: Record<SupervisionTaskCategory, string> = {
   DUE_THIS_WEEK: "Due this week",
   DUE_THIS_MONTH: "Due this month",
   DUE_NEXT_MONTH: "Due next month",
+  DUE_LATER: "Due later",
   HIDDEN: "Hidden",
   employmentNeed: "Unemployed",
   usIdEmploymentVerification: "Employment Verifications",

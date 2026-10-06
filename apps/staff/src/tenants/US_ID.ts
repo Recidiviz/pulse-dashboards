@@ -42,6 +42,18 @@ const US_ID_CONFIG = {
     collection: "usIdSupervisionTasks",
     methodologyUrl:
       "https://docs.google.com/document/d/e/2PACX-1vRN_KixvGRM-PlVlgyqThRaehhmXs-1j3iNJBOv9XWW00caonEqd4t0czI1ohN6VjyJWc16AqCr7rUg/pub",
+    categories: ["ALL_TASKS", "OVERDUE", "DUE_THIS_MONTH", "DUE_LATER"],
+    columns: [
+      "name",
+      "id",
+      "task",
+      "dueDate",
+      "lastContactDate",
+      "frequency",
+      "supervisionLevel",
+      "caseType",
+      "tasksDue",
+    ],
     pageDescriptionMarkdown:
       "The clients below might have upcoming requirements this month. Hiding a below task will not change an officer's timeliness percentage in the Operations metrics.",
     tasks: {

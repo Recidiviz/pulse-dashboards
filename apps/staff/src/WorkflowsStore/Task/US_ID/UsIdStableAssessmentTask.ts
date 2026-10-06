@@ -16,17 +16,16 @@
 // =============================================================================
 
 import { fieldToDate } from "~datatypes";
-import { formatDate } from "~utils";
 
 import UsIdTaskBase from "./UsIdTaskBase";
 
 class UsIdStableAssessmentTask extends UsIdTaskBase<"usIdStableAssessment"> {
   taskAction = "assessment";
 
-  get lastContacted(): string | undefined {
+  get mostRecentContactDate(): Date | undefined {
     const { lastAssessmentDate } = this.details;
     if (!lastAssessmentDate) return;
-    return formatDate(fieldToDate(lastAssessmentDate));
+    return fieldToDate(lastAssessmentDate);
   }
 
   get additionalDetails(): string {

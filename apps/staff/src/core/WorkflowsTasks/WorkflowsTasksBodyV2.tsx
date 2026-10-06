@@ -78,6 +78,7 @@ export const WorkflowsTasksBodyV2 = observer(function WorkflowsTasksBodyV2({
     DUE_THIS_WEEK: presenter.countForCategory("DUE_THIS_WEEK"),
     DUE_THIS_MONTH: presenter.countForCategory("DUE_THIS_MONTH"),
     DUE_NEXT_MONTH: presenter.countForCategory("DUE_NEXT_MONTH"),
+    DUE_LATER: presenter.countForCategory("DUE_LATER"),
     HIDDEN: presenter.countForCategory("HIDDEN"),
   } as Partial<Record<SupervisionTaskCategory, number>>;
 

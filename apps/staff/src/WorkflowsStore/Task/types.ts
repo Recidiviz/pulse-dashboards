@@ -314,6 +314,8 @@ export type SupervisionTask<
 
   supplementaryContacts: string[];
 
+  mostRecentContactDate: Date | undefined;
+
   additionalDetails?: string;
   vitalsMetricId?: VitalsMetricId;
   includeInRoutePlanner: boolean;

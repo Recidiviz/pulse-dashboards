@@ -15,7 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { differenceInCalendarMonths, isThisMonth, isThisWeek } from "date-fns";
+import {
+  differenceInCalendarMonths,
+  endOfMonth,
+  isAfter,
+  isThisMonth,
+  isThisWeek,
+} from "date-fns";
 import { uniq } from "lodash";
 import { computed, makeObservable, reaction } from "mobx";
 
@@ -340,6 +346,8 @@ export default class TasksFilterStore extends FilterStoreBase {
             );
           case "DUE_NEXT_MONTH":
             return differenceInCalendarMonths(t.dueDate, new Date()) === 1;
+          case "DUE_LATER":
+            return !t.isOverdue && isAfter(t.dueDate, endOfMonth(new Date()));
           default:
             return false;
         }

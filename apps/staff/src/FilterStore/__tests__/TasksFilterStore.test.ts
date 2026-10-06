@@ -469,6 +469,36 @@ describe("allTasksForCategory with custom tasks", () => {
     ]);
   });
 
+  it("DUE_LATER returns tasks due after the current month", () => {
+    const overdue = makeSupervisionTask({
+      key: "sup-overdue",
+      dueDate: new Date("2026-01-01"),
+      isOverdue: true,
+    });
+    const dueThisMonth = makeSupervisionTask({
+      key: "sup-this-month",
+      dueDate: new Date("2026-05-31T12:00:00.000Z"),
+    });
+    const dueNextMonth = makeSupervisionTask({
+      key: "sup-next-month",
+      dueDate: new Date("2026-06-01T12:00:00.000Z"),
+    });
+    const dueInSixMonths = makeSupervisionTask({
+      key: "sup-six-months",
+      dueDate: new Date("2026-11-15T12:00:00.000Z"),
+    });
+    const tasks = [overdue, dueThisMonth, dueNextMonth, dueInSixMonths];
+    const client = makeClient({
+      supervisionTasks: { orderedTasks: tasks, readyOrderedTasks: tasks },
+    });
+
+    const store = buildStore({ persons: [client], flagOn: false });
+    expect(store.allTasksForCategory("DUE_LATER", false)).toEqual([
+      dueNextMonth,
+      dueInSixMonths,
+    ]);
+  });
+
   it("keeps a client visible when their supervision task is snoozed but they have an active custom task", () => {
     // Snoozed supervision task is in orderedTasks but NOT readyOrderedTasks
     // (the bug repro: previously this client would drop out of the table).

@@ -111,6 +111,8 @@ export class CaseloadTasksPresenterV2
         return `There are no contacts or assessments currently due within the next month for the selected ${caseloadTerm}. Please navigate to one of the other tabs.`;
       case "DUE_NEXT_MONTH":
         return `There are no contacts or assessments currently due next month for the selected ${caseloadTerm}. Please navigate to one of the other tabs.`;
+      case "DUE_LATER":
+        return `There are no contacts or assessments currently due after this month for the selected ${caseloadTerm}. Please navigate to one of the other tabs.`;
       case "DUE_THIS_WEEK":
         return `There are no contacts or assessments due within the next week for the selected ${caseloadTerm}. Please navigate to one of the other tabs.`;
       case "OVERDUE":

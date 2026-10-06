@@ -20,6 +20,7 @@ import { addDays, subDays } from "date-fns";
 import { MemoryRouter } from "react-router-dom";
 
 import { useFeatureVariants } from "../../../components/StoreProvider";
+import { formatWorkflowsDate } from "../../../utils";
 import {
   ClientTasksSummary,
   CustomTaskItem,
@@ -270,5 +271,73 @@ describe("TasksTable row click behavior", () => {
     // selectPerson is not called on row click in this mode.
     fireEvent.click(screen.getByText(/Home Visit due in 3 days/));
     expect(selectPerson).not.toHaveBeenCalled();
+  });
+});
+
+describe("TasksTable lastContactDate column", () => {
+  const lastContact = new Date(2026, 2, 4);
+
+  function renderLastContactTable(rows: ClientTasksSummary[]) {
+    return render(
+      <MemoryRouter>
+        <TasksTable
+          presenter={makePresenter(rows, {
+            tasksTableColumns: ["name", "lastContactDate"],
+          })}
+        />
+      </MemoryRouter>,
+    );
+  }
+
+  function rowTexts() {
+    return screen
+      .getAllByRole("row")
+      .slice(1)
+      .map((row) => row.textContent);
+  }
+
+  it("renders the main task's most recent contact date", () => {
+    renderLastContactTable([
+      makeSummary("Doe, J", [
+        {
+          ...makeTask("Contact", new Date()),
+          mostRecentContactDate: lastContact,
+        },
+      ]),
+    ]);
+    expect(
+      screen.getByText(formatWorkflowsDate(lastContact)),
+    ).toBeInTheDocument();
+  });
+
+  it("renders a dash when the task has no contact on record or is a custom task", () => {
+    renderLastContactTable([
+      makeSummary("Doe, J", [makeTask("Contact", new Date())]),
+      makeSummary("Roe, R", [makeCustomTaskItem() as never]),
+    ]);
+    expect(screen.getAllByText("–")).toHaveLength(2);
+  });
+
+  it("sorts rows without a contact on record last", () => {
+    renderLastContactTable([
+      makeSummary("No contact", [makeTask("Contact", new Date())]),
+      makeSummary("Older", [
+        {
+          ...makeTask("Contact", new Date()),
+          mostRecentContactDate: new Date(2026, 0, 1),
+        },
+      ]),
+      makeSummary("Newer", [
+        {
+          ...makeTask("Contact", new Date()),
+          mostRecentContactDate: lastContact,
+        },
+      ]),
+    ]);
+
+    fireEvent.click(screen.getByText("Last Completed"));
+    const rows = rowTexts();
+    expect(rows).toHaveLength(3);
+    expect(rows[2]?.trim()).toBe("–");
   });
 });

@@ -190,6 +190,18 @@ function TaskDateCell({ row }: { row: Row<TasksRowEntity> }) {
   );
 }
 
+// Custom tasks have no contact history, so they have no last contact date.
+const lastContactDateForEntity = (entity: TasksRowEntity) => {
+  const task = mainTaskForEntity(entity);
+  if (!task || task.type === "customTask") return;
+  return task.mostRecentContactDate;
+};
+
+function LastContactDateCell({ row }: { row: Row<TasksRowEntity> }) {
+  const lastContactDate = lastContactDateForEntity(row.original);
+  return <>{lastContactDate ? formatWorkflowsDate(lastContactDate) : "–"}</>;
+}
+
 function FrequencyCell({ row }: { row: Row<TasksRowEntity> }) {
   const task = mainTaskForEntity(row.original);
 
@@ -289,6 +301,14 @@ const getColumnDefs = (presenter: {
       enableSorting: true,
       accessorFn: (entity) => mainTaskForEntity(entity).dueDate,
       cell: TaskDateCell,
+    },
+    {
+      header: "Last Completed",
+      id: "lastContactDate",
+      enableSorting: true,
+      sortUndefined: "last",
+      accessorFn: (entity) => lastContactDateForEntity(entity)?.getTime(),
+      cell: LastContactDateCell,
     },
     {
       header: "Frequency",

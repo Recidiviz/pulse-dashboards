@@ -146,6 +146,11 @@ export abstract class Task<TaskType extends SupervisionTaskType>
     return;
   }
 
+  get mostRecentContactDate(): Date | undefined {
+    // This is reimplemented directly on the classes for the tasks that currently use it
+    return;
+  }
+
   /**
    * @returns An array of the scheduled contact dates for this task that are today
    *          or later, without duplicates, sorted in ascending order;

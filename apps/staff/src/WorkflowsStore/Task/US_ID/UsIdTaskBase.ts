@@ -27,10 +27,15 @@ import { UsIdAgnosticTaskType } from "../types";
 abstract class UsIdTaskBase<T extends UsIdAgnosticTaskType> extends Task<T> {
   abstract taskAction: string;
 
-  get lastContacted(): string | undefined {
+  get mostRecentContactDate(): Date | undefined {
     const { lastContactDate } = this.details;
     if (!lastContactDate) return;
-    return formatDate(fieldToDate(lastContactDate));
+    return fieldToDate(lastContactDate);
+  }
+
+  get lastContacted(): string | undefined {
+    if (!this.mostRecentContactDate) return;
+    return formatDate(this.mostRecentContactDate);
   }
 
   get lastActionTaskText(): string | undefined {
