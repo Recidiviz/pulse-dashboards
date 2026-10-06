@@ -25,6 +25,7 @@ export const supervisionOfficerSupervisorSchema = z
   .object({
     email: z.string().nullable(),
     externalId: z.string(),
+    stableStaffExternalId: z.string().nullish(),
     fullName: fullNameSchema,
     pseudonymizedId: z.string(),
     hasOutliers: z.boolean(),

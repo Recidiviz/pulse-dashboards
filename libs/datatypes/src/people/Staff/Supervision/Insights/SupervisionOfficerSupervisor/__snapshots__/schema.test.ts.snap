@@ -12,6 +12,7 @@ exports[`transformations 1`] = `
   },
   "hasOutliers": true,
   "pseudonymizedId": "hashed-agonzalez123",
+  "stableStaffExternalId": "STABLE_agonzalez123",
   "supervisionLocationForListPage": "Region 1",
   "supervisionLocationForSupervisorPage": "Unit 1",
 }
@@ -28,6 +29,7 @@ exports[`transformations 2`] = `
   },
   "hasOutliers": true,
   "pseudonymizedId": "hashed-dlee456",
+  "stableStaffExternalId": "STABLE_dlee456",
   "supervisionLocationForListPage": "Region 2",
   "supervisionLocationForSupervisorPage": "Unit 1",
 }
@@ -44,6 +46,7 @@ exports[`transformations 3`] = `
   },
   "hasOutliers": true,
   "pseudonymizedId": "hashed-rsmith789",
+  "stableStaffExternalId": "STABLE_rsmith789",
   "supervisionLocationForListPage": "Region 1",
   "supervisionLocationForSupervisorPage": "Unit 1",
 }
@@ -60,6 +63,7 @@ exports[`transformations 4`] = `
   },
   "hasOutliers": false,
   "pseudonymizedId": "hashed-cthomas321",
+  "stableStaffExternalId": null,
   "supervisionLocationForListPage": "Region 2",
   "supervisionLocationForSupervisorPage": "Unknown",
 }
@@ -76,6 +80,7 @@ exports[`transformations 5`] = `
   },
   "hasOutliers": false,
   "pseudonymizedId": "hashed-cmatterson567",
+  "stableStaffExternalId": "STABLE_cmatterson567",
   "supervisionLocationForListPage": "Unknown",
   "supervisionLocationForSupervisorPage": "Unknown",
 }
@@ -92,6 +97,7 @@ exports[`transformations 6`] = `
   },
   "hasOutliers": false,
   "pseudonymizedId": "hashed-jwilliams345",
+  "stableStaffExternalId": "STABLE_jwilliams345",
   "supervisionLocationForListPage": "Unknown",
   "supervisionLocationForSupervisorPage": "Unknown",
 }

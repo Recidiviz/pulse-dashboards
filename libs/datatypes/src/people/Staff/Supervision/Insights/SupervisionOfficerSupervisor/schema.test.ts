@@ -23,3 +23,34 @@ test("transformations", () => {
     expect(supervisionOfficerSupervisorSchema.parse(b)).toMatchSnapshot(),
   );
 });
+
+describe("stableStaffExternalId", () => {
+  const baseInput = rawSupervisionOfficerSupervisorFixture[0];
+
+  test("is kept when present", () => {
+    expect(
+      supervisionOfficerSupervisorSchema.parse({
+        ...baseInput,
+        stableStaffExternalId: "STABLE123",
+      }),
+    ).toHaveProperty("stableStaffExternalId", "STABLE123");
+  });
+
+  test("accepts null for supervisors without a stable supervision id", () => {
+    expect(
+      supervisionOfficerSupervisorSchema.parse({
+        ...baseInput,
+        stableStaffExternalId: null,
+      }).stableStaffExternalId,
+    ).toBeNull();
+  });
+
+  test("accepts a supervisor without the field", () => {
+    const inputWithoutField = { ...baseInput };
+    delete inputWithoutField.stableStaffExternalId;
+    expect(
+      supervisionOfficerSupervisorSchema.parse(inputWithoutField)
+        .stableStaffExternalId,
+    ).toBeUndefined();
+  });
+});

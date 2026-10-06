@@ -37,8 +37,10 @@ export const rawSupervisionOfficerSupervisorFactory = (
 ): Factory<RawSupervisionOfficerSupervisor> =>
   makeFactory(() => {
     const fullName = fullNameFactory(person.sexType()).build();
+    const externalId = randId();
     return {
-      externalId: randId(),
+      externalId,
+      stableStaffExternalId: `STABLE_${externalId}`,
       pseudonymizedId: randPseudonymizedId(),
       supervisionLocationForListPage: nullable(() => randDistrict()),
       supervisionLocationForSupervisorPage: nullable(() => randUnit()),

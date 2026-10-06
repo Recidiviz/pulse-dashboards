@@ -586,6 +586,7 @@ test("current user record for supervisor", async () => {
       },
       "hasOutliers": true,
       "pseudonymizedId": "hashed-agonzalez123",
+      "stableStaffExternalId": "STABLE_agonzalez123",
       "supervisionLocationForListPage": "Region 1",
       "supervisionLocationForSupervisorPage": "Unit 1",
     }
@@ -638,6 +639,7 @@ test("hydrate supervisors list with current user", async () => {
         },
         "hasOutliers": true,
         "pseudonymizedId": "hashed-agonzalez123",
+        "stableStaffExternalId": "STABLE_agonzalez123",
         "supervisionLocationForListPage": "Region 1",
         "supervisionLocationForSupervisorPage": "Unit 1",
       },

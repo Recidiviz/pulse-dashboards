@@ -29,6 +29,7 @@ export const rawSupervisionOfficerSupervisorFixture: RawSupervisionOfficerSuperv
         surname: "Gonzalez",
       },
       externalId: "agonzalez123",
+      stableStaffExternalId: "STABLE_agonzalez123",
       supervisionLocationForListPage: "Region 1",
       supervisionLocationForSupervisorPage: "Unit 1",
       pseudonymizedId: "hashed-agonzalez123",
@@ -38,6 +39,7 @@ export const rawSupervisionOfficerSupervisorFixture: RawSupervisionOfficerSuperv
     {
       fullName: { givenNames: "David", surname: "Lee" },
       externalId: "dlee456",
+      stableStaffExternalId: "STABLE_dlee456",
       supervisionLocationForListPage: "Region 2",
       supervisionLocationForSupervisorPage: "Unit 1",
       pseudonymizedId: "hashed-dlee456",
@@ -47,6 +49,7 @@ export const rawSupervisionOfficerSupervisorFixture: RawSupervisionOfficerSuperv
     {
       fullName: { givenNames: "Rosa", surname: "Smith" },
       externalId: "rsmith789",
+      stableStaffExternalId: "STABLE_rsmith789",
       supervisionLocationForListPage: "Region 1",
       supervisionLocationForSupervisorPage: "Unit 1",
       pseudonymizedId: "hashed-rsmith789",
@@ -56,6 +59,7 @@ export const rawSupervisionOfficerSupervisorFixture: RawSupervisionOfficerSuperv
     {
       fullName: { givenNames: "Charles", surname: "Thomas" },
       externalId: "cthomas321",
+      stableStaffExternalId: null,
       supervisionLocationForListPage: "Region 2",
       supervisionLocationForSupervisorPage: null,
       pseudonymizedId: "hashed-cthomas321",
@@ -65,6 +69,7 @@ export const rawSupervisionOfficerSupervisorFixture: RawSupervisionOfficerSuperv
     {
       fullName: { givenNames: "Cora", surname: "Matterson" },
       externalId: "cmatterson567",
+      stableStaffExternalId: "STABLE_cmatterson567",
       supervisionLocationForListPage: "EXTERNAL_UNKNOWN",
       supervisionLocationForSupervisorPage: null,
       pseudonymizedId: "hashed-cmatterson567",
@@ -74,6 +79,7 @@ export const rawSupervisionOfficerSupervisorFixture: RawSupervisionOfficerSuperv
     {
       fullName: { givenNames: "Jared", surname: "Williams" },
       externalId: "jwilliams345",
+      stableStaffExternalId: "STABLE_jwilliams345",
       supervisionLocationForListPage: null,
       supervisionLocationForSupervisorPage: "NULL",
       pseudonymizedId: "hashed-jwilliams345",

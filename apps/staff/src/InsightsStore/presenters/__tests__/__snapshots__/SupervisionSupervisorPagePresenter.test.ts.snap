@@ -184,6 +184,7 @@ exports[`supervisorInfo 1`] = `
   },
   "hasOutliers": true,
   "pseudonymizedId": "hashed-agonzalez123",
+  "stableStaffExternalId": "STABLE_agonzalez123",
   "supervisionLocationForListPage": "Region 1",
   "supervisionLocationForSupervisorPage": "Unit 1",
 }
