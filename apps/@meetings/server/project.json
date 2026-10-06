@@ -144,6 +144,40 @@
       "defaultConfiguration": "test"
     },
     "requires-sops-env:upload-sourcemaps": {},
+    "requires-sops-env:sentry-release": {
+      "command": "sentry-cli releases new \"$SENTRY_RELEASE\" -p meetings-server -p meetings-data-import -p meetings-artifact-cleanup -p meetings-seed-demo && sentry-cli releases set-commits \"$SENTRY_RELEASE\" --auto",
+      "cache": false,
+      "options": { "cwd": "{projectRoot}" },
+      "metadata": {
+        "sops-env": {
+          "additional-sops-env-files": [
+            "{projectRoot}/env.upload-sourcemaps.enc.yaml"
+          ]
+        }
+      },
+      "configurations": {
+        "staging": {},
+        "production": {}
+      },
+      "defaultConfiguration": "staging"
+    },
+    "requires-sops-env:sentry-deploy": {
+      "command": "sentry-cli deploys new --release \"$SENTRY_RELEASE\" -e \"$APP_ENV\"",
+      "cache": false,
+      "options": { "cwd": "{projectRoot}" },
+      "metadata": {
+        "sops-env": {
+          "additional-sops-env-files": [
+            "{projectRoot}/env.upload-sourcemaps.enc.yaml"
+          ]
+        }
+      },
+      "configurations": {
+        "staging": { "env": { "APP_ENV": "staging" } },
+        "production": { "env": { "APP_ENV": "production" } }
+      },
+      "defaultConfiguration": "staging"
+    },
     "container": {
       "executor": "@nx-tools/nx-container:build",
       "dependsOn": ["upload-sourcemaps"],

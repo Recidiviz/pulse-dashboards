@@ -53,6 +53,13 @@ export const meetingsBackend: ServiceDefinition = {
       );
     }
 
+    // Create the release before the new containers roll out, so it exists on Sentry's
+    // timeline from this deploy and not from whenever its first event happens to arrive.
+    // Idempotent, so a revision staging already released reuses its release.
+    await $`SENTRY_RELEASE=${currentRevision} nx sentry-release @meetings/server --configuration ${env}`.pipe(
+      process.stdout,
+    );
+
     // Deploy the import, migration, and server infrastructure changes for the applicable environment
     const stack = dashboardStack(env, "meetings");
 
@@ -62,6 +69,11 @@ export const meetingsBackend: ServiceDefinition = {
         -var migrate_db_container_version=${currentRevision} \
         -var import_container_version=${currentRevision} \
         -var seed_demo_container_version=${currentRevision}`.pipe(
+      process.stdout,
+    );
+
+    // Tells Sentry this release is now running in this environment.
+    await $`SENTRY_RELEASE=${currentRevision} nx sentry-deploy @meetings/server --configuration ${env}`.pipe(
       process.stdout,
     );
 
