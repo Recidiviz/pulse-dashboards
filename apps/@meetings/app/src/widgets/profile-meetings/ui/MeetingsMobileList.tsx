@@ -94,7 +94,7 @@ const MeetingsMobileList = ({
       }
       ListEmptyComponent={
         <MeetingsPlaceholder
-          handleCreateMeeting={handleOpenModal}
+          handleCreateMeeting={handleOpenBottomSheet}
           isSearchResultEmpty={searchQuery.trim().length > 0}
         />
       }
