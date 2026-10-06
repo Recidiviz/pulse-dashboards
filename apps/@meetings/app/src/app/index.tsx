@@ -30,6 +30,7 @@ import {
   getCredentialsFailedCause,
   offlineTransport,
   sentryDsn,
+  sentryRelease,
   useSentryAppLifecycle,
 } from "~@meetings/app/shared/lib/monitoring";
 
@@ -58,8 +59,7 @@ Sentry.init({
   // "development"; otherwise the SDK invents one from the app name and version.
   enabled: env.EXPO_PUBLIC_SENTRY_ENV !== "development",
   environment: env.EXPO_PUBLIC_SENTRY_ENV,
-  // Web-only: set by build:web. Unset on native, where the SDK derives the release.
-  release: env.EXPO_PUBLIC_SENTRY_RELEASE,
+  release: sentryRelease,
   // Web-only: cache events that fail while offline and replay on reconnect.
   // Undefined on native, which keeps the SDK's built-in offline caching.
   transport: offlineTransport,
