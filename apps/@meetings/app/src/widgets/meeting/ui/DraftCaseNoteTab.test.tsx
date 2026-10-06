@@ -21,6 +21,10 @@ import React from "react";
 
 import DraftCaseNoteTab from "./DraftCaseNoteTab";
 
+jest.mock("@react-native-async-storage/async-storage", () =>
+  require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
+);
+
 // Capture the onSuccess callback the component hands to useUpdateNotes so we can
 // simulate a successful save without wiring up a real tRPC mutation.
 let mockCapturedOnSuccess: (() => void) | undefined;

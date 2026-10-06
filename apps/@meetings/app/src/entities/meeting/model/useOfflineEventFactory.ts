@@ -114,6 +114,7 @@ export function useOfflineEventFactory() {
           { meetingId },
           {
             id: meetingId,
+            notetakingPipelineRunId: null,
             meetingType,
             meetingTypeCategory: meetingTypeCategory ?? null,
             startTime,

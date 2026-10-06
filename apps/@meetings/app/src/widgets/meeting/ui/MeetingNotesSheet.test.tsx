@@ -54,6 +54,7 @@ jest.mock("react-native-heroicons/outline/DocumentDuplicateIcon", () => ({
 
 const meetingDetails = {
   id: "m1",
+  notetakingPipelineRunId: null,
   meetingType: null,
   meetingTypeCategory: null,
   startTime: new Date("2026-01-01T10:00:00Z"),

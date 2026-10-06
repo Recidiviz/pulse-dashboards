@@ -260,7 +260,6 @@ export const meetingRouter = router({
               "staffFeedback",
               "staffFeedbackGeneratedAt",
               "outputsPipelineRunId",
-              "notetakingPipelineRunId",
               "recordingsGCSBucket",
               "finalRecordingGCSPath",
               "audioDeletedAt",

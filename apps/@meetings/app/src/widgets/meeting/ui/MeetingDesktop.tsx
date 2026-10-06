@@ -277,6 +277,13 @@ const MeetingDesktop = ({
                   isMeetingCreator={isMeetingCreator}
                   personId={person.personId.toString()}
                   canEdit={isMeetingCreator}
+                  typingAnimation={{
+                    pipelineRunId: meetingDetails.notetakingPipelineRunId,
+                    meetingStartTime: meetingDetails.startTime,
+                    isRead:
+                      !!meetingDetails.caseNoteEditedAt ||
+                      meetingDetails.approvals.caseNote.isApproved,
+                  }}
                   outputVote={
                     isMeetingCreator &&
                     meetingDetails.caseNote && (

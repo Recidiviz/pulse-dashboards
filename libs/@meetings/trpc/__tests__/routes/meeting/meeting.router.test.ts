@@ -123,6 +123,7 @@ describe("meeting router", () => {
         structuredActionItems: [],
         staffFeedback: null,
         currentOutputVotes: null,
+        notetakingPipelineRunId: null,
         caseNoteEditedAt: null,
         actionItemsEditedAt: null,
         approvals: {
@@ -212,6 +213,7 @@ describe("meeting router", () => {
         structuredActionItems: [],
         staffFeedback: null,
         currentOutputVotes: null,
+        notetakingPipelineRunId: null,
         caseNoteEditedAt: null,
         actionItemsEditedAt: null,
         approvals: {
@@ -528,6 +530,7 @@ describe("meeting router", () => {
         meetingId: fakeActiveMeeting.id,
       });
 
+      expect(result.notetakingPipelineRunId).toBe(currentPipelineRunId);
       expect(result.approvals).toEqual({
         caseNote: {
           isApproved: false,

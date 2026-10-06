@@ -30,6 +30,14 @@ import { Button } from "~@meetings/app/shared/ui/Button";
 import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
+import {
+  CaseNoteTypingAnimation,
+  useCaseNoteTyping,
+} from "../model/useCaseNoteTyping";
+
+const NOTE_TEXT_CLASSNAME =
+  "text-base leading-6 tracking-[-0.32px] text-primary";
+
 type Props = {
   meetingId: string;
   caseNote: string;
@@ -39,6 +47,7 @@ type Props = {
   outputVote?: ReactNode;
   canEdit?: boolean;
   onEdit?: () => void;
+  typingAnimation?: CaseNoteTypingAnimation;
 };
 
 const DraftCaseNoteTab = ({
@@ -50,6 +59,7 @@ const DraftCaseNoteTab = ({
   outputVote,
   canEdit = false,
   onEdit,
+  typingAnimation,
 }: Props) => {
   const { track } = useAnalytics();
   const utils = trpc.useUtils();
@@ -57,6 +67,12 @@ const DraftCaseNoteTab = ({
   const [inputNotes, setInputNotes] = useState(caseNote);
   const [inputHeight, setInputHeight] = useState(0);
   const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
+  const { isPending, isTyping, visibleText } = useCaseNoteTyping({
+    meetingId,
+    caseNote,
+    animation: typingAnimation,
+  });
+  const isNoteShown = !isPending && !isTyping;
   const updateNotesMutation = useUpdateNotes({
     onSuccess: () => {
       utils.v1.meeting.getDetails.invalidate({ meetingId });
@@ -108,7 +124,7 @@ const DraftCaseNoteTab = ({
       <View className="flex-row items-center justify-between">
         <View>
           <Typography variant="heading-4">Draft case note</Typography>
-          {canEdit && (
+          {canEdit && isNoteShown && (
             <Typography variant="body-s-regular">
               Place your cursor where you want to start typing
             </Typography>
@@ -138,24 +154,31 @@ const DraftCaseNoteTab = ({
         </View>
       </View>
       <View className="flex-1">
-        <TextInput
-          style={{
-            outlineColor: "transparent",
-            minHeight: inputHeight,
-            overflow: "hidden",
-          }}
-          className="text-base leading-6 tracking-[-0.32px] text-primary"
-          value={inputNotes}
-          onChangeText={handleChange}
-          onContentSizeChange={(e) =>
-            setInputHeight(e.nativeEvent.contentSize.height)
-          }
-          textAlignVertical="top"
-          scrollEnabled={false}
-          readOnly={!canEdit}
-          multiline
-        />
-        {outputVote}
+        {isNoteShown ? (
+          <TextInput
+            style={{
+              outlineColor: "transparent",
+              minHeight: inputHeight,
+              overflow: "hidden",
+            }}
+            className={NOTE_TEXT_CLASSNAME}
+            value={inputNotes}
+            onChangeText={handleChange}
+            onContentSizeChange={(e) =>
+              setInputHeight(e.nativeEvent.contentSize.height)
+            }
+            textAlignVertical="top"
+            scrollEnabled={false}
+            readOnly={!canEdit}
+            multiline
+          />
+        ) : (
+          <Typography className={NOTE_TEXT_CLASSNAME}>
+            {visibleText}
+            {isTyping && <Typography className="animate-pulse">|</Typography>}
+          </Typography>
+        )}
+        {isNoteShown && outputVote}
       </View>
       {isReviewModalVisible && (
         <ReviewBeforeCopyModal

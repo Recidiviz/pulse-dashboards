@@ -81,6 +81,7 @@ export const getDetailsOutputSchema = z.object({
       }),
     )
     .nullable(),
+  notetakingPipelineRunId: z.string().nullable(),
   // Most-recent user edit per section; null = untouched LLM output.
   caseNoteEditedAt: z.date().nullable(),
   actionItemsEditedAt: z.date().nullable(),
