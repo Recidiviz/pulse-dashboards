@@ -31,6 +31,10 @@ export const usAzResidentsConfig: ResidentsConfig = {
   enabledResidentFacilityFlags: {
     PERRYVILLE: {
       usAzIonReferral: parseISO("2026-09-25T05:00:00-07:00"),
+      usAzClassification: parseISO("2026-10-08T07:00:00-07:00"),
+    },
+    WINSLOW: {
+      usAzClassification: parseISO("2026-10-08T07:00:00-07:00"),
     },
   },
 };

@@ -18,4 +18,6 @@ The app shows the dates specific to your own sentence or sentences. Some sentenc
 
 ## What is Time Comp?
 
-The Time Computation Unit (“TCU”) calculates the release dates for everyone sentenced to ADCRR. When you first arrive, TCU will review your court documents to make sure your sentence is recorded correctly. TCU will recalculate your projected release dates that may impact your earned release credits during your incarceration period.
+The Time Computation Unit (“TCU”) calculates the release dates for everyone sentenced to ADCRR. When you first arrive, TCU will review your court documents to make sure your sentence is recorded correctly.
+
+TCU will recalculate your projected release dates if anything changes during your incarceration that affects your earned release credits, or which release types you qualify for.

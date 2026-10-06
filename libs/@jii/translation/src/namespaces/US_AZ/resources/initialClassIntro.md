@@ -8,4 +8,4 @@ Be careful: disciplinary infractions can raise your points and custody level fas
 
 If it has been more than 3 months and you have not been reclassified, ask your COIII.
 
-Tap **Learn more about how Classification works** below for more information.
+Visit the ["Common Questions about Classification"]({{faqPageUrl}}) page for more information.

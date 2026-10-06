@@ -16,6 +16,7 @@
 // =============================================================================
 
 import aboutInfoPage from "./aboutInfoPage.md?raw";
+import aboutInfoPageWithClassification from "./aboutInfoPageWithClassification.md?raw";
 import dprInfoPage from "./dprInfoPage.md?raw";
 import initialClassIntro from "./initialClassIntro.md?raw";
 import ionInfoPage from "./ionInfoPage.md?raw";
@@ -28,6 +29,7 @@ export default {
   about: {
     heading: "About the App",
     body: aboutInfoPage,
+    bodyWithClassification: aboutInfoPageWithClassification,
   },
   homePageLinkText: "Home Page",
   backToHomePageLinkText: "Back to Home",
@@ -786,7 +788,7 @@ If you refuse to sign your Conditions of Supervision at your SED, you stay in pr
       reclassIntro,
       noClassIntro,
       updateWarning: `**Your points may not update unless they would result in a change to your level.** 
-Tap the “Learn more” button below.`,
+[Learn more about classification.]({{faqPageUrl}})`,
       explainerCard: {
         heading: "What do these numbers mean?",
         body: `- Your Custody Level affects which yards you are eligible to be housed at. 
@@ -866,7 +868,9 @@ If it has been more than 3 months since Intake and you have not been reclassifie
         },
         finishedProgramNoChange: {
           header: "I finished a Major Program. Why didn't my points go down?",
-          content: `Your points may have already gone down. The points you see here, and what your COIII would tell you your points are if you asked, only updates when a new classification review is done. A review does not happen every time your points change — it happens when your points change enough to move you to a lower or higher custody level. Until then, the number here can stay the same.
+          content: `Your points may have already gone down. The points you see here, and what your COIII would tell you your points are if you asked, only updates when a new classification review is done. 
+          
+**A review does not happen every time your points change** — it happens when your points change enough to move you to a lower or higher custody level. Until then, the number here can stay the same.
 
 If you think your points have dropped, ask your COIII to check. They can look up where your points are now and may be able to start a review.
 

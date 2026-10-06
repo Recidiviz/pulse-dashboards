@@ -65,7 +65,7 @@ export class ResidentNavBarPresenter {
     }
 
     if (this.routeParams.stateSlug === "arizona") {
-      const links = [
+      const links: Array<AdditionalTopBarLink> = [
         {
           label: "About",
           to: State.Resident.UsAzMoreInformation.About.buildPath(
@@ -79,6 +79,7 @@ export class ResidentNavBarPresenter {
           to: State.Resident.UsAzClassificationPoints.buildPath(
             this.routeParams,
           ),
+          activeOnSubroutes: true,
         });
       }
       return links;

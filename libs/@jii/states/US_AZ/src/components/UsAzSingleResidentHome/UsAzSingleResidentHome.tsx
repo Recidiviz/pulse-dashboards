@@ -15,8 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { PageLinksFooter } from "~@jii/common-ui";
 import { AboutVideoCta } from "~@jii/onboarding-video";
 
+import { useUsAzInfoPageFooterContents } from "../../hooks/useUsAzInfoPageFooterContents";
 import { ClassificationPointsCTA } from "../ClassificationPoints/CTA";
 import { IONBanner } from "../IONReferral";
 import { UsAzLastUpdatedBanner } from "../UsAzLastUpdatedBanner";
@@ -36,6 +38,7 @@ export function UsAzSingleResidentHome() {
       <ClassificationPointsCTA />
       <UsAzImportantDates />
       <UsAzImportantDatesLink />
+      <PageLinksFooter contents={useUsAzInfoPageFooterContents()} />
     </>
   );
 }

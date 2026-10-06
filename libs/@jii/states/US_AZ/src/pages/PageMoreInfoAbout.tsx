@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { usePageTitle, withCopyWrapperOverrides } from "~@jii/common-ui";
+import { useSingleResidentContext } from "~@jii/data";
 import { AboutVideoCta } from "~@jii/onboarding-video";
 import { useUsAzTranslations } from "~@jii/translation";
 
@@ -27,13 +28,19 @@ const CopyWrapperWithCustomComponents = withCopyWrapperOverrides({
 
 export function PageMoreInfoAbout() {
   const { t } = useUsAzTranslations();
+  const { heading, body, bodyWithClassification } = t(($) => $.about, {
+    returnObjects: true,
+  });
 
-  usePageTitle(t(($) => $.about.heading));
+  usePageTitle(heading);
+  const {
+    residentFlags: { usAzClassification },
+  } = useSingleResidentContext();
 
   return (
     <DefinitionView
-      heading={t(($) => $.about.heading)}
-      body={t(($) => $.about.body)}
+      heading={heading}
+      body={usAzClassification ? bodyWithClassification : body}
       CopyWrapperOverride={CopyWrapperWithCustomComponents}
     />
   );

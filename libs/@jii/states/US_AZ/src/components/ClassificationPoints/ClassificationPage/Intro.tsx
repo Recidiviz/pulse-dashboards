@@ -18,6 +18,7 @@
 import assertNever from "assert-never";
 
 import { CopyWrapper } from "~@jii/common-ui";
+import { State } from "~@jii/paths";
 import { useUsAzTranslations } from "~@jii/translation";
 import { UsAzResidentJiiData } from "~datatypes";
 
@@ -32,7 +33,13 @@ export const Intro = ({
 
   const { initialClassIntro, reclassIntro, noClassIntro } = t(
     ($) => $.classificationPoints.page,
-    { returnObjects: true },
+    {
+      returnObjects: true,
+      replace: {
+        faqPageUrl:
+          State.Resident.UsAzClassificationPoints.$.FAQ.buildRelativePath({}),
+      },
+    },
   );
   switch (classType) {
     case "INITIAL":

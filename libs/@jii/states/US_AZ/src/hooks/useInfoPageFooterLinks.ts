@@ -36,12 +36,14 @@ export function useInfoPageFooterLinks(): Array<SimpleLinkProps> {
     residentFlags: { usAzClassification },
   } = useSingleResidentContext();
 
-  const links: Array<SimpleLinkProps> = [
-    {
+  const links: Array<SimpleLinkProps> = [];
+  if (!matchPath(State.Resident.path, pathname)) {
+    links.push({
       children: t(($) => $.homePageLinkText),
       to: State.Resident.buildPath(pathParams),
-    },
-  ];
+    });
+  }
+
   if (!matchPath(State.Resident.UsAzMoreInformation.About.path, pathname)) {
     links.push({
       to: State.Resident.UsAzMoreInformation.About.buildPath(pathParams),

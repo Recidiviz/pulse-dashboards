@@ -26,6 +26,7 @@ import {
   Chip,
   CopyWrapper,
 } from "~@jii/common-ui";
+import { State } from "~@jii/paths";
 import { useUsAzTranslations } from "~@jii/translation";
 import { palette, spacing } from "~design-system";
 
@@ -92,13 +93,19 @@ export const ValuesCard = () => {
   let custodyLevelValue;
   // don't make a composite string if values are missing (in practice they should always be present or missing together)
   if (cuAssignedCustodyLevel && cuAssignedCustodyLevelNumeric) {
-    custodyLevelValue = `${cuAssignedCustodyLevel}-${cuAssignedCustodyLevelNumeric}`;
+    custodyLevelValue = `${cuAssignedCustodyLevel}—${cuAssignedCustodyLevelNumeric}`;
   }
   const {
     values: { cuLevel, cuPoints, irLevel, irPoints },
     initialClassBadge,
     updateWarning,
-  } = t(($) => $.classificationPoints.page, { returnObjects: true });
+  } = t(($) => $.classificationPoints.page, {
+    returnObjects: true,
+    replace: {
+      faqPageUrl:
+        State.Resident.UsAzClassificationPoints.$.FAQ.buildRelativePath({}),
+    },
+  });
 
   return (
     <CardWrapper>
