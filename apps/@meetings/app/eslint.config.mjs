@@ -22,6 +22,19 @@ import path from "path";
 import baseConfig from "../../../eslint.config.mjs";
 import noRnText from "./.eslint-rules/no-rn-text.js";
 
+const ADMIN_MESSAGE =
+  "Admin code is internal. Import it only through the entry points described in src/admin/README.md.";
+
+const adminDeepImports = (...exceptions) => ({
+  group: ["~@meetings/app/admin/**", ...exceptions.map((e) => `!${e}`)],
+  message: ADMIN_MESSAGE,
+});
+
+const adminEntryImport = {
+  regex: "^~@meetings/app/admin$",
+  message: ADMIN_MESSAGE,
+};
+
 export default [
   ...baseConfig,
   ...nx.configs["flat/react"],
@@ -58,6 +71,41 @@ export default [
         },
       ],
       "local/no-rn-text": "error",
+    },
+  },
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: ["src/admin/**"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [adminDeepImports(), adminEntryImport],
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/app/navigation/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": ["error", { patterns: [adminDeepImports()] }],
+    },
+  },
+  {
+    files: [
+      "src/widgets/header/**/*.{ts,tsx}",
+      "src/widgets/navigation-drawer/**/*.{ts,tsx}",
+    ],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            adminDeepImports("~@meetings/app/admin/navigation"),
+            adminEntryImport,
+          ],
+        },
+      ],
     },
   },
   {

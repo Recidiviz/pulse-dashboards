@@ -17,6 +17,7 @@
 
 import { stringify } from "yaml";
 
+import { IMPERSONATED_EMAIL_HEADER_KEY } from "~@meetings/trpc/context";
 import {
   initFastifyAndSetUser,
   testGlobalPrismaClient,
@@ -424,7 +425,7 @@ describe("config router", () => {
         data: { id: "test_base", version: 1, config: "version: 1" },
       });
 
-      // recidivizStatelessProcedure never forwards ctx.prisma/ctx.stateCode to
+      // adminProcedure never forwards ctx.prisma/ctx.stateCode to
       // the handler, so the result should be identical no matter which state
       // the request claims to be scoped to.
       await initFastifyAndSetUser(
@@ -441,6 +442,41 @@ describe("config router", () => {
       const result = await testTRPCClient.v1.config.getNames.query();
 
       expect(result).toEqual({ test_base: undefined });
+    });
+  });
+
+  describe("while impersonating", () => {
+    beforeEach(async () => {
+      await initFastifyAndSetUser(
+        {
+          "https://dashboard.recidiviz.org/email_address": "test@recidiviz.org",
+          "https://dashboard.recidiviz.org/app_metadata": {
+            stateCode: "recidiviz",
+            allowedStates: ["US_NE"],
+          },
+        },
+        {
+          extraHeaders: {
+            [IMPERSONATED_EMAIL_HEADER_KEY]: fakeStaff[0].email,
+          },
+        },
+      );
+    });
+
+    test("rejects admin procedures", async () => {
+      await expect(testTRPCClient.v1.config.getNames.query()).rejects.toThrow(
+        "Admin requests are not allowed while impersonating",
+      );
+      await expect(
+        testTRPCClient.v1.config.getByState.query({ id: "us_ne" }),
+      ).rejects.toThrow("Admin requests are not allowed while impersonating");
+      await expect(
+        testTRPCClient.v1.config.saveNewConfig.mutate({
+          id: "us_ne",
+          parentId: null,
+          newConfig: "version: 1",
+        }),
+      ).rejects.toThrow("Admin requests are not allowed while impersonating");
     });
   });
 });

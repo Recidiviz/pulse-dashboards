@@ -27,6 +27,7 @@ module.exports = {
     "./src/shared/**/*.{js,jsx,ts,tsx}",
     "./src/widgets/**/*.{js,jsx,ts,tsx}",
     "./src/entities/**/*.{js,jsx,ts,tsx}",
+    "./src/admin/**/*.{js,jsx,ts,tsx}",
   ],
   darkMode: "class",
   presets: [require("nativewind/preset")],

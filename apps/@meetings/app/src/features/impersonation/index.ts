@@ -15,6 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { useImpersonationStore } from "./model/impersonation";
+export {
+  useImpersonationStore,
+  useIsImpersonating,
+} from "./model/impersonation";
 export { ImpersonationBanner } from "./ui/ImpersonationBanner";
 export { ImpersonationModal } from "./ui/ImpersonationModal";

@@ -29,9 +29,13 @@ import ChevronDownIcon from "react-native-heroicons/outline/ChevronDownIcon";
 import ChevronUpIcon from "react-native-heroicons/outline/ChevronUpIcon";
 import ExternalLinkIcon from "react-native-heroicons/outline/ExternalLinkIcon";
 
+import { useAdminNavigationStore } from "~@meetings/app/admin/navigation";
 import { useStateSelection } from "~@meetings/app/entities/state-code";
 import { useUserContext } from "~@meetings/app/entities/user";
-import { ImpersonationModal } from "~@meetings/app/features/impersonation";
+import {
+  ImpersonationModal,
+  useIsImpersonating,
+} from "~@meetings/app/features/impersonation";
 import BgAvatarImage from "~@meetings/app/shared/assets/images/bg-avatar.png";
 import { IS_PROD } from "~@meetings/app/shared/config";
 import { getInitials } from "~@meetings/app/shared/lib/format";
@@ -55,6 +59,8 @@ export const ProfileMenu = () => {
     isRecidivizUser,
   } = useUserContext();
   const { canSelectStateCode, currentStateName } = useStateSelection();
+  const isImpersonating = useIsImpersonating();
+  const lastAdminScreen = useAdminNavigationStore((s) => s.lastScreen);
 
   const handleDropdownMenuPress = (callback?: () => void) => {
     setProfileDropdownOpen(false);
@@ -191,13 +197,17 @@ export const ProfileMenu = () => {
               )}
               {isRecidivizUser && (
                 <>
-                  <ProfileMenuItem
-                    link={{
-                      screen: "AgencyConfig",
-                      onPress: () => setProfileDropdownOpen(false),
-                    }}
-                    label="Agency Configurations"
-                  />
+                  {/* Admin actions always run as the Recidiviz user, so the
+                      entry is hidden while impersonating. */}
+                  {!isImpersonating && (
+                    <ProfileMenuItem
+                      link={{
+                        screen: lastAdminScreen,
+                        onPress: () => setProfileDropdownOpen(false),
+                      }}
+                      label="Admin"
+                    />
+                  )}
                   <ProfileMenuItem
                     pressable={{
                       onPress: () => {

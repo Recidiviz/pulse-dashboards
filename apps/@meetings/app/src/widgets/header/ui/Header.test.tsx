@@ -96,6 +96,7 @@ jest.mock("~@meetings/app/features/impersonation", () => ({
     startImpersonating: jest.fn(),
     stopImpersonating: jest.fn(),
   }),
+  useIsImpersonating: () => false,
 }));
 
 jest.mock("~@meetings/app/shared/ui/OfflineIndicator", () => ({

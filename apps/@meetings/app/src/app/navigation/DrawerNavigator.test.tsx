@@ -69,8 +69,11 @@ jest.mock("~@meetings/app/widgets/navigation-drawer", () => ({
 jest.mock("~@meetings/app/pages/onboarding", () => ({
   OnboardingScreen: null,
 }));
-jest.mock("~@meetings/app/pages/agency-config", () => ({
+jest.mock("~@meetings/app/admin", () => ({
   AgencyConfigScreen: null,
+}));
+jest.mock("~@meetings/app/features/impersonation", () => ({
+  useIsImpersonating: () => false,
 }));
 
 jest.mock("~@meetings/app/entities/agency-config", () => ({

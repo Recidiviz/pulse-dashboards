@@ -26,11 +26,7 @@ import {
 } from "~@meetings/config";
 import { getGlobalPrismaClient } from "~@meetings/prisma";
 import { type AgencyConfig as AgencyConfigRow } from "~@meetings/prisma/client";
-import {
-  auth0Procedure,
-  recidivizStatelessProcedure,
-  router,
-} from "~@meetings/trpc/init";
+import { adminProcedure, auth0Procedure, router } from "~@meetings/trpc/init";
 import { getAgencyConfigs } from "~@meetings/trpc/routes/config/utils";
 
 export const configRouter = router({
@@ -40,7 +36,7 @@ export const configRouter = router({
     },
   ),
 
-  getNames: recidivizStatelessProcedure.query(
+  getNames: adminProcedure.query(
     async (): Promise<Record<string, string | undefined>> => {
       const prisma = getGlobalPrismaClient();
       const rows = await prisma.agencyConfig.findMany({
@@ -62,7 +58,7 @@ export const configRouter = router({
     },
   ),
 
-  getByState: recidivizStatelessProcedure
+  getByState: adminProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input }): Promise<AgencyConfigRow> => {
       const prisma = getGlobalPrismaClient();
@@ -79,7 +75,7 @@ export const configRouter = router({
       return row;
     }),
 
-  saveNewConfig: recidivizStatelessProcedure
+  saveNewConfig: adminProcedure
     .input(
       z.object({
         newConfig: z.string(),

@@ -58,11 +58,13 @@ export const auth0Procedure = baseProcedure.use(async (opts) => {
   });
 });
 
-// TODO (OBT-37732): migrate impersonation endpoints to use this procedure
-export const recidivizStatelessProcedure = baseProcedure.use(async (opts) => {
+// For the Admin screens.
+// TODO (OBT-37732): migrate impersonation endpoints to use this procedure. Switching the
+// impersonated user mid-impersonation will need a different procedure, since this one rejects
+// requests made while impersonating.
+export const adminProcedure = baseProcedure.use(async (opts) => {
   const { ctx } = opts;
   if (!ctx.isAuth0Authorized || !ctx.user) {
-    //
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
@@ -70,6 +72,15 @@ export const recidivizStatelessProcedure = baseProcedure.use(async (opts) => {
     throw new TRPCError({
       code: "FORBIDDEN",
       message: "Admin permissions required for requests",
+    });
+  }
+
+  // Admin actions should always run as the Recidiviz user, never as the staff member they are
+  // impersonating.
+  if (ctx.user.impersonatedBy) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Admin requests are not allowed while impersonating",
     });
   }
 

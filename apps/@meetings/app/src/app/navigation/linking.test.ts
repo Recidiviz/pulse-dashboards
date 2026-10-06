@@ -66,3 +66,14 @@ describe("linking stateCode round trip", () => {
     expect(path).toBe("/clients");
   });
 });
+
+describe("admin paths", () => {
+  it("maps admin/agency-config to the AgencyConfig screen", () => {
+    const state = parsePath("/admin/agency-config");
+
+    expect(findFocusedRoute(state)?.name).toBe("AgencyConfig");
+    expect(linking.getPathFromState?.(state, linking.config)).toBe(
+      "/admin/agency-config",
+    );
+  });
+});

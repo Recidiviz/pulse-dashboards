@@ -121,6 +121,10 @@ Use `nx generate ~repo:lib [my-library]`; README.md has the details.
 
 Import paths use a `~` prefix for workspace libraries (e.g. `~datatypes`, `~@sentencing/prisma`); tsconfig.base.json defines them.
 
+### Internal admin areas (Meetings)
+
+The Meetings admin panel for Recidiviz staff is kept apart from user-facing code, and user-facing code must not import it (ESLint enforces this). In the app it lives in `apps/@meetings/app/src/admin/`; on the server in `libs/@meetings/trpc/src/{routes,services}/admin/` and `libs/@meetings/tasks/src/admin/`. Put new admin-only code there and read the README in each folder before adding to it.
+
 ### Key Technology Patterns
 
 - **State management**: MobX for staff app, React Query for newer apps

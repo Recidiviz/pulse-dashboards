@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { DrawerContentComponentProps } from "@react-navigation/drawer";
-import { render, screen } from "@testing-library/react-native";
+import { fireEvent, render, screen } from "@testing-library/react-native";
 import React from "react";
 
 import { useStateSelection } from "~@meetings/app/entities/state-code";
@@ -37,8 +37,17 @@ jest.mock("@react-navigation/drawer", () => {
   };
 });
 
+const mockImpersonation = { impersonatedEmail: "" };
+
 jest.mock("~@meetings/app/features/impersonation", () => ({
   ImpersonationModal: () => null,
+  useIsImpersonating: () => !!mockImpersonation.impersonatedEmail,
+}));
+
+jest.mock("~@meetings/app/admin/navigation", () => ({
+  useAdminNavigationStore: (
+    selector: (state: { lastScreen: string }) => unknown,
+  ) => selector({ lastScreen: "AgencyConfig" }),
 }));
 
 jest.mock("react-native-safe-area-context", () => ({
@@ -71,6 +80,7 @@ describe("DrawerContent", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockImpersonation.impersonatedEmail = "";
 
     mockUseStateSelection.mockReturnValue({
       canSelectStateCode: false,
@@ -89,21 +99,33 @@ describe("DrawerContent", () => {
     mockUsePlatform.mockReturnValue({ isWeb: false, isMobile: true });
   });
 
-  // The agency config screen renders a Monaco editor, which is DOM-based and
-  // throws an Invariant Violation on native (Sentry MEETINGS-APP-16A).
-  describe("agency config entry", () => {
+  // Admin screens are web only: the agency config screen renders a Monaco
+  // editor, which is DOM-based and throws an Invariant Violation on native
+  // (Sentry MEETINGS-APP-16A).
+  describe("admin entry", () => {
     it("is hidden from Recidiviz users on native", () => {
       render(<DrawerContent {...props} />);
 
-      expect(screen.queryByText("Agency Configurations")).toBeFalsy();
+      expect(screen.queryByText("Admin")).toBeFalsy();
     });
 
-    it("is shown to Recidiviz users on web", () => {
+    it("is shown to Recidiviz users on web and opens the last admin screen", () => {
       mockUsePlatform.mockReturnValue({ isWeb: true, isMobile: false });
 
       render(<DrawerContent {...props} />);
+      fireEvent.press(screen.getByText("Admin"));
 
-      expect(screen.queryByText("Agency Configurations")).toBeTruthy();
+      expect(props.navigation.navigate).toHaveBeenCalledWith("AgencyConfig");
+    });
+
+    it("is hidden from Recidiviz users while they are impersonating", () => {
+      mockUsePlatform.mockReturnValue({ isWeb: true, isMobile: false });
+      mockImpersonation.impersonatedEmail = "staff@example.com";
+
+      render(<DrawerContent {...props} />);
+
+      expect(screen.queryByText("Admin")).toBeFalsy();
+      expect(screen.getByText("Impersonate User")).toBeTruthy();
     });
 
     it("is hidden from non-Recidiviz users on web", () => {
@@ -119,7 +141,7 @@ describe("DrawerContent", () => {
 
       render(<DrawerContent {...props} />);
 
-      expect(screen.queryByText("Agency Configurations")).toBeFalsy();
+      expect(screen.queryByText("Admin")).toBeFalsy();
     });
   });
 

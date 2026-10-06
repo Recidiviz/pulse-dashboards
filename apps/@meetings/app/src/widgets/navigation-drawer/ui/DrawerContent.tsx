@@ -25,9 +25,13 @@ import XIcon from "react-native-heroicons/outline/XIcon";
 import UsersIcon from "react-native-heroicons/solid/UsersIcon";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { useAdminNavigationStore } from "~@meetings/app/admin/navigation";
 import { useStateSelection } from "~@meetings/app/entities/state-code";
 import { useUserContext } from "~@meetings/app/entities/user";
-import { ImpersonationModal } from "~@meetings/app/features/impersonation";
+import {
+  ImpersonationModal,
+  useIsImpersonating,
+} from "~@meetings/app/features/impersonation";
 import BgAvatarImage from "~@meetings/app/shared/assets/images/bg-avatar.png";
 import { IS_PROD } from "~@meetings/app/shared/config";
 import { getInitials } from "~@meetings/app/shared/lib/format";
@@ -43,6 +47,8 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
   const { canSelectStateCode, currentStateName } = useStateSelection();
   const [showImpersonationModal, setShowImpersonationModal] = useState(false);
   const { isWeb } = usePlatform();
+  const isImpersonating = useIsImpersonating();
+  const lastAdminScreen = useAdminNavigationStore((s) => s.lastScreen);
   const {
     name,
     email,
@@ -132,12 +138,13 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
             )}
           </>
         )}
-        {/* Web only: the AgencyConfig screen is not registered on native, since
-            its Monaco editor is DOM-based. */}
-        {isRecidivizUser && isWeb && (
+        {/* Web only: the admin screens are not registered on native. They are
+            also hidden while impersonating, since admin actions always run as
+            the Recidiviz user. */}
+        {isRecidivizUser && isWeb && !isImpersonating && (
           <MobileMenuTextItem
-            title="Agency Configurations"
-            onPress={() => navigation.navigate("AgencyConfig")}
+            title="Admin"
+            onPress={() => navigation.navigate(lastAdminScreen)}
           />
         )}
         {isRecidivizUser && (

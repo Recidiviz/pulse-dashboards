@@ -34,3 +34,6 @@ export const useImpersonationStore = create<ImpersonationMetadata>((set) => {
       set({ impersonatedEmail: "", impersonatedStateCode: "" }),
   };
 });
+
+export const useIsImpersonating = () =>
+  useImpersonationStore((state) => !!state.impersonatedEmail);

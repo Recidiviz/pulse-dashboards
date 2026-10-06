@@ -19,10 +19,11 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 
+import { AgencyConfigScreen } from "~@meetings/app/admin";
 import { useAgencyConfigs } from "~@meetings/app/entities/agency-config";
 import { useStateSelection } from "~@meetings/app/entities/state-code";
 import { useGetUser, useUserContext } from "~@meetings/app/entities/user";
-import { AgencyConfigScreen } from "~@meetings/app/pages/agency-config";
+import { useIsImpersonating } from "~@meetings/app/features/impersonation";
 import { ClientMeetingScreen } from "~@meetings/app/pages/client-meeting";
 import { ClientNewMeetingScreen } from "~@meetings/app/pages/client-new-meeting";
 import { ClientProfileScreen } from "~@meetings/app/pages/client-profile";
@@ -62,6 +63,7 @@ export default function DrawerNavigator() {
   const { isLoading: isStateLoading } = useStateSelection();
   const { agencyConfigs, isPending: isConfigsPending } = useAgencyConfigs();
   const { isMobile, isWeb } = usePlatform();
+  const isImpersonating = useIsImpersonating();
   const { data: userData, isLoading: isUserLoading } = useGetUser();
 
   const hasSeenOnboarding = userData ? userData.hasSeenOnboarding : false;
@@ -130,7 +132,7 @@ export default function DrawerNavigator() {
       <Drawer.Screen name="StateSelection" component={StateSelectionScreen} />
       {/* Web only: AgencyConfigScreen renders a Monaco editor, which is DOM-based
           and throws an Invariant Violation on native. */}
-      {isRecidivizUser && isWeb && (
+      {isRecidivizUser && isWeb && !isImpersonating && (
         <Drawer.Screen name="AgencyConfig" component={AgencyConfigScreen} />
       )}
     </Drawer.Navigator>

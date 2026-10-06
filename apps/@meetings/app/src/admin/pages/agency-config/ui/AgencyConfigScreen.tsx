@@ -32,6 +32,7 @@ import {
 } from "react-native-safe-area-context";
 import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
 
+import { AdminSidebar } from "~@meetings/app/admin/widgets/admin-sidebar";
 import { trpc } from "~@meetings/app/shared/api";
 import { DEPLOY_ENV_LABEL } from "~@meetings/app/shared/config";
 import { humanReadableTitleCase } from "~@meetings/app/shared/lib/format";
@@ -293,175 +294,180 @@ export const AgencyConfigScreen = () => {
       edges={["top"]}
     >
       <Header />
-      <View className="flex-1 px-4 pb-6 pt-10 md:px-10">
-        <View className="mx-auto w-full max-w-[1240px] flex-1">
-          {/* Toolbar: relative + z-50 is critical so the dropdown renders above Monaco */}
-          <View className="relative z-50 mb-6">
-            <View className="flex-row items-center gap-2">
-              <Typography variant="heading-1">Agency Configurations</Typography>
-              <TouchableOpacity
-                onPress={() => setIsFieldsModalOpen(true)}
-                accessibilityLabel="View available config fields"
-              >
-                <QuestionMarkCircleIcon className="size-5 stroke-tertiary" />
-              </TouchableOpacity>
-            </View>
-            <Typography className="my-2" variant="body-s-regular">
-              View and edit agency configs for {DEPLOY_ENV_LABEL}.
-            </Typography>
-            <View className="min-h-[30px] flex-col items-start gap-3 pt-3 sm:flex-row sm:items-center sm:justify-between">
-              {isLoading ? (
-                <Typography>Loading…</Typography>
-              ) : (
-                <Dropdown
-                  key={selectedDisplayName ?? "none"}
-                  value={selectedDisplayName}
-                  variant="text"
-                  options={displayNames}
-                  onSelect={handleSelect}
-                  label="Select existing agency"
-                  defaultEmptyValue
-                  className="my-2"
-                />
-              )}
-              {(hasChangesToUndo || hasUnsavedChanges) && (
-                <View className="flex-row items-center gap-3">
-                  {hasChangesToUndo && (
-                    <Button variant="tertiary" onPress={handleUndo}>
-                      Undo all changes
-                    </Button>
-                  )}
-                  {hasUnsavedChanges && (
-                    <Button
-                      variant="primary"
-                      onPress={handleSave}
-                      disabled={!canSave}
-                    >
-                      {isCreatingNew
-                        ? "Create config"
-                        : "Save as a new version"}
-                    </Button>
-                  )}
-                </View>
-              )}
-            </View>
-          </View>
-          {!isLoading && selectedConfigId && (
-            <View className="flex-1 flex-col gap-4 overflow-hidden md:flex-row">
-              <View className="flex-1 flex-col overflow-hidden rounded-lg shadow-sm">
-                {isReadOnly && (
-                  <View className="border-b border-subtle bg-secondary px-3 py-2">
-                    <Typography className="text-xs font-semibold uppercase tracking-wide text-tertiary">
-                      (read-only) This state is not currently enabled in the
-                      Meetings app. Please enable to edit.
-                    </Typography>
+      <View className="flex-1 flex-row">
+        <AdminSidebar active="AgencyConfig" />
+        <View className="flex-1 px-4 pb-6 pt-10 md:px-10">
+          <View className="mx-auto w-full max-w-[1240px] flex-1">
+            {/* Toolbar: relative + z-50 is critical so the dropdown renders above Monaco */}
+            <View className="relative z-50 mb-6">
+              <View className="flex-row items-center gap-2">
+                <Typography variant="heading-1">
+                  Agency Configurations
+                </Typography>
+                <TouchableOpacity
+                  onPress={() => setIsFieldsModalOpen(true)}
+                  accessibilityLabel="View available config fields"
+                >
+                  <QuestionMarkCircleIcon className="size-5 stroke-tertiary" />
+                </TouchableOpacity>
+              </View>
+              <Typography className="my-2" variant="body-s-regular">
+                View and edit agency configs for {DEPLOY_ENV_LABEL}.
+              </Typography>
+              <View className="min-h-[30px] flex-col items-start gap-3 pt-3 sm:flex-row sm:items-center sm:justify-between">
+                {isLoading ? (
+                  <Typography>Loading…</Typography>
+                ) : (
+                  <Dropdown
+                    key={selectedDisplayName ?? "none"}
+                    value={selectedDisplayName}
+                    variant="text"
+                    options={displayNames}
+                    onSelect={handleSelect}
+                    label="Select existing agency"
+                    defaultEmptyValue
+                    className="my-2"
+                  />
+                )}
+                {(hasChangesToUndo || hasUnsavedChanges) && (
+                  <View className="flex-row items-center gap-3">
+                    {hasChangesToUndo && (
+                      <Button variant="tertiary" onPress={handleUndo}>
+                        Undo all changes
+                      </Button>
+                    )}
+                    {hasUnsavedChanges && (
+                      <Button
+                        variant="primary"
+                        onPress={handleSave}
+                        disabled={!canSave}
+                      >
+                        {isCreatingNew
+                          ? "Create config"
+                          : "Save as a new version"}
+                      </Button>
+                    )}
                   </View>
                 )}
-                <View className="flex-1 overflow-hidden rounded-lg shadow-sm">
-                  <Editor
-                    height="100%"
-                    defaultLanguage="yaml"
-                    theme="vs"
-                    value={editedConfigText}
-                    onChange={(val) => setEditedConfigText(val ?? "")}
-                    onMount={handleEditorDidMount}
-                    options={{
-                      fixedOverflowWidgets: true, // Forces Monaco popups to absolute float, preventing clipping
-                      minimap: { enabled: false },
-                      padding: { top: 16, bottom: 16 },
-                      fontSize: 14,
-                      fontFamily: "monospace",
-                      lineNumbers: isReadOnly ? "off" : "on",
-                      scrollBeyondLastLine: true,
-                      automaticLayout: true,
-                      renderLineHighlight: "none",
-                      wordWrap: "on",
-                      readOnly: isReadOnly,
-                    }}
-                  />
-                </View>
               </View>
-              {isAgencyConfig && isPreviewEnabled && (
+            </View>
+            {!isLoading && selectedConfigId && (
+              <View className="flex-1 flex-col gap-4 overflow-hidden md:flex-row">
                 <View className="flex-1 flex-col overflow-hidden rounded-lg shadow-sm">
-                  <View className="border-b border-subtle bg-secondary px-3 py-2">
-                    <Typography className="text-xs font-semibold uppercase tracking-wide text-tertiary">
-                      (read-only) Preview merged with:{" "}
-                      {selectedAgencyConfig?.parentId ?? "base"}
-                    </Typography>
-                  </View>
-                  <View className="flex-1">
+                  {isReadOnly && (
+                    <View className="border-b border-subtle bg-secondary px-3 py-2">
+                      <Typography className="text-xs font-semibold uppercase tracking-wide text-tertiary">
+                        (read-only) This state is not currently enabled in the
+                        Meetings app. Please enable to edit.
+                      </Typography>
+                    </View>
+                  )}
+                  <View className="flex-1 overflow-hidden rounded-lg shadow-sm">
                     <Editor
                       height="100%"
                       defaultLanguage="yaml"
                       theme="vs"
-                      value={mergedPreviewText ?? ""}
+                      value={editedConfigText}
+                      onChange={(val) => setEditedConfigText(val ?? "")}
+                      onMount={handleEditorDidMount}
                       options={{
-                        readOnly: true,
-                        domReadOnly: true,
-                        fixedOverflowWidgets: true,
+                        fixedOverflowWidgets: true, // Forces Monaco popups to absolute float, preventing clipping
                         minimap: { enabled: false },
-                        padding: { top: 8 },
+                        padding: { top: 16, bottom: 16 },
                         fontSize: 14,
                         fontFamily: "monospace",
-                        lineNumbers: "off",
-                        scrollBeyondLastLine: false,
+                        lineNumbers: isReadOnly ? "off" : "on",
+                        scrollBeyondLastLine: true,
+                        automaticLayout: true,
                         renderLineHighlight: "none",
                         wordWrap: "on",
+                        readOnly: isReadOnly,
                       }}
                     />
                   </View>
-                  {!canSave && hasUnsavedChanges && (
+                </View>
+                {isAgencyConfig && isPreviewEnabled && (
+                  <View className="flex-1 flex-col overflow-hidden rounded-lg shadow-sm">
                     <View className="border-b border-subtle bg-secondary px-3 py-2">
-                      <Typography className="text-xs font-semibold tracking-wide text-tertiary">
-                        This is an approximation. Please fix the issues in the
-                        editor to see the true merged version.
+                      <Typography className="text-xs font-semibold uppercase tracking-wide text-tertiary">
+                        (read-only) Preview merged with:{" "}
+                        {selectedAgencyConfig?.parentId ?? "base"}
                       </Typography>
                     </View>
-                  )}
-                </View>
-              )}
-            </View>
-          )}
-          {!isLoading &&
-            (missingStateCodes.length > 0 ||
-              (selectedConfigId && isAgencyConfig)) && (
-              <View className="flex-col-reverse items-start gap-3 pt-3 sm:flex-row sm:items-center sm:justify-between">
-                {missingStateCodes.length > 0 && (
-                  <View className="flex-row items-center gap-2">
-                    <Typography
-                      variant="body-s-regular"
-                      className="md:text-base"
-                    >
-                      Create a new config for:
-                    </Typography>
-                    <View className="flex-row flex-wrap gap-2">
-                      {missingStateCodes.map((stateCode) => (
-                        <Button
-                          key={stateCode}
-                          variant="secondary"
-                          onPress={() => handleCreateNew(stateCode)}
-                        >
-                          {stateCode}
-                        </Button>
-                      ))}
+                    <View className="flex-1">
+                      <Editor
+                        height="100%"
+                        defaultLanguage="yaml"
+                        theme="vs"
+                        value={mergedPreviewText ?? ""}
+                        options={{
+                          readOnly: true,
+                          domReadOnly: true,
+                          fixedOverflowWidgets: true,
+                          minimap: { enabled: false },
+                          padding: { top: 8 },
+                          fontSize: 14,
+                          fontFamily: "monospace",
+                          lineNumbers: "off",
+                          scrollBeyondLastLine: false,
+                          renderLineHighlight: "none",
+                          wordWrap: "on",
+                        }}
+                      />
                     </View>
+                    {!canSave && hasUnsavedChanges && (
+                      <View className="border-b border-subtle bg-secondary px-3 py-2">
+                        <Typography className="text-xs font-semibold tracking-wide text-tertiary">
+                          This is an approximation. Please fix the issues in the
+                          editor to see the true merged version.
+                        </Typography>
+                      </View>
+                    )}
                   </View>
                 )}
-                <View className="w-full flex-row justify-start sm:flex-1 sm:justify-end">
-                  {selectedConfigId && isAgencyConfig && (
-                    <Button
-                      variant={isPreviewEnabled ? "tertiary" : "secondary"}
-                      onPress={() => setIsPreviewEnabled((prev) => !prev)}
-                      className="border border-subtle"
-                    >
-                      {isPreviewEnabled
-                        ? "Hide merged preview"
-                        : "Show merged preview"}
-                    </Button>
-                  )}
-                </View>
               </View>
             )}
+            {!isLoading &&
+              (missingStateCodes.length > 0 ||
+                (selectedConfigId && isAgencyConfig)) && (
+                <View className="flex-col-reverse items-start gap-3 pt-3 sm:flex-row sm:items-center sm:justify-between">
+                  {missingStateCodes.length > 0 && (
+                    <View className="flex-row items-center gap-2">
+                      <Typography
+                        variant="body-s-regular"
+                        className="md:text-base"
+                      >
+                        Create a new config for:
+                      </Typography>
+                      <View className="flex-row flex-wrap gap-2">
+                        {missingStateCodes.map((stateCode) => (
+                          <Button
+                            key={stateCode}
+                            variant="secondary"
+                            onPress={() => handleCreateNew(stateCode)}
+                          >
+                            {stateCode}
+                          </Button>
+                        ))}
+                      </View>
+                    </View>
+                  )}
+                  <View className="w-full flex-row justify-start sm:flex-1 sm:justify-end">
+                    {selectedConfigId && isAgencyConfig && (
+                      <Button
+                        variant={isPreviewEnabled ? "tertiary" : "secondary"}
+                        onPress={() => setIsPreviewEnabled((prev) => !prev)}
+                        className="border border-subtle"
+                      >
+                        {isPreviewEnabled
+                          ? "Hide merged preview"
+                          : "Show merged preview"}
+                      </Button>
+                    )}
+                  </View>
+                </View>
+              )}
+          </View>
         </View>
       </View>
       {isFieldsModalOpen && (
