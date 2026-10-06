@@ -46,3 +46,15 @@ export function filterFlaggedMeetings(
     );
   });
 }
+
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+/** Keeps the meetings held in the last `days` days. */
+export function withinLookback(
+  meetings: FlaggedMeetingSummary[],
+  days: number,
+  now: Date = new Date(),
+): FlaggedMeetingSummary[] {
+  const since = now.getTime() - days * MS_PER_DAY;
+  return meetings.filter((meeting) => meeting.startTime.getTime() >= since);
+}

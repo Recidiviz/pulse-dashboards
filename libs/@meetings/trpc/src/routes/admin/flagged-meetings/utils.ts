@@ -25,6 +25,7 @@ import {
   OutputVoteValue,
   Prisma,
   PrismaClient,
+  ReviewSection,
   StateCode,
 } from "~@meetings/prisma/client";
 import {
@@ -32,6 +33,7 @@ import {
   type GradedDimensionKey,
   type GradesByDimension,
   type HumanGrade,
+  isUncoveredBadGrade,
   LS_AUTHORITATIVE_RATER_EMAIL,
   worstGrade,
 } from "~@meetings/tasks/admin/label-studio-grades";
@@ -45,9 +47,14 @@ import { DraftingOutputSchema } from "~@meetings/tasks/llm/schemas";
 import {
   type CombinedGrade,
   EXCLUDED_BY_DEFAULT,
+  FLAG_SECTIONS,
   type FlagSection,
+  type ReopenReason,
+  type ReviewOutcomeSummary,
   type SectionFlags,
+  type SectionReviews,
 } from "~@meetings/trpc/routes/admin/flagged-meetings/flagged-meetings.schema";
+import type { LabelStudioTaskAnnotations } from "~@meetings/trpc/services/admin/label-studio-cache";
 import type { AuthUser } from "~@meetings/trpc/types";
 
 // =============================================================================
@@ -190,7 +197,7 @@ export async function findBadEvaluationMeetingIds(
  * is coaching feedback for the staff member, so a vote on it says nothing
  * about the meeting's notes.
  */
-const VOTE_TAB_TO_SECTION = {
+export const VOTE_TAB_TO_SECTION = {
   [OutputVoteTab.DRAFT_CASE_NOTES]: "CASE_NOTE",
   [OutputVoteTab.ACTION_ITEMS]: "ACTION_ITEMS",
 } as const satisfies Partial<Record<OutputVoteTab, FlagSection>>;
@@ -379,6 +386,227 @@ export function combineRaterGrades(
     };
   }
   return result;
+}
+
+// =============================================================================
+// Review outcomes
+// =============================================================================
+
+/** The dimension key each section's grades are filed under, on both the judge and Label Studio sides. */
+export const SECTION_TO_DIMENSION = {
+  CASE_NOTE: "caseNote",
+  ACTION_ITEMS: "actionItems",
+  OVERALL: "overall",
+} as const satisfies Record<FlagSection, GradedDimensionKey>;
+
+export type ReviewOutcomeRow = ReviewOutcomeSummary & {
+  meetingId: string;
+  section: ReviewSection;
+  pipelineRunId: string | null;
+};
+
+/** The meetings with an outcome recorded in the window, so a reviewed meeting stays listed after its flags clear. */
+export async function findReviewedMeetingIds(
+  prisma: PrismaClient,
+  since: Date,
+): Promise<string[]> {
+  const rows = await prisma.meetingReviewOutcome.findMany({
+    where: { createdAt: { gte: since } },
+    select: { meetingId: true },
+    distinct: ["meetingId"],
+  });
+  return rows.map((row) => row.meetingId);
+}
+
+/**
+ * Each meeting's current outcome per section: the latest row, since outcomes
+ * are appended and never updated.
+ */
+export async function findLatestReviewOutcomes(
+  prisma: PrismaClient,
+  meetingIds: string[],
+): Promise<Map<string, Partial<Record<FlagSection, ReviewOutcomeRow>>>> {
+  const byMeeting = new Map<
+    string,
+    Partial<Record<FlagSection, ReviewOutcomeRow>>
+  >();
+  if (meetingIds.length === 0) return byMeeting;
+
+  const rows = await prisma.meetingReviewOutcome.findMany({
+    where: { meetingId: { in: meetingIds } },
+    orderBy: { createdAt: "desc" },
+  });
+  for (const row of rows) {
+    const sections = byMeeting.get(row.meetingId) ?? {};
+    // Ordered desc, so the first row seen per section is the current one.
+    if (!sections[row.section]) sections[row.section] = row;
+    byMeeting.set(row.meetingId, sections);
+  }
+  return byMeeting;
+}
+
+export interface BadEvaluationEvent {
+  section: FlagSection;
+  createdAt: Date;
+}
+
+/**
+ * The BAD grades the judge has given each meeting's sections since `since`,
+ * across every evaluation run, so a reprocess or a new evaluator version that
+ * grades a reviewed section BAD again shows up even when a later run is better.
+ */
+export async function findBadEvaluationEvents(
+  prisma: PrismaClient,
+  meetingIds: string[],
+  since: Date,
+): Promise<Map<string, BadEvaluationEvent[]>> {
+  const byMeeting = new Map<string, BadEvaluationEvent[]>();
+  if (meetingIds.length === 0) return byMeeting;
+
+  const runs = await prisma.notetakingEvaluationRun.findMany({
+    where: {
+      createdAt: { gt: since },
+      pipelineRun: { meetingId: { in: meetingIds } },
+    },
+    select: {
+      createdAt: true,
+      scores: true,
+      pipelineRun: { select: { meetingId: true } },
+    },
+  });
+  for (const run of runs) {
+    const dimensions = extractLlmajDimensions(
+      run.scores as unknown as EvaluationScores,
+    );
+    const events = byMeeting.get(run.pipelineRun.meetingId) ?? [];
+    for (const section of FLAG_SECTIONS) {
+      const key = SECTION_TO_DIMENSION[section];
+      if (dimensions.some((d) => d.key === key && d.bad)) {
+        events.push({ section, createdAt: run.createdAt });
+      }
+    }
+    byMeeting.set(run.pipelineRun.meetingId, events);
+  }
+  return byMeeting;
+}
+
+interface DatedEvent {
+  at: Date;
+  by: string | null;
+}
+
+function latestEvent(events: DatedEvent[]): DatedEvent | null {
+  return events.reduce<DatedEvent | null>(
+    (max, e) => (max === null || e.at > max.at ? e : max),
+    null,
+  );
+}
+
+/**
+ * Where each section stands in review.
+ *
+ * A section with an outcome is "reviewed", unless it is still flagged and
+ * something has happened since the outcome that a reviewer has not seen:
+ * a Label Studio annotation created or edited with a BAD grade on the section,
+ * a newer thumbs-down on its tab, a BAD evaluation, or the meeting's outputs
+ * having been regenerated. That makes it "reopened", with the latest such
+ * event as the reason.
+ */
+export function computeSectionReviews({
+  flags,
+  outcomes,
+  outputsPipelineRunId,
+  labelStudio,
+  votes,
+  badEvaluations,
+}: {
+  flags: SectionFlags;
+  outcomes: Partial<Record<FlagSection, ReviewOutcomeRow>>;
+  outputsPipelineRunId: string | null;
+  labelStudio: Pick<LabelStudioTaskAnnotations, "annotations"> | undefined;
+  votes: Pick<OutputVoteRow, "tab" | "vote" | "createdAt" | "voterEmail">[];
+  badEvaluations: BadEvaluationEvent[];
+}): SectionReviews {
+  const reviews = {} as SectionReviews;
+
+  for (const section of FLAG_SECTIONS) {
+    const outcome = outcomes[section] ?? null;
+    const flagged =
+      flags[section].llm || flags[section].labelStudio || flags[section].vote;
+
+    if (!outcome) {
+      reviews[section] = {
+        status: flagged ? "needs_review" : "not_flagged",
+        latestOutcome: null,
+        reopened: null,
+      };
+      continue;
+    }
+
+    const since = outcome.createdAt;
+    const dimension = SECTION_TO_DIMENSION[section];
+    const events: {
+      reason: ReopenReason;
+      at: Date | null;
+      by: string | null;
+    }[] = [];
+
+    if (flagged) {
+      const ls = latestEvent(
+        (labelStudio?.annotations ?? [])
+          .filter(
+            (a) =>
+              a.grades[dimension] === "BAD" ||
+              (section === "OVERALL" &&
+                a.decodedFields.some(isUncoveredBadGrade)),
+          )
+          .flatMap((a) => [
+            { at: a.annotatedAt, by: a.raterEmail },
+            { at: a.updatedAt, by: a.raterEmail },
+          ])
+          .filter((e) => e.at > since),
+      );
+      if (ls) events.push({ reason: "label_studio", ...ls });
+
+      const vote = latestEvent(
+        votes
+          .filter(
+            (v) =>
+              v.vote === OutputVoteValue.DOWN &&
+              VOTE_TAB_TO_SECTION[v.tab as keyof typeof VOTE_TAB_TO_SECTION] ===
+                section &&
+              v.createdAt > since,
+          )
+          .map((v) => ({ at: v.createdAt, by: v.voterEmail })),
+      );
+      if (vote) events.push({ reason: "thumbs_down", ...vote });
+
+      const evaluation = latestEvent(
+        badEvaluations
+          .filter((e) => e.section === section && e.createdAt > since)
+          .map((e) => ({ at: e.createdAt, by: null })),
+      );
+      if (evaluation) events.push({ reason: "evaluation", ...evaluation });
+
+      if (outcome.pipelineRunId !== outputsPipelineRunId) {
+        events.push({ reason: "outputs_regenerated", at: null, by: null });
+      }
+    }
+
+    const reopened = events.reduce<(typeof events)[number] | null>(
+      (best, e) =>
+        best === null || (e.at?.getTime() ?? 0) > (best.at?.getTime() ?? 0)
+          ? e
+          : best,
+      null,
+    );
+    reviews[section] = {
+      status: reopened ? "reopened" : "reviewed",
+      latestOutcome: outcome,
+      reopened,
+    };
+  }
+  return reviews;
 }
 
 // =============================================================================

@@ -21,6 +21,8 @@ import { useMemo, useState } from "react";
 import { ScrollView, View } from "react-native";
 
 import type { FlaggedMeetingSummary } from "~@meetings/app/admin/api/flaggedMeetings";
+import { isNeedsReview } from "~@meetings/app/admin/entities/flagged-meeting-review";
+import { Tabs } from "~@meetings/app/admin/ui/Tabs";
 import { AdminLayout } from "~@meetings/app/admin/widgets/admin-sidebar";
 import { useUserContext } from "~@meetings/app/entities/user";
 import { trpc } from "~@meetings/app/shared/api";
@@ -35,6 +37,7 @@ import {
   type DimensionFilter,
   filterFlaggedMeetings,
   type FlaggedBy,
+  withinLookback,
 } from "../lib/filterFlaggedMeetings";
 import { useDebouncedValue } from "../lib/useDebouncedValue";
 import { FilterDropdown, type FilterOption } from "./FilterDropdown";
@@ -43,6 +46,11 @@ import { LoadErrorPanel } from "./LoadErrorPanel";
 
 const SEARCH_DEBOUNCE_MS = 300;
 const ALL_STATES = "ALL";
+
+/** Needs review is the whole backlog, so every tab reads the same 365-day window. */
+const QUERY_LOOKBACK_DAYS = 365;
+
+type ReviewTab = "needs" | "reviewed" | "all";
 
 const LOOKBACK_OPTIONS: FilterOption<"30" | "90" | "365">[] = [
   { value: "30", label: "Last 30 days" },
@@ -88,7 +96,8 @@ export const FlaggedMeetingsScreen = () => {
 
   const [state, setState] = useState(ALL_STATES);
   const [lookback, setLookback] =
-    useState<(typeof LOOKBACK_OPTIONS)[number]["value"]>("365");
+    useState<(typeof LOOKBACK_OPTIONS)[number]["value"]>("30");
+  const [tab, setTab] = useState<ReviewTab>("needs");
   const [flaggedBy, setFlaggedBy] = useState<FlaggedBy>("any");
   const [dimension, setDimension] = useState<DimensionFilter>("any");
   const [searchText, setSearchText] = useState("");
@@ -108,18 +117,31 @@ export const FlaggedMeetingsScreen = () => {
 
   const { data, isLoading, isError, refetch } =
     trpc.v1.flaggedMeetings.list.useQuery({
-      lookbackDays: Number(lookback),
+      lookbackDays: QUERY_LOOKBACK_DAYS,
       ...(state !== ALL_STATES && {
         stateCodes: [state as FlaggedMeetingSummary["stateCode"]],
       }),
       ...(search && { search }),
     });
 
-  const meetings = useMemo(
-    () =>
-      data ? filterFlaggedMeetings(data.meetings, flaggedBy, dimension) : [],
-    [data, flaggedBy, dimension],
-  );
+  // The meeting-date filter only narrows the finished work; Needs review
+  // always shows the whole backlog.
+  const { meetings, counts } = useMemo(() => {
+    const filtered = data
+      ? filterFlaggedMeetings(data.meetings, flaggedBy, dimension)
+      : [];
+    const needs = filtered.filter((m) => isNeedsReview(m.reviews));
+    const dated = withinLookback(filtered, Number(lookback));
+    const reviewed = dated.filter((m) => !isNeedsReview(m.reviews));
+    return {
+      meetings: { needs, reviewed, all: dated }[tab],
+      counts: {
+        needs: needs.length,
+        reviewed: reviewed.length,
+        all: dated.length,
+      },
+    };
+  }, [data, flaggedBy, dimension, lookback, tab]);
 
   const sourceFailed = data?.sources.some((s) => s.status === "failed");
 
@@ -137,7 +159,9 @@ export const FlaggedMeetingsScreen = () => {
         {meetings.length === 0 ? (
           <View className="items-center rounded-lg border border-subtle px-4 py-10">
             <Typography variant="body-s-regular" className="!text-tertiary">
-              Nothing here. No meetings are flagged in this view.
+              {tab === "needs"
+                ? "Nothing here. Every meeting in this view has an outcome."
+                : "Nothing here. No meetings are flagged in this view."}
             </Typography>
           </View>
         ) : (
@@ -170,6 +194,18 @@ export const FlaggedMeetingsScreen = () => {
             thumbs down in the app.
           </Typography>
         </View>
+        {/* Counts from a failed or partial load would mislead. */}
+        {data && !sourceFailed && (
+          <Tabs
+            value={tab}
+            onChange={setTab}
+            tabs={[
+              { value: "needs", label: "Needs review", count: counts.needs },
+              { value: "reviewed", label: "Reviewed", count: counts.reviewed },
+              { value: "all", label: "All flagged", count: counts.all },
+            ]}
+          />
+        )}
         {/* z-20 keeps an open filter menu above the table. */}
         <View className="relative z-20 flex-row flex-wrap items-center gap-x-6 gap-y-2">
           <FilterDropdown
@@ -178,12 +214,14 @@ export const FlaggedMeetingsScreen = () => {
             value={state}
             onChange={setState}
           />
-          <FilterDropdown
-            label="Meeting date"
-            options={LOOKBACK_OPTIONS}
-            value={lookback}
-            onChange={setLookback}
-          />
+          {tab !== "needs" && (
+            <FilterDropdown
+              label="Meeting date"
+              options={LOOKBACK_OPTIONS}
+              value={lookback}
+              onChange={setLookback}
+            />
+          )}
           <FilterDropdown
             label="Flagged by"
             options={FLAGGED_BY_OPTIONS}

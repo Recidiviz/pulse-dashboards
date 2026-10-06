@@ -20,6 +20,7 @@ import { describe, expect, test } from "vitest";
 import {
   OutputVoteTab,
   OutputVoteValue,
+  ReviewOutcomeKind,
   StateCode,
 } from "~@meetings/prisma/client";
 import {
@@ -30,8 +31,10 @@ import type { LlmajDimension } from "~@meetings/tasks/admin/llmaj-grades";
 import {
   combineRaterGrades,
   computeSectionFlags,
+  computeSectionReviews,
   isAnySectionFlagged,
   resolveRequestedStates,
+  type ReviewOutcomeRow,
 } from "~@meetings/trpc/routes/admin/flagged-meetings/utils";
 
 function dimension(key: LlmajDimension["key"], bad: boolean): LlmajDimension {
@@ -286,5 +289,188 @@ describe("combineRaterGrades", () => {
       worst: null,
       overriddenByAuthoritative: false,
     });
+  });
+});
+
+describe("computeSectionReviews", () => {
+  const OUTCOME_AT = new Date("2026-09-10T00:00:00Z");
+  const BEFORE = new Date("2026-09-05T00:00:00Z");
+  const AFTER = new Date("2026-09-12T00:00:00Z");
+
+  const noFlags = computeSectionFlags({
+    llmDimensions: undefined,
+    labelStudio: undefined,
+    votes: [],
+  });
+  const caseNoteFlagged = {
+    ...noFlags,
+    CASE_NOTE: { llm: true, labelStudio: false, vote: false },
+  };
+
+  function outcome(
+    overrides: Partial<ReviewOutcomeRow> = {},
+  ): ReviewOutcomeRow {
+    return {
+      meetingId: "m1",
+      section: "CASE_NOTE",
+      pipelineRunId: "run-1",
+      outcome: ReviewOutcomeKind.CONFIRMED_BAD,
+      followUp: "NO_ACTION",
+      correctedGrade: null,
+      overriddenSources: [],
+      appliesTo: [],
+      notes: null,
+      reviewerEmail: "admin@recidiviz.org",
+      createdAt: OUTCOME_AT,
+      ...overrides,
+    };
+  }
+
+  function review(
+    overrides: Partial<Parameters<typeof computeSectionReviews>[0]> = {},
+  ) {
+    return computeSectionReviews({
+      flags: caseNoteFlagged,
+      outcomes: { CASE_NOTE: outcome() },
+      outputsPipelineRunId: "run-1",
+      labelStudio: undefined,
+      votes: [],
+      badEvaluations: [],
+      ...overrides,
+    }).CASE_NOTE;
+  }
+
+  function lsAnnotation(at: Date, grade: "BAD" | "GOOD") {
+    return {
+      annotations: [
+        {
+          raterEmail: "rater@recidiviz.org",
+          annotatedAt: at,
+          updatedAt: at,
+          decodedFields: [],
+          grades: { caseNote: grade },
+          actionItemsIgnoredFieldName: null,
+        },
+      ],
+    };
+  }
+
+  test("a flagged section with no outcome needs review", () => {
+    expect(review({ outcomes: {} })).toEqual({
+      status: "needs_review",
+      latestOutcome: null,
+      reopened: null,
+    });
+  });
+
+  test("an unflagged section with no outcome is not flagged", () => {
+    expect(review({ flags: noFlags, outcomes: {} }).status).toBe("not_flagged");
+  });
+
+  test("a flagged section with an outcome and nothing newer is reviewed", () => {
+    expect(review()).toMatchObject({ status: "reviewed", reopened: null });
+  });
+
+  test("a section stays reviewed once its flags clear", () => {
+    expect(review({ flags: noFlags }).status).toBe("reviewed");
+  });
+
+  test("a new BAD Label Studio annotation reopens it", () => {
+    expect(review({ labelStudio: lsAnnotation(AFTER, "BAD") })).toMatchObject({
+      status: "reopened",
+      reopened: {
+        reason: "label_studio",
+        at: AFTER,
+        by: "rater@recidiviz.org",
+      },
+    });
+  });
+
+  test("a Label Studio BAD from before the outcome does not", () => {
+    expect(review({ labelStudio: lsAnnotation(BEFORE, "BAD") }).status).toBe(
+      "reviewed",
+    );
+  });
+
+  test("a newer non-BAD Label Studio annotation does not", () => {
+    expect(review({ labelStudio: lsAnnotation(AFTER, "GOOD") }).status).toBe(
+      "reviewed",
+    );
+  });
+
+  test("a newer thumbs-down on the section's tab reopens it", () => {
+    expect(
+      review({
+        votes: [
+          {
+            tab: OutputVoteTab.DRAFT_CASE_NOTES,
+            vote: OutputVoteValue.DOWN,
+            createdAt: AFTER,
+            voterEmail: "staff@example.com",
+          },
+        ],
+      }),
+    ).toMatchObject({
+      status: "reopened",
+      reopened: { reason: "thumbs_down", by: "staff@example.com" },
+    });
+  });
+
+  test("a thumbs-down on another tab, or a thumbs-up, does not", () => {
+    expect(
+      review({
+        votes: [
+          {
+            tab: OutputVoteTab.ACTION_ITEMS,
+            vote: OutputVoteValue.DOWN,
+            createdAt: AFTER,
+            voterEmail: "staff@example.com",
+          },
+          {
+            tab: OutputVoteTab.DRAFT_CASE_NOTES,
+            vote: OutputVoteValue.UP,
+            createdAt: AFTER,
+            voterEmail: "staff@example.com",
+          },
+        ],
+      }).status,
+    ).toBe("reviewed");
+  });
+
+  test("a newer BAD evaluation reopens it", () => {
+    expect(
+      review({ badEvaluations: [{ section: "CASE_NOTE", createdAt: AFTER }] }),
+    ).toMatchObject({ status: "reopened", reopened: { reason: "evaluation" } });
+  });
+
+  test("a BAD evaluation of another section does not", () => {
+    expect(
+      review({ badEvaluations: [{ section: "OVERALL", createdAt: AFTER }] })
+        .status,
+    ).toBe("reviewed");
+  });
+
+  test("regenerated outputs reopen a section that is still flagged", () => {
+    expect(review({ outputsPipelineRunId: "run-2" })).toMatchObject({
+      status: "reopened",
+      reopened: { reason: "outputs_regenerated", at: null, by: null },
+    });
+  });
+
+  test("regenerated outputs do not reopen a section that is no longer flagged", () => {
+    expect(
+      review({ flags: noFlags, outputsPipelineRunId: "run-2" }).status,
+    ).toBe("reviewed");
+  });
+
+  test("reports the latest event as the reason", () => {
+    const later = new Date("2026-09-20T00:00:00Z");
+    expect(
+      review({
+        labelStudio: lsAnnotation(AFTER, "BAD"),
+        badEvaluations: [{ section: "CASE_NOTE", createdAt: later }],
+        outputsPipelineRunId: "run-2",
+      }).reopened,
+    ).toEqual({ reason: "evaluation", at: later, by: null });
   });
 });

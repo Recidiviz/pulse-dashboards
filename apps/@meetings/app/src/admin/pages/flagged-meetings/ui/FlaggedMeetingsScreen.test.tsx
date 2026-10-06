@@ -55,6 +55,17 @@ jest.mock("~@meetings/app/admin/widgets/admin-sidebar", () => ({
   AdminLayout: ({ children }: { children: React.ReactNode }) => children,
 }));
 
+const needsReview = {
+  status: "needs_review",
+  latestOutcome: null,
+  reopened: null,
+};
+const notFlagged = {
+  status: "not_flagged",
+  latestOutcome: null,
+  reopened: null,
+};
+
 const noVotes = { llm: false, labelStudio: false, vote: false };
 
 const meeting = {
@@ -78,6 +89,35 @@ const meeting = {
     CASE_NOTE: { ...noVotes, llm: true },
     ACTION_ITEMS: { ...noVotes, vote: true },
     OVERALL: noVotes,
+  },
+  reviews: {
+    CASE_NOTE: needsReview,
+    ACTION_ITEMS: needsReview,
+    OVERALL: notFlagged,
+  },
+} as unknown as FlaggedMeetingSummary;
+
+const reviewedMeeting = {
+  ...meeting,
+  meetingId: "m-456",
+  startTime: new Date(),
+  reviews: {
+    CASE_NOTE: {
+      status: "reviewed",
+      latestOutcome: {
+        outcome: "CONFIRMED_BAD",
+        followUp: "EMAILED_PO",
+        correctedGrade: null,
+        overriddenSources: [],
+        appliesTo: [],
+        notes: null,
+        reviewerEmail: "admin@example.org",
+        createdAt: new Date(),
+      },
+      reopened: null,
+    },
+    ACTION_ITEMS: notFlagged,
+    OVERALL: notFlagged,
   },
 } as unknown as FlaggedMeetingSummary;
 
@@ -114,6 +154,42 @@ describe("FlaggedMeetingsScreen", () => {
     expect(screen.getByText("2 raters")).toBeTruthy();
     expect(screen.getByText("Thumbs down · Action items")).toBeTruthy();
     expect(screen.getByText("1 meeting")).toBeTruthy();
+    // The tab and the row's Outcome badge.
+    expect(screen.getAllByText("Needs review")).toHaveLength(2);
+  });
+
+  it("splits meetings across the Needs review, Reviewed and All tabs", () => {
+    mockResult({
+      data: { sources: okSources, meetings: [meeting, reviewedMeeting] },
+    });
+    render(<FlaggedMeetingsScreen />);
+
+    // Needs review is the default tab.
+    expect(screen.getByText("m-123")).toBeTruthy();
+    expect(screen.queryByText("m-456")).toBeNull();
+
+    fireEvent.press(screen.getByRole("tab", { name: /Reviewed/ }));
+    expect(screen.queryByText("m-123")).toBeNull();
+    expect(screen.getByText("m-456")).toBeTruthy();
+    expect(screen.getByText("Confirmed BAD · emailed the PO")).toBeTruthy();
+
+    // All flagged follows the meeting-date filter, which leaves out the 2020 meeting.
+    fireEvent.press(screen.getByRole("tab", { name: /All flagged/ }));
+    expect(screen.queryByText("m-123")).toBeNull();
+    expect(screen.getByText("m-456")).toBeTruthy();
+  });
+
+  it("limits Reviewed and All by meeting date but not Needs review", () => {
+    // The fixture meetings are from 2020, far outside the default 30 days.
+    mockResult({ data: { sources: okSources, meetings: [meeting] } });
+    render(<FlaggedMeetingsScreen />);
+
+    expect(screen.queryByRole("button", { name: /Meeting date/ })).toBeNull();
+    expect(screen.getByText("m-123")).toBeTruthy();
+
+    fireEvent.press(screen.getByRole("tab", { name: /All flagged/ }));
+    expect(screen.getByRole("button", { name: /Meeting date/ })).toBeTruthy();
+    expect(screen.queryByText("m-123")).toBeNull();
   });
 
   it("shows the empty state", () => {
@@ -121,7 +197,9 @@ describe("FlaggedMeetingsScreen", () => {
     render(<FlaggedMeetingsScreen />);
 
     expect(
-      screen.getByText("Nothing here. No meetings are flagged in this view."),
+      screen.getByText(
+        "Nothing here. Every meeting in this view has an outcome.",
+      ),
     ).toBeTruthy();
     expect(screen.getByText("0 meetings")).toBeTruthy();
   });

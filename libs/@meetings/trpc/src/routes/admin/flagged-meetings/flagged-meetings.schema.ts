@@ -20,6 +20,11 @@ import { z } from "zod";
 import {
   OutputVoteTab,
   OutputVoteValue,
+  ReviewCorrectedGrade,
+  ReviewFollowUp,
+  ReviewOutcomeKind,
+  ReviewSection,
+  ReviewSource,
   StateCode,
 } from "~@meetings/prisma/client";
 import type { DecodedField } from "~@meetings/tasks/admin/label-studio-annotations";
@@ -51,6 +56,115 @@ export interface SectionFlag {
 }
 
 export type SectionFlags = Record<FlagSection, SectionFlag>;
+
+// =============================================================================
+// Review outcomes
+// =============================================================================
+
+/** Why a reviewed section is back in the queue. */
+export type ReopenReason =
+  | "label_studio"
+  | "thumbs_down"
+  | "evaluation"
+  | "outputs_regenerated";
+
+export interface ReviewOutcomeSummary {
+  outcome: ReviewOutcomeKind;
+  followUp: ReviewFollowUp | null;
+  correctedGrade: ReviewCorrectedGrade | null;
+  overriddenSources: ReviewSource[];
+  appliesTo: ReviewSection[];
+  notes: string | null;
+  reviewerEmail: string;
+  createdAt: Date;
+}
+
+/**
+ * Where a section stands in review. "not_flagged" is a section nobody flagged
+ * and nobody reviewed; "reviewed" covers a section with an outcome, even one
+ * whose flags have since cleared (for instance by a Label Studio override).
+ */
+export interface SectionReview {
+  status: "not_flagged" | "needs_review" | "reviewed" | "reopened";
+  /** The latest outcome, which for a reopened section is the earlier one. */
+  latestOutcome: ReviewOutcomeSummary | null;
+  /**
+   * Set only when status is "reopened". `at` is null when no event has a
+   * time; `by` is the rater or voter behind the event, when there is one.
+   */
+  reopened: {
+    reason: ReopenReason;
+    at: Date | null;
+    by: string | null;
+  } | null;
+}
+
+export type SectionReviews = Record<FlagSection, SectionReview>;
+
+/**
+ * The sections an Overall outcome covers. An empty list is the reviewer's
+ * "neither section" answer, which is why it is required for Overall rather
+ * than required to be non-empty.
+ */
+const appliesToSchema = z
+  .array(z.enum([ReviewSection.CASE_NOTE, ReviewSection.ACTION_ITEMS]))
+  .optional();
+
+const recordOutcomeBase = {
+  stateCode: z.nativeEnum(StateCode),
+  meetingId: z.string(),
+  section: z.nativeEnum(ReviewSection),
+  notes: z.string().trim().max(4000).optional(),
+};
+
+export const recordOutcomeInput = z
+  .discriminatedUnion("outcome", [
+    z.object({
+      ...recordOutcomeBase,
+      outcome: z.literal(ReviewOutcomeKind.CONFIRMED_BAD),
+      followUp: z.nativeEnum(ReviewFollowUp),
+      appliesTo: appliesToSchema,
+    }),
+    z.object({
+      ...recordOutcomeBase,
+      outcome: z.literal(ReviewOutcomeKind.NOT_BAD),
+      correctedGrade: z.nativeEnum(ReviewCorrectedGrade),
+      /** The ratings to replace with correctedGrade. Label Studio is written to, not just recorded. */
+      overriddenSources: z.array(z.nativeEnum(ReviewSource)),
+      /** Whether the reviewer emailed the PO; "user caught it" only applies to a real BAD. */
+      followUp: z.enum([ReviewFollowUp.NO_ACTION, ReviewFollowUp.EMAILED_PO]),
+      appliesTo: appliesToSchema,
+    }),
+    z.object({
+      ...recordOutcomeBase,
+      outcome: z.literal(ReviewOutcomeKind.OTHER),
+      notes: z.string().trim().min(1).max(4000),
+      appliesTo: appliesToSchema,
+    }),
+  ])
+  .superRefine((input, ctx) => {
+    const needsAppliesTo =
+      input.section === ReviewSection.OVERALL &&
+      input.outcome !== ReviewOutcomeKind.OTHER;
+    const { appliesTo } = input;
+    if (needsAppliesTo && appliesTo === undefined) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["appliesTo"],
+        message: "Choose which sections an Overall outcome applies to",
+      });
+    }
+    if (!needsAppliesTo && appliesTo !== undefined) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["appliesTo"],
+        message:
+          "Only a Confirmed BAD or Not BAD Overall outcome has appliesTo",
+      });
+    }
+  });
+
+export type RecordOutcomeInput = z.infer<typeof recordOutcomeInput>;
 
 export const listFlaggedMeetingsInput = z.object({
   /** Meeting-date window, counted back from now and matched against Meeting.startTime. */
@@ -115,6 +229,7 @@ export interface FlaggedMeetingSummary {
   /** The staff thumbs up and down that apply to the meeting's current outputs. */
   votes: { tab: OutputVoteTab; vote: OutputVoteValue }[];
   sections: SectionFlags;
+  reviews: SectionReviews;
 }
 
 export interface ListFlaggedMeetingsResult {
@@ -203,6 +318,9 @@ export interface FlaggedMeetingDetails {
   labelStudio: LabelStudioDetail | null;
   votes: OutputVoteDetail[];
   sections: SectionFlags;
+  reviews: SectionReviews;
+  /** The meeting's current outputs run, which a new outcome is recorded against. */
+  outputsPipelineRunId: string | null;
   caseNote: {
     current: string | null;
     /** The pre-edit generated case note, for diffing against `current`. Null when there is nothing to diff. */

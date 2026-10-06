@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import type { inferRouterInputs } from "@trpc/server";
+
 import type { AppRouter } from "~@meetings/trpc-types";
 
 type FlaggedMeetingsRouter = AppRouter["v1"]["flaggedMeetings"];
@@ -35,3 +37,12 @@ export type FlaggedMeetingDetails = Awaited<
 
 /** The parts of a meeting a flag can point at. */
 export type FlagSection = keyof FlaggedMeetingSummary["sections"];
+
+export type SectionReviews = FlaggedMeetingSummary["reviews"];
+
+export type SectionReview = SectionReviews[FlagSection];
+
+export type ReviewOutcomeSummary = NonNullable<SectionReview["latestOutcome"]>;
+
+export type RecordOutcomeInput =
+  inferRouterInputs<AppRouter>["v1"]["flaggedMeetings"]["recordOutcome"];

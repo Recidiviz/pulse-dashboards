@@ -296,6 +296,9 @@ async function crawl(
 let cached: LabelStudioSnapshot | null = null;
 let cachedProjectId: number | null = null;
 let inFlight: Promise<LabelStudioSnapshot> | null = null;
+// Bumped by invalidation so a crawl that started before a write cannot store
+// its (now stale) snapshot when it finishes.
+let generation = 0;
 
 /**
  * The project's annotations, from cache when fresh. Concurrent callers share
@@ -316,10 +319,13 @@ export async function getLabelStudioSnapshot(
   }
   if (inFlight) return inFlight;
 
+  const startedAt = generation;
   inFlight = crawl(client, projectId)
     .then((snapshot) => {
-      cached = snapshot;
-      cachedProjectId = projectId;
+      if (startedAt === generation) {
+        cached = snapshot;
+        cachedProjectId = projectId;
+      }
       return snapshot;
     })
     .finally(() => {
@@ -327,6 +333,18 @@ export async function getLabelStudioSnapshot(
     });
 
   return inFlight;
+}
+
+/**
+ * Drops the snapshot after this server changes Label Studio, so the next read
+ * sees the change instead of waiting out the TTL. Other instances still serve
+ * their own snapshot until it expires.
+ */
+export function invalidateLabelStudioSnapshot(): void {
+  generation += 1;
+  cached = null;
+  cachedProjectId = null;
+  inFlight = null;
 }
 
 /** Test seam: drop the module-level snapshot. */

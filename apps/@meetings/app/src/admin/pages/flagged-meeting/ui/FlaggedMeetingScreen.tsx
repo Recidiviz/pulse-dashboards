@@ -36,6 +36,7 @@ import { MetadataGrid } from "./MetadataGrid";
 import { NotesPanel } from "./NotesPanel";
 import { LlmJudgeCard, RaterCard, VotesCard } from "./RaterOutput";
 import { RatingsTableView } from "./RatingsTable";
+import { ReviewRail } from "./ReviewRail";
 import { TranscriptPanel } from "./TranscriptPanel";
 
 type FlaggedMeetingRouteProp = RouteProp<
@@ -137,26 +138,31 @@ export function FlaggedMeetingScreen() {
           <MetadataGrid items={buildMetaItems(data)} />
         </View>
 
-        <Section title="Ratings">
-          <RatingsTableView table={buildRatingsTable(data)} />
-        </Section>
+        <View className="flex-row flex-wrap items-start gap-6">
+          <View className="min-w-[480px] flex-1 gap-6">
+            <Section title="Ratings">
+              <RatingsTableView table={buildRatingsTable(data)} />
+            </Section>
 
-        <Section title="Rater output">
-          <View className="flex-row flex-wrap items-start gap-4">
-            {llm && <LlmJudgeCard llm={llm} />}
-            {labelStudio?.raters.map((rater) => (
-              <RaterCard key={rater.raterEmail} rater={rater} />
-            ))}
-            {votes.length > 0 && <VotesCard votes={votes} />}
-          </View>
-        </Section>
+            <Section title="Rater output">
+              <View className="flex-row flex-wrap items-start gap-4">
+                {llm && <LlmJudgeCard llm={llm} />}
+                {labelStudio?.raters.map((rater) => (
+                  <RaterCard key={rater.raterEmail} rater={rater} />
+                ))}
+                {votes.length > 0 && <VotesCard votes={votes} />}
+              </View>
+            </Section>
 
-        <Section title="Notes and transcript">
-          <View className="flex-row flex-wrap items-start gap-4">
-            <NotesPanel details={data} />
-            <TranscriptPanel details={data} />
+            <Section title="Notes and transcript">
+              <View className="flex-row flex-wrap items-start gap-4">
+                <NotesPanel details={data} />
+                <TranscriptPanel details={data} />
+              </View>
+            </Section>
           </View>
-        </Section>
+          <ReviewRail key={data.meetingId} details={data} />
+        </View>
       </ScrollView>
     </AdminLayout>
   );

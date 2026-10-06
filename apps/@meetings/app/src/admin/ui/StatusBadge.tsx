@@ -71,13 +71,17 @@ export const StatusBadge = ({
   return (
     <View
       className={clsx(
-        "flex-row items-center gap-1.5 self-start rounded-full px-2.5 py-0.5",
+        "max-w-full flex-row items-center gap-1.5 self-start rounded-full px-2.5 py-0.5",
         classes.container,
         className,
       )}
     >
       {dot && <View className={clsx("size-1.5 rounded-full", classes.dot)} />}
-      <Typography variant="caption-s-medium" className={classes.text}>
+      {/* shrink lets a long label wrap inside a narrow table cell. */}
+      <Typography
+        variant="caption-s-medium"
+        className={clsx("shrink", classes.text)}
+      >
         {children}
       </Typography>
     </View>

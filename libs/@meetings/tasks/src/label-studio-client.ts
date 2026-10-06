@@ -48,6 +48,8 @@ import { GoogleAuth } from "google-auth-library";
 /** One entry in an annotation's `result[]` array. */
 export interface LabelStudioResult {
   from_name: string;
+  /** Required by Label Studio when creating a result; older reads may omit it. */
+  to_name?: string;
   type: string;
   value: { choices?: string[]; text?: string[] };
 }
@@ -160,6 +162,11 @@ export class LabelStudioClient {
     return (text ? JSON.parse(text) : undefined) as T;
   }
 
+  /** The user the refresh token belongs to, i.e. who annotations created by this client are attributed to. */
+  async getCurrentUser(): Promise<{ id: number; email: string }> {
+    return this.request("/api/current-user/whoami");
+  }
+
   async listUsers(): Promise<{ id: number; email: string }[]> {
     const users = await this.request<
       | { id: number; email: string }[]
@@ -261,6 +268,24 @@ export class LabelStudioClient {
     await this.request(`/api/tasks/${taskId}/`, {
       method: "PATCH",
       body: JSON.stringify({ data }),
+    });
+  }
+
+  /**
+   * Replace an annotation's `result`. Label Studio stores the array as given,
+   * so callers pass every result entry they want to keep, not just the changes.
+   */
+  async updateAnnotation(
+    annotationId: number,
+    { result }: { result: LabelStudioResult[] },
+  ): Promise<{
+    id: number;
+    completed_by: number;
+    result: LabelStudioResult[];
+  }> {
+    return this.request(`/api/annotations/${annotationId}/`, {
+      method: "PATCH",
+      body: JSON.stringify({ result }),
     });
   }
 

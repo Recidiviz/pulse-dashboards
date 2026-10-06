@@ -40,6 +40,8 @@ jest.mock("~@meetings/app/shared/api", () => ({
   },
 }));
 
+jest.mock("./ReviewRail", () => ({ ReviewRail: () => null }));
+
 jest.mock("~@meetings/app/admin/widgets/admin-sidebar", () => ({
   AdminLayout: ({ children }: { children: React.ReactNode }) => children,
 }));

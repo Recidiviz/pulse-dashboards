@@ -35,6 +35,7 @@ import type {
 } from "~@meetings/trpc/services/admin/label-studio-cache";
 import * as labelStudioCache from "~@meetings/trpc/services/admin/label-studio-cache";
 import * as labelStudioConfigModule from "~@meetings/trpc/services/admin/label-studio-config";
+import * as labelStudioOverride from "~@meetings/trpc/services/admin/label-studio-override";
 import {
   initFastifyAndSetUser,
   testPrismaClient,
@@ -998,6 +999,320 @@ describe("flaggedMeetings router", () => {
     test("throws NOT_FOUND for a meeting that does not exist", async () => {
       await expect(details("no-such-meeting")).rejects.toMatchObject({
         data: { code: "NOT_FOUND" },
+      });
+    });
+  });
+
+  describe("recordOutcome", () => {
+    type RecordInput = Parameters<
+      typeof testTRPCClient.v1.flaggedMeetings.recordOutcome.mutate
+    >[0];
+
+    const confirmed = (meetingId: string): RecordInput => ({
+      stateCode: STATE,
+      meetingId,
+      section: "CASE_NOTE",
+      outcome: "CONFIRMED_BAD",
+      followUp: "EMAILED_PO",
+      notes: "Invented a UA refusal.",
+    });
+
+    const notBad = (meetingId: string): RecordInput => ({
+      stateCode: STATE,
+      meetingId,
+      section: "CASE_NOTE",
+      outcome: "NOT_BAD",
+      correctedGrade: "PARTIAL",
+      overriddenSources: ["LABEL_STUDIO", "LLM_JUDGE"],
+      followUp: "NO_ACTION",
+    });
+
+    beforeEach(async () => {
+      await setRecidivizUser();
+      vi.spyOn(console, "info").mockReturnValue(undefined);
+      vi.spyOn(
+        labelStudioOverride,
+        "overrideLabelStudioGrade",
+      ).mockResolvedValue(undefined);
+    });
+
+    test("records the outcome against the current outputs run and the reviewer", async () => {
+      await createMeeting("meeting-review", { outputsPipelineRunId: "run-9" });
+
+      await testTRPCClient.v1.flaggedMeetings.recordOutcome.mutate(
+        confirmed("meeting-review"),
+      );
+
+      const [row] = await testPrismaClient.meetingReviewOutcome.findMany();
+      expect(row).toMatchObject({
+        meetingId: "meeting-review",
+        section: "CASE_NOTE",
+        pipelineRunId: "run-9",
+        outcome: "CONFIRMED_BAD",
+        followUp: "EMAILED_PO",
+        correctedGrade: null,
+        overriddenSources: [],
+        appliesTo: [],
+        notes: "Invented a UA refusal.",
+        reviewerEmail: "test@recidiviz.org",
+      });
+    });
+
+    test("does not log the notes", async () => {
+      await createMeeting("meeting-audit");
+
+      await testTRPCClient.v1.flaggedMeetings.recordOutcome.mutate(
+        confirmed("meeting-audit"),
+      );
+
+      const logged = JSON.stringify(vi.mocked(console.info).mock.calls);
+      expect(logged).toContain("meeting-audit");
+      expect(logged).not.toContain("UA refusal");
+      expect(logged).not.toContain("test@recidiviz.org");
+    });
+
+    test("overrides Label Studio as the admin before recording Not BAD", async () => {
+      await createMeeting("meeting-override");
+      useLabelStudio([labelStudioEntry("meeting-override")]);
+
+      await testTRPCClient.v1.flaggedMeetings.recordOutcome.mutate(
+        notBad("meeting-override"),
+      );
+
+      expect(labelStudioOverride.overrideLabelStudioGrade).toHaveBeenCalledWith(
+        expect.objectContaining({
+          projectId: 7,
+          taskId: 501,
+          dimension: "caseNote",
+          grade: "PARTIAL",
+        }),
+      );
+      const [row] = await testPrismaClient.meetingReviewOutcome.findMany();
+      expect(row).toMatchObject({
+        outcome: "NOT_BAD",
+        correctedGrade: "PARTIAL",
+        overriddenSources: ["LABEL_STUDIO", "LLM_JUDGE"],
+      });
+    });
+
+    test("does not touch Label Studio when only the judge is overridden", async () => {
+      await createMeeting("meeting-judge-only");
+
+      await testTRPCClient.v1.flaggedMeetings.recordOutcome.mutate({
+        ...notBad("meeting-judge-only"),
+        overriddenSources: ["LLM_JUDGE"],
+      } as RecordInput);
+
+      expect(
+        labelStudioOverride.overrideLabelStudioGrade,
+      ).not.toHaveBeenCalled();
+      expect(await testPrismaClient.meetingReviewOutcome.count()).toBe(1);
+    });
+
+    test("records nothing when the Label Studio write fails", async () => {
+      await createMeeting("meeting-ls-fails");
+      useLabelStudio([labelStudioEntry("meeting-ls-fails")]);
+      vi.mocked(labelStudioOverride.overrideLabelStudioGrade).mockRejectedValue(
+        new Error("LS 500"),
+      );
+
+      await expect(
+        testTRPCClient.v1.flaggedMeetings.recordOutcome.mutate(
+          notBad("meeting-ls-fails"),
+        ),
+      ).rejects.toThrow();
+
+      expect(await testPrismaClient.meetingReviewOutcome.count()).toBe(0);
+    });
+
+    test("rejects a Label Studio override when the meeting has no task", async () => {
+      await createMeeting("meeting-no-task");
+      useLabelStudio([]);
+
+      await expect(
+        testTRPCClient.v1.flaggedMeetings.recordOutcome.mutate(
+          notBad("meeting-no-task"),
+        ),
+      ).rejects.toMatchObject({ data: { code: "BAD_REQUEST" } });
+
+      expect(await testPrismaClient.meetingReviewOutcome.count()).toBe(0);
+    });
+
+    test("rejects a Label Studio override when Label Studio is not configured", async () => {
+      await createMeeting("meeting-no-ls");
+
+      await expect(
+        testTRPCClient.v1.flaggedMeetings.recordOutcome.mutate(
+          notBad("meeting-no-ls"),
+        ),
+      ).rejects.toMatchObject({ data: { code: "PRECONDITION_FAILED" } });
+    });
+
+    test("requires appliesTo for an Overall outcome, and only there", async () => {
+      await createMeeting("meeting-overall");
+
+      await expect(
+        testTRPCClient.v1.flaggedMeetings.recordOutcome.mutate({
+          ...confirmed("meeting-overall"),
+          section: "OVERALL",
+        }),
+      ).rejects.toThrow(/appliesTo/);
+      await expect(
+        testTRPCClient.v1.flaggedMeetings.recordOutcome.mutate({
+          ...confirmed("meeting-overall"),
+          appliesTo: ["CASE_NOTE"],
+        }),
+      ).rejects.toThrow(/appliesTo/);
+
+      await testTRPCClient.v1.flaggedMeetings.recordOutcome.mutate({
+        ...confirmed("meeting-overall"),
+        section: "OVERALL",
+        appliesTo: ["CASE_NOTE", "ACTION_ITEMS"],
+      });
+      const [row] = await testPrismaClient.meetingReviewOutcome.findMany();
+      expect(row.appliesTo).toEqual(["CASE_NOTE", "ACTION_ITEMS"]);
+    });
+
+    test("accepts an empty appliesTo as 'neither section'", async () => {
+      await createMeeting("meeting-neither");
+
+      await testTRPCClient.v1.flaggedMeetings.recordOutcome.mutate({
+        ...confirmed("meeting-neither"),
+        section: "OVERALL",
+        appliesTo: [],
+      });
+
+      const [row] = await testPrismaClient.meetingReviewOutcome.findMany();
+      expect(row.appliesTo).toEqual([]);
+    });
+
+    test("does not accept 'user caught it' on a Not BAD outcome", async () => {
+      await createMeeting("meeting-follow");
+
+      await expect(
+        testTRPCClient.v1.flaggedMeetings.recordOutcome.mutate({
+          ...notBad("meeting-follow"),
+          followUp: "USER_CAUGHT_IT",
+        } as unknown as RecordInput),
+      ).rejects.toThrow();
+    });
+
+    test("requires notes for Other", async () => {
+      await createMeeting("meeting-other");
+
+      await expect(
+        testTRPCClient.v1.flaggedMeetings.recordOutcome.mutate({
+          stateCode: STATE,
+          meetingId: "meeting-other",
+          section: "CASE_NOTE",
+          outcome: "OTHER",
+        } as RecordInput),
+      ).rejects.toThrow();
+    });
+
+    test("throws NOT_FOUND for an unknown meeting", async () => {
+      await expect(
+        testTRPCClient.v1.flaggedMeetings.recordOutcome.mutate(
+          confirmed("no-such-meeting"),
+        ),
+      ).rejects.toMatchObject({ data: { code: "NOT_FOUND" } });
+    });
+
+    test("throws FORBIDDEN for a state outside allowedStates", async () => {
+      await expect(
+        testTRPCClient.v1.flaggedMeetings.recordOutcome.mutate({
+          ...confirmed("meeting-1"),
+          stateCode: StateCode.US_ND,
+        }),
+      ).rejects.toMatchObject({ data: { code: "FORBIDDEN" } });
+    });
+
+    test("throws FORBIDDEN for a non-Recidiviz user", async () => {
+      await setStaffUser();
+
+      await expect(
+        testTRPCClient.v1.flaggedMeetings.recordOutcome.mutate(
+          confirmed("meeting-1"),
+        ),
+      ).rejects.toMatchObject({ data: { code: "FORBIDDEN" } });
+    });
+
+    test("rejects an impersonating admin", async () => {
+      await initFastifyAndSetUser(
+        {
+          "https://dashboard.recidiviz.org/email_address": "test@recidiviz.org",
+          "https://dashboard.recidiviz.org/app_metadata": {
+            stateCode: "recidiviz",
+            allowedStates: [STATE],
+          },
+        },
+        {
+          extraHeaders: {
+            [IMPERSONATED_EMAIL_HEADER_KEY]: fakeStaff[0].email,
+          },
+        },
+      );
+
+      await expect(
+        testTRPCClient.v1.flaggedMeetings.recordOutcome.mutate(
+          confirmed("meeting-1"),
+        ),
+      ).rejects.toThrow("Admin requests are not allowed while impersonating");
+    });
+
+    describe("in the list and details", () => {
+      test("a recorded section is reviewed; a later thumbs-down reopens it", async () => {
+        await createMeeting("meeting-cycle", { outputsPipelineRunId: "run-1" });
+        await evaluate("meeting-cycle", { caseNote: "BAD" });
+        expect((await list()).meetings[0].reviews.CASE_NOTE.status).toBe(
+          "needs_review",
+        );
+
+        await testTRPCClient.v1.flaggedMeetings.recordOutcome.mutate(
+          confirmed("meeting-cycle"),
+        );
+        expect((await list()).meetings[0].reviews.CASE_NOTE).toMatchObject({
+          status: "reviewed",
+          latestOutcome: { outcome: "CONFIRMED_BAD", followUp: "EMAILED_PO" },
+        });
+
+        vi.setSystemTime(new Date("2026-09-30T13:00:00Z"));
+        await vote("meeting-cycle", "run-1", OutputVoteValue.DOWN, {
+          createdAt: new Date("2026-09-30T12:30:00Z"),
+        });
+        const reopened = (await details("meeting-cycle")).reviews.CASE_NOTE;
+        expect(reopened).toMatchObject({
+          status: "reopened",
+          reopened: { reason: "thumbs_down" },
+          latestOutcome: { outcome: "CONFIRMED_BAD" },
+        });
+      });
+
+      test("keeps a reviewed meeting listed after its only flag clears", async () => {
+        await createMeeting("meeting-cleared", {
+          outputsPipelineRunId: "run-1",
+        });
+        useLabelStudio([labelStudioEntry("meeting-cleared")]);
+        expect((await list()).meetings).toHaveLength(1);
+
+        await testTRPCClient.v1.flaggedMeetings.recordOutcome.mutate(
+          notBad("meeting-cleared"),
+        );
+        // What Label Studio now reports, after the override.
+        useLabelStudio([
+          labelStudioEntry("meeting-cleared", {
+            collapsed: { caseNote: "PARTIAL" },
+          }),
+        ]);
+
+        const { meetings } = await list();
+        expect(meetings).toHaveLength(1);
+        expect(meetings[0].reviews.CASE_NOTE.status).toBe("reviewed");
+        expect(meetings[0].sections.CASE_NOTE).toEqual({
+          llm: false,
+          labelStudio: false,
+          vote: false,
+        });
       });
     });
   });

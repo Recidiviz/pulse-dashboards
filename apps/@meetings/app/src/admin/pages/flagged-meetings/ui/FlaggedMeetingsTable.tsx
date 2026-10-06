@@ -19,6 +19,7 @@ import { format, isSameYear } from "date-fns";
 import { View } from "react-native";
 
 import type { FlaggedMeetingSummary } from "~@meetings/app/admin/api/flaggedMeetings";
+import { meetingReviewState } from "~@meetings/app/admin/entities/flagged-meeting-review";
 import { StatusBadge } from "~@meetings/app/admin/ui/StatusBadge";
 import {
   Table,
@@ -46,7 +47,13 @@ const HEADERS = [
   "LLM judge",
   "Label Studio",
   "In-app feedback",
+  "Outcome",
 ];
+
+function outcomeBadge({ reviews }: FlaggedMeetingSummary): BadgeSpec {
+  const { label, tone } = meetingReviewState(reviews);
+  return { label, tone };
+}
 
 function formatMeetingDate(date: Date): string {
   return format(date, isSameYear(date, new Date()) ? "MMM d" : "MMM d, yyyy");
@@ -56,7 +63,12 @@ const Badges = ({ badges }: { badges: BadgeSpec[] | null }) =>
   badges ? (
     <View className="flex-row flex-wrap gap-1 py-2">
       {badges.map((badge) => (
-        <StatusBadge key={badge.label} tone={badge.tone} dot={badge.dot}>
+        <StatusBadge
+          key={badge.label}
+          className="shrink"
+          tone={badge.tone}
+          dot={badge.dot}
+        >
           {badge.label}
         </StatusBadge>
       ))}
@@ -110,6 +122,9 @@ export const FlaggedMeetingsTable = ({
           </TableCell>
           <TableCell>
             <Badges badges={feedbackBadges(meeting.votes)} />
+          </TableCell>
+          <TableCell>
+            <Badges badges={[outcomeBadge(meeting)]} />
           </TableCell>
         </TableRow>
       ))}

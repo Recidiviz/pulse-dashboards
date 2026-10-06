@@ -19,7 +19,13 @@ import { captureException } from "@sentry/node";
 import { TRPCError } from "@trpc/server";
 
 import { getPrismaClientForStateCode } from "~@meetings/prisma";
-import { NoteSection, Prisma, StateCode } from "~@meetings/prisma/client";
+import {
+  NoteSection,
+  Prisma,
+  ReviewOutcomeKind,
+  ReviewSource,
+  StateCode,
+} from "~@meetings/prisma/client";
 import type { StructuredActionItem } from "~@meetings/tasks";
 import { formatStructuredActionItem } from "~@meetings/tasks";
 import {
@@ -27,26 +33,34 @@ import {
   LS_AUTHORITATIVE_RATER_EMAIL,
   LS_TRANSCRIPT_QUALITY_FIELD_NAME,
 } from "~@meetings/tasks/admin/label-studio-grades";
+import type { OverrideGrade } from "~@meetings/tasks/admin/label-studio-override";
 import { adminProcedure, router } from "~@meetings/trpc/init";
 import {
   type FlaggedMeetingDetails,
   flaggedMeetingDetailsInput,
   type FlaggedMeetingSummary,
+  type FlagSection,
   type LabelStudioDetail,
   type LabelStudioSummary,
   listFlaggedMeetingsInput,
   type ListFlaggedMeetingsResult,
   MAX_LOOKBACK_DAYS,
+  recordOutcomeInput,
   type ReviewGrade,
   type SourceName,
   type SourceStatus,
 } from "~@meetings/trpc/routes/admin/flagged-meetings/flagged-meetings.schema";
 import {
+  type BadEvaluationEvent,
   combineRaterGrades,
   computeSectionFlags,
+  computeSectionReviews,
+  findBadEvaluationEvents,
   findBadEvaluationMeetingIds,
   findCurrentOutputVotes,
+  findLatestReviewOutcomes,
   findLlmajResultsByMeeting,
+  findReviewedMeetingIds,
   findSectionApprovals,
   findThumbsDownMeetingIds,
   flaggedMeetingDetailInclude,
@@ -57,6 +71,8 @@ import {
   resolveAudioLinks,
   resolveOriginalCaseNote,
   resolveRequestedStates,
+  type ReviewOutcomeRow,
+  SECTION_TO_DIMENSION,
 } from "~@meetings/trpc/routes/admin/flagged-meetings/utils";
 import {
   getLabelStudioSnapshot,
@@ -64,6 +80,7 @@ import {
   type LabelStudioTaskAnnotations,
 } from "~@meetings/trpc/services/admin/label-studio-cache";
 import { labelStudioConfig } from "~@meetings/trpc/services/admin/label-studio-config";
+import { overrideLabelStudioGrade } from "~@meetings/trpc/services/admin/label-studio-override";
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
@@ -177,7 +194,7 @@ async function findFlaggedMeetingsForState({
 
   // Candidates come from the signals themselves, not from every meeting in
   // the window, so the cost follows the number of flags rather than meetings.
-  const [evaluationIds, voteIds] = await Promise.all([
+  const [evaluationIds, voteIds, reviewedIds] = await Promise.all([
     tracker.run(
       "evaluations",
       () => findBadEvaluationMeetingIds(prisma, since),
@@ -190,6 +207,13 @@ async function findFlaggedMeetingsForState({
       [],
       stateCode,
     ),
+    // A reviewed meeting stays listed after its flags clear.
+    tracker.run(
+      "database",
+      () => findReviewedMeetingIds(prisma, since),
+      [],
+      stateCode,
+    ),
   ]);
   const labelStudioIds = [...(snapshot?.byMeetingId.values() ?? [])]
     .filter((entry) => entry.stateCode === stateCode)
@@ -197,7 +221,12 @@ async function findFlaggedMeetingsForState({
     .map((entry) => entry.meetingId);
 
   const candidateIds = [
-    ...new Set([...evaluationIds, ...voteIds, ...labelStudioIds]),
+    ...new Set([
+      ...evaluationIds,
+      ...voteIds,
+      ...reviewedIds,
+      ...labelStudioIds,
+    ]),
   ];
   if (candidateIds.length === 0) return [];
 
@@ -229,24 +258,49 @@ async function findFlaggedMeetingsForState({
   );
   if (meetings.length === 0) return [];
 
-  const [llmajByMeeting, votesByMeeting] = await Promise.all([
-    tracker.run(
-      "evaluations",
-      () =>
-        findLlmajResultsByMeeting(
-          prisma,
-          meetings.map((m) => m.id),
-        ),
-      new Map<string, LlmajResult>(),
-      stateCode,
-    ),
-    tracker.run(
-      "inAppFeedback",
-      () => findCurrentOutputVotes(prisma, meetings),
-      new Map<string, OutputVoteRow[]>(),
-      stateCode,
-    ),
-  ]);
+  const meetingIds = meetings.map((m) => m.id);
+  const [llmajByMeeting, votesByMeeting, outcomesByMeeting] = await Promise.all(
+    [
+      tracker.run(
+        "evaluations",
+        () => findLlmajResultsByMeeting(prisma, meetingIds),
+        new Map<string, LlmajResult>(),
+        stateCode,
+      ),
+      tracker.run(
+        "inAppFeedback",
+        () => findCurrentOutputVotes(prisma, meetings),
+        new Map<string, OutputVoteRow[]>(),
+        stateCode,
+      ),
+      tracker.run(
+        "database",
+        () => findLatestReviewOutcomes(prisma, meetingIds),
+        new Map<string, Partial<Record<FlagSection, ReviewOutcomeRow>>>(),
+        stateCode,
+      ),
+    ],
+  );
+
+  const earliestOutcome = [...outcomesByMeeting.values()]
+    .flatMap((sections) => Object.values(sections))
+    .reduce<Date | null>(
+      (min, o) => (min === null || o.createdAt < min ? o.createdAt : min),
+      null,
+    );
+  const badEvaluationsByMeeting = earliestOutcome
+    ? await tracker.run(
+        "evaluations",
+        () =>
+          findBadEvaluationEvents(
+            prisma,
+            [...outcomesByMeeting.keys()],
+            earliestOutcome,
+          ),
+        new Map<string, BadEvaluationEvent[]>(),
+        stateCode,
+      )
+    : new Map<string, BadEvaluationEvent[]>();
 
   return meetings.flatMap((meeting) => {
     const llm = llmajByMeeting.get(meeting.id);
@@ -256,7 +310,18 @@ async function findFlaggedMeetingsForState({
       labelStudio: snapshot?.byMeetingId.get(meeting.id),
       votes,
     });
-    if (!isAnySectionFlagged(sections)) return [];
+    const outcomes = outcomesByMeeting.get(meeting.id) ?? {};
+    if (!isAnySectionFlagged(sections) && Object.keys(outcomes).length === 0) {
+      return [];
+    }
+    const reviews = computeSectionReviews({
+      flags: sections,
+      outcomes,
+      outputsPipelineRunId: meeting.outputsPipelineRunId,
+      labelStudio: snapshot?.byMeetingId.get(meeting.id),
+      votes,
+      badEvaluations: badEvaluationsByMeeting.get(meeting.id) ?? [],
+    });
 
     return [
       {
@@ -274,6 +339,7 @@ async function findFlaggedMeetingsForState({
         labelStudio: labelStudioSummary(snapshot, meeting.id),
         votes: votes.map(({ tab, vote }) => ({ tab, vote })),
         sections,
+        reviews,
       },
     ];
   });
@@ -389,17 +455,35 @@ export const flaggedMeetingsRouter = router({
         caseNoteOriginal,
         approvals,
         snapshot,
+        outcomesByMeeting,
       ] = await Promise.all([
         findLlmajResultsByMeeting(prisma, [meeting.id]),
         findCurrentOutputVotes(prisma, [meeting]),
         resolveOriginalCaseNote(prisma, meeting),
         findSectionApprovals(prisma, meeting),
         snapshotPromise,
+        findLatestReviewOutcomes(prisma, [meeting.id]),
       ]);
+      const outcomes = outcomesByMeeting.get(meeting.id) ?? {};
+      const earliestOutcome = Object.values(outcomes).reduce<Date | null>(
+        (min, o) => (min === null || o.createdAt < min ? o.createdAt : min),
+        null,
+      );
+      const badEvaluations = earliestOutcome
+        ? (
+            await findBadEvaluationEvents(prisma, [meeting.id], earliestOutcome)
+          ).get(meeting.id) ?? []
+        : [];
 
       const llm = llmajByMeeting.get(meeting.id);
       const votes = votesByMeeting.get(meeting.id) ?? [];
       const lsEntry = snapshot?.byMeetingId.get(meeting.id);
+
+      const sections = computeSectionFlags({
+        llmDimensions: llm?.dimensions,
+        labelStudio: lsEntry,
+        votes,
+      });
 
       const person = meeting.client ?? meeting.resident;
       let personType: "client" | "resident" | null = null;
@@ -454,11 +538,16 @@ export const flaggedMeetingsRouter = router({
           message: vote.message,
           createdAt: vote.createdAt,
         })),
-        sections: computeSectionFlags({
-          llmDimensions: llm?.dimensions,
+        sections,
+        reviews: computeSectionReviews({
+          flags: sections,
+          outcomes,
+          outputsPipelineRunId: meeting.outputsPipelineRunId,
           labelStudio: lsEntry,
           votes,
+          badEvaluations,
         }),
+        outputsPipelineRunId: meeting.outputsPipelineRunId,
         caseNote: {
           current: meeting.caseNote,
           original: caseNoteOriginal,
@@ -499,5 +588,95 @@ export const flaggedMeetingsRouter = router({
             }))
           : null,
       };
+    }),
+
+  recordOutcome: adminProcedure
+    .input(recordOutcomeInput)
+    .mutation(async ({ ctx, input }) => {
+      // The client picks which state's database to write to, so check the
+      // caller's entitlement to it, as getDetails does.
+      const [stateCode] = resolveRequestedStates(ctx.user, [input.stateCode]);
+      const prisma = getPrismaClientForStateCode(stateCode);
+
+      const meeting = await prisma.meeting.findUnique({
+        where: { id: input.meetingId },
+        select: { id: true, outputsPipelineRunId: true },
+      });
+      if (!meeting) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Meeting not found",
+        });
+      }
+
+      const overriddenSources =
+        input.outcome === ReviewOutcomeKind.NOT_BAD
+          ? [...new Set(input.overriddenSources)]
+          : [];
+
+      // Label Studio first: if it fails nothing is recorded and the reviewer
+      // can retry, whereas an outcome saved without its override would say
+      // something Label Studio does not. The write is idempotent, so a retry
+      // after a failed save is safe.
+      if (
+        input.outcome === ReviewOutcomeKind.NOT_BAD &&
+        overriddenSources.includes(ReviewSource.LABEL_STUDIO)
+      ) {
+        const config = labelStudioConfig();
+        if (!config) {
+          throw new TRPCError({
+            code: "PRECONDITION_FAILED",
+            message: "Label Studio is not configured in this environment",
+          });
+        }
+        const snapshot = await getLabelStudioSnapshot(
+          config.client,
+          config.projectId,
+        );
+        const taskId = snapshot.taskIdByMeetingId.get(meeting.id);
+        if (taskId === undefined) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "This meeting has no Label Studio task to override",
+          });
+        }
+        await overrideLabelStudioGrade({
+          client: config.client,
+          projectId: config.projectId,
+          taskId,
+          dimension: SECTION_TO_DIMENSION[input.section],
+          grade: input.correctedGrade as OverrideGrade,
+        });
+      }
+
+      await prisma.meetingReviewOutcome.create({
+        data: {
+          meetingId: meeting.id,
+          section: input.section,
+          pipelineRunId: meeting.outputsPipelineRunId,
+          outcome: input.outcome,
+          followUp:
+            input.outcome === ReviewOutcomeKind.OTHER ? null : input.followUp,
+          correctedGrade:
+            input.outcome === ReviewOutcomeKind.NOT_BAD
+              ? input.correctedGrade
+              : null,
+          overriddenSources,
+          appliesTo: input.appliesTo ?? [],
+          notes: input.notes ?? null,
+          reviewerEmail: ctx.user.email,
+        },
+      });
+
+      // The meeting id only: the audit line must not carry record contents.
+      console.info("Flagged meeting review outcome recorded", {
+        meetingId: meeting.id,
+        stateCode,
+        section: input.section,
+        outcome: input.outcome,
+        labelStudioOverridden: overriddenSources.includes(
+          ReviewSource.LABEL_STUDIO,
+        ),
+      });
     }),
 });

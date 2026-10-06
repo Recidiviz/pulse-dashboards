@@ -23,6 +23,24 @@ type Rater = NonNullable<
 
 const NO_FLAG = { llm: false, labelStudio: false, vote: false };
 
+type Reviews = FlaggedMeetingDetails["reviews"];
+
+const NOT_FLAGGED: Reviews["CASE_NOTE"] = {
+  status: "not_flagged",
+  latestOutcome: null,
+  reopened: null,
+};
+
+/** Reviews with nothing recorded: the case note needs review and the rest are not flagged. */
+export function makeReviews(overrides: Partial<Reviews> = {}): Reviews {
+  return {
+    CASE_NOTE: { ...NOT_FLAGGED, status: "needs_review" },
+    ACTION_ITEMS: NOT_FLAGGED,
+    OVERALL: NOT_FLAGGED,
+    ...overrides,
+  };
+}
+
 export function makeDetails(
   overrides: Partial<FlaggedMeetingDetails> = {},
 ): FlaggedMeetingDetails {
@@ -69,6 +87,8 @@ export function makeDetails(
       ACTION_ITEMS: NO_FLAG,
       OVERALL: NO_FLAG,
     },
+    reviews: makeReviews(),
+    outputsPipelineRunId: "run-1",
     caseNote: {
       current: "Final case note text.",
       original: null,

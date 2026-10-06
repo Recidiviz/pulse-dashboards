@@ -359,6 +359,65 @@ model NoteApproval {
   @@index([meetingId, pipelineRunId])
 }
 
+// The part of a meeting a review outcome is about. OVERALL is for problems that are not
+// specific to the case note or the action items.
+enum ReviewSection {
+  CASE_NOTE
+  ACTION_ITEMS
+  OVERALL
+}
+
+enum ReviewOutcomeKind {
+  CONFIRMED_BAD
+  NOT_BAD
+  OTHER
+}
+
+enum ReviewFollowUp {
+  NO_ACTION
+  USER_CAUGHT_IT
+  EMAILED_PO
+}
+
+enum ReviewCorrectedGrade {
+  GOOD
+  PARTIAL
+}
+
+enum ReviewSource {
+  LLM_JUDGE
+  LABEL_STUDIO
+}
+
+// A Recidiviz admin's verdict on one section of a flagged meeting. Append-only: the latest row
+// per (meetingId, section) is the current outcome and earlier rows are the audit history.
+// Admin only: written by the Flagged meetings review workflow, never read by the user-facing app.
+model MeetingReviewOutcome {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  // Not FKs (matches NoteApproval): rows are kept as audit history across reprocess/deletion.
+  meetingId String
+  section   ReviewSection
+  // The Meeting.outputsPipelineRunId the reviewer was looking at, to tell when the outputs have
+  // since been regenerated.
+  pipelineRunId String?
+
+  outcome           ReviewOutcomeKind
+  followUp          ReviewFollowUp?
+  // Only for NOT_BAD: the grade the reviewer says the section deserves.
+  correctedGrade    ReviewCorrectedGrade?
+  // Only for NOT_BAD: the ratings the reviewer replaced with correctedGrade.
+  overriddenSources ReviewSource[]
+  // Only for OVERALL: the sections the problem applies to.
+  appliesTo         ReviewSection[]
+
+  notes         String?
+  reviewerEmail String
+
+  @@index([meetingId, section, createdAt])
+}
+
 model NotetakingPipelineRun {
   id String @id @default(cuid())
 
