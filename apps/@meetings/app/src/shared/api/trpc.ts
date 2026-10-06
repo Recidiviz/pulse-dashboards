@@ -16,7 +16,9 @@
 // =============================================================================
 
 import { createTRPCReact } from "@trpc/react-query";
+import { createContext } from "react";
 
+import type { JiiMeetingsAppRouter } from "~@jii/trpc-types";
 import type { AppRouter } from "~@meetings/trpc-types";
 
 // Authenticated tRPC client - requires user to be logged in
@@ -24,3 +26,10 @@ export const trpc = createTRPCReact<AppRouter>();
 
 // Public tRPC client - for unauthenticated endpoints (e.g., version check)
 export const publicTrpc = createTRPCReact<AppRouter>();
+
+/**
+ *  TRPC client for the JII backend (NE success planner integration).
+ */
+export const jiiTrpc = createTRPCReact<JiiMeetingsAppRouter>({
+  context: createContext(null),
+});

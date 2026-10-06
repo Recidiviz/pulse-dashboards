@@ -19,6 +19,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { httpBatchLink } from "@trpc/client";
 import React, { useEffect, useRef, useState } from "react";
+import { Platform } from "react-native";
 import superjson from "superjson";
 
 import {
@@ -35,9 +36,10 @@ import {
   useUserContext,
 } from "~@meetings/app/entities/user";
 import { useImpersonationStore } from "~@meetings/app/features/impersonation";
-import { trpc } from "~@meetings/app/shared/api";
+import { jiiTrpc, trpc } from "~@meetings/app/shared/api";
 import { env } from "~@meetings/app/shared/config";
 import { queryCachePersister } from "~@meetings/app/shared/lib/queryCachePersister";
+import { FirebaseAuthClient } from "~firebase-auth";
 
 import { AuthenticatedContent } from "./AuthenticatedContent";
 
@@ -50,6 +52,20 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+const getFirebaseAuthClient = () => {
+  const { EXPO_PUBLIC_FIREBASE_PROJECT_ID, EXPO_PUBLIC_FIREBASE_API_KEY } = env;
+  // Only missing from contractor env in practice.
+  if (!EXPO_PUBLIC_FIREBASE_PROJECT_ID || !EXPO_PUBLIC_FIREBASE_API_KEY) {
+    throw new Error(
+      "EXPO_PUBLIC_FIREBASE_PROJECT_ID and EXPO_PUBLIC_FIREBASE_API_KEY must be set to initialize firebase auth",
+    );
+  }
+  return new FirebaseAuthClient(
+    EXPO_PUBLIC_FIREBASE_PROJECT_ID,
+    EXPO_PUBLIC_FIREBASE_API_KEY,
+  );
+};
 
 /**
  * Passes the user and agency config values StateCodeProvider needs
@@ -99,8 +115,12 @@ const AuthenticatedApp: React.FC = () => {
   // will initialize this to the user's state for state users, or allow Recidiviz users to change it
   // via settings.
   const selectedStateRef = useRef<StateCode>(DEFAULT_STATE_CODE);
+  // impersonatedEmail is "" when not impersonating
   const impersonatedEmailRef = useRef(impersonatedEmail);
   const impersonatedStateCodeRef = useRef(impersonatedStateCode);
+  // We need to refresh our firebase token when switching between identities - this
+  // ref will allow us to flag when the token needs a refresh.
+  const firebaseSessionEmailRef = useRef<string | undefined>(undefined);
 
   useEffect(() => {
     impersonatedEmailRef.current = impersonatedEmail;
@@ -155,22 +175,72 @@ const AuthenticatedApp: React.FC = () => {
     }),
   );
 
+  const [jiiTrpcClient] = useState(() =>
+    jiiTrpc.createClient({
+      links: [
+        httpBatchLink({
+          url: env.EXPO_PUBLIC_JII_API_URL,
+          headers: async () => {
+            const firebaseAuthClient = getFirebaseAuthClient();
+            // Get a new token when firebaseImpersonationRef is undefined (i.e. the
+            // first time we try to mint), or when the impersonated user has changed
+            // since the last token refresh.
+            if (
+              firebaseSessionEmailRef.current !== impersonatedEmailRef.current
+            ) {
+              const { firebaseToken } =
+                await trpcClient.v1.firebaseAuth.getFirebaseToken.query();
+              await firebaseAuthClient.authenticate(firebaseToken);
+              firebaseSessionEmailRef.current = impersonatedEmailRef.current;
+            }
+
+            const stateCode = impersonatedEmailRef.current
+              ? impersonatedStateCodeRef.current
+              : selectedStateRef.current;
+            return {
+              Authorization: `Bearer ${await firebaseAuthClient.getIdToken()}`,
+              StateCode: stateCode,
+              UseDemoData: `${isSkipAuthUser || stateCode === "US_DEMO"}`,
+            };
+          },
+          transformer: superjson,
+        }),
+      ],
+    }),
+  );
+
   if (isLoading) {
     return null;
   }
 
+  // The NE success planner (the only consumer of jiiTrpc) is web-only, so
+  // mount the jiiTrpc provider on web.
+  const withJiiTrpc = (children: React.ReactNode) =>
+    Platform.OS === "web" ? (
+      <jiiTrpc.Provider client={jiiTrpcClient} queryClient={queryClient}>
+        {children}
+      </jiiTrpc.Provider>
+    ) : (
+      children
+    );
+
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <PersistQueryClientProvider
-        client={queryClient}
-        persistOptions={{ persister: queryCachePersister, maxAge: ONE_WEEK_MS }}
-      >
-        <AgencyConfigProvider>
-          <ConnectedStateCodeProvider selectedStateRef={selectedStateRef}>
-            <AuthenticatedContent />
-          </ConnectedStateCodeProvider>
-        </AgencyConfigProvider>
-      </PersistQueryClientProvider>
+      {withJiiTrpc(
+        <PersistQueryClientProvider
+          client={queryClient}
+          persistOptions={{
+            persister: queryCachePersister,
+            maxAge: ONE_WEEK_MS,
+          }}
+        >
+          <AgencyConfigProvider>
+            <ConnectedStateCodeProvider selectedStateRef={selectedStateRef}>
+              <AuthenticatedContent />
+            </ConnectedStateCodeProvider>
+          </AgencyConfigProvider>
+        </PersistQueryClientProvider>,
+      )}
     </trpc.Provider>
   );
 };

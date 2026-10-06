@@ -17,16 +17,25 @@
 
 import { TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
+import ExclamationCircleIcon from "react-native-heroicons/solid/ExclamationCircleIcon";
 
 import { Button } from "~@meetings/app/shared/ui/Button";
 import Modal from "~@meetings/app/shared/ui/Modal";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 type Props = {
   onCancel: () => void;
   onSend: () => void;
+  isSending: boolean;
+  isError: boolean;
 };
 
-export function SendSuccessPlannerModal({ onCancel, onSend }: Props) {
+export function SendSuccessPlannerModal({
+  onCancel,
+  onSend,
+  isSending,
+  isError,
+}: Props) {
   return (
     <Modal
       visible
@@ -45,11 +54,19 @@ export function SendSuccessPlannerModal({ onCancel, onSend }: Props) {
           Send the Success Planner to the resident to complete before their
           120-day pre-release meeting.
         </Modal.Body>
+        {isError && (
+          <View className="flex-row items-center gap-1.5">
+            <ExclamationCircleIcon className="size-4 fill-attention" />
+            <Typography variant="caption-s-regular" className="!text-attention">
+              Couldn't send the Success Planner. Please try again.
+            </Typography>
+          </View>
+        )}
         <Modal.Actions className="mt-2">
           <Button variant="secondary" onPress={onCancel}>
             Cancel
           </Button>
-          <Button variant="primary" onPress={onSend}>
+          <Button variant="primary" loading={isSending} onPress={onSend}>
             Send
           </Button>
         </Modal.Actions>

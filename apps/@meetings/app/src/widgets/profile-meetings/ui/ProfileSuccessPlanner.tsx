@@ -27,7 +27,7 @@ import { Person } from "~@meetings/app/shared/api";
 
 export function ProfileSuccessPlanner({ person }: { person: Person }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const planner = useSuccessPlanner();
+  const { planner } = useSuccessPlanner(person.pseudonymizedId);
 
   if (!planner) return null;
 

@@ -35,7 +35,7 @@
         }
       ],
       "options": {
-        "command": "GOOGLE_APPLICATION_CREDENTIALS=recidiviz-dashboard-staging-22598baea1a7.json HOST=0.0.0.0 vite-node --watch src/main.ts",
+        "command": "HOST=0.0.0.0 vite-node --watch src/main.ts",
         "cwd": "{projectRoot}"
       }
     },

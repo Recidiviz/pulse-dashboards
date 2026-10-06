@@ -18,15 +18,26 @@ If you haven't already, follow the setup instructions in the root README to inst
    2. Set the CORS policy on the bucket by running `gcloud storage buckets update gs://[your-bucket-name] --cors-file=apps/@meetings/server/gcs-cors.json`
    3. create an `.env.dev` file in this directory with the following contents:
 
-   ```
-   AUDIO_RECORDINGS_BUCKET_NAME=your-bucket-name
-   ```
+      ```
+      AUDIO_RECORDINGS_BUCKET_NAME=your-bucket-name
+      ```
 
-   Replace `your-bucket-name` with the name of your GCS bucket.
+      Replace `your-bucket-name` with the name of your GCS bucket.
 
-3. Get the service account key JSON file for the `recidiviz-dashboard-staging` GCP project from your team lead and put it in this directory. Name the file `recidiviz-dashboard-staging-22598baea1a7.json`.
-4. [Only if this is the first time you're setting up the project/you want to re-seed the database] Run `nx prisma-seed @meetings/prisma` to seed the database with initial data (Docker starts automatically as a dependency).
-5. Start the server with `nx dev @meetings/server`. This starts the database in Docker and applies any pending prisma migrations automatically.
+   4. Get the service account key JSON file for the `recidiviz-dashboard-staging` GCP project from your team lead and put it in this directory. Name the file `recidiviz-dashboard-staging-22598baea1a7.json`.
+   5. Append `GOOGLE_APPLICATION_CREDENTIALS=recidiviz-dashboard-staging-22598baea1a7.json` to the "requires-sops-env:dev" target's `command.options` field in `apps/@meetings/server/project.json`.
+
+3. [Only if this is the first time you're setting up the project/you want to re-seed the database] Run `nx prisma-seed @meetings/prisma` to seed the database with initial data (Docker starts automatically as a dependency).
+4. Start the server with `nx dev @meetings/server`. This starts the database in Docker and applies any pending prisma migrations automatically.
+
+### Running the application with JII features
+
+If you want to test out a feature that relies on the JII backend (e.g. NE Success Planner):
+
+1. Use go/pam to request temporary deploy permissions for recidiviz-dashboard-staging (the elevated permission will allow your account to create firebase tokens)
+2. Run `nx dev @meetings/server` in one terminal
+3. Run `nx dev jii` in another terminal
+4. Run `nx web @meetings/app` in another terminal
 
 ### Local Mode (No GCS)
 

@@ -15,11 +15,41 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { MOCK_SUCCESS_PLANNER } from "../api/mockSuccessPlanner";
-import { SuccessPlanner } from "../model/successPlanner";
+import { jiiTrpc } from "~@meetings/app/shared/api";
+
+import { SuccessPlanner, SuccessPlannerAnswers } from "../model/successPlanner";
 import { useIsSuccessPlannerVisible } from "./useIsSuccessPlannerVisible";
 
-export function useSuccessPlanner(): SuccessPlanner | null {
+type UseSuccessPlannerResult = {
+  planner: SuccessPlanner | null;
+  isLoading: boolean;
+  isError: boolean;
+};
+
+export function useSuccessPlanner(
+  pseudonymizedId: string,
+): UseSuccessPlannerResult {
   const isVisible = useIsSuccessPlannerVisible();
-  return isVisible ? MOCK_SUCCESS_PLANNER : null;
+  const { data, isLoading, isError } =
+    jiiTrpc.meetingsStaff.usNe.getCheckIn.useQuery(
+      { pseudonymizedId },
+      { enabled: isVisible },
+    );
+
+  if (!isVisible || !data) return { planner: null, isLoading, isError };
+
+  // TODO(OBT-47841): Avoid casting and reference the getCheckIn procedure's types
+  // once they exist.
+  return {
+    planner: {
+      id: data.id,
+      assignedBy: data.assignedBy,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+      completedAt: data.completedAt,
+      answers: data.answers as SuccessPlannerAnswers,
+    },
+    isLoading,
+    isError,
+  };
 }

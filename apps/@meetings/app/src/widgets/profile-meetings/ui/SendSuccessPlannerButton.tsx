@@ -16,33 +16,78 @@
 // =============================================================================
 
 import { useState } from "react";
+import { View } from "react-native";
 import { PlusIcon } from "react-native-heroicons/outline";
+import ExclamationCircleIcon from "react-native-heroicons/solid/ExclamationCircleIcon";
 
 import {
   SendSuccessPlannerModal,
   useSuccessPlanner,
 } from "~@meetings/app/entities/success-planner";
+import { jiiTrpc, Person } from "~@meetings/app/shared/api";
 import { Button } from "~@meetings/app/shared/ui/Button";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
 
-export function SendSuccessPlannerButton() {
+export function SendSuccessPlannerButton({ person }: { person: Person }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const planner = useSuccessPlanner();
+
+  // One ID for the component's lifetime, to avoid the possibility of saving a second
+  // check-in, which could reset JII form progress.
+  const [checkInId] = useState(() => crypto.randomUUID());
+
+  const { planner, isLoading, isError } = useSuccessPlanner(
+    person.pseudonymizedId,
+  );
+  const utils = jiiTrpc.useUtils();
+  const createCheckIn = jiiTrpc.meetingsStaff.usNe.createCheckIn.useMutation({
+    onSettled: () =>
+      utils.meetingsStaff.usNe.getCheckIn.invalidate({
+        pseudonymizedId: person.pseudonymizedId,
+      }),
+  });
 
   if (planner) return null;
+
+  if (isError) {
+    return (
+      <View className="flex-row items-center gap-1.5">
+        <ExclamationCircleIcon className="size-4 fill-attention" />
+        <Typography variant="caption-s-regular" className="!text-attention">
+          Couldn't load the Success Planner
+        </Typography>
+      </View>
+    );
+  }
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    createCheckIn.reset();
+  };
 
   return (
     <>
       <Button
         variant="tertiary"
         icon={{ icon: PlusIcon, className: "!size-4 stroke-[3px]" }}
+        loading={isLoading || createCheckIn.isPending}
         onPress={() => setIsModalOpen(true)}
       >
         Success Planner
       </Button>
       {isModalOpen && (
         <SendSuccessPlannerModal
-          onCancel={() => setIsModalOpen(false)}
-          onSend={() => setIsModalOpen(false)}
+          onCancel={closeModal}
+          onSend={() =>
+            createCheckIn.mutate(
+              {
+                pseudonymizedId: person.pseudonymizedId,
+                id: checkInId,
+              },
+              { onSuccess: closeModal },
+            )
+          }
+          isSending={createCheckIn.isPending}
+          isError={createCheckIn.isError}
         />
       )}
     </>

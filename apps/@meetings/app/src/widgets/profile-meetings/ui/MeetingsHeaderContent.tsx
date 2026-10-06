@@ -104,7 +104,7 @@ const MeetingsHeaderContent = ({
               </Typography>
             </Typography>
             <View className="flex-row items-center gap-2">
-              {isPlannerVisible && <SendSuccessPlannerButton />}
+              {isPlannerVisible && <SendSuccessPlannerButton person={person} />}
               {recordingState === "idle" && (
                 <Button
                   variant="primary"
