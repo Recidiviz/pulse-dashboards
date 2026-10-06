@@ -19,9 +19,15 @@
 
 import { $ } from "zx";
 
-// Entitlement that grants the app deploy/operate roles just-in-time. Created per
-// project by the PAM rollout; see recidiviz-security-operations-automation.
-const ENTITLEMENT_ID = "pam-deploy-app";
+// Entitlements that grant the app deploy/operate roles just-in-time, in order of
+// preference. `pam-engineering` is Terraform-managed in Recidiviz/recidiviz-iam
+// (requesters: s-polaris@ and s-doppler@). Callers not eligible for it fall back
+// to the legacy `pam-deploy-app` lane, so nobody loses elevation during the move.
+// TODO(AUR-240): drop `pam-deploy-app` from this list when that lane is retired.
+const ENTITLEMENTS = [
+  { id: "pam-engineering", groupHint: "s-polaris@ or s-doppler@" },
+  { id: "pam-deploy-app", groupHint: "s-pam-deploy-app@" },
+];
 const LOCATION = "global";
 // 2 hours is comfortably longer than a deploy; the entitlement's max is 12h.
 const GRANT_DURATION = "7200s";
@@ -48,9 +54,9 @@ function parseJson(text) {
  * than `grants list` (grants.list) or `grants describe` (grants.get) — eligible
  * requesters hold neither of those.
  */
-async function searchOwnGrants(projectId) {
+async function searchOwnGrants(projectId, entitlementId) {
   const searched =
-    await $`gcloud pam grants search --caller-relationship=had-created --entitlement=${ENTITLEMENT_ID} --location=${LOCATION} --project=${projectId} --format=json`
+    await $`gcloud pam grants search --caller-relationship=had-created --entitlement=${entitlementId} --location=${LOCATION} --project=${projectId} --format=json`
       .nothrow()
       .quiet();
   if (searched.exitCode !== 0) {
@@ -60,7 +66,7 @@ async function searchOwnGrants(projectId) {
 }
 
 /**
- * Requests a just-in-time PAM `deploy-app` grant on `projectId` so the deploying
+ * Requests a just-in-time PAM deploy grant on `projectId` so the deploying
  * engineer holds the deploy roles for the duration of the deploy, then evaporates.
  *
  * Ported from recidiviz-data's `request_pam_deploy_grant` (deploy_helpers.sh).
@@ -69,7 +75,7 @@ async function searchOwnGrants(projectId) {
  * it will either succeed via the caller's existing access or fail later at the
  * real deploy step with a clear error.
  *
- * @param {string} projectId - GCP project the `pam-deploy-app` entitlement lives on.
+ * @param {string} projectId - GCP project the deploy entitlement lives on.
  * @param {{ waitForPropagation?: boolean }} [options] - Set `waitForPropagation: false` (default
  *   true) to return as soon as the grant is ACTIVE, skipping the IAM-propagation pause -- for
  *   callers that request several grants up front and let later steps (e.g. `yarn install`) cover
@@ -80,31 +86,34 @@ export async function requestPamDeployGrant(
   projectId,
   { waitForPropagation = true } = {},
 ) {
-  const label = `PAM deploy-app grant on ${projectId}`;
-
-  // 1. Is the entitlement reachable here?
+  // 1. Which entitlement is reachable here? Take the first eligible one.
   // Uses `entitlements search`, not `entitlements describe` to perform the check
   // since `describe` would require elevated role permissions (entitlements.get) to function properly
   const searched =
     await $`gcloud pam entitlements search --caller-access-type=grant-requester --location=${LOCATION} --project=${projectId} --format=json`
       .nothrow()
       .quiet();
-  const isEligible =
-    searched.exitCode === 0 &&
-    (parseJson(searched.stdout) ?? []).some((entitlement) =>
-      entitlement?.name?.endsWith(`/entitlements/${ENTITLEMENT_ID}`),
-    );
-  if (!isEligible) {
+  const reachable =
+    searched.exitCode === 0 ? parseJson(searched.stdout) ?? [] : [];
+  const entitlement = ENTITLEMENTS.find(({ id }) =>
+    reachable.some(({ name }) => name?.endsWith(`/entitlements/${id}`)),
+  );
+  if (!entitlement) {
+    const hints = ENTITLEMENTS.map(({ groupHint }) => groupHint).join(", ");
     console.warn(
-      `⚠️  ${label}: not eligible, or PAM unreachable -- proceeding without elevation.\n    (Confirm you are in s-pam-deploy-app@.)`,
+      `⚠️  PAM deploy grant on ${projectId}: not eligible, or PAM unreachable -- proceeding without elevation.\n    (Confirm you are in one of: ${hints}.)`,
     );
     return;
   }
+  const entitlementId = entitlement.id;
+  const label = `PAM ${entitlementId} grant on ${projectId}`;
 
   // 2. Reuse an existing ACTIVE grant, if one is already open. `grants search`
   // only returns grants this caller created, so no requester filter is needed.
   if (
-    (await searchOwnGrants(projectId))?.some(({ state }) => state === "ACTIVE")
+    (await searchOwnGrants(projectId, entitlementId))?.some(
+      ({ state }) => state === "ACTIVE",
+    )
   ) {
     console.log(`✅ ${label}: reusing your active grant.`);
     return;
@@ -113,7 +122,7 @@ export async function requestPamDeployGrant(
   // 3. Create a short grant.
   console.log(`⏳ Requesting ${label} for ${GRANT_DURATION}...`);
   const created =
-    await $`gcloud pam grants create --entitlement=${ENTITLEMENT_ID} --location=${LOCATION} --project=${projectId} --requested-duration=${GRANT_DURATION} --justification=${JUSTIFICATION} --format=json`
+    await $`gcloud pam grants create --entitlement=${entitlementId} --location=${LOCATION} --project=${projectId} --requested-duration=${GRANT_DURATION} --justification=${JUSTIFICATION} --format=json`
       .nothrow()
       .quiet();
   if (created.exitCode !== 0) {
@@ -127,7 +136,7 @@ export async function requestPamDeployGrant(
   // 4. Wait for the grant to activate and its IAM bindings to propagate.
   for (let attempt = 0; attempt < ACTIVE_POLL_ATTEMPTS; attempt += 1) {
     const state = grantName
-      ? (await searchOwnGrants(projectId))?.find(
+      ? (await searchOwnGrants(projectId, entitlementId))?.find(
           ({ name }) => name === grantName,
         )?.state
       : undefined;
