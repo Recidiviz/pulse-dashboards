@@ -117,4 +117,33 @@ describe("jwt", () => {
     const result = await trpcClient.test.query();
     expect(result).toEqual("Hello, world!");
   });
+
+  // Fastify's default 100-character route param limit turns larger batches
+  // into a non-tRPC 404 that clients fail to parse.
+  test("should serve a batch whose joined procedure names exceed 100 characters", async () => {
+    const token = testServer.jwt.regular.sign({ user: "test-user" });
+
+    const trpcClient = createTRPCClient<JwtAppRouter>({
+      links: [
+        httpBatchLink({
+          url: `http://${testHost}:${testPort}`,
+          headers() {
+            return {
+              Authorization: `Bearer ${token}`,
+              StateCode: "US_ID",
+            };
+          },
+          // Required to get Date objects to serialize correctly.
+          transformer: superjson,
+        }),
+      ],
+    });
+
+    // Queries issued in the same tick share one request, whose path is
+    // "test,test,..." (30 names, 149 characters).
+    const results = await Promise.all(
+      Array.from({ length: 30 }, () => trpcClient.test.query()),
+    );
+    expect(results).toEqual(Array(30).fill("Hello, world!"));
+  });
 });
