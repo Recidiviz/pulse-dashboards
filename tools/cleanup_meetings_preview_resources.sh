@@ -15,9 +15,13 @@ migrate_jobs="$(gcloud run jobs list --project recidiviz-dashboard-staging --fil
 
 
 if [[ $dbs ]]; then
-  # Wait for the clone operation to finish if it does already exist (we have to wait for the clone operation to finish before we can delete the database)
+  # Cloud SQL rejects deleting an instance while its clone is still running, so
+  # wait for the clone first. A clone can take longer than gcloud's default
+  # 5-minute wait. A failed clone leaves a FAILED instance whose wait exits
+  # non-zero, and that instance still needs deleting, so the wait's result is
+  # ignored; if the clone is somehow still running, the delete fails instead.
   CLONE_OPERATION_ID="$(gcloud sql operations list --project recidiviz-dashboard-staging --instance "$db_name" --filter "TYPE=CLONE" --format="get(NAME)")"
-  gcloud sql operations wait --project recidiviz-dashboard-staging "$CLONE_OPERATION_ID"
+  gcloud sql operations wait --project recidiviz-dashboard-staging --timeout=900 "$CLONE_OPERATION_ID" || true
 
   gcloud sql instances delete "$db_name" --project recidiviz-dashboard-staging -q
 fi
