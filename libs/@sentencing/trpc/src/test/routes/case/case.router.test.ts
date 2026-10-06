@@ -472,6 +472,28 @@ describe("case router", () => {
       );
     });
 
+    test.each([null, 0])(
+      "should throw error if lsir score is locked and lsirScore is %s",
+      async (lsirScore) => {
+        await testPrismaClient.case.update({
+          where: { id: fakeCase.id },
+          data: { isLsirScoreLocked: true },
+        });
+
+        await expect(() =>
+          testTRPCClient.case.updateCase.mutate({
+            id: fakeCase.id,
+            attributes: { lsirScore },
+          }),
+        ).rejects.toThrowError(
+          new TRPCError({
+            code: "BAD_REQUEST",
+            message: "LSIR score is locked and cannot be updated",
+          }),
+        );
+      },
+    );
+
     test("should throw error if report type is locked and report type is provided", async () => {
       await testPrismaClient.case.update({
         where: { id: fakeCase.id },

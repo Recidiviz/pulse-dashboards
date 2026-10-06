@@ -138,12 +138,15 @@ export const caseRouter = router({
         try {
           const { lsirScore, reportType, county, clientGender, clientCounty } =
             attributes;
+          // Compare against undefined rather than truthiness, so that a falsy
+          // value that would clear a locked field (e.g. a null or 0 lsirScore,
+          // or an empty-string county) still hits that field's lock check.
           if (
-            lsirScore ||
-            reportType ||
-            clientGender ||
-            county ||
-            clientCounty
+            lsirScore !== undefined ||
+            reportType !== undefined ||
+            clientGender !== undefined ||
+            county !== undefined ||
+            clientCounty !== undefined
           ) {
             const {
               isLsirScoreLocked,
@@ -165,34 +168,34 @@ export const caseRouter = router({
               },
             });
 
-            if (lsirScore && isLsirScoreLocked) {
+            if (lsirScore !== undefined && isLsirScoreLocked) {
               throw new TRPCError({
                 code: "BAD_REQUEST",
                 message: "LSIR score is locked and cannot be updated",
               });
             }
 
-            if (reportType && isReportTypeLocked) {
+            if (reportType !== undefined && isReportTypeLocked) {
               throw new TRPCError({
                 code: "BAD_REQUEST",
                 message: "Report type is locked and cannot be updated",
               });
             }
 
-            if (county && isCountyLocked) {
+            if (county !== undefined && isCountyLocked) {
               throw new TRPCError({
                 code: "BAD_REQUEST",
                 message: "County is locked and cannot be updated",
               });
             }
 
-            if (clientGender && client?.isGenderLocked) {
+            if (clientGender !== undefined && client?.isGenderLocked) {
               throw new TRPCError({
                 code: "BAD_REQUEST",
                 message: "Client gender is locked and cannot be updated",
               });
             }
-            if (clientCounty && client?.isCountyLocked) {
+            if (clientCounty !== undefined && client?.isCountyLocked) {
               throw new TRPCError({
                 code: "BAD_REQUEST",
                 message: "Client county is locked and cannot be updated",
