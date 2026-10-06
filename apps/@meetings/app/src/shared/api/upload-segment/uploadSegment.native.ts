@@ -40,32 +40,44 @@ export async function uploadSegment({
     throw new Error("The file could not be found.");
   }
 
-  const signedUrl = await createSignedUrlForRecording({
-    meetingId,
-    contentType,
-    fileExtension,
-  });
+  const signAndUpload = async () => {
+    const signedUrl = await createSignedUrlForRecording({
+      meetingId,
+      contentType,
+      fileExtension,
+    });
 
-  if (!signedUrl) {
-    throw new Error("Could not get signed URL for recording.");
+    if (!signedUrl) {
+      throw new Error("Could not get signed URL for recording.");
+    }
+
+    const task = FileSystem.createUploadTask(
+      signedUrl,
+      uri,
+      {
+        httpMethod: "PUT",
+        uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
+        headers: { "Content-Type": contentType },
+      },
+      (data) =>
+        onProgress?.(data.totalBytesSent, data.totalBytesExpectedToSend),
+    );
+
+    if (signal) {
+      signal.onabort = () => task.cancelAsync();
+    }
+
+    return task.uploadAsync();
+  };
+
+  let result = await signAndUpload();
+
+  // The signed URL is only valid for a short window, and GCS checks it when the
+  // request arrives. A backgrounded app can hold the request past that window
+  // (MEETINGS-APP-171), so retry once with a freshly signed URL.
+  if (!signal?.aborted && isExpiredSignedUrl(result)) {
+    result = await signAndUpload();
   }
-
-  const task = FileSystem.createUploadTask(
-    signedUrl,
-    uri,
-    {
-      httpMethod: "PUT",
-      uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
-      headers: { "Content-Type": contentType },
-    },
-    (data) => onProgress?.(data.totalBytesSent, data.totalBytesExpectedToSend),
-  );
-
-  if (signal) {
-    signal.onabort = () => task.cancelAsync();
-  }
-
-  const result = await task.uploadAsync();
 
   if (signal?.aborted) {
     throw new AbortError();
@@ -74,4 +86,15 @@ export async function uploadSegment({
   if (!result || result.status < 200 || result.status >= 300) {
     throw new Error(result?.body || "Could not upload audio recording.");
   }
+}
+
+function isExpiredSignedUrl(
+  result: FileSystem.FileSystemUploadResult | null | undefined,
+) {
+  return (
+    !!result &&
+    result.status >= 400 &&
+    result.status < 500 &&
+    result.body.includes("<Code>ExpiredToken</Code>")
+  );
 }
