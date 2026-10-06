@@ -17,7 +17,16 @@
 
 import { z } from "zod";
 
-import { Prisma, PrismaClient } from "~@jii/prisma";
+import { reentryQuestionnaireAnswersReadSchema } from "~@jii/configs";
+import { Prisma, PrismaClient, UsMaReentryQuestionnaire } from "~@jii/prisma";
+
+/**
+ * Returns the questionnaire with its stored JSON answers parsed into typed answers.
+ */
+export const withParsedAnswers = (questionnaire: UsMaReentryQuestionnaire) => ({
+  ...questionnaire,
+  answers: reentryQuestionnaireAnswersReadSchema.parse(questionnaire.answers),
+});
 
 export const getReentryQuestionnaireInputSchema = z.object({
   pseudonymizedId: z.string(),
@@ -34,7 +43,7 @@ export const getReentryQuestionnaireQueryResolver = async ({
   input: z.infer<typeof getReentryQuestionnaireInputSchema>;
   ctx: { prisma: PrismaClient };
 }) => {
-  return prisma.usMaReentryQuestionnaire.findFirst({
+  const questionnaire = await prisma.usMaReentryQuestionnaire.findFirst({
     where: {
       pseudonymizedId,
     },
@@ -42,4 +51,5 @@ export const getReentryQuestionnaireQueryResolver = async ({
       updatedAt: "desc",
     },
   });
+  return questionnaire && withParsedAnswers(questionnaire);
 };

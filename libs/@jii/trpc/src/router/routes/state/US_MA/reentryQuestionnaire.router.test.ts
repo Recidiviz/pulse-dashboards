@@ -91,62 +91,52 @@ describe("getReentryQuestionnaire", () => {
   });
 });
 
-describe("getOrCreateReentryQuestionnaire", () => {
-  it("creates a new blank reentry questionnaire if none exists", async () => {
-    const result = await caller.usMa.getOrCreateReentryQuestionnaire({
+describe("upsertReentryQuestionnaireAnswers", () => {
+  it("creates the reentry questionnaire (with answers) if none exists", async () => {
+    await caller.usMa.upsertReentryQuestionnaireAnswers({
       pseudonymizedId: testPseudonymizedId,
+      answers: { HOUSING: "FAMILY" },
+      isCompleted: false,
     });
 
-    expect(result).toMatchObject({
-      pseudonymizedId: testPseudonymizedId,
-      answers: {},
-    });
-
-    await expect(
-      testPrismaClient.usMaReentryQuestionnaire.findMany({
+    const questionnaires =
+      await testPrismaClient.usMaReentryQuestionnaire.findMany({
         where: { pseudonymizedId: testPseudonymizedId },
-      }),
-    ).resolves.toHaveLength(1);
+      });
+    expect(questionnaires).toHaveLength(1);
+    expect(questionnaires[0].answers).toEqual({ HOUSING: "FAMILY" });
   });
 
-  it("returns the existing reentry questionnaire if one already exists", async () => {
+  it("updates the most recently updated reentry questionnaire", async () => {
+    vi.setSystemTime(new Date("2020-01-01"));
+    await testPrismaClient.usMaReentryQuestionnaire.create({
+      data: {
+        id: "another-reentry-questionnaire-id",
+        pseudonymizedId: testPseudonymizedId,
+        answers: {},
+      },
+    });
+    vi.setSystemTime(new Date("2022-02-02"));
     await testPrismaClient.usMaReentryQuestionnaire.create({
       data: {
         id: testReentryQuestionnaireId,
         pseudonymizedId: testPseudonymizedId,
-        answers: { housing: "OWN_PLACE" },
+        answers: {},
       },
     });
 
-    await expect(
-      caller.usMa.getOrCreateReentryQuestionnaire({
-        pseudonymizedId: testPseudonymizedId,
-      }),
-    ).resolves.toMatchObject({
-      id: testReentryQuestionnaireId,
-      answers: { housing: "OWN_PLACE" },
+    const result = await caller.usMa.upsertReentryQuestionnaireAnswers({
+      pseudonymizedId: testPseudonymizedId,
+      answers: { HOUSING: "FAMILY" },
+      isCompleted: false,
     });
 
+    expect(result.id).toBe(testReentryQuestionnaireId);
     await expect(
-      testPrismaClient.usMaReentryQuestionnaire.findMany({
-        where: { pseudonymizedId: testPseudonymizedId },
+      testPrismaClient.usMaReentryQuestionnaire.findUnique({
+        where: { id: "another-reentry-questionnaire-id" },
       }),
-    ).resolves.toHaveLength(1);
-  });
-});
-
-describe("updateReentryQuestionnaire", () => {
-  it("throws error if reentry questionnaire doesn't exist", async () => {
-    await expect(
-      caller.usMa.overwriteReentryQuestionnaireAnswers({
-        id: testReentryQuestionnaireId,
-        pseudonymizedId: testPseudonymizedId,
-        answers: {},
-        isCompleted: false,
-      }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Reentry Questionnaire with ID test-reentry-questionnaire-id not found]`,
-    );
+    ).resolves.toMatchObject({ answers: {} });
   });
 
   it("updates all answers of the reentry questionnaire", async () => {
@@ -158,8 +148,7 @@ describe("updateReentryQuestionnaire", () => {
       },
     });
 
-    await caller.usMa.overwriteReentryQuestionnaireAnswers({
-      id: testReentryQuestionnaireId,
+    await caller.usMa.upsertReentryQuestionnaireAnswers({
       pseudonymizedId: testPseudonymizedId,
       answers: { HOUSING: "FAMILY" },
       isCompleted: false,
@@ -193,8 +182,7 @@ describe("updateReentryQuestionnaire", () => {
     });
 
     await expect(
-      caller.usMa.overwriteReentryQuestionnaireAnswers({
-        id: testReentryQuestionnaireId,
+      caller.usMa.upsertReentryQuestionnaireAnswers({
         pseudonymizedId: testPseudonymizedId,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         answers: { notARealQuestion: "YES" } as any,
@@ -213,8 +201,7 @@ describe("updateReentryQuestionnaire", () => {
     });
 
     await expect(
-      caller.usMa.overwriteReentryQuestionnaireAnswers({
-        id: testReentryQuestionnaireId,
+      caller.usMa.upsertReentryQuestionnaireAnswers({
         pseudonymizedId: testPseudonymizedId,
         // TRANSPORTATION is a CHECKBOX question and expects an array of
         // selected option ids, not a bare string
@@ -235,8 +222,7 @@ describe("updateReentryQuestionnaire", () => {
     });
 
     await expect(
-      caller.usMa.overwriteReentryQuestionnaireAnswers({
-        id: testReentryQuestionnaireId,
+      caller.usMa.upsertReentryQuestionnaireAnswers({
         pseudonymizedId: testPseudonymizedId,
         // HOUSING is a RADIO question and expects a single string, not an
         // array of selected option ids
@@ -256,8 +242,7 @@ describe("updateReentryQuestionnaire", () => {
       },
     });
 
-    await caller.usMa.overwriteReentryQuestionnaireAnswers({
-      id: testReentryQuestionnaireId,
+    await caller.usMa.upsertReentryQuestionnaireAnswers({
       pseudonymizedId: testPseudonymizedId,
       answers: { TRANSPORTATION: ["BIKE", "OWN_CAR"] },
       isCompleted: false,
@@ -286,8 +271,7 @@ describe("updateReentryQuestionnaire", () => {
       },
     });
 
-    const result = await caller.usMa.overwriteReentryQuestionnaireAnswers({
-      id: testReentryQuestionnaireId,
+    const result = await caller.usMa.upsertReentryQuestionnaireAnswers({
       pseudonymizedId: testPseudonymizedId,
       answers: {},
       isCompleted: false,
@@ -305,13 +289,32 @@ describe("updateReentryQuestionnaire", () => {
       },
     });
 
-    const result = await caller.usMa.overwriteReentryQuestionnaireAnswers({
-      id: testReentryQuestionnaireId,
+    const result = await caller.usMa.upsertReentryQuestionnaireAnswers({
       pseudonymizedId: testPseudonymizedId,
       answers: {},
       isCompleted: true,
     });
 
     expect(result.completedAt).toEqual(new Date("2022-02-02"));
+  });
+
+  it("keeps an existing completedAt when isCompleted is false", async () => {
+    const completedAt = new Date("2022-01-01");
+    await testPrismaClient.usMaReentryQuestionnaire.create({
+      data: {
+        id: testReentryQuestionnaireId,
+        pseudonymizedId: testPseudonymizedId,
+        answers: {},
+        completedAt,
+      },
+    });
+
+    const result = await caller.usMa.upsertReentryQuestionnaireAnswers({
+      pseudonymizedId: testPseudonymizedId,
+      answers: {},
+      isCompleted: false,
+    });
+
+    expect(result.completedAt).toEqual(completedAt);
   });
 });

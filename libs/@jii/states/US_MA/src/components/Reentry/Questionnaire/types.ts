@@ -16,6 +16,7 @@
 // =============================================================================
 
 import type {
+  ReentryQuestionnaireDomainId,
   ReentryQuestionnaireQuestionConfig,
   ReentryQuestionnaireQuestionFormat,
   ShowIf,
@@ -78,8 +79,7 @@ export type GetOptionCopy<QuestionId extends string> = (
 export type BuildQuestionnaireDisplayParams<QuestionId extends string> = {
   questionIds: readonly QuestionId[];
   config: Record<QuestionId, ReentryQuestionnaireQuestionConfig>;
-  sectionDomains: readonly string[];
-  getSectionLabel: (domain: string) => string;
+  getSectionLabel: (domain: ReentryQuestionnaireDomainId) => string;
   getQuestionCopy: GetQuestionCopy<QuestionId>;
   getOptionCopy: GetOptionCopy<QuestionId>;
 };

@@ -19,41 +19,18 @@ import { act, renderHook } from "@testing-library/react";
 
 import { useEditSession } from "../useEditSession";
 
-const answers = { needsCare: ["YES"] };
-
 const render = () => renderHook(() => useEditSession());
 
 test("starts with no edit in progress", () => {
   const { result } = render();
   expect(result.current.session).toBeNull();
   expect(result.current.isConfirmingCancel).toBe(false);
-  expect(result.current.hasChanges(answers)).toBe(false);
 });
 
-test("start begins an edit on the question, with a snapshot of the answers", () => {
+test("start begins an edit on the question", () => {
   const { result } = render();
-  act(() => result.current.start("needsCare", answers));
-  expect(result.current.session).toEqual({
-    startQuestionId: "needsCare",
-    questionIds: new Set(["needsCare"]),
-    answersBeforeEdit: answers,
-  });
-});
-
-test("continueToFollowUp adds the follow-up to the edit", () => {
-  const { result } = render();
-  act(() => result.current.start("needsCare", answers));
-  act(() => result.current.continueToFollowUp("careDetails"));
-  expect(result.current.session?.questionIds).toEqual(
-    new Set(["needsCare", "careDetails"]),
-  );
-});
-
-test("hasChanges compares answers against the snapshot", () => {
-  const { result } = render();
-  act(() => result.current.start("needsCare", answers));
-  expect(result.current.hasChanges({ needsCare: ["YES"] })).toBe(false);
-  expect(result.current.hasChanges({ needsCare: ["NO"] })).toBe(true);
+  act(() => result.current.start("needsCare"));
+  expect(result.current.session).toEqual({ startQuestionId: "needsCare" });
 });
 
 test("asks to confirm a cancel, then closes the confirmation", () => {
@@ -66,7 +43,7 @@ test("asks to confirm a cancel, then closes the confirmation", () => {
 
 test("end clears the edit and any cancel confirmation", () => {
   const { result } = render();
-  act(() => result.current.start("needsCare", answers));
+  act(() => result.current.start("needsCare"));
   act(() => result.current.askToConfirmCancel());
   act(() => result.current.end());
   expect(result.current.session).toBeNull();

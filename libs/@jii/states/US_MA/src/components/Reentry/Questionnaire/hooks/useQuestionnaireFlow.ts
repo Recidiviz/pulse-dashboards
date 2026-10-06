@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { isEqual } from "lodash-es";
 import { useState } from "react";
 
 import { FlowStep, QuestionAnswerValue } from "../types";
@@ -27,7 +28,11 @@ import {
   isAnswered,
   pruneHiddenAnswers,
 } from "../utils";
-import { QuestionnaireScreen, UseQuestionnaireFlowParams } from "./types";
+import {
+  QuestionnaireHeaderAction,
+  QuestionnaireScreen,
+  UseQuestionnaireFlowParams,
+} from "./types";
 import { useEditSession } from "./useEditSession";
 import { getQuestionPosition } from "./utils";
 
@@ -40,6 +45,8 @@ export function useQuestionnaireFlow({
   sections,
   status,
   storedAnswers,
+  save,
+  onExit,
 }: UseQuestionnaireFlowParams): QuestionnaireScreen {
   const [answers, setAnswers] = useState(() =>
     getInitialAnswers(allQuestions, storedAnswers),
@@ -56,6 +63,18 @@ export function useQuestionnaireFlow({
 
   const visibleQuestions = getVisibleQuestions(allQuestions, answers);
 
+  // The answers as last saved, which cancelling an edit reverts to.
+  const getSavedAnswers = () => getInitialAnswers(allQuestions, storedAnswers);
+
+  const closeAction: QuestionnaireHeaderAction = {
+    kind: "close",
+    onClick: onExit,
+  };
+  const saveAndExitAction: QuestionnaireHeaderAction = {
+    kind: "saveAndExit",
+    onClick: () => save({ answers, isCompleted: false }, { onSuccess: onExit }),
+  };
+
   const goToQuestion = (questionId: string) => {
     setIsSectionListOpen(false);
     setStep({ kind: "question", questionId });
@@ -66,29 +85,32 @@ export function useQuestionnaireFlow({
     setStep({ kind: "review" });
   };
 
-  const start = () => goToQuestion(visibleQuestions[0].id);
-
   const backFromReview = () =>
     goToQuestion(visibleQuestions[visibleQuestions.length - 1].id);
 
-  // TODO OBT-51840: submit answers and set completedAt.
-  const submit = () => setStep({ kind: "completion" });
+  const start = () => goToQuestion(visibleQuestions[0].id);
+
+  const submit = () =>
+    save(
+      { answers, isCompleted: true },
+      { onSuccess: () => setStep({ kind: "completion" }) },
+    );
 
   const startEdit = (questionId: string) => {
-    edit.start(questionId, answers);
+    edit.start(questionId);
     goToQuestion(questionId);
   };
 
   const cancelEdit = () => {
-    if (edit.hasChanges(answers)) {
-      edit.askToConfirmCancel();
-    } else {
+    if (isEqual(answers, getSavedAnswers())) {
       goToReview();
+    } else {
+      edit.askToConfirmCancel();
     }
   };
 
   const discardEdit = () => {
-    if (editSession) setAnswers(editSession.answersBeforeEdit);
+    setAnswers(getSavedAnswers());
     goToReview();
   };
 
@@ -96,7 +118,7 @@ export function useQuestionnaireFlow({
     case "intro":
       return {
         kind: "intro",
-        headerAction: "close",
+        headerAction: closeAction,
         props: { totalQuestionCount: allQuestions.length, onStart: start },
       };
 
@@ -130,14 +152,23 @@ export function useQuestionnaireFlow({
         setAnswers(updatedAnswers);
       };
 
-      // TODO OBT-51840: save the current answer on Next.
       const next = () => {
-        if (!upcomingQuestion) {
-          goToReview();
-          return;
+        const goToNextStep = () => {
+          if (upcomingQuestion) {
+            goToQuestion(upcomingQuestion.id);
+          } else {
+            goToReview();
+          }
+        };
+
+        // An edit of a completed profile only saves once it's finished.
+        const isMidEdit =
+          isProfileCompleted && !!editSession && !isLastQuestionBeforeReview;
+        if (isMidEdit) {
+          goToNextStep();
+        } else {
+          save({ answers, isCompleted: false }, { onSuccess: goToNextStep });
         }
-        if (editSession) edit.continueToFollowUp(upcomingQuestion.id);
-        goToQuestion(upcomingQuestion.id);
       };
 
       const back = () => {
@@ -158,7 +189,7 @@ export function useQuestionnaireFlow({
 
       return {
         kind: "question",
-        headerAction: isProfileCompleted ? null : "saveAndExit",
+        headerAction: isProfileCompleted ? null : saveAndExitAction,
         sectionProgress: {
           currentSectionIndex: sectionIndex,
           isOpen: isSectionListOpen,
@@ -192,18 +223,18 @@ export function useQuestionnaireFlow({
       if (isProfileCompleted) {
         return {
           kind: "review",
-          headerAction: "close",
+          headerAction: closeAction,
           props: { isEditing: true, entries },
         };
       }
       return {
         kind: "review",
-        headerAction: "close",
+        headerAction: closeAction,
         props: { entries, onBack: backFromReview, onSubmit: submit },
       };
     }
 
     case "completion":
-      return { kind: "completion", headerAction: "close" };
+      return { kind: "completion", headerAction: closeAction };
   }
 }

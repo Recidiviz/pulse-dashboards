@@ -20,7 +20,7 @@ import { z } from "zod";
 import {
   ReentryChecklistItemId,
   ReentryQuestionnaireAnswers,
-  reentryQuestionnaireAnswersSchema,
+  reentryQuestionnaireAnswersReadSchema,
 } from "~@jii/configs";
 import { Prisma, PrismaClient } from "~@jii/prisma";
 
@@ -50,7 +50,7 @@ async function getSubmittedReentryQuestionnaireAnswers(
   });
 
   if (!submitted) return {};
-  return reentryQuestionnaireAnswersSchema.parse(submitted.answers);
+  return reentryQuestionnaireAnswersReadSchema.parse(submitted.answers);
 }
 
 /**

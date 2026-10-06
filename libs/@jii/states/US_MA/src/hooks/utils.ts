@@ -15,13 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import type { ReentryQuestionnaireQuestionFormat } from "~@jii/configs";
+
 import { ReentryQuestionnaireStatus } from "../components/Reentry/types";
 
 /**
  * Derives the resident's questionnaire status from their latest Reentry
  * Questionnaire record. `null` (no record found) and a record with no answers
- * yet are both "NOT_STARTED" - a blank record only exists once the resident
- * has actually opened the questionnaire (see `getOrCreateReentryQuestionnaire`).
+ * yet are both "NOT_STARTED".
  */
 export function getQuestionnaireStatus(
   questionnaire: {
@@ -32,4 +33,25 @@ export function getQuestionnaireStatus(
   if (!questionnaire || Object.keys(questionnaire.answers).length === 0)
     return "NOT_STARTED";
   return questionnaire.completedAt ? "COMPLETED" : "IN_PROGRESS";
+}
+
+/**
+ * Returns the answers in the shape they're stored in: a single string for RADIO
+ * questions and a list for CHECKBOX ones, leaving out unanswered questions.
+ */
+export function toStoredAnswers(
+  questions: { id: string; format: ReentryQuestionnaireQuestionFormat }[],
+  answers: Record<string, string[]>,
+): Record<string, string | string[]> {
+  const storedAnswers: Record<string, string | string[]> = {};
+
+  for (const question of questions) {
+    const value = answers[question.id];
+    if (value?.length) {
+      storedAnswers[question.id] =
+        question.format === "RADIO" ? value[0] : value;
+    }
+  }
+
+  return storedAnswers;
 }

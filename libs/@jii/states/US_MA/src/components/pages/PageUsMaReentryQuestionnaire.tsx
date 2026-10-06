@@ -15,31 +15,35 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// TEMPORARY - FOR REVIEW AND TESTING ONLY.
-// Renders the flow against dummy data so the route can be clicked through;
-// switched to the real config and copy in OBT-51840.
 import {
   reentryQuestionnaireConfig,
   reentryQuestionnaireQuestionIds,
 } from "~@jii/configs";
+import { useUsMaTranslations } from "~@jii/translation";
 
-import {
-  domainLabels,
-  domainOrder,
-  optionCopy,
-  questionCopy,
-} from "../Reentry/Questionnaire/dummyQuestionnaireData";
 import { ReentryQuestionnaire } from "../Reentry/Questionnaire/ReentryQuestionnaire";
 import { buildQuestionnaireDisplay } from "../Reentry/Questionnaire/utils";
 
 export const PageUsMaReentryQuestionnaire = () => {
+  const { t } = useUsMaTranslations();
+
+  const { domainCopy, questionCopy, optionCopy, standardOptionCopy } = t(
+    ($) => $.reentry.questionnaire,
+    { returnObjects: true },
+  );
+  // Widened so the config's option ids (plain strings) can index the copy.
+  // A question with no optionCopy entry uses standardOptionCopy's labels.
+  const questionOptionCopy: Partial<Record<string, Record<string, string>>> =
+    optionCopy;
+  const standardOptionLabels: Record<string, string> = standardOptionCopy;
+
   const questionnaire = buildQuestionnaireDisplay({
     questionIds: reentryQuestionnaireQuestionIds,
     config: reentryQuestionnaireConfig,
-    sectionDomains: domainOrder,
-    getSectionLabel: (domain) => domainLabels[domain],
-    getQuestionCopy: (questionId) => questionCopy[questionId],
-    getOptionCopy: (questionId, optionId) => optionCopy[questionId][optionId],
+    getSectionLabel: (domain) => domainCopy[domain],
+    getQuestionCopy: (questionId) => questionCopy[questionId].question,
+    getOptionCopy: (questionId, optionId) =>
+      (questionOptionCopy[questionId] ?? standardOptionLabels)[optionId],
   });
 
   return <ReentryQuestionnaire {...questionnaire} />;

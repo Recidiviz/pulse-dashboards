@@ -23,7 +23,7 @@ import { reentryQuestionnaireConfig } from "./usMaReentryQuestionnaireSpec";
 const radioAnswerSchema = z.string().optional();
 const checkboxAnswerSchema = z.array(z.string()).optional();
 
-export const reentryQuestionnaireAnswersSchema = z
+export const reentryQuestionnaireAnswersWriteSchema = z
   .object(
     mapValues(reentryQuestionnaireConfig, (config) =>
       config.format === "RADIO" ? radioAnswerSchema : checkboxAnswerSchema,
@@ -31,6 +31,11 @@ export const reentryQuestionnaireAnswersSchema = z
   )
   .strict();
 
+// For reading stored answers: drops answers to questions the config no longer
+// has, instead of rejecting the whole record like the write schema above.
+export const reentryQuestionnaireAnswersReadSchema =
+  reentryQuestionnaireAnswersWriteSchema.strip();
+
 export type ReentryQuestionnaireAnswers = z.infer<
-  typeof reentryQuestionnaireAnswersSchema
+  typeof reentryQuestionnaireAnswersWriteSchema
 >;

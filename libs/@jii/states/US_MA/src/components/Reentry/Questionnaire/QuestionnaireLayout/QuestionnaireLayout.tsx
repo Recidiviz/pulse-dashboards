@@ -33,7 +33,7 @@ import {
 } from "./QuestionnaireLayout.styles";
 
 type QuestionnaireLayoutProps = {
-  headerAction?: { label: string; onClick: () => void };
+  headerAction?: { label: string; onClick: () => void; disabled?: boolean };
   sectionProgress?: SectionProgressProps;
   children: ReactNode;
 };
@@ -54,7 +54,11 @@ export const QuestionnaireLayout = ({
           {t(($) => $.reentry.questionnaire.header.title)}
         </Title>
         {headerAction && (
-          <HeaderActionButton type="button" onClick={headerAction.onClick}>
+          <HeaderActionButton
+            type="button"
+            onClick={headerAction.onClick}
+            disabled={headerAction.disabled}
+          >
             {headerAction.label}
           </HeaderActionButton>
         )}

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { getQuestionnaireStatus } from "../utils";
+import { getQuestionnaireStatus, toStoredAnswers } from "../utils";
 
 describe("getQuestionnaireStatus", () => {
   test("returns NOT_STARTED when there is no record", () => {
@@ -44,5 +44,37 @@ describe("getQuestionnaireStatus", () => {
         answers: { housing: "OWN_PLACE" },
       }),
     ).toBe("COMPLETED");
+  });
+});
+
+describe("toStoredAnswers", () => {
+  const questions = [
+    { id: "housing", format: "RADIO" as const },
+    { id: "transportation", format: "CHECKBOX" as const },
+  ];
+
+  test("stores a RADIO answer as a string and a CHECKBOX answer as a list", () => {
+    expect(
+      toStoredAnswers(questions, {
+        housing: ["OWN_PLACE"],
+        transportation: ["BIKE", "PUBLIC_TRANSIT"],
+      }),
+    ).toEqual({
+      housing: "OWN_PLACE",
+      transportation: ["BIKE", "PUBLIC_TRANSIT"],
+    });
+  });
+
+  test("leaves out unanswered questions", () => {
+    expect(toStoredAnswers(questions, { housing: [] })).toEqual({});
+  });
+
+  test("leaves out answers to questions it isn't given", () => {
+    expect(
+      toStoredAnswers(questions, {
+        housing: ["OWN_PLACE"],
+        removedQuestion: ["YES"],
+      }),
+    ).toEqual({ housing: "OWN_PLACE" });
   });
 });

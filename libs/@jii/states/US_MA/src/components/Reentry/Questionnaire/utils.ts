@@ -97,9 +97,6 @@ export function isAnswered(value: QuestionAnswerValue | undefined): boolean {
 
 /**
  * Determines if a question is a follow-up of any question in the given set of question IDs.
- *
- * Used when editing from the Review section to decide whether Next continues into the following
- * question (a follow-up of the current question being edited) or returns to Review.
  */
 export function isFollowUpOf(
   question: QuestionDisplay,
@@ -108,6 +105,26 @@ export function isFollowUpOf(
   return getShowIfConditions(question.showIf).some((condition) =>
     questionIds.has(condition.questionId),
   );
+}
+
+/**
+ * Returns the ids of the questions an edit from Review covers: the question
+ * being edited, plus every question that depends on it, directly or through
+ * another follow-up.
+ */
+export function getEditQuestionIds(
+  questions: QuestionDisplay[],
+  startQuestionId: string,
+): Set<string> {
+  const editQuestionIds = new Set([startQuestionId]);
+  // Follow-ups come after the questions they depend on, so one pass in order
+  // also picks up follow-ups of follow-ups.
+  for (const question of questions) {
+    if (isFollowUpOf(question, editQuestionIds)) {
+      editQuestionIds.add(question.id);
+    }
+  }
+  return editQuestionIds;
 }
 
 /**
@@ -196,14 +213,17 @@ export function buildQuestionDisplay<QuestionId extends string>(
   getQuestionCopy: GetQuestionCopy<QuestionId>,
   getOptionCopy: GetOptionCopy<QuestionId>,
 ): QuestionDisplay {
+  const exclusiveOptions =
+    config.format === "CHECKBOX" ? config.exclusiveOptions : [];
+
   return {
     id: questionId,
     format: config.format,
     heading: getQuestionCopy(questionId),
-    options: config.options.map((option) => ({
-      value: option.id,
-      label: getOptionCopy(questionId, option.id),
-      exclusive: option.exclusive,
+    options: config.options.map((optionId) => ({
+      value: optionId,
+      label: getOptionCopy(questionId, optionId),
+      exclusive: exclusiveOptions.includes(optionId),
     })),
     showIf: config.showIf,
   };
@@ -216,11 +236,15 @@ export function buildQuestionDisplay<QuestionId extends string>(
 export function buildQuestionnaireDisplay<QuestionId extends string>({
   questionIds,
   config,
-  sectionDomains,
   getSectionLabel,
   getQuestionCopy,
   getOptionCopy,
 }: BuildQuestionnaireDisplayParams<QuestionId>): QuestionnaireDisplay {
+  // Sections appear in the order of their first question.
+  const sectionDomains = [
+    ...new Set(questionIds.map((id) => config[id].domain)),
+  ];
+
   return {
     sections: sectionDomains.map((domain) => ({
       domain,

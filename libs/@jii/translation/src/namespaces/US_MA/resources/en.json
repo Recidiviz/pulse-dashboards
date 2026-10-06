@@ -262,13 +262,15 @@
         "multiSelectHint": "You can pick more than one",
         "next": "Next",
         "saveAndUpdate": "Save and update profile",
-        "saveHint": "Your answer will be saved when you tap"
+        "saveHint": "Your answer will be saved when you tap",
+        "saving": "Saving..."
       },
       "review": {
         "heading": "Review and submit your Reentry profile",
         "description": "Please check your answers before submitting. You can change any answer by clicking the link next to it.",
         "change": "Change",
         "submit": "Submit answers",
+        "submitting": "Submitting...",
         "editHeading": "Review your Reentry profile",
         "editDescription": "These are the answers we used to build your checklist. Change any answer to update your profile and checklist."
       },
@@ -326,7 +328,7 @@
         "HEALTHCARE_DETAILS": {
           "question": "What health care or medicine will you need when you get out?"
         },
-        "TRANSPORATION": {
+        "TRANSPORTATION": {
           "question": "How do you plan to get to work and appointments once you're out?"
         }
       },
@@ -334,8 +336,14 @@
         "YES": "Yes",
         "NO": "No",
         "UNSURE": "I'm not sure",
-        "DECLINE_TO_ANSWER": "I'd rather not say"
-      }
+        "DECLINED_TO_ANSWER": "I'd rather not say"
+      },
+      "domainCopy": {
+        "HOUSING": "Housing",
+        "TRANSPORTATION": "Transportation",
+        "HEALTH": "Health"
+      },
+      "saveError": "We couldn't save your answers. Check your connection and try again."
     }
   },
   "sentenceDates": {

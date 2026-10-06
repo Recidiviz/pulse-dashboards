@@ -26,21 +26,42 @@ import { ShowIf } from "./showIf";
 
 export type ReentryQuestionnaireQuestionFormat = "RADIO" | "CHECKBOX";
 
+export const unsureOrDeclinedOptionIds = [
+  "UNSURE",
+  "DECLINED_TO_ANSWER",
+] as const;
+
 export const standardRadioOptionIds = [
   "YES",
   "NO",
-  "UNSURE",
-  "DECLINE_TO_ANSWER",
+  ...unsureOrDeclinedOptionIds,
 ] as const;
 export type StandardRadioOptionId = (typeof standardRadioOptionIds)[number];
 
-export type ReentryQuestionnaireQuestionConfig = {
-  format: ReentryQuestionnaireQuestionFormat;
+export const reentryQuestionnaireDomainIds = [
+  "HOUSING",
+  "TRANSPORTATION",
+  "HEALTH",
+] as const;
+export type ReentryQuestionnaireDomainId =
+  (typeof reentryQuestionnaireDomainIds)[number];
+
+type QuestionConfigBase = {
+  domain: ReentryQuestionnaireDomainId;
   options: readonly string[];
   // When set, this question is shown on its own page, only when the given
   // condition (or any one of the given conditions) is met.
   showIf?: ShowIf<ReentryQuestionnaireQuestionId>;
 };
+
+export type ReentryQuestionnaireQuestionConfig =
+  | (QuestionConfigBase & { format: "RADIO" })
+  | (QuestionConfigBase & {
+      format: "CHECKBOX";
+      // Selecting one of these clears every other selection. Empty when there
+      // are none.
+      exclusiveOptions: readonly string[];
+    });
 
 export const reentryQuestionnaireQuestionIds = [
   "HOUSING",
@@ -56,6 +77,7 @@ export const reentryQuestionnaireConfig: Record<
   ReentryQuestionnaireQuestionConfig
 > = {
   HOUSING: {
+    domain: "HOUSING",
     format: "RADIO",
     options: [
       "FAMILY",
@@ -63,26 +85,28 @@ export const reentryQuestionnaireConfig: Record<
       "LONG_TERM_RESIDENTIAL_PROGRAM",
       "SOBER_OR_ROOMING_HOUSE",
       "OWN_PLACE",
-      "UNSURE",
-      "DECLINED_TO_ANSWER",
+      ...unsureOrDeclinedOptionIds,
     ],
   },
   TRANSPORTATION: {
+    domain: "TRANSPORTATION",
     format: "CHECKBOX",
     options: [
       "FAMILY_OR_FRIENDS",
       "PUBLIC_TRANSIT",
       "BIKE",
       "OWN_CAR",
-      "UNSURE",
-      "DECLINED_TO_ANSWER",
+      ...unsureOrDeclinedOptionIds,
     ],
+    exclusiveOptions: unsureOrDeclinedOptionIds,
   },
   HEALTHCARE_NEEDED: {
+    domain: "HEALTH",
     format: "RADIO",
     options: standardRadioOptionIds,
   },
   HEALTHCARE_DETAILS: {
+    domain: "HEALTH",
     format: "CHECKBOX",
     options: [
       "PRESCRIPTION_MEDICINE",
@@ -91,6 +115,7 @@ export const reentryQuestionnaireConfig: Record<
       "SUBSTANCE_USE",
       "MEDICATION_ASSISTED_TREATMENT",
     ],
+    exclusiveOptions: [],
     showIf: {
       questionId: "HEALTHCARE_NEEDED",
       operator: "equals",

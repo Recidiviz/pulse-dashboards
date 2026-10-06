@@ -15,45 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { isEqual } from "lodash-es";
 import { useState } from "react";
 
-import { QuestionnaireAnswers } from "../types";
 import { EditSession } from "./types";
 
 /**
- * The state of an edit started from Review: which questions it covers and the
- * answers to restore if the resident cancels.
+ * The state of an edit started from Review: which question it started on, and
+ * whether the resident is confirming a cancel.
  */
 export function useEditSession() {
   const [session, setSession] = useState<EditSession | null>(null);
   const [isConfirmingCancel, setIsConfirmingCancel] = useState(false);
 
-  // TODO OBT-51840: stop snapshotting answers here once saves refetch them;
-  // compare against and revert to the stored answers instead.
-  const start = (questionId: string, answers: QuestionnaireAnswers) =>
-    setSession({
-      startQuestionId: questionId,
-      questionIds: new Set([questionId]),
-      answersBeforeEdit: answers,
-    });
-
-  const continueToFollowUp = (questionId: string) =>
-    setSession(
-      (current) =>
-        current && {
-          ...current,
-          questionIds: new Set(current.questionIds).add(questionId),
-        },
-    );
+  const start = (questionId: string) =>
+    setSession({ startQuestionId: questionId });
 
   const end = () => {
     setSession(null);
     setIsConfirmingCancel(false);
   };
-
-  const hasChanges = (answers: QuestionnaireAnswers) =>
-    !!session && !isEqual(answers, session.answersBeforeEdit);
 
   const askToConfirmCancel = () => setIsConfirmingCancel(true);
 
@@ -63,9 +43,7 @@ export function useEditSession() {
     session,
     isConfirmingCancel,
     start,
-    continueToFollowUp,
     end,
-    hasChanges,
     askToConfirmCancel,
     closeCancelConfirm,
   };

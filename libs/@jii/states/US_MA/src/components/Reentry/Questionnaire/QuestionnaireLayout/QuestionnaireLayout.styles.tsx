@@ -69,6 +69,11 @@ export const HeaderActionButton = styled.button`
   color: ${palette.marble1};
   cursor: pointer;
   padding: 0;
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
 `;
 
 export const Content = styled.main`

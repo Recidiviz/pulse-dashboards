@@ -15,36 +15,68 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { captureException } from "@sentry/react";
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { getQuestionnaireStatus } from "./utils";
+import {
+  reentryQuestionnaireAnswersWriteSchema,
+  reentryQuestionnaireConfig,
+  reentryQuestionnaireQuestionIds,
+} from "~@jii/configs";
+import { useRootStore } from "~@jii/data";
+import { State } from "~@jii/paths";
 
-// TODO OBT-51840: swap for the real fetch (trpcQuerier.state.usMa.getReentryQuestionnaire)
-// once that router merges. Stubbed as always-blank so this hook's shape and
-// consumers can be built and reviewed independently in the meantime.
-function useStubbedQuestionnaire() {
-  return useSuspenseQuery({
-    queryKey: ["stub-reentry-questionnaire"],
-    queryFn: async () =>
-      null as {
-        completedAt: Date | null;
-        answers: Record<string, unknown>;
-      } | null,
-  });
-}
+import { SaveAnswersInput } from "./types";
+import { getQuestionnaireStatus, toStoredAnswers } from "./utils";
+
+const questionFormats = reentryQuestionnaireQuestionIds.map((id) => ({
+  id,
+  format: reentryQuestionnaireConfig[id].format,
+}));
 
 /**
  * Returns the resident's latest Reentry Questionnaire record, or null if they
- * haven't opened the questionnaire yet, along with its status and saved
- * answers. Must be rendered inside a Suspense boundary (see
- * `SuspenseQueryBoundary`).
+ * haven't saved any answers yet, along with its status and saved answers, and
+ * a `save` that stores new answers to it. Must be rendered inside a Suspense
+ * boundary (see `SuspenseQueryBoundary`).
  */
 export function useReentryQuestionnaire() {
-  const { data: questionnaire } = useStubbedQuestionnaire();
+  const { personPseudoId } = useTypedParams(State.Resident);
+  const {
+    apiClient: { trpc, trpcQuerier },
+  } = useRootStore();
+  const queryClient = useQueryClient();
+
+  const questionnaireQuery =
+    trpcQuerier.state.usMa.getReentryQuestionnaire.queryOptions({
+      pseudonymizedId: personPseudoId,
+    });
+  const { data: questionnaire } = useSuspenseQuery(questionnaireQuery);
+
+  const { mutate: save, isPending: isSaving } = useMutation({
+    mutationFn: ({ answers, isCompleted }: SaveAnswersInput) =>
+      trpc.state.usMa.upsertReentryQuestionnaireAnswers.mutate({
+        pseudonymizedId: personPseudoId,
+        answers: reentryQuestionnaireAnswersWriteSchema.parse(
+          toStoredAnswers(questionFormats, answers),
+        ),
+        isCompleted,
+      }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: questionnaireQuery.queryKey }),
+    onError: (error) => captureException(error),
+  });
 
   return {
     questionnaire,
     answers: questionnaire?.answers ?? {},
     status: getQuestionnaireStatus(questionnaire),
+    save,
+    isSaving,
   };
 }

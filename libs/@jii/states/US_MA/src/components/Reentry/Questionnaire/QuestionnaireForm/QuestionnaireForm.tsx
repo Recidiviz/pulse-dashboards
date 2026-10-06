@@ -37,6 +37,7 @@ export type QuestionnaireFormProps = {
   onNext: () => void;
   onBack?: () => void;
   canGoNext: boolean;
+  isSaving?: boolean;
   // Set when editing a completed profile via "Change" on Review.
   editing?: {
     onCancel: () => void;
@@ -52,6 +53,7 @@ export const QuestionnaireForm = ({
   onNext,
   onBack,
   canGoNext,
+  isSaving,
   editing,
 }: QuestionnaireFormProps) => {
   const { t } = useUsMaTranslations();
@@ -60,6 +62,9 @@ export const QuestionnaireForm = ({
   const primaryLabel = editing?.isLastQuestionBeforeReview
     ? t(($) => $.reentry.questionnaire.form.saveAndUpdate)
     : nextLabel;
+  const buttonLabel = isSaving
+    ? t(($) => $.reentry.questionnaire.form.saving)
+    : primaryLabel;
 
   const isCheckbox = question.format === "CHECKBOX";
   const selected = value ?? [];
@@ -112,8 +117,13 @@ export const QuestionnaireForm = ({
             <strong>{nextLabel}</strong>
           </SaveHint>
         )}
-        <NextButton kind="primary" onClick={onNext} disabled={!canGoNext}>
-          {primaryLabel}
+        <NextButton
+          kind="primary"
+          onClick={onNext}
+          disabled={!canGoNext || isSaving}
+          aria-busy={isSaving}
+        >
+          {buttonLabel}
         </NextButton>
       </QuestionnaireFooter>
     </Wrapper>

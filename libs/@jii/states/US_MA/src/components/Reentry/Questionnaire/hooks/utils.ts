@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { isFollowUpOf } from "../utils";
+import { getEditQuestionIds } from "../utils";
 import { GetQuestionPositionParams, QuestionPosition } from "./types";
 
 /**
@@ -36,15 +36,16 @@ export function getQuestionPosition({
   const earlierQuestions = visibleQuestions.slice(0, index);
   const laterQuestions = visibleQuestions.slice(index + 1);
 
-  // During an edit from Review, Back and Next only move through the edited
-  // questions and their follow-ups, skipping any questions in between.
-  const previousQuestion = editSession
-    ? earlierQuestions.findLast(({ id }) => editSession.questionIds.has(id))
+  // During an edit from Review, Back and Next only move through the questions
+  // the edit covers, skipping any questions in between.
+  const editQuestionIds =
+    editSession &&
+    getEditQuestionIds(visibleQuestions, editSession.startQuestionId);
+  const previousQuestion = editQuestionIds
+    ? earlierQuestions.findLast(({ id }) => editQuestionIds.has(id))
     : earlierQuestions.at(-1);
-  const upcomingQuestion = editSession
-    ? laterQuestions.find((later) =>
-        isFollowUpOf(later, editSession.questionIds),
-      )
+  const upcomingQuestion = editQuestionIds
+    ? laterQuestions.find(({ id }) => editQuestionIds.has(id))
     : laterQuestions[0];
 
   return {

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import type { SaveAnswers } from "../../../../hooks/types";
 import type { ReentryQuestionnaireStatus } from "../../types";
 import type { QuestionnaireCancelModalProps } from "../QuestionnaireCancelModal/QuestionnaireCancelModal";
 import type { QuestionnaireFormProps } from "../QuestionnaireForm/QuestionnaireForm";
@@ -30,9 +31,6 @@ import type {
 
 export type EditSession = {
   startQuestionId: string;
-  questionIds: Set<string>;
-  // TODO OBT-51840: revert to the stored answers instead, once saves refetch them.
-  answersBeforeEdit: QuestionnaireAnswers;
 };
 
 export type UseQuestionnaireFlowParams = {
@@ -40,9 +38,14 @@ export type UseQuestionnaireFlowParams = {
   sections: QuestionnaireSectionDisplay[];
   status: ReentryQuestionnaireStatus;
   storedAnswers: Record<string, unknown>;
+  save: SaveAnswers;
+  onExit: () => void;
 };
 
-export type QuestionnaireHeaderAction = "close" | "saveAndExit";
+export type QuestionnaireHeaderAction = {
+  kind: "close" | "saveAndExit";
+  onClick: () => void;
+};
 
 type ScreenBase = {
   headerAction: QuestionnaireHeaderAction | null;

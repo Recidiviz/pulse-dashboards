@@ -262,13 +262,15 @@
         "multiSelectHint": "[US_MA]reentry.questionnaire.form.multiSelectHint",
         "next": "[US_MA]reentry.questionnaire.form.next",
         "saveAndUpdate": "[US_MA]reentry.questionnaire.form.saveAndUpdate",
-        "saveHint": "[US_MA]reentry.questionnaire.form.saveHint"
+        "saveHint": "[US_MA]reentry.questionnaire.form.saveHint",
+        "saving": "[US_MA]reentry.questionnaire.form.saving"
       },
       "review": {
         "heading": "[US_MA]reentry.questionnaire.review.heading",
         "description": "[US_MA]reentry.questionnaire.review.description",
         "change": "[US_MA]reentry.questionnaire.review.change",
         "submit": "[US_MA]reentry.questionnaire.review.submit",
+        "submitting": "[US_MA]reentry.questionnaire.review.submitting",
         "editHeading": "[US_MA]reentry.questionnaire.review.editHeading",
         "editDescription": "[US_MA]reentry.questionnaire.review.editDescription"
       },
@@ -326,16 +328,22 @@
         "HEALTHCARE_DETAILS": {
           "question": "[US_MA]reentry.questionnaire.questionCopy.HEALTHCARE_DETAILS.question"
         },
-        "TRANSPORATION": {
-          "question": "[US_MA]reentry.questionnaire.questionCopy.TRANSPORATION.question"
+        "TRANSPORTATION": {
+          "question": "[US_MA]reentry.questionnaire.questionCopy.TRANSPORTATION.question"
         }
       },
       "standardOptionCopy": {
         "YES": "[US_MA]reentry.questionnaire.standardOptionCopy.YES",
         "NO": "[US_MA]reentry.questionnaire.standardOptionCopy.NO",
         "UNSURE": "[US_MA]reentry.questionnaire.standardOptionCopy.UNSURE",
-        "DECLINE_TO_ANSWER": "[US_MA]reentry.questionnaire.standardOptionCopy.DECLINE_TO_ANSWER"
-      }
+        "DECLINED_TO_ANSWER": "[US_MA]reentry.questionnaire.standardOptionCopy.DECLINED_TO_ANSWER"
+      },
+      "domainCopy": {
+        "HOUSING": "[US_MA]reentry.questionnaire.domainCopy.HOUSING",
+        "TRANSPORTATION": "[US_MA]reentry.questionnaire.domainCopy.TRANSPORTATION",
+        "HEALTH": "[US_MA]reentry.questionnaire.domainCopy.HEALTH"
+      },
+      "saveError": "[US_MA]reentry.questionnaire.saveError"
     }
   },
   "sentenceDates": {

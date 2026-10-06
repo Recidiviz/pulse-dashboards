@@ -21,15 +21,13 @@ import {
   updateReentryChecklistItemState,
 } from "./checklistItemState.router";
 import {
-  getOrCreateReentryQuestionnaire,
   getReentryQuestionnaire,
-  overwriteReentryQuestionnaireAnswers,
+  upsertReentryQuestionnaireAnswers,
 } from "./reentryQuestionnaire.router";
 
 export const usMaRouter = router({
   getReentryQuestionnaire,
-  getOrCreateReentryQuestionnaire,
-  overwriteReentryQuestionnaireAnswers,
+  upsertReentryQuestionnaireAnswers,
   getReentryChecklistItemStates,
   updateReentryChecklistItemState,
 });

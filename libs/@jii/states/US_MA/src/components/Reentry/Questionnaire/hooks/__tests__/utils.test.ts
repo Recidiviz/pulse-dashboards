@@ -58,11 +58,7 @@ const sections: QuestionnaireSectionDisplay[] = [
   { domain: "money", label: "Money" },
 ];
 
-const editingNeedsCare: EditSession = {
-  startQuestionId: "needsCare",
-  questionIds: new Set(["needsCare"]),
-  answersBeforeEdit: {},
-};
+const editingNeedsCare: EditSession = { startQuestionId: "needsCare" };
 
 describe("getQuestionPosition", () => {
   test("the first question has no previous question and leads to the next", () => {
@@ -139,10 +135,7 @@ describe("getQuestionPosition", () => {
       questionId: "careDetails",
       answers: { needsCare: ["YES"] },
       sections,
-      editSession: {
-        ...editingNeedsCare,
-        questionIds: new Set(["needsCare", "careDetails"]),
-      },
+      editSession: editingNeedsCare,
     });
     expect(position.previousQuestion).toBe(needsCare);
   });

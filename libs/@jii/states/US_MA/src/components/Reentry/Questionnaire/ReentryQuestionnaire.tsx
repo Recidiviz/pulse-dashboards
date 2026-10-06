@@ -40,32 +40,27 @@ export const ReentryQuestionnaire = ({
   const navigate = useNavigate();
   const routeParams = useTypedParams(State.Resident);
 
-  const { status, answers } = useReentryQuestionnaire();
+  const exit = () =>
+    navigate(State.Resident.UsMaReentry.Overview.buildPath(routeParams));
+
+  const goToChecklist = () =>
+    navigate(State.Resident.UsMaReentry.Checklist.buildPath(routeParams));
+
+  const { status, answers, save, isSaving } = useReentryQuestionnaire();
+  // TODO OBT-52496: confirm with design how errors should be surfaced to the
+  // user. A failed save is only reported to Sentry for now.
   const screen = useQuestionnaireFlow({
     questions,
     sections,
     status,
     storedAnswers: answers,
+    save,
+    onExit: exit,
   });
 
-  const exit = () =>
-    navigate(State.Resident.UsMaReentry.Overview.buildPath(routeParams));
-
-  // TODO OBT-51840: save the current question's answer before exiting.
-  const saveAndExit = () => exit();
-
-  const goToChecklist = () =>
-    navigate(State.Resident.UsMaReentry.Checklist.buildPath(routeParams));
-
-  const headerActions = {
-    close: {
-      label: t(($) => $.reentry.questionnaire.header.close),
-      onClick: exit,
-    },
-    saveAndExit: {
-      label: t(($) => $.reentry.questionnaire.header.saveAndExit),
-      onClick: saveAndExit,
-    },
+  const headerActionLabels = {
+    close: t(($) => $.reentry.questionnaire.header.close),
+    saveAndExit: t(($) => $.reentry.questionnaire.header.saveAndExit),
   };
 
   const renderScreen = () => {
@@ -75,12 +70,12 @@ export const ReentryQuestionnaire = ({
       case "question":
         return (
           <>
-            <QuestionnaireForm {...screen.props} />
+            <QuestionnaireForm {...screen.props} isSaving={isSaving} />
             <QuestionnaireCancelModal {...screen.cancelDialog} />
           </>
         );
       case "review":
-        return <QuestionnaireReview {...screen.props} />;
+        return <QuestionnaireReview {...screen.props} isSaving={isSaving} />;
       case "completion":
         return (
           <QuestionnaireCompletion
@@ -92,7 +87,11 @@ export const ReentryQuestionnaire = ({
   };
 
   const headerAction = screen.headerAction
-    ? headerActions[screen.headerAction]
+    ? {
+        label: headerActionLabels[screen.headerAction.kind],
+        onClick: screen.headerAction.onClick,
+        disabled: isSaving,
+      }
     : undefined;
   const sectionProgressProps =
     screen.kind === "question"

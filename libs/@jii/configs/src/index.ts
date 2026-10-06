@@ -27,13 +27,3 @@ export * from "./usNcRNAFormSpec";
 export * from "./usNcRNASchema";
 export * from "./usNeCheckInToolSchema";
 export * from "./usNeCheckInToolSpec";
-// TEMPORARY - FOR REVIEW AND TESTING ONLY.
-// Replaced with the real questionnaire config in OBT-51840.
-export {
-  reentryQuestionnaireConfig,
-  type ReentryQuestionnaireOptionConfig,
-  type ReentryQuestionnaireQuestionConfig,
-  type ReentryQuestionnaireQuestionFormat,
-  type ReentryQuestionnaireQuestionId,
-  reentryQuestionnaireQuestionIds,
-} from "./usMaReentryQuestionnaireSpec.dummy";

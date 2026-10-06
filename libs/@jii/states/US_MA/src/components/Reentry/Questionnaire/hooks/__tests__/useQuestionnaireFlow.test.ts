@@ -17,6 +17,7 @@
 
 import { act, renderHook } from "@testing-library/react";
 
+import { SaveAnswers } from "../../../../../hooks/types";
 import { ReentryQuestionnaireStatus } from "../../../types";
 import {
   QuestionnaireQuestion,
@@ -64,6 +65,14 @@ const sections: QuestionnaireSectionDisplay[] = [
   { domain: "money", label: "Money" },
 ];
 
+const save = vi.fn<SaveAnswers>();
+const onExit = vi.fn();
+
+beforeEach(() => {
+  // mockReset (in the vitest config) clears implementations before each test.
+  save.mockImplementation((_input, options) => options?.onSuccess?.());
+});
+
 const render = (
   status: ReentryQuestionnaireStatus = "NOT_STARTED",
   storedAnswers: Record<string, unknown> = {},
@@ -75,6 +84,8 @@ const render = (
       sections,
       status,
       storedAnswers,
+      save,
+      onExit,
     }),
   );
 
@@ -275,6 +286,52 @@ describe("section list", () => {
   });
 });
 
+describe("saving", () => {
+  test("a first pass saves on every Next", () => {
+    const { result } = render();
+    act(() => screenOf(result, "intro").props.onStart());
+    answerAndNext(result, ["NO"]);
+    expect(save).toHaveBeenCalledWith(
+      { answers: { needsCare: ["NO"] }, isCompleted: false },
+      { onSuccess: expect.any(Function) },
+    );
+  });
+
+  test("submitting saves the answers as completed", () => {
+    const { result } = render("IN_PROGRESS", {
+      needsCare: "NO",
+      benefits: "YES",
+    });
+    act(() => firstTimeReviewOf(result).onSubmit());
+    expect(save).toHaveBeenCalledWith(
+      { answers: { needsCare: ["NO"], benefits: ["YES"] }, isCompleted: true },
+      { onSuccess: expect.any(Function) },
+    );
+  });
+
+  test("an edit of a completed profile only saves once it's finished", () => {
+    const { result } = startEditing("COMPLETED", "needsCare");
+    act(() => screenOf(result, "question").props.onChange(["YES"]));
+    act(() => screenOf(result, "question").props.onNext());
+    // Walked into the follow-up, so the edit isn't finished yet.
+    expect(save).not.toHaveBeenCalled();
+
+    answerAndNext(result, ["MEDS"]);
+    expect(save).toHaveBeenCalledTimes(1);
+    expect(result.current.kind).toBe("review");
+  });
+
+  test("a failed submit stays on Review", () => {
+    save.mockImplementationOnce(() => undefined);
+    const { result } = render("IN_PROGRESS", {
+      needsCare: "NO",
+      benefits: "YES",
+    });
+    act(() => firstTimeReviewOf(result).onSubmit());
+    expect(result.current.kind).toBe("review");
+  });
+});
+
 describe("review entries", () => {
   test("lists visible questions with their formatted answers", () => {
     const { result } = render("COMPLETED", {
@@ -454,22 +511,22 @@ describe("editing a completed profile from review", () => {
 
 describe("header action", () => {
   test("the intro and completion screens offer Close", () => {
-    expect(render().result.current.headerAction).toBe("close");
+    expect(render().result.current.headerAction?.kind).toBe("close");
 
     const { result } = render("IN_PROGRESS", {
       needsCare: "NO",
       benefits: "YES",
     });
     act(() => firstTimeReviewOf(result).onSubmit());
-    expect(result.current.headerAction).toBe("close");
+    expect(result.current.headerAction?.kind).toBe("close");
   });
 
   test("before submitting, questions offer Save and exit, then review offers Close", () => {
     const { result } = render("IN_PROGRESS", { needsCare: "NO" });
-    expect(result.current.headerAction).toBe("saveAndExit");
+    expect(result.current.headerAction?.kind).toBe("saveAndExit");
     answerAndNext(result, ["YES"]);
     expect(result.current.kind).toBe("review");
-    expect(result.current.headerAction).toBe("close");
+    expect(result.current.headerAction?.kind).toBe("close");
   });
 
   test("editing a completed profile hides it, then review offers Close", () => {
@@ -477,6 +534,23 @@ describe("header action", () => {
     expect(result.current.headerAction).toBeNull();
     act(() => screenOf(result, "question").props.onNext());
     expect(result.current.kind).toBe("review");
-    expect(result.current.headerAction).toBe("close");
+    expect(result.current.headerAction?.kind).toBe("close");
+  });
+
+  test("Save and exit saves the answers, then exits", () => {
+    const { result } = render("IN_PROGRESS", { needsCare: "NO" });
+    act(() => result.current.headerAction?.onClick());
+    expect(save).toHaveBeenCalledWith(
+      { answers: { needsCare: ["NO"] }, isCompleted: false },
+      { onSuccess: expect.any(Function) },
+    );
+    expect(onExit).toHaveBeenCalled();
+  });
+
+  test("Save and exit stays put if the save fails", () => {
+    save.mockImplementationOnce(() => undefined);
+    const { result } = render("IN_PROGRESS", { needsCare: "NO" });
+    act(() => result.current.headerAction?.onClick());
+    expect(onExit).not.toHaveBeenCalled();
   });
 });

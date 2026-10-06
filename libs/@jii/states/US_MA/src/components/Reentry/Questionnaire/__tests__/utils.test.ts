@@ -21,6 +21,7 @@ import {
   buildQuestionDisplay,
   buildQuestionnaireDisplay,
   formatAnswerText,
+  getEditQuestionIds,
   getInitialAnswers,
   getInitialStep,
   getVisibleQuestions,
@@ -78,6 +79,68 @@ describe("isFollowUpOf", () => {
       },
     };
     expect(isFollowUpOf(question, new Set(["b"]))).toBe(true);
+  });
+});
+
+describe("getEditQuestionIds", () => {
+  const parent: QuestionDisplay = {
+    id: "parent",
+    format: "RADIO",
+    heading: "Parent question",
+    options: [],
+  };
+  const otherParent: QuestionDisplay = {
+    id: "otherParent",
+    format: "RADIO",
+    heading: "Other parent question",
+    options: [],
+  };
+  const followUp: QuestionDisplay = {
+    id: "followUp",
+    format: "RADIO",
+    heading: "Follow-up of the parent",
+    options: [],
+    showIf: { questionId: "parent", operator: "equals", value: "YES" },
+  };
+  const followUpOfFollowUp: QuestionDisplay = {
+    id: "followUpOfFollowUp",
+    format: "RADIO",
+    heading: "Follow-up of the follow-up",
+    options: [],
+    showIf: { questionId: "followUp", operator: "equals", value: "YES" },
+  };
+  const sharedFollowUp: QuestionDisplay = {
+    id: "sharedFollowUp",
+    format: "RADIO",
+    heading: "Follow-up of either parent",
+    options: [],
+    showIf: {
+      any: [
+        { questionId: "otherParent", operator: "equals", value: "YES" },
+        { questionId: "parent", operator: "equals", value: "YES" },
+      ],
+    },
+  };
+
+  test("includes the edited question and its follow-ups, but not unrelated questions", () => {
+    expect(
+      getEditQuestionIds([parent, otherParent, followUp], "parent"),
+    ).toEqual(new Set(["parent", "followUp"]));
+  });
+
+  test("includes follow-ups of follow-ups", () => {
+    expect(
+      getEditQuestionIds([parent, followUp, followUpOfFollowUp], "parent"),
+    ).toEqual(new Set(["parent", "followUp", "followUpOfFollowUp"]));
+  });
+
+  test("includes a follow-up with several parents from whichever parent is edited", () => {
+    expect(
+      getEditQuestionIds([parent, otherParent, sharedFollowUp], "parent"),
+    ).toEqual(new Set(["parent", "sharedFollowUp"]));
+    expect(
+      getEditQuestionIds([parent, otherParent, sharedFollowUp], "otherParent"),
+    ).toEqual(new Set(["otherParent", "sharedFollowUp"]));
   });
 });
 
@@ -306,19 +369,20 @@ describe("buildQuestionDisplay", () => {
       buildQuestionDisplay(
         "needsCare",
         {
-          domain: "health",
-          format: "RADIO",
-          options: [{ id: "YES" }, { id: "UNSURE", exclusive: true }],
+          domain: "HEALTH",
+          format: "CHECKBOX",
+          options: ["YES", "UNSURE"],
+          exclusiveOptions: ["UNSURE"],
         },
         (questionId) => `${questionId} heading`,
         (questionId, optionId) => `${questionId}.${optionId}`,
       ),
     ).toEqual({
       id: "needsCare",
-      format: "RADIO",
+      format: "CHECKBOX",
       heading: "needsCare heading",
       options: [
-        { value: "YES", label: "needsCare.YES", exclusive: undefined },
+        { value: "YES", label: "needsCare.YES", exclusive: false },
         { value: "UNSURE", label: "needsCare.UNSURE", exclusive: true },
       ],
       showIf: undefined,
@@ -328,25 +392,26 @@ describe("buildQuestionDisplay", () => {
 
 describe("buildQuestionnaireDisplay", () => {
   const display = buildQuestionnaireDisplay({
-    questionIds: ["needsCare", "benefits"],
+    questionIds: ["needsCare", "housing", "careDetails"],
     config: {
-      needsCare: {
-        domain: "health",
-        format: "RADIO",
-        options: [{ id: "YES" }],
+      needsCare: { domain: "HEALTH", format: "RADIO", options: ["YES"] },
+      housing: { domain: "HOUSING", format: "RADIO", options: ["YES"] },
+      careDetails: {
+        domain: "HEALTH",
+        format: "CHECKBOX",
+        options: ["MEDS"],
+        exclusiveOptions: [],
       },
-      benefits: { domain: "money", format: "RADIO", options: [{ id: "YES" }] },
     },
-    sectionDomains: ["health", "money"],
     getSectionLabel: (domain) => `${domain} label`,
     getQuestionCopy: (questionId) => `${questionId} heading`,
     getOptionCopy: (questionId, optionId) => `${questionId}.${optionId}`,
   });
 
-  test("builds the sections in order with their labels", () => {
+  test("builds one section per domain, in the order of its first question", () => {
     expect(display.sections).toEqual([
-      { domain: "health", label: "health label" },
-      { domain: "money", label: "money label" },
+      { domain: "HEALTH", label: "HEALTH label" },
+      { domain: "HOUSING", label: "HOUSING label" },
     ]);
   });
 
@@ -361,9 +426,14 @@ describe("buildQuestionnaireDisplay", () => {
       {
         id: "needsCare",
         heading: "needsCare heading",
-        sectionDomain: "health",
+        sectionDomain: "HEALTH",
       },
-      { id: "benefits", heading: "benefits heading", sectionDomain: "money" },
+      { id: "housing", heading: "housing heading", sectionDomain: "HOUSING" },
+      {
+        id: "careDetails",
+        heading: "careDetails heading",
+        sectionDomain: "HEALTH",
+      },
     ]);
   });
 });

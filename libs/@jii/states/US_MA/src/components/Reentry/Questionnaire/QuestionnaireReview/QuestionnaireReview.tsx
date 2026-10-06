@@ -34,6 +34,7 @@ import {
 
 type ReviewBaseProps = {
   entries: QuestionnaireReviewEntry[];
+  isSaving?: boolean;
 };
 
 type SubmitReviewProps = ReviewBaseProps & {
@@ -81,8 +82,15 @@ export const QuestionnaireReview = (props: QuestionnaireReviewProps) => {
 
       {!isEditing && (
         <QuestionnaireFooter onBack={props.onBack}>
-          <Button kind="primary" onClick={props.onSubmit}>
-            {t(($) => $.reentry.questionnaire.review.submit)}
+          <Button
+            kind="primary"
+            onClick={props.onSubmit}
+            disabled={props.isSaving}
+            aria-busy={props.isSaving}
+          >
+            {props.isSaving
+              ? t(($) => $.reentry.questionnaire.review.submitting)
+              : t(($) => $.reentry.questionnaire.review.submit)}
           </Button>
         </QuestionnaireFooter>
       )}
