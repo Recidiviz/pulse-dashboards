@@ -71,6 +71,8 @@ jest.mock("~@meetings/app/pages/onboarding", () => ({
 }));
 jest.mock("~@meetings/app/admin", () => ({
   AgencyConfigScreen: null,
+  FlaggedMeetingScreen: null,
+  FlaggedMeetingsScreen: null,
 }));
 jest.mock("~@meetings/app/features/impersonation", () => ({
   useIsImpersonating: () => false,

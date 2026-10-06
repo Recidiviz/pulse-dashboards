@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { router } from "~@meetings/trpc/init";
+import { flaggedMeetingsRouter } from "~@meetings/trpc/routes/admin/flagged-meetings/flagged-meetings.router";
 import { clientRouter } from "~@meetings/trpc/routes/client/client.router";
 import { configRouter } from "~@meetings/trpc/routes/config/config.router";
 import { firebaseAuthRouter } from "~@meetings/trpc/routes/firebaseAuth/firebaseAuth.router";
@@ -28,6 +29,7 @@ import { userRouter } from "~@meetings/trpc/routes/user/user.router";
 const v1Router = router({
   client: clientRouter,
   config: configRouter,
+  flaggedMeetings: flaggedMeetingsRouter,
   meeting: meetingRouter,
   metadata: metadataRouter,
   resident: residentRouter,

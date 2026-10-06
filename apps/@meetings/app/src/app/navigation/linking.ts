@@ -54,6 +54,8 @@ export const linking: LinkingOptions<AppStackParamList> = {
           },
           StateSelection: "settings",
           AgencyConfig: "admin/agency-config",
+          AdminFlaggedMeetings: "admin/flagged-meetings",
+          AdminFlaggedMeeting: "admin/flagged-meetings/:stateCode/:meetingId",
         },
       },
     },

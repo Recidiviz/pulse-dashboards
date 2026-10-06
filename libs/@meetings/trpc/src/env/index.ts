@@ -45,6 +45,14 @@ const envSchema = z.object({
   TRANSCRIPTION_DISABLED_STATES: z.string().default(""),
   FIREBASE_BACKEND_PROJECT: z.string().optional(),
   FIREBASE_ADMIN_SERVICE_ACCOUNT_EMAIL: z.string().optional(),
+  // Label Studio lives outside this project, behind IAP, and only some
+  // environments point at an instance.
+  LABEL_STUDIO_URL: z.string().url().optional(),
+  LABEL_STUDIO_API_TOKEN: z.string().min(1).optional(),
+  LABEL_STUDIO_IAP_AUDIENCE: z.string().min(1).optional(),
+  LABEL_STUDIO_PROJECT_ID: z.coerce.number().int().positive().optional(),
+  /** Only set outside GCP; on Cloud Run the IAP token comes from ADC. */
+  SA_KEY_FILE: z.string().min(1).optional(),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

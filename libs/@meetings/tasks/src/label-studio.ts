@@ -53,14 +53,14 @@ function formatDuration(seconds: number): string {
   return `${m}m ${s}s`;
 }
 
-type StructuredActionItem = {
+export type StructuredActionItem = {
   task: string;
   assignee: string;
   deadline?: string | null;
 };
 
 /** Format a structured action item as "[Assignee] Task (due: deadline)". */
-function formatStructuredActionItem(item: StructuredActionItem): string {
+export function formatStructuredActionItem(item: StructuredActionItem): string {
   const base = `[${item.assignee}] ${item.task}`;
   return item.deadline ? `${base} (due: ${item.deadline})` : base;
 }

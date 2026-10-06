@@ -171,6 +171,9 @@ export async function createContext(
     formattedUser = {
       email: "staff-email-1@example.com",
       isRecidivizUser: true,
+      // Local dev shares one database across states; without this the admin
+      // pages have no state to read.
+      allowedStates: ["US_NE"],
     };
   } else {
     // Cast since the returned object from verifyAuth0Token has no type information

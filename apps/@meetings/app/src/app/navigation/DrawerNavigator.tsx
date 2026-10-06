@@ -19,7 +19,11 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 
-import { AgencyConfigScreen } from "~@meetings/app/admin";
+import {
+  AgencyConfigScreen,
+  FlaggedMeetingScreen,
+  FlaggedMeetingsScreen,
+} from "~@meetings/app/admin";
 import { useAgencyConfigs } from "~@meetings/app/entities/agency-config";
 import { useStateSelection } from "~@meetings/app/entities/state-code";
 import { useGetUser, useUserContext } from "~@meetings/app/entities/user";
@@ -133,7 +137,17 @@ export default function DrawerNavigator() {
       {/* Web only: AgencyConfigScreen renders a Monaco editor, which is DOM-based
           and throws an Invariant Violation on native. */}
       {isRecidivizUser && isWeb && !isImpersonating && (
-        <Drawer.Screen name="AgencyConfig" component={AgencyConfigScreen} />
+        <>
+          <Drawer.Screen name="AgencyConfig" component={AgencyConfigScreen} />
+          <Drawer.Screen
+            name="AdminFlaggedMeetings"
+            component={FlaggedMeetingsScreen}
+          />
+          <Drawer.Screen
+            name="AdminFlaggedMeeting"
+            component={FlaggedMeetingScreen}
+          />
+        </>
       )}
     </Drawer.Navigator>
   );

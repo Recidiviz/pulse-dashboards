@@ -76,4 +76,27 @@ describe("admin paths", () => {
       "/admin/agency-config",
     );
   });
+
+  it("maps admin/flagged-meetings to the list screen", () => {
+    const state = parsePath("/admin/flagged-meetings");
+
+    expect(findFocusedRoute(state)?.name).toBe("AdminFlaggedMeetings");
+    expect(linking.getPathFromState?.(state, linking.config)).toBe(
+      "/admin/flagged-meetings",
+    );
+  });
+
+  it("puts only the state code and meeting id in the flagged meeting URL", () => {
+    const state = parsePath("/admin/flagged-meetings/US_NE/meeting-123");
+
+    const route = findFocusedRoute(state);
+    expect(route?.name).toBe("AdminFlaggedMeeting");
+    expect(route?.params).toEqual({
+      stateCode: "US_NE",
+      meetingId: "meeting-123",
+    });
+    expect(linking.getPathFromState?.(state, linking.config)).toBe(
+      "/admin/flagged-meetings/US_NE/meeting-123",
+    );
+  });
 });

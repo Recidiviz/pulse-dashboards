@@ -28,8 +28,11 @@ import { GoogleAuth } from "google-auth-library";
 //    without a Google-signed ID token, minted for IAP's own OAuth audience,
 //    on `Proxy-Authorization`. A user's own gcloud/OAuth credentials can't
 //    mint an ID token for an arbitrary audience — Google's token endpoint
-//    only issues those for service accounts — so we mint it from a service
-//    account keyfile instead (see `createLabelStudioClientFromEnv`).
+//    only issues those for service accounts — so a script run by a developer
+//    mints it from a service-account keyfile. Code already running *as* a
+//    service account (the server on Cloud Run) needs no keyfile: Application
+//    Default Credentials mint the token through the metadata server. See
+//    `createLabelStudioClient`.
 //
 // 2. Label Studio (app-level, JWT): once past IAP, Label Studio has its own
 //    separate JWT auth — a short-lived access token on `Authorization:
@@ -199,6 +202,7 @@ export class LabelStudioClient {
       completed_by: number;
       result: LabelStudioResult[];
       created_at: string;
+      updated_at: string;
       lead_time: number | null;
       was_cancelled: boolean;
       ground_truth: boolean;
@@ -226,6 +230,22 @@ export class LabelStudioClient {
     projectId: number,
   ): Promise<{ id: number; bucket: string; prefix: string }[]> {
     return this.request(`/api/storages/export/gcs?project=${projectId}`);
+  }
+
+  /**
+   * Fetch a project's labeling interface config (the `<View>...</View>` XML
+   * defined in the Label Studio admin UI). There's no copy of this config in
+   * the repo — it's edited directly in LS and has drifted before (see
+   * `parseLabelConfig` in `label-studio-annotations.ts`), so callers that
+   * need to interpret annotation results (which `from_name` slots are grades,
+   * what their `BAD`/`PARTIAL`/`GOOD` aliases are) should fetch this live
+   * rather than hardcoding field names.
+   */
+  async getProjectLabelConfig(projectId: number): Promise<string> {
+    const project = await this.request<{ label_config: string }>(
+      `/api/projects/${projectId}/`,
+    );
+    return project.label_config;
   }
 
   /**
@@ -294,20 +314,47 @@ export class LabelStudioClient {
   }
 }
 
+export interface LabelStudioClientConfig {
+  baseUrl: string;
+  /** The long-lived *refresh* token, not an access token — see the header comment. */
+  refreshToken: string;
+  iapAudience: string;
+  /**
+   * Path to a service-account keyfile used to mint the IAP ID token. Omit it
+   * when running somewhere with a service-account identity of its own (Cloud
+   * Run), where Application Default Credentials mint the token instead — no
+   * key material to distribute. Scripts run under a developer's own gcloud
+   * credentials do need one: Google's token endpoint won't issue an ID token
+   * for an arbitrary audience to a user account, and IAP rejects the result
+   * as an empty token.
+   */
+  keyFile?: string;
+}
+
+/** Build a {@link LabelStudioClient} from already-validated config. */
+export function createLabelStudioClient({
+  baseUrl,
+  refreshToken,
+  iapAudience,
+  keyFile,
+}: LabelStudioClientConfig): LabelStudioClient {
+  const iapAuth = new GoogleAuth(keyFile ? { keyFile } : {});
+  return new LabelStudioClient(baseUrl, refreshToken, iapAuth, iapAudience);
+}
+
 /**
  * Build a {@link LabelStudioClient} from the standard `LABEL_STUDIO_*` env
- * vars plus `SA_KEY_FILE`.
+ * vars, plus `SA_KEY_FILE` when running outside GCP (see
+ * {@link LabelStudioClientConfig.keyFile}).
  *
- * IAP requires an ID token minted for its OAuth audience. User credentials
- * can't mint one (Google's token endpoint won't issue an ID token for an
- * arbitrary audience to a user account — IAP rejects it as "empty token"), so
- * this uses a service-account keyfile.
+ * Callers that already validate their own env — the server does — should use
+ * {@link createLabelStudioClient} and pass the values in.
  */
 export function createLabelStudioClientFromEnv(): LabelStudioClient {
-  const baseUrl = requireEnv("LABEL_STUDIO_URL");
-  const refreshToken = requireEnv("LABEL_STUDIO_API_TOKEN");
-  const iapAudience = requireEnv("LABEL_STUDIO_IAP_AUDIENCE");
-  const saKeyFile = requireEnv("SA_KEY_FILE");
-  const iapAuth = new GoogleAuth({ keyFile: saKeyFile });
-  return new LabelStudioClient(baseUrl, refreshToken, iapAuth, iapAudience);
+  return createLabelStudioClient({
+    baseUrl: requireEnv("LABEL_STUDIO_URL"),
+    refreshToken: requireEnv("LABEL_STUDIO_API_TOKEN"),
+    iapAudience: requireEnv("LABEL_STUDIO_IAP_AUDIENCE"),
+    keyFile: process.env["SA_KEY_FILE"],
+  });
 }

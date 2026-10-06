@@ -21,9 +21,12 @@ import { createJSONStorage, persist } from "zustand/middleware";
 
 import { RootStackParamList } from "~@meetings/app/shared/config";
 
-export type AdminScreen = Extract<keyof RootStackParamList, "AgencyConfig">;
+export type AdminScreen = Extract<
+  keyof RootStackParamList,
+  "AgencyConfig" | "AdminFlaggedMeetings"
+>;
 
-const DEFAULT_ADMIN_SCREEN: AdminScreen = "AgencyConfig";
+const DEFAULT_ADMIN_SCREEN: AdminScreen = "AdminFlaggedMeetings";
 
 type AdminNavigationStore = {
   lastScreen: AdminScreen;

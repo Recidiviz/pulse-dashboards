@@ -15,4 +15,5 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export { AdminLayout } from "./ui/AdminLayout";
 export { AdminSidebar } from "./ui/AdminSidebar";

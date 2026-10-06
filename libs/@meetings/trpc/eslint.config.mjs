@@ -21,15 +21,44 @@ import tseslint from "typescript-eslint";
 
 import baseConfig from "../../../eslint.config.mjs";
 
-export default tseslint.config(baseConfig, {
-  files: ["**/*.ts", "**/*.tsx"],
-  rules: {
-    // This enforces that we use absolute imports for all of the code in this project
-    "no-restricted-imports": [
-      "error",
-      {
-        patterns: [".*"],
-      },
-    ],
+// Admin-only code is imported only by other admin code (see the README in each admin folder).
+const absoluteImportsOnly = {
+  group: [".*"],
+  message: "Use absolute imports instead of relative ones.",
+};
+
+const adminOnly = {
+  group: [
+    "~@meetings/tasks/admin/**",
+    "~@meetings/trpc/routes/admin/**",
+    "~@meetings/trpc/services/admin/**",
+  ],
+  message:
+    "Admin code is internal. Only other admin code may import it; see the README in the admin folder.",
+};
+
+export default tseslint.config(
+  baseConfig,
+  {
+    files: ["**/*.ts", "**/*.tsx"],
+    rules: {
+      // This enforces that we use absolute imports for all of the code in this project
+      "no-restricted-imports": [
+        "error",
+        { patterns: [absoluteImportsOnly, adminOnly] },
+      ],
+    },
   },
-});
+  {
+    files: [
+      "src/routes/admin/**",
+      "src/services/admin/**",
+      "src/router.ts",
+      "__tests__/routes/admin/**",
+      "__tests__/services/admin/**",
+    ],
+    rules: {
+      "no-restricted-imports": ["error", { patterns: [absoluteImportsOnly] }],
+    },
+  },
+);

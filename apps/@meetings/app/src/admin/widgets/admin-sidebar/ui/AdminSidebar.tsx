@@ -38,6 +38,10 @@ type NavSection = {
 
 const NAV_SECTIONS: NavSection[] = [
   {
+    title: "Meeting review",
+    items: [{ screen: "AdminFlaggedMeetings", label: "Flagged meetings" }],
+  },
+  {
     title: "Configuration",
     items: [{ screen: "AgencyConfig", label: "Agency configurations" }],
   },

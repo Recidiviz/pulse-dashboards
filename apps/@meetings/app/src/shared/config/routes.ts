@@ -67,6 +67,11 @@ export type RootStackParamList = {
   ResidentsRoot: NavigatorScreenParams<ResidentsStackParamList>;
   StateSelection: undefined;
   AgencyConfig: undefined;
+  AdminFlaggedMeetings: undefined;
+  AdminFlaggedMeeting: {
+    stateCode: string;
+    meetingId: string;
+  };
 };
 
 export type AppStackParamList = {
