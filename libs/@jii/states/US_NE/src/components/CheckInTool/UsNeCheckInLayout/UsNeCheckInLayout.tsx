@@ -17,9 +17,11 @@
 
 import type { ReactNode } from "react";
 
+import { CheckInSectionId } from "~@jii/configs";
 import { useHeaderOverride, WordmarkIcon } from "~@jii/layout";
 import { useUsNeTranslations } from "~@jii/translation";
 
+import { UsNeCheckInSectionProgress } from "../UsNeCheckInSectionProgress/UsNeCheckInSectionProgress";
 import {
   Content,
   Header,
@@ -30,14 +32,17 @@ import {
 
 type CheckInLayoutProps = {
   onCloseClick: () => void;
+  sectionId?: CheckInSectionId;
   children: ReactNode;
 };
 
 /**
- * Full-screen takeover that displays header text and an action button.
+ * Full-screen takeover that displays an overall header about the Check-In,
+ * section information, and an action button.
  */
 export const UsNeCheckInLayout = ({
   onCloseClick,
+  sectionId,
   children,
 }: CheckInLayoutProps) => {
   const { t } = useUsNeTranslations();
@@ -54,6 +59,9 @@ export const UsNeCheckInLayout = ({
           {t(($) => $.checkIn.header.close)}
         </HeaderActionButton>
       </Header>
+
+      {sectionId && <UsNeCheckInSectionProgress section={sectionId} />}
+
       <Content>{children}</Content>
     </Wrapper>
   );

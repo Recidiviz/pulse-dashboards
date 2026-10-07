@@ -45,6 +45,11 @@ const UsNeCheckInPageContent = () => {
   const saveIsPending = updateMutation.isPending;
   const screen = useCheckInFlow(data);
 
+  const sectionId =
+    screen.screenKind === "question" || screen.screenKind === "sectionIntro"
+      ? screen.sectionId
+      : undefined;
+
   const showModal = screen.screenKind === "question";
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
@@ -83,7 +88,7 @@ const UsNeCheckInPageContent = () => {
   };
 
   return (
-    <UsNeCheckInLayout onCloseClick={onCloseClick}>
+    <UsNeCheckInLayout onCloseClick={onCloseClick} sectionId={sectionId}>
       {renderContent()}
       {showModal && (
         <UsNeCheckInExitModal

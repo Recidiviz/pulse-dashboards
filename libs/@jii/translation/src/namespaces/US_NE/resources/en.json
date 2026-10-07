@@ -340,6 +340,21 @@
           "OTHER": "Other"
         }
       }
+    },
+    "sectionHeader": {
+      "next": "Next:"
+    },
+    "sections": {
+      "sectionHousing": "Housing",
+      "sectionEducationWork": "Education & Work",
+      "sectionTransportation": "Transportation",
+      "sectionHobbiesLeisure": "Hobbies & Leisure",
+      "sectionMoney": "Money",
+      "sectionWellness": "Wellness",
+      "sectionPhysicalHealth": "Physical Health",
+      "sectionSupportSystem": "Support System",
+      "sectionStrengthsSkills": "Strengths & Skills",
+      "sectionEnd": "Wrap Up"
     }
   }
 }

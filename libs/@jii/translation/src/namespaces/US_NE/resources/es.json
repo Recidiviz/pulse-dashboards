@@ -340,6 +340,18 @@
           "OTHER": "Otros"
         }
       }
+    },
+    "sections": {
+      "sectionHousing": "Vivienda",
+      "sectionEducationWork": "Educación y trabajo",
+      "sectionTransportation": "Transporte",
+      "sectionHobbiesLeisure": "Aficiones y tiempo libre",
+      "sectionMoney": "Dinero",
+      "sectionWellness": "Bienestar",
+      "sectionPhysicalHealth": "Salud física",
+      "sectionSupportSystem": "Sistema de apoyo",
+      "sectionStrengthsSkills": "Fortalezas y habilidades",
+      "sectionEnd": "Para terminar"
     }
   }
 }

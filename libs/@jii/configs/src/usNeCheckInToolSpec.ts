@@ -56,7 +56,7 @@ export const checkInToolSpec: CheckInSectionSpec[] = [
     questions: ["HELPFUL_SUPPORT"],
   },
 ];
-
+export const checkInSections = checkInToolSpec.map(({ id }) => id);
 export const checkInStandardRadioAnswers = ["YES", "NO"] as const;
 
 type SelectAnswerFormat = "RADIO" | "CHECKBOX";

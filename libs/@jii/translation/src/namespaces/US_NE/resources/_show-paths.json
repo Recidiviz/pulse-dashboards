@@ -340,6 +340,21 @@
           "OTHER": "[US_NE]checkIn.questions.HELPFUL_SUPPORT.answers.OTHER"
         }
       }
+    },
+    "sectionHeader": {
+      "next": "[US_NE]checkIn.sectionHeader.next"
+    },
+    "sections": {
+      "sectionHousing": "[US_NE]checkIn.sections.sectionHousing",
+      "sectionEducationWork": "[US_NE]checkIn.sections.sectionEducationWork",
+      "sectionTransportation": "[US_NE]checkIn.sections.sectionTransportation",
+      "sectionHobbiesLeisure": "[US_NE]checkIn.sections.sectionHobbiesLeisure",
+      "sectionMoney": "[US_NE]checkIn.sections.sectionMoney",
+      "sectionWellness": "[US_NE]checkIn.sections.sectionWellness",
+      "sectionPhysicalHealth": "[US_NE]checkIn.sections.sectionPhysicalHealth",
+      "sectionSupportSystem": "[US_NE]checkIn.sections.sectionSupportSystem",
+      "sectionStrengthsSkills": "[US_NE]checkIn.sections.sectionStrengthsSkills",
+      "sectionEnd": "[US_NE]checkIn.sections.sectionEnd"
     }
   }
 }
