@@ -15,8 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 
+import { useAnalytics } from "~@meetings/app/shared/analytics";
+import { Person } from "~@meetings/app/shared/api";
 import { Tooltip } from "~@meetings/app/shared/ui/Tooltip";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
@@ -25,6 +27,7 @@ import { CitationTooltipContent } from "./CitationTooltipContent";
 
 type Props = {
   segments: CaseNoteSummarySegment[];
+  person: Person;
   isInsideModal?: boolean;
 };
 
@@ -33,8 +36,18 @@ type Props = {
  */
 export function CaseNoteSummaryWithTooltips({
   segments,
+  person,
   isInsideModal,
 }: Props) {
+  const { track } = useAnalytics();
+
+  useEffect(() => {
+    track("cni_summary_viewed", {
+      personId: person.personId.toString(),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Typography variant="body-s-regular">
       {segments.map(({ content, citation }, index) => {
@@ -54,6 +67,13 @@ export function CaseNoteSummaryWithTooltips({
               inline
               content={<CitationTooltipContent citation={citation} />}
               isInsideModal={isInsideModal}
+              onOpenChange={(open) => {
+                if (open) {
+                  track("cni_summary_citation_viewed", {
+                    personId: person.personId.toString(),
+                  });
+                }
+              }}
             >
               <Typography className="border-b border-dotted border-primary text-primary">
                 {content.slice(lead.length)}

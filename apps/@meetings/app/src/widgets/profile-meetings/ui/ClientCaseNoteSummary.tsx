@@ -103,7 +103,7 @@ export function ClientCaseNoteSummary({ person }: Props) {
         </View>
         <View className="flex-row gap-3">
           <View className="flex-1">
-            <CaseNoteSummaryWithTooltips segments={segments} />
+            <CaseNoteSummaryWithTooltips segments={segments} person={person} />
           </View>
           <CaseNoteSummaryFeedbackButtons
             person={person}

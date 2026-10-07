@@ -147,7 +147,11 @@ export function MeetingSidebar({
                   </Typography>
                 </View>
               </View>
-              <CaseNoteSummaryWithTooltips segments={segments} isInsideModal />
+              <CaseNoteSummaryWithTooltips
+                segments={segments}
+                person={person}
+                isInsideModal
+              />
             </View>
           )}
 

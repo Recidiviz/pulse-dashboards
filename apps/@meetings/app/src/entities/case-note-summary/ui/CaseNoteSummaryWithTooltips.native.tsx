@@ -15,8 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useEffect } from "react";
 import { View } from "react-native";
 
+import { useAnalytics } from "~@meetings/app/shared/analytics";
+import { Person } from "~@meetings/app/shared/api";
 import { Tooltip } from "~@meetings/app/shared/ui/Tooltip";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
@@ -26,6 +29,7 @@ import { CitationTooltipContent } from "./CitationTooltipContent";
 
 type Props = {
   segments: CaseNoteSummarySegment[];
+  person: Person;
   isInsideModal?: boolean;
 };
 
@@ -34,8 +38,19 @@ type Props = {
  */
 export function CaseNoteSummaryWithTooltips({
   segments,
+  person,
   isInsideModal,
 }: Props) {
+  const { track } = useAnalytics();
+
+  useEffect(() => {
+    track("cni_summary_viewed", {
+      personId: person.personId.toString(),
+    });
+    // Empty dependency array ensures this effect only runs once on mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <View className="flex-row flex-wrap items-baseline">
       {toWords(segments).map(({ text, segmentIndex, isCited }, index) => {
@@ -48,6 +63,13 @@ export function CaseNoteSummaryWithTooltips({
               key={key}
               content={<CitationTooltipContent citation={citation} />}
               isInsideModal={isInsideModal}
+              onOpenChange={(open) => {
+                if (open) {
+                  track("cni_summary_citation_viewed", {
+                    personId: person.personId.toString(),
+                  });
+                }
+              }}
             >
               <Typography
                 variant="body-s-regular"

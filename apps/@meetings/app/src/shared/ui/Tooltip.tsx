@@ -49,6 +49,8 @@ type Props = {
    * a box of its own, so a multi-word trigger wraps across lines like the text around it
    */
   inline?: boolean;
+  /** Fires whenever the tooltip opens or closes, on both web (hover) and native (press). */
+  onOpenChange?: (open: boolean) => void;
 };
 
 /**
@@ -80,6 +82,7 @@ export function Tooltip({
   contentClassName,
   isInsideModal,
   inline,
+  onOpenChange,
 }: Props) {
   const isWeb = Platform.OS === "web";
   const triggerRef = useRef<TooltipPrimitive.TriggerRef>(null);
@@ -97,6 +100,8 @@ export function Tooltip({
   }, [isWeb, isInsideModal]);
 
   const handleOpenChange = (open: boolean) => {
+    onOpenChange?.(open);
+
     if (isWeb) return;
 
     if (!open) {
