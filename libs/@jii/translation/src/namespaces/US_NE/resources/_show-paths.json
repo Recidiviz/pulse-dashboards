@@ -298,6 +298,17 @@
   },
   "disclaimer": "[US_NE]disclaimer",
   "checkIn": {
+    "header": {
+      "title": "[US_NE]checkIn.header.title",
+      "close": "[US_NE]checkIn.header.close"
+    },
+    "exitModal": {
+      "title": "[US_NE]checkIn.exitModal.title",
+      "content": "[US_NE]checkIn.exitModal.content",
+      "info": "[US_NE]checkIn.exitModal.info",
+      "cancel": "[US_NE]checkIn.exitModal.cancel",
+      "saveAndLeave": "[US_NE]checkIn.exitModal.saveAndLeave"
+    },
     "standardRadioAnswers": {
       "YES": "[US_NE]checkIn.standardRadioAnswers.YES",
       "NO": "[US_NE]checkIn.standardRadioAnswers.NO"

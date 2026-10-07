@@ -16,11 +16,18 @@
 // =============================================================================
 
 import assertNever from "assert-never";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
+
+import { State } from "~@jii/paths";
 
 import { useCheckInData } from "./hooks/useCheckInData";
 import { useCheckInFlow } from "./hooks/useCheckInFlow";
 import { UsNeCheckInCompletion } from "./UsNeCheckInCompletion";
 import { UsNeCheckInContextProvider } from "./UsNeCheckInContext";
+import { UsNeCheckInExitModal } from "./UsNeCheckInExitModal/UsNeCheckInExitModal";
+import { UsNeCheckInLayout } from "./UsNeCheckInLayout/UsNeCheckInLayout";
 import { UsNeCheckInQuestion } from "./UsNeCheckInQuestion";
 import { UsNeCheckInSectionIntro } from "./UsNeCheckInSectionIntro";
 import { UsNeCheckInWelcome } from "./UsNeCheckInWelcome";
@@ -28,7 +35,6 @@ import { UsNeCheckInWelcome } from "./UsNeCheckInWelcome";
 export const UsNeCheckInPage = () => {
   return (
     <UsNeCheckInContextProvider>
-      {/* TODO(OBT-47843) add header and full-page layout override */}
       <UsNeCheckInPageContent />
     </UsNeCheckInContextProvider>
   );
@@ -36,25 +42,56 @@ export const UsNeCheckInPage = () => {
 
 const UsNeCheckInPageContent = () => {
   const { data, updateMutation } = useCheckInData();
+  const saveIsPending = updateMutation.isPending;
   const screen = useCheckInFlow(data);
 
-  switch (screen.screenKind) {
-    case "completion":
-      return <UsNeCheckInCompletion />;
-    case "welcome":
-      return <UsNeCheckInWelcome />;
-    case "sectionIntro":
-      return <UsNeCheckInSectionIntro sectionId={screen.sectionId} />;
-    case "question":
-      return (
-        <UsNeCheckInQuestion
-          questionId={screen.questionId}
-          sectionId={screen.sectionId}
-          data={data}
-          updateMutation={updateMutation}
+  const showModal = screen.screenKind === "question";
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+
+  const routeParams = useTypedParams(State.Resident);
+  const navigate = useNavigate();
+  const exit = () => {
+    if (saveIsPending) return;
+    navigate(State.Resident.buildPath(routeParams));
+  };
+  const openModal = () => {
+    if (saveIsPending) return;
+    setModalIsOpen(true);
+  };
+  const onCloseClick = showModal ? openModal : exit;
+
+  const renderContent = () => {
+    switch (screen.screenKind) {
+      case "completion":
+        return <UsNeCheckInCompletion />;
+      case "welcome":
+        return <UsNeCheckInWelcome />;
+      case "sectionIntro":
+        return <UsNeCheckInSectionIntro sectionId={screen.sectionId} />;
+      case "question":
+        return (
+          <UsNeCheckInQuestion
+            questionId={screen.questionId}
+            sectionId={screen.sectionId}
+            data={data}
+            updateMutation={updateMutation}
+          />
+        );
+      default:
+        return assertNever(screen);
+    }
+  };
+
+  return (
+    <UsNeCheckInLayout onCloseClick={onCloseClick}>
+      {renderContent()}
+      {showModal && (
+        <UsNeCheckInExitModal
+          isOpen={modalIsOpen}
+          onStay={() => setModalIsOpen(false)}
+          onLeave={exit}
         />
-      );
-    default:
-      return assertNever(screen);
-  }
+      )}
+    </UsNeCheckInLayout>
+  );
 };

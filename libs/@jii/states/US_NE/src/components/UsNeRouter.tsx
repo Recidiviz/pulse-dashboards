@@ -49,11 +49,15 @@ export const UsNeRouter = () => {
           path={ReentryAssessment.path}
           element={<UsNeReentryAssessmentPage />}
         />
-        {residentFlags.usNeCheckInTool && (
-          <Route path={UsNeCheckInTool.path} element={<UsNeCheckInPage />} />
-        )}
-        <Route path="*" element={<NotFound />} />
       </Route>
+
+      {/* Check-In Tool screens take over the entire layout and 
+          skip the disclaimer footer */}
+      {residentFlags.usNeCheckInTool && (
+        <Route path={UsNeCheckInTool.path} element={<UsNeCheckInPage />} />
+      )}
+
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };

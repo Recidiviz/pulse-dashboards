@@ -70,12 +70,12 @@
     },
     "todos": {
       "sectionTitle": "Tareas pendientes",
-      "loading": "Checking for new tasks...",
+      "loading": "Buscando tareas pendientes nuevas",
       "error": {
-        "message": "Your To-dos couldn't be loaded right now.",
-        "retryCta": "Try again"
+        "message": "No se pudieron cargar sus tareas pendientes en este momento.",
+        "retryCta": "Reintentar"
       },
-      "noTodos": "You don't have any To-dos right now.",
+      "noTodos": "No tienes tareas pendientes en este momento.",
       "goodTimeRestoration": {
         "almostEligible": {
           "title": "Manténgase libre de mala conducta para su tiempo de buena conducta",
@@ -100,14 +100,14 @@
         "linkText": "Más información"
       },
       "reentryAssessment": {
-        "title": "Complete la Evaluación de Reinserción de 120 Días",
+        "title": "Complete el Cuestonario de Reinserción de 120 Días",
         "body": "Su Especialista de Reinserción le ha asignado esta evaluación para poder comprender mejor sus necesidades antes de su reunión de 120 días con ellos. Esto les permitirá llevar recursos más personalizados y respuestas claras a su reunión.",
-        "linkText": "Comenzar Evaluación"
+        "linkText": "Comenzar Cuestionario"
       },
       "checkInTool": {
-        "title": "Prepare for Your 120-Day Check-In with Your Reentry Specialist",
-        "body": "Answer a few questions to help your Reentry Specialist prepare for your 120-Day Check-In.\nYour Reentry Specialist assigned this on {{date, formatFullDate}} — we recommend completing it in the next week.",
-        "linkText": "Get Started"
+        "title": "Prepárese para su control de los 120 días con su Especialista de Reinserción",
+        "body": "Responda algunas preguntas para ayudar a su Especialista de Reinserción a prepararse para su control de los 120 días.\n\nSu Especialista de Reinserción Social le asignó esto el {{date, formatFullDate}} — le recomendamos completarlo en la próxima semana.",
+        "linkText": "Comenzar"
       }
     },
     "dates": {
@@ -298,6 +298,17 @@
   },
   "disclaimer": "Esta información es proporcionada por un proveedor externo únicamente con fines informativos generales. No constituye asesoramiento legal ni sustituye el asesoramiento individualizado de su abogado.\n\nProporcionar esta información no crea una relación abogado-cliente entre el Departamento de Servicios Correccionales de Nebraska y el usuario.\nProporcionar esta información no crea una relación abogado-cliente entre el proveedor externo y el usuario.\n\nEl Departamento de Servicios Correccionales de Nebraska y el proveedor externo no serán responsables de ningún error, omisión, retraso o interrupción relacionada con la información proporcionada.\n\n",
   "checkIn": {
+    "header": {
+      "title": "120-Day Check-In Prep",
+      "close": "Exit"
+    },
+    "exitModal": {
+      "title": "Are you sure you want to leave?",
+      "content": "We'll save your progress. When you come back, you'll start on this question.",
+      "info": "Your answer for this question won't be saved. Cancel and hit Next first if you want to keep it.",
+      "cancel": "Cancel",
+      "saveAndLeave": "Save and leave"
+    },
     "standardRadioAnswers": {
       "YES": "Sí",
       "NO": "No"
