@@ -234,6 +234,11 @@ export function WithJusticeInvolvedPersonStore<
         });
       }
 
+      // An opportunity sent back to a reviewer who already acted on it matches
+      // both groups, and each group holds its own Client instance for that
+      // person, so dedupe on record and update doc IDs rather than identity.
+      const includedOpportunityKeys = new Set<string>();
+
       const opportunitiesByType = clientGroups.reduce(
         (
           oppsByType,
@@ -244,6 +249,10 @@ export function WithJusticeInvolvedPersonStore<
               client[opportunityMappingOverride ?? this.opportunityMapping],
             ).flat()) {
               if (!includeInOpportunitiesByType(opportunity)) continue;
+
+              const opportunityKey = `${client.recordId}/${opportunity.firestoreUpdateDocId}`;
+              if (includedOpportunityKeys.has(opportunityKey)) continue;
+              includedOpportunityKeys.add(opportunityKey);
 
               const { type } = opportunity;
               (oppsByType[type] ?? (oppsByType[type] = [])).push(opportunity);

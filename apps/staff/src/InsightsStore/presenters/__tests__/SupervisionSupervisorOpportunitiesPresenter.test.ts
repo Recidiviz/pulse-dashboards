@@ -595,11 +595,13 @@ describe("Opportunity details methods", () => {
           denied: false,
           tabTitle: () => "Eligible Now",
           config: MOCK_OPPORTUNITY_CONFIGS[type],
+          firestoreUpdateDocId: type,
         } as unknown as Opportunity;
       }
 
       function fakeClientWithOpportunities(
         opportunities: Opportunity[],
+        recordId = "us_xx_client-1",
       ): JusticeInvolvedPerson {
         const opportunitiesByType = opportunities.reduce(
           (acc, opp) => {
@@ -609,6 +611,7 @@ describe("Opportunity details methods", () => {
           {} as Record<OpportunityType, Opportunity[]>,
         );
         return {
+          recordId,
           opportunities: opportunitiesByType,
         } as unknown as JusticeInvolvedPerson;
       }
@@ -640,12 +643,14 @@ describe("Opportunity details methods", () => {
       });
 
       it("aggregates counts across multiple clients assigned to the reviewer", () => {
-        const clientA = fakeClientWithOpportunities([
-          fakeReviewerOpportunity(OPP_TYPE_1, REVIEWER_EXTERNAL_ID),
-        ]);
-        const clientB = fakeClientWithOpportunities([
-          fakeReviewerOpportunity(OPP_TYPE_1, REVIEWER_EXTERNAL_ID),
-        ]);
+        const clientA = fakeClientWithOpportunities(
+          [fakeReviewerOpportunity(OPP_TYPE_1, REVIEWER_EXTERNAL_ID)],
+          "us_xx_client-a",
+        );
+        const clientB = fakeClientWithOpportunities(
+          [fakeReviewerOpportunity(OPP_TYPE_1, REVIEWER_EXTERNAL_ID)],
+          "us_xx_client-b",
+        );
         jiiStore.caseloadByReviewerId.set(REVIEWER_EXTERNAL_ID, [
           clientA,
           clientB,

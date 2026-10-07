@@ -302,22 +302,32 @@ describe("JusticeInvolvedPersonsStore", () => {
      * hydrated Client/Opportunity graph.
      */
     function fakeClientWithOpportunities(
-      opportunities: { type: OpportunityType; currentReviewerId?: string }[],
+      opportunities: {
+        type: OpportunityType;
+        currentReviewerId?: string;
+        allUniqueReviewerIds?: string[];
+      }[],
+      recordId = "us_xx_client-1",
     ): JusticeInvolvedPerson {
       const opportunitiesByType = opportunities.reduce(
         (acc, opp) => {
-          (acc[opp.type] ??= []).push(opp);
+          (acc[opp.type] ??= []).push({
+            ...opp,
+            firestoreUpdateDocId: opp.type,
+          });
           return acc;
         },
-        {} as Record<OpportunityType, typeof opportunities>,
+        {} as Record<OpportunityType, object[]>,
       );
       return {
+        recordId,
         opportunities: opportunitiesByType,
       } as unknown as JusticeInvolvedPerson;
     }
 
     afterEach(() => {
       jiiStore?.caseloadByReviewerId.clear();
+      jiiStore?.historicalCaseloadByReviewerId.clear();
     });
 
     describe("Method: opportunitiesByTypeForReviewer", () => {
@@ -366,6 +376,66 @@ describe("JusticeInvolvedPersonsStore", () => {
             "opportunities",
           ),
         ).toStrictEqual({});
+      });
+
+      it("includes an opportunity once when it is in both the current and historical caseloads", () => {
+        vi.spyOn(
+          presenter,
+          "showPreviouslyReviewedOpportunities",
+          "get",
+        ).mockReturnValue(true);
+        // Separate instances for the same person, as the store builds them.
+        const opportunity = {
+          type: OPP_TYPE_1,
+          currentReviewerId: REVIEWER_ID,
+          allUniqueReviewerIds: [REVIEWER_ID, OTHER_REVIEWER_ID],
+        };
+        jiiStore?.caseloadByReviewerId.set(REVIEWER_ID, [
+          fakeClientWithOpportunities([opportunity]),
+        ]);
+        jiiStore?.historicalCaseloadByReviewerId.set(REVIEWER_ID, [
+          fakeClientWithOpportunities([opportunity]),
+        ]);
+
+        const oppsByType = presenter.opportunitiesByTypeForReviewer(
+          REVIEWER_ID,
+          "opportunities",
+        );
+
+        expect(oppsByType?.[OPP_TYPE_1]).toHaveLength(1);
+      });
+
+      it("keeps different people's opportunities of the same type", () => {
+        vi.spyOn(
+          presenter,
+          "showPreviouslyReviewedOpportunities",
+          "get",
+        ).mockReturnValue(true);
+        jiiStore?.caseloadByReviewerId.set(REVIEWER_ID, [
+          fakeClientWithOpportunities(
+            [{ type: OPP_TYPE_1, currentReviewerId: REVIEWER_ID }],
+            "us_xx_client-1",
+          ),
+        ]);
+        jiiStore?.historicalCaseloadByReviewerId.set(REVIEWER_ID, [
+          fakeClientWithOpportunities(
+            [
+              {
+                type: OPP_TYPE_1,
+                currentReviewerId: OTHER_REVIEWER_ID,
+                allUniqueReviewerIds: [REVIEWER_ID],
+              },
+            ],
+            "us_xx_client-2",
+          ),
+        ]);
+
+        const oppsByType = presenter.opportunitiesByTypeForReviewer(
+          REVIEWER_ID,
+          "opportunities",
+        );
+
+        expect(oppsByType?.[OPP_TYPE_1]).toHaveLength(2);
       });
 
       it("returns empty object for a reviewer with no caseload", () => {
