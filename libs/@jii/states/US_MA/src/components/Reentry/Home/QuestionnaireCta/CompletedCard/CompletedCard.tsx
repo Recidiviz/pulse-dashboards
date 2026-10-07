@@ -21,6 +21,7 @@ import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 import { Icon } from "~design-system";
 
+import { useReentryChecklist } from "../../../../../hooks/useReentryChecklist";
 import { QUESTIONNAIRE_STATUS_COPY } from "../../../ctaConfigs";
 import {
   Description,
@@ -32,13 +33,10 @@ import {
   ViewChecklistButton,
 } from "./CompletedCard.styles";
 
-// TODO OBT-50585: derive from the real checklist hydration hook once it
-// exists. Placeholder for now to unblock component development.
-const PLACEHOLDER_RECOMMENDED_TASK_COUNT = 11;
-
 export const CompletedCard = () => {
   const { t } = useUsMaTranslations();
   const routeParams = useTypedParams(State.Resident);
+  const { personalizedItemCount } = useReentryChecklist();
   const { heading, recommendedTaskCount, cta } =
     QUESTIONNAIRE_STATUS_COPY.COMPLETED(t);
 
@@ -51,9 +49,7 @@ export const CompletedCard = () => {
       </IconBlock>
       <SummaryContent>
         <Heading>{heading}</Heading>
-        <Description>
-          {recommendedTaskCount(PLACEHOLDER_RECOMMENDED_TASK_COUNT)}
-        </Description>
+        <Description>{recommendedTaskCount(personalizedItemCount)}</Description>
         <ViewChecklistButton
           kind="primary"
           to={State.Resident.UsMaReentry.Checklist.buildPath(routeParams)}

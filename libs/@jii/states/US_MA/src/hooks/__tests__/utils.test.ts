@@ -15,7 +15,80 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { getQuestionnaireStatus, toStoredAnswers } from "../utils";
+import {
+  getQuestionnaireStatus,
+  toChecklistItems,
+  toStoredAnswers,
+} from "../utils";
+
+describe("toChecklistItems", () => {
+  test("orders items as the config lists them, not as the server returns them", () => {
+    const items = toChecklistItems(
+      [
+        { itemId: "HOUSING_PLAN_AGREEMENT", checked: false },
+        { itemId: "BACKUP_HOUSING", checked: false },
+        { itemId: "FINALIZED_HOUSING", checked: false },
+      ],
+      [],
+    );
+    expect(items.map((item) => item.id)).toEqual([
+      "BACKUP_HOUSING",
+      "FINALIZED_HOUSING",
+      "HOUSING_PLAN_AGREEMENT",
+    ]);
+  });
+
+  test("keeps each item's checked value", () => {
+    const items = toChecklistItems(
+      [
+        { itemId: "BACKUP_HOUSING", checked: true },
+        { itemId: "FINALIZED_HOUSING", checked: false },
+      ],
+      [],
+    );
+    expect(items.map((item) => item.checked)).toEqual([true, false]);
+  });
+
+  test("marks items with a showIf as personalized", () => {
+    const items = toChecklistItems(
+      [
+        { itemId: "BACKUP_HOUSING", checked: false },
+        { itemId: "HOUSING_PLAN_AGREEMENT", checked: false }, // has a showIf condition in config
+      ],
+      [],
+    );
+    expect(items).toEqual([
+      { id: "BACKUP_HOUSING", checked: false, isPersonalized: false },
+      { id: "HOUSING_PLAN_AGREEMENT", checked: false, isPersonalized: true },
+    ]);
+  });
+
+  test("shows pending changes over saved values, the latest one winning", () => {
+    const items = toChecklistItems(
+      [
+        { itemId: "BACKUP_HOUSING", checked: false },
+        { itemId: "FINALIZED_HOUSING", checked: false },
+      ],
+      [
+        { itemId: "BACKUP_HOUSING", checked: true },
+        { itemId: "BACKUP_HOUSING", checked: false },
+        { itemId: "FINALIZED_HOUSING", checked: true },
+      ],
+    );
+    expect(items.map((item) => item.checked)).toEqual([false, true]);
+  });
+
+  test("leaves out items the config doesn't have", () => {
+    const items = toChecklistItems(
+      [
+        { itemId: "REMOVED_ITEM", checked: true },
+        { itemId: "BACKUP_HOUSING", checked: false },
+      ],
+      [],
+    );
+    expect(items.map((item) => item.id)).toEqual(["BACKUP_HOUSING"]);
+  });
+});
 
 describe("getQuestionnaireStatus", () => {
   test("returns NOT_STARTED when there is no record", () => {

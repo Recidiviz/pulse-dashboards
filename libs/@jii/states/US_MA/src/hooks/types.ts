@@ -15,6 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import type { ReentryChecklistItemId } from "~@jii/configs";
+
+export type ReentryChecklistItem = {
+  id: ReentryChecklistItemId;
+  checked: boolean;
+  isPersonalized: boolean;
+};
+
+export type ReentryChecklistChange = {
+  itemId: ReentryChecklistItemId;
+  checked: boolean;
+};
+
 export type SaveAnswersInput = {
   answers: Record<string, string[]>;
   isCompleted: boolean;

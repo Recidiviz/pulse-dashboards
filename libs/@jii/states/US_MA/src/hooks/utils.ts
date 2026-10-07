@@ -15,9 +15,48 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { ReentryQuestionnaireQuestionFormat } from "~@jii/configs";
+import {
+  reentryChecklistConfig,
+  reentryChecklistItemIds,
+  type ReentryQuestionnaireQuestionFormat,
+} from "~@jii/configs";
 
 import { ReentryQuestionnaireStatus } from "../components/Reentry/types";
+import { ReentryChecklistChange, ReentryChecklistItem } from "./types";
+
+/**
+ * Returns the resident's checklist items, in the order the config lists them.
+ * Items with a showIf condition are marked as personalized.
+ *
+ * Each item shows its saved value, unless a change to it is still being saved.
+ * pendingChanges are in the order the resident made them, so the latest
+ * change to an item wins.
+ */
+export function toChecklistItems(
+  savedItems: { itemId: string; checked: boolean }[],
+  pendingChanges: ReentryChecklistChange[],
+): ReentryChecklistItem[] {
+  const checkedById = new Map(
+    savedItems.map((item) => [item.itemId, item.checked]),
+  );
+
+  // Pending changes take priority over saved values.
+  for (const change of pendingChanges) {
+    checkedById.set(change.itemId, change.checked);
+  }
+
+  return reentryChecklistItemIds.flatMap((id) => {
+    const checked = checkedById.get(id);
+    if (checked === undefined) return [];
+    return [
+      {
+        id,
+        checked,
+        isPersonalized: reentryChecklistConfig[id].showIf !== undefined,
+      },
+    ];
+  });
+}
 
 /**
  * Derives the resident's questionnaire status from their latest Reentry
