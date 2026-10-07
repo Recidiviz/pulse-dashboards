@@ -980,6 +980,15 @@ describe("ParoleAPIClient", () => {
                   violationSanction: "SEGREGATN",
                   violationFacility: "Facility A",
                 },
+                {
+                  violationCategory: "Class C",
+                  violationDate: "2026-09-02",
+                  violationType: "TOBACCO",
+                  violationDescription: "Found with tobacco",
+                  violationSanction: "LOST PRIVILEGES",
+                  violationFacility: "Facility A",
+                  violationIsPending: true,
+                },
               ],
             },
           },
@@ -996,6 +1005,16 @@ describe("ParoleAPIClient", () => {
           description: "Threatened another resident",
           severity: "Class IIa",
           disposition: "SEGREGATN",
+          isPending: false,
+        },
+        {
+          date: "2026-09-02",
+          facility: "Facility A",
+          violation: "TOBACCO",
+          description: "Found with tobacco",
+          severity: "Class C",
+          disposition: "LOST PRIVILEGES",
+          isPending: true,
         },
       ]);
     });

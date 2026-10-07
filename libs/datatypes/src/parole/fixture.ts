@@ -339,8 +339,6 @@ const GENERIC_COMMUNITY_SUPERVISION_RECOMMENDATIONS: ReadonlyArray<
 
 const CUSTODY_LEVELS = ["Minimum", "Medium", "Maximum"] as const;
 
-const REPORT_AUTHOR_NAMES = ["R. Nguyen", "A. Patel", "M. Johnson"] as const;
-
 // Institutional conduct records, keyed by how many months before the module
 // loads they occurred (see the `iso`/relative-date rationale above). Anderson
 // is hand-authored to match the OBT-41634 design mock 1:1 -- six records
@@ -367,6 +365,7 @@ const ANDERSON_CONDUCT_RECORDS: Array<{
   violation: string;
   description: string;
   disposition: string;
+  isPending: boolean;
   severityByState: Record<ParoleFixtureStateCode, string>;
 }> = [
   {
@@ -376,6 +375,7 @@ const ANDERSON_CONDUCT_RECORDS: Array<{
     description:
       "Refused random urinalysis screening without valid medical exemption.",
     disposition: "30 days disciplinary segregation, loss of good time",
+    isPending: true,
     severityByState: { US_CO: "Class 1", US_ID: "Class A" },
   },
   {
@@ -385,6 +385,7 @@ const ANDERSON_CONDUCT_RECORDS: Array<{
     description:
       "Found in restricted maintenance corridor without authorization.",
     disposition: "Loss of privileges - 7 days",
+    isPending: false,
     severityByState: { US_CO: "Class 3", US_ID: "Class C" },
   },
   {
@@ -393,6 +394,7 @@ const ANDERSON_CONDUCT_RECORDS: Array<{
     violation: "Threatening Behavior",
     description: "Verbal threats toward staff member.",
     disposition: "30 days disciplinary segregation, anger management referral",
+    isPending: false,
     severityByState: { US_CO: "Class 2", US_ID: "Class A" },
   },
   {
@@ -401,6 +403,7 @@ const ANDERSON_CONDUCT_RECORDS: Array<{
     violation: "Fighting",
     description: "Physical altercation in dining hall.",
     disposition: "45 days disciplinary segregation",
+    isPending: false,
     severityByState: { US_CO: "Class 1", US_ID: "Class A" },
   },
   {
@@ -409,6 +412,7 @@ const ANDERSON_CONDUCT_RECORDS: Array<{
     violation: "Disobeying Orders",
     description: "Refused work assignment.",
     disposition: "Loss of privileges - 14 days",
+    isPending: false,
     severityByState: { US_CO: "Class 3", US_ID: "Class C" },
   },
   {
@@ -417,6 +421,7 @@ const ANDERSON_CONDUCT_RECORDS: Array<{
     violation: "Possession of Contraband",
     description: "Found with an unauthorized cell phone during a cell search.",
     disposition: "60 days disciplinary segregation, loss of good time",
+    isPending: false,
     severityByState: { US_CO: "Class 2", US_ID: "Class A" },
   },
 ];
@@ -455,6 +460,7 @@ function buildGenericConductHistory(
         description: "Missed scheduled headcount.",
         severity: classThree,
         disposition: "Loss of privileges - 3 days",
+        isPending: false,
       }),
     ];
   }
@@ -465,6 +471,7 @@ function buildGenericConductHistory(
       description: "Refused a direct order from a correctional officer.",
       severity: classOne,
       disposition: "14 days disciplinary segregation",
+      isPending: false,
     }),
     buildConductRecord(16, {
       facility,
@@ -472,6 +479,7 @@ function buildGenericConductHistory(
       description: "Found in a restricted area without authorization.",
       severity: classThree,
       disposition: "Loss of privileges - 7 days",
+      isPending: false,
     }),
   ];
 }
@@ -541,7 +549,6 @@ function buildAndersonCaseProfile(
     hearingDate,
     hearingTime: "9:00 AM",
     hearingType: "Parole Grant Hearing",
-    reportAuthor: "R. Nguyen",
     isParoleReturn: false,
     sentenceStartDate: iso(subYears(today, 4)),
     paroleEligibilityDate: iso(addDays(today, 20)),
@@ -1288,7 +1295,6 @@ function buildGenericCaseProfile(
       ? HEARING_TIME_BY_PSEUDONYMIZED_ID[hearing.pseudonymizedId]
       : undefined,
     hearingType: hearing.hearingType,
-    reportAuthor: REPORT_AUTHOR_NAMES[index % REPORT_AUTHOR_NAMES.length],
     isParoleReturn: hearing.pseudonymizedId === PAROLE_RETURN_PSEUDONYMIZED_ID,
     sentenceStartDate: iso(subYears(today, 3 + (index % 4))),
     paroleEligibilityDate: iso(addDays(today, 10 + index * 5)),
@@ -1352,6 +1358,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "OFFENDER WAS WITNESSED REACHING INTO A CANTEEN CRATE REMOVING AN ITEM THAT DID NOT BELONG TO THEM AND WAS LATER FOUND IN THEIR CELL.",
         severity: "Class IIa",
         disposition: "LOST PRIVILEGES",
+        isPending: false,
       },
     ],
     docPrograms: [
@@ -1495,6 +1502,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
         description: "INMATE THREW WATER ON STAFF.",
         severity: "Class IIa",
         disposition: "LOST TIME",
+        isPending: false,
       },
       {
         date: "2025-05-20",
@@ -1503,6 +1511,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
         description: "INMATE MAKE THREATS TOWARDS STAFF.",
         severity: "Class IIa",
         disposition: "NO SANCTION - CMNTS",
+        isPending: false,
       },
       {
         date: "2025-05-14",
@@ -1512,6 +1521,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "INMATER ATTEMTED TO CAUSE INJURY TO STAFF BY THROWING AN UNKNOWN LIQUID ON THEM.",
         severity: "Class I",
         disposition: "LOST TIME",
+        isPending: false,
       },
       {
         date: "2025-05-08",
@@ -1520,6 +1530,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
         description: "INMATE THREW HAZARDOUS LIQUID AND HIT STAFF.",
         severity: "Class I",
         disposition: "LOST PRIVILEGES",
+        isPending: false,
       },
       {
         date: "2025-04-25",
@@ -1528,6 +1539,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
         description: "INMATE MADE THREATS TOWARDS STAFF.",
         severity: "Class IIa",
         disposition: "LOST PRIVILEGES",
+        isPending: false,
       },
       {
         date: "2025-03-06",
@@ -1537,6 +1549,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "INMATE DAMAGED ITEMS ASSIGNED TO HIM REQUIRING REPLACEMENT OR REPAIR. RESTITUTION $3.96 TP CSP LAUNDRY",
         severity: "Class IIa",
         disposition: "RESTITUTION",
+        isPending: false,
       },
       {
         date: "2025-02-08",
@@ -1546,6 +1559,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "DO LT DOE HO LT NIGHT. INMATE WS FOIUND IN POSSESSION OF UNAUTHORIZED ITEMS.",
         severity: "Class IIa",
         disposition: "LOST TIME",
+        isPending: false,
       },
       {
         date: "2024-10-29",
@@ -1555,6 +1569,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "OFFENDER ROGERS THREW A LIQUID FECES MIXTURE AT STAFF THROUGH THE TRAY SLOT. 15 DYS RH, 30 DYS LOGT.",
         severity: "Class I",
         disposition: "SEGREGATION",
+        isPending: false,
       },
       {
         date: "2024-10-29",
@@ -1564,6 +1579,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "OFFENDER ROGERS THREW A LIQUID FECES MIXTURE AT STAFF THROUGH THE TRAY SLOT. 15 DYS RH, 30 DYS LOGT.",
         severity: "Class I",
         disposition: "LOST TIME",
+        isPending: false,
       },
       {
         date: "2024-10-28",
@@ -1573,6 +1589,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "OFFENDER ROGERS MADE STATEMENTS TO ASSAULT ANOTHER OFFENDER. 15 DYS RH, 15 DYS LOGT.",
         severity: "Class IIa",
         disposition: "SEGREGATION",
+        isPending: false,
       },
       {
         date: "2024-10-28",
@@ -1582,6 +1599,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "OFFENDER ROGERS MADE STATEMENTS TO HARM STAFF. 15 DYS RH, 15 DYS LOGT.",
         severity: "Class IIa",
         disposition: "LOST TIME",
+        isPending: false,
       },
       {
         date: "2024-10-28",
@@ -1591,6 +1609,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "OFFENDER ROGERS MADE STATEMENTS TO ASSAULT ANOTHER OFFENDER. 15 DYS RH, 15 DYS LOGT.",
         severity: "Class IIa",
         disposition: "LOST TIME",
+        isPending: false,
       },
       {
         date: "2024-10-28",
@@ -1600,6 +1619,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "OFFENDER ROGERS MADE STATEMENTS TO HARM STAFF. 15 DYS RH, 15 DYS LOGT.",
         severity: "Class IIa",
         disposition: "SEGREGATION",
+        isPending: false,
       },
       {
         date: "2024-09-07",
@@ -1609,6 +1629,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "OFFENDER MADE STATEMENTS THAT PLACED A PERSON IN FEAR OF INJURY. WAIVED RIGHT TO A FORMAL HEARING.",
         severity: "Class IIa",
         disposition: "LOST PRIVILEGES",
+        isPending: false,
       },
       {
         date: "2024-04-20",
@@ -1618,6 +1639,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "OFFENDER ROGERS. IT WAS FOUND THE ITEM WAS NOT A HYPODERMIC NEEDLE AND NOT CAPABLE OF ADMINISTERING DANGEROUS DRUGS. NOTHING IMPOSED.",
         severity: "Class IIa",
         disposition: "NOT GUILTY",
+        isPending: false,
       },
       {
         date: "2024-01-14",
@@ -1627,6 +1649,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "OFFENDER ROGERS IN POSSESSION OF ITEMS COMMONLY USED IN THE CORRECTION SETTTING TO MAKE HOMEMADE ALCOHOL. 20 DYS LOP PROBATED. OFFENDER WAIVED RIGHT TO A FORMAL HEARING.",
         severity: "Class IIa",
         disposition: "LOST PRIVILEGES",
+        isPending: false,
       },
       {
         date: "2023-09-28",
@@ -1636,6 +1659,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "OFFENDER MADE THREATENING STATEMENTS TO A STAFF MEMBER. OFFENDER WAIVED RIGHT TO A FORMAL HEARING.",
         severity: "Class IIa",
         disposition: "SEGREGATION",
+        isPending: false,
       },
       {
         date: "2023-09-25",
@@ -1645,6 +1669,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "OFFENDER ROGERS INTERFERRED WITH A DOC STAFF SEARCH, MAKING OFFENSIVE STATEMENTS AND POSSESSING UNAUTHORIZED ITEMS. 8 DYS RH. OFFENDER WAVIED RIGHT TO A FORMAL HEARING.",
         severity: "Class IIa",
         disposition: "SEGREGATION",
+        isPending: false,
       },
       {
         date: "2023-09-25",
@@ -1654,6 +1679,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "OFFENDER ROGERS INTERFERRED WITH A DOC STAFF SEARCH, MAKING OFFENSIVE STATEMENTS AND POSSESSING UNAUTHORIZED ITEMS. 8 DYS RH. OFFENDER WAVIED RIGHT TO A FORMAL HEARING.",
         severity: "Class IIa",
         disposition: "SEGREGATION",
+        isPending: false,
       },
       {
         date: "2023-09-25",
@@ -1663,6 +1689,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "OFFENDER ROGERS INTERFERRED WITH A DOC STAFF SEARCH, MAKING OFFENSIVE STATEMENTS AND POSSESSING UNAUTHORIZED ITEMS. 8 DYS RH. OFFENDER WAVIED RIGHT TO A FORMAL HEARING.",
         severity: "Class IIa",
         disposition: "SEGREGATION",
+        isPending: false,
       },
       {
         date: "2023-06-07",
@@ -1672,6 +1699,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "HO KLINGON DO KYPROT: OFFENDER ROGERS HAD THE WINDOW OF THEIR CELL AND REFUSED DIRECTIVES TO UNCOVER THE WINDOW. THEY THEN THREATENED TO THROW WATER ON STAFF.",
         severity: "Class I",
         disposition: "NO SANCTION - CMNTS",
+        isPending: false,
       },
       {
         date: "2023-06-06",
@@ -1681,6 +1709,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "HO KLINGON DO KYPROT: OFFENDER COVERED THEIR WINDOW DURING COUNT AND REFUSED DIRECTIVES TO SUBMIT TO RESTRAINTS. OFFENDER MADE MULTIPLE THREATS TO STAFF.",
         severity: "Class IIa",
         disposition: "NO SANCTION - CMNTS",
+        isPending: false,
       },
       {
         date: "2023-06-06",
@@ -1690,6 +1719,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "HO KLINGON DO KYPROT: OFFENDER ROGERS MADE THREATS TO KILL STAFF UPON THEIR RELEASE FROM CUSTODY OF THE DEPARTMENT OF CORRECTIONS",
         severity: "Class IIa",
         disposition: "NO SANCTION - CMNTS",
+        isPending: false,
       },
       {
         date: "2023-06-06",
@@ -1699,6 +1729,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "HO KLINGON DO KYPROT: OFFENDER COVERED THEIR WINDOW DURING COUNT AND REFUSED DIRECTIVES TO SUBMIT TO RESTRAINTS. OFFENDER MADE MULTIPLE THREATS TO STAFF.",
         severity: "Class IIa",
         disposition: "NO SANCTION - CMNTS",
+        isPending: false,
       },
       {
         date: "2023-06-06",
@@ -1708,6 +1739,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "HO KLINGON DO KYPROT: OFFENDER ROGERS MADE THREATS TO KILL STAFF UPON THEIR RELEASE FROM CUSTODY OF THE DEPARTMENT OF CORRECTIONS",
         severity: "Class I",
         disposition: "NO SANCTION - CMNTS",
+        isPending: false,
       },
       {
         date: "2023-06-06",
@@ -1717,6 +1749,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "HO KLINGON DO KYPROT: OFFENDER COVERED THEIR WINDOW DURING COUNT AND REFUSED DIRECTIVES TO SUBMIT TO RESTRAINTS. OFFENDER MADE MULTIPLE THREATS TO STAFF.",
         severity: "Class I",
         disposition: "SEGREGATION",
+        isPending: false,
       },
       {
         date: "2023-06-05",
@@ -1726,6 +1759,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "HO KLINGON DO KYPROT: OFFENDER ROGERS WAS FOUND IN POSSESSION OF TATTOO PARAPHERNALIA",
         severity: "Class IIa",
         disposition: "NO SANCTION - CMNTS",
+        isPending: false,
       },
       {
         date: "2023-06-05",
@@ -1735,6 +1769,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "HO KLINGON DO KYPROT: OFFENDER ROGERS WAS FOUND IN POSSESSION OF TATTOO PARAPHERNALIA",
         severity: "Class IIa",
         disposition: "NO SANCTION - CMNTS",
+        isPending: false,
       },
       {
         date: "2022-12-27",
@@ -1744,6 +1779,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "HO KLINGON, DO KYPROT: OFFENDER WAS IN A FIGHT WITH ANOTHER OFFENDER",
         severity: "Class I",
         disposition: "SEGREGATION",
+        isPending: false,
       },
       {
         date: "2020-01-25",
@@ -1753,6 +1789,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "D.O. LT ASTRUD.  H.O. TIP ZAYOOS.  OFFENDER FOUND GUILTY OF COMPLICIT IN ATTEMPTING TO AID TWO OTHERS DURING A MURDER ATTEMPT.  WEAPON FOUND IN THIS OFFENDER'S POSSESSION.",
         severity: "Class I",
         disposition: "LOST TIME",
+        isPending: false,
       },
       {
         date: "2020-01-25",
@@ -1762,6 +1799,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "D.O. LT ASTRUD.  H.O. TIP ZAYOOS.  OFFENDER FOUND GUILTY OF COMPLICIT IN ATTEMPTING TO AID TWO OTHERS DURING A MURDER ATTEMPT.  WEAPON FOUND IN THIS OFFENDER'S POSSESSION.",
         severity: "Class I",
         disposition: "SEGREGATION",
+        isPending: false,
       },
       {
         date: "2020-01-25",
@@ -1771,6 +1809,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "D.O. LT ASTRUD- OFFENDER AIDED OR ASSISTED WITH OTHER OFFENDERS IN A PHYSICAL ALTERCATION, ASSAULTING ANOTHER OFFENDER WITH WEAPONS.  OFFENDER WAS FOUND IN POSSESSION OF A HOMEMADE WEAPON.",
         severity: "Class I",
         disposition: "LOST TIME",
+        isPending: false,
       },
       {
         date: "2020-01-25",
@@ -1780,6 +1819,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "D.O. LT ASTRUD.  H.O. TIP ZAYOOS.  OFFENDER FOUND GUILTY OF COMPLICIT IN ATTEMPTING TO AID TWO OTHERS DURING A MURDER ATTEMPT.  WEAPON FOUND IN THIS OFFENDER'S POSSESSION.",
         severity: "Class I",
         disposition: "SEGREGATION",
+        isPending: false,
       },
       {
         date: "2020-01-25",
@@ -1789,6 +1829,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "D.O. LT ASTRUD- OFFENDER AIDED OR ASSISTED WITH OTHER OFFENDERS IN A PHYSICAL ALTERCATION, ASSAULTING ANOTHER OFFENDER WITH WEAPONS.  OFFENDER WAS FOUND IN POSSESSION OF A HOMEMADE WEAPON.",
         severity: "Class I",
         disposition: "LOST TIME",
+        isPending: false,
       },
       {
         date: "2019-06-11",
@@ -1798,6 +1839,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           'D.O. BILL LION. OFFENDER VERBALLY COMMUNICATED AN INTENT TO JEOPARDIZE SAFETY /SECURITY OF FACILITY WHEN HE TOLD OFFICER HE WAS NOT GOING TO FOLLOW THE RULES "SEE WHAT HAPPENS". OFFICER TOOK THIS AS A THREAT.',
         severity: "Class IIa",
         disposition: "HOUSING RESTRICTION",
+        isPending: false,
       },
       {
         date: "2018-02-07",
@@ -1807,6 +1849,7 @@ const CO_ANONYMIZED_CASE_PROFILES: Record<string, ParoleCase> = {
           "D.O. SAREN.  OFFENDER VERBALLY AND PHYSICALLY COMMUNICATED A DETERMINATION TO HARM ANOTHER PERSON AND WAS OBSERVED TAMPERING WITH A FIRE ALARM.",
         severity: "Class IIa",
         disposition: "LOST PRIVILEGES",
+        isPending: false,
       },
     ],
     docPrograms: [
@@ -1955,7 +1998,6 @@ const ID_SYNTHETIC_CASE_PROFILES: Record<string, ParoleCase> = {
     caseManagerName: "Angela Wright",
     hearingDate: iso(addDays(new Date(), 35)),
     hearingType: "Parole Grant Hearing",
-    reportAuthor: "R. Nguyen",
     isParoleReturn: true,
     sentenceStartDate: iso(subYears(new Date(), 8)),
     paroleEligibilityDate: iso(addDays(new Date(), 90)),
@@ -1972,6 +2014,7 @@ const ID_SYNTHETIC_CASE_PROFILES: Record<string, ParoleCase> = {
         description:
           "Threw an unknown liquid substance at a correctional officer during meal distribution.",
         disposition: "45 days disciplinary segregation, loss of good time",
+        isPending: false,
         severity: "Class A",
       }),
       buildConductRecord(3, {
@@ -1979,6 +2022,7 @@ const ID_SYNTHETIC_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "Threatening Behavior",
         description: "Made verbal threats of violence toward a staff member.",
         disposition: "30 days disciplinary segregation",
+        isPending: false,
         severity: "Class A",
       }),
       buildConductRecord(5, {
@@ -1987,6 +2031,7 @@ const ID_SYNTHETIC_CASE_PROFILES: Record<string, ParoleCase> = {
         description:
           "Found in possession of an unauthorized weapon during a routine cell search.",
         disposition: "60 days disciplinary segregation, loss of good time",
+        isPending: false,
         severity: "Class A",
       }),
       buildConductRecord(9, {
@@ -1994,6 +2039,7 @@ const ID_SYNTHETIC_CASE_PROFILES: Record<string, ParoleCase> = {
         violation: "Property Damage",
         description: "Damaged state-issued property during a cell search.",
         disposition: "Restitution ordered",
+        isPending: false,
         severity: "Class C",
       }),
       buildConductRecord(14, {
@@ -2002,6 +2048,7 @@ const ID_SYNTHETIC_CASE_PROFILES: Record<string, ParoleCase> = {
         description:
           "Physical altercation with another incarcerated individual in the yard.",
         disposition: "30 days disciplinary segregation",
+        isPending: false,
         severity: "Class A",
       }),
       buildConductRecord(20, {
@@ -2010,6 +2057,7 @@ const ID_SYNTHETIC_CASE_PROFILES: Record<string, ParoleCase> = {
         description:
           "Found with unauthorized tattoo paraphernalia during a cell inspection.",
         disposition: "Loss of privileges - 14 days",
+        isPending: false,
         severity: "Class C",
       }),
       buildConductRecord(27, {
@@ -2018,6 +2066,7 @@ const ID_SYNTHETIC_CASE_PROFILES: Record<string, ParoleCase> = {
         description:
           "Struck a correctional officer during an escort to segregation.",
         disposition: "Disciplinary segregation, referred for prosecution",
+        isPending: false,
         severity: "Class A",
       }),
       buildConductRecord(33, {
@@ -2026,6 +2075,7 @@ const ID_SYNTHETIC_CASE_PROFILES: Record<string, ParoleCase> = {
         description:
           "Made threats of harm toward staff following a disciplinary hearing.",
         disposition: "30 days disciplinary segregation",
+        isPending: false,
         severity: "Class A",
       }),
     ],

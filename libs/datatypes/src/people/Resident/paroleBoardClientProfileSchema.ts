@@ -154,6 +154,8 @@ export const paroleBoardClientProfileViolationSchema = z.object({
   violationDescription: nullishAsUndefined(z.string()),
   violationSanction: nullishAsUndefined(z.string()),
   violationFacility: nullishAsUndefined(z.string()),
+  // True while the violation awaits a decision. US_ID only.
+  violationIsPending: nullishAsUndefined(z.boolean()),
 });
 export type ParoleBoardClientProfileViolation = z.infer<
   typeof paroleBoardClientProfileViolationSchema

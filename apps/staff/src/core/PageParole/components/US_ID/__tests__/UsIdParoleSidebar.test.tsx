@@ -24,10 +24,6 @@ import { UsIdParoleSidebar } from "../UsIdParoleSidebar";
 
 const CASE = paroleCasesFixtureByState.US_ID["350463"];
 
-// The Report Author row shows the case manager until the backend sources an
-// author of its own, so the tests assert against CASE's own value.
-const { caseManagerName } = CASE;
-
 function makeConfig(overrides: Partial<ParoleConfig> = {}): ParoleConfig {
   return {
     // These tests render case-profile sections, which never read the docket
@@ -61,22 +57,22 @@ describe("UsIdParoleSidebar", () => {
     expect(screen.queryByText(/Level 3/)).not.toBeInTheDocument();
   });
 
-  it("shows a Report Status block with hearing type, report author, and hearing date", () => {
-    render(<UsIdParoleSidebar caseDetail={CASE} config={CONFIG_WITH_TOOLS} />);
+  it("shows a Report Status block with report type and hearing month", () => {
+    render(
+      <UsIdParoleSidebar
+        caseDetail={{ ...CASE, hearingDate: "2026-10-14" }}
+        config={CONFIG_WITH_TOOLS}
+      />,
+    );
 
     expect(screen.getByText("Report Status")).toBeInTheDocument();
-    expect(screen.getByText("Hearing Type")).toBeInTheDocument();
+    expect(screen.getByText("Report Type")).toBeInTheDocument();
     expect(screen.getByText(CASE.hearingType)).toBeInTheDocument();
-    expect(screen.getByText(caseManagerName)).toBeInTheDocument();
+    expect(screen.getByText("Parole Board Hearing")).toBeInTheDocument();
+    expect(screen.getByText("October")).toBeInTheDocument();
+    expect(screen.queryByText("Oct 14, 2026")).not.toBeInTheDocument();
 
-    // Report Author sits above the hearing date, per the V1 design.
-    const author = screen.getByText("Report Author");
-    const hearing = screen.getByText("Parole Board Hearing");
-    expect(
-      author.compareDocumentPosition(hearing) &
-        Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
-
+    expect(screen.queryByText("Report Author")).not.toBeInTheDocument();
     // Facility moved to the identity block; Case Manager is not shown for US_ID.
     expect(screen.queryByText("Facility")).not.toBeInTheDocument();
     expect(screen.queryByText("Case Manager")).not.toBeInTheDocument();

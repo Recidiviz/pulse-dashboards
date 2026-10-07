@@ -85,6 +85,16 @@ const FullNarrative = styled.div`
 `;
 
 /**
+ * Returns the report's severity class, with "(Pending)" appended while the
+ * report awaits a decision.
+ */
+export const dorSeverityLabel = ({
+  severity,
+  isPending,
+}: ParoleConductRecord): string =>
+  isPending ? `${severity} (Pending)` : severity;
+
+/**
  * The whole of one disciplinary report. The card behind it clips the
  * narrative to a few lines, so this is where a reader sees all of it.
  *
@@ -136,7 +146,7 @@ export function UsIdDisciplinaryReportModal({
             </FactRowStack>
             <FactRowStack>
               <WorkflowsBadgePill
-                text={report.severity}
+                text={dorSeverityLabel(report)}
                 palette={conductClassificationPalette(
                   conductClassificationColors,
                   report.severity,

@@ -606,6 +606,7 @@ export class ParoleAPIClient implements ParoleAPI {
       description: violation.violationDescription ?? UNKNOWN_TEXT,
       severity: violation.violationCategory ?? UNKNOWN_TEXT,
       disposition: violation.violationSanction ?? UNKNOWN_TEXT,
+      isPending: violation.violationIsPending ?? false,
     }));
   }
 

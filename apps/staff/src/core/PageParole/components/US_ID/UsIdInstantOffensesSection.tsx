@@ -41,7 +41,8 @@ const InstantOffenseList = styled.ul`
 `;
 
 /**
- * The sidebar's Instant Offenses field
+ * The sidebar's Instant Offenses field. Offenses with the same name show once,
+ * with a count, in the order each name first appears.
  *
  * @param offenses - The resident's instant offenses.
  */
@@ -50,13 +51,21 @@ export function UsIdInstantOffensesSection({
 }: {
   offenses: Array<ParoleOffense>;
 }) {
+  const countsByConviction = new Map<string, number>();
+  for (const { conviction } of offenses) {
+    countsByConviction.set(
+      conviction,
+      (countsByConviction.get(conviction) ?? 0) + 1,
+    );
+  }
+
   return (
     <InstantOffensesField>
       <UsIdFactLabel>Instant Offenses</UsIdFactLabel>
       <InstantOffenseList>
-        {offenses.map((offense) => (
-          <li key={`${offense.docket}-${offense.conviction}`}>
-            {offense.conviction}
+        {[...countsByConviction].map(([conviction, count]) => (
+          <li key={conviction}>
+            {count > 1 ? `${conviction} (${count})` : conviction}
           </li>
         ))}
       </InstantOffenseList>

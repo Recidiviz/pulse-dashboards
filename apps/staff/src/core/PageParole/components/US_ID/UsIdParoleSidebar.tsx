@@ -33,6 +33,7 @@ import {
   calculateAge,
   FactRow,
   formatDate,
+  formatMonth,
   Hr,
   StackedFactRow,
   StackedFacts,
@@ -154,18 +155,14 @@ export function UsIdParoleSidebar({
         <SubsectionTitle>Report Status</SubsectionTitle>
         <StackedFacts>
           <ReportStatusRow>
-            <UsIdFactLabel>Hearing Type</UsIdFactLabel>
+            <UsIdFactLabel>Report Type</UsIdFactLabel>
             <UsIdFactValue>{caseDetail.hearingType}</UsIdFactValue>
-          </ReportStatusRow>
-          <ReportStatusRow>
-            <UsIdFactLabel>Report Author</UsIdFactLabel>
-            <UsIdFactValue>{caseDetail.caseManagerName}</UsIdFactValue>
           </ReportStatusRow>
           <ReportStatusRow>
             <UsIdFactLabel>Parole Board Hearing</UsIdFactLabel>
             <UsIdFactValue>
               {caseDetail.hearingDate
-                ? formatDate(caseDetail.hearingDate)
+                ? formatMonth(caseDetail.hearingDate)
                 : "Not scheduled"}
             </UsIdFactValue>
           </ReportStatusRow>

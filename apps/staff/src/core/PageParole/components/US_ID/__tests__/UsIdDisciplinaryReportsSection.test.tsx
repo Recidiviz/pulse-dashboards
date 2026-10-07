@@ -44,6 +44,7 @@ function record(fields: Partial<ParoleConductRecord>): ParoleConductRecord {
     description: "Resident stated the other individual provoked her.",
     severity: "Class B",
     disposition: "Loss of privileges",
+    isPending: false,
     ...fields,
   };
 }
@@ -70,6 +71,16 @@ describe("UsIdDisciplinaryReportsSection", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("Institution")).toBeInTheDocument();
     expect(screen.getByText("ISCI, medium")).toBeInTheDocument();
+    expect(screen.getByText("Class B")).toBeInTheDocument();
+  });
+
+  it("appends (Pending) to the class only while a report awaits a decision", () => {
+    renderSection([
+      record({ violation: "Tobacco possession", isPending: true }),
+      record({ violation: "Disobeying orders" }),
+    ]);
+
+    expect(screen.getByText("Class B (Pending)")).toBeInTheDocument();
     expect(screen.getByText("Class B")).toBeInTheDocument();
   });
 

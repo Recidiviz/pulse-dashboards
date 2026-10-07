@@ -44,6 +44,7 @@ function makeRecord(fields: Partial<ParoleConductRecord>): ParoleConductRecord {
     description: "Found in restricted maintenance corridor.",
     severity: "Class 1",
     disposition: "Loss of privileges - 7 days",
+    isPending: false,
     ...fields,
   };
 }

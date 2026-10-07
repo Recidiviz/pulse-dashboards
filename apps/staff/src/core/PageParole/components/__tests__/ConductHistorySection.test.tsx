@@ -35,6 +35,7 @@ function makeRecord(fields: Partial<ParoleConductRecord>): ParoleConductRecord {
     description: "Physical altercation in dining hall.",
     severity: "Major",
     disposition: "45 days disciplinary segregation",
+    isPending: false,
     ...fields,
   };
 }

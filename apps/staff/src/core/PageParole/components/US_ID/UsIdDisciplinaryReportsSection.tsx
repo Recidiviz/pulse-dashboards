@@ -45,7 +45,10 @@ import {
   UsIdSubsectionHeading,
   UsIdSubsectionTitle,
 } from "./UsIdCaseProfileStyles";
-import { UsIdDisciplinaryReportModal } from "./UsIdDisciplinaryReportModal";
+import {
+  dorSeverityLabel,
+  UsIdDisciplinaryReportModal,
+} from "./UsIdDisciplinaryReportModal";
 
 // Reports older than this are left out entirely; Idaho's design has no "see
 // older" affordance, unlike Colorado's conduct history.
@@ -165,7 +168,7 @@ export function UsIdDisciplinaryReportsSection({
                   </ReportFact>
                 </ReportFacts>
                 <WorkflowsBadgePill
-                  text={record.severity}
+                  text={dorSeverityLabel(record)}
                   palette={conductClassificationPalette(
                     conductClassificationColors,
                     record.severity,

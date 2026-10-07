@@ -168,6 +168,7 @@ export const paroleConductRecordSchema = z.object({
   description: z.string(),
   severity: z.string(),
   disposition: z.string(),
+  isPending: z.boolean(),
 });
 export type ParoleConductRecord = z.infer<typeof paroleConductRecordSchema>;
 
@@ -307,7 +308,6 @@ export const paroleCaseSchema = z.object({
   hearingDateIsPlaceholder: z.boolean().optional(),
   hearingTime: z.string().optional(),
   hearingType: z.string(),
-  reportAuthor: z.string().optional(),
   isParoleReturn: z.boolean().optional(),
   sentenceStartDate: z.string(),
   paroleEligibilityDate: z.string(),

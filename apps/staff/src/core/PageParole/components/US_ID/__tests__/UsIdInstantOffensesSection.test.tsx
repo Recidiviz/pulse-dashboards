@@ -50,6 +50,22 @@ describe("UsIdInstantOffensesSection", () => {
     expect(screen.getByText("Burglary")).toBeInTheDocument();
   });
 
+  it("lists a repeated conviction once, with its count", () => {
+    render(
+      <UsIdInstantOffensesSection
+        offenses={[
+          makeOffense({ docket: "2021-CF-0489", conviction: "Armed Robbery" }),
+          makeOffense({ docket: "2022-CF-0110", conviction: "Burglary" }),
+          makeOffense({ docket: "2022-CF-0111", conviction: "Armed Robbery" }),
+        ]}
+      />,
+    );
+
+    expect(screen.getByText("Armed Robbery (2)")).toBeInTheDocument();
+    expect(screen.getByText("Burglary")).toBeInTheDocument();
+    expect(screen.getAllByRole("listitem")).toHaveLength(2);
+  });
+
   it("renders the Instant Offenses label even with a single offense", () => {
     render(<UsIdInstantOffensesSection offenses={[makeOffense({})]} />);
 
