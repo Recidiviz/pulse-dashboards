@@ -34,6 +34,13 @@ export interface SlackMessageInputs {
   stagingGithubLink?: string;
 }
 
+export interface SlackNotification {
+  channel: string;
+  text: string;
+  // Posted as a reply in the thread under text, so the channel shows only the summary line.
+  threadReply?: string;
+}
+
 /**
  * Assemble the Slack notification for a staging or production deploy. Pure: all I/O-derived
  * values arrive via {@link SlackMessageInputs}. Returns `null` when there's nothing to post
@@ -44,11 +51,12 @@ export function buildSlackNotification(
   successfullyDeployedServices: string[],
   published: PublishedRelease | null,
   inputs: SlackMessageInputs,
-): { channel: string; text: string } | null {
+): SlackNotification | null {
   const { deployer, deployDurationMinutes, stagingGithubLink } = inputs;
 
   let channel: string | null = null;
   let message: string | null = null;
+  let threadReply: string | undefined;
 
   if (plan.env === "staging") {
     channel = polarisEngChannelId;
@@ -77,7 +85,9 @@ export function buildSlackNotification(
 
     const githubLink = `https://github.com/${owner}/${repo}/releases/tag/${published.nextVersion}`;
     message += ` (<${githubLink}|view on GitHub>)`;
-    message += ` \`\`\`${releaseNotesMessage}\`\`\``;
+    if (releaseNotesMessage) {
+      threadReply = `\`\`\`${releaseNotesMessage}\`\`\``;
+    }
 
     channel = polarisChannelId;
   }
@@ -85,7 +95,7 @@ export function buildSlackNotification(
   if (channel === null || message === null) return null;
 
   message += `\nWhat was deployed: ${successfullyDeployedServices.join(", ")}`;
-  return { channel, text: message };
+  return { channel, text: message, threadReply };
 }
 
 /**
@@ -134,6 +144,7 @@ export async function postDeployNotification(
   );
   if (!note) return;
 
+  let parentTs: string | undefined;
   try {
     const slackMessageResponse = await slack.chat.postMessage({
       channel: note.channel,
@@ -144,6 +155,7 @@ export async function postDeployNotification(
     });
     if (slackMessageResponse.ok) {
       console.log(`Successfully posted to Slack channel ${note.channel}`);
+      parentTs = slackMessageResponse.ts;
     } else {
       throw slackMessageResponse;
     }
@@ -152,6 +164,30 @@ export async function postDeployNotification(
       "There was a problem posting to Slack, please post the message manually:",
     );
     console.log(note.text);
+    if (note.threadReply) {
+      console.log("Then reply in its thread with:");
+      console.log(note.threadReply);
+    }
+    console.error(error);
+    return;
+  }
+
+  if (!note.threadReply) return;
+
+  try {
+    const threadReplyResponse = await slack.chat.postMessage({
+      channel: note.channel,
+      thread_ts: parentTs,
+      text: note.threadReply,
+      unfurl_links: false,
+      unfurl_media: false,
+    });
+    if (!threadReplyResponse.ok) throw threadReplyResponse;
+  } catch (error) {
+    console.log(
+      "There was a problem posting the thread reply to Slack, please post it manually:",
+    );
+    console.log(note.threadReply);
     console.error(error);
   }
 }

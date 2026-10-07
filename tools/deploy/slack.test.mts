@@ -104,9 +104,10 @@ describe("buildSlackNotification", () => {
       "me deployed v5.296.0 to production in 7 minutes!",
     );
     expect(note?.text).toContain("releases/tag/v5.296.0|view on GitHub");
-    // header + footer lines removed, the middle kept inside a code block
-    expect(note?.text).toContain("```- change one\n- change two```");
     expect(note?.text).toContain("\nWhat was deployed: Staff Frontend");
+    expect(note?.text).not.toContain("change one");
+    // header + footer lines removed, the middle kept inside a code block in the thread
+    expect(note?.threadReply).toBe("```- change one\n- change two```");
   });
 
   it("builds a re-deploy message pointing at the existing release (no published notes)", () => {
@@ -127,5 +128,6 @@ describe("buildSlackNotification", () => {
     );
     expect(note?.text).toContain("releases/tag/v5.300.0|view on GitHub");
     expect(note?.text).toContain("\nWhat was deployed: Meetings Backend");
+    expect(note?.threadReply).toBeUndefined();
   });
 });
