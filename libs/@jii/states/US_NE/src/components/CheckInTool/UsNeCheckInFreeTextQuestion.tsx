@@ -15,10 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { CheckInQuestionId } from "~@jii/configs";
+import { checkInQuestionConfig, CheckInQuestionId } from "~@jii/configs";
 import { useUsNeTranslations } from "~@jii/translation";
 
 import { useResidentGivenNames } from "./hooks/useResidentGivenNames";
+import {
+  OptionalHint,
+  QuestionText,
+  TextEntry,
+} from "./UsNeCheckInQuestion.styles";
 
 export const UsNeCheckInFreeTextQuestion = ({
   id,
@@ -26,17 +31,20 @@ export const UsNeCheckInFreeTextQuestion = ({
   id: CheckInQuestionId;
 }) => {
   const { t } = useUsNeTranslations();
+  const isOptional = !!checkInQuestionConfig[id].optional;
 
   const questionCopy = t(($) => $.checkIn.questions[id], {
     returnObjects: true,
     name: useResidentGivenNames(),
   });
 
-  // TODO(OBT-47849) styles for custom inputs
   return (
     <>
-      <p>{questionCopy.question}</p>
-      <textarea />
+      <QuestionText>{questionCopy.question}</QuestionText>
+      {isOptional && (
+        <OptionalHint>{t(($) => $.checkIn.questionPage.optional)}</OptionalHint>
+      )}
+      <TextEntry />
     </>
   );
 };

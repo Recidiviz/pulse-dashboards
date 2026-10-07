@@ -15,10 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { CheckInQuestionId } from "~@jii/configs";
+import { useState } from "react";
+
+import { checkInQuestionConfig, CheckInQuestionId } from "~@jii/configs";
 import { useUsNeTranslations } from "~@jii/translation";
+import { Radio, RadioGroup } from "~design-system";
 
 import { useResidentGivenNames } from "./hooks/useResidentGivenNames";
+import {
+  AnswerHint,
+  OptionalHint,
+  OptionCard,
+  OptionsList,
+  QuestionText,
+} from "./UsNeCheckInQuestion.styles";
 
 export const UsNeCheckInRadioQuestion = ({
   id,
@@ -28,6 +38,9 @@ export const UsNeCheckInRadioQuestion = ({
   answers: readonly string[];
 }) => {
   const { t } = useUsNeTranslations();
+  const isOptional = !!checkInQuestionConfig[id].optional;
+
+  const [selected, setSelected] = useState<string | null>(null);
 
   const questionCopy = t(($) => $.checkIn.questions[id], {
     returnObjects: true,
@@ -43,17 +56,28 @@ export const UsNeCheckInRadioQuestion = ({
   const answerCopy: Record<string, string> =
     "answers" in questionCopy ? questionCopy.answers : {};
 
-  // TODO(OBT-47849) styles for custom inputs
   return (
     <>
-      <p>{questionCopy.question}</p>
-      <ul>
-        {answers.map((answerOpt) => (
-          <li key={answerOpt}>
-            {answerCopy[answerOpt] ?? defaultRadioAnswers[answerOpt]}
-          </li>
-        ))}
-      </ul>
+      <QuestionText>{questionCopy.question}</QuestionText>
+      {isOptional && (
+        <OptionalHint>{t(($) => $.checkIn.questionPage.optional)}</OptionalHint>
+      )}
+      <AnswerHint>{t(($) => $.checkIn.questionPage.selectOne)}</AnswerHint>
+      <RadioGroup
+        value={selected ?? undefined}
+        onChange={(value) => setSelected(value)}
+        ariaLabel={questionCopy.question}
+      >
+        <OptionsList>
+          {answers.map((option) => (
+            <OptionCard key={option} $selected={option === selected}>
+              <Radio value={option}>
+                {answerCopy[option] ?? defaultRadioAnswers[option]}
+              </Radio>
+            </OptionCard>
+          ))}
+        </OptionsList>
+      </RadioGroup>
     </>
   );
 };

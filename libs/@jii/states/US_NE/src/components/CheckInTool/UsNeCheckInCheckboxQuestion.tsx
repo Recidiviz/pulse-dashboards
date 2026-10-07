@@ -15,10 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { CheckInQuestionId } from "~@jii/configs";
+import { useState } from "react";
+
+import { checkInQuestionConfig, CheckInQuestionId } from "~@jii/configs";
 import { useUsNeTranslations } from "~@jii/translation";
+import { Checkbox, CheckboxGroup } from "~design-system";
 
 import { useResidentGivenNames } from "./hooks/useResidentGivenNames";
+import {
+  AnswerHint,
+  OptionalHint,
+  OptionCard,
+  OptionsList,
+  QuestionText,
+} from "./UsNeCheckInQuestion.styles";
 
 export const UsNeCheckInCheckboxQuestion = ({
   id,
@@ -28,6 +38,9 @@ export const UsNeCheckInCheckboxQuestion = ({
   answers: readonly string[];
 }) => {
   const { t } = useUsNeTranslations();
+  const isOptional = !!checkInQuestionConfig[id].optional;
+
+  const [selected, setSelected] = useState<string[]>([]);
 
   const questionCopy = t(($) => $.checkIn.questions[id], {
     returnObjects: true,
@@ -39,15 +52,26 @@ export const UsNeCheckInCheckboxQuestion = ({
   const answerCopy: Record<string, string> =
     "answers" in questionCopy ? questionCopy.answers : {};
 
-  // TODO(OBT-47849) styles for custom inputs
   return (
     <>
-      <p>{questionCopy.question}</p>
-      <ul>
-        {answers.map((answerOpt) => (
-          <li key={answerOpt}>{answerCopy[answerOpt]}</li>
-        ))}
-      </ul>
+      <QuestionText>{questionCopy.question}</QuestionText>
+      {isOptional && (
+        <OptionalHint>{t(($) => $.checkIn.questionPage.optional)}</OptionalHint>
+      )}
+      <AnswerHint>{t(($) => $.checkIn.questionPage.checkAll)}</AnswerHint>
+      <CheckboxGroup
+        value={selected}
+        onChange={setSelected}
+        ariaLabel={questionCopy.question}
+      >
+        <OptionsList>
+          {answers.map((option) => (
+            <OptionCard key={option} $selected={selected.includes(option)}>
+              <Checkbox value={option}>{answerCopy[option]}</Checkbox>
+            </OptionCard>
+          ))}
+        </OptionsList>
+      </CheckboxGroup>
     </>
   );
 };

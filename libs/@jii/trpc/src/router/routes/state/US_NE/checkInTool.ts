@@ -19,12 +19,12 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { usNeCheckInSchema } from "~@jii/configs";
+import { checkInStatus } from "~@jii/configs";
 
 import {
   getCheckInInputSchema,
   getCheckInQueryResolver,
 } from "../../../../helpers/US_NE/checkIn";
-import { checkInStatus } from "../../../../helpers/US_NE/checkInUtils";
 import { residentRestrictedMiddleware } from "../../../../middleware/residentRestrictedMiddleware";
 import { nebraskaProcedure } from "./nebraskaProcedure";
 

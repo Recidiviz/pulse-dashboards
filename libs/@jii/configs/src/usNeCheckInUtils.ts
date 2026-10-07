@@ -17,7 +17,9 @@
 
 import {
   checkInQuestionConfig,
+  CheckInQuestionId,
   CheckInQuestionInfo,
+  CheckInSectionId,
   CheckInStatus,
   checkInToolSpec,
   UsNeCheckInAnswers,
@@ -42,6 +44,20 @@ export function getVisibleQuestions(
       return [];
     });
   });
+}
+
+/**
+ * Return the ordinal position of the given questionId among the questions in its section.
+ */
+export function positionOfQuestion(
+  questionId: CheckInQuestionId,
+  sectionId: CheckInSectionId,
+  answers: UsNeCheckInAnswers,
+): number {
+  const questionsInSection = getVisibleQuestions(answers).filter(
+    (q) => q.sectionId === sectionId,
+  );
+  return questionsInSection.findIndex((q) => q.questionId === questionId) + 1;
 }
 
 /**

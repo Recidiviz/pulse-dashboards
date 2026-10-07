@@ -31,6 +31,7 @@ export const Wrapper = styled.div`
   justify-content: end;
   align-items: center;
   gap: ${rem(spacing.md)};
+  background: ${palette.marble1};
   border-top: 1px solid ${palette.slate20};
   bottom: 0;
   left: 0;

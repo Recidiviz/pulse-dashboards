@@ -326,11 +326,11 @@
       "HOUSING_BACKUP_PLAN": {
         "question": "Do you have a backup plan if this falls through?"
       },
-      "HOUSING_BACKUP_PLAN_DESCRIPTION": {
-        "question": "What is your housing backup plan?"
-      },
       "HOUSING_SUCCESS": {
         "question": "If your housing was successful, what would that look like day to day?"
+      },
+      "HOUSING_BACKUP_PLAN_DESCRIPTION": {
+        "question": "What is your housing backup plan?"
       },
       "HOUSING_STEP": {
         "question": "What is one small step you could take right now to support your housing plan?"
