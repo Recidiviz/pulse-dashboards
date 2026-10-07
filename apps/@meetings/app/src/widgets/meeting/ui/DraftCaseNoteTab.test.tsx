@@ -46,6 +46,10 @@ jest.mock("~@meetings/app/shared/analytics", () => ({
   useAnalytics: () => ({ track: mockTrack }),
 }));
 
+jest.mock("./AiGeneratedIndicator", () => ({
+  AiGeneratedIndicator: () => null,
+}));
+
 const mockInvalidate = jest.fn();
 jest.mock("~@meetings/app/shared/api", () => ({
   trpc: {

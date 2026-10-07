@@ -28,6 +28,8 @@ import { PersonType } from "~@meetings/app/shared/api";
 import SearchBar from "~@meetings/app/shared/ui/SearchBar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
+import { AiGeneratedIndicator } from "./AiGeneratedIndicator";
+
 type Props = {
   transcription?: {
     confidence: number | null;
@@ -121,9 +123,10 @@ const MeetingsTranscriptionTab = ({
 
   return (
     <View className="flex flex-col pb-9">
-      <Typography variant="heading-4" className="mb-3">
-        Transcript
-      </Typography>
+      <View className="mb-3 flex-row items-center gap-1.5">
+        <Typography variant="heading-4">Transcript</Typography>
+        <AiGeneratedIndicator />
+      </View>
       <SearchBar
         placeholder="Search by keyword or phrase"
         value={searchQuery}

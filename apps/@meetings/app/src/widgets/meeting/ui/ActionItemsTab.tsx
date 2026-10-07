@@ -50,6 +50,8 @@ import Modal from "~@meetings/app/shared/ui/Modal";
 import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
+import { AiGeneratedIndicator } from "./AiGeneratedIndicator";
+
 function actionItemErrorMessage(fallback: string, error: unknown): string {
   const message = extractError(error);
   return message ? `${fallback}: ${message}` : fallback;
@@ -143,9 +145,12 @@ export const ActionItemsTab = ({
     <View className="flex-1 pb-4">
       <View className="mb-3 flex-row items-center justify-between">
         <View className="flex flex-col">
-          <Typography variant="heading-4">
-            {isMobileEditMode ? "Edit Action Items" : "Action items"}
-          </Typography>
+          <View className="flex-row items-center gap-1.5">
+            <Typography variant="heading-4">
+              {isMobileEditMode ? "Edit Action Items" : "Action items"}
+            </Typography>
+            <AiGeneratedIndicator />
+          </View>
           {!isMobileReviewMode && (
             <Typography variant="body-s-regular" className="mt-1">
               Click on an item's text to make edits

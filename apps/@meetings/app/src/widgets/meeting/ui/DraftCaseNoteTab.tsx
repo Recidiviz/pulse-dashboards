@@ -35,6 +35,7 @@ import {
   CaseNoteTypingAnimation,
   useCaseNoteTyping,
 } from "../model/useCaseNoteTyping";
+import { AiGeneratedIndicator } from "./AiGeneratedIndicator";
 
 type Props = {
   meetingId: string;
@@ -121,7 +122,10 @@ const DraftCaseNoteTab = ({
     <View className="flex-1 gap-3 pb-4">
       <View className="flex-row items-center justify-between">
         <View>
-          <Typography variant="heading-4">Draft case note</Typography>
+          <View className="flex-row items-center gap-1.5">
+            <Typography variant="heading-4">Draft case note</Typography>
+            <AiGeneratedIndicator />
+          </View>
           {canEdit && isNoteShown && (
             <Typography variant="body-s-regular">
               Place your cursor where you want to start typing

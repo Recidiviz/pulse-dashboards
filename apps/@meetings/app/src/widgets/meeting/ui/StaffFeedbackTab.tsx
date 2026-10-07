@@ -21,6 +21,8 @@ import { View } from "react-native";
 import type { MeetingDetails } from "~@meetings/app/entities/meeting";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
+import { AiGeneratedIndicator } from "./AiGeneratedIndicator";
+
 type StaffFeedback = NonNullable<MeetingDetails["staffFeedback"]>;
 
 type Props = {
@@ -83,9 +85,12 @@ const FeedbackCard = ({
 const StaffFeedbackTab = ({ staffFeedback, outputVote }: Props) => {
   return (
     <View className="flex-1 gap-5 pb-4">
-      <Typography className="text-xl font-semibold text-primary">
-        Staff Feedback
-      </Typography>
+      <View className="flex-row items-center gap-1.5">
+        <Typography className="text-xl font-semibold text-primary">
+          Staff Feedback
+        </Typography>
+        <AiGeneratedIndicator />
+      </View>
       <FeedbackCard
         title="What you did well"
         items={staffFeedback.whatYouDidWell}
