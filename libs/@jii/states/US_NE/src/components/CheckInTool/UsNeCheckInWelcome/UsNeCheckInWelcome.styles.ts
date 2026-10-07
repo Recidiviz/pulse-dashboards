@@ -15,7 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const UsNeCheckInCompletion = () => {
-  // TODO(OBT-47844): Add appropriate styles/copy to this page
-  return <div>You're done!</div>;
-};
+import { rem } from "polished";
+import styled from "styled-components";
+
+import { SlateCopy } from "~@jii/common-ui";
+import { spacing, typography } from "~design-system";
+
+export const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(spacing.lg)};
+
+  padding-top: ${rem(spacing.lg)};
+`;
+
+export const WelcomeHeading = styled.h2`
+  ${typography.Serif34}
+`;
+
+export const Description = styled(SlateCopy)`
+  margin-bottom: 0;
+
+  & p:last-child {
+    margin-bottom: 0;
+  }
+`;

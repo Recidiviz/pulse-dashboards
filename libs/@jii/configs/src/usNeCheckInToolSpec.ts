@@ -53,7 +53,7 @@ export const checkInToolSpec: CheckInSectionSpec[] = [
   },
   {
     id: "sectionWellness",
-    questions: ["HELPFUL_SUPPORT"],
+    questions: ["WELLNESS_SUPPORT"],
   },
 ];
 export const checkInSections = checkInToolSpec.map(({ id }) => id);
@@ -82,7 +82,7 @@ export type CheckInQuestionId =
   | "WHERE_WILL_YOU_LIVE"
   | "HOUSING_BACKUP_PLAN"
   | "HOUSING_SUCCESS"
-  | "HELPFUL_SUPPORT";
+  | "WELLNESS_SUPPORT";
 
 export const checkInQuestionConfig: Record<
   CheckInQuestionId,
@@ -104,7 +104,7 @@ export const checkInQuestionConfig: Record<
   HOUSING_SUCCESS: {
     format: "FREE_TEXT",
   },
-  HELPFUL_SUPPORT: {
+  WELLNESS_SUPPORT: {
     format: "CHECKBOX",
     answers: [
       "SUPPORT_GROUP",

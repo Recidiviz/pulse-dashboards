@@ -34,7 +34,7 @@ export const UsNeCheckInExitModal = ({
   onLeave,
 }: UsNeCheckInExitModalProps) => {
   const { t } = useUsNeTranslations();
-  const { title, content, info, cancel, saveAndLeave } = t(
+  const { title, content, info, cancel, saveAndExit } = t(
     ($) => $.checkIn.exitModal,
     { returnObjects: true },
   );
@@ -52,7 +52,7 @@ export const UsNeCheckInExitModal = ({
           {cancel}
         </JIIButton>
         <JIIButton kind="primary" onClick={onLeave}>
-          {saveAndLeave}
+          {saveAndExit}
         </JIIButton>
       </Actions>
     </Modal>

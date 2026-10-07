@@ -15,28 +15,27 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { CheckInSectionId } from "~@jii/configs";
+import { JIIButton } from "~@jii/common-ui";
 
-import { useUsNeCheckInContext } from "./UsNeCheckInContext";
+import { Info, Wrapper } from "./UsNeCheckInFooter.styles";
 
-export const UsNeCheckInSectionIntro = ({
-  sectionId,
-}: {
-  sectionId: CheckInSectionId;
-}) => {
-  const { markSeen } = useUsNeCheckInContext();
+type UsNeCheckInFooterProps = {
+  onButtonClick: () => void;
+  buttonText: string;
+  infoText?: string;
+};
 
-  // TODO(OBT-47844): Add appropriate styles/copy to this page
+export const UsNeCheckInFooter = ({
+  onButtonClick,
+  buttonText,
+  infoText,
+}: UsNeCheckInFooterProps) => {
   return (
-    <>
-      <div>Section intro: {sectionId}</div>
-      <button
-        onClick={() => {
-          markSeen({ screenKind: "sectionIntro", sectionId });
-        }}
-      >
-        Next
-      </button>
-    </>
+    <Wrapper>
+      {/* TODO(OBT-47849) Show explanatory text when saving to the db fails */}
+      {infoText && <Info>{infoText}</Info>}
+      {/* TODO(OBT-47849) Disable this button when the user hasn't answered a required question */}
+      <JIIButton onClick={onButtonClick}>{buttonText}</JIIButton>
+    </Wrapper>
   );
 };

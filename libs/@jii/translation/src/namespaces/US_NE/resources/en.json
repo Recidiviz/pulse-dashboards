@@ -307,7 +307,7 @@
       "content": "We'll save your progress. When you come back, you'll start on this question.",
       "info": "Your answer for this question won't be saved. Cancel and hit Next first if you want to keep it.",
       "cancel": "Cancel",
-      "saveAndLeave": "Save and leave"
+      "saveAndExit": "Save and exit"
     },
     "standardRadioAnswers": {
       "YES": "Yes",
@@ -329,7 +329,82 @@
       "HOUSING_SUCCESS": {
         "question": "If your housing was successful, what would that look like day to day?"
       },
-      "HELPFUL_SUPPORT": {
+      "HOUSING_BACKUP_PLAN_DESCRIPTION": {
+        "question": "What is your housing backup plan?"
+      },
+      "HOUSING_STEP": {
+        "question": "What is one small step you could take right now to support your housing plan?"
+      },
+      "EDUCATION_PLANS": {
+        "question": "Do you have plans to further your education after you go home?"
+      },
+      "EDUCATION_PLANS_DESCRIPTION": {
+        "question": "What are your plans to further your education after you go home?"
+      },
+      "WORK_PLANS": {
+        "question": "What are your plans for work, {{name}}? Do you already have a job?"
+      },
+      "WORK_PLANS_DESCRIPTION": {
+        "question": "What’s the organization and role?"
+      },
+      "EDUCATION_WORK_SUCCESS": {
+        "question": "Think about your school and work plans being successful. What would that look like?"
+      },
+      "EDUCATION_WORK_STEP": {
+        "question": "What is one small step you could take right now that would help your education or work plans?"
+      },
+      "TRANSPORTATION_PLAN": {
+        "question": "How will you get to work or to appointments after your release?",
+        "answers": {
+          "PUBLIC_TRANSPORT": "I’ll take public transportation",
+          "GET_A_RIDE": "I’ll get a ride with a friend or family member",
+          "OWN_CAR": "I’ll have my own car",
+          "FIGURING_IT_OUT": "Still figuring it out"
+        }
+      },
+      "CAR_INSURANCE_REGISTRATION": {
+        "question": "Is it insured and currently registered?"
+      },
+      "TRANSPORTATION_STEP": {
+        "question": "What is one small step you could take right now to make your transportation plan more solid?"
+      },
+      "DO_FOR_FUN": {
+        "question": "What do you like to do for fun, {{name}}?"
+      },
+      "STAY_AWAY_FROM": {
+        "question": "Is there anything from your past that you’re planning to stay away from after release?"
+      },
+      "STAY_AWAY_FROM_DESCRIPTION": {
+        "question": "Please share what you’re planning to stay from after release."
+      },
+      "FINES_AND_FEES": {
+        "question": "Does the court say you owe money, like fines or fees?",
+        "answers": {
+          "DONT_KNOW": "I don't know"
+        }
+      },
+      "DEBTS": {
+        "question": "Do you have other debts you’ll need to manage after release?"
+      },
+      "DEBTS_DESCRIPTION": {
+        "question": "Please describe what other debts you’ll need to manage after release."
+      },
+      "SOCIAL_SECURITY": {
+        "question": "Have you ever received money from Social Security, like SSI or SSDI?"
+      },
+      "CHILDREN": {
+        "question": "Do you have children?"
+      },
+      "CHILDREN_DESCRIPTION": {
+        "question": "What are your goals for your relationships with your children? Do you have child support obligations?"
+      },
+      "FINANCES_SUCCESS": {
+        "question": "If your finances were going well, what would be different?"
+      },
+      "FINANCES_STEP": {
+        "question": "What is one small step you could take right now to improve your finances?"
+      },
+      "WELLNESS_SUPPORT": {
         "question": "Which of the following options could help you?",
         "answers": {
           "SUPPORT_GROUP": "Support groups for alcohol or drug use, like AA or NA",
@@ -339,22 +414,126 @@
           "PEER_SUPPORT": "Intentional peer support",
           "OTHER": "Other"
         }
+      },
+      "WELLNESS_SUPPORT_OTHER": {
+        "question": "What sort of wellness support do you need?"
+      },
+      "WELLNESS_STEP": {
+        "question": "What is one small step you could take right now to support this plan?"
+      },
+      "MEDICAL_CONCERNS": {
+        "question": "Do you have any medical concerns prior to going home?"
+      },
+      "MEDICAL_CONCERNS_DESCRIPTION": {
+        "question": "Please describe any medical concerns you have prior to going home."
+      },
+      "MEDICINE": {
+        "question": "Do you take any medicine right now?"
+      },
+      "MEDICINE_DESCRIPTION": {
+        "question": "Please share what medicine you are currently taking."
+      },
+      "HEALTH_GOALS": {
+        "question": "Is there anything about your health you want to work on? This can be about your body, your mental health, or drug or alcohol use."
+      },
+      "HEALTH_STEP": {
+        "question": "What is one small step you could take right now to improve your health?"
+      },
+      "SUPPORT_SYSTEM": {
+        "question": "Who are the four people who most support you?"
+      },
+      "STRENGTH_1": {
+        "question": "What’s one strength that will help you after release?"
+      },
+      "STRENGTH_2": {
+        "question": "What’s another strength you have?"
+      },
+      "SKILL_1": {
+        "question": "What is a skill that will help your future?"
+      },
+      "SKILL_2": {
+        "question": "What’s another skill you have that will help you when you go home?"
+      },
+      "OBSTACLES": {
+        "question": "What could stop you from doing well with your release plans, {{name}}?"
+      },
+      "CELEBRATION": {
+        "question": "What is one way you can celebrate when you do well?"
       }
     },
     "sectionHeader": {
       "next": "Next:"
     },
     "sections": {
-      "sectionHousing": "Housing",
-      "sectionEducationWork": "Education & Work",
-      "sectionTransportation": "Transportation",
-      "sectionHobbiesLeisure": "Hobbies & Leisure",
-      "sectionMoney": "Money",
-      "sectionWellness": "Wellness",
-      "sectionPhysicalHealth": "Physical Health",
-      "sectionSupportSystem": "Support System",
-      "sectionStrengthsSkills": "Strengths & Skills",
-      "sectionEnd": "Wrap Up"
+      "sectionHousing": {
+        "title": "Housing",
+        "subheading": "First, let's talk about housing.",
+        "explainer": "It's okay if you don't have a housing plan yet — we’re just interested in understanding your current thinking and where you might be looking for support."
+      },
+      "sectionEducationWork": {
+        "title": "Education & Work",
+        "subheading": "Next we’ll ask you a few questions about your plans for education and work once you go home."
+      },
+      "sectionTransportation": {
+        "title": "Transportation",
+        "subheading": "Next up we’ll talk about transportation and how you’ll get around once you go home, {{name}}."
+      },
+      "sectionHobbiesLeisure": {
+        "title": "Hobbies & Leisure",
+        "subheading": "This next section is focused on what you like to do for fun — outside of work and school."
+      },
+      "sectionMoney": {
+        "title": "Money",
+        "subheading": "Now we’ll ask you a few questions about your finances, {{name}}.",
+        "explainer": "These are designed to help you and your Reentry Specialist make the best possible plans for your release."
+      },
+      "sectionWellness": {
+        "title": "Wellness",
+        "subheading": "Now let's talk about wellness and support you might want, {{name}}, as you plan to go home."
+      },
+      "sectionPhysicalHealth": {
+        "title": "Physical Health",
+        "subheading": "Now we’ll ask you a few quick questions about your health."
+      },
+      "sectionSupportSystem": {
+        "title": "Support System",
+        "subheading": "Now let’s talk about the people who support you and will be helpful with your reentry, {{name}}."
+      },
+      "sectionStrengthsSkills": {
+        "title": "Strengths & Skills",
+        "subheading": "This is the second to last section — which focuses on your strengths and skills.\n\nYou’re almost done, {{name}}!"
+      },
+      "sectionEnd": {
+        "title": "Wrap Up",
+        "subheading": "This is your last section. You’ll be done in 2 questions!"
+      }
+    },
+    "welcome": {
+      "heading": "Welcome, {{name}}!",
+      "description": "This tool asks about your plans for reentry and will help you get ready for your 120-Day meeting with your Reentry Specialist. \n\nWe will ask you about your goals, your strengths, and your next steps.\n\nFilling this out will let your Reentry Specialist know that you’re prepared to meet.",
+      "info": "This should take 15-20 minutes to complete.\n\nYou can stop and come back later. **Just hit “Next” first so your answers are saved.**"
+    },
+    "completion": {
+      "heading": "You're done, {{name}}!",
+      "subheading": "Thanks for doing this today.",
+      "description": "You thought through:\n- Your housing plans\n- Your transportation plans\n- Your finances\n- Who will support you\n\nYour Reentry Specialist will use what you’ve shared in your 120-day check-in and to build your Success Plan with you.",
+      "close": "Close"
+    },
+    "questionPage": {
+      "header": "Question {{number}}",
+      "optional": "Optional — you can skip",
+      "selectOne": "Select one option below",
+      "checkAll": "Check all that apply"
+    },
+    "footer": {
+      "next": "Next",
+      "nextInfo": "Your answer will be saved when you tap Next",
+      "getStarted": "Get Started"
+    },
+    "supportSystem": {
+      "name": "Name",
+      "howDoYouKnowThem": "How do you know them?",
+      "placeholder": "Tap to add"
     }
   }
 }

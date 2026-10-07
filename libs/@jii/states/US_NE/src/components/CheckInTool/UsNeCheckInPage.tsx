@@ -24,13 +24,13 @@ import { State } from "~@jii/paths";
 
 import { useCheckInData } from "./hooks/useCheckInData";
 import { useCheckInFlow } from "./hooks/useCheckInFlow";
-import { UsNeCheckInCompletion } from "./UsNeCheckInCompletion";
+import { UsNeCheckInCompletion } from "./UsNeCheckInCompletion/UsNeCheckInCompletion";
 import { UsNeCheckInContextProvider } from "./UsNeCheckInContext";
 import { UsNeCheckInExitModal } from "./UsNeCheckInExitModal/UsNeCheckInExitModal";
 import { UsNeCheckInLayout } from "./UsNeCheckInLayout/UsNeCheckInLayout";
 import { UsNeCheckInQuestion } from "./UsNeCheckInQuestion";
-import { UsNeCheckInSectionIntro } from "./UsNeCheckInSectionIntro";
-import { UsNeCheckInWelcome } from "./UsNeCheckInWelcome";
+import { UsNeCheckInSectionIntro } from "./UsNeCheckInSectionIntro/UsNeCheckInSectionIntro";
+import { UsNeCheckInWelcome } from "./UsNeCheckInWelcome/UsNeCheckInWelcome";
 
 export const UsNeCheckInPage = () => {
   return (
@@ -68,7 +68,7 @@ const UsNeCheckInPageContent = () => {
   const renderContent = () => {
     switch (screen.screenKind) {
       case "completion":
-        return <UsNeCheckInCompletion />;
+        return <UsNeCheckInCompletion onClose={exit} />;
       case "welcome":
         return <UsNeCheckInWelcome />;
       case "sectionIntro":

@@ -15,22 +15,41 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useUsNeCheckInContext } from "./UsNeCheckInContext";
+import { useUsNeTranslations } from "~@jii/translation";
+
+import { useResidentGivenNames } from "../hooks/useResidentGivenNames";
+import { InfoBox } from "../styles";
+import { useUsNeCheckInContext } from "../UsNeCheckInContext";
+import { UsNeCheckInFooter } from "../UsNeCheckInFooter/UsNeCheckInFooter";
+import {
+  Description,
+  WelcomeHeading,
+  Wrapper,
+} from "./UsNeCheckInWelcome.styles";
 
 export const UsNeCheckInWelcome = () => {
   const { markSeen } = useUsNeCheckInContext();
+  const { t } = useUsNeTranslations();
 
-  // TODO(OBT-47844): Add appropriate styles/copy to this page
+  const { heading, description, info } = t(($) => $.checkIn.welcome, {
+    returnObjects: true,
+    name: useResidentGivenNames(),
+  });
+
   return (
-    <>
-      <div>Welcome!</div>
-      <button
-        onClick={() => {
-          markSeen({ screenKind: "welcome" });
-        }}
-      >
-        Next
-      </button>
-    </>
+    <Wrapper>
+      <WelcomeHeading>{heading}</WelcomeHeading>
+
+      <Description>{description}</Description>
+
+      <InfoBox>
+        <Description>{info}</Description>
+      </InfoBox>
+
+      <UsNeCheckInFooter
+        onButtonClick={() => markSeen({ screenKind: "welcome" })}
+        buttonText={t(($) => $.checkIn.footer.getStarted)}
+      />
+    </Wrapper>
   );
 };

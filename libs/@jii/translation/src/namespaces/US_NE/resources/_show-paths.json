@@ -307,7 +307,7 @@
       "content": "[US_NE]checkIn.exitModal.content",
       "info": "[US_NE]checkIn.exitModal.info",
       "cancel": "[US_NE]checkIn.exitModal.cancel",
-      "saveAndLeave": "[US_NE]checkIn.exitModal.saveAndLeave"
+      "saveAndExit": "[US_NE]checkIn.exitModal.saveAndExit"
     },
     "standardRadioAnswers": {
       "YES": "[US_NE]checkIn.standardRadioAnswers.YES",
@@ -329,32 +329,211 @@
       "HOUSING_SUCCESS": {
         "question": "[US_NE]checkIn.questions.HOUSING_SUCCESS.question"
       },
-      "HELPFUL_SUPPORT": {
-        "question": "[US_NE]checkIn.questions.HELPFUL_SUPPORT.question",
+      "HOUSING_BACKUP_PLAN_DESCRIPTION": {
+        "question": "[US_NE]checkIn.questions.HOUSING_BACKUP_PLAN_DESCRIPTION.question"
+      },
+      "HOUSING_STEP": {
+        "question": "[US_NE]checkIn.questions.HOUSING_STEP.question"
+      },
+      "EDUCATION_PLANS": {
+        "question": "[US_NE]checkIn.questions.EDUCATION_PLANS.question"
+      },
+      "EDUCATION_PLANS_DESCRIPTION": {
+        "question": "[US_NE]checkIn.questions.EDUCATION_PLANS_DESCRIPTION.question"
+      },
+      "WORK_PLANS": {
+        "question": "[US_NE]checkIn.questions.WORK_PLANS.question"
+      },
+      "WORK_PLANS_DESCRIPTION": {
+        "question": "[US_NE]checkIn.questions.WORK_PLANS_DESCRIPTION.question"
+      },
+      "EDUCATION_WORK_SUCCESS": {
+        "question": "[US_NE]checkIn.questions.EDUCATION_WORK_SUCCESS.question"
+      },
+      "EDUCATION_WORK_STEP": {
+        "question": "[US_NE]checkIn.questions.EDUCATION_WORK_STEP.question"
+      },
+      "TRANSPORTATION_PLAN": {
+        "question": "[US_NE]checkIn.questions.TRANSPORTATION_PLAN.question",
         "answers": {
-          "SUPPORT_GROUP": "[US_NE]checkIn.questions.HELPFUL_SUPPORT.answers.SUPPORT_GROUP",
-          "COUNSELOR": "[US_NE]checkIn.questions.HELPFUL_SUPPORT.answers.COUNSELOR",
-          "MEDICATION": "[US_NE]checkIn.questions.HELPFUL_SUPPORT.answers.MEDICATION",
-          "RESIDENTIAL_TREATMENT": "[US_NE]checkIn.questions.HELPFUL_SUPPORT.answers.RESIDENTIAL_TREATMENT",
-          "PEER_SUPPORT": "[US_NE]checkIn.questions.HELPFUL_SUPPORT.answers.PEER_SUPPORT",
-          "OTHER": "[US_NE]checkIn.questions.HELPFUL_SUPPORT.answers.OTHER"
+          "PUBLIC_TRANSPORT": "[US_NE]checkIn.questions.TRANSPORTATION_PLAN.answers.PUBLIC_TRANSPORT",
+          "GET_A_RIDE": "[US_NE]checkIn.questions.TRANSPORTATION_PLAN.answers.GET_A_RIDE",
+          "OWN_CAR": "[US_NE]checkIn.questions.TRANSPORTATION_PLAN.answers.OWN_CAR",
+          "FIGURING_IT_OUT": "[US_NE]checkIn.questions.TRANSPORTATION_PLAN.answers.FIGURING_IT_OUT"
         }
+      },
+      "CAR_INSURANCE_REGISTRATION": {
+        "question": "[US_NE]checkIn.questions.CAR_INSURANCE_REGISTRATION.question"
+      },
+      "TRANSPORTATION_STEP": {
+        "question": "[US_NE]checkIn.questions.TRANSPORTATION_STEP.question"
+      },
+      "DO_FOR_FUN": {
+        "question": "[US_NE]checkIn.questions.DO_FOR_FUN.question"
+      },
+      "STAY_AWAY_FROM": {
+        "question": "[US_NE]checkIn.questions.STAY_AWAY_FROM.question"
+      },
+      "STAY_AWAY_FROM_DESCRIPTION": {
+        "question": "[US_NE]checkIn.questions.STAY_AWAY_FROM_DESCRIPTION.question"
+      },
+      "FINES_AND_FEES": {
+        "question": "[US_NE]checkIn.questions.FINES_AND_FEES.question",
+        "answers": {
+          "DONT_KNOW": "[US_NE]checkIn.questions.FINES_AND_FEES.answers.DONT_KNOW"
+        }
+      },
+      "DEBTS": {
+        "question": "[US_NE]checkIn.questions.DEBTS.question"
+      },
+      "DEBTS_DESCRIPTION": {
+        "question": "[US_NE]checkIn.questions.DEBTS_DESCRIPTION.question"
+      },
+      "SOCIAL_SECURITY": {
+        "question": "[US_NE]checkIn.questions.SOCIAL_SECURITY.question"
+      },
+      "CHILDREN": {
+        "question": "[US_NE]checkIn.questions.CHILDREN.question"
+      },
+      "CHILDREN_DESCRIPTION": {
+        "question": "[US_NE]checkIn.questions.CHILDREN_DESCRIPTION.question"
+      },
+      "FINANCES_SUCCESS": {
+        "question": "[US_NE]checkIn.questions.FINANCES_SUCCESS.question"
+      },
+      "FINANCES_STEP": {
+        "question": "[US_NE]checkIn.questions.FINANCES_STEP.question"
+      },
+      "WELLNESS_SUPPORT": {
+        "question": "[US_NE]checkIn.questions.WELLNESS_SUPPORT.question",
+        "answers": {
+          "SUPPORT_GROUP": "[US_NE]checkIn.questions.WELLNESS_SUPPORT.answers.SUPPORT_GROUP",
+          "COUNSELOR": "[US_NE]checkIn.questions.WELLNESS_SUPPORT.answers.COUNSELOR",
+          "MEDICATION": "[US_NE]checkIn.questions.WELLNESS_SUPPORT.answers.MEDICATION",
+          "RESIDENTIAL_TREATMENT": "[US_NE]checkIn.questions.WELLNESS_SUPPORT.answers.RESIDENTIAL_TREATMENT",
+          "PEER_SUPPORT": "[US_NE]checkIn.questions.WELLNESS_SUPPORT.answers.PEER_SUPPORT",
+          "OTHER": "[US_NE]checkIn.questions.WELLNESS_SUPPORT.answers.OTHER"
+        }
+      },
+      "WELLNESS_SUPPORT_OTHER": {
+        "question": "[US_NE]checkIn.questions.WELLNESS_SUPPORT_OTHER.question"
+      },
+      "WELLNESS_STEP": {
+        "question": "[US_NE]checkIn.questions.WELLNESS_STEP.question"
+      },
+      "MEDICAL_CONCERNS": {
+        "question": "[US_NE]checkIn.questions.MEDICAL_CONCERNS.question"
+      },
+      "MEDICAL_CONCERNS_DESCRIPTION": {
+        "question": "[US_NE]checkIn.questions.MEDICAL_CONCERNS_DESCRIPTION.question"
+      },
+      "MEDICINE": {
+        "question": "[US_NE]checkIn.questions.MEDICINE.question"
+      },
+      "MEDICINE_DESCRIPTION": {
+        "question": "[US_NE]checkIn.questions.MEDICINE_DESCRIPTION.question"
+      },
+      "HEALTH_GOALS": {
+        "question": "[US_NE]checkIn.questions.HEALTH_GOALS.question"
+      },
+      "HEALTH_STEP": {
+        "question": "[US_NE]checkIn.questions.HEALTH_STEP.question"
+      },
+      "SUPPORT_SYSTEM": {
+        "question": "[US_NE]checkIn.questions.SUPPORT_SYSTEM.question"
+      },
+      "STRENGTH_1": {
+        "question": "[US_NE]checkIn.questions.STRENGTH_1.question"
+      },
+      "STRENGTH_2": {
+        "question": "[US_NE]checkIn.questions.STRENGTH_2.question"
+      },
+      "SKILL_1": {
+        "question": "[US_NE]checkIn.questions.SKILL_1.question"
+      },
+      "SKILL_2": {
+        "question": "[US_NE]checkIn.questions.SKILL_2.question"
+      },
+      "OBSTACLES": {
+        "question": "[US_NE]checkIn.questions.OBSTACLES.question"
+      },
+      "CELEBRATION": {
+        "question": "[US_NE]checkIn.questions.CELEBRATION.question"
       }
     },
     "sectionHeader": {
       "next": "[US_NE]checkIn.sectionHeader.next"
     },
     "sections": {
-      "sectionHousing": "[US_NE]checkIn.sections.sectionHousing",
-      "sectionEducationWork": "[US_NE]checkIn.sections.sectionEducationWork",
-      "sectionTransportation": "[US_NE]checkIn.sections.sectionTransportation",
-      "sectionHobbiesLeisure": "[US_NE]checkIn.sections.sectionHobbiesLeisure",
-      "sectionMoney": "[US_NE]checkIn.sections.sectionMoney",
-      "sectionWellness": "[US_NE]checkIn.sections.sectionWellness",
-      "sectionPhysicalHealth": "[US_NE]checkIn.sections.sectionPhysicalHealth",
-      "sectionSupportSystem": "[US_NE]checkIn.sections.sectionSupportSystem",
-      "sectionStrengthsSkills": "[US_NE]checkIn.sections.sectionStrengthsSkills",
-      "sectionEnd": "[US_NE]checkIn.sections.sectionEnd"
+      "sectionHousing": {
+        "title": "[US_NE]checkIn.sections.sectionHousing.title",
+        "subheading": "[US_NE]checkIn.sections.sectionHousing.subheading",
+        "explainer": "[US_NE]checkIn.sections.sectionHousing.explainer"
+      },
+      "sectionEducationWork": {
+        "title": "[US_NE]checkIn.sections.sectionEducationWork.title",
+        "subheading": "[US_NE]checkIn.sections.sectionEducationWork.subheading"
+      },
+      "sectionTransportation": {
+        "title": "[US_NE]checkIn.sections.sectionTransportation.title",
+        "subheading": "[US_NE]checkIn.sections.sectionTransportation.subheading"
+      },
+      "sectionHobbiesLeisure": {
+        "title": "[US_NE]checkIn.sections.sectionHobbiesLeisure.title",
+        "subheading": "[US_NE]checkIn.sections.sectionHobbiesLeisure.subheading"
+      },
+      "sectionMoney": {
+        "title": "[US_NE]checkIn.sections.sectionMoney.title",
+        "subheading": "[US_NE]checkIn.sections.sectionMoney.subheading",
+        "explainer": "[US_NE]checkIn.sections.sectionMoney.explainer"
+      },
+      "sectionWellness": {
+        "title": "[US_NE]checkIn.sections.sectionWellness.title",
+        "subheading": "[US_NE]checkIn.sections.sectionWellness.subheading"
+      },
+      "sectionPhysicalHealth": {
+        "title": "[US_NE]checkIn.sections.sectionPhysicalHealth.title",
+        "subheading": "[US_NE]checkIn.sections.sectionPhysicalHealth.subheading"
+      },
+      "sectionSupportSystem": {
+        "title": "[US_NE]checkIn.sections.sectionSupportSystem.title",
+        "subheading": "[US_NE]checkIn.sections.sectionSupportSystem.subheading"
+      },
+      "sectionStrengthsSkills": {
+        "title": "[US_NE]checkIn.sections.sectionStrengthsSkills.title",
+        "subheading": "[US_NE]checkIn.sections.sectionStrengthsSkills.subheading"
+      },
+      "sectionEnd": {
+        "title": "[US_NE]checkIn.sections.sectionEnd.title",
+        "subheading": "[US_NE]checkIn.sections.sectionEnd.subheading"
+      }
+    },
+    "welcome": {
+      "heading": "[US_NE]checkIn.welcome.heading",
+      "description": "[US_NE]checkIn.welcome.description",
+      "info": "[US_NE]checkIn.welcome.info"
+    },
+    "completion": {
+      "heading": "[US_NE]checkIn.completion.heading",
+      "subheading": "[US_NE]checkIn.completion.subheading",
+      "description": "[US_NE]checkIn.completion.description",
+      "close": "[US_NE]checkIn.completion.close"
+    },
+    "questionPage": {
+      "header": "[US_NE]checkIn.questionPage.header",
+      "optional": "[US_NE]checkIn.questionPage.optional",
+      "selectOne": "[US_NE]checkIn.questionPage.selectOne",
+      "checkAll": "[US_NE]checkIn.questionPage.checkAll"
+    },
+    "footer": {
+      "next": "[US_NE]checkIn.footer.next",
+      "nextInfo": "[US_NE]checkIn.footer.nextInfo",
+      "getStarted": "[US_NE]checkIn.footer.getStarted"
+    },
+    "supportSystem": {
+      "name": "[US_NE]checkIn.supportSystem.name",
+      "howDoYouKnowThem": "[US_NE]checkIn.supportSystem.howDoYouKnowThem",
+      "placeholder": "[US_NE]checkIn.supportSystem.placeholder"
     }
   }
 }

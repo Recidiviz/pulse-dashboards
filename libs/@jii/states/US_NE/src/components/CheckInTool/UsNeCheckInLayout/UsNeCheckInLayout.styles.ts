@@ -78,5 +78,7 @@ export const Content = styled.main`
   background: ${palette.marble1};
   margin: 0 auto;
   padding: ${rem(spacing.lg)} ${rem(spacing.xl)};
-  padding-bottom: calc(${rem(FOOTER_HEIGHT)} + ${rem(spacing.lg)});
+  padding-bottom: ${rem(FOOTER_HEIGHT + spacing.lg)};
+
+  display: grid;
 `;

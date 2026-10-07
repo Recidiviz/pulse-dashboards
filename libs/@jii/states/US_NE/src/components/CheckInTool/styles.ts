@@ -28,6 +28,7 @@ export const InfoBox = styled.div`
   ${typography.Body14}
 
   padding: ${rem(spacing.md)};
+  text-align: left;
 
   background-color: ${palette.marble3};
   color: ${palette.slate85};

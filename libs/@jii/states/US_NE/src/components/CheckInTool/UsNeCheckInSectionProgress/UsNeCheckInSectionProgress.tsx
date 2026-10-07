@@ -43,7 +43,7 @@ export const UsNeCheckInSectionProgress = ({
     return null;
   }
 
-  const sectionLabel = t(($) => $.checkIn.sections[section]);
+  const sectionLabel = t(($) => $.checkIn.sections[section].title);
 
   const sectionNumber = sectionIndex + 1;
   const percent = Math.round(
@@ -60,7 +60,10 @@ export const UsNeCheckInSectionProgress = ({
           {showNextSection && (
             <NextSection>
               <strong>{t(($) => $.checkIn.sectionHeader.next)}</strong>{" "}
-              {t(($) => $.checkIn.sections[checkInSections[sectionIndex + 1]])}
+              {t(
+                ($) =>
+                  $.checkIn.sections[checkInSections[sectionIndex + 1]].title,
+              )}
             </NextSection>
           )}
         </HeaderRow>

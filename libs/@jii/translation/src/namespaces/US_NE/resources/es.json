@@ -307,7 +307,7 @@
       "content": "We'll save your progress. When you come back, you'll start on this question.",
       "info": "Your answer for this question won't be saved. Cancel and hit Next first if you want to keep it.",
       "cancel": "Cancel",
-      "saveAndLeave": "Save and leave"
+      "saveAndExit": "Save and exit"
     },
     "standardRadioAnswers": {
       "YES": "Sí",
@@ -329,7 +329,82 @@
       "HOUSING_SUCCESS": {
         "question": "Si tu plan de vivienda tuviera éxito, ¿cómo se vería eso en tu día a día?"
       },
-      "HELPFUL_SUPPORT": {
+      "HOUSING_BACKUP_PLAN_DESCRIPTION": {
+        "question": "¿Cuál es tu plan de respaldo para la vivienda?"
+      },
+      "HOUSING_STEP": {
+        "question": "¿Qué pequeño paso podrías dar ahora mismo para apoyar tu plan de vivienda?"
+      },
+      "EDUCATION_PLANS": {
+        "question": "¿Tienes planes de continuar tu educación después de regresar a casa?"
+      },
+      "EDUCATION_PLANS_DESCRIPTION": {
+        "question": "¿Cuáles son tus planes para continuar con tu educación cuando regreses a casa?"
+      },
+      "WORK_PLANS": {
+        "question": "¿Cuáles son tus planes para el trabajo, {{name}}? ¿Ya tienes un trabajo?"
+      },
+      "WORK_PLANS_DESCRIPTION": {
+        "question": "¿Cuál es la organización y tu puesto?"
+      },
+      "EDUCATION_WORK_SUCCESS": {
+        "question": "Imagina que tus planes de estudio y trabajo sean exitosos. ¿Cómo se vería eso?"
+      },
+      "EDUCATION_WORK_STEP": {
+        "question": "¿Cuál es un pequeño paso que podrías dar ahora mismo y que te ayudaría con tus planes educativos o laborales?"
+      },
+      "TRANSPORTATION_PLAN": {
+        "question": "¿Cómo te desplazarás al trabajo o a tus citas después de tu liberación?",
+        "answers": {
+          "PUBLIC_TRANSPORT": "Tomaré el transporte público",
+          "GET_A_RIDE": "Me llevará un amigo o un familiar",
+          "OWN_CAR": "Tendré mi propio auto",
+          "FIGURING_IT_OUT": "Aún no lo tengo claro"
+        }
+      },
+      "CAR_INSURANCE_REGISTRATION": {
+        "question": "¿Está asegurado y registrado actualmente?"
+      },
+      "TRANSPORTATION_STEP": {
+        "question": "¿Qué pequeño paso podrías dar ahora mismo para que tu plan de transporte sea más sólido?"
+      },
+      "DO_FOR_FUN": {
+        "question": "¿Qué te gusta hacer para divertirte, {{name}}?"
+      },
+      "STAY_AWAY_FROM": {
+        "question": "¿Hay algo de tu pasado de lo que quieras alejarte después de tu liberación?"
+      },
+      "STAY_AWAY_FROM_DESCRIPTION": {
+        "question": "Por favor, comparte de qué piensas alejarte después de tu liberación."
+      },
+      "FINES_AND_FEES": {
+        "question": "¿El tribunal dice que debes dinero, como multas o cargos?",
+        "answers": {
+          "DONT_KNOW": "No lo sé"
+        }
+      },
+      "DEBTS": {
+        "question": "¿Tienes otras deudas que tendrás que manejar después de tu liberación?"
+      },
+      "DEBTS_DESCRIPTION": {
+        "question": "Por favor, describe qué otras deudas tendrás que manejar después de tu liberación."
+      },
+      "SOCIAL_SECURITY": {
+        "question": "¿Alguna vez has recibido dinero del Seguro Social, como SSI o SSDI?"
+      },
+      "CHILDREN": {
+        "question": "¿Tienes hijos?"
+      },
+      "CHILDREN_DESCRIPTION": {
+        "question": "¿Cuáles son tus metas para tus relaciones con sus hijos? ¿Tienes obligaciones de pensión alimenticia?"
+      },
+      "FINANCES_SUCCESS": {
+        "question": "Si a tus finanzas les fuera bien, ¿qué cambiaría?"
+      },
+      "FINANCES_STEP": {
+        "question": "¿Cuál es un pequeño paso que podrías dar ahora mismo para mejorar tu situación financiera?"
+      },
+      "WELLNESS_SUPPORT": {
         "question": "¿Cuál de las siguientes opciones podría serte útil?",
         "answers": {
           "SUPPORT_GROUP": "Grupos de apoyo para el uso de alcohol o drogas, como Alcohólicos Anónimos (AA) o Narcóticos Anónimos (NA)",
@@ -339,19 +414,123 @@
           "PEER_SUPPORT": "Apoyo intencional entre pares",
           "OTHER": "Otros"
         }
+      },
+      "WELLNESS_SUPPORT_OTHER": {
+        "question": "¿Qué tipo de apoyo para el bienestar necesitas?"
+      },
+      "WELLNESS_STEP": {
+        "question": "¿Cuál es un pequeño paso que podrías dar ahora mismo para apoyar este plan?"
+      },
+      "MEDICAL_CONCERNS": {
+        "question": "¿Tienes alguna preocupación médica antes de regresar a casa?"
+      },
+      "MEDICAL_CONCERNS_DESCRIPTION": {
+        "question": "Por favor, describe cualquier preocupación médica que tengas antes de regresar a casa."
+      },
+      "MEDICINE": {
+        "question": "¿Estás tomando algún medicamento en este momento?"
+      },
+      "MEDICINE_DESCRIPTION": {
+        "question": "Por favor, indica qué medicamentos está stomando actualmente."
+      },
+      "HEALTH_GOALS": {
+        "question": "¿Hay algo relacionado con tu salud en lo que quieras trabajar? Puede ser algo relacionado con tu cuerpo, tu salud mental o el consumo de drogas o alcohol."
+      },
+      "HEALTH_STEP": {
+        "question": "¿Cuál es un pequeño paso que podrías dar ahora mismo para mejorar tu salud?"
+      },
+      "SUPPORT_SYSTEM": {
+        "question": "¿Quiénes son las cuatro personas que más te apoyan?"
+      },
+      "STRENGTH_1": {
+        "question": "¿Cuál es una fortaleza que te ayudará después de tu liberación?"
+      },
+      "STRENGTH_2": {
+        "question": "¿Cuál es otra fortaleza que tienes?"
+      },
+      "SKILL_1": {
+        "question": "¿Cuál es una habilidad que te ayudará en tu futuro?"
+      },
+      "SKILL_2": {
+        "question": "¿Qué otra habilidad tienes que te ayudará cuando regreses a casa?"
+      },
+      "OBSTACLES": {
+        "question": "¿Qué podría impedirte tener éxito con tus planes de reinserción social, {{name}}?"
+      },
+      "CELEBRATION": {
+        "question": "¿De qué manera puedes celebrar cuando te va bien?"
       }
     },
     "sections": {
-      "sectionHousing": "Vivienda",
-      "sectionEducationWork": "Educación y trabajo",
-      "sectionTransportation": "Transporte",
-      "sectionHobbiesLeisure": "Aficiones y tiempo libre",
-      "sectionMoney": "Dinero",
-      "sectionWellness": "Bienestar",
-      "sectionPhysicalHealth": "Salud física",
-      "sectionSupportSystem": "Sistema de apoyo",
-      "sectionStrengthsSkills": "Fortalezas y habilidades",
-      "sectionEnd": "Para terminar"
+      "sectionHousing": {
+        "title": "Vivienda",
+        "subheading": "Primero, hablemos de la vivienda.",
+        "explainer": "Está bien si todavía no tiene un plan de vivienda; solo nos interesa entender cómo te sientes al respecto y en qué aspectos podrías necesitar apoyo."
+      },
+      "sectionEducationWork": {
+        "title": "Educación y trabajo",
+        "subheading": "A continuación, te haremos algunas preguntas sobre tus planes de educación y trabajo cuando regreses a casa."
+      },
+      "sectionTransportation": {
+        "title": "Transporte",
+        "subheading": "A continuación hablaremos sobre el transporte y cómo te desplazarás cuando regreses a casa, {{name}}."
+      },
+      "sectionHobbiesLeisure": {
+        "title": "Aficiones y tiempo libre",
+        "subheading": "La siguiente sección se enfoca en lo que te gusta hacer para divertirte, fuera del trabajo y la escuela."
+      },
+      "sectionMoney": {
+        "title": "Dinero",
+        "subheading": "Ahora te haremos algunas preguntas sobre tus finanzas, {{name}}.",
+        "explainer": "Estas preguntas están diseñadas para ayudarte a ti y a tu Especialista de Reinserción a elaborar los mejores planes posibles para tu puesta en libertad."
+      },
+      "sectionWellness": {
+        "title": "Bienestar",
+        "subheading": "Ahora hablemos sobre el bienestar y el apoyo que tal vez necesites, {{name}}, ahora que planeas regresar a casa."
+      },
+      "sectionPhysicalHealth": {
+        "title": "Salud física",
+        "subheading": "Ahora te haremos unas preguntas sobre tu salud."
+      },
+      "sectionSupportSystem": {
+        "title": "Sistema de apoyo",
+        "subheading": "Ahora hablemos de las personas que te apoyan y que te ayudarán con tu reinserción social, {{name}}."
+      },
+      "sectionStrengthsSkills": {
+        "title": "Fortalezas y habilidades",
+        "subheading": "Esta es la penúltima sección, y se enfoca en tus fortalezas y habilidades.\n\n¡Ya casi terminas, {{name}}!"
+      },
+      "sectionEnd": {
+        "title": "Para terminar",
+        "subheading": "Esta es su última sección. ¡Solo te faltan dos preguntas para terminar!"
+      }
+    },
+    "welcome": {
+      "heading": "¡Bienvenido, {{name}}!",
+      "description": "Esta herramienta le hace preguntas sobre sus planes de reinserción social y le ayudará a prepararse para su junta de los 120 días con su Especialista de Reinserción.\n\nLe preguntaremos sobre sus metas, sus fortalezas y sus próximos pasos.\n\nCompletar este formulario le indicará a su Especialista de Reinserción que usted está listo para la junta.",
+      "info": "Le tomará entre 15 y 20 minutos completarlo.\n\nPuedes salirte y regresar más tarde. **Solo presiona «Siguiente» primero para que se guarden tus respuestas.**"
+    },
+    "completion": {
+      "heading": "¡Ya terminaste, {{name}}!",
+      "subheading": "Gracias por hacer esto hoy.",
+      "description": "Ya pensaste en:\n- Tus planes de vivienda\n- Tus planes de transporte\n- Tus finanzas\n- Quién te apoyará\n\nTu Especialista de Reinserción usará lo que tú compartiste en tu junta de los 120 días para crear tu Success Plan junto contigo.",
+      "close": "Close"
+    },
+    "questionPage": {
+      "header": "Question {{number}}",
+      "optional": "Optional — you can skip",
+      "selectOne": "Select one option below",
+      "checkAll": "Check all that apply"
+    },
+    "footer": {
+      "next": "Siguiente",
+      "nextInfo": "Your answer will be saved when you tap Next",
+      "getStarted": "Get Started"
+    },
+    "supportSystem": {
+      "name": "Nombre",
+      "howDoYouKnowThem": "¿Cómo las conoces?",
+      "placeholder": "Tap to add"
     }
   }
 }
