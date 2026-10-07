@@ -244,7 +244,7 @@ export const mockSARInsight: SARInsight = {
   rollupAssessmentScoreBucketEnd: null,
   dispositionData: [
     {
-      recommendationType: "Deferred_prosecution",
+      recommendationType: "Deferred Prosecution",
       sentenceLengthBucketStart: 0,
       sentenceLengthBucketEnd: -1,
       percentage: 0.007532956685499058,
@@ -280,7 +280,7 @@ export const mockSARInsight: SARInsight = {
       percentage: 0.3352165725047081,
     },
     {
-      recommendationType: "Treatment_in_prison",
+      recommendationType: "Treatment In Prison",
       sentenceLengthBucketStart: 0,
       sentenceLengthBucketEnd: -1,
       percentage: 0.1111111111111111,

@@ -41,17 +41,9 @@ export const SENTENCE_TYPE_TO_COLOR: { [key: string]: string } = {
 
 // Maps sentence types from the insight data to the labels shown in the charts
 // and reports. Used by getSentenceLengthBucketLabel.
-//
-// Multi-word types are listed in two formats. Data written before
-// write_case_insights_data_to_bq.py switched from .capitalize() to .title()
-// has "Treatment_in_prison"; data written after has "Treatment In Prison".
-// TODO(OBT-25456): Remove the underscored keys once insight data in every environment
-// uses the newer format.
 export const SENTENCE_TYPE_DISPLAY_NAMES: Record<string, string> = {
-  Treatment_in_prison: "Court-Ordered Treatment",
   "Treatment In Prison": "Court-Ordered Treatment",
   Suspended: "Suspended Sentence",
-  Deferred_prosecution: "Treatment Court/Deferred Prosecution",
   "Deferred Prosecution": "Treatment Court/Deferred Prosecution",
 };
 

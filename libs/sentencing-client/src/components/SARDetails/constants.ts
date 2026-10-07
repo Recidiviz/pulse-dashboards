@@ -64,16 +64,11 @@ export const DECLINED_SAR_REPORT_SECTIONS = [
 export const SAR_AUTOSAVE_DELAY = 500; // 500ms
 
 /**
- * Sentence-type sort order for the donut/legend. Multi-word types are listed
- * in both formats; see SENTENCE_TYPE_DISPLAY_NAMES for why.
+ * Sentence-type sort order for the donut/legend.
  */
-// TODO(OBT-25456): Remove the underscored keys once insight data in every environment
-// uses the newer format.
 export const DISPOSITION_TYPE_ORDER: Record<string, number> = {
-  Deferred_prosecution: 0,
   "Deferred Prosecution": 0,
   Probation: 1,
-  Treatment_in_prison: 2,
   "Treatment In Prison": 2,
   Suspended: 3,
 };

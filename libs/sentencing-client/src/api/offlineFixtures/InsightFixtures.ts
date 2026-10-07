@@ -79,7 +79,7 @@ export const InsightFixture: Insight = {
       ],
     },
     {
-      recommendationType: "Treatment_in_prison",
+      recommendationType: "Treatment In Prison",
       sentenceLengthBucketStart: 0,
       sentenceLengthBucketEnd: -1,
       dataPoints: [
@@ -118,7 +118,7 @@ export const InsightFixture: Insight = {
       percentage: 0.02,
     },
     {
-      recommendationType: "Treatment_in_prison",
+      recommendationType: "Treatment In Prison",
       sentenceLengthBucketStart: 0,
       sentenceLengthBucketEnd: -1,
       percentage: 0.06,
@@ -193,7 +193,7 @@ export const SARInsightFixture: NonNullable<SARInsight> = {
       ],
     },
     {
-      recommendationType: "Treatment_in_prison",
+      recommendationType: "Treatment In Prison",
       sentenceLengthBucketStart: 0,
       sentenceLengthBucketEnd: -1,
       dataPoints: [
@@ -236,7 +236,7 @@ export const SARInsightFixture: NonNullable<SARInsight> = {
       percentage: 0.15,
     },
     {
-      recommendationType: "Treatment_in_prison",
+      recommendationType: "Treatment In Prison",
       sentenceLengthBucketStart: 0,
       sentenceLengthBucketEnd: -1,
       percentage: 0.06,
