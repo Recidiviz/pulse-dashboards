@@ -140,6 +140,7 @@ export class OfflineAPIClient {
   }) {
     return {
       id: `offline-${Date.now()}`,
+      createdAt: new Date(),
       employerName: input.employerName ?? null,
       startDate: input.startDate ?? null,
       endDate: input.endDate ?? null,

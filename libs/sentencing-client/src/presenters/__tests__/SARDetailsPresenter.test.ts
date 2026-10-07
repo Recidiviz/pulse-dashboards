@@ -294,6 +294,7 @@ describe("defendant declined to participate", () => {
   describe("employmentHistories", () => {
     const manualRecord = {
       id: "emp-1",
+      createdAt: new Date("2025-01-01"),
       employerName: "Acme Corp",
       startDate: null,
       endDate: null,
@@ -302,6 +303,7 @@ describe("defendant declined to participate", () => {
     };
     const importedRecord = {
       id: "emp-2",
+      createdAt: new Date("2025-01-01"),
       employerName: "DOC Employer",
       startDate: null,
       endDate: null,

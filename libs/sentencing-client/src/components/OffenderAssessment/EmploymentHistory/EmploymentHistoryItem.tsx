@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import moment from "moment";
 import React from "react";
 import toast from "react-hot-toast";
 
@@ -89,7 +90,8 @@ export const EmploymentHistoryItem: React.FC<EmploymentHistoryItemProps> = ({
           {history.employerName || "Not specified"}
           {history.importedFromDOC && (
             <Styled.DataSubtitle>
-              This entry was pulled from MOCIS
+              This entry was pulled from MOCIS on{" "}
+              {moment(history.createdAt).utc().format("MM/DD/YYYY")}
             </Styled.DataSubtitle>
           )}
         </Styled.DataCell>

@@ -216,7 +216,6 @@ export const sarRouter = router({
           },
           employmentHistories: {
             omit: {
-              createdAt: true,
               updatedAt: true,
               sentencingAssessmentReportId: true,
             },
