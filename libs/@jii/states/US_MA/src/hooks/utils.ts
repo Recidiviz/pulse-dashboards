@@ -22,7 +22,11 @@ import {
 } from "~@jii/configs";
 
 import { ReentryQuestionnaireStatus } from "../components/Reentry/types";
-import { ReentryChecklistChange, ReentryChecklistItem } from "./types";
+import {
+  ReentryChecklistChange,
+  ReentryChecklistItem,
+  ReentryChecklistSection,
+} from "./types";
 
 /**
  * Returns the resident's checklist items, in the order the config lists them.
@@ -56,6 +60,20 @@ export function toChecklistItems(
       },
     ];
   });
+}
+
+/**
+ * Groups the resident's checklist items into the sections the checklist page
+ * shows, in order. Sections with no items are left out.
+ */
+export function toChecklistSections(
+  items: ReentryChecklistItem[],
+): ReentryChecklistSection[] {
+  // TODO(OBT-50538): Put each item in its section by release timing, once
+  // items have one. Until then, every item is in "Anytime".
+  const sections: ReentryChecklistSection[] = [{ id: "ANYTIME", items }];
+
+  return sections.filter((section) => section.items.length > 0);
 }
 
 /**

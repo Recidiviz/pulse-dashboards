@@ -175,7 +175,36 @@
         },
         "HAS_PAID_HOUSING_PROGRAM_DEPOSIT": {
           "label": "[US_MA]reentry.checklist.itemCopy.HAS_PAID_HOUSING_PROGRAM_DEPOSIT.label"
+        },
+        "CONFIRMED_FAMILY_AND_FRIENDS_TRANSPORTATION": {
+          "label": "[US_MA]reentry.checklist.itemCopy.CONFIRMED_FAMILY_AND_FRIENDS_TRANSPORTATION.label"
         }
+      },
+      "pageTitle": "[US_MA]reentry.checklist.pageTitle",
+      "heading": "[US_MA]reentry.checklist.heading",
+      "intro": "[US_MA]reentry.checklist.intro",
+      "notPersonalized": {
+        "heading": "[US_MA]reentry.checklist.notPersonalized.heading",
+        "description": "[US_MA]reentry.checklist.notPersonalized.description",
+        "cta": "[US_MA]reentry.checklist.notPersonalized.cta"
+      },
+      "personalized": {
+        "heading": "[US_MA]reentry.checklist.personalized.heading",
+        "recommendedTaskCount_one": "[US_MA]reentry.checklist.personalized.recommendedTaskCount_one",
+        "recommendedTaskCount_other": "[US_MA]reentry.checklist.personalized.recommendedTaskCount_other"
+      },
+      "sections": {
+        "ANYTIME": {
+          "title": "[US_MA]reentry.checklist.sections.ANYTIME.title",
+          "description": "[US_MA]reentry.checklist.sections.ANYTIME.description"
+        }
+      },
+      "progress": "[US_MA]reentry.checklist.progress",
+      "personalizedBadge": "[US_MA]reentry.checklist.personalizedBadge",
+      "updateProfile": {
+        "heading": "[US_MA]reentry.checklist.updateProfile.heading",
+        "description": "[US_MA]reentry.checklist.updateProfile.description",
+        "cta": "[US_MA]reentry.checklist.updateProfile.cta"
       }
     },
     "navBar": {
@@ -270,9 +299,9 @@
         "description": "[US_MA]reentry.questionnaire.review.description",
         "change": "[US_MA]reentry.questionnaire.review.change",
         "submit": "[US_MA]reentry.questionnaire.review.submit",
-        "submitting": "[US_MA]reentry.questionnaire.review.submitting",
         "editHeading": "[US_MA]reentry.questionnaire.review.editHeading",
-        "editDescription": "[US_MA]reentry.questionnaire.review.editDescription"
+        "editDescription": "[US_MA]reentry.questionnaire.review.editDescription",
+        "submitting": "[US_MA]reentry.questionnaire.review.submitting"
       },
       "footer": {
         "back": "[US_MA]reentry.questionnaire.footer.back",

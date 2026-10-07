@@ -175,7 +175,36 @@
         },
         "HAS_PAID_HOUSING_PROGRAM_DEPOSIT": {
           "label": "I have paid my housing deposit, if there is one."
+        },
+        "CONFIRMED_FAMILY_AND_FRIENDS_TRANSPORTATION": {
+          "label": "I have talked to the person who is going to help drive me to work and appointments, and they confirmed they are able to do it."
         }
+      },
+      "pageTitle": "Reentry Checklist",
+      "heading": "Reentry Checklist",
+      "intro": "This is your personal to-do list to prepare for reentry. Check off each task when you finish it. Your Reentry Specialist will not be notified of tasks you check off here unless you tell them.",
+      "notPersonalized": {
+        "heading": "Checklist not personalized yet",
+        "description": "Complete your Reentry profile to personalize this checklist.",
+        "cta": "Complete profile"
+      },
+      "personalized": {
+        "heading": "This checklist is personalized",
+        "recommendedTaskCount_one": "{{count}} new task recommended based on your Reentry profile.",
+        "recommendedTaskCount_other": "{{count}} new tasks recommended based on your Reentry profile."
+      },
+      "sections": {
+        "ANYTIME": {
+          "title": "Complete Anytime",
+          "description": "These tasks can be completed as early as possible to set you up for success."
+        }
+      },
+      "progress": "{{done}} of {{total}} done",
+      "personalizedBadge": "Based on your profile",
+      "updateProfile": {
+        "heading": "Does this list still fit your situation?",
+        "description": "These tasks come from your reentry profile. If something has changed – like your housing goals or healthcare needs – update your profile and the tasks on your checklist will update too.",
+        "cta": "Update your profile"
       }
     },
     "navBar": {
@@ -270,9 +299,9 @@
         "description": "Please check your answers before submitting. You can change any answer by clicking the link next to it.",
         "change": "Change",
         "submit": "Submit answers",
-        "submitting": "Submitting...",
         "editHeading": "Review your Reentry profile",
-        "editDescription": "These are the answers we used to build your checklist. Change any answer to update your profile and checklist."
+        "editDescription": "These are the answers we used to build your checklist. Change any answer to update your profile and checklist.",
+        "submitting": "Submitting..."
       },
       "footer": {
         "back": "Back",
@@ -349,11 +378,11 @@
   "sentenceDates": {
     "dates": {
       "rts": {
-        "label": "Release-to-supervision date",
+        "label": "Release-to-supervision date (RTS)",
         "description": "The RTS Date is a release to parole supervision without the need for a parole hearing, based upon completion credits earned through programming and education pursuant to M.G.L.c.127, §129D."
       },
       "maxRelease": {
-        "label": "Maximum release / wrap date",
+        "label": "Maximum release / wrap date (MAX)",
         "adjusted": {
           "originalDateLabel": "Original MAX date",
           "adjustedDateLabel": "Adjusted MAX date"

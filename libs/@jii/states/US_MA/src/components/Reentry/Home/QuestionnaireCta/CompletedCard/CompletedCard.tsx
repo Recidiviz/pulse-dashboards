@@ -49,7 +49,11 @@ export const CompletedCard = () => {
       </IconBlock>
       <SummaryContent>
         <Heading>{heading}</Heading>
-        <Description>{recommendedTaskCount(personalizedItemCount)}</Description>
+        {personalizedItemCount > 0 && (
+          <Description>
+            {recommendedTaskCount(personalizedItemCount)}
+          </Description>
+        )}
         <ViewChecklistButton
           kind="primary"
           to={State.Resident.UsMaReentry.Checklist.buildPath(routeParams)}

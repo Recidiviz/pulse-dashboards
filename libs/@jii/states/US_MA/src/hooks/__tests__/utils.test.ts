@@ -18,8 +18,25 @@
 import {
   getQuestionnaireStatus,
   toChecklistItems,
+  toChecklistSections,
   toStoredAnswers,
 } from "../utils";
+
+describe("toChecklistSections", () => {
+  test("puts every item in the Anytime section, in order", () => {
+    const items = [
+      { id: "BACKUP_HOUSING", checked: true, isPersonalized: false },
+      { id: "HOUSING_PLAN_AGREEMENT", checked: false, isPersonalized: true },
+    ] as const;
+    expect(toChecklistSections([...items])).toEqual([
+      { id: "ANYTIME", items: [...items] },
+    ]);
+  });
+
+  test("leaves out sections with no items", () => {
+    expect(toChecklistSections([])).toEqual([]);
+  });
+});
 
 describe("toChecklistItems", () => {
   test("orders items as the config lists them, not as the server returns them", () => {

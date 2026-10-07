@@ -31,14 +31,14 @@ export type CalloutProps = {
   tone: CalloutTone;
   variant?: CalloutVariant;
   heading: string;
-  description: string;
+  description?: string;
   icon?: ReactNode;
   action?: ReactNode;
 };
 
 /**
- * A highlighted message with a heading and description, an optional icon,
- * and an optional action such as a link.
+ * A highlighted message with a heading, and an optional description, icon,
+ * and action such as a link.
  *
  * Tones set the colors:
  * - neutral: gray
@@ -60,7 +60,9 @@ export const Callout = ({
     {icon && <IconSlot>{icon}</IconSlot>}
     <Content>
       <Heading>{heading}</Heading>
-      <Description $variant={variant}>{description}</Description>
+      {description && (
+        <Description $variant={variant}>{description}</Description>
+      )}
     </Content>
     {action && <ActionSlot>{action}</ActionSlot>}
   </Wrapper>

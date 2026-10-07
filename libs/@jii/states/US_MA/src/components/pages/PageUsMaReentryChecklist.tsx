@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ReentryChecklist } from "../Reentry/Checklist/ReentryChecklist";
+
 export const PageUsMaReentryChecklist = () => {
-  return <div>PageUsMaReentryChecklist</div>;
+  return <ReentryChecklist />;
 };

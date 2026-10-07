@@ -28,6 +28,13 @@ export type ReentryChecklistChange = {
   checked: boolean;
 };
 
+export type ReentryChecklistSectionId = "ANYTIME";
+
+export type ReentryChecklistSection = {
+  id: ReentryChecklistSectionId;
+  items: ReentryChecklistItem[];
+};
+
 export type SaveAnswersInput = {
   answers: Record<string, string[]>;
   isCompleted: boolean;
