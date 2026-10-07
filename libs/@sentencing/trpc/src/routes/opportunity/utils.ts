@@ -136,7 +136,7 @@ export async function getFindHelpPrograms(zipCode = "83201") {
         if (e.response?.status === 401) {
           console.error(
             "Authorization token has expired, retrying with new authentication token.",
-            e,
+            e.message,
           );
 
           // eslint-disable-next-line no-await-in-loop
