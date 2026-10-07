@@ -18,6 +18,8 @@
 import { CheckInQuestionId } from "~@jii/configs";
 import { useUsNeTranslations } from "~@jii/translation";
 
+import { useResidentGivenNames } from "./hooks/useResidentGivenNames";
+
 export const UsNeCheckInRadioQuestion = ({
   id,
   answers,
@@ -29,6 +31,7 @@ export const UsNeCheckInRadioQuestion = ({
 
   const questionCopy = t(($) => $.checkIn.questions[id], {
     returnObjects: true,
+    name: useResidentGivenNames(),
   });
   const defaultRadioAnswers: Record<string, string> = t(
     ($) => $.checkIn.standardRadioAnswers,

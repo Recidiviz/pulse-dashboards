@@ -18,6 +18,8 @@
 import { CheckInQuestionId } from "~@jii/configs";
 import { useUsNeTranslations } from "~@jii/translation";
 
+import { useResidentGivenNames } from "./hooks/useResidentGivenNames";
+
 export const UsNeCheckInCheckboxQuestion = ({
   id,
   answers,
@@ -29,6 +31,7 @@ export const UsNeCheckInCheckboxQuestion = ({
 
   const questionCopy = t(($) => $.checkIn.questions[id], {
     returnObjects: true,
+    name: useResidentGivenNames(),
   });
 
   // Not all questions have answer copy, but the existence of answer

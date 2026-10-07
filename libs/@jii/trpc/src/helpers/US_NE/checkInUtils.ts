@@ -16,22 +16,30 @@
 // =============================================================================
 
 import {
+  checkInQuestionConfig,
   CheckInQuestionInfo,
   CheckInStatus,
   checkInToolSpec,
   UsNeCheckInAnswers,
 } from "~@jii/configs";
 
-// TODO(OBT-47841): Edit these utils to add support for branching/show-if questions
 /**
  * Return all the questions that should be shown to the resident.
  */
-export function getVisibleQuestions(): CheckInQuestionInfo[] {
-  // Currently this function returns every question, but will start to depend on the
-  // user's answers when we implement show-if
+export function getVisibleQuestions(
+  answers: UsNeCheckInAnswers,
+): CheckInQuestionInfo[] {
   return checkInToolSpec.flatMap(({ id: sectionId, questions }) => {
-    return questions.map((questionId) => {
-      return { questionId, sectionId };
+    return questions.flatMap((questionId) => {
+      const { showIf } = checkInQuestionConfig[questionId];
+
+      // Show questions that don't depend on anything
+      // and questions whose show-if condition was met
+      if (!showIf || answers[showIf.questionId] === showIf.value) {
+        return [{ questionId, sectionId }];
+      }
+
+      return [];
     });
   });
 }
@@ -41,7 +49,7 @@ export function getVisibleQuestions(): CheckInQuestionInfo[] {
  * the given answers.
  */
 export function checkInStatus(answers: UsNeCheckInAnswers): CheckInStatus {
-  const visibleQuestions = getVisibleQuestions();
+  const visibleQuestions = getVisibleQuestions(answers);
 
   const firstUnansweredIndex = answers
     ? visibleQuestions.findIndex(

@@ -18,6 +18,8 @@
 import { CheckInQuestionId } from "~@jii/configs";
 import { useUsNeTranslations } from "~@jii/translation";
 
+import { useResidentGivenNames } from "./hooks/useResidentGivenNames";
+
 export const UsNeCheckInFreeTextQuestion = ({
   id,
 }: {
@@ -27,6 +29,7 @@ export const UsNeCheckInFreeTextQuestion = ({
 
   const questionCopy = t(($) => $.checkIn.questions[id], {
     returnObjects: true,
+    name: useResidentGivenNames(),
   });
 
   // TODO(OBT-47849) styles for custom inputs

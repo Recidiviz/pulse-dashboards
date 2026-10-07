@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ShowIfCondition } from "./showIf";
+
 /**
  * Configuration and types relating to the 120-Day Check-In Tool form
  * for Nebraska.
@@ -48,12 +50,73 @@ export const checkInToolSpec: CheckInSectionSpec[] = [
     questions: [
       "WHERE_WILL_YOU_LIVE",
       "HOUSING_BACKUP_PLAN",
+      "HOUSING_BACKUP_PLAN_DESCRIPTION",
       "HOUSING_SUCCESS",
+      "HOUSING_STEP",
+    ],
+  },
+  {
+    id: "sectionEducationWork",
+    questions: [
+      "EDUCATION_PLANS",
+      "EDUCATION_PLANS_DESCRIPTION",
+      "WORK_PLANS",
+      "WORK_PLANS_DESCRIPTION",
+      "EDUCATION_WORK_SUCCESS",
+      "EDUCATION_WORK_STEP",
+    ],
+  },
+  {
+    id: "sectionTransportation",
+    questions: [
+      "TRANSPORTATION_PLAN",
+      "CAR_INSURANCE_REGISTRATION",
+      "TRANSPORTATION_STEP",
+    ],
+  },
+  {
+    id: "sectionHobbiesLeisure",
+    questions: ["DO_FOR_FUN", "STAY_AWAY_FROM", "STAY_AWAY_FROM_DESCRIPTION"],
+  },
+  {
+    id: "sectionMoney",
+    questions: [
+      "FINES_AND_FEES",
+      "DEBTS",
+      "DEBTS_DESCRIPTION",
+      "SOCIAL_SECURITY",
+      "CHILDREN",
+      "CHILDREN_DESCRIPTION",
+      "FINANCES_SUCCESS",
+      "FINANCES_STEP",
     ],
   },
   {
     id: "sectionWellness",
-    questions: ["WELLNESS_SUPPORT"],
+    questions: ["WELLNESS_SUPPORT", "WELLNESS_SUPPORT_OTHER", "WELLNESS_STEP"],
+  },
+  {
+    id: "sectionPhysicalHealth",
+    questions: [
+      "MEDICAL_CONCERNS",
+      "MEDICAL_CONCERNS_DESCRIPTION",
+      "MEDICINE",
+      "MEDICINE_DESCRIPTION",
+      "HEALTH_GOALS",
+      "HEALTH_STEP",
+    ],
+  },
+  {
+    id: "sectionSupportSystem",
+    questions: ["SUPPORT_SYSTEM"],
+  },
+  {
+    id: "sectionStrengthsSkills",
+    questions: ["STRENGTH_1", "STRENGTH_2", "SKILL_1", "SKILL_2"],
+  },
+  {
+    id: "sectionEnd",
+    questions: ["OBSTACLES", "CELEBRATION"],
   },
 ];
 export const checkInSections = checkInToolSpec.map(({ id }) => id);
@@ -64,7 +127,7 @@ type TextEntryAnswerFormat = "FREE_TEXT"; // TODO(OBT-47841): Add "Support Syste
 
 type SharedQuestionConfigFields = {
   optional?: boolean;
-  // TODO(OBT-47841): Add support for branching/show-if questions
+  showIf?: ShowIfCondition<CheckInQuestionId> & { operator: "equals" };
 };
 export type QuestionConfigWithAnswerOptions = SharedQuestionConfigFields & {
   format: SelectAnswerFormat;
@@ -81,8 +144,45 @@ export type CheckInQuestionConfig =
 export type CheckInQuestionId =
   | "WHERE_WILL_YOU_LIVE"
   | "HOUSING_BACKUP_PLAN"
+  | "HOUSING_BACKUP_PLAN_DESCRIPTION"
   | "HOUSING_SUCCESS"
-  | "WELLNESS_SUPPORT";
+  | "HOUSING_STEP"
+  | "EDUCATION_PLANS"
+  | "EDUCATION_PLANS_DESCRIPTION"
+  | "WORK_PLANS"
+  | "WORK_PLANS_DESCRIPTION"
+  | "EDUCATION_WORK_SUCCESS"
+  | "EDUCATION_WORK_STEP"
+  | "TRANSPORTATION_PLAN"
+  | "CAR_INSURANCE_REGISTRATION"
+  | "TRANSPORTATION_STEP"
+  | "DO_FOR_FUN"
+  | "STAY_AWAY_FROM"
+  | "STAY_AWAY_FROM_DESCRIPTION"
+  | "FINES_AND_FEES"
+  | "DEBTS"
+  | "DEBTS_DESCRIPTION"
+  | "SOCIAL_SECURITY"
+  | "CHILDREN"
+  | "CHILDREN_DESCRIPTION"
+  | "FINANCES_SUCCESS"
+  | "FINANCES_STEP"
+  | "WELLNESS_SUPPORT"
+  | "WELLNESS_SUPPORT_OTHER"
+  | "WELLNESS_STEP"
+  | "MEDICAL_CONCERNS"
+  | "MEDICAL_CONCERNS_DESCRIPTION"
+  | "MEDICINE"
+  | "MEDICINE_DESCRIPTION"
+  | "HEALTH_GOALS"
+  | "HEALTH_STEP"
+  | "SUPPORT_SYSTEM"
+  | "STRENGTH_1"
+  | "STRENGTH_2"
+  | "SKILL_1"
+  | "SKILL_2"
+  | "OBSTACLES"
+  | "CELEBRATION";
 
 export const checkInQuestionConfig: Record<
   CheckInQuestionId,
@@ -101,7 +201,117 @@ export const checkInQuestionConfig: Record<
     format: "RADIO",
     answers: checkInStandardRadioAnswers,
   },
+  HOUSING_BACKUP_PLAN_DESCRIPTION: {
+    format: "FREE_TEXT",
+    showIf: {
+      questionId: "HOUSING_BACKUP_PLAN",
+      operator: "equals",
+      value: "YES",
+    },
+  },
   HOUSING_SUCCESS: {
+    format: "FREE_TEXT",
+  },
+  HOUSING_STEP: {
+    format: "FREE_TEXT",
+  },
+  EDUCATION_PLANS: {
+    format: "RADIO",
+    answers: checkInStandardRadioAnswers,
+  },
+  EDUCATION_PLANS_DESCRIPTION: {
+    format: "FREE_TEXT",
+    showIf: {
+      questionId: "EDUCATION_PLANS",
+      operator: "equals",
+      value: "YES",
+    },
+  },
+  WORK_PLANS: {
+    format: "RADIO",
+    answers: checkInStandardRadioAnswers,
+  },
+  WORK_PLANS_DESCRIPTION: {
+    format: "FREE_TEXT",
+    showIf: {
+      questionId: "WORK_PLANS",
+      operator: "equals",
+      value: "YES",
+    },
+  },
+  EDUCATION_WORK_SUCCESS: {
+    format: "FREE_TEXT",
+  },
+  EDUCATION_WORK_STEP: {
+    format: "FREE_TEXT",
+  },
+  TRANSPORTATION_PLAN: {
+    format: "RADIO",
+    answers: ["PUBLIC_TRANSPORT", "GET_A_RIDE", "OWN_CAR", "FIGURING_IT_OUT"],
+  },
+  CAR_INSURANCE_REGISTRATION: {
+    format: "RADIO",
+    answers: checkInStandardRadioAnswers,
+    showIf: {
+      questionId: "TRANSPORTATION_PLAN",
+      operator: "equals",
+      value: "OWN_CAR",
+    },
+  },
+  TRANSPORTATION_STEP: {
+    format: "FREE_TEXT",
+  },
+  DO_FOR_FUN: {
+    format: "FREE_TEXT",
+  },
+  STAY_AWAY_FROM: {
+    format: "RADIO",
+    answers: checkInStandardRadioAnswers,
+  },
+  STAY_AWAY_FROM_DESCRIPTION: {
+    format: "FREE_TEXT",
+    showIf: {
+      questionId: "STAY_AWAY_FROM",
+      operator: "equals",
+      value: "YES",
+    },
+  },
+  FINES_AND_FEES: {
+    format: "RADIO",
+    answers: [...checkInStandardRadioAnswers, "DONT_KNOW"],
+  },
+  DEBTS: {
+    format: "RADIO",
+    answers: checkInStandardRadioAnswers,
+  },
+  DEBTS_DESCRIPTION: {
+    format: "FREE_TEXT",
+    showIf: {
+      questionId: "DEBTS",
+      operator: "equals",
+      value: "YES",
+    },
+  },
+  SOCIAL_SECURITY: {
+    format: "RADIO",
+    answers: checkInStandardRadioAnswers,
+  },
+  CHILDREN: {
+    format: "RADIO",
+    answers: checkInStandardRadioAnswers,
+  },
+  CHILDREN_DESCRIPTION: {
+    format: "FREE_TEXT",
+    showIf: {
+      questionId: "CHILDREN",
+      operator: "equals",
+      value: "YES",
+    },
+  },
+  FINANCES_SUCCESS: {
+    format: "FREE_TEXT",
+  },
+  FINANCES_STEP: {
     format: "FREE_TEXT",
   },
   WELLNESS_SUPPORT: {
@@ -115,5 +325,70 @@ export const checkInQuestionConfig: Record<
       "OTHER",
     ],
     optional: true,
+  },
+  WELLNESS_SUPPORT_OTHER: {
+    format: "FREE_TEXT",
+    showIf: {
+      questionId: "WELLNESS_SUPPORT",
+      operator: "equals",
+      value: "OTHER",
+    },
+  },
+  WELLNESS_STEP: {
+    format: "FREE_TEXT",
+  },
+  MEDICAL_CONCERNS: {
+    format: "RADIO",
+    answers: checkInStandardRadioAnswers,
+  },
+  MEDICAL_CONCERNS_DESCRIPTION: {
+    format: "FREE_TEXT",
+    showIf: {
+      questionId: "MEDICAL_CONCERNS",
+      operator: "equals",
+      value: "YES",
+    },
+  },
+  MEDICINE: {
+    format: "RADIO",
+    answers: checkInStandardRadioAnswers,
+  },
+  MEDICINE_DESCRIPTION: {
+    format: "FREE_TEXT",
+    showIf: {
+      questionId: "MEDICINE",
+      operator: "equals",
+      value: "YES",
+    },
+  },
+  HEALTH_GOALS: {
+    format: "FREE_TEXT",
+  },
+  HEALTH_STEP: {
+    format: "FREE_TEXT",
+  },
+  SUPPORT_SYSTEM: {
+    // TODO: Implement support system format
+    format: "FREE_TEXT",
+  },
+  STRENGTH_1: {
+    format: "FREE_TEXT",
+  },
+  STRENGTH_2: {
+    format: "FREE_TEXT",
+    optional: true,
+  },
+  SKILL_1: {
+    format: "FREE_TEXT",
+  },
+  SKILL_2: {
+    format: "FREE_TEXT",
+    optional: true,
+  },
+  OBSTACLES: {
+    format: "FREE_TEXT",
+  },
+  CELEBRATION: {
+    format: "FREE_TEXT",
   },
 };

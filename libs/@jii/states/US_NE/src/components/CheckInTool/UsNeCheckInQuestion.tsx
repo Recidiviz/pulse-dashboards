@@ -31,7 +31,6 @@ import { UsNeCheckInFreeTextQuestion } from "./UsNeCheckInFreeTextQuestion";
 import { UsNeCheckInRadioQuestion } from "./UsNeCheckInRadioQuestion";
 
 export const UsNeCheckInQuestion = ({
-  sectionId,
   questionId,
   data,
   updateMutation,
