@@ -30,6 +30,7 @@ import { UsNeCheckInFooter } from "./UsNeCheckInFooter/UsNeCheckInFooter";
 import { UsNeCheckInFreeTextQuestion } from "./UsNeCheckInFreeTextQuestion";
 import { QuestionNumber, QuestionWrapper } from "./UsNeCheckInQuestion.styles";
 import { UsNeCheckInRadioQuestion } from "./UsNeCheckInRadioQuestion";
+import { UsNeCheckInSupportSystemQuestion } from "./UsNeCheckInSupportSystemQuestion";
 
 export const UsNeCheckInQuestion = ({
   sectionId,
@@ -68,6 +69,10 @@ export const UsNeCheckInQuestion = ({
         );
       case "FREE_TEXT":
         return <UsNeCheckInFreeTextQuestion key={questionId} id={questionId} />;
+      case "SUPPORT_SYSTEM":
+        return (
+          <UsNeCheckInSupportSystemQuestion key={questionId} id={questionId} />
+        );
       default:
         return assertNever(config);
     }

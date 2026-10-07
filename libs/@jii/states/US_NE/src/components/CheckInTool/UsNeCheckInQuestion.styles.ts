@@ -31,7 +31,7 @@ export const QuestionWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${rem(spacing.md)};
-  margin-top: ${rem(spacing.md)};
+  margin-top: ${rem(spacing.sm)};
 `;
 
 export const QuestionText = styled.h2`
@@ -104,4 +104,76 @@ export const OptionCard = styled.div<{ $selected: boolean }>`
       background: ${rgba(palette.pine4, 0.12)};
       border-color: ${palette.pine3};
     `}
+`;
+
+export const SupportSystemTable = styled.table`
+  color: ${palette.slate85};
+  border-spacing: 0;
+  border-collapse: separate;
+
+  table-layout: fixed;
+  width: 100%;
+
+  th,
+  td {
+    border-style: solid;
+    border-color: ${palette.slate30Opaque};
+    border-left-width: 1px;
+    border-top-width: 1px;
+    border-right-width: 0;
+    border-bottom-width: 0;
+  }
+
+  tbody {
+    td:last-child {
+      border-right-width: 1px;
+    }
+
+    tr:last-child > td {
+      border-bottom-width: 1px;
+    }
+  }
+
+  thead {
+    ${typography.Sans14}
+    text-transform: uppercase;
+    text-align: left;
+
+    th {
+      padding: ${rem(spacing.sm * 1.5)} ${rem(spacing.sm)};
+      background-color: ${palette.marble3};
+    }
+
+    th:last-child {
+      border-right-width: 1px;
+    }
+  }
+`;
+
+// the rows attribute and field-sizing have the same effect on
+// the initial height of the text entry;
+// field-sizing is used as a progressive enhancement
+export const SupportSystemTextEntry = styled.textarea.attrs({ rows: 1 })`
+  appearance: none;
+  display: block;
+
+  field-sizing: content;
+  max-height: ${rem(70)};
+
+  background-color: ${palette.marble1};
+
+  font-size: ${rem(14)};
+  padding: ${rem(spacing.sm)};
+  border: 0;
+
+  resize: none;
+  width: 100%;
+
+  &::placeholder {
+    color: ${palette.slate85};
+  }
+
+  &:focus {
+    outline-offset: -2px;
+  }
 `;

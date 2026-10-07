@@ -123,7 +123,7 @@ export const checkInSections = checkInToolSpec.map(({ id }) => id);
 export const checkInStandardRadioAnswers = ["YES", "NO"] as const;
 
 type SelectAnswerFormat = "RADIO" | "CHECKBOX";
-type TextEntryAnswerFormat = "FREE_TEXT"; // TODO(OBT-47841): Add "Support Systems" format
+type TextEntryAnswerFormat = "FREE_TEXT" | "SUPPORT_SYSTEM";
 
 type SharedQuestionConfigFields = {
   optional?: boolean;
@@ -368,8 +368,7 @@ export const checkInQuestionConfig: Record<
     format: "FREE_TEXT",
   },
   SUPPORT_SYSTEM: {
-    // TODO: Implement support system format
-    format: "FREE_TEXT",
+    format: "SUPPORT_SYSTEM",
   },
   STRENGTH_1: {
     format: "FREE_TEXT",

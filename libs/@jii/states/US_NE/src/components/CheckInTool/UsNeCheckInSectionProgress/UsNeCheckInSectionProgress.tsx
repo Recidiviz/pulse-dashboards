@@ -47,7 +47,7 @@ export const UsNeCheckInSectionProgress = ({
 
   const sectionNumber = sectionIndex + 1;
   const percent = Math.round(
-    (sectionNumber / checkInSections.length + 1) * 100,
+    (sectionNumber / (checkInSections.length + 1)) * 100,
   );
 
   const showNextSection = sectionIndex < checkInSections.length - 1;

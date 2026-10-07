@@ -72,10 +72,10 @@
       "sectionTitle": "To-dos",
       "loading": "Checking for new tasks...",
       "error": {
-        "message": "Your To-dos couldn't be loaded right now.",
+        "message": "Your To-dos couldn’t be loaded right now.",
         "retryCta": "Try again"
       },
-      "noTodos": "You don't have any To-dos right now.",
+      "noTodos": "You don’t have any To-dos right now.",
       "goodTimeRestoration": {
         "almostEligible": {
           "title": "Become Eligible For Good Time Restoration",
@@ -252,7 +252,7 @@
       "backup-housing": "I have a backup housing plan.",
       "reentry-circle": "I know when my Reentry Inner Circle Meeting is, or I have already attended.",
       "social-security-card": "I have my Social Security card.",
-      "state-id-license": "I have my state ID or driver's license.",
+      "state-id-license": "I have my state ID or driver’s license.",
       "birth-certificate-120": "I have my birth certificate.",
       "medicaid-120": "I have Medicaid.",
       "medical-checkup": "I have completed a medical check-up.",
@@ -304,8 +304,8 @@
     },
     "exitModal": {
       "title": "Are you sure you want to leave?",
-      "content": "We'll save your progress. When you come back, you'll start on this question.",
-      "info": "Your answer for this question won't be saved. Cancel and hit Next first if you want to keep it.",
+      "content": "We’ll save your progress. When you come back, you’ll start on this question.",
+      "info": "Your answer for this question won’t be saved. Cancel and hit Next first if you want to keep it.",
       "cancel": "Cancel",
       "saveAndExit": "Save and exit"
     },
@@ -375,12 +375,12 @@
         "question": "Is there anything from your past that you’re planning to stay away from after release?"
       },
       "STAY_AWAY_FROM_DESCRIPTION": {
-        "question": "Please share what you’re planning to stay from after release."
+        "question": "Please share what you’re planning to stay away from after release."
       },
       "FINES_AND_FEES": {
         "question": "Does the court say you owe money, like fines or fees?",
         "answers": {
-          "DONT_KNOW": "I don't know"
+          "DONT_KNOW": "I don’t know"
         }
       },
       "DEBTS": {
@@ -467,8 +467,8 @@
     "sections": {
       "sectionHousing": {
         "title": "Housing",
-        "subheading": "First, let's talk about housing.",
-        "explainer": "It's okay if you don't have a housing plan yet — we’re just interested in understanding your current thinking and where you might be looking for support."
+        "subheading": "First, let’s talk about housing.",
+        "explainer": "It’s okay if you don’t have a housing plan yet — we’re just interested in understanding your current thinking and where you might be looking for support."
       },
       "sectionEducationWork": {
         "title": "Education & Work",
@@ -489,7 +489,7 @@
       },
       "sectionWellness": {
         "title": "Wellness",
-        "subheading": "Now let's talk about wellness and support you might want, {{name}}, as you plan to go home."
+        "subheading": "Now let’s talk about wellness and support you might want, {{name}}, as you plan to go home."
       },
       "sectionPhysicalHealth": {
         "title": "Physical Health",
@@ -514,9 +514,9 @@
       "info": "This should take 15-20 minutes to complete.\n\nYou can stop and come back later. **Just hit “Next” first so your answers are saved.**"
     },
     "completion": {
-      "heading": "You're done, {{name}}!",
+      "heading": "You’re done, {{name}}!",
       "subheading": "Thanks for doing this today.",
-      "description": "You thought through:\n- Your housing plans\n- Your transportation plans\n- Your finances\n- Who will support you\n\nYour Reentry Specialist will use what you’ve shared in your 120-day check-in and to build your Success Plan with you.",
+      "description": "You shared your reentry plans for:\n- Your housing\n- Your transportation\n- Your finances\n- Who will support you\n\nYour Reentry Specialist will use what you’ve shared in your 120-day check-in and to build your Success Plan with you.",
       "close": "Close"
     },
     "questionPage": {
