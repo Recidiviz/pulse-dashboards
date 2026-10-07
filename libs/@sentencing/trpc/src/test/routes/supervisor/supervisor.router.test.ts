@@ -18,10 +18,25 @@
 import { TRPCError } from "@trpc/server";
 import moment from "moment";
 
+import { appRouter } from "~@sentencing/trpc/router";
 import { PRISMA_STAFF_GET_ARGS_FOR_SUPERVISOR } from "~@sentencing/trpc/routes/supervisor/constants";
 import { getSupervisorDashboardStats } from "~@sentencing/trpc/routes/supervisor/utils";
 import { testPrismaClient, testTRPCClient } from "~@sentencing/trpc/test/setup";
 import { fakeStaff, fakeSupervisor } from "~@sentencing/trpc/test/setup/seed";
+
+// Builds a tRPC caller with the given staffPseudonymizedId, bypassing
+// createContext, so tests can act as a state user. The HTTP test client always
+// acts as an internal user (no staffPseudonymizedId).
+function makeCallerForStaff(staffPseudonymizedId: string | undefined) {
+  return appRouter.createCaller({
+    req: {} as never,
+    res: {} as never,
+    isAuthorized: true,
+    prisma: testPrismaClient,
+    staffPseudonymizedId,
+    hasSARRouteAccess: true,
+  });
+}
 
 describe("supervisor router", () => {
   describe("getSupervisor", () => {
@@ -71,6 +86,31 @@ describe("supervisor router", () => {
         new TRPCError({
           code: "NOT_FOUND",
           message: "Staff with that id was not found",
+        }),
+      );
+    });
+
+    test("should return the caller's own team when a state user requests their own ID", async () => {
+      const returnedSupervisor = await makeCallerForStaff(
+        fakeSupervisor.pseudonymizedId,
+      ).supervisor.getSupervisor({
+        pseudonymizedId: fakeSupervisor.pseudonymizedId,
+      });
+
+      expect(returnedSupervisor.pseudonymizedId).toEqual(
+        fakeSupervisor.pseudonymizedId,
+      );
+    });
+
+    test("should throw FORBIDDEN when a state user requests another supervisor's ID", async () => {
+      await expect(() =>
+        makeCallerForStaff(fakeStaff.pseudonymizedId).supervisor.getSupervisor({
+          pseudonymizedId: fakeSupervisor.pseudonymizedId,
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have access to this supervisor",
         }),
       );
     });

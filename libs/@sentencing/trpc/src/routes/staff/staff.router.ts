@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { TRPCError } from "@trpc/server";
+
 import { handlePrismaError } from "~@sentencing/trpc/errors";
 import { baseProcedure, router } from "~@sentencing/trpc/init";
 import {
@@ -32,18 +34,37 @@ import {
 export const staffRouter = router({
   getStaff: baseProcedure
     .input(getStaffInputSchema)
-    .query(async ({ input: { pseudonymizedId }, ctx: { prisma } }) => {
-      const staff = await fetchStaffById(prisma, pseudonymizedId);
-      const staffFilter = await buildStaffCaseFilter(prisma, staff);
-      const cases = await fetchCasesForStaff(prisma, staffFilter);
+    .query(
+      async ({
+        input: { pseudonymizedId: requestedPseudonymizedId },
+        ctx: { prisma, staffPseudonymizedId },
+      }) => {
+        // State users may only request their own record. The client always
+        // sends the user's own ID, so a mismatch means a bug or someone probing;
+        // the FORBIDDEN is logged by the server's tRPC onError handler.
+        // Recidiviz internal users have no JWT pseudo ID and may request any
+        // ID, which keeps impersonation working.
+        if (
+          staffPseudonymizedId &&
+          requestedPseudonymizedId !== staffPseudonymizedId
+        ) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You do not have access to this staff member",
+          });
+        }
+        const staff = await fetchStaffById(prisma, requestedPseudonymizedId);
+        const staffFilter = await buildStaffCaseFilter(prisma, staff);
+        const cases = await fetchCasesForStaff(prisma, staffFilter);
 
-      return {
-        ...sanitizeStaffForResponse(staff),
-        cases: cases.map((c) =>
-          transformCaseForResponse(c, staff.pseudonymizedId),
-        ),
-      };
-    }),
+        return {
+          ...sanitizeStaffForResponse(staff),
+          cases: cases.map((c) =>
+            transformCaseForResponse(c, staff.pseudonymizedId),
+          ),
+        };
+      },
+    ),
   updateStaff: baseProcedure
     .input(updateStaffSchema)
     .mutation(

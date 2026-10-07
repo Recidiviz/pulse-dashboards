@@ -20,9 +20,24 @@ import { TRPCError } from "@trpc/server";
 import { describe, expect, test } from "vitest";
 
 import { Gender, StateCode } from "~@sentencing/prisma/client";
+import { appRouter } from "~@sentencing/trpc/router";
 import { testGetStaff } from "~@sentencing/trpc/test/common/utils";
 import { testPrismaClient, testTRPCClient } from "~@sentencing/trpc/test/setup";
 import { fakeStaff, fakeSupervisor } from "~@sentencing/trpc/test/setup/seed";
+
+// Builds a tRPC caller with the given staffPseudonymizedId, bypassing
+// createContext, so tests can act as a state user. The HTTP test client always
+// acts as an internal user (no staffPseudonymizedId).
+function makeCallerForStaff(staffPseudonymizedId: string | undefined) {
+  return appRouter.createCaller({
+    req: {} as never,
+    res: {} as never,
+    isAuthorized: true,
+    prisma: testPrismaClient,
+    staffPseudonymizedId,
+    hasSARRouteAccess: true,
+  });
+}
 
 describe("staff router", () => {
   describe("getStaff", () => {
@@ -126,6 +141,27 @@ describe("staff router", () => {
       const staffCase = result.cases.find((c) => c.externalId === "case-ext-1");
       expect(staffCase).toBeDefined();
       expect(staffCase?.assignedTo).toBeDefined();
+    });
+
+    test("should return the caller's own record when a state user requests their own ID", async () => {
+      const returnedStaff = await makeCallerForStaff(
+        fakeStaff.pseudonymizedId,
+      ).staff.getStaff({ pseudonymizedId: fakeStaff.pseudonymizedId });
+
+      expect(returnedStaff.pseudonymizedId).toEqual(fakeStaff.pseudonymizedId);
+    });
+
+    test("should throw FORBIDDEN when a state user requests another staff member's ID", async () => {
+      await expect(() =>
+        makeCallerForStaff(fakeStaff.pseudonymizedId).staff.getStaff({
+          pseudonymizedId: fakeSupervisor.pseudonymizedId,
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have access to this staff member",
+        }),
+      );
     });
   });
 

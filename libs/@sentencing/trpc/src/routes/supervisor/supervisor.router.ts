@@ -25,30 +25,49 @@ import { getSupervisorDashboardStats } from "~@sentencing/trpc/routes/supervisor
 export const supervisorRouter = router({
   getSupervisor: baseProcedure
     .input(getSupervisorInputSchema)
-    .query(async ({ input: { pseudonymizedId }, ctx: { prisma } }) => {
-      const supervisor = await prisma.staff.findUnique({
-        where: {
-          pseudonymizedId,
-        },
-        ...PRISMA_STAFF_GET_ARGS_FOR_SUPERVISOR,
-      });
-
-      if (!supervisor) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Staff with that id was not found",
+    .query(
+      async ({
+        input: { pseudonymizedId: requestedPseudonymizedId },
+        ctx: { prisma, staffPseudonymizedId },
+      }) => {
+        // State users may only request their own team. The client always
+        // sends the user's own ID, so a mismatch means a bug or someone probing;
+        // the FORBIDDEN is logged by the server's tRPC onError handler.
+        // Recidiviz internal users have no JWT pseudo ID and may request any
+        // ID, which keeps impersonation working.
+        if (
+          staffPseudonymizedId &&
+          requestedPseudonymizedId !== staffPseudonymizedId
+        ) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You do not have access to this supervisor",
+          });
+        }
+        const supervisor = await prisma.staff.findUnique({
+          where: {
+            pseudonymizedId: requestedPseudonymizedId,
+          },
+          ...PRISMA_STAFF_GET_ARGS_FOR_SUPERVISOR,
         });
-      }
 
-      const supervisorDashboardStats = await getSupervisorDashboardStats(
-        supervisor,
-        prisma,
-      );
+        if (!supervisor) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Staff with that id was not found",
+          });
+        }
 
-      return {
-        ...supervisor,
-        externalId: undefined,
-        supervisorDashboardStats,
-      };
-    }),
+        const supervisorDashboardStats = await getSupervisorDashboardStats(
+          supervisor,
+          prisma,
+        );
+
+        return {
+          ...supervisor,
+          externalId: undefined,
+          supervisorDashboardStats,
+        };
+      },
+    ),
 });
