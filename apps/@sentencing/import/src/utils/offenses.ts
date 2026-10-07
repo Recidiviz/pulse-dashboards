@@ -91,10 +91,13 @@ export async function transformAndLoadOffenseData(
       ],
     },
   });
-  // If there are any non-placeholder offenses in the database that aren't in the data import, log an error
+  // Offenses missing from the source data have been retired or renamed by the state.
+  // Keep them because existing cases still reference them. They drop out of the
+  // offense dropdown on their own, since getOffenses only returns offenses with
+  // insights and the insights import removes insights that aren't in the source data.
   if (missingExistingOffenses.length > 0) {
-    throw new Error(
-      `Error when importing offenses! These offenses exist in the database but are missing from the data import: ${missingExistingOffenses.map((offense) => offense.name).join(", ")}`,
+    console.warn(
+      `These offenses exist in the database but are missing from the data import: ${missingExistingOffenses.map((offense) => offense.name).join(", ")}`,
     );
   }
 }

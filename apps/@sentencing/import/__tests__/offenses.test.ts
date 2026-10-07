@@ -115,7 +115,7 @@ describe("import offense data", () => {
     );
   });
 
-  test("should throw error if existing offense is missing", async () => {
+  test("should keep existing offense if missing from the import", async () => {
     dataProviderSingleton.setData(TEST_OFFENSES_FILE_NAME, [
       // New offense
       {
@@ -125,10 +125,16 @@ describe("import offense data", () => {
       },
     ]);
 
-    await expect(() =>
-      importHandler.import(TEST_STATE_CODE, [OFFENSES_FILE_NAME]),
-    ).rejects.toThrowError(
-      "Error when importing offenses! These offenses exist in the database but are missing from the data import: offense-name",
+    await importHandler.import(TEST_STATE_CODE, [OFFENSES_FILE_NAME]);
+
+    const dbOffenses = await testPrismaClient.offense.findMany();
+
+    expect(dbOffenses).toHaveLength(2);
+    expect(dbOffenses).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: fakeOffense.name }),
+        expect.objectContaining({ name: "new-offense" }),
+      ]),
     );
   });
 
