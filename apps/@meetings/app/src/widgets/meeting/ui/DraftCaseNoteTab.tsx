@@ -18,7 +18,7 @@
 import Clipboard from "@react-native-clipboard/clipboard";
 import { debounce } from "lodash";
 import { ReactNode, useCallback, useEffect, useState } from "react";
-import { TextInput, View } from "react-native";
+import { View } from "react-native";
 import DocumentDuplicateIcon from "react-native-heroicons/solid/DocumentDuplicateIcon";
 import PencilIcon from "react-native-heroicons/solid/PencilIcon";
 
@@ -28,15 +28,13 @@ import { useAnalytics } from "~@meetings/app/shared/analytics";
 import { trpc } from "~@meetings/app/shared/api";
 import { Button } from "~@meetings/app/shared/ui/Button";
 import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
+import { TextInput } from "~@meetings/app/shared/ui/TextInput";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import {
   CaseNoteTypingAnimation,
   useCaseNoteTyping,
 } from "../model/useCaseNoteTyping";
-
-const NOTE_TEXT_CLASSNAME =
-  "text-base leading-6 tracking-[-0.32px] text-primary";
 
 type Props = {
   meetingId: string;
@@ -154,29 +152,22 @@ const DraftCaseNoteTab = ({
         </View>
       </View>
       <View className="flex-1">
-        {isNoteShown ? (
+        {!isPending && (
           <TextInput
-            style={{
-              outlineColor: "transparent",
-              minHeight: inputHeight,
-              overflow: "hidden",
-            }}
-            className={NOTE_TEXT_CLASSNAME}
-            value={inputNotes}
-            onChangeText={handleChange}
+            variant={isNoteShown && canEdit ? "outlined" : "outlined-static"}
+            style={{ minHeight: inputHeight }}
+            className="overflow-hidden text-base leading-6 tracking-[-0.32px] text-primary outline-none"
+            value={isTyping ? `${visibleText}|` : inputNotes}
+            // Not wired up while typing, so a half-typed note can't be saved
+            onChangeText={isTyping ? undefined : handleChange}
             onContentSizeChange={(e) =>
               setInputHeight(e.nativeEvent.contentSize.height)
             }
             textAlignVertical="top"
             scrollEnabled={false}
-            readOnly={!canEdit}
+            readOnly={!canEdit || isTyping}
             multiline
           />
-        ) : (
-          <Typography className={NOTE_TEXT_CLASSNAME}>
-            {visibleText}
-            {isTyping && <Typography className="animate-pulse">|</Typography>}
-          </Typography>
         )}
         {isNoteShown && outputVote}
       </View>

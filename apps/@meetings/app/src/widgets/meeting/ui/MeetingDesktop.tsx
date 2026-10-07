@@ -168,7 +168,7 @@ const MeetingDesktop = ({
           {/* overflow-hidden makes this a scroll container, which is what lets
               it reserve the same gutter as the ScrollView below and stay
               aligned with it. */}
-          <View className="scrollbar-gutter-stable overflow-hidden pr-14">
+          <View className="scrollbar-gutter-stable overflow-hidden pl-1 pr-14">
             <View className="flex-row items-center gap-3">
               <ImageBackground
                 source={BgAvatarImage}
@@ -259,7 +259,7 @@ const MeetingDesktop = ({
           <ScrollView
             ref={setScrollView}
             className="scrollbar-gutter-stable flex-1"
-            contentContainerClassName="grow pr-14 pb-10"
+            contentContainerClassName="grow pr-14 pb-10 pl-1"
             contentContainerStyle={
               shouldShowFooter && { paddingBottom: 40 + FOOTER_HEIGHT }
             }
