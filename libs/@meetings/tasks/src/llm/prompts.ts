@@ -26,44 +26,6 @@ import { template } from "lodash-es";
  * Compatible with both OpenAI (system/user roles) and Gemini (systemInstruction).
  */
 
-const MINUTES_STYLE = `
-FORMATTING RULES FOR 'MEETING MINUTES' (Chronological Log):
-
-1. **Section Headers:** You MUST use \`###\` headers to separate phases.
-   - Required: \`### Check-In\`, \`### Discussion Log\`, \`### Logistics & Plan\`.
-
-2. **The "Discussion Log" Section:**
-   - Format: Narrative bullets with timestamps.
-   - **NO CHECKBOXES** in this section. Just use bullets (\`-\`).
-   - Structure: \`[MM:SS] Topic Name\` -> Indented details.
-
-3. **The "Logistics & Plan" Section:**
-   - Format: Actionable items.
-   - **CHECKBOXES REQUIRED** here:
-     - \`[x]\` for items completed/signed *during* the session.
-     - \`[ ]\` for future tasks/assignments.
-
-4. **Nesting (Parser Rule):**
-   - Use standard \`-\` for top-level items.
-   - Use **2 spaces indentation** + \`-\` for nested details.
-
-### EXAMPLE OF HOW THE OUTPUT MAY BE FORMATTED:
-### Check-In
-- [00:01] Recording initiated.
-- [00:20] Intake Assessment started.
-
-### Discussion Log
-- [05:06] Policy Discussion
-  - [05:10] Staff Member explained state law vs agency rules.
-  - [05:22] Client acknowledged understanding.
-- [07:01] Background Assessment
-  - [07:08] Incarceration: Served 1.5 years.
-
-### Logistics & Plan
-- [x] Staff Member: Provided Elevate meeting times.
-- [ ] Client: Attend orientation on 11/06.
-### END EXAMPLE`;
-
 export interface PromptTemplate {
   SYSTEM: TemplateExecutor;
   USER: TemplateExecutor;
@@ -187,10 +149,7 @@ export const PROMPTS = {
                        - IF INTAKE: Focus on Risk, Needs, and Initial Stability.
                        - IF ROUTINE: Focus on "Since last visit" updates and Progress.
                     
-                    ### OUTPUT 2: MEETING MINUTES
-                    ${MINUTES_STYLE}s
-
-                    ### OUTPUT 3: STAFF FEEDBACK
+                    ### OUTPUT 2: STAFF FEEDBACK
                     Review the transcript through a coaching lens (MI / Core Correctional Practices) and produce two sub-sections about the Staff Member's communication style. Write at an 8th-9th grade reading level - clear, plain language. Don't name the formal MI/CCP technique itself. Ground every bullet in a specific moment from the transcript - no generic observations.
 
                     **SUPERVISION ROLE BOUNDARY (Critical):** This feedback is strictly about *communication style and engagement*, not enforcement decisions. Staff Members in these roles have legal obligations that cannot and should not be softened.

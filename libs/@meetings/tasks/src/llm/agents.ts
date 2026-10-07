@@ -20,7 +20,7 @@
  *
  * Implements the three-agent architecture:
  * - Extraction Agent (GPT-5): Extracts action items and status changes
- * - Writer Agent (GPT-5): Drafts case notes and meeting minutes
+ * - Writer Agent (GPT-5): Drafts case notes and staff feedback
  * - Auditor Agent (Gemini-2.5-Flash): Finds verbatim citations for verification
  */
 
@@ -85,7 +85,7 @@ function buildAdditionalOutputsSection(agency: AgencyConfig): string {
   return dedent`
     ### ADDITIONAL OUTPUTS
     The items below are agency-specific supplemental outputs, on top of the
-    three fixed outputs above. For each one: follow its instructions, write
+    fixed outputs above. For each one: follow its instructions, write
     plain prose (no codes, IDs, or structured data), and do not add your own
     section header - one will be added automatically. If its instructions
     say to omit the output under certain conditions, return an empty string
@@ -257,7 +257,7 @@ export class SpecialistCore {
 
   /**
    * STEP 2: Writer Agent
-   * Synthesizes case notes, minutes, and coaching staff feedback using
+   * Synthesizes case notes and coaching staff feedback using
    * extracted facts and the transcript.
    */
   async runDrafting(
