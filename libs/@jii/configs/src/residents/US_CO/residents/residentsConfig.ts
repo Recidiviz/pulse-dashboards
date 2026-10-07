@@ -28,4 +28,7 @@ export const usCoResidentsConfig: ResidentsConfig = {
   enabledResidentFlags: {
     usCoEdovoV1: parseISO("2026-10-05T05:00:00-07:00"),
   },
+  enabledUserFlags: {
+    useNewResidentData: parseISO("2026-10-08T12:00:00-07:00"),
+  },
 };

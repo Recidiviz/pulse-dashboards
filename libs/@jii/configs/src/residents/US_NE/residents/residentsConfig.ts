@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { parseISO } from "date-fns";
+
 import { home } from "../../defaults";
 import { ResidentsConfig } from "../../types";
 
@@ -29,5 +31,8 @@ export const usNeResidentsConfig: ResidentsConfig = {
   },
   translation: {
     additionalLanguages: ["es"],
+  },
+  enabledUserFlags: {
+    useNewResidentData: parseISO("2026-10-08T12:00:00-07:00"),
   },
 };

@@ -37,4 +37,7 @@ export const usAzResidentsConfig: ResidentsConfig = {
       usAzClassification: parseISO("2026-10-08T07:00:00-07:00"),
     },
   },
+  enabledUserFlags: {
+    useNewResidentData: parseISO("2026-10-08T12:00:00-07:00"),
+  },
 };
