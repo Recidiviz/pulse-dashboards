@@ -24,7 +24,7 @@ const meta = {
   component: Chip,
   argTypes: {
     color: {
-      options: ["green", "yellow", "gray", "red"],
+      options: ["green", "yellow", "gray", "red", "blue"],
       control: "radio",
     },
   },
@@ -52,4 +52,8 @@ export const Gray: ChipStory = {
 
 export const Red: ChipStory = {
   args: { color: "red" },
+};
+
+export const Blue: ChipStory = {
+  args: { color: "blue" },
 };

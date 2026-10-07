@@ -53,6 +53,11 @@ const statusStyles = {
     backgroundColor: palette.data.crimson1,
     borderColor: palette.data.crimson1,
   },
+  blue: {
+    color: palette.signal.notification,
+    backgroundColor: rgba(palette.signal.notification, 0.1),
+    borderColor: palette.signal.notification,
+  },
 };
 
 export type ChipColor = keyof typeof statusStyles;
