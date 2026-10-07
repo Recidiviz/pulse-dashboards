@@ -83,3 +83,46 @@ export function getDemoOnlyUser(
     },
   );
 }
+
+/** A CO user whose token lacks the Parole Board access claim. */
+export function getCOUser(testEnv: RulesTestEnvironment) {
+  return testEnv.authenticatedContext("user@us_co.gov", {
+    app: "staff",
+    stateCode: "US_CO",
+    impersonator: false,
+    recidivizAllowedStates: [],
+  });
+}
+
+/** A CO user whose token carries the Parole Board access claim. */
+export function getCOParoleBoardUser(testEnv: RulesTestEnvironment) {
+  return testEnv.authenticatedContext("paroleboard@us_co.gov", {
+    app: "staff",
+    stateCode: "US_CO",
+    impersonator: false,
+    recidivizAllowedStates: [],
+    hasParoleBoardAccess: true,
+  });
+}
+
+/** A demo-only CO user whose token carries the Parole Board access claim. */
+export function getDemoOnlyCOParoleBoardUser(testEnv: RulesTestEnvironment) {
+  return testEnv.authenticatedContext("paroleboard@us_co.gov", {
+    app: "staff",
+    stateCode: "US_CO",
+    impersonator: false,
+    recidivizAllowedStates: [],
+    forceWorkflowsDemoData: true,
+    hasParoleBoardAccess: true,
+  });
+}
+
+/** A Recidiviz user allowed into CO but not US_ID, the other Parole Board state. */
+export function getCORecidivizUser(testEnv: RulesTestEnvironment) {
+  return testEnv.authenticatedContext("admin", {
+    app: "staff",
+    stateCode: "RECIDIVIZ",
+    impersonator: false,
+    recidivizAllowedStates: ["US_CO"],
+  });
+}

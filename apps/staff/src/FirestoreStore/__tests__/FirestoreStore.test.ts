@@ -159,6 +159,18 @@ describe("FirestoreStore", () => {
       expect(mockFetchFirebaseToken).toBeCalled();
     });
 
+    test("Should call /token if user can access only the Parole Board", async () => {
+      const auth0Token = "token123";
+      const appMetadata: UserAppMetadata = {
+        stateCode: "us_id",
+        routes: {
+          parole: true,
+        },
+      };
+      await store.authenticate(auth0Token, appMetadata);
+      expect(mockFetchFirebaseToken).toBeCalled();
+    });
+
     test("Should not call /token if user cannot access workflows", async () => {
       const auth0Token = "token123";
       const appMetadata: UserAppMetadata = {

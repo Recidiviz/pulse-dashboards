@@ -35,6 +35,7 @@ import {
   or,
   PartialWithFieldValue,
   query,
+  QueryDocumentSnapshot,
   serverTimestamp,
   setDoc,
   Timestamp,
@@ -44,12 +45,15 @@ import {
 } from "firebase/firestore";
 import { chunk, mapValues, pickBy } from "lodash";
 import { makeAutoObservable } from "mobx";
+import { ZodError } from "zod";
 
 import { isOfflineMode } from "~client-env-utils";
 import {
   ClientRecord,
   clientRecordSchema,
   OpportunityType,
+  ParoleBoardClientProfileRecord,
+  paroleBoardClientProfileRecordSchema,
   WorkflowsResidentRecord,
   workflowsResidentRecordSchema,
 } from "~datatypes";
@@ -105,6 +109,39 @@ export type FirestoreDateRangeFilter = {
   endDateInclusive: string;
 };
 
+/**
+ * The field paths a profile failed to parse at. A ZodError's own message can
+ * include the values it received, which may be PII, so profile parse errors
+ * report only these paths. No document id either, since profile document ids
+ * carry the resident's DOC id.
+ *
+ * @param error - The error from parsing a profile document.
+ */
+function profileParseErrorPaths(error: ZodError): string {
+  return error.issues.map((issue) => issue.path.join(".")).join(", ");
+}
+
+/**
+ * Parses each profile document, skipping and logging a malformed one so it
+ * can't take down a whole docket.
+ */
+function parseParoleBoardClientProfiles(
+  docs: Array<QueryDocumentSnapshot>,
+): ParoleBoardClientProfileRecord[] {
+  return docs.flatMap((result) => {
+    const parsed = paroleBoardClientProfileRecordSchema.safeParse(
+      result.data(),
+    );
+    if (!parsed.success) {
+      console.error(
+        `Failed to parse a Parole Board client profile at fields [${profileParseErrorPaths(parsed.error)}]`,
+      );
+      return [];
+    }
+    return [parsed.data];
+  });
+}
+
 export default class FirestoreStore {
   rootStore;
 
@@ -127,7 +164,7 @@ export default class FirestoreStore {
     return this.rootStore.firebaseAuthClient.projectId.startsWith("demo-");
   }
 
-  /* Authenticate with Firebase for users with access to workflows */
+  /* Authenticate with Firebase for users with based on metadata */
   async authenticate(
     auth0Token: string,
     appMetadata: UserAppMetadata,
@@ -138,7 +175,8 @@ export default class FirestoreStore {
       isOfflineMode() ||
       appMetadata.routes?.workflowsSupervision ||
       appMetadata.routes?.workflowsFacilities ||
-      appMetadata.routes?.tasks;
+      appMetadata.routes?.tasks ||
+      appMetadata.routes?.parole;
 
     if (shouldGenerateToken) {
       const impersonationParams = impersonatedEmail
@@ -379,6 +417,91 @@ export default class FirestoreStore {
       }
       return [parsed.data];
     });
+  }
+
+  /**
+   * Returns the resident's Parole Board client profile, or undefined when
+   * they have none. Firestore rules deny the read to users without Parole
+   * Board access, so this throws for them rather than returning undefined.
+   *
+   * @param pseudonymizedId - The resident's pseudonymizedId.
+   * @param stateCode - The resident's state code.
+   */
+  async getParoleBoardClientProfile(
+    pseudonymizedId: string,
+    stateCode: string,
+  ): Promise<ParoleBoardClientProfileRecord | undefined> {
+    const results = await getDocs(
+      query(
+        this.collection({ key: "paroleBoardClientProfiles" }),
+        where("pseudonymizedId", "==", pseudonymizedId),
+        where("stateCode", "==", stateCode),
+        limit(1),
+      ),
+    );
+
+    const [result] = results.docs;
+    if (!result) return undefined;
+
+    // Unlike the docket, which skips a malformed profile, this fails the case
+    // page: a profile missing the fields that failed could mislead the Board.
+    const parsed = paroleBoardClientProfileRecordSchema.safeParse(
+      result.data(),
+    );
+    if (!parsed.success) {
+      throw new Error(
+        `Failed to parse the Parole Board client profile at fields [${profileParseErrorPaths(parsed.error)}]`,
+      );
+    }
+    return parsed.data;
+  }
+
+  /**
+   * Returns every Parole Board client profile in a state. Throws for users
+   * without Parole Board access, as getParoleBoardClientProfile does.
+   *
+   * @param stateCode - The state whose profiles to return.
+   */
+  async getParoleBoardClientProfilesForState(
+    stateCode: string,
+  ): Promise<ParoleBoardClientProfileRecord[]> {
+    const results = await getDocs(
+      query(
+        this.collection({ key: "paroleBoardClientProfiles" }),
+        where("stateCode", "==", stateCode),
+      ),
+    );
+    return parseParoleBoardClientProfiles(results.docs);
+  }
+
+  /**
+   * Returns the Parole Board client profiles stored under these document ids,
+   * which match the residents collection's. An id with no profile is
+   * skipped. Throws for users without Parole Board access, as
+   * getParoleBoardClientProfile does.
+   *
+   * @param recordIds - Resident record ids (WorkflowsResidentRecord.recordId).
+   * @param stateCode - The residents' state code.
+   */
+  async getParoleBoardClientProfilesByRecordIds(
+    recordIds: string[],
+    stateCode: string,
+  ): Promise<ParoleBoardClientProfileRecord[]> {
+    if (recordIds.length === 0) return [];
+    const batches = await Promise.all(
+      chunk(recordIds, FIRESTORE_IN_QUERY_BATCH_SIZE).map((batch) =>
+        getDocs(
+          query(
+            this.collection({ key: "paroleBoardClientProfiles" }),
+            where("stateCode", "==", stateCode),
+            where(documentId(), "in", batch),
+          ),
+        ),
+      ),
+    );
+    return batches.flatMap((results) =>
+      parseParoleBoardClientProfiles(results.docs),
+    );
   }
 
   private get userUpdatesKey() {

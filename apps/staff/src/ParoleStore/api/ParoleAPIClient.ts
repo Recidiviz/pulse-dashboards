@@ -27,6 +27,7 @@ import {
   ParoleAttachment,
   ParoleBoardClientProfileHearing,
   ParoleBoardClientProfileLatestRiskNeedSummary,
+  ParoleBoardClientProfileRecord,
   ParoleBoardClientProfileRiskAssessment,
   ParoleBoardClientProfileSentence,
   ParoleCase,
@@ -278,17 +279,24 @@ export class ParoleAPIClient implements ParoleAPI {
   constructor(public readonly paroleStore: ParoleStore) {}
 
   /**
-   * One docket row per resident with an upcoming scheduled hearing. A
-   * resident with no scheduled hearing is left out.
+   * One docket row per resident whose docket hearing date falls in the
+   * tenant's docket window. A resident with no docket hearing date is left
+   * out.
    */
   async hearings(): Promise<Array<ParoleHearing>> {
-    const residents = await this.getResidentsForState(
-      "hearings",
-      this.hearingDateRangeFilter(),
-    );
+    // Checked before hearingDateRangeFilter, which reads the tenant's
+    // paroleConfig and would otherwise mask this error with a config one.
+    this.requireSupportedTenant("hearings");
+    const dateRange = this.hearingDateRangeFilter();
+    const residents = await this.getResidentsForState("hearings", dateRange);
+    const profiles = await this.profilesByPseudonymizedId(residents, dateRange);
 
     return residents.flatMap(
-      (resident) => this.hearingForResident(resident) ?? [],
+      (resident) =>
+        this.hearingForResident(
+          resident,
+          profiles.get(resident.pseudonymizedId),
+        ) ?? [],
     );
   }
 
@@ -302,18 +310,21 @@ export class ParoleAPIClient implements ParoleAPI {
   async caseDetail(pseudonymizedId: string): Promise<ParoleCase> {
     const currentTenantId = this.requireSupportedTenant("caseDetail");
 
-    const resident =
-      await this.paroleStore.rootStore.firestoreStore.getResident(
+    const { firestoreStore } = this.paroleStore.rootStore;
+    const [resident, profile] = await Promise.all([
+      firestoreStore.getResident(pseudonymizedId, currentTenantId),
+      firestoreStore.getParoleBoardClientProfile(
         pseudonymizedId,
         currentTenantId,
-      );
+      ),
+    ]);
     if (!resident) {
       throw new Error(
         `No ${currentTenantId} resident found for pseudonymizedId [${pseudonymizedId}].`,
       );
     }
 
-    return this.caseDetailForResident(resident);
+    return this.caseDetailForResident(resident, profile);
   }
 
   /**
@@ -351,20 +362,45 @@ export class ParoleAPIClient implements ParoleAPI {
   }
 
   /**
+   * The Parole Board client profiles of these residents, by pseudonymizedId.
+   * A resident with no profile document has no entry. Fetches by document id
+   * when the residents query was narrowed to a date range, and otherwise
+   * fetches the whole tenant's profiles in one query, since batching an id
+   * lookup over every resident in a state would take hundreds of queries.
+   *
+   * @param residents - Residents of the current tenant.
+   * @param dateRange - The filter the residents query was narrowed by, if any.
+   */
+  private async profilesByPseudonymizedId(
+    residents: Array<WorkflowsResidentRecord>,
+    dateRange: FirestoreDateRangeFilter | undefined,
+  ): Promise<Map<string, ParoleBoardClientProfileRecord>> {
+    const currentTenantId = this.requireSupportedTenant("hearings");
+    const { firestoreStore } = this.paroleStore.rootStore;
+    const profiles = dateRange
+      ? await firestoreStore.getParoleBoardClientProfilesByRecordIds(
+          residents.map((resident) => resident.recordId),
+          currentTenantId,
+        )
+      : await firestoreStore.getParoleBoardClientProfilesForState(
+          currentTenantId,
+        );
+    return new Map(
+      profiles.map((profile) => [profile.pseudonymizedId, profile]),
+    );
+  }
+
+  /**
    * Narrows the hearings() query to the tenant's docket window, so the docket
-   * does not fetch every resident in the state and window them client-side in
-   * ParoleDocketPresenter.hearingsInWindow.
+   * does not fetch every resident in the state.
    */
   private hearingDateRangeFilter(): FirestoreDateRangeFilter | undefined {
-    const { currentTenantId } = this.paroleStore.rootStore.tenantStore;
-    if (currentTenantId !== "US_CO") return undefined;
-
     const { windowDaysBefore, windowDaysAfter } =
       this.paroleStore.config.docketConfig;
     if (windowDaysAfter === undefined) return undefined;
 
     return {
-      field: "metadata.nextParoleHearingDate",
+      field: "metadata.docketHearingDate",
       startDateInclusive: formatDateToISO(
         subDays(startOfToday(), windowDaysBefore ?? 0),
       ),
@@ -380,12 +416,12 @@ export class ParoleAPIClient implements ParoleAPI {
    */
   private hearingForResident(
     resident: WorkflowsResidentRecord,
+    profile: ParoleBoardClientProfileRecord | undefined,
   ): ParoleHearing | undefined {
-    if (!isSupportedTenantId(resident.metadata.stateCode)) return undefined;
-
-    const hearing = this.scheduledHearing(resident);
-    const hearingDate = hearing?.hearingDate ?? this.flatHearingDate(resident);
+    const hearingDate = this.docketHearingDate(resident);
     if (!hearingDate) return undefined;
+
+    const hearing = this.scheduledHearing(profile);
 
     return {
       pseudonymizedId: resident.pseudonymizedId,
@@ -394,7 +430,7 @@ export class ParoleAPIClient implements ParoleAPI {
       hearingDate,
       hearingDateIsPlaceholder: hearing?.hearingDateIsPlaceholder,
       hearingType: hearing?.hearingType ?? UNKNOWN_TEXT,
-      facility: this.facilityForResident(resident),
+      facility: this.facilityForResident(resident, profile),
     };
   }
 
@@ -404,12 +440,12 @@ export class ParoleAPIClient implements ParoleAPI {
    * since ParoleHearing.pseudonymizedId is the person's id and two rows would
    * open the same case profile twice.
    *
-   * @param resident - The resident whose hearing to find.
+   * @param profile - The resident's Parole Board client profile, if any.
    */
   private scheduledHearing(
-    resident: WorkflowsResidentRecord,
+    profile: ParoleBoardClientProfileRecord | undefined,
   ): ScheduledHearing | undefined {
-    return (this.profileFor(resident)?.paroleHearings ?? [])
+    return (profile?.paroleHearings ?? [])
       .flatMap((hearing) =>
         hearing.hearingStatus === "SCHEDULED" && hearing.hearingDate
           ? [
@@ -425,21 +461,20 @@ export class ParoleAPIClient implements ParoleAPI {
   }
 
   /**
-   * The flat hearing date us_ix_resident_metadata carries beside the parole
-   * hearings struct. Most US_ID residents have no SCHEDULED entry in that
-   * struct, so this is where their hearing date comes from. It carries no
-   * hearing type, so callers supply their own placeholder for that.
+   * The hearing date the docket and case profile show, which the backend
+   * computes as docket_hearing_date: the soonest scheduled hearing, else the
+   * tenant's fallback dates (US_ID's hearing due dates). The docket query
+   * filters on this same field, so the rows it returns are the rows it shows.
    *
-   * Drop this once the struct covers them, not merely once it exists.
-   *
-   * @param resident - The resident whose flat hearing date to read.
+   * @param resident - The resident whose docket hearing date to read.
    */
-  private flatHearingDate(
+  private docketHearingDate(
     resident: WorkflowsResidentRecord,
   ): string | undefined {
     const { metadata } = resident;
-    if (metadata.stateCode !== "US_ID") return undefined;
-    return metadata.nextParoleHearingDate ?? metadata.initialParoleHearingDate;
+    return isSupportedTenantMetadata(metadata)
+      ? metadata.docketHearingDate
+      : undefined;
   }
 
   /**
@@ -460,9 +495,12 @@ export class ParoleAPIClient implements ParoleAPI {
    * Assembles the whole case profile from one resident record, filling each
    * field the tenant does not source with its UNKNOWN placeholder.
    */
-  private caseDetailForResident(resident: WorkflowsResidentRecord): ParoleCase {
-    const hearing = this.scheduledHearing(resident);
-    const dates = this.sourceableDatesForResident(resident);
+  private caseDetailForResident(
+    resident: WorkflowsResidentRecord,
+    profile: ParoleBoardClientProfileRecord | undefined,
+  ): ParoleCase {
+    const hearing = this.scheduledHearing(profile);
+    const dates = this.sourceableDatesForResident(resident, profile);
 
     return {
       pseudonymizedId: resident.pseudonymizedId,
@@ -470,37 +508,35 @@ export class ParoleAPIClient implements ParoleAPI {
       name: this.nameForResident(resident),
       dob: dates.dob ?? UNKNOWN_DATE,
       gender: resident.gender ?? UNKNOWN_TEXT,
-      currentFacility: this.facilityForResident(resident),
+      currentFacility: this.facilityForResident(resident, profile),
       custodyLevel: resident.custodyLevel ?? UNKNOWN_TEXT,
-      caseManagerName:
-        this.profileFor(resident)?.demographics.caseManager ?? UNKNOWN_TEXT,
-      hearingDate: hearing?.hearingDate ?? this.flatHearingDate(resident),
+      caseManagerName: profile?.demographics.caseManager ?? UNKNOWN_TEXT,
+      hearingDate: this.docketHearingDate(resident),
       hearingDateIsPlaceholder: hearing?.hearingDateIsPlaceholder,
       hearingType: hearing?.hearingType ?? UNKNOWN_TEXT,
       sentenceStartDate: dates.sentenceStartDate ?? UNKNOWN_DATE,
       paroleEligibilityDate: dates.paroleEligibilityDate ?? UNKNOWN_DATE,
       mandatoryReleaseDate: dates.mandatoryReleaseDate ?? UNKNOWN_DATE,
       lifeSentence: dates.lifeSentence,
-      parolePlan: this.parolePlanForResident(resident),
-      attachments: this.attachmentsForResident(resident),
-      conductHistory: this.conductHistoryForResident(resident),
+      parolePlan: this.parolePlanForResident(profile),
+      attachments: this.attachmentsForResident(profile),
+      conductHistory: this.conductHistoryForResident(profile),
       disciplinaryFacilityNotes:
-        this.profileFor(resident)?.disciplinarySummary
-          ?.disciplinaryFacilityNotes,
-      stg: this.profileFor(resident)?.securityThreatGroup?.stg,
+        profile?.disciplinarySummary?.disciplinaryFacilityNotes,
+      stg: profile?.securityThreatGroup?.stg,
       communitySupervisionPlan:
-        this.communitySupervisionPlanForResident(resident),
-      docPrograms: this.docProgramsForResident(resident),
-      edovoPrograms: this.edovoProgramsForResident(resident),
-      caseNotes: this.caseNotesForResident(resident),
+        this.communitySupervisionPlanForResident(profile),
+      docPrograms: this.docProgramsForResident(profile),
+      edovoPrograms: this.edovoProgramsForResident(profile),
+      caseNotes: this.caseNotesForResident(profile),
       offenseHistory: {
-        offenses: this.offensesForResident(resident),
-        priorConvictions: this.priorConvictionsForResident(resident),
+        offenses: this.offensesForResident(profile),
+        priorConvictions: this.priorConvictionsForResident(profile),
         victimInvolved: false,
         victimAttendingHearing: false,
       },
-      riskAssessments: this.riskAssessmentsForResident(resident),
-      riskAndNeedsFactors: this.riskAndNeedsFactorsForResident(resident),
+      riskAssessments: this.riskAssessmentsForResident(profile),
+      riskAndNeedsFactors: this.riskAndNeedsFactorsForResident(profile),
     };
   }
 
@@ -511,9 +547,9 @@ export class ParoleAPIClient implements ParoleAPI {
    * resident's state, or they genuinely have no active sentence.
    */
   private offensesForResident(
-    resident: WorkflowsResidentRecord,
+    profile: ParoleBoardClientProfileRecord | undefined,
   ): ParoleOffenseHistory["offenses"] {
-    const sentences = this.profileFor(resident)?.activeSentences ?? [];
+    const sentences = profile?.activeSentences ?? [];
 
     if (sentences.length === 0) return [UNKNOWN_OFFENSE];
 
@@ -559,23 +595,13 @@ export class ParoleAPIClient implements ParoleAPI {
    * facility name where `facilityId` is a raw code; US_IX selects `facilityId`
    * straight through today, so the two agree there for now.
    */
-  private facilityForResident(resident: WorkflowsResidentRecord): string {
+  private facilityForResident(
+    resident: WorkflowsResidentRecord,
+    profile: ParoleBoardClientProfileRecord | undefined,
+  ): string {
     return (
-      this.profileFor(resident)?.demographics.facility ??
-      resident.facilityId ??
-      UNKNOWN_TEXT
+      profile?.demographics.facility ?? resident.facilityId ?? UNKNOWN_TEXT
     );
-  }
-
-  /**
-   * The resident's paroleBoardClientProfile, which every mapper below reads
-   * from. Undefined when the resident belongs to a tenant that carries none.
-   */
-  private profileFor(resident: WorkflowsResidentRecord) {
-    const { metadata } = resident;
-    return isSupportedTenantMetadata(metadata)
-      ? metadata.paroleBoardClientProfile
-      : undefined;
   }
 
   /**
@@ -584,9 +610,9 @@ export class ParoleAPIClient implements ParoleAPI {
    * both and any placeholder would misrepresent a real charge.
    */
   private priorConvictionsForResident(
-    resident: WorkflowsResidentRecord,
+    profile: ParoleBoardClientProfileRecord | undefined,
   ): Array<ParoleConviction> {
-    const history = this.profileFor(resident)?.criminalHistory ?? [];
+    const history = profile?.criminalHistory ?? [];
     return history.flatMap((entry) =>
       entry.historyCharge && entry.historyDate
         ? [{ charge: entry.historyCharge, date: entry.historyDate }]
@@ -596,9 +622,9 @@ export class ParoleAPIClient implements ParoleAPI {
 
   /** Disciplinary records from the profile's violations. */
   private conductHistoryForResident(
-    resident: WorkflowsResidentRecord,
+    profile: ParoleBoardClientProfileRecord | undefined,
   ): Array<ParoleConductRecord> {
-    const violations = this.profileFor(resident)?.violations ?? [];
+    const violations = profile?.violations ?? [];
     return violations.map((violation) => ({
       date: violation.violationDate ?? UNKNOWN_DATE,
       facility: violation.violationFacility ?? UNKNOWN_TEXT,
@@ -616,9 +642,9 @@ export class ParoleAPIClient implements ParoleAPI {
    * because status has no safe placeholder.
    */
   private docProgramsForResident(
-    resident: WorkflowsResidentRecord,
+    profile: ParoleBoardClientProfileRecord | undefined,
   ): Array<ParoleDocProgram> {
-    const programs = this.profileFor(resident)?.programs ?? [];
+    const programs = profile?.programs ?? [];
     return programs.flatMap((program) => {
       const status = program.programStatus
         ? programStatusForRawLabel(program.programStatus)
@@ -644,9 +670,9 @@ export class ParoleAPIClient implements ParoleAPI {
    * client does not recognize, for the same reason as docProgramsForResident.
    */
   private edovoProgramsForResident(
-    resident: WorkflowsResidentRecord,
+    profile: ParoleBoardClientProfileRecord | undefined,
   ): Array<ParoleEdovoProgram> {
-    const programs = this.profileFor(resident)?.edovoPrograms ?? [];
+    const programs = profile?.edovoPrograms ?? [];
     return programs.flatMap((program) => {
       const status = program.edovoProgramStatus
         ? EDOVO_STATUS_BY_RAW_LABEL[program.edovoProgramStatus]
@@ -674,9 +700,9 @@ export class ParoleAPIClient implements ParoleAPI {
    * id, so each note's position in the list serves as one.
    */
   private caseNotesForResident(
-    resident: WorkflowsResidentRecord,
+    profile: ParoleBoardClientProfileRecord | undefined,
   ): Array<ParoleCaseNote> {
-    const notes = this.profileFor(resident)?.caseNotes ?? [];
+    const notes = profile?.caseNotes ?? [];
     return notes.flatMap((note, index) =>
       note.noteDate && note.noteBody
         ? [
@@ -696,9 +722,9 @@ export class ParoleAPIClient implements ParoleAPI {
    * or score is dropped, since each is required downstream.
    */
   private riskAssessmentsForResident(
-    resident: WorkflowsResidentRecord,
+    profile: ParoleBoardClientProfileRecord | undefined,
   ): Array<ParoleRiskAssessment> {
-    const assessments = this.profileFor(resident)?.riskAssessments ?? [];
+    const assessments = profile?.riskAssessments ?? [];
 
     return assessments.flatMap((assessment) => {
       const tool = assessment.assessmentType
@@ -735,9 +761,9 @@ export class ParoleAPIClient implements ParoleAPI {
    * rather than fabricated.
    */
   private riskAndNeedsFactorsForResident(
-    resident: WorkflowsResidentRecord,
+    profile: ParoleBoardClientProfileRecord | undefined,
   ): Array<ParoleRiskNeedFactor> {
-    const summary = this.profileFor(resident)?.latestRiskNeedSummary;
+    const summary = profile?.latestRiskNeedSummary;
     if (!summary) return [];
 
     return RISK_NEED_FACTOR_FIELDS.flatMap(({ field, factor }) => {
@@ -754,8 +780,10 @@ export class ParoleAPIClient implements ParoleAPI {
    * The resident's parole plan, or the schema's own "no plan on file" value
    * when the profile carries none.
    */
-  private parolePlanForResident(resident: WorkflowsResidentRecord): ParolePlan {
-    const plan = this.profileFor(resident)?.parolePlan;
+  private parolePlanForResident(
+    profile: ParoleBoardClientProfileRecord | undefined,
+  ): ParolePlan {
+    const plan = profile?.parolePlan;
     if (!plan?.parolePlanIsOnFile) {
       return { onFile: false, documents: [] };
     }
@@ -783,9 +811,9 @@ export class ParoleAPIClient implements ParoleAPI {
    * decision-relevant recommendation.
    */
   private communitySupervisionPlanForResident(
-    resident: WorkflowsResidentRecord,
+    profile: ParoleBoardClientProfileRecord | undefined,
   ): Array<ParoleCommunitySupervisionPlanEntry> {
-    const plan = this.profileFor(resident)?.parolePlan;
+    const plan = profile?.parolePlan;
     const recommended = plan?.parolePlanRecommended;
     if (!plan?.parolePlanIsOnFile || !plan.parolePlanSponsorName) return [];
     if (!recommended || !RECOMMENDED_STATUS_OPTIONS.has(recommended)) {
@@ -810,9 +838,9 @@ export class ParoleAPIClient implements ParoleAPI {
    * because the link is still useful without them.
    */
   private attachmentsForResident(
-    resident: WorkflowsResidentRecord,
+    profile: ParoleBoardClientProfileRecord | undefined,
   ): Array<ParoleAttachment> {
-    const attachments = this.profileFor(resident)?.attachments ?? [];
+    const attachments = profile?.attachments ?? [];
     return attachments.flatMap((attachment) =>
       attachment.attachmentUrl
         ? [
@@ -832,18 +860,21 @@ export class ParoleAPIClient implements ParoleAPI {
    * different fields. caseDetailForResident falls back to UNKNOWN_DATE for
    * whichever come back undefined.
    */
-  private sourceableDatesForResident(resident: WorkflowsResidentRecord): {
+  private sourceableDatesForResident(
+    resident: WorkflowsResidentRecord,
+    profile: ParoleBoardClientProfileRecord | undefined,
+  ): {
     sentenceStartDate: string | undefined;
     paroleEligibilityDate: string | undefined;
     mandatoryReleaseDate: string | undefined;
     lifeSentence?: ParoleLifeSentence;
     dob: string | undefined;
   } {
-    const dob = this.profileFor(resident)?.demographics.residentDob;
+    const dob = profile?.demographics.residentDob;
     // The soonest-eligibility sentence, first per the backend's own
     // ordering (see recidiviz-data#102399's ORDER BY) -- the same one
     // offensesForResident() lists first.
-    const firstSentence = this.profileFor(resident)?.activeSentences?.[0];
+    const firstSentence = profile?.activeSentences?.[0];
 
     if (resident.metadata.stateCode === "US_ID") {
       return {

@@ -46,6 +46,12 @@ service cloud.firestore {
     return !collectionName.matches(".*Updates.*");
   }
 
+  // Parole Board client profiles have their own match blocks below, gated on
+  // Parole Board access; the general read rule must not also grant them.
+  function isParoleBoardClientProfileCollection(collectionName) {
+    return collectionName.matches("^(DEMO_)?paroleBoardClientProfiles$");
+  }
+
   function isDemoCollection(collectionName) {
     return collectionName.matches("^DEMO_.*");
   }
@@ -134,6 +140,27 @@ service cloud.firestore {
     return permission in request.auth.token.permissions;
   }
 
+  // Expects the staff-server Firebase token endpoint to set this claim from the
+  // user's Auth0 `parole` route permission. A token without the claim is denied.
+  function hasParoleBoardAccess() {
+    return request.auth.token.get("hasParoleBoardAccess", false) == true;
+  }
+
+  // Recidiviz users read profiles for their allowed states, as they read any
+  // other staff collection. Everyone else needs Parole Board access, and only
+  // reads profiles in their own state.
+  //
+  // Unlike the general read rule, a missing doc is denied rather than allowed.
+  // Profile doc ids carry the resident's DOC id, so allowing it would let a user
+  // tell a nonexistent id (not found) from another state's id (denied).
+  function allowStaffParoleBoardClientProfileRead(collection) {
+    return appIsStaff() && isDemoCollectionIfDemoOnlyAccount(collection) &&
+      (
+        recidivizAllowedStatesIncludesTarget(collection) ||
+        (hasParoleBoardAccess() && stateCodeMatchesTarget())
+      );
+  }
+
   function docIdMatchesUserId(documentId) {
     return documentId == path(userDocIdRegexFromToken());
   }
@@ -180,11 +207,20 @@ service cloud.firestore {
       // firestore will allow an operation if ANY rules match it,
       // so we specifically filter out update collections here
       allow read: if notAnUpdateCollection(collection) &&
+        !isParoleBoardClientProfileCollection(collection) &&
         (
           allowStaffGeneralRead(collection) || 
           (!isDemoCollection(collection) && allowJiiLiveRead(collection, document)) ||
           (isDemoCollection(collection) && allowJiiGeneralRead(collection, document))
         );
+    }
+
+    match /paroleBoardClientProfiles/{document} {
+      allow read: if allowStaffParoleBoardClientProfileRead("paroleBoardClientProfiles");
+    }
+
+    match /DEMO_paroleBoardClientProfiles/{document} {
+      allow read: if allowStaffParoleBoardClientProfileRead("DEMO_paroleBoardClientProfiles");
     }
 
     match /userUpdates/{path=**}/{document} {

@@ -19,17 +19,25 @@ import mockFirebaseAdmin from "firebase-admin";
 
 import { stateCodes } from "~auth-utils";
 
+import { fetchImpersonatedUserRestrictions } from "../../routes/api";
 import { isOfflineMode } from "../../utils/isOfflineMode";
 import { getFirebaseToken } from "../firebaseToken";
 
 vi.mock("firebase-admin");
 vi.mock("../../utils/isOfflineMode");
+vi.mock("../../routes/api", async (importOriginal) => ({
+  ...(await importOriginal()),
+  fetchImpersonatedUserRestrictions: vi.fn(),
+}));
 
 const createCustomTokenMock = vi.fn();
 
 beforeEach(() => {
   const authMock = vi.fn(() => ({ createCustomToken: createCustomTokenMock }));
   mockFirebaseAdmin.auth = authMock;
+  createCustomTokenMock.mockClear();
+  fetchImpersonatedUserRestrictions.mockReset();
+  fetchImpersonatedUserRestrictions.mockResolvedValue({ routes: {} });
 });
 
 test("requests Firebase auth token", async () => {
@@ -57,6 +65,7 @@ test("requests Firebase auth token", async () => {
     impersonator: false,
     recidivizAllowedStates: [],
     forceWorkflowsDemoData: false,
+    hasParoleBoardAccess: false,
   });
   expect(mockRes.json).toHaveBeenCalledWith({
     firebaseToken: mockFirebaseToken,
@@ -91,6 +100,7 @@ test("Firebase token with allowedStates", async () => {
     impersonator: false,
     recidivizAllowedStates: ["US_XX"],
     forceWorkflowsDemoData: false,
+    hasParoleBoardAccess: false,
   });
   expect(mockRes.json).toHaveBeenCalledWith({
     firebaseToken: mockFirebaseToken,
@@ -125,6 +135,7 @@ test("Firebase token with forceWorkflowsDemoData: true", async () => {
     impersonator: false,
     recidivizAllowedStates: [],
     forceWorkflowsDemoData: true,
+    hasParoleBoardAccess: false,
   });
   expect(mockRes.json).toHaveBeenCalledWith({
     firebaseToken: mockFirebaseToken,
@@ -160,6 +171,7 @@ test("Firebase token for offline mode allows all states", async () => {
     impersonator: false,
     recidivizAllowedStates: Object.values(stateCodes),
     forceWorkflowsDemoData: false,
+    hasParoleBoardAccess: false,
   });
   expect(mockRes.json).toHaveBeenCalledWith({
     firebaseToken: mockFirebaseToken,
@@ -195,10 +207,90 @@ test("requests Firebase auth token for impersonated user", async () => {
     impersonator: true,
     recidivizAllowedStates: [],
     forceWorkflowsDemoData: false,
+    hasParoleBoardAccess: false,
   });
   expect(mockRes.json).toHaveBeenCalledWith({
     firebaseToken: mockFirebaseToken,
   });
+});
+
+test("grants hasParoleBoardAccess to a user with the parole route", async () => {
+  const userId = "TEST123@somewhere.com";
+
+  createCustomTokenMock.mockResolvedValue("tokenabc123");
+  const mockReq = {
+    user: {
+      undefinedemail_address: userId,
+      // this key includes an env variable that is not set in this test environment
+      undefinedapp_metadata: { stateCode: "us_xx", routes: { parole: true } },
+    },
+  };
+
+  await getFirebaseToken(mockReq, { json: vi.fn() });
+
+  expect(createCustomTokenMock).toHaveBeenCalledWith(
+    userId,
+    expect.objectContaining({ hasParoleBoardAccess: true }),
+  );
+});
+
+test("grants an impersonated user hasParoleBoardAccess from their own permissions, not the impersonator's", async () => {
+  const userId = "impersonatedEmail@somewhere.com";
+  fetchImpersonatedUserRestrictions.mockResolvedValue({
+    routes: { parole: true },
+  });
+
+  createCustomTokenMock.mockResolvedValue("tokenabc123");
+  const mockReq = {
+    user: {
+      undefinedapp_metadata: { stateCode: "recidiviz", routes: {} },
+    },
+    query: {
+      impersonationParams: JSON.stringify({
+        impersonatedEmail: userId,
+        impersonatedStateCode: "us_yy",
+      }),
+    },
+  };
+
+  await getFirebaseToken(mockReq, { json: vi.fn() });
+
+  expect(fetchImpersonatedUserRestrictions).toHaveBeenCalledWith(userId);
+  expect(createCustomTokenMock).toHaveBeenCalledWith(
+    userId,
+    expect.objectContaining({ hasParoleBoardAccess: true }),
+  );
+});
+
+test("withholds only hasParoleBoardAccess when the impersonated user's permissions cannot be fetched", async () => {
+  const userId = "impersonatedEmail@somewhere.com";
+  const consoleErrorSpy = vi
+    .spyOn(console, "error")
+    .mockImplementation(() => undefined);
+  fetchImpersonatedUserRestrictions.mockRejectedValue(
+    new Error(`auth API unavailable for ${userId}`),
+  );
+  createCustomTokenMock.mockResolvedValue("tokenabc123");
+  const mockReq = {
+    user: {
+      undefinedapp_metadata: { stateCode: "recidiviz" },
+    },
+    query: {
+      impersonationParams: JSON.stringify({
+        impersonatedEmail: userId,
+        impersonatedStateCode: "us_yy",
+      }),
+    },
+  };
+
+  await getFirebaseToken(mockReq, { json: vi.fn() });
+
+  expect(createCustomTokenMock).toHaveBeenCalledWith(
+    userId,
+    expect.objectContaining({ hasParoleBoardAccess: false }),
+  );
+  expect(JSON.stringify(consoleErrorSpy.mock.calls)).not.toContain(userId);
+  consoleErrorSpy.mockRestore();
 });
 
 test("responds with 403 forbidden when requested by a non-recidiviz user", async () => {

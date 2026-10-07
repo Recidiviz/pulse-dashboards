@@ -21,6 +21,7 @@ export const FIRESTORE_GENERAL_COLLECTION_MAP = {
   userUpdates: "userUpdates",
   clients: "clients",
   residents: "residents",
+  paroleBoardClientProfiles: "paroleBoardClientProfiles",
   clientUpdates: "clientUpdates",
   clientUpdatesV2: "clientUpdatesV2",
   clientOpportunityUpdates: "clientOpportunityUpdates",

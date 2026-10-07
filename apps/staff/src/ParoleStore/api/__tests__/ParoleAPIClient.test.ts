@@ -16,10 +16,13 @@
 // =============================================================================
 
 import { addDays, startOfToday, subDays } from "date-fns";
+import { z } from "zod";
 
 import {
   PAROLE_UNKNOWN_DATE,
   PAROLE_UNKNOWN_TEXT,
+  paroleBoardClientProfileRecordSchema,
+  paroleBoardClientProfileSchema,
   RawWorkflowsResidentRecord,
   WorkflowsResidentRecord,
   workflowsResidentRecordSchema,
@@ -69,6 +72,33 @@ function buildUsCoResident(
   });
 }
 
+/**
+ * Stubs every Parole Board client profile fetch to return this one profile,
+ * belonging to the anonres999 resident the builders above create.
+ */
+function stubProfile(
+  rootStore: RootStore,
+  raw: z.input<typeof paroleBoardClientProfileSchema>,
+) {
+  const profile = paroleBoardClientProfileRecordSchema.parse({
+    stateCode: rootStore.tenantStore.currentTenantId,
+    pseudonymizedId: "anonres999",
+    ...raw,
+  });
+  vi.spyOn(
+    rootStore.firestoreStore,
+    "getParoleBoardClientProfile",
+  ).mockResolvedValue(profile);
+  vi.spyOn(
+    rootStore.firestoreStore,
+    "getParoleBoardClientProfilesForState",
+  ).mockResolvedValue([profile]);
+  vi.spyOn(
+    rootStore.firestoreStore,
+    "getParoleBoardClientProfilesByRecordIds",
+  ).mockResolvedValue([profile]);
+}
+
 describe("ParoleAPIClient", () => {
   let rootStore: RootStore;
   let client: ParoleAPIClient;
@@ -77,6 +107,18 @@ describe("ParoleAPIClient", () => {
     rootStore = new RootStore();
     rootStore.tenantStore.currentTenantId = "US_ID";
     client = new ParoleAPIClient(new ParoleStore(rootStore));
+    vi.spyOn(
+      rootStore.firestoreStore,
+      "getParoleBoardClientProfile",
+    ).mockResolvedValue(undefined);
+    vi.spyOn(
+      rootStore.firestoreStore,
+      "getParoleBoardClientProfilesForState",
+    ).mockResolvedValue([]);
+    vi.spyOn(
+      rootStore.firestoreStore,
+      "getParoleBoardClientProfilesByRecordIds",
+    ).mockResolvedValue([]);
   });
 
   describe("hearings", () => {
@@ -98,13 +140,13 @@ describe("ParoleAPIClient", () => {
 
       // US_CO's docketConfig: windowDaysBefore 31, windowDaysAfter 14.
       expect(spy).toHaveBeenCalledWith("US_CO", {
-        field: "metadata.nextParoleHearingDate",
+        field: "metadata.docketHearingDate",
         startDateInclusive: formatDateToISO(subDays(startOfToday(), 31)),
         endDateInclusive: formatDateToISO(addDays(startOfToday(), 14)),
       });
     });
 
-    it("does not scope the US_ID query server-side, since its records don't have metadata.nextParoleHearingDate yet", async () => {
+    it("scopes the US_ID query server-side to its docket window", async () => {
       rootStore.tenantStore.currentTenantId = "US_ID";
       const spy = vi
         .spyOn(rootStore.firestoreStore, "getResidentsForState")
@@ -112,10 +154,99 @@ describe("ParoleAPIClient", () => {
 
       await client.hearings();
 
-      expect(spy).toHaveBeenCalledWith("US_ID", undefined);
+      // US_ID's docketConfig: windowDaysBefore 7, windowDaysAfter 30.
+      expect(spy).toHaveBeenCalledWith("US_ID", {
+        field: "metadata.docketHearingDate",
+        startDateInclusive: formatDateToISO(subDays(startOfToday(), 7)),
+        endDateInclusive: formatDateToISO(addDays(startOfToday(), 30)),
+      });
     });
 
-    it("excludes a resident whose parole_hearings category is unhydrated", async () => {
+    it("fetches US_CO profiles only for the residents in its docket window", async () => {
+      rootStore.tenantStore.currentTenantId = "US_CO";
+      vi.spyOn(
+        rootStore.firestoreStore,
+        "getResidentsForState",
+      ).mockResolvedValue([buildUsCoResident()]);
+
+      await client.hearings();
+
+      expect(
+        rootStore.firestoreStore.getParoleBoardClientProfilesByRecordIds,
+      ).toHaveBeenCalledWith(["us_co_res999"], "US_CO");
+      expect(
+        rootStore.firestoreStore.getParoleBoardClientProfilesForState,
+      ).not.toHaveBeenCalled();
+    });
+
+    it("fetches US_ID profiles only for the residents in its docket window", async () => {
+      vi.spyOn(
+        rootStore.firestoreStore,
+        "getResidentsForState",
+      ).mockResolvedValue([buildUsIdResident()]);
+
+      await client.hearings();
+
+      expect(
+        rootStore.firestoreStore.getParoleBoardClientProfilesByRecordIds,
+      ).toHaveBeenCalledWith(["us_id_res999"], "US_ID");
+      expect(
+        rootStore.firestoreStore.getParoleBoardClientProfilesForState,
+      ).not.toHaveBeenCalled();
+    });
+
+    it("does not apply another resident's profile", async () => {
+      vi.spyOn(
+        rootStore.firestoreStore,
+        "getResidentsForState",
+      ).mockResolvedValue([
+        buildUsIdResident({
+          metadata: {
+            stateCode: "US_ID",
+            crcFacilities: [],
+            docketHearingDate: "2026-06-01",
+          },
+        }),
+      ]);
+      vi.spyOn(
+        rootStore.firestoreStore,
+        "getParoleBoardClientProfilesByRecordIds",
+      ).mockResolvedValue([
+        paroleBoardClientProfileRecordSchema.parse({
+          stateCode: "US_ID",
+          pseudonymizedId: "anonres111",
+          demographics: {},
+          paroleHearings: [
+            {
+              hearingStatus: "SCHEDULED",
+              hearingDate: "2026-06-01",
+              hearingType: "Someone else's",
+            },
+          ],
+        }),
+      ]);
+
+      const [hearing] = await client.hearings();
+
+      expect(hearing.hearingType).toBe("Not yet available");
+    });
+
+    it("fails when the profile read is denied, rather than showing a docket without profiles", async () => {
+      vi.spyOn(
+        rootStore.firestoreStore,
+        "getResidentsForState",
+      ).mockResolvedValue([buildUsIdResident()]);
+      vi.spyOn(
+        rootStore.firestoreStore,
+        "getParoleBoardClientProfilesByRecordIds",
+      ).mockRejectedValue(new Error("Missing or insufficient permissions."));
+
+      await expect(client.hearings()).rejects.toThrow(
+        "Missing or insufficient permissions.",
+      );
+    });
+
+    it("excludes a US_CO resident with no docketHearingDate", async () => {
       rootStore.tenantStore.currentTenantId = "US_CO";
       vi.spyOn(
         rootStore.firestoreStore,
@@ -137,19 +268,20 @@ describe("ParoleAPIClient", () => {
             incarcerationStartDate: null,
             creditActivity: [],
             cohortLabel: "STANDARD",
-            paroleBoardClientProfile: {
-              demographics: {},
-              paroleHearings: [
-                {
-                  hearingStatus: "SCHEDULED",
-                  hearingDate: "2026-11-02",
-                  hearingType: "Parole Consideration",
-                },
-              ],
-            },
+            docketHearingDate: "2026-11-02",
           },
         }),
       ]);
+      stubProfile(rootStore, {
+        demographics: {},
+        paroleHearings: [
+          {
+            hearingStatus: "SCHEDULED",
+            hearingDate: "2026-11-02",
+            hearingType: "Parole Consideration",
+          },
+        ],
+      });
 
       await expect(client.hearings()).resolves.toEqual([
         {
@@ -164,7 +296,7 @@ describe("ParoleAPIClient", () => {
       ]);
     });
 
-    it("takes the soonest SCHEDULED hearing and ignores PREVIOUS ones", async () => {
+    it("takes hearingType from the soonest SCHEDULED hearing and ignores PREVIOUS ones", async () => {
       vi.spyOn(
         rootStore.firestoreStore,
         "getResidentsForState",
@@ -173,29 +305,30 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: {},
-              paroleHearings: [
-                {
-                  hearingStatus: "SCHEDULED",
-                  hearingDate: "2027-01-15",
-                  hearingType: "Later",
-                },
-                {
-                  hearingStatus: "PREVIOUS",
-                  hearingDate: "2020-01-01",
-                  hearingType: "Past",
-                },
-                {
-                  hearingStatus: "SCHEDULED",
-                  hearingDate: "2026-06-01",
-                  hearingType: "Soonest",
-                },
-              ],
-            },
+            docketHearingDate: "2026-06-01",
           },
         }),
       ]);
+      stubProfile(rootStore, {
+        demographics: {},
+        paroleHearings: [
+          {
+            hearingStatus: "SCHEDULED",
+            hearingDate: "2027-01-15",
+            hearingType: "Later",
+          },
+          {
+            hearingStatus: "PREVIOUS",
+            hearingDate: "2020-01-01",
+            hearingType: "Past",
+          },
+          {
+            hearingStatus: "SCHEDULED",
+            hearingDate: "2026-06-01",
+            hearingType: "Soonest",
+          },
+        ],
+      });
 
       const [hearing] = await client.hearings();
 
@@ -203,7 +336,7 @@ describe("ParoleAPIClient", () => {
       expect(hearing.hearingType).toBe("Soonest");
     });
 
-    it("prefers parole_hearings over the flat US_ID hearing dates", async () => {
+    it("reads hearingDate from docketHearingDate, not the flat US_ID hearing dates", async () => {
       vi.spyOn(
         rootStore.firestoreStore,
         "getResidentsForState",
@@ -213,19 +346,21 @@ describe("ParoleAPIClient", () => {
             stateCode: "US_ID",
             crcFacilities: [],
             nextParoleHearingDate: "2026-05-01",
-            paroleBoardClientProfile: {
-              demographics: {},
-              paroleHearings: [
-                {
-                  hearingStatus: "SCHEDULED",
-                  hearingDate: "2026-09-09",
-                  hearingType: "From the struct",
-                },
-              ],
-            },
+            initialParoleHearingDate: "2020-01-01",
+            docketHearingDate: "2026-09-09",
           },
         }),
       ]);
+      stubProfile(rootStore, {
+        demographics: {},
+        paroleHearings: [
+          {
+            hearingStatus: "SCHEDULED",
+            hearingDate: "2026-09-09",
+            hearingType: "From the struct",
+          },
+        ],
+      });
 
       const [hearing] = await client.hearings();
 
@@ -242,7 +377,7 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            nextParoleHearingDate: "2026-05-01",
+            docketHearingDate: "2026-05-01",
           },
         }),
       ]);
@@ -257,45 +392,6 @@ describe("ParoleAPIClient", () => {
           facility: "FACILITY1",
         },
       ]);
-    });
-
-    it("prefers nextParoleHearingDate over initialParoleHearingDate", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentsForState",
-      ).mockResolvedValue([
-        buildUsIdResident({
-          metadata: {
-            stateCode: "US_ID",
-            crcFacilities: [],
-            nextParoleHearingDate: "2026-05-01",
-            initialParoleHearingDate: "2020-01-01",
-          },
-        }),
-      ]);
-
-      const [hearing] = await client.hearings();
-
-      expect(hearing.hearingDate).toBe("2026-05-01");
-    });
-
-    it("falls back to initialParoleHearingDate when there is no next hearing date", async () => {
-      vi.spyOn(
-        rootStore.firestoreStore,
-        "getResidentsForState",
-      ).mockResolvedValue([
-        buildUsIdResident({
-          metadata: {
-            stateCode: "US_ID",
-            crcFacilities: [],
-            initialParoleHearingDate: "2020-01-01",
-          },
-        }),
-      ]);
-
-      const [hearing] = await client.hearings();
-
-      expect(hearing.hearingDate).toBe("2020-01-01");
     });
 
     it("excludes residents with no hearing date at all", async () => {
@@ -321,7 +417,7 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            nextParoleHearingDate: "2026-05-01",
+            docketHearingDate: "2026-05-01",
           },
         }),
       ]);
@@ -341,7 +437,7 @@ describe("ParoleAPIClient", () => {
         metadata: {
           stateCode: "US_ID",
           crcFacilities: [],
-          nextParoleHearingDate: "2026-05-01",
+          docketHearingDate: "2026-05-01",
         },
       });
       vi.spyOn(
@@ -379,6 +475,20 @@ describe("ParoleAPIClient", () => {
       );
     });
 
+    it("fails when the profile read is denied", async () => {
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
+        buildUsIdResident(),
+      );
+      vi.spyOn(
+        rootStore.firestoreStore,
+        "getParoleBoardClientProfile",
+      ).mockRejectedValue(new Error("Missing or insufficient permissions."));
+
+      await expect(client.caseDetail("anonres999")).rejects.toThrow(
+        "Missing or insufficient permissions.",
+      );
+    });
+
     it("maps every field the resident record has real data for", async () => {
       vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
@@ -388,7 +498,7 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            nextParoleHearingDate: "2026-05-01",
+            docketHearingDate: "2026-05-01",
             paroleEligibilityDate: "2026-01-01",
           },
         }),
@@ -415,12 +525,12 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: { residentDob: "1986-07-27" },
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: { residentDob: "1986-07-27" },
+      });
 
       const result = await client.caseDetail("RES999");
 
@@ -436,12 +546,12 @@ describe("ParoleAPIClient", () => {
             incarcerationStartDate: null,
             creditActivity: [],
             cohortLabel: "STANDARD",
-            paroleBoardClientProfile: {
-              demographics: { residentDob: "1974-02-05" },
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: { residentDob: "1974-02-05" },
+      });
 
       const result = await client.caseDetail("RES999");
 
@@ -454,10 +564,10 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: { demographics: {} },
           },
         }),
       );
+      stubProfile(rootStore, { demographics: {} });
 
       const result = await client.caseDetail("RES999");
 
@@ -525,13 +635,13 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: {},
-              activeSentences: [],
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: {},
+        activeSentences: [],
+      });
 
       const result = await client.caseDetail("RES999");
 
@@ -555,32 +665,32 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: {},
-              activeSentences: [
-                {
-                  sentenceConvictionCounty: "Ada",
-                  sentenceDocket: "CR-2020-001",
-                  sentenceFelonyClass: "Felony Class 1",
-                  sentenceChargeName: "Burglary",
-                  sentenceStatute: "18-1401",
-                  sentenceOffenseDate: "2019-05-01",
-                  sentenceConvictionDate: "2019-11-01",
-                  sentenceLength: "5y 0m 0d",
-                  sentenceSummary: "Entered a closed business at night.",
-                  sentenceStartDate: "2019-11-01",
-                  sentenceParoleEligibilityDate: "2026-01-01",
-                  sentenceFullTermReleaseDate: "2029-01-01",
-                },
-                {
-                  sentenceDocket: "CR-2021-002",
-                  sentenceChargeName: "Grand Theft",
-                },
-              ],
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: {},
+        activeSentences: [
+          {
+            sentenceConvictionCounty: "Ada",
+            sentenceDocket: "CR-2020-001",
+            sentenceFelonyClass: "Felony Class 1",
+            sentenceChargeName: "Burglary",
+            sentenceStatute: "18-1401",
+            sentenceOffenseDate: "2019-05-01",
+            sentenceConvictionDate: "2019-11-01",
+            sentenceLength: "5y 0m 0d",
+            sentenceSummary: "Entered a closed business at night.",
+            sentenceStartDate: "2019-11-01",
+            sentenceParoleEligibilityDate: "2026-01-01",
+            sentenceFullTermReleaseDate: "2029-01-01",
+          },
+          {
+            sentenceDocket: "CR-2021-002",
+            sentenceChargeName: "Grand Theft",
+          },
+        ],
+      });
 
       const result = await client.caseDetail("RES999");
 
@@ -622,19 +732,19 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: {},
-              activeSentences: [
-                {
-                  sentenceDocket: "CR-2020-001",
-                  sentenceParoleEligibilityDate: "9999-01-25",
-                  sentenceFullTermReleaseDate: "9999-01-25",
-                },
-              ],
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: {},
+        activeSentences: [
+          {
+            sentenceDocket: "CR-2020-001",
+            sentenceParoleEligibilityDate: "9999-01-25",
+            sentenceFullTermReleaseDate: "9999-01-25",
+          },
+        ],
+      });
 
       const [offense] = (await client.caseDetail("RES999")).offenseHistory
         .offenses;
@@ -664,28 +774,20 @@ describe("ParoleAPIClient", () => {
         sentenceStartDate: "2019-08-12",
         paroleEligibilityDate: "2027-01-03",
         mandatoryReleaseDate: "2033-01-03",
-        // No parole_hearings on this mock resident, so this stays unset --
-        // see the "sources hearingDate from parole_hearings" tests below
+        // No docketHearingDate on this mock resident, so this stays unset --
+        // see the "sources hearingDate from docketHearingDate" test below
         // for a US_CO resident that has one.
         hearingDate: undefined,
       });
     });
 
-    it("sources hearingDate from parole_hearings for both tenants", async () => {
-      const scheduledHearing = {
-        hearingStatus: "SCHEDULED",
-        hearingDate: "2026-11-02",
-      };
-
+    it("sources hearingDate from docketHearingDate for both tenants", async () => {
       vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
         buildUsIdResident({
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: {},
-              paroleHearings: [scheduledHearing],
-            },
+            docketHearingDate: "2026-11-02",
           },
         }),
       );
@@ -701,10 +803,7 @@ describe("ParoleAPIClient", () => {
             incarcerationStartDate: null,
             creditActivity: [],
             cohortLabel: "STANDARD",
-            paroleBoardClientProfile: {
-              demographics: {},
-              paroleHearings: [scheduledHearing],
-            },
+            docketHearingDate: "2026-11-02",
           },
         }),
       );
@@ -721,17 +820,18 @@ describe("ParoleAPIClient", () => {
           incarcerationStartDate: null,
           creditActivity: [],
           cohortLabel: "STANDARD",
-          paroleBoardClientProfile: {
-            demographics: {},
-            paroleHearings: [
-              {
-                hearingStatus: "SCHEDULED",
-                hearingDate: "2026-11-01",
-                hearingDateIsPlaceholder: true,
-              },
-            ],
-          },
+          docketHearingDate: "2026-11-01",
         },
+      });
+      stubProfile(rootStore, {
+        demographics: {},
+        paroleHearings: [
+          {
+            hearingStatus: "SCHEDULED",
+            hearingDate: "2026-11-01",
+            hearingDateIsPlaceholder: true,
+          },
+        ],
       });
       vi.spyOn(
         rootStore.firestoreStore,
@@ -754,24 +854,25 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: {},
-              paroleHearings: [
-                {
-                  hearingStatus: "PREVIOUS",
-                  hearingDate: "2024-01-01",
-                  hearingType: "Past",
-                },
-                {
-                  hearingStatus: "SCHEDULED",
-                  hearingDate: "2026-11-02",
-                  hearingType: "Parole Consideration",
-                },
-              ],
-            },
+            docketHearingDate: "2026-11-02",
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: {},
+        paroleHearings: [
+          {
+            hearingStatus: "PREVIOUS",
+            hearingDate: "2024-01-01",
+            hearingType: "Past",
+          },
+          {
+            hearingStatus: "SCHEDULED",
+            hearingDate: "2026-11-02",
+            hearingType: "Parole Consideration",
+          },
+        ],
+      });
 
       const result = await client.caseDetail("RES999");
 
@@ -785,15 +886,15 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: {},
-              paroleHearings: [
-                { hearingStatus: "SCHEDULED", hearingDate: "2026-11-02" },
-              ],
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: {},
+        paroleHearings: [
+          { hearingStatus: "SCHEDULED", hearingDate: "2026-11-02" },
+        ],
+      });
 
       const result = await client.caseDetail("RES999");
 
@@ -807,12 +908,12 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: { facility: "Idaho State Correctional Center" },
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: { facility: "Idaho State Correctional Center" },
+      });
 
       const result = await client.caseDetail("RES999");
 
@@ -826,10 +927,10 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: { demographics: {} },
           },
         }),
       );
+      stubProfile(rootStore, { demographics: {} });
 
       const result = await client.caseDetail("RES999");
 
@@ -842,12 +943,12 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: { caseManager: "ANGELA PORTELA" },
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: { caseManager: "ANGELA PORTELA" },
+      });
 
       const result = await client.caseDetail("RES999");
 
@@ -865,19 +966,19 @@ describe("ParoleAPIClient", () => {
             pedTent: "2027-01-03",
             creditActivity: [],
             cohortLabel: "STANDARD",
-            paroleBoardClientProfile: {
-              demographics: {},
-              activeSentences: [
-                {
-                  sentenceParoleEligibilityDate: "2026-06-01",
-                  // A placeholder year, so it falls back to mrdTent.
-                  sentenceMandatoryReleaseDate: "2999-01-20",
-                },
-              ],
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: {},
+        activeSentences: [
+          {
+            sentenceParoleEligibilityDate: "2026-06-01",
+            // A placeholder year, so it falls back to mrdTent.
+            sentenceMandatoryReleaseDate: "2999-01-20",
+          },
+        ],
+      });
 
       const result = await client.caseDetail("RES999");
 
@@ -902,18 +1003,18 @@ describe("ParoleAPIClient", () => {
               pedTent: "2027-01-03",
               creditActivity: [],
               cohortLabel,
-              paroleBoardClientProfile: {
-                demographics: {},
-                activeSentences: [
-                  {
-                    sentenceParoleEligibilityDate: "2026-06-01",
-                    sentenceMandatoryReleaseDate: "2999-01-20",
-                  },
-                ],
-              },
             },
           }),
         );
+        stubProfile(rootStore, {
+          demographics: {},
+          activeSentences: [
+            {
+              sentenceParoleEligibilityDate: "2026-06-01",
+              sentenceMandatoryReleaseDate: "2999-01-20",
+            },
+          ],
+        });
 
         const result = await client.caseDetail("RES999");
 
@@ -945,16 +1046,16 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: {},
-              criminalHistory: [
-                { historyCharge: "Burglary", historyDate: "2015-01-01" },
-                { historyCharge: "Trespassing" },
-              ],
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: {},
+        criminalHistory: [
+          { historyCharge: "Burglary", historyDate: "2015-01-01" },
+          { historyCharge: "Trespassing" },
+        ],
+      });
 
       const result = await client.caseDetail("RES999");
 
@@ -969,31 +1070,31 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: {},
-              violations: [
-                {
-                  violationCategory: "Class IIa",
-                  violationDate: "2026-08-13",
-                  violationType: "THREATS",
-                  violationDescription: "Threatened another resident",
-                  violationSanction: "SEGREGATN",
-                  violationFacility: "Facility A",
-                },
-                {
-                  violationCategory: "Class C",
-                  violationDate: "2026-09-02",
-                  violationType: "TOBACCO",
-                  violationDescription: "Found with tobacco",
-                  violationSanction: "LOST PRIVILEGES",
-                  violationFacility: "Facility A",
-                  violationIsPending: true,
-                },
-              ],
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: {},
+        violations: [
+          {
+            violationCategory: "Class IIa",
+            violationDate: "2026-08-13",
+            violationType: "THREATS",
+            violationDescription: "Threatened another resident",
+            violationSanction: "SEGREGATN",
+            violationFacility: "Facility A",
+          },
+          {
+            violationCategory: "Class C",
+            violationDate: "2026-09-02",
+            violationType: "TOBACCO",
+            violationDescription: "Found with tobacco",
+            violationSanction: "LOST PRIVILEGES",
+            violationFacility: "Facility A",
+            violationIsPending: true,
+          },
+        ],
+      });
 
       const result = await client.caseDetail("RES999");
 
@@ -1025,31 +1126,31 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: {},
-              programs: [
-                {
-                  // Already the normalized enum value for US_ID -- passes through untranslated.
-                  programName: "Anger Management",
-                  programStatus: "IN_PROGRESS",
-                  programCategory: "Treatment",
-                  programNeed: "Antisocial Thinking",
-                },
-                {
-                  // US_CO's own free-form status, translated by this client.
-                  programName: "Offender Led Program",
-                  programStatus: "Transferred to another Facility",
-                },
-                {
-                  // Unrecognized status -- dropped rather than guessed.
-                  programName: "Mystery Program",
-                  programStatus: "Some New Status",
-                },
-              ],
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: {},
+        programs: [
+          {
+            // Already the normalized enum value for US_ID -- passes through untranslated.
+            programName: "Anger Management",
+            programStatus: "IN_PROGRESS",
+            programCategory: "Treatment",
+            programNeed: "Antisocial Thinking",
+          },
+          {
+            // US_CO's own free-form status, translated by this client.
+            programName: "Offender Led Program",
+            programStatus: "Transferred to another Facility",
+          },
+          {
+            // Unrecognized status -- dropped rather than guessed.
+            programName: "Mystery Program",
+            programStatus: "Some New Status",
+          },
+        ],
+      });
 
       const result = await client.caseDetail("RES999");
 
@@ -1077,26 +1178,26 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: {},
-              edovoPrograms: [
-                {
-                  edovoProgramName: "Financial Literacy",
-                  edovoProgramStatus: "COMPLETED",
-                  edovoProgramResult: "PASSED",
-                  edovoProgramStartDate: "2024-02-09",
-                  edovoProgramCompletionDate: "2024-03-09",
-                  edovoProgramDuration: 28,
-                },
-                {
-                  edovoProgramName: "Mindfulness",
-                  edovoProgramStatus: "WITHDRAWN",
-                },
-              ],
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: {},
+        edovoPrograms: [
+          {
+            edovoProgramName: "Financial Literacy",
+            edovoProgramStatus: "COMPLETED",
+            edovoProgramResult: "PASSED",
+            edovoProgramStartDate: "2024-02-09",
+            edovoProgramCompletionDate: "2024-03-09",
+            edovoProgramDuration: 28,
+          },
+          {
+            edovoProgramName: "Mindfulness",
+            edovoProgramStatus: "WITHDRAWN",
+          },
+        ],
+      });
 
       const result = await client.caseDetail("RES999");
 
@@ -1118,33 +1219,33 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: {},
-              riskAssessments: [
-                {
-                  // Already the normalized enum value for US_ID.
-                  assessmentType: "LSIR",
-                  assessmentDate: "2026-05-01",
-                  assessmentScore: 30,
-                  assessmentMaxScore: 54,
-                },
-                {
-                  // US_CO's raw label, translated by this client.
-                  assessmentType: "RT Scoring Tool",
-                  assessmentDate: "2026-05-08",
-                  assessmentScore: 7,
-                  assessmentMaxScore: 27,
-                },
-                {
-                  // No score -- dropped rather than shown with one missing.
-                  assessmentType: "LSIR",
-                  assessmentDate: "2020-01-01",
-                },
-              ],
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: {},
+        riskAssessments: [
+          {
+            // Already the normalized enum value for US_ID.
+            assessmentType: "LSIR",
+            assessmentDate: "2026-05-01",
+            assessmentScore: 30,
+            assessmentMaxScore: 54,
+          },
+          {
+            // US_CO's raw label, translated by this client.
+            assessmentType: "RT Scoring Tool",
+            assessmentDate: "2026-05-08",
+            assessmentScore: 7,
+            assessmentMaxScore: 27,
+          },
+          {
+            // No score -- dropped rather than shown with one missing.
+            assessmentType: "LSIR",
+            assessmentDate: "2020-01-01",
+          },
+        ],
+      });
 
       const result = await client.caseDetail("RES999");
 
@@ -1172,20 +1273,20 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: {},
-              riskAssessments: [
-                {
-                  assessmentType: "LSIR",
-                  assessmentDate: "2026-05-01",
-                  assessmentScore: 0,
-                  assessmentMaxScore: 54,
-                },
-              ],
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: {},
+        riskAssessments: [
+          {
+            assessmentType: "LSIR",
+            assessmentDate: "2026-05-01",
+            assessmentScore: 0,
+            assessmentMaxScore: 54,
+          },
+        ],
+      });
 
       const result = await client.caseDetail("RES999");
 
@@ -1206,20 +1307,20 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: {},
-              riskAssessments: [
-                {
-                  assessmentType: "LSIR",
-                  assessmentDate: "2026-05-01",
-                  assessmentLevel: "HIGH",
-                  assessmentScore: 30,
-                },
-              ],
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: {},
+        riskAssessments: [
+          {
+            assessmentType: "LSIR",
+            assessmentDate: "2026-05-01",
+            assessmentLevel: "HIGH",
+            assessmentScore: 30,
+          },
+        ],
+      });
 
       const result = await client.caseDetail("RES999");
 
@@ -1240,38 +1341,38 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: {},
-              riskAssessments: [
-                {
-                  assessmentType: "LSIR",
-                  assessmentDate: "2026-05-01",
-                  assessmentScore: 30,
-                  assessmentMaxScore: 54,
-                  assessmentCategories: [
-                    {
-                      assessmentCategoryName: "Criminal History",
-                      assessmentCategoryScore: 8,
-                      assessmentCategoryMaxScore: 10,
-                    },
-                    {
-                      assessmentCategoryName: "Education/Employment",
-                      assessmentCategoryScore: 3,
-                      assessmentCategoryMaxScore: 10,
-                    },
-                    // Missing its score, so it is dropped.
-                    {
-                      assessmentCategoryName: "Financial",
-                      assessmentCategoryScore: null,
-                      assessmentCategoryMaxScore: 2,
-                    },
-                  ],
-                },
-              ],
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: {},
+        riskAssessments: [
+          {
+            assessmentType: "LSIR",
+            assessmentDate: "2026-05-01",
+            assessmentScore: 30,
+            assessmentMaxScore: 54,
+            assessmentCategories: [
+              {
+                assessmentCategoryName: "Criminal History",
+                assessmentCategoryScore: 8,
+                assessmentCategoryMaxScore: 10,
+              },
+              {
+                assessmentCategoryName: "Education/Employment",
+                assessmentCategoryScore: 3,
+                assessmentCategoryMaxScore: 10,
+              },
+              // Missing its score, so it is dropped.
+              {
+                assessmentCategoryName: "Financial",
+                assessmentCategoryScore: null,
+                assessmentCategoryMaxScore: 2,
+              },
+            ],
+          },
+        ],
+      });
 
       const result = await client.caseDetail("RES999");
 
@@ -1295,20 +1396,20 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: {},
-              riskAssessments: [
-                {
-                  assessmentType: "LSIR",
-                  assessmentDate: "2026-05-01",
-                  assessmentScore: 30,
-                  assessmentMaxScore: 54,
-                },
-              ],
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: {},
+        riskAssessments: [
+          {
+            assessmentType: "LSIR",
+            assessmentDate: "2026-05-01",
+            assessmentScore: 30,
+            assessmentMaxScore: 54,
+          },
+        ],
+      });
 
       const result = await client.caseDetail("RES999");
 
@@ -1324,27 +1425,27 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: {},
-              riskAssessments: [
-                {
-                  assessmentType: "CARAS",
-                  assessmentDate: "2026-05-01",
-                  assessmentScore: 40,
-                  assessmentMaxScore: 100,
-                  assessmentCategories: [
-                    {
-                      assessmentCategoryName: "Criminal History",
-                      assessmentCategoryScore: 8,
-                      assessmentCategoryMaxScore: 10,
-                    },
-                  ],
-                },
-              ],
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: {},
+        riskAssessments: [
+          {
+            assessmentType: "CARAS",
+            assessmentDate: "2026-05-01",
+            assessmentScore: 40,
+            assessmentMaxScore: 100,
+            assessmentCategories: [
+              {
+                assessmentCategoryName: "Criminal History",
+                assessmentCategoryScore: 8,
+                assessmentCategoryMaxScore: 10,
+              },
+            ],
+          },
+        ],
+      });
 
       const result = await client.caseDetail("RES999");
 
@@ -1359,18 +1460,18 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: {},
-              latestRiskNeedSummary: {
-                assessmentLatestMedical: '{"code":"0","scale":"Low"}',
-                // A compound label, shown as-is rather than translated.
-                assessmentLatestMentalHealth:
-                  '{"code":"3","scale":"Low to moderate"}',
-              },
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: {},
+        latestRiskNeedSummary: {
+          assessmentLatestMedical: '{"code":"0","scale":"Low"}',
+          // A compound label, shown as-is rather than translated.
+          assessmentLatestMentalHealth:
+            '{"code":"3","scale":"Low to moderate"}',
+        },
+      });
 
       const result = await client.caseDetail("RES999");
 
@@ -1386,17 +1487,17 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: {},
-              latestRiskNeedSummary: {
-                assessmentLatestMedical: '{"code":"M1","scale":null}',
-                assessmentLatestDental: '{"code":null,"scale":null}',
-                assessmentLatestId: "null",
-              },
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: {},
+        latestRiskNeedSummary: {
+          assessmentLatestMedical: '{"code":"M1","scale":null}',
+          assessmentLatestDental: '{"code":null,"scale":null}',
+          assessmentLatestId: "null",
+        },
+      });
 
       const result = await client.caseDetail("RES999");
 
@@ -1411,16 +1512,16 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: {},
-              disciplinarySummary: {
-                disciplinaryFacilityNotes: "03/14/2025: First note",
-              },
-              securityThreatGroup: { stg: "Group A; Group B" },
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: {},
+        disciplinarySummary: {
+          disciplinaryFacilityNotes: "03/14/2025: First note",
+        },
+        securityThreatGroup: { stg: "Group A; Group B" },
+      });
 
       const result = await client.caseDetail("RES999");
 
@@ -1434,22 +1535,22 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: {},
-              caseNotes: [
-                {
-                  noteDate: "2026-05-01",
-                  noteType: "Facility Notes",
-                  noteBody: "First note",
-                },
-                { noteDate: null, noteType: "Facility Notes", noteBody: "x" },
-                { noteDate: "2026-04-01", noteType: null, noteBody: "Third" },
-                { noteDate: "2026-03-01", noteType: "Other", noteBody: null },
-              ],
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: {},
+        caseNotes: [
+          {
+            noteDate: "2026-05-01",
+            noteType: "Facility Notes",
+            noteBody: "First note",
+          },
+          { noteDate: null, noteType: "Facility Notes", noteBody: "x" },
+          { noteDate: "2026-04-01", noteType: null, noteBody: "Third" },
+          { noteDate: "2026-03-01", noteType: "Other", noteBody: null },
+        ],
+      });
 
       const result = await client.caseDetail("RES999");
 
@@ -1475,18 +1576,18 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: {},
-              parolePlan: {
-                parolePlanIsOnFile: true,
-                parolePlanLastUpdatedDate: "2026-06-01",
-                parolePlanUrl: "https://example.com/plan.pdf",
-                parolePlanDate: "2026-06-01",
-              },
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: {},
+        parolePlan: {
+          parolePlanIsOnFile: true,
+          parolePlanLastUpdatedDate: "2026-06-01",
+          parolePlanUrl: "https://example.com/plan.pdf",
+          parolePlanDate: "2026-06-01",
+        },
+      });
 
       const result = await client.caseDetail("RES999");
 
@@ -1505,16 +1606,16 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: {},
-              parolePlan: {
-                parolePlanIsOnFile: true,
-                parolePlanSponsorName: "Jane Doe",
-              },
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: {},
+        parolePlan: {
+          parolePlanIsOnFile: true,
+          parolePlanSponsorName: "Jane Doe",
+        },
+      });
 
       const result = await client.caseDetail("RES999");
 
@@ -1527,19 +1628,19 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: {},
-              parolePlan: {
-                parolePlanIsOnFile: true,
-                parolePlanSponsorName: "Jane Doe",
-                parolePlanSponsorRelationship: "Sister",
-                parolePlanAddress: "123 Main St",
-                parolePlanRecommended: "Pending",
-              },
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: {},
+        parolePlan: {
+          parolePlanIsOnFile: true,
+          parolePlanSponsorName: "Jane Doe",
+          parolePlanSponsorRelationship: "Sister",
+          parolePlanAddress: "123 Main St",
+          parolePlanRecommended: "Pending",
+        },
+      });
 
       const result = await client.caseDetail("RES999");
 
@@ -1560,27 +1661,27 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_ID",
             crcFacilities: [],
-            paroleBoardClientProfile: {
-              demographics: {},
-              attachments: [
-                {
-                  attachmentName: "Victim Statement",
-                  attachmentType: "VICTIM_STATEMENT",
-                  attachmentUrl: "https://example.com/statement.pdf",
-                  attachmentUploadDate: "2024-11-16",
-                },
-                {
-                  attachmentName: "PSI Report",
-                  attachmentType: "PSI",
-                  attachmentUrl: "https://example.com/psi.pdf",
-                  attachmentUploadDate: "2024-11-17",
-                },
-                { attachmentName: "No URL" },
-              ],
-            },
           },
         }),
       );
+      stubProfile(rootStore, {
+        demographics: {},
+        attachments: [
+          {
+            attachmentName: "Victim Statement",
+            attachmentType: "VICTIM_STATEMENT",
+            attachmentUrl: "https://example.com/statement.pdf",
+            attachmentUploadDate: "2024-11-16",
+          },
+          {
+            attachmentName: "PSI Report",
+            attachmentType: "PSI",
+            attachmentUrl: "https://example.com/psi.pdf",
+            attachmentUploadDate: "2024-11-17",
+          },
+          { attachmentName: "No URL" },
+        ],
+      });
 
       const result = await client.caseDetail("RES999");
 

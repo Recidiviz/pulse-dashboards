@@ -18,7 +18,6 @@
 import { z } from "zod";
 
 import { nullishAsUndefined } from "../../../../utils/zod";
-import { paroleBoardClientProfileSchema } from "../../paroleBoardClientProfileSchema";
 
 export const usIdResidentMetadataSchema = z.object({
   stateCode: z.literal("US_ID"),
@@ -28,5 +27,5 @@ export const usIdResidentMetadataSchema = z.object({
   tentativeParoleDate: nullishAsUndefined(z.string()),
   paroleEligibilityDate: nullishAsUndefined(z.string()),
   earliestPossibleReleaseDate: nullishAsUndefined(z.string()),
-  paroleBoardClientProfile: paroleBoardClientProfileSchema.optional(),
+  docketHearingDate: nullishAsUndefined(z.string()),
 });

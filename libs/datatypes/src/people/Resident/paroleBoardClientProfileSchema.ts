@@ -19,6 +19,19 @@ import { z } from "zod";
 
 import { nullishAsUndefined } from "../../utils/zod";
 
+const INTEGER_STRING_PATTERN = /^-?\d+$/;
+
+/**
+ * A BigQuery INT64 field of a paroleBoardClientProfiles document. The
+ * Workflows export writes the profile through BigQuery's JSON extract, which
+ * encodes INT64 as a string ("30"), so this accepts either form and returns a
+ * number. A string that is not an integer still fails the parse.
+ */
+const bigQueryIntegerSchema = z.union([
+  z.number().int(),
+  z.string().regex(INTEGER_STRING_PATTERN).transform(Number),
+]);
+
 // Mirrors recidiviz-data's parole_board_client_profile_schema.py: one shared
 // contract multiple states select into, one sub-object per profile category
 // (demographics, active_sentence, etc.). Deliberately partial -- the backend
@@ -87,16 +100,16 @@ export type ParoleBoardClientProfileCriminalHistory = z.infer<
 // `assessmentCategories`; a tool that scores no subcategories sends none.
 export const paroleBoardClientProfileRiskAssessmentCategorySchema = z.object({
   assessmentCategoryName: nullishAsUndefined(z.string()),
-  assessmentCategoryScore: nullishAsUndefined(z.number()),
-  assessmentCategoryMaxScore: nullishAsUndefined(z.number()),
+  assessmentCategoryScore: nullishAsUndefined(bigQueryIntegerSchema),
+  assessmentCategoryMaxScore: nullishAsUndefined(bigQueryIntegerSchema),
 });
 
 export const paroleBoardClientProfileRiskAssessmentSchema = z.object({
   assessmentDate: nullishAsUndefined(z.string()),
   assessmentType: nullishAsUndefined(z.string()),
   assessmentLevel: nullishAsUndefined(z.string()),
-  assessmentScore: nullishAsUndefined(z.number()),
-  assessmentMaxScore: nullishAsUndefined(z.number()),
+  assessmentScore: nullishAsUndefined(bigQueryIntegerSchema),
+  assessmentMaxScore: nullishAsUndefined(bigQueryIntegerSchema),
   assessmentCategories: z
     .array(paroleBoardClientProfileRiskAssessmentCategorySchema)
     .optional()
@@ -200,7 +213,7 @@ export const paroleBoardClientProfileEdovoProgramSchema = z.object({
   edovoProgramResult: nullishAsUndefined(z.string()),
   edovoProgramStartDate: nullishAsUndefined(z.string()),
   edovoProgramCompletionDate: nullishAsUndefined(z.string()),
-  edovoProgramDuration: nullishAsUndefined(z.number()),
+  edovoProgramDuration: nullishAsUndefined(bigQueryIntegerSchema),
 });
 export type ParoleBoardClientProfileEdovoProgram = z.infer<
   typeof paroleBoardClientProfileEdovoProgramSchema
@@ -304,3 +317,19 @@ export const paroleBoardClientProfileSchema = z.object({
   // collapsing the two.
   parolePlan: paroleBoardClientProfileParolePlanSchema.optional(),
 });
+
+/**
+ * One paroleBoardClientProfiles document. Its document id matches the id of
+ * the resident's document in the residents collection, and it is looked up
+ * by the same pseudonymizedId + stateCode pair. Firestore rules restrict reads
+ * to staff with Parole Board access, which is why the profile is not part of
+ * the resident record.
+ */
+export const paroleBoardClientProfileRecordSchema =
+  paroleBoardClientProfileSchema.extend({
+    stateCode: z.string(),
+    pseudonymizedId: z.string(),
+  });
+export type ParoleBoardClientProfileRecord = z.infer<
+  typeof paroleBoardClientProfileRecordSchema
+>;
