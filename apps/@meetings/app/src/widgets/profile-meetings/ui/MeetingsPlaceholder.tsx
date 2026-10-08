@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ReactNode } from "react";
 import { View } from "react-native";
 import { PlusIcon } from "react-native-heroicons/outline";
 import SearchIcon from "react-native-heroicons/solid/SearchIcon";
@@ -25,11 +26,13 @@ import { Typography } from "~@meetings/app/shared/ui/Typography";
 type Props = {
   handleCreateMeeting: () => void;
   isSearchResultEmpty: boolean;
+  secondaryAction?: ReactNode;
 };
 
 const MeetingsPlaceholder = ({
   handleCreateMeeting,
   isSearchResultEmpty,
+  secondaryAction,
 }: Props) => {
   const emptyListPlaceholderTitle = "No meetings yet";
   const emptyListPlaceholderSubtitle =
@@ -54,13 +57,16 @@ const MeetingsPlaceholder = ({
           : emptyListPlaceholderSubtitle}
       </Typography>
       {!isSearchResultEmpty && (
-        <Button
-          variant="primary"
-          icon={{ icon: PlusIcon, className: "!size-4" }}
-          onPress={handleCreateMeeting}
-        >
-          Meeting
-        </Button>
+        <View className="flex-row items-center gap-2">
+          <Button
+            variant="primary"
+            icon={{ icon: PlusIcon, className: "!size-4" }}
+            onPress={handleCreateMeeting}
+          >
+            Meeting
+          </Button>
+          {secondaryAction}
+        </View>
       )}
     </View>
   );

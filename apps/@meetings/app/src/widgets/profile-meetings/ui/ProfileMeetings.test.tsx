@@ -65,6 +65,10 @@ jest.mock("~@meetings/app/entities/state-code", () => ({
   useStateSelection: () => ({ selectedStateCode: "US_NE" }),
 }));
 
+jest.mock("~@meetings/app/entities/success-planner", () => ({
+  useIsSuccessPlannerVisible: () => false,
+}));
+
 jest.mock("~@meetings/app/shared/analytics", () => ({
   useAnalytics: () => ({ track: mockTrack }),
 }));
@@ -130,6 +134,9 @@ jest.mock("./NewMeetingRecordingSheet", () => ({
 jest.mock("./MeetingsMobileList", () => () => null);
 jest.mock("./MeetingsPlaceholder", () => () => null);
 jest.mock("./MeetingsHeaderContent", () => () => null);
+jest.mock("./SendSuccessPlannerButton", () => ({
+  SendSuccessPlannerButton: () => null,
+}));
 
 const MEETING_ID = "test-meeting-id";
 

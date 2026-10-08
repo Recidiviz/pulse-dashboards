@@ -42,6 +42,7 @@ import {
   validateAndStart,
 } from "~@meetings/app/entities/meeting-type";
 import { useStateSelection } from "~@meetings/app/entities/state-code";
+import { useIsSuccessPlannerVisible } from "~@meetings/app/entities/success-planner";
 import { useAudioUploadStore } from "~@meetings/app/features/audio-upload";
 import {
   MeetingControlsMobile,
@@ -58,6 +59,7 @@ import MeetingsPlaceholder from "./MeetingsPlaceholder";
 import MeetingsTable from "./MeetingsTable.web";
 import { NewMeetingOptionsModal } from "./NewMeetingOptionsModal";
 import { NewMeetingRecordingSheet } from "./NewMeetingRecordingSheet";
+import { SendSuccessPlannerButton } from "./SendSuccessPlannerButton";
 
 enum MeetingsSort {
   NEWEST_FIRST = "Date (Latest first)",
@@ -90,6 +92,7 @@ export const ProfileMeetings = ({
   const { agencyConfigs } = useAgencyConfigs();
   const { selectedStateCode } = useStateSelection();
   const meetingTypes = agencyConfigs[selectedStateCode].meetingTypes;
+  const isPlannerVisible = useIsSuccessPlannerVisible();
   const { status: recordingState } = useRecording();
   const {
     setMeetingId,
@@ -401,6 +404,11 @@ export const ProfileMeetings = ({
                           setIsNewMeetingModalOpen(true)
                         }
                         isSearchResultEmpty={searchQuery.trim().length > 0}
+                        secondaryAction={
+                          isPlannerVisible && (
+                            <SendSuccessPlannerButton person={person} />
+                          )
+                        }
                       />
                     ) : (
                       <MeetingsTable
