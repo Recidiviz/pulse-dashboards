@@ -213,7 +213,7 @@ const AuthenticatedApp: React.FC = () => {
     return null;
   }
 
-  // The NE success planner (the only consumer of jiiTrpc) is web-only, so
+  // The NE 120-Day Check-In (the only consumer of jiiTrpc) is web-only, so
   // mount the jiiTrpc provider on web.
   const withJiiTrpc = (children: React.ReactNode) =>
     Platform.OS === "web" ? (

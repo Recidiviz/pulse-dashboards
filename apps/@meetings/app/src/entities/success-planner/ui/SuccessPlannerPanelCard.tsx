@@ -36,7 +36,7 @@ export function SuccessPlannerPanelCard({ planner, onOpen }: Props) {
   return (
     <View className="gap-2 rounded-2xl border border-subtle bg-primary p-3">
       <View className="flex-row items-center justify-between gap-2">
-        <Typography variant="body-s-medium">Success Planner</Typography>
+        <Typography variant="body-s-medium">120-Day Check-In</Typography>
         <SuccessPlannerStatusBadge status={status} label={statusLabel} />
       </View>
       <Typography variant="caption-s-regular">{subtitle}</Typography>

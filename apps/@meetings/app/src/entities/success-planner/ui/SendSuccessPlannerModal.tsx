@@ -45,20 +45,20 @@ export function SendSuccessPlannerModal({
     >
       <View className="gap-3">
         <View className="flex-row justify-between">
-          <Modal.Title>Send Success Planner?</Modal.Title>
+          <Modal.Title>Send 120-Day Check-In?</Modal.Title>
           <TouchableOpacity onPress={onCancel}>
             <XIcon className="stroke-tertiary" />
           </TouchableOpacity>
         </View>
         <Modal.Body className="!text-left">
-          Send the Success Planner to the resident to complete before their
+          Send the 120-Day Check-In to the resident to complete before their
           120-day pre-release meeting.
         </Modal.Body>
         {isError && (
           <View className="flex-row items-center gap-1.5">
             <ExclamationCircleIcon className="size-4 fill-attention" />
             <Typography variant="caption-s-regular" className="!text-attention">
-              Couldn't send the Success Planner. Please try again.
+              Couldn't send the 120-Day Check-In. Please try again.
             </Typography>
           </View>
         )}

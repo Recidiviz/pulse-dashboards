@@ -43,7 +43,7 @@ describe("getSuccessPlannerSummary", () => {
   test("a not-started planner says who sent it and offers to open it", () => {
     expect(getSuccessPlannerSummary(NOT_STARTED_PLANNER)).toMatchObject({
       statusLabel: "Not started",
-      title: "Success Planner",
+      title: "120-Day Check-In",
       subtitle: `Sent to tablet by ${sender} on Aug 17, 2026`,
       actionLabel: "Open",
     });
@@ -52,7 +52,7 @@ describe("getSuccessPlannerSummary", () => {
   test("an in-progress planner carries the section count and the last edit", () => {
     expect(getSuccessPlannerSummary(IN_PROGRESS_PLANNER)).toMatchObject({
       statusLabel: "In Progress",
-      title: "Success Planner — 3 of 10 sections",
+      title: "120-Day Check-In — 3 of 10 sections",
       subtitle: `Sent by ${sender} on Aug 17 · last updated Aug 21, 9:14am`,
       actionLabel: "Open",
     });
@@ -61,7 +61,7 @@ describe("getSuccessPlannerSummary", () => {
   test("a completed planner switches the action to View responses", () => {
     expect(getSuccessPlannerSummary(COMPLETED_PLANNER)).toMatchObject({
       statusLabel: "Completed",
-      title: "Success Planner — completed Aug 28, 2026",
+      title: "120-Day Check-In — completed Aug 28, 2026",
       subtitle: `Sent by ${sender} on Aug 17 · all 10 sections answered`,
       actionLabel: "View responses",
     });

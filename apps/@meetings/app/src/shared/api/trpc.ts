@@ -28,7 +28,7 @@ export const trpc = createTRPCReact<AppRouter>();
 export const publicTrpc = createTRPCReact<AppRouter>();
 
 /**
- *  TRPC client for the JII backend (NE success planner integration).
+ *  TRPC client for the JII backend (NE 120-Day Check-In integration).
  */
 export const jiiTrpc = createTRPCReact<JiiMeetingsAppRouter>({
   context: createContext(null),

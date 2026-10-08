@@ -47,7 +47,7 @@ export function SuccessPlannerDrawer({ person, planner, onClose }: Props) {
       header={
         <>
           <View className="flex-row items-center gap-2">
-            <Typography variant="heading-5">Success Planner</Typography>
+            <Typography variant="heading-5">120-Day Check-In</Typography>
             <SuccessPlannerStatusBadge status={status} label={statusLabel} />
           </View>
           <Typography variant="caption-s-regular">{subtitle}</Typography>

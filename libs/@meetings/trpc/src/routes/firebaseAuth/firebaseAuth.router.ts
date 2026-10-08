@@ -21,7 +21,7 @@ import { auth0Procedure, router } from "~@meetings/trpc/init";
 import { firebaseApp } from "~@meetings/trpc/routes/firebaseAuth/firebaseAdmin";
 
 /**
- * The JII integration for NE Success Planner requires the meetings application to pass
+ * The JII integration for NE 120-Day Check-In requires the meetings application to pass
  * a valid firebase token with custom claims to the JII server.
  */
 export const firebaseAuthRouter = router({

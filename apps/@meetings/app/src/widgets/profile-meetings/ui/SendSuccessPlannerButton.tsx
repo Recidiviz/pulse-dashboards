@@ -53,7 +53,7 @@ export function SendSuccessPlannerButton({ person }: { person: Person }) {
       <View className="flex-row items-center gap-1.5">
         <ExclamationCircleIcon className="size-4 fill-attention" />
         <Typography variant="caption-s-regular" className="!text-attention">
-          Couldn't load the Success Planner
+          Couldn't load the 120-Day Check-In
         </Typography>
       </View>
     );
@@ -72,7 +72,7 @@ export function SendSuccessPlannerButton({ person }: { person: Person }) {
         loading={isLoading || createCheckIn.isPending}
         onPress={() => setIsModalOpen(true)}
       >
-        Success Planner
+        120-Day Check-In
       </Button>
       {isModalOpen && (
         <SendSuccessPlannerModal

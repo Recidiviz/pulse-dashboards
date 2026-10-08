@@ -135,7 +135,7 @@ export const AgencyConfigFileSchema = z
     successPlannerEnabled: z
       .boolean()
       .optional()
-      .describe("Whether the Success Planner is available in this state"),
+      .describe("Whether the 120-Day Check-In is available in this state"),
     mobileAppEnabled: z
       .boolean()
       .optional()

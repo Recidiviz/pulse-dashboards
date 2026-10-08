@@ -32,7 +32,7 @@ If you haven't already, follow the setup instructions in the root README to inst
 
 ### Running the application with JII features
 
-If you want to test out a feature that relies on the JII backend (e.g. NE Success Planner):
+If you want to test out a feature that relies on the JII backend (e.g. NE 120-Day Check-In):
 
 1. Use go/pam to request temporary deploy permissions for recidiviz-dashboard-staging (the elevated permission will allow your account to create firebase tokens)
 2. Run `nx dev @meetings/server` in one terminal

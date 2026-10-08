@@ -66,7 +66,7 @@ export function usePrintSuccessPlanner({
     const { title, subtitle } = getSuccessPlannerSummary(planner);
 
     printHtmlDocument({
-      title: `Success Planner - ${person.fullName}`,
+      title: `120-Day Check-In - ${person.fullName}`,
       body: `
         <h1>${escapeHtml(person.fullName)}</h1>
         <p>ID: ${escapeHtml(person.displayPersonExternalId)}</p>

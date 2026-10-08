@@ -56,7 +56,7 @@ export function getSuccessPlannerSummary(
       return {
         status,
         statusLabel: STATUS_LABELS[status],
-        title: "Success Planner",
+        title: "120-Day Check-In",
         subtitle: `Sent to tablet by ${sender} on ${format(planner.createdAt, "MMM d, yyyy")}`,
         actionLabel: "Open",
       };
@@ -64,7 +64,7 @@ export function getSuccessPlannerSummary(
       return {
         status,
         statusLabel: STATUS_LABELS[status],
-        title: `Success Planner — ${completedSectionCount} of ${totalSectionCount} sections`,
+        title: `120-Day Check-In — ${completedSectionCount} of ${totalSectionCount} sections`,
         subtitle: `Sent by ${sender} on ${sentOn} · last updated ${format(planner.updatedAt, "MMM d, h:mmaaa")}`,
         actionLabel: "Open",
       };
@@ -72,7 +72,7 @@ export function getSuccessPlannerSummary(
       return {
         status,
         statusLabel: STATUS_LABELS[status],
-        title: `Success Planner — completed ${planner.completedAt ? format(planner.completedAt, "MMM d, yyyy") : ""}`,
+        title: `120-Day Check-In — completed ${planner.completedAt ? format(planner.completedAt, "MMM d, yyyy") : ""}`,
         subtitle: `Sent by ${sender} on ${sentOn} · all ${totalSectionCount} sections answered`,
         actionLabel: "View responses",
       };
