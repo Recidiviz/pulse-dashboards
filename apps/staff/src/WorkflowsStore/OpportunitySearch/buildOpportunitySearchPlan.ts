@@ -307,6 +307,11 @@ function staleSearches(
     `$${personCollection}(${selection})`,
     `opportunityType:=${quote(opportunityType)}`,
     "isEligible:=true",
+    // On `updateStatus`, not on the overlay existing: a record someone merely
+    // VIEWED has an overlay reading NONE, and viewing is what the alert is
+    // about. The negation reaches inside the child, so a record with no
+    // overlay at all is kept.
+    `!$opportunityUpdates(updateStatus:!=${quote("NONE")})`,
   ];
   const shared = {
     collection: "opportunities",

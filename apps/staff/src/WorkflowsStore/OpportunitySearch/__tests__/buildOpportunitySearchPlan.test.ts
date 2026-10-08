@@ -275,6 +275,32 @@ describe("the STALE SEARCH shape", () => {
     );
   });
 
+  test("excludes a record anyone has acted on, from both branches", () => {
+    // `isEligibleStaleViewed` also requires the "Eligible Now" tab, and an
+    // action moves the record off it. Filtering on eligibility alone counted
+    // submitted records as stale — US_NE reported 3 where the caseload said 1.
+    const plan = build(ALERTS);
+    const unviewed = plan.find((p) => p.kind === "staleUnviewed");
+    const viewed = plan.find((p) => p.kind === "staleViewed");
+
+    for (const search of [unviewed, viewed]) {
+      expect(search?.descriptor["filter_by"]).toContain(
+        "!$opportunityUpdates(updateStatus:!=`NONE`)",
+      );
+    }
+  });
+
+  test("keeps a record that was only VIEWED", () => {
+    // The clause reads `updateStatus`, not the overlay's existence. Viewing
+    // writes an overlay reading NONE, and viewing is what the alert measures —
+    // excluding those would empty the alert entirely.
+    const viewed = build(ALERTS).find((p) => p.kind === "staleViewed");
+
+    expect(viewed?.descriptor["filter_by"]).not.toContain(
+      "!$opportunityUpdates(lastViewedTimestamp:>=0)",
+    );
+  });
+
   test("uses :>=0, never :>0", () => {
     // They agree on today's data. `:>0` silently drops a genuine epoch-0
     // timestamp, and nothing else in the suite would notice.

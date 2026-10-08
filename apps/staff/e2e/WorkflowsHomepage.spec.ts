@@ -207,26 +207,48 @@ async function openMenu(
     .toBeGreaterThan(0);
 }
 
+/** Identical reads needed before the page counts as settled. */
+const SETTLED_READS = 3;
+
+/** Every `Label: N` in the page text — the per-tab counts the cards render. */
+function readTabCounts(text: string): Record<string, number> {
+  const tabCounts: Record<string, number> = {};
+  for (const [, label, n] of text.matchAll(
+    /^([A-Za-z][^:\n]{2,40}): (\d+)$/gm,
+  )) {
+    tabCounts[label.trim()] = Number(n);
+  }
+  return tabCounts;
+}
+
 /**
- * The page text, once it stops changing.
+ * The page text, once the hydrator is done and the text has stopped changing.
  *
- * Both paths fill their counts asynchronously, and the two settle at different
- * moments. Reading on a fixed delay either races the slower one or pads every
- * case by the worst case, so this waits for two identical reads instead.
+ * Text alone is not enough to settle on. The Firestore path hydrates the
+ * caseload one person at a time, so under a loaded worker it holds an empty
+ * page still for seconds while that runs — long enough to read as settled, and
+ * that side then snapshots nothing while the other snapshots its counts.
+ * Observed as an intermittent US_ND failure reading `firestore tabs: {}`.
  */
 async function settledText(page: Page): Promise<string> {
+  const hydrating = page.locator(".Hydrator__StatusWrapper");
   let previous = "";
+  let repeats = 0;
   await expect
     .poll(
       async () => {
+        if ((await hydrating.count()) > 0) {
+          repeats = 0;
+          return repeats;
+        }
         const current = await page.locator("body").innerText();
-        const stable = current === previous && current.length > 0;
+        repeats = current === previous && current.length > 0 ? repeats + 1 : 0;
         previous = current;
-        return stable;
+        return repeats;
       },
       { timeout: 45000, intervals: [1000] },
     )
-    .toBe(true);
+    .toBeGreaterThanOrEqual(SETTLED_READS - 1);
   return previous;
 }
 
@@ -313,12 +335,7 @@ async function snapshotHomepage(
 
   const text = await settledText(page);
 
-  const tabCounts: Record<string, number> = {};
-  for (const [, label, n] of text.matchAll(
-    /^([A-Za-z][^:\n]{2,40}): (\d+)$/gm,
-  )) {
-    tabCounts[label.trim()] = Number(n);
-  }
+  const tabCounts = readTabCounts(text);
 
   const headers = text
     .split("\n")
