@@ -386,9 +386,6 @@
       "DEBTS": {
         "question": "¿Tienes otras deudas que tendrás que manejar después de tu liberación?"
       },
-      "DEBTS_DESCRIPTION": {
-        "question": "Por favor, describe qué otras deudas tendrás que manejar después de tu liberación."
-      },
       "SOCIAL_SECURITY": {
         "question": "¿Alguna vez has recibido dinero del Seguro Social, como SSI o SSDI?"
       },
@@ -525,6 +522,8 @@
     "footer": {
       "next": "Siguiente",
       "nextInfo": "Your answer will be saved when you tap Next",
+      "savingInfo": "Saving...",
+      "errorInfo": "There was a problem saving your answer, please try again",
       "getStarted": "Get Started"
     },
     "supportSystem": {

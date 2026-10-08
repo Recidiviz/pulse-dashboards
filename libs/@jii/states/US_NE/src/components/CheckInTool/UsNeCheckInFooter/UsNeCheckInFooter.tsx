@@ -23,19 +23,23 @@ type UsNeCheckInFooterProps = {
   onButtonClick: () => void;
   buttonText: string;
   infoText?: string;
+  isDisabled?: boolean;
+  isError?: boolean;
 };
 
 export const UsNeCheckInFooter = ({
   onButtonClick,
   buttonText,
   infoText,
+  isDisabled = false,
+  isError = false,
 }: UsNeCheckInFooterProps) => {
   return (
     <Wrapper>
-      {/* TODO(OBT-47849) Show explanatory text when saving to the db fails */}
-      {infoText && <Info>{infoText}</Info>}
-      {/* TODO(OBT-47849) Disable this button when the user hasn't answered a required question */}
-      <JIIButton onClick={onButtonClick}>{buttonText}</JIIButton>
+      {infoText && <Info $isError={isError}>{infoText}</Info>}
+      <JIIButton disabled={isDisabled} onClick={onButtonClick}>
+        {buttonText}
+      </JIIButton>
     </Wrapper>
   );
 };

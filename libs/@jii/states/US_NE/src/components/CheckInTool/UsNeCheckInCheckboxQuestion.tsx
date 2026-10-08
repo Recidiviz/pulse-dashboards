@@ -17,15 +17,12 @@
 
 import { useState } from "react";
 
-import {
-  CheckInAnswer,
-  checkInQuestionConfig,
-  CheckInQuestionId,
-} from "~@jii/configs";
+import { checkInQuestionConfig } from "~@jii/configs";
 import { useUsNeTranslations } from "~@jii/translation";
 import { Checkbox, CheckboxGroup } from "~design-system";
 
 import { useResidentGivenNames } from "./hooks/useResidentGivenNames";
+import { SelectQuestionScreenProps } from "./types";
 import { UsNeCheckInFooter } from "./UsNeCheckInFooter/UsNeCheckInFooter";
 import {
   AnswerHint,
@@ -40,11 +37,9 @@ export const UsNeCheckInCheckboxQuestion = ({
   id,
   answers,
   saveAnswer,
-}: {
-  id: CheckInQuestionId;
-  answers: readonly string[];
-  saveAnswer: (answer: CheckInAnswer) => void;
-}) => {
+  saveIsPending,
+  footerProps,
+}: SelectQuestionScreenProps) => {
   const { t } = useUsNeTranslations();
   const isOptional = !!checkInQuestionConfig[id].optional;
 
@@ -87,8 +82,8 @@ export const UsNeCheckInCheckboxQuestion = ({
 
       <UsNeCheckInFooter
         onButtonClick={() => saveAnswer(selected.length > 0 ? selected : null)}
-        infoText={t(($) => $.checkIn.footer.nextInfo)}
-        buttonText={t(($) => $.checkIn.footer.next)}
+        isDisabled={saveIsPending || (!isOptional && selected.length === 0)}
+        {...footerProps}
       />
     </>
   );

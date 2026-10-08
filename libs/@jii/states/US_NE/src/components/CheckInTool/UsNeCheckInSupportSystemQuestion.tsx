@@ -17,16 +17,14 @@
 
 import { useState } from "react";
 
-import {
-  CheckInAnswer,
-  CheckInQuestionId,
-  SupportSystemContact,
-} from "~@jii/configs";
+import { checkInQuestionConfig, SupportSystemContact } from "~@jii/configs";
 import { useUsNeTranslations } from "~@jii/translation";
 
 import { useResidentGivenNames } from "./hooks/useResidentGivenNames";
+import { QuestionScreenProps } from "./types";
 import { UsNeCheckInFooter } from "./UsNeCheckInFooter/UsNeCheckInFooter";
 import {
+  OptionalHint,
   QuestionText,
   QuestionWrapper,
   SupportSystemTable,
@@ -81,16 +79,16 @@ const SupportSystemPersonRow = ({
 export const UsNeCheckInSupportSystemQuestion = ({
   id,
   saveAnswer,
-}: {
-  id: CheckInQuestionId;
-  saveAnswer: (answer: CheckInAnswer) => void;
-}) => {
+  saveIsPending,
+  footerProps,
+}: QuestionScreenProps) => {
   const [contacts, setContacts] = useState<readonly SupportSystemContact[]>([
     { name: "", relationship: undefined },
     { name: "", relationship: undefined },
     { name: "", relationship: undefined },
     { name: "", relationship: undefined },
   ]);
+  const nonEmptyContacts = contacts.filter(({ name }) => !!name);
 
   const { t } = useUsNeTranslations();
 
@@ -99,10 +97,17 @@ export const UsNeCheckInSupportSystemQuestion = ({
     name: useResidentGivenNames(),
   });
 
+  const isOptional = !!checkInQuestionConfig[id].optional;
+
   return (
     <>
       <QuestionWrapper>
         <QuestionText>{questionCopy.question}</QuestionText>
+        {isOptional && (
+          <OptionalHint>
+            {t(($) => $.checkIn.questionPage.optional)}
+          </OptionalHint>
+        )}
         <SupportSystemTable>
           <thead>
             <tr>
@@ -126,11 +131,12 @@ export const UsNeCheckInSupportSystemQuestion = ({
 
       <UsNeCheckInFooter
         onButtonClick={() => {
-          const nonEmptyContacts = contacts.filter(({ name }) => !!name);
           saveAnswer(nonEmptyContacts.length > 0 ? nonEmptyContacts : null);
         }}
-        infoText={t(($) => $.checkIn.footer.nextInfo)}
-        buttonText={t(($) => $.checkIn.footer.next)}
+        isDisabled={
+          saveIsPending || (!isOptional && nonEmptyContacts.length === 0)
+        }
+        {...footerProps}
       />
     </>
   );

@@ -29,6 +29,18 @@ export const jiiButtonStyles = css<{ kind?: ButtonKind }>`
   padding: ${rem(10)} ${rem(18)};
   border-radius: ${rem(21)};
 
+  &:disabled {
+    &,
+    &:hover,
+    &:focus,
+    &:active {
+      background-color: ${palette.slate10};
+      color: ${palette.slate80};
+      border-color: ${palette.slate30};
+      cursor: not-allowed;
+    }
+  }
+
   ${(props) => {
     // secondary is also the default if no kind is specified,
     // which it may not be for button-styled links

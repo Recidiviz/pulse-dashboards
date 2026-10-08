@@ -386,9 +386,6 @@
       "DEBTS": {
         "question": "[US_NE]checkIn.questions.DEBTS.question"
       },
-      "DEBTS_DESCRIPTION": {
-        "question": "[US_NE]checkIn.questions.DEBTS_DESCRIPTION.question"
-      },
       "SOCIAL_SECURITY": {
         "question": "[US_NE]checkIn.questions.SOCIAL_SECURITY.question"
       },
@@ -528,6 +525,8 @@
     "footer": {
       "next": "[US_NE]checkIn.footer.next",
       "nextInfo": "[US_NE]checkIn.footer.nextInfo",
+      "savingInfo": "[US_NE]checkIn.footer.savingInfo",
+      "errorInfo": "[US_NE]checkIn.footer.errorInfo",
       "getStarted": "[US_NE]checkIn.footer.getStarted"
     },
     "supportSystem": {

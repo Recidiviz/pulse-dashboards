@@ -65,6 +65,19 @@ export const UsNeCheckInQuestion = ({
     });
   };
 
+  let infoText = t(($) => $.checkIn.footer.nextInfo);
+  if (updateMutation.isError) {
+    infoText = t(($) => $.checkIn.footer.errorInfo);
+  } else if (updateMutation.isPending) {
+    infoText = t(($) => $.checkIn.footer.savingInfo);
+  }
+
+  const footerProps = {
+    infoText,
+    buttonText: t(($) => $.checkIn.footer.next),
+    isError: updateMutation.isError,
+  };
+
   const renderQuestion = () => {
     switch (config.format) {
       case "RADIO":
@@ -74,6 +87,8 @@ export const UsNeCheckInQuestion = ({
             id={questionId}
             answers={config.answers}
             saveAnswer={saveAnswer}
+            saveIsPending={updateMutation.isPending}
+            footerProps={footerProps}
           />
         );
       case "CHECKBOX":
@@ -83,6 +98,8 @@ export const UsNeCheckInQuestion = ({
             id={questionId}
             answers={config.answers}
             saveAnswer={saveAnswer}
+            saveIsPending={updateMutation.isPending}
+            footerProps={footerProps}
           />
         );
       case "FREE_TEXT":
@@ -91,6 +108,8 @@ export const UsNeCheckInQuestion = ({
             key={questionId}
             id={questionId}
             saveAnswer={saveAnswer}
+            saveIsPending={updateMutation.isPending}
+            footerProps={footerProps}
           />
         );
       case "SUPPORT_SYSTEM":
@@ -99,6 +118,8 @@ export const UsNeCheckInQuestion = ({
             key={questionId}
             id={questionId}
             saveAnswer={saveAnswer}
+            saveIsPending={updateMutation.isPending}
+            footerProps={footerProps}
           />
         );
       default:

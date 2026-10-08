@@ -384,10 +384,7 @@
         }
       },
       "DEBTS": {
-        "question": "Do you have other debts you’ll need to manage after release?"
-      },
-      "DEBTS_DESCRIPTION": {
-        "question": "Please describe what other debts you’ll need to manage after release."
+        "question": "Do you have other debts you’ll need to manage after release? If so, what are they?"
       },
       "SOCIAL_SECURITY": {
         "question": "Have you ever received money from Social Security, like SSI or SSDI?"
@@ -528,6 +525,8 @@
     "footer": {
       "next": "Next",
       "nextInfo": "Your answer will be saved when you tap Next",
+      "savingInfo": "Saving...",
+      "errorInfo": "There was a problem saving your answer, please try again",
       "getStarted": "Get Started"
     },
     "supportSystem": {

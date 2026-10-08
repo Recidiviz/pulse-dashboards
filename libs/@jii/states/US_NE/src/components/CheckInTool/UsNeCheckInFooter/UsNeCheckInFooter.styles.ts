@@ -42,9 +42,10 @@ export const Wrapper = styled.div`
   z-index: ${STICKY_HEADER_ZINDEX};
 `;
 
-export const Info = styled.div`
+export const Info = styled.div<{ $isError?: boolean }>`
   ${typography.Sans14}
 
-  color: ${palette.slate85};
+  color: ${(props) =>
+    props.$isError ? palette.signal.error : palette.slate85};
   margin-right: auto;
 `;

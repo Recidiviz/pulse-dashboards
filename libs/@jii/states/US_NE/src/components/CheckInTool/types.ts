@@ -15,7 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { CheckInQuestionId, CheckInSectionId } from "~@jii/configs";
+import {
+  CheckInAnswer,
+  CheckInQuestionId,
+  CheckInSectionId,
+} from "~@jii/configs";
 import {
   JiiResidentAppRouterInputs,
   JiiResidentAppRouterOutputs,
@@ -47,3 +51,18 @@ export type CheckInScreen =
   | SectionIntroScreen
   | QuestionScreen
   | CompletionScreen;
+
+export type QuestionScreenProps = {
+  id: CheckInQuestionId;
+  saveAnswer: (answer: CheckInAnswer) => void;
+  saveIsPending: boolean;
+  footerProps: {
+    infoText: string;
+    buttonText: string;
+    isError: boolean;
+  };
+};
+
+export type SelectQuestionScreenProps = QuestionScreenProps & {
+  answers: readonly string[];
+};

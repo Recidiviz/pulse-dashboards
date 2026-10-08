@@ -17,14 +17,11 @@
 
 import { useState } from "react";
 
-import {
-  CheckInAnswer,
-  checkInQuestionConfig,
-  CheckInQuestionId,
-} from "~@jii/configs";
+import { checkInQuestionConfig } from "~@jii/configs";
 import { useUsNeTranslations } from "~@jii/translation";
 
 import { useResidentGivenNames } from "./hooks/useResidentGivenNames";
+import { QuestionScreenProps } from "./types";
 import { UsNeCheckInFooter } from "./UsNeCheckInFooter/UsNeCheckInFooter";
 import {
   OptionalHint,
@@ -36,13 +33,12 @@ import {
 export const UsNeCheckInFreeTextQuestion = ({
   id,
   saveAnswer,
-}: {
-  id: CheckInQuestionId;
-  saveAnswer: (answer: CheckInAnswer) => void;
-}) => {
+  saveIsPending,
+  footerProps,
+}: QuestionScreenProps) => {
   const { t } = useUsNeTranslations();
   const isOptional = !!checkInQuestionConfig[id].optional;
-  const [answer, setAnswer] = useState<string | null>(null);
+  const [answer, setAnswer] = useState<string>("");
 
   const questionCopy = t(($) => $.checkIn.questions[id], {
     returnObjects: true,
@@ -60,15 +56,15 @@ export const UsNeCheckInFreeTextQuestion = ({
         )}
         <TextEntry
           id={id}
-          value={answer ?? ""}
+          value={answer}
           onChange={(e) => setAnswer(e.target.value)}
         />
       </QuestionWrapper>
 
       <UsNeCheckInFooter
-        onButtonClick={() => saveAnswer(answer)}
-        infoText={t(($) => $.checkIn.footer.nextInfo)}
-        buttonText={t(($) => $.checkIn.footer.next)}
+        onButtonClick={() => saveAnswer(answer.trim() || null)}
+        isDisabled={saveIsPending || (!isOptional && !answer.trim())}
+        {...footerProps}
       />
     </>
   );

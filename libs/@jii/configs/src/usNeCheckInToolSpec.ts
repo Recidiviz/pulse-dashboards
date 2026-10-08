@@ -83,7 +83,6 @@ export const checkInToolSpec: CheckInSectionSpec[] = [
     questions: [
       "FINES_AND_FEES",
       "DEBTS",
-      "DEBTS_DESCRIPTION",
       "SOCIAL_SECURITY",
       "CHILDREN",
       "CHILDREN_DESCRIPTION",
@@ -161,7 +160,6 @@ export const checkInQuestionIds = [
   "STAY_AWAY_FROM_DESCRIPTION",
   "FINES_AND_FEES",
   "DEBTS",
-  "DEBTS_DESCRIPTION",
   "SOCIAL_SECURITY",
   "CHILDREN",
   "CHILDREN_DESCRIPTION",
@@ -284,16 +282,8 @@ export const checkInQuestionConfig: Record<
     answers: [...checkInStandardRadioAnswers, "DONT_KNOW"],
   },
   DEBTS: {
-    format: "RADIO",
-    answers: checkInStandardRadioAnswers,
-  },
-  DEBTS_DESCRIPTION: {
     format: "FREE_TEXT",
-    showIf: {
-      questionId: "DEBTS",
-      operator: "equals",
-      value: "YES",
-    },
+    optional: true,
   },
   SOCIAL_SECURITY: {
     format: "RADIO",
@@ -372,6 +362,7 @@ export const checkInQuestionConfig: Record<
   },
   SUPPORT_SYSTEM: {
     format: "SUPPORT_SYSTEM",
+    optional: true,
   },
   STRENGTH_1: {
     format: "FREE_TEXT",

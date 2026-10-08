@@ -17,15 +17,12 @@
 
 import { useState } from "react";
 
-import {
-  CheckInAnswer,
-  checkInQuestionConfig,
-  CheckInQuestionId,
-} from "~@jii/configs";
+import { checkInQuestionConfig } from "~@jii/configs";
 import { useUsNeTranslations } from "~@jii/translation";
 import { Radio, RadioGroup } from "~design-system";
 
 import { useResidentGivenNames } from "./hooks/useResidentGivenNames";
+import { SelectQuestionScreenProps } from "./types";
 import { UsNeCheckInFooter } from "./UsNeCheckInFooter/UsNeCheckInFooter";
 import {
   AnswerHint,
@@ -40,11 +37,9 @@ export const UsNeCheckInRadioQuestion = ({
   id,
   answers,
   saveAnswer,
-}: {
-  id: CheckInQuestionId;
-  answers: readonly string[];
-  saveAnswer: (answer: CheckInAnswer) => void;
-}) => {
+  saveIsPending,
+  footerProps,
+}: SelectQuestionScreenProps) => {
   const { t } = useUsNeTranslations();
   const isOptional = !!checkInQuestionConfig[id].optional;
 
@@ -93,8 +88,8 @@ export const UsNeCheckInRadioQuestion = ({
 
       <UsNeCheckInFooter
         onButtonClick={() => saveAnswer(selected)}
-        infoText={t(($) => $.checkIn.footer.nextInfo)}
-        buttonText={t(($) => $.checkIn.footer.next)}
+        isDisabled={saveIsPending || (!isOptional && !selected)}
+        {...footerProps}
       />
     </>
   );
