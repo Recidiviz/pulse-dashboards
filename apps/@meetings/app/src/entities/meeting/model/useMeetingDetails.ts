@@ -25,6 +25,11 @@ export function useMeetingDetails(meetingId?: string) {
     { meetingId },
     {
       enabled: !!meetingId,
+      // Retrying a denied or missing meeting can't succeed.
+      retry: (failureCount, error) =>
+        error.data?.code !== "FORBIDDEN" &&
+        error.data?.code !== "NOT_FOUND" &&
+        failureCount < 3,
       refetchInterval: ({ state }) => {
         const isProcessing = state.data?.postMeetingProcessingStatus
           ? isMeetingProcessing(state.data.postMeetingProcessingStatus)

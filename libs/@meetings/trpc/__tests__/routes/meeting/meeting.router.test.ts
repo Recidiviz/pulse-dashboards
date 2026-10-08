@@ -80,6 +80,32 @@ async function setUSNEStaffFeedback(enabled: boolean) {
   });
 }
 
+async function setUSNEAudioPlayback(enabled: boolean) {
+  const config = stringify({
+    baseVersion: 1,
+    name: "Nebraska",
+    stateCode: "US_NE",
+    version: 2,
+    showTranscriptions: true,
+    showCNI: false,
+    staffFeedbackEnabled: false,
+    audioPlaybackEnabled: enabled,
+    audioTTLDays: 30,
+    transcriptTTLDays: 30,
+    meetingTypes: [],
+    keywords: [],
+    glossary: {},
+    rules: [],
+    outputs: [],
+    labels: {},
+  });
+  await testGlobalPrismaClient.agencyConfig.upsert({
+    where: { id_version: { id: "us_ne", version: 2 } },
+    create: { id: "us_ne", parentId: "base", version: 2, config },
+    update: { config },
+  });
+}
+
 // Seeds only a "base" row — no us_ne row by default, so tests opt in via
 // the helpers above.
 beforeEach(async () => {
@@ -388,33 +414,45 @@ describe("meeting router", () => {
       ]);
     });
 
-    describe("audioUrl", () => {
-      async function setUSNEAudioPlayback(enabled: boolean) {
-        const config = stringify({
-          baseVersion: 1,
-          name: "Nebraska",
-          stateCode: "US_NE",
-          version: 2,
-          showTranscriptions: true,
-          showCNI: false,
-          staffFeedbackEnabled: false,
-          audioPlaybackEnabled: enabled,
-          audioTTLDays: 30,
-          transcriptTTLDays: 30,
-          meetingTypes: [],
-          keywords: [],
-          glossary: {},
-          rules: [],
-          outputs: [],
-          labels: {},
+    describe("per-meeting authorization", () => {
+      // fakeMeetingStaff1 is owned by fakeStaff[1]; the test client is fakeStaff[0].
+      test("Should throw FORBIDDEN and not mint audioUrl for another staff member's unshared meeting", async () => {
+        await setUSNEAudioPlayback(true);
+        await testPrismaClient.meeting.update({
+          where: { id: fakeMeetingStaff1.id },
+          data: { finalRecordingGCSPath: "meeting-3/final.m4a" },
         });
-        await testGlobalPrismaClient.agencyConfig.upsert({
-          where: { id_version: { id: "us_ne", version: 2 } },
-          create: { id: "us_ne", parentId: "base", version: 2, config },
-          update: { config },
-        });
-      }
+        const signedUrlSpy = vi.spyOn(
+          meetingsTasks,
+          "getSignedUrlForRecording",
+        );
 
+        await expect(
+          testTRPCClient.v1.meeting.getDetails.query({
+            meetingId: fakeMeetingStaff1.id,
+          }),
+        ).rejects.toMatchObject({ data: { code: "FORBIDDEN" } });
+        expect(signedUrlSpy).not.toHaveBeenCalled();
+      });
+
+      test("Should let a non-creator view a meeting once processing has started", async () => {
+        await testPrismaClient.meeting.update({
+          where: { id: fakeMeetingStaff1.id },
+          data: {
+            postMeetingProcessingStatus:
+              PostMeetingProcessingStatus.STITCHING_QUEUED,
+          },
+        });
+
+        const result = await testTRPCClient.v1.meeting.getDetails.query({
+          meetingId: fakeMeetingStaff1.id,
+        });
+
+        expect(result.id).toBe(fakeMeetingStaff1.id);
+      });
+    });
+
+    describe("audioUrl", () => {
       test("Should return audioUrl: null when audioPlaybackEnabled is false", async () => {
         await setUSNEAudioPlayback(false);
         await testPrismaClient.meeting.update({

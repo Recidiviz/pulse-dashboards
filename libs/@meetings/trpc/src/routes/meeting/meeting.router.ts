@@ -66,9 +66,26 @@ export const meetingRouter = router({
     .query(
       async ({
         input: { meetingId },
-        ctx: { prisma, stateCode, user, req },
+        ctx: { prisma, stateCode, user, isSkipAuth, req },
       }) => {
         try {
+          // Non-creators only see meetings the list view shares with them.
+          const access = await prisma.meeting.findUniqueOrThrow({
+            where: { id: meetingId },
+            select: { staffEmail: true, postMeetingProcessingStatus: true },
+          });
+          if (
+            !isSkipAuth &&
+            access.staffEmail !== user.email &&
+            access.postMeetingProcessingStatus ===
+              PostMeetingProcessingStatus.NOT_STARTED
+          ) {
+            throw new TRPCError({
+              code: "FORBIDDEN",
+              message: "You do not have access to this meeting",
+            });
+          }
+
           const meeting = await prisma.meeting.findUniqueOrThrow({
             where: { id: meetingId },
             select: {

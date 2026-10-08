@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { RouteProp, useRoute } from "@react-navigation/native";
+import { View } from "react-native";
 
 import {
   formatMeetingStartDateTitle,
@@ -29,6 +30,7 @@ import { trpc } from "~@meetings/app/shared/api";
 import { ClientsStackParamList } from "~@meetings/app/shared/config";
 import { useSetDocumentTitle } from "~@meetings/app/shared/lib/platform";
 import Loading from "~@meetings/app/shared/ui/Loading";
+import { Typography } from "~@meetings/app/shared/ui/Typography";
 import { Header } from "~@meetings/app/widgets/header";
 import { Meeting } from "~@meetings/app/widgets/meeting";
 
@@ -37,8 +39,11 @@ type MeetingRouteProp = RouteProp<ClientsStackParamList, "ClientMeeting">;
 export function ClientMeetingScreen() {
   const route = useRoute<MeetingRouteProp>();
   const meetingId = route.params?.meetingId || "";
-  const { data: meetingDetails, isLoading: isMeetingDetailsLoading } =
-    useMeetingDetails(meetingId);
+  const {
+    data: meetingDetails,
+    isLoading: isMeetingDetailsLoading,
+    error: meetingDetailsError,
+  } = useMeetingDetails(meetingId);
   const { data: person, isLoading: isPersonLoading } =
     trpc.v1.client.get.useQuery(
       { personId: BigInt(route.params?.personId || 0) },
@@ -52,6 +57,15 @@ export function ClientMeetingScreen() {
 
   if (isMeetingDetailsLoading || isPersonLoading)
     return <Loading message="Loading..." />;
+  if (meetingDetailsError?.data?.code === "FORBIDDEN")
+    return (
+      <View className="flex-1">
+        <Header />
+        <Typography variant="body-m-regular" className="p-6 text-center">
+          You don't have access to this meeting.
+        </Typography>
+      </View>
+    );
   if (!person || !meetingDetails) return null;
 
   return (
