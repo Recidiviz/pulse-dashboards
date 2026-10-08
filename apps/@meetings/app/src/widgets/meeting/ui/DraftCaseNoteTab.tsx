@@ -22,7 +22,11 @@ import { View } from "react-native";
 import DocumentDuplicateIcon from "react-native-heroicons/solid/DocumentDuplicateIcon";
 import PencilIcon from "react-native-heroicons/solid/PencilIcon";
 
-import { useUpdateNotes } from "~@meetings/app/entities/meeting";
+import {
+  MeetingDetails,
+  useUpdateNotes,
+} from "~@meetings/app/entities/meeting";
+import { useUserContext } from "~@meetings/app/entities/user";
 import { ReviewBeforeCopyModal } from "~@meetings/app/features/meeting-section-approval";
 import { useAnalytics } from "~@meetings/app/shared/analytics";
 import { trpc } from "~@meetings/app/shared/api";
@@ -31,45 +35,51 @@ import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 import { TextInput } from "~@meetings/app/shared/ui/TextInput";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
-import {
-  CaseNoteTypingAnimation,
-  useCaseNoteTyping,
-} from "../model/useCaseNoteTyping";
+import { useCaseNoteTyping } from "../model/useCaseNoteTyping";
 import { AiGeneratedIndicator } from "./AiGeneratedIndicator";
+import { NotepadNotesSection } from "./NotepadNotesSection";
 
 type Props = {
-  meetingId: string;
-  caseNote: string;
-  isApproved: boolean;
-  isMeetingCreator: boolean;
+  meetingDetails: MeetingDetails;
   personId: string;
   outputVote?: ReactNode;
   canEdit?: boolean;
   onEdit?: () => void;
-  typingAnimation?: CaseNoteTypingAnimation;
 };
 
 const DraftCaseNoteTab = ({
-  meetingId,
-  caseNote,
+  meetingDetails,
   personId,
-  isApproved,
-  isMeetingCreator,
   outputVote,
   canEdit = false,
   onEdit,
-  typingAnimation,
 }: Props) => {
   const { track } = useAnalytics();
   const utils = trpc.useUtils();
   const { showSnackbar, isShowing: isSnackbarShowing } = useSnackbar();
+  const { email: currentUserEmail, isSkipAuthUser } = useUserContext();
+
+  const meetingId = meetingDetails.id;
+  const caseNote = meetingDetails.caseNote || "";
+  const notepadNotes = meetingDetails.userNotepadNotes;
+  const isApproved = meetingDetails.approvals.caseNote.isApproved;
+  const isMeetingCreator =
+    currentUserEmail?.toLowerCase() ===
+      meetingDetails.staffEmail.toLowerCase() || isSkipAuthUser;
+
   const [inputNotes, setInputNotes] = useState(caseNote);
   const [inputHeight, setInputHeight] = useState(0);
   const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
   const { isPending, isTyping, visibleText } = useCaseNoteTyping({
     meetingId,
     caseNote,
-    animation: typingAnimation,
+    animation: {
+      pipelineRunId: meetingDetails.notetakingPipelineRunId,
+      meetingStartTime: meetingDetails.startTime,
+      isRead:
+        !!meetingDetails.caseNoteEditedAt ||
+        meetingDetails.approvals.caseNote.isApproved,
+    },
   });
   const isNoteShown = !isPending && !isTyping;
   const updateNotesMutation = useUpdateNotes({
@@ -120,6 +130,11 @@ const DraftCaseNoteTab = ({
 
   return (
     <View className="flex-1 gap-3 pb-4">
+      {notepadNotes?.trim() && (
+        <View className="mb-5">
+          <NotepadNotesSection notes={notepadNotes} />
+        </View>
+      )}
       <View className="flex-row items-center justify-between">
         <View>
           <View className="flex-row items-center gap-1.5">

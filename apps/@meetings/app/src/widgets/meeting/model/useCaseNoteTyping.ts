@@ -29,7 +29,7 @@ const START_DELAY_MS = 1000;
 const CHUNK_INTERVAL_MS = 100;
 const SECTION_PAUSE_MS = 600;
 
-export type CaseNoteTypingAnimation = {
+type CaseNoteTypingAnimation = {
   pipelineRunId: string | null;
   meetingStartTime: Date;
   // if someone has already read this note

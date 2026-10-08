@@ -347,10 +347,7 @@ const MeetingMobile = ({
         <View className="mx-auto mt-4 w-full max-w-[960px] flex-1">
           {activeTab === Tab.DraftCaseNotes && (
             <DraftCaseNoteTab
-              isApproved={meetingDetails.approvals.caseNote.isApproved}
-              isMeetingCreator={isMeetingCreator}
-              meetingId={meetingId}
-              caseNote={meetingDetails.caseNote || ""}
+              meetingDetails={meetingDetails}
               personId={person.personId.toString()}
               canEdit={isMeetingCreator && !isMobile}
               onEdit={canOpenEditScreen ? handleEditCaseNote : undefined}

@@ -19,6 +19,8 @@ import Clipboard from "@react-native-clipboard/clipboard";
 import { act, fireEvent, render } from "@testing-library/react-native";
 import React from "react";
 
+import type { MeetingDetails } from "~@meetings/app/entities/meeting";
+
 import DraftCaseNoteTab from "./DraftCaseNoteTab";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
@@ -36,9 +38,23 @@ jest.mock("~@meetings/app/entities/meeting", () => ({
   }),
 }));
 
+const CREATOR_EMAIL = "creator@example.com";
+let mockCurrentUserEmail = CREATOR_EMAIL;
+jest.mock("~@meetings/app/entities/user", () => ({
+  useUserContext: () => ({
+    email: mockCurrentUserEmail,
+    isSkipAuthUser: false,
+  }),
+}));
+
 const mockShowSnackbar = jest.fn();
 jest.mock("~@meetings/app/shared/ui/Snackbar", () => ({
   useSnackbar: () => ({ showSnackbar: mockShowSnackbar, isShowing: false }),
+}));
+
+// @rn-primitives/tooltip ships untranspiled JSX that Jest can't parse.
+jest.mock("~@meetings/app/shared/ui/Tooltip", () => ({
+  Tooltip: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 const mockTrack = jest.fn();
@@ -74,6 +90,41 @@ const MEETING_ID = "meeting-1";
 const PERSON_ID = "person-1";
 const ORIGINAL_NOTE = "Original case note";
 
+function buildMeetingDetails({
+  caseNote = ORIGINAL_NOTE,
+  isApproved = true,
+}: { caseNote?: string; isApproved?: boolean } = {}) {
+  return {
+    id: MEETING_ID,
+    notetakingPipelineRunId: null,
+    meetingType: null,
+    meetingTypeCategory: null,
+    // Outside the typing-animation window, so the note renders immediately.
+    startTime: new Date("2020-01-01T10:00:00Z"),
+    endTime: null,
+    durationMs: null,
+    caseNote,
+    userNotepadNotes: null,
+    actionItems: [],
+    meetingActionItems: [],
+    structuredActionItems: [],
+    staffFeedback: null,
+    currentOutputVotes: null,
+    caseNoteEditedAt: null,
+    actionItemsEditedAt: null,
+    approvals: {
+      caseNote: { isApproved, approverEmail: null, approvedAt: null },
+      actionItems: { isApproved: false, approverEmail: null, approvedAt: null },
+    },
+    postMeetingProcessingStatus: "NOT_STARTED",
+    validationErrorType: null,
+    transcriptDeletedAt: null,
+    transcription: null,
+    staffEmail: CREATOR_EMAIL,
+    audioUrl: null,
+  } satisfies MeetingDetails;
+}
+
 function renderTab(
   caseNote = ORIGINAL_NOTE,
   canEdit = true,
@@ -81,12 +132,9 @@ function renderTab(
 ) {
   const utils = render(
     <DraftCaseNoteTab
-      meetingId={MEETING_ID}
-      caseNote={caseNote}
+      meetingDetails={buildMeetingDetails({ caseNote, isApproved })}
       personId={PERSON_ID}
       canEdit={canEdit}
-      isApproved={isApproved}
-      isMeetingCreator
     />,
   );
   const input = utils.getByDisplayValue(caseNote);
@@ -99,6 +147,7 @@ describe("DraftCaseNoteTab", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockCapturedOnSuccess = undefined;
+    mockCurrentUserEmail = CREATOR_EMAIL;
   });
 
   it("does not call the save mutation immediately while typing", () => {
@@ -203,14 +252,12 @@ describe("DraftCaseNoteTab", () => {
     });
 
     it("shows the non-creator phrasing when the viewer isn't the meeting creator", () => {
+      mockCurrentUserEmail = "someone-else@example.com";
       const { getByText, queryByText } = render(
         <DraftCaseNoteTab
-          meetingId={MEETING_ID}
-          caseNote={ORIGINAL_NOTE}
+          meetingDetails={buildMeetingDetails({ isApproved: false })}
           personId={PERSON_ID}
           canEdit={false}
-          isApproved={false}
-          isMeetingCreator={false}
         />,
       );
 
@@ -247,11 +294,8 @@ describe("DraftCaseNoteTab", () => {
     it("defaults to read-only when canEdit is omitted (deny-by-default)", () => {
       const { getByDisplayValue, queryByText } = render(
         <DraftCaseNoteTab
-          meetingId={MEETING_ID}
-          caseNote={ORIGINAL_NOTE}
+          meetingDetails={buildMeetingDetails({ isApproved: false })}
           personId={PERSON_ID}
-          isApproved={false}
-          isMeetingCreator
         />,
       );
 
@@ -280,11 +324,8 @@ describe("DraftCaseNoteTab", () => {
       const onEdit = jest.fn();
       const { getByText } = render(
         <DraftCaseNoteTab
-          meetingId={MEETING_ID}
-          caseNote={ORIGINAL_NOTE}
+          meetingDetails={buildMeetingDetails()}
           personId={PERSON_ID}
-          isApproved
-          isMeetingCreator
           onEdit={onEdit}
         />,
       );

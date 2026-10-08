@@ -271,19 +271,9 @@ const MeetingDesktop = ({
                 onVisible={handleSectionVisible}
               >
                 <DraftCaseNoteTab
-                  meetingId={meetingId}
-                  caseNote={meetingDetails.caseNote || ""}
-                  isApproved={meetingDetails.approvals.caseNote.isApproved}
-                  isMeetingCreator={isMeetingCreator}
+                  meetingDetails={meetingDetails}
                   personId={person.personId.toString()}
                   canEdit={isMeetingCreator}
-                  typingAnimation={{
-                    pipelineRunId: meetingDetails.notetakingPipelineRunId,
-                    meetingStartTime: meetingDetails.startTime,
-                    isRead:
-                      !!meetingDetails.caseNoteEditedAt ||
-                      meetingDetails.approvals.caseNote.isApproved,
-                  }}
                   outputVote={
                     isMeetingCreator &&
                     meetingDetails.caseNote && (
