@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { compact, uniq } from "lodash";
 import { Fragment, useEffect } from "react";
 
 import { useAnalytics } from "~@meetings/app/shared/analytics";
@@ -44,13 +45,15 @@ export function CaseNoteSummaryWithTooltips({
   useEffect(() => {
     track("cni_summary_viewed", {
       personId: person.personId.toString(),
+      categories: uniq(compact(segments.map((s) => s.category))),
+      isInsideModal: !!isInsideModal,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <Typography variant="body-s-regular">
-      {segments.map(({ content, citation }, index) => {
+      {segments.map(({ content, citation, category }, index) => {
         const key = `${index}-${content}`;
 
         if (!citation) return <Fragment key={key}>{content}</Fragment>;
@@ -71,6 +74,8 @@ export function CaseNoteSummaryWithTooltips({
                 if (open) {
                   track("cni_summary_citation_viewed", {
                     personId: person.personId.toString(),
+                    category,
+                    isInsideModal: !!isInsideModal,
                   });
                 }
               }}

@@ -37,4 +37,5 @@ export type CniCitation = {
 export type CaseNoteSummarySegment = {
   content: string;
   citation?: CniCitation;
+  category?: "employment" | "housing";
 };

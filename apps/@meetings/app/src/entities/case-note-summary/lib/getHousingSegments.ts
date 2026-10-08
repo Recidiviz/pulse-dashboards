@@ -112,6 +112,8 @@ export function getHousingSegments(
     return null;
   }
 
+  let housingSegments: CaseNoteSummarySegment[];
+
   switch (primaryStatus.fieldValue) {
     // We've decided not to render a summary for this status since it typically signals
     // a stale case note and isn't actionable to the user.
@@ -119,7 +121,7 @@ export function getHousingSegments(
       return null;
 
     case "unhoused":
-      return compact([
+      housingSegments = compact([
         citedValue(primaryStatus, () => "is currently unhoused"),
         citedFragment(
           cniFields.unhousedLocation,
@@ -128,12 +130,18 @@ export function getHousingSegments(
           (fragment) => `, ${fragment}`,
         ),
       ]);
+      break;
 
     case "housed":
-      return getHousedSegments(cniFields, primaryStatus, warn);
+      housingSegments = getHousedSegments(cniFields, primaryStatus, warn);
+      break;
 
     default:
       warn(`unrecognized housing primaryStatus="${primaryStatus.fieldValue}"`);
       return null;
   }
+  return housingSegments.map((segment) => ({
+    ...segment,
+    category: "housing",
+  }));
 }

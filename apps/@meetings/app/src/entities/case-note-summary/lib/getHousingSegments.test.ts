@@ -209,7 +209,7 @@ describe("getHousingSegments", () => {
       warn,
     );
 
-    expect(result).toEqual([
+    expect(result).toMatchObject([
       {
         content: "is housed",
         citation: {
@@ -230,6 +230,29 @@ describe("getHousingSegments", () => {
           quotes: ["quote for 123 Jackson St"],
           lastVerifiedDate: new Date(2026, 6, 14),
         },
+      },
+    ]);
+  });
+
+  it("attaches the housing category to all segments", () => {
+    const result = getHousingSegments(
+      build({
+        primaryStatus: field("housed"),
+        housedType: field("dependent"),
+        address: field("123 Jackson St"),
+      }),
+      warn,
+    );
+
+    expect(result).toMatchObject([
+      {
+        category: "housing",
+      },
+      {
+        category: "housing",
+      },
+      {
+        category: "housing",
       },
     ]);
   });

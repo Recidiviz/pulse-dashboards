@@ -237,7 +237,7 @@ describe("getEmploymentSegments", () => {
         warn,
       );
 
-      expect(result).toEqual([
+      expect(result).toMatchObject([
         {
           content: "is employed",
           citation: {
@@ -299,6 +299,36 @@ describe("getEmploymentSegments", () => {
         quotes: ["still a real quote"],
         lastVerifiedDate: undefined,
       });
+    });
+  });
+
+  describe("categories", () => {
+    it("attaches the employment category to all segments", () => {
+      const result = getEmploymentSegments(
+        build({
+          primaryStatus: field("employed"),
+          employers: [
+            {
+              employmentType: field("employee_pt"),
+              employerName: field("Diner"),
+            },
+          ],
+        }),
+        warn,
+      );
+
+      expect(result).toMatchObject([
+        {
+          category: "employment",
+        },
+        { category: "employment" },
+        {
+          category: "employment",
+        },
+        {
+          category: "employment",
+        },
+      ]);
     });
   });
 

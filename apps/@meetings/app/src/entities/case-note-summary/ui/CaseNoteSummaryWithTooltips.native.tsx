@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { compact, uniq } from "lodash";
 import { useEffect } from "react";
 import { View } from "react-native";
 
@@ -46,6 +47,8 @@ export function CaseNoteSummaryWithTooltips({
   useEffect(() => {
     track("cni_summary_viewed", {
       personId: person.personId.toString(),
+      categories: uniq(compact(segments.map((s) => s.category))),
+      isInsideModal: !!isInsideModal,
     });
     // Empty dependency array ensures this effect only runs once on mount.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -67,6 +70,8 @@ export function CaseNoteSummaryWithTooltips({
                 if (open) {
                   track("cni_summary_citation_viewed", {
                     personId: person.personId.toString(),
+                    category: segments[segmentIndex].category,
+                    isInsideModal: !!isInsideModal,
                   });
                 }
               }}

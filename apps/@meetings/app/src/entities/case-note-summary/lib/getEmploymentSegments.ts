@@ -138,7 +138,7 @@ export function getEmploymentSegments(
       ),
       toSegment(" "),
       ...joined,
-    ]);
+    ]).map((segment) => ({ ...segment, category: "employment" }));
   }
 
   warn(`unrecognized employment primaryStatus="${primaryStatus.fieldValue}"`);
