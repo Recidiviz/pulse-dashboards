@@ -105,7 +105,7 @@ resource "auth0_connection" "email" {
     signature_algorithm                    = null
     signature_method                       = null
     strategy_version                       = 0
-    subject                                = "Sign in to Idaho TH"
+    subject                                = "Sign in to Idaho Transitional Housing"
     syntax                                 = "liquid"
     team_id                                = null
     template                               = file("${path.module}/templates/passwordless_email.html")
