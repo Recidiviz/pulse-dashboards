@@ -48,6 +48,5 @@ export const getCheckInQueryResolver = async ({
     return null;
   }
 
-  // TODO(OBT-47841): parse with zod
   return { ...result, answers: usNeCheckInSchema.parse(result.answers) };
 };

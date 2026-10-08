@@ -66,8 +66,7 @@ export const updateCheckIn = nebraskaProcedure
     z.object({
       id: z.string(),
       pseudonymizedId: z.string(),
-      // TODO(OBT-47841) can this type be tightened?
-      answers: z.record(z.string(), z.any()),
+      answers: usNeCheckInSchema,
     }),
   )
   .use(residentRestrictedMiddleware)

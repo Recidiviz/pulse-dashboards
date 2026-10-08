@@ -17,11 +17,39 @@
 
 import { z } from "zod";
 
-import { CheckInQuestionId, CheckInSectionId } from "./usNeCheckInToolSpec";
+import {
+  CheckInQuestionId,
+  checkInQuestionIds,
+  CheckInSectionId,
+} from "./usNeCheckInToolSpec";
 
-// TODO(OBT-47841): this is a dummy schema, replace with a more useful one
-// derived from CheckInQuestionId
-export const usNeCheckInSchema = z.object({}).passthrough();
+export const supportSystemContactSchema = z.object({
+  name: z.string(),
+  relationship: z.string().optional(),
+});
+
+export type SupportSystemContact = z.output<typeof supportSystemContactSchema>;
+
+export const checkInAnswerSchema = z
+  .string()
+  .or(z.array(z.string()))
+  .or(z.array(supportSystemContactSchema))
+  .nullable();
+
+export type CheckInAnswer = z.output<typeof checkInAnswerSchema>;
+
+export function isNonemptyStringArray(
+  ans: CheckInAnswer | undefined,
+): ans is string[] {
+  return Boolean(
+    ans && Array.isArray(ans) && ans.length > 0 && typeof ans[0] === "string",
+  );
+}
+
+export const usNeCheckInSchema = z.record(
+  z.enum(checkInQuestionIds),
+  checkInAnswerSchema,
+);
 
 export type UsNeCheckInAnswers = z.output<typeof usNeCheckInSchema>;
 

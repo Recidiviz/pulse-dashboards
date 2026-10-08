@@ -17,25 +17,33 @@
 
 import { useState } from "react";
 
-import { checkInQuestionConfig, CheckInQuestionId } from "~@jii/configs";
+import {
+  CheckInAnswer,
+  checkInQuestionConfig,
+  CheckInQuestionId,
+} from "~@jii/configs";
 import { useUsNeTranslations } from "~@jii/translation";
 import { Radio, RadioGroup } from "~design-system";
 
 import { useResidentGivenNames } from "./hooks/useResidentGivenNames";
+import { UsNeCheckInFooter } from "./UsNeCheckInFooter/UsNeCheckInFooter";
 import {
   AnswerHint,
   OptionalHint,
   OptionCard,
   OptionsList,
   QuestionText,
+  QuestionWrapper,
 } from "./UsNeCheckInQuestion.styles";
 
 export const UsNeCheckInRadioQuestion = ({
   id,
   answers,
+  saveAnswer,
 }: {
   id: CheckInQuestionId;
   answers: readonly string[];
+  saveAnswer: (answer: CheckInAnswer) => void;
 }) => {
   const { t } = useUsNeTranslations();
   const isOptional = !!checkInQuestionConfig[id].optional;
@@ -58,26 +66,36 @@ export const UsNeCheckInRadioQuestion = ({
 
   return (
     <>
-      <QuestionText>{questionCopy.question}</QuestionText>
-      {isOptional && (
-        <OptionalHint>{t(($) => $.checkIn.questionPage.optional)}</OptionalHint>
-      )}
-      <AnswerHint>{t(($) => $.checkIn.questionPage.selectOne)}</AnswerHint>
-      <RadioGroup
-        value={selected ?? undefined}
-        onChange={(value) => setSelected(value)}
-        ariaLabel={questionCopy.question}
-      >
-        <OptionsList>
-          {answers.map((option) => (
-            <OptionCard key={option} $selected={option === selected}>
-              <Radio value={option}>
-                {answerCopy[option] ?? defaultRadioAnswers[option]}
-              </Radio>
-            </OptionCard>
-          ))}
-        </OptionsList>
-      </RadioGroup>
+      <QuestionWrapper>
+        <QuestionText>{questionCopy.question}</QuestionText>
+        {isOptional && (
+          <OptionalHint>
+            {t(($) => $.checkIn.questionPage.optional)}
+          </OptionalHint>
+        )}
+        <AnswerHint>{t(($) => $.checkIn.questionPage.selectOne)}</AnswerHint>
+        <RadioGroup
+          value={selected ?? undefined}
+          onChange={(value) => setSelected(value)}
+          ariaLabel={questionCopy.question}
+        >
+          <OptionsList>
+            {answers.map((option) => (
+              <OptionCard key={option} $selected={option === selected}>
+                <Radio value={option}>
+                  {answerCopy[option] ?? defaultRadioAnswers[option]}
+                </Radio>
+              </OptionCard>
+            ))}
+          </OptionsList>
+        </RadioGroup>
+      </QuestionWrapper>
+
+      <UsNeCheckInFooter
+        onButtonClick={() => saveAnswer(selected)}
+        infoText={t(($) => $.checkIn.footer.nextInfo)}
+        buttonText={t(($) => $.checkIn.footer.next)}
+      />
     </>
   );
 };

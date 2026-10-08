@@ -19,16 +19,19 @@ import { UseMutationResult } from "@tanstack/react-query";
 import { TRPCClientErrorLike } from "@trpc/client";
 import assertNever from "assert-never";
 
-import { checkInQuestionConfig, positionOfQuestion } from "~@jii/configs";
+import {
+  CheckInAnswer,
+  checkInQuestionConfig,
+  positionOfQuestion,
+} from "~@jii/configs";
 import { useUsNeTranslations } from "~@jii/translation";
 import { JiiResidentAppRouter } from "~@jii/trpc-types";
 
 import { CheckInFormData, CheckInMutationInput } from "./types";
 import { QuestionInfo } from "./types";
 import { UsNeCheckInCheckboxQuestion } from "./UsNeCheckInCheckboxQuestion";
-import { UsNeCheckInFooter } from "./UsNeCheckInFooter/UsNeCheckInFooter";
 import { UsNeCheckInFreeTextQuestion } from "./UsNeCheckInFreeTextQuestion";
-import { QuestionNumber, QuestionWrapper } from "./UsNeCheckInQuestion.styles";
+import { QuestionNumber } from "./UsNeCheckInQuestion.styles";
 import { UsNeCheckInRadioQuestion } from "./UsNeCheckInRadioQuestion";
 import { UsNeCheckInSupportSystemQuestion } from "./UsNeCheckInSupportSystemQuestion";
 
@@ -49,6 +52,19 @@ export const UsNeCheckInQuestion = ({
   const config = checkInQuestionConfig[questionId];
   const position = positionOfQuestion(questionId, sectionId, data.answers);
 
+  const saveAnswer = (answer: CheckInAnswer) => {
+    const updatedAnswers = {
+      ...data.answers,
+      [questionId]: answer,
+    };
+
+    updateMutation.mutate({
+      id: data.id,
+      pseudonymizedId: data.pseudonymizedId,
+      answers: updatedAnswers,
+    });
+  };
+
   const renderQuestion = () => {
     switch (config.format) {
       case "RADIO":
@@ -57,6 +73,7 @@ export const UsNeCheckInQuestion = ({
             key={questionId}
             id={questionId}
             answers={config.answers}
+            saveAnswer={saveAnswer}
           />
         );
       case "CHECKBOX":
@@ -65,43 +82,36 @@ export const UsNeCheckInQuestion = ({
             key={questionId}
             id={questionId}
             answers={config.answers}
+            saveAnswer={saveAnswer}
           />
         );
       case "FREE_TEXT":
-        return <UsNeCheckInFreeTextQuestion key={questionId} id={questionId} />;
+        return (
+          <UsNeCheckInFreeTextQuestion
+            key={questionId}
+            id={questionId}
+            saveAnswer={saveAnswer}
+          />
+        );
       case "SUPPORT_SYSTEM":
         return (
-          <UsNeCheckInSupportSystemQuestion key={questionId} id={questionId} />
+          <UsNeCheckInSupportSystemQuestion
+            key={questionId}
+            id={questionId}
+            saveAnswer={saveAnswer}
+          />
         );
       default:
         return assertNever(config);
     }
   };
 
-  // TODO(OBT-47849): Add logic to control form inputs and send the user's selected
-  // answer to the backend.
   return (
     <div>
       <QuestionNumber>
         {t(($) => $.checkIn.questionPage.header, { number: position })}
       </QuestionNumber>
-      <QuestionWrapper>{renderQuestion()}</QuestionWrapper>
-      <UsNeCheckInFooter
-        onButtonClick={() => {
-          const updatedAnswers = {
-            ...data.answers,
-            [questionId]: "YES",
-          };
-
-          updateMutation.mutate({
-            id: data.id,
-            pseudonymizedId: data.pseudonymizedId,
-            answers: updatedAnswers,
-          });
-        }}
-        infoText={t(($) => $.checkIn.footer.nextInfo)}
-        buttonText={t(($) => $.checkIn.footer.next)}
-      />
+      {renderQuestion()}
     </div>
   );
 };

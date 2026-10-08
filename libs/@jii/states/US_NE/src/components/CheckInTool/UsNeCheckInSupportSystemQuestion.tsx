@@ -17,24 +17,36 @@
 
 import { useState } from "react";
 
-import { CheckInQuestionId } from "~@jii/configs";
+import {
+  CheckInAnswer,
+  CheckInQuestionId,
+  SupportSystemContact,
+} from "~@jii/configs";
 import { useUsNeTranslations } from "~@jii/translation";
 
 import { useResidentGivenNames } from "./hooks/useResidentGivenNames";
+import { UsNeCheckInFooter } from "./UsNeCheckInFooter/UsNeCheckInFooter";
 import {
   QuestionText,
+  QuestionWrapper,
   SupportSystemTable,
   SupportSystemTextEntry,
 } from "./UsNeCheckInQuestion.styles";
 
-const SupportSystemPersonRow = ({ index }: { index: number }) => {
+const SupportSystemPersonRow = ({
+  index,
+  contact,
+  setContact,
+}: {
+  index: number;
+  contact: SupportSystemContact;
+  setContact: (contact: SupportSystemContact) => void;
+}) => {
   const { t } = useUsNeTranslations();
   const placeholder = t(($) => $.checkIn.supportSystem.placeholder);
 
-  const [name, setName] = useState<string>("");
-  const [relationship, setRelationship] = useState<string>("");
-
-  const hasName = name !== "";
+  const { name, relationship } = contact;
+  const hasName = !!name;
 
   return (
     <tr>
@@ -44,20 +56,19 @@ const SupportSystemPersonRow = ({ index }: { index: number }) => {
           placeholder={placeholder}
           value={name}
           onChange={(e) => {
-            setName(e.target.value);
-            if (e.target.value === "") {
-              setRelationship("");
-            }
+            const newName = e.target.value;
+            const newRelationship = newName ? relationship : undefined;
+            setContact({ name: newName, relationship: newRelationship });
           }}
         />
       </td>
       <td>
         {hasName ? (
           <SupportSystemTextEntry
-            id={`name${index}`}
+            id={`relationship${index}`}
             placeholder={placeholder}
-            value={relationship}
-            onChange={(e) => setRelationship(e.target.value)}
+            value={relationship ?? ""}
+            onChange={(e) => setContact({ name, relationship: e.target.value })}
           />
         ) : (
           <SupportSystemTextEntry disabled value={"—"} />
@@ -69,9 +80,18 @@ const SupportSystemPersonRow = ({ index }: { index: number }) => {
 
 export const UsNeCheckInSupportSystemQuestion = ({
   id,
+  saveAnswer,
 }: {
   id: CheckInQuestionId;
+  saveAnswer: (answer: CheckInAnswer) => void;
 }) => {
+  const [contacts, setContacts] = useState<readonly SupportSystemContact[]>([
+    { name: "", relationship: undefined },
+    { name: "", relationship: undefined },
+    { name: "", relationship: undefined },
+    { name: "", relationship: undefined },
+  ]);
+
   const { t } = useUsNeTranslations();
 
   const questionCopy = t(($) => $.checkIn.questions[id], {
@@ -81,21 +101,37 @@ export const UsNeCheckInSupportSystemQuestion = ({
 
   return (
     <>
-      <QuestionText>{questionCopy.question}</QuestionText>
-      <SupportSystemTable>
-        <thead>
-          <tr>
-            <th>{t(($) => $.checkIn.supportSystem.name)}</th>
-            <th>{t(($) => $.checkIn.supportSystem.howDoYouKnowThem)}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <SupportSystemPersonRow index={0} />
-          <SupportSystemPersonRow index={1} />
-          <SupportSystemPersonRow index={2} />
-          <SupportSystemPersonRow index={3} />
-        </tbody>
-      </SupportSystemTable>
+      <QuestionWrapper>
+        <QuestionText>{questionCopy.question}</QuestionText>
+        <SupportSystemTable>
+          <thead>
+            <tr>
+              <th>{t(($) => $.checkIn.supportSystem.name)}</th>
+              <th>{t(($) => $.checkIn.supportSystem.howDoYouKnowThem)}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {contacts.map((contact, i) => (
+              <SupportSystemPersonRow
+                index={i}
+                contact={contact}
+                setContact={(contact: SupportSystemContact) => {
+                  setContacts(contacts.toSpliced(i, 1, contact));
+                }}
+              />
+            ))}
+          </tbody>
+        </SupportSystemTable>
+      </QuestionWrapper>
+
+      <UsNeCheckInFooter
+        onButtonClick={() => {
+          const nonEmptyContacts = contacts.filter(({ name }) => !!name);
+          saveAnswer(nonEmptyContacts.length > 0 ? nonEmptyContacts : null);
+        }}
+        infoText={t(($) => $.checkIn.footer.nextInfo)}
+        buttonText={t(($) => $.checkIn.footer.next)}
+      />
     </>
   );
 };

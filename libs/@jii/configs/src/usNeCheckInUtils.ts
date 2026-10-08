@@ -22,23 +22,44 @@ import {
   CheckInSectionId,
   CheckInStatus,
   checkInToolSpec,
+  isNonemptyStringArray,
   UsNeCheckInAnswers,
 } from "~@jii/configs";
 
 /**
- * Return all the questions that should be shown to the resident.
+ * Return all the questions that should be shown to the resident, including
+ * information about the question's section, based on the resident's answers.
  */
 export function getVisibleQuestions(
   answers: UsNeCheckInAnswers,
 ): CheckInQuestionInfo[] {
   return checkInToolSpec.flatMap(({ id: sectionId, questions }) => {
     return questions.flatMap((questionId) => {
+      const questionInfo = [{ questionId, sectionId }];
+
       const { showIf } = checkInQuestionConfig[questionId];
 
       // Show questions that don't depend on anything
-      // and questions whose show-if condition was met
-      if (!showIf || answers[showIf.questionId] === showIf.value) {
-        return [{ questionId, sectionId }];
+      if (!showIf) {
+        return questionInfo;
+      }
+
+      // Show questions whose show-if condition was met
+      const dependencyAnswer = answers[showIf.questionId];
+      const dependencyFormat = checkInQuestionConfig[showIf.questionId].format;
+
+      if (dependencyAnswer === showIf.value) {
+        return questionInfo;
+      }
+
+      if (
+        // these first two conditions should be identical, the second one
+        // just narrows the type of dependencyAnswer
+        dependencyFormat === "CHECKBOX" &&
+        isNonemptyStringArray(dependencyAnswer) &&
+        dependencyAnswer.includes(showIf.value)
+      ) {
+        return questionInfo;
       }
 
       return [];

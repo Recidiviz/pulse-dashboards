@@ -49,7 +49,7 @@ test("no repeated answer IDs within a question", () => {
   });
 });
 
-test("every showIf references a real option from a previous question", () => {
+test("every showIf references a real option from a previous multiple-choice question", () => {
   for (const [id, config] of Object.entries(checkInQuestionConfig) as [
     CheckInQuestionId,
     CheckInQuestionConfig,

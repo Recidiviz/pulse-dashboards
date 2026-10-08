@@ -17,25 +17,33 @@
 
 import { useState } from "react";
 
-import { checkInQuestionConfig, CheckInQuestionId } from "~@jii/configs";
+import {
+  CheckInAnswer,
+  checkInQuestionConfig,
+  CheckInQuestionId,
+} from "~@jii/configs";
 import { useUsNeTranslations } from "~@jii/translation";
 import { Checkbox, CheckboxGroup } from "~design-system";
 
 import { useResidentGivenNames } from "./hooks/useResidentGivenNames";
+import { UsNeCheckInFooter } from "./UsNeCheckInFooter/UsNeCheckInFooter";
 import {
   AnswerHint,
   OptionalHint,
   OptionCard,
   OptionsList,
   QuestionText,
+  QuestionWrapper,
 } from "./UsNeCheckInQuestion.styles";
 
 export const UsNeCheckInCheckboxQuestion = ({
   id,
   answers,
+  saveAnswer,
 }: {
   id: CheckInQuestionId;
   answers: readonly string[];
+  saveAnswer: (answer: CheckInAnswer) => void;
 }) => {
   const { t } = useUsNeTranslations();
   const isOptional = !!checkInQuestionConfig[id].optional;
@@ -54,24 +62,34 @@ export const UsNeCheckInCheckboxQuestion = ({
 
   return (
     <>
-      <QuestionText>{questionCopy.question}</QuestionText>
-      {isOptional && (
-        <OptionalHint>{t(($) => $.checkIn.questionPage.optional)}</OptionalHint>
-      )}
-      <AnswerHint>{t(($) => $.checkIn.questionPage.checkAll)}</AnswerHint>
-      <CheckboxGroup
-        value={selected}
-        onChange={setSelected}
-        ariaLabel={questionCopy.question}
-      >
-        <OptionsList>
-          {answers.map((option) => (
-            <OptionCard key={option} $selected={selected.includes(option)}>
-              <Checkbox value={option}>{answerCopy[option]}</Checkbox>
-            </OptionCard>
-          ))}
-        </OptionsList>
-      </CheckboxGroup>
+      <QuestionWrapper>
+        <QuestionText>{questionCopy.question}</QuestionText>
+        {isOptional && (
+          <OptionalHint>
+            {t(($) => $.checkIn.questionPage.optional)}
+          </OptionalHint>
+        )}
+        <AnswerHint>{t(($) => $.checkIn.questionPage.checkAll)}</AnswerHint>
+        <CheckboxGroup
+          value={selected}
+          onChange={setSelected}
+          ariaLabel={questionCopy.question}
+        >
+          <OptionsList>
+            {answers.map((option) => (
+              <OptionCard key={option} $selected={selected.includes(option)}>
+                <Checkbox value={option}>{answerCopy[option]}</Checkbox>
+              </OptionCard>
+            ))}
+          </OptionsList>
+        </CheckboxGroup>
+      </QuestionWrapper>
+
+      <UsNeCheckInFooter
+        onButtonClick={() => saveAnswer(selected.length > 0 ? selected : null)}
+        infoText={t(($) => $.checkIn.footer.nextInfo)}
+        buttonText={t(($) => $.checkIn.footer.next)}
+      />
     </>
   );
 };

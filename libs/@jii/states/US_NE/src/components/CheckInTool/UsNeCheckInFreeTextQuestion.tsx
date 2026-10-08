@@ -15,23 +15,34 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { checkInQuestionConfig, CheckInQuestionId } from "~@jii/configs";
+import { useState } from "react";
+
+import {
+  CheckInAnswer,
+  checkInQuestionConfig,
+  CheckInQuestionId,
+} from "~@jii/configs";
 import { useUsNeTranslations } from "~@jii/translation";
 
 import { useResidentGivenNames } from "./hooks/useResidentGivenNames";
+import { UsNeCheckInFooter } from "./UsNeCheckInFooter/UsNeCheckInFooter";
 import {
   OptionalHint,
   QuestionText,
+  QuestionWrapper,
   TextEntry,
 } from "./UsNeCheckInQuestion.styles";
 
 export const UsNeCheckInFreeTextQuestion = ({
   id,
+  saveAnswer,
 }: {
   id: CheckInQuestionId;
+  saveAnswer: (answer: CheckInAnswer) => void;
 }) => {
   const { t } = useUsNeTranslations();
   const isOptional = !!checkInQuestionConfig[id].optional;
+  const [answer, setAnswer] = useState<string | null>(null);
 
   const questionCopy = t(($) => $.checkIn.questions[id], {
     returnObjects: true,
@@ -40,11 +51,25 @@ export const UsNeCheckInFreeTextQuestion = ({
 
   return (
     <>
-      <QuestionText>{questionCopy.question}</QuestionText>
-      {isOptional && (
-        <OptionalHint>{t(($) => $.checkIn.questionPage.optional)}</OptionalHint>
-      )}
-      <TextEntry />
+      <QuestionWrapper>
+        <QuestionText>{questionCopy.question}</QuestionText>
+        {isOptional && (
+          <OptionalHint>
+            {t(($) => $.checkIn.questionPage.optional)}
+          </OptionalHint>
+        )}
+        <TextEntry
+          id={id}
+          value={answer ?? ""}
+          onChange={(e) => setAnswer(e.target.value)}
+        />
+      </QuestionWrapper>
+
+      <UsNeCheckInFooter
+        onButtonClick={() => saveAnswer(answer)}
+        infoText={t(($) => $.checkIn.footer.nextInfo)}
+        buttonText={t(($) => $.checkIn.footer.next)}
+      />
     </>
   );
 };

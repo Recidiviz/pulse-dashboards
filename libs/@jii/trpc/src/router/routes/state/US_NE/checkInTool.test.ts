@@ -129,18 +129,18 @@ describe("updateCheckIn", () => {
         id: testCheckInId,
         pseudonymizedId: testPseudonymizedId,
         assignedBy: testEmail,
-        answers: { foo: "bar", baz: 123 },
+        answers: { EDUCATION_PLANS: "bar", EDUCATION_PLANS_DESCRIPTION: "baz" },
       },
     });
 
     await caller.usNe.updateCheckIn({
       id: testCheckInId,
       pseudonymizedId: testPseudonymizedId,
-      answers: { foo: "different answer" },
+      answers: { CELEBRATION: "foo" },
     });
 
     await expect(
       caller.usNe.getCheckIn({ pseudonymizedId: testPseudonymizedId }),
-    ).resolves.toMatchObject({ answers: { foo: "different answer" } });
+    ).resolves.toMatchObject({ answers: { CELEBRATION: "foo" } });
   });
 });
