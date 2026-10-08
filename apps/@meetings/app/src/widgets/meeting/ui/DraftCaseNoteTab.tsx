@@ -147,28 +147,15 @@ const DraftCaseNoteTab = ({
             </Typography>
           )}
         </View>
-        <View className="flex-row items-center gap-4">
-          {onEdit && (
-            <Button
-              variant="secondary"
-              icon={{ icon: PencilIcon, className: "size-4" }}
-              onPress={onEdit}
-            >
-              Edit
-            </Button>
-          )}
+        {onEdit && (
           <Button
             variant="secondary"
-            icon={{
-              icon: DocumentDuplicateIcon,
-              className: "size-4 stroke-none",
-            }}
-            disabled={isSnackbarShowing}
-            onPress={onCopy}
+            icon={{ icon: PencilIcon, className: "size-4" }}
+            onPress={onEdit}
           >
-            Copy
+            Edit
           </Button>
-        </View>
+        )}
       </View>
       <View className="flex-1">
         {!isPending && (
@@ -187,6 +174,17 @@ const DraftCaseNoteTab = ({
             readOnly={!canEdit || isTyping}
             multiline
           />
+        )}
+        {isNoteShown && (
+          <Button
+            variant="secondary"
+            icon={{ icon: DocumentDuplicateIcon }}
+            disabled={isSnackbarShowing}
+            onPress={onCopy}
+            className="mt-6 self-start px-6"
+          >
+            Copy to clipboard
+          </Button>
         )}
         {isNoteShown && outputVote}
       </View>

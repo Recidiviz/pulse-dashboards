@@ -201,7 +201,7 @@ describe("DraftCaseNoteTab", () => {
     const { input, getByText } = renderTab();
 
     fireEvent.changeText(input, "Unsaved in-progress edit");
-    fireEvent.press(getByText("Copy"));
+    fireEvent.press(getByText("Copy to clipboard"));
 
     expect(mockSetString).toHaveBeenCalledWith(ORIGINAL_NOTE);
     expect(mockSetString).not.toHaveBeenCalledWith("Unsaved in-progress edit");
@@ -217,7 +217,7 @@ describe("DraftCaseNoteTab", () => {
     it("shows the review warning instead of copying immediately", () => {
       const { getByText, queryByText } = renderTab(ORIGINAL_NOTE, true, false);
 
-      fireEvent.press(getByText("Copy"));
+      fireEvent.press(getByText("Copy to clipboard"));
 
       expect(mockSetString).not.toHaveBeenCalled();
       expect(mockTrack).not.toHaveBeenCalled();
@@ -227,7 +227,7 @@ describe("DraftCaseNoteTab", () => {
     it("copies and dismisses the warning when the user confirms 'Copy anyway'", () => {
       const { getByText, queryByText } = renderTab(ORIGINAL_NOTE, true, false);
 
-      fireEvent.press(getByText("Copy"));
+      fireEvent.press(getByText("Copy to clipboard"));
       fireEvent.press(getByText("Copy anyway"));
 
       expect(mockSetString).toHaveBeenCalledWith(ORIGINAL_NOTE);
@@ -244,7 +244,7 @@ describe("DraftCaseNoteTab", () => {
     it("does not copy and dismisses the warning when the user picks 'Review first'", () => {
       const { getByText, queryByText } = renderTab(ORIGINAL_NOTE, true, false);
 
-      fireEvent.press(getByText("Copy"));
+      fireEvent.press(getByText("Copy to clipboard"));
       fireEvent.press(getByText("Review first"));
 
       expect(mockSetString).not.toHaveBeenCalled();
@@ -261,7 +261,7 @@ describe("DraftCaseNoteTab", () => {
         />,
       );
 
-      fireEvent.press(getByText("Copy"));
+      fireEvent.press(getByText("Copy to clipboard"));
 
       expect(
         queryByText("This content has not been reviewed yet. Copy anyway?"),
@@ -354,7 +354,7 @@ describe("DraftCaseNoteTab", () => {
     it("shows a snackbar when the note is copied", () => {
       const { getByText } = renderTab();
 
-      fireEvent.press(getByText("Copy"));
+      fireEvent.press(getByText("Copy to clipboard"));
 
       expect(mockShowSnackbar).toHaveBeenCalledWith(
         "Case note copied to clipboard",
