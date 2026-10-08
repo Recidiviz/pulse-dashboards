@@ -58,13 +58,13 @@ describe("stableStaffExternalId", () => {
     ).toHaveProperty("stableStaffExternalId", "STABLE123");
   });
 
-  test("accepts null for staff without a stable supervision id", () => {
+  test("accepts null for staff without a stable supervision id and converts to undefined", () => {
     expect(
       supervisionStaffRecordSchema.parse({
         ...baseInput,
         stableStaffExternalId: null,
       }).stableStaffExternalId,
-    ).toBeNull();
+    ).toBeUndefined();
   });
 
   test("accepts a record without the field", () => {

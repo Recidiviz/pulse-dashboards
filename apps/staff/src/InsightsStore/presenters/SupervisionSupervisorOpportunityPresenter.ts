@@ -103,10 +103,9 @@ export class SupervisionSupervisorOpportunityPresenter extends SupervisionSuperv
         ...this.allOfficers.map(
           (o) => () => this.expectCaseloadPopulated(o.externalId),
         ),
-        () =>
-          this.expectCaseloadPopulatedForReviewer(
-            this.supervisorInfo?.externalId,
-          ),
+        () => this.expectCaseloadPopulatedForReviewer(this.reviewerId),
+        // TODO(OBT-53651): Remove once reviewer fields are migrated to stable IDs.
+        () => this.expectCaseloadPopulatedForReviewer(this.legacyReviewerId),
       ],
     });
   }
@@ -135,9 +134,10 @@ export class SupervisionSupervisorOpportunityPresenter extends SupervisionSuperv
   // awaiting review from this supervisor
   get opportunitiesByType(): Record<OpportunityType, Opportunity[]> {
     if (this.isInsightsSupervisorReviewTableEnabled) {
-      const { externalId } = this.supervisorInfo ?? {};
-      if (!externalId) return {} as Record<OpportunityType, Opportunity[]>;
-      return this.opportunitiesByTypeForReviewer(externalId);
+      const { reviewerId, legacyReviewerId } = this;
+      if (!reviewerId && !legacyReviewerId)
+        return {} as Record<OpportunityType, Opportunity[]>;
+      return this.opportunitiesByTypeForReviewer(reviewerId, legacyReviewerId);
     }
 
     const oppsByType = this.allOfficers.reduce(
@@ -204,11 +204,20 @@ export class SupervisionSupervisorOpportunityPresenter extends SupervisionSuperv
     const clients = [];
 
     if (this.isInsightsSupervisorReviewTableEnabled) {
-      const { externalId } = this.supervisorInfo ?? {};
-      if (externalId) {
-        clients.push(...this.findClientsForReviewer(externalId));
+      const { reviewerId, legacyReviewerId } = this;
+      if (reviewerId) {
+        clients.push(...this.findClientsForReviewer(reviewerId));
         if (this.showPreviouslyReviewedOpportunities) {
-          clients.push(...this.findHistoricalClientsForReviewer(externalId));
+          clients.push(...this.findHistoricalClientsForReviewer(reviewerId));
+        }
+      }
+      // TODO(OBT-53651): Remove once reviewer fields are migrated to stable IDs.
+      if (legacyReviewerId) {
+        clients.push(...this.findClientsForReviewer(legacyReviewerId));
+        if (this.showPreviouslyReviewedOpportunities) {
+          clients.push(
+            ...this.findHistoricalClientsForReviewer(legacyReviewerId),
+          );
         }
       }
     } else {

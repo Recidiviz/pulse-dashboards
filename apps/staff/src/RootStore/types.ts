@@ -89,6 +89,7 @@ export type FeatureVariant =
   | "typesensePersonSearch"
   | "sentenceProgressV2"
   | "useRecordForIneligibleOpps"
+  | "useStableExternalId"
 
   //// Arizona
   | "usAzAdminSupervisionApprovalFlow"
@@ -335,6 +336,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   hideWorkflowsOpportunities: {},
   hideWorkflowsResidentsPage: {},
   useRecordForIneligibleOpps: {},
+  useStableExternalId: {},
 };
 export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
@@ -392,6 +394,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usMoSearchByUnit: {},
         usMoWorkRelease: {},
         indefiniteSnooze: { activeTenants: ["US_IA"] },
+        useStableExternalId: { activeTenants: ["US_TX"] },
         usIaEarlyDischargeForms: {},
         usIaFinesAndFees: {},
         usIaSupervisionLevelDowngrade: {},
@@ -436,6 +439,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         operationsDrilldown: { activeTenants: ["US_ID", "US_ND", "US_TX"] },
         operationsContactsDrilldown: { activeTenants: ["US_TX"] },
         operationsNumeratorDenominatorIsEnabled: { activeTenants: ["US_TX"] },
+        useStableExternalId: { activeTenants: ["US_TX"] },
         reportIncorrectRosters: {
           activeTenants: ["US_TN"],
         },

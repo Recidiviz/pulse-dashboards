@@ -48,6 +48,12 @@ import { SupervisionSupervisorOpportunityPresenter } from "../SupervisionSupervi
 
 const testSupervisor = supervisionOfficerSupervisorsFixture[0];
 
+// The stable staff external ID that reviewer fields hold for testSupervisor.
+const REVIEWER_STABLE_ID = testSupervisor.stableStaffExternalId;
+if (!REVIEWER_STABLE_ID) {
+  throw new Error("testSupervisor fixture has no stableStaffExternalId");
+}
+
 let store: InsightsSupervisionStore;
 let presenter: SupervisionSupervisorOpportunityPresenter;
 let jiiStore: JusticeInvolvedPersonsStore;
@@ -208,8 +214,7 @@ describe("Opportunity methods", () => {
   });
 
   describe("Reviewer-scoped getters", () => {
-    const REVIEWER_EXTERNAL_ID = testSupervisor.externalId;
-    const OTHER_REVIEWER_EXTERNAL_ID = "other-reviewer-id";
+    const OTHER_REVIEWER_STABLE_ID = "other-reviewer-id";
 
     function fakeReviewerOpportunity(
       type: OpportunityType,
@@ -253,10 +258,10 @@ describe("Opportunity methods", () => {
     describe("Method: opportunitiesByType", () => {
       it("only includes opportunities actually assigned to the reviewer", () => {
         const client = fakeClientWithOpportunities("p1", [
-          fakeReviewerOpportunity(OPP_TYPE_1, REVIEWER_EXTERNAL_ID),
-          fakeReviewerOpportunity(OPP_TYPE_2, OTHER_REVIEWER_EXTERNAL_ID),
+          fakeReviewerOpportunity(OPP_TYPE_1, REVIEWER_STABLE_ID),
+          fakeReviewerOpportunity(OPP_TYPE_2, OTHER_REVIEWER_STABLE_ID),
         ]);
-        jiiStore.caseloadByReviewerId.set(REVIEWER_EXTERNAL_ID, [client]);
+        jiiStore.caseloadByReviewerId.set(REVIEWER_STABLE_ID, [client]);
 
         expect(presenter.opportunitiesByType).toContainAllKeys([OPP_TYPE_1]);
         expect(presenter.opportunitiesByType?.[OPP_TYPE_2]).toBeUndefined();
@@ -272,9 +277,9 @@ describe("Opportunity methods", () => {
     describe("Getter: opportunities", () => {
       it("reads from opportunitiesByType when the review table is enabled", () => {
         const client = fakeClientWithOpportunities("p1", [
-          fakeReviewerOpportunity(OPP_TYPE_1, REVIEWER_EXTERNAL_ID),
+          fakeReviewerOpportunity(OPP_TYPE_1, REVIEWER_STABLE_ID),
         ]);
-        jiiStore.caseloadByReviewerId.set(REVIEWER_EXTERNAL_ID, [client]);
+        jiiStore.caseloadByReviewerId.set(REVIEWER_STABLE_ID, [client]);
 
         expect(presenter.opportunities).toHaveLength(1);
         expect(presenter.opportunities).toEqual(
@@ -284,9 +289,9 @@ describe("Opportunity methods", () => {
 
       it("excludes opportunities of this type not assigned to the reviewer", () => {
         const client = fakeClientWithOpportunities("p1", [
-          fakeReviewerOpportunity(OPP_TYPE_1, OTHER_REVIEWER_EXTERNAL_ID),
+          fakeReviewerOpportunity(OPP_TYPE_1, OTHER_REVIEWER_STABLE_ID),
         ]);
-        jiiStore.caseloadByReviewerId.set(REVIEWER_EXTERNAL_ID, [client]);
+        jiiStore.caseloadByReviewerId.set(REVIEWER_STABLE_ID, [client]);
 
         expect(presenter.opportunities).toBeEmpty();
       });
@@ -310,11 +315,9 @@ describe("Opportunity methods", () => {
         ]);
 
         const reviewerClient = fakeClientWithOpportunities("p1", [
-          fakeReviewerOpportunity(OPP_TYPE_1, REVIEWER_EXTERNAL_ID),
+          fakeReviewerOpportunity(OPP_TYPE_1, REVIEWER_STABLE_ID),
         ]);
-        jiiStore.caseloadByReviewerId.set(REVIEWER_EXTERNAL_ID, [
-          reviewerClient,
-        ]);
+        jiiStore.caseloadByReviewerId.set(REVIEWER_STABLE_ID, [reviewerClient]);
 
         // Falls back to opportunitiesByType (the officer path) even though
         // caseloadByReviewerId also has a matching opportunity -- the reviewer
@@ -329,11 +332,9 @@ describe("Opportunity methods", () => {
     describe("Getter: clients", () => {
       it("includes clients from the reviewer caseload when the review table is enabled", () => {
         const reviewerClient = fakeClientWithOpportunities("reviewer-client", [
-          fakeReviewerOpportunity(OPP_TYPE_1, REVIEWER_EXTERNAL_ID),
+          fakeReviewerOpportunity(OPP_TYPE_1, REVIEWER_STABLE_ID),
         ]);
-        jiiStore.caseloadByReviewerId.set(REVIEWER_EXTERNAL_ID, [
-          reviewerClient,
-        ]);
+        jiiStore.caseloadByReviewerId.set(REVIEWER_STABLE_ID, [reviewerClient]);
 
         // Compare by `pseudonymizedId` rather than object identity -- MobX
         // deep-observable enhancement clones the plain object once it's
@@ -351,11 +352,9 @@ describe("Opportunity methods", () => {
           "get",
         ).mockReturnValue(false);
         const reviewerClient = fakeClientWithOpportunities("reviewer-client", [
-          fakeReviewerOpportunity(OPP_TYPE_1, REVIEWER_EXTERNAL_ID),
+          fakeReviewerOpportunity(OPP_TYPE_1, REVIEWER_STABLE_ID),
         ]);
-        jiiStore.caseloadByReviewerId.set(REVIEWER_EXTERNAL_ID, [
-          reviewerClient,
-        ]);
+        jiiStore.caseloadByReviewerId.set(REVIEWER_STABLE_ID, [reviewerClient]);
 
         expect(presenter.clients.map((c) => c.pseudonymizedId)).not.toContain(
           "reviewer-client",

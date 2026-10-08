@@ -54,7 +54,7 @@ export const supervisionStaffRecordSchema =
     supervisorExternalId: z.string().nullish(),
     supervisorExternalIds: z.array(z.string().nullish()).nullish(),
     stateSpecificData: supervisionStaffStateSpecificSchema.optional(),
-    stableStaffExternalId: z.string().nullish(),
+    stableStaffExternalId: nullishAsUndefined(z.string()),
   });
 
 /**

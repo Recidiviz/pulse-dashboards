@@ -44,6 +44,7 @@ const WorkflowsUsTxEarlyReleaseFromSupervisionForm = observer(
 
     const sectionEditedByCurrentUser = arsErsSectionEditedByCurrentUser({
       currentUserId: opportunity.form?.currentUserId,
+      stableCurrentUserId: opportunity.form?.stableCurrentUserId,
       draftData: opportunity.form?.draftData,
       fieldAuthors: opportunity.form?.fieldAuthors,
     });

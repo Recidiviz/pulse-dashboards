@@ -462,7 +462,7 @@ const CurrentReviewerNameCell = observer(function CurrentReviewerNameCell({
   if (row.original.currentReviewerId) {
     return (
       <WorkflowsOfficerName
-        officerId={row.original.currentReviewerId}
+        stableStaffExternalId={row.original.currentReviewerId}
         availableOfficers={availableOfficersWithOrWithoutCaseloads}
       />
     );

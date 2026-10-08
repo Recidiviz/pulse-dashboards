@@ -66,6 +66,8 @@ export abstract class UsTxArsErsV2OpportunityBase<
             const staffResponseId = action.supervisorResponse?.updateById;
             const staffRequestId = action.updateById;
 
+            // updateById holds a stable staff external ID, which must not be
+            // shown to users, so an unmatched ID falls back to action.by
             if (staffResponseId && staffRequestId) {
               return [
                 getOfficerFullName(
@@ -73,13 +75,15 @@ export abstract class UsTxArsErsV2OpportunityBase<
                   staffRequestId,
                   undefined,
                   searchType,
-                ) ?? staffRequestId,
+                  "stableStaffExternalId",
+                ) ?? action.by,
                 getOfficerFullName(
                   availableOfficersWithOrWithoutCaseloads,
                   staffResponseId,
                   undefined,
                   searchType,
-                ) ?? staffResponseId,
+                  "stableStaffExternalId",
+                ) ?? action.supervisorResponse?.by,
               ];
             }
 
@@ -91,7 +95,8 @@ export abstract class UsTxArsErsV2OpportunityBase<
                 staffRequestId,
                 undefined,
                 searchType,
-              ) ?? staffRequestId
+                "stableStaffExternalId",
+              ) ?? action.by
             );
           })
           .filter((name) => name !== undefined),
@@ -135,10 +140,28 @@ export abstract class UsTxArsErsV2OpportunityBase<
     return undefined;
   }
 
+  /**
+   * Returns whether the selected staff is not this opportunity's current reviewer.
+   */
+  private isPastReviewFor(
+    reviewerId: string | undefined,
+    legacyReviewerId: string | undefined,
+  ): boolean {
+    if (!reviewerId && !legacyReviewerId) return false;
+    const { currentReviewerId } = this;
+    if (!currentReviewerId) return true;
+    return (
+      currentReviewerId !== reviewerId &&
+      // TODO(OBT-53651): Remove once reviewer fields are migrated to stable IDs.
+      currentReviewerId !== legacyReviewerId
+    );
+  }
+
   eligibilityStatusLabel(
     includeReasons?: boolean,
     category?: OpportunityTabGroup,
     reviewerId?: string,
+    legacyReviewerId?: string,
   ): string | null {
     if (this.isGrantApproved) return this.grantApprovedStatusMessage;
 
@@ -147,8 +170,7 @@ export abstract class UsTxArsErsV2OpportunityBase<
     // but selected supervisor is not the current reviewer
     if (
       category === "REVIEW STATUS" &&
-      reviewerId &&
-      this.currentReviewerId !== reviewerId
+      this.isPastReviewFor(reviewerId, legacyReviewerId)
     ) {
       return this.config.historicalReviewTabTitle;
     }
@@ -173,6 +195,7 @@ export abstract class UsTxArsErsV2OpportunityBase<
   tabTitle(
     category?: OpportunityTabGroup,
     reviewerId?: string,
+    legacyReviewerId?: string,
   ): OpportunityTab {
     // Approved tab
     if (this.isGrantApproved) return this.grantApprovedTabTitle;
@@ -180,8 +203,7 @@ export abstract class UsTxArsErsV2OpportunityBase<
     // Past Reviews tab
     if (
       category === "REVIEW STATUS" &&
-      reviewerId &&
-      this.currentReviewerId !== reviewerId
+      this.isPastReviewFor(reviewerId, legacyReviewerId)
     ) {
       return this.config.historicalReviewTabTitle;
     }

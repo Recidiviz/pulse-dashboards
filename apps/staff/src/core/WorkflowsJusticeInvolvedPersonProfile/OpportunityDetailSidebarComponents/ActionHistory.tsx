@@ -22,7 +22,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import styled from "styled-components";
 
-import { StaffRecord, SystemId } from "~datatypes";
+import { getStableStaffExternalId, StaffRecord, SystemId } from "~datatypes";
 
 import {
   formatWorkflowsDate,
@@ -98,9 +98,30 @@ function resolveDisplayName(
   officers: StaffRecord[],
   searchType: SearchType | undefined,
   currentUserEmail: string | undefined,
+  useStableExternalId: boolean,
 ): string {
   if (by.trim() !== "") {
     return by.trim();
+  }
+  // With useStableExternalId, updateById may hold a stable staff external ID.
+  // Those must not be shown to users, so an unnamed match renders as the
+  // officer's staffExternalId and an unmatched one as the action.by string.
+  if (updateById && useStableExternalId) {
+    const officer =
+      officers.find((o) => getStableStaffExternalId(o) === updateById) ??
+      // TODO(OBT-53651): Remove once updater fields are migrated to stable IDs
+      officers.find((o) => o.staffExternalId === updateById);
+    return (
+      getOfficerFullName(
+        officers,
+        updateById,
+        undefined,
+        searchType,
+        "stableStaffExternalId",
+      ) ??
+      officer?.staffExternalId ??
+      by
+    );
   }
   if (updateById) {
     return (
@@ -161,8 +182,9 @@ const ActionEntry = observer(function ActionEntry({
       availableOfficers,
       searchStore: { searchType },
     },
-    userStore: { userEmail },
+    userStore: { userEmail, activeFeatureVariants },
   } = useRootStore();
+  const useStableExternalId = !!activeFeatureVariants.useStableExternalId;
 
   const officers =
     systemType === "INCARCERATION"
@@ -176,6 +198,7 @@ const ActionEntry = observer(function ActionEntry({
     officers,
     searchType,
     userEmail,
+    useStableExternalId,
   );
 
   return (
@@ -189,6 +212,7 @@ const ActionEntry = observer(function ActionEntry({
               officers,
               searchType,
               userEmail,
+              useStableExternalId,
             )}
             date={response.date}
           />

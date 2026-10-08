@@ -182,6 +182,7 @@ export function isUnchangedFromPrefilledValue(
 export function arsErsUserHasFilledNecessaryFields({
   formLastUpdatedId,
   currentUserId,
+  stableCurrentUserId,
   formData,
   draftData,
   fieldAuthors,
@@ -189,14 +190,17 @@ export function arsErsUserHasFilledNecessaryFields({
 }: {
   formLastUpdatedId: string | undefined;
   currentUserId: string | undefined;
+  stableCurrentUserId?: string;
   formData: Record<string, unknown> | undefined;
   draftData: Record<string, unknown> | undefined;
   fieldAuthors: Record<string, string> | undefined;
   isInRevisionsRequested: boolean | undefined;
 }): boolean {
-  if (currentUserId === undefined) {
+  if (currentUserId === undefined && stableCurrentUserId === undefined) {
     return false;
   }
+  const isCurrentUser = (id: string | undefined) =>
+    id !== undefined && (id === currentUserId || id === stableCurrentUserId);
 
   const isFieldFilled = (
     field: string,
@@ -206,7 +210,7 @@ export function arsErsUserHasFilledNecessaryFields({
   // Requires a real (non-empty) value, not just an author — a field a user
   // touched and left blank shouldn't count as having started a block.
   const isFieldByCurrentUser = (field: string) =>
-    fieldAuthors?.[field] === currentUserId && isFieldFilled(field, draftData);
+    isCurrentUser(fieldAuthors?.[field]) && isFieldFilled(field, draftData);
 
   // A block is "started" if any user has written a real (non-empty) value to
   // any of its fields in draftData. A block whose only touched fields are
@@ -241,7 +245,7 @@ export function arsErsUserHasFilledNecessaryFields({
   return (
     atLeastOneBlockStarted &&
     allStartedBlocksComplete &&
-    formLastUpdatedId === currentUserId
+    isCurrentUser(formLastUpdatedId)
   );
 }
 
@@ -253,19 +257,26 @@ export function arsErsUserHasFilledNecessaryFields({
  */
 export function arsErsSectionEditedByCurrentUser({
   currentUserId,
+  stableCurrentUserId,
   draftData,
   fieldAuthors,
 }: {
   currentUserId: string | undefined;
+  stableCurrentUserId?: string;
   draftData: Record<string, unknown> | undefined;
   fieldAuthors: Record<string, string> | undefined;
 }): UsTxArsErsBlockingSubmitFieldKey | undefined {
-  if (currentUserId === undefined) {
+  if (currentUserId === undefined && stableCurrentUserId === undefined) {
     return undefined;
   }
 
-  const isFieldByCurrentUser = (field: string) =>
-    fieldAuthors?.[field] === currentUserId && !!draftData?.[field];
+  const isFieldByCurrentUser = (field: string) => {
+    const author = fieldAuthors?.[field];
+    const isCurrentUser =
+      author !== undefined &&
+      (author === currentUserId || author === stableCurrentUserId);
+    return isCurrentUser && !!draftData?.[field];
+  };
 
   const keys = Object.keys(
     US_TX_ARS_ERS_BLOCKING_SUBMIT_FIELDS,

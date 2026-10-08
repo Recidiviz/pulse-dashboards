@@ -27,7 +27,7 @@ import { DocumentData, Timestamp } from "firebase/firestore";
 import { isEmpty, pick, pickBy } from "lodash";
 import { action, computed, makeObservable, when } from "mobx";
 
-import { OpportunityType } from "~datatypes";
+import { getStableStaffExternalId, OpportunityType } from "~datatypes";
 import { HydrationState, isHydrated } from "~hydration-utils";
 
 import {
@@ -1160,8 +1160,12 @@ export class OpportunityBase<
     reviewerId: string | undefined,
   ): string | undefined {
     if (!reviewerId) return undefined;
-    return this.rootStore.workflowsStore.availableOfficersWithOrWithoutCaseloads.find(
-      (s) => s.staffExternalId === reviewerId,
+    const officers =
+      this.rootStore.workflowsStore.availableOfficersWithOrWithoutCaseloads;
+    return (
+      officers.find((s) => getStableStaffExternalId(s) === reviewerId) ??
+      // TODO(OBT-53651): Remove once reviewer fields are migrated to stable IDs
+      officers.find((s) => s.staffExternalId === reviewerId)
     )?.pseudonymizedId;
   }
 
@@ -1369,6 +1373,17 @@ export class OpportunityBase<
 
   get userId(): string | undefined {
     return this.rootStore.userStore.externalId;
+  }
+
+  /**
+   * The current user's stable staff external ID when useStableExternalId is on,
+   * which reviewer and updater fields may hold alongside userId.
+   */
+  get stableUserId(): string | undefined {
+    const { userStore, workflowsStore } = this.rootStore;
+    if (!userStore.activeFeatureVariants.useStableExternalId) return undefined;
+    const userInfo = workflowsStore.user?.info;
+    return userInfo ? getStableStaffExternalId(userInfo) : undefined;
   }
 
   get denialViewPrompt(): string {

@@ -67,6 +67,12 @@ import {
 } from "../types";
 
 const testSupervisor = supervisionOfficerSupervisorsFixture[0];
+
+// The stable staff external ID that reviewer fields hold for testSupervisor.
+const REVIEWER_STABLE_ID = testSupervisor.stableStaffExternalId;
+if (!REVIEWER_STABLE_ID) {
+  throw new Error("testSupervisor fixture has no stableStaffExternalId");
+}
 const officerWithNoClients = supervisionOfficerFixture[9];
 const testOfficers = [...CLIENTS_OFFICERS, officerWithNoClients].map(
   ({ supervisorExternalIds, ...rest }) => ({
@@ -730,7 +736,7 @@ describe("Opportunity details methods", () => {
 
         expect(isHydrated(notificationsPresenter)).toBeTrue();
         expect(
-          jiiStore.caseloadByReviewerId.has(testSupervisor.externalId),
+          jiiStore.caseloadByReviewerId.has(REVIEWER_STABLE_ID),
         ).toBeFalse();
       });
 
@@ -740,9 +746,8 @@ describe("Opportunity details methods", () => {
         await detailPresenter.hydrate();
 
         expect(isHydrated(detailPresenter)).toBeTrue();
-        const reviewerCaseload = jiiStore.caseloadByReviewerId.get(
-          testSupervisor.externalId,
-        );
+        const reviewerCaseload =
+          jiiStore.caseloadByReviewerId.get(REVIEWER_STABLE_ID);
         expect(reviewerCaseload).toHaveLength(1);
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         expect(isHydrated(reviewerCaseload![0].opportunityManager)).toBeTrue();

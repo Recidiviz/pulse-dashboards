@@ -328,9 +328,16 @@ export function opportunitiesByTab(
   allOpportunitiesByType: Partial<Record<OpportunityType, Opportunity[]>>,
   tabGroup?: OpportunityTabGroup,
   reviewerId?: string,
+  // TODO(OBT-53651): Remove once reviewer fields are migrated to stable IDs.
+  legacyReviewerId?: string,
 ): Partial<Record<OpportunityType, Record<OpportunityTab, Opportunity[]>>> {
   return mapValues(allOpportunitiesByType, (opps) => {
-    return opportunitiesByTabForType(opps, tabGroup, reviewerId);
+    return opportunitiesByTabForType(
+      opps,
+      tabGroup,
+      reviewerId,
+      legacyReviewerId,
+    );
   });
 }
 
@@ -338,11 +345,14 @@ export function opportunitiesByTabForType(
   opportunities?: Opportunity<JusticeInvolvedPerson>[] | undefined,
   tabGroup?: OpportunityTabGroup,
   reviewerId?: string,
+  // TODO(OBT-53651): Remove once reviewer fields are migrated to stable IDs.
+  legacyReviewerId?: string,
 ): Record<OpportunityTab, Opportunity[]> {
   return groupBy(opportunities, (opp) =>
     opp.tabTitle(
       (tabGroup || Object.keys(opp.config.tabGroups)[0]) as any,
       reviewerId,
+      legacyReviewerId,
     ),
   ) as Record<OpportunityTab, Opportunity[]>;
 }

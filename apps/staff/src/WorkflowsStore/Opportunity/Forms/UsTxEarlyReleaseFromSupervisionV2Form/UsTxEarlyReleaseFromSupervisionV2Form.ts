@@ -88,6 +88,10 @@ export class UsTxEarlyReleaseFromSupervisionV2Form extends FormBase<
   UsTxEarlyReleaseFromSupervisionV2DraftData,
   UsTxEarlyReleaseFromSupervisionV2Opportunity
 > {
+  override get stableCurrentUserId(): string | undefined {
+    return this.opportunity.stableUserId;
+  }
+
   get navigateToFormText(): string {
     return "Download Form";
   }
@@ -148,6 +152,7 @@ export class UsTxEarlyReleaseFromSupervisionV2Form extends FormBase<
     return arsErsUserHasFilledNecessaryFields({
       formLastUpdatedId: this?.formLastUpdated?.updateById,
       currentUserId: this?.currentUserId,
+      stableCurrentUserId: this?.stableCurrentUserId,
       formData: this?.formData,
       draftData: this?.draftData,
       fieldAuthors: this?.fieldAuthors,

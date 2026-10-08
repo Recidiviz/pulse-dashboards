@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { StaffRecord } from "~datatypes";
+import { getStableStaffExternalId, StaffRecord } from "~datatypes";
 
 import { SearchType } from "../models/types";
 
@@ -24,12 +24,24 @@ export function getOfficerFullName(
   officerId: string | undefined,
   officerEmail: string | undefined,
   searchType: SearchType | undefined,
+  officerIdType:
+    | "staffExternalId"
+    | "stableStaffExternalId" = "staffExternalId",
 ): string | undefined {
-  const officer = availableOfficers.find((o) => {
-    return officerId
-      ? o.staffExternalId === officerId
-      : o.email === officerEmail;
-  });
+  let officer: StaffRecord | undefined;
+  if (!officerId) {
+    officer = availableOfficers.find((o) => o.email === officerEmail);
+  } else if (officerIdType === "staffExternalId") {
+    officer = availableOfficers.find((o) => o.staffExternalId === officerId);
+  } else {
+    officer =
+      availableOfficers.find(
+        (o) => getStableStaffExternalId(o) === officerId,
+      ) ??
+      // TODO(OBT-53651): Remove once reviewer and updater fields are migrated
+      // to stable IDs
+      availableOfficers.find((o) => o.staffExternalId === officerId);
+  }
 
   let officerFullName: string | undefined;
   // unlikely but not impossible that name data could be missing
@@ -44,7 +56,12 @@ export function getOfficerFullName(
     }
   }
 
-  if (searchType === "CASELOAD" && officerId)
+  // Stable IDs must not be shown to users, so they never become a caseload label.
+  if (
+    searchType === "CASELOAD" &&
+    officerId &&
+    officerIdType === "staffExternalId"
+  )
     officerFullName = `Caseload ${officerId}`;
 
   return officerFullName;

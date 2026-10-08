@@ -27,17 +27,28 @@ type WorkflowsOfficerNameProps =
   | {
       officerId: string;
       officerEmail?: never;
+      stableStaffExternalId?: never;
       availableOfficers?: StaffRecord[];
     }
   | {
       officerId?: never;
       officerEmail: string;
+      stableStaffExternalId?: never;
+      availableOfficers?: StaffRecord[];
+    }
+  | {
+      officerId?: never;
+      officerEmail?: never;
+      // Renders nothing when no officer matches, since stable IDs must not be
+      // shown to users.
+      stableStaffExternalId: string;
       availableOfficers?: StaffRecord[];
     };
 
 const WorkflowsOfficerName: React.FC<WorkflowsOfficerNameProps> = ({
   officerId,
   officerEmail,
+  stableStaffExternalId,
   availableOfficers: availableOfficersProp,
 }) => {
   const {
@@ -47,16 +58,26 @@ const WorkflowsOfficerName: React.FC<WorkflowsOfficerNameProps> = ({
     },
   } = useRootStore();
 
-  if (!officerId && !officerEmail) return null;
+  if (!officerId && !officerEmail && !stableStaffExternalId) return null;
 
   const availableOfficers = availableOfficersProp ?? availableOfficersFromStore;
 
-  const officerFullName = getOfficerFullName(
-    availableOfficers,
-    officerId,
-    officerEmail,
-    searchType,
-  );
+  const officerFullName = stableStaffExternalId
+    ? getOfficerFullName(
+        availableOfficers,
+        stableStaffExternalId,
+        undefined,
+        searchType,
+        "stableStaffExternalId",
+      )
+    : getOfficerFullName(
+        availableOfficers,
+        officerId,
+        officerEmail,
+        searchType,
+      );
+
+  if (stableStaffExternalId && !officerFullName) return null;
 
   return (
     <span className="fs-exclude">

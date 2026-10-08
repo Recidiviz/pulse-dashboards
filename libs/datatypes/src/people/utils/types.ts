@@ -31,6 +31,19 @@ export type StaffRecord =
   | SupervisionStaffRecord["output"];
 
 /**
+ * Returns the stable staff external ID of a supervision staff record, or
+ * undefined for incarceration staff and for supervision staff the data
+ * platform has no stable ID for.
+ */
+export function getStableStaffExternalId(
+  staff: StaffRecord,
+): string | undefined {
+  return staff.recordType === "supervisionStaff"
+    ? staff.stableStaffExternalId
+    : undefined;
+}
+
+/**
  * The role subtype assigned to a staff record. Drives per-state visibility
  * rules (notably US_CA's `usCaFilterByRoleSubtype`) and Typesense scoped-key
  * filter resolution.

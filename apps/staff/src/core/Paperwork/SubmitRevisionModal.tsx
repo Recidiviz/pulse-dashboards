@@ -23,7 +23,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
-import { StaffRecord } from "~datatypes";
+import { getStableStaffExternalId, StaffRecord } from "~datatypes";
 import { palette } from "~design-system";
 
 import { CharacterCountTextField } from "../../components/CharacterCountTextField/CharacterCountTextField";
@@ -110,7 +110,14 @@ export const SubmitRevisionModal = observer(function SubmitRevisionModal({
   const currentReviewerId = opportunity.currentReviewerId;
 
   const actionHistoryOfficers = availableOfficersWithOrWithoutCaseloads.filter(
-    (o) => previousReviewerIds.has(o.staffExternalId),
+    (officer) => {
+      const stableId = getStableStaffExternalId(officer);
+      return (
+        (!!stableId && previousReviewerIds.has(stableId)) ||
+        // TODO(OBT-53651): Remove once updater fields are migrated to stable IDs
+        previousReviewerIds.has(officer.staffExternalId)
+      );
+    },
   );
   const [selectedStaff, setSelectedStaff] = useState<StaffRecord | null>(null);
   const [reason, setReason] = useState("");
@@ -155,7 +162,7 @@ export const SubmitRevisionModal = observer(function SubmitRevisionModal({
         <CurrentReviewer>
           Current Reviewer:{" "}
           <WorkflowsOfficerName
-            officerId={currentReviewerId}
+            stableStaffExternalId={currentReviewerId}
             availableOfficers={availableOfficersWithOrWithoutCaseloads}
           />
         </CurrentReviewer>

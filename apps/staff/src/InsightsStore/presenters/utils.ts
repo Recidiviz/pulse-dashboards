@@ -154,6 +154,8 @@ export function addSupervisorReviewCounts(
   reviewTabTitles: OpportunityTab[],
   eligibilityCategory?: OpportunityTabGroup,
   reviewerId?: string,
+  // TODO(OBT-53651): Remove once reviewer fields are migrated to stable IDs.
+  legacyReviewerId?: string,
 ): void {
   const reviewOpps = reviewTabTitles.flatMap(
     (tabTitle) => oppsByTab[tabTitle] ?? [],
@@ -164,6 +166,7 @@ export function addSupervisorReviewCounts(
       undefined,
       eligibilityCategory,
       reviewerId,
+      legacyReviewerId,
     );
     if (statusLabel && oppDetail.supervisorReviewCounts) {
       oppDetail.supervisorReviewCounts[statusLabel] =

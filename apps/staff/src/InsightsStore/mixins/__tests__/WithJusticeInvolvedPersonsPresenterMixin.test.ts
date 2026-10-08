@@ -331,6 +331,32 @@ describe("JusticeInvolvedPersonsStore", () => {
     });
 
     describe("Method: opportunitiesByTypeForReviewer", () => {
+      it("includes opportunities still assigned under the reviewer's legacy external ID", () => {
+        const LEGACY_REVIEWER_ID = "legacy-reviewer-1";
+        const client = Object.assign(
+          fakeClientWithOpportunities([
+            { type: OPP_TYPE_1, currentReviewerId: REVIEWER_ID },
+          ]),
+          { recordId: "client-1" },
+        );
+        const legacyClient = Object.assign(
+          fakeClientWithOpportunities([
+            { type: OPP_TYPE_2, currentReviewerId: LEGACY_REVIEWER_ID },
+          ]),
+          { recordId: "client-2" },
+        );
+        jiiStore?.caseloadByReviewerId.set(REVIEWER_ID, [client]);
+        jiiStore?.caseloadByReviewerId.set(LEGACY_REVIEWER_ID, [legacyClient]);
+
+        const oppsByType = presenter.opportunitiesByTypeForReviewer(
+          REVIEWER_ID,
+          LEGACY_REVIEWER_ID,
+          "opportunities",
+        );
+
+        expect(oppsByType).toContainAllKeys([OPP_TYPE_1, OPP_TYPE_2]);
+      });
+
       it("excludes opportunities not actually assigned to the given reviewer", () => {
         const client = fakeClientWithOpportunities([
           { type: OPP_TYPE_1, currentReviewerId: REVIEWER_ID },
@@ -340,6 +366,7 @@ describe("JusticeInvolvedPersonsStore", () => {
 
         const oppsByType = presenter.opportunitiesByTypeForReviewer(
           REVIEWER_ID,
+          undefined,
           "opportunities",
         );
 
@@ -358,6 +385,7 @@ describe("JusticeInvolvedPersonsStore", () => {
 
         const oppsByType = presenter.opportunitiesByTypeForReviewer(
           REVIEWER_ID,
+          undefined,
           "opportunities",
         );
 
@@ -373,6 +401,7 @@ describe("JusticeInvolvedPersonsStore", () => {
         expect(
           presenter.opportunitiesByTypeForReviewer(
             REVIEWER_ID,
+            undefined,
             "opportunities",
           ),
         ).toStrictEqual({});
@@ -399,6 +428,7 @@ describe("JusticeInvolvedPersonsStore", () => {
 
         const oppsByType = presenter.opportunitiesByTypeForReviewer(
           REVIEWER_ID,
+          undefined,
           "opportunities",
         );
 
@@ -432,6 +462,7 @@ describe("JusticeInvolvedPersonsStore", () => {
 
         const oppsByType = presenter.opportunitiesByTypeForReviewer(
           REVIEWER_ID,
+          undefined,
           "opportunities",
         );
 
@@ -442,6 +473,7 @@ describe("JusticeInvolvedPersonsStore", () => {
         expect(
           presenter.opportunitiesByTypeForReviewer(
             "reviewer-with-no-caseload",
+            undefined,
             "opportunities",
           ),
         ).toEqual({});

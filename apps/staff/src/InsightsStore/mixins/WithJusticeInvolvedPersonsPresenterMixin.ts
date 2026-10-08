@@ -17,7 +17,7 @@
 
 import { flowResult } from "mobx";
 
-import { OpportunityType } from "~datatypes";
+import { OpportunityType, SupervisionOfficerSupervisor } from "~datatypes";
 import { awaitHydration, Hydratable, isHydrated } from "~hydration-utils";
 
 import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
@@ -94,6 +94,27 @@ export function WithJusticeInvolvedPersonStore<
 
       return !!userStore.activeFeatureVariants
         .showPreviouslyReviewedOpportunities;
+    }
+
+    /**
+     * Returns the stable staff external ID that opportunity reviewer fields hold
+     * for the given supervisor.
+     */
+    protected reviewerIdForSupervisor(
+      supervisor: SupervisionOfficerSupervisor | undefined,
+    ): string | undefined {
+      return supervisor?.stableStaffExternalId ?? undefined;
+    }
+
+    /**
+     * Returns the external ID that opportunity reviewer fields written before
+     * stable IDs hold for the given supervisor.
+     * TODO(OBT-53651): Remove once those reviewer fields are migrated to stable IDs.
+     */
+    protected legacyReviewerIdForSupervisor(
+      supervisor: SupervisionOfficerSupervisor | undefined,
+    ): string | undefined {
+      return supervisor?.externalId;
     }
 
     get opportunityMapping(): JusticeInvolvedPersonOpportunityMapping {
@@ -200,16 +221,41 @@ export function WithJusticeInvolvedPersonStore<
      * applicable to the override (e.g. only eligible opportunities). Otherwise, this function
      * will return opportunities based on the opportunity mapping of the implementing class.
      *
-     * @param reviewerId - The ID of the reviewer to look up opportunities.
+     * @param reviewerId - The stable ID of the reviewer to look up opportunities.
+     * @param legacyReviewerId - The external ID that the reviewer's opportunities
+     * written before stable IDs hold.
      * @returns An object with lists of opportunities assigned to keys of the same type.
      * @see {Opportunity}
      * @see {OpportunityType}
      */
     protected opportunitiesByTypeForReviewer(
-      reviewerId: string,
+      reviewerId: string | undefined,
+      legacyReviewerId: string | undefined,
       opportunityMappingOverride?: JusticeInvolvedPersonOpportunityMapping,
     ): Record<OpportunityType, Opportunity[]> {
-      const clients = this.findClientsForReviewer(reviewerId);
+      const isReviewer = (id: string | undefined) =>
+        !!id &&
+        (id === reviewerId ||
+          // TODO(OBT-53651): Remove once reviewer fields are migrated to stable IDs.
+          id === legacyReviewerId);
+
+      // The legacy caseload is keyed separately, so the same client can appear
+      // in both; keep the stable caseload's copy.
+      const withLegacyClients = (
+        clients: JusticeInvolvedPerson[],
+        legacyClients: JusticeInvolvedPerson[],
+      ) => [
+        ...clients,
+        ...legacyClients.filter(
+          (legacy) => !clients.some((c) => c.recordId === legacy.recordId),
+        ),
+      ];
+
+      const clients = withLegacyClients(
+        reviewerId ? this.findClientsForReviewer(reviewerId) : [],
+        // TODO(OBT-53651): Remove once reviewer fields are migrated to stable IDs.
+        legacyReviewerId ? this.findClientsForReviewer(legacyReviewerId) : [],
+      );
 
       // A client can appear here because a *different* opportunity type's
       // update is assigned to this reviewer (or was reviewed by this reviewer),
@@ -222,15 +268,21 @@ export function WithJusticeInvolvedPersonStore<
         {
           clients,
           includeInOpportunitiesByType: (opportunity: Opportunity) =>
-            opportunity.currentReviewerId === reviewerId,
+            isReviewer(opportunity.currentReviewerId),
         },
       ];
 
       if (this.showPreviouslyReviewedOpportunities) {
         clientGroups.push({
-          clients: this.findHistoricalClientsForReviewer(reviewerId),
+          clients: withLegacyClients(
+            reviewerId ? this.findHistoricalClientsForReviewer(reviewerId) : [],
+            // TODO(OBT-53651): Remove once reviewer fields are migrated to stable IDs.
+            legacyReviewerId
+              ? this.findHistoricalClientsForReviewer(legacyReviewerId)
+              : [],
+          ),
           includeInOpportunitiesByType: (opportunity: Opportunity) =>
-            opportunity.allUniqueReviewerIds?.includes(reviewerId) ?? false,
+            opportunity.allUniqueReviewerIds?.some(isReviewer) ?? false,
         });
       }
 

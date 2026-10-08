@@ -37,7 +37,13 @@ vi.mock("react-hot-toast", () => ({ default: mockToast }));
 vi.mock("~client-env-utils");
 
 vi.mock("../../WorkflowsOfficerName/WorkflowsOfficerName", () => ({
-  default: ({ officerId }: { officerId: string }) => <span>{officerId}</span>,
+  default: ({
+    officerId,
+    stableStaffExternalId,
+  }: {
+    officerId?: string;
+    stableStaffExternalId?: string;
+  }) => <span>{stableStaffExternalId ?? officerId}</span>,
 }));
 
 vi.mock("../../views", async (importOriginal) => ({
@@ -48,8 +54,10 @@ vi.mock("../../views", async (importOriginal) => ({
 
 const mockOfficer = {
   staffExternalId: "officer1",
+  recordType: "supervisionStaff" as const,
   surname: "Smith",
   givenNames: "John",
+  stableStaffExternalId: "officer1",
 };
 const mockWorkflowsStore = {
   availableOfficersWithOrWithoutCaseloads: [mockOfficer],
@@ -345,8 +353,10 @@ describe("Officer dropdown", () => {
     vi.mocked(isDemoMode).mockReturnValue(true);
     const otherOfficer = {
       staffExternalId: "officer2",
+      recordType: "supervisionStaff" as const,
       surname: "Jones",
       givenNames: "Jane",
+      stableStaffExternalId: "officer2",
     };
     const workflowsStoreWithBoth = {
       availableOfficersWithOrWithoutCaseloads: [mockOfficer, otherOfficer],
@@ -393,8 +403,10 @@ describe("Officer dropdown", () => {
     vi.mocked(isOfflineMode).mockReturnValue(true);
     const otherOfficer = {
       staffExternalId: "officer2",
+      recordType: "supervisionStaff" as const,
       surname: "Jones",
       givenNames: "Jane",
+      stableStaffExternalId: "officer2",
     };
     const workflowsStoreWithBoth = {
       availableOfficersWithOrWithoutCaseloads: [mockOfficer, otherOfficer],

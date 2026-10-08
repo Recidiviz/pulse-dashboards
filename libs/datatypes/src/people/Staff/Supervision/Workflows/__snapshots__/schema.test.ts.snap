@@ -490,7 +490,7 @@ exports[`supervision staff schema for 'US_TX' 'OFFICER5' 1`] = `
   "hasCaseload": true,
   "pseudonymizedId": "p005",
   "recordType": "supervisionStaff",
-  "stableStaffExternalId": null,
+  "stableStaffExternalId": undefined,
   "staffExternalId": "OFFICER5",
   "stateCode": "US_TX",
   "stateSpecificData": {

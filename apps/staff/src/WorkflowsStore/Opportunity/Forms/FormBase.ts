@@ -93,6 +93,14 @@ export class FormBase<
     return this.rootStore.userStore.externalId;
   }
 
+  /**
+   * The current user's stable staff external ID, for forms whose updater fields
+   * may hold it alongside currentUserId.
+   */
+  get stableCurrentUserId(): string | undefined {
+    return undefined;
+  }
+
   get type(): OpportunityType {
     return this.opportunity.type;
   }

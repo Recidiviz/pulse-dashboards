@@ -463,7 +463,8 @@ export class OpportunityPersonListPresenter
     const allOppsForTypeByTab = opportunitiesByTab(
       oppsByType,
       this.activeTabGroup,
-      this.supervisorInfo?.externalId,
+      this.reviewerId,
+      this.legacyReviewerId,
     )[this.opportunityType];
 
     const { deniedTabTitle, excludeIndefiniteSnoozesFromTableView } =
@@ -510,6 +511,29 @@ export class OpportunityPersonListPresenter
    * Returns undefined otherwise (i.e. if there is no presenter or the presenter
    * does not have an supervisor record).
    */
+  /**
+   * The ID that opportunity reviewer fields hold for the supervisor whose page
+   * this list is on, if any.
+   */
+  get reviewerId(): string | undefined {
+    if (this.supervisionPresenter && "reviewerId" in this.supervisionPresenter)
+      return this.supervisionPresenter.reviewerId;
+    return undefined;
+  }
+  /**
+   * The ID that opportunity reviewer fields written before stable IDs hold for
+   * the supervisor whose page this list is on, if any.
+   * TODO(OBT-53651): Remove once those reviewer fields are migrated to stable IDs.
+   */
+  get legacyReviewerId(): string | undefined {
+    if (
+      this.supervisionPresenter &&
+      "legacyReviewerId" in this.supervisionPresenter
+    )
+      return this.supervisionPresenter.legacyReviewerId;
+    return undefined;
+  }
+
   get supervisorInfo() {
     if (
       this.supervisionPresenter &&

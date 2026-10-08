@@ -21,7 +21,11 @@ import { configure, runInAction } from "mobx";
 import timekeeper from "timekeeper";
 import { MockInstance } from "vitest";
 
-import { OpportunityRecordBase, OpportunityType } from "~datatypes";
+import {
+  getStableStaffExternalId,
+  OpportunityRecordBase,
+  OpportunityType,
+} from "~datatypes";
 import { HydrationState } from "~hydration-utils";
 
 import {
@@ -34,6 +38,7 @@ import {
   OfficerRequest,
   OpportunityUpdate,
   SupervisorResponse,
+  UserRecord,
 } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
@@ -1540,10 +1545,61 @@ describe("getPseudIdFromReviewerId", () => {
     root.workflowsStore.updateActiveSystem("SUPERVISION");
   });
 
-  test("returns the pseudonymized ID for a known officer external ID", () => {
+  test("returns the pseudonymized ID for a known officer stable external ID", () => {
+    expect(
+      opp.getPseudoIdFromReviewerId(
+        getStableStaffExternalId(mockSupervisionOfficers[0]),
+      ),
+    ).toBe(mockSupervisionOfficers[0].pseudonymizedId);
+  });
+  test("returns the pseudonymized ID for a reviewer ID recorded before stable IDs", () => {
     expect(
       opp.getPseudoIdFromReviewerId(mockSupervisionOfficers[0].staffExternalId),
     ).toBe(mockSupervisionOfficers[0].pseudonymizedId);
+  });
+});
+
+describe("current user IDs", () => {
+  const officer = mockSupervisionOfficers[0];
+
+  beforeEach(() => {
+    vi.spyOn(root.workflowsStore, "user", "get").mockReturnValue({
+      info: officer as UserRecord,
+    });
+    vi.spyOn(root.userStore, "externalId", "get").mockReturnValue(
+      officer.staffExternalId,
+    );
+  });
+
+  test("userId is the current user's external ID", () => {
+    expect(opp.userId).toBe(officer.staffExternalId);
+  });
+
+  describe("with useStableExternalId", () => {
+    beforeEach(() => {
+      vi.spyOn(root.userStore, "activeFeatureVariants", "get").mockReturnValue({
+        useStableExternalId: {},
+      });
+    });
+
+    test("stableUserId is the current user's stable staff external ID", () => {
+      expect(opp.stableUserId).toBe(officer.stableStaffExternalId);
+      expect(opp.stableUserId).not.toBe(officer.staffExternalId);
+    });
+
+    test("stableUserId is undefined when the current user has no staff record", () => {
+      vi.spyOn(root.workflowsStore, "user", "get").mockReturnValue(undefined);
+
+      expect(opp.stableUserId).toBeUndefined();
+    });
+  });
+
+  test("stableUserId is undefined without useStableExternalId", () => {
+    vi.spyOn(root.userStore, "activeFeatureVariants", "get").mockReturnValue(
+      {},
+    );
+
+    expect(opp.stableUserId).toBeUndefined();
   });
 });
 
@@ -1555,9 +1611,7 @@ describe("setOfficerAction", () => {
     vi.spyOn(root.userStore, "userFullName", "get").mockReturnValue(
       "Test Officer",
     );
-    vi.spyOn(root.userStore, "externalId", "get").mockReturnValue(
-      "test-external-id",
-    );
+    vi.spyOn(opp, "userId", "get").mockReturnValue("test-external-id");
   });
   test("sets approval action", async () => {
     await opp.setOfficerAction({ type: "APPROVAL" });
@@ -1702,8 +1756,8 @@ describe("setOfficerAction", () => {
 
     // Current user is Officer #1
     const officer = mockSupervisionOfficers[0];
-    vi.spyOn(root.userStore, "externalId", "get").mockReturnValue(
-      officer.staffExternalId,
+    vi.spyOn(opp, "userId", "get").mockReturnValue(
+      getStableStaffExternalId(officer),
     );
     vi.spyOn(root.userStore, "userPseudoId", "get").mockReturnValue(
       officer.pseudonymizedId,
@@ -1730,7 +1784,7 @@ describe("setOfficerAction", () => {
     await opp.setOfficerAction({
       type: "APPROVAL",
       // Assigned to Officer #2 next
-      reviewerId: mockSupervisionOfficers[1].staffExternalId,
+      reviewerId: getStableStaffExternalId(mockSupervisionOfficers[1]),
     });
 
     expect(
@@ -1752,8 +1806,8 @@ describe("setOfficerAction", () => {
 
     // First user is Officer #1
     let officer = mockSupervisionOfficers[0];
-    vi.spyOn(root.userStore, "externalId", "get").mockReturnValue(
-      officer.staffExternalId,
+    vi.spyOn(opp, "userId", "get").mockReturnValue(
+      getStableStaffExternalId(officer),
     );
     vi.spyOn(root.userStore, "userPseudoId", "get").mockReturnValue(
       officer.pseudonymizedId,
@@ -1781,13 +1835,13 @@ describe("setOfficerAction", () => {
     await opp.setOfficerAction({
       type: "APPROVAL",
       // Assigned to Officer #2 next
-      reviewerId: mockSupervisionOfficers[1].staffExternalId,
+      reviewerId: getStableStaffExternalId(mockSupervisionOfficers[1]),
     });
 
     // Second user is Officer #2
     officer = mockSupervisionOfficers[1];
-    vi.spyOn(root.userStore, "externalId", "get").mockReturnValue(
-      officer.staffExternalId,
+    vi.spyOn(opp, "userId", "get").mockReturnValue(
+      getStableStaffExternalId(officer),
     );
     vi.spyOn(root.userStore, "userPseudoId", "get").mockReturnValue(
       officer.pseudonymizedId,
@@ -1797,7 +1851,7 @@ describe("setOfficerAction", () => {
     await opp.setOfficerAction({
       type: "APPROVAL",
       // Assigned to Officer #3 next
-      reviewerId: mockSupervisionOfficers[2].staffExternalId,
+      reviewerId: getStableStaffExternalId(mockSupervisionOfficers[2]),
     });
 
     expect(
@@ -1819,8 +1873,8 @@ describe("setOfficerAction", () => {
 
     // First user is Officer #1
     let officer = mockSupervisionOfficers[0];
-    vi.spyOn(root.userStore, "externalId", "get").mockReturnValue(
-      officer.staffExternalId,
+    vi.spyOn(opp, "userId", "get").mockReturnValue(
+      getStableStaffExternalId(officer),
     );
     vi.spyOn(root.userStore, "userPseudoId", "get").mockReturnValue(
       officer.pseudonymizedId,
@@ -1848,13 +1902,13 @@ describe("setOfficerAction", () => {
     await opp.setOfficerAction({
       type: "APPROVAL",
       // Assigned to Officer #2 next
-      reviewerId: mockSupervisionOfficers[1].staffExternalId,
+      reviewerId: getStableStaffExternalId(mockSupervisionOfficers[1]),
     });
 
     // Second approval comes from Officer #3
     officer = mockSupervisionOfficers[2];
-    vi.spyOn(root.userStore, "externalId", "get").mockReturnValue(
-      officer.staffExternalId,
+    vi.spyOn(opp, "userId", "get").mockReturnValue(
+      getStableStaffExternalId(officer),
     );
     vi.spyOn(root.userStore, "userPseudoId", "get").mockReturnValue(
       officer.pseudonymizedId,
@@ -1863,7 +1917,7 @@ describe("setOfficerAction", () => {
     await opp.setOfficerAction({
       type: "APPROVAL",
       // Assigned to Officer #4 next
-      reviewerId: mockSupervisionOfficers[3].staffExternalId,
+      reviewerId: getStableStaffExternalId(mockSupervisionOfficers[3]),
     });
 
     expect(
@@ -1885,9 +1939,7 @@ describe("setSupervisorResponse", () => {
     vi.spyOn(root.userStore, "userFullName", "get").mockReturnValue(
       "Test Supervisor",
     );
-    vi.spyOn(root.userStore, "externalId", "get").mockReturnValue(
-      "test-external-id",
-    );
+    vi.spyOn(opp, "userId", "get").mockReturnValue("test-external-id");
   });
 
   test("throws error if actionHistory is empty", async () => {
@@ -2092,8 +2144,8 @@ describe("setSupervisorResponse", () => {
 
     // First user is Officer #1
     let officer = mockSupervisionOfficers[0];
-    vi.spyOn(root.userStore, "externalId", "get").mockReturnValue(
-      officer.staffExternalId,
+    vi.spyOn(opp, "userId", "get").mockReturnValue(
+      getStableStaffExternalId(officer),
     );
     vi.spyOn(root.userStore, "userPseudoId", "get").mockReturnValue(
       officer.pseudonymizedId,
@@ -2121,13 +2173,13 @@ describe("setSupervisorResponse", () => {
     await opp.setOfficerAction({
       type: "APPROVAL",
       // Assigned to Officer #2 next
-      reviewerId: mockSupervisionOfficers[1].staffExternalId,
+      reviewerId: getStableStaffExternalId(mockSupervisionOfficers[1]),
     });
 
     // Second user is Officer #2
     officer = mockSupervisionOfficers[1];
-    vi.spyOn(root.userStore, "externalId", "get").mockReturnValue(
-      officer.staffExternalId,
+    vi.spyOn(opp, "userId", "get").mockReturnValue(
+      getStableStaffExternalId(officer),
     );
     vi.spyOn(root.userStore, "userPseudoId", "get").mockReturnValue(
       officer.pseudonymizedId,
@@ -2138,7 +2190,7 @@ describe("setSupervisorResponse", () => {
       type: "REVISION",
       notes: "Check in with stakeholder before moving forward.",
       // Back to Officer #1 next
-      reviewerId: mockSupervisionOfficers[0].staffExternalId,
+      reviewerId: getStableStaffExternalId(mockSupervisionOfficers[0]),
     } as Omit<SupervisorResponse, "date" | "by">);
 
     expect(
@@ -2160,8 +2212,8 @@ describe("setSupervisorResponse", () => {
 
     // First user is Officer #1
     let officer = mockSupervisionOfficers[0];
-    vi.spyOn(root.userStore, "externalId", "get").mockReturnValue(
-      officer.staffExternalId,
+    vi.spyOn(opp, "userId", "get").mockReturnValue(
+      getStableStaffExternalId(officer),
     );
     vi.spyOn(root.userStore, "userPseudoId", "get").mockReturnValue(
       officer.pseudonymizedId,
@@ -2189,13 +2241,13 @@ describe("setSupervisorResponse", () => {
     await opp.setOfficerAction({
       type: "APPROVAL",
       // Assigned to Officer #2 next
-      reviewerId: mockSupervisionOfficers[1].staffExternalId,
+      reviewerId: getStableStaffExternalId(mockSupervisionOfficers[1]),
     });
 
     // Second user is Officer #3
     officer = mockSupervisionOfficers[2];
-    vi.spyOn(root.userStore, "externalId", "get").mockReturnValue(
-      officer.staffExternalId,
+    vi.spyOn(opp, "userId", "get").mockReturnValue(
+      getStableStaffExternalId(officer),
     );
     vi.spyOn(root.userStore, "userPseudoId", "get").mockReturnValue(
       officer.pseudonymizedId,
@@ -2206,7 +2258,7 @@ describe("setSupervisorResponse", () => {
       type: "REVISION",
       notes: "Check in with stakeholder before moving forward.",
       // Back to Officer #1 next
-      reviewerId: mockSupervisionOfficers[0].staffExternalId,
+      reviewerId: getStableStaffExternalId(mockSupervisionOfficers[0]),
     } as Omit<SupervisorResponse, "date" | "by">);
 
     expect(

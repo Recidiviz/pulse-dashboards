@@ -204,6 +204,25 @@ describe("form.userHasFilledNecessaryFields", () => {
   });
 
   describe("returns true", () => {
+    it("when the edits were recorded under the current user's stable ID", () => {
+      const form = {
+        ...makeForm({
+          updateById: "STABLE_user1",
+          currentUserId: "user1",
+          draftData: paroleOfficerDraft,
+          formData: paroleOfficerDraft,
+          fieldAuthors: {
+            officerName: "STABLE_user1",
+            supervisingOfficerSignature: "STABLE_user1",
+            supervisingOfficerDate: "STABLE_user1",
+            supervisingOfficerRecommendCheckYes: "STABLE_user1",
+          },
+        }),
+        stableCurrentUserId: "STABLE_user1",
+      };
+      expect(form.userHasFilledNecessaryFields()).toBe(true);
+    });
+
     it("when one block is started and complete and the current user was the last editor", () => {
       const form = makeForm({
         updateById: "user1",
@@ -371,6 +390,22 @@ describe("form.userHasFilledNecessaryFields", () => {
 });
 
 describe("arsErsSectionEditedByCurrentUser", () => {
+  it("recognizes fields authored under the current user's stable ID", () => {
+    expect(
+      arsErsSectionEditedByCurrentUser({
+        currentUserId: "user1",
+        stableCurrentUserId: "STABLE_user1",
+        draftData: paroleOfficerDraft,
+        fieldAuthors: {
+          officerName: "STABLE_user1",
+          supervisingOfficerSignature: "STABLE_user1",
+          supervisingOfficerDate: "STABLE_user1",
+          supervisingOfficerRecommendCheckYes: "STABLE_user1",
+        },
+      }),
+    ).toEqual("paroleOfficer");
+  });
+
   it("returns undefined when fieldAuthors is empty", () => {
     expect(
       arsErsSectionEditedByCurrentUser({

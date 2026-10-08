@@ -144,10 +144,10 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
         ...(this.includeReviewerCaseload &&
         this.isInsightsSupervisorReviewTableEnabled
           ? [
+              () => this.expectCaseloadPopulatedForReviewer(this.reviewerId),
+              // TODO(OBT-53651): Remove once reviewer fields are migrated to stable IDs.
               () =>
-                this.expectCaseloadPopulatedForReviewer(
-                  this.supervisorInfo?.externalId,
-                ),
+                this.expectCaseloadPopulatedForReviewer(this.legacyReviewerId),
             ]
           : []),
         ...(this.includeReviewerCaseload &&
@@ -156,7 +156,12 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
           ? [
               () =>
                 this.expectHistoricalCaseloadPopulatedForReviewer(
-                  this.supervisorInfo?.externalId,
+                  this.reviewerId,
+                ),
+              // TODO(OBT-53651): Remove once reviewer fields are migrated to stable IDs.
+              () =>
+                this.expectHistoricalCaseloadPopulatedForReviewer(
+                  this.legacyReviewerId,
                 ),
             ]
           : []),
@@ -174,6 +179,22 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
    */
   get supervisorInfo(): SupervisionOfficerSupervisor | undefined {
     return this.supervisionStore.supervisorInfo(this.supervisorPseudoId);
+  }
+
+  /**
+   * The ID that opportunity reviewer fields hold for the current supervisor.
+   */
+  get reviewerId(): string | undefined {
+    return this.reviewerIdForSupervisor(this.supervisorInfo);
+  }
+
+  /**
+   * The ID that opportunity reviewer fields written before stable IDs hold for
+   * the current supervisor.
+   * TODO(OBT-53651): Remove once those reviewer fields are migrated to stable IDs.
+   */
+  get legacyReviewerId(): string | undefined {
+    return this.legacyReviewerIdForSupervisor(this.supervisorInfo);
   }
 
   get isNotificationBannerEnabled() {
@@ -273,10 +294,10 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
     if (!this.isWorkflowsEnabled) return;
 
     if (this.isInsightsSupervisorReviewTableEnabled) {
-      const { externalId } = this.supervisorInfo ?? {};
-      if (!externalId) return [];
+      const { reviewerId, legacyReviewerId } = this;
+      if (!reviewerId && !legacyReviewerId) return [];
       return this.buildOpportunitiesDetails(
-        this.processReviewerOpportunities(externalId),
+        this.processReviewerOpportunities(reviewerId, legacyReviewerId),
       );
     }
 
@@ -418,9 +439,13 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
       return;
     }
 
-    const { externalId } = this.supervisorInfo ?? {};
-    if (externalId) {
-      await this.populateCaseloadForReviewer(externalId);
+    const { reviewerId, legacyReviewerId } = this;
+    if (reviewerId) {
+      await this.populateCaseloadForReviewer(reviewerId);
+    }
+    // TODO(OBT-53651): Remove once reviewer fields are migrated to stable IDs.
+    if (legacyReviewerId) {
+      await this.populateCaseloadForReviewer(legacyReviewerId);
     }
   }
 
@@ -437,9 +462,13 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
       return;
     }
 
-    const { externalId } = this.supervisorInfo ?? {};
-    if (externalId) {
-      await this.populateHistoricalCaseloadForReviewer(externalId);
+    const { reviewerId, legacyReviewerId } = this;
+    if (reviewerId) {
+      await this.populateHistoricalCaseloadForReviewer(reviewerId);
+    }
+    // TODO(OBT-53651): Remove once reviewer fields are migrated to stable IDs.
+    if (legacyReviewerId) {
+      await this.populateHistoricalCaseloadForReviewer(legacyReviewerId);
     }
   }
 
@@ -555,14 +584,17 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
   /**
    * Processes a reviewer's clients, creating a map of raw opportunity details.
    *
-   * @param {string} reviewerId - The external ID of the reviewer (supervisor).
+   * @param {string} reviewerId - The stable ID of the reviewer (supervisor).
+   * @param {string} legacyReviewerId - The external ID that the reviewer's
+   * opportunities written before stable IDs hold.
    * @return {*}  {RawOpportunityInfoByOpportunityType}
    */
   protected processReviewerOpportunities(
-    reviewerId: string,
+    reviewerId: string | undefined,
+    legacyReviewerId: string | undefined,
   ): RawOpportunityInfoByOpportunityType {
     const opportunitiesByType: PartialRecord<OpportunityType, Opportunity[]> =
-      this.opportunitiesByTypeForReviewer(reviewerId) ?? {};
+      this.opportunitiesByTypeForReviewer(reviewerId, legacyReviewerId) ?? {};
 
     return Object.entries(opportunitiesByType).reduce(
       (acc: RawOpportunityInfoByOpportunityType, [oppType, opportunities]) => {
@@ -587,6 +619,7 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
             ? "REVIEW STATUS"
             : "ELIGIBILITY STATUS",
           reviewerId,
+          legacyReviewerId,
         );
 
         const clientCount = countRelevantOpportunities(
@@ -610,6 +643,7 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
             ],
             "REVIEW STATUS",
             reviewerId,
+            legacyReviewerId,
           );
         } else if (this.isReviewCardEnabled && supportsSupervisorReview) {
           addSupervisorReviewCounts(oppDetail, oppsByTab, [

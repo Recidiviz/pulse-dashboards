@@ -293,6 +293,7 @@ const US_TX_CONFIG = {
   },
   featureVariants: {
     logInToOwnSupervisorPage: {},
+    useStableExternalId: {},
   },
   directorDashboard: {
     navTitle: "Regional Dashboard",
