@@ -15,7 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usNdResidentJiiDataSchema } from "~datatypes";
+import { z } from "zod";
 
-// TODO(OBT-29535): move the entire schema over from datatypes
-export const usNdStateDataSchema = usNdResidentJiiDataSchema;
+import {
+  dateStringSchema,
+  nullishAsUndefined,
+  usNdResidentCommonSchema,
+} from "~datatypes";
+
+export const usNdStateDataSchema = usNdResidentCommonSchema.extend({
+  lastUpdatedDate: nullishAsUndefined(dateStringSchema),
+  initialReviewDate: nullishAsUndefined(dateStringSchema),
+  goodTimeDate: nullishAsUndefined(dateStringSchema),
+  finalSentExpDate: nullishAsUndefined(dateStringSchema),
+});
+export type UsNdResidentJiiData = z.output<typeof usNdStateDataSchema>;
+export type RawUsNdResidentJiiData = z.input<typeof usNdStateDataSchema>;

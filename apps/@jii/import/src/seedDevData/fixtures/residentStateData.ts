@@ -21,10 +21,11 @@ import {
   usCoResidentJiiDataFixtures,
   usMaResidentJiiDataFixtures,
   usNcResidentJiiDataFixtures,
+  usNdResidentJiiDataFixtures,
   usNeResidentJiiDataFixtures,
   usTnResidentJiiDataFixture,
 } from "~@jii/fixtures";
-import { usNdResidentJiiDataFixtures, usTnResidentCommon } from "~datatypes";
+import { usTnResidentCommon } from "~datatypes";
 
 // the value type is not important here because it's being fed directly to a Zod parser,
 // but TS can't infer anything sensible from the different arrays and causes errors
@@ -34,7 +35,6 @@ export const rawResidentStateDataFixtures = new Map<string, Array<unknown>>([
   ["US_CO", usCoResidentJiiDataFixtures],
   ["US_MA", usMaResidentJiiDataFixtures],
   ["US_NC", usNcResidentJiiDataFixtures],
-  // TODO(OBT-29535): move this over from datatypes
   ["US_ND", usNdResidentJiiDataFixtures],
   ["US_NE", usNeResidentJiiDataFixtures],
   // all records here share the same fixture

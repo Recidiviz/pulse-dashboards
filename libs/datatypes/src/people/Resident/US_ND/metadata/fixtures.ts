@@ -16,11 +16,7 @@
 // =============================================================================
 
 import { relativeFixtureDate } from "../../../../utils/zod";
-import {
-  RawUsNdResidentCommon,
-  RawUsNdResidentJiiData,
-  RawUsNdResidentMetadata,
-} from "./schema";
+import { RawUsNdResidentCommon, RawUsNdResidentMetadata } from "./schema";
 
 // Fields used by both JII and workflows products.
 export const usNdResidentCommonDataFixtures: RawUsNdResidentCommon[] = [
@@ -41,26 +37,7 @@ export const usNdResidentCommonDataFixtures: RawUsNdResidentCommon[] = [
   },
 ];
 
-// JII-only fields (extends common).
-export const usNdResidentJiiDataFixtures: RawUsNdResidentJiiData[] = [
-  {
-    ...usNdResidentCommonDataFixtures[0],
-    lastUpdatedDate: relativeFixtureDate(),
-  },
-  {
-    ...usNdResidentCommonDataFixtures[1],
-    lastUpdatedDate: relativeFixtureDate(),
-    initialReviewDate: relativeFixtureDate({ months: 2 }),
-    goodTimeDate: relativeFixtureDate({ months: 7 }),
-    finalSentExpDate: relativeFixtureDate({ months: 10 }),
-  },
-  {
-    ...usNdResidentCommonDataFixtures[2],
-    lastUpdatedDate: relativeFixtureDate(),
-  },
-];
-
 // the only Workflows-only fields are optional and missing from these fixtures
 export const usNdResidentMetadataFixtures: Array<RawUsNdResidentMetadata> = [
-  ...usNdResidentJiiDataFixtures,
+  ...usNdResidentCommonDataFixtures,
 ];

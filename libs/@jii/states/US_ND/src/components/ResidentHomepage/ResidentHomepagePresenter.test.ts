@@ -16,7 +16,8 @@
 // =============================================================================
 
 import { ResidentRecord } from "~@jii/data";
-import { UsNdResidentMetadata, usNdResidents } from "~datatypes";
+import { usNdResidentJiiDataFixtures } from "~@jii/fixtures";
+import { usNdStateDataSchema } from "~@jii/schemas";
 
 import { ResidentHomepagePresenter } from "./ResidentHomepagePresenter";
 
@@ -24,7 +25,7 @@ describe("sentence dates", () => {
   test("with data present", () => {
     expect(
       new ResidentHomepagePresenter(
-        usNdResidents[1].metadata as UsNdResidentMetadata,
+        usNdStateDataSchema.parse(usNdResidentJiiDataFixtures[1]),
         {} as ResidentRecord,
       ).sentenceDatesData,
     ).toMatchInlineSnapshot(`
@@ -58,7 +59,7 @@ describe("sentence dates", () => {
   test("with data missing", () => {
     expect(
       new ResidentHomepagePresenter(
-        usNdResidents[0].metadata as UsNdResidentMetadata,
+        usNdStateDataSchema.parse(usNdResidentJiiDataFixtures[0]),
         {} as ResidentRecord,
       ).sentenceDatesData,
     ).toMatchInlineSnapshot(`
