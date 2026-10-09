@@ -155,9 +155,9 @@ Each sub-agent gets a prompt built from this template (fill in the brackets):
 > commit SHA and one-line summary. If several candidate commits touched the line and
 > you can't tell which one actually caused it, say that rather than picking one.
 >
-> **If this issue's project is a Meetings one** (`meetings-app`, `meetings-server`,
-> `meetings-data-import`, `meetings-seed-demo`, `meetings-artifact-cleanup`), read
-> `.claude/skills/investigate-sentry-issue/SKILL.md`'s Step 5 and apply its method
+> **If this issue's project is a Meetings one** (`meetings-app`, `meetings-web`,
+> `meetings-server`, `meetings-data-import`, `meetings-seed-demo`,
+> `meetings-artifact-cleanup`), read `.claude/skills/investigate-sentry-issue/SKILL.md`'s Step 5 and apply its method
 > instead of a plain `git log -S` on the release string — Meetings' release tag and
 > `ota_updates.runtime_version` need Expo-specific handling that doesn't apply (and
 > would be actively misleading) for another product's release tag; see that skill's

@@ -36,9 +36,8 @@ with a release) are Meetings/Expo-specific** and were written entirely from Meet
 issues. For an issue from another product, skip those three and locate the code and
 correlate the release using that product's own conventions instead — e.g.
 `@sentencing/server`'s Fastify/tRPC layout instead of Feature-Sliced Design, and
-whatever that project's own release tag actually is (it may well be a plain git SHA,
-unlike Meetings' `<app name>@<version>` — don't assume the SHA-lookalike trap in
-Step 5 carries over).
+whatever that project's own release tag actually is (don't assume Meetings' naming
+in Step 5 carries over).
 
 ## Inputs
 
@@ -52,15 +51,17 @@ at the Sentry board" — ask which issue; don't pick one yourself.
 
 | Sentry project              | Code                                                                                                                                                                                                        |
 | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `meetings-app`              | [apps/@meetings/app](apps/@meetings/app) — Expo RN + web                                                                                                                                                    |
+| `meetings-app`              | [apps/@meetings/app](apps/@meetings/app) — native (iOS and Android) only                                                                                                                                    |
+| `meetings-web`              | [apps/@meetings/app](apps/@meetings/app) — the web build of the same code                                                                                                                                   |
 | `meetings-server`           | [apps/@meetings/server](apps/@meetings/server)                                                                                                                                                              |
 | `meetings-data-import`      | [apps/@meetings/import](apps/@meetings/import)                                                                                                                                                              |
 | `meetings-seed-demo`        | [apps/@meetings/seed-demo](apps/@meetings/seed-demo)                                                                                                                                                        |
 | `meetings-artifact-cleanup` | [apps/@meetings/server/src/jobs/meeting-artifact-cleanup.ts](apps/@meetings/server/src/jobs/meeting-artifact-cleanup.ts) — a Cloud Run job with its own Sentry project, but it lives in the server codebase |
 
-`meetings-app` covers **both** native and web. Check the `url` tag and the
-`react_native_context` / `browser` contexts to tell which one you're looking at
-— the fix location often differs (`*.native.tsx` vs `*.web.tsx`).
+Native and web report to separate projects but share one codebase, so the
+project tells you which platform you're on. The fix location often differs
+(`*.native.tsx` vs `*.web.tsx`). Issues in `meetings-app` from before October 2026
+may still be web; check the `browser` context on those.
 
 ## Step 1: Fetch the issue
 
@@ -166,12 +167,26 @@ Read enough surrounding code to explain the failure, not just the failing line.
 
 ## Step 5: Correlate with a release
 
-The `release` tag looks like `Recidiviz Development@0.6.1` — an app name and
-version, **not a git SHA**. To get to a commit:
+The `release` tag depends on the project:
 
-```bash
-git log -S '"0.6.1"' --oneline -- apps/@meetings/app/package.json apps/@meetings/app/app.config.ts
-```
+- **`meetings-web` and the backend projects** use the 12-character short SHA of the
+  deployed commit, such as `5c1af0507178`. Web and backend from the same deploy
+  share a release.
+- **`meetings-app` (native)** uses `meetings-native@<version>`, such as
+  `meetings-native@0.10.8`, with `dist` set to the native build number. Every OTA
+  and native release gets its own version, and the release workflows tag the commit
+  as `meetings-app-<staging|production>-v<version>`:
+
+  ```bash
+  git rev-parse --short=12 'meetings-app-production-v0.10.8^{}'
+  ```
+
+Either way, the release in Sentry lists its commits and its staging and production
+deploys (`find_releases`), so you can usually read the commit off Sentry directly.
+
+Older events carry older formats: `Recidiviz Development@0.6.1` on web, and
+`org.recidiviz.app@0.10.0+31` (bundle ID, binary version, build number) on native.
+The binary version in the second one doesn't change when an OTA ships.
 
 Then check how the code actually reached the user:
 
@@ -321,9 +336,10 @@ Invoke the **`send-it`** skill. It chains `commit → pass-ci →
 create-linear-ticket → create-pr` and owns all the details of each stage.
 
 **Pass forward one thing it can't know:** the commit message must contain
-`Fixes MEETINGS-APP-167` (the issue's short ID). Sentry auto-resolves the issue
-when a commit referencing it merges — this is the whole reason the loop closes
-without a manual Sentry visit. Tell the `commit` skill to include that line.
+`Fixes MEETINGS-APP-167` (the issue's short ID). Sentry resolves the issue in the
+first release that contains that commit, which is the next deploy or OTA after
+merge. That's why the loop closes without a manual Sentry visit. Tell the `commit`
+skill to include that line.
 
 Also hand `create-pr` the Sentry issue link and the diagnosis from Step 6 — that's
 the PR description already written. The repo's PR template has a dedicated
@@ -356,9 +372,10 @@ reopening something archived by mistake.
   `sendDefaultPii: true`, so events carry real user emails, IP addresses, and
   geolocation. Refer to affected users by count and category ("5 internal users"),
   never by identity.
-- **`release` is not a SHA, and neither is `runtime_version`** despite looking
-  exactly like one. See Step 5.
-- **OTA means the version number can lie** about which code was running.
+- **`runtime_version` is not a SHA** despite looking exactly like one. Release
+  formats differ by project and by era; see Step 5.
+- **On native events from before October 2026, the version number can lie** about
+  which code was running, because an OTA didn't change it.
 - **A passing new test may be proving nothing.** Verify it fails without the fix
   (Step 7). Component-level assertions are the usual culprit — the thing you're
   asserting on may not render in the test harness at all.
