@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { usNeResidentJiiDataFixtures } from "~@jii/fixtures";
+import { UsNeResidentJiiData, usNeStateDataSchema } from "~@jii/schemas";
 import { createI18nInstance } from "~@jii/translation";
-import { UsNeResidentMetadata, usNeResidents } from "~datatypes";
 
 import { UsNeHomeHeaderPresenter } from "./UsNeHomeHeaderPresenter";
 
@@ -76,13 +77,13 @@ const usNeResourceFixture = {
   },
 };
 
-const baseData = usNeResidents[0].metadata as UsNeResidentMetadata;
+const baseData = usNeStateDataSchema.parse(usNeResidentJiiDataFixtures[0]);
 
 const i18n = createI18nInstance([]);
 i18n.addResourceBundle("en", "US_NE", usNeResourceFixture);
 const t = i18n.getFixedT("en", "US_NE");
 
-function createPresenter(stateSpecificData: UsNeResidentMetadata) {
+function createPresenter(stateSpecificData: UsNeResidentJiiData) {
   return new UsNeHomeHeaderPresenter(stateSpecificData, t);
 }
 

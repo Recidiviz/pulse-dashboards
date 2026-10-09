@@ -24,8 +24,8 @@ import {
 import { useResidentMetadata } from "~@jii/data";
 import { CardDateInfo } from "~@jii/earned-good-time";
 import { State } from "~@jii/paths";
+import type { UsNeResidentJiiData } from "~@jii/schemas";
 import { useUsNeTranslations, UsNeTranslationsObject } from "~@jii/translation";
-import type { UsNeResidentMetadata } from "~datatypes";
 
 const dateCards = [
   { id: "trd", metadataField: "tentativeReleaseDate" },
@@ -33,7 +33,7 @@ const dateCards = [
   { id: "mmtd", metadataField: "mandatoryMinimumDate" },
 ] as const satisfies {
   id: keyof UsNeTranslationsObject["home"]["dates"]["cards"];
-  metadataField: keyof UsNeResidentMetadata;
+  metadataField: keyof UsNeResidentJiiData;
 }[];
 
 const UsNeDateCardGroup = () => {

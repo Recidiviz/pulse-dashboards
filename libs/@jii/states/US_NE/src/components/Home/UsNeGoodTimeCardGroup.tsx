@@ -24,8 +24,8 @@ import {
 import { useResidentMetadata } from "~@jii/data";
 import { CardDateInfo } from "~@jii/earned-good-time";
 import { State } from "~@jii/paths";
+import type { UsNeResidentJiiData } from "~@jii/schemas";
 import { useUsNeTranslations } from "~@jii/translation";
-import type { UsNeResidentMetadata } from "~datatypes";
 
 const goodTimeCards = [
   { id: "gbmd", metadataField: "goodTimeBalanceDays", definitionSlug: "gbmd" },
@@ -47,7 +47,7 @@ const goodTimeCards = [
   },
 ] as const satisfies {
   id: string;
-  metadataField: keyof UsNeResidentMetadata;
+  metadataField: keyof UsNeResidentJiiData;
   definitionSlug: string;
 }[];
 

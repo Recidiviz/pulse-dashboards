@@ -16,4 +16,5 @@
 // =============================================================================
 
 export * from "./stateData";
-export type * from "./stateData/US_TN";
+export * from "./stateData/US_NE";
+export * from "./stateData/US_TN";

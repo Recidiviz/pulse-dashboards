@@ -15,7 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usTnResidentJiiDataFixture } from "~@jii/fixtures";
+import {
+  usNeResidentJiiDataFixtures,
+  usTnResidentJiiDataFixture,
+} from "~@jii/fixtures";
 import {
   rawUsCoResidentJiiDataFixtures,
   rawUsMaResidentJiiDataFixtures,
@@ -23,7 +26,6 @@ import {
   usAzResidentJiiDataFixtures,
   usNcResidentJiiFixtures,
   usNdResidentJiiDataFixtures,
-  usNeResidentJiiDataFixtures,
   usTnResidentCommon,
 } from "~datatypes";
 

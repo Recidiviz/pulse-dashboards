@@ -22,12 +22,12 @@ import { makeAutoObservable } from "mobx";
 
 import { IntakeAssessmentPresenter } from "~@jii/case-planning";
 import { ResidentRecord, UserStore } from "~@jii/data";
-import { UsNeTranslationsObject } from "~@jii/translation";
-import { JiiResidentAppRouter } from "~@jii/trpc-types";
 import {
   usNeGoodTimeRestorationTodosCriterionEnum,
   UsNeResidentJiiData,
-} from "~datatypes";
+} from "~@jii/schemas";
+import { UsNeTranslationsObject } from "~@jii/translation";
+import { JiiResidentAppRouter } from "~@jii/trpc-types";
 import { FirebaseAuthClient } from "~firebase-auth";
 import { Hydratable, HydrationState } from "~hydration-utils";
 

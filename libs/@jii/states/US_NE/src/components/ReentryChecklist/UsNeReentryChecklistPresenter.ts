@@ -20,8 +20,8 @@ import { addDays, addMonths, addYears, isBefore, min } from "date-fns";
 import { flowResult, makeAutoObservable } from "mobx";
 
 import { DataAPI, ResidentFlags, ResidentRecord } from "~@jii/data";
+import { UsNeResidentJiiData } from "~@jii/schemas";
 import type { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
-import { UsNeResidentJiiData } from "~datatypes";
 import {
   Hydratable,
   HydratesFromSource,

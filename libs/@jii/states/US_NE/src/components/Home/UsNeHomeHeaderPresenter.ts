@@ -18,8 +18,8 @@
 import { isNumber } from "lodash";
 import { makeAutoObservable } from "mobx";
 
+import type { UsNeResidentJiiData } from "~@jii/schemas";
 import { UsNeTFunction } from "~@jii/translation";
-import type { UsNeResidentMetadata } from "~datatypes";
 
 const headerFields = [
   { key: "numHoldsAndDetainers", fields: ["numHoldsAndDetainers"] },
@@ -52,12 +52,12 @@ const headerFields = [
   { key: "goodTime", fields: ["goodTimeLawNumber"] },
 ] as const satisfies {
   key: string;
-  fields: Array<keyof UsNeResidentMetadata>;
+  fields: Array<keyof UsNeResidentJiiData>;
 }[];
 
 export class UsNeHomeHeaderPresenter {
   constructor(
-    private stateSpecificData: UsNeResidentMetadata,
+    private stateSpecificData: UsNeResidentJiiData,
     private t: UsNeTFunction,
   ) {
     makeAutoObservable(this);
