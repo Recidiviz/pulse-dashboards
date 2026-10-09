@@ -19,8 +19,8 @@ import assertNever from "assert-never";
 
 import { CopyWrapper } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
+import { UsAzResidentJiiData } from "~@jii/schemas";
 import { useUsAzTranslations } from "~@jii/translation";
-import { UsAzResidentJiiData } from "~datatypes";
 
 export const Intro = ({
   classType,

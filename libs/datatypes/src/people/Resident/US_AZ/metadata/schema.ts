@@ -17,11 +17,7 @@
 
 import { z } from "zod";
 
-import {
-  dateStringSchema,
-  nullishAsUndefined,
-  toTitleCase,
-} from "../../../../utils/zod";
+import { dateStringSchema, nullishAsUndefined } from "../../../../utils/zod";
 
 // Fields used by both JII and workflows.
 export const usAzResidentCommonSchema = z.object({
@@ -34,49 +30,8 @@ export const usAzResidentCommonSchema = z.object({
 export type UsAzResidentCommon = z.output<typeof usAzResidentCommonSchema>;
 export type RawUsAzResidentCommon = z.input<typeof usAzResidentCommonSchema>;
 
-// JII-only fields (extends common).
-// TODO(OBT-29535): remove this from the workflows schema and move to @jii/schemas
-export const usAzResidentJiiDataSchema = usAzResidentCommonSchema.extend({
-  lastUpdatedDate: nullishAsUndefined(dateStringSchema),
-  tprApprovalStatus: nullishAsUndefined(z.string()),
-  dtpApprovalStatus: nullishAsUndefined(z.string()),
-  // Standalone ingested date fields (sourced from person_projected_date_sessions).
-  // These are the preferred fields for single-date consumers like the JII app.
-  // The V2 suffix on ercd/csbd avoids collision with the "combined" ercdDate/csbdDate
-  // fields in the workflows schema, which pack two mutually-exclusive dates into one
-  // column.
-  ercdDateV2: nullishAsUndefined(dateStringSchema),
-  csbdDateV2: nullishAsUndefined(dateStringSchema),
-  addDate: nullishAsUndefined(dateStringSchema),
-  trToAddDate: nullishAsUndefined(dateStringSchema),
-  isDprEligible: nullishAsUndefined(z.boolean()),
-  hasAnyDprProgramCompleted: nullishAsUndefined(z.boolean()),
-  // Standalone ingested DPR date fields (no V2 suffix needed — no name collision).
-  dprCsbdDate: nullishAsUndefined(dateStringSchema),
-  dprCsedDate: nullishAsUndefined(dateStringSchema),
-  dprErcdDate: nullishAsUndefined(dateStringSchema),
-  dprTprDate: nullishAsUndefined(dateStringSchema),
-  dprDtpDate: nullishAsUndefined(dateStringSchema),
-  dprTrToAddDate: nullishAsUndefined(dateStringSchema),
-  dprAddDate: nullishAsUndefined(dateStringSchema),
-  // classification points fields
-  cuAssignedCustodyLevel: nullishAsUndefined(z.string().transform(toTitleCase)),
-  // expected to be a number 1-5; not worth coercing if all we're doing is displaying it anyway
-  cuAssignedCustodyLevelNumeric: nullishAsUndefined(z.string()),
-  cuAssessmentScore: nullishAsUndefined(z.number()),
-  irAssessmentScore: nullishAsUndefined(z.number()),
-  // similar to custody level, should be a numeric string 1-5 but not coerced here
-  irAssignedRiskLevelNumeric: nullishAsUndefined(z.string()),
-  mostRecentClassificationType: nullishAsUndefined(
-    z.enum(["INITIAL", "RECLASSIFICATION"]),
-  ),
-});
-export type UsAzResidentJiiData = z.output<typeof usAzResidentJiiDataSchema>;
-export type RawUsAzResidentJiiData = z.input<typeof usAzResidentJiiDataSchema>;
-
-// Workflows-only fields (extends JII, which extends common).
-// TODO(OBT-29535): remove JII-only fields from this schema and move to @jii/schemas
-export const usAzResidentMetadataSchema = usAzResidentJiiDataSchema.extend({
+// Workflows-only fields (extends common).
+export const usAzResidentMetadataSchema = usAzResidentCommonSchema.extend({
   // "Combined" date fields: each packs two mutually-exclusive dates into one column.
   ercdDate: nullishAsUndefined(dateStringSchema),
   csbdDate: nullishAsUndefined(dateStringSchema),

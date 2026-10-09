@@ -20,7 +20,7 @@ import { createContext, FC } from "react";
 import { Outlet } from "react-router-dom";
 
 import { useResidentMetadata } from "~@jii/data";
-import { WorkflowsResidentMetadata } from "~datatypes";
+import { UsAzResidentJiiData } from "~@jii/schemas";
 import { withPresenterManager } from "~hydration-utils";
 import { useRequiredContext } from "~utils";
 
@@ -31,7 +31,7 @@ export type UsAzResidentContext = {
   isTprApproved: boolean;
   isDtpApproved: boolean;
   displayedDates: SingleResidentContextPresenter["displayedDates"];
-  metadata: WorkflowsResidentMetadata<"US_AZ">;
+  metadata: UsAzResidentJiiData;
 };
 
 const context = createContext<UsAzResidentContext | undefined>(undefined);
