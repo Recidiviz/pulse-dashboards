@@ -16,8 +16,7 @@
 // =============================================================================
 
 import { createSigner, SignerPayload } from "fast-jwt";
-import { DocumentData, getFirestore } from "firebase-admin/firestore";
-import { z } from "zod";
+import { getFirestore } from "firebase-admin/firestore";
 
 import {
   AuthorizedUserProfile,
@@ -30,40 +29,12 @@ import { getPrismaClient } from "~@jii/prisma";
 import { isUserFlagActive } from "../helpers/featureFlags";
 import { firebaseApp } from "../helpers/firebaseAdmin";
 
-// we aren't reusing the querier function from firebaseAdmin helpers here
-// because this feature is not subject to the same restrictions as user data endpoints
-const firestore = () => getFirestore(firebaseApp());
-
-function getResidentIds(residentRecord: DocumentData) {
-  // in practice this should always parse, but we can't import the full schema from ~datatypes
-  // due to Vite dependency issues. We only care about these fields anyway
-  return z
-    .object({ personExternalId: z.string(), pseudonymizedId: z.string() })
-    .parse(residentRecord);
-}
-
 // signer creation is function-scoped rather than module-scoped
 // so that an error with the key doesn't bring down the entire app
 function signIntercomJwt(payload: SignerPayload) {
   return createSigner({
     key: process.env["INTERCOM_WEB_SDK_SECRET_KEY"],
   })(payload);
-}
-
-async function getResidentRecordForDisplayId(
-  stateCode: string,
-  displayId: string,
-): Promise<DocumentData | undefined> {
-  const userResidentRecord = (
-    await firestore()
-      .collection(`residents`)
-      .where("stateCode", "==", stateCode)
-      .where("displayId", "==", displayId)
-      .limit(1)
-      .get()
-  ).docs[0]?.data();
-
-  return userResidentRecord;
 }
 
 export type RosterLookupOpts = {
@@ -83,51 +54,17 @@ export async function checkResidentsRoster({
     "US_NE",
     "US_NYC",
   ].includes(stateCode);
-  let personExternalId: string;
-  let pseudonymizedId: string;
 
   const prisma = getPrismaClient({ stateCode, demo: false });
-  if (
-    await isUserFlagActive({
-      stateCode,
-      prisma,
-      userIdFromAuthProvider,
-      flagId: "useNewResidentData",
-      // we don't know the user's permissions yet, that depends on the roster checks
-      userPermissions: undefined,
-    })
-  ) {
-    const userRecord = await prisma.resident.findFirst({
-      where: {
-        displayId: lookupByDisplayId ? userExternalId : undefined,
-        personExternalId: lookupByDisplayId ? undefined : userExternalId,
-      },
-      select: { pseudonymizedId: true, personExternalId: true },
-    });
-    if (!userRecord) return;
-    ({ personExternalId, pseudonymizedId } = userRecord);
-  } else {
-    let userResidentRecord;
-    if (lookupByDisplayId) {
-      userResidentRecord = await getResidentRecordForDisplayId(
-        stateCode,
-        userExternalId,
-      );
-    } else {
-      userResidentRecord = (
-        await firestore()
-          .doc(
-            `residents/${stateCode.toLowerCase()}_${userExternalId.toLowerCase()}`,
-          )
-          .get()
-      ).data();
-    }
-
-    if (!userResidentRecord) return;
-
-    ({ pseudonymizedId, personExternalId } =
-      getResidentIds(userResidentRecord));
-  }
+  const userRecord = await prisma.resident.findFirst({
+    where: {
+      displayId: lookupByDisplayId ? userExternalId : undefined,
+      personExternalId: lookupByDisplayId ? undefined : userExternalId,
+    },
+    select: { pseudonymizedId: true, personExternalId: true },
+  });
+  if (!userRecord) return;
+  const { personExternalId, pseudonymizedId } = userRecord;
 
   // if we've gotten this far, it means we have a match and we know this user is a resident.
   // these are the applicable permissions for residents; constructing them now so the flag check can consume them
@@ -160,40 +97,15 @@ export async function checkDemoResidentsRoster({
   userExternalId,
   userIdFromAuthProvider,
 }: RosterLookupOpts): Promise<ResidentUserProfile | undefined> {
-  let pseudonymizedId: string;
   const prisma = getPrismaClient({ stateCode, demo: true });
-  if (
-    await isUserFlagActive({
-      stateCode,
-      prisma,
-      userIdFromAuthProvider,
-      flagId: "useNewResidentData",
-      // we don't know the user's permissions yet, that depends on the roster checks
-      userPermissions: undefined,
-    })
-  ) {
-    const userRecord = await prisma.resident.findFirst({
-      where: {
-        personExternalId: userExternalId,
-      },
-      select: { pseudonymizedId: true },
-    });
-    if (!userRecord) return;
-    ({ pseudonymizedId } = userRecord);
-  } else {
-    const userDemoResidentRecord = (
-      await firestore()
-        .collection(`DEMO_residents`)
-        .where("stateCode", "==", stateCode)
-        .where("personExternalId", "==", userExternalId)
-        .limit(1)
-        .get()
-    ).docs[0]?.data();
-
-    if (!userDemoResidentRecord) return;
-
-    ({ pseudonymizedId } = getResidentIds(userDemoResidentRecord));
-  }
+  const userRecord = await prisma.resident.findFirst({
+    where: {
+      personExternalId: userExternalId,
+    },
+    select: { pseudonymizedId: true },
+  });
+  if (!userRecord) return;
+  const { pseudonymizedId } = userRecord;
 
   // if we've gotten this far, it means we have a match and we know this user is a demo resident.
   // these are the applicable permissions for demo residents; constructing them now so the flag check can consume them
@@ -223,6 +135,8 @@ export async function checkDemoResidentsRoster({
 
 export async function checkEdovoTestAccountRoster(userId: string) {
   return (
-    await firestore().doc(`JII-edovoToRecidivizMappings/${userId}`).get()
+    await getFirestore(firebaseApp())
+      .doc(`JII-edovoToRecidivizMappings/${userId}`)
+      .get()
   ).data();
 }

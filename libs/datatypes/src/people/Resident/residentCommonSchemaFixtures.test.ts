@@ -21,8 +21,7 @@ import { rawAllResidentCommon } from "./residentCommonSchemaFixtures";
 /**
  * The dev seed reads from rawAllResidentCommon. Any state that has Workflows
  * fixtures (rawAllResidents) will also be served via the Prisma/tRPC path in
- * development (all_user_flags_enabled grants useNewResidentData to all dev
- * users), so it must also be registered here. If it is not, the seed logs
+ * development, so it must also be registered here. If it is not, the seed logs
  * "Skipping... no fixtures available" and moves on without error, leaving the
  * DB empty for that state.
  */

@@ -31,7 +31,7 @@ beforeEach(() => {
   configure({ safeDescriptors: false });
   store = new RootStore();
 
-  // unlike firestore methods, this is not automocked in tests so we have to stub it
+  // the trpc client is not automocked in tests so we have to stub it
   vi.spyOn(store.apiClient, "trpc", "get").mockReturnValue({
     // @ts-expect-error minimal stub
     user: {

@@ -66,8 +66,8 @@ export class RootStore {
     this.translationStore = new TranslationStore(this);
 
     this.firebaseAuthClient = new FirebaseAuthClient(
-      import.meta.env["VITE_FIRESTORE_PROJECT"],
-      import.meta.env["VITE_FIRESTORE_API_KEY"],
+      import.meta.env["VITE_FIREBASE_PROJECT"],
+      import.meta.env["VITE_FIREBASE_API_KEY"],
       proxyHost(),
     );
 
@@ -105,9 +105,6 @@ export class RootStore {
         ...commonExternals,
         // these are getters rather than static properties so that the API client
         // can can observe changes to these values rather than getting a one-time snapshot
-        get config() {
-          return store.residentsStore?.config;
-        },
         get firebaseAuthClient() {
           return store.firebaseAuthClient;
         },

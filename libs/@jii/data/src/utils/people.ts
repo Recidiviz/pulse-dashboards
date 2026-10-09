@@ -15,22 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { WorkflowsResidentRecord } from "~datatypes";
-
 import { ResidentRecord } from "../contexts/SingleResidentContext";
 
-export function firstNameLastName(
-  resident: ResidentRecord | WorkflowsResidentRecord,
-) {
-  // TODO(OBT-29541): personName phased out with Workflows backend
-  let givenNames;
-  let surname;
-  if ("personName" in resident) {
-    givenNames = resident.personName.givenNames;
-    surname = resident.personName.surname;
-  } else {
-    givenNames = resident.givenNames;
-    surname = resident.surname;
-  }
-  return `${givenNames} ${surname}`;
+export function firstNameLastName(resident: ResidentRecord) {
+  return `${resident.givenNames} ${resident.surname}`;
 }

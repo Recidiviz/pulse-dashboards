@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { createVerifier } from "fast-jwt";
-import { getFirestore } from "firebase-admin/firestore";
 import tk from "timekeeper";
 
 import { StateCode } from "~@jii/configs";
@@ -37,18 +36,8 @@ const externalIdState: StateCode = "US_TN";
 // from userId -- the ID assigned by their auth provider
 const residentExternalId = "ext-abc123";
 
-// Firestore access is deprecated and being migrated away from, so we only
-// verify whether it's queried at all, not its query shape or results.
-vi.mock("../helpers/firebaseAdmin", () => ({
-  firebaseApp: vi.fn(),
-}));
-vi.mock("firebase-admin/firestore");
-
-// getPrismaClient is spied on (not stubbed) so its call args can be asserted
-// on while it still resolves to the real test DB client. The initial
-// implementation must be pass-through immediately (not just in beforeEach)
-// since ../test/prisma's testPrismaClient is built from this at import time.
-// TODO(OBT-29541): Once Firestore is removed from the app we don't need to do this anymore
+// We need to spy on getPrismaClient to verify real vs demo data lookups are executed correctly,
+// since the test environment collapses everything into a single database
 vi.mock("~@jii/prisma", async (importOriginal) => {
   const actual = await importOriginal<typeof import("~@jii/prisma")>();
   return { ...actual, getPrismaClient: vi.fn(actual.getPrismaClient) };
@@ -83,40 +72,9 @@ function activateFlag(flagId: UserFlagId) {
   });
 }
 
-const mockFirestore = {
-  collection: vi.fn(),
-  doc: vi.fn(),
-  where: vi.fn(),
-  limit: vi.fn(),
-  get: vi.fn(),
-};
-
-// satisfies both the `.doc().get()` and `.collection()...limit().get()`
-// shapes checkResidentsRoster/checkDemoResidentsRoster read from
-function mockFirestoreRecord(payload: Record<string, unknown>) {
-  const data = () => payload;
-  mockFirestore.get.mockResolvedValue({ docs: [{ data }], data });
-}
-
 const verifyIntercomToken = createVerifier({ key: testIntercomSigningKey });
 
 beforeEach(async () => {
-  // mockReset (configured globally) clears mock implementations before each
-  // test, so all the mocks have to be rewired here rather than at module scope
-
-  mockFirestore.collection.mockReturnValue(mockFirestore);
-  mockFirestore.doc.mockReturnValue(mockFirestore);
-  mockFirestore.where.mockReturnValue(mockFirestore);
-  mockFirestore.limit.mockReturnValue(mockFirestore);
-  // resolves such that no record is found on any Firestore lookup shape,
-  // since these tests only care whether Firestore was queried
-  mockFirestore.get.mockResolvedValue({ docs: [], data: () => undefined });
-
-  vi.mocked(getFirestore).mockReturnValue(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    mockFirestore as any,
-  );
-
   // we have to recreate this spy before each test because mocks are automatically cleared between tests;
   // the setup in the mock factory was only for imports in our testkit
   const actual =
@@ -154,176 +112,106 @@ describe("checkResidentsRoster", () => {
     });
   });
 
-  describe("when the useNewResidentData flag is active", () => {
-    beforeEach(async () => {
-      await activateFlag("useNewResidentData");
-    });
-
-    test("returns an AuthorizedUserProfile built from the resident record", async () => {
-      await testPrismaClient.resident.create({
-        data: buildResidentRecord({
-          pseudonymizedId: "anonres1",
-          personExternalId: residentExternalId,
-        }),
-      });
-
-      const result = await checkResidentsRoster({
-        stateCode: externalIdState,
-        userExternalId: residentExternalId,
-        userIdFromAuthProvider: userId,
-      });
-
-      expect(result).toEqual({
-        stateCode: externalIdState,
-        externalId: residentExternalId,
+  test("returns an AuthorizedUserProfile built from the resident record", async () => {
+    await testPrismaClient.resident.create({
+      data: buildResidentRecord({
         pseudonymizedId: "anonres1",
-        permissions: ["live_data"],
-      });
+        personExternalId: residentExternalId,
+      }),
     });
 
-    test("returns undefined when no resident record is found", async () => {
-      const result = await checkResidentsRoster({
-        stateCode: externalIdState,
-        userExternalId: residentExternalId,
-        userIdFromAuthProvider: userId,
-      });
-
-      expect(result).toBeUndefined();
+    const result = await checkResidentsRoster({
+      stateCode: externalIdState,
+      userExternalId: residentExternalId,
+      userIdFromAuthProvider: userId,
     });
 
-    test("matches residents by displayId for states that use display-id lookup", async () => {
-      await testPrismaClient.resident.create({
-        data: buildResidentRecord({
-          pseudonymizedId: "anonres1",
-          displayId: residentExternalId,
-          personExternalId: "someone-else",
-        }),
-      });
-
-      const result = await checkResidentsRoster({
-        stateCode: displayIdState,
-        userExternalId: residentExternalId,
-        userIdFromAuthProvider: userId,
-      });
-
-      expect(result).toEqual({
-        stateCode: displayIdState,
-        externalId: "someone-else",
-        pseudonymizedId: "anonres1",
-        permissions: ["live_data"],
-      });
-    });
-
-    test("matches residents by personExternalId for other states", async () => {
-      await testPrismaClient.resident.create({
-        data: buildResidentRecord({
-          pseudonymizedId: "anonres1",
-          personExternalId: residentExternalId,
-          displayId: "someone-else",
-        }),
-      });
-
-      const result = await checkResidentsRoster({
-        stateCode: externalIdState,
-        userExternalId: residentExternalId,
-        userIdFromAuthProvider: userId,
-      });
-
-      expect(result).toEqual({
-        stateCode: externalIdState,
-        externalId: residentExternalId,
-        pseudonymizedId: "anonres1",
-        permissions: ["live_data"],
-      });
-    });
-
-    test("does not query Firestore", async () => {
-      await checkResidentsRoster({
-        stateCode: externalIdState,
-        userExternalId: residentExternalId,
-        userIdFromAuthProvider: userId,
-      });
-
-      expect(getFirestore).not.toHaveBeenCalled();
-    });
-
-    test("includes Intercom token when flag is active", async () => {
-      // useNewResidentData is already active via the parent beforeEach
-      await activateFlag("intercom");
-
-      await testPrismaClient.resident.create({
-        data: buildResidentRecord({
-          pseudonymizedId: "anonres1",
-          personExternalId: residentExternalId,
-        }),
-      });
-
-      // freezing so the timestamp in the payload will be consistent
-      const result = await tk.withFreeze(new Date("2026-08-13"), async () => {
-        return checkResidentsRoster({
-          stateCode: externalIdState,
-          userExternalId: residentExternalId,
-          userIdFromAuthProvider: userId,
-        });
-      });
-
-      expect(verifyIntercomToken(result?.intercomToken ?? "")).toEqual({
-        user_id: "anonres1",
-        iat: 1786579200,
-      });
+    expect(result).toEqual({
+      stateCode: externalIdState,
+      externalId: residentExternalId,
+      pseudonymizedId: "anonres1",
+      permissions: ["live_data"],
     });
   });
 
-  describe("when the useNewResidentData flag is not active", () => {
-    // no flag needs to be seeded here; the DB is reset before every test, so
-    // the flag is inactive by default
+  test("returns undefined when no resident record is found", async () => {
+    const result = await checkResidentsRoster({
+      stateCode: externalIdState,
+      userExternalId: residentExternalId,
+      userIdFromAuthProvider: userId,
+    });
 
-    test("uses the Firestore record rather than a matching Prisma record", async () => {
-      // seeded so the assertion below would fail if this record were
-      // (incorrectly) used to satisfy the request instead of Firestore's
-      await testPrismaClient.resident.create({
-        data: buildResidentRecord({
-          pseudonymizedId: "prisma-anon-id",
-          personExternalId: residentExternalId,
-        }),
-      });
-      mockFirestoreRecord({
-        personExternalId: "firestore-ext-id",
-        pseudonymizedId: "firestore-anon-id",
-      });
+    expect(result).toBeUndefined();
+  });
 
-      const result = await checkResidentsRoster({
+  test("matches residents by displayId for states that use display-id lookup", async () => {
+    await testPrismaClient.resident.create({
+      data: buildResidentRecord({
+        pseudonymizedId: "anonres1",
+        displayId: residentExternalId,
+        personExternalId: "someone-else",
+      }),
+    });
+
+    const result = await checkResidentsRoster({
+      stateCode: displayIdState,
+      userExternalId: residentExternalId,
+      userIdFromAuthProvider: userId,
+    });
+
+    expect(result).toEqual({
+      stateCode: displayIdState,
+      externalId: "someone-else",
+      pseudonymizedId: "anonres1",
+      permissions: ["live_data"],
+    });
+  });
+
+  test("matches residents by personExternalId for other states", async () => {
+    await testPrismaClient.resident.create({
+      data: buildResidentRecord({
+        pseudonymizedId: "anonres1",
+        personExternalId: residentExternalId,
+        displayId: "someone-else",
+      }),
+    });
+
+    const result = await checkResidentsRoster({
+      stateCode: externalIdState,
+      userExternalId: residentExternalId,
+      userIdFromAuthProvider: userId,
+    });
+
+    expect(result).toEqual({
+      stateCode: externalIdState,
+      externalId: residentExternalId,
+      pseudonymizedId: "anonres1",
+      permissions: ["live_data"],
+    });
+  });
+
+  test("includes Intercom token when flag is active", async () => {
+    await activateFlag("intercom");
+
+    await testPrismaClient.resident.create({
+      data: buildResidentRecord({
+        pseudonymizedId: "anonres1",
+        personExternalId: residentExternalId,
+      }),
+    });
+
+    // freezing so the timestamp in the payload will be consistent
+    const result = await tk.withFreeze(new Date("2026-08-13"), async () => {
+      return checkResidentsRoster({
         stateCode: externalIdState,
         userExternalId: residentExternalId,
         userIdFromAuthProvider: userId,
-      });
-
-      expect(result).toEqual({
-        stateCode: externalIdState,
-        externalId: "firestore-ext-id",
-        pseudonymizedId: "firestore-anon-id",
-        permissions: ["live_data"],
       });
     });
 
-    test("queries Firestore by collection for states that use display-id lookup", async () => {
-      await checkResidentsRoster({
-        stateCode: displayIdState,
-        userExternalId: residentExternalId,
-        userIdFromAuthProvider: userId,
-      });
-
-      expect(mockFirestore.collection).toHaveBeenCalled();
-    });
-
-    test("queries Firestore by doc for other states", async () => {
-      await checkResidentsRoster({
-        stateCode: externalIdState,
-        userExternalId: residentExternalId,
-        userIdFromAuthProvider: userId,
-      });
-
-      expect(mockFirestore.doc).toHaveBeenCalled();
+    expect(verifyIntercomToken(result?.intercomToken ?? "")).toEqual({
+      user_id: "anonres1",
+      iat: 1786579200,
     });
   });
 });
@@ -352,94 +240,35 @@ describe("checkDemoResidentsRoster", () => {
     });
   });
 
-  describe("when the useNewResidentData flag is active", () => {
-    beforeEach(async () => {
-      await activateFlag("useNewResidentData");
-    });
-
-    test("returns a ResidentUserProfile built from the resident record", async () => {
-      await testPrismaClient.resident.create({
-        data: buildResidentRecord({
-          pseudonymizedId: "anonres1",
-          personExternalId: residentExternalId,
-        }),
-      });
-
-      const result = await checkDemoResidentsRoster({
-        stateCode: externalIdState,
-        userExternalId: residentExternalId,
-        userIdFromAuthProvider: userId,
-      });
-
-      expect(result).toEqual({
-        stateCode: externalIdState,
-        externalId: residentExternalId,
+  test("returns a ResidentUserProfile built from the resident record", async () => {
+    await testPrismaClient.resident.create({
+      data: buildResidentRecord({
         pseudonymizedId: "anonres1",
-        permissions: [],
-      });
+        personExternalId: residentExternalId,
+      }),
     });
 
-    test("returns undefined when no resident record is found", async () => {
-      const result = await checkDemoResidentsRoster({
-        stateCode: externalIdState,
-        userExternalId: residentExternalId,
-        userIdFromAuthProvider: userId,
-      });
-
-      expect(result).toBeUndefined();
+    const result = await checkDemoResidentsRoster({
+      stateCode: externalIdState,
+      userExternalId: residentExternalId,
+      userIdFromAuthProvider: userId,
     });
 
-    test("does not query Firestore", async () => {
-      await checkDemoResidentsRoster({
-        stateCode: externalIdState,
-        userExternalId: residentExternalId,
-        userIdFromAuthProvider: userId,
-      });
-
-      expect(getFirestore).not.toHaveBeenCalled();
+    expect(result).toEqual({
+      stateCode: externalIdState,
+      externalId: residentExternalId,
+      pseudonymizedId: "anonres1",
+      permissions: [],
     });
   });
 
-  describe("when the useNewResidentData flag is not active", () => {
-    // no flag needs to be seeded here; the DB is reset before every test, so
-    // the flag is inactive by default
-
-    test("uses the Firestore record rather than a matching Prisma record", async () => {
-      // seeded so the assertion below would fail if this record were
-      // (incorrectly) used to satisfy the request instead of Firestore's
-      await testPrismaClient.resident.create({
-        data: buildResidentRecord({
-          pseudonymizedId: "prisma-anon-id",
-          personExternalId: residentExternalId,
-        }),
-      });
-      mockFirestoreRecord({
-        personExternalId: "firestore-ext-id",
-        pseudonymizedId: "firestore-anon-id",
-      });
-
-      const result = await checkDemoResidentsRoster({
-        stateCode: externalIdState,
-        userExternalId: residentExternalId,
-        userIdFromAuthProvider: userId,
-      });
-
-      expect(result).toEqual({
-        stateCode: externalIdState,
-        externalId: residentExternalId,
-        pseudonymizedId: "firestore-anon-id",
-        permissions: [],
-      });
+  test("returns undefined when no resident record is found", async () => {
+    const result = await checkDemoResidentsRoster({
+      stateCode: externalIdState,
+      userExternalId: residentExternalId,
+      userIdFromAuthProvider: userId,
     });
 
-    test("queries Firestore", async () => {
-      await checkDemoResidentsRoster({
-        stateCode: externalIdState,
-        userExternalId: residentExternalId,
-        userIdFromAuthProvider: userId,
-      });
-
-      expect(mockFirestore.collection).toHaveBeenCalled();
-    });
+    expect(result).toBeUndefined();
   });
 });

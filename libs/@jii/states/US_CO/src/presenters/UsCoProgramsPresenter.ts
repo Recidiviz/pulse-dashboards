@@ -23,7 +23,6 @@ import { makeAutoObservable, runInAction } from "mobx";
 
 import { DataAPI, ResidentRecord, UserStore } from "~@jii/data";
 import type { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
-import { WorkflowsResidentRecord } from "~datatypes";
 import {
   Hydratable,
   HydratesFromSource,
@@ -47,7 +46,7 @@ export class UsCoProgramsPresenter implements Hydratable {
   selectedProgram?: UsCoProgram;
 
   constructor(
-    private readonly resident: WorkflowsResidentRecord | ResidentRecord,
+    private readonly resident: ResidentRecord,
     private readonly apiClient: DataAPI,
     private readonly userStore: UserStore,
   ) {

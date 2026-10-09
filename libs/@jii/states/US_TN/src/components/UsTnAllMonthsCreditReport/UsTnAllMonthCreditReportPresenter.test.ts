@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { WorkflowsResidentRecord } from "~datatypes";
+import { ResidentRecord } from "~@jii/data";
 
 import { UsTnMonthlyReports } from "../UsTnSingleResidentDataContext/context";
 import { UsTnAllMonthCreditReportPresenter } from "./UsTnAllMonthCreditReportPresenter";
@@ -56,7 +56,7 @@ const monthlyReports = {
 describe("UsTnAllMonthCreditReportPresenter tests", () => {
   it("groups reports by year and orders them by date within each year", () => {
     const presenter = new UsTnAllMonthCreditReportPresenter(
-      {} as never as WorkflowsResidentRecord,
+      {} as never as ResidentRecord,
       monthlyReports,
     );
 
@@ -76,7 +76,7 @@ describe("UsTnAllMonthCreditReportPresenter tests", () => {
 
   it("orders years in descending order", () => {
     const presenter = new UsTnAllMonthCreditReportPresenter(
-      {} as never as WorkflowsResidentRecord,
+      {} as never as ResidentRecord,
       monthlyReports,
     );
 

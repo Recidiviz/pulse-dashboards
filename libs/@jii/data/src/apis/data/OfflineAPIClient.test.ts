@@ -29,29 +29,10 @@ beforeEach(() => {
   api = new OfflineAPIClient({ authManager });
 });
 
-test("residents should reflect state code", async () => {
-  const residents = await api.residents(stateCodeMock);
-  // sanity check
-  expect(residents.length).toBeGreaterThan(0);
-  residents.forEach((r) => expect(r.stateCode).toBe("US_AZ"));
-});
-
 test("local config object", async () => {
   const expectedConfig = residentsConfigByState.US_AZ;
 
   const fetched = await api.residentsConfig(stateCodeMock);
 
   expect(fetched).toEqual(expectedConfig);
-});
-
-test("missing eligibility record", async () => {
-  await expect(
-    api.residentEligibility(
-      stateCodeMock,
-      "does-not-exist",
-      "usNeGoodTimeRestoration",
-    ),
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `[Error: Unable to find usNeGoodTimeRestoration record for does-not-exist]`,
-  );
 });

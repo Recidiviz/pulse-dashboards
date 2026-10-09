@@ -21,32 +21,24 @@ import { differenceInMonths } from "date-fns";
 import { makeAutoObservable } from "mobx";
 
 import { IntakeAssessmentPresenter } from "~@jii/case-planning";
-import { OpportunityData, ResidentRecord, UserStore } from "~@jii/data";
+import { ResidentRecord, UserStore } from "~@jii/data";
 import { UsNeTranslationsObject } from "~@jii/translation";
 import { JiiResidentAppRouter } from "~@jii/trpc-types";
 import {
-  UsNeGoodTimeRestorationRecord,
   usNeGoodTimeRestorationTodosCriterionEnum,
   UsNeResidentJiiData,
-  WorkflowsResidentRecord,
 } from "~datatypes";
 import { FirebaseAuthClient } from "~firebase-auth";
 import { Hydratable, HydrationState } from "~hydration-utils";
 
 import { CheckInFormResult } from "../CheckInTool/types";
 
-type GoodTimeOpportunity = OpportunityData & {
-  opportunityRecord: UsNeGoodTimeRestorationRecord["output"];
-};
-
 export class UsNeTodosPresenter implements Hydratable {
   readonly intakeAssessmentPresenter: IntakeAssessmentPresenter;
 
   constructor(
-    resident: WorkflowsResidentRecord | ResidentRecord,
+    resident: ResidentRecord,
     private readonly residentMetadata: UsNeResidentJiiData,
-    private readonly opportunities: OpportunityData[],
-    private readonly useNewResidentData: boolean,
     firebaseAuthClient: FirebaseAuthClient,
     userStore: UserStore,
     public checkInFormQuery: UseSuspenseQueryResult<
@@ -105,39 +97,6 @@ export class UsNeTodosPresenter implements Hydratable {
     return years <= 75;
   }
 
-  get goodTimeRestorationOpportunityRecord():
-    | GoodTimeOpportunity["opportunityRecord"]
-    | undefined {
-    return this.opportunities.find(
-      // This type guard only asserts what OpportunityData guarantees (that opportunityRecord's
-      // type matches the opportunityId) but TypeScript is unable to deduce on its own.
-      (opp): opp is GoodTimeOpportunity =>
-        opp.opportunityId === "usNeGoodTimeRestoration",
-    )?.opportunityRecord;
-  }
-
-  private get goodTimeRestorationStatusFromOpportunity():
-    | keyof UsNeTranslationsObject["home"]["todos"]["goodTimeRestoration"]
-    | undefined {
-    const { goodTimeRestorationOpportunityRecord } = this;
-    if (!goodTimeRestorationOpportunityRecord) {
-      return;
-    }
-
-    const {
-      ineligibleCriteria,
-      metadata: { almostEligibleForJiiApp },
-    } = goodTimeRestorationOpportunityRecord;
-
-    // We're not showing the eligible states for now, just almost/ineligible
-    if (!almostEligibleForJiiApp) return;
-
-    if ("usNeNotInLtrhFor90Days" in ineligibleCriteria) return "ineligibleLTRH";
-    if ("usNeNoOngoingClinicalTreatmentProgramRefusal" in ineligibleCriteria)
-      return "ineligibleTreatment";
-    return "almostEligible";
-  }
-
   /**
    * We expect and support at most one item in the array of todos
    */
@@ -151,7 +110,10 @@ export class UsNeTodosPresenter implements Hydratable {
       : undefined;
   }
 
-  private get goodTimeRestorationStatusFromResident():
+  /**
+   * Which Good Time Restoration todo should be shown, if any?
+   */
+  get goodTimeRestorationStatus():
     | keyof UsNeTranslationsObject["home"]["todos"]["goodTimeRestoration"]
     | undefined {
     const restorationReason = this.goodTimeRestorationTodo;
@@ -169,40 +131,12 @@ export class UsNeTodosPresenter implements Hydratable {
     }
   }
 
-  /**
-   * Which Good Time Restoration todo should be shown, if any?
-   */
-  get goodTimeRestorationStatus():
-    | keyof UsNeTranslationsObject["home"]["todos"]["goodTimeRestoration"]
-    | undefined {
-    return this.useNewResidentData
-      ? this.goodTimeRestorationStatusFromResident
-      : this.goodTimeRestorationStatusFromOpportunity;
-  }
-
   // Only supported when goodTimeRestorationStatus === "almostEligible"
   get goodTimeRestorationMonthsRemaining(): number | undefined {
     if (this.goodTimeRestorationStatus !== "almostEligible") return;
 
-    let latestEligibleDate: Date | undefined;
-
-    if (this.useNewResidentData) {
-      latestEligibleDate =
-        this.goodTimeRestorationTodo?.reason.latestEligibleDate;
-    } else {
-      const ineligibleCriteria =
-        this.goodTimeRestorationOpportunityRecord?.ineligibleCriteria;
-      if (!ineligibleCriteria) {
-        return;
-      }
-
-      // At most one of these will exist in records marked as almostEligibleForJiiApp
-      latestEligibleDate =
-        ineligibleCriteria.usNeLessThan3UdcMrsInPast6Months
-          ?.latestEligibleDate ??
-        ineligibleCriteria.usNeNoIdcMrsInPast6Months?.latestEligibleDate ??
-        ineligibleCriteria.usNeNoClass1MrsInLastYear?.latestEligibleDate;
-    }
+    const latestEligibleDate =
+      this.goodTimeRestorationTodo?.reason.latestEligibleDate;
 
     if (!latestEligibleDate) return;
     return Math.max(1, differenceInMonths(latestEligibleDate, new Date()));

@@ -16,8 +16,7 @@
 // =============================================================================
 
 import { IntakeAssessmentPresenter } from "~@jii/case-planning";
-import type { UserStore } from "~@jii/data";
-import type { WorkflowsResidentRecord } from "~datatypes";
+import type { ResidentRecord, UserStore } from "~@jii/data";
 import type { FirebaseAuthClient } from "~firebase-auth";
 
 import { SurveyCardPresenter } from "./SurveyCardPresenter";
@@ -57,7 +56,7 @@ function makePresenter() {
   return new SurveyCardPresenter(
     // none of these actually get used by this class, they are just passed through
     // to the IntakeAssessmentPresenter that is also being mocked
-    {} as WorkflowsResidentRecord,
+    {} as ResidentRecord,
     {} as FirebaseAuthClient,
     {} as UserStore,
     mockCopy,

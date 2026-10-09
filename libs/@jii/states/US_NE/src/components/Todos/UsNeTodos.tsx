@@ -25,7 +25,6 @@ import { ReactNode, Suspense } from "react";
 
 import { Card, HomepageSectionHeading, SlateCopy } from "~@jii/common-ui";
 import {
-  useNewResidentData,
   useResidentMetadata,
   useRootStore,
   useSingleResidentContext,
@@ -124,11 +123,9 @@ function usePresenter() {
   const { firebaseAuthClient, userStore, apiClient } = useRootStore();
   const {
     resident,
-    opportunities,
     residentFlags: { usNeCheckInTool },
   } = useSingleResidentContext();
   const stateData = useResidentMetadata("US_NE");
-  const newDataFlag = useNewResidentData();
 
   const checkInFormQuery = useSuspenseQuery(
     apiClient.trpcQuerier.state.usNe.getCheckIn.queryOptions({
@@ -139,8 +136,6 @@ function usePresenter() {
   return new UsNeTodosPresenter(
     resident,
     stateData,
-    opportunities,
-    newDataFlag,
     firebaseAuthClient,
     userStore,
     checkInFormQuery,

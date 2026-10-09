@@ -21,7 +21,6 @@ import { z } from "zod";
 
 import { usNcResidentMetadataSchema } from "~datatypes";
 
-import { isUserFlagActive } from "../../../../../helpers/featureFlags";
 import { usNcStaffProcedure } from "../../../../../procedures/stateRestrictedStaffProcedureFactory";
 import { getStatusOfExistingRNA, RNAAssessmentStatus } from "./rnaStatus";
 
@@ -39,12 +38,6 @@ function plainDueDate(datetime: Date | null | undefined) {
     day: datetime.getDate(),
   });
 }
-
-const residentRecordFields = z.object({
-  pseudonymizedId: z.string(),
-  // note this is assuming only NC records will be fetched
-  metadata: usNcResidentMetadataSchema,
-});
 
 function validateCurrentRNA<T extends { createdAt: Date }>(
   rnaDueDate: Temporal.PlainDate | undefined,
@@ -87,139 +80,108 @@ export const rnaStatusList = usNcStaffProcedure
       lookupValue: z.array(z.string()),
     }),
   )
-  .query(
-    async ({
-      ctx: { prisma, firestoreCurrentStateQuerier, userId, stateCode },
-      input: { lookupField, lookupValue },
-    }) => {
-      let residentData: Array<{
+  .query(async ({ ctx: { prisma }, input: { lookupField, lookupValue } }) => {
+    const residentData: Array<{
+      pseudonymizedId: string;
+      rnaDueDate: Temporal.PlainDate | undefined;
+    }> = (
+      await prisma.resident.findMany({
+        where: { [lookupField]: { in: lookupValue } },
+        select: { pseudonymizedId: true, stateSpecificData: true },
+      })
+    ).map(({ pseudonymizedId, stateSpecificData }) => {
+      const { rnaDueDate } =
+        usNcResidentMetadataSchema.parse(stateSpecificData);
+      return { pseudonymizedId, rnaDueDate: plainDueDate(rnaDueDate) };
+    });
+
+    const allRNARecords = await prisma.usNcRNA.findMany({
+      where: {
+        pseudonymizedId: { in: residentData.map((r) => r.pseudonymizedId) },
+      },
+      select: {
+        id: true,
+        pseudonymizedId: true,
+        completedAt: true,
+        createdAt: true,
+        updatedAt: true,
+        answers: true,
+        submittedByStaffAt: true,
+        enabledAt: true,
+      },
+      // we only want the most recent for each person,
+      // this will help us filter for that in memory
+      orderBy: {
+        updatedAt: "desc",
+      },
+    });
+
+    const latestRNAByResident = rollup(
+      allRNARecords,
+      // first item is most recent because the query sorted them
+      (v) => v[0],
+      // group by person
+      (r) => r.pseudonymizedId,
+    );
+
+    // compute a status for each resident and include applicable assessment data
+    return residentData.map(
+      (
+        r,
+      ): {
         pseudonymizedId: string;
-        rnaDueDate: Temporal.PlainDate | undefined;
-      }>;
+        status: RNAAssessmentStatus;
+        id?: string;
+        updatedAt?: Date;
+        createdAt?: Date;
+        completedAt?: Date;
+        submittedByStaffAt?: Date;
+        enabledAt?: Date;
+      } => {
+        const { pseudonymizedId, rnaDueDate } = r;
 
-      if (
-        await isUserFlagActive({
-          prisma,
-          flagId: "useNewResidentData",
-          userIdFromAuthProvider: userId,
-          stateCode,
-          // permissions in this app do not apply to staff
-          userPermissions: undefined,
-        })
-      ) {
-        residentData = (
-          await prisma.resident.findMany({
-            where: { [lookupField]: { in: lookupValue } },
-            select: { pseudonymizedId: true, stateSpecificData: true },
-          })
-        ).map(({ pseudonymizedId, stateSpecificData }) => {
-          const { rnaDueDate } =
-            usNcResidentMetadataSchema.parse(stateSpecificData);
-          return { pseudonymizedId, rnaDueDate: plainDueDate(rnaDueDate) };
-        });
-      } else {
-        // resident data is in Firestore, which we need to map this request to resident IDs
-        const residentsQuery = firestoreCurrentStateQuerier("residents")
-          .where(lookupField, "in", lookupValue)
-          .select("pseudonymizedId", "metadata");
+        const latestRNA = latestRNAByResident.get(pseudonymizedId);
 
-        residentData = (await residentsQuery.get()).docs.map((d) => {
-          const {
-            pseudonymizedId,
-            metadata: { rnaDueDate },
-          } = residentRecordFields.parse(d.data());
-          return { pseudonymizedId, rnaDueDate: plainDueDate(rnaDueDate) };
-        });
-      }
+        let currentRNA;
+        if (latestRNA) {
+          currentRNA = validateCurrentRNA(rnaDueDate, latestRNA);
+        }
 
-      const allRNARecords = await prisma.usNcRNA.findMany({
-        where: {
-          pseudonymizedId: { in: residentData.map((r) => r.pseudonymizedId) },
-        },
-        select: {
-          id: true,
-          pseudonymizedId: true,
-          completedAt: true,
-          createdAt: true,
-          updatedAt: true,
-          answers: true,
-          submittedByStaffAt: true,
-          enabledAt: true,
-        },
-        // we only want the most recent for each person,
-        // this will help us filter for that in memory
-        orderBy: {
-          updatedAt: "desc",
-        },
-      });
+        // if a resident has never filled out an assessment,
+        // or if their latest assessment is not fresh, staff needs to enable a new one
+        if (!latestRNA || !currentRNA) {
+          let status: RNAAssessmentStatus;
 
-      const latestRNAByResident = rollup(
-        allRNARecords,
-        // first item is most recent because the query sorted them
-        (v) => v[0],
-        // group by person
-        (r) => r.pseudonymizedId,
-      );
-
-      // compute a status for each resident and include applicable assessment data
-      return residentData.map(
-        (
-          r,
-        ): {
-          pseudonymizedId: string;
-          status: RNAAssessmentStatus;
-          id?: string;
-          updatedAt?: Date;
-          createdAt?: Date;
-          completedAt?: Date;
-          submittedByStaffAt?: Date;
-          enabledAt?: Date;
-        } => {
-          const { pseudonymizedId, rnaDueDate } = r;
-
-          const latestRNA = latestRNAByResident.get(pseudonymizedId);
-
-          let currentRNA;
-          if (latestRNA) {
-            currentRNA = validateCurrentRNA(rnaDueDate, latestRNA);
-          }
-
-          // if a resident has never filled out an assessment,
-          // or if their latest assessment is not fresh, staff needs to enable a new one
-          if (!latestRNA || !currentRNA) {
-            let status: RNAAssessmentStatus;
-
-            if (!rnaDueDate) {
-              status = "UPCOMING";
-            } else {
-              // comparing due date to today as calendar dates, not timestamps
-              const today = Temporal.Now.plainDateISO(NC_TZ);
-              // the person's status becomes "DUE" when the due date is in the past or today
-              status =
-                Temporal.PlainDate.compare(rnaDueDate, today) < 1
-                  ? "DUE"
-                  : "UPCOMING";
-            }
-
-            return {
-              pseudonymizedId,
-              status,
-            };
+          if (!rnaDueDate) {
+            status = "UPCOMING";
+          } else {
+            // comparing due date to today as calendar dates, not timestamps
+            const today = Temporal.Now.plainDateISO(NC_TZ);
+            // the person's status becomes "DUE" when the due date is in the past or today
+            status =
+              Temporal.PlainDate.compare(rnaDueDate, today) < 1
+                ? "DUE"
+                : "UPCOMING";
           }
 
           return {
             pseudonymizedId,
-            status: getStatusOfExistingRNA(currentRNA),
-            id: currentRNA.id,
-            updatedAt: currentRNA.updatedAt,
-            createdAt: currentRNA.createdAt,
-            // coalescing nulls to undefined just to simplify the output type,
-            // the distinction between them is not important
-            completedAt: currentRNA.completedAt ?? undefined,
-            submittedByStaffAt: currentRNA.submittedByStaffAt ?? undefined,
-            enabledAt: currentRNA.enabledAt ?? undefined,
+            status,
           };
-        },
-      );
-    },
-  );
+        }
+
+        return {
+          pseudonymizedId,
+          status: getStatusOfExistingRNA(currentRNA),
+          id: currentRNA.id,
+          updatedAt: currentRNA.updatedAt,
+          createdAt: currentRNA.createdAt,
+          // coalescing nulls to undefined just to simplify the output type,
+          // the distinction between them is not important
+          completedAt: currentRNA.completedAt ?? undefined,
+          submittedByStaffAt: currentRNA.submittedByStaffAt ?? undefined,
+          enabledAt: currentRNA.enabledAt ?? undefined,
+        };
+      },
+    );
+  });

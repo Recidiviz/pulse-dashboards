@@ -17,35 +17,17 @@
 
 import { captureException } from "@sentry/react";
 import { parseISO } from "date-fns";
-import keyBy from "lodash/keyBy";
 import omit from "lodash/omit";
-import { makeAutoObservable, runInAction, set } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 
-import {
-  IncarcerationOpportunityId,
-  ResidentsConfig,
-  StateCode,
-} from "~@jii/configs";
+import { ResidentsConfig, StateCode } from "~@jii/configs";
 import type {
   JiiResidentAppRouterInputs,
   JiiResidentAppRouterOutputs,
 } from "~@jii/trpc-types";
-import {
-  LocationRecord,
-  setDateshift,
-  WorkflowsResidentRecord,
-} from "~datatypes";
-import { FilterParams } from "~firestore-api";
 import { FlowMethod } from "~hydration-utils";
 
-import { DataAPI } from "../apis/data/interface";
-import { OpportunityRecord } from "../configs/residentsOpportunitySchemas";
 import type { RootStore } from "./RootStore";
-
-// because we use a mapped type to ensure key-value agreement, this can't be an ES6 Map
-type OpportunityRecordMapping = {
-  [O in IncarcerationOpportunityId]?: OpportunityRecord<O>;
-};
 
 export type StateUserProperties = Partial<
   JiiResidentAppRouterOutputs["user"]["getProperties"]
@@ -63,21 +45,6 @@ export type ResidentFlags = JiiResidentAppRouterOutputs["resident"]["getFlags"];
 export type UserFlags = JiiResidentAppRouterOutputs["user"]["getFlags"];
 
 export class ResidentsStore {
-  /**
-   * Holds all resident records that have been fetched
-   */
-  residentsByExternalId: Map<string, WorkflowsResidentRecord> = new Map();
-
-  /**
-   * Holds all opportunity eligibility records that have been fetched
-   */
-  residentOpportunityRecordsByExternalId: Map<
-    string,
-    OpportunityRecordMapping
-  > = new Map();
-
-  locations: Array<LocationRecord> = [];
-
   residentFlagsByPseudoId: Map<string, ResidentFlags> = new Map();
 
   userProperties?: StateUserProperties;
@@ -104,111 +71,6 @@ export class ResidentsStore {
 
   get userStore() {
     return this.rootStore.userStore;
-  }
-
-  private areAllResidentsPopulated(): boolean {
-    // if we started the session on a single resident's page, we might have had one
-    // populated already. Seems a safe assumption that the total will always be > 1
-    return this.residentsByExternalId.size > 1;
-  }
-  /**
-   * Populates {@link residentsByExternalId} with the API response for all available residents
-   * (or the subset indicated by {@link filters}).
-   * Will not refetch if data is already populated, unless `forceRefresh` is true.
-   * Returns the number of residents fetched, if applicable.
-   */
-  *populateResidents(
-    filters?: Array<FilterParams>,
-    forceRefresh = false,
-  ): FlowMethod<DataAPI["residents"], number | undefined> {
-    if (!forceRefresh && this.areAllResidentsPopulated()) return;
-
-    const residents = yield this.apiClient.residents(this.stateCode, filters);
-    set(this.residentsByExternalId, keyBy(residents, "personExternalId"));
-
-    return residents.length;
-  }
-
-  /**
-   * Populates {@link locations} with the API response for all available locations
-   */
-  *populateLocations(): FlowMethod<DataAPI["locations"], void> {
-    this.locations = yield this.apiClient.locations(this.stateCode);
-  }
-
-  get residentsByPseudoId(): Map<string, WorkflowsResidentRecord> {
-    return new Map(
-      Object.entries(
-        keyBy([...this.residentsByExternalId.values()], "pseudonymizedId"),
-      ),
-    );
-  }
-
-  private isResidentWithPseudoIdPopulated(pseudoId: string): boolean {
-    return this.residentsByPseudoId.has(pseudoId);
-  }
-
-  /**
-   * Populates {@link residentsByExternalId} with the API response for the resident
-   * with pseudonymizedId matching `residentPseudoId`. Throws if the API request fails.
-   * Will not refetch if data is already populated.
-   */
-  *populateResidentByPseudoId(
-    residentPseudoId: string,
-  ): FlowMethod<DataAPI["residentByPseudoId"], void> {
-    if (this.isResidentWithPseudoIdPopulated(residentPseudoId)) return;
-
-    const resident = yield this.apiClient.residentByPseudoId(
-      this.stateCode,
-      residentPseudoId,
-    );
-    this.residentsByExternalId.set(resident.personExternalId, resident);
-  }
-
-  private isResidentEligibilityRecordPopulated(
-    residentExternalId: string,
-    opportunityId: IncarcerationOpportunityId,
-  ): boolean {
-    return (
-      opportunityId in
-      (this.residentOpportunityRecordsByExternalId.get(residentExternalId) ??
-        {})
-    );
-  }
-
-  /**
-   * Populates {@link residentOpportunityRecordsByExternalId} with the API response for
-   * the provided resident and opportunity IDs. Will populate with `undefined` if no record is found
-   * (indicating the resident is ineligible). Will not refetch if data is already populated.
-   */
-  *populateOpportunityRecordByResidentId(
-    residentExternalId: string,
-    opportunityId: IncarcerationOpportunityId,
-  ): FlowMethod<DataAPI["residentEligibility"], void> {
-    if (
-      this.isResidentEligibilityRecordPopulated(
-        residentExternalId,
-        opportunityId,
-      )
-    )
-      return;
-
-    const eligibilityRecord = yield this.apiClient.residentEligibility(
-      this.stateCode,
-      residentExternalId,
-      opportunityId,
-    );
-    const opportunityMap: OpportunityRecordMapping =
-      this.residentOpportunityRecordsByExternalId.get(residentExternalId) ?? {};
-
-    opportunityMap[opportunityId] = eligibilityRecord;
-
-    if (!this.residentOpportunityRecordsByExternalId.has(residentExternalId)) {
-      this.residentOpportunityRecordsByExternalId.set(
-        residentExternalId,
-        opportunityMap,
-      );
-    }
   }
 
   *populateResidentFlags(
@@ -249,11 +111,6 @@ export class ResidentsStore {
     if (this.userFlags) return;
 
     this.userFlags = yield this.apiClient.trpc.user.getFlags.query();
-    // TODO(OBT-29541): disable all client-side dateshifting once Firestore is gone
-    // new data fixtures have their dates pre-shifted at seeding time
-    if (this.userFlags.useNewResidentData) {
-      setDateshift(false);
-    }
   }
 
   // incrementally migrating old data from local storage as we encounter it

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,18 +15,49 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useQuery } from "@tanstack/react-query";
 import { memo } from "react";
+import { Outlet } from "react-router-dom";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { useNewResidentData } from "~@jii/data";
+import { SingleResidentContextProvider, useRootStore } from "~@jii/data";
+import { ErrorPageMainContent } from "~@jii/layout";
+import { State } from "~@jii/paths";
+import { Loading } from "~design-system";
+import { castToError } from "~hydration-utils";
 
-import { SingleResidentFirestoreHydrator } from "./SingleResidentFirestoreHydrator";
-import { SingleResidentTrpcHydrator } from "./SingleResidentTrpcHydrator";
+import { useResidentDataQuery } from "./useResidentDataQuery";
 
 export const SingleResidentHydrator = memo(function SingleResidentHydrator() {
-  return useNewResidentData() ? (
-    <SingleResidentTrpcHydrator />
-  ) : (
-    // TODO(OBT-29541): get rid of this entirely
-    <SingleResidentFirestoreHydrator />
+  const { personPseudoId: pseudonymizedId } = useTypedParams(State.Resident);
+
+  const {
+    apiClient: { trpcQuerier },
+  } = useRootStore();
+  const residentQuery = useResidentDataQuery(pseudonymizedId, trpcQuerier);
+  const residentFlagsQuery = useQuery(
+    trpcQuerier.resident.getFlags.queryOptions({
+      pseudonymizedId,
+    }),
+  );
+
+  // error handling for each query; order is not important,
+  // any failure should trigger this immediately
+  const error = residentQuery.error ?? residentFlagsQuery.error;
+  if (error) return <ErrorPageMainContent error={castToError(error)} />;
+
+  // loading state waits for all queries
+  if (!residentQuery.data || !residentFlagsQuery.data) return <Loading />;
+
+  // if we've made it this far, all queries have succeeded
+  return (
+    <SingleResidentContextProvider
+      value={{
+        resident: residentQuery.data,
+        residentFlags: residentFlagsQuery.data,
+      }}
+    >
+      <Outlet />
+    </SingleResidentContextProvider>
   );
 });

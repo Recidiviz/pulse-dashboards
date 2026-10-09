@@ -21,8 +21,8 @@ import { useSingleResidentContext } from "~@jii/data";
  * @returns The currently viewed resident's given names
  */
 export function useResidentGivenNames() {
-  const { resident } = useSingleResidentContext();
-  return "givenNames" in resident
-    ? resident.givenNames
-    : resident.personName.givenNames;
+  const {
+    resident: { givenNames },
+  } = useSingleResidentContext();
+  return givenNames;
 }

@@ -20,29 +20,19 @@ import {
   createTRPCOptionsProxy,
   TRPCOptionsProxy,
 } from "@trpc/tanstack-react-query";
-import { makeObservable, when } from "mobx";
+import { makeObservable } from "mobx";
 import { ILazyObservable, lazyObservable } from "mobx-utils";
 
-import {
-  IncarcerationOpportunityId,
-  ResidentsConfig,
-  residentsConfigByState,
-  StateCode,
-} from "~@jii/configs";
+import { residentsConfigByState, StateCode } from "~@jii/configs";
 import type { JiiResidentAppRouter } from "~@jii/trpc-types";
 import { FirebaseAuthClient } from "~firebase-auth";
-import { FilterParams, FirestoreAPIClient } from "~firestore-api";
 
-import { residentOpportunitySchemas } from "../../configs/residentsOpportunitySchemas";
-import { proxyHost } from "../../utils/proxy";
 import { AuthManager } from "../auth/AuthManager";
 import { queryClient } from "../query/client";
 import { DataAPI } from "./interface";
 import { createTrpcClientForApi } from "./trpcMixin";
 
 export class ApiClient implements DataAPI {
-  private firestoreClient: FirestoreAPIClient;
-
   readonly trpc: TRPCClient<JiiResidentAppRouter>;
   readonly trpcQuerier: TRPCOptionsProxy<JiiResidentAppRouter>;
 
@@ -51,17 +41,10 @@ export class ApiClient implements DataAPI {
   constructor(
     private externals: {
       authManager: AuthManager;
-      config?: ResidentsConfig;
       firebaseAuthClient: FirebaseAuthClient;
     },
   ) {
     makeObservable<this, "isAuthenticated">(this, { isAuthenticated: true });
-
-    this.firestoreClient = new FirestoreAPIClient(
-      this.externals.firebaseAuthClient.app,
-      () => this.externals.authManager.isDemoUser,
-      proxyHost(),
-    );
 
     this.trpc = createTrpcClientForApi(this);
     this.trpcQuerier = createTRPCOptionsProxy({
@@ -104,56 +87,5 @@ export class ApiClient implements DataAPI {
    */
   async residentsConfig(stateCode: StateCode) {
     return residentsConfigByState[stateCode];
-  }
-
-  async residents(stateCode: StateCode, filters?: Array<FilterParams>) {
-    await when(() => this.isAuthenticated);
-
-    return await this.firestoreClient.residents(stateCode, filters);
-  }
-
-  async residentByPseudoId(stateCode: StateCode, residentPseudoId: string) {
-    await when(() => this.isAuthenticated);
-
-    return this.firestoreClient.residentByPseudoId(stateCode, residentPseudoId);
-  }
-
-  async residentEligibility<O extends IncarcerationOpportunityId>(
-    stateCode: StateCode,
-    residentExternalId: string,
-    opportunityId: O,
-  ) {
-    await when(() => this.isAuthenticated);
-    try {
-      const collectionName =
-        this.externals.config?.eligibility?.incarcerationOpportunities[
-          opportunityId
-        ]?.firestoreCollection;
-
-      if (!collectionName) {
-        throw new Error(
-          `Unable to resolve collection name for ${opportunityId}`,
-        );
-      }
-
-      const schema = residentOpportunitySchemas[opportunityId];
-
-      return this.firestoreClient.recordForExternalId(
-        stateCode,
-        { raw: collectionName },
-        residentExternalId,
-        schema,
-      );
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.log(e);
-      throw e;
-    }
-  }
-
-  async locations(stateCode: StateCode) {
-    await when(() => this.isAuthenticated);
-
-    return this.firestoreClient.locations(stateCode);
   }
 }

@@ -15,10 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useRootStore } from "../components/StoreProvider/useRootStore";
+import { isDemoMode } from "~client-env-utils";
+import {
+  collectionNameFromConfig,
+  FirestoreCollectionKey,
+} from "~firestore-config";
 
-// TODO(OBT-29541): don't need this anymore once the migration is complete
-export function useNewResidentData() {
-  const { residentsStore } = useRootStore();
-  return !!residentsStore?.userFlags?.useNewResidentData;
+/**
+ * Given a Firestore collection specifier, returns the collection name that should
+ * be used in Firestore queries. In demo environments (identified via environment variable)
+ * or for accounts tagged for pen testing, names will be automatically
+ * prefixed to their demo data equivalents.
+ */
+export function collectionNameForCurrentEnv(
+  collectionKey: FirestoreCollectionKey,
+  userMetadata: { forceWorkflowsDemoData?: boolean } | undefined,
+) {
+  return collectionNameFromConfig({
+    name: collectionKey,
+    demo: isDemoMode() || Boolean(userMetadata?.forceWorkflowsDemoData),
+  });
 }

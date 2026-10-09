@@ -24,7 +24,6 @@ import {
   UsCoCreditType,
   UsCoEarnedCreditActivity,
   UsCoResidentJiiData,
-  WorkflowsResidentRecord,
 } from "~datatypes";
 
 export type UsCoMonthlyReport = {
@@ -93,7 +92,7 @@ export class UsCoCreditReportPresenter {
   readonly monthlyReports: UsCoMonthlyReports;
 
   constructor(
-    public readonly resident: WorkflowsResidentRecord | ResidentRecord,
+    public readonly resident: ResidentRecord,
     metadata: UsCoResidentJiiData,
   ) {
     this.monthlyReports = processMonthlyReports(metadata);

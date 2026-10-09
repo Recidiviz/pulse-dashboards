@@ -82,7 +82,7 @@ export class AuthManager implements Hydratable {
   }
 
   /**
-   * Returns an API access token that can be used to communicate directly with Firestore.
+   * Returns an API access token that can be used for API auth.
    * Will throw an error if the current user is not authorized.
    */
   getFirebaseToken() {

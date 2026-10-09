@@ -19,16 +19,8 @@ import type { TRPCClient } from "@trpc/client";
 import { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
 
 import { StateCode } from "~@jii/configs";
-import {
-  IncarcerationOpportunityId,
-  LandingPageConfig,
-  ResidentsConfig,
-} from "~@jii/configs";
+import { LandingPageConfig, ResidentsConfig } from "~@jii/configs";
 import type { JiiResidentAppRouter } from "~@jii/trpc-types";
-import { LocationRecord, WorkflowsResidentRecord } from "~datatypes";
-import { FilterParams } from "~firestore-api";
-
-import { OpportunityRecord } from "../../configs/residentsOpportunitySchemas";
 
 export interface DataAPI {
   /**
@@ -39,36 +31,6 @@ export interface DataAPI {
    * Fetches residents application config object for the given StateCode.
    */
   residentsConfig(stateCode: StateCode): Promise<ResidentsConfig>;
-  /**
-   * Fetches data for available residents for the given StateCode, applying
-   * additional filters as specified.
-   */
-  residents(
-    stateCode: StateCode,
-    filters?: Array<FilterParams>,
-  ): Promise<Array<WorkflowsResidentRecord>>;
-  /**
-   * Fetches data for the resident with pseudonymizedId matching `residentPseudoId`
-   * for the given StateCode. Throws if a match cannot be found.
-   */
-  residentByPseudoId(
-    stateCode: StateCode,
-    residentPseudoId: string,
-  ): Promise<WorkflowsResidentRecord>;
-  /**
-   * Fetches the opportunity eligibility record for the specified resident
-   * and opportunity type for the given StateCode. Throws if a record is not found.
-   * (i.e., unlike Workflows this API requires a record even for ineligible residents.)
-   */
-  residentEligibility<O extends IncarcerationOpportunityId>(
-    stateCode: StateCode,
-    residentExternalId: string,
-    opportunity: IncarcerationOpportunityId,
-  ): Promise<OpportunityRecord<O>>;
-  /**
-   * Fetches all location records (facilities, etc) for the specified state
-   */
-  locations(stateCode: StateCode): Promise<Array<LocationRecord>>;
   isAuthenticated: boolean;
   getApiToken(): Promise<string>;
   readonly trpc: TRPCClient<JiiResidentAppRouter>;

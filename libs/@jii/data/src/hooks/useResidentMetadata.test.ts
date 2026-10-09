@@ -17,23 +17,29 @@
 
 import { usMaResidents } from "~datatypes";
 
-import { useSingleResidentContext } from "../contexts/SingleResidentContext";
+import {
+  ResidentRecord,
+  useSingleResidentContext,
+} from "../contexts/SingleResidentContext";
 import { useResidentMetadata } from "./useResidentMetadata";
 
 vi.mock("../contexts/SingleResidentContext");
 
-const testResident = usMaResidents[0];
+const testStateSpecificData = usMaResidents[0]
+  .metadata as ResidentRecord["stateSpecificData"];
 
 beforeEach(() => {
   vi.mocked(useSingleResidentContext).mockReturnValue({
-    resident: testResident,
-    opportunities: [],
+    resident: {
+      pseudonymizedId: "anonres001",
+      stateSpecificData: testStateSpecificData,
+    } as ResidentRecord,
     residentFlags: {},
   });
 });
 
 test("correct state code", () => {
-  expect(useResidentMetadata("US_MA")).toEqual(testResident.metadata);
+  expect(useResidentMetadata("US_MA")).toEqual(testStateSpecificData);
 });
 
 test("incorrect stateCode", () => {

@@ -21,13 +21,13 @@ import { MockInstance } from "vitest";
 
 import { Permission } from "~@jii/auth";
 import {
+  ResidentRecord,
   RootStore,
   SingleResidentContextProvider,
   useRootStore,
   UserStore,
 } from "~@jii/data";
 import { TRANSLATOR_MODE_LANGUAGE_CODE } from "~@jii/translation";
-import { WorkflowsResidentRecord } from "~datatypes";
 
 import { NavMenu } from "./NavMenu";
 
@@ -177,21 +177,17 @@ describe("with translator permission", () => {
 });
 
 describe("resident info display", () => {
-  const mockResident: WorkflowsResidentRecord = {
+  const mockResident: ResidentRecord = {
     displayId: "12345",
-    personName: {
-      givenNames: "John",
-      surname: "Doe",
-      middleNames: "Q",
-    },
-    stateCode: "US_ID",
+    givenNames: "John",
+    surname: "Doe",
+    middleNames: "Q",
     pseudonymizedId: "pseudo-123",
-  } as WorkflowsResidentRecord;
+  } as ResidentRecord;
 
   test("shows resident name and DOC ID when context is provided", () => {
     const contextValue = {
       resident: mockResident,
-      opportunities: [],
       residentFlags: {},
     };
 

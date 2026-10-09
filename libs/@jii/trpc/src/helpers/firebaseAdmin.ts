@@ -16,12 +16,6 @@
 // =============================================================================
 
 import firebaseAdmin from "firebase-admin";
-import { getFirestore } from "firebase-admin/firestore";
-
-import {
-  collectionNameFromConfig,
-  FirestoreCollectionName,
-} from "~firestore-config";
 
 export const firebaseApp = () => {
   const firebaseCredential = process.env["DATA_SOURCE_FIREBASE_CREDENTIAL"];
@@ -46,25 +40,3 @@ export const firebaseApp = () => {
     )
   );
 };
-
-const firestore = () => getFirestore(firebaseApp());
-
-export function getFirestoreCollectionQuerier(
-  stateCode: string,
-  isDemoRequest: boolean,
-) {
-  return (key: FirestoreCollectionName) => {
-    const collectionName = collectionNameFromConfig({
-      name: { key },
-      demo: isDemoRequest,
-    });
-
-    return firestore()
-      .collection(collectionName)
-      .where("stateCode", "==", stateCode);
-  };
-}
-
-export type FirestoreCollectionQuerier = ReturnType<
-  typeof getFirestoreCollectionQuerier
->;

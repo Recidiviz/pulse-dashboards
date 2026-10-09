@@ -22,13 +22,6 @@ import { ResidentsConfig } from "../../types";
 
 export const usNeResidentsConfig: ResidentsConfig = {
   home,
-  eligibility: {
-    incarcerationOpportunities: {
-      usNeGoodTimeRestoration: {
-        firestoreCollection: "US_NE-goodTimeRestorationReferrals",
-      },
-    },
-  },
   translation: {
     additionalLanguages: ["es"],
   },

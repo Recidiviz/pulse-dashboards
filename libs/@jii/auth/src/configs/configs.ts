@@ -97,7 +97,7 @@ export type ResidentUserProfile = z.infer<typeof residentUserProfileSchema>;
 /**
  * Based on and broader than {@link residentUserProfileSchema} since it may represent
  * different types of authorized users. Should NOT exceed 1000 bytes due to limits
- * imposed by Firestore (which will receive these claims downstream), so beware of unbounded fields
+ * imposed by Firebase (which will receive these claims downstream), so beware of unbounded fields
  * and limit its contents to permission-related fields only, not arbitrary profile data.
  *
  * Should match any valid combination of fields added to app_metadata in the Auth0 actions in `../auth0/actions`.

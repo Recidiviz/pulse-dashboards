@@ -57,7 +57,6 @@ import {
   WorkflowsResidentRecord,
   workflowsResidentRecordSchema,
 } from "~datatypes";
-import { collectionNameForCurrentEnv } from "~firestore-api";
 import {
   FIRESTORE_GENERAL_COLLECTION_MAP,
   FirestoreCollectionKey,
@@ -74,6 +73,7 @@ import {
 } from "../WorkflowsStore";
 import { CollectionDocumentSubscription } from "../WorkflowsStore/subscriptions";
 import { getMonthYearFromDate } from "../WorkflowsStore/utils";
+import { collectionNameForCurrentEnv } from "./collectionNames";
 import {
   AdjudicationStatusValue,
   AtLeastOneTrue,

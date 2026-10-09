@@ -17,20 +17,10 @@
 
 import { createContext, useContext } from "react";
 
-import { IncarcerationOpportunityId, OpportunityConfig } from "~@jii/configs";
 import { ResidentFlags } from "~@jii/data";
 import { AnyStateSpecificData } from "~@jii/schemas";
 import { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
-import { WorkflowsResidentRecord } from "~datatypes";
 import { useRequiredContext } from "~utils";
-
-import { OpportunityRecord } from "../configs/residentsOpportunitySchemas";
-
-export type OpportunityData = {
-  opportunityId: IncarcerationOpportunityId;
-  opportunityConfig: OpportunityConfig;
-  opportunityRecord: OpportunityRecord<IncarcerationOpportunityId>;
-};
 
 export type ResidentRecord = Omit<
   JiiResidentAppRouterOutputs["resident"]["getResident"],
@@ -38,8 +28,7 @@ export type ResidentRecord = Omit<
 > & { stateSpecificData: AnyStateSpecificData | undefined };
 
 export type SingleResidentContext = {
-  resident: WorkflowsResidentRecord | ResidentRecord;
-  opportunities: Array<OpportunityData>;
+  resident: ResidentRecord;
   residentFlags: ResidentFlags;
 };
 

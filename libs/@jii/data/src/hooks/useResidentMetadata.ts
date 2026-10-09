@@ -15,35 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { WorkflowsResidentMetadata, WorkflowsResidentRecord } from "~datatypes";
-
 import {
   ResidentRecord,
   useSingleResidentContext,
 } from "../contexts/SingleResidentContext";
 
-type StateCode = WorkflowsResidentRecord["metadata"]["stateCode"];
+type StateSpecificData = NonNullable<ResidentRecord["stateSpecificData"]>;
 
 /**
- * Returns the current resident's metadata, narrowed to the correct type
+ * Returns the current resident's state-specific data, narrowed to the correct type
  * for the provided `stateCode`. Will throw if the state code doesn't match
  * the current resident's state code. Must have a `SingleResidentContextProvider`
  * among its ancestors when called.
  */
-export function useResidentMetadata<S extends NonNullable<StateCode>>(
+export function useResidentMetadata<S extends StateSpecificData["stateCode"]>(
   stateCode: S,
-): WorkflowsResidentMetadata<S> {
+): Extract<StateSpecificData, { stateCode: S }> {
   const { resident } = useSingleResidentContext();
-
-  // TODO(OBT-29541): metadata phased out with Workflows backend
-  let stateSpecificData:
-    | WorkflowsResidentRecord["metadata"]
-    | ResidentRecord["stateSpecificData"];
-  if ("metadata" in resident) {
-    stateSpecificData = resident.metadata;
-  } else {
-    stateSpecificData = resident.stateSpecificData;
-  }
+  const { stateSpecificData } = resident;
 
   if (!stateSpecificData) {
     throw new Error(
@@ -54,7 +43,7 @@ export function useResidentMetadata<S extends NonNullable<StateCode>>(
   if (stateCode === stateSpecificData.stateCode) {
     // typescript can't infer this correctly,
     // but if the state codes match then this should be a safe assertion
-    return stateSpecificData as WorkflowsResidentMetadata<S>;
+    return stateSpecificData as Extract<StateSpecificData, { stateCode: S }>;
   }
 
   throw new Error(

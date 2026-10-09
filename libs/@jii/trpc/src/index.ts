@@ -21,8 +21,5 @@ export type { RosterLookupOpts } from "./auth/roster";
 export { checkDemoResidentsRoster, checkResidentsRoster } from "./auth/roster";
 export * from "./context";
 export * from "./errors";
-export {
-  firebaseApp,
-  getFirestoreCollectionQuerier,
-} from "./helpers/firebaseAdmin";
+export { firebaseApp } from "./helpers/firebaseAdmin";
 export * from "./router/appRouter";

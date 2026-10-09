@@ -21,14 +21,8 @@ import { usNcDashboardStaffRouter } from "../../router/routes/dashboardStaff/sta
 import { userId } from "../context";
 import { testPrismaClient } from "../prisma";
 
-const mocks = vi.hoisted(() => {
-  return { mockCollectionQuerier: vi.fn() };
-});
 vi.mock("../../procedures/firebaseAuthedStaffProcedure", () => {
   return {
-    // the real procedure depends on third party services such as Firebase
-    // to create a context for authorized users; this just mocks that result
-    // for a standardized test user
     firebaseAuthedStaffProcedure: baseProcedure.use((opts) => {
       return opts.next({
         ctx: {
@@ -41,7 +35,6 @@ vi.mock("../../procedures/firebaseAuthedStaffProcedure", () => {
           },
           stateCode: "US_NC",
           prisma: testPrismaClient,
-          firestoreCurrentStateQuerier: mocks.mockCollectionQuerier,
         } satisfies AuthorizedStaffUserContext,
       });
     }),
@@ -51,5 +44,3 @@ vi.mock("../../procedures/firebaseAuthedStaffProcedure", () => {
 // we are mocking the procedure's context so it doesn't really matter what we pass here
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const caller = usNcDashboardStaffRouter.createCaller({ req: {} as any });
-
-export const mockCollectionQuerier = mocks.mockCollectionQuerier;

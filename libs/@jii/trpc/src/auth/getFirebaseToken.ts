@@ -23,8 +23,7 @@ import type { AuthorizedUserProfile } from "~@jii/auth";
 import { firebaseApp } from "../helpers/firebaseAdmin";
 
 /**
- * Returns a Firebase auth token for a given user, which can be used to access Firestore
- * from the frontend.
+ * Returns a Firebase auth token for a given user, which can be used for API auth
  * @param uid needs to be unique but otherwise not used directly
  * @param metadata user app metadata as defined by the schema
  */
@@ -36,13 +35,7 @@ export async function getFirebaseToken(
 
   return firebaseAdmin.auth(firebaseApp()).createCustomToken(uid, {
     app: "jii",
-    // "allowedStates" and "recidivizAllowedStates" are functionally identical in this app;
-    // we mostly use allowedStates, as it is more generic, but there is some shared functionality
-    // with the staff app in our Firestore Rules that expects recidivizAllowedStates to exist,
-    // so for safety we always include it in the token
     allowedStates: allowedStatesNormalized,
-    // TODO(OBT-29541): not needed once Firestore access is removed
-    recidivizAllowedStates: allowedStatesNormalized,
     // FYI Firebase caps claims at 1000 bytes, beware of anything large or unbounded being passed through
     ...passthroughClaims,
   });

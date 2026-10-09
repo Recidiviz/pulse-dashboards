@@ -18,17 +18,10 @@
 import { waitFor } from "@testing-library/react";
 import { FirebaseApp } from "firebase/app";
 
-import { residentsConfigByState } from "~@jii/configs";
-import { usAzResidents } from "~datatypes";
 import { FirebaseAuthClient } from "~firebase-auth";
-import { FilterParams, FirestoreAPIClient } from "~firestore-api";
 
-import { proxyHost } from "../../utils/proxy";
 import type { AuthManager } from "../auth/AuthManager";
 import { ApiClient } from "./ApiClient";
-
-vi.mock("~firestore-api");
-vi.mock("../../utils/proxy");
 
 let client: ApiClient;
 const getFirebaseTokenMock = vi.fn();
@@ -39,8 +32,6 @@ const mockFirebaseAuthClient = {
   authenticate: authenticateMock,
 } as unknown as FirebaseAuthClient;
 
-const stateCodeMock = "US_AZ";
-
 beforeEach(() => {
   getFirebaseTokenMock.mockResolvedValue("test-firebase-token");
 
@@ -49,17 +40,8 @@ beforeEach(() => {
       getFirebaseToken: getFirebaseTokenMock,
       isDemoUser: false,
     } as unknown as AuthManager,
-    config: residentsConfigByState.US_AZ,
     firebaseAuthClient: mockFirebaseAuthClient,
   });
-});
-
-test("firestore client", () => {
-  expect(FirestoreAPIClient).toHaveBeenCalledExactlyOnceWith(
-    mockFirebaseApp,
-    expect.any(Function),
-    undefined,
-  );
 });
 
 test("authenticate", async () => {
@@ -68,67 +50,4 @@ test("authenticate", async () => {
   await waitFor(() => expect(client.isAuthenticated).toBeTrue());
 
   expect(authenticateMock).toHaveBeenCalledWith("test-firebase-token");
-});
-
-describe("after authentication", () => {
-  beforeEach(async () => {
-    await waitFor(() => expect(client.isAuthenticated).toBeTrue());
-  });
-
-  describe("residents", () => {
-    const records = usAzResidents;
-
-    test("exists", async () => {
-      vi.mocked(FirestoreAPIClient.prototype.residents).mockResolvedValue([
-        ...records,
-      ]);
-
-      const fetched = await client.residents(stateCodeMock);
-
-      expect(FirestoreAPIClient.prototype.residents).toHaveBeenCalled();
-      expect(fetched).toEqual(records);
-    });
-
-    test("no filters", async () => {
-      await client.residents(stateCodeMock);
-      expect(
-        FirestoreAPIClient.prototype.residents,
-      ).toHaveBeenCalledExactlyOnceWith(stateCodeMock, undefined);
-    });
-
-    test("filtered", async () => {
-      const filter: FilterParams = ["foo", "==", "bar"];
-      await client.residents(stateCodeMock, [filter]);
-      expect(
-        FirestoreAPIClient.prototype.residents,
-      ).toHaveBeenCalledExactlyOnceWith(stateCodeMock, [filter]);
-    });
-
-    test("does not exist", async () => {
-      vi.mocked(FirestoreAPIClient.prototype.residents).mockResolvedValue([]);
-
-      const fetched = await client.residents(stateCodeMock);
-
-      expect(fetched).toEqual([]);
-    });
-  });
-});
-
-test("with proxy option", () => {
-  vi.mocked(proxyHost).mockReturnValue("foo.bar");
-
-  client = new ApiClient({
-    authManager: {
-      getFirebaseToken: getFirebaseTokenMock,
-      isDemoUser: false,
-    } as unknown as AuthManager,
-    config: residentsConfigByState.US_AZ,
-    firebaseAuthClient: mockFirebaseAuthClient,
-  });
-
-  expect(FirestoreAPIClient).toHaveBeenLastCalledWith(
-    mockFirebaseApp,
-    expect.any(Function),
-    "foo.bar",
-  );
 });

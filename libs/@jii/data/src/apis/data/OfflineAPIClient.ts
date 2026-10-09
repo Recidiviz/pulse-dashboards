@@ -20,35 +20,22 @@ import {
   createTRPCOptionsProxy,
   TRPCOptionsProxy,
 } from "@trpc/tanstack-react-query";
-import assertNever from "assert-never";
-import isMatch from "lodash/isMatch";
 
-import {
-  IncarcerationOpportunityId,
-  residentsConfigByState,
-  StateCode,
-} from "~@jii/configs";
+import { residentsConfigByState, StateCode } from "~@jii/configs";
 import type { JiiResidentAppRouter } from "~@jii/trpc-types";
-import { outputFixture, usNeGoodTimeRestorationFixtures } from "~datatypes";
-import { FirestoreAPI, FirestoreOfflineAPIClient } from "~firestore-api";
 
-import { OpportunityRecord } from "../../configs/residentsOpportunitySchemas";
 import { AuthManager } from "../auth/AuthManager";
 import { queryClient } from "../query/client";
 import { DataAPI } from "./interface";
 import { createTrpcClientForApi } from "./trpcMixin";
 
 export class OfflineAPIClient implements DataAPI {
-  private firestoreClient: FirestoreAPI;
-
   isAuthenticated = true;
 
   readonly trpc: TRPCClient<JiiResidentAppRouter>;
   readonly trpcQuerier: TRPCOptionsProxy<JiiResidentAppRouter>;
 
   constructor(private externals: { authManager: AuthManager }) {
-    this.firestoreClient = new FirestoreOfflineAPIClient();
-
     this.trpc = createTrpcClientForApi(this);
     this.trpcQuerier = createTRPCOptionsProxy({
       client: this.trpc,
@@ -71,73 +58,6 @@ export class OfflineAPIClient implements DataAPI {
    */
   async residentsConfig(stateCode: StateCode) {
     return residentsConfigByState[stateCode];
-  }
-
-  /**
-   * Fetches fixture data for all residents matching `stateCode`
-   */
-  async residents(stateCode: StateCode) {
-    return this.firestoreClient.residents(stateCode);
-  }
-
-  /**
-   * Fetches data for the resident with pseudonymizedId matching `residentPseudoId`
-   * and `stateCode`. Throws if a match cannot be found.
-   */
-  async residentByPseudoId(stateCode: StateCode, residentPseudoId: string) {
-    const residentFixture = await this.firestoreClient.residentByPseudoId(
-      stateCode,
-      residentPseudoId,
-    );
-
-    if (!residentFixture) {
-      throw new Error(
-        `Missing data for resident ${residentPseudoId} in ${stateCode}`,
-      );
-    }
-
-    return residentFixture;
-  }
-
-  /**
-   * Fetches the opportunity eligibility record fixture for the specified resident
-   * and opportunity type, returning `undefined` if a record is not found (indicating
-   * the resident is not currently eligible).
-   */
-  async residentEligibility<O extends IncarcerationOpportunityId>(
-    stateCode: StateCode,
-    residentExternalId: string,
-    opportunityId: O,
-  ): Promise<OpportunityRecord<O>> {
-    let fixture: OpportunityRecord<O> | undefined;
-
-    switch (opportunityId) {
-      case "usNeGoodTimeRestoration": {
-        fixture = Object.values(usNeGoodTimeRestorationFixtures)
-          .map(outputFixture)
-          .find((f) =>
-            isMatch(f, {
-              stateCode: stateCode,
-              externalId: residentExternalId,
-            }),
-          );
-        break;
-      }
-      default:
-        assertNever(opportunityId);
-    }
-
-    if (!fixture) {
-      throw new Error(
-        `Unable to find ${opportunityId} record for ${residentExternalId}`,
-      );
-    }
-
-    return fixture;
-  }
-
-  async locations(stateCode: StateCode) {
-    return this.firestoreClient.locations(stateCode);
   }
 
   getApiToken() {

@@ -15,21 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
-
 import { StateCode } from "../stateCodes";
-
-export type OpportunityConfig = {
-  firestoreCollection: string;
-};
-
-export const incarcerationOpportunityIdEnum = z.enum([
-  "usNeGoodTimeRestoration",
-]);
-
-export type IncarcerationOpportunityId = z.infer<
-  typeof incarcerationOpportunityIdEnum
->;
 
 export type TranslationConfig = {
   additionalLanguages: Array<string>;
@@ -71,7 +57,6 @@ export type ResidentsConfig = {
       };
     };
   };
-  eligibility?: EligibilityModuleConfig;
   egt?: EarnedGoodTimeConfig;
   translation: TranslationConfig;
   limitDistrictSearchOptions?: boolean;
@@ -81,14 +66,6 @@ export type ResidentsConfig = {
     Partial<Record<ResidentFlag, Date>>
   >;
   enabledUserFlags?: Partial<Record<UserFlag, Date>>;
-};
-
-export type EligibilityModuleConfig = {
-  incarcerationOpportunities: Partial<
-    Record<IncarcerationOpportunityId, OpportunityConfig>
-  >;
-  // this is an array to support later expansion, but for now we don't support
-  // there being more than one of these pages in the implementation
 };
 
 export type EarnedGoodTimeConfig = {

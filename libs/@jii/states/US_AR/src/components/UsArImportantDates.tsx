@@ -22,7 +22,7 @@ import styled from "styled-components";
 import { GoButton, HomepageSectionHeading } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 import { useUsArTranslations } from "~@jii/translation";
-import { UsArResidentMetadata } from "~datatypes";
+import { UsArResidentJiiData } from "~datatypes";
 
 import { DateInfoCard, DateInfoProps } from "./DateInfoCard";
 
@@ -34,7 +34,7 @@ const LinkContainer = styled.div`
 export function UsArImportantDates({
   metadata,
 }: {
-  metadata: UsArResidentMetadata;
+  metadata: UsArResidentJiiData;
 }) {
   const { t } = useUsArTranslations();
   const dates: DateInfoProps[] = [

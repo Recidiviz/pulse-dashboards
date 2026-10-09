@@ -20,12 +20,8 @@ import { freeze, reset } from "timekeeper";
 
 import { Prisma } from "~@jii/prisma";
 
-import { userId } from "../../../../../test/context";
 import { testPrismaClient } from "../../../../../test/prisma";
-import {
-  caller,
-  mockCollectionQuerier,
-} from "../../../../../test/US_NC/mockStaffProcedure";
+import { caller } from "../../../../../test/US_NC/mockStaffProcedure";
 
 const testDate = new Date(2026, 0, 10);
 const recentDate = subDays(testDate, 55);
@@ -58,7 +54,6 @@ const testInput = {
   lookupValue: ["abc123"],
 };
 
-// used to seed the DB for the Prisma-backed resident lookup codepath
 function buildResidentRecord(
   overrides: Partial<Prisma.ResidentCreateInput> & {
     pseudonymizedId: string;
@@ -76,33 +71,9 @@ function buildResidentRecord(
   };
 }
 
-async function activateNewResidentDataFlag() {
-  await testPrismaClient.userFlagInstance.create({
-    data: {
-      userId,
-      flagId: "useNewResidentData",
-      effectiveAt: new Date(2020, 0, 1),
-    },
-  });
-}
-
-const mockQuerierObject = { where: vi.fn() };
-const mockFirestoreGet = {
-  get: vi.fn(),
-};
-
 describe("rnaWritebackStatusList", () => {
-  // stubbing the specific query as a chain of firestore methods :(
   beforeEach(() => {
     freeze(testDate);
-
-    mockFirestoreGet.get.mockResolvedValue({
-      docs: [],
-    });
-    mockQuerierObject.where.mockReturnValue({
-      select: vi.fn().mockReturnValue(mockFirestoreGet),
-    });
-    mockCollectionQuerier.mockReturnValue(mockQuerierObject);
   });
 
   afterEach(async () => {
@@ -111,15 +82,96 @@ describe("rnaWritebackStatusList", () => {
     reset();
   });
 
-  test("firestore lookup for residents", async () => {
-    await caller.rnaWritebackStatusList(testInput);
-    expect(mockQuerierObject.where).toHaveBeenCalledWith("facilityId", "in", [
-      "abc123",
+  test("looks up residents via Prisma, filtered by lookupField/lookupValue", async () => {
+    // writeback data is needed so the results aren't filtered out due to status
+    await testPrismaClient.usNcRNAWritebackData.createMany({
+      data: allResidents.map(({ pseudonymizedId }) => {
+        return {
+          pseudonymizedId: pseudonymizedId,
+          opusId: pseudonymizedId,
+          seqNumber: "002",
+          admitDate: recentDate,
+          importedAt: testDate,
+        };
+      }),
+    });
+    await testPrismaClient.resident.createMany({
+      data: [
+        ...testResidents.map((r) =>
+          buildResidentRecord({
+            pseudonymizedId: r.pseudonymizedId,
+            facilityId: "abc123",
+          }),
+        ),
+        // different facilityId, so these should be excluded by the query
+        ...additionalResidents.map((r) =>
+          buildResidentRecord({
+            pseudonymizedId: r.pseudonymizedId,
+            facilityId: "some-other-facility",
+          }),
+        ),
+      ],
+    });
+
+    const result = await caller.rnaWritebackStatusList(testInput);
+
+    expect(result).toHaveLength(testResidents.length);
+    expect(result).toEqual(
+      expect.arrayContaining(
+        testResidents.map((r) =>
+          expect.objectContaining({ pseudonymizedId: r.pseudonymizedId }),
+        ),
+      ),
+    );
+  });
+
+  test("supports lookup by officerId", async () => {
+    await testPrismaClient.usNcRNAWritebackData.create({
+      data: {
+        pseudonymizedId: testResidents[0].pseudonymizedId,
+        opusId: testResidents[0].pseudonymizedId,
+        seqNumber: "002",
+        admitDate: recentDate,
+        importedAt: testDate,
+      },
+    });
+    await testPrismaClient.resident.create({
+      data: buildResidentRecord({
+        pseudonymizedId: testResidents[0].pseudonymizedId,
+        officerId: "officer1",
+      }),
+    });
+
+    const result = await caller.rnaWritebackStatusList({
+      lookupField: "officerId",
+      lookupValue: ["officer1"],
+    });
+
+    expect(result).toEqual([
+      expect.objectContaining({
+        pseudonymizedId: testResidents[0].pseudonymizedId,
+      }),
     ]);
   });
 
   test("latest records matching input query", async () => {
-    // seed DB
+    await testPrismaClient.resident.createMany({
+      data: [
+        ...testResidents.map((r) =>
+          buildResidentRecord({
+            pseudonymizedId: r.pseudonymizedId,
+            facilityId: "abc123",
+          }),
+        ),
+        // different facilityId, so these should be excluded by the query
+        ...additionalResidents.map((r) =>
+          buildResidentRecord({
+            pseudonymizedId: r.pseudonymizedId,
+            facilityId: "some-other-facility",
+          }),
+        ),
+      ],
+    });
 
     // writeback data is needed so the results aren't filtered out
     await testPrismaClient.usNcRNAWritebackData.createMany({
@@ -167,14 +219,6 @@ describe("rnaWritebackStatusList", () => {
       ],
     });
 
-    mockFirestoreGet.get.mockResolvedValue({
-      docs: testResidents.map((r) => ({
-        data() {
-          return r;
-        },
-      })),
-    });
-
     expect(await caller.rnaWritebackStatusList(testInput)).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -194,13 +238,12 @@ describe("rnaWritebackStatusList", () => {
   });
 
   describe("status", () => {
-    beforeEach(() => {
-      mockFirestoreGet.get.mockResolvedValue({
-        docs: testResidents.slice(0, 1).map((r) => ({
-          data() {
-            return r;
-          },
-        })),
+    beforeEach(async () => {
+      await testPrismaClient.resident.create({
+        data: buildResidentRecord({
+          pseudonymizedId: testResidents[0].pseudonymizedId,
+          facilityId: "abc123",
+        }),
       });
     });
 
@@ -654,85 +697,6 @@ describe("rnaWritebackStatusList", () => {
       expect((await caller.rnaWritebackStatusList(testInput))[0].status).toBe(
         "SUBMITTED_BY_STAFF",
       );
-    });
-  });
-
-  describe("when the useNewResidentData flag is active", () => {
-    beforeEach(async () => {
-      await activateNewResidentDataFlag();
-    });
-
-    test("looks up residents via Prisma, filtered by lookupField/lookupValue, instead of querying Firestore", async () => {
-      // writeback data is needed so the results aren't filtered out due to status
-      await testPrismaClient.usNcRNAWritebackData.createMany({
-        data: allResidents.map(({ pseudonymizedId }) => {
-          return {
-            pseudonymizedId: pseudonymizedId,
-            opusId: pseudonymizedId,
-            seqNumber: "002",
-            admitDate: recentDate,
-            importedAt: testDate,
-          };
-        }),
-      });
-      await testPrismaClient.resident.createMany({
-        data: [
-          ...testResidents.map((r) =>
-            buildResidentRecord({
-              pseudonymizedId: r.pseudonymizedId,
-              facilityId: "abc123",
-            }),
-          ),
-          // different facilityId, so these should be excluded by the Prisma query
-          ...additionalResidents.map((r) =>
-            buildResidentRecord({
-              pseudonymizedId: r.pseudonymizedId,
-              facilityId: "some-other-facility",
-            }),
-          ),
-        ],
-      });
-
-      const result = await caller.rnaWritebackStatusList(testInput);
-
-      expect(mockCollectionQuerier).not.toHaveBeenCalled();
-      expect(result).toHaveLength(testResidents.length);
-      expect(result).toEqual(
-        expect.arrayContaining(
-          testResidents.map((r) =>
-            expect.objectContaining({ pseudonymizedId: r.pseudonymizedId }),
-          ),
-        ),
-      );
-    });
-
-    test("supports lookup by officerId", async () => {
-      await testPrismaClient.usNcRNAWritebackData.create({
-        data: {
-          pseudonymizedId: testResidents[0].pseudonymizedId,
-          opusId: testResidents[0].pseudonymizedId,
-          seqNumber: "002",
-          admitDate: recentDate,
-          importedAt: testDate,
-        },
-      });
-      await testPrismaClient.resident.create({
-        data: buildResidentRecord({
-          pseudonymizedId: testResidents[0].pseudonymizedId,
-          officerId: "officer1",
-        }),
-      });
-
-      const result = await caller.rnaWritebackStatusList({
-        lookupField: "officerId",
-        lookupValue: ["officer1"],
-      });
-
-      expect(result).toEqual([
-        expect.objectContaining({
-          pseudonymizedId: testResidents[0].pseudonymizedId,
-        }),
-      ]);
     });
   });
 });

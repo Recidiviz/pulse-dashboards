@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2026 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 import { isDemoMode } from "~client-env-utils";
 
-import { collectionNameForCurrentEnv } from "./collectionNames";
+import { collectionNameForCurrentEnv } from "../collectionNames";
 
 vi.mock("~client-env-utils");
 

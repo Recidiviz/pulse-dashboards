@@ -17,20 +17,15 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-import {
-  useNewResidentData,
-  useResidentsContext,
-  useRootStore,
-} from "~@jii/data";
+import { useResidentsContext, useRootStore } from "~@jii/data";
 import { ErrorPageMainContent } from "~@jii/layout";
 import { Loading } from "~design-system";
 import { castToError } from "~hydration-utils";
 
-import { FirestoreResidentsSearch } from "./FirestoreResidentsSearch";
 import { ResidentSearchWithPresenter } from "./ResidentSearchWithPresenter";
 import { ResidentsSearchPresenter } from "./ResidentsSearchPresenter";
 
-const TrpcResidentsSearch = () => {
+export function ResidentsSearch() {
   const {
     apiClient: { trpcQuerier },
   } = useRootStore();
@@ -49,13 +44,5 @@ const TrpcResidentsSearch = () => {
         new ResidentsSearchPresenter(newData.data, residentsStore, userStore)
       }
     />
-  );
-};
-
-export function ResidentsSearch() {
-  return useNewResidentData() ? (
-    <TrpcResidentsSearch />
-  ) : (
-    <FirestoreResidentsSearch />
   );
 }

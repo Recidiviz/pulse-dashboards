@@ -15,11 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  UsNdResidentMetadata,
-  usNdResidents,
-  WorkflowsResidentRecord,
-} from "~datatypes";
+import { ResidentRecord } from "~@jii/data";
+import { UsNdResidentMetadata, usNdResidents } from "~datatypes";
 
 import { ResidentHomepagePresenter } from "./ResidentHomepagePresenter";
 
@@ -28,7 +25,7 @@ describe("sentence dates", () => {
     expect(
       new ResidentHomepagePresenter(
         usNdResidents[1].metadata as UsNdResidentMetadata,
-        {} as WorkflowsResidentRecord,
+        {} as ResidentRecord,
       ).sentenceDatesData,
     ).toMatchInlineSnapshot(`
       {
@@ -62,7 +59,7 @@ describe("sentence dates", () => {
     expect(
       new ResidentHomepagePresenter(
         usNdResidents[0].metadata as UsNdResidentMetadata,
-        {} as WorkflowsResidentRecord,
+        {} as ResidentRecord,
       ).sentenceDatesData,
     ).toMatchInlineSnapshot(`
       {

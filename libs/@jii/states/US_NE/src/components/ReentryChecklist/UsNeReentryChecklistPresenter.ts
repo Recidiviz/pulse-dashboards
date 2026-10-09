@@ -21,7 +21,7 @@ import { flowResult, makeAutoObservable } from "mobx";
 
 import { DataAPI, ResidentFlags, ResidentRecord } from "~@jii/data";
 import type { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
-import { UsNeResidentJiiData, WorkflowsResidentRecord } from "~datatypes";
+import { UsNeResidentJiiData } from "~datatypes";
 import {
   Hydratable,
   HydratesFromSource,
@@ -59,7 +59,7 @@ export class UsNeReentryChecklistPresenter implements Hydratable {
   writeError?: string;
 
   constructor(
-    private readonly resident: WorkflowsResidentRecord | ResidentRecord,
+    private readonly resident: ResidentRecord,
     private readonly residentStateSpecificData: UsNeResidentJiiData,
     private readonly apiClient: DataAPI,
     private readonly residentFlags: ResidentFlags,

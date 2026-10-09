@@ -16,14 +16,10 @@
 // =============================================================================
 
 import { formatISO } from "date-fns";
-import { flowResult } from "mobx";
 import tk from "timekeeper";
 
 import { residentsConfigByState } from "~@jii/configs";
-import { usAzResidents } from "~datatypes";
-import { FilterParams } from "~firestore-api";
 
-import { OfflineAPIClient } from "../apis/data/OfflineAPIClient";
 import { createTrpcClientForApi } from "../apis/data/trpcMixin";
 import { ResidentsStore } from "./ResidentsStore";
 import { RootStore } from "./RootStore";
@@ -55,61 +51,6 @@ beforeEach(() => {
     "US_AZ",
     residentsConfigByState.US_AZ,
   );
-});
-
-describe("populate residents", () => {
-  test("succeeds", async () => {
-    expect(store.residentsByExternalId.size).toBe(0);
-
-    await flowResult(store.populateResidents());
-
-    usAzResidents.forEach((r) => {
-      expect(store.residentsByExternalId.get(r.personExternalId)).toEqual(r);
-    });
-  });
-
-  test("fails", async () => {
-    vi.spyOn(OfflineAPIClient.prototype, "residents").mockRejectedValue(
-      new Error("api request failed"),
-    );
-
-    await expect(async () =>
-      flowResult(store.populateResidents()),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: api request failed]`);
-  });
-
-  test("does not refetch if already populated", async () => {
-    vi.spyOn(OfflineAPIClient.prototype, "residents");
-
-    await flowResult(store.populateResidents());
-
-    expect(OfflineAPIClient.prototype.residents).toHaveBeenCalledTimes(1);
-
-    await flowResult(store.populateResidents());
-    expect(OfflineAPIClient.prototype.residents).toHaveBeenCalledTimes(1);
-  });
-
-  test("with filters", async () => {
-    vi.spyOn(OfflineAPIClient.prototype, "residents");
-
-    const filter: FilterParams = ["foo", "==", "bar"];
-    await flowResult(store.populateResidents([filter]));
-
-    expect(OfflineAPIClient.prototype.residents).toHaveBeenCalledWith("US_AZ", [
-      filter,
-    ]);
-  });
-
-  test("refetches with force refresh", async () => {
-    vi.spyOn(OfflineAPIClient.prototype, "residents");
-
-    await flowResult(store.populateResidents());
-
-    expect(OfflineAPIClient.prototype.residents).toHaveBeenCalledTimes(1);
-
-    await flowResult(store.populateResidents(undefined, true));
-    expect(OfflineAPIClient.prototype.residents).toHaveBeenCalledTimes(2);
-  });
 });
 
 describe("user-generated properties", () => {

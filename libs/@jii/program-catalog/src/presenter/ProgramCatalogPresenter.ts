@@ -22,7 +22,6 @@ import { isUndefined, sortBy, uniq } from "lodash";
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { DataAPI, ResidentRecord, UserStore } from "~@jii/data";
-import { WorkflowsResidentRecord } from "~datatypes";
 import {
   Hydratable,
   HydratesFromSource,
@@ -43,7 +42,7 @@ export class ProgramCatalogPresenter implements Hydratable {
   selectedProgram?: Program;
 
   constructor(
-    private readonly resident: WorkflowsResidentRecord | ResidentRecord,
+    private readonly resident: ResidentRecord,
     private readonly apiClient: DataAPI,
     readonly config: ProgramCatalogProps,
     private readonly userStore: UserStore,

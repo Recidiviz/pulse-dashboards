@@ -21,13 +21,9 @@ import { usNeMeetingsStaffRouter } from "../../router/routes/meetingsStaff/state
 import { userId } from "../context";
 import { testPrismaClient } from "../prisma";
 
-// This is mostly the same as in US_NC/mockStaffProcedure, but we don't need to mock
-// the firestore querier to test NE methods.
+// This is mostly the same as in US_NC/mockStaffProcedure
 vi.mock("../../procedures/firebaseAuthedStaffProcedure", () => {
   return {
-    // the real procedure depends on third party services such as Firebase
-    // to create a context for authorized users; this just mocks that result
-    // for a standardized test user
     firebaseAuthedStaffProcedure: baseProcedure.use((opts) => {
       return opts.next({
         ctx: {
@@ -40,7 +36,6 @@ vi.mock("../../procedures/firebaseAuthedStaffProcedure", () => {
           },
           stateCode: "US_NE",
           prisma: testPrismaClient,
-          firestoreCurrentStateQuerier: vi.fn(),
         } satisfies AuthorizedStaffUserContext,
       });
     }),
