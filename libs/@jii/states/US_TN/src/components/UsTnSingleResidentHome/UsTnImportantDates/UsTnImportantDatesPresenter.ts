@@ -17,7 +17,7 @@
 
 import { differenceInDays } from "date-fns";
 
-import { UsTnResidentJiiData } from "~datatypes";
+import { UsTnResidentJiiData } from "~@jii/schemas";
 
 export class UsTnImportantDatesPresenter {
   constructor(public readonly residentData: UsTnResidentJiiData) {}

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsTnCreditType } from "~datatypes";
+import { UsTnCreditType } from "~@jii/schemas";
 
 import sentenceCreditsInfoPage from "./sentenceCreditsInfoPage.md?raw";
 

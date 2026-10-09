@@ -20,11 +20,11 @@ import { z } from "zod";
 
 import { workflowsResidentRecordSchema } from "../../workflowsResidentRecordSchema";
 import { rawUsTnResidents } from "../fixtures";
-import { usTnResidentJiiDataFixture } from "./fixtures";
+import { rawUsTnCommonMetadata } from "./fixtures";
 import { usTnResidentMetadataSchema } from "./schema";
 
 const validInput: z.input<typeof usTnResidentMetadataSchema> = {
-  ...usTnResidentJiiDataFixture,
+  ...rawUsTnCommonMetadata,
   latestVantageRiskAssessment: {
     assessmentDate: "2026-06-01",
     assessmentType: "STRONG_R2",
@@ -73,9 +73,9 @@ describe("usTnResidentMetadataSchema warm-handoff fields", () => {
 
   test("parses when all 7 warm-handoff fields are absent (backward compat)", () => {
     expect(() =>
-      usTnResidentMetadataSchema.parse(usTnResidentJiiDataFixture),
+      usTnResidentMetadataSchema.parse(rawUsTnCommonMetadata),
     ).not.toThrow();
-    const parsed = usTnResidentMetadataSchema.parse(usTnResidentJiiDataFixture);
+    const parsed = usTnResidentMetadataSchema.parse(rawUsTnCommonMetadata);
     expect(parsed.latestVantageRiskAssessment).toBeUndefined();
     expect(parsed.tnSentences).toBeUndefined();
   });

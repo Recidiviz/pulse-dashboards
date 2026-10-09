@@ -19,41 +19,11 @@ import { z } from "zod";
 
 import { dateStringSchema } from "../../../../utils/zod";
 
-export const usTnJiiCreditsSchema = z.object({
-  creditDate: dateStringSchema,
-  creditType: z
-    .enum([
-      "60_DAY_ED_CREDIT",
-      "60_DAY_TREATMENT",
-      "BEHAVIOR",
-      "BONUS_BEHAVIOR",
-      "DRUG_ALCOHOL",
-      "GED",
-      "PROGRAM",
-      "BONUS_PROGRAM",
-      "REMOVAL",
-    ])
-    .nullable(),
-  creditsEarned: z.number().nullable(),
-});
-
 export const usTnResidentCommonSchema = z.object({
   stateCode: z.literal("US_TN"),
 });
 export type UsTnResidentCommon = z.infer<typeof usTnResidentCommonSchema>;
 export type RawUsTnResidentCommon = z.input<typeof usTnResidentCommonSchema>;
-
-// TODO(OBT-29535): remove this from the workflows schema and move to @jii/schemas
-export const usTnResidentJiiDataSchema = usTnResidentCommonSchema.extend({
-  expirationDate: dateStringSchema.nullable(),
-  expirationDateOriginal: dateStringSchema.nullable(),
-  releaseEligibilityDate: dateStringSchema.nullable(),
-  sentenceEffectiveDate: dateStringSchema.nullable(),
-  creditActivity: z.array(usTnJiiCreditsSchema),
-  fileUpdateDate: dateStringSchema,
-});
-export type UsTnResidentJiiData = z.infer<typeof usTnResidentJiiDataSchema>;
-export type RawUsTnResidentJiiData = z.input<typeof usTnResidentJiiDataSchema>;
 
 export const usTnSentenceSchema = z.object({
   imposedDate: dateStringSchema.nullable(),
@@ -78,7 +48,7 @@ export type UsTnVantageRiskAssessment = z.output<
   typeof usTnVantageRiskAssessmentSchema
 >;
 
-export const usTnResidentMetadataSchema = usTnResidentJiiDataSchema.extend({
+export const usTnResidentMetadataSchema = usTnResidentCommonSchema.extend({
   latestClassificationDate: dateStringSchema.nullable().optional(),
   latestVantageRiskAssessment: usTnVantageRiskAssessmentSchema
     .nullable()
@@ -92,5 +62,3 @@ export const usTnResidentMetadataSchema = usTnResidentJiiDataSchema.extend({
 });
 
 export type UsTnResidentMetadata = z.output<typeof usTnResidentMetadataSchema>;
-export type UsTnCreditActivity = z.output<typeof usTnJiiCreditsSchema>;
-export type UsTnCreditType = NonNullable<UsTnCreditActivity["creditType"]>;

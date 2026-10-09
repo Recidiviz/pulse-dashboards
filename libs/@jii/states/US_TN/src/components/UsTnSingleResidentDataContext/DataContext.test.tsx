@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsTnResidentMetadata } from "~datatypes";
+import { UsTnResidentJiiData } from "~@jii/schemas";
 
 import { processMonthlyReports } from "./DataContext";
 
@@ -60,8 +60,8 @@ describe("UsTnMonthlyReportsPresenter tests", () => {
       creditType: string;
       creditsEarned: number | null;
     }[] = [],
-  ): UsTnResidentMetadata =>
-    ({ stateCode, creditActivity }) as never as UsTnResidentMetadata;
+  ): UsTnResidentJiiData =>
+    ({ stateCode, creditActivity }) as never as UsTnResidentJiiData;
 
   describe("processMonthlyReports", () => {
     const processedReports = processMonthlyReports(

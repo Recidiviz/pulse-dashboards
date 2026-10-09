@@ -15,7 +15,37 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usTnResidentJiiDataSchema } from "~datatypes";
+import { z } from "zod";
 
-// TODO(OBT-29535): move the schema over from datatypes
-export const usTnStateDataSchema = usTnResidentJiiDataSchema;
+import { dateStringSchema, usTnResidentCommonSchema } from "~datatypes";
+
+const usTnJiiCreditsSchema = z.object({
+  creditDate: dateStringSchema,
+  creditType: z
+    .enum([
+      "60_DAY_ED_CREDIT",
+      "60_DAY_TREATMENT",
+      "BEHAVIOR",
+      "BONUS_BEHAVIOR",
+      "DRUG_ALCOHOL",
+      "GED",
+      "PROGRAM",
+      "BONUS_PROGRAM",
+      "REMOVAL",
+    ])
+    .nullable(),
+  creditsEarned: z.number().nullable(),
+});
+
+export const usTnStateDataSchema = usTnResidentCommonSchema.extend({
+  expirationDate: dateStringSchema.nullable(),
+  expirationDateOriginal: dateStringSchema.nullable(),
+  releaseEligibilityDate: dateStringSchema.nullable(),
+  creditActivity: z.array(usTnJiiCreditsSchema),
+  fileUpdateDate: dateStringSchema,
+});
+export type UsTnResidentJiiData = z.infer<typeof usTnStateDataSchema>;
+export type RawUsTnResidentJiiData = z.input<typeof usTnStateDataSchema>;
+
+export type UsTnCreditActivity = z.output<typeof usTnJiiCreditsSchema>;
+export type UsTnCreditType = NonNullable<UsTnCreditActivity["creditType"]>;

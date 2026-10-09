@@ -16,7 +16,7 @@ This requires an active gcloud login because it relies on your local Application
 
 `nx offline jii` lets you to develop features in the database itself, or to develop against fixture data, in offline mode. In offline mode the app does not require authentication (it self-identifies as a fake user; see the `OfflineAuthHandler`) and it does not communicate with any external services; data is stored locally in databases run via docker in `@jii/prisma`.
 
-**The offline database starts out empty and you will need to manually seed it with fixture data using `nx seed @jii/import`.** This is not run automatically when starting the server, but you can run it on demand for updated fixture data.
+**The offline database starts out empty and you will need to manually seed it with fixture data using `nx seed @jii/import`.** This is not run automatically when starting the server, but you can run it on demand for updated fixture data. The fixture data itself lives in `libs/@jii/fixtures`. This is the same fixture data that is used in deployments for the demo site and test accounts.
 
 ### Reentry features
 

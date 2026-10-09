@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsTnResidentJiiData } from "~datatypes";
+import { UsTnResidentJiiData } from "~@jii/schemas";
 
 import { UsTnImportantDatesPresenter } from "./UsTnImportantDatesPresenter";
 

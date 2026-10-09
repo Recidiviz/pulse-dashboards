@@ -30,8 +30,8 @@ import {
 import { hydrateTemplate, useResidentMetadata } from "~@jii/data";
 import { CardDateInfo } from "~@jii/earned-good-time";
 import { State } from "~@jii/paths";
+import { UsTnResidentJiiData } from "~@jii/schemas";
 import { useUsTnTranslations } from "~@jii/translation";
-import { UsTnResidentMetadata } from "~datatypes";
 import { withPresenterManager } from "~hydration-utils";
 
 import { UsTnImportantDatesPresenter } from "./UsTnImportantDatesPresenter";
@@ -43,7 +43,7 @@ const ImportantDateCard = ({
   infoPageAnchorTag,
 }: {
   section: "releaseEligibilityDate" | "expirationDate";
-  metadata: UsTnResidentMetadata;
+  metadata: UsTnResidentJiiData;
   children?: React.ReactNode;
   infoPageAnchorTag?: "expiration-date";
 }) => {

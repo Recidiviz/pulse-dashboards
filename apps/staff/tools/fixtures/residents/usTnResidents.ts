@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { relativeFixtureDate, usTnResidentMetadata } from "~datatypes";
+import { rawUsTnResidentMetadata, relativeFixtureDate } from "~datatypes";
 
 import { ResidentFixture } from "../residents";
 
@@ -41,6 +41,6 @@ export const usTnResidents: ResidentFixture[] = [
     custodyLevel: "MEDIUM",
     admissionDate: relativeFixtureDate({ years: -1, days: -30 }),
     releaseDate: relativeFixtureDate({ years: 1, days: 90 }),
-    metadata: usTnResidentMetadata,
+    metadata: rawUsTnResidentMetadata,
   },
 ];

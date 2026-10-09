@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { usTnResidentJiiDataFixture } from "~@jii/fixtures";
 import {
   rawUsCoResidentJiiDataFixtures,
   rawUsMaResidentJiiDataFixtures,
@@ -24,7 +25,6 @@ import {
   usNdResidentJiiDataFixtures,
   usNeResidentJiiDataFixtures,
   usTnResidentCommon,
-  usTnResidentJiiDataFixture,
 } from "~datatypes";
 
 // the value type is not important here because it's being fed directly to a Zod parser,

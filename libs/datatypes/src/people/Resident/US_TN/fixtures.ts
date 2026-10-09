@@ -24,7 +24,7 @@ import {
   RawWorkflowsResidentRecord,
   workflowsResidentRecordSchema,
 } from "../workflowsResidentRecordSchema";
-import { usTnResidentMetadata } from "./metadata/fixtures";
+import { rawUsTnResidentMetadata } from "./metadata/fixtures";
 
 export const rawUsTnResidentCommon: Array<RawResidentCommon> = [
   {
@@ -80,7 +80,7 @@ export const rawUsTnResidents: Array<RawWorkflowsResidentRecord> = [
     custodyLevel: "CLOSE",
     admissionDate: relativeFixtureDate({ years: -2, days: -200 }),
     releaseDate: relativeFixtureDate({ years: 3, days: 300 }),
-    metadata: usTnResidentMetadata,
+    metadata: rawUsTnResidentMetadata,
   },
   {
     ...rawUsTnResidentCommon[1],
@@ -91,7 +91,7 @@ export const rawUsTnResidents: Array<RawWorkflowsResidentRecord> = [
     custodyLevel: "MEDIUM",
     admissionDate: relativeFixtureDate({ years: -4, days: -400 }),
     releaseDate: relativeFixtureDate({ years: 1, days: 100 }),
-    metadata: usTnResidentMetadata,
+    metadata: rawUsTnResidentMetadata,
   },
   {
     ...rawUsTnResidentCommon[2],
@@ -105,7 +105,7 @@ export const rawUsTnResidents: Array<RawWorkflowsResidentRecord> = [
     custodyLevel: "MEDIUM",
     admissionDate: relativeFixtureDate({ years: -3, days: -100 }),
     releaseDate: relativeFixtureDate({ years: 1, days: 100 }),
-    metadata: usTnResidentMetadata,
+    metadata: rawUsTnResidentMetadata,
   },
   {
     ...rawUsTnResidentCommon[3],
@@ -119,7 +119,7 @@ export const rawUsTnResidents: Array<RawWorkflowsResidentRecord> = [
     custodyLevel: "CLOSE",
     admissionDate: relativeFixtureDate({ years: -2, days: -200 }),
     releaseDate: relativeFixtureDate({ years: 1, days: 200 }),
-    metadata: usTnResidentMetadata,
+    metadata: rawUsTnResidentMetadata,
   },
 ];
 

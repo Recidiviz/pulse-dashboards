@@ -19,7 +19,7 @@ import { observer } from "mobx-react-lite";
 import { FC, ReactNode } from "react";
 
 import { useResidentMetadata } from "~@jii/data";
-import { UsTnResidentMetadata } from "~datatypes";
+import { UsTnResidentJiiData } from "~@jii/schemas";
 
 import {
   UsTnMonthlyReports,
@@ -49,7 +49,7 @@ export const UsTnSingleResidentDataContext: FC<{ children: ReactNode }> =
   });
 
 export function processMonthlyReports(
-  metadata: UsTnResidentMetadata,
+  metadata: UsTnResidentJiiData,
 ): UsTnMonthlyReports {
   const monthlyReports: UsTnMonthlyReports = {};
 
