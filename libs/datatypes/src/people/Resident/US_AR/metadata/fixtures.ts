@@ -15,11 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  RawUsArResidentCommon,
-  RawUsArResidentJiiData,
-  RawUsArResidentMetadata,
-} from "./schema";
+import { RawUsArResidentCommon, RawUsArResidentMetadata } from "./schema";
 
 // Fields used by both JII and workflows products.
 export const usArResidentCommonDataFixtures: RawUsArResidentCommon[] = [
@@ -61,156 +57,127 @@ export const usArResidentCommonDataFixtures: RawUsArResidentCommon[] = [
   },
 ];
 
-// JII-only fields (extends common).
-export const usArResidentJiiDataFixtures: RawUsArResidentJiiData[] = [
+// Workflows metadata (extends common).
+export const usArResidentMetadataFixtures: Array<RawUsArResidentMetadata> = [
   {
     ...usArResidentCommonDataFixtures[0],
-    lastUpdatedDate: "2021-12-16",
+    currentCustodyClassification: "C2",
+    currentGtEarningClass: "I-P",
+    currentLocation: "1230456",
+    currentSentences: [
+      {
+        sentenceId: "555666888889999",
+        startDate: "2015-10-12",
+        endDate: "2016-06-08",
+        initialTimeServedDays: 12,
+        personId: 1,
+      },
+      {
+        sentenceId: "222881257772134",
+        startDate: "2005-02-12",
+        endDate: "2008-04-22",
+        initialTimeServedDays: 19,
+        personId: 1,
+      },
+    ],
+    gedCompletionDate: "2017-05-23",
+    noIncarcerationSanctionsWithin6Months: true,
+    noIncarcerationSanctionsWithin12Months: true,
+    programAchievement: [
+      {
+        programLocation: "1400758",
+        programAchievementDate: "2024-03-06",
+        programType: "TEG",
+        programEvaluationScore: null,
+      },
+      {
+        programLocation: "1400756",
+        programAchievementDate: "2019-12-04",
+        programType: "SM",
+        programEvaluationScore: "PASS",
+      },
+    ],
   },
   {
     ...usArResidentCommonDataFixtures[1],
-    lastUpdatedDate: "2021-12-16",
+    currentCustodyClassification: "C2",
+    currentGtEarningClass: "I-P",
+    currentLocation: "1230456",
+    currentSentences: [
+      {
+        sentenceId: "555666888889999",
+        startDate: "2015-10-12",
+        endDate: "2016-06-08",
+        initialTimeServedDays: 12,
+        personId: 2,
+      },
+      {
+        sentenceId: "222881257772134",
+        startDate: "2005-02-12",
+        endDate: "2008-04-22",
+        initialTimeServedDays: 19,
+        personId: 2,
+      },
+    ],
+    gedCompletionDate: "2017-05-23",
+    noIncarcerationSanctionsWithin6Months: true,
+    noIncarcerationSanctionsWithin12Months: true,
+    programAchievement: [
+      {
+        programLocation: "1400758",
+        programAchievementDate: "2024-03-06",
+        programType: "TEG",
+        programEvaluationScore: null,
+      },
+      {
+        programLocation: "1400756",
+        programAchievementDate: "2019-12-04",
+        programType: "SM",
+        programEvaluationScore: "PASS",
+      },
+    ],
   },
   {
     ...usArResidentCommonDataFixtures[2],
-    lastUpdatedDate: "2021-12-16",
+    currentCustodyClassification: "C2",
+    currentGtEarningClass: "I-P",
+    currentLocation: "1230456",
+    currentSentences: [
+      {
+        sentenceId: "555666888889999",
+        startDate: "2015-10-12",
+        endDate: "2016-06-08",
+        initialTimeServedDays: 12,
+        personId: 3,
+      },
+      {
+        sentenceId: "222881257772134",
+        startDate: "2005-02-12",
+        endDate: "2008-04-22",
+        initialTimeServedDays: 19,
+        personId: 3,
+      },
+    ],
+    gedCompletionDate: "2017-05-23",
+    noIncarcerationSanctionsWithin6Months: true,
+    noIncarcerationSanctionsWithin12Months: true,
+    programAchievement: [
+      {
+        programLocation: "1400758",
+        programAchievementDate: "2024-03-06",
+        programType: "TEG",
+        programEvaluationScore: null,
+      },
+      {
+        programLocation: "1400756",
+        programAchievementDate: "2019-12-04",
+        programType: "SM",
+        programEvaluationScore: "PASS",
+      },
+    ],
   },
   {
     ...usArResidentCommonDataFixtures[3],
-    lastUpdatedDate: "2021-12-16",
-  },
-  {
-    ...usArResidentCommonDataFixtures[4],
-    lastUpdatedDate: "2021-12-16",
-  },
-  {
-    ...usArResidentCommonDataFixtures[5],
-    cohortCode: "4",
-    lastUpdatedDate: "2025-04-01",
-  },
-];
-
-// Workflows metadata (extends common; spreads JII fixtures which include JII-only fields).
-export const usArResidentMetadataFixtures: Array<RawUsArResidentMetadata> = [
-  {
-    ...usArResidentJiiDataFixtures[0],
-    currentCustodyClassification: "C2",
-    currentGtEarningClass: "I-P",
-    currentLocation: "1230456",
-    currentSentences: [
-      {
-        sentenceId: "555666888889999",
-        startDate: "2015-10-12",
-        endDate: "2016-06-08",
-        initialTimeServedDays: 12,
-        personId: 1,
-      },
-      {
-        sentenceId: "222881257772134",
-        startDate: "2005-02-12",
-        endDate: "2008-04-22",
-        initialTimeServedDays: 19,
-        personId: 1,
-      },
-    ],
-    gedCompletionDate: "2017-05-23",
-    noIncarcerationSanctionsWithin6Months: true,
-    noIncarcerationSanctionsWithin12Months: true,
-    programAchievement: [
-      {
-        programLocation: "1400758",
-        programAchievementDate: "2024-03-06",
-        programType: "TEG",
-        programEvaluationScore: null,
-      },
-      {
-        programLocation: "1400756",
-        programAchievementDate: "2019-12-04",
-        programType: "SM",
-        programEvaluationScore: "PASS",
-      },
-    ],
-  },
-  {
-    ...usArResidentJiiDataFixtures[1],
-    currentCustodyClassification: "C2",
-    currentGtEarningClass: "I-P",
-    currentLocation: "1230456",
-    currentSentences: [
-      {
-        sentenceId: "555666888889999",
-        startDate: "2015-10-12",
-        endDate: "2016-06-08",
-        initialTimeServedDays: 12,
-        personId: 2,
-      },
-      {
-        sentenceId: "222881257772134",
-        startDate: "2005-02-12",
-        endDate: "2008-04-22",
-        initialTimeServedDays: 19,
-        personId: 2,
-      },
-    ],
-    gedCompletionDate: "2017-05-23",
-    noIncarcerationSanctionsWithin6Months: true,
-    noIncarcerationSanctionsWithin12Months: true,
-    programAchievement: [
-      {
-        programLocation: "1400758",
-        programAchievementDate: "2024-03-06",
-        programType: "TEG",
-        programEvaluationScore: null,
-      },
-      {
-        programLocation: "1400756",
-        programAchievementDate: "2019-12-04",
-        programType: "SM",
-        programEvaluationScore: "PASS",
-      },
-    ],
-  },
-  {
-    ...usArResidentJiiDataFixtures[2],
-    currentCustodyClassification: "C2",
-    currentGtEarningClass: "I-P",
-    currentLocation: "1230456",
-    currentSentences: [
-      {
-        sentenceId: "555666888889999",
-        startDate: "2015-10-12",
-        endDate: "2016-06-08",
-        initialTimeServedDays: 12,
-        personId: 3,
-      },
-      {
-        sentenceId: "222881257772134",
-        startDate: "2005-02-12",
-        endDate: "2008-04-22",
-        initialTimeServedDays: 19,
-        personId: 3,
-      },
-    ],
-    gedCompletionDate: "2017-05-23",
-    noIncarcerationSanctionsWithin6Months: true,
-    noIncarcerationSanctionsWithin12Months: true,
-    programAchievement: [
-      {
-        programLocation: "1400758",
-        programAchievementDate: "2024-03-06",
-        programType: "TEG",
-        programEvaluationScore: null,
-      },
-      {
-        programLocation: "1400756",
-        programAchievementDate: "2019-12-04",
-        programType: "SM",
-        programEvaluationScore: "PASS",
-      },
-    ],
-  },
-  {
-    ...usArResidentJiiDataFixtures[3],
     currentCustodyClassification: "C3",
     currentGtEarningClass: "II-P",
     currentLocation: "1230457",
@@ -249,7 +216,7 @@ export const usArResidentMetadataFixtures: Array<RawUsArResidentMetadata> = [
     ],
   },
   {
-    ...usArResidentJiiDataFixtures[4],
+    ...usArResidentCommonDataFixtures[4],
     currentCustodyClassification: "C1",
     currentGtEarningClass: "III-P",
     currentLocation: "1230458",
@@ -288,7 +255,7 @@ export const usArResidentMetadataFixtures: Array<RawUsArResidentMetadata> = [
     ],
   },
   {
-    ...usArResidentJiiDataFixtures[5],
+    ...usArResidentCommonDataFixtures[5],
     currentCustodyClassification: "C2",
     currentGtEarningClass: "I-P",
     currentLocation: "1230456",

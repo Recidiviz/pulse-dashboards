@@ -15,7 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usArResidentJiiDataSchema } from "~datatypes";
+import { z } from "zod";
 
-// TODO(OBT-29535): move the entire schema over from datatypes
-export const usArStateDataSchema = usArResidentJiiDataSchema;
+import {
+  dateStringSchema,
+  nullishAsUndefined,
+  usArResidentCommonSchema,
+} from "~datatypes";
+
+export const usArStateDataSchema = usArResidentCommonSchema.extend({
+  cohortCode: nullishAsUndefined(z.string()),
+  lastUpdatedDate: dateStringSchema,
+});
+export type UsArResidentJiiData = z.output<typeof usArStateDataSchema>;
+export type RawUsArResidentJiiData = z.input<typeof usArStateDataSchema>;

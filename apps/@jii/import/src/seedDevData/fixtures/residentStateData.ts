@@ -16,13 +16,13 @@
 // =============================================================================
 
 import {
+  usArResidentJiiDataFixtures,
   usNeResidentJiiDataFixtures,
   usTnResidentJiiDataFixture,
 } from "~@jii/fixtures";
 import {
   rawUsCoResidentJiiDataFixtures,
   rawUsMaResidentJiiDataFixtures,
-  usArResidentJiiDataFixtures,
   usAzResidentJiiDataFixtures,
   usNcResidentJiiFixtures,
   usNdResidentJiiDataFixtures,

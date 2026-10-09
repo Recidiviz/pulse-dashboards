@@ -48,18 +48,8 @@ export const usArResidentCommonSchema = z.object({
 export type UsArResidentCommon = z.infer<typeof usArResidentCommonSchema>;
 export type RawUsArResidentCommon = z.input<typeof usArResidentCommonSchema>;
 
-// JII-only fields (extends common).
-// TODO(OBT-29535): remove this from the workflows schema and move to @jii/schemas
-export const usArResidentJiiDataSchema = usArResidentCommonSchema.extend({
-  cohortCode: nullishAsUndefined(z.string()),
-  lastUpdatedDate: dateStringSchema,
-});
-export type UsArResidentJiiData = z.output<typeof usArResidentJiiDataSchema>;
-export type RawUsArResidentJiiData = z.input<typeof usArResidentJiiDataSchema>;
-
-// Workflows metadata (extends JII, which extends common).
-// TODO(OBT-29535): remove JII-only fields from this schema and move to @jii/schemas
-export const usArResidentMetadataSchema = usArResidentJiiDataSchema.extend({
+// Workflows metadata (extends common).
+export const usArResidentMetadataSchema = usArResidentCommonSchema.extend({
   currentCustodyClassification: z.string(),
   currentGtEarningClass: z.string(),
   currentLocation: z.string(),

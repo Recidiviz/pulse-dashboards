@@ -21,8 +21,8 @@ import styled from "styled-components";
 
 import { GoButton, HomepageSectionHeading } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
+import { UsArResidentJiiData } from "~@jii/schemas";
 import { useUsArTranslations } from "~@jii/translation";
-import { UsArResidentJiiData } from "~datatypes";
 
 import { DateInfoCard, DateInfoProps } from "./DateInfoCard";
 
