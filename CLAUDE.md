@@ -56,6 +56,9 @@ nx test-e2e staff --configuration=lantern   # or login, or userAccess
 
 `lint` and `typecheck` are inferred targets (`nx lint staff --fix`, `nx typecheck staff`). The `pass-ci` skill runs the CI-equivalent checks across affected projects.
 
+CI runs lint with `--max-warnings 0` — a single ESLint warning fails the build.
+Fix warnings; do not leave them.
+
 ### SOPS Environment Variable Loading
 
 The repo uses a custom SOPS plugin to load encrypted environment variables for nx targets.
