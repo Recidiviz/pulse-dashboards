@@ -22,7 +22,6 @@ import { rawUsIdResidents, usIdResidents } from "./US_ID/fixtures";
 import { rawUsNcResidents, usNcResidents } from "./US_NC/fixtures";
 import { rawUsNdResidents, usNdResidents } from "./US_ND/fixtures";
 import { rawUsNeResidents, usNeResidents } from "./US_NE/fixtures";
-import { rawUsNycResidents, usNycResidents } from "./US_NYC/fixtures";
 import { rawUsTnResidents, usTnResidents } from "./US_TN/fixtures";
 import {
   RawWorkflowsResidentRecord,
@@ -40,7 +39,6 @@ export const allResidents: WorkflowsResidentRecord[] = [
   ...usNcResidents,
   ...usNdResidents,
   ...usNeResidents,
-  ...usNycResidents,
   ...usTnResidents,
 ];
 
@@ -52,6 +50,5 @@ export const rawAllResidents: RawWorkflowsResidentRecord[] = [
   ...rawUsNcResidents,
   ...rawUsNdResidents,
   ...rawUsNeResidents,
-  ...rawUsNycResidents,
   ...rawUsTnResidents,
 ];

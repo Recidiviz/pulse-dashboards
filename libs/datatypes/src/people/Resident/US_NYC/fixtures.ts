@@ -19,10 +19,6 @@ import {
   RawResidentCommon,
   residentCommonSchema,
 } from "../residentCommonSchema";
-import {
-  RawWorkflowsResidentRecord,
-  workflowsResidentRecordSchema,
-} from "../workflowsResidentRecordSchema";
 
 export const rawUsNycResidentCommon: RawResidentCommon[] = [
   {
@@ -45,33 +41,4 @@ export const rawUsNycResidentCommon: RawResidentCommon[] = [
 
 export const usNycResidentCommon = rawUsNycResidentCommon.map((r) =>
   residentCommonSchema.parse(r),
-);
-
-export const rawUsNycResidents: RawWorkflowsResidentRecord[] = [
-  {
-    stateCode: "US_NYC",
-    personExternalId: "NYC_RES001",
-    pseudonymizedId: "anonres_nyc_001",
-    displayId: "RES001",
-    personName: { givenNames: "Alex", surname: "Rivera" },
-    facilityId: "NYC_DEMO_FACILITY",
-    recordId: "us_nyc_nyc_res001",
-    allEligibleOpportunities: [],
-    metadata: { stateCode: "US_NYC" },
-  },
-  {
-    stateCode: "US_NYC",
-    personExternalId: "NYC_RES002",
-    pseudonymizedId: "anonres_nyc_002",
-    displayId: "RES002",
-    personName: { givenNames: "Jordan", surname: "Chen" },
-    facilityId: "NYC_DEMO_FACILITY",
-    recordId: "us_nyc_nyc_res002",
-    allEligibleOpportunities: [],
-    metadata: { stateCode: "US_NYC" },
-  },
-];
-
-export const usNycResidents = rawUsNycResidents.map((r) =>
-  workflowsResidentRecordSchema.parse(r),
 );
