@@ -24,7 +24,7 @@ import {
   RawWorkflowsResidentRecord,
   workflowsResidentRecordSchema,
 } from "../workflowsResidentRecordSchema";
-import { rawUsCoResidentJiiDataFixtures } from "./metadata/fixtures";
+import { usCoResidentMetadataFixtures } from "./metadata/fixtures";
 
 export const rawUsCoResidentCommon: Array<RawResidentCommon> = [
   {
@@ -68,7 +68,7 @@ export const rawUsCoResidents: Array<RawWorkflowsResidentRecord> = [
     facilityUnitId: null,
     unitId: null,
     admissionDate: relativeFixtureDate({ years: -1, days: -97 }),
-    metadata: rawUsCoResidentJiiDataFixtures[0],
+    metadata: usCoResidentMetadataFixtures[0],
   },
   {
     ...rawUsCoResidentCommon[1],
@@ -80,7 +80,7 @@ export const rawUsCoResidents: Array<RawWorkflowsResidentRecord> = [
     facilityUnitId: null,
     unitId: null,
     admissionDate: relativeFixtureDate({ years: -2, months: -6 }),
-    metadata: rawUsCoResidentJiiDataFixtures[1],
+    metadata: usCoResidentMetadataFixtures[1],
   },
 ];
 

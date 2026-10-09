@@ -18,11 +18,11 @@
 import {
   usArResidentJiiDataFixtures,
   usAzResidentJiiDataFixtures,
+  usCoResidentJiiDataFixtures,
   usNeResidentJiiDataFixtures,
   usTnResidentJiiDataFixture,
 } from "~@jii/fixtures";
 import {
-  rawUsCoResidentJiiDataFixtures,
   rawUsMaResidentJiiDataFixtures,
   usNcResidentJiiFixtures,
   usNdResidentJiiDataFixtures,
@@ -35,7 +35,7 @@ export const rawResidentStateDataFixtures = new Map<string, Array<unknown>>([
   // TODO(OBT-29535): move these over from datatypes
   ["US_AR", usArResidentJiiDataFixtures],
   ["US_AZ", usAzResidentJiiDataFixtures],
-  ["US_CO", rawUsCoResidentJiiDataFixtures],
+  ["US_CO", usCoResidentJiiDataFixtures],
   ["US_MA", rawUsMaResidentJiiDataFixtures],
   ["US_NC", usNcResidentJiiFixtures],
   ["US_ND", usNdResidentJiiDataFixtures],

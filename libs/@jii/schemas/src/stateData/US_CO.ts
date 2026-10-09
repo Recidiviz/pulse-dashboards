@@ -15,7 +15,39 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usCoResidentJiiDataSchema } from "~datatypes";
+import { z } from "zod";
 
-// TODO(OBT-29535): move the entire schema over from datatypes
-export const usCoStateDataSchema = usCoResidentJiiDataSchema;
+import {
+  dateStringSchema,
+  nullishAsUndefined,
+  usCoResidentCommonSchema,
+} from "~datatypes";
+
+const creditTypeSchema = z.enum([
+  "EARNED_TIME",
+  "GOOD_TIME",
+  "ACHIEVEMENT",
+  "OTHER",
+  "PROJECTED_EARNED_TIME_FINAL_3_MONTHS",
+]);
+
+export const usCoEarnedCreditActivitySchema = z.object({
+  creditDate: dateStringSchema,
+  creditType: nullishAsUndefined(creditTypeSchema),
+  creditsEarned: nullishAsUndefined(z.number()),
+  goodTimeChangeReason: z.string().nullable(),
+  earnedTimeStatus: z.string().nullable(),
+});
+
+export const usCoStateDataSchema = usCoResidentCommonSchema.extend({
+  sddTent: nullishAsUndefined(dateStringSchema),
+  creditActivity: z.array(usCoEarnedCreditActivitySchema),
+  lastUpdatedDate: nullishAsUndefined(dateStringSchema),
+});
+
+export type RawUsCoResidentJiiData = z.input<typeof usCoStateDataSchema>;
+export type UsCoResidentJiiData = z.output<typeof usCoStateDataSchema>;
+export type UsCoEarnedCreditActivity = z.output<
+  typeof usCoEarnedCreditActivitySchema
+>;
+export type UsCoCreditType = z.output<typeof creditTypeSchema>;

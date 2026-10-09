@@ -24,7 +24,7 @@ import {
   UsCoCreditType,
   UsCoEarnedCreditActivity,
   UsCoResidentJiiData,
-} from "~datatypes";
+} from "~@jii/schemas";
 
 export type UsCoMonthlyReport = {
   monthSlug: string;

@@ -31,13 +31,7 @@ import {
 } from "./workflowsResidentRecordSchema";
 
 // re-exporting state fixtures for convenience
-export {
-  rawUsArResidents,
-  rawUsCoResidents,
-  rawUsMaResidents,
-  usCoResidents,
-  usMaResidents,
-};
+export { rawUsArResidents, rawUsMaResidents, usMaResidents };
 
 export const allResidents: WorkflowsResidentRecord[] = [
   ...usArResidents,

@@ -65,7 +65,6 @@ function buildUsCoResident(
     metadata: {
       stateCode: "US_CO",
       incarcerationStartDate: null,
-      creditActivity: [],
       cohortLabel: "STANDARD",
     },
     ...raw,
@@ -266,7 +265,6 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_CO",
             incarcerationStartDate: null,
-            creditActivity: [],
             cohortLabel: "STANDARD",
             docketHearingDate: "2026-11-02",
           },
@@ -544,7 +542,6 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_CO",
             incarcerationStartDate: null,
-            creditActivity: [],
             cohortLabel: "STANDARD",
           },
         }),
@@ -762,7 +759,6 @@ describe("ParoleAPIClient", () => {
             incarcerationStartDate: "2019-08-12",
             mrdTent: "2033-01-03",
             pedTent: "2027-01-03",
-            creditActivity: [],
             cohortLabel: "STANDARD",
           },
         }),
@@ -801,7 +797,6 @@ describe("ParoleAPIClient", () => {
           metadata: {
             stateCode: "US_CO",
             incarcerationStartDate: null,
-            creditActivity: [],
             cohortLabel: "STANDARD",
             docketHearingDate: "2026-11-02",
           },
@@ -818,7 +813,6 @@ describe("ParoleAPIClient", () => {
         metadata: {
           stateCode: "US_CO",
           incarcerationStartDate: null,
-          creditActivity: [],
           cohortLabel: "STANDARD",
           docketHearingDate: "2026-11-01",
         },
@@ -964,7 +958,6 @@ describe("ParoleAPIClient", () => {
             incarcerationStartDate: null,
             mrdTent: "2033-01-03",
             pedTent: "2027-01-03",
-            creditActivity: [],
             cohortLabel: "STANDARD",
           },
         }),
@@ -1001,7 +994,6 @@ describe("ParoleAPIClient", () => {
               stateCode: "US_CO",
               incarcerationStartDate: null,
               pedTent: "2027-01-03",
-              creditActivity: [],
               cohortLabel,
             },
           }),

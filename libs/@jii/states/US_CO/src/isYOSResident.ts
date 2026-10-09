@@ -16,14 +16,11 @@
 // =============================================================================
 
 import { ResidentRecord } from "~@jii/data";
-import { WorkflowsResidentRecord } from "~datatypes";
 
 /**
  * Residents at the Youthful Offender System facility see only the program
  * catalog, scoped to YOS programs, rather than the full resident experience.
  */
-export function isYOSResident(
-  resident: WorkflowsResidentRecord | ResidentRecord,
-) {
+export function isYOSResident(resident: ResidentRecord) {
   return resident.facilityId === "YOS";
 }

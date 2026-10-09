@@ -18,31 +18,14 @@
 import { z } from "zod";
 
 import { dateStringSchema, nullishAsUndefined } from "../../../../utils/zod";
+import { paroleBoardClientProfileSchema } from "../../paroleBoardClientProfileSchema";
 
-const creditTypeSchema = z.enum([
-  "EARNED_TIME",
-  "GOOD_TIME",
-  "ACHIEVEMENT",
-  "OTHER",
-  "PROJECTED_EARNED_TIME_FINAL_3_MONTHS",
-]);
-
-export const usCoEarnedCreditActivitySchema = z.object({
-  creditDate: dateStringSchema,
-  creditType: nullishAsUndefined(creditTypeSchema),
-  creditsEarned: nullishAsUndefined(z.number()),
-  goodTimeChangeReason: z.string().nullable(),
-  earnedTimeStatus: z.string().nullable(),
-});
-
-export const usCoResidentJiiDataSchema = z.object({
+// Fields used by both JII and workflows.
+export const usCoResidentCommonSchema = z.object({
   stateCode: z.literal("US_CO"),
   incarcerationStartDate: dateStringSchema.nullable(),
   mrdTent: nullishAsUndefined(dateStringSchema),
   pedTent: nullishAsUndefined(dateStringSchema),
-  sddTent: nullishAsUndefined(dateStringSchema),
-  creditActivity: z.array(usCoEarnedCreditActivitySchema),
-  lastUpdatedDate: nullishAsUndefined(dateStringSchema),
   cohortLabel: z.enum([
     "STANDARD",
     "INDETERMINATE_LIFE_WITH_PAROLE",
@@ -50,12 +33,29 @@ export const usCoResidentJiiDataSchema = z.object({
     "LIFE_WITHOUT_PAROLE",
     "INTERSTATE_COMPACT",
   ]),
-  docketHearingDate: nullishAsUndefined(z.string()),
 });
+export type UsCoResidentCommon = z.infer<typeof usCoResidentCommonSchema>;
+export type RawUsCoResidentCommon = z.input<typeof usCoResidentCommonSchema>;
 
-export type RawUsCoResidentJiiData = z.input<typeof usCoResidentJiiDataSchema>;
-export type UsCoResidentJiiData = z.output<typeof usCoResidentJiiDataSchema>;
-export type UsCoEarnedCreditActivity = z.output<
-  typeof usCoEarnedCreditActivitySchema
+// Workflows metadata (extends common). The JII-only fields live in ~@jii/schemas.
+export const usCoResidentMetadataSchema = usCoResidentCommonSchema.extend({
+  docketHearingDate: nullishAsUndefined(z.string()),
+  // The resident's soonest upcoming Parole Board hearing (backend field
+  // next_parole_hearing_date), read by FirestoreStore.getResidentsForState
+  // to filter the docket query server-side instead of fetching every US_CO
+  // resident and windowing client-side. A plain ISO string, not
+  // dateStringSchema (which parses to a Date) -- Firestore's inequality
+  // operators compare the raw stored value, and the rest of the parole
+  // hearing code (ParoleHearing.hearingDate) already relies on plain
+  // string ordering rather than Date parsing for exactly this reason.
+  // TEMPORARY: lives under metadata for now because that's where the
+  // current sandbox upload puts it. TODO(OBT-47979): move this to
+  // WorkflowsResidentRecord's top level (and update the query's field path
+  // to match) once the real backend export does the same.
+  nextParoleHearingDate: nullishAsUndefined(z.string()),
+  paroleBoardClientProfile: paroleBoardClientProfileSchema.optional(),
+});
+export type UsCoResidentMetadata = z.output<typeof usCoResidentMetadataSchema>;
+export type RawUsCoResidentMetadata = z.input<
+  typeof usCoResidentMetadataSchema
 >;
-export type UsCoCreditType = z.output<typeof creditTypeSchema>;

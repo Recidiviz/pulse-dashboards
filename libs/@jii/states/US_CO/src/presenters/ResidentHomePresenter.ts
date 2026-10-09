@@ -17,8 +17,8 @@
 
 import { makeAutoObservable } from "mobx";
 
+import { UsCoResidentJiiData } from "~@jii/schemas";
 import { SentenceDatesData } from "~@jii/sentence-dates";
-import { UsCoResidentJiiData } from "~datatypes";
 
 export class ResidentHomePresenter {
   constructor(private residentData: UsCoResidentJiiData) {

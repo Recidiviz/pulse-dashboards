@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { ResidentRecord } from "~@jii/data";
-import { UsCoResidentJiiData } from "~datatypes";
+import { UsCoResidentJiiData } from "~@jii/schemas";
 
 import { UsCoCreditReportPresenter } from "./UsCoCreditReportPresenter";
 

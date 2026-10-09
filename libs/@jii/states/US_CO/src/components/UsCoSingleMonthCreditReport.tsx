@@ -32,8 +32,8 @@ import {
 } from "~@jii/common-ui";
 import { useResidentMetadata, useSingleResidentContext } from "~@jii/data";
 import { EGT } from "~@jii/paths";
+import { UsCoCreditType } from "~@jii/schemas";
 import { useUsCoTranslations } from "~@jii/translation";
-import { UsCoCreditType } from "~datatypes";
 import { spacing } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
