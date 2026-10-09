@@ -15,22 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import * as Sentry from "@sentry/react-native";
 import { useEffect, useState } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 
-import { Person } from "~@meetings/app/shared/api";
+import { useDiscardMeeting } from "~@meetings/app/entities/meeting";
+import { useErrorCapture } from "~@meetings/app/shared/lib/errors";
 
+import { Button } from "../../../shared/ui/Button";
 import Modal from "../../../shared/ui/Modal";
 import { Typography } from "../../../shared/ui/Typography";
+import { useActiveMeetingStore, useNewRecording } from "../model";
 import { ModalConfirmationBackdrop } from "./ModalConfirmationBackdrop";
 
-type Props = {
-  person: Person;
-  onContinue: () => void;
-  onDiscard: () => void;
-};
-
-export function DiscardMeetingModal({ person, onContinue, onDiscard }: Props) {
+export function DiscardMeetingModal() {
+  const {
+    meetingId,
+    person,
+    personType,
+    cleanup,
+    setControlsDisabled,
+    setShowDiscardModal,
+    controlsDisabled,
+  } = useActiveMeetingStore();
+  const { discardRecording, resumeRecording } = useNewRecording();
+  const discard = useDiscardMeeting();
+  const { captureError } = useErrorCapture();
   const [discardCountdown, setDiscardCountdown] = useState(3);
 
   useEffect(() => {
@@ -49,9 +59,42 @@ export function DiscardMeetingModal({ person, onContinue, onDiscard }: Props) {
     return () => clearInterval(interval);
   }, []);
 
+  if (!person) return null;
+
+  const onContinue = () => {
+    setShowDiscardModal(false);
+    resumeRecording();
+  };
+
+  const onDiscard = async () => {
+    if (!meetingId || !personType) return;
+
+    try {
+      setControlsDisabled(true);
+      await discardRecording();
+      await discard.mutateAsync({
+        meetingId,
+        personId: person.personId,
+        personType,
+      });
+      Sentry.logger.info("meeting.discard", { meetingId });
+    } catch (error) {
+      captureError({
+        message: "meeting.discard.error",
+        error,
+        params: { meetingId },
+      });
+      return;
+    } finally {
+      setControlsDisabled(false);
+    }
+
+    cleanup();
+  };
+
   return (
     <Modal
-      visible
+      visible={!controlsDisabled}
       transparent
       containerClassName="px-6 py-5 max-w-[360px]"
       onClickOutside={onContinue}
@@ -68,23 +111,19 @@ export function DiscardMeetingModal({ person, onContinue, onDiscard }: Props) {
         Notes and transcript won't be saved.
       </Typography>
       <View className="flex-row gap-2">
-        <TouchableOpacity
-          className="flex-1 items-center rounded-full border border-subtle py-3"
-          onPress={onContinue}
-        >
-          <Typography className="font-semibold text-primary">Cancel</Typography>
-        </TouchableOpacity>
-        <TouchableOpacity
-          className={`flex-1 items-center rounded-full py-3 ${discardCountdown > 0 ? "bg-disabled" : "bg-attention"}`}
+        <Button variant="tertiary" className="flex-1" onPress={onContinue}>
+          Cancel
+        </Button>
+        <Button
+          variant="destructive"
+          className="flex-1"
           onPress={onDiscard}
-          disabled={discardCountdown > 0}
+          disabled={discardCountdown > 0 || controlsDisabled}
         >
-          <Typography className="font-semibold text-on-brand">
-            {discardCountdown > 0
-              ? `Discard (0:${discardCountdown.toString().padStart(2, "0")})`
-              : "Discard"}
-          </Typography>
-        </TouchableOpacity>
+          {discardCountdown > 0
+            ? `Discard (0:${discardCountdown.toString().padStart(2, "0")})`
+            : "Discard"}
+        </Button>
       </View>
     </Modal>
   );

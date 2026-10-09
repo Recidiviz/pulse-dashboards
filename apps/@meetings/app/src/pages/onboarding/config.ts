@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { MicErrorType } from "./model/types";
-
 export enum OnboardingStep {
   Welcome = "welcome",
   EnableMicrophone = "enable-microphone",
@@ -28,24 +26,3 @@ export enum OnboardingStep {
   ProTip3 = "pro-tip-3",
   ProTip4 = "pro-tip-4",
 }
-
-export const MIC_ERROR_MESSAGES: Record<
-  MicErrorType,
-  { title: string; message: string }
-> = {
-  "permission-denied": {
-    title: "Microphone access required",
-    message:
-      "Please allow microphone access in your browser or device settings, then try again.",
-  },
-  "in-use": {
-    title: "Microphone is unavailable",
-    message:
-      "Your microphone is currently being used by another application or blocked by your device. Close any apps using the microphone and try again.",
-  },
-  "not-found": {
-    title: "Microphone not detected",
-    message:
-      "Check your system preferences to ensure your microphone is on and connected.",
-  },
-};

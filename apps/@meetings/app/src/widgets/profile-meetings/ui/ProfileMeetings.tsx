@@ -46,7 +46,8 @@ import { useIsSuccessPlannerVisible } from "~@meetings/app/entities/success-plan
 import { useAudioUploadStore } from "~@meetings/app/features/audio-upload";
 import {
   MeetingControlsMobile,
-  useRecording,
+  useActiveMeetingStore,
+  useNewRecording,
 } from "~@meetings/app/features/recording";
 import { useAnalytics } from "~@meetings/app/shared/analytics";
 import { Person, PersonType } from "~@meetings/app/shared/api";
@@ -93,19 +94,9 @@ export const ProfileMeetings = ({
   const { selectedStateCode } = useStateSelection();
   const meetingTypes = agencyConfigs[selectedStateCode].meetingTypes;
   const isPlannerVisible = useIsSuccessPlannerVisible();
-  const { status: recordingState } = useRecording();
-  const {
-    setMeetingId,
-    setMeetingType,
-    setPerson,
-    setPersonType,
-    startRecording,
-  } = useRecording<"native">();
-  const {
-    openRecordingView,
-    startRecording: startRecordingWeb,
-    setNote: setRecordingNote,
-  } = useRecording<"web">();
+  const { openMeeting, setNote: setRecordingNote } = useActiveMeetingStore();
+  const { startRecording, state: recordingState } = useNewRecording();
+
   const openAudioUpload = useAudioUploadStore((s) => s.open);
   const setUploadNotepadNotes = useAudioUploadStore(
     (s) => s.setUserNotepadNotes,
@@ -168,37 +159,23 @@ export const ProfileMeetings = ({
     meetingType: meetingTypeValue,
     meetingTypeCategory: meetingTypeCategoryValue,
     personType: personType,
-    onSuccess: (meetingId) => {
+    onSuccess: async (meetingId) => {
       track("meeting_started", {
         meetingId,
         personId: person.personId.toString(),
         personType,
       });
-      switch (Platform.OS) {
-        case "web":
-          openRecordingView({
-            meetingId,
-            meetingType: meetingTypeValue,
-            meetingTypeCategory: meetingTypeCategoryValue,
-            person,
-          });
-          // user can add notes on the pre-meeting screen.
-          // web only, we don't have such screen on ios and android
-          setRecordingNote(preMeetingNote);
-          setPreMeetingNote("");
-          startRecordingWeb();
-          resetMeetingTypeStore(meetingTypes[0]?.type ?? undefined);
-          break;
-        case "ios":
-        case "android":
-          setMeetingId(meetingId);
-          setMeetingType(meetingTypeValue);
-          setPerson(person);
-          setPersonType(personType);
-          startRecording();
-          resetMeetingTypeStore(meetingTypes[0]?.type ?? undefined);
-          break;
-      }
+      openMeeting({
+        meetingId,
+        meetingType: meetingTypeValue,
+        meetingTypeCategory: meetingTypeCategoryValue,
+        person,
+      });
+      // The pre-meeting notepad is web-only, so this is empty on iOS and Android.
+      setRecordingNote(preMeetingNote);
+      setPreMeetingNote("");
+      await startRecording();
+      resetMeetingTypeStore(meetingTypes[0]?.type ?? undefined);
     },
   });
 

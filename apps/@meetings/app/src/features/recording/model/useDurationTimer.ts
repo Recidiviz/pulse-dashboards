@@ -59,11 +59,6 @@ export function useDurationTimer() {
     setDurationMs(0);
   }, []);
 
-  const setInitialDurationMs = useCallback((ms: number) => {
-    accumulatedMsRef.current = ms;
-    setDurationMs(ms);
-  }, []);
-
   useEffect(() => {
     return () => {
       if (intervalRef.current) {
@@ -77,6 +72,5 @@ export function useDurationTimer() {
     start,
     stop,
     reset,
-    setInitialDurationMs,
   };
 }

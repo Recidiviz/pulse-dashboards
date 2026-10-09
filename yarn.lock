@@ -10763,6 +10763,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mediabunny/aac-encoder@npm:1.56.2":
+  version: 1.56.2
+  resolution: "@mediabunny/aac-encoder@npm:1.56.2"
+  peerDependencies:
+    mediabunny: ^1.0.0
+  checksum: 10c0/007415691fb88a71b46f48a5cae7ed5166386e0c5060b6ffc8906b87119efced43ef7f590f3914ea30f9ae6d090ba25264b7feb71a8f035e09f1c8e9267f0a5c
+  languageName: node
+  linkType: hard
+
 "@meetings/app@workspace:apps/@meetings/app":
   version: 0.0.0-use.local
   resolution: "@meetings/app@workspace:apps/@meetings/app"
@@ -22128,6 +22137,29 @@ __metadata:
   version: 0.0.9
   resolution: "@types/doctrine@npm:0.0.9"
   checksum: 10c0/cdaca493f13c321cf0cacd1973efc0ae74569633145d9e6fc1128f32217a6968c33bea1f858275239fe90c98f3be57ec8f452b416a9ff48b8e8c1098b20fa51c
+  languageName: node
+  linkType: hard
+
+"@types/dom-mediacapture-transform@npm:^0.1.11":
+  version: 0.1.12
+  resolution: "@types/dom-mediacapture-transform@npm:0.1.12"
+  dependencies:
+    "@types/dom-webcodecs": "npm:*"
+  checksum: 10c0/340d31b37dd12c4c145d9cb1e10057376bcbefeb32833bb829a9cea430e04ddc6f5a942479f92ad9f33adb8ee0fe208675cb1f3f1ad501c8e8c50f0a14cd496c
+  languageName: node
+  linkType: hard
+
+"@types/dom-webcodecs@npm:*":
+  version: 0.1.19
+  resolution: "@types/dom-webcodecs@npm:0.1.19"
+  checksum: 10c0/bb6e04daf5c22eda547db38ddc000d978b5af6203a519962859439a14c3455ce89edeea33d9464f698872a3540971c20c7cda354a5535b1a3bc18cbdddcdf843
+  languageName: node
+  linkType: hard
+
+"@types/dom-webcodecs@npm:0.1.13":
+  version: 0.1.13
+  resolution: "@types/dom-webcodecs@npm:0.1.13"
+  checksum: 10c0/16683fd0330fdfbb867affec1c18fd493d88433a4ec66257579adc5d07b07e9492268b4401e9017b7388b13750722365b0392b375e39c84e74f564d5b4f634a4
   languageName: node
   linkType: hard
 
@@ -45223,6 +45255,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mediabunny@npm:^1.56.2":
+  version: 1.56.2
+  resolution: "mediabunny@npm:1.56.2"
+  dependencies:
+    "@types/dom-mediacapture-transform": "npm:^0.1.11"
+    "@types/dom-webcodecs": "npm:0.1.13"
+  checksum: 10c0/7713a1b51092307a5179460f8ee23d064ab9b76a6633a97d2f4bd28405b4aa8972ab7f6574817a17620449420e28a1d20e6a5deb0b4e5f2b17ab76ce2d7cb18e
+  languageName: node
+  linkType: hard
+
 "memfs@npm:^3.4.1":
   version: 3.5.3
   resolution: "memfs@npm:3.5.3"
@@ -53868,6 +53910,7 @@ __metadata:
     "@material/select": "npm:^14.0.0"
     "@material/textfield": "npm:^14.0.0"
     "@mdxeditor/editor": "npm:^3.30.1"
+    "@mediabunny/aac-encoder": "npm:1.56.2"
     "@monaco-editor/loader": "npm:1.7.0"
     "@monaco-editor/react": "npm:4.7.0"
     "@mui/icons-material": "npm:^6.1.1"
@@ -54126,6 +54169,7 @@ __metadata:
     markdown-it: "npm:^14.1.0"
     markdown-slug: "npm:^0.1.1"
     markdown-to-jsx: "npm:^7.4.7"
+    mediabunny: "npm:^1.56.2"
     mermaid: "npm:^11.2.1"
     metro-config: "npm:^0.83.3"
     metro-resolver: "npm:^0.83.3"

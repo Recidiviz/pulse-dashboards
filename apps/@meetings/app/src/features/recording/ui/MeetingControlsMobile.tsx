@@ -27,7 +27,7 @@ import StopSvg from "../../../shared/assets/icons/stop.svg";
 import { formatDurationNumeric } from "../../../shared/lib/format";
 import { RecordingIndicator } from "../../../shared/ui/RecordingIndicator";
 import { Typography } from "../../../shared/ui/Typography";
-import { useRecording } from "../model";
+import { useActiveMeetingStore, useNewRecording } from "../model";
 import { useAudioErrorDetection } from "../model/useAudioErrorDetection";
 import { MicIndicator } from "./MicIndicator";
 
@@ -37,20 +37,24 @@ export function MeetingControlsMobile() {
   const {
     person,
     personType,
-    status,
+    meetingId,
+    controlsDisabled,
+    setShowEndModal,
+    setShowDiscardModal,
+  } = useActiveMeetingStore();
+  const {
+    resumeRecording,
     durationMs,
     audioLevel,
-    meetingId,
-    stopRecording,
-    discardRecording,
-    togglePauseResume,
-  } = useRecording<"native">();
+    pauseRecording,
+    state: recorderState,
+  } = useNewRecording();
   const { micStatus } = useAudioErrorDetection({
-    isRecording: status === "recording",
+    isRecording: recorderState === "recording",
     audioLevel,
   });
 
-  if (status === "idle" || !meetingId || !person) return null;
+  if (recorderState === "idle" || !meetingId || !person) return null;
 
   const linkProps = {
     screen: personType === "client" ? "ClientNewMeeting" : "ResidentNewMeeting",
@@ -63,7 +67,15 @@ export function MeetingControlsMobile() {
     },
   };
 
-  const isControlsDisabled = status === "uploading" || status === "ending";
+  const onEndPress = () => {
+    pauseRecording();
+    setShowEndModal(true);
+  };
+
+  const onDiscardPress = () => {
+    pauseRecording();
+    setShowDiscardModal(true);
+  };
   const isNewMeetingScreen =
     route.name === "ClientNewMeeting" || route.name === "ResidentNewMeeting";
 
@@ -97,7 +109,7 @@ export function MeetingControlsMobile() {
           <View className="w-[42px]" />
         </View>
         <View className="mt-1 flex flex-row items-center gap-2">
-          <RecordingIndicator isRecording={status === "recording"} />
+          <RecordingIndicator isRecording={recorderState === "recording"} />
           <Typography className="text-sm font-medium text-primary">
             Recording in progress
           </Typography>
@@ -106,11 +118,11 @@ export function MeetingControlsMobile() {
           </Typography>
         </View>
         <View className="mt-4 w-full flex-row items-center justify-center gap-2">
-          {status === "recording" ? (
+          {recorderState === "recording" ? (
             <TouchableOpacity
               className="flex-1 disabled:opacity-50"
-              onPress={togglePauseResume}
-              disabled={isControlsDisabled}
+              onPress={pauseRecording}
+              disabled={controlsDisabled}
             >
               <View className="flex h-[44px] flex-row items-center justify-center gap-1.5 rounded-full bg-secondary">
                 <PauseSvg className="!size-4 fill-tertiary" />
@@ -122,8 +134,8 @@ export function MeetingControlsMobile() {
           ) : (
             <TouchableOpacity
               className="flex-1 disabled:opacity-50"
-              onPress={togglePauseResume}
-              disabled={isControlsDisabled}
+              onPress={resumeRecording}
+              disabled={controlsDisabled}
             >
               <View className="flex h-[44px] flex-row items-center justify-center gap-1.5 rounded-full bg-brand">
                 <PlaySvg className="!size-4 fill-on-brand" />
@@ -135,8 +147,8 @@ export function MeetingControlsMobile() {
           )}
           <TouchableOpacity
             className="flex-1 disabled:opacity-50"
-            onPress={stopRecording}
-            disabled={isControlsDisabled}
+            onPress={onEndPress}
+            disabled={controlsDisabled}
           >
             <View className="flex h-[44px] flex-row items-center justify-center gap-1.5 rounded-full bg-attention">
               <StopSvg className="!size-4 fill-on-brand" />
@@ -147,8 +159,8 @@ export function MeetingControlsMobile() {
           </TouchableOpacity>
           <TouchableOpacity
             className="disabled:opacity-50"
-            onPress={discardRecording}
-            disabled={isControlsDisabled}
+            onPress={onDiscardPress}
+            disabled={controlsDisabled}
           >
             <View className="flex size-[44px] items-center justify-center rounded-full bg-secondary">
               <XIcon className="!size-5 stroke-tertiary" />

@@ -19,7 +19,10 @@ import clsx from "clsx";
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
 
-import { useRecording } from "~@meetings/app/features/recording";
+import {
+  useActiveMeetingStore,
+  useNewRecording,
+} from "~@meetings/app/features/recording";
 import { Person } from "~@meetings/app/shared/api";
 import PauseSvg from "~@meetings/app/shared/assets/icons/pause.svg";
 import PlaySvg from "~@meetings/app/shared/assets/icons/play.svg";
@@ -52,8 +55,18 @@ const MeetingInProgressBar = ({
 }: MeetingInProgressBarProps) => {
   const isPaused = recordingState === "paused";
 
-  const { durationMs, stopRecording, togglePauseResume, status } =
-    useRecording<"native">();
+  const { setShowEndModal } = useActiveMeetingStore();
+  const {
+    durationMs,
+    pauseRecording,
+    resumeRecording,
+    state: recorderState,
+  } = useNewRecording();
+
+  const onEndPress = () => {
+    pauseRecording();
+    setShowEndModal(true);
+  };
 
   return (
     <View
@@ -63,7 +76,7 @@ const MeetingInProgressBar = ({
       )}
     >
       <View className="flex flex-row items-center gap-1">
-        <RecordingIndicator isRecording={status === "recording"} />
+        <RecordingIndicator isRecording={recorderState === "recording"} />
         <Typography variant="body-s-medium" className="leading-4">
           Recording
         </Typography>
@@ -79,7 +92,7 @@ const MeetingInProgressBar = ({
               ? "border border-brand bg-brand"
               : "border border-subtle bg-transparent",
           )}
-          onPress={togglePauseResume}
+          onPress={isPaused ? resumeRecording : pauseRecording}
         >
           <View className="flex-row items-center">
             {isPaused ? (
@@ -98,7 +111,7 @@ const MeetingInProgressBar = ({
 
         <TouchableOpacity
           className="ml-2 rounded-full border border-attention bg-attention p-[6px]"
-          onPress={stopRecording}
+          onPress={onEndPress}
         >
           <StopSvg className="size-4 fill-on-brand" />
         </TouchableOpacity>

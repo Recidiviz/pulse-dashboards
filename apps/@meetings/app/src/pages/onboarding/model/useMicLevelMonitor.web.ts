@@ -19,11 +19,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
   AUDIO_LEVEL_INTERVAL_MS,
+  getMicErrorType,
+  MicErrorType,
   rmsToAudioLevel,
 } from "~@meetings/app/features/recording";
-
-import { getMicErrorType } from "../lib";
-import { MicErrorType } from "./types";
 
 export function useMicLevelMonitor() {
   const streamRef = useRef<MediaStream | null>(null);

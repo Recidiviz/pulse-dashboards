@@ -17,9 +17,18 @@
 
 export * from "./config";
 export { dbToAudioLevel, rmsToAudioLevel } from "./lib/audioLevel";
-export { RecordingProvider, useRecording } from "./model";
+export {
+  getMicErrorType,
+  MIC_ERROR_MESSAGES,
+  type MicErrorType,
+} from "./lib/micError";
+export {
+  NewRecordingProvider,
+  useActiveMeetingStore,
+  useNewRecording,
+} from "./model";
 export * from "./model/types";
 export { MeetingControlsMobile } from "./ui/MeetingControlsMobile";
+export { MeetingModal } from "./ui/MeetingModal";
 export { MeetingModalLayout } from "./ui/MeetingModalLayout";
-export { MeetingModalMobile } from "./ui/MeetingModalMobile";
 export { MicIndicator } from "./ui/MicIndicator";

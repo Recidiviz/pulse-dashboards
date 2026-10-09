@@ -15,28 +15,132 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TouchableOpacity, View } from "react-native";
+import * as Sentry from "@sentry/react-native";
+import { Platform, View } from "react-native";
 
-import { Person } from "~@meetings/app/shared/api";
+import { useEndMeeting } from "~@meetings/app/entities/meeting";
+import { useUploadSegment } from "~@meetings/app/shared/api";
+import { useErrorCapture } from "~@meetings/app/shared/lib/errors";
+import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
+import { AUDIO_FORMATS } from "~@meetings/config";
 
+import { Button } from "../../../shared/ui/Button";
 import Modal from "../../../shared/ui/Modal";
 import { Typography } from "../../../shared/ui/Typography";
+import { useActiveMeetingStore, useNewRecording } from "../model";
 import { ModalConfirmationBackdrop } from "./ModalConfirmationBackdrop";
 
-type Props = {
-  person: Person;
-  onContinue: () => void;
-  onFinishAndSave: () => void;
-};
+export function EndMeetingModal() {
+  const {
+    meetingId,
+    person,
+    personType,
+    note,
+    cleanup,
+    setControlsDisabled,
+    setShowEndModal,
+    controlsDisabled,
+  } = useActiveMeetingStore();
+  const { finalizeRecording, resumeRecording } = useNewRecording();
+  const endMeeting = useEndMeeting();
+  const upload = useUploadSegment();
+  const { showError, captureError } = useErrorCapture();
+  const { isOnline } = useIsOnline();
 
-export function EndMeetingModal({
-  person,
-  onContinue,
-  onFinishAndSave,
-}: Props) {
+  if (!person) return null;
+
+  const onContinue = () => {
+    setShowEndModal(false);
+    resumeRecording();
+  };
+
+  const onFinishAndSave = async () => {
+    if (!meetingId || !personType) {
+      showError("Invalid meeting state.", {
+        message: "meeting.end.error",
+        error: new Error(
+          `Invalid state when finishing a meeting: ${JSON.stringify({ meetingId, person: person?.personId, personType })}`,
+        ),
+        params: { meetingId },
+      });
+      return;
+    }
+
+    const endTime = new Date();
+    let audioUri: string | undefined;
+    // Web keeps the recording as a blob; native keeps a file URI.
+    let audioBlob: Blob | undefined;
+    // When the upload is skipped or fails, endMeeting queues the meeting and
+    // its audio in the offline queue, which retries the upload later.
+    let queueForRetry = false;
+    try {
+      setControlsDisabled(true);
+      const audioUrl = await finalizeRecording();
+      if (Platform.OS === "web") {
+        audioBlob = await fetch(audioUrl).then((r) => r.blob());
+      } else {
+        audioUri = audioUrl;
+      }
+
+      if (isOnline) {
+        try {
+          Sentry.logger.info("upload.start", { meetingId });
+          await upload({
+            uri: audioUrl,
+            meetingId,
+            fileExtension: AUDIO_FORMATS.m4a.extension,
+            contentType: AUDIO_FORMATS.m4a.contentType,
+          });
+          Sentry.logger.info("upload.done", { meetingId });
+        } catch (error) {
+          captureError({
+            message: "upload.error",
+            error,
+            params: { meetingId },
+          });
+          queueForRetry = true;
+        }
+      }
+    } catch (error) {
+      captureError({
+        message: "recording.finalize.error",
+        error,
+        params: { meetingId },
+      });
+      setControlsDisabled(false);
+      return;
+    }
+
+    try {
+      await endMeeting.mutateAsync({
+        meetingId,
+        personId: person.personId,
+        personType,
+        endTime,
+        userNotepadNotes: note || undefined,
+        audioUri,
+        audioBlob,
+        person,
+        queueForRetry,
+      });
+      Sentry.logger.info("meeting.end", { meetingId });
+    } catch (error) {
+      showError("Failed to end the meeting. An error occured.", {
+        message: "meeting.end.error",
+        error,
+        params: { meetingId },
+      });
+      return;
+    } finally {
+      setControlsDisabled(false);
+    }
+
+    cleanup();
+  };
+
   return (
     <Modal
-      visible
+      visible={!controlsDisabled}
       transparent
       containerClassName="px-6 py-5 sm:max-w-[360px]"
       onClickOutside={onContinue}
@@ -53,20 +157,22 @@ export function EndMeetingModal({
         and save the notes for processing.
       </Typography>
       <View className="flex-row gap-2">
-        <TouchableOpacity
-          className="flex-1 items-center rounded-full border border-subtle py-3"
+        <Button
+          variant="tertiary"
+          className="flex-1"
           onPress={onContinue}
+          disabled={controlsDisabled}
         >
-          <Typography className="font-semibold text-primary">Cancel</Typography>
-        </TouchableOpacity>
-        <TouchableOpacity
-          className="flex-1 items-center rounded-full bg-brand py-3"
+          Cancel
+        </Button>
+        <Button
+          variant="primary"
+          className="flex-1"
           onPress={onFinishAndSave}
+          disabled={controlsDisabled}
         >
-          <Typography className="font-semibold text-on-brand">
-            Finish & Save
-          </Typography>
-        </TouchableOpacity>
+          Finish & Save
+        </Button>
       </View>
     </Modal>
   );

@@ -42,7 +42,7 @@ import SidebarSvg from "~@meetings/app/shared/assets/icons/sidebar.svg";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import { getLatestCompletedMeeting } from "../lib/getLatestCompletedMeeting";
-import { useRecordingStore } from "../model/store";
+import { useActiveMeetingStore } from "../model";
 import { PreviousMeetingActionItems } from "./PreviousMeetingActionItems";
 
 export type MeetingSidebarProps = {
@@ -57,8 +57,8 @@ export function MeetingSidebar({
 }: MeetingSidebarProps) {
   const personType = getPersonType(person);
 
-  const isCollapsed = useRecordingStore((s) => s.isSidebarCollapsed);
-  const setIsCollapsed = useRecordingStore((s) => s.setIsSidebarCollapsed);
+  const isCollapsed = useActiveMeetingStore((s) => s.isSidebarCollapsed);
+  const setIsCollapsed = useActiveMeetingStore((s) => s.setIsSidebarCollapsed);
   const { selectedStateCode } = useStateSelection();
   const { agencyConfigs } = useAgencyConfigs();
   const { isVariantActive } = useFeatureVariants();

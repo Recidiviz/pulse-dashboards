@@ -17,7 +17,6 @@
 
 import { act, render } from "@testing-library/react-native";
 import React from "react";
-import { Platform } from "react-native";
 
 import { Person } from "~@meetings/app/shared/api";
 
@@ -29,10 +28,10 @@ jest.mock("@react-native-async-storage/async-storage", () =>
 
 // Capture the onSuccess callback that ProfileMeetings passes down, so we can
 // invoke it directly without needing to simulate a full tRPC mutation.
-let capturedOnSuccess: ((meetingId: string) => void) | undefined;
+let capturedOnSuccess: ((meetingId: string) => Promise<void>) | undefined;
 jest.mock("~@meetings/app/entities/meeting", () => ({
   useCreateMeeting: jest.fn(
-    ({ onSuccess }: { onSuccess: (meetingId: string) => void }) => {
+    ({ onSuccess }: { onSuccess: (meetingId: string) => Promise<void> }) => {
       capturedOnSuccess = onSuccess;
       return { handleCreateMeeting: jest.fn(), isCreating: false };
     },
@@ -42,12 +41,8 @@ jest.mock("~@meetings/app/entities/meeting", () => ({
 // mock-prefixed variables are hoisted by Jest alongside jest.mock calls,
 // so they're safely accessible inside factory functions.
 let mockMeetingTypes: { type: string }[] = [];
-const mockSetMeetingId = jest.fn();
-const mockSetMeetingType = jest.fn();
-const mockSetPerson = jest.fn();
-const mockSetPersonType = jest.fn();
+const mockOpenMeeting = jest.fn();
 const mockStartRecording = jest.fn();
-const mockOpenRecordingView = jest.fn();
 const mockSetNote = jest.fn();
 const mockTrack = jest.fn();
 const mockResetMeetingTypeStore = jest.fn();
@@ -75,15 +70,15 @@ jest.mock("~@meetings/app/shared/analytics", () => ({
 
 jest.mock("~@meetings/app/features/recording", () => ({
   MeetingControlsMobile: () => null,
-  useRecording: jest.fn(() => ({
-    status: null,
-    setMeetingId: mockSetMeetingId,
-    setMeetingType: mockSetMeetingType,
-    setPerson: mockSetPerson,
-    setPersonType: mockSetPersonType,
-    startRecording: mockStartRecording,
-    openRecordingView: mockOpenRecordingView,
+  useActiveMeetingStore: jest.fn(() => ({
+    meetingId: null,
+    person: null,
+    openMeeting: mockOpenMeeting,
     setNote: mockSetNote,
+  })),
+  useNewRecording: jest.fn(() => ({
+    startRecording: mockStartRecording,
+    state: "idle",
   })),
 }));
 
@@ -168,54 +163,26 @@ describe("ProfileMeetings", () => {
   });
 
   describe("after a successful meeting creation", () => {
-    describe("on native (iOS/Android)", () => {
-      it("starts recording and sets meeting state", () => {
-        renderComponent();
-        act(() => {
-          capturedOnSuccess?.(MEETING_ID);
-        });
-
-        expect(mockSetMeetingId).toHaveBeenCalledWith(MEETING_ID);
-        expect(mockSetMeetingType).toHaveBeenCalledWith(null);
-        expect(mockSetPerson).toHaveBeenCalledWith(mockPerson);
-        expect(mockSetPersonType).toHaveBeenCalledWith("client");
-        expect(mockStartRecording).toHaveBeenCalled();
-        expect(mockOpenRecordingView).not.toHaveBeenCalled();
-      });
-    });
-
-    describe("on web", () => {
-      // The RN jest preset defaults Platform.OS to 'ios'; override it for web tests.
-      beforeEach(() => {
-        Platform.OS = "web" as typeof Platform.OS;
-      });
-
-      afterEach(() => {
-        Platform.OS = "ios" as typeof Platform.OS;
-      });
-
-      it("opens the recording view and starts recording", () => {
-        renderComponent();
-        act(() => {
-          capturedOnSuccess?.(MEETING_ID);
-        });
-
-        expect(mockOpenRecordingView).toHaveBeenCalledWith({
-          meetingId: MEETING_ID,
-          meetingType: null,
-          meetingTypeCategory: null,
-          person: mockPerson,
-        });
-        expect(mockSetNote).toHaveBeenCalledWith("");
-        expect(mockStartRecording).toHaveBeenCalled();
-        expect(mockSetMeetingId).not.toHaveBeenCalled();
-      });
-    });
-
-    it("tracks the meeting_started analytics event", () => {
+    it("opens the meeting and starts recording", async () => {
       renderComponent();
-      act(() => {
-        capturedOnSuccess?.(MEETING_ID);
+      await act(async () => {
+        await capturedOnSuccess?.(MEETING_ID);
+      });
+
+      expect(mockOpenMeeting).toHaveBeenCalledWith({
+        meetingId: MEETING_ID,
+        meetingType: null,
+        meetingTypeCategory: null,
+        person: mockPerson,
+      });
+      expect(mockSetNote).toHaveBeenCalledWith("");
+      expect(mockStartRecording).toHaveBeenCalled();
+    });
+
+    it("tracks the meeting_started analytics event", async () => {
+      renderComponent();
+      await act(async () => {
+        await capturedOnSuccess?.(MEETING_ID);
       });
 
       expect(mockTrack).toHaveBeenCalledWith("meeting_started", {
@@ -225,21 +192,21 @@ describe("ProfileMeetings", () => {
       });
     });
 
-    it("resets the meeting type store to the first type when meetingTypes is configured", () => {
+    it("resets the meeting type store to the first type when meetingTypes is configured", async () => {
       mockMeetingTypes = [{ type: "Home Visit" }, { type: "Office Visit" }];
       renderComponent();
-      act(() => {
-        capturedOnSuccess?.(MEETING_ID);
+      await act(async () => {
+        await capturedOnSuccess?.(MEETING_ID);
       });
 
       expect(mockResetMeetingTypeStore).toHaveBeenCalledWith("Home Visit");
     });
 
-    it("resets the meeting type store to undefined when meetingTypes is empty", () => {
+    it("resets the meeting type store to undefined when meetingTypes is empty", async () => {
       mockMeetingTypes = [];
       renderComponent();
-      act(() => {
-        capturedOnSuccess?.(MEETING_ID);
+      await act(async () => {
+        await capturedOnSuccess?.(MEETING_ID);
       });
 
       expect(mockResetMeetingTypeStore).toHaveBeenCalledWith(undefined);

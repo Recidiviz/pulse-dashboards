@@ -18,13 +18,14 @@
 import { TouchableOpacity, View } from "react-native";
 import { XIcon } from "react-native-heroicons/solid";
 
+import {
+  MIC_ERROR_MESSAGES,
+  MicErrorType,
+} from "~@meetings/app/features/recording";
 import MicrophoneMutedSvg from "~@meetings/app/shared/assets/icons/microphone-muted.svg";
 import { Button } from "~@meetings/app/shared/ui/Button";
 import Modal from "~@meetings/app/shared/ui/Modal";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
-
-import { MIC_ERROR_MESSAGES } from "../config";
-import { MicErrorType } from "../model/types";
 
 type Props = {
   onClose: () => void;

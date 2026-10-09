@@ -49,7 +49,7 @@ export function useAudioUpload() {
     personType: store.personType,
     meetingType: store.meetingType,
     meetingTypeCategory: store.meetingTypeCategory,
-    onSuccess: () => undefined,
+    onSuccess: async () => undefined,
   });
   const abortControllerRef = useRef<AbortController | null>(null);
 

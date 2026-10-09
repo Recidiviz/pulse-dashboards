@@ -102,9 +102,12 @@ jest.mock("~@meetings/app/features/impersonation", () => ({
 jest.mock("~@meetings/app/shared/ui/OfflineIndicator", () => ({
   OfflineIndicator: () => <div>Mocked Indicator</div>,
 }));
+jest.mock("~@meetings/app/shared/ui/Snackbar", () => ({
+  useSnackbar: () => ({ showSnackbar: jest.fn() }),
+}));
 jest.mock("~@meetings/app/features/recording", () => ({
-  useRecording: () => ({
-    status: "idle",
+  useActiveMeetingStore: () => ({
+    meetingId: null,
   }),
 }));
 

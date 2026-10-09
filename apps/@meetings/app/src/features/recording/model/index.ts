@@ -15,6 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { RecordingProvider } from "./RecordingProvider";
+export { useActiveMeetingStore } from "./activeMeetingStore";
+export { NewRecordingProvider, useNewRecording } from "./RecordingProvider";
 export * from "./types";
-export { useRecording } from "./useRecording";

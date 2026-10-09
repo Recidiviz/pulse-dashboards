@@ -16,10 +16,8 @@
 // =============================================================================
 
 import { TRPCClientError } from "@trpc/client";
-import { Platform } from "react-native";
 
 import { useUploadSegment } from "~@meetings/app/shared/api";
-import { AUDIO_FORMATS } from "~@meetings/config";
 import type { AppRouter } from "~@meetings/trpc-types";
 
 import { useMeetingActions } from "./useMeetingActions";
@@ -73,17 +71,11 @@ export function useProcessOfflineEvent() {
           }
 
           if (uploadUri) {
-            // TODO(#12776): currently we use offline mode for recording only,
-            // where we have static formats for web and mobile.
-            // We will need to use dynamic formats for the upload audio feature
-            const audioFormat = Platform.OS === "web" ? "webm" : "m4a";
-            const { contentType, extension } = AUDIO_FORMATS[audioFormat];
-
             await uploadSegment({
               uri: uploadUri,
               meetingId: event.meetingId,
-              contentType,
-              fileExtension: extension,
+              contentType: "audio/m4a",
+              fileExtension: "m4a",
               onProgress: (loaded, total) =>
                 setUploadProgress(event.meetingId, loaded, total),
             });

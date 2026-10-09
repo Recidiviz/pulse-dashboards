@@ -15,18 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useAudioPlayer } from "expo-audio";
-import { useEffect, useState } from "react";
-
-export function usePersistedFileDuration(uri: string | null) {
-  const audioPlayer = useAudioPlayer(uri);
-  const [durationMs, setDurationMs] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (audioPlayer.duration) {
-      setDurationMs(audioPlayer.duration * 1000);
-    }
-  }, [audioPlayer.duration]);
-
-  return { durationMs: durationMs };
-}
+export type RecorderState = "idle" | "recording" | "paused";

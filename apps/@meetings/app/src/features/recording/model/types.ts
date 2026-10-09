@@ -15,89 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ReactNode } from "react";
-
-import { Person, PersonType } from "~@meetings/app/shared/api";
-
-export type Status =
-  | "idle"
-  | "recording"
-  | "paused"
-  | "uploading"
-  | "stopping"
-  | "discarding"
-  | "ending";
+import { RecorderState } from "./recorderStates";
 
 export type MicStatus = "speaking" | "silent" | "error";
 
-export type RecordingProviderProps = {
-  children: ReactNode;
-};
-
-export type RecordingBase = {
-  // status: in-memory status that updates UI
-  status: Status;
-  // Updates both status AND persistedStatus
-  setStatus: (status: Status) => void;
-
-  isRecording: boolean;
-  durationMs: number;
-  // Normalized 0–1 microphone loudness, on a shared scale across web and native.
+export type AudioRecorder = {
+  start: () => Promise<void>;
+  stop: () => Promise<void>;
+  getUrl: () => string | null;
+  discard: () => Promise<void>;
+  pause: () => void;
+  resume: () => void;
+  state: RecorderState;
   audioLevel: number;
-
-  note: string;
-  setNote: (note: string) => void;
-
-  startRecording: () => Promise<void>;
-  stopRecording: () => Promise<void>;
-  discardRecording: () => Promise<void>;
-
-  togglePauseResume: () => Promise<void>;
-
-  // Cleanup everything — invoked when user discards or finishes
-  cleanupRecording: () => Promise<void>;
-
-  // High-level meeting actions (combining recording + API calls)
-  handleFinishAndSave: (onComplete?: () => void) => Promise<void>;
-  handleFinalDiscard: (onComplete?: () => void) => Promise<void>;
-  // true once AsyncStorage rehydration completes; prevents from running on the pre-hydration default
-  hasHydrated: boolean;
-};
-
-export type RecordingWeb = RecordingBase & {
-  isRecordingViewMinimized: boolean;
-  setIsRecordingViewMinimized: (isMinimized: boolean) => void;
-  meetingId: string | null;
-  meetingType: string | null;
-  meetingTypeCategory: string | null;
-  person: Person | null;
-  openRecordingView: ({
-    meetingId,
-    meetingType,
-    meetingTypeCategory,
-    person,
-  }: {
-    meetingId: string;
-    meetingType: string | null;
-    meetingTypeCategory: string | null;
-    person: Person;
-  }) => void;
-  closeRecordingView: () => void;
-};
-
-export type RecordingNative = RecordingBase & {
-  meetingId: string | null;
-  meetingType: string | null;
-  meetingTypeCategory: string | null;
-  setMeetingId: (meetingId: string | null) => void;
-  setMeetingType: (meetingType: string | null) => void;
-  setMeetingTypeCategory: (meetingTypeCategory: string | null) => void;
-  person: Person | null;
-  personType: PersonType | null;
-  setPerson: (person: Person | null) => void;
-  setPersonType: (personType: PersonType | null) => void;
-  // Low-level recording primitives. togglePauseResume / handleFinishAndSave
-  // compose these; they are exposed so each step can be unit tested in isolation.
-  stopRecorder: () => Promise<void>;
-  uploadRecording: () => Promise<void>;
+  durationMs: number;
 };

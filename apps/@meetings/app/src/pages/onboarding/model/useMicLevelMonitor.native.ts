@@ -29,10 +29,9 @@ import { Platform } from "react-native";
 import {
   AUDIO_LEVEL_INTERVAL_MS,
   dbToAudioLevel,
+  MicErrorType,
 } from "~@meetings/app/features/recording";
 import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
-
-import { MicErrorType } from "./types";
 
 export function useMicLevelMonitor() {
   const audioRecorder = useAudioRecorder({

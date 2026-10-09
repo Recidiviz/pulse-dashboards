@@ -31,7 +31,7 @@ type Params = {
   meetingType: string | null;
   meetingTypeCategory?: string | null;
   personType?: PersonType | null;
-  onSuccess: (meetingId: string) => void;
+  onSuccess: (meetingId: string) => Promise<void>;
 };
 
 export function useCreateMeeting({

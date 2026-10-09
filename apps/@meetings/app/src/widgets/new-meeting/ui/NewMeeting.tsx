@@ -28,7 +28,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
 import {
   MeetingControlsMobile,
-  useRecording,
+  useActiveMeetingStore,
 } from "~@meetings/app/features/recording";
 import { Person } from "~@meetings/app/shared/api";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
@@ -51,23 +51,10 @@ export const NewMeeting = ({
   const insets = useSafeAreaInsets();
   const notepadSheetRef = useRef<BottomSheetModal>(null);
 
-  const {
-    meetingType,
-    meetingTypeCategory,
-    status,
-    note,
-    setNote,
-    isRecording,
-    setMeetingId,
-    setPerson,
-    handleFinalDiscard,
-  } = useRecording<"native">();
+  const { meetingType, meetingTypeCategory, note, setNote, controlsDisabled } =
+    useActiveMeetingStore();
 
-  const isMeetingActive = status !== "idle" || isRecording;
-
-  if (!status) return null;
-
-  if (status === "ending") {
+  if (controlsDisabled) {
     return (
       <View className="flex-1 flex-row items-center justify-center bg-primary">
         <ActivityIndicator size="small" color="text-primary" />
@@ -78,20 +65,10 @@ export const NewMeeting = ({
     );
   }
 
-  const handleGoBack = () => {
-    if (!isMeetingActive) {
-      handleFinalDiscard(() => {
-        setMeetingId(null);
-        setPerson(null);
-      });
-    }
-    navigateToPersonProfile();
-  };
-
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View className="flex-1 bg-secondary" style={{ marginTop: -insets.top }}>
-        {header({ onGoBack: handleGoBack })}
+        {header({ onGoBack: navigateToPersonProfile })}
         <View className="rounded-b-3xl bg-primary">
           <View className="flex flex-col gap-1 p-4 md:px-0 md:pt-0">
             <Typography variant="body-m-regular">

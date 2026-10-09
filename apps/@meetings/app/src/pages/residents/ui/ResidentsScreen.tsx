@@ -26,7 +26,7 @@ import {
 } from "react-native-safe-area-context";
 
 import { SortDirection, SortOption } from "~@meetings/app/entities/person";
-import { useRecording } from "~@meetings/app/features/recording";
+import { useNewRecording } from "~@meetings/app/features/recording";
 import { trpc } from "~@meetings/app/shared/api";
 import {
   useIsMobileWidth,
@@ -45,7 +45,7 @@ export function ResidentsScreen() {
   useSetDocumentTitle("Residents - Recidiviz Meetings");
   const insets = useSafeAreaInsets();
   const isMobileWidth = useIsMobileWidth();
-  const { status: recordingState } = useRecording();
+  const { state: recordingState } = useNewRecording();
   const isFocused = useIsFocused();
 
   const [search, setSearch] = useState("");

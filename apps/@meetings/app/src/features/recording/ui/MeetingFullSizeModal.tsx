@@ -22,7 +22,6 @@ import { TextInput, TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
-import { Person } from "~@meetings/app/shared/api";
 
 import PauseSvg from "../../../shared/assets/icons/pause.svg";
 import PlaySvg from "../../../shared/assets/icons/play.svg";
@@ -32,76 +31,70 @@ import LinearProgressBar from "../../../shared/ui/LinearProgressBar";
 import { OfflineIndicator } from "../../../shared/ui/OfflineIndicator";
 import { RecordingIndicator } from "../../../shared/ui/RecordingIndicator";
 import { Typography } from "../../../shared/ui/Typography";
-import { useRecording } from "..";
-import { useRecordingStore } from "../model/store";
+import { useActiveMeetingStore } from "../model";
+import { useNewRecording } from "../model";
 import { useAudioErrorDetection } from "../model/useAudioErrorDetection";
 import { MeetingModalLayout } from "./MeetingModalLayout";
 import { MicIndicator } from "./MicIndicator";
 
-type Props = {
-  person: Person;
-};
-
-export const MeetingFullSizeModal = ({ person }: Props) => {
+export const MeetingFullSizeModal = () => {
   const {
     meetingType,
     meetingTypeCategory,
-    status,
     note,
     setNote,
+    setIsMinimized,
+    setShowEndModal,
+    setShowDiscardModal,
+    controlsDisabled,
+    person,
+    isSidebarCollapsed,
+  } = useActiveMeetingStore();
+
+  const {
     durationMs,
     audioLevel,
-    setIsRecordingViewMinimized,
-    stopRecording,
-    discardRecording,
-    togglePauseResume,
-  } = useRecording<"web">();
-  const isSidebarCollapsed = useRecordingStore((s) => s.isSidebarCollapsed);
+    pauseRecording,
+    resumeRecording,
+    state: recorderState,
+  } = useNewRecording();
+
+  const onEnd = () => {
+    pauseRecording();
+    setShowEndModal(true);
+  };
+
+  const onDiscard = () => {
+    pauseRecording();
+    setShowDiscardModal(true);
+  };
+
   const { micStatus, hasAudioError } = useAudioErrorDetection({
-    isRecording: status === "recording",
+    isRecording: recorderState === "recording",
     audioLevel,
   });
 
   const tooltipTriggerRef = useRef<TooltipPrimitive.TriggerRef>(null);
 
-  useEffect(() => {
-    if (hasAudioError) {
-      tooltipTriggerRef.current?.open();
-    } else {
-      tooltipTriggerRef.current?.close();
-    }
-  }, [hasAudioError]);
+  useEffect(
+    function displayErrorTip() {
+      if (hasAudioError) {
+        tooltipTriggerRef.current?.open();
+      } else {
+        tooltipTriggerRef.current?.close();
+      }
+    },
+    [hasAudioError],
+  );
 
   const tooltipContainer =
     typeof document !== "undefined"
       ? document.getElementById("rnmodal")
       : undefined;
 
-  // TODO: live transcript will be added in next releases
-  // const [showLiveTranscript, setShowLiveTranscript] = useState(false);
-  // const [isScrollToBottomButtonVisible, setIsScrollToBottomButtonVisible] =
-  //   useState(true);
-  // const scrollViewRef = useRef<ScrollView>(null);
+  if (!person) return null;
 
-  // const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-  //   const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
-  //   const isBottom =
-  //     contentOffset.y + layoutMeasurement.height >= contentSize.height - 20;
-  //   setIsScrollToBottomButtonVisible(isBottom);
-  // };
-
-  // const scrollToBottom = () => {
-  //   scrollViewRef.current?.scrollToEnd({ animated: true });
-  // };
-
-  // useEffect(() => {
-  //   if (showLiveTranscript) scrollToBottom();
-  // }, [showLiveTranscript]);
-
-  if (!status) return null;
-
-  const isModalDisabled = status === "uploading" || status === "ending";
-  const minimize = () => setIsRecordingViewMinimized(true);
+  const minimize = () => setIsMinimized(true);
 
   return (
     <MeetingModalLayout
@@ -125,65 +118,12 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
               multiline
               className="mt-4 grow justify-start rounded-lg border border-subtle px-4 py-3 text-base leading-[22px] text-primary outline-none"
               placeholder="Start typing here... Try adding details you want saved, discussion topics, or other notes."
-              editable={!isModalDisabled}
+              editable={!controlsDisabled}
             />
           </View>
-          {/* {showLiveTranscript && (
-            <View className="min-w-[300px] flex-1 gap-5 border-l border-[#EDF1F1] py-5">
-              <View className="flex-row items-center gap-1.5 px-8">
-                <Image source={Icons.Sparkles} className="!size-5" />
-                <Text className="font-inter font-semibold text-primary">
-                  Live AI Transcript
-                </Text>
-              </View>
-              <ScrollView
-                ref={scrollViewRef}
-                className="flex-1 px-8"
-                contentContainerClassName="grow"
-                onScroll={handleScroll}
-                scrollEventThrottle={16}
-              >
-                <Text className="font-inter leading-[20px] text-[#355362D9]">
-                  I started the new job a few weeks ago and things have been
-                  going pretty smoothly so far. The first few days were a bit of
-                  an adjustment, mostly just figuring out the routine and
-                  getting used to being up early again. After the first week it
-                  started to feel more natural, and now I actually look forward
-                  to going in. The team has been really welcoming — everyone’s
-                  been patient while I learn how things work. My supervisor
-                  checks in often to make sure I have what I need and gives
-                  helpful feedback. It’s nice to feel supported and to know that
-                  people trust me to do my part. I’ve been showing up on time
-                  every day, trying to stay consistent with my schedule. Having
-                  that structure helps a lot, and it keeps me motivated to keep
-                  improving. Even when the work gets I started the new job a few
-                  weeks ago and things have been going pretty smoothly so far.
-                  The first few days were a bit of an adjustment, mostly just
-                  figuring out the routine and getting used to being up early
-                  again. After the first week it started to feel more natural,
-                  and now I actually look forward to going in. The team has been
-                  really welcoming — everyone’s been patient while I learn how
-                  things work. My supervisor checks in often to make sure I have
-                  what I need and gives helpful feedback. It’s nice to feel
-                  supported and to know that people trust me to do my part. I’ve
-                  been showing up on time every day, trying to stay consistent
-                  with my schedule. Having that structure helps a lot, and it
-                  keeps me motivated to keep improving. Even when the work gets
-                </Text>
-              </ScrollView>
-              {!isScrollToBottomButtonVisible && (
-                <TouchableOpacity
-                  className="absolute bottom-4 right-4 size-10 items-center justify-center rounded-full bg-white shadow-lg"
-                  onPress={scrollToBottom}
-                >
-                  <Image source={Icons.ArrowDown} className="!size-5" />
-                </TouchableOpacity>
-              )}
-            </View>
-          )} */}
         </View>
         <View className="h-1">
-          {status === "ending" && <LinearProgressBar />}
+          {recorderState === "idle" && <LinearProgressBar />}
         </View>
         <View
           className={clsx(
@@ -215,9 +155,11 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
                 {formatDurationNumeric(durationMs)}
               </Typography>
               <View className="flex-row items-center gap-2">
-                <RecordingIndicator isRecording={status === "recording"} />
+                <RecordingIndicator
+                  isRecording={recorderState === "recording"}
+                />
                 <Typography className="font-medium text-secondary">
-                  {status === "recording"
+                  {recorderState === "recording"
                     ? "Recording in progress"
                     : "Recording paused"}
                 </Typography>
@@ -237,7 +179,7 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
               alignOffset={-8}
               isInsideModal
             />
-            {status === "recording" ? (
+            {recorderState === "recording" ? (
               <TooltipPrimitive.Root delayDuration={0}>
                 <TooltipPrimitive.Trigger
                   ref={tooltipTriggerRef}
@@ -287,11 +229,11 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
                 />
               </View>
             )}
-            {status === "recording" ? (
+            {recorderState === "recording" ? (
               <TouchableOpacity
                 className="w-[150px] flex-row items-center justify-center rounded-full bg-primary py-3 aria-disabled:opacity-40"
-                onPress={togglePauseResume}
-                disabled={isModalDisabled}
+                onPress={pauseRecording}
+                disabled={controlsDisabled}
               >
                 <PauseSvg className="size-6 fill-primary" />
                 <Typography className="ml-2 text-lg font-semibold text-primary">
@@ -301,8 +243,8 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
             ) : (
               <TouchableOpacity
                 className="w-[150px] flex-row items-center justify-center rounded-full bg-brand py-3 aria-disabled:opacity-40"
-                onPress={togglePauseResume}
-                disabled={isModalDisabled}
+                onPress={resumeRecording}
+                disabled={controlsDisabled}
               >
                 <PlaySvg className="size-4 fill-on-brand" />
                 <Typography className="ml-2 text-lg font-semibold text-on-brand">
@@ -312,8 +254,8 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
             )}
             <TouchableOpacity
               className="w-[150px] flex-row items-center justify-center rounded-full bg-attention py-3 aria-disabled:opacity-40"
-              onPress={stopRecording}
-              disabled={isModalDisabled}
+              onPress={onEnd}
+              disabled={controlsDisabled}
             >
               <StopSvg className="size-6 fill-on-brand" />
               <Typography className="ml-2 text-lg font-semibold text-on-brand">
@@ -325,8 +267,8 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
                 "size-[52px] items-center justify-center rounded-full aria-disabled:opacity-40",
                 isSidebarCollapsed && "lg:hidden",
               )}
-              onPress={discardRecording}
-              disabled={isModalDisabled}
+              onPress={onDiscard}
+              disabled={controlsDisabled}
             >
               <XIcon className="size-6 stroke-secondary" />
             </TouchableOpacity>
@@ -339,8 +281,8 @@ export const MeetingFullSizeModal = ({ person }: Props) => {
           >
             <TouchableOpacity
               className="flex-row items-center aria-disabled:opacity-40"
-              disabled={isModalDisabled}
-              onPress={discardRecording}
+              disabled={controlsDisabled}
+              onPress={onDiscard}
             >
               <XIcon className="size-6 stroke-secondary" />
               <Typography className="ml-2 text-lg font-semibold text-secondary">

@@ -15,57 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useRecording } from "../model";
+import { Platform } from "react-native";
+
+import { useActiveMeetingStore } from "../model";
 import { DiscardMeetingModal } from "./DiscardMeetingModal";
 import { EndMeetingModal } from "./EndMeetingModal";
 import { MeetingFullSizeModal } from "./MeetingFullSizeModal";
 import { MeetingMinimizedModal } from "./MeetingMinimizedModal";
 
+const isMobile = Platform.OS === "android" || Platform.OS === "ios";
+
 export function MeetingModal() {
-  const {
-    status,
-    durationMs,
-    person,
-    meetingId,
-    isRecordingViewMinimized,
-    stopRecording,
-    togglePauseResume,
-    discardRecording,
-    handleFinishAndSave,
-    handleFinalDiscard,
-  } = useRecording<"web">();
+  const { person, meetingId, isMinimized, showDiscardModal, showEndModal } =
+    useActiveMeetingStore();
 
-  const isRecordingViewOpened = meetingId && person;
-
-  if (!isRecordingViewOpened) return null;
+  if (!meetingId || !person) return null;
 
   return (
     <>
-      {isRecordingViewMinimized ? (
-        <MeetingMinimizedModal
-          person={person}
-          durationMs={durationMs}
-          onStop={stopRecording}
-          onPauseResume={togglePauseResume}
-          onDiscard={discardRecording}
-        />
-      ) : (
-        <MeetingFullSizeModal person={person} />
-      )}
-      {status === "stopping" && (
-        <EndMeetingModal
-          person={person}
-          onContinue={togglePauseResume}
-          onFinishAndSave={handleFinishAndSave}
-        />
-      )}
-      {status === "discarding" && (
-        <DiscardMeetingModal
-          person={person}
-          onContinue={togglePauseResume}
-          onDiscard={handleFinalDiscard}
-        />
-      )}
+      {/* On mobile, screens render MeetingControlsMobile instead. */}
+      {!isMobile &&
+        (isMinimized ? <MeetingMinimizedModal /> : <MeetingFullSizeModal />)}
+      {showEndModal && <EndMeetingModal />}
+      {showDiscardModal && <DiscardMeetingModal />}
     </>
   );
 }

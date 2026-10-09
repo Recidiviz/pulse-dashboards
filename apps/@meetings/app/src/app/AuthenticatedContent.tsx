@@ -28,7 +28,10 @@ import {
   ReconnectStatus,
   useOfflineQueueDrainer,
 } from "~@meetings/app/features/offline-sync";
-import { RecordingProvider } from "~@meetings/app/features/recording";
+import {
+  MeetingModal,
+  NewRecordingProvider,
+} from "~@meetings/app/features/recording";
 import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 
 import DrawerNavigator from "./navigation/DrawerNavigator";
@@ -55,15 +58,16 @@ export function AuthenticatedContent() {
   );
 
   return (
-    <RecordingProvider>
+    <NewRecordingProvider>
       <SafeAreaProvider>
         <BottomSheetModalProvider>
           <DrawerNavigator />
+          <MeetingModal />
           <AudioUpload />
           <ReconnectStatus onRetry={forceDrain} isVisible={isDraining} />
           <FeedbackLauncher onPress={openMessenger} />
         </BottomSheetModalProvider>
       </SafeAreaProvider>
-    </RecordingProvider>
+    </NewRecordingProvider>
   );
 }

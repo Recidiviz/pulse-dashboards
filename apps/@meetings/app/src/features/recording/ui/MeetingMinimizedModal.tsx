@@ -19,7 +19,6 @@ import { TouchableOpacity, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 
 import { MeetingTypeTag } from "~@meetings/app/entities/meeting-type";
-import { Person } from "~@meetings/app/shared/api";
 
 import MaximizeSvg from "../../../shared/assets/icons/arrows-poin-outting-in.svg";
 import PauseSvg from "../../../shared/assets/icons/pause.svg";
@@ -30,31 +29,37 @@ import { FloatingCard } from "../../../shared/ui/FloatingCard";
 import LinearProgressBar from "../../../shared/ui/LinearProgressBar";
 import { RecordingIndicator } from "../../../shared/ui/RecordingIndicator";
 import { Typography } from "../../../shared/ui/Typography";
-import { useRecording } from "../model";
+import { useActiveMeetingStore, useNewRecording } from "../model";
 
-type Props = {
-  person: Person;
-  durationMs: number;
-  onPauseResume: () => void;
-  onStop: () => void;
-  onDiscard: () => void;
-};
-
-export function MeetingMinimizedModal({
-  person,
-  durationMs,
-  onPauseResume,
-  onStop,
-  onDiscard,
-}: Props) {
+export function MeetingMinimizedModal() {
   const {
     meetingType,
     meetingTypeCategory,
-    status,
-    setIsRecordingViewMinimized,
-  } = useRecording<"web">();
+    person,
+    setIsMinimized,
+    setShowEndModal,
+    setShowDiscardModal,
+    controlsDisabled,
+  } = useActiveMeetingStore();
 
-  const isControlsDisabled = status === "uploading" || status === "ending";
+  const {
+    durationMs,
+    pauseRecording,
+    resumeRecording,
+    state: recorderState,
+  } = useNewRecording();
+
+  const onEnd = () => {
+    pauseRecording();
+    setShowEndModal(true);
+  };
+
+  const onDiscard = () => {
+    pauseRecording();
+    setShowDiscardModal(true);
+  };
+
+  if (!person) return null;
 
   return (
     <FloatingCard position="bottom-right" className="h-[150px] w-[360px]">
@@ -69,26 +74,26 @@ export function MeetingMinimizedModal({
           </Typography>
           <TouchableOpacity
             className="relative -right-1 -top-1"
-            onPress={() => setIsRecordingViewMinimized(false)}
+            onPress={() => setIsMinimized(false)}
           >
             <MaximizeSvg className="size-5 text-secondary" />
           </TouchableOpacity>
         </View>
         <View className="flex-row items-center gap-2">
-          <RecordingIndicator isRecording={status === "recording"} />
+          <RecordingIndicator isRecording={recorderState === "recording"} />
           <Typography className="font-medium text-primary">
-            {status === "recording" ? "Recording in progress" : "Paused"}
+            {recorderState === "recording" ? "Recording in progress" : "Paused"}
           </Typography>
           <Typography className="font-semibold text-tertiary">
             {formatDurationNumeric(durationMs)}
           </Typography>
         </View>
         <View className="mt-auto w-full flex-row justify-around">
-          {status === "recording" ? (
+          {recorderState === "recording" ? (
             <TouchableOpacity
               className="h-[44px] w-[130px] flex-row items-center justify-center rounded-full bg-screen aria-disabled:opacity-40"
-              onPress={onPauseResume}
-              disabled={isControlsDisabled}
+              onPress={pauseRecording}
+              disabled={controlsDisabled}
             >
               <PauseSvg className="size-6 fill-primary" />
               <Typography className="ml-2 text-base font-semibold text-primary">
@@ -98,8 +103,8 @@ export function MeetingMinimizedModal({
           ) : (
             <TouchableOpacity
               className="h-[44px] w-[130px] flex-row items-center justify-center rounded-full bg-brand aria-disabled:opacity-40"
-              onPress={onPauseResume}
-              disabled={isControlsDisabled}
+              onPress={resumeRecording}
+              disabled={controlsDisabled}
             >
               <PlaySvg className="size-4 fill-on-brand" />
               <Typography className="ml-2 text-base font-semibold text-on-brand">
@@ -109,8 +114,8 @@ export function MeetingMinimizedModal({
           )}
           <TouchableOpacity
             className="h-[44px] w-[130px] flex-row items-center justify-center rounded-full bg-attention aria-disabled:opacity-40"
-            onPress={onStop}
-            disabled={isControlsDisabled}
+            onPress={onEnd}
+            disabled={controlsDisabled}
           >
             <StopSvg className="size-6 fill-on-brand" />
             <Typography className="ml-2 text-base font-semibold text-on-brand">
@@ -120,14 +125,14 @@ export function MeetingMinimizedModal({
           <TouchableOpacity
             className="size-[44px] items-center justify-center rounded-full bg-screen aria-disabled:opacity-40"
             onPress={onDiscard}
-            disabled={isControlsDisabled}
+            disabled={controlsDisabled}
           >
             <XIcon className="size-5 stroke-secondary" />
           </TouchableOpacity>
         </View>
       </View>
       <View className="h-1">
-        {status === "ending" && <LinearProgressBar />}
+        {controlsDisabled && recorderState === "idle" && <LinearProgressBar />}
       </View>
     </FloatingCard>
   );

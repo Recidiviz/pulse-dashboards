@@ -19,7 +19,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { TouchableOpacity, View } from "react-native";
 
 import { useUserContext } from "~@meetings/app/entities/user";
-import { useRecording } from "~@meetings/app/features/recording";
+import { useActiveMeetingStore } from "~@meetings/app/features/recording";
 import WordmarkSvg from "~@meetings/app/shared/assets/icons/wordmark.svg";
 import { OfflineIndicator } from "~@meetings/app/shared/ui/OfflineIndicator";
 
@@ -28,7 +28,7 @@ import { DesktopMenuItem } from "./DesktopMenuItem";
 import { ProfileMenu } from "./ProfileMenu";
 
 export const DesktopNav = () => {
-  const { status } = useRecording();
+  const { meetingId } = useActiveMeetingStore();
   const navigation = useNavigation<HeaderNavProp>();
   const route = useRoute<HeaderRouteProp>();
   const { hasSupervisionAccess, hasFacilitiesAccess } = useUserContext();
@@ -45,7 +45,7 @@ export const DesktopNav = () => {
       </TouchableOpacity>
       <View className="h-full flex-row items-center gap-x-6">
         <OfflineIndicator
-          enableTooltip={status !== "idle"}
+          enableTooltip={!!meetingId}
           align="center"
           side="bottom"
         />

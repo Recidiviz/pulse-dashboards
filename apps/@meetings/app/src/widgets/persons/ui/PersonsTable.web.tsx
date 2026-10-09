@@ -34,7 +34,10 @@ import {
   SortDirection,
   SortOption,
 } from "~@meetings/app/entities/person";
-import { useRecording } from "~@meetings/app/features/recording";
+import {
+  useActiveMeetingStore,
+  useNewRecording,
+} from "~@meetings/app/features/recording";
 import { Person, PersonType, trpc } from "~@meetings/app/shared/api";
 import BgAvatarImage from "~@meetings/app/shared/assets/images/bg-avatar.png";
 import {
@@ -90,11 +93,9 @@ export function PersonsTable({
 }: Props) {
   const isFocused = useIsFocused();
   const navigation = useNavigation<ProfileNavProp>();
-  const {
-    status,
-    meetingId: activeMeetingId,
-    person: recordingPerson,
-  } = useRecording<"web">();
+  const { meetingId: activeMeetingId, person: recordingPerson } =
+    useActiveMeetingStore();
+  const { state: recorderState } = useNewRecording();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const serializedSortBy = serializeSort(sort.sortBy as SortOption) as any;
@@ -308,9 +309,8 @@ export function PersonsTable({
           <TableBody>
             {persons.map((person) => {
               const isPersonInActiveMeeting =
-                status !== "idle" &&
-                recordingPerson?.personId === person.personId &&
-                !!activeMeetingId;
+                !!activeMeetingId &&
+                recordingPerson?.personId === person.personId;
 
               return (
                 <TableRow
@@ -367,7 +367,7 @@ export function PersonsTable({
                         {isPersonInActiveMeeting && (
                           <View className="flex-row items-center pb-2">
                             <RecordingIndicator
-                              isRecording={status === "recording"}
+                              isRecording={recorderState === "recording"}
                             />
                             <Typography className="px-2 text-secondary">
                               In progress

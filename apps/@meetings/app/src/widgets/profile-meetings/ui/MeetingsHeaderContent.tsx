@@ -20,7 +20,7 @@ import { useWindowDimensions, View } from "react-native";
 import { PlusIcon } from "react-native-heroicons/outline";
 
 import { useIsSuccessPlannerVisible } from "~@meetings/app/entities/success-planner";
-import { useRecording } from "~@meetings/app/features/recording";
+import { useActiveMeetingStore } from "~@meetings/app/features/recording";
 import { Person } from "~@meetings/app/shared/api";
 import { usePlatform } from "~@meetings/app/shared/lib/platform";
 import { Button } from "~@meetings/app/shared/ui/Button";
@@ -53,7 +53,7 @@ const MeetingsHeaderContent = ({
   sortOptions,
   setSortBy,
 }: Props) => {
-  const { status: recordingState } = useRecording<"native">();
+  const { meetingId } = useActiveMeetingStore();
   const { isWeb, isMobile } = usePlatform();
   const { width } = useWindowDimensions();
   const showSearchAndSort = !(meetingsCount <= 1 && !searchQuery);
@@ -105,7 +105,7 @@ const MeetingsHeaderContent = ({
             </Typography>
             <View className="flex-row items-center gap-2">
               {isPlannerVisible && <SendSuccessPlannerButton person={person} />}
-              {recordingState === "idle" && (
+              {!meetingId && (
                 <Button
                   variant="primary"
                   className="!py-2"

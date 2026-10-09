@@ -25,7 +25,7 @@ import {
   PrPreviewChip,
   usePrPreviewContext,
 } from "~@meetings/app/features/pr-preview";
-import { useRecording } from "~@meetings/app/features/recording";
+import { useActiveMeetingStore } from "~@meetings/app/features/recording";
 import { OfflineIndicator } from "~@meetings/app/shared/ui/OfflineIndicator";
 
 import { HeaderNavProp, HeaderProps } from "../model/header";
@@ -40,7 +40,7 @@ export const MobileHeader = ({
   onGoBack,
   className,
 }: MobileHeaderProps) => {
-  const { status } = useRecording();
+  const { meetingId } = useActiveMeetingStore();
   const navigation = useNavigation<HeaderNavProp>();
   const { activeChannel, promptExitPreview, isExiting } = usePrPreviewContext();
 
@@ -68,7 +68,7 @@ export const MobileHeader = ({
       </View>
       <View className="absolute inset-x-0 items-center">
         <OfflineIndicator
-          enableTooltip={status !== "idle"}
+          enableTooltip={!!meetingId}
           side="bottom"
           align="center"
         />

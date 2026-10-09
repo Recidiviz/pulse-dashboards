@@ -21,7 +21,7 @@ import { ImageBackground, View } from "react-native";
 import ChevronRightIcon from "react-native-heroicons/outline/ChevronRightIcon";
 
 import { formatPersonLastMeetingDate } from "~@meetings/app/entities/person";
-import { useRecording } from "~@meetings/app/features/recording";
+import { useActiveMeetingStore } from "~@meetings/app/features/recording";
 import { Person, PersonType } from "~@meetings/app/shared/api";
 import BgAvatarImage from "~@meetings/app/shared/assets/images/bg-avatar.png";
 import {
@@ -45,11 +45,9 @@ export function PersonCardItem({
   personType,
 }: ItemProps) {
   const { meetingId: activeMeetingId, person: recordingPerson } =
-    useRecording<"native">();
+    useActiveMeetingStore();
   const hasActiveMeeting =
-    recordingState !== "idle" &&
-    recordingPerson?.personId === person.personId &&
-    !!activeMeetingId;
+    !!activeMeetingId && recordingPerson?.personId === person.personId;
   const hasValidationError =
     !hasActiveMeeting && !!person.meetingDetails.validationErrorType;
   const hasLastMeeting =

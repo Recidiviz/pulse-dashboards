@@ -15,37 +15,33 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { debounce } from "lodash";
-import { useEffect, useRef, useState } from "react";
+import * as Sentry from "@sentry/react-native";
 
-import { getItem, saveItem } from "../../../shared/lib/storage";
+import { useSnackbar } from "../../ui/Snackbar";
 
-export function useNote() {
-  const [note, setNote] = useState("");
-  const debouncedSave = useRef(
-    debounce((noteToSave: string) => {
-      saveItem("note", noteToSave);
-    }, 1000),
-  ).current;
+type SentryParams = {
+  message: string;
+  error: unknown;
+  params?: object;
+};
 
-  const updateNote = (newNote: string) => {
-    setNote(newNote);
-    debouncedSave(newNote);
+export const useErrorCapture = () => {
+  const snackbar = useSnackbar();
+
+  const captureError = ({ message, error, params }: SentryParams) => {
+    Sentry.logger.error(message, {
+      ...params,
+      error: String(error),
+    });
+    if (error instanceof Error) {
+      Sentry.captureException(error, { tags: { ...params } });
+    }
   };
 
-  useEffect(() => {
-    async function loadNote() {
-      const persistedNote = await getItem("note");
-      setNote(persistedNote ?? "");
-    }
-    loadNote();
-  }, []);
+  const showError = (message: string, sentryParams: SentryParams) => {
+    snackbar.showSnackbar(message);
+    captureError(sentryParams);
+  };
 
-  useEffect(() => {
-    return () => {
-      debouncedSave.cancel();
-    };
-  }, [debouncedSave]);
-
-  return [note, updateNote] as const;
-}
+  return { showError, captureError };
+};
