@@ -146,67 +146,22 @@
   "spanishLaunchBanner": {
     "message": "[US_MA]spanishLaunchBanner.message"
   },
-  "reentry": {
-    "checklist": {
-      "itemCopy": {
-        "BACKUP_HOUSING": {
-          "label": "[US_MA]reentry.checklist.itemCopy.BACKUP_HOUSING.label"
-        },
-        "FINALIZED_HOUSING": {
-          "label": "[US_MA]reentry.checklist.itemCopy.FINALIZED_HOUSING.label"
-        },
-        "HOUSING_PLAN_AGREEMENT": {
-          "label": "[US_MA]reentry.checklist.itemCopy.HOUSING_PLAN_AGREEMENT.label"
-        },
-        "HAS_RENT_PAYMENT_PLAN": {
-          "label": "[US_MA]reentry.checklist.itemCopy.HAS_RENT_PAYMENT_PLAN.label"
-        },
-        "HAS_HOUSING_LOCATION_PREFERENCE": {
-          "label": "[US_MA]reentry.checklist.itemCopy.HAS_HOUSING_LOCATION_PREFERENCE.label"
-        },
-        "RESEARCHED_HOUSING_RESOURCES": {
-          "label": "[US_MA]reentry.checklist.itemCopy.RESEARCHED_HOUSING_RESOURCES.label"
-        },
-        "DISCUSSED_HOUSING_WITH_SPECIALIST": {
-          "label": "[US_MA]reentry.checklist.itemCopy.DISCUSSED_HOUSING_WITH_SPECIALIST.label"
-        },
-        "HAS_HOUSING_PROGRAM_RENT_PLAN": {
-          "label": "[US_MA]reentry.checklist.itemCopy.HAS_HOUSING_PROGRAM_RENT_PLAN.label"
-        },
-        "HAS_PAID_HOUSING_PROGRAM_DEPOSIT": {
-          "label": "[US_MA]reentry.checklist.itemCopy.HAS_PAID_HOUSING_PROGRAM_DEPOSIT.label"
-        },
-        "CONFIRMED_FAMILY_AND_FRIENDS_TRANSPORTATION": {
-          "label": "[US_MA]reentry.checklist.itemCopy.CONFIRMED_FAMILY_AND_FRIENDS_TRANSPORTATION.label"
+  "sentenceDates": {
+    "dates": {
+      "rts": {
+        "label": "[US_MA]sentenceDates.dates.rts.label",
+        "description": "[US_MA]sentenceDates.dates.rts.description"
+      },
+      "maxRelease": {
+        "label": "[US_MA]sentenceDates.dates.maxRelease.label",
+        "adjusted": {
+          "originalDateLabel": "[US_MA]sentenceDates.dates.maxRelease.adjusted.originalDateLabel",
+          "adjustedDateLabel": "[US_MA]sentenceDates.dates.maxRelease.adjusted.adjustedDateLabel"
         }
-      },
-      "pageTitle": "[US_MA]reentry.checklist.pageTitle",
-      "heading": "[US_MA]reentry.checklist.heading",
-      "intro": "[US_MA]reentry.checklist.intro",
-      "notPersonalized": {
-        "heading": "[US_MA]reentry.checklist.notPersonalized.heading",
-        "description": "[US_MA]reentry.checklist.notPersonalized.description",
-        "cta": "[US_MA]reentry.checklist.notPersonalized.cta"
-      },
-      "personalized": {
-        "heading": "[US_MA]reentry.checklist.personalized.heading",
-        "recommendedTaskCount_one": "[US_MA]reentry.checklist.personalized.recommendedTaskCount_one",
-        "recommendedTaskCount_other": "[US_MA]reentry.checklist.personalized.recommendedTaskCount_other"
-      },
-      "sections": {
-        "ANYTIME": {
-          "title": "[US_MA]reentry.checklist.sections.ANYTIME.title",
-          "description": "[US_MA]reentry.checklist.sections.ANYTIME.description"
-        }
-      },
-      "progress": "[US_MA]reentry.checklist.progress",
-      "personalizedBadge": "[US_MA]reentry.checklist.personalizedBadge",
-      "updateProfile": {
-        "heading": "[US_MA]reentry.checklist.updateProfile.heading",
-        "description": "[US_MA]reentry.checklist.updateProfile.description",
-        "cta": "[US_MA]reentry.checklist.updateProfile.cta"
       }
-    },
+    }
+  },
+  "reentry": {
     "navBar": {
       "sectionLabel": "[US_MA]reentry.navBar.sectionLabel",
       "overview": "[US_MA]reentry.navBar.overview",
@@ -321,35 +276,22 @@
         "checklistCta": "[US_MA]reentry.questionnaire.completion.checklistCta",
         "closeCta": "[US_MA]reentry.questionnaire.completion.closeCta"
       },
-      "optionCopy": {
-        "HOUSING": {
-          "FAMILY": "[US_MA]reentry.questionnaire.optionCopy.HOUSING.FAMILY",
-          "FRIENDS_OR_ROOMMATES": "[US_MA]reentry.questionnaire.optionCopy.HOUSING.FRIENDS_OR_ROOMMATES",
-          "LONG_TERM_RESIDENTIAL_PROGRAM": "[US_MA]reentry.questionnaire.optionCopy.HOUSING.LONG_TERM_RESIDENTIAL_PROGRAM",
-          "SOBER_OR_ROOMING_HOUSE": "[US_MA]reentry.questionnaire.optionCopy.HOUSING.SOBER_OR_ROOMING_HOUSE",
-          "OWN_PLACE": "[US_MA]reentry.questionnaire.optionCopy.HOUSING.OWN_PLACE",
-          "UNSURE": "[US_MA]reentry.questionnaire.optionCopy.HOUSING.UNSURE",
-          "DECLINED_TO_ANSWER": "[US_MA]reentry.questionnaire.optionCopy.HOUSING.DECLINED_TO_ANSWER"
-        },
-        "HEALTHCARE_DETAILS": {
-          "PRESCRIPTION_MEDICINE": "[US_MA]reentry.questionnaire.optionCopy.HEALTHCARE_DETAILS.PRESCRIPTION_MEDICINE",
-          "ONGOING_CONDITION": "[US_MA]reentry.questionnaire.optionCopy.HEALTHCARE_DETAILS.ONGOING_CONDITION",
-          "MENTAL_HEALTH": "[US_MA]reentry.questionnaire.optionCopy.HEALTHCARE_DETAILS.MENTAL_HEALTH",
-          "SUBSTANCE_USE": "[US_MA]reentry.questionnaire.optionCopy.HEALTHCARE_DETAILS.SUBSTANCE_USE",
-          "MEDICATION_ASSISTED_TREATMENT": "[US_MA]reentry.questionnaire.optionCopy.HEALTHCARE_DETAILS.MEDICATION_ASSISTED_TREATMENT"
-        },
-        "TRANSPORTATION": {
-          "FAMILY_OR_FRIENDS": "[US_MA]reentry.questionnaire.optionCopy.TRANSPORTATION.FAMILY_OR_FRIENDS",
-          "PUBLIC_TRANSIT": "[US_MA]reentry.questionnaire.optionCopy.TRANSPORTATION.PUBLIC_TRANSIT",
-          "BIKE": "[US_MA]reentry.questionnaire.optionCopy.TRANSPORTATION.BIKE",
-          "OWN_CAR": "[US_MA]reentry.questionnaire.optionCopy.TRANSPORTATION.OWN_CAR",
-          "UNSURE": "[US_MA]reentry.questionnaire.optionCopy.TRANSPORTATION.UNSURE",
-          "DECLINED_TO_ANSWER": "[US_MA]reentry.questionnaire.optionCopy.TRANSPORTATION.DECLINED_TO_ANSWER"
-        }
+      "saveError": "[US_MA]reentry.questionnaire.saveError",
+      "domainCopy": {
+        "HOUSING": "[US_MA]reentry.questionnaire.domainCopy.HOUSING",
+        "WORK": "[US_MA]reentry.questionnaire.domainCopy.WORK",
+        "HEALTH": "[US_MA]reentry.questionnaire.domainCopy.HEALTH",
+        "MONEY": "[US_MA]reentry.questionnaire.domainCopy.MONEY",
+        "TRANSPORTATION": "[US_MA]reentry.questionnaire.domainCopy.TRANSPORTATION",
+        "EDUCATION_AND_PROGRAMS": "[US_MA]reentry.questionnaire.domainCopy.EDUCATION_AND_PROGRAMS",
+        "DOCUMENTS": "[US_MA]reentry.questionnaire.domainCopy.DOCUMENTS"
       },
       "questionCopy": {
         "HOUSING": {
           "question": "[US_MA]reentry.questionnaire.questionCopy.HOUSING.question"
+        },
+        "WORK_PLANS": {
+          "question": "[US_MA]reentry.questionnaire.questionCopy.WORK_PLANS.question"
         },
         "HEALTHCARE_NEEDED": {
           "question": "[US_MA]reentry.questionnaire.questionCopy.HEALTHCARE_NEEDED.question"
@@ -357,8 +299,96 @@
         "HEALTHCARE_DETAILS": {
           "question": "[US_MA]reentry.questionnaire.questionCopy.HEALTHCARE_DETAILS.question"
         },
+        "SSI_SSDI_ELIGIBILITY": {
+          "question": "[US_MA]reentry.questionnaire.questionCopy.SSI_SSDI_ELIGIBILITY.question"
+        },
+        "SSI_SSDI_DETAILS": {
+          "question": "[US_MA]reentry.questionnaire.questionCopy.SSI_SSDI_DETAILS.question"
+        },
+        "TRANSPORTATION_PLAN": {
+          "question": "[US_MA]reentry.questionnaire.questionCopy.TRANSPORTATION_PLAN.question"
+        },
         "TRANSPORTATION": {
           "question": "[US_MA]reentry.questionnaire.questionCopy.TRANSPORTATION.question"
+        },
+        "RELEASE_DAY_TRANSPORTATION": {
+          "question": "[US_MA]reentry.questionnaire.questionCopy.RELEASE_DAY_TRANSPORTATION.question"
+        },
+        "EDUCATION_LEVEL": {
+          "question": "[US_MA]reentry.questionnaire.questionCopy.EDUCATION_LEVEL.question"
+        },
+        "MILITARY_SERVICE": {
+          "question": "[US_MA]reentry.questionnaire.questionCopy.MILITARY_SERVICE.question"
+        },
+        "BORN_IN_MASSACHUSETTS": {
+          "question": "[US_MA]reentry.questionnaire.questionCopy.BORN_IN_MASSACHUSETTS.question"
+        }
+      },
+      "optionCopy": {
+        "HOUSING": {
+          "FAMILY": "[US_MA]reentry.questionnaire.optionCopy.HOUSING.FAMILY",
+          "FRIEND": "[US_MA]reentry.questionnaire.optionCopy.HOUSING.FRIEND",
+          "LONG_TERM_RESIDENTIAL_PROGRAM": "[US_MA]reentry.questionnaire.optionCopy.HOUSING.LONG_TERM_RESIDENTIAL_PROGRAM",
+          "RESIDENTIAL_RECOVERY_HOUSE": "[US_MA]reentry.questionnaire.optionCopy.HOUSING.RESIDENTIAL_RECOVERY_HOUSE",
+          "SOBER_HOUSE": "[US_MA]reentry.questionnaire.optionCopy.HOUSING.SOBER_HOUSE",
+          "ROOMING_HOUSE": "[US_MA]reentry.questionnaire.optionCopy.HOUSING.ROOMING_HOUSE",
+          "OWN_PLACE": "[US_MA]reentry.questionnaire.optionCopy.HOUSING.OWN_PLACE",
+          "UNSURE": "[US_MA]reentry.questionnaire.optionCopy.HOUSING.UNSURE",
+          "DECLINED_TO_ANSWER": "[US_MA]reentry.questionnaire.optionCopy.HOUSING.DECLINED_TO_ANSWER"
+        },
+        "WORK_PLANS": {
+          "HAS_JOB_LINED_UP": "[US_MA]reentry.questionnaire.optionCopy.WORK_PLANS.HAS_JOB_LINED_UP",
+          "LOOKING_FOR_WORK": "[US_MA]reentry.questionnaire.optionCopy.WORK_PLANS.LOOKING_FOR_WORK",
+          "DISABLED": "[US_MA]reentry.questionnaire.optionCopy.WORK_PLANS.DISABLED",
+          "RETIRED": "[US_MA]reentry.questionnaire.optionCopy.WORK_PLANS.RETIRED",
+          "ATTENDING_SCHOOL": "[US_MA]reentry.questionnaire.optionCopy.WORK_PLANS.ATTENDING_SCHOOL",
+          "UNSURE": "[US_MA]reentry.questionnaire.optionCopy.WORK_PLANS.UNSURE",
+          "DECLINED_TO_ANSWER": "[US_MA]reentry.questionnaire.optionCopy.WORK_PLANS.DECLINED_TO_ANSWER"
+        },
+        "HEALTHCARE_DETAILS": {
+          "PRESCRIPTION_MEDICINE": "[US_MA]reentry.questionnaire.optionCopy.HEALTHCARE_DETAILS.PRESCRIPTION_MEDICINE",
+          "ONGOING_CONDITION": "[US_MA]reentry.questionnaire.optionCopy.HEALTHCARE_DETAILS.ONGOING_CONDITION",
+          "MENTAL_HEALTH": "[US_MA]reentry.questionnaire.optionCopy.HEALTHCARE_DETAILS.MENTAL_HEALTH",
+          "SUBSTANCE_USE": "[US_MA]reentry.questionnaire.optionCopy.HEALTHCARE_DETAILS.SUBSTANCE_USE",
+          "MEDICATION_ASSISTED_TREATMENT": "[US_MA]reentry.questionnaire.optionCopy.HEALTHCARE_DETAILS.MEDICATION_ASSISTED_TREATMENT",
+          "SOMETHING_ELSE": "[US_MA]reentry.questionnaire.optionCopy.HEALTHCARE_DETAILS.SOMETHING_ELSE"
+        },
+        "SSI_SSDI_DETAILS": {
+          "SSI": "[US_MA]reentry.questionnaire.optionCopy.SSI_SSDI_DETAILS.SSI",
+          "SSDI": "[US_MA]reentry.questionnaire.optionCopy.SSI_SSDI_DETAILS.SSDI",
+          "NONE": "[US_MA]reentry.questionnaire.optionCopy.SSI_SSDI_DETAILS.NONE",
+          "DECLINED_TO_ANSWER": "[US_MA]reentry.questionnaire.optionCopy.SSI_SSDI_DETAILS.DECLINED_TO_ANSWER"
+        },
+        "TRANSPORTATION_PLAN": {
+          "HAS_PLAN": "[US_MA]reentry.questionnaire.optionCopy.TRANSPORTATION_PLAN.HAS_PLAN",
+          "NO_PLAN_YET": "[US_MA]reentry.questionnaire.optionCopy.TRANSPORTATION_PLAN.NO_PLAN_YET",
+          "DECLINED_TO_ANSWER": "[US_MA]reentry.questionnaire.optionCopy.TRANSPORTATION_PLAN.DECLINED_TO_ANSWER"
+        },
+        "TRANSPORTATION": {
+          "FAMILY_OR_FRIENDS": "[US_MA]reentry.questionnaire.optionCopy.TRANSPORTATION.FAMILY_OR_FRIENDS",
+          "PUBLIC_TRANSIT": "[US_MA]reentry.questionnaire.optionCopy.TRANSPORTATION.PUBLIC_TRANSIT",
+          "BIKE": "[US_MA]reentry.questionnaire.optionCopy.TRANSPORTATION.BIKE",
+          "OWN_CAR": "[US_MA]reentry.questionnaire.optionCopy.TRANSPORTATION.OWN_CAR"
+        },
+        "RELEASE_DAY_TRANSPORTATION": {
+          "PICKUP": "[US_MA]reentry.questionnaire.optionCopy.RELEASE_DAY_TRANSPORTATION.PICKUP",
+          "PUBLIC_TRANSPORTATION": "[US_MA]reentry.questionnaire.optionCopy.RELEASE_DAY_TRANSPORTATION.PUBLIC_TRANSPORTATION",
+          "UNSURE": "[US_MA]reentry.questionnaire.optionCopy.RELEASE_DAY_TRANSPORTATION.UNSURE",
+          "DECLINED_TO_ANSWER": "[US_MA]reentry.questionnaire.optionCopy.RELEASE_DAY_TRANSPORTATION.DECLINED_TO_ANSWER"
+        },
+        "EDUCATION_LEVEL": {
+          "BACHELORS_OR_HIGHER": "[US_MA]reentry.questionnaire.optionCopy.EDUCATION_LEVEL.BACHELORS_OR_HIGHER",
+          "ASSOCIATE_DEGREE": "[US_MA]reentry.questionnaire.optionCopy.EDUCATION_LEVEL.ASSOCIATE_DEGREE",
+          "SOME_COLLEGE": "[US_MA]reentry.questionnaire.optionCopy.EDUCATION_LEVEL.SOME_COLLEGE",
+          "HIGH_SCHOOL_EQUIVALENT": "[US_MA]reentry.questionnaire.optionCopy.EDUCATION_LEVEL.HIGH_SCHOOL_EQUIVALENT",
+          "LESS_THAN_HIGH_SCHOOL": "[US_MA]reentry.questionnaire.optionCopy.EDUCATION_LEVEL.LESS_THAN_HIGH_SCHOOL",
+          "DECLINED_TO_ANSWER": "[US_MA]reentry.questionnaire.optionCopy.EDUCATION_LEVEL.DECLINED_TO_ANSWER"
+        },
+        "MILITARY_SERVICE": {
+          "YES_HAS_DD214": "[US_MA]reentry.questionnaire.optionCopy.MILITARY_SERVICE.YES_HAS_DD214",
+          "YES_NEEDS_DD214": "[US_MA]reentry.questionnaire.optionCopy.MILITARY_SERVICE.YES_NEEDS_DD214",
+          "NO": "[US_MA]reentry.questionnaire.optionCopy.MILITARY_SERVICE.NO",
+          "DECLINED_TO_ANSWER": "[US_MA]reentry.questionnaire.optionCopy.MILITARY_SERVICE.DECLINED_TO_ANSWER"
         }
       },
       "standardOptionCopy": {
@@ -366,26 +396,281 @@
         "NO": "[US_MA]reentry.questionnaire.standardOptionCopy.NO",
         "UNSURE": "[US_MA]reentry.questionnaire.standardOptionCopy.UNSURE",
         "DECLINED_TO_ANSWER": "[US_MA]reentry.questionnaire.standardOptionCopy.DECLINED_TO_ANSWER"
+      }
+    },
+    "checklist": {
+      "pageTitle": "[US_MA]reentry.checklist.pageTitle",
+      "heading": "[US_MA]reentry.checklist.heading",
+      "intro": "[US_MA]reentry.checklist.intro",
+      "notPersonalized": {
+        "heading": "[US_MA]reentry.checklist.notPersonalized.heading",
+        "description": "[US_MA]reentry.checklist.notPersonalized.description",
+        "cta": "[US_MA]reentry.checklist.notPersonalized.cta"
       },
-      "domainCopy": {
-        "HOUSING": "[US_MA]reentry.questionnaire.domainCopy.HOUSING",
-        "TRANSPORTATION": "[US_MA]reentry.questionnaire.domainCopy.TRANSPORTATION",
-        "HEALTH": "[US_MA]reentry.questionnaire.domainCopy.HEALTH"
+      "personalized": {
+        "heading": "[US_MA]reentry.checklist.personalized.heading",
+        "recommendedTaskCount_one": "[US_MA]reentry.checklist.personalized.recommendedTaskCount_one",
+        "recommendedTaskCount_other": "[US_MA]reentry.checklist.personalized.recommendedTaskCount_other"
       },
-      "saveError": "[US_MA]reentry.questionnaire.saveError"
-    }
-  },
-  "sentenceDates": {
-    "dates": {
-      "rts": {
-        "label": "[US_MA]sentenceDates.dates.rts.label",
-        "description": "[US_MA]sentenceDates.dates.rts.description"
+      "updateProfile": {
+        "heading": "[US_MA]reentry.checklist.updateProfile.heading",
+        "description": "[US_MA]reentry.checklist.updateProfile.description",
+        "cta": "[US_MA]reentry.checklist.updateProfile.cta"
       },
-      "maxRelease": {
-        "label": "[US_MA]sentenceDates.dates.maxRelease.label",
-        "adjusted": {
-          "originalDateLabel": "[US_MA]sentenceDates.dates.maxRelease.adjusted.originalDateLabel",
-          "adjustedDateLabel": "[US_MA]sentenceDates.dates.maxRelease.adjusted.adjustedDateLabel"
+      "progress": "[US_MA]reentry.checklist.progress",
+      "personalizedBadge": "[US_MA]reentry.checklist.personalizedBadge",
+      "sections": {
+        "ANYTIME": {
+          "title": "[US_MA]reentry.checklist.sections.ANYTIME.title",
+          "description": "[US_MA]reentry.checklist.sections.ANYTIME.description"
+        },
+        "TWELVE_MONTHS": {
+          "title": "[US_MA]reentry.checklist.sections.TWELVE_MONTHS.title",
+          "description": "[US_MA]reentry.checklist.sections.TWELVE_MONTHS.description"
+        },
+        "SIX_MONTHS": {
+          "title": "[US_MA]reentry.checklist.sections.SIX_MONTHS.title",
+          "description": "[US_MA]reentry.checklist.sections.SIX_MONTHS.description"
+        },
+        "THREE_MONTHS": {
+          "title": "[US_MA]reentry.checklist.sections.THREE_MONTHS.title",
+          "description": "[US_MA]reentry.checklist.sections.THREE_MONTHS.description"
+        },
+        "ONE_MONTH": {
+          "title": "[US_MA]reentry.checklist.sections.ONE_MONTH.title",
+          "description": "[US_MA]reentry.checklist.sections.ONE_MONTH.description"
+        }
+      },
+      "itemCopy": {
+        "HAS_BIRTH_CERTIFICATE": {
+          "label": "[US_MA]reentry.checklist.itemCopy.HAS_BIRTH_CERTIFICATE.label"
+        },
+        "KNOWS_REENTRY_SPECIALIST_TIMING": {
+          "label": "[US_MA]reentry.checklist.itemCopy.KNOWS_REENTRY_SPECIALIST_TIMING.label"
+        },
+        "ENROLLED_IN_HIGH_SCHOOL_EQUIVALENCY_PROGRAM": {
+          "label": "[US_MA]reentry.checklist.itemCopy.ENROLLED_IN_HIGH_SCHOOL_EQUIVALENCY_PROGRAM.label"
+        },
+        "REQUESTED_BIRTH_CERTIFICATE": {
+          "label": "[US_MA]reentry.checklist.itemCopy.REQUESTED_BIRTH_CERTIFICATE.label"
+        },
+        "HAS_HIGH_SCHOOL_EQUIVALENCY": {
+          "label": "[US_MA]reentry.checklist.itemCopy.HAS_HIGH_SCHOOL_EQUIVALENCY.label"
+        },
+        "REVIEWED_PROGRAM_CATALOG": {
+          "label": "[US_MA]reentry.checklist.itemCopy.REVIEWED_PROGRAM_CATALOG.label"
+        },
+        "KNOWS_WORK_SKILLS_AND_INTERESTS": {
+          "label": "[US_MA]reentry.checklist.itemCopy.KNOWS_WORK_SKILLS_AND_INTERESTS.label"
+        },
+        "HAS_JOB_TRAINING": {
+          "label": "[US_MA]reentry.checklist.itemCopy.HAS_JOB_TRAINING.label"
+        },
+        "HAS_UPDATED_RESUME": {
+          "label": "[US_MA]reentry.checklist.itemCopy.HAS_UPDATED_RESUME.label"
+        },
+        "REQUESTED_DD214": {
+          "label": "[US_MA]reentry.checklist.itemCopy.REQUESTED_DD214.label"
+        },
+        "RECEIVED_DD214": {
+          "label": "[US_MA]reentry.checklist.itemCopy.RECEIVED_DD214.label"
+        },
+        "APPLIED_FOR_OUT_OF_STATE_BIRTH_CERTIFICATE": {
+          "label": "[US_MA]reentry.checklist.itemCopy.APPLIED_FOR_OUT_OF_STATE_BIRTH_CERTIFICATE.label"
+        },
+        "KNOWS_REQUIRED_PROGRAMS": {
+          "label": "[US_MA]reentry.checklist.itemCopy.KNOWS_REQUIRED_PROGRAMS.label"
+        },
+        "KNOWS_PEER_SUPPORT_PROGRAMS": {
+          "label": "[US_MA]reentry.checklist.itemCopy.KNOWS_PEER_SUPPORT_PROGRAMS.label"
+        },
+        "COMPLETED_REQUIRED_PROGRAMS": {
+          "label": "[US_MA]reentry.checklist.itemCopy.COMPLETED_REQUIRED_PROGRAMS.label"
+        },
+        "HAS_POSITIVE_ROLE_MODELS": {
+          "label": "[US_MA]reentry.checklist.itemCopy.HAS_POSITIVE_ROLE_MODELS.label"
+        },
+        "RESEARCHED_HOUSING_RESOURCES": {
+          "label": "[US_MA]reentry.checklist.itemCopy.RESEARCHED_HOUSING_RESOURCES.label"
+        },
+        "HAS_MEDICAL_FOLLOW_UP_PLAN": {
+          "label": "[US_MA]reentry.checklist.itemCopy.HAS_MEDICAL_FOLLOW_UP_PLAN.label"
+        },
+        "CAR_READY_TO_DRIVE": {
+          "label": "[US_MA]reentry.checklist.itemCopy.CAR_READY_TO_DRIVE.label"
+        },
+        "HAS_SUPPORT_CONTACT_LIST": {
+          "label": "[US_MA]reentry.checklist.itemCopy.HAS_SUPPORT_CONTACT_LIST.label"
+        },
+        "KNOWS_MASSHEALTH_APPLICATION_PROCESS": {
+          "label": "[US_MA]reentry.checklist.itemCopy.KNOWS_MASSHEALTH_APPLICATION_PROCESS.label"
+        },
+        "ATTENDED_MASSHIRE_INFO_SESSION": {
+          "label": "[US_MA]reentry.checklist.itemCopy.ATTENDED_MASSHIRE_INFO_SESSION.label"
+        },
+        "DISCUSSED_HOUSING_WITH_SPECIALIST": {
+          "label": "[US_MA]reentry.checklist.itemCopy.DISCUSSED_HOUSING_WITH_SPECIALIST.label"
+        },
+        "DISCUSSED_SSI_SSDI_ELIGIBILITY_WITH_SPECIALIST": {
+          "label": "[US_MA]reentry.checklist.itemCopy.DISCUSSED_SSI_SSDI_ELIGIBILITY_WITH_SPECIALIST.label"
+        },
+        "REQUESTED_VETERANS_ADVOCATE": {
+          "label": "[US_MA]reentry.checklist.itemCopy.REQUESTED_VETERANS_ADVOCATE.label"
+        },
+        "HAS_FAMILY_RECONNECTION_PLAN": {
+          "label": "[US_MA]reentry.checklist.itemCopy.HAS_FAMILY_RECONNECTION_PLAN.label"
+        },
+        "HAS_SUPPORT_PERSON": {
+          "label": "[US_MA]reentry.checklist.itemCopy.HAS_SUPPORT_PERSON.label"
+        },
+        "HAS_HOUSING_LOCATION_PREFERENCE": {
+          "label": "[US_MA]reentry.checklist.itemCopy.HAS_HOUSING_LOCATION_PREFERENCE.label"
+        },
+        "APPLIED_FOR_STATE_ID": {
+          "label": "[US_MA]reentry.checklist.itemCopy.APPLIED_FOR_STATE_ID.label"
+        },
+        "DISCUSSED_CASE_MANAGEMENT_WITH_SPECIALIST": {
+          "label": "[US_MA]reentry.checklist.itemCopy.DISCUSSED_CASE_MANAGEMENT_WITH_SPECIALIST.label"
+        },
+        "ENROLLED_IN_SCHOOL_AFTER_RELEASE": {
+          "label": "[US_MA]reentry.checklist.itemCopy.ENROLLED_IN_SCHOOL_AFTER_RELEASE.label"
+        },
+        "DISCUSSED_SSI_APPLICATION_WITH_SPECIALIST": {
+          "label": "[US_MA]reentry.checklist.itemCopy.DISCUSSED_SSI_APPLICATION_WITH_SPECIALIST.label"
+        },
+        "DISCUSSED_SSDI_APPLICATION_WITH_SPECIALIST": {
+          "label": "[US_MA]reentry.checklist.itemCopy.DISCUSSED_SSDI_APPLICATION_WITH_SPECIALIST.label"
+        },
+        "HOUSING_PLAN_AGREEMENT": {
+          "label": "[US_MA]reentry.checklist.itemCopy.HOUSING_PLAN_AGREEMENT.label"
+        },
+        "BACKUP_HOUSING": {
+          "label": "[US_MA]reentry.checklist.itemCopy.BACKUP_HOUSING.label"
+        },
+        "HAS_RENT_PAYMENT_PLAN": {
+          "label": "[US_MA]reentry.checklist.itemCopy.HAS_RENT_PAYMENT_PLAN.label"
+        },
+        "HAS_HOUSING_PROGRAM_RENT_PLAN": {
+          "label": "[US_MA]reentry.checklist.itemCopy.HAS_HOUSING_PROGRAM_RENT_PLAN.label"
+        },
+        "HAS_FIRST_DAY_PLAN": {
+          "label": "[US_MA]reentry.checklist.itemCopy.HAS_FIRST_DAY_PLAN.label"
+        },
+        "KNOWS_MENTAL_HEALTH_SUPPORT": {
+          "label": "[US_MA]reentry.checklist.itemCopy.KNOWS_MENTAL_HEALTH_SUPPORT.label"
+        },
+        "KNOWS_SUBSTANCE_USE_TREATMENT": {
+          "label": "[US_MA]reentry.checklist.itemCopy.KNOWS_SUBSTANCE_USE_TREATMENT.label"
+        },
+        "DISCUSSED_RELEASE_DAY_TRANSPORTATION_WITH_SPECIALIST": {
+          "label": "[US_MA]reentry.checklist.itemCopy.DISCUSSED_RELEASE_DAY_TRANSPORTATION_WITH_SPECIALIST.label"
+        },
+        "APPLIED_FOR_SOCIAL_SECURITY_CARD": {
+          "label": "[US_MA]reentry.checklist.itemCopy.APPLIED_FOR_SOCIAL_SECURITY_CARD.label"
+        },
+        "ASKED_ABOUT_RELEASE_DAY_RIDE": {
+          "label": "[US_MA]reentry.checklist.itemCopy.ASKED_ABOUT_RELEASE_DAY_RIDE.label"
+        },
+        "KNOWS_PUBLIC_TRANSIT_ROUTES": {
+          "label": "[US_MA]reentry.checklist.itemCopy.KNOWS_PUBLIC_TRANSIT_ROUTES.label"
+        },
+        "HAS_BIKE_PLAN": {
+          "label": "[US_MA]reentry.checklist.itemCopy.HAS_BIKE_PLAN.label"
+        },
+        "SEARCHED_FOR_JOBS": {
+          "label": "[US_MA]reentry.checklist.itemCopy.SEARCHED_FOR_JOBS.label"
+        },
+        "KNOWS_MAT_PROVIDER": {
+          "label": "[US_MA]reentry.checklist.itemCopy.KNOWS_MAT_PROVIDER.label"
+        },
+        "RECEIVED_STATE_ID": {
+          "label": "[US_MA]reentry.checklist.itemCopy.RECEIVED_STATE_ID.label"
+        },
+        "HAS_FIRST_MONTH_BUDGET": {
+          "label": "[US_MA]reentry.checklist.itemCopy.HAS_FIRST_MONTH_BUDGET.label"
+        },
+        "RECEIVED_SOCIAL_SECURITY_CARD": {
+          "label": "[US_MA]reentry.checklist.itemCopy.RECEIVED_SOCIAL_SECURITY_CARD.label"
+        },
+        "MASSHEALTH_APPLICATION_FILED": {
+          "label": "[US_MA]reentry.checklist.itemCopy.MASSHEALTH_APPLICATION_FILED.label"
+        },
+        "HAS_MASSHEALTH_COVERAGE": {
+          "label": "[US_MA]reentry.checklist.itemCopy.HAS_MASSHEALTH_COVERAGE.label"
+        },
+        "CONFIRMED_JOB_START_DATE": {
+          "label": "[US_MA]reentry.checklist.itemCopy.CONFIRMED_JOB_START_DATE.label"
+        },
+        "KNOWS_DOCTOR_OR_CLINIC": {
+          "label": "[US_MA]reentry.checklist.itemCopy.KNOWS_DOCTOR_OR_CLINIC.label"
+        },
+        "KNOWS_PHARMACY": {
+          "label": "[US_MA]reentry.checklist.itemCopy.KNOWS_PHARMACY.label"
+        },
+        "KNOWS_FIRST_WORK_DAY_REQUIREMENTS": {
+          "label": "[US_MA]reentry.checklist.itemCopy.KNOWS_FIRST_WORK_DAY_REQUIREMENTS.label"
+        },
+        "FINALIZED_HOUSING": {
+          "label": "[US_MA]reentry.checklist.itemCopy.FINALIZED_HOUSING.label"
+        },
+        "CONFIRMED_RELEASE_DAY_PICKUP": {
+          "label": "[US_MA]reentry.checklist.itemCopy.CONFIRMED_RELEASE_DAY_PICKUP.label"
+        },
+        "KNOWS_RELEASE_DAY_PUBLIC_TRANSIT": {
+          "label": "[US_MA]reentry.checklist.itemCopy.KNOWS_RELEASE_DAY_PUBLIC_TRANSIT.label"
+        },
+        "HAS_RELEASE_DAY_TRANSPORTATION_PLAN": {
+          "label": "[US_MA]reentry.checklist.itemCopy.HAS_RELEASE_DAY_TRANSPORTATION_PLAN.label"
+        },
+        "CONFIRMED_FAMILY_AND_FRIENDS_TRANSPORTATION": {
+          "label": "[US_MA]reentry.checklist.itemCopy.CONFIRMED_FAMILY_AND_FRIENDS_TRANSPORTATION.label"
+        },
+        "HAS_TRANSPORTATION_TO_WORK_AND_APPOINTMENTS": {
+          "label": "[US_MA]reentry.checklist.itemCopy.HAS_TRANSPORTATION_TO_WORK_AND_APPOINTMENTS.label"
+        },
+        "HAS_JOB_APPLICATION_EMAIL": {
+          "label": "[US_MA]reentry.checklist.itemCopy.HAS_JOB_APPLICATION_EMAIL.label"
+        },
+        "HAS_PAID_HOUSING_PROGRAM_DEPOSIT": {
+          "label": "[US_MA]reentry.checklist.itemCopy.HAS_PAID_HOUSING_PROGRAM_DEPOSIT.label"
+        },
+        "ASKED_ABOUT_SOBER_HOUSE_FUNDING": {
+          "label": "[US_MA]reentry.checklist.itemCopy.ASKED_ABOUT_SOBER_HOUSE_FUNDING.label"
+        }
+      }
+    },
+    "resources": {
+      "list": {
+        "pageTitle": "[US_MA]reentry.resources.list.pageTitle",
+        "subtitle": "[US_MA]reentry.resources.list.subtitle",
+        "resultCount_one": "[US_MA]reentry.resources.list.resultCount_one",
+        "resultCount_other": "[US_MA]reentry.resources.list.resultCount_other",
+        "sectionCount_one": "[US_MA]reentry.resources.list.sectionCount_one",
+        "sectionCount_other": "[US_MA]reentry.resources.list.sectionCount_other",
+        "emptyState": "[US_MA]reentry.resources.list.emptyState",
+        "contactLabel": "[US_MA]reentry.resources.list.contactLabel",
+        "rent": {
+          "free": "[US_MA]reentry.resources.list.rent.free",
+          "range": "[US_MA]reentry.resources.list.rent.range",
+          "single": "[US_MA]reentry.resources.list.rent.single",
+          "incomePercent": "[US_MA]reentry.resources.list.rent.incomePercent",
+          "notListed": "[US_MA]reentry.resources.list.rent.notListed"
+        },
+        "lengthOfStay": {
+          "range": "[US_MA]reentry.resources.list.lengthOfStay.range",
+          "single_one": "[US_MA]reentry.resources.list.lengthOfStay.single_one",
+          "single_other": "[US_MA]reentry.resources.list.lengthOfStay.single_other",
+          "noTimeLimit": "[US_MA]reentry.resources.list.lengthOfStay.noTimeLimit"
+        },
+        "gender": {
+          "male": "[US_MA]reentry.resources.list.gender.male",
+          "female": "[US_MA]reentry.resources.list.gender.female",
+          "coed": "[US_MA]reentry.resources.list.gender.coed"
+        },
+        "accepts": {
+          "sexOffenses": "[US_MA]reentry.resources.list.accepts.sexOffenses",
+          "arsonOffenses": "[US_MA]reentry.resources.list.accepts.arsonOffenses",
+          "parolees": "[US_MA]reentry.resources.list.accepts.parolees"
         }
       }
     }

@@ -146,67 +146,22 @@
   "spanishLaunchBanner": {
     "message": "**Program list now available in Spanish** \n\n**Ahora en español **\n\nLa Lista de Programas ahora está disponible en español.\nPara cambiar, toque “English” en la parte superior de su tableta Orijin y elija “Español”."
   },
-  "reentry": {
-    "checklist": {
-      "itemCopy": {
-        "BACKUP_HOUSING": {
-          "label": "I have a backup housing plan in case my main plan doesn't work out."
-        },
-        "FINALIZED_HOUSING": {
-          "label": "I have a finalized place to live after release, and I know any house rules and expectations."
-        },
-        "HOUSING_PLAN_AGREEMENT": {
-          "label": "I have talked with the people I plan to live with and they agreed that I can live there."
-        },
-        "HAS_RENT_PAYMENT_PLAN": {
-          "label": "I have a plan for how I will pay my rent for the first three months (including any deposit)."
-        },
-        "HAS_HOUSING_LOCATION_PREFERENCE": {
-          "label": "I know which city or county I want to live in when I get out."
-        },
-        "RESEARCHED_HOUSING_RESOURCES": {
-          "label": "I have reviewed housing programs in the Housing Resource Explorer (in this app) and found at least 3 options I'm interested in."
-        },
-        "DISCUSSED_HOUSING_WITH_SPECIALIST": {
-          "label": "I have talked to my Reentry Specialist about the housing programs I'm interested in."
-        },
-        "HAS_HOUSING_PROGRAM_RENT_PLAN": {
-          "label": "I have a plan for how I will pay my transitional program fees for the first three months (including any deposit)."
-        },
-        "HAS_PAID_HOUSING_PROGRAM_DEPOSIT": {
-          "label": "I have paid my housing deposit, if there is one."
-        },
-        "CONFIRMED_FAMILY_AND_FRIENDS_TRANSPORTATION": {
-          "label": "I have talked to the person who is going to help drive me to work and appointments, and they confirmed they are able to do it."
+  "sentenceDates": {
+    "dates": {
+      "rts": {
+        "label": "Release-to-supervision date (RTS)",
+        "description": "The RTS Date is a release to parole supervision without the need for a parole hearing, based upon completion credits earned through programming and education pursuant to M.G.L.c.127, §129D."
+      },
+      "maxRelease": {
+        "label": "Maximum release / wrap date (MAX)",
+        "adjusted": {
+          "originalDateLabel": "Original MAX date",
+          "adjustedDateLabel": "Adjusted MAX date"
         }
-      },
-      "pageTitle": "Reentry Checklist",
-      "heading": "Reentry Checklist",
-      "intro": "This is your personal to-do list to prepare for reentry. Check off each task when you finish it. Your Reentry Specialist will not be notified of tasks you check off here unless you tell them.",
-      "notPersonalized": {
-        "heading": "Checklist not personalized yet",
-        "description": "Complete your Reentry profile to personalize this checklist.",
-        "cta": "Complete profile"
-      },
-      "personalized": {
-        "heading": "This checklist is personalized",
-        "recommendedTaskCount_one": "{{count}} new task recommended based on your Reentry profile.",
-        "recommendedTaskCount_other": "{{count}} new tasks recommended based on your Reentry profile."
-      },
-      "sections": {
-        "ANYTIME": {
-          "title": "Complete Anytime",
-          "description": "These tasks can be completed as early as possible to set you up for success."
-        }
-      },
-      "progress": "{{done}} of {{total}} done",
-      "personalizedBadge": "Based on your profile",
-      "updateProfile": {
-        "heading": "Does this list still fit your situation?",
-        "description": "These tasks come from your reentry profile. If something has changed – like your housing goals or healthcare needs – update your profile and the tasks on your checklist will update too.",
-        "cta": "Update your profile"
       }
-    },
+    }
+  },
+  "reentry": {
     "navBar": {
       "sectionLabel": "Reentry",
       "overview": "Overview",
@@ -321,14 +276,73 @@
         "checklistCta": "Go to your checklist",
         "closeCta": "Close and return home"
       },
+      "saveError": "We couldn't save your answers. Check your connection and try again.",
+      "domainCopy": {
+        "HOUSING": "Housing",
+        "WORK": "Work",
+        "HEALTH": "Health",
+        "MONEY": "Money",
+        "TRANSPORTATION": "Transportation",
+        "EDUCATION_AND_PROGRAMS": "Education and programs",
+        "DOCUMENTS": "Documents"
+      },
+      "questionCopy": {
+        "HOUSING": {
+          "question": "Where are you planning to live when you get out?"
+        },
+        "WORK_PLANS": {
+          "question": "Do you plan to work when you get out?"
+        },
+        "HEALTHCARE_NEEDED": {
+          "question": "Will you need health care or medicine when you get out?"
+        },
+        "HEALTHCARE_DETAILS": {
+          "question": "What health care or medicine will you need when you get out?"
+        },
+        "SSI_SSDI_ELIGIBILITY": {
+          "question": "Have you received SSI or SSDI before, or think you might qualify for either?"
+        },
+        "SSI_SSDI_DETAILS": {
+          "question": "Which of these have you received before or think you might qualify for?"
+        },
+        "TRANSPORTATION_PLAN": {
+          "question": "Once you're out, do you have a plan for your transportation to get to work and appointments?"
+        },
+        "TRANSPORTATION": {
+          "question": "How do you plan to get to work and appointments once you're out?"
+        },
+        "RELEASE_DAY_TRANSPORTATION": {
+          "question": "How do you plan to get home on the day you get out?"
+        },
+        "EDUCATION_LEVEL": {
+          "question": "What is your highest level of education?"
+        },
+        "MILITARY_SERVICE": {
+          "question": "Have you served in the military?"
+        },
+        "BORN_IN_MASSACHUSETTS": {
+          "question": "Were you born in Massachusetts?"
+        }
+      },
       "optionCopy": {
         "HOUSING": {
           "FAMILY": "With family",
-          "FRIENDS_OR_ROOMMATES": "With friends or roommates",
-          "LONG_TERM_RESIDENTIAL_PROGRAM": "A long term residential program (LTRP)",
-          "SOBER_OR_ROOMING_HOUSE": "A sober house or rooming house",
+          "FRIEND": "With a friend",
+          "LONG_TERM_RESIDENTIAL_PROGRAM": "Long Term Residential Program (LTRP)",
+          "RESIDENTIAL_RECOVERY_HOUSE": "Residential Recovery House",
+          "SOBER_HOUSE": "Sober House",
+          "ROOMING_HOUSE": "Rooming House",
           "OWN_PLACE": "My own place",
           "UNSURE": "I don't know yet / depends on parole",
+          "DECLINED_TO_ANSWER": "I'd rather not say"
+        },
+        "WORK_PLANS": {
+          "HAS_JOB_LINED_UP": "Yes, and I already have a job lined up",
+          "LOOKING_FOR_WORK": "Yes, and I need to look for jobs",
+          "DISABLED": "No, I am disabled and can't work",
+          "RETIRED": "No, I am retired",
+          "ATTENDING_SCHOOL": "No, I plan to go to school full time",
+          "UNSURE": "I'm not sure",
           "DECLINED_TO_ANSWER": "I'd rather not say"
         },
         "HEALTHCARE_DETAILS": {
@@ -336,29 +350,45 @@
           "ONGOING_CONDITION": "Healthcare for an ongoing medical condition",
           "MENTAL_HEALTH": "Mental health support",
           "SUBSTANCE_USE": "Substance use support",
-          "MEDICATION_ASSISTED_TREATMENT": "Medication-assisted treatment (MAT)"
+          "MEDICATION_ASSISTED_TREATMENT": "Medication-assisted treatment (MAT)",
+          "SOMETHING_ELSE": "Something else"
+        },
+        "SSI_SSDI_DETAILS": {
+          "SSI": "SSI",
+          "SSDI": "SSDI",
+          "NONE": "None of these",
+          "DECLINED_TO_ANSWER": "I'd rather not say"
+        },
+        "TRANSPORTATION_PLAN": {
+          "HAS_PLAN": "Yes, I have a plan",
+          "NO_PLAN_YET": "No, I don't know yet",
+          "DECLINED_TO_ANSWER": "I'd rather not say"
         },
         "TRANSPORTATION": {
           "FAMILY_OR_FRIENDS": "Family or friends will drive me",
           "PUBLIC_TRANSIT": "Public transit",
           "BIKE": "I'll ride a bike",
-          "OWN_CAR": "My own car",
-          "UNSURE": "I'm not sure",
+          "OWN_CAR": "My own car"
+        },
+        "RELEASE_DAY_TRANSPORTATION": {
+          "PICKUP": "Someone is picking me up",
+          "PUBLIC_TRANSPORTATION": "I'll use public transportation (bus, train, or taxi)",
+          "UNSURE": "I don't know yet",
           "DECLINED_TO_ANSWER": "I'd rather not say"
-        }
-      },
-      "questionCopy": {
-        "HOUSING": {
-          "question": "Where are you planning to live when you get out?"
         },
-        "HEALTHCARE_NEEDED": {
-          "question": "Will you need healthcare when you get out?"
+        "EDUCATION_LEVEL": {
+          "BACHELORS_OR_HIGHER": "Bachelor's degree or higher",
+          "ASSOCIATE_DEGREE": "Associate degree",
+          "SOME_COLLEGE": "Some college, no degree",
+          "HIGH_SCHOOL_EQUIVALENT": "High school diploma, GED or HiSET",
+          "LESS_THAN_HIGH_SCHOOL": "Less than high school",
+          "DECLINED_TO_ANSWER": "I'd rather not say"
         },
-        "HEALTHCARE_DETAILS": {
-          "question": "What health care or medicine will you need when you get out?"
-        },
-        "TRANSPORTATION": {
-          "question": "How do you plan to get to work and appointments once you're out?"
+        "MILITARY_SERVICE": {
+          "YES_HAS_DD214": "Yes, and I have my DD-214 (military discharge papers)",
+          "YES_NEEDS_DD214": "Yes, but I don't have a copy of my DD-214 (military discharge papers)",
+          "NO": "No",
+          "DECLINED_TO_ANSWER": "I'd rather not say"
         }
       },
       "standardOptionCopy": {
@@ -366,26 +396,281 @@
         "NO": "No",
         "UNSURE": "I'm not sure",
         "DECLINED_TO_ANSWER": "I'd rather not say"
+      }
+    },
+    "checklist": {
+      "pageTitle": "Reentry Checklist",
+      "heading": "Reentry Checklist",
+      "intro": "This is your personal to-do list to prepare for reentry. Check off each task when you finish it. Your Reentry Specialist will not be notified of tasks you check off here unless you tell them.",
+      "notPersonalized": {
+        "heading": "Checklist not personalized yet",
+        "description": "Complete your Reentry profile to personalize this checklist.",
+        "cta": "Complete profile"
       },
-      "domainCopy": {
-        "HOUSING": "Housing",
-        "TRANSPORTATION": "Transportation",
-        "HEALTH": "Health"
+      "personalized": {
+        "heading": "This checklist is personalized",
+        "recommendedTaskCount_one": "{{count}} new task recommended based on your Reentry profile.",
+        "recommendedTaskCount_other": "{{count}} new tasks recommended based on your Reentry profile."
       },
-      "saveError": "We couldn't save your answers. Check your connection and try again."
-    }
-  },
-  "sentenceDates": {
-    "dates": {
-      "rts": {
-        "label": "Release-to-supervision date (RTS)",
-        "description": "The RTS Date is a release to parole supervision without the need for a parole hearing, based upon completion credits earned through programming and education pursuant to M.G.L.c.127, §129D."
+      "updateProfile": {
+        "heading": "Does this list still fit your situation?",
+        "description": "These tasks come from your reentry profile. If something has changed – like your housing goals or healthcare needs – update your profile and the tasks on your checklist will update too.",
+        "cta": "Update your profile"
       },
-      "maxRelease": {
-        "label": "Maximum release / wrap date (MAX)",
-        "adjusted": {
-          "originalDateLabel": "Original MAX date",
-          "adjustedDateLabel": "Adjusted MAX date"
+      "progress": "{{done}} of {{total}} done",
+      "personalizedBadge": "Based on your profile",
+      "sections": {
+        "ANYTIME": {
+          "title": "Complete Anytime",
+          "description": "These tasks can be completed as early as possible to set you up for success."
+        },
+        "TWELVE_MONTHS": {
+          "title": "Complete 12 months before release",
+          "description": "Start these tasks about a year before you get out. Some of them take months to finish."
+        },
+        "SIX_MONTHS": {
+          "title": "Complete 6 months before release",
+          "description": "Work on these tasks about six months before you get out."
+        },
+        "THREE_MONTHS": {
+          "title": "Complete 3 months before release",
+          "description": "Finish these tasks about three months before you get out."
+        },
+        "ONE_MONTH": {
+          "title": "Complete 1 month before release",
+          "description": "Wrap up these tasks in your last month before you get out."
+        }
+      },
+      "itemCopy": {
+        "HAS_BIRTH_CERTIFICATE": {
+          "label": "I have my Birth Certificate."
+        },
+        "KNOWS_REENTRY_SPECIALIST_TIMING": {
+          "label": "I know a Reentry Specialist will be assigned to me 1 year before my defined release date OR after I receive a positive parole vote."
+        },
+        "ENROLLED_IN_HIGH_SCHOOL_EQUIVALENCY_PROGRAM": {
+          "label": "I am enrolled in a program to get my high school diploma, GED or HiSET."
+        },
+        "REQUESTED_BIRTH_CERTIFICATE": {
+          "label": "I have requested my Birth Certificate using the \"MADOC Birth Certificiate Initiative\" form in the \"Titanium\" app on my tablet."
+        },
+        "HAS_HIGH_SCHOOL_EQUIVALENCY": {
+          "label": "I have my high school diploma, GED, or HiSET."
+        },
+        "REVIEWED_PROGRAM_CATALOG": {
+          "label": "I have looked at the Program Catalog in this app to see which programs I can take here, and I know my CPO signs me up."
+        },
+        "KNOWS_WORK_SKILLS_AND_INTERESTS": {
+          "label": "I know my skills and what kind of work interests me."
+        },
+        "HAS_JOB_TRAINING": {
+          "label": "I have taken part in job training, a work assignment, or an apprenticeship."
+        },
+        "HAS_UPDATED_RESUME": {
+          "label": "I have a resume that is up to date with my work history."
+        },
+        "REQUESTED_DD214": {
+          "label": "I have talked to my Reentry Specialist to request a copy of my DD-214 (military discharge papers)."
+        },
+        "RECEIVED_DD214": {
+          "label": "I have received my DD-214 (military discharge papers)."
+        },
+        "APPLIED_FOR_OUT_OF_STATE_BIRTH_CERTIFICATE": {
+          "label": "I have worked with my Reentry Specialist to apply for my Birth Certificate from the state where I was born."
+        },
+        "KNOWS_REQUIRED_PROGRAMS": {
+          "label": "I have asked my CPO which programs I need to complete before parole or release."
+        },
+        "KNOWS_PEER_SUPPORT_PROGRAMS": {
+          "label": "I know about peer support or reentry programs I can join when I get out."
+        },
+        "COMPLETED_REQUIRED_PROGRAMS": {
+          "label": "I have finished the programs I'm required to complete."
+        },
+        "HAS_POSITIVE_ROLE_MODELS": {
+          "label": "I have at least three people in my life who are living the kind of life I want to live."
+        },
+        "RESEARCHED_HOUSING_RESOURCES": {
+          "label": "I have reviewed housing programs in this app's Housing Explorer and found at least 3 options I'm interested in."
+        },
+        "HAS_MEDICAL_FOLLOW_UP_PLAN": {
+          "label": "I have seen a doctor about my medical condition and I know my follow-up plan."
+        },
+        "CAR_READY_TO_DRIVE": {
+          "label": "My car's registration and insurance are current, and my driver's license is valid, so I can drive to work and appointments."
+        },
+        "HAS_SUPPORT_CONTACT_LIST": {
+          "label": "I have a list of the people who will support me when I get out, with current contact information."
+        },
+        "KNOWS_MASSHEALTH_APPLICATION_PROCESS": {
+          "label": "I know my Reentry Specialist will file my MassHealth application about 30 to 60 days before release (earlier if I'm 65 or older), and what I need to have ready."
+        },
+        "ATTENDED_MASSHIRE_INFO_SESSION": {
+          "label": "I have attended a MassHire info session."
+        },
+        "DISCUSSED_HOUSING_WITH_SPECIALIST": {
+          "label": "I have talked to my Reentry Specialist about the housing programs I'm interested in."
+        },
+        "DISCUSSED_SSI_SSDI_ELIGIBILITY_WITH_SPECIALIST": {
+          "label": "I have talked to my Reentry Specialist about whether I'm eligible for SSI or SSDI."
+        },
+        "REQUESTED_VETERANS_ADVOCATE": {
+          "label": "I have asked my Reentry Specialist to connect me with the VA representative or veterans advocate."
+        },
+        "HAS_FAMILY_RECONNECTION_PLAN": {
+          "label": "I have a realistic plan for how I'll reconnect with family or loved ones after release."
+        },
+        "HAS_SUPPORT_PERSON": {
+          "label": "I have at least one person I can call when I'm struggling."
+        },
+        "HAS_HOUSING_LOCATION_PREFERENCE": {
+          "label": "I know which cities or counties I want to live in when I get out."
+        },
+        "APPLIED_FOR_STATE_ID": {
+          "label": "I have applied for my Massachusetts State ID with my Reentry Specialist."
+        },
+        "DISCUSSED_CASE_MANAGEMENT_WITH_SPECIALIST": {
+          "label": "I have talked to my Reentry Specialist about programs that give me a supportive case manager after release (like BHJI, Credible Messengers, or Reentry Navigators)."
+        },
+        "ENROLLED_IN_SCHOOL_AFTER_RELEASE": {
+          "label": "I am enrolled in a full time college, vocational, or training program that I'll start when I get out."
+        },
+        "DISCUSSED_SSI_APPLICATION_WITH_SPECIALIST": {
+          "label": "I have talked to my Reentry Specialist about applying for SSI."
+        },
+        "DISCUSSED_SSDI_APPLICATION_WITH_SPECIALIST": {
+          "label": "I have talked to my Reentry Specialist about applying for SSDI."
+        },
+        "HOUSING_PLAN_AGREEMENT": {
+          "label": "I have talked with the people I plan to live with and they agreed that I can live there."
+        },
+        "BACKUP_HOUSING": {
+          "label": "I have a backup housing plan in case my main plan doesn't work out."
+        },
+        "HAS_RENT_PAYMENT_PLAN": {
+          "label": "I have a plan for how I will pay my rent for the first three months (including any deposit)."
+        },
+        "HAS_HOUSING_PROGRAM_RENT_PLAN": {
+          "label": "I have a plan for how I will pay my housing program fees for the first three months (including any deposit)."
+        },
+        "HAS_FIRST_DAY_PLAN": {
+          "label": "I have a detailed plan for my first day out."
+        },
+        "KNOWS_MENTAL_HEALTH_SUPPORT": {
+          "label": "I know where I can go for mental health support near where I'm living."
+        },
+        "KNOWS_SUBSTANCE_USE_TREATMENT": {
+          "label": "I know where I can go for treatment or aftercare near where I'm living."
+        },
+        "DISCUSSED_RELEASE_DAY_TRANSPORTATION_WITH_SPECIALIST": {
+          "label": "I have talked to my Reentry Specialist about my transportation plan on release day."
+        },
+        "APPLIED_FOR_SOCIAL_SECURITY_CARD": {
+          "label": "I have applied for my Social Security card with my Reentry Specialist."
+        },
+        "ASKED_ABOUT_RELEASE_DAY_RIDE": {
+          "label": "I have asked my Reentry Specialist about help getting home (a program ride, BHJI, or Credible Messengers)."
+        },
+        "KNOWS_PUBLIC_TRANSIT_ROUTES": {
+          "label": "I know the bus or train lines I will use to get to work and appointments."
+        },
+        "HAS_BIKE_PLAN": {
+          "label": "I have a plan to get the bike I will use to get to work and appointments."
+        },
+        "SEARCHED_FOR_JOBS": {
+          "label": "I have used my tablet to find job listings and employers near where I'm going."
+        },
+        "KNOWS_MAT_PROVIDER": {
+          "label": "I know where I'll continue my medication for addiction treatment (MAT) after release."
+        },
+        "RECEIVED_STATE_ID": {
+          "label": "I have received my Massachusetts State ID or driver's license."
+        },
+        "HAS_FIRST_MONTH_BUDGET": {
+          "label": "I have a budget for my first month out."
+        },
+        "RECEIVED_SOCIAL_SECURITY_CARD": {
+          "label": "I have received my Social Security card."
+        },
+        "MASSHEALTH_APPLICATION_FILED": {
+          "label": "My MassHealth application has been filed."
+        },
+        "HAS_MASSHEALTH_COVERAGE": {
+          "label": "I have MassHealth coverage."
+        },
+        "CONFIRMED_JOB_START_DATE": {
+          "label": "I have talked with my employer to confirm the job is still there and I know my start date."
+        },
+        "KNOWS_DOCTOR_OR_CLINIC": {
+          "label": "I know which doctor or clinic I'll go to near where I'm living."
+        },
+        "KNOWS_PHARMACY": {
+          "label": "I know which pharmacy I'll go to near where I'm living."
+        },
+        "KNOWS_FIRST_WORK_DAY_REQUIREMENTS": {
+          "label": "I know what I need to bring on my first day."
+        },
+        "FINALIZED_HOUSING": {
+          "label": "I have a finalized place to live after release, and I know any house rules and expectations."
+        },
+        "CONFIRMED_RELEASE_DAY_PICKUP": {
+          "label": "I spoke with the person who is picking me up on release day and confirmed they will pick me up."
+        },
+        "KNOWS_RELEASE_DAY_PUBLIC_TRANSIT": {
+          "label": "I know what public transportation I'm taking to get home on release day."
+        },
+        "HAS_RELEASE_DAY_TRANSPORTATION_PLAN": {
+          "label": "I have a transportation plan to get to my home on the day I get out."
+        },
+        "CONFIRMED_FAMILY_AND_FRIENDS_TRANSPORTATION": {
+          "label": "I have talked to the person who is going to help drive me to work and appointments, and they confirmed they are able to do it."
+        },
+        "HAS_TRANSPORTATION_TO_WORK_AND_APPOINTMENTS": {
+          "label": "I have a way to get to work and appointments."
+        },
+        "HAS_JOB_APPLICATION_EMAIL": {
+          "label": "I have an email address I can use for job applications."
+        },
+        "HAS_PAID_HOUSING_PROGRAM_DEPOSIT": {
+          "label": "I have paid my housing deposit, if there is one."
+        },
+        "ASKED_ABOUT_SOBER_HOUSE_FUNDING": {
+          "label": "I have asked my Reentry Specialist whether MASH funding or another source can pay for my first month in a sober house."
+        }
+      }
+    },
+    "resources": {
+      "list": {
+        "pageTitle": "Resource explorer – Housing",
+        "subtitle": "Browse housing by type. Use filters to narrow the list.",
+        "resultCount_one": "Showing {{count}} resource",
+        "resultCount_other": "Showing {{count}} resources",
+        "sectionCount_one": "{{count}} resource",
+        "sectionCount_other": "{{count}} resources",
+        "emptyState": "No housing resources found.",
+        "contactLabel": "Address: {{address}}",
+        "rent": {
+          "free": "Rent: Free",
+          "range": "Rent: ${{min}}–${{max}}/week",
+          "single": "Rent: ${{amount}}/week",
+          "incomePercent": "Rent: {{percent}}% of income",
+          "notListed": "No rent info listed"
+        },
+        "lengthOfStay": {
+          "range": "{{min}}–{{max}} months",
+          "single_one": "{{count}} month",
+          "single_other": "{{count}} months",
+          "noTimeLimit": "No time limit"
+        },
+        "gender": {
+          "male": "Male",
+          "female": "Female",
+          "coed": "Co-ed"
+        },
+        "accepts": {
+          "sexOffenses": "Sex offenses",
+          "arsonOffenses": "Arson offenses",
+          "parolees": "Parolees"
         }
       }
     }
