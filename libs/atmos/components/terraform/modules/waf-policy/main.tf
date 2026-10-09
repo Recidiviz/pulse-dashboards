@@ -27,7 +27,7 @@ locals {
     {
       priority    = 1000
       description = "SQL Injection"
-      expression  = "evaluatePreconfiguredWaf('sqli-v33-stable', {'sensitivity': 1})"
+      expression  = "evaluatePreconfiguredWaf('sqli-v33-stable', {'sensitivity': 1, 'opt_out_rule_ids': ['owasp-crs-v030301-id942432-sqli', 'owasp-crs-v030301-id942100-sqli']})"
     },
     {
       priority    = 1001
