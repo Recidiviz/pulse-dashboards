@@ -51,7 +51,7 @@ export function SuccessPlannerSupportSystemTable({
             {contact.name}
           </Typography>
           <Typography variant="body-s-regular" className="flex-1 text-primary">
-            {contact.relationship}
+            {contact.relationship ?? "—"}
           </Typography>
         </View>
       ))}

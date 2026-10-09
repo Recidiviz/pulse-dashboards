@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { getVisibleQuestions } from "~@jii/configs";
+
 import { SUCCESS_PLANNER_SECTIONS } from "../config/successPlannerSections";
 import {
   SuccessPlanner,
@@ -27,7 +29,14 @@ export function isSectionComplete(
   section: SuccessPlannerSection,
   answers: SuccessPlannerAnswers,
 ) {
-  return section.questions.every((question) => question.id in answers);
+  const visibleQuestions = getVisibleQuestions(answers).map(
+    ({ questionId }) => questionId,
+  );
+
+  return section.questions.every(
+    (question) =>
+      question.id in answers || !visibleQuestions.includes(question.id),
+  );
 }
 
 export function getCompletedSectionCount(answers: SuccessPlannerAnswers) {

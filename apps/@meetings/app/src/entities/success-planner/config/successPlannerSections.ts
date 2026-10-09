@@ -19,71 +19,73 @@ import { SuccessPlannerSection } from "../model/successPlanner";
 
 export const SUCCESS_PLANNER_SECTIONS: SuccessPlannerSection[] = [
   {
-    id: "housing",
+    id: "sectionHousing",
     navLabel: "Housing",
     heading: "HOUSING",
     questions: [
       {
-        id: "housing-where",
+        id: "WHERE_WILL_YOU_LIVE",
         label: "Where will you live when you go home?",
         answerType: "text",
       },
       {
-        id: "housing-backup",
+        id: "HOUSING_BACKUP_PLAN",
         label: "Do you have a backup plan if this falls through?",
         answerType: "text",
       },
       {
-        id: "housing-backup-detail",
-        label: "Do you have a backup plan, just in case?",
+        id: "HOUSING_BACKUP_PLAN_DESCRIPTION",
+        label: "What is your housing backup plan?",
         answerType: "text",
       },
       {
-        id: "housing-success",
+        id: "HOUSING_SUCCESS",
         label:
           "If your housing was successful, what would that look like day to day?",
         answerType: "text",
       },
       {
-        id: "housing-step",
-        label: "What is one small step you could take right now?",
+        id: "HOUSING_STEP",
+        label:
+          "What is one small step you could take right now to support your housing plan?",
         answerType: "text",
       },
     ],
   },
   {
-    id: "education-employment",
-    navLabel: "Education and Employment",
-    heading: "EDUCATION & EMPLOYMENT",
+    id: "sectionEducationWork",
+    navLabel: "Education & Work",
+    heading: "EDUCATION & WORK",
     questions: [
       {
-        id: "education-plans",
+        id: "EDUCATION_PLANS",
         label: "Do you have plans to further your education after you go home?",
         answerType: "text",
       },
       {
-        id: "education-detail",
-        label: "What are your plans?",
+        id: "EDUCATION_PLANS_DESCRIPTION",
+        label:
+          "What are your plans to further your education after you go home?",
         answerType: "text",
       },
       {
-        id: "employment-plans",
+        id: "WORK_PLANS",
         label: "What are your plans for work? Do you already have a job?",
         answerType: "text",
       },
       {
-        id: "employment-org",
+        id: "WORK_PLANS_DESCRIPTION",
         label: "What's the organization and role?",
         answerType: "text",
       },
       {
-        id: "education-success",
+        id: "EDUCATION_WORK_SUCCESS",
         label:
           "Think about your school and work plans being successful. What would that look like?",
         answerType: "text",
       },
       {
-        id: "education-step",
+        id: "EDUCATION_WORK_STEP",
         label:
           "What is one small step you could take right now that would help your education or work plans?",
         answerType: "text",
@@ -91,23 +93,23 @@ export const SUCCESS_PLANNER_SECTIONS: SuccessPlannerSection[] = [
     ],
   },
   {
-    id: "transportation",
+    id: "sectionTransportation",
     navLabel: "Transportation",
     heading: "TRANSPORTATION",
     questions: [
       {
-        id: "transportation-how",
+        id: "TRANSPORTATION_PLAN",
         label:
           "How will you get to work or to appointments after your release?",
         answerType: "text",
       },
       {
-        id: "transportation-insured",
-        label: "Is it insured and currently registered?",
+        id: "CAR_INSURANCE_REGISTRATION",
+        label: "Is your car insured and currently registered?",
         answerType: "text",
       },
       {
-        id: "transportation-step",
+        id: "TRANSPORTATION_STEP",
         label:
           "What is one small step you could take right now to make your transportation plan more solid?",
         answerType: "text",
@@ -115,75 +117,69 @@ export const SUCCESS_PLANNER_SECTIONS: SuccessPlannerSection[] = [
     ],
   },
   {
-    id: "hobbies-leisure",
-    navLabel: "Hobbies and Leisure",
-    heading: "HOBBIES AND LEISURE",
+    id: "sectionHobbiesLeisure",
+    navLabel: "Hobbies & Leisure",
+    heading: "HOBBIES & LEISURE",
     questions: [
       {
-        id: "hobbies-fun",
-        label:
-          "Let's talk about hobbies and leisure, what do you like to do for fun?",
+        id: "DO_FOR_FUN",
+        label: "What do you like to do for fun?",
         answerType: "text",
       },
       {
-        id: "hobbies-avoid",
+        id: "STAY_AWAY_FROM",
         label:
           "Is there anything from your past that you're planning to stay away from after release?",
         answerType: "text",
       },
       {
-        id: "hobbies-avoid-detail",
+        id: "STAY_AWAY_FROM_DESCRIPTION",
         label:
-          "Describing anything from client's past that he is planning to stay away from after release",
+          "Please share what you're planning to stay away from after release.",
         answerType: "text",
       },
     ],
   },
   {
-    id: "money",
+    id: "sectionMoney",
     navLabel: "Money",
     heading: "MONEY",
     questions: [
       {
-        id: "money-court",
+        id: "FINES_AND_FEES",
+        label: "Does the court say you owe money, like fines or fees?",
+        answerType: "text",
+      },
+      {
+        id: "DEBTS",
         label:
-          "Let's talk about your finances. Does the court say you owe money, like fines or fees?",
+          "Do you have other debts you'll need to manage after release? If so, what are they?",
         answerType: "text",
       },
       {
-        id: "money-debts",
-        label: "Do you have other debts you'll need to manage after release?",
-        answerType: "text",
-      },
-      {
-        id: "money-debts-detail",
-        label: "Please describe",
-        answerType: "text",
-      },
-      {
-        id: "money-benefits",
+        id: "SOCIAL_SECURITY",
         label:
           "Have you ever received money from Social Security, like SSI or SSDI?",
         answerType: "text",
       },
       {
-        id: "money-children",
+        id: "CHILDREN",
         label: "Do you have children?",
         answerType: "text",
       },
       {
-        id: "money-children-goals",
+        id: "CHILDREN_DESCRIPTION",
         label:
-          "What are your goals for your relationships with them? Do you have child support obligations?",
+          "What are your goals for your relationships with your children? Do you have child support obligations?",
         answerType: "text",
       },
       {
-        id: "money-success",
-        label: "If your finances were going well, what would that look like?",
+        id: "FINANCES_SUCCESS",
+        label: "If your finances were going well, what would be different?",
         answerType: "text",
       },
       {
-        id: "money-step",
+        id: "FINANCES_STEP",
         label:
           "What is one small step you could take right now to improve your finances?",
         answerType: "text",
@@ -191,17 +187,22 @@ export const SUCCESS_PLANNER_SECTIONS: SuccessPlannerSection[] = [
     ],
   },
   {
-    id: "wellness",
+    id: "sectionWellness",
     navLabel: "Wellness",
     heading: "WELLNESS",
     questions: [
       {
-        id: "wellness-helpful",
-        label: "Which of the below might be helpful for you?",
+        id: "WELLNESS_SUPPORT",
+        label: "Which of the following options could help you?",
         answerType: "text",
       },
       {
-        id: "wellness-step",
+        id: "WELLNESS_SUPPORT_OTHER",
+        label: "What sort of wellness support do you need?",
+        answerType: "text",
+      },
+      {
+        id: "WELLNESS_STEP",
         label:
           "What is one small step you could take right now to support this plan?",
         answerType: "text",
@@ -209,38 +210,39 @@ export const SUCCESS_PLANNER_SECTIONS: SuccessPlannerSection[] = [
     ],
   },
   {
-    id: "physical-health",
+    id: "sectionPhysicalHealth",
     navLabel: "Physical Health",
     heading: "PHYSICAL HEALTH",
     questions: [
       {
-        id: "health-concerns",
+        id: "MEDICAL_CONCERNS",
         label: "Do you have any medical concerns prior to going home?",
         answerType: "text",
       },
       {
-        id: "health-concerns-detail",
-        label: "Please describe.",
+        id: "MEDICAL_CONCERNS_DESCRIPTION",
+        label:
+          "Please describe any medical concerns you have prior to going home.",
         answerType: "text",
       },
       {
-        id: "health-medicine",
+        id: "MEDICINE",
         label: "Do you take any medicine right now?",
         answerType: "text",
       },
       {
-        id: "health-medicine-detail",
-        label: "Please describe.",
+        id: "MEDICINE_DESCRIPTION",
+        label: "Please share what medicine you are currently taking.",
         answerType: "text",
       },
       {
-        id: "health-goals",
+        id: "HEALTH_GOALS",
         label:
           "Is there anything about your health you want to work on? This can be about your body, your mental health, or drug or alcohol use.",
         answerType: "text",
       },
       {
-        id: "health-step",
+        id: "HEALTH_STEP",
         label:
           "What is one small step you could take right now to improve your health?",
         answerType: "text",
@@ -248,40 +250,39 @@ export const SUCCESS_PLANNER_SECTIONS: SuccessPlannerSection[] = [
     ],
   },
   {
-    id: "support-system",
+    id: "sectionSupportSystem",
     navLabel: "Support System",
     heading: "SUPPORT SYSTEM",
     questions: [
       {
-        id: "support-people",
-        label: "Please name the four people who most support you.",
+        id: "SUPPORT_SYSTEM",
+        label: "Who are the four people who most support you?",
         answerType: "table",
       },
     ],
   },
   {
-    id: "strengths-skills",
-    navLabel: "Strengths and Skills",
-    heading: "STRENGTHS AND SKILLS",
+    id: "sectionStrengthsSkills",
+    navLabel: "Strengths & Skills",
+    heading: "STRENGTHS & SKILLS",
     questions: [
       {
-        id: "strengths-first",
-        label:
-          "Let's get started by talking about your strengths and skills — what's one strength that will help you after release?",
+        id: "STRENGTH_1",
+        label: "What's one strength that will help you after release?",
         answerType: "text",
       },
       {
-        id: "strengths-second",
+        id: "STRENGTH_2",
         label: "What's another strength you have?",
         answerType: "text",
       },
       {
-        id: "skills-first",
+        id: "SKILL_1",
         label: "What is a skill that will help your future?",
         answerType: "text",
       },
       {
-        id: "skills-second",
+        id: "SKILL_2",
         label:
           "What's another skill you have that will help you when you go home?",
         answerType: "text",
@@ -289,17 +290,17 @@ export const SUCCESS_PLANNER_SECTIONS: SuccessPlannerSection[] = [
     ],
   },
   {
-    id: "staying-on-track",
-    navLabel: "Staying on Track",
-    heading: "STAYING ON TRACK",
+    id: "sectionEnd",
+    navLabel: "Wrap Up",
+    heading: "WRAP UP",
     questions: [
       {
-        id: "track-risks",
+        id: "OBSTACLES",
         label: "What could stop you from doing well with your release plans?",
         answerType: "text",
       },
       {
-        id: "track-celebrate",
+        id: "CELEBRATION",
         label: "What is one way you can celebrate when you do well?",
         answerType: "text",
       },

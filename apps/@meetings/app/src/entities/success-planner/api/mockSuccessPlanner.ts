@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { CheckInSectionId } from "~@jii/configs";
+
 import { SUCCESS_PLANNER_SECTIONS } from "../config/successPlannerSections";
 import { SuccessPlanner, SuccessPlannerAnswers } from "../model/successPlanner";
 
@@ -23,84 +25,83 @@ const SENT_AT = new Date(2026, 7, 17, 10, 2);
 const LAST_UPDATED_AT = new Date(2026, 7, 21, 9, 14);
 const COMPLETED_AT = new Date(2026, 7, 28, 15, 40);
 
-const COMPLETED_ANSWERS: SuccessPlannerAnswers = {
-  "housing-where": "Staying with family or friends",
-  "housing-backup": "Yes",
-  "housing-backup-detail":
+const COMPLETED_ANSWERS: Required<SuccessPlannerAnswers> = {
+  WHERE_WILL_YOU_LIVE: "FAMILY_OR_FRIENDS",
+  HOUSING_BACKUP_PLAN: "YES",
+  HOUSING_BACKUP_PLAN_DESCRIPTION:
     "I could look for another job or training program if my current plan doesn't work out. I'd also reach out to my support system and ask about other opportunities. I want to have more than one option lined up so I'm not stuck if something changes at the last minute.",
-  "housing-success":
+  HOUSING_SUCCESS:
     "My sister has a room for me for six months. I'd pay something toward rent once I'm working and be out of there by spring. While I'm staying with my sister, I want to focus on finding steady work, saving money, and getting back on my feet. I'd like to have a consistent daily routine and work toward having my own place once I'm financially ready.",
-  "housing-step": "Call my sister and get it in writing.",
+  HOUSING_STEP: "Call my sister and get it in writing.",
 
-  "education-plans": "Yes",
-  "education-detail": null,
-  "employment-plans": "Yes",
-  "employment-org":
+  EDUCATION_PLANS: "YES",
+  EDUCATION_PLANS_DESCRIPTION: null,
+  WORK_PLANS: "YES",
+  WORK_PLANS_DESCRIPTION:
     "I'm interested in working in a warehouse or distribution center in an entry-level position.",
-  "education-success": null,
-  "education-step":
+  EDUCATION_WORK_SUCCESS: null,
+  EDUCATION_WORK_STEP:
     "I could research local job openings and training programs and apply to one opportunity this week.",
 
-  "transportation-how": "I'll have my own car",
-  "transportation-insured": "Yes",
-  "transportation-step":
+  TRANSPORTATION_PLAN: "OWN_CAR",
+  CAR_INSURANCE_REGISTRATION: "YES",
+  TRANSPORTATION_STEP:
     "I could look up reliable bus routes in my area and plan how I'll get to work and other important appointments.",
 
-  "hobbies-fun":
+  DO_FOR_FUN:
     "I like playing basketball, listening to music, watching movies, and spending time with my family.",
-  "hobbies-avoid": "Yes",
-  "hobbies-avoid-detail": null,
+  STAY_AWAY_FROM: "YES",
+  STAY_AWAY_FROM_DESCRIPTION: null,
 
-  "money-court": "No",
-  "money-debts": "Yes",
-  "money-debts-detail":
+  FINES_AND_FEES: "NO",
+  DEBTS:
     "I have some credit card debt and a few unpaid bills that I'll need to manage after release.",
-  "money-benefits": "No",
-  "money-children": "Yes",
-  "money-children-goals":
+  SOCIAL_SECURITY: "NO",
+  CHILDREN: "YES",
+  CHILDREN_DESCRIPTION:
     "I want to stay in regular contact with my family and be more responsible with my financial obligations. I also plan to stay current on any child support payments.",
-  "money-success":
+  FINANCES_SUCCESS:
     "I would have steady income, my bills would be paid on time, and I would be able to save some money each month.",
-  "money-step":
+  FINANCES_STEP:
     "I could make a list of my debts and monthly expenses so I know exactly what I need to pay and can start planning a budget.",
 
-  "wellness-helpful": "Intentional peer support",
-  "wellness-step": null,
+  WELLNESS_SUPPORT: ["PEER_SUPPORT"],
+  WELLNESS_SUPPORT_OTHER: null,
+  WELLNESS_STEP: "I could look for nearby support groups after getting out.",
 
-  "health-concerns": "Yes",
-  "health-concerns-detail":
+  MEDICAL_CONCERNS: "YES",
+  MEDICAL_CONCERNS_DESCRIPTION:
     "I have high blood pressure and need to continue monitoring it after release.",
-  "health-medicine": "Yes",
-  "health-medicine-detail":
+  MEDICINE: "YES",
+  MEDICINE_DESCRIPTION:
     "I currently take medication to help manage my blood pressure and plan to continue taking it as prescribed.",
-  "health-goals":
+  HEALTH_GOALS:
     "I want to improve my overall health by eating better, staying active, and finding healthy ways to manage stress.",
-  "health-step":
+  HEALTH_STEP:
     "I could make an appointment with a healthcare provider to discuss my health and make a plan for staying healthy after release.",
 
-  "support-people": [
+  SUPPORT_SYSTEM: [
     { name: "Renata Auer", relationship: "Sister" },
     { name: "Pastor Dale", relationship: "Faith community" },
   ],
 
-  "strengths-first":
+  STRENGTH_1:
     "I'm dependable and willing to work hard, even when things are difficult.",
-  "strengths-second":
-    "I'm patient and good at staying calm when I'm under pressure.",
-  "skills-first": null,
-  "skills-second":
+  STRENGTH_2: "I'm patient and good at staying calm when I'm under pressure.",
+  SKILL_1:
     "I'm good at communicating with people and working as part of a team.",
+  SKILL_2: null,
 
-  "track-risks":
+  OBSTACLES:
     "Stress, getting distracted by old habits, or spending time with people who could lead me back into trouble could make it harder to stay on track.",
-  "track-celebrate":
+  CELEBRATION:
     "I could celebrate by spending time with my family, going out for a good meal, or doing something I enjoy.",
 };
 
-const IN_PROGRESS_SECTION_IDS = [
-  "housing",
-  "education-employment",
-  "transportation",
+const IN_PROGRESS_SECTION_IDS: CheckInSectionId[] = [
+  "sectionHousing",
+  "sectionEducationWork",
+  "sectionTransportation",
 ];
 
 const IN_PROGRESS_ANSWERS: SuccessPlannerAnswers = Object.fromEntries(

@@ -15,12 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { checkInQuestionConfig } from "~@jii/configs";
 import { Person } from "~@meetings/app/shared/api";
 import {
   escapeHtml,
   printHtmlDocument,
 } from "~@meetings/app/shared/lib/print.web";
 
+import copy from "../config/successPlannerCopy";
 import { SUCCESS_PLANNER_SECTIONS } from "../config/successPlannerSections";
 import {
   getAnswerState,
@@ -41,16 +43,40 @@ function renderAnswer(
       return `<p class="muted">No response provided</p>`;
     case "answered": {
       const value = planner.answers[question.id];
+
+      const questionCopy = copy.questions[question.id];
+      const answerCopy: Record<string, string> =
+        "answers" in questionCopy ? questionCopy.answers : {};
+      const standardAnswerCopy: Record<string, string> =
+        copy.standardRadioAnswers;
+
+      const answerAsString = () => {
+        const format = checkInQuestionConfig[question.id].format;
+
+        if (format === "FREE_TEXT") {
+          return value as string;
+        } else if (format === "RADIO") {
+          return (
+            answerCopy[value as string] ??
+            standardAnswerCopy[value as string] ??
+            value
+          );
+        } else if (format === "CHECKBOX") {
+          return (value as string[]).map((s) => answerCopy[s] ?? s).join("; ");
+        }
+        return "—";
+      };
+
       if (question.answerType === "table") {
         const rows = (value as SupportSystemContact[])
           .map(
             (contact) =>
-              `<tr><td>${escapeHtml(contact.name)}</td><td>${escapeHtml(contact.relationship)}</td></tr>`,
+              `<tr><td>${escapeHtml(contact.name)}</td><td>${escapeHtml(contact.relationship ?? "—")}</td></tr>`,
           )
           .join("");
         return `<table><tr><th>Name</th><th>How do you know them?</th></tr>${rows}</table>`;
       }
-      return `<p>${escapeHtml(value as string)}</p>`;
+      return `<p>${escapeHtml(answerAsString())}</p>`;
     }
   }
 }

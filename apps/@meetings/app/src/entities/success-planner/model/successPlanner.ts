@@ -15,16 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { CheckInQuestionId, CheckInSectionId } from "~@jii/configs";
+
 export type SupportSystemContact = {
   name: string;
-  relationship: string;
+  relationship?: string;
 };
 
-type SuccessPlannerAnswerValue = string | SupportSystemContact[];
+export type SuccessPlannerAnswerValue =
+  | string
+  | string[]
+  | SupportSystemContact[];
 
-export type SuccessPlannerAnswers = Record<
-  string,
-  SuccessPlannerAnswerValue | null
+export type SuccessPlannerAnswers = Partial<
+  Record<CheckInQuestionId, SuccessPlannerAnswerValue | null>
 >;
 
 type SuccessPlannerAnswerState = "unreached" | "skipped" | "answered";
@@ -43,13 +47,13 @@ export type SuccessPlannerStatus = "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
 type SuccessPlannerAnswerType = "text" | "table";
 
 export type SuccessPlannerQuestion = {
-  id: string;
+  id: CheckInQuestionId;
   label: string;
   answerType: SuccessPlannerAnswerType;
 };
 
 export type SuccessPlannerSection = {
-  id: string;
+  id: CheckInSectionId;
   navLabel: string;
   heading: string;
   questions: SuccessPlannerQuestion[];
@@ -57,7 +61,7 @@ export type SuccessPlannerSection = {
 
 export function getAnswerState(
   answers: SuccessPlannerAnswers,
-  questionId: string,
+  questionId: CheckInQuestionId,
 ): SuccessPlannerAnswerState {
   if (!(questionId in answers)) return "unreached";
   return answers[questionId] === null ? "skipped" : "answered";

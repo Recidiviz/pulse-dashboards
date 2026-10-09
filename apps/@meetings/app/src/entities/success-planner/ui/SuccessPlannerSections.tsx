@@ -18,6 +18,7 @@
 import clsx from "clsx";
 import { View } from "react-native";
 
+import { getVisibleQuestions } from "~@jii/configs";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
 import { SUCCESS_PLANNER_SECTIONS } from "../config/successPlannerSections";
@@ -29,6 +30,8 @@ export function SuccessPlannerSections({
 }: {
   answers: SuccessPlannerAnswers;
 }) {
+  const visibleQuestions = getVisibleQuestions(answers);
+
   return (
     <View className="gap-8">
       {SUCCESS_PLANNER_SECTIONS.map((section, index) => (
@@ -40,13 +43,19 @@ export function SuccessPlannerSections({
             {section.heading}
           </Typography>
           <View className="gap-5">
-            {section.questions.map((question) => (
-              <SuccessPlannerQuestionItem
-                key={question.id}
-                question={question}
-                answers={answers}
-              />
-            ))}
+            {section.questions
+              .filter((question) =>
+                visibleQuestions.some(
+                  ({ questionId }) => questionId === question.id,
+                ),
+              )
+              .map((question) => (
+                <SuccessPlannerQuestionItem
+                  key={question.id}
+                  question={question}
+                  answers={answers}
+                />
+              ))}
           </View>
         </View>
       ))}

@@ -49,6 +49,11 @@ module.exports = {
     // ['require', 'react-native'], which yaml's exports map doesn't satisfy,
     // so it falls back to the ESM browser build and fails to parse.
     "^yaml$": require.resolve("yaml"),
+    // New dependencies on ~@jii/configs meant we try to resolve an import from lodash-es
+    // (uses ESM syntax, while Jest uses CommonJS syntax). We could consider turning
+    // on Jest's experimental ESM support in the future, but for now we just map to
+    // the "lodash" library instead (uses CommonJS).
+    "^lodash-es$": require.resolve("lodash"),
   },
   transformIgnorePatterns: [
     "node_modules/(?!(jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/|@expo-google-fonts/|react-navigation|@react-navigation/|@unimodules/|unimodules|sentry-expo|native-base|react-native-svg|@rneui/|@paralleldrive/cuid2|@sentry/react-native|@sentry/core)",

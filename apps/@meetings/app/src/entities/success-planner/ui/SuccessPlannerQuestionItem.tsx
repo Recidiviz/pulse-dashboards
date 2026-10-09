@@ -17,8 +17,10 @@
 
 import { View } from "react-native";
 
+import { checkInQuestionConfig } from "~@jii/configs";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 
+import copy from "../config/successPlannerCopy";
 import {
   getAnswerState,
   SuccessPlannerAnswers,
@@ -36,6 +38,28 @@ type Props = {
 export function SuccessPlannerQuestionItem({ question, answers }: Props) {
   const state = getAnswerState(answers, question.id);
   const value = answers[question.id];
+
+  const questionCopy = copy.questions[question.id];
+  const answerCopy: Record<string, string> =
+    "answers" in questionCopy ? questionCopy.answers : {};
+  const standardAnswerCopy: Record<string, string> = copy.standardRadioAnswers;
+
+  const answerAsString = () => {
+    const format = checkInQuestionConfig[question.id].format;
+
+    if (format === "FREE_TEXT") {
+      return value as string;
+    } else if (format === "RADIO") {
+      return (
+        answerCopy[value as string] ??
+        standardAnswerCopy[value as string] ??
+        value
+      );
+    } else if (format === "CHECKBOX") {
+      return (value as string[]).map((s) => answerCopy[s] ?? s).join("; ");
+    }
+    return;
+  };
 
   return (
     <View className="gap-1.5">
@@ -61,7 +85,9 @@ export function SuccessPlannerQuestionItem({ question, answers }: Props) {
             contacts={value as SupportSystemContact[]}
           />
         ) : (
-          <SuccessPlannerAnswerText value={value as string} />
+          <SuccessPlannerAnswerText
+            value={answerAsString() ?? "Couldn't display the provided answer"}
+          />
         ))}
     </View>
   );

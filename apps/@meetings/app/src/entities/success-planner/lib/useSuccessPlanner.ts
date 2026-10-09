@@ -17,7 +17,7 @@
 
 import { jiiTrpc } from "~@meetings/app/shared/api";
 
-import { SuccessPlanner, SuccessPlannerAnswers } from "../model/successPlanner";
+import { SuccessPlanner } from "../model/successPlanner";
 import { useIsSuccessPlannerVisible } from "./useIsSuccessPlannerVisible";
 
 type UseSuccessPlannerResult = {
@@ -38,8 +38,6 @@ export function useSuccessPlanner(
 
   if (!isVisible || !data) return { planner: null, isLoading, isError };
 
-  // TODO(OBT-47841): Avoid casting and reference the getCheckIn procedure's types
-  // once they exist.
   return {
     planner: {
       id: data.id,
@@ -47,7 +45,7 @@ export function useSuccessPlanner(
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
       completedAt: data.completedAt,
-      answers: data.answers as SuccessPlannerAnswers,
+      answers: data.answers,
     },
     isLoading,
     isError,

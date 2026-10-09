@@ -52,7 +52,7 @@ describe("getSuccessPlannerStatus", () => {
 
 describe("isSectionComplete", () => {
   test("is false while any question is unreached", () => {
-    const partial = { "housing-where": "Staying with family or friends" };
+    const partial = { WHERE_WILL_YOU_LIVE: "Staying with family or friends" };
     expect(isSectionComplete(HOUSING, partial)).toBe(false);
   });
 
@@ -61,6 +61,15 @@ describe("isSectionComplete", () => {
       HOUSING.questions.map((question) => [question.id, null]),
     );
     expect(isSectionComplete(HOUSING, skippedThroughout)).toBe(true);
+  });
+
+  test("counts a skipped conditional question as reached", () => {
+    // skip "HOUSING_BACKUP_PLAN_DESCRIPTION", which is conditional on
+    // "HOUSING_BACKUP_PLAN" being "YES"
+    const { HOUSING_BACKUP_PLAN_DESCRIPTION, ...partial } = Object.fromEntries(
+      HOUSING.questions.map((question) => [question.id, "NO"]),
+    );
+    expect(isSectionComplete(HOUSING, partial)).toBe(true);
   });
 });
 
@@ -87,11 +96,11 @@ describe("getSuccessPlannerProgress", () => {
 });
 
 describe("getAnswerState", () => {
-  const answers = { answered: "Yes", skipped: null };
+  const answers = { OBSTACLES: "answered", CELEBRATION: null };
 
   test("separates an absent question from an explicitly blank one", () => {
-    expect(getAnswerState(answers, "answered")).toBe("answered");
-    expect(getAnswerState(answers, "skipped")).toBe("skipped");
-    expect(getAnswerState(answers, "never-reached")).toBe("unreached");
+    expect(getAnswerState(answers, "OBSTACLES")).toBe("answered");
+    expect(getAnswerState(answers, "CELEBRATION")).toBe("skipped");
+    expect(getAnswerState(answers, "DEBTS")).toBe("unreached");
   });
 });
