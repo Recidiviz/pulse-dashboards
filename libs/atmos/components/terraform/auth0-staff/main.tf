@@ -25,7 +25,7 @@ resource "auth0_action_module" "recidiviz_action_helpers" {
   code    = file("${path.module}/modules/recidiviz-action-helpers.js")
   dependencies {
     name    = "crypto-js"
-    version = "4.1.1"
+    version = "4.2.0"
   }
   dependencies {
     name    = "google-auth-library"

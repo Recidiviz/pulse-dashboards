@@ -276,7 +276,7 @@ resource "auth0_action" "idaho_th_set_provider_metadata" {
   runtime = "node22"
   dependencies {
     name    = "crypto-js"
-    version = "4.1.1"
+    version = "4.2.0"
   }
   modules {
     module_id         = auth0_action_module.recidiviz_action_helpers.id
@@ -295,7 +295,7 @@ resource "auth0_action" "idaho_th_set_staff_metadata" {
   runtime = "node22"
   dependencies {
     name    = "crypto-js"
-    version = "4.1.1"
+    version = "4.2.0"
   }
   modules {
     module_id         = auth0_action_module.recidiviz_action_helpers.id
