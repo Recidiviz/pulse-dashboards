@@ -82,7 +82,7 @@ describe("isReentryChecklistItemApplicable", () => {
     ).toBe(true);
     expect(
       isReentryChecklistItemApplicable("HOUSING_PLAN_AGREEMENT", {
-        HOUSING: "FRIENDS_OR_ROOMMATES",
+        HOUSING: "FRIEND",
       }),
     ).toBe(true);
   });

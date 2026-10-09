@@ -61,7 +61,7 @@ export const reentryChecklistConfig: Record<
         {
           questionId: "HOUSING",
           operator: "equals",
-          value: "FRIENDS_OR_ROOMMATES",
+          value: "FRIEND",
         },
       ],
     },
@@ -77,7 +77,12 @@ export const reentryChecklistConfig: Record<
         {
           questionId: "HOUSING",
           operator: "equals",
-          value: "FRIENDS_OR_ROOMMATES",
+          value: "FRIEND",
+        },
+        {
+          questionId: "HOUSING",
+          operator: "equals",
+          value: "ROOMING_HOUSE",
         },
         {
           questionId: "HOUSING",
@@ -98,7 +103,17 @@ export const reentryChecklistConfig: Record<
         {
           questionId: "HOUSING",
           operator: "equals",
-          value: "SOBER_OR_ROOMING_HOUSE",
+          value: "RESIDENTIAL_RECOVERY_HOUSE",
+        },
+        {
+          questionId: "HOUSING",
+          operator: "equals",
+          value: "SOBER_HOUSE",
+        },
+        {
+          questionId: "HOUSING",
+          operator: "equals",
+          value: "ROOMING_HOUSE",
         },
         {
           questionId: "HOUSING",
@@ -124,7 +139,17 @@ export const reentryChecklistConfig: Record<
         {
           questionId: "HOUSING",
           operator: "equals",
-          value: "SOBER_OR_ROOMING_HOUSE",
+          value: "RESIDENTIAL_RECOVERY_HOUSE",
+        },
+        {
+          questionId: "HOUSING",
+          operator: "equals",
+          value: "SOBER_HOUSE",
+        },
+        {
+          questionId: "HOUSING",
+          operator: "equals",
+          value: "ROOMING_HOUSE",
         },
         {
           questionId: "HOUSING",
@@ -145,7 +170,17 @@ export const reentryChecklistConfig: Record<
         {
           questionId: "HOUSING",
           operator: "equals",
-          value: "SOBER_OR_ROOMING_HOUSE",
+          value: "RESIDENTIAL_RECOVERY_HOUSE",
+        },
+        {
+          questionId: "HOUSING",
+          operator: "equals",
+          value: "SOBER_HOUSE",
+        },
+        {
+          questionId: "HOUSING",
+          operator: "equals",
+          value: "ROOMING_HOUSE",
         },
         {
           questionId: "HOUSING",
@@ -166,7 +201,12 @@ export const reentryChecklistConfig: Record<
         {
           questionId: "HOUSING",
           operator: "equals",
-          value: "SOBER_OR_ROOMING_HOUSE",
+          value: "RESIDENTIAL_RECOVERY_HOUSE",
+        },
+        {
+          questionId: "HOUSING",
+          operator: "equals",
+          value: "SOBER_HOUSE",
         },
       ],
     },
@@ -182,7 +222,17 @@ export const reentryChecklistConfig: Record<
         {
           questionId: "HOUSING",
           operator: "equals",
-          value: "SOBER_OR_ROOMING_HOUSE",
+          value: "RESIDENTIAL_RECOVERY_HOUSE",
+        },
+        {
+          questionId: "HOUSING",
+          operator: "equals",
+          value: "SOBER_HOUSE",
+        },
+        {
+          questionId: "HOUSING",
+          operator: "equals",
+          value: "ROOMING_HOUSE",
         },
       ],
     },

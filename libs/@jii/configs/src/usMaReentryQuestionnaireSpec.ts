@@ -40,8 +40,12 @@ export type StandardRadioOptionId = (typeof standardRadioOptionIds)[number];
 
 export const reentryQuestionnaireDomainIds = [
   "HOUSING",
-  "TRANSPORTATION",
+  "WORK",
   "HEALTH",
+  "MONEY",
+  "TRANSPORTATION",
+  "EDUCATION_AND_PROGRAMS",
+  "DOCUMENTS",
 ] as const;
 export type ReentryQuestionnaireDomainId =
   (typeof reentryQuestionnaireDomainIds)[number];
@@ -65,9 +69,17 @@ export type ReentryQuestionnaireQuestionConfig =
 
 export const reentryQuestionnaireQuestionIds = [
   "HOUSING",
-  "TRANSPORTATION",
+  "WORK_PLANS",
   "HEALTHCARE_NEEDED",
   "HEALTHCARE_DETAILS",
+  "SSI_SSDI_ELIGIBILITY",
+  "SSI_SSDI_DETAILS",
+  "TRANSPORTATION_PLAN",
+  "TRANSPORTATION",
+  "RELEASE_DAY_TRANSPORTATION",
+  "EDUCATION_LEVEL",
+  "MILITARY_SERVICE",
+  "BORN_IN_MASSACHUSETTS",
 ] as const;
 export type ReentryQuestionnaireQuestionId =
   (typeof reentryQuestionnaireQuestionIds)[number];
@@ -81,24 +93,26 @@ export const reentryQuestionnaireConfig: Record<
     format: "RADIO",
     options: [
       "FAMILY",
-      "FRIENDS_OR_ROOMMATES",
+      "FRIEND",
       "LONG_TERM_RESIDENTIAL_PROGRAM",
-      "SOBER_OR_ROOMING_HOUSE",
+      "RESIDENTIAL_RECOVERY_HOUSE",
+      "SOBER_HOUSE",
+      "ROOMING_HOUSE",
       "OWN_PLACE",
       ...unsureOrDeclinedOptionIds,
     ],
   },
-  TRANSPORTATION: {
-    domain: "TRANSPORTATION",
-    format: "CHECKBOX",
+  WORK_PLANS: {
+    domain: "WORK",
+    format: "RADIO",
     options: [
-      "FAMILY_OR_FRIENDS",
-      "PUBLIC_TRANSIT",
-      "BIKE",
-      "OWN_CAR",
+      "HAS_JOB_LINED_UP",
+      "LOOKING_FOR_WORK",
+      "DISABLED",
+      "RETIRED",
+      "ATTENDING_SCHOOL",
       ...unsureOrDeclinedOptionIds,
     ],
-    exclusiveOptions: unsureOrDeclinedOptionIds,
   },
   HEALTHCARE_NEEDED: {
     domain: "HEALTH",
@@ -114,6 +128,7 @@ export const reentryQuestionnaireConfig: Record<
       "MENTAL_HEALTH",
       "SUBSTANCE_USE",
       "MEDICATION_ASSISTED_TREATMENT",
+      "SOMETHING_ELSE",
     ],
     exclusiveOptions: [],
     showIf: {
@@ -121,5 +136,64 @@ export const reentryQuestionnaireConfig: Record<
       operator: "equals",
       value: "YES",
     },
+  },
+  SSI_SSDI_ELIGIBILITY: {
+    domain: "MONEY",
+    format: "RADIO",
+    options: standardRadioOptionIds,
+  },
+  SSI_SSDI_DETAILS: {
+    domain: "MONEY",
+    format: "CHECKBOX",
+    options: ["SSI", "SSDI", "NONE", "DECLINED_TO_ANSWER"],
+    exclusiveOptions: ["NONE", "DECLINED_TO_ANSWER"],
+    showIf: {
+      questionId: "SSI_SSDI_ELIGIBILITY",
+      operator: "equals",
+      value: "YES",
+    },
+  },
+  TRANSPORTATION_PLAN: {
+    domain: "TRANSPORTATION",
+    format: "RADIO",
+    options: ["HAS_PLAN", "NO_PLAN_YET", "DECLINED_TO_ANSWER"],
+  },
+  TRANSPORTATION: {
+    domain: "TRANSPORTATION",
+    format: "CHECKBOX",
+    options: ["FAMILY_OR_FRIENDS", "PUBLIC_TRANSIT", "BIKE", "OWN_CAR"],
+    exclusiveOptions: [],
+    showIf: {
+      questionId: "TRANSPORTATION_PLAN",
+      operator: "equals",
+      value: "HAS_PLAN",
+    },
+  },
+  RELEASE_DAY_TRANSPORTATION: {
+    domain: "TRANSPORTATION",
+    format: "RADIO",
+    options: ["PICKUP", "PUBLIC_TRANSPORTATION", ...unsureOrDeclinedOptionIds],
+  },
+  EDUCATION_LEVEL: {
+    domain: "EDUCATION_AND_PROGRAMS",
+    format: "RADIO",
+    options: [
+      "BACHELORS_OR_HIGHER",
+      "ASSOCIATE_DEGREE",
+      "SOME_COLLEGE",
+      "HIGH_SCHOOL_EQUIVALENT",
+      "LESS_THAN_HIGH_SCHOOL",
+      "DECLINED_TO_ANSWER",
+    ],
+  },
+  MILITARY_SERVICE: {
+    domain: "DOCUMENTS",
+    format: "RADIO",
+    options: ["YES_HAS_DD214", "YES_NEEDS_DD214", "NO", "DECLINED_TO_ANSWER"],
+  },
+  BORN_IN_MASSACHUSETTS: {
+    domain: "DOCUMENTS",
+    format: "RADIO",
+    options: ["YES", "NO", "DECLINED_TO_ANSWER"],
   },
 };

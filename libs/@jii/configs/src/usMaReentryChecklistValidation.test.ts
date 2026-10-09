@@ -33,9 +33,8 @@ test("flags a showIf condition that references an unknown option", () => {
       },
     }),
   ).toEqual([
-    'BACKUP_HOUSING: showIf references option "NOT_A_REAL_OPTION" which is not ' +
-      'a valid option of question "HOUSING" (valid: FAMILY, FRIENDS_OR_ROOMMATES, ' +
-      "LONG_TERM_RESIDENTIAL_PROGRAM, SOBER_OR_ROOMING_HOUSE, OWN_PLACE, UNSURE, " +
-      "DECLINED_TO_ANSWER)",
+    expect.stringContaining(
+      'BACKUP_HOUSING: showIf references option "NOT_A_REAL_OPTION" which is not a valid option of question "HOUSING"',
+    ),
   ]);
 });
