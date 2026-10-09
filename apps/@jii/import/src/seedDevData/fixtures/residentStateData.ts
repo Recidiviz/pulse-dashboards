@@ -20,24 +20,21 @@ import {
   usAzResidentJiiDataFixtures,
   usCoResidentJiiDataFixtures,
   usMaResidentJiiDataFixtures,
+  usNcResidentJiiDataFixtures,
   usNeResidentJiiDataFixtures,
   usTnResidentJiiDataFixture,
 } from "~@jii/fixtures";
-import {
-  usNcResidentJiiFixtures,
-  usNdResidentJiiDataFixtures,
-  usTnResidentCommon,
-} from "~datatypes";
+import { usNdResidentJiiDataFixtures, usTnResidentCommon } from "~datatypes";
 
 // the value type is not important here because it's being fed directly to a Zod parser,
 // but TS can't infer anything sensible from the different arrays and causes errors
 export const rawResidentStateDataFixtures = new Map<string, Array<unknown>>([
-  // TODO(OBT-29535): move these over from datatypes
   ["US_AR", usArResidentJiiDataFixtures],
   ["US_AZ", usAzResidentJiiDataFixtures],
   ["US_CO", usCoResidentJiiDataFixtures],
   ["US_MA", usMaResidentJiiDataFixtures],
-  ["US_NC", usNcResidentJiiFixtures],
+  ["US_NC", usNcResidentJiiDataFixtures],
+  // TODO(OBT-29535): move this over from datatypes
   ["US_ND", usNdResidentJiiDataFixtures],
   ["US_NE", usNeResidentJiiDataFixtures],
   // all records here share the same fixture

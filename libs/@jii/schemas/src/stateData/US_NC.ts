@@ -15,7 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { z } from "zod";
+
 import { usNcResidentCommonSchema } from "~datatypes";
 
 // there are no JII-specific fields here besides what's in common with staff
 export const usNcStateDataSchema = usNcResidentCommonSchema;
+
+export type UsNcResidentJiiData = z.output<typeof usNcStateDataSchema>;
+export type RawUsNcResidentJiiData = z.input<typeof usNcStateDataSchema>;

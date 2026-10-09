@@ -19,7 +19,7 @@ import { rollup } from "d3-array";
 import { Temporal } from "temporal-polyfill";
 import { z } from "zod";
 
-import { usNcResidentMetadataSchema } from "~datatypes";
+import { usNcStateDataSchema } from "~@jii/schemas";
 
 import { usNcStaffProcedure } from "../../../../../procedures/stateRestrictedStaffProcedureFactory";
 import { getStatusOfExistingRNA, RNAAssessmentStatus } from "./rnaStatus";
@@ -90,8 +90,7 @@ export const rnaStatusList = usNcStaffProcedure
         select: { pseudonymizedId: true, stateSpecificData: true },
       })
     ).map(({ pseudonymizedId, stateSpecificData }) => {
-      const { rnaDueDate } =
-        usNcResidentMetadataSchema.parse(stateSpecificData);
+      const { rnaDueDate } = usNcStateDataSchema.parse(stateSpecificData);
       return { pseudonymizedId, rnaDueDate: plainDueDate(rnaDueDate) };
     });
 

@@ -16,23 +16,17 @@
 // =============================================================================
 
 import { relativeFixtureDate } from "../../../../utils/zod";
-import { RawUsNcResidentCommonData, RawUsNcResidentMetadata } from "./schema";
+import { RawUsNcResidentCommon, RawUsNcResidentMetadata } from "./schema";
 
-export const usNcResidentCommonDataFixtures: Array<RawUsNcResidentCommonData> =
-  [
-    {
-      stateCode: "US_NC",
-      rnaDueDate: relativeFixtureDate({ days: -3 }),
-    },
-    {
-      stateCode: "US_NC",
-      rnaDueDate: relativeFixtureDate({ days: 22 }),
-    },
-  ];
-
-// aliased for naming convention, there are no more fields to append
-export const usNcResidentJiiFixtures: Array<RawUsNcResidentMetadata> = [
-  ...usNcResidentCommonDataFixtures,
+export const usNcResidentCommonDataFixtures: Array<RawUsNcResidentCommon> = [
+  {
+    stateCode: "US_NC",
+    rnaDueDate: relativeFixtureDate({ days: -3 }),
+  },
+  {
+    stateCode: "US_NC",
+    rnaDueDate: relativeFixtureDate({ days: 22 }),
+  },
 ];
 
 // aliased for naming convention, there are no more fields to append

@@ -23,12 +23,12 @@ export const usNcResidentCommonSchema = z.object({
   stateCode: z.literal("US_NC"),
   rnaDueDate: nullishAsUndefined(dateStringSchema),
 });
-export type RawUsNcResidentCommonData = z.input<
-  typeof usNcResidentCommonSchema
->;
+export type UsNcResidentCommon = z.infer<typeof usNcResidentCommonSchema>;
+export type RawUsNcResidentCommon = z.input<typeof usNcResidentCommonSchema>;
 
 // there are no Workflows-specific fields; schema is aliased to satisfy naming convention
 export const usNcResidentMetadataSchema = usNcResidentCommonSchema;
+export type UsNcResidentMetadata = z.infer<typeof usNcResidentMetadataSchema>;
 export type RawUsNcResidentMetadata = z.input<
   typeof usNcResidentMetadataSchema
 >;
