@@ -91,7 +91,7 @@ resource "google_sql_database_instance" "data" {
 
     database_flags {
       name  = "log_duration"
-      value = "on"
+      value = "off"
     }
 
     database_flags {
@@ -99,9 +99,12 @@ resource "google_sql_database_instance" "data" {
       value = "on"
     }
 
+    # Logging every statement writes query text and bind parameter values,
+    # which can include person data, to Cloud Logging. ddl, -1 and warning are
+    # the CIS GCP Benchmark v2.0 values for these three flags.
     database_flags {
       name  = "log_statement"
-      value = "all"
+      value = "ddl"
     }
 
     database_flags {
@@ -111,13 +114,13 @@ resource "google_sql_database_instance" "data" {
 
     database_flags {
       name  = "log_min_messages"
-      value = "info"
+      value = "warning"
     }
 
 
     database_flags {
       name  = "log_min_duration_statement"
-      value = 0
+      value = "-1"
     }
 
 
