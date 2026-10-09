@@ -26,6 +26,7 @@ import {
   type DocumentData,
   type Firestore,
   getFirestore,
+  type QueryDocumentSnapshot,
 } from "firebase-admin/firestore";
 
 import type { RoleSubtype } from "~datatypes";
@@ -137,6 +138,7 @@ async function fetchStaffRecordByEmail(
 // not). The primary query below reflects that invariant.
 async function fetchSupervisedStaffExternalIds(
   db: Firestore,
+  stateCode: string,
   externalId: string,
 ): Promise<string[]> {
   const [suprSnap, incSnap] = await Promise.all([
@@ -149,17 +151,24 @@ async function fetchSupervisedStaffExternalIds(
       .where("supervisorExternalId", "==", externalId)
       .get(),
   ]);
-  if (!incSnap.empty) {
+
+  const inThisState = (doc: QueryDocumentSnapshot): boolean =>
+    doc.data()["stateCode"] === stateCode;
+
+  const incInState = incSnap.docs.filter(inThisState);
+  if (incInState.length > 0) {
     Sentry.captureMessage(
       "incarcerationStaff doc has supervisorExternalId set — cross-system supervisor invariant violated. See fetchSupervisedStaffExternalIds in userScopeContext.ts.",
       {
         level: "warning",
-        extra: { externalId, docId: incSnap.docs[0]?.id },
+        extra: { stateCode, externalId, docId: incInState[0]?.id },
       },
     );
   }
+
   const staffExternalIds = new Set<string>();
   for (const doc of suprSnap.docs) {
+    if (!inThisState(doc)) continue;
     const staffExternalId = doc.data()["staffExternalId"] as string | undefined;
     if (staffExternalId) staffExternalIds.add(staffExternalId);
   }
@@ -217,7 +226,7 @@ async function buildFirestoreScopeContext(
     userId || (staff?.["staffExternalId"] as string | undefined);
 
   const supervisedStaffExternalIds = resolvedUserId
-    ? await fetchSupervisedStaffExternalIds(db, resolvedUserId)
+    ? await fetchSupervisedStaffExternalIds(db, stateCode, resolvedUserId)
     : [];
 
   return {

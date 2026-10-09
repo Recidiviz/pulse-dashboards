@@ -21,6 +21,7 @@ import { fetchOfflineUser } from "../../core";
 import { isOfflineMode } from "../../utils/isOfflineMode";
 import { initTypesenseScopedKeys } from "../typesense/init";
 import { mintPersonScopedKey } from "../typesense/personScopedKey";
+import { type SupervisedEntry, supervisedStaffDoc } from "./supervisedEntry";
 
 vi.mock("../../utils/isOfflineMode");
 vi.mock("../../core");
@@ -38,10 +39,10 @@ const fakeFirestore = {
   // user IDs that supervise >= 1 staff on supervisionStaff via the plural
   // `supervisorExternalIds` array, mapped to the staffExternalIds of the
   // staff they supervise.
-  supervisionSupervisors: new Map<string, string[]>(),
+  supervisionSupervisors: new Map<string, SupervisedEntry[]>(),
   // user IDs (impossibly) matched as supervisor on incarcerationStaff — used
   // by the canary test to force the invariant violation.
-  incarcerationSupervisors: new Map<string, string[]>(),
+  incarcerationSupervisors: new Map<string, SupervisedEntry[]>(),
 };
 
 // Supervisor lookups only match supervisionStaff in healthy states — the
@@ -52,7 +53,7 @@ const fakeFirestore = {
 // bodies rather than a side-table of supervised ids).
 const mapsByCollectionAndField: Record<
   string,
-  Map<string, string[]> | undefined
+  Map<string, SupervisedEntry[]> | undefined
 > = {
   "supervisionStaff:supervisorExternalIds":
     fakeFirestore.supervisionSupervisors,
@@ -80,10 +81,14 @@ vi.mock("firebase-admin/firestore", () => ({
                 mapsByCollectionAndField[key]?.get(value) ?? [];
               return Promise.resolve({
                 empty: supervisedIds.length === 0,
-                docs: supervisedIds.map((staffExternalId, i) => ({
-                  id: `${name}_${field}_${value}_${i}`,
-                  data: () => ({ staffExternalId }),
-                })),
+                docs: supervisedIds.map((entry, i) => {
+                  const { staffExternalId, stateCode } =
+                    supervisedStaffDoc(entry);
+                  return {
+                    id: `${name}_${field}_${value}_${i}`,
+                    data: () => ({ staffExternalId, stateCode }),
+                  };
+                }),
               });
             }
           }
@@ -485,6 +490,36 @@ describe("mintPersonScopedKey — single-system state user", () => {
     expect(mintedFilters(res).clients).toBe(
       "stateCode:=`US_TN` && (district:=[`Region 1`] || officerId:=[`STAFF456`])",
     );
+  });
+
+  test("a supervised id from ANOTHER state is excluded from the grant", async () => {
+    fakeFirestore.supervisionStaff.set("us_tn_OFFICER123", {
+      district: "Region 1",
+      email: "officer@example.com",
+    });
+    fakeFirestore.supervisionSupervisors.set("OFFICER123", [
+      "STAFF456",
+      { staffExternalId: "OTHER_STATE_OFFICER", stateCode: "US_XX" },
+    ]);
+
+    const res = makeRes();
+    await mintPersonScopedKey(
+      makeReq(
+        { currentTenantId: "US_TN", system: "SUPERVISION" },
+        makeUser({
+          featureVariants: { workflowsSupervisorSearch: true },
+        }),
+      ),
+      res,
+    );
+
+    const filters = mintedFilters(res).clients;
+    expect(filters).toBe(
+      "stateCode:=`US_TN` && (district:=[`Region 1`] || officerId:=[`STAFF456`])",
+    );
+    // Stated separately, so a future change to the filter's shape cannot make
+    // this pass while the id is back in it.
+    expect(filters).not.toContain("OTHER_STATE_OFFICER");
   });
 
   test("workflowsSupervisorSearch FV + user is one of several supervisors (multiple staff via supervisorExternalIds) → district OR supervised-staff officerId grant", async () => {

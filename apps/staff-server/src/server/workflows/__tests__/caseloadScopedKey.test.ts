@@ -21,6 +21,7 @@ import { fetchOfflineUser } from "../../core";
 import { isOfflineMode } from "../../utils/isOfflineMode";
 import { mintCaseloadScopedKey } from "../typesense/caseloadScopedKey";
 import { initTypesenseScopedKeys } from "../typesense/init";
+import { type SupervisedEntry, supervisedStaffDoc } from "./supervisedEntry";
 
 vi.mock("../../utils/isOfflineMode");
 vi.mock("../../core");
@@ -50,10 +51,10 @@ const fakeFirestore = {
   // user IDs that supervise >= 1 staff on supervisionStaff via the plural
   // `supervisorExternalIds` array, mapped to the staffExternalIds of the
   // staff they supervise.
-  supervisionSupervisors: new Map<string, string[]>(),
+  supervisionSupervisors: new Map<string, SupervisedEntry[]>(),
   // user IDs (impossibly) matched as supervisor on incarcerationStaff — used
   // by the canary test to force the invariant violation.
-  incarcerationSupervisors: new Map<string, string[]>(),
+  incarcerationSupervisors: new Map<string, SupervisedEntry[]>(),
 };
 
 // Supervisor lookups only match supervisionStaff in healthy states — the
@@ -64,7 +65,7 @@ const fakeFirestore = {
 // bodies rather than a side-table of supervised ids).
 const mapsByCollectionAndField: Record<
   string,
-  Map<string, string[]> | undefined
+  Map<string, SupervisedEntry[]> | undefined
 > = {
   "supervisionStaff:supervisorExternalIds":
     fakeFirestore.supervisionSupervisors,
@@ -92,10 +93,14 @@ vi.mock("firebase-admin/firestore", () => ({
                 mapsByCollectionAndField[key]?.get(value) ?? [];
               return Promise.resolve({
                 empty: supervisedIds.length === 0,
-                docs: supervisedIds.map((staffExternalId, i) => ({
-                  id: `${name}_${field}_${value}_${i}`,
-                  data: () => ({ staffExternalId }),
-                })),
+                docs: supervisedIds.map((entry, i) => {
+                  const { staffExternalId, stateCode } =
+                    supervisedStaffDoc(entry);
+                  return {
+                    id: `${name}_${field}_${value}_${i}`,
+                    data: () => ({ staffExternalId, stateCode }),
+                  };
+                }),
               });
             }
           }
