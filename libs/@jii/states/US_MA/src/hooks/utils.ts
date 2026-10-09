@@ -18,6 +18,7 @@
 import {
   reentryChecklistConfig,
   reentryChecklistItemIds,
+  reentryChecklistSectionIds,
   type ReentryQuestionnaireQuestionFormat,
 } from "~@jii/configs";
 
@@ -64,14 +65,18 @@ export function toChecklistItems(
 
 /**
  * Groups the resident's checklist items into the sections the checklist page
- * shows, in order. Sections with no items are left out.
+ * shows, in order. Items keep their order within a section. Sections with no
+ * items are left out.
  */
 export function toChecklistSections(
   items: ReentryChecklistItem[],
 ): ReentryChecklistSection[] {
-  // TODO(OBT-50538): Put each item in its section by release timing, once
-  // items have one. Until then, every item is in "Anytime".
-  const sections: ReentryChecklistSection[] = [{ id: "ANYTIME", items }];
+  const sections = reentryChecklistSectionIds.map((id) => ({
+    id,
+    items: items.filter(
+      (item) => reentryChecklistConfig[item.id].section === id,
+    ),
+  }));
 
   return sections.filter((section) => section.items.length > 0);
 }

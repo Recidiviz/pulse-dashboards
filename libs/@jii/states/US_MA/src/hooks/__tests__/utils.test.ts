@@ -23,13 +23,39 @@ import {
 } from "../utils";
 
 describe("toChecklistSections", () => {
-  test("puts every item in the Anytime section, in order", () => {
-    const items = [
-      { id: "BACKUP_HOUSING", checked: true, isPersonalized: false },
-      { id: "HOUSING_PLAN_AGREEMENT", checked: false, isPersonalized: true },
-    ] as const;
-    expect(toChecklistSections([...items])).toEqual([
-      { id: "ANYTIME", items: [...items] },
+  test("puts each item in its section, in section order", () => {
+    const stateId = {
+      id: "RECEIVED_STATE_ID",
+      checked: false,
+      isPersonalized: false,
+    } as const;
+    const backupHousing = {
+      id: "BACKUP_HOUSING",
+      checked: true,
+      isPersonalized: false,
+    } as const;
+    const birthCertificate = {
+      id: "HAS_BIRTH_CERTIFICATE",
+      checked: false,
+      isPersonalized: false,
+    } as const;
+    const housingPlanAgreement = {
+      id: "HOUSING_PLAN_AGREEMENT",
+      checked: false,
+      isPersonalized: true,
+    } as const;
+
+    expect(
+      toChecklistSections([
+        stateId,
+        backupHousing,
+        birthCertificate,
+        housingPlanAgreement,
+      ]),
+    ).toEqual([
+      { id: "ANYTIME", items: [birthCertificate] },
+      { id: "SIX_MONTHS", items: [backupHousing, housingPlanAgreement] },
+      { id: "ONE_MONTH", items: [stateId] },
     ]);
   });
 
@@ -42,16 +68,16 @@ describe("toChecklistItems", () => {
   test("orders items as the config lists them, not as the server returns them", () => {
     const items = toChecklistItems(
       [
-        { itemId: "HOUSING_PLAN_AGREEMENT", checked: false },
-        { itemId: "BACKUP_HOUSING", checked: false },
         { itemId: "FINALIZED_HOUSING", checked: false },
+        { itemId: "BACKUP_HOUSING", checked: false },
+        { itemId: "HOUSING_PLAN_AGREEMENT", checked: false },
       ],
       [],
     );
     expect(items.map((item) => item.id)).toEqual([
+      "HOUSING_PLAN_AGREEMENT",
       "BACKUP_HOUSING",
       "FINALIZED_HOUSING",
-      "HOUSING_PLAN_AGREEMENT",
     ]);
   });
 
@@ -75,8 +101,8 @@ describe("toChecklistItems", () => {
       [],
     );
     expect(items).toEqual([
-      { id: "BACKUP_HOUSING", checked: false, isPersonalized: false },
       { id: "HOUSING_PLAN_AGREEMENT", checked: false, isPersonalized: true },
+      { id: "BACKUP_HOUSING", checked: false, isPersonalized: false },
     ]);
   });
 

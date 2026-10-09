@@ -25,6 +25,8 @@ test("flags a showIf condition that references an unknown option", () => {
   expect(
     findInvalidReentryChecklistShowIfConditions({
       BACKUP_HOUSING: {
+        section: "SIX_MONTHS",
+        domain: "HOUSING",
         showIf: {
           questionId: "HOUSING",
           operator: "equals",

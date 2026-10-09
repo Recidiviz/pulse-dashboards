@@ -15,7 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { ReentryChecklistItemId } from "~@jii/configs";
+import type {
+  ReentryChecklistItemId,
+  ReentryChecklistSectionId,
+} from "~@jii/configs";
 
 export type ReentryChecklistItem = {
   id: ReentryChecklistItemId;
@@ -27,8 +30,6 @@ export type ReentryChecklistChange = {
   itemId: ReentryChecklistItemId;
   checked: boolean;
 };
-
-export type ReentryChecklistSectionId = "ANYTIME";
 
 export type ReentryChecklistSection = {
   id: ReentryChecklistSectionId;

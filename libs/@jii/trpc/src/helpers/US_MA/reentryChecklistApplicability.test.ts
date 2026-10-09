@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { reentryChecklistConfig, reentryChecklistItemIds } from "~@jii/configs";
+
 import {
   conditionIsMet,
   getApplicableReentryChecklistItems,
@@ -133,9 +135,13 @@ describe("isReentryChecklistItemApplicable", () => {
 });
 
 describe("getApplicableReentryChecklistItems", () => {
+  const itemsWithNoShowIf = reentryChecklistItemIds.filter(
+    (id) => !reentryChecklistConfig[id].showIf,
+  );
+
   it("returns only the items with no showIf when nothing has been answered", () => {
     expect(getApplicableReentryChecklistItems({}).sort()).toEqual(
-      ["BACKUP_HOUSING", "FINALIZED_HOUSING"].sort(),
+      [...itemsWithNoShowIf].sort(),
     );
   });
 
@@ -144,12 +150,11 @@ describe("getApplicableReentryChecklistItems", () => {
       HOUSING: "LONG_TERM_RESIDENTIAL_PROGRAM",
     });
 
-    // BACKUP_HOUSING/FINALIZED_HOUSING have no showIf, so they're always included;
+    // Items with no showIf are always included;
     // "LONG_TERM_RESIDENTIAL_PROGRAM" also satisfies every housing-program item
     expect(applicable.sort()).toEqual(
       [
-        "BACKUP_HOUSING",
-        "FINALIZED_HOUSING",
+        ...itemsWithNoShowIf,
         "HAS_HOUSING_LOCATION_PREFERENCE",
         "HAS_HOUSING_PROGRAM_RENT_PLAN",
         "HAS_PAID_HOUSING_PROGRAM_DEPOSIT",
