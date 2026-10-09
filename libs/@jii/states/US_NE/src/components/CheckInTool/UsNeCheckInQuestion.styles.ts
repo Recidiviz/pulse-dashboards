@@ -49,7 +49,7 @@ export const AnswerHint = styled.span`
 `;
 
 export const TextEntry = styled.textarea.attrs({
-  rows: 10,
+  rows: 8,
   maxLength: 500,
 })`
   appearance: none;

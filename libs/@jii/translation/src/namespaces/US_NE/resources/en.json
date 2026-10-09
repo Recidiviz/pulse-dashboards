@@ -513,7 +513,7 @@
     "completion": {
       "heading": "You’re done, {{name}}!",
       "subheading": "Thanks for doing this today.",
-      "description": "You shared your reentry plans for:\n- Your housing\n- Your transportation\n- Your finances\n- Who will support you\n\nYour Reentry Specialist will use what you’ve shared in your 120-day check-in and to build your Success Plan with you.",
+      "description": "You shared your reentry plans for:\n- Your housing\n- Your transportation\n- Your finances\n- Who will support you\n\nYour Reentry Specialist will use what you’ve shared in your 120-day check-in to build your Success Plan with you.",
       "close": "Close"
     },
     "questionPage": {
