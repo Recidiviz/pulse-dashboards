@@ -20,12 +20,12 @@ import { format, isAfter } from "date-fns";
 import { DeepNonNullable } from "utility-types";
 
 import { EarnedGoodTimeConfig } from "~@jii/configs";
-import { UsMaTranslationsObject } from "~@jii/translation";
 import {
   UsMaCreditActivity,
   UsMaEarnedCreditType,
   UsMaResidentJiiData,
-} from "~datatypes";
+} from "~@jii/schemas";
+import { UsMaTranslationsObject } from "~@jii/translation";
 
 export type AchievementKey = Exclude<
   keyof UsMaTranslationsObject["individualMonthlyReport"]["achievements"],

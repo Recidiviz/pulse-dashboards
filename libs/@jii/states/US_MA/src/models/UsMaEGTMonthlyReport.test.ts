@@ -18,13 +18,12 @@
 import { parseISO } from "date-fns";
 
 import { residentsConfigByState } from "~@jii/configs";
+import { usMaCreditActivityFixture } from "~@jii/fixtures";
+import { creditActivitySchema, UsMaCreditActivity } from "~@jii/schemas";
 import {
-  creditActivityFixture,
-  creditActivitySchema,
   makeRecordFixture,
   outputFixtureArray,
   relativeFixtureMonth,
-  UsMaCreditActivity,
 } from "~datatypes";
 
 import { UsMaEGTMonthlyReport } from "./UsMaEGTMonthlyReport";
@@ -38,7 +37,7 @@ const usMaEgtConfig = residentsConfigByState.US_MA.egt!;
 
 beforeEach(() => {
   parsedCreditActivity = outputFixtureArray(
-    creditActivityFixture
+    usMaCreditActivityFixture
       .filter((creditRecord) => creditRecord.creditDate === creditDateStr)
       .map((credit) => makeRecordFixture(creditActivitySchema, credit)),
   );

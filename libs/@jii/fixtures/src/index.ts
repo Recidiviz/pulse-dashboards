@@ -18,5 +18,6 @@
 export * from "./stateData/US_AR";
 export * from "./stateData/US_AZ";
 export * from "./stateData/US_CO";
+export * from "./stateData/US_MA";
 export * from "./stateData/US_NE";
 export * from "./stateData/US_TN";

@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usMaResidents } from "~datatypes";
+import { usMaResidentJiiDataFixtures } from "~@jii/fixtures";
+import { usMaStateDataSchema } from "~@jii/schemas";
 
 import {
   ResidentRecord,
@@ -25,8 +26,9 @@ import { useResidentMetadata } from "./useResidentMetadata";
 
 vi.mock("../contexts/SingleResidentContext");
 
-const testStateSpecificData = usMaResidents[0]
-  .metadata as ResidentRecord["stateSpecificData"];
+const testStateSpecificData = usMaStateDataSchema.parse(
+  usMaResidentJiiDataFixtures[0],
+) as ResidentRecord["stateSpecificData"];
 
 beforeEach(() => {
   vi.mocked(useSingleResidentContext).mockReturnValue({

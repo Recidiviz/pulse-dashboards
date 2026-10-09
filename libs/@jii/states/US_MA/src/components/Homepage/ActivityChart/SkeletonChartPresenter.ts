@@ -18,7 +18,7 @@
 import { range } from "d3-array";
 import { makeAutoObservable } from "mobx";
 
-import { usMaEarnedCreditTypes } from "~datatypes";
+import { usMaEarnedCreditTypes } from "~@jii/schemas";
 
 import { ChartDatum, ChartPresenterInterface } from "./types";
 

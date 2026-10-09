@@ -17,7 +17,7 @@
 
 import { createContext } from "react";
 
-import { UsMaResidentJiiData } from "~datatypes";
+import { UsMaResidentJiiData } from "~@jii/schemas";
 import { useRequiredContext } from "~utils";
 
 import { UsMaEGTMonthlyReport } from "../../models/UsMaEGTMonthlyReport";

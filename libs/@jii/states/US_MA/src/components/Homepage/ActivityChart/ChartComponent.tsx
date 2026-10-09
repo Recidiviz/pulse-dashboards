@@ -24,8 +24,8 @@ import OrdinalFrame from "semiotic/lib/OrdinalFrame";
 import styled from "styled-components";
 
 import { preventFlexibleLayoutOverflow } from "~@jii/common-ui";
+import { usMaEarnedCreditTypes } from "~@jii/schemas";
 import { useUsMaTranslations } from "~@jii/translation";
-import { usMaEarnedCreditTypes } from "~datatypes";
 import { palette } from "~design-system";
 
 import { ChartDatum, ChartPresenterInterface } from "./types";

@@ -18,7 +18,7 @@
 import { max, range, rollup, sum } from "d3-array";
 import { makeAutoObservable } from "mobx";
 
-import { usMaEarnedCreditTypes } from "~datatypes";
+import { usMaEarnedCreditTypes } from "~@jii/schemas";
 
 import { UsMaEGTMonthlyReport } from "../../../models/UsMaEGTMonthlyReport";
 import { ChartDatum, ChartPresenterInterface } from "./types";

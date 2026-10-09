@@ -19,13 +19,6 @@ import {
   RawResidentCommon,
   residentCommonSchema,
 } from "../residentCommonSchema";
-import {
-  RawWorkflowsResidentRecord,
-  WorkflowsResidentRecord,
-  workflowsResidentRecordSchema,
-} from "../workflowsResidentRecordSchema";
-import { rawUsMaResidentJiiDataFixtures } from "./metadata/fixtures";
-import { RawUsMaResidentJiiData } from "./metadata/schema";
 
 export const rawUsMaResidentCommon: Array<RawResidentCommon> = [
   {
@@ -73,17 +66,3 @@ export const rawUsMaResidentCommon: Array<RawResidentCommon> = [
 export const usMaResidentCommon = rawUsMaResidentCommon.map((r) =>
   residentCommonSchema.parse(r),
 );
-
-export const rawUsMaResidents: Array<
-  RawWorkflowsResidentRecord & { metadata: RawUsMaResidentJiiData }
-> = rawUsMaResidentCommon.map((common, i) => ({
-  ...common,
-  stateCode: "US_MA",
-  gender: "MALE",
-  metadata: rawUsMaResidentJiiDataFixtures[i],
-  recordId: `us_ma_${common.personExternalId}`,
-  allEligibleOpportunities: [],
-}));
-
-export const usMaResidents: Array<WorkflowsResidentRecord> =
-  rawUsMaResidents.map((r) => workflowsResidentRecordSchema.parse(r));

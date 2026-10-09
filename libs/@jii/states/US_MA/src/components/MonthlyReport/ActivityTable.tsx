@@ -22,8 +22,8 @@ import { FC } from "react";
 import styled from "styled-components";
 
 import { preventFlexibleLayoutOverflow, SlateCopy } from "~@jii/common-ui";
+import { usMaEarnedCreditTypes } from "~@jii/schemas";
 import { useUsMaTranslations } from "~@jii/translation";
-import { usMaEarnedCreditTypes } from "~datatypes";
 import { palette } from "~design-system";
 
 import { UsMaEGTMonthlyReport } from "../../models/UsMaEGTMonthlyReport";

@@ -16,7 +16,7 @@
 // =============================================================================
 
 // Shared types and interfaces for ActivityChart presenters
-import { UsMaEarnedCreditType } from "~datatypes";
+import { UsMaEarnedCreditType } from "~@jii/schemas";
 
 export type ChartDatum = {
   creditMonth: Date;
