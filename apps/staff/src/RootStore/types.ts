@@ -377,7 +377,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usMiCaseManagerSearch: {},
         usMiCustodyLevelDowngrade: {},
         usMiRestrictiveHousingV2Ineligible: { activeTenants: ["US_MI"] },
-        usMiClassification: { activeTenants: ["US_MI"] },
+        usMiClassification: {},
         usMiFacilitySearch: {},
         usMiRestrictiveHousingV2: {},
         usMoOverdueRHPilot: {},
