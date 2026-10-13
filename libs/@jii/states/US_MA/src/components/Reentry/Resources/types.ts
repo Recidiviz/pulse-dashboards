@@ -19,3 +19,8 @@ import type { JiiResidentAppRouterOutputs } from "~@jii/trpc-types";
 
 export type ResourceSummary =
   JiiResidentAppRouterOutputs["resident"]["resources"]["getResources"][number];
+
+export type HousingAttributes = Extract<
+  NonNullable<ResourceSummary["categoryAttributes"]>,
+  { category: "Housing" }
+>;

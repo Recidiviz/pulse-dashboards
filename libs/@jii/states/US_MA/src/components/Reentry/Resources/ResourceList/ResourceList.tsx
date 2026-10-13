@@ -26,7 +26,7 @@ import { useUsMaTranslations } from "~@jii/translation";
 
 import { CollapsibleSection } from "../CollapsibleSection/CollapsibleSection";
 import { ResourceCard } from "../ResourceCard/ResourceCard";
-import { groupResourcesBySubcategory } from "../utils";
+import { getResourceChips, groupResourcesBySubcategory } from "../utils";
 import {
   AccordionItem,
   AccordionList,
@@ -120,6 +120,8 @@ export const ResourceList = () => {
                         key={resource.organizationId}
                         name={resource.name}
                         to={detailPath(resource.organizationId)}
+                        primaryContact={resource.primaryContactValue}
+                        chips={getResourceChips(resource, t)}
                       />
                     ))}
                   </ResourceListWrapper>

@@ -17,16 +17,44 @@
 
 import { FC } from "react";
 
-import { Card, CardName } from "./ResourceCard.styles";
+import { useUsMaTranslations } from "~@jii/translation";
+
+import { Chip } from "../Chip/Chip";
+import { Card, CardChips, CardContact, CardName } from "./ResourceCard.styles";
 
 // Props follow the NYC ResourceCard so the two can merge into a shared component.
 export type ResourceCardProps = {
   name: string;
   to: string;
+  primaryContact?: string;
+  chips?: string[];
 };
 
-export const ResourceCard: FC<ResourceCardProps> = ({ name, to }) => (
-  <Card to={to}>
-    <CardName>{name}</CardName>
-  </Card>
-);
+export const ResourceCard: FC<ResourceCardProps> = ({
+  name,
+  to,
+  primaryContact,
+  chips,
+}) => {
+  const { t } = useUsMaTranslations();
+
+  return (
+    <Card to={to}>
+      <CardName>{name}</CardName>
+      {primaryContact ? (
+        <CardContact>
+          {t(($) => $.reentry.resources.list.contactLabel, {
+            address: primaryContact,
+          })}
+        </CardContact>
+      ) : null}
+      {chips?.length ? (
+        <CardChips>
+          {chips.map((chip) => (
+            <Chip key={chip}>{chip}</Chip>
+          ))}
+        </CardChips>
+      ) : null}
+    </Card>
+  );
+};

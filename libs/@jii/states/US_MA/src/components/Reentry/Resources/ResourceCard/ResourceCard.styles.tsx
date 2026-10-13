@@ -50,3 +50,16 @@ export const Card = styled(Link)`
     border-bottom: none;
   }
 `;
+
+export const CardContact = styled.span`
+  ${typography.Sans14}
+
+  color: ${palette.slate80};
+`;
+
+export const CardChips = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${rem(spacing.sm)};
+  margin-top: ${rem(spacing.xs)};
+`;

@@ -15,8 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { groupResourcesBySubcategory } from "../utils";
-import { makeResource } from "./testUtils";
+import { UsMaTFunction } from "~@jii/translation";
+
+import {
+  getLengthOfStayChip,
+  getRentChip,
+  getResourceChips,
+  groupResourcesBySubcategory,
+} from "../utils";
+import { loadUsMaTranslations, makeResource } from "./testUtils";
+
+let t: UsMaTFunction;
+
+beforeAll(async () => {
+  t = await loadUsMaTranslations();
+});
 
 describe("groupResourcesBySubcategory", () => {
   test("groups by subcategory in name order, matching the category case-insensitively", () => {
@@ -38,6 +51,60 @@ describe("groupResourcesBySubcategory", () => {
     ).toEqual([
       ["Medical facility", [both]],
       ["Shelter", [shelter, both]],
+    ]);
+  });
+});
+
+describe("getRentChip", () => {
+  test.each([
+    [{ weeklyRent: { min: 0, max: 0 } }, "Rent: Free"],
+    [{ weeklyRent: { min: 150, max: 200 } }, "Rent: $150–$200/week"],
+    [{ weeklyRent: { min: 100, max: 100 } }, "Rent: $100/week"],
+    [{ weeklyRent: { min: 187.5, max: 187.5 } }, "Rent: $187.50/week"],
+    [{ weeklyRent: { min: 22.75, max: 1200 } }, "Rent: $22.75–$1,200/week"],
+    [{ rentAsIncomePercent: 30 }, "Rent: 30% of income"],
+    [{}, "No rent info listed"],
+  ])("%j → %s", (attributes, expected) => {
+    expect(getRentChip({ category: "Housing", ...attributes }, t)).toBe(
+      expected,
+    );
+  });
+});
+
+describe("getLengthOfStayChip", () => {
+  test.each([
+    [{ programLengthMonths: { min: 6, max: 12 } }, "6–12 months"],
+    [{ programLengthMonths: { min: 6, max: 6 } }, "6 months"],
+    [{}, "No program length info listed"],
+  ])("%j → %s", (attributes, expected) => {
+    expect(getLengthOfStayChip({ category: "Housing", ...attributes }, t)).toBe(
+      expected,
+    );
+  });
+});
+
+describe("getResourceChips", () => {
+  test("orders gender, rent, length of stay, then Accepts, and drops unknown tags", () => {
+    const resource = makeResource(1, {
+      tags: ["Parolees Accepted", "Co-ed", "Spanish", "Sex Offenders Accepted"],
+      categoryAttributes: {
+        category: "Housing",
+        weeklyRent: { min: 150, max: 200 },
+      },
+    });
+
+    expect(getResourceChips(resource, t)).toEqual([
+      "Co-ed",
+      "Rent: $150–$200/week",
+      "No program length info listed",
+      "Parolees",
+      "Sex offenses",
+    ]);
+  });
+
+  test("leaves out rent and length of stay without housing attributes", () => {
+    expect(getResourceChips(makeResource(1, { tags: ["Female"] }), t)).toEqual([
+      "Female",
     ]);
   });
 });

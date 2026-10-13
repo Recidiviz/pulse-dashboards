@@ -377,7 +377,7 @@ describe("US_MA housing attributes", () => {
       categorizations: [
         { section: "Housing", subsection: "Transitional Housing" },
       ],
-      tags: ["Women", "Parolees Accepted"],
+      tags: ["Female", "Parolees Accepted"],
       county: "Worcester",
       category_attributes: {
         category: "Housing",

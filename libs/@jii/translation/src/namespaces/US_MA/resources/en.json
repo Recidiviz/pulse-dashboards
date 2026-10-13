@@ -651,8 +651,8 @@
         "contactLabel": "Address: {{address}}",
         "rent": {
           "free": "Rent: Free",
-          "range": "Rent: ${{min}}–${{max}}/week",
-          "single": "Rent: ${{amount}}/week",
+          "range": "Rent: {{min, currency(USD)}}–{{max, currency(USD)}}/week",
+          "single": "Rent: {{amount, currency(USD)}}/week",
           "incomePercent": "Rent: {{percent}}% of income",
           "notListed": "No rent info listed"
         },
@@ -660,7 +660,7 @@
           "range": "{{min}}–{{max}} months",
           "single_one": "{{count}} month",
           "single_other": "{{count}} months",
-          "noTimeLimit": "No time limit"
+          "notListed": "No program length info listed"
         },
         "gender": {
           "male": "Male",

@@ -15,7 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { createI18nInstance, UsMaTFunction } from "~@jii/translation";
+
 import { ResourceSummary } from "../types";
+
+/** Loads the real US_MA English copy and returns a t function for it. */
+export async function loadUsMaTranslations(): Promise<UsMaTFunction> {
+  const i18n = createI18nInstance([]);
+  await i18n.changeLanguage("en");
+  await i18n.loadNamespaces("US_MA");
+  return i18n.getFixedT("en", "US_MA") as unknown as UsMaTFunction;
+}
 
 export function makeResource(
   organizationId: number,
