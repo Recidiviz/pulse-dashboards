@@ -657,7 +657,6 @@ describe("table view columns", () => {
 
   describe("STATUS", () => {
     test.each([
-      "usAzTransferToAdministrativeSupervision",
       "usAzTransferToAdministrativeSupervisionV2",
       "usAzReleaseToTPR",
       "usAzReleaseToDTP",
@@ -685,55 +684,54 @@ describe("table view columns", () => {
     });
   });
   describe("ALMOST_ELIGIBILITY_DATE", () => {
-    test.each([
-      "LSU",
-      "usTnCompliantReporting2025Policy",
-      "usAzTransferToAdministrativeSupervision",
-    ])("hides status column for %s", (opportunityType) => {
-      // Add almostEligible tab support to the test configuration
-      const mockConfig = {
-        ...mockOpportunity.config,
-        supportsAlmostEligible: true,
-        tabGroups: {
-          "ELIGIBILITY STATUS": [
-            "Eligible Now",
-            "Almost Eligible",
-            "Submitted",
-            "Marked Ineligible",
-          ],
-        },
-        enabledColumns:
-          mockOpportunityConfigs[opportunityType as OpportunityType]
-            .enabledColumns,
-      };
-      vi.spyOn(
-        mockWorkflowsStore,
-        "allOpportunitiesByType",
-        "get",
-      ).mockReturnValue({
-        [opportunityType]: [
-          {
-            ...mockOpportunity,
-            config: mockConfig,
-            almostEligible: true,
-            almostEligibilityDate: new Date(),
-            type: opportunityType,
-            tabTitle: () => "Almost Eligible",
+    test.each(["LSU", "usTnCompliantReporting2025Policy"])(
+      "hides status column for %s",
+      (opportunityType) => {
+        // Add almostEligible tab support to the test configuration
+        const mockConfig = {
+          ...mockOpportunity.config,
+          supportsAlmostEligible: true,
+          tabGroups: {
+            "ELIGIBILITY STATUS": [
+              "Eligible Now",
+              "Almost Eligible",
+              "Submitted",
+              "Marked Ineligible",
+            ],
           },
-        ],
-      });
+          enabledColumns:
+            mockOpportunityConfigs[opportunityType as OpportunityType]
+              .enabledColumns,
+        };
+        vi.spyOn(
+          mockWorkflowsStore,
+          "allOpportunitiesByType",
+          "get",
+        ).mockReturnValue({
+          [opportunityType]: [
+            {
+              ...mockOpportunity,
+              config: mockConfig,
+              almostEligible: true,
+              almostEligibilityDate: new Date(),
+              type: opportunityType,
+              tabTitle: () => "Almost Eligible",
+            },
+          ],
+        });
 
-      presenter = getPresenter({
-        config: mockConfig as OpportunityConfiguration,
-        opportunityType: opportunityType as OpportunityType,
-      });
+        presenter = getPresenter({
+          config: mockConfig as OpportunityConfiguration,
+          opportunityType: opportunityType as OpportunityType,
+        });
 
-      presenter.activeTab = "Almost Eligible";
+        presenter.activeTab = "Almost Eligible";
 
-      expect(
-        presenter.enabledColumnIds.includes("ALMOST_ELIGIBILITY_DATE"),
-      ).toBeTrue();
-    });
+        expect(
+          presenter.enabledColumnIds.includes("ALMOST_ELIGIBILITY_DATE"),
+        ).toBeTrue();
+      },
+    );
   });
   describe("RELEASE_DATE", () => {
     test("shows for INCARCERATION system", () => {

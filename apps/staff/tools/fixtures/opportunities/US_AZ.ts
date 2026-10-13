@@ -327,8 +327,8 @@ export const mockApiOpportunityConfigurationResponse = {
             "Inmates must be classified by the department as minimum or medium custody as determined by an objective risk assessment.",
         },
         {
-          key: "usAzAtLeast24MonthsSinceLastCsed",
-          text: "At least 24 months since last CSED",
+          key: "usAzTprDateAtLeast24MonthsSinceLastCsed",
+          text: "TPR Date is at least 24 months since last CSED",
         },
         {
           key: "usAzNoTprRemovalsFromSelfImprovementPrograms",
@@ -556,202 +556,6 @@ export const mockApiOpportunityConfigurationResponse = {
       urlSection: "TPR",
       zeroGrantsTooltip: null,
     },
-    usAzTransferToAdministrativeSupervision: {
-      callToAction: "",
-      caseNotesTitle: null,
-      compareBy: null,
-      denialAdjective: null,
-      denialNoun: null,
-      denialReasons: [
-        {
-          key: "INELIGIBLE_OFFENSES",
-          text: "Current or prior conviction for an ineligible offense",
-        },
-        {
-          key: "INITIAL_INTAKE",
-          text: "Has not yet completed initial intake and needs assessment",
-        },
-        {
-          key: "EMPLOYMENT",
-          text: "Not currently employed, disabled, retired, or in school",
-        },
-        {
-          key: "SUBSTANCE",
-          text: "Currently dealing with substance use issues",
-        },
-        { key: "IN_CUSTODY", text: "In state or county custody" },
-        { key: "Other", text: "Other" },
-      ],
-      denialText: "Mark Ineligible",
-      deniedTabTitle: "Marked Ineligible",
-      displayName: "Administrative Supervision",
-      dynamicEligibilityText:
-        "client[|s] may be eligible for Administrative Supervision.",
-      eligibilityDateText: null,
-      eligibleCriteriaCopy: [
-        {
-          key: "usAzAnyRiskScoreBut15MonthsViolationFree",
-          text: '{{#if \n    (or\n      (or\n        (or\n            (eq orasAssessmentLevel "LOW" )\n            (eq orasAssessmentLevel "MODERATE" )\n        )\n        (eq orasAssessmentLevel "LOW_MODERATE" )\n      )\n      (eq intakeAssessmentLevel "MINIMUM" )\n    )\n}}\nEligible risk score\n{{else}}\nOn supervision 15 months violation free despite risk score\n{{/if}}\n\n',
-          tooltip:
-            '{{#if \n    (or\n      (or\n        (or\n            (eq orasAssessmentLevel "LOW" )\n            (eq orasAssessmentLevel "MODERATE" )\n        )\n        (eq orasAssessmentLevel "LOW_MODERATE" )\n      )\n      (eq intakeAssessmentLevel "MINIMUM" )\n    )\n}}\n(DO 1007 8.1.1 - 8.1.1.1) Risk and needs assessment shows a risk determination of moderate or lower. Clients that score Minimum on the Initial Community Risk Assessment and who therefore do not receive additional risk and needs assessment are not required to meet criteria 8.1.1 above.\n{{else}}\n(DO 1007 8.1.9) Clients with any risk score or offenses are eligible for administrative supervision if they meet the other criteria and have completed 15 consecutive months of supervision with no formal sanctions or interventions and the supervisor approves the placement on administrative supervision. See DO for more detail. \n{{/if}}',
-        },
-        {
-          key: "usAzIneligibleOffensesBut15MonthsViolationFree",
-          text: "{{#if \n  (and\n    (eq ineligibleConvictions null )\n    (eq ineligibleOffenses null )\n)\n}}\nNo current or prior convictions of exclusionary offenses\n{{else}}\nOn supervision 15 months violation free despite offenses/convictions \n{{/if}}\n\n",
-          tooltip:
-            "{{#if \n  (and\n    (eq ineligibleConvictions null )\n    (eq ineligibleOffenses null )\n)\n}}\n(DO 1007 8.1.2) No current or prior convictions of a registerable sexual offense or felony domestic violence offense, or current convictions of felony arson or murder, unless the client qualifies for administrative supervision under Section 8.1.9. See  Attachment A of DO 1007 for a list of offenses excluded under this section.\n{{else}}\n(DO 1007 8.1.9) Clients with any risk score or offenses are eligible for administrative supervision if they meet the other criteria and have completed 15 consecutive months of supervision with no formal sanctions or interventions and the supervisor approves the placement on administrative supervision. See DO for more detail. \n{{/if}}",
-        },
-        {
-          key: "usAzRiskReleaseAssessmentIsCompleted",
-          text: "Initial intake and needs assessment complete",
-          tooltip:
-            "(DO 1007 8.1.3) Has completed initial intake and risk and needs assessment with assigned CRO. This may be done in-person, or, where deemed appropriate by the CRO, virtually (e.g., by telephone or video call).",
-        },
-        {
-          key: "usAzOrasEmployedDisabledRetiredOrStudent",
-          text: "{{#unless record.metadata.isMaybeEligible}}\nCurrently employed, disabled, retired, or in school\n{{/unless}}",
-          tooltip:
-            "(DO 1007 8.1.5) Currently employed, disabled, retired, or in school, as assessed in the risk and needs assessment. See DO for more details. ",
-        },
-        {
-          key: "usAzMentalHealthScore3OrBelow",
-          text: "Mental Health Score of 3 or below",
-          tooltip: "(DO 1007 8.1.6) Mental Health Score below 4.",
-        },
-        {
-          key: "usAzNotSeverelyMentallyIll",
-          text: "Not SMI-C",
-          tooltip: "(DO 1007 8.1.7) Not SMI-C.",
-        },
-        {
-          key: "usAzOrasHasSubstanceUseIssues",
-          text: "{{#unless record.metadata.isMaybeEligible}}\nNot currently dealing with substance use issues\n{{/unless}}",
-          tooltip:
-            "(DO 1007 8.1.8) Not currently dealing with substance use issues, as assessed in the risk and needs assessment. Only a score of 2, indicating “current problems caused by drug use,” disqualifies someone from eligibility. A client may also meet this requirement if they have abstained from illicit drug use for the past year.",
-        },
-        {
-          key: "usAzNotInHalfwayHouseOrNewFreedom",
-          text: "Not in halfway house",
-          tooltip:
-            "Requires validation of DO 1007 section 8.1.4: A client has achieved stable housing while on supervision.",
-        },
-      ],
-      emptyTabCopy: [
-        {
-          tab: "Eligible per ORAS",
-          text: "At this time, there are no clients who are currently eligible. Please navigate to one of the other tabs.",
-        },
-        {
-          tab: "Eligible per Initial Assessment",
-          text: "At this time, there are no clients who are almost eligible. Please navigate to one of the other tabs.",
-        },
-        {
-          tab: "Transferred in ACIS",
-          text: "No clients for the selected officer(s) were marked as transferred within the last day. Clients stop appearing in this tab 24 hours after the change is confirmed in ACIS.",
-        },
-        {
-          tab: "Marked Ineligible",
-          text: "At this time, there are no clients who are marked ineligible. Please navigate to one of the other tabs.",
-        },
-      ],
-      enabledColumns: [],
-      firestoreCollection: "US_AZ-TransferToAdminSupervision",
-      grantApprovedStatusMessage: null,
-      grantApprovedTabTitle: null,
-      grantReviewDropdownLabel: null,
-      grantReviewStatusMessage: null,
-      hideDenialRevert: true,
-      highlightCasesOnHomepage: false,
-      highlightedCaseCtaCopy: null,
-      homepagePosition: 5,
-      ineligibleCriteriaCopy: [
-        {
-          key: "usAzDummyCopyToEnableAE",
-          text: "This ineligible criteria is added to set opportunityConfiguration.supportsAlmostEligible as true",
-        },
-      ],
-      initialHeader:
-        "View low-needs clients who qualify for transfer to Administrative Supervision.",
-      isAlert: false,
-      markSubmittedOnFormDownload: true,
-      markSubmittedOptionsByTab: [],
-      methodologyUrl:
-        "https://drive.google.com/file/d/1U_V_4Xgj3rIWAFjLSbta-MojehPSU-YE/view?usp=drive_link",
-      nonOmsCriteria: [
-        {
-          text: "Requires validation of DO 1007 section 8.1.4: A client has achieved stable housing while on supervision",
-          tooltip:
-            "See DO 1007 section 8.1.4 for details on what qualifies as stable housing.",
-        },
-        {
-          text: "{{#if record.metadata.isMaybeEligible}}Requires validation of DO 1007 section 8.1.5: Currently employed, disabled, retired, or in school, as assessed in ORAS question 2.4{{/if}}",
-          tooltip:
-            "Alternate Eligibility: An offender may also meet this requirement by presenting their CRO with proof of gainful employment, enrollment in education, disability status, or retirement. For the purpose of this policy, people providing caregiving for a family member may also be considered to meet this condition. ",
-        },
-        {
-          text: "{{#if record.metadata.isMaybeEligible}}Requires validation of DO 1007 section 8.1.8: Not currently dealing with substance uses issues, as assessed in ORAS question 5.4 {{/if}}",
-          tooltip:
-            "Alternate Eligibility: An offender may also meet this requirement if they have abstained from illicit drug use for the past year.",
-        },
-      ],
-      nonOmsCriteriaHeader: null,
-      notifications: [],
-      omsCriteriaHeader: "Validated by data from ACIS",
-      overdueOpportunityCalloutCopy: null,
-      priority: "NORMAL",
-      reasonsRequiringApproval: [],
-      reviewerFeatureVariant: null,
-      sidebarComponents: ["Supervision"],
-      skipFormPreview: false,
-      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
-      snoozeCompanionOpportunityTypes: [],
-      snoozeReviewStatusMessage: null,
-      stateCode: "US_AZ",
-      strictlyIneligibleCriteriaCopy: [],
-      subcategoryHeadings: [],
-      subcategoryOrderings: [],
-      subheading:
-        "Identify clients who are eligible for Administrative Supervision and adjust their supervision level in ACIS. [Learn More](https://docs.google.com/document/d/e/2PACX-1vQ55ljjO7rz-6UiHGLwEcH7WR6_ZZIbEynN-92kO5D61wfKIZZVewqLxQdQfjOtv6vnKDSmQKLX9xui/pub)",
-      submittedTabTitle: "Transferred in ACIS",
-      supervisorReviewTabTitle: null,
-      supportsIneligible: false,
-      supportsSubmitted: true,
-      supportsSupervisorReviewOnGrants: false,
-      supportsSupervisorReviewOnSnooze: false,
-      systemType: "SUPERVISION",
-      tabGroups: [
-        {
-          key: "ELIGIBILITY STATUS",
-          tabs: [
-            "Eligible per ORAS",
-            "Eligible per Initial Assessment",
-            "Transferred in ACIS",
-            "Marked Ineligible",
-          ],
-        },
-      ],
-      tabPrefaceCopy: [
-        {
-          tab: "Eligible per ORAS",
-          text: "Clients in this tab have an ORAS score. Based on ORAS results and ACIS data, they appear eligible for Administrative Supervision. Review housing stability and transfer eligible clients to Administrative Supervision per policy.",
-        },
-        {
-          tab: "Eligible per Initial Assessment",
-          text: "These clients scored Low on the Initial Risk Assessment (no ORAS needed). Verify all items under “Requirements to Check” (shown when you click on the individual client). If all criteria are met, complete the transfer per policy.",
-        },
-        {
-          tab: "Transferred in ACIS",
-          text: "Clients appear here after you confirm that their supervision level has been set to Administrative Supervision in ACIS. Clients who were successfully transferred will drop off this list after 24 hours. If a client continues to appear here, double check their supervision level in ACIS.",
-        },
-        {
-          tab: "Marked Ineligible",
-          text: "This tab shows clients whose status was updated in this tool. Status updates do not write back to ACIS. ",
-        },
-      ],
-      tooltipEligibilityText: null,
-      urlSection: "AdminSupervision",
-      zeroGrantsTooltip: null,
-    },
     usAzTransferToAdministrativeSupervisionV2: {
       callToAction: null,
       caseNotesTitle: null,
@@ -780,22 +584,22 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       denialText: "Mark Ineligible",
       deniedTabTitle: "Marked Ineligible",
-      displayName: "Administrative Supervision (v2)",
+      displayName: "Administrative Supervision ",
       dynamicEligibilityText:
         "client[|s] may be eligible for Administrative Supervision.",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
-          key: "usAzOrasRiskLevelIsMediumOrLower",
-          text: "Eligible risk score",
+          key: "usAzAnyRiskScoreBut15MonthsViolationFree",
+          text: '{{#if\n            (eq orasAssessmentLevel "LOW" )\n}}\nEligible risk score\n{{else}}\nOn supervision 15 months violation free despite risk score\n{{/if}}',
           tooltip:
-            "(DO 1007 8.1.1 - 8.1.1.1) Risk and needs assessment shows a risk determination of moderate or lower. Clients that score Minimum on the Initial Community Risk Assessment and who therefore do not receive additional risk and needs assessment are not required to meet criteria 8.1.1 above.",
+            '{{#if\n            (eq orasAssessmentLevel "LOW" )\n}}\n(DO 1007 8.1.1) Risk and needs assessment shows a low-risk determination, unless the client qualifies for administrative supervision under Section 8.1.8.\n{{else}}\n(DO 1007 8.1.8) Clients with any risk score or offenses are eligible for administrative supervision if they meet the other criteria and have completed 15 consecutive months of supervision with no formal sanctions or interventions and the supervisor approves the placement on administrative supervision. See DO for more detail. \n{{/if}}',
         },
         {
-          key: "usAzNoIneligibleCurrentOrPriorOffense",
-          text: "No current or prior convictions of exclusionary offenses",
+          key: "usAzIneligibleOffensesBut15MonthsViolationFree",
+          text: "{{#if \n  (and\n    (eq ineligibleConvictions null )\n    (eq ineligibleOffenses null )\n)\n}}\nNo current or prior convictions of exclusionary offenses\n{{else}}\nOn supervision 15 months violation free despite offenses/convictions \n{{/if}}",
           tooltip:
-            "(DO 1007 8.1.2) No current or prior convictions of a registerable sexual offense or felony domestic violence offense, or current convictions of felony arson or murder. See  Attachment A of DO 1007 for a list of offenses excluded under this section.",
+            "{{#if \n  (and\n    (eq ineligibleConvictions null )\n    (eq ineligibleOffenses null )\n)\n}}\n(DO 1007 8.1.2) No current or prior convictions of a registerable sexual offense or felony domestic violence offense, or current convictions of felony arson or murder, unless the client qualifies for administrative supervision under Section 8.1.8. See  Attachment A of DO 1007 for a list of offenses excluded under this section.\n{{else}}\n(DO 1007 8.1.8) Clients with any risk score or offenses are eligible for administrative supervision if they meet the other criteria and have completed 15 consecutive months of supervision with no formal sanctions or interventions and the supervisor approves the placement on administrative supervision. See DO for more detail. \n{{/if}}",
         },
         {
           key: "usAzRiskReleaseAssessmentIsCompleted",
@@ -804,31 +608,32 @@ export const mockApiOpportunityConfigurationResponse = {
             "(DO 1007 8.1.3) Has completed initial intake and risk and needs assessment with assigned CRO. This may be done in-person, or, where deemed appropriate by the CRO, virtually (e.g., by telephone or video call).",
         },
         {
+          key: "usAzStableHousingNotInHalfwayHouseOrNewFreedom",
+          text: "Currently has stable housing documented in ACIS Home Plan",
+          tooltip:
+            "(DO 1007 8.1.4) Upon verifying the client’s stable housing documents, the CRO must ensure the updated, approved housing information is accurately entered into Arizona Correctional Information System (ACIS) under Home Plan.",
+        },
+        {
           key: "usAzOrasEmployedDisabledRetiredOrStudent",
           text: "Currently employed, disabled, retired, or in school",
           tooltip:
             "(DO 1007 8.1.5) Currently employed, disabled, retired, or in school, as assessed in the risk and needs assessment. See DO for more details. ",
         },
         {
-          key: "usAzMentalHealthScore3OrBelow",
-          text: "Mental Health Score of 3 or below",
-          tooltip: "(DO 1007 8.1.6) Mental Health Score below 4.",
-        },
-        {
           key: "usAzNotSeverelyMentallyIll",
           text: "Not SMI-C",
-          tooltip: "(DO 1007 8.1.7) Not SMI-C.",
+          tooltip: "(DO 1007 8.1.6) Not Serious Mental Illness (SMI-C).",
         },
         {
           key: "usAzOrasHasSubstanceUseIssues",
           text: "Not currently dealing with substance use issues ",
           tooltip:
-            "(DO 1007 8.1.8) Not currently dealing with substance use issues, as assessed in the risk and needs assessment. Only a score of 2, indicating “current problems caused by drug use,” disqualifies someone from eligibility. A client may also meet this requirement if they have abstained from illicit drug use for the past year.",
+            "(DO 1007 8.1.7) Not currently dealing with substance use issues, as assessed in the risk and needs assessment. Only a score of 2, indicating “current problems caused by drug use,” disqualifies someone from eligibility. A client may also meet this requirement if they have abstained from illicit drug use for the past year.",
         },
       ],
       emptyTabCopy: [
         {
-          tab: "Eligible for Administrative Supervision",
+          tab: "Eligible per ORAS",
           text: "At this time, there are no clients who are currently eligible. Please navigate to one of the other tabs.",
         },
         {
@@ -866,13 +671,7 @@ export const mockApiOpportunityConfigurationResponse = {
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1U_V_4Xgj3rIWAFjLSbta-MojehPSU-YE/view?usp=drive_link",
-      nonOmsCriteria: [
-        {
-          text: "Requires validation of DO 1007 section 8.1.4: A client has achieved stable housing while on supervision",
-          tooltip:
-            "See DO 1007 Section 8.1.4 for details on what qualifies as stable housing. ",
-        },
-      ],
+      nonOmsCriteria: [],
       nonOmsCriteriaHeader: "Requirements to check",
       notifications: [],
       omsCriteriaHeader: "Validated by data from ACIS",
@@ -888,16 +687,16 @@ export const mockApiOpportunityConfigurationResponse = {
       stateCode: "US_AZ",
       strictlyIneligibleCriteriaCopy: [
         {
-          key: "usAzOrasRiskLevelIsMediumOrLower",
-          text: "Ineligible risk score",
+          key: "usAzAnyRiskScoreBut15MonthsViolationFree",
+          text: "Ineligible risk score and not 15-months violation-free",
           tooltip:
-            "(DO 1007 8.1.1 - 8.1.1.1) Risk and needs assessment shows a risk determination of moderate or lower. Clients that score Minimum on the Initial Community Risk Assessment and who therefore do not receive additional risk and needs assessment are not required to meet criteria 8.1.1 above.",
+            "(DO 1007 8.1.1) Risk and needs assessment shows a low-risk determination, unless the client qualifies for administrative supervision under Section 8.1.8.",
         },
         {
-          key: "usAzNoIneligibleCurrentOrPriorOffense",
-          text: "Has current or prior convictions of exclusionary offenses",
+          key: "usAzIneligibleOffensesBut15MonthsViolationFree",
+          text: "Exclusionary offenses and not 15-months violation-free",
           tooltip:
-            "(DO 1007 8.1.2) No current or prior convictions of a registerable sexual offense or felony domestic violence offense, or current convictions of felony arson or murder. See  Attachment A of DO 1007 for a list of offenses excluded under this section.",
+            "(DO 1007 8.1.2) No current or prior convictions of a registerable sexual offense or felony domestic violence offense, or current convictions of felony arson or murder, unless the client qualifies for administrative supervision under Section 8.1.8. See Attachment A of DO 1007 for a list of offenses excluded under this section.",
         },
         {
           key: "usAzRiskReleaseAssessmentIsCompleted",
@@ -906,26 +705,27 @@ export const mockApiOpportunityConfigurationResponse = {
             "(DO 1007 8.1.3) Has completed initial intake and risk and needs assessment with assigned CRO. This may be done in-person, or, where deemed appropriate by the CRO, virtually (e.g., by telephone or video call).",
         },
         {
+          key: "usAzStableHousingNotInHalfwayHouseOrNewFreedom",
+          text: "Does not have stable housing currently documented in ACIS Home Plan",
+          tooltip:
+            "(DO 1007 8.1.4) Upon verifying the client’s stable housing documents, the CRO must ensure the updated, approved housing information is accurately entered into Arizona Correctional Information System (ACIS) under Home Plan.",
+        },
+        {
           key: "usAzOrasEmployedDisabledRetiredOrStudent",
           text: "Not currently employed, disabled, retired, or in school",
           tooltip:
             "(DO 1007 8.1.5) Currently employed, disabled, retired, or in school, as assessed in the risk and needs assessment. See DO for more details. ",
         },
         {
-          key: "usAzMentalHealthScore3OrBelow",
-          text: "Mental Health Score of 4 or higher",
-          tooltip: "(DO 1007 8.1.6) Mental Health Score below 4.",
-        },
-        {
           key: "usAzNotSeverelyMentallyIll",
           text: "Client is SMI-C",
-          tooltip: "(DO 1007 8.1.7) Not SMI-C.",
+          tooltip: "(DO 1007 8.1.6) Not SMI-C.",
         },
         {
           key: "usAzOrasHasSubstanceUseIssues",
           text: "Currently dealing with substance use issues ",
           tooltip:
-            "(DO 1007 8.1.8) Not currently dealing with substance use issues, as assessed in the risk and needs assessment. Only a score of 2, indicating “current problems caused by drug use,” disqualifies someone from eligibility. A client may also meet this requirement if they have abstained from illicit drug use for the past year.",
+            "(DO 1007 8.1.7) Not currently dealing with substance use issues, as assessed in the risk and needs assessment. Only a score of 2, indicating “current problems caused by drug use,” disqualifies someone from eligibility. A client may also meet this requirement if they have abstained from illicit drug use for the past year.",
         },
       ],
       subcategoryHeadings: [],
@@ -953,7 +753,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       tabPrefaceCopy: [
         {
-          tab: "Eligible for Administrative Supervision",
+          tab: "Eligible per ORAS",
           text: "Based on ORAS results and ACIS data, clients in this tab appear eligible for Administrative Supervision as per the policy. CROs should review case notes and submit eligible cases for supervisor approval.",
         },
         {
@@ -962,7 +762,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           tab: "Approved by Supervisor",
-          text: "Clients in this tab have been approved by a supervisor for transfer to Administrative Supervision. CROs should complete the transfer by [updating the client’s supervision level in ACIS].",
+          text: "Clients in this tab have been approved by a supervisor for transfer to Administrative Supervision. CROs should complete the transfer by updating the client’s supervision level in ACIS.",
         },
         {
           tab: "Transferred in ACIS",
