@@ -604,6 +604,7 @@ describe("ParoleAPIClient", () => {
         docPrograms: [],
         edovoPrograms: [],
         caseNotes: [],
+        hearingHistory: [],
         offenseHistory: {
           offenses: [
             {
@@ -1558,6 +1559,61 @@ describe("ParoleAPIClient", () => {
           type: PAROLE_UNKNOWN_TEXT,
           date: "2026-04-01",
           body: "Third",
+        },
+      ]);
+    });
+
+    it("maps hearing history to previous hearings with a date, newest first, filling a missing type", async () => {
+      vi.spyOn(rootStore.firestoreStore, "getResident").mockResolvedValue(
+        buildUsIdResident({
+          metadata: {
+            stateCode: "US_ID",
+            crcFacilities: [],
+          },
+        }),
+      );
+      stubProfile(rootStore, {
+        demographics: {},
+        paroleHearings: [
+          {
+            hearingStatus: "PREVIOUS",
+            hearingDate: "2018-01-15",
+            hearingType: "Regular Hearing",
+            hearingSubtype: "Initial",
+            hearingDecision: "Parole granted",
+          },
+          {
+            hearingStatus: "SCHEDULED",
+            hearingDate: "2099-01-01",
+            hearingType: "Regular Hearing",
+          },
+          {
+            hearingStatus: "PREVIOUS",
+            hearingDate: null,
+            hearingType: "Regular Hearing",
+          },
+          {
+            hearingStatus: "PREVIOUS",
+            hearingDate: "2019-11-20",
+            hearingType: null,
+            hearingDecision: null,
+          },
+        ],
+      });
+
+      const result = await client.caseDetail("RES999");
+
+      expect(result.hearingHistory).toEqual([
+        {
+          hearingDate: "2019-11-20",
+          hearingType: PAROLE_UNKNOWN_TEXT,
+          hearingDecision: undefined,
+        },
+        {
+          hearingDate: "2018-01-15",
+          hearingType: "Regular Hearing",
+          hearingSubtype: "Initial",
+          hearingDecision: "Parole granted",
         },
       ]);
     });

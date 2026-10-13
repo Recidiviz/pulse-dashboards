@@ -293,6 +293,18 @@ export const paroleCaseNoteSchema = z.object({
 });
 export type ParoleCaseNote = z.infer<typeof paroleCaseNoteSchema>;
 
+/** A hearing the Board already held, shown in the case profile's history. */
+export const paroleHearingHistoryEntrySchema = z.object({
+  hearingDate: z.string(),
+  hearingType: z.string(),
+  // Not shown. Tells apart two hearings with the same date, type and decision.
+  hearingSubtype: z.string().optional(),
+  hearingDecision: z.string().optional(),
+});
+export type ParoleHearingHistoryEntry = z.infer<
+  typeof paroleHearingHistoryEntrySchema
+>;
+
 export const paroleCaseSchema = z.object({
   // See paroleHearingSchema above for the pseudonymizedId/displayId split.
   pseudonymizedId: z.string(),
@@ -335,5 +347,7 @@ export const paroleCaseSchema = z.object({
   // the most recent snapshot is tracked (no history), unlike riskAssessments.
   riskAndNeedsFactors: z.array(paroleRiskNeedFactorSchema),
   caseNotes: z.array(paroleCaseNoteSchema).optional(),
+  // Held hearings, newest first. Only US_ID shows them.
+  hearingHistory: z.array(paroleHearingHistoryEntrySchema).optional(),
 });
 export type ParoleCase = z.infer<typeof paroleCaseSchema>;

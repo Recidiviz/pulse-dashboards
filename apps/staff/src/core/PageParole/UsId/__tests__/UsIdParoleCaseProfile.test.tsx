@@ -24,11 +24,24 @@ import { paroleCasesFixtureByState } from "~datatypes";
 import US_ID_CONFIG from "../../../../tenants/US_ID";
 import { UsIdParoleCaseProfile } from "../UsIdParoleCaseProfile";
 
-const CASE = Object.values(paroleCasesFixtureByState.US_ID)[0];
+const CASE = {
+  ...Object.values(paroleCasesFixtureByState.US_ID)[0],
+  hearingHistory: [
+    {
+      hearingDate: "2018-01-15",
+      hearingType: "Regular Hearing",
+      hearingDecision: "Parole granted",
+    },
+  ],
+};
 
 // The nav list and the SectionAnchors are two separate lists in the same
 // file, so an entry can drift to an id that nothing renders.
-const NAV_LABELS = ["Offense Information", "Institutional History"];
+const NAV_LABELS = [
+  "Offense Information",
+  "Institutional History",
+  "Hearing History",
+];
 
 describe("UsIdParoleCaseProfile", () => {
   // jsdom doesn't implement scrollIntoView. scrollToSection is a no-op when
@@ -66,5 +79,25 @@ describe("UsIdParoleCaseProfile", () => {
     expect(
       screen.queryByRole("button", { name: /download/i }),
     ).not.toBeInTheDocument();
+  });
+});
+
+describe("UsIdParoleCaseProfile without hearing history", () => {
+  it("still shows the Hearing History section, with its empty state", () => {
+    render(
+      <MemoryRouter>
+        <UsIdParoleCaseProfile
+          caseDetail={{ ...CASE, hearingHistory: [] }}
+          config={US_ID_CONFIG.paroleConfig}
+        />
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Hearing History" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("No hearing history on record"),
+    ).toBeInTheDocument();
   });
 });

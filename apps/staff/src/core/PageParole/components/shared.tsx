@@ -84,6 +84,13 @@ export const formatDateNumeric = (date: string | number | Date) =>
     year: "numeric",
   });
 
+/** Returns the month and year as numbers (e.g. "1/2018"). */
+export const formatMonthYearNumeric = (date: string | number | Date) =>
+  toSafeDate(date).toLocaleDateString("en-US", {
+    month: "numeric",
+    year: "numeric",
+  });
+
 /** Returns the month name alone (e.g. "October"), for a date known only to the month. */
 export const formatMonth = (date: string | number | Date) =>
   toSafeDate(date).toLocaleDateString("en-US", { month: "long" });
@@ -353,6 +360,7 @@ export const PAROLE_SECTION_IDS = {
   programParticipation: "parole-section-program-participation",
   conductHistory: "parole-section-conduct-history",
   institutionalHistory: "parole-section-institutional-history",
+  hearingHistory: "parole-section-hearing-history",
   attachments: "parole-section-attachments",
   communitySupervisionPlan: "parole-section-community-supervision-plan",
 } as const;

@@ -26,6 +26,7 @@ import { CaseProfileSidebar } from "../components/CaseProfileSidebar";
 import { SectionAnchor } from "../components/SectionAnchor";
 import { PAROLE_SECTION_IDS } from "../components/shared";
 import { US_ID_CARD_CORNER_RADIUS } from "../components/US_ID/UsIdCaseProfileStyles";
+import { UsIdHearingHistorySection } from "../components/US_ID/UsIdHearingHistorySection";
 import { UsIdInstitutionalHistorySection } from "../components/US_ID/UsIdInstitutionalHistorySection";
 import { UsIdOffenseHistorySection } from "../components/US_ID/UsIdOffenseHistorySection";
 import { UsIdParoleSidebar } from "../components/US_ID/UsIdParoleSidebar";
@@ -40,6 +41,10 @@ const SECTION_NAV = [
   {
     id: PAROLE_SECTION_IDS.institutionalHistory,
     label: "Institutional History",
+  },
+  {
+    id: PAROLE_SECTION_IDS.hearingHistory,
+    label: "Hearing History",
   },
 ];
 
@@ -82,6 +87,12 @@ export function UsIdParoleCaseProfile({
         <UsIdInstitutionalHistorySection
           caseDetail={caseDetail}
           config={config}
+        />
+      </SectionAnchor>
+
+      <SectionAnchor id={PAROLE_SECTION_IDS.hearingHistory}>
+        <UsIdHearingHistorySection
+          hearingHistory={caseDetail.hearingHistory ?? []}
         />
       </SectionAnchor>
     </ParoleCaseProfileLayout>

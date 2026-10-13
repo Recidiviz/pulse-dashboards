@@ -34,6 +34,7 @@ import {
   ParoleConductRecord,
   paroleConductRecordSchema,
   ParoleHearing,
+  ParoleHearingHistoryEntry,
   paroleHearingSchema,
   ParoleRiskAssessment,
   ParoleRiskNeedFactor,
@@ -2254,6 +2255,65 @@ function withCaseNotes(
   return { ...caseDetail, caseNotes: buildIdCaseNotes(index, new Date()) };
 }
 
+const ID_HEARING_HISTORY_TEMPLATES: ReadonlyArray<
+  Omit<ParoleHearingHistoryEntry, "hearingDate"> & { daysAgo: number }
+> = [
+  {
+    daysAgo: 150,
+    hearingType: "Revocation Hearing",
+    hearingDecision: "Parole revoked",
+  },
+  {
+    daysAgo: 900,
+    hearingType: "Regular Hearing",
+    hearingDecision: "Parole granted",
+  },
+  {
+    daysAgo: 2000,
+    hearingType: "Regular Hearing",
+    hearingDecision: "Parole denied",
+  },
+];
+
+/**
+ * Builds a case's held hearings, newest first. The number of hearings varies
+ * off the case's index, so the list shows one to three entries across cases.
+ *
+ * @param index - The case's position in the fixture list.
+ * @param today - The date the fixture is generated relative to.
+ */
+function buildIdHearingHistory(
+  index: number,
+  today: Date,
+): Array<ParoleHearingHistoryEntry> {
+  return ID_HEARING_HISTORY_TEMPLATES.slice(0, (index % 3) + 1).map(
+    ({ daysAgo, ...entry }) => ({
+      ...entry,
+      hearingDate: iso(subDays(today, daysAgo)),
+    }),
+  );
+}
+
+/**
+ * Attaches hearing history to Idaho's cases. Colorado's backend does not show
+ * the section, so its cases keep none.
+ *
+ * @param caseDetail - The case to attach hearing history to.
+ * @param index - The case's position in the fixture list.
+ * @param stateCode - The tenant the case is built for.
+ */
+function withHearingHistory(
+  caseDetail: ParoleCase,
+  index: number,
+  stateCode: ParoleFixtureStateCode,
+): ParoleCase {
+  if (stateCode !== "US_ID" || caseDetail.hearingHistory) return caseDetail;
+  return {
+    ...caseDetail,
+    hearingHistory: buildIdHearingHistory(index, new Date()),
+  };
+}
+
 function buildParoleCasesFixture(
   stateCode: ParoleFixtureStateCode,
 ): Record<string, ParoleCase> {
@@ -2274,8 +2334,12 @@ function buildParoleCasesFixture(
 
       return [
         hearing.pseudonymizedId,
-        withCaseNotes(
-          withAssessmentLevels(caseDetail, stateCode),
+        withHearingHistory(
+          withCaseNotes(
+            withAssessmentLevels(caseDetail, stateCode),
+            index,
+            stateCode,
+          ),
           index,
           stateCode,
         ),

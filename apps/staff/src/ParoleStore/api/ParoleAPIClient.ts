@@ -38,6 +38,7 @@ import {
   ParoleDocProgram,
   ParoleEdovoProgram,
   ParoleHearing,
+  ParoleHearingHistoryEntry,
   ParoleLifeSentence,
   ParoleOffense,
   ParoleOffenseHistory,
@@ -87,6 +88,9 @@ function isSupportedTenantMetadata(
 
 const UNKNOWN_TEXT = PAROLE_UNKNOWN_TEXT;
 const UNKNOWN_DATE = PAROLE_UNKNOWN_DATE;
+
+const HEARING_STATUS_PREVIOUS = "PREVIOUS";
+const HEARING_STATUS_SCHEDULED = "SCHEDULED";
 
 /** The fields the mappers below read off a resident's scheduled hearing. */
 type ScheduledHearing = Pick<
@@ -447,7 +451,8 @@ export class ParoleAPIClient implements ParoleAPI {
   ): ScheduledHearing | undefined {
     return (profile?.paroleHearings ?? [])
       .flatMap((hearing) =>
-        hearing.hearingStatus === "SCHEDULED" && hearing.hearingDate
+        hearing.hearingStatus === HEARING_STATUS_SCHEDULED &&
+        hearing.hearingDate
           ? [
               {
                 hearingDate: hearing.hearingDate,
@@ -458,6 +463,32 @@ export class ParoleAPIClient implements ParoleAPI {
           : [],
       )
       .sort((a, b) => a.hearingDate.localeCompare(b.hearingDate))[0];
+  }
+
+  /**
+   * Hearings the Board already held, newest first, read from
+   * `parole_board_client_profile.parole_hearings`. A hearing without a date is
+   * dropped, since the list cannot place it.
+   *
+   * @param profile - The resident's Parole Board client profile, if any.
+   */
+  private hearingHistoryForResident(
+    profile: ParoleBoardClientProfileRecord | undefined,
+  ): Array<ParoleHearingHistoryEntry> {
+    return (profile?.paroleHearings ?? [])
+      .flatMap((hearing) =>
+        hearing.hearingStatus === HEARING_STATUS_PREVIOUS && hearing.hearingDate
+          ? [
+              {
+                hearingDate: hearing.hearingDate,
+                hearingType: hearing.hearingType ?? UNKNOWN_TEXT,
+                hearingSubtype: hearing.hearingSubtype,
+                hearingDecision: hearing.hearingDecision,
+              },
+            ]
+          : [],
+      )
+      .sort((a, b) => b.hearingDate.localeCompare(a.hearingDate));
   }
 
   /**
@@ -529,6 +560,7 @@ export class ParoleAPIClient implements ParoleAPI {
       docPrograms: this.docProgramsForResident(profile),
       edovoPrograms: this.edovoProgramsForResident(profile),
       caseNotes: this.caseNotesForResident(profile),
+      hearingHistory: this.hearingHistoryForResident(profile),
       offenseHistory: {
         offenses: this.offensesForResident(profile),
         priorConvictions: this.priorConvictionsForResident(profile),
