@@ -234,10 +234,10 @@ describe("ParoleDocketPresenter docket window", () => {
     };
   }
 
-  // US_CO looks 14 days ahead, US_ID 30 -- see each tenant's paroleConfig.
+  // US_CO looks 14 days ahead, US_ID 120 -- see each tenant's paroleConfig.
   it.each([
     ["US_CO", 14],
-    ["US_ID", 30],
+    ["US_ID", 120],
   ] as const)(
     "keeps a %s hearing on the last day of the window and drops the day after",
     async (tenantId, windowDaysAfter) => {
@@ -252,13 +252,13 @@ describe("ParoleDocketPresenter docket window", () => {
     },
   );
 
-  // US_ID looks back 7 days; US_CO looks back 31 -- a full month, since its
+  // US_ID starts its window today; US_CO looks back 31 -- a full month, since its
   // scheduled hearing dates are truncated to the 1st of the month (see
   // us_co/parole_board_client_profile.py), so a hearing set for "this month"
   // must stay on the docket through the month's last day.
   it.each([
     ["US_CO", 31],
-    ["US_ID", 7],
+    ["US_ID", 0],
   ] as const)(
     "keeps a %s hearing on the first day of its look-back and drops the day before",
     async (tenantId, windowDaysBefore) => {

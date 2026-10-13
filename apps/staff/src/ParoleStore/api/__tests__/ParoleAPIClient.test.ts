@@ -153,11 +153,11 @@ describe("ParoleAPIClient", () => {
 
       await client.hearings();
 
-      // US_ID's docketConfig: windowDaysBefore 7, windowDaysAfter 30.
+      // US_ID's docketConfig: windowDaysBefore 0, windowDaysAfter 120.
       expect(spy).toHaveBeenCalledWith("US_ID", {
         field: "metadata.docketHearingDate",
-        startDateInclusive: formatDateToISO(subDays(startOfToday(), 7)),
-        endDateInclusive: formatDateToISO(addDays(startOfToday(), 30)),
+        startDateInclusive: formatDateToISO(startOfToday()),
+        endDateInclusive: formatDateToISO(addDays(startOfToday(), 120)),
       });
     });
 

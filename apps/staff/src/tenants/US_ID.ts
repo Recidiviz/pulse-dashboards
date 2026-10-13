@@ -245,8 +245,8 @@ const US_ID_CONFIG = {
         { header: "Hearing Type", field: "hearingType" },
         { header: "Facility", field: "facility" },
       ],
-      windowDaysBefore: 7,
-      windowDaysAfter: 30,
+      windowDaysBefore: 0,
+      windowDaysAfter: 120,
     },
     conductHistoryConfig: {
       classificationColors: {
