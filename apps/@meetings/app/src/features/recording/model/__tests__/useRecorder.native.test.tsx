@@ -167,13 +167,14 @@ describe("useRecorder (native)", () => {
       expect(mockShowSnackbar).toHaveBeenCalledTimes(1);
     });
 
-    it("skips audio mode configuration on iOS", async () => {
+    it("configures the audio mode for background recording on iOS", async () => {
       jest.replaceProperty(Platform, "OS", "ios");
       const { result } = renderHook(() => useRecorder());
 
       await act(() => result.current.start());
 
-      expect(configureAudioMode).not.toHaveBeenCalled();
+      expect(configureAudioMode).toHaveBeenCalledTimes(1);
+      expect(mockShowSnackbar).not.toHaveBeenCalled();
     });
   });
 

@@ -23,7 +23,7 @@ import {
 } from "expo-audio";
 import * as FileSystem from "expo-file-system/legacy";
 import { useEffect, useRef, useState } from "react";
-import { Alert, Linking, Platform } from "react-native";
+import { Alert, Linking } from "react-native";
 
 import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 
@@ -107,7 +107,7 @@ export function useRecorder(): AudioRecorder {
       throw new Error("Microphone permission not granted");
     }
 
-    if (!allowsBackgroundRecordingRef.current && Platform.OS === "android") {
+    if (!allowsBackgroundRecordingRef.current) {
       const { allowsBackgroundRecording } = await configureAudioMode();
       allowsBackgroundRecordingRef.current = allowsBackgroundRecording;
 
