@@ -15,27 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useSuspenseQuery } from "@tanstack/react-query";
-
-import { useRootStore } from "~@jii/data";
-
+import { ResourceList } from "../Reentry/Resources/ResourceList/ResourceList";
 import { SuspenseQueryBoundary } from "../Reentry/SuspenseQueryBoundary";
-
-const ResourceCount = () => {
-  const {
-    apiClient: { trpcQuerier },
-  } = useRootStore();
-  const { data } = useSuspenseQuery(
-    trpcQuerier.resident.resources.getResources.queryOptions(),
-  );
-
-  return <div>{data.length}</div>;
-};
 
 export const PageUsMaResourceList = () => {
   return (
     <SuspenseQueryBoundary>
-      <ResourceCount />
+      <ResourceList />
     </SuspenseQueryBoundary>
   );
 };
