@@ -21,6 +21,26 @@ import { z } from "zod";
 import { nullishAsUndefined } from "~datatypes";
 import { camelCaseObject } from "~utils";
 
+const rangeSchema = z.object({
+  min: z.number(),
+  max: z.number(),
+});
+
+const usMaHousingAttributesSchema = z.object({
+  category: z.literal("Housing"),
+  weeklyRent: nullishAsUndefined(rangeSchema),
+  rentAsIncomePercent: nullishAsUndefined(z.number()),
+  programLengthMonths: nullishAsUndefined(rangeSchema),
+  numBeds: nullishAsUndefined(z.number()),
+});
+
+// Add a schema here for each category whose organizations carry
+// category_attributes. An organization with an unrecognized category fails to
+// parse, and resourceApiClient drops and reports it.
+const categoryAttributesSchema = nullishAsUndefined(
+  z.discriminatedUnion("category", [usMaHousingAttributesSchema]),
+);
+
 const organizationBaseSchema = z.object({
   id: z.number(),
   name: z.string(),
@@ -33,6 +53,8 @@ const organizationBaseSchema = z.object({
       }),
     ),
     tags: z.array(z.string()),
+    county: nullishAsUndefined(z.string()),
+    categoryAttributes: categoryAttributesSchema,
   }),
   primaryContactMethod: nullishAsUndefined(z.string()),
   primaryContactValue: nullishAsUndefined(z.string()),
@@ -71,10 +93,15 @@ function sanitizeString(s: string): string {
 
 function organizationTransform<
   T extends z.infer<typeof organizationBaseSchema>,
->({ id, attributes: { categorizations, tags }, ...rest }: T) {
+>({
+  id,
+  attributes: { categorizations, tags, ...otherAttributes },
+  ...rest
+}: T) {
   return {
     organizationId: id,
     ...rest,
+    ...otherAttributes,
     categories: categorizations.map(({ section, subsection }) => ({
       category: sanitizeString(section),
       subcategory: sanitizeString(subsection),

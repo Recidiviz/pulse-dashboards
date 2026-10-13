@@ -15,7 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { captureException } from "@sentry/node";
+
 import { resourceApiClient } from "./resourceApiClient";
+
+vi.mock("@sentry/node", () => ({ captureException: vi.fn() }));
 
 vi.mock("../../../../helpers/createCachedCall", () => ({
   createCachedCall: <T>(fn: () => T) => fn,
@@ -51,6 +55,7 @@ beforeEach(() => {
 afterEach(() => {
   vi.unstubAllEnvs();
   vi.unstubAllGlobals();
+  vi.clearAllMocks();
 });
 
 describe("getOrganizations", () => {
@@ -162,6 +167,28 @@ describe("getOrganizations", () => {
       expect.objectContaining({
         method: "POST",
         body: JSON.stringify({ origin: "NYC_CONNECTIONS" }),
+      }),
+    );
+  });
+
+  test("throws when the response is not an array", async () => {
+    mockFetch({ detail: "unexpected" });
+
+    await expect(
+      resourceApiClient.getOrganizations(US_NYC_STATE_CODE),
+    ).rejects.toThrow();
+  });
+
+  test("sends the CURATED origin for US_MA", async () => {
+    const fetch = mockFetch([]);
+
+    await resourceApiClient.getOrganizations("US_MA");
+
+    expect(fetch).toHaveBeenCalledWith(
+      `${BASE_URL}/api/v1/organizations`,
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({ origin: "CURATED" }),
       }),
     );
   });
@@ -329,6 +356,130 @@ describe("getOrganization", () => {
     expect(result.addresses[1].googlePlaceId).toBeUndefined();
     expect(result.phoneNumbers).toHaveLength(2);
     expect(result.phoneNumbers[0].addressId).toBe(383);
+  });
+
+  test("reports and throws when the organization fails to parse", async () => {
+    mockFetch({ id: 42, name: "Test Org" });
+
+    await expect(resourceApiClient.getOrganization(42)).rejects.toMatchObject({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Could not parse organization",
+    });
+    expect(captureException).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("US_MA housing attributes", () => {
+  const housingOrganization = {
+    id: 9002,
+    name: "Sample Street Women's Residence",
+    attributes: {
+      categorizations: [
+        { section: "Housing", subsection: "Transitional Housing" },
+      ],
+      tags: ["Women", "Parolees Accepted"],
+      county: "Worcester",
+      category_attributes: {
+        category: "Housing",
+        weekly_rent: { min: 150, max: 200 },
+        program_length_months: { min: 6, max: 12 },
+        num_beds: 8,
+      },
+    },
+    addresses: [],
+    phone_numbers: [],
+    websites: [],
+  };
+  const expectedAttributes = {
+    county: "Worcester",
+    categoryAttributes: {
+      category: "Housing",
+      weeklyRent: { min: 150, max: 200 },
+      programLengthMonths: { min: 6, max: 12 },
+      numBeds: 8,
+    },
+  };
+
+  test("getOrganizations parses county and categoryAttributes", async () => {
+    mockFetch([housingOrganization]);
+
+    const [result] = await resourceApiClient.getOrganizations("US_MA");
+
+    expect(result).toMatchObject(expectedAttributes);
+  });
+
+  test("getOrganization parses county and categoryAttributes", async () => {
+    mockFetch(housingOrganization);
+
+    const result = await resourceApiClient.getOrganization(9002);
+
+    expect(result).toMatchObject(expectedAttributes);
+  });
+
+  test("coalesces null county and category attributes to undefined", async () => {
+    mockFetch([
+      {
+        id: 1,
+        name: "Test Org",
+        attributes: {
+          categorizations: [],
+          tags: [],
+          county: null,
+          category_attributes: {
+            category: "Housing",
+            weekly_rent: null,
+            rent_as_income_percent: null,
+            program_length_months: null,
+            num_beds: null,
+          },
+        },
+      },
+    ]);
+
+    const [result] = await resourceApiClient.getOrganizations("US_MA");
+
+    expect(result.county).toBeUndefined();
+    expect(result.categoryAttributes).toEqual({ category: "Housing" });
+  });
+
+  test("drops and reports an organization with an unrecognized category, keeping the rest", async () => {
+    mockFetch([
+      {
+        id: 1,
+        name: "Test Org",
+        attributes: {
+          categorizations: [],
+          tags: [],
+          county: "Suffolk",
+          category_attributes: { category: "Employment", hourly_wage: 20 },
+        },
+      },
+      housingOrganization,
+    ]);
+
+    const result = await resourceApiClient.getOrganizations("US_MA");
+
+    expect(result.map((org) => org.organizationId)).toEqual([9002]);
+    expect(captureException).toHaveBeenCalledTimes(1);
+  });
+
+  test("leaves county and categoryAttributes undefined for an NYC organization", async () => {
+    mockFetch([
+      {
+        id: 1,
+        name: "Test Org",
+        attributes: {
+          categorizations: [{ section: "Legal", subsection: "Public Defense" }],
+          tags: [],
+        },
+      },
+    ]);
+
+    const [result] =
+      await resourceApiClient.getOrganizations(US_NYC_STATE_CODE);
+
+    expect(result.county).toBeUndefined();
+    expect(result.categoryAttributes).toBeUndefined();
   });
 });
 

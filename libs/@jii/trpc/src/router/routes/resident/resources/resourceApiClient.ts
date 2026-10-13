@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { captureException } from "@sentry/node";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -29,6 +30,7 @@ import {
 // Maps state codes to Resource API params.
 const RESOURCES_CONFIG: Record<string, { origin: string }> = {
   US_NYC: { origin: "NYC_CONNECTIONS" },
+  US_MA: { origin: "CURATED" },
 };
 
 async function request(path: string, body: unknown): Promise<unknown> {
@@ -64,12 +66,33 @@ async function fetchOrganizations(
   origin: string,
 ): Promise<OrganizationSummary[]> {
   const rawResponse = await request("/api/v1/organizations", { origin });
-  return z.array(organizationApiSchema).parse(rawResponse);
+  // One malformed organization is dropped and reported rather than failing the
+  // whole list
+  return z
+    .array(z.unknown())
+    .parse(rawResponse)
+    .flatMap((rawOrganization) => {
+      const result = organizationApiSchema.safeParse(rawOrganization);
+      if (result.error) {
+        captureException(result.error);
+        return [];
+      }
+      return [result.data];
+    });
 }
 
 async function fetchOrganization(id: number): Promise<OrganizationDetail> {
   const rawResponse = await request("/api/v1/organization", { id });
-  return organizationDetailApiSchema.parse(rawResponse);
+  const result = organizationDetailApiSchema.safeParse(rawResponse);
+  if (result.error) {
+    captureException(result.error);
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Could not parse organization",
+      cause: result.error,
+    });
+  }
+  return result.data;
 }
 
 const cachedFetchersByState = Object.fromEntries(
