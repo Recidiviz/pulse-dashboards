@@ -18,6 +18,7 @@
 export * from "./UsMiClassificationReviewOpportunity";
 export * from "./UsMiCustodyLevelDowngradeOpportunity";
 export * from "./UsMiEarlyDischargeOpportunity";
+export * from "./UsMiInitialClassification2026Opportunity";
 export * from "./UsMiMinimumTelephoneReportingOpportunity";
 export * from "./UsMiPastFTRDOpportunity";
 export * from "./UsMiSupervisionLevelDowngradeOpportunity";

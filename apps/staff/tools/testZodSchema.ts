@@ -47,6 +47,7 @@ import {
   usMiClassificationReviewSchemaForSupervisionLevelFormatter,
   usMiCustodyLevelDowngradeSchema,
   usMiEarlyDischargeSchema,
+  usMiInitialClassificationSchema,
   usMiMinimumTelephoneReportingSchema,
   usMiPastFTRDSchema,
   usMiSecurityClassificationCommitteeReviewV2Schema,
@@ -147,6 +148,7 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
     usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(),
   usMiWardenInPersonSecurityClassificationCommitteeReviewV2:
     usMiWardenInPersonSecurityClassificationCommitteeReviewV2Schema,
+  usMiInitialClassificationReview2026Policy: usMiInitialClassificationSchema,
 
   // US_MO
   usMoOverdueRestrictiveHousingRelease:

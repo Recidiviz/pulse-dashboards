@@ -65,6 +65,7 @@ import { UsIdCRCWorkReleaseOpportunity } from "./UsId/UsIdCRCWorkReleaseOpportun
 import { UsIdOverdueFaceToFaceContactOpportunity } from "./UsId/usIdOverdueFaceToFaceContact";
 import { UsIdTransferToCRCLikeBedOpportunity } from "./UsId/UsIdTransferToCRCLikeBedOpportunity";
 import { usMiAddInPersonSecurityClassificationCommitteeReviewV2Opportunity } from "./UsMi/UsMiAddInPersonSecurityClassificationCommitteeReviewV2Opportunity";
+import { UsMiInitialClassificationOpportunity } from "./UsMi/UsMiInitialClassification2026Opportunity/UsMiInitialClassificationOpportunity";
 import { usMiReclassificationRequestOpportunity } from "./UsMi/UsMiReclassificationRequestOpportunity";
 import { usMiSecurityClassificationCommitteeReviewV2Opportunity } from "./UsMi/UsMiSecurityClassificationCommitteeReviewV2Opportunity";
 import { usMiWardenInPersonSecurityClassificationCommitteeReviewV2Opportunity } from "./UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReviewV2Opportunity";
@@ -150,6 +151,8 @@ export const opportunityConstructors = {
   usMiWardenInPersonSecurityClassificationCommitteeReviewV2:
     usMiWardenInPersonSecurityClassificationCommitteeReviewV2Opportunity,
   usMiCustodyLevelDowngrade: UsMiCustodyLevelDowngradeOpportunity,
+  usMiInitialClassificationReview2026Policy:
+    UsMiInitialClassificationOpportunity,
 
   // US_MO
   usMoOverdueRestrictiveHousingInitialHearing:
