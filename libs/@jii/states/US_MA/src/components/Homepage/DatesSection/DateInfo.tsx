@@ -20,7 +20,8 @@ import { FC } from "react";
 import { CardDateInfo } from "~@jii/earned-good-time";
 
 export const DateInfo: FC<{
-  tag: string;
+  // TODO(JII2-47): remove tag once the old DatesSection cards are deleted
+  tag?: string;
   label: string;
   value?: string;
   muted?: boolean;

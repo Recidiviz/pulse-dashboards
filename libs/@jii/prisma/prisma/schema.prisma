@@ -60,6 +60,7 @@ enum ResidentFlagId {
     usArFslImprovements
     usNcRNAAutoEnablement
     usMaReentry
+    usMaSentenceDatesV1
 }
 
 model ResidentFlagInstance {

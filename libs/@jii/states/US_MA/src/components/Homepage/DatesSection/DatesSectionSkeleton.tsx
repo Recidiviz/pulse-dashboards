@@ -32,16 +32,14 @@ export const DatesSectionSkeleton = () => {
       {/* First card skeleton (RTS) */}
       <Card>
         <DateInfoSkeleton
-          tag={t(($) => $.tags.rts)}
-          label={t(($) => $.home.dates.rts.label)}
+          label={t(($) => $.sentenceDates.dates["rts"].label)}
         />
       </Card>
 
       {/* Second card skeleton (MAX) */}
       <Card>
         <DateInfoSkeleton
-          tag={t(($) => $.tags.maxRelease)}
-          label={t(($) => $.home.dates.maxRelease.label)}
+          label={t(($) => $.sentenceDates.dates["maxRelease"].label)}
         />
       </Card>
     </section>

@@ -42,7 +42,7 @@
         }
       },
       "parole": {
-        "label": "Parole eligibility date",
+        "label": "Parole eligibility date (PE)",
         "tag": "PE",
         "summary": "Questions regarding the calculation of parole eligibility dates should be directed to the Institutional Parole Officer."
       }

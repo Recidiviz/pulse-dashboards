@@ -17,7 +17,7 @@
 
 import { z } from "zod";
 
-import { dateStringSchema } from "~datatypes";
+import { dateStringSchema, nullishAsUndefined } from "~datatypes";
 
 export const usMaEarnedCreditTypes = z.enum([
   "earnedGoodTime",
@@ -80,9 +80,9 @@ export const creditActivitySchema = z.object({
 export const usMaStateDataSchema = z.object({
   stateCode: z.literal("US_MA"),
   isEgtDisabled: z.boolean().nullish(),
-  rtsDate: dateStringSchema.nullable(),
-  adjustedMaxReleaseDate: dateStringSchema.nullable(),
-  originalMaxReleaseDate: dateStringSchema.nullable(),
+  rtsDate: nullishAsUndefined(dateStringSchema),
+  adjustedMaxReleaseDate: nullishAsUndefined(dateStringSchema),
+  originalMaxReleaseDate: nullishAsUndefined(dateStringSchema),
   totalCompletionCredit: nullZeroFloatSchema,
   totalCompletionCreditDaysCalculated: nullZeroFloatSchema,
   totalStateCredit: nullZeroFloatSchema,

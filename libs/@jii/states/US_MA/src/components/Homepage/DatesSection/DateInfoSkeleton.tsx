@@ -22,12 +22,11 @@ import { CardValue } from "~@jii/common-ui";
 import { DateInfoShell } from "~@jii/earned-good-time";
 
 export const DateInfoSkeleton: FC<{
-  tag: string;
   label: string;
   muted?: boolean;
-}> = ({ tag, label, muted }) => {
+}> = ({ label, muted }) => {
   return (
-    <DateInfoShell tag={tag} label={label} muted={muted}>
+    <DateInfoShell label={label} muted={muted}>
       <CardValue>
         <Skeleton width="60%" />
       </CardValue>

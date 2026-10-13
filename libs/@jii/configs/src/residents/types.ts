@@ -40,6 +40,7 @@ type ResidentFlag =
   | "usArFslImprovements"
   | "usNcRNAAutoEnablement"
   | "usMaReentry"
+  | "usMaSentenceDatesV1"
   | "usNeCheckInTool";
 
 // this type must stay in sync with the UserFlagId enum

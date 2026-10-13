@@ -19,17 +19,23 @@ import { observer } from "mobx-react-lite";
 import styled from "styled-components";
 
 import { usePageTitle } from "~@jii/common-ui";
+import { useSingleResidentContext } from "~@jii/data";
 import { LastUpdatedBanner } from "~@jii/layout";
 import { ProgramsCtaSection } from "~@jii/program-catalog";
+import { SentenceDates } from "~@jii/sentence-dates";
 import { useUsMaTranslations } from "~@jii/translation";
+import { withPresenterManager } from "~hydration-utils";
 
 import { Disclaimer } from "../Disclaimer/Disclaimer";
 import { useEGTDataContext } from "../EGTDataContext/context";
+import { CardsWrapperOverride } from "../SentenceDatesOverrides/CardsWrapperOverride";
+import { DateCardBodyWrapperOverride } from "../SentenceDatesOverrides/DateCardBodyWrapperOverride";
 import { ActivityChart, ActivityChartSkeleton } from "./ActivityChart";
 import { DatesSection, DatesSectionSkeleton } from "./DatesSection";
 import { EmptyState } from "./EmptyState";
 import { MonthlyReportHomepageCard } from "./MonthlyReport/MonthlyReportHomepageCard";
 import { MonthlyReportHomepageCardSkeleton } from "./MonthlyReport/MonthlyReportHomepageCardSkeleton";
+import { ResidentHomepagePresenter } from "./ResidentHomepagePresenter";
 import { SpanishLaunchBanner } from "./SpanishLaunchBanner";
 import { TotalTimeEarnedSection } from "./TotalTimeEarnedSection/TotalTimeEarnedSection";
 import { TotalTimeEarnedSectionSkeleton } from "./TotalTimeEarnedSection/TotalTimeEarnedSectionSkeleton";
@@ -39,35 +45,61 @@ const SkeletonMode = styled.div`
   filter: opacity(0.6);
 `;
 
-export const Homepage = observer(function Homepage() {
-  const { data } = useEGTDataContext();
-  const { t } = useUsMaTranslations();
-  usePageTitle(t(($) => $.home.pageTitle));
+const ManagedComponent: React.FC<{ presenter: ResidentHomepagePresenter }> =
+  observer(function Homepage({ presenter }) {
+    const { t } = useUsMaTranslations();
+    const { residentFlags } = useSingleResidentContext();
+    usePageTitle(t(($) => $.home.pageTitle));
 
-  return (
-    <div>
-      <LastUpdatedBanner overrideCopy={t(($) => $.lastUpdated, data)} />
-      <SpanishLaunchBanner />
-      <ProgramsCtaSection stateCode="US_MA" />
-      {data.isEgtDisabled ? (
-        <>
-          <EmptyState />
-          <SkeletonMode>
-            <DatesSectionSkeleton />
-            <ActivityChartSkeleton />
-            <MonthlyReportHomepageCardSkeleton />
-            <TotalTimeEarnedSectionSkeleton />
-          </SkeletonMode>
-        </>
-      ) : (
-        <>
-          <DatesSection />
-          <ActivityChart />
-          <MonthlyReportHomepageCard />
-          <TotalTimeEarnedSection />
-          <Disclaimer />
-        </>
-      )}
-    </div>
-  );
+    return (
+      <div>
+        <LastUpdatedBanner
+          overrideCopy={t(($) => $.lastUpdated, {
+            lastUpdatedDate: presenter.lastUpdatedDate,
+          })}
+        />
+        <SpanishLaunchBanner />
+        <ProgramsCtaSection stateCode="US_MA" />
+        {presenter.isEgtDisabled ? (
+          <>
+            <EmptyState />
+            <SkeletonMode>
+              <DatesSectionSkeleton />
+              <ActivityChartSkeleton />
+              <MonthlyReportHomepageCardSkeleton />
+              <TotalTimeEarnedSectionSkeleton />
+            </SkeletonMode>
+          </>
+        ) : (
+          <>
+            {/* TODO(JII2-47): remove the flag check and DatesSection once usMaSentenceDatesV1 is on for all of US_MA */}
+            {residentFlags.usMaSentenceDatesV1 ? (
+              <SentenceDates
+                data={presenter.sentenceDatesData}
+                stateCode="US_MA"
+                componentOverrides={{
+                  DateCardBodyWrapper: DateCardBodyWrapperOverride,
+                  CardsWrapper: CardsWrapperOverride,
+                }}
+              />
+            ) : (
+              <DatesSection />
+            )}
+            <ActivityChart />
+            <MonthlyReportHomepageCard />
+            <TotalTimeEarnedSection />
+            <Disclaimer />
+          </>
+        )}
+      </div>
+    );
+  });
+
+function usePresenter() {
+  return new ResidentHomepagePresenter(useEGTDataContext().data);
+}
+export const Homepage = withPresenterManager({
+  usePresenter,
+  ManagedComponent,
+  managerIsObserver: false,
 });
