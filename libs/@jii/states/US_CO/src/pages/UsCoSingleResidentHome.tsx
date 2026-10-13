@@ -27,6 +27,7 @@ import { SentenceDates } from "~@jii/sentence-dates";
 import { useUsCoTranslations } from "~@jii/translation";
 import { withPresenterManager } from "~hydration-utils";
 
+import { SentenceDatesDateCardOverride } from "../components/SentenceDatesOverrides/DateCardOverride";
 import { AETBanner } from "../components/UsCoSingleResidentHome/UsCoAETBanner";
 import { UsCoMonthlyReports } from "../components/UsCoSingleResidentHome/UsCoMonthlyReports";
 import { isYOSResident } from "../isYOSResident";
@@ -68,6 +69,7 @@ const ManagedComponent: React.FC<{ presenter: ResidentHomePresenter }> =
           stateCode="US_CO"
           componentOverrides={{
             SectionWrapper: SentenceDatesSectionWrapperOverride,
+            DateCard: SentenceDatesDateCardOverride,
             DateValue: SentenceDatesPedValueOverride,
             DateValueSupplemental: SentenceDatesPedSupplementalOverride,
           }}

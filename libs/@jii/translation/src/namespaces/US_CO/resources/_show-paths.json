@@ -78,7 +78,9 @@
       "lifeSentence": {
         "withParole": "[US_CO]homepage.sentenceDates.lifeSentence.withParole",
         "withoutParole": "[US_CO]homepage.sentenceDates.lifeSentence.withoutParole"
-      }
+      },
+      "mrdOverride": "[US_CO]homepage.sentenceDates.mrdOverride",
+      "mrdOverrideFullState": "[US_CO]homepage.sentenceDates.mrdOverrideFullState"
     }
   },
   "sentenceDates": {

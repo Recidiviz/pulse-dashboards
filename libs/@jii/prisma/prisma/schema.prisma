@@ -54,6 +54,8 @@ enum ResidentFlagId {
     usAzIonReferral
     usCoV1Experience
     usCoEdovoV1
+    usCoMrdOverride
+    usCoMrdOverrideFullState
     usCoEdovoCredits
     usArFslImprovements
     usNcRNAAutoEnablement

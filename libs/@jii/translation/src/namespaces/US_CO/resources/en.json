@@ -78,7 +78,9 @@
       "lifeSentence": {
         "withParole": "Life Sentence With Parole",
         "withoutParole": "Life Sentence Without Parole"
-      }
+      },
+      "mrdOverride": "Due to your completion of Achievement Earned Time, your MRD has moved up. CDOC is working to get you your new MRD as soon as possible, and a notification will be sent when your MRD is available. If you have questions in the meantime please reach out to your Case Manager.",
+      "mrdOverrideFullState": "CDOC is in the process of updating MRDs as a result of a new policy. This is expected to take a few days. Once updates are complete, your MRD will be shown here again."
     }
   },
   "sentenceDates": {
