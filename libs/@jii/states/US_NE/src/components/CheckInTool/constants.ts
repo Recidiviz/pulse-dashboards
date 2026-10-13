@@ -15,6 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const FOOTER_HEIGHT = 72;
+export const FOOTER_HEIGHT = 144;
 
 export const CONTENT_MAX_WIDTH = 600;

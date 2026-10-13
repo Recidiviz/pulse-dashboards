@@ -37,6 +37,7 @@ export const Wrapper = styled.div`
   left: 0;
   margin: 0 auto;
   padding: 0 ${rem(spacing.xl + spacing.sm)};
+  padding-bottom: ${rem(FOOTER_HEIGHT / 2)};
   position: fixed;
   right: 0;
   z-index: ${STICKY_HEADER_ZINDEX};
