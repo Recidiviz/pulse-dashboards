@@ -88,6 +88,68 @@ describe("buildPruneFilter", () => {
   });
 });
 
+describe("the system the ETL stamps", () => {
+  const template = [
+    { name: "opportunities", fields: ["externalId", "opportunityType"] },
+  ];
+
+  it("stamps the system onto every document the source yields", () => {
+    const [result] = instantiateFromSourceCollection(
+      template,
+      "US_TN-compliantReportingReferrals",
+      "SUPERVISION",
+    );
+
+    expect(result.constantFields).toEqual({
+      sourceCollection: "US_TN-compliantReportingReferrals",
+      system: "SUPERVISION",
+    });
+  });
+
+  it("carries INCARCERATION just the same", () => {
+    const [result] = instantiateFromSourceCollection(
+      template,
+      "US_MO-overdueRestrictiveHousingReleaseReferrals",
+      "INCARCERATION",
+    );
+
+    expect(result.constantFields).toEqual({
+      sourceCollection: "US_MO-overdueRestrictiveHousingReleaseReferrals",
+      system: "INCARCERATION",
+    });
+  });
+
+  it("omits the field entirely when the request sends none", () => {
+    // Absent, not empty. An empty string would index and then match no key.
+    const [result] = instantiateFromSourceCollection(
+      template,
+      "US_TN-compliantReportingReferrals",
+    );
+
+    expect(result.constantFields).toEqual({
+      sourceCollection: "US_TN-compliantReportingReferrals",
+    });
+    expect(result.constantFields).not.toHaveProperty("system");
+  });
+
+  it("leaves a config that names its own source alone", () => {
+    // `clients` and `residents` take their system from SYSTEM_BY_COLLECTION,
+    // which this must not override.
+    const configs = [
+      {
+        name: "clients",
+        fields: ["externalId"],
+        sourceCollection: "clients",
+        constantFields: { system: "SUPERVISION" },
+      },
+    ];
+
+    expect(
+      instantiateFromSourceCollection(configs, "whatever", "INCARCERATION"),
+    ).toEqual(configs);
+  });
+});
+
 describe("instantiateFromSourceCollection", () => {
   it("returns the input unchanged when no sourceCollection is supplied", () => {
     const configs = [
@@ -215,5 +277,92 @@ describe("instantiateFromSourceCollection", () => {
       name: "clients",
       sourceCollection: "US_TN-somethingReferrals",
     });
+  });
+});
+
+describe("the merge source the system picks", () => {
+  // Mirrors OPPORTUNITY_SCOPE_MERGE_SOURCES: both keyed by the same composed
+  // (stateCode, externalId), differing only in which person collection they
+  // read and which field becomes `locationId`.
+  const clients = {
+    sourceCollection: "clients",
+    system: "SUPERVISION" as const,
+    hasStateCode: true,
+    fields: ["officerId", { from: "district", into: "locationId" }],
+  };
+  const residents = {
+    sourceCollection: "residents",
+    system: "INCARCERATION" as const,
+    hasStateCode: true,
+    fields: ["officerId", { from: "facilityId", into: "locationId" }],
+  };
+  const updates = {
+    sourceCollection: "clientOpportunityUpdates",
+    collectionGroup: true,
+    fields: ["updateStatus"],
+  };
+
+  const template = [
+    {
+      name: "opportunities",
+      fields: ["externalId"],
+      mergeSources: [clients, residents, updates],
+    },
+  ];
+
+  const sourcesFor = (system?: string) =>
+    instantiateFromSourceCollection(
+      template,
+      "US_TN-compliantReportingReferrals",
+      system,
+    )[0].mergeSources?.map((s) => s.sourceCollection);
+
+  it("reads clients on a SUPERVISION run", () => {
+    expect(sourcesFor("SUPERVISION")).toEqual([
+      "clients",
+      "clientOpportunityUpdates",
+    ]);
+  });
+
+  it("reads residents on an INCARCERATION run", () => {
+    expect(sourcesFor("INCARCERATION")).toEqual([
+      "residents",
+      "clientOpportunityUpdates",
+    ]);
+  });
+
+  it("never reads both", () => {
+    // The whole point. `clients` and `residents` can hold the same composed key
+    // for different people, and `projectWithMerges` lets the later source
+    // overwrite the earlier one, so a supervision opportunity would take its
+    // scope from an unrelated resident.
+    for (const system of ["SUPERVISION", "INCARCERATION"]) {
+      const picked = sourcesFor(system) ?? [];
+      expect(picked).not.toContain(
+        system === "SUPERVISION" ? "residents" : "clients",
+      );
+    }
+  });
+
+  it("keeps an untagged source on every run", () => {
+    expect(sourcesFor("SUPERVISION")).toContain("clientOpportunityUpdates");
+    expect(sourcesFor("INCARCERATION")).toContain("clientOpportunityUpdates");
+  });
+
+  it("drops every tagged source when the run has no system", () => {
+    // Fails closed. An unscoped document is invisible, which a re-backfill
+    // repairs; a wrongly scoped one is not. The handler rejects such a request
+    // before it reaches here, so this only bounds the blast radius.
+    expect(sourcesFor(undefined)).toEqual(["clientOpportunityUpdates"]);
+  });
+
+  it("leaves a config with no merge sources without the key", () => {
+    const [result] = instantiateFromSourceCollection(
+      [{ name: "opportunities", fields: ["externalId"] }],
+      "US_TN-compliantReportingReferrals",
+      "SUPERVISION",
+    );
+
+    expect(result).not.toHaveProperty("mergeSources");
   });
 });

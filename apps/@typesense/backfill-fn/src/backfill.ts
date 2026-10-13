@@ -250,6 +250,7 @@ export async function runBackfill(
   collectionsConfig: CollectionConfig[],
   stateCode?: string,
   sourceCollection?: string,
+  system?: string,
 ): Promise<BackfillSummary> {
   // A bare `{ collections: ["opportunities"] }` invocation (no
   // sourceCollection) falls through to backfillCollection using `name` as the
@@ -259,6 +260,7 @@ export async function runBackfill(
   const instantiated = instantiateFromSourceCollection(
     collectionsConfig,
     sourceCollection,
+    system,
   );
 
   const inScope = stateCode

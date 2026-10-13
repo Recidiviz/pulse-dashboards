@@ -29,7 +29,7 @@
 // for backfill-fn to instantiate it at runtime.
 
 import { OPPORTUNITY_UPDATE_FIELDS } from "./opportunityUpdates";
-import { schemas } from "./schemas";
+import { type DocumentSystem, schemas } from "./schemas";
 
 // Static `system` discriminator for each collection whose docs are inherently
 // single-system. backfill-fn stamps this onto every emitted doc via
@@ -37,7 +37,7 @@ import { schemas } from "./schemas";
 // filter_by works. `locations` is absent here — its docs are mixed (facilities
 // vs districts) and get `system` derived per-doc from `idType`; see
 // LOCATIONS_DERIVED_FIELDS below.
-const SYSTEM_BY_COLLECTION: Record<string, "SUPERVISION" | "INCARCERATION"> = {
+const SYSTEM_BY_COLLECTION: Record<string, DocumentSystem> = {
   clients: "SUPERVISION",
   supervisionStaff: "SUPERVISION",
   residents: "INCARCERATION",
@@ -116,31 +116,30 @@ const OPPORTUNITY_REFERENCE_FIELDS = [
   },
 ];
 
-// Person SCOPE merged onto the opportunities it governs — the three fields the
-// minted scoped key reads, and nothing else.
+// Person SCOPE merged onto the opportunities it governs — the fields the minted
+// scoped key reads, and nothing else.
+//
+// `system` picks exactly ONE of these per run, from the backfill request. Both
+// are keyed by (stateCode, externalId), and the two person collections can
+// carry the same externalId for different people, so running both would let
+// `residents` overwrite `clients` on every collision.
 const OPPORTUNITY_SCOPE_MERGE_SOURCES = [
   {
     sourceCollection: "clients",
+    system: "SUPERVISION" as const,
     lookupKey: PERSON_LOOKUP_KEY,
     hasStateCode: true,
-    fields: [
-      "officerId",
-      { from: "district", into: "locationId" },
-      { value: "SUPERVISION", into: "system" },
-    ],
+    fields: ["officerId", { from: "district", into: "locationId" }],
   },
   {
     sourceCollection: "residents",
+    system: "INCARCERATION" as const,
     lookupKey: PERSON_LOOKUP_KEY,
     hasStateCode: true,
     // Nothing filters on the resident side yet. Populated now anyway: the
     // alternative is a collection recreate plus a full re-backfill the day a
     // state turns facility scoping on.
-    fields: [
-      "officerId",
-      { from: "facilityId", into: "locationId" },
-      { value: "INCARCERATION", into: "system" },
-    ],
+    fields: ["officerId", { from: "facilityId", into: "locationId" }],
   },
 ];
 

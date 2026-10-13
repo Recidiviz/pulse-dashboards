@@ -18,12 +18,30 @@
 import { CollectionFieldSchema } from "typesense/lib/Typesense/Collection";
 import type { CollectionCreateSchema } from "typesense/lib/Typesense/Collections";
 
+import type { SystemId } from "~datatypes";
+
+/**
+ * The systems a STORED document can belong to.
+ *
+ * `SystemId` also carries `ALL`, which is a query-time concept — a user asking
+ * for both — and never a value in the index. Excluding it means a backfill
+ * request carrying `ALL` is rejected rather than indexed and then matched by
+ * no scoped key.
+ */
+export type DocumentSystem = Exclude<SystemId, "ALL">;
+
+/** The same two, for validating a value that arrives at runtime. */
+export const DOCUMENT_SYSTEMS: readonly DocumentSystem[] = [
+  "SUPERVISION",
+  "INCARCERATION",
+];
+
 // Discriminates supervision vs incarceration on collections queried by a
 // cross-system caseload-scoped key. Stamped by backfill-fn's
 // constantFields for staff/person collections (each is inherently single-
 // system per collection); locations get their `system` derived from `idType`
-// upstream; `opportunities` spans both systems, so it takes its value from
-// whichever person collection its merge source matched.
+// upstream; `opportunities` spans both systems and takes its value from the
+// backfill REQUEST, which the ETL stamps per source collection.
 const systemField: CollectionFieldSchema = {
   name: "system",
   type: "string",

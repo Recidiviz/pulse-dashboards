@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { CollectionConfig } from "./types";
+import type { CollectionConfig, MergeSource } from "./types";
 
 // The Recidiviz state-code shape: `US_` followed by two or three uppercase
 // ASCII letters (US_AZ, US_ID, US_NYC, ...). Not every tenant is a state — a
@@ -27,12 +27,24 @@ export function isValidStateCode(raw: unknown): raw is string {
   return typeof raw === "string" && STATE_CODE_PATTERN.test(raw);
 }
 
+/**
+ * Keeps only the merge sources this run's system may read.
+ */
+function selectMergeSources(
+  sources: MergeSource[],
+  system: string | undefined,
+): MergeSource[] {
+  return sources.filter((source) => !source.system || source.system === system);
+}
+
 // Instantiates template configs (currently `opportunities`) that don't
 // statically enumerate their sources. The ETL calls backfill-fn once per source
-// with `{ collections: ["opportunities"], sourceCollection: "US_XX-..." }`.
+// with `{ collections: ["opportunities"], sourceCollection: "US_XX-...",
+// system: "SUPERVISION" }`.
 export function instantiateFromSourceCollection(
   configs: CollectionConfig[],
   sourceCollection: string | undefined,
+  system?: string,
 ): CollectionConfig[] {
   if (!sourceCollection) return configs;
   return configs.map((config) =>
@@ -48,7 +60,11 @@ export function instantiateFromSourceCollection(
           constantFields: {
             ...config.constantFields,
             sourceCollection,
+            ...(system ? { system } : {}),
           },
+          ...(config.mergeSources && {
+            mergeSources: selectMergeSources(config.mergeSources, system),
+          }),
         },
   );
 }

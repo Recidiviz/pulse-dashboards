@@ -35,6 +35,8 @@
 import type { Request, Response } from "express";
 import * as admin from "firebase-admin";
 
+import { DOCUMENT_SYSTEMS } from "~@typesense/client";
+
 import { runBackfill } from "./backfill";
 import { isValidStateCode } from "./scope";
 import type { CollectionConfig } from "./types";
@@ -94,6 +96,24 @@ function extractSourceCollection(body: unknown): string | undefined {
   return trimmed.length > 0 ? trimmed : undefined;
 }
 
+// The system the ETL says this source collection belongs to. Validated rather
+// than passed through: an unrecognised value would be indexed verbatim and then
+// match no scoped key, hiding every document in the source behind a filter that
+// silently never matches.
+function extractSystem(body: unknown): { system?: string } | { error: string } {
+  if (!body || typeof body !== "object") return {};
+  const raw = (body as { system?: unknown }).system;
+  if (raw === undefined || raw === null) return {};
+  const trimmed = typeof raw === "string" ? raw.trim() : raw;
+  if (
+    typeof trimmed !== "string" ||
+    !(DOCUMENT_SYSTEMS as readonly string[]).includes(trimmed)
+  ) {
+    return { error: `invalid system: ${JSON.stringify(raw)}` };
+  }
+  return { system: trimmed };
+}
+
 export async function backfill(req: Request, res: Response): Promise<void> {
   const startedAt = Date.now();
 
@@ -135,14 +155,34 @@ export async function backfill(req: Request, res: Response): Promise<void> {
   // source, so this is the common path for `collections: ["opportunities"]`.
   const sourceCollection = extractSourceCollection(req.body);
 
+  // The system that source belongs to, supplied by the ETL per source.
+  const systemResult = extractSystem(req.body);
+  if ("error" in systemResult) {
+    res.status(400).json({ error: systemResult.error });
+    return;
+  }
+  const { system } = systemResult;
+
+  if (sourceCollection && !system) {
+    res.status(400).json({
+      error: `system is required alongside sourceCollection; expected one of ${DOCUMENT_SYSTEMS.join(", ")}`,
+    });
+    return;
+  }
+
   console.info(
-    `[backfill] starting${stateCode ? ` (state=${stateCode})` : ""}${sourceCollection ? ` (source=${sourceCollection})` : ""}: ${targets
+    `[backfill] starting${stateCode ? ` (state=${stateCode})` : ""}${sourceCollection ? ` (source=${sourceCollection})` : ""}${system ? ` (system=${system})` : ""}: ${targets
       .map((c) => c.name)
       .join(", ")}`,
   );
 
   try {
-    const result = await runBackfill(targets, stateCode, sourceCollection);
+    const result = await runBackfill(
+      targets,
+      stateCode,
+      sourceCollection,
+      system,
+    );
     const durationMs = Date.now() - startedAt;
     console.info(
       `[backfill] complete${stateCode ? ` (state=${stateCode})` : ""}${sourceCollection ? ` (source=${sourceCollection})` : ""} in ${durationMs}ms`,
@@ -152,6 +192,7 @@ export async function backfill(req: Request, res: Response): Promise<void> {
       durationMs,
       stateCode: stateCode ?? null,
       sourceCollection: sourceCollection ?? null,
+      system: system ?? null,
       ...result,
     });
   } catch (err) {

@@ -28,6 +28,7 @@ import type { Client as TypesenseClient } from "typesense";
 import type {
   DocIdFieldsOverride,
   DocIdOverrides,
+  DocumentSystem,
   FirestoreDoc,
 } from "~@typesense/client";
 
@@ -151,12 +152,15 @@ export type MergeSource = {
    * - `{ from, into }` RENAMES on the way across: a client's `district` and a
    *   resident's `facilityId` both land in `locationId`.
    * - `{ value, into }` stamps a LITERAL, but only when this source matched.
-   *   That is how `system` is set — it says which person collection the
-   *   opportunity's person lives in, which no `constantFields` entry can know.
    */
   fields: Array<
     string | { from: string; into: string } | { value: string; into: string }
   >;
+  /**
+   * Restricts this source to runs for one system. An untagged source applies
+   * to every run.
+   */
+  system?: DocumentSystem;
   /**
    * Compose the merge LOOKUP key from the TARGET document's own fields instead
    * of the target's id, so one merge document can decorate many targets.

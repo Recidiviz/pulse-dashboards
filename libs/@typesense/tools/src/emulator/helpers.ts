@@ -31,6 +31,7 @@ import {
   composeDocIdFromFields,
   deriveOpportunityFields,
   deriveUpdateFields,
+  type DocumentSystem,
   type FirestoreDoc,
   mergeDocIdFromPath,
   OPPORTUNITY_UPDATE_FIELDS,
@@ -196,7 +197,7 @@ const OPPORTUNITY_SOURCE_PATTERN = /^US_[A-Z]{2}-/;
 type PersonScopeFields = {
   officerId?: unknown;
   locationId?: unknown;
-  system: "SUPERVISION" | "INCARCERATION";
+  system: DocumentSystem;
 };
 
 /**

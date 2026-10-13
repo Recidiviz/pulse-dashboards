@@ -41,6 +41,8 @@ export {
 export {
   BROWSER_SEARCHABLE_COLLECTIONS,
   collectionNames,
+  DOCUMENT_SYSTEMS,
+  type DocumentSystem,
   schemas,
 } from "./schemas";
 export {
