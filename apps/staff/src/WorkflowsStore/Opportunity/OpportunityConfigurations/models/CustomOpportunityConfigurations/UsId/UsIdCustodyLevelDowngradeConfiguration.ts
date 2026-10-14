@@ -21,10 +21,9 @@ import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationIm
 export class UsIdCustodyLevelDowngradeConfiguration extends ApiOpportunityConfiguration {
   get enabledColumns(): Array<OpportunityTableColumnId> {
     const cols = [...super.enabledColumns];
-    const colsToAdd: OpportunityTableColumnId[] = ["US_ID_EPRD"].filter(
-      (c) => !cols.includes(c as OpportunityTableColumnId),
-    ) as OpportunityTableColumnId[];
-    const colsToRemove: OpportunityTableColumnId[] = ["RELEASE_DATE"];
-    return [...cols, ...colsToAdd].filter((c) => !colsToRemove.includes(c));
+    const colsToAdd: OpportunityTableColumnId[] = (
+      ["RELEASE_DATE", "US_ID_TPD"] as OpportunityTableColumnId[]
+    ).filter((c) => !cols.includes(c));
+    return [...cols, ...colsToAdd];
   }
 }

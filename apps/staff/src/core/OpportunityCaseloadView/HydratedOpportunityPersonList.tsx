@@ -271,7 +271,7 @@ export type OpportunityTableColumnId =
   | "ALMOST_ELIGIBILITY_DATE"
   | "RELEASE_DATE"
   | "SUPERVISION_EXPIRATION_DATE"
-  | "US_ID_EPRD"
+  | "US_ID_TPD"
   | "US_NE_PEDD_DATE"
   | "UNIT_ID"
   | "US_NE_ELIGIBLE_RESTORATION_AMT"
@@ -776,21 +776,31 @@ const TableView = observer(function TableView({
       cell: ReleaseDateWrapper,
     },
     {
-      header: "Earliest Possible Release Date",
-      id: "US_ID_EPRD",
+      header: "Tentative Parole Date",
+      id: "US_ID_TPD",
       enableSorting: true,
       sortingFn: "datetime",
       accessorFn: ({ person }: Opportunity) => {
         if (
           person instanceof Resident &&
+          person.metadata.stateCode === "US_ID" &&
+          person.metadata.tentativeParoleDate
+        ) {
+          return new Date(person.metadata.tentativeParoleDate);
+        }
+      },
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        const { person } = row.original;
+        if (
+          person instanceof Resident &&
           person.metadata.stateCode === "US_ID"
         ) {
-          return person.metadata.earliestPossibleReleaseDate
-            ? formatWorkflowsDateString(
-                person.metadata.earliestPossibleReleaseDate,
-              )
-            : formatWorkflowsDate(person.releaseDate);
+          return formatWorkflowsDateString(
+            person.metadata.tentativeParoleDate,
+            "-",
+          );
         }
+        return "-";
       },
     },
     {

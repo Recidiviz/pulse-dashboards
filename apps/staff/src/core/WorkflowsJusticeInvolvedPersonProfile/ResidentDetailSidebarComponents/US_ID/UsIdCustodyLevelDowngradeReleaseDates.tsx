@@ -24,7 +24,7 @@ import {
 import { DetailsSubheading, SecureDetailsContent } from "../../styles";
 import { ResidentProfileProps } from "../../types";
 
-export function UsIdEarliestPossibleReleaseDate({
+export function UsIdCustodyLevelDowngradeReleaseDates({
   resident,
 }: ResidentProfileProps): React.ReactElement<any> | null {
   if (resident.metadata.stateCode !== "US_ID") {
@@ -33,16 +33,17 @@ export function UsIdEarliestPossibleReleaseDate({
 
   return (
     <>
-      <DetailsSubheading>Release Date</DetailsSubheading>
+      <DetailsSubheading>Tentative Parole Date</DetailsSubheading>
       <SecureDetailsContent>
-        {formatWorkflowsDate(resident.releaseDate)}
+        {formatWorkflowsDateString(
+          resident.metadata.tentativeParoleDate,
+          "Not set",
+        )}
       </SecureDetailsContent>
-      <DetailsSubheading>Earliest Possible Release Date</DetailsSubheading>
+      <DetailsSubheading>Full Term Release Date</DetailsSubheading>
       <SecureDetailsContent>
-        {resident.metadata.earliestPossibleReleaseDate
-          ? formatWorkflowsDateString(
-              resident.metadata.earliestPossibleReleaseDate,
-            )
+        {resident.onLifeSentence
+          ? "Life sentence"
           : formatWorkflowsDate(resident.releaseDate)}
       </SecureDetailsContent>
     </>

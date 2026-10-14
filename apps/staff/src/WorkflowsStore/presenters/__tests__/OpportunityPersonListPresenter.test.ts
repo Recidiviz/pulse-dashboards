@@ -751,7 +751,6 @@ describe("table view columns", () => {
       "usMiAddInPersonSecurityClassificationCommitteeReviewV2",
       "usMiWardenInPersonSecurityClassificationCommitteeReviewV2",
       "usMiCustodyLevelDowngrade",
-      "usIdCustodyLevelDowngrade",
     ])("hides for %s even in INCARCERATION", (opportunityType) => {
       presenter = getPresenter({
         opportunityType: opportunityType as OpportunityType,
@@ -797,9 +796,9 @@ describe("table view columns", () => {
     );
   });
 
-  describe("US_ID_EPRD", () => {
+  describe("US_ID_TPD", () => {
     test("hides by default", () => {
-      expect(presenter.enabledColumnIds.includes("US_ID_EPRD")).toBeFalse();
+      expect(presenter.enabledColumnIds.includes("US_ID_TPD")).toBeFalse();
     });
 
     test("shows for usIdCustodyLevelDowngrade", () => {
@@ -807,7 +806,8 @@ describe("table view columns", () => {
         opportunityType: "usIdCustodyLevelDowngrade" as OpportunityType,
         config: mockOpportunityConfigs.usIdCustodyLevelDowngrade,
       });
-      expect(presenter.enabledColumnIds.includes("US_ID_EPRD")).toBeTrue();
+      expect(presenter.enabledColumnIds.includes("US_ID_TPD")).toBeTrue();
+      expect(presenter.enabledColumnIds.includes("RELEASE_DATE")).toBeTrue();
     });
   });
 
