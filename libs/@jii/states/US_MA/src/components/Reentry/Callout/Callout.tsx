@@ -17,10 +17,13 @@
 
 import { ReactNode } from "react";
 
+import { Icon } from "~design-system";
+
 import {
   ActionSlot,
   Content,
   Description,
+  DismissButton,
   Heading,
   IconSlot,
   Wrapper,
@@ -30,22 +33,28 @@ import { CalloutTone, CalloutVariant } from "./types";
 export type CalloutProps = {
   tone: CalloutTone;
   variant?: CalloutVariant;
-  heading: string;
-  description?: string;
+  heading?: string;
+  description?: ReactNode;
   icon?: ReactNode;
   action?: ReactNode;
+  dismiss?: { label: string; onClick: () => void };
+  role?: "alert" | "status";
 };
 
 /**
- * A highlighted message with a heading, and an optional description, icon,
- * and action such as a link.
+ * A highlighted message with a heading, a description, or both, and an optional
+ * icon, action such as a link, and dismiss button.
  *
  * Tones set the colors:
  * - neutral: gray
  * - info: blue
+ * - warning: gold
+ * - success: green
+ * - error: red
  *
  * Variants set the shape:
  * - banner (default): an accent bar on the left, with the action to the right
+ * - slim: a banner with less padding, for tight spaces
  * - card: rounded corners, with the action below the text
  */
 export const Callout = ({
@@ -55,15 +64,26 @@ export const Callout = ({
   description,
   icon,
   action,
+  dismiss,
+  role,
 }: CalloutProps) => (
-  <Wrapper $tone={tone} $variant={variant}>
-    {icon && <IconSlot>{icon}</IconSlot>}
+  <Wrapper $tone={tone} $variant={variant} role={role}>
+    {icon && <IconSlot $variant={variant}>{icon}</IconSlot>}
     <Content>
-      <Heading>{heading}</Heading>
+      {heading && <Heading>{heading}</Heading>}
       {description && (
         <Description $variant={variant}>{description}</Description>
       )}
     </Content>
     {action && <ActionSlot>{action}</ActionSlot>}
+    {dismiss && (
+      <DismissButton
+        type="button"
+        aria-label={dismiss.label}
+        onClick={dismiss.onClick}
+      >
+        <Icon kind="Close" size={10} />
+      </DismissButton>
+    )}
   </Wrapper>
 );

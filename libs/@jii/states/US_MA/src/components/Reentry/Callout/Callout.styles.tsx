@@ -34,12 +34,32 @@ const toneStyles: Record<
     backgroundColor: rgba(palette.signal.notification, 0.1),
     borderColor: palette.signal.notification,
   },
+  warning: {
+    backgroundColor: rgba(palette.data.gold2, 0.1),
+    borderColor: palette.data.gold2,
+  },
+  success: {
+    backgroundColor: rgba(palette.signal.highlight, 0.1),
+    borderColor: palette.signal.highlight,
+  },
+  error: {
+    backgroundColor: rgba(palette.signal.error, 0.1),
+    borderColor: palette.signal.error,
+  },
 };
 
 const bannerStyles = css<{ $tone: CalloutTone }>`
   align-items: center;
   border-left: 4px solid ${({ $tone }) => toneStyles[$tone].borderColor};
   padding: ${rem(spacing.md)};
+`;
+
+const slimStyles = css<{ $tone: CalloutTone }>`
+  ${bannerStyles}
+
+  gap: ${rem(spacing.sm)};
+  min-height: ${rem(spacing.xxl)};
+  padding: ${rem(spacing.sm)} ${rem(spacing.md)};
 `;
 
 const cardStyles = css`
@@ -49,6 +69,12 @@ const cardStyles = css`
   padding: ${rem(spacing.md)} ${rem(spacing.lg)};
 `;
 
+const variantStyles = {
+  banner: bannerStyles,
+  slim: slimStyles,
+  card: cardStyles,
+};
+
 export const Wrapper = styled.div<{
   $tone: CalloutTone;
   $variant: CalloutVariant;
@@ -57,11 +83,12 @@ export const Wrapper = styled.div<{
   display: flex;
   gap: ${rem(spacing.md)};
 
-  ${({ $variant }) => ($variant === "card" ? cardStyles : bannerStyles)}
+  ${({ $variant }) => variantStyles[$variant]}
 `;
 
-export const IconSlot = styled.div`
-  align-self: flex-start;
+export const IconSlot = styled.div<{ $variant: CalloutVariant }>`
+  align-self: ${({ $variant }) =>
+    $variant === "slim" ? "center" : "flex-start"};
   color: ${palette.pine2};
   display: flex;
   flex-shrink: 0;
@@ -92,4 +119,18 @@ export const Description = styled.p<{ $variant: CalloutVariant }>`
 
 export const ActionSlot = styled.div`
   flex-shrink: 0;
+`;
+
+export const DismissButton = styled.button`
+  height: ${rem(24)};
+  width: ${rem(24)};
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: ${palette.pine2};
+  cursor: pointer;
+  padding: 0;
 `;

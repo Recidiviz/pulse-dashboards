@@ -22,7 +22,7 @@ import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 import { Icon } from "~design-system";
 
-import { Callout } from "../Callout/Callout";
+import { Callout } from "../../Callout/Callout";
 
 type PersonalizationBannerProps = {
   isProfileCompleted: boolean;

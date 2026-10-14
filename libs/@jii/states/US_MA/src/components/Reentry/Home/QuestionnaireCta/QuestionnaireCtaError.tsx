@@ -15,17 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import styled from "styled-components";
-
 import { useUsMaTranslations } from "~@jii/translation";
-import { Button } from "~design-system";
+import { Button, Icon } from "~design-system";
 
-import { Description, Wrapper } from "./QuestionnaireCta.styles";
-
-const CenteredWrapper = styled(Wrapper)`
-  align-items: center;
-  text-align: center;
-`;
+import { Callout } from "../../Callout/Callout";
 
 const QuestionnaireCtaErrorContent = ({
   resetError,
@@ -35,14 +28,19 @@ const QuestionnaireCtaErrorContent = ({
   const { t } = useUsMaTranslations();
 
   return (
-    <CenteredWrapper>
-      <Description>
-        {t(($) => $.reentry.overview.questionnaireCta.loadError.description)}
-      </Description>
-      <Button kind="link" onClick={() => resetError()}>
-        {t(($) => $.reentry.overview.questionnaireCta.retryCta)}
-      </Button>
-    </CenteredWrapper>
+    <Callout
+      tone="warning"
+      icon={<Icon kind="Info" size={24} />}
+      heading={t(($) => $.reentry.overview.questionnaireCta.loadError.heading)}
+      description={t(
+        ($) => $.reentry.overview.questionnaireCta.loadError.description,
+      )}
+      action={
+        <Button kind="link" onClick={() => resetError()}>
+          {t(($) => $.reentry.overview.questionnaireCta.retryCta)}
+        </Button>
+      }
+    />
   );
 };
 

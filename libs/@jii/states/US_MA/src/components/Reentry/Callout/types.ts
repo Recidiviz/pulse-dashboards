@@ -15,6 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type CalloutTone = "neutral" | "info";
+export type CalloutTone = "neutral" | "info" | "warning" | "success" | "error";
 
-export type CalloutVariant = "banner" | "card";
+export type CalloutVariant = "banner" | "slim" | "card";

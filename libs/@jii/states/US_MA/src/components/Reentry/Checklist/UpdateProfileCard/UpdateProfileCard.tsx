@@ -21,7 +21,7 @@ import { ButtonLink } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 
-import { Callout } from "../Callout/Callout";
+import { Callout } from "../../Callout/Callout";
 
 /**
  * Prompts a resident with a personalized checklist to update their Reentry
