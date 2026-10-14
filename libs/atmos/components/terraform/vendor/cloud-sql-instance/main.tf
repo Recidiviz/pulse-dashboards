@@ -68,6 +68,10 @@ resource "google_sql_database_instance" "data" {
   encryption_key_name = var.encryption_key_id
 
   settings {
+    # Blocks deletion from the console, gcloud and the API too, not only from
+    # Terraform (which is what the resource-level deletion_protection does).
+    deletion_protection_enabled = var.deletion_protection_enabled
+
     disk_autoresize   = true
     tier              = var.tier
     edition           = "ENTERPRISE"

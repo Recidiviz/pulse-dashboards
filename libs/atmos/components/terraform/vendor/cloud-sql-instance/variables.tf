@@ -104,3 +104,9 @@ variable "encryption_key_id" {
   type    = string
   default = null
 }
+
+variable "deletion_protection_enabled" {
+  description = "GCP-side deletion protection on the instance (settings.deletion_protection_enabled). Blocks deletes from any client, not only Terraform. Set false only for throwaway instances."
+  type        = bool
+  default     = true
+}
