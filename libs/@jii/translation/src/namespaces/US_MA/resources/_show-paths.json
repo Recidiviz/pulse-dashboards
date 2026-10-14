@@ -681,6 +681,7 @@
           "range": "[US_MA]reentry.resources.list.rent.range",
           "single": "[US_MA]reentry.resources.list.rent.single",
           "incomePercent": "[US_MA]reentry.resources.list.rent.incomePercent",
+          "varies": "[US_MA]reentry.resources.list.rent.varies",
           "notListed": "[US_MA]reentry.resources.list.rent.notListed"
         },
         "lengthOfStay": {

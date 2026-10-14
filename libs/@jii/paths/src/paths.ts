@@ -140,6 +140,7 @@ export const ResourceExplorer = route(
         searchParams: {
           subcategories: string().defined().array(),
           tags: string().defined().array(),
+          rent: string().defined().array(),
         },
       },
       {

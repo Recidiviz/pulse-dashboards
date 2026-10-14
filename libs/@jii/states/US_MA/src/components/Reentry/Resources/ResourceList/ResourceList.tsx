@@ -15,15 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { useLocation } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { usePageTitle } from "~@jii/common-ui";
-import { useRootStore } from "~@jii/data";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 
+import { useResources } from "../../../../hooks/useResources";
 import { CollapsibleSection } from "../CollapsibleSection/CollapsibleSection";
 import { ResourceCard } from "../ResourceCard/ResourceCard";
 import { getResourceChips, groupResourcesBySubcategory } from "../utils";
@@ -39,27 +38,17 @@ import {
   Wrapper,
 } from "./ResourceList.styles";
 
-const ONE_HOUR_MS = 60 * 60 * 1000;
-
 export const ResourceList = () => {
   const { t } = useUsMaTranslations();
   usePageTitle(t(($) => $.reentry.resources.list.pageTitle));
 
-  const {
-    apiClient: { trpcQuerier },
-  } = useRootStore();
-  // TODO(REE-182): Replace with useUsMaResources once the filter config lands.
-  const { data } = useSuspenseQuery({
-    ...trpcQuerier.resident.resources.getResources.queryOptions(),
-    staleTime: ONE_HOUR_MS,
-  });
-
+  const { resources: matchingResources } = useResources();
   const { category, ...residentParams } = useTypedParams(
     State.Resident.UsMaReentry.Resources.CategoryResults,
   );
   const location = useLocation();
 
-  const sections = groupResourcesBySubcategory(data, category);
+  const sections = groupResourcesBySubcategory(matchingResources, category);
   const resourceCount = new Set(
     sections.flatMap(([, resources]) =>
       resources.map((resource) => resource.organizationId),

@@ -53,6 +53,9 @@ export function getRentChip(
   { weeklyRent, rentAsIncomePercent }: HousingAttributes,
   t: UsMaTFunction,
 ): string {
+  if (weeklyRent && rentAsIncomePercent !== undefined) {
+    return t(($) => $.reentry.resources.list.rent.varies);
+  }
   if (weeklyRent) {
     const { min, max } = weeklyRent;
     if (min === 0 && max === 0)

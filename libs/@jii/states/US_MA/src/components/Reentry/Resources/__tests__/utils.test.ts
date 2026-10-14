@@ -63,6 +63,14 @@ describe("getRentChip", () => {
     [{ weeklyRent: { min: 187.5, max: 187.5 } }, "Rent: $187.50/week"],
     [{ weeklyRent: { min: 22.75, max: 1200 } }, "Rent: $22.75–$1,200/week"],
     [{ rentAsIncomePercent: 30 }, "Rent: 30% of income"],
+    [
+      { weeklyRent: { min: 150, max: 200 }, rentAsIncomePercent: 30 },
+      "Rent: Varies",
+    ],
+    [
+      { weeklyRent: { min: 0, max: 0 }, rentAsIncomePercent: 30 },
+      "Rent: Varies",
+    ],
     [{}, "No rent info listed"],
   ])("%j → %s", (attributes, expected) => {
     expect(getRentChip({ category: "Housing", ...attributes }, t)).toBe(

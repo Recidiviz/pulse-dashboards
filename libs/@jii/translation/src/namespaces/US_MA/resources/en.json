@@ -681,6 +681,7 @@
           "range": "Rent: {{min, currency(USD)}}–{{max, currency(USD)}}/week",
           "single": "Rent: {{amount, currency(USD)}}/week",
           "incomePercent": "Rent: {{percent}}% of income",
+          "varies": "Rent: Varies",
           "notListed": "No rent info listed"
         },
         "lengthOfStay": {
