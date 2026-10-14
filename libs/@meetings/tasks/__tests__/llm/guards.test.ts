@@ -530,5 +530,19 @@ describe("Guards - Predefined Guards", () => {
       expect(result.valid).toBe(false);
       expect(result.errorKind).toBe("Format");
     });
+
+    test.each(["\u0000", "\uD800"])(
+      "should reject Postgres-unsafe character %j",
+      (char) => {
+        const data = {
+          caseNote: `${"Word ".repeat(200)}${char}`,
+          staffFeedback: { whatYouDidWell: [], growthOpportunities: [] },
+        };
+
+        expect(draftingGuard(DraftingOutputSchema, data).errorKind).toBe(
+          "Format",
+        );
+      },
+    );
   });
 });

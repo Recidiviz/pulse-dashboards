@@ -34,6 +34,7 @@ import { SpecialistCore } from "~@meetings/tasks/llm/agents";
 import {
   createAgentExecution,
   createPipelineRun,
+  sanitizeForPostgres,
   serializeError,
   updatePipelineRunStatus,
 } from "~@meetings/tasks/llm/evaluation-store";
@@ -227,12 +228,13 @@ export class ProductionPipeline {
 
         await updatePipelineRunStatus(this.prisma, pipelineRun.id, "SUCCESS");
 
-        return {
+        // The last drafting attempt is kept even if invalid, so sanitize for the meeting write
+        return sanitizeForPostgres({
           caseNote: finalPayload.caseNote,
           actionItems: verification.actionItems,
           staffFeedback: finalPayload.staffFeedback,
           pipelineRunId: pipelineRun.id,
-        };
+        });
       } catch (error) {
         // Update pipeline run status on any error
         await updatePipelineRunStatus(

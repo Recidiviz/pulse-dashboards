@@ -226,6 +226,12 @@ export const validateCaseNoteLength: Validator<
 
 const ESCAPE_SEQUENCE = String.raw`\u`;
 
+// Literal escapes, plus the NULs and lone surrogates that Postgres rejects
+const containsUnsafeUnicode = (value: string) =>
+  value.includes(ESCAPE_SEQUENCE) ||
+  value.includes("\0") ||
+  !value.isWellFormed();
+
 /**
  * Validates no unicode escapes in the extraction output
  */
@@ -241,13 +247,12 @@ export const validateExtractionNoUnicode: Validator<ExtractionOutput> = (
   for (const entry of data.actionItems) {
     const containsUnicode = Object.values(entry)
       .flat()
-      .some((value) => value && value.includes(ESCAPE_SEQUENCE));
+      .some((value) => value && containsUnsafeUnicode(value));
     if (containsUnicode) return errorContext;
   }
 
   for (const entry of data.entities) {
-    if (Object.values(entry).some((value) => value.includes(ESCAPE_SEQUENCE)))
-      return errorContext;
+    if (Object.values(entry).some(containsUnsafeUnicode)) return errorContext;
   }
 
   return { valid: true };
@@ -263,14 +268,14 @@ export const validateDraftingNoUnicode: Validator<DraftingOutput> = (data) => {
     message: `Output contains unicode escape sequence`,
   };
 
-  if (data.caseNote.includes(ESCAPE_SEQUENCE)) return errorContext;
+  if (containsUnsafeUnicode(data.caseNote)) return errorContext;
 
   for (const entry of data.staffFeedback.growthOpportunities) {
-    if (entry.includes(ESCAPE_SEQUENCE)) return errorContext;
+    if (containsUnsafeUnicode(entry)) return errorContext;
   }
 
   for (const entry of data.staffFeedback.whatYouDidWell) {
-    if (entry.includes(ESCAPE_SEQUENCE)) return errorContext;
+    if (containsUnsafeUnicode(entry)) return errorContext;
   }
 
   return { valid: true };

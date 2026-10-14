@@ -89,6 +89,15 @@ export function getLangsmithTraceId(): string | undefined {
 }
 
 /**
+ * Returns value with the NULs and lone surrogates that Postgres rejects
+ * replaced by U+FFFD
+ */
+export const sanitizeForPostgres = <T>(value: T): T =>
+  JSON.parse(JSON.stringify(value), (_, v) =>
+    typeof v === "string" ? v.replaceAll("\0", "\uFFFD").toWellFormed() : v,
+  );
+
+/**
  * Serializes an error object to JSON format with stack trace
  */
 export function serializeError(
@@ -157,7 +166,7 @@ export async function updatePipelineRunStatus(
     where: { id: pipelineRunId },
     data: {
       status,
-      errorDetails,
+      errorDetails: errorDetails && sanitizeForPostgres(errorDetails),
     },
   });
 }
@@ -174,7 +183,7 @@ export async function createAgentExecution(
       pipelineRunId: params.pipelineRunId,
       agentType: params.agentType,
       attemptNumber: params.attemptNumber ?? 1,
-      outputData: params.outputData,
+      outputData: sanitizeForPostgres(params.outputData),
       validationResult: params.validationResult,
     },
   });

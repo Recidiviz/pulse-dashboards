@@ -507,6 +507,40 @@ describe("ProductionPipeline", () => {
         pipeline.run(mockAgency, mockClient, mockTranscript, "test-meeting-9"),
       ).rejects.toThrow("Drafting failed");
     });
+
+    test("should retry drafting and sanitize writes when output contains a NUL", async () => {
+      const emptyExtraction: ExtractionOutput = {
+        actionItems: [],
+        entities: [],
+      };
+      const caseNote = `${"Word ".repeat(200)}\u0000`;
+
+      vi.spyOn(SpecialistCore.prototype, "runExtraction").mockResolvedValue(
+        emptyExtraction,
+      );
+      const draftingSpy = vi
+        .spyOn(SpecialistCore.prototype, "runDrafting")
+        .mockResolvedValue({ caseNote, staffFeedback: EMPTY_STAFF_FEEDBACK });
+      vi.spyOn(SpecialistCore.prototype, "runVerification").mockResolvedValue(
+        emptyExtraction,
+      );
+
+      const pipeline = new ProductionPipeline(mockPrisma, mockCore);
+      const result = await pipeline.run(
+        mockAgency,
+        mockClient,
+        mockTranscript,
+        "test-meeting-10",
+      );
+
+      const sanitized = caseNote.replace("\u0000", "\uFFFD");
+      expect(draftingSpy).toHaveBeenCalledTimes(3);
+      expect(
+        vi.mocked(mockPrisma.notetakingAgentExecution.create).mock.calls[1][0]
+          .data.outputData,
+      ).toMatchObject({ caseNote: sanitized });
+      expect(result.caseNote).toBe(sanitized);
+    });
   });
 
   describe("Evaluation Tracking", () => {
