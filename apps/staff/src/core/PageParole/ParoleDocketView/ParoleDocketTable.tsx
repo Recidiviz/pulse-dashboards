@@ -16,10 +16,10 @@
 // =============================================================================
 
 import { spacing } from "@recidiviz/design-system";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, PaginationState } from "@tanstack/react-table";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import styled from "styled-components";
 
 import { ParoleHearing } from "~datatypes";
@@ -30,12 +30,15 @@ import { ParoleDocketPresenter } from "../../../ParoleStore/presenters/ParoleDoc
 import { formatDocId } from "../../../ParoleStore/utils";
 import { CaseloadTable } from "../../CaseloadTable";
 import { ParoleDocketColumn } from "../../models/types";
+import { Pagination } from "../../Pagination/Pagination";
 import { SectionCard } from "../../SectionCard";
 import { paroleUrl } from "../../views";
 import { WorkflowsFilterDropdown } from "../../WorkflowsFilters/WorkflowsFilterDropdown";
 import { formatMonth, parseIsoDate } from "../components/shared";
 
 type HearingDatePrecision = "month" | "date";
+
+const DOCKET_PAGE_SIZE_OPTIONS = [10, 25, 50] as const;
 
 const FilterBar = styled.div`
   display: flex;
@@ -75,6 +78,10 @@ const SearchIcon = styled(SearchIconComponent)`
 const Summary = styled.div`
   margin-top: ${rem(spacing.md)};
   color: ${palette.slate70};
+`;
+
+const PaginationBar = styled.div`
+  margin-top: ${rem(spacing.md)};
 `;
 
 // CaseloadTable's cells default to the browser's baseline vertical-align
@@ -198,6 +205,17 @@ export const ParoleDocketTable = observer(function ParoleDocketTable({
     () => buildColumns(presenter.docketColumns),
     [presenter.docketColumns],
   );
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: DOCKET_PAGE_SIZE_OPTIONS[0],
+  });
+
+  const hearingCount = presenter.filteredHearings.length;
+  const firstRowOnPage = pagination.pageIndex * pagination.pageSize + 1;
+  const lastRowOnPage = Math.min(
+    firstRowOnPage + pagination.pageSize - 1,
+    hearingCount,
+  );
 
   return (
     <>
@@ -222,6 +240,11 @@ export const ParoleDocketTable = observer(function ParoleDocketTable({
           data={presenter.filteredHearings}
           columns={columns}
           initialState={{ sorting: [{ id: "hearingDate", desc: false }] }}
+          pagination={
+            presenter.docketPaginationEnabled
+              ? { state: pagination, onChange: setPagination }
+              : undefined
+          }
           rowLinkUrl={(hearing) =>
             paroleUrl("caseProfile", {
               pseudonymizedId: hearing.pseudonymizedId,
@@ -230,10 +253,32 @@ export const ParoleDocketTable = observer(function ParoleDocketTable({
         />
       </SectionCard>
 
-      <Summary>
-        Showing {presenter.filteredHearings.length} of{" "}
-        {presenter.totalHearingsCount} upcoming hearings
-      </Summary>
+      {presenter.docketPaginationEnabled ? (
+        hearingCount > DOCKET_PAGE_SIZE_OPTIONS[0] && (
+          <PaginationBar>
+            <Pagination
+              currentPage={pagination.pageIndex}
+              totalPages={Math.ceil(hearingCount / pagination.pageSize)}
+              onPageChange={(pageIndex) =>
+                setPagination((current) => ({ ...current, pageIndex }))
+              }
+              summary={`${firstRowOnPage}-${lastRowOnPage} of ${hearingCount}`}
+              size="large"
+              pageSize={{
+                value: pagination.pageSize,
+                options: DOCKET_PAGE_SIZE_OPTIONS,
+                onChange: (pageSize) =>
+                  setPagination({ pageIndex: 0, pageSize }),
+              }}
+            />
+          </PaginationBar>
+        )
+      ) : (
+        <Summary>
+          Showing {hearingCount} of {presenter.totalHearingsCount} upcoming
+          hearings
+        </Summary>
+      )}
     </>
   );
 });

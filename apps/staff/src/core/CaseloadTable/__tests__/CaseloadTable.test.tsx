@@ -15,9 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, PaginationState } from "@tanstack/react-table";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { useState } from "react";
 import {
   BrowserRouter,
   MemoryRouter,
@@ -157,5 +158,59 @@ describe("CaseloadTable row links are tenant-aware and stamp previousPage", () =
     expect(screen.getByTestId("prev")).toHaveTextContent(
       "/start?tenantId=US_MO",
     );
+  });
+});
+
+describe("CaseloadTable pagination prop", () => {
+  // Twelve rows in reverse name order, so a correct sort has to look past
+  // the first page to find "Person 01".
+  const MANY_ROWS: Row[] = Array.from({ length: 12 }, (_, index) => {
+    const number = String(12 - index).padStart(2, "0");
+    return { id: number, name: `Person ${number}`, profileUrl: "" };
+  });
+
+  /** Holds the page state, as a real caller does, and shows the page index. */
+  function PagedTable({ data }: { data: Row[] }) {
+    const [pagination, setPagination] = useState<PaginationState>({
+      pageIndex: 0,
+      pageSize: 10,
+    });
+    return (
+      <BrowserRouter>
+        <CaseloadTable<Row>
+          data={data}
+          columns={COLUMNS}
+          initialState={{ sorting: [{ id: "name", desc: false }] }}
+          pagination={{ state: pagination, onChange: setPagination }}
+        />
+        <button onClick={() => setPagination((p) => ({ ...p, pageIndex: 1 }))}>
+          Page 2
+        </button>
+        <output>page index {pagination.pageIndex}</output>
+      </BrowserRouter>
+    );
+  }
+
+  const bodyRowCount = () => screen.getAllByRole("row").length - 1;
+
+  it("sorts every row before splitting them into pages", () => {
+    render(<PagedTable data={MANY_ROWS} />);
+
+    expect(bodyRowCount()).toBe(10);
+    expect(screen.getByText("Person 01")).toBeInTheDocument();
+    expect(screen.queryByText("Person 11")).not.toBeInTheDocument();
+  });
+
+  it("goes back to the first page when the data changes", async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(<PagedTable data={MANY_ROWS} />);
+    await user.click(screen.getByText("Page 2"));
+    expect(screen.getByText("Person 11")).toBeInTheDocument();
+
+    rerender(<PagedTable data={MANY_ROWS.slice(1)} />);
+
+    // The table queues its page reset, so it lands after this render.
+    expect(await screen.findByText("page index 0")).toBeInTheDocument();
+    expect(screen.getByText("Person 01")).toBeInTheDocument();
   });
 });

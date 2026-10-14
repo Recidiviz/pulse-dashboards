@@ -22,6 +22,8 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  OnChangeFn,
+  PaginationState,
   SortDirection,
   SortingState,
   TableState,
@@ -262,6 +264,16 @@ export type CaseloadTableProps<TData> = {
   enableProgressiveLoading?: boolean;
   progressiveLoadingBatchSize?: number;
   /**
+   * Splits the rows into pages. The caller owns the page state and draws the
+   * page controls. Sorting still orders every row, not just the current page,
+   * and the table goes back to the first page when the data changes. Cannot
+   * be combined with enableProgressiveLoading.
+   */
+  pagination?: {
+    state: PaginationState;
+    onChange: OnChangeFn<PaginationState>;
+  };
+  /**
    * When provided true - this parameter overrides the standard styling
    * to prioritize smaller columns with a min-width of 10px & overwriting
    * min-width of 100px of 125px (mobile and laptop breakpoints respectively)
@@ -284,8 +296,15 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
   initialState = undefined,
   enableProgressiveLoading = false,
   progressiveLoadingBatchSize = 0,
+  pagination = undefined,
   smallColumns = false,
 }: CaseloadTableProps<TData>) {
+  if (enableProgressiveLoading && pagination) {
+    throw new Error(
+      "CaseloadTable cannot use enableProgressiveLoading and pagination together",
+    );
+  }
+
   const { isMobile } = useIsMobile(true);
 
   /*
@@ -315,13 +334,15 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
           maxMultiSortColCount: 3,
         }
       : {}),
-    ...(enableProgressiveLoading
+    ...(enableProgressiveLoading || pagination
       ? { getPaginationRowModel: getPaginationRowModel() }
       : {}),
+    ...(pagination ? { onPaginationChange: pagination.onChange } : {}),
     initialState,
     state: {
       ...(manualSorting ? { sorting: manualSorting?.sorting } : {}),
       ...(enableProgressiveLoading ? { pagination: progressiveLoading } : {}),
+      ...(pagination ? { pagination: pagination.state } : {}),
     },
   });
 

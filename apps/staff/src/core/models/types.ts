@@ -149,6 +149,8 @@ export type ParoleDocketConfig = {
   subheading?: string;
   /** Enables the table's name/DOC ID search input. Omit to hide it. */
   searchEnabled?: boolean;
+  /** Splits the table into pages of 10, 25, or 50 rows. Omit to show all rows. */
+  paginationEnabled?: boolean;
   /**
    * How many days ahead the docket looks. A hearing outside the window --
    * before `windowDaysBefore` days ago, or past this many days out -- is left

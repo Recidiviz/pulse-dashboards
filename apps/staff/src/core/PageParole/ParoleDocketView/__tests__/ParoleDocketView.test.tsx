@@ -131,3 +131,27 @@ describe("ParoleDocketView columns", () => {
     expect(screen.queryByText("Hearing Month")).not.toBeInTheDocument();
   });
 });
+
+describe("ParoleDocketView hearing count summary", () => {
+  it("shows the summary for a tenant without pagination", async () => {
+    render(
+      <MemoryRouter>
+        <ParoleDocketView />
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByText(/upcoming hearings$/)).toBeInTheDocument();
+  });
+
+  it("drops the summary for a tenant with pagination, whose counter replaces it", async () => {
+    mockCurrentTenant("US_ID");
+    render(
+      <MemoryRouter>
+        <ParoleDocketView />
+      </MemoryRouter>,
+    );
+
+    await screen.findAllByRole("link");
+    expect(screen.queryByText(/upcoming hearings$/)).not.toBeInTheDocument();
+  });
+});

@@ -123,4 +123,38 @@ describe("Pagination", () => {
     await user.click(screen.getByLabelText("Previous page"));
     expect(onPageChange).not.toHaveBeenCalled();
   });
+
+  describe("page-size menu", () => {
+    const pageSize = { value: 10, options: [10, 25, 50] };
+
+    test("still renders on a single page, so a smaller size can be picked", () => {
+      render(
+        <Pagination
+          currentPage={0}
+          totalPages={1}
+          onPageChange={vi.fn()}
+          pageSize={{ ...pageSize, value: 50, onChange: vi.fn() }}
+        />,
+      );
+      expect(
+        screen.getByRole("button", { name: "Rows per page 50" }),
+      ).toBeInTheDocument();
+    });
+
+    test("calls onChange with the picked size", async () => {
+      const user = userEvent.setup();
+      const onChange = vi.fn();
+      render(
+        <Pagination
+          currentPage={0}
+          totalPages={3}
+          onPageChange={vi.fn()}
+          pageSize={{ ...pageSize, onChange }}
+        />,
+      );
+      await user.click(screen.getByRole("button", { name: /Rows per page/ }));
+      await user.click(screen.getByRole("menuitem", { name: "25" }));
+      expect(onChange).toHaveBeenCalledWith(25);
+    });
+  });
 });

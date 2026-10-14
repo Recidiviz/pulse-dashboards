@@ -118,6 +118,10 @@ export class ParoleDocketPresenter
     return Boolean(this.paroleStore.config.docketConfig.searchEnabled);
   }
 
+  get docketPaginationEnabled(): boolean {
+    return Boolean(this.paroleStore.config.docketConfig.paginationEnabled);
+  }
+
   get docketColumns(): ReadonlyArray<ParoleDocketColumn> {
     return this.paroleStore.config.docketConfig.columns;
   }

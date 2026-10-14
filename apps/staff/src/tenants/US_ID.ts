@@ -245,6 +245,7 @@ const US_ID_CONFIG = {
         { header: "Hearing Type", field: "hearingType" },
         { header: "Facility", field: "facility" },
       ],
+      paginationEnabled: true,
       windowDaysBefore: 0,
       windowDaysAfter: 120,
     },

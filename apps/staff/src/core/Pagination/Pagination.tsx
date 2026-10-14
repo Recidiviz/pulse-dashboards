@@ -15,10 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React from "react";
+import React, { useId } from "react";
 import styled from "styled-components";
 
-import { palette, typography } from "~design-system";
+import {
+  Dropdown,
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownToggle,
+  palette,
+  typography,
+} from "~design-system";
+
+const SIZE_STYLES = {
+  small: { text: typography.Sans12, iconSize: "1rem", gap: "15px" },
+  large: { text: typography.Sans14, iconSize: "1.25rem", gap: "20px" },
+} as const;
+
+type PaginationSize = keyof typeof SIZE_STYLES;
 
 type PaginationProps = {
   /** Zero-indexed. */
@@ -32,20 +46,59 @@ type PaginationProps = {
    * Example: The US_ID parole board counts notes, and shows "1-10 of 32".
    */
   summary?: string;
+  /** Adds a "Rows per page" menu. Omit for a fixed page size. */
+  pageSize?: {
+    value: number;
+    options: ReadonlyArray<number>;
+    onChange: (pageSize: number) => void;
+  };
+  /** Text and arrow size. Defaults to "small". */
+  size?: PaginationSize;
 };
 
-const PaginationRow = styled.div`
-  align-items: flex-end;
+const PaginationRow = styled.div<{
+  $size: PaginationSize;
+  $hasPageSizeMenu: boolean;
+}>`
+  ${({ $size }) => SIZE_STYLES[$size].text}
+  color: ${palette.pine1};
+  align-items: ${({ $hasPageSizeMenu }) =>
+    $hasPageSizeMenu ? "center" : "flex-end"};
   display: flex;
-  gap: 15px;
+  gap: ${({ $size }) => SIZE_STYLES[$size].gap};
   justify-content: right;
   padding-top: 5px;
   padding-right: 5px;
+
+  & i {
+    font-size: ${({ $size }) => SIZE_STYLES[$size].iconSize};
+  }
 `;
 
-const PaginationText = styled.div`
+const PageSizeControl = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const PageSizeToggle = styled(DropdownToggle)`
+  font: inherit;
   color: ${palette.pine1};
-  ${typography.Sans12}
+  min-height: 0;
+  min-width: 0;
+  padding: 4px 8px;
+
+  &:hover {
+    background-color: ${palette.slate10};
+    color: ${palette.pine4};
+  }
+  &:focus {
+    background-color: unset;
+  }
+`;
+
+const PageSizeMenu = styled(DropdownMenu)`
+  min-width: 0;
 `;
 
 const PaginationButtons = styled.div`
@@ -67,27 +120,28 @@ const PaginationButton = styled.button`
   &:disabled {
     cursor: default;
   }
-
-  // Matches the "back" chevron weight used elsewhere in Workflows
-  // (backLinkStyles in NavigationBackButton.tsx) rather than a hand-drawn
-  // SVG stroke, and inherits color (incl. hover/disabled) for free.
-  & i {
-    font-size: 1rem;
-  }
 `;
 
 /**
- * First/previous/next/last controls with a counter, rendered only when there
- * is more than one page. The caller owns the paging state and slices its own
- * data; this renders the controls alone.
+ * First/previous/next/last controls with a counter, and an optional page-size
+ * menu. Without the menu, it renders only when there is more than one page.
+ * With it, it always renders, so a reader who picks a large page size can
+ * pick a smaller one again. The caller owns the paging state and slices its
+ * own data; this renders the controls alone.
  */
 export const Pagination: React.FC<PaginationProps> = ({
   currentPage,
   totalPages,
   onPageChange,
   summary,
+  pageSize,
+  size = "small",
 }) => {
-  if (totalPages <= 1) {
+  const pageSizeId = useId();
+  const pageSizeLabelId = `${pageSizeId}-label`;
+  const pageSizeToggleId = `${pageSizeId}-toggle`;
+
+  if (totalPages <= 1 && !pageSize) {
     return null;
   }
 
@@ -95,10 +149,32 @@ export const Pagination: React.FC<PaginationProps> = ({
   const isLastPage = currentPage === totalPages - 1;
 
   return (
-    <PaginationRow>
-      <PaginationText>
-        {summary ?? `${currentPage + 1} of ${totalPages}`}
-      </PaginationText>
+    <PaginationRow $size={size} $hasPageSizeMenu={Boolean(pageSize)}>
+      {pageSize && (
+        <PageSizeControl>
+          <span id={pageSizeLabelId}>Rows per page</span>
+          <Dropdown>
+            <PageSizeToggle
+              id={pageSizeToggleId}
+              aria-labelledby={`${pageSizeLabelId} ${pageSizeToggleId}`}
+              showCaret
+            >
+              {pageSize.value}
+            </PageSizeToggle>
+            <PageSizeMenu ariaLabel="Rows per page">
+              {pageSize.options.map((option) => (
+                <DropdownMenuItem
+                  key={option}
+                  onClick={() => pageSize.onChange(option)}
+                >
+                  {option}
+                </DropdownMenuItem>
+              ))}
+            </PageSizeMenu>
+          </Dropdown>
+        </PageSizeControl>
+      )}
+      <div>{summary ?? `${currentPage + 1} of ${totalPages}`}</div>
       <PaginationButtons>
         <PaginationButton
           aria-label="First page"
