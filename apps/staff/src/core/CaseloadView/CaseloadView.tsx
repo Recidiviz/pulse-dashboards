@@ -50,10 +50,10 @@ export const CaseloadView: React.FC = observer(function CaseloadView() {
 
   const header = (
     <WorkflowsResultsHeader
-      headerText={presenter.headerText}
+      headerText={presenter.initialHeaderText}
       callToActionText={presenter.headerCallToActionText}
       verticallyCentered={!isTypesenseSearchEnabled}
-      align="center"
+      align={isTypesenseSearchEnabled ? "left" : "center"}
     />
   );
 

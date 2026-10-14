@@ -159,45 +159,62 @@ describe("WorkflowsHomepagePresenter", () => {
       setOpportunities({ type1: [], type2: [] });
       expect(presenter.ctaAndHeaderText).toEqual({ ctaText: NO_RESULTS });
     });
+
+    it("shows only the page title for results when the FV is on", () => {
+      setOpportunities({ type1: [oppInTab("Eligible Now")], type2: [] });
+      (workflowsStore as any).searchStore.isTypesenseSearchEnabled = true;
+      expect(presenter.ctaAndHeaderText).toEqual({
+        headerText: "Opportunities",
+      });
+    });
+
+    it("shows the page title over no results when the FV is on", () => {
+      setOpportunities({ type1: [], type2: [] });
+      (workflowsStore as any).searchStore.isTypesenseSearchEnabled = true;
+      expect(presenter.ctaAndHeaderText).toEqual({
+        headerText: "Opportunities",
+        ctaText: NO_RESULTS,
+      });
+    });
   });
 
-  // These tests verify the presenter WIRES the searchStore's
-  // `workflowsSearchFieldTitle` into the CTA copy — the phrase-generation
-  // logic itself is unit-tested in SearchStore.test.ts, so here we just mock
-  // the getter as a fixed string.
   describe("ctaAndHeaderText — no-search welcome message", () => {
     function noSearchSelectedWith({
-      phrase,
-      typesenseEnabled = true,
+      typesenseEnabled,
     }: {
-      phrase: string;
-      typesenseEnabled?: boolean;
+      typesenseEnabled: boolean;
     }) {
       const ws = workflowsStore as any;
       ws.searchStore.selectedSearchIds = [];
-      ws.searchStore.workflowsSearchFieldTitle = phrase;
       ws.searchStore.isTypesenseSearchEnabled = typesenseEnabled;
     }
 
-    it("uses the 'Start typing the name of {phrase}' copy when FV is on and a phrase is available", () => {
-      noSearchSelectedWith({ phrase: "an officer, district, or facility" });
-      expect(presenter.ctaAndHeaderText.ctaText).toBe(
-        "Start typing the name of an officer, district, or facility above to review and refer people eligible for opportunities like Opportunity Type 1 and Opportunity Type 2.",
-      );
-    });
+    it.each([
+      ["SUPERVISION", "Search for someone's caseload to see the people on it."],
+      ["INCARCERATION", "Search a facility to see the people in it."],
+      [
+        "ALL",
+        "Search for someone's caseload or a facility to see the people on it.",
+      ],
+    ])(
+      "names what %s lets the user search when the FV is on",
+      (activeSystem, ctaText) => {
+        noSearchSelectedWith({ typesenseEnabled: true });
+        (workflowsStore as any).activeSystem = activeSystem;
+        expect(presenter.ctaAndHeaderText).toEqual({
+          headerText: "Find people eligible for opportunities",
+          ctaText,
+        });
+      },
+    );
 
-    it("falls back to the generic 'Search above' copy when the phrase is empty", () => {
-      noSearchSelectedWith({ phrase: "" });
-      expect(presenter.ctaAndHeaderText.ctaText).toBe(
-        "Search above to review and refer people eligible for opportunities like Opportunity Type 1 and Opportunity Type 2.",
-      );
-    });
-
-    it("falls back to the generic 'Search above' copy when the caseload-search FV is off", () => {
-      noSearchSelectedWith({ phrase: "an officer", typesenseEnabled: false });
-      expect(presenter.ctaAndHeaderText.ctaText).toBe(
-        "Search above to review and refer people eligible for opportunities like Opportunity Type 1 and Opportunity Type 2.",
-      );
+    it("greets the user and lists opportunities when the FV is off", () => {
+      noSearchSelectedWith({ typesenseEnabled: false });
+      expect(presenter.ctaAndHeaderText).toEqual({
+        headerText: "Hi, John Doe.",
+        ctaText:
+          "Search above to review and refer people eligible for opportunities like Opportunity Type 1 and Opportunity Type 2.",
+      });
     });
   });
 });

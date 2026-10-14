@@ -286,7 +286,7 @@ test.describe("caseload search — search types per system", () => {
     await openSearch(page, ID_USER, "/workflows/clients");
 
     await expect(page.locator(".CaseloadSelect__placeholder")).toHaveText(
-      "Search for a district or supervision officer …",
+      "Start typing …",
     );
     await expect(page.locator(".CaseloadSelect__group-heading")).toHaveText([
       "district",
@@ -304,7 +304,7 @@ test.describe("caseload search — search types per system", () => {
     await openSearch(page, ID_USER, "/workflows/residents");
 
     await expect(page.locator(".CaseloadSelect__placeholder")).toHaveText(
-      "Search for a facility or case manager …",
+      "Start typing …",
     );
     const texts = await optionTexts(page, "Phobos Reentry Center");
     expect(texts.sort()).toEqual([...CRC_FACILITIES].sort());
@@ -338,7 +338,7 @@ test.describe("caseload search — search types per system", () => {
     await openSearch(page, ID_USER, "/workflows/home");
 
     await expect(page.locator(".CaseloadSelect__placeholder")).toHaveText(
-      "Search for a district, supervision officer, facility, or case manager …",
+      "Start typing …",
     );
     await expect(page.locator(".CaseloadSelect__group-heading")).toHaveText([
       "district",
@@ -363,14 +363,10 @@ test.describe("caseload search — search types per system", () => {
 
     await page.click('a[href*="/workflows/residents"]');
     await openMenu(page);
-    await expect(page.locator(".CaseloadSelect__placeholder")).toHaveText(
-      "Search for a facility or case manager …",
-    );
 
-    // Retried rather than read once: the placeholder swaps synchronously from
-    // the tenant config, but the options only change after the re-minted key
-    // comes back from Typesense. Matching the full set also asserts that the
-    // supervision options are gone.
+    // Retried rather than read once: the options only change after the
+    // re-minted key comes back from Typesense. Matching the full set also
+    // asserts that the supervision options are gone.
     await expect(options(page)).toHaveText(CRC_FACILITIES);
   });
 });

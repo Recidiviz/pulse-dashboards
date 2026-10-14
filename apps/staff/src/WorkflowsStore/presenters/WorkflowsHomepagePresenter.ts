@@ -289,17 +289,33 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
     return this.workflowsStore.caseloadLoaded();
   }
 
+  private get searchPromptForActiveSystem(): string {
+    switch (this.workflowsStore.activeSystem) {
+      case "SUPERVISION":
+        return "Search for someone's caseload to see the people on it.";
+      case "INCARCERATION":
+        return "Search a facility to see the people in it.";
+      default:
+        return "Search for someone's caseload or a facility to see the people on it.";
+    }
+  }
+
   get welcomeCtaAndHeaderText(): { ctaText: string; headerText: string } {
-    const { workflowsSearchFieldTitle, listOfSelectedOpportunities } =
-      this.labels;
+    if (this.isTypesenseSearchEnabled) {
+      return {
+        headerText: "Find people eligible for opportunities",
+        ctaText: this.searchPromptForActiveSystem,
+      };
+    }
+
+    const { listOfSelectedOpportunities } = this.labels;
     const salutation = this.userGivenNames
       ? `Hi, ${this.userGivenNames}.`
       : "Hi.";
-    const ctaText =
-      this.isTypesenseSearchEnabled && workflowsSearchFieldTitle
-        ? `Start typing the name of ${workflowsSearchFieldTitle} above to review and refer people eligible for opportunities like ${listOfSelectedOpportunities}.`
-        : `Search above to review and refer people eligible for opportunities like ${listOfSelectedOpportunities}.`;
-    return { headerText: salutation, ctaText };
+    return {
+      headerText: salutation,
+      ctaText: `Search above to review and refer people eligible for opportunities like ${listOfSelectedOpportunities}.`,
+    };
   }
 
   get labels() {
@@ -406,11 +422,11 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
         : { headerText: `${salutation} ${foundItems}` };
     }
 
-    // With the FV, the salutation is the header and the detail renders on the
-    // line below it (styled like the welcome copy's CTA).
+    // With the FV, the page title is the header, and only the no-results copy
+    // gets a line below it.
     return noSearchResults
-      ? { headerText: salutation, ctaText: noResultsCta }
-      : { headerText: salutation, ctaText: `${foundItems}.` };
+      ? { headerText: "Opportunities", ctaText: noResultsCta }
+      : { headerText: "Opportunities" };
   }
 
   // Copy for the header rendered above the search bar (typesense search FV):

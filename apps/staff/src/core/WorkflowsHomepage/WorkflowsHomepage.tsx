@@ -52,7 +52,7 @@ const ManagedComponent = observer(function WorkflowsHomepage({
       <WorkflowsResultsHeader
         headerText={aboveHeaderCopy.headerText}
         callToActionText={aboveHeaderCopy.callToActionText}
-        align="center"
+        align="left"
       />
       <CaseloadTypeSelect />
       <CaseloadSelect />

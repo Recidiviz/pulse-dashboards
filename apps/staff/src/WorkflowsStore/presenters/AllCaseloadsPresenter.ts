@@ -85,20 +85,24 @@ export class AllCaseloadsPresenter implements TableViewSelectInterface {
   }
 
   get initialHeaderText(): string {
-    return `All ${toTitleCase(
+    const people = `${toTitleCase(
       this.rootStore.workflowsStore.justiceInvolvedPersonTitle,
     )}s`;
+    return this.isTypesenseSearchEnabled ? people : `All ${people}`;
   }
 
   get initialCallToActionText(): string {
     const {
       workflowsStore: {
+        activeSystem,
         searchStore: { workflowsSearchFieldTitle },
       },
     } = this.rootStore;
 
     if (this.isTypesenseSearchEnabled) {
-      return `Start typing the name of ${workflowsSearchFieldTitle} to view their entire caseload.`;
+      return activeSystem === "INCARCERATION"
+        ? "Search a facility to see the people in it."
+        : "Search for someone's caseload to see the people on it.";
     }
 
     return `Search for ${workflowsSearchFieldTitle} above to view their entire caseload.`;
@@ -117,12 +121,6 @@ export class AllCaseloadsPresenter implements TableViewSelectInterface {
       workflowsStore.caseloadLoaded() &&
       workflowsStore.caseloadPersons.length > 0
     );
-  }
-
-  // Header shown with the caseload selects: keep the base "All Clients" header
-  // visible while a search hydrates, then add the "(N)" count once results load.
-  get headerText(): string {
-    return this.hasResults ? this.hydratedHeaderText : this.initialHeaderText;
   }
 
   get headerCallToActionText(): string | undefined {

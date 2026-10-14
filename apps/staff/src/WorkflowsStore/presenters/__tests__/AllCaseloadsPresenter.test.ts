@@ -25,6 +25,7 @@ function makePresenter({
   clientsResidentsShowListView,
   currentTenantId = "US_CA",
   displayIdCopy = "DOC ID",
+  isTypesenseSearchEnabled = false,
   labels = {
     incarcerationStaffTitle: "Case Manager",
     supervisionEndDateCopy: "End",
@@ -37,6 +38,7 @@ function makePresenter({
   clientsResidentsShowListView?: boolean;
   currentTenantId?: string;
   displayIdCopy?: string;
+  isTypesenseSearchEnabled?: boolean;
   labels?: {
     incarcerationStaffTitle: string;
     supervisionEndDateCopy: string;
@@ -64,6 +66,7 @@ function makePresenter({
         activeSystem === "SUPERVISION" ? "client" : "resident",
       searchStore: {
         caseloadPersons,
+        isTypesenseSearchEnabled,
         searchType: "staff",
         workflowsSearchFieldTitle: "staff",
       },
@@ -159,6 +162,38 @@ describe("AllCaseloadsPresenter", () => {
     });
 
     expect(presenter.hydratedHeaderText).toEqual("All Clients (3)");
+  });
+
+  it("drops 'All' from the header when the typesense search FV is on", () => {
+    const { presenter } = makePresenter({
+      caseloadPersons: [{}, {}, {}],
+      isTypesenseSearchEnabled: true,
+    });
+
+    expect(presenter.initialHeaderText).toEqual("Clients");
+  });
+
+  it("invites a caseload search on the Clients page when the FV is on", () => {
+    const { presenter } = makePresenter({
+      activeSystem: "SUPERVISION",
+      isTypesenseSearchEnabled: true,
+    });
+
+    expect(presenter.initialCallToActionText).toEqual(
+      "Search for someone's caseload to see the people on it.",
+    );
+  });
+
+  it("invites a facility search on the Residents page when the FV is on", () => {
+    const { presenter } = makePresenter({
+      activeSystem: "INCARCERATION",
+      isTypesenseSearchEnabled: true,
+    });
+
+    expect(presenter.initialHeaderText).toEqual("Residents");
+    expect(presenter.initialCallToActionText).toEqual(
+      "Search a facility to see the people in it.",
+    );
   });
 
   it("exposes the hydrated caseload people", () => {

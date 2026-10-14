@@ -453,7 +453,6 @@ export const CaseloadSelect = observer(function CaseloadSelect({
       updateSelectedSearch,
       isTypesenseSearchEnabled,
       caseloadSearchManager,
-      workflowsSearchFieldTitle,
       facilityUnitSearchIds,
     },
   } = workflowsStore;
@@ -556,7 +555,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
       : {}),
     options: buildSelectOptionsFromSearchableGroup(searchableGroups),
     placeholder: isTypesenseSearchEnabled
-      ? `Search for ${workflowsSearchFieldTitle} …`
+      ? "Start typing …"
       : "Search for one or more caseloads …",
     styles: caseloadSelectStyles(isMobile, hideIndicators),
     value: buildSelectOptionsFromSearchables(selectedSearchables),
