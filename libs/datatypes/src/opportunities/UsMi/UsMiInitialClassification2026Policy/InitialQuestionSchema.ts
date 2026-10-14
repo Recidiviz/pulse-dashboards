@@ -17,21 +17,27 @@
 
 import { SingleSectionAssessmentQuestionSpec } from "~datatypes";
 
+export type UsMiAssessmentQuestionNote = {
+  type: "AdSeg" | "Incidents" | "NoMisconducts" | "Programs" | "Age" | "VFO";
+  header: string;
+  notfound: string;
+};
+
 type SingleExtendedAssessmentQuestionSpec =
   SingleSectionAssessmentQuestionSpec & {
     description: string;
+    note?: UsMiAssessmentQuestionNote;
   };
 
-// to-do - move this towards BreakdownAssessmentQuestionSpecV2
-// and extend with description & bounds
-
-// and - or - move the tn utils out to a shared reusable file
 type MultiplierExtendedAssessmentQuestionSpec = {
   title: string;
   type: "NUMBER";
   description: string;
   bounds: number;
   multiplier: number;
+  countDescriptor?: string;
+  autofilled?: boolean;
+  note?: UsMiAssessmentQuestionNote;
 };
 
 export type UsMiAssessmentQuestionSpec =
