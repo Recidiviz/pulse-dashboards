@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-const { createHmac, randomUUID } = require("crypto");
+const { createHash, createHmac, randomUUID } = require("crypto");
 const { GoogleAuth } = require("google-auth-library");
 const Base64 = require("crypto-js/enc-base64");
 const SHA256 = require("crypto-js/sha256");
@@ -39,6 +39,25 @@ function getUserEmail(event) {
  */
 function normalizeEmail(email) {
   return (email || "").trim().toLowerCase();
+}
+
+/**
+ * Deterministic `pseudonymizedId` for an account that has no roster entry to
+ * read one from. Derived from the email, so the same person always resolves to
+ * the same identifier: two logins racing each other propose one value rather
+ * than two, and an account whose Auth0 metadata is lost comes back as itself.
+ *
+ * The email is normalized first. `HousingProviderUser.pseudonymizedId` is
+ * unique and is what the backend joins on, so a derivation that varied with
+ * the identity provider's casing would key one person to two rows.
+ */
+function generatePseudonymizedId(stateCode, email) {
+  const normalized = normalizeEmail(email);
+  if (!normalized) return undefined;
+  return createHash("sha256")
+    .update(`${stateCode}${normalized}`)
+    .digest("base64url")
+    .slice(0, 16);
 }
 
 /**
@@ -154,6 +173,7 @@ async function callIdahoThSignedWebhook(path, payload) {
 module.exports = {
   callIdahoThSignedWebhook,
   fetchUserRestrictions,
+  generatePseudonymizedId,
   getUserEmail,
   isIdahoThClient,
   normalizeEmail,

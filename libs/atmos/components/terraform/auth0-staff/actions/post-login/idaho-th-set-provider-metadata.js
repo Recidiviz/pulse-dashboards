@@ -51,9 +51,9 @@
  * @param {PostLoginAPI} api - Methods to change the behavior of the login.
  */
 
-const { randomUUID } = require("crypto");
 const {
   callIdahoThSignedWebhook,
+  generatePseudonymizedId,
   isIdahoThClient,
   normalizeEmail,
 } = require("actions:recidiviz-action-helpers");
@@ -83,9 +83,11 @@ function isNonEmptyString(value) {
  */
 async function reconcileProviderIdentity(event, api, { email, auth0Sub }) {
   // Provisional value for first-time claim only; ignored by the backend once
-  // the provider row is linked. Prefer existing Auth0 metadata when present.
+  // the provider row is linked. Prefer existing Auth0 metadata when present,
+  // then a value derived from the email, which is stable across logins.
   const provisionalPseudonymizedId =
-    event.user.app_metadata?.pseudonymizedId || randomUUID();
+    event.user.app_metadata?.pseudonymizedId ||
+    generatePseudonymizedId(STATE_CODE, email);
 
   const res = await callIdahoThSignedWebhook(LINK_PROVIDER_PATH, {
     email,
