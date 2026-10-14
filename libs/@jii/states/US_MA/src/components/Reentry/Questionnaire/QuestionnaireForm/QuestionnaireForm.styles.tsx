@@ -34,6 +34,31 @@ export const Heading = styled.h2`
   margin: 0;
 `;
 
+export const WhyWeAsk = styled.div`
+  border-bottom: 1px solid ${palette.slate05};
+  border-top: 1px solid ${palette.slate05};
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(spacing.sm)};
+  padding: ${rem(spacing.md)};
+`;
+
+export const WhyWeAskLabel = styled.p`
+  ${typography.Sans14}
+
+  color: ${palette.slate80};
+  margin: 0;
+  text-transform: uppercase;
+`;
+
+export const WhyWeAskText = styled.p`
+  ${typography.Sans16}
+
+  color: ${palette.slate85};
+  font-weight: 400;
+  margin: 0;
+`;
+
 export const SelectionHint = styled.p`
   ${typography.Sans16}
 

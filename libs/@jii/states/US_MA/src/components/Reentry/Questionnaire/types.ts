@@ -32,6 +32,7 @@ export type QuestionDisplay = {
   id: string;
   format: ReentryQuestionnaireQuestionFormat;
   heading: string;
+  whyWeAsk?: string;
   options: QuestionAnswerOption[];
   showIf?: ShowIf;
 };
@@ -69,7 +70,7 @@ export type QuestionnaireReviewEntry = {
 
 export type GetQuestionCopy<QuestionId extends string> = (
   questionId: QuestionId,
-) => string;
+) => { question: string; whyWeAsk?: string };
 
 export type GetOptionCopy<QuestionId extends string> = (
   questionId: QuestionId,

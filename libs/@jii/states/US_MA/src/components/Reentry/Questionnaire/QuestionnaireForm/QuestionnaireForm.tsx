@@ -27,6 +27,9 @@ import {
   OptionsList,
   SaveHint,
   SelectionHint,
+  WhyWeAsk,
+  WhyWeAskLabel,
+  WhyWeAskText,
   Wrapper,
 } from "./QuestionnaireForm.styles";
 
@@ -86,6 +89,14 @@ export const QuestionnaireForm = ({
   return (
     <Wrapper>
       <Heading>{question.heading}</Heading>
+      {question.whyWeAsk && (
+        <WhyWeAsk>
+          <WhyWeAskLabel>
+            {t(($) => $.reentry.questionnaire.form.whyWeAskLabel)}
+          </WhyWeAskLabel>
+          <WhyWeAskText>{question.whyWeAsk}</WhyWeAskText>
+        </WhyWeAsk>
+      )}
       <SelectionHint>
         {isCheckbox
           ? t(($) => $.reentry.questionnaire.form.multiSelectHint)

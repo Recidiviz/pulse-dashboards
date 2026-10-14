@@ -374,13 +374,17 @@ describe("buildQuestionDisplay", () => {
           options: ["YES", "UNSURE"],
           exclusiveOptions: ["UNSURE"],
         },
-        (questionId) => `${questionId} heading`,
+        (questionId) => ({
+          question: `${questionId} heading`,
+          whyWeAsk: `${questionId} why we ask`,
+        }),
         (questionId, optionId) => `${questionId}.${optionId}`,
       ),
     ).toEqual({
       id: "needsCare",
       format: "CHECKBOX",
       heading: "needsCare heading",
+      whyWeAsk: "needsCare why we ask",
       options: [
         { value: "YES", label: "needsCare.YES", exclusive: false },
         { value: "UNSURE", label: "needsCare.UNSURE", exclusive: true },
@@ -404,7 +408,7 @@ describe("buildQuestionnaireDisplay", () => {
       },
     },
     getSectionLabel: (domain) => `${domain} label`,
-    getQuestionCopy: (questionId) => `${questionId} heading`,
+    getQuestionCopy: (questionId) => ({ question: `${questionId} heading` }),
     getOptionCopy: (questionId, optionId) => `${questionId}.${optionId}`,
   });
 

@@ -215,11 +215,13 @@ export function buildQuestionDisplay<QuestionId extends string>(
 ): QuestionDisplay {
   const exclusiveOptions =
     config.format === "CHECKBOX" ? config.exclusiveOptions : [];
+  const { question, whyWeAsk } = getQuestionCopy(questionId);
 
   return {
     id: questionId,
     format: config.format,
-    heading: getQuestionCopy(questionId),
+    heading: question,
+    whyWeAsk,
     options: config.options.map((optionId) => ({
       value: optionId,
       label: getOptionCopy(questionId, optionId),

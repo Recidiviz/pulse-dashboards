@@ -41,7 +41,7 @@ export const PageUsMaReentryQuestionnaire = () => {
     questionIds: reentryQuestionnaireQuestionIds,
     config: reentryQuestionnaireConfig,
     getSectionLabel: (domain) => domainCopy[domain],
-    getQuestionCopy: (questionId) => questionCopy[questionId].question,
+    getQuestionCopy: (questionId) => questionCopy[questionId],
     getOptionCopy: (questionId, optionId) =>
       (questionOptionCopy[questionId] ?? standardOptionLabels)[optionId],
   });
