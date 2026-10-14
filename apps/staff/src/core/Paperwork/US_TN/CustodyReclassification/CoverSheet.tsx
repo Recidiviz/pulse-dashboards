@@ -18,7 +18,11 @@
 import { useContext } from "react";
 import styled from "styled-components";
 
-import { OpportunityType, UsTnCoverSheetSharedDraftData } from "~datatypes";
+import {
+  OpportunityType,
+  US_TN_CUSTODY_LEVELS,
+  UsTnCoverSheetSharedDraftData,
+} from "~datatypes";
 
 import { useFeatureVariants } from "../../../../components/StoreProvider";
 import { UsTnReclassificationReviewForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassificationReviewForm";
@@ -33,7 +37,7 @@ import FormRadioButton from "./FormRadioButton";
 import { FormContainer, Label } from "./styles";
 import { CLASSIFICATION_TYPE_BY_OPPORTUNITY } from "./utils";
 
-const CUSTODY_LEVELS = ["TRUSTEE", "LOW", "MEDIUM", "CLOSE", "MAX"];
+const CUSTODY_LEVELS = [...US_TN_CUSTODY_LEVELS];
 const OVERRIDE_TYPES = [
   "Disciplinary history (A1INC)",
   "Disciplinary history (C2DEC)",

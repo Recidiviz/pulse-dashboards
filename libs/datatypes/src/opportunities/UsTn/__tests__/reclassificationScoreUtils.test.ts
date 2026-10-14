@@ -80,6 +80,21 @@ describe("showTrusteeChecklist", () => {
     expect(showTrusteeChecklist("NOT LOW", formDataBase)).toBeFalse();
   });
 
+  it("returns true if all criteria met and any custody level TRUSTEE", () => {
+    expect(
+      showTrusteeChecklist("NOT LOW", {
+        ...formDataBase,
+        counselorRecommendedCustody: "TRUSTEE",
+      }),
+    ).toBeTrue();
+    expect(
+      showTrusteeChecklist("NOT LOW", {
+        ...formDataBase,
+        recommendationCustodyLevel: "TRUSTEE",
+      }),
+    ).toBeTrue();
+  });
+
   it("still shows the checklist when an override takes the final level off LOW", () => {
     expect(
       showTrusteeChecklist("LOW", {
@@ -149,6 +164,46 @@ describe("showTrusteeChecklist", () => {
           "LOW",
           {
             counselorRecommendedCustody: "LOW",
+            recommendationCustodyLevel: "MEDIUM",
+          },
+          true,
+        ),
+      ).toBeFalse();
+    });
+
+    it("shows the checklist when the final level is TRUSTEE", () => {
+      expect(
+        showTrusteeChecklist(
+          "NOT LOW",
+          { counselorRecommendedCustody: "TRUSTEE" },
+          true,
+        ),
+      ).toBeTrue();
+      expect(
+        showTrusteeChecklist(
+          "LOW",
+          { recommendationCustodyLevel: "TRUSTEE" },
+          true,
+        ),
+      ).toBeTrue();
+      expect(
+        showTrusteeChecklist(
+          "NOT LOW",
+          {
+            counselorRecommendedCustody: "MEDIUM",
+            recommendationCustodyLevel: "TRUSTEE",
+          },
+          true,
+        ),
+      ).toBeTrue();
+    });
+
+    it("drops the checklist when an override takes the final level off TRUSTEE", () => {
+      expect(
+        showTrusteeChecklist(
+          "NOT LOW",
+          {
+            counselorRecommendedCustody: "TRUSTEE",
             recommendationCustodyLevel: "MEDIUM",
           },
           true,

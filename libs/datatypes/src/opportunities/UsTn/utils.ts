@@ -179,6 +179,16 @@ const partialCoverSheetInformation = coverSheetInformationSchema.partial();
 
 export type CoverSheetFormData = z.infer<typeof partialCoverSheetInformation>;
 
+export const US_TN_CUSTODY_LEVELS = [
+  "TRUSTEE",
+  "LOW",
+  "MEDIUM",
+  "CLOSE",
+  "MAX",
+] as const;
+
+export type UsTnCustodyLevel = (typeof US_TN_CUSTODY_LEVELS)[number];
+
 export type UsTnCoverSheetSharedDraftData = {
   institutionName: string;
   residentFullName: string;

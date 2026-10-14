@@ -26,7 +26,11 @@ import {
   trusteeCriterionNotMetHeading,
 } from "./trusteeCriteria";
 import { UsTnReclassification2026DraftData } from "./UsTnReclassification2026Policy";
-import { multiIncidentPeriodReportSchema, TrusteeFormSchema } from "./utils";
+import {
+  multiIncidentPeriodReportSchema,
+  TrusteeFormSchema,
+  UsTnCustodyLevel,
+} from "./utils";
 
 export type AssessmentOption = {
   text: string;
@@ -355,31 +359,37 @@ function resolveFinalCustodyLevel(
   );
 }
 
+const TRUSTEE_CHECKLIST_CUSTODY_LEVELS: ReadonlySet<string> =
+  new Set<UsTnCustodyLevel>(["LOW", "TRUSTEE"]);
+
 export function showTrusteeChecklist(
   totalText: string,
   formData: Partial<UsTnReclassification2026DraftData>,
   trusteeChecklistReworkEnabled = false,
 ): boolean {
-  const scoredOrOverriddenToLow =
-    totalText === "LOW" ||
-    formData.counselorRecommendedCustody === "LOW" ||
-    formData.recommendationCustodyLevel === "LOW";
+  const scoredOrOverriddenToLowOrTrustee = [
+    totalText,
+    formData.counselorRecommendedCustody,
+    formData.recommendationCustodyLevel,
+  ].some((level) => level && TRUSTEE_CHECKLIST_CUSTODY_LEVELS.has(level));
 
   // Under the rework criteria 1-3 live inside the checklist, so a False shows
   // as Not eligible rather than hiding the form.
   if (trusteeChecklistReworkEnabled) {
-    return resolveFinalCustodyLevel(totalText, formData) === "LOW";
+    return TRUSTEE_CHECKLIST_CUSTODY_LEVELS.has(
+      resolveFinalCustodyLevel(totalText, formData),
+    );
   }
 
   // Only show the trustee checklist if all three questions at top are true
   // (no 1st degree, 10 years or less, and not serving life) and the person
-  // has been scored or overridden to "LOW"
+  // has been scored or overridden to "LOW" or "TRUSTEE"
   return (
     formData.trusteeNotConvictedOfFirstDegreeMurder === "true" &&
     formData.trusteeHas10YearsOrLessRemaining === "true" &&
     formData.isServingLife === "false" &&
     formData.trusteeNotServingForSexualOffense === "true" &&
-    scoredOrOverriddenToLow
+    scoredOrOverriddenToLowOrTrustee
   );
 }
 
