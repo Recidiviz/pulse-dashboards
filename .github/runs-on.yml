@@ -1,26 +1,33 @@
 # This file is consumed by the RunsOn service which is hosted in our AWS account
 # https://runs-on.com/configuration/repo-config/
 runners:
-  # ARM64 pricing is generally ~20% cheaper than x64 and should be used where possible
+  # ARM64 spot is often cheaper per instance than x64, but x64 (m8a) has much higher
+  # single-thread performance, so compare price per unit of work for CPU-bound jobs.
+  # Prices: https://go.runs-on.com/finder
   arm64:
     image: ubuntu24-stepsecurity-arm64
-    family: ["m8g", "c8g", "c7g", "m7g"]
+    family: ["c9g", "m9g", "c8g", "m8g", "c7g", "m7g"]
     extras: ["s3-cache"]
     # Disable SSH access to the runner instances
     ssh: false
-    # Use capacity-optimized strategy to select spot instances with less chance of preemption
-    spot: capacity-optimized
+    # Balance spot price against interruption risk. capacity-optimized ignores price and
+    # was regularly picking pools at ~2x the cost of equivalent instance types
+    spot: price-capacity-optimized
     # Use large disk
     volume: 80gb
 
   x64:
     image: ubuntu24-stepsecurity-x64
-    family: ["m8a", "m8azn"]
+    # m8a (AMD Zen 5) for fast builds. m8a.* rather than m8a, which as a prefix also matches
+    # m8azn: ~11% faster single-thread than m8a, but ~1.8x the spot price.
+    # m8i-flex.* adds spot capacity at the same 16 GiB per 4 vCPUs
+    family: ["m8a.*", "m8i-flex.*"]
     extras: ["s3-cache"]
     # Disable SSH access to the runner instances
     ssh: false
-    # Use capacity-optimized strategy to select spot instances with less chance of preemption
-    spot: capacity-optimized
+    # Balance spot price against interruption risk. capacity-optimized ignores price and
+    # was regularly picking pools at ~2x the cost of equivalent instance types
+    spot: price-capacity-optimized
     # Use large disk
     volume: 80gb
 
