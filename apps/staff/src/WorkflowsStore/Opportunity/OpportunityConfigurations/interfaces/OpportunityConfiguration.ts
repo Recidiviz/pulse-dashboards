@@ -21,6 +21,7 @@ import { OpportunityType, SystemId } from "~datatypes";
 
 import { OpportunityTableColumnId } from "../../../../core/OpportunityCaseloadView/HydratedOpportunityPersonList";
 import { FeatureVariant, TenantId } from "../../../../RootStore/types";
+import { PartialRecord } from "../../../../utils/typeUtils";
 import {
   DenialInputSettings,
   DenialReasonsMap,
@@ -74,6 +75,9 @@ export interface OpportunityConfiguration {
   nonOmsCriteriaHeader: string;
   nonOmsCriteria: OpportunityRequirement[];
   homepagePosition: number;
+  countFromTabCounts?: (
+    tabCounts: PartialRecord<OpportunityTab, number>,
+  ) => number;
   countByFunction?: (opportunities: Opportunity[]) => number;
   deniedTabTitle: OpportunityTab;
   denialAdjective: string;

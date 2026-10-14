@@ -21,7 +21,7 @@
 // Typesense search returned without fetching the caseload. Both resolve to this
 // shape in a presenter, so no component branches on which one it got.
 
-import { countBy, sum } from "lodash";
+import { countBy } from "lodash";
 
 import type { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 import { OpportunityTabGroup } from "../../WorkflowsStore";
@@ -81,17 +81,18 @@ export function summaryFromOpportunities(
 /**
  * One type's summary, from a search that never fetched the caseload.
  *
- * `totalCount` sums the tabs here, because the records the alternative would
- * filter on were never fetched — the census counted them by bucket instead.
+ * `totalCount` is passed in rather than summed from `tabCounts`: the census
+ * already dropped what `countOpportunities` would. See `reconstructTabCounts`.
  */
 export function summaryFromCounts(
   tabCounts: Record<string, number>,
+  totalCount: number,
   people: JusticeInvolvedPerson[] = [],
   alerts: AlertCounts = NO_ALERTS,
 ): OpportunitySummaryData {
   return {
     tabCounts,
-    totalCount: sum(Object.values(tabCounts)),
+    totalCount,
     people,
     alerts,
   };

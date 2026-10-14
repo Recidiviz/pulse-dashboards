@@ -372,6 +372,31 @@ async function loadOpportunityUpdates(logger: Logger): Promise<void> {
     },
   ];
 
+  /**
+   * TX records sitting in the supervisor approval flow.
+   */
+  const approvalFlowUpdates: Array<{
+    recordId: string;
+    opportunityType: string;
+    stateCode: string;
+    requestedDaysAgo: number;
+    supervisorApprovedDaysAgo?: number;
+  }> = [
+    {
+      recordId: "us_tx_013",
+      opportunityType: "usTxEarlyReleaseFromSupervisionV2",
+      stateCode: "US_TX",
+      requestedDaysAgo: 5,
+    },
+    {
+      recordId: "us_tx_014",
+      opportunityType: "usTxEarlyReleaseFromSupervisionV2",
+      stateCode: "US_TX",
+      requestedDaysAgo: 10,
+      supervisorApprovedDaysAgo: 2,
+    },
+  ];
+
   logger(`loading opportunity update fixtures...`);
   const bulkWriter = db.bulkWriter();
 
@@ -387,6 +412,36 @@ async function loadOpportunityUpdates(logger: Logger): Promise<void> {
         date: Timestamp.fromDate(subDays(new Date(), update.submittedDaysAgo)),
         by: "staff@recidiviz.org",
       },
+      stateCode: update.stateCode,
+    });
+  }
+
+  for (const update of approvalFlowUpdates) {
+    const docRef = db
+      .collection(collectionName)
+      .doc(update.recordId)
+      .collection(subcollection)
+      .doc(update.opportunityType);
+    bulkWriter.set(docRef, {
+      actionHistory: [
+        {
+          type: "APPROVAL",
+          date: Timestamp.fromDate(
+            subDays(new Date(), update.requestedDaysAgo),
+          ),
+          by: "officer@recidiviz.org",
+          isStale: false,
+          ...(update.supervisorApprovedDaysAgo !== undefined && {
+            supervisorResponse: {
+              type: "APPROVAL",
+              date: Timestamp.fromDate(
+                subDays(new Date(), update.supervisorApprovedDaysAgo),
+              ),
+              by: "supervisor@recidiviz.org",
+            },
+          }),
+        },
+      ],
       stateCode: update.stateCode,
     });
   }

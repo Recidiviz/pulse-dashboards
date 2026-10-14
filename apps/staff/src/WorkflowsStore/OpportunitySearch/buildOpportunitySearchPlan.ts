@@ -134,11 +134,7 @@ const MAX_FACET_VALUES = 50;
  */
 export const CENSUS_MAX_GROUPS = 250;
 
-/**
- * The fields whose combination decides an untouched record's tab.
- *
- * TODO(OBT-53660): Derive tabTitleForBucket exclusions instead of listing
- */
+/** The fields whose combination decides an untouched record's tab. */
 const CENSUS_GROUP_BY = [
   "opportunityType",
   "isEligible",

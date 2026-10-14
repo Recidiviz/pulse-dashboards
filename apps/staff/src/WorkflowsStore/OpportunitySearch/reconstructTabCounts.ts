@@ -29,6 +29,8 @@ export type CensusBucket = {
   untouchedTab: string;
   /** Every record in the bucket, including those someone has acted on. */
   count: number;
+  /** `OpportunityBase.isIneligible`, straight off the census group key. */
+  ineligible: boolean;
 };
 
 /** One acted-on document, labelled twice by the real `tabTitle()`. */
@@ -38,6 +40,12 @@ export type ActedOnTab = {
   tab: string;
   /** Where the census counted it, so the same record is not counted twice. */
   untouchedTab: string;
+  ineligible: boolean;
+  /**
+   * Submitted or denied, per its overlay. With `ineligible`, the whole of what
+   * `countOpportunities` drops.
+   */
+  actedOnExcluded: boolean;
 };
 
 export type ReconstructTabCountsInput = {
@@ -57,6 +65,14 @@ export type TabCounts = Record<string, number>;
 export type ReconstructTabCountsResult = {
   /** Per opportunity type, the count for each tab that has one. */
   countsByType: Record<string, TabCounts>;
+  /**
+   * Per type, the headline count — and NOT the sum of `countsByType`.
+   *
+   * `countOpportunities` keeps a record only when it is neither submitted, nor
+   * denied, nor ineligible. A record can be several at once, so this counts
+   * what is KEPT rather than subtracting three overlapping sets.
+   */
+  totalsByType: Record<string, number>;
   /**
    * Types whose arithmetic did not hold, excluded from `countsByType`.
    *
@@ -82,16 +98,22 @@ export function reconstructTabCounts({
   actedOn,
 }: ReconstructTabCountsInput): ReconstructTabCountsResult {
   const countsByType: Record<string, TabCounts> = {};
+  const totalsByType: Record<string, number> = {};
 
   // Several buckets can carry one label — the MI reviews fold DUE and UPCOMING
   // into "Due" — so this accumulates rather than assigns.
   for (const bucket of buckets) {
     countsByType[bucket.opportunityType] ??= {};
+    totalsByType[bucket.opportunityType] ??= 0;
     add(
       countsByType[bucket.opportunityType],
       bucket.untouchedTab,
       bucket.count,
     );
+    // Counted first, then taken back below if the overlay excludes it.
+    if (!bucket.ineligible) {
+      totalsByType[bucket.opportunityType] += bucket.count;
+    }
   }
 
   const contradictory = new Set<string>();
@@ -106,6 +128,12 @@ export function reconstructTabCounts({
     }
     add(counts, record.untouchedTab, -1);
     add(counts, record.tab, 1);
+
+    // An ineligible record was never counted above, so taking it out here
+    // would subtract it twice.
+    if (!record.ineligible && record.actedOnExcluded) {
+      totalsByType[record.opportunityType] -= 1;
+    }
   }
 
   for (const [opportunityType, counts] of Object.entries(countsByType)) {
@@ -116,8 +144,14 @@ export function reconstructTabCounts({
     }
   }
 
+  for (const [opportunityType, total] of Object.entries(totalsByType)) {
+    // As for a negative tab: an empty caseload is worse than a stated gap.
+    if (total < 0) contradictory.add(opportunityType);
+  }
+
   for (const opportunityType of contradictory) {
     delete countsByType[opportunityType];
+    delete totalsByType[opportunityType];
   }
 
   // A tab at zero is not rendered, and carrying it would make an empty type
@@ -130,6 +164,7 @@ export function reconstructTabCounts({
 
   return {
     countsByType,
+    totalsByType,
     unreconstructable: [...contradictory].sort(),
   };
 }

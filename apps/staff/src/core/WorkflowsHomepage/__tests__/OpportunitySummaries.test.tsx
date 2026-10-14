@@ -110,11 +110,11 @@ describe("summarised from a search that fetched no caseload", () => {
     // Empty BY DESIGN: the caseload is never fetched on this path.
     opportunitiesByType: {},
     summaryByType: {
-      [TYPE]: summaryFromCounts({ "Eligible Now": 12, "Almost Eligible": 3 }, [
-        person("Ada"),
-        person("Ben"),
-        person("Cleo"),
-      ]),
+      [TYPE]: summaryFromCounts(
+        { "Eligible Now": 12, "Almost Eligible": 3 },
+        15,
+        [person("Ada"), person("Ben"), person("Cleo")],
+      ),
     },
   };
 
@@ -149,7 +149,7 @@ describe("summarised from a search that fetched no caseload", () => {
   test("an empty count set renders no card", () => {
     renderSummaries({
       ...withCounts,
-      summaryByType: { [TYPE]: summaryFromCounts({}) },
+      summaryByType: { [TYPE]: summaryFromCounts({}, 0) },
     });
 
     expect(screen.queryByText(/people are eligible/)).not.toBeInTheDocument();
@@ -158,7 +158,7 @@ describe("summarised from a search that fetched no caseload", () => {
   test("a zeroed tab renders no card either", () => {
     renderSummaries({
       ...withCounts,
-      summaryByType: { [TYPE]: summaryFromCounts({ "Eligible Now": 0 }) },
+      summaryByType: { [TYPE]: summaryFromCounts({ "Eligible Now": 0 }, 0) },
     });
 
     expect(screen.queryByText(/people are eligible/)).not.toBeInTheDocument();

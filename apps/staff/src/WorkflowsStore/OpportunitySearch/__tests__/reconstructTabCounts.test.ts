@@ -27,16 +27,24 @@ function bucket(
   untouchedTab: string,
   count: number,
   opportunityType = "usTnLSU",
+  ineligible = false,
 ): CensusBucket {
-  return { opportunityType, untouchedTab, count };
+  return { opportunityType, untouchedTab, count, ineligible };
 }
 
 function acted(
   untouchedTab: string,
   tab: string,
   opportunityType = "usTnLSU",
+  { ineligible = false, actedOnExcluded = false } = {},
 ): ActedOnTab {
-  return { opportunityType, untouchedTab, tab };
+  return {
+    opportunityType,
+    untouchedTab,
+    tab,
+    ineligible,
+    actedOnExcluded,
+  };
 }
 
 function run(buckets: CensusBucket[], actedOn: ActedOnTab[] = []) {
@@ -49,6 +57,7 @@ describe("with nobody having acted", () => {
       run([bucket("Eligible Now", 12), bucket("Almost Eligible", 3)]),
     ).toEqual({
       countsByType: { usTnLSU: { "Eligible Now": 12, "Almost Eligible": 3 } },
+      totalsByType: { usTnLSU: 15 },
       unreconstructable: [],
     });
   });
@@ -188,5 +197,77 @@ describe("an inconsistency", () => {
 
     expect(result.unreconstructable).toEqual(["usTnExpiration"]);
     expect(result.countsByType).toEqual({ usTnLSU: { "Eligible Now": 3 } });
+  });
+});
+
+describe("the headline total", () => {
+  test("leaves an ineligible bucket out, while the tab still shows it", () => {
+    const result = run([
+      bucket("Eligible Now", 4),
+      bucket("Marked Ineligible", 3, "usTnLSU", true),
+    ]);
+
+    expect(result.countsByType).toEqual({
+      usTnLSU: { "Eligible Now": 4, "Marked Ineligible": 3 },
+    });
+    // 4, NOT the 7 the tabs sum to.
+    expect(result.totalsByType).toEqual({ usTnLSU: 4 });
+  });
+
+  test("takes back a record the overlay submitted or denied", () => {
+    const result = run(
+      [bucket("Eligible Now", 5)],
+      [
+        acted("Eligible Now", "Submitted", "usTnLSU", {
+          actedOnExcluded: true,
+        }),
+        acted("Eligible Now", "Denied", "usTnLSU", { actedOnExcluded: true }),
+      ],
+    );
+
+    expect(result.totalsByType).toEqual({ usTnLSU: 3 });
+  });
+
+  test("keeps a record the overlay only MOVED", () => {
+    // A snooze that has not expired: the tab moves, the headline does not.
+    const result = run(
+      [bucket("Eligible Now", 5)],
+      [acted("Eligible Now", "Snoozed")],
+    );
+
+    expect(result.totalsByType).toEqual({ usTnLSU: 5 });
+  });
+
+  test("does not subtract an ineligible record twice", () => {
+    // THE overlap. Ineligible AND denied drops the record once, and it was
+    // never counted, so taking it back would report one fewer than the truth.
+    const result = run(
+      [
+        bucket("Eligible Now", 4),
+        bucket("Marked Ineligible", 2, "usTnLSU", true),
+      ],
+      [
+        acted("Marked Ineligible", "Denied", "usTnLSU", {
+          ineligible: true,
+          actedOnExcluded: true,
+        }),
+      ],
+    );
+
+    expect(result.totalsByType).toEqual({ usTnLSU: 4 });
+  });
+
+  test("reports a type whose total goes negative rather than rendering it", () => {
+    // Impossible against consistent inputs: the two searches disagree.
+    const result = run(
+      [bucket("Eligible Now", 1)],
+      [
+        acted("Eligible Now", "Denied", "usTnLSU", { actedOnExcluded: true }),
+        acted("Eligible Now", "Denied", "usTnLSU", { actedOnExcluded: true }),
+      ],
+    );
+
+    expect(result.totalsByType).toEqual({});
+    expect(result.unreconstructable).toEqual(["usTnLSU"]);
   });
 });

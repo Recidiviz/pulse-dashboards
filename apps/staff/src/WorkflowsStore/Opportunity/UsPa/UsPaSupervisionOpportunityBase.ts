@@ -17,13 +17,12 @@
 
 import { DocumentData } from "firebase/firestore";
 
-import { OpportunityType } from "~datatypes";
-
-import { RootStore } from "../../../RootStore";
 import { Client } from "../../Client";
 import { OpportunityBase } from "../OpportunityBase";
 import { OpportunityTab } from "../types";
 import { hydrateReq } from "../utils";
+
+const ELIGIBILITY_UNCLEAR_DISPLAY_NAME: OpportunityTab = "Eligibility Unclear";
 
 /**
  * Base class for US_PA Supervision Opportunities.
@@ -37,34 +36,33 @@ export abstract class UsPaSupervisionOpportunityBase<
   /**
    * Text indicating unclear eligibility status that is treated
    * as a non-OMS requirement.
+   *
+   * A getter, not a constructor field, so it reads the record and the user's
+   * variants when asked. A value frozen at construction never reacts, which
+   * `apps/staff/CLAUDE.md` forbids, and leaves `tabTitle()` unanswerable from
+   * anything but a fully constructed instance.
    */
-  eligibilityUnclearText?: string[];
+  get eligibilityUnclearText(): string[] | undefined {
+    if (!this.isEligibilityUnclearEnabled) return undefined;
+    return this.record?.metadata?.eligibilityUnclearText;
+  }
+
   /**
    * Whether the opportunity is in an "Eligibility Unclear" status,
    * which is true when the metadata tab name is "ELIGIBILITY_UNCLEAR".
    */
-  isEligibilityUnclear?: boolean;
+  get isEligibilityUnclear(): boolean | undefined {
+    if (!this.isEligibilityUnclearEnabled) return undefined;
+    return this.record?.metadata?.tabName === "ELIGIBILITY_UNCLEAR";
+  }
 
-  readonly eligibilityUnclearDisplayName = "Eligibility Unclear";
+  get eligibilityUnclearDisplayName(): OpportunityTab {
+    return ELIGIBILITY_UNCLEAR_DISPLAY_NAME;
+  }
 
-  private isEligibilityUnclearEnabled: boolean;
-
-  constructor(
-    client: Client,
-    opportunityType: OpportunityType,
-    rootStore: RootStore,
-    record: ReferralRecord,
-  ) {
-    super(client, opportunityType, rootStore, record);
-
-    this.isEligibilityUnclearEnabled =
-      !!rootStore.userStore.activeFeatureVariants.usPaUnclearEligibility;
-
-    if (this.isEligibilityUnclearEnabled) {
-      const { eligibilityUnclearText, tabName } = record.metadata;
-      this.eligibilityUnclearText = eligibilityUnclearText;
-      this.isEligibilityUnclear = tabName === "ELIGIBILITY_UNCLEAR";
-    }
+  private get isEligibilityUnclearEnabled(): boolean {
+    return !!this.rootStore.userStore.activeFeatureVariants
+      .usPaUnclearEligibility;
   }
 
   /**

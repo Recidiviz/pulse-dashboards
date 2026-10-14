@@ -22,6 +22,7 @@
 // token. The query construction and the arithmetic live in pure modules.
 
 import * as Sentry from "@sentry/react";
+import { get } from "lodash";
 import {
   comparer,
   makeAutoObservable,
@@ -37,6 +38,8 @@ import {
 import type { OpportunityType } from "~datatypes";
 import type { Hydratable, HydrationState } from "~hydration-utils";
 
+import type { RootStore } from "../../RootStore";
+import { countsTowardTotal } from "../Opportunity/utils/generateHeadersUtils";
 import type { SearchStore } from "../SearchStore";
 import type { WorkflowsStore } from "../WorkflowsStore";
 import {
@@ -58,6 +61,10 @@ import {
   type TabCounts,
 } from "./reconstructTabCounts";
 import { type BucketKey, tabTitleForBucket } from "./tabTitleForBucket";
+
+function isIneligibleRecord(doc: Record<string, unknown>): boolean {
+  return doc["isEligible"] !== true && doc["isAlmostEligible"] !== true;
+}
 
 /** A document the page will render, with its joined person and overlay. */
 export type FetchedOpportunity = Record<string, unknown>;
@@ -114,6 +121,9 @@ function staleBucketCount(result: TypesenseResult): number {
 export class OpportunitySearchManager implements Hydratable {
   /** Per opportunity type, the count for each tab that has one. */
   countsByType: Record<string, TabCounts> = {};
+
+  /** Per type, the headline count. See `reconstructTabCounts`. */
+  totalsByType: Record<string, number> = {};
 
   /**
    * Types whose counts did not reconcile, so the page must say so rather than
@@ -295,6 +305,7 @@ export class OpportunitySearchManager implements Hydratable {
     if (plan.length === 0) {
       runInAction(() => {
         this.countsByType = {};
+        this.totalsByType = {};
         this.unreconstructableTypes = [];
         this.alertsByType = {};
         this.records = [];
@@ -325,12 +336,11 @@ export class OpportunitySearchManager implements Hydratable {
       if (rejected)
         throw new Error(`Typesense rejected a search: ${rejected.error}`);
 
-      const { counts, unreconstructable, alerts, records } = this.collect(
-        plan,
-        results,
-      );
+      const { counts, totals, unreconstructable, alerts, records } =
+        this.collect(plan, results);
       runInAction(() => {
         this.countsByType = counts;
+        this.totalsByType = totals;
         this.unreconstructableTypes = unreconstructable;
         this.alertsByType = alerts;
         this.records = records;
@@ -343,6 +353,7 @@ export class OpportunitySearchManager implements Hydratable {
           // Cleared rather than left stale. A homepage showing the previous
           // selection's counts is worse than one showing none.
           this.countsByType = {};
+          this.totalsByType = {};
           this.unreconstructableTypes = [];
           this.alertsByType = {};
           this.records = [];
@@ -354,7 +365,34 @@ export class OpportunitySearchManager implements Hydratable {
     }
   }
 
-  /** The bucket key a document belongs to. */
+  /**
+   * Whether an overlay puts a record outside `countOpportunities`.
+   *
+   * Defers to `countsTowardTotal`, the same predicate the Firestore path
+   * applies, with the three flags read off the census rather than a hydrated
+   * record. `supportsSubmitted` gates the submitted flag because
+   * `OpportunityBase.isSubmitted` gates it: a stray `submitted` without the
+   * feature does not drop the record there, so it must not drop it here.
+   */
+  private isExcludedByOverlay(
+    opportunityType: string,
+    overlay: unknown,
+  ): boolean {
+    const status = get(overlay, "updateStatus");
+    const supportsSubmitted = Boolean(
+      this.workflowsStore.opportunityConfigurationStore.opportunities[
+        opportunityType as OpportunityType
+      ]?.supportsSubmitted,
+    );
+
+    return !countsTowardTotal({
+      isSubmitted: status === "SUBMITTED" && supportsSubmitted,
+      denial: status === "DENIED" || undefined,
+      // Carried separately: it comes off the census group key, not the overlay.
+      isIneligible: false,
+    });
+  }
+
   private static keyOf(
     document: Record<string, unknown>,
     opportunityType: string,
@@ -396,6 +434,7 @@ export class OpportunitySearchManager implements Hydratable {
     results: TypesenseResult[],
   ): {
     counts: Record<string, TabCounts>;
+    totals: Record<string, number>;
     unreconstructable: string[];
     alerts: Record<string, OpportunityAlertCounts>;
     records: FetchedOpportunity[];
@@ -415,116 +454,197 @@ export class OpportunitySearchManager implements Hydratable {
       if (search.kind === "eligibility") {
         records.push(...(result.hits ?? []).map((h) => h.document));
       }
-
-      // The STALE SEARCH shape's two alert rows. `staleUnviewed` and
-      // two halves of one COALESCE that no single facet expresses, so they sum
-      // rather than replace each other.
-      if (search.opportunityType) {
-        const type = search.opportunityType;
-        const bump = (key: keyof OpportunityAlertCounts, by: number) => {
-          alerts[type] ??= { eligibleStale: 0, pendingOverdue: 0 };
-          alerts[type][key] += by;
-        };
-        if (search.kind === "staleUnviewed" || search.kind === "staleViewed") {
-          bump("eligibleStale", staleBucketCount(result));
-        }
-        if (search.kind === "pendingOverdue") {
-          bump("pendingOverdue", staleBucketCount(result));
-        }
-      }
-
+      this.collectAlerts(search, result, alerts);
       if (search.kind === "census") {
-        const groups = result.grouped_hits ?? [];
-        // On a grouped search `found` counts GROUPS, so this compares like with
-        // like. An overflow drops whole buckets, which reads as a tab that
-        // simply is not there rather than as an error.
-        if ((result.found ?? 0) > groups.length) {
-          throw new Error(
-            `The tab census needs pagination: ${result.found} groups found, ${CENSUS_MAX_GROUPS} per page.`,
-          );
-        }
-
-        for (const group of groups) {
-          const exemplar = group.hits[0]?.document;
-          const count = group.found ?? 0;
-          if (!exemplar || count === 0) continue;
-
-          const opportunityType = exemplar["opportunityType"];
-          if (typeof opportunityType !== "string") continue;
-
-          // Named by the REAL `tabTitle()`, with no overlay — so the answer is
-          // the tab an untouched record of this bucket lands on.
-          const untouchedTab = tabTitleForBucket(
-            OpportunitySearchManager.keyOf(exemplar, opportunityType),
-            rootStore,
-          );
-          // A class that cannot answer from the bucket key alone.
-          if (!untouchedTab) {
-            unlabelled.add(opportunityType);
-            continue;
-          }
-
-          buckets.push({ opportunityType, untouchedTab, count });
-        }
+        this.collectCensusBuckets(result, rootStore, buckets, unlabelled);
       }
-
       if (search.kind === "actedOn") {
-        const hits = result.hits ?? [];
-        // Checked HERE rather than after scoping: `found` counts the whole
-        // acted-on set, and a missed record stays in the bucket it has left.
-        if ((result.found ?? 0) > hits.length) {
-          throw new Error(
-            `The acted-on set needs pagination: ${result.found} found, ${ACTED_ON_PAGE_SIZE} per page.`,
-          );
-        }
-
-        for (const hit of hits) {
-          records.push(hit.document);
-
-          const opportunityType = hit.document["opportunityType"];
-          if (typeof opportunityType !== "string") continue;
-          if (!this.inCensusScope(hit.document, opportunityType)) continue;
-
-          const key = OpportunitySearchManager.keyOf(
-            hit.document,
-            opportunityType,
-          );
-          // Twice: where it belongs now, and the bucket the census counted it
-          // in. Both from the same class, one with the overlay and one without.
-          const tab = tabTitleForBucket(
-            key,
-            rootStore,
-            hit.document["opportunityUpdates"],
-          );
-          const untouchedTab = tabTitleForBucket(key, rootStore);
-          if (!tab || !untouchedTab) {
-            unlabelled.add(opportunityType);
-            continue;
-          }
-
-          actedOn.push({ opportunityType, tab, untouchedTab });
-        }
+        this.collectActedOn(result, rootStore, records, actedOn, unlabelled);
       }
     });
 
-    const { countsByType, unreconstructable } = reconstructTabCounts({
-      buckets,
-      actedOn,
-    });
+    const { countsByType, totalsByType, unreconstructable } =
+      reconstructTabCounts({
+        buckets,
+        actedOn,
+      });
 
     // A type with even one unnamed bucket has a PARTIAL histogram, and a
     // partial one is worse than none — it renders as a smaller caseload.
     for (const opportunityType of unlabelled) {
       delete countsByType[opportunityType];
+      delete totalsByType[opportunityType];
     }
+
+    const uncountable = this.applyConfiguredCounts(countsByType, totalsByType);
 
     return {
       counts: countsByType,
+      totals: totalsByType,
       unreconstructable: [
-        ...new Set([...unreconstructable, ...unlabelled]),
+        ...new Set([...unreconstructable, ...unlabelled, ...uncountable]),
       ].sort(),
       alerts,
       records,
     };
+  }
+
+  /**
+   * The two alert rows, accumulated across every search that feeds them.
+   *
+   * `staleUnviewed` and `staleViewed` are two halves of one COALESCE that no
+   * single facet expresses, so they SUM rather than replace each other.
+   */
+  private collectAlerts(
+    search: PlannedOpportunitySearch,
+    result: TypesenseResult,
+    alerts: Record<string, OpportunityAlertCounts>,
+  ): void {
+    // The STALE SEARCH shape's two alert rows. `staleUnviewed` and
+    // two halves of one COALESCE that no single facet expresses, so they sum
+    // rather than replace each other.
+    if (search.opportunityType) {
+      const type = search.opportunityType;
+      const bump = (key: keyof OpportunityAlertCounts, by: number) => {
+        alerts[type] ??= { eligibleStale: 0, pendingOverdue: 0 };
+        alerts[type][key] += by;
+      };
+      if (search.kind === "staleUnviewed" || search.kind === "staleViewed") {
+        bump("eligibleStale", staleBucketCount(result));
+      }
+      if (search.kind === "pendingOverdue") {
+        bump("pendingOverdue", staleBucketCount(result));
+      }
+    }
+  }
+
+  /** One bucket per census group, named by an exemplar carrying no overlay. */
+  private collectCensusBuckets(
+    result: TypesenseResult,
+    rootStore: RootStore,
+    buckets: CensusBucket[],
+    unlabelled: Set<string>,
+  ): void {
+    const groups = result.grouped_hits ?? [];
+    // On a grouped search `found` counts GROUPS, so this compares like with
+    // like. An overflow drops whole buckets, which reads as a tab that
+    // simply is not there rather than as an error.
+    if ((result.found ?? 0) > groups.length) {
+      throw new Error(
+        `The tab census needs pagination: ${result.found} groups found, ${CENSUS_MAX_GROUPS} per page.`,
+      );
+    }
+
+    for (const group of groups) {
+      const exemplar = group.hits[0]?.document;
+      const count = group.found ?? 0;
+      if (!exemplar || count === 0) continue;
+
+      const opportunityType = exemplar["opportunityType"];
+      if (typeof opportunityType !== "string") continue;
+
+      // Named by the REAL `tabTitle()`, with no overlay — so the answer is
+      // the tab an untouched record of this bucket lands on.
+      const untouchedTab = tabTitleForBucket(
+        OpportunitySearchManager.keyOf(exemplar, opportunityType),
+        rootStore,
+      );
+      // A class that cannot answer from the bucket key alone.
+      if (!untouchedTab) {
+        unlabelled.add(opportunityType);
+        continue;
+      }
+
+      buckets.push({
+        opportunityType,
+        untouchedTab,
+        count,
+        ineligible: isIneligibleRecord(exemplar),
+      });
+    }
+  }
+
+  /** Every acted-on document, labelled twice: where it sits, and where the
+   * census counted it. */
+  private collectActedOn(
+    result: TypesenseResult,
+    rootStore: RootStore,
+    records: FetchedOpportunity[],
+    actedOn: ActedOnTab[],
+    unlabelled: Set<string>,
+  ): void {
+    const hits = result.hits ?? [];
+    // Checked HERE rather than after scoping: `found` counts the whole
+    // acted-on set, and a missed record stays in the bucket it has left.
+    if ((result.found ?? 0) > hits.length) {
+      throw new Error(
+        `The acted-on set needs pagination: ${result.found} found, ${ACTED_ON_PAGE_SIZE} per page.`,
+      );
+    }
+
+    for (const hit of hits) {
+      records.push(hit.document);
+
+      const opportunityType = hit.document["opportunityType"];
+      if (typeof opportunityType !== "string") continue;
+      if (!this.inCensusScope(hit.document, opportunityType)) continue;
+
+      const key = OpportunitySearchManager.keyOf(hit.document, opportunityType);
+      // Twice: where it belongs now, and the bucket the census counted it
+      // in. Both from the same class, one with the overlay and one without.
+      const tab = tabTitleForBucket(
+        key,
+        rootStore,
+        hit.document["opportunityUpdates"],
+      );
+      const untouchedTab = tabTitleForBucket(key, rootStore);
+      if (!tab || !untouchedTab) {
+        unlabelled.add(opportunityType);
+        continue;
+      }
+
+      actedOn.push({
+        opportunityType,
+        tab,
+        untouchedTab,
+        ineligible: isIneligibleRecord(hit.document),
+        actedOnExcluded: this.isExcludedByOverlay(
+          opportunityType,
+          hit.document["opportunityUpdates"],
+        ),
+      });
+    }
+  }
+
+  /**
+   * Replaces the generic total for any type that configures its own count.
+   *
+   * Returns the types whose count a tab histogram cannot express.
+   */
+  private applyConfiguredCounts(
+    countsByType: Record<string, TabCounts>,
+    totalsByType: Record<string, number>,
+  ): string[] {
+    // A type that configures its own count replaces the generic total, which
+    // is the default rule and not what these types mean by a headline.
+    const configs =
+      this.workflowsStore.opportunityConfigurationStore.opportunities;
+    const uncountable: string[] = [];
+    for (const [opportunityType, tabCounts] of Object.entries(countsByType)) {
+      const config = configs[opportunityType as OpportunityType];
+      if (!config?.countByFunction) continue;
+
+      if (!config.countFromTabCounts) {
+        // Counts something a tab histogram cannot express — US_OR counts
+        // distinct people across sentences. Reported as unreconstructable,
+        // because the generic total would be a plausible wrong number.
+        uncountable.push(opportunityType);
+        delete countsByType[opportunityType];
+        delete totalsByType[opportunityType];
+        continue;
+      }
+      totalsByType[opportunityType] = config.countFromTabCounts(tabCounts);
+    }
+    return uncountable;
   }
 }

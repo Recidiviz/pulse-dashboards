@@ -45,24 +45,15 @@ import { OpportunityBase } from "../Opportunity/OpportunityBase";
 import { opportunityConstructors } from "../Opportunity/opportunityConstructors";
 import { JusticeInvolvedPerson } from "../types";
 
-/**
- * Types whose untouched tab reads data the bucket key does not carry, so one
- * exemplar cannot speak for its bucket.
- *
- * Returning undefined withholds the count, which is right — a guess would
- * render a wrong number that looks right. Dropping the card is NOT right, and
- * is why this set must be empty before launch rather than merely accurate.
- *
- * TODO(OBT-53660) Do not maintain this list and derive every tab title directly
- */
 export const BUCKET_KEY_INSUFFICIENT: ReadonlySet<string> = new Set([
-  // Compare `eligibilityDate` against the current week. A date is continuous,
-  // so it cannot join the key the way `tabName` does; they need their own
-  // date-bucketed grouping.
+  //
+  // TODO(OBT-50229): index US_MO's resolved eligibility date and partition the
+  // census by it, then delete these three.
   "usMoOverdueRestrictiveHousingInitialHearing",
   "usMoOverdueRestrictiveHousingRelease",
   "usMoOverdueRestrictiveHousingReviewHearing",
-  // Reads the COMPANION opportunity's denial, which is not on the record.
+  // TODO(OBT-50232): fetch the companion denials in their own search and move
+  // the affected records onto the pending tab, then delete this one.
   "usIaCompleteSupervisionLevelDowngrade",
 ]);
 
@@ -112,7 +103,16 @@ function personStub(rootStore: RootStore): JusticeInvolvedPerson {
  * initialised instance. The update subscription is inert: its listener only
  * attaches when something subscribes, and nothing here does.
  */
-export function tabTitleForBucket(
+/** A shell and the tab group a card renders it by. */
+export type OpportunityShell = {
+  opportunity: Opportunity;
+  tabGroup: OpportunityTabGroup;
+};
+
+/**
+ * One opportunity standing in for every record in a bucket.
+ */
+export function opportunityShell(
   {
     opportunityType,
     isEligible,
@@ -123,7 +123,7 @@ export function tabTitleForBucket(
   }: BucketKey,
   rootStore: RootStore,
   updates?: unknown,
-): OpportunityTab | undefined {
+): OpportunityShell | undefined {
   // Present but empty, so `metadata.tabName` reads as absent rather than
   // throwing on the types that switch on it.
   const record = {
@@ -142,8 +142,6 @@ export function tabTitleForBucket(
     eligibleCriteria: {},
     ineligibleCriteria: {},
   };
-
-  if (BUCKET_KEY_INSUFFICIENT.has(opportunityType)) return undefined;
 
   try {
     const base = new OpportunityBase(
@@ -176,7 +174,31 @@ export function tabTitleForBucket(
       base.config.tabGroups ?? {},
     )[0] as OpportunityTabGroup;
 
-    return (base as unknown as Opportunity).tabTitle(tabGroup);
+    return { opportunity: base as unknown as Opportunity, tabGroup };
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * The tab a record with these fields lands on, or undefined when the class
+ * cannot answer without a real document.
+ *
+ * With no `updates` the answer is the UNTOUCHED tab, which is what a census
+ * bucket needs. With them it is the record's real tab.
+ */
+export function tabTitleForBucket(
+  key: BucketKey,
+  rootStore: RootStore,
+  updates?: unknown,
+): OpportunityTab | undefined {
+  if (BUCKET_KEY_INSUFFICIENT.has(key.opportunityType)) return undefined;
+
+  const shell = opportunityShell(key, rootStore, updates);
+  if (!shell) return undefined;
+
+  try {
+    return shell.opportunity.tabTitle(shell.tabGroup);
   } catch {
     // A class that needs more than the bucket key. Reported rather than
     // guessed — see `reconstructTabCounts`.

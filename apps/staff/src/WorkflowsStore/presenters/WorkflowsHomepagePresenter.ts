@@ -83,7 +83,7 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
       );
     }
 
-    const { countsByType, peopleByType, alertsByType } =
+    const { countsByType, totalsByType, peopleByType, alertsByType } =
       this.workflowsStore.searchStore.opportunitySearchManager;
 
     return Object.fromEntries(
@@ -91,6 +91,7 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
         type,
         summaryFromCounts(
           tabCounts,
+          totalsByType?.[type] ?? 0,
           peopleByType?.[type],
           alertsByType?.[type],
         ),

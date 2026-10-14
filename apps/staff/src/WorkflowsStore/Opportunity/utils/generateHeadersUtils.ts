@@ -18,6 +18,27 @@
 import { Opportunity } from "..";
 
 /**
+ * Whether one record counts toward a type's headline, absent a
+ * `countByFunction`.
+ *
+ * Takes the three flags rather than an `Opportunity` so the Typesense homepage
+ * can apply the same rule: it derives them from the census instead of a
+ * hydrated record, and never builds an `Opportunity` at all. One definition, so
+ * the two paths cannot drift.
+ */
+export function countsTowardTotal({
+  isSubmitted,
+  denial,
+  isIneligible,
+}: {
+  isSubmitted: boolean;
+  denial: unknown;
+  isIneligible: boolean;
+}): boolean {
+  return !isSubmitted && !denial && !isIneligible;
+}
+
+/**
  * This counts the number of opportunities in a list using the default counting algorithm if there is not one defined for the opportunityType.
  * @param opportunities list of opportunities
  * @returns number of opportunities according to counting algorithm
@@ -37,8 +58,6 @@ export const countOpportunities = (opportunities: Opportunity[]): number => {
   const countByFunction = opportunities[0].config.countByFunction;
   const count = countByFunction
     ? countByFunction(opportunities)
-    : opportunities.filter(
-        (opp) => !opp.isSubmitted && !opp.denial && !opp.isIneligible,
-      ).length;
+    : opportunities.filter(countsTowardTotal).length;
   return count;
 };

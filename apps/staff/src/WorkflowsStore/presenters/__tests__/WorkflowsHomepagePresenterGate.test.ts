@@ -41,7 +41,11 @@ function makePresenter(store: Record<string, unknown>) {
 /** A manager stub, since the presenter reaches through to it under the gate. */
 function managerWith(state: Record<string, unknown> = {}) {
   return {
-    opportunitySearchManager: { countsByType: {}, ...state },
+    opportunitySearchManager: {
+      countsByType: {},
+      totalsByType: {},
+      ...state,
+    },
   };
 }
 
@@ -75,7 +79,8 @@ describe("summaryByType", () => {
       searchStore: {
         isTypesenseHomepageEnabled: gateOn,
         opportunitySearchManager: {
-          countsByType: { usTnLSU: { "Eligible Now": 4 } },
+          countsByType: { usTnLSU: { "Eligible Now": 4, Denied: 2 } },
+          totalsByType: { usTnLSU: 4 },
           peopleByType: {},
           alertsByType: {},
         },
@@ -86,9 +91,9 @@ describe("summaryByType", () => {
   test("comes from the search manager under the gate", () => {
     const summary = makePresenter(store(true)).summaryByType[LSU_TYPE];
 
-    expect(summary?.tabCounts).toEqual({ "Eligible Now": 4 });
-    // Summed, because the records the other count would filter on were never
-    // fetched.
+    expect(summary?.tabCounts).toEqual({ "Eligible Now": 4, Denied: 2 });
+    // The manager's own total, NOT the 6 the tabs sum to: the census already
+    // dropped the denied pair, the way `countOpportunities` would.
     expect(summary?.totalCount).toBe(4);
   });
 

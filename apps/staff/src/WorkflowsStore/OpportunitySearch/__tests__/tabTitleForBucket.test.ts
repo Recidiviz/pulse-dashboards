@@ -17,7 +17,8 @@
 
 import { readFileSync } from "fs";
 import { globSync } from "glob";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { configure } from "mobx";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 import {
   type OpportunityType,
@@ -55,8 +56,15 @@ vi.mock("@sentry/react", () => ({ captureException: vi.fn() }));
 let root: RootStore;
 
 beforeEach(() => {
+  // Lets the US_PA block below stub `activeFeatureVariants`, a computed getter.
+  configure({ safeDescriptors: false });
   root = new RootStore();
   root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
+  configure({ safeDescriptors: true });
 });
 
 /**
@@ -136,8 +144,8 @@ const OVERRIDES_COVERED_VIA_SUBCLASS = [
 const OVERRIDES_WITHOUT_FIXTURES = [
   "UsAzTransferToAdministrativeSupervisionOpportunity",
   "UsAzTransferToAdministrativeSupervisionV2Opportunity",
-  // All listed in BUCKET_KEY_INSUFFICIENT and reported as unreconstructable
-  // rather than guessed at. See the reasons there.
+  // Withheld rather than guessed at. tabCountCoverage.test.ts proves the
+  // list that decides this.
   "UsMoOverdueRestrictiveHousingOpportunityBase",
   "UsIaSupervisionLevelDowngradeOpportunity",
 ];
@@ -227,8 +235,63 @@ describe("with an overlay", () => {
   });
 });
 
-describe("types the bucket key cannot answer for", () => {
-  test.each([...BUCKET_KEY_INSUFFICIENT])("%s returns undefined", (type) => {
+describe("US_PA under the unclear-eligibility variant", () => {
+  // The parity sweep cannot reach this: no US_PA fixture carries the unclear
+  // tab name, and the default store has no feature variants, so both sides
+  // take `super.tabTitle()` and agree whichever way the class is written.
+  //
+  // `isEligibilityUnclear` is a GETTER over `record.metadata.tabName`, which
+  // the bucket key carries. It used to be a constructor field, which a shell
+  // never sets — the unclear branch was then skipped WITHOUT throwing, and the
+  // census reported a plausible wrong tab.
+  const record = Object.values(usPaAdminSupervisionFixtures)[0].input as Record<
+    string,
+    unknown
+  >;
+  const unclear = {
+    ...record,
+    metadata: {
+      ...(record["metadata"] as object),
+      tabName: "ELIGIBILITY_UNCLEAR",
+      eligibilityUnclearText: ["probe"],
+    },
+  };
+  const key = {
+    opportunityType: "usPaAdminSupervision" as OpportunityType,
+    isEligible: true,
+    isAlmostEligible: false,
+    tabName: "ELIGIBILITY_UNCLEAR",
+  };
+
+  function enableVariant() {
+    vi.spyOn(root.userStore, "activeFeatureVariants", "get").mockReturnValue({
+      usPaUnclearEligibility: {},
+    } as never);
+  }
+
+  test("the variant off leaves the base tab", () => {
+    expect(tabTitleForBucket(key, root)).toBe("Eligible Now");
+  });
+
+  test("the variant on reaches the unclear tab, as the real class does", () => {
+    // ABSOLUTE, not just equal to the real instance. A regression that breaks
+    // the class breaks BOTH sides, and they would then agree on the wrong
+    // answer — parity proves agreement, never correctness.
+    enableVariant();
+
+    expect(tabTitleForBucket(key, root)).toBe("Eligibility Unclear");
+    expect(
+      realTabTitle("usPaAdminSupervision" as OpportunityType, unclear),
+    ).toBe("Eligibility Unclear");
+  });
+});
+
+describe("buckets the key cannot answer for", () => {
+  // Driven by the list itself, so this cannot fall behind it.
+  //
+  // TODO(OBT-50229): index US_MO's resolved eligibility date and partition the
+  // census by it, which empties the list and this block with it.
+  test.each([...BUCKET_KEY_INSUFFICIENT])("%s is withheld", (type) => {
     // Fails closed. Left to the generic path, US_MO would answer "Missing
     // Review Date" for every record — right-looking and wrong.
     expect(

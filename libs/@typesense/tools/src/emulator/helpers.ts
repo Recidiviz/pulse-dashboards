@@ -194,6 +194,26 @@ export async function importCollection(
 
 const OPPORTUNITY_SOURCE_PATTERN = /^US_[A-Z]{2}-/;
 
+/**
+ * Opportunity sources whose collection predates the `US_XX-` convention.
+ *
+ * The real answer is the `firestoreCollection` on each opportunity
+ * configuration, which this library cannot read — it cannot import an app. A
+ * third would surface as a type on the Firestore homepage and absent from the
+ * indexed one, which `apps/staff/e2e/WorkflowsHomepage.spec.ts` catches.
+ */
+const LEGACY_OPPORTUNITY_SOURCES = new Set([
+  "earlyTerminationReferrals",
+  "usTnCompliantReporting2025PolicyReferrals",
+]);
+
+function isOpportunitySource(collectionId: string): boolean {
+  return (
+    OPPORTUNITY_SOURCE_PATTERN.test(collectionId) ||
+    LEGACY_OPPORTUNITY_SOURCES.has(collectionId)
+  );
+}
+
 type PersonScopeFields = {
   officerId?: unknown;
   locationId?: unknown;
@@ -263,7 +283,7 @@ export async function importOpportunities(
 ): Promise<number> {
   const sources = (await db.listCollections())
     .map((c) => c.id)
-    .filter((id) => OPPORTUNITY_SOURCE_PATTERN.test(id));
+    .filter(isOpportunitySource);
   if (sources.length === 0) return 0;
 
   const personScope = await loadPersonScope(db);

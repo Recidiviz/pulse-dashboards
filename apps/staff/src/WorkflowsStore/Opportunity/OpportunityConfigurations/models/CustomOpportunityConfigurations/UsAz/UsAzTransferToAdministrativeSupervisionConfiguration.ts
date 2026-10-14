@@ -15,27 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { countBy } from "lodash";
-
 import { OpportunityTableColumnId } from "../../../../../../core/OpportunityCaseloadView/HydratedOpportunityPersonList";
 import { PartialRecord } from "../../../../../../utils/typeUtils";
-import {
-  Opportunity,
-  OpportunityTab,
-  OpportunityTabGroups,
-} from "../../../../types";
+import { OpportunityTab, OpportunityTabGroups } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsAzTransferToAdministrativeSupervisionConfiguration extends ApiOpportunityConfiguration {
-  countByFunction = (opportunities: Opportunity[]) => {
-    const counts = countBy(opportunities, (opp) =>
-      opp.tabTitle(),
-    ) as PartialRecord<OpportunityTab, number>;
-    return (
-      (counts["Eligible per ORAS"] ?? 0) +
-      (counts["Eligible per Initial Assessment"] ?? 0)
-    );
-  };
+  countFromTabCounts = (counts: PartialRecord<OpportunityTab, number>) =>
+    (counts["Eligible per ORAS"] ?? 0) +
+    (counts["Eligible per Initial Assessment"] ?? 0);
 
   get customSubmittedText(): string {
     return "Don't forget to remove them from the [drug testing schedule](https://aversys.averhealth.com).";

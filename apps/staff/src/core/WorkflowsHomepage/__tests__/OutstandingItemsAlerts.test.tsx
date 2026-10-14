@@ -166,6 +166,7 @@ describe("with an alerts prop — the Typesense homepage", () => {
           summaryByType={{
             [OPPORTUNITY_TYPE]: summaryFromCounts(
               {},
+              0,
               [],
               alertsByType[OPPORTUNITY_TYPE],
             ),

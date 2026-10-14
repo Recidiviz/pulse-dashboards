@@ -19,7 +19,17 @@ import { Opportunity } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsOrEarnedDischargeSentenceConfiguration extends ApiOpportunityConfiguration {
-  countByFunction(opportunities: Opportunity[]): number {
-    return new Set(opportunities.map((opp) => opp.person.externalId)).size;
+  /**
+   * Counts distinct people, not records: a person can hold several sentences,
+   * and the card reports people.
+   *
+   * The one count a tab histogram cannot express, so this overrides the base
+   * accessor instead of supplying `countFromTabCounts`. The indexed-search
+   * homepage reports this type as unreconstructable rather than showing the
+   * generic total, which would be a plausible wrong number.
+   */
+  override get countByFunction() {
+    return (opportunities: Opportunity[]) =>
+      new Set(opportunities.map((opp) => opp.person.externalId)).size;
   }
 }

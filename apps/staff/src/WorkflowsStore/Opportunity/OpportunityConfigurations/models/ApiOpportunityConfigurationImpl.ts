@@ -29,14 +29,17 @@ import {
   FeatureVariant,
 } from "../../../../RootStore/types";
 import UserStore from "../../../../RootStore/UserStore";
+import { PartialRecord } from "../../../../utils/typeUtils";
 import {
   DenialInputSettings,
+  Opportunity,
   OpportunityRequirement,
   OpportunityTab,
   OpportunityTabGroups,
 } from "../../types";
 import { IApiOpportunityConfiguration } from "../interfaces";
 import { OpportunityConfiguration } from "../interfaces/OpportunityConfiguration";
+import { tabHistogram } from "./utils";
 
 export function formatEligibilityText(dynamicText: string, count: number) {
   return simplur(
@@ -84,6 +87,27 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     protected configurationObject: IApiOpportunityConfiguration,
     protected userStore: UserStore,
   ) {}
+
+  /**
+   * Declared so the getter below can read it. Subclasses supply it.
+   *
+   * `declare` rather than `abstract`: this class is instantiated directly as
+   * the fallback for every type with no custom config, and most types have no
+   * custom count, so there is nothing for a subclass to be obliged to
+   * implement.
+   */
+  declare countFromTabCounts?: (
+    tabCounts: PartialRecord<OpportunityTab, number>,
+  ) => number;
+
+  get countByFunction():
+    | ((opportunities: Opportunity[]) => number)
+    | undefined {
+    const countFromTabCounts = this.countFromTabCounts;
+    if (!countFromTabCounts) return undefined;
+    return (opportunities: Opportunity[]) =>
+      countFromTabCounts(tabHistogram(opportunities));
+  }
 
   get systemType() {
     return this.configurationObject.systemType;

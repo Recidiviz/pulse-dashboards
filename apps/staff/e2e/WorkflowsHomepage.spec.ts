@@ -91,8 +91,8 @@ const CASES: HomepageCase[] = [
     tenant: "us_ia",
     externalId: "OFFICER1",
     shape: "TAB_SUBSET - Pending Eligibility + Eligible Now",
-    // TODO(OBT-50232): the Typesense path also counts `Downgraded` and
-    // `Snoozed`, which `countByFunction` leaves out.
+    // TODO(OBT-50232): the TAB COUNTS diverge, not the headline, so running
+    // `countByFunction` over the histogram cannot reach it.
     knownFailure: "OBT-50232",
   },
   { tenant: "us_id", externalId: "OFFICER6", shape: "DEFAULT" },
@@ -100,9 +100,8 @@ const CASES: HomepageCase[] = [
   {
     tenant: "us_mo",
     shape: "DYNAMIC_TAB - Overdue as of <date>",
-    // TODO(OBT-50229): counts `Overridden` and `Missing Review Date` too, and
-    // the `Overdue as of <date>` label is derived from the record, so the two
-    // paths have to reconstruct it identically.
+    // TODO(OBT-50229): the census never produces the `Coming up` tab at all.
+    // A record-derived tab LABEL, so the histogram itself is short.
     knownFailure: "OBT-50229",
   },
   {
@@ -115,16 +114,11 @@ const CASES: HomepageCase[] = [
     tenant: "us_nd",
     externalId: "OFFICER3",
     shape: "DEFAULT",
-    // TODO(OBT-52517): tab counts agree; the headline does not. `Referral
-    // Submitted` is dropped by Firestore and summed by the census.
-    knownFailure: "OBT-52517",
   },
   {
     tenant: "us_ne",
     externalId: "NEOFFICER1",
     shape: "DEFAULT",
-    // TODO(OBT-52517): same as US_ND, with `Pending` as the excluded tab.
-    knownFailure: "OBT-52517",
   },
   {
     tenant: "us_or",
@@ -148,19 +142,12 @@ const CASES: HomepageCase[] = [
     tenant: "us_tx",
     externalId: "OFFICER1",
     shape: "TAB_SUBSET - Eligible Now + Almost Eligible + Awaiting Revisions",
-    // TODO(OBT-52520): adds `Submitted for Review`, `Approved in OIMS` and
-    // `Marked Ineligible`. The tenant also enables the V1 AND V2 type of each
-    // opportunity, which the ticket tracks separately.
-    knownFailure: "OBT-52520",
   },
   {
     tenant: "us_ut",
     externalId: "UTOFFICER1",
     searchFor: "Sunny Campana",
     shape: "SINGLE_TAB - Suitable for Early Termination",
-    // TODO(OBT-52518): Firestore reports 3, the census 5. `countByFunction`
-    // counts one named tab; the census sums them all.
-    knownFailure: "OBT-52518",
   },
 ];
 

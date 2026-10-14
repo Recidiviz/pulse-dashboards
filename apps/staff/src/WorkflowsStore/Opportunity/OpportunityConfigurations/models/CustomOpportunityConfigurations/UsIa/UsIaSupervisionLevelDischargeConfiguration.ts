@@ -15,10 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { countBy } from "lodash";
-
 import { PartialRecord } from "../../../../../../utils/typeUtils";
-import { Opportunity, OpportunityTab } from "../../../../types";
+import { OpportunityTab } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsIaSupervisionLevelDowngradeConfiguration extends ApiOpportunityConfiguration {
@@ -26,10 +24,6 @@ export class UsIaSupervisionLevelDowngradeConfiguration extends ApiOpportunityCo
     return true;
   }
 
-  countByFunction = (opportunities: Opportunity[]) => {
-    const counts = countBy(opportunities, (opp) =>
-      opp.tabTitle(),
-    ) as PartialRecord<OpportunityTab, number>;
-    return (counts["Pending Eligibility"] ?? 0) + (counts["Eligible Now"] ?? 0);
-  };
+  countFromTabCounts = (counts: PartialRecord<OpportunityTab, number>) =>
+    (counts["Pending Eligibility"] ?? 0) + (counts["Eligible Now"] ?? 0);
 }

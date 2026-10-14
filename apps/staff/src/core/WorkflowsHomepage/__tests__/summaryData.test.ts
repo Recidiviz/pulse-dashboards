@@ -97,16 +97,17 @@ describe("summaryFromOpportunities", () => {
 });
 
 describe("summaryFromCounts", () => {
-  test("sums the tabs for the headline", () => {
-    // The alternative filter needs records, and this path fetched none.
+  test("takes the headline given, rather than summing the tabs", () => {
+    // THE point of OBT-52517: summing would say 15 and count three
+    // ineligible records the card must not.
     expect(
-      summaryFromCounts({ "Eligible Now": 12, "Almost Eligible": 3 })
+      summaryFromCounts({ "Eligible Now": 12, "Marked Ineligible": 3 }, 12)
         .totalCount,
-    ).toBe(15);
+    ).toBe(12);
   });
 
   test("defaults people and alerts rather than leaving them undefined", () => {
-    const summary = summaryFromCounts({ "Eligible Now": 1 });
+    const summary = summaryFromCounts({ "Eligible Now": 1 }, 1);
 
     expect(summary.people).toEqual([]);
     expect(summary.alerts).toEqual({ eligibleStale: 0, pendingOverdue: 0 });
@@ -116,14 +117,14 @@ describe("summaryFromCounts", () => {
 describe("hasDisplayableTabs", () => {
   test("ignores a count parked on a tab the card never renders", () => {
     expect(
-      hasDisplayableTabs(summaryFromCounts({ Other: 9 }), CONFIG.tabGroups),
+      hasDisplayableTabs(summaryFromCounts({ Other: 9 }, 9), CONFIG.tabGroups),
     ).toBe(false);
   });
 
   test("is true for a populated tab in the first group", () => {
     expect(
       hasDisplayableTabs(
-        summaryFromCounts({ "Eligible Now": 1 }),
+        summaryFromCounts({ "Eligible Now": 1 }, 1),
         CONFIG.tabGroups,
       ),
     ).toBe(true);
@@ -132,7 +133,7 @@ describe("hasDisplayableTabs", () => {
   test("a zeroed tab does not count", () => {
     expect(
       hasDisplayableTabs(
-        summaryFromCounts({ "Eligible Now": 0 }),
+        summaryFromCounts({ "Eligible Now": 0 }, 0),
         CONFIG.tabGroups,
       ),
     ).toBe(false);

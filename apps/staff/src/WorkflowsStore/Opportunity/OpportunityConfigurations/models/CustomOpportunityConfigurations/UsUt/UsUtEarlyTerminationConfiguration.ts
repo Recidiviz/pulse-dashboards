@@ -15,15 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Opportunity } from "../../../../types";
+import { PartialRecord } from "../../../../../../utils/typeUtils";
+import { OpportunityTab } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsUtEarlyTerminationConfiguration extends ApiOpportunityConfiguration {
-  countByFunction = (opportunities: Opportunity[]) => {
-    return opportunities.filter(
-      (opp) => opp.tabTitle() === "Suitable for Early Termination",
-    ).length;
-  };
+  countFromTabCounts = (counts: PartialRecord<OpportunityTab, number>) =>
+    counts["Suitable for Early Termination"] ?? 0;
 
   get supportsSupervisorReviewOnSnooze(): boolean {
     return true;

@@ -16,24 +16,21 @@
 // =============================================================================
 
 import { startOfWeek } from "date-fns";
-import { countBy } from "lodash";
 
 import { formatWorkflowsDate } from "../../../../../../utils";
-import { Opportunity, OpportunityTab } from "../../../../types";
+import { PartialRecord } from "../../../../../../utils/typeUtils";
+import { OpportunityTab } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsMoOverdueRestrictiveHousingConfiguration extends ApiOpportunityConfiguration {
-  countByFunction = (opportunities: Opportunity[]) => {
-    const counts = countBy(opportunities, (opp) => opp.tabTitle()) as Record<
-      OpportunityTab,
-      number
-    >;
+  countFromTabCounts = (counts: PartialRecord<OpportunityTab, number>) => {
+    // The overdue tab embeds a date, so it is matched by prefix rather than
+    // named. `OpportunityTab` carries `\`Overdue as of ${string}\`` for it.
     const tabs = Object.keys(counts) as OpportunityTab[];
     const overdueTab = tabs.find((tab) => tab.startsWith("Overdue as of"));
-    const count = overdueTab
-      ? counts[overdueTab]
+    return overdueTab
+      ? counts[overdueTab] ?? 0
       : counts["Due this week"] || counts["Coming up"] || 0;
-    return count;
   };
 
   get tabGroups() {
