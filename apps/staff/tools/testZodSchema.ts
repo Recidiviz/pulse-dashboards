@@ -50,6 +50,7 @@ import {
   usMiInitialClassificationSchema,
   usMiMinimumTelephoneReportingSchema,
   usMiPastFTRDSchema,
+  usMiReviewClassificationSchema,
   usMiSecurityClassificationCommitteeReviewV2Schema,
   usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter,
   usMiWardenInPersonSecurityClassificationCommitteeReviewV2Schema,
@@ -149,6 +150,7 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
   usMiWardenInPersonSecurityClassificationCommitteeReviewV2:
     usMiWardenInPersonSecurityClassificationCommitteeReviewV2Schema,
   usMiInitialClassificationReview2026Policy: usMiInitialClassificationSchema,
+  usMiAnnualClassificationReview2026Policy: usMiReviewClassificationSchema,
 
   // US_MO
   usMoOverdueRestrictiveHousingRelease:

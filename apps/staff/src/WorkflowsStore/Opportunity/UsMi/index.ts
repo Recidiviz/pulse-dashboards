@@ -21,4 +21,5 @@ export * from "./UsMiEarlyDischargeOpportunity";
 export * from "./UsMiInitialClassification2026Opportunity";
 export * from "./UsMiMinimumTelephoneReportingOpportunity";
 export * from "./UsMiPastFTRDOpportunity";
+export * from "./UsMiReviewClassification2026Opportunity";
 export * from "./UsMiSupervisionLevelDowngradeOpportunity";
