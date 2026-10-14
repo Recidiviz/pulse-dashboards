@@ -21,12 +21,9 @@ import { $ } from "zx";
 
 // Entitlements that grant the app deploy/operate roles just-in-time, in order of
 // preference. `pam-engineering` is Terraform-managed in Recidiviz/recidiviz-iam
-// (requesters: s-polaris@ and s-doppler@). Callers not eligible for it fall back
-// to the legacy `pam-deploy-app` lane, so nobody loses elevation during the move.
-// TODO(AUR-240): drop `pam-deploy-app` from this list when that lane is retired.
+// (requesters: s-polaris@ and s-doppler@).
 const ENTITLEMENTS = [
   { id: "pam-engineering", groupHint: "s-polaris@ or s-doppler@" },
-  { id: "pam-deploy-app", groupHint: "s-pam-deploy-app@" },
 ];
 const LOCATION = "global";
 // 2 hours is comfortably longer than a deploy; the entitlement's max is 12h.

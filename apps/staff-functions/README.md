@@ -44,7 +44,7 @@ To create a new firebase function for a new environment (1️⃣) or in an alrea
 1. A current Firebase CLI login: `firebase login --reauth` if `firebase login:list` shows an expired session.
 1. Deploy permissions, which nobody holds by default. Request a time-limited grant through PAM (no approval
    needed if you're eligible). Use `recidiviz-dashboard-production` for production. The entitlement is
-   `pam-engineering` for s-polaris@ and s-doppler@; anyone else still uses `pam-deploy-app`:
+   `pam-engineering` for s-polaris@ and s-doppler@:
 
    ```bash
    gcloud pam grants create --entitlement=pam-engineering --requested-duration=3600s \
