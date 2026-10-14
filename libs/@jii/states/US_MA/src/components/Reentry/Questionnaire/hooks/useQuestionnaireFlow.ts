@@ -15,11 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { isEqual } from "lodash-es";
 import { useState } from "react";
 
 import { FlowStep, QuestionAnswerValue } from "../types";
 import {
+  allAnswersMatch,
+  answersMatch,
   applyExclusiveOptions,
   formatAnswerText,
   getInitialAnswers,
@@ -47,6 +48,7 @@ export function useQuestionnaireFlow({
   storedAnswers,
   save,
   onExit,
+  onGoToChecklist,
 }: UseQuestionnaireFlowParams): QuestionnaireScreen {
   const [answers, setAnswers] = useState(() =>
     getInitialAnswers(allQuestions, storedAnswers),
@@ -55,6 +57,10 @@ export function useQuestionnaireFlow({
     getInitialStep(status, allQuestions, answers),
   );
   const [isSectionListOpen, setIsSectionListOpen] = useState(false);
+  // The answers as saved when the questionnaire opened, which Review marks
+  // changes against when editing.
+  const [initialAnswers] = useState(answers);
+  const [isSavedBannerVisible, setIsSavedBannerVisible] = useState(false);
 
   const edit = useEditSession();
   const editSession = edit.session;
@@ -97,12 +103,13 @@ export function useQuestionnaireFlow({
     );
 
   const startEdit = (questionId: string) => {
+    setIsSavedBannerVisible(false);
     edit.start(questionId);
     goToQuestion(questionId);
   };
 
   const cancelEdit = () => {
-    if (isEqual(answers, getSavedAnswers())) {
+    if (allAnswersMatch(answers, getSavedAnswers())) {
       goToReview();
     } else {
       edit.askToConfirmCancel();
@@ -161,11 +168,22 @@ export function useQuestionnaireFlow({
           }
         };
 
-        // An edit of a completed profile only saves once it's finished.
-        const isMidEdit =
-          isProfileCompleted && !!editSession && !isLastQuestionBeforeReview;
-        if (isMidEdit) {
+        // An edit of a completed profile only saves once it's finished, and
+        // only if an answer changed.
+        const isEditingProfile = isProfileCompleted && !!editSession;
+        const hasChanges = !allAnswersMatch(answers, getSavedAnswers());
+        if (isEditingProfile && (!isLastQuestionBeforeReview || !hasChanges)) {
           goToNextStep();
+        } else if (isEditingProfile) {
+          save(
+            { answers, isCompleted: false },
+            {
+              onSuccess: () => {
+                setIsSavedBannerVisible(true);
+                goToNextStep();
+              },
+            },
+          );
         } else {
           save({ answers, isCompleted: false }, { onSuccess: goToNextStep });
         }
@@ -217,14 +235,20 @@ export function useQuestionnaireFlow({
         questionId: question.id,
         heading: question.heading,
         answerText: formatAnswerText(question, answers[question.id]),
+        isUpdated:
+          isProfileCompleted &&
+          !answersMatch(answers[question.id], initialAnswers[question.id]),
         onEdit: () => startEdit(question.id),
       }));
 
       if (isProfileCompleted) {
+        const savedBanner = isSavedBannerVisible
+          ? { onDismiss: () => setIsSavedBannerVisible(false), onGoToChecklist }
+          : undefined;
         return {
           kind: "review",
           headerAction: closeAction,
-          props: { isEditing: true, entries },
+          props: { isEditing: true, entries, savedBanner },
         };
       }
       return {

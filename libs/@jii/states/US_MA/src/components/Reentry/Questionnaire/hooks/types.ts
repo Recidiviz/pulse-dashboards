@@ -40,6 +40,7 @@ export type UseQuestionnaireFlowParams = {
   storedAnswers: Record<string, unknown>;
   save: SaveAnswers;
   onExit: () => void;
+  onGoToChecklist: () => void;
 };
 
 export type QuestionnaireHeaderAction = {

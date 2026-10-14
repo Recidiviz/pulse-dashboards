@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { rem } from "polished";
+import { rem, rgba } from "polished";
 import styled from "styled-components";
 
 import { Button, palette, spacing, typography } from "~design-system";
@@ -60,16 +60,34 @@ export const EntryText = styled.div`
 `;
 
 export const EntryQuestion = styled.span`
-  ${typography.Sans14}
+  ${typography.Sans16}
 
   color: ${palette.pine1};
   font-weight: 700;
 `;
 
+export const EntryAnswerRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: ${rem(spacing.sm)};
+`;
+
 export const EntryAnswer = styled.span`
-  ${typography.Sans14}
+  ${typography.Sans16}
 
   color: ${palette.slate85};
+`;
+
+export const UpdatedBadge = styled.span`
+  ${typography.Sans12}
+
+  background: ${rgba(palette.signal.highlight, 0.1)};
+  border: 1px solid ${rgba(palette.signal.highlight, 0.4)};
+  border-radius: ${rem(4)};
+  color: ${palette.pine4};
+  font-weight: 500;
+  padding: ${rem(spacing.xs)} ${rem(spacing.sm)};
 `;
 
 export const ChangeLink = styled(Button)`

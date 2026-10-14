@@ -56,6 +56,7 @@ export const ReentryQuestionnaire = ({
     storedAnswers: answers,
     save,
     onExit: exit,
+    onGoToChecklist: goToChecklist,
   });
 
   const headerActionLabels = {

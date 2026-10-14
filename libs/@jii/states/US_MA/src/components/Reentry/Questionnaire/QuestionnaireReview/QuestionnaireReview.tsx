@@ -16,8 +16,9 @@
 // =============================================================================
 
 import { useUsMaTranslations } from "~@jii/translation";
-import { Button } from "~design-system";
+import { Button, Icon } from "~design-system";
 
+import { Callout } from "../../Callout/Callout";
 import { QuestionnaireFooter } from "../QuestionnaireFooter/QuestionnaireFooter";
 import { QuestionnaireReviewEntry } from "../types";
 import {
@@ -25,10 +26,12 @@ import {
   Description,
   Entry,
   EntryAnswer,
+  EntryAnswerRow,
   EntryList,
   EntryQuestion,
   EntryText,
   Heading,
+  UpdatedBadge,
   Wrapper,
 } from "./QuestionnaireReview.styles";
 
@@ -45,6 +48,7 @@ type SubmitReviewProps = ReviewBaseProps & {
 
 type EditReviewProps = ReviewBaseProps & {
   isEditing: true;
+  savedBanner?: { onDismiss: () => void; onGoToChecklist: () => void };
 };
 
 export type QuestionnaireReviewProps = SubmitReviewProps | EditReviewProps;
@@ -53,8 +57,28 @@ export const QuestionnaireReview = (props: QuestionnaireReviewProps) => {
   const { entries, isEditing } = props;
   const { t } = useUsMaTranslations();
 
+  const savedBanner = isEditing ? props.savedBanner : undefined;
+
   return (
     <Wrapper>
+      {savedBanner && (
+        <Callout
+          tone="success"
+          icon={<Icon kind="Success" size={24} />}
+          description={t(
+            ($) => $.reentry.questionnaire.review.savedBanner.message,
+          )}
+          action={
+            <Button kind="link" onClick={savedBanner.onGoToChecklist}>
+              {t(($) => $.reentry.questionnaire.review.savedBanner.cta)}
+            </Button>
+          }
+          dismiss={{
+            label: t(($) => $.reentry.questionnaire.review.savedBanner.dismiss),
+            onClick: savedBanner.onDismiss,
+          }}
+        />
+      )}
       <Heading>
         {isEditing
           ? t(($) => $.reentry.questionnaire.review.editHeading)
@@ -71,7 +95,14 @@ export const QuestionnaireReview = (props: QuestionnaireReviewProps) => {
           <Entry key={entry.questionId}>
             <EntryText>
               <EntryQuestion>{entry.heading}</EntryQuestion>
-              <EntryAnswer>{entry.answerText}</EntryAnswer>
+              <EntryAnswerRow>
+                <EntryAnswer>{entry.answerText}</EntryAnswer>
+                {entry.isUpdated && (
+                  <UpdatedBadge>
+                    {t(($) => $.reentry.questionnaire.review.answerUpdated)}
+                  </UpdatedBadge>
+                )}
+              </EntryAnswerRow>
             </EntryText>
             <ChangeLink kind="link" onClick={entry.onEdit}>
               {t(($) => $.reentry.questionnaire.review.change)}

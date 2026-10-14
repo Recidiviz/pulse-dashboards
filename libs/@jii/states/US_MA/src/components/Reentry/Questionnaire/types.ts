@@ -65,6 +65,7 @@ export type QuestionnaireReviewEntry = {
   questionId: string;
   heading: string;
   answerText: string;
+  isUpdated: boolean;
   onEdit: () => void;
 };
 

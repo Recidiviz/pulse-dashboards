@@ -17,6 +17,8 @@
 
 import { QuestionDisplay, QuestionnaireQuestion } from "../types";
 import {
+  allAnswersMatch,
+  answersMatch,
   applyExclusiveOptions,
   buildQuestionDisplay,
   buildQuestionnaireDisplay,
@@ -296,6 +298,42 @@ describe("applyExclusiveOptions", () => {
     expect(
       applyExclusiveOptions(careDetails, ["MEDS", "THERAPY"], ["MEDS"]),
     ).toEqual(["MEDS"]);
+  });
+});
+
+describe("answersMatch", () => {
+  test("is true for the same options in a different order", () => {
+    expect(answersMatch(["MEDS", "THERAPY"], ["THERAPY", "MEDS"])).toBe(true);
+  });
+
+  test("is false when an option is added or swapped", () => {
+    expect(answersMatch(["MEDS"], ["MEDS", "THERAPY"])).toBe(false);
+    expect(answersMatch(["MEDS"], ["THERAPY"])).toBe(false);
+  });
+
+  test("treats an unanswered question like an empty answer", () => {
+    expect(answersMatch(undefined, [])).toBe(true);
+    expect(answersMatch(undefined, ["MEDS"])).toBe(false);
+  });
+});
+
+describe("allAnswersMatch", () => {
+  test("is true when every question has the same options, in any order", () => {
+    expect(
+      allAnswersMatch(
+        { needsCare: ["YES"], careDetails: ["MEDS", "THERAPY"] },
+        { needsCare: ["YES"], careDetails: ["THERAPY", "MEDS"] },
+      ),
+    ).toBe(true);
+  });
+
+  test("is false when a question is answered in only one of them", () => {
+    expect(
+      allAnswersMatch(
+        { needsCare: ["YES"] },
+        { needsCare: ["YES"], benefits: ["NO"] },
+      ),
+    ).toBe(false);
   });
 });
 

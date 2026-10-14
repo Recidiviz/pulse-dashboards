@@ -96,6 +96,28 @@ export function isAnswered(value: QuestionAnswerValue | undefined): boolean {
 }
 
 /**
+ * Returns whether two answers have the same options selected, in any order.
+ */
+export function answersMatch(
+  a: QuestionAnswerValue = [],
+  b: QuestionAnswerValue = [],
+): boolean {
+  return a.length === b.length && a.every((option) => b.includes(option));
+}
+
+/**
+ * Returns whether two sets of answers have the same options selected for every
+ * question, in any order.
+ */
+export function allAnswersMatch(
+  a: QuestionnaireAnswers,
+  b: QuestionnaireAnswers,
+): boolean {
+  const questionIds = new Set([...Object.keys(a), ...Object.keys(b)]);
+  return [...questionIds].every((id) => answersMatch(a[id], b[id]));
+}
+
+/**
  * Determines if a question is a follow-up of any question in the given set of question IDs.
  */
 export function isFollowUpOf(

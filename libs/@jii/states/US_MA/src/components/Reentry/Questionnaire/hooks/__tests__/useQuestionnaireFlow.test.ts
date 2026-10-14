@@ -67,6 +67,7 @@ const sections: QuestionnaireSectionDisplay[] = [
 
 const save = vi.fn<SaveAnswers>();
 const onExit = vi.fn();
+const onGoToChecklist = vi.fn();
 
 beforeEach(() => {
   // mockReset (in the vitest config) clears implementations before each test.
@@ -78,15 +79,18 @@ const render = (
   storedAnswers: Record<string, unknown> = {},
   flowQuestions: QuestionnaireQuestion[] = questions,
 ) =>
-  renderHook(() =>
-    useQuestionnaireFlow({
-      questions: flowQuestions,
-      sections,
-      status,
-      storedAnswers,
-      save,
-      onExit,
-    }),
+  renderHook(
+    (props: { storedAnswers: Record<string, unknown> }) =>
+      useQuestionnaireFlow({
+        questions: flowQuestions,
+        sections,
+        status,
+        storedAnswers: props.storedAnswers,
+        save,
+        onExit,
+        onGoToChecklist,
+      }),
+    { initialProps: { storedAnswers } },
   );
 
 type Result = ReturnType<typeof render>["result"];
@@ -112,6 +116,19 @@ const firstTimeReviewOf = (result: Result) => {
   if (props.isEditing) throw new Error("Expected review before submitting");
   return props;
 };
+
+// Review of a completed profile, which has Change links but no Submit.
+const editReviewOf = (result: Result) => {
+  const { props } = screenOf(result, "review");
+  if (!props.isEditing)
+    throw new Error("Expected review of a completed profile");
+  return props;
+};
+
+const updatedQuestionIdsOf = (result: Result) =>
+  editReviewOf(result)
+    .entries.filter((entry) => entry.isUpdated)
+    .map((entry) => entry.questionId);
 
 // Answers the current question and moves on.
 const answerAndNext = (result: Result, value: string[]) => {
@@ -506,6 +523,144 @@ describe("editing a completed profile from review", () => {
         (e) => e.questionId === "careDetails",
       )?.answerText,
     ).toBe("Medicine");
+  });
+});
+
+describe("after saving an edit of a completed profile", () => {
+  test("marks each changed answer as updated, including a follow-up question that just appeared", () => {
+    const { result } = startEditing("COMPLETED", "needsCare");
+    // Yes makes careDetails appear. It started with no answer, so answering it
+    // counts as an update.
+    answerAndNext(result, ["YES"]);
+    answerAndNext(result, ["MEDS"]);
+    expect(updatedQuestionIdsOf(result)).toEqual(["needsCare", "careDetails"]);
+    expect(editReviewOf(result).savedBanner).toBeDefined();
+  });
+
+  test("skips saving and the banner when no answer changed", () => {
+    const { result } = startEditing("COMPLETED", "needsCare");
+    act(() => screenOf(result, "question").props.onNext());
+    expect(save).not.toHaveBeenCalled();
+    expect(updatedQuestionIdsOf(result)).toEqual([]);
+    expect(editReviewOf(result).savedBanner).toBeUndefined();
+  });
+
+  test("the banner links to the checklist", () => {
+    const { result } = startEditing("COMPLETED", "benefits");
+    answerAndNext(result, ["NO"]);
+    act(() => editReviewOf(result).savedBanner?.onGoToChecklist());
+    expect(onGoToChecklist).toHaveBeenCalled();
+  });
+
+  test("dismissing the banner keeps the updated answers marked", () => {
+    const { result } = startEditing("COMPLETED", "needsCare");
+    answerAndNext(result, ["YES"]);
+    answerAndNext(result, ["MEDS"]);
+    act(() => editReviewOf(result).savedBanner?.onDismiss());
+    expect(editReviewOf(result).savedBanner).toBeUndefined();
+    expect(updatedQuestionIdsOf(result)).toEqual(["needsCare", "careDetails"]);
+  });
+
+  test("keeps marking answers updated across edits", () => {
+    const { result } = startEditing("COMPLETED", "needsCare");
+    answerAndNext(result, ["YES"]);
+    answerAndNext(result, ["MEDS"]);
+    // A second edit, of a different question.
+    const benefitsEntry = editReviewOf(result).entries.find(
+      (entry) => entry.questionId === "benefits",
+    );
+    act(() => benefitsEntry?.onEdit());
+    answerAndNext(result, ["NO"]);
+    expect(updatedQuestionIdsOf(result)).toEqual([
+      "needsCare",
+      "careDetails",
+      "benefits",
+    ]);
+  });
+
+  test("an answer changed back to how it started is no longer marked", () => {
+    const { result } = startEditing("COMPLETED", "needsCare");
+    answerAndNext(result, ["YES"]);
+    answerAndNext(result, ["MEDS"]);
+    // Edits needsCare again, back to its starting answer.
+    const needsCareEntry = editReviewOf(result).entries.find(
+      (entry) => entry.questionId === "needsCare",
+    );
+    act(() => needsCareEntry?.onEdit());
+    answerAndNext(result, ["NO"]);
+    expect(updatedQuestionIdsOf(result)).toEqual([]);
+  });
+
+  test("starting another edit hides the banner", () => {
+    const { result, rerender } = startEditing("COMPLETED", "benefits");
+    answerAndNext(result, ["NO"]);
+    // Workaround: the mocked save doesn't reload the saved answers like the
+    // app does, so this updates them by hand to match what was just saved.
+    rerender({ storedAnswers: { needsCare: "NO", benefits: "NO" } });
+
+    const needsCareEntry = editReviewOf(result).entries.find(
+      (entry) => entry.questionId === "needsCare",
+    );
+    act(() => needsCareEntry?.onEdit());
+    act(() => screenOf(result, "question").props.editing?.onCancel());
+    expect(editReviewOf(result).savedBanner).toBeUndefined();
+  });
+
+  test("a failed save stays on the question, with no banner", () => {
+    // The mocked save never calls onSuccess.
+    save.mockImplementation(() => undefined);
+    const { result } = startEditing("COMPLETED", "benefits");
+    answerAndNext(result, ["NO"]);
+    expect(questionIdOf(result)).toBe("benefits");
+  });
+});
+
+describe("re-checking the same options in a different order", () => {
+  // "careDetails" with a second option that isn't exclusive, so two options
+  // can be checked at once.
+  const withTwoCareOptions = questions.map((question) =>
+    question.id === "careDetails"
+      ? {
+          ...question,
+          options: [
+            { value: "MEDS", label: "Medicine" },
+            { value: "THERAPY", label: "Therapy" },
+            { value: "UNSURE", label: "I'm not sure", exclusive: true },
+          ],
+        }
+      : question,
+  );
+
+  // Opens a completed profile with both options checked, changes the answer,
+  // then unchecks and re-checks "MEDS", so it's checked after "THERAPY".
+  const recheckInNewOrder = () => {
+    const hook = render(
+      "COMPLETED",
+      { needsCare: "YES", careDetails: ["MEDS", "THERAPY"], benefits: "NO" },
+      withTwoCareOptions,
+    );
+    const entry = editReviewOf(hook.result).entries.find(
+      (e) => e.questionId === "careDetails",
+    );
+    act(() => entry?.onEdit());
+    act(() => screenOf(hook.result, "question").props.onChange(["THERAPY"]));
+    act(() =>
+      screenOf(hook.result, "question").props.onChange(["THERAPY", "MEDS"]),
+    );
+    return hook;
+  };
+
+  test("doesn't save or mark the answer updated", () => {
+    const { result } = recheckInNewOrder();
+    act(() => screenOf(result, "question").props.onNext());
+    expect(save).not.toHaveBeenCalled();
+    expect(updatedQuestionIdsOf(result)).toEqual([]);
+  });
+
+  test("cancelling returns to review without asking to confirm", () => {
+    const { result } = recheckInNewOrder();
+    act(() => screenOf(result, "question").props.editing?.onCancel());
+    expect(result.current.kind).toBe("review");
   });
 });
 
