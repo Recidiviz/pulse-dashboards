@@ -68,7 +68,14 @@ export const usMiClassificationFormBaseSchema = z
     pastAdSegNotes: z
       .object({
         numAdSegStartsInPast36Months: z.coerce.number(),
-        adSegStartsList: z.array(z.record(z.unknown())).nullable(),
+        adSegStartsList: z
+          .array(
+            z.object({
+              adSegEndDateExclusive: dateStringSchema,
+              adSegStartDate: dateStringSchema,
+            }),
+          )
+          .nullable(),
       })
       .passthrough()
       .nullable(),

@@ -88,6 +88,7 @@ export * from "./opportunities/UsMi/UsMiPastFTRD/fixtures";
 export * from "./opportunities/UsMi/UsMiPastFTRD/schema";
 export * from "./opportunities/UsMi/UsMiReclassificationRequest/fixtures";
 export * from "./opportunities/UsMi/UsMiReclassificationRequest/schema";
+export * from "./opportunities/UsMi/UsMiReviewClassification2026Policy/schema";
 export * from "./opportunities/UsMi/UsMiSecurityClassificationCommitteeReview/fixtures";
 export * from "./opportunities/UsMi/UsMiSecurityClassificationCommitteeReview/schema";
 export * from "./opportunities/UsMi/UsMiSecurityClassificationCommitteeReviewV2/fixtures";
