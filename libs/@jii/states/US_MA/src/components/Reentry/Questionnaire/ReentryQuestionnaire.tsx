@@ -47,8 +47,6 @@ export const ReentryQuestionnaire = ({
     navigate(State.Resident.UsMaReentry.Checklist.buildPath(routeParams));
 
   const { status, answers, save, isSaving } = useReentryQuestionnaire();
-  // TODO OBT-52496: confirm with design how errors should be surfaced to the
-  // user. A failed save is only reported to Sentry for now.
   const screen = useQuestionnaireFlow({
     questions,
     sections,
@@ -71,7 +69,11 @@ export const ReentryQuestionnaire = ({
       case "question":
         return (
           <>
-            <QuestionnaireForm {...screen.props} isSaving={isSaving} />
+            <QuestionnaireForm
+              key={screen.props.question.id}
+              {...screen.props}
+              isSaving={isSaving}
+            />
             <QuestionnaireCancelModal {...screen.cancelDialog} />
           </>
         );

@@ -27,21 +27,32 @@ import {
 } from "../constants";
 
 export const Wrapper = styled.div`
-  height: ${rem(QUESTIONNAIRE_FOOTER_HEIGHT)};
+  background: ${palette.marble3};
+  border-top: 1px solid ${palette.slate20};
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  right: 0;
+  z-index: ${STICKY_HEADER_ZINDEX};
+`;
+
+export const Inner = styled.div`
+  min-height: ${rem(QUESTIONNAIRE_FOOTER_HEIGHT)};
   max-width: ${rem(QUESTIONNAIRE_CONTENT_MAX_WIDTH)};
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: ${rem(spacing.md)};
+  margin: 0 auto;
+  padding: ${rem(spacing.md)} ${rem(spacing.xl + spacing.sm)};
+  position: relative;
+`;
+
+export const Row = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: ${rem(spacing.md)};
-  background: ${palette.marble1};
-  border-top: 1px solid ${palette.slate20};
-  bottom: 0;
-  left: 0;
-  margin: 0 auto;
-  padding: 0 ${rem(spacing.xl + spacing.sm)};
-  position: fixed;
-  right: 0;
-  z-index: ${STICKY_HEADER_ZINDEX};
 `;
 
 export const BackLinkButton = styled(Button)`

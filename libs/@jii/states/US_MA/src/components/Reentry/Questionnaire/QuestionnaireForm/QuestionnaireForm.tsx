@@ -15,11 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import Markdown from "markdown-to-jsx";
+import { useState } from "react";
+
 import { useUsMaTranslations } from "~@jii/translation";
 import { Checkbox, CheckboxGroup, Radio, RadioGroup } from "~design-system";
 
 import { QuestionnaireFooter } from "../QuestionnaireFooter/QuestionnaireFooter";
-import { QuestionAnswerValue, QuestionDisplay } from "../types";
+import { QuestionAnswerValue, QuestionDisplay, SaveOptions } from "../types";
 import {
   Heading,
   NextButton,
@@ -37,7 +40,7 @@ export type QuestionnaireFormProps = {
   question: QuestionDisplay;
   value: QuestionAnswerValue | undefined;
   onChange: (value: QuestionAnswerValue) => void;
-  onNext: () => void;
+  onNext: (options?: SaveOptions) => void;
   onBack?: () => void;
   canGoNext: boolean;
   isSaving?: boolean;
@@ -60,14 +63,27 @@ export const QuestionnaireForm = ({
   editing,
 }: QuestionnaireFormProps) => {
   const { t } = useUsMaTranslations();
+  const [hasSaveError, setHasSaveError] = useState(false);
 
+  const isSaveAndUpdate = !!editing?.isLastQuestionBeforeReview;
   const nextLabel = t(($) => $.reentry.questionnaire.form.next);
-  const primaryLabel = editing?.isLastQuestionBeforeReview
+  const primaryLabel = isSaveAndUpdate
     ? t(($) => $.reentry.questionnaire.form.saveAndUpdate)
     : nextLabel;
   const buttonLabel = isSaving
     ? t(($) => $.reentry.questionnaire.form.saving)
     : primaryLabel;
+  const saveErrorMessage = isSaveAndUpdate
+    ? t(($) => $.reentry.questionnaire.form.saveAndUpdateError)
+    : t(($) => $.reentry.questionnaire.form.saveError);
+  const saveError = hasSaveError ? (
+    <Markdown options={{ forceInline: true }}>{saveErrorMessage}</Markdown>
+  ) : undefined;
+
+  const handleNext = () => {
+    setHasSaveError(false);
+    onNext({ onSaveError: () => setHasSaveError(true) });
+  };
 
   const isCheckbox = question.format === "CHECKBOX";
   const selected = value ?? [];
@@ -121,7 +137,11 @@ export const QuestionnaireForm = ({
         </RadioGroup>
       )}
 
-      <QuestionnaireFooter onBack={onBack} onCancel={editing?.onCancel}>
+      <QuestionnaireFooter
+        onBack={onBack}
+        onCancel={editing?.onCancel}
+        error={saveError}
+      >
         {!editing && (
           <SaveHint>
             {t(($) => $.reentry.questionnaire.form.saveHint)}{" "}
@@ -130,7 +150,7 @@ export const QuestionnaireForm = ({
         )}
         <NextButton
           kind="primary"
-          onClick={onNext}
+          onClick={handleNext}
           disabled={!canGoNext || isSaving}
           aria-busy={isSaving}
         >

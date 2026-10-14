@@ -15,6 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const QUESTIONNAIRE_FOOTER_HEIGHT = 72;
+export const QUESTIONNAIRE_FOOTER_HEIGHT = 80;
+
+// The extra height the footer's error banner adds when it shows: the banner
+// itself plus the gap above the buttons.
+export const QUESTIONNAIRE_FOOTER_ERROR_HEIGHT = 64;
 
 export const QUESTIONNAIRE_CONTENT_MAX_WIDTH = 600;

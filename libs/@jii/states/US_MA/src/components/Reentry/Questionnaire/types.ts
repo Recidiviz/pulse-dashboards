@@ -44,6 +44,8 @@ export type QuestionnaireSectionDisplay = {
 
 export type QuestionAnswerValue = string[];
 
+export type SaveOptions = { onSaveError?: () => void };
+
 export type QuestionnaireAnswers = Record<string, QuestionAnswerValue>;
 
 export type QuestionnaireQuestion = QuestionDisplay & {

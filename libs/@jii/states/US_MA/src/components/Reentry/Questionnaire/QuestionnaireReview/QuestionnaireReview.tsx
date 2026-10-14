@@ -15,12 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import Markdown from "markdown-to-jsx";
+import { useState } from "react";
+
 import { useUsMaTranslations } from "~@jii/translation";
 import { Button, Icon } from "~design-system";
 
 import { Callout } from "../../Callout/Callout";
 import { QuestionnaireFooter } from "../QuestionnaireFooter/QuestionnaireFooter";
-import { QuestionnaireReviewEntry } from "../types";
+import { QuestionnaireReviewEntry, SaveOptions } from "../types";
 import {
   ChangeLink,
   Description,
@@ -43,7 +46,7 @@ type ReviewBaseProps = {
 type SubmitReviewProps = ReviewBaseProps & {
   isEditing?: false;
   onBack: () => void;
-  onSubmit: () => void;
+  onSubmit: (options?: SaveOptions) => void;
 };
 
 type EditReviewProps = ReviewBaseProps & {
@@ -56,8 +59,19 @@ export type QuestionnaireReviewProps = SubmitReviewProps | EditReviewProps;
 export const QuestionnaireReview = (props: QuestionnaireReviewProps) => {
   const { entries, isEditing } = props;
   const { t } = useUsMaTranslations();
+  const [hasSubmitError, setHasSubmitError] = useState(false);
 
   const savedBanner = isEditing ? props.savedBanner : undefined;
+  const submitError = hasSubmitError ? (
+    <Markdown options={{ forceInline: true }}>
+      {t(($) => $.reentry.questionnaire.review.submitError)}
+    </Markdown>
+  ) : undefined;
+
+  const handleSubmit = (onSubmit: SubmitReviewProps["onSubmit"]) => {
+    setHasSubmitError(false);
+    onSubmit({ onSaveError: () => setHasSubmitError(true) });
+  };
 
   return (
     <Wrapper>
@@ -112,10 +126,10 @@ export const QuestionnaireReview = (props: QuestionnaireReviewProps) => {
       </EntryList>
 
       {!isEditing && (
-        <QuestionnaireFooter onBack={props.onBack}>
+        <QuestionnaireFooter onBack={props.onBack} error={submitError}>
           <Button
             kind="primary"
-            onClick={props.onSubmit}
+            onClick={() => handleSubmit(props.onSubmit)}
             disabled={props.isSaving}
             aria-busy={props.isSaving}
           >

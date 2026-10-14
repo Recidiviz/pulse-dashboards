@@ -18,43 +18,61 @@
 import { ReactNode } from "react";
 
 import { useUsMaTranslations } from "~@jii/translation";
-import { Button } from "~design-system";
+import { Button, Icon } from "~design-system";
 
+import { Callout } from "../../Callout/Callout";
 import {
   Actions,
   BackLinkButton,
+  Inner,
   LeadingActions,
+  Row,
   Wrapper,
 } from "./QuestionnaireFooter.styles";
 
 type QuestionnaireFooterProps = {
   onBack?: () => void;
   onCancel?: () => void;
+  error?: ReactNode;
   children: ReactNode;
 };
 
 export const QuestionnaireFooter = ({
   onBack,
   onCancel,
+  error,
   children,
 }: QuestionnaireFooterProps) => {
   const { t } = useUsMaTranslations();
 
   return (
     <Wrapper>
-      <LeadingActions>
-        {onBack && (
-          <BackLinkButton kind="link" onClick={onBack}>
-            {t(($) => $.reentry.questionnaire.footer.back)}
-          </BackLinkButton>
+      <Inner>
+        {error && (
+          <Callout
+            tone="error"
+            variant="slim"
+            role="alert"
+            icon={<Icon kind="Error" size={20} />}
+            description={error}
+          />
         )}
-        {onCancel && (
-          <Button kind="secondary" onClick={onCancel}>
-            {t(($) => $.reentry.questionnaire.footer.cancel)}
-          </Button>
-        )}
-      </LeadingActions>
-      <Actions>{children}</Actions>
+        <Row>
+          <LeadingActions>
+            {onBack && (
+              <BackLinkButton kind="link" onClick={onBack}>
+                {t(($) => $.reentry.questionnaire.footer.back)}
+              </BackLinkButton>
+            )}
+            {onCancel && (
+              <Button kind="secondary" onClick={onCancel}>
+                {t(($) => $.reentry.questionnaire.footer.cancel)}
+              </Button>
+            )}
+          </LeadingActions>
+          <Actions>{children}</Actions>
+        </Row>
+      </Inner>
     </Wrapper>
   );
 };

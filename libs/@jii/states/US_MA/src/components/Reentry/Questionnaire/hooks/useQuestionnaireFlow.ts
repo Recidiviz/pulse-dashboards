@@ -17,7 +17,7 @@
 
 import { useState } from "react";
 
-import { FlowStep, QuestionAnswerValue } from "../types";
+import { FlowStep, QuestionAnswerValue, SaveOptions } from "../types";
 import {
   allAnswersMatch,
   answersMatch,
@@ -58,7 +58,7 @@ export function useQuestionnaireFlow({
   );
   const [isSectionListOpen, setIsSectionListOpen] = useState(false);
   // The answers as saved when the questionnaire opened, which Review marks
-  // changes against when editing.
+  // changes against.
   const [initialAnswers] = useState(answers);
   const [isSavedBannerVisible, setIsSavedBannerVisible] = useState(false);
 
@@ -76,6 +76,9 @@ export function useQuestionnaireFlow({
     kind: "close",
     onClick: onExit,
   };
+  // TODO(REE-197): Show an error when Save and exit fails, once design decides
+  // where it goes. Until then, a failure is only reported to Sentry, and the
+  // resident stays on the question with no way to close the questionnaire.
   const saveAndExitAction: QuestionnaireHeaderAction = {
     kind: "saveAndExit",
     onClick: () => save({ answers, isCompleted: false }, { onSuccess: onExit }),
@@ -96,10 +99,13 @@ export function useQuestionnaireFlow({
 
   const start = () => goToQuestion(visibleQuestions[0].id);
 
-  const submit = () =>
+  const submit = ({ onSaveError }: SaveOptions = {}) =>
     save(
       { answers, isCompleted: true },
-      { onSuccess: () => setStep({ kind: "completion" }) },
+      {
+        onSuccess: () => setStep({ kind: "completion" }),
+        onError: onSaveError,
+      },
     );
 
   const startEdit = (questionId: string) => {
@@ -159,7 +165,7 @@ export function useQuestionnaireFlow({
         setAnswers(updatedAnswers);
       };
 
-      const next = () => {
+      const next = ({ onSaveError }: SaveOptions = {}) => {
         const goToNextStep = () => {
           if (upcomingQuestion) {
             goToQuestion(upcomingQuestion.id);
@@ -182,10 +188,14 @@ export function useQuestionnaireFlow({
                 setIsSavedBannerVisible(true);
                 goToNextStep();
               },
+              onError: onSaveError,
             },
           );
         } else {
-          save({ answers, isCompleted: false }, { onSuccess: goToNextStep });
+          save(
+            { answers, isCompleted: false },
+            { onSuccess: goToNextStep, onError: onSaveError },
+          );
         }
       };
 

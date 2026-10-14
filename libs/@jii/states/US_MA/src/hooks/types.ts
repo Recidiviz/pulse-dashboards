@@ -41,9 +41,9 @@ export type SaveAnswersInput = {
   isCompleted: boolean;
 };
 
-// Starts a save. onSuccess only runs once it succeeds; failures are reported
-// by the save itself.
+// Starts a save. onSuccess runs once it succeeds, and onError if it fails.
+// Failures are also reported to Sentry by the save itself.
 export type SaveAnswers = (
   input: SaveAnswersInput,
-  options?: { onSuccess?: () => void },
+  options?: { onSuccess?: () => void; onError?: () => void },
 ) => void;

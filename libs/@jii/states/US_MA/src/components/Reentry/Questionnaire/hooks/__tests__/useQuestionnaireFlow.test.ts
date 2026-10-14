@@ -338,13 +338,40 @@ describe("saving", () => {
     expect(result.current.kind).toBe("review");
   });
 
-  test("a failed submit stays on Review", () => {
-    save.mockImplementationOnce(() => undefined);
+  test("a failed save on Next calls onError and stays on the question", () => {
+    save.mockImplementation((_input, options) => options?.onError?.());
+    const onError = vi.fn();
+    const { result } = render();
+    act(() => screenOf(result, "intro").props.onStart());
+    act(() => screenOf(result, "question").props.onChange(["NO"]));
+    act(() =>
+      screenOf(result, "question").props.onNext({ onSaveError: onError }),
+    );
+    expect(onError).toHaveBeenCalled();
+    expect(questionIdOf(result)).toBe("needsCare");
+  });
+
+  test("a failed save at the end of an edit calls onError and stays on the question", () => {
+    save.mockImplementation((_input, options) => options?.onError?.());
+    const onError = vi.fn();
+    const { result } = startEditing("COMPLETED", "benefits");
+    act(() => screenOf(result, "question").props.onChange(["NO"]));
+    act(() =>
+      screenOf(result, "question").props.onNext({ onSaveError: onError }),
+    );
+    expect(onError).toHaveBeenCalled();
+    expect(questionIdOf(result)).toBe("benefits");
+  });
+
+  test("a failed submit calls onError and stays on Review", () => {
+    save.mockImplementation((_input, options) => options?.onError?.());
+    const onError = vi.fn();
     const { result } = render("IN_PROGRESS", {
       needsCare: "NO",
       benefits: "YES",
     });
-    act(() => firstTimeReviewOf(result).onSubmit());
+    act(() => firstTimeReviewOf(result).onSubmit({ onSaveError: onError }));
+    expect(onError).toHaveBeenCalled();
     expect(result.current.kind).toBe("review");
   });
 });
