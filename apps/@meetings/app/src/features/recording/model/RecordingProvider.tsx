@@ -22,6 +22,7 @@ import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 
 import { getMicErrorType, MIC_ERROR_MESSAGES } from "../lib/micError";
 import { RecorderState } from "./recorderStates";
+import { useLeavePageWarning } from "./useLeavePageWarning";
 import { useRecorder } from "./useRecorder";
 
 type NewRecordingContextValue = {
@@ -52,6 +53,8 @@ export function useNewRecording() {
 export function NewRecordingProvider({ children }: { children: ReactNode }) {
   const recorder = useRecorder();
   const { showSnackbar } = useSnackbar();
+
+  useLeavePageWarning(recorder.state !== "idle");
 
   const startRecording = async () => {
     try {
