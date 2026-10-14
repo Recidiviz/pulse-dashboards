@@ -25,7 +25,7 @@ import { RecorderState } from "./recorderStates";
 import { useLeavePageWarning } from "./useLeavePageWarning";
 import { useRecorder } from "./useRecorder";
 
-type NewRecordingContextValue = {
+type RecordingContextValue = {
   state: RecorderState;
   audioLevel: number;
   startRecording: () => Promise<void>;
@@ -36,21 +36,19 @@ type NewRecordingContextValue = {
   durationMs: number;
 };
 
-const NewRecordingContext = createContext<NewRecordingContextValue | null>(
-  null,
-);
+const RecordingContext = createContext<RecordingContextValue | null>(null);
 
-export function useNewRecording() {
-  const ctx = useContext(NewRecordingContext);
+export function useAudioRecording() {
+  const ctx = useContext(RecordingContext);
   if (!ctx) {
     throw new Error(
-      "useNewRecording must be used within <NewRecordingProvider>",
+      "useAudioRecording must be used within <RecordingProvider>",
     );
   }
   return ctx;
 }
 
-export function NewRecordingProvider({ children }: { children: ReactNode }) {
+export function RecordingProvider({ children }: { children: ReactNode }) {
   const recorder = useRecorder();
   const { showSnackbar } = useSnackbar();
 
@@ -109,7 +107,7 @@ export function NewRecordingProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <NewRecordingContext.Provider
+    <RecordingContext.Provider
       value={{
         state: recorder.state,
         audioLevel: recorder.audioLevel,
@@ -122,6 +120,6 @@ export function NewRecordingProvider({ children }: { children: ReactNode }) {
       }}
     >
       {children}
-    </NewRecordingContext.Provider>
+    </RecordingContext.Provider>
   );
 }

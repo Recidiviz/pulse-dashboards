@@ -25,7 +25,7 @@ import { useUploadSegment } from "~@meetings/app/shared/api";
 import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 
 import { useActiveMeetingStore } from "../model/activeMeetingStore";
-import { useNewRecording } from "../model/RecordingProvider";
+import { useAudioRecording } from "../model/RecordingProvider";
 import { EndMeetingModal } from "./EndMeetingModal";
 
 jest.mock("@sentry/react-native", () => ({
@@ -34,7 +34,7 @@ jest.mock("@sentry/react-native", () => ({
 }));
 
 jest.mock("../model/RecordingProvider", () => ({
-  useNewRecording: jest.fn(),
+  useAudioRecording: jest.fn(),
 }));
 
 jest.mock("~@meetings/app/shared/ui/Snackbar", () => ({
@@ -91,7 +91,7 @@ describe("EndMeetingModal", () => {
     mockEndMeeting.mockResolvedValue(undefined);
     mockUpload.mockResolvedValue(undefined);
 
-    (useNewRecording as jest.Mock).mockReturnValue({
+    (useAudioRecording as jest.Mock).mockReturnValue({
       finalizeRecording: mockFinalizeRecording,
       resumeRecording: mockResumeRecording,
     });

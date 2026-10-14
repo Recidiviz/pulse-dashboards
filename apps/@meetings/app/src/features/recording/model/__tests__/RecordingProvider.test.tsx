@@ -19,7 +19,7 @@ import * as Sentry from "@sentry/react-native";
 import { act, renderHook } from "@testing-library/react-native";
 import React from "react";
 
-import { NewRecordingProvider, useNewRecording } from "../RecordingProvider";
+import { RecordingProvider, useAudioRecording } from "../RecordingProvider";
 
 const mockStart = jest.fn().mockResolvedValue(undefined);
 const mockStop = jest.fn().mockResolvedValue(undefined);
@@ -58,16 +58,16 @@ jest.mock("~@meetings/app/shared/ui/Snackbar", () => ({
 }));
 
 function wrapper({ children }: { children: React.ReactNode }) {
-  return <NewRecordingProvider>{children}</NewRecordingProvider>;
+  return <RecordingProvider>{children}</RecordingProvider>;
 }
 
-describe("NewRecordingProvider", () => {
+describe("RecordingProvider", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("provides correct initial values", () => {
-    const { result } = renderHook(() => useNewRecording(), { wrapper });
+    const { result } = renderHook(() => useAudioRecording(), { wrapper });
 
     expect(result.current.state).toBe("idle");
     expect(result.current.audioLevel).toBe(0);
@@ -76,13 +76,13 @@ describe("NewRecordingProvider", () => {
 
   it("throws when used outside provider", () => {
     expect(() => {
-      renderHook(() => useNewRecording());
-    }).toThrow("useNewRecording must be used within <NewRecordingProvider>");
+      renderHook(() => useAudioRecording());
+    }).toThrow("useAudioRecording must be used within <RecordingProvider>");
   });
 
   describe("startRecording", () => {
     it("calls recorder.start and logs to Sentry", async () => {
-      const { result } = renderHook(() => useNewRecording(), { wrapper });
+      const { result } = renderHook(() => useAudioRecording(), { wrapper });
 
       await act(async () => {
         await result.current.startRecording();
@@ -96,7 +96,7 @@ describe("NewRecordingProvider", () => {
       const err = new DOMException("Permission denied", "NotAllowedError");
       mockStart.mockRejectedValueOnce(err);
 
-      const { result } = renderHook(() => useNewRecording(), { wrapper });
+      const { result } = renderHook(() => useAudioRecording(), { wrapper });
 
       await act(async () => {
         await result.current.startRecording();
@@ -117,7 +117,7 @@ describe("NewRecordingProvider", () => {
       const err = new DOMException("Device in use", "NotReadableError");
       mockStart.mockRejectedValueOnce(err);
 
-      const { result } = renderHook(() => useNewRecording(), { wrapper });
+      const { result } = renderHook(() => useAudioRecording(), { wrapper });
 
       await act(async () => {
         await result.current.startRecording();
@@ -137,7 +137,7 @@ describe("NewRecordingProvider", () => {
       const err = new DOMException("No mic", "NotFoundError");
       mockStart.mockRejectedValueOnce(err);
 
-      const { result } = renderHook(() => useNewRecording(), { wrapper });
+      const { result } = renderHook(() => useAudioRecording(), { wrapper });
 
       await act(async () => {
         await result.current.startRecording();
@@ -156,7 +156,7 @@ describe("NewRecordingProvider", () => {
     it("treats non-DOMException errors as permission-denied", async () => {
       mockStart.mockRejectedValueOnce(new Error("generic failure"));
 
-      const { result } = renderHook(() => useNewRecording(), { wrapper });
+      const { result } = renderHook(() => useAudioRecording(), { wrapper });
 
       await act(async () => {
         await result.current.startRecording();
@@ -171,7 +171,7 @@ describe("NewRecordingProvider", () => {
 
   describe("pauseRecording", () => {
     it("calls recorder.pause and logs to Sentry", () => {
-      const { result } = renderHook(() => useNewRecording(), { wrapper });
+      const { result } = renderHook(() => useAudioRecording(), { wrapper });
 
       act(() => {
         result.current.pauseRecording();
@@ -184,7 +184,7 @@ describe("NewRecordingProvider", () => {
 
   describe("resumeRecording", () => {
     it("calls recorder.resume and logs to Sentry", () => {
-      const { result } = renderHook(() => useNewRecording(), { wrapper });
+      const { result } = renderHook(() => useAudioRecording(), { wrapper });
 
       act(() => {
         result.current.resumeRecording();
@@ -197,7 +197,7 @@ describe("NewRecordingProvider", () => {
 
   describe("finalizeRecording", () => {
     it("stops the recorder, returns its URL, and logs", async () => {
-      const { result } = renderHook(() => useNewRecording(), { wrapper });
+      const { result } = renderHook(() => useAudioRecording(), { wrapper });
 
       let url: string | null = null;
       await act(async () => {
@@ -212,7 +212,7 @@ describe("NewRecordingProvider", () => {
     it("throws and shows a snackbar when the recorder has no URL", async () => {
       mockGetUrl.mockResolvedValueOnce(null);
 
-      const { result } = renderHook(() => useNewRecording(), { wrapper });
+      const { result } = renderHook(() => useAudioRecording(), { wrapper });
 
       await act(async () => {
         await expect(result.current.finalizeRecording()).rejects.toThrow(
@@ -230,7 +230,7 @@ describe("NewRecordingProvider", () => {
 
   describe("discardRecording", () => {
     it("calls recorder.discard", async () => {
-      const { result } = renderHook(() => useNewRecording(), { wrapper });
+      const { result } = renderHook(() => useAudioRecording(), { wrapper });
 
       await act(async () => {
         await result.current.finalizeRecording();

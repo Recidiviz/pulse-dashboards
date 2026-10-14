@@ -16,5 +16,8 @@
 // =============================================================================
 
 export { useActiveMeetingStore } from "./activeMeetingStore";
-export { NewRecordingProvider, useNewRecording } from "./RecordingProvider";
+export {
+  RecordingProvider as NewRecordingProvider,
+  useAudioRecording as useNewRecording,
+} from "./RecordingProvider";
 export * from "./types";

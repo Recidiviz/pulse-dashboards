@@ -22,7 +22,7 @@ import React from "react";
 import { useDiscardMeeting } from "~@meetings/app/entities/meeting";
 
 import { useActiveMeetingStore } from "../model/activeMeetingStore";
-import { useNewRecording } from "../model/RecordingProvider";
+import { useAudioRecording } from "../model/RecordingProvider";
 import { DiscardMeetingModal } from "./DiscardMeetingModal";
 
 jest.mock("@sentry/react-native", () => ({
@@ -31,7 +31,7 @@ jest.mock("@sentry/react-native", () => ({
 }));
 
 jest.mock("../model/RecordingProvider", () => ({
-  useNewRecording: jest.fn(),
+  useAudioRecording: jest.fn(),
 }));
 
 jest.mock("~@meetings/app/shared/ui/Snackbar", () => ({
@@ -79,7 +79,7 @@ describe("DiscardMeetingModal", () => {
     mockDiscardRecording.mockResolvedValue(undefined);
     mockDiscardMeeting.mockResolvedValue(undefined);
 
-    (useNewRecording as jest.Mock).mockReturnValue({
+    (useAudioRecording as jest.Mock).mockReturnValue({
       discardRecording: mockDiscardRecording,
       resumeRecording: mockResumeRecording,
     });
