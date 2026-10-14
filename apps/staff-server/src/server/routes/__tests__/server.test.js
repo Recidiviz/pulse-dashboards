@@ -538,5 +538,55 @@ describe("Server tests", () => {
           expect(response.body.status).toEqual(500);
         });
     });
+
+    describe("outside offline mode", () => {
+      const lookedUpUser = {
+        emailAddress: "officer@us_id.gov",
+        stateCode: "US_ID",
+        firstName: "Test",
+        lastName: "Officer",
+      };
+      const lookupRequest = vi.fn();
+
+      beforeEach(async () => {
+        lookupRequest.mockReset().mockResolvedValue({ data: lookedUpUser });
+        vi.doMock("google-auth-library", () => ({
+          GoogleAuth: vi.fn().mockImplementation(() => ({
+            getIdTokenClient: vi
+              .fn()
+              .mockResolvedValue({ request: lookupRequest }),
+          })),
+        }));
+        vi.stubEnv("IS_OFFLINE", "false");
+        vi.stubEnv("AUTH_ENV", "test");
+        vi.resetModules();
+        app = (await import("../../app.js")).app;
+      });
+
+      afterEach(() => {
+        vi.doUnmock("google-auth-library");
+      });
+
+      it("refuses a state user and does not look up the requested user", () => {
+        return request(app)
+          .get("/api/impersonateAuth0User?impersonatedEmail=officer@us_id.gov")
+          .then((response) => {
+            expect(response.statusCode).toEqual(403);
+            expect(response.body).not.toHaveProperty("emailAddress");
+            expect(lookupRequest).not.toHaveBeenCalled();
+          });
+      });
+
+      it("returns the requested user's metadata to a Recidiviz user", () => {
+        vi.mocked(getAppMetadata).mockReturnValue({ state_code: "recidiviz" });
+        return request(app)
+          .get("/api/impersonateAuth0User?impersonatedEmail=officer@us_id.gov")
+          .then((response) => {
+            expect(response.statusCode).toEqual(200);
+            expect(response.body).toEqual(lookedUpUser);
+            expect(lookupRequest).toHaveBeenCalledTimes(1);
+          });
+      });
+    });
   });
 });

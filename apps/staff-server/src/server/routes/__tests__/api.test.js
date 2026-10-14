@@ -382,20 +382,50 @@ describe("API GET tests", () => {
   });
 
   describe("getImpersonatedUserRestrictions", () => {
-    beforeEach(async () => {
-      vi.resetModules();
-      await fakeRequest(getImpersonatedUserRestrictions, {
-        query: {
-          impersonatedStateCode: "US_TN",
-          impersonatedEmail: "test-email",
-        },
+    const impersonationRequest = (appMetadata) => ({
+      user: {
+        [`${process.env.METADATA_NAMESPACE}app_metadata`]: appMetadata,
+      },
+      query: {
+        impersonatedStateCode: "US_TN",
+        impersonatedEmail: "test-email",
+      },
+    });
+
+    describe("when the caller is a Recidiviz user", () => {
+      beforeEach(async () => {
+        vi.resetModules();
+        await fakeRequest(
+          getImpersonatedUserRestrictions,
+          impersonationRequest({ state_code: "recidiviz" }),
+        );
+      });
+      it("calls GoogleAuth with the service account credentials", () => {
+        expect(GoogleAuth).toHaveBeenCalledWith({
+          credentials: { type: "service_account" },
+        });
       });
     });
-    it("calls GoogleAuth with the service account credentials", () => {
-      expect(GoogleAuth).toHaveBeenCalledWith({
-        credentials: { type: "service_account" },
-      });
-    });
+
+    test.each([
+      ["a state user", { state_code: "US_TN" }],
+      ["a CSG user", { state_code: "csg" }],
+      ["a user with no app metadata", undefined],
+    ])(
+      "returns 403 without looking up the user when the caller is %s",
+      async (_, appMetadata) => {
+        vi.mocked(GoogleAuth).mockClear();
+        const status = vi.fn().mockReturnValue({ send: vi.fn() });
+        await getImpersonatedUserRestrictions(
+          impersonationRequest(appMetadata),
+          { status, set: vi.fn(), send: vi.fn() },
+        );
+
+        expect(status).toHaveBeenCalledWith(403);
+        expect(GoogleAuth).not.toHaveBeenCalled();
+      },
+    );
+
     it("sanitizes bad hashes", () => {
       expect(sanitizeUserHash("/someHash/=")).toBe("_someHash/=");
     });

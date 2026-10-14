@@ -469,6 +469,13 @@ export async function getImpersonatedUserRestrictions(req, res) {
     return;
   }
 
+  // The lookup returns any user's roster record, in any state, so only
+  // Recidiviz users (the only ones who can impersonate) may call it.
+  if (getAppMetadata(req).state_code?.toLowerCase() !== "recidiviz") {
+    respondWithForbidden(res);
+    return;
+  }
+
   const { impersonatedEmail: email } = req.query;
   try {
     const data = await fetchImpersonatedUserRestrictions(email);
