@@ -19,6 +19,7 @@ import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
+import { useState } from "react";
 import { ImageBackground, Platform, View } from "react-native";
 import XIcon from "react-native-heroicons/outline/XIcon";
 import MicrophoneIcon from "react-native-heroicons/solid/MicrophoneIcon";
@@ -39,12 +40,15 @@ import {
   getInitials,
   humanReadableTitleCase,
 } from "~@meetings/app/shared/lib/format";
+import { isMobileBrowser } from "~@meetings/app/shared/lib/platform";
 import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 import { Button } from "~@meetings/app/shared/ui/Button";
 import Dropdown from "~@meetings/app/shared/ui/Dropdown";
 import { OfflineIndicator } from "~@meetings/app/shared/ui/OfflineIndicator";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 import { AgencyConfig } from "~@meetings/config";
+
+import { UseMobileAppModal } from "./UseMobileAppModal";
 
 type NewMeetingRecordingSheetProps = {
   person: Person;
@@ -75,6 +79,7 @@ export function NewMeetingRecordingSheet({
 }: NewMeetingRecordingSheetProps) {
   const insets = useSafeAreaInsets();
   const { isOnline } = useIsOnline();
+  const [isUseMobileAppModalOpen, setIsUseMobileAppModalOpen] = useState(false);
   const { isRecidivizUser } = useUserContext();
   const meetingTypesOptions = getMeetingTypesOptions(
     meetingTypes,
@@ -181,7 +186,11 @@ export function NewMeetingRecordingSheet({
             className="mb-3 h-14 w-full"
             icon={{ icon: PlaySvg, className: "size-4" }}
             loading={isMeetingCreating}
-            onPress={onStartMeeting}
+            onPress={
+              isMobileBrowser()
+                ? () => setIsUseMobileAppModalOpen(true)
+                : onStartMeeting
+            }
           >
             Start meeting
           </Button>
@@ -195,6 +204,9 @@ export function NewMeetingRecordingSheet({
           </Button>
         </View>
       </BottomSheetView>
+      {isUseMobileAppModalOpen && (
+        <UseMobileAppModal onClose={() => setIsUseMobileAppModalOpen(false)} />
+      )}
     </BottomSheet>
   );
 }

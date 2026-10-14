@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export { isMobileBrowser } from "./isMobileBrowser";
 export type { HapticType } from "./useHaptic";
 export { useHaptic } from "./useHaptic";
 export { useIsMobileWidth } from "./useIsMobileWidth";

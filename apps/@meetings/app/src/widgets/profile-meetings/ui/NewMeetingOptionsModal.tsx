@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useState } from "react";
 import { TextInput, View } from "react-native";
 import MicrophoneIcon from "react-native-heroicons/solid/MicrophoneIcon";
 import UploadIcon from "react-native-heroicons/solid/UploadIcon";
@@ -30,12 +31,15 @@ import { useUserContext } from "~@meetings/app/entities/user";
 import { MeetingModalLayout } from "~@meetings/app/features/recording";
 import { Person } from "~@meetings/app/shared/api";
 import PlaySvg from "~@meetings/app/shared/assets/icons/play.svg";
+import { isMobileBrowser } from "~@meetings/app/shared/lib/platform";
 import useIsOnline from "~@meetings/app/shared/lib/useIsOnline";
 import { Button } from "~@meetings/app/shared/ui/Button";
 import Dropdown from "~@meetings/app/shared/ui/Dropdown";
 import { OfflineIndicator } from "~@meetings/app/shared/ui/OfflineIndicator";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 import { AgencyConfig } from "~@meetings/config";
+
+import { UseMobileAppModal } from "./UseMobileAppModal";
 
 type NewMeetingOptionsModalProps = {
   person: Person;
@@ -69,6 +73,7 @@ export function NewMeetingOptionsModal({
   setNote,
 }: NewMeetingOptionsModalProps) {
   const { isOnline } = useIsOnline();
+  const [isUseMobileAppModalOpen, setIsUseMobileAppModalOpen] = useState(false);
   const { isRecidivizUser } = useUserContext();
   const meetingTypesOptions = getMeetingTypesOptions(
     meetingTypes,
@@ -150,7 +155,12 @@ export function NewMeetingOptionsModal({
             className="h-14 min-w-[200px]"
             icon={{ icon: PlaySvg, className: "size-4" }}
             loading={isMeetingCreating}
-            onPress={onStartMeeting}
+            onPress={
+              isMobileBrowser()
+                ? () => setIsUseMobileAppModalOpen(true)
+                : onStartMeeting
+            }
+            disabled={isMeetingCreating}
           >
             Start Meeting
           </Button>
@@ -173,6 +183,9 @@ export function NewMeetingOptionsModal({
           className="min-h-[88px] rounded-lg border border-subtle bg-secondary px-4 py-3 text-base leading-[22px] text-primary outline-none"
         />
       </View>
+      {isUseMobileAppModalOpen && (
+        <UseMobileAppModal onClose={() => setIsUseMobileAppModalOpen(false)} />
+      )}
     </MeetingModalLayout>
   );
 }

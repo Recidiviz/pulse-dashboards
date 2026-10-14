@@ -10810,6 +10810,7 @@ __metadata:
     expo-asset: "npm:~55.0.18"
     expo-audio: "npm:~55.0.16"
     expo-dev-client: "npm:~55.0.37"
+    expo-device: "npm:~55.0.21"
     expo-document-picker: "npm:~55.0.15"
     expo-font: "npm:~55.0.8"
     expo-haptics: "npm:~55.0.16"
@@ -35166,6 +35167,17 @@ __metadata:
   peerDependencies:
     expo: "*"
   checksum: 10c0/4286dca1881a5bc30a95336c095f94f0d023e56fd21a6299fb9d10f7015d0514c7dd24ec92c392f6529268aef6dfa6a60ace949e259250aab83a350f831cc014
+  languageName: node
+  linkType: hard
+
+"expo-device@npm:~55.0.21":
+  version: 55.0.21
+  resolution: "expo-device@npm:55.0.21"
+  dependencies:
+    ua-parser-js: "npm:^0.7.33"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/a43714ccdfdfa9f37d8ad5742dac3783c8375c3934e2c1ec6106346f14403cccc92e86558c9aedf8abe891d78ea682dee51f8c8c1e47ce0e7448a265d001f8d7
   languageName: node
   linkType: hard
 
@@ -60332,6 +60344,15 @@ __metadata:
   version: 0.7.37
   resolution: "ua-parser-js@npm:0.7.37"
   checksum: 10c0/38295744f1771896a9158f427b10a6971e82e30bdcedb98bf871eb29987a517722ed1185a00e54b1dea5480920d131e374b92574851f29e3a753173b9c0f24d2
+  languageName: node
+  linkType: hard
+
+"ua-parser-js@npm:^0.7.33":
+  version: 0.7.41
+  resolution: "ua-parser-js@npm:0.7.41"
+  bin:
+    ua-parser-js: script/cli.js
+  checksum: 10c0/b134bc0d8da10c76e07740a0ade61c193fd4c4d120ba2cb2530e26931f6b550dd60b6e801d8891f6d9c23dfebadf5590294739069edff94396f173cc8cc5767e
   languageName: node
   linkType: hard
 
