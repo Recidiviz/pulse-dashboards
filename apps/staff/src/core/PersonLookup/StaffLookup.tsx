@@ -158,13 +158,8 @@ export const StaffLookup = observer(function StaffLookup({
           return;
         }
         if (value.trim().length >= 2) {
-          const searchResults = workflowsStore
-            .searchStaffWithOrWithoutCaseloads(value)
-            .filter(
-              (o) =>
-                o.staffExternalId !==
-                workflowsStore.rootStore.userStore.externalId,
-            );
+          const searchResults =
+            workflowsStore.searchStaffWithOrWithoutCaseloads(value);
           setResults(searchResults);
           setShowDropdown(true);
           setSelectedIndex(-1);
