@@ -24,7 +24,10 @@ redis_client = redis.from_url(settings.REDIS_URL)
 # Internal domains for access control
 # In production/staging, only Recidiviz domains are allowed
 # In dev/demo/local, Monadical is also allowed for development purposes
-_RECIDIVIZ_DOMAINS = ["@recidiviz.org", "@recidiviz-test.org"]
+# @recidiviz-test.org is deliberately absent: those accounts are test personas
+# of state staff (e.g. pentest accounts), not Recidiviz employees, and the
+# frontend's isRecidivizUser already treats only @recidiviz.org as internal.
+_RECIDIVIZ_DOMAINS = ["@recidiviz.org"]
 _DEV_DOMAINS = ["@monadical.com"]
 
 
@@ -41,7 +44,7 @@ def is_internal_user(email: str | None) -> bool:
 
     Internal users have access to admin features like Config Management.
     The allowed domains are environment-dependent:
-    - staging/prod: Only @recidiviz.org and @recidiviz-test.org
+    - staging/prod: Only @recidiviz.org
     - dev/demo/local: Also includes @monadical.com for development
     """
     if not email:
