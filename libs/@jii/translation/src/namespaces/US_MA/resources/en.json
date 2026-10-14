@@ -198,8 +198,11 @@
           "cta": "Review"
         },
         "loading": "Loading your Reentry profile...",
-        "loadError": "We couldn't load your Reentry profile.",
-        "retryCta": "Click here to try again"
+        "loadError": {
+          "heading": "Can't display your Reentry profile status",
+          "description": "Something went wrong on our end."
+        },
+        "retryCta": "Try again"
       },
       "resourceCategories": {
         "sectionLabel": "Plan your next steps",
@@ -247,7 +250,10 @@
         "next": "Next",
         "saveAndUpdate": "Save and update profile",
         "saveHint": "Your answer will be saved when you tap",
-        "saving": "Saving..."
+        "saving": "Saving...",
+        "saveError": "Couldn't save your answer. Tap **Next** to retry.",
+        "saveAndUpdateError": "Couldn't save your answer. Tap **Save and update profile** to retry.",
+        "whyWeAskLabel": "Why we ask this"
       },
       "review": {
         "heading": "Review and submit your Reentry profile",
@@ -256,11 +262,19 @@
         "submit": "Submit answers",
         "editHeading": "Review your Reentry profile",
         "editDescription": "These are the answers we used to build your checklist. Change any answer to update your profile and checklist.",
-        "submitting": "Submitting..."
+        "submitting": "Submitting...",
+        "answerUpdated": "Answer updated",
+        "savedBanner": {
+          "message": "Saved. Your checklist is updated.",
+          "cta": "See my checklist",
+          "dismiss": "Dismiss"
+        },
+        "submitError": "Couldn't submit your answers. Tap **Submit answers** to retry."
       },
       "footer": {
         "back": "Back",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "showMore": "Show more"
       },
       "cancelModal": {
         "heading": "Are you sure you want to leave?",
@@ -276,7 +290,6 @@
         "checklistCta": "Go to your checklist",
         "closeCta": "Close and return home"
       },
-      "saveError": "We couldn't save your answers. Check your connection and try again.",
       "domainCopy": {
         "HOUSING": "Housing",
         "WORK": "Work",
@@ -288,40 +301,52 @@
       },
       "questionCopy": {
         "HOUSING": {
-          "question": "Where are you planning to live when you get out?"
+          "question": "Where are you planning to live when you get out?",
+          "whyWeAsk": "So your housing steps match your actual plan — staying with family, going to a program, or getting your own place each need different things."
         },
         "WORK_PLANS": {
-          "question": "Do you plan to work when you get out?"
+          "question": "Do you plan to work when you get out?",
+          "whyWeAsk": "So your list matches your plan — job-search steps if you need them, different steps if you already have work lined up, and neither if you won't be working."
         },
         "HEALTHCARE_NEEDED": {
-          "question": "Will you need health care or medicine when you get out?"
+          "question": "Will you need health care or medicine when you get out?",
+          "whyWeAsk": "So the health steps on your list are the ones that actually apply to you, instead of a general list you have to sort through."
         },
         "HEALTHCARE_DETAILS": {
-          "question": "What health care or medicine will you need when you get out?"
+          "question": "What health care or medicine will you need when you get out?",
+          "whyWeAsk": "So the health steps on your list are the ones that actually apply to you, instead of a general list you have to sort through."
         },
         "SSI_SSDI_ELIGIBILITY": {
-          "question": "Have you received SSI or SSDI before, or think you might qualify for either?"
+          "question": "Have you received SSI or SSDI before, or think you might qualify for either?",
+          "whyWeAsk": "So we can add steps for the benefits you might qualify for, instead of a general list."
         },
         "SSI_SSDI_DETAILS": {
-          "question": "Which of these have you received before or think you might qualify for?"
+          "question": "Which of these have you received before or think you might qualify for?",
+          "whyWeAsk": "So we can add steps for the benefits you might qualify for, instead of a general list."
         },
         "TRANSPORTATION_PLAN": {
-          "question": "Once you're out, do you have a plan for your transportation to get to work and appointments?"
+          "question": "Once you're out, do you have a plan for your transportation to get to work and appointments?",
+          "whyWeAsk": "So your transportation step matches how you'll really get around, whether that's your own car, a ride, or public transit."
         },
         "TRANSPORTATION": {
-          "question": "How do you plan to get to work and appointments once you're out?"
+          "question": "How do you plan to get to work and appointments once you're out?",
+          "whyWeAsk": "So your transportation step matches how you'll really get around, whether that's your own car, a ride, or public transit."
         },
         "RELEASE_DAY_TRANSPORTATION": {
-          "question": "How do you plan to get home on the day you get out?"
+          "question": "How do you plan to get home on the day you get out?",
+          "whyWeAsk": "So your release-day step matches your plan, and we can show you travel information if you're getting there on your own."
         },
         "EDUCATION_LEVEL": {
-          "question": "What is your highest level of education?"
+          "question": "What is your highest level of education?",
+          "whyWeAsk": "So we can show relevant tasks about education programming."
         },
         "MILITARY_SERVICE": {
-          "question": "Have you served in the military?"
+          "question": "Have you served in the military?",
+          "whyWeAsk": "So we can add the documents and benefits that only apply to veterans, like your DD-214."
         },
         "BORN_IN_MASSACHUSETTS": {
-          "question": "Were you born in Massachusetts?"
+          "question": "Were you born in Massachusetts?",
+          "whyWeAsk": "The process for getting your Birth Certificate is different if you were not born in MA."
         }
       },
       "optionCopy": {
@@ -419,6 +444,7 @@
       },
       "progress": "{{done}} of {{total}} done",
       "personalizedBadge": "Based on your profile",
+      "itemSaveError": "Something went wrong. Tap the option again to retry.",
       "sections": {
         "ANYTIME": {
           "title": "Complete Anytime",
@@ -651,6 +677,7 @@
         "contactLabel": "Address: {{address}}",
         "rent": {
           "free": "Rent: Free",
+          "varies": "Rent: Varies",
           "range": "Rent: {{min, currency(USD)}}–{{max, currency(USD)}}/week",
           "single": "Rent: {{amount, currency(USD)}}/week",
           "incomePercent": "Rent: {{percent}}% of income",
@@ -671,6 +698,29 @@
           "sexOffenses": "Sex offenses",
           "arsonOffenses": "Arson offenses",
           "parolees": "Parolees"
+        }
+      },
+      "filters": {
+        "openButton": "Filters",
+        "sheet": {
+          "title": "Filters",
+          "subtitle": "All results are shown until you select a filter. Tap options below to narrow the list. Selected filters apply together.",
+          "clearAll": "Clear all",
+          "cancel": "Cancel",
+          "apply": "Apply selected ({{count}})",
+          "ariaLabel": "Filter housing resources"
+        },
+        "groups": {
+          "rent": "Rent (Weekly)"
+        },
+        "rent": {
+          "free": "Free",
+          "upTo150": "Up to $150",
+          "from151To175": "$151 to $175",
+          "from176To200": "$176 to $200",
+          "over200": "Over $200",
+          "basedOnIncome": "Based on income",
+          "notListed": "Rent not listed"
         }
       }
     }

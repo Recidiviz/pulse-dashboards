@@ -37,7 +37,7 @@ const QuestionnaireCtaErrorContent = ({
   return (
     <CenteredWrapper>
       <Description>
-        {t(($) => $.reentry.overview.questionnaireCta.loadError)}
+        {t(($) => $.reentry.overview.questionnaireCta.loadError.description)}
       </Description>
       <Button kind="link" onClick={() => resetError()}>
         {t(($) => $.reentry.overview.questionnaireCta.retryCta)}

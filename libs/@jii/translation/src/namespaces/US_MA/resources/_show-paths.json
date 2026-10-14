@@ -198,7 +198,10 @@
           "cta": "[US_MA]reentry.overview.questionnaireCta.reviewProfile.cta"
         },
         "loading": "[US_MA]reentry.overview.questionnaireCta.loading",
-        "loadError": "[US_MA]reentry.overview.questionnaireCta.loadError",
+        "loadError": {
+          "heading": "[US_MA]reentry.overview.questionnaireCta.loadError.heading",
+          "description": "[US_MA]reentry.overview.questionnaireCta.loadError.description"
+        },
         "retryCta": "[US_MA]reentry.overview.questionnaireCta.retryCta"
       },
       "resourceCategories": {
@@ -247,7 +250,10 @@
         "next": "[US_MA]reentry.questionnaire.form.next",
         "saveAndUpdate": "[US_MA]reentry.questionnaire.form.saveAndUpdate",
         "saveHint": "[US_MA]reentry.questionnaire.form.saveHint",
-        "saving": "[US_MA]reentry.questionnaire.form.saving"
+        "saving": "[US_MA]reentry.questionnaire.form.saving",
+        "saveError": "[US_MA]reentry.questionnaire.form.saveError",
+        "saveAndUpdateError": "[US_MA]reentry.questionnaire.form.saveAndUpdateError",
+        "whyWeAskLabel": "[US_MA]reentry.questionnaire.form.whyWeAskLabel"
       },
       "review": {
         "heading": "[US_MA]reentry.questionnaire.review.heading",
@@ -256,11 +262,19 @@
         "submit": "[US_MA]reentry.questionnaire.review.submit",
         "editHeading": "[US_MA]reentry.questionnaire.review.editHeading",
         "editDescription": "[US_MA]reentry.questionnaire.review.editDescription",
-        "submitting": "[US_MA]reentry.questionnaire.review.submitting"
+        "submitting": "[US_MA]reentry.questionnaire.review.submitting",
+        "answerUpdated": "[US_MA]reentry.questionnaire.review.answerUpdated",
+        "savedBanner": {
+          "message": "[US_MA]reentry.questionnaire.review.savedBanner.message",
+          "cta": "[US_MA]reentry.questionnaire.review.savedBanner.cta",
+          "dismiss": "[US_MA]reentry.questionnaire.review.savedBanner.dismiss"
+        },
+        "submitError": "[US_MA]reentry.questionnaire.review.submitError"
       },
       "footer": {
         "back": "[US_MA]reentry.questionnaire.footer.back",
-        "cancel": "[US_MA]reentry.questionnaire.footer.cancel"
+        "cancel": "[US_MA]reentry.questionnaire.footer.cancel",
+        "showMore": "[US_MA]reentry.questionnaire.footer.showMore"
       },
       "cancelModal": {
         "heading": "[US_MA]reentry.questionnaire.cancelModal.heading",
@@ -276,7 +290,6 @@
         "checklistCta": "[US_MA]reentry.questionnaire.completion.checklistCta",
         "closeCta": "[US_MA]reentry.questionnaire.completion.closeCta"
       },
-      "saveError": "[US_MA]reentry.questionnaire.saveError",
       "domainCopy": {
         "HOUSING": "[US_MA]reentry.questionnaire.domainCopy.HOUSING",
         "WORK": "[US_MA]reentry.questionnaire.domainCopy.WORK",
@@ -288,40 +301,52 @@
       },
       "questionCopy": {
         "HOUSING": {
-          "question": "[US_MA]reentry.questionnaire.questionCopy.HOUSING.question"
+          "question": "[US_MA]reentry.questionnaire.questionCopy.HOUSING.question",
+          "whyWeAsk": "[US_MA]reentry.questionnaire.questionCopy.HOUSING.whyWeAsk"
         },
         "WORK_PLANS": {
-          "question": "[US_MA]reentry.questionnaire.questionCopy.WORK_PLANS.question"
+          "question": "[US_MA]reentry.questionnaire.questionCopy.WORK_PLANS.question",
+          "whyWeAsk": "[US_MA]reentry.questionnaire.questionCopy.WORK_PLANS.whyWeAsk"
         },
         "HEALTHCARE_NEEDED": {
-          "question": "[US_MA]reentry.questionnaire.questionCopy.HEALTHCARE_NEEDED.question"
+          "question": "[US_MA]reentry.questionnaire.questionCopy.HEALTHCARE_NEEDED.question",
+          "whyWeAsk": "[US_MA]reentry.questionnaire.questionCopy.HEALTHCARE_NEEDED.whyWeAsk"
         },
         "HEALTHCARE_DETAILS": {
-          "question": "[US_MA]reentry.questionnaire.questionCopy.HEALTHCARE_DETAILS.question"
+          "question": "[US_MA]reentry.questionnaire.questionCopy.HEALTHCARE_DETAILS.question",
+          "whyWeAsk": "[US_MA]reentry.questionnaire.questionCopy.HEALTHCARE_DETAILS.whyWeAsk"
         },
         "SSI_SSDI_ELIGIBILITY": {
-          "question": "[US_MA]reentry.questionnaire.questionCopy.SSI_SSDI_ELIGIBILITY.question"
+          "question": "[US_MA]reentry.questionnaire.questionCopy.SSI_SSDI_ELIGIBILITY.question",
+          "whyWeAsk": "[US_MA]reentry.questionnaire.questionCopy.SSI_SSDI_ELIGIBILITY.whyWeAsk"
         },
         "SSI_SSDI_DETAILS": {
-          "question": "[US_MA]reentry.questionnaire.questionCopy.SSI_SSDI_DETAILS.question"
+          "question": "[US_MA]reentry.questionnaire.questionCopy.SSI_SSDI_DETAILS.question",
+          "whyWeAsk": "[US_MA]reentry.questionnaire.questionCopy.SSI_SSDI_DETAILS.whyWeAsk"
         },
         "TRANSPORTATION_PLAN": {
-          "question": "[US_MA]reentry.questionnaire.questionCopy.TRANSPORTATION_PLAN.question"
+          "question": "[US_MA]reentry.questionnaire.questionCopy.TRANSPORTATION_PLAN.question",
+          "whyWeAsk": "[US_MA]reentry.questionnaire.questionCopy.TRANSPORTATION_PLAN.whyWeAsk"
         },
         "TRANSPORTATION": {
-          "question": "[US_MA]reentry.questionnaire.questionCopy.TRANSPORTATION.question"
+          "question": "[US_MA]reentry.questionnaire.questionCopy.TRANSPORTATION.question",
+          "whyWeAsk": "[US_MA]reentry.questionnaire.questionCopy.TRANSPORTATION.whyWeAsk"
         },
         "RELEASE_DAY_TRANSPORTATION": {
-          "question": "[US_MA]reentry.questionnaire.questionCopy.RELEASE_DAY_TRANSPORTATION.question"
+          "question": "[US_MA]reentry.questionnaire.questionCopy.RELEASE_DAY_TRANSPORTATION.question",
+          "whyWeAsk": "[US_MA]reentry.questionnaire.questionCopy.RELEASE_DAY_TRANSPORTATION.whyWeAsk"
         },
         "EDUCATION_LEVEL": {
-          "question": "[US_MA]reentry.questionnaire.questionCopy.EDUCATION_LEVEL.question"
+          "question": "[US_MA]reentry.questionnaire.questionCopy.EDUCATION_LEVEL.question",
+          "whyWeAsk": "[US_MA]reentry.questionnaire.questionCopy.EDUCATION_LEVEL.whyWeAsk"
         },
         "MILITARY_SERVICE": {
-          "question": "[US_MA]reentry.questionnaire.questionCopy.MILITARY_SERVICE.question"
+          "question": "[US_MA]reentry.questionnaire.questionCopy.MILITARY_SERVICE.question",
+          "whyWeAsk": "[US_MA]reentry.questionnaire.questionCopy.MILITARY_SERVICE.whyWeAsk"
         },
         "BORN_IN_MASSACHUSETTS": {
-          "question": "[US_MA]reentry.questionnaire.questionCopy.BORN_IN_MASSACHUSETTS.question"
+          "question": "[US_MA]reentry.questionnaire.questionCopy.BORN_IN_MASSACHUSETTS.question",
+          "whyWeAsk": "[US_MA]reentry.questionnaire.questionCopy.BORN_IN_MASSACHUSETTS.whyWeAsk"
         }
       },
       "optionCopy": {
@@ -419,6 +444,7 @@
       },
       "progress": "[US_MA]reentry.checklist.progress",
       "personalizedBadge": "[US_MA]reentry.checklist.personalizedBadge",
+      "itemSaveError": "[US_MA]reentry.checklist.itemSaveError",
       "sections": {
         "ANYTIME": {
           "title": "[US_MA]reentry.checklist.sections.ANYTIME.title",
@@ -651,6 +677,7 @@
         "contactLabel": "[US_MA]reentry.resources.list.contactLabel",
         "rent": {
           "free": "[US_MA]reentry.resources.list.rent.free",
+          "varies": "[US_MA]reentry.resources.list.rent.varies",
           "range": "[US_MA]reentry.resources.list.rent.range",
           "single": "[US_MA]reentry.resources.list.rent.single",
           "incomePercent": "[US_MA]reentry.resources.list.rent.incomePercent",
@@ -671,6 +698,29 @@
           "sexOffenses": "[US_MA]reentry.resources.list.accepts.sexOffenses",
           "arsonOffenses": "[US_MA]reentry.resources.list.accepts.arsonOffenses",
           "parolees": "[US_MA]reentry.resources.list.accepts.parolees"
+        }
+      },
+      "filters": {
+        "openButton": "[US_MA]reentry.resources.filters.openButton",
+        "sheet": {
+          "title": "[US_MA]reentry.resources.filters.sheet.title",
+          "subtitle": "[US_MA]reentry.resources.filters.sheet.subtitle",
+          "clearAll": "[US_MA]reentry.resources.filters.sheet.clearAll",
+          "cancel": "[US_MA]reentry.resources.filters.sheet.cancel",
+          "apply": "[US_MA]reentry.resources.filters.sheet.apply",
+          "ariaLabel": "[US_MA]reentry.resources.filters.sheet.ariaLabel"
+        },
+        "groups": {
+          "rent": "[US_MA]reentry.resources.filters.groups.rent"
+        },
+        "rent": {
+          "free": "[US_MA]reentry.resources.filters.rent.free",
+          "upTo150": "[US_MA]reentry.resources.filters.rent.upTo150",
+          "from151To175": "[US_MA]reentry.resources.filters.rent.from151To175",
+          "from176To200": "[US_MA]reentry.resources.filters.rent.from176To200",
+          "over200": "[US_MA]reentry.resources.filters.rent.over200",
+          "basedOnIncome": "[US_MA]reentry.resources.filters.rent.basedOnIncome",
+          "notListed": "[US_MA]reentry.resources.filters.rent.notListed"
         }
       }
     }
