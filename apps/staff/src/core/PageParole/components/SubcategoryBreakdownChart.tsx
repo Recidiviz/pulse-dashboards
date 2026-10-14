@@ -18,14 +18,13 @@
 import { typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { useCallback, useMemo } from "react";
-import useMeasure from "react-use-measure";
 import { ResponsiveOrdinalFrame } from "semiotic";
 import styled from "styled-components";
 
 import { CARAS_COMPONENT_NAMES, ParoleRiskAssessment } from "~datatypes";
 import { palette } from "~design-system";
 
-import { EdgeAwareTooltip } from "./EdgeAwareTooltip";
+import { EdgeAwareTooltip, useChartContainer } from "./EdgeAwareTooltip";
 import {
   ChartColumn,
   ChartTitle,
@@ -146,7 +145,11 @@ export function SubcategoryBreakdownChart({
   title?: string;
   height?: number;
 }) {
-  const [barChartRef, barChartBounds] = useMeasure();
+  const {
+    setContainer: setBarChart,
+    bounds: barChartBounds,
+    containerRef: barChartRef,
+  } = useChartContainer();
 
   const subcategoryBarData = useMemo(
     () =>
@@ -176,10 +179,7 @@ export function SubcategoryBreakdownChart({
       const point = d.pieces?.[0];
       if (!point) return null;
       return (
-        <EdgeAwareTooltip
-          containerBounds={barChartBounds}
-          resetKey={point.name}
-        >
+        <EdgeAwareTooltip containerRef={barChartRef} resetKey={point.name}>
           <div>{point.name}</div>
           <div>
             Score: {point.score} / {point.score + point.remaining}
@@ -187,7 +187,7 @@ export function SubcategoryBreakdownChart({
         </EdgeAwareTooltip>
       );
     },
-    [barChartBounds],
+    [barChartRef],
   );
 
   // CARAS scores via coefficients, not points out of a max, so its bars
@@ -204,10 +204,7 @@ export function SubcategoryBreakdownChart({
       const point = d.pieces?.[0];
       if (!point) return null;
       return (
-        <EdgeAwareTooltip
-          containerBounds={barChartBounds}
-          resetKey={point.name}
-        >
+        <EdgeAwareTooltip containerRef={barChartRef} resetKey={point.name}>
           <div>{point.name}</div>
           <div>Value: {point.value}</div>
           <div>
@@ -217,7 +214,7 @@ export function SubcategoryBreakdownChart({
         </EdgeAwareTooltip>
       );
     },
-    [barChartBounds],
+    [barChartRef],
   );
 
   if (assessment.tool === "CARAS") {
@@ -249,7 +246,7 @@ export function SubcategoryBreakdownChart({
         {title && <ChartTitle>{title}</ChartTitle>}
         <ChartWrapper
           $height={height}
-          ref={barChartRef}
+          ref={setBarChart}
           role="img"
           aria-label={`Subcategory breakdown for CARAS: ${carasFactorSummary}`}
         >
@@ -309,7 +306,7 @@ export function SubcategoryBreakdownChart({
       {title && <ChartTitle>{title}</ChartTitle>}
       <ChartWrapper
         $height={height}
-        ref={barChartRef}
+        ref={setBarChart}
         role="img"
         aria-label={`Subcategory breakdown for ${assessment.tool}: ${subcategoryBarSummary}`}
       >

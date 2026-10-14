@@ -15,7 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { horizontalOffsetToFit } from "../EdgeAwareTooltip";
+import {
+  horizontalOffsetToFit,
+  verticalPlacementToFit,
+} from "../EdgeAwareTooltip";
 
 const CHART = { containerLeft: 100, containerRight: 400, viewportWidth: 1280 };
 
@@ -57,5 +60,26 @@ describe("horizontalOffsetToFit", () => {
         viewportWidth: 1280,
       }),
     ).toBe(-50);
+  });
+});
+
+describe("verticalPlacementToFit", () => {
+  it("keeps a tooltip above its point when it clears the chart's top", () => {
+    expect(verticalPlacementToFit({ tooltipTop: 120, containerTop: 100 })).toBe(
+      "above",
+    );
+  });
+
+  it("flips a tooltip below its point when the chart would clip its top", () => {
+    expect(verticalPlacementToFit({ tooltipTop: 60, containerTop: 100 })).toBe(
+      "below",
+    );
+  });
+
+  it("flips when the chart is scrolled partly above the viewport", () => {
+    // The chart starts above the window, so the window's top edge clips first.
+    expect(
+      verticalPlacementToFit({ tooltipTop: -10, containerTop: -200 }),
+    ).toBe("below");
   });
 });

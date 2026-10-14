@@ -16,13 +16,12 @@
 // =============================================================================
 
 import { useCallback } from "react";
-import useMeasure from "react-use-measure";
 import { ResponsiveXYFrame } from "semiotic";
 
 import { ParoleRiskTool } from "~datatypes";
 import { palette } from "~design-system";
 
-import { EdgeAwareTooltip } from "./EdgeAwareTooltip";
+import { EdgeAwareTooltip, useChartContainer } from "./EdgeAwareTooltip";
 import {
   ChartColumn,
   ChartTitle,
@@ -38,10 +37,15 @@ export type RiskTrajectoryLine = {
   coordinates: Array<{ date: Date; value: number }>;
 };
 
-// The trajectory line chart: raw score (scaled to `yMax`) for tenants with a
-// custom riskAssessmentConfig, percent-of-max for everyone else -- see
-// RiskAssessmentSection for how `trajectoryLines`' values are derived to
-// match whichever mode `hasCustomConfig` selects.
+/**
+ * Line chart of risk scores over time, one line per tool.
+ * @param trajectoryLines - Lines to plot. RiskAssessmentSection scales their
+ * values to match hasCustomConfig.
+ * @param hasCustomConfig - True plots raw scores up to yMax; false plots
+ * percent of max score.
+ * @param yMax - Top of the y-axis when hasCustomConfig is true.
+ * @param selectedTool - The tool in view, or null for all tools.
+ */
 export function RiskTrajectoryChart({
   trajectoryLines,
   hasCustomConfig,
@@ -53,7 +57,11 @@ export function RiskTrajectoryChart({
   yMax: number;
   selectedTool: ParoleRiskTool | null;
 }) {
-  const [lineChartRef, lineChartBounds] = useMeasure();
+  const {
+    setContainer: setLineChart,
+    bounds: lineChartBounds,
+    containerRef: lineChartRef,
+  } = useChartContainer();
 
   // Some tools (e.g. VRAG-R) score below zero, so the axis extends down to
   // the lowest plotted value rather than clipping it.
@@ -79,7 +87,7 @@ export function RiskTrajectoryChart({
           : Math.round(d.value);
       return (
         <EdgeAwareTooltip
-          containerBounds={lineChartBounds}
+          containerRef={lineChartRef}
           resetKey={`${d.parentLine.tool}-${d.date.getTime()}`}
         >
           <div>{formatDate(d.date)}</div>
@@ -90,7 +98,7 @@ export function RiskTrajectoryChart({
         </EdgeAwareTooltip>
       );
     },
-    [hasCustomConfig, lineChartBounds],
+    [hasCustomConfig, lineChartRef],
   );
 
   // A per-line summary of the most recent point, for the aria-label below --
@@ -117,7 +125,7 @@ export function RiskTrajectoryChart({
       </ChartTitle>
       {trajectoryLines.length > 0 && (
         <ChartWrapper
-          ref={lineChartRef}
+          ref={setLineChart}
           role="img"
           aria-label={`Latest risk score: ${latestScoreSummary}`}
         >

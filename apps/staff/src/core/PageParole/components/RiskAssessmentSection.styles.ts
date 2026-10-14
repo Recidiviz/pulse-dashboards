@@ -92,14 +92,23 @@ export const ChartWrapper = styled.div<{ $height?: number }>`
   }
 `;
 
+export type TooltipPlacement = "above" | "below";
+
 export const StyledTooltip = styled(Tooltip).attrs({
   backgroundColor: palette.signal.tooltip,
 })<{
   $offsetX?: number;
+  $placement?: TooltipPlacement;
 }>`
   ${typography.Sans14}
   position: relative;
-  transform: translate(calc(-50% + ${({ $offsetX = 0 }) => $offsetX}px), -115%);
+  transform: translate(
+    calc(-50% + ${({ $offsetX = 0 }) => $offsetX}px),
+    ${({ $placement = "above" }) => ($placement === "above" ? "-115%" : "15%")}
+  );
+  // Sizes to the text, not to semiotic's wrapper. Near the chart's right edge
+  // the wrapper is narrow, which would wrap the text at every space.
+  width: max-content;
   max-width: min(16rem, calc(100vw - 2rem));
   white-space: normal;
   overflow-wrap: break-word;
