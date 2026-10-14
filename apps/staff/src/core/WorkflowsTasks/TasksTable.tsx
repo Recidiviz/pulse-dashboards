@@ -266,8 +266,10 @@ const getColumnDefs = (presenter: {
       enableSorting: true,
       sortingFn: (rowA, rowB) => {
         if (presenter.shouldSortByLastName) {
-          const lastB = rowB.original.person.displayPreferredName.split(" ")[1];
-          const lastA = rowA.original.person.displayPreferredName.split(" ")[1];
+          const lastA =
+            rowA.original.person.fullName.surname?.toLowerCase() ?? "";
+          const lastB =
+            rowB.original.person.fullName.surname?.toLowerCase() ?? "";
           return lastA < lastB ? 1 : -1;
         }
         return rowA.original.person.displayPreferredName <

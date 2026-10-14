@@ -164,7 +164,7 @@ export class CaseloadTasksPresenterV2
   }
 
   get shouldSortByLastName(): boolean {
-    return this.tenantStore.stateCode === "US_TX";
+    return this.tenantStore.currentTenantId === "US_TX";
   }
 
   shouldHighlightRow({ person }: TasksRowEntity): boolean {
