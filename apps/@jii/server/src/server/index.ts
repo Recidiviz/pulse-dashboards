@@ -18,6 +18,7 @@
 import { appRouter, createContext, firebaseApp } from "~@jii/trpc";
 import { buildCommonServer } from "~server-setup-plugin";
 
+import { registerNoStoreHook } from "./cacheControl";
 import { registerAuthRoutes } from "./routes";
 
 export function buildServer() {
@@ -44,6 +45,7 @@ export function buildServer() {
     firebaseAuthOptions,
   });
 
+  registerNoStoreHook(server);
   registerAuthRoutes(server);
 
   return server;

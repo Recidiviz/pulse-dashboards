@@ -85,6 +85,16 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
     }
 
+    # Opportunities app server. This goes straight to Cloud Run rather than through
+    # OPPORTUNITIES_APP_URL to bypass Firebase Hosting's CDN, which caches 404s from the server
+    # by default (which we don't want) and adds unnecessary network hops regardless.
+    location /api/ {
+        proxy_pass ${JII_SERVER_URL}/api/;
+        proxy_http_version 1.1;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_ssl_server_name on;
+    }
+
     location / {
         proxy_pass ${OPPORTUNITIES_APP_URL}/;
         proxy_http_version 1.1;
