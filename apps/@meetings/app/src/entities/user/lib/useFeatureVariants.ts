@@ -16,16 +16,9 @@
 // =============================================================================
 
 import { IS_PROD } from "~@meetings/app/shared/config";
-import type {
-  FeatureVariant,
-  FeatureVariantValue,
-} from "~@meetings/trpc-types";
+import type { FeatureVariant } from "~@meetings/trpc-types";
 
 import { useUserContext } from "../model/UserContext";
-
-export type ProcessedFeatureVariantValue = {
-  active: boolean;
-} & FeatureVariantValue;
 
 const DEFAULT_FEATURE_VARIANTS: FeatureVariant[] = [];
 
@@ -41,31 +34,17 @@ export const useFeatureVariants: () => {
     };
   }
 
-  const processedVariants = Object.fromEntries(
-    Object.entries(featureVariants).map(([key, variant]) => {
-      const defaultValue = IS_PROD
-        ? DEFAULT_FEATURE_VARIANTS.includes(key as FeatureVariant)
-        : true;
-
-      const isActive = variant.activeDate
-        ? new Date(variant.activeDate) <= new Date()
-        : defaultValue;
-
-      return [
-        key as FeatureVariant,
-        {
-          ...variant,
-          active: isRecidivizUser || isActive,
-        } as ProcessedFeatureVariantValue,
-      ];
-    }),
-  );
-
   const isVariantActive = (variant: FeatureVariant) => {
-    if (processedVariants?.[variant] === undefined) {
-      return false;
+    if (isRecidivizUser) return true;
+
+    const value = featureVariants[variant];
+    if (value === undefined) {
+      return IS_PROD && DEFAULT_FEATURE_VARIANTS.includes(variant);
     }
-    return processedVariants?.[variant]?.active;
+
+    if (typeof value === "object" && value.activeDate)
+      return new Date(value.activeDate) <= new Date();
+    return !!value;
   };
 
   return {

@@ -85,6 +85,18 @@ describe("useFeatureVariants", () => {
       expect(result.current.isVariantActive("TEST")).toBe(false);
     });
 
+    it("returns false for a variant set to false", () => {
+      mockUseUserContext.mockReturnValue({
+        featureVariants: { TEST: false },
+        isRecidivizUser: false,
+        isSkipAuthUser: false,
+      });
+
+      const { result } = renderHook(() => useFeatureVariants());
+
+      expect(result.current.isVariantActive("TEST")).toBe(false);
+    });
+
     it("returns true for a variant with a past activeDate", () => {
       mockUseUserContext.mockReturnValue({
         featureVariants: { TEST: { activeDate: PAST_DATE } },
@@ -138,7 +150,7 @@ describe("useFeatureVariants", () => {
         mockIsProd = true;
       });
 
-      it("returns false for a variant with no activeDate since none are in DEFAULT_FEATURE_VARIANTS", () => {
+      it("returns true for a variant with no activeDate", () => {
         mockUseUserContext.mockReturnValue({
           featureVariants: { feedbackTab: {} },
           isRecidivizUser: false,
@@ -147,7 +159,43 @@ describe("useFeatureVariants", () => {
 
         const { result } = renderHook(() => useFeatureVariants());
 
+        expect(result.current.isVariantActive("feedbackTab")).toBe(true);
+      });
+
+      it("returns false for a variant not present in featureVariants since none are in DEFAULT_FEATURE_VARIANTS", () => {
+        mockUseUserContext.mockReturnValue({
+          featureVariants: {},
+          isRecidivizUser: false,
+          isSkipAuthUser: false,
+        });
+
+        const { result } = renderHook(() => useFeatureVariants());
+
         expect(result.current.isVariantActive("feedbackTab")).toBe(false);
+      });
+
+      it("returns false for a variant set to false", () => {
+        mockUseUserContext.mockReturnValue({
+          featureVariants: { feedbackTab: false },
+          isRecidivizUser: false,
+          isSkipAuthUser: false,
+        });
+
+        const { result } = renderHook(() => useFeatureVariants());
+
+        expect(result.current.isVariantActive("feedbackTab")).toBe(false);
+      });
+
+      it("returns true for a variant set to true", () => {
+        mockUseUserContext.mockReturnValue({
+          featureVariants: { feedbackTab: true },
+          isRecidivizUser: false,
+          isSkipAuthUser: false,
+        });
+
+        const { result } = renderHook(() => useFeatureVariants());
+
+        expect(result.current.isVariantActive("feedbackTab")).toBe(true);
       });
 
       it("returns true for a variant with a past activeDate in production", () => {

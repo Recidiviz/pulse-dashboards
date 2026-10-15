@@ -19,11 +19,13 @@ import { FastifyReply, FastifyRequest } from "fastify";
 
 import { PrismaClient, StateCode } from "~@meetings/prisma/client";
 
-export type FeatureVariantValue = {
-  activeDate?: string; // string because JSON dates from Auth0
-  variant?: string;
-  activeTenants?: StateCode[];
-};
+export type FeatureVariantValue =
+  | {
+      activeDate?: string; // string because JSON dates from Auth0
+      variant?: string;
+      activeTenants?: StateCode[];
+    }
+  | boolean;
 
 export type FeatureVariant =
   | "TEST"
