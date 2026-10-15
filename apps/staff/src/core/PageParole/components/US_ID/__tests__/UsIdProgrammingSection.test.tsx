@@ -69,6 +69,18 @@ function renderedRows(): Array<Array<string>> {
 }
 
 describe("UsIdProgrammingSection", () => {
+  // jsdom doesn't implement scrollIntoView, which a page change calls.
+  const scrollIntoViewMock = vi.fn();
+
+  beforeEach(() => {
+    scrollIntoViewMock.mockClear();
+    Element.prototype.scrollIntoView = scrollIntoViewMock;
+  });
+
+  afterAll(() => {
+    Reflect.deleteProperty(Element.prototype, "scrollIntoView");
+  });
+
   it("renders the Date, Program and Status columns", () => {
     renderSection([docProgram({})]);
 
@@ -238,5 +250,21 @@ describe("UsIdProgrammingSection", () => {
     fireEvent.click(screen.getByLabelText("Last page"));
     expect(renderedRows()).toHaveLength(3);
     expect(screen.getByText("21-23 of 23")).toBeInTheDocument();
+  });
+
+  it("scrolls back to the top of the table on a page change", () => {
+    renderSection(
+      Array.from({ length: 23 }, (_, i) =>
+        docProgram({ name: `Program ${i}`, startDate: `2020-01-${i + 1}` }),
+      ),
+    );
+    expect(scrollIntoViewMock).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByLabelText("Next page"));
+
+    expect(scrollIntoViewMock).toHaveBeenCalledWith({
+      behavior: "smooth",
+      block: "start",
+    });
   });
 });

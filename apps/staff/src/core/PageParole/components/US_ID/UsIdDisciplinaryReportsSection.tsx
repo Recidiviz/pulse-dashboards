@@ -36,6 +36,7 @@ import {
   toSafeDate,
 } from "../shared";
 import {
+  US_ID_RECORD_CORNER_RADIUS,
   UsIdFactLabel,
   UsIdFactStack,
   usIdRecordCardStyles,
@@ -56,6 +57,8 @@ export const US_ID_DOR_VISIBLE_YEARS = 3;
 
 const ReportCard = styled.button.attrs({ type: "button" })`
   ${usIdRecordCardStyles}
+  background-color: transparent;
+  border-radius: ${US_ID_RECORD_CORNER_RADIUS};
   cursor: pointer;
   text-align: left;
   width: 100%;

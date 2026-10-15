@@ -38,6 +38,7 @@ import { Pagination } from "../../../Pagination/Pagination";
 import { formatDateLong, parseIsoDate } from "../shared";
 import { UsIdCaseNotesFilter } from "./UsIdCaseNotesFilter";
 import {
+  US_ID_RECORD_CORNER_RADIUS,
   usIdRecordCardStyles,
   UsIdSubsection,
   UsIdSubsectionCaption,
@@ -65,6 +66,11 @@ const SubsectionHeader = styled.div`
 const NotesFrame = styled.div`
   ${usIdRecordCardStyles}
   padding: 0;
+  background-color: transparent;
+  border-radius: ${US_ID_RECORD_CORNER_RADIUS};
+  overflow: hidden;
+  border: 0;
+  box-shadow: inset 0 0 0 1px ${palette.slate10};
 `;
 
 const UsIdNoteRow = styled(NoteRow)`
@@ -80,6 +86,20 @@ const UsIdNoteRow = styled(NoteRow)`
     left: ${rem(spacing.md)};
     right: ${rem(spacing.md)};
     border-bottom: 1px solid ${palette.slate20};
+  }
+
+  &:hover,
+  &:focus-visible {
+    background: transparent;
+    border-radius: ${US_ID_RECORD_CORNER_RADIUS};
+    box-shadow: inset 0 0 0 1px ${palette.slate60};
+  }
+
+  &:hover::after,
+  &:focus-visible::after,
+  &:has(+ &:hover)::after,
+  &:has(+ &:focus-visible)::after {
+    display: none;
   }
 `;
 

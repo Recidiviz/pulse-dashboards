@@ -17,7 +17,7 @@
 
 import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 
 import {
@@ -28,6 +28,7 @@ import {
 import { palette } from "~design-system";
 
 import { Pagination } from "../../../Pagination/Pagination";
+import { SectionAnchor } from "../SectionAnchor";
 import { formatDateNumeric } from "../shared";
 import {
   UsIdSubsection,
@@ -211,6 +212,14 @@ export function UsIdProgrammingSection({
   edovoPrograms: Array<ParoleEdovoProgram>;
 }) {
   const [currentPage, setCurrentPage] = useState(0);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  // A new page can be shorter than the last, which would leave the reader
+  // below the table, so each page change brings its top back into view.
+  const changePage = (page: number) => {
+    setCurrentPage(page);
+    sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   const rows = useMemo(
     () => programRows(docPrograms, edovoPrograms),
@@ -222,49 +231,51 @@ export function UsIdProgrammingSection({
   const pageRows = rows.slice(pageStart, pageStart + US_ID_PROGRAMS_PER_PAGE);
 
   return (
-    <UsIdSubsection>
-      <UsIdSubsectionHeading>
-        <UsIdSubsectionTitle>Programming</UsIdSubsectionTitle>
-        {rows.length === 0 && (
-          <UsIdSubsectionCaption>No programs on record</UsIdSubsectionCaption>
-        )}
-      </UsIdSubsectionHeading>
-      {rows.length > 0 && (
-        <Table>
-          <colgroup>
-            <DateColumn />
-            <ProgramColumn />
-          </colgroup>
-          <thead>
-            <tr>
-              <HeaderCell>Date</HeaderCell>
-              <HeaderCell>Program</HeaderCell>
-              <HeaderCell>Status</HeaderCell>
-            </tr>
-          </thead>
-          <tbody>
-            {pageRows.map((row) => (
-              <tr key={row.key}>
-                <Cell>
-                  {row.date ? formatDateNumeric(row.date) : EMPTY_PLACEHOLDER}
-                </Cell>
-                <Cell>{row.name}</Cell>
-                <Cell>{row.status}</Cell>
+    <SectionAnchor ref={sectionRef}>
+      <UsIdSubsection>
+        <UsIdSubsectionHeading>
+          <UsIdSubsectionTitle>Programming</UsIdSubsectionTitle>
+          {rows.length === 0 && (
+            <UsIdSubsectionCaption>No programs on record</UsIdSubsectionCaption>
+          )}
+        </UsIdSubsectionHeading>
+        {rows.length > 0 && (
+          <Table>
+            <colgroup>
+              <DateColumn />
+              <ProgramColumn />
+            </colgroup>
+            <thead>
+              <tr>
+                <HeaderCell>Date</HeaderCell>
+                <HeaderCell>Program</HeaderCell>
+                <HeaderCell>Status</HeaderCell>
               </tr>
-            ))}
-          </tbody>
-        </Table>
-      )}
-      {rows.length > 0 && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage}
-          summary={`${pageStart + 1}-${pageStart + pageRows.length} of ${
-            rows.length
-          }`}
-        />
-      )}
-    </UsIdSubsection>
+            </thead>
+            <tbody>
+              {pageRows.map((row) => (
+                <tr key={row.key}>
+                  <Cell>
+                    {row.date ? formatDateNumeric(row.date) : EMPTY_PLACEHOLDER}
+                  </Cell>
+                  <Cell>{row.name}</Cell>
+                  <Cell>{row.status}</Cell>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        )}
+        {rows.length > 0 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={changePage}
+            summary={`${pageStart + 1}-${pageStart + pageRows.length} of ${
+              rows.length
+            }`}
+          />
+        )}
+      </UsIdSubsection>
+    </SectionAnchor>
   );
 }

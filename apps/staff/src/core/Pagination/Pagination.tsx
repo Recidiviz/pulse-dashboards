@@ -118,7 +118,8 @@ const PaginationButton = styled.button`
   }
 
   &:disabled {
-    cursor: default;
+    color: ${palette.slate30};
+    cursor: not-allowed;
   }
 `;
 

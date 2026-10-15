@@ -26,6 +26,9 @@ import { FactRowStack, SectionCard, SubsectionTitle } from "../shared";
 /** Corner radius of every US_ID case profile card, in both columns. */
 export const US_ID_CARD_CORNER_RADIUS = rem(10);
 
+/** Corner radius of a record box inside a card, such as a DOR card. */
+export const US_ID_RECORD_CORNER_RADIUS = rem(4);
+
 /** Background of every US_ID case profile card, in both columns. */
 export const US_ID_CARD_BACKGROUND_COLOR = palette.white;
 
