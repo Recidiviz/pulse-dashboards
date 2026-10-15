@@ -27,6 +27,7 @@ import {
   CancelButton,
   SaveButton,
 } from "../../shared/styles/FormButtonStyles";
+import { FormLabel } from "../../shared/styles/FormLabel.styles";
 import { useStore } from "../../StoreProvider/StoreProvider";
 import { dropdownStyles } from "../FormComponents.styles";
 import {
@@ -152,7 +153,7 @@ export const EmploymentHistoryModal: React.FC<EmploymentHistoryModalProps> =
 
           <Styled.Form>
             <Styled.Field>
-              <Styled.Label>Name of Employer</Styled.Label>
+              <FormLabel>Name of Employer</FormLabel>
               <Styled.TextInput
                 value={formData.employerName ?? ""}
                 onChange={(e) =>
@@ -166,7 +167,7 @@ export const EmploymentHistoryModal: React.FC<EmploymentHistoryModalProps> =
             </Styled.Field>
 
             <Styled.Field>
-              <Styled.Label>Verified by Report Author</Styled.Label>
+              <FormLabel>Verified by Report Author</FormLabel>
               <Dropdown
                 value={
                   formData.verifiedByReportAuthor !== null
@@ -193,7 +194,7 @@ export const EmploymentHistoryModal: React.FC<EmploymentHistoryModalProps> =
             <Styled.DateSection>
               <Styled.DateRow>
                 <Styled.Field>
-                  <Styled.Label>Start Date</Styled.Label>
+                  <FormLabel>Start Date</FormLabel>
                   <Styled.DatePickerWrapper>
                     <SharedDatePicker
                       selected={startDateObj}
@@ -206,7 +207,7 @@ export const EmploymentHistoryModal: React.FC<EmploymentHistoryModalProps> =
                 </Styled.Field>
 
                 <Styled.Field>
-                  <Styled.Label>End Date</Styled.Label>
+                  <FormLabel>End Date</FormLabel>
                   <Styled.DatePickerWrapper>
                     <SharedDatePicker
                       selected={

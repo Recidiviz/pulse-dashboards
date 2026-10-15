@@ -114,16 +114,6 @@ export const SummarySection = styled.div`
   gap: 0.5rem;
 `;
 
-export const SummaryLabel = styled.label`
-  color: ${palette.pine1};
-  font-family: "Public Sans";
-  font-size: 1rem;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 120%;
-  letter-spacing: -0.01rem;
-`;
-
 export const InfoBox = styled.div`
   display: flex;
   padding: 1rem 1rem 1rem 1.375rem;

@@ -35,17 +35,6 @@ export const SkipContainer = styled.div`
   gap: 8px;
 `;
 
-export const SkipCheckbox = styled.input`
-  width: 1rem;
-  height: 1rem;
-  accent-color: ${palette.pine4};
-  cursor: pointer;
-
-  &:disabled {
-    cursor: not-allowed;
-  }
-`;
-
 export const SkipLabel = styled.label<{ $disabled?: boolean }>`
   ${typography.Sans14}
   color: ${palette.slate85};

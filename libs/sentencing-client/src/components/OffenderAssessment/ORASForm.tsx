@@ -28,6 +28,7 @@ import {
   CheckboxLabel,
 } from "../shared/styles/CheckboxStyles";
 import { CancelButton, SaveButton } from "../shared/styles/FormButtonStyles";
+import { FormLabel } from "../shared/styles/FormLabel.styles";
 import {
   AssessmentTypeDisplayNames,
   AssessmentTypeKey,
@@ -39,7 +40,6 @@ import {
   dropdownStyles,
   FieldContainer,
   Input,
-  Label,
   ORASTitle,
   Textarea,
 } from "./FormComponents.styles";
@@ -149,7 +149,7 @@ export const ORASForm: React.FC<ORASFormProps> = ({
 
       <DomainCardStyled.ContentArea>
         <FieldContainer>
-          <Label>Select an Assessment Type</Label>
+          <FormLabel>Select an Assessment Type</FormLabel>
           <Dropdown
             value={
               formData.assessmentType
@@ -177,7 +177,7 @@ export const ORASForm: React.FC<ORASFormProps> = ({
         </FieldContainer>
 
         <FieldContainer>
-          <Label>Assessment Date</Label>
+          <FormLabel>Assessment Date</FormLabel>
           <DatePickerWrapper>
             <SharedDatePicker
               selected={formData.assessmentDate ?? null}
@@ -190,7 +190,7 @@ export const ORASForm: React.FC<ORASFormProps> = ({
         </FieldContainer>
 
         <FieldContainer>
-          <Label>Administered By</Label>
+          <FormLabel>Administered By</FormLabel>
           <Input
             value={formData.assessmentAdministeredBy ?? ""}
             onChange={(e) =>
@@ -204,7 +204,7 @@ export const ORASForm: React.FC<ORASFormProps> = ({
 
         <FieldContainer>
           <DomainCardStyled.SpacedRow>
-            <Label>Domains</Label>
+            <FormLabel>Domains</FormLabel>
             {formData.assessmentType && (
               <CheckboxContainer>
                 <Checkbox

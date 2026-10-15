@@ -864,11 +864,6 @@ export const SignedSignatureColumn = styled(SignatureColumn)`
   gap: 4px;
 `;
 
-export const SignatureDateCreated = styled.div`
-  ${signatureTextStyle}
-  margin-top: 5px;
-`;
-
 export const SignatureLine = styled.div`
   border-bottom: 1px solid ${customPalette.black};
 `;

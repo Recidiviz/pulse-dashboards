@@ -49,16 +49,6 @@ export const ClientInfoRow = styled.div`
   ${fullBleedDivider}
 `;
 
-export const StaffInfoRow = styled.div`
-  border-top: 1px solid ${palette.slate20};
-  padding-top: 1.5rem;
-  display: flex;
-  gap: 0.375rem;
-  align-self: stretch;
-  font-size: 0.75rem;
-  ${fullBleedDivider}
-`;
-
 export const StaffInformationContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -75,10 +65,6 @@ export const JudgeInformationContainer = styled.div`
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
   padding-right: 2.5rem;
-`;
-
-export const SARDivisionName = styled.div`
-  justify-content: flex-end;
 `;
 
 export const OfficerInformationContainer = styled.div`

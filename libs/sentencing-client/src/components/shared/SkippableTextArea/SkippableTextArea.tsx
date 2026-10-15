@@ -19,6 +19,7 @@ import { useEffect, useState } from "react";
 
 import { useDebouncedCallback } from "../../../hooks/useDebouncedCallback";
 import { SAR_AUTOSAVE_DELAY } from "../../SARDetails/constants";
+import { FormLabel } from "../styles/FormLabel.styles";
 import * as Styled from "./SkippableTextArea.styles";
 
 export interface SkippableTextAreaProps {
@@ -64,7 +65,7 @@ export function SkippableTextArea({
 
   return (
     <Styled.Container>
-      {label && <Styled.Label>{label}</Styled.Label>}
+      {label && <FormLabel>{label}</FormLabel>}
       <Styled.StyledTextArea
         placeholder={placeholder}
         value={localValue}

@@ -34,7 +34,7 @@ import { OnboardingTopic } from "./CaseOnboarding/types";
 import { PDF_PAGE_WIDTH } from "./constants";
 import { SelectOption } from "./Form/types";
 import { RecommendationSummary } from "./Recommendations/report/Report.styles";
-import { FormAttributes, ProfileStrength } from "./types";
+import { FormAttributes } from "./types";
 
 export { BackLink } from "../styles/shared";
 
@@ -90,8 +90,6 @@ export const ModuleSection = styled.div`
   border-radius: 10px;
   padding: 24px;
 `;
-
-export const IconWrapper = styled.div``;
 
 /** Case Attributes */
 
@@ -187,103 +185,6 @@ export const LinkValue = styled.div`
     cursor: pointer;
   }
 `;
-
-export const EditCaseDetails = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 12px 16px;
-  border-radius: 10px;
-  border: 1px solid ${palette.marble5};
-  background: ${palette.white};
-  margin-bottom: 15px;
-`;
-
-export const ProfileStrengthWrapper = styled.div`
-  display: flex;
-  align-items: flex-start;
-  gap: 7px;
-`;
-
-const profileStrengthToColor = {
-  High: palette.text.links,
-  Medium: palette.signal.notification,
-  Low: palette.signal.error,
-};
-
-export const Indicator = styled.div<{
-  profileStrength: ProfileStrength;
-}>`
-  width: 9px;
-  height: 6px;
-  background-color: ${({ profileStrength }) =>
-    profileStrength !== "Low"
-      ? profileStrengthToColor[profileStrength]
-      : palette.slate60};
-  position: relative;
-  margin: 12px;
-
-  &::before {
-    content: "";
-    width: 9px;
-    height: 6px;
-    background-color: ${({ profileStrength }) =>
-      profileStrength
-        ? profileStrengthToColor[profileStrength]
-        : palette.slate60};
-    position: absolute;
-    left: -10px;
-    border-radius: 3px 0 0 3px;
-  }
-
-  &::after {
-    content: "";
-    width: 9px;
-    height: 6px;
-    background-color: ${({ profileStrength }) =>
-      profileStrength === "High"
-        ? profileStrengthToColor[profileStrength]
-        : palette.slate60};
-    position: absolute;
-    right: -10px;
-    border-radius: 0 3px 3px 0;
-  }
-`;
-
-export const Carot = styled.div<{
-  profileStrength: ProfileStrength;
-}>`
-  display: block;
-  width: 0px;
-  height: 0px;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 6px solid rgb(0, 51, 49);
-  margin-left: 5px;
-  position: absolute;
-  top: -8px;
-  right: ${({ profileStrength }) => {
-    if (profileStrength === "Low") return `8px`;
-    if (profileStrength === "Medium") return `-2px`;
-    if (profileStrength === "High") return `-11px`;
-    return 0;
-  }};
-`;
-
-export const Content = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  // TODO(#8709): Add color to design system or change to design system color
-  color: rgba(0, 17, 51, 1);
-  ${typography.Sans14}
-`;
-
-export const Text = styled.div`
-  span {
-    color: green;
-  }
-`;
-export const Caption = styled.div``;
 
 export const EditCaseDetailsButton = styled.button`
   width: fit-content;
@@ -433,18 +334,6 @@ export const OpportunitiesText = styled.div`
   text-wrap: balance;
 `;
 
-export const OpportunitiesCount = styled.div`
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: ${palette.white};
-  background-color: ${palette.pine4};
-  border-radius: 100%;
-  font-size: 12px;
-`;
-
 export const NoOpportunitiesWrapper = styled.div`
   width: 100%;
   height: 430px;
@@ -469,11 +358,6 @@ export const NoOpportunitiesTextContainer = styled.div`
   align-items: center;
   text-align: center;
   gap: 4px;
-`;
-
-export const NoOpportunitiesSelectedText = styled.div`
-  color: ${palette.slate60};
-  margin-right: 4px;
 `;
 
 export const RecommendationOutcome = styled.div`
@@ -681,22 +565,6 @@ export const AddLsirScoreContainer = styled.div`
   color: ${palette.pine1};
 `;
 
-export const ChartControls = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-export const Notification = styled.div`
-  width: fit-content;
-  padding: 10px;
-  justify-content: center;
-  align-items: center;
-  border-radius: 5px;
-  color: ${palette.slate80};
-  background-color: ${palette.marble5};
-`;
-
 export const CarouselButton = styled.div`
   display: flex;
   align-items: center;
@@ -826,38 +694,12 @@ export const OpportunitiesTableWrapper = styled.div`
   margin-top: 12px;
 `;
 
-export const OpportunitiesTable = styled.div`
-  position: relative;
-`;
-
 export const TableWrapper = styled.div`
   width: 100%;
   position: relative;
   height: ${OPPORTUNITY_TABLE_HEIGHT}px;
   overflow-y: scroll;
   border: 0.5px solid ${customPalette.white.white2};
-`;
-
-export const OpportunitiesNotAvailable = styled.div`
-  width: fit-content;
-  display: flex;
-  gap: 8px;
-  background-color: ${palette.marble5};
-  border: 1px solid ${palette.slate85};
-  border-radius: 3px;
-  padding: 7px 16px;
-  color: ${palette.slate85};
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 3;
-`;
-
-export const SearchFilter = styled.div`
-  display: flex;
-  gap: 17px;
-  margin-bottom: 10px;
 `;
 
 export const Search = styled.div`
@@ -891,11 +733,6 @@ export const SearchInput = styled.input`
   border-radius: 5px;
   border: 1px solid ${palette.slate20};
   color: ${palette.pine3};
-`;
-
-export const Filter = styled.div`
-  display: flex;
-  gap: 8px;
 `;
 
 export const Table = styled(DashboardTable)<{ disabled?: boolean }>`
@@ -950,46 +787,6 @@ export const CaseDetailsAppliedTitle = styled.div`
 export const CaseDetailsAppliedList = styled.div`
   ${typography.Sans14}
   color: ${palette.slate85};
-`;
-
-export const ViewMore = styled.div`
-  color: ${palette.signal.notification};
-`;
-
-export const InfoIcon = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 100%;
-  background-color: ${palette.slate60};
-  color: ${palette.white};
-  ${typography.Sans12}
-
-  &::before {
-    content: "i";
-  }
-`;
-
-export const WarningIcon = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 0;
-  height: 0;
-  border-left: 50px solid transparent;
-  border-right: 50px solid transparent;
-  border-bottom: 100px solid #007bff;
-  border-radius: 50%;
-  transform: rotate(45deg);
-  background-color: ${palette.slate60};
-  color: ${palette.white};
-  ${typography.Sans12}
-
-  &::before {
-    content: "i";
-  }
 `;
 
 export const AddRecommendationButton = styled(EditCaseDetailsButton)<{
@@ -1503,48 +1300,6 @@ export const FrequencyLabel = styled.div`
   white-space: nowrap;
 `;
 
-export const MultiSelectContainer = styled.div<{ selected?: boolean }>`
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  align-content: center;
-  gap: 4px;
-  margin-bottom: 16px;
-`;
-
-export const SelectChip = styled.div<{
-  selected?: boolean;
-  isNotSureYetOption: boolean;
-}>`
-  width: fit-content;
-  display: flex;
-  align-items: center;
-  padding: 9px 12px;
-  gap: 6px;
-  background-color: ${({ selected }) =>
-    selected ? customPalette.green.light3 : "none"};
-  color: ${({ selected }) => (selected ? palette.pine3 : palette.slate85)};
-  border: 1px solid
-    ${({ selected }) => (selected ? palette.pine4 : palette.slate20)};
-  border-radius: 32px;
-  ${typography.Sans14}
-
-  &:hover {
-    cursor: pointer;
-  }
-
-  ${({ selected, isNotSureYetOption }) =>
-    selected &&
-    isNotSureYetOption &&
-    `
-      background-color: ${customPalette.green.light2};
-      border: 1px solid ${palette.slate20};
-      path {
-        fill: ${palette.slate60};
-      }
-  `}
-`;
-
 export const InputRowWrapper = styled.div`
   width: 100%;
   display: flex;
@@ -1578,18 +1333,6 @@ export const NestedWrapper = styled.div`
 export const ActionButtonRowWrapper = styled.div`
   display: flex;
   gap: 8px;
-`;
-
-export const ActionButtonWrapper = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 16px;
-  border-top: 1px solid ${palette.slate20};
-  padding: 10px 40px;
-  position: absolute;
-  width: 100%;
-  left: 0;
-  margin-top: 16px;
 `;
 
 export const StickyActionButtonWrapper = styled.div`

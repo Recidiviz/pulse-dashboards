@@ -24,6 +24,7 @@ import {
   CancelButton,
   SaveButton,
 } from "../../shared/styles/FormButtonStyles";
+import { FormLabel } from "../../shared/styles/FormLabel.styles";
 import { SelectOption, VERIFIED_OPTIONS } from "../constants";
 import { dropdownStyles } from "../FormComponents.styles";
 import * as ModalStyled from "../ModalStyles";
@@ -107,7 +108,7 @@ export const PriorTreatmentHistoryModal: React.FC<
 
         <ModalStyled.Form>
           <ModalStyled.Field>
-            <ModalStyled.Label>Year Completed</ModalStyled.Label>
+            <FormLabel>Year Completed</FormLabel>
             <Dropdown
               value={
                 formData.yearCompleted
@@ -132,7 +133,7 @@ export const PriorTreatmentHistoryModal: React.FC<
           </ModalStyled.Field>
 
           <ModalStyled.Field>
-            <ModalStyled.Label>Program Name</ModalStyled.Label>
+            <FormLabel>Program Name</FormLabel>
             <ModalStyled.TextInput
               value={formData.programName ?? ""}
               onChange={(e) =>
@@ -146,7 +147,7 @@ export const PriorTreatmentHistoryModal: React.FC<
           </ModalStyled.Field>
 
           <ModalStyled.Field>
-            <ModalStyled.Label>Verified by Report Author</ModalStyled.Label>
+            <FormLabel>Verified by Report Author</FormLabel>
             <Dropdown
               value={
                 formData.verifiedByReportAuthor !== null

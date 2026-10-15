@@ -21,7 +21,6 @@ import styled from "styled-components";
 export { SectionTitle as Title } from "../styles/SectionStyles";
 export {
   HeaderContainer,
-  SkipCheckbox,
   SkipContainer,
   SkipLabel,
 } from "../styles/SkipStyles";

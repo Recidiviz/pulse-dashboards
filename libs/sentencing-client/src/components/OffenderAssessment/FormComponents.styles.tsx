@@ -21,7 +21,6 @@ import styled from "styled-components";
 import { Icon, IconSVG, iconToDataURI, palette } from "~design-system";
 
 import { SelectOption } from "../CaseDetails/Form/types";
-import { Button } from "../shared/styles/FormButtonStyles";
 import { hasErrorStyles } from "../shared/styles/ValidationStyles";
 import { BaseDatePickerWrapper } from "./ModalStyles";
 
@@ -33,16 +32,6 @@ export const FieldContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-`;
-
-export const Label = styled.label`
-  color: ${palette.pine1};
-  font-family: "Public Sans";
-  font-size: 1rem;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 120%;
-  letter-spacing: -0.01rem;
 `;
 
 const inputStyles = `
@@ -87,16 +76,6 @@ export const Textarea = styled.textarea<{ height?: string }>`
   height: ${({ height }) => height ?? "6.8125rem"};
 `;
 
-export const Select = styled.select`
-  ${inputStyles}
-  appearance: none;
-  background-image: url("${CHEVRON_DOWN_BACKGROUND}");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  background-size: 1em;
-  cursor: pointer;
-`;
-
 export const dropdownStyles: StylesConfig<SelectOption, boolean> = {
   control: (styles, { isFocused, isDisabled }) => ({
     ...styles,
@@ -137,11 +116,6 @@ export const inlineDropdownBase: StylesConfig<SelectOption, boolean> = {
   input: (base) => ({ ...base, margin: 0, padding: 0 }),
   placeholder: (base) => ({ ...base, color: palette.pine4, margin: 0 }),
 };
-
-export const DeleteButton = styled(Button)`
-  background: ${palette.signal.error};
-  color: white;
-`;
 
 export const ORASTitle = styled.span`
   color: ${palette.pine1};

@@ -18,6 +18,7 @@
 import React from "react";
 
 import { SkippableTextArea } from "../shared/SkippableTextArea/SkippableTextArea";
+import { FormLabel } from "../shared/styles/FormLabel.styles";
 import { RiskLevelKey } from "./constants";
 import * as Styled from "./DomainCard.styles";
 import { RiskScoreChip } from "./RiskScoreChip";
@@ -78,9 +79,7 @@ export const DomainCard: React.FC<DomainCardProps> = ({
         {children && <Styled.ContentArea>{children}</Styled.ContentArea>}
 
         <Styled.SummarySection>
-          {!hideSummaryLabel && (
-            <Styled.SummaryLabel>Summary</Styled.SummaryLabel>
-          )}
+          {!hideSummaryLabel && <FormLabel>Summary</FormLabel>}
           <SkippableTextArea
             value={summaryValue}
             onChange={onSummaryChange}

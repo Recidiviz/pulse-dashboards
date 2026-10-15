@@ -92,52 +92,10 @@ export const TitleWrapper = styled.div`
   flex-direction: column;
 `;
 
-export const CaseOverviewItem = styled.div`
-  border: 2px solid ${palette.slate30};
-  border-radius: 5px;
-  background: transparent;
-  position: relative;
-  z-index: 1;
-
-  &::before {
-    content: "";
-    height: 100%;
-    width: 5px;
-    background-color: ${palette.slate30};
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    z-index: 0;
-    border-radius: 3px 0px 0px 3px;
-  }
-`;
-
-export const CaseOverviewWrapper = styled.div<{ isHeader?: boolean }>`
-  padding: ${({ isHeader }) => (isHeader ? "0" : "18px")} 24px;
-  display: grid;
-  grid-template-columns: 2fr repeat(4, 1fr) 2fr;
-  column-gap: 20px;
-`;
-
 export const TableTitle = styled.div`
   ${typography.Serif34}
   color: ${palette.pine2};
   margin-bottom: 0;
-`;
-
-export const Button = styled.button`
-  width: 117px;
-  justify-self: end;
-  background-color: ${palette.slate85};
-  color: white;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  padding: 8px 16px;
-
-  &:hover {
-    cursor: pointer;
-    background-color: ${palette.slate80};
-  }
 `;
 
 export const DropdownContainer = styled.div`
@@ -193,18 +151,6 @@ export const Dropdown = styled.div`
   position: absolute;
   top: 67px;
   z-index: 100;
-`;
-
-export const DropdownHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-`;
-
-export const ClearButton = styled.div`
-  &:hover {
-    cursor: pointer;
-  }
 `;
 
 export const DropdownOption = styled.div<{ isNested?: boolean }>`

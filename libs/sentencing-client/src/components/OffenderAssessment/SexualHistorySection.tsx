@@ -22,6 +22,7 @@ import React from "react";
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
 import { STATIC_99R_NOTE_LABEL } from "../constants";
 import { SkippableTextArea } from "../shared/SkippableTextArea/SkippableTextArea";
+import { FormLabel } from "../shared/styles/FormLabel.styles";
 import { useStore } from "../StoreProvider/StoreProvider";
 import { CheckboxRevealSection } from "./CheckboxRevealSection";
 import * as DomainCardStyled from "./DomainCard.styles";
@@ -58,9 +59,7 @@ export const SexualHistorySection: React.FC<SexualHistorySectionProps> =
         onChange={(value) => presenter.updateInvolvesSexCrime(value)}
         disabled={disabled}
       >
-        <DomainCardStyled.SummaryLabel>
-          Sexual History
-        </DomainCardStyled.SummaryLabel>
+        <FormLabel>Sexual History</FormLabel>
         <SkippableTextArea
           value={sexualHistorySummary ?? null}
           onChange={(value) => presenter.updateSexualHistorySummary(value)}

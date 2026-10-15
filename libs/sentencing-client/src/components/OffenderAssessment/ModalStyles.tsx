@@ -89,17 +89,6 @@ export const FieldContent = styled.div`
   gap: 1rem;
 `;
 
-export const Label = styled.label`
-  color: ${palette.pine1};
-
-  font-family: "Public Sans";
-  font-size: 1rem;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 120%; /* 1.2rem */
-  letter-spacing: -0.01rem;
-`;
-
 export const BaseDatePickerWrapper = styled(
   CaseDetailsStyled.DatePickerWrapper,
 )`

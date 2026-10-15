@@ -139,11 +139,6 @@ export const SectionCard = styled.div`
   padding: 24px 24px 0;
 `;
 
-/** Last section in the Container, restores the bottom padding. */
-export const LastSectionCard = styled(SectionCard)`
-  padding-bottom: 24px;
-`;
-
 export const SectionTitle = styled.h3`
   align-self: stretch;
   color: ${palette.pine1};

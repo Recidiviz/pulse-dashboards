@@ -22,6 +22,7 @@ import {
   ReportTypeNoticeControls,
 } from "~sentencing-client/components/SARDetails/ReportTypeNotice";
 
+import { Checkbox } from "../styles/CheckboxStyles";
 import * as Styled from "./SkippableSection.styles";
 
 export interface SkippableSectionProps {
@@ -48,7 +49,7 @@ export function SkippableSection({
         <Styled.Title>{title}</Styled.Title>
         <Styled.SkipContainer>
           <Styled.SkipLabel $disabled={disabled}>Skip</Styled.SkipLabel>
-          <Styled.SkipCheckbox
+          <Checkbox
             type="checkbox"
             checked={skipped}
             disabled={disabled}

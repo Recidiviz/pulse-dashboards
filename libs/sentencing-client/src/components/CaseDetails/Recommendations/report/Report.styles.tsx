@@ -267,15 +267,6 @@ export const Name = styled.div`
   text-transform: capitalize;
 `;
 
-export const HistoricalDetails = styled(CaseOverview)`
-  height: 100%;
-  padding: 14px 16px;
-
-  span {
-    border-bottom: 1px solid ${customPalette.black};
-  }
-`;
-
 export const HistoricalBreakdown = styled.div`
   margin-bottom: 32px;
 `;
@@ -289,12 +280,6 @@ export const DispositionCardWrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 14px;
-`;
-
-export const DispositionCardTitle = styled.div`
-  font-weight: 700;
-  font-size: 17px;
-  margin-bottom: 32px;
 `;
 
 export const SentencingRecidivismRateContainer = styled.div`
@@ -320,8 +305,6 @@ export const ChartCaption = styled.div`
   font-weight: 500;
   margin-top: 8px;
 `;
-
-export const HistoricalSentencingExplanation = styled.div``;
 
 export const RateDetailsTitlePercentage = styled.div`
   display: flex;
@@ -356,8 +339,6 @@ export const ProgressBar = styled.div<{ percentage?: number }>`
   }
 `;
 
-export const ChartContainer = styled.div``;
-
 export const CardCaption = styled.div`
   ${typography.Sans12}
   height: 32px;
@@ -370,42 +351,6 @@ export const CardCaption = styled.div`
   border-radius: 0 0 4px 4px;
   padding: 10px 12px;
   line-height: 12px;
-`;
-
-export const DispositionCard = styled.div<{ selected?: boolean }>`
-  ${typography.Sans16}
-  width: 267px;
-  height: 378px;
-  border-radius: 4px;
-  border: ${({ selected }) => (selected ? 2 : 1)}px solid ${customPalette.black};
-  padding: 12px;
-  position: relative;
-
-  ${CardCaption} {
-    ${({ selected }) =>
-      selected
-        ? `
-          background: ${customPalette.black};
-          color: ${palette.white};
-            bottom: -2px;`
-        : `
-          background: ${palette.white};
-          color: ${customPalette.black};
-    `}
-  }
-`;
-
-export const HistoricalSentencingExplanationContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 11px;
-  margin-bottom: 19px;
-`;
-
-export const CumulativeRecidivismRateExplanationContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 11px;
 `;
 
 export const NumberOfRecords = styled.div<{ isV2?: boolean }>`
@@ -468,46 +413,6 @@ export const AttributeChip = styled.div`
   padding: 4px 8px;
   border: 1px solid ${customPalette.black};
   border-radius: 4px;
-`;
-
-export const ExternalId = styled.span`
-  color: ${palette.slate85};
-  font-size: 18px;
-`;
-
-export const RecommendationSection = styled.div`
-  margin-bottom: 28px;
-`;
-
-export const Subtitle = styled.div`
-  ${typography.Serif24}
-  color: ${palette.pine3};
-  margin-bottom: 8px;
-`;
-
-export const RecommendationContainer = styled.div`
-  color: ${palette.pine1};
-  font-size: 20px;
-  font-weight: 500;
-  background-color: #2b696908;
-  padding: 16px;
-  border-radius: 8px;
-  border: 1px solid #00665f66;
-`;
-
-export const InsightSubtitle = styled.div`
-  ${typography.Sans14}
-  font-weight: 500;
-  margin-bottom: 16px;
-  color: #355362cc;
-`;
-
-export const PlotContainer = styled.div`
-  margin-bottom: 16px;
-`;
-
-export const Bold = styled.span`
-  font-weight: bold;
 `;
 
 export const Explanation = styled.span`

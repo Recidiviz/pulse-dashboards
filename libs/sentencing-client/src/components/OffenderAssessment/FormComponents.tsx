@@ -24,6 +24,7 @@ import { Dropdown } from "../CaseDetails/Form/Elements/Dropdown";
 import { SelectOption } from "../CaseDetails/Form/types";
 import { LevelOfEducationLabels } from "../constants";
 import { SAR_AUTOSAVE_DELAY } from "../SARDetails/constants";
+import { FormLabel } from "../shared/styles/FormLabel.styles";
 import * as Styled from "./FormComponents.styles";
 
 type LevelOfEducation = NonNullable<SAR["levelOfEducation"]>;
@@ -62,7 +63,7 @@ export const TextField: React.FC<TextFieldProps> = ({
   if (disabled) {
     return (
       <Styled.FieldContainer>
-        <Styled.Label>{label}</Styled.Label>
+        <FormLabel>{label}</FormLabel>
         <span>{value ?? "Unknown"}</span>
       </Styled.FieldContainer>
     );
@@ -70,7 +71,7 @@ export const TextField: React.FC<TextFieldProps> = ({
 
   return (
     <Styled.FieldContainer>
-      <Styled.Label>{label}</Styled.Label>
+      <FormLabel>{label}</FormLabel>
       <Styled.Input
         type="text"
         value={localValue}
@@ -119,7 +120,7 @@ export const EducationDropdown: React.FC<EducationDropdownProps> = ({
 
   return (
     <Styled.FieldContainer>
-      <Styled.Label>{label}</Styled.Label>
+      <FormLabel>{label}</FormLabel>
       <Dropdown
         value={selectedOption}
         options={options}
@@ -176,7 +177,7 @@ export const BooleanDropdown: React.FC<BooleanDropdownProps> = ({
 
   return (
     <Styled.FieldContainer>
-      <Styled.Label>{label}</Styled.Label>
+      <FormLabel>{label}</FormLabel>
       <Dropdown
         value={getSelectedOption()}
         options={BOOLEAN_WITH_UNKNOWN_OPTIONS}

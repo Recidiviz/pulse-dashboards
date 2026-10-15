@@ -26,7 +26,6 @@ import { customPalette } from "../../styles/palette";
 export { SectionTitle as Title } from "../styles/SectionStyles";
 export {
   HeaderContainer,
-  SkipCheckbox,
   SkipContainer,
   SkipLabel,
 } from "../styles/SkipStyles";

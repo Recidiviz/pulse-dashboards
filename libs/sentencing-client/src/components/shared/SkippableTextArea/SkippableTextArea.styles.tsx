@@ -30,16 +30,6 @@ export const Container = styled.div`
   align-self: stretch;
 `;
 
-export const Label = styled.label`
-  color: ${palette.pine1};
-  font-family: "Public Sans";
-  font-size: 1rem;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 120%;
-  letter-spacing: -0.01rem;
-`;
-
 export const StyledTextArea = styled.textarea<{
   height: string;
   $placeholderColor?: string;

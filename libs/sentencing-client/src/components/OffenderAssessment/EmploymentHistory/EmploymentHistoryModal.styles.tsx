@@ -31,7 +31,6 @@ export {
   Footer,
   Form,
   Header,
-  Label,
   TextInput,
   Title,
 } from "../ModalStyles";

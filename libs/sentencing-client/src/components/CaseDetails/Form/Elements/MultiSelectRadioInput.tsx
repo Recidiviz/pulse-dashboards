@@ -16,7 +16,7 @@
 // =============================================================================
 
 import CheckIcon from "../../../assets/green-check-icon.svg?react";
-import * as Styled from "../../CaseDetails.styles";
+import * as Styled from "../../../shared/MultiSelectRadioInput/MultiSelectRadioInput.styles";
 import { NeedsIcons } from "../../components/NeedsIcons/NeedsIcons";
 import { NOT_SURE_YET_OPTION } from "../constants";
 import { MultiSelectRadioInputProps } from "./types";

@@ -26,6 +26,7 @@ import {
   SARDetailsPresenter,
   SARReportType,
 } from "../../../presenters/SARDetailsPresenter";
+import { ButtonRow } from "../../shared/styles/FormButtonStyles";
 import * as Styled from "./PartialSentencingReportCard.styles";
 
 interface ReportTypeOption {
@@ -106,7 +107,7 @@ export const PartialSentencingReportCard: React.FC<PartialSentencingReportCardPr
             </Styled.OptionContainer>
           ))}
         </Styled.OptionList>
-        <Styled.ButtonRow>
+        <ButtonRow>
           <Styled.Button onClick={onBackToDashboard}>Back</Styled.Button>
           <Styled.SaveButton
             disabled={draftIsVictimImpactOnly === null}
@@ -126,7 +127,7 @@ export const PartialSentencingReportCard: React.FC<PartialSentencingReportCardPr
           >
             Save
           </Styled.SaveButton>
-        </Styled.ButtonRow>
+        </ButtonRow>
       </Styled.Container>
     );
   });

@@ -126,9 +126,3 @@ export const SaveButton = styled(Button)`
     background: ${palette.pine4};
   }
 `;
-
-export const ButtonRow = styled.div`
-  display: flex;
-  gap: 0.75rem;
-  justify-content: flex-end;
-`;

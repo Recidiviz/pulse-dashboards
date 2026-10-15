@@ -22,6 +22,7 @@ import CheckIcon from "../../assets/green-check-icon.svg?react";
 import { NeedsIcons } from "../../CaseDetails/components/NeedsIcons/NeedsIcons";
 import { NOT_SURE_YET_OPTION, OTHER_OPTION } from "../../constants";
 import { SAR_AUTOSAVE_DELAY } from "../../SARDetails/constants";
+import { Checkbox } from "../styles/CheckboxStyles";
 import * as Styled from "./MultiSelectRadioInput.styles";
 
 export interface MultiSelectRadioInputProps {
@@ -90,7 +91,7 @@ export function MultiSelectRadioInput({
           {onSkipChange && (
             <Styled.SkipContainer>
               <Styled.SkipLabel>{skipLabel}</Styled.SkipLabel>
-              <Styled.SkipCheckbox
+              <Checkbox
                 type="checkbox"
                 checked={skipped}
                 onChange={(e) => onSkipChange(e.target.checked)}

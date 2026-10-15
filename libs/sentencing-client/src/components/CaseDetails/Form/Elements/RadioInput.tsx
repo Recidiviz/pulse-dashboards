@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import * as Styled from "../../CaseDetails.styles";
+import * as Styled from "../../../shared/MultiSelectRadioInput/MultiSelectRadioInput.styles";
 import { NOT_SURE_YET_OPTION } from "../constants";
 import { RadioInputProps } from "./types";
 

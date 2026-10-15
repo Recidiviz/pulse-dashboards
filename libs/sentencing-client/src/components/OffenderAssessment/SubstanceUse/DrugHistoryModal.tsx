@@ -30,6 +30,7 @@ import {
   CancelButton,
   SaveButton,
 } from "../../shared/styles/FormButtonStyles";
+import { FormLabel } from "../../shared/styles/FormLabel.styles";
 import { DatePickerWrapper, dropdownStyles } from "../FormComponents.styles";
 import * as ModalStyled from "../ModalStyles";
 import {
@@ -134,7 +135,7 @@ export const DrugHistoryModal: React.FC<DrugHistoryModalProps> = ({
 
         <ModalStyled.Form>
           <ModalStyled.Field>
-            <ModalStyled.Label>Substance</ModalStyled.Label>
+            <FormLabel>Substance</FormLabel>
             <Dropdown
               value={
                 formData.substance
@@ -164,7 +165,7 @@ export const DrugHistoryModal: React.FC<DrugHistoryModalProps> = ({
 
           {formData.substance === "Other" && (
             <ModalStyled.Field>
-              <ModalStyled.Label>Substance Name</ModalStyled.Label>
+              <FormLabel>Substance Name</FormLabel>
               <ModalStyled.TextInput
                 value={formData.otherSubstanceName ?? ""}
                 onChange={(e) =>
@@ -179,7 +180,7 @@ export const DrugHistoryModal: React.FC<DrugHistoryModalProps> = ({
           )}
 
           <ModalStyled.Field>
-            <ModalStyled.Label>Age of Regular Use</ModalStyled.Label>
+            <FormLabel>Age of Regular Use</FormLabel>
             <Dropdown
               value={
                 formData.ageOfRegularUse
@@ -204,7 +205,7 @@ export const DrugHistoryModal: React.FC<DrugHistoryModalProps> = ({
           </ModalStyled.Field>
 
           <ModalStyled.Field>
-            <ModalStyled.Label>Last Use</ModalStyled.Label>
+            <FormLabel>Last Use</FormLabel>
             <ModalStyled.FieldContent>
               <DatePickerWrapper>
                 <SharedDatePicker
@@ -239,7 +240,7 @@ export const DrugHistoryModal: React.FC<DrugHistoryModalProps> = ({
           </ModalStyled.Field>
 
           <ModalStyled.Field>
-            <ModalStyled.Label>Heaviest Use</ModalStyled.Label>
+            <FormLabel>Heaviest Use</FormLabel>
             <Dropdown
               value={
                 formData.heaviestUse
@@ -263,7 +264,7 @@ export const DrugHistoryModal: React.FC<DrugHistoryModalProps> = ({
           </ModalStyled.Field>
 
           <ModalStyled.Field>
-            <ModalStyled.Label>Method</ModalStyled.Label>
+            <FormLabel>Method</FormLabel>
             <Dropdown
               value={
                 formData.method
