@@ -72,7 +72,8 @@ export class AllCaseloadsPresenter implements TableViewSelectInterface {
     );
 
     const MiClassification = !!(
-      activeFeatureVariants.usMiClassification && currentTenantId === "US_MI"
+      activeFeatureVariants.usMiDisplayClassificationTable &&
+      currentTenantId === "US_MI"
     );
 
     const applicableClassifications = TnClassification || MiClassification;

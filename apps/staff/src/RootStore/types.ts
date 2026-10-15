@@ -118,6 +118,7 @@ export type FeatureVariant =
   | "usMiRestrictiveHousingV2"
   | "usMiRestrictiveHousingV2Ineligible"
   | "usMiClassification"
+  | "usMiDisplayClassificationTable"
 
   //// Missouri
   | "usMoOverdueRHPilot"
@@ -296,6 +297,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usMiRestrictiveHousingV2: {},
   usMiRestrictiveHousingV2Ineligible: {},
   usMiClassification: {},
+  usMiDisplayClassificationTable: {},
   usNcCrrApprovalFlow: {},
   usNcCrrApprover: {},
   usNcRNAAutoEnablement: {},
@@ -378,6 +380,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usMiCustodyLevelDowngrade: {},
         usMiRestrictiveHousingV2Ineligible: { activeTenants: ["US_MI"] },
         usMiClassification: {},
+        usMiDisplayClassificationTable: undefined,
         usMiFacilitySearch: {},
         usMiRestrictiveHousingV2: {},
         usMoOverdueRHPilot: {},
@@ -475,6 +478,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         },
         usTxEnablePoFormSection: { activeTenants: ["US_TX"] },
         usTxEnableSupervisorFormSection: { activeTenants: ["US_TX"] },
+        usMiDisplayClassificationTable: undefined,
       };
 
 export type LanternMethodologyByTenant = {
