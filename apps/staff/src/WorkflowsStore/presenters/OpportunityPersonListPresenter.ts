@@ -394,8 +394,12 @@ export class OpportunityPersonListPresenter
   }
 
   private get defaultTab() {
+    // REVIEW STATUS may reuse supervisorReviewTabTitle as the label of a
+    // different tab (US_TX names its historical review tab "Submitted for
+    // Review"), so only match on it in the other tab groups.
     if (
       this.supervisorInfo &&
+      this.activeTabGroup !== "REVIEW STATUS" &&
       this.config.supervisorReviewTabTitle &&
       this.displayTabs.includes(this.config.supervisorReviewTabTitle)
     ) {

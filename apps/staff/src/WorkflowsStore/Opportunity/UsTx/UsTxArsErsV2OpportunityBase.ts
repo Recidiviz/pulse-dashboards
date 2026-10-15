@@ -200,7 +200,7 @@ export abstract class UsTxArsErsV2OpportunityBase<
     // Approved tab
     if (this.isGrantApproved) return this.grantApprovedTabTitle;
 
-    // Past Reviews tab
+    // Submitted for Review tab in REVIEW STATUS
     if (
       category === "REVIEW STATUS" &&
       this.isPastReviewFor(reviewerId, legacyReviewerId)
@@ -215,7 +215,8 @@ export abstract class UsTxArsErsV2OpportunityBase<
     if (this.isInRevisionsRequested)
       return this.config.awaitingRevisionsTabTitle;
 
-    // Submitted for Review tab (Awaiting Review on the Insights homepage)
+    // Submitted for Review tab in ELIGIBILITY STATUS, Awaiting Review tab in
+    // REVIEW STATUS
     if (this.isInSupervisorReview) {
       // TODO (OBT-39704) Refactor OpportunityTabGroup to enums
       return category === "REVIEW STATUS" &&

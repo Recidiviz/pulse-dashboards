@@ -94,7 +94,7 @@ export class UsTxArsErsV2Configuration extends ApiOpportunityConfiguration {
   }
 
   get historicalReviewTabTitle(): OpportunityTab {
-    return "Past Reviews";
+    return "Submitted for Review";
   }
 
   // Adding this here as opposed to the admin panel since this gives us

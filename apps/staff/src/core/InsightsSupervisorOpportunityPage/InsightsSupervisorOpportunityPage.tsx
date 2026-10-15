@@ -59,8 +59,8 @@ export const SupervisorOpportunityPageWithPresenter = observer(
     } = presenter;
 
     // The hydrator only populates the reviewer caseload once, on the presenter's
-    // first hydration; explicitly reinvoke it on each mount so the Past Reviews
-    // tab and review counts stay fresh after a supervisor takes an action,
+    // first hydration; explicitly reinvoke it on each mount so the historical
+    // review tab and review counts stay fresh after a supervisor takes an action,
     // without refiring on every unrelated re-render.
     const isPresenterHydrated = isHydrated(presenter);
 

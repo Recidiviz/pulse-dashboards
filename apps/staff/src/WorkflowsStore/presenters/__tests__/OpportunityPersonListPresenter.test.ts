@@ -34,6 +34,7 @@ import { OpportunityConfiguration } from "../../Opportunity/OpportunityConfigura
 import {
   Opportunity,
   OpportunityTab,
+  OpportunityTabGroup,
   OpportunityTabGroups,
 } from "../../Opportunity/types";
 import { WorkflowsStore } from "../../WorkflowsStore";
@@ -410,6 +411,59 @@ describe("in insights/with supervisor opportunity presenter", () => {
     expect(
       presenter.enabledColumnIds.includes("ASSIGNED_STAFF_NAME"),
     ).toBeTrue();
+  });
+});
+
+describe("in insights/with supervisor opportunity presenter, REVIEW STATUS tab group", () => {
+  const reviewConfig: OpportunityConfiguration = {
+    ...mockOpportunity.config,
+    supervisorReviewTabTitle: "Submitted for Review",
+    insightsSupervisorReviewTabTitle: "Awaiting Review",
+    historicalReviewTabTitle: "Submitted for Review",
+    tabGroups: {
+      "ELIGIBILITY STATUS": ["Eligible Now", "Submitted for Review"],
+      "REVIEW STATUS": ["Awaiting Review", "Submitted for Review"],
+    } as Partial<OpportunityTabGroups>,
+  };
+
+  const supervisionSupervisorOpportunityPresenter = {
+    opportunitiesByType: {
+      [mockOpportunity.type]: [
+        {
+          ...mockOpportunity,
+          config: reviewConfig,
+          tabTitle: (tabGroup?: OpportunityTabGroup) =>
+            tabGroup === "REVIEW STATUS"
+              ? "Awaiting Review"
+              : "Submitted for Review",
+        },
+        {
+          ...mockOpportunity,
+          config: reviewConfig,
+          tabTitle: () => "Submitted for Review",
+        },
+      ],
+    },
+    supervisorInfo: { pseudonymizedId: "testsupervisor1" },
+    defaultTabGroup: "REVIEW STATUS",
+  } as any as SupervisionSupervisorOpportunityPresenter;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    presenter = getPresenter({
+      config: reviewConfig,
+      supervisionPresenter: supervisionSupervisorOpportunityPresenter,
+    });
+  });
+
+  test("defaults to the first review tab when the historical tab shares the supervisor review title", () => {
+    expect(presenter.activeTabGroup).toEqual("REVIEW STATUS");
+    expect(presenter.activeTab).toEqual("Awaiting Review");
+  });
+
+  test("defaults to the supervisor review tab in ELIGIBILITY STATUS", () => {
+    presenter.activeTabGroup = "ELIGIBILITY STATUS";
+    expect(presenter.activeTab).toEqual("Submitted for Review");
   });
 });
 
