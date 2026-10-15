@@ -51,9 +51,14 @@ export abstract class UsAzReleaseToTransitionProgramOpportunityBase<
     return this.record.metadata.tabName === "ALMOST_ELIGIBLE_1";
   }
 
+  get awaitingRelease(): boolean {
+    return this.record.metadata.tabName === "AWAITING_RELEASE";
+  }
+
   tabTitle(): OpportunityTab {
     if (this.isSubmitted) return this.submittedTabTitle;
     if (this.denied) return this.deniedTabTitle;
+    if (this.awaitingRelease) return this.submittedTabTitle;
     if (this.almostEligible) return "Almost Eligible";
 
     switch (this.record.metadata.tabDescription) {
@@ -103,6 +108,8 @@ export abstract class UsAzReleaseToTransitionProgramOpportunityBase<
       } else {
         return "PROJECTED_TPR_IN_AT_LEAST_180_DAYS";
       }
+    } else if (this.awaitingRelease && !this.denied) {
+      return "AWAITING_RELEASE";
     } else {
       return undefined;
     }
