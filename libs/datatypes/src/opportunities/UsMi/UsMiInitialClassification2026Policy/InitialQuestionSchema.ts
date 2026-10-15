@@ -81,6 +81,7 @@ export const miBaseInitialClassificationQuestions = [
       {
         title: "Administrative Segregation Placements in Past 36 Months",
         type: "NUMBER",
+        countDescriptor: "Placements",
         description:
           "Counts distinct ad seg placement starts (current or previous incarceration periods) in past 36 months.",
         bounds: 0,
@@ -90,6 +91,7 @@ export const miBaseInitialClassificationQuestions = [
         title:
           "Number of Misconducts for Assault, Homicide, Sexual Violence, Inciting a Riot or Strike In Past 6 Months",
         type: "NUMBER",
+        countDescriptor: "Misconducts",
         description:
           "Includes any incarceration periods overlapping the past 6 months.",
         bounds: 0,
@@ -99,6 +101,7 @@ export const miBaseInitialClassificationQuestions = [
         title:
           "Number of Misconducts for Assault, Homicide, Sexual Violence, Inciting a Riot or Strike In Past 0-36 Months",
         type: "NUMBER",
+        countDescriptor: "Misconducts",
         bounds: 4,
         description:
           "Includes any incarceration periods overlapping the past 36 months.",
@@ -108,6 +111,7 @@ export const miBaseInitialClassificationQuestions = [
         title:
           "Number of Misconducts for Fighting, Threatening Behavior, or Possession of a Weapon In Past 6 Months",
         type: "NUMBER",
+        countDescriptor: "Misconducts",
         description:
           "Includes any incarceration periods overlapping the past 6 months.",
         bounds: 0,
@@ -117,6 +121,7 @@ export const miBaseInitialClassificationQuestions = [
         title:
           "Number of Misconducts for Fighting, Threatening Behavior, or Possession of a Weapon In Past 0-36 Months",
         type: "NUMBER",
+        countDescriptor: "Misconducts",
         description:
           "Includes any incarceration periods overlapping the past 36 months.",
         bounds: 4,
@@ -125,16 +130,22 @@ export const miBaseInitialClassificationQuestions = [
       {
         title: "Number of Class One or Class Two Misconducts in Past 6 Months",
         type: "NUMBER",
+        countDescriptor: "Misconducts",
         description: "Auto-filled from misconduct records.",
         bounds: 0,
         multiplier: 1,
       },
       {
         title: "Assaultive Acts in Jail",
-        type: "NUMBER",
+        type: "SINGLE",
         description: "Not auto-filled.",
-        bounds: 4,
-        multiplier: 6.5,
+        options: [
+          { text: "None", score: 0 },
+          { text: "One", score: 6.5 },
+          { text: "Two", score: 13 },
+          { text: "Three", score: 19.5 },
+          { text: "Four or more", score: 26.0 },
+        ],
       },
     ],
   },

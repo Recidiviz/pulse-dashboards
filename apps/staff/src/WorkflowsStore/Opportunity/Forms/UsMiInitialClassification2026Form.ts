@@ -15,12 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsMiInitialClassification2026DraftData } from "~datatypes";
+import {
+  miFemaleInitialClassificationQuestions,
+  miMaleInitialClassificationQuestions,
+  UsMiAssessmentSectionsSpec,
+  UsMiInitialClassification2026DraftData,
+} from "~datatypes";
 
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
+import { Resident } from "../../Resident";
 import { FormBase } from "./FormBase";
 
-export class UsMiClassificiationForm extends FormBase<UsMiInitialClassification2026DraftData> {
+export class UsMiClassificationForm extends FormBase<UsMiInitialClassification2026DraftData> {
   get navigateToFormText(): string {
     return this.opportunity.isSubmitted
       ? "Review classification"
@@ -29,5 +35,25 @@ export class UsMiClassificiationForm extends FormBase<UsMiInitialClassification2
 
   get formContents(): OpportunityFormComponentName {
     return "FormUsMiClassification";
+  }
+
+  get questionList(): UsMiAssessmentSectionsSpec[] | undefined {
+    const person = this.person as Resident;
+    if (person.stateCode === "US_MI") {
+      const questionList =
+        person.gender === "MALE"
+          ? miMaleInitialClassificationQuestions
+          : miFemaleInitialClassificationQuestions;
+      return questionList;
+    }
+  }
+
+  get displayCustodyLevel(): string | undefined {
+    const person = this.person as Resident;
+    if (person.stateCode === "US_MI") {
+      const level = person.displayCustodyLevel.split("Security");
+      if (level[0].trim() === "Unknown") return "Unknown";
+      return level[1].trim();
+    }
   }
 }

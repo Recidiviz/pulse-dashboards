@@ -80,6 +80,7 @@ export * from "./opportunities/UsMi/UsMiCustodyLevelDowngrade/fixtures";
 export * from "./opportunities/UsMi/UsMiCustodyLevelDowngrade/schema";
 export * from "./opportunities/UsMi/UsMiEarlyDischarge/fixtures";
 export * from "./opportunities/UsMi/UsMiEarlyDischarge/schema";
+export * from "./opportunities/UsMi/UsMiInitialClassification2026Policy/InitialQuestionSchema";
 export * from "./opportunities/UsMi/UsMiInitialClassification2026Policy/schema";
 export * from "./opportunities/UsMi/UsMiInitialClassification2026Policy/utils";
 export * from "./opportunities/UsMi/UsMiMinimumTelephoneReporting/fixtures";
