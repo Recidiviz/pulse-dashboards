@@ -21,7 +21,7 @@ import styled, { css } from "styled-components";
 
 import { palette } from "~design-system";
 
-import { FactRowStack, SectionCard } from "../shared";
+import { FactRowStack, SectionCard, SubsectionTitle } from "../shared";
 
 /** Corner radius of every US_ID case profile card, in both columns. */
 export const US_ID_CARD_CORNER_RADIUS = rem(10);
@@ -67,12 +67,15 @@ export const UsIdSubsectionHeading = styled.div`
   gap: ${rem(spacing.xs)};
 `;
 
+/** Color of a UsIdSubsectionTitle, and of the labels that match it. */
+export const US_ID_SUBSECTION_TITLE_COLOR = palette.slate85;
+
 export const UsIdSubsectionTitle = styled.h5`
   ${typography.Sans18}
   font-size: ${rem(18)};
   line-height: ${rem(26)};
   font-weight: 600;
-  color: ${palette.slate85};
+  color: ${US_ID_SUBSECTION_TITLE_COLOR};
 `;
 
 /**
@@ -111,4 +114,15 @@ export const UsIdFactLabel = styled.div`
 export const UsIdFactValue = styled.div`
   ${typography.Sans16}
   color: ${palette.pine1};
+`;
+
+/** A block title in the US_ID sidebar, at the sidebar's 14px text size. */
+export const UsIdSidebarTitle = styled(SubsectionTitle)`
+  ${typography.Sans14}
+  font-weight: 600;
+`;
+
+/** A UsIdFactValue at 14px. */
+export const UsIdSmallFactValue = styled(UsIdFactValue)`
+  ${typography.Sans14}
 `;

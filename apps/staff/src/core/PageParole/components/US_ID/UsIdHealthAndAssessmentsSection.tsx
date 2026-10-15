@@ -27,6 +27,7 @@ import {
 import { palette } from "~design-system";
 
 import { statusStyles } from "../../../BadgePill/BadgePill";
+import { AssessmentScore } from "../AssessmentScore";
 import { ChartWrapper } from "../RiskAssessmentSection.styles";
 import {
   getRiskLevelForAssessment,
@@ -35,6 +36,7 @@ import {
 import { FactRow, FactValue, formatDate, MutedText } from "../shared";
 import { SubcategoryBreakdownChart } from "../SubcategoryBreakdownChart";
 import {
+  US_ID_SUBSECTION_TITLE_COLOR,
   UsIdFactStack,
   UsIdSubsection,
   UsIdSubsectionTitle,
@@ -99,9 +101,21 @@ const RiskLevelName = styled.span`
   text-transform: uppercase;
 `;
 
+// Matches the CO profile, which puts the score and its date on one line.
+const ScoreLine = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: ${rem(spacing.md)};
+`;
+
 const AssessedOn = styled.div`
   ${typography.Sans14}
-  color: ${palette.slate80};
+  color: ${US_ID_SUBSECTION_TITLE_COLOR};
+`;
+
+const MentalHealthLabel = styled(MutedText)`
+  color: ${US_ID_SUBSECTION_TITLE_COLOR};
 `;
 
 const NORMAL_TEXT_COLOR = "#00413E";
@@ -151,7 +165,10 @@ function AssessmentSummaryCard({
           </RiskLabel>
         )}
       </CardHeader>
-      <AssessedOn>Assessed {formatDate(assessment.date)}</AssessedOn>
+      <ScoreLine>
+        <AssessmentScore assessment={assessment} />
+        <AssessedOn>Assessed {formatDate(assessment.date)}</AssessedOn>
+      </ScoreLine>
       {assessment.subcategories && (
         <ChartBlock>
           <ChartCaption>Subcategory breakdown</ChartCaption>
@@ -197,7 +214,7 @@ export function UsIdHealthAndAssessmentsSection({
 
       <FactRow>
         <UsIdFactStack>
-          <MutedText>Mental health level of care</MutedText>
+          <MentalHealthLabel>Mental health level of care</MentalHealthLabel>
           <FactValue>
             {mentalHealthLevelOfCare(riskAndNeedsFactors) ?? NOT_REPORTED}
           </FactValue>

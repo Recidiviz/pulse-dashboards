@@ -21,29 +21,24 @@ import { Fragment } from "react";
 import styled from "styled-components";
 
 import { ParoleRiskAssessment, ParoleRiskTool } from "~datatypes";
-import { palette } from "~design-system";
 
 import { PaletteKey, statusStyles } from "../../BadgePill/BadgePill";
+import { AssessmentScore } from "./AssessmentScore";
 import {
   getRiskLevelForAssessment,
   latestAssessmentsByTool,
 } from "./RiskAssessmentSection.utils";
-import {
-  FactRow,
-  formatDate,
-  Hr,
-  SectionStack,
-  SubsectionTitle,
-} from "./shared";
+import { FactRow, formatDate, Hr, SectionStack } from "./shared";
 import {
   UsIdFactLabel,
   UsIdFactStack,
-  UsIdFactValue,
+  UsIdSidebarTitle,
+  UsIdSmallFactValue,
 } from "./US_ID/UsIdCaseProfileStyles";
 
 // SectionStack's gap already spaces this from the first AssessmentRow, so
-// SubsectionTitle's own margin-bottom would double that spacing here.
-const AssessmentsTitle = styled(SubsectionTitle)`
+// the title's own margin-bottom would double that spacing here.
+const AssessmentsTitle = styled(UsIdSidebarTitle)`
   margin-bottom: 0;
 `;
 
@@ -68,22 +63,6 @@ const ScoreRow = styled.div`
   align-items: center;
   gap: ${rem(spacing.md)};
   margin-top: 0.5rem;
-`;
-
-const ScoreValueGroup = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${rem(spacing.xs)};
-`;
-
-const ScoreValue = styled.span`
-  ${typography.Serif24}
-  color: ${palette.signal.links};
-`;
-
-const ScoreOutOf = styled.span`
-  ${typography.Sans14}
-  color: ${palette.slate70};
 `;
 
 /**
@@ -154,22 +133,17 @@ export function AssessmentsSidebarSection({
               <AssessmentFactRow>
                 <UsIdFactStack>
                   <UsIdFactLabel>Type</UsIdFactLabel>
-                  <UsIdFactValue>{assessment.tool}</UsIdFactValue>
+                  <UsIdSmallFactValue>{assessment.tool}</UsIdSmallFactValue>
                 </UsIdFactStack>
                 <UsIdFactStack>
                   <UsIdFactLabel>Date</UsIdFactLabel>
-                  <UsIdFactValue>{formatDate(assessment.date)}</UsIdFactValue>
+                  <UsIdSmallFactValue>
+                    {formatDate(assessment.date)}
+                  </UsIdSmallFactValue>
                 </UsIdFactStack>
               </AssessmentFactRow>
               <ScoreRow>
-                <ScoreValueGroup>
-                  <ScoreValue>{assessment.score}</ScoreValue>
-                  {/* US_ID records no max score, so this shows the score
-                      alone there and "out of N" for tenants that do. */}
-                  {assessment.maxScore !== undefined && (
-                    <ScoreOutOf>out of {assessment.maxScore}</ScoreOutOf>
-                  )}
-                </ScoreValueGroup>
+                <AssessmentScore assessment={assessment} />
                 {risk && (
                   <RiskLevel $color={riskTextColor(risk.palette)}>
                     {risk.label} Risk
@@ -186,9 +160,9 @@ export function AssessmentsSidebarSection({
           <UsIdFactLabel>Non Applicable/ Not on File</UsIdFactLabel>
           <NotOnFileList>
             {notOnFileTools.map((tool) => (
-              <UsIdFactValue as="li" key={tool}>
+              <UsIdSmallFactValue as="li" key={tool}>
                 {tool}
-              </UsIdFactValue>
+              </UsIdSmallFactValue>
             ))}
           </NotOnFileList>
         </UsIdFactStack>

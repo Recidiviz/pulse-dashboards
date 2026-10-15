@@ -91,6 +91,20 @@ describe("UsIdHealthAndAssessmentsSection", () => {
     expect(screen.getByText("Subcategory breakdown")).toBeInTheDocument();
   });
 
+  it("shows each card's score out of its tool's max score", () => {
+    renderSection();
+
+    expect(screen.getByText("14")).toBeInTheDocument();
+    expect(screen.getByText("out of 54")).toBeInTheDocument();
+  });
+
+  it("shows the score alone when the assessment has no max score", () => {
+    renderSection({ riskAssessments: [assessment({ maxScore: undefined })] });
+
+    expect(screen.getByText("14")).toBeInTheDocument();
+    expect(screen.queryByText(/^out of/)).not.toBeInTheDocument();
+  });
+
   it("shows the level as the source spells it, rather than deriving one", () => {
     renderSection({
       riskAssessments: [assessment({ level: "VERY_HIGH", score: 1 })],

@@ -31,7 +31,7 @@ const InstantOffensesField = styled.div`
 `;
 
 const InstantOffenseList = styled.ul`
-  ${typography.Sans16}
+  ${typography.Sans14}
   color: ${palette.pine1};
   display: flex;
   flex-direction: column;

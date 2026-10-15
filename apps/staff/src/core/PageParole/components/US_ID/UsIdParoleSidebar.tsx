@@ -37,12 +37,12 @@ import {
   Hr,
   StackedFactRow,
   StackedFacts,
-  SubsectionTitle,
 } from "../shared";
 import {
   UsIdFactLabel,
   UsIdFactStack,
-  UsIdFactValue,
+  UsIdSidebarTitle,
+  UsIdSmallFactValue,
 } from "./UsIdCaseProfileStyles";
 import { UsIdInstantOffensesSection } from "./UsIdInstantOffensesSection";
 
@@ -100,13 +100,13 @@ function UsIdPersonalDetails({ caseDetail }: { caseDetail: ParoleCase }) {
 
   return (
     <div>
-      <SubsectionTitle>Personal Details</SubsectionTitle>
+      <UsIdSidebarTitle>Personal Details</UsIdSidebarTitle>
       <PersonalDetailsFields>
         <FactRow>
           {facts.map((fact) => (
             <UsIdFactStack key={fact.label}>
               <UsIdFactLabel>{fact.label}</UsIdFactLabel>
-              <UsIdFactValue>{fact.value}</UsIdFactValue>
+              <UsIdSmallFactValue>{fact.value}</UsIdSmallFactValue>
             </UsIdFactStack>
           ))}
         </FactRow>
@@ -152,19 +152,19 @@ export function UsIdParoleSidebar({
       <FullWidthHr />
 
       <div>
-        <SubsectionTitle>Report Status</SubsectionTitle>
+        <UsIdSidebarTitle>Report Status</UsIdSidebarTitle>
         <StackedFacts>
           <ReportStatusRow>
             <UsIdFactLabel>Report Type</UsIdFactLabel>
-            <UsIdFactValue>{caseDetail.hearingType}</UsIdFactValue>
+            <UsIdSmallFactValue>{caseDetail.hearingType}</UsIdSmallFactValue>
           </ReportStatusRow>
           <ReportStatusRow>
             <UsIdFactLabel>Parole Board Hearing</UsIdFactLabel>
-            <UsIdFactValue>
+            <UsIdSmallFactValue>
               {caseDetail.hearingDate
                 ? formatMonth(caseDetail.hearingDate)
                 : "Not scheduled"}
-            </UsIdFactValue>
+            </UsIdSmallFactValue>
           </ReportStatusRow>
         </StackedFacts>
       </div>

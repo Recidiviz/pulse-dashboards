@@ -38,8 +38,8 @@ import {
 import {
   UsIdFactLabel,
   UsIdFactStack,
-  UsIdFactValue,
   usIdRecordCardStyles,
+  UsIdSmallFactValue,
   UsIdSubsection,
   UsIdSubsectionCaption,
   UsIdSubsectionHeading,
@@ -81,7 +81,8 @@ const ReportHeader = styled.div`
 const NARRATIVE_PREVIEW_LINES = 3;
 
 const Narrative = styled.div`
-  ${typography.Sans16}
+  ${typography.Sans14}
+  line-height: 1.6;
   color: ${palette.pine1};
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -152,19 +153,19 @@ export function UsIdDisciplinaryReportsSection({
                 <ReportFacts>
                   <ReportFact>
                     <UsIdFactLabel>Date</UsIdFactLabel>
-                    <UsIdFactValue>
+                    <UsIdSmallFactValue>
                       {isParoleUnknownDate(record.date)
                         ? PAROLE_UNKNOWN_TEXT
                         : formatMonthAndYear(record.date)}
-                    </UsIdFactValue>
+                    </UsIdSmallFactValue>
                   </ReportFact>
                   <ReportFact>
                     <UsIdFactLabel>Offense</UsIdFactLabel>
-                    <UsIdFactValue>{record.violation}</UsIdFactValue>
+                    <UsIdSmallFactValue>{record.violation}</UsIdSmallFactValue>
                   </ReportFact>
                   <ReportFact>
                     <UsIdFactLabel>Institution</UsIdFactLabel>
-                    <UsIdFactValue>{record.facility}</UsIdFactValue>
+                    <UsIdSmallFactValue>{record.facility}</UsIdSmallFactValue>
                   </ReportFact>
                 </ReportFacts>
                 <WorkflowsBadgePill

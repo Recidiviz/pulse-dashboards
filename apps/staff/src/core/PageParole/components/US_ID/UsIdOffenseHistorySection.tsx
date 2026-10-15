@@ -31,10 +31,10 @@ import {
 import {
   UsIdFactLabel,
   UsIdFactStack,
-  UsIdFactValue,
   usIdRecordCardStyles,
   UsIdSectionCard,
   UsIdSectionTitle,
+  UsIdSmallFactValue,
   UsIdSubsection,
   UsIdSubsectionTitle,
 } from "./UsIdCaseProfileStyles";
@@ -64,14 +64,14 @@ const OffenseHeading = styled.div`
 `;
 
 const OffenseStatute = styled.span`
-  ${typography.Sans12}
+  ${typography.Sans14}
   flex-shrink: 0;
   white-space: nowrap;
   color: ${palette.slate85};
 `;
 
 const OffenseCaseNumber = styled.div`
-  ${typography.Sans12}
+  ${typography.Sans14}
   flex-shrink: 0;
   white-space: nowrap;
   color: ${palette.slate85};
@@ -181,7 +181,7 @@ export function UsIdOffenseHistorySection({
                   {facts.map((fact) => (
                     <OffenseFact key={fact.label}>
                       <UsIdFactLabel>{fact.label}</UsIdFactLabel>
-                      <UsIdFactValue>{fact.value}</UsIdFactValue>
+                      <UsIdSmallFactValue>{fact.value}</UsIdSmallFactValue>
                     </OffenseFact>
                   ))}
                 </FactRow>
