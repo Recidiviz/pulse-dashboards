@@ -24,6 +24,7 @@ import { palette } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
 import { useRootStore } from "../../../components/StoreProvider";
+import useIsMobile from "../../../hooks/useIsMobile";
 import { ParoleDocketPresenter } from "../../../ParoleStore/presenters/ParoleDocketPresenter";
 import ModelHydrator from "../../ModelHydrator";
 import { ParoleDocketTable } from "./ParoleDocketTable";
@@ -37,8 +38,9 @@ const HeaderBlock = styled.div`
   margin-bottom: ${rem(spacing.lg)};
 `;
 
-const Title = styled.div`
-  ${typography.Serif24}
+/** Matches the Overview page title (InsightsSupervisorsListPage). */
+const Title = styled.div<{ $isMobile: boolean }>`
+  ${({ $isMobile }) => ($isMobile ? typography.Serif24 : typography.Serif34)}
   color: ${palette.pine2};
 `;
 
@@ -53,10 +55,11 @@ const ParoleDocketList = observer(function ParoleDocketList({
 }: {
   presenter: ParoleDocketPresenter;
 }) {
+  const { isMobile } = useIsMobile(true);
   return (
     <Wrapper>
       <HeaderBlock>
-        <Title>Hearing Schedule</Title>
+        <Title $isMobile={isMobile}>Hearing Schedule</Title>
         {presenter.docketSubheading && (
           <Subheading>{presenter.docketSubheading}</Subheading>
         )}

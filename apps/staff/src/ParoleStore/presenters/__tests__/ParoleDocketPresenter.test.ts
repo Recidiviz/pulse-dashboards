@@ -186,6 +186,10 @@ describe("ParoleDocketPresenter", () => {
 });
 
 describe("ParoleDocketPresenter docket display config", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("exposes docketSubheading and docketSearchEnabled from the tenant's paroleConfig", () => {
     const rootStore = new RootStore();
     rootStore.tenantStore.currentTenantId = "US_CO";
@@ -193,15 +197,39 @@ describe("ParoleDocketPresenter docket display config", () => {
 
     expect(presenter.docketSubheading).toBe("Two Week Outlook");
     expect(presenter.docketSearchEnabled).toBe(true);
+    expect(presenter.docketIdLabel).toBe("DOC ID");
   });
 
-  it("hides the subheading and search for tenants that don't configure them", () => {
+  it("hides the subheading for a tenant that doesn't configure one", () => {
     const rootStore = new RootStore();
     rootStore.tenantStore.currentTenantId = "US_ID";
     const presenter = new ParoleDocketPresenter(new ParoleStore(rootStore));
 
     expect(presenter.docketSubheading).toBeUndefined();
-    expect(presenter.docketSearchEnabled).toBe(false);
+    expect(presenter.docketSearchEnabled).toBe(true);
+    expect(presenter.docketIdLabel).toBe("IDOC ID");
+  });
+
+  it("labels the id 'DOC ID' when the docket has no DOC ID column", () => {
+    // US_ID heads its column "IDOC ID", so "DOC ID" here can only be the
+    // fallback.
+    const rootStore = new RootStore();
+    rootStore.tenantStore.currentTenantId = "US_ID";
+    const { config } = new ParoleStore(rootStore);
+    // makeAutoObservable locks the getter on each instance, so the stub goes
+    // on the prototype before the store under test is built.
+    vi.spyOn(ParoleStore.prototype, "config", "get").mockReturnValue({
+      ...config,
+      docketConfig: {
+        ...config.docketConfig,
+        columns: config.docketConfig.columns.filter(
+          (column) => column.format !== "docId",
+        ),
+      },
+    });
+    const presenter = new ParoleDocketPresenter(new ParoleStore(rootStore));
+
+    expect(presenter.docketIdLabel).toBe("DOC ID");
   });
 });
 

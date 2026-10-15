@@ -122,6 +122,14 @@ export class ParoleDocketPresenter
     return Boolean(this.paroleStore.config.docketConfig.paginationEnabled);
   }
 
+  /** The tenant's own name for the DOC ID, taken from its docId column. */
+  get docketIdLabel(): string {
+    return (
+      this.docketColumns.find((column) => column.format === "docId")?.header ??
+      "DOC ID"
+    );
+  }
+
   get docketColumns(): ReadonlyArray<ParoleDocketColumn> {
     return this.paroleStore.config.docketConfig.columns;
   }

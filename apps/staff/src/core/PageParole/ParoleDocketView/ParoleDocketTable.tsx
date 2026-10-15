@@ -42,6 +42,7 @@ const DOCKET_PAGE_SIZE_OPTIONS = [10, 25, 50] as const;
 
 const FilterBar = styled.div`
   display: flex;
+  align-items: center;
   justify-content: flex-end;
   margin-bottom: ${rem(spacing.md)};
 `;
@@ -201,6 +202,7 @@ export const ParoleDocketTable = observer(function ParoleDocketTable({
 }: {
   presenter: ParoleDocketPresenter;
 }) {
+  const searchLabel = `Search by name or ${presenter.docketIdLabel}`;
   const columns = useMemo(
     () => buildColumns(presenter.docketColumns),
     [presenter.docketColumns],
@@ -227,8 +229,8 @@ export const ParoleDocketTable = observer(function ParoleDocketTable({
               className="fs-exclude"
               value={presenter.searchQuery}
               onChange={(e) => presenter.setSearchQuery(e.target.value)}
-              placeholder="Search by name or DOC ID"
-              aria-label="Search by name or DOC ID"
+              placeholder={searchLabel}
+              aria-label={searchLabel}
             />
           </SearchInputWrapper>
         )}

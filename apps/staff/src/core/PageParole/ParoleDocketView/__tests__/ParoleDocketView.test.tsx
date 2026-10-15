@@ -79,7 +79,7 @@ describe("ParoleDocketView docket subheading and search", () => {
     ).toBeInTheDocument();
   });
 
-  it("hides the subheading and search input for a tenant that doesn't configure them", async () => {
+  it("hides the subheading for a tenant that doesn't configure one", async () => {
     mockCurrentTenant("US_ID");
     render(
       <MemoryRouter>
@@ -89,9 +89,19 @@ describe("ParoleDocketView docket subheading and search", () => {
 
     await screen.findAllByRole("link");
     expect(screen.queryByText("Two Week Outlook")).not.toBeInTheDocument();
+  });
+
+  it("names the id in the search box with the tenant's own column header", async () => {
+    mockCurrentTenant("US_ID");
+    render(
+      <MemoryRouter>
+        <ParoleDocketView />
+      </MemoryRouter>,
+    );
+
     expect(
-      screen.queryByPlaceholderText("Search by name or DOC ID"),
-    ).not.toBeInTheDocument();
+      await screen.findByPlaceholderText("Search by name or IDOC ID"),
+    ).toBeInTheDocument();
   });
 });
 
