@@ -35,8 +35,10 @@ vi.mock("react-hot-toast", () => ({ default: mockToast }));
 
 const mockOfficer = {
   staffExternalId: "officer1",
+  recordType: "supervisionStaff" as const,
   surname: "Smith",
   givenNames: "John",
+  stableStaffExternalId: "officer1",
 };
 
 vi.mock("../../PersonLookup/StaffLookup", () => ({
@@ -200,7 +202,7 @@ describe("ForwardButton", () => {
     fireEvent.click(screen.getByRole("button", { name: "Forward" }));
     expect(opportunity.setOfficerAction).toHaveBeenCalledWith({
       type: "APPROVAL",
-      reviewerId: mockOfficer.staffExternalId,
+      reviewerId: mockOfficer.stableStaffExternalId,
     });
   });
 

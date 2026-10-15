@@ -80,6 +80,14 @@ export class UsTxAnnualReportStatusV2Form extends FormBase<
     return this.opportunity.stableUserId;
   }
 
+  /**
+   * Records edits under the opportunity's userId, so they match the IDs in its
+   * action history.
+   */
+  override get editorId(): string | undefined {
+    return this.opportunity.userId;
+  }
+
   get navigateToFormText(): string {
     return "Download Form";
   }

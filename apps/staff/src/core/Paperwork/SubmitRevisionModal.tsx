@@ -99,7 +99,7 @@ export const SubmitRevisionModal = observer(function SubmitRevisionModal({
     // flow, which otherwise isn't usable in demo.
     isDemoMode() || isOfflineMode()
       ? new Set(
-          availableOfficersWithOrWithoutCaseloads.map((o) => o.staffExternalId),
+          availableOfficersWithOrWithoutCaseloads.map(getStableStaffExternalId),
         )
       : new Set(
           opportunity.actionHistory
@@ -109,17 +109,20 @@ export const SubmitRevisionModal = observer(function SubmitRevisionModal({
 
   const currentReviewerId = opportunity.currentReviewerId;
 
-  const actionHistoryOfficers = availableOfficersWithOrWithoutCaseloads.filter(
+  const actionHistoryOfficers = availableOfficersWithOrWithoutCaseloads.flatMap(
     (officer) => {
-      const stableId = getStableStaffExternalId(officer);
-      return (
-        (!!stableId && previousReviewerIds.has(stableId)) ||
+      const reviewerId = getStableStaffExternalId(officer);
+      const wasPreviousReviewer =
+        (!!reviewerId && previousReviewerIds.has(reviewerId)) ||
         // TODO(OBT-53651): Remove once updater fields are migrated to stable IDs
-        previousReviewerIds.has(officer.staffExternalId)
-      );
+        previousReviewerIds.has(officer.staffExternalId);
+      return reviewerId && wasPreviousReviewer ? [{ officer, reviewerId }] : [];
     },
   );
   const [selectedStaff, setSelectedStaff] = useState<StaffRecord | null>(null);
+  const selectedReviewerId = selectedStaff
+    ? getStableStaffExternalId(selectedStaff)
+    : undefined;
   const [reason, setReason] = useState("");
 
   return (
@@ -133,9 +136,9 @@ export const SubmitRevisionModal = observer(function SubmitRevisionModal({
       <StyledDropdown>
         <StyledDropdownToggle>
           <NameLabel>
-            {selectedStaff ? (
+            {selectedReviewerId ? (
               <WorkflowsOfficerName
-                officerId={selectedStaff.staffExternalId}
+                stableStaffExternalId={selectedReviewerId}
                 availableOfficers={availableOfficersWithOrWithoutCaseloads}
               />
             ) : (
@@ -145,13 +148,13 @@ export const SubmitRevisionModal = observer(function SubmitRevisionModal({
           {selectedStaff && <ChangeLabel>Change</ChangeLabel>}
         </StyledDropdownToggle>
         <StyledDropdownMenu>
-          {actionHistoryOfficers.map((officer) => (
+          {actionHistoryOfficers.map(({ officer, reviewerId }) => (
             <StyledDropdownMenuItem
-              key={officer.staffExternalId}
+              key={reviewerId}
               onClick={() => setSelectedStaff(officer)}
             >
               <WorkflowsOfficerName
-                officerId={officer.staffExternalId}
+                stableStaffExternalId={reviewerId}
                 availableOfficers={availableOfficersWithOrWithoutCaseloads}
               />
             </StyledDropdownMenuItem>
@@ -190,9 +193,9 @@ export const SubmitRevisionModal = observer(function SubmitRevisionModal({
         <SendButton
           kind="primary"
           shape="block"
-          disabled={!selectedStaff || !reason}
+          disabled={!selectedReviewerId || !reason}
           onClick={async () => {
-            if (!selectedStaff || !reason) {
+            if (!selectedStaff || !selectedReviewerId || !reason) {
               return;
             }
             // Must be awaited before navigating away: the next page's caseload
@@ -200,7 +203,7 @@ export const SubmitRevisionModal = observer(function SubmitRevisionModal({
             await opportunity.setSupervisorResponse({
               type: "REVISION",
               notes: reason,
-              reviewerId: selectedStaff.staffExternalId,
+              reviewerId: selectedReviewerId,
             });
             toast(
               <OpportunityStatusUpdateToast

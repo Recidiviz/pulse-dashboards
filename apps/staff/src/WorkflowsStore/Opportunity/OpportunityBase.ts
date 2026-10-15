@@ -1371,8 +1371,16 @@ export class OpportunityBase<
     return this.rootStore.userStore.userFullName ?? this.currentUserEmail;
   }
 
+  /**
+   * The ID recorded for the current user's actions: their stable staff external
+   * ID when useStableExternalId is on, otherwise their external ID.
+   */
   get userId(): string | undefined {
-    return this.rootStore.userStore.externalId;
+    const { userStore } = this.rootStore;
+    if (userStore.activeFeatureVariants.useStableExternalId) {
+      return this.stableUserId;
+    }
+    return userStore.externalId;
   }
 
   /**

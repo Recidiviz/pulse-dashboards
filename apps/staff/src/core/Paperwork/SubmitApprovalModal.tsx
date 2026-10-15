@@ -20,7 +20,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
-import { StaffRecord } from "~datatypes";
+import { getStableStaffExternalId, StaffRecord } from "~datatypes";
 
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { WorkflowsStore } from "../../WorkflowsStore";
@@ -53,6 +53,9 @@ export const SubmitApprovalModal = observer(function SubmitApprovalModal({
   const { pathname, key: locationKey } = useLocation();
   const { officerPseudoId, supervisorPseudoId } = useParams();
   const [selectedStaff, setSelectedStaff] = useState<StaffRecord | null>(null);
+  const reviewerId = selectedStaff
+    ? getStableStaffExternalId(selectedStaff)
+    : undefined;
 
   return (
     <StyledModal
@@ -76,9 +79,9 @@ export const SubmitApprovalModal = observer(function SubmitApprovalModal({
           Cancel
         </CancelButton>
         <SendButton
-          disabled={!selectedStaff}
+          disabled={!reviewerId}
           onClick={async () => {
-            if (!selectedStaff) {
+            if (!selectedStaff || !reviewerId) {
               return;
             }
             // If the opportunity is currently in review, it means the current user is responding
@@ -92,7 +95,7 @@ export const SubmitApprovalModal = observer(function SubmitApprovalModal({
             }
             await opportunity.setOfficerAction({
               type: "APPROVAL",
-              reviewerId: selectedStaff.staffExternalId,
+              reviewerId,
             });
             toast(
               <OpportunityStatusUpdateToast

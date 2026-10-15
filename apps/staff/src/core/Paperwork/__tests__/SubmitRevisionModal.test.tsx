@@ -75,7 +75,7 @@ function setup(
     ...mockOpportunity,
     person: { ...mockOpportunity.person, displayName: "Test Client" },
     actionHistory: [
-      { type: "APPROVAL", updateById: mockOfficer.staffExternalId },
+      { type: "APPROVAL", updateById: mockOfficer.stableStaffExternalId },
     ],
     setSupervisorResponse: vi.fn(),
     ...overrides,
@@ -205,7 +205,7 @@ describe("SendButton", () => {
     expect(opportunity.setSupervisorResponse).toHaveBeenCalledWith({
       type: "REVISION",
       notes: "Needs revision",
-      reviewerId: mockOfficer.staffExternalId,
+      reviewerId: mockOfficer.stableStaffExternalId,
     });
   });
 
@@ -317,7 +317,7 @@ describe("Officer dropdown", () => {
     const opportunity = {
       ...mockOpportunity,
       actionHistory: [
-        { type: "APPROVAL", updateById: mockOfficer.staffExternalId },
+        { type: "APPROVAL", updateById: mockOfficer.stableStaffExternalId },
       ],
       setSupervisorResponse: vi.fn(),
     };
@@ -376,7 +376,7 @@ describe("Officer dropdown", () => {
                     actionHistory: [
                       {
                         type: "APPROVAL",
-                        updateById: mockOfficer.staffExternalId,
+                        updateById: mockOfficer.stableStaffExternalId,
                       },
                     ],
                     setSupervisorResponse: vi.fn(),
@@ -426,7 +426,7 @@ describe("Officer dropdown", () => {
                     actionHistory: [
                       {
                         type: "APPROVAL",
-                        updateById: mockOfficer.staffExternalId,
+                        updateById: mockOfficer.stableStaffExternalId,
                       },
                     ],
                     setSupervisorResponse: vi.fn(),
@@ -452,7 +452,7 @@ describe("Officer dropdown", () => {
 
 describe("CurrentReviewer display", () => {
   it("shows the current reviewer when currentReviewerId is set", () => {
-    setup({ currentReviewerId: mockOfficer.staffExternalId });
+    setup({ currentReviewerId: mockOfficer.stableStaffExternalId });
     expect(screen.getByText(/Current Reviewer/)).toBeInTheDocument();
   });
 
