@@ -18,9 +18,12 @@
 import { ReactNode } from "react";
 
 import { useUsMaTranslations } from "~@jii/translation";
-import { Button, Icon } from "~design-system";
+import { Button, Icon, spacing } from "~design-system";
 
 import { Callout } from "../../Callout/Callout";
+import { QUESTIONNAIRE_FOOTER_ERROR_HEIGHT } from "../constants";
+import { useShouldShowScrollCue } from "../hooks/useShouldShowScrollCue";
+import { ScrollCue } from "../ScrollCue/ScrollCue";
 import {
   Actions,
   BackLinkButton,
@@ -44,10 +47,15 @@ export const QuestionnaireFooter = ({
   children,
 }: QuestionnaireFooterProps) => {
   const { t } = useUsMaTranslations();
+  // The layout reserves room for the error banner and a gap below the content.
+  const shouldShowScrollCue = useShouldShowScrollCue({
+    blankSpaceBelowContent: QUESTIONNAIRE_FOOTER_ERROR_HEIGHT + spacing.lg,
+  });
 
   return (
     <Wrapper>
       <Inner>
+        {shouldShowScrollCue && <ScrollCue />}
         {error && (
           <Callout
             tone="error"
