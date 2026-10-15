@@ -78,7 +78,7 @@ export const TableHeaderCell: React.FC<{
     style={[
       {
         fontWeight: font.weight.bold,
-        fontSize: font.size.sm,
+        fontSize: font.size.base,
         color: color.text.default,
       },
       style,

@@ -78,7 +78,7 @@ export const SentenceDistribution: React.FC<{
       </Text>
       <Text
         style={{
-          fontSize: font.size.xxs,
+          fontSize: font.size.chartText,
           lineHeight: font.lineHeight.normal,
           color: color.text.default,
         }}
@@ -123,11 +123,14 @@ export const SentenceDistribution: React.FC<{
               <View style={{ width: 11, height: 11, marginRight: space[6] }}>
                 <LegendGlyphView glyph={it.glyph} />
               </View>
-              <Text style={{ flex: 1, fontSize: font.size.sm }}>
+              <Text style={{ flex: 1, fontSize: font.size.chartText }}>
                 {it.label}
               </Text>
               <Text
-                style={{ fontSize: font.size.sm, fontWeight: font.weight.bold }}
+                style={{
+                  fontSize: font.size.chartText,
+                  fontWeight: font.weight.bold,
+                }}
               >
                 {it.pct}%
               </Text>

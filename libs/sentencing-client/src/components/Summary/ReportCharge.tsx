@@ -27,6 +27,17 @@ import { CHARGE_FIELD_LABELS } from "../constants";
 import { FIELD_ROW_GAP } from "./SentencingAssessmentReport.constants";
 import * as Styled from "./SentencingAssessmentReport.styles";
 
+/** Bold label followed inline by its value; long values wrap under the label. */
+const ChargeField: React.FC<{ label: string; children: React.ReactNode }> = ({
+  label,
+  children,
+}) => (
+  <Styled.ReportChargeField>
+    <Styled.ReportChargeFieldLabel>{label}</Styled.ReportChargeFieldLabel>{" "}
+    {children}
+  </Styled.ReportChargeField>
+);
+
 interface ReportChargeProps {
   charge: FormCharge;
   index: number;
@@ -47,53 +58,34 @@ export const ReportCharge: React.FC<ReportChargeProps> = ({
       <Styled.ReportChargeBody>
         <Styled.ReportChargeColumns>
           <Styled.ReportChargeLeftColumn gap={FIELD_ROW_GAP}>
-            <Styled.RowFlexContainer gap={FIELD_ROW_GAP}>
-              <Styled.Label>Offense:</Styled.Label>
-              <Styled.Value>
-                {charge.offense || "—"}
-                {formatInlineClassification(charge)}
-              </Styled.Value>
-            </Styled.RowFlexContainer>
-            <Styled.RowFlexContainer gap={FIELD_ROW_GAP}>
-              <Styled.Label>Cause Number:</Styled.Label>
-              <Styled.Value>{charge.causeNum || "—"}</Styled.Value>
-            </Styled.RowFlexContainer>
-            <Styled.RowFlexContainer gap={FIELD_ROW_GAP}>
-              <Styled.Label>County:</Styled.Label>
-              <Styled.Value>{charge.county || "—"}</Styled.Value>
-            </Styled.RowFlexContainer>
-            <Styled.RowFlexContainer gap={FIELD_ROW_GAP}>
-              <Styled.Label>Judge / Division:</Styled.Label>
-              <Styled.Value>{judgeAndDivision || "—"}</Styled.Value>
-            </Styled.RowFlexContainer>
-            <Styled.RowFlexContainer gap={FIELD_ROW_GAP}>
-              <Styled.Label>
-                {CHARGE_FIELD_LABELS.defenseAttorney}:
-              </Styled.Label>
-              <Styled.Value>{charge.defenseAttorney || "—"}</Styled.Value>
-            </Styled.RowFlexContainer>
+            <ChargeField label="Offense:">
+              {charge.offense || "—"}
+              {formatInlineClassification(charge)}
+            </ChargeField>
+            <ChargeField label="Cause Number:">
+              {charge.causeNum || "—"}
+            </ChargeField>
+            <ChargeField label="County:">{charge.county || "—"}</ChargeField>
+            <ChargeField label="Judge / Division:">
+              {judgeAndDivision || "—"}
+            </ChargeField>
+            <ChargeField label={`${CHARGE_FIELD_LABELS.defenseAttorney}:`}>
+              {charge.defenseAttorney || "—"}
+            </ChargeField>
           </Styled.ReportChargeLeftColumn>
           <Styled.ReportChargeRightColumn gap={FIELD_ROW_GAP}>
-            <Styled.RowFlexContainer gap={FIELD_ROW_GAP}>
-              <Styled.Label>
-                {CHARGE_FIELD_LABELS.prosecutingAttorney}:
-              </Styled.Label>
-              <Styled.Value>{charge.prosecutingAttorney || "—"}</Styled.Value>
-            </Styled.RowFlexContainer>
-            <Styled.RowFlexContainer gap={FIELD_ROW_GAP}>
-              <Styled.Label>{CHARGE_FIELD_LABELS.pleaAgreement}:</Styled.Label>
-              <Styled.Value>{charge.pleaAgreement || "—"}</Styled.Value>
-            </Styled.RowFlexContainer>
-            <Styled.RowFlexContainer gap={FIELD_ROW_GAP}>
-              <Styled.Label>{CHARGE_FIELD_LABELS.pleaDate}:</Styled.Label>
-              <Styled.Value>{formatDisplayDate(charge.pleaDate)}</Styled.Value>
-            </Styled.RowFlexContainer>
-            <Styled.RowFlexContainer gap={FIELD_ROW_GAP}>
-              <Styled.Label>{CHARGE_FIELD_LABELS.sentencingDate}:</Styled.Label>
-              <Styled.Value>
-                {formatDisplayDate(charge.sentencingDate)}
-              </Styled.Value>
-            </Styled.RowFlexContainer>
+            <ChargeField label={`${CHARGE_FIELD_LABELS.prosecutingAttorney}:`}>
+              {charge.prosecutingAttorney || "—"}
+            </ChargeField>
+            <ChargeField label={`${CHARGE_FIELD_LABELS.pleaAgreement}:`}>
+              {charge.pleaAgreement || "—"}
+            </ChargeField>
+            <ChargeField label={`${CHARGE_FIELD_LABELS.pleaDate}:`}>
+              {formatDisplayDate(charge.pleaDate)}
+            </ChargeField>
+            <ChargeField label={`${CHARGE_FIELD_LABELS.sentencingDate}:`}>
+              {formatDisplayDate(charge.sentencingDate)}
+            </ChargeField>
           </Styled.ReportChargeRightColumn>
         </Styled.ReportChargeColumns>
       </Styled.ReportChargeBody>

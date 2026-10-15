@@ -201,10 +201,10 @@ export const ReportOffenderAssessment: React.FC<
   return (
     <Styled.ColumnFlexContainer gap={15}>
       <ReportBlock>
-        <Styled.SectionTitleContainer>
+        <Styled.SectionTitleContainer $noMarginBottom={!!note}>
           <Styled.SectionTitle>{sectionTitle}</Styled.SectionTitle>
-          {note && <Styled.SectionTitleNote>{note}</Styled.SectionTitleNote>}
         </Styled.SectionTitleContainer>
+        {note && <Styled.HeaderMetaNote>{note}</Styled.HeaderMetaNote>}
         {isDeclined && sarData.defendantStatement && (
           <Styled.FreeTextContent>
             {sarData.defendantStatement}

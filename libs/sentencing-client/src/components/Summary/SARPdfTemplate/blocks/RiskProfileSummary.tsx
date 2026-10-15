@@ -33,6 +33,7 @@ import {
   riskProfileGroups,
 } from "../derive";
 import { Badge } from "../primitives/Badge";
+import { HeadingMeta } from "../primitives/HeadingMeta";
 import { SectionHeading } from "../primitives/SectionHeading";
 import { useActiveFeatureVariants, useSAR } from "../SARContext";
 import type { PdfStyle } from "../SARPdfTemplate.types";
@@ -103,10 +104,8 @@ export const RiskProfileSummary: React.FC<{ style?: PdfStyle }> = ({
 
   return (
     <View style={style} wrap={false}>
-      <SectionHeading
-        title={`RISK PROFILE SUMMARY (${sar.assessmentType})`}
-        meta={meta}
-      />
+      <SectionHeading title={`RISK PROFILE SUMMARY (${sar.assessmentType})`} />
+      <HeadingMeta>{meta}</HeadingMeta>
       <View
         style={{
           flexDirection: "row",

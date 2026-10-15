@@ -37,7 +37,7 @@ export const SARHeader: React.FC<{ style?: PdfStyle }> = ({ style = {} }) => {
           top: 24,
           left: space.pageMargin.x,
           right: space.pageMargin.x,
-          fontSize: font.size.sm,
+          fontSize: font.size.base,
           fontWeight: font.weight.semibold,
           color: color.text.default,
           justifyContent: "space-between",

@@ -39,7 +39,7 @@ const HeaderCell: React.FC<{
       style,
     ]}
   >
-    <Text style={{ fontSize: font.size.xxs, color: color.text.default }}>
+    <Text style={{ fontSize: font.size.base, color: color.text.default }}>
       {label}
     </Text>
     <Text style={{ fontSize: font.size.xxxl, fontWeight: font.weight.medium }}>

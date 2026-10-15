@@ -15,10 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// ORAS domains render from a stable, order-stable config array; array indices
-// are safe React keys here.
-/* eslint-disable react/no-array-index-key */
-
 import { View } from "@react-pdf/renderer";
 import React from "react";
 
@@ -33,6 +29,7 @@ import {
   ageAtAssessment as getAgeAtAssessment,
   shouldShowInReport,
 } from "../derive";
+import { HeadingMeta } from "../primitives/HeadingMeta";
 import { Paragraph } from "../primitives/Paragraph";
 import { UnderlinedHeading } from "../primitives/UnderlinedHeading";
 import { useActiveFeatureVariants, useSAR } from "../SARContext";
@@ -84,25 +81,34 @@ export const OrasAssessment: React.FC<{ style?: PdfStyle }> = ({
           " | ",
         )
       : undefined;
+  const statement =
+    declined && sar.defendantStatement ? sar.defendantStatement : null;
+  const noOrasReason =
+    !shouldShowOrasContent(sar.ORASDomainsAvailable, activeFeatureVariants) &&
+    sar.noORASDomainReason
+      ? sar.noORASDomainReason
+      : null;
+  const [firstDomain, ...remainingDomains] = domains;
 
   return (
     <View style={style}>
-      <UnderlinedHeading meta={meta}>
-        {declined
-          ? "Offender Risk Assessment"
-          : `Offender Risk Assessment (${getAssessmentTypeShortName(sar.assessmentType)})`}
-      </UnderlinedHeading>
-      {declined && sar.defendantStatement ? (
-        <Paragraph>{sar.defendantStatement}</Paragraph>
-      ) : null}
-      {!shouldShowOrasContent(
-        sar.ORASDomainsAvailable,
-        activeFeatureVariants,
-      ) && sar.noORASDomainReason ? (
-        <Paragraph>{sar.noORASDomainReason}</Paragraph>
-      ) : null}
-      {domains.map((domain, i) => (
-        <OrasDomainSection key={i} domain={domain} />
+      {/* Keeps the heading on the same page as the first domain, which is
+          itself unbreakable. Only when no paragraph sits between them: a
+          free-text paragraph can be longer than a page, and the heading then
+          flows with the paragraph instead. */}
+      <View wrap={!!statement || !!noOrasReason}>
+        <UnderlinedHeading>
+          {declined
+            ? "Offender Risk Assessment"
+            : `Offender Risk Assessment (${getAssessmentTypeShortName(sar.assessmentType)})`}
+        </UnderlinedHeading>
+        {meta ? <HeadingMeta>{meta}</HeadingMeta> : null}
+        {statement ? <Paragraph>{statement}</Paragraph> : null}
+        {noOrasReason ? <Paragraph>{noOrasReason}</Paragraph> : null}
+        {firstDomain ? <OrasDomainSection domain={firstDomain} /> : null}
+      </View>
+      {remainingDomains.map((domain) => (
+        <OrasDomainSection key={domain.key} domain={domain} />
       ))}
     </View>
   );

@@ -58,7 +58,7 @@ export const UnderlinedHeading: React.FC<{
     {meta ? (
       <Text
         style={{
-          fontSize: font.size.sm,
+          fontSize: font.size.base,
           fontWeight: font.weight.medium,
           color: color.text.default,
         }}

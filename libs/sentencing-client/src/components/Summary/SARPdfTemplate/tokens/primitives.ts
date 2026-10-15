@@ -88,26 +88,23 @@ export const space = {
  * the content rhythm ramp above.
  */
 export const pageFrame = {
-  top: 64,
+  top: 72,
   bottom: 48,
   x: 30,
 } as const;
 
 /**
- * Type ramp (pt). The half-steps (7.5 / 8.5 / 9.5) are intentional: at print
- * sizes the document relies on fine-grained gradations, so they are preserved
- * rather than snapped to whole points.
+ * Type ramp (pt). 11.5pt is the smallest size for report text; only chart
+ * explanations and the disposition legend go below it, at 10.5pt.
  */
 export const fontSize = {
-  50: 7,
-  100: 7.5,
-  200: 8,
-  300: 8.5,
-  400: 9,
-  500: 9.5,
-  600: 10,
-  700: 11,
-  800: 13,
+  600: 10.5,
+  650: 11.5,
+  700: 12,
+  725: 12.5,
+  750: 13,
+  800: 14,
+  900: 16,
 } as const;
 
 /** Weight axis — keys ARE the CSS numeric gradient. */

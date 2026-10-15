@@ -48,6 +48,10 @@ import { SentenceDistribution } from "./SentenceDistribution";
 // Maps each disposition label to a slice/legend glyph, matching the reference:
 // non-incarceration dispositions use the solid gray ramp; incarceration buckets
 // escalate through textures (dots -> crosshatch -> plus) to solid black at 6+.
+/** Height of one line of disclaimer text (a `Paragraph`), so the flag can
+ * center on the first line. */
+const DISCLAIMER_LINE_HEIGHT = font.size.base * font.lineHeight.tight;
+
 const GLYPH_BY_LABEL: Record<string, LegendGlyph> = {
   "Treatment Court/Deferred Prosecution": "stripes",
   Probation: "light",
@@ -81,24 +85,29 @@ export const HistoricalOutcomeBlock: React.FC<{ style?: PdfStyle }> = ({
 
   return (
     <View style={style}>
-      <UnderlinedHeading>Historical Outcome Reference</UnderlinedHeading>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          gap: space[4],
-        }}
-      >
-        <FlagIcon height={7} width={7} />
-        <Text
+      {/* Keep the heading, flag, and disclaimer together on one page. */}
+      <View wrap={false}>
+        <UnderlinedHeading>Historical Outcome Reference</UnderlinedHeading>
+        <View
           style={{
-            fontSize: font.size.base,
-            lineHeight: font.lineHeight.tight,
+            flexDirection: "row",
+            alignItems: "flex-start",
+            gap: space[4],
           }}
         >
-          The following data represents historical trends, which do not predict
-          or guarantee the outcome of any individual case.
-        </Text>
+          <View
+            style={{
+              height: DISCLAIMER_LINE_HEIGHT,
+              justifyContent: "center",
+            }}
+          >
+            <FlagIcon height={7} width={7} />
+          </View>
+          <Paragraph style={{ flex: 1, marginBottom: 0 }}>
+            The following data represents historical trends, which do not
+            predict or guarantee the outcome of any individual case.
+          </Paragraph>
+        </View>
       </View>
 
       {tags.length ? (
@@ -135,7 +144,7 @@ export const HistoricalOutcomeBlock: React.FC<{ style?: PdfStyle }> = ({
 
       <Text
         style={{
-          fontSize: font.size.xs,
+          fontSize: font.size.base,
           fontWeight: font.weight.semibold,
           color: color.text.default,
           lineHeight: font.lineHeight.tight,
@@ -170,7 +179,7 @@ export const HistoricalOutcomeBlock: React.FC<{ style?: PdfStyle }> = ({
       </Text>
 
       {keyFinding ? (
-        <View style={{ marginTop: space[8] }}>
+        <View style={{ marginTop: space[8] }} wrap={false}>
           <BoldSubheading style={{ fontSize: font.size.xl }}>
             Key Finding
           </BoldSubheading>

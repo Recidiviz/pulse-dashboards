@@ -73,8 +73,8 @@ export const ReportRiskProfileSummaryCard: React.FC<RiskProfileCardData> = ({
         <span>
           RISK PROFILE SUMMARY ({getAssessmentTypeShortName(assessmentType)})
         </span>
-        {note && <span>{note}</span>}
       </Styled.ReportCardHeader>
+      {note && <Styled.RiskProfileNote>{note}</Styled.RiskProfileNote>}
       <Styled.RiskLevelColumnsContainer>
         {RISK_COLUMN_CONFIG.map(({ level, bgColor, textColor }) => (
           <Styled.RiskLevelColumn key={level}>

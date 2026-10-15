@@ -80,7 +80,7 @@ export const AverageTimeServed: React.FC<{
         </Text>
         <Text
           style={{
-            fontSize: font.size.xxs,
+            fontSize: font.size.chartText,
             lineHeight: font.lineHeight.normal,
             color: color.text.default,
           }}
@@ -129,10 +129,10 @@ export const AverageTimeServed: React.FC<{
             marginBottom: space[2],
           }}
         >
-          <Text style={{ fontSize: font.size.sm, color: color.text.muted }}>
+          <Text style={{ fontSize: font.size.base, color: color.text.muted }}>
             Start
           </Text>
-          <Text style={{ fontSize: font.size.sm, color: color.text.muted }}>
+          <Text style={{ fontSize: font.size.base, color: color.text.muted }}>
             End
           </Text>
         </View>
@@ -189,7 +189,7 @@ export const AverageTimeServed: React.FC<{
         <View style={{ flexDirection: "row", marginTop: space[4] }}>
           <Text
             style={{
-              fontSize: font.size.sm,
+              fontSize: font.size.base,
               fontWeight: font.weight.bold,
               color: color.text.default,
               textAlign: "right",
@@ -200,7 +200,7 @@ export const AverageTimeServed: React.FC<{
           </Text>
           <Text
             style={{
-              fontSize: font.size.sm,
+              fontSize: font.size.base,
               color: color.text.muted,
               textAlign: "right",
               width: `${remainderPct}%`,

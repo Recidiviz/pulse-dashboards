@@ -33,7 +33,7 @@ export const TagChip: React.FC<{
         paddingVertical: space[4],
         paddingHorizontal: space[8],
         borderRadius: border.radius.md,
-        fontSize: font.size.sm,
+        fontSize: font.size.base,
         fontWeight: font.weight.bold,
         marginRight: space[6],
       },

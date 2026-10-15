@@ -94,14 +94,16 @@ export const PriorTreatmentSection: React.FC<{ style?: PdfStyle }> = ({
                 {g.entries.map((e, ei) => (
                   <View
                     key={ei}
-                    style={{ marginBottom: space[6], fontSize: font.size.sm }}
+                    style={{ marginBottom: space[6], fontSize: font.size.base }}
                   >
                     {e.date ? <Text>{e.date}</Text> : null}
                     <Text>{e.name}</Text>
                   </View>
                 ))}
                 {g.overflowCount > 0 ? (
-                  <Text style={{ fontSize: font.size.sm, fontStyle: "italic" }}>
+                  <Text
+                    style={{ fontSize: font.size.base, fontStyle: "italic" }}
+                  >
                     and {g.overflowCount} more
                   </Text>
                 ) : null}
@@ -121,7 +123,7 @@ export const PriorTreatmentSection: React.FC<{ style?: PdfStyle }> = ({
                 community based treatments/programs.
               </Paragraph>
               <CommunityTreatmentTable rows={communityHistories} />
-              <Text style={{ fontSize: font.size.xxs, marginTop: space[2] }}>
+              <Text style={{ fontSize: font.size.base, marginTop: space[2] }}>
                 * The defendant&apos;s community treatment participation was
                 verified through independent documentation (such as program
                 certificates or discharge summaries), direct communication with

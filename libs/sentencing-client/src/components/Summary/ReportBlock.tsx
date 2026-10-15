@@ -37,17 +37,20 @@ import * as Styled from "./SentencingAssessmentReport.styles";
 interface ReportBlockProps {
   splittable?: boolean;
   pageStart?: boolean;
+  className?: string;
   children: React.ReactNode;
 }
 
 export const ReportBlock: React.FC<ReportBlockProps> = ({
   splittable,
   pageStart,
+  className,
   children,
 }) => {
   const classes = [
     !splittable ? NO_SPLIT_CLASS : null,
     pageStart ? PAGE_START_CLASS : null,
+    className,
   ]
     .filter(Boolean)
     .join(" ");

@@ -15,15 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Text, View } from "@react-pdf/renderer";
+import { Text } from "@react-pdf/renderer";
 import React from "react";
 
 import type { PdfStyle } from "../SARPdfTemplate.types";
 import { font, space } from "../tokens";
 
 /**
- * Inline label-then-value row used inside offense cards. Label is bold and
- * left-aligned in a fixed-width column; value flows to the right of it.
+ * Inline label-then-value row used inside offense cards. The bold label and
+ * the value share one text run, so a long value wraps back to the left edge
+ * under the label instead of leaving a gap beneath it.
  * Distinct from FieldCell (which stacks label above value).
  */
 export const FieldRow: React.FC<{
@@ -31,18 +32,17 @@ export const FieldRow: React.FC<{
   value: React.ReactNode;
   style?: PdfStyle;
 }> = ({ label, value, style = {} }) => (
-  <View style={[{ flexDirection: "row", marginBottom: space[4] }, style]}>
-    <Text style={{ fontSize: font.size.base, fontWeight: font.weight.bold }}>
-      {label + " "}
-    </Text>
-    <Text
-      style={{
-        flex: 1,
+  <Text
+    style={[
+      {
+        marginBottom: space[4],
         fontSize: font.size.base,
         fontWeight: font.weight.medium,
-      }}
-    >
-      {value}
-    </Text>
-  </View>
+      },
+      style,
+    ]}
+  >
+    <Text style={{ fontWeight: font.weight.bold }}>{label + " "}</Text>
+    {value}
+  </Text>
 );

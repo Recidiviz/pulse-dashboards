@@ -27,7 +27,6 @@ import { DECLINED_TEXT } from "../../SentencingAssessmentReport.constants";
 import { sectionSkipped, shouldShowInReport, splitParagraphs } from "../derive";
 import { Banner } from "../primitives/Banner";
 import { HomeIcon } from "../primitives/icons/HomeIcon";
-import { NumberedItem } from "../primitives/NumberedItem";
 import { Paragraph } from "../primitives/Paragraph";
 import { UnderlinedHeading } from "../primitives/UnderlinedHeading";
 import { useSAR } from "../SARContext";
@@ -72,12 +71,12 @@ export const RecommendationAndPlan: React.FC<{ style?: PdfStyle }> = ({
     banners.push(
       <Banner title="Community Strategies" key="community">
         {strategies.map((s, i) => (
-          <NumberedItem key={i} index={i + 1}>
-            {s}
-          </NumberedItem>
+          <Paragraph key={i}>{s}</Paragraph>
         ))}
         {homePlan ? (
+          // Moves to the next page whole instead of splitting its border box.
           <View
+            wrap={false}
             style={{
               marginTop: space[6],
               padding: space[16],
@@ -115,9 +114,7 @@ export const RecommendationAndPlan: React.FC<{ style?: PdfStyle }> = ({
     banners.push(
       <Banner title="Institutional Strategies" key="institutional">
         {institutionalPlan.map((s, i) => (
-          <NumberedItem key={i} index={i + 1}>
-            {s}
-          </NumberedItem>
+          <Paragraph key={i}>{s}</Paragraph>
         ))}
       </Banner>,
     );
@@ -125,15 +122,15 @@ export const RecommendationAndPlan: React.FC<{ style?: PdfStyle }> = ({
 
   return (
     <View style={style}>
-      {/* Keep the heading attached to the first banner so it can't orphan at a
-          page bottom while the (wrap=false) banner jumps to the next page. */}
-      <View wrap={false}>
+      {/* Keep the heading on the same page as the start of the first banner.
+          The banners themselves can be taller than a page, so they can't be
+          held together with wrap={false}. */}
+      <View minPresenceAhead={100}>
         <UnderlinedHeading>
           Recommendation and Supervision Plan
         </UnderlinedHeading>
-        {banners[0]}
       </View>
-      {banners.slice(1)}
+      {banners}
     </View>
   );
 };

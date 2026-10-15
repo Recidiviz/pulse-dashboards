@@ -103,7 +103,7 @@ export const OrasDomainSection: React.FC<{
           ) : null}
           <Text
             style={{
-              fontSize: font.size.xxs,
+              fontSize: font.size.base,
             }}
           >
             * The defendant's employment was verified through independent

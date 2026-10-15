@@ -46,7 +46,7 @@ export const SubBanner: React.FC<{
   >
     <Text
       style={{
-        fontSize: font.size.sm,
+        fontSize: font.size.base,
         fontWeight: font.weight.bold,
         textTransform: "uppercase",
         letterSpacing: font.letterSpacing.wide,
@@ -55,7 +55,7 @@ export const SubBanner: React.FC<{
       {left}
     </Text>
     {right ? (
-      <Text style={{ fontSize: font.size.xs, color: color.text.muted }}>
+      <Text style={{ fontSize: font.size.base, color: color.text.muted }}>
         {right}
       </Text>
     ) : null}

@@ -30,7 +30,7 @@ export const FieldCell: React.FC<{
   <View style={[{ marginBottom: space[4] }, style]}>
     <Text
       style={{
-        fontSize: font.size.sm,
+        fontSize: font.size.base,
         fontWeight: font.weight.bold,
         color: color.text.default,
         marginBottom: space[2],

@@ -109,15 +109,13 @@ export const space = {
 export const font = {
   family: primitive.fontFamily.body,
   size: {
-    xxs: primitive.fontSize[50],
-    xs: primitive.fontSize[100],
-    sm: primitive.fontSize[200],
-    base: primitive.fontSize[300],
-    md: primitive.fontSize[400],
-    lg: primitive.fontSize[500],
-    xl: primitive.fontSize[600],
-    xxl: primitive.fontSize[700],
-    xxxl: primitive.fontSize[800],
+    base: primitive.fontSize[650],
+    chartText: primitive.fontSize[600],
+    md: primitive.fontSize[700],
+    lg: primitive.fontSize[725],
+    xl: primitive.fontSize[750],
+    xxl: primitive.fontSize[800],
+    xxxl: primitive.fontSize[900],
   },
   weight: {
     regular: primitive.fontWeight[400],

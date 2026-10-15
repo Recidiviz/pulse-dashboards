@@ -15,45 +15,27 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Text, View } from "@react-pdf/renderer";
+import { Text } from "@react-pdf/renderer";
 import React from "react";
 
-import type { PdfStyle } from "../SARPdfTemplate.types";
 import { font, space } from "../tokens";
 
-/** One "N. text" row in the Community / Institutional Strategies lists. */
-export const NumberedItem: React.FC<{
-  index: number;
-  children: React.ReactNode;
-  style?: PdfStyle;
-}> = ({ index, children, style = {} }) => (
-  <View
-    style={[
-      {
-        flexDirection: "row",
-        marginBottom: space[4],
-        paddingHorizontal: space[4],
-      },
-      style,
-    ]}
+/**
+ * Assessment context ("Administered By: X, date | Age at Assessment: N") on
+ * its own line beneath a section heading, padded to keep the content that
+ * follows from crowding it.
+ */
+export const HeadingMeta: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => (
+  <Text
+    style={{
+      fontSize: font.size.base,
+      fontWeight: font.weight.medium,
+      paddingTop: space[4],
+      paddingBottom: space[8],
+    }}
   >
-    <Text
-      style={{
-        width: 14,
-        fontSize: font.size.md,
-        fontWeight: font.weight.bold,
-      }}
-    >
-      {index}.
-    </Text>
-    <Text
-      style={{
-        flex: 1,
-        fontSize: font.size.md,
-        lineHeight: font.lineHeight.normal,
-      }}
-    >
-      {children}
-    </Text>
-  </View>
+    {children}
+  </Text>
 );

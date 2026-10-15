@@ -65,7 +65,7 @@ export const OffenseBlock: React.FC<{
       >
         <Text
           style={{
-            fontSize: font.size.sm,
+            fontSize: font.size.base,
             fontWeight: font.weight.medium,
             textTransform: "uppercase",
             letterSpacing: font.letterSpacing.wide,
@@ -75,7 +75,7 @@ export const OffenseBlock: React.FC<{
         </Text>
 
         {headerMeta ? (
-          <Text style={{ fontSize: font.size.xs, color: color.text.default }}>
+          <Text style={{ fontSize: font.size.base, color: color.text.default }}>
             {headerMeta}
           </Text>
         ) : null}

@@ -22,7 +22,7 @@ import type { ActiveFeatureVariants } from "../../../datastores/types";
 import { DefendantStatement } from "./blocks/DefendantStatement";
 import { HistoricalOutcomeBlock } from "./blocks/HistoricalOutcomeBlock";
 import { KeyConsiderationsBlock } from "./blocks/KeyConsiderationsBlock";
-import { LearnMorePill } from "./blocks/LearnMorePill";
+import { LEARN_MORE_PILL_HEIGHT, LearnMorePill } from "./blocks/LearnMorePill";
 import { OffenderInfoSection } from "./blocks/OffenderInfoSection";
 import { Offenses } from "./blocks/Offenses";
 import { OrasAssessment } from "./blocks/OrasAssessment";
@@ -98,7 +98,12 @@ export const SARPdfTemplate: React.FC<SARPdfTemplateProps> = ({
 
         <HistoricalOutcomeBlock style={blockSpacing} />
 
-        <SignatureBlock style={blockSpacing} />
+        {/* Padding rather than margin: SignatureBlock can't be split across
+            pages, so the space reserved for the pill always stays on the
+            signature's page instead of overflowing onto a blank one. */}
+        <SignatureBlock
+          style={{ paddingBottom: LEARN_MORE_PILL_HEIGHT + space.blockGap }}
+        />
         <LearnMorePill />
 
         <SARFooter />

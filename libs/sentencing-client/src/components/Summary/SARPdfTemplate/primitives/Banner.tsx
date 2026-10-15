@@ -38,9 +38,11 @@ export const Banner: React.FC<{
       },
       style,
     ]}
-    wrap={false}
   >
+    {/* The banner may run longer than a page, so it has to be allowed to
+        wrap. minPresenceAhead keeps the title from orphaning at a page bottom. */}
     <Text
+      minPresenceAhead={40}
       style={{
         textAlign: "center",
         fontSize: font.size.xxxl,

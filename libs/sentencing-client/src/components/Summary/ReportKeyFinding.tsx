@@ -16,11 +16,18 @@
 // =============================================================================
 
 import React from "react";
+import styled from "styled-components";
 
 import { SARInsight } from "../../api";
 import { buildKeyFindingText } from "./insightsUtils";
 import { ReportBlock } from "./ReportBlock";
 import * as Styled from "./SentencingAssessmentReport.styles";
+
+// The offset sits on the block itself, not its content, so the PDF page cut
+// (which snaps to the block's edge) can't slice through the top of the title.
+const KeyFindingBlock = styled(ReportBlock)`
+  margin-top: -5px;
+`;
 
 interface ReportKeyFindingProps {
   insight: NonNullable<SARInsight>;
@@ -29,12 +36,12 @@ interface ReportKeyFindingProps {
 export const ReportKeyFinding: React.FC<ReportKeyFindingProps> = ({
   insight,
 }) => (
-  <ReportBlock>
+  <KeyFindingBlock>
     <Styled.KeyFindingContainer>
       <Styled.DispositionEmptyTitle>Key Finding</Styled.DispositionEmptyTitle>
       <Styled.KeyFindingText>
         {buildKeyFindingText(insight.dispositionData, insight.avgPctServed)}
       </Styled.KeyFindingText>
     </Styled.KeyFindingContainer>
-  </ReportBlock>
+  </KeyFindingBlock>
 );

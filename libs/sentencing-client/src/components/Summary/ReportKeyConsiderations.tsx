@@ -110,15 +110,17 @@ export const ReportKeyConsiderations: React.FC<
         {riskProfileCardData && showOrasCard && (
           <>
             <ReportBlock>
-              The Ohio Risk Assessment System (ORAS) is a validated,
-              evidence-based tool used to identify an individual's risk of
-              recidivism and determine the appropriate level of supervision and
-              treatment. For further information on its application in Missouri,
-              please visit{" "}
-              <strong>
-                https://doc.mo.gov/justice-reinvestment-initiative/oras
-              </strong>
-              .
+              <Styled.FreeTextContent>
+                The Ohio Risk Assessment System (ORAS) is a validated,
+                evidence-based tool used to identify an individual's risk of
+                recidivism and determine the appropriate level of supervision
+                and treatment. For further information on its application in
+                Missouri, please visit{" "}
+                <strong>
+                  https://doc.mo.gov/justice-reinvestment-initiative/oras
+                </strong>
+                .
+              </Styled.FreeTextContent>
             </ReportBlock>
             <ReportRiskProfileSummaryCard {...riskProfileCardData} />
           </>

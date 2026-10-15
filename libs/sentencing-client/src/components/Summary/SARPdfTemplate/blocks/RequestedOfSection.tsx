@@ -49,7 +49,7 @@ export const RequestedOfSection: React.FC<{ style?: PdfStyle }> = ({
           gap: space[16],
         }}
       >
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1.5 }}>
           <FieldCell
             label="Officer"
             value={
@@ -61,13 +61,13 @@ export const RequestedOfSection: React.FC<{ style?: PdfStyle }> = ({
             }
           />
         </View>
-        <View style={{ flex: 2 }}>
+        <View style={{ flex: 1 }}>
           <FieldCell label="District" value={staff?.district?.name ?? ""} />
         </View>
         <View style={{ flex: 2 }}>
           <FieldCell label="Address" value={staff?.officeAddress ?? ""} />
         </View>
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1.5 }}>
           <FieldCell label="Phone" value={staff?.officePhoneNumber ?? ""} />
         </View>
       </View>

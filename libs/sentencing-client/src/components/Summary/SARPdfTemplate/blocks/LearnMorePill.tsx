@@ -28,6 +28,16 @@ import { border, color, font, space } from "../tokens";
  */
 const DEFAULT_LEARN_MORE_URL = "https://www.mosac.mo.gov/sar-pilot";
 
+const TEXT_LINES = 2;
+const TEXT_LINE_HEIGHT = font.lineHeight.tight;
+const PADDING_Y = space[8];
+
+/** Height of the pill in points, assuming the sentence wraps to TEXT_LINES
+ * lines. The pill is absolutely positioned, so the block above it reserves this
+ * much space to keep content from running underneath. */
+export const LEARN_MORE_PILL_HEIGHT =
+  TEXT_LINES * font.size.md * TEXT_LINE_HEIGHT + 2 * PADDING_Y;
+
 export const LearnMorePill: React.FC<{ url?: string; style?: PdfStyle }> = ({
   url = DEFAULT_LEARN_MORE_URL,
   style = {},
@@ -38,11 +48,11 @@ export const LearnMorePill: React.FC<{ url?: string; style?: PdfStyle }> = ({
       style={[
         {
           position: "absolute",
-          bottom: 40,
+          bottom: space.pageMargin.bottom,
           left: space.pageMargin.x,
           right: space.pageMargin.x,
           backgroundColor: color.surface.info,
-          paddingVertical: space[8],
+          paddingVertical: PADDING_Y,
           paddingHorizontal: space[12],
           borderRadius: border.radius.md,
           flexDirection: "row",
@@ -53,7 +63,13 @@ export const LearnMorePill: React.FC<{ url?: string; style?: PdfStyle }> = ({
       ]}
     >
       <InfoIcon />
-      <Text style={{ flex: 1, fontSize: font.size.md }}>
+      <Text
+        style={{
+          flex: 1,
+          fontSize: font.size.md,
+          lineHeight: TEXT_LINE_HEIGHT,
+        }}
+      >
         Visit <Text style={{ fontWeight: font.weight.semibold }}>{url}</Text> to
         learn more about the information presented in this report.
       </Text>

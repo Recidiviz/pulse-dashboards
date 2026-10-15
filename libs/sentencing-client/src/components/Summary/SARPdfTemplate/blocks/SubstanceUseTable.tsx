@@ -89,7 +89,7 @@ export const SubstanceUseTable: React.FC<{
     {hasCurrentUse(rows) && (
       <Text
         style={{
-          fontSize: font.size.xs,
+          fontSize: font.size.base,
           color: color.text.default,
           marginTop: space[8],
         }}

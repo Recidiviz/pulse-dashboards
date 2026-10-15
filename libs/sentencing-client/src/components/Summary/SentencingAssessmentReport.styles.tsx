@@ -28,9 +28,9 @@ import {
   ICON_LABEL_GAP,
 } from "./SentencingAssessmentReport.constants";
 
-/** Shared base for 12px report body text with tight tracking. */
-const text12Style = css`
-  ${typography.Sans12}
+/** Shared base for report body text with tight tracking. */
+const bodyTextStyle = css`
+  ${typography.Sans18}
   line-height: 120%;
   letter-spacing: -0.12px;
 `;
@@ -51,7 +51,7 @@ export const FooterCell = styled.td`
 `;
 
 export const Header = styled.div`
-  ${typography.Sans12}
+  ${typography.Sans18}
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -95,7 +95,7 @@ export const Footer = styled.div`
 `;
 
 export const FooterMessage = styled.div`
-  ${typography.Sans12}
+  ${typography.Sans18}
   font-weight: 500;
   line-height: 150%;
   padding: 10px 50px;
@@ -125,14 +125,14 @@ export const TitleRightContainer = styled.div`
 `;
 
 export const SectionTitle = styled.h3`
-  ${typography.Sans14}
+  ${typography.Sans18}
   font-weight: 700;
-  line-height: 120%; /* 16.8px */
+  line-height: 120%;
   text-transform: uppercase;
 `;
 
 export const SectionTitleNote = styled.div`
-  ${typography.Sans12}
+  ${typography.Sans18}
   font-weight: 500;
   line-height: 150%;
 `;
@@ -157,24 +157,37 @@ export const RowFlexContainer = styled.div<{
 `;
 
 export const Label = styled.div`
-  ${typography.Sans14}
+  ${typography.Sans18}
   font-weight: 700;
-  line-height: 120%; /* 16.8px */
+  line-height: 120%;
   flex-shrink: 0;
   letter-spacing: -0.14px;
   white-space: nowrap;
 `;
 
 export const Value = styled.div`
-  ${typography.Sans14}
+  ${typography.Sans18}
   font-weight: 500;
-  line-height: 150%; /* 21px */
+  line-height: 150%;
   flex: 1;
   min-width: 0;
   overflow-wrap: break-word;
 `;
 
+export const ReportChargeField = styled.div`
+  ${typography.Sans18}
+  font-weight: 500;
+  line-height: 150%;
+  overflow-wrap: break-word;
+`;
+
+export const ReportChargeFieldLabel = styled.span`
+  font-weight: 700;
+  letter-spacing: -0.14px;
+`;
+
 export const ReportChip = styled.div`
+  ${typography.Sans18}
   padding: 6.052px 12.105px;
   justify-content: center;
   align-items: center;
@@ -213,7 +226,7 @@ export const ReportChargeHeader = styled.div`
   padding: 5px;
   align-items: center;
   align-self: stretch;
-  ${typography.Sans12}
+  ${typography.Sans18}
   font-weight: 500;
   line-height: 150%;
 `;
@@ -241,23 +254,20 @@ export const CaseInformationColumn = styled(ColumnFlexContainer)`
 `;
 
 export const CaseInformationLabel = styled.div`
+  ${typography.Sans18}
   color: ${customPalette.black};
-  font-size: 9px;
-  font-weight: 500;
-  line-height: 120%;
   letter-spacing: -0.09px;
 `;
 
 export const CaseInformationValue = styled.div`
+  ${typography.Sans24}
   color: ${customPalette.black};
-  font-size: 20px;
   font-weight: 500;
-  line-height: 16px;
   letter-spacing: -0.4px;
 `;
 
 export const FreeTextContent = styled.div`
-  ${typography.Sans14}
+  ${typography.Sans18}
   font-weight: 500;
   line-height: 150%;
   white-space: pre-wrap;
@@ -268,7 +278,7 @@ export const FreeTextContent = styled.div`
 
 /** Card header with title on left, metadata on right. */
 export const ReportCardHeader = styled.div`
-  ${typography.Sans12}
+  ${typography.Sans18}
   font-weight: 500;
   line-height: 150%;
   background: ${palette.slate05};
@@ -280,6 +290,20 @@ export const ReportCardHeader = styled.div`
   & > span:first-child {
     text-transform: uppercase;
   }
+`;
+
+/** Assessment context ("Administered By: X, date | Age at Assessment: N")
+ * shown on its own line beneath a section header. */
+export const HeaderMetaNote = styled.div`
+  ${typography.Sans18}
+  font-weight: 500;
+  line-height: 150%;
+  padding: 8px 0 12px;
+`;
+
+/** The risk columns below supply their own top padding. */
+export const RiskProfileNote = styled(HeaderMetaNote)`
+  padding: 8px 8px 0;
 `;
 
 export const RiskLevelColumnsContainer = styled.div`
@@ -299,12 +323,12 @@ export const RiskLevelColumnHeader = styled.div<{
   $bgColor: string;
   $textColor: string;
 }>`
-  ${typography.Sans14}
+  ${typography.Sans18}
   font-weight: 500;
   line-height: 120%;
   letter-spacing: -0.14px;
   display: flex;
-  height: 19px;
+  height: 24px;
   padding: 0 8px;
   align-items: center;
   justify-content: center;
@@ -315,7 +339,7 @@ export const RiskLevelColumnHeader = styled.div<{
 `;
 
 export const RiskLevelDomainItem = styled.div`
-  ${typography.Sans12}
+  ${typography.Sans18}
   font-weight: 500;
   line-height: 150%;
 `;
@@ -365,7 +389,7 @@ export const ReportHistoryTableHeader = styled.div`
   padding: 8px 10px;
   gap: 8px;
   border-bottom: 1px solid ${customPalette.black};
-  ${typography.Sans12}
+  ${typography.Sans18}
   font-weight: 500;
 `;
 
@@ -379,12 +403,12 @@ export const ReportHistoryTableRow = styled.div`
 
 export const ReportHistoryTableCell = styled.div`
   flex: 1;
-  ${typography.Sans12}
+  ${typography.Sans18}
   font-weight: 500;
 `;
 
 export const ReportHistoryTableFootnote = styled.div`
-  ${text12Style}
+  ${bodyTextStyle}
   color: ${customPalette.black};
   font-weight: 500;
   align-self: stretch;
@@ -395,7 +419,7 @@ export const ReportHistoryTableFootnote = styled.div`
 
 /** Bold subheading within a section — no border, used for DOC and community subsections. */
 export const ReportSubsectionTitle = styled.h4`
-  ${typography.Sans14}
+  ${typography.Sans18}
   font-weight: 700;
   line-height: 120%;
   letter-spacing: -0.14px;
@@ -424,7 +448,7 @@ export const DOCCategoryBox = styled.div`
 
 /** "N Institutional Treatments" heading inside a DOC category box. */
 export const DOCCategoryBoxHeader = styled.div`
-  ${typography.Sans16}
+  ${typography.Sans18}
   font-weight: 600;
   line-height: 150%;
   margin-bottom: 8px;
@@ -432,13 +456,13 @@ export const DOCCategoryBoxHeader = styled.div`
 
 /** Date or program name row inside a DOC category box. */
 export const DOCCategoryBoxItem = styled.div`
-  ${text12Style}
+  ${bodyTextStyle}
   font-weight: 500;
 `;
 
 /** "and N more" overflow indicator — italic. */
 export const DOCCategoryBoxMore = styled.div`
-  ${typography.Sans12}
+  ${typography.Sans18}
   font-style: italic;
   font-weight: 500;
   line-height: 150%;
@@ -461,10 +485,9 @@ export const StrategyBox = styled.div`
 
 /** "Community Strategies" / "Institutional Strategies" centered heading. */
 export const StrategyTitle = styled.h4`
-  ${typography.Sans16}
-  font-size: 19px;
+  ${typography.Sans24}
   font-weight: 600;
-  line-height: 24px;
+  line-height: 27px;
   text-align: center;
   margin: 0;
 `;
@@ -490,7 +513,7 @@ export const HomePlanTitleRow = styled.div`
 
 /** "Home Plan" heading inside the nested Home Plan box. */
 export const HomePlanTitle = styled.h5`
-  ${typography.Sans14}
+  ${typography.Sans18}
   font-weight: 700;
   line-height: 120%;
   letter-spacing: -0.14px;
@@ -500,21 +523,30 @@ export const HomePlanTitle = styled.h5`
 
 // ─── Historical Outcome Reference ─────────────────────────────────────────────
 
+// One line of disclaimer text. The flag sits in a box this tall so it centers
+// on the first line, even when the disclaimer wraps.
+const DISCLAIMER_LINE_HEIGHT = "27px";
+
 export const DispositionDisclaimerRow = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 6px;
   margin-bottom: 8px;
   padding-bottom: 6px;
 `;
 
+export const DispositionDisclaimerFlag = styled.div`
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: ${DISCLAIMER_LINE_HEIGHT};
+`;
+
 export const DispositionDisclaimerText = styled.div`
+  ${typography.Sans18}
   color: ${customPalette.black};
-  font-family: "Public Sans";
-  font-size: 12px;
-  font-style: normal;
   font-weight: 400;
-  line-height: 120%;
+  line-height: ${DISCLAIMER_LINE_HEIGHT};
 `;
 
 export const DispositionChipsRow = styled.div`
@@ -525,7 +557,7 @@ export const DispositionChipsRow = styled.div`
 `;
 
 export const InsightChip = styled.div`
-  ${typography.Sans12}
+  ${typography.Sans18}
   display: flex;
   align-items: center;
   justify-content: center;
@@ -555,17 +587,16 @@ export const DispositionLeftPanel = styled.div`
 `;
 
 export const DispositionLeftPanelTitle = styled.h4`
-  ${typography.Sans16}
+  ${typography.Sans18}
   width: 110px;
   color: ${customPalette.black};
   font-weight: 600;
-  line-height: 18px;
+  line-height: 21px;
   margin: 0;
 `;
 
 export const DispositionLeftPanelText = styled.div`
-  ${typography.Sans12}
-  font-size: 11px;
+  ${typography.Sans16}
   font-weight: 500;
   line-height: 150%;
 
@@ -636,8 +667,7 @@ export const DispositionLegendSwatch = styled.div<{ $color: string }>`
 `;
 
 export const DispositionLegendLabel = styled.div`
-  ${typography.Sans12}
-  font-size: 14px;
+  ${typography.Sans16}
   font-weight: 500;
   line-height: 150%;
   white-space: nowrap;
@@ -670,15 +700,15 @@ export const DispositionEmptyContent = styled.div`
 `;
 
 export const DispositionEmptyTitle = styled.h4`
-  ${typography.Sans16}
+  ${typography.Sans18}
   font-weight: 600;
-  line-height: 18px;
+  line-height: 21px;
   color: ${customPalette.black};
   margin: 0;
 `;
 
 export const DispositionEmptyBadge = styled.div`
-  ${typography.Sans16}
+  ${typography.Sans18}
   display: flex;
   padding: 8px;
   justify-content: center;
@@ -690,8 +720,7 @@ export const DispositionEmptyBadge = styled.div`
 `;
 
 export const DispositionEmptySubheading = styled.div`
-  ${typography.Sans14}
-  font-size: 15px;
+  ${typography.Sans18}
   font-weight: 600;
   line-height: 120%;
   letter-spacing: -0.3px;
@@ -699,8 +728,7 @@ export const DispositionEmptySubheading = styled.div`
 `;
 
 export const DispositionEmptyText = styled.div`
-  ${typography.Sans12}
-  font-size: 11.5px;
+  ${typography.Sans18}
   font-weight: 500;
   line-height: 120%;
   letter-spacing: -0.115px;
@@ -719,7 +747,7 @@ export const TimeServedFootnoteContainer = styled.div`
 `;
 
 export const TimeServedFootnoteText = styled.p`
-  ${text12Style}
+  ${bodyTextStyle}
   color: ${customPalette.black};
   font-weight: 600;
   margin: 0;
@@ -734,12 +762,10 @@ export const KeyFindingContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-top: -15px;
-  padding-top: 10px;
 `;
 
 export const KeyFindingText = styled.p`
-  ${text12Style}
+  ${bodyTextStyle}
   color: ${customPalette.black};
   font-weight: 500;
   margin: 0;
@@ -757,7 +783,7 @@ export const TimeServedStatsRow = styled.div`
 `;
 
 export const TimeServedStat = styled.div`
-  ${typography.Sans14}
+  ${typography.Sans16}
   font-weight: 500;
   line-height: 150%;
 
@@ -789,7 +815,7 @@ export const LearnMoreBanner = styled.div`
 `;
 
 export const LearnMoreBannerText = styled.div`
-  ${typography.Sans12}
+  ${typography.Sans18}
   font-weight: 500;
   line-height: 150%;
 
@@ -800,8 +826,8 @@ export const LearnMoreBannerText = styled.div`
 
 // ─── Signature Block ──────────────────────────────────────────────────────────
 
-const signatureText12 = css`
-  ${typography.Sans12}
+const signatureTextStyle = css`
+  ${typography.Sans18}
   font-weight: 500;
   line-height: 150%;
   letter-spacing: -0.12px;
@@ -815,7 +841,7 @@ export const SignatureContainer = styled.div`
 `;
 
 export const SignatureSubmittedText = styled.div`
-  ${typography.Sans14}
+  ${typography.Sans18}
   font-weight: 500;
   line-height: 150%;
 `;
@@ -839,7 +865,7 @@ export const SignedSignatureColumn = styled(SignatureColumn)`
 `;
 
 export const SignatureDateCreated = styled.div`
-  ${signatureText12}
+  ${signatureTextStyle}
   margin-top: 5px;
 `;
 
@@ -848,7 +874,7 @@ export const SignatureLine = styled.div`
 `;
 
 export const SignatureRoleLabel = styled.div`
-  ${signatureText12}
+  ${signatureTextStyle}
 `;
 
 export const SignatureFieldRow = styled.div`

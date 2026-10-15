@@ -62,7 +62,7 @@ export const SectionHeading: React.FC<{
         style,
       ]}
     >
-      <Text style={{ fontSize: font.size.xs }}>{title}</Text>
+      <Text style={{ fontSize: font.size.base }}>{title}</Text>
       <View
         style={{ flexDirection: "row", alignItems: "center", gap: space[8] }}
       >
@@ -70,7 +70,7 @@ export const SectionHeading: React.FC<{
           <Text
             style={{
               fontWeight: font.weight.regular,
-              fontSize: font.size.xs,
+              fontSize: font.size.base,
             }}
           >
             {meta}

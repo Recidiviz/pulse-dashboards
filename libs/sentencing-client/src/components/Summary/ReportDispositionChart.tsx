@@ -169,7 +169,9 @@ export const ReportDispositionChart: React.FC<ReportDispositionChartProps> = ({
   return (
     <SentencingAssessmentReportSection title={SECTION_TITLE}>
       <Styled.DispositionDisclaimerRow>
-        <FlagIcon />
+        <Styled.DispositionDisclaimerFlag>
+          <FlagIcon />
+        </Styled.DispositionDisclaimerFlag>
         <Styled.DispositionDisclaimerText>
           The following data represents historical trends, which do not predict
           or guarantee the outcome of any individual case.
