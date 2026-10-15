@@ -49,7 +49,7 @@ import { UsIdInstantOffensesSection } from "./UsIdInstantOffensesSection";
 const IdentityBlock = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${rem(spacing.sm)};
+  gap: 0.2rem;
 `;
 
 const PersonName = styled.div`

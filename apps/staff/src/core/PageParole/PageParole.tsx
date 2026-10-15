@@ -20,12 +20,13 @@ import { ErrorBoundary } from "@sentry/react";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React, { useEffect } from "react";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation, useMatch } from "react-router-dom";
 import styled from "styled-components";
 
 import { palette } from "~design-system";
 
 import NotFound from "../../components/NotFound";
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import cssVars from "../CoreConstants.module.scss";
 import {
@@ -34,13 +35,13 @@ import {
   OverviewNavLinks,
 } from "../NavigationLayout";
 import { MaxWidth } from "../sharedComponents";
-import { paroleRoute } from "../views";
+import { PAROLE_PATHS, paroleRoute } from "../views";
 import { ParoleCaseProfile } from "./ParoleCaseProfile";
 import { ParoleDocketView } from "./ParoleDocketView";
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ $backgroundColor: string }>`
   ${typography.Sans14};
-  background-color: ${palette.marble1};
+  background-color: ${({ $backgroundColor }) => $backgroundColor};
   min-height: 100vh;
   max-height: 100vh;
   height: 100%;
@@ -82,6 +83,11 @@ const Main = styled.main<{ isMobile?: boolean }>`
 const PageParole: React.FC = observer(function PageParole() {
   const { isMobile } = useIsMobile(true);
   const { pathname } = useLocation();
+  const { paroleStore } = useRootStore();
+  const isCaseProfile = useMatch(PAROLE_PATHS.caseProfile) !== null;
+  const backgroundColor =
+    (isCaseProfile && paroleStore.config.caseProfileBackgroundColor) ||
+    palette.marble1;
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
@@ -96,7 +102,7 @@ const PageParole: React.FC = observer(function PageParole() {
         </ErrorPage>
       }
     >
-      <Wrapper>
+      <Wrapper $backgroundColor={backgroundColor}>
         <NavigationLayout>
           <OverviewNavLinks />
         </NavigationLayout>

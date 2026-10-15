@@ -51,19 +51,25 @@ const StickyNavSentinel = styled.div`
   height: 0;
 `;
 
-const cornerRadiusStyles = ({ $cornerRadius }: { $cornerRadius?: string }) =>
-  $cornerRadius &&
-  css`
-    border-radius: ${$cornerRadius};
-  `;
+const cardOverrideStyles = ({
+  $cornerRadius,
+  $backgroundColor,
+}: {
+  $cornerRadius?: string;
+  $backgroundColor?: string;
+}) => css`
+  ${$cornerRadius && `border-radius: ${$cornerRadius};`}
+  ${$backgroundColor && `background-color: ${$backgroundColor};`}
+`;
 
 // With a banner, the card stops clipping so the banner can cover its border.
 const InfoCard = styled(SectionCard)<{
   $isNavStuck: boolean;
   $hasBanner: boolean;
   $cornerRadius?: string;
+  $backgroundColor?: string;
 }>`
-  ${cornerRadiusStyles}
+  ${cardOverrideStyles}
 
   ${({ $hasBanner }) =>
     $hasBanner &&
@@ -90,11 +96,12 @@ const BannerSlot = styled.div`
 const SectionNavCard = styled(SectionCard)<{
   $isNavStuck: boolean;
   $cornerRadius?: string;
+  $backgroundColor?: string;
 }>`
   position: sticky;
   top: ${rem(NAV_BAR_HEIGHT + spacing.lg)};
 
-  ${cornerRadiusStyles}
+  ${cardOverrideStyles}
 
   ${({ $isNavStuck }) =>
     !$isNavStuck &&
@@ -146,6 +153,8 @@ export type ParoleSectionNavItem = {
  *   banner sets its own height.
  * @param cornerRadius - Corner radius of both sidebar cards, in place of the
  *   SectionCard default.
+ * @param backgroundColor - Background of both sidebar cards, in place of the
+ *   SectionCard default.
  * @param children - Body of the info card.
  */
 export function CaseProfileSidebar({
@@ -153,12 +162,14 @@ export function CaseProfileSidebar({
   sections,
   banner,
   cornerRadius,
+  backgroundColor,
   children,
 }: {
   caseDetail: ParoleCase;
   sections: ReadonlyArray<ParoleSectionNavItem>;
   banner?: ReactNode;
   cornerRadius?: string;
+  backgroundColor?: string;
   children: ReactNode;
 }) {
   const [sentinel, setSentinel] = useState<HTMLDivElement | null>(null);
@@ -173,6 +184,7 @@ export function CaseProfileSidebar({
         $isNavStuck={isNavStuck}
         $hasBanner={banner !== undefined}
         $cornerRadius={cornerRadius}
+        $backgroundColor={backgroundColor}
       >
         {banner && <BannerSlot>{banner}</BannerSlot>}
         <InfoCardBody>
@@ -202,7 +214,11 @@ export function CaseProfileSidebar({
       </InfoCard>
 
       <StickyNavSentinel ref={setSentinel} />
-      <SectionNavCard $isNavStuck={isNavStuck} $cornerRadius={cornerRadius}>
+      <SectionNavCard
+        $isNavStuck={isNavStuck}
+        $cornerRadius={cornerRadius}
+        $backgroundColor={backgroundColor}
+      >
         <NavCardBody>
           <SectionNav>
             {sections.map((section) => (

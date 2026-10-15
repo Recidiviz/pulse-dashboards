@@ -32,6 +32,11 @@ const Wrapper = styled.div`
   padding-bottom: 1.5rem;
 `;
 
+// The Wrapper column would otherwise stretch the link across the page.
+const ButtonSizedBackLink = styled(BackLink)`
+  align-self: flex-start;
+`;
+
 // Default stretch keeps the sidebar as tall as MainColumn, so its sticky nav
 // can travel on scroll.
 const CaseProfileLayout = styled.div`
@@ -81,7 +86,9 @@ export function ParoleCaseProfileLayout({
 }) {
   return (
     <Wrapper>
-      <BackLink fallbackUrl={paroleUrl("docket")}>Back to Docket</BackLink>
+      <ButtonSizedBackLink fallbackUrl={paroleUrl("docket")}>
+        Back to Docket
+      </ButtonSizedBackLink>
 
       <CaseProfileLayout>
         <SidebarColumn>{sidebar}</SidebarColumn>

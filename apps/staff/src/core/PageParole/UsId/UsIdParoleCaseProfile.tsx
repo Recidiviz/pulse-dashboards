@@ -25,7 +25,10 @@ import type { ParoleConfig } from "../../models/types";
 import { CaseProfileSidebar } from "../components/CaseProfileSidebar";
 import { SectionAnchor } from "../components/SectionAnchor";
 import { PAROLE_SECTION_IDS } from "../components/shared";
-import { US_ID_CARD_CORNER_RADIUS } from "../components/US_ID/UsIdCaseProfileStyles";
+import {
+  US_ID_CARD_BACKGROUND_COLOR,
+  US_ID_CARD_CORNER_RADIUS,
+} from "../components/US_ID/UsIdCaseProfileStyles";
 import { UsIdHearingHistorySection } from "../components/US_ID/UsIdHearingHistorySection";
 import { UsIdInstitutionalHistorySection } from "../components/US_ID/UsIdInstitutionalHistorySection";
 import { UsIdOffenseHistorySection } from "../components/US_ID/UsIdOffenseHistorySection";
@@ -74,6 +77,7 @@ export function UsIdParoleCaseProfile({
           sections={SECTION_NAV}
           banner={<SidebarBanner name={caseDetail.name} />}
           cornerRadius={US_ID_CARD_CORNER_RADIUS}
+          backgroundColor={US_ID_CARD_BACKGROUND_COLOR}
         >
           <UsIdParoleSidebar caseDetail={caseDetail} config={config} />
         </CaseProfileSidebar>

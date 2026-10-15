@@ -26,6 +26,9 @@ import { FactRowStack, SectionCard } from "../shared";
 /** Corner radius of every US_ID case profile card, in both columns. */
 export const US_ID_CARD_CORNER_RADIUS = rem(10);
 
+/** Background of every US_ID case profile card, in both columns. */
+export const US_ID_CARD_BACKGROUND_COLOR = palette.white;
+
 /**
  * A US_ID case profile card. The title sits inside the card body, above the
  * subsections, rather than in a tinted header bar.
@@ -34,7 +37,7 @@ export const UsIdSectionCard = styled(SectionCard)`
   display: flex;
   flex-direction: column;
   gap: ${rem(spacing.md)};
-  background-color: ${palette.white};
+  background-color: ${US_ID_CARD_BACKGROUND_COLOR};
   border-radius: ${US_ID_CARD_CORNER_RADIUS};
   padding: ${rem(spacing.lg)};
 `;
