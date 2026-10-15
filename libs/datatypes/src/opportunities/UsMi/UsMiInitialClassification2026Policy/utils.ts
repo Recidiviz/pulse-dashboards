@@ -35,50 +35,46 @@ export const incidentNotesSchema = z
   .partial()
   .passthrough();
 
+export const ageNotes = z
+  .object({
+    age: z.coerce.number(),
+  })
+  .passthrough();
+
+export const vfoNotes = z
+  .object({
+    assessmentDate: dateStringSchema,
+    vfoLevelDetail: z.string(),
+    vfoLevel: z.string(),
+  })
+  .passthrough();
+
+export const felonyConvictionNotes = z.array(
+  z.object({
+    description: z.string(),
+    imposedDate: dateStringSchema,
+    statute: z.string(),
+  }),
+);
+
+export const pastAdSegNotes = z
+  .object({
+    numAdSegStartsInPast36Months: z.coerce.number(),
+    adSegStartsList: z.array(z.record(z.unknown())).nullable(),
+  })
+  .passthrough();
+
 export const usMiClassificationFormBaseSchema = z
   .object({
-    ageNotes: z
-      .object({
-        age: z.coerce.number(),
-      })
-      .passthrough()
-      .nullable(),
-    vfoNotes: z
-      .object({
-        assessmentDate: dateStringSchema,
-        vfoLevelDetail: z.string(),
-        vfoLevel: z.string(),
-      })
-      .passthrough()
-      .nullable(),
+    ageNotes: ageNotes.nullable(),
+    vfoNotes: vfoNotes.nullable(),
     currentViolentIncNotes: incidentNotesSchema.nullable(),
     pastViolentIncNotes: incidentNotesSchema.nullable(),
     currentFightThreatPowIncNotes: incidentNotesSchema.nullable(),
     pastFightThreatPowIncNotes: incidentNotesSchema.nullable(),
     currentOtherIncNotes: incidentNotesSchema.nullable(),
-    felonyConvictionNotes: z
-      .array(
-        z.object({
-          description: z.string(),
-          imposedDate: dateStringSchema,
-          statute: z.string(),
-        }),
-      )
-      .nullable(),
-    pastAdSegNotes: z
-      .object({
-        numAdSegStartsInPast36Months: z.coerce.number(),
-        adSegStartsList: z
-          .array(
-            z.object({
-              adSegEndDateExclusive: dateStringSchema,
-              adSegStartDate: dateStringSchema,
-            }),
-          )
-          .nullable(),
-      })
-      .passthrough()
-      .nullable(),
+    felonyConvictionNotes: felonyConvictionNotes.nullable(),
+    pastAdSegNotes: pastAdSegNotes.nullable(),
     ageScore: z.coerce.number().nullable(),
     calculatedTotalScore: z.coerce.number().nullable(),
     currentFightThreatPowIncScore: z.coerce.number().nullable(),
@@ -91,3 +87,8 @@ export const usMiClassificationFormBaseSchema = z
   })
   .partial()
   .passthrough();
+
+export type incidentNotesSchema = z.infer<typeof incidentNotesSchema>;
+export type ageNotes = z.infer<typeof ageNotes>;
+export type vfoNotes = z.infer<typeof vfoNotes>;
+export type felonyConvictionNotes = z.infer<typeof felonyConvictionNotes>;

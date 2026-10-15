@@ -22,6 +22,7 @@ import { AssessmentOption, UsMiAssessmentQuestionSpec } from "~datatypes";
 import { palette } from "~design-system";
 import * as Styled from "~sentencing-client/components/CaseDetails/CaseDetails.styles";
 
+import { UsMiClassificationForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiInitialClassification2026Form";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import {
   FormInput,
@@ -29,9 +30,10 @@ import {
   QuestionBox,
   QuestionDescription,
   QuestionHeader,
+  QuestionStatusBadge,
   QuestionTitle,
   StyledQuestionButton,
-  ViewMoreCaseNotes,
+  ViewMoreNotes,
 } from "./Styles";
 
 type MiNumberQuestionSpec = Extract<
@@ -70,7 +72,6 @@ export const ClassificationQuestion = observer(function ClassificationQuestion({
       opportunityForm.updateDraftData(selectionKey, "");
       return;
     }
-
     const number = Number(value);
     if (bounds && number > bounds) {
       setError(`Counted as ${bounds} (max ${bounds})`);
@@ -89,8 +90,18 @@ export const ClassificationQuestion = observer(function ClassificationQuestion({
 
   const selection = opportunityForm.formData[selectionKey];
 
+  const { derivedData } = useOpportunityFormContext() as UsMiClassificationForm;
+  const scoreKey = `s${questionSection}q${questionNumber}Score` as Exclude<
+    Extract<keyof typeof derivedData, `${string}Score`>,
+    "totalScore"
+  >;
+
+  const score = derivedData[scoreKey];
+
+  const status = question.autofilled !== false && "AUTO-FILLED";
+
   return (
-    <QuestionBox $status={""}>
+    <QuestionBox $status={status}>
       <QuestionHeader id="question-header">
         <QuestionTitle>
           {questionNumber}: {question.title}
@@ -101,13 +112,17 @@ export const ClassificationQuestion = observer(function ClassificationQuestion({
             flexDirection: "row",
           }}
         >
+          {status && (
+            <QuestionStatusBadge $status={status}>{status}</QuestionStatusBadge>
+          )}
+
           <div
             style={{
               fontWeight: "600",
               color: "black",
             }}
           >
-            0
+            {score}
           </div>
         </div>
       </QuestionHeader>
@@ -131,7 +146,7 @@ export const ClassificationQuestion = observer(function ClassificationQuestion({
             <NumberMultiplierQuestion
               question={question}
               inputNumber={inputNumber}
-              score={0}
+              score={score || 0}
               onChange={onChange}
               showError={showError}
             />
@@ -142,14 +157,14 @@ export const ClassificationQuestion = observer(function ClassificationQuestion({
           style={{ display: "flex", flexDirection: "column", width: "40%" }}
         >
           {question && (
-            <ViewMoreCaseNotes
+            <ViewMoreNotes
               onClick={(e) => {
                 e.preventDefault();
                 updateShowMore(!showMore);
               }}
             >
               {showMore ? "Show Fewer" : "Show More"}
-            </ViewMoreCaseNotes>
+            </ViewMoreNotes>
           )}
         </div>
       </div>
@@ -171,9 +186,10 @@ export const NumberMultiplierQuestion = observer(
     onChange: ChangeEventHandler<HTMLInputElement>;
     showError: string | null | undefined;
   }) {
+    const maxBound = question.bounds > 0 && question.bounds;
     return (
       <div style={{ width: "100%" }}>
-        {question.bounds > 0 && <span>Max: {question.bounds}</span>}
+        {maxBound && <span>Max: {maxBound}</span>}
         <PlacementsSection>
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div>{question.countDescriptor}</div>

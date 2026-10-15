@@ -22,6 +22,12 @@ import { dateStringSchema } from "../../../utils/zod";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 import { usMiClassificationFormBaseSchema } from "./utils";
 
+export const prevLevelFiveNotes = z.object({
+  hadPrevTrueLevel5Release: z.coerce.number(),
+  prevReleaseDate: dateStringSchema.nullable(),
+  prevReleaseTrueLevel: z.string().nullable(),
+});
+
 export const usMiInitialClassificationSchema = opportunitySchemaBase.extend({
   eligibleCriteria: z
     .object({
@@ -30,16 +36,12 @@ export const usMiInitialClassificationSchema = opportunitySchemaBase.extend({
     .partial()
     .passthrough(),
   formInformation: usMiClassificationFormBaseSchema.extend({
-    prevLevelFiveNotes: z
-      .object({
-        hadPrevTrueLevel5Release: z.coerce.number(),
-        prevReleaseDate: dateStringSchema.nullable(),
-        prevReleaseTrueLevel: z.string().nullable(),
-      })
-      .nullable(),
+    prevLevelFiveNotes: prevLevelFiveNotes.nullable(),
     prevLevelFiveScore: z.coerce.number().nullable(),
   }),
 });
+
+export type prevLevelFiveNotes = z.infer<typeof prevLevelFiveNotes>;
 
 export type UsMiInitialClassificationRecord = ParsedRecord<
   typeof usMiInitialClassificationSchema

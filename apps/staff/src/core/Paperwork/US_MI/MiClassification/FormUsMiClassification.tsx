@@ -47,7 +47,7 @@ export const FormUsMiClassification = observer(function FormUsMiClassification({
   const formRef = React.useRef<HTMLDivElement>(null);
   const form = useOpportunityFormContext() as UsMiClassificationForm;
 
-  const { displayCustodyLevel, questionList } = form;
+  const { displayCustodyLevel, questionList, derivedData, formTitle } = form;
 
   const [headerVisible, isHeaderVisible] = useState(true);
 
@@ -73,7 +73,7 @@ export const FormUsMiClassification = observer(function FormUsMiClassification({
     <>
       <StickyHeader $headerVisible={headerVisible}>
         <div>
-          <FormTitle>INITIAL CLASSIFICATION</FormTitle>
+          <FormTitle>{formTitle}</FormTitle>
           <SubHeading $headerVisible={headerVisible}>
             Auto-filled fields are pulled from OMS. Review each and complete
             required fields.
@@ -103,13 +103,14 @@ export const FormUsMiClassification = observer(function FormUsMiClassification({
         }}
       >
         {questionList?.map((section, sectionIndex) => {
+          const { subscores } = derivedData;
           return (
             <div key={section.title}>
               <SectionHeading>
                 <div style={{ fontWeight: "600", color: "black" }}>
                   {section.title}
                 </div>
-                <div>Subtotal 0 pts</div>
+                <div>Subtotal: {subscores && subscores[sectionIndex]}</div>
               </SectionHeading>
               {section.questions.map((question) => {
                 questionNumber += 1;

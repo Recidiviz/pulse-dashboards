@@ -23,21 +23,22 @@ export type UsMiAssessmentQuestionNote = {
   notfound: string;
 };
 
-type SingleExtendedAssessmentQuestionSpec =
+export type SingleExtendedAssessmentQuestionSpec =
   SingleSectionAssessmentQuestionSpec & {
     description: string;
     note?: UsMiAssessmentQuestionNote;
+    autofilled?: boolean;
   };
 
-type MultiplierExtendedAssessmentQuestionSpec = {
+export type MultiplierExtendedAssessmentQuestionSpec = {
   title: string;
   type: "NUMBER";
   description: string;
   bounds: number;
   multiplier: number;
   countDescriptor?: string;
-  autofilled?: boolean;
   note?: UsMiAssessmentQuestionNote;
+  autofilled?: boolean;
 };
 
 export type UsMiAssessmentQuestionSpec =
@@ -184,7 +185,7 @@ export const miMaleAgeClassificationQuestions = {
 export const miMaleInitialClassificationQuestions = [
   miMaleAgeClassificationQuestions,
   ...miBaseInitialClassificationQuestions,
-];
+] satisfies UsMiAssessmentSectionsSpec[];
 
 const miFemaleAgeClassificationQuestions = {
   title: "Background Factors",
@@ -218,4 +219,4 @@ const miFemaleAgeClassificationQuestions = {
 export const miFemaleInitialClassificationQuestions = [
   miFemaleAgeClassificationQuestions,
   ...miBaseInitialClassificationQuestions,
-];
+] satisfies UsMiAssessmentSectionsSpec[];

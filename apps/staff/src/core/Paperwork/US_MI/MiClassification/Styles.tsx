@@ -122,7 +122,7 @@ export const VerticalHr = styled.hr`
 // for questions
 
 export const QuestionBox = styled.div<{
-  $status?: string;
+  $status?: string | boolean;
 }>`
   display: flex;
   flex-direction: column;
@@ -256,7 +256,7 @@ export const PlacementsSection = styled.div`
  * Case notes - show few and show more
  */
 
-export const ViewMoreCaseNotes = styled.button`
+export const ViewMoreNotes = styled.button`
   color: ${palette.pine4};
   border: none;
   background: none;
