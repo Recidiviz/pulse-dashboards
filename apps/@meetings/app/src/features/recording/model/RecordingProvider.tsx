@@ -21,6 +21,7 @@ import { createContext, ReactNode, useContext } from "react";
 import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 
 import { getMicErrorType, MIC_ERROR_MESSAGES } from "../lib/micError";
+import { useActiveMeetingStore } from "./activeMeetingStore";
 import { RecorderState } from "./recorderStates";
 import { useLeavePageWarning } from "./useLeavePageWarning";
 import { useRecorder } from "./useRecorder";
@@ -51,12 +52,14 @@ export function useAudioRecording() {
 export function RecordingProvider({ children }: { children: ReactNode }) {
   const recorder = useRecorder();
   const { showSnackbar } = useSnackbar();
+  const { markActivity } = useActiveMeetingStore();
 
   useLeavePageWarning(recorder.state !== "idle");
 
   const startRecording = async () => {
     try {
       await recorder.start();
+      markActivity();
       Sentry.logger.info("recording.start");
     } catch (err) {
       const micError = getMicErrorType(err);
@@ -72,11 +75,13 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
 
   const pauseRecording = () => {
     recorder.pause();
+    markActivity();
     Sentry.logger.info("recording.pause");
   };
 
   const resumeRecording = () => {
     recorder.resume();
+    markActivity();
     Sentry.logger.info("recording.resume");
   };
 

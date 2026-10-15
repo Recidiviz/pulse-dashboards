@@ -101,6 +101,41 @@ describe("activeMeetingStore", () => {
     });
   });
 
+  describe("activity tracking", () => {
+    beforeEach(() => {
+      jest.spyOn(Date, "now").mockReturnValue(1000);
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    it.each([
+      ["markActivity", () => useActiveMeetingStore.getState().markActivity()],
+      ["setNote", () => useActiveMeetingStore.getState().setNote("note")],
+      [
+        "setIsMinimized",
+        () => useActiveMeetingStore.getState().setIsMinimized(true),
+      ],
+      [
+        "setShowEndModal",
+        () => useActiveMeetingStore.getState().setShowEndModal(true),
+      ],
+      [
+        "setShowDiscardModal",
+        () => useActiveMeetingStore.getState().setShowDiscardModal(true),
+      ],
+    ])("%s updates lastActivityAt", (_, action) => {
+      action();
+      expect(useActiveMeetingStore.getState().lastActivityAt).toBe(1000);
+    });
+
+    it("setShowStillThereModal does not update lastActivityAt", () => {
+      useActiveMeetingStore.getState().setShowStillThereModal(true);
+      expect(useActiveMeetingStore.getState().lastActivityAt).not.toBe(1000);
+    });
+  });
+
   describe("cleanup", () => {
     it("resets all state and clears Sentry tag", () => {
       useActiveMeetingStore.getState().openMeeting({

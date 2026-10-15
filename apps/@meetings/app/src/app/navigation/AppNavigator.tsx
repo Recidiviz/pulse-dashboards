@@ -144,6 +144,7 @@ const AppNavigator = () => {
   const [, fontsLoadingError] = useFonts({
     Inter: require("~@meetings/app/shared/assets/fonts/Inter.ttf"),
     "LibreBaskerville-Bold": require("~@meetings/app/shared/assets/fonts/LibreBaskerville-Bold.ttf"),
+    RobotoMono: require("~@meetings/app/shared/assets/fonts/RobotoMono-Regular.ttf"),
   });
 
   useEffect(() => {

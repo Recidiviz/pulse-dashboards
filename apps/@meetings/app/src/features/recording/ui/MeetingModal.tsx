@@ -17,17 +17,26 @@
 
 import { Platform } from "react-native";
 
-import { useActiveMeetingStore } from "../model";
+import { useActiveMeetingStore, useStillTherePrompt } from "../model";
 import { DiscardMeetingModal } from "./DiscardMeetingModal";
 import { EndMeetingModal } from "./EndMeetingModal";
 import { MeetingFullSizeModal } from "./MeetingFullSizeModal";
 import { MeetingMinimizedModal } from "./MeetingMinimizedModal";
+import { StillThereModal } from "./StillThereModal";
 
 const isMobile = Platform.OS === "android" || Platform.OS === "ios";
 
 export function MeetingModal() {
-  const { person, meetingId, isMinimized, showDiscardModal, showEndModal } =
-    useActiveMeetingStore();
+  const {
+    person,
+    meetingId,
+    isMinimized,
+    showDiscardModal,
+    showEndModal,
+    showStillThereModal,
+  } = useActiveMeetingStore();
+
+  useStillTherePrompt();
 
   if (!meetingId || !person) return null;
 
@@ -38,6 +47,7 @@ export function MeetingModal() {
         (isMinimized ? <MeetingMinimizedModal /> : <MeetingFullSizeModal />)}
       {showEndModal && <EndMeetingModal />}
       {showDiscardModal && <DiscardMeetingModal />}
+      {showStillThereModal && <StillThereModal />}
     </>
   );
 }

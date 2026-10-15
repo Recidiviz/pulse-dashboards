@@ -21,3 +21,4 @@ export {
   useAudioRecording as useNewRecording,
 } from "./RecordingProvider";
 export * from "./types";
+export { useStillTherePrompt } from "./useStillTherePrompt";

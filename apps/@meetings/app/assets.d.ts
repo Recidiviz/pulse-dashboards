@@ -20,3 +20,9 @@ declare module "*.png" {
   const value: ImageSourcePropType;
   export default value;
 }
+
+declare module "*.wav" {
+  import { AudioSource } from "expo-audio";
+  const value: AudioSource;
+  export default value;
+}

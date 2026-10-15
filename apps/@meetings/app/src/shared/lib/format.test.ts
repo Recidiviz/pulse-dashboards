@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { formatDurationNumeric } from "./format";
+import { formatDurationHoursMinutes, formatDurationNumeric } from "./format";
 
 describe("formatDurationNumeric", () => {
   it("formats zero as 0:00", () => {
@@ -48,5 +48,26 @@ describe("formatDurationNumeric", () => {
   it("truncates sub-second precision", () => {
     expect(formatDurationNumeric(1500)).toBe("0:01");
     expect(formatDurationNumeric(59999)).toBe("0:59");
+  });
+});
+
+describe("formatDurationHoursMinutes", () => {
+  it("formats sub-hour durations as minutes", () => {
+    expect(formatDurationHoursMinutes(0)).toBe("0 min");
+    expect(formatDurationHoursMinutes(45 * 60_000)).toBe("45 min");
+  });
+
+  it("omits minutes on the exact hour", () => {
+    expect(formatDurationHoursMinutes(60 * 60_000)).toBe("1 hr");
+    expect(formatDurationHoursMinutes(120 * 60_000)).toBe("2 hr");
+  });
+
+  it("formats hours and minutes", () => {
+    expect(formatDurationHoursMinutes(65 * 60_000)).toBe("1 hr 5 min");
+    expect(formatDurationHoursMinutes(125 * 60_000)).toBe("2 hr 5 min");
+  });
+
+  it("truncates partial minutes", () => {
+    expect(formatDurationHoursMinutes(65 * 60_000 + 59_999)).toBe("1 hr 5 min");
   });
 });

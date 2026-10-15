@@ -31,8 +31,10 @@ type ActiveMeetingState = {
   isMinimized: boolean;
   showEndModal: boolean;
   showDiscardModal: boolean;
+  showStillThereModal: boolean;
   controlsDisabled: boolean;
   isSidebarCollapsed: boolean;
+  lastActivityAt: number;
 
   openMeeting: (params: {
     meetingId: string;
@@ -44,8 +46,10 @@ type ActiveMeetingState = {
   setIsMinimized: (isMinimized: boolean) => void;
   setShowDiscardModal: (showDiscardModal: boolean) => void;
   setShowEndModal: (showEndModal: boolean) => void;
+  setShowStillThereModal: (showStillThereModal: boolean) => void;
   setControlsDisabled: (disableControls: boolean) => void;
   setIsSidebarCollapsed: (isSidebarCollapsed: boolean) => void;
+  markActivity: () => void;
   cleanup: () => void;
 };
 
@@ -60,8 +64,10 @@ export const useActiveMeetingStore = create<ActiveMeetingState>()(
     isMinimized: false,
     showEndModal: false,
     showDiscardModal: false,
+    showStillThereModal: false,
     controlsDisabled: false,
     isSidebarCollapsed: false,
+    lastActivityAt: Date.now(),
 
     openMeeting: (params) => {
       Sentry.setTag("meetingId", params.meetingId);
@@ -73,12 +79,19 @@ export const useActiveMeetingStore = create<ActiveMeetingState>()(
         meetingTypeCategory: params.meetingTypeCategory,
       });
     },
-    setNote: (note) => set({ note }),
-    setIsMinimized: (isMinimized) => set({ isMinimized }),
-    setShowDiscardModal: (showDiscardModal) => set({ showDiscardModal }),
-    setShowEndModal: (showEndModal) => set({ showEndModal }),
+    setNote: (note) => set({ note, lastActivityAt: Date.now() }),
+    setIsMinimized: (isMinimized) =>
+      set({ isMinimized, lastActivityAt: Date.now() }),
+    setShowDiscardModal: (showDiscardModal) =>
+      set({ showDiscardModal, lastActivityAt: Date.now() }),
+    setShowEndModal: (showEndModal) =>
+      set({ showEndModal, lastActivityAt: Date.now() }),
+    setShowStillThereModal: (showStillThereModal) =>
+      set({ showStillThereModal }),
     setControlsDisabled: (controlsDisabled) => set({ controlsDisabled }),
-    setIsSidebarCollapsed: (isSidebarCollapsed) => set({ isSidebarCollapsed }),
+    setIsSidebarCollapsed: (isSidebarCollapsed) =>
+      set({ isSidebarCollapsed, lastActivityAt: Date.now() }),
+    markActivity: () => set({ lastActivityAt: Date.now() }),
     cleanup: () => {
       Sentry.setTag("meetingId", null);
       set(store.getInitialState());

@@ -78,6 +78,7 @@ module.exports = {
       fontFamily: {
         "libre-baskerville": ["LibreBaskerville-Bold", "serif"],
         inter: ["Inter", "sans-serif"],
+        "roboto-mono": ["RobotoMono", "monospace"],
       },
       keyframes: {
         "linear-progress-1": {

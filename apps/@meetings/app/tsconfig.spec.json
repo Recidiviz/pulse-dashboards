@@ -7,7 +7,7 @@
     "jsx": "react-jsx",
     "types": ["jest", "node"]
   },
-  "files": ["test-setup.ts", "images.d.ts", "css.d.ts"],
+  "files": ["test-setup.ts", "assets.d.ts", "css.d.ts"],
   "include": [
     "jest.config.ts",
     "src/**/*.ts",

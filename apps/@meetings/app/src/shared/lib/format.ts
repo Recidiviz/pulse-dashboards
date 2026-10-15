@@ -48,6 +48,17 @@ export const formatDurationNumeric = (ms: number) => {
   return `0:${seconds.toString().padStart(2, "0")}`;
 };
 
+// e.g. "1 hr 5 min", "1 hr", "45 min"
+export const formatDurationHoursMinutes = (ms: number) => {
+  const totalMinutes = Math.floor(ms / 60_000);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+
+  if (hours === 0) return `${minutes} min`;
+  if (minutes === 0) return `${hours} hr`;
+  return `${hours} hr ${minutes} min`;
+};
+
 export const humanReadableTitleCase = (str: string): string =>
   startCase(str.toLowerCase());
 
