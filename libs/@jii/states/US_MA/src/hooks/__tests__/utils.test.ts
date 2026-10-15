@@ -28,21 +28,25 @@ describe("toChecklistSections", () => {
       id: "RECEIVED_STATE_ID",
       checked: false,
       isPersonalized: false,
+      hasSaveError: false,
     } as const;
     const backupHousing = {
       id: "BACKUP_HOUSING",
       checked: true,
       isPersonalized: false,
+      hasSaveError: false,
     } as const;
     const birthCertificate = {
       id: "HAS_BIRTH_CERTIFICATE",
       checked: false,
       isPersonalized: false,
+      hasSaveError: false,
     } as const;
     const housingPlanAgreement = {
       id: "HOUSING_PLAN_AGREEMENT",
       checked: false,
       isPersonalized: true,
+      hasSaveError: false,
     } as const;
 
     expect(
@@ -73,6 +77,7 @@ describe("toChecklistItems", () => {
         { itemId: "HOUSING_PLAN_AGREEMENT", checked: false },
       ],
       [],
+      [],
     );
     expect(items.map((item) => item.id)).toEqual([
       "HOUSING_PLAN_AGREEMENT",
@@ -88,6 +93,7 @@ describe("toChecklistItems", () => {
         { itemId: "FINALIZED_HOUSING", checked: false },
       ],
       [],
+      [],
     );
     expect(items.map((item) => item.checked)).toEqual([true, false]);
   });
@@ -99,10 +105,36 @@ describe("toChecklistItems", () => {
         { itemId: "HOUSING_PLAN_AGREEMENT", checked: false }, // has a showIf condition in config
       ],
       [],
+      [],
     );
     expect(items).toEqual([
-      { id: "HOUSING_PLAN_AGREEMENT", checked: false, isPersonalized: true },
-      { id: "BACKUP_HOUSING", checked: false, isPersonalized: false },
+      {
+        id: "HOUSING_PLAN_AGREEMENT",
+        checked: false,
+        isPersonalized: true,
+        hasSaveError: false,
+      },
+      {
+        id: "BACKUP_HOUSING",
+        checked: false,
+        isPersonalized: false,
+        hasSaveError: false,
+      },
+    ]);
+  });
+
+  test("sets hasSaveError on failed items and not the rest", () => {
+    const items = toChecklistItems(
+      [
+        { itemId: "BACKUP_HOUSING", checked: false },
+        { itemId: "FINALIZED_HOUSING", checked: false },
+      ],
+      [],
+      ["FINALIZED_HOUSING"],
+    );
+    expect(items.map((item) => [item.id, item.hasSaveError])).toEqual([
+      ["BACKUP_HOUSING", false],
+      ["FINALIZED_HOUSING", true],
     ]);
   });
 
@@ -117,6 +149,7 @@ describe("toChecklistItems", () => {
         { itemId: "BACKUP_HOUSING", checked: false },
         { itemId: "FINALIZED_HOUSING", checked: true },
       ],
+      [],
     );
     expect(items.map((item) => item.checked)).toEqual([false, true]);
   });
@@ -127,6 +160,7 @@ describe("toChecklistItems", () => {
         { itemId: "REMOVED_ITEM", checked: true },
         { itemId: "BACKUP_HOUSING", checked: false },
       ],
+      [],
       [],
     );
     expect(items.map((item) => item.id)).toEqual(["BACKUP_HOUSING"]);

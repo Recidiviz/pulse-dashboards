@@ -24,6 +24,7 @@ export type ReentryChecklistItem = {
   id: ReentryChecklistItemId;
   checked: boolean;
   isPersonalized: boolean;
+  hasSaveError: boolean;
 };
 
 export type ReentryChecklistChange = {

@@ -34,6 +34,7 @@ export const ChecklistContent = () => {
   const isProfileCompleted = status === "COMPLETED";
   const sections = toChecklistSections(items);
   const personalizedBadge = t(($) => $.reentry.checklist.personalizedBadge);
+  const itemSaveError = t(($) => $.reentry.checklist.itemSaveError);
 
   return (
     <>
@@ -60,19 +61,24 @@ export const ChecklistContent = () => {
             description={sectionCopy.description}
             progressLabel={progressLabel}
           >
-            {section.items.map((item) => (
-              <ChecklistItem
-                key={item.id}
-                label={t(($) => $.reentry.checklist.itemCopy[item.id].label)}
-                checked={item.checked}
-                onCheckedChange={(checked) => setChecked(item.id, checked)}
-                badge={
-                  item.isPersonalized && (
-                    <Chip color="blue">{personalizedBadge}</Chip>
-                  )
-                }
-              />
-            ))}
+            {section.items.map((item) => {
+              const error = item.hasSaveError ? itemSaveError : undefined;
+
+              return (
+                <ChecklistItem
+                  key={item.id}
+                  label={t(($) => $.reentry.checklist.itemCopy[item.id].label)}
+                  checked={item.checked}
+                  onCheckedChange={(checked) => setChecked(item.id, checked)}
+                  badge={
+                    item.isPersonalized && (
+                      <Chip color="blue">{personalizedBadge}</Chip>
+                    )
+                  }
+                  error={error}
+                />
+              );
+            })}
           </ChecklistSection>
         );
       })}

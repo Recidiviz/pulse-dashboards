@@ -17,6 +17,7 @@
 
 import {
   reentryChecklistConfig,
+  type ReentryChecklistItemId,
   reentryChecklistItemIds,
   reentryChecklistSectionIds,
   type ReentryQuestionnaireQuestionFormat,
@@ -35,11 +36,13 @@ import {
  *
  * Each item shows its saved value, unless a change to it is still being saved.
  * pendingChanges are in the order the resident made them, so the latest
- * change to an item wins.
+ * change to an item wins. Items in failedItemIds are marked as having a save
+ * error.
  */
 export function toChecklistItems(
   savedItems: { itemId: string; checked: boolean }[],
   pendingChanges: ReentryChecklistChange[],
+  failedItemIds: ReentryChecklistItemId[],
 ): ReentryChecklistItem[] {
   const checkedById = new Map(
     savedItems.map((item) => [item.itemId, item.checked]),
@@ -58,6 +61,7 @@ export function toChecklistItems(
         id,
         checked,
         isPersonalized: reentryChecklistConfig[id].showIf !== undefined,
+        hasSaveError: failedItemIds.includes(id),
       },
     ];
   });

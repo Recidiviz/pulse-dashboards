@@ -98,6 +98,11 @@ const isChecked = (
   id: string,
 ) => result.current.items.find((item) => item.id === id)?.checked;
 
+const hasSaveError = (
+  result: { current: ReturnType<typeof useReentryChecklist> },
+  id: string,
+) => result.current.items.find((item) => item.id === id)?.hasSaveError;
+
 test("saves the change", async () => {
   const { result } = render();
 
@@ -159,6 +164,74 @@ test("a failed save is reported, and the item goes back", async () => {
   await waitFor(() =>
     expect(isChecked(result, "HOUSING_PLAN_AGREEMENT")).toBe(false),
   );
+});
+
+describe("save errors", () => {
+  test("sets hasSaveError on the failed item and not the rest", async () => {
+    updateItem.mockRejectedValueOnce(new Error("Save failed"));
+    const { result } = render();
+
+    act(() => result.current.setChecked("HOUSING_PLAN_AGREEMENT", true));
+    act(() => result.current.setChecked("BACKUP_HOUSING", false));
+
+    await waitFor(() =>
+      expect(hasSaveError(result, "HOUSING_PLAN_AGREEMENT")).toBe(true),
+    );
+    expect(hasSaveError(result, "BACKUP_HOUSING")).toBe(false);
+  });
+
+  test("clears as soon as the item is tapped again", async () => {
+    updateItem
+      .mockRejectedValueOnce(new Error("Save failed"))
+      .mockImplementationOnce(neverFinishes);
+    const { result } = render();
+
+    act(() => result.current.setChecked("HOUSING_PLAN_AGREEMENT", true));
+    await waitFor(() =>
+      expect(hasSaveError(result, "HOUSING_PLAN_AGREEMENT")).toBe(true),
+    );
+
+    // Gives the retry a later submittedAt than the failed save. setupTests
+    // re-freezes the clock before each test.
+    freeze(new Date(Date.now() + 1));
+    act(() => result.current.setChecked("HOUSING_PLAN_AGREEMENT", true));
+    // The retry never finishes, so the error clears because it's in progress.
+    await waitFor(() =>
+      expect(hasSaveError(result, "HOUSING_PLAN_AGREEMENT")).toBe(false),
+    );
+  });
+
+  test("stays cleared once a later save of the item succeeds", async () => {
+    updateItem.mockRejectedValueOnce(new Error("Save failed"));
+    const { result } = render();
+
+    act(() => result.current.setChecked("HOUSING_PLAN_AGREEMENT", true));
+    await waitFor(() =>
+      expect(hasSaveError(result, "HOUSING_PLAN_AGREEMENT")).toBe(true),
+    );
+
+    freeze(new Date(Date.now() + 1));
+    act(() => result.current.setChecked("HOUSING_PLAN_AGREEMENT", true));
+    await waitFor(() => expect(queryClient.isMutating()).toBe(0));
+    expect(hasSaveError(result, "HOUSING_PLAN_AGREEMENT")).toBe(false);
+  });
+
+  test("shows the error when the item's latest save failed, even after an earlier one succeeded", async () => {
+    updateItem
+      .mockResolvedValueOnce({})
+      .mockRejectedValueOnce(new Error("Save failed"));
+    const { result } = render();
+
+    act(() => result.current.setChecked("HOUSING_PLAN_AGREEMENT", true));
+    // Gives the second save a later submittedAt (the test setup freezes the
+    // clock).
+    freeze(new Date(Date.now() + 1));
+    act(() => result.current.setChecked("HOUSING_PLAN_AGREEMENT", false));
+
+    await waitFor(() =>
+      expect(hasSaveError(result, "HOUSING_PLAN_AGREEMENT")).toBe(true),
+    );
+  });
 });
 
 test("sends one save at a time", async () => {
@@ -225,6 +298,8 @@ describe("back-to-back clicks", () => {
     expect(captureException).toHaveBeenCalledTimes(1);
     expect(server["HOUSING_PLAN_AGREEMENT"]).toBe(true);
     expect(isChecked(result, "HOUSING_PLAN_AGREEMENT")).toBe(true);
+    // The last save of the item succeeded, so no error is left on it.
+    expect(hasSaveError(result, "HOUSING_PLAN_AGREEMENT")).toBe(false);
   });
 
   test("keeps showing a later click when an earlier save's refetch lands", async () => {

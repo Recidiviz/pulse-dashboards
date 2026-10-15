@@ -69,13 +69,14 @@ export function useReentryChecklist() {
     onError: (error) => captureException(error),
   });
 
-  // Every save still in progress, not just the latest one useMutation tracks,
-  // so clicking several items in a row shows them all. See
+  // Every save, not just the latest one useMutation tracks, so clicking
+  // several items in a row shows them all. See
   // https://tanstack.com/query/latest/docs/framework/react/guides/optimistic-updates
-  const pendingSaves = useMutationState({
-    filters: { mutationKey: [CHECKLIST_SAVE_ID], status: "pending" },
+  const allSaves = useMutationState({
+    filters: { mutationKey: [CHECKLIST_SAVE_ID] },
     select: (mutation) => ({
       submittedAt: mutation.state.submittedAt,
+      status: mutation.state.status,
       // Cast to ReentryChecklistChange since variables returns an unknown type,
       // and we know that the variables will match the ReentryChecklistChange shape.
       change: mutation.state.variables as ReentryChecklistChange,
@@ -85,11 +86,25 @@ export function useReentryChecklist() {
   // Sorted by when each save was submitted, so a later click on an item
   // always overrides an earlier one. See
   // https://tanstack.com/query/latest/docs/framework/react/guides/optimistic-updates#if-the-mutation-and-the-query-dont-live-in-the-same-component
-  const pendingChanges = [...pendingSaves]
-    .sort((a, b) => a.submittedAt - b.submittedAt)
+  const orderedSaves = [...allSaves].sort(
+    (a, b) => a.submittedAt - b.submittedAt,
+  );
+
+  const pendingChanges = orderedSaves
+    .filter((save) => save.status === "pending")
     .map((save) => save.change);
 
-  const items = toChecklistItems(savedItems, pendingChanges);
+  // An item shows an error if its most recent save failed. Tapping it again
+  // starts a newer save, which clears the error. Later saves overwrite earlier
+  // ones in the map, leaving each item's most recent.
+  const latestSaveStatusByItem = new Map(
+    orderedSaves.map((save) => [save.change.itemId, save.status]),
+  );
+  const failedItemIds = [...latestSaveStatusByItem]
+    .filter(([, status]) => status === "error")
+    .map(([itemId]) => itemId);
+
+  const items = toChecklistItems(savedItems, pendingChanges, failedItemIds);
 
   return {
     items,

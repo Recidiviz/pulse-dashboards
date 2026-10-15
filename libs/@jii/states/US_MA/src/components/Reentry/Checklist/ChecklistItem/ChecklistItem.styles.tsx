@@ -16,12 +16,30 @@
 // =============================================================================
 
 import { rem } from "polished";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { palette, spacing, typography } from "~design-system";
 
+export const Wrapper = styled.div<{ $hasError: boolean }>`
+  position: relative;
+
+  ${({ $hasError }) =>
+    $hasError &&
+    css`
+      &::before {
+        background: ${palette.signal.error};
+        bottom: 0;
+        content: "";
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: ${rem(spacing.xs)};
+      }
+    `}
+`;
+
 export const Row = styled.div`
-  align-items: center;
+  align-items: flex-start;
   display: flex;
   gap: ${rem(spacing.md)};
   min-height: ${rem(64)};
@@ -29,16 +47,26 @@ export const Row = styled.div`
   position: relative;
 `;
 
+export const Content = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: ${rem(spacing.sm)};
+`;
+
+export const ErrorMessage = styled.p`
+  ${typography.Sans14}
+
+  color: ${palette.signal.error};
+  margin: 0;
+`;
+
 export const Label = styled.label`
   ${typography.Sans16}
 
-  align-items: flex-start;
   color: ${palette.pine2};
   cursor: pointer;
-  display: flex;
-  flex: 1;
   font-weight: 500;
-  gap: ${rem(spacing.md)};
 
   /* Stretches the label over the whole row so all of it is clickable. */
   &::after {
