@@ -21,8 +21,9 @@ import socket
 from unittest.mock import patch
 
 import pytest
+from weasyprint import URLFetcher
 
-from app.pdf.renderer import _safe_url_fetcher
+from app.pdf.renderer import SafeURLFetcher
 
 
 class TestSafeUrlFetcher:
@@ -37,7 +38,7 @@ class TestSafeUrlFetcher:
     )
     def test_blocks_known_metadata_hosts(self, url):
         with pytest.raises(ValueError, match="URL fetch blocked"):
-            _safe_url_fetcher(url)
+            SafeURLFetcher().fetch(url)
 
     # Blocked by literal private IP
     @pytest.mark.parametrize(
@@ -51,7 +52,7 @@ class TestSafeUrlFetcher:
     )
     def test_blocks_private_ip_literals(self, url):
         with pytest.raises(ValueError, match="URL fetch blocked"):
-            _safe_url_fetcher(url)
+            SafeURLFetcher().fetch(url)
 
     # DNS resolves to private IP (rebinding attack)
     def test_blocks_dns_resolving_to_private_ip(self):
@@ -59,7 +60,7 @@ class TestSafeUrlFetcher:
         mock_result = [(socket.AF_INET, None, None, None, (private_ip, 80))]
         with patch("app.pdf.renderer.socket.getaddrinfo", return_value=mock_result):
             with pytest.raises(ValueError, match="resolves to private IP"):
-                _safe_url_fetcher("http://evil.example.com/resource")
+                SafeURLFetcher().fetch("http://evil.example.com/resource")
 
     # Unresolvable host
     def test_blocks_unresolvable_hostname(self):
@@ -68,15 +69,16 @@ class TestSafeUrlFetcher:
             side_effect=socket.gaierror("Name not resolved"),
         ):
             with pytest.raises(ValueError, match="cannot resolve"):
-                _safe_url_fetcher("http://not-a-real-host.invalid/")
+                SafeURLFetcher().fetch("http://not-a-real-host.invalid/")
 
-    # Legitimate external URL passes through to weasyprint
+    # Legitimate external URL passes through to WeasyPrint's own fetcher.
+    # Patching URLFetcher.fetch is what `super().fetch(...)` resolves to, so
+    # this asserts the guard delegates instead of hitting the network.
     def test_allows_legitimate_external_url(self):
         public_ip = "93.184.216.34"  # example.com
         mock_result = [(socket.AF_INET, None, None, None, (public_ip, 80))]
         with patch("app.pdf.renderer.socket.getaddrinfo", return_value=mock_result):
-            with patch("app.pdf.renderer.weasyprint.default_url_fetcher") as mock_fetch:
-                mock_fetch.return_value = {"content": b"", "mime_type": "image/png"}
-                result = _safe_url_fetcher("http://example.com/image.png")
+            with patch.object(URLFetcher, "fetch", return_value=object()) as mock_fetch:
+                result = SafeURLFetcher().fetch("http://example.com/image.png")
                 mock_fetch.assert_called_once()
                 assert result is not None

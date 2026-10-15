@@ -21,8 +21,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 import jinja2
-import weasyprint
-from weasyprint import CSS, HTML
+from weasyprint import CSS, HTML, URLFetcher
 
 _BLOCKED_HOSTS = frozenset({"metadata.google.internal", "metadata", "169.254.169.254"})
 
@@ -35,13 +34,14 @@ def _is_blocked_ip(addr_str: str) -> bool:
         return False
 
 
-def _safe_url_fetcher(
-    url: str, timeout: int = 10, ssl_context: object = None
-) -> object:
-    """URL fetcher for WeasyPrint that blocks internal/metadata endpoints.
+def _assert_url_allowed(url: str) -> None:
+    """Reject URLs pointing at internal/metadata endpoints.
 
     Resolves DNS before allowing requests to prevent DNS rebinding attacks
     where attacker-controlled domains point to internal IPs.
+
+    Raises:
+        ValueError: if the URL must not be fetched.
     """
     parsed = urlparse(url)
     hostname = parsed.hostname or ""
@@ -65,7 +65,18 @@ def _safe_url_fetcher(
     except socket.gaierror:
         raise ValueError(f"URL fetch blocked: cannot resolve {hostname}")
 
-    return weasyprint.default_url_fetcher(url, timeout=timeout, ssl_context=ssl_context)
+
+class SafeURLFetcher(URLFetcher):
+    """URL fetcher for WeasyPrint that blocks internal/metadata endpoints.
+
+    WeasyPrint 70 replaced the ``default_url_fetcher`` function with this
+    class, so the guard is applied by overriding ``fetch`` and delegating to
+    the base implementation once the URL has been cleared.
+    """
+
+    def fetch(self, url: str, headers: object = None) -> object:
+        _assert_url_allowed(url)
+        return super().fetch(url, headers)
 
 
 class PDFRenderer:
@@ -80,7 +91,9 @@ class PDFRenderer:
     def render(self, template_name: str, context: dict, css_file: str) -> bytes:
         html_string = self._env.get_template(template_name).render(**context)
         css = CSS(filename=str(self._styles_dir / css_file))
-        return HTML(string=html_string, url_fetcher=_safe_url_fetcher).write_pdf(
+        # A fetcher instance carries per-request state, so build one per render
+        # rather than sharing a module-level instance across concurrent renders.
+        return HTML(string=html_string, url_fetcher=SafeURLFetcher()).write_pdf(
             stylesheets=[css],
             presentational_hints=True,
             optimize_images=True,
