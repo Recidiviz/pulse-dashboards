@@ -1,0 +1,8 @@
+model SavedForm {
+  stateCode    StateCode
+  lastEditedAt DateTime
+  lastEditedBy String
+  residentId   BigInt
+
+  @@id([stateCode, lastEditedAt, residentId])
+}

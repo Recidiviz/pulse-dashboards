@@ -53,10 +53,12 @@ export function buildCommonServer<TRouter extends AnyRouter>(
   }
   const server = Fastify({
     logger: logger,
-    // tRPC batches join procedure names into a single route param, which
-    // exceeds Fastify's default limit of 100 characters and 404s.
-    // See https://trpc.io/docs/server/adapters/fastify#create-fastify-server
-    maxParamLength: 5000,
+    routerOptions: {
+      // tRPC batches join procedure names into a single route param, which
+      // exceeds Fastify's default limit of 100 characters and 404s.
+      // See https://trpc.io/docs/server/adapters/fastify#create-fastify-server
+      maxParamLength: 5000,
+    },
   });
 
   setupFastifyErrorHandler(server);

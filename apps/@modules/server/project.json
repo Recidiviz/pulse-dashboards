@@ -5,6 +5,21 @@
   "projectType": "application",
   "tags": ["scope:server"],
   "targets": {
+    "requires-sops-env:dev": {
+      "continuous": true,
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "dev",
+      "dependsOn": ["build", "^local-dbs"],
+      "options": {
+        "buildTarget": "@modules/server:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "dev": {
+          "buildTarget": "@modules/server:build:dev"
+        }
+      }
+    },
     "build": {
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
@@ -19,6 +34,7 @@
         "generatePackageJson": true,
         "minify": true,
         "target": "node22",
+        "external": ["@prisma/client"],
         "esbuildOptions": {
           "sourcemap": true,
           "outExtension": {
@@ -40,8 +56,15 @@
         }
       }
     },
-    "require-sops-env:test": {
+    "requires-sops-env:test": {
       "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@modules-server/prisma"],
+          "target": "prisma-generate"
+        }
+      ],
+      "outputs": ["{workspaceRoot}/coverage/apps/modules"],
       "cache": true,
       "options": {
         "command": "cd apps/@modules/server && vitest run",
@@ -78,24 +101,6 @@
     "prune": {
       "dependsOn": ["prune-lockfile", "copy-workspace-modules"],
       "executor": "nx:noop"
-    },
-    "requires-sops-env:serve": {
-      "continuous": true,
-      "executor": "@nx/js:node",
-      "defaultConfiguration": "development",
-      "dependsOn": ["build"],
-      "options": {
-        "buildTarget": "@modules/server:build",
-        "runBuildTargetDependencies": false
-      },
-      "configurations": {
-        "development": {
-          "buildTarget": "@modules/server:build:development"
-        },
-        "production": {
-          "buildTarget": "@modules/server:build:production"
-        }
-      }
     },
     "container": {
       "executor": "@nx-tools/nx-container:build",

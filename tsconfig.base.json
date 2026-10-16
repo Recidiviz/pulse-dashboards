@@ -89,6 +89,7 @@
       "~@modules/UsTnReclassification": [
         "./libs/@modules/UsTnReclassification/src/index.ts"
       ],
+      "~@modules-server/prisma": ["./libs/@modules-server/prisma/src/index.ts"],
       "~@modules-server/trpc-base": [
         "./libs/@modules-server/trpc-base/src/index.ts"
       ],

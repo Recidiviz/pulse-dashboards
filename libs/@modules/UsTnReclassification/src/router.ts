@@ -15,10 +15,43 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { z } from "zod";
+
+import { getPrismaClient } from "~@modules-server/prisma";
 import { auth0Procedure, router } from "~@modules-server/trpc-base";
+
+const saveArgs = z.object({
+  editor: z.string(),
+  residentId: z.number(),
+});
 
 export const moduleRouter = router({
   reclass: auth0Procedure.query(() => {
     return "Hi from TN";
+  }),
+
+  getForm: auth0Procedure.input(String).query(async (opts) => {
+    const client = getPrismaClient();
+
+    const res = await client.savedForm.findMany({
+      where: { lastEditedBy: opts.input },
+    });
+
+    return res;
+  }),
+
+  saveForm: auth0Procedure.input(saveArgs).mutation(async (opts) => {
+    const client = getPrismaClient();
+
+    const res = await client.savedForm.create({
+      data: {
+        lastEditedBy: opts.input.editor,
+        lastEditedAt: new Date(),
+        residentId: opts.input.residentId,
+        stateCode: "US_TN",
+      },
+    });
+
+    return res;
   }),
 });

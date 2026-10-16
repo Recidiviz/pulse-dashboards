@@ -19,7 +19,7 @@ import { createTRPCClient, httpBatchLink, TRPCClient } from "@trpc/client";
 import superjson from "superjson";
 import { beforeAll } from "vitest";
 
-import { AppRouter } from "~@modules-server/trpc-base";
+import { AppRouter } from "~@modules-server/trpc-router";
 
 import { testServer } from "./setup";
 
