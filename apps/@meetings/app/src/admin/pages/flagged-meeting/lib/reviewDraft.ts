@@ -31,10 +31,13 @@ export type CoveredSection = "CASE_NOTE" | "ACTION_ITEMS";
 export interface ReviewDraft {
   outcome: OutcomeKind | null;
   followUp: FollowUp;
-  correctedGrade: "GOOD" | "PARTIAL";
+  /** Null when there are no ratings to correct, as on an in-app-only flag. */
+  correctedGrade: "GOOD" | "PARTIAL" | null;
   overriddenSources: OverrideSource[];
   /** Null until the reviewer answers; empty means "neither section". */
   appliesTo: CoveredSection[] | null;
+  notetakingPromptFollowUp: boolean;
+  judgePromptFollowUp: boolean;
   notes: string;
 }
 
@@ -72,6 +75,18 @@ export function overridableSources(
   };
 }
 
+/**
+ * Whether only in-app feedback flagged the section. A Not BAD then has no
+ * ratings to correct or override, since a thumbs down is not a grade.
+ */
+export function isInAppOnlyFlag(
+  details: Pick<FlaggedMeetingDetails, "sections">,
+  section: FlagSection,
+): boolean {
+  const flag = details.sections[section];
+  return flag.vote && !flag.llm && !flag.labelStudio;
+}
+
 export function emptyDraft(sources: OverrideSource[]): ReviewDraft {
   return {
     outcome: null,
@@ -80,6 +95,8 @@ export function emptyDraft(sources: OverrideSource[]): ReviewDraft {
     // Overriding everything that flagged it is the usual reason to say Not BAD.
     overriddenSources: sources,
     appliesTo: null,
+    notetakingPromptFollowUp: false,
+    judgePromptFollowUp: false,
     notes: "",
   };
 }
@@ -89,11 +106,15 @@ export function draftFromOutcome(outcome: ReviewOutcomeSummary): ReviewDraft {
   return {
     outcome: outcome.outcome,
     followUp: outcome.followUp ?? "NO_ACTION",
-    correctedGrade: outcome.correctedGrade ?? "GOOD",
+    // A Not BAD without a grade was an in-app-only flag, which stays ungraded.
+    correctedGrade:
+      outcome.outcome === "NOT_BAD" ? outcome.correctedGrade : "GOOD",
     overriddenSources: outcome.overriddenSources,
     appliesTo: outcome.appliesTo.filter(
       (s): s is CoveredSection => s !== "OVERALL",
     ),
+    notetakingPromptFollowUp: outcome.notetakingPromptFollowUp,
+    judgePromptFollowUp: outcome.judgePromptFollowUp,
     notes: outcome.notes ?? "",
   };
 }
@@ -130,6 +151,8 @@ export function toRecordInput({
     stateCode,
     meetingId,
     section,
+    notetakingPromptFollowUp: draft.notetakingPromptFollowUp,
+    judgePromptFollowUp: draft.judgePromptFollowUp,
     ...(draft.notes.trim() && { notes: draft.notes.trim() }),
   };
   const appliesTo = needsAppliesTo(section, draft)
@@ -149,10 +172,11 @@ export function toRecordInput({
         ...base,
         ...appliesTo,
         outcome: "NOT_BAD",
-        correctedGrade: draft.correctedGrade,
-        overriddenSources: draft.overriddenSources,
+        ...(draft.correctedGrade && { correctedGrade: draft.correctedGrade }),
+        overriddenSources: draft.correctedGrade ? draft.overriddenSources : [],
         // "User caught it" describes a real BAD; a Not BAD flag was never wrong output.
-        followUp: draft.followUp === "EMAILED_PO" ? "EMAILED_PO" : "NO_ACTION",
+        followUp:
+          draft.followUp === "EMAIL_STAFF" ? "EMAIL_STAFF" : "NO_ACTION",
       };
     case "OTHER":
       return {

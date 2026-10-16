@@ -311,6 +311,7 @@ describe("computeSectionReviews", () => {
     overrides: Partial<ReviewOutcomeRow> = {},
   ): ReviewOutcomeRow {
     return {
+      id: "outcome-1",
       meetingId: "m1",
       section: "CASE_NOTE",
       pipelineRunId: "run-1",
@@ -319,6 +320,10 @@ describe("computeSectionReviews", () => {
       correctedGrade: null,
       overriddenSources: [],
       appliesTo: [],
+      notetakingPromptFollowUp: false,
+      judgePromptFollowUp: false,
+      staffEmailSentAt: null,
+      staffEmailSentBy: null,
       notes: null,
       reviewerEmail: "admin@recidiviz.org",
       createdAt: OUTCOME_AT,

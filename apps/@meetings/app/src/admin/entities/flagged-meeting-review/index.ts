@@ -21,8 +21,10 @@ export {
   type MeetingReviewState,
   meetingReviewState,
   outcomeLabel,
+  promptFollowUpLabel,
   reopenSentence,
   reviewableSections,
   SECTION_LABEL,
   SECTION_ORDER,
+  staffEmailStatus,
 } from "./lib/review";

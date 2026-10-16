@@ -69,11 +69,17 @@ export type ReopenReason =
   | "outputs_regenerated";
 
 export interface ReviewOutcomeSummary {
+  id: string;
   outcome: ReviewOutcomeKind;
   followUp: ReviewFollowUp | null;
   correctedGrade: ReviewCorrectedGrade | null;
   overriddenSources: ReviewSource[];
   appliesTo: ReviewSection[];
+  notetakingPromptFollowUp: boolean;
+  judgePromptFollowUp: boolean;
+  /** Set once someone marks an EMAIL_STAFF follow-up's email as sent. */
+  staffEmailSentAt: Date | null;
+  staffEmailSentBy: string | null;
   notes: string | null;
   reviewerEmail: string;
   createdAt: Date;
@@ -115,6 +121,10 @@ const recordOutcomeBase = {
   meetingId: z.string(),
   section: z.nativeEnum(ReviewSection),
   notes: z.string().trim().max(4000).optional(),
+  /** The reviewer thinks the notetaking prompt may need an update. */
+  notetakingPromptFollowUp: z.boolean().optional(),
+  /** The reviewer thinks the LLM judge prompt may need an update. */
+  judgePromptFollowUp: z.boolean().optional(),
 };
 
 export const recordOutcomeInput = z
@@ -128,11 +138,12 @@ export const recordOutcomeInput = z
     z.object({
       ...recordOutcomeBase,
       outcome: z.literal(ReviewOutcomeKind.NOT_BAD),
-      correctedGrade: z.nativeEnum(ReviewCorrectedGrade),
+      /** Omitted when only in-app feedback flagged the section, so there is no grade to correct. */
+      correctedGrade: z.nativeEnum(ReviewCorrectedGrade).optional(),
       /** The ratings to replace with correctedGrade. Label Studio is written to, not just recorded. */
       overriddenSources: z.array(z.nativeEnum(ReviewSource)),
-      /** Whether the reviewer emailed the PO; "user caught it" only applies to a real BAD. */
-      followUp: z.enum([ReviewFollowUp.NO_ACTION, ReviewFollowUp.EMAILED_PO]),
+      /** Whether the staff member needs an email; "user caught it" only applies to a real BAD. */
+      followUp: z.enum([ReviewFollowUp.NO_ACTION, ReviewFollowUp.EMAIL_STAFF]),
       appliesTo: appliesToSchema,
     }),
     z.object({
@@ -143,6 +154,17 @@ export const recordOutcomeInput = z
     }),
   ])
   .superRefine((input, ctx) => {
+    if (
+      input.outcome === ReviewOutcomeKind.NOT_BAD &&
+      input.overriddenSources.length > 0 &&
+      input.correctedGrade === undefined
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["correctedGrade"],
+        message: "Overriding a rating needs a corrected grade",
+      });
+    }
     const needsAppliesTo =
       input.section === ReviewSection.OVERALL &&
       input.outcome !== ReviewOutcomeKind.OTHER;
@@ -176,6 +198,34 @@ export const listFlaggedMeetingsInput = z.object({
 });
 
 export type ListFlaggedMeetingsInput = z.infer<typeof listFlaggedMeetingsInput>;
+
+// =============================================================================
+// Staff emails
+// =============================================================================
+
+export const setStaffEmailSentInput = z.object({
+  stateCode: z.nativeEnum(StateCode),
+  outcomeId: z.string(),
+  /** False undoes an earlier "Mark as sent". */
+  sent: z.boolean(),
+});
+
+/** A current outcome whose follow-up is to email the staff member who held the meeting. */
+export interface StaffEmailTask {
+  outcomeId: string;
+  stateCode: StateCode;
+  meetingId: string;
+  /** Null when the meeting has since been deleted. */
+  startTime: Date | null;
+  staffEmail: string | null;
+  section: ReviewSection;
+  outcome: ReviewOutcomeKind;
+  notes: string | null;
+  reviewerEmail: string;
+  recordedAt: Date;
+  sentAt: Date | null;
+  sentBy: string | null;
+}
 
 export const flaggedMeetingDetailsInput = z.object({
   stateCode: z.nativeEnum(StateCode),

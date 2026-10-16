@@ -43,7 +43,7 @@ const FOLLOW_UP_LABEL: Record<
 > = {
   NO_ACTION: "no action",
   USER_CAUGHT_IT: "user caught it",
-  EMAILED_PO: "emailed the PO",
+  EMAIL_STAFF: "email staff",
 };
 
 const SOURCE_LABEL: Record<
@@ -79,10 +79,15 @@ export function outcomeLabel(
         }`
       : "";
 
+  const emailState = outcome.staffEmailSentAt
+    ? "Staff emailed"
+    : "Staff email pending";
   if (outcome.outcome === "CONFIRMED_BAD") {
-    const follow = outcome.followUp
-      ? ` · ${FOLLOW_UP_LABEL[outcome.followUp]}`
-      : "";
+    let follow = "";
+    if (outcome.followUp === "EMAIL_STAFF") follow = ` · ${emailState}`;
+    else if (outcome.followUp) {
+      follow = ` · ${FOLLOW_UP_LABEL[outcome.followUp]}`;
+    }
     return `Confirmed BAD${covers}${follow}`;
   }
   if (outcome.outcome === "NOT_BAD") {
@@ -93,10 +98,42 @@ export function outcomeLabel(
       outcome.overriddenSources.length > 0
         ? ` · overrides ${outcome.overriddenSources.map((s) => SOURCE_LABEL[s]).join(" + ")}`
         : "";
-    const emailed = outcome.followUp === "EMAILED_PO" ? " · emailed PO" : "";
+    const emailed =
+      outcome.followUp === "EMAIL_STAFF" ? ` · ${emailState}` : "";
     return `Not BAD${grade}${covers}${overrides}${emailed}`;
   }
   return "Other / bug";
+}
+
+/** Whether the PO has been emailed yet, for an outcome that asked for it. */
+export function staffEmailStatus(
+  outcome: ReviewOutcomeSummary,
+): { label: string; detail: string | null; tone: StatusTone } | null {
+  if (outcome.outcome === "OTHER" || outcome.followUp !== "EMAIL_STAFF") {
+    return null;
+  }
+  if (!outcome.staffEmailSentAt) {
+    return { label: "Staff email pending", detail: null, tone: "partial" };
+  }
+  const by = outcome.staffEmailSentBy
+    ? `by ${outcome.staffEmailSentBy} · `
+    : "";
+  return {
+    label: "Staff emailed",
+    detail: `${by}${format(outcome.staffEmailSentAt, "MMM d")}`,
+    tone: "good",
+  };
+}
+
+/** The prompts a reviewer flagged for an update, or null when they flagged none. */
+export function promptFollowUpLabel(
+  outcome: ReviewOutcomeSummary,
+): string | null {
+  const prompts = [
+    outcome.notetakingPromptFollowUp && "notetaking",
+    outcome.judgePromptFollowUp && "LLM judge",
+  ].filter(Boolean);
+  return prompts.length > 0 ? `Prompt follow-up: ${prompts.join(" + ")}` : null;
 }
 
 function outcomeTone(outcome: ReviewOutcomeSummary): StatusTone {

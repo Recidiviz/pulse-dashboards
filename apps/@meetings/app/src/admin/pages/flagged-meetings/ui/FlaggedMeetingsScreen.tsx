@@ -20,8 +20,12 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useMemo, useState } from "react";
 import { ScrollView, View } from "react-native";
 
-import type { FlaggedMeetingSummary } from "~@meetings/app/admin/api/flaggedMeetings";
+import type {
+  FlaggedMeetingSummary,
+  StaffEmailTask,
+} from "~@meetings/app/admin/api/flaggedMeetings";
 import { isNeedsReview } from "~@meetings/app/admin/entities/flagged-meeting-review";
+import { SegmentedControl } from "~@meetings/app/admin/ui/SegmentedControl";
 import { Tabs } from "~@meetings/app/admin/ui/Tabs";
 import { AdminLayout } from "~@meetings/app/admin/widgets/admin-sidebar";
 import { useUserContext } from "~@meetings/app/entities/user";
@@ -30,27 +34,30 @@ import { RootStackParamList } from "~@meetings/app/shared/config";
 import { useSetDocumentTitle } from "~@meetings/app/shared/lib/platform";
 import Loading from "~@meetings/app/shared/ui/Loading";
 import SearchBar from "~@meetings/app/shared/ui/SearchBar";
+import { useSnackbar } from "~@meetings/app/shared/ui/Snackbar";
 import { Typography } from "~@meetings/app/shared/ui/Typography";
 import { MEETINGS_STATE_CODES } from "~@meetings/config";
 
 import {
   type DimensionFilter,
+  filterByPromptFollowUp,
   filterFlaggedMeetings,
   type FlaggedBy,
+  type PromptFollowUpFilter,
   withinLookback,
 } from "../lib/filterFlaggedMeetings";
 import { useDebouncedValue } from "../lib/useDebouncedValue";
+import { useFlaggedMeetingsTabStore } from "../model/tabStore";
 import { FilterDropdown, type FilterOption } from "./FilterDropdown";
 import { FlaggedMeetingsTable } from "./FlaggedMeetingsTable";
 import { LoadErrorPanel } from "./LoadErrorPanel";
+import { StaffEmailsTable } from "./StaffEmailsTable";
 
 const SEARCH_DEBOUNCE_MS = 300;
 const ALL_STATES = "ALL";
 
 /** Needs review is the whole backlog, so every tab reads the same 365-day window. */
 const QUERY_LOOKBACK_DAYS = 365;
-
-type ReviewTab = "needs" | "reviewed" | "all";
 
 const LOOKBACK_OPTIONS: FilterOption<"30" | "90" | "365">[] = [
   { value: "30", label: "Last 30 days" },
@@ -81,6 +88,13 @@ const FLAGGED_BY_OPTIONS: FilterOption<FlaggedBy>[] = [
   },
 ];
 
+const PROMPT_FOLLOW_UP_OPTIONS: FilterOption<PromptFollowUpFilter>[] = [
+  { value: "any", label: "Any" },
+  { value: "either", label: "Either prompt" },
+  { value: "notetaking", label: "Notetaking prompt" },
+  { value: "judge", label: "LLM judge prompt" },
+];
+
 const DIMENSION_OPTIONS: FilterOption<DimensionFilter>[] = [
   { value: "any", label: "Any" },
   { value: "CASE_NOTE", label: "Case note" },
@@ -97,9 +111,12 @@ export const FlaggedMeetingsScreen = () => {
   const [state, setState] = useState(ALL_STATES);
   const [lookback, setLookback] =
     useState<(typeof LOOKBACK_OPTIONS)[number]["value"]>("30");
-  const [tab, setTab] = useState<ReviewTab>("needs");
+  const { tab, setTab, staffEmailsView, setStaffEmailsView } =
+    useFlaggedMeetingsTabStore();
   const [flaggedBy, setFlaggedBy] = useState<FlaggedBy>("any");
   const [dimension, setDimension] = useState<DimensionFilter>("any");
+  const [promptFollowUp, setPromptFollowUp] =
+    useState<PromptFollowUpFilter>("any");
   const [searchText, setSearchText] = useState("");
   const search = useDebouncedValue(searchText, SEARCH_DEBOUNCE_MS).trim();
 
@@ -124,28 +141,114 @@ export const FlaggedMeetingsScreen = () => {
       ...(search && { search }),
     });
 
+  const staffEmails = trpc.v1.flaggedMeetings.listStaffEmails.useQuery();
+  const utils = trpc.useUtils();
+  const snackbar = useSnackbar();
+  const setStaffEmailSent =
+    trpc.v1.flaggedMeetings.setStaffEmailSent.useMutation({
+      onSuccess: async () => {
+        await Promise.all([
+          utils.v1.flaggedMeetings.listStaffEmails.invalidate(),
+          utils.v1.flaggedMeetings.getDetails.invalidate(),
+        ]);
+      },
+    });
+  const markSent = (email: StaffEmailTask, sent: boolean) =>
+    setStaffEmailSent.mutate(
+      { stateCode: email.stateCode, outcomeId: email.outcomeId, sent },
+      {
+        onSuccess: () =>
+          sent &&
+          snackbar.showSnackbar(
+            `Marked as sent to ${email.staffEmail ?? "staff"}.`,
+          ),
+      },
+    );
+  const toSend = staffEmails.data?.filter((e) => !e.sentAt) ?? [];
+  const sent = staffEmails.data?.filter((e) => e.sentAt) ?? [];
+
   // The meeting-date filter only narrows the finished work; Needs review
   // always shows the whole backlog.
-  const { meetings, counts } = useMemo(() => {
+  const { meetings, needsCount } = useMemo(() => {
     const filtered = data
       ? filterFlaggedMeetings(data.meetings, flaggedBy, dimension)
       : [];
     const needs = filtered.filter((m) => isNeedsReview(m.reviews));
-    const dated = withinLookback(filtered, Number(lookback));
+    // Only recorded outcomes carry prompt follow-ups, so the filter applies to
+    // the finished work, like the meeting-date filter.
+    const dated = filterByPromptFollowUp(
+      withinLookback(filtered, Number(lookback)),
+      promptFollowUp,
+    );
     const reviewed = dated.filter((m) => !isNeedsReview(m.reviews));
     return {
-      meetings: { needs, reviewed, all: dated }[tab],
-      counts: {
-        needs: needs.length,
-        reviewed: reviewed.length,
-        all: dated.length,
-      },
+      meetings: { needs, reviewed, all: dated, staffEmails: [] }[tab],
+      needsCount: needs.length,
     };
-  }, [data, flaggedBy, dimension, lookback, tab]);
+  }, [data, flaggedBy, dimension, lookback, promptFollowUp, tab]);
 
   const sourceFailed = data?.sources.some((s) => s.status === "failed");
 
+  const openMeeting = (meeting: { stateCode: string; meetingId: string }) =>
+    navigation.navigate("AdminFlaggedMeeting", {
+      stateCode: meeting.stateCode,
+      meetingId: meeting.meetingId,
+    });
+
+  const renderStaffEmailTasks = () => {
+    if (staffEmails.isError) {
+      return <LoadErrorPanel onRetry={() => staffEmails.refetch()} />;
+    }
+    if (staffEmails.isLoading)
+      return <Loading message="Loading staff emails…" />;
+    const shown = staffEmailsView === "sent" ? sent : toSend;
+    return (
+      <View className="gap-3">
+        <View className="flex-row flex-wrap items-center justify-between gap-3">
+          <SegmentedControl
+            value={staffEmailsView}
+            onChange={setStaffEmailsView}
+            options={[
+              { value: "toSend", label: `To send ${toSend.length}` },
+              { value: "sent", label: `Sent ${sent.length}` },
+            ]}
+          />
+          <Typography variant="body-s-regular" className="!text-secondary">
+            Meetings where a reviewer chose &quot;Email staff&quot;. Send the
+            email, then mark it sent here.
+          </Typography>
+        </View>
+        {setStaffEmailSent.error && (
+          <Typography variant="body-s-regular" className="!text-attention">
+            {`Couldn't update the email: ${setStaffEmailSent.error.message}`}
+          </Typography>
+        )}
+        {shown.length === 0 ? (
+          <View className="items-center rounded-lg border border-subtle px-4 py-10">
+            <Typography variant="body-s-regular" className="!text-tertiary">
+              {staffEmailsView === "sent"
+                ? "No emails marked as sent yet."
+                : "No staff emails to send."}
+            </Typography>
+          </View>
+        ) : (
+          <StaffEmailsTable
+            emails={shown}
+            onOpen={openMeeting}
+            onSetSent={markSent}
+            pendingOutcomeId={
+              setStaffEmailSent.isPending
+                ? setStaffEmailSent.variables?.outcomeId ?? null
+                : null
+            }
+          />
+        )}
+      </View>
+    );
+  };
+
   const renderResults = () => {
+    if (tab === "staffEmails") return renderStaffEmailTasks();
     if (isError) return <LoadErrorPanel onRetry={() => refetch()} />;
     if (isLoading) return <Loading message="Loading flagged meetings…" />;
     if (!data) return null;
@@ -165,15 +268,7 @@ export const FlaggedMeetingsScreen = () => {
             </Typography>
           </View>
         ) : (
-          <FlaggedMeetingsTable
-            meetings={meetings}
-            onOpen={(meeting) =>
-              navigation.navigate("AdminFlaggedMeeting", {
-                stateCode: meeting.stateCode,
-                meetingId: meeting.meetingId,
-              })
-            }
-          />
+          <FlaggedMeetingsTable meetings={meetings} onOpen={openMeeting} />
         )}
         <Typography variant="caption-s-regular" className="!text-tertiary">
           {`${meetings.length} ${meetings.length === 1 ? "meeting" : "meetings"}`}
@@ -200,49 +295,63 @@ export const FlaggedMeetingsScreen = () => {
             value={tab}
             onChange={setTab}
             tabs={[
-              { value: "needs", label: "Needs review", count: counts.needs },
-              { value: "reviewed", label: "Reviewed", count: counts.reviewed },
-              { value: "all", label: "All flagged", count: counts.all },
+              // Only the backlog gets a count. Reviewed and All flagged follow the
+              // meeting-date filter, so their counts don't add up to the backlog.
+              { value: "needs", label: "Needs review", count: needsCount },
+              { value: "reviewed", label: "Reviewed" },
+              { value: "all", label: "All flagged" },
+              // To send and Sent counts are inside the tab.
+              { value: "staffEmails", label: "Staff emails" },
             ]}
           />
         )}
-        {/* z-20 keeps an open filter menu above the table. */}
-        <View className="relative z-20 flex-row flex-wrap items-center gap-x-6 gap-y-2">
-          <FilterDropdown
-            label="State"
-            options={stateOptions}
-            value={state}
-            onChange={setState}
-          />
-          {tab !== "needs" && (
+        {/* z-20 keeps an open filter menu above the table. The filters don't apply to staff emails. */}
+        {tab !== "staffEmails" && (
+          <View className="relative z-20 flex-row flex-wrap items-center gap-x-6 gap-y-2">
             <FilterDropdown
-              label="Meeting date"
-              options={LOOKBACK_OPTIONS}
-              value={lookback}
-              onChange={setLookback}
+              label="State"
+              options={stateOptions}
+              value={state}
+              onChange={setState}
             />
-          )}
-          <FilterDropdown
-            label="Flagged by"
-            options={FLAGGED_BY_OPTIONS}
-            value={flaggedBy}
-            onChange={setFlaggedBy}
-          />
-          <FilterDropdown
-            label="Dimension"
-            options={DIMENSION_OPTIONS}
-            value={dimension}
-            onChange={setDimension}
-          />
-          <View className="ml-auto w-[260px]">
-            <SearchBar
-              value={searchText}
-              placeholder="Meeting id or staff email"
-              onChange={setSearchText}
-              onExit={() => setSearchText("")}
+            {tab !== "needs" && (
+              <FilterDropdown
+                label="Meeting date"
+                options={LOOKBACK_OPTIONS}
+                value={lookback}
+                onChange={setLookback}
+              />
+            )}
+            <FilterDropdown
+              label="Flagged by"
+              options={FLAGGED_BY_OPTIONS}
+              value={flaggedBy}
+              onChange={setFlaggedBy}
             />
+            <FilterDropdown
+              label="Dimension"
+              options={DIMENSION_OPTIONS}
+              value={dimension}
+              onChange={setDimension}
+            />
+            {tab !== "needs" && (
+              <FilterDropdown
+                label="Prompt follow-up"
+                options={PROMPT_FOLLOW_UP_OPTIONS}
+                value={promptFollowUp}
+                onChange={setPromptFollowUp}
+              />
+            )}
+            <View className="ml-auto w-[260px]">
+              <SearchBar
+                value={searchText}
+                placeholder="Meeting id or staff email"
+                onChange={setSearchText}
+                onExit={() => setSearchText("")}
+              />
+            </View>
           </View>
-        </View>
+        )}
         {renderResults()}
       </ScrollView>
     </AdminLayout>

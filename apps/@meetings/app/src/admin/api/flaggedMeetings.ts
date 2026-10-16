@@ -46,3 +46,8 @@ export type ReviewOutcomeSummary = NonNullable<SectionReview["latestOutcome"]>;
 
 export type RecordOutcomeInput =
   inferRouterInputs<AppRouter>["v1"]["flaggedMeetings"]["recordOutcome"];
+
+/** An outcome whose follow-up is to email staff, for the Staff emails tab. */
+export type StaffEmailTask = Awaited<
+  ReturnType<FlaggedMeetingsRouter["listStaffEmails"]>
+>[number];

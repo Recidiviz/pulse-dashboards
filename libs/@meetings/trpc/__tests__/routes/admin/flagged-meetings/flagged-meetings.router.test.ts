@@ -1013,7 +1013,7 @@ describe("flaggedMeetings router", () => {
       meetingId,
       section: "CASE_NOTE",
       outcome: "CONFIRMED_BAD",
-      followUp: "EMAILED_PO",
+      followUp: "EMAIL_STAFF",
       notes: "Invented a UA refusal.",
     });
 
@@ -1049,12 +1049,30 @@ describe("flaggedMeetings router", () => {
         section: "CASE_NOTE",
         pipelineRunId: "run-9",
         outcome: "CONFIRMED_BAD",
-        followUp: "EMAILED_PO",
+        followUp: "EMAIL_STAFF",
         correctedGrade: null,
         overriddenSources: [],
         appliesTo: [],
+        notetakingPromptFollowUp: false,
+        judgePromptFollowUp: false,
         notes: "Invented a UA refusal.",
         reviewerEmail: "test@recidiviz.org",
+      });
+    });
+
+    test("records which prompts may need an update", async () => {
+      await createMeeting("meeting-prompts");
+
+      await testTRPCClient.v1.flaggedMeetings.recordOutcome.mutate({
+        ...confirmed("meeting-prompts"),
+        notetakingPromptFollowUp: true,
+        judgePromptFollowUp: true,
+      });
+
+      const [row] = await testPrismaClient.meetingReviewOutcome.findMany();
+      expect(row).toMatchObject({
+        notetakingPromptFollowUp: true,
+        judgePromptFollowUp: true,
       });
     });
 
@@ -1093,6 +1111,42 @@ describe("flaggedMeetings router", () => {
         correctedGrade: "PARTIAL",
         overriddenSources: ["LABEL_STUDIO", "LLM_JUDGE"],
       });
+    });
+
+    test("records a Not BAD without a grade when nothing is overridden", async () => {
+      await createMeeting("meeting-in-app-only");
+
+      await testTRPCClient.v1.flaggedMeetings.recordOutcome.mutate({
+        stateCode: STATE,
+        meetingId: "meeting-in-app-only",
+        section: "CASE_NOTE",
+        outcome: "NOT_BAD",
+        overriddenSources: [],
+        followUp: "NO_ACTION",
+      });
+
+      const [row] = await testPrismaClient.meetingReviewOutcome.findMany();
+      expect(row).toMatchObject({
+        outcome: "NOT_BAD",
+        correctedGrade: null,
+        overriddenSources: [],
+      });
+    });
+
+    test("rejects an override without a corrected grade", async () => {
+      await createMeeting("meeting-no-grade");
+
+      await expect(
+        testTRPCClient.v1.flaggedMeetings.recordOutcome.mutate({
+          stateCode: STATE,
+          meetingId: "meeting-no-grade",
+          section: "CASE_NOTE",
+          outcome: "NOT_BAD",
+          overriddenSources: ["LLM_JUDGE"],
+          followUp: "NO_ACTION",
+        }),
+      ).rejects.toThrow(/corrected grade/);
+      expect(await testPrismaClient.meetingReviewOutcome.count()).toBe(0);
     });
 
     test("does not touch Label Studio when only the judge is overridden", async () => {
@@ -1273,7 +1327,7 @@ describe("flaggedMeetings router", () => {
         );
         expect((await list()).meetings[0].reviews.CASE_NOTE).toMatchObject({
           status: "reviewed",
-          latestOutcome: { outcome: "CONFIRMED_BAD", followUp: "EMAILED_PO" },
+          latestOutcome: { outcome: "CONFIRMED_BAD", followUp: "EMAIL_STAFF" },
         });
 
         vi.setSystemTime(new Date("2026-09-30T13:00:00Z"));
@@ -1314,6 +1368,119 @@ describe("flaggedMeetings router", () => {
           vote: false,
         });
       });
+    });
+  });
+
+  describe("staff emails", () => {
+    async function recordEmailStaff(meetingId: string) {
+      await testTRPCClient.v1.flaggedMeetings.recordOutcome.mutate({
+        stateCode: STATE,
+        meetingId,
+        section: "CASE_NOTE",
+        outcome: "CONFIRMED_BAD",
+        followUp: "EMAIL_STAFF",
+      });
+    }
+
+    beforeEach(async () => {
+      await setRecidivizUser();
+      vi.spyOn(console, "info").mockReturnValue(undefined);
+    });
+
+    test("lists outcomes waiting on a staff email, and marks one sent", async () => {
+      await createMeeting("meeting-staff-email");
+      await recordEmailStaff("meeting-staff-email");
+
+      const [pending] =
+        await testTRPCClient.v1.flaggedMeetings.listStaffEmails.query();
+      expect(pending).toMatchObject({
+        meetingId: "meeting-staff-email",
+        stateCode: STATE,
+        staffEmail: STAFF_EMAIL,
+        section: "CASE_NOTE",
+        outcome: "CONFIRMED_BAD",
+        reviewerEmail: "test@recidiviz.org",
+        sentAt: null,
+        sentBy: null,
+      });
+
+      await testTRPCClient.v1.flaggedMeetings.setStaffEmailSent.mutate({
+        stateCode: STATE,
+        outcomeId: pending.outcomeId,
+        sent: true,
+      });
+      const [sent] =
+        await testTRPCClient.v1.flaggedMeetings.listStaffEmails.query();
+      expect(sent).toMatchObject({
+        sentAt: expect.any(Date),
+        sentBy: "test@recidiviz.org",
+      });
+
+      await testTRPCClient.v1.flaggedMeetings.setStaffEmailSent.mutate({
+        stateCode: STATE,
+        outcomeId: pending.outcomeId,
+        sent: false,
+      });
+      const [undone] =
+        await testTRPCClient.v1.flaggedMeetings.listStaffEmails.query();
+      expect(undone).toMatchObject({ sentAt: null, sentBy: null });
+    });
+
+    test("drops an outcome a reviewer has since changed", async () => {
+      await createMeeting("meeting-changed");
+      await recordEmailStaff("meeting-changed");
+      vi.setSystemTime(Date.now() + 60_000);
+      await testTRPCClient.v1.flaggedMeetings.recordOutcome.mutate({
+        stateCode: STATE,
+        meetingId: "meeting-changed",
+        section: "CASE_NOTE",
+        outcome: "CONFIRMED_BAD",
+        followUp: "NO_ACTION",
+      });
+
+      expect(
+        await testTRPCClient.v1.flaggedMeetings.listStaffEmails.query(),
+      ).toEqual([]);
+    });
+
+    test("keeps a sent email when the outcome is recorded again", async () => {
+      await createMeeting("meeting-again");
+      await recordEmailStaff("meeting-again");
+      const [first] =
+        await testTRPCClient.v1.flaggedMeetings.listStaffEmails.query();
+      await testTRPCClient.v1.flaggedMeetings.setStaffEmailSent.mutate({
+        stateCode: STATE,
+        outcomeId: first.outcomeId,
+        sent: true,
+      });
+
+      vi.setSystemTime(Date.now() + 60_000);
+      await recordEmailStaff("meeting-again");
+
+      const [again] =
+        await testTRPCClient.v1.flaggedMeetings.listStaffEmails.query();
+      expect(again.outcomeId).not.toBe(first.outcomeId);
+      expect(again).toMatchObject({ sentBy: "test@recidiviz.org" });
+    });
+
+    test("rejects marking an outcome that is not waiting on an email", async () => {
+      await createMeeting("meeting-no-email");
+      await testTRPCClient.v1.flaggedMeetings.recordOutcome.mutate({
+        stateCode: STATE,
+        meetingId: "meeting-no-email",
+        section: "CASE_NOTE",
+        outcome: "CONFIRMED_BAD",
+        followUp: "NO_ACTION",
+      });
+      const [row] = await testPrismaClient.meetingReviewOutcome.findMany();
+
+      await expect(
+        testTRPCClient.v1.flaggedMeetings.setStaffEmailSent.mutate({
+          stateCode: STATE,
+          outcomeId: row.id,
+          sent: true,
+        }),
+      ).rejects.toThrow(/No outcome is waiting/);
     });
   });
 });

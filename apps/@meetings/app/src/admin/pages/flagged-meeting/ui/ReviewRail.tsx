@@ -18,6 +18,7 @@
 import clsx from "clsx";
 import { useState } from "react";
 import { Pressable, TextInput, View } from "react-native";
+import CheckIcon from "react-native-heroicons/solid/CheckIcon";
 
 import type {
   FlaggedMeetingDetails,
@@ -27,9 +28,11 @@ import type {
 import {
   isSectionDone,
   outcomeLabel,
+  promptFollowUpLabel,
   reopenSentence,
   reviewableSections,
   SECTION_LABEL,
+  staffEmailStatus,
 } from "~@meetings/app/admin/entities/flagged-meeting-review";
 import { SegmentedControl } from "~@meetings/app/admin/ui/SegmentedControl";
 import {
@@ -48,12 +51,14 @@ import {
   draftFromOutcome,
   emptyDraft,
   type FollowUp,
+  isInAppOnlyFlag,
   type OutcomeKind,
   overridableSources,
   type OverrideSource,
   type ReviewDraft,
   toRecordInput,
 } from "../lib/reviewDraft";
+import { GradingScaleLink } from "./GradingScale";
 
 const LABEL_STUDIO_RATER = "admin@recidiviz.org";
 
@@ -65,7 +70,7 @@ const SOURCE_NAME: Record<OverrideSource, string> = {
 const FOLLOW_UP_OPTIONS: { value: FollowUp; label: string }[] = [
   { value: "NO_ACTION", label: "No action" },
   { value: "USER_CAUGHT_IT", label: "User caught it" },
-  { value: "EMAILED_PO", label: "Emailed the PO" },
+  { value: "EMAIL_STAFF", label: "Email staff" },
 ];
 
 function Chip({
@@ -158,6 +163,35 @@ function OptionCard({
   );
 }
 
+function CheckRow({
+  label,
+  checked,
+  onPress,
+}: {
+  label: string;
+  checked: boolean;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      accessibilityRole="checkbox"
+      accessibilityState={{ checked }}
+      onPress={onPress}
+      className="flex-row items-start gap-2"
+    >
+      <View
+        className={clsx(
+          "mt-0.5 size-4 items-center justify-center rounded border",
+          checked ? "border-brand bg-brand" : "border-subtle bg-primary",
+        )}
+      >
+        {checked && <CheckIcon size={12} color="white" />}
+      </View>
+      <Typography variant="body-s-regular">{label}</Typography>
+    </Pressable>
+  );
+}
+
 /** Which of the flagging sources apply to this section, in a sentence. */
 function problemText(
   section: FlagSection,
@@ -217,6 +251,21 @@ export function ReviewRail({ details }: ReviewRailProps) {
 
   const utils = trpc.useUtils();
   const snackbar = useSnackbar();
+  const setStaffEmailSent =
+    trpc.v1.flaggedMeetings.setStaffEmailSent.useMutation({
+      onSuccess: async (_result, input) => {
+        await Promise.all([
+          utils.v1.flaggedMeetings.getDetails.invalidate({
+            stateCode: details.stateCode,
+            meetingId: details.meetingId,
+          }),
+          utils.v1.flaggedMeetings.listStaffEmails.invalidate(),
+        ]);
+        if (input.sent) {
+          snackbar.showSnackbar(`Marked as sent to ${details.staffEmail}.`);
+        }
+      },
+    });
   const recordOutcome = trpc.v1.flaggedMeetings.recordOutcome.useMutation({
     onSuccess: async (_result, input) => {
       await Promise.all([
@@ -225,10 +274,21 @@ export function ReviewRail({ details }: ReviewRailProps) {
           meetingId: details.meetingId,
         }),
         utils.v1.flaggedMeetings.list.invalidate(),
+        utils.v1.flaggedMeetings.listStaffEmails.invalidate(),
       ]);
       setEditing((e) => ({ ...e, [input.section]: false }));
       setDrafts((d) => ({ ...d, [input.section]: undefined }));
-      snackbar.showSnackbar("Outcome recorded.");
+      const previous = details.reviews[input.section].latestOutcome;
+      const alreadySent =
+        previous?.followUp === "EMAIL_STAFF" &&
+        previous.staffEmailSentAt !== null;
+      snackbar.showSnackbar(
+        input.outcome !== "OTHER" &&
+          input.followUp === "EMAIL_STAFF" &&
+          !alreadySent
+          ? "Outcome recorded. Added to staff emails."
+          : "Outcome recorded.",
+      );
       const next = sections.find(
         (s) => s !== input.section && !isSectionDone(details.reviews[s]),
       );
@@ -260,7 +320,13 @@ export function ReviewRail({ details }: ReviewRailProps) {
   const update = (patch: Partial<ReviewDraft>) => {
     setDrafts((d) => ({ ...d, [selected]: { ...draft, ...patch } }));
   };
-  const pickOutcome = (outcome: OutcomeKind) => update({ outcome });
+  const inAppOnly = isInAppOnlyFlag(details, selected);
+  const pickOutcome = (outcome: OutcomeKind) =>
+    update(
+      outcome === "NOT_BAD" && inAppOnly
+        ? { outcome, correctedGrade: null, overriddenSources: [] }
+        : { outcome },
+    );
   // A reopened section has no recorded view to fall back to, so only a
   // deliberate "Change outcome" can be cancelled.
   const canCancel = recorded !== null && !reopened;
@@ -314,8 +380,13 @@ export function ReviewRail({ details }: ReviewRailProps) {
       />
     </ChipGroup>
   );
+  const notBadSub = inAppOnly
+    ? "Not BAD by our rubric. Only in-app feedback flagged this, so there are no ratings to override."
+    : "The flag was wrong. Overrides the BAD grade on eval dashboards. LLM judge overrides are logged for judge tuning.";
 
   const { label: stateLabel, tone: stateTone } = railState(review.status);
+  const recordedPrompts = recorded && promptFollowUpLabel(recorded);
+  const recordedEmail = recorded && staffEmailStatus(recorded);
 
   return (
     <RailShell>
@@ -359,6 +430,49 @@ export function ReviewRail({ details }: ReviewRailProps) {
               {outcomeLabel(recorded, selected)}
             </Typography>
           </View>
+          {recordedEmail && (
+            <View className="flex-row items-center justify-between gap-3 rounded-lg border border-subtle px-3 py-2.5">
+              <View className="min-w-0 shrink items-start gap-1">
+                <StatusBadge tone={recordedEmail.tone} dot>
+                  {recordedEmail.label}
+                </StatusBadge>
+                {recordedEmail.detail && (
+                  <Typography
+                    variant="caption-s-regular"
+                    className="!text-tertiary"
+                  >
+                    {recordedEmail.detail}
+                  </Typography>
+                )}
+              </View>
+              <Pressable
+                accessibilityRole="button"
+                disabled={setStaffEmailSent.isPending}
+                onPress={() =>
+                  setStaffEmailSent.mutate({
+                    stateCode: details.stateCode,
+                    outcomeId: recorded.id,
+                    sent: !recorded.staffEmailSentAt,
+                  })
+                }
+                className="shrink-0"
+              >
+                <Typography variant="body-s-medium" className="!text-brand">
+                  {recorded.staffEmailSentAt ? "Undo" : "Mark as sent"}
+                </Typography>
+              </Pressable>
+            </View>
+          )}
+          {setStaffEmailSent.error && (
+            <Typography variant="body-s-regular" className="!text-attention">
+              {`Couldn't update the email: ${setStaffEmailSent.error.message}`}
+            </Typography>
+          )}
+          {recordedPrompts && (
+            <StatusBadge tone="info" className="self-start">
+              {recordedPrompts}
+            </StatusBadge>
+          )}
           {recorded.notes && (
             <View className="rounded-lg bg-secondary p-3">
               <Typography variant="body-s-regular">{recorded.notes}</Typography>
@@ -409,53 +523,57 @@ export function ReviewRail({ details }: ReviewRailProps) {
             </OptionCard>
             <OptionCard
               label="Not BAD"
-              sub="The flag was wrong. Overrides the BAD grade on eval dashboards and is logged for judge tuning."
+              sub={notBadSub}
               selected={draft.outcome === "NOT_BAD"}
               onPress={() => pickOutcome("NOT_BAD")}
             >
-              <ChipGroup label="Corrected grade">
-                <Chip
-                  label="Good"
-                  selected={draft.correctedGrade === "GOOD"}
-                  onPress={() => update({ correctedGrade: "GOOD" })}
-                />
-                <Chip
-                  label="Partial"
-                  selected={draft.correctedGrade === "PARTIAL"}
-                  onPress={() => update({ correctedGrade: "PARTIAL" })}
-                />
-              </ChipGroup>
-              {ratedSources.length > 0 && (
-                <ChipGroup label="Ratings to override">
-                  {ratedSources.map((source) => (
+              {!inAppOnly && (
+                <>
+                  <ChipGroup label="Corrected grade">
                     <Chip
-                      key={source}
-                      role="checkbox"
-                      label={SOURCE_NAME[source]}
-                      selected={draft.overriddenSources.includes(source)}
-                      onPress={() => toggleSource(source)}
+                      label="Good"
+                      selected={draft.correctedGrade === "GOOD"}
+                      onPress={() => update({ correctedGrade: "GOOD" })}
                     />
-                  ))}
-                </ChipGroup>
-              )}
-              {draft.overriddenSources.includes("LABEL_STUDIO") && (
-                <Typography
-                  variant="caption-s-regular"
-                  className="pt-2 !text-secondary"
-                >
-                  {`Saving also records a ${draft.correctedGrade === "GOOD" ? "Good" : "Partial"} rating in Label Studio as ${LABEL_STUDIO_RATER}, which takes priority over the other raters.`}
-                </Typography>
+                    <Chip
+                      label="Partial"
+                      selected={draft.correctedGrade === "PARTIAL"}
+                      onPress={() => update({ correctedGrade: "PARTIAL" })}
+                    />
+                  </ChipGroup>
+                  {ratedSources.length > 0 && (
+                    <ChipGroup label="Ratings to override">
+                      {ratedSources.map((source) => (
+                        <Chip
+                          key={source}
+                          role="checkbox"
+                          label={SOURCE_NAME[source]}
+                          selected={draft.overriddenSources.includes(source)}
+                          onPress={() => toggleSource(source)}
+                        />
+                      ))}
+                    </ChipGroup>
+                  )}
+                  {draft.overriddenSources.includes("LABEL_STUDIO") && (
+                    <Typography
+                      variant="caption-s-regular"
+                      className="pt-2 !text-secondary"
+                    >
+                      {`Saving also records a ${draft.correctedGrade === "GOOD" ? "Good" : "Partial"} rating in Label Studio as ${LABEL_STUDIO_RATER}, which takes priority over the other raters.`}
+                    </Typography>
+                  )}
+                </>
               )}
               <ChipGroup label="Follow-up">
                 <Chip
                   label="No action"
-                  selected={draft.followUp !== "EMAILED_PO"}
+                  selected={draft.followUp !== "EMAIL_STAFF"}
                   onPress={() => update({ followUp: "NO_ACTION" })}
                 />
                 <Chip
-                  label="Emailed the PO"
-                  selected={draft.followUp === "EMAILED_PO"}
-                  onPress={() => update({ followUp: "EMAILED_PO" })}
+                  label="Email staff"
+                  selected={draft.followUp === "EMAIL_STAFF"}
+                  onPress={() => update({ followUp: "EMAIL_STAFF" })}
                 />
               </ChipGroup>
               {appliesToGroup}
@@ -465,6 +583,29 @@ export function ReviewRail({ details }: ReviewRailProps) {
               sub="Put the Linear issue in the notes."
               selected={draft.outcome === "OTHER"}
               onPress={() => pickOutcome("OTHER")}
+            />
+            <GradingScaleLink label="View grading scale" />
+          </View>
+
+          <View className="gap-2">
+            <Typography variant="body-s-medium" className="!text-secondary">
+              Prompt follow-up
+            </Typography>
+            <CheckRow
+              label="Notetaking prompt may need an update"
+              checked={draft.notetakingPromptFollowUp}
+              onPress={() =>
+                update({
+                  notetakingPromptFollowUp: !draft.notetakingPromptFollowUp,
+                })
+              }
+            />
+            <CheckRow
+              label="LLM judge prompt may need an update"
+              checked={draft.judgePromptFollowUp}
+              onPress={() =>
+                update({ judgePromptFollowUp: !draft.judgePromptFollowUp })
+              }
             />
           </View>
 

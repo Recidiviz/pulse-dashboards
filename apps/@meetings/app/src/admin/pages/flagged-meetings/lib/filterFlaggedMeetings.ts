@@ -22,6 +22,7 @@ import type {
 
 export type FlaggedBy = "any" | "llm" | "labelStudio" | "vote";
 export type DimensionFilter = "any" | FlagSection;
+export type PromptFollowUpFilter = "any" | "either" | "notetaking" | "judge";
 
 /**
  * Narrows already-fetched rows. Dimension alone matches a section flagged by
@@ -45,6 +46,26 @@ export function filterFlaggedMeetings(
         : section[flaggedBy],
     );
   });
+}
+
+/**
+ * Keeps the meetings with a recorded outcome that flags a prompt for an
+ * update: the notetaking prompt, the LLM judge prompt, or either.
+ */
+export function filterByPromptFollowUp(
+  meetings: FlaggedMeetingSummary[],
+  filter: PromptFollowUpFilter,
+): FlaggedMeetingSummary[] {
+  if (filter === "any") return meetings;
+
+  return meetings.filter((meeting) =>
+    Object.values(meeting.reviews).some(({ latestOutcome: outcome }) => {
+      if (!outcome) return false;
+      if (filter === "notetaking") return outcome.notetakingPromptFollowUp;
+      if (filter === "judge") return outcome.judgePromptFollowUp;
+      return outcome.notetakingPromptFollowUp || outcome.judgePromptFollowUp;
+    }),
+  );
 }
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;

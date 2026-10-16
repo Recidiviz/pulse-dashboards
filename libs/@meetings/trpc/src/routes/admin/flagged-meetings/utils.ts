@@ -25,6 +25,7 @@ import {
   OutputVoteValue,
   Prisma,
   PrismaClient,
+  ReviewFollowUp,
   ReviewSection,
   StateCode,
 } from "~@meetings/prisma/client";
@@ -443,6 +444,31 @@ export async function findLatestReviewOutcomes(
     byMeeting.set(row.meetingId, sections);
   }
   return byMeeting;
+}
+
+/**
+ * The outcomes whose follow-up is still to email staff: the current outcome
+ * per section, so one a reviewer has since changed drops out.
+ */
+export async function findStaffEmailOutcomes(
+  prisma: PrismaClient,
+): Promise<ReviewOutcomeRow[]> {
+  const candidates = await prisma.meetingReviewOutcome.findMany({
+    where: { followUp: ReviewFollowUp.EMAIL_STAFF },
+    select: { id: true, meetingId: true },
+  });
+  if (candidates.length === 0) return [];
+
+  const latest = await findLatestReviewOutcomes(prisma, [
+    ...new Set(candidates.map((c) => c.meetingId)),
+  ]);
+  const candidateIds = new Set(candidates.map((c) => c.id));
+  return [...latest.values()]
+    .flatMap((sections) => Object.values(sections))
+    .filter(
+      (row): row is ReviewOutcomeRow =>
+        row !== undefined && candidateIds.has(row.id),
+    );
 }
 
 export interface BadEvaluationEvent {

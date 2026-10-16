@@ -20,6 +20,9 @@
 import { Transcript } from "assemblyai";
 
 import {
+  NotetakingPipelineStatus,
+  OutputVoteTab,
+  OutputVoteValue,
   PostMeetingProcessingStatus,
   Prisma,
   PrismaClient,
@@ -136,6 +139,123 @@ async function seedMeeting(
     create: { id: meetingId, ...data },
     update: data,
   });
+}
+
+type Grade = "GOOD" | "PARTIAL" | "BAD";
+
+function textScore(
+  grade: Grade,
+  rationale: string,
+  hallucinations: string[] = [],
+) {
+  return { grade, rationale, hallucinations, omissions: [] };
+}
+
+const GOOD_SCORE = textScore("GOOD", "Accurate and complete.");
+
+/**
+ * LLM judge grades and thumbs-down votes that put demo meetings on the admin
+ * Flagged meetings page, one per review scenario: a BAD case note, an Overall
+ * BAD with nothing else flagged, a thumbs down with no BAD grade, and BAD
+ * action items. Ids are fixed so re-seeding replaces these rows only.
+ */
+const FLAGGED_MEETINGS: {
+  meetingId: string;
+  scores: {
+    caseNote: ReturnType<typeof textScore>;
+    actionItems: ReturnType<typeof textScore>;
+    overall: ReturnType<typeof textScore>;
+  };
+  thumbsDown?: { tab: OutputVoteTab; message: string };
+}[] = [
+  {
+    meetingId: "meeting-1",
+    scores: {
+      caseNote: textScore(
+        "BAD",
+        "The note says the client missed her housing office appointment, but she says she went.",
+        ["Client missed her appointment at the housing office."],
+      ),
+      actionItems: GOOD_SCORE,
+      overall: textScore("PARTIAL", "The case note misstates attendance."),
+    },
+  },
+  {
+    meetingId: "meeting-2",
+    scores: {
+      caseNote: GOOD_SCORE,
+      actionItems: GOOD_SCORE,
+      overall: textScore(
+        "BAD",
+        "Taken together, the outputs understate a safety concern raised in the meeting.",
+      ),
+    },
+  },
+  {
+    meetingId: "meeting-3",
+    scores: {
+      caseNote: GOOD_SCORE,
+      actionItems: GOOD_SCORE,
+      overall: GOOD_SCORE,
+    },
+    thumbsDown: {
+      tab: OutputVoteTab.DRAFT_CASE_NOTES,
+      message: "The employment section has the wrong start date.",
+    },
+  },
+  {
+    meetingId: "meeting-4",
+    scores: {
+      caseNote: GOOD_SCORE,
+      actionItems: textScore(
+        "BAD",
+        "An action item assigns the client a curfew check-in that was never discussed.",
+        ["Client to check in by phone every night at 9pm."],
+      ),
+      overall: textScore("PARTIAL", "One invented action item."),
+    },
+  },
+];
+
+async function seedFlaggedMeetings(prisma: PrismaClient) {
+  for (const { meetingId, scores, thumbsDown } of FLAGGED_MEETINGS) {
+    // Matches the outputsPipelineRunId seedMeeting sets, so votes count as current.
+    const pipelineRunId = `pipeline-${meetingId}`;
+    await prisma.notetakingPipelineRun.upsert({
+      where: { id: pipelineRunId },
+      create: {
+        id: pipelineRunId,
+        meetingId,
+        personPseudonymizedId: "demo-person-pid",
+        status: NotetakingPipelineStatus.SUCCESS,
+      },
+      update: {},
+    });
+    const evaluation = {
+      pipelineRunId,
+      evaluatorVersion: "demo",
+      scores: { transcriptComparison: null, ...scores },
+    };
+    await prisma.notetakingEvaluationRun.upsert({
+      where: { id: `seed-eval-${meetingId}` },
+      create: { id: `seed-eval-${meetingId}`, ...evaluation },
+      update: evaluation,
+    });
+    if (thumbsDown) {
+      const vote = {
+        meetingId,
+        pipelineRunId,
+        voterEmail: STAFF_EMAIL,
+        vote: OutputVoteValue.DOWN,
+        ...thumbsDown,
+      };
+      await prisma.outputVote.upsert({
+        where: { id: `seed-vote-${meetingId}` },
+        create: { id: `seed-vote-${meetingId}`, ...vote },
+        update: vote,
+      });
+    }
+  }
 }
 
 export async function main(prisma: PrismaClient) {
@@ -257,4 +377,6 @@ export async function main(prisma: PrismaClient) {
       );
     }
   }
+
+  await seedFlaggedMeetings(prisma);
 }

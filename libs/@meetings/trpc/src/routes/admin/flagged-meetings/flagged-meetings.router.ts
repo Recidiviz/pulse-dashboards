@@ -22,6 +22,7 @@ import { getPrismaClientForStateCode } from "~@meetings/prisma";
 import {
   NoteSection,
   Prisma,
+  ReviewFollowUp,
   ReviewOutcomeKind,
   ReviewSource,
   StateCode,
@@ -47,8 +48,10 @@ import {
   MAX_LOOKBACK_DAYS,
   recordOutcomeInput,
   type ReviewGrade,
+  setStaffEmailSentInput,
   type SourceName,
   type SourceStatus,
+  type StaffEmailTask,
 } from "~@meetings/trpc/routes/admin/flagged-meetings/flagged-meetings.schema";
 import {
   type BadEvaluationEvent,
@@ -62,6 +65,7 @@ import {
   findLlmajResultsByMeeting,
   findReviewedMeetingIds,
   findSectionApprovals,
+  findStaffEmailOutcomes,
   findThumbsDownMeetingIds,
   flaggedMeetingDetailInclude,
   isAnySectionFlagged,
@@ -649,8 +653,32 @@ export const flaggedMeetingsRouter = router({
         });
       }
 
+      // Re-recording an outcome that still says "Email staff" keeps an email
+      // that was already sent, so staff are not emailed twice.
+      const previous =
+        input.outcome !== ReviewOutcomeKind.OTHER &&
+        input.followUp === ReviewFollowUp.EMAIL_STAFF
+          ? await prisma.meetingReviewOutcome.findFirst({
+              where: { meetingId: meeting.id, section: input.section },
+              orderBy: { createdAt: "desc" },
+              select: {
+                followUp: true,
+                staffEmailSentAt: true,
+                staffEmailSentBy: true,
+              },
+            })
+          : null;
+      const sentEmail =
+        previous?.followUp === ReviewFollowUp.EMAIL_STAFF
+          ? {
+              staffEmailSentAt: previous.staffEmailSentAt,
+              staffEmailSentBy: previous.staffEmailSentBy,
+            }
+          : {};
+
       await prisma.meetingReviewOutcome.create({
         data: {
+          ...sentEmail,
           meetingId: meeting.id,
           section: input.section,
           pipelineRunId: meeting.outputsPipelineRunId,
@@ -659,10 +687,12 @@ export const flaggedMeetingsRouter = router({
             input.outcome === ReviewOutcomeKind.OTHER ? null : input.followUp,
           correctedGrade:
             input.outcome === ReviewOutcomeKind.NOT_BAD
-              ? input.correctedGrade
+              ? input.correctedGrade ?? null
               : null,
           overriddenSources,
           appliesTo: input.appliesTo ?? [],
+          notetakingPromptFollowUp: input.notetakingPromptFollowUp ?? false,
+          judgePromptFollowUp: input.judgePromptFollowUp ?? false,
           notes: input.notes ?? null,
           reviewerEmail: ctx.user.email,
         },
@@ -677,6 +707,72 @@ export const flaggedMeetingsRouter = router({
         labelStudioOverridden: overriddenSources.includes(
           ReviewSource.LABEL_STUDIO,
         ),
+      });
+    }),
+  listStaffEmails: adminProcedure.query(
+    async ({ ctx }): Promise<StaffEmailTask[]> => {
+      const stateCodes = resolveRequestedStates(ctx.user);
+      const perState = await Promise.all(
+        stateCodes.map(async (stateCode) => {
+          const prisma = getPrismaClientForStateCode(stateCode);
+          const outcomes = await findStaffEmailOutcomes(prisma);
+          if (outcomes.length === 0) return [];
+
+          const meetings = await prisma.meeting.findMany({
+            where: { id: { in: outcomes.map((o) => o.meetingId) } },
+            select: { id: true, startTime: true, staffEmail: true },
+          });
+          const meetingById = new Map(meetings.map((m) => [m.id, m]));
+
+          return outcomes.map((o): StaffEmailTask => {
+            const meeting = meetingById.get(o.meetingId);
+            return {
+              outcomeId: o.id,
+              stateCode,
+              meetingId: o.meetingId,
+              startTime: meeting?.startTime ?? null,
+              staffEmail: meeting?.staffEmail ?? null,
+              section: o.section,
+              outcome: o.outcome,
+              notes: o.notes,
+              reviewerEmail: o.reviewerEmail,
+              recordedAt: o.createdAt,
+              sentAt: o.staffEmailSentAt,
+              sentBy: o.staffEmailSentBy,
+            };
+          });
+        }),
+      );
+      return perState
+        .flat()
+        .sort((a, b) => b.recordedAt.getTime() - a.recordedAt.getTime());
+    },
+  ),
+
+  setStaffEmailSent: adminProcedure
+    .input(setStaffEmailSentInput)
+    .mutation(async ({ ctx, input }) => {
+      const [stateCode] = resolveRequestedStates(ctx.user, [input.stateCode]);
+      const prisma = getPrismaClientForStateCode(stateCode);
+
+      const { count } = await prisma.meetingReviewOutcome.updateMany({
+        where: { id: input.outcomeId, followUp: ReviewFollowUp.EMAIL_STAFF },
+        data: input.sent
+          ? { staffEmailSentAt: new Date(), staffEmailSentBy: ctx.user.email }
+          : { staffEmailSentAt: null, staffEmailSentBy: null },
+      });
+      if (count === 0) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "No outcome is waiting on a staff email with that id",
+        });
+      }
+
+      // Ids only: the audit line must not carry record contents.
+      console.info("Flagged meeting staff email marked", {
+        outcomeId: input.outcomeId,
+        stateCode,
+        sent: input.sent,
       });
     }),
 });

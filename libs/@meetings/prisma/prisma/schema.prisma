@@ -376,7 +376,8 @@ enum ReviewOutcomeKind {
 enum ReviewFollowUp {
   NO_ACTION
   USER_CAUGHT_IT
-  EMAILED_PO
+  // The meeting's staff member still needs an email; staffEmailSentAt on the outcome records when it went out.
+  EMAIL_STAFF
 }
 
 enum ReviewCorrectedGrade {
@@ -390,7 +391,8 @@ enum ReviewSource {
 }
 
 // A Recidiviz admin's verdict on one section of a flagged meeting. Append-only: the latest row
-// per (meetingId, section) is the current outcome and earlier rows are the audit history.
+// per (meetingId, section) is the current outcome and earlier rows are the audit history. The one
+// exception is the PO email fields, which are set when someone marks the email sent.
 // Admin only: written by the Flagged meetings review workflow, never read by the user-facing app.
 model MeetingReviewOutcome {
   id        String   @id @default(cuid())
@@ -411,6 +413,14 @@ model MeetingReviewOutcome {
   overriddenSources ReviewSource[]
   // Only for OVERALL: the sections the problem applies to.
   appliesTo         ReviewSection[]
+
+  // The reviewer thinks the notetaking or LLM judge prompt may need an update.
+  notetakingPromptFollowUp Boolean @default(false)
+  judgePromptFollowUp      Boolean @default(false)
+
+  // Only for an EMAIL_STAFF follow-up: when and by whom the email was marked as sent.
+  staffEmailSentAt DateTime?
+  staffEmailSentBy String?
 
   notes         String?
   reviewerEmail String

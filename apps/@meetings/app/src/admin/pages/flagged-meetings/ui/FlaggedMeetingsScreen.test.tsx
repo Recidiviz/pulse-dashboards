@@ -21,13 +21,17 @@ import React from "react";
 import type {
   FlaggedMeetingSourceStatus,
   FlaggedMeetingSummary,
+  StaffEmailTask,
 } from "~@meetings/app/admin/api/flaggedMeetings";
 
+import { useFlaggedMeetingsTabStore } from "../model/tabStore";
 import { FlaggedMeetingsScreen } from "./FlaggedMeetingsScreen";
 
 const mockNavigate = jest.fn();
 const mockRefetch = jest.fn();
 const mockUseQuery = jest.fn();
+const mockStaffEmailTasks = jest.fn();
+const mockSetSent = jest.fn();
 
 jest.mock("@react-navigation/native", () => ({
   useNavigation: () => ({ navigate: mockNavigate }),
@@ -38,9 +42,22 @@ jest.mock("~@meetings/app/shared/api", () => ({
     v1: {
       flaggedMeetings: {
         list: { useQuery: (...args: unknown[]) => mockUseQuery(...args) },
+        listStaffEmails: { useQuery: () => mockStaffEmailTasks() },
+        setStaffEmailSent: {
+          useMutation: () => ({
+            mutate: mockSetSent,
+            isPending: false,
+            error: null,
+          }),
+        },
       },
     },
+    useUtils: () => ({}),
   },
+}));
+
+jest.mock("~@meetings/app/shared/ui/Snackbar", () => ({
+  useSnackbar: () => ({ showSnackbar: jest.fn() }),
 }));
 
 jest.mock("~@meetings/app/entities/user", () => ({
@@ -105,11 +122,16 @@ const reviewedMeeting = {
     CASE_NOTE: {
       status: "reviewed",
       latestOutcome: {
+        id: "outcome-1",
         outcome: "CONFIRMED_BAD",
-        followUp: "EMAILED_PO",
+        followUp: "EMAIL_STAFF",
         correctedGrade: null,
         overriddenSources: [],
         appliesTo: [],
+        notetakingPromptFollowUp: false,
+        judgePromptFollowUp: false,
+        staffEmailSentAt: null,
+        staffEmailSentBy: null,
         notes: null,
         reviewerEmail: "admin@example.org",
         createdAt: new Date(),
@@ -128,6 +150,21 @@ const okSources: FlaggedMeetingSourceStatus[] = [
   { name: "inAppFeedback", status: "ok" },
 ];
 
+const emailTask = {
+  outcomeId: "outcome-1",
+  stateCode: "US_NE",
+  meetingId: "m-po",
+  startTime: new Date("2026-09-10T12:00:00Z"),
+  staffEmail: "officer@example.org",
+  section: "CASE_NOTE",
+  outcome: "CONFIRMED_BAD",
+  notes: "Wrong curfew time.",
+  reviewerEmail: "admin@example.org",
+  recordedAt: new Date("2026-09-11T12:00:00Z"),
+  sentAt: null,
+  sentBy: null,
+} satisfies StaffEmailTask;
+
 function mockResult(overrides: Record<string, unknown>) {
   mockUseQuery.mockReturnValue({
     data: undefined,
@@ -139,7 +176,52 @@ function mockResult(overrides: Record<string, unknown>) {
 }
 
 describe("FlaggedMeetingsScreen", () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    useFlaggedMeetingsTabStore.setState({
+      tab: "needs",
+      staffEmailsView: "toSend",
+    });
+    mockStaffEmailTasks.mockReturnValue({
+      data: [
+        emailTask,
+        {
+          ...emailTask,
+          outcomeId: "outcome-2",
+          meetingId: "m-sent",
+          sentAt: new Date("2026-09-12T12:00:00Z"),
+          sentBy: "admin@example.org",
+        },
+      ],
+      isLoading: false,
+      isError: false,
+    });
+  });
+
+  it("lists staff emails to send in their own tab, without the list filters", () => {
+    mockResult({ data: { sources: okSources, meetings: [meeting] } });
+    render(<FlaggedMeetingsScreen />);
+
+    fireEvent.press(screen.getByRole("tab", { name: /Staff emails/ }));
+    expect(screen.queryByRole("button", { name: /Flagged by/ })).toBeNull();
+    expect(screen.getByText("m-po")).toBeTruthy();
+    expect(screen.getByText("officer@example.org")).toBeTruthy();
+    expect(screen.queryByText("m-sent")).toBeNull();
+
+    fireEvent.press(screen.getByText("Mark as sent"));
+    expect(mockSetSent).toHaveBeenCalledWith(
+      { stateCode: "US_NE", outcomeId: "outcome-1", sent: true },
+      expect.anything(),
+    );
+
+    fireEvent.press(screen.getByRole("radio", { name: /Sent/ }));
+    expect(screen.getByText("m-sent")).toBeTruthy();
+    fireEvent.press(screen.getByText("Undo"));
+    expect(mockSetSent).toHaveBeenLastCalledWith(
+      { stateCode: "US_NE", outcomeId: "outcome-2", sent: false },
+      expect.anything(),
+    );
+  });
 
   it("renders a row with a badge for each source", () => {
     mockResult({ data: { sources: okSources, meetings: [meeting] } });
@@ -171,12 +253,31 @@ describe("FlaggedMeetingsScreen", () => {
     fireEvent.press(screen.getByRole("tab", { name: /Reviewed/ }));
     expect(screen.queryByText("m-123")).toBeNull();
     expect(screen.getByText("m-456")).toBeTruthy();
-    expect(screen.getByText("Confirmed BAD · emailed the PO")).toBeTruthy();
+    expect(
+      screen.getByText("Confirmed BAD · Staff email pending"),
+    ).toBeTruthy();
 
     // All flagged follows the meeting-date filter, which leaves out the 2020 meeting.
     fireEvent.press(screen.getByRole("tab", { name: /All flagged/ }));
     expect(screen.queryByText("m-123")).toBeNull();
     expect(screen.getByText("m-456")).toBeTruthy();
+  });
+
+  it("shows a count only on Needs review", () => {
+    mockResult({ data: { sources: okSources, meetings: [meeting] } });
+    render(<FlaggedMeetingsScreen />);
+
+    expect(screen.getByRole("tab", { name: /Needs review/ })).toHaveTextContent(
+      "Needs review1",
+    );
+    expect(screen.getByRole("tab", { name: /Reviewed/ })).toHaveTextContent(
+      "Reviewed",
+      { exact: true },
+    );
+    expect(screen.getByRole("tab", { name: /All flagged/ })).toHaveTextContent(
+      "All flagged",
+      { exact: true },
+    );
   });
 
   it("limits Reviewed and All by meeting date but not Needs review", () => {

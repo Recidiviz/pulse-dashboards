@@ -25,18 +25,25 @@ import {
   isNeedsReview,
   meetingReviewState,
   outcomeLabel,
+  promptFollowUpLabel,
   reopenSentence,
   reviewableSections,
+  staffEmailStatus,
 } from "./review";
 
 const outcome = (
   overrides: Partial<ReviewOutcomeSummary> = {},
 ): ReviewOutcomeSummary => ({
+  id: "outcome-1",
   outcome: "CONFIRMED_BAD",
   followUp: "NO_ACTION",
   correctedGrade: null,
   overriddenSources: [],
   appliesTo: [],
+  notetakingPromptFollowUp: false,
+  judgePromptFollowUp: false,
+  staffEmailSentAt: null,
+  staffEmailSentBy: null,
   notes: null,
   reviewerEmail: "admin@example.com",
   createdAt: new Date("2026-09-10T12:00:00Z"),
@@ -64,9 +71,9 @@ const reviews = (overrides: Partial<SectionReviews>): SectionReviews => ({
 
 describe("outcomeLabel", () => {
   it("summarizes a confirmed BAD with its follow-up", () => {
-    expect(outcomeLabel(outcome({ followUp: "EMAILED_PO" }), "CASE_NOTE")).toBe(
-      "Confirmed BAD · emailed the PO",
-    );
+    expect(
+      outcomeLabel(outcome({ followUp: "EMAIL_STAFF" }), "CASE_NOTE"),
+    ).toBe("Confirmed BAD · Staff email pending");
   });
 
   it("summarizes a Not BAD with its corrected grade and overrides", () => {
@@ -76,11 +83,11 @@ describe("outcomeLabel", () => {
           outcome: "NOT_BAD",
           correctedGrade: "PARTIAL",
           overriddenSources: ["LLM_JUDGE", "LABEL_STUDIO"],
-          followUp: "EMAILED_PO",
+          followUp: "EMAIL_STAFF",
         }),
         "CASE_NOTE",
       ),
-    ).toBe("Not BAD → Partial · overrides LLMAJ + LS · emailed PO");
+    ).toBe("Not BAD → Partial · overrides LLMAJ + LS · Staff email pending");
   });
 
   it("names the sections an Overall outcome covers, or neither", () => {
@@ -93,6 +100,37 @@ describe("outcomeLabel", () => {
     expect(outcomeLabel(outcome({ appliesTo: [] }), "OVERALL")).toBe(
       "Confirmed BAD · neither section · no action",
     );
+  });
+
+  it("names the prompts flagged for an update", () => {
+    expect(promptFollowUpLabel(outcome())).toBeNull();
+    expect(
+      promptFollowUpLabel(
+        outcome({ notetakingPromptFollowUp: true, judgePromptFollowUp: true }),
+      ),
+    ).toBe("Prompt follow-up: notetaking + LLM judge");
+  });
+
+  it("says whether staff have been emailed yet", () => {
+    expect(staffEmailStatus(outcome())).toBeNull();
+    expect(staffEmailStatus(outcome({ followUp: "EMAIL_STAFF" }))).toEqual({
+      label: "Staff email pending",
+      detail: null,
+      tone: "partial",
+    });
+    expect(
+      staffEmailStatus(
+        outcome({
+          followUp: "EMAIL_STAFF",
+          staffEmailSentAt: new Date("2026-09-12T12:00:00Z"),
+          staffEmailSentBy: "admin@example.com",
+        }),
+      ),
+    ).toEqual({
+      label: "Staff emailed",
+      detail: "by admin@example.com · Sep 12",
+      tone: "good",
+    });
   });
 
   it("labels Other plainly", () => {

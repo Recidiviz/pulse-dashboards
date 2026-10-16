@@ -32,6 +32,7 @@ import { Typography } from "~@meetings/app/shared/ui/Typography";
 import { formatDate, formatMinutes } from "../lib/format";
 import { buildMetaItems } from "../lib/metadata";
 import { buildRatingsTable } from "../lib/ratings";
+import { GradingScaleLink } from "./GradingScale";
 import { MetadataGrid } from "./MetadataGrid";
 import { NotesPanel } from "./NotesPanel";
 import { LlmJudgeCard, RaterCard, VotesCard } from "./RaterOutput";
@@ -46,14 +47,20 @@ type FlaggedMeetingRouteProp = RouteProp<
 
 function Section({
   title,
+  action,
   children,
 }: {
   title: string;
+  /** Shown at the end of the heading row. */
+  action?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
     <View className="gap-3">
-      <Typography variant="heading-5">{title}</Typography>
+      <View className="flex-row items-baseline justify-between gap-3">
+        <Typography variant="heading-5">{title}</Typography>
+        {action}
+      </View>
       {children}
     </View>
   );
@@ -140,7 +147,10 @@ export function FlaggedMeetingScreen() {
 
         <View className="flex-row flex-wrap items-start gap-6">
           <View className="min-w-[480px] flex-1 gap-6">
-            <Section title="Ratings">
+            <Section
+              title="Ratings"
+              action={<GradingScaleLink label="Grading scale" />}
+            >
               <RatingsTableView table={buildRatingsTable(data)} />
             </Section>
 

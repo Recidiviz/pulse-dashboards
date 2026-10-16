@@ -17,7 +17,10 @@
 
 import type { FlaggedMeetingSummary } from "~@meetings/app/admin/api/flaggedMeetings";
 
-import { filterFlaggedMeetings } from "./filterFlaggedMeetings";
+import {
+  filterByPromptFollowUp,
+  filterFlaggedMeetings,
+} from "./filterFlaggedMeetings";
 
 type Sections = FlaggedMeetingSummary["sections"];
 
@@ -73,5 +76,47 @@ describe("filterFlaggedMeetings", () => {
       OVERALL: { ...none, vote: true },
     });
     expect(filterFlaggedMeetings([mixed], "llm", "OVERALL")).toEqual([]);
+  });
+});
+
+describe("filterByPromptFollowUp", () => {
+  const reviewed = (
+    id: string,
+    prompts: {
+      notetakingPromptFollowUp: boolean;
+      judgePromptFollowUp: boolean;
+    },
+  ) =>
+    ({
+      meetingId: id,
+      reviews: {
+        CASE_NOTE: { latestOutcome: prompts },
+        ACTION_ITEMS: { latestOutcome: null },
+        OVERALL: { latestOutcome: null },
+      },
+    }) as unknown as FlaggedMeetingSummary;
+
+  const notetaking = reviewed("n", {
+    notetakingPromptFollowUp: true,
+    judgePromptFollowUp: false,
+  });
+  const judge = reviewed("j", {
+    notetakingPromptFollowUp: false,
+    judgePromptFollowUp: true,
+  });
+  const neither = reviewed("x", {
+    notetakingPromptFollowUp: false,
+    judgePromptFollowUp: false,
+  });
+  const rows = [notetaking, judge, neither];
+
+  it("keeps every row for any", () => {
+    expect(filterByPromptFollowUp(rows, "any")).toEqual(rows);
+  });
+
+  it("keeps the rows that flag the chosen prompt", () => {
+    expect(ids(filterByPromptFollowUp(rows, "notetaking"))).toEqual(["n"]);
+    expect(ids(filterByPromptFollowUp(rows, "judge"))).toEqual(["j"]);
+    expect(ids(filterByPromptFollowUp(rows, "either"))).toEqual(["n", "j"]);
   });
 });

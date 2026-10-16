@@ -132,6 +132,8 @@ describe("toRecordInput", () => {
       ),
     ).toEqual({
       ...target,
+      notetakingPromptFollowUp: false,
+      judgePromptFollowUp: false,
       section: "CASE_NOTE",
       outcome: "CONFIRMED_BAD",
       followUp: "USER_CAUGHT_IT",
@@ -152,6 +154,8 @@ describe("toRecordInput", () => {
       ),
     ).toEqual({
       ...target,
+      notetakingPromptFollowUp: false,
+      judgePromptFollowUp: false,
       section: "CASE_NOTE",
       outcome: "NOT_BAD",
       correctedGrade: "PARTIAL",
@@ -176,6 +180,15 @@ describe("toRecordInput", () => {
     ).not.toHaveProperty("appliesTo");
   });
 
+  it("leaves out the corrected grade and overrides when there is no grade", () => {
+    const input = build(
+      "CASE_NOTE",
+      draft({ outcome: "NOT_BAD", correctedGrade: null }),
+    );
+    expect(input).toMatchObject({ overriddenSources: [] });
+    expect(input).not.toHaveProperty("correctedGrade");
+  });
+
   it("returns null for a draft that is not ready", () => {
     expect(build("CASE_NOTE", draft({}))).toBeNull();
   });
@@ -185,21 +198,28 @@ describe("draftFromOutcome", () => {
   it("restores a recorded outcome for editing", () => {
     expect(
       draftFromOutcome({
+        id: "outcome-1",
         outcome: "NOT_BAD",
-        followUp: "EMAILED_PO",
+        followUp: "EMAIL_STAFF",
         correctedGrade: "PARTIAL",
         overriddenSources: ["LLM_JUDGE"],
         appliesTo: [],
+        notetakingPromptFollowUp: false,
+        judgePromptFollowUp: true,
+        staffEmailSentAt: null,
+        staffEmailSentBy: null,
         notes: "why",
         reviewerEmail: "a@b.org",
         createdAt: new Date(),
       }),
     ).toEqual({
       outcome: "NOT_BAD",
-      followUp: "EMAILED_PO",
+      followUp: "EMAIL_STAFF",
       correctedGrade: "PARTIAL",
       overriddenSources: ["LLM_JUDGE"],
       appliesTo: [],
+      notetakingPromptFollowUp: false,
+      judgePromptFollowUp: true,
       notes: "why",
     });
   });
