@@ -266,9 +266,17 @@ export const formatBooleanDisplay = (
   return "Not specified";
 };
 
+// e.g. "4/2023"
+export const formatMonthYear = (date: Date | string): string =>
+  new Date(date).toLocaleDateString("en-US", {
+    timeZone: "UTC",
+    month: "numeric",
+    year: "numeric",
+  });
+
 /**
  * Formats a date range for display.
- * Returns "04/2023 - 11/2025" format, or "04/2023 - Present" if no end date.
+ * Returns "4/2023 - 11/2025" format, or "4/2023 - Present" if no end date.
  * Returns "Not specified" if no start date.
  * Uses UTC to avoid off-by-one timezone issues.
  */
@@ -278,16 +286,8 @@ export const formatDateRange = (
 ): string => {
   if (!startDate) return "Not specified";
 
-  const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString("en-US", {
-      month: "2-digit",
-      year: "numeric",
-      timeZone: "UTC",
-    });
-  };
-
-  const start = formatDate(startDate);
-  const end = endDate ? formatDate(endDate) : "Present";
+  const start = formatMonthYear(startDate);
+  const end = endDate ? formatMonthYear(endDate) : "Present";
 
   return `${start} - ${end}`;
 };
@@ -343,13 +343,27 @@ export const formatJudgeAndDivision = (charge: {
   return judgeNames || charge.division || null;
 };
 
+type DateFormatOptions = {
+  /** Shown when the date is empty. Defaults to an em dash. */
+  fallback?: string;
+  /**
+   * Format in the viewer's time zone instead of UTC. Use for "now" (e.g. when
+   * a report is generated); leave off for stored date-only values, which are
+   * saved as UTC midnight.
+   */
+  local?: boolean;
+};
+
 /**
  * Formats a date as "Month Day, Year" (e.g. "March 27, 2026").
- * Uses UTC to avoid off-by-one timezone issues.
+ * Uses UTC to avoid off-by-one timezone issues, unless `local` is set.
  */
-export const formatLongDate = (date: Date): string => {
+export const formatLongDate = (
+  date: Date,
+  { local = false }: Pick<DateFormatOptions, "local"> = {},
+): string => {
   return date.toLocaleDateString("en-US", {
-    timeZone: "UTC",
+    timeZone: local ? undefined : "UTC",
     month: "long",
     day: "numeric",
     year: "numeric",
@@ -399,14 +413,6 @@ export const formatAgeAtAssessmentPointNote = (
     " ",
   );
 
-// e.g. "04/2023"
-export const formatMonthYear = (date: Date | string): string =>
-  new Date(date).toLocaleDateString("en-US", {
-    timeZone: "UTC",
-    month: "2-digit",
-    year: "numeric",
-  });
-
 /**
  * Converts a UTC-midnight Date/string to a local Date with matching Y/M/D,
  * so a date picker (which renders in local time) displays the correct calendar day.
@@ -425,12 +431,16 @@ export const localDateToUtcIsoDate = (d: Date): string =>
     .toISOString()
     .split("T")[0];
 
-/** Format a date for display as MM/DD/YYYY, returning a dash for empty values */
+/**
+ * Format a date for display as M/D/YYYY (e.g. "3/27/2026"), returning
+ * `fallback` for empty values. Uses UTC unless `local` is set.
+ */
 export const formatDisplayDate = (
   date: string | Date | null | undefined,
+  { fallback = "—", local = false }: DateFormatOptions = {},
 ): string => {
-  if (!date) return "—";
-  return moment(date).utc().format("MM/DD/YYYY");
+  if (!date) return fallback;
+  return (local ? moment(date) : moment(date).utc()).format("M/D/YYYY");
 };
 
 /**

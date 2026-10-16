@@ -20,7 +20,7 @@ import moment from "moment";
 import React from "react";
 
 import { SARDetailsPresenter } from "../../presenters/SARDetailsPresenter";
-import { formatJudgeName } from "../../utils/utils";
+import { formatJudgeName, formatLongDate } from "../../utils/utils";
 import LearnMoreBannerIcon from "../assets/learn-more-banner-icon.svg?react";
 import { SARSection } from "../SARDetails/constants";
 import { useStore } from "../StoreProvider/StoreProvider";
@@ -87,7 +87,7 @@ export const SentencingAssessmentReport: React.FC<SentencingAssessmentReportProp
           <div> Sentencing Assessment Report </div>
         </Styled.DOCHeader>
         <Styled.DateTimeHeader>
-          <div>{moment().format("MMMM D, YYYY")}</div>
+          <div>{formatLongDate(new Date(), { local: true })}</div>
           <div>{moment().format("LTS")}</div>
         </Styled.DateTimeHeader>
       </Styled.Header>

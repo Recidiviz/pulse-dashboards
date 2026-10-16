@@ -15,9 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import moment from "moment";
-
 import { Case, Opportunities as OpportunitiesType } from "../../../api";
+import { formatDisplayDate } from "../../../utils/utils";
 import { Modal } from "../../Modal/Modal";
 import { Tooltip } from "../../Tooltip/Tooltip";
 import * as Styled from "../CaseDetails.styles";
@@ -148,10 +147,7 @@ const OpportunityModal: React.FC<OpportunityModalProps> = ({
         </Styled.ModalHeader>
         {selectedOpportunity.lastUpdatedAt && (
           <Styled.SectionLabel>
-            Last updated{" "}
-            {moment(selectedOpportunity.lastUpdatedAt)
-              .utc()
-              .format("MM/DD/YYYY")}
+            Last updated {formatDisplayDate(selectedOpportunity.lastUpdatedAt)}
           </Styled.SectionLabel>
         )}
       </Styled.ModalHeaderWrapper>

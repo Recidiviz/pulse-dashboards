@@ -16,9 +16,9 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import moment from "moment";
 import React from "react";
 
+import { formatDisplayDate } from "../../utils/utils";
 import {
   ReportTypeNotice,
   ReportTypeNoticeControls,
@@ -132,7 +132,7 @@ export const OrasAssessmentScoreCard: React.FC<
           <Styled.MetadataItem>
             <Styled.MetadataLabel>Assessment date</Styled.MetadataLabel>
             <Styled.MetadataValue>
-              {moment(assessmentDate).utc().format("l")}
+              {formatDisplayDate(assessmentDate)}
             </Styled.MetadataValue>
           </Styled.MetadataItem>
           <Styled.MetadataItem>

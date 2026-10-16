@@ -16,12 +16,12 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import moment from "moment";
 import React from "react";
 
 import { ReportTypeNotice } from "~sentencing-client/components/SARDetails/ReportTypeNotice";
 
 import { PriorTreatmentHistoryPresenter } from "../../../presenters/PriorTreatmentHistoryPresenter";
+import { formatDisplayDate } from "../../../utils/utils";
 import { SkippableTextArea } from "../../shared/SkippableTextArea";
 import { SectionTitle } from "../../shared/styles/SectionStyles";
 import {
@@ -88,9 +88,7 @@ export const PriorTreatmentHistorySection: React.FC<PriorTreatmentHistorySection
                         .slice(0, MAX_DOC_HISTORIES_PER_CATEGORY)
                         .map((history) => {
                           const completedDate = history.completedOn
-                            ? moment(history.completedOn)
-                                .utc()
-                                .format("MM/DD/YY")
+                            ? formatDisplayDate(history.completedOn)
                             : null;
                           return (
                             <React.Fragment key={history.id}>

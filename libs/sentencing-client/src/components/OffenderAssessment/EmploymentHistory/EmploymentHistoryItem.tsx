@@ -15,13 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import moment from "moment";
 import React from "react";
 import toast from "react-hot-toast";
 
 import { Icon, IconSVG } from "~design-system";
 
-import { formatBooleanDisplay, formatDateRange } from "../../../utils/utils";
+import {
+  formatBooleanDisplay,
+  formatDateRange,
+  formatDisplayDate,
+} from "../../../utils/utils";
 import * as Styled from "../HistoryItemStyles";
 import { EmploymentHistory } from "./constants";
 
@@ -91,7 +94,7 @@ export const EmploymentHistoryItem: React.FC<EmploymentHistoryItemProps> = ({
           {history.importedFromDOC && (
             <Styled.DataSubtitle>
               This entry was pulled from MOCIS on{" "}
-              {moment(history.createdAt).utc().format("MM/DD/YYYY")}
+              {formatDisplayDate(history.createdAt)}
             </Styled.DataSubtitle>
           )}
         </Styled.DataCell>

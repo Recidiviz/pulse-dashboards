@@ -22,7 +22,7 @@
 import { Text } from "@react-pdf/renderer";
 import React from "react";
 
-import { formatMonthYear } from "../../../../utils/utils";
+import { formatDateRange } from "../../../../utils/utils";
 import {
   Table,
   TableHeaderCell,
@@ -34,12 +34,6 @@ import { font } from "../tokens";
 import { valueOrDash as v, yesNoOrDash } from "../utils";
 
 type EmploymentRow = SAR["employmentHistories"][number];
-
-const dateRange = (row: EmploymentRow): string => {
-  const start = row.startDate ? formatMonthYear(row.startDate) : "—";
-  const end = row.endDate ? formatMonthYear(row.endDate) : "—";
-  return `${start} - ${end}`;
-};
 
 export const EmploymentTable: React.FC<{
   rows: EmploymentRow[];
@@ -62,7 +56,7 @@ export const EmploymentTable: React.FC<{
           {v(r.employerName)}
         </Text>
         <Text style={{ fontSize: font.size.base, flex: 2 }}>
-          {dateRange(r)}
+          {formatDateRange(r.startDate, r.endDate)}
         </Text>
         <Text style={{ fontSize: font.size.base, flex: 2 }}>
           {yesNoOrDash(r.verifiedByReportAuthor)}

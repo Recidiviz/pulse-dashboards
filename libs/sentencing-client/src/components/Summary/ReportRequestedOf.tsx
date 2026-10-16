@@ -15,11 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import moment from "moment";
 import React from "react";
 
 import { SARAttributes } from "../../datastores/types";
-import { formatPersonName } from "../../utils/utils";
+import { formatDisplayDate, formatPersonName } from "../../utils/utils";
 import { SentencingAssessmentReportSection } from "./ReportBlock";
 import { SECTION_COLUMN_GAP } from "./SentencingAssessmentReport.constants";
 import * as Styled from "./SentencingAssessmentReport.styles";
@@ -37,7 +36,7 @@ export const ReportRequestedOf: React.FC<ReportRequestedOfProps> = ({
 }) => (
   <SentencingAssessmentReportSection
     title="Requested Of"
-    note={`Requested ${dateRequested ? moment(dateRequested).utc().format("MM/DD/YY") : "—"} | Completed ${updatedAt ? moment(updatedAt).utc().format("MM/DD/YY") : "—"}`}
+    note={`Requested ${formatDisplayDate(dateRequested)} | Completed ${formatDisplayDate(updatedAt, { local: true })}`}
   >
     <Styled.RowFlexContainer gap={SECTION_COLUMN_GAP}>
       <Styled.ColumnFlexContainer>

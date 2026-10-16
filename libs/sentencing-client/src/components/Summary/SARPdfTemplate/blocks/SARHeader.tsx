@@ -19,6 +19,7 @@ import { Text, View } from "@react-pdf/renderer";
 import moment from "moment";
 import React from "react";
 
+import { formatLongDate } from "../../../../utils/utils";
 import type { PdfStyle } from "../SARPdfTemplate.types";
 import { color, font, space } from "../tokens";
 
@@ -53,7 +54,7 @@ export const SARHeader: React.FC<{ style?: PdfStyle }> = ({ style = {} }) => {
         Sentencing Assessment Report
       </Text>
       <Text style={{ textAlign: "right" }}>
-        {generatedAt.format("MMMM D, YYYY")}
+        {formatLongDate(generatedAt.toDate(), { local: true })}
         {"\n"}
         {generatedAt.format("LTS")}
       </Text>

@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { ColumnDef, Row } from "@tanstack/react-table";
-import moment from "moment";
 
 import { isSARArchived } from "~@sentencing/trpc-types";
 import { StaffSAR } from "~sentencing-client/api";
@@ -25,6 +24,7 @@ import { sortFullNameByLastNameDescending } from "../../../utils/sorting";
 import {
   capitalizeName,
   displayReportType,
+  formatDisplayDate,
   formatPersonName,
 } from "../../../utils/utils";
 import { REPORT_TYPE_KEY } from "../../CaseDetails/constants";
@@ -75,9 +75,7 @@ const createDateColumn = (
   accessorKey,
   cell: (info) => {
     const value = info.getValue() as Date | null | undefined;
-    return value == null
-      ? UNKNOWN_OPTION
-      : moment(value).utc().format("MM/DD/YYYY");
+    return formatDisplayDate(value, { fallback: UNKNOWN_OPTION });
   },
 });
 

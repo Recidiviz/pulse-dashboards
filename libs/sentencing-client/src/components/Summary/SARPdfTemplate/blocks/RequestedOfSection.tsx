@@ -16,18 +16,14 @@
 // =============================================================================
 
 import { View } from "@react-pdf/renderer";
-import moment from "moment";
 import React from "react";
 
-import { formatPersonName } from "../../../../utils/utils";
+import { formatDisplayDate, formatPersonName } from "../../../../utils/utils";
 import { FieldCell } from "../primitives/FieldCell";
 import { UnderlinedHeading } from "../primitives/UnderlinedHeading";
 import { useSAR } from "../SARContext";
 import type { PdfStyle } from "../SARPdfTemplate.types";
 import { space } from "../tokens";
-
-const fmt = (d: Date | string | null | undefined): string =>
-  d ? moment(d).utc().format("MM/DD/YY") : "—";
 
 export const RequestedOfSection: React.FC<{ style?: PdfStyle }> = ({
   style = {},
@@ -37,7 +33,7 @@ export const RequestedOfSection: React.FC<{ style?: PdfStyle }> = ({
   return (
     <View style={style}>
       <UnderlinedHeading
-        meta={`Requested ${fmt(sar.dateRequested)} | Completed ${fmt(sar.updatedAt)}`}
+        meta={`Requested ${formatDisplayDate(sar.dateRequested)} | Completed ${formatDisplayDate(sar.updatedAt, { local: true })}`}
       >
         Requested of
       </UnderlinedHeading>

@@ -16,12 +16,12 @@
 // =============================================================================
 
 import _ from "lodash";
-import moment from "moment";
 import React from "react";
 
 import { CaseInsight } from "../../../../api";
 import {
   convertDecimalToPercentage,
+  formatLongDate,
   printFormattedRecordString,
 } from "../../../../utils/utils";
 import InfoIcon from "../../../assets/info-icon.svg?react";
@@ -253,7 +253,7 @@ export function ReportHeader() {
   return (
     <Styled.Header>
       <div>Report Attachment</div>
-      <div>{moment().format("MMMM DD, YYYY")}</div>
+      <div>{formatLongDate(new Date(), { local: true })}</div>
     </Styled.Header>
   );
 }

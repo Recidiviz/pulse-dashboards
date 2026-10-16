@@ -16,10 +16,10 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import moment from "moment";
 import React from "react";
 
 import { SARAttributes } from "../../datastores/types";
+import { formatDisplayDate } from "../../utils/utils";
 import * as Styled from "./SARHeader.styles";
 import { useOverflowText } from "./useOverflowText";
 
@@ -54,7 +54,7 @@ export const SARHeader: React.FC<SARHeaderProps> = observer(function SARHeader({
             <Styled.DocID>DOC ID: {externalId}</Styled.DocID>
             {dueDate && (
               <Styled.DueDateBadge>
-                Due {moment(dueDate).utc().format("MM/DD/YY")}
+                Due {formatDisplayDate(dueDate)}
               </Styled.DueDateBadge>
             )}
           </Styled.HeaderInfo>

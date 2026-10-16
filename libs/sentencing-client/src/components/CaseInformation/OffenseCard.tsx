@@ -23,6 +23,7 @@ import { FormCharge } from "../../datastores/types";
 import { useDebouncedCallback } from "../../hooks/useDebouncedCallback";
 import {
   formatClassification,
+  formatDisplayDate,
   formatJudgeAndDivision,
 } from "../../utils/utils";
 import { Dropdown } from "../CaseDetails/Form/Elements/Dropdown";
@@ -148,24 +149,11 @@ export const OffenseCard: React.FC<OffenseCardProps> = observer(
                 />
                 <ReadOnlyField
                   label={CHARGE_FIELD_LABELS.pleaDate}
-                  value={
-                    charge.pleaDate
-                      ? new Date(charge.pleaDate).toLocaleDateString("en-US", {
-                          timeZone: "UTC",
-                        })
-                      : null
-                  }
+                  value={formatDisplayDate(charge.pleaDate)}
                 />
                 <ReadOnlyField
                   label={CHARGE_FIELD_LABELS.sentencingDate}
-                  value={
-                    charge.sentencingDate
-                      ? new Date(charge.sentencingDate).toLocaleDateString(
-                          "en-US",
-                          { timeZone: "UTC" },
-                        )
-                      : null
-                  }
+                  value={formatDisplayDate(charge.sentencingDate)}
                 />
               </>
             ) : (

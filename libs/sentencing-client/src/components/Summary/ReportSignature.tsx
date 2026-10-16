@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import moment from "moment";
 import React from "react";
 
+import { formatDisplayDate } from "../../utils/utils";
 import { ReportBlock } from "./ReportBlock";
 import * as Styled from "./SentencingAssessmentReport.styles";
 
@@ -46,7 +46,7 @@ const SignatureBlock: React.FC<{
         </Styled.SignatureRoleLabel>
         <Styled.SignatureRoleLabel>{data.title}</Styled.SignatureRoleLabel>
         <Styled.SignatureRoleLabel>
-          Date: {moment(data.lastSignedAt).utc().format("M/D/YY")}
+          Date: {formatDisplayDate(data.lastSignedAt, { local: true })}
         </Styled.SignatureRoleLabel>
       </Styled.SignedSignatureColumn>
     );
@@ -93,7 +93,7 @@ export const ReportSignature: React.FC<ReportSignatureProps> = ({
         />
       </Styled.SignatureColumnsRow>
       <Styled.SignatureFieldLabel>
-        Date Created: {moment().format("M/D/YY")}
+        Date Created: {formatDisplayDate(new Date(), { local: true })}
       </Styled.SignatureFieldLabel>
     </Styled.SignatureContainer>
   </ReportBlock>

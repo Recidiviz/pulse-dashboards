@@ -16,9 +16,9 @@
 // =============================================================================
 
 import { Text, View } from "@react-pdf/renderer";
-import moment from "moment";
 import React from "react";
 
+import { formatDisplayDate, formatLongDate } from "../../../../utils/utils";
 import {
   isSignatureComplete,
   officerSignatureData,
@@ -75,7 +75,7 @@ const SignatoryColumn: React.FC<{
         <Text
           style={{ fontSize: font.size.md, lineHeight: font.lineHeight.normal }}
         >
-          Date: {moment(data.lastSignedAt).utc().format("M/D/YY")}
+          Date: {formatDisplayDate(data.lastSignedAt, { local: true })}
         </Text>
       </View>
     );
@@ -139,7 +139,7 @@ export const SignatureBlock: React.FC<{ style?: PdfStyle }> = ({
           fontWeight: font.weight.bold,
         }}
       >
-        Date Created: {moment().format("MMMM D, YYYY")}
+        Date Created: {formatLongDate(new Date(), { local: true })}
       </Text>
     </View>
   );

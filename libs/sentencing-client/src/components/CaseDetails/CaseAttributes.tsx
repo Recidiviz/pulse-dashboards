@@ -16,11 +16,14 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import moment from "moment";
 
 import { PSIStore } from "../../datastores/PSIStore";
 import { filterExcludedAttributes } from "../../geoConfigs/utils";
-import { displayReportType, titleCase } from "../../utils/utils";
+import {
+  displayReportType,
+  formatDisplayDate,
+  titleCase,
+} from "../../utils/utils";
 import { useStore } from "../StoreProvider/StoreProvider";
 import * as Styled from "./CaseDetails.styles";
 import {
@@ -124,9 +127,7 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
         <Styled.HeaderWrapper>
           <Styled.Name>{fullName}</Styled.Name>
           <Styled.ID>{externalId}</Styled.ID>
-          <Styled.DueDate>
-            Due {moment(dueDate).utc().format("MM/DD/YYYY")}
-          </Styled.DueDate>
+          <Styled.DueDate>Due {formatDisplayDate(dueDate)}</Styled.DueDate>
           <Styled.EditCaseDetailsButton onClick={openEditCaseDetailsModal}>
             Edit Case Details
           </Styled.EditCaseDetailsButton>

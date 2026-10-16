@@ -15,10 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import moment from "moment";
-
 import { Client } from "../../api";
 import { ActiveFeatureVariants } from "../../datastores/types";
+import { formatDisplayDate } from "../../utils/utils";
 import { GenderToDisplayName } from "../CaseDetails/constants";
 import { MutableSARAttributes } from "../CaseDetails/types";
 import { Boundaries } from "./assessmentTypeUtils";
@@ -164,9 +163,7 @@ export function getOrasUpdatedText(
   ORASEnteredManually: boolean,
 ): string {
   const label = ORASEnteredManually ? "Data Manually Added:" : `Last Updated: `;
-  return `${label} ${
-    ORASLastUpdatedAt ? moment.utc(ORASLastUpdatedAt).format("l") : "Unknown"
-  }`;
+  return `${label} ${formatDisplayDate(ORASLastUpdatedAt, { fallback: "Unknown" })}`;
 }
 
 // Domain keys used for conditional rendering based on ORAS type
