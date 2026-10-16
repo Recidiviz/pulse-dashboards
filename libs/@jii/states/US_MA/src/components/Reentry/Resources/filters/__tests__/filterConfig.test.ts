@@ -19,6 +19,7 @@ import { loadUsMaTranslations, rentFilters } from "../../__tests__/testUtils";
 import {
   countSelectedOptions,
   FILTER_GROUPS,
+  getAppliedOptions,
   isSameSelection,
   parseSelectedFilters,
   toggleOption,
@@ -48,6 +49,19 @@ describe("parseSelectedFilters", () => {
 test("toSearchParams maps options back to their IDs", () => {
   expect(toSearchParams(rentFilters("over200", "free"))).toEqual({
     rent: ["over200", "free"],
+  });
+});
+
+describe("getAppliedOptions", () => {
+  test("returns the selected options in config order, with their param and key", () => {
+    expect(
+      getAppliedOptions(rentFilters("over200", "free")).map(
+        ({ key, param, option }) => [key, param, option.id],
+      ),
+    ).toEqual([
+      ["rent:free", "rent", "free"],
+      ["rent:over200", "rent", "over200"],
+    ]);
   });
 });
 

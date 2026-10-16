@@ -113,6 +113,19 @@ export function isOptionSelected(
   return filters[param].some((selected) => selected.id === option.id);
 }
 
+/** Returns the options selected in filters with a unique key. */
+export function getAppliedOptions(filters: SelectedFilters): {
+  key: string;
+  param: keyof SelectedFilters;
+  option: FilterOption<unknown>;
+}[] {
+  return FILTER_GROUPS.flatMap(({ param, options }) =>
+    options
+      .filter((option) => isOptionSelected(filters, param, option))
+      .map((option) => ({ key: `${param}:${option.id}`, param, option })),
+  );
+}
+
 /** Returns filters with option added to or removed from param's selection. */
 export function toggleOption(
   filters: SelectedFilters,

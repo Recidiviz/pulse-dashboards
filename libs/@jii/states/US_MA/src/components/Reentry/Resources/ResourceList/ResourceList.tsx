@@ -22,9 +22,9 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 import { BottomSheet, usePageTitle } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
-import { Button } from "~design-system";
 
 import { useResources } from "../../../../hooks/useResources";
+import { AppliedFilters } from "../AppliedFilters/AppliedFilters";
 import { CollapsibleSection } from "../CollapsibleSection/CollapsibleSection";
 import { FilterSheet } from "../FilterSheet/FilterSheet";
 import { ResourceCard } from "../ResourceCard/ResourceCard";
@@ -92,12 +92,11 @@ export const ResourceList = () => {
         </PageSubtitle>
       </PageHeader>
 
-      {/* TODO(REE-187): Match the results page design for the filter button. */}
-      <div>
-        <Button kind="secondary" onClick={() => setFilterSheetOpen(true)}>
-          {t(($) => $.reentry.resources.filters.openButton)}
-        </Button>
-      </div>
+      <AppliedFilters
+        appliedFilters={appliedFilters}
+        onChange={applyFilters}
+        onOpenSheet={() => setFilterSheetOpen(true)}
+      />
 
       {sections.length === 0 ? (
         <EmptyState>{t(($) => $.reentry.resources.list.emptyState)}</EmptyState>

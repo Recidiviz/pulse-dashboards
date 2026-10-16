@@ -702,7 +702,15 @@
         }
       },
       "filters": {
-        "openButton": "[US_MA]reentry.resources.filters.openButton",
+        "openButton_zero": "[US_MA]reentry.resources.filters.openButton_zero",
+        "openButton_one": "[US_MA]reentry.resources.filters.openButton_one",
+        "openButton_other": "[US_MA]reentry.resources.filters.openButton_other",
+        "applied": {
+          "more": "[US_MA]reentry.resources.filters.applied.more",
+          "showLess": "[US_MA]reentry.resources.filters.applied.showLess",
+          "clearAll": "[US_MA]reentry.resources.filters.applied.clearAll",
+          "remove": "[US_MA]reentry.resources.filters.applied.remove"
+        },
         "sheet": {
           "title": "[US_MA]reentry.resources.filters.sheet.title",
           "subtitle": "[US_MA]reentry.resources.filters.sheet.subtitle",

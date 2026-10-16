@@ -702,7 +702,15 @@
         }
       },
       "filters": {
-        "openButton": "Filters",
+        "openButton_zero": "Filters",
+        "openButton_one": "Filters ({{count}})",
+        "openButton_other": "Filters ({{count}})",
+        "applied": {
+          "more": "+{{count}} more",
+          "showLess": "Show less",
+          "clearAll": "Clear all",
+          "remove": "Remove {{label}} filter"
+        },
         "sheet": {
           "title": "Filters",
           "subtitle": "All results are shown until you select a filter. Tap options below to narrow the list. Selected filters apply together.",

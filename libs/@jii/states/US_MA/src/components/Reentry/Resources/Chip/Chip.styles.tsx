@@ -54,3 +54,29 @@ export const ChipButton = styled.button<{ $selected: boolean }>`
     outline-offset: 2px;
   }
 `;
+
+export const RemovableChipButton = styled.button`
+  ${typography.Sans12}
+
+  display: inline-flex;
+  align-items: center;
+  gap: ${rem(spacing.xs)};
+  max-width: 100%;
+  min-height: ${rem(24)};
+  padding: ${rem(spacing.xs)} ${rem(spacing.sm)};
+  border-radius: ${rem(999)};
+  border: none;
+  background: ${palette.pine4};
+  color: ${palette.white};
+  cursor: pointer;
+  text-align: left;
+
+  &:hover {
+    background: ${palette.pine3};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${palette.pine1};
+    outline-offset: 2px;
+  }
+`;

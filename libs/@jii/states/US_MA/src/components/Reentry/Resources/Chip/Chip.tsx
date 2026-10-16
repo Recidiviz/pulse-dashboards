@@ -15,22 +15,38 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, Ref } from "react";
 
-import { ChipButton, ChipTag } from "./Chip.styles";
+import { Icon } from "~design-system";
+
+import { ChipButton, ChipTag, RemovableChipButton } from "./Chip.styles";
 
 type InteractiveChipProps = {
   children: ReactNode;
   selected: boolean;
   onClick: () => void;
+  onRemove?: undefined;
+};
+
+/** A selected option, such as an applied filter, that removes itself on click. */
+type RemovableChipProps = {
+  children: ReactNode;
+  removeLabel: string;
+  onRemove: () => void;
+  ref?: Ref<HTMLButtonElement>;
+  onClick?: undefined;
 };
 
 type LabelChipProps = {
   children: ReactNode;
   onClick?: undefined;
+  onRemove?: undefined;
 };
 
-export type ChipProps = InteractiveChipProps | LabelChipProps;
+export type ChipProps =
+  | InteractiveChipProps
+  | RemovableChipProps
+  | LabelChipProps;
 
 export const Chip: FC<ChipProps> = (props) => {
   if (props.onClick) {
@@ -43,6 +59,20 @@ export const Chip: FC<ChipProps> = (props) => {
       >
         {props.children}
       </ChipButton>
+    );
+  }
+
+  if (props.onRemove) {
+    return (
+      <RemovableChipButton
+        ref={props.ref}
+        type="button"
+        aria-label={props.removeLabel}
+        onClick={props.onRemove}
+      >
+        {props.children}
+        <Icon kind="Close" size={10} />
+      </RemovableChipButton>
     );
   }
 
