@@ -299,15 +299,15 @@
   "disclaimer": "Esta información es proporcionada por un proveedor externo únicamente con fines informativos generales. No constituye asesoramiento legal ni sustituye el asesoramiento individualizado de su abogado.\n\nProporcionar esta información no crea una relación abogado-cliente entre el Departamento de Servicios Correccionales de Nebraska y el usuario.\nProporcionar esta información no crea una relación abogado-cliente entre el proveedor externo y el usuario.\n\nEl Departamento de Servicios Correccionales de Nebraska y el proveedor externo no serán responsables de ningún error, omisión, retraso o interrupción relacionada con la información proporcionada.\n\n",
   "checkIn": {
     "header": {
-      "title": "120-Day Check-In Prep",
-      "close": "Exit"
+      "title": "Preparación para la junta de los 120 días",
+      "close": "Salir"
     },
     "exitModal": {
-      "title": "Are you sure you want to leave?",
-      "content": "We'll save your progress. When you come back, you'll start on this question.",
-      "info": "Your answer for this question won't be saved. Cancel and hit Next first if you want to keep it.",
-      "cancel": "Cancel",
-      "saveAndExit": "Save and exit"
+      "title": "¿Realmente quieres salir?",
+      "content": "Guardaremos tu progreso. Cuando vuelvas, empezarás en esta pregunta.",
+      "info": "Tu respuesta a esta pregunta no se guardará. Toca «Cancelar» y luego «Siguiente» si quieres conservarla.",
+      "cancel": "Cancelar",
+      "saveAndExit": "Guardar y salir"
     },
     "standardRadioAnswers": {
       "YES": "Sí",
@@ -384,7 +384,7 @@
         }
       },
       "DEBTS": {
-        "question": "¿Tienes otras deudas que tendrás que manejar después de tu liberación?"
+        "question": "¿Tienes otras deudas que tendrás que manejar después de tu liberación? Si es así, ¿cuáles son?"
       },
       "SOCIAL_SECURITY": {
         "question": "¿Alguna vez has recibido dinero del Seguro Social, como SSI o SSDI?"
@@ -458,6 +458,9 @@
         "question": "¿De qué manera puedes celebrar cuando te va bien?"
       }
     },
+    "sectionHeader": {
+      "next": "Siguiente:"
+    },
     "sections": {
       "sectionHousing": {
         "title": "Vivienda",
@@ -511,25 +514,25 @@
       "heading": "¡Ya terminaste, {{name}}!",
       "subheading": "Gracias por hacer esto hoy.",
       "description": "Ya pensaste en:\n- Tus planes de vivienda\n- Tus planes de transporte\n- Tus finanzas\n- Quién te apoyará\n\nTu Especialista de Reinserción usará lo que tú compartiste en tu junta de los 120 días para crear tu Success Plan junto contigo.",
-      "close": "Close"
+      "close": "Cerrar"
     },
     "questionPage": {
-      "header": "Question {{number}}",
-      "optional": "Optional — you can skip",
-      "selectOne": "Select one option below",
-      "checkAll": "Check all that apply"
+      "header": "Pregunta {{number}}",
+      "optional": "Opcional — puedes saltarla",
+      "selectOne": "Elige una opción",
+      "checkAll": "Marca todas las que apliquen"
     },
     "footer": {
       "next": "Siguiente",
-      "nextInfo": "Your answer will be saved when you tap Next",
-      "savingInfo": "Saving...",
-      "errorInfo": "There was a problem saving your answer, please try again",
-      "getStarted": "Get Started"
+      "nextInfo": "Tu respuesta se guardará cuando toques «Siguiente»",
+      "savingInfo": "Guardando…",
+      "errorInfo": "No se pudo guardar tu respuesta. Inténtalo de nuevo.",
+      "getStarted": "Empezar"
     },
     "supportSystem": {
       "name": "Nombre",
       "howDoYouKnowThem": "¿Cómo las conoces?",
-      "placeholder": "Tap to add"
+      "placeholder": "Toca para agregar"
     }
   }
 }

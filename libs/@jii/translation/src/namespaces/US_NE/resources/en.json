@@ -526,7 +526,7 @@
       "next": "Next",
       "nextInfo": "Your answer will be saved when you tap Next",
       "savingInfo": "Saving...",
-      "errorInfo": "There was a problem saving your answer, please try again",
+      "errorInfo": "There was a problem saving your answer, please try again.",
       "getStarted": "Get Started"
     },
     "supportSystem": {
