@@ -17,21 +17,20 @@
 
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
+import { IllustratedCard } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
-import { Icon } from "~design-system";
+import { palette } from "~design-system";
 
 import { useReentryChecklist } from "../../../../../hooks/useReentryChecklist";
 import { QUESTIONNAIRE_STATUS_COPY } from "../../../ctaConfigs";
 import {
   Description,
   Heading,
-  IconBlock,
-  IconCircle,
-  SummaryCard,
   SummaryContent,
   ViewChecklistButton,
 } from "./CompletedCard.styles";
+import illustration from "./illustration.svg";
 
 export const CompletedCard = () => {
   const { t } = useUsMaTranslations();
@@ -39,14 +38,16 @@ export const CompletedCard = () => {
   const { personalizedItemCount } = useReentryChecklist();
   const { heading, recommendedTaskCount, cta } =
     QUESTIONNAIRE_STATUS_COPY.COMPLETED(t);
+  const checklistPath =
+    State.Resident.UsMaReentry.Checklist.buildPath(routeParams);
 
   return (
-    <SummaryCard>
-      <IconBlock>
-        <IconCircle>
-          <Icon kind="Check" size={20} />
-        </IconCircle>
-      </IconBlock>
+    <IllustratedCard
+      illustrationSrc={illustration}
+      illustrationAlt=""
+      illustrationBackground={palette.slate10}
+      illustrationLink={checklistPath}
+    >
       <SummaryContent>
         <Heading>{heading}</Heading>
         {personalizedItemCount > 0 && (
@@ -54,13 +55,10 @@ export const CompletedCard = () => {
             {recommendedTaskCount(personalizedItemCount)}
           </Description>
         )}
-        <ViewChecklistButton
-          kind="primary"
-          to={State.Resident.UsMaReentry.Checklist.buildPath(routeParams)}
-        >
+        <ViewChecklistButton kind="primary" to={checklistPath}>
           {cta}
         </ViewChecklistButton>
       </SummaryContent>
-    </SummaryCard>
+    </IllustratedCard>
   );
 };

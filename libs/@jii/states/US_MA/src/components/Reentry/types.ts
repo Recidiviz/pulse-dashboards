@@ -36,7 +36,8 @@ export type ResourceCategoryCopy = {
 
 export type ResourceCategoryConfig = {
   category: string;
-  icon: LucideIcon;
+  illustrationSrc: string;
+  illustrationBackground: string;
   copy: (t: UsMaTFunction) => ResourceCategoryCopy;
 };
 

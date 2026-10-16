@@ -1,0 +1,9 @@
+<svg width="88" height="96" viewBox="0 0 88 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<filter id="shadow" x="0" y="0" width="88" height="96" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#012322" flood-opacity="0.12"/>
+</filter>
+</defs>
+<circle cx="44" cy="48" r="32" fill="white" filter="url(#shadow)"/>
+<path d="M53.333 41L40.501 53.832L34.668 47.999" stroke="#006C67" stroke-width="3" stroke-linecap="round"/>
+</svg>

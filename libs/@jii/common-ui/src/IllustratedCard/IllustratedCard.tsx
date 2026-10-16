@@ -52,7 +52,7 @@ type IllustrationColumnProps = {
 // a panel of color with the artwork centered in it;
 // the artwork shrinks to fit but is never enlarged
 const illustrationColumnStyles = css<IllustrationColumnProps>`
-  background-color: ${({ $background }) => $background || "transparent"};
+  background: ${({ $background }) => $background || "transparent"};
 
   flex: 1;
   min-width: ${rem(ILLUSTRATION_MIN_WIDTH)};

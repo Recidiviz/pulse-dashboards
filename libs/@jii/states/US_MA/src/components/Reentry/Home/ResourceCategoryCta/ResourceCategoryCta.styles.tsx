@@ -18,7 +18,7 @@
 import { rem } from "polished";
 import styled from "styled-components";
 
-import { Card, palette, spacing, typography } from "~design-system";
+import { palette, spacing, typography } from "~design-system";
 
 export const SectionLabel = styled.h2`
   ${typography.Sans14}
@@ -31,58 +31,4 @@ export const CardsList = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${rem(spacing.md)};
-`;
-
-export const Wrapper = styled(Card)`
-  border-radius: ${rem(12)};
-  gap: ${rem(spacing.md)};
-  overflow: hidden;
-`;
-
-export const IconBlock = styled.div`
-  align-items: center;
-  background: linear-gradient(
-    135deg,
-    ${palette.pine2} 0%,
-    ${palette.slate60} 100%
-  );
-  display: flex;
-  flex: 0 0 auto;
-  justify-content: center;
-  width: ${rem(200)};
-`;
-
-export const IconCircle = styled.div`
-  align-items: center;
-  background: ${palette.white40};
-  border-radius: 50%;
-  display: flex;
-  height: ${rem(100)};
-  justify-content: center;
-  width: ${rem(100)};
-
-  svg {
-    color: ${palette.white};
-  }
-`;
-
-export const Content = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${rem(spacing.sm)};
-  padding: ${rem(spacing.lg)};
-`;
-
-export const Heading = styled.h3`
-  ${typography.Sans18}
-
-  color: ${palette.pine1};
-  margin: 0;
-`;
-
-export const Description = styled.p`
-  ${typography.Sans14}
-
-  color: ${palette.slate85};
-  margin: 0;
 `;

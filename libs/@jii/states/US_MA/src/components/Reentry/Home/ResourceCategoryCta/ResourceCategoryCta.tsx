@@ -17,21 +17,12 @@
 
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { GoButton } from "~@jii/common-ui";
+import { CallToActionCard } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 
 import { RESOURCE_CATEGORIES } from "../../ctaConfigs";
-import {
-  CardsList,
-  Content,
-  Description,
-  Heading,
-  IconBlock,
-  IconCircle,
-  SectionLabel,
-  Wrapper,
-} from "./ResourceCategoryCta.styles";
+import { CardsList, SectionLabel } from "./ResourceCategoryCta.styles";
 
 export const ResourceCategoryCta = () => {
   const { t } = useUsMaTranslations();
@@ -43,35 +34,28 @@ export const ResourceCategoryCta = () => {
         {t(($) => $.reentry.overview.resourceCategories.sectionLabel)}
       </SectionLabel>
       <CardsList>
-        {RESOURCE_CATEGORIES.map(({ category, icon: Icon, copy }) => {
-          const { heading, description, cta } = copy(t);
+        {RESOURCE_CATEGORIES.map(
+          ({ category, illustrationSrc, illustrationBackground, copy }) => {
+            const { heading, description, cta } = copy(t);
 
-          return (
-            <Wrapper key={category}>
-              <IconBlock>
-                <IconCircle>
-                  <Icon size={48} />
-                </IconCircle>
-              </IconBlock>
-              <Content>
-                <Heading>{heading}</Heading>
-                <Description>{description}</Description>
-                <div>
-                  <GoButton
-                    to={State.Resident.UsMaReentry.Resources.CategoryResults.buildPath(
-                      {
-                        ...routeParams,
-                        category,
-                      },
-                    )}
-                  >
-                    {cta}
-                  </GoButton>
-                </div>
-              </Content>
-            </Wrapper>
-          );
-        })}
+            return (
+              <CallToActionCard
+                key={category}
+                linkTo={State.Resident.UsMaReentry.Resources.CategoryResults.buildPath(
+                  {
+                    ...routeParams,
+                    category,
+                  },
+                )}
+                heading={heading}
+                description={description}
+                linkText={cta}
+                illustrationSrc={illustrationSrc}
+                illustrationBackground={illustrationBackground}
+              />
+            );
+          },
+        )}
       </CardsList>
     </div>
   );

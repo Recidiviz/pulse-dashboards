@@ -18,7 +18,9 @@
 import { FileText, Home as HomeIcon } from "lucide-react";
 
 import { UsMaTFunction } from "~@jii/translation";
+import { palette } from "~design-system";
 
+import housingIllustration from "./Home/ResourceCategoryCta/housingIllustration.svg";
 import {
   CompletedQuestionnaireCardCopy,
   GuideTopicConfig,
@@ -39,14 +41,17 @@ export const GUIDE_TOPICS: GuideTopicConfig[] = [
   },
 ];
 
+const HOUSING_GRADIENT_START = "#6F97AB";
+
 /**
  * Add a new entry here to add a new resource category card to the Overview
- * page - each renders its own icon + heading + description + CTA.
+ * page - each renders its own illustration + heading + description + CTA.
  */
 export const RESOURCE_CATEGORIES: ResourceCategoryConfig[] = [
   {
     category: "housing",
-    icon: HomeIcon,
+    illustrationSrc: housingIllustration,
+    illustrationBackground: `linear-gradient(135deg, ${HOUSING_GRADIENT_START}, ${palette.slate})`,
     copy: (t) => ({
       heading: t(($) => $.reentry.overview.resourceCategories.housing.heading),
       description: t(

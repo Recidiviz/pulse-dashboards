@@ -19,44 +19,12 @@ import { rem } from "polished";
 import styled from "styled-components";
 
 import { ButtonLink } from "~@jii/common-ui";
-import { Card, palette, spacing, typography } from "~design-system";
-
-export const SummaryCard = styled(Card)`
-  align-items: stretch;
-  border-radius: ${rem(12)};
-  gap: ${rem(spacing.lg)};
-  overflow: hidden;
-`;
-
-export const IconBlock = styled.div`
-  align-items: center;
-  background: ${palette.marble4};
-  display: flex;
-  flex: 0 0 auto;
-  justify-content: center;
-  width: ${rem(120)};
-`;
-
-export const IconCircle = styled.div`
-  align-items: center;
-  background: ${palette.white};
-  border-radius: 50%;
-  display: flex;
-  height: ${rem(48)};
-  justify-content: center;
-  width: ${rem(48)};
-
-  svg {
-    color: ${palette.pine4};
-  }
-`;
+import { palette, spacing, typography } from "~design-system";
 
 export const SummaryContent = styled.div`
   display: flex;
-  flex: 1 1 auto;
   flex-direction: column;
   gap: ${rem(spacing.md)};
-  padding: ${rem(spacing.lg)} ${rem(spacing.lg)} ${rem(spacing.lg)} 0;
 `;
 
 export const Heading = styled.h2`
