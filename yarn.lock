@@ -7059,13 +7059,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fastify/proxy-addr@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "@fastify/proxy-addr@npm:5.0.0"
+"@fastify/proxy-addr@npm:>=5.1.1 <6.0.0":
+  version: 5.1.2
+  resolution: "@fastify/proxy-addr@npm:5.1.2"
   dependencies:
     "@fastify/forwarded": "npm:^3.0.0"
     ipaddr.js: "npm:^2.1.0"
-  checksum: 10c0/5a7d667480c3699015aa9bc12a47b6044106f412725d91a1b90f4a7845390c710486f05d322a895c633fb32a5ba1a17e598cb72e727337862034034443d59bcd
+  checksum: 10c0/c5f8003b1cc6e5d917f3917c244f9e97d908f08f360dd8daa4b1059ac09ca7c096dc9d0797e443fdb3ae5cfe42bb7a4f30b8e2157bb03426a10dc2ca3622d39a
   languageName: node
   linkType: hard
 
@@ -51877,13 +51877,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"proxy-addr@npm:~2.0.7":
-  version: 2.0.7
-  resolution: "proxy-addr@npm:2.0.7"
+"proxy-addr@npm:>=2.0.8 <3.0.0":
+  version: 2.0.8
+  resolution: "proxy-addr@npm:2.0.8"
   dependencies:
     forwarded: "npm:0.2.0"
     ipaddr.js: "npm:1.9.1"
-  checksum: 10c0/c3eed999781a35f7fd935f398b6d8920b6fb00bbc14287bc6de78128ccc1a02c89b95b56742bf7cf0362cc333c61d138532049c7dedc7a328ef13343eff81210
+  checksum: 10c0/58398f36e5b1f72b1011ca21844c0c41a9a3b6f2f0d101bcdb19abb3f3dd9626b27a96e53da777ded901eb67faed0304a4bc1d435b235e436f66f8e5e1fe1f5e
   languageName: node
   linkType: hard
 
