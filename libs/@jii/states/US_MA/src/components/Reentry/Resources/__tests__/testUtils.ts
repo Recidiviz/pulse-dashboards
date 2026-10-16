@@ -17,14 +17,33 @@
 
 import { createI18nInstance, UsMaTFunction } from "~@jii/translation";
 
+import { RENT_OPTIONS } from "../filters/filterConfig";
+import { SelectedFilters } from "../filters/types";
 import { ResourceSummary } from "../types";
 
-/** Loads the real US_MA English copy and returns a t function for it. */
-export async function loadUsMaTranslations(): Promise<UsMaTFunction> {
+/** Returns an i18n instance with the real US_MA English copy loaded. */
+export async function loadUsMaI18n() {
   const i18n = createI18nInstance([]);
   await i18n.changeLanguage("en");
   await i18n.loadNamespaces("US_MA");
+  return i18n;
+}
+
+/** Loads the real US_MA English copy and returns a t function for it. */
+export async function loadUsMaTranslations(): Promise<UsMaTFunction> {
+  const i18n = await loadUsMaI18n();
   return i18n.getFixedT("en", "US_MA") as unknown as UsMaTFunction;
+}
+
+/** Returns filters that select the rent options with ids, in that order. */
+export function rentFilters(...ids: string[]): SelectedFilters {
+  return {
+    rent: ids.map((id) => {
+      const option = RENT_OPTIONS.find((rentOption) => rentOption.id === id);
+      if (!option) throw new Error(`No rent option ${id}`);
+      return option;
+    }),
+  };
 }
 
 export function makeResource(

@@ -17,12 +17,8 @@
 
 import { makeResource } from "../../__tests__/testUtils";
 import { HousingAttributes, ResourceSummary } from "../../types";
-import {
-  bandMatchesRange,
-  matchesFilters,
-  RentOption,
-  SelectedFilters,
-} from "../matching";
+import { bandMatchesRange, matchesFilters } from "../matching";
+import { RentOption, SelectedFilters } from "../types";
 
 const band = (gt?: number, lte?: number) =>
   ({ kind: "band", band: { gt, lte } }) as const;
@@ -33,6 +29,15 @@ const OVER_200 = band(200);
 const FREE: RentOption = { kind: "free" };
 const BASED_ON_INCOME: RentOption = { kind: "basedOnIncome" };
 const NOT_LISTED: RentOption = { kind: "notListed" };
+
+// Wraps each match in an option, so these cases don't depend on the config's bands.
+const rent = (...matches: RentOption[]): SelectedFilters => ({
+  rent: matches.map((match, index) => ({
+    id: String(index),
+    label: () => "",
+    match,
+  })),
+});
 
 let nextId = 1;
 function housing(
@@ -77,7 +82,7 @@ describe("rent", () => {
   test.each<[string, SelectedFilters, string[]]>([
     [
       "no selection",
-      { rent: [] },
+      rent(),
       [
         "Exactly 150",
         "Free",
@@ -88,34 +93,26 @@ describe("rent", () => {
         "Wide Range",
       ],
     ],
-    [
-      "a band",
-      { rent: [UP_TO_150] },
-      ["Exactly 150", "Sliding Scale", "Wide Range"],
-    ],
-    ["a middle band", { rent: [FROM_151_TO_175] }, ["Wide Range"]],
-    ["an open-ended band", { rent: [OVER_200] }, ["Wide Range"]],
+    ["a band", rent(UP_TO_150), ["Exactly 150", "Sliding Scale", "Wide Range"]],
+    ["a middle band", rent(FROM_151_TO_175), ["Wide Range"]],
+    ["an open-ended band", rent(OVER_200), ["Wide Range"]],
     // Wide Range spans both bands and appears once.
     [
       "consecutive bands",
-      { rent: [UP_TO_150, FROM_151_TO_175] },
+      rent(UP_TO_150, FROM_151_TO_175),
       ["Exactly 150", "Sliding Scale", "Wide Range"],
     ],
     [
       "non-consecutive bands",
-      { rent: [UP_TO_150, OVER_200] },
+      rent(UP_TO_150, OVER_200),
       ["Exactly 150", "Sliding Scale", "Wide Range"],
     ],
-    ["free", { rent: [FREE] }, ["Free"]],
-    [
-      "based on income",
-      { rent: [BASED_ON_INCOME] },
-      ["Exactly 150", "Income Based"],
-    ],
-    ["not listed", { rent: [NOT_LISTED] }, ["No Attributes", "Not Listed"]],
+    ["free", rent(FREE), ["Free"]],
+    ["based on income", rent(BASED_ON_INCOME), ["Exactly 150", "Income Based"]],
+    ["not listed", rent(NOT_LISTED), ["No Attributes", "Not Listed"]],
     [
       "a band, free, and not listed",
-      { rent: [OVER_200, FREE, NOT_LISTED] },
+      rent(OVER_200, FREE, NOT_LISTED),
       ["Free", "No Attributes", "Not Listed", "Wide Range"],
     ],
   ])("%s", (_, filters, expected) => {

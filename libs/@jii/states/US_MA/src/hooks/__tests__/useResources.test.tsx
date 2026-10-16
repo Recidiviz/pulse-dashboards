@@ -16,14 +16,17 @@
 // =============================================================================
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { renderHook } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { Suspense } from "react";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 
 import { useRootStore } from "~@jii/data";
 import { State } from "~@jii/paths";
 
-import { makeResource } from "../../components/Reentry/Resources/__tests__/testUtils";
+import {
+  makeResource,
+  rentFilters,
+} from "../../components/Reentry/Resources/__tests__/testUtils";
 import { useResources } from "../useResources";
 
 vi.mock("~@jii/data", async (importOriginal) => ({
@@ -97,27 +100,33 @@ beforeEach(() => {
   } as unknown as ReturnType<typeof useRootStore>);
 });
 
-function renderResources(search = "") {
-  const { result } = renderHook(() => useResources(), {
-    wrapper: ({ children }) => (
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter
-          initialEntries={[
-            `/massachusetts/abc/reentry/resources/categories/housing${search}`,
-          ]}
-        >
-          <Routes>
-            <Route
-              path={State.Resident.UsMaReentry.Resources.CategoryResults.path}
-              element={<Suspense fallback={null}>{children}</Suspense>}
-            />
-          </Routes>
-        </MemoryRouter>
-      </QueryClientProvider>
-    ),
-  });
-  return result.current;
+// Also returns the URL's search string, to check what applyFilters writes.
+function renderResourcesHook(search = "") {
+  return renderHook(
+    () => ({ ...useResources(), search: useLocation().search }),
+    {
+      wrapper: ({ children }) => (
+        <QueryClientProvider client={queryClient}>
+          <MemoryRouter
+            initialEntries={[
+              `/massachusetts/abc/reentry/resources/categories/housing${search}`,
+            ]}
+          >
+            <Routes>
+              <Route
+                path={State.Resident.UsMaReentry.Resources.CategoryResults.path}
+                element={<Suspense fallback={null}>{children}</Suspense>}
+              />
+            </Routes>
+          </MemoryRouter>
+        </QueryClientProvider>
+      ),
+    },
+  );
 }
+
+const renderResources = (search = "") =>
+  renderResourcesHook(search).result.current;
 
 const namesFor = (search: string) =>
   renderResources(search).resources.map((resource) => resource.name);
@@ -144,4 +153,23 @@ test.each([
 
 test("ignores option IDs that aren't in the config", () => {
   expect(namesFor("?rent=cheap")).toHaveLength(3);
+});
+
+test("appliedFilters holds the known rent options from the URL", () => {
+  expect(renderResources("?rent=over200&rent=cheap").appliedFilters).toEqual(
+    rentFilters("over200"),
+  );
+});
+
+test("applyFilters replaces the rent IDs and keeps other params", () => {
+  const { result } = renderResourcesHook("?subcategories=Shelter&rent=over200");
+
+  act(() => result.current.applyFilters(rentFilters("free", "basedOnIncome")));
+
+  const params = new URLSearchParams(result.current.search);
+  expect(params.getAll("subcategories")).toEqual(["Shelter"]);
+  expect(params.getAll("rent")).toEqual(["free", "basedOnIncome"]);
+  expect(result.current.appliedFilters).toEqual(
+    rentFilters("free", "basedOnIncome"),
+  );
 });

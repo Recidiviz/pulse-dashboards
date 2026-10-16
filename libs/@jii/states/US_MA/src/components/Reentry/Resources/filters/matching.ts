@@ -16,30 +16,9 @@
 // =============================================================================
 
 import { HousingAttributes, ResourceSummary } from "../types";
-
-/**
- * A (gt, lte] band. Omit gt for no lower bound or lte for no upper bound.
- */
-export type RangeBand = { gt?: number; lte?: number };
+import { RangeBand, RentOption, SelectedFilters } from "./types";
 
 type Range = { min: number; max: number };
-
-export type RentOption =
-  | { kind: "band"; band: RangeBand }
-  | { kind: "free" }
-  | { kind: "basedOnIncome" }
-  | { kind: "notListed" };
-
-/**
- * The selected options in each filter group. An empty group doesn't filter
- * anything, and a resource has to match every group that isn't empty.
- */
-export type SelectedFilters = {
-  // A resource matches if it matches any of these.
-  rent: RentOption[];
-};
-
-export const NO_FILTERS: SelectedFilters = { rent: [] };
 
 /**
  * Returns whether range overlaps band, meaning min <= lte and max > gt. For
@@ -83,6 +62,6 @@ export function matchesFilters(
 
   return (
     filters.rent.length === 0 ||
-    filters.rent.some((option) => matchesRentOption(housing, option))
+    filters.rent.some((option) => matchesRentOption(housing, option.match))
   );
 }

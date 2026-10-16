@@ -15,31 +15,71 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { loadUsMaTranslations } from "../../__tests__/testUtils";
-import { FILTER_GROUPS, parseSelectedFilters } from "../filterConfig";
+import { loadUsMaTranslations, rentFilters } from "../../__tests__/testUtils";
+import {
+  countSelectedOptions,
+  FILTER_GROUPS,
+  isSameSelection,
+  parseSelectedFilters,
+  toggleOption,
+  toSearchParams,
+} from "../filterConfig";
+
+const [FREE, OVER_200] = rentFilters("free", "over200").rent;
 
 describe("parseSelectedFilters", () => {
   test("selects nothing without params", () => {
     expect(parseSelectedFilters({ rent: [] })).toEqual({ rent: [] });
   });
 
-  test("maps rent IDs to options", () => {
+  test("maps rent IDs to options, in config order", () => {
     expect(
-      parseSelectedFilters({ rent: ["free", "upTo150", "notListed"] }),
-    ).toEqual({
-      rent: [
-        { kind: "free" },
-        { kind: "band", band: { gt: 0, lte: 150 } },
-        { kind: "notListed" },
-      ],
-    });
+      parseSelectedFilters({ rent: ["notListed", "free", "upTo150"] }),
+    ).toEqual(rentFilters("free", "upTo150", "notListed"));
   });
 
   test("drops IDs that aren't in the config", () => {
-    expect(parseSelectedFilters({ rent: ["cheap", "over200"] })).toEqual({
-      rent: [{ kind: "band", band: { gt: 200 } }],
-    });
+    expect(parseSelectedFilters({ rent: ["cheap", "over200"] })).toEqual(
+      rentFilters("over200"),
+    );
   });
+});
+
+test("toSearchParams maps options back to their IDs", () => {
+  expect(toSearchParams(rentFilters("over200", "free"))).toEqual({
+    rent: ["over200", "free"],
+  });
+});
+
+describe("toggleOption", () => {
+  test("adds an unselected option", () => {
+    expect(toggleOption(rentFilters("free"), "rent", OVER_200)).toEqual(
+      rentFilters("free", "over200"),
+    );
+  });
+
+  test("removes a selected option", () => {
+    expect(toggleOption(rentFilters("free", "over200"), "rent", FREE)).toEqual(
+      rentFilters("over200"),
+    );
+  });
+});
+
+describe("isSameSelection", () => {
+  test.each([
+    [[], [], true],
+    [["free", "over200"], ["over200", "free"], true],
+    [["free"], [], false],
+    [["free"], ["over200"], false],
+  ])("%j and %j is %s", (a, b, expected) => {
+    expect(isSameSelection(rentFilters(...a), rentFilters(...b))).toBe(
+      expected,
+    );
+  });
+});
+
+test("countSelectedOptions counts options across groups", () => {
+  expect(countSelectedOptions(rentFilters("free", "over200"))).toBe(2);
 });
 
 describe("FILTER_GROUPS", () => {

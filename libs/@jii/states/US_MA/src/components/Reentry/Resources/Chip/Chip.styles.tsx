@@ -32,3 +32,25 @@ export const ChipTag = styled.span`
   border: 1px solid ${palette.slate20};
   color: ${palette.pine1};
 `;
+
+export const ChipButton = styled.button<{ $selected: boolean }>`
+  ${typography.Sans16}
+
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  min-height: ${rem(44)};
+  padding: ${rem(spacing.sm)} ${rem(spacing.lg)};
+  border-radius: ${rem(999)};
+  border: 1px solid
+    ${({ $selected }) => ($selected ? palette.pine4 : palette.slate20)};
+  background: ${({ $selected }) => ($selected ? palette.pine4 : "transparent")};
+  color: ${({ $selected }) => ($selected ? palette.white : palette.pine1)};
+  cursor: pointer;
+  text-align: left;
+
+  &:focus-visible {
+    outline: 2px solid ${palette.pine1};
+    outline-offset: 2px;
+  }
+`;

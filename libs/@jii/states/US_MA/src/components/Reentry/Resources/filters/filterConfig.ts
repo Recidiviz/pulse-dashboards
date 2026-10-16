@@ -17,17 +17,7 @@
 
 import { UsMaTFunction } from "~@jii/translation";
 
-import { RentOption, SelectedFilters } from "./matching";
-
-/**
- * A filter option. The id is what the URL stores, and match is what
- * matchesFilters checks a resource against.
- */
-export type FilterOption<Match> = {
-  id: string;
-  label: (t: UsMaTFunction) => string;
-  match: Match;
-};
+import { FilterOption, RentOption, SelectedFilters } from "./types";
 
 // TODO(REE-25): Confirm the rent bands once the content
 // review finishes.
@@ -69,15 +59,10 @@ export const RENT_OPTIONS: FilterOption<RentOption>[] = [
   },
 ];
 
-/** The ResourceExplorer.CategoryResults search params the MA filters use. */
-export type FilterSearchParams = {
-  rent: string[];
-};
-
 /** The filter groups in display order. */
 export const FILTER_GROUPS: {
   id: string;
-  param: keyof FilterSearchParams;
+  param: keyof SelectedFilters;
   label: (t: UsMaTFunction) => string;
   options: FilterOption<unknown>[];
 }[] = [
@@ -89,23 +74,75 @@ export const FILTER_GROUPS: {
   },
 ];
 
-function matchesFor<Match>(
-  options: FilterOption<Match>[],
-  ids: string[],
-): Match[] {
-  return options
-    .filter((option) => ids.includes(option.id))
-    .map((option) => option.match);
-}
+export const NO_SELECTION: SelectedFilters = { rent: [] };
 
 /**
- * Returns the filters selected by the search params. Option IDs that aren't in
- * the config are dropped, so a stale or hand-edited URL can't break the page.
- * For example, ?rent=free&rent=upTo150 selects
- * [{kind: "free"}, {kind: "band", band: {gt: 0, lte: 150}}].
+ * Returns the options the search params select, in config order. Option IDs
+ * that aren't in the config are dropped, so a stale or hand-edited URL can't
+ * break the page. For example, ?rent=over200&rent=cheap&rent=free selects the
+ * "free" and "over200" rent options.
  */
 export function parseSelectedFilters(
-  params: FilterSearchParams,
+  params: Record<keyof SelectedFilters, string[]>,
 ): SelectedFilters {
-  return { rent: matchesFor(RENT_OPTIONS, params.rent) };
+  return Object.fromEntries(
+    FILTER_GROUPS.map(({ param, options }) => [
+      param,
+      options.filter((option) => params[param].includes(option.id)),
+    ]),
+  ) as SelectedFilters;
+}
+
+/** Returns the search params that select filters. */
+export function toSearchParams(
+  filters: SelectedFilters,
+): Record<keyof SelectedFilters, string[]> {
+  return Object.fromEntries(
+    FILTER_GROUPS.map(({ param }) => [
+      param,
+      filters[param].map((option) => option.id),
+    ]),
+  ) as Record<keyof SelectedFilters, string[]>;
+}
+
+export function isOptionSelected(
+  filters: SelectedFilters,
+  param: keyof SelectedFilters,
+  option: FilterOption<unknown>,
+): boolean {
+  return filters[param].some((selected) => selected.id === option.id);
+}
+
+/** Returns filters with option added to or removed from param's selection. */
+export function toggleOption(
+  filters: SelectedFilters,
+  param: keyof SelectedFilters,
+  option: FilterOption<unknown>,
+): SelectedFilters {
+  const selected = filters[param];
+  return {
+    ...filters,
+    [param]: isOptionSelected(filters, param, option)
+      ? selected.filter((selectedOption) => selectedOption.id !== option.id)
+      : [...selected, option],
+  } as SelectedFilters;
+}
+
+export function countSelectedOptions(filters: SelectedFilters): number {
+  return FILTER_GROUPS.reduce(
+    (count, { param }) => count + filters[param].length,
+    0,
+  );
+}
+
+/** Returns whether a and b select the same options, in any order. */
+export function isSameSelection(
+  a: SelectedFilters,
+  b: SelectedFilters,
+): boolean {
+  return FILTER_GROUPS.every(
+    ({ param }) =>
+      a[param].length === b[param].length &&
+      a[param].every((option) => isOptionSelected(b, param, option)),
+  );
 }

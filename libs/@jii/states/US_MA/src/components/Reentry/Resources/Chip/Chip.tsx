@@ -17,8 +17,34 @@
 
 import { FC, ReactNode } from "react";
 
-import { ChipTag } from "./Chip.styles";
+import { ChipButton, ChipTag } from "./Chip.styles";
 
-export const Chip: FC<{ children: ReactNode }> = ({ children }) => (
-  <ChipTag>{children}</ChipTag>
-);
+type InteractiveChipProps = {
+  children: ReactNode;
+  selected: boolean;
+  onClick: () => void;
+};
+
+type LabelChipProps = {
+  children: ReactNode;
+  onClick?: undefined;
+};
+
+export type ChipProps = InteractiveChipProps | LabelChipProps;
+
+export const Chip: FC<ChipProps> = (props) => {
+  if (props.onClick) {
+    return (
+      <ChipButton
+        type="button"
+        $selected={props.selected}
+        aria-pressed={props.selected}
+        onClick={props.onClick}
+      >
+        {props.children}
+      </ChipButton>
+    );
+  }
+
+  return <ChipTag>{props.children}</ChipTag>;
+};

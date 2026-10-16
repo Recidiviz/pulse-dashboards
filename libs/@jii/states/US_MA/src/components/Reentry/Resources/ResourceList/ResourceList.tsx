@@ -15,15 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { usePageTitle } from "~@jii/common-ui";
+import { BottomSheet, usePageTitle } from "~@jii/common-ui";
 import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
+import { Button } from "~design-system";
 
 import { useResources } from "../../../../hooks/useResources";
 import { CollapsibleSection } from "../CollapsibleSection/CollapsibleSection";
+import { FilterSheet } from "../FilterSheet/FilterSheet";
 import { ResourceCard } from "../ResourceCard/ResourceCard";
 import { getResourceChips, groupResourcesBySubcategory } from "../utils";
 import {
@@ -42,7 +45,12 @@ export const ResourceList = () => {
   const { t } = useUsMaTranslations();
   usePageTitle(t(($) => $.reentry.resources.list.pageTitle));
 
-  const { resources: matchingResources } = useResources();
+  const {
+    resources: matchingResources,
+    appliedFilters,
+    applyFilters,
+  } = useResources();
+  const [isFilterSheetOpen, setFilterSheetOpen] = useState(false);
   const { category, ...residentParams } = useTypedParams(
     State.Resident.UsMaReentry.Resources.CategoryResults,
   );
@@ -84,6 +92,13 @@ export const ResourceList = () => {
         </PageSubtitle>
       </PageHeader>
 
+      {/* TODO(REE-187): Match the results page design for the filter button. */}
+      <div>
+        <Button kind="secondary" onClick={() => setFilterSheetOpen(true)}>
+          {t(($) => $.reentry.resources.filters.openButton)}
+        </Button>
+      </div>
+
       {sections.length === 0 ? (
         <EmptyState>{t(($) => $.reentry.resources.list.emptyState)}</EmptyState>
       ) : (
@@ -120,6 +135,19 @@ export const ResourceList = () => {
           </AccordionList>
         </div>
       )}
+
+      <BottomSheet
+        isOpen={isFilterSheetOpen}
+        onRequestClose={() => setFilterSheetOpen(false)}
+        ariaLabel={t(($) => $.reentry.resources.filters.sheet.ariaLabel)}
+        hideCloseButton
+      >
+        <FilterSheet
+          appliedFilters={appliedFilters}
+          onApply={applyFilters}
+          onClose={() => setFilterSheetOpen(false)}
+        />
+      </BottomSheet>
     </Wrapper>
   );
 };

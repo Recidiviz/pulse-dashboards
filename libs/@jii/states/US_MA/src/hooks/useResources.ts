@@ -24,15 +24,19 @@ import {
 import { useRootStore } from "~@jii/data";
 import { State } from "~@jii/paths";
 
-import { parseSelectedFilters } from "../components/Reentry/Resources/filters/filterConfig";
+import {
+  parseSelectedFilters,
+  toSearchParams,
+} from "../components/Reentry/Resources/filters/filterConfig";
 import { matchesFilters } from "../components/Reentry/Resources/filters/matching";
+import { SelectedFilters } from "../components/Reentry/Resources/filters/types";
 
 const ONE_HOUR_MS = 60 * 60 * 1000;
 
 /**
  * Returns the MA resources in the route's category that match the filters in
- * the URL. MA has few enough resources that the page fetches them all once and
- * filters them in memory.
+ * the URL, those filters, and applyFilters to replace them. MA has few enough
+ * resources that the page fetches them all once and filters them in memory.
  */
 export function useResources() {
   const {
@@ -45,8 +49,8 @@ export function useResources() {
 
   const route = State.Resident.UsMaReentry.Resources.CategoryResults;
   const { category } = useTypedParams(route);
-  const [searchParams] = useTypedSearchParams(route);
-  const selectedFilters = parseSelectedFilters(searchParams);
+  const [searchParams, setSearchParams] = useTypedSearchParams(route);
+  const appliedFilters = parseSelectedFilters(searchParams);
 
   return {
     // The route uses "housing" while the Resource API uses "Housing".
@@ -54,8 +58,14 @@ export function useResources() {
       (resource) =>
         resource.categories.some(
           (cat) => cat.category.toLowerCase() === category.toLowerCase(),
-        ) && matchesFilters(resource, selectedFilters),
+        ) && matchesFilters(resource, appliedFilters),
     ),
-    selectedFilters,
+    appliedFilters,
+    // Keeps search params that the filters don't use, such as subcategories.
+    applyFilters: (filters: SelectedFilters) =>
+      setSearchParams((current) => ({
+        ...current,
+        ...toSearchParams(filters),
+      })),
   };
 }

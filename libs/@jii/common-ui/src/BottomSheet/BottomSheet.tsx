@@ -84,6 +84,9 @@ export type BottomSheetProps = {
   onRequestClose: () => void;
   children: ReactNode;
   closeLabel?: string;
+  // Set when children render their own way to close the sheet, such as a header
+  // with Cancel and Apply buttons.
+  hideCloseButton?: boolean;
   ariaLabel: string;
 };
 
@@ -92,6 +95,7 @@ export const BottomSheet: FC<BottomSheetProps> = ({
   onRequestClose,
   children,
   closeLabel = "Close",
+  hideCloseButton = false,
   ariaLabel,
 }) => (
   <StyledBottomSheet
@@ -101,9 +105,11 @@ export const BottomSheet: FC<BottomSheetProps> = ({
     contentLabel={ariaLabel}
   >
     <PageContainer>
-      <CloseButton type="button" onClick={onRequestClose}>
-        {closeLabel}
-      </CloseButton>
+      {!hideCloseButton && (
+        <CloseButton type="button" onClick={onRequestClose}>
+          {closeLabel}
+        </CloseButton>
+      )}
       {children}
     </PageContainer>
   </StyledBottomSheet>
