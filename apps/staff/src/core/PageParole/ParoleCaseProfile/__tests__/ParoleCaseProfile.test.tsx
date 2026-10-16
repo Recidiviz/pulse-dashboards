@@ -100,10 +100,10 @@ function renderAtPath(path: string) {
 }
 
 describe("ParoleCaseProfile", () => {
-  it("renders a link back to the docket", async () => {
+  it("renders a Back link that falls back to the docket", async () => {
     renderAtPath("/parole/case/45821");
 
-    const link = await screen.findByRole("link", { name: /back to docket/i });
+    const link = await screen.findByRole("link", { name: /^back$/i });
     expect(link).toHaveAttribute("href", "/parole/docket");
   });
 
@@ -112,7 +112,7 @@ describe("ParoleCaseProfile", () => {
 
     expect(screen.getByText("Oops Page Not Found")).toBeInTheDocument();
     expect(
-      screen.queryByRole("link", { name: /back to docket/i }),
+      screen.queryByRole("link", { name: /^back$/i }),
     ).not.toBeInTheDocument();
   });
 

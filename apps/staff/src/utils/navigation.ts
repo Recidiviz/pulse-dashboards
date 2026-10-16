@@ -23,6 +23,7 @@ import { Navigation } from "../core/types/navigation";
 import {
   DASHBOARD_VIEWS,
   INSIGHTS_PAGES,
+  PAROLE_PAGES,
   WORKFLOWS_PATH_SECTIONS,
 } from "../core/views";
 import { TenantId } from "../RootStore/types";
@@ -61,6 +62,7 @@ export function getPathWithoutParams(pathname: string): string {
     ...Object.values(PATHWAYS_PAGES),
     ...WORKFLOWS_PATH_SECTIONS,
     ...Object.values(INSIGHTS_PAGES),
+    ...Object.values(PAROLE_PAGES),
   ];
   const basePath = pathname
     .split("/")

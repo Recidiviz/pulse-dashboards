@@ -74,6 +74,29 @@ describe("getPathWithoutParams", () => {
     const basePath = "/workflows/tasks";
     expect(getPathWithoutParams(`${basePath}/route-planner`)).toEqual(basePath);
   });
+
+  it.each(["/parole/docket", "/parole/residents"])(
+    "keeps the Parole subpage in %s",
+    (path) => {
+      expect(getPathWithoutParams(path)).toEqual(path);
+    },
+  );
+
+  it("returns /parole for a Parole case profile", () => {
+    expect(getPathWithoutParams("/parole/case/somePseudonymizedId")).toEqual(
+      "/parole",
+    );
+  });
+
+  // DashboardLayout shows NotFound for a path that is not in the user's
+  // allowed paths, so a tenant without the residents subpage cannot reach it
+  // by URL.
+  it("does not allow /parole/residents for a tenant with only the docket", () => {
+    const allowedPaths = getPathsFromNavigation({ parole: ["docket"] });
+    expect(allowedPaths).not.toContain(
+      getPathWithoutParams("/parole/residents"),
+    );
+  });
 });
 
 describe("convertSlugToId", () => {

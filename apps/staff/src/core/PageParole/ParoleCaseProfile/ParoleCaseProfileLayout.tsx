@@ -87,7 +87,7 @@ export function ParoleCaseProfileLayout({
   return (
     <Wrapper>
       <ButtonSizedBackLink fallbackUrl={paroleUrl("docket")}>
-        Back to Docket
+        Back
       </ButtonSizedBackLink>
 
       <CaseProfileLayout>
