@@ -162,6 +162,12 @@
     }
   },
   "reentry": {
+    "homepageCta": {
+      "sectionHeader": "[US_MA]reentry.homepageCta.sectionHeader",
+      "heading": "[US_MA]reentry.homepageCta.heading",
+      "description": "[US_MA]reentry.homepageCta.description",
+      "link": "[US_MA]reentry.homepageCta.link"
+    },
     "navBar": {
       "sectionLabel": "[US_MA]reentry.navBar.sectionLabel",
       "overview": "[US_MA]reentry.navBar.overview",

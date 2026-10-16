@@ -35,6 +35,7 @@ import { DatesSection, DatesSectionSkeleton } from "./DatesSection";
 import { EmptyState } from "./EmptyState";
 import { MonthlyReportHomepageCard } from "./MonthlyReport/MonthlyReportHomepageCard";
 import { MonthlyReportHomepageCardSkeleton } from "./MonthlyReport/MonthlyReportHomepageCardSkeleton";
+import { ReentryCtaSection } from "./ReentryCtaSection/ReentryCtaSection";
 import { ResidentHomepagePresenter } from "./ResidentHomepagePresenter";
 import { SpanishLaunchBanner } from "./SpanishLaunchBanner";
 import { TotalTimeEarnedSection } from "./TotalTimeEarnedSection/TotalTimeEarnedSection";
@@ -60,6 +61,9 @@ const ManagedComponent: React.FC<{ presenter: ResidentHomepagePresenter }> =
         />
         <SpanishLaunchBanner />
         <ProgramsCtaSection stateCode="US_MA" />
+
+        <ReentryCtaSection />
+
         {presenter.isEgtDisabled ? (
           <>
             <EmptyState />

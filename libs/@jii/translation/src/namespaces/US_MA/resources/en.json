@@ -162,6 +162,12 @@
     }
   },
   "reentry": {
+    "homepageCta": {
+      "sectionHeader": "Reentry",
+      "heading": "Plan for life after release",
+      "description": "Take ownership of your reentry plan. Build a reentry profile, track your progress with a personal reentry checklist, and explore housing resources.",
+      "link": "Get started"
+    },
     "navBar": {
       "sectionLabel": "Reentry",
       "overview": "Overview",
