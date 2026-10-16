@@ -25359,17 +25359,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmldom/xmldom@npm:^0.8.3":
-  version: 0.8.6
-  resolution: "@xmldom/xmldom@npm:0.8.6"
-  checksum: 10c0/b7c5444ec3e4ac8065b00015631b2357bedd7c140962197643dc2cfd444f7251de94cc8aa03a406d6ab9ffc506dd0149f1b7ddebb8a4173965c75846922e4a75
-  languageName: node
-  linkType: hard
-
-"@xmldom/xmldom@npm:^0.8.8":
-  version: 0.8.11
-  resolution: "@xmldom/xmldom@npm:0.8.11"
-  checksum: 10c0/e768623de72c95d3dae6b5da8e33dda0d81665047811b5498d23a328d45b13feb5536fe921d0308b96a4a8dd8addf80b1f6ef466508051c0b581e63e0dc74ed5
+"@xmldom/xmldom@npm:>=0.8.15 <0.9.0":
+  version: 0.8.15
+  resolution: "@xmldom/xmldom@npm:0.8.15"
+  checksum: 10c0/59d09b85824b684fba5a0a224d5b43abea1a0d745e8d8b8136a7013e996eb6da122fdbb3deb32ed1621923a10e1937b1f7917cea43481d9d5b976e8c1ff836c1
   languageName: node
   linkType: hard
 
@@ -26676,26 +26669,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:1.16.0":
-  version: 1.16.0
-  resolution: "axios@npm:1.16.0"
+"axios@npm:>=1.20.0 <2.0.0":
+  version: 1.20.0
+  resolution: "axios@npm:1.20.0"
   dependencies:
     follow-redirects: "npm:^1.16.0"
-    form-data: "npm:^4.0.5"
-    proxy-from-env: "npm:^2.1.0"
-  checksum: 10c0/1c91a5221b77b76072026b4cc95ecdf38f7c3e33e63423abec09a85e6e9a12279637dcc9ac2ba1fc333e0c447fb3b0f46d7965acb5d7cea02d188e9c6d425c0b
-  languageName: node
-  linkType: hard
-
-"axios@npm:^1.11.0, axios@npm:^1.15.0, axios@npm:^1.4.0, axios@npm:^1.6.0, axios@npm:^1.6.5, axios@npm:^1.7.8, axios@npm:^1.8.3":
-  version: 1.18.1
-  resolution: "axios@npm:1.18.1"
-  dependencies:
-    follow-redirects: "npm:^1.16.0"
-    form-data: "npm:^4.0.5"
+    form-data: "npm:^4.0.6"
     https-proxy-agent: "npm:^5.0.1"
     proxy-from-env: "npm:^2.1.0"
-  checksum: 10c0/9d9378a3af0d0ad730a52ad9d15ec7201f3926ad6e7e8bbffc5ae21ca2835ad11d1d9598698f5dd9718917486039f55ea1d7dc23d8e44fa827a55cc3262c02fc
+  checksum: 10c0/976088acf532286356f4c2e65df1ef47ba7da3936d83e928d0d64357bbf5370456abd3eb5826c15df322335fcb1fe200d4a84b4fcf20ffccdd63b40d80fa495c
   languageName: node
   linkType: hard
 
@@ -32546,15 +32528,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:3.2.7":
-  version: 3.2.7
-  resolution: "dompurify@npm:3.2.7"
+"dompurify@npm:>=3.4.16 <4.0.0, dompurify@npm:^3.4.16":
+  version: 3.4.17
+  resolution: "dompurify@npm:3.4.17"
   dependencies:
     "@types/trusted-types": "npm:^2.0.7"
   dependenciesMeta:
     "@types/trusted-types":
       optional: true
-  checksum: 10c0/d41bb31a72f1acdf9b84c56723c549924b05d92a39a15bd8c40bec9007ff80d5fccf844bc53ee12af5b69044f9a7ce24a1e71c267a4f49cf38711379ed8c1363
+  checksum: 10c0/6a12251ef5e700fc91b6d96d33e9f8b5fd590c55276f632cf42d182c5808e9f48d5bef435ab26eac235dfcc05ed8fe95e1c8308dcc502bf1050e561f14d0361a
   languageName: node
   linkType: hard
 
@@ -32581,18 +32563,6 @@ __metadata:
     "@types/trusted-types":
       optional: true
   checksum: 10c0/c8f8e5b0879a0d93c84a2e5e78649a47d0c057ed0f7850ca3d573d2cca64b84fb1ff85bd4b20980ade69c4e5b80ae73011340f1c2ff375c7ef98bb8268e1d13a
-  languageName: node
-  linkType: hard
-
-"dompurify@npm:^3.4.13":
-  version: 3.4.13
-  resolution: "dompurify@npm:3.4.13"
-  dependencies:
-    "@types/trusted-types": "npm:^2.0.7"
-  dependenciesMeta:
-    "@types/trusted-types":
-      optional: true
-  checksum: 10c0/9c2a1a71e1a1d8b77953db7a39ffc935ef4ed4f10fe40770232128c2cbfd4c3dc677d3d7bae51eb24cc52d9ff3548612dc540ecb4343e89b26e809d2be2e0cfe
   languageName: node
   linkType: hard
 
@@ -47137,10 +47107,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"moment@npm:^2.10.2, moment@npm:^2.29.4":
-  version: 2.29.4
-  resolution: "moment@npm:2.29.4"
-  checksum: 10c0/844c6f3ce42862ac9467c8ca4f5e48a00750078682cc5bda1bc0e50cc7ca88e2115a0f932d65a06e4a90e26cb78892be9b3ca3dd6546ca2c4d994cebb787fc2b
+"moment@npm:>=2.31.0 <3.0.0":
+  version: 2.31.0
+  resolution: "moment@npm:2.31.0"
+  checksum: 10c0/3755b186b8ff62c565685ce69dde55bf46003c0329139be5c8dd7845cd567bfd7d02be3a13e379a25acb9e98f6b87136c4776745e440615a4f5ca8dd9a8815b9
   languageName: node
   linkType: hard
 
@@ -47163,16 +47133,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"morgan@npm:^1.9.1":
-  version: 1.10.0
-  resolution: "morgan@npm:1.10.0"
+"morgan@npm:^1.12.1":
+  version: 1.12.1
+  resolution: "morgan@npm:1.12.1"
   dependencies:
     basic-auth: "npm:~2.0.1"
     debug: "npm:2.6.9"
     depd: "npm:~2.0.0"
-    on-finished: "npm:~2.3.0"
-    on-headers: "npm:~1.0.2"
-  checksum: 10c0/684db061daca28f8d8e3bfd50bd0d21734401b46f74ea76f6df7785d45698fcd98f6d3b81a6bad59f8288c429183afba728c428e8f66d2e8c30fd277af3b5b3a
+    on-finished: "npm:~2.4.1"
+    on-headers: "npm:~1.1.0"
+  checksum: 10c0/543ef12deae8c30d12df9cd0412353dc6003a075530a2c093099a91792fa969778d5eeb863f0fdcbd0333f25281b17a5b7bc3e38cf759024679b24ca7b950be9
   languageName: node
   linkType: hard
 
@@ -47244,15 +47214,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"multer@npm:^2.1.0":
-  version: 2.1.1
-  resolution: "multer@npm:2.1.1"
+"multer@npm:^2.3.0":
+  version: 2.4.0
+  resolution: "multer@npm:2.4.0"
   dependencies:
     append-field: "npm:^1.0.0"
     busboy: "npm:^1.6.0"
-    concat-stream: "npm:^2.0.0"
     type-is: "npm:^1.6.18"
-  checksum: 10c0/2ec4e02833b20f403cfb879d4b64d2a9070d902b9deae7aef18a6faadb707d7665385456cf540aa8a6dadfe3d4c5fc8e0e7b0675b94e1077048b1125426deee6
+  checksum: 10c0/4e271959ba4c9184f26dbd98a06eeb2ee8008e8ca2d1d30cb7856f642678648c085ed064627e9db01ae07442adfd275a7124fb409335a8f754ec41df51f1f1d0
   languageName: node
   linkType: hard
 
@@ -48591,13 +48560,6 @@ __metadata:
   dependencies:
     ee-first: "npm:1.1.1"
   checksum: 10c0/c904f9e518b11941eb60279a3cbfaf1289bd0001f600a950255b1dede9fe3df8cd74f38483550b3bb9485165166acb5db500c3b4c4337aec2815c88c96fcc2ea
-  languageName: node
-  linkType: hard
-
-"on-headers@npm:~1.0.2":
-  version: 1.0.2
-  resolution: "on-headers@npm:1.0.2"
-  checksum: 10c0/f649e65c197bf31505a4c0444875db0258e198292f34b884d73c2f751e91792ef96bb5cf89aa0f4fecc2e4dc662461dda606b1274b0e564f539cae5d2f5fc32f
   languageName: node
   linkType: hard
 
@@ -54053,7 +54015,7 @@ __metadata:
     argparse: "npm:^2.0.1"
     assemblyai: "npm:^4.35.0"
     assert-never: "npm:^1.2.1"
-    axios: "npm:^1.15.0"
+    axios: "npm:^1.20.0"
     axios-mock-adapter: "npm:^2.1.0"
     babel-jest: "npm:^30.0.2"
     babel-plugin-styled-components: "npm:^2.1.4"
@@ -54084,7 +54046,7 @@ __metadata:
     devtools: "npm:^7.27.0"
     diff: "npm:^9.0.0"
     docxtemplater: "npm:^3.31.5"
-    dompurify: "npm:^3.4.13"
+    dompurify: "npm:^3.4.16"
     dotenv: "npm:^8.2.0"
     downloadjs: "npm:^1.4.7"
     env-cmd: "npm:^9.0.3"
@@ -54191,11 +54153,11 @@ __metadata:
     mock-gcs: "npm:^2.1.0"
     mock-jwks: "npm:^3.3.5"
     modern-normalize: "npm:^2.0.0"
-    moment: "npm:^2.29.4"
+    moment: "npm:^2.31.0"
     monaco-editor: "npm:0.55.1"
-    morgan: "npm:^1.9.1"
+    morgan: "npm:^1.12.1"
     msw: "npm:^2.7.3"
-    multer: "npm:^2.1.0"
+    multer: "npm:^2.3.0"
     nativewind: "npm:^4.2.6"
     next: "npm:15.5.27"
     next-remove-imports: "npm:^1.0.12"
@@ -57184,17 +57146,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"smol-toml@npm:1.6.1":
-  version: 1.6.1
-  resolution: "smol-toml@npm:1.6.1"
-  checksum: 10c0/511a78722f99c7616fdb46af708de3d7e81434b5a3d58061166da73f28bfc6cae4f0cd04683f60515b9c490cd10152fce72287c960b337419c0299cc1f0f2a22
-  languageName: node
-  linkType: hard
-
-"smol-toml@npm:^1.0.1":
-  version: 1.3.1
-  resolution: "smol-toml@npm:1.3.1"
-  checksum: 10c0/bac5bf4f2655fd561fe41f9426d70ab68b486631beff97a7f127f5d2f811b5e247d50a06583be03d35a625dcb05b7984b94a61a81c68ea2810ac7a9bf4edc64d
+"smol-toml@npm:>=1.7.1 <2.0.0":
+  version: 1.9.1
+  resolution: "smol-toml@npm:1.9.1"
+  checksum: 10c0/8acccf7bbc063f29405f58f5014ab39bf4eb9d7f0e000e5e3f140f7d4d6ead5696681a7c15260d1f2910213012c0af43b31a05bf94f704b0bdf39989fba08c02
   languageName: node
   linkType: hard
 
