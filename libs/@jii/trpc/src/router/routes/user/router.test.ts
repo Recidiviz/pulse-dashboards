@@ -38,6 +38,7 @@ describe("get properties for user in auth token", () => {
     expect(await c.getProperties()).toMatchInlineSnapshot(`
       {
         "hasSeenOnboarding": 2025-12-10T11:14:00.000Z,
+        "hasSeenReentryOnboarding": null,
         "hasSeenResourcesOnboarding": null,
         "hideAboutVideoFromHomePage": null,
         "hideSentenceDates": false,
@@ -53,6 +54,7 @@ test("set properties for user in auth token", async () => {
   expect(result).toMatchInlineSnapshot(`
     {
       "hasSeenOnboarding": 2025-12-10T11:43:00.000Z,
+      "hasSeenReentryOnboarding": null,
       "hasSeenResourcesOnboarding": null,
       "hideAboutVideoFromHomePage": null,
       "hideSentenceDates": false,
@@ -70,6 +72,7 @@ test("set multiple properties at once", async () => {
   expect(result).toMatchInlineSnapshot(`
     {
       "hasSeenOnboarding": 2025-12-10T11:43:00.000Z,
+      "hasSeenReentryOnboarding": null,
       "hasSeenResourcesOnboarding": null,
       "hideAboutVideoFromHomePage": 2025-12-10T12:44:00.000Z,
       "hideSentenceDates": false,
@@ -89,6 +92,7 @@ test("setting one property doesn't affect another", async () => {
   expect(result).toMatchInlineSnapshot(`
     {
       "hasSeenOnboarding": 2025-12-10T11:43:00.000Z,
+      "hasSeenReentryOnboarding": null,
       "hasSeenResourcesOnboarding": null,
       "hideAboutVideoFromHomePage": 2025-12-10T12:44:00.000Z,
       "hideSentenceDates": false,

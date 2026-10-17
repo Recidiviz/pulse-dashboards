@@ -222,6 +222,15 @@
         "sectionLabel": "[US_MA]reentry.overview.guideCta.sectionLabel",
         "idDocuments": "[US_MA]reentry.overview.guideCta.idDocuments",
         "housingBasics": "[US_MA]reentry.overview.guideCta.housingBasics"
+      },
+      "video": {
+        "title": "[US_MA]reentry.overview.video.title",
+        "bannerDescription": "[US_MA]reentry.overview.video.bannerDescription",
+        "learnMoreDescription": "[US_MA]reentry.overview.video.learnMoreDescription",
+        "dismissBanner": "[US_MA]reentry.overview.video.dismissBanner",
+        "modalTitle": "[US_MA]reentry.overview.video.modalTitle",
+        "modalClose": "[US_MA]reentry.overview.video.modalClose",
+        "modalFooter": "[US_MA]reentry.overview.video.modalFooter"
       }
     },
     "questionnaire": {

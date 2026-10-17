@@ -194,6 +194,10 @@ export class ResidentsStore {
     await this.setUserProperties({ hasSeenResourcesOnboarding: new Date() });
   }
 
+  async setUserReentryOnboardingSeen() {
+    await this.setUserProperties({ hasSeenReentryOnboarding: new Date() });
+  }
+
   async setHideSentenceDates(hidden: boolean) {
     // it's OK for this to fail silently, it should be logged elsewhere.
     // only effect to user is that their dates will be visible again

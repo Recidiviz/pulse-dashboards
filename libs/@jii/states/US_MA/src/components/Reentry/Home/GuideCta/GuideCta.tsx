@@ -21,6 +21,7 @@ import { State } from "~@jii/paths";
 import { useUsMaTranslations } from "~@jii/translation";
 
 import { GUIDE_TOPICS } from "../../ctaConfigs";
+import { ReentryVideoLearnMoreRow } from "../ReentryVideo/ReentryVideoLearnMoreRow/ReentryVideoLearnMoreRow";
 import {
   CardsRow,
   SectionLabel,
@@ -28,7 +29,11 @@ import {
   TopicLabel,
 } from "./GuideCta.styles";
 
-export const GuideCta = () => {
+export type GuideCtaProps = {
+  onOpenVideo: () => void;
+};
+
+export const GuideCta = ({ onOpenVideo }: GuideCtaProps) => {
   const { t } = useUsMaTranslations();
   const routeParams = useTypedParams(State.Resident);
 
@@ -37,6 +42,9 @@ export const GuideCta = () => {
       <SectionLabel>
         {t(($) => $.reentry.overview.guideCta.sectionLabel)}
       </SectionLabel>
+
+      <ReentryVideoLearnMoreRow onOpenVideo={onOpenVideo} />
+
       <CardsRow>
         {GUIDE_TOPICS.map(({ slug, icon: Icon, label }) => (
           <TopicCard

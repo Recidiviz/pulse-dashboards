@@ -35,7 +35,10 @@ import {
   typography,
 } from "~design-system";
 
-import ctaIllustration from "../assets/AboutVideoCtaIllustration.svg";
+import {
+  ABOUT_VIDEO_ILLUSTRATION_BACKGROUND,
+  aboutVideoIllustration,
+} from "../illustration";
 import { AboutVideoPresenter } from "../presenter/AboutVideoPresenter";
 
 type FadeOutAnimationProps = { $fadeOut: boolean };
@@ -55,9 +58,6 @@ const FadeOutWrapper = styled.div<FadeOutAnimationProps>`
 
   ${fadeOutAnimation}
 `;
-
-// matches the background of the illustration artwork
-const ILLUSTRATION_BACKGROUND = "#121c3f";
 
 const CLICK_TARGET_SIZE = 30;
 const CLOSE_ICON_SIZE = 14;
@@ -124,9 +124,9 @@ export const AboutVideoCtaCard = observer(function AboutVideoCtaCard({
       }}
     >
       <IllustratedCard
-        illustrationSrc={ctaIllustration}
+        illustrationSrc={aboutVideoIllustration}
         illustrationAlt={t(($) => $.onboardingVideo.videoButtonAltText)}
-        illustrationBackground={ILLUSTRATION_BACKGROUND}
+        illustrationBackground={ABOUT_VIDEO_ILLUSTRATION_BACKGROUND}
         illustrationOnClick={() => {
           presenter.openVideo();
         }}

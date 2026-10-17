@@ -16,3 +16,5 @@
 // =============================================================================
 
 export * from "./components/AboutVideoCta";
+export * from "./illustration";
+export type { OnboardingVideoAssets } from "./presenter/AboutVideoPresenter";

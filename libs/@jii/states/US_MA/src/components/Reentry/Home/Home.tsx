@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useState } from "react";
+
 import { usePageTitle } from "~@jii/common-ui";
 import { firstNameLastName, useSingleResidentContext } from "~@jii/data";
 import { useUsMaTranslations } from "~@jii/translation";
@@ -25,29 +27,46 @@ import { Greeting, Wrapper } from "./Home.styles";
 import { QuestionnaireCta } from "./QuestionnaireCta/QuestionnaireCta";
 import { QuestionnaireCtaError } from "./QuestionnaireCta/QuestionnaireCtaError";
 import { QuestionnaireCtaLoading } from "./QuestionnaireCta/QuestionnaireCtaLoading";
+import { REENTRY_VIDEO } from "./ReentryVideo/config";
+import { ReentryVideoBanner } from "./ReentryVideo/ReentryVideoBanner/ReentryVideoBanner";
+import { ReentryVideoModal } from "./ReentryVideo/ReentryVideoModal/ReentryVideoModal";
 import { ResourceCategoryCta } from "./ResourceCategoryCta/ResourceCategoryCta";
 
 export const Home = () => {
   const { t } = useUsMaTranslations();
   const { resident } = useSingleResidentContext();
+  const [videoIsOpen, setVideoIsOpen] = useState(false);
 
   usePageTitle(t(($) => $.reentry.overview.pageTitle));
 
+  const openVideo = () => setVideoIsOpen(true);
+
   return (
     <Wrapper>
+      <ReentryVideoBanner onOpenVideo={openVideo} />
+
       <Greeting>
         {t(($) => $.reentry.overview.greeting, {
           name: firstNameLastName(resident),
         })}
       </Greeting>
+
       <SuspenseQueryBoundary
         loadingFallback={<QuestionnaireCtaLoading />}
         errorFallback={QuestionnaireCtaError}
       >
         <QuestionnaireCta />
       </SuspenseQueryBoundary>
+
       <ResourceCategoryCta />
-      <GuideCta />
+
+      <GuideCta onOpenVideo={openVideo} />
+
+      <ReentryVideoModal
+        isOpen={videoIsOpen}
+        onClose={() => setVideoIsOpen(false)}
+        video={REENTRY_VIDEO}
+      />
     </Wrapper>
   );
 };

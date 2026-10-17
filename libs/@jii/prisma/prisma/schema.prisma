@@ -17,6 +17,7 @@ model UserProperties {
     hasSeenOnboarding             DateTime?
     hideAboutVideoFromHomePage    DateTime?
     hasSeenResourcesOnboarding    DateTime?
+    hasSeenReentryOnboarding      DateTime?
     hideSentenceDates             Boolean @default(false)
 }
 
